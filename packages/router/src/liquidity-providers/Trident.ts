@@ -2,104 +2,17 @@ import { balanceOfAbi, getReservesAbi, getStableReservesAbi, totalsAbi } from '@
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
-import {
-  Address,
-  readContracts,
-  watchBlockNumber,
-} from '@wagmi/core'
+import { Address, readContracts, watchBlockNumber } from '@wagmi/core'
 import { BigNumber } from 'ethers'
 
 import { getPoolsByTokenIds, getTopPools, PoolResponse } from '../lib/api'
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
 import { BentoPoolCode } from '../pools/BentoPool'
-import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
-// const ConstantProductPoolFactory: Record<string | number, string> = {
-//   [ChainId.POLYGON]: '0x05689fCfeE31FCe4a67FbC7Cab13E74F80A4E288',
-// }
-
-// const StablePoolFactory: Record<string | number, string> = {
-//   [ChainId.POLYGON]: '0x2A0Caa28331bC6a18FF195f06694f90671dE70f2',
-// }
-
 export const BentoBox: Record<string | number, string> = {
   [ChainId.POLYGON]: '0x0319000133d3AdA02600f0875d2cf03D442C3367',
-}
-const totalsABI = [
-  {
-    inputs: [
-      {
-        internalType: 'contract IERC20',
-        name: '',
-        type: 'address',
-      },
-    ],
-    name: 'totals',
-    outputs: [
-      {
-        internalType: 'uint128',
-        name: 'elastic',
-        type: 'uint128',
-      },
-      {
-        internalType: 'uint128',
-        name: 'base',
-        type: 'uint128',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-]
-
-const balanceOfABI = [
-  {
-    constant: true,
-    inputs: [
-      {
-        name: '_owner',
-        type: 'address',
-      },
-    ],
-    name: 'balanceOf',
-    outputs: [
-      {
-        name: 'balance',
-        type: 'uint256',
-      },
-    ],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function',
-  },
-]
-const syncAbi = [
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'reserve0',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'reserve1',
-        type: 'uint256',
-      },
-    ],
-    name: 'Sync',
-    type: 'event',
-  },
-]
-
-function closeValues(a: number, b: number, precision: number) {
-  if (a == 0 || b == 0) return Math.abs(a - b) < precision
-  return Math.abs(a / b - 1) < precision
 }
 
 export function convertToNumbers(arr: BigNumber[]): (number | undefined)[] {
@@ -322,7 +235,7 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   async updatePools(type: 'ALL' | 'INITIAL'): Promise<void> {
-    // this.removeStalePools()
+    this.removeStalePools()
     let cppPools = Array.from(this.cPPools.values())
     let stablePools = Array.from(this.stablePools.values())
     let bridges = Array.from(this.bridges.values())
@@ -449,32 +362,32 @@ export class TridentProvider extends LiquidityProvider {
         ++this.stateId
       }
     })
-
-    console.log('updated pools', this.stateId)
+    console.debug(`${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - UPDATED POOLS`)
   }
 
   async getPools(t0: Token, t1: Token): Promise<void> {
-    // console.debug(`****** ${this.getType()} POOLS IN MEMORY:`, this.getCurrentPoolList().length)
-    // const poolsOnDemand = await getPoolsByTokenIds(
-    //   this.chainId,
-    //   'SushiSwap',
-    //   'TRIDENT',
-    //   ['CONSTANT_PRODUCT_POOL', 'STABLE_POOL'],
-    //   t0.address,
-    //   t1.address,
-    //   this.TOP_POOL_SIZE,
-    //   this.TOP_POOL_LIQUIDITY_THRESHOLD,
-    //   this.ON_DEMAND_POOL_SIZE
-    // )
-    // console.debug(
-    //   `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - ON DEMAND: Begin fetching reserves for ${
-    //     poolsOnDemand.size
-    //   } pools`
-    // )
-    // const pools = Array.from(poolsOnDemand.values())
-    // updatePools()
-    // this.initPools(pools, 'ON_DEMAND')
-    // this.updatePools('ALL')
+    console.debug(`****** ${this.getType()} POOLS IN MEMORY:`, this.getCurrentPoolList().length)
+    const poolsOnDemand = await getPoolsByTokenIds(
+      this.chainId,
+      'SushiSwap',
+      'TRIDENT',
+      ['CONSTANT_PRODUCT_POOL', 'STABLE_POOL'],
+      t0.address,
+      t1.address,
+      this.TOP_POOL_SIZE,
+      this.TOP_POOL_LIQUIDITY_THRESHOLD,
+      this.ON_DEMAND_POOL_SIZE
+    )
+    console.debug(
+      `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - ON DEMAND: Begin fetching reserves for ${
+        poolsOnDemand.size
+      } pools`
+    )
+    const pools = Array.from(poolsOnDemand.values())
+
+    // TODO: refactor this, unnecessary to fetch reserves for all pools, then update them again after
+    await this.initPools(pools, 'ON_DEMAND')
+    await this.updatePools('ALL')
   }
 
   startFetchPoolsData() {
@@ -489,16 +402,11 @@ export class TridentProvider extends LiquidityProvider {
       },
       (blockNumber) => {
         this.lastUpdateBlock = blockNumber
-        // this.removeStalePools(blockNumber)
         if (!this.isInitialized) {
           this.initialize(blockNumber)
         } else {
-          // this.updatePools('INITIAL')
+          this.updatePools('INITIAL')
         }
-
-        // for (const p of this.getCurrentPoolList()) {
-        //   console.log(`${p.poolName} ${p.pool.address} ${p.pool.reserve0} ${p.pool.reserve1}`)
-        // }
       }
     )
   }
@@ -507,32 +415,30 @@ export class TridentProvider extends LiquidityProvider {
     // TODO: move this to a per-chain config?
 
     const blockThreshold = this.lastUpdateBlock - 100
+    let removed = 0
 
     for (const [k, v] of this.cPPools) {
-      if (v.updatedAtBlock > blockThreshold && v.fetchType === 'ON_DEMAND') {
-        console.log(
-          `Removing stale pool ${v.poolCode.pool.address} ${v.poolCode.pool.token0.symbol}/${v.poolCode.pool.token1.symbol}`
-        )
+      if (v.updatedAtBlock < blockThreshold && v.fetchType === 'ON_DEMAND') {
+        removed++
         this.cPPools.delete(k)
       }
     }
 
     for (const [k, v] of this.stablePools) {
-      if (v.updatedAtBlock > blockThreshold && v.fetchType === 'ON_DEMAND') {
-        console.log(
-          `Removing stale pool ${v.poolCode.pool.address} ${v.poolCode.pool.token0.symbol}/${v.poolCode.pool.token1.symbol}`
-        )
+      if (v.updatedAtBlock < blockThreshold && v.fetchType === 'ON_DEMAND') {
+        removed++
         this.stablePools.delete(k)
       }
     }
 
     for (const [k, v] of this.bridges) {
-      if (v.updatedAtBlock > blockThreshold && v.fetchType === 'ON_DEMAND') {
-        console.log(
-          `Removing stale pool ${v.poolCode.pool.address} ${v.poolCode.pool.token0.symbol}/${v.poolCode.pool.token1.symbol}`
-        )
+      if (v.updatedAtBlock < blockThreshold && v.fetchType === 'ON_DEMAND') {
+        removed++
         this.bridges.delete(k)
       }
+    }
+    if (removed > 0) {
+      console.log(`${this.chainId}~${this.lastUpdateBlock}~${this.getType()} -Removed ${removed} stale pools`)
     }
   }
 
@@ -541,11 +447,7 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   getCurrentPoolList(): PoolCode[] {
-    return [
-      ...this.cPPools.values(), 
-      ...this.stablePools.values(),
-       ...this.bridges.values()
-      ].map((p) => p.poolCode)
+    return [...this.cPPools.values(), ...this.stablePools.values(), ...this.bridges.values()].map((p) => p.poolCode)
   }
 
   stopFetchPoolsData() {
