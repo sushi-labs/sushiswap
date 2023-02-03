@@ -6,10 +6,10 @@ export type RouteProcessorChainId = RouteProcessorExport['chainId']
 export type RouteProcessorContracts = RouteProcessorExport['contracts']
 export type RouteProcessorContractName = keyof RouteProcessorContracts
 export type RouteProcessorContract = RouteProcessorContracts[RouteProcessorContractName]
-export const routeProcessorAddress = Object.fromEntries(
-  Object.entries(routeProcessorExports).map(([chainId, data]) => [parseInt(chainId), data[0].contracts.RouteProcessor.address])
-) as {
-  [chainId in RouteProcessorChainId]: RouteProcessorExports[chainId][number]['contracts']['RouteProcessor']['address']
-}
+// export const routeProcessorAddress = Object.fromEntries(
+//   Object.entries(routeProcessorExports).map(([chainId, data]) => [parseInt(chainId), data[0].contracts.RouteProcessor.address])
+// ) as {
+//   [chainId in RouteProcessorChainId]: RouteProcessorExports[chainId][number]['contracts']['RouteProcessor']['address']
+// }
 export default routeProcessorExports
   
