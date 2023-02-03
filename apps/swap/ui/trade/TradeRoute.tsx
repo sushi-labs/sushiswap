@@ -22,30 +22,6 @@ export const TradeRoute: FC<{
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
 }> = ({ open, setOpen, trade }) => {
-  const directPaths = trade?.route?.legs?.filter(
-    (leg) =>
-      leg.tokenFrom.address === trade?.amountIn?.currency.wrapped.address &&
-      leg.tokenTo.address === trade?.amountOut?.currency.wrapped.address
-  )
-
-  const initialPaths = trade?.route?.legs?.filter(
-    (leg) =>
-      leg.tokenFrom.address === trade?.amountIn?.currency.wrapped.address &&
-      leg.tokenTo.address !== trade?.amountOut?.currency.wrapped.address
-  )
-
-  const percentPaths = trade?.route?.legs?.filter(
-    (leg) =>
-      leg.tokenFrom.address !== trade?.amountIn?.currency.wrapped.address &&
-      leg.tokenTo.address !== trade?.amountOut?.currency.wrapped.address
-  )
-
-  const finalPaths = trade?.route?.legs?.filter(
-    (leg) =>
-      leg.tokenFrom.address !== trade?.amountIn?.currency.wrapped.address &&
-      leg.tokenTo.address === trade?.amountOut?.currency.wrapped.address
-  )
-
   const onClose = useCallback(() => {
     setOpen(false)
   }, [setOpen])
@@ -54,7 +30,7 @@ export const TradeRoute: FC<{
     <Dialog open={open} onClose={onClose}>
       <Dialog.Content className="max-h-[320px] sm:max-h-[560px] overflow-y-scroll scroll dark:bg-slate-900 bg-white">
         <div className="flex flex-col gap-5">
-          {directPaths?.map((directPath, i) => (
+          {trade?.route?.legs?.map((directPath, i) => (
             <ComplexRoutePath
               key={i}
               fromToken={tokenFromRToken(directPath.tokenFrom)}
@@ -63,39 +39,6 @@ export const TradeRoute: FC<{
               poolFee={directPath.poolFee}
               portion={directPath.absolutePortion}
               title={`${directPath.poolName}`}
-            />
-          ))}
-          {initialPaths?.map((initialPath, i) => (
-            <ComplexRoutePath
-              key={i}
-              fromToken={tokenFromRToken(initialPath.tokenFrom)}
-              toToken={tokenFromRToken(initialPath.tokenTo)}
-              poolType={initialPath.poolType}
-              poolFee={initialPath.poolFee}
-              portion={initialPath.absolutePortion}
-              title={initialPath.poolName}
-            />
-          ))}
-          {percentPaths?.map((percentagePath, i) => (
-            <ComplexRoutePath
-              key={i}
-              fromToken={tokenFromRToken(percentagePath.tokenFrom)}
-              toToken={tokenFromRToken(percentagePath.tokenTo)}
-              poolType={percentagePath.poolType}
-              poolFee={percentagePath.poolFee}
-              portion={percentagePath.absolutePortion}
-              title={percentagePath.poolName}
-            />
-          ))}
-          {finalPaths?.map((finalPath, i) => (
-            <ComplexRoutePath
-              key={i}
-              fromToken={tokenFromRToken(finalPath.tokenFrom)}
-              toToken={tokenFromRToken(finalPath.tokenTo)}
-              poolType={finalPath.poolType}
-              poolFee={finalPath.poolFee}
-              portion={finalPath.absolutePortion}
-              title={finalPath.poolName}
             />
           ))}
         </div>

@@ -43,7 +43,6 @@ const Page: FC = ({}: InferGetStaticPropsType<typeof getStaticProps>) => {
         <Widget />
         <TradeStats />
         <TradeReviewDialogSameChain />
-        <SwapButton />
         <TokenNotFoundDialog />
       </Drawer.Root>
 

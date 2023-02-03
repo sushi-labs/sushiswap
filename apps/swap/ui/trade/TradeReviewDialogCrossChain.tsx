@@ -130,27 +130,28 @@ export const TradeReviewDialogCrossChain: FC = () => {
             </List>
           )}
         </div>
+        <div className="pt-4">
+          <ConfirmationDialogCrossChain>
+            {({ onClick, isWritePending, isLoading, isConfirming }) => (
+              <Button
+                size="xl"
+                fullWidth
+                loading={isLoading}
+                onClick={onClick}
+                disabled={isWritePending || Boolean(isLoading && +value > 0) || isFetching}
+              >
+                {isConfirming ? (
+                  <Dots>Confirming transaction</Dots>
+                ) : isWritePending ? (
+                  <Dots>Confirm Swap</Dots>
+                ) : (
+                  `Swap ${token0.symbol} for ${token1.symbol}`
+                )}
+              </Button>
+            )}
+          </ConfirmationDialogCrossChain>
+        </div>
       </div>
-      <FixedButtonContainer>
-        <ConfirmationDialogCrossChain>
-          {({ onClick, isWritePending, isLoading, isConfirming }) => (
-            <Button
-              size="xl"
-              loading={isLoading}
-              onClick={onClick}
-              disabled={isWritePending || Boolean(isLoading && +value > 0) || isFetching}
-            >
-              {isConfirming ? (
-                <Dots>Confirming transaction</Dots>
-              ) : isWritePending ? (
-                <Dots>Confirm Swap</Dots>
-              ) : (
-                `Swap ${token0.symbol} for ${token1.symbol}`
-              )}
-            </Button>
-          )}
-        </ConfirmationDialogCrossChain>
-      </FixedButtonContainer>
     </Dialog>
   )
 }

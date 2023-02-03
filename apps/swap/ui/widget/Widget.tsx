@@ -9,22 +9,22 @@ import { SwapCurrencyInput } from './SwapCurrencyInput'
 import { SwapCurrencyOutput } from './SwapCurrencyOutput'
 import { WidgetTitleV2 } from './WidgetTitleV2'
 import { CrossChainBanner } from './CrossChainBanner'
-import { ChainSelectors } from './ChainSelectors'
+import { SwapButton } from './SwapButton'
 
 export const Widget: FC = () => {
   return (
     <div className="flex flex-col gap-4">
-      <CrossChainBanner />
       <WidgetTitleV2 />
       <div className="flex justify-between items-center">
         <SwitchAppType />
-        <SettingsOverlay modules={[SettingsModule.SlippageTolerance, SettingsModule.ExpertMode]} />
+        <SettingsOverlay modules={[SettingsModule.SlippageTolerance]} />
       </div>
       <UIWidget.Content>
-        <ChainSelectors />
+        <CrossChainBanner />
         <SwapCurrencyInput />
         <SwitchTokensButton />
         <SwapCurrencyOutput />
+        <SwapButton />
       </UIWidget.Content>
     </div>
   )

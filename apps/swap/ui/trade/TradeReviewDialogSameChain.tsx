@@ -52,11 +52,11 @@ export const TradeReviewDialogSameChain: FC = () => {
               <Skeleton.Text fontSize="text-3xl" className="w-2/3" />
             ) : (
               <h1 className="text-3xl font-semibold dark:text-slate-50">
-                Receive {trade?.amountOut?.toSignificant(6)} {token1.symbol}
+                Buy {trade?.amountOut?.toSignificant(6)} {token1.symbol}
               </h1>
             )}
             <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
-              {isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'} {amount?.toSignificant(6)} {token0.symbol}
+              {isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Sell'} {amount?.toSignificant(6)} {token0.symbol}
             </h1>
           </div>
           <div className="min-w-[56px] min-h-[56px]">
@@ -79,6 +79,13 @@ export const TradeReviewDialogSameChain: FC = () => {
             </div>
           </div>
         </div>
+        {warningSeverity(trade?.priceImpact) >= 3 && (
+          <div className="rounded-xl px-4 py-3 bg-red/20 mt-4">
+            <span className="text-red-600 font-medium text-sm">
+              High price impact. You will lose a significant portion of your funds in this trade due to price impact.
+            </span>
+          </div>
+        )}
         <div className="flex flex-col gap-3">
           <List>
             <List.Control>
@@ -152,31 +159,33 @@ export const TradeReviewDialogSameChain: FC = () => {
             </List>
           )}
         </div>
+        <div className="pt-4">
+          <ConfirmationDialog>
+            {({ onClick, isWritePending, isLoading, isConfirming }) => (
+              <Button
+                fullWidth
+                size="xl"
+                loading={isLoading}
+                onClick={onClick}
+                disabled={isWritePending || Boolean(isLoading && +value > 0) || isFetching}
+                color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+              >
+                {isConfirming ? (
+                  <Dots>Confirming transaction</Dots>
+                ) : isWritePending ? (
+                  <Dots>Confirm Swap</Dots>
+                ) : isWrap ? (
+                  'Wrap'
+                ) : isUnwrap ? (
+                  'Unwrap'
+                ) : (
+                  `Swap ${token0.symbol} for ${token1.symbol}`
+                )}
+              </Button>
+            )}
+          </ConfirmationDialog>
+        </div>
       </div>
-      <FixedButtonContainer>
-        <ConfirmationDialog>
-          {({ onClick, isWritePending, isLoading, isConfirming }) => (
-            <Button
-              size="xl"
-              loading={isLoading}
-              onClick={onClick}
-              disabled={isWritePending || Boolean(isLoading && +value > 0) || isFetching}
-            >
-              {isConfirming ? (
-                <Dots>Confirming transaction</Dots>
-              ) : isWritePending ? (
-                <Dots>Confirm Swap</Dots>
-              ) : isWrap ? (
-                'Wrap'
-              ) : isUnwrap ? (
-                'Unwrap'
-              ) : (
-                `Swap ${token0.symbol} for ${token1.symbol}`
-              )}
-            </Button>
-          )}
-        </ConfirmationDialog>
-      </FixedButtonContainer>
     </Dialog>
   )
 }

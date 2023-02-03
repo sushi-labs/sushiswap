@@ -43,7 +43,7 @@ export const SearchPanel: FC = () => {
           {query && query.length > 2 && (
             <List className="pt-6">
               <List.Label className="text-sm">{Chain.from(network1).name}</List.Label>
-              <List.Control className="scroll max-h-[368px]">
+              <List.Control className="scroll max-h-[368px] !p-1">
                 {isLoading ? (
                   <RowSkeleton />
                 ) : tokenList && Object.keys(tokenList).length > 0 ? (
@@ -61,7 +61,7 @@ export const SearchPanel: FC = () => {
           {query && query.length > 2 && (
             <List className="pt-6">
               <List.Label className="text-sm">Other networks</List.Label>
-              <List.Control className="scroll max-h-[368px]">
+              <List.Control className="scroll max-h-[368px] !p-1">
                 {isLoading ? (
                   <RowSkeleton />
                 ) : tokenList && Object.keys(tokenList).length > 0 ? (
@@ -78,7 +78,7 @@ export const SearchPanel: FC = () => {
           )}
           <List className="pt-6">
             <List.Label className="text-sm">Popular tokens</List.Label>
-            <List.Control>
+            <List.Control className="!p-1">
               {popularTokensList &&
                 Object.values(popularTokensList)?.map((el) => <Row currency={el} key={`example-${el.address}`} />)}
             </List.Control>
@@ -104,7 +104,7 @@ const Row: FC<{ currency: Token }> = ({ currency }) => {
   return (
     <button
       onClick={handleClick}
-      className="w-full cursor-pointer flex justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
+      className="w-full cursor-pointer flex justify-between px-3 py-2 rounded-lg hover:bg-blue/10 dark:hover:bg-slate-700"
     >
       <div className="flex items-center gap-5">
         <div className="w-9 h-9">

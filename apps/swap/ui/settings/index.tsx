@@ -8,6 +8,7 @@ import React, { FC, useState } from 'react'
 import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
 import { SlippageTolerance } from './SlippageTolerance'
+import * as module from 'module'
 
 export enum SettingsModule {
   CarbonOffset = 'CarbonOffset',
@@ -40,12 +41,14 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules }) => {
               </List.Control>
             </List>
           )}
-          <List className="!pt-0">
-            <List.Control>
-              {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}
-              {modules.includes(SettingsModule.CarbonOffset) && <CarbonOffset />}
-            </List.Control>
-          </List>
+          {!modules.includes(SettingsModule.SlippageTolerance) && modules.length > 0 && (
+            <List className="!pt-0">
+              <List.Control>
+                {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}
+                {modules.includes(SettingsModule.CarbonOffset) && <CarbonOffset />}
+              </List.Control>
+            </List>
+          )}
         </Dialog.Content>
       </Dialog>
     </>
