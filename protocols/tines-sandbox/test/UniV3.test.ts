@@ -366,5 +366,33 @@ describe('Uni V3', () => {
       ])
       await monkeyTest(env, pool, 'big', 1000, true)
     })
+    it('Touching positions small monkey test', async () => {
+      const pool = await createPool(env, 3000, 4, [
+        { from: -1200, to: 18000, val: 1e18 },
+        { from: 18000, to: 42000, val: 5e18 },
+      ])
+      await monkeyTest(env, pool, '_small', 10)
+    })
+    it.skip('Touching positions big monkey test', async () => {
+      const pool = await createPool(env, 3000, 4, [
+        { from: -1200, to: 18000, val: 1e18 },
+        { from: 18000, to: 42000, val: 5e18 },
+      ])
+      await monkeyTest(env, pool, '_big', 1000, true)
+    })
+    it.skip('Overlapped positions small monkey test', async () => {
+      const pool = await createPool(env, 3000, 8, [
+        { from: -1200, to: 18000, val: 2e18 },
+        { from: 12000, to: 24000, val: 6e18 },
+      ])
+      await monkeyTest(env, pool, 'Small', 10)
+    })
+    it.skip('Overlapped positions small monkey test', async () => {
+      const pool = await createPool(env, 3000, 8, [
+        { from: -1200, to: 18000, val: 2e18 },
+        { from: 12000, to: 24000, val: 6e18 },
+      ])
+      await monkeyTest(env, pool, 'Big', 1000, true)
+    })
   })
 })
