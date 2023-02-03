@@ -1,7 +1,7 @@
 import '@nomiclabs/hardhat-ethers'
 
 import { defaultConfig } from '@sushiswap/hardhat-config'
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync, symlinkSync, writeFileSync } from 'fs'
 import { TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD } from 'hardhat/builtin-tasks/task-names'
 import { HardhatUserConfig, subtask, task } from 'hardhat/config'
 import { TASK_EXPORT } from 'hardhat-deploy'
@@ -17,6 +17,7 @@ task(TASK_EXPORT, async (args, hre, runSuper) => {
 
   const exports = readFileSync('./exports.json', { encoding: 'utf-8' })
   writeFileSync('./exports.ts', `export default ${exports} as const`)
+  symlinkSync('./exports.ts', './exports.cts')
 })
 
 subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVersion: string }, hre, runSuper) => {
