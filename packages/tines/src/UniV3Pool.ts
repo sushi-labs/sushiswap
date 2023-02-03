@@ -102,7 +102,7 @@ export class UniV3Pool extends RPool {
 
   _findTickForPrice(sqrtPriceX96: BigNumber) {
     const sqrtPrice = parseInt(sqrtPriceX96.toString()) / two96
-    const index = Math.floor(Math.log(sqrtPrice) / Math.log(1.0001))
+    const index = Math.floor((Math.log(sqrtPrice) * 2) / Math.log(1.0001))
     let a = 0
     let b = this.ticks.length
     while (b - a > 1) {

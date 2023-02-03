@@ -328,9 +328,26 @@ describe('Uni V3', () => {
       await checkSwap(env, pool, 1, false, true)
     })
 
-    it.only('Monkey test', async () => {
+    it.skip('Monkey test', async () => {
       const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
       await monkeyTest(env, pool, 'test1', 1000, true)
+    })
+  })
+
+  describe('Two positions', () => {
+    it('Special 1', async () => {
+      const pool = await createPool(env, 3000, 12.310868067131443, [
+        { from: -1200, to: 18000, val: 1e18 },
+        { from: 24000, to: 48000, val: 5e18 },
+      ])
+      await checkSwap(env, pool, 85433172055732540, true)
+    })
+    it.skip('No overlapping', async () => {
+      const pool = await createPool(env, 3000, 3, [
+        { from: -1200, to: 18000, val: 1e18 },
+        { from: 24000, to: 48000, val: 5e18 },
+      ])
+      await monkeyTest(env, pool, 'small', 10, true)
     })
   })
 })
