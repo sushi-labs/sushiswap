@@ -1,12 +1,15 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
 
-import prisma, { DecimalToString } from '@sushiswap/database'
+// What the fuck
+import { DecimalToString, default as database } from '@sushiswap/database'
+const prisma = database.default
 
-import type { ChefType, PoolType, PoolVersion, RewarderType } from '.'
-import type { PoolsApiSchema } from '../api/v0/'
-import type { PoolCountApiSchema } from '../api/v0/count'
-import type { PoolApiSchema } from '../api/v0/[chainId]/[address]'
+import type { PoolApiSchema } from '../api/v0/[chainId]/[address].js'
+import type { PoolCountApiSchema } from '../api/v0/count.js'
+import type { PoolsApiSchema } from '../api/v0/index.js'
+import { getUnindexedPool } from './getUnindexedPool.js'
+import type { ChefType, PoolType, PoolVersion, RewarderType } from './index.js'
 
 type PrismaArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
 
@@ -61,6 +64,8 @@ export async function getPool(args: typeof PoolApiSchema._output) {
 
   // Need to specify take and orderBy to make TS happy
   const [pool] = await getPools({ ids: [id], take: 1, orderBy: 'liquidityUSD' })
+
+  if (!pool) throw new Error('Pool not found.')
 
   await prisma.$disconnect()
   return pool
@@ -161,6 +166,10 @@ export async function getPools(args: typeof PoolsApiSchema._output) {
       >
     }
   >
+
+  if (args.ids) {
+    console.log(await getUnindexedPool(args.ids[0]!))
+  }
 
   await prisma.$disconnect()
   return pools ? (pools as unknown as Pool[]) : []

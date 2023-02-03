@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 
-import { getPool } from '../../../lib/api'
+import { getPool } from '../../../lib/api.js'
 
 export const PoolApiSchema = z.object({
   chainId: z.coerce
