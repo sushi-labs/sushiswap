@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@sushiswap/ui13/components/button'
-import React, { FC, Fragment, useState } from 'react'
+import React, { FC, Fragment, useEffect, useState } from 'react'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { ApprovalState, ApproveTokenController, Checker } from '@sushiswap/wagmi13'
 import { ChainId } from '@sushiswap/chain'
@@ -23,6 +23,13 @@ export const SwapButton: FC = () => {
     appType === AppType.Swap && token0.isNative && token1.wrapped.address === Native.onChain(network0).wrapped.address
   const isUnwrap =
     appType === AppType.Swap && token1.isNative && token0.wrapped.address === Native.onChain(network0).wrapped.address
+
+  // Reset
+  useEffect(() => {
+    if (warningSeverity(trade?.priceImpact) < 3) {
+      setChecked(false)
+    }
+  }, [trade])
 
   return (
     <>
