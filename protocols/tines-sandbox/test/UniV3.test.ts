@@ -161,7 +161,10 @@ async function createPool(env: Environment, fee: number, price: number, position
   }
 
   const slot = await pool.slot0()
-  const ticks: CLTick[] = Array.from(tickMap.entries()).map(([index, DLiquidity]) => ({ index, DLiquidity }))
+  const ticks: CLTick[] = Array.from(tickMap.entries())
+    .sort((a, b) => a[0] - b[0])
+    .map(([index, DLiquidity]) => ({ index, DLiquidity }))
+
   const tinesPool = new UniV3Pool(
     pool.address,
     token0,
@@ -259,7 +262,7 @@ async function getRandomSwapParams(rnd: () => number, pool: PoolInfo): Promise<[
   const maxRes = direction ? res1 / price : res0 * price
   const amount = Math.round(rnd() * maxRes) + 1000
 
-  //console.log(res0, res1, price, maxRes, amount, direction)
+  console.log(res0, res1, price, maxRes, amount, direction)
 
   return [amount, direction]
 }
@@ -352,6 +355,13 @@ describe('Uni V3', () => {
       ])
       await checkSwap(env, pool, '154350003013680480', true)
     })
+    it('Special 3', async () => {
+      const pool = await createPool(env, 3000, 6.857889404362659, [
+        { from: -1200, to: 18000, val: 2e18 },
+        { from: 12000, to: 24000, val: 6e18 },
+      ])
+      await checkSwap(env, pool, '994664157591385500', true)
+    })
     it('No overlapping small monkey test', async () => {
       const pool = await createPool(env, 3000, 3, [
         { from: -1200, to: 18000, val: 1e18 },
@@ -380,7 +390,7 @@ describe('Uni V3', () => {
       ])
       await monkeyTest(env, pool, '_big', 1000, true)
     })
-    it.skip('Overlapped positions small monkey test', async () => {
+    it('Overlapped positions small monkey test', async () => {
       const pool = await createPool(env, 3000, 8, [
         { from: -1200, to: 18000, val: 2e18 },
         { from: 12000, to: 24000, val: 6e18 },

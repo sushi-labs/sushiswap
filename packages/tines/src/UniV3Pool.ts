@@ -187,8 +187,6 @@ export class UniV3Pool extends RPool {
       //console.log('out', outAmount)
     }
 
-    // TODO: to add minimal limit check!
-
     return { out: outAmount, gasSpent: this.swapGasCost } // TODO: more accurate gas prediction
   }
 
