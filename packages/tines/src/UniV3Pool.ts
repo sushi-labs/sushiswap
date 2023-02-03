@@ -74,12 +74,12 @@ export class UniV3Pool extends RPool {
     fee: number,
     reserve0: BigNumber,
     reserve1: BigNumber,
+    tick: number,
     liquidity: BigNumber,
     sqrtPriceX96: BigNumber,
     ticks: CLTick[]
   ) {
     super(address, token0, token1, fee, reserve0, reserve1, TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST)
-    this.liquidity = liquidity
     this.ticks = ticks
     if (this.ticks.length === 0) {
       this.ticks.push({ index: CL_MIN_TICK, DLiquidity: ZERO })
@@ -87,29 +87,27 @@ export class UniV3Pool extends RPool {
     }
     if (this.ticks[0].index > CL_MIN_TICK) this.ticks.unshift({ index: CL_MIN_TICK, DLiquidity: ZERO })
     if (this.ticks[this.ticks.length - 1].index < CL_MAX_TICK) this.ticks.push({ index: CL_MAX_TICK, DLiquidity: ZERO })
-    this.sqrtPriceX96 = sqrtPriceX96
-    this.nearestTick = this._findTickForPrice(sqrtPriceX96)
-  }
 
-  updatePrice(sqrtPriceX96: BigNumber) {
-    this.sqrtPriceX96 = sqrtPriceX96
-    this.nearestTick = this._findTickForPrice(sqrtPriceX96)
-  }
-
-  updateLiquidity(liquidity: BigNumber) {
     this.liquidity = liquidity
+    this.sqrtPriceX96 = sqrtPriceX96
+    this.nearestTick = this._findTickForPrice(tick)
   }
 
-  _findTickForPrice(sqrtPriceX96: BigNumber) {
-    const sqrtPrice = parseInt(sqrtPriceX96.toString()) / two96
-    const index = Math.floor((Math.log(sqrtPrice) * 2) / Math.log(1.0001))
+  updateState(reserve0: BigNumber, reserve1: BigNumber, tick: number, liquidity: BigNumber, sqrtPriceX96: BigNumber) {
+    this.updateReserves(reserve0, reserve1)
+    this.liquidity = liquidity
+    this.sqrtPriceX96 = sqrtPriceX96
+    this.nearestTick = this._findTickForPrice(tick)
+  }
+
+  _findTickForPrice(tick: number) {
     let a = 0
     let b = this.ticks.length
     while (b - a > 1) {
       const c = Math.floor((a + b) / 2)
       const ind = this.ticks[c].index
-      if (ind == index) return c
-      if (ind < index) a = c
+      if (ind == tick) return c
+      if (ind < tick) a = c
       else b = c
     }
     return a
@@ -147,6 +145,17 @@ export class UniV3Pool extends RPool {
 
       if (direction) {
         const maxDx = (currentLiquidity * priceDiff) / currentPrice / nextTickPrice
+        // console.log(
+        //   't',
+        //   maxDx,
+        //   this.nearestTick,
+        //   nextTickToCross,
+        //   currentLiquidity,
+        //   priceDiff,
+        //   currentPrice,
+        //   nextTickPrice
+        // )
+
         if (input <= maxDx) {
           output = (currentLiquidity * currentPrice * input) / (input + currentLiquidity / currentPrice)
           input = 0

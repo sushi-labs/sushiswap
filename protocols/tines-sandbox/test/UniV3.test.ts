@@ -160,6 +160,7 @@ async function createPool(env: Environment, fee: number, price: number, position
     tickMap.set(position.to, tickLiquidity)
   }
 
+  const slot = await pool.slot0()
   const ticks: CLTick[] = Array.from(tickMap.entries()).map(([index, DLiquidity]) => ({ index, DLiquidity }))
   const tinesPool = new UniV3Pool(
     pool.address,
@@ -168,6 +169,7 @@ async function createPool(env: Environment, fee: number, price: number, position
     fee / 1e6,
     await token0Contract.balanceOf(pool.address),
     await token1Contract.balanceOf(pool.address),
+    slot[1],
     await pool.liquidity(),
     sqrtPriceX96,
     ticks
@@ -191,13 +193,14 @@ async function checkSwap(
 ) {
   if (updateTinesPool) {
     // update tines pool data
-    pool.tinesPool.updateReserves(
-      await pool.token0Contract.balanceOf(pool.contract.address),
-      await pool.token1Contract.balanceOf(pool.contract.address)
-    )
     const slot = await pool.contract.slot0()
-    pool.tinesPool.updatePrice(slot[0])
-    pool.tinesPool.updateLiquidity(await pool.contract.liquidity())
+    pool.tinesPool.updateState(
+      await pool.token0Contract.balanceOf(pool.contract.address),
+      await pool.token1Contract.balanceOf(pool.contract.address),
+      slot[1], // tick
+      await pool.contract.liquidity(),
+      slot[0] // price
+    )
   }
 
   const amountBN: BigNumber = typeof amount == 'number' ? getBigNumber(amount) : BigNumber.from(amount)
@@ -342,12 +345,26 @@ describe('Uni V3', () => {
       ])
       await checkSwap(env, pool, 85433172055732540, true)
     })
-    it.skip('No overlapping', async () => {
+    it('Special 2', async () => {
+      const pool = await createPool(env, 3000, 121.48126046130433, [
+        { from: -1200, to: 18000, val: 1e18 },
+        { from: 24000, to: 48000, val: 5e18 },
+      ])
+      await checkSwap(env, pool, '154350003013680480', true)
+    })
+    it('No overlapping small monkey test', async () => {
       const pool = await createPool(env, 3000, 3, [
         { from: -1200, to: 18000, val: 1e18 },
         { from: 24000, to: 48000, val: 5e18 },
       ])
-      await monkeyTest(env, pool, 'small', 10, true)
+      await monkeyTest(env, pool, 'small', 10)
+    })
+    it.skip('No overlapping big monkey test', async () => {
+      const pool = await createPool(env, 3000, 3, [
+        { from: -1200, to: 18000, val: 1e18 },
+        { from: 24000, to: 48000, val: 5e18 },
+      ])
+      await monkeyTest(env, pool, 'big', 1000, true)
     })
   })
 })
