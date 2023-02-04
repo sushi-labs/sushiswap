@@ -6,7 +6,6 @@ import { DecimalToString, prisma } from '@sushiswap/database'
 import type { PoolApiSchema } from '../api/v0/[chainId]/[address].js'
 import type { PoolCountApiSchema } from '../api/v0/count.js'
 import type { PoolsApiSchema } from '../api/v0/index.js'
-import type { ChefType, PoolType, PoolVersion, RewarderType } from './index.js'
 
 type PrismaArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
 
@@ -150,21 +149,7 @@ export async function getPools(args: typeof PoolsApiSchema._output) {
     },
   })
 
-  // TODO: Get rid of manual enums when the DB is migrated
-  type Pool = DecimalToString<
-    (typeof pools)[0] & {
-      type: PoolType
-      version: PoolVersion
-      incentives: Array<
-        (typeof pools)[0]['incentives'][0] & {
-          chefType: ChefType
-          rewarderType: RewarderType
-        }
-      >
-    }
-  >
-
-  const poolsRetyped = pools as unknown as Pool[]
+  const poolsRetyped = pools as unknown as DecimalToString<typeof pools>
 
   if (args.ids && args.ids.length > poolsRetyped.length) {
     const fetchedPoolIds = poolsRetyped.map((pool) => pool.id)

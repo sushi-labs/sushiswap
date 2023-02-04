@@ -1,10 +1,10 @@
 import { constantProductPoolAbi, uniswapV2PairAbi } from '@sushiswap/abi'
+import { PoolType, PoolVersion } from '@sushiswap/database'
 import { allChains } from '@sushiswap/wagmi-config/chains'
 import { allProviders } from '@sushiswap/wagmi-config/providers'
 import { Address, configureChains, createClient, fetchToken, FetchTokenResult, readContracts } from '@wagmi/core'
 
 import type { getPool } from './api.js'
-import { PoolType, PoolVersion } from './index.js'
 
 const { provider } = configureChains(allChains, allProviders)
 
@@ -122,10 +122,10 @@ export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnTy
     },
     liquidityUSD: '0',
     volumeUSD: '0',
-    volume1d: null,
-    volume1w: null,
-    fees1d: null,
-    fees1w: null,
+    volume1d: '0',
+    volume1w: '0',
+    fees1d: '0',
+    fees1w: '0',
     feeApr: 0,
     incentiveApr: 0,
     totalApr: 0,

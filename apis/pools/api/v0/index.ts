@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import type { PoolType } from '@sushiswap/database'
 import { z } from 'zod'
 
 import { getPools } from '../../lib/api.js'
-import type { PoolType } from '../../lib/index.js'
 
 export const PoolsApiSchema = z.object({
   take: z
