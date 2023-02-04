@@ -12,6 +12,7 @@ export enum LiquidityProviders {
   Dfyn = 'Dfyn',
   Elk = 'Elk',
   JetSwap = 'JetSwap',
+  SpookySwap = 'SpookySwap',
   NativeWrap = 'NativeWrap',
 }
 

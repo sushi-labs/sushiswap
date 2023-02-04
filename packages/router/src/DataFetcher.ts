@@ -10,6 +10,7 @@ import { JetSwapProvider } from './liquidity-providers/JetSwap'
 import { LiquidityProvider, LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
 import { QuickSwapProvider } from './liquidity-providers/QuickSwap'
+import { SpookySwapProvider } from './liquidity-providers/SpookySwap'
 import { SushiProvider } from './liquidity-providers/Sushi'
 import { TridentProvider } from './liquidity-providers/Trident'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
@@ -42,7 +43,6 @@ export class DataFetcher {
     if (lp == LiquidityProviders.NativeWrap) return true
     return liquidity.some((l) => l == lp)
   }
-
 
   // Starts pool data fetching
   startDataFetching(
@@ -109,7 +109,16 @@ export class DataFetcher {
         console.warn(e.message)
       }
     }
-    
+
+    if (this._providerIsIncluded(LiquidityProviders.SpookySwap, providers)) {
+      try {
+        const provider = new SpookySwapProvider(this.chainId)
+        this.providers.push(provider)
+      } catch (e: any) {
+        console.warn(e.message)
+      }
+    }
+
     if (this._providerIsIncluded(LiquidityProviders.Trident, providers)) {
       try {
         const provider = new TridentProvider(this.chainId)

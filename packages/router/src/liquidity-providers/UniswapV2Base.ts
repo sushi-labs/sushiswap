@@ -4,11 +4,11 @@ import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
-import { Address, fetchBlockNumber, readContracts, watchBlockNumber, watchContractEvent } from '@wagmi/core'
+import { Address, readContracts, watchBlockNumber, watchContractEvent } from '@wagmi/core'
 import { BigNumber } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 
-import { getPoolsByTokenIds, getTopPools, PoolResponse } from '../lib/api'
+import { getPoolsByTokenIds, getTopPools } from '../lib/api'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
@@ -144,10 +144,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         )
       )
     })
-    
-    console.debug(
-      `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - INIT, WATCHING ${this.pools.size} POOLS`
-    )
+
+    console.debug(`${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - INIT, WATCHING ${this.pools.size} POOLS`)
   }
 
   async getPools(t0: Token, t1: Token): Promise<void> {
@@ -213,7 +211,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         )
       }
     })
-
   }
 
   _getPoolAddress(t1: Token, t2: Token): string {
@@ -266,7 +263,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         this.pools.delete(k)
       }
     }
-    
+
     if (removed > 0) {
       console.log(`${this.chainId}~${this.lastUpdateBlock}~${this.getType()} -Removed ${removed} stale pools`)
     }
