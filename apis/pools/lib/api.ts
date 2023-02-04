@@ -6,7 +6,6 @@ import { DecimalToString, prisma } from '@sushiswap/database'
 import type { PoolApiSchema } from '../api/v0/[chainId]/[address].js'
 import type { PoolCountApiSchema } from '../api/v0/count.js'
 import type { PoolsApiSchema } from '../api/v0/index.js'
-import { getUnindexedPool } from './getUnindexedPool.js'
 import type { ChefType, PoolType, PoolVersion, RewarderType } from './index.js'
 
 type PrismaArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
@@ -170,6 +169,8 @@ export async function getPools(args: typeof PoolsApiSchema._output) {
   if (args.ids && args.ids.length > poolsRetyped.length) {
     const fetchedPoolIds = poolsRetyped.map((pool) => pool.id)
     const unfetchedPoolIds = args.ids.filter((id) => !fetchedPoolIds.includes(id))
+
+    const { getUnindexedPool } = await import('./getUnindexedPool.js')
 
     const unindexedPools = await Promise.all(unfetchedPoolIds.map((id) => getUnindexedPool(id)))
     poolsRetyped.push(...unindexedPools)
