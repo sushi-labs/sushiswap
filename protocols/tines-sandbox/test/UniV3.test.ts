@@ -404,5 +404,19 @@ describe('Uni V3', () => {
       ])
       await monkeyTest(env, pool, 'Big', 1000, true)
     })
+    it('Nested positions small monkey test', async () => {
+      const pool = await createPool(env, 3000, 8, [
+        { from: -1200, to: 24000, val: 2e18 },
+        { from: 6000, to: 12000, val: 6e18 },
+      ])
+      await monkeyTest(env, pool, '_small_', 10)
+    })
+    it.skip('Nested positions big monkey test', async () => {
+      const pool = await createPool(env, 3000, 8, [
+        { from: -1200, to: 24000, val: 2e18 },
+        { from: 6000, to: 12000, val: 6e18 },
+      ])
+      await monkeyTest(env, pool, '_big_', 1000, true)
+    })
   })
 })
