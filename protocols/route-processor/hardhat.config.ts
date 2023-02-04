@@ -17,7 +17,6 @@ task(TASK_EXPORT, async (args, hre, runSuper) => {
 
   const exports = readFileSync('./exports.json', { encoding: 'utf-8' })
   writeFileSync('./exports.ts', `export default ${exports} as const`)
-  writeFileSync('./exports.cts', `export default ${exports} as const`)
 })
 
 subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVersion: string }, hre, runSuper) => {
