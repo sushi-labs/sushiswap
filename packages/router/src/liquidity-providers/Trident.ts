@@ -213,8 +213,6 @@ export class TridentProvider extends LiquidityProvider {
       rebases.set(t.address, total)
     })
 
-    console.log({ stablePools })
-
     stablePools.forEach((pr, i) => {
       const res = stableReserves[i]
       const totals0 = rebases.get(pr.token0.address)
@@ -358,8 +356,6 @@ export class TridentProvider extends LiquidityProvider {
       rebases.set(t.address, total)
     })
 
-    console.log({ stablePools })
-
     stablePools.forEach((pi, i) => {
       const pool = pi.poolCode.pool as StableSwapRPool
       const total0 = rebases.get(pool.token0.address)
@@ -384,7 +380,7 @@ export class TridentProvider extends LiquidityProvider {
       // unless res is undefined, the criteria below will always be true,
       //  because reserve0 and 1 is being converted to amount and adjusted to wei using realReservesToAdjusted()
       // but the res[0] and res[1] are not adjusted.
-      if (res !== undefined && (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1]))) {
+      if (res !== undefined && res !== null && (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1]))) {
         pool.updateReserves(toShareBN(res[0], pool.getTotal0()), toShareBN(res[1], pool.getTotal1()))
         this.stablePools.set(pool.address, {
           poolCode: pi.poolCode,
