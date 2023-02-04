@@ -142,8 +142,10 @@ function getProtocol(lp: LiquidityProviders, chainId: ChainId) {
       return prefix + 'SUSHISWAP'
     case LiquidityProviders.QuickSwap:
       return prefix + 'QUICKSWAP'
-    case LiquidityProviders.Trident:
-      return prefix + 'TRIDENT'
+    case LiquidityProviders.TridentCP:
+      return prefix + 'TRIDENT_CP'
+      case LiquidityProviders.TridentStable:
+        return prefix + 'TRIDENT_STABLE'
     case LiquidityProviders.UniswapV2:
       return prefix + 'UNISWAP_V2'
   }
@@ -176,7 +178,7 @@ async function testTrident() {
     const divisor = Math.pow(10, from.decimals)
     const to = USDC[chainId]
     const gasPrice = 100e9
-    const providers = [LiquidityProviders.Trident]
+    const providers = [LiquidityProviders.TridentCP]
     const env = getEnvironment(chainId)
     env.dataFetcher.fetchPoolsForToken(from, to)
     await delay(3000)
