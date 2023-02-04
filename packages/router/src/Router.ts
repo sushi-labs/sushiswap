@@ -10,10 +10,11 @@ import {
 } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 
+import type { DataFetcher } from './DataFetcher'
+import type { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { convertTokenToBento, getBentoChainId } from './liquidity-providers/Trident'
+// import { convertTokenToBento, getBentoChainId } from './liquidity-providers/Trident'
 import { getRouteProcessorCode } from './TinesToRouteProcessor'
-import type { DataFetcher } from './wagmi/DataFetcher'
-import type { LiquidityProviders } from './wagmi/liquidity-providers/LiquidityProvider'
 
 type RouteCallBack = (r: MultiRoute) => void
 

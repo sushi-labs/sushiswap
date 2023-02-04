@@ -7,11 +7,12 @@ import { Dialog } from '@sushiswap/ui13/components/dialog'
 
 const tokenFromRToken = (token: TradeLegType['tokenFrom']) => {
   if (token.address === '' || !token.address) return Native.onChain(Number(token.chainId))
-
+  // TODO: move this to api, it should return a number?
+  const chainId = token.chainId.toString().startsWith('Bento ') ? Number(token.chainId.toString().split(' ')[1]) : Number(token.chainId)
   return new Token({
     address: token.address,
     symbol: token.symbol,
-    chainId: Number(token.chainId),
+    chainId,
     decimals: 18,
   })
 }
@@ -68,7 +69,7 @@ const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolT
 
   return (
     <div className="relative grid grid-cols-10">
-      <div className="absolute inset-0 flex items-center pointer-events-none z-0">
+      <div className="absolute inset-0 z-0 flex items-center pointer-events-none">
         <svg viewBox="850 0 300 200" width="100%" height="35" className="text-gray-300 dark:text-slate-700">
           <line
             x1="0"
@@ -85,10 +86,10 @@ const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolT
       <div className="z-[10] col-span-4 flex justify-start items-center">
         <div
           ref={ref}
-          className="flex relative justify-between gap-2 items-center overflow-hidden rounded-full p-2 bg-white dark:bg-slate-800"
+          className="relative flex items-center justify-between gap-2 p-2 overflow-hidden bg-white rounded-full dark:bg-slate-800"
         >
           <div
-            className="absolute bg-blue/20 dark:bg-slate-700 pointer-events-none inset-0 rounded-full"
+            className="absolute inset-0 rounded-full pointer-events-none bg-blue/20 dark:bg-slate-700"
             style={{ width: `calc(28px + ${width}px)` }}
           />
           <div className="z-[10] flex items-center gap-1">
@@ -101,7 +102,7 @@ const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolT
         </div>
       </div>
       <div className="z-[10] col-span-3 flex justify-center items-center">
-        <span className="whitespace-nowrap text-xs font-semibold text-gray-900 bg-white dark:bg-slate-800 dark:text-slate-400 flex items-center rounded-lg h-8 px-2">
+        <span className="flex items-center h-8 px-2 text-xs font-semibold text-gray-900 bg-white rounded-lg whitespace-nowrap dark:bg-slate-800 dark:text-slate-400">
           {title}
         </span>
       </div>

@@ -2,10 +2,7 @@
 import type { ChainId } from '@sushiswap/chain'
 import { Native, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { BridgeUnlimited, RToken } from '@sushiswap/tines'
-import type { ethers } from 'ethers'
 
-import type { Limited } from '../Limited'
-import type { MultiCallProvider } from '../MulticallProvider'
 import { NativeWrapBridgePoolCode } from '../pools/NativeWrapBridge'
 import type { PoolCode } from '../pools/PoolCode'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
@@ -13,13 +10,8 @@ import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 export class NativeWrapProvider extends LiquidityProvider {
   poolCodes: PoolCode[]
 
-  constructor(
-    chainDataProvider: ethers.providers.BaseProvider,
-    multiCallProvider: MultiCallProvider,
-    chainId: ChainId,
-    l: Limited
-  ) {
-    super(chainDataProvider, multiCallProvider, chainId, l)
+  constructor(chainId: ChainId) {
+    super(chainId)
     const native = Native.onChain(chainId)
     const nativeRToken: RToken = {
       address: '',

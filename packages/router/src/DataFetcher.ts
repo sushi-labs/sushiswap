@@ -1,8 +1,8 @@
 import type { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
-import type { ethers } from 'ethers'
+import { configureChains, createClient } from '@wagmi/core'
 
-import { Limited } from './Limited'
+import { allChains } from './chains'
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { DfynProvider } from './liquidity-providers/Dfyn'
 import { ElkProvider } from './liquidity-providers/Elk'
@@ -13,26 +13,28 @@ import { QuickSwapProvider } from './liquidity-providers/QuickSwap'
 import { SushiProvider } from './liquidity-providers/Sushi'
 import { TridentProvider } from './liquidity-providers/Trident'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
-import { MultiCallProvider } from './MulticallProvider'
 import type { PoolCode } from './pools/PoolCode'
+import { allProviders } from './providers'
+
+const { provider } = configureChains(allChains, allProviders, { pollingInterval: 10000 })
+
+createClient({
+  autoConnect: true,
+  provider,
+})
 
 // Gathers pools info, creates routing in 'incremental' mode
 // This means that new routing recalculates each time new pool fetching data comes
 export class DataFetcher {
   chainId: ChainId
-  chainDataProvider: ethers.providers.BaseProvider
-  multiCallProvider: MultiCallProvider
-  limited = new Limited(10, 1000)
   providers: LiquidityProvider[] = []
   lastProviderStates: Map<LiquidityProviders, number> = new Map()
   // Provider to poolAddress to PoolCode
   poolCodes: Map<LiquidityProviders, Map<string, PoolCode>> = new Map()
   stateId = 0
 
-  constructor(chainDataProvider: ethers.providers.BaseProvider, chainId: ChainId) {
+  constructor(chainId: ChainId) {
     this.chainId = chainId
-    this.chainDataProvider = chainDataProvider
-    this.multiCallProvider = new MultiCallProvider(chainDataProvider)
   }
 
   _providerIsIncluded(lp: LiquidityProviders, liquidity?: LiquidityProviders[]) {
@@ -41,6 +43,7 @@ export class DataFetcher {
     return liquidity.some((l) => l == lp)
   }
 
+
   // Starts pool data fetching
   startDataFetching(
     providers?: LiquidityProviders[] // all providers if undefined
@@ -48,37 +51,74 @@ export class DataFetcher {
     this.stopDataFetching()
     this.poolCodes = new Map()
 
-    this.providers = [
-      new NativeWrapProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited),
-    ]
+    this.providers = [new NativeWrapProvider(this.chainId)]
 
-    if (this._providerIsIncluded(LiquidityProviders.SushiSwap, providers))
-      this.providers.push(new SushiProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited))
-    if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers))
-      this.providers.push(
-        new UniswapV2Provider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
-      )
-    if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers))
-      this.providers.push(
-        new QuickSwapProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
-      )
-    if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers))
-      this.providers.push(
-        new ApeSwapProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
-      )
-    if (this._providerIsIncluded(LiquidityProviders.Dfyn, providers))
-      this.providers.push(new DfynProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited))
-    if (this._providerIsIncluded(LiquidityProviders.Elk, providers))
-      this.providers.push(new ElkProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited))
-    if (this._providerIsIncluded(LiquidityProviders.JetSwap, providers))
-      this.providers.push(
-        new JetSwapProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
-      )
-    if (this._providerIsIncluded(LiquidityProviders.Trident, providers))
-      this.providers.push(
-        new TridentProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
-      )
-
+    if (this._providerIsIncluded(LiquidityProviders.SushiSwap, providers)) {
+      try {
+        const provider = new SushiProvider(this.chainId)
+        this.providers.push(provider)
+      } catch (e: any) {
+        console.warn(e.message)
+      }
+    }
+    if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
+      try {
+        const provider = new UniswapV2Provider(this.chainId)
+        this.providers.push(provider)
+      } catch (e: any) {
+        console.warn(e.message)
+      }
+    }
+    if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers)) {
+      try {
+        const provider = new QuickSwapProvider(this.chainId)
+        this.providers.push(provider)
+      } catch (e: any) {
+        console.warn(e.message)
+      }
+    }
+    if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers)) {
+      try {
+        const provider = new ApeSwapProvider(this.chainId)
+        this.providers.push(provider)
+      } catch (e: any) {
+        console.warn(e.message)
+      }
+    }
+    if (this._providerIsIncluded(LiquidityProviders.Dfyn, providers)) {
+      try {
+        const provider = new DfynProvider(this.chainId)
+        this.providers.push(provider)
+      } catch (e: any) {
+        console.warn(e.message)
+      }
+    }
+    if (this._providerIsIncluded(LiquidityProviders.Elk, providers)) {
+      try {
+        const provider = new ElkProvider(this.chainId)
+        this.providers.push(provider)
+      } catch (e: any) {
+        console.warn(e.message)
+      }
+    }
+    if (this._providerIsIncluded(LiquidityProviders.JetSwap, providers)) {
+      try {
+        const provider = new JetSwapProvider(this.chainId)
+        this.providers.push(provider)
+      } catch (e: any) {
+        console.warn(e.message)
+      }
+    }
+    
+    if (this._providerIsIncluded(LiquidityProviders.Trident, providers)) {
+      try {
+        const provider = new TridentProvider(this.chainId)
+        this.providers.push(provider)
+      } catch (e: any) {
+        console.warn(e.message)
+      }
+    }
+    console.log(`${this.chainId} - Included providers: ${this.providers.map((p) => p.getType()).join(', ')}`)
     this.providers.forEach((p) => p.startFetchPoolsData())
   }
 
