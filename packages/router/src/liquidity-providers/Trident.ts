@@ -213,6 +213,8 @@ export class TridentProvider extends LiquidityProvider {
       rebases.set(t.address, total)
     })
 
+    console.log({ stablePools })
+
     stablePools.forEach((pr, i) => {
       const res = stableReserves[i]
       const totals0 = rebases.get(pr.token0.address)

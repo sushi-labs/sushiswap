@@ -66,14 +66,14 @@ export const SwapButton: FC = () => {
                 </Transition>
               </Popover>
             )}
-            <Checker.Network fullWidth size="xl" chainId={ChainId.POLYGON}>
+            <Checker.Network fullWidth size="xl" chainId={network0}>
               <Checker.Amounts fullWidth size="xl" chainId={network0} amounts={[amount]}>
                 <Checker.ApproveERC20
                   id="approve-erc20"
                   fullWidth
                   size="xl"
                   amount={amount}
-                  contract={getRouteProcessorAddressForChainId(ChainId.POLYGON)}
+                  contract={getRouteProcessorAddressForChainId(network0)}
                 >
                   <Button
                     disabled={
