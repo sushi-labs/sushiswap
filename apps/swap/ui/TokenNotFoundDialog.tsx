@@ -4,7 +4,7 @@ import { useToken } from 'wagmi'
 import { queryParamsSchema, useSwapActions, useSwapState } from './trade/TradeProvider'
 import { useRouter } from 'next/router'
 import { isAddress } from 'ethers/lib/utils'
-import { currencyFromShortCurrencyName, Native, Token } from '@sushiswap/currency'
+import { currencyFromShortCurrencyName, defaultQuoteCurrency, Native, Token } from '@sushiswap/currency'
 import { List } from '@sushiswap/ui13/components/list/List'
 import { Button } from '@sushiswap/ui13/components/button'
 import { Chain } from '@sushiswap/chain'
@@ -69,7 +69,8 @@ export const TokenNotFoundDialog = () => {
   )
 
   const reset = useCallback(() => {
-    setTokens(Native.onChain(network0), currencyFromShortCurrencyName(network1, 'SUSHI'))
+    // @ts-ignore
+    setTokens(Native.onChain(network0), defaultQuoteCurrency[network1])
   }, [network0, network1, setTokens])
 
   return (

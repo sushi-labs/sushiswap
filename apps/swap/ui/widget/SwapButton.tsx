@@ -33,7 +33,7 @@ export const SwapButton: FC = () => {
 
   return (
     <>
-      <ApproveTokenController amount={amount} contract={getRouteProcessorAddressForChainId(ChainId.POLYGON)}>
+      <ApproveTokenController amount={amount} contract={getRouteProcessorAddressForChainId(network0)}>
         {({ approvalState }) => (
           <div className="pt-4">
             {approvalState === ApprovalState.NOT_APPROVED && (

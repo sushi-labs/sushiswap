@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { DAI, FRAX, LUSD, MAI, MIM, SUSHI, UNI, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants'
+import { DAI, FRAX, LUSD, MAI, MIM, OP, SUSHI, UNI, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants'
 import { Native } from './Native'
 import { Type } from './Type'
 
@@ -153,6 +153,7 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     WETH: WNATIVE[ChainId.OPTIMISM],
     USDC: USDC[ChainId.OPTIMISM],
     USDT: USDT[ChainId.OPTIMISM],
+    OP: OP[ChainId.OPTIMISM],
     // SUSHI: SUSHI[ChainId.OPTIMISM],
   },
   [ChainId.POLYGON]: {

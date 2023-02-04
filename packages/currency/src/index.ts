@@ -3,6 +3,7 @@ export * from './Amount'
 // dont't export abstract currency
 // export * from './Currency'
 export * from './constants'
+export * from './defaultQuoteCurrency'
 export * from './Native'
 export * from './nativeCurrencyIds'
 export * from './Price'

@@ -17,7 +17,7 @@ import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import type { PoolCode } from './pools/PoolCode'
 import { allProviders } from './providers'
 
-const { provider } = configureChains(allChains, allProviders, { pollingInterval: 10000 })
+const { provider } = configureChains(allChains, allProviders, { pollingInterval: 10000, minQuorum: 1, targetQuorum: 1 })
 
 createClient({
   autoConnect: true,

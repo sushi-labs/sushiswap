@@ -22,6 +22,7 @@ import {
   MIM_ADDRESS,
   NFTX_ADDRESS,
   OHM_ADDRESS,
+  OP_ADDRESS,
   PRIMATE_ADDRESS,
   QUICK_ADDRESS,
   renBTC_ADDRESS,
@@ -579,3 +580,12 @@ export const QUICK = addressMapToTokenMap(
   },
   QUICK_ADDRESS
 ) as Record<keyof typeof QUICK_ADDRESS, Token>
+
+export const OP = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'OP',
+    name: 'Optimism',
+  },
+  OP_ADDRESS
+) as Record<keyof typeof OP_ADDRESS, Token>

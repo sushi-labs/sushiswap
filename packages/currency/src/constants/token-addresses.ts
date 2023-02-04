@@ -364,3 +364,7 @@ export const KLIMA_ADDRESS = {
 export const QUICK_ADDRESS = {
   [ChainId.POLYGON]: '0x831753dd7087cac61ab5644b308642cc1c33dc13',
 } as const
+
+export const OP_ADDRESS = {
+  [ChainId.OPTIMISM]: '0x4200000000000000000000000000000000000042',
+} as const
