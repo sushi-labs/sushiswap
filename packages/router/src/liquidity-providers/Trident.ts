@@ -1,5 +1,9 @@
 import { balanceOfAbi, getReservesAbi, getStableReservesAbi, totalsAbi } from '@sushiswap/abi'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
+import {
+  BENTOBOX_ADDRESS,
+  CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS,
+  STABLE_POOL_FACTORY_ADDRESS,
+} from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
@@ -11,10 +15,6 @@ import { BentoBridgePoolCode } from '../pools/BentoBridge'
 import { BentoPoolCode } from '../pools/BentoPool'
 import type { PoolCode } from '../pools/PoolCode'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
-
-export const BentoBox: Record<string | number, string> = {
-  [ChainId.POLYGON]: '0x0319000133d3AdA02600f0875d2cf03D442C3367',
-}
 
 export function convertToNumbers(arr: BigNumber[]): (number | undefined)[] {
   return arr.map((a) => {
@@ -48,6 +48,8 @@ export class TridentProvider extends LiquidityProvider {
   stablePools: Map<string, PoolInfo> = new Map()
   bridges: Map<string, PoolInfo> = new Map()
   bentoBox = BENTOBOX_ADDRESS
+  constantProductPoolFactory = CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS
+  stablePoolFactory = STABLE_POOL_FACTORY_ADDRESS
 
   blockListener?: () => void
   unwatchBlockNumber?: () => void
@@ -58,7 +60,11 @@ export class TridentProvider extends LiquidityProvider {
 
   constructor(chainId: ChainId) {
     super(chainId)
-    if (!(chainId in this.bentoBox)) {
+    if (
+      !(chainId in this.bentoBox) ||
+      !(chainId in this.constantProductPoolFactory) ||
+      !(chainId in this.stablePoolFactory)
+    ) {
       throw new Error(`${this.getType()} cannot be instantiated for chainId ${chainId}, no bentobox address found`)
     }
   }
@@ -146,7 +152,7 @@ export class TridentProvider extends LiquidityProvider {
         (t) =>
           ({
             args: [t.address as Address],
-            address: BentoBox[this.chainId] as Address,
+            address: this.bentoBox[this.chainId] as Address,
             chainId: this.chainId,
             abi: totalsAbi,
             functionName: 'totals',
@@ -159,7 +165,7 @@ export class TridentProvider extends LiquidityProvider {
       contracts: sortedTokens.map(
         (t) =>
           ({
-            args: [BentoBox[this.chainId] as Address],
+            args: [this.bentoBox[this.chainId] as Address],
             address: t.address as Address,
             chainId: this.chainId,
             abi: balanceOfAbi,
@@ -200,7 +206,7 @@ export class TridentProvider extends LiquidityProvider {
         balance
       )
       this.bridges.set(t.address, {
-        poolCode: new BentoBridgePoolCode(pool, this.getPoolProviderName(), BentoBox[this.chainId]),
+        poolCode: new BentoBridgePoolCode(pool, this.getPoolProviderName(), this.bentoBox[this.chainId]),
         fetchType: 'INITIAL', // Better to always keep bridges as INITIAL, can't be ON_DEMAND because those will eventually removed.
         updatedAtBlock: this.lastUpdateBlock,
       })
@@ -272,7 +278,7 @@ export class TridentProvider extends LiquidityProvider {
         (b) =>
           ({
             args: [b.poolCode.pool.token0.address as Address],
-            address: BentoBox[this.chainId] as Address,
+            address: this.bentoBox[this.chainId] as Address,
             chainId: this.chainId,
             abi: totalsAbi,
             functionName: 'totals',
@@ -285,7 +291,7 @@ export class TridentProvider extends LiquidityProvider {
       contracts: bridges.map(
         (b) =>
           ({
-            args: [BentoBox[this.chainId] as Address],
+            args: [this.bentoBox[this.chainId] as Address],
             address: b.poolCode.pool.token0.address as Address,
             chainId: this.chainId,
             abi: balanceOfAbi,
@@ -343,7 +349,7 @@ export class TridentProvider extends LiquidityProvider {
       pool.updateReserves(total.elastic, total.base)
 
       this.bridges.set(t.address, {
-        poolCode: new BentoBridgePoolCode(pool, this.getPoolProviderName(), BentoBox[this.chainId]),
+        poolCode: new BentoBridgePoolCode(pool, this.getPoolProviderName(), this.bentoBox[this.chainId]),
         fetchType: 'INITIAL', // Better to always keep bridges as INITIAL, can't be ON_DEMAND because those will eventually removed.
         updatedAtBlock: this.lastUpdateBlock,
       })

@@ -22,12 +22,12 @@ import { HexString } from '@sushiswap/types'
 
 export type BentoBoxChainId = keyof typeof BENTOBOX_ADDRESS | number
 
-export type BentoBoxExport = typeof bentoBoxExports[keyof typeof bentoBoxExports][number]
+export type BentoBoxExport = (typeof bentoBoxExports)[keyof typeof bentoBoxExports][number]
 export type BentoBoxExportChainId = BentoBoxExport['chainId']
 export type BentoBoxExportContracts = BentoBoxExport['contracts']
 
 // TODO: Generate from exports will full type safety
-export const BENTOBOX_ADDRESS: Partial<Record<BentoBoxExportChainId, HexString>> = {
+export const BENTOBOX_ADDRESS: Record<BentoBoxExportChainId, HexString> = {
   [ChainId.ETHEREUM]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
   [ChainId.GÖRLI]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
   [ChainId.FANTOM]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
