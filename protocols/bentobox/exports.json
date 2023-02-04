@@ -27972,7 +27972,7 @@
       "chainId": "1666600000",
       "contracts": {
         "BentoBoxV1": {
-          "address": "0xA28cfF72b04f83A7E3f912e6ad34d5537708a2C2",
+          "address": "0x6b2A3FF504798886862Ca5ce501e080947A506A2",
           "abi": [
             {
               "inputs": [
