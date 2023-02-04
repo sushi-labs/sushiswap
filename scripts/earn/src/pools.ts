@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { PoolType, PoolVersion, Prisma, PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
 import { SUBGRAPH_HOST, TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
@@ -151,12 +151,30 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               .slice(0, 15)
               .concat('-')
               .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
+            let version: PoolVersion
+            if (pair.source == PoolVersion.LEGACY) {
+              version = PoolVersion.LEGACY
+            } else if (pair.source == PoolVersion.TRIDENT) {
+              version = PoolVersion.TRIDENT
+            } else {
+              throw new Error('Unknown pool version')
+            }
+            let type: PoolType
+   
+            if (pair.type == PoolType.CONSTANT_PRODUCT_POOL)  {
+              type = PoolType.CONSTANT_PRODUCT_POOL
+            } else if (pair.type == PoolType.STABLE_POOL) {
+              type = PoolType.STABLE_POOL
+            } else {
+              throw new Error('Unknown pool type')
+            }
+
             return Prisma.validator<Prisma.SushiPoolCreateManyInput>()({
               id: exchange.chainId.toString().concat(':').concat(pair.id),
               address: pair.id,
               name: name,
-              version: pair.source,
-              type: pair.type,
+              version,
+              type,
               chainId: exchange.chainId,
               swapFee: Number(pair.swapFee) / 10000,
               twapEnabled: pair.twapEnabled,
