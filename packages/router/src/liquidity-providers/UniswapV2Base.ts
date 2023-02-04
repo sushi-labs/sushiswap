@@ -42,7 +42,7 @@ interface PoolInfo {
 }
 
 export abstract class UniswapV2BaseProvider extends LiquidityProvider {
-  pools: PoolInfo[] = []
+  pools: Map<string, PoolInfo> = new Map()
   blockListener?: () => void
   unwatchBlockNumber?: () => void
   unwatchMulticall?: () => void
@@ -109,7 +109,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
           res[1]
         )
         const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
-        this.pools.push({ poolCode: pc, fetchType: 'INITIAL', updatedAtBlock: blockNumber })
+        this.pools.set(pool.address, { poolCode: pc, fetchType: 'INITIAL', updatedAtBlock: blockNumber })
         ++this.stateId
       } else {
         console.error(
@@ -136,7 +136,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
             const res0 = BigNumber.from(reserve0)
             const res1 = BigNumber.from(reserve1)
             console.debug(
-              `${this.chainId}~${this.lastUpdateBlock} - SYNC ${p.poolCode.poolName}, ${pool.token0.symbol}/${pool.token1.symbol}.`
+              `${this.chainId}~${this.lastUpdateBlock}~${type} - SYNC ${p.poolCode.poolName}, ${pool.token0.symbol}/${pool.token1.symbol}.`
             )
             pool.updateReserves(res0, res1)
             p.updatedAtBlock = blockNumber
@@ -146,7 +146,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     })
     
     console.debug(
-      `${this.chainId}~${this.lastUpdateBlock}${this.getType()} - INIT, WATCHING ${this.pools.length} POOLS`
+      `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - INIT, WATCHING ${this.pools.size} POOLS`
     )
   }
 
@@ -156,7 +156,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     //   this.lastUpdateBlock = -1
     //   return
     // }
-    console.debug(`****** ${this.getType()} POOLS IN MEMORY:`, this.pools.length)
+    console.debug(`****** ${this.getType()} POOLS IN MEMORY:`, this.pools.size)
 
     const type = this.getType()
 
@@ -203,7 +203,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
           res[1]
         )
         const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
-        this.pools.push({ poolCode: pc, fetchType: 'ON_DEMAND', updatedAtBlock: this.lastUpdateBlock })
+        this.pools.set(pool.address, { poolCode: pc, fetchType: 'ON_DEMAND', updatedAtBlock: this.lastUpdateBlock })
         ++this.stateId
       } else {
         console.error(
@@ -238,7 +238,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
   startFetchPoolsData() {
     this.stopFetchPoolsData()
-    this.pools = []
+    this.pools = new Map()
 
     this.unwatchBlockNumber = watchBlockNumber(
       {
@@ -256,16 +256,19 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   }
 
   private removeStalePools(blockNumber: number) {
-    const before = this.pools.length
     // TODO: move this to a per-chain config?
-    const blockThreshold = blockNumber - 100
-    this.pools = this.pools.filter(
-      (p) => (p.updatedAtBlock < blockThreshold && p.fetchType === 'ON_DEMAND') || p.fetchType === 'INITIAL'
-    )
-    if (before !== this.pools.length) {
-      console.debug(
-        `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} Stale pools removed: ${before - this.pools.length}`
-      )
+    const blockThreshold = blockNumber - 75
+    let removed = 0
+
+    for (const [k, v] of this.pools) {
+      if (v.updatedAtBlock < blockThreshold && v.fetchType === 'ON_DEMAND') {
+        removed++
+        this.pools.delete(k)
+      }
+    }
+    
+    if (removed > 0) {
+      console.log(`${this.chainId}~${this.lastUpdateBlock}~${this.getType()} -Removed ${removed} stale pools`)
     }
   }
 
@@ -274,7 +277,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   }
 
   getCurrentPoolList(): PoolCode[] {
-    return this.pools.map((p) => p.poolCode)
+    return [...this.pools.values()].map((p) => p.poolCode)
   }
 
   stopFetchPoolsData() {

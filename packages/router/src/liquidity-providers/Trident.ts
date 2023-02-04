@@ -51,7 +51,7 @@ export class TridentProvider extends LiquidityProvider {
   unwatchBlockNumber?: () => void
 
   readonly TOP_POOL_SIZE = 155
-  readonly TOP_POOL_LIQUIDITY_THRESHOLD = 100
+  readonly TOP_POOL_LIQUIDITY_THRESHOLD = 1000
   readonly ON_DEMAND_POOL_SIZE = 20
 
   constructor(chainId: ChainId) {
@@ -105,9 +105,6 @@ export class TridentProvider extends LiquidityProvider {
   async initPools(pools: PoolResponse[], fetchType: 'INITIAL' | 'ON_DEMAND'): Promise<void> {
     const cppPools = pools.filter((p) => p.type === 'CONSTANT_PRODUCT_POOL')
     const stablePools = pools.filter((p) => p.type === 'STABLE_POOL')
-    for (const pool of cppPools) {
-      console.log(`${pool.address}`)
-    }
     const tokenMap = new Map<string, Token>()
     pools.forEach((pool) => {
       tokenMap.set(pool.token0.address, pool.token0)
@@ -175,7 +172,6 @@ export class TridentProvider extends LiquidityProvider {
       totalsPromise,
       balancesPromise,
     ])
-    // console.log(`${cppReserves.length} ${stableReserves.length} ${totals.length} ${balances.length}`)
 
     cppPools.forEach((pr, i) => {
       const res = cppReserves[i]
@@ -438,7 +434,7 @@ export class TridentProvider extends LiquidityProvider {
   private removeStalePools() {
     // TODO: move this to a per-chain config?
 
-    const blockThreshold = this.lastUpdateBlock - 100
+    const blockThreshold = this.lastUpdateBlock - 75
     let removed = 0
 
     for (const [k, v] of this.cPPools) {
