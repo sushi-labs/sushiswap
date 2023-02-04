@@ -1,4 +1,5 @@
 import { balanceOfAbi, getReservesAbi, getStableReservesAbi, totalsAbi } from '@sushiswap/abi'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
@@ -46,6 +47,7 @@ export class TridentProvider extends LiquidityProvider {
   cPPools: Map<string, PoolInfo> = new Map()
   stablePools: Map<string, PoolInfo> = new Map()
   bridges: Map<string, PoolInfo> = new Map()
+  bentoBox = BENTOBOX_ADDRESS
 
   blockListener?: () => void
   unwatchBlockNumber?: () => void
@@ -56,7 +58,7 @@ export class TridentProvider extends LiquidityProvider {
 
   constructor(chainId: ChainId) {
     super(chainId)
-    if (!(chainId in BentoBox)) {
+    if (!(chainId in this.bentoBox)) {
       throw new Error(`${this.getType()} cannot be instantiated for chainId ${chainId}, no bentobox address found`)
     }
   }
