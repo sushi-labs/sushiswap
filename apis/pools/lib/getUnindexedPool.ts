@@ -1,5 +1,6 @@
 import { constantProductPoolAbi, uniswapV2PairAbi } from '@sushiswap/abi'
-import { allChains, allProviders } from '@sushiswap/wagmi-config-esm'
+import { allChains } from '@sushiswap/wagmi-config/chains'
+import { allProviders } from '@sushiswap/wagmi-config/providers'
 import { Address, configureChains, createClient, fetchToken, FetchTokenResult, readContracts } from '@wagmi/core'
 
 import type { getPool } from './api.js'
