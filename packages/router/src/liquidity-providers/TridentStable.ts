@@ -11,8 +11,7 @@ import { LiquidityProviders } from './LiquidityProvider'
 import { convertTokenToBento, TridentBase } from './TridentBase'
 
 export const BentoBox: Record<string | number, string> = {
-  [ChainId.POLYGON]: '0x0319000133d3AdA02600f0875d2cf03D442C3367',
-  [ChainId.ARBITRUM]: '0x74c764D41B77DBbb4fe771daB1939B00b146894A'
+  [ChainId.POLYGON]: '0x0319000133d3AdA02600f0875d2cf03D442C3367'
 }
 
 interface PoolInfo {
