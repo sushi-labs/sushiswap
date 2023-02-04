@@ -51,7 +51,7 @@ export class TridentProvider extends LiquidityProvider {
   unwatchBlockNumber?: () => void
 
   readonly TOP_POOL_SIZE = 155
-  readonly TOP_POOL_LIQUIDITY_THRESHOLD = 1000
+  readonly TOP_POOL_LIQUIDITY_THRESHOLD = 100
   readonly ON_DEMAND_POOL_SIZE = 20
 
   constructor(chainId: ChainId) {
@@ -105,7 +105,9 @@ export class TridentProvider extends LiquidityProvider {
   async initPools(pools: PoolResponse[], fetchType: 'INITIAL' | 'ON_DEMAND'): Promise<void> {
     const cppPools = pools.filter((p) => p.type === 'CONSTANT_PRODUCT_POOL')
     const stablePools = pools.filter((p) => p.type === 'STABLE_POOL')
-
+    for (const pool of cppPools) {
+      console.log(`${pool.address}`)
+    }
     const tokenMap = new Map<string, Token>()
     pools.forEach((pool) => {
       tokenMap.set(pool.token0.address, pool.token0)
@@ -304,7 +306,15 @@ export class TridentProvider extends LiquidityProvider {
 
     cppPools.forEach((pi, i) => {
       const res = cppReserves[i]
-      if (res === undefined || res === null) return
+      if (
+        res === undefined ||
+        res === null ||
+        !pi.poolCode.pool.reserve0.eq(res[0]) ||
+        !pi.poolCode.pool.reserve1.eq(res[1])
+      ) {
+        return
+      }
+
       pi.poolCode.pool.updateReserves(res[0], res[1])
       this.cPPools.set(pi.poolCode.pool.address, {
         poolCode: pi.poolCode,
@@ -321,7 +331,17 @@ export class TridentProvider extends LiquidityProvider {
       const t = pool.token0
       const total = totals[i]
       const balance = balances[i]
-      if (total === undefined || total === null || balance === undefined || balance === null) return
+      if (
+        total === undefined ||
+        total === null ||
+        balance === undefined ||
+        balance === null ||
+        !pool.reserve0.eq(total.elastic) ||
+        !pool.reserve1.eq(total.base)
+      ) {
+        return
+      }
+
       pool.updateReserves(total.elastic, total.base)
 
       this.bridges.set(t.address, {
@@ -352,6 +372,10 @@ export class TridentProvider extends LiquidityProvider {
       }
 
       const res = stableReserves[i]
+      // TODO: Fix criteria below or always update?
+      // unless res is undefined, the criteria below will always be true,
+      //  because reserve0 and 1 is being converted to amount and adjusted to wei using realReservesToAdjusted()
+      // but the res[0] and res[1] are not adjusted.
       if (res !== undefined && (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1]))) {
         pool.updateReserves(toShareBN(res[0], pool.getTotal0()), toShareBN(res[1], pool.getTotal1()))
         this.stablePools.set(pool.address, {
