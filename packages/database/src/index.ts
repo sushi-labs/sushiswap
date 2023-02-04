@@ -15,7 +15,7 @@ declare let global: { prisma: PrismaClient }
 // Learn more:
 // https://pris.ly/d/help/next-js-best-practices
 
-let prisma: PrismaClient
+export let prisma: PrismaClient
 
 if (process.env['NODE_ENV'] === 'production') {
   prisma = new PrismaClient()

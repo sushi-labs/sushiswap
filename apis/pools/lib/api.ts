@@ -1,9 +1,7 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
 
-// What the fuck
-import { DecimalToString, default as database } from '@sushiswap/database'
-const prisma = database.default
+import { DecimalToString, prisma } from '@sushiswap/database'
 
 import type { PoolApiSchema } from '../api/v0/[chainId]/[address].js'
 import type { PoolCountApiSchema } from '../api/v0/count.js'
