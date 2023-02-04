@@ -66,7 +66,8 @@ async function getTridentPool({ chainId, address }: GetPoolArgs): Promise<Pool> 
   }
 }
 
-export async function getUnindexedPool(poolId: string): ReturnType<typeof getPool> {
+// Thought ReturnType would be enough, needed to wrap it to make TS happy
+export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnType<typeof getPool>>> {
   const [chainId, address] = [Number(poolId.split(':')[0]), poolId.split(':')[1]]
   if (!chainId || !address) throw new Error('Invalid pool id.')
 
