@@ -72,6 +72,8 @@ server.get('/v0', async (request) => {
   //   gasPrice ?? 30e9
   // )
 
+  // const poolCodesMap = dataFetcher.getCurrentPoolCodeMap()
+
   const bestRoute = Router.findBestRoute(
     dataFetcher,
     fromToken,
@@ -99,6 +101,7 @@ server.get('/v0', async (request) => {
       gasSpent: bestRoute?.gasSpent,
       legs: bestRoute?.legs,
     },
+    // getRouteAsArray: Router.routeToArray(dataFetcher, bestRoute),
     getCurrentRouteRPParams: to
       ? Router.routeProcessorParams(
           dataFetcher,
@@ -115,20 +118,15 @@ server.get('/v0', async (request) => {
 // Run the server!
 const start = async () => {
   try {
-    // dataFetcherMap.set(
-    //   ChainId.ETHEREUM,
-    //   new DataFetcher(
-    //     ChainId.ETHEREUM
-    //   )
-    // )
-    dataFetcherMap.set(ChainId.POLYGON, new DataFetcher(ChainId.POLYGON))
+    dataFetcherMap.set(ChainId.ARBITRUM, new DataFetcher(ChainId.ARBITRUM))
+    dataFetcherMap.set(ChainId.AVALANCHE, new DataFetcher(ChainId.AVALANCHE))
+    dataFetcherMap.set(ChainId.BSC, new DataFetcher(ChainId.BSC))
+    dataFetcherMap.set(ChainId.ETHEREUM, new DataFetcher(ChainId.ETHEREUM))
     dataFetcherMap.set(ChainId.FANTOM, new DataFetcher(ChainId.FANTOM))
-    // dataFetcherMap.set(
-    //   ChainId.ARBITRUM,
-    //   new DataFetcher(
-    //     ChainId.ARBITRUM
-    //   )
-    // )
+    dataFetcherMap.set(ChainId.GNOSIS, new DataFetcher(ChainId.GNOSIS))
+    dataFetcherMap.set(ChainId.OPTIMISM, new DataFetcher(ChainId.OPTIMISM))
+    dataFetcherMap.set(ChainId.POLYGON, new DataFetcher(ChainId.POLYGON))
+
     for (const dataFetcher of dataFetcherMap.values()) {
       dataFetcher.startDataFetching()
     }

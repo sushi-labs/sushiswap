@@ -259,6 +259,14 @@ export class Router {
     }
   }
 
+  static routeToArray(dataFetcher: DataFetcher, route: MultiRoute) {
+    const poolCodesMap = dataFetcher.getCurrentPoolCodeMap()
+    return route.legs.map((l) => ({
+      ...l,
+      poolName: poolCodesMap.get(l.poolAddress)?.poolName ?? 'Unknown Pool',
+    }))
+  }
+
   // Human-readable route printing
   static routeToHumanString(
     dataFetcher: DataFetcher,
