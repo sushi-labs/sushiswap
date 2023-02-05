@@ -56,8 +56,8 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const [dialogState, setDialogState] = useState<ConfirmationDialogState>(ConfirmationDialogState.Undefined)
 
   const { config } = usePrepareContractWrite({
-    chainId: ChainId.POLYGON,
-    address: getRouteProcessorAddressForChainId(ChainId.POLYGON),
+    chainId: network0,
+    address: getRouteProcessorAddressForChainId(network0),
     abi: routeProcessorAbi,
     functionName: 'processRoute',
     args: trade?.writeArgs,

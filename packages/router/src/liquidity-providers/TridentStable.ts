@@ -1,4 +1,5 @@
 import { getStableReservesAbi } from '@sushiswap/abi'
+import { STABLE_POOL_FACTORY_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { StableSwapRPool, toShareBN } from '@sushiswap/tines'
@@ -28,7 +29,10 @@ export class TridentStableProvider extends TridentBase {
   unwatchBlockNumber?: () => void
 
   constructor(chainId: ChainId) {
-    super(chainId, BentoBox)
+    super(chainId)
+    if (!(chainId in STABLE_POOL_FACTORY_ADDRESS)) {
+      throw new Error(`${this.getType()} cannot be instantiated for chainId ${chainId}, no constant product pool factory address found`)
+    }
   }
 
   getType(): LiquidityProviders {
@@ -184,7 +188,7 @@ export class TridentStableProvider extends TridentBase {
       // unless res is undefined, the criteria below will always be true,
       //  because reserve0 and 1 is being converted to amount and adjusted to wei using realReservesToAdjusted()
       // but the res[0] and res[1] are not adjusted.
-      if (res !== undefined && (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1]))) {
+      if (res !== undefined && res !== null && (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1]))) {
         pool.updateReserves(toShareBN(res[0], pool.getTotal0()), toShareBN(res[1], pool.getTotal1()))
         this.pools.set(pool.address, {
           poolCode: pi.poolCode,

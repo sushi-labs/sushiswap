@@ -1,4 +1,5 @@
 import { getReservesAbi } from '@sushiswap/abi'
+import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { ConstantProductRPool } from '@sushiswap/tines'
@@ -10,9 +11,6 @@ import type { PoolCode } from '../pools/PoolCode'
 import { LiquidityProviders } from './LiquidityProvider'
 import { convertTokenToBento, TridentBase } from './TridentBase'
 
-export const BentoBox: Record<string | number, string> = {
-  [ChainId.POLYGON]: '0x0319000133d3AdA02600f0875d2cf03D442C3367',
-}
 
 interface PoolInfo {
   poolCode: PoolCode
@@ -28,7 +26,10 @@ export class TridentCPPProvider extends TridentBase {
   unwatchBlockNumber?: () => void
 
   constructor(chainId: ChainId) {
-    super(chainId, BentoBox)
+    super(chainId)
+    if (!(chainId in CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS)) {
+      throw new Error(`${this.getType()} cannot be instantiated for chainId ${chainId}, no constant product pool factory address found`)
+    }
   }
 
   getType(): LiquidityProviders {

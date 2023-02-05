@@ -4,7 +4,6 @@ import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class UniswapV2Provider extends UniswapV2BaseProvider {
-
   constructor(chainId: ChainId) {
     const factory = {
       [ChainId.ETHEREUM]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',

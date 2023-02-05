@@ -1,29 +1,13 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { DAI, FRAX, LUSD, MAI, MIM, SUSHI, UNI, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants'
+import { DAI, FRAX, LUSD, MAI, MIM, OP, SUSHI, UNI, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants'
 import { Native } from './Native'
 import { Type } from './Type'
 
 const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
-  [ChainId.ETHEREUM]: {
-    NATIVE: Native.onChain(ChainId.ETHEREUM),
-    WNATIVE: WETH9[ChainId.ETHEREUM],
-    ETH: Native.onChain(ChainId.ETHEREUM),
-    WETH: WETH9[ChainId.ETHEREUM],
-    WBTC: WBTC[ChainId.ETHEREUM],
-    USDC: USDC[ChainId.ETHEREUM],
-    USDT: USDT[ChainId.ETHEREUM],
-    DAI: DAI[ChainId.ETHEREUM],
-    FRAX: FRAX[ChainId.ETHEREUM],
-    MIM: MIM[ChainId.ETHEREUM],
-    SUSHI: SUSHI[ChainId.ETHEREUM],
-    MAI: MAI[ChainId.ETHEREUM],
-    UNI: UNI[ChainId.ETHEREUM],
-    LUSD: LUSD[ChainId.ETHEREUM],
-  },
   [ChainId.ARBITRUM]: {
-    NATIVE: Native.onChain(ChainId.ARBITRUM),
-    WNATIVE: WNATIVE[ChainId.ARBITRUM],
+    // NATIVE: Native.onChain(ChainId.ARBITRUM),
+    // WNATIVE: WNATIVE[ChainId.ARBITRUM],
     ETH: Native.onChain(ChainId.ARBITRUM),
     WETH: WNATIVE[ChainId.ARBITRUM],
     WBTC: WBTC[ChainId.ARBITRUM],
@@ -36,9 +20,14 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     MAI: MAI[ChainId.ARBITRUM],
     UNI: UNI[ChainId.ARBITRUM],
   },
+  [ChainId.ARBITRUM_NOVA]: {
+    ETH: Native.onChain(ChainId.ARBITRUM_NOVA),
+    WETH: WNATIVE[ChainId.ARBITRUM_NOVA],
+    SUSHI: SUSHI[ChainId.ARBITRUM_NOVA],
+  },
   [ChainId.AVALANCHE]: {
-    NATIVE: Native.onChain(ChainId.AVALANCHE),
-    WNATIVE: WNATIVE[ChainId.AVALANCHE],
+    // NATIVE: Native.onChain(ChainId.AVALANCHE),
+    // WNATIVE: WNATIVE[ChainId.AVALANCHE],
     ETH: WETH9[ChainId.AVALANCHE],
     WETH: WETH9[ChainId.AVALANCHE],
     WBTC: WBTC[ChainId.AVALANCHE],
@@ -51,9 +40,26 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     MAI: MAI[ChainId.AVALANCHE],
     UNI: UNI[ChainId.AVALANCHE],
   },
+  [ChainId.BOBA]: {
+    ETH: Native.onChain(ChainId.BOBA),
+    WETH: WNATIVE[ChainId.BOBA],
+    SUSHI: SUSHI[ChainId.BOBA],
+  },
+  [ChainId.BOBA_AVAX]: {
+    BOBA: Native.onChain(ChainId.BOBA_AVAX),
+    WBOBA: WNATIVE[ChainId.BOBA_AVAX],
+    USDC: USDC[ChainId.BOBA_AVAX],
+    // SUSHI: SUSHI[ChainId.BOBA_AVAX],
+  },
+  [ChainId.BOBA_BNB]: {
+    BOBA: Native.onChain(ChainId.BOBA_BNB),
+    WBOBA: WNATIVE[ChainId.BOBA_BNB],
+    USDC: USDC[ChainId.BOBA_BNB],
+    // SUSHI: SUSHI[ChainId.BOBA_BNB],
+  },
   [ChainId.BSC]: {
-    NATIVE: Native.onChain(ChainId.BSC),
-    WNATIVE: WNATIVE[ChainId.BSC],
+    // NATIVE: Native.onChain(ChainId.BSC),
+    // WNATIVE: WNATIVE[ChainId.BSC],
     BNB: Native.onChain(ChainId.BSC),
     WBNB: WNATIVE[ChainId.BSC],
     ETH: WETH9[ChainId.BSC],
@@ -67,9 +73,35 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     MAI: MAI[ChainId.BSC],
     UNI: UNI[ChainId.BSC],
   },
+  [ChainId.BTTC]: {
+    BTTC: Native.onChain(ChainId.BTTC),
+    WBTTC: WNATIVE[ChainId.BTTC],
+    // SUSHI: SUSHI[ChainId.BTTC],
+  },
+  [ChainId.CELO]: {
+    CELO: Native.onChain(ChainId.CELO),
+    WCELO: WNATIVE[ChainId.CELO],
+    SUSHI: SUSHI[ChainId.CELO],
+  },
+  [ChainId.ETHEREUM]: {
+    // NATIVE: Native.onChain(ChainId.ETHEREUM),
+    // WNATIVE: WETH9[ChainId.ETHEREUM],
+    ETH: Native.onChain(ChainId.ETHEREUM),
+    WETH: WETH9[ChainId.ETHEREUM],
+    WBTC: WBTC[ChainId.ETHEREUM],
+    USDC: USDC[ChainId.ETHEREUM],
+    USDT: USDT[ChainId.ETHEREUM],
+    DAI: DAI[ChainId.ETHEREUM],
+    FRAX: FRAX[ChainId.ETHEREUM],
+    MIM: MIM[ChainId.ETHEREUM],
+    SUSHI: SUSHI[ChainId.ETHEREUM],
+    MAI: MAI[ChainId.ETHEREUM],
+    UNI: UNI[ChainId.ETHEREUM],
+    LUSD: LUSD[ChainId.ETHEREUM],
+  },
   [ChainId.FANTOM]: {
-    NATIVE: Native.onChain(ChainId.FANTOM),
-    WNATIVE: WNATIVE[ChainId.FANTOM],
+    // NATIVE: Native.onChain(ChainId.FANTOM),
+    // WNATIVE: WNATIVE[ChainId.FANTOM],
     FTM: Native.onChain(ChainId.FANTOM),
     WFTM: WNATIVE[ChainId.FANTOM],
     ETH: WETH9[ChainId.FANTOM],
@@ -83,9 +115,50 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     SUSHI: SUSHI[ChainId.FANTOM],
     MAI: MAI[ChainId.FANTOM],
   },
+  [ChainId.FUSE]: {
+    FUSE: Native.onChain(ChainId.FUSE),
+    WFUSE: WNATIVE[ChainId.FUSE],
+    SUSHI: SUSHI[ChainId.FUSE],
+  },
+  [ChainId.GNOSIS]: {
+    XDAI: Native.onChain(ChainId.GNOSIS),
+    WXDAI: WNATIVE[ChainId.GNOSIS],
+    SUSHI: SUSHI[ChainId.GNOSIS],
+  },
+  [ChainId.KAVA]: {
+    KAVA: Native.onChain(ChainId.KAVA),
+    WKAVA: WNATIVE[ChainId.KAVA],
+    SUSHI: SUSHI[ChainId.KAVA],
+  },
+  [ChainId.METIS]: {
+    METIS: Native.onChain(ChainId.METIS),
+    WMETIS: WNATIVE[ChainId.METIS],
+    SUSHI: SUSHI[ChainId.METIS],
+  },
+  [ChainId.MOONBEAM]: {
+    GLMR: Native.onChain(ChainId.MOONBEAM),
+    WGLMR: WNATIVE[ChainId.MOONBEAM],
+    SUSHI: SUSHI[ChainId.MOONBEAM],
+  },
+  [ChainId.MOONRIVER]: {
+    MOVR: Native.onChain(ChainId.MOONRIVER),
+    WMOVR: WNATIVE[ChainId.MOONRIVER],
+    SUSHI: SUSHI[ChainId.MOONRIVER],
+  },
+
+  [ChainId.OPTIMISM]: {
+    // NATIVE: Native.onChain(ChainId.OPTIMISM),
+    // WNATIVE: WNATIVE[ChainId.OPTIMISM],
+    ETH: Native.onChain(ChainId.OPTIMISM),
+    WETH: WNATIVE[ChainId.OPTIMISM],
+    USDC: USDC[ChainId.OPTIMISM],
+    USDT: USDT[ChainId.OPTIMISM],
+    OP: OP[ChainId.OPTIMISM],
+    // SUSHI: SUSHI[ChainId.OPTIMISM],
+  },
   [ChainId.POLYGON]: {
-    NATIVE: Native.onChain(ChainId.POLYGON),
-    WNATIVE: WNATIVE[ChainId.POLYGON],
+    // NATIVE: Native.onChain(ChainId.POLYGON),
+    // WNATIVE: WNATIVE[ChainId.POLYGON],
     MATIC: Native.onChain(ChainId.POLYGON),
     WMATIC: WNATIVE[ChainId.POLYGON],
     ETH: WETH9[ChainId.POLYGON],
@@ -99,6 +172,11 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     SUSHI: SUSHI[ChainId.POLYGON],
     MAI: MAI[ChainId.POLYGON],
     UNI: UNI[ChainId.POLYGON],
+  },
+  [ChainId.HARMONY]: {
+    ONE: Native.onChain(ChainId.HARMONY),
+    WONE: WNATIVE[ChainId.HARMONY],
+    SUSHI: SUSHI[ChainId.HARMONY],
   },
 } as const
 
