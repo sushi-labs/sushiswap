@@ -1,11 +1,11 @@
 import { Amount, Type } from '@sushiswap/currency'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { FundSource } from '@sushiswap/hooks'
 import { useBalance } from '@sushiswap/wagmi'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
-import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../lib/hooks'
+import { useGraphPool, useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from '../lib/hooks'
 
 interface PoolPositionContext {
   balance: Record<FundSource, Amount<Type>> | undefined
@@ -20,25 +20,26 @@ interface PoolPositionContext {
 const Context = createContext<PoolPositionContext | undefined>(undefined)
 
 export const PoolPositionProvider: FC<{
-  pair: Pair
+  pool: Pool
   children: ReactNode
   watch?: boolean
-}> = ({ pair, children, watch = true }) => {
+}> = ({ pool, children, watch = true }) => {
   const { address: account } = useAccount()
-  const { reserve0, reserve1, totalSupply, liquidityToken } = useTokensFromPair(pair)
+
+  const { reserve0, reserve1, totalSupply, liquidityToken } = useGraphPool(pool)
 
   const {
     data: balance,
     isLoading,
     isError,
   } = useBalance({
-    chainId: pair.chainId,
+    chainId: pool.chainId,
     currency: liquidityToken,
     account,
     watch,
   })
 
-  const underlying = useUnderlyingTokenBalanceFromPair({
+  const underlying = useUnderlyingTokenBalanceFromPool({
     reserve0,
     reserve1,
     totalSupply,
@@ -47,7 +48,7 @@ export const PoolPositionProvider: FC<{
 
   const [underlying0, underlying1] = underlying
   const [value0, value1] = useTokenAmountDollarValues({
-    chainId: pair.chainId,
+    chainId: pool.chainId,
     amounts: underlying,
   })
 

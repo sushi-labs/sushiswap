@@ -2,7 +2,6 @@ import { PlusIcon } from '@heroicons/react/solid'
 import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
 import { ChainId, chainShortName } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
-import { Pair as PairDTO } from '@sushiswap/graph-client'
 import { FundSource } from '@sushiswap/hooks'
 import { AppearOnMount, BreadcrumbLink, Button, Container, Dots, Loader } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui'
@@ -30,13 +29,16 @@ import {
   SettingsOverlay,
 } from '../components'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import useSWR, { SWRConfig } from 'swr'
+import { SWRConfig } from 'swr'
 
 import { CreateSectionReviewModalTrident } from '../components/CreateSection'
 import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '../config'
 import { isConstantProductPool, isLegacyPool, isStablePool } from '../lib/functions'
 import { useCustomTokens } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
+import { usePool } from '../lib/hooks/api'
+
+import { allChains, allProviders } from '@sushiswap/wagmi-config'
 
 const LINKS: BreadcrumbLink[] = [
   {
@@ -176,12 +178,7 @@ const _Add: FC<AddProps> = ({
   poolType,
   setPoolType,
 }) => {
-  const { data } = useSWR<{ pair: PairDTO }>(
-    pool?.liquidityToken.address
-      ? `/earn/api/pool/${chainShortName[chainId]}:${pool.liquidityToken.address.toLowerCase()}`
-      : null,
-    (url) => fetch(url).then((response) => response.json())
-  )
+  const { data } = usePool({ chainId, address: pool?.liquidityToken.address as string }, !!pool)
 
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
   const tokenMap = useTokens(chainId)
@@ -372,13 +369,13 @@ const _Add: FC<AddProps> = ({
             </div>
           </Widget.Content>
         </Widget>
-        {pool && data?.pair && (
-          <PoolPositionProvider pair={data.pair}>
-            <PoolPositionStakedProvider pair={data.pair}>
+        {pool && data && (
+          <PoolPositionProvider pool={data}>
+            <PoolPositionStakedProvider pool={data}>
               <Container maxWidth={400} className="mx-auto">
                 <AddSectionStake
                   title="4. Stake Liquidity"
-                  poolAddress={`${chainShortName[chainId]}:${pool.liquidityToken.address}`}
+                  poolId={`${chainShortName[chainId]}:${pool.liquidityToken.address}`}
                 />
               </Container>
             </PoolPositionStakedProvider>
@@ -386,12 +383,12 @@ const _Add: FC<AddProps> = ({
         )}
       </div>
 
-      {pool && data?.pair && (
-        <PoolPositionProvider pair={data.pair}>
-          <PoolPositionStakedProvider pair={data.pair}>
+      {pool && data && (
+        <PoolPositionProvider pool={data}>
+          <PoolPositionStakedProvider pool={data}>
             <div className="order-1 sm:order-3">
               <AppearOnMount>
-                <AddSectionMyPosition pair={data.pair} />
+                <AddSectionMyPosition pool={data} />
               </AppearOnMount>
             </div>
           </PoolPositionStakedProvider>

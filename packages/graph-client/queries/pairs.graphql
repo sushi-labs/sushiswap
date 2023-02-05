@@ -99,55 +99,6 @@ query PairsByChainIds(
   }
 }
 
-query PairsWithFarms(
-  $first: Int
-  $skip: Int
-  $where: Pair_filter
-  $orderBy: Pair_orderBy
-  $orderDirection: OrderDirection
-  $block: Block_height
-  $chainIds: [Int!]!
-  $pagination: Pagination
-  $farmsOnly: Boolean
-) {
-  pairs: pairsWithFarms(
-    first: $first
-    skip: $skip
-    where: $where
-    orderBy: $orderBy
-    orderDirection: $orderDirection
-    block: $block
-    chainIds: $chainIds
-    pagination: $pagination
-    farmsOnly: $farmsOnly
-  ) {
-    ...PairFields
-    volume1d
-    volume1w
-    fees1d
-    fees1w
-    utilisation1dChange
-    feeApr
-    incentiveApr
-    farm {
-      id
-      incentives {
-        apr
-        rewardPerDay
-        rewardToken {
-          address
-          symbol
-          decimals
-        }
-        rewarderAddress
-        rewarderType
-      }
-      chefType
-      poolType
-    }
-  }
-}
-
 query PairById($id: ID!) {
   pair: pairById(id: $id) {
     ...PairFields
@@ -164,23 +115,6 @@ query PairById($id: ID!) {
     txCount1w
     apr
     feeApr
-    incentiveApr
-    farm {
-      id
-      incentives {
-        apr
-        rewardPerDay
-        rewardToken {
-          address
-          symbol
-          decimals
-        }
-        rewarderAddress
-        rewarderType
-      }
-      chefType
-      poolType
-    }
     hourSnapshots(first: 168, orderBy: date, orderDirection: desc) {
       id
       date

@@ -1,0 +1,56 @@
+[
+  {
+    "id": "0x001b6450083e531a5a7bf310bd2c1af4247e23d4:0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+    "chainId": 1,
+    "pid": 7,
+    "type": "MasterChefV1",
+    "apr": 0.01490521390302601,
+    "rewardPerDay": 8.215629360706828,
+    "poolId": "1:0x001b6450083e531a5a7bf310bd2c1af4247e23d4",
+    "rewarderAddress": "0xc2edad668740f1aa35e4d8f227fb8e17dca888cd",
+    "rewarderType": "Primary",
+    "rewardToken": {
+      "id": "1:0x6b3595068778dd592e39a122f4f5a5cf09c90fe2",
+      "address": "0x6b3595068778dd592e39a122f4f5a5cf09c90fe2",
+      "name": "SushiToken",
+      "symbol": "SUSHI",
+      "decimals": 18
+    }
+  },
+  {
+    "id": "0x055475920a8c93cffb64d039a8205f7acc7722d3:0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+    "chainId": 1,
+    "pid": 347,
+    "type": "MasterChefV1",
+    "apr": 0.335151700512154,
+    "rewardPerDay": 149.3750792855787,
+    "poolId": "1:0x055475920a8c93cffb64d039a8205f7acc7722d3",
+    "rewarderAddress": "0xc2edad668740f1aa35e4d8f227fb8e17dca888cd",
+    "rewarderType": "Primary",
+    "rewardToken": {
+      "id": "1:0x6b3595068778dd592e39a122f4f5a5cf09c90fe2",
+      "address": "0x6b3595068778dd592e39a122f4f5a5cf09c90fe2",
+      "name": "SushiToken",
+      "symbol": "SUSHI",
+      "decimals": 18
+    }
+  },
+  {
+    "id": "0x05767d9ef41dc40689678ffca0608878fb3de906:0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+    "chainId": 1,
+    "pid": 1,
+    "type": "MasterChefV2",
+    "apr": 0.07452133666411478,
+    "rewardPerDay": 87.24562152963004,
+    "poolId": "1:0x05767d9ef41dc40689678ffca0608878fb3de906",
+    "rewarderAddress": "0xef0881ec094552b2e128cf945ef17a6752b4ec5d",
+    "rewarderType": "Primary",
+    "rewardToken": {
+      "id": "1:0x6b3595068778dd592e39a122f4f5a5cf09c90fe2",
+      "address": "0x6b3595068778dd592e39a122f4f5a5cf09c90fe2",
+      "name": "SushiToken",
+      "symbol": "SUSHI",
+      "decimals": 18
+    }
+  }
+]

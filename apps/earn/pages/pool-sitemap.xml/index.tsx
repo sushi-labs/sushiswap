@@ -1,12 +1,10 @@
-import { getPools, GetPoolsQuery } from '../../lib/api'
+import { getPools } from '../../lib/hooks'
 import { GetServerSideProps } from 'next'
 import { getServerSideSitemap, ISitemapField } from 'next-sitemap'
-import stringify from 'fast-json-stable-stringify'
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const pools = await getPools({
-    pagination: stringify({ pageIndex: 0, pageSize: 1000 }),
-  } as GetPoolsQuery)
+  // TODO: Increase number of pools when API supports it
+  const pools = await getPools()
 
   const ids = pools.map((pool) => pool.id)
 

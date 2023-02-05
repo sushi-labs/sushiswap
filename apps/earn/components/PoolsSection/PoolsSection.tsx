@@ -1,9 +1,9 @@
 import { Tab } from '@headlessui/react'
-import { UserWithFarm } from '@sushiswap/graph-client'
+// import { UserWithFarm } from '@sushiswap/graph-client'
 import { Chip, classNames } from '@sushiswap/ui'
 import { FC, useState } from 'react'
-import useSWR from 'swr'
 import { useAccount } from 'wagmi'
+import { useUserPositions } from '../../lib/hooks/api/useUserPositions'
 
 import { PoolsTable, PositionsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'
@@ -11,9 +11,7 @@ import { TableFilters } from './Tables/TableFilters'
 export const PoolsSection: FC = () => {
   const { address } = useAccount()
   const [tab, setTab] = useState<number>(0)
-  const { data: userWithFarms } = useSWR<UserWithFarm[]>(address ? [`/earn/api/user/${address}`] : null, (url) =>
-    fetch(url).then((response) => response.json())
-  )
+  const { data: userPositions } = useUserPositions({ id: address as string }, !!address)
 
   return (
     <section className="flex flex-col">
@@ -39,7 +37,7 @@ export const PoolsSection: FC = () => {
                 )
               }
             >
-              My Positions <Chip label={userWithFarms?.length || '0'} size="sm" color="blue" />
+              My Positions <Chip label={userPositions?.length || '0'} size="sm" color="blue" />
             </Tab>
           )}
         </div>

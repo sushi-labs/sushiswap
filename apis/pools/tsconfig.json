@@ -1,5 +1,10 @@
 {
   "extends": "@sushiswap/typescript-config/node18-strictest-esm.combined.json",
   "include": ["."],
-  "exclude": ["node_modules", ".vercel"]
+  "exclude": ["node_modules", ".vercel"],
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "nodenext",
+    "allowSyntheticDefaultImports": true
+  }
 }

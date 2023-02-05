@@ -9,17 +9,16 @@ import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { TableFiltersSearchToken } from './TableFiltersSearchToken'
 
 export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters = false }) => {
-  const { selectedNetworks, selectedPoolTypes, farmsOnly, ignoreLowTvl, setFilters } = usePoolFilters()
-  const poolTypesValue =
-    Object.keys(AVAILABLE_POOL_TYPE_MAP).length === selectedPoolTypes.length ? [] : selectedPoolTypes
+  const { chainIds, poolTypes, incentivizedOnly, setFilters } = usePoolFilters()
+  const poolTypesValue = Object.keys(AVAILABLE_POOL_TYPE_MAP).length === poolTypes.length ? [] : poolTypes
 
   return (
     <>
       <div className="flex flex-wrap gap-3 mb-4">
         <Network.SelectorMenu
           networks={SUPPORTED_CHAIN_IDS}
-          selectedNetworks={selectedNetworks}
-          onChange={(selectedNetworks) => setFilters({ selectedNetworks })}
+          selectedNetworks={chainIds}
+          onChange={(chainIds) => setFilters({ chainIds })}
         />
         <div
           className={classNames(
@@ -29,9 +28,12 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
         >
           <Select
             value={poolTypesValue}
-            onChange={(values: string[]) =>
+            onChange={(values: (keyof typeof AVAILABLE_POOL_TYPE_MAP)[]) =>
               setFilters({
-                selectedPoolTypes: values.length === 0 ? Object.keys(AVAILABLE_POOL_TYPE_MAP) : values,
+                poolTypes:
+                  values.length === 0
+                    ? (Object.keys(AVAILABLE_POOL_TYPE_MAP) as (keyof typeof AVAILABLE_POOL_TYPE_MAP)[])
+                    : values,
               })
             }
             button={
@@ -52,8 +54,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
                         variant="sm"
                         weight={600}
                         className={classNames(
-                          selectedPoolTypes.includes(k) &&
-                            selectedPoolTypes.length !== Object.keys(AVAILABLE_POOL_TYPE_MAP).length
+                          poolTypes.includes(k) && poolTypes.length !== Object.keys(AVAILABLE_POOL_TYPE_MAP).length
                             ? 'text-slate-50'
                             : 'text-slate-400'
                         )}
@@ -62,8 +63,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
                       </Typography>
                     </div>
                     <div className="flex justify-end">
-                      {selectedPoolTypes.includes(k) &&
-                      selectedPoolTypes.length !== Object.keys(AVAILABLE_POOL_TYPE_MAP).length ? (
+                      {poolTypes.includes(k) && poolTypes.length !== Object.keys(AVAILABLE_POOL_TYPE_MAP).length ? (
                         <CheckIcon width={20} height={20} className="text-blue" />
                       ) : (
                         <></>
@@ -75,26 +75,13 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             </Select.Options>
           </Select>
 
-          {/* <div className="flex items-center bg-slate-700 rounded-xl gap-3 px-3 h-[44px]">
-            <Typography variant="sm" weight={600} className="text-slate-200">
-              &gt; $1,000.00
-            </Typography>
-            <Switch
-              checked={ignoreLowTvl}
-              onChange={(checked) => setFilters({ ignoreLowTvl: checked })}
-              size="sm"
-              uncheckedIcon={<XIcon />}
-              checkedIcon={<CheckIcon />}
-            />
-          </div> */}
-
           <div className="flex items-center bg-slate-700 rounded-xl gap-3 px-3 h-[44px]">
             <Typography variant="sm" weight={600} className="text-slate-200">
               Farms
             </Typography>
             <Switch
-              checked={farmsOnly}
-              onChange={(checked) => setFilters({ farmsOnly: checked })}
+              checked={incentivizedOnly}
+              onChange={(checked) => setFilters({ incentivizedOnly: checked })}
               size="sm"
               uncheckedIcon={<XIcon />}
               checkedIcon={<CheckIcon />}
