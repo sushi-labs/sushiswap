@@ -261,7 +261,7 @@ export async function getAggregatorPoolsByTokenIds(
   token1: string,
   size: number,
   excludeTopPoolsSize: number,
-  topPoolMinLiquidity?: number,
+  topPoolMinLiquidity?: number
 ) {
   const token0Id = chainId.toString().concat(':').concat(token0.toLowerCase())
   const token1Id = chainId.toString().concat(':').concat(token1.toLowerCase())

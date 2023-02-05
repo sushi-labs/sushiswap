@@ -39,6 +39,14 @@ const commonSchema = z.object({
   poolType: z.nativeEnum(PoolType),
 })
 
+const chainIdOnlySchema = z.object({
+  chainId: z.coerce
+    .number()
+    .int()
+    .gte(0)
+    .lte(2 ** 256),
+})
+
 const priceSchema = z.object({
   chainId: z.coerce
     .number()
@@ -176,13 +184,13 @@ app.get(
   async (req, res) => {
     req.setTimeout(300000)
 
-    const result = commonSchema.safeParse(req.query)
+    const result = chainIdOnlySchema.safeParse(req.query)
     if (!result.success) {
       return res.status(400).json(result.error.format())
     }
-    const { chainId, version, poolType } = result.data
+    const { chainId } = result.data
     try {
-      await liquidity(chainId, version, poolType)
+      await liquidity(chainId)
       res.sendStatus(200)
     } catch (err) {
       res.status(500).send(err)
@@ -196,14 +204,14 @@ app.get(
   async (req, res) => {
     req.setTimeout(300000)
 
-    const result = commonSchema.safeParse(req.query)
+    const result = chainIdOnlySchema.safeParse(req.query)
     if (!result.success) {
       return res.status(400).json(result.error.format())
     }
 
-    const { chainId, version, poolType } = result.data
+    const { chainId } = result.data
     try {
-      await reserves(chainId, version, poolType)
+      await reserves(chainId)
       res.sendStatus(200)
     } catch (err) {
       res.status(500).send(err)
