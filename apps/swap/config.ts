@@ -29,9 +29,10 @@ export const AMM_ENABLED_NETWORKS = [
   ChainId.OKEX,
   ChainId.BOBA,
   ChainId.BOBA_AVAX,
+  ChainId.BOBA_BNB,
   ChainId.HARMONY,
 ] as const
 
 export const SUPPORTED_CHAIN_IDS = Array.from(new Set([...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS]))
 
-export type SupportedChainId = typeof SUPPORTED_CHAIN_IDS[number]
+export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]

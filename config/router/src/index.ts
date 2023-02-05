@@ -500,5 +500,5 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
   ],
   [ChainId.BOBA_AVAX]: [WNATIVE[ChainId.BOBA_AVAX], USDC[ChainId.BOBA_AVAX], USDT[ChainId.BOBA_AVAX]],
   [ChainId.BOBA_BNB]: [WNATIVE[ChainId.BOBA_BNB], USDC[ChainId.BOBA_BNB], USDT[ChainId.BOBA_BNB]],
-  [ChainId.BTTC]: [WNATIVE[ChainId.BTTC]],
+  [ChainId.BTTC]: [WNATIVE[ChainId.BTTC], USDC[ChainId.BTTC], USDT[ChainId.BTTC]],
 }
