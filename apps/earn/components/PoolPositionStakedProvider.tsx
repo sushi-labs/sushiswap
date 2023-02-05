@@ -1,14 +1,14 @@
 import { Amount, Currency, Token } from '@sushiswap/currency'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { Chef, useMasterChef } from '@sushiswap/wagmi'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
 import { CHEF_TYPE_MAP } from '../lib/constants'
 import {
   useCreateNotification,
+  useGraphPool,
   useTokenAmountDollarValues,
-  useTokensFromPair,
-  useUnderlyingTokenBalanceFromPair,
+  useUnderlyingTokenBalanceFromPool,
 } from '../lib/hooks'
 
 interface PoolPositionStakedContext {
@@ -26,13 +26,13 @@ interface PoolPositionStakedContext {
 const Context = createContext<PoolPositionStakedContext | undefined>(undefined)
 
 interface PoolPositionStakedProviderProps {
-  pair: Pair
+  pool: Pool
   children: ReactNode
   watch?: boolean
 }
 
-export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> = ({ pair, children, watch = true }) => {
-  if (pair?.farm?.id === undefined || !pair?.farm?.chefType)
+export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> = ({ pool, children, watch = true }) => {
+  if (!pool?.incentives || pool.incentives.length === 0)
     return (
       <Context.Provider
         value={{
@@ -54,9 +54,9 @@ export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> = (
   return (
     <_PoolPositionStakedProvider
       watch={watch}
-      pair={pair}
-      farmId={Number(pair.farm.id)}
-      chefType={CHEF_TYPE_MAP[pair.farm.chefType as keyof typeof CHEF_TYPE_MAP]}
+      pool={pool}
+      farmId={Number(pool.incentives[0].pid)}
+      chefType={CHEF_TYPE_MAP[pool.incentives[0].chefType as keyof typeof CHEF_TYPE_MAP]}
     >
       {children}
     </_PoolPositionStakedProvider>
@@ -64,7 +64,7 @@ export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> = (
 }
 
 interface _PoolPositionStakedProviderProps {
-  pair: Pair
+  pool: Pool
   children: ReactNode
   farmId: number
   chefType: Chef
@@ -73,15 +73,15 @@ interface _PoolPositionStakedProviderProps {
 
 const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({
   watch,
-  pair,
+  pool,
   farmId,
   chefType,
   children,
 }) => {
   const createNotification = useCreateNotification()
-  const { reserve0, reserve1, totalSupply, liquidityToken } = useTokensFromPair(pair)
+  const { reserve0, reserve1, totalSupply, liquidityToken } = useGraphPool(pool)
   const { balance, isLoading, isError, isWritePending, isWriteError } = useMasterChef({
-    chainId: pair.chainId,
+    chainId: pool.chainId,
     chef: chefType,
     pid: farmId,
     token: liquidityToken,
@@ -89,7 +89,7 @@ const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({
     watch,
   })
 
-  const stakedUnderlying = useUnderlyingTokenBalanceFromPair({
+  const stakedUnderlying = useUnderlyingTokenBalanceFromPool({
     reserve0: reserve0,
     reserve1: reserve1,
     totalSupply,
@@ -98,7 +98,7 @@ const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({
 
   const [underlying0, underlying1] = stakedUnderlying
   const [value0, value1] = useTokenAmountDollarValues({
-    chainId: pair.chainId,
+    chainId: pool.chainId,
     amounts: stakedUnderlying,
   })
 

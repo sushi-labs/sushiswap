@@ -1,10 +1,5 @@
 {
-  "extends": "@sushiswap/typescript-config/node16-strictest.combined.json",
-  "include": [".graphclient", "src"],
-  "exclude": ["node_modules", "dist"],
-  "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "./dist",
-    "rootDir": "."
-  }
+  "extends": "@sushiswap/typescript-config/node18-vercel.json",
+  "include": ["."],
+  "exclude": ["node_modules", ".vercel"]
 }

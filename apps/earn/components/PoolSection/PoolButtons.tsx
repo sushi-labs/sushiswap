@@ -1,5 +1,5 @@
 import { getAddress } from '@ethersproject/address'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, Link } from '@sushiswap/ui'
@@ -8,17 +8,17 @@ import { FC } from 'react'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 interface PoolButtonsProps {
-  pair: Pair
+  pool: Pool
 }
 
-export const PoolButtons: FC<PoolButtonsProps> = ({ pair }) => {
+export const PoolButtons: FC<PoolButtonsProps> = ({ pool }) => {
   const { balance } = usePoolPosition()
   const { balance: stakedBalance } = usePoolPositionStaked()
 
   return (
     <div className="flex flex-col w-full gap-2">
       <div className="flex gap-2">
-        <Link.Internal href={`/${pair.id}/remove`} passHref={true}>
+        <Link.Internal href={`/${pool.id}/remove`} passHref={true}>
           <a className="w-full">
             <Button
               disabled={Boolean(balance?.[FundSource.WALLET]?.equalTo(ZERO) && stakedBalance?.equalTo(ZERO))}
@@ -30,7 +30,7 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pair }) => {
             </Button>
           </a>
         </Link.Internal>
-        <Link.Internal href={`/${pair.id}/add`} passHref={true}>
+        <Link.Internal href={`/${pool.id}/add`} passHref={true}>
           <Button as="a" size="md" fullWidth>
             Deposit
           </Button>
@@ -41,9 +41,9 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pair }) => {
         size="md"
         variant="outlined"
         as="a"
-        href={`https://www.sushi.com/swap?token0=${getAddress(pair.token0.id)}&token1=${getAddress(
-          pair.token1.id
-        )}&chainId=${pair.chainId}`}
+        href={`https://www.sushi.com/swap?token0=${getAddress(pool.token0.address)}&token1=${getAddress(
+          pool.token1.address
+        )}&chainId=${pool.chainId}`}
       >
         Trade
       </Button>

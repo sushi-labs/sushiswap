@@ -1,8 +1,8 @@
 import { Resolvers } from '../../.graphclient'
-import { crossChainUserWithFarms } from './crossChainUserWithFarms'
+import { crossChainUserPositions } from './crossChainUserPositions'
 
 export const resolvers: Resolvers = {
   Query: {
-    crossChainUserWithFarms,
+    crossChainUserPositions,
   },
 }

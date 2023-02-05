@@ -12,7 +12,7 @@ import {
   useSendTransaction,
   useSushiSwapRouterContract,
 } from '@sushiswap/wagmi'
-import { BigNumber, BigNumberish } from 'ethers'
+import { BigNumber } from 'ethers'
 import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { Address, useAccount, useNetwork } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'

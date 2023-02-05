@@ -22,8 +22,10 @@
     "./nextjs.json": "./node14.json",
     "./node14.json": "./node14.json",
     "./node16.json": "./node16.json",
+    "./node16-strictest-esm.combined.json": "./node16-strictest-esm.combined.json",
     "./node18.json": "./node18.json",
     "./node18-strictest-esm.combined.json": "./node18-strictest-esm.combined.json",
+    "./node18-vercel.json": "./node18-vercel.json",
     "./react-library.json": "./react-library.json"
   },
   "files": [

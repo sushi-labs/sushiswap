@@ -13,7 +13,7 @@ import { isPromiseFulfilled } from '@sushiswap/validate'
 import { getBuiltGraphSDK, Pair, QueryResolvers } from '../../.graphclient'
 import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
 import { TridentTypes } from '../../.graphclient/sources/Trident/types'
-import { getFarms } from '../../lib/farms'
+import { getIncentivesByPoolId } from '../../lib/incentives'
 import { transformPair } from '../../transformers'
 
 const sdk = getBuiltGraphSDK()
@@ -53,8 +53,8 @@ export const pairById: QueryResolvers['pairById'] = async (root, args, context, 
         chainId,
         chainName: chainName[chainId],
         chainShortName: chainShortName[chainId],
-        subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]],
-        subgraphHost: SUBGRAPH_HOST[chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]],
+        subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]],
+        subgraphHost: SUBGRAPH_HOST[chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]],
       },
       info,
     }).then((pair: SushiSwapTypes.Pair | null) => {
@@ -72,8 +72,8 @@ export const pairById: QueryResolvers['pairById'] = async (root, args, context, 
         chainId,
         chainName: chainName[chainId],
         chainShortName: chainShortName[chainId],
-        subgraphName: TRIDENT_SUBGRAPH_NAME[chainId as typeof TRIDENT_ENABLED_NETWORKS[number]],
-        subgraphHost: SUBGRAPH_HOST[chainId as typeof TRIDENT_ENABLED_NETWORKS[number]],
+        subgraphName: TRIDENT_SUBGRAPH_NAME[chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]],
+        subgraphHost: SUBGRAPH_HOST[chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]],
       },
       info,
     }).then((pair: TridentTypes.Pair | null) => {
@@ -106,15 +106,10 @@ export const pairById: QueryResolvers['pairById'] = async (root, args, context, 
 
   if (!pair) return null
 
-  // TODO: should be able to get a single farm for this case...
-  // const farms = await context.FarmsV0.Query.farmsv0(root, args, context, info)
-  const farms = await getFarms()
-
   return transformPair({
     pair,
     pair1d,
     pair2d,
     pair1w,
-    farm: farms?.[chainId]?.farms?.[address.toLowerCase()],
   })
 }

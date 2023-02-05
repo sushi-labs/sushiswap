@@ -1,11 +1,11 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { getUnixTime } from 'date-fns'
 
-import redis from '../../lib/redis'
-import { SUPPORTED_CHAINS } from './config'
+import redis from '../../lib/redis.js'
+import { SUPPORTED_CHAINS } from './config.js'
 
 export default async (request: VercelRequest, response: VercelResponse) => {
-  const chainId = request.query.chainId as string
+  const chainId = request.query['chainId'] as string
 
   if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
     response.status(422).json({

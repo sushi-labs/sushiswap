@@ -1,0 +1,82 @@
+{
+  "type": "array",
+  "items": {
+    "$ref": "#/definitions/Incentive"
+  },
+  "definitions": {
+    "ChefType": {
+      "type": "string",
+      "title": "ChefType",
+      "enum": ["MasterChefV1", "MasterChefV2", "MiniChef"]
+    },
+    "RewarderType": {
+      "type": "string",
+      "title": "RewarderType",
+      "enum": ["Primary", "Secondary"]
+    },
+    "RewardToken": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "decimals": {
+          "type": "number"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "Incentive": {
+      "type": "object",
+      "properties": {
+        "chainId": {
+          "type": "number"
+        },
+        "type": {
+          "type": "object",
+          "items": {
+            "$ref": "#/definitions/ChefType"
+          }
+        },
+        "id": {
+          "type": "string"
+        },
+        "pid": {
+          "type": "string"
+        },
+        "poolId": {
+          "type": "string"
+        },
+        "apr": {
+          "type": ["number", null]
+        },
+        "rewardPerDay": {
+          "type": "number"
+        },
+        "rewardToken": {
+          "type": "object",
+          "items": {
+            "$ref": "#/definitions/RewardToken"
+          }
+        },
+        "rewarderType": {
+          "type": "object",
+          "items": {
+            "$ref": "#/definitions/RewarderType"
+          }
+        },
+        "rewarderAddress": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

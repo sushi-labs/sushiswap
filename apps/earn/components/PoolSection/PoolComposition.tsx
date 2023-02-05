@@ -1,19 +1,19 @@
 import { Native } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { AppearOnMount, Currency, Table, Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
 import { FC } from 'react'
 
-import { useTokensFromPair } from '../../lib/hooks'
+import { useGraphPool } from '../../lib/hooks'
 
 interface PoolCompositionProps {
-  pair: Pair
+  pool: Pool
 }
 
-export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
-  const { data: prices } = usePrices({ chainId: pair.chainId })
-  const { token0, token1, reserve1, reserve0 } = useTokensFromPair(pair)
+export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
+  const { data: prices } = usePrices({ chainId: pool.chainId })
+  const { token0, token1, reserve0, reserve1, liquidityNative } = useGraphPool(pool)
 
   return (
     <div className="flex flex-col w-full gap-4">
@@ -27,7 +27,7 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
             <span className="font-semibold text-slate-50">
               {' '}
               {formatUSD(
-                pair.liquidityNative * Number(prices?.[Native.onChain(pair.chainId).wrapped.address]?.toFixed(10))
+                liquidityNative ?? 0 * Number(prices?.[Native.onChain(pool.chainId).wrapped.address]?.toFixed(10))
               )}
             </span>
           </Typography>
@@ -67,7 +67,7 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
                 <AppearOnMount>
                   <Typography weight={600} variant="sm" className="text-slate-50">
                     {formatUSD(
-                      prices?.[token0.wrapped.address]
+                      prices?.[token0.wrapped.address] && reserve0
                         ? reserve0.multiply(prices?.[token0.wrapped.address].asFraction).toSignificant(6)
                         : ''
                     )}
@@ -93,7 +93,7 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
                 <AppearOnMount>
                   <Typography weight={600} variant="sm" className="text-slate-50">
                     {formatUSD(
-                      prices?.[token1.wrapped.address]
+                      prices?.[token1.wrapped.address] && reserve1
                         ? reserve1.multiply(prices?.[token1.wrapped.address].asFraction).toSignificant(6)
                         : ''
                     )}

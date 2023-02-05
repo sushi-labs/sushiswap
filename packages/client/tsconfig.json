@@ -1,0 +1,11 @@
+{
+  "extends": "@sushiswap/typescript-config/node16-strictest-esm.combined.json",
+  "exclude": ["node_modules", "dist"],
+  "include": ["src"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "./dist",
+    "rootDir": ".",
+    "resolveJsonModule": true
+  }
+}

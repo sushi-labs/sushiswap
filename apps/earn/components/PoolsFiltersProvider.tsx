@@ -1,72 +1,57 @@
 import { ChainId } from '@sushiswap/chain'
-import { createContext, FC, ReactNode, useCallback, useContext, useState } from 'react'
+import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 import { AVAILABLE_POOL_TYPE_MAP } from '../lib/constants'
 
 enum Filters {
-  myTokensOnly = 'myTokensOnly',
-  singleSidedStakingOnly = 'singleSidedStakingOnly',
-  stablePairsOnly = 'stablePairsOnly',
-  selectedNetworks = 'selectedNetworks',
-  selectedPoolTypes = 'selectedPoolTypes',
-  farmsOnly = 'farmsOnly',
-  ignoreLowTvl = 'ignoreLowTvl',
+  chainIds = 'chainIds',
+  poolTypes = 'poolTypes',
+  incentivizedOnly = 'incentivizedOnly',
 }
 
 interface FilterContext {
   query: string
   extraQuery: string
-  [Filters.myTokensOnly]: boolean
-  [Filters.singleSidedStakingOnly]: boolean
-  [Filters.stablePairsOnly]: boolean
-  [Filters.selectedNetworks]: ChainId[]
-  [Filters.selectedPoolTypes]: string[]
-  [Filters.farmsOnly]: boolean
-  [Filters.ignoreLowTvl]: boolean
-  atLeastOneFilterSelected: boolean
+  [Filters.chainIds]: ChainId[]
+  [Filters.poolTypes]: (keyof typeof AVAILABLE_POOL_TYPE_MAP)[]
+  [Filters.incentivizedOnly]: boolean
   setFilters(filters: Partial<Omit<FilterContext, 'setFilters'>>): void
 }
 
 const FilterContext = createContext<FilterContext | undefined>(undefined)
 
+export type PoolFilters = Omit<FilterContext, 'setFilters'>
+
 interface PoolsFiltersProvider {
   children?: ReactNode
-  selectedNetworks: ChainId[]
+  passedFilters?: Partial<PoolFilters>
 }
 
-export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({
-  children,
-  selectedNetworks = SUPPORTED_CHAIN_IDS,
-}) => {
-  const [filters, _setFilters] = useState({
-    query: '',
-    extraQuery: '',
-    [Filters.myTokensOnly]: false,
-    [Filters.singleSidedStakingOnly]: false,
-    [Filters.stablePairsOnly]: false,
-    [Filters.selectedNetworks]: selectedNetworks,
-    [Filters.selectedPoolTypes]: Object.keys(AVAILABLE_POOL_TYPE_MAP),
-    [Filters.farmsOnly]: false,
-    [Filters.ignoreLowTvl]: true,
-    atLeastOneFilterSelected: false,
-  })
+const defaultFilters: PoolFilters = {
+  query: '',
+  extraQuery: '',
+  [Filters.chainIds]: SUPPORTED_CHAIN_IDS,
+  [Filters.poolTypes]: Object.keys(AVAILABLE_POOL_TYPE_MAP) as unknown as (keyof typeof AVAILABLE_POOL_TYPE_MAP)[],
+  [Filters.incentivizedOnly]: false,
+}
 
-  const setFilters = useCallback((filters: Partial<Omit<FilterContext, 'setFilters'>>) => {
+export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children, passedFilters }) => {
+  const [filters, _setFilters] = useState<PoolFilters>({ ...defaultFilters, ...passedFilters })
+
+  const setFilters = useCallback((filters: PoolFilters) => {
     _setFilters((prevState) => ({
       ...prevState,
       ...filters,
     }))
   }, [])
 
+  useEffect(() => setFilters({ ...defaultFilters, ...passedFilters }), [passedFilters, setFilters])
+
   return (
     <FilterContext.Provider
       value={{
         ...filters,
-        atLeastOneFilterSelected:
-          filters.farmsOnly ||
-          filters.query.length > 0 ||
-          filters.selectedPoolTypes.length !== Object.keys(AVAILABLE_POOL_TYPE_MAP).length,
         setFilters,
       }}
     >

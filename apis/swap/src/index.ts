@@ -6,10 +6,10 @@ import { ChainId } from '@sushiswap/chain'
 import { Native, nativeCurrencyIds } from '@sushiswap/currency'
 import { DataFetcher, findSpecialRoute, Router } from '@sushiswap/router'
 import { BigNumber, providers } from 'ethers'
-import fastify from 'fastify'
+import { fastify } from 'fastify'
 import { z } from 'zod'
 
-import { getToken } from './tokens'
+import { getToken } from './tokens.js'
 
 const server = fastify({ logger: true })
 server.register(cors)
