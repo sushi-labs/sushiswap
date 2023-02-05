@@ -186,6 +186,25 @@ async function createPool(env: Environment, fee: number, price: number, position
   }
 }
 
+// EVM calculations with 256 integers are not very precise in case of small numbers.
+// It impacts calcOutByIn calculation for extremely big/small prices
+// This function sets output precision calculation depending on current pool price
+function expectedPrecision(sqrtPriceX96Before: BigNumber, sqrtPriceX96After: BigNumber): number {
+  const sqrtPrice1 = parseInt(sqrtPriceX96Before.toString()) / Math.pow(2, 96)
+  let price1 = sqrtPrice1 * sqrtPrice1
+  price1 = price1 < 1 ? 1 / price1 : price1
+  const sqrtPrice2 = parseInt(sqrtPriceX96After.toString()) / Math.pow(2, 96)
+  let price2 = sqrtPrice2 * sqrtPrice2
+  price2 = price2 < 1 ? 1 / price2 : price2
+  const maxPrice = Math.max(price1, price2)
+  //console.log(price1, price2)
+  if (maxPrice < 1e15) return 1e-12
+  if (maxPrice < 1e20) return 1e-9
+  if (maxPrice < 1e29) return 1e-5
+  if (maxPrice < 1e32) return 1e-4
+  return 1e-2
+}
+
 async function checkSwap(
   env: Environment,
   pool: PoolInfo,
@@ -194,18 +213,20 @@ async function checkSwap(
   updateTinesPool = false,
   printTick = false
 ) {
+  const slotBefore = await pool.contract.slot0()
+
   if (updateTinesPool) {
     // update tines pool data
-    const slot = await pool.contract.slot0()
     pool.tinesPool.updateState(
       await pool.token0Contract.balanceOf(pool.contract.address),
       await pool.token1Contract.balanceOf(pool.contract.address),
-      slot[1], // tick
+      slotBefore[1], // tick
       await pool.contract.liquidity(),
-      slot[0] // price
+      slotBefore[0] // price
     )
   }
 
+  if (typeof amount == 'number') amount = Math.round(amount) // input should be integer
   const amountBN: BigNumber = typeof amount == 'number' ? getBigNumber(amount) : BigNumber.from(amount)
   const amountN: number = typeof amount == 'number' ? amount : parseInt(amount.toString())
   const [inToken, outToken] = direction
@@ -213,19 +234,22 @@ async function checkSwap(
     : [pool.token1Contract, pool.token0Contract]
   const inBalanceBefore = await inToken.balanceOf(env.user.getAddress())
   const outBalanceBefore = await outToken.balanceOf(env.user.getAddress())
-  const tickBefore = (await pool.contract.slot0())[1]
+  const tickBefore = slotBefore[1]
   await env.testRouter.swap(pool.contract.address, direction, amountBN)
-  const tickAfter = (await pool.contract.slot0())[1]
+  const slotAfter = await pool.contract.slot0()
+  const tickAfter = slotAfter[1]
   const inBalanceAfter = await inToken.balanceOf(env.user.getAddress())
   const outBalanceAfter = await outToken.balanceOf(env.user.getAddress())
   if (printTick) console.log(tickBefore, '->', tickAfter)
+
+  const precision = expectedPrecision(slotBefore[0], slotAfter[0])
 
   const amountOut = outBalanceAfter.sub(outBalanceBefore)
   const amountIn: BigNumber = inBalanceBefore.sub(inBalanceAfter)
   if (amountIn.eq(amountBN)) {
     // all input value were swapped to output
     const amounOutTines = pool.tinesPool.calcOutByIn(amountN, direction)
-    expectCloseValues(amountOut, amounOutTines.out, 1e-12)
+    expectCloseValues(amountOut, amounOutTines.out, precision)
   } else {
     // out of liquidity
     expect(amountIn.lt(amountBN)).true
@@ -237,7 +261,7 @@ async function checkSwap(
       errorThrown = true
     }
     if (!errorThrown) {
-      expectCloseValues(amountOut, amounOutTines, 1e-12)
+      expectCloseValues(amountOut, amounOutTines, precision)
     }
   }
 }
@@ -262,7 +286,7 @@ async function getRandomSwapParams(rnd: () => number, pool: PoolInfo): Promise<[
   const maxRes = direction ? res1 / price : res0 * price
   const amount = Math.round(rnd() * maxRes) + 1000
 
-  console.log(res0, res1, price, maxRes, amount, direction)
+  //console.log('current price:', price, 'amount:', amount, 'direction:', direction)
 
   return [amount, direction]
 }
@@ -273,6 +297,35 @@ async function monkeyTest(env: Environment, pool: PoolInfo, seed: string, iterat
     const [amount, direction] = await getRandomSwapParams(rnd, pool)
     await checkSwap(env, pool, amount, direction, true, printTick)
   }
+}
+
+function getRndLin(rnd: () => number, min: number, max: number) {
+  return rnd() * (max - min) + min
+}
+function getRndLinInt(rnd: () => number, min: number, max: number) {
+  return Math.floor(getRndLin(rnd, min, max))
+}
+
+async function createRandomPool(env: Environment, seed: string, positionNumber: number, price?: number) {
+  const rnd: () => number = seedrandom(seed) // random [0, 1)
+
+  const fee = [500, 3000, 10000][getRndLinInt(rnd, 0, 3)]
+  const tickSpacing = feeAmountTickSpacing[fee]
+  const RANGE = Math.floor((CL_MAX_TICK - CL_MIN_TICK) / tickSpacing)
+  const SHIFT = -Math.floor(-CL_MIN_TICK / tickSpacing) * tickSpacing
+
+  const positions: Position[] = []
+  for (let i = 0; i < positionNumber; ++i) {
+    const pos1 = getRndLinInt(rnd, 0, RANGE)
+    const pos2 = (pos1 + getRndLinInt(rnd, 1, RANGE - 1)) % RANGE
+    const from = Math.min(pos1, pos2) * tickSpacing + SHIFT
+    const to = Math.max(pos1, pos2) * tickSpacing + SHIFT
+    console.assert(CL_MIN_TICK <= from && from < to && to <= CL_MAX_TICK, `Wrong from-to range ${from} - ${to}`)
+    positions.push({ from, to, val: getRndLin(rnd, 0.01, 30) * 1e18 })
+  }
+  price = price === undefined ? getRndLin(rnd, 0.01, 100) : price
+  //console.log(positions, price, fee)
+  return await createPool(env, fee, price, positions)
 }
 
 describe('Uni V3', () => {
@@ -417,6 +470,12 @@ describe('Uni V3', () => {
         { from: 6000, to: 12000, val: 6e18 },
       ])
       await monkeyTest(env, pool, '_big_', 1000, true)
+    })
+    it.skip('Random pool monkey test', async () => {
+      for (let i = 0; i < 10; ++i) {
+        const pool = await createRandomPool(env, 'pool' + i, 100)
+        await monkeyTest(env, pool, 'monkey' + i, 100, true)
+      }
     })
   })
 })
