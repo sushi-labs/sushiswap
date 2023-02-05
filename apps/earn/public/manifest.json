@@ -1,6 +1,6 @@
 {
   "name": "Earn by Sushi",
-  "description": "Earn fees by providing liquidity and staking SUSHI into xSUSHI.",
+  "description": "Earn fees by providing liquidity.",
   "short_name": "Earn",
   "display": "standalone",
   "orientation": "portrait",
