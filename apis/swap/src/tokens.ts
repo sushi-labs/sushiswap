@@ -58,7 +58,7 @@ export async function getToken(chainId: ChainId, tokenId: string) {
   const isShortNameSupported = isShortCurrencyNameSupported(chainId)
   const tokenIdIsShortName = isShortCurrencyName(chainId, tokenId)
 
-  console.log({ isShortNameSupported, tokenIdIsShortName })
+  // console.log({ isShortNameSupported, tokenIdIsShortName, tokenId })
 
   return isShortNameSupported && tokenIdIsShortName
     ? currencyFromShortCurrencyName(chainId, tokenId)

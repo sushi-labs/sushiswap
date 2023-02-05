@@ -74,9 +74,9 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     UNI: UNI[ChainId.BSC],
   },
   [ChainId.BTTC]: {
-    BTTC: Native.onChain(ChainId.BTTC),
-    WBTTC: WNATIVE[ChainId.BTTC],
-    // SUSHI: SUSHI[ChainId.BTTC],
+    BTT: Native.onChain(ChainId.BTTC),
+    WBTT: WNATIVE[ChainId.BTTC],
+    SUSHI: SUSHI[ChainId.BTTC],
   },
   [ChainId.CELO]: {
     CELO: Native.onChain(ChainId.CELO),
