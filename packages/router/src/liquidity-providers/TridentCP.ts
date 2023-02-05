@@ -166,6 +166,7 @@ export class TridentCPPProvider extends TridentBase {
   startFetchPoolsData() {
     this.stopFetchPoolsData()
     this.pools = new Map()
+    this.bridges = new Map()
 
     this.unwatchBlockNumber = watchBlockNumber(
       {
