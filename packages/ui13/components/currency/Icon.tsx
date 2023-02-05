@@ -88,6 +88,7 @@ const LOGO: Record<number, string> = {
   [ChainId.METIS]: MetisLogo,
   [ChainId.BOBA]: EthereumLogo,
   [ChainId.BOBA_AVAX]: BobaLogo,
+  [ChainId.BOBA_BNB]: BobaLogo,
   [ChainId.BTTC]: BttcLogo,
 }
 
