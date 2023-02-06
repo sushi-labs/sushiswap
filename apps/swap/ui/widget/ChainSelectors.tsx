@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react'
+import React, { FC, useCallback, useState } from 'react'
 import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui13/components/networkselector'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { Chain } from '@sushiswap/chain'
@@ -9,9 +9,9 @@ import { ArrowRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { Collapsible } from '@sushiswap/ui13/components/animation/Collapsible'
 import { AppType } from '@sushiswap/ui13/types'
 
-export const ChainSelectors: FC = () => {
-  const { network0, network1, appType } = useSwapState()
-  const { setNetwork0, setNetwork1, switchTokens } = useSwapActions()
+export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
+  const { network0, network1 } = useSwapState()
+  const { setNetwork0, setNetwork1, switchTokens, setAppType } = useSwapActions()
 
   const handleSelect0 = useCallback<NetworkSelectorOnSelectCallback>(
     (el, close) => {
@@ -30,10 +30,7 @@ export const ChainSelectors: FC = () => {
   )
 
   return (
-    <Collapsible open={appType === AppType.xSwap}>
-      {/*<div className="py-4">*/}
-      {/*  <div className="h-[2px] bg-gradient-to-r from-blue/20 to-pink/20 w-full" />*/}
-      {/*</div>*/}
+    <Collapsible open={open} afterChange={() => setAppType(open ? AppType.xSwap : AppType.Swap)}>
       <div className="flex gap-2 border-gray-200 dark:border-slate-800 pt-6">
         <div className="w-[calc(50%-20px)]">
           <NetworkSelector networks={SUPPORTED_CHAIN_IDS} variant="dialog" selected={network0} onSelect={handleSelect0}>

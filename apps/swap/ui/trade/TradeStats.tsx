@@ -40,21 +40,21 @@ export const TradeStats: FC = () => {
         {/*    )}*/}
         {/*  </span>*/}
         {/*</div>*/}
-        {/*<div className="flex justify-between items-center gap-2">*/}
-        {/*  <span className="text-sm text-gray-700 dark:text-slate-400">Price Impact</span>*/}
-        {/*  <span*/}
-        {/*    className={classNames(*/}
-        {/*      warningSeverityClassName(warningSeverity(trade?.priceImpact)),*/}
-        {/*      'text-sm font-semibold text-gray-700 text-right dark:text-slate-400'*/}
-        {/*    )}*/}
-        {/*  >*/}
-        {/*    {isLoading ? (*/}
-        {/*      <Skeleton.Box className="h-4 py-0.5 w-[120px] rounded-md" />*/}
-        {/*    ) : (*/}
-        {/*      `${trade?.priceImpact?.toFixed(2) ?? 'N/A'}`*/}
-        {/*    )}*/}
-        {/*  </span>*/}
-        {/*</div>*/}
+        <div className="flex justify-between items-center gap-2">
+          <span className="text-sm text-gray-700 dark:text-slate-400">Price Impact</span>
+          <span
+            className={classNames(
+              warningSeverityClassName(warningSeverity(trade?.priceImpact)),
+              'text-sm font-semibold text-gray-700 text-right dark:text-slate-400'
+            )}
+          >
+            {isLoading ? (
+              <Skeleton.Box className="h-4 py-0.5 w-[120px] rounded-md" />
+            ) : (
+              `${trade?.priceImpact?.toFixed(2)}%` ?? 'N/A'
+            )}
+          </span>
+        </div>
         {/*<div className="flex justify-between items-center gap-2">*/}
         {/*  <span className="text-sm text-gray-700 dark:text-slate-400">Minimum received</span>*/}
         {/*  <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">*/}

@@ -54,7 +54,7 @@ export const PricePanel: FC<PricePanel> = ({ loading, price, currency, value, us
           $ {big}.<span className="text-sm font-semibold">{portion}</span>
         </>
       )}
-      {usdPctChange && (
+      {!(!loading && price?.equalTo(ZERO)) && usdPctChange && (
         <span
           className={classNames(
             'text-sm',
