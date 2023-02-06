@@ -309,10 +309,18 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     const setAppType = (appType: AppType) => {
       const network1 =
         appType === AppType.Swap
-          ? query.fromChainId
-          : query.fromChainId === query.toChainId
-          ? ChainId.ARBITRUM
-          : query.toChainId
+          ? state.network0
+          : state.network1 === state.network0
+          ? state.network1 === ChainId.ARBITRUM
+            ? ChainId.ETHEREUM
+            : ChainId.ARBITRUM
+          : state.network1
+      const token1 =
+        state.token1.chainId === network1
+          ? state.token1.isNative
+            ? state.token1.symbol
+            : state.token1.wrapped.address
+          : 'SUSHI'
 
       void push(
         {
@@ -320,7 +328,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           query: {
             ...query,
             toChainId: network1,
-            toCurrencyId: 'SUSHI',
+            toCurrencyId: token1,
           },
         },
         undefined,
@@ -348,6 +356,8 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   }, [
     push,
     query,
+    state.network0,
+    state.network1,
     state.token0,
     state.token1.chainId,
     state.token1.isNative,
@@ -372,7 +382,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, api])
+  }, [isConnected])
 
   return (
     <SwapActionsContext.Provider value={api}>
