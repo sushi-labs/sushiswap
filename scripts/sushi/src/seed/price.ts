@@ -1,14 +1,12 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
-import { Prisma, PrismaClient, Token } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
+import { client,Prisma, Token } from '@sushiswap/database'
 import { calcTokenPrices, ConstantProductRPool } from '@sushiswap/tines'
 import { performance } from 'perf_hooks'
 
 import { PoolType, Price, ProtocolVersion } from '../config.js'
-
-const client = new PrismaClient()
 
 const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 

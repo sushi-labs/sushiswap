@@ -1,7 +1,5 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { Prisma, client } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
-
-const client = new PrismaClient()
 
 export async function whitelistPools() {
   try {
@@ -67,7 +65,7 @@ async function start() {
   for (let i = 0; i < poolsToUpdate.length; i += updatePoolsBatchSize) {
     const batch = poolsToUpdate.slice(i, i + updatePoolsBatchSize)
     const batchToUpdate = batch.map((id) =>
-      client.pool.update({
+    client.pool.update({
         where: {
           id,
         },

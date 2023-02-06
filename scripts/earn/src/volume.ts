@@ -1,13 +1,11 @@
-import { PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
+import { client } from '@sushiswap/database'
 import { SUBGRAPH_HOST, TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
 import { Block, getBuiltGraphSDK, Pair } from '../.graphclient/index.js'
 import { EXCHANGE_SUBGRAPH_NAME, SUSHISWAP_CHAINS, TRIDENT_CHAINS } from './config.js'
 import { PoolMinimal, updatePoolsWithVolumeAndFee } from './etl/pool/index.js'
-
-const client = new PrismaClient()
 
 export async function execute() {
   try {
@@ -30,7 +28,7 @@ export async function execute() {
     const batchSize = 500
     for (let i = 0; i < transformed.length; i += batchSize) {
       const batch = transformed.slice(i, i + batchSize)
-      await updatePoolsWithVolumeAndFee(client, batch)
+      await updatePoolsWithVolumeAndFee(batch)
     }
     const endTime = performance.now()
     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
@@ -65,7 +63,7 @@ async function extractPairs(blocks?: Pick<Block, 'number' | 'id' | 'timestamp' |
     return { chainId, requests }
   })
   const tridentRequests = TRIDENT_CHAINS.map((chainId) => {
-    const _chainId = chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]
+    const _chainId = chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
     const host = SUBGRAPH_HOST[Number(chainId) as keyof typeof SUBGRAPH_HOST]
     const blockNumber = blocks ? Number(blocks.find((block) => block.chainId === chainId)?.number) : undefined
     const requests = createQuery(chainId, host, TRIDENT_SUBGRAPH_NAME[_chainId], blockNumber)

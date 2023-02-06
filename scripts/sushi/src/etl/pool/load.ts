@@ -1,7 +1,7 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { client, Prisma } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
-export async function createPools(client: PrismaClient, pools: Prisma.PoolCreateManyInput[]) {
+export async function createPools(pools: Prisma.PoolCreateManyInput[]) {
   const startTime = performance.now()
   const created = await client.pool.createMany({
     data: pools,
@@ -17,7 +17,7 @@ export async function createPools(client: PrismaClient, pools: Prisma.PoolCreate
   }
 }
 
-export async function getLatestPoolTimestamp(client: PrismaClient, chainId: number, protocol: string, versions: string[]) {
+export async function getLatestPoolTimestamp(chainId: number, protocol: string, versions: string[]) {
   const startTime = performance.now()
   const latestPool = await client.pool.findFirst({
     select: {

@@ -1,12 +1,10 @@
 import '../lib/wagmi.js'
 
-import { Prisma, PrismaClient, Token as PrismaToken } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
+import { client,Prisma, Token as PrismaToken } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 import { PoolType, ProtocolVersion } from '../config.js'
-
-const client = new PrismaClient()
 
 const SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 const SUPPORTED_TYPES = [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL]

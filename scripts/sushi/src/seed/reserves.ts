@@ -1,7 +1,7 @@
 import '../lib/wagmi.js'
 
-import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
+import { client, Prisma } from '@sushiswap/database'
 import { readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
@@ -53,8 +53,6 @@ const STABLE_RESERVES_ABI = [
     type: 'function',
   },
 ]
-
-const client = new PrismaClient()
 
 const SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 const SUPPORTED_TYPES = [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL]
@@ -170,7 +168,6 @@ async function getReserves(
 
     let failures = 0
     const mappedPools = pools.slice(i, max).reduce<PoolWithReserve[]>((prev, pool, i) => {
-      
       if (reserves[i] === null || reserves[i] === undefined) {
         failures++
         return prev
@@ -192,10 +189,7 @@ async function getReserves(
     totalFailedCount += failures
     totalSuccessCount += mappedPools.length
     console.log(
-      `Fetched a batch with reserves, ${batchSize} (${(
-        (batchEndTime - batchStartTime) /
-        1000
-      ).toFixed(1)}s). `
+      `Fetched a batch with reserves, ${batchSize} (${((batchEndTime - batchStartTime) / 1000).toFixed(1)}s). `
     )
 
     poolsWithReserve.push(...mappedPools)

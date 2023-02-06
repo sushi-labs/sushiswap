@@ -1,8 +1,8 @@
-// import { Prisma, PrismaClient } from '@prisma/client'
+// import { client, Prisma } from '@sushiswap/database'
 // import { ChainId, chainName } from '@sushiswap/chain'
 // import { performance } from 'perf_hooks'
 
-// const client = new PrismaClient()
+//
 
 // export async function test() {
 //   try {
@@ -34,7 +34,6 @@
 //       updatedCount += responses.length
 //     }
 //     console.log({updatedCount})
-
 
 //     const endTime = performance.now()
 //     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)

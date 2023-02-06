@@ -15,15 +15,15 @@ declare let global: { prisma: PrismaClient }
 // Learn more:
 // https://pris.ly/d/help/next-js-best-practices
 
-let prisma: PrismaClient
+export let client: PrismaClient
 
 if (process.env['NODE_ENV'] === 'production') {
-  prisma = new PrismaClient()
+  client = new PrismaClient()
 } else {
   if (!global.prisma) {
     global.prisma = new PrismaClient()
   }
-  prisma = global.prisma
+  client = global.prisma
 }
 
 const redis = new Redis(process.env['REDIS_URL'])
@@ -43,8 +43,8 @@ const cacheMiddleware = createPrismaRedisCache({
   },
 })
 
-prisma.$use(cacheMiddleware)
+client.$use(cacheMiddleware)
 
-export default prisma as PrismaClient
-
+export default client as PrismaClient
+export type { Prisma, PrismaClient } from '@prisma/client'
 export * from '@prisma/client'

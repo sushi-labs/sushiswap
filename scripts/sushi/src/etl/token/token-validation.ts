@@ -1,6 +1,6 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { client, Prisma } from '@sushiswap/database'
 
-export async function transform(data: TokenResponse[], client: PrismaClient): Promise<Prisma.TokenUpdateArgs[]> {
+export async function transform(data: TokenResponse[]): Promise<Prisma.TokenUpdateArgs[]> {
   const existingTokens = await client.token.findMany({
     where: {
       id: {

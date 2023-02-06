@@ -1,5 +1,5 @@
-import { PoolType, PoolVersion, Prisma, PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
+import { client,PoolType, PoolVersion, Prisma } from '@sushiswap/database'
 import { SUBGRAPH_HOST, TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
@@ -13,8 +13,6 @@ const FIRST_TIME_SEED = process.env.FIRST_TIME_SEED === 'true'
 if (FIRST_TIME_SEED) {
   console.log('FIRST_TIME_SEED is true')
 }
-
-const client = new PrismaClient()
 
 export async function execute() {
   try {
@@ -33,13 +31,13 @@ export async function execute() {
 
     for (let i = 0; i < tokens.length; i += batchSize) {
       const batch = tokens.slice(i, i + batchSize)
-      await createTokens(client, batch)
+      await createTokens(batch)
     }
 
     for (let i = 0; i < pools.length; i += batchSize) {
       const batch = pools.slice(i, i + batchSize)
-      const filteredPools = await filterPools(client, batch)
-      await mergePools(client, filteredPools, FIRST_TIME_SEED)
+      const filteredPools = await filterPools(batch)
+      await mergePools(filteredPools, FIRST_TIME_SEED)
     }
     const endTime = performance.now()
 
@@ -56,7 +54,7 @@ async function extract() {
   const result: { chainId: ChainId; data: PairsQuery[] }[] = []
   const subgraphs = [
     TRIDENT_CHAINS.map((chainId) => {
-      const _chainId = chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]
+      const _chainId = chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
       return { chainId, host: SUBGRAPH_HOST[_chainId], name: TRIDENT_SUBGRAPH_NAME[_chainId] }
     }),
     SUSHISWAP_CHAINS.map((chainId) => {
@@ -160,8 +158,8 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               throw new Error('Unknown pool version')
             }
             let type: PoolType
-   
-            if (pair.type == PoolType.CONSTANT_PRODUCT_POOL)  {
+
+            if (pair.type == PoolType.CONSTANT_PRODUCT_POOL) {
               type = PoolType.CONSTANT_PRODUCT_POOL
             } else if (pair.type == PoolType.STABLE_POOL) {
               type = PoolType.STABLE_POOL
