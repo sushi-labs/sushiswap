@@ -1,4 +1,4 @@
-import type { ChainId } from '@sushiswap/chain'
+import { ChainId, chainShortName } from '@sushiswap/chain'
 import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
 import { configureChains, createClient } from '@wagmi/core'
 
@@ -127,7 +127,7 @@ export class DataFetcher {
         console.warn(e.message)
       }
     }
-    console.log(`${this.chainId} - Included providers: ${this.providers.map((p) => p.getType()).join(', ')}`)
+    console.log(`${chainShortName[this.chainId]}/${this.chainId} - Included providers: ${this.providers.map((p) => p.getType()).join(', ')}`)
     this.providers.forEach((p) => p.startFetchPoolsData())
   }
 
