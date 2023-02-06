@@ -24,6 +24,7 @@ import { Native } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui13'
 import { warningSeverity, warningSeverityClassName } from '../../lib/warningSeverity'
 import { TradeRoute } from './TradeRoute'
+import { ZERO } from '@sushiswap/math'
 
 export const TradeReviewDialogSameChain: FC = () => {
   const [open, setOpen] = useState(false)
@@ -98,13 +99,15 @@ export const TradeReviewDialogSameChain: FC = () => {
                   <span
                     className={classNames(
                       warningSeverityClassName(warningSeverity(trade?.priceImpact)),
-                      'text-gray-700 text-right dark:text-slate-400'
+                      'text-gray-700 text-right dark:text-slate-400 text-yellow text-yellow-700 text-green'
                     )}
                   >
                     {isFetching ? (
                       <Skeleton.Box className="h-4 py-0.5 w-[60px] rounded-md" />
                     ) : (
-                      `${trade?.priceImpact?.toFixed(2) ?? '-'}`
+                      `${trade?.priceImpact?.lessThan(ZERO) ? '+' : '-'}${Math.abs(
+                        Number(trade?.priceImpact?.toFixed(2))
+                      )}%` ?? '-'
                     )}
                   </span>
                 </List.KeyValue>

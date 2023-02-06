@@ -26,7 +26,7 @@ export const SwapButton: FC = () => {
 
   // Reset
   useEffect(() => {
-    if (warningSeverity(trade?.priceImpact) < 3) {
+    if (warningSeverity(trade?.priceImpact) <= 3) {
       setChecked(false)
     }
   }, [trade])
@@ -48,9 +48,9 @@ export const SwapButton: FC = () => {
                   disabled={
                     Boolean(isLoading && +value > 0) ||
                     isFetching ||
-                    (!checked && warningSeverity(trade?.priceImpact) >= 3)
+                    (!checked && warningSeverity(trade?.priceImpact) > 3)
                   }
-                  color={!checked && warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+                  color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
                   fullWidth
                   size="xl"
                   onClick={() => setReview(true)}
@@ -68,7 +68,7 @@ export const SwapButton: FC = () => {
           </Checker.Network>
         </Checker.Connect>
       </div>
-      {warningSeverity(trade?.priceImpact) >= 3 && (
+      {warningSeverity(trade?.priceImpact) > 3 && (
         <div className="rounded-xl px-4 py-3 bg-red/20 mt-4 flex items-start">
           <input
             id="expert-checkbox"
