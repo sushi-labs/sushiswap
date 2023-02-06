@@ -67,6 +67,16 @@ export class UniV3Pool extends RPool {
   nearestTick: number
   ticks: CLTick[]
 
+  /// @param address The address of the pool
+  /// @param token0 The first token of the pool
+  /// @param token1 The secons token of the pool
+  /// @param fee Pool's fee in fractions of 1. fee=0.003 means 0.3%
+  /// @param reserve0 Pool's reserve of token0 - await token0.balanceOf(pool.address)
+  /// @param reserve1 Pool's reserve of token1 - await token1.balanceOf(pool.address)
+  /// @param tick Currenct pool tick - (await pool.slot0())[1]
+  /// @param liquidity Current pool liquidity - await pool.liquidity()
+  /// @param sqrtPriceX96 Square root of the current pool price multiplied 2^96 - (await pool.slot0())[0]
+  /// @param ticks The list of all initialized ticks, sorted by index from low ho high
   constructor(
     address: string,
     token0: RToken,
