@@ -51,7 +51,7 @@ export const TradeStats: FC = () => {
             {isLoading ? (
               <Skeleton.Box className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
-              `${trade?.priceImpact?.toFixed(2)}%` ?? 'N/A'
+              `-${trade?.priceImpact?.toFixed(2)}%` ?? 'N/A'
             )}
           </span>
         </div>

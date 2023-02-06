@@ -104,7 +104,7 @@ export const TradeReviewDialogSameChain: FC = () => {
                     {isFetching ? (
                       <Skeleton.Box className="h-4 py-0.5 w-[60px] rounded-md" />
                     ) : (
-                      `${trade?.priceImpact?.toFixed(2) ?? '-'}`
+                      `-${trade?.priceImpact?.toFixed(2)}%` ?? '-'
                     )}
                   </span>
                 </List.KeyValue>
