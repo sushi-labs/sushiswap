@@ -1,15 +1,16 @@
 import React, { FC, Fragment, useCallback, useEffect, useState } from 'react'
 import Switch from '@sushiswap/ui13/components/Switch'
-import { useSwapActions, useSwapState } from '../trade/TradeProvider'
+import { useSwapState } from '../trade/TradeProvider'
 import { AppType } from '@sushiswap/ui13/types'
 import { classNames } from '@sushiswap/ui13'
 import { ShuffleIcon } from '@sushiswap/ui13/components/icons'
-import { Menu, Popover, Transition } from '@headlessui/react'
+import { Menu, Transition } from '@headlessui/react'
 import { InformationCircleIcon } from '@heroicons/react/24/solid'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { ChainSelectors } from './ChainSelectors'
 
 export const CrossChainBanner: FC = () => {
+  const { appType } = useSwapState()
   const [open, setOpen] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
 
@@ -17,6 +18,14 @@ export const CrossChainBanner: FC = () => {
     if (checked) setOpen(true)
     else setOpen(false)
   }, [])
+
+  useEffect(() => {
+    if (appType === AppType.xSwap) {
+      setOpen(true)
+    } else {
+      setOpen(false)
+    }
+  }, [appType])
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-xl mb-4">

@@ -70,7 +70,6 @@ type SwapApi = {
   switchTokens(): void
   setTokens(currency0: Type, currency1: Type): void
   setAppType(appType: AppType): void
-  setSearch(currency: Type): void
 }
 
 export const SwapStateContext = createContext<State>({} as State)
@@ -180,14 +179,22 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   ])
 
   const api = useMemo(() => {
-    const setNetworks = (chainId: ChainId) =>
+    const setNetworks = (chainId: ChainId) => {
+      const token0 = state.token0.chainId === chainId ? state.token0 : Native.onChain(chainId)
+      const token1 =
+        state.token1.chainId === chainId
+          ? state.token1.isNative
+            ? state.token1.symbol
+            : state.token1.wrapped.address
+          : 'SUSHI'
+
       void push(
         {
           pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
           query: {
             ...query,
-            fromCurrencyId: Native.onChain(chainId).symbol,
-            toCurrencyId: 'SUSHI',
+            fromCurrencyId: token0.isNative ? token0.symbol : token0.wrapped.address,
+            toCurrencyId: token1,
             fromChainId: chainId,
             toChainId: chainId,
           },
@@ -195,6 +202,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         undefined,
         { shallow: true }
       )
+    }
     const setNetwork0 = (chainId: ChainId) =>
       void push(
         {
@@ -269,22 +277,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         { shallow: true }
       )
     }
-    const setSearch = (currency: Type) => {
-      void push(
-        {
-          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
-          query: {
-            ...query,
-            fromChainId: currency.chainId,
-            toChainId: currency.chainId,
-            fromCurrencyId: Native.onChain(currency.chainId).symbol,
-            toCurrencyId: currency.wrapped.address,
-          },
-        },
-        undefined,
-        { shallow: true }
-      )
-    }
     const switchTokens = () =>
       void push(
         {
@@ -327,7 +319,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     const setReview = (value: boolean) => dispatch({ type: 'setReview', value })
 
     return {
-      setSearch,
       setNetworks,
       setNetwork0,
       setNetwork1,

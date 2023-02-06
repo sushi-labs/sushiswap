@@ -14,6 +14,7 @@ import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { Token } from '@sushiswap/currency'
 import { Chain } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/ui13/components/currency'
+import { AppType } from '@sushiswap/ui13/types'
 
 const POPULAR_TOKENS = [
   '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',
@@ -90,14 +91,21 @@ export const SearchPanel: FC = () => {
 }
 
 const Row: FC<{ currency: Token }> = ({ currency }) => {
-  const { setSearch } = useSwapActions()
+  const { token0 } = useSwapState()
+  const { setToken1, setAppType } = useSwapActions()
   const { setOpen } = useSearchContext()
   const { data: price, isLoading } = usePrice({ address: currency.address, chainId: currency.chainId })
 
   const handleClick = useCallback(() => {
-    setSearch(currency)
+    if (token0.chainId !== currency.chainId) {
+      setAppType(AppType.xSwap)
+    } else {
+      setAppType(AppType.Swap)
+    }
+
+    setToken1(currency)
     setOpen(false)
-  }, [currency, setOpen, setSearch])
+  }, [currency, setAppType, setOpen, setToken1, token0.chainId])
 
   if (isLoading) return <RowSkeleton />
 
