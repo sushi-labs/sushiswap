@@ -1,5 +1,5 @@
 {
-  "extends": "@sushiswap/typescript-config/node18-strictest.combined.json",
+  "extends": "@sushiswap/typescript-config/node18-vercel.json",
   "include": ["."],
   "exclude": ["node_modules", ".vercel"]
 }

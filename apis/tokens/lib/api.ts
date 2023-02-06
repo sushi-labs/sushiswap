@@ -1,4 +1,4 @@
-import prisma from '@sushiswap/database'
+import { prisma } from '@sushiswap/database'
 
 export async function getToken(chainId: number, address: string) {
   const token = await prisma.token.findFirstOrThrow({

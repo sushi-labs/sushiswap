@@ -1,6 +1,6 @@
 import prisma from '@sushiswap/database'
 
-import { Currency } from './enums'
+import { Currency } from './enums.js'
 
 /**
  * Get the price of a token
@@ -55,6 +55,4 @@ export async function getPricesByChainId(chainId: number, date: Date, currency: 
     acc[token.address] = currency === Currency.USD ? Number(token.derivedUSD) : Number(token.derivedNative)
     return acc
   }, {} as Record<string, number>)
-
-  
 }

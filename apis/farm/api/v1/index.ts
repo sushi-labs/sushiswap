@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import redis from '../../lib/redis'
+import redis from '../../lib/redis.js'
 
 interface ChainIdFarmMap {
   [key: string]: {
@@ -34,7 +34,7 @@ interface Farm {
   poolType: 'Legacy' | 'Trident' | 'Kashi' | 'Unknown'
 }
 
-export default async (request: VercelRequest, response: VercelResponse) => {
+export default async (_request: VercelRequest, response: VercelResponse) => {
   const data = await redis.hgetall('farms')
 
   if (!data) {
@@ -42,14 +42,14 @@ export default async (request: VercelRequest, response: VercelResponse) => {
   }
 
   return response.status(200).json(
-    Object.entries(data).reduce((previousValue: Farm[], [key, value]: [string, string]) => {
+    Object.values(data).reduce((previousValue: Farm[], value) => {
       const {
         chainId,
         farms,
       }: {
         chainId: number
         farms: FarmsMap
-      } = JSON.parse(value)
+      } = JSON.parse(value as string)
       return [
         ...previousValue,
         ...Object.entries(farms).reduce<Farm[]>(
@@ -65,6 +65,6 @@ export default async (request: VercelRequest, response: VercelResponse) => {
           []
         ),
       ]
-    }, [])
+    }, [] as Farm[])
   )
 }

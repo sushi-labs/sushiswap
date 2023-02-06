@@ -22,7 +22,7 @@
     "@vercel/node": "2.8.2",
     "@wagmi/core": "0.8.10-cjs",
     "lodash.zip": "4.2.0",
-    "node-fetch": "2.6.6",
+    "@whatwg-node/fetch": "latest",
     "zod": "3.20.2"
   },
   "devDependencies": {

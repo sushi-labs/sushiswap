@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { getTokens } from '../../lib/api'
+import { getTokens } from '../../lib/api.js'
 
 const handler = async (_request: VercelRequest, response: VercelResponse) => {
   const tokens = await getTokens()
