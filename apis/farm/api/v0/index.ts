@@ -3,7 +3,7 @@ import { getUnixTime } from 'date-fns'
 
 import redis from '../../lib/redis.js'
 
-export default async (request: VercelRequest, response: VercelResponse) => {
+const handler = async (request: VercelRequest, response: VercelResponse) => {
   const chainId = request.query['chainId'] as string
 
   if (chainId) {
@@ -46,3 +46,5 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     )
   )
 }
+
+export default handler
