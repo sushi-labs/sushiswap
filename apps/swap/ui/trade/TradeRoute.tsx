@@ -88,7 +88,7 @@ const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolT
       <div className="z-[10] col-span-4 flex justify-start items-center">
         <div
           ref={ref}
-          className="relative flex items-center justify-between gap-2 p-2 overflow-hidden bg-white rounded-full dark:bg-slate-800 w-[140px]"
+          className="relative flex items-center justify-between gap-2 p-2 overflow-hidden bg-white rounded-full dark:bg-slate-800 w-[150px]"
         >
           <div
             className="absolute inset-0 rounded-full pointer-events-none bg-blue/20 dark:bg-slate-700"
