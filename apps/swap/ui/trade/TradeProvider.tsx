@@ -70,6 +70,7 @@ type SwapApi = {
   switchTokens(): void
   setTokens(currency0: Type, currency1: Type): void
   setAppType(appType: AppType): void
+  setSearch(currency: Type): void
 }
 
 export const SwapStateContext = createContext<State>({} as State)
@@ -268,6 +269,22 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         { shallow: true }
       )
     }
+    const setSearch = (currency: Type) => {
+      void push(
+        {
+          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
+          query: {
+            ...query,
+            fromChainId: currency.chainId,
+            toChainId: currency.chainId,
+            fromCurrencyId: Native.onChain(currency.chainId).symbol,
+            toCurrencyId: currency.wrapped.address,
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
+    }
     const switchTokens = () =>
       void push(
         {
@@ -310,6 +327,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     const setReview = (value: boolean) => dispatch({ type: 'setReview', value })
 
     return {
+      setSearch,
       setNetworks,
       setNetwork0,
       setNetwork1,

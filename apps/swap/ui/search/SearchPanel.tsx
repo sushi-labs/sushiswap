@@ -90,14 +90,14 @@ export const SearchPanel: FC = () => {
 }
 
 const Row: FC<{ currency: Token }> = ({ currency }) => {
-  const { setToken1 } = useSwapActions()
+  const { setSearch } = useSwapActions()
   const { setOpen } = useSearchContext()
   const { data: price, isLoading } = usePrice({ address: currency.address, chainId: currency.chainId })
 
   const handleClick = useCallback(() => {
-    setToken1(currency)
+    setSearch(currency)
     setOpen(false)
-  }, [currency, setOpen, setToken1])
+  }, [currency, setOpen, setSearch])
 
   if (isLoading) return <RowSkeleton />
 
