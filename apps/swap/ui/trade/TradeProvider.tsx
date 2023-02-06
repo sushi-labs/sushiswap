@@ -203,34 +203,48 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         { shallow: true }
       )
     }
-    const setNetwork0 = (chainId: ChainId) =>
+    const setNetwork0 = (chainId: ChainId) => {
+      const token0 =
+        state.token0.chainId === chainId
+          ? state.token0.isNative
+            ? state.token0.symbol
+            : state.token0.wrapped.address
+          : Native.onChain(chainId).symbol
+
       void push(
         {
           pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
           query: {
             ...query,
-            fromCurrencyId: Native.onChain(chainId).symbol,
-            toCurrencyId: 'SUSHI',
+            fromCurrencyId: token0,
             fromChainId: chainId,
           },
         },
         undefined,
         { shallow: true }
       )
-    const setNetwork1 = (chainId: ChainId) =>
+    }
+    const setNetwork1 = (chainId: ChainId) => {
+      const token1 =
+        state.token1.chainId === chainId
+          ? state.token1.isNative
+            ? state.token1.symbol
+            : state.token1.wrapped.address
+          : 'SUSHI'
+
       void push(
         {
           pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
           query: {
             ...query,
-            fromCurrencyId: Native.onChain(chainId).symbol,
-            toCurrencyId: 'SUSHI',
+            toCurrencyId: token1,
             toChainId: chainId,
           },
         },
         undefined,
         { shallow: true }
       )
+    }
     const setTokens = (currency0: Type, currency1: Type) => {
       void push(
         {
@@ -331,7 +345,15 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setTokens,
       setAppType,
     }
-  }, [push, query])
+  }, [
+    push,
+    query,
+    state.token0,
+    state.token1.chainId,
+    state.token1.isNative,
+    state.token1.symbol,
+    state.token1.wrapped.address,
+  ])
 
   useEffect(() => {
     if (isConnected) {
