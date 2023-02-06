@@ -11,6 +11,7 @@ import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 import { classNames } from '@sushiswap/ui13'
 import { warningSeverity, warningSeverityClassName } from '../../lib/warningSeverity'
 import { TradeRoute } from './TradeRoute'
+import { ZERO } from '@sushiswap/math'
 
 export const TradeStats: FC = () => {
   const [open, setOpen] = useState(false)
@@ -51,7 +52,8 @@ export const TradeStats: FC = () => {
             {isLoading ? (
               <Skeleton.Box className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
-              `-${trade?.priceImpact?.toFixed(2)}%` ?? 'N/A'
+              `${trade?.priceImpact?.lessThan(ZERO) ? '+' : '-'}${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%` ??
+              'N/A'
             )}
           </span>
         </div>
