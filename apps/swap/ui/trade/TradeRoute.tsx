@@ -8,7 +8,9 @@ import { Dialog } from '@sushiswap/ui13/components/dialog'
 const tokenFromRToken = (token: TradeLegType['tokenFrom']) => {
   if (token.address === '' || !token.address) return Native.onChain(Number(token.chainId))
   // TODO: move this to api, it should return a number?
-  const chainId = token.chainId.toString().startsWith('Bento ') ? Number(token.chainId.toString().split(' ')[1]) : Number(token.chainId)
+  const chainId = token.chainId.toString().startsWith('Bento ')
+    ? Number(token.chainId.toString().split(' ')[1])
+    : Number(token.chainId)
   return new Token({
     address: token.address,
     symbol: token.symbol,
@@ -86,7 +88,7 @@ const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolT
       <div className="z-[10] col-span-4 flex justify-start items-center">
         <div
           ref={ref}
-          className="relative flex items-center justify-between gap-2 p-2 overflow-hidden bg-white rounded-full dark:bg-slate-800"
+          className="relative flex items-center justify-between gap-2 p-2 overflow-hidden bg-white rounded-full dark:bg-slate-800 w-[140px]"
         >
           <div
             className="absolute inset-0 rounded-full pointer-events-none bg-blue/20 dark:bg-slate-700"
@@ -94,7 +96,7 @@ const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolT
           />
           <div className="z-[10] flex items-center gap-1">
             <Currency.Icon disableLink currency={fromToken} width={16} height={16} />
-            <span className="text-xs font-semibold text-gray-900 dark:text-slate-50">{fromToken.symbol}</span>
+            <span className="text-xs font-semibold text-gray-900 dark:text-slate-50 truncate">{fromToken.symbol}</span>
           </div>
           <span className="text-xs font-semibold z-[10] text-gray-900 dark:text-slate-50">
             {Number(portion * 100).toFixed(2)}%
@@ -102,7 +104,7 @@ const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolT
         </div>
       </div>
       <div className="z-[10] col-span-3 flex justify-center items-center">
-        <span className="flex items-center h-8 px-2 text-xs font-semibold text-gray-900 bg-white rounded-lg whitespace-nowrap dark:bg-slate-800 dark:text-slate-400">
+        <span className="truncate flex items-center h-5 px-1.5 text-[10px] font-semibold text-gray-900 bg-white rounded-lg whitespace-nowrap dark:bg-slate-800 dark:text-slate-400">
           {title}
         </span>
       </div>
