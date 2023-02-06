@@ -2,6 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 
 import { DAI, FRAX, LUSD, MAI, MIM, OP, SUSHI, UNI, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants'
 import { Native } from './Native'
+import { Token } from './Token'
 import { Type } from './Type'
 
 const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
@@ -55,6 +56,13 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     BOBA: Native.onChain(ChainId.BOBA_BNB),
     WBOBA: WNATIVE[ChainId.BOBA_BNB],
     USDC: USDC[ChainId.BOBA_BNB],
+    BNB: new Token({
+      chainId: ChainId.BOBA_BNB,
+      symbol: 'BNB',
+      name: 'Binance Coin',
+      decimals: 18,
+      address: '0x4200000000000000000000000000000000000023',
+    }),
     // SUSHI: SUSHI[ChainId.BOBA_BNB],
   },
   [ChainId.BSC]: {

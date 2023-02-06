@@ -238,6 +238,7 @@ importers:
       '@swc/core': 1.3.26
       '@swc/helpers': 0.4.14
       '@types/node-fetch': 2.x
+      '@wagmi/core': 0.8.10-cjs
       dotenv: 16.0.3
       eslint: 8.29.0
       ethers: 5.7.2
@@ -254,6 +255,7 @@ importers:
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/router': link:../../packages/router
+      '@wagmi/core': 0.8.10-cjs_x2ezj3xegecdemsw4hlmllv4lu
       ethers: 5.7.2
       fastify: 4.11.0
       node-fetch: 2.6.7
@@ -12174,6 +12176,39 @@ packages:
       '@wagmi/chains': 0.1.7-cjs
       '@wagmi/connectors': 0.1.3-cjs_mtypdhtr7z4hhyyfdywbg6ixae
       abitype: 0.2.5_typescript@4.9.4
+      ethers: 5.7.2
+      eventemitter3: 4.0.7
+      zustand: 4.1.5
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@react-native-async-storage/async-storage'
+      - bufferutil
+      - debug
+      - encoding
+      - immer
+      - lokijs
+      - react
+      - supports-color
+      - typescript
+      - utf-8-validate
+      - zod
+    dev: false
+
+  /@wagmi/core/0.8.10-cjs_x2ezj3xegecdemsw4hlmllv4lu:
+    resolution: {integrity: sha512-yy6RMKvuAFIer5xm3s1mQDI8z0dezg8cDLGZrWgKsZMfNk3cC7Lb4qmDgygLYsuWpxqo4HLFzUNfHI5Eq2OFpQ==}
+    peerDependencies:
+      '@coinbase/wallet-sdk': '>=3.6.0'
+      '@walletconnect/ethereum-provider': '>=1.7.5'
+      ethers: '>=5.5.1'
+    peerDependenciesMeta:
+      '@coinbase/wallet-sdk':
+        optional: true
+      '@walletconnect/ethereum-provider':
+        optional: true
+    dependencies:
+      '@wagmi/chains': 0.1.7-cjs
+      '@wagmi/connectors': 0.1.3-cjs_mtypdhtr7z4hhyyfdywbg6ixae
+      abitype: 0.2.5_4umapwpw55xijlh2mknjgcn4rq
       ethers: 5.7.2
       eventemitter3: 4.0.7
       zustand: 4.1.5

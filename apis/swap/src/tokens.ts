@@ -7,9 +7,19 @@ import {
   isShortCurrencyNameSupported,
   Token,
 } from '@sushiswap/currency'
-import { getAddress } from 'ethers/lib/utils'
+import { configureChains, createClient } from '@wagmi/core'
+import { getAddress, isAddress } from 'ethers/lib/utils'
 import fetch from 'node-fetch'
 import { z } from 'zod'
+
+import { allChains } from './chains'
+import { allProviders } from './providers'
+
+const { provider } = configureChains(allChains, allProviders)
+createClient({
+  autoConnect: true,
+  provider,
+})
 
 const tokenSchema = z.object({
   address: z.coerce.string().transform((address) => address.toLowerCase()),
@@ -60,10 +70,15 @@ export async function getToken(chainId: ChainId, tokenId: string) {
 
   // console.log({ isShortNameSupported, tokenIdIsShortName, tokenId })
 
-  return isShortNameSupported && tokenIdIsShortName
-    ? currencyFromShortCurrencyName(chainId, tokenId)
-    : new Token({
-        chainId,
-        ...(await fetcher(chainId, tokenId)),
-      })
+  if (isShortNameSupported && tokenIdIsShortName) return currencyFromShortCurrencyName(chainId, tokenId)
+
+  if (!isAddress(tokenId)) throw new Error(`Invalid token address: ${tokenId}`)
+
+  // Fallback?
+  // const { address, decimals, name, symbol } = await fetchToken({ address: getAddress(tokenId), chainId })
+
+  return new Token({
+    chainId,
+    ...(await fetcher(chainId, tokenId)),
+  })
 }
