@@ -6,9 +6,10 @@ interface Collapsible {
   open: boolean
   children: ReactNode
   className?: string
+  afterChange?: () => void
 }
 
-export const Collapsible: FC<Collapsible> = ({ className, open, children }) => {
+export const Collapsible: FC<Collapsible> = ({ className, open, children, afterChange }) => {
   const { ref, height } = useResizeObserver()
 
   const props = useSpring({
@@ -20,6 +21,7 @@ export const Collapsible: FC<Collapsible> = ({ className, open, children }) => {
       clamp: true,
       velocity: 0.01,
     },
+    onRest: afterChange,
   })
 
   return (

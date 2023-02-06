@@ -15,10 +15,17 @@ export const NetworkCheck: FC = () => {
 
   // Delay couple seconds
   useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout> | undefined = undefined
     if (Boolean(isMounted && chain && network0 !== chain.id)) {
-      setTimeout(() => setOpen(true), 1500)
+      timeout = setTimeout(() => setOpen(true), 1500)
     } else {
       setOpen(false)
+    }
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout)
+      }
     }
   }, [chain, isMounted, network0])
 

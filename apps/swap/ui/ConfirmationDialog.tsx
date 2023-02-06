@@ -11,8 +11,6 @@ import { FC, ReactNode, useCallback, useState } from 'react'
 
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
 import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
-
-import { ChainId } from '@sushiswap/chain'
 import { routeProcessorAbi } from '@sushiswap/abi'
 import { useTrade } from '../lib/useTrade'
 import { BigNumber } from 'ethers'
@@ -46,7 +44,7 @@ enum ConfirmationDialogState {
 export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) => {
   const { address } = useAccount()
   const { setReview } = useSwapActions()
-  const { appType, network0, network1, token0, token1, review } = useSwapState()
+  const { appType, network0, token0, token1, review } = useSwapState()
   const { data: trade } = useTrade()
   const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
   const { refetch: refetchNetwork1Balances } = useBalances({ account: address, chainId: network0 })
@@ -61,7 +59,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     abi: routeProcessorAbi,
     functionName: 'processRoute',
     args: trade?.writeArgs,
-    enabled: Boolean(trade?.writeArgs) && network0 === network1,
+    enabled: Boolean(trade?.writeArgs) && appType === AppType.Swap,
     overrides: token0.isNative && trade?.writeArgs?.[1] ? { value: BigNumber.from(trade?.writeArgs?.[1]) } : undefined,
   })
 
@@ -193,11 +191,11 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 <h1 className="flex flex-wrap justify-center gap-1 font-semibold text-lg items-center">
                   You {isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'}
                   <span className="text-red px-0.5">
-                    {trade?.amountIn?.toSignificant(6)} {token1.symbol}
+                    {trade?.amountIn?.toSignificant(6)} {token0.symbol}
                   </span>{' '}
                   {isWrap ? 'to' : isUnwrap ? 'to' : 'for'}{' '}
                   <span className="text-blue px-0.5">
-                    {trade?.amountOut?.toSignificant(6)} {token0.symbol}.
+                    {trade?.amountOut?.toSignificant(6)} {token1.symbol}.
                   </span>
                 </h1>
               ) : (

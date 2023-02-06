@@ -3,12 +3,12 @@
 import { ChainId } from '@sushiswap/chain'
 import {
   Amount,
+  currencyFromShortCurrencyName,
+  isShortCurrencyName,
   Native,
   SUSHI,
   tryParseAmount,
   Type,
-  isShortCurrencyName,
-  currencyFromShortCurrencyName,
 } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
 import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, useReducer } from 'react'
@@ -61,6 +61,7 @@ type State = InternalSwapState & SwapState
 type SwapApi = {
   setReview(value: boolean): void
   setRecipient(recipient: string): void
+  setNetworks(chainId: ChainId): void
   setNetwork0(chainId: ChainId): void
   setNetwork1(chainId: ChainId): void
   setToken0(currency: Type): void
@@ -178,6 +179,21 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   ])
 
   const api = useMemo(() => {
+    const setNetworks = (chainId: ChainId) =>
+      void push(
+        {
+          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
+          query: {
+            ...query,
+            fromCurrencyId: Native.onChain(chainId).symbol,
+            toCurrencyId: 'SUSHI',
+            fromChainId: chainId,
+            toChainId: chainId,
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
     const setNetwork0 = (chainId: ChainId) =>
       void push(
         {
@@ -294,6 +310,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     const setReview = (value: boolean) => dispatch({ type: 'setReview', value })
 
     return {
+      setNetworks,
       setNetwork0,
       setNetwork1,
       setToken0,
@@ -311,11 +328,19 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     if (isConnected) {
       const unwatch = watchNetwork(({ chain }) => {
         if (chain) {
-          api.setNetwork0(chain.id)
+          if (state.appType === AppType.Swap) {
+            api.setNetworks(chain.id)
+          }
+
+          if (state.appType === AppType.xSwap) {
+            api.setNetwork0(chain.id)
+          }
         }
       })
       return () => unwatch()
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, api])
 
   return (
