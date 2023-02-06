@@ -29,6 +29,8 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
   [ChainId.AVALANCHE]: {
     // NATIVE: Native.onChain(ChainId.AVALANCHE),
     // WNATIVE: WNATIVE[ChainId.AVALANCHE],
+    AVAX: Native.onChain(ChainId.AVALANCHE),
+    WAVAX: WNATIVE[ChainId.AVALANCHE],
     ETH: WETH9[ChainId.AVALANCHE],
     WETH: WETH9[ChainId.AVALANCHE],
     WBTC: WBTC[ChainId.AVALANCHE],
