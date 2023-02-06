@@ -34,37 +34,39 @@ export const SwapButton: FC = () => {
   return (
     <>
       <div className="pt-4">
-        <Checker.Network fullWidth size="xl" chainId={network0}>
-          <Checker.Amounts fullWidth size="xl" chainId={network0} amounts={[amount]}>
-            <Checker.ApproveERC20
-              id="approve-erc20"
-              fullWidth
-              size="xl"
-              amount={amount}
-              contract={getRouteProcessorAddressForChainId(network0)}
-            >
-              <Button
-                disabled={
-                  Boolean(isLoading && +value > 0) ||
-                  isFetching ||
-                  (!checked && warningSeverity(trade?.priceImpact) >= 3)
-                }
-                color={!checked && warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+        <Checker.Connect fullWidth size="xl" color="blue" variant="filled">
+          <Checker.Network fullWidth size="xl" chainId={network0}>
+            <Checker.Amounts fullWidth size="xl" chainId={network0} amounts={[amount]}>
+              <Checker.ApproveERC20
+                id="approve-erc20"
                 fullWidth
                 size="xl"
-                onClick={() => setReview(true)}
+                amount={amount}
+                contract={getRouteProcessorAddressForChainId(network0)}
               >
-                {!checked && warningSeverity(trade?.priceImpact) >= 3
-                  ? 'Price impact too high'
-                  : isWrap
-                  ? 'Wrap'
-                  : isUnwrap
-                  ? 'Unwrap'
-                  : 'Swap'}
-              </Button>
-            </Checker.ApproveERC20>
-          </Checker.Amounts>
-        </Checker.Network>
+                <Button
+                  disabled={
+                    Boolean(isLoading && +value > 0) ||
+                    isFetching ||
+                    (!checked && warningSeverity(trade?.priceImpact) >= 3)
+                  }
+                  color={!checked && warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+                  fullWidth
+                  size="xl"
+                  onClick={() => setReview(true)}
+                >
+                  {!checked && warningSeverity(trade?.priceImpact) >= 3
+                    ? 'Price impact too high'
+                    : isWrap
+                    ? 'Wrap'
+                    : isUnwrap
+                    ? 'Unwrap'
+                    : 'Swap'}
+                </Button>
+              </Checker.ApproveERC20>
+            </Checker.Amounts>
+          </Checker.Network>
+        </Checker.Connect>
       </div>
       {warningSeverity(trade?.priceImpact) >= 3 && (
         <div className="rounded-xl px-4 py-3 bg-red/20 mt-4 flex items-start">
