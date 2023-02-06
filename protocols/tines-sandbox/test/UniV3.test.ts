@@ -205,6 +205,17 @@ function expectedPrecision(sqrtPriceX96Before: BigNumber, sqrtPriceX96After: Big
   return 1e-2
 }
 
+function checkCalcInByOut(pool: UniV3Pool, amountIn: number, direction: boolean, amountOut: number) {
+  const amounInExpected = pool.calcInByOut(amountOut, direction).inp
+  const amountOutPrediction2 = pool.calcOutByIn(amounInExpected, direction).out
+  expectCloseValues(amountIn, amounInExpected, 1e-12)
+  expectCloseValues(amountOut, amountOutPrediction2, 1e-12)
+  expect(closeValues(amountIn, amounInExpected, 1e-12) || closeValues(amountOut, amountOutPrediction2, 1e-12)).equals(
+    true,
+    'values were not equal'
+  )
+}
+
 async function checkSwap(
   env: Environment,
   pool: PoolInfo,
@@ -250,6 +261,7 @@ async function checkSwap(
     // all input value were swapped to output
     const amounOutTines = pool.tinesPool.calcOutByIn(amountN, direction)
     expectCloseValues(amountOut, amounOutTines.out, precision)
+    checkCalcInByOut(pool.tinesPool, amountN, direction, amounOutTines.out)
   } else {
     // out of liquidity
     expect(amountIn.lt(amountBN)).true

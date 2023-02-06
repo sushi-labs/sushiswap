@@ -200,7 +200,8 @@ export class UniV3Pool extends RPool {
 
     let startFlag = true
     while (outBeforeFee > 0) {
-      if (nextTickToCross < 0 || nextTickToCross >= this.ticks.length) return { inp: input, gasSpent: this.swapGasCost }
+      if (nextTickToCross < 0 || nextTickToCross >= this.ticks.length)
+        return { inp: Number.POSITIVE_INFINITY, gasSpent: this.swapGasCost }
 
       let nextTickPrice, priceDiff
       if (startFlag) {
