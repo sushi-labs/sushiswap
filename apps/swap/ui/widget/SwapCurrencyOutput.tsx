@@ -24,7 +24,7 @@ export const SwapCurrencyOutput: FC = () => {
       disabled
       chainId={network1}
       onSelect={setToken1}
-      value={trade?.amountOut?.toExact() ?? ''}
+      value={trade?.amountOut?.toSignificant() ?? ''}
       currency={token1}
       usdPctChange={usdPctChange}
       loading={Boolean(isLoading && +value > 0) || isFetching}

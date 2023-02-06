@@ -1,20 +1,10 @@
 'use client'
 
-import { Popover } from '@headlessui/react'
-import { ArrowTrendingUpIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
-import { chainName } from '@sushiswap/chain'
-import { Button } from '@sushiswap/ui13/components/button'
-import { NetworkIcon } from '@sushiswap/ui13/components/icons'
-import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui13/components/networkselector'
-import { Tooltip } from '@sushiswap/ui13/components/Tooltip'
-import { AppType } from '@sushiswap/ui13/types'
-import React, { useCallback, useMemo, useState } from 'react'
-
-import { SUPPORTED_CHAIN_IDS } from '../../config'
-import { useSwapActions, useSwapState } from '../trade/TradeProvider'
+import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
+import React, { useMemo, useState } from 'react'
+import { useSwapState } from '../trade/TradeProvider'
 import { usePrice } from '@sushiswap/react-query'
 import { Amount, Price, Token, tryParseAmount } from '@sushiswap/currency'
-import { useBreakpoint } from '@sushiswap/ui13/lib/useBreakpoint'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 import { ZERO } from '@sushiswap/math'
 
