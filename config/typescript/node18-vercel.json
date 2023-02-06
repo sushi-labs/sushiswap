@@ -3,7 +3,9 @@
   "display": "Node 18 + Strictest",
   "extends": "./node18-strictest-esm.combined",
   "compilerOptions": {
-    "moduleResolution": "nodenext"
+    "module": "esnext",
+    "moduleResolution": "nodenext",
+    "allowSyntheticDefaultImports": true
   }
 
 }
