@@ -14,8 +14,7 @@ import { QuickSwapProvider } from './liquidity-providers/QuickSwap'
 import { SpookySwapProvider } from './liquidity-providers/SpookySwap'
 import { SushiProvider } from './liquidity-providers/Sushi'
 import { TraderJoeProvider } from './liquidity-providers/TraderJoe'
-import { TridentClassicProvider } from './liquidity-providers/TridentClassic'
-import { TridentStableProvider } from './liquidity-providers/TridentStable'
+import { TridentProvider } from './liquidity-providers/Trident'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import type { PoolCode } from './pools/PoolCode'
 import { allProviders } from './providers'
@@ -122,23 +121,32 @@ export class DataFetcher {
       }
     }
 
-    if (this._providerIsIncluded(LiquidityProviders.TridentCP, providers)) {
+    if (this._providerIsIncluded(LiquidityProviders.Trident, providers)) {
       try {
-        const provider = new TridentClassicProvider(this.chainId)
+        const provider = new TridentProvider(this.chainId)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
       }
     }
 
-    if (this._providerIsIncluded(LiquidityProviders.TridentStable, providers)) {
-      try {
-        const provider = new TridentStableProvider(this.chainId)
-        this.providers.push(provider)
-      } catch (e: any) {
-        // console.warn(e.message)
-      }
-    }
+    // if (this._providerIsIncluded(LiquidityProviders.TridentCP, providers)) {
+    //   try {
+    //     const provider = new TridentClassicProvider(this.chainId)
+    //     this.providers.push(provider)
+    //   } catch (e: any) {
+    //     // console.warn(e.message)
+    //   }
+    // }
+
+    // if (this._providerIsIncluded(LiquidityProviders.TridentStable, providers)) {
+    //   try {
+    //     const provider = new TridentStableProvider(this.chainId)
+    //     this.providers.push(provider)
+    //   } catch (e: any) {
+    //     // console.warn(e.message)
+    //   }
+    // }
 
     if (this._providerIsIncluded(LiquidityProviders.TraderJoe, providers)) {
       try {

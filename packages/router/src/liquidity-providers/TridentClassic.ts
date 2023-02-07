@@ -17,7 +17,7 @@ interface PoolInfo {
   updatedAtBlock: number
 }
 
-export class TridentClassicProvider extends TridentBase {
+export class TridentCPPProvider extends TridentBase {
   isInitialized = false
   pools: Map<string, PoolInfo> = new Map()
 
@@ -38,7 +38,7 @@ export class TridentClassicProvider extends TridentBase {
   }
 
   getPoolProviderName(): string {
-    return 'Trident'
+    return 'Trident CPP'
   }
 
   async initialize() {
