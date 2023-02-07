@@ -31,6 +31,13 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
     }
   }
 
+  if ('poolVersions' in args && args.poolVersions !== undefined) {
+    where = {
+      version: { in: args.poolVersions },
+      ...where,
+    }
+  }
+
   if ('isIncentivized' in args && args.isIncentivized !== undefined) {
     where = {
       isIncentivized: args.isIncentivized,

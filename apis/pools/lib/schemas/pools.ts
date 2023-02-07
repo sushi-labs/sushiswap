@@ -1,4 +1,4 @@
-import type { PoolType } from '@sushiswap/database'
+import type { PoolType, PoolVersion } from '@sushiswap/database'
 import { z } from 'zod'
 
 export const PoolsApiSchema = z.object({
@@ -38,6 +38,10 @@ export const PoolsApiSchema = z.object({
   poolTypes: z
     .string()
     .transform((poolTypes) => poolTypes?.split(',') as PoolType[])
+    .optional(),
+  poolVersions: z
+    .string()
+    .transform((poolVersions) => poolVersions?.split(',') as PoolVersion[])
     .optional(),
   cursor: z.string().optional(),
   orderBy: z.string().default('liquidityUSD'),
