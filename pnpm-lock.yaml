@@ -156,7 +156,7 @@ importers:
       eslint: 8.29.0
       ioredis: 5.2.4
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.15.0
     dependencies:
       '@vercel/node': 2.8.2
       date-fns: 2.29.3
@@ -168,7 +168,7 @@ importers:
       '@sushiswap/typescript-config': link:../../config/typescript
       eslint: 8.29.0
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.15.0
 
   apis/incentives:
     specifiers:
@@ -290,7 +290,7 @@ importers:
       '@vercel/node': ^2.2.0
       eslint: 8.29.0
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.15.0
     dependencies:
       '@sushiswap/chainlink-token-list': 0.1.0
       '@sushiswap/default-token-list': 39.8.0
@@ -302,7 +302,7 @@ importers:
       '@sushiswap/typescript-config': link:../../config/typescript
       eslint: 8.29.0
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.15.0
 
   apis/token-price:
     specifiers:
@@ -318,7 +318,7 @@ importers:
       eslint: 8.29.0
       ioredis: 5.2.4
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.15.0
       zod: 3.20.2
     dependencies:
       '@sushiswap/chain': link:../../packages/chain
@@ -335,7 +335,7 @@ importers:
       '@types/node': 18.11.18
       eslint: 8.29.0
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.15.0
 
   apis/tokens:
     specifiers:
