@@ -34,6 +34,7 @@
     "./node14.json",
     "./node16.json",
     "./node18-strictest-esm.combined.json",
+    "./node18-vercel.json",
     "./react-library.json"
   ]
 }
