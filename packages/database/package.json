@@ -14,8 +14,8 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "type": "module",
+  "module": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
   "files": [
@@ -23,7 +23,7 @@
   ],
   "scripts": {
     "prebuild": "npm run db:generate",
-    "build": "tsup src/index.ts --format esm,cjs --dts --external prisma/client",
+    "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "db:generate": "prisma generate",

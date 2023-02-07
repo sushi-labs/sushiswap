@@ -1,8 +1,8 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
-import { ChainId } from '@sushiswap/chain'
-import { client,Prisma, Token } from '@sushiswap/database'
+import type { ChainId } from '@sushiswap/chain'
+import { client, Prisma, Token } from '@sushiswap/database/dist/index.js'
 import { calcTokenPrices, ConstantProductRPool } from '@sushiswap/tines'
 import { performance } from 'perf_hooks'
 
@@ -89,7 +89,8 @@ async function getPools(chainId: ChainId) {
     } else {
       result = await getPoolsByPagination(chainId, batchSize, 1, { id: cursor })
     }
-    cursor = result.length == batchSize ? result[result.length - 1].id : null
+
+    cursor = result.length == batchSize ? result[result.length - 1]?.id : null
     totalCount += result.length
     results.push(result)
     const requestEndTime = performance.now()
@@ -114,8 +115,6 @@ async function getPoolsByPagination(
 ): Promise<Pool[]> {
   return client.pool.findMany({
     take,
-    skip,
-    cursor,
     select: {
       id: true,
       address: true,

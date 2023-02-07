@@ -1,4 +1,4 @@
-import { client, Prisma } from '@sushiswap/database'
+import { client, Prisma } from '@sushiswap/database/dist/index.js'
 
 /**
  * Filters token incentives to only include the ones that are new or have changed.
@@ -6,9 +6,7 @@ import { client, Prisma } from '@sushiswap/database'
  * @param incentives
  * @returns
  */
-export async function filterIncentives(
-  incentives: Prisma.IncentiveCreateManyInput[]
-): Promise<{
+export async function filterIncentives(incentives: Prisma.IncentiveCreateManyInput[]): Promise<{
   incentivesToCreate: Prisma.IncentiveCreateManyInput[]
   incentivesToUpdate: Prisma.IncentiveCreateManyInput[]
 }> {

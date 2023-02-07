@@ -1,7 +1,7 @@
 import '../lib/wagmi.js'
 
 import { ChainId } from '@sushiswap/chain'
-import { client, Prisma } from '@sushiswap/database'
+import { client, Prisma } from '@sushiswap/database/dist/index.js'
 import { readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 

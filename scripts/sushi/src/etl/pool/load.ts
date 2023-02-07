@@ -1,4 +1,4 @@
-import { client, Prisma } from '@sushiswap/database'
+import { client, Prisma } from '@sushiswap/database/dist/index.js'
 import { performance } from 'perf_hooks'
 
 export async function createPools(pools: Prisma.PoolCreateManyInput[]) {

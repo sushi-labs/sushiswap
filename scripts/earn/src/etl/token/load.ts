@@ -1,4 +1,4 @@
-import { client, Prisma } from '@sushiswap/database'
+import { client, Prisma } from '@sushiswap/database/dist/index.js'
 
 export async function createTokens(tokens: Prisma.TokenCreateManyInput[]) {
   if (tokens.length === 0) {

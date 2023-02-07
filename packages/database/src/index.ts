@@ -29,10 +29,10 @@ if (process.env['NODE_ENV'] === 'production') {
 const redis = new Redis(process.env['REDIS_URL'])
 
 const cacheMiddleware = createPrismaRedisCache({
-  models: [{ model: 'Token', cacheTime: 900 }, { model: 'Incentive', cacheTime: 180 }],
+  models: [{ model: 'Token', cacheTime: 900 }, { model: 'Incentive', cacheTime: 180 }, { model: 'Pool', cacheTime: 24 * 60 * 60}],
   storage: {
     type: 'redis',
-    options: { client: redis, invalidation: { referencesTTL: 900 } },
+    options: { client: redis },
   },
   cacheTime: 900,
   onHit: (key: string) => {
@@ -41,10 +41,16 @@ const cacheMiddleware = createPrismaRedisCache({
   onMiss: (key: string) => {
     console.log('Miss: ❌', key)
   },
+  onDedupe: (key: string) => {
+    console.log('Dedupe: 🤔', key)
+  },
+  onError: (key: string) => {
+    console.log('Error: 🚨', key)
+  }
 })
 
 client.$use(cacheMiddleware)
 
 export default client as PrismaClient
-export type { Prisma, PrismaClient } from '@prisma/client'
+export { Prisma, PrismaClient } from '@prisma/client'
 export * from '@prisma/client'
