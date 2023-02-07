@@ -1,4 +1,5 @@
-import { chainName, chainShortName } from '@sushiswap/chain'
+// @ts-nocheck
+import { ChainId, chainName, chainShortName } from '@sushiswap/chain'
 import {
   SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
@@ -13,6 +14,14 @@ import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
 import { TridentTypes } from '../../.graphclient/sources/Trident/types'
 import { page } from '../../lib/page'
 
+const BLACKLIST = {
+  [ChainId.ARBITRUM]: ['0xeba61eb686b515fae79a96118f140924a634ab23'],
+}
+
+// An empty array breaks it
+const getBlacklist = (chainId: ChainId, id_not_in?: string[]) =>
+  BLACKLIST[chainId] ? [...(id_not_in ?? []), ...BLACKLIST[chainId]] : id_not_in
+
 export const _tokensByChainIds = async (
   root = {},
   args: QuerytokensByChainIdsArgs,
@@ -23,11 +32,17 @@ export const _tokensByChainIds = async (
   return Promise.all<Query['tokensByChainIds'][]>([
     ...args.chainIds
       .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
-      .map((chainId: typeof TRIDENT_ENABLED_NETWORKS[number]) =>
+      .map((chainId: (typeof TRIDENT_ENABLED_NETWORKS)[number]) =>
         context.Trident.Query.tokens({
           root,
           // @ts-ignore
-          args,
+          args: {
+            ...args,
+            where: {
+              ...args.where,
+              id_not_in: getBlacklist(chainId, args?.where?.id_not_in),
+            },
+          },
           context: {
             ...context,
             // @ts-ignore
@@ -58,11 +73,17 @@ export const _tokensByChainIds = async (
       ),
     ...args.chainIds
       .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
-      .map((chainId: typeof SUSHISWAP_ENABLED_NETWORKS[number]) =>
+      .map((chainId: (typeof SUSHISWAP_ENABLED_NETWORKS)[number]) =>
         context.SushiSwap.Query.tokens({
           root,
           // @ts-ignore
-          args,
+          args: {
+            ...args,
+            where: {
+              ...args.where,
+              id_not_in: getBlacklist(chainId, args?.where?.id_not_in),
+            },
+          },
           context: {
             ...context,
             // @ts-ignore

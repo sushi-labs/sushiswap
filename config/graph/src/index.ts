@@ -176,7 +176,7 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
 export const SUSHISWAP_SUBGRAPH_NAME = {
   [ChainId.ETHEREUM]: 'sushi-0m/sushiswap-ethereum-v2',
   [ChainId.AVALANCHE]: 'sushi-0m/sushiswap-avalanche',
-  [ChainId.ARBITRUM]: 'sushi-0m/sushiswap-arbitrum',
+  [ChainId.ARBITRUM]: 'sushi-v2/sushiswap-arbitrum',
   [ChainId.BSC]: 'sushi-0m/sushiswap-bsc',
   [ChainId.CELO]: 'sushi-0m/sushiswap-celo',
   [ChainId.FANTOM]: 'sushi-0m/sushiswap-fantom',
@@ -200,7 +200,7 @@ export const TRIDENT_SUBGRAPH_NAME = {
   [ChainId.BTTC]: 'sushi-qa/trident-bttc',
   [ChainId.ARBITRUM]: 'sushi-v2/trident-arbitrum',
   [ChainId.BSC]: 'sushi-qa/trident-bsc',
-  [ChainId.AVALANCHE]: 'sushi-qa/trident-avalanche',
+  [ChainId.AVALANCHE]: 'sushi-v2/trident-avalanche',
 } as const
 
 export const TRIDENT_SUBGRAPH_START_BLOCK: Record<keyof typeof TRIDENT_SUBGRAPH_NAME, number> = {

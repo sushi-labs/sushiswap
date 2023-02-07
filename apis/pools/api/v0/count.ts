@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 
 import type { PoolType } from '../../lib'
-import { getPools } from '../../lib/api'
+import { getPoolCount } from '../../lib/api'
 
 const schema = z.object({
   chainIds: z
@@ -37,9 +37,6 @@ const schema = z.object({
     .string()
     .optional()
     .transform((poolTypes) => poolTypes?.split(',') as PoolType[]),
-  cursor: z.string().optional(),
-  orderBy: z.string().default('liquidityUSD'),
-  orderDir: z.enum(['asc', 'desc']).default('desc'),
 })
 
 const handler = async (_request: VercelRequest, response: VercelResponse) => {
@@ -48,9 +45,9 @@ const handler = async (_request: VercelRequest, response: VercelResponse) => {
     return response.status(400).json(result.error.format())
   }
 
-  const { chainIds, isIncentivized, isWhitelisted, poolTypes, cursor, orderBy, orderDir } = result.data
-  const pools = await getPools({ chainIds, isIncentivized, isWhitelisted, poolTypes, cursor, orderBy, orderDir })
-  return response.status(200).json(pools)
+  const { chainIds, isIncentivized, isWhitelisted, poolTypes } = result.data
+  const count = await getPoolCount({ chainIds, isIncentivized, isWhitelisted, poolTypes })
+  return response.status(200).json({ count })
 }
 
 export default handler

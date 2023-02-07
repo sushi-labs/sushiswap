@@ -190,6 +190,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
               </Approve.Components>
             }
             render={({ approved }) => {
+              // console.log({ approved, isWritePending })
               return (
                 <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
