@@ -93,10 +93,6 @@ importers:
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@vercel/node': 2.8.2
       '@wagmi/core': 0.8.10-cjs_4umapwpw55xijlh2mknjgcn4rq
-<<<<<<< HEAD
-=======
-      '@whatwg-node/fetch': 0.7.0_@types+node@18.11.18
->>>>>>> 861e2838b (fix: apis)
       lodash.zip: 4.2.0
       node-fetch: 2.6.6
       zod: 3.20.2
@@ -134,10 +130,6 @@ importers:
       '@sushiswap/chain': link:../../packages/chain
       '@vercel/node': 2.8.2
       '@wagmi/core': 0.8.10-cjs_4umapwpw55xijlh2mknjgcn4rq
-<<<<<<< HEAD
-=======
-      '@whatwg-node/fetch': 0.7.0_@types+node@18.11.18
->>>>>>> 861e2838b (fix: apis)
       lodash.zip: 4.2.0
       node-fetch: 2.6.6
       zod: 3.20.2
@@ -260,10 +252,6 @@ importers:
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/router': link:../../packages/router
-<<<<<<< HEAD
-=======
-      '@whatwg-node/fetch': 0.7.0
->>>>>>> 861e2838b (fix: apis)
       ethers: 5.7.2
       fastify: 4.11.0
       node-fetch: 2.6.7
@@ -2046,38 +2034,6 @@ importers:
       tsup: 6.5.0_z6wznmtyb6ovnulj6iujpct7um
       typescript: 4.9.4
 
-<<<<<<< HEAD
-=======
-  packages/client:
-    specifiers:
-      '@sushiswap/chain': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/pools-api': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@types/node': ^16.0.0
-      '@whatwg-node/fetch': latest
-      eslint: 8.29.0
-      tslib: latest
-      tsup: 6.5.0
-      typescript: 4.9.4
-    dependencies:
-      '@sushiswap/chain': link:../chain
-      '@whatwg-node/fetch': 0.7.0_@types+node@16.18.11
-      tslib: 2.5.0
-    devDependencies:
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/pools-api': link:../../apis/pools
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/typescript-config': link:../../config/typescript
-      '@types/node': 16.18.11
-      eslint: 8.29.0
-      tsup: 6.5.0_typescript@4.9.4
-      typescript: 4.9.4
-
->>>>>>> 861e2838b (fix: apis)
   packages/convert:
     specifiers:
       '@sushiswap/currency': workspace:*
@@ -13092,34 +13048,11 @@ packages:
       - '@types/node'
     dev: false
 
-  /@whatwg-node/fetch/0.7.0:
-    resolution: {integrity: sha512-0nmiUgHA9lSBcPQS0Eq9DACsdGa2W9gJUnN+Ul1vVhQsL3dnOAIGTs4uTiVC/W7bcfxTMP+TRFxngxS40aO5Nw==}
+  /@whatwg-node/fetch/0.6.9_@types+node@18.11.18:
+    resolution: {integrity: sha512-JfrBCJdMu9n9OARc0e/hPHcD98/8Nz1CKSdGYDg6VbObDkV/Ys30xe5i/wPOatYbxuvatj1kfWeHf7iNX3i17w==}
     dependencies:
       '@peculiar/webcrypto': 1.4.1
-      '@whatwg-node/node-fetch': 0.0.6
-      busboy: 1.6.0
-      urlpattern-polyfill: 6.0.2
-      web-streams-polyfill: 3.2.1
-    transitivePeerDependencies:
-      - '@types/node'
-
-  /@whatwg-node/fetch/0.7.0_@types+node@16.18.11:
-    resolution: {integrity: sha512-0nmiUgHA9lSBcPQS0Eq9DACsdGa2W9gJUnN+Ul1vVhQsL3dnOAIGTs4uTiVC/W7bcfxTMP+TRFxngxS40aO5Nw==}
-    dependencies:
-      '@peculiar/webcrypto': 1.4.1
-      '@whatwg-node/node-fetch': 0.0.6_@types+node@16.18.11
-      busboy: 1.6.0
-      urlpattern-polyfill: 6.0.2
-      web-streams-polyfill: 3.2.1
-    transitivePeerDependencies:
-      - '@types/node'
-    dev: false
-
-  /@whatwg-node/fetch/0.7.0_@types+node@18.11.18:
-    resolution: {integrity: sha512-0nmiUgHA9lSBcPQS0Eq9DACsdGa2W9gJUnN+Ul1vVhQsL3dnOAIGTs4uTiVC/W7bcfxTMP+TRFxngxS40aO5Nw==}
-    dependencies:
-      '@peculiar/webcrypto': 1.4.1
-      '@whatwg-node/node-fetch': 0.0.6_@types+node@18.11.18
+      '@whatwg-node/node-fetch': 0.0.5_@types+node@18.11.18
       busboy: 1.6.0
       urlpattern-polyfill: 6.0.2
       web-streams-polyfill: 3.2.1
@@ -13172,28 +13105,8 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@whatwg-node/node-fetch/0.0.6:
-    resolution: {integrity: sha512-pFEN2DNk1ZJZjdX9O7FG9qBZ7oIaB8JzOpAUCUditZ25kOSJb0qylq5uR2XUnzngBQCBwT/MHnKq2sXQZp1BUQ==}
-    peerDependencies:
-      '@types/node': ^18.0.6
-    dependencies:
-      '@whatwg-node/events': 0.0.2
-      busboy: 1.6.0
-      tslib: 2.5.0
-
-  /@whatwg-node/node-fetch/0.0.6_@types+node@16.18.11:
-    resolution: {integrity: sha512-pFEN2DNk1ZJZjdX9O7FG9qBZ7oIaB8JzOpAUCUditZ25kOSJb0qylq5uR2XUnzngBQCBwT/MHnKq2sXQZp1BUQ==}
-    peerDependencies:
-      '@types/node': ^18.0.6
-    dependencies:
-      '@types/node': 16.18.11
-      '@whatwg-node/events': 0.0.2
-      busboy: 1.6.0
-      tslib: 2.5.0
-    dev: false
-
-  /@whatwg-node/node-fetch/0.0.6_@types+node@18.11.18:
-    resolution: {integrity: sha512-pFEN2DNk1ZJZjdX9O7FG9qBZ7oIaB8JzOpAUCUditZ25kOSJb0qylq5uR2XUnzngBQCBwT/MHnKq2sXQZp1BUQ==}
+  /@whatwg-node/node-fetch/0.0.5_@types+node@18.11.18:
+    resolution: {integrity: sha512-hbccmaSZaItdsRuBKBEEhLoO+5oXJPxiyd0kG2xXd0Dh3Rt+vZn4pADHxuSiSHLd9CM+S2z4+IxlEGbWUgiz9g==}
     peerDependencies:
       '@types/node': ^18.0.6
     dependencies:
