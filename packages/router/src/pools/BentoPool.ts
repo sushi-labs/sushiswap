@@ -5,7 +5,7 @@ import { HEXer } from '../HEXer'
 import { PoolCode } from './PoolCode'
 
 function getPoolTypeTicker(pool: RPool): string {
-  if (pool instanceof ConstantProductRPool) return 'CP'
+  if (pool instanceof ConstantProductRPool) return 'Classic'
   if (pool instanceof StableSwapRPool) return 'Stable'
   return ''
 }

@@ -12,7 +12,7 @@ import { LiquidityProviders } from './LiquidityProvider'
 import { convertTokenToBento, TridentBase } from './TridentBase'
 
 export const BentoBox: Record<string | number, string> = {
-  [ChainId.POLYGON]: '0x0319000133d3AdA02600f0875d2cf03D442C3367'
+  [ChainId.POLYGON]: '0x0319000133d3AdA02600f0875d2cf03D442C3367',
 }
 
 interface PoolInfo {
@@ -31,7 +31,9 @@ export class TridentStableProvider extends TridentBase {
   constructor(chainId: ChainId) {
     super(chainId)
     if (!(chainId in STABLE_POOL_FACTORY_ADDRESS)) {
-      throw new Error(`${this.getType()} cannot be instantiated for chainId ${chainId}, no constant product pool factory address found`)
+      throw new Error(
+        `${this.getType()} cannot be instantiated for chainId ${chainId}, no constant product pool factory address found`
+      )
     }
   }
 

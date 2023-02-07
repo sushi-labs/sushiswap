@@ -10,10 +10,13 @@ export enum LiquidityProviders {
   TridentStable = 'Trident Stable',
   QuickSwap = 'QuickSwap',
   ApeSwap = 'ApeSwap',
+  PancakeSwap = 'PancakeSwap',
+  TraderJoe = 'TraderJoe',
   Dfyn = 'Dfyn',
   Elk = 'Elk',
   JetSwap = 'JetSwap',
   SpookySwap = 'SpookySwap',
+  NetSwap = 'NetSwap',
   NativeWrap = 'NativeWrap',
 }
 
