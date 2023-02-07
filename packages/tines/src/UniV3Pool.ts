@@ -3,6 +3,9 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { CL_MAX_TICK, CL_MIN_TICK, CLTick } from './CLPool'
 import { RPool, RToken, TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST } from './PrimaryPools'
 
+const BASE_GAS_CONSUMPTION = 70_000
+const STEP_GAS_CONSUMPTION = 40_000
+
 const ZERO = BigNumber.from(0)
 const c01 = BigNumber.from('0xfffcb933bd6fad37aa2d162d1a594001')
 const c02 = BigNumber.from('0x100000000000000000000000000000000')
@@ -131,6 +134,7 @@ export class UniV3Pool extends RPool {
     let outAmount = 0
     let input = amountIn * (1 - this.fee)
 
+    let stepCounter = 0
     let startFlag = true
     while (input > 0) {
       if (nextTickToCross < 0 || nextTickToCross >= this.ticks.length) {
@@ -194,10 +198,11 @@ export class UniV3Pool extends RPool {
       }
 
       outAmount += output
+      ++stepCounter
       //console.log('out', outAmount)
     }
 
-    return { out: outAmount, gasSpent: this.swapGasCost } // TODO: more accurate gas prediction
+    return { out: outAmount, gasSpent: BASE_GAS_CONSUMPTION + STEP_GAS_CONSUMPTION * stepCounter } // TODO: more accurate gas prediction
   }
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
@@ -208,11 +213,13 @@ export class UniV3Pool extends RPool {
     let input = 0
     let outBeforeFee = amountOut
 
+    let stepCounter = 0
     let startFlag = true
     while (outBeforeFee > 0) {
       if (nextTickToCross < 0 || nextTickToCross >= this.ticks.length)
         return { inp: Number.POSITIVE_INFINITY, gasSpent: this.swapGasCost }
 
+      ++stepCounter
       let nextTickPrice, priceDiff
       if (startFlag) {
         // Increasing precision at first step only - otherwise its too slow
@@ -261,7 +268,7 @@ export class UniV3Pool extends RPool {
       }
     }
 
-    return { inp: input / (1 - this.fee), gasSpent: this.swapGasCost }
+    return { inp: input / (1 - this.fee), gasSpent: BASE_GAS_CONSUMPTION + STEP_GAS_CONSUMPTION * stepCounter }
   }
 
   calcCurrentPriceWithoutFee(direction: boolean): number {

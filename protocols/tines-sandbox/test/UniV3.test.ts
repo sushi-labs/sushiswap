@@ -242,6 +242,8 @@ function checkPrice(pool: UniV3Pool) {
   expectCloseValues(direction ? price1 : price2, realPrice, 10 / inp)
 }
 
+const counter = new Map<number, [number, number]>()
+
 async function checkSwap(
   env: Environment,
   pool: PoolInfo,
@@ -272,7 +274,8 @@ async function checkSwap(
   const inBalanceBefore = await inToken.balanceOf(env.user.getAddress())
   const outBalanceBefore = await outToken.balanceOf(env.user.getAddress())
   const tickBefore = slotBefore[1]
-  await env.testRouter.swap(pool.contract.address, direction, amountBN)
+  const tr = await env.testRouter.swap(pool.contract.address, direction, amountBN)
+  const rct = await tr.wait()
   const slotAfter = await pool.contract.slot0()
   const tickAfter = slotAfter[1]
   const inBalanceAfter = await inToken.balanceOf(env.user.getAddress())
@@ -286,6 +289,14 @@ async function checkSwap(
   if (amountIn.eq(amountBN)) {
     // all input value were swapped to output
     const amounOutTines = pool.tinesPool.calcOutByIn(amountN, direction)
+    let count: [number, number] | undefined = counter.get(amounOutTines.steps)
+    if (count === undefined) {
+      count = [0, 0]
+      counter.set(amounOutTines.steps, count)
+    }
+    count[0] += 1
+    count[1] += parseInt(rct.gasUsed.toString())
+    console.log('gas:', rct.gasUsed.toString(), 'steps:', amounOutTines.steps)
     expectCloseValues(amountOut, amounOutTines.out, precision)
     checkCalcInByOut(pool.tinesPool, amountN, direction, amounOutTines.out)
     checkPrice(pool.tinesPool)
@@ -515,6 +526,11 @@ describe('Uni V3', () => {
     for (let i = 0; i < 10; ++i) {
       const pool = await createRandomPool(env, 'pool' + i, 100)
       await monkeyTest(env, pool, 'monkey' + i, 100, true)
+      Array.from(counter.entries())
+        .sort((a, b) => a[0] - b[0])
+        .forEach(([k, v]) => {
+          console.log(k, v[0], v[1] / v[0])
+        })
     }
   })
 })
