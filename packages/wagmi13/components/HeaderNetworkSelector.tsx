@@ -10,7 +10,10 @@ import { useBreakpoint } from '@sushiswap/ui13/lib/useBreakpoint'
 import React, { FC, useCallback } from 'react'
 import { ProviderRpcError, useNetwork, UserRejectedRequestError, useSwitchNetwork } from 'wagmi'
 
-export const HeaderNetworkSelector: FC<{ networks: ChainId[] }> = ({ networks }) => {
+export const HeaderNetworkSelector: FC<{ networks: ChainId[]; selectedNetwork?: ChainId }> = ({
+  networks,
+  selectedNetwork,
+}) => {
   const { switchNetworkAsync } = useSwitchNetwork()
   const { chain } = useNetwork()
   const { isSm } = useBreakpoint('sm')
@@ -32,7 +35,7 @@ export const HeaderNetworkSelector: FC<{ networks: ChainId[] }> = ({ networks })
     [switchNetworkAsync]
   )
 
-  const selected = chain?.id || ChainId.ETHEREUM
+  const selected = chain?.id || selectedNetwork || ChainId.ETHEREUM
 
   return (
     <NetworkSelector

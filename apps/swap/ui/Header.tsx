@@ -9,9 +9,13 @@ import { SUPPORTED_CHAIN_IDS } from '../config'
 import { Search } from './search/SearchProvider'
 import { AppearOnMount } from '@sushiswap/ui13/components/animation'
 import { useAutoConnect } from '@sushiswap/wagmi13'
+import { useRouter } from 'next/router'
+import { queryParamsSchema } from './trade/TradeProvider'
 
 export const Header: FC = () => {
   const { isAutoConnecting } = useAutoConnect()
+  const { query } = useRouter()
+  const { fromChainId } = queryParamsSchema.parse(query)
 
   return (
     <Search>
@@ -22,7 +26,7 @@ export const Header: FC = () => {
           ) : (
             <AppearOnMount className="flex gap-2">
               <Search.Button />
-              <HeaderNetworkSelector networks={SUPPORTED_CHAIN_IDS} />
+              <HeaderNetworkSelector networks={SUPPORTED_CHAIN_IDS} selectedNetwork={fromChainId} />
               <UserProfile networks={SUPPORTED_CHAIN_IDS} />
             </AppearOnMount>
           )
