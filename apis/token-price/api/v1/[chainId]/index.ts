@@ -2,8 +2,8 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { roundToNearestMinutes, sub } from 'date-fns'
 import { z } from 'zod'
 
-import { getPricesByChainId } from '../../../lib/api'
-import { Currency } from '../../../lib/enums'
+import { getPricesByChainId } from '../../../lib/api.js'
+import { Currency } from '../../../lib/enums.js'
 
 const schema = z.object({
   chainId: z.coerce
@@ -16,7 +16,7 @@ const schema = z.object({
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
   const { chainId, currency } = schema.parse(request.query)
-  const threeDaysAgo = sub(new Date(), {days: 3})
+  const threeDaysAgo = sub(new Date(), { days: 3 })
   const dateThreshold = roundToNearestMinutes(threeDaysAgo, { nearestTo: 10 })
 
   const tokens = await getPricesByChainId(chainId, dateThreshold, currency)

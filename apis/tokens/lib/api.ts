@@ -1,7 +1,7 @@
-import prisma from '@sushiswap/database'
+import { client } from '@sushiswap/database'
 
 export async function getToken(chainId: number, address: string) {
-  const token = await prisma.token.findFirstOrThrow({
+  const token = await client.token.findFirstOrThrow({
     select: {
       id: true,
       address: true,
@@ -17,12 +17,12 @@ export async function getToken(chainId: number, address: string) {
       },
     },
   })
-  await prisma.$disconnect()
+  await client.$disconnect()
   return token
 }
 
 export async function getTokenIdsByChainId(chainId: number) {
-  const ids = await prisma.token.findMany({
+  const ids = await client.token.findMany({
     select: {
       id: true,
     },
@@ -33,12 +33,12 @@ export async function getTokenIdsByChainId(chainId: number) {
       },
     },
   })
-  await prisma.$disconnect()
+  await client.$disconnect()
   return ids ? ids : []
 }
 
 export async function getTokenAddressesByChainId(chainId: number) {
-  const addresses = await prisma.token.findMany({
+  const addresses = await client.token.findMany({
     select: {
       address: true,
     },
@@ -49,12 +49,12 @@ export async function getTokenAddressesByChainId(chainId: number) {
       },
     },
   })
-  await prisma.$disconnect()
+  await client.$disconnect()
   return addresses ? addresses : []
 }
 
 export async function getTokensByChainId(chainId: number) {
-  const tokens = await prisma.token.findMany({
+  const tokens = await client.token.findMany({
     select: {
       id: true,
       address: true,
@@ -69,12 +69,12 @@ export async function getTokensByChainId(chainId: number) {
       },
     },
   })
-  await prisma.$disconnect()
+  await client.$disconnect()
   return tokens ? tokens : []
 }
 
 export async function getTokens() {
-  const tokens = await prisma.token.findMany({
+  const tokens = await client.token.findMany({
     select: {
       id: true,
       address: true,
@@ -89,6 +89,6 @@ export async function getTokens() {
       },
     },
   })
-  await prisma.$disconnect()
+  await client.$disconnect()
   return tokens ? tokens : []
 }

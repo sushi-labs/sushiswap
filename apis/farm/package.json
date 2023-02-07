@@ -2,6 +2,7 @@
   "name": "@sushiswap/farm-api",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel",
@@ -19,6 +20,6 @@
     "@sushiswap/typescript-config": "workspace:*",
     "eslint": "8.29.0",
     "typescript": "4.9.4",
-    "vercel": "28.10.1"
+    "vercel": "28.15.0"
   }
 }
