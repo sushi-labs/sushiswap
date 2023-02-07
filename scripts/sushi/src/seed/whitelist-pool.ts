@@ -1,4 +1,4 @@
-import { Prisma, client } from '@sushiswap/database/dist/index.js'
+import { client,Prisma } from '@sushiswap/database/dist/index.js'
 import { performance } from 'perf_hooks'
 
 export async function whitelistPools() {

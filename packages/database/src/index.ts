@@ -1,8 +1,7 @@
 import 'dotenv/config'
-
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Prisma } from '@prisma/client'
+import { createPrismaRedisCache} from 'prisma-redis-middleware'
 import Redis from 'ioredis'
-import { createPrismaRedisCache } from 'prisma-redis-middleware'
 
 if (!process.env['DATABASE_URL']) throw new Error('DATABASE_URL is required')
 if (!process.env['REDIS_URL']) throw new Error('REDIS_URL is required')
@@ -29,27 +28,25 @@ if (process.env['NODE_ENV'] === 'production') {
 const redis = new Redis(process.env['REDIS_URL'])
 
 const cacheMiddleware = createPrismaRedisCache({
-  models: [{ model: 'Token', cacheTime: 900 }, { model: 'Incentive', cacheTime: 180 }, { model: 'Pool', cacheTime: 24 * 60 * 60}],
+  models: [
+  { model: 'Token', cacheTime: 900 }, 
+  { model: 'Incentive', cacheTime: 180 }, 
+  { model: 'Pool', cacheTime: 24 * 60 * 60 },
+  { model: 'SushiPool', cacheTime: 900 }
+],
   storage: {
-    type: 'redis',
-    options: { client: redis },
+    type: "redis",
+    options: { client: redis, invalidation: { referencesTTL: 24 * 60 * 60} },
   },
-  cacheTime: 900,
   onHit: (key: string) => {
     console.log('Hit: ✅', key)
   },
   onMiss: (key: string) => {
     console.log('Miss: ❌', key)
-  },
-  onDedupe: (key: string) => {
-    console.log('Dedupe: 🤔', key)
-  },
-  onError: (key: string) => {
-    console.log('Error: 🚨', key)
   }
 })
 
-client.$use(cacheMiddleware)
+client.$use(cacheMiddleware as Prisma.Middleware)
 
 export default client as PrismaClient
 export { Prisma, PrismaClient } from '@prisma/client'

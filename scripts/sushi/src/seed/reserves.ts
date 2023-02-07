@@ -106,7 +106,11 @@ async function getPools(chainId: ChainId) {
   const endTime = performance.now()
 
   console.log(`Fetched ${pools.length} pool addresses (${((endTime - startTime) / 1000).toFixed(1)}s). `)
-  return pools
+  const poolsMap = new Map<string, PoolResult>()
+  pools.forEach((pool) => {
+    poolsMap.set(pool.address, pool)
+  })
+  return poolsMap
 }
 
 async function getPoolsPagination(
@@ -123,6 +127,8 @@ async function getPoolsPagination(
       id: true,
       address: true,
       type: true,
+      reserve0: true,
+      reserve1: true,
     },
     where: {
       chainId,
@@ -139,22 +145,18 @@ async function getPoolsPagination(
 
 async function getReserves(
   chainId: ChainId,
-  pools: {
-    address: string
-    id: string
-    type: string
-  }[]
+  pools: Map<string, PoolResult>
 ) {
   const startTime = performance.now()
   const poolsWithReserve: PoolWithReserve[] = []
-  const batchSize = pools.length > 2500 ? 2500 : pools.length
+  const batchSize = pools.size > 2500 ? 2500 : pools.size
 
   let totalSuccessCount = 0
   let totalFailedCount = 0
-  for (let i = 0; i < pools.length; i += batchSize) {
-    const max = i + batchSize <= pools.length ? i + batchSize : i + (pools.length % batchSize)
+  for (let i = 0; i < pools.size; i += batchSize) {
+    const max = i + batchSize <= pools.size ? i + batchSize : i + (pools.size % batchSize)
 
-    const batch = pools.slice(i, max).map((pool) => ({
+    const batch = Array.from(pools.values()).slice(i, max).map((pool) => ({
       address: pool.address,
       chainId,
       abi: pool.type === PoolType.CONSTANT_PRODUCT_POOL ? CPP_RESERVES_ABI : STABLE_RESERVES_ABI,
@@ -167,7 +169,7 @@ async function getReserves(
     })
 
     let failures = 0
-    const mappedPools = pools.slice(i, max).reduce<PoolWithReserve[]>((prev, pool, i) => {
+    const mappedPools = Array.from(pools.values()).slice(i, max).reduce<PoolWithReserve[]>((prev, pool, i) => {
       if (reserves[i] === null || reserves[i] === undefined) {
         failures++
         return prev
@@ -203,7 +205,22 @@ async function getReserves(
       1000
     ).toFixed(1)}s). `
   )
-  return poolsWithReserve
+  
+  const poolsToUpdate: PoolWithReserve[] = []
+  
+  poolsWithReserve.forEach((pool) => {
+    const poolResult = pools.get(pool.address)
+    if (poolResult !== undefined && (poolResult.reserve0 !== pool.reserve0 || poolResult.reserve1 !== pool.reserve1)) {
+      console.log(`Pool ${pool.address} needs to be updated. Old reserve0: ${poolResult.reserve0}, new reserve0: ${pool.reserve0}. Old reserve1: ${poolResult.reserve1}, new reserve1: ${pool.reserve1}.`)
+      poolsToUpdate.push(pool)
+    }
+  })
+
+  if (poolsToUpdate.length !== pools.size) {
+    console.log(`${poolsToUpdate.length} out of ${pools.size} pools need to be updated`)
+  }
+
+  return poolsToUpdate
 }
 
 async function updatePoolsWithReserve(chainId: ChainId, pools: PoolWithReserve[]) {
@@ -215,6 +232,7 @@ async function updatePoolsWithReserve(chainId: ChainId, pools: PoolWithReserve[]
     const batch = pools.slice(i, i + batchSize)
     const requests = batch.map((pool) => {
       const id = chainId.toString().concat(':').concat(pool.address.toLowerCase())
+      
       return client.pool.update({
         select: { id: true }, // select only the `id` field, otherwise it returns everything and we don't use the data after updating.
         where: { id },
@@ -234,12 +252,21 @@ async function updatePoolsWithReserve(chainId: ChainId, pools: PoolWithReserve[]
       )}s).`
     )
   }
+
   const endTime = performance.now()
   console.log(`LOAD - Updated a total of ${updatedCount} pools (${((endTime - startTime) / 1000).toFixed(1)}s). `)
 }
 
 interface PoolWithReserve {
   address: string
+  reserve0: string
+  reserve1: string
+}
+
+interface PoolResult {
+  address: string
+  id: string
+  type: string
   reserve0: string
   reserve1: string
 }
