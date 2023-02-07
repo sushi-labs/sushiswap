@@ -24,7 +24,10 @@ export async function getPoolsByTokenIds(
   try {
     const pools = await fetch(
      `https://pools-git-feature-swap.sushi.com/api/v0/aggregator/pools/${chainId}/${protocol}/${version}?poolTypes=${poolTypes.join(',')}&token0=${token0Address}&token1=${token1Address}&size=${size}&excludeTopPoolsSize=${excludeTopPoolsSize}&topPoolMinLiquidity=${topPoolMinLiquidity}`
-      ).then((data) => data.json())
+      ).then((data) => data.json()).catch((e: any) => {
+        console.log(e.message)
+        return new Map<string, PoolResponse>()
+      })
 
     const poolMap: Map<string, PoolResponse> = new Map()
     for (const pool of pools) {
@@ -53,8 +56,8 @@ export async function getPoolsByTokenIds(
     }
 
     return poolMap
-  } catch (error) {
-    console.error(error)
+  } catch (error: any) {
+    console.error(error.message)
     return new Map<string, PoolResponse>()
   }
 }
@@ -99,8 +102,8 @@ export async function getTopPools(
     }
 
     return poolMap
-  } catch (error) {
-    console.error(error)
+  } catch (error: any) {
+    console.error(error.message)
     return new Map<string, PoolResponse>()
   }
 }

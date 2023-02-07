@@ -12,7 +12,8 @@ import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
 import { QuickSwapProvider } from './liquidity-providers/QuickSwap'
 import { SpookySwapProvider } from './liquidity-providers/SpookySwap'
 import { SushiProvider } from './liquidity-providers/Sushi'
-import { TridentProvider } from './liquidity-providers/Trident'
+import { TridentCPPProvider as TridentCPProvider } from './liquidity-providers/TridentCP'
+import { TridentStableProvider } from './liquidity-providers/TridentStable'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import type { PoolCode } from './pools/PoolCode'
 import { allProviders } from './providers'
@@ -58,7 +59,7 @@ export class DataFetcher {
         const provider = new SushiProvider(this.chainId)
         this.providers.push(provider)
       } catch (e: any) {
-        console.warn(e.message)
+        // console.warn(e.message)
       }
     }
     if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
@@ -66,7 +67,7 @@ export class DataFetcher {
         const provider = new UniswapV2Provider(this.chainId)
         this.providers.push(provider)
       } catch (e: any) {
-        console.warn(e.message)
+        // console.warn(e.message)
       }
     }
     if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers)) {
@@ -74,7 +75,7 @@ export class DataFetcher {
         const provider = new QuickSwapProvider(this.chainId)
         this.providers.push(provider)
       } catch (e: any) {
-        console.warn(e.message)
+        // console.warn(e.message)
       }
     }
     if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers)) {
@@ -82,7 +83,7 @@ export class DataFetcher {
         const provider = new ApeSwapProvider(this.chainId)
         this.providers.push(provider)
       } catch (e: any) {
-        console.warn(e.message)
+        // console.warn(e.message)
       }
     }
     if (this._providerIsIncluded(LiquidityProviders.Dfyn, providers)) {
@@ -90,7 +91,7 @@ export class DataFetcher {
         const provider = new DfynProvider(this.chainId)
         this.providers.push(provider)
       } catch (e: any) {
-        console.warn(e.message)
+        // console.warn(e.message)
       }
     }
     if (this._providerIsIncluded(LiquidityProviders.Elk, providers)) {
@@ -98,7 +99,7 @@ export class DataFetcher {
         const provider = new ElkProvider(this.chainId)
         this.providers.push(provider)
       } catch (e: any) {
-        console.warn(e.message)
+        // console.warn(e.message)
       }
     }
     if (this._providerIsIncluded(LiquidityProviders.JetSwap, providers)) {
@@ -106,7 +107,7 @@ export class DataFetcher {
         const provider = new JetSwapProvider(this.chainId)
         this.providers.push(provider)
       } catch (e: any) {
-        console.warn(e.message)
+        // console.warn(e.message)
       }
     }
 
@@ -115,16 +116,25 @@ export class DataFetcher {
         const provider = new SpookySwapProvider(this.chainId)
         this.providers.push(provider)
       } catch (e: any) {
-        console.warn(e.message)
+        // console.warn(e.message)
       }
     }
 
-    if (this._providerIsIncluded(LiquidityProviders.Trident, providers)) {
+    if (this._providerIsIncluded(LiquidityProviders.TridentCP, providers)) {
       try {
-        const provider = new TridentProvider(this.chainId)
+        const provider = new TridentCPProvider(this.chainId)
         this.providers.push(provider)
       } catch (e: any) {
-        console.warn(e.message)
+        // console.warn(e.message)
+      }
+    }
+    
+    if (this._providerIsIncluded(LiquidityProviders.TridentStable, providers)) {
+      try {
+        const provider = new TridentStableProvider(this.chainId)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
       }
     }
     console.log(`${chainShortName[this.chainId]}/${this.chainId} - Included providers: ${this.providers.map((p) => p.getType()).join(', ')}`)
