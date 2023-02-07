@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from 'react'
+import React, { FC, useCallback } from 'react'
 import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui13/components/networkselector'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { Chain } from '@sushiswap/chain'
@@ -10,7 +10,7 @@ import { Collapsible } from '@sushiswap/ui13/components/animation/Collapsible'
 import { AppType } from '@sushiswap/ui13/types'
 
 export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
-  const { network0, network1 } = useSwapState()
+  const { network0, network1, appType } = useSwapState()
   const { setNetwork0, setNetwork1, switchTokens, setAppType } = useSwapActions()
 
   const handleSelect0 = useCallback<NetworkSelectorOnSelectCallback>(
@@ -29,8 +29,13 @@ export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
     [setNetwork1]
   )
 
+  const handleAfterChange = useCallback(() => {
+    if (open && appType !== AppType.xSwap) setAppType(AppType.xSwap)
+    if (!open && appType !== AppType.Swap) setAppType(AppType.Swap)
+  }, [appType, open, setAppType])
+
   return (
-    <Collapsible open={open} afterChange={() => setAppType(open ? AppType.xSwap : AppType.Swap)}>
+    <Collapsible open={open} afterChange={handleAfterChange}>
       <div className="flex gap-2 border-gray-200 dark:border-slate-800 pt-6">
         <div className="w-[calc(50%-20px)]">
           <NetworkSelector networks={SUPPORTED_CHAIN_IDS} variant="dialog" selected={network0} onSelect={handleSelect0}>
