@@ -180,7 +180,7 @@ export class TridentProvider extends LiquidityProvider {
       if (res === undefined || res === null) return
       const tokens = [convertTokenToBento(pr.token0), convertTokenToBento(pr.token1)]
       const rPool = new ConstantProductRPool(pr.address, tokens[0], tokens[1], pr.swapFee, res[0], res[1])
-      const pc = new BentoPoolCode(rPool, this.getPoolProviderName())
+      const pc = new BentoPoolCode(rPool, this.getType(),this.getPoolProviderName())
       this.cPPools.set(pr.address, { poolCode: pc, fetchType, updatedAtBlock: this.lastUpdateBlock })
       ++this.stateId
     })
@@ -200,7 +200,7 @@ export class TridentProvider extends LiquidityProvider {
         balance
       )
       this.bridges.set(t.address, {
-        poolCode: new BentoBridgePoolCode(pool, this.getPoolProviderName(), this.bentoBox[this.chainId]),
+        poolCode: new BentoBridgePoolCode(pool,this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId]),
         fetchType: 'INITIAL', // Better to always keep bridges as INITIAL, can't be ON_DEMAND because those will eventually removed.
         updatedAtBlock: this.lastUpdateBlock,
       })
@@ -226,7 +226,7 @@ export class TridentProvider extends LiquidityProvider {
         totals1
       )
       this.stablePools.set(pr.address, {
-        poolCode: new BentoPoolCode(stablePool, this.getPoolProviderName()),
+        poolCode: new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName()),
         fetchType,
         updatedAtBlock: this.lastUpdateBlock,
       })
@@ -343,7 +343,7 @@ export class TridentProvider extends LiquidityProvider {
       pool.updateReserves(total.elastic, total.base)
 
       this.bridges.set(t.address, {
-        poolCode: new BentoBridgePoolCode(pool, this.getPoolProviderName(), this.bentoBox[this.chainId]),
+        poolCode: new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId]),
         fetchType: 'INITIAL', // Better to always keep bridges as INITIAL, can't be ON_DEMAND because those will eventually removed.
         updatedAtBlock: this.lastUpdateBlock,
       })

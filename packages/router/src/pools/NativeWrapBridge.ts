@@ -1,11 +1,12 @@
 import type { BridgeUnlimited, RouteLeg } from '@sushiswap/tines'
 
 import { HEXer } from '../HEXer'
+import { LiquidityProviders } from '../liquidity-providers'
 import { PoolCode } from './PoolCode'
 
 export class NativeWrapBridgePoolCode extends PoolCode {
-  constructor(pool: BridgeUnlimited) {
-    super(pool, `Wrap Native`)
+  constructor(pool: BridgeUnlimited, liquidityProvider: LiquidityProviders) {
+    super(pool, liquidityProvider, `Wrap Native`)
   }
 
   override getStartPoint(): string {

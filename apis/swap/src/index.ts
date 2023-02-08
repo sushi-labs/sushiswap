@@ -52,6 +52,7 @@ server.get('/v0', async (request) => {
   const [fromToken, toToken] = await Promise.all([getToken(chainId, fromTokenId), getToken(chainId, toTokenId)])
   const tokenEndTime = performance.now()
   console.log(`tokens (${(tokenEndTime - tokenStartTime).toFixed(0)} ms) `)
+
   const dataFetcher = dataFetcherMap.get(chainId)
   if (!dataFetcher) {
     throw new Error(`Unsupported chainId ${chainId}`)
@@ -63,29 +64,30 @@ server.get('/v0', async (request) => {
     `dataFetcher.fetchPoolsForToken(fromToken, toToken) (${(dataFetcherEndTime - dataFetcherStartTime).toFixed(0)} ms) `
   )
   const routeStartTime = performance.now()
+  const poolCodesMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
+  
   // const bestRoute = findSpecialRoute(
-  //   dataFetcher,
+  //   poolCodesMap,
+  //   chainId,
   //   fromToken,
   //   BigNumber.from(amount.toString()),
   //   toToken,
   //   gasPrice ?? 30e9
   // )
 
-  // const poolCodesMap = dataFetcher.getCurrentPoolCodeMap()
-
   const bestRoute = Router.findBestRoute(
-    dataFetcher,
+    poolCodesMap,
+    chainId,
     fromToken,
     BigNumber.from(amount.toString()),
     toToken,
     gasPrice ?? 30e9
   )
 
-  const pools = dataFetcher.getCurrentPoolCodeMap()
 
   console.log('ROUTE WITH RESERVES:')
   for (const leg of bestRoute.legs) {
-    const p = pools.get(leg.poolAddress)
+    const p = poolCodesMap.get(leg.poolAddress)
     if (p) {
       console.log(
         `${p.pool.address} ${p.pool.token0.symbol}/${p.pool.token1.symbol}, r0: ${p.pool.reserve0} r1: ${p.pool.reserve1}`
@@ -98,7 +100,7 @@ server.get('/v0', async (request) => {
   const routeEndTime = performance.now()
   console.log(`findSpecialRoute(..) (${(routeEndTime - routeStartTime).toFixed(0)} ms) `)
   return {
-    getCurrentRouteHumanString: Router.routeToHumanString(dataFetcher, bestRoute, fromToken, toToken),
+    getCurrentRouteHumanString: Router.routeToHumanString(poolCodesMap, bestRoute, fromToken, toToken),
     getBestRoute: {
       status: bestRoute?.status,
       fromToken: bestRoute?.fromToken?.address === '' ? Native.onChain(chainId) : bestRoute?.fromToken,
@@ -118,7 +120,7 @@ server.get('/v0', async (request) => {
     // getRouteAsArray: Router.routeToArray(dataFetcher, bestRoute),
     getCurrentRouteRPParams: to
       ? Router.routeProcessorParams(
-          dataFetcher,
+          poolCodesMap,
           bestRoute,
           fromToken,
           toToken,

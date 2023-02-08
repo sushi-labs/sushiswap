@@ -1,12 +1,14 @@
+import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { RouteStatus } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 
-import { DataFetcher } from './DataFetcher'
 import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
+import { PoolCode } from './pools/PoolCode'
 import { Router } from './Router'
 
 export const PreferrableLiquidityProviders: LiquidityProviders[] = [
+  LiquidityProviders.NativeWrap,
   LiquidityProviders.SushiSwap,
   LiquidityProviders.TridentCP,
   LiquidityProviders.TridentStable
@@ -15,7 +17,8 @@ export const PreferrableLiquidityProviders: LiquidityProviders[] = [
 // Makes the route using only Preferrable liquidity providers.
 // If the result price impact % is more than maxPriceImpact, then remakes the route using all possible liquidity
 export function findSpecialRoute(
-  dataFetcher: DataFetcher,
+  poolCodesMap: Map<string, PoolCode>,
+  chainId: ChainId,
   fromToken: Type,
   amountIn: BigNumber,
   toToken: Type,
@@ -24,7 +27,8 @@ export function findSpecialRoute(
 ) {
   // Find preferrable route
   const preferrableRoute = Router.findBestRoute(
-    dataFetcher,
+    poolCodesMap,
+    chainId,
     fromToken,
     amountIn,
     toToken,
@@ -40,5 +44,5 @@ export function findSpecialRoute(
     return preferrableRoute
   }
   // Otherwise, find the route using all possible liquidity providers
-  return Router.findBestRoute(dataFetcher, fromToken, amountIn, toToken, gasPrice)
+  return Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice)
 }

@@ -107,7 +107,7 @@ export class TridentStableProvider extends TridentBase {
         totals1
       )
       this.pools.set(pr.address, {
-        poolCode: new BentoPoolCode(pool, this.getPoolProviderName()),
+        poolCode: new BentoPoolCode(pool, this.getType(), this.getPoolProviderName()),
         fetchType,
         updatedAtBlock: this.lastUpdateBlock,
       })
@@ -216,7 +216,7 @@ export class TridentStableProvider extends TridentBase {
   private removeStalePools() {
     // TODO: move this to a per-chain config?
     this.removeStaleBridges()
-    const blockThreshold = this.lastUpdateBlock - this.BLOCKS_TO_KEEP_ON_DEMAND_POOLS
+    const blockThreshold = this.lastUpdateBlock - this.ON_DEMAND_POOLS_BLOCK_LIFETIME
     let removed = 0
 
     for (const [k, v] of this.pools) {

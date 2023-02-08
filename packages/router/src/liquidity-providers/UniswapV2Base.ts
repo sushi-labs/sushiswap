@@ -5,6 +5,7 @@ import { Token } from '@sushiswap/currency'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { Address, readContracts, watchBlockNumber } from '@wagmi/core'
+import { BigNumber } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 
 import { getPoolsByTokenIds, getTopPools } from '../lib/api'
@@ -12,36 +13,14 @@ import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
-const syncAbi = [
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'uint112',
-        name: 'reserve0',
-        type: 'uint112',
-      },
-      {
-        indexed: false,
-        internalType: 'uint112',
-        name: 'reserve1',
-        type: 'uint112',
-      },
-    ],
-    name: 'Sync',
-    type: 'event',
-  },
-]
-
 interface PoolInfo {
   poolCode: PoolCode
-  fetchType: 'INITIAL' | 'ON_DEMAND'
-  updatedAtBlock: number
+  validUntilBlock: number
 }
 
 export abstract class UniswapV2BaseProvider extends LiquidityProvider {
-  pools: Map<string, PoolInfo> = new Map()
+  initialPools: Map<string, PoolCode> = new Map()
+  onDemandPools: Map<string, Map<string, PoolInfo>> = new Map()
   blockListener?: () => void
   unwatchBlockNumber?: () => void
   unwatchMulticall?: () => void
@@ -61,7 +40,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 5000
   readonly ON_DEMAND_POOL_SIZE = 20
 
-  async initialize(blockNumber: number) {
+  async initialize() {
     this.isInitialized = true
     const type = this.getType()
 
@@ -104,19 +83,19 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
           res[0],
           res[1]
         )
-        const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
-        this.pools.set(pool.address, { poolCode: pc, fetchType: 'INITIAL', updatedAtBlock: blockNumber })
+        const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
+        this.initialPools.set(pool.address, pc)
         ++this.stateId
       } else {
         console.error(`${this.getLogPrefix()} - ERROR INIT SYNC, Failed to fetch reserves for pool: ${pool.address}`)
       }
     })
 
-    console.debug(`${this.getLogPrefix()} - INIT, WATCHING ${this.pools.size} POOLS`)
+    console.debug(`${this.getLogPrefix()} - INIT, WATCHING ${this.initialPools.size} POOLS`)
   }
 
-  async getPools(t0: Token, t1: Token): Promise<void> {
-    console.debug(`****** ${this.getType()} POOLS IN MEMORY:`, this.pools.size)
+  async getOnDemandPools(t0: Token, t1: Token): Promise<void> {
+    console.debug(`****** MEM - ${this.getType()} INITIAL POOLS:`, this.initialPools.size)
 
     const type = this.getType()
 
@@ -136,68 +115,106 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
     const pools = Array.from(poolsOnDemand.values())
 
-    const reserves = await readContracts({
-      allowFailure: true,
-      contracts: pools.map((pool) => ({
-        address: pool.address as Address,
-        chainId: this.chainId,
-        abi: getReservesAbi,
-        functionName: 'getReserves',
-      })),
-    })
+    const onDemandId = this.getOnDemandId(t0, t1)
 
-    pools.map((pool, i) => {
-      const res = reserves[i]
-      if (res !== null && res !== undefined) {
+    if (!this.onDemandPools.has(onDemandId)) {
+      this.onDemandPools.set(onDemandId, new Map())
+    }
+    const validUntilBlock = this.lastUpdateBlock + this.ON_DEMAND_POOLS_BLOCK_LIFETIME
+    pools.map((pool) => {
+      const existingPool = this.onDemandPools.get(onDemandId)?.get(pool.address)
+      if (existingPool === undefined) {
         const toks = [pool.token0, pool.token1]
         const rPool = new ConstantProductRPool(
           pool.address,
           toks[0] as RToken,
           toks[1] as RToken,
           this.fee,
-          res[0],
-          res[1]
+          BigNumber.from(0),
+          BigNumber.from(0)
         )
-        const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
-        this.pools.set(pool.address, { poolCode: pc, fetchType: 'ON_DEMAND', updatedAtBlock: this.lastUpdateBlock })
-        ++this.stateId
+
+        const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
+        this.onDemandPools.get(onDemandId)?.set(pool.address, { poolCode: pc, validUntilBlock })
       } else {
-        console.error(`${this.getLogPrefix()} - ERROR ON DEMAND, Failed to fetch reserves for pool: ${pool.address}`)
+        existingPool.validUntilBlock = validUntilBlock
       }
     })
   }
 
   async updatePools() {
-    const pools = Array.from(this.pools.values())
-    const reserves = await readContracts({
-      allowFailure: true,
-      contracts: pools.map((pool) => ({
-        address: pool.poolCode.pool.address as Address,
-        chainId: this.chainId,
-        abi: getReservesAbi,
-        functionName: 'getReserves',
-      })),
-    })
+    if (this.isInitialized) {
+      this.removeStalePools()
 
-    pools.map((poolInfo, i) => {
-      const pool = poolInfo.poolCode.pool
-      const res = reserves[i]
-      if (res !== null && res !== undefined) {
-        if (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1])) {
-          pool.updateReserves(res[0], res[1])
+      const initialPools = Array.from(this.initialPools.values())
+      const onDemandPools = Array.from(this.onDemandPools.values()).flatMap((pools) => Array.from(pools.values()))
+
+
+      const [initialPoolsReserves, onDemandPoolsReserves] = await Promise.all([
+        readContracts({
+          allowFailure: true,
+          contracts: initialPools.map((poolCode) => ({
+            address: poolCode.pool.address as Address,
+            chainId: this.chainId,
+            abi: getReservesAbi,
+            functionName: 'getReserves',
+          })),
+        }),
+        readContracts({
+          allowFailure: true,
+          contracts: onDemandPools.map((poolInfo) => ({
+            address: poolInfo.poolCode.pool.address as Address,
+            chainId: this.chainId,
+            abi: getReservesAbi,
+            functionName: 'getReserves',
+          })),
+        }),
+      ])
+
+      initialPools.map((poolCode, i) => {
+        const pool = poolCode.pool
+        const res = initialPoolsReserves[i]
+        if (res !== null && res !== undefined) {
+          if (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1])) {
+            pool.updateReserves(res[0], res[1])
+            console.info(
+              `${this.getLogPrefix()} - SYNC, init-pool: ${pool.address} ${pool.token0.symbol}/${
+                pool.token1.symbol
+              } ${res[0].toString()} ${res[1].toString()}`
+            )
+            ++this.stateId
+          }
+        } else {
           console.error(
-            `${this.getLogPrefix()} - SYNC, pool: ${pool.address} ${pool.token0.symbol}/${
-              pool.token1.symbol
-            } ${res[0].toString()} ${res[1].toString()}`
+            `${this.getLogPrefix()} - ERROR UPDATING RESERVES for a initial pool, Failed to fetch reserves for pool: ${
+              pool.address
+            }`
           )
-          ++this.stateId
         }
-      } else {
-        console.error(
-          `${this.getLogPrefix()} - ERROR UPDATING RESERVES, Failed to fetch reserves for pool: ${pool.address}`
-        )
-      }
-    })
+      })
+
+      onDemandPools.map((poolInfo, i) => {
+        const pool = poolInfo.poolCode.pool
+        const res = onDemandPoolsReserves[i]
+        if (res !== null && res !== undefined) {
+          if (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1])) {
+            pool.updateReserves(res[0], res[1])
+            console.info(
+              `${this.getLogPrefix()} - SYNC, on-demand pool: ${pool.address} ${pool.token0.symbol}/${
+                pool.token1.symbol
+              } ${res[0].toString()} ${res[1].toString()}`
+            )
+            ++this.stateId
+          }
+        } else {
+          console.error(
+            `${this.getLogPrefix()} - ERROR UPDATING RESERVES for a on-demand pool, Failed to fetch reserves for pool: ${
+              pool.address
+            }`
+          )
+        }
+      })
+    }
   }
 
   _getPoolAddress(t1: Token, t2: Token): string {
@@ -222,7 +239,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
   startFetchPoolsData() {
     this.stopFetchPoolsData()
-    this.pools = new Map()
+    this.initialPools = new Map()
 
     this.unwatchBlockNumber = watchBlockNumber(
       {
@@ -230,39 +247,39 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       },
       (blockNumber) => {
         this.lastUpdateBlock = blockNumber
-        this.removeStalePools(blockNumber)
         this.updatePools()
 
         if (!this.isInitialized) {
-          this.initialize(blockNumber)
+          this.initialize()
         }
       }
     )
   }
 
-  private removeStalePools(blockNumber: number) {
-    // TODO: move this to a per-chain config?
-    const blockThreshold = blockNumber - 75
+  private removeStalePools() {
     let removed = 0
-
-    for (const [k, v] of this.pools) {
-      if (v.updatedAtBlock < blockThreshold && v.fetchType === 'ON_DEMAND') {
-        removed++
-        this.pools.delete(k)
+    for (const allOnDemandPools of this.onDemandPools.values()) {
+      for (const [poolId, poolInfo] of allOnDemandPools) {
+        if (poolInfo.validUntilBlock < this.lastUpdateBlock) {
+          allOnDemandPools.delete(poolId)
+          removed++
+        }
       }
     }
-
     if (removed > 0) {
       console.log(`${this.getLogPrefix()} -Removed ${removed} stale pools`)
     }
   }
 
   fetchPoolsForToken(t0: Token, t1: Token): void {
-    this.getPools(t0, t1)
+    this.getOnDemandPools(t0, t1)
   }
 
-  getCurrentPoolList(): PoolCode[] {
-    return [...this.pools.values()].map((p) => p.poolCode)
+  getCurrentPoolList(t0: Token, t1: Token): PoolCode[] {
+    const onDemandPoolCodes = Array.from(this.onDemandPools.get(this.getOnDemandId(t0, t1))?.values() ?? []).map(
+      (p) => p.poolCode
+    )
+    return [...this.initialPools.values(), onDemandPoolCodes].flat()
   }
 
   stopFetchPoolsData() {
@@ -270,4 +287,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     if (this.unwatchMulticall) this.unwatchMulticall()
     this.blockListener = undefined
   }
+
+  getOnDemandId = (t0: Token, t1: Token) =>
+    [t0.address, t1.address].sort((first, second) => (first > second ? -1 : 1)).join(':')
 }

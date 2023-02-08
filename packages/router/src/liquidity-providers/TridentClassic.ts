@@ -83,7 +83,7 @@ export class TridentCPPProvider extends TridentBase {
       if (res === undefined || res === null) return
       const tokens = [convertTokenToBento(pr.token0), convertTokenToBento(pr.token1)]
       const rPool = new ConstantProductRPool(pr.address, tokens[0], tokens[1], pr.swapFee, res[0], res[1])
-      const pc = new BentoPoolCode(rPool, this.getPoolProviderName())
+      const pc = new BentoPoolCode(rPool, this.getType(), this.getPoolProviderName())
       this.pools.set(pr.address, { poolCode: pc, fetchType, updatedAtBlock: this.lastUpdateBlock })
       ++this.stateId
     })
@@ -176,7 +176,7 @@ export class TridentCPPProvider extends TridentBase {
   private removeStalePools() {
     // TODO: move this to a per-chain config?
     this.removeStaleBridges()
-    const blockThreshold = this.lastUpdateBlock - this.BLOCKS_TO_KEEP_ON_DEMAND_POOLS
+    const blockThreshold = this.lastUpdateBlock - this.ON_DEMAND_POOLS_BLOCK_LIFETIME
     let removed = 0
 
     for (const [k, v] of this.pools) {

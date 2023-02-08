@@ -121,14 +121,14 @@ export class DataFetcher {
       }
     }
 
-    if (this._providerIsIncluded(LiquidityProviders.Trident, providers)) {
-      try {
-        const provider = new TridentProvider(this.chainId)
-        this.providers.push(provider)
-      } catch (e: any) {
-        // console.warn(e.message)
-      }
-    }
+    // if (this._providerIsIncluded(LiquidityProviders.Trident, providers)) {
+    //   try {
+    //     const provider = new TridentProvider(this.chainId)
+    //     this.providers.push(provider)
+    //   } catch (e: any) {
+    //     // console.warn(e.message)
+    //   }
+    // }
 
     // if (this._providerIsIncluded(LiquidityProviders.TridentCP, providers)) {
     //   try {
@@ -180,18 +180,20 @@ export class DataFetcher {
   }
 
   fetchPoolsForToken(t0: Type, t1: Type) {
-    if (t0 instanceof Native) t0 = WNATIVE[t0.chainId]
-    if (t1 instanceof Native) t1 = WNATIVE[t1.chainId]
-    this.providers.forEach((p) => p.fetchPoolsForToken(t0 as Token, t1 as Token))
+    const token0 = this.transformToken(t0)
+    const token1 = this.transformToken(t1)
+    this.providers.forEach((p) => p.fetchPoolsForToken(token0, token1))
   }
 
-  getCurrentPoolCodeMap(providers?: LiquidityProviders[]): Map<string, PoolCode> {
+  getCurrentPoolCodeMap(t0: Type, t1: Type): Map<string, PoolCode> {
+    const token0 = this.transformToken(t0)
+    const token1 = this.transformToken(t1)
     const result: Map<string, PoolCode> = new Map()
     this.providers.forEach((p) => {
-      if (!this._providerIsIncluded(p.getType(), providers)) return
+      // if (!this._providerIsIncluded(p.getType(), providers)) return
       if (p.getCurrentPoolStateId() !== this.lastProviderStates.get(p.getType())) {
         this.lastProviderStates.set(p.getType(), p.getCurrentPoolStateId())
-        const poolCodes = p.getCurrentPoolList()
+        const poolCodes = p.getCurrentPoolList(token0, token1)
         let pcMap = this.poolCodes.get(p.getType())
         if (pcMap === undefined) {
           pcMap = new Map()
@@ -206,8 +208,10 @@ export class DataFetcher {
     return result
   }
 
-  getCurrentPoolCodeList(providers?: LiquidityProviders[]): PoolCode[] {
-    const pcMap = this.getCurrentPoolCodeMap(providers)
+  getCurrentPoolCodeList(t0: Type, t1: Type): PoolCode[] {
+    const token0 = this.transformToken(t0)
+    const token1 = this.transformToken(t1)
+    const pcMap = this.getCurrentPoolCodeMap(token0, token1)
     return Array.from(pcMap.values())
   }
 
@@ -231,5 +235,9 @@ export class DataFetcher {
       }
     })
     return lastUpdateBlock === undefined ? 0 : lastUpdateBlock
+  }
+
+  transformToken(t: Type) {
+    return t instanceof Native ? WNATIVE[t.chainId] : (t as Token)
   }
 }

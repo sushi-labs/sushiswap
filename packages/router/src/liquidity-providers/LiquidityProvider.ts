@@ -25,6 +25,7 @@ export abstract class LiquidityProvider {
   chainId: ChainId
   stateId = 0
   lastUpdateBlock = 0
+  readonly ON_DEMAND_POOLS_BLOCK_LIFETIME = 150
   constructor(chainId: ChainId) {
     this.chainId = chainId
   }
@@ -50,9 +51,11 @@ export abstract class LiquidityProvider {
 
   /**
    * Returns a list of PoolCode
+   * @param t0 Token
+   * @param t1 Token
    * @returns PoolCode[]
    */
-  abstract getCurrentPoolList(): PoolCode[]
+  abstract getCurrentPoolList(t0: Token, t1: Token): PoolCode[]
 
   /**
    * Returns current stateId
@@ -76,7 +79,7 @@ export abstract class LiquidityProvider {
    * Logs a message with the following format:
    * <chainId>~<lastUpdateBlock>~<providerName>
    * Example: 1~123456~SushiSwap
-   * @returns string 
+   * @returns string
    */
   getLogPrefix(): string {
     return `${chainShortName[this.chainId]}/${this.chainId}~${this.lastUpdateBlock}~${this.getType()}`

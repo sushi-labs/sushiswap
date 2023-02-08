@@ -49,7 +49,6 @@ export abstract class TridentBase extends LiquidityProvider {
   readonly TOP_POOL_SIZE = 155
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 1000
   readonly ON_DEMAND_POOL_SIZE = 20
-  readonly BLOCKS_TO_KEEP_ON_DEMAND_POOLS = 75
 
   constructor(chainId: ChainId) {
     super(chainId)
@@ -115,7 +114,7 @@ export abstract class TridentBase extends LiquidityProvider {
         balance
       )
       this.bridges.set(t.address, {
-        poolCode: new BentoBridgePoolCode(pool, this.getPoolProviderName(), this.bentoBox[this.chainId] as Address),
+        poolCode: new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId] as Address),
         fetchType: 'INITIAL', // Better to always keep bridges as INITIAL, can't be ON_DEMAND because those will eventually removed.
         updatedAtBlock: this.lastUpdateBlock,
       })
@@ -180,7 +179,7 @@ export abstract class TridentBase extends LiquidityProvider {
       pool.updateReserves(total.elastic, total.base)
 
       this.bridges.set(t.address, {
-        poolCode: new BentoBridgePoolCode(pool, this.getPoolProviderName(), this.bentoBox[this.chainId] as Address),
+        poolCode: new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId] as Address),
         fetchType: 'INITIAL', // Better to always keep bridges as INITIAL, can't be ON_DEMAND because those will eventually removed.
         updatedAtBlock: this.lastUpdateBlock,
       })
@@ -193,7 +192,7 @@ export abstract class TridentBase extends LiquidityProvider {
   removeStaleBridges() {
     // TODO: move this to a per-chain config?
 
-    const blockThreshold = this.lastUpdateBlock - this.BLOCKS_TO_KEEP_ON_DEMAND_POOLS
+    const blockThreshold = this.lastUpdateBlock - this.ON_DEMAND_POOLS_BLOCK_LIFETIME
     let removed = 0
 
     for (const [k, v] of this.bridges) {
