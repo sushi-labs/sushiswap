@@ -182,7 +182,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     pools.map((poolInfo, i) => {
       const pool = poolInfo.poolCode.pool
       const res = reserves[i]
-      if (res !== null && res !== undefined && res[0] !== null && res[1] !== null) {
+      if (res !== null && res !== undefined) {
         if (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1])) {
           pool.updateReserves(res[0], res[1])
           console.error(
