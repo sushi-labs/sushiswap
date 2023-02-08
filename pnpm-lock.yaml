@@ -292,7 +292,7 @@ importers:
       '@vercel/node': ^2.2.0
       eslint: 8.29.0
       typescript: 4.9.4
-      vercel: 28.15.0
+      vercel: 28.10.1
     dependencies:
       '@sushiswap/chainlink-token-list': 0.1.0
       '@sushiswap/default-token-list': 39.8.0
@@ -304,7 +304,7 @@ importers:
       '@sushiswap/typescript-config': link:../../config/typescript
       eslint: 8.29.0
       typescript: 4.9.4
-      vercel: 28.15.0
+      vercel: 28.10.1
 
   apis/token-price:
     specifiers:
