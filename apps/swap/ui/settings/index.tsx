@@ -41,7 +41,7 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules }) => {
               </List.Control>
             </List>
           )}
-          {!modules.includes(SettingsModule.SlippageTolerance) && modules.length > 0 && (
+          {modules.length > 1 && (
             <List className="!pt-0">
               <List.Control>
                 {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}

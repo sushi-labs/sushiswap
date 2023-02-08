@@ -6,6 +6,7 @@ import { FC, memo, useCallback } from 'react'
 
 import { CurrencyInputProps } from './CurrencyInput'
 import { JSBI } from '@sushiswap/math'
+import { WalletIcon } from '@sushiswap/ui13/components/icons'
 
 type BalancePanel = Pick<CurrencyInputProps, 'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'loading'> & {
   id?: string
@@ -48,10 +49,10 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
       data-testid={`${id}-balance-button`}
       type="button"
       onClick={onClick}
-      className="font-medium flex gap-1 items-center py-1 text-blue hover:text-blue-600 active:text-blue-700 dark:text-slate-400 hover:dark:text-slate-300 px-2 rounded-md"
+      className="font-medium flex gap-1.5 items-center py-1 text-blue hover:text-blue-600 active:text-blue-700 dark:text-slate-400 hover:dark:text-slate-300 px-2 rounded-md"
       disabled={disableMaxButton}
     >
-      <CreditCardIcon width={20} height={20} />
+      <WalletIcon width={18} height={18} />
       <span className="text-lg">
         {big}.<span className="text-sm font-semibold">{portion ?? '00'}</span>
       </span>
