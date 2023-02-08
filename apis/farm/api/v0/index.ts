@@ -1,10 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { getUnixTime } from 'date-fns'
 
-import redis from '../../lib/redis.js'
+import redis from '../../lib/redis'
 
-const handler = async (request: VercelRequest, response: VercelResponse) => {
-  const chainId = request.query['chainId'] as string
+export default async (request: VercelRequest, response: VercelResponse) => {
+  const chainId = request.query.chainId as string
 
   if (chainId) {
     const data = await redis.hget('farms', chainId)
@@ -33,7 +33,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
 
   return response.status(200).json(
     Object.fromEntries(
-      Object.entries(data).map(([chainId, data]: any) => {
+      Object.entries(data).map(([chainId, data]) => {
         const json = JSON.parse(data)
         return [
           chainId,
@@ -46,5 +46,3 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
     )
   )
 }
-
-export default handler

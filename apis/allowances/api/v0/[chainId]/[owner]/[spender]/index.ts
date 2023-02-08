@@ -1,10 +1,11 @@
-import { allChains } from '@sushiswap/wagmi-config/chains'
-import { allProviders } from '@sushiswap/wagmi-config/providers'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { Address, configureChains, createClient, erc20ABI, readContracts } from '@wagmi/core'
-import { fetch } from '@whatwg-node/fetch'
+import { Address, configureChains, createClient,erc20ABI, readContracts } from '@wagmi/core'
 import zip from 'lodash.zip'
+import fetch from 'node-fetch'
 import { z } from 'zod'
+
+import { allChains } from '../../../../../chains'
+import { allProviders } from '../../../../../providers'
 
 const { provider } = configureChains(allChains, allProviders)
 createClient({

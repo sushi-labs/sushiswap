@@ -1,9 +1,7 @@
 import Redis from 'ioredis'
 
-const redisUrl = process.env['REDIS_URL']
-if (!redisUrl) throw new Error('REDIS_URL is required')
+if (!process.env.REDIS_URL) throw new Error('REDIS_URL is required')
 
-// @ts-ignore
-const redis = new Redis(redisUrl)
+const redis = new Redis(process.env.REDIS_URL)
 
 export default redis
