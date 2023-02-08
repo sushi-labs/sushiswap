@@ -11,7 +11,6 @@ import type { PoolCode } from '../pools/PoolCode'
 import { LiquidityProviders } from './LiquidityProvider'
 import { convertTokenToBento, TridentBase } from './TridentBase'
 
-
 interface PoolInfo {
   poolCode: PoolCode
   fetchType: 'INITIAL' | 'ON_DEMAND'
@@ -28,7 +27,9 @@ export class TridentCPPProvider extends TridentBase {
   constructor(chainId: ChainId) {
     super(chainId)
     if (!(chainId in CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS)) {
-      throw new Error(`${this.getType()} cannot be instantiated for chainId ${chainId}, no constant product pool factory address found`)
+      throw new Error(
+        `${this.getType()} cannot be instantiated for chainId ${chainId}, no constant product pool factory address found`
+      )
     }
   }
 
@@ -161,7 +162,6 @@ export class TridentCPPProvider extends TridentBase {
 
     console.debug(`${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - UPDATED POOLS`)
   }
-
 
   startFetchPoolsData() {
     this.stopFetchPoolsData()

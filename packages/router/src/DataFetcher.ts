@@ -9,11 +9,12 @@ import { ElkProvider } from './liquidity-providers/Elk'
 import { JetSwapProvider } from './liquidity-providers/JetSwap'
 import { LiquidityProvider, LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
+import { NetSwapProvider } from './liquidity-providers/NetSwap'
 import { QuickSwapProvider } from './liquidity-providers/QuickSwap'
 import { SpookySwapProvider } from './liquidity-providers/SpookySwap'
 import { SushiProvider } from './liquidity-providers/Sushi'
-import { TridentCPPProvider as TridentCPProvider } from './liquidity-providers/TridentCP'
-import { TridentStableProvider } from './liquidity-providers/TridentStable'
+import { TraderJoeProvider } from './liquidity-providers/TraderJoe'
+import { TridentProvider } from './liquidity-providers/Trident'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import type { PoolCode } from './pools/PoolCode'
 import { allProviders } from './providers'
@@ -120,24 +121,56 @@ export class DataFetcher {
       }
     }
 
-    if (this._providerIsIncluded(LiquidityProviders.TridentCP, providers)) {
+    if (this._providerIsIncluded(LiquidityProviders.Trident, providers)) {
       try {
-        const provider = new TridentCPProvider(this.chainId)
+        const provider = new TridentProvider(this.chainId)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
       }
     }
-    
-    if (this._providerIsIncluded(LiquidityProviders.TridentStable, providers)) {
+
+    // if (this._providerIsIncluded(LiquidityProviders.TridentCP, providers)) {
+    //   try {
+    //     const provider = new TridentClassicProvider(this.chainId)
+    //     this.providers.push(provider)
+    //   } catch (e: any) {
+    //     // console.warn(e.message)
+    //   }
+    // }
+
+    // if (this._providerIsIncluded(LiquidityProviders.TridentStable, providers)) {
+    //   try {
+    //     const provider = new TridentStableProvider(this.chainId)
+    //     this.providers.push(provider)
+    //   } catch (e: any) {
+    //     // console.warn(e.message)
+    //   }
+    // }
+
+    if (this._providerIsIncluded(LiquidityProviders.TraderJoe, providers)) {
       try {
-        const provider = new TridentStableProvider(this.chainId)
+        const provider = new TraderJoeProvider(this.chainId)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
       }
     }
-    console.log(`${chainShortName[this.chainId]}/${this.chainId} - Included providers: ${this.providers.map((p) => p.getType()).join(', ')}`)
+
+    if (this._providerIsIncluded(LiquidityProviders.NetSwap, providers)) {
+      try {
+        const provider = new NetSwapProvider(this.chainId)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+
+    console.log(
+      `${chainShortName[this.chainId]}/${this.chainId} - Included providers: ${this.providers
+        .map((p) => p.getType())
+        .join(', ')}`
+    )
     this.providers.forEach((p) => p.startFetchPoolsData())
   }
 
