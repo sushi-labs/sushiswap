@@ -1,4 +1,4 @@
-// import {Prisma, PrismaClient} from '@sushiswap/database/dist/index.js'
+// import {Prisma, PrismaClient} from '@sushiswap/database'
 // import { ChainId, chainName } from '@sushiswap/chain'
 // import { performance } from 'perf_hooks'
 

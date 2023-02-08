@@ -1,7 +1,7 @@
 import '../lib/wagmi.js'
 
 import { ChainId } from '@sushiswap/chain'
-import { client, Prisma, Token as PrismaToken } from '@sushiswap/database/dist/index.js'
+import { client, Prisma, Token as PrismaToken } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 import { PoolType, ProtocolVersion } from '../config.js'

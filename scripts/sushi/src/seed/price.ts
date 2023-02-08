@@ -2,7 +2,7 @@
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import type { ChainId } from '@sushiswap/chain'
-import { client, Prisma, Token } from '@sushiswap/database/dist/index.js'
+import { client, Prisma, Token } from '@sushiswap/database'
 import { calcTokenPrices, ConstantProductRPool } from '@sushiswap/tines'
 import { performance } from 'perf_hooks'
 

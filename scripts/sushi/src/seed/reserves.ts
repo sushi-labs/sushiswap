@@ -1,7 +1,7 @@
 import '../lib/wagmi.js'
 
 import { ChainId } from '@sushiswap/chain'
-import { client, Prisma } from '@sushiswap/database/dist/index.js'
+import { client, Prisma } from '@sushiswap/database'
 import { readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
@@ -143,10 +143,7 @@ async function getPoolsPagination(
   })
 }
 
-async function getReserves(
-  chainId: ChainId,
-  pools: Map<string, PoolResult>
-) {
+async function getReserves(chainId: ChainId, pools: Map<string, PoolResult>) {
   const startTime = performance.now()
   const poolsWithReserve: PoolWithReserve[] = []
   const batchSize = pools.size > 2500 ? 2500 : pools.size
@@ -156,33 +153,37 @@ async function getReserves(
   for (let i = 0; i < pools.size; i += batchSize) {
     const max = i + batchSize <= pools.size ? i + batchSize : i + (pools.size % batchSize)
 
-    const batch = Array.from(pools.values()).slice(i, max).map((pool) => ({
-      address: pool.address,
-      chainId,
-      abi: pool.type === PoolType.CONSTANT_PRODUCT_POOL ? CPP_RESERVES_ABI : STABLE_RESERVES_ABI,
-      functionName: 'getReserves',
-      allowFailure: true,
-    }))
+    const batch = Array.from(pools.values())
+      .slice(i, max)
+      .map((pool) => ({
+        address: pool.address,
+        chainId,
+        abi: pool.type === PoolType.CONSTANT_PRODUCT_POOL ? CPP_RESERVES_ABI : STABLE_RESERVES_ABI,
+        functionName: 'getReserves',
+        allowFailure: true,
+      }))
     const batchStartTime = performance.now()
     const reserves: any = await readContracts({
       contracts: batch,
     })
 
     let failures = 0
-    const mappedPools = Array.from(pools.values()).slice(i, max).reduce<PoolWithReserve[]>((prev, pool, i) => {
-      if (reserves[i] === null || reserves[i] === undefined) {
-        failures++
-        return prev
-      }
-      return [
-        ...prev,
-        {
-          address: pool.address,
-          reserve0: reserves[i][0].toString() as string,
-          reserve1: reserves[i][1].toString() as string,
-        },
-      ]
-    }, [])
+    const mappedPools = Array.from(pools.values())
+      .slice(i, max)
+      .reduce<PoolWithReserve[]>((prev, pool, i) => {
+        if (reserves[i] === null || reserves[i] === undefined) {
+          failures++
+          return prev
+        }
+        return [
+          ...prev,
+          {
+            address: pool.address,
+            reserve0: reserves[i][0].toString() as string,
+            reserve1: reserves[i][1].toString() as string,
+          },
+        ]
+      }, [])
 
     if (failures > 0) {
       console.log(`Failed to fetch reserves for ${failures} pools.`)
@@ -205,13 +206,15 @@ async function getReserves(
       1000
     ).toFixed(1)}s). `
   )
-  
+
   const poolsToUpdate: PoolWithReserve[] = []
-  
+
   poolsWithReserve.forEach((pool) => {
     const poolResult = pools.get(pool.address)
     if (poolResult !== undefined && (poolResult.reserve0 !== pool.reserve0 || poolResult.reserve1 !== pool.reserve1)) {
-      console.log(`Pool ${pool.address} needs to be updated. Old reserve0: ${poolResult.reserve0}, new reserve0: ${pool.reserve0}. Old reserve1: ${poolResult.reserve1}, new reserve1: ${pool.reserve1}.`)
+      console.log(
+        `Pool ${pool.address} needs to be updated. Old reserve0: ${poolResult.reserve0}, new reserve0: ${pool.reserve0}. Old reserve1: ${poolResult.reserve1}, new reserve1: ${pool.reserve1}.`
+      )
       poolsToUpdate.push(pool)
     }
   })
@@ -232,7 +235,7 @@ async function updatePoolsWithReserve(chainId: ChainId, pools: PoolWithReserve[]
     const batch = pools.slice(i, i + batchSize)
     const requests = batch.map((pool) => {
       const id = chainId.toString().concat(':').concat(pool.address.toLowerCase())
-      
+
       return client.pool.update({
         select: { id: true }, // select only the `id` field, otherwise it returns everything and we don't use the data after updating.
         where: { id },

@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { client, PoolType, PoolVersion, Prisma } from '@sushiswap/database/dist/index.js'
+import { client, PoolType, PoolVersion, Prisma } from '@sushiswap/database'
 import { SUBGRAPH_HOST, TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 

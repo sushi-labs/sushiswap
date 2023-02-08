@@ -1,5 +1,5 @@
 import { ChainId, chainName } from '@sushiswap/chain'
-import { client, Prisma } from '@sushiswap/database/dist/index.js'
+import { client, Prisma } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 import { getBuiltGraphSDK, TraderJoePairsQuery } from '../../../../.graphclient/index.js'

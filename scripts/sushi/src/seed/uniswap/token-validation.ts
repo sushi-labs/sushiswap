@@ -1,4 +1,4 @@
-import { client } from '@sushiswap/database/dist/index.js'
+import { client } from '@sushiswap/database'
 import fetch from 'isomorphic-unfetch'
 import { performance } from 'perf_hooks'
 

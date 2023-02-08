@@ -1,4 +1,4 @@
-import { client, Prisma } from '@sushiswap/database/dist/index.js'
+import { client, Prisma } from '@sushiswap/database'
 
 /**
  * Filters pools to only include the ones that are new or have changed.
