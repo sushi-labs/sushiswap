@@ -1,0 +1,5 @@
+{
+  "extends": "@sushiswap/typescript-config/hardhat.json",
+  "include": ["scripts", "test/*.test.ts", "deploy"],
+  "files": ["hardhat.config.ts"]
+}
