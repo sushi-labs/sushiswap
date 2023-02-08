@@ -187,7 +187,7 @@ export abstract class TridentBase extends LiquidityProvider {
       this.rebases.set(t.address, total)
     })
 
-    console.debug(`${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - UPDATED BRIDGES`)
+    console.debug(`${this.getLogPrefix()} - UPDATED BRIDGES`)
   }
 
   removeStaleBridges() {
@@ -203,7 +203,7 @@ export abstract class TridentBase extends LiquidityProvider {
       }
     }
     if (removed > 0) {
-      console.log(`${this.chainId}~${this.lastUpdateBlock}~${this.getType()} -Removed ${removed} stale bridges`)
+      console.log(`${this.getLogPrefix()} -Removed ${removed} stale bridges`)
     }
   }
 }

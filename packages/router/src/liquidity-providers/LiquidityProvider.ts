@@ -1,4 +1,4 @@
-import type { ChainId } from '@sushiswap/chain'
+import { ChainId, chainShortName } from '@sushiswap/chain'
 import type { Token } from '@sushiswap/currency'
 
 import type { PoolCode } from '../pools/PoolCode'
@@ -70,5 +70,15 @@ export abstract class LiquidityProvider {
    */
   getLastUpdateBlock(): number {
     return this.lastUpdateBlock
+  }
+
+  /**
+   * Logs a message with the following format:
+   * <chainId>~<lastUpdateBlock>~<providerName>
+   * Example: 1~123456~SushiSwap
+   * @returns string 
+   */
+  getLogPrefix(): string {
+    return `${chainShortName[this.chainId]}/${this.chainId}~${this.lastUpdateBlock}~${this.getType()}`
   }
 }

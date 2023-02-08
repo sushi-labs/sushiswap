@@ -54,21 +54,15 @@ export class TridentCPPProvider extends TridentBase {
     )
 
     if (topPools.size > 0) {
-      console.debug(
-        `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - INIT: top pools found: ${topPools.size}`
-      )
+      console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${topPools.size}`)
     } else {
-      console.debug(`${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - INIT: NO pools found.`)
+      console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
       return
     }
 
     await this.initPools(Array.from(topPools.values()), 'INITIAL')
 
-    console.debug(
-      `${this.chainId}~${this.lastUpdateBlock}${this.getType()} - INIT, WATCHING ${
-        this.getCurrentPoolList().length
-      } POOLS`
-    )
+    console.debug(`${this.getLogPrefix()} - INIT, WATCHING ${this.getCurrentPoolList().length} POOLS`)
   }
 
   async initPools(pools: PoolResponse[], fetchType: 'INITIAL' | 'ON_DEMAND'): Promise<void> {
@@ -108,11 +102,7 @@ export class TridentCPPProvider extends TridentBase {
       this.TOP_POOL_LIQUIDITY_THRESHOLD,
       this.ON_DEMAND_POOL_SIZE
     )
-    console.debug(
-      `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - ON DEMAND: Begin fetching reserves for ${
-        poolsOnDemand.size
-      } pools`
-    )
+    console.debug(`${this.getLogPrefix()} - ON DEMAND: Begin fetching reserves for ${poolsOnDemand.size} pools`)
     const pools = Array.from(poolsOnDemand.values())
 
     // TODO: refactor this, unnecessary to fetch reserves for all pools, then update them again after
@@ -160,7 +150,7 @@ export class TridentCPPProvider extends TridentBase {
       ++this.stateId
     })
 
-    console.debug(`${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - UPDATED POOLS`)
+    console.debug(`${this.getLogPrefix()} - UPDATED POOLS`)
   }
 
   startFetchPoolsData() {
@@ -197,7 +187,7 @@ export class TridentCPPProvider extends TridentBase {
     }
 
     if (removed > 0) {
-      console.log(`${this.chainId}~${this.lastUpdateBlock}~${this.getType()} -Removed ${removed} stale pools`)
+      console.log(`${this.getLogPrefix()} -Removed ${removed} stale pools`)
     }
   }
 

@@ -1,6 +1,6 @@
 import { keccak256, pack } from '@ethersproject/solidity'
 import { getReservesAbi } from '@sushiswap/abi'
-import { ChainId, chainShortName } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
@@ -74,17 +74,9 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       this.TOP_POOL_LIQUIDITY_THRESHOLD
     )
     if (topPools.size > 0) {
-      console.debug(
-        `${chainShortName[this.chainId]}/${this.chainId}~${
-          this.lastUpdateBlock
-        }~${this.getType()} - INIT: top pools found: ${topPools.size}`
-      )
+      console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${topPools.size}`)
     } else {
-      console.debug(
-        `${chainShortName[this.chainId]}/${this.chainId}~${
-          this.lastUpdateBlock
-        }~${this.getType()} - INIT: NO pools found.`
-      )
+      console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
       return
     }
 
@@ -116,23 +108,14 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         this.pools.set(pool.address, { poolCode: pc, fetchType: 'INITIAL', updatedAtBlock: blockNumber })
         ++this.stateId
       } else {
-        console.error(
-          `${chainShortName[this.chainId]}/${this.chainId}~${
-            this.lastUpdateBlock
-          }~${this.getType()} - ERROR INIT SYNC, Failed to fetch reserves for pool: ${pool.address}`
-        )
+        console.error(`${this.getLogPrefix()} - ERROR INIT SYNC, Failed to fetch reserves for pool: ${pool.address}`)
       }
     })
 
-    console.debug(
-      `${chainShortName[this.chainId]}/${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - INIT, WATCHING ${
-        this.pools.size
-      } POOLS`
-    )
+    console.debug(`${this.getLogPrefix()} - INIT, WATCHING ${this.pools.size} POOLS`)
   }
 
   async getPools(t0: Token, t1: Token): Promise<void> {
-
     console.debug(`****** ${this.getType()} POOLS IN MEMORY:`, this.pools.size)
 
     const type = this.getType()
@@ -149,11 +132,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       this.ON_DEMAND_POOL_SIZE
     )
 
-    console.debug(
-      `${chainShortName[this.chainId]}/${this.chainId}~${
-        this.lastUpdateBlock
-      }~${this.getType()} - ON DEMAND: Begin fetching reserves for ${poolsOnDemand.size} pools`
-    )
+    console.debug(`${this.getLogPrefix()} - ON DEMAND: Begin fetching reserves for ${poolsOnDemand.size} pools`)
 
     const pools = Array.from(poolsOnDemand.values())
 
@@ -183,11 +162,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         this.pools.set(pool.address, { poolCode: pc, fetchType: 'ON_DEMAND', updatedAtBlock: this.lastUpdateBlock })
         ++this.stateId
       } else {
-        console.error(
-          `${chainShortName[this.chainId]}/${this.chainId}~${
-            this.lastUpdateBlock
-          }~${this.getType()} - ERROR ON DEMAND, Failed to fetch reserves for pool: ${pool.address}`
-        )
+        console.error(`${this.getLogPrefix()} - ERROR ON DEMAND, Failed to fetch reserves for pool: ${pool.address}`)
       }
     })
   }
@@ -211,17 +186,15 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         if (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1])) {
           pool.updateReserves(res[0], res[1])
           console.error(
-            `${chainShortName[this.chainId]}/${this.chainId}~${
-              this.lastUpdateBlock
-            }~${this.getType()} - SYNC, pool: ${pool.address} ${pool.token0.symbol}/${pool.token1.symbol} ${res[0].toString()} ${res[1].toString()}`
+            `${this.getLogPrefix()} - SYNC, pool: ${pool.address} ${pool.token0.symbol}/${
+              pool.token1.symbol
+            } ${res[0].toString()} ${res[1].toString()}`
           )
           ++this.stateId
         }
       } else {
         console.error(
-          `${chainShortName[this.chainId]}/${this.chainId}~${
-            this.lastUpdateBlock
-          }~${this.getType()} - ERROR UPDATING RESERVES, Failed to fetch reserves for pool: ${pool.address}`
+          `${this.getLogPrefix()} - ERROR UPDATING RESERVES, Failed to fetch reserves for pool: ${pool.address}`
         )
       }
     })
@@ -280,11 +253,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     }
 
     if (removed > 0) {
-      console.log(
-        `${chainShortName[this.chainId]}/${this.chainId}~${
-          this.lastUpdateBlock
-        }~${this.getType()} -Removed ${removed} stale pools`
-      )
+      console.log(`${this.getLogPrefix()} -Removed ${removed} stale pools`)
     }
   }
 

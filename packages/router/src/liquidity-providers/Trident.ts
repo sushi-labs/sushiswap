@@ -4,7 +4,7 @@ import {
   CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS,
   STABLE_POOL_FACTORY_ADDRESS,
 } from '@sushiswap/address'
-import { ChainId, chainShortName } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
 import { Address, readContracts, watchBlockNumber } from '@wagmi/core'
@@ -90,27 +90,15 @@ export class TridentProvider extends LiquidityProvider {
     )
 
     if (topPools.size > 0) {
-      console.debug(
-        `${chainShortName[this.chainId]}/${this.chainId}~${
-          this.lastUpdateBlock
-        }~${this.getType()} - INIT: top pools found: ${topPools.size}`
-      )
+      console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${topPools.size}`)
     } else {
-      console.debug(
-        `${chainShortName[this.chainId]}/${this.chainId}~${
-          this.lastUpdateBlock
-        }~${this.getType()} - INIT: NO pools found.`
-      )
+      console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
       return
     }
 
     await this.initPools(Array.from(topPools.values()), 'INITIAL')
 
-    console.debug(
-      `${chainShortName[this.chainId]}/${this.chainId}~${this.lastUpdateBlock}${this.getType()} - INIT, WATCHING ${
-        this.getCurrentPoolList().length
-      } POOLS`
-    )
+    console.debug(`${this.getLogPrefix()} - INIT, WATCHING ${this.getCurrentPoolList().length} POOLS`)
     // for (const pool of this.getCurrentPoolList()) {
     //   console.log(`${pool.poolName} ${pool.pool.address} ${pool.pool.token0.symbol}/${pool.pool.token1.symbol} ${pool.pool.reserve0} ${pool.pool.reserve1}`)
     // }
@@ -396,9 +384,7 @@ export class TridentProvider extends LiquidityProvider {
         ++this.stateId
       }
     })
-    console.debug(
-      `${chainShortName[this.chainId]}/${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - UPDATED POOLS`
-    )
+    console.debug(`${this.getLogPrefix()} - UPDATED POOLS`)
   }
 
   async getPools(t0: Token, t1: Token): Promise<void> {
@@ -414,11 +400,7 @@ export class TridentProvider extends LiquidityProvider {
       this.TOP_POOL_LIQUIDITY_THRESHOLD,
       this.ON_DEMAND_POOL_SIZE
     )
-    console.debug(
-      `${chainShortName[this.chainId]}/${this.chainId}~${
-        this.lastUpdateBlock
-      }~${this.getType()} - ON DEMAND: Begin fetching reserves for ${poolsOnDemand.size} pools`
-    )
+    console.debug(`${this.getLogPrefix()} - ON DEMAND: Begin fetching reserves for ${poolsOnDemand.size} pools`)
     const pools = Array.from(poolsOnDemand.values())
 
     // TODO: refactor this, unnecessary to fetch reserves for all pools, then update them again after
@@ -474,11 +456,7 @@ export class TridentProvider extends LiquidityProvider {
       }
     }
     if (removed > 0) {
-      console.log(
-        `${chainShortName[this.chainId]}/${this.chainId}~${
-          this.lastUpdateBlock
-        }~${this.getType()} -Removed ${removed} stale pools`
-      )
+      console.log(`${this.getLogPrefix()} -Removed ${removed} stale pools`)
     }
   }
 
