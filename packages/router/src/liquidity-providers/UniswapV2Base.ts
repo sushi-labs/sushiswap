@@ -4,8 +4,7 @@ import { ChainId, chainShortName } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
-import { Address, readContracts, watchBlockNumber, watchContractEvent } from '@wagmi/core'
-import { BigNumber } from 'ethers'
+import { Address, readContracts, watchBlockNumber } from '@wagmi/core'
 import { getCreate2Address } from 'ethers/lib/utils'
 
 import { getPoolsByTokenIds, getTopPools } from '../lib/api'
@@ -46,7 +45,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   blockListener?: () => void
   unwatchBlockNumber?: () => void
   unwatchMulticall?: () => void
-  unwatchSyncEvents: Map<string, () => void> = new Map()
   fee = 0.003
   isInitialized = false
   factory: { [chainId: number]: Address } = {}
@@ -77,10 +75,16 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     )
     if (topPools.size > 0) {
       console.debug(
-        `${chainShortName[this.chainId]}/${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - INIT: top pools found: ${topPools.size}`
+        `${chainShortName[this.chainId]}/${this.chainId}~${
+          this.lastUpdateBlock
+        }~${this.getType()} - INIT: top pools found: ${topPools.size}`
       )
     } else {
-      console.debug(`${chainShortName[this.chainId]}/${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - INIT: NO pools found.`)
+      console.debug(
+        `${chainShortName[this.chainId]}/${this.chainId}~${
+          this.lastUpdateBlock
+        }~${this.getType()} - INIT: NO pools found.`
+      )
       return
     }
 
@@ -120,40 +124,15 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       }
     })
 
-    this.pools.forEach((p) => {
-      const pool = p.poolCode.pool
-      if (this.unwatchSyncEvents.has(pool.address)) return
-      this.unwatchSyncEvents.set(
-        pool.address,
-        watchContractEvent(
-          {
-            address: pool.address as Address,
-            abi: syncAbi,
-            eventName: 'Sync',
-            chainId: this.chainId,
-          },
-          (reserve0, reserve1) => {
-            const res0 = BigNumber.from(reserve0)
-            const res1 = BigNumber.from(reserve1)
-            console.debug(
-              `${chainShortName[this.chainId]}/${this.chainId}~${this.lastUpdateBlock}~${type} - SYNC ${p.poolCode.poolName}, ${pool.token0.symbol}/${pool.token1.symbol}.`
-            )
-            pool.updateReserves(res0, res1)
-            p.updatedAtBlock = blockNumber
-          }
-        )
-      )
-    })
-
-    console.debug(`${chainShortName[this.chainId]}/${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - INIT, WATCHING ${this.pools.size} POOLS`)
+    console.debug(
+      `${chainShortName[this.chainId]}/${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - INIT, WATCHING ${
+        this.pools.size
+      } POOLS`
+    )
   }
 
   async getPools(t0: Token, t1: Token): Promise<void> {
-    // if (!(this.chainId in this.factory)) {
-    //   // No sushiswap for this network
-    //   this.lastUpdateBlock = -1
-    //   return
-    // }
+
     console.debug(`****** ${this.getType()} POOLS IN MEMORY:`, this.pools.size)
 
     const type = this.getType()
@@ -171,9 +150,9 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     )
 
     console.debug(
-      `${chainShortName[this.chainId]}/${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - ON DEMAND: Begin fetching reserves for ${
-        poolsOnDemand.size
-      } pools`
+      `${chainShortName[this.chainId]}/${this.chainId}~${
+        this.lastUpdateBlock
+      }~${this.getType()} - ON DEMAND: Begin fetching reserves for ${poolsOnDemand.size} pools`
     )
 
     const pools = Array.from(poolsOnDemand.values())
@@ -213,6 +192,41 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     })
   }
 
+  async updatePools() {
+    const pools = Array.from(this.pools.values())
+    const reserves = await readContracts({
+      allowFailure: true,
+      contracts: pools.map((pool) => ({
+        address: pool.poolCode.pool.address as Address,
+        chainId: this.chainId,
+        abi: getReservesAbi,
+        functionName: 'getReserves',
+      })),
+    })
+
+    pools.map((poolInfo, i) => {
+      const pool = poolInfo.poolCode.pool
+      const res = reserves[i]
+      if (res !== null && res !== undefined && res[0] !== null && res[1] !== null) {
+        if (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1])) {
+          pool.updateReserves(res[0], res[1])
+          console.error(
+            `${chainShortName[this.chainId]}/${this.chainId}~${
+              this.lastUpdateBlock
+            }~${this.getType()} - SYNC, pool: ${pool.address} ${pool.token0.symbol}/${pool.token1.symbol} ${res[0].toString()} ${res[1].toString()}`
+          )
+          ++this.stateId
+        }
+      } else {
+        console.error(
+          `${chainShortName[this.chainId]}/${this.chainId}~${
+            this.lastUpdateBlock
+          }~${this.getType()} - ERROR UPDATING RESERVES, Failed to fetch reserves for pool: ${pool.address}`
+        )
+      }
+    })
+  }
+
   _getPoolAddress(t1: Token, t2: Token): string {
     return getCreate2Address(
       this.factory[this.chainId as keyof typeof this.factory],
@@ -244,6 +258,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       (blockNumber) => {
         this.lastUpdateBlock = blockNumber
         this.removeStalePools(blockNumber)
+        this.updatePools()
 
         if (!this.isInitialized) {
           this.initialize(blockNumber)
@@ -265,7 +280,11 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     }
 
     if (removed > 0) {
-      console.log(`${chainShortName[this.chainId]}/${this.chainId}~${this.lastUpdateBlock}~${this.getType()} -Removed ${removed} stale pools`)
+      console.log(
+        `${chainShortName[this.chainId]}/${this.chainId}~${
+          this.lastUpdateBlock
+        }~${this.getType()} -Removed ${removed} stale pools`
+      )
     }
   }
 
@@ -280,8 +299,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   stopFetchPoolsData() {
     if (this.unwatchBlockNumber) this.unwatchBlockNumber()
     if (this.unwatchMulticall) this.unwatchMulticall()
-    if (this.unwatchSyncEvents.size > 0) this.unwatchSyncEvents?.forEach((unwatch) => unwatch())
-    // if (this.blockListener) this.chainDataProvider.off('block', this.blockListener)
     this.blockListener = undefined
   }
 }
