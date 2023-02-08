@@ -20,7 +20,15 @@ import {
   USDT_ADDRESS,
   WNATIVE,
 } from '@sushiswap/currency'
-import { DataFetcher, findSpecialRoute, LiquidityProviders, PoolFilter, Router, RPParams } from '@sushiswap/router'
+import {
+  DataFetcher,
+  findSpecialRoute,
+  getRoutingAnyChartSankeyData,
+  LiquidityProviders,
+  PoolFilter,
+  Router,
+  RPParams,
+} from '@sushiswap/router'
 import { BridgeBento, getBigNumber, MultiRoute, RPool, StableSwapRPool } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'
@@ -98,7 +106,8 @@ async function makeSwap(
   amountIn: BigNumber,
   toToken: Type,
   providers?: LiquidityProviders[],
-  poolFilter?: PoolFilter
+  poolFilter?: PoolFilter,
+  makeSankeyDiagram = false
 ): Promise<[BigNumber, number] | undefined> {
   //console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
@@ -114,7 +123,9 @@ async function makeSwap(
   const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
   router.startRouting(() => {
     //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
-    const printed = router.getCurrentRouteHumanString()
+    const printed = makeSankeyDiagram
+      ? getRoutingAnyChartSankeyData(router.getBestRoute() as MultiRoute)
+      : router.getCurrentRouteHumanString()
     console.log(printed)
     waiter.resolve()
   })
@@ -194,7 +205,8 @@ async function updMakeSwap(
   toToken: Type,
   lastCallResult: BigNumber | [BigNumber | undefined, number],
   providers?: LiquidityProviders[],
-  poolFilter?: PoolFilter
+  poolFilter?: PoolFilter,
+  makeSankeyDiagram = false
 ): Promise<[BigNumber | undefined, number]> {
   const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
   if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
@@ -203,7 +215,7 @@ async function updMakeSwap(
   //console.log('Wait data update for min block', waitBlock)
   await dataUpdated(env, waitBlock)
 
-  const res = await makeSwap(env, fromToken, amountIn, toToken, providers, poolFilter)
+  const res = await makeSwap(env, fromToken, amountIn, toToken, providers, poolFilter, makeSankeyDiagram)
   expect(res).not.undefined
   if (res === undefined) return [undefined, waitBlock]
   else return res
@@ -397,5 +409,18 @@ describe('End-to-end Router test', async function () {
     intermidiateResult = await checkTransferAndRoute(env, WNATIVE[chainId], SUSHI_LOCAL, intermidiateResult)
     intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, WNATIVE[chainId], intermidiateResult)
     intermidiateResult = await checkTransferAndRoute(env, WNATIVE[chainId], Native.onChain(chainId), intermidiateResult)
+  })
+
+  it.skip('AnyChart Sankey Diargam data generation Native=>SUSHI', async function () {
+    intermidiateResult[0] = getBigNumber(1000000 * 1e18)
+    intermidiateResult = await updMakeSwap(
+      env,
+      Native.onChain(chainId),
+      SUSHI_LOCAL,
+      intermidiateResult,
+      undefined,
+      undefined,
+      true
+    )
   })
 })
