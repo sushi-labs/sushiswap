@@ -19,7 +19,7 @@ import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../
 import { ZFundSourceToFundSource, ZTokenToToken } from '../../../lib/zod'
 import { CreateStreamFormSchemaType } from './schema'
 import { useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui13/components/toast'
+import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
 
 export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const { address } = useAccount()

@@ -19,7 +19,7 @@ import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount }
 import { CreateVestingFormSchemaType } from '../schema'
 import CreateFormReviewModalBase from './CreateFormReviewModalBase'
 import { useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui13/components/toast'
+import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
 
 interface Item {
   title: string

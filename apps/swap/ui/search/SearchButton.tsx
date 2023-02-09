@@ -1,5 +1,5 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
-import { Button } from '@sushiswap/ui13/components/button'
+import { Button } from '@sushiswap/ui/future/components/button'
 import React, { FC, useCallback } from 'react'
 
 import { useSearchContext } from './SearchProvider'

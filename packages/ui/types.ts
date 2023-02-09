@@ -1,5 +1,22 @@
 import React, { ComponentType } from 'react'
 
+export enum AppType {
+  Root = 'Explore Apps',
+  Blog = 'Blog',
+  Bridge = 'Bridge',
+  Swap = 'Swap',
+  xSwap = 'xSwap',
+  Furo = 'Streaming',
+  Legacy = 'Sushi 1.0',
+  Internal = 'Internal',
+  Kashi = 'Lend & Borrow',
+  Analytics = 'Analytics',
+  Earn = 'Earn',
+  Partner = 'Partner',
+  Widget = 'Widget',
+  Academy = 'Academy',
+}
+
 export type ExtractProps<T> = T extends ComponentType<infer P> ? P : T
 export type AnyTag = keyof JSX.IntrinsicElements
 

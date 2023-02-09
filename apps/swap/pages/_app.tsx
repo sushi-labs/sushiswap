@@ -1,4 +1,4 @@
-import '@sushiswap/ui13/index.css'
+import '@sushiswap/ui/index.css'
 
 import React, { FC } from 'react'
 
@@ -7,7 +7,7 @@ import { WagmiProvider } from '../ui/WagmiProvider'
 import { PersistQueryClientProvider } from '../ui/PersistQueryClientProvider'
 import Head from 'next/head'
 import { AppProps } from 'next/app'
-import { ToastContainer } from '@sushiswap/ui13/components/toast'
+import { ToastContainer } from '@sushiswap/ui/future/components/toast'
 import { SwapProvider } from 'ui/trade/TradeProvider'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {

@@ -1,8 +1,8 @@
 'use client'
 
-import Switch from '@sushiswap/ui13/components/Switch'
+import Switch from '@sushiswap/ui/future/components/Switch'
 import React, { FC } from 'react'
-import { NetworkIcon } from '@sushiswap/ui13/components/icons'
+import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { ChainId } from '@sushiswap/chain'
 import { useLocalStorage } from '@sushiswap/hooks'
 

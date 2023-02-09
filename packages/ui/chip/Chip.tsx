@@ -1,4 +1,4 @@
-import { XIcon } from '@heroicons/react/outline'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import classNames from 'classnames'
 import { FC, ReactNode } from 'react'
 
@@ -51,7 +51,7 @@ export const Chip: FC<ChipProps> = ({
   onClick,
   icon = undefined,
   opaque,
-  endIcon = <XIcon width={12} height={12} strokeWidth={5} />,
+  endIcon = <XMarkIcon width={12} height={12} strokeWidth={5} />,
   id = '',
 }) => {
   return (

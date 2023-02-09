@@ -1,13 +1,13 @@
 import React, { FC, useCallback } from 'react'
-import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui13/components/networkselector'
+import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui/future/components/networkselector'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { Chain } from '@sushiswap/chain'
 import { Popover } from '@headlessui/react'
-import { NetworkIcon } from '@sushiswap/ui13/components/icons'
+import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { ArrowRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
-import { Collapsible } from '@sushiswap/ui13/components/animation/Collapsible'
-import { AppType } from '@sushiswap/ui13/types'
+import { Collapsible } from '@sushiswap/ui/future/components/animation/Collapsible'
+import { AppType } from '@sushiswap/ui/types'
 
 export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
   const { network0, network1, appType } = useSwapState()

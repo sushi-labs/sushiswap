@@ -1,6 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
-import { SearchIcon } from '@heroicons/react/outline'
-import { XCircleIcon } from '@heroicons/react/solid'
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { XCircleIcon } from '@heroicons/react/20/solid'
 import chain from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { FundSource, useIsSmScreen } from '@sushiswap/hooks'
@@ -117,7 +117,7 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
                     onClick={() => onInput('')}
                   />
                 ) : (
-                  <SearchIcon className="text-slate-500" strokeWidth={2} width={20} height={20} />
+                  <MagnifyingGlassIcon className="text-slate-500" strokeWidth={2} width={20} height={20} />
                 )}
               </div>
               <div className="relative h-full -ml-6 -mr-6">

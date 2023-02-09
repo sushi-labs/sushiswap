@@ -10,7 +10,7 @@ import {
   tryParseAmount,
   Type,
 } from '@sushiswap/currency'
-import { AppType } from '@sushiswap/ui13/types'
+import { AppType } from '@sushiswap/ui/types'
 import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, useReducer } from 'react'
 import { useAccount } from 'wagmi'
 import { z } from 'zod'

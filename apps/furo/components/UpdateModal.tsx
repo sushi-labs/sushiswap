@@ -16,7 +16,7 @@ import { SendTransactionResult } from 'wagmi/actions'
 
 import { CurrencyInput } from '../components'
 import { Stream } from '../lib'
-import { createToast, NotificationData } from '@sushiswap/ui13/components/toast'
+import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
 import { useCreateNotification } from '@sushiswap/react-query'
 
 interface UpdateModalProps {

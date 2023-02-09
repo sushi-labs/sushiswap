@@ -9,8 +9,6 @@ const nextConfig = {
     '@sushiswap/redux-localstorage',
     '@sushiswap/wagmi',
     '@sushiswap/ui',
-    '@sushiswap/wagmi13',
-    '@sushiswap/ui13',
   ],
   async redirects() {
     return [

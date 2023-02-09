@@ -2,9 +2,9 @@ import { FC, useEffect, useState } from 'react'
 import { useSwapState } from './trade/TradeProvider'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 import { useIsMounted } from '@sushiswap/hooks'
-import { Button } from '@sushiswap/ui13/components/button'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { Chain } from '@sushiswap/chain'
-import { Collapsible } from '@sushiswap/ui13/components/animation/Collapsible'
+import { Collapsible } from '@sushiswap/ui/future/components/animation/Collapsible'
 
 export const NetworkCheck: FC = () => {
   const [open, setOpen] = useState(false)

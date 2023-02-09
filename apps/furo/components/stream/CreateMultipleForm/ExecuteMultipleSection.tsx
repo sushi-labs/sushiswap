@@ -18,7 +18,7 @@ import { approveBentoBoxAction, batchAction, streamCreationAction, useDeepCompar
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
 import { CreateMultipleStreamFormSchemaType } from './schema'
 import { useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui13/components/toast'
+import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
 
 export const ExecuteMultipleSection: FC<{
   chainId: ChainId

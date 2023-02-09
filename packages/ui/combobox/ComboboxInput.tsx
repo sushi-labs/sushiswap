@@ -1,5 +1,5 @@
 import { Combobox as HeadlessCombobox } from '@headlessui/react'
-import { SelectorIcon } from '@heroicons/react/outline'
+import { ChevronUpDownIcon } from '@heroicons/react/24/outline'
 import classNames from 'classnames'
 import React, { FC, forwardRef } from 'react'
 
@@ -31,7 +31,7 @@ const ComboboxInput: FC<ComboboxInputProps> = forwardRef(({ className, standalon
         {children || 'Combobox a token'}
       </Typography>
       <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-        <SelectorIcon className="w-5 h-5" aria-hidden="true" />
+        <ChevronUpDownIcon className="w-5 h-5" aria-hidden="true" />
       </span>
     </>
   )

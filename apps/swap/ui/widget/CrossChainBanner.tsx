@@ -1,12 +1,12 @@
 import React, { FC, useCallback, useEffect, useState } from 'react'
-import Switch from '@sushiswap/ui13/components/Switch'
+import Switch from '@sushiswap/ui/future/components/Switch'
 import { useSwapState } from '../trade/TradeProvider'
-import { AppType } from '@sushiswap/ui13/types'
-import { classNames } from '@sushiswap/ui13'
-import { ShuffleIcon } from '@sushiswap/ui13/components/icons'
+import { AppType } from '@sushiswap/ui/types'
+import { classNames } from '@sushiswap/ui'
+import { ShuffleIcon } from '@sushiswap/ui/future/components/icons'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { ChainSelectors } from './ChainSelectors'
-import { Explainer } from '@sushiswap/ui13/components/Explainer'
+import { Explainer } from '@sushiswap/ui/future/components/Explainer'
 
 export const CrossChainBanner: FC = () => {
   const { appType } = useSwapState()

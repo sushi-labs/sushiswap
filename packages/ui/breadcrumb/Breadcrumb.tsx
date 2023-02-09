@@ -1,4 +1,4 @@
-import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
+import { ChevronRightIcon, HomeIcon } from '@heroicons/react/20/solid'
 import { FC } from 'react'
 
 import { Link, Typography } from '..'

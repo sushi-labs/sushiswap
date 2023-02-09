@@ -1,8 +1,8 @@
 'use client'
 
 import { LightBulbIcon } from '@heroicons/react/24/outline'
-import { List } from '@sushiswap/ui13/components/list/List'
-import Switch from '@sushiswap/ui13/components/Switch'
+import { List } from '@sushiswap/ui/future/components/list/List'
+import Switch from '@sushiswap/ui/future/components/Switch'
 import React, { FC } from 'react'
 import { useLocalStorage } from '@sushiswap/hooks'
 

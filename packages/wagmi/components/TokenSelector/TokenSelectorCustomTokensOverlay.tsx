@@ -1,5 +1,5 @@
-import { ChevronRightIcon, ExternalLinkIcon } from '@heroicons/react/outline'
-import { CurrencyDollarIcon, XCircleIcon } from '@heroicons/react/solid'
+import { ChevronRightIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
+import { CurrencyDollarIcon, XCircleIcon } from '@heroicons/react/20/solid'
 import chain from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
@@ -42,7 +42,7 @@ export const TokenSelectorCustomTokenRow: FC<{
             target="_blank"
             href={chain[currency.chainId].getTokenUrl(currency.wrapped.address)}
           >
-            <ExternalLinkIcon width={20} height={20} className="text-blue" />
+            <ArrowTopRightOnSquareIcon width={20} height={20} className="text-blue" />
           </IconButton>
         </div>
       </div>

@@ -1,5 +1,10 @@
-import { CreditCardIcon, DuplicateIcon, ExternalLinkIcon, LogoutIcon } from '@heroicons/react/outline'
-import { ChevronRightIcon } from '@heroicons/react/solid'
+import {
+  CreditCardIcon,
+  DocumentDuplicateIcon,
+  ArrowTopRightOnSquareIcon,
+  ArrowLeftOnRectangleIcon,
+} from '@heroicons/react/24/outline'
+import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import chains, { ChainId } from '@sushiswap/chain'
 import { Amount, Native } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
@@ -66,7 +71,7 @@ export const Default: FC<DefaultProps> = ({ chainId, address, setView }) => {
             <CopyHelper toCopy={address} hideIcon>
               {(isCopied) => (
                 <IconButton className="p-0.5" description={isCopied ? 'Copied!' : 'Copy'}>
-                  <DuplicateIcon width={18} height={18} />
+                  <DocumentDuplicateIcon width={18} height={18} />
                 </IconButton>
               )}
             </CopyHelper>
@@ -77,10 +82,10 @@ export const Default: FC<DefaultProps> = ({ chainId, address, setView }) => {
               className="p-0.5"
               description="Explore"
             >
-              <ExternalLinkIcon width={18} height={18} />
+              <ArrowTopRightOnSquareIcon width={18} height={18} />
             </IconButton>
             <IconButton as="button" onClick={() => disconnect()} className="p-0.5" description="Disconnect">
-              <LogoutIcon width={18} height={18} />
+              <ArrowLeftOnRectangleIcon width={18} height={18} />
             </IconButton>
           </div>
         </div>

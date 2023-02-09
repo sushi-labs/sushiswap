@@ -12,7 +12,7 @@ import { SendTransactionResult } from 'wagmi/actions'
 
 import { useVestingBalance, Vesting } from '../../lib'
 import { useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui13/components/toast'
+import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
 
 interface WithdrawModalProps {
   vesting?: Vesting

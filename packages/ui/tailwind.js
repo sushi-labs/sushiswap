@@ -47,6 +47,9 @@ module.exports = {
         heartbeat: 'heartbeat 1s ease 0.2s infinite normal forwards',
         rotate: 'rotate360 1s cubic-bezier(0.83, 0, 0.17, 1) infinite',
         wave: 'shimmer 1.25s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'wave-fast': 'shimmer 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        dash: 'dash 1.5s 2s ease-out infinite',
+        'dash-check': 'dash-check 1.5s 2s ease-out infinite',
       },
       keyframes: {
         shimmer: {
@@ -83,6 +86,22 @@ module.exports = {
           },
           to: {
             transform: 'rotate(360deg)',
+          },
+        },
+        dash: {
+          '0%': {
+            strokeDashoffset: 1000,
+          },
+          '100%': {
+            strokeDashoffset: 0,
+          },
+        },
+        'dash-check': {
+          '0%': {
+            strokeDashoffset: -100,
+          },
+          '100%': {
+            strokeDashoffset: 900,
           },
         },
       },
