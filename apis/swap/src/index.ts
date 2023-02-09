@@ -144,13 +144,16 @@ const start = async () => {
     // dataFetcherMap.set(ChainId.BSC, new DataFetcher(ChainId.BSC))
     // dataFetcherMap.set(ChainId.BTTC, new DataFetcher(ChainId.BTTC))
     // dataFetcherMap.set(ChainId.CELO, new DataFetcher(ChainId.CELO))
+
+    //
+
     dataFetcherMap.set(
       ChainId.ETHEREUM,
       new DataFetcher(
         ChainId.ETHEREUM,
         createClient({
           chain: mainnet,
-          transport: http(mainnet.rpcUrls.alchemy.http + '/kxJMJX53VvORsKQjLcV_lGTFeLBZhVoa'),
+          transport: http(mainnet.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
         })
       )
     )
@@ -160,7 +163,7 @@ const start = async () => {
         ChainId.POLYGON,
         createClient({
           chain: polygon,
-          transport: http(polygon.rpcUrls.alchemy.http + '/kxJMJX53VvORsKQjLcV_lGTFeLBZhVoa'),
+          transport: http(polygon.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
         })
       )
     )
@@ -170,7 +173,7 @@ const start = async () => {
         ChainId.ARBITRUM,
         createClient({
           chain: arbitrum,
-          transport: http(arbitrum.rpcUrls.alchemy.http + '/kxJMJX53VvORsKQjLcV_lGTFeLBZhVoa'),
+          transport: http(arbitrum.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
         })
       )
     )
@@ -180,7 +183,7 @@ const start = async () => {
         ChainId.OPTIMISM,
         createClient({
           chain: optimism,
-          transport: http(optimism.rpcUrls.alchemy.http + '/kxJMJX53VvORsKQjLcV_lGTFeLBZhVoa'),
+          transport: http(optimism.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
         })
       )
     )

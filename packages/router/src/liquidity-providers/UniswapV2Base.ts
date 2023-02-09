@@ -41,7 +41,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       throw new Error(`${this.getType()} cannot be instantiated for chainid ${chainId}, no factory or initCodeHash`)
     }
   }
-  readonly TOP_POOL_SIZE = 1000
+  readonly TOP_POOL_SIZE = 155
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 5000
   readonly ON_DEMAND_POOL_SIZE = 20
 
