@@ -357,7 +357,7 @@ export class TridentProvider extends LiquidityProvider {
       on demand stable pools: ${this.onDemandStablePools.size} 
       bridges: ${this.bridges.size}`
     )
-    console.log("TRADES:", this.poolsByTrade.size)
+
     const poolsOnDemand = await getPoolsByTokenIds(
       this.chainId,
       'SushiSwap',
@@ -371,8 +371,8 @@ export class TridentProvider extends LiquidityProvider {
     )
     console.debug(`${this.getLogPrefix()} - ON DEMAND: Begin fetching reserves for ${poolsOnDemand.size} pools`)
     const pools = Array.from(poolsOnDemand.values())
-    const onDemandClassicPools = pools.filter((p) => p.type === 'CONSTANT_PRODUCT_POOL')
-    const onDemandStablePools = pools.filter((p) => p.type === 'STABLE_POOL')
+    const onDemandClassicPools = pools.filter((p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.initialClassicPools.has(p.address))
+    const onDemandStablePools = pools.filter((p) => p.type === 'STABLE_POOL' && this.initialStablePools.has(p.address))
 
     
     this.poolsByTrade.set(this.getTradeId(t0, t1), pools.map((pool) => pool.address))

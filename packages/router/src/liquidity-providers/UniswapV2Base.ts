@@ -113,9 +113,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       this.ON_DEMAND_POOL_SIZE
     )
 
-    console.debug(`${this.getLogPrefix()} - ON DEMAND: Begin fetching reserves for ${poolsOnDemand.size} pools`)
-
-    const pools = Array.from(poolsOnDemand.values())
+    const pools = Array.from(poolsOnDemand.values()).filter((pool) => !this.initialPools.has(pool.address))
 
     this.poolsByTrade.set(this.getTradeId(t0, t1), pools.map((pool) => pool.address))
 
@@ -139,6 +137,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         existingPool.validUntilBlock = validUntilBlock
       }
     })
+    console.debug(`${this.getLogPrefix()} - ON DEMAND: Found ${pools.length} pools`)
   }
 
   async updatePools() {
@@ -169,7 +168,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         }),
       ])
 
-      initialPools.map((poolCode, i) => {
+      initialPools.forEach((poolCode, i) => {
         const pool = poolCode.pool
         const res = initialPoolsReserves[i]
         if (res !== null && res !== undefined) {
@@ -191,7 +190,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         }
       })
 
-      onDemandPools.map((poolInfo, i) => {
+      onDemandPools.forEach((poolInfo, i) => {
         const pool = poolInfo.poolCode.pool
         const res = onDemandPoolsReserves[i]
         if (res !== null && res !== undefined) {
