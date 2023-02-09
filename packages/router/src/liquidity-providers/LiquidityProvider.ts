@@ -1,5 +1,6 @@
 import type { ChainId } from '@sushiswap/chain'
 import type { Token } from '@sushiswap/currency'
+import { Client } from 'viem'
 
 import type { PoolCode } from '../pools/PoolCode'
 
@@ -23,10 +24,12 @@ export enum LiquidityProviders {
 
 export abstract class LiquidityProvider {
   chainId: ChainId
+  client: Client
   stateId = 0
   lastUpdateBlock = 0
-  constructor(chainId: ChainId) {
+  constructor(chainId: ChainId, client: Client) {
     this.chainId = chainId
+    this.client = client
   }
 
   abstract getType(): LiquidityProviders

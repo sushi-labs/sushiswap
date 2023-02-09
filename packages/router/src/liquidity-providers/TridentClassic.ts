@@ -4,6 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { ConstantProductRPool } from '@sushiswap/tines'
 import { Address, readContracts, watchBlockNumber } from '@wagmi/core'
+import { Client } from 'viem'
 
 import { getPoolsByTokenIds, getTopPools, PoolResponse } from '../lib/api'
 import { BentoPoolCode } from '../pools/BentoPool'
@@ -24,8 +25,8 @@ export class TridentCPPProvider extends TridentBase {
   blockListener?: () => void
   unwatchBlockNumber?: () => void
 
-  constructor(chainId: ChainId) {
-    super(chainId)
+  constructor(chainId: ChainId, client: Client) {
+    super(chainId, client)
     if (!(chainId in CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS)) {
       throw new Error(
         `${this.getType()} cannot be instantiated for chainId ${chainId}, no constant product pool factory address found`

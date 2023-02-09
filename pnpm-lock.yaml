@@ -2247,7 +2247,7 @@ importers:
       '@graphql-tools/merge': 8.3.18_graphql@16.6.0
       '@sushiswap/chain': link:../chain
       '@sushiswap/validate': link:../validate
-      '@whatwg-node/fetch': 0.7.0_@types+node@16.18.11
+      '@whatwg-node/fetch': 0.7.1_@types+node@16.18.11
       date-fns: 2.29.3
       ethers: 5.7.2
       graphql: 16.6.0
@@ -2599,6 +2599,7 @@ importers:
       tiny-warning: ^1.0.3
       tsup: 6.5.0
       typescript: 4.9.4
+      viem: 0.0.1-alpha.23
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
@@ -2618,6 +2619,7 @@ importers:
       node-fetch: 2.6.6
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
+      viem: 0.0.1-alpha.23_typescript@4.9.4
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -3547,7 +3549,7 @@ importers:
       '@swc/helpers': 0.4.14
       '@types/connect-timeout': 0.0.36
       '@types/express': 4.17.15
-      '@whatwg-node/fetch': 0.7.0
+      '@whatwg-node/fetch': 0.7.1
       date-fns: 2.29.3
       dotenv: 16.0.3
       eslint: 8.29.0
@@ -3648,7 +3650,7 @@ importers:
       '@swc/core': 1.3.26
       '@swc/helpers': 0.4.14
       '@types/express': 4.17.15
-      '@whatwg-node/fetch': 0.7.0
+      '@whatwg-node/fetch': 0.7.1
       dotenv: 16.0.3
       ioredis: 5.2.4
       jest: 29.3.1_ts-node@10.9.1
@@ -3816,7 +3818,7 @@ importers:
       '@swc/helpers': 0.4.14
       '@types/connect-timeout': 0.0.36
       '@types/express': 4.17.15
-      '@whatwg-node/fetch': 0.7.0
+      '@whatwg-node/fetch': 0.7.1
       dotenv: 16.0.3
       eslint: 8.29.0
       graphql: 16.6.0
@@ -11954,6 +11956,17 @@ packages:
     deprecated: this package has been deprecated
     dev: false
 
+  /@wagmi/chains/0.2.7_typescript@4.9.4:
+    resolution: {integrity: sha512-Oqnkl5n9MTBdMzgIwwdSKEDfm0Vdv2CYBaDyTa5SiTjFNaIfT6MRATLg7KbI3JydfxqJphsVFL+TZZqFvkte/g==}
+    peerDependencies:
+      typescript: '>=4.9.4'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      typescript: 4.9.4
+    dev: false
+
   /@wagmi/connectors/0.1.3-cjs_hdicynzillggfgfeuslacfae2m:
     resolution: {integrity: sha512-fvnT2Cf2ygsoXyLT/tlva2tw5GPVNu0G/hqVG8hmC/rZmmfnaCmhbM9/vYdMTvQkLeuQd9Av37qjXcu0+2Y3Bg==}
     deprecated: this package has been deprecated
@@ -13032,11 +13045,11 @@ packages:
       - '@types/node'
     dev: false
 
-  /@whatwg-node/fetch/0.7.0:
-    resolution: {integrity: sha512-0nmiUgHA9lSBcPQS0Eq9DACsdGa2W9gJUnN+Ul1vVhQsL3dnOAIGTs4uTiVC/W7bcfxTMP+TRFxngxS40aO5Nw==}
+  /@whatwg-node/fetch/0.7.1:
+    resolution: {integrity: sha512-rU/oS5pQLP0GOtTegi3sgzCkid5kbogXX16IaO0DYudhHJxbylKO7+xr7mbjM68XXYr7wkJ2BCmO1DHeg/XBuw==}
     dependencies:
       '@peculiar/webcrypto': 1.4.1
-      '@whatwg-node/node-fetch': 0.0.6
+      '@whatwg-node/node-fetch': 0.1.0
       busboy: 1.6.0
       urlpattern-polyfill: 6.0.2
       web-streams-polyfill: 3.2.1
@@ -13044,11 +13057,11 @@ packages:
       - '@types/node'
     dev: true
 
-  /@whatwg-node/fetch/0.7.0_@types+node@16.18.11:
-    resolution: {integrity: sha512-0nmiUgHA9lSBcPQS0Eq9DACsdGa2W9gJUnN+Ul1vVhQsL3dnOAIGTs4uTiVC/W7bcfxTMP+TRFxngxS40aO5Nw==}
+  /@whatwg-node/fetch/0.7.1_@types+node@16.18.11:
+    resolution: {integrity: sha512-rU/oS5pQLP0GOtTegi3sgzCkid5kbogXX16IaO0DYudhHJxbylKO7+xr7mbjM68XXYr7wkJ2BCmO1DHeg/XBuw==}
     dependencies:
       '@peculiar/webcrypto': 1.4.1
-      '@whatwg-node/node-fetch': 0.0.6_@types+node@16.18.11
+      '@whatwg-node/node-fetch': 0.1.0_@types+node@16.18.11
       busboy: 1.6.0
       urlpattern-polyfill: 6.0.2
       web-streams-polyfill: 3.2.1
@@ -13077,8 +13090,8 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@whatwg-node/node-fetch/0.0.6:
-    resolution: {integrity: sha512-pFEN2DNk1ZJZjdX9O7FG9qBZ7oIaB8JzOpAUCUditZ25kOSJb0qylq5uR2XUnzngBQCBwT/MHnKq2sXQZp1BUQ==}
+  /@whatwg-node/node-fetch/0.1.0:
+    resolution: {integrity: sha512-SSEGg+uVCeGSROAFSuBHhh7KufoOVcs+ftcCQaCHawXdkWVX7+fHramK23H3tXXlKdxuYIHO0oDiIVbq9BE34Q==}
     peerDependencies:
       '@types/node': ^18.0.6
     dependencies:
@@ -13087,8 +13100,8 @@ packages:
       tslib: 2.5.0
     dev: true
 
-  /@whatwg-node/node-fetch/0.0.6_@types+node@16.18.11:
-    resolution: {integrity: sha512-pFEN2DNk1ZJZjdX9O7FG9qBZ7oIaB8JzOpAUCUditZ25kOSJb0qylq5uR2XUnzngBQCBwT/MHnKq2sXQZp1BUQ==}
+  /@whatwg-node/node-fetch/0.1.0_@types+node@16.18.11:
+    resolution: {integrity: sha512-SSEGg+uVCeGSROAFSuBHhh7KufoOVcs+ftcCQaCHawXdkWVX7+fHramK23H3tXXlKdxuYIHO0oDiIVbq9BE34Q==}
     peerDependencies:
       '@types/node': ^18.0.6
     dependencies:
@@ -13240,6 +13253,19 @@ packages:
     engines: {pnpm: '>=7'}
     peerDependencies:
       typescript: '>=4.7.4'
+      zod: '>=3.19.1'
+    peerDependenciesMeta:
+      zod:
+        optional: true
+    dependencies:
+      typescript: 4.9.4
+    dev: false
+
+  /abitype/0.3.0_typescript@4.9.4:
+    resolution: {integrity: sha512-0YokyAV4hKMcy97Pl+6QgZBlBdZJN2llslOs7kiFY+cu7kMlVXDBpxMExfv0krzBCQt2t7hNovpQ3y/zvEm18A==}
+    engines: {pnpm: '>=7'}
+    peerDependencies:
+      typescript: '>=4.9.4'
       zod: '>=3.19.1'
     peerDependenciesMeta:
       zod:
@@ -20934,6 +20960,13 @@ packages:
     engines: {node: '>=4.0.0'}
     dependencies:
       punycode: 2.1.0
+    dev: false
+
+  /idna-uts46-hx/4.1.2:
+    resolution: {integrity: sha512-EAB3egrcalcTQHcjA7yzXXkE4E09TIFerR//4yUYGYCeCfXmkU0LgsGJgYSIQA1lQunfsn4ZCWJhbelgl3cdiQ==}
+    engines: {node: '>=16.15.1', npm: '>=8.11.1'}
+    dependencies:
+      punycode: 2.1.1
     dev: false
 
   /ieee754/1.2.1:
@@ -30365,6 +30398,18 @@ packages:
       is-buffer: 2.0.5
       unist-util-stringify-position: 3.0.2
       vfile-message: 3.1.3
+    dev: false
+
+  /viem/0.0.1-alpha.23_typescript@4.9.4:
+    resolution: {integrity: sha512-wTsnJ4PU3UjQg9uwYk99fKd7T69e4wU7T+f7lMG8oGP+YlX7+iIeOtYafmbzVWsDhdOoBNpJqevYWTqRRbuj9g==}
+    dependencies:
+      '@noble/hashes': 1.1.5
+      '@wagmi/chains': 0.2.7_typescript@4.9.4
+      abitype: 0.3.0_typescript@4.9.4
+      idna-uts46-hx: 4.1.2
+    transitivePeerDependencies:
+      - typescript
+      - zod
     dev: false
 
   /vlq/0.2.3:

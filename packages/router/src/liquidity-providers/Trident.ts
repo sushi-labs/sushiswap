@@ -9,6 +9,7 @@ import { Token } from '@sushiswap/currency'
 import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
 import { Address, readContracts, watchBlockNumber } from '@wagmi/core'
 import { BigNumber } from 'ethers'
+import { Client } from 'viem'
 
 import { getPoolsByTokenIds, getTopPools, PoolResponse } from '../lib/api'
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
@@ -58,8 +59,8 @@ export class TridentProvider extends LiquidityProvider {
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 1000
   readonly ON_DEMAND_POOL_SIZE = 20
 
-  constructor(chainId: ChainId) {
-    super(chainId)
+  constructor(chainId: ChainId, client: Client) {
+    super(chainId, client)
     if (
       !(chainId in this.bentoBox) ||
       !(chainId in this.constantProductPoolFactory) ||

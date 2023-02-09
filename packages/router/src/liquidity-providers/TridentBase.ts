@@ -5,6 +5,7 @@ import { Token } from '@sushiswap/currency'
 import { BridgeBento, Rebase, RToken } from '@sushiswap/tines'
 import { Address, readContracts } from '@wagmi/core'
 import { BigNumber } from 'ethers'
+import { Client } from 'viem'
 
 import { PoolResponse } from '../lib/api'
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
@@ -51,8 +52,8 @@ export abstract class TridentBase extends LiquidityProvider {
   readonly ON_DEMAND_POOL_SIZE = 20
   readonly BLOCKS_TO_KEEP_ON_DEMAND_POOLS = 75
 
-  constructor(chainId: ChainId) {
-    super(chainId)
+  constructor(chainId: ChainId, client: Client) {
+    super(chainId, client)
     if (!(chainId in BENTOBOX_ADDRESS)) {
       throw new Error(`${this.getType()} cannot be instantiated for chainId ${chainId}, no bentobox address found`)
     }
