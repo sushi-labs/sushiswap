@@ -218,8 +218,6 @@ export class TridentProvider extends LiquidityProvider {
     const rebases: Map<string, Rebase> = new Map()
 
     sortedTokens.forEach((t, i) => {
-      //   const total = totals[i]
-      // const balance = balances[i]
       const elastic = totals?.[i]?.result?.[0]
       const base = totals?.[i]?.result?.[1]
       const balance = balances?.[i]?.result

@@ -1,6 +1,7 @@
 import './env'
 
 import cors from '@fastify/cors'
+import rateLimit from '@fastify/rate-limit'
 import { ChainId } from '@sushiswap/chain'
 import { Native, nativeCurrencyIds } from '@sushiswap/currency'
 import routeProcessorExports from '@sushiswap/route-processor/exports'
@@ -18,6 +19,10 @@ import { getToken } from './tokens'
 
 const server = fastify({ logger: true })
 server.register(cors)
+server.register(rateLimit, {
+  max: 100,
+  timeWindow: '1 minute',
+})
 
 const dataFetcherMap = new Map<ChainId, DataFetcher>()
 
