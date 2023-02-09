@@ -1,12 +1,20 @@
 import { ChainId } from '@sushiswap/chain'
 import { Native, USDC } from '@sushiswap/currency'
+import { createClient, fallback, http } from 'viem'
+import { mainnet } from 'viem/chains'
 
 import { DataFetcher } from './DataFetcher'
 import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
 import { SushiProvider } from './liquidity-providers/Sushi'
 
-const DATA_FETCHER = new DataFetcher(ChainId.ETHEREUM)
+const DATA_FETCHER = new DataFetcher(
+  ChainId.ETHEREUM,
+  createClient({
+    chain: mainnet,
+    transport: fallback([http(mainnet.rpcUrls.alchemy + '/kxJMJX53VvORsKQjLcV_lGTFeLBZhVoa')]),
+  })
+)
 const DEFAULT_PROVIDERS = [LiquidityProviders.SushiSwap]
 beforeAll(() => {
   expect(DATA_FETCHER).toBeInstanceOf(DataFetcher)

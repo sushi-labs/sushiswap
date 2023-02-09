@@ -4,39 +4,14 @@ import { ChainId, chainShortName } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
-import { Address, readContracts } from '@wagmi/core'
 import { BigNumber } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
-import { Client, multicall, watchBlockNumber, watc } from 'viem'
+import { Address, Client, decodeHex, Hex, multicall, watchBlockNumber, watchEvent } from 'viem'
 
-import { allChains } from '../chains'
 import { getPoolsByTokenIds, getTopPools } from '../lib/api'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
-
-const syncAbi = [
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'uint112',
-        name: 'reserve0',
-        type: 'uint112',
-      },
-      {
-        indexed: false,
-        internalType: 'uint112',
-        name: 'reserve1',
-        type: 'uint112',
-      },
-    ],
-    name: 'Sync',
-    type: 'event',
-  },
-]
-
 interface PoolInfo {
   poolCode: PoolCode
   fetchType: 'INITIAL' | 'ON_DEMAND'
@@ -66,7 +41,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       throw new Error(`${this.getType()} cannot be instantiated for chainid ${chainId}, no factory or initCodeHash`)
     }
   }
-  readonly TOP_POOL_SIZE = 155
+  readonly TOP_POOL_SIZE = 1000
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 5000
   readonly ON_DEMAND_POOL_SIZE = 20
 
@@ -110,7 +85,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     // })
 
     const results = await multicall(this.client, {
-      multicallAddress: allChains.find((chain) => chain.id === this.chainId)?.contracts?.multicall3?.address as Address,
+      multicallAddress: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
       allowFailure: true,
       contracts: pools.map(
         (pool) =>
@@ -129,7 +104,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       // results[i].error && console.error(results[i].error)
 
       const res0 = results?.[i]?.result?.[0]
-      const res1 = results?.[i]?.result?.[0]
+      const res1 = results?.[i]?.result?.[1]
 
       if (res0 && res1) {
         const toks = [pool.token0, pool.token1]
@@ -139,8 +114,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
           toks[0] as RToken,
           toks[1] as RToken,
           this.fee,
-          BigNumber.from(res0.toString()),
-          BigNumber.from(res1.toString())
+          BigNumber.from(res0),
+          BigNumber.from(res1)
         )
         const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
         this.pools.set(pool.address, { poolCode: pc, fetchType: 'INITIAL', updatedAtBlock: blockNumber })
@@ -157,13 +132,33 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     this.pools.forEach((p) => {
       const pool = p.poolCode.pool
       if (this.unwatchSyncEvents.has(pool.address)) return
+      console.log('Set watch event for pool: ', pool.address)
       this.unwatchSyncEvents.set(
         pool.address,
-
         watchEvent(this.client, {
+          batch: true,
+          pollingInterval: 1_000,
           address: pool.address as Address,
           event: 'Sync(uint112 reserve0, uint112 reserve1)',
-          onLogs: (logs) => console.log(logs),
+          onLogs: (logs) => {
+            logs.forEach((log) => {
+              const res0 = BigNumber.from(decodeHex(log.data.slice(0, 66) as Hex, 'bigint'))
+              const res1 = BigNumber.from(
+                decodeHex(log.data.slice(0, 2).concat(log.data.slice(66, 130)) as Hex, 'bigint')
+              )
+              console.debug(
+                `${chainShortName[this.chainId]}/${this.chainId}~${log.blockNumber}~${type} - SYNC ${
+                  p.poolCode.poolName
+                }, ${pool.token0.symbol}/${pool.token1.symbol}.`
+              )
+
+              pool.updateReserves(res0, res1)
+              p.updatedAtBlock = Number(log.blockNumber)
+            })
+          },
+          onError: (error) => {
+            console.log('LOGS ERROR', error)
+          },
         })
 
         // watchContractEvent(
@@ -225,27 +220,43 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
     const pools = Array.from(poolsOnDemand.values())
 
-    const reserves = await readContracts({
+    // const reserves = await readContracts({
+    //   allowFailure: true,
+    //   contracts: pools.map((pool) => ({
+    //     address: pool.address as Address,
+    //     chainId: this.chainId,
+    //     abi: getReservesAbi,
+    //     functionName: 'getReserves',
+    //   })),
+    // })
+
+    const results = await multicall(this.client, {
+      multicallAddress: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
       allowFailure: true,
-      contracts: pools.map((pool) => ({
-        address: pool.address as Address,
-        chainId: this.chainId,
-        abi: getReservesAbi,
-        functionName: 'getReserves',
-      })),
+      contracts: pools.map(
+        (pool) =>
+          ({
+            address: pool.address as Address,
+            chainId: this.chainId,
+            abi: getReservesAbi,
+            functionName: 'getReserves',
+          } as const)
+      ),
     })
 
     pools.map((pool, i) => {
-      const res = reserves[i]
-      if (res !== null && res !== undefined) {
+      const res0 = results?.[i]?.result?.[0]
+      const res1 = results?.[i]?.result?.[1]
+
+      if (res0 && res1) {
         const toks = [pool.token0, pool.token1]
         const rPool = new ConstantProductRPool(
           pool.address,
           toks[0] as RToken,
           toks[1] as RToken,
           this.fee,
-          res[0],
-          res[1]
+          BigNumber.from(res0),
+          BigNumber.from(res1)
         )
         const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
         this.pools.set(pool.address, { poolCode: pc, fetchType: 'ON_DEMAND', updatedAtBlock: this.lastUpdateBlock })

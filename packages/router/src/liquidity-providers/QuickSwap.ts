@@ -1,6 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
 import { Client } from 'viem'
-
 import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 

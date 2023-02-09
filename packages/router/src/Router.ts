@@ -11,9 +11,10 @@ import {
 import { BigNumber } from 'ethers'
 
 import type { DataFetcher } from './DataFetcher'
-import type { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
-import { convertTokenToBento, getBentoChainId } from './liquidity-providers/TridentBase'
+// import { convertTokenToBento, getBentoChainId } from './liquidity-providers/TridentBase'
 // import { convertTokenToBento, getBentoChainId } from './liquidity-providers/Trident'
+import { convertTokenToBento, getBentoChainId } from './lib/convert'
+import type { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { getRouteProcessorCode } from './TinesToRouteProcessor'
 
 type RouteCallBack = (r: MultiRoute) => void

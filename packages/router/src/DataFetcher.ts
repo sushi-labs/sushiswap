@@ -5,8 +5,7 @@ import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
 //   autoConnect: true,
 //   provider,
 // })
-import { createPublicClient, http } from 'viem'
-import { mainnet } from 'viem/chains'
+import { Client } from 'viem'
 
 // import { configureChains, createClient } from '@wagmi/core'
 // import { allChains } from './chains'
@@ -24,10 +23,7 @@ import { TraderJoeProvider } from './liquidity-providers/TraderJoe'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import type { PoolCode } from './pools/PoolCode'
 
-const client = createPublicClient({
-  chain: mainnet,
-  transport: http(),
-})
+// import { create } from 'viem'
 
 // Gathers pools info, creates routing in 'incremental' mode
 // This means that new routing recalculates each time new pool fetching data comes
@@ -38,10 +34,11 @@ export class DataFetcher {
   // Provider to poolAddress to PoolCode
   poolCodes: Map<LiquidityProviders, Map<string, PoolCode>> = new Map()
   stateId = 0
-  client = client
+  client: Client
 
-  constructor(chainId: ChainId) {
+  constructor(chainId: ChainId, client: Client) {
     this.chainId = chainId
+    this.client = client
   }
 
   _providerIsIncluded(lp: LiquidityProviders, liquidity?: LiquidityProviders[]) {
@@ -155,7 +152,7 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.TraderJoe, providers)) {
       try {
-        const provider = new TraderJoeProvider(this.chainId)
+        const provider = new TraderJoeProvider(this.chainId, this.client)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -164,7 +161,7 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.NetSwap, providers)) {
       try {
-        const provider = new NetSwapProvider(this.chainId)
+        const provider = new NetSwapProvider(this.chainId, this.client)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
