@@ -20,7 +20,9 @@ interface PoolInfo {
 
 export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   initialPools: Map<string, PoolCode> = new Map()
-  onDemandPools: Map<string, Map<string, PoolInfo>> = new Map()
+  poolsByTrade: Map<string, string[]> = new Map()
+  onDemandPools: Map<string, PoolInfo> = new Map()
+  
   blockListener?: () => void
   unwatchBlockNumber?: () => void
   unwatchMulticall?: () => void
@@ -115,14 +117,11 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
     const pools = Array.from(poolsOnDemand.values())
 
-    const onDemandId = this.getOnDemandId(t0, t1)
+    this.poolsByTrade.set(this.getTradeId(t0, t1), pools.map((pool) => pool.address))
 
-    if (!this.onDemandPools.has(onDemandId)) {
-      this.onDemandPools.set(onDemandId, new Map())
-    }
     const validUntilBlock = this.lastUpdateBlock + this.ON_DEMAND_POOLS_BLOCK_LIFETIME
     pools.forEach((pool) => {
-      const existingPool = this.onDemandPools.get(onDemandId)?.get(pool.address)
+      const existingPool = this.onDemandPools.get(pool.address)
       if (existingPool === undefined) {
         const toks = [pool.token0, pool.token1]
         const rPool = new ConstantProductRPool(
@@ -135,7 +134,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         )
 
         const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
-        this.onDemandPools.get(onDemandId)?.set(pool.address, { poolCode: pc, validUntilBlock })
+        this.onDemandPools.set(pool.address, { poolCode: pc, validUntilBlock })
       } else {
         existingPool.validUntilBlock = validUntilBlock
       }
@@ -147,8 +146,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       this.removeStalePools()
 
       const initialPools = Array.from(this.initialPools.values())
-      const onDemandPools = Array.from(this.onDemandPools.values()).flatMap((pools) => Array.from(pools.values()))
-
+      const onDemandPools = Array.from(this.onDemandPools.values())
 
       const [initialPoolsReserves, onDemandPoolsReserves] = await Promise.all([
         readContracts({
@@ -258,12 +256,10 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
   private removeStalePools() {
     let removed = 0
-    for (const allOnDemandPools of this.onDemandPools.values()) {
-      for (const [poolId, poolInfo] of allOnDemandPools) {
-        if (poolInfo.validUntilBlock < this.lastUpdateBlock) {
-          allOnDemandPools.delete(poolId)
-          removed++
-        }
+    for (const poolInfo of this.onDemandPools.values()) {
+      if (poolInfo.validUntilBlock < this.lastUpdateBlock) {
+        this.onDemandPools.delete(poolInfo.poolCode.pool.address)
+        removed++
       }
     }
     if (removed > 0) {
@@ -276,9 +272,14 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   }
 
   getCurrentPoolList(t0: Token, t1: Token): PoolCode[] {
-    const onDemandPoolCodes = Array.from(this.onDemandPools.get(this.getOnDemandId(t0, t1))?.values() ?? []).map(
-      (p) => p.poolCode
-    )
+    const tradeId = this.getTradeId(t0, t1)
+    const poolsByTrade = this.poolsByTrade.get(tradeId) ?? []
+    const onDemandPoolCodes = poolsByTrade
+      ? Array.from(this.onDemandPools)
+          .filter(([poolAddress]) => poolsByTrade.includes(poolAddress))
+          .map(([, p]) => p.poolCode)
+      : []
+
     return [...this.initialPools.values(), onDemandPoolCodes].flat()
   }
 
@@ -287,5 +288,4 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     if (this.unwatchMulticall) this.unwatchMulticall()
     this.blockListener = undefined
   }
-
 }

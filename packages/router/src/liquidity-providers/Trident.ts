@@ -7,10 +7,8 @@ import {
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import {
-  adjustedReservesToReal,
   BridgeBento,
   ConstantProductRPool,
-  realReservesToAdjusted,
   Rebase,
   RToken,
   StableSwapRPool,
@@ -54,8 +52,11 @@ export class TridentProvider extends LiquidityProvider {
   isInitialized = false
   initialClassicPools: Map<string, PoolCode> = new Map()
   initialStablePools: Map<string, PoolCode> = new Map()
-  onDemandClassicPools: Map<string, Map<string, PoolInfo>> = new Map()
-  onDemandStablePools: Map<string, Map<string, PoolInfo>> = new Map()
+
+  onDemandClassicPools: Map<string, PoolInfo> = new Map()
+  onDemandStablePools: Map<string, PoolInfo> = new Map()
+  poolsByTrade: Map<string, string[]> = new Map()
+  
   bridges: Map<string, PoolCode> = new Map()
   bentoBox = BENTOBOX_ADDRESS
   constantProductPoolFactory = CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS
@@ -234,12 +235,10 @@ export class TridentProvider extends LiquidityProvider {
     this.removeStalePools()
     const initialClassicPools = Array.from(this.initialClassicPools.values())
     const initialStablePools = Array.from(this.initialStablePools.values())
-    const onDemandClassicPools = Array.from(this.onDemandClassicPools.values()).flatMap((pools) =>
-      Array.from(pools.values()).map((p) => p.poolCode)
-    )
-    const onDemandStablePools = Array.from(this.onDemandStablePools.values()).flatMap((pools) =>
-      Array.from(pools.values()).map((p) => p.poolCode)
-    )
+
+    const onDemandClassicPools = Array.from(this.onDemandClassicPools.values()).map((p) => p.poolCode)
+    const onDemandStablePools = Array.from(this.onDemandStablePools.values()).map((p) => p.poolCode)
+
     const bridges = Array.from(this.bridges.values())
 
     const initClassicReservePromise = readContracts({
@@ -358,6 +357,7 @@ export class TridentProvider extends LiquidityProvider {
       on demand stable pools: ${this.onDemandStablePools.size} 
       bridges: ${this.bridges.size}`
     )
+    console.log("TRADES:", this.poolsByTrade.size)
     const poolsOnDemand = await getPoolsByTokenIds(
       this.chainId,
       'SushiSwap',
@@ -374,7 +374,8 @@ export class TridentProvider extends LiquidityProvider {
     const onDemandClassicPools = pools.filter((p) => p.type === 'CONSTANT_PRODUCT_POOL')
     const onDemandStablePools = pools.filter((p) => p.type === 'STABLE_POOL')
 
-    const onDemandId = this.getOnDemandId(t0, t1)
+    
+    this.poolsByTrade.set(this.getTradeId(t0, t1), pools.map((pool) => pool.address))
     const validUntilBlock = this.lastUpdateBlock + this.ON_DEMAND_POOLS_BLOCK_LIFETIME
 
     const sortedTokens = this.poolResponseToSortedTokens(pools)
@@ -397,12 +398,9 @@ export class TridentProvider extends LiquidityProvider {
       }
     })
 
-    if (!this.onDemandClassicPools.has(onDemandId)) {
-      this.onDemandClassicPools.set(onDemandId, new Map())
-    }
 
     onDemandClassicPools.forEach((pr) => {
-      const existingPool = this.onDemandClassicPools.get(onDemandId)?.get(pr.address)
+      const existingPool = this.onDemandClassicPools.get(pr.address)
       if (existingPool === undefined) {
         const tokens = [convertTokenToBento(pr.token0), convertTokenToBento(pr.token1)]
         const rPool = new ConstantProductRPool(
@@ -415,18 +413,14 @@ export class TridentProvider extends LiquidityProvider {
         )
         const pc = new BentoPoolCode(rPool, this.getType(), this.getPoolProviderName())
 
-        this.onDemandClassicPools.get(onDemandId)?.set(pr.address, { poolCode: pc, validUntilBlock })
+        this.onDemandClassicPools.set(pr.address, { poolCode: pc, validUntilBlock })
       } else {
         existingPool.validUntilBlock = validUntilBlock
       }
     })
 
-    if (!this.onDemandStablePools.has(onDemandId)) {
-      this.onDemandStablePools.set(onDemandId, new Map())
-    }
-
     onDemandStablePools.forEach((pr) => {
-      const existingPool = this.onDemandStablePools.get(onDemandId)?.get(pr.address)
+      const existingPool = this.onDemandStablePools.get(pr.address)
       if (existingPool === undefined) {
         const stablePool = new StableSwapRPool(
           pr.address,
@@ -442,7 +436,7 @@ export class TridentProvider extends LiquidityProvider {
         )
 
         const pc = new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName())
-        this.onDemandStablePools.get(onDemandId)?.set(pr.address, { poolCode: pc, validUntilBlock })
+        this.onDemandStablePools.set(pr.address, { poolCode: pc, validUntilBlock })
       } else {
         existingPool.validUntilBlock = validUntilBlock
       }
@@ -473,21 +467,17 @@ export class TridentProvider extends LiquidityProvider {
   private removeStalePools() {
     let removed = 0
 
-    for (const allOnDemandClassicPools of this.onDemandClassicPools.values()) {
-      for (const [poolId, poolInfo] of allOnDemandClassicPools) {
-        if (poolInfo.validUntilBlock < this.lastUpdateBlock) {
-          allOnDemandClassicPools.delete(poolId)
-          removed++
-        }
+    for (const poolInfo of this.onDemandClassicPools.values()) {
+      if (poolInfo.validUntilBlock < this.lastUpdateBlock) {
+        this.onDemandClassicPools.delete(poolInfo.poolCode.pool.address)
+        removed++
       }
     }
 
-    for (const allOnDemandStablePools of this.onDemandStablePools.values()) {
-      for (const [poolId, poolInfo] of allOnDemandStablePools) {
-        if (poolInfo.validUntilBlock < this.lastUpdateBlock) {
-          allOnDemandStablePools.delete(poolId)
-          removed++
-        }
+    for (const poolInfo of this.onDemandStablePools.values()) {
+      if (poolInfo.validUntilBlock < this.lastUpdateBlock) {
+        this.onDemandStablePools.delete(poolInfo.poolCode.pool.address)
+        removed++
       }
     }
 
@@ -501,12 +491,14 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   getCurrentPoolList(t0: Token, t1: Token): PoolCode[] {
-    const onDemandPoolCodes = [
-      Array.from(this.onDemandStablePools.get(this.getOnDemandId(t0, t1))?.values() ?? []),
-      Array.from(this.onDemandClassicPools.get(this.getOnDemandId(t0, t1))?.values() ?? []),
-    ]
-      .flat()
-      .map((p) => p.poolCode)
+      const tradeId = this.getTradeId(t0, t1)
+      const poolsByTrade = this.poolsByTrade.get(tradeId) ?? []
+      const onDemandPoolCodes = poolsByTrade
+        ? [Array.from(this.onDemandClassicPools), Array.from(this.onDemandStablePools)].flat()
+            .filter(([poolAddress]) => poolsByTrade.includes(poolAddress))
+            .map(([, p]) => p.poolCode)
+        : []
+
 
     return [
       ...this.initialClassicPools.values(),
