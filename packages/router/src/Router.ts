@@ -1,7 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token, Type, WNATIVE } from '@sushiswap/currency'
-import { findMultiRouteExactIn, getBigNumber, MultiRoute, NetworkInfo, RPool, RToken } from '@sushiswap/tines'
+import { findMultiRouteExactIn, getBigNumber, MultiRoute, NetworkInfo, RouteStatus, RPool, RToken } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
+import { DataFetcher } from './DataFetcher'
 
 import type { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { convertTokenToBento, getBentoChainId } from './liquidity-providers/TridentBase'
@@ -59,7 +60,7 @@ export class Router {
     if (providers) {
       poolCodes = poolCodes.filter((pc) => providers.includes(pc.liquidityProvider))
     }
-    
+
     let pools = Array.from(poolCodes).map((pc) => pc.pool)
 
     if (poolFilter) pools = pools.filter(poolFilter)
