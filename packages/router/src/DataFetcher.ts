@@ -20,6 +20,7 @@ import { QuickSwapProvider } from './liquidity-providers/QuickSwap'
 import { SpookySwapProvider } from './liquidity-providers/SpookySwap'
 import { SushiProvider } from './liquidity-providers/Sushi'
 import { TraderJoeProvider } from './liquidity-providers/TraderJoe'
+import { TridentProvider } from './liquidity-providers/Trident'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import type { PoolCode } from './pools/PoolCode'
 
@@ -65,14 +66,14 @@ export class DataFetcher {
       }
     }
 
-    // if (this._providerIsIncluded(LiquidityProviders.Trident, providers)) {
-    //   try {
-    //     const provider = new TridentProvider(this.chainId, this.client)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.Trident, providers)) {
+      try {
+        const provider = new TridentProvider(this.chainId, this.client)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
     if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
       try {
