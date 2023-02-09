@@ -136,8 +136,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       this.unwatchSyncEvents.set(
         pool.address,
         watchEvent(this.client, {
-          batch: true,
-          pollingInterval: 1_000,
           address: pool.address as Address,
           event: 'Sync(uint112 reserve0, uint112 reserve1)',
           onLogs: (logs) => {
