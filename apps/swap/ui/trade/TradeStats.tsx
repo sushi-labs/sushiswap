@@ -2,7 +2,6 @@
 
 import { Transition } from '@headlessui/react'
 import { shortenAddress } from '@sushiswap/format'
-import { useSlippageTolerance } from '@sushiswap/react-query'
 import React, { FC, useState } from 'react'
 
 import { useSwapState } from './TradeProvider'
@@ -15,8 +14,7 @@ import { ZERO } from '@sushiswap/math'
 
 export const TradeStats: FC = () => {
   const [open, setOpen] = useState(false)
-  const { value, token1, recipient } = useSwapState()
-  const { data: slippageTolerance } = useSlippageTolerance()
+  const { value, recipient } = useSwapState()
   const { isLoading, isFetching, data: trade } = useTrade()
   const loading = Boolean(isLoading && +value > 0) || isFetching
 
