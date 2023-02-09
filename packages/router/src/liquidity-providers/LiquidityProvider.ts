@@ -84,4 +84,7 @@ export abstract class LiquidityProvider {
   getLogPrefix(): string {
     return `${chainShortName[this.chainId]}/${this.chainId}~${this.lastUpdateBlock}~${this.getType()}`
   }
+
+  getOnDemandId = (t0: Token, t1: Token) =>
+    [t0.address, t1.address].sort((first, second) => (first > second ? -1 : 1)).join(':')
 }

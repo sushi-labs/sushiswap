@@ -121,7 +121,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       this.onDemandPools.set(onDemandId, new Map())
     }
     const validUntilBlock = this.lastUpdateBlock + this.ON_DEMAND_POOLS_BLOCK_LIFETIME
-    pools.map((pool) => {
+    pools.forEach((pool) => {
       const existingPool = this.onDemandPools.get(onDemandId)?.get(pool.address)
       if (existingPool === undefined) {
         const toks = [pool.token0, pool.token1]
@@ -288,6 +288,4 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     this.blockListener = undefined
   }
 
-  getOnDemandId = (t0: Token, t1: Token) =>
-    [t0.address, t1.address].sort((first, second) => (first > second ? -1 : 1)).join(':')
 }

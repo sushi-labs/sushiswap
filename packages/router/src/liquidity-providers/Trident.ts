@@ -6,7 +6,16 @@ import {
 } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
+import {
+  adjustedReservesToReal,
+  BridgeBento,
+  ConstantProductRPool,
+  realReservesToAdjusted,
+  Rebase,
+  RToken,
+  StableSwapRPool,
+  toShareBN,
+} from '@sushiswap/tines'
 import { Address, readContracts, watchBlockNumber } from '@wagmi/core'
 import { BigNumber } from 'ethers'
 
@@ -38,15 +47,16 @@ export function convertTokenToBento(token: Token): RToken {
 
 interface PoolInfo {
   poolCode: PoolCode
-  fetchType: 'INITIAL' | 'ON_DEMAND'
-  updatedAtBlock: number
+  validUntilBlock: number
 }
 
 export class TridentProvider extends LiquidityProvider {
   isInitialized = false
-  cPPools: Map<string, PoolInfo> = new Map()
-  stablePools: Map<string, PoolInfo> = new Map()
-  bridges: Map<string, PoolInfo> = new Map()
+  initialClassicPools: Map<string, PoolCode> = new Map()
+  initialStablePools: Map<string, PoolCode> = new Map()
+  onDemandClassicPools: Map<string, Map<string, PoolInfo>> = new Map()
+  onDemandStablePools: Map<string, Map<string, PoolInfo>> = new Map()
+  bridges: Map<string, PoolCode> = new Map()
   bentoBox = BENTOBOX_ADDRESS
   constantProductPoolFactory = CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS
   stablePoolFactory = STABLE_POOL_FACTORY_ADDRESS
@@ -96,29 +106,19 @@ export class TridentProvider extends LiquidityProvider {
       return
     }
 
-    await this.initPools(Array.from(topPools.values()), 'INITIAL')
+    await this.initPools(Array.from(topPools.values()))
 
-    console.debug(`${this.getLogPrefix()} - INIT, WATCHING ${this.getCurrentPoolList().length} POOLS`)
-    // for (const pool of this.getCurrentPoolList()) {
-    //   console.log(`${pool.poolName} ${pool.pool.address} ${pool.pool.token0.symbol}/${pool.pool.token1.symbol} ${pool.pool.reserve0} ${pool.pool.reserve1}`)
-    // }
+    console.debug(
+      `${this.getLogPrefix()} - INIT, WATCHING ${this.initialClassicPools.size} CLASSIC AND ${
+        this.initialStablePools.size
+      } STABLE POOLS`
+    )
   }
 
-  async initPools(pools: PoolResponse[], fetchType: 'INITIAL' | 'ON_DEMAND'): Promise<void> {
+  async initPools(pools: PoolResponse[]): Promise<void> {
     const cppPools = pools.filter((p) => p.type === 'CONSTANT_PRODUCT_POOL')
     const stablePools = pools.filter((p) => p.type === 'STABLE_POOL')
-    const tokenMap = new Map<string, Token>()
-    pools.forEach((pool) => {
-      tokenMap.set(pool.token0.address, pool.token0)
-      tokenMap.set(pool.token1.address, pool.token1)
-    })
-    const tokensDedup = Array.from(tokenMap.values())
-    // tokens sorting
-    const tok0: [string, Token][] = tokensDedup.map((t) => [
-      t.address.toLocaleLowerCase().substring(2).padStart(40, '0'),
-      t,
-    ])
-    const sortedTokens = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([, t]) => t)
+    const sortedTokens = this.poolResponseToSortedTokens(pools)
 
     const cppReservePromise = readContracts({
       allowFailure: true,
@@ -180,8 +180,8 @@ export class TridentProvider extends LiquidityProvider {
       if (res === undefined || res === null) return
       const tokens = [convertTokenToBento(pr.token0), convertTokenToBento(pr.token1)]
       const rPool = new ConstantProductRPool(pr.address, tokens[0], tokens[1], pr.swapFee, res[0], res[1])
-      const pc = new BentoPoolCode(rPool, this.getType(),this.getPoolProviderName())
-      this.cPPools.set(pr.address, { poolCode: pc, fetchType, updatedAtBlock: this.lastUpdateBlock })
+      const pc = new BentoPoolCode(rPool, this.getType(), this.getPoolProviderName())
+      this.initialClassicPools.set(pr.address, pc)
       ++this.stateId
     })
 
@@ -199,11 +199,11 @@ export class TridentProvider extends LiquidityProvider {
         total.base,
         balance
       )
-      this.bridges.set(t.address, {
-        poolCode: new BentoBridgePoolCode(pool,this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId]),
-        fetchType: 'INITIAL', // Better to always keep bridges as INITIAL, can't be ON_DEMAND because those will eventually removed.
-        updatedAtBlock: this.lastUpdateBlock,
-      })
+      this.bridges.set(
+        t.address,
+        new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
+      )
+      ++this.stateId
       rebases.set(t.address, total)
     })
 
@@ -225,41 +225,57 @@ export class TridentProvider extends LiquidityProvider {
         totals0,
         totals1
       )
-      this.stablePools.set(pr.address, {
-        poolCode: new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName()),
-        fetchType,
-        updatedAtBlock: this.lastUpdateBlock,
-      })
+      this.initialStablePools.set(pr.address, new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName()))
       ++this.stateId
     })
   }
 
-  async updatePools(type: 'ALL' | 'INITIAL'): Promise<void> {
+  async updatePools(): Promise<void> {
     this.removeStalePools()
-    let cppPools = Array.from(this.cPPools.values())
-    let stablePools = Array.from(this.stablePools.values())
-    let bridges = Array.from(this.bridges.values())
+    const initialClassicPools = Array.from(this.initialClassicPools.values())
+    const initialStablePools = Array.from(this.initialStablePools.values())
+    const onDemandClassicPools = Array.from(this.onDemandClassicPools.values()).flatMap((pools) =>
+      Array.from(pools.values()).map((p) => p.poolCode)
+    )
+    const onDemandStablePools = Array.from(this.onDemandStablePools.values()).flatMap((pools) =>
+      Array.from(pools.values()).map((p) => p.poolCode)
+    )
+    const bridges = Array.from(this.bridges.values())
 
-    if (type === 'INITIAL') {
-      cppPools = cppPools.filter((p) => p.fetchType === 'INITIAL')
-      stablePools = stablePools.filter((p) => p.fetchType === 'INITIAL')
-      bridges = bridges.filter((p) => p.fetchType === 'INITIAL')
-    }
-
-    const cppReservePromise = readContracts({
+    const initClassicReservePromise = readContracts({
       allowFailure: true,
-      contracts: cppPools.map((p) => ({
-        address: p.poolCode.pool.address as Address,
+      contracts: initialClassicPools.map((pc) => ({
+        address: pc.pool.address as Address,
         chainId: this.chainId,
         abi: getReservesAbi,
         functionName: 'getReserves',
       })),
     })
 
-    const stableReservePromise = readContracts({
+    const onDemandClassicReservePromise = readContracts({
       allowFailure: true,
-      contracts: stablePools.map((p) => ({
-        address: p.poolCode.pool.address as Address,
+      contracts: onDemandClassicPools.map((pc) => ({
+        address: pc.pool.address as Address,
+        chainId: this.chainId,
+        abi: getReservesAbi,
+        functionName: 'getReserves',
+      })),
+    })
+
+    const initStableReservePromise = readContracts({
+      allowFailure: true,
+      contracts: initialStablePools.map((pc) => ({
+        address: pc.pool.address as Address,
+        chainId: this.chainId,
+        abi: getStableReservesAbi,
+        functionName: 'getReserves',
+      })),
+    })
+
+    const onDemandStableReservePromise = readContracts({
+      allowFailure: true,
+      contracts: onDemandStablePools.map((pc) => ({
+        address: pc.pool.address as Address,
         chainId: this.chainId,
         abi: getStableReservesAbi,
         functionName: 'getReserves',
@@ -271,7 +287,7 @@ export class TridentProvider extends LiquidityProvider {
       contracts: bridges.map(
         (b) =>
           ({
-            args: [b.poolCode.pool.token0.address as Address],
+            args: [b.pool.token0.address as Address],
             address: this.bentoBox[this.chainId] as Address,
             chainId: this.chainId,
             abi: totalsAbi,
@@ -286,7 +302,7 @@ export class TridentProvider extends LiquidityProvider {
         (b) =>
           ({
             args: [this.bentoBox[this.chainId] as Address],
-            address: b.poolCode.pool.token0.address as Address,
+            address: b.pool.token0.address as Address,
             chainId: this.chainId,
             abi: balanceOfAbi,
             functionName: 'balanceOf',
@@ -294,39 +310,24 @@ export class TridentProvider extends LiquidityProvider {
       ),
     })
 
-    const [cppReserves, stableReserves, totals, balances] = await Promise.all([
-      cppReservePromise,
-      stableReservePromise,
-      totalsPromise,
-      balancesPromise,
-    ])
-    // console.log(`${cppReserves.length} ${stableReserves.length} ${totals.length} ${balances.length}`)
+    const [initClassicReserves, onDemandClassicReserves, initStableReserves, onDemandStableReserves, totals, balances] =
+      await Promise.all([
+        initClassicReservePromise,
+        onDemandClassicReservePromise,
+        initStableReservePromise,
+        onDemandStableReservePromise,
+        totalsPromise,
+        balancesPromise,
+      ])
 
-    cppPools.forEach((pi, i) => {
-      const res = cppReserves[i]
-      if (
-        res === undefined ||
-        res === null ||
-        !pi.poolCode.pool.reserve0.eq(res[0]) ||
-        !pi.poolCode.pool.reserve1.eq(res[1])
-      ) {
-        return
-      }
-
-      pi.poolCode.pool.updateReserves(res[0], res[1])
-      this.cPPools.set(pi.poolCode.pool.address, {
-        poolCode: pi.poolCode,
-        fetchType: pi.fetchType,
-        updatedAtBlock: this.lastUpdateBlock,
-      })
-      ++this.stateId
-    })
+    this.updateClassicReserves(initialClassicPools, initClassicReserves)
+    this.updateClassicReserves(onDemandClassicPools, onDemandClassicReserves)
 
     const rebases: Map<string, Rebase> = new Map()
 
     bridges.forEach((b, i) => {
-      const pool = b.poolCode.pool as BridgeBento
-      const t = pool.token0
+      const bridge = b.pool as BridgeBento
+      const t = bridge.token0
       const total = totals[i]
       const balance = balances[i]
       if (
@@ -334,24 +335,225 @@ export class TridentProvider extends LiquidityProvider {
         total === null ||
         balance === undefined ||
         balance === null ||
-        !pool.reserve0.eq(total.elastic) ||
-        !pool.reserve1.eq(total.base)
+        !bridge.reserve0.eq(total.elastic) ||
+        !bridge.reserve1.eq(total.base)
       ) {
         return
       }
-
-      pool.updateReserves(total.elastic, total.base)
-
-      this.bridges.set(t.address, {
-        poolCode: new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId]),
-        fetchType: 'INITIAL', // Better to always keep bridges as INITIAL, can't be ON_DEMAND because those will eventually removed.
-        updatedAtBlock: this.lastUpdateBlock,
-      })
+      bridge.updateReserves(total.elastic, total.base)
       rebases.set(t.address, total)
     })
 
-    stablePools.forEach((pi, i) => {
-      const pool = pi.poolCode.pool as StableSwapRPool
+    this.updateStablePools(initialStablePools, rebases, initStableReserves)
+    this.updateStablePools(onDemandStablePools, rebases, onDemandStableReserves)
+
+    console.debug(`${this.getLogPrefix()} - UPDATED POOLS`)
+  }
+
+  async getOnDemandPools(t0: Token, t1: Token): Promise<void> {
+    console.debug(
+      `****** MEM - ${this.getType()} init classic pools: ${this.initialClassicPools.size} 
+      on demand classic pools: ${this.onDemandClassicPools.size} 
+      init stable pools: ${this.initialStablePools.size} 
+      on demand stable pools: ${this.onDemandStablePools.size} 
+      bridges: ${this.bridges.size}`
+    )
+    const poolsOnDemand = await getPoolsByTokenIds(
+      this.chainId,
+      'SushiSwap',
+      'TRIDENT',
+      ['CONSTANT_PRODUCT_POOL', 'STABLE_POOL'],
+      t0.address,
+      t1.address,
+      this.TOP_POOL_SIZE,
+      this.TOP_POOL_LIQUIDITY_THRESHOLD,
+      this.ON_DEMAND_POOL_SIZE
+    )
+    console.debug(`${this.getLogPrefix()} - ON DEMAND: Begin fetching reserves for ${poolsOnDemand.size} pools`)
+    const pools = Array.from(poolsOnDemand.values())
+    const onDemandClassicPools = pools.filter((p) => p.type === 'CONSTANT_PRODUCT_POOL')
+    const onDemandStablePools = pools.filter((p) => p.type === 'STABLE_POOL')
+
+    const onDemandId = this.getOnDemandId(t0, t1)
+    const validUntilBlock = this.lastUpdateBlock + this.ON_DEMAND_POOLS_BLOCK_LIFETIME
+
+    const sortedTokens = this.poolResponseToSortedTokens(pools)
+
+    sortedTokens.forEach((t, i) => {
+      if (!this.bridges.has(t.address)) {
+        const pool = new BridgeBento(
+          `Bento bridge for ${t.symbol}`,
+          t as RToken,
+          convertTokenToBento(t),
+          BigNumber.from(0),
+          BigNumber.from(0),
+          BigNumber.from(0)
+        )
+        this.bridges.set(
+          t.address,
+          new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
+        )
+        ++this.stateId
+      }
+    })
+
+    if (!this.onDemandClassicPools.has(onDemandId)) {
+      this.onDemandClassicPools.set(onDemandId, new Map())
+    }
+
+    onDemandClassicPools.forEach((pr) => {
+      const existingPool = this.onDemandClassicPools.get(onDemandId)?.get(pr.address)
+      if (existingPool === undefined) {
+        const tokens = [convertTokenToBento(pr.token0), convertTokenToBento(pr.token1)]
+        const rPool = new ConstantProductRPool(
+          pr.address,
+          tokens[0],
+          tokens[1],
+          pr.swapFee,
+          BigNumber.from(0),
+          BigNumber.from(0)
+        )
+        const pc = new BentoPoolCode(rPool, this.getType(), this.getPoolProviderName())
+
+        this.onDemandClassicPools.get(onDemandId)?.set(pr.address, { poolCode: pc, validUntilBlock })
+      } else {
+        existingPool.validUntilBlock = validUntilBlock
+      }
+    })
+
+    if (!this.onDemandStablePools.has(onDemandId)) {
+      this.onDemandStablePools.set(onDemandId, new Map())
+    }
+
+    onDemandStablePools.forEach((pr) => {
+      const existingPool = this.onDemandStablePools.get(onDemandId)?.get(pr.address)
+      if (existingPool === undefined) {
+        const stablePool = new StableSwapRPool(
+          pr.address,
+          convertTokenToBento(pr.token0),
+          convertTokenToBento(pr.token1),
+          pr.swapFee,
+          BigNumber.from(0),
+          BigNumber.from(0),
+          pr.token0.decimals,
+          pr.token1.decimals,
+          { elastic: BigNumber.from(0), base: BigNumber.from(0) },
+          { elastic: BigNumber.from(0), base: BigNumber.from(0) }
+        )
+
+        const pc = new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName())
+        this.onDemandStablePools.get(onDemandId)?.set(pr.address, { poolCode: pc, validUntilBlock })
+      } else {
+        existingPool.validUntilBlock = validUntilBlock
+      }
+    })
+  }
+
+  startFetchPoolsData() {
+    this.stopFetchPoolsData()
+    this.initialClassicPools = new Map()
+    this.initialStablePools = new Map()
+    this.bridges = new Map()
+
+    this.unwatchBlockNumber = watchBlockNumber(
+      {
+        listen: true,
+      },
+      (blockNumber) => {
+        this.lastUpdateBlock = blockNumber
+        if (!this.isInitialized) {
+          this.initialize(blockNumber)
+        } else {
+          this.updatePools()
+        }
+      }
+    )
+  }
+
+  private removeStalePools() {
+    let removed = 0
+
+    for (const allOnDemandClassicPools of this.onDemandClassicPools.values()) {
+      for (const [poolId, poolInfo] of allOnDemandClassicPools) {
+        if (poolInfo.validUntilBlock < this.lastUpdateBlock) {
+          allOnDemandClassicPools.delete(poolId)
+          removed++
+        }
+      }
+    }
+
+    for (const allOnDemandStablePools of this.onDemandStablePools.values()) {
+      for (const [poolId, poolInfo] of allOnDemandStablePools) {
+        if (poolInfo.validUntilBlock < this.lastUpdateBlock) {
+          allOnDemandStablePools.delete(poolId)
+          removed++
+        }
+      }
+    }
+
+    if (removed > 0) {
+      console.log(`${this.getLogPrefix()} -Removed ${removed} stale pools`)
+    }
+  }
+
+  fetchPoolsForToken(t0: Token, t1: Token): void {
+    this.getOnDemandPools(t0, t1)
+  }
+
+  getCurrentPoolList(t0: Token, t1: Token): PoolCode[] {
+    const onDemandPoolCodes = [
+      Array.from(this.onDemandStablePools.get(this.getOnDemandId(t0, t1))?.values() ?? []),
+      Array.from(this.onDemandClassicPools.get(this.getOnDemandId(t0, t1))?.values() ?? []),
+    ]
+      .flat()
+      .map((p) => p.poolCode)
+
+    return [
+      ...this.initialClassicPools.values(),
+      ...this.initialStablePools.values(),
+      ...onDemandPoolCodes,
+      ...this.bridges.values(),
+    ]
+  }
+
+  stopFetchPoolsData() {
+    if (this.unwatchBlockNumber) this.unwatchBlockNumber()
+    this.blockListener = undefined
+  }
+
+  private updateClassicReserves(
+    poolCodes: PoolCode[],
+    reserves: (readonly [BigNumber, BigNumber, number] & {
+      _reserve0: BigNumber
+      _reserve1: BigNumber
+      _blockTimestampLast: number
+    })[]
+  ) {
+    poolCodes.forEach((pc, i) => {
+      const res = reserves[i]
+      const pool = pc.pool
+      if (res === undefined || res === null) {
+        return
+      }
+      if (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1])) {
+        pool.updateReserves(res[0], res[1])
+        ++this.stateId
+        console.info(
+          `${this.getLogPrefix()} - SYNC, classic pool: ${pool.address} ${pool.token0.symbol}/${
+            pool.token1.symbol
+          } ${res[0].toString()} ${res[1].toString()}`
+        )
+      }
+    })
+  }
+
+  private updateStablePools(
+    poolCodes: PoolCode[],
+    rebases: Map<string, Rebase>,
+    reserves: (readonly [BigNumber, BigNumber] & { _reserve0: BigNumber; _reserve1: BigNumber })[]
+  ) {
+    poolCodes.forEach((pc, i) => {
+      const pool = pc.pool as StableSwapRPool
       const total0 = rebases.get(pool.token0.address)
       if (total0) {
         const current = pool.getTotal0()
@@ -369,107 +571,30 @@ export class TridentProvider extends LiquidityProvider {
         }
       }
 
-      const res = stableReserves[i]
-      // TODO: Fix criteria below or always update?
-      // unless res is undefined, the criteria below will always be true,
-      //  because reserve0 and 1 is being converted to amount and adjusted to wei using realReservesToAdjusted()
-      // but the res[0] and res[1] are not adjusted.
-      if (res !== undefined && res !== null && (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1]))) {
-        pool.updateReserves(toShareBN(res[0], pool.getTotal0()), toShareBN(res[1], pool.getTotal1()))
-        this.stablePools.set(pool.address, {
-          poolCode: pi.poolCode,
-          fetchType: pi.fetchType,
-          updatedAtBlock: this.lastUpdateBlock,
-        })
-        ++this.stateId
+      const res = reserves[i]
+
+      if (res === undefined || res === null) {
+        return
       }
+
+      // Always updating stable pool
+      pool.updateReserves(toShareBN(res[0], pool.getTotal0()), toShareBN(res[1], pool.getTotal1()))
+      ++this.stateId
     })
-    console.debug(`${this.getLogPrefix()} - UPDATED POOLS`)
   }
 
-  async getPools(t0: Token, t1: Token): Promise<void> {
-    console.debug(`****** ${this.getType()} POOLS IN MEMORY:`, this.getCurrentPoolList().length)
-    const poolsOnDemand = await getPoolsByTokenIds(
-      this.chainId,
-      'SushiSwap',
-      'TRIDENT',
-      ['CONSTANT_PRODUCT_POOL', 'STABLE_POOL'],
-      t0.address,
-      t1.address,
-      this.TOP_POOL_SIZE,
-      this.TOP_POOL_LIQUIDITY_THRESHOLD,
-      this.ON_DEMAND_POOL_SIZE
-    )
-    console.debug(`${this.getLogPrefix()} - ON DEMAND: Begin fetching reserves for ${poolsOnDemand.size} pools`)
-    const pools = Array.from(poolsOnDemand.values())
-
-    // TODO: refactor this, unnecessary to fetch reserves for all pools, then update them again after
-    await this.initPools(pools, 'ON_DEMAND')
-    await this.updatePools('ALL')
-  }
-
-  startFetchPoolsData() {
-    this.stopFetchPoolsData()
-    this.cPPools = new Map()
-    this.stablePools = new Map()
-    this.bridges = new Map()
-
-    this.unwatchBlockNumber = watchBlockNumber(
-      {
-        listen: true,
-      },
-      (blockNumber) => {
-        this.lastUpdateBlock = blockNumber
-        if (!this.isInitialized) {
-          this.initialize(blockNumber)
-        } else {
-          this.updatePools('INITIAL')
-        }
-      }
-    )
-  }
-
-  private removeStalePools() {
-    // TODO: move this to a per-chain config?
-
-    const blockThreshold = this.lastUpdateBlock - 75
-    let removed = 0
-
-    for (const [k, v] of this.cPPools) {
-      if (v.updatedAtBlock < blockThreshold && v.fetchType === 'ON_DEMAND') {
-        removed++
-        this.cPPools.delete(k)
-      }
-    }
-
-    for (const [k, v] of this.stablePools) {
-      if (v.updatedAtBlock < blockThreshold && v.fetchType === 'ON_DEMAND') {
-        removed++
-        this.stablePools.delete(k)
-      }
-    }
-
-    for (const [k, v] of this.bridges) {
-      if (v.updatedAtBlock < blockThreshold && v.fetchType === 'ON_DEMAND') {
-        removed++
-        this.bridges.delete(k)
-      }
-    }
-    if (removed > 0) {
-      console.log(`${this.getLogPrefix()} -Removed ${removed} stale pools`)
-    }
-  }
-
-  fetchPoolsForToken(t0: Token, t1: Token): void {
-    this.getPools(t0, t1)
-  }
-
-  getCurrentPoolList(): PoolCode[] {
-    return [...this.cPPools.values(), ...this.stablePools.values(), ...this.bridges.values()].map((p) => p.poolCode)
-  }
-
-  stopFetchPoolsData() {
-    if (this.unwatchBlockNumber) this.unwatchBlockNumber()
-    this.blockListener = undefined
+  private poolResponseToSortedTokens(poolResults: PoolResponse[]) {
+    const tokenMap = new Map<string, Token>()
+    poolResults.forEach((pool) => {
+      tokenMap.set(pool.token0.address, pool.token0)
+      tokenMap.set(pool.token1.address, pool.token1)
+    })
+    const tokensDedup = Array.from(tokenMap.values())
+    // tokens sorting
+    const tok0: [string, Token][] = tokensDedup.map((t) => [
+      t.address.toLocaleLowerCase().substring(2).padStart(40, '0'),
+      t,
+    ])
+    return tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([, t]) => t)
   }
 }
