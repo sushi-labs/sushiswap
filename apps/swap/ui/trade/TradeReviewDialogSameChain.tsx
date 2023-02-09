@@ -132,12 +132,12 @@ export const TradeReviewDialogSameChain: FC = () => {
                 )}
               </List.KeyValue>
               {isSwap && (
-                <List.KeyValue title="Route">
+                <List.KeyValue title="Smart Order Route">
                   {isFetching ? (
                     <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" />
                   ) : (
                     <button onClick={() => setOpen(true)} className="text-sm text-blue font-semibold">
-                      View Route
+                      View
                     </button>
                   )}
                   <TradeRoute trade={trade} open={open} setOpen={setOpen} />

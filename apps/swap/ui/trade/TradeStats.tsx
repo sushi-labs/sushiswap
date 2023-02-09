@@ -86,13 +86,13 @@ export const TradeStats: FC = () => {
           </span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-700 dark:text-slate-400">Route</span>
+          <span className="text-sm text-gray-700 dark:text-slate-400">Smart order route</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             {loading ? (
               <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
             ) : (
               <button onClick={() => setOpen(true)} className="text-sm text-blue font-semibold">
-                View Route
+                View
               </button>
             )}
             <TradeRoute trade={trade} open={open} setOpen={setOpen} />

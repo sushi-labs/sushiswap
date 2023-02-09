@@ -63,6 +63,16 @@ export class DataFetcher {
         // console.warn(e.message)
       }
     }
+
+    if (this._providerIsIncluded(LiquidityProviders.Trident, providers)) {
+      try {
+        const provider = new TridentProvider(this.chainId)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+
     if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
       try {
         const provider = new UniswapV2Provider(this.chainId)
@@ -115,15 +125,6 @@ export class DataFetcher {
     if (this._providerIsIncluded(LiquidityProviders.SpookySwap, providers)) {
       try {
         const provider = new SpookySwapProvider(this.chainId)
-        this.providers.push(provider)
-      } catch (e: any) {
-        // console.warn(e.message)
-      }
-    }
-
-    if (this._providerIsIncluded(LiquidityProviders.Trident, providers)) {
-      try {
-        const provider = new TridentProvider(this.chainId)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)

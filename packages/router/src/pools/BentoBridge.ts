@@ -8,7 +8,7 @@ export class BentoBridgePoolCode extends PoolCode {
   bentoBoxAddress: string
 
   constructor(pool: BridgeBento, _providerName: string, bentoBoxAddress: `0x${string}`) {
-    super(pool, `BentoBridge`)
+    super(pool, `BentoBox Bridge`)
     this.bentoBoxAddress = bentoBoxAddress
   }
 
