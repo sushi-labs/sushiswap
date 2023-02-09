@@ -197,10 +197,8 @@ async function testTrident() {
       )
     }
     env.dataFetcher.stopDataFetching()
-    process.exit(1)
   } catch (e) {
     console.log('Error', e)
-    process.exit(0)
   }
 }
 
