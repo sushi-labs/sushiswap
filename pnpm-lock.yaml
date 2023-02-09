@@ -5798,7 +5798,7 @@ packages:
       '@graphql-mesh/cli': 0.82.3_erstqrng57z6woex75r4i3v24q
       '@graphql-mesh/graphql': 0.33.3_graphql@16.6.0
       graphql: 16.6.0
-      tslib: 2.4.1
+      tslib: 2.5.0
     transitivePeerDependencies:
       - '@babel/core'
       - '@envelop/core'
@@ -5833,7 +5833,7 @@ packages:
       '@graphql-mesh/cli': 0.82.3_jelggnc5b4b3hu7o6odhvrmlsa
       '@graphql-mesh/graphql': 0.33.3_jelggnc5b4b3hu7o6odhvrmlsa
       graphql: 16.6.0
-      tslib: 2.4.1
+      tslib: 2.5.0
     transitivePeerDependencies:
       - '@babel/core'
       - '@envelop/core'
@@ -5868,7 +5868,7 @@ packages:
       '@graphql-mesh/cli': 0.82.3_yj7ds5aogkvyuxyljhbabepxei
       '@graphql-mesh/graphql': 0.33.3_yj7ds5aogkvyuxyljhbabepxei
       graphql: 16.6.0
-      tslib: 2.4.1
+      tslib: 2.5.0
     transitivePeerDependencies:
       - '@babel/core'
       - '@envelop/core'
@@ -5903,7 +5903,7 @@ packages:
       '@graphql-mesh/cli': 0.82.3_erstqrng57z6woex75r4i3v24q
       '@graphql-mesh/graphql': 0.33.3_graphql@16.6.0
       graphql: 16.6.0
-      tslib: 2.4.1
+      tslib: 2.5.0
     transitivePeerDependencies:
       - '@babel/core'
       - '@envelop/core'
@@ -5938,7 +5938,7 @@ packages:
       '@graphql-mesh/cli': 0.82.3_ykzowzmb7rcumunkscnbisnkom
       '@graphql-mesh/graphql': 0.33.3_ykzowzmb7rcumunkscnbisnkom
       graphql: 16.6.0
-      tslib: 2.4.1
+      tslib: 2.5.0
     transitivePeerDependencies:
       - '@babel/core'
       - '@envelop/core'

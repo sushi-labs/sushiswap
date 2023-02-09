@@ -1,9 +1,8 @@
 'use client'
 
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline'
-import { Chain, chainName } from '@sushiswap/chain'
+import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
-import { useSlippageTolerance } from '@sushiswap/react-query'
 import { Currency } from '@sushiswap/ui13/components/currency'
 import { Dialog } from '@sushiswap/ui13/components/dialog'
 import { List } from '@sushiswap/ui13/components/list/List'
@@ -14,18 +13,17 @@ import { useTrade } from '../../lib/useTrade'
 import numeral from 'numeral'
 import { Button } from '@sushiswap/ui13/components/button'
 import { Dots } from '@sushiswap/ui13/components/Dots'
-import { FixedButtonContainer } from '../FixedButtonContainer'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
-import { Drawer } from '@sushiswap/ui13/components/drawer'
 import { Badge } from '@sushiswap/ui13/components/Badge'
 import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain'
 import { TradeRoute } from './TradeRoute'
+import { useSlippageTolerance } from '../../lib/useSlippageTolerance'
 
 export const TradeReviewDialogCrossChain: FC = () => {
   const [open, setOpen] = useState(false)
   const { review, token0, token1, recipient, network0, amount, value } = useSwapState()
   const { setReview } = useSwapActions()
-  const { data: slippageTolerance } = useSlippageTolerance()
+  const [slippageTolerance] = useSlippageTolerance()
   const { data: trade, isFetching } = useTrade()
 
   const onClose = useCallback(() => setReview(false), [setReview])

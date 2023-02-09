@@ -1,4 +1,3 @@
-import { useSetSlippageTolerance, useSlippageTolerance } from '@sushiswap/react-query'
 import { RadioGroup } from '@headlessui/react'
 import React, { FC, Fragment, useCallback, useEffect, useState } from 'react'
 import Switch from '@sushiswap/ui13/components/Switch'
@@ -7,19 +6,21 @@ import { classNames } from '@sushiswap/ui13'
 import { Input } from '@sushiswap/ui13/components/input'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { Explainer } from '@sushiswap/ui13/components/Explainer'
+import { useLocalStorage } from '@sushiswap/hooks'
+import { useSlippageTolerance } from '../../lib/useSlippageTolerance'
 
 const TABS = ['0.1', '0.5', '1.0']
 
 export const SlippageTolerance: FC = () => {
-  const { data: slippageTolerance } = useSlippageTolerance()
-  const { mutate: updateSlippageTolerance } = useSetSlippageTolerance()
+  const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance()
   const onChange = useCallback(
     (value: string) => {
       setCustomVal('')
-      updateSlippageTolerance({ value })
+      setSlippageTolerance(value)
     },
-    [updateSlippageTolerance]
+    [setSlippageTolerance]
   )
+
   const [customVal, setCustomVal] = useState('')
 
   const isDangerous =
@@ -41,7 +42,7 @@ export const SlippageTolerance: FC = () => {
         </div>
         <Switch
           checked={slippageTolerance === 'AUTO'}
-          onChange={(checked) => updateSlippageTolerance({ value: checked ? 'AUTO' : '0.5' })}
+          onChange={(checked) => setSlippageTolerance(checked ? 'AUTO' : '0.5')}
         />
       </div>
       <div className="my-4 h-0.5 w-full dark:bg-slate-200/5 bg-gray-900/5" />
@@ -108,9 +109,10 @@ export const SlippageTolerance: FC = () => {
 
                 <div className="h-[28px] w-0.5 bg-gray-900/5 dark:bg-slate-200/5" />
                 <Input.Numeric
+                  maxDecimals={1}
                   variant="unstyled"
                   value={customVal}
-                  onUserInput={(val) => updateSlippageTolerance({ value: val })}
+                  onUserInput={setSlippageTolerance}
                   placeholder="Custom"
                   className={classNames(
                     'border-0 focus:bg-slate-800 focus:outline-none focus:!ring-0 focus:!border-2 border-blue !text-gray-900 dark:!text-slate-50 z-[1] relative rounded-lg text-sm h-8 font-medium bg-transparent text-center w-[100px]'
