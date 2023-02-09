@@ -2,14 +2,14 @@ import { formatUSD } from '@sushiswap/format'
 import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { Row } from './types'
+import { CellProps } from './types'
 
-export const PoolVolume24hCell: FC<Row<{ volume1d: string | number }>> = ({ row }) => {
-  const volume = formatUSD(row.volume1d)
+export const PoolFees1dCell: FC<CellProps> = ({ row }) => {
+  const fees = formatUSD(row.fees1d)
 
   return (
     <Typography variant="sm" weight={600} className="text-right text-slate-50">
-      {volume.includes('NaN') ? '$0.00' : volume}
+      {fees.includes('NaN') ? '$0.00' : fees}
     </Typography>
   )
 }

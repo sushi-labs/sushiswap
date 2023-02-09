@@ -2,10 +2,10 @@ import { formatUSD } from '@sushiswap/format'
 import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { CellProps } from './types'
+import { Row } from '../types'
 
-export const PairFees7dCell: FC<CellProps> = ({ row }) => {
-  const volume = formatUSD(row.fees1w)
+export const PoolVolume1dCell: FC<Row<{ volume1d: string | number }>> = ({ row }) => {
+  const volume = formatUSD(row.volume1d)
 
   return (
     <Typography variant="sm" weight={600} className="text-right text-slate-50">

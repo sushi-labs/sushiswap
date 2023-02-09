@@ -14,7 +14,16 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
   const { data: prices } = usePrices({ chainId: pool.chainId })
   const nativePrice = prices?.[Native.onChain(pool.chainId).wrapped.address]
 
-  const { liquidityNative, liquidity1dChange, volume1dChange, txCount1d, txCount1dChange } = useGraphPool(pool)
+  const {
+    liquidityNative,
+    liquidity1dChange,
+    fees1d,
+    fees1dChange,
+    volume1d,
+    volume1dChange,
+    txCount1d,
+    txCount1dChange,
+  } = useGraphPool(pool)
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -37,7 +46,7 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
           Volume (24h)
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatUSD(pool.volume1d)}
+          {formatUSD(volume1d ?? 0)}
         </Typography>
         {volume1dChange ? (
           <Typography variant="xs" weight={500} className={volume1dChange > 0 ? 'text-green' : 'text-red'}>
@@ -51,12 +60,12 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
           Fees (24h)
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatUSD(pool.fees1d)}
+          {formatUSD(fees1d ?? 0)}
         </Typography>
-        {volume1dChange ? (
-          <Typography variant="xs" weight={500} className={volume1dChange > 0 ? 'text-green' : 'text-red'}>
-            {volume1dChange > 0 ? '+' : '-'}
-            {formatPercent(Math.abs(volume1dChange))}
+        {fees1dChange ? (
+          <Typography variant="xs" weight={500} className={fees1dChange > 0 ? 'text-green' : 'text-red'}>
+            {fees1dChange > 0 ? '+' : '-'}
+            {formatPercent(Math.abs(fees1dChange))}
           </Typography>
         ) : null}
       </div>

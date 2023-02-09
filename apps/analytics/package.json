@@ -16,6 +16,7 @@
     "@heroicons/react": "^1.0.0",
     "@reduxjs/toolkit": "1.9.1",
     "@sushiswap/chain": "workspace:*",
+    "@sushiswap/client": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",

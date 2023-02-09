@@ -1,13 +1,14 @@
+import { Pool } from '@sushiswap/client'
 import { formatNumber } from '@sushiswap/format'
 import { classNames, NetworkIcon, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { useTokensFromPair } from '../../lib/hooks'
-import { ICON_SIZE } from './constants'
-import { CellProps } from './types'
+import { useTokensFromPool } from '../../../lib/hooks'
+import { ICON_SIZE } from '../columns'
+import { Row } from '../types'
 
-export const PairNameCell: FC<CellProps> = ({ row }) => {
-  const { token0, token1 } = useTokensFromPair(row)
+export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
+  const { token0, token1 } = useTokensFromPool(row)
 
   return (
     <div className="flex items-center gap-3 sm:gap-0">
@@ -18,11 +19,11 @@ export const PairNameCell: FC<CellProps> = ({ row }) => {
         <Typography variant="sm" weight={500} className="flex items-center gap-1 text-slate-50">
           {token0.symbol} <span className="text-slate-500">/</span> {token1.symbol}{' '}
           <div className={classNames('bg-slate-700 rounded-lg px-1 py-0.5 ml-1')}>
-            {formatNumber(Number(row.swapFee) / 100)}%
+            {formatNumber(Number(row.swapFee) * 100)}%
           </div>
         </Typography>
         <Typography variant="xxs" className="text-slate-400">
-          {row.farm ? 'Farm' : 'Pool'}
+          {row.incentives.length > 0 ? 'Farm' : 'Pool'}
         </Typography>
       </div>
     </div>

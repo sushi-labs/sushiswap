@@ -4,7 +4,7 @@ import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 import useSWR from 'swr'
 
-import { TokenCellProps } from './types'
+import { TokenCellProps } from '../types'
 
 export const TokenPriceCell: FC<TokenCellProps> = ({ row }) => {
   const { data: bundles } = useSWR<Bundle[]>('/analytics/api/bundles', (url) =>

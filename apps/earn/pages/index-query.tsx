@@ -1,8 +1,8 @@
+import { PoolType } from '@sushiswap/client'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import { z } from 'zod'
 import { _Pools } from '.'
-import { AvailablePools } from '../lib/constants'
 
 const schema = z.object({
   chainIds: z
@@ -12,7 +12,7 @@ const schema = z.object({
   poolTypes: z
     .string()
     .optional()
-    .transform((poolTypes) => poolTypes?.split(',') as AvailablePools[]),
+    .transform((poolTypes) => poolTypes?.split(',') as PoolType[]),
   incentivizedOnly: z.string().optional().transform(Boolean),
 })
 

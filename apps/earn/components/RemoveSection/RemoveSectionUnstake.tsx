@@ -1,5 +1,5 @@
 import { tryParseAmount } from '@sushiswap/currency'
-import { Pool } from '@sushiswap/client'
+import { Pool, usePool } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
 import { AppearOnMount, Button, Dots } from '@sushiswap/ui'
 import { Approve, Checker, Chef, getMasterChefContractConfig, useMasterChefWithdraw } from '@sushiswap/wagmi'
@@ -7,10 +7,8 @@ import { FC, useMemo, useState } from 'react'
 
 import { CHEF_TYPE_MAP } from '../../lib/constants'
 import { useCreateNotification, useGraphPool } from '../../lib/hooks'
-import { usePool } from '../../lib/hooks/api'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
-import { idToObject } from '../../lib/functions'
 
 interface AddSectionStakeProps {
   pool: Pool
@@ -20,7 +18,7 @@ interface AddSectionStakeProps {
 
 export const RemoveSectionUnstake: FC<{ poolId: string }> = ({ poolId }) => {
   const isMounted = useIsMounted()
-  const { data: pool } = usePool(idToObject(poolId))
+  const { data: pool } = usePool(poolId)
 
   if (!pool) return <></>
 

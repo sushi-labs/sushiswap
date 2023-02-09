@@ -6,6 +6,7 @@
     "baseUrl": ".",
     "outDir": "./dist",
     "rootDir": ".",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "declaration": true
   }
 }

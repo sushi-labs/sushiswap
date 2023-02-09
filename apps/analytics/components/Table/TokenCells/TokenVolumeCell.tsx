@@ -2,7 +2,7 @@ import { formatUSD } from '@sushiswap/format'
 import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { TokenCellProps } from './types'
+import { TokenCellProps } from '../types'
 
 export const TokenVolumeCell: FC<TokenCellProps> = ({ row }) => {
   const volume = formatUSD(row.volumeUSD)

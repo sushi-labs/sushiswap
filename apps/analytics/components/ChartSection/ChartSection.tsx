@@ -13,12 +13,12 @@ const fetcher = ({
 }: {
   url: string
   args: {
-    selectedNetworks: ChainId[]
+    chainIds: ChainId[]
   }
 }) => {
   const _url = new URL(url, window.location.origin)
-  if (args.selectedNetworks) {
-    _url.searchParams.set('networks', stringify(args.selectedNetworks))
+  if (args.chainIds) {
+    _url.searchParams.set('networks', stringify(args.chainIds))
   }
   return fetch(_url.href)
     .then((res) => res.json())
@@ -26,8 +26,8 @@ const fetcher = ({
 }
 
 export const ChartSection: FC = () => {
-  const { selectedNetworks } = usePoolFilters()
-  const args = useMemo(() => ({ selectedNetworks }), [selectedNetworks])
+  const { chainIds } = usePoolFilters()
+  const args = useMemo(() => ({ chainIds }), [chainIds])
   const { data, isValidating } = useSWR({ url: '/analytics/api/charts', args }, fetcher)
   // const { data } = useSWR('/analytics/api/charts', fetcher)
   return (

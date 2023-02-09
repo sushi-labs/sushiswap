@@ -1,6 +1,6 @@
 import { Transition } from '@headlessui/react'
 import { tryParseAmount } from '@sushiswap/currency'
-import { Pool } from '@sushiswap/client'
+import { Pool, usePool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, Dots, Typography } from '@sushiswap/ui'
@@ -10,11 +10,9 @@ import { useAccount } from 'wagmi'
 
 import { CHEF_TYPE_MAP } from '../../lib/constants'
 import { useGraphPool } from '../../lib/hooks'
-import { usePool } from '../../lib/hooks/api'
 import { useNotifications } from '../../lib/state/storage'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { AddSectionStakeWidget } from './AddSectionStakeWidget'
-import { idToObject } from '../../lib/functions'
 
 interface AddSectionStakeProps {
   pool: Pool
@@ -25,7 +23,7 @@ interface AddSectionStakeProps {
 
 export const AddSectionStake: FC<{ poolId: string; title?: string }> = ({ poolId, title }) => {
   const isMounted = useIsMounted()
-  const { data: pool } = usePool(idToObject(poolId))
+  const { data: pool } = usePool(poolId)
 
   if (!pool) return <></>
 

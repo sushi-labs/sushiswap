@@ -3,15 +3,6 @@ import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { Pool } from '@sushiswap/client'
 
-export const idToObject = (id: string) => {
-  const [chainId, address] = id.split(':') as [ChainId, string]
-  if (!chainId || !address) throw new Error('Invalid id.')
-
-  return { chainId, address }
-}
-
-export const objectToId = ({ chainId, address }: { chainId: ChainId; address: string }) => `${chainId}:${address}`
-
 export const isConstantProductPool = (
   pool: Pair | ConstantProductPool | StablePool | null
 ): pool is ConstantProductPool => {

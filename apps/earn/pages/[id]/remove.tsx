@@ -16,17 +16,14 @@ import {
   RemoveSectionTrident,
   RemoveSectionUnstake,
 } from '../../components'
-import { GET_POOL_TYPE_MAP } from '../../lib/constants'
-import { getPool, getPools, Pool } from '@sushiswap/client'
-import { getPoolUrl, usePool } from '../../lib/hooks/api'
+import { POOL_TYPE_MAP } from '../../lib/constants'
+import { getPool, getPools, usePool, Pool, getPoolUrl } from '@sushiswap/client'
 import { ChainId } from '@sushiswap/chain'
 
 const LINKS = (pool: Pool): BreadcrumbLink[] => [
   {
     href: `/${pool.id}`,
-    label: `${pool.name} - ${GET_POOL_TYPE_MAP[pool.type as keyof typeof GET_POOL_TYPE_MAP]} - ${formatPercent(
-      pool.swapFee * 100
-    )}`,
+    label: `${pool.name} - ${POOL_TYPE_MAP[pool.type]} - ${formatPercent(pool.swapFee * 100)}`,
   },
   {
     href: `/${pool.id}/remove`,

@@ -1,10 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 import { UserPosition } from '@sushiswap/graph-client'
-import { parseArgs, Pools } from '@sushiswap/client'
+import { parseArgs, Pools, usePools } from '@sushiswap/client'
 import { useMemo } from 'react'
 import useSWR from 'swr'
 import { PositionWithPool } from '../../../types'
-import { usePools } from './usePools'
 
 export interface GetUserArgs {
   id?: string

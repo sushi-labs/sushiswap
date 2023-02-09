@@ -2,7 +2,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 import { PositionWithPool } from '../../../../../types'
 
-import { PoolAPRCell, PoolChainCell, PoolNameCell, PoolVolume24hCell } from '../../SharedCells'
+import { PoolAPRCell, PoolChainCell, PoolNameCell, PoolVolume1dCell } from '../../SharedCells'
 import { PairValueCell } from './PoolValueCell'
 
 type TData = PositionWithPool
@@ -64,7 +64,7 @@ export const VALUE_COLUMN: ColumnDef<TData, unknown> = {
 export const VOLUME_COLUMN: ColumnDef<TData, unknown> = {
   id: 'volume',
   header: 'Volume (24h)',
-  cell: (props) => <PoolVolume24hCell row={props.row.original.pool} />,
+  cell: (props) => <PoolVolume1dCell row={props.row.original.pool} />,
   size: 100,
   meta: {
     className: 'justify-end',

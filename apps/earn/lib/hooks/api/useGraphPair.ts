@@ -6,7 +6,7 @@ import useSWR from 'swr'
 import { useTokensFromPool } from '../useTokensFromPool'
 
 export function getGraphPoolUrl(poolId: string) {
-  return `/earn/api/pool/graph/${poolId}`
+  return `/earn/api/graphPool/${poolId}`
 }
 
 export const useGraphPool = (pool: Pool) => {
@@ -23,6 +23,9 @@ export const useGraphPool = (pool: Pool) => {
       liquidityToken,
       liquidityNative: graphPool ? Number(graphPool?.liquidityNative) : null,
       liquidity1dChange: graphPool ? Number(graphPool?.liquidity1dChange ?? 0) : null,
+      fees1d: graphPool ? Number(graphPool?.fees1d ?? 0) : null,
+      fees1dChange: graphPool ? Number(graphPool?.fees1dChange ?? 0) : null,
+      volume1d: graphPool ? Number(graphPool?.volume1d ?? 0) : null,
       volume1dChange: graphPool ? Number(graphPool?.volume1dChange ?? 0) : null,
       txCount1d: graphPool ? Number(graphPool?.txCount1d ?? 0) : null,
       txCount1dChange: graphPool ? Number(graphPool?.txCount1dChange ?? 0) : null,

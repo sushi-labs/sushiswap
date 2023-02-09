@@ -64,7 +64,7 @@ const fetcher = ({
 }
 
 export const TokenTable: FC = () => {
-  const { query, selectedNetworks } = usePoolFilters()
+  const { query, chainIds } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
   const { isLg } = useBreakpoint('lg')
@@ -76,14 +76,11 @@ export const TokenTable: FC = () => {
     pageSize: PAGE_SIZE,
   })
 
-  const args = useMemo(
-    () => ({ sorting, pagination, selectedNetworks, query }),
-    [sorting, pagination, selectedNetworks, query]
-  )
+  const args = useMemo(() => ({ sorting, pagination, chainIds, query }), [sorting, pagination, chainIds, query])
 
   const { data: tokens, isValidating } = useSWR<Token[]>({ url: '/analytics/api/tokens', args }, fetcher)
   const { data: tokenCount } = useSWR<number>(
-    `/analytics/api/tokens/count${selectedNetworks ? `?networks=${stringify(selectedNetworks)}` : ''}`,
+    `/analytics/api/tokens/count${chainIds ? `?networks=${stringify(chainIds)}` : ''}`,
     (url) => fetch(url).then((response) => response.json())
   )
 

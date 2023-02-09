@@ -2,8 +2,8 @@ import { Pool } from '@sushiswap/client'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
-import { PoolFees24hCell } from './PoolFees24hCell'
-import { PoolNameCell, PoolChainCell, PoolAPRCell, PoolVolume24hCell } from '../../SharedCells'
+import { PoolFees1dCell } from './PoolFees1dCell'
+import { PoolNameCell, PoolChainCell, PoolAPRCell, PoolVolume1dCell } from '../../SharedCells'
 import { PoolTVLCell } from './PoolTVLCell'
 
 export const ICON_SIZE = 26
@@ -67,7 +67,7 @@ export const VOLUME_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'volume1d',
   header: 'Volume (24h)',
   accessorFn: (row) => row.volume1d,
-  cell: (props) => <PoolVolume24hCell row={props.row.original} />,
+  cell: (props) => <PoolVolume1dCell row={props.row.original} />,
   size: 100,
   meta: {
     className: 'justify-end',
@@ -79,7 +79,7 @@ export const FEES_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'fees1d',
   header: 'Fees (24h)',
   accessorFn: (row) => row.fees1d,
-  cell: (props) => <PoolFees24hCell row={props.row.original} />,
+  cell: (props) => <PoolFees1dCell row={props.row.original} />,
   size: 100,
   meta: {
     className: 'justify-end',

@@ -1,37 +1,56 @@
+import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
 import { useBreakpoint } from '@sushiswap/hooks'
 import { GenericTable, Table } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 
-import { usePoolFilters } from '../../../PoolsFiltersProvider'
-import { PAGE_SIZE } from '../contants'
-import { APR_COLUMN, FEES_COLUMN, NAME_COLUMN, NETWORK_COLUMN, TVL_COLUMN, VOLUME_COLUMN } from './Cells/columns'
-import { PoolQuickHoverTooltip } from './PoolQuickHoverTooltip'
-import { Pool, GetPoolsArgs, usePoolCount, usePoolsInfinite, PoolType, PoolVersion } from '@sushiswap/client'
+import { usePoolFilters } from '../PoolsFiltersProvider'
+import {
+  APR_COLUMN,
+  FEES_7D_COLUMN,
+  FEES_1D_COLUMN,
+  NAME_COLUMN,
+  NETWORK_COLUMN,
+  PAGE_SIZE,
+  TVL_COLUMN,
+  VOLUME_7D_COLUMN,
+  VOLUME_1D_COLUMN,
+} from '../Table'
+import { PoolQuickHoverTooltip } from './PoolTableQuickHoverTooltip'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, FEES_COLUMN, APR_COLUMN]
+const COLUMNS = [
+  NETWORK_COLUMN,
+  NAME_COLUMN,
+  TVL_COLUMN,
+  VOLUME_1D_COLUMN,
+  VOLUME_7D_COLUMN,
+  FEES_1D_COLUMN,
+  FEES_7D_COLUMN,
+  APR_COLUMN,
+]
 
-export const PoolsTable: FC = () => {
-  const { chainIds, poolTypes, poolVersions, incentivizedOnly } = usePoolFilters()
+export const PoolTable: FC = () => {
+  const { chainIds } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
+  const { isLg } = useBreakpoint('lg')
 
   const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
-  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: PAGE_SIZE })
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: PAGE_SIZE,
+  })
 
   const args = useMemo<GetPoolsArgs>(
     () => ({
       chainIds: chainIds,
-      isIncentivized: incentivizedOnly || undefined, // will filter farms out if set to false, undefined will be filtered out by the parser
       orderBy: sorting[0]?.id,
       orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
-      poolTypes: poolTypes as PoolType[],
-      poolVersions: poolVersions as PoolVersion[],
     }),
-    [chainIds, incentivizedOnly, sorting, poolTypes, poolVersions]
+    [chainIds, sorting]
   )
 
   const { data: pools, isValidating, size, setSize } = usePoolsInfinite(args)
@@ -53,33 +72,33 @@ export const PoolsTable: FC = () => {
     manualPagination: true,
   })
 
+  // TODO: Fix
   useEffect(() => {
-    if (isSm && !isMd) {
+    if (isSm && !isMd && !isLg) {
       setColumnVisibility({
-        volume: false,
+        fees1d: false,
+        volume24h: false,
+        fees7d: false,
         network: false,
-        rewards: false,
-        fees: false,
       })
+    } else if (isSm && isMd && !isLg) {
+      setColumnVisibility({ fees24h: false, volume24h: false, network: false })
     } else if (isSm) {
       setColumnVisibility({})
     } else {
       setColumnVisibility({
-        volume: false,
+        fees1d: false,
+        volume1d: false,
         network: false,
-        rewards: false,
-        liquidityUSD: false,
-        fees: false,
+        fees1w: false,
+        tvl: false,
+        totalApr: false,
       })
     }
-  }, [isMd, isSm])
-
-  const rowLink = useCallback((row: Pool) => {
-    return `/${row.id}`
-  }, [])
+  }, [isLg, isMd, isSm])
 
   return (
-    <>
+    <div>
       <button onClick={() => setSize(size + 1)}>Load More</button>
       <GenericTable<Pool>
         table={table}
@@ -87,12 +106,11 @@ export const PoolsTable: FC = () => {
         HoverElement={isMd ? PoolQuickHoverTooltip : undefined}
         placeholder="No pools found"
         pageSize={PAGE_SIZE}
-        linkFormatter={rowLink}
+        linkFormatter={({ id }) => `/earn/${id}`}
       />
       <Table.Paginator
         hasPrev={pagination.pageIndex > 0}
         hasNext={pagination.pageIndex < table.getPageCount()}
-        nextDisabled={!pools && isValidating}
         onPrev={table.previousPage}
         onNext={table.nextPage}
         page={pagination.pageIndex}
@@ -100,6 +118,6 @@ export const PoolsTable: FC = () => {
         pages={table.getPageCount()}
         pageSize={PAGE_SIZE}
       />
-    </>
+    </div>
   )
 }
