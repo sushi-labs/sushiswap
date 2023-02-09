@@ -38,7 +38,7 @@ const Page: FC = ({}: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <>
       <NetworkCheck />
-      <Container maxWidth={520} className="space-y-8 p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
+      <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
         <Drawer.Root>
           <Widget />
           <TradeStats />
