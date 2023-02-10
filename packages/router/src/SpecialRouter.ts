@@ -10,8 +10,7 @@ import { Router } from './Router'
 export const PreferrableLiquidityProviders: LiquidityProviders[] = [
   LiquidityProviders.NativeWrap,
   LiquidityProviders.SushiSwap,
-  LiquidityProviders.TridentCP,
-  LiquidityProviders.TridentStable
+  LiquidityProviders.Trident,
 ]
 
 // Makes the route using only Preferrable liquidity providers.

@@ -19,7 +19,7 @@ import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
 import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount } from '../utils'
 import { CreateMultipleVestingFormSchemaType } from './schema'
 import { useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui13/components/toast'
+import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
 
 export const ExecuteMultipleSection: FC<{
   chainId: ChainId

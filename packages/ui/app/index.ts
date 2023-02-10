@@ -25,5 +25,3 @@ export const App = {
   Main,
   Footer,
 }
-
-export { AppType } from './Header'

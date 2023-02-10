@@ -1,5 +1,4 @@
 import '@sushiswap/ui/index.css'
-import '@sushiswap/ui13/index.css'
 
 import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'

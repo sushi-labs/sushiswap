@@ -1,5 +1,5 @@
 import { Combobox as HeadlessCombobox } from '@headlessui/react'
-import { CheckIcon } from '@heroicons/react/outline'
+import { CheckIcon } from '@heroicons/react/24/outline'
 import classNames from 'classnames'
 import { FC, forwardRef } from 'react'
 

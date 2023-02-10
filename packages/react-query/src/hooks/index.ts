@@ -1,7 +1,6 @@
 export * from './customTokens'
 export * from './notifications'
 export * from './prices'
-export * from './settings'
 export * from './tokenlist'
 export * from './tokens'
 export * from './trade'

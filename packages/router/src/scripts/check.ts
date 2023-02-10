@@ -1,8 +1,9 @@
-//// @ts-nocheck
+// @ts-nocheck
+
 import { ChainId } from '@sushiswap/chain'
 import { Type, USDC, USDT } from '@sushiswap/currency'
 import { getBigNumber, MultiRoute } from '@sushiswap/tines'
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber } from 'ethers'
 import https from 'https'
 
 import { DataFetcher } from '../DataFetcher'
@@ -141,10 +142,6 @@ function getProtocol(lp: LiquidityProviders, chainId: ChainId) {
       return prefix + 'QUICKSWAP'
     case LiquidityProviders.Trident:
       return prefix + 'TRIDENT'
-    case LiquidityProviders.TridentCP:
-      return prefix + 'TRIDENT_CP'
-    case LiquidityProviders.TridentStable:
-      return prefix + 'TRIDENT_STABLE'
     case LiquidityProviders.UniswapV2:
       return prefix + 'UNISWAP_V2'
   }

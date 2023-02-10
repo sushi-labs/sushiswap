@@ -47,5 +47,3 @@ export function getCurrencyCombinations(chainId: ChainId, currencyA: Type, curre
       return true
     })
 }
-
-export type Bases = typeof BASES_TO_CHECK_TRADES_AGAINST | typeof COMMON_BASES | typeof CUSTOM_BASES

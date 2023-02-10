@@ -1,14 +1,14 @@
 'use client'
 
-import { GlobalNav, NavLink } from '@sushiswap/ui13/components/GlobalNav'
-import { HeaderNetworkSelector } from '@sushiswap/wagmi13/components/HeaderNetworkSelector'
-import { UserProfile } from '@sushiswap/wagmi13/components/UserProfile'
+import { GlobalNav, NavLink } from '@sushiswap/ui/future/components/GlobalNav'
+import { HeaderNetworkSelector } from '@sushiswap/wagmi/future/components/HeaderNetworkSelector'
+import { UserProfile } from '@sushiswap/wagmi/future/components/UserProfile'
 import React, { FC } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 import { Search } from './search/SearchProvider'
-import { AppearOnMount } from '@sushiswap/ui13/components/animation'
-import { useAutoConnect } from '@sushiswap/wagmi13'
+import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
+import { useAutoConnect } from '@sushiswap/wagmi'
 import { useRouter } from 'next/router'
 import { queryParamsSchema } from './trade/TradeProvider'
 

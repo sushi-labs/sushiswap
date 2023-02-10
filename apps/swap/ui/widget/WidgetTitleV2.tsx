@@ -5,7 +5,7 @@ import React, { useMemo, useState } from 'react'
 import { useSwapState } from '../trade/TradeProvider'
 import { usePrice } from '@sushiswap/react-query'
 import { Amount, Price, Token, tryParseAmount } from '@sushiswap/currency'
-import { Skeleton } from '@sushiswap/ui13/components/skeleton'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { ZERO } from '@sushiswap/math'
 
 export const WidgetTitleV2 = () => {

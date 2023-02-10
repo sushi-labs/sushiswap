@@ -1,6 +1,7 @@
 import './env'
 
 import cors from '@fastify/cors'
+import rateLimit from '@fastify/rate-limit'
 import { ChainId } from '@sushiswap/chain'
 import { Native, nativeCurrencyIds } from '@sushiswap/currency'
 import routeProcessorExports from '@sushiswap/route-processor/exports'
@@ -18,6 +19,10 @@ import { getToken } from './tokens'
 
 const server = fastify({ logger: true })
 server.register(cors)
+server.register(rateLimit, {
+  max: 100,
+  timeWindow: '1 minute',
+})
 
 const dataFetcherMap = new Map<ChainId, DataFetcher>()
 
@@ -131,29 +136,74 @@ server.get('/v0', async (request) => {
   }
 })
 
+import { createClient, http } from 'viem'
+import { arbitrum, mainnet, optimism, polygon } from 'viem/chains'
+
 // Run the server!
 const start = async () => {
   try {
-    dataFetcherMap.set(ChainId.ARBITRUM, new DataFetcher(ChainId.ARBITRUM))
-    dataFetcherMap.set(ChainId.ARBITRUM_NOVA, new DataFetcher(ChainId.ARBITRUM_NOVA))
-    dataFetcherMap.set(ChainId.AVALANCHE, new DataFetcher(ChainId.AVALANCHE))
-    dataFetcherMap.set(ChainId.BOBA, new DataFetcher(ChainId.BOBA))
-    dataFetcherMap.set(ChainId.BOBA_AVAX, new DataFetcher(ChainId.BOBA_AVAX))
-    dataFetcherMap.set(ChainId.BOBA_BNB, new DataFetcher(ChainId.BOBA_BNB))
-    dataFetcherMap.set(ChainId.BSC, new DataFetcher(ChainId.BSC))
-    dataFetcherMap.set(ChainId.BTTC, new DataFetcher(ChainId.BTTC))
-    dataFetcherMap.set(ChainId.CELO, new DataFetcher(ChainId.CELO))
-    dataFetcherMap.set(ChainId.ETHEREUM, new DataFetcher(ChainId.ETHEREUM))
-    dataFetcherMap.set(ChainId.FANTOM, new DataFetcher(ChainId.FANTOM))
-    dataFetcherMap.set(ChainId.FUSE, new DataFetcher(ChainId.FUSE))
-    dataFetcherMap.set(ChainId.GNOSIS, new DataFetcher(ChainId.GNOSIS))
-    dataFetcherMap.set(ChainId.KAVA, new DataFetcher(ChainId.KAVA))
-    dataFetcherMap.set(ChainId.METIS, new DataFetcher(ChainId.METIS))
-    dataFetcherMap.set(ChainId.MOONBEAM, new DataFetcher(ChainId.MOONBEAM))
-    dataFetcherMap.set(ChainId.MOONRIVER, new DataFetcher(ChainId.MOONRIVER))
-    dataFetcherMap.set(ChainId.OPTIMISM, new DataFetcher(ChainId.OPTIMISM))
-    dataFetcherMap.set(ChainId.POLYGON, new DataFetcher(ChainId.POLYGON))
-    dataFetcherMap.set(ChainId.HARMONY, new DataFetcher(ChainId.HARMONY))
+    // dataFetcherMap.set(ChainId.ARBITRUM, new DataFetcher(createClient()))
+    // dataFetcherMap.set(ChainId.ARBITRUM_NOVA, new DataFetcher(ChainId.ARBITRUM_NOVA))
+    // dataFetcherMap.set(ChainId.AVALANCHE, new DataFetcher(ChainId.AVALANCHE))
+    // dataFetcherMap.set(ChainId.BOBA, new DataFetcher(ChainId.BOBA))
+    // dataFetcherMap.set(ChainId.BOBA_AVAX, new DataFetcher(ChainId.BOBA_AVAX))
+    // dataFetcherMap.set(ChainId.BOBA_BNB, new DataFetcher(ChainId.BOBA_BNB))
+    // dataFetcherMap.set(ChainId.BSC, new DataFetcher(ChainId.BSC))
+    // dataFetcherMap.set(ChainId.BTTC, new DataFetcher(ChainId.BTTC))
+    // dataFetcherMap.set(ChainId.CELO, new DataFetcher(ChainId.CELO))
+
+    //
+
+    dataFetcherMap.set(
+      ChainId.ETHEREUM,
+      new DataFetcher(
+        ChainId.ETHEREUM,
+        createClient({
+          chain: mainnet,
+          transport: http(mainnet.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.POLYGON,
+      new DataFetcher(
+        ChainId.POLYGON,
+        createClient({
+          chain: polygon,
+          transport: http(polygon.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.ARBITRUM,
+      new DataFetcher(
+        ChainId.ARBITRUM,
+        createClient({
+          chain: arbitrum,
+          transport: http(arbitrum.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.OPTIMISM,
+      new DataFetcher(
+        ChainId.OPTIMISM,
+        createClient({
+          chain: optimism,
+          transport: http(optimism.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+        })
+      )
+    )
+    // dataFetcherMap.set(ChainId.FANTOM, new DataFetcher(ChainId.FANTOM))
+    // dataFetcherMap.set(ChainId.FUSE, new DataFetcher(ChainId.FUSE))
+    // dataFetcherMap.set(ChainId.GNOSIS, new DataFetcher(ChainId.GNOSIS))
+    // dataFetcherMap.set(ChainId.KAVA, new DataFetcher(ChainId.KAVA))
+    // dataFetcherMap.set(ChainId.METIS, new DataFetcher(ChainId.METIS))
+    // dataFetcherMap.set(ChainId.MOONBEAM, new DataFetcher(ChainId.MOONBEAM))
+    // dataFetcherMap.set(ChainId.MOONRIVER, new DataFetcher(ChainId.MOONRIVER))
+    // dataFetcherMap.set(ChainId.OPTIMISM, new DataFetcher(ChainId.OPTIMISM))
+    // dataFetcherMap.set(ChainId.POLYGON, new DataFetcher(ChainId.POLYGON))
+    // dataFetcherMap.set(ChainId.HARMONY, new DataFetcher(ChainId.HARMONY))
 
     for (const dataFetcher of dataFetcherMap.values()) {
       dataFetcher.startDataFetching()

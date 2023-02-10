@@ -1,8 +1,8 @@
 'use client'
 
 import React, { FC } from 'react'
-import { Button } from '@sushiswap/ui13/components/button'
-import { Tooltip } from '@sushiswap/ui13/components/Tooltip'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
 import NonSSRWrapper from '../NonSSRWrapper'
 
 export const SwitchAppType: FC = () => {

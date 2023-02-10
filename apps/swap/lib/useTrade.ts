@@ -1,12 +1,13 @@
-import { useSlippageTolerance, useTrade as _useTrade } from '@sushiswap/react-query'
+import { useTrade as _useTrade } from '@sushiswap/react-query'
 import { useFeeData } from 'wagmi'
 import { useSwapState } from '../ui/trade/TradeProvider'
 import { useCrossChainTrade } from './useCrossChainTrade'
+import { useSlippageTolerance } from './useSlippageTolerance'
 
 export const useTrade = () => {
   const { token0, token1, network0, network1, amount, recipient } = useSwapState()
+  const [slippageTolerance] = useSlippageTolerance()
 
-  const { data: slippageTolerance } = useSlippageTolerance()
   const { data: feeData } = useFeeData()
   const sameChainTrade = _useTrade({
     chainId: network0,

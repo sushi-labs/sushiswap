@@ -1,6 +1,6 @@
 import { FC, ReactNode, useCallback } from 'react'
 import { useSwapState } from './trade/TradeProvider'
-import { AppType } from '@sushiswap/ui13/types'
+import { AppType } from '@sushiswap/ui/types'
 
 interface ConfirmationDialogCrossChainProps {
   children({

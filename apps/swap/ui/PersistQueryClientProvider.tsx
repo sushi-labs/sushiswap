@@ -5,7 +5,15 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 export const PersistQueryClientProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
-    <_PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
+    <_PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister }}
+      onSuccess={() => {
+        queryClient.resumePausedMutations().then(() => {
+          void queryClient.invalidateQueries()
+        })
+      }}
+    >
       {children}
       {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </_PersistQueryClientProvider>

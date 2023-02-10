@@ -1,4 +1,4 @@
-import { client } from '@sushiswap/wagmi13'
+import { client } from '@sushiswap/wagmi'
 import { FC, ReactNode } from 'react'
 import { WagmiConfig } from 'wagmi'
 

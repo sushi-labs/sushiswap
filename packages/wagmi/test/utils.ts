@@ -1,6 +1,7 @@
 import { providers, Wallet } from 'ethers'
 import { Chain } from 'wagmi'
 import { foundry, goerli, mainnet, optimism, polygon } from 'wagmi/chains'
+
 export function getNetwork(chain: Chain) {
   return {
     chainId: chain.id,

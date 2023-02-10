@@ -2,21 +2,19 @@
 
 import { Transition } from '@headlessui/react'
 import { shortenAddress } from '@sushiswap/format'
-import { useSlippageTolerance } from '@sushiswap/react-query'
 import React, { FC, useState } from 'react'
 
 import { useSwapState } from './TradeProvider'
 import { useTrade } from '../../lib/useTrade'
-import { Skeleton } from '@sushiswap/ui13/components/skeleton'
-import { classNames } from '@sushiswap/ui13'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { classNames } from '@sushiswap/ui'
 import { warningSeverity, warningSeverityClassName } from '../../lib/warningSeverity'
 import { TradeRoute } from './TradeRoute'
 import { ZERO } from '@sushiswap/math'
 
 export const TradeStats: FC = () => {
   const [open, setOpen] = useState(false)
-  const { value, token1, recipient } = useSwapState()
-  const { data: slippageTolerance } = useSlippageTolerance()
+  const { value, recipient } = useSwapState()
   const { isLoading, isFetching, data: trade } = useTrade()
   const loading = Boolean(isLoading && +value > 0) || isFetching
 
@@ -86,13 +84,13 @@ export const TradeStats: FC = () => {
           </span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-700 dark:text-slate-400">Route</span>
+          <span className="text-sm text-gray-700 dark:text-slate-400">Smart order route</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             {loading ? (
               <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
             ) : (
               <button onClick={() => setOpen(true)} className="text-sm text-blue font-semibold">
-                View Route
+                View
               </button>
             )}
             <TradeRoute trade={trade} open={open} setOpen={setOpen} />

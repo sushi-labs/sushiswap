@@ -1,11 +1,11 @@
 'use client'
 
-import { Web3Input } from '@sushiswap/wagmi13/components/Web3Input'
+import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import React, { FC } from 'react'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { usePctChange } from '../../lib/usePctChange'
 import { useTrade } from '../../lib/useTrade'
-import { AppType } from '@sushiswap/ui13/types'
+import { AppType } from '@sushiswap/ui/types'
 import { Token } from '@sushiswap/currency'
 
 const STG_CURRENCIES_OUTPUT: Record<string, Token> = {}

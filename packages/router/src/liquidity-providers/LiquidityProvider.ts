@@ -1,5 +1,6 @@
 import { ChainId, chainShortName } from '@sushiswap/chain'
 import type { Token } from '@sushiswap/currency'
+import { Client } from 'viem'
 
 import type { PoolCode } from '../pools/PoolCode'
 
@@ -7,8 +8,6 @@ export enum LiquidityProviders {
   SushiSwap = 'SushiSwap',
   UniswapV2 = 'UniswapV2',
   Trident = 'Trident',
-  TridentCP = 'Trident CP',
-  TridentStable = 'Trident Stable',
   QuickSwap = 'QuickSwap',
   ApeSwap = 'ApeSwap',
   PancakeSwap = 'PancakeSwap',
@@ -23,11 +22,14 @@ export enum LiquidityProviders {
 
 export abstract class LiquidityProvider {
   chainId: ChainId
+  client: Client
   stateId = 0
   lastUpdateBlock = 0
   readonly ON_DEMAND_POOLS_BLOCK_LIFETIME = 150
-  constructor(chainId: ChainId) {
+
+  constructor(chainId: ChainId, client: Client) {
     this.chainId = chainId
+    this.client = client
   }
 
   abstract getType(): LiquidityProviders

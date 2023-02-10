@@ -1,8 +1,14 @@
 import { ChainId, chainShortName } from '@sushiswap/chain'
 import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
-import { configureChains, createClient } from '@wagmi/core'
+// const { provider } = configureChains(allChains, allProviders, { pollingInterval: 10000, minQuorum: 1, targetQuorum: 1 })
+// createClient({
+//   autoConnect: true,
+//   provider,
+// })
+import { Client } from 'viem'
 
-import { allChains } from './chains'
+// import { configureChains, createClient } from '@wagmi/core'
+// import { allChains } from './chains'
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { DfynProvider } from './liquidity-providers/Dfyn'
 import { ElkProvider } from './liquidity-providers/Elk'
@@ -17,14 +23,8 @@ import { TraderJoeProvider } from './liquidity-providers/TraderJoe'
 import { TridentProvider } from './liquidity-providers/Trident'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import type { PoolCode } from './pools/PoolCode'
-import { allProviders } from './providers'
 
-const { provider } = configureChains(allChains, allProviders, { pollingInterval: 10000, minQuorum: 1, targetQuorum: 1 })
-
-createClient({
-  autoConnect: true,
-  provider,
-})
+// import { create } from 'viem'
 
 // Gathers pools info, creates routing in 'incremental' mode
 // This means that new routing recalculates each time new pool fetching data comes
@@ -35,9 +35,11 @@ export class DataFetcher {
   // Provider to poolAddress to PoolCode
   poolCodes: Map<LiquidityProviders, Map<string, PoolCode>> = new Map()
   stateId = 0
+  client: Client
 
-  constructor(chainId: ChainId) {
+  constructor(chainId: ChainId, client: Client) {
     this.chainId = chainId
+    this.client = client
   }
 
   _providerIsIncluded(lp: LiquidityProviders, liquidity?: LiquidityProviders[]) {
@@ -53,68 +55,11 @@ export class DataFetcher {
     this.stopDataFetching()
     this.poolCodes = new Map()
 
-    this.providers = [new NativeWrapProvider(this.chainId)]
+    this.providers = [new NativeWrapProvider(this.chainId, this.client)]
 
     if (this._providerIsIncluded(LiquidityProviders.SushiSwap, providers)) {
       try {
-        const provider = new SushiProvider(this.chainId)
-        this.providers.push(provider)
-      } catch (e: any) {
-        // console.warn(e.message)
-      }
-    }
-    if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
-      try {
-        const provider = new UniswapV2Provider(this.chainId)
-        this.providers.push(provider)
-      } catch (e: any) {
-        // console.warn(e.message)
-      }
-    }
-    if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers)) {
-      try {
-        const provider = new QuickSwapProvider(this.chainId)
-        this.providers.push(provider)
-      } catch (e: any) {
-        // console.warn(e.message)
-      }
-    }
-    if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers)) {
-      try {
-        const provider = new ApeSwapProvider(this.chainId)
-        this.providers.push(provider)
-      } catch (e: any) {
-        // console.warn(e.message)
-      }
-    }
-    if (this._providerIsIncluded(LiquidityProviders.Dfyn, providers)) {
-      try {
-        const provider = new DfynProvider(this.chainId)
-        this.providers.push(provider)
-      } catch (e: any) {
-        // console.warn(e.message)
-      }
-    }
-    if (this._providerIsIncluded(LiquidityProviders.Elk, providers)) {
-      try {
-        const provider = new ElkProvider(this.chainId)
-        this.providers.push(provider)
-      } catch (e: any) {
-        // console.warn(e.message)
-      }
-    }
-    if (this._providerIsIncluded(LiquidityProviders.JetSwap, providers)) {
-      try {
-        const provider = new JetSwapProvider(this.chainId)
-        this.providers.push(provider)
-      } catch (e: any) {
-        // console.warn(e.message)
-      }
-    }
-
-    if (this._providerIsIncluded(LiquidityProviders.SpookySwap, providers)) {
-      try {
-        const provider = new SpookySwapProvider(this.chainId)
+        const provider = new SushiProvider(this.chainId, this.client)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -123,7 +68,65 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.Trident, providers)) {
       try {
-        const provider = new TridentProvider(this.chainId)
+        const provider = new TridentProvider(this.chainId, this.client)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+
+    if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
+      try {
+        const provider = new UniswapV2Provider(this.chainId, this.client)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+    if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers)) {
+      try {
+        const provider = new QuickSwapProvider(this.chainId, this.client)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+    if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers)) {
+      try {
+        const provider = new ApeSwapProvider(this.chainId, this.client)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+    if (this._providerIsIncluded(LiquidityProviders.Dfyn, providers)) {
+      try {
+        const provider = new DfynProvider(this.chainId, this.client)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+    if (this._providerIsIncluded(LiquidityProviders.Elk, providers)) {
+      try {
+        const provider = new ElkProvider(this.chainId, this.client)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+    if (this._providerIsIncluded(LiquidityProviders.JetSwap, providers)) {
+      try {
+        const provider = new JetSwapProvider(this.chainId, this.client)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+
+    if (this._providerIsIncluded(LiquidityProviders.SpookySwap, providers)) {
+      try {
+        const provider = new SpookySwapProvider(this.chainId, this.client)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -150,7 +153,7 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.TraderJoe, providers)) {
       try {
-        const provider = new TraderJoeProvider(this.chainId)
+        const provider = new TraderJoeProvider(this.chainId, this.client)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -159,7 +162,7 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.NetSwap, providers)) {
       try {
-        const provider = new NetSwapProvider(this.chainId)
+        const provider = new NetSwapProvider(this.chainId, this.client)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)

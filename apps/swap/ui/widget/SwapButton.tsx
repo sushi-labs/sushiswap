@@ -1,16 +1,13 @@
 'use client'
 
-import { Button } from '@sushiswap/ui13/components/button'
-import React, { FC, Fragment, useEffect, useState } from 'react'
+import { Button } from '@sushiswap/ui/future/components/button'
+import React, { FC, useEffect, useState } from 'react'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
-import { ApprovalState, ApproveTokenController, Checker } from '@sushiswap/wagmi13'
-import { ChainId } from '@sushiswap/chain'
+import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useTrade } from '../../lib/useTrade'
 import { Native } from '@sushiswap/currency'
-import { AppType } from '@sushiswap/ui13/types'
+import { AppType } from '@sushiswap/ui/types'
 import { getRouteProcessorAddressForChainId } from 'lib/getRouteProcessorAddressForChainId'
-import { Popover, Transition } from '@headlessui/react'
-import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { warningSeverity } from '../../lib/warningSeverity'
 
 export const SwapButton: FC = () => {

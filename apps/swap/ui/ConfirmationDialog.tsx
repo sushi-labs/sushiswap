@@ -1,12 +1,12 @@
 'use client'
 
-import { BarLoader } from '@sushiswap/ui13/components/BarLoader'
-import { Button } from '@sushiswap/ui13/components/button'
-import { Dialog } from '@sushiswap/ui13/components/dialog'
-import { Dots } from '@sushiswap/ui13/components/Dots'
-import { CheckMarkIcon } from '@sushiswap/ui13/components/icons/CheckmarkIcon'
-import { FailedMarkIcon } from '@sushiswap/ui13/components/icons/FailedMarkIcon'
-import { Loader } from '@sushiswap/ui13/components/Loader'
+import { BarLoader } from '@sushiswap/ui/future/components/BarLoader'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { Dialog } from '@sushiswap/ui/future/components/dialog'
+import { Dots } from '@sushiswap/ui/future/components/Dots'
+import { CheckMarkIcon } from '@sushiswap/ui/future/components/icons/CheckmarkIcon'
+import { FailedMarkIcon } from '@sushiswap/ui/future/components/icons/FailedMarkIcon'
+import { Loader } from '@sushiswap/ui/future/components/Loader'
 import { FC, ReactNode, useCallback, useState } from 'react'
 
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
@@ -15,12 +15,13 @@ import { routeProcessorAbi } from '@sushiswap/abi'
 import { useTrade } from '../lib/useTrade'
 import { BigNumber } from 'ethers'
 import { SendTransactionResult } from 'wagmi/actions'
-import { useBalances, useCarbonOffset, useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui13/components/toast'
-import { AppType } from '@sushiswap/ui13/types'
+import { useBalances, useCreateNotification } from '@sushiswap/react-query'
+import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
 import { getRouteProcessorAddressForChainId } from 'lib/getRouteProcessorAddressForChainId'
 import { ChainId } from '@sushiswap/chain'
+import { useCarbonOffset } from '../lib/useCarbonOffset'
 
 interface ConfirmationDialogProps {
   children({
@@ -50,7 +51,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
   const { refetch: refetchNetwork1Balances } = useBalances({ account: address, chainId: network0 })
   const { mutate: storeNotification } = useCreateNotification({ account: address })
-  const { data: carbonOffset } = useCarbonOffset()
+  const [carbonOffset] = useCarbonOffset()
 
   const [open, setOpen] = useState(false)
   const [dialogState, setDialogState] = useState<ConfirmationDialogState>(ConfirmationDialogState.Undefined)

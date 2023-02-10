@@ -1,12 +1,12 @@
 'use client'
 
-import { GlobalNav } from '@sushiswap/ui13/components/GlobalNav'
-import { HeaderNetworkSelector } from '@sushiswap/wagmi13/components/HeaderNetworkSelector'
-import { UserProfile } from '@sushiswap/wagmi13/components/UserProfile'
+import { GlobalNav } from '@sushiswap/ui/future/components/GlobalNav'
+import { HeaderNetworkSelector } from '@sushiswap/wagmi/future/components/HeaderNetworkSelector'
+import { UserProfile } from '@sushiswap/wagmi/future/components/UserProfile'
 import React, { FC } from 'react'
 
 import { SUPPORTED_CHAINS } from '../config'
-import { AppearOnMount } from '@sushiswap/ui13/components/animation'
+import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
 import { useAutoConnect } from '@sushiswap/wagmi'
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { Link, Menu } from '@sushiswap/ui'
