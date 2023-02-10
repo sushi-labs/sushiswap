@@ -35,6 +35,11 @@ export const PoolsApiSchema = z.object({
       }
     })
     .optional(),
+  tokenSymbols: z
+    .string()
+    .transform((tokenSymbols) => tokenSymbols?.split(','))
+    .refine((tokenSymbols) => tokenSymbols.length <= 3, { message: 'Can only use up to 3 tokenSymbols.' })
+    .optional(),
   poolTypes: z
     .string()
     .transform((poolTypes) => poolTypes?.split(',') as PoolType[])

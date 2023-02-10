@@ -3,58 +3,70 @@ import type * as _ from '@prisma/client/runtime'
 
 import { DecimalToString, prisma } from '@sushiswap/database'
 import { isPromiseFulfilled } from '@sushiswap/validate'
+import { deepmergeInto } from 'deepmerge-ts'
 import type { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './schemas/index.js'
 
 type PrismaArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
 
 function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSchema._output) {
-  let where: PrismaArgs['where'] = {}
+  let where: NonNullable<PrismaArgs['where']> = {}
+
+  const addFilter = (filter: typeof where) => deepmergeInto(where, filter)
 
   if ('ids' in args && args.ids !== undefined) {
-    where = {
+    addFilter({
       id: {
         in: args.ids,
       },
-    }
+    })
   }
 
   if ('chainIds' in args && args.chainIds !== undefined) {
-    where = {
+    addFilter({
       chainId: { in: args.chainIds },
-    }
+    })
   }
 
   if ('poolTypes' in args && args.poolTypes !== undefined) {
-    where = {
+    addFilter({
       type: { in: args.poolTypes },
-      ...where,
-    }
+    })
   }
 
   if ('poolVersions' in args && args.poolVersions !== undefined) {
-    where = {
+    addFilter({
       version: { in: args.poolVersions },
-      ...where,
-    }
+    })
   }
 
   if ('isIncentivized' in args && args.isIncentivized !== undefined) {
-    where = {
+    addFilter({
       isIncentivized: args.isIncentivized,
-      ...where,
-    }
+    })
   }
 
   if ('isWhitelisted' in args && args.isWhitelisted !== undefined) {
-    where = {
+    addFilter({
       token0: {
         status: 'APPROVED',
       },
       token1: {
         status: 'APPROVED',
       },
-      ...where,
-    }
+    })
+  }
+
+  if ('tokenSymbols' in args && args.tokenSymbols !== undefined) {
+    // Create every possible set of two
+    const sets = args.tokenSymbols.flatMap((token0, i, arr) =>
+      arr.slice(i + 1).map((token1) => [token0, token1] as const)
+    )
+    addFilter({
+      OR: sets.flatMap((set) => [
+        { token0: { symbol: { contains: set[0] } }, token1: { symbol: { contains: set[1] } } },
+        { token0: { symbol: { contains: set[1] } }, token1: { symbol: { contains: set[0] } } },
+      ]),
+    })
   }
 
   return where
