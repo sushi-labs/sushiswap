@@ -6,7 +6,7 @@ import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/rout
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
-import { Address, Client, decodeHex, Hex, multicall, watchBlockNumber, watchEvent } from 'viem'
+import { Address, Client, multicall, watchBlockNumber } from 'viem'
 
 import { getPoolsByTokenIds, getTopPools } from '../lib/api'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
@@ -190,7 +190,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         }),
       ])
 
-      this.updatePoolWithReserves(initialPools, initialPoolsReserves, 'ON_DEMAND')
+      this.updatePoolWithReserves(initialPools, initialPoolsReserves, 'INITIAL')
       this.updatePoolWithReserves(onDemandPools, onDemandPoolsReserves, 'ON_DEMAND')
     }
   }

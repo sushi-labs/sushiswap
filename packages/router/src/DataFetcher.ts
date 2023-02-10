@@ -133,24 +133,6 @@ export class DataFetcher {
       }
     }
 
-    // if (this._providerIsIncluded(LiquidityProviders.TridentCP, providers)) {
-    //   try {
-    //     const provider = new TridentClassicProvider(this.chainId)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
-
-    // if (this._providerIsIncluded(LiquidityProviders.TridentStable, providers)) {
-    //   try {
-    //     const provider = new TridentStableProvider(this.chainId)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
-
     if (this._providerIsIncluded(LiquidityProviders.TraderJoe, providers)) {
       try {
         const provider = new TraderJoeProvider(this.chainId, this.client)
