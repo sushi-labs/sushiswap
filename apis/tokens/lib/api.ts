@@ -8,6 +8,8 @@ export async function getToken(chainId: number, address: string) {
       name: true,
       symbol: true,
       decimals: true,
+      isCommon: true,
+      isFeeOnTransfer: true,
     },
     where: {
       AND: {
@@ -61,6 +63,8 @@ export async function getTokensByChainId(chainId: number) {
       name: true,
       symbol: true,
       decimals: true,
+      isCommon: true,
+      isFeeOnTransfer: true,
     },
     where: {
       AND: {
@@ -82,6 +86,8 @@ export async function getTokens() {
       name: true,
       symbol: true,
       decimals: true,
+      isCommon: true,
+      isFeeOnTransfer: true,
     },
     where: {
       AND: {
