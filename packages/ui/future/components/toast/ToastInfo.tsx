@@ -19,7 +19,6 @@ export const ToastInfo: FC<ToastInfo> = ({ href, chainId, txHash, onDismiss, sum
         icon={<HalfCircleIcon width={18} height={18} className="text-blue" />}
         summary={summary?.info}
       />
-      <ToastButtons href={txUrl} onDismiss={onDismiss} />
     </>
   )
 }

@@ -1329,6 +1329,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query': workspace:*
       '@sushiswap/route-processor': workspace:*
+      '@sushiswap/stargate': workspace:*
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -1374,6 +1375,7 @@ importers:
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/react-query': link:../../packages/react-query
       '@sushiswap/route-processor': link:../../protocols/route-processor
+      '@sushiswap/stargate': link:../../packages/stargate
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/validate': link:../../packages/validate

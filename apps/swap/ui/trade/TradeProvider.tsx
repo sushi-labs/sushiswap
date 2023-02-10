@@ -18,6 +18,7 @@ import { useRouter } from 'next/router'
 import { useCustomTokens, useToken } from '@sushiswap/react-query'
 import { getAddress, isAddress } from 'ethers/lib/utils'
 import { watchNetwork } from 'wagmi/actions'
+import { STARGATE_SUPPORTED_CHAIN_IDS } from '@sushiswap/stargate'
 
 export const queryParamsSchema = z.object({
   fromChainId: z.coerce
@@ -70,6 +71,7 @@ type SwapApi = {
   switchTokens(): void
   setTokens(currency0: Type, currency1: Type): void
   setAppType(appType: AppType): void
+  setSearch(currency: Type): void
 }
 
 export const SwapStateContext = createContext<State>({} as State)
@@ -335,6 +337,23 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         { shallow: true }
       )
     }
+    const setSearch = (currency: Type) => {
+      const _toCurrencyId = currency.isNative ? currency.symbol : currency.wrapped.address
+      void push(
+        {
+          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
+          query: {
+            ...query,
+            fromChainId: currency.chainId,
+            toChainId: currency.chainId,
+            fromCurrencyId: Native.onChain(currency.chainId).symbol,
+            toCurrencyId: _toCurrencyId,
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
+    }
 
     const setValue = (value: string) => dispatch({ type: 'setValue', value })
     const setRecipient = (recipient: string) => dispatch({ type: 'setRecipient', recipient })
@@ -352,6 +371,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setReview,
       setTokens,
       setAppType,
+      setSearch,
     }
   }, [
     push,

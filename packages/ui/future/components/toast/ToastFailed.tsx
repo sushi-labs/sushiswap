@@ -14,7 +14,6 @@ export const ToastFailed: FC<ToastFailed> = ({ href, type, chainId, txHash, onDi
   return (
     <>
       <ToastContent href={txUrl} summary={summary.failed} />
-      <ToastButtons href={txUrl} onDismiss={onDismiss} />
     </>
   )
 }

@@ -31,7 +31,7 @@ export const Explainer: FC<{ children: ReactNode; iconSize: number; placement: P
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
-          className="z-[2000] w-[240px] bg-gray-100 dark:bg-slate-900 rounded-lg shadow-md shadow-black/20 dark:shadow-black/30 p-1 text-xs mt-0.5"
+          className="z-[2000] w-[240px] bg-white dark:bg-slate-900 rounded-lg shadow-hover-card shadow-black/30 text-xs mt-0.5"
         >
           <div className="flex flex-col gap-3 rounded-md px-4 py-3 bg-white dark:bg-slate-800">{children}</div>
         </Menu.Items>,

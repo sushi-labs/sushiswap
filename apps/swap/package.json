@@ -26,6 +26,7 @@
     "@sushiswap/math": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/route-processor": "workspace:*",
+    "@sushiswap/stargate": "workspace:*",
     "@sushiswap/types": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",

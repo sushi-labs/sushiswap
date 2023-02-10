@@ -115,7 +115,7 @@ export const SlippageTolerance: FC = () => {
                   onUserInput={setSlippageTolerance}
                   placeholder="Custom"
                   className={classNames(
-                    'border-0 focus:bg-slate-800 focus:outline-none focus:!ring-0 focus:!border-2 border-blue !text-gray-900 dark:!text-slate-50 z-[1] relative rounded-lg text-sm h-8 font-medium bg-transparent text-center w-[100px]'
+                    'border-0 focus:bg-white focus:dark:bg-slate-800 focus:outline-none focus:!ring-0 focus:!border-2 border-blue !text-gray-900 dark:!text-slate-50 z-[1] relative rounded-lg text-sm h-8 font-medium bg-transparent text-center w-[100px]'
                   )}
                 />
               </>

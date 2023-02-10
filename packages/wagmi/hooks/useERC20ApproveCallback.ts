@@ -40,10 +40,11 @@ export function useERC20ApproveCallback(
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined, e: Error | null) => {
-      // TODO: ignore until wagmi workaround on ethers error
+      // Property code does exist on object
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      if (e?.code === ErrorCode.ACTION_REJECTED) {
-        createErrorToast(e?.message, true)
+      if (e && e.code !== ErrorCode.ACTION_REJECTED) {
+        createErrorToast(e.message, true)
       }
 
       if (data && onSuccess && amountToApprove) {

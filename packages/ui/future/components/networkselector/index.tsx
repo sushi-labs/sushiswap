@@ -7,7 +7,7 @@ import { NetworkSelectorMenu } from './NetworkSelectorMenu'
 export type NetworkSelectorOnSelectCallback = (chainId: ChainId, close: () => void) => void
 
 export interface NetworkSelectorProps {
-  networks: ChainId[]
+  networks: readonly ChainId[]
   selected: ChainId
   onSelect: NetworkSelectorOnSelectCallback
   variant: 'menu' | 'dialog'
