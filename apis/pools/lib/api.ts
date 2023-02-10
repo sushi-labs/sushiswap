@@ -57,16 +57,25 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
   }
 
   if ('tokenSymbols' in args && args.tokenSymbols !== undefined) {
-    // Create every possible set of two
-    const sets = args.tokenSymbols.flatMap((token0, i, arr) =>
-      arr.slice(i + 1).map((token1) => [token0, token1] as const)
-    )
-    addFilter({
-      OR: sets.flatMap((set) => [
-        { token0: { symbol: { contains: set[0] } }, token1: { symbol: { contains: set[1] } } },
-        { token0: { symbol: { contains: set[1] } }, token1: { symbol: { contains: set[0] } } },
-      ]),
-    })
+    if (args.tokenSymbols.length === 1) {
+      addFilter({
+        OR: [
+          { token0: { symbol: { contains: args.tokenSymbols[0]! } } },
+          { token1: { symbol: { contains: args.tokenSymbols[0]! } } },
+        ],
+      })
+    } else {
+      // Create every possible set of two
+      const sets = args.tokenSymbols.flatMap((token0, i, arr) =>
+        arr.slice(i + 1).map((token1) => [token0, token1] as const)
+      )
+      addFilter({
+        OR: sets.flatMap((set) => [
+          { token0: { symbol: { contains: set[0] } }, token1: { symbol: { contains: set[1] } } },
+          { token0: { symbol: { contains: set[1] } }, token1: { symbol: { contains: set[0] } } },
+        ]),
+      })
+    }
   }
 
   return where

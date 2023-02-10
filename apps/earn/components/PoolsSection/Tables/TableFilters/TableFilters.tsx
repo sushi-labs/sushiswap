@@ -7,7 +7,7 @@ import { FC } from 'react'
 import { SUPPORTED_CHAIN_IDS } from '../../../../config'
 import { AVAILABLE_POOL_TYPE_MAP, AVAILABLE_VERSION_MAP } from '../../../../lib/constants'
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
-// import { TableFiltersSearchToken } from './TableFiltersSearchToken'
+import { TableFiltersSearchToken } from './TableFiltersSearchToken'
 
 export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters = false }) => {
   const { chainIds, poolTypes, poolVersions, incentivizedOnly, setFilters } = usePoolFilters()
@@ -142,8 +142,8 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
               checkedIcon={<CheckIcon />}
             />
           </div>
-          {/* // TODO: Readd */}
-          {/* <TableFiltersSearchToken /> */}
+
+          <TableFiltersSearchToken />
         </div>
       </div>
     </>

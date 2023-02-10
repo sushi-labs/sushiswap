@@ -14,7 +14,7 @@ import { Pool, GetPoolsArgs, usePoolCount, usePoolsInfinite, PoolType, PoolVersi
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, FEES_COLUMN, APR_COLUMN]
 
 export const PoolsTable: FC = () => {
-  const { chainIds, poolTypes, poolVersions, incentivizedOnly } = usePoolFilters()
+  const { chainIds, tokenSymbols, poolTypes, poolVersions, incentivizedOnly } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
@@ -25,13 +25,14 @@ export const PoolsTable: FC = () => {
   const args = useMemo<GetPoolsArgs>(
     () => ({
       chainIds: chainIds,
+      tokenSymbols,
       isIncentivized: incentivizedOnly || undefined, // will filter farms out if set to false, undefined will be filtered out by the parser
       orderBy: sorting[0]?.id,
       orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
       poolTypes: poolTypes as PoolType[],
       poolVersions: poolVersions as PoolVersion[],
     }),
-    [chainIds, incentivizedOnly, sorting, poolTypes, poolVersions]
+    [chainIds, tokenSymbols, incentivizedOnly, sorting, poolTypes, poolVersions]
   )
 
   const { data: pools, isValidating, size, setSize } = usePoolsInfinite(args)

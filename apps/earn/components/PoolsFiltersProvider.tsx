@@ -5,6 +5,7 @@ import { SUPPORTED_CHAIN_IDS } from '../config'
 import { AVAILABLE_POOL_TYPE_MAP, AVAILABLE_VERSION_MAP } from '../lib/constants'
 
 enum Filters {
+  tokenSymbols = 'tokenSymbols',
   chainIds = 'chainIds',
   poolTypes = 'poolTypes',
   poolVersions = 'poolVersions',
@@ -12,8 +13,7 @@ enum Filters {
 }
 
 interface FilterContext {
-  query: string
-  extraQuery: string
+  [Filters.tokenSymbols]: undefined | string[]
   [Filters.chainIds]: ChainId[]
   [Filters.poolTypes]: (keyof typeof AVAILABLE_POOL_TYPE_MAP)[]
   [Filters.poolVersions]: (keyof typeof AVAILABLE_VERSION_MAP)[]
@@ -31,8 +31,7 @@ interface PoolsFiltersProvider {
 }
 
 const defaultFilters: PoolFilters = {
-  query: '',
-  extraQuery: '',
+  [Filters.tokenSymbols]: undefined,
   [Filters.chainIds]: SUPPORTED_CHAIN_IDS,
   [Filters.poolTypes]: Object.keys(AVAILABLE_POOL_TYPE_MAP) as (keyof typeof AVAILABLE_POOL_TYPE_MAP)[],
   [Filters.poolVersions]: Object.keys(AVAILABLE_VERSION_MAP) as (keyof typeof AVAILABLE_VERSION_MAP)[],
