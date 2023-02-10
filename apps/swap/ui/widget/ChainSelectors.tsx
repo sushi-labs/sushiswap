@@ -8,7 +8,7 @@ import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { ArrowRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { Collapsible } from '@sushiswap/ui/future/components/animation/Collapsible'
 import { AppType } from '@sushiswap/ui/types'
-
+import { STARGATE_SUPPORTED_CHAIN_IDS } from '@sushiswap/stargate'
 export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
   const { network0, network1, appType } = useSwapState()
   const { setNetwork0, setNetwork1, switchTokens, setAppType } = useSwapActions()
@@ -53,7 +53,7 @@ export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
           <div className="grid grid-cols-2 gap-[60px] border-gray-200 dark:border-slate-800">
             <div className="z-10">
               <NetworkSelector
-                networks={SUPPORTED_CHAIN_IDS}
+                networks={STARGATE_SUPPORTED_CHAIN_IDS}
                 variant="dialog"
                 selected={network0}
                 onSelect={handleSelect0}
@@ -79,7 +79,7 @@ export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
             </div>
             <div className="z-10">
               <NetworkSelector
-                networks={SUPPORTED_CHAIN_IDS}
+                networks={STARGATE_SUPPORTED_CHAIN_IDS}
                 variant="dialog"
                 selected={network1}
                 onSelect={handleSelect1}

@@ -16,7 +16,6 @@ export const ToastPending: FC<ToastPending> = ({ type, href, chainId, txHash, on
   return (
     <>
       <ToastContent href={txUrl} summary={<Dots>{summary.pending}</Dots>} />
-      <ToastButtons href={txUrl} onDismiss={onDismiss} />
     </>
   )
 }

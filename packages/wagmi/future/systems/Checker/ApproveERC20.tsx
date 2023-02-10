@@ -64,7 +64,7 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
                 leaveTo="opacity-0 translate-y-1"
               >
                 <div className="z-10 absolute pb-2 w-[max-content] bottom-4">
-                  <Menu.Items className="text-left w-[240px] text-gray-700  border-gray-300 dark:border-slate-700 dark:text-slate-200 flex flex-col gap-3 bg-white dark:bg-slate-800 rounded-lg shadow-md shadow-black/30 dark:shadow-black/80 px-4 py-3 text-xs mt-0.5">
+                  <Menu.Items className="text-left w-[240px] text-gray-700  border-gray-300 dark:border-slate-700 dark:text-slate-200 flex flex-col gap-3 bg-white dark:bg-slate-800 rounded-lg shadow-hover-card shadow-black/30 px-4 py-3 text-xs mt-0.5">
                     <span className="text-gray-500 dark:text-slate-400">Token Approval</span>
                     We need your approval to execute this transaction on your behalf. You will only have to approve the{' '}
                     {amount?.currency.symbol} contract once.
