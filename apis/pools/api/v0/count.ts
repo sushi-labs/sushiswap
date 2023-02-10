@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 
-import type { PoolType } from '../../lib'
-import { getEarnPoolCount } from '../../lib/api'
+import { getEarnPoolCount } from '../../lib/api.js'
+import type { PoolType } from '../../lib/index.js'
 
 const schema = z.object({
   chainIds: z

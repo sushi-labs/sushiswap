@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 
-import { getEarnPool } from '../../../lib/api'
+import { getEarnPool } from '../../../lib/api.js'
 
 const schema = z.object({
   chainId: z.coerce
