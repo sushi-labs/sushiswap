@@ -10,14 +10,19 @@
   ],
   "license": "MIT",
   "author": "Ola Stenberg <hello@olastenberg.com>",
+  "type": "module",
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel",
     "lint": "TIMING=1 eslint --fix ."
   },
   "dependencies": {
+    "@sushiswap/abi": "workspace:*",
     "@sushiswap/database": "workspace:*",
+    "@sushiswap/validate": "workspace:*",
+    "@sushiswap/wagmi-config": "workspace:*",
     "@vercel/node": "2.8.2",
+    "@wagmi/core": "0.8.1",
     "zod": "3.20.2"
   },
   "devDependencies": {
@@ -28,6 +33,6 @@
     "@types/node": "^18.0.0",
     "eslint": "8.29.0",
     "typescript": "4.9.4",
-    "vercel": "28.10.1"
+    "vercel": "28.15.0"
   }
 }

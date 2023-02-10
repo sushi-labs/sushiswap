@@ -1,8 +1,7 @@
 import 'dotenv/config'
-
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Prisma } from '@prisma/client'
+import { createPrismaRedisCache} from 'prisma-redis-middleware'
 import Redis from 'ioredis'
-import { createPrismaRedisCache } from 'prisma-redis-middleware'
 
 if (!process.env['DATABASE_URL']) throw new Error('DATABASE_URL is required')
 if (!process.env['REDIS_URL']) throw new Error('REDIS_URL is required')
@@ -15,36 +14,40 @@ declare let global: { prisma: PrismaClient }
 // Learn more:
 // https://pris.ly/d/help/next-js-best-practices
 
-let prisma: PrismaClient
+export let client: PrismaClient
 
 if (process.env['NODE_ENV'] === 'production') {
-  prisma = new PrismaClient()
+  client = new PrismaClient()
 } else {
   if (!global.prisma) {
     global.prisma = new PrismaClient()
   }
-  prisma = global.prisma
+  client = global.prisma
 }
 
 const redis = new Redis(process.env['REDIS_URL'])
 
 const cacheMiddleware = createPrismaRedisCache({
-  models: [{ model: 'Token', cacheTime: 900 }, { model: 'Incentive', cacheTime: 180 }],
+  models: [
+  { model: 'Token', cacheTime: 900 }, 
+  { model: 'Incentive', cacheTime: 180 }, 
+  { model: 'Pool', cacheTime: 24 * 60 * 60 },
+  { model: 'SushiPool', cacheTime: 900 }
+],
   storage: {
-    type: 'redis',
-    options: { client: redis, invalidation: { referencesTTL: 900 } },
+    type: "redis",
+    options: { client: redis, invalidation: { referencesTTL: 24 * 60 * 60} },
   },
-  cacheTime: 900,
   onHit: (key: string) => {
     console.log('Hit: ✅', key)
   },
   onMiss: (key: string) => {
     console.log('Miss: ❌', key)
-  },
+  }
 })
 
-prisma.$use(cacheMiddleware)
+client.$use(cacheMiddleware as Prisma.Middleware)
 
-export default prisma as PrismaClient
-
+export default client as PrismaClient
+export { Prisma, PrismaClient } from '@prisma/client'
 export * from '@prisma/client'
