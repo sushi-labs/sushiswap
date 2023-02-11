@@ -6,7 +6,8 @@ import { expect } from 'chai'
 import { BigNumber } from 'ethers'
 import { ethers } from 'hardhat'
 
-const RouteProcessorAddr = '0x9B3fF703FA9C8B467F5886d7b61E61ba07a9b51c'
+//const RouteProcessorAddr = '0x9B3fF703FA9C8B467F5886d7b61E61ba07a9b51c'
+const RouteProcessorAddr = '0x3e1116eA5034f5D73a7B530071709D54A4109F5f' // new Route Processor
 
 const cUSD = new Token({
   chainId: ChainId.CELO,
@@ -41,40 +42,24 @@ async function makeSwap(
     const coder = new ethers.utils.AbiCoder()
     const callArgs = coder.encode(
       ['address', 'uint256', 'address', 'uint256', 'address', 'bytes'],
-      [
-        rpParams.tokenIn,
-        0, //rpParams.amountIn,
-        rpParams.tokenOut,
-        rpParams.amountOutMin,
-        rpParams.to,
-        //rpParams.routeCode,
-        //'0x04471EcE3750Da237f93B8E339c536989b8978a438014DA9471c101e0cac906E52DF4f00943b21863efFffff0a4DA9471c101e0cac906E52DF4f00943b21863efF471EcE3750Da237f93B8E339c536989b8978a438010000000000000000000000000000000000000001',
-        '0x05471EcE3750Da237f93B8E339c536989b8978a43800',
-      ]
+      [rpParams.tokenIn, rpParams.amountIn, rpParams.tokenOut, rpParams.amountOutMin, rpParams.to, rpParams.routeCode]
     )
     const callData = '0x2646478b' + callArgs.substring(2)
-
-    // Simple one pool swap code
-    // 04 471EcE3750Da237f93B8E339c536989b8978a438 01 4DA9471c101e0cac906E52DF4f00943b21863efF ffff
-    // distributeERC20Shares<celo_token>01<pool addr><share>
-    // 0a 4DA9471c101e0cac906E52DF4f00943b21863efF 471EcE3750Da237f93B8E339c536989b8978a438 01 471EcE3750Da237f93B8E339c536989b8978a438
-    // swapUniswapPool pool celo direction to(celo)
-
-    const val = '0x' + Number(parseInt(rpParams.value?.toString() as string)).toString(16)
+    const params: Record<string, string> = {
+      from,
+      to: RouteProcessorAddr,
+      data: callData,
+    }
+    if (rpParams.value !== undefined) {
+      const val = '0x' + Number(parseInt(rpParams.value?.toString() as string)).toString(16)
+      params.value = val
+    }
 
     const call = await ethers.utils.fetchJson(
       `https://celo-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
       JSON.stringify({
         method: 'eth_call',
-        params: [
-          {
-            from,
-            to: RouteProcessorAddr,
-            value: val,
-            data: callData,
-          },
-          'latest',
-        ],
+        params: [params, 'latest'],
         id: 1,
         jsonrpc: '2.0',
       })
@@ -88,7 +73,7 @@ async function makeSwap(
 
 if (process.env.INFURA_API_KEY) {
   describe('Celo test', () => {
-    it.only('Celo test', async () => {
+    it('Celo test', async () => {
       const chainId = ChainId.CELO
 
       const provider = new ethers.providers.JsonRpcProvider(

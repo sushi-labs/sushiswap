@@ -1,3 +1,4 @@
+import { ChainId } from '@sushiswap/chain'
 import { getBigNumber, MultiRoute, RouteLeg, RouteStatus, RToken } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 
@@ -19,11 +20,13 @@ function getTokenType(token: RToken): TokenType {
 
 export class TinesToRouteProcessor {
   routeProcessorAddress: string
+  chainId: ChainId
   pools: Map<string, PoolCode>
   tokenOutputLegs: Map<string, RouteLeg[]>
 
-  constructor(routeProcessorAddress: string, pools: Map<string, PoolCode>) {
+  constructor(routeProcessorAddress: string, chainId: ChainId, pools: Map<string, PoolCode>) {
     this.routeProcessorAddress = routeProcessorAddress
+    this.chainId = chainId
     this.pools = pools
     this.tokenOutputLegs = new Map()
   }
@@ -122,9 +125,14 @@ export class TinesToRouteProcessor {
 
     const hex = new HEXer()
     if (getTokenType(fromToken) == TokenType.BENTO) hex.uint8(24) // distributeBentoShares
-    else if (route.fromToken.address == '')
-      hex.uint8(5).address(route.legs[0].poolAddress) // wrapAndDistributeERC20Amounts
-    else hex.uint8(3) // distributeERC20Amounts
+    else if (route.fromToken.address == '') {
+      if (this.chainId == ChainId.CELO) {
+        // Celo is very special - native coin has it's own ERC20 token
+        // So, to prevent user from providing appove to RouteProcessor in case if he swaps from CELO,
+        // we support payment to RP in native coin and then distribute it as ERC20 tokens
+        hex.uint8(7) // distributeERC20AmountsFromRP
+      } else hex.uint8(5).address(route.legs[0].poolAddress) // wrapAndDistributeERC20Amounts
+    } else hex.uint8(3) // distributeERC20Amounts
 
     hex.uint8(legsAddr.length)
 
@@ -213,6 +221,6 @@ export function getRouteProcessorCode(
   toAddress: string,
   pools: Map<string, PoolCode>
 ): string {
-  const rpc = new TinesToRouteProcessor(routeProcessorAddress, pools)
+  const rpc = new TinesToRouteProcessor(routeProcessorAddress, route.fromToken.chainId as ChainId, pools)
   return rpc.getRouteProcessorCode(route, toAddress)
 }
