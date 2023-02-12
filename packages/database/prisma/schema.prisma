@@ -45,6 +45,9 @@ model Token {
   symbol   String
   decimals Int
   status   TokenStatus @default(UNKNOWN)
+  
+  isFeeOnTransfer Boolean @default(false)
+  isCommon Boolean @default(false)
 
   derivedUSD    Decimal?
   derivedNative Decimal?

@@ -1,9 +1,9 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
 
-import prisma from '@sushiswap/database'
+import client from '@sushiswap/database'
 
-import type { PoolType } from '.'
+import type { PoolType } from './index.js'
 
 type PartialWithUndefined<T extends object> = Partial<{
   [K in keyof T]: T[K] | undefined
@@ -22,7 +22,7 @@ export type PoolApiArgs = PartialWithUndefined<{
 
 export async function getPool(chainId: number, address: string) {
   const id = `${chainId}:${address.toLowerCase()}`
-  const pool = await prisma.sushiPool.findFirstOrThrow({
+  const pool = await client.sushiPool.findFirstOrThrow({
     include: {
       token0: true,
       token1: true,
@@ -54,11 +54,11 @@ export async function getPool(chainId: number, address: string) {
     },
   })
 
-  await prisma.$disconnect()
+  await client.$disconnect()
   return pool
 }
 
-type PrismaArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
+type PrismaArgs = NonNullable<Parameters<typeof client.sushiPool.findMany>['0']>
 
 function parseWhere(args: PoolApiArgs) {
   let where: PrismaArgs['where'] = {}
@@ -110,7 +110,7 @@ export async function getPools(args: PoolApiArgs) {
     cursor = { cursor: { id: args.cursor } }
   }
 
-  const pools = await prisma.sushiPool.findMany({
+  const pools = await client.sushiPool.findMany({
     take: 20,
     skip,
     ...cursor,
@@ -178,17 +178,17 @@ export async function getPools(args: PoolApiArgs) {
     },
   })
 
-  await prisma.$disconnect()
+  await client.$disconnect()
   return pools ? pools : []
 }
 
 export async function getPoolCount(args: PoolApiArgs) {
   const where: PrismaArgs['where'] = parseWhere(args)
 
-  const count = await prisma.sushiPool.count({
+  const count = await client.sushiPool.count({
     where,
   })
 
-  await prisma.$disconnect()
+  await client.$disconnect()
   return count ? count : null
 }

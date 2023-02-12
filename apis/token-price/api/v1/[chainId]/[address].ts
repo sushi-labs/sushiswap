@@ -2,8 +2,8 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { roundToNearestMinutes, sub } from 'date-fns'
 import { z } from 'zod'
 
-import { getPrice } from '../../../lib/api'
-import { Currency } from '../../../lib/enums'
+import { getPrice } from '../../../lib/api.js'
+import { Currency } from '../../../lib/enums.js'
 
 const schema = z.object({
   chainId: z.coerce

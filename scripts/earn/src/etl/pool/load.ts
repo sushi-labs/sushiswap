@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { client, Prisma } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 import { PoolMinimal } from './index.js'
@@ -9,15 +9,15 @@ import { PoolMinimal } from './index.js'
  * @param client
  * @param pools
  */
-export async function mergePools(client: PrismaClient, pools: Prisma.SushiPoolCreateManyInput[], isFirstRun: boolean) {
+export async function mergePools(pools: Prisma.SushiPoolCreateManyInput[], isFirstRun: boolean) {
   if (!isFirstRun) {
-    await upsertPools(client, pools)
+    await upsertPools(pools)
   } else {
-    await createPools(client, pools)
+    await createPools(pools)
   }
 }
 
-async function upsertPools(client: PrismaClient, pools: Prisma.SushiPoolCreateManyInput[]) {
+async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   console.log(`LOAD - Preparing to update ${pools.length} pools`)
 
   const poolsWithIncentives = await client.sushiPool.findMany({
@@ -53,7 +53,7 @@ async function upsertPools(client: PrismaClient, pools: Prisma.SushiPoolCreateMa
           volumeNative: pool.volumeNative,
           token0Price: pool.token0Price,
           token1Price: pool.token1Price,
-          feeApr: (pool.feeApr ?? 0),
+          feeApr: pool.feeApr ?? 0,
           totalApr: (pool.feeApr ?? 0) + totalIncentiveApr,
         },
       })
@@ -86,7 +86,7 @@ async function upsertPools(client: PrismaClient, pools: Prisma.SushiPoolCreateMa
   console.log(`LOAD - Updated ${updatedPools.length} pools. (${((endTime - startTime) / 1000).toFixed(1)}s) `)
 }
 
-async function createPools(client: PrismaClient, pools: Prisma.SushiPoolCreateManyInput[]) {
+async function createPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   let count = 0
   const startTime = performance.now()
   const created = await client.sushiPool.createMany({
@@ -100,7 +100,7 @@ async function createPools(client: PrismaClient, pools: Prisma.SushiPoolCreateMa
   console.log(`LOAD - Created ${count} pools. (${((endTime - startTime) / 1000).toFixed(1)}s) `)
 }
 
-export async function updatePoolsWithIncentivesTotalApr(client: PrismaClient) {
+export async function updatePoolsWithIncentivesTotalApr() {
   const poolsWithIncentives = await client.sushiPool.findMany({
     where: {
       incentives: {
@@ -144,7 +144,7 @@ export async function updatePoolsWithIncentivesTotalApr(client: PrismaClient) {
   )
 }
 
-export async function updatePoolsWithVolumeAndFee(client: PrismaClient, pools: PoolMinimal[]) {
+export async function updatePoolsWithVolumeAndFee(pools: PoolMinimal[]) {
   const poolsToUpdate = pools.map((pool) => {
     return client.sushiPool.update({
       select: { id: true },

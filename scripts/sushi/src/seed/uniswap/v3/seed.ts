@@ -1,5 +1,5 @@
-import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainName } from '@sushiswap/chain'
+import { client, Prisma } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 import { getBuiltGraphSDK, V3PairsQuery } from '../../../../.graphclient/index.js'
@@ -8,14 +8,11 @@ import { createPools, getLatestPoolTimestamp } from '../../../etl/pool/load.js'
 import { createTokens } from '../../../etl/token/load.js'
 import { GRAPH_HOST, UNISWAP_V3_SUBGRAPH_NAME, UNISWAP_V3_SUPPORTED_CHAINS } from '../config.js'
 
-const client = new PrismaClient()
-
 const PROTOCOL = ProtocolName.UNISWAP
 const VERSION = ProtocolVersion.V3
 const CONSTANT_PRODUCT_POOL = PoolType.CONSTANT_PRODUCT_POOL
 const SWAP_FEE = 0.003
 const TWAP_ENABLED = true
-
 
 export async function uniswapV3() {
   try {
@@ -44,7 +41,7 @@ async function start() {
   for (const chainId of UNISWAP_V3_SUPPORTED_CHAINS) {
     // Continue from the latest pool creation timestamp,
     // if null, then it's the first time seeding and we grab everything
-    const latestPoolTimestamp = await getLatestPoolTimestamp(client, chainId, PROTOCOL, [VERSION])
+    const latestPoolTimestamp = await getLatestPoolTimestamp(chainId, PROTOCOL, [VERSION])
 
     const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: UNISWAP_V3_SUBGRAPH_NAME[chainId] })
     if (!UNISWAP_V3_SUBGRAPH_NAME[chainId]) {
@@ -92,7 +89,7 @@ async function start() {
         // NOTE: This shouldn't have to be async, but was seeing this error:
         // (unlocked closed connection) (CallerID: planetscale-admin)'
         // this script doesn't have to be super fast, so keeping it async to not throttle the db
-        await Promise.all([createTokens(client, tokens), createPools(client, pools)])
+        await Promise.all([createTokens(tokens), createPools(pools)])
       }
 
       const newCursor = request?.V3_pools[request.V3_pools.length - 1]?.id ?? ''

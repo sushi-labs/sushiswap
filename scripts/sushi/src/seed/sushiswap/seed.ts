@@ -1,24 +1,15 @@
-import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
+import { client, Prisma } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 import { getBuiltGraphSDK, PairsQuery } from '../../../.graphclient/index.js'
 import { ProtocolName } from '../../config.js'
 import { createPools, getLatestPoolTimestamp } from '../../etl/pool/load.js'
 import { createTokens } from '../../etl/token/load.js'
-import {
-  GRAPH_HOST,
-  LEGACY_SUBGRAPH_NAME,
-  SUSHISWAP_CHAINS,
-  TRIDENT_CHAINS,
-  TRIDENT_SUBGRAPH_NAME
-} from './config.js'
-
-const client = new PrismaClient()
+import { GRAPH_HOST, LEGACY_SUBGRAPH_NAME, SUSHISWAP_CHAINS, TRIDENT_CHAINS, TRIDENT_SUBGRAPH_NAME } from './config.js'
 
 const PROTOCOL = ProtocolName.SUSHISWAP
 const VERSIONS = ['LEGACY', 'TRIDENT']
-
 
 export async function sushiSwap() {
   try {
@@ -56,7 +47,7 @@ async function start() {
 
     // Continue from the latest pool creation timestamp,
     // if null, then it's the first time seeding and we grab everything
-    const latestPoolTimestamp = await getLatestPoolTimestamp(client, chainId, PROTOCOL, VERSIONS)
+    const latestPoolTimestamp = await getLatestPoolTimestamp(chainId, PROTOCOL, VERSIONS)
 
     const sdk = getBuiltGraphSDK({ chainId, host: subgraph.host, name: subgraph.name })
 
@@ -101,7 +92,7 @@ async function start() {
         // NOTE: This shouldn't have to be async, but was seeing this error:
         // (unlocked closed connection) (CallerID: planetscale-admin)'
         // this script doesn't have to be super fast, so keeping it async to not throttle the db
-        await Promise.all([createTokens(client, tokens), createPools(client, pools)])
+        await Promise.all([createTokens(tokens), createPools(pools)])
       }
 
       const newCursor = request?.pairs[request.pairs.length - 1]?.id ?? ''

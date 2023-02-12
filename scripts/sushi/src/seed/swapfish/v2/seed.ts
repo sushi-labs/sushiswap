@@ -1,4 +1,4 @@
-// import { Prisma, PrismaClient } from '@prisma/client'
+// import { client, Prisma } from '@sushiswap/database'
 // import { ChainId, chainName } from '@sushiswap/chain'
 // import { performance } from 'perf_hooks'
 // import { getBuiltGraphSDK, PairsQuery } from '../../../../.graphclient/index.js'
@@ -7,7 +7,7 @@
 // import { createTokens } from '../../../etl/token/load.js'
 // import { GRAPH_HOST, SWAPFISH_SUBGRAPH_NAME, SWAPFISH_SUPPORTED_CHAINS } from '../config.js'
 
-// const client = new PrismaClient()
+//
 // const PROTOCOL = ProtocolName.SWAPFISH
 // const VERSION = ProtocolVersion.V2
 // TODO: Fees can change, see https://github.com/swapfish/contracts/blob/main/swap/UniswapV2Pair.sol#L189-L190
@@ -40,7 +40,7 @@
 //   for (const chainId of SWAPFISH_SUPPORTED_CHAINS) {
 //     let latestPoolTimestamp: string | null = null
 //     if (!FIRST_TIME_SEED) {
-//       latestPoolTimestamp = await getLatestPoolTimestamp(client, chainId, PROTOCOL, [VERSION])
+//       latestPoolTimestamp = await getLatestPoolTimestamp(chainId, PROTOCOL, [VERSION])
 //     }
 //     const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: SWAPFISH_SUBGRAPH_NAME[chainId] })
 //     if (!SWAPFISH_SUBGRAPH_NAME[chainId]) {
@@ -88,7 +88,7 @@
 //         // NOTE: This shouldn't have to be async, but was seeing this error:
 //         // (unlocked closed connection) (CallerID: planetscale-admin)'
 //         // this script doesn't have to be super fast, so keeping it async to not throttle the db
-//         await Promise.all([createTokens(client, tokens), createPools(client, pools)])
+//         await Promise.all([createTokens(tokens), createPools(pools)])
 //       }
 
 //       const newCursor = request?.pairs[request.pairs.length - 1]?.id ?? ''

@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { client, Prisma } from '@sushiswap/database'
 
 /**
  * Filters pools to only include the ones that are new or have changed.
@@ -7,7 +7,6 @@ import { Prisma, PrismaClient } from '@prisma/client'
  * @returns
  */
 export async function filterPools(
-  client: PrismaClient,
   pools: Prisma.SushiPoolCreateManyInput[]
 ): Promise<Prisma.SushiPoolCreateManyInput[]> {
   const poolSelect = Prisma.validator<Prisma.SushiPoolSelect>()({
@@ -50,7 +49,7 @@ export async function filterPools(
       Number(pool.volumeUSD).toFixed(2) !== poolExists.volumeUSD.toFixed(2).toString() ||
       pool.token0Price !== poolExists.token0Price ||
       pool.token1Price !== poolExists.token1Price ||
-      pool.feeApr !== poolExists.feeApr 
+      pool.feeApr !== poolExists.feeApr
     ) {
       poolsToUpdate++
       pool.totalApr = Number(pool.feeApr ?? 0) + Number(poolExists.incentiveApr ?? 0)
