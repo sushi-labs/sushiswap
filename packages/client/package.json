@@ -32,7 +32,6 @@
   },
   "dependencies": {
     "@sushiswap/chain": "workspace:*",
-    "swr": "2.0.3",
     "@whatwg-node/fetch": "latest",
     "tslib": "latest"
   },
@@ -45,7 +44,11 @@
     "@sushiswap/database": "workspace:*",
     "@types/node": "^16.0.0",
     "eslint": "8.29.0",
+    "swr": "2.0.3",
     "tsup": "6.5.0",
     "typescript": "4.9.4"
+  },
+  "peerDependencies": {
+    "swr": "^2"
   }
 }

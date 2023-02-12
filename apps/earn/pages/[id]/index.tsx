@@ -5,7 +5,7 @@ import { getPool, usePool, getPools, getPoolUrl, Pool } from '@sushiswap/client'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
-import { SWRConfig } from 'swr'
+import { SWRConfig, useSWRConfig } from 'swr'
 
 import {
   Layout,
@@ -44,7 +44,11 @@ const _Pool = () => {
   const router = useRouter()
 
   const [chainId, address] = (router.query.id as string).split(':') as [ChainId, string]
-  const { data: pool } = usePool({ chainId, address }, !!router.query.id)
+  const { data: pool } = usePool({
+    args: { chainId, address },
+    swrConfig: useSWRConfig(),
+    shouldFetch: Boolean(chainId && address),
+  })
 
   if (!pool) return <></>
 

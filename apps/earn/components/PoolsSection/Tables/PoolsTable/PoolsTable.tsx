@@ -7,7 +7,8 @@ import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { PAGE_SIZE } from '../contants'
 import { APR_COLUMN, FEES_COLUMN, NAME_COLUMN, NETWORK_COLUMN, TVL_COLUMN, VOLUME_COLUMN } from './Cells/columns'
 import { PoolQuickHoverTooltip } from './PoolQuickHoverTooltip'
-import { Pool, GetPoolsArgs, usePoolCount, usePoolsInfinite, PoolType, PoolVersion } from '@sushiswap/client'
+import { Pool, GetPoolsArgs, usePoolsInfinite, usePoolCount, PoolType, PoolVersion } from '@sushiswap/client'
+import { useSWRConfig } from 'swr/_internal'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -35,8 +36,8 @@ export const PoolsTable: FC = () => {
     [chainIds, tokenSymbols, incentivizedOnly, sorting, poolTypes, poolVersions]
   )
 
-  const { data: pools, isValidating, size, setSize } = usePoolsInfinite(args)
-  const { data: poolCount } = usePoolCount(args)
+  const { data: pools, isValidating, size, setSize } = usePoolsInfinite({ args, swrConfig: useSWRConfig() })
+  const { data: poolCount } = usePoolCount({ args, swrConfig: useSWRConfig() })
 
   const table = useReactTable<Pool>({
     data: pools?.flat() || [],
@@ -45,7 +46,7 @@ export const PoolsTable: FC = () => {
       sorting,
       columnVisibility,
     },
-    pageCount: Math.ceil((poolCount || 0) / PAGE_SIZE),
+    pageCount: Math.ceil((poolCount?.count || 0) / PAGE_SIZE),
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),

@@ -5,7 +5,7 @@ import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
-import { SWRConfig } from 'swr'
+import { SWRConfig, useSWRConfig } from 'swr'
 
 import {
   AddSectionLegacy,
@@ -55,7 +55,11 @@ const _Add = () => {
   const router = useRouter()
 
   const [chainId, address] = (router.query.id as string).split(':') as [ChainId, string]
-  const { data: pool } = usePool({ chainId, address }, !!router.query.id)
+  const { data: pool } = usePool({
+    args: { chainId, address },
+    swrConfig: useSWRConfig(),
+    shouldFetch: Boolean(chainId && address),
+  })
 
   if (!pool) return <></>
 

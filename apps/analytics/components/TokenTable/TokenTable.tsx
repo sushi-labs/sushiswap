@@ -29,7 +29,7 @@ const fetcher = ({
   args: {
     sorting: SortingState
     pagination: PaginationState
-    query: string
+    tokenSymbols: string[]
     extraQuery: string
     selectedNetworks: ChainId[]
   }
@@ -50,9 +50,9 @@ const fetcher = ({
   }
 
   let where = {}
-  if (args.query) {
+  if (args.tokenSymbols) {
     where = {
-      symbol_contains_nocase: args.query,
+      symbol_contains_nocase: args.tokenSymbols[0],
     }
 
     _url.searchParams.set('where', stringify(where))
@@ -64,7 +64,7 @@ const fetcher = ({
 }
 
 export const TokenTable: FC = () => {
-  const { query, chainIds } = usePoolFilters()
+  const { chainIds, tokenSymbols } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
   const { isLg } = useBreakpoint('lg')
@@ -76,7 +76,10 @@ export const TokenTable: FC = () => {
     pageSize: PAGE_SIZE,
   })
 
-  const args = useMemo(() => ({ sorting, pagination, chainIds, query }), [sorting, pagination, chainIds, query])
+  const args = useMemo(
+    () => ({ sorting, pagination, chainIds, tokenSymbols }),
+    [sorting, pagination, chainIds, tokenSymbols]
+  )
 
   const { data: tokens, isValidating } = useSWR<Token[]>({ url: '/analytics/api/tokens', args }, fetcher)
   const { data: tokenCount } = useSWR<number>(

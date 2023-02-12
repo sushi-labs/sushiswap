@@ -3,7 +3,7 @@ import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 import { unstable_serialize as unstable_serialize_infinite } from 'swr/infinite'
-import { getPools, getPoolCount, getPoolCountUrl } from '@sushiswap/client'
+import { getPools, getPoolCount, getPoolCountUrl, getPoolsUrl } from '@sushiswap/client'
 
 import { ChartSection, Layout, PoolsFiltersProvider, TableSection } from '../components'
 import { getBundles, getCharts, getTokenCount, getTokens } from '../lib/api'
@@ -21,7 +21,7 @@ export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
       fallback: {
-        [unstable_serialize_infinite(() => defaultPoolsArgs)]: pools,
+        [unstable_serialize_infinite(() => getPoolsUrl(defaultPoolsArgs))]: pools,
         [unstable_serialize({
           url: '/analytics/api/tokens',
           args: {

@@ -190,7 +190,7 @@ export async function getPools(args: typeof PoolsApiSchema._output) {
   }
 
   await prisma.$disconnect()
-  return poolsRetyped ? poolsRetyped : []
+  return poolsRetyped
 }
 
 export async function getPoolCount(args: typeof PoolCountApiSchema._output) {
@@ -201,5 +201,5 @@ export async function getPoolCount(args: typeof PoolCountApiSchema._output) {
   })
 
   await prisma.$disconnect()
-  return count ? count : null
+  return { count }
 }

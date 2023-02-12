@@ -4,6 +4,7 @@ import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useSt
 import { SUPPORTED_CHAIN_IDS } from '../config'
 
 enum Filters {
+  tokenSymbols = 'tokenSymbols',
   chainIds = 'chainIds',
   poolTypes = 'poolTypes',
   poolVersions = 'poolVersions',
@@ -16,8 +17,7 @@ export enum SelectedTable {
 }
 
 interface FilterContext {
-  query: string
-  extraQuery: string
+  [Filters.tokenSymbols]: undefined | string[]
   [Filters.chainIds]: ChainId[]
   selectedTable: SelectedTable
   setFilters(filters: Partial<Omit<FilterContext, 'setFilters'>>): void
@@ -33,8 +33,7 @@ interface PoolsFiltersProvider {
 }
 
 const defaultFilters: PoolFilters = {
-  query: '',
-  extraQuery: '',
+  [Filters.tokenSymbols]: undefined,
   [Filters.chainIds]: SUPPORTED_CHAIN_IDS,
   selectedTable: SelectedTable.Markets,
 }

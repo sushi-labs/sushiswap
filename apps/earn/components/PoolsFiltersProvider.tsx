@@ -30,6 +30,8 @@ interface PoolsFiltersProvider {
   passedFilters?: Partial<PoolFilters>
 }
 
+// ! Has to be kept up to date with defaultPoolsArgs
+// Else prefetching won't work
 const defaultFilters: PoolFilters = {
   [Filters.tokenSymbols]: undefined,
   [Filters.chainIds]: SUPPORTED_CHAIN_IDS,

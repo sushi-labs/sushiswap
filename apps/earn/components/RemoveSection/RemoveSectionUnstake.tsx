@@ -9,6 +9,7 @@ import { CHEF_TYPE_MAP } from '../../lib/constants'
 import { useCreateNotification, useGraphPool } from '../../lib/hooks'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
+import { useSWRConfig } from 'swr/_internal'
 
 interface AddSectionStakeProps {
   pool: Pool
@@ -18,7 +19,7 @@ interface AddSectionStakeProps {
 
 export const RemoveSectionUnstake: FC<{ poolId: string }> = ({ poolId }) => {
   const isMounted = useIsMounted()
-  const { data: pool } = usePool(poolId)
+  const { data: pool } = usePool({ args: poolId, swrConfig: useSWRConfig() })
 
   if (!pool) return <></>
 

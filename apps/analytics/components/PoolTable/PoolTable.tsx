@@ -3,6 +3,7 @@ import { useBreakpoint } from '@sushiswap/hooks'
 import { GenericTable, Table } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useEffect, useMemo, useState } from 'react'
+import { useSWRConfig } from 'swr'
 
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import {
@@ -32,7 +33,7 @@ const COLUMNS = [
 ]
 
 export const PoolTable: FC = () => {
-  const { chainIds } = usePoolFilters()
+  const { chainIds, tokenSymbols } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
   const { isLg } = useBreakpoint('lg')
@@ -47,14 +48,15 @@ export const PoolTable: FC = () => {
   const args = useMemo<GetPoolsArgs>(
     () => ({
       chainIds: chainIds,
+      tokenSymbols,
       orderBy: sorting[0]?.id,
       orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
     }),
-    [chainIds, sorting]
+    [chainIds, sorting, tokenSymbols]
   )
 
-  const { data: pools, isValidating, size, setSize } = usePoolsInfinite(args)
-  const { data: poolCount } = usePoolCount(args)
+  const { data: pools, isValidating, size, setSize } = usePoolsInfinite({ args, swrConfig: useSWRConfig() })
+  const { data: poolCount } = usePoolCount({ args, swrConfig: useSWRConfig() })
 
   const table = useReactTable<Pool>({
     data: pools?.flat() || [],
@@ -63,7 +65,7 @@ export const PoolTable: FC = () => {
       sorting,
       columnVisibility,
     },
-    pageCount: Math.ceil((poolCount || 0) / PAGE_SIZE),
+    pageCount: Math.ceil((poolCount?.count || 0) / PAGE_SIZE),
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),

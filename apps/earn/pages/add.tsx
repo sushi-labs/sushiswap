@@ -37,6 +37,7 @@ import { isConstantProductPool, isLegacyPool, isStablePool } from '../lib/functi
 import { useCustomTokens } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
 import { usePool } from '@sushiswap/client'
+import { useSWRConfig } from 'swr/_internal'
 
 const LINKS: BreadcrumbLink[] = [
   {
@@ -176,7 +177,11 @@ const _Add: FC<AddProps> = ({
   poolType,
   setPoolType,
 }) => {
-  const { data } = usePool({ chainId, address: pool?.liquidityToken.address as string }, !!pool)
+  const { data } = usePool({
+    args: { chainId, address: pool?.liquidityToken.address as string },
+    swrConfig: useSWRConfig(),
+    shouldFetch: !!pool,
+  })
 
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
   const tokenMap = useTokens(chainId)

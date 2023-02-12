@@ -33,9 +33,12 @@ export const AVAILABLE_POOL_TYPE_MAP: Partial<typeof POOL_TYPE_MAP> = {
   STABLE_POOL: 'Stable Pool',
 }
 
+// ! Has to be kept up to date with default filters
+// Else prefetching won't work
 export const defaultPoolsArgs: GetPoolsArgs = {
   chainIds: SUPPORTED_CHAIN_IDS,
   orderBy: 'liquidityUSD',
   orderDir: 'desc',
   poolTypes: Object.keys(AVAILABLE_POOL_TYPE_MAP) as PoolType[],
+  poolVersions: Object.keys(AVAILABLE_VERSION_MAP) as PoolVersion[],
 }

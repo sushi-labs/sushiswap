@@ -10,7 +10,7 @@ const handler = async (_request: VercelRequest, response: VercelResponse) => {
   }
 
   const count = await getPoolCount(result.data)
-  return response.status(200).json({ count })
+  return response.status(200).json(count)
 }
 
 export default handler

@@ -5,6 +5,7 @@ import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { Currency, Link, Table, Tooltip, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
+import { useSWRConfig } from 'swr'
 
 import { FarmRewardsAvailableTooltip } from '../FarmRewardsAvailableTooltip'
 import { PoolQuickHoverTooltip } from '../PoolTable'
@@ -14,7 +15,7 @@ interface TokenPairs {
 }
 
 export const TokenPairs: FC<TokenPairs> = ({ token }) => {
-  const { data: pools } = usePools({ ids: token.pairs.map(({ pair }) => pair.id) })
+  const { data: pools } = usePools({ args: { ids: token.pairs.map(({ pair }) => pair.id) }, swrConfig: useSWRConfig() })
 
   return (
     <div className="flex flex-col w-full gap-4">

@@ -13,6 +13,7 @@ import { useGraphPool } from '../../lib/hooks'
 import { useNotifications } from '../../lib/state/storage'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { AddSectionStakeWidget } from './AddSectionStakeWidget'
+import { useSWRConfig } from 'swr/_internal'
 
 interface AddSectionStakeProps {
   pool: Pool
@@ -23,7 +24,7 @@ interface AddSectionStakeProps {
 
 export const AddSectionStake: FC<{ poolId: string; title?: string }> = ({ poolId, title }) => {
   const isMounted = useIsMounted()
-  const { data: pool } = usePool(poolId)
+  const { data: pool } = usePool({ args: poolId, swrConfig: useSWRConfig() })
 
   if (!pool) return <></>
 

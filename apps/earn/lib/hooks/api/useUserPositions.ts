@@ -4,6 +4,7 @@ import { parseArgs, Pools, usePools } from '@sushiswap/client'
 import { useMemo } from 'react'
 import useSWR from 'swr'
 import { PositionWithPool } from '../../../types'
+import { useSWRConfig } from 'swr/_internal'
 
 export interface GetUserArgs {
   id?: string
@@ -38,7 +39,11 @@ export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
     async (url) => fetch(url).then((data) => data.json())
   )
 
-  const { data: pools, isValidating } = usePools({ ids: positions?.map((position) => position.pool) }, !!positions)
+  const { data: pools, isValidating } = usePools({
+    args: { ids: positions?.map((position) => position.pool) },
+    swrConfig: useSWRConfig(),
+    shouldFetch: !!positions,
+  })
 
   return useMemo(
     () => ({
