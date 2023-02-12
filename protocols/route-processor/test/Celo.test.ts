@@ -9,6 +9,14 @@ import { ethers } from 'hardhat'
 //const RouteProcessorAddr = '0x9B3fF703FA9C8B467F5886d7b61E61ba07a9b51c'
 const RouteProcessorAddr = '0x3e1116eA5034f5D73a7B530071709D54A4109F5f' // new Route Processor
 
+const cUSDC = new Token({
+  chainId: ChainId.CELO,
+  address: '0x765DE816845861e75A25fCA122bb6898B8B1282a',
+  decimals: 18,
+  symbol: 'cUSD',
+  name: 'Celo Dollar',
+})
+
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 async function makeSwap(
@@ -64,19 +72,19 @@ async function makeSwap(
 }
 
 if (process.env.INFURA_API_KEY) {
-  describe('Celo test', () => {
-    it('Celo test', async () => {
-      const chainId = ChainId.CELO
+  describe('Celo', () => {
+    const chainId = ChainId.CELO
 
-      const provider = new ethers.providers.JsonRpcProvider(
-        `https://celo-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-        42220
-      )
+    const provider = new ethers.providers.JsonRpcProvider(
+      `https://celo-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      42220
+    )
 
-      const dataFetcher = new DataFetcher(provider, chainId)
-      dataFetcher.startDataFetching()
+    const dataFetcher = new DataFetcher(provider, chainId)
+    dataFetcher.startDataFetching()
 
-      const amountOut = await makeSwap(
+    it('CELO => USDC', async () => {
+      await makeSwap(
         dataFetcher,
         Native.onChain(chainId),
         USDC[chainId],
@@ -84,8 +92,17 @@ if (process.env.INFURA_API_KEY) {
         WNATIVE[chainId].address,
         getBigNumber(10 * 1e18)
       )
+    })
 
-      console.log(amountOut)
+    it('cUSDC => CELO', async () => {
+      await makeSwap(
+        dataFetcher,
+        cUSDC,
+        WNATIVE[chainId], //Native.onChain(chainId),
+        '0xed30404098da5948d8B3cBD7958ceB641F2C352c', // has cUSDC and approve 800000 to the RP
+        '0xed30404098da5948d8B3cBD7958ceB641F2C352c',
+        getBigNumber(800000)
+      )
     })
   })
 }
