@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
+import { Native, Token, Type, USDC, WNATIVE } from '@sushiswap/currency'
 import { DataFetcher, Router } from '@sushiswap/router'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
@@ -8,14 +8,6 @@ import { ethers } from 'hardhat'
 
 //const RouteProcessorAddr = '0x9B3fF703FA9C8B467F5886d7b61E61ba07a9b51c'
 const RouteProcessorAddr = '0x3e1116eA5034f5D73a7B530071709D54A4109F5f' // new Route Processor
-
-const cUSD = new Token({
-  chainId: ChainId.CELO,
-  address: '0x765DE816845861e75A25fCA122bb6898B8B1282a',
-  decimals: 18,
-  symbol: 'cUSD',
-  name: 'Celo Dollar',
-})
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -87,9 +79,9 @@ if (process.env.INFURA_API_KEY) {
       const amountOut = await makeSwap(
         dataFetcher,
         Native.onChain(chainId),
-        cUSD,
+        USDC[chainId],
         WNATIVE[chainId].address,
-        '0x0000000000000000000000000000000000000001',
+        WNATIVE[chainId].address,
         getBigNumber(10 * 1e18)
       )
 
