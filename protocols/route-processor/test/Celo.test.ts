@@ -40,50 +40,19 @@ async function makeSwap(
   if (route) {
     const rpParams = Router.routeProcessorParams(dataFetcher, route, fromToken, toToken, to, RouteProcessorAddr)
 
-    // const RouteProcessorFactory = await ethers.getContractFactory('RouteProcessor', signer)
-    // const RouteProcessor = RouteProcessorFactory.attach(RouteProcessorAddr)
-    // const res = await RouteProcessor.callStatic.processRoute(
-    //   rpParams.tokenIn,
-    //   rpParams.amountIn,
-    //   rpParams.tokenOut,
-    //   rpParams.amountOutMin,
-    //   rpParams.to,
-    //   rpParams.routeCode
-    // )
-    // console.log(res)
-
-    const coder = new ethers.utils.AbiCoder()
-    const callArgs = coder.encode(
-      ['address', 'uint256', 'address', 'uint256', 'address', 'bytes'],
-      [rpParams.tokenIn, rpParams.amountIn, rpParams.tokenOut, rpParams.amountOutMin, rpParams.to, rpParams.routeCode]
+    const RouteProcessorFactory = await ethers.getContractFactory('RouteProcessor', signer)
+    const RouteProcessor = RouteProcessorFactory.attach(RouteProcessorAddr)
+    const res = await RouteProcessor.callStatic.processRoute(
+      rpParams.tokenIn,
+      rpParams.amountIn,
+      rpParams.tokenOut,
+      rpParams.amountOutMin,
+      rpParams.to,
+      rpParams.routeCode,
+      { value: rpParams.value?.toString() }
     )
-    const callData = '0x2646478b' + callArgs.substring(2)
-    const params: Record<string, string> = {
-      //from,
-      to: RouteProcessorAddr,
-      data: callData,
-    }
-    if (rpParams.value !== undefined) {
-      const val = '0x' + Number(parseInt(rpParams.value?.toString() as string)).toString(16)
-      params.value = val
-    }
-
-    const call = await signer.call(params)
-    return parseInt(call)
-
-    // const call = await ethers.utils.fetchJson(
-    //   `https://celo-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    //   JSON.stringify({
-    //     method: 'eth_call',
-    //     params: [params, 'latest'],
-    //     id: 1,
-    //     jsonrpc: '2.0',
-    //   })
-    // )
-    // if (call.result) {
-    //   return parseInt(call.result)
-    // }
-    // console.log(call)
+    // console.log(parseInt(res.toString()))
+    return parseInt(res.toString())
   }
 }
 
@@ -95,12 +64,12 @@ if (process.env.INFURA_API_KEY) {
       `https://celo-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
       42220
     )
-    const signer = await provider.getSigner(WNATIVE[chainId].address)
 
     const dataFetcher = new DataFetcher(provider, chainId)
     dataFetcher.startDataFetching()
 
     it('CELO => USDC', async () => {
+      const signer = await provider.getUncheckedSigner(WNATIVE[chainId].address)
       await makeSwap(
         dataFetcher,
         signer,
@@ -113,13 +82,15 @@ if (process.env.INFURA_API_KEY) {
     })
 
     it('cUSDC => CELO', async () => {
+      const user = '0xed30404098da5948d8B3cBD7958ceB641F2C352c' // has cUSDC and approved 800000 to the RP
+      const signer = await provider.getUncheckedSigner(user)
       await makeSwap(
         dataFetcher,
         signer,
         cUSDC,
         WNATIVE[chainId], //Native.onChain(chainId),
-        '0xed30404098da5948d8B3cBD7958ceB641F2C352c', // has cUSDC and approve 800000 to the RP
-        '0xed30404098da5948d8B3cBD7958ceB641F2C352c',
+        user,
+        user,
         getBigNumber(800000)
       )
     })
