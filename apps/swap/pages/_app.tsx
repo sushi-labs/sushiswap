@@ -42,15 +42,26 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       router.events.off('hashChangeComplete', handler)
     }
   }, [router.events])
+
+  const isValentines = new Date().getDate() === 14
+
   return (
     <>
       <Head>
         <link rel="apple-touch-icon" sizes="180x180" href="/swap/apple-touch-icon.png?v=1" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/swap/favicon-32x32.png?v=1" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/swap/favicon-16x16.png?v=1" />
+        {!isValentines && (
+          <>
+            <link rel="icon" type="image/png" sizes="32x32" href="/swap/favicon-32x32.png?v=1" />
+            <link rel="icon" type="image/png" sizes="16x16" href="/swap/favicon-16x16.png?v=1" />
+          </>
+        )}
         <link rel="manifest" href="/swap/manifest.json?v=1" />
         <link rel="mask-icon" href="/swap/safari-pinned-tab.svg?v=1" color="#fa52a0" />
-        <link rel="shortcut icon" href="/swap/favicon.ico?v=1" />
+        {isValentines ? (
+          <link rel="shortcut icon" href="/swap/sushi_heart-1.ico?v=1" />
+        ) : (
+          <link rel="shortcut icon" href="/swap/favicon.ico?v=1" />
+        )}
       </Head>
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
       <Script
