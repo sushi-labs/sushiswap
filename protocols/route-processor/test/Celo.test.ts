@@ -101,7 +101,7 @@ if (process.env.INFURA_API_KEY) {
     dataFetcher.startDataFetching()
 
     it('CELO => USDC', async () => {
-      const res = await makeSwap(
+      await makeSwap(
         dataFetcher,
         signer,
         Native.onChain(chainId),
