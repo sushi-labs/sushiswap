@@ -1,4 +1,4 @@
-import prisma from '@sushiswap/database'
+import client from '@sushiswap/database'
 
 import { Currency } from './enums.js'
 
@@ -11,14 +11,14 @@ import { Currency } from './enums.js'
  * @returns
  */
 export async function getPrice(chainId: number, address: string, date: Date, currency: Currency = Currency.USD) {
-  const price = await prisma.token.findFirst({
+  const price = await client.token.findFirst({
     select: { address: true, derivedUSD: true, derivedNative: true },
     where:
       currency === Currency.USD
         ? { AND: { chainId, address, status: 'APPROVED', derivedUSD: { gt: 0 }, updatedAt: { gt: date } } }
         : { AND: { chainId, address, status: 'APPROVED', derivedNative: { gt: 0 }, updatedAt: { gt: date } } },
   })
-  await prisma.$disconnect()
+  await client.$disconnect()
 
   if (
     !price ||
@@ -39,14 +39,14 @@ export async function getPrice(chainId: number, address: string, date: Date, cur
  * @returns
  */
 export async function getPricesByChainId(chainId: number, date: Date, currency: Currency = Currency.USD) {
-  const prices = await prisma.token.findMany({
+  const prices = await client.token.findMany({
     select: { address: true, derivedUSD: true, derivedNative: true },
     where:
       currency === Currency.USD
         ? { AND: { chainId, status: 'APPROVED', derivedUSD: { gt: 0 }, updatedAt: { gt: date } } }
         : { AND: { chainId, status: 'APPROVED', derivedNative: { gt: 0 }, updatedAt: { gt: date } } },
   })
-  await prisma.$disconnect()
+  await client.$disconnect()
   if (!prices.length) {
     return {}
   }

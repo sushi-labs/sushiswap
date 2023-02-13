@@ -4,7 +4,7 @@ import { getUnixTime } from 'date-fns'
 import redis from '../../lib/redis.js'
 import { SUPPORTED_CHAINS } from './config.js'
 
-export default async (request: VercelRequest, response: VercelResponse) => {
+const handler = async (request: VercelRequest, response: VercelResponse) => {
   const chainId = request.query['chainId'] as string
 
   if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
@@ -28,3 +28,5 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     updatedSecondsAgo: now - json.updatedAtTimestamp,
   })
 }
+
+export default handler

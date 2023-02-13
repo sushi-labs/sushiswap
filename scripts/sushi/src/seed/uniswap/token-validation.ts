@@ -1,10 +1,8 @@
-import { PrismaClient } from '@prisma/client'
+import { client } from '@sushiswap/database'
 import fetch from 'isomorphic-unfetch'
 import { performance } from 'perf_hooks'
 
 import { TokenResponse, transform } from '../../etl/token/token-validation.js'
-
-const client = new PrismaClient()
 
 async function main() {
   const startTime = performance.now()
@@ -15,7 +13,7 @@ async function main() {
   console.log(`EXTRACT - ${tokenLists.length} Tokens extracted from source`)
 
   // TRANSFORM
-  const transformedTokens = await transform(tokenLists, client)
+  const transformedTokens = await transform(tokenLists)
   console.log(`TRANSFORM - ${transformedTokens.length} is transformed and ready for approval.`)
 
   // LOAD

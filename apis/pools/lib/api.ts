@@ -1,11 +1,11 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
 
-import { DecimalToString, prisma } from '@sushiswap/database'
+import { client, DecimalToString } from '@sushiswap/database'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import type { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './schemas/index.js'
 
-type PrismaArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
+type PrismaArgs = NonNullable<Parameters<typeof client.sushiPool.findMany>['0']>
 
 function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSchema._output) {
   let where: PrismaArgs['where'] = {}
@@ -61,7 +61,7 @@ export async function getPool(args: typeof PoolApiSchema._output) {
 
   if (!pool) throw new Error('Pool not found.')
 
-  await prisma.$disconnect()
+  await client.$disconnect()
   return pool
 }
 
@@ -78,7 +78,7 @@ export async function getPools(args: typeof PoolsApiSchema._output) {
     cursor = { cursor: { id: args.cursor } }
   }
 
-  const pools = await prisma.sushiPool.findMany({
+  const pools = await client.sushiPool.findMany({
     take,
     skip,
     ...cursor,
@@ -161,17 +161,17 @@ export async function getPools(args: typeof PoolsApiSchema._output) {
     poolsRetyped.push(...unindexedPools)
   }
 
-  await prisma.$disconnect()
-  return poolsRetyped ? poolsRetyped : []
+  await client.$disconnect()
+  return poolsRetyped
 }
 
 export async function getPoolCount(args: typeof PoolCountApiSchema._output) {
   const where: PrismaArgs['where'] = parseWhere(args)
 
-  const count = await prisma.sushiPool.count({
+  const count = await client.sushiPool.count({
     where,
   })
 
-  await prisma.$disconnect()
-  return count ? count : null
+  await client.$disconnect()
+  return { count }
 }

@@ -103,7 +103,10 @@ contract RouteProcessor {
           amountInAcc += distributeERC20Amounts(stream, tokenIn); // initial distribution
         else if (commandCode == 5)
           amountInAcc += wrapAndDistributeERC20Amounts(stream); // wrap natives and initial distribution        
-        else if (commandCode == 6) unwrapNative(to, stream);
+        else if (commandCode == 6) 
+          unwrapNative(to, stream);
+        else if (commandCode == 7)
+          amountInAcc += distributeERC20AmountsFromRP(stream, tokenIn); // initial distribution
         else revert('Unknown command code');
       } else if (commandCode < 24) {
         if (commandCode == 20) bentoDepositAmountFromBento(stream, tokenIn);
@@ -208,6 +211,22 @@ contract RouteProcessor {
       uint256 amount = stream.readUint();
       amountTotal += amount;
       IERC20(token).safeTransferFrom(msg.sender, to, amount);
+    }
+  }
+
+  /// @notice Distributes input ERC20 tokens from this contract to addresses. Tokens should be approved
+  /// @notice Expected to be called for initial liquidity transfer from the user to pools, so we know exact amounts
+  /// @param stream [ArrayLength, ...[To, Amount][]]. An array of destinations and token amounts
+  /// @param token Token to distribute
+  /// @return amountTotal Total amount distributed
+  function distributeERC20AmountsFromRP(uint256 stream, address token) private returns (uint256 amountTotal) {
+    uint8 num = stream.readUint8();
+    amountTotal = 0;
+    for (uint256 i = 0; i < num; ++i) {
+      address to = stream.readAddress();
+      uint256 amount = stream.readUint();
+      amountTotal += amount;
+      IERC20(token).safeTransfer(to, amount);
     }
   }
 

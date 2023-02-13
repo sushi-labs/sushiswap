@@ -18,8 +18,8 @@
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "generate": "graphclient build --fileType js --throwOnInvalidConfig && prisma generate",
-    "lint": "TIMING=1 eslint src --fix",
+    "lint": "TIMING=1 eslint src --fix",    
+    "generate": "graphclient build --fileType js --throwOnInvalidConfig",
     "server": "ts-node --swc src/server.ts",
     "start": "ts-node --swc src/server.ts",
     "setup": "ts-node src/setup-schedulers.ts",
@@ -34,7 +34,6 @@
     "@ethersproject/bignumber": "5.7.0",
     "@google-cloud/run": "0.3.0",
     "@google-cloud/scheduler": "^3.1.0",
-    "@prisma/client": "4.8.1",
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
@@ -49,6 +48,7 @@
     "zod": "3.20.2"
   },
   "devDependencies": {
+    "@sushiswap/database": "workspace:*",
     "@graphprotocol/client-add-source-name": "latest",
     "@graphprotocol/client-auto-pagination": "latest",
     "@graphprotocol/client-cli": "2.2.16",
@@ -76,14 +76,13 @@
     "@swc/helpers": "0.4.14",
     "@types/connect-timeout": "0.0.36",
     "@types/express": "4.17.15",
-    "@whatwg-node/fetch": "latest",
+    "@whatwg-node/fetch": "0.7.0",
     "dotenv": "16.0.3",
     "eslint": "8.29.0",
     "graphql": "16.6.0",
     "ioredis": "5.2.4",
     "jest": "29.3.1",
     "prettier": "2.8.1",
-    "prisma": "4.8.1",
     "ts-node": "10.9.1",
     "tsup": "6.5.0",
     "typescript": "4.9.4"

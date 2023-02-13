@@ -1,7 +1,5 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { client,Prisma } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
-
-const client = new PrismaClient()
 
 export async function whitelistPools() {
   try {

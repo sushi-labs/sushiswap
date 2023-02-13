@@ -121,6 +121,7 @@ export async function getTokenBalancesOf(_tokens: string[], address: string, cha
 
   return tokens.map((token, i) => ({
     token,
-    balance: divBigNumberToNumber(balancesOf[i], decimals[i]),
+    // TODO: when response is null, should we return 0 or exclude the token completely? why is null returned?
+    balance: balancesOf[i] !== undefined && balancesOf[i] !== null ? divBigNumberToNumber(balancesOf[i], decimals[i]) : 0,
   }))
 }

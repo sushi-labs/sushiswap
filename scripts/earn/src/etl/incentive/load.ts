@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { client, Prisma } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 /**
@@ -8,20 +8,19 @@ import { performance } from 'perf_hooks'
  * @param incentives
  */
 export async function mergeIncentives(
-  client: PrismaClient,
   incentivesToCreate: Prisma.IncentiveCreateManyInput[],
   incentivesToUpdate: Prisma.IncentiveCreateManyInput[]
 ) {
-  const containsProtocolPrices = await alreadyContainsProtocol(client)
-  if (containsProtocolPrices) {
-    await updateIncentives(client, incentivesToUpdate)
-    await createIncentives(client, incentivesToCreate)
+  const incentivesAlreadyExist = await hasIncentives()
+  if (incentivesAlreadyExist) {
+    await updateIncentives(incentivesToUpdate)
+    await createIncentives(incentivesToCreate)
   } else {
-    await createIncentives(client, incentivesToCreate)
+    await createIncentives(incentivesToCreate)
   }
 }
 
-async function updateIncentives(client: PrismaClient, incentives: Prisma.IncentiveCreateManyInput[]) {
+async function updateIncentives(incentives: Prisma.IncentiveCreateManyInput[]) {
   if (incentives.length === 0) {
     return
   }
@@ -48,7 +47,7 @@ async function updateIncentives(client: PrismaClient, incentives: Prisma.Incenti
   console.log(`LOAD - Updated ${updatedIncentives.length} incentives. (${((endTime - startTime) / 1000).toFixed(1)}s) `)
 }
 
-async function createIncentives(client: PrismaClient, incentives: Prisma.IncentiveCreateManyInput[]) {
+async function createIncentives(incentives: Prisma.IncentiveCreateManyInput[]) {
   if (incentives.length === 0) {
     return
   }
@@ -68,7 +67,7 @@ async function createIncentives(client: PrismaClient, incentives: Prisma.Incenti
   console.log(`LOAD - Created ${count} incentives. (${((endTime - startTime) / 1000).toFixed(1)}s)`)
 }
 
-async function alreadyContainsProtocol(client: PrismaClient) {
+async function hasIncentives() {
   const count = await client.incentive.count()
   return count > 0
 }
