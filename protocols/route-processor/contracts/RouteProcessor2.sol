@@ -11,6 +11,7 @@ import './InputStream.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 
 address constant NATIVE_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+address constant IMPOSSIBLE_POOL_ADDRESS = 0x0000000000000000000000000000000000000001;
 
 /// @title A route processor for the Sushi Aggregator
 /// @author Okavango
@@ -19,6 +20,7 @@ contract RouteProcessor {
   using InputStream for uint256;
 
   IBentoBoxMinimal public immutable bentoBox;
+  address private lastCalledPool;
 
   uint private unlocked = 1;
   modifier lock() {
@@ -30,6 +32,7 @@ contract RouteProcessor {
 
   constructor(address _bentoBox) {
     bentoBox = IBentoBoxMinimal(_bentoBox);
+    lastCalledPool = IMPOSSIBLE_POOL_ADDRESS;
   }
 
   /// @notice For native unwrapping
@@ -336,6 +339,7 @@ contract RouteProcessor {
     bool zeroForOne = stream.readUint8() > 0;
     address recipient = stream.readAddress();
 
+    lastCalledPool = pool;
     IUniswapV3Pool(pool).swap(
       recipient,
       zeroForOne,
@@ -359,6 +363,8 @@ contract RouteProcessor {
     int256 amount1Delta,
     bytes calldata data
   ) external {
+    require(msg.sender == lastCalledPool, 'uniswapV3SwapCallback: call from unknown source');
+    lastCalledPool = IMPOSSIBLE_POOL_ADDRESS;
     address tokenIn = abi.decode(data, (address));
     int256 amount = amount0Delta > 0 ? amount0Delta : amount1Delta;
     require(amount > 0, 'uniswapV3SwapCallback: no positive amount');
