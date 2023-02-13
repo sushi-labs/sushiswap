@@ -136,7 +136,7 @@ server.get('/v0', async (request) => {
 })
 
 import { createClient, http } from 'viem'
-import { arbitrum, mainnet, optimism, polygon } from 'viem/chains'
+import { arbitrum, celo, mainnet, optimism, polygon } from 'viem/chains'
 
 // Run the server!
 const start = async () => {
@@ -193,6 +193,18 @@ const start = async () => {
         })
       )
     )
+
+    dataFetcherMap.set(
+      ChainId.CELO,
+      new DataFetcher(
+        ChainId.CELO,
+        createClient({
+          chain: celo,
+          transport: http(celo.rpcUrls.default.http[0]),
+        })
+      )
+    )
+
     // dataFetcherMap.set(ChainId.FANTOM, new DataFetcher(ChainId.FANTOM))
     // dataFetcherMap.set(ChainId.FUSE, new DataFetcher(ChainId.FUSE))
     // dataFetcherMap.set(ChainId.GNOSIS, new DataFetcher(ChainId.GNOSIS))
