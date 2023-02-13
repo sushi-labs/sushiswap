@@ -68,7 +68,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     const pools = Array.from(topPools.values())
 
     const results = await multicall(this.client, {
-      multicallAddress: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
+      multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
       contracts: pools.map(
         (pool) =>
@@ -163,7 +163,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
       const [initialPoolsReserves, onDemandPoolsReserves] = await Promise.all([
         multicall(this.client, {
-          multicallAddress: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
+          multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
           allowFailure: true,
           contracts: initialPools.map(
             (poolCode) =>
@@ -176,7 +176,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
           ),
         }),
         multicall(this.client, {
-          multicallAddress: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
+          multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
           allowFailure: true,
           contracts: onDemandPools.map(
             (poolCode) =>

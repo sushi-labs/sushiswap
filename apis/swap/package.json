@@ -41,6 +41,7 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/route-processor": "workspace:*",
+    "@sushiswap/viem-config": "workspace:*",
     "fastify": "4.11.0",
     "@fastify/cors": "8.2.0",
     "@fastify/rate-limit": "7.6.0",
