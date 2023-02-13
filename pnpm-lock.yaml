@@ -86,7 +86,7 @@ importers:
       eslint: 8.29.0
       lodash.zip: 4.2.0
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.15.0
       zod: 3.20.2
     dependencies:
       '@sushiswap/chain': link:../../packages/chain
@@ -106,7 +106,7 @@ importers:
       '@types/node-fetch': 2.6.2
       eslint: 8.29.0
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.15.0
 
   apis/balances:
     specifiers:
@@ -125,7 +125,7 @@ importers:
       eslint: 8.29.0
       lodash.zip: 4.2.0
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.15.0
       zod: 3.20.2
     dependencies:
       '@sushiswap/chain': link:../../packages/chain
@@ -145,7 +145,7 @@ importers:
       '@types/node-fetch': 2.6.2
       eslint: 8.29.0
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.15.0
 
   apis/farm:
     specifiers:
@@ -158,7 +158,7 @@ importers:
       eslint: 8.29.0
       ioredis: 5.2.4
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.15.0
     dependencies:
       '@vercel/node': 2.8.2
       date-fns: 2.29.3
@@ -170,7 +170,7 @@ importers:
       '@sushiswap/typescript-config': link:../../config/typescript
       eslint: 8.29.0
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.15.0
 
   apis/pools:
     specifiers:
@@ -185,6 +185,7 @@ importers:
       '@types/node': ^18.0.0
       '@vercel/node': 2.8.2
       '@wagmi/core': 0.8.1
+      deepmerge-ts: ^4.3.0
       eslint: 8.29.0
       typescript: 4.9.4
       vercel: 28.15.0
@@ -196,6 +197,7 @@ importers:
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@vercel/node': 2.8.2
       '@wagmi/core': 0.8.1_typescript@4.9.4
+      deepmerge-ts: 4.3.0
       zod: 3.20.2
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
@@ -265,7 +267,7 @@ importers:
       '@vercel/node': ^2.2.0
       eslint: 8.29.0
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.15.0
     dependencies:
       '@sushiswap/chainlink-token-list': 0.1.0
       '@sushiswap/default-token-list': 39.8.0
@@ -277,7 +279,7 @@ importers:
       '@sushiswap/typescript-config': link:../../config/typescript
       eslint: 8.29.0
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.15.0
 
   apis/token-price:
     specifiers:
@@ -502,6 +504,7 @@ importers:
       '@heroicons/react': ^1.0.0
       '@reduxjs/toolkit': 1.9.1
       '@sushiswap/chain': workspace:*
+      '@sushiswap/client': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
@@ -535,7 +538,7 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0
       react-redux: 8.0.5
-      swr: ^1.3.0
+      swr: 2.0.3
       tailwindcss: 3.2.4
       typescript: 4.9.4
       wagmi: 0.9.1
@@ -545,6 +548,7 @@ importers:
       '@heroicons/react': 1.0.6_react@18.2.0
       '@reduxjs/toolkit': 1.9.1_k4ae6lp43ej6mezo3ztvx6pykq
       '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/client': link:../../packages/client
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/format': link:../../packages/format
       '@sushiswap/graph-client': link:../../packages/graph-client
@@ -580,7 +584,7 @@ importers:
       autoprefixer: 10.4.13_postcss@8.4.21
       eslint: 8.29.0
       postcss: 8.4.21
-      swr: 1.3.0_react@18.2.0
+      swr: 2.0.3_react@18.2.0
       tailwindcss: 3.2.4_postcss@8.4.21
       typescript: 4.9.4
 
@@ -2026,6 +2030,7 @@ importers:
   packages/client:
     specifiers:
       '@sushiswap/chain': workspace:*
+      '@sushiswap/database': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/pools-api': workspace:*
@@ -2034,6 +2039,7 @@ importers:
       '@types/node': ^16.0.0
       '@whatwg-node/fetch': latest
       eslint: 8.29.0
+      swr: 2.0.3
       tslib: latest
       tsup: 6.5.0
       typescript: 4.9.4
@@ -2042,6 +2048,7 @@ importers:
       '@whatwg-node/fetch': 0.8.1_@types+node@16.18.11
       tslib: 2.5.0
     devDependencies:
+      '@sushiswap/database': link:../database
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/pools-api': link:../../apis/pools
@@ -2049,6 +2056,7 @@ importers:
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 16.18.11
       eslint: 8.29.0
+      swr: 2.0.3
       tsup: 6.5.0_typescript@4.9.4
       typescript: 4.9.4
 
@@ -16844,6 +16852,11 @@ packages:
   /deep-is/0.1.4:
     resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
 
+  /deepmerge-ts/4.3.0:
+    resolution: {integrity: sha512-if3ZYdkD2dClhnXR5reKtG98cwyaRT1NeugQoAPTTfsOpV9kqyeiBF9Qa5RHjemb3KzD5ulqygv6ED3t5j9eJw==}
+    engines: {node: '>=12.4.0'}
+    dev: false
+
   /deepmerge/4.2.2:
     resolution: {integrity: sha512-FJ3UgI4gIl+PHZm53knsuSFpE+nESMr7M4v9QcgB7S63Kj/6WqMiFQJpBBYz1Pt+66bZpP3Q7Lye0Oo9MPKEdg==}
     engines: {node: '>=0.10.0'}
@@ -29805,6 +29818,16 @@ packages:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0
     dependencies:
       react: 18.2.0
+    dev: false
+
+  /swr/2.0.3:
+    resolution: {integrity: sha512-sGvQDok/AHEWTPfhUWXEHBVEXmgGnuahyhmRQbjl9XBYxT/MSlAzvXEKQpyM++bMPaI52vcWS2HiKNaW7+9OFw==}
+    engines: {pnpm: '7'}
+    peerDependencies:
+      react: ^16.11.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      use-sync-external-store: 1.2.0
+    dev: true
 
   /swr/2.0.3_react@18.2.0:
     resolution: {integrity: sha512-sGvQDok/AHEWTPfhUWXEHBVEXmgGnuahyhmRQbjl9XBYxT/MSlAzvXEKQpyM++bMPaI52vcWS2HiKNaW7+9OFw==}
@@ -29814,7 +29837,6 @@ packages:
     dependencies:
       react: 18.2.0
       use-sync-external-store: 1.2.0_react@18.2.0
-    dev: false
 
   /symbol-observable/1.2.0:
     resolution: {integrity: sha512-e900nM8RRtGhlV36KGEU9k65K3mPb1WV70OdjfxlG2EAuM1noi/E/BaW/uMhL7bPEssK8QV57vN3esixjUvcXQ==}

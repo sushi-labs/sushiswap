@@ -1,4 +1,4 @@
-import type { PoolType } from '@sushiswap/database'
+import type { PoolType, PoolVersion } from '@sushiswap/database'
 import { z } from 'zod'
 
 export const PoolCountApiSchema = z.object({
@@ -30,8 +30,17 @@ export const PoolCountApiSchema = z.object({
       }
     })
     .optional(),
+  tokenSymbols: z
+    .string()
+    .transform((tokenSymbols) => tokenSymbols?.split(','))
+    .refine((tokenSymbols) => tokenSymbols.length <= 3, { message: 'Can only use up to 3 tokenSymbols.' })
+    .optional(),
   poolTypes: z
     .string()
     .optional()
     .transform((poolTypes) => poolTypes?.split(',') as PoolType[]),
+  poolVersions: z
+    .string()
+    .transform((poolVersions) => poolVersions?.split(',') as PoolVersion[])
+    .optional(),
 })

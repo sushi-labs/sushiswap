@@ -2,9 +2,9 @@ import { formatUSD } from '@sushiswap/format'
 import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { CellProps } from './types'
+import { TokenCellProps } from '../types'
 
-export const PairTVLCell: FC<CellProps> = ({ row }) => {
+export const TokenLiquidityCell: FC<TokenCellProps> = ({ row }) => {
   const tvl = formatUSD(row.liquidityUSD)
 
   return (

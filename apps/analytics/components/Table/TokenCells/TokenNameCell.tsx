@@ -1,9 +1,9 @@
 import { Currency, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { useTokenFromToken } from '../../lib/hooks'
-import { ICON_SIZE } from './constants'
-import { TokenCellProps } from './types'
+import { useTokenFromToken } from '../../../lib/hooks'
+import { ICON_SIZE } from '../columns'
+import { TokenCellProps } from '../types'
 
 export const TokenNameCell: FC<TokenCellProps> = ({ row }) => {
   const token = useTokenFromToken(row)

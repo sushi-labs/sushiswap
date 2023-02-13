@@ -1,10 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
 import { UserPosition } from '@sushiswap/graph-client'
-import { parseArgs, Pools } from '@sushiswap/client'
+import { parseArgs, Pools, usePools } from '@sushiswap/client'
 import { useMemo } from 'react'
 import useSWR from 'swr'
 import { PositionWithPool } from '../../../types'
-import { usePools } from './usePools'
+import { useSWRConfig } from 'swr'
 
 export interface GetUserArgs {
   id?: string
@@ -39,7 +39,11 @@ export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
     async (url) => fetch(url).then((data) => data.json())
   )
 
-  const { data: pools, isValidating } = usePools({ ids: positions?.map((position) => position.pool) }, !!positions)
+  const { data: pools, isValidating } = usePools({
+    args: { ids: positions?.map((position) => position.pool) },
+    swrConfig: useSWRConfig(),
+    shouldFetch: !!positions,
+  })
 
   return useMemo(
     () => ({

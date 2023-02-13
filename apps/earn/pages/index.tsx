@@ -6,9 +6,8 @@ import { SWRConfig } from 'swr'
 
 import { Layout, PoolFilters, PoolsFiltersProvider, PoolsSection, SushiBarSection } from '../components'
 import { getSushiBar } from '../lib/api'
-import { getPoolCount, getPools } from '@sushiswap/client'
+import { getPoolCount, getPoolCountUrl, getPools, getPoolsUrl } from '@sushiswap/client'
 import { defaultPoolsArgs } from '../lib/constants'
-import { getPoolCountUrl } from '../lib/hooks/api/usePoolCount'
 import { unstable_serialize } from 'swr/infinite'
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -17,11 +16,12 @@ export const getStaticProps: GetStaticProps = async () => {
     getPoolCount(defaultPoolsArgs),
     getSushiBar(),
   ])
+
   return {
     props: {
       fallback: {
         // Need unstable_serialize for SWRInfinite: https://github.com/vercel/swr/discussions/2164
-        [unstable_serialize(() => defaultPoolsArgs)]: pools,
+        [unstable_serialize(() => getPoolsUrl(defaultPoolsArgs))]: pools,
         [getPoolCountUrl(defaultPoolsArgs)]: poolCount,
         [`/earn/api/bar`]: bar,
       },

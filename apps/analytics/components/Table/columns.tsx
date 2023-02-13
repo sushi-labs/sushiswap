@@ -1,49 +1,49 @@
-import { Pair, Token } from '@sushiswap/graph-client'
+import { Token } from '@sushiswap/graph-client'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
-import { NetworkCell } from './NetworkCell'
-import { PairAPRCell } from './PairAPRCell'
-import { PairFees7dCell } from './PairFees7dCell'
-import { PairFees24hCell } from './PairFees24hCell'
-import { PairNameCell } from './PairNameCell'
-import { PairTVLCell } from './PairTVLCell'
-import { PairVolume1wCell } from './PairVolume1wCell'
-import { PairVolume24hCell } from './PairVolume24hCell'
-import { TokenChainCell } from './TokenChainCell'
-import { TokenLiquidityCell } from './TokenLiquidityCell'
-import { TokenNameCell } from './TokenNameCell'
-import { TokenPriceCell } from './TokenPriceCell'
-import { TokenVolumeCell } from './TokenVolumeCell'
+import { ChainCell } from './SharedCells/ChainCell'
+import { PoolAPRCell } from './PoolCells/PoolAPRCell'
+import { PoolFees1wCell } from './PoolCells/PoolFees1wCell'
+import { PoolFees1dCell } from './PoolCells/PoolFees1dCell'
+import { PoolNameCell } from './PoolCells/PoolNameCell'
+import { PoolTVLCell } from './PoolCells/PoolTVLCell'
+import { PoolVolume1wCell } from './PoolCells/PoolVolume1wCell'
+import { PoolVolume1dCell } from './PoolCells/PoolVolume1dCell'
+import { TokenLiquidityCell } from './TokenCells/TokenLiquidityCell'
+import { TokenNameCell } from './TokenCells/TokenNameCell'
+import { TokenPriceCell } from './TokenCells/TokenPriceCell'
+import { TokenVolumeCell } from './TokenCells/TokenVolumeCell'
+import { Pool } from '@sushiswap/client'
 
 export const ICON_SIZE = 20
 export const PAGE_SIZE = 20
 
-export const NETWORK_COLUMN: ColumnDef<Pair, unknown> = {
+export const NETWORK_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'network',
   header: '',
-  cell: (props) => <NetworkCell row={props.row.original} />,
+  cell: (props) => <ChainCell row={props.row.original} />,
   size: 30,
   meta: {
     skeleton: <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />,
   },
 }
 
-export const NAME_COLUMN: ColumnDef<Pair, unknown> = {
+export const NAME_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'name',
   header: 'Name',
-  cell: (props) => <PairNameCell row={props.row.original} />,
+  cell: (props) => <PoolNameCell row={props.row.original} />,
   size: 160,
   meta: {
     skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
   },
 }
 
-export const TVL_COLUMN: ColumnDef<Pair, unknown> = {
+export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
   header: 'TVL',
   id: 'liquidityUSD',
   accessorFn: (row) => row.liquidityUSD,
-  cell: (props) => <PairTVLCell row={props.row.original} />,
+  cell: (props) => <PoolTVLCell row={props.row.original} />,
   size: 100,
   meta: {
     className: 'justify-end',
@@ -51,11 +51,11 @@ export const TVL_COLUMN: ColumnDef<Pair, unknown> = {
   },
 }
 
-export const VOLUME_24_COLUMN: ColumnDef<Pair, unknown> = {
+export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
   header: 'Volume (24h)',
-  id: 'volume24h',
-  // accessorFn: (row) => row.volume24h,
-  cell: (props) => <PairVolume24hCell row={props.row.original} />,
+  id: 'volume1d',
+  accessorFn: (row) => row.volume1d,
+  cell: (props) => <PoolVolume1dCell row={props.row.original} />,
   size: 100,
   meta: {
     className: 'justify-end',
@@ -63,11 +63,11 @@ export const VOLUME_24_COLUMN: ColumnDef<Pair, unknown> = {
   },
 }
 
-export const VOLUME_7_COLUMN: ColumnDef<Pair, unknown> = {
+export const VOLUME_7D_COLUMN: ColumnDef<Pool, unknown> = {
   header: 'Volume (7d)',
   id: 'volume1w',
-  // accessorFn: (row) => row.volume1w,
-  cell: (props) => <PairVolume1wCell row={props.row.original} />,
+  accessorFn: (row) => row.volume1w,
+  cell: (props) => <PoolVolume1wCell row={props.row.original} />,
   size: 100,
   meta: {
     className: 'justify-end',
@@ -75,11 +75,11 @@ export const VOLUME_7_COLUMN: ColumnDef<Pair, unknown> = {
   },
 }
 
-export const FEES_24_COLUMN: ColumnDef<Pair, unknown> = {
+export const FEES_1D_COLUMN: ColumnDef<Pool, unknown> = {
   header: 'Fees (24h)',
   id: 'fees24h',
-  // accessorFn: (row) => row.fees24h,
-  cell: (props) => <PairFees24hCell row={props.row.original} />,
+  accessorFn: (row) => row.fees1d,
+  cell: (props) => <PoolFees1dCell row={props.row.original} />,
   size: 100,
   meta: {
     className: 'justify-end',
@@ -87,11 +87,11 @@ export const FEES_24_COLUMN: ColumnDef<Pair, unknown> = {
   },
 }
 
-export const FEES_7_COLUMN: ColumnDef<Pair, unknown> = {
+export const FEES_7D_COLUMN: ColumnDef<Pool, unknown> = {
   header: 'Fees (7d)',
   id: 'fees7d',
-  // accessorFn: (row) => row.fees7d,
-  cell: (props) => <PairFees7dCell row={props.row.original} />,
+  accessorFn: (row) => row.fees1w,
+  cell: (props) => <PoolFees1wCell row={props.row.original} />,
   size: 100,
   meta: {
     className: 'justify-end',
@@ -99,11 +99,11 @@ export const FEES_7_COLUMN: ColumnDef<Pair, unknown> = {
   },
 }
 
-export const APR_COLUMN: ColumnDef<Pair, unknown> = {
+export const APR_COLUMN: ColumnDef<Pool, unknown> = {
   header: 'APR',
-  id: 'apr',
-  accessorFn: (row) => row.apr,
-  cell: (props) => <PairAPRCell row={props.row.original} />,
+  id: 'totalApr',
+  accessorFn: (row) => row.totalApr,
+  cell: (props) => <PoolAPRCell row={props.row.original} />,
   size: 100,
   meta: {
     className: 'justify-end',
@@ -113,8 +113,8 @@ export const APR_COLUMN: ColumnDef<Pair, unknown> = {
 
 export const TOKEN_CHAIN_COLUMN: ColumnDef<Token, unknown> = {
   id: 'network',
-  header: 'Chain',
-  cell: (props) => <TokenChainCell row={props.row.original} />,
+  header: '',
+  cell: (props) => <ChainCell row={props.row.original} />,
   size: 30,
   meta: {
     skeleton: <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />,

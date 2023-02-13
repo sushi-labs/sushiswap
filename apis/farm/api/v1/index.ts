@@ -34,7 +34,7 @@ interface Farm {
   poolType: 'Legacy' | 'Trident' | 'Kashi' | 'Unknown'
 }
 
-export default async (_request: VercelRequest, response: VercelResponse) => {
+const handler = async (_request: VercelRequest, response: VercelResponse) => {
   const data = await redis.hgetall('farms')
 
   if (!data) {
@@ -68,3 +68,5 @@ export default async (_request: VercelRequest, response: VercelResponse) => {
     }, [] as Farm[])
   )
 }
+
+export default handler

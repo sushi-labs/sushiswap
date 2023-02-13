@@ -2,29 +2,20 @@ import { useBreakpoint } from '@sushiswap/hooks'
 import { GenericTable, Table } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import useSWRInfinite from 'swr/infinite'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { PAGE_SIZE } from '../contants'
 import { APR_COLUMN, FEES_COLUMN, NAME_COLUMN, NETWORK_COLUMN, TVL_COLUMN, VOLUME_COLUMN } from './Cells/columns'
 import { PoolQuickHoverTooltip } from './PoolQuickHoverTooltip'
-import { getPools, Pool, GetPoolsArgs } from '@sushiswap/client'
-import { usePoolCount } from '../../../../lib/hooks/api/usePoolCount'
+import { Pool, GetPoolsArgs, usePoolsInfinite, usePoolCount, PoolType, PoolVersion } from '@sushiswap/client'
+import { useSWRConfig } from 'swr'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, FEES_COLUMN, APR_COLUMN]
 
-const getArgs = (pageIndex: number, previousData: { id: string }[], args: GetPoolsArgs) => {
-  // first page, we don't have `previousPageData`
-  if (pageIndex === 0) return args
-
-  // add the cursor to the API endpoint
-  return { ...args, cursor: previousData?.[previousData.length - 1].id }
-}
-
 export const PoolsTable: FC = () => {
-  const { chainIds, poolTypes, incentivizedOnly } = usePoolFilters()
+  const { chainIds, tokenSymbols, poolTypes, poolVersions, incentivizedOnly } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
@@ -35,25 +26,18 @@ export const PoolsTable: FC = () => {
   const args = useMemo<GetPoolsArgs>(
     () => ({
       chainIds: chainIds,
+      tokenSymbols,
       isIncentivized: incentivizedOnly || undefined, // will filter farms out if set to false, undefined will be filtered out by the parser
       orderBy: sorting[0]?.id,
       orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
-      poolTypes: poolTypes as Pool['type'][],
+      poolTypes: poolTypes as PoolType[],
+      poolVersions: poolVersions as PoolVersion[],
     }),
-    [sorting, chainIds, poolTypes, incentivizedOnly]
+    [chainIds, tokenSymbols, incentivizedOnly, sorting, poolTypes, poolVersions]
   )
 
-  const {
-    data: pools,
-    isValidating,
-    size,
-    setSize,
-  } = useSWRInfinite(
-    (index, previous) => getArgs(index, previous, args),
-    (args) => getPools(args)
-  )
-
-  const { data: poolCount } = usePoolCount(args)
+  const { data: pools, isValidating, size, setSize } = usePoolsInfinite({ args, swrConfig: useSWRConfig() })
+  const { data: poolCount } = usePoolCount({ args, swrConfig: useSWRConfig() })
 
   const table = useReactTable<Pool>({
     data: pools?.flat() || [],
@@ -62,7 +46,7 @@ export const PoolsTable: FC = () => {
       sorting,
       columnVisibility,
     },
-    pageCount: Math.ceil((poolCount || 0) / PAGE_SIZE),
+    pageCount: Math.ceil((poolCount?.count || 0) / PAGE_SIZE),
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),

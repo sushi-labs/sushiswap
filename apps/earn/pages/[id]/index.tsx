@@ -1,10 +1,11 @@
 import { formatPercent } from '@sushiswap/format'
 import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
+import { getPool, usePool, getPools, getPoolUrl, Pool } from '@sushiswap/client'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
-import { SWRConfig } from 'swr'
+import { SWRConfig, useSWRConfig } from 'swr'
 
 import {
   Layout,
@@ -21,17 +22,13 @@ import {
   PoolRewards,
   PoolStats,
 } from '../../components'
-import { GET_POOL_TYPE_MAP } from '../../lib/constants'
-import { getPoolUrl, usePool } from '../../lib/hooks/api'
-import { getPool, getPools, Pool } from '@sushiswap/client'
+import { POOL_TYPE_MAP } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
 
 const LINKS = (pool: Pool): BreadcrumbLink[] => [
   {
     href: `/${pool.id}`,
-    label: `${pool.name} - ${GET_POOL_TYPE_MAP[pool.type as keyof typeof GET_POOL_TYPE_MAP]} - ${formatPercent(
-      pool.swapFee * 100
-    )}`,
+    label: `${pool.name} - ${POOL_TYPE_MAP[pool.type]} - ${formatPercent(pool.swapFee * 100)}`,
   },
 ]
 
@@ -47,7 +44,11 @@ const _Pool = () => {
   const router = useRouter()
 
   const [chainId, address] = (router.query.id as string).split(':') as [ChainId, string]
-  const { data: pool } = usePool({ chainId, address }, !!router.query.id)
+  const { data: pool } = usePool({
+    args: { chainId, address },
+    swrConfig: useSWRConfig(),
+    shouldFetch: Boolean(chainId && address),
+  })
 
   if (!pool) return <></>
 

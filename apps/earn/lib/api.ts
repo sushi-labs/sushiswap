@@ -21,7 +21,7 @@ export const getBundles = async () => {
   }
 }
 
-export const getPool = async (id: string) => {
+export const getGraphPool = async (id: string) => {
   if (!id.includes(':')) throw Error('Invalid pair id')
   // Migrating to new format, graph-client uses the deprecated one
   const split = id.split(':')

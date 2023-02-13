@@ -36,9 +36,8 @@ import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '../config'
 import { isConstantProductPool, isLegacyPool, isStablePool } from '../lib/functions'
 import { useCustomTokens } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
-import { usePool } from '../lib/hooks/api'
-
-import { allChains, allProviders } from '@sushiswap/wagmi-config'
+import { usePool } from '@sushiswap/client'
+import { useSWRConfig } from 'swr'
 
 const LINKS: BreadcrumbLink[] = [
   {
@@ -178,7 +177,11 @@ const _Add: FC<AddProps> = ({
   poolType,
   setPoolType,
 }) => {
-  const { data } = usePool({ chainId, address: pool?.liquidityToken.address as string }, !!pool)
+  const { data } = usePool({
+    args: { chainId, address: pool?.liquidityToken.address as string },
+    swrConfig: useSWRConfig(),
+    shouldFetch: !!pool,
+  })
 
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
   const tokenMap = useTokens(chainId)

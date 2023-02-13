@@ -5,7 +5,7 @@ import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
-import { SWRConfig } from 'swr'
+import { SWRConfig, useSWRConfig } from 'swr'
 
 import {
   AddSectionLegacy,
@@ -16,18 +16,14 @@ import {
   PoolPositionProvider,
   PoolPositionStakedProvider,
 } from '../../components'
-import { GET_POOL_TYPE_MAP } from '../../lib/constants'
-import { usePool } from '../../lib/hooks/api'
-import { getPool, getPools, Pool } from '@sushiswap/client'
-import { getPoolUrl } from '../../lib/hooks/api'
+import { POOL_TYPE_MAP } from '../../lib/constants'
+import { getPool, getPools, getPoolUrl, Pool, usePool } from '@sushiswap/client'
 import { ChainId } from '@sushiswap/chain'
 
 const LINKS = (pool: Pool): BreadcrumbLink[] => [
   {
     href: `/${pool.id}`,
-    label: `${pool.name} - ${GET_POOL_TYPE_MAP[pool.type as keyof typeof GET_POOL_TYPE_MAP]} - ${formatPercent(
-      pool.swapFee * 100
-    )}`,
+    label: `${pool.name} - ${POOL_TYPE_MAP[pool.type]} - ${formatPercent(pool.swapFee * 100)}`,
   },
   {
     href: `/${pool.id}/add`,
@@ -59,7 +55,11 @@ const _Add = () => {
   const router = useRouter()
 
   const [chainId, address] = (router.query.id as string).split(':') as [ChainId, string]
-  const { data: pool } = usePool({ chainId, address }, !!router.query.id)
+  const { data: pool } = usePool({
+    args: { chainId, address },
+    swrConfig: useSWRConfig(),
+    shouldFetch: Boolean(chainId && address),
+  })
 
   if (!pool) return <></>
 
