@@ -7,9 +7,9 @@ import { Native, nativeCurrencyIds } from '@sushiswap/currency'
 import routeProcessorExports from '@sushiswap/route-processor/exports'
 import {
   // findSpecialRoute,
+  DataFetcher,
   Router,
 } from '@sushiswap/router'
-import { DataFetcher } from '@sushiswap/router/dist/DataFetcher'
 import { BigNumber } from 'ethers'
 import fastify from 'fastify'
 import { performance } from 'perf_hooks'
@@ -70,7 +70,7 @@ server.get('/v0', async (request) => {
   )
   const routeStartTime = performance.now()
   const poolCodesMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
-  
+
   // const bestRoute = findSpecialRoute(
   //   poolCodesMap,
   //   chainId,
@@ -88,7 +88,6 @@ server.get('/v0', async (request) => {
     toToken,
     gasPrice ?? 30e9
   )
-
 
   console.log('ROUTE WITH RESERVES:')
   for (const leg of bestRoute.legs) {
