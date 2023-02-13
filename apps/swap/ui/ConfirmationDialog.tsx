@@ -13,22 +13,21 @@ import { useSwapActions, useSwapState } from './trade/TradeProvider'
 import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
 import { routeProcessorAbi } from '@sushiswap/abi'
 import { useTrade } from '../lib/useTrade'
-import { BigNumber } from 'ethers'
 import { SendTransactionResult } from 'wagmi/actions'
 import { useBalances, useCreateNotification } from '@sushiswap/react-query'
 import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
 import { getRouteProcessorAddressForChainId } from 'lib/getRouteProcessorAddressForChainId'
-import { ChainId } from '@sushiswap/chain'
-import { useCarbonOffset } from '../lib/useCarbonOffset'
 
 interface ConfirmationDialogProps {
   children({
     onClick,
     isWritePending,
   }: {
+    error: Error | null
     onClick(): void
+    isError: boolean
     isWritePending: boolean
     isLoading: boolean
     isConfirming: boolean
@@ -51,19 +50,18 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
   const { refetch: refetchNetwork1Balances } = useBalances({ account: address, chainId: network0 })
   const { mutate: storeNotification } = useCreateNotification({ account: address })
-  const [carbonOffset] = useCarbonOffset()
 
   const [open, setOpen] = useState(false)
   const [dialogState, setDialogState] = useState<ConfirmationDialogState>(ConfirmationDialogState.Undefined)
 
-  const { config } = usePrepareContractWrite({
+  const { config, isError, error } = usePrepareContractWrite({
     chainId: network0,
     address: getRouteProcessorAddressForChainId(network0),
     abi: routeProcessorAbi,
-    functionName: carbonOffset && network0 === ChainId.POLYGON ? 'transferValueAndprocessRoute' : 'processRoute',
+    functionName: trade?.functionName,
     args: trade?.writeArgs,
     enabled: Boolean(trade?.writeArgs) && appType === AppType.Swap,
-    overrides: token0.isNative && trade?.writeArgs?.[1] ? { value: BigNumber.from(trade?.writeArgs?.[1]) } : undefined,
+    overrides: trade?.overrides,
   })
 
   const isWrap =
@@ -158,6 +156,8 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         onClick,
         isWritePending,
         isLoading: !writeAsync,
+        error,
+        isError,
         isConfirming: dialogState === ConfirmationDialogState.Pending,
       })}
       <Dialog open={open} unmount={false} onClose={() => setOpen(false)}>

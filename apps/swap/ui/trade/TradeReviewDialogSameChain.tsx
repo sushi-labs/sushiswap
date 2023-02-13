@@ -17,7 +17,7 @@ import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
-import { classNames } from '@sushiswap/ui'
+import { classNames, Collapsible } from '@sushiswap/ui'
 import { warningSeverity, warningSeverityClassName } from '../../lib/warningSeverity'
 import { TradeRoute } from './TradeRoute'
 import { ZERO } from '@sushiswap/math'
@@ -161,27 +161,38 @@ export const TradeReviewDialogSameChain: FC = () => {
         </div>
         <div className="pt-4">
           <ConfirmationDialog>
-            {({ onClick, isWritePending, isLoading, isConfirming }) => (
-              <Button
-                fullWidth
-                size="xl"
-                loading={isLoading}
-                onClick={onClick}
-                disabled={isWritePending || Boolean(isLoading && +value > 0) || isFetching}
-                color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
-              >
-                {isConfirming ? (
-                  <Dots>Confirming transaction</Dots>
-                ) : isWritePending ? (
-                  <Dots>Confirm Swap</Dots>
-                ) : isWrap ? (
-                  'Wrap'
-                ) : isUnwrap ? (
-                  'Unwrap'
-                ) : (
-                  `Swap ${token0.symbol} for ${token1.symbol}`
-                )}
-              </Button>
+            {({ onClick, isWritePending, isLoading, isError, error, isConfirming }) => (
+              <div className="space-y-4">
+                <Button
+                  fullWidth
+                  size="xl"
+                  loading={isLoading && !isError}
+                  onClick={onClick}
+                  disabled={isWritePending || Boolean(isLoading && +value > 0) || isFetching || isError}
+                  color={isError ? 'red' : warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+                >
+                  {isError ? (
+                    'Shoot! Something went wrong :('
+                  ) : isConfirming ? (
+                    <Dots>Confirming transaction</Dots>
+                  ) : isWritePending ? (
+                    <Dots>Confirm Swap</Dots>
+                  ) : isWrap ? (
+                    'Wrap'
+                  ) : isUnwrap ? (
+                    'Unwrap'
+                  ) : (
+                    `Swap ${token0.symbol} for ${token1.symbol}`
+                  )}
+                </Button>
+                <Collapsible open={!!error}>
+                  <div className="scroll bg-red/20 text-red-700 dark:bg-black/20 p-2 px-3 rounded-lg border border-slate-200/10 text-[10px] break-all max-h-[80px] overflow-y-auto">
+                    {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                    {/* @ts-ignore */}
+                    <code>{error ? ('data' in error ? error?.data?.message : error.message) : ''}</code>
+                  </div>
+                </Collapsible>
+              </div>
             )}
           </ConfirmationDialog>
         </div>
