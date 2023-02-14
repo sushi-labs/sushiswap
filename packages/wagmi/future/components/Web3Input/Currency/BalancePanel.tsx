@@ -36,7 +36,7 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
 
   if (loading) {
     return (
-      <div className="h-[36px] w-[60px] flex items-center">
+      <div className="w-[60px] flex items-center">
         <Skeleton.Text fontSize="text-lg" className="w-full" />
       </div>
     )
