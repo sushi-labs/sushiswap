@@ -13,9 +13,14 @@ import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 address constant NATIVE_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 address constant IMPOSSIBLE_POOL_ADDRESS = 0x0000000000000000000000000000000000000001;
 
+/// @dev The minimum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MIN_TICK)
+uint160 constant MIN_SQRT_RATIO = 4295128739;
+/// @dev The maximum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MAX_TICK)
+uint160 constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970342;
+
 /// @title A route processor for the Sushi Aggregator
-/// @author Okavango
-contract RouteProcessor {
+/// @author Ilya Lyalin
+contract RouteProcessor2 {
   using SafeERC20 for IERC20;
   using InputStream for uint256;
 
@@ -99,7 +104,7 @@ contract RouteProcessor {
       uint8 commandCode = stream.readUint8();
       if (commandCode == 1) processMyERC20(stream);
       else if (commandCode == 2) processUserERC20(stream, amountIn);
-      else if (commandCode == 3) processNative(stream);
+      else if (commandCode == 3) processNative(stream, to);
       else revert('RouteProcessor: Unknown command code');
     }
 
@@ -112,36 +117,14 @@ contract RouteProcessor {
     amountOut = balanceOutFinal - balanceOutInitial;
   }
 
-  function processNative(uint256 stream) private {
+  function processNative(uint256 stream, address to) private {
+    uint amount = address(this).balance;
     address token = stream.readAddress();
-    IWETH(token).deposit{value: address(this).balance}();
+    IWETH(token).deposit{value: amount}();
+
+    uint8 send = stream.readUint8();
+    if (send > 0) IERC20(token).safeTransfer(to, amount);
   }
-
-  // function processERC20(uint256 stream, uint256 amountIn) private {
-  //   address token = stream.readAddress();
-  //   uint8 num = stream.readUint8();
-  //   address from; // = num <= 127 ? msg.sender : address(this);
-  //   uint256 amountTotal; // =  amountIn > 0 ? amountIn : IERC20(token).balanceOf(address(this))
-  //    // - 1;     // slot undrain protection
-  //   if (num < 128) { // take liquidity for swap from msg.sender
-  //     from = msg.sender;
-  //     amountTotal = amountIn;
-  //   } else { // take liquidity for swap from this contract
-  //     unchecked {num -= 128;}
-  //     from = address(this);
-  //     amountTotal = IERC20(token).balanceOf(address(this))
-  //       - 1;     // slot undrain protection
-  //   }
-
-  //   unchecked {
-  //     for (uint256 i = 0; i < num; ++i) {
-  //       uint16 share = stream.readUint16();
-  //       uint256 amount = (amountTotal * share) / 65535;
-  //       amountTotal -= amount;
-  //       swap(stream, from, token, amount);
-  //     }
-  //   }
-  // }
 
   function processMyERC20(uint256 stream) private {
     address token = stream.readAddress();
@@ -196,11 +179,6 @@ contract RouteProcessor {
     (uint256 amount0Out, uint256 amount1Out) = direction == 1 ? (uint256(0), amountOut) : (amountOut, uint256(0));
     IUniswapV2Pair(pool).swap(amount0Out, amount1Out, to, new bytes(0));
   }
-
-  /// @dev The minimum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MIN_TICK)
-  uint160 internal constant MIN_SQRT_RATIO = 4295128739;
-  /// @dev The maximum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MAX_TICK)
-  uint160 internal constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970342;
 
   /// @notice Performs a UniV3 pool swap
   /// @param amountIn amount of tokens to swap
