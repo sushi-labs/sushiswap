@@ -8061,10 +8061,10 @@ packages:
       '@types/ws': 8.5.4
       '@whatwg-node/fetch': 0.8.1
       graphql: 16.6.0
-      isomorphic-ws: 5.0.0_ws@8.12.0
+      isomorphic-ws: 5.0.0_ws@8.12.1
       tslib: 2.5.0
       value-or-promise: 1.0.12
-      ws: 8.12.0
+      ws: 8.12.1
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -8087,10 +8087,10 @@ packages:
       '@types/ws': 8.5.4
       '@whatwg-node/fetch': 0.8.1_@types+node@16.18.11
       graphql: 16.6.0
-      isomorphic-ws: 5.0.0_ws@8.12.0
+      isomorphic-ws: 5.0.0_ws@8.12.1
       tslib: 2.5.0
       value-or-promise: 1.0.12
-      ws: 8.12.0
+      ws: 8.12.1
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil

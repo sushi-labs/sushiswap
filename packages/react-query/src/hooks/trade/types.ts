@@ -16,7 +16,10 @@ export interface UseTradeParams {
   slippagePercentage: string
   recipient: string | undefined
   enabled: boolean
+  carbonOffset: boolean
 }
+
+export type UseTradeReturnWriteArgs = [HexString, BigNumber, HexString, BigNumber, HexString, BigNumber, HexString, HexString] | [HexString, BigNumber, HexString, BigNumber, HexString, HexString] | undefined
 
 export interface UseTradeReturn {
   swapPrice: Price<Type, Type> | undefined
@@ -25,9 +28,11 @@ export interface UseTradeReturn {
   amountOut: Amount<Type> | undefined
   minAmountOut: Amount<Type> | undefined
   gasSpent: string | undefined
-  writeArgs: [HexString, BigNumber, HexString, BigNumber, HexString, HexString] | undefined
+  functionName: 'processRoute' | 'transferValueAndprocessRoute'
+  writeArgs: UseTradeReturnWriteArgs
   route: TradeType['getBestRoute']
   currentRouteHumanString: string
+  overrides: { value: BigNumber} | undefined
 }
 
 export type UseTradeQuerySelect = (data: TradeType) => UseTradeReturn
