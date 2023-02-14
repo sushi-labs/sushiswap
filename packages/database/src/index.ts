@@ -31,12 +31,12 @@ const cacheMiddleware = createPrismaRedisCache({
   models: [
   { model: 'Token', cacheTime: 900 }, 
   { model: 'Incentive', cacheTime: 180 }, 
-  { model: 'Pool', cacheTime: 24 * 60 * 60 },
+  { model: 'Pool', cacheTime: 900 },
   { model: 'SushiPool', cacheTime: 900 }
 ],
   storage: {
     type: "redis",
-    options: { client: redis, invalidation: { referencesTTL: 24 * 60 * 60} },
+    options: { client: redis, invalidation: { referencesTTL: 900 } },
   },
   onHit: (key: string) => {
     console.log('Hit: ✅', key)
