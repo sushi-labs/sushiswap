@@ -87,7 +87,7 @@ export const PoolsTable: FC = () => {
       <InfiniteScroll
         dataLength={data.length}
         next={() => setSize((prev) => prev + 1)}
-        hasMore={true}
+        hasMore={data.length < (poolCount?.count || 0)}
         loader={
           <div className="flex justify-center w-full py-4">
             <Loader size={24} />
