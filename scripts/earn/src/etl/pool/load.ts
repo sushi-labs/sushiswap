@@ -1,4 +1,4 @@
-import { client, Prisma } from '@sushiswap/database'
+import { createClient, Prisma } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 import { PoolMinimal } from './index.js'
@@ -20,6 +20,7 @@ export async function mergePools(pools: Prisma.SushiPoolCreateManyInput[], isFir
 async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   console.log(`LOAD - Preparing to update ${pools.length} pools`)
 
+  const client = createClient()
   const poolsWithIncentives = await client.sushiPool.findMany({
     where: {
       id: {
@@ -89,6 +90,7 @@ async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
 async function createPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   let count = 0
   const startTime = performance.now()
+  const client = createClient()
   const created = await client.sushiPool.createMany({
     data: pools,
     skipDuplicates: true,
@@ -101,6 +103,7 @@ async function createPools(pools: Prisma.SushiPoolCreateManyInput[]) {
 }
 
 export async function updatePoolsWithIncentivesTotalApr() {
+  const client = createClient()
   const poolsWithIncentives = await client.sushiPool.findMany({
     where: {
       incentives: {
@@ -145,6 +148,7 @@ export async function updatePoolsWithIncentivesTotalApr() {
 }
 
 export async function updatePoolsWithVolumeAndFee(pools: PoolMinimal[]) {
+  const client = createClient()
   const poolsToUpdate = pools.map((pool) => {
     return client.sushiPool.update({
       select: { id: true },

@@ -1,5 +1,5 @@
 import { ChainId, chainName } from '@sushiswap/chain'
-import { client, Prisma } from '@sushiswap/database'
+import { createClient, Prisma } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 import { getBuiltGraphSDK, MessariPairsQuery } from '../../../../.graphclient/index.js'
@@ -7,7 +7,6 @@ import { PoolType, ProtocolName, ProtocolVersion } from '../../../config.js'
 import { createPools, getLatestPoolTimestamp } from '../../../etl/pool/load.js'
 import { createTokens } from '../../../etl/token/load.js'
 import { APESWAP_V2_SUBGRAPH_NAME, APESWAP_V2_SUPPORTED_CHAINS, GRAPH_HOST } from '../config.js'
-
 
 const PROTOCOL = ProtocolName.APESWAP
 const VERSION = ProtocolVersion.V2
@@ -26,9 +25,9 @@ export async function apeSwapV2() {
     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
   } catch (e) {
     console.error(e)
-    await client.$disconnect()
+    await createClient().$disconnect()
   } finally {
-    await client.$disconnect()
+    await createClient().$disconnect()
   }
 }
 

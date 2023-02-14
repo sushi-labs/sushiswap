@@ -1,4 +1,4 @@
-// import { client, Prisma } from '@sushiswap/database'
+// import { createClient, Prisma } from '@sushiswap/database'
 // import { ChainId, chainName } from '@sushiswap/chain'
 // import { performance } from 'perf_hooks'
 // import { getBuiltGraphSDK, PairsQuery } from '../../../../.graphclient/index.js'
@@ -166,10 +166,10 @@
 
 // main()
 //   .then(async () => {
-//     await client.$disconnect()
+//     await createClient().$disconnect()
 //   })
 //   .catch(async (e) => {
 //     console.error(e)
-//     await client.$disconnect()
+//     await createClient().$disconnect()
 //     process.exit(1)
 //   })

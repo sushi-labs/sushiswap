@@ -1,4 +1,4 @@
-import { client, Prisma } from '@sushiswap/database'
+import { createClient, Prisma } from '@sushiswap/database'
 
 /**
  * Filters token incentives to only include the ones that are new or have changed.
@@ -16,6 +16,7 @@ export async function filterIncentives(incentives: Prisma.IncentiveCreateManyInp
     rewardPerDay: true,
   })
 
+  const client = createClient()
   const incentiveFound = await client.incentive.findMany({
     where: {
       id: { in: incentives.map((incentive) => incentive.id) },

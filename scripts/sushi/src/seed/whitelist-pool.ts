@@ -1,4 +1,4 @@
-import { client,Prisma } from '@sushiswap/database'
+import { createClient, Prisma } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 export async function whitelistPools() {
@@ -11,13 +11,14 @@ export async function whitelistPools() {
     console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
   } catch (e) {
     console.error(e)
-    await client.$disconnect()
+    await createClient().$disconnect()
   } finally {
-    await client.$disconnect()
+    await createClient().$disconnect()
   }
 }
 
 async function start() {
+  const client = createClient()
   const approvedTokensResult = await client.token.findMany({
     select: {
       id: true,
@@ -88,6 +89,7 @@ async function getPoolsAddresses(
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
 ) {
+  const client = createClient()
   const approvedTokens = await client.pool.findMany({
     take,
     skip,

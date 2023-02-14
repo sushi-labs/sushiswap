@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { client, Prisma } from '@sushiswap/database'
+import { createClient, Prisma } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 import { getBuiltGraphSDK, PairsQuery } from '../../../.graphclient/index.js'
@@ -22,9 +22,9 @@ export async function sushiSwap() {
     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
   } catch (e) {
     console.error(e)
-    await client.$disconnect()
+    await createClient().$disconnect()
   } finally {
-    await client.$disconnect()
+    await createClient().$disconnect()
   }
 }
 

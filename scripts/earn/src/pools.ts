@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { client, PoolType, PoolVersion, Prisma } from '@sushiswap/database'
+import { createClient, PoolType, PoolVersion, Prisma } from '@sushiswap/database'
 import { SUBGRAPH_HOST, TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
@@ -44,9 +44,9 @@ export async function execute() {
     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
   } catch (e) {
     console.error(e)
-    await client.$disconnect()
+    await createClient().$disconnect()
   } finally {
-    await client.$disconnect()
+    await createClient().$disconnect()
   }
 }
 

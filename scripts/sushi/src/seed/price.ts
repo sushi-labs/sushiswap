@@ -2,7 +2,7 @@
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import type { ChainId } from '@sushiswap/chain'
-import { client, Prisma, Token } from '@sushiswap/database'
+import { createClient, Prisma, Token } from '@sushiswap/database'
 import { calcTokenPrices, ConstantProductRPool } from '@sushiswap/tines'
 import { performance } from 'perf_hooks'
 
@@ -50,13 +50,14 @@ export async function prices(
     console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
   } catch (e) {
     console.error(e)
-    await client.$disconnect()
+    await createClient().$disconnect()
   } finally {
-    await client.$disconnect()
+    await createClient().$disconnect()
   }
 }
 
 async function getBaseToken(chainId: ChainId, address: string) {
+  const client = createClient()
   const baseToken = await client.token.findFirst({
     select: {
       address: true,
@@ -113,6 +114,7 @@ async function getPoolsByPagination(
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
 ): Promise<Pool[]> {
+  const client = createClient()
   return client.pool.findMany({
     take,
     select: {
@@ -204,6 +206,7 @@ async function updateTokenPrices(price: Price, tokens: { id: string; price: numb
   const batchSize = 250
   let updatedCount = 0
 
+  const client = createClient()
   for (let i = 0; i < tokens.length; i += batchSize) {
     const batch = tokens.slice(i, i + batchSize)
     const requests = batch.map((token) => {

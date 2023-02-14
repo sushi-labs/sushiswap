@@ -1,9 +1,10 @@
-import { client, Prisma } from '@sushiswap/database'
+import { createClient, Prisma } from '@sushiswap/database'
 
 export async function createTokens(tokens: Prisma.TokenCreateManyInput[]) {
   if (tokens.length === 0) {
     return
   }
+  const client = createClient()
   const created = await client.token.createMany({
     data: tokens,
     skipDuplicates: true,

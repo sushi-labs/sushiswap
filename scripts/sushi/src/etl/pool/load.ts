@@ -1,8 +1,10 @@
-import { client, Prisma } from '@sushiswap/database'
+import { createClient, Prisma } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 export async function createPools(pools: Prisma.PoolCreateManyInput[]) {
   const startTime = performance.now()
+
+  const client = createClient()
   const created = await client.pool.createMany({
     data: pools,
     skipDuplicates: true,
@@ -19,6 +21,8 @@ export async function createPools(pools: Prisma.PoolCreateManyInput[]) {
 
 export async function getLatestPoolTimestamp(chainId: number, protocol: string, versions: string[]) {
   const startTime = performance.now()
+
+  const client = createClient()
   const latestPool = await client.pool.findFirst({
     select: {
       address: true,
@@ -35,6 +39,7 @@ export async function getLatestPoolTimestamp(chainId: number, protocol: string, 
       generatedAt: 'desc',
     },
   })
+
   const endTime = performance.now()
   const duration = ((endTime - startTime) / 1000).toFixed(1)
   if (!latestPool) {

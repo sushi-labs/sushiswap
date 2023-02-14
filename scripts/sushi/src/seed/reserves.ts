@@ -1,7 +1,7 @@
 import '../lib/wagmi.js'
 
 import { ChainId } from '@sushiswap/chain'
-import { client, Prisma } from '@sushiswap/database'
+import { createClient, Prisma } from '@sushiswap/database'
 import { readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
@@ -69,9 +69,9 @@ export async function reserves(chainId: ChainId) {
     console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
   } catch (e) {
     console.error(e)
-    await client.$disconnect()
+    await createClient().$disconnect()
   } finally {
-    await client.$disconnect()
+    await createClient().$disconnect()
   }
 }
 
@@ -119,6 +119,7 @@ async function getPoolsPagination(
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
 ) {
+  const client = createClient()
   return client.pool.findMany({
     take,
     skip,
@@ -231,6 +232,7 @@ async function updatePoolsWithReserve(chainId: ChainId, pools: PoolWithReserve[]
   const batchSize = 250
   let updatedCount = 0
 
+  const client = createClient()
   for (let i = 0; i < pools.length; i += batchSize) {
     const batch = pools.slice(i, i + batchSize)
     const requests = batch.map((pool) => {

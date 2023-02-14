@@ -1,4 +1,4 @@
-import { client } from '@sushiswap/database'
+import { createClient } from '@sushiswap/database'
 import fetch from 'isomorphic-unfetch'
 import { performance } from 'perf_hooks'
 
@@ -19,6 +19,8 @@ async function main() {
   // LOAD
   const batchSize = 200
   let count = 0
+
+  const client = createClient()
   for (let i = 0; i < transformedTokens.length; i += batchSize) {
     const batch = transformedTokens.slice(i, i + batchSize)
     const updates = batch.map((token) => client.token.update(token))

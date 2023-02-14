@@ -1,4 +1,4 @@
-import { client, Prisma } from '@sushiswap/database'
+import { createClient, Prisma } from '@sushiswap/database'
 
 /**
  * Filters pools to only include the ones that are new or have changed.
@@ -28,6 +28,7 @@ export async function filterPools(
   let poolsToUpdate = 0
   const poolsToUpsert: Prisma.SushiPoolCreateManyInput[] = []
 
+  const client = createClient()
   const poolsFound = await client.sushiPool.findMany({
     where: {
       address: { in: pools.map((pool) => pool.address) },

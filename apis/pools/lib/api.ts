@@ -1,12 +1,12 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
 
-import { client, DecimalToString } from '@sushiswap/database'
+import { DecimalToString, PrismaClient, createClient } from '@sushiswap/database'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { deepmergeInto } from 'deepmerge-ts'
 import type { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './schemas/index.js'
 
-type PrismaArgs = NonNullable<Parameters<typeof client.sushiPool.findMany>['0']>
+type PrismaArgs = NonNullable<Parameters<PrismaClient['sushiPool']['findMany']>['0']>
 
 function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSchema._output) {
   let where: NonNullable<PrismaArgs['where']> = {}
@@ -89,7 +89,6 @@ export async function getPool(args: typeof PoolApiSchema._output) {
 
   if (!pool) throw new Error('Pool not found.')
 
-  await client.$disconnect()
   return pool
 }
 
@@ -106,6 +105,7 @@ export async function getPools(args: typeof PoolsApiSchema._output) {
     cursor = { cursor: { id: args.cursor } }
   }
 
+  const client = createClient()
   const pools = await client.sushiPool.findMany({
     take,
     skip,
@@ -196,6 +196,7 @@ export async function getPools(args: typeof PoolsApiSchema._output) {
 export async function getPoolCount(args: typeof PoolCountApiSchema._output) {
   const where: PrismaArgs['where'] = parseWhere(args)
 
+  const client = createClient()
   const count = await client.sushiPool.count({
     where,
   })
