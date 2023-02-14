@@ -75,13 +75,9 @@ export const TokenNotFoundDialog = () => {
 
   return (
     <Dialog open={token0NotInList || token1NotInList} onClose={() => {}}>
-      <Dialog.Content className="flex flex-col gap-4 px-4 sm:!rounded-[24px]">
+      <Dialog.Content className="flex flex-col gap-4">
         <>
-          <div className="flex justify-between items-center py-2">
-            <span className="text-lg font-semibold dark:text-slate-50 text-gray-900">
-              Unknown Token{token0 && token1 ? 's' : ''}
-            </span>
-          </div>
+          <Dialog.Header title={`Unknown Token${token0 && token1 ? 's' : ''}`} />
           <p className="text-gray-700 dark:text-slate-400">
             Anyone can create a token, including creating fake versions of existing tokens that claim to represent
             projects. If you purchase this token, you may not be able to sell it back.

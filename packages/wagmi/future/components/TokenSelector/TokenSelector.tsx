@@ -18,6 +18,13 @@ import { TokenSelectorCustomTokensOverlay } from './TokenSelectorCustomTokensOve
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { COMMON_BASES } from '@sushiswap/router-config'
+import { AppearOnMount, classNames, Loader } from '@sushiswap/ui'
+import { AddressZero } from '@ethersproject/constants'
+import { Badge } from '@sushiswap/ui/future/components/Badge'
+import { CheckCircleIcon } from '@heroicons/react/20/solid'
+import { Icon } from '@sushiswap/ui/future/components/currency/Icon'
+import { ZERO } from '@sushiswap/math'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 
 interface TokenSelectorProps {
   id: string
@@ -96,31 +103,54 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
                     ))}
                   </div>
 
-                  <List.Control className="flex flex-col flex-grow gap-3 p-1">
-                    {queryToken[0] && (
-                      <TokenSelectorImportRow
-                        currencies={queryToken}
-                        onImport={() => queryToken[0] && handleImport(queryToken[0])}
-                      />
-                    )}
-                    <TokenSelectorCurrencyList
-                      selected={selected}
-                      onSelect={_onSelect}
-                      id={id}
-                      currencies={currencies}
-                      chainId={chainId}
-                    />
-                  </List.Control>
-                  {currencies.length === 0 && !queryToken && chainId && (
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="flex flex-col items-center justify-center gap-1">
-                        <span className="flex text-xs italic text-slate-500">No tokens found on</span>
-                        <span className="flex gap-1 text-xs italic font-medium text-slate-500">
-                          <NetworkIcon width={14} height={14} chainId={chainId} /> {chainName[chainId]}
-                        </span>
+                  <List.Control className="relative flex flex-col flex-grow gap-3 p-1">
+                    {searching ? (
+                      <div className="py-0.5 h-[64px] -mb-3">
+                        <div className="flex items-center w-full h-full rounded-lg px-3">
+                          <div className="flex items-center justify-between flex-grow gap-2 rounded">
+                            <div className="flex flex-row items-center flex-grow gap-4">
+                              <Skeleton.Circle radius={40} />
+                              <div className="flex flex-col items-start">
+                                <Skeleton.Text fontSize="text-base" className="w-full bg-gray-300 w-[100px]" />
+                                <Skeleton.Text fontSize="text-sm" className="w-full bg-gray-100 w-[60px]" />
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col">
+                              <Skeleton.Text fontSize="text-base" className="bg-gray-300 w-[80px]" />
+                              <Skeleton.Text fontSize="text-sm" align="right" className="bg-gray-200 w-[40px]" />
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    ) : (
+                      <>
+                        {queryToken[0] && (
+                          <TokenSelectorImportRow
+                            currencies={queryToken}
+                            onImport={() => queryToken[0] && handleImport(queryToken[0])}
+                          />
+                        )}
+                        <TokenSelectorCurrencyList
+                          selected={selected}
+                          onSelect={_onSelect}
+                          id={id}
+                          currencies={currencies}
+                          chainId={chainId}
+                        />
+                        {currencies.length === 0 && !queryToken?.[0] && chainId && (
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <span className="flex items-center text-xs text-gray-500 dark:text-slate-500">
+                                No tokens found on <NetworkIcon type="naked" width={20} height={20} chainId={chainId} />{' '}
+                                <span className="font-medium">{chainName[chainId]}</span>
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </List.Control>
                 </SlideIn>
               </Dialog.Content>
             </Dialog>

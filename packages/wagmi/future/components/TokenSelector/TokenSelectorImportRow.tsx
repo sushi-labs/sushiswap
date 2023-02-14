@@ -1,5 +1,5 @@
-import { ExclamationTriangleIcon, LinkIcon, PlusIcon } from '@heroicons/react/24/outline'
-import chain from '@sushiswap/chain'
+import { ArrowTopRightOnSquareIcon, ExclamationTriangleIcon, LinkIcon, PlusIcon } from '@heroicons/react/24/outline'
+import chain, { Chain } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { SlideIn } from '@sushiswap/ui/future/components/animation'
 import { Button } from '@sushiswap/ui/future/components/button'
@@ -7,6 +7,9 @@ import { Icon } from '@sushiswap/ui/future/components/currency/Icon'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Overlay } from '@sushiswap/ui/future/components/overlay'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { Currency } from '@sushiswap/ui'
+import { shortenAddress } from '@sushiswap/format'
 
 interface TokenSelectorImportRow {
   currencies: (Token | undefined)[]
@@ -42,20 +45,37 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
             {currencies.reduce<ReactNode[]>((acc, cur) => {
               if (cur) {
                 acc.push(
-                  <List.MenuItem
-                    as="a"
-                    href={chain[cur.chainId].getTokenUrl(cur.wrapped.address)}
-                    target="_blank"
-                    icon={Icon}
-                    iconProps={{ currency: cur, width: 28, height: 28 }}
-                    title={cur.symbol || ''}
-                    hoverIcon={LinkIcon}
-                    hoverIconProps={{
-                      width: 20,
-                      height: 20,
-                      className: 'text-blue',
-                    }}
-                  />
+                  <div className="py-0.5 h-[64px]">
+                    <div className="flex items-center w-full h-full rounded-lg px-3">
+                      <div className="flex items-center justify-between flex-grow gap-2 rounded">
+                        <div className="flex flex-row items-center flex-grow gap-4">
+                          <Icon currency={cur} width={40} height={40} />
+                          <div className="flex flex-col items-start">
+                            <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
+                              {cur.symbol}
+                            </span>
+                            <span className="text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">
+                              {cur.name}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col">
+                          <span className="text-right font-medium text-sm text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
+                            {shortenAddress(cur.address)}
+                          </span>
+                          <a
+                            target="_blank"
+                            href={Chain.from(cur.chainId).getTokenUrl(cur.address)}
+                            className="flex gap-1 text-sm items-center text-blue font-medium justify-end"
+                            rel="noreferrer"
+                          >
+                            View on Explorer <ArrowTopRightOnSquareIcon width={14} height={14} />
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 )
               }
 
@@ -77,14 +97,29 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
     <>
       {slideIn && currencies[0] ? (
         <>
-          <List.MenuItem
-            className="!px-2 rounded-xl hover:!bg-white hover:dark:!bg-slate-800"
-            icon={Icon}
-            iconProps={{ currency: currencies[0], width: 28, height: 28 }}
-            title={currencies[0].symbol || ''}
-            onClick={() => setOpen(true)}
-            hoverIcon={PlusIcon}
-          />
+          <div className="py-0.5 h-[64px]">
+            <div className="flex items-center w-full h-full rounded-lg px-3">
+              <div className="flex items-center justify-between flex-grow gap-2 rounded">
+                <div className="flex flex-row items-center flex-grow gap-4">
+                  <Icon currency={currencies[0]} width={40} height={40} />
+                  <div className="flex flex-col items-start">
+                    <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
+                      {currencies[0].symbol}
+                    </span>
+                    <span className="text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">
+                      {currencies[0].name}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col">
+                  <Button className="rounded-full" color="blue" size="xs" onClick={() => setOpen(true)}>
+                    Import
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
           <SlideIn.FromRight show={open} onClose={() => setOpen(false)}>
             <Overlay.Content className="bg-white dark:bg-slate-800 !pb-0">
               <Overlay.Header onBack={() => setOpen(false)} title="" />
