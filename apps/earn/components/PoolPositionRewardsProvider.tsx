@@ -1,11 +1,10 @@
 import { Amount, Token } from '@sushiswap/currency'
-import { Pool } from '@sushiswap/client'
-import { Chef, RewarderType, useMasterChef } from '@sushiswap/wagmi'
+import { ChefType, Pool } from '@sushiswap/client'
+import { RewarderType, useMasterChef } from '@sushiswap/wagmi'
 import { useRewarder } from '@sushiswap/wagmi/hooks/useRewarder'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
-import { CHEF_TYPE_MAP } from '../lib/constants'
 import { incentiveRewardToToken } from '../lib/functions'
 import { useTokenAmountDollarValues, useTokensFromPool } from '../lib/hooks'
 import { useNotifications } from '../lib/state/storage'
@@ -24,7 +23,7 @@ const Context = createContext<PoolPositionRewardsContext | undefined>(undefined)
 interface PoolPositionRewardsProviderProps {
   pool: Pool
   farmId: number
-  chefType: Chef
+  chefType: ChefType
   children: ReactNode
   incentives: Pool['incentives']
 }
@@ -55,7 +54,7 @@ export const PoolPositionRewardsProvider: FC<PoolPositionStakedProviderProps> = 
     <_PoolPositionRewardsProvider
       pool={pool}
       farmId={Number(pool.incentives[0].pid)}
-      chefType={CHEF_TYPE_MAP[pool.incentives[0].chefType as keyof typeof CHEF_TYPE_MAP]}
+      chefType={pool.incentives[0].chefType}
       incentives={pool.incentives}
     >
       {children}

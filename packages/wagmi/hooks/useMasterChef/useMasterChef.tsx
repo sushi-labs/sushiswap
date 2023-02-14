@@ -1,6 +1,7 @@
 import { Zero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
+import { ChefType } from '@sushiswap/client'
 import { Amount, SUSHI, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
 import { NotificationData } from '@sushiswap/ui'
 import { BigNumber } from 'ethers'
@@ -16,12 +17,6 @@ import {
 } from '../useMasterChefContract'
 import { useSendTransaction } from '../useSendTransaction'
 
-export enum Chef {
-  MASTERCHEF,
-  MASTERCHEF_V2,
-  MINICHEF,
-}
-
 interface UseMasterChefReturn extends Pick<ReturnType<typeof useContractReads>, 'isLoading' | 'isError'> {
   balance: Amount<Token> | undefined
   harvest: undefined | (() => void)
@@ -32,7 +27,7 @@ interface UseMasterChefReturn extends Pick<ReturnType<typeof useContractReads>, 
 
 interface UseMasterChefParams {
   chainId: number
-  chef: Chef
+  chef: ChefType
   pid: number
   token: Token
   enabled?: boolean
@@ -64,13 +59,17 @@ export const useMasterChef: UseMasterChef = ({
           address: SUSHI_ADDRESS[chainId] as Address,
           abi: erc20ABI,
           functionName: 'balanceOf',
-          args: [(chef === Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId]) as Address],
+          args: [
+            (chef === ChefType.MasterChefV1 ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId]) as Address,
+          ],
         } as const,
         {
           chainId: ChainId.ETHEREUM,
-          address: (chef === Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId]) as Address,
+          address: (chef === ChefType.MasterChefV1
+            ? MASTERCHEF_ADDRESS[chainId]
+            : MASTERCHEF_V2_ADDRESS[chainId]) as Address,
           abi: [
-            chef === Chef.MASTERCHEF
+            chef === ChefType.MasterChefV1
               ? ({
                   inputs: [
                     { internalType: 'uint256', name: '', type: 'uint256' },
@@ -230,13 +229,13 @@ export const useMasterChef: UseMasterChef = ({
   const prepare = useCallback(
     (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       if (!address || !chainId || !data || !contract) return
-      if (chef === Chef.MASTERCHEF) {
+      if (chef === ChefType.MasterChefV1) {
         setRequest({
           from: address,
           to: contract.address,
           data: contract.interface.encodeFunctionData('deposit', [pid, Zero]),
         })
-      } else if (chef === Chef.MASTERCHEF_V2) {
+      } else if (chef === ChefType.MasterChefV2) {
         if (pendingSushi && sushiBalance && pendingSushi.greaterThan(sushiBalance)) {
           setRequest({
             from: address,
@@ -253,7 +252,7 @@ export const useMasterChef: UseMasterChef = ({
             data: contract.interface.encodeFunctionData('harvest', [pid, address]),
           })
         }
-      } else if (chef === Chef.MINICHEF) {
+      } else if (chef === ChefType.MiniChef) {
         setRequest({
           from: address,
           to: contract.address,

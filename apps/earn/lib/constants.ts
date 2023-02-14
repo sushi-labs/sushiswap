@@ -1,15 +1,9 @@
-import type { GetPoolsArgs, PoolType, PoolVersion } from '@sushiswap/client'
-import { Chef } from '@sushiswap/wagmi'
+import { GetPoolsArgs, PoolType, PoolVersion } from '@sushiswap/client'
 import { SUPPORTED_CHAIN_IDS } from '../config'
 
 export const L2_DEADLINE_FROM_NOW = 60 * 5
 
-// TODO: Use ChefType from @sushiswap/client
-export const CHEF_TYPE_MAP = {
-  MiniChef: Chef.MINICHEF,
-  MasterChefV1: Chef.MASTERCHEF,
-  MasterChefV2: Chef.MASTERCHEF_V2,
-}
+// TODO: Export objects instead of just enums from @sushiswap/client
 
 export const POOL_VERSION_MAP: Record<PoolVersion, string> = {
   LEGACY: 'Legacy',

@@ -16,7 +16,8 @@ const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, VALUE_COLUMN, APR_COLUMN]
 
 export const PositionsTable: FC = () => {
   const { chainIds } = usePoolFilters()
-  const { address } = useAccount()
+  // const { address } = useAccount()
+  const address = '0x8f54C8c2df62c94772ac14CcFc85603742976312'
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 

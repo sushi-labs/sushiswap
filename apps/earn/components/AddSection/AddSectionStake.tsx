@@ -1,14 +1,13 @@
 import { Transition } from '@headlessui/react'
 import { tryParseAmount } from '@sushiswap/currency'
-import { Pool, usePool } from '@sushiswap/client'
+import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, Dots, Typography } from '@sushiswap/ui'
-import { Approve, Checker, Chef, getMasterChefContractConfig, useMasterChefDeposit } from '@sushiswap/wagmi'
+import { Approve, Checker, getMasterChefContractConfig, useMasterChefDeposit } from '@sushiswap/wagmi'
 import { FC, Fragment, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 
-import { CHEF_TYPE_MAP } from '../../lib/constants'
 import { useGraphPool } from '../../lib/hooks'
 import { useNotifications } from '../../lib/state/storage'
 import { usePoolPosition } from '../PoolPositionProvider'
@@ -17,7 +16,7 @@ import { useSWRConfig } from 'swr'
 
 interface AddSectionStakeProps {
   pool: Pool
-  chefType: Chef
+  chefType: ChefType
   title?: string
   farmId: number
 }
@@ -43,7 +42,7 @@ export const AddSectionStake: FC<{ poolId: string; title?: string }> = ({ poolId
     >
       <_AddSectionStake
         pool={pool}
-        chefType={CHEF_TYPE_MAP[pool.incentives[0].chefType as keyof typeof CHEF_TYPE_MAP]}
+        chefType={pool.incentives[0].chefType}
         title={title}
         farmId={Number(pool.incentives[0].pid)}
       />

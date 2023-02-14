@@ -33,6 +33,7 @@
     "@sushiswap/address": "workspace:*",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/client": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/format": "workspace:*",

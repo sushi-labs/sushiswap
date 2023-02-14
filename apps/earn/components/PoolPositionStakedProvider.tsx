@@ -1,9 +1,8 @@
 import { Amount, Currency, Token } from '@sushiswap/currency'
-import { Pool } from '@sushiswap/client'
-import { Chef, useMasterChef } from '@sushiswap/wagmi'
+import { ChefType, Pool } from '@sushiswap/client'
+import { useMasterChef } from '@sushiswap/wagmi'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
-import { CHEF_TYPE_MAP } from '../lib/constants'
 import {
   useCreateNotification,
   useGraphPool,
@@ -56,7 +55,7 @@ export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> = (
       watch={watch}
       pool={pool}
       farmId={Number(pool.incentives[0].pid)}
-      chefType={CHEF_TYPE_MAP[pool.incentives[0].chefType as keyof typeof CHEF_TYPE_MAP]}
+      chefType={pool.incentives[0].chefType}
     >
       {children}
     </_PoolPositionStakedProvider>
@@ -67,7 +66,7 @@ interface _PoolPositionStakedProviderProps {
   pool: Pool
   children: ReactNode
   farmId: number
-  chefType: Chef
+  chefType: ChefType
   watch: boolean
 }
 

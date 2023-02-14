@@ -1,11 +1,10 @@
 import { tryParseAmount } from '@sushiswap/currency'
-import { Pool, usePool } from '@sushiswap/client'
+import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
 import { AppearOnMount, Button, Dots } from '@sushiswap/ui'
-import { Approve, Checker, Chef, getMasterChefContractConfig, useMasterChefWithdraw } from '@sushiswap/wagmi'
+import { Approve, Checker, getMasterChefContractConfig, useMasterChefWithdraw } from '@sushiswap/wagmi'
 import { FC, useMemo, useState } from 'react'
 
-import { CHEF_TYPE_MAP } from '../../lib/constants'
 import { useCreateNotification, useGraphPool } from '../../lib/hooks'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
@@ -13,7 +12,7 @@ import { useSWRConfig } from 'swr'
 
 interface AddSectionStakeProps {
   pool: Pool
-  chefType: Chef
+  chefType: ChefType
   farmId: number
 }
 
@@ -29,7 +28,7 @@ export const RemoveSectionUnstake: FC<{ poolId: string }> = ({ poolId }) => {
     <AppearOnMount show={true}>
       <_RemoveSectionUnstake
         pool={pool}
-        chefType={CHEF_TYPE_MAP[pool.incentives[0].chefType as keyof typeof CHEF_TYPE_MAP]}
+        chefType={pool.incentives[0].chefType}
         farmId={Number(pool.incentives[0].pid)}
       />
     </AppearOnMount>
