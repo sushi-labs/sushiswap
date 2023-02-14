@@ -1322,6 +1322,8 @@ importers:
   apps/swap:
     specifiers:
       '@ethersproject/abi': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/bytes': 5.7.0
       '@ethersproject/constants': 5.7.0
       '@headlessui/react': ^1.7.3
       '@heroicons/react': 2.0.13
@@ -1340,6 +1342,7 @@ importers:
       '@sushiswap/react-query': workspace:*
       '@sushiswap/route-processor': workspace:*
       '@sushiswap/stargate': workspace:*
+      '@sushiswap/tines': workspace:*
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -1361,6 +1364,7 @@ importers:
       date-fns: 2.29.3
       eslint: 8.29.0
       ethers: ^5.7.0
+      nanoid: 4.0.0
       next: 13.1.1
       next-seo: 5.15.0
       numeral: 2.0.6
@@ -1373,6 +1377,8 @@ importers:
       zod: 3.20.2
     dependencies:
       '@ethersproject/abi': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/bytes': 5.7.0
       '@ethersproject/constants': 5.7.0
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 2.0.13_react@18.2.0
@@ -1386,6 +1392,7 @@ importers:
       '@sushiswap/react-query': link:../../packages/react-query
       '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/stargate': link:../../packages/stargate
+      '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/validate': link:../../packages/validate
@@ -1396,6 +1403,7 @@ importers:
       '@vercel/analytics': 0.1.5_react@18.2.0
       date-fns: 2.29.3
       ethers: 5.7.2
+      nanoid: 4.0.0
       next: 13.1.1_biqbaboplfbrettd7655fr4n2y
       next-seo: 5.15.0_q76c2b4vyoegvsbrcwkfvimnai
       numeral: 2.0.6
@@ -2273,7 +2281,7 @@ importers:
       '@graphql-mesh/cross-helpers': 0.3.3_graphql@16.6.0
       '@graphql-mesh/graphql': 0.34.4_yj7ds5aogkvyuxyljhbabepxei
       '@graphql-mesh/http': 0.3.17_yj7ds5aogkvyuxyljhbabepxei
-      '@graphql-mesh/json-schema': 0.37.12_yj7ds5aogkvyuxyljhbabepxei
+      '@graphql-mesh/json-schema': 0.37.13_yj7ds5aogkvyuxyljhbabepxei
       '@graphql-mesh/merger-bare': 0.16.13_graphql@16.6.0
       '@graphql-mesh/merger-stitching': 0.18.13_graphql@16.6.0
       '@graphql-mesh/plugin-mock': 0.1.11_graphql@16.6.0
@@ -3565,7 +3573,7 @@ importers:
       '@graphql-mesh/cross-helpers': 0.3.3_graphql@16.6.0
       '@graphql-mesh/graphql': 0.34.4_graphql@16.6.0
       '@graphql-mesh/http': 0.3.17_graphql@16.6.0
-      '@graphql-mesh/json-schema': 0.37.12_graphql@16.6.0
+      '@graphql-mesh/json-schema': 0.37.13_graphql@16.6.0
       '@graphql-mesh/merger-bare': 0.16.13_graphql@16.6.0
       '@graphql-mesh/merger-stitching': 0.18.13_graphql@16.6.0
       '@graphql-mesh/plugin-mock': 0.1.11_graphql@16.6.0
@@ -3668,7 +3676,7 @@ importers:
       '@graphql-mesh/cross-helpers': 0.3.3_graphql@16.6.0
       '@graphql-mesh/graphql': 0.34.4_graphql@16.6.0
       '@graphql-mesh/http': 0.3.17_graphql@16.6.0
-      '@graphql-mesh/json-schema': 0.37.12_graphql@16.6.0
+      '@graphql-mesh/json-schema': 0.37.13_graphql@16.6.0
       '@graphql-mesh/merger-bare': 0.16.13_graphql@16.6.0
       '@graphql-mesh/merger-stitching': 0.18.13_graphql@16.6.0
       '@graphql-mesh/plugin-mock': 0.1.11_graphql@16.6.0
@@ -3833,7 +3841,7 @@ importers:
       '@graphql-mesh/cross-helpers': 0.3.3_graphql@16.6.0
       '@graphql-mesh/graphql': 0.34.4_graphql@16.6.0
       '@graphql-mesh/http': 0.3.17_graphql@16.6.0
-      '@graphql-mesh/json-schema': 0.37.12_graphql@16.6.0
+      '@graphql-mesh/json-schema': 0.37.13_graphql@16.6.0
       '@graphql-mesh/merger-bare': 0.16.13_graphql@16.6.0
       '@graphql-mesh/merger-stitching': 0.18.13_graphql@16.6.0
       '@graphql-mesh/plugin-mock': 0.1.11_graphql@16.6.0
@@ -6699,8 +6707,8 @@ packages:
       - react-native-windows
     dev: true
 
-  /@graphql-mesh/json-schema/0.37.12_graphql@16.6.0:
-    resolution: {integrity: sha512-4jwONqYC+ZiQHCH2Fuge8cL+T2d5fxfOkvHGr4+ZLIe5Nc2Vy+l7KOaSYnSg2U9gz3aZSwUBLwC1Zu/XU7YGBA==}
+  /@graphql-mesh/json-schema/0.37.13_graphql@16.6.0:
+    resolution: {integrity: sha512-eeRMCoFlz2hS4UdUpitrM7Fi3vYFdpABZv838TK3UJKR+6nMmyOKqkfriAC7a8hYOXdmg0tSOTAqUrUMygkFfw==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -6711,10 +6719,10 @@ packages:
       '@graphql-mesh/utils': 0.43.11_graphql@16.6.0
       '@graphql-tools/utils': 9.2.1_graphql@16.6.0
       '@json-schema-tools/meta-schema': 1.7.0
-      '@omnigraph/json-schema': 0.38.12_graphql@16.6.0
+      '@omnigraph/json-schema': 0.38.13_graphql@16.6.0
       graphql: 16.6.0
       graphql-compose: 9.0.10_graphql@16.6.0
-      json-machete: 0.18.10_graphql@16.6.0
+      json-machete: 0.18.11_graphql@16.6.0
       tslib: 2.5.0
     transitivePeerDependencies:
       - '@types/node'
@@ -6722,8 +6730,8 @@ packages:
       - react-native-windows
     dev: true
 
-  /@graphql-mesh/json-schema/0.37.12_yj7ds5aogkvyuxyljhbabepxei:
-    resolution: {integrity: sha512-4jwONqYC+ZiQHCH2Fuge8cL+T2d5fxfOkvHGr4+ZLIe5Nc2Vy+l7KOaSYnSg2U9gz3aZSwUBLwC1Zu/XU7YGBA==}
+  /@graphql-mesh/json-schema/0.37.13_yj7ds5aogkvyuxyljhbabepxei:
+    resolution: {integrity: sha512-eeRMCoFlz2hS4UdUpitrM7Fi3vYFdpABZv838TK3UJKR+6nMmyOKqkfriAC7a8hYOXdmg0tSOTAqUrUMygkFfw==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -6734,10 +6742,10 @@ packages:
       '@graphql-mesh/utils': 0.43.11_graphql@16.6.0
       '@graphql-tools/utils': 9.2.1_graphql@16.6.0
       '@json-schema-tools/meta-schema': 1.7.0
-      '@omnigraph/json-schema': 0.38.12_yj7ds5aogkvyuxyljhbabepxei
+      '@omnigraph/json-schema': 0.38.13_yj7ds5aogkvyuxyljhbabepxei
       graphql: 16.6.0
       graphql-compose: 9.0.10_graphql@16.6.0
-      json-machete: 0.18.10_yj7ds5aogkvyuxyljhbabepxei
+      json-machete: 0.18.11_yj7ds5aogkvyuxyljhbabepxei
       tslib: 2.5.0
     transitivePeerDependencies:
       - '@types/node'
@@ -9603,8 +9611,8 @@ packages:
       aggregate-error: 3.1.0
     dev: false
 
-  /@omnigraph/json-schema/0.38.12_graphql@16.6.0:
-    resolution: {integrity: sha512-EOw5H414a+8aEg7TZYBKl8HxLMxodrUKfxL+57d/nM1NUL7R8eb8H5ur1mhfU/xrLOnlUf10T+7C85tL0w1mrA==}
+  /@omnigraph/json-schema/0.38.13_graphql@16.6.0:
+    resolution: {integrity: sha512-FM900DOtyvysnRh2NFnBkGCm8XKigz9YTK3wqbvifW+jNgML48P87i4IfoF4qbuOyqBPQS49pxjA8g1XxnrF3Q==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -9620,7 +9628,7 @@ packages:
       graphql: 16.6.0
       graphql-compose: 9.0.10_graphql@16.6.0
       graphql-scalars: 1.20.1_graphql@16.6.0
-      json-machete: 0.18.10_graphql@16.6.0
+      json-machete: 0.18.11_graphql@16.6.0
       lodash.set: 4.3.2
       pascal-case: 3.1.2
       qs: 6.11.0
@@ -9633,8 +9641,8 @@ packages:
       - react-native-windows
     dev: true
 
-  /@omnigraph/json-schema/0.38.12_yj7ds5aogkvyuxyljhbabepxei:
-    resolution: {integrity: sha512-EOw5H414a+8aEg7TZYBKl8HxLMxodrUKfxL+57d/nM1NUL7R8eb8H5ur1mhfU/xrLOnlUf10T+7C85tL0w1mrA==}
+  /@omnigraph/json-schema/0.38.13_yj7ds5aogkvyuxyljhbabepxei:
+    resolution: {integrity: sha512-FM900DOtyvysnRh2NFnBkGCm8XKigz9YTK3wqbvifW+jNgML48P87i4IfoF4qbuOyqBPQS49pxjA8g1XxnrF3Q==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -9650,7 +9658,7 @@ packages:
       graphql: 16.6.0
       graphql-compose: 9.0.10_graphql@16.6.0
       graphql-scalars: 1.20.1_graphql@16.6.0
-      json-machete: 0.18.10_yj7ds5aogkvyuxyljhbabepxei
+      json-machete: 0.18.11_yj7ds5aogkvyuxyljhbabepxei
       lodash.set: 4.3.2
       pascal-case: 3.1.2
       qs: 6.11.0
@@ -23205,8 +23213,8 @@ packages:
     dev: false
     optional: true
 
-  /json-machete/0.18.10_graphql@16.6.0:
-    resolution: {integrity: sha512-gq3W55D+HXxGs3rjwj46/y1wpPXVcceOC+ePFX+sWHz6HqM6Fp7F5CCqrE5L5Zm01OiCnOvZdZQPk/fbgiS9dg==}
+  /json-machete/0.18.11_graphql@16.6.0:
+    resolution: {integrity: sha512-fz1x0NMVOZrdXxTxX8fBFngoIatVLzPiZt1bCOmsrq10tPjWum5EJpeGTu5bupQ5dweVa7gOJGnpLv7iWZehww==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -23227,8 +23235,8 @@ packages:
       - react-native-windows
     dev: true
 
-  /json-machete/0.18.10_yj7ds5aogkvyuxyljhbabepxei:
-    resolution: {integrity: sha512-gq3W55D+HXxGs3rjwj46/y1wpPXVcceOC+ePFX+sWHz6HqM6Fp7F5CCqrE5L5Zm01OiCnOvZdZQPk/fbgiS9dg==}
+  /json-machete/0.18.11_yj7ds5aogkvyuxyljhbabepxei:
+    resolution: {integrity: sha512-fz1x0NMVOZrdXxTxX8fBFngoIatVLzPiZt1bCOmsrq10tPjWum5EJpeGTu5bupQ5dweVa7gOJGnpLv7iWZehww==}
     peerDependencies:
       graphql: '*'
     dependencies:
