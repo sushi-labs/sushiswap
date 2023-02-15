@@ -24,6 +24,7 @@ class TinesToRouteProcessor2 {
   chainId: ChainId
   pools: Map<string, PoolCode>
   tokenOutputLegs: Map<string, RouteLeg[]> = new Map()
+  presendedLegs: Set<RouteLeg> = new Set()
 
   constructor(routeProcessorAddress: string, chainId: ChainId, pools: Map<string, PoolCode>) {
     this.routeProcessorAddress = routeProcessorAddress
@@ -35,6 +36,7 @@ class TinesToRouteProcessor2 {
     // 0. Check for no route
     if (route.status == RouteStatus.NoWay || route.legs.length == 0) return ''
 
+    this.presendedLegs = new Set()
     this.calcTokenOutputLegs(route)
     let res = '0x'
 
@@ -50,7 +52,7 @@ class TinesToRouteProcessor2 {
       } else {
         if (token.address == '') {
           if (this.chainId == ChainId.CELO) res += this.processERC20Code(true, token, route, toAddress)
-          else res += this.processNativeCode(token, route)
+          else res += this.processNativeCode(token, route, toAddress)
         } else res += this.processERC20Code(false, token, route, toAddress)
       }
     })
@@ -58,11 +60,17 @@ class TinesToRouteProcessor2 {
     return res
   }
 
-  processNativeCode(token: RToken, route: MultiRoute): string {
+  processNativeCode(token: RToken, route: MultiRoute, toAddress: string): string {
+    const outputLegs = this.tokenOutputLegs.get(token.tokenId as string)
+    if (!outputLegs || outputLegs.length !== 1) {
+      throw new Error('Not 1 output pool for native token: ' + outputLegs?.length)
+    }
+
+    const to = this.getPoolOutputAddress(outputLegs[0], route, toAddress)
     const hex = new HEXer()
       .uint8(3) // processNative commandCode
       .address(WNATIVE_ADDRESS[token.chainId as ChainId])
-      .uint8(route.legs.length == 1 ? 1 : 0)
+      .address(to)
     return hex.toString()
   }
 
@@ -86,7 +94,7 @@ class TinesToRouteProcessor2 {
   swapCode(leg: RouteLeg, route: MultiRoute, toAddress: string): string {
     const pc = this.getPoolCode(leg)
     const to = this.getPoolOutputAddress(leg, route, toAddress)
-    return pc.getSwapCodeForRouteProcessor2(leg, route, to)
+    return pc.getSwapCodeForRouteProcessor2(leg, route, to, this.presendedLegs.has(leg))
   }
 
   getPoolOutputAddress(l: RouteLeg, route: MultiRoute, toAddress: string): string {
@@ -97,6 +105,7 @@ class TinesToRouteProcessor2 {
     } else if (outputDistribution.length == 1) {
       outAddress = this.getPoolCode(outputDistribution[0]).getStartPoint(l, route)
       if (outAddress == PoolCode.RouteProcessorAddress) outAddress = this.routeProcessorAddress
+      else this.presendedLegs.add(l)
     } else {
       outAddress = this.routeProcessorAddress
     }
@@ -129,7 +138,7 @@ class TinesToRouteProcessor2 {
   }
 }
 
-export function getRouteProcessorCode2(
+export function getRouteProcessor2Code(
   route: MultiRoute,
   routeProcessorAddress: string,
   toAddress: string,

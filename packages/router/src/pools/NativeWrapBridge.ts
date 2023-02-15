@@ -1,4 +1,4 @@
-import type { BridgeUnlimited, RouteLeg } from '@sushiswap/tines'
+import type { BridgeUnlimited, MultiRoute, RouteLeg } from '@sushiswap/tines'
 
 import { HEXer } from '../HEXer'
 import { PoolCode } from './PoolCode'
@@ -20,6 +20,20 @@ export class NativeWrapBridgePoolCode extends PoolCode {
     } else {
       // unwrap - withdraw
       const code = new HEXer().uint8(6).address(this.pool.address).toString() // unwrapNative(address receiver, unwrap token)
+      return code
+    }
+  }
+
+  getSwapCodeForRouteProcessor2(leg: RouteLeg, _route: MultiRoute, to: string): string {
+    if (leg.tokenFrom.tokenId == this.pool.token0.tokenId) {
+      // wrap - deposit. not used normally
+      throw new Error('Wrap pool code call')
+    } else {
+      // unwrap - withdraw
+      const code = new HEXer()
+        .uint8(2) // unWrapNative
+        .address(to)
+        .toString() // unwrapNative(address receiver, unwrap token)
       return code
     }
   }

@@ -104,7 +104,7 @@ contract RouteProcessor2 {
       uint8 commandCode = stream.readUint8();
       if (commandCode == 1) processMyERC20(stream);
       else if (commandCode == 2) processUserERC20(stream, amountIn);
-      else if (commandCode == 3) processNative(stream, to);
+      else if (commandCode == 3) processNative(stream);
       else revert('RouteProcessor: Unknown command code');
     }
 
@@ -117,13 +117,13 @@ contract RouteProcessor2 {
     amountOut = balanceOutFinal - balanceOutInitial;
   }
 
-  function processNative(uint256 stream, address to) private {
+  function processNative(uint256 stream) private {
     uint amount = address(this).balance;
     address token = stream.readAddress();
     IWETH(token).deposit{value: amount}();
 
-    uint8 send = stream.readUint8();
-    if (send > 0) IERC20(token).safeTransfer(to, amount);
+    address to = stream.readAddress();
+    if (to != address(this)) IERC20(token).safeTransfer(to, amount);
   }
 
   function processMyERC20(uint256 stream) private {
@@ -160,15 +160,25 @@ contract RouteProcessor2 {
     uint8 poolType = stream.readUint8();
     if (poolType == 0) swapUniV2(stream, from, tokenIn, amountIn);
     //else if (poolType == 1) swapUniV3(stream, tokenIn, amountIn);
-    revert('RouteProcessor: Unknown pool type');
+    else if (poolType == 2) unWrapNative(stream, from, tokenIn, amountIn);
+    else revert('RouteProcessor: Unknown pool type');
+  }
+
+  function unWrapNative(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
+    if (from != address(this)) IERC20(tokenIn).safeTransferFrom(from, address(this), amountIn);
+    IWETH(tokenIn).withdraw(amountIn);
+    address to = stream.readAddress();
+    payable(to).transfer(address(this).balance);
   }
 
   function swapUniV2(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
     address pool = stream.readAddress();
     uint8 direction = stream.readUint8();
     address to = stream.readAddress();
+    uint8 presended = stream.readUint8();
 
-    IERC20(tokenIn).safeTransferFrom(from, to, amountIn);
+    if (presended == 0)
+      IERC20(tokenIn).safeTransferFrom(from, to, amountIn);
 
     (uint256 r0, uint256 r1, ) = IUniswapV2Pair(pool).getReserves();
     require(r0 > 0 && r1 > 0, 'Wrong pool reserves');
