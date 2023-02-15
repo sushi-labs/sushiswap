@@ -24,8 +24,7 @@ export const PoolPositionProvider: FC<{
   children: ReactNode
   watch?: boolean
 }> = ({ pool, children, watch = true }) => {
-  // const { address: account } = useAccount()
-  const account = '0x8f54C8c2df62c94772ac14CcFc85603742976312'
+  const { address: account } = useAccount()
 
   const { reserve0, reserve1, totalSupply, liquidityToken } = useGraphPool(pool)
 

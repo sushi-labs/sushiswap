@@ -166,10 +166,10 @@
 
 // main()
 //   .then(async () => {
-//     await createClient().$disconnect()
+//     await (await createClient()).$disconnect()
 //   })
 //   .catch(async (e) => {
 //     console.error(e)
-//     await createClient().$disconnect()
+//     await (await createClient()).$disconnect()
 //     process.exit(1)
 //   })

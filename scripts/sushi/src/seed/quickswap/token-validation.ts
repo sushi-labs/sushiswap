@@ -19,7 +19,7 @@
 //   // LOAD
 //   const batchSize = 200
 //   let count = 0
-//   const client = createClient()
+//   const client = await createClient()
 //   for (let i = 0; i < transformedTokens.length; i += batchSize) {
 //     const batch = transformedTokens.slice(i, i + batchSize)
 //     const updates = batch.map((token) => client.token.update(token))
@@ -55,10 +55,10 @@
 
 // main()
 //   .then(async () => {
-//     await createClient().$disconnect()
+//     await (await createClient()).$disconnect()
 //   })
 //   .catch(async (e) => {
 //     console.error(e)
-//     await createClient().$disconnect()
+//     await (await createClient()).$disconnect()
 //     process.exit(1)
 //   })

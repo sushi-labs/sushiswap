@@ -2050,10 +2050,10 @@ importers:
       typescript: 4.9.4
     dependencies:
       '@sushiswap/chain': link:../chain
+      '@sushiswap/database': link:../database
       '@whatwg-node/fetch': 0.8.1_@types+node@16.18.11
       tslib: 2.5.0
     devDependencies:
-      '@sushiswap/database': link:../database
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/pools-api': link:../../apis/pools
@@ -3139,6 +3139,7 @@ importers:
       '@sushiswap/amm': workspace:*
       '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
+      '@sushiswap/client': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
@@ -3190,6 +3191,7 @@ importers:
       '@sushiswap/amm': link:../amm
       '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../chain
+      '@sushiswap/client': link:../client
       '@sushiswap/currency': link:../currency
       '@sushiswap/format': link:../format
       '@sushiswap/furo': link:../../protocols/furo
@@ -8277,10 +8279,10 @@ packages:
       '@types/ws': 8.5.3
       '@whatwg-node/fetch': 0.8.1
       graphql: 16.6.0
-      isomorphic-ws: 5.0.0_ws@8.12.0
+      isomorphic-ws: 5.0.0_ws@8.12.1
       tslib: 2.5.0
       value-or-promise: 1.0.12
-      ws: 8.12.0
+      ws: 8.12.1
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -8303,10 +8305,10 @@ packages:
       '@types/ws': 8.5.3
       '@whatwg-node/fetch': 0.8.1_@types+node@16.18.11
       graphql: 16.6.0
-      isomorphic-ws: 5.0.0_ws@8.12.0
+      isomorphic-ws: 5.0.0_ws@8.12.1
       tslib: 2.5.0
       value-or-promise: 1.0.12
-      ws: 8.12.0
+      ws: 8.12.1
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -22382,6 +22384,7 @@ packages:
       ws: '*'
     dependencies:
       ws: 8.12.0
+    dev: true
 
   /isomorphic-ws/5.0.0_ws@8.12.1:
     resolution: {integrity: sha512-muId7Zzn9ywDsyXgTIafTry2sV3nySZeUDe6YedVd1Hvuuep5AsIlqK+XefWpYTyJG5e503F2xIuT2lcU6rCSw==}

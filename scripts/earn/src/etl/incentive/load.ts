@@ -26,7 +26,7 @@ async function updateIncentives(incentives: Prisma.IncentiveCreateManyInput[]) {
   }
   console.log(`LOAD - Preparing to update ${incentives.length} incentives`)
 
-  const client = createClient()
+  const client = await createClient()
   const incentivesToUpdate = incentives.map((incentive) => {
     return client.incentive.update({
       select: {
@@ -57,7 +57,7 @@ async function createIncentives(incentives: Prisma.IncentiveCreateManyInput[]) {
   const batchSize = 500
   const startTime = performance.now()
   for (let i = 0; i < incentives.length; i += batchSize) {
-    const client = createClient()
+    const client = await createClient()
     const created = await client.incentive.createMany({
       data: incentives.slice(i, i + batchSize),
       skipDuplicates: true,
@@ -70,7 +70,7 @@ async function createIncentives(incentives: Prisma.IncentiveCreateManyInput[]) {
 }
 
 async function hasIncentives() {
-  const client = createClient()
+  const client = await createClient()
   const count = await client.incentive.count()
   return count > 0
 }

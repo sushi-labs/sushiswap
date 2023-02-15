@@ -11,7 +11,7 @@ import { Currency } from './enums.js'
  * @returns
  */
 export async function getPrice(chainId: number, address: string, date: Date, currency: Currency = Currency.USD) {
-  const client = createClient()
+  const client = await createClient()
   const price = await client.token.findFirst({
     select: { address: true, derivedUSD: true, derivedNative: true },
     where:
@@ -40,7 +40,7 @@ export async function getPrice(chainId: number, address: string, date: Date, cur
  * @returns
  */
 export async function getPricesByChainId(chainId: number, date: Date, currency: Currency = Currency.USD) {
-  const client = createClient()
+  const client = await createClient()
   const prices = await client.token.findMany({
     select: { address: true, derivedUSD: true, derivedNative: true },
     where:

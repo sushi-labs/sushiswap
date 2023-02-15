@@ -28,7 +28,7 @@ export async function filterPools(
   let poolsToUpdate = 0
   const poolsToUpsert: Prisma.SushiPoolCreateManyInput[] = []
 
-  const client = createClient()
+  const client = await createClient()
   const poolsFound = await client.sushiPool.findMany({
     where: {
       address: { in: pools.map((pool) => pool.address) },

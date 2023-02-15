@@ -1,15 +1,13 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
 
-import { DecimalToString, PrismaClient, createClient } from '@sushiswap/database'
+import { DecimalToString, createClient, Prisma } from '@sushiswap/database'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { deepmergeInto } from 'deepmerge-ts'
 import type { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './schemas/index.js'
 
-type PrismaArgs = NonNullable<Parameters<PrismaClient['sushiPool']['findMany']>['0']>
-
 function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSchema._output) {
-  let where: NonNullable<PrismaArgs['where']> = {}
+  let where: NonNullable<Prisma.SushiPoolWhereInput> = {}
 
   const addFilter = (filter: typeof where) => deepmergeInto(where, filter)
 
@@ -94,18 +92,18 @@ export async function getPool(args: typeof PoolApiSchema._output) {
 
 export async function getPools(args: typeof PoolsApiSchema._output) {
   const take = args.take
-  const orderBy: PrismaArgs['orderBy'] = { [args.orderBy]: args.orderDir }
-  const where: PrismaArgs['where'] = parseWhere(args)
+  const orderBy: Prisma.SushiPoolOrderByWithRelationInput = { [args.orderBy]: args.orderDir }
+  const where: Prisma.SushiPoolWhereInput = parseWhere(args)
 
-  let skip: PrismaArgs['skip'] = 0
-  let cursor: { cursor: PrismaArgs['cursor'] } | object = {}
+  let skip: number = 0
+  let cursor: { cursor: Prisma.SushiPoolWhereUniqueInput } | object = {}
 
   if (args.cursor) {
     skip = 1
     cursor = { cursor: { id: args.cursor } }
   }
 
-  const client = createClient()
+  const client = await createClient()
   const pools = await client.sushiPool.findMany({
     take,
     skip,
@@ -194,9 +192,9 @@ export async function getPools(args: typeof PoolsApiSchema._output) {
 }
 
 export async function getPoolCount(args: typeof PoolCountApiSchema._output) {
-  const where: PrismaArgs['where'] = parseWhere(args)
+  const where: Prisma.SushiPoolWhereInput = parseWhere(args)
 
-  const client = createClient()
+  const client = await createClient()
   const count = await client.sushiPool.count({
     where,
   })

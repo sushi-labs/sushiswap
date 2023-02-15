@@ -69,9 +69,9 @@ export async function reserves(chainId: ChainId) {
     console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
   } catch (e) {
     console.error(e)
-    await createClient().$disconnect()
+    await (await createClient()).$disconnect()
   } finally {
-    await createClient().$disconnect()
+    await (await createClient()).$disconnect()
   }
 }
 
@@ -119,7 +119,7 @@ async function getPoolsPagination(
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
 ) {
-  const client = createClient()
+  const client = await createClient()
   return client.pool.findMany({
     take,
     skip,
@@ -232,7 +232,7 @@ async function updatePoolsWithReserve(chainId: ChainId, pools: PoolWithReserve[]
   const batchSize = 250
   let updatedCount = 0
 
-  const client = createClient()
+  const client = await createClient()
   for (let i = 0; i < pools.length; i += batchSize) {
     const batch = pools.slice(i, i + batchSize)
     const requests = batch.map((pool) => {

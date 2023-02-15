@@ -4,7 +4,7 @@ export async function createTokens(tokens: Prisma.TokenCreateManyInput[]) {
   if (tokens.length === 0) {
     return
   }
-  const client = createClient()
+  const client = await createClient()
   const created = await client.token.createMany({
     data: tokens,
     skipDuplicates: true,

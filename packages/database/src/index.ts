@@ -1,16 +1,8 @@
-import 'dotenv/config'
-
 import { Prisma, PrismaClient } from '@prisma/client'
-import Redis from 'ioredis'
-import { createPrismaRedisCache } from 'prisma-redis-middleware'
 
-export { Prisma, PrismaClient } from '@prisma/client'
 export * from '@prisma/client'
 
-export function createClient() {
-  if (!process.env['DATABASE_URL']) throw new Error('DATABASE_URL is required')
-  if (!process.env['REDIS_URL']) throw new Error('REDIS_URL is required')
-
+export async function createClient() {
   let client: PrismaClient
 
   if (process.env['NODE_ENV'] === 'production') {
@@ -21,6 +13,14 @@ export function createClient() {
     }
     client = global.prisma
   }
+
+  await import('dotenv/config')
+  const Redis = (await import('ioredis')).default
+  const { createPrismaRedisCache } = await import('prisma-redis-middleware')
+
+  if (!process.env['DATABASE_URL']) throw new Error('DATABASE_URL is required')
+  if (!process.env['REDIS_URL']) throw new Error('REDIS_URL is required')
+
   const redis = new Redis(process.env['REDIS_URL'])
 
   const cacheMiddleware = createPrismaRedisCache({

@@ -44,9 +44,9 @@ export async function execute() {
     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
   } catch (e) {
     console.error(e)
-    await createClient().$disconnect()
+    await (await createClient()).$disconnect()
   } finally {
-    await createClient().$disconnect()
+    await (await createClient()).$disconnect()
   }
 }
 

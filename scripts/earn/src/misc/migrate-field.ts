@@ -7,7 +7,7 @@
 // export async function test() {
 //   try {
 //     const startTime = performance.now()
-//     const client = createClient()
+//     const client = await createClient()
 //     const incentives = await client.incentive.findMany({
 //       select: {
 //         id: true,
@@ -40,9 +40,9 @@
 //     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
 //   } catch (e) {
 //     console.error(e)
-//     await createClient().$disconnect()
+//     await (await createClient()).$disconnect()
 //   } finally {
-//     await createClient().$disconnect()
+//     await (await createClient()).$disconnect()
 //   }
 // }
 

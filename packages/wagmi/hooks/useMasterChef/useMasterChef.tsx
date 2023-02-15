@@ -181,7 +181,7 @@ export const useMasterChef: UseMasterChef = ({
     enabled: contracts.length > 0 && enabled,
   })
 
-  // console.log({ data })
+  console.log(data, isLoading, isError)
 
   const [sushiBalance, balance, pendingSushi] = useMemo(() => {
     const _sushiBalance = data?.[0] ? data?.[0] : undefined

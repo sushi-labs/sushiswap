@@ -16,7 +16,7 @@ export async function filterIncentives(incentives: Prisma.IncentiveCreateManyInp
     rewardPerDay: true,
   })
 
-  const client = createClient()
+  const client = await createClient()
   const incentiveFound = await client.incentive.findMany({
     where: {
       id: { in: incentives.map((incentive) => incentive.id) },

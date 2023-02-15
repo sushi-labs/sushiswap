@@ -1,7 +1,7 @@
 import { createClient, Prisma } from '@sushiswap/database'
 
 export async function transform(data: TokenResponse[]): Promise<Prisma.TokenUpdateArgs[]> {
-  const client = createClient()
+  const client = await createClient()
   const existingTokens = await client.token.findMany({
     where: {
       id: {

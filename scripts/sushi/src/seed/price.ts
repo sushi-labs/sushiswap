@@ -50,14 +50,14 @@ export async function prices(
     console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
   } catch (e) {
     console.error(e)
-    await createClient().$disconnect()
+    await (await createClient()).$disconnect()
   } finally {
-    await createClient().$disconnect()
+    await (await createClient()).$disconnect()
   }
 }
 
 async function getBaseToken(chainId: ChainId, address: string) {
-  const client = createClient()
+  const client = await createClient()
   const baseToken = await client.token.findFirst({
     select: {
       address: true,
@@ -114,7 +114,7 @@ async function getPoolsByPagination(
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
 ): Promise<Pool[]> {
-  const client = createClient()
+  const client = await createClient()
   return client.pool.findMany({
     take,
     select: {
@@ -206,7 +206,7 @@ async function updateTokenPrices(price: Price, tokens: { id: string; price: numb
   const batchSize = 250
   let updatedCount = 0
 
-  const client = createClient()
+  const client = await createClient()
   for (let i = 0; i < tokens.length; i += batchSize) {
     const batch = tokens.slice(i, i + batchSize)
     const requests = batch.map((token) => {
