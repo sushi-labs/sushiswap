@@ -3,7 +3,7 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
 import { ChefType } from '@sushiswap/client'
 import { Amount, SUSHI, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
-import { NotificationData } from '@sushiswap/ui'
+import { NotificationData } from '@sushiswap/ui/future/components/toast'
 import { BigNumber } from 'ethers'
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
 import { Address, erc20ABI, useAccount, useContractReads } from 'wagmi'
@@ -180,8 +180,6 @@ export const useMasterChef: UseMasterChef = ({
     keepPreviousData: true,
     enabled: contracts.length > 0 && enabled,
   })
-
-  console.log(data, isLoading, isError)
 
   const [sushiBalance, balance, pendingSushi] = useMemo(() => {
     const _sushiBalance = data?.[0] ? data?.[0] : undefined

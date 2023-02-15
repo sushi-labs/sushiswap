@@ -10,7 +10,7 @@ const queryClientConfig = {
   },
 }
 
-export const queryClient = new QueryClient()
+export const queryClient = new QueryClient(queryClientConfig)
 
 /**
  * Creates an Indexed DB persister

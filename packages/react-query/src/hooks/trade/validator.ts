@@ -1,7 +1,7 @@
 import z from 'zod'
 
 const tokenValidator = z.object({
-  chainId: z.number(),
+  chainId: z.number().or(z.string()),
   decimals: z.number().optional(),
   symbol: z.string(),
   name: z.string(),
@@ -11,9 +11,22 @@ const tokenValidator = z.object({
   tokenId: z.string().optional(),
 })
 
+export const legValidator = z.object({
+    poolAddress: z.string(),
+    poolType: z.enum(['Classic', 'Stable', 'Unknown']),
+    poolFee: z.number(),
+    tokenFrom: tokenValidator,
+    tokenTo: tokenValidator,
+    assumedAmountIn: z.number(),
+    assumedAmountOut: z.number(),
+    swapPortion: z.number(),
+    absolutePortion: z.number(),
+    poolName: z.string()
+})
+
 export const tradeValidator = z.object({
   getCurrentRouteHumanString: z.string(),
-  getCurrentRouteHumanArray: z.array(z.string()),
+  // getCurrentRouteHumanArray: z.array(z.string()),
   getBestRoute: z.object({
     status: z.string(),
     fromToken: tokenValidator,
@@ -26,24 +39,12 @@ export const tradeValidator = z.object({
     amountOut: z.number(),
     amountOutBN: z.string(),
     legs: z
-      .array(
-        z.object({
-          poolAddress: z.string(),
-          poolType: z.enum(['Classic']),
-          poolFee: z.number(),
-          tokenFrom: tokenValidator,
-          tokenTo: tokenValidator,
-          assumedAmountIn: z.number(),
-          assumedAmountOut: z.number(),
-          swapPortion: z.number(),
-          absolutePortion: z.number(),
-        })
-      )
+      .array(legValidator)
       .optional(),
     gasSpent: z.number(),
     totalAmountOut: z.number(),
     totalAmountOutBN: z.string(),
-  }),
+  }).optional(),
   getCurrentRouteRPParams: z.optional(
     z.object({
       amountIn: z.object({

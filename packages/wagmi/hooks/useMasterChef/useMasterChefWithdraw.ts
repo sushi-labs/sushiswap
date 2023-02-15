@@ -1,7 +1,7 @@
 import { TransactionRequest } from '@ethersproject/providers'
 import { ChefType } from '@sushiswap/client'
 import { Amount, Token } from '@sushiswap/currency'
-import { NotificationData } from '@sushiswap/ui'
+import { NotificationData } from '@sushiswap/ui/future/components/toast'
 import { Dispatch, SetStateAction, useCallback } from 'react'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'

@@ -1,7 +1,9 @@
+import 'dotenv/config'
+
 import { z } from 'zod'
 
 export const envSchema = z.object({
-  ALCHEMY_API_KEY: z.string(),
+  ALCHEMY_ID: z.string(),
   PORT: z.coerce.number().default(3000),
   HOST: z.string().default('0.0.0.0'),
 })
@@ -16,8 +18,15 @@ if (!parsed.success) {
 
 declare global {
   namespace NodeJS {
-    interface Process {
-      env: z.infer<typeof envSchema>
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface
+    interface ProcessEnv extends z.infer<typeof envSchema> {}
   }
 }
+
+// declare global {
+//   namespace NodeJS {
+//     interface Process {
+//       env: z.infer<typeof envSchema>
+//     }
+//   }
+// }

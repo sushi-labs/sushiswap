@@ -1,9 +1,9 @@
 // @ts-check
 /** @type {import('next-seo').DefaultSeoProps} */
-const config = {
+export default {
   titleTemplate: '%s | Sushi',
-  title: 'Swap',
-  defaultTitle: 'Swap',
+  title: 'SushiSwap',
+  defaultTitle: 'SushiSwap',
   description: 'Easiest way to trade your tokens and supported by 22 networks.',
   //   canonical: 'https://www.sushi.com/pool',
   //   mobileAlternate: {
@@ -19,7 +19,7 @@ const config = {
   openGraph: {
     url: 'https://www.sushi.com/swap',
     type: 'website',
-    title: 'Swap',
+    title: 'SushiSwap',
     description: 'Easiest way to trade your tokens and supported by 22 networks.',
     images: [
       {
@@ -33,4 +33,3 @@ const config = {
     // locale: 'en_IE',
   },
 }
-export default config

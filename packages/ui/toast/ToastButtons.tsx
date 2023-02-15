@@ -1,7 +1,6 @@
+import classNames from 'classnames'
 import { FC } from 'react'
-
-import { classNames } from '../index'
-import { Typography } from '../typography'
+import { Button } from '../button'
 
 interface ToastButtons {
   href?: string
@@ -9,28 +8,19 @@ interface ToastButtons {
 }
 
 export const ToastButtons: FC<ToastButtons> = ({ href, onDismiss }) => {
+  return <></>
+
   return (
-    <div className={classNames(href ? 'grid-cols-2' : 'grid-cols-auto', 'grid divide-x divide-slate-200/5')}>
-      {href && (
-        <Typography
-          as="a"
-          href={href}
-          target="_blank"
-          variant="xs"
-          weight={600}
-          className="py-3 text-blue text-center hover:bg-slate-700/20 cursor-pointer border-t border-slate-200/5"
-        >
-          View Detail
-        </Typography>
-      )}
-      <Typography
-        onClick={onDismiss}
-        variant="xs"
-        weight={600}
-        className="py-3 text-blue text-center hover:bg-slate-700/20 cursor-pointer border-t border-slate-200/5"
-      >
+    <div className={classNames(href ? 'grid-cols-2' : 'grid-cols-auto', 'grid gap-4 p-4 pt-0')}>
+      <Button size="sm" onClick={onDismiss} variant="outlined" color="blue">
         Dismiss
-      </Typography>
+      </Button>
+
+      {href && (
+        <Button size="sm" as="a" href={href} target="_blank" rel="noreferrer" variant="outlined" color="blue">
+          Transaction
+        </Button>
+      )}
     </div>
   )
 }

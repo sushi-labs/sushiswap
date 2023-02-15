@@ -4,7 +4,7 @@ import { allChains } from '@sushiswap/wagmi-config/chains'
 import { allProviders } from '@sushiswap/wagmi-config/providers'
 import { Address, configureChains, createClient, fetchToken, FetchTokenResult, readContracts } from '@wagmi/core'
 
-import type { getPool } from './api.js'
+import type { getEarnPool } from './api/earn.js'
 
 const { provider } = configureChains(allChains, allProviders)
 
@@ -68,7 +68,7 @@ async function getTridentPool({ chainId, address }: GetPoolArgs): Promise<Pool> 
 }
 
 // Thought ReturnType would be enough, needed to wrap it to make TS happy
-export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnType<typeof getPool>>> {
+export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnType<typeof getEarnPool>>> {
   const [chainId, address] = [Number(poolId.split(':')[0]), poolId.split(':')[1]]
   if (!chainId || !address) throw new Error('Invalid pool id.')
 
@@ -134,5 +134,5 @@ export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnTy
     incentives: [],
     type: poolType,
     ...pool,
-  } as Awaited<ReturnType<typeof getPool>>
+  } as Awaited<ReturnType<typeof getEarnPool>>
 }

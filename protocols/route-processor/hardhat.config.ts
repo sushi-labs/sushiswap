@@ -15,8 +15,30 @@ const accounts = {
 task(TASK_EXPORT, async (args, hre, runSuper) => {
   await runSuper()
 
-  const exports = readFileSync('./exports.json', { encoding: 'utf-8' })
-  writeFileSync('./exports.ts', `export default ${exports} as const`)
+  const parsed = JSON.parse(readFileSync('./exports.json', { encoding: 'utf-8' }))
+
+  delete parsed['31337']
+
+  const string = JSON.stringify(parsed)
+
+  writeFileSync(
+    './exports.ts',
+    `
+export const routeProcessorExports = ${string} as const
+export type RouteProcessorExports = typeof routeProcessorExports
+export type RouteProcessorExport = RouteProcessorExports[keyof typeof routeProcessorExports][number]
+export type RouteProcessorChainId = RouteProcessorExport['chainId']
+export type RouteProcessorContracts = RouteProcessorExport['contracts']
+export type RouteProcessorContractName = keyof RouteProcessorContracts
+export type RouteProcessorContract = RouteProcessorContracts[RouteProcessorContractName]
+// export const routeProcessorAddress = Object.fromEntries(
+//   Object.entries(routeProcessorExports).map(([chainId, data]) => [parseInt(chainId), data[0].contracts.RouteProcessor.address])
+// ) as {
+//   [chainId in RouteProcessorChainId]: RouteProcessorExports[chainId][number]['contracts']['RouteProcessor']['address']
+// }
+export default routeProcessorExports
+  `
+  )
 })
 
 subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVersion: string }, hre, runSuper) => {
@@ -50,45 +72,45 @@ const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
   networks: {
     localhost: {},
-    hardhat: {
-      // ethereum
-      forking: {
-        enabled: true,
-        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-        blockNumber: 16240100,
-      },
-      accounts: {
-        accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
-      },
-      chainId: 1,
-    },
+    ...defaultConfig.networks,
     // hardhat: {
-    //   // polygon
     //   forking: {
     //     enabled: true,
-    //     url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-    //     blockNumber: 37180000,
+    //     url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+    //     blockNumber: 16240100,
     //   },
     //   accounts: {
-    //     accountsBalance: '10000000000000000000000000', //(10_000_000 MATIC).
+    //     accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
     //   },
-    //   chainId: 137,
+    //   chainId: 1,
     // },
-    ethereum: {
-      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts,
-      chainId: 1,
-      hardfork: process.env.CODE_COVERAGE ? 'berlin' : 'london',
+    hardhat: {
+      // polygon
+      forking: {
+        enabled: true,
+        url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+        blockNumber: 37180000,
+      },
+      accounts: {
+        accountsBalance: '10000000000000000000000000', //(10_000_000 MATIC).
+      },
+      chainId: 137,
     },
-    ropsten: {
-      url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts,
-      chainId: 3,
-    },
-    goerli: {
-      url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts,
-    },
+    // ethereum: {
+    //   url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+    //   accounts,
+    //   chainId: 1,
+    //   hardfork: process.env.CODE_COVERAGE ? 'berlin' : 'london',
+    // },
+    // ropsten: {
+    //   url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
+    //   accounts,
+    //   chainId: 3,
+    // },
+    // goerli: {
+    //   url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
+    //   accounts,
+    // },
   },
   solidity: {
     compilers: [
@@ -97,7 +119,7 @@ const config: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 999999,
+            runs: 10000000,
           },
         },
       },
@@ -106,7 +128,7 @@ const config: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 999999,
+            runs: 10000000,
           },
         },
       },

@@ -16,7 +16,8 @@ import { SendTransactionResult } from 'wagmi/actions'
 
 import { CurrencyInput } from '../components'
 import { Stream } from '../lib'
-import { useNotifications } from '../lib/state/storage'
+import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { useCreateNotification } from '@sushiswap/react-query'
 
 interface UpdateModalProps {
   stream?: Stream
@@ -27,12 +28,13 @@ interface UpdateModalProps {
 
 export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contractAddress, chainId }) => {
   const { address } = useAccount()
-  const [, { createNotification }] = useNotifications(address)
   const [open, setOpen] = useState(false)
   const [topUp, setTopUp] = useState(false)
   const [changeEndDate, setChangeEndDate] = useState(false)
   const [amount, setAmount] = useState<string>('')
   const [endDate, setEndDate] = useState<Date | null>(null)
+  const { mutate: storeNotification } = useCreateNotification({ account: address })
+
   const contract = useContract({
     address: contractAddress,
     abi: abi,
@@ -56,7 +58,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
       if (!data || !amount) return
 
       const ts = new Date().getTime()
-      createNotification({
+      const notificationData: NotificationData = {
         type: 'updateStream',
         txHash: data.hash,
         chainId,
@@ -68,9 +70,11 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
           completed: `Successfully updated stream`,
           failed: 'Something went wrong updating the stream',
         },
-      })
+      }
+
+      storeNotification(createToast(notificationData))
     },
-    [amount, chainId, createNotification]
+    [amount, chainId, storeNotification]
   )
 
   const prepare = useCallback(
@@ -234,7 +238,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
           </div>
           <div>
             <Approve
-              onSuccess={createNotification}
+              onSuccess={(data) => storeNotification(createToast(data))}
               components={
                 <Approve.Components>
                   <Approve.Token

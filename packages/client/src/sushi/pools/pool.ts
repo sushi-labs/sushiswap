@@ -1,6 +1,6 @@
 import type { ChainId } from '@sushiswap/chain'
 import type {} from '@sushiswap/database'
-import type { getPool as getPoolOriginal } from '@sushiswap/pools-api/lib/api'
+import type { getEarnPool as getEarnPoolOriginal } from '@sushiswap/pools-api/lib/api'
 import { PoolApiSchema } from '@sushiswap/pools-api/lib/schemas'
 import { fetch } from '@whatwg-node/fetch'
 import type { GetApiInputFromOutput, SWRHookConfig } from 'src/types'
@@ -9,7 +9,7 @@ import useSWR from 'swr'
 import { POOL_API } from '.'
 
 export { PoolApiSchema }
-export type Pool = Awaited<ReturnType<typeof getPoolOriginal>>
+export type Pool = Awaited<ReturnType<typeof getEarnPoolOriginal>>
 // Slightly opinionated, adding string to support the chainId:address format
 export type GetPoolArgs =
   | GetApiInputFromOutput<(typeof PoolApiSchema)['_input'], (typeof PoolApiSchema)['_output']>

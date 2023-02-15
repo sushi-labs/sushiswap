@@ -78,6 +78,7 @@ export const defaultConfig: HardhatUserConfig = {
       metis: 'api-key',
       // bobaAvax: 'api-key',
       bttc: process.env.BTTC_API_KEY || '',
+      gnosis: process.env.GNOSIS_API_KEY || '',
     },
   },
   tenderly: {

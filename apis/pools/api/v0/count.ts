@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { getPoolCount } from '../../lib/api.js'
+import { getEarnPoolCount } from '../../lib/api/earn.js'
 import { PoolCountApiSchema } from '../../lib/schemas/index.js'
 
 const handler = async (_request: VercelRequest, response: VercelResponse) => {
@@ -11,7 +11,7 @@ const handler = async (_request: VercelRequest, response: VercelResponse) => {
     return response.status(400).json(result.error.format())
   }
 
-  const count = await getPoolCount(result.data)
+  const count = await getEarnPoolCount(result.data)
   return response.status(200).json(count)
 }
 

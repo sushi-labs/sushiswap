@@ -150,8 +150,8 @@ export const otherChains: Chain[] = [
   },
   {
     id: ChainId.HARMONY,
-    name: 'Gnosis Chain',
-    network: 'gnosis',
+    name: 'Harmony',
+    network: 'harmony',
     nativeCurrency: { name: 'ONE', symbol: 'ONE', decimals: 18 },
     rpcUrls: {
       default: {

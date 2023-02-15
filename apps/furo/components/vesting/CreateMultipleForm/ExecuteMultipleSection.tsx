@@ -15,10 +15,11 @@ import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../lib'
-import { useNotifications } from '../../../lib/state/storage'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
 import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount } from '../utils'
 import { CreateMultipleVestingFormSchemaType } from './schema'
+import { useCreateNotification } from '@sushiswap/react-query'
+import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
 
 export const ExecuteMultipleSection: FC<{
   chainId: ChainId
@@ -26,7 +27,7 @@ export const ExecuteMultipleSection: FC<{
 }> = ({ chainId, isReview }) => {
   const { address } = useAccount()
   const contract = useFuroVestingRouterContract(chainId)
-  const [, { createNotification }] = useNotifications(address)
+  const { mutate: storeNotification } = useCreateNotification({ account: address })
   const [signature, setSignature] = useState<Signature>()
 
   const {
@@ -68,7 +69,7 @@ export const ExecuteMultipleSection: FC<{
 
       const ts = new Date().getTime()
 
-      createNotification({
+      const notificationData: NotificationData = {
         type: 'createVesting',
         chainId: chainId,
         txHash: data.hash,
@@ -80,9 +81,11 @@ export const ExecuteMultipleSection: FC<{
         },
         timestamp: ts,
         groupTimestamp: ts,
-      })
+      }
+
+      storeNotification(createToast(notificationData))
     },
-    [chainId, createNotification, vestings]
+    [chainId, storeNotification, vestings]
   )
 
   const prepare = useCallback(
@@ -169,7 +172,7 @@ export const ExecuteMultipleSection: FC<{
 
   return (
     <Approve
-      onSuccess={createNotification}
+      onSuccess={(data) => storeNotification(createToast(data))}
       className="!items-end"
       components={
         <Approve.Components>

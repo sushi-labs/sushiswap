@@ -2,13 +2,14 @@ import type { BridgeBento, MultiRoute, RouteLeg } from '@sushiswap/tines'
 import type { BigNumber } from 'ethers'
 
 import { HEXer } from '../HEXer'
+import { LiquidityProviders } from '../liquidity-providers'
 import { PoolCode } from './PoolCode'
 
 export class BentoBridgePoolCode extends PoolCode {
   bentoBoxAddress: string
 
-  constructor(pool: BridgeBento, _providerName: string, bentoBoxAddress: string) {
-    super(pool, `BentoBridge`)
+  constructor(pool: BridgeBento, liquidityProvider: LiquidityProviders, _providerName: string, bentoBoxAddress: `0x${string}`) {
+    super(pool, liquidityProvider, `BentoBridge`)
     this.bentoBoxAddress = bentoBoxAddress
   }
 

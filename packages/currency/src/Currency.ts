@@ -1,5 +1,4 @@
 import { ChainId } from '@sushiswap/chain'
-import { JSBI } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
 import { Native } from './Native'
@@ -33,10 +32,6 @@ export abstract class Currency {
    * The name of the currency, i.e. a descriptive textual non-unique identifier
    */
   public readonly name?: string
-  /**
-   * The rebase
-   */
-  public readonly rebase?: { base: JSBI; elastic: JSBI }
 
   /**
    * Constructs an instance of the abstract class `Currency`.
@@ -51,13 +46,11 @@ export abstract class Currency {
     decimals,
     symbol,
     name,
-    rebase = { base: JSBI.BigInt(1), elastic: JSBI.BigInt(1) },
   }: {
     chainId: number | string
     decimals: number | string
     symbol?: string
     name?: string
-    rebase?: { base: JSBI; elastic: JSBI }
   }) {
     invariant(Number.isSafeInteger(Number(chainId)), 'CHAIN_ID')
     invariant(decimals >= 0 && decimals < 255 && Number.isInteger(Number(decimals)), 'DECIMALS')
@@ -66,7 +59,6 @@ export abstract class Currency {
     this.decimals = Number(decimals)
     this.symbol = symbol
     this.name = name
-    this.rebase = rebase
   }
 
   /**

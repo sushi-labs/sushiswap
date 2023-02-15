@@ -1,4 +1,4 @@
-import type { getPoolCount as getPoolCountOriginal } from '@sushiswap/pools-api/lib/api'
+import type { getEarnPoolCount as getEarnPoolCountOriginal } from '@sushiswap/pools-api/lib/api'
 import { PoolCountApiSchema } from '@sushiswap/pools-api/lib/schemas'
 import { fetch } from '@whatwg-node/fetch'
 import { parseArgs } from 'src/functions'
@@ -8,7 +8,7 @@ import useSWR from 'swr'
 import { POOL_API } from '.'
 
 export { PoolCountApiSchema }
-export type PoolCount = Awaited<ReturnType<typeof getPoolCountOriginal>>
+export type PoolCount = Awaited<ReturnType<typeof getEarnPoolCountOriginal>>
 export type GetPoolCountArgs =
   | GetApiInputFromOutput<(typeof PoolCountApiSchema)['_input'], (typeof PoolCountApiSchema)['_output']>
   | undefined
