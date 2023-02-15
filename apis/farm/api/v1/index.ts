@@ -2,12 +2,12 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 import redis from '../../lib/redis.js'
 
-interface ChainIdFarmMap {
-  [key: string]: {
-    chainId: number
-    farms: FarmsMap
-  }
-}
+// interface ChainIdFarmMap {
+//   [key: string]: {
+//     chainId: number
+//     farms: FarmsMap
+//   }
+// }
 
 interface FarmsMap {
   [poolAddress: string]: Farm
