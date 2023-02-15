@@ -3,8 +3,6 @@ import { SUPPORTED_CHAIN_IDS } from '../config'
 
 export const L2_DEADLINE_FROM_NOW = 60 * 5
 
-// TODO: Export objects instead of just enums from @sushiswap/client
-
 export const POOL_VERSION_MAP: Record<PoolVersion, string> = {
   LEGACY: 'Legacy',
   TRIDENT: 'Trident',

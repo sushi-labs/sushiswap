@@ -537,6 +537,7 @@ importers:
       postcss: 8.4.21
       react: 18.2.0
       react-dom: 18.2.0
+      react-infinite-scroll-component: ^6.1.0
       react-redux: 8.0.5
       swr: 2.0.3
       tailwindcss: 3.2.4
@@ -570,6 +571,7 @@ importers:
       next-sitemap: 3.1.43_next@13.1.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      react-infinite-scroll-component: 6.1.0_react@18.2.0
       react-redux: 8.0.5_ie75ejlwqy5zh3tldgt7pftwcu
       wagmi: 0.9.1_o4scbtliisanygemawej7x2d6i
     devDependencies:
@@ -27216,6 +27218,7 @@ packages:
       prettier: 2.8.1
       semver: 7.3.8
       solidity-comments-extractor: 0.0.7
+    dev: false
     optional: true
 
   /prettier-plugin-solidity/1.1.1_prettier@2.8.2:
@@ -27238,6 +27241,7 @@ packages:
       prettier: '>=2.2.0'
     dependencies:
       prettier: 2.8.1
+    dev: false
     optional: true
 
   /prettier-plugin-tailwindcss/0.2.1_prettier@2.8.2:
@@ -30052,6 +30056,8 @@ packages:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
+    peerDependencies:
+      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -30077,7 +30083,6 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
-      - postcss
       - ts-node
     dev: true
 

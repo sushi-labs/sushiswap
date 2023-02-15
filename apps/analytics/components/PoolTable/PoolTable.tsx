@@ -1,8 +1,9 @@
 import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { GenericTable, Table } from '@sushiswap/ui'
+import { GenericTable, Loader } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import InfiniteScroll from 'react-infinite-scroll-component'
 import { useSWRConfig } from 'swr'
 
 import { usePoolFilters } from '../PoolsFiltersProvider'
@@ -58,8 +59,10 @@ export const PoolTable: FC = () => {
   const { data: pools, isValidating, size, setSize } = usePoolsInfinite({ args, swrConfig: useSWRConfig() })
   const { data: poolCount } = usePoolCount({ args, swrConfig: useSWRConfig() })
 
+  const data = useMemo(() => pools?.flat() || [], [pools])
+
   const table = useReactTable<Pool>({
-    data: pools?.flat() || [],
+    data,
     columns: COLUMNS,
     state: {
       sorting,
@@ -99,27 +102,31 @@ export const PoolTable: FC = () => {
     }
   }, [isLg, isMd, isSm])
 
+  const rowLink = useCallback((row: Pool) => {
+    return `/earn/${row.id}`
+  }, [])
+
   return (
-    <div>
-      <button onClick={() => setSize(size + 1)}>Load More</button>
-      <GenericTable<Pool>
-        table={table}
-        loading={!pools && isValidating}
-        HoverElement={isMd ? PoolQuickHoverTooltip : undefined}
-        placeholder="No pools found"
-        pageSize={PAGE_SIZE}
-        linkFormatter={({ id }) => `/earn/${id}`}
-      />
-      <Table.Paginator
-        hasPrev={pagination.pageIndex > 0}
-        hasNext={pagination.pageIndex < table.getPageCount()}
-        onPrev={table.previousPage}
-        onNext={table.nextPage}
-        page={pagination.pageIndex}
-        onPage={table.setPageIndex}
-        pages={table.getPageCount()}
-        pageSize={PAGE_SIZE}
-      />
-    </div>
+    <>
+      <InfiniteScroll
+        dataLength={data.length}
+        next={() => setSize((prev) => prev + 1)}
+        hasMore={data.length < (poolCount?.count || 0)}
+        loader={
+          <div className="flex justify-center w-full py-4">
+            <Loader size={24} />
+          </div>
+        }
+      >
+        <GenericTable<Pool>
+          table={table}
+          loading={!pools && isValidating}
+          HoverElement={isMd ? PoolQuickHoverTooltip : undefined}
+          placeholder="No pools found"
+          pageSize={PAGE_SIZE}
+          linkFormatter={rowLink}
+        />
+      </InfiniteScroll>
+    </>
   )
 }
