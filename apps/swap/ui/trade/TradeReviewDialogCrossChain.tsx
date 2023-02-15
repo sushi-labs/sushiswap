@@ -24,7 +24,7 @@ export const TradeReviewDialogCrossChain: FC = () => {
   const { review, token0, token1, recipient, network0, amount, value } = useSwapState()
   const { setReview } = useSwapActions()
   const [slippageTolerance] = useSlippageTolerance()
-  const { data: trade, isFetching } = useTrade()
+  const { data: trade, isFetching } = useTrade({ crossChain: true })
 
   const onClose = useCallback(() => setReview(false), [setReview])
 

@@ -14,8 +14,8 @@ import { ZERO } from '@sushiswap/math'
 
 export const TradeStats: FC = () => {
   const [open, setOpen] = useState(false)
-  const { value, recipient } = useSwapState()
-  const { isLoading, isFetching, data: trade } = useTrade()
+  const { value, recipient, network0, network1 } = useSwapState()
+  const { isLoading, isFetching, data: trade } = useTrade({ crossChain: network0 !== network1 })
   const loading = Boolean(isLoading && +value > 0) || isFetching
 
   return (

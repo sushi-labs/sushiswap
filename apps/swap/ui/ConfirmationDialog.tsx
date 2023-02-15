@@ -46,7 +46,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const { address } = useAccount()
   const { setReview } = useSwapActions()
   const { appType, network0, token0, token1, review } = useSwapState()
-  const { data: trade } = useTrade()
+  const { data: trade } = useTrade({ crossChain: false })
   const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
   const { refetch: refetchNetwork1Balances } = useBalances({ account: address, chainId: network0 })
   const { mutate: storeNotification } = useCreateNotification({ account: address })

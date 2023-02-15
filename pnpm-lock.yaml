@@ -1341,6 +1341,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query': workspace:*
       '@sushiswap/route-processor': workspace:*
+      '@sushiswap/router': workspace:*
       '@sushiswap/stargate': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/types': workspace:*
@@ -1348,6 +1349,7 @@ importers:
       '@sushiswap/ui': workspace:*
       '@sushiswap/validate': workspace:*
       '@sushiswap/wagmi': workspace:*
+      '@sushiswap/wagmi-config': workspace:*
       '@tanstack/react-query': 4.20.4
       '@tanstack/react-query-devtools': 4.22.0
       '@tanstack/react-query-persist-client': 4.20.4
@@ -1391,12 +1393,14 @@ importers:
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/react-query': link:../../packages/react-query
       '@sushiswap/route-processor': link:../../protocols/route-processor
+      '@sushiswap/router': link:../../packages/router
       '@sushiswap/stargate': link:../../packages/stargate
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/validate': link:../../packages/validate
       '@sushiswap/wagmi': link:../../packages/wagmi
+      '@sushiswap/wagmi-config': link:../../config/wagmi
       '@tanstack/react-query': 4.20.4_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-devtools': 4.22.0_fu3ixcwltlssi3ozitelgaebme
       '@tanstack/react-query-persist-client': 4.20.4_l2azqzttlggxzjcfejyd3icfe4

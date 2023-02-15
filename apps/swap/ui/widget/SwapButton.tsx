@@ -11,8 +11,8 @@ import { getRouteProcessorAddressForChainId } from 'lib/getRouteProcessorAddress
 import { warningSeverity } from '../../lib/warningSeverity'
 
 export const SwapButton: FC = () => {
-  const { appType, amount, network0, value, token0, token1 } = useSwapState()
-  const { isFetching, isLoading, data: trade } = useTrade()
+  const { appType, amount, network0, network1, value, token0, token1 } = useSwapState()
+  const { isFetching, isLoading, data: trade } = useTrade({ crossChain: network0 !== network1 })
   const { setReview } = useSwapActions()
   const [checked, setChecked] = useState(false)
 

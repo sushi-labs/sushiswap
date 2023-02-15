@@ -166,7 +166,7 @@ export const useCrossChainTrade = (params: UseTradeParams) => {
     if (!bridgeFee || !amount || !srcMinimumAmountOut) {
       return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
     }
-    return new Percent(bridgeFee.quotient, srcMinimumAmountOut ? srcMinimumAmountOut.quotient : srcAmount.quotient)
+    return new Percent(bridgeFee.quotient, srcMinimumAmountOut ? srcMinimumAmountOut.quotient : amount.quotient)
   }, [bridgeFee, srcMinimumAmountOut, amount])
 
   const priceImpact = useMemo(() => {
