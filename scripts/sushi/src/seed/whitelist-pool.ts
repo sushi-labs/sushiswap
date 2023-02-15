@@ -25,12 +25,13 @@ async function start(client: PrismaClient) {
       id: true,
     },
     where: {
+      isFeeOnTransfer: false,
       status: 'APPROVED',
     },
   })
 
   const approvedTokens = approvedTokensResult.map((token) => token.id)
-  console.log(`Fetched ${approvedTokens.length} approved tokens.`)
+  console.log(`Fetched ${approvedTokens.length} tokens (approved and not fee on transfer).`)
 
   const batchSize = 10000
   let cursor = null
