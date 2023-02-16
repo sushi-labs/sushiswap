@@ -173,6 +173,8 @@ export const useCrossChainTradeQuery = (
 
       const nanoId = nanoid()
 
+      console.log({ recipient, amount, network0, network1, dstMinimumAmountOut, srcRebases, dstRebases, contract })
+
       if (
         !recipient ||
         !amount ||
