@@ -46,10 +46,12 @@ export const getBentoboxTotals = async (chainId: ChainId | undefined, currencies
   )
 
   const totals = await readContracts({
+    allowFailure: false,
     contracts,
   })
 
   const result: { base: JSBI; elastic: JSBI }[] = []
+  let allResolved = true
   currencies.forEach((currency, index) => {
     if (totals?.[index]) {
       const { base, elastic } = totals[index]
@@ -57,10 +59,13 @@ export const getBentoboxTotals = async (chainId: ChainId | undefined, currencies
         base: JSBI.BigInt(base),
         elastic: JSBI.BigInt(elastic),
       }
+    } else {
+      allResolved = false
     }
   })
 
-  return result
+  if (allResolved) return result
+  return undefined
 }
 
 export const getBentoboxTotal = async ({ chainId, currency }: { chainId: ChainId; currency: Type }) => {
