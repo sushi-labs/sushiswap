@@ -96,7 +96,7 @@ contract RouteProcessor2 {
     address to,
     bytes memory route
   ) private returns (uint256 amountOut) {
-    uint256 balanceInInitial = tokenIn == NATIVE_ADDRESS ? address(to).balance : IERC20(tokenIn).balanceOf(to);
+    uint256 balanceInInitial = tokenIn == NATIVE_ADDRESS ? address(this).balance : IERC20(tokenIn).balanceOf(msg.sender);
     uint256 balanceOutInitial = tokenOut == NATIVE_ADDRESS ? address(to).balance : IERC20(tokenOut).balanceOf(to);
 
     uint256 stream = InputStream.createStream(route);
@@ -108,7 +108,7 @@ contract RouteProcessor2 {
       else revert('RouteProcessor: Unknown command code');
     }
 
-    uint256 balanceInFinal = tokenIn == NATIVE_ADDRESS ? address(to).balance : IERC20(tokenIn).balanceOf(to);
+    uint256 balanceInFinal = tokenIn == NATIVE_ADDRESS ? address(this).balance : IERC20(tokenIn).balanceOf(msg.sender);
     require(balanceInFinal + amountIn >= balanceInInitial, 'RouteProcessor: Minimal imput balance violation');
 
     uint256 balanceOutFinal = tokenOut == NATIVE_ADDRESS ? address(to).balance : IERC20(tokenOut).balanceOf(to);
@@ -118,7 +118,7 @@ contract RouteProcessor2 {
   }
 
   function processNative(uint256 stream) private {
-    uint amountTotal = address(this).balance;
+    uint256 amountTotal = address(this).balance;
     distributeAndSwap(stream, address(this), NATIVE_ADDRESS, amountTotal);
   }
 
