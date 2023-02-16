@@ -286,7 +286,7 @@ export const useCrossChainTradeQuery = (
         route: {},
         functionName: 'cook',
         currentRouteHumanString: '',
-        overrides: { value: BigNumber.from(0) },
+        overrides: { value },
       } as UseCrossChainSelect
     },
     refetchOnWindowFocus: true,
