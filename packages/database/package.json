@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@prisma/client": "4.8.1",
-    "ioredis": "5.2.4",
+    "ioredis": "5.3.1",
     "prisma-redis-middleware": "4.5.0"
   },
   "devDependencies": {
