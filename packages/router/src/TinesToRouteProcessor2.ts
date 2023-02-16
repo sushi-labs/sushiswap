@@ -107,7 +107,7 @@ class TinesToRouteProcessor2 {
     } else if (outputDistribution.length == 1) {
       outAddress = this.getPoolCode(outputDistribution[0]).getStartPoint(l, route)
       if (outAddress == PoolCode.RouteProcessorAddress) outAddress = this.routeProcessorAddress
-      else this.presendedLegs.add(l)
+      else this.presendedLegs.add(outputDistribution[0])
     } else {
       outAddress = this.routeProcessorAddress
     }

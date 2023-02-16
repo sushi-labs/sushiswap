@@ -124,8 +124,10 @@ contract RouteProcessor2 {
 
   function processMyERC20(uint256 stream) private {
     address token = stream.readAddress();
-    uint256 amountTotal = IERC20(token).balanceOf(address(this))
-      - 1;     // slot undrain protection
+    uint256 amountTotal = IERC20(token).balanceOf(address(this));
+    unchecked {
+      if (amountTotal > 0) amountTotal -= 1;     // slot undrain protection
+    }
     distributeAndSwap(stream, address(this), token, amountTotal);
   }
   
@@ -176,12 +178,12 @@ contract RouteProcessor2 {
     address to = stream.readAddress();
     uint8 presended = stream.readUint8();   // optimization
 
-    if (presended == 0)
-      IERC20(tokenIn).safeTransferFrom(from, pool, amountIn);
-
     (uint256 r0, uint256 r1, ) = IUniswapV2Pair(pool).getReserves();
     require(r0 > 0 && r1 > 0, 'Wrong pool reserves');
     (uint256 reserveIn, uint256 reserveOut) = direction == 1 ? (r0, r1) : (r1, r0);
+
+    if (presended == 0) IERC20(tokenIn).safeTransferFrom(from, pool, amountIn);
+    else amountIn = IERC20(tokenIn).balanceOf(pool) - reserveIn;
 
     uint256 amountInWithFee = amountIn * 997;
     uint256 amountOut = (amountInWithFee * reserveOut) / (reserveIn * 1000 + amountInWithFee);
