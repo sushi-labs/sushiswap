@@ -260,8 +260,8 @@ export const useCrossChainTradeQuery = (
       // need async to get fee for final value... this should be moved to exec?
       const [fee] = await sushiXSwap.getFee(dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined)
       console.log(`Successful Fee`, fee)
-      // const value = sushiXSwap.srcCooker.values.reduce((a, b) => a.add(b), fee)
-
+      const value = sushiXSwap.srcCooker.values.reduce((a, b) => a.add(b), fee)
+      console.log(`Total Value`, value)
       // Needs to be parsed to string because react-query entities are serialized to cache
       return {
         priceImpact: priceImpact.quotient.toString(),
