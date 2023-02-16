@@ -5,6 +5,7 @@ import { Percent } from '@sushiswap/math'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Action } from '../SushiXSwap'
 import { TradeType } from '@sushiswap/react-query'
+import { Signature } from '@ethersproject/bytes'
 
 export interface UseCrossChainTradeParams {
   network0: ChainId
@@ -15,6 +16,7 @@ export interface UseCrossChainTradeParams {
   slippagePercentage: string
   recipient: string | undefined
   enabled: boolean
+  bentoboxSignature?: Signature
 }
 
 export type UseCrossChainSelect = Omit<

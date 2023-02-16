@@ -1,13 +1,10 @@
 import { TradeType } from '@sushiswap/amm'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, StargateChainId } from '@sushiswap/stargate'
-import { getSushiXSwapContractConfig, useSushiXSwapContract, useSushiXSwapContractWithProvider } from '@sushiswap/wagmi'
+import { useSushiXSwapContract } from '@sushiswap/wagmi'
 import { JSBI, Percent } from '@sushiswap/math'
 import { Amount, Price, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { nanoid } from 'nanoid'
-import { HexString } from '@sushiswap/types'
-import { defaultAbiCoder } from '@ethersproject/abi'
 import { useQuery } from '@tanstack/react-query'
-import { getContract } from 'wagmi/actions'
 import { getTrade } from './getTrade'
 import { getBridgeFees } from './getBridgeFees'
 import { SushiXSwap } from '../SushiXSwap'
@@ -21,7 +18,17 @@ import { useBentoboxTotals } from './useRebases'
 const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
 
 export const useCrossChainTradeQuery = (
-  { network0, network1, token0, token1, amount, slippagePercentage, recipient, enabled }: UseCrossChainTradeParams,
+  {
+    network0,
+    network1,
+    token0,
+    token1,
+    amount,
+    slippagePercentage,
+    recipient,
+    enabled,
+    bentoboxSignature,
+  }: UseCrossChainTradeParams,
   select: UseCrossChainTradeQuerySelect
 ) => {
   // First we'll check if bridge tokens for srcChainId includes srcToken, if so use srcToken as srcBridgeToken,
@@ -173,7 +180,7 @@ export const useCrossChainTradeQuery = (
 
       const nanoId = nanoid()
 
-      console.log({ recipient, amount, network0, network1, dstMinimumAmountOut, srcRebases, dstRebases, contract })
+      // console.log({ recipient, amount, network0, network1, dstMinimumAmountOut, srcRebases, dstRebases, contract })
 
       if (
         !recipient ||
@@ -218,9 +225,9 @@ export const useCrossChainTradeQuery = (
         debug: true,
       })
 
-      // if (signature) {
-      //   sushiXSwap.srcCooker.setMasterContractApproval(signature)
-      // }
+      if (bentoboxSignature) {
+        sushiXSwap.srcCooker.setMasterContractApproval(bentoboxSignature)
+      }
 
       if (transfer) {
         sushiXSwap.transfer(amount, srcShare)
@@ -246,24 +253,24 @@ export const useCrossChainTradeQuery = (
           nanoId
         )
       }
-
-      console.log({
-        swapPrice: price,
-        priceImpact,
-        amountIn: amount.toFixed(),
-        amountOut: dstAmountOut?.toFixed(),
-        minAmountOut: dstMinimumAmountOut.toFixed(),
-        writeArgs: defaultAbiCoder.encode(
-          ['uint8[]', 'uint256[]', 'bytes[]'],
-          [sushiXSwap.srcCooker.actions, sushiXSwap.srcCooker.values, sushiXSwap.srcCooker.datas]
-        ) as HexString,
-      })
+      //
+      // console.log({
+      //   swapPrice: price,
+      //   priceImpact,
+      //   amountIn: amount.toFixed(),
+      //   amountOut: dstAmountOut?.toFixed(),
+      //   minAmountOut: dstMinimumAmountOut.toFixed(),
+      //   writeArgs: defaultAbiCoder.encode(
+      //     ['uint8[]', 'uint256[]', 'bytes[]'],
+      //     [sushiXSwap.srcCooker.actions, sushiXSwap.srcCooker.values, sushiXSwap.srcCooker.datas]
+      //   ) as HexString,
+      // })
 
       // need async to get fee for final value... this should be moved to exec?
       const [fee] = await sushiXSwap.getFee(dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined)
-      console.log(`Successful Fee`, fee)
+      // console.log(`Successful Fee`, fee)
       const value = sushiXSwap.srcCooker.values.reduce((a, b) => a.add(b), fee)
-      console.log(`Total Value`, value)
+      // console.log(`Total Value`, value)
       // Needs to be parsed to string because react-query entities are serialized to cache
       return {
         priceImpact: priceImpact.quotient.toString(),

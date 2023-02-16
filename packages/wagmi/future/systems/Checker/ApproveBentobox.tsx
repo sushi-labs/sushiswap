@@ -1,22 +1,26 @@
 import React, { FC, Fragment, useState } from 'react'
-import { ApproveTokenController } from '../../components'
 import { Button, ButtonProps } from '@sushiswap/ui/future/components/button'
-import { Amount, Type } from '@sushiswap/currency'
 import { ApprovalState } from '../../../hooks'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/24/solid'
+import { ApproveBentoboxController } from '../../components'
+import { Address } from 'wagmi'
+import { ChainId } from '@sushiswap/chain'
 import { NotificationData } from '@sushiswap/ui/future/components/toast'
+import { Signature } from '@ethersproject/bytes'
 
-export interface ApproveERC20Props extends ButtonProps<'button'> {
+export interface ApproveBentoboxProps extends ButtonProps<'button'> {
+  chainId: ChainId
   id: string
-  amount: Amount<Type> | undefined
-  contract: string
+  contract: Address
+  enabled?: boolean
   onSuccess?: (data: NotificationData) => void
+  onSignature?: (data: Signature) => void
 }
 
-export const ApproveERC20: FC<ApproveERC20Props> = ({
+export const ApproveBentobox: FC<ApproveBentoboxProps> = ({
+  chainId,
   id,
-  amount,
   contract,
   children,
   className,
@@ -24,21 +28,29 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
   fullWidth,
   as,
   size,
+  enabled = true,
   onSuccess,
+  onSignature,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
 
   return (
-    <ApproveTokenController amount={amount} contract={contract} onSuccess={onSuccess}>
-      {({ approvalState, onApprove }) => {
-        if (approvalState === ApprovalState.APPROVED) {
+    <ApproveBentoboxController
+      contract={contract}
+      chainId={chainId}
+      enabled={enabled}
+      onSuccess={onSuccess}
+      onSignature={onSignature}
+    >
+      {({ approvalState, onApprove, signature }) => {
+        if (approvalState === ApprovalState.APPROVED || (approvalState === ApprovalState.PENDING && signature)) {
           return <>{children}</>
         }
 
         return (
           <Button
             as={as}
-            loading={[ApprovalState.LOADING, ApprovalState.PENDING].includes(approvalState)}
+            loading={approvalState === ApprovalState.LOADING || (approvalState === ApprovalState.PENDING && !signature)}
             testdata-id={id}
             variant={variant}
             size={size}
@@ -46,7 +58,7 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
             fullWidth={fullWidth}
             onClick={onApprove}
           >
-            Approve {amount?.currency.symbol}
+            Approve Bentobox
             <Menu
               as="div"
               className="relative flex justify-center"
@@ -68,13 +80,13 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
               >
                 <div className="z-10 absolute pb-2 w-[max-content] bottom-4">
                   <Menu.Items className="text-left w-[240px] text-gray-700  border-gray-300 dark:border-slate-700 dark:text-slate-200 flex flex-col gap-3 bg-white dark:bg-slate-800 rounded-lg shadow-hover-card shadow-black/30 px-4 py-3 text-xs mt-0.5">
-                    <span className="text-gray-500 dark:text-slate-400">Token Approval</span>
-                    We need your approval to execute this transaction on your behalf. You will only have to approve the{' '}
-                    {amount?.currency.symbol} contract once.
+                    <span className="text-gray-500 dark:text-slate-400">BentoBox Approval</span>
+                    We need your approval first to access your wallet using BentoBox; you will only have to approve this
+                    master contract once.
                     <a
                       target="_blank"
                       className="text-blue dark:text-blue dark:font-semibold flex gap-1 items-center hover:text-blue-700"
-                      href="https://www.sushi.com/academy/articles/what-is-token-approval"
+                      href="https://www.sushi.com/academy/articles/what-is-bentobox"
                       rel="noreferrer"
                     >
                       Learn more <ChevronRightIcon width={12} height={12} />
@@ -86,6 +98,6 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
           </Button>
         )
       }}
-    </ApproveTokenController>
+    </ApproveBentoboxController>
   )
 }

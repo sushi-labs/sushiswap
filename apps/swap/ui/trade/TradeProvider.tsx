@@ -19,6 +19,7 @@ import { useCustomTokens, useToken } from '@sushiswap/react-query'
 import { getAddress, isAddress } from 'ethers/lib/utils'
 import { watchNetwork } from 'wagmi/actions'
 import { STARGATE_SUPPORTED_CHAIN_IDS } from '@sushiswap/stargate'
+import { Signature } from '@ethersproject/bytes'
 
 export const queryParamsSchema = z.object({
   fromChainId: z.coerce
@@ -43,6 +44,7 @@ interface InternalSwapState {
   review: boolean
   recipient: string | undefined
   value: string
+  bentoboxSignature: Signature | undefined
 }
 
 interface SwapState {
@@ -72,6 +74,7 @@ type SwapApi = {
   setTokens(currency0: Type, currency1: Type): void
   setAppType(appType: AppType): void
   setSearch(currency: Type): void
+  setBentoboxSignature(signature: Signature | undefined): void
 }
 
 export const SwapStateContext = createContext<State>({} as State)
@@ -81,6 +84,7 @@ type Actions =
   | { type: 'setValue'; value: string }
   | { type: 'setRecipient'; recipient: string }
   | { type: 'setReview'; value: boolean }
+  | { type: 'setBentoboxSignature'; value: Signature }
 
 const reducer = (state: InternalSwapState, action: Actions): InternalSwapState => {
   switch (action.type) {
@@ -92,6 +96,11 @@ const reducer = (state: InternalSwapState, action: Actions): InternalSwapState =
       return {
         ...state,
         value: action.value,
+      }
+    case 'setBentoboxSignature':
+      return {
+        ...state,
+        bentoboxSignature: action.value,
       }
   }
 }
@@ -121,6 +130,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     // TODO: no recipient
     recipient: address ? address : undefined,
     value: _amount ? _amount.toString() : '',
+    bentoboxSignature: undefined,
   })
 
   const state = useMemo(() => {
@@ -358,6 +368,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     const setValue = (value: string) => dispatch({ type: 'setValue', value })
     const setRecipient = (recipient: string) => dispatch({ type: 'setRecipient', recipient })
     const setReview = (value: boolean) => dispatch({ type: 'setReview', value })
+    const setBentoboxSignature = (value: Signature) => dispatch({ type: 'setBentoboxSignature', value })
 
     return {
       setNetworks,
@@ -372,6 +383,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setTokens,
       setAppType,
       setSearch,
+      setBentoboxSignature,
     }
   }, [
     push,

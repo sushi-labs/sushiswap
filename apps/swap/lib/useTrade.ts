@@ -9,7 +9,7 @@ import { useMemo } from 'react'
 type ObjectType<T> = T extends true ? ReturnType<typeof useCrossChainTrade> : ReturnType<typeof _useTrade>
 
 export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): ObjectType<T> {
-  const { token0, token1, network0, network1, amount, recipient } = useSwapState()
+  const { token0, token1, network0, network1, amount, recipient, bentoboxSignature } = useSwapState()
   const [slippageTolerance] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
 
@@ -35,6 +35,7 @@ export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): 
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     recipient,
     enabled: crossChain && network0 !== network1,
+    bentoboxSignature,
   })
 
   return useMemo(() => {

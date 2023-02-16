@@ -9,6 +9,7 @@ import { Widget } from '../../../../../ui/widget/Widget'
 import { Drawer } from '@sushiswap/ui/future/components/drawer'
 import { NetworkCheck } from '../../../../../ui/NetworkCheck'
 import { TokenNotFoundDialog } from '../../../../../ui/TokenNotFoundDialog'
+import { TradeReviewDialog } from '../../../../../ui/trade/TradeReviewDialog'
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
@@ -42,7 +43,7 @@ const Page: FC = ({}: InferGetStaticPropsType<typeof getStaticProps>) => {
         <Drawer.Root>
           <Widget />
           <TradeStats />
-          <TradeReviewDialogSameChain />
+          <TradeReviewDialog />
           <TokenNotFoundDialog />
         </Drawer.Root>
 
