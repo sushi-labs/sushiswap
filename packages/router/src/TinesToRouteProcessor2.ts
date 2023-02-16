@@ -24,7 +24,7 @@ class TinesToRouteProcessor2 {
   chainId: ChainId
   pools: Map<string, PoolCode>
   tokenOutputLegs: Map<string, RouteLeg[]> = new Map()
-  presendedLegs: Set<RouteLeg> = new Set()
+  //presendedLegs: Set<RouteLeg> = new Set()
 
   constructor(routeProcessorAddress: string, chainId: ChainId, pools: Map<string, PoolCode>) {
     this.routeProcessorAddress = routeProcessorAddress
@@ -36,7 +36,7 @@ class TinesToRouteProcessor2 {
     // 0. Check for no route
     if (route.status == RouteStatus.NoWay || route.legs.length == 0) return ''
 
-    this.presendedLegs = new Set()
+    //this.presendedLegs = new Set()
     this.calcTokenOutputLegs(route)
     let res = '0x'
 
@@ -96,7 +96,7 @@ class TinesToRouteProcessor2 {
   swapCode(leg: RouteLeg, route: MultiRoute, toAddress: string): string {
     const pc = this.getPoolCode(leg)
     const to = this.getPoolOutputAddress(leg, route, toAddress)
-    return pc.getSwapCodeForRouteProcessor2(leg, route, to, this.presendedLegs.has(leg))
+    return pc.getSwapCodeForRouteProcessor2(leg, route, to) //, this.presendedLegs.has(leg))
   }
 
   getPoolOutputAddress(l: RouteLeg, route: MultiRoute, toAddress: string): string {
@@ -107,7 +107,7 @@ class TinesToRouteProcessor2 {
     } else if (outputDistribution.length == 1) {
       outAddress = this.getPoolCode(outputDistribution[0]).getStartPoint(l, route)
       if (outAddress == PoolCode.RouteProcessorAddress) outAddress = this.routeProcessorAddress
-      else this.presendedLegs.add(outputDistribution[0])
+      //else this.presendedLegs.add(outputDistribution[0])
     } else {
       outAddress = this.routeProcessorAddress
     }

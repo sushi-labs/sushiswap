@@ -21,13 +21,13 @@ export class ConstantProductPoolCode extends PoolCode {
     return code
   }
 
-  getSwapCodeForRouteProcessor2(leg: RouteLeg, _route: MultiRoute, to: string, presended: boolean): string {
+  getSwapCodeForRouteProcessor2(leg: RouteLeg, _route: MultiRoute, to: string): string {
     const code = new HEXer()
       .uint8(0) // uniV2 pool
       .address(this.pool.address)
       .bool(leg.tokenFrom.address == this.pool.token0.address)
       .address(to)
-      .bool(presended)
+      //.bool(presended)
       .toString()
     return code
   }
