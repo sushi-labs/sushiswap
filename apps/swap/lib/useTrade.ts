@@ -22,7 +22,7 @@ export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): 
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     gasPrice: feeData?.gasPrice?.toNumber(),
     recipient,
-    enabled: !crossChain,
+    enabled: !crossChain && network0 === network1,
     carbonOffset,
   })
 
@@ -34,7 +34,7 @@ export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): 
     amount: amount,
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     recipient,
-    enabled: crossChain,
+    enabled: crossChain && network0 !== network1,
   })
 
   return useMemo(() => {

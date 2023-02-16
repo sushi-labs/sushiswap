@@ -1,6 +1,6 @@
 import { Amount, Currency, Token } from '@sushiswap/currency'
 import { StablePool } from '@sushiswap/amm'
-import { getStablePoolFactoryContract, StablePoolState, useBentoBoxTotals } from '@sushiswap/wagmi'
+import { getStablePoolFactoryContract, StablePoolState } from '@sushiswap/wagmi'
 import { Address, readContracts } from 'wagmi'
 import { stablePoolAbi, stablePoolFactoryAbi } from '@sushiswap/wagmi/abis'
 import { BigNumber } from 'ethers'
@@ -115,22 +115,15 @@ export const getStablePools = async (
   const totals = await getBentoboxTotals(chainId, tokensUnique)
 
   return pools.map((p, i) => {
-    if (
-      !reserves?.[i] ||
-      !fees?.[i] ||
-      !totals ||
-      !(p.token0.wrapped.address in totals) ||
-      !(p.token1.wrapped.address in totals)
-    )
-      return [StablePoolState.LOADING, null]
+    if (!reserves?.[i] || !fees?.[i] || !totals || !totals?.[0] || !totals?.[1]) return [StablePoolState.LOADING, null]
     return [
       StablePoolState.EXISTS,
       new StablePool(
         Amount.fromRawAmount(p.token0, reserves[i]._reserve0.toString()),
         Amount.fromRawAmount(p.token1, reserves[i]._reserve1.toString()),
         parseInt(fees[i].toString()),
-        totals[p.token0.wrapped.address],
-        totals[p.token1.wrapped.address]
+        totals[0],
+        totals[1]
       ),
     ]
   })

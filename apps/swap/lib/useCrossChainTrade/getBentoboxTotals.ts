@@ -1,10 +1,8 @@
 import { Type, Type as Currency } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
-import { Address, readContracts, useContractReads } from 'wagmi'
+import { Address, readContracts } from 'wagmi'
 import { ChainId } from '@sushiswap/chain'
-import { useMemo } from 'react'
-import { useBentoBoxTotals } from '@sushiswap/wagmi'
 
 export const getBentoboxTotals = async (chainId: ChainId | undefined, currencies: (Currency | undefined)[]) => {
   const addresses = currencies
@@ -51,15 +49,18 @@ export const getBentoboxTotals = async (chainId: ChainId | undefined, currencies
     contracts,
   })
 
-  return totals?.reduce<Record<string, { base: JSBI; elastic: JSBI }>>((previousValue, currentValue, i) => {
-    if (!currentValue) return previousValue
-    const { base, elastic } = currentValue
-    previousValue[addresses[i]] = {
-      base: JSBI.BigInt(base),
-      elastic: JSBI.BigInt(elastic),
+  const result: { base: JSBI; elastic: JSBI }[] = []
+  currencies.forEach((currency, index) => {
+    if (totals?.[index]) {
+      const { base, elastic } = totals[index]
+      result[index] = {
+        base: JSBI.BigInt(base),
+        elastic: JSBI.BigInt(elastic),
+      }
     }
-    return previousValue
-  }, {})
+  })
+
+  return result
 }
 
 export const getBentoboxTotal = async ({ chainId, currency }: { chainId: ChainId; currency: Type }) => {
@@ -69,5 +70,5 @@ export const getBentoboxTotal = async ({ chainId, currency }: { chainId: ChainId
     return undefined
   }
 
-  return totals[currency.wrapped.address]
+  return totals[0]
 }

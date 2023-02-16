@@ -8,13 +8,15 @@ import { HexString } from '@sushiswap/types'
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { useQuery } from '@tanstack/react-query'
 import { getContract } from 'wagmi/actions'
-import { getBentoboxTotal } from './getBentoboxTotals'
 import { getTrade } from './getTrade'
 import { getBridgeFees } from './getBridgeFees'
 import { SushiXSwap } from '../SushiXSwap'
 import { useCallback } from 'react'
 import { UseCrossChainSelect, UseCrossChainTradeParams, UseCrossChainTradeQuerySelect } from './types'
 import { BigNumber } from '@ethersproject/bignumber'
+import { usePools } from './usePools'
+import { useFeeData } from 'wagmi'
+import { useBentoboxTotals } from './useRebases'
 
 const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
 
@@ -22,6 +24,38 @@ export const useCrossChainTradeQuery = (
   { network0, network1, token0, token1, amount, slippagePercentage, recipient, enabled }: UseCrossChainTradeParams,
   select: UseCrossChainTradeQuerySelect
 ) => {
+  // First we'll check if bridge tokens for srcChainId includes srcToken, if so use srcToken as srcBridgeToken,
+  // else take first stargate bridge token as srcBridgeToken
+  const srcBridgeToken = token0.isToken && isStargateBridgeToken(token0) ? token0 : STARGATE_BRIDGE_TOKENS[network0][0]
+
+  // First we'll check if bridge tokens for dstChainId includes dstToken, if so use dstToken as dstBridgeToken,
+  // else take first stargate bridge token as dstBridgeToken
+  const dstBridgeToken = token1.isToken && isStargateBridgeToken(token1) ? token1 : STARGATE_BRIDGE_TOKENS[network1][0]
+
+  // A cross chain swap, a swap on the source and a swap on the destination
+  const crossChainSwap = !isStargateBridgeToken(token0) && !isStargateBridgeToken(token1)
+
+  // A regular bridge transfer, no swaps on either end
+  const transfer = isStargateBridgeToken(token0) && isStargateBridgeToken(token1)
+
+  // A swap transfer, a swap on the source, but not swap on the destination
+  const swapTransfer = !isStargateBridgeToken(token0) && isStargateBridgeToken(token1)
+
+  // A transfer swap, no swap on the source, but a swap on the destination
+  const transferSwap = isStargateBridgeToken(token0) && !isStargateBridgeToken(token1)
+
+  const srcCurrencyA = crossChainSwap || swapTransfer ? token0 : undefined
+  const srcCurrencyB = crossChainSwap || swapTransfer ? srcBridgeToken : token1
+  const dstCurrencyA = crossChainSwap || transferSwap ? dstBridgeToken : undefined
+  const dstCurrencyB = crossChainSwap || transferSwap ? token1 : undefined
+
+  const { data: srcPools } = usePools({ chainId: network0, currencyA: srcCurrencyA, currencyB: srcCurrencyB })
+  const { data: dstPools } = usePools({ chainId: network1, currencyA: dstCurrencyA, currencyB: dstCurrencyB })
+  const { data: srcFeeData } = useFeeData({ chainId: network0 })
+  const { data: dstFeeData } = useFeeData({ chainId: network1 })
+  const { data: srcRebases } = useBentoboxTotals({ chainId: network0, currencies: [srcCurrencyA, srcCurrencyB] })
+  const { data: dstRebases } = useBentoboxTotals({ chainId: network1, currencies: [dstCurrencyA, dstCurrencyB] })
+
   return useQuery({
     queryKey: ['crossChainTrade', { network0, network1, token0, token1, amount, slippagePercentage, recipient }],
     queryFn: async () => {
@@ -33,40 +67,15 @@ export const useCrossChainTradeQuery = (
         ...getSushiXSwapContractConfig(network0),
       })
 
-      // First we'll check if bridge tokens for srcChainId includes srcToken, if so use srcToken as srcBridgeToken,
-      // else take first stargate bridge token as srcBridgeToken
-      const srcBridgeToken =
-        token0.isToken && isStargateBridgeToken(token0) ? token0 : STARGATE_BRIDGE_TOKENS[network0][0]
-
-      // First we'll check if bridge tokens for dstChainId includes dstToken, if so use dstToken as dstBridgeToken,
-      // else take first stargate bridge token as dstBridgeToken
-      const dstBridgeToken =
-        token1.isToken && isStargateBridgeToken(token1) ? token1 : STARGATE_BRIDGE_TOKENS[network1][0]
-
-      // A cross chain swap, a swap on the source and a swap on the destination
-      const crossChainSwap = !isStargateBridgeToken(token0) && !isStargateBridgeToken(token1)
-
-      // A regular bridge transfer, no swaps on either end
-      const transfer = isStargateBridgeToken(token0) && isStargateBridgeToken(token1)
-
-      // A swap transfer, a swap on the source, but not swap on the destination
-      const swapTransfer = !isStargateBridgeToken(token0) && isStargateBridgeToken(token1)
-
-      // A transfer swap, no swap on the source, but a swap on the destination
-      const transferSwap = isStargateBridgeToken(token0) && !isStargateBridgeToken(token1)
-
-      const [srcInputCurrencyRebase, srcOutputCurrencyRebase, dstOutputCurrencyRebase, srcTrade] = await Promise.all([
-        getBentoboxTotal({ chainId: network0, currency: token0 }),
-        getBentoboxTotal({ chainId: network0, currency: srcBridgeToken }),
-        getBentoboxTotal({ chainId: network1, currency: token1 }),
-        getTrade({
-          chainId: network0,
-          tradeType: TradeType.EXACT_INPUT,
-          amountSpecified: crossChainSwap || swapTransfer ? amount : undefined,
-          currencyA: crossChainSwap || swapTransfer ? token0 : undefined,
-          currencyB: crossChainSwap || swapTransfer ? srcBridgeToken : token1,
-        }),
-      ])
+      const srcTrade = await getTrade({
+        chainId: network0,
+        amountSpecified: crossChainSwap || swapTransfer ? amount : undefined,
+        currencyA: srcCurrencyA,
+        currencyB: srcCurrencyB,
+        pools: srcPools,
+        feeData: srcFeeData,
+        rebases: srcRebases,
+      })
 
       const srcMinimumAmountOut = srcTrade?.minimumAmountOut(swapSlippage)
 
@@ -112,8 +121,11 @@ export const useCrossChainTradeQuery = (
         chainId: network1,
         tradeType: TradeType.EXACT_INPUT,
         amountSpecified: crossChainSwap || transferSwap ? dstAmountIn : undefined,
-        currencyA: crossChainSwap || transferSwap ? dstBridgeToken : undefined,
-        currencyB: crossChainSwap || transferSwap ? token1 : undefined,
+        currencyA: dstCurrencyA,
+        currencyB: dstCurrencyB,
+        pools: dstPools,
+        feeData: dstFeeData,
+        rebases: dstRebases,
       })
 
       // Output amount displayed... not including slippage for sameChainSwap, transferSwap, crossChainSwap
@@ -169,9 +181,8 @@ export const useCrossChainTradeQuery = (
         !network0 ||
         !network1 ||
         !dstMinimumAmountOut ||
-        !srcInputCurrencyRebase ||
-        !srcOutputCurrencyRebase ||
-        !dstOutputCurrencyRebase ||
+        !srcRebases ||
+        !dstRebases ||
         !contract
       ) {
         return {
@@ -187,6 +198,9 @@ export const useCrossChainTradeQuery = (
           overrides: undefined,
         } as UseCrossChainSelect
       }
+
+      const [srcInputCurrencyRebase, srcOutputCurrencyRebase] = srcRebases
+      const [, dstOutputCurrencyRebase] = dstRebases
 
       const srcShare = amount.toShare(srcInputCurrencyRebase)
 
@@ -273,7 +287,22 @@ export const useCrossChainTradeQuery = (
     keepPreviousData: !!amount,
     cacheTime: 0,
     select,
-    enabled: enabled && Boolean(network0 && network1 && token0 && token1 && amount && recipient),
+    enabled:
+      enabled &&
+      Boolean(
+        network0 &&
+          network1 &&
+          token0 &&
+          token1 &&
+          amount &&
+          recipient &&
+          srcPools &&
+          dstPools &&
+          srcFeeData &&
+          dstFeeData &&
+          srcRebases &&
+          dstRebases
+      ),
   })
 }
 
