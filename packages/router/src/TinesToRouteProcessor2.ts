@@ -66,11 +66,13 @@ class TinesToRouteProcessor2 {
       throw new Error('Not 1 output pool for native token: ' + outputLegs?.length)
     }
 
-    const to = this.getPoolOutputAddress(outputLegs[0], route, toAddress)
     const hex = new HEXer()
       .uint8(3) // processNative commandCode
-      .address(WNATIVE_ADDRESS[token.chainId as ChainId])
-      .address(to)
+      .uint8(outputLegs.length)
+
+    outputLegs.forEach((l) => {
+      hex.share16(l.swapPortion).hexData(this.swapCode(l, route, toAddress))
+    })
     return hex.toString()
   }
 

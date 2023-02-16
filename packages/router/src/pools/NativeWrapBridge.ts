@@ -26,14 +26,22 @@ export class NativeWrapBridgePoolCode extends PoolCode {
 
   getSwapCodeForRouteProcessor2(leg: RouteLeg, _route: MultiRoute, to: string): string {
     if (leg.tokenFrom.tokenId == this.pool.token0.tokenId) {
-      // wrap - deposit. not used normally
-      throw new Error('Wrap pool code call')
+      // wrap - deposit
+      const code = new HEXer()
+        .uint8(2) // wrapNative pool type
+        .uint8(1) // wrap action
+        .address(to) // where to transfer native coin after unwrapping
+        .address(this.pool.address) // wrap token
+        .toString()
+      return code
     } else {
       // unwrap - withdraw
       const code = new HEXer()
-        .uint8(2) // unWrapNative
-        .address(to)
-        .toString() // unwrapNative(address receiver, unwrap token)
+        .uint8(2) // wrapNative pool type
+        .uint8(0) // unwrap action
+        .address(to) // where to transfer native coin after unwrapping
+        //.address(this.pool.address) - don't need because processToken knows the token
+        .toString()
       return code
     }
   }

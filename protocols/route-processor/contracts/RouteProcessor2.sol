@@ -118,54 +118,30 @@ contract RouteProcessor2 {
   }
 
   function processNative(uint256 stream) private {
-    uint amount = address(this).balance;
-    address token = stream.readAddress();
-    IWETH(token).deposit{value: amount}();
-
-    address to = stream.readAddress();
-    if (to != address(this)) IERC20(token).safeTransfer(to, amount);
+    uint amountTotal = address(this).balance;
+    distributeAndSwap(stream, address(this), NATIVE_ADDRESS, amountTotal);
   }
-
-  // function processNative(uint256 stream) private {
-  //   uint amountTotal = address(this).balance;
-  //   uint8 num = stream.readUint8();
-
-  //   unchecked {
-  //     for (uint256 i = 0; i < num; ++i) {
-  //       uint16 share = stream.readUint16();
-  //       uint256 amount = (amountTotal * share) / 65535;
-  //       amountTotal -= amount;
-  //       swap(stream, msg.sender, token, amount);
-  //     }
-  //   }
-  // }
 
   function processMyERC20(uint256 stream) private {
     address token = stream.readAddress();
-    uint8 num = stream.readUint8();
     uint256 amountTotal = IERC20(token).balanceOf(address(this))
       - 1;     // slot undrain protection
-
-    unchecked {
-      for (uint256 i = 0; i < num; ++i) {
-        uint16 share = stream.readUint16();
-        uint256 amount = (amountTotal * share) / 65535;
-        amountTotal -= amount;
-        swap(stream, address(this), token, amount);
-      }
-    }
+    distributeAndSwap(stream, address(this), token, amountTotal);
   }
   
   function processUserERC20(uint256 stream, uint256 amountTotal) private {
     address token = stream.readAddress();
-    uint8 num = stream.readUint8();
+    distributeAndSwap(stream, msg.sender, token, amountTotal);
+  }
 
+  function distributeAndSwap(uint256 stream, address from, address tokenIn, uint256 amountTotal) private {
+    uint8 num = stream.readUint8();
     unchecked {
       for (uint256 i = 0; i < num; ++i) {
         uint16 share = stream.readUint16();
         uint256 amount = (amountTotal * share) / 65535;
         amountTotal -= amount;
-        swap(stream, msg.sender, token, amount);
+        swap(stream, from, tokenIn, amount);
       }
     }
   }
@@ -174,31 +150,24 @@ contract RouteProcessor2 {
     uint8 poolType = stream.readUint8();
     if (poolType == 0) swapUniV2(stream, from, tokenIn, amountIn);
     //else if (poolType == 1) swapUniV3(stream, tokenIn, amountIn);
-    else if (poolType == 2) unWrapNative(stream, from, tokenIn, amountIn);
+    else if (poolType == 2) wrapNative(stream, from, tokenIn, amountIn);
     else revert('RouteProcessor: Unknown pool type');
   }
 
-  // function wrapNative(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
-  //   uint8 direction = stream.readUint8();
-  //   address to = stream.readAddress();
-
-  //   if (direction > 0) {  // wrap native
-  //     uint amount = address(this).balance;
-  //     address token = stream.readAddress();
-  //     IWETH(token).deposit{value: amount}();
-  //     if (to != address(this)) IERC20(token).safeTransfer(to, amount);
-  //   } else { // unwrap native
-  //     if (from != address(this)) IERC20(tokenIn).safeTransferFrom(from, address(this), amountIn);
-  //     IWETH(tokenIn).withdraw(amountIn);
-  //     payable(to).transfer(address(this).balance);
-  //   }
-  // }
-
-  function unWrapNative(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
-    if (from != address(this)) IERC20(tokenIn).safeTransferFrom(from, address(this), amountIn);
-    IWETH(tokenIn).withdraw(amountIn);
+  function wrapNative(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
+    uint8 direction = stream.readUint8();
     address to = stream.readAddress();
-    payable(to).transfer(address(this).balance);
+
+    if (direction > 0) {  // wrap native
+      address wrapToken = stream.readAddress();
+      uint amount = address(this).balance;
+      IWETH(wrapToken).deposit{value: amount}();
+      if (to != address(this)) IERC20(wrapToken).safeTransfer(to, amount);
+    } else { // unwrap native
+      if (from != address(this)) IERC20(tokenIn).safeTransferFrom(from, address(this), amountIn);
+      IWETH(tokenIn).withdraw(amountIn);
+      payable(to).transfer(address(this).balance);
+    }
   }
 
   function swapUniV2(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
