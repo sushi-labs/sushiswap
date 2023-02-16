@@ -80,7 +80,7 @@
     "dotenv": "16.0.3",
     "eslint": "8.29.0",
     "graphql": "16.6.0",
-    "ioredis": "5.2.4",
+    "ioredis": "5.3.1",
     "jest": "29.3.1",
     "prettier": "2.8.1",
     "ts-node": "10.9.1",

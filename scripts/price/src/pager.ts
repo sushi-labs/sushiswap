@@ -1,4 +1,4 @@
-import { getBuiltGraphSDK } from '../.graphclient'
+import { getBuiltGraphSDK } from '../.graphclient/index.js'
 
 export async function pager(host: string, name: string) {
   const sdk = getBuiltGraphSDK({ host, name })
@@ -15,12 +15,15 @@ export async function pager(host: string, name: string) {
 
     tokenPrices.push(...newTokenPrices)
 
-    if (newTokenPrices?.length < 1000) {
+    if(!newTokenPrices) throw new Error(`Fetch on ${host}/${name} failed.`)
+
+    if (newTokenPrices.length < 1000) {
       rest = newRest
       break
     }
 
-    lastId = newTokenPrices[newTokenPrices.length - 1].id
+    // eslint-disable-next-line
+    lastId = newTokenPrices[newTokenPrices.length - 1]!.id
   }
 
   return { tokenPrices, ...rest }

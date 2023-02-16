@@ -10,7 +10,7 @@
   "dependencies": {
     "@vercel/node": "2.8.2",
     "date-fns": "2.29.3",
-    "ioredis": "5.2.4"
+    "ioredis": "5.3.1"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
