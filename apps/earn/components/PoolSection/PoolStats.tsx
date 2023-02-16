@@ -32,7 +32,7 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
           Liquidity
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatUSD(liquidityNative ?? 0 * Number(nativePrice?.toFixed(4)))}
+          {formatUSD((liquidityNative ?? 0) * Number(nativePrice?.toFixed(4)))}
         </Typography>
         {liquidity1dChange ? (
           <Typography variant="xs" weight={500} className={liquidity1dChange > 0 ? 'text-green' : 'text-red'}>
