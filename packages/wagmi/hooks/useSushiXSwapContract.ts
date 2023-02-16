@@ -25,7 +25,7 @@ export function useSushiXSwapContractWithProvider(chainId: number | undefined) {
   return useContract({
     ...getSushiXSwapContractConfig(chainId),
     signerOrProvider: provider,
-  })
+  }) as SushiXSwap
 }
 
 export type SushiXSwap = NonNullable<ReturnType<typeof useSushiXSwapContractWithProvider>>

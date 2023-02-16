@@ -1,6 +1,6 @@
 import { TradeType } from '@sushiswap/amm'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, StargateChainId } from '@sushiswap/stargate'
-import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
+import { getSushiXSwapContractConfig, useSushiXSwapContract, useSushiXSwapContractWithProvider } from '@sushiswap/wagmi'
 import { JSBI, Percent } from '@sushiswap/math'
 import { Amount, Price, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { nanoid } from 'nanoid'
@@ -56,16 +56,14 @@ export const useCrossChainTradeQuery = (
   const { data: srcRebases } = useBentoboxTotals({ chainId: network0, currencies: [srcCurrencyA, srcCurrencyB] })
   const { data: dstRebases } = useBentoboxTotals({ chainId: network1, currencies: [dstCurrencyA, dstCurrencyB] })
 
+  const contract = useSushiXSwapContract(network0)
+
   return useQuery({
     queryKey: ['crossChainTrade', { network0, network1, token0, token1, amount, slippagePercentage, recipient }],
     queryFn: async () => {
       const swapSlippage = slippagePercentage
         ? new Percent(Number(slippagePercentage === 'AUTO' ? 0.5 : slippagePercentage) * 100, 10_000)
         : SWAP_DEFAULT_SLIPPAGE
-
-      const contract = getContract({
-        ...getSushiXSwapContractConfig(network0),
-      })
 
       const srcTrade = await getTrade({
         chainId: network0,
@@ -260,8 +258,8 @@ export const useCrossChainTradeQuery = (
       })
 
       // need async to get fee for final value... this should be moved to exec?
-      // const [fee] = await this.getFee(gasSpent)
-      // console.log(`Successful Fee`, fee)
+      const [fee] = await sushiXSwap.getFee(dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined)
+      console.log(`Successful Fee`, fee)
       // const value = sushiXSwap.srcCooker.values.reduce((a, b) => a.add(b), fee)
 
       // Needs to be parsed to string because react-query entities are serialized to cache
