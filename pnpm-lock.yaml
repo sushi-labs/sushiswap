@@ -2122,13 +2122,13 @@ importers:
       ioredis: 5.3.1
       jest: 29.3.1
       prisma: 4.8.1
-      prisma-redis-middleware: 4.5.0
+      prisma-redis-middleware: 4.6.0
       tsup: 6.5.0
       typescript: 4.9.4
     dependencies:
       '@prisma/client': 4.8.1_prisma@4.8.1
       ioredis: 5.3.1
-      prisma-redis-middleware: 4.5.0
+      prisma-redis-middleware: 4.6.0
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -14206,8 +14206,8 @@ packages:
     resolution: {integrity: sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ==}
     engines: {node: '>=8'}
 
-  /async-cache-dedupe/1.6.0:
-    resolution: {integrity: sha512-yB0FT8pEQ60+CVY4moyYrqF6eo/sVcsH/bW0cRF0tN3DFqcjYlGMH8ALhNLHy3NXFD/5u5DfAR2rrwAk4/3HgQ==}
+  /async-cache-dedupe/1.8.0:
+    resolution: {integrity: sha512-igRdbMUs8JeDP8niH6E2/QYPhrch85sO/JM5OXFz2QzME6PJJ046aMc3mCkMTL38l8kQHIh0mNqoSSwKLyihCg==}
     dependencies:
       abstract-logging: 2.0.1
       mnemonist: 0.39.5
@@ -21729,8 +21729,8 @@ packages:
       ioredis: 5.3.1
     dev: false
 
-  /ioredis/5.2.4:
-    resolution: {integrity: sha512-qIpuAEt32lZJQ0XyrloCRdlEdUUNGG9i0UOk6zgzK6igyudNWqEBxfH6OlbnOOoBBvr1WB02mm8fR55CnikRng==}
+  /ioredis/5.2.5:
+    resolution: {integrity: sha512-7HKo/ClM2DGLRXdFq8ruS3Uuadensz4A76wPOU0adqlOqd1qkhoLPDaBhmVhUhNGpB+J65/bhLmNB8DDY99HJQ==}
     engines: {node: '>=12.22.0'}
     dependencies:
       '@ioredis/commands': 1.2.0
@@ -27179,12 +27179,12 @@ packages:
     dependencies:
       parse-ms: 2.1.0
 
-  /prisma-redis-middleware/4.5.0:
-    resolution: {integrity: sha512-VteUpiSRWnh1l7xubxG9uKB790dyp36y/SGR9583lSXi9e7pi+uRa67csdQmfvE3e3lp8adF2vYpFUP3FfRqbA==}
+  /prisma-redis-middleware/4.6.0:
+    resolution: {integrity: sha512-qo3HtSTdy1kbbtSSSsoAyqlXddJI7fnlOM4xnAMr9hQypmg7+xuc3Zp/VVaTtuuVRE3ZQFifNV2Oj08rb16NrQ==}
     engines: {node: ^16.x || ^18.x, npm: ^7.x || ^8.x || ^9.0.0}
     dependencies:
-      async-cache-dedupe: 1.6.0
-      ioredis: 5.2.4
+      async-cache-dedupe: 1.8.0
+      ioredis: 5.2.5
     transitivePeerDependencies:
       - supports-color
     dev: false
