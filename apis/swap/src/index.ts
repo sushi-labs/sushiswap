@@ -263,16 +263,16 @@ const start = async () => {
     //     })
     //   )
     // )
-    // dataFetcherMap.set(
-    //   ChainId.OPTIMISM,
-    //   new DataFetcher(
-    //     ChainId.OPTIMISM,
-    //     createClient({
-    //       chain: optimism,
-    //       transport: http(optimism.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
-    //     })
-    //   )
-    // )
+    dataFetcherMap.set(
+      ChainId.OPTIMISM,
+      new DataFetcher(
+        ChainId.OPTIMISM,
+        createClient({
+          chain: optimism,
+          transport: http(optimism.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+        })
+      )
+    )
     // dataFetcherMap.set(
     //   ChainId.CELO,
     //   new DataFetcher(
@@ -314,26 +314,26 @@ const start = async () => {
     //     })
     //   )
     // )
-    dataFetcherMap.set(
-      ChainId.KAVA,
-      new DataFetcher(
-        ChainId.KAVA,
-        createClient({
-          chain: kava,
+    // dataFetcherMap.set(
+    //   ChainId.KAVA,
+    //   new DataFetcher(
+    //     ChainId.KAVA,
+    //     createClient({
+    //       chain: kava,
           
-          transport: 
-          fallback([
-            // http(kava.rpcUrls.default.http[0]),
-            http(kava.rpcUrls.default.http[1]),
-          ], 
-          // {
-          //   retryCount: 5,
-          //   retryDelay: 1000,
-          // }
-          ),
-        })
-      )
-    )
+    //       transport: 
+    //       fallback([
+    //         // http(kava.rpcUrls.default.http[0]),
+    //         http(kava.rpcUrls.default.http[1]),
+    //       ], 
+    //       // {
+    //       //   retryCount: 5,
+    //       //   retryDelay: 1000,
+    //       // }
+    //       ),
+    //     })
+    //   )
+    // )
     // dataFetcherMap.set(
     //   ChainId.METIS,
     //   new DataFetcher(
