@@ -182,8 +182,10 @@ contract RouteProcessor2 {
     require(r0 > 0 && r1 > 0, 'Wrong pool reserves');
     (uint256 reserveIn, uint256 reserveOut) = direction == 1 ? (r0, r1) : (r1, r0);
 
-    if (amountIn != 0) IERC20(tokenIn).safeTransferFrom(from, pool, amountIn);
-    else amountIn = IERC20(tokenIn).balanceOf(pool) - reserveIn;  // tokens already were transferred
+    if (amountIn != 0) {
+      if (from == address(this)) IERC20(tokenIn).safeTransfer(pool, amountIn);
+      else IERC20(tokenIn).safeTransferFrom(from, pool, amountIn);
+    } else amountIn = IERC20(tokenIn).balanceOf(pool) - reserveIn;  // tokens already were transferred
 
     uint256 amountInWithFee = amountIn * 997;
     uint256 amountOut = (amountInWithFee * reserveOut) / (reserveIn * 1000 + amountInWithFee);

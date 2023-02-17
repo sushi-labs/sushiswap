@@ -325,12 +325,12 @@ describe('End-to-end Router2 test', async function () {
   })
 
   it.only('Native => SUSHI => Native', async function () {
-    intermidiateResult[0] = getBigNumber(1e16) //1000000 * 1e18)
+    intermidiateResult[0] = getBigNumber(1000000 * 1e18)
     intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
-    //intermidiateResult = await updMakeSwap(env, SUSHI_LOCAL, Native.onChain(chainId), intermidiateResult)
+    intermidiateResult = await updMakeSwap(env, SUSHI_LOCAL, Native.onChain(chainId), intermidiateResult)
   })
 
-  it('Native => WrappedNative => Native', async function () {
+  it.only('Native => WrappedNative => Native', async function () {
     intermidiateResult[0] = getBigNumber(1 * 1e18)
     intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), WNATIVE[chainId], intermidiateResult)
     intermidiateResult = await updMakeSwap(env, WNATIVE[chainId], Native.onChain(chainId), intermidiateResult)
