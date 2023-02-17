@@ -172,7 +172,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
                 chainId: this.chainId,
                 abi: getReservesAbi,
                 functionName: 'getReserves',
-                blockTag: currentBlockNumber,
               } as const)
           ),
         }),
@@ -186,7 +185,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
                 chainId: this.chainId,
                 abi: getReservesAbi,
                 functionName: 'getReserves',
-                blockTag: currentBlockNumber,
               } as const)
           ),
         }),

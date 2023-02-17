@@ -267,9 +267,6 @@ export class TridentProvider extends LiquidityProvider {
             functionName: 'getReserves',
           } as const)
       ),
-    }).catch((e) => {
-      console.log(e.message)
-      return []
     })
     const onDemandClassicReservePromise = multicall(this.client, {
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
@@ -283,9 +280,6 @@ export class TridentProvider extends LiquidityProvider {
             functionName: 'getReserves',
           } as const)
       ),
-    }).catch((e) => {
-      console.log(e.message)
-      return []
     })
 
     const initStableReservePromise = multicall(this.client, {
@@ -300,9 +294,6 @@ export class TridentProvider extends LiquidityProvider {
             functionName: 'getReserves',
           } as const)
       ),
-    }).catch((e) => {
-      console.log(e.message)
-      return []
     })
 
     const onDemandStableReservePromise = multicall(this.client, {
@@ -317,9 +308,6 @@ export class TridentProvider extends LiquidityProvider {
             functionName: 'getReserves',
           } as const)
       ),
-    }).catch((e) => {
-      console.log(e.message)
-      return []
     })
 
     const totalsPromise = multicall(this.client, {
@@ -335,9 +323,6 @@ export class TridentProvider extends LiquidityProvider {
             functionName: 'totals',
           } as const)
       ),
-    }).catch((e) => {
-      console.log(e.message)
-      return []
     })
 
     const balancesPromise = multicall(this.client, {
@@ -353,9 +338,6 @@ export class TridentProvider extends LiquidityProvider {
             functionName: 'balanceOf',
           } as const)
       ),
-    }).catch((e) => {
-      console.log(e.message)
-      return []
     })
 
     const [initClassicReserves, onDemandClassicReserves, initStableReserves, onDemandStableReserves, totals, balances] =
@@ -407,7 +389,6 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   async getOnDemandPools(t0: Token, t1: Token): Promise<void> {
-    console.log('getOnDemandPools')
     console.debug(
       `****** MEM - ${this.getLogPrefix()} init classic pools: ${this.initialClassicPools.size} 
       on demand classic pools: ${this.onDemandClassicPools.size} 
@@ -545,7 +526,6 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   fetchPoolsForToken(t0: Token, t1: Token): void {
-    console.log('fetchPoolsForToken')
     this.getOnDemandPools(t0, t1)
   }
 
@@ -589,14 +569,6 @@ export class TridentProvider extends LiquidityProvider {
   ) {
     poolCodes.forEach((pc, i) => {
       const pool = pc.pool
-      if (reserves?.[i].status === 'error') {
-        console.error(
-          `${this.getLogPrefix()} - INIT: ERROR fetching reserves for pool ${pool.address}. Error: ${
-            reserves?.[i].error?.message
-          }`
-        )
-        return
-      }
       const res0 = reserves?.[i]?.result?.[0]
       const res1 = reserves?.[i]?.result?.[1]
 
