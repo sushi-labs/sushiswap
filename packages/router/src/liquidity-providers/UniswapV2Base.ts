@@ -175,9 +175,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
                 blockTag: currentBlockNumber,
               } as const)
           ),
-        }).catch((e) => {
-          console.error(`${this.getLogPrefix()} - ERROR UPDATING POOLS, Failed to fetch reserves for initial pools`, e.message)
-          return []
         }),
         multicall(this.client, {
           multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
@@ -192,9 +189,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
                 blockTag: currentBlockNumber,
               } as const)
           ),
-        }).catch((e) => {
-          console.error(`${this.getLogPrefix()} - ERROR UPDATING POOLS, Failed to fetch reserves for on demand pools`, e.message)
-          return []
         }),
       ])
 

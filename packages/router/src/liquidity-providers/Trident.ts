@@ -357,7 +357,7 @@ export class TridentProvider extends LiquidityProvider {
       console.log(e.message)
       return []
     })
-    console.log('BEFORE PROMISE')
+
     const [initClassicReserves, onDemandClassicReserves, initStableReserves, onDemandStableReserves, totals, balances] =
       await Promise.all([
         initClassicReservePromise,
@@ -382,22 +382,20 @@ export class TridentProvider extends LiquidityProvider {
       if (!elastic || !base || !balance) {
         return
       }
-
-      if (!bridge.reserve0.eq(BigNumber.from(elastic)) || !bridge.reserve1.eq(BigNumber.from(base))) {
-        const elasticBN = BigNumber.from(elastic)
-        const baseBN = BigNumber.from(base)
-
+      const elasticBN = BigNumber.from(elastic)
+      const baseBN = BigNumber.from(base)
+      rebases.set(t.address, {
+        elastic: elasticBN,
+        base: baseBN,
+      })
+      if (!bridge.reserve0.eq(elasticBN) || !bridge.reserve1.eq(baseBN)) {
         bridge.updateReserves(elasticBN, baseBN)
-        rebases.set(t.address, {
-          elastic: elasticBN,
-          base: baseBN,
-        })
-        console.debug(`${this.getLogPrefix()} -BRIDGE REBASE UPDATE: ${bridge.token0.symbol} ${bridge.reserve0} ${bridge.reserve1}`)
+        console.debug(`${this.getLogPrefix()} - BRIDGE REBASE UPDATE: ${bridge.token0.symbol} ${bridge.reserve0} ${bridge.reserve1}`)
       }
 
       if (bridge.freeLiquidity !== Number(balance)) {
         bridge.freeLiquidity = Number(balance)
-        console.debug(`${this.getLogPrefix()} -BRIDGE BALANCE UPDATE: ${bridge.token0.symbol} ${bridge.reserve0} ${bridge.reserve1}`)
+        console.debug(`${this.getLogPrefix()} - BRIDGE BALANCE UPDATE: ${bridge.token0.symbol} ${bridge.freeLiquidity}`)
       }
 
     })
