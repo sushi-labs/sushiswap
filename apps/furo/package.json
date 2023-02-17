@@ -85,7 +85,7 @@
   "devDependencies": {
     "@graphprotocol/client-add-source-name": "latest",
     "@graphprotocol/client-auto-pagination": "latest",
-    "@graphprotocol/client-cli": "2.2.16",
+    "@graphprotocol/client-cli": "2.2.18",
     "@hookform/devtools": "^4.2.2",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",

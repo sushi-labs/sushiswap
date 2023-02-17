@@ -52,7 +52,7 @@
     "@graphprotocol/client-auto-pagination": "latest",
     "@graphprotocol/client-auto-type-merging": "latest",
     "@sushiswap/database": "workspace:*",
-    "@graphprotocol/client-cli": "2.2.16",
+    "@graphprotocol/client-cli": "2.2.18",
     "@graphql-mesh/cache-localforage": "latest",
     "@graphql-mesh/cross-helpers": "latest",
     "@graphql-mesh/graphql": "latest",
