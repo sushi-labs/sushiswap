@@ -320,7 +320,7 @@ const start = async () => {
         ChainId.KAVA,
         createClient({
           chain: kava,
-          transport: http(kava.rpcUrls.default.http[0]),
+          transport: http(kava.rpcUrls.default.http[1]),
         })
       )
     )
