@@ -163,106 +163,106 @@ import { createClient, fallback, http } from 'viem'
 // Run the server!
 const start = async () => {
   try {
-    // dataFetcherMap.set(
-    //   ChainId.ARBITRUM_NOVA,
-    //   new DataFetcher(
-    //     ChainId.ARBITRUM_NOVA,
-    //     createClient({
-    //       chain: arbitrumNova,
-    //       transport: http(arbitrumNova.rpcUrls.default.http[0]),
-    //     })
-    //   )
-    // )
-    // dataFetcherMap.set(
-    //   ChainId.AVALANCHE,
-    //   new DataFetcher(
-    //     ChainId.AVALANCHE,
-    //     createClient({
-    //       chain: avalanche,
-    //       transport: http(avalanche.rpcUrls.default.http[0]),
-    //     })
-    //   )
-    // )
-    // dataFetcherMap.set(
-    //   ChainId.BOBA,
-    //   new DataFetcher(
-    //     ChainId.BOBA,
-    //     createClient({
-    //       chain: boba,
-    //       transport: http(boba.rpcUrls.default.http[0]),
-    //     })
-    //   )
-    // )
-    // dataFetcherMap.set(
-    //   ChainId.BOBA_AVAX,
-    //   new DataFetcher(
-    //     ChainId.BOBA_AVAX,
-    //     createClient({
-    //       chain: bobaAvax,
-    //       transport: http(bobaAvax.rpcUrls.default.http[0]),
-    //     })
-    //   )
-    // )
-    // dataFetcherMap.set(
-    //   ChainId.BOBA_BNB,
-    //   new DataFetcher(
-    //     ChainId.BOBA_BNB,
-    //     createClient({
-    //       chain: bobaBnb,
-    //       transport: http(bobaBnb.rpcUrls.default.http[0]),
-    //     })
-    //   )
-    // )
-    // dataFetcherMap.set(
-    //   ChainId.BSC,
-    //   new DataFetcher(
-    //     ChainId.BSC,
-    //     createClient({
-    //       chain: bsc,
-    //       transport: http(bsc.rpcUrls.default.http[0]),
-    //     })
-    //   )
-    // )
-    // dataFetcherMap.set(
-    //   ChainId.BTTC,
-    //   new DataFetcher(
-    //     ChainId.BTTC,
-    //     createClient({
-    //       chain: bttc,
-    //       transport: http(bttc.rpcUrls.default.http[0]),
-    //     })
-    //   )
-    // )
-    // dataFetcherMap.set(
-    //   ChainId.ETHEREUM,
-    //   new DataFetcher(
-    //     ChainId.ETHEREUM,
-    //     createClient({
-    //       chain: mainnet,
-    //       transport: http(mainnet.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
-    //     })
-    //   )
-    // )
-    // dataFetcherMap.set(
-    //   ChainId.POLYGON,
-    //   new DataFetcher(
-    //     ChainId.POLYGON,
-    //     createClient({
-    //       chain: polygon,
-    //       transport: http(polygon.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
-    //     })
-    //   )
-    // )
-    // dataFetcherMap.set(
-    //   ChainId.ARBITRUM,
-    //   new DataFetcher(
-    //     ChainId.ARBITRUM,
-    //     createClient({
-    //       chain: arbitrum,
-    //       transport: http(arbitrum.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
-    //     })
-    //   )
-    // )
+    dataFetcherMap.set(
+      ChainId.ARBITRUM_NOVA,
+      new DataFetcher(
+        ChainId.ARBITRUM_NOVA,
+        createClient({
+          chain: arbitrumNova,
+          transport: http(arbitrumNova.rpcUrls.default.http[0]),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.AVALANCHE,
+      new DataFetcher(
+        ChainId.AVALANCHE,
+        createClient({
+          chain: avalanche,
+          transport: http(avalanche.rpcUrls.default.http[0]),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.BOBA,
+      new DataFetcher(
+        ChainId.BOBA,
+        createClient({
+          chain: boba,
+          transport: http(boba.rpcUrls.default.http[0]),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.BOBA_AVAX,
+      new DataFetcher(
+        ChainId.BOBA_AVAX,
+        createClient({
+          chain: bobaAvax,
+          transport: http(bobaAvax.rpcUrls.default.http[0]),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.BOBA_BNB,
+      new DataFetcher(
+        ChainId.BOBA_BNB,
+        createClient({
+          chain: bobaBnb,
+          transport: http(bobaBnb.rpcUrls.default.http[0]),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.BSC,
+      new DataFetcher(
+        ChainId.BSC,
+        createClient({
+          chain: bsc,
+          transport: http(bsc.rpcUrls.default.http[0]),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.BTTC,
+      new DataFetcher(
+        ChainId.BTTC,
+        createClient({
+          chain: bttc,
+          transport: http(bttc.rpcUrls.default.http[0]),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.ETHEREUM,
+      new DataFetcher(
+        ChainId.ETHEREUM,
+        createClient({
+          chain: mainnet,
+          transport: http(mainnet.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.POLYGON,
+      new DataFetcher(
+        ChainId.POLYGON,
+        createClient({
+          chain: polygon,
+          transport: http(polygon.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.ARBITRUM,
+      new DataFetcher(
+        ChainId.ARBITRUM,
+        createClient({
+          chain: arbitrum,
+          transport: http(arbitrum.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+        })
+      )
+    )
     dataFetcherMap.set(
       ChainId.OPTIMISM,
       new DataFetcher(
@@ -273,107 +273,97 @@ const start = async () => {
         })
       )
     )
-    // dataFetcherMap.set(
-    //   ChainId.CELO,
-    //   new DataFetcher(
-    //     ChainId.CELO,
-    //     createClient({
-    //       chain: celo,
-    //       transport: http(celo.rpcUrls.default.http[0]),
-    //     })
-    //   )
-    // )
+    dataFetcherMap.set(
+      ChainId.CELO,
+      new DataFetcher(
+        ChainId.CELO,
+        createClient({
+          chain: celo,
+          transport: http(celo.rpcUrls.default.http[0]),
+        })
+      )
+    )
 
-    // dataFetcherMap.set(
-    //   ChainId.FANTOM,
-    //   new DataFetcher(
-    //     ChainId.FANTOM,
-    //     createClient({
-    //       chain: fantom,
-    //       transport: http(fantom.rpcUrls.default.http[0]),
-    //     })
-    //   )
-    // )
-    // dataFetcherMap.set(
-    //   ChainId.FUSE,
-    //   new DataFetcher(
-    //     ChainId.FUSE,
-    //     createClient({
-    //       chain: fuse,
-    //       transport: http(fuse.rpcUrls.default.http[0]),
-    //     })
-    //   )
-    // )
-    // dataFetcherMap.set(
-    //   ChainId.GNOSIS,
-    //   new DataFetcher(
-    //     ChainId.GNOSIS,
-    //     createClient({
-    //       chain: gnosis,
-    //       transport: http(gnosis.rpcUrls.default.http[0]),
-    //     })
-    //   )
-    // )
-    // dataFetcherMap.set(
-    //   ChainId.KAVA,
-    //   new DataFetcher(
-    //     ChainId.KAVA,
-    //     createClient({
-    //       chain: kava,
-          
-    //       transport: 
-    //       fallback([
-    //         // http(kava.rpcUrls.default.http[0]),
-    //         http(kava.rpcUrls.default.http[1]),
-    //       ], 
-    //       // {
-    //       //   retryCount: 5,
-    //       //   retryDelay: 1000,
-    //       // }
-    //       ),
-    //     })
-    //   )
-    // )
-    // dataFetcherMap.set(
-    //   ChainId.METIS,
-    //   new DataFetcher(
-    //     ChainId.METIS,
-    //     createClient({
-    //       chain: metis,
-    //       transport: http(metis.rpcUrls.default.http[0]),
-    //     })
-    //   )
-    // )
-    // dataFetcherMap.set(
-    //   ChainId.MOONBEAM,
-    //   new DataFetcher(
-    //     ChainId.MOONBEAM,
-    //     createClient({
-    //       chain: moonbeam,
-    //       transport: http(moonbeam.rpcUrls.default.http[0]),
-    //     })
-    //   )
-    // )
-    // dataFetcherMap.set(
-    //   ChainId.MOONRIVER,
-    //   new DataFetcher(
-    //     ChainId.MOONRIVER,
-    //     createClient({
-    //       chain: moonriver,
-    //       transport: http(moonriver.rpcUrls.default.http[0]),
-    //     })
-    //   )
-    // )
-    // dataFetcherMap.set(
-    //   ChainId.HARMONY,
-    //   new DataFetcher(
-    //     ChainId.HARMONY,
-    //     createClient({
-    //       chain: harmony,
-    //       transport: http(harmony.rpcUrls.default.http[0]),
-    //     })
-    //   )
-    // )
+    dataFetcherMap.set(
+      ChainId.FANTOM,
+      new DataFetcher(
+        ChainId.FANTOM,
+        createClient({
+          chain: fantom,
+          transport: http(fantom.rpcUrls.default.http[0]),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.FUSE,
+      new DataFetcher(
+        ChainId.FUSE,
+        createClient({
+          chain: fuse,
+          transport: http(fuse.rpcUrls.default.http[0]),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.GNOSIS,
+      new DataFetcher(
+        ChainId.GNOSIS,
+        createClient({
+          chain: gnosis,
+          transport: http(gnosis.rpcUrls.default.http[0]),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.KAVA,
+      new DataFetcher(
+        ChainId.KAVA,
+        createClient({
+          chain: kava,
+          transport: http(kava.rpcUrls.default.http[1]),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.METIS,
+      new DataFetcher(
+        ChainId.METIS,
+        createClient({
+          chain: metis,
+          transport: http(metis.rpcUrls.default.http[0]),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.MOONBEAM,
+      new DataFetcher(
+        ChainId.MOONBEAM,
+        createClient({
+          chain: moonbeam,
+          transport: http(moonbeam.rpcUrls.default.http[0]),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.MOONRIVER,
+      new DataFetcher(
+        ChainId.MOONRIVER,
+        createClient({
+          chain: moonriver,
+          transport: http(moonriver.rpcUrls.default.http[0]),
+        })
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.HARMONY,
+      new DataFetcher(
+        ChainId.HARMONY,
+        createClient({
+          chain: harmony,
+          transport: http(harmony.rpcUrls.default.http[0]),
+        })
+      )
+    )
 
     for (const dataFetcher of dataFetcherMap.values()) {
       dataFetcher.startDataFetching()
