@@ -24,7 +24,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
   blockListener?: () => void
   unwatchBlockNumber?: () => void
-  unwatchMulticall?: () => void
   fee = 0.003
   isInitialized = false
   factory: { [chainId: number]: Address } = {}
@@ -156,6 +155,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
   async updatePools(currentBlockNumber: number) {
     if (this.isInitialized) {
+
       this.removeStalePools(currentBlockNumber)
 
       const initialPools = Array.from(this.initialPools.values())
@@ -172,8 +172,12 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
                 chainId: this.chainId,
                 abi: getReservesAbi,
                 functionName: 'getReserves',
+                blockTag: currentBlockNumber,
               } as const)
           ),
+        }).catch((e) => {
+          console.error(`${this.getLogPrefix()} - ERROR UPDATING POOLS, Failed to fetch reserves for initial pools`, e.message)
+          return []
         }),
         multicall(this.client, {
           multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
@@ -185,8 +189,12 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
                 chainId: this.chainId,
                 abi: getReservesAbi,
                 functionName: 'getReserves',
+                blockTag: currentBlockNumber,
               } as const)
           ),
+        }).catch((e) => {
+          console.error(`${this.getLogPrefix()} - ERROR UPDATING POOLS, Failed to fetch reserves for on demand pools`, e.message)
+          return []
         }),
       ])
 
@@ -298,7 +306,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
   stopFetchPoolsData() {
     if (this.unwatchBlockNumber) this.unwatchBlockNumber()
-    if (this.unwatchMulticall) this.unwatchMulticall()
     this.blockListener = undefined
   }
 }
