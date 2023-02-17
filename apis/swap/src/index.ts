@@ -157,7 +157,7 @@ import {
   optimism,
   polygon,
 } from '@sushiswap/viem-config'
-import { createClient, fallback, http } from 'viem'
+import { createClient, http } from 'viem'
 // import { arbitrum, bsc, celo, mainnet, optimism, polygon } from 'viem/chains'
 
 // Run the server!

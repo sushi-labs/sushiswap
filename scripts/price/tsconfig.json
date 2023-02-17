@@ -5,6 +5,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "./dist",
-    "rootDir": "."
-  }
+    "rootDir": ".",
+    "moduleResolution": "nodenext",
+    "module": "esnext"
+    },
+    "ts-node": {
+      "swc": true,
+      "esm": true
+    },
 }
