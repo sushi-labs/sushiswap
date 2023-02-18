@@ -105,6 +105,7 @@ contract RouteProcessor2 {
       if (commandCode == 1) processMyERC20(stream);
       else if (commandCode == 2) processUserERC20(stream, amountIn);
       else if (commandCode == 3) processNative(stream);
+      else if (commandCode == 4) processInsideBento(stream);
       else revert('RouteProcessor: Unknown command code');
     }
 
@@ -148,11 +149,30 @@ contract RouteProcessor2 {
     }
   }
 
+  function processInsideBento(uint256 stream) private {
+    address token = stream.readAddress();
+    uint8 num = stream.readUint8();
+
+    uint256 amountTotal = bentoBox.balanceOf(token, address(this));
+    unchecked {
+      if (amountTotal > 0) amountTotal -= 1;     // slot undrain protection
+      for (uint256 i = 0; i < num; ++i) {
+        address to = stream.readAddress();
+        uint16 share = stream.readUint16();
+        uint256 amount = (amountTotal * share) / 65535;
+        amountTotal -= amount;
+        bentoBox.transfer(token, address(this), to, amount);
+      }
+    }
+  }
+
   function swap(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
     uint8 poolType = stream.readUint8();
     if (poolType == 0) swapUniV2(stream, from, tokenIn, amountIn);
     //else if (poolType == 1) swapUniV3(stream, tokenIn, amountIn);
     else if (poolType == 2) wrapNative(stream, from, tokenIn, amountIn);
+    else if (poolType == 3) bentoBridge(stream, from, tokenIn, amountIn);
+    else if (poolType == 4) swapTrident(stream, from, tokenIn, amountIn);
     else revert('RouteProcessor: Unknown pool type');
   }
 
@@ -172,11 +192,31 @@ contract RouteProcessor2 {
     }
   }
 
+  function bentoBridge(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
+    uint8 direction = stream.readUint8();
+    address to = stream.readAddress();
+
+    if (direction > 0) {  // outside to Bento
+      if (amountIn != 0) {
+        if (from == address(this)) IERC20(tokenIn).safeTransfer(address(bentoBox), amountIn);
+        else IERC20(tokenIn).safeTransferFrom(from, address(bentoBox), amountIn);
+      } else {
+        // tokens already were transferred
+        amountIn = IERC20(tokenIn).balanceOf(address(bentoBox)) +
+        bentoBox.strategyData(tokenIn).balance -
+        bentoBox.totals(tokenIn).elastic;
+      }
+      bentoBox.deposit(tokenIn, address(bentoBox), to, amountIn, 0);
+    } else { // Bento to outside
+      if (amountIn == 0 ) amountIn = bentoBox.balanceOf(tokenIn, address(this));
+      bentoBox.withdraw(tokenIn, address(this), to, amountIn, 0);
+    }
+  }
+
   function swapUniV2(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
     address pool = stream.readAddress();
     uint8 direction = stream.readUint8();
     address to = stream.readAddress();
-    //uint8 presended = stream.readUint8();   // optimization
 
     (uint256 r0, uint256 r1, ) = IUniswapV2Pair(pool).getReserves();
     require(r0 > 0 && r1 > 0, 'Wrong pool reserves');
@@ -191,6 +231,18 @@ contract RouteProcessor2 {
     uint256 amountOut = (amountInWithFee * reserveOut) / (reserveIn * 1000 + amountInWithFee);
     (uint256 amount0Out, uint256 amount1Out) = direction == 1 ? (uint256(0), amountOut) : (amountOut, uint256(0));
     IUniswapV2Pair(pool).swap(amount0Out, amount1Out, to, new bytes(0));
+  }
+
+  function swapTrident(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
+    address pool = stream.readAddress();
+    bytes memory swapData = stream.readBytes();
+
+    if (amountIn != 0) {
+      if (from == address(this)) IERC20(tokenIn).safeTransfer(pool, amountIn);
+      else IERC20(tokenIn).safeTransferFrom(from, pool, amountIn);
+    }
+    
+    IPool(pool).swap(swapData);
   }
 
   /// @notice Performs a UniV3 pool swap
