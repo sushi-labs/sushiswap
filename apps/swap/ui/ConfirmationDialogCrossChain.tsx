@@ -1,7 +1,7 @@
 import { FC, ReactNode, useCallback, useState } from 'react'
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
 import { AppType } from '@sushiswap/ui/types'
-import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
+import { useAccount, useContractWrite, useNetwork, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
 import { useTrade } from '../lib/useTrade'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { useBalances, useCreateNotification } from '@sushiswap/react-query'
@@ -37,6 +37,7 @@ enum ConfirmationDialogState {
 
 export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps> = ({ children }) => {
   const { address } = useAccount()
+  const { chain } = useNetwork()
   const { appType, review, network0, token0, token1 } = useSwapState()
   const { setReview, setBentoboxSignature } = useSwapActions()
   const [open, setOpen] = useState(false)
@@ -52,7 +53,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     abi: getSushiXSwapContractConfig(network0).abi,
     functionName: trade?.functionName,
     args: trade?.writeArgs,
-    enabled: Boolean(trade?.writeArgs) && appType === AppType.xSwap,
+    enabled: Boolean(trade?.writeArgs) && appType === AppType.xSwap && chain?.id === network0,
     overrides: trade?.overrides,
   })
 

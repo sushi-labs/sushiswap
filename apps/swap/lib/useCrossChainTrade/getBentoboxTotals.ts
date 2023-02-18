@@ -50,14 +50,14 @@ export const getBentoboxTotals = async (chainId: ChainId | undefined, currencies
     contracts,
   })
 
-  const result: { base: JSBI; elastic: JSBI }[] = []
+  const result: { base: string; elastic: string }[] = []
   let allResolved = true
   currencies.forEach((currency, index) => {
     if (totals?.[index]) {
       const { base, elastic } = totals[index]
       result[index] = {
-        base: JSBI.BigInt(base),
-        elastic: JSBI.BigInt(elastic),
+        base: base.toHexString(),
+        elastic: elastic.toHexString(),
       }
     } else {
       allResolved = false

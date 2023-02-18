@@ -13,7 +13,7 @@ export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): 
   const [slippageTolerance] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
 
-  const { data: feeData } = useFeeData()
+  const { data: feeData } = useFeeData({ chainId: network0 })
   const sameChainTrade = _useTrade({
     chainId: network0,
     fromToken: token0,

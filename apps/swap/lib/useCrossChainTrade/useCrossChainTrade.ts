@@ -10,7 +10,6 @@ import { getBridgeFees } from './getBridgeFees'
 import { SushiXSwap } from '../SushiXSwap'
 import { useCallback } from 'react'
 import { UseCrossChainSelect, UseCrossChainTradeParams, UseCrossChainTradeQuerySelect } from './types'
-import { BigNumber } from '@ethersproject/bignumber'
 import { usePools } from './usePools'
 import { useFeeData } from 'wagmi'
 import { useBentoboxTotals } from './useRebases'
@@ -155,10 +154,6 @@ export const useCrossChainTradeQuery = (
       } else if (crossChainSwap) {
         dstMinimumAmountOut = dstTrade?.minimumAmountOut(swapSlippage)
       }
-      // NO OUTPUT ACTION?
-      // useEffect(() => setDstTypedAmount(dstAmountOut?.toFixed() ?? ''), [dstAmountOut])
-
-      const price = amount && dstAmountOut ? new Price({ baseAmount: amount, quoteAmount: dstAmountOut }) : undefined
 
       const bridgeImpact =
         !bridgeFee || !amount || !srcMinimumAmountOut
@@ -181,6 +176,8 @@ export const useCrossChainTradeQuery = (
       const nanoId = nanoid()
 
       // console.log({ recipient, amount, network0, network1, dstMinimumAmountOut, srcRebases, dstRebases, contract })
+      const [srcInputCurrencyRebase, srcOutputCurrencyRebase] = srcRebases || [undefined, undefined]
+      const [, dstOutputCurrencyRebase] = dstRebases || [undefined, undefined]
 
       if (
         !recipient ||
@@ -188,8 +185,9 @@ export const useCrossChainTradeQuery = (
         !network0 ||
         !network1 ||
         !dstMinimumAmountOut ||
-        !srcRebases ||
-        !dstRebases ||
+        !srcInputCurrencyRebase ||
+        !srcOutputCurrencyRebase ||
+        !dstOutputCurrencyRebase ||
         !contract
       ) {
         return {
@@ -206,12 +204,7 @@ export const useCrossChainTradeQuery = (
         } as UseCrossChainSelect
       }
 
-      const [srcInputCurrencyRebase, srcOutputCurrencyRebase] = srcRebases
-      const [, dstOutputCurrencyRebase] = dstRebases
-
       const srcShare = amount.toShare(srcInputCurrencyRebase)
-
-      // setIsWritePending(true)
 
       const sushiXSwap = new SushiXSwap({
         contract,
@@ -302,7 +295,6 @@ export const useCrossChainTradeQuery = (
           token0 &&
           token1 &&
           amount &&
-          recipient &&
           srcPools &&
           dstPools &&
           srcFeeData &&
