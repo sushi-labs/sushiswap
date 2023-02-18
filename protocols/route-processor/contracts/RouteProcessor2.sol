@@ -105,7 +105,8 @@ contract RouteProcessor2 {
       if (commandCode == 1) processMyERC20(stream);
       else if (commandCode == 2) processUserERC20(stream, amountIn);
       else if (commandCode == 3) processNative(stream);
-      else if (commandCode == 4) processInsideBento(stream);
+      else if (commandCode == 4) processOnePool(stream);
+      else if (commandCode == 5) processInsideBento(stream);
       else revert('RouteProcessor: Unknown command code');
     }
 
@@ -149,6 +150,13 @@ contract RouteProcessor2 {
     }
   }
 
+  // Should be used for tokens with only 1 output pool, if pool's input liquidity
+  // already have been transfered to pool 
+  function processOnePool(uint256 stream) private {
+    address token = stream.readAddress();
+    swap(stream, address(this), token, 0);
+  }
+
   function processInsideBento(uint256 stream) private {
     address token = stream.readAddress();
     uint8 num = stream.readUint8();
@@ -157,11 +165,10 @@ contract RouteProcessor2 {
     unchecked {
       if (amountTotal > 0) amountTotal -= 1;     // slot undrain protection
       for (uint256 i = 0; i < num; ++i) {
-        address to = stream.readAddress();
         uint16 share = stream.readUint16();
         uint256 amount = (amountTotal * share) / 65535;
         amountTotal -= amount;
-        bentoBox.transfer(token, address(this), to, amount);
+        swap(stream, address(this), token, amount);
       }
     }
   }
@@ -197,19 +204,22 @@ contract RouteProcessor2 {
     address to = stream.readAddress();
 
     if (direction > 0) {  // outside to Bento
+      // deposit to arbitrary recipient is possible only from address(bentoBox)
       if (amountIn != 0) {
         if (from == address(this)) IERC20(tokenIn).safeTransfer(address(bentoBox), amountIn);
         else IERC20(tokenIn).safeTransferFrom(from, address(bentoBox), amountIn);
       } else {
-        // tokens already were transferred
+        // tokens already are at address(bentoBox)
         amountIn = IERC20(tokenIn).balanceOf(address(bentoBox)) +
         bentoBox.strategyData(tokenIn).balance -
         bentoBox.totals(tokenIn).elastic;
       }
       bentoBox.deposit(tokenIn, address(bentoBox), to, amountIn, 0);
     } else { // Bento to outside
-      if (amountIn == 0 ) amountIn = bentoBox.balanceOf(tokenIn, address(this));
-      bentoBox.withdraw(tokenIn, address(this), to, amountIn, 0);
+      if (amountIn > 0) {
+        bentoBox.transfer(tokenIn, from, address(this), amountIn);
+      } else amountIn = bentoBox.balanceOf(tokenIn, address(this));
+      bentoBox.withdraw(tokenIn, address(this), to, 0, amountIn);
     }
   }
 
@@ -238,8 +248,7 @@ contract RouteProcessor2 {
     bytes memory swapData = stream.readBytes();
 
     if (amountIn != 0) {
-      if (from == address(this)) IERC20(tokenIn).safeTransfer(pool, amountIn);
-      else IERC20(tokenIn).safeTransferFrom(from, pool, amountIn);
+      bentoBox.transfer(tokenIn, from, pool, amountIn);
     }
     
     IPool(pool).swap(swapData);

@@ -48,7 +48,8 @@ class TinesToRouteProcessor2 {
 
       if (i > 0) {
         if (token.address === '') throw new Error('unexpected native inside the route: ' + token.symbol)
-        res += this.processERC20Code(true, token, route, toAddress)
+        if (this.isOnePoolOptimization(token, route)) res += this.processOnePoolCode(token, route, toAddress)
+        else res += this.processERC20Code(true, token, route, toAddress)
       } else {
         if (token.address == '') {
           if (this.chainId == ChainId.CELO) res += this.processERC20Code(true, token, route, toAddress)
@@ -93,6 +94,36 @@ class TinesToRouteProcessor2 {
     return hex.toString()
   }
 
+  processOnePoolCode(token: RToken, route: MultiRoute, toAddress: string): string {
+    const outputLegs = this.tokenOutputLegs.get(token.tokenId as string)
+    if (!outputLegs || outputLegs.length != 1) {
+      throw new Error('1 output leg expected ' + outputLegs?.length)
+    }
+
+    const hex = new HEXer()
+      .uint8(4) // processOnePool commandCode
+      .address(token.address)
+      .hexData(this.swapCode(outputLegs[0], route, toAddress))
+    return hex.toString()
+  }
+
+  processBentoCode(token: RToken, route: MultiRoute, toAddress: string): string {
+    const outputLegs = this.tokenOutputLegs.get(token.tokenId as string)
+    if (!outputLegs || outputLegs.length == 0) {
+      throw new Error('No output legs for token ' + outputLegs?.length)
+    }
+
+    const hex = new HEXer()
+      .uint8(5) // processInsideBento commandCode
+      .address(token.address)
+      .uint8(outputLegs.length)
+
+    outputLegs.forEach((l) => {
+      hex.share16(l.swapPortion).hexData(this.swapCode(l, route, toAddress))
+    })
+    return hex.toString()
+  }
+
   swapCode(leg: RouteLeg, route: MultiRoute, toAddress: string): string {
     const pc = this.getPoolCode(leg)
     const to = this.getPoolOutputAddress(leg, route, toAddress)
@@ -112,6 +143,14 @@ class TinesToRouteProcessor2 {
       outAddress = this.routeProcessorAddress
     }
     return outAddress
+  }
+
+  isOnePoolOptimization(token: RToken, route: MultiRoute) {
+    const outputDistribution = this.tokenOutputLegs.get(token.tokenId as string) || []
+    if (outputDistribution.length != 1) return false
+
+    const startPoint = this.getPoolCode(outputDistribution[0]).getStartPoint(outputDistribution[0], route)
+    return startPoint == outputDistribution[0].poolAddress
   }
 
   getPoolCode(l: RouteLeg): PoolCode {
