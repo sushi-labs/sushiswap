@@ -92,14 +92,14 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
 
   console.log(`Network: ${chainName[chainId]}, Forked Block: ${provider.blockNumber}`)
   //console.log('    User creation ...')
-  const [Alice, Bob] = await ethers.getSigners()
+  const [Alice] = await ethers.getSigners()
 
   return {
     chainId,
     provider,
     rp: routeProcessor,
     user: Alice,
-    user2: Bob,
+    user2: await ethers.getSigner('0xbc4a6be1285893630d45c881c6c343a65fdbe278'),
     dataFetcher,
   }
 }
@@ -251,6 +251,7 @@ async function checkTransferAndRoute(
   })
   await waiter.wait()
   router.stopRouting()
+  //console.log(router.getBestRoute()?.legs)
 
   const rpParams = router.getCurrentRouteRPParams(env.user.address, env.rp.address) as RPParams
   const transferValue = getBigNumber(0.02 * Math.pow(10, Native.onChain(env.chainId).decimals))
@@ -401,20 +402,52 @@ describe('End-to-end Router test', async function () {
     expect(route).not.undefined
   })
 
-  it('Transfer value and route 1', async function () {
-    intermidiateResult[0] = getBigNumber(1e18)
-    intermidiateResult = await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
-    intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, USDC_LOCAL, intermidiateResult)
-    intermidiateResult = await checkTransferAndRoute(env, USDC_LOCAL, Native.onChain(chainId), intermidiateResult)
-  })
+  if (network.config.chainId == ChainId.POLYGON) {
+    it('Transfer value and route 1', async function () {
+      intermidiateResult[0] = getBigNumber(1e18)
+      intermidiateResult = await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
+      intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, USDC_LOCAL, intermidiateResult)
+      intermidiateResult = await checkTransferAndRoute(env, USDC_LOCAL, Native.onChain(chainId), intermidiateResult)
+    })
 
-  it('Transfer value and route 2', async function () {
-    intermidiateResult[0] = getBigNumber(1e18)
-    intermidiateResult = await checkTransferAndRoute(env, Native.onChain(chainId), WNATIVE[chainId], intermidiateResult)
-    intermidiateResult = await checkTransferAndRoute(env, WNATIVE[chainId], SUSHI_LOCAL, intermidiateResult)
-    intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, WNATIVE[chainId], intermidiateResult)
-    intermidiateResult = await checkTransferAndRoute(env, WNATIVE[chainId], Native.onChain(chainId), intermidiateResult)
-  })
+    it('Transfer value and route 2', async function () {
+      intermidiateResult[0] = getBigNumber(1e18)
+      intermidiateResult = await checkTransferAndRoute(
+        env,
+        Native.onChain(chainId),
+        WNATIVE[chainId],
+        intermidiateResult
+      )
+      intermidiateResult = await checkTransferAndRoute(env, WNATIVE[chainId], SUSHI_LOCAL, intermidiateResult)
+      intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, WNATIVE[chainId], intermidiateResult)
+      intermidiateResult = await checkTransferAndRoute(
+        env,
+        WNATIVE[chainId],
+        Native.onChain(chainId),
+        intermidiateResult
+      )
+    })
+
+    it('Transfer value and route 3 - check EOA', async function () {
+      intermidiateResult[0] = getBigNumber(1e18)
+      env.user2 = await ethers.getSigner('0x0000000000000000000000000000000000000001')
+      intermidiateResult = await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
+      intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, USDC_LOCAL, intermidiateResult)
+      intermidiateResult = await checkTransferAndRoute(env, USDC_LOCAL, Native.onChain(chainId), intermidiateResult)
+    })
+
+    it('Transfer value and route 4 - not payable address', async function () {
+      intermidiateResult[0] = getBigNumber(1e18)
+      env.user2 = await ethers.getSigner('0x597A9bc3b24C2A578CCb3aa2c2C62C39427c6a49')
+      let throwed = false
+      try {
+        await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
+      } catch (e) {
+        throwed = true
+      }
+      expect(throwed, 'Transfer value to not payable address should fail').equal(true)
+    })
+  }
 
   it.skip('AnyChart Sankey Diargam data generation Native=>SUSHI', async function () {
     intermidiateResult[0] = getBigNumber(1000000 * 1e18)

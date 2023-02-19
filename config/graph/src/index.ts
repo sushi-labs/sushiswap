@@ -229,6 +229,9 @@ export const MINICHEF_SUBGRAPH_NAME = {
   [ChainId.BOBA]: 'sushiswap/minichef-boba',
   [ChainId.ARBITRUM_NOVA]: 'sushiswap/minichef-arbitrum-nova',
   [ChainId.BTTC]: 'sushiswap/minichef-bttc',
+  [ChainId.OPTIMISM]: 'sushiswap/minichef-optimism',
+  [ChainId.AVALANCHE]: 'sushiswap/minichef-avalanche',
+  [ChainId.BSC]: 'sushiswap/minichef-bsc',
 } as const
 
 export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging' as const
