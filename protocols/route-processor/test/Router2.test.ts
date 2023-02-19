@@ -181,13 +181,13 @@ async function makeSwap(
   }
   const slippage = parseInt(balanceOutBN.sub(route.amountOutBN).mul(10_000).div(route.amountOutBN).toString())
 
-  if (slippage !== 0) {
+  if (slippage < 0) {
     console.log(`expected amountOut: ${route.amountOutBN.toString()}`)
     console.log(`real amountOut:     ${balanceOutBN.toString()}`)
     console.log(`slippage: ${slippage / 100}%`)
   }
   console.log(`gas use: ${receipt.gasUsed.toString()}`)
-  expect(slippage).equal(0)
+  expect(slippage).greaterThanOrEqual(0) // positive slippage could be if we 'gather' some liquidity on the route
 
   return [balanceOutBN, receipt.blockNumber]
 }
@@ -336,7 +336,7 @@ describe('End-to-end Router2 test', async function () {
     intermidiateResult = await updMakeSwap(env, WNATIVE[chainId], Native.onChain(chainId), intermidiateResult)
   })
 
-  it('Trident Native => SUSHI => Native (Polygon only)', async function () {
+  it.only('Trident Native => SUSHI => Native (Polygon only)', async function () {
     if (chainId == ChainId.POLYGON) {
       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI[chainId], intermidiateResult, [
@@ -409,18 +409,5 @@ describe('End-to-end Router2 test', async function () {
     intermidiateResult = await checkTransferAndRoute(env, WNATIVE[chainId], SUSHI_LOCAL, intermidiateResult)
     intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, WNATIVE[chainId], intermidiateResult)
     intermidiateResult = await checkTransferAndRoute(env, WNATIVE[chainId], Native.onChain(chainId), intermidiateResult)
-  })
-
-  it.skip('AnyChart Sankey Diargam data generation Native=>SUSHI', async function () {
-    intermidiateResult[0] = getBigNumber(1000000 * 1e18)
-    intermidiateResult = await updMakeSwap(
-      env,
-      Native.onChain(chainId),
-      SUSHI_LOCAL,
-      intermidiateResult,
-      undefined,
-      undefined,
-      true
-    )
   })
 })

@@ -49,7 +49,8 @@ class TinesToRouteProcessor2 {
       if (i > 0) {
         if (token.address === '') throw new Error('unexpected native inside the route: ' + token.symbol)
         if (this.isOnePoolOptimization(token, route)) res += this.processOnePoolCode(token, route, toAddress)
-        else res += this.processERC20Code(true, token, route, toAddress)
+        else if (getTokenType(token) == TokenType.ERC20) res += this.processERC20Code(true, token, route, toAddress)
+        else res += this.processBentoCode(token, route, toAddress)
       } else {
         if (token.address == '') {
           if (this.chainId == ChainId.CELO) res += this.processERC20Code(true, token, route, toAddress)
