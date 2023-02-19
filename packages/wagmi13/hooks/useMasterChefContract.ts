@@ -1,8 +1,8 @@
-import {masterChefV1Abi, masterChefV2Abi, miniChefAbi} from '@sushiswap/abi'
-import {ChainId} from '@sushiswap/chain'
-import {Address, useContract, useProvider} from 'wagmi'
+import { masterChefV1Abi, masterChefV2Abi, miniChefAbi } from '@sushiswap/abi'
+import { ChainId } from '@sushiswap/chain'
+import { Address, useContract, useProvider } from 'wagmi'
 
-import {Chef} from './useMasterChef'
+import { Chef } from './useMasterChef'
 
 // TODO move to package
 export const MASTERCHEF_ADDRESS = {

@@ -6,6 +6,7 @@ import { stablePoolAbi, stablePoolFactoryAbi } from '@sushiswap/wagmi/abis'
 import { BigNumber } from 'ethers'
 import { getContract } from 'wagmi/actions'
 import { getBentoboxTotals } from './getBentoboxTotals'
+import { JSBI } from '@sushiswap/math'
 
 interface PoolData {
   address: string
@@ -122,8 +123,8 @@ export const getStablePools = async (
         Amount.fromRawAmount(p.token0, reserves[i]._reserve0.toString()),
         Amount.fromRawAmount(p.token1, reserves[i]._reserve1.toString()),
         parseInt(fees[i].toString()),
-        totals[0],
-        totals[1]
+        { base: JSBI.BigInt(totals[0].base), elastic: JSBI.BigInt(totals[0].elastic) },
+        { base: JSBI.BigInt(totals[1].base), elastic: JSBI.BigInt(totals[1].elastic) }
       ),
     ]
   })

@@ -34,6 +34,7 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules }) => {
       />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="!bg-gray-100 dark:!bg-slate-900 flex flex-col gap-3">
+          <Dialog.Header title="Settings" onClose={() => setOpen(false)} />
           {modules.includes(SettingsModule.SlippageTolerance) && (
             <List className="!pt-0">
               <List.Control>

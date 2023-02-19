@@ -19,7 +19,7 @@ export const PricePanel: FC<PricePanel> = ({ loading, price, currency, value, us
 
   if (loading)
     return (
-      <div className="h-[36px] w-1/5 flex items-center">
+      <div className="w-1/5 flex items-center">
         <Skeleton.Text fontSize="text-lg" className="w-full" />
       </div>
     )
@@ -29,7 +29,7 @@ export const PricePanel: FC<PricePanel> = ({ loading, price, currency, value, us
   }
 
   return (
-    <p className="font-medium text-lg py-1 select-none text-gray-500 dark:text-slate-400">
+    <p className="font-medium text-lg flex items-center select-none text-gray-500 dark:text-slate-400">
       {!loading && price?.equalTo(ZERO) ? (
         <span className="text-sm flex items-center">Price not available</span>
       ) : (

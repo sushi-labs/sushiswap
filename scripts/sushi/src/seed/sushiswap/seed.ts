@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { client, Prisma } from '@sushiswap/database'
+import { client, Prisma, PrismaClient } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 import { getBuiltGraphSDK, PairsQuery } from '../../../.graphclient/index.js'
@@ -12,11 +12,12 @@ const PROTOCOL = ProtocolName.SUSHISWAP
 const VERSIONS = ['LEGACY', 'TRIDENT']
 
 export async function sushiSwap() {
+  const client = new PrismaClient()
   try {
     const startTime = performance.now()
     console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}`)
 
-    await start()
+    await start(client)
 
     const endTime = performance.now()
     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
@@ -28,7 +29,7 @@ export async function sushiSwap() {
   }
 }
 
-async function start() {
+async function start(client: PrismaClient) {
   const subgraphs = [
     TRIDENT_CHAINS.map((chainId) => {
       return { chainId, host: GRAPH_HOST[chainId], name: TRIDENT_SUBGRAPH_NAME[chainId] }
@@ -47,7 +48,7 @@ async function start() {
 
     // Continue from the latest pool creation timestamp,
     // if null, then it's the first time seeding and we grab everything
-    const latestPoolTimestamp = await getLatestPoolTimestamp(chainId, PROTOCOL, VERSIONS)
+    const latestPoolTimestamp = await getLatestPoolTimestamp(client, chainId, PROTOCOL, VERSIONS)
 
     const sdk = getBuiltGraphSDK({ chainId, host: subgraph.host, name: subgraph.name })
 
@@ -92,7 +93,7 @@ async function start() {
         // NOTE: This shouldn't have to be async, but was seeing this error:
         // (unlocked closed connection) (CallerID: planetscale-admin)'
         // this script doesn't have to be super fast, so keeping it async to not throttle the db
-        await Promise.all([createTokens(tokens), createPools(pools)])
+        await Promise.all([createTokens(client, tokens), createPools(client, pools)])
       }
 
       const newCursor = request?.pairs[request.pairs.length - 1]?.id ?? ''

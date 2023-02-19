@@ -174,32 +174,32 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
 } as const
 
 export const SUSHISWAP_SUBGRAPH_NAME = {
-  [ChainId.ETHEREUM]: 'sushi-0m/sushiswap-ethereum-v2',
-  [ChainId.AVALANCHE]: 'sushi-0m/sushiswap-avalanche',
+  [ChainId.ETHEREUM]: 'sushi-v2/sushiswap-ethereum',
+  [ChainId.AVALANCHE]: 'sushi-v2/sushiswap-avalanche',
   [ChainId.ARBITRUM]: 'sushi-v2/sushiswap-arbitrum',
-  [ChainId.BSC]: 'sushi-0m/sushiswap-bsc',
-  [ChainId.CELO]: 'sushi-0m/sushiswap-celo',
-  [ChainId.FANTOM]: 'sushi-0m/sushiswap-fantom',
-  [ChainId.FUSE]: 'sushi-0m/sushiswap-fuse',
-  [ChainId.GNOSIS]: 'sushi-0m/sushiswap-gnosis',
-  [ChainId.MOONBEAM]: 'sushi-0m/sushiswap-moonbeam',
-  [ChainId.MOONRIVER]: 'sushi-0m/sushiswap-moonriver',
+  [ChainId.BSC]: 'sushi-v2/sushiswap-bsc',
+  [ChainId.CELO]: 'sushi-v2/sushiswap-celo',
+  [ChainId.FANTOM]: 'sushi-v2/sushiswap-fantom',
+  [ChainId.FUSE]: 'sushi-v2/sushiswap-fuse',
+  [ChainId.GNOSIS]: 'sushi-v2/sushiswap-gnosis',
+  [ChainId.MOONBEAM]: 'sushi-v2/sushiswap-moonbeam',
+  [ChainId.MOONRIVER]: 'sushi-v2/sushiswap-moonriver',
   [ChainId.HARMONY]: 'olastenberg/sushiswap-harmony-fix',
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
-  [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
-  [ChainId.POLYGON]: 'subgraph-qa/sushiswap-polygon',
+  [ChainId.BOBA]: 'sushi-v2/sushiswap-boba',
+  [ChainId.POLYGON]: 'sushi-v2/sushiswap-polygon',
   [ChainId.BOBA_AVAX]: 'sushi-0m/sushiswap-boba-avax',
   [ChainId.BOBA_BNB]: 'sushi-0m/sushiswap-boba-bnb',
 } as const
 
 export const TRIDENT_SUBGRAPH_NAME = {
   [ChainId.POLYGON]: 'sushi-v2/trident-polygon',
-  [ChainId.OPTIMISM]: 'sushi-qa/trident-optimism',
-  [ChainId.KAVA]: 'sushi-qa/trident-kava',
-  [ChainId.METIS]: 'sushi-qa/trident-metis',
-  [ChainId.BTTC]: 'sushi-qa/trident-bttc',
+  [ChainId.OPTIMISM]: 'sushi-v2/trident-optimism',
+  [ChainId.KAVA]: 'sushi-v2/trident-kava',
+  [ChainId.METIS]: 'sushi-v2/trident-metis',
+  [ChainId.BTTC]: 'sushi-v2/trident-bttc',
   [ChainId.ARBITRUM]: 'sushi-v2/trident-arbitrum',
-  [ChainId.BSC]: 'sushi-qa/trident-bsc',
+  [ChainId.BSC]: 'sushi-v2/trident-bsc',
   [ChainId.AVALANCHE]: 'sushi-v2/trident-avalanche',
 } as const
 
@@ -228,6 +228,10 @@ export const MINICHEF_SUBGRAPH_NAME = {
   [ChainId.METIS]: 'sushiswap/metis-minichef',
   [ChainId.BOBA]: 'sushiswap/minichef-boba',
   [ChainId.ARBITRUM_NOVA]: 'sushiswap/minichef-arbitrum-nova',
+  [ChainId.BTTC]: 'sushiswap/minichef-bttc',
+  [ChainId.OPTIMISM]: 'sushiswap/minichef-optimism',
+  [ChainId.AVALANCHE]: 'sushiswap/minichef-avalanche',
+  [ChainId.BSC]: 'sushiswap/minichef-bsc',
 } as const
 
 export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging' as const

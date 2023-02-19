@@ -24,7 +24,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
   blockListener?: () => void
   unwatchBlockNumber?: () => void
-  unwatchMulticall?: () => void
   fee = 0.003
   isInitialized = false
   factory: { [chainId: number]: Address } = {}
@@ -156,6 +155,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
   async updatePools(currentBlockNumber: number) {
     if (this.isInitialized) {
+
       this.removeStalePools(currentBlockNumber)
 
       const initialPools = Array.from(this.initialPools.values())
@@ -298,7 +298,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
   stopFetchPoolsData() {
     if (this.unwatchBlockNumber) this.unwatchBlockNumber()
-    if (this.unwatchMulticall) this.unwatchMulticall()
     this.blockListener = undefined
   }
 }

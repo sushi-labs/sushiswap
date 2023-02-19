@@ -103,7 +103,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
       className={classNames(
         fetching && type === 'OUTPUT' ? 'shimmer-fast' : '',
         insufficientBalance ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
-        'space-y-1 overflow-hidden',
+        'space-y-2 overflow-hidden pb-2',
         className
       )}
       onClick={focusInput}
@@ -166,7 +166,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           </TokenSelector>
         )}
       </div>
-      <div className="flex flex-row justify-between">
+      <div className="flex flex-row justify-between h-[36px]">
         <PricePanel
           value={value}
           currency={currency}
@@ -175,18 +175,16 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           loading={isLoading || init}
           price={price}
         />
-        <div className="h-6">
-          <BalancePanel
-            id={id}
-            loading={isLoading || init}
-            chainId={chainId}
-            account={address}
-            onChange={onChange}
-            currency={currency}
-            disableMaxButton={disableMaxButton}
-            balance={balance}
-          />
-        </div>
+        <BalancePanel
+          id={id}
+          loading={isLoading || init}
+          chainId={chainId}
+          account={address}
+          onChange={onChange}
+          currency={currency}
+          disableMaxButton={disableMaxButton}
+          balance={balance}
+        />
       </div>
     </div>
   )

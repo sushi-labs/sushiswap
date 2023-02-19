@@ -1,5 +1,5 @@
 import { ChainId, chainName } from '@sushiswap/chain'
-import { client, Prisma } from '@sushiswap/database'
+import { client, Prisma, PrismaClient } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 import { getBuiltGraphSDK, V2PairsQuery } from '../../../../.graphclient/index.js'
@@ -15,11 +15,12 @@ const SWAP_FEE = 0.003
 const TWAP_ENABLED = true
 
 export async function netSwapV2() {
+  const client = new PrismaClient()
   try {
     const startTime = performance.now()
     console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}`)
 
-    await start()
+    await start(client)
 
     const endTime = performance.now()
     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
@@ -31,7 +32,7 @@ export async function netSwapV2() {
   }
 }
 
-async function start() {
+async function start(client: PrismaClient) {
   console.log(
     `Fetching pools from ${PROTOCOL} ${VERSION}, chains: ${NETSWAP_V2_SUPPORTED_CHAINS.map(
       (chainId) => chainName[chainId]
@@ -42,7 +43,7 @@ async function start() {
   for (const chainId of NETSWAP_V2_SUPPORTED_CHAINS) {
     // Continue from the latest pool creation timestamp,
     // if null, then it's the first time seeding and we grab everything
-    const latestPoolTimestamp = await getLatestPoolTimestamp(chainId, PROTOCOL, [VERSION])
+    const latestPoolTimestamp = await getLatestPoolTimestamp(client, chainId, PROTOCOL, [VERSION])
 
     const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: NETSWAP_V2_SUBGRAPH_NAME[chainId] })
     if (!NETSWAP_V2_SUBGRAPH_NAME[chainId]) {
@@ -90,7 +91,7 @@ async function start() {
         // NOTE: This shouldn't have to be async, but was seeing this error:
         // (unlocked closed connection) (CallerID: planetscale-admin)'
         // this script doesn't have to be super fast, so keeping it async to not throttle the db
-        await Promise.all([createTokens(tokens), createPools(pools)])
+        await Promise.all([createTokens(client, tokens), createPools(client, pools)])
       }
 
       const newCursor = request?.V2_pairs[request.V2_pairs.length - 1]?.id ?? ''

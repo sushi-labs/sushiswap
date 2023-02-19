@@ -83,7 +83,6 @@ export class TridentProvider extends LiquidityProvider {
 
   async initialize(blockNumber: number) {
     this.isInitialized = true
-
     const topPools = await getTopPools(
       this.chainId,
       'SushiSwap',
@@ -114,7 +113,7 @@ export class TridentProvider extends LiquidityProvider {
     const stablePools = pools.filter((p) => p.type === 'STABLE_POOL')
     const sortedTokens = this.poolResponseToSortedTokens(pools)
 
-    const cppReservePromise = await multicall(this.client, {
+    const classicReservePromise = multicall(this.client, {
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
       contracts: pools.map(
@@ -172,16 +171,16 @@ export class TridentProvider extends LiquidityProvider {
       ),
     })
 
-    const [cppReserves, stableReserves, totals, balances] = await Promise.all([
-      cppReservePromise,
+    const [classicReserves, stableReserves, totals, balances] = await Promise.all([
+      classicReservePromise,
       stableReservePromise,
       totalsPromise,
       balancesPromise,
     ])
 
     classicPools.forEach((pr, i) => {
-      const res0 = cppReserves?.[i]?.result?.[0]
-      const res1 = cppReserves?.[i]?.result?.[1]
+      const res0 = classicReserves?.[i]?.result?.[0]
+      const res1 = classicReserves?.[i]?.result?.[1]
       if (!res0 || !res1) return
       const tokens = [convertTokenToBento(pr.token0), convertTokenToBento(pr.token1)]
       const rPool = new ConstantProductRPool(
@@ -223,7 +222,6 @@ export class TridentProvider extends LiquidityProvider {
     })
 
     stablePools.forEach((pr, i) => {
-      //   const res = stableReserves[i]
       const res0 = stableReserves?.[i]?.result?.[0]
       const res1 = stableReserves?.[i]?.result?.[1]
       const totals0 = rebases.get(pr.token0.address)
@@ -270,7 +268,6 @@ export class TridentProvider extends LiquidityProvider {
           } as const)
       ),
     })
-
     const onDemandClassicReservePromise = multicall(this.client, {
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
@@ -364,23 +361,25 @@ export class TridentProvider extends LiquidityProvider {
       const elastic = totals?.[i]?.result?.[0]
       const base = totals?.[i]?.result?.[1]
       const balance = balances?.[i]?.result
-      if (
-        !elastic ||
-        !base ||
-        !balance ||
-        !bridge.reserve0.eq(BigNumber.from(elastic)) ||
-        !bridge.reserve1.eq(BigNumber.from(base))
-      ) {
+      if (!elastic || !base || !balance) {
         return
       }
       const elasticBN = BigNumber.from(elastic)
       const baseBN = BigNumber.from(base)
-
-      bridge.updateReserves(elasticBN, baseBN)
       rebases.set(t.address, {
         elastic: elasticBN,
         base: baseBN,
       })
+      if (!bridge.reserve0.eq(elasticBN) || !bridge.reserve1.eq(baseBN)) {
+        bridge.updateReserves(elasticBN, baseBN)
+        console.debug(`${this.getLogPrefix()} - BRIDGE REBASE UPDATE: ${bridge.token0.symbol} ${bridge.reserve0} ${bridge.reserve1}`)
+      }
+
+      if (bridge.freeLiquidity !== Number(balance)) {
+        bridge.freeLiquidity = Number(balance)
+        console.debug(`${this.getLogPrefix()} - BRIDGE BALANCE UPDATE: ${bridge.token0.symbol} ${bridge.freeLiquidity}`)
+      }
+
     })
 
     this.updateStablePools(initialStablePools, rebases, initStableReserves)
@@ -391,7 +390,7 @@ export class TridentProvider extends LiquidityProvider {
 
   async getOnDemandPools(t0: Token, t1: Token): Promise<void> {
     console.debug(
-      `****** MEM - ${this.getType()} init classic pools: ${this.initialClassicPools.size} 
+      `****** MEM - ${this.getLogPrefix()} init classic pools: ${this.initialClassicPools.size} 
       on demand classic pools: ${this.onDemandClassicPools.size} 
       init stable pools: ${this.initialStablePools.size} 
       on demand stable pools: ${this.onDemandStablePools.size} 
@@ -575,9 +574,13 @@ export class TridentProvider extends LiquidityProvider {
 
       const res0BN = BigNumber.from(res0)
       const res1BN = BigNumber.from(res1)
-      if (!res0 || !res1 || !pool.reserve0.eq(res0BN) || !pool.reserve1.eq(res1BN)) {
+      if (!res0 || !res1) {
         return
       }
+      if (pool.reserve0.eq(res0BN) && pool.reserve1.eq(res1BN)) {
+        return
+      }
+
       pool.updateReserves(res0BN, res1BN)
       ++this.stateId
       console.info(
