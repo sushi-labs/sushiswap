@@ -16,7 +16,12 @@ interface UsePoolsParams {
   tradeType?: TradeType
 }
 
-export type UsePoolsReturn = (Pair | ConstantProductPool | StablePool)[] | undefined
+export type UsePoolsReturn = {
+  pairs: Pair[] | undefined
+  constantProductPools: ConstantProductPool[] | undefined
+  stablePools: StablePool[] | undefined
+}
+
 type UsePoolsQuerySelect = (data: Awaited<ReturnType<typeof queryFn>>) => UsePoolsReturn
 
 const queryFn = async ({ currencyA, currencyB, chainId, tradeType = TradeType.EXACT_INPUT }: UsePoolsParams) => {
@@ -32,7 +37,11 @@ const queryFn = async ({ currencyA, currencyB, chainId, tradeType = TradeType.EX
     getStablePools(chainId, currencyCombinations),
   ])
 
-  return [...pairs, ...constantProductPools, ...stablePools]
+  return {
+    pairs,
+    constantProductPools,
+    stablePools,
+  }
 }
 
 export const usePoolsQuery = (variables: UsePoolsParams, select: UsePoolsQuerySelect) => {
@@ -49,21 +58,27 @@ export const usePoolsQuery = (variables: UsePoolsParams, select: UsePoolsQuerySe
 
 export const usePools = (variables: UsePoolsParams) => {
   const select: UsePoolsQuerySelect = useCallback((data) => {
-    return Object.values(
-      data
-        .filter(
-          (
-            result
-          ): result is
-            | [PairState.EXISTS, Pair]
-            | [ConstantProductPoolState.EXISTS, ConstantProductPool]
-            | [StablePoolState.EXISTS, StablePool] =>
-            Boolean(result[0] === PairState.EXISTS && result[1]) ||
-            Boolean(result[0] === ConstantProductPoolState.EXISTS && result[1]) ||
+    return {
+      pairs: Object.values(
+        data.pairs
+          .filter((result): result is [PairState.EXISTS, Pair] => Boolean(result[0] === PairState.EXISTS && result[1]))
+          .map(([, pair]) => pair)
+      ),
+      constantProductPools: Object.values(
+        data.constantProductPools
+          .filter((result): result is [ConstantProductPoolState.EXISTS, ConstantProductPool] =>
+            Boolean(result[0] === ConstantProductPoolState.EXISTS && result[1])
+          )
+          .map(([, pair]) => pair)
+      ),
+      stablePools: Object.values(
+        data.stablePools
+          .filter((result): result is [StablePoolState.EXISTS, StablePool] =>
             Boolean(result[0] === StablePoolState.EXISTS && result[1])
-        )
-        .map(([, pair]) => pair)
-    )
+          )
+          .map(([, pair]) => pair)
+      ),
+    }
   }, [])
 
   return usePoolsQuery(variables, select)

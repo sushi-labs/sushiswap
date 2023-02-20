@@ -67,7 +67,7 @@ export const getTrade = async ({
           currencyIn.wrapped,
           currencyOut.wrapped,
           BigNumber.from(amountSpecified.quotient.toString()),
-          pools.filter((pool): pool is Pair => pool instanceof Pair),
+          pools.pairs || [],
           WNATIVE[amountSpecified.currency.chainId],
           feeData.gasPrice.toNumber()
         )
@@ -76,10 +76,7 @@ export const getTrade = async ({
           currencyIn.wrapped,
           currencyOut.wrapped,
           BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
-          [
-            ...pools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
-            ...pools.filter((pool): pool is StablePool => pool instanceof StablePool),
-          ],
+          [...(pools.constantProductPools || []), ...(pools.stablePools || [])],
           WNATIVE[amountSpecified.currency.chainId],
           feeData.gasPrice.toNumber()
         )
@@ -107,7 +104,7 @@ export const getTrade = async ({
         currencyIn.wrapped,
         currencyOut.wrapped,
         BigNumber.from(amountSpecified.quotient.toString()),
-        pools.filter((pool): pool is Pair => pool instanceof Pair),
+        pools.pairs || [],
         WNATIVE[amountSpecified.currency.chainId],
         feeData.gasPrice.toNumber()
       )
@@ -124,10 +121,7 @@ export const getTrade = async ({
         currencyIn.wrapped,
         currencyOut.wrapped,
         BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
-        [
-          ...pools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
-          ...pools.filter((pool): pool is StablePool => pool instanceof StablePool),
-        ],
+        [...(pools.constantProductPools || []), ...(pools.stablePools || [])],
         WNATIVE[amountSpecified.currency.chainId],
         feeData.gasPrice.toNumber()
       )

@@ -56,8 +56,16 @@ export const useCrossChainTradeQuery = (
   const dstCurrencyA = crossChainSwap || transferSwap ? dstBridgeToken : undefined
   const dstCurrencyB = crossChainSwap || transferSwap ? token1 : undefined
 
-  const { data: srcPools } = usePools({ chainId: network0, currencyA: srcCurrencyA, currencyB: srcCurrencyB })
-  const { data: dstPools } = usePools({ chainId: network1, currencyA: dstCurrencyA, currencyB: dstCurrencyB })
+  const { data: srcPools, isFetched: srcPoolsFetched } = usePools({
+    chainId: network0,
+    currencyA: srcCurrencyA,
+    currencyB: srcCurrencyB,
+  })
+  const { data: dstPools, isFetched: dstPoolsFetched } = usePools({
+    chainId: network1,
+    currencyA: dstCurrencyA,
+    currencyB: dstCurrencyB,
+  })
   const { data: srcFeeData } = useFeeData({ chainId: network0 })
   const { data: dstFeeData } = useFeeData({ chainId: network1 })
   const { data: srcRebases } = useBentoboxTotals({ chainId: network0, currencies: [srcCurrencyA, srcCurrencyB] })
@@ -86,8 +94,14 @@ export const useCrossChainTradeQuery = (
         transferSwap,
         srcRebases,
         dstRebases,
-        srcPools: srcPools?.length,
-        dstPools: dstPools?.length,
+        srcPools:
+          (srcPools?.pairs?.length || 0) +
+          (srcPools?.constantProductPools?.length || 0) +
+          (srcPools?.stablePools?.length || 0),
+        dstPools:
+          (dstPools?.pairs?.length || 0) +
+          (dstPools?.constantProductPools?.length || 0) +
+          (dstPools?.stablePools?.length || 0),
       },
     ],
     queryFn: async () => {
@@ -310,8 +324,8 @@ export const useCrossChainTradeQuery = (
           dstFeeData &&
           srcRebases &&
           dstRebases &&
-          dstPools.length > 0 &&
-          srcPools.length > 0
+          srcPoolsFetched &&
+          dstPoolsFetched
       ),
   })
 }
