@@ -1,7 +1,7 @@
-import { client, Prisma } from '@sushiswap/database'
+import { Prisma,PrismaClient } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
-export async function createTokens(tokens: Prisma.TokenCreateManyInput[]) {
+export async function createTokens(client: PrismaClient, tokens: Prisma.TokenCreateManyInput[]) {
   if (tokens.length === 0) {
     return
   }

@@ -1,7 +1,7 @@
 import '../lib/wagmi.js'
 
 import { ChainId } from '@sushiswap/chain'
-import { client, Prisma, Token as PrismaToken } from '@sushiswap/database'
+import { Prisma, PrismaClient, Token as PrismaToken } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 import { PoolType, ProtocolVersion } from '../config.js'
@@ -9,14 +9,16 @@ import { PoolType, ProtocolVersion } from '../config.js'
 const SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 const SUPPORTED_TYPES = [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL]
 
+
 export async function liquidity(chainId: ChainId) {
+  const client = new PrismaClient()
   try {
     const startTime = performance.now()
     console.log(`LIQUIDITY - CHAIN_ID: ${chainId}, VERSIONS: ${SUPPORTED_VERSIONS}, TYPE: ${SUPPORTED_TYPES}`)
 
-    const pools = await getPools(chainId)
+    const pools = await getPools(client, chainId)
     const poolsToUpdate = transform(pools)
-    await updatePools(poolsToUpdate)
+    await updatePools(client, poolsToUpdate)
 
     const endTime = performance.now()
     console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
@@ -28,7 +30,7 @@ export async function liquidity(chainId: ChainId) {
   }
 }
 
-async function getPools(chainId: ChainId) {
+async function getPools(client: PrismaClient, chainId: ChainId) {
   const startTime = performance.now()
   const batchSize = 2500
   let cursor = null
@@ -38,9 +40,9 @@ async function getPools(chainId: ChainId) {
     const requestStartTime = performance.now()
     let result = []
     if (!cursor) {
-      result = await getPoolsByPagination(chainId, batchSize)
+      result = await getPoolsByPagination(client, chainId, batchSize)
     } else {
-      result = await getPoolsByPagination(chainId, batchSize, 1, { id: cursor })
+      result = await getPoolsByPagination(client, chainId, batchSize, 1, { id: cursor })
     }
     cursor = result.length == batchSize ? result[result.length - 1].id : null
     totalCount += result.length
@@ -60,6 +62,7 @@ async function getPools(chainId: ChainId) {
 }
 
 async function getPoolsByPagination(
+  client: PrismaClient,
   chainId: ChainId,
   take?: number,
   skip?: number,
@@ -139,7 +142,7 @@ function transform(pools: Pool[]) {
   return poolsToUpdate
 }
 
-async function updatePools(pools: PoolWithLiquidity[]) {
+async function updatePools(client: PrismaClient, pools: PoolWithLiquidity[]) {
   const startTime = performance.now()
   const batchSize = 250
   let updatedCount = 0

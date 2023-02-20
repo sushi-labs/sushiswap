@@ -23,12 +23,14 @@ interface SwapReviewModalLegacy {
 }
 
 const BANNER_URLS = [
-  'https://cdn.sushi.com/image/upload/v1676283579/Valentine_s_3.jpg',
-  'https://cdn.sushi.com/image/upload/v1676283579/Valentine_s23.jpg',
-  'https://cdn.sushi.com/image/upload/v1676283580/Valentine_s_1.jpg',
-  'https://cdn.sushi.com/image/upload/v1676283579/Valentine_s_2.jpg',
-  'https://cdn.sushi.com/image/upload/v1676283579/Valentine_s23_1.jpg',
-  'https://cdn.sushi.com/image/upload/v1676283579/Valentine_s.jpg',
+  'https://cdn.sushi.com/image/upload/v1676366659/Valentine_s_4.jpg',
+  'https://cdn.sushi.com/image/upload/v1676366659/Valentine_s_5.jpg',
+  'https://cdn.sushi.com/image/upload/v1676366658/Valentine_s_7.jpg',
+  'https://cdn.sushi.com/image/upload/v1676366659/Valentine_s23_3.jpg',
+  'https://cdn.sushi.com/image/upload/v1676366658/Valentine_s_9.jpg',
+  'https://cdn.sushi.com/image/upload/v1676366658/Valentine_s23_2.jpg',
+  'https://cdn.sushi.com/image/upload/v1676366659/Valentine_s_6.jpg',
+  'https://cdn.sushi.com/image/upload/v1676366658/Valentine_s_8.jpg',
 ]
 
 export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, children, onSuccess }) => {
@@ -40,7 +42,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
   const [{ carbonOffset }] = useSettings()
   const [signature, setSignature] = useState<Signature>()
   const [card, setCard] = useState(false)
-  const [bannerIndex] = useState(Math.floor(Math.random() * 6))
+  const [bannerIndex] = useState(Math.floor(Math.random() * 8))
   const showAd = new Date().getDate() === 14
 
   const [input0, input1] = useMemo(

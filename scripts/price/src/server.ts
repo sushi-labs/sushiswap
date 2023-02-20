@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { execute } from './index'
+import { execute } from './index.js'
 
 const app = express()
 
