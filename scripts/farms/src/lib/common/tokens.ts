@@ -34,6 +34,10 @@ const getExchangeTokens = async (ids: string[], chainId: SushiSwapChainId): Prom
     where: { id_in: ids.map((id) => id.toLowerCase()) },
   })
 
+  if (chainId === ChainId.ARBITRUM_NOVA) {
+    console.log(tokens, subgraphName, SUBGRAPH_HOST[chainId])
+  }
+
   return tokens.map((token) => ({
     id: token.id,
     symbol: token.symbol,
