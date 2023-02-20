@@ -18,6 +18,7 @@ import { formatBytes32String } from 'ethers/lib/utils'
 import { SushiXSwap as SushiXSwapContract } from '@sushiswap/wagmi'
 import { Address } from 'wagmi'
 import { HexString } from '@sushiswap/types'
+import { readContract } from 'wagmi/actions'
 
 export type Complex = [
   {
@@ -850,17 +851,22 @@ export class SushiXSwap {
 
   async getFee(gasSpent = 1000000) {
     return this.crossChain
-      ? await this.contract.getFee(
-          STARGATE_CHAIN_ID[this.dstCooker.chainId],
-          1,
-          this.dstCooker.masterContract,
-          BigNumber.from(gasSpent),
-          BigNumber.from(0),
-          defaultAbiCoder.encode(
-            ['address', 'uint8[]', 'uint256[]', 'bytes[]'],
-            [this.user, this.dstCooker.actions, this.dstCooker.values, this.dstCooker.datas]
-          ) as HexString
-        )
+      ? await readContract({
+          ...getSushiXSwapContractConfig(this.srcChainId),
+          chainId: this.srcChainId,
+          functionName: 'getFee',
+          args: [
+            STARGATE_CHAIN_ID[this.dstCooker.chainId],
+            1,
+            this.dstCooker.masterContract,
+            BigNumber.from(gasSpent),
+            BigNumber.from(0),
+            defaultAbiCoder.encode(
+              ['address', 'uint8[]', 'uint256[]', 'bytes[]'],
+              [this.user, this.dstCooker.actions, this.dstCooker.values, this.dstCooker.datas]
+            ) as HexString,
+          ],
+        })
       : [Zero, Zero]
   }
 

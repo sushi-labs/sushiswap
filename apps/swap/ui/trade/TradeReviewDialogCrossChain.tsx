@@ -1,7 +1,7 @@
 'use client'
 
-import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline'
-import { Chain } from '@sushiswap/chain'
+import { ArrowLeftIcon, ArrowRightIcon, PlusIcon } from '@heroicons/react/24/outline'
+import { Chain, chainName } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
@@ -18,10 +18,14 @@ import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain'
 import { TradeRoute } from './TradeRoute'
 import { useSlippageTolerance } from '../../lib/useSlippageTolerance'
+import { NetworkIcon } from '@sushiswap/ui'
+import { ArrowLongRightIcon } from '@heroicons/react/20/solid'
+import { ApproveBentoboxController } from '@sushiswap/wagmi/future/components'
+import { ApprovalState, getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 
 export const TradeReviewDialogCrossChain: FC = () => {
   const [open, setOpen] = useState(false)
-  const { review, token0, token1, recipient, network0, amount, value } = useSwapState()
+  const { review, token0, token1, recipient, network0, network1, amount, value, bentoboxSignature } = useSwapState()
   const { setReview } = useSwapActions()
   const [slippageTolerance] = useSlippageTolerance()
   const { data: trade, isFetching } = useTrade({ crossChain: true })
@@ -53,13 +57,8 @@ export const TradeReviewDialogCrossChain: FC = () => {
               <Badge
                 position="bottom-right"
                 badgeContent={
-                  <div className="bg-gray-100 rounded-full border-2 border-gray-100">
-                    <PlusIcon
-                      strokeWidth={2}
-                      width={24}
-                      height={24}
-                      className="bg-blue text-white rounded-full p-0.5"
-                    />
+                  <div className="bg-gray-100 rounded-full border-2 border-gray-100 dark:border-slate-500">
+                    <NetworkIcon width={24} height={24} chainId={network1} />
                   </div>
                 }
               >
@@ -71,7 +70,15 @@ export const TradeReviewDialogCrossChain: FC = () => {
         <div className="flex flex-col gap-3">
           <List>
             <List.Control>
-              <List.KeyValue title="Network">{Chain.from(network0).name}</List.KeyValue>
+              <List.KeyValue title="Network">
+                <div className="flex items-center gap-1 whitespace-nowrap truncate">
+                  {chainName?.[network0]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
+                  <div className="min-w-4 min-h-4">
+                    <ArrowLongRightIcon width={16} height={16} />
+                  </div>
+                  {chainName?.[network1]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
+                </div>
+              </List.KeyValue>
               <List.KeyValue
                 title="Price impact"
                 subtitle="The impact your trade has on the market price of this pool."
@@ -129,25 +136,34 @@ export const TradeReviewDialogCrossChain: FC = () => {
           )}
         </div>
         <div className="pt-4">
-          <ConfirmationDialogCrossChain>
-            {({ onClick, isWritePending, isLoading, isConfirming }) => (
-              <Button
-                size="xl"
-                fullWidth
-                loading={isLoading}
-                onClick={onClick}
-                disabled={isWritePending || Boolean(isLoading && +value > 0) || isFetching}
-              >
-                {isConfirming ? (
-                  <Dots>Confirming transaction</Dots>
-                ) : isWritePending ? (
-                  <Dots>Confirm Swap</Dots>
-                ) : (
-                  `Swap ${token0.symbol} for ${token1.symbol}`
+          <ApproveBentoboxController chainId={network0} contract={getSushiXSwapContractConfig(network0).address}>
+            {({ approvalState }) => (
+              <ConfirmationDialogCrossChain
+                enabled={Boolean(
+                  approvalState === ApprovalState.APPROVED ||
+                    (approvalState === ApprovalState.PENDING && bentoboxSignature)
                 )}
-              </Button>
+              >
+                {({ onClick, isWritePending, isLoading, isConfirming }) => (
+                  <Button
+                    size="xl"
+                    fullWidth
+                    loading={isLoading}
+                    onClick={onClick}
+                    disabled={isWritePending || Boolean(isLoading && +value > 0) || isFetching}
+                  >
+                    {isConfirming ? (
+                      <Dots>Confirming transaction</Dots>
+                    ) : isWritePending ? (
+                      <Dots>Confirm Swap</Dots>
+                    ) : (
+                      `Swap ${token0.symbol} for ${token1.symbol}`
+                    )}
+                  </Button>
+                )}
+              </ConfirmationDialogCrossChain>
             )}
-          </ConfirmationDialogCrossChain>
+          </ApproveBentoboxController>
         </div>
       </div>
     </Dialog>

@@ -7,7 +7,7 @@ import { useTrade } from './useTrade'
 export const usePctChange = () => {
   const { token1, token0, network0, network1, amount } = useSwapState()
   const { data: price0 } = usePrice({ chainId: network0, address: token0?.wrapped.address })
-  const { data: price1 } = usePrice({ chainId: network0, address: token1?.wrapped.address })
+  const { data: price1 } = usePrice({ chainId: network1, address: token1?.wrapped.address })
   const { data: trade } = useTrade({ crossChain: network0 !== network1 })
 
   return useMemo(() => {

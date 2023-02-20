@@ -2,7 +2,7 @@ import { TradeType } from '@sushiswap/amm'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, StargateChainId } from '@sushiswap/stargate'
 import { useSushiXSwapContract } from '@sushiswap/wagmi'
 import { JSBI, Percent } from '@sushiswap/math'
-import { Amount, Price, Token, tryParseAmount, Type } from '@sushiswap/currency'
+import { Amount, Native, Price, Token, tryParseAmount, Type, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { nanoid } from 'nanoid'
 import { useQuery } from '@tanstack/react-query'
 import { getTrade } from './getTrade'
@@ -13,6 +13,7 @@ import { UseCrossChainSelect, UseCrossChainTradeParams, UseCrossChainTradeQueryS
 import { usePools } from './usePools'
 import { useFeeData } from 'wagmi'
 import { useBentoboxTotals } from './useRebases'
+import { usePrice } from '@sushiswap/react-query'
 
 const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
 
@@ -266,11 +267,11 @@ export const useCrossChainTradeQuery = (
       // console.log(`Total Value`, value)
       // Needs to be parsed to string because react-query entities are serialized to cache
       return {
-        priceImpact: priceImpact.quotient.toString(),
+        priceImpact: [priceImpact.numerator.toString(), priceImpact.denominator.toString()],
         amountIn: amount.quotient.toString(),
         amountOut: dstAmountOut?.quotient.toString(),
         minAmountOut: dstMinimumAmountOut?.quotient.toString(),
-        gasSpent: '0',
+        gasSpent: fee.toString(),
         writeArgs: [sushiXSwap.srcCooker.actions, sushiXSwap.srcCooker.values, sushiXSwap.srcCooker.datas],
         // writeArgs: defaultAbiCoder.encode(
         //   ['uint8[]', 'uint256[]', 'bytes[]'],
@@ -307,6 +308,8 @@ export const useCrossChainTradeQuery = (
 
 export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
   const { token0, token1 } = variables
+  const { data: price } = usePrice({ chainId: variables.network0, address: WNATIVE_ADDRESS[variables.network0] })
+
   const select: UseCrossChainTradeQuerySelect = useCallback(
     (data) => {
       if (data && data.amountIn && data.amountOut && data.priceImpact && data.minAmountOut) {
@@ -315,9 +318,15 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
 
         return {
           ...data,
+          gasSpent:
+            data.gasSpent && price
+              ? Amount.fromRawAmount(Native.onChain(variables.network0), data.gasSpent)
+                  .multiply(price.asFraction)
+                  .toSignificant(4)
+              : '0',
           swapPrice:
             data.amountIn && data.amountOut ? new Price({ baseAmount: amountIn, quoteAmount: amountOut }) : undefined,
-          priceImpact: new Percent(data.priceImpact),
+          priceImpact: new Percent(JSBI.BigInt(data.priceImpact[0]), JSBI.BigInt(data.priceImpact[1])),
           amountIn,
           amountOut,
           minAmountOut: Amount.fromRawAmount(token1, data.minAmountOut),
@@ -338,7 +347,7 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
         overrides: undefined,
       }
     },
-    [token0, token1]
+    [price, token0, token1, variables.network0]
   )
 
   return useCrossChainTradeQuery(variables, select)

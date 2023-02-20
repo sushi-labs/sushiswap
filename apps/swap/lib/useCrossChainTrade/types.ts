@@ -23,7 +23,7 @@ export type UseCrossChainSelect = Omit<
   UseCrossChainTradeReturn,
   'priceImpact' | 'amountIn' | 'amountOut' | 'minAmountOut' | 'swapPrice'
 > & {
-  priceImpact: string | undefined
+  priceImpact: [string, string] | undefined
   amountIn: string | undefined
   amountOut: string | undefined
   minAmountOut: string | undefined

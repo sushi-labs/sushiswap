@@ -16,6 +16,7 @@ import { Dots } from '@sushiswap/ui/future/components/Dots'
 import { Button } from '@sushiswap/ui/future/components/button'
 
 interface ConfirmationDialogCrossChainProps {
+  enabled?: boolean
   children({
     onClick,
     isWritePending,
@@ -35,7 +36,7 @@ enum ConfirmationDialogState {
   Sign,
 }
 
-export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps> = ({ children }) => {
+export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps> = ({ children, enabled = true }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
   const { appType, review, network0, token0, token1 } = useSwapState()
@@ -46,14 +47,13 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
   const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
   const { refetch: refetchNetwork1Balances } = useBalances({ account: address, chainId: network0 })
   const { mutate: storeNotification } = useCreateNotification({ account: address })
-
   const { config } = usePrepareContractWrite({
     chainId: network0,
     address: getSushiXSwapContractConfig(network0).address,
     abi: getSushiXSwapContractConfig(network0).abi,
     functionName: trade?.functionName,
     args: trade?.writeArgs,
-    enabled: Boolean(trade?.writeArgs) && appType === AppType.xSwap && chain?.id === network0,
+    enabled: Boolean(trade?.writeArgs) && appType === AppType.xSwap && chain?.id === network0 && enabled,
     overrides: trade?.overrides,
   })
 
