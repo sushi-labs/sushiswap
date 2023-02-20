@@ -139,9 +139,20 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
             '0x3c61b93b64f59b5091a11a071083598ee8b5cb64',
           ],
           [ChainId.GNOSIS]: ['0xb291149e478dbdd2cd2528ad4088ee5c8376df1e'],
+          [ChainId.ARBITRUM_NOVA]: [
+            '0x3f505b5cff05d04f468db65e27e72ec45a12645f',
+            '0x840ecabcad4d6b8d25a9bb853ae32eac467e017b',
+            '0x16ac10499ad2712a847641996e0aab97e90305fa',
+          ],
         }
 
-        if (blacklist[chainId]?.includes(rewarder.id)) throw new Error()
+        if (blacklist[chainId]?.includes(rewarder.id)) {
+          return {
+            id: rewarder.id,
+            rewardToken: rewarder.rewardToken,
+            rewardPerSecond: BigNumber.from(rewarder.rewardPerSecond),
+          }
+        }
 
         const poolLength = await getPoolLength(chainId)
 
@@ -175,7 +186,9 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
           rewardPerSecond: BigNumber.from(rewarder.rewardPerSecond),
         }
       } catch (error) {
-        // console.log('error', error)
+        console.log('error', ChainId[chainId], rewarder.id, error)
+
+        // so that the script doesn't fail on new should-be-blacklisted pools
         return {
           id: rewarder.id,
           rewardToken: rewarder.rewardToken,
