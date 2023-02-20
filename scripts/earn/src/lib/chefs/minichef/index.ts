@@ -17,10 +17,8 @@ import {
 } from './fetchers.js'
 
 export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): Promise<ChefReturn> {
-
   try {
-    // SUSHI token / minichef is not on these chains
-    if (chainId === ChainId.ARBITRUM_NOVA || chainId === ChainId.OPTIMISM || chainId === ChainId.BTTC) {
+    if (!(chainId in SUSHI)) {
       return { chainId, farms: null }
     }
 
@@ -32,7 +30,8 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
         getRewarderInfos(chainId),
         getTokens([SUSHI[ChainId.ETHEREUM].address], ChainId.ETHEREUM),
       ])
-    const sushiPerDay = secondsInDay * divBigNumberToNumber(sushiPerSecond, SUSHI[chainId]?.decimals ?? 18)
+    const sushiPerDay =
+      secondsInDay * divBigNumberToNumber(sushiPerSecond, SUSHI[chainId as keyof typeof SUSHI]?.decimals ?? 18)
 
     console.log(
       `MiniChef ${chainId} - pools: ${poolLength}, sushiPerDay: ${sushiPerDay}, rewarderInfos: ${rewarderInfos.length}, totalAllocPoint: ${totalAllocPoint}`
@@ -80,10 +79,10 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
             apr: sushiRewardPerYearUSD / stakedLiquidityUSD,
             rewardPerDay: sushiRewardPerDay,
             rewardToken: {
-              address: SUSHI[chainId]?.address ?? '',
-              name: SUSHI[chainId]?.name ?? '',
-              decimals: SUSHI[chainId]?.decimals ?? 18,
-              symbol: SUSHI[chainId]?.symbol ?? '',
+              address: SUSHI[chainId as keyof typeof SUSHI]?.address ?? '',
+              name: SUSHI[chainId as keyof typeof SUSHI]?.name ?? '',
+              decimals: SUSHI[chainId as keyof typeof SUSHI]?.decimals ?? 18,
+              symbol: SUSHI[chainId as keyof typeof SUSHI]?.symbol ?? '',
             },
             rewarder: {
               address: MINICHEF_ADDRESS[chainId],
