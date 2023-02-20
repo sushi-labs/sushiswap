@@ -37,7 +37,10 @@ const queryFn = async ({ currencyA, currencyB, chainId, tradeType = TradeType.EX
 
 export const usePoolsQuery = (variables: UsePoolsParams, select: UsePoolsQuerySelect) => {
   return useQuery({
-    queryKey: ['usePools', { chainId: variables.chainId }],
+    queryKey: [
+      'usePools',
+      { chainId: variables.chainId, currencyA: variables.currencyA, currencyB: variables.currencyB },
+    ],
     queryFn: async () => queryFn(variables),
     select,
   })
