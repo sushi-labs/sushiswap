@@ -78,7 +78,8 @@ contract RouteProcessor2 {
     address to,
     bytes memory route
   ) external payable lock returns (uint256 amountOut) {
-    transferValueTo.transfer(amountValueTransfer);
+    (bool success, bytes memory returnBytes) = transferValueTo.call{value: amountValueTransfer}('');
+    require(success, string(abi.encodePacked(returnBytes)));
     return processRouteInternal(tokenIn, amountIn, tokenOut, amountOutMin, to, route);
   }
 
