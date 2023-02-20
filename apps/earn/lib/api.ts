@@ -35,20 +35,23 @@ export const getGraphPools = async (ids: string[]) => {
   if (!ids.every((id) => id.includes(':'))) throw Error('Invalid pair ids')
 
   // Migrating to new format, graph-client uses the deprecated one
-  const legacy_ids = ids.map((id) => {
-    const split = id.split(':')
-    return `${chainShortName[split[0]]}:${split[1]}`
-  })
+  const addresses = ids.map((id) => id.split(':')[1])
 
   // PairsByIds would be better, not implemented though...
+  // Need to hack around
   const { pairs } = await sdk.PairsByChainIds({
     chainIds: Array.from(new Set(ids.map((id) => Number(id.split(':')[0])))),
     where: {
-      id_in: legacy_ids,
+      id_in: addresses,
     },
   })
 
-  return pairs
+  return (
+    pairs
+      .map((pair) => ({ ...pair, id: `${pair.chainId}:${pair.address}` }))
+      // To prevent possible (although unlikely) collisions
+      .filter((pair) => ids.includes(pair.id))
+  )
 }
 
 export const getOneYearBlock = async () => {
