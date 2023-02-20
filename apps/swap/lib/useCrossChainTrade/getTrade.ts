@@ -128,7 +128,7 @@ export const getTrade = async ({
         feeData.gasPrice.toNumber()
       )
       if (tridentRoute.status === RouteStatus.Success) {
-        // console.debug('Found trident route', tridentRoute)
+        console.debug('Found trident route', tridentRoute)
         return Trade.exactIn(
           tridentRoute,
           amountSpecified,
@@ -138,7 +138,7 @@ export const getTrade = async ({
           currencyOutRebase
         )
       } else {
-        // console.debug('No trident route', tridentRoute)
+        console.debug('No trident route', tridentRoute)
       }
 
       // TODO: Use best trade if both available
