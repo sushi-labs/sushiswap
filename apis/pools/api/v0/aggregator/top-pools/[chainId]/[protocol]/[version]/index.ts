@@ -22,6 +22,7 @@ const schema = z.object({
 })
 
 const handler = async (_request: VercelRequest, response: VercelResponse) => {
+  response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=2592000')
   const result = schema.safeParse(_request.query)
   if (!result.success) {
     return response.status(400).json(result.error.format())
