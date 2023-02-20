@@ -176,6 +176,7 @@ export const useCrossChainTradeQuery = (
 
       const nanoId = nanoid()
 
+      console.log({ srcTrade, dstTrade })
       // console.log({ recipient, amount, network0, network1, dstMinimumAmountOut, srcRebases, dstRebases, contract })
       const [srcInputCurrencyRebase, srcOutputCurrencyRebase] = srcRebases || [undefined, undefined]
       const [, dstOutputCurrencyRebase] = dstRebases || [undefined, undefined]
@@ -192,10 +193,10 @@ export const useCrossChainTradeQuery = (
         !contract
       ) {
         return {
-          priceImpact: undefined,
-          amountIn: undefined,
-          amountOut: undefined,
-          minAmountOut: undefined,
+          priceImpact: [priceImpact.numerator.toString(), priceImpact.denominator.toString()],
+          amountIn: amount?.quotient.toString(),
+          amountOut: dstAmountOut?.quotient.toString(),
+          minAmountOut: dstMinimumAmountOut?.quotient.toString(),
           gasSpent: undefined,
           writeArgs: undefined,
           route: undefined,
@@ -247,24 +248,11 @@ export const useCrossChainTradeQuery = (
           nanoId
         )
       }
-      //
-      // console.log({
-      //   swapPrice: price,
-      //   priceImpact,
-      //   amountIn: amount.toFixed(),
-      //   amountOut: dstAmountOut?.toFixed(),
-      //   minAmountOut: dstMinimumAmountOut.toFixed(),
-      //   writeArgs: defaultAbiCoder.encode(
-      //     ['uint8[]', 'uint256[]', 'bytes[]'],
-      //     [sushiXSwap.srcCooker.actions, sushiXSwap.srcCooker.values, sushiXSwap.srcCooker.datas]
-      //   ) as HexString,
-      // })
 
       // need async to get fee for final value... this should be moved to exec?
       const [fee] = await sushiXSwap.getFee(dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined)
-      // console.log(`Successful Fee`, fee)
       const value = sushiXSwap.srcCooker.values.reduce((a, b) => a.add(b), fee)
-      // console.log(`Total Value`, value)
+
       // Needs to be parsed to string because react-query entities are serialized to cache
       return {
         priceImpact: [priceImpact.numerator.toString(), priceImpact.denominator.toString()],
@@ -273,10 +261,6 @@ export const useCrossChainTradeQuery = (
         minAmountOut: dstMinimumAmountOut?.quotient.toString(),
         gasSpent: fee.toString(),
         writeArgs: [sushiXSwap.srcCooker.actions, sushiXSwap.srcCooker.values, sushiXSwap.srcCooker.datas],
-        // writeArgs: defaultAbiCoder.encode(
-        //   ['uint8[]', 'uint256[]', 'bytes[]'],
-        //   [sushiXSwap.srcCooker.actions, sushiXSwap.srcCooker.values, sushiXSwap.srcCooker.datas]
-        // ) as HexString,
         route: {},
         functionName: 'cook',
         currentRouteHumanString: '',
@@ -312,10 +296,15 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
 
   const select: UseCrossChainTradeQuerySelect = useCallback(
     (data) => {
-      if (data && data.amountIn && data.amountOut && data.priceImpact && data.minAmountOut) {
-        const amountIn = Amount.fromRawAmount(token0, data.amountIn)
-        const amountOut = Amount.fromRawAmount(token1, data.amountOut)
+      const amountIn = data.amountIn ? Amount.fromRawAmount(token0, data.amountIn) : undefined
+      const amountOut = data.amountOut ? Amount.fromRawAmount(token1, data.amountOut) : undefined
+      const minAmountOut = data.minAmountOut ? Amount.fromRawAmount(token1, data.minAmountOut) : undefined
+      const swapPrice = amountIn && amountOut ? new Price({ baseAmount: amountIn, quoteAmount: amountOut }) : undefined
+      const priceImpact = data.priceImpact
+        ? new Percent(JSBI.BigInt(data.priceImpact[0]), JSBI.BigInt(data.priceImpact[1]))
+        : undefined
 
+      if (data && amountIn && amountOut && data.priceImpact && data.minAmountOut) {
         return {
           ...data,
           gasSpent:
@@ -324,21 +313,20 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
                   .multiply(price.asFraction)
                   .toSignificant(4)
               : '0',
-          swapPrice:
-            data.amountIn && data.amountOut ? new Price({ baseAmount: amountIn, quoteAmount: amountOut }) : undefined,
-          priceImpact: new Percent(JSBI.BigInt(data.priceImpact[0]), JSBI.BigInt(data.priceImpact[1])),
+          swapPrice,
+          priceImpact,
           amountIn,
           amountOut,
-          minAmountOut: Amount.fromRawAmount(token1, data.minAmountOut),
+          minAmountOut,
         }
       }
 
       return {
-        swapPrice: undefined,
-        priceImpact: undefined,
-        amountIn: undefined,
-        amountOut: undefined,
-        minAmountOut: undefined,
+        swapPrice,
+        priceImpact,
+        amountIn,
+        amountOut,
+        minAmountOut,
         gasSpent: undefined,
         writeArgs: undefined,
         route: undefined,

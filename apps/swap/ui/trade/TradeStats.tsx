@@ -73,14 +73,20 @@ export const TradeStats: FC = () => {
             ) : recipient ? (
               shortenAddress(recipient)
             ) : (
-              ''
+              'N/A'
             )}
           </span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">Network fee</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading ? <Skeleton.Text fontSize="text-sm" className="w-[120px]" /> : `~$${trade?.gasSpent ?? '0.00'}`}
+            {loading ? (
+              <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
+            ) : trade?.gasSpent !== '0' ? (
+              `~$${trade?.gasSpent}`
+            ) : (
+              'N/A'
+            )}
           </span>
         </div>
         <div className="flex justify-between items-center">
