@@ -35,10 +35,6 @@ const getExchangeTokens = async (ids: string[], chainId: SushiSwapChainId): Prom
     where: { id_in: ids.map((id) => id.toLowerCase()) },
   })
 
-  if (chainId === ChainId.ARBITRUM_NOVA) {
-    console.log(tokens, subgraphName, SUBGRAPH_HOST[chainId])
-  }
-
   return tokens.map((token) => ({
     id: token.id,
     symbol: token.symbol,
@@ -127,6 +123,6 @@ export async function getTokenBalancesOf(_tokens: string[], address: string, cha
   return tokens.map((token, i) => ({
     token,
     // so that we don't need to seed new pairs
-    balance: balancesOf[i]?.eq(0) ? 1 : divBigNumberToNumber(balancesOf[i], decimals[i]),
+    balance: !balancesOf[i] || balancesOf[i]?.eq(0) ? 1 : divBigNumberToNumber(balancesOf[i], decimals[i]),
   }))
 }
