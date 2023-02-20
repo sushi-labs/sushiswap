@@ -247,7 +247,7 @@ async function checkTransferAndRoute(
   await waiter.wait()
   router.stopRouting()
 
-  const rpParams = router.getCurrentRouteRPParams(env.user.address, env.rp.address) as RPParams
+  const rpParams = router.getCurrentRouteRP2Params(env.user.address, env.rp.address) as RPParams
   const transferValue = getBigNumber(0.02 * Math.pow(10, Native.onChain(env.chainId).decimals))
   rpParams.value = (rpParams.value || BigNumber.from(0)).add(transferValue)
 
@@ -324,19 +324,19 @@ describe('End-to-end Router2 test', async function () {
     ]
   })
 
-  it.only('Native => SUSHI => Native', async function () {
+  it('Native => SUSHI => Native', async function () {
     intermidiateResult[0] = getBigNumber(1000000 * 1e18)
     intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
     intermidiateResult = await updMakeSwap(env, SUSHI_LOCAL, Native.onChain(chainId), intermidiateResult)
   })
 
-  it.only('Native => WrappedNative => Native', async function () {
+  it('Native => WrappedNative => Native', async function () {
     intermidiateResult[0] = getBigNumber(1 * 1e18)
     intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), WNATIVE[chainId], intermidiateResult)
     intermidiateResult = await updMakeSwap(env, WNATIVE[chainId], Native.onChain(chainId), intermidiateResult)
   })
 
-  it.only('Trident Native => SUSHI => Native (Polygon only)', async function () {
+  it('Trident Native => SUSHI => Native (Polygon only)', async function () {
     if (chainId == ChainId.POLYGON) {
       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI[chainId], intermidiateResult, [
