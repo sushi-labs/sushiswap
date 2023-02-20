@@ -4,7 +4,6 @@ import { pairsByChainId } from './pairsByChainId'
 import { pairsByChainIds } from './pairsByChainIds'
 import { pairsByIds } from './pairsByIds'
 
-
 export const resolvers: Resolvers = {
   Pair: {
     chainId: (root, args, context, info) => Number(root.chainId || context.chainId || 1),

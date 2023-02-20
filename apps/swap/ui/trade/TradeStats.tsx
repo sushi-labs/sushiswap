@@ -14,8 +14,8 @@ import { ZERO } from '@sushiswap/math'
 
 export const TradeStats: FC = () => {
   const [open, setOpen] = useState(false)
-  const { value, recipient } = useSwapState()
-  const { isLoading, isFetching, data: trade } = useTrade()
+  const { value, recipient, network0, network1 } = useSwapState()
+  const { isLoading, isFetching, data: trade } = useTrade({ crossChain: network0 !== network1 })
   const loading = Boolean(isLoading && +value > 0) || isFetching
 
   return (
@@ -73,14 +73,20 @@ export const TradeStats: FC = () => {
             ) : recipient ? (
               shortenAddress(recipient)
             ) : (
-              ''
+              'N/A'
             )}
           </span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">Network fee</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading ? <Skeleton.Text fontSize="text-sm" className="w-[120px]" /> : `~$${trade?.gasSpent ?? '0.00'}`}
+            {loading ? (
+              <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
+            ) : trade?.gasSpent !== '0' ? (
+              `~$${trade?.gasSpent}`
+            ) : (
+              'N/A'
+            )}
           </span>
         </div>
         <div className="flex justify-between items-center">

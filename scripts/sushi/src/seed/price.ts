@@ -2,7 +2,7 @@
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import type { ChainId } from '@sushiswap/chain'
-import { createClient, Prisma, Token } from '@sushiswap/database'
+import { createClient, Prisma, PrismaClient, Token } from '@sushiswap/database'
 import { calcTokenPrices, ConstantProductRPool } from '@sushiswap/tines'
 import { performance } from 'perf_hooks'
 
@@ -18,6 +18,7 @@ export async function prices(
   price: Price,
   minimumLiquidity = 500000000
 ) {
+  const client = await createClient()
   try {
     if (!Object.values(CURRENT_SUPPORTED_VERSIONS).includes(version)) {
       throw new Error(
@@ -39,25 +40,24 @@ export async function prices(
 
     console.log(`Arguments: CHAIN_ID: ${chainId}, VERSION: ${version}, TYPE: ${type}, BASE: ${base}, PRICE: ${price}`)
 
-    const baseToken = await getBaseToken(chainId, base)
-    const pools = await getPools(chainId)
+    const baseToken = await getBaseToken(client, chainId, base)
+    const pools = await getPools(client, chainId)
 
     const { constantProductPools, tokens } = transform(pools)
     const tokensToUpdate = calculatePrices(constantProductPools, minimumLiquidity, baseToken, tokens)
-    await updateTokenPrices(price, tokensToUpdate)
+    await updateTokenPrices(client, price, tokensToUpdate)
 
     const endTime = performance.now()
     console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
   } catch (e) {
     console.error(e)
-    await (await createClient()).$disconnect()
+    await client.$disconnect()
   } finally {
-    await (await createClient()).$disconnect()
+    await client.$disconnect()
   }
 }
 
-async function getBaseToken(chainId: ChainId, address: string) {
-  const client = await createClient()
+async function getBaseToken(client: PrismaClient, chainId: ChainId, address: string) {
   const baseToken = await client.token.findFirst({
     select: {
       address: true,
@@ -75,7 +75,7 @@ async function getBaseToken(chainId: ChainId, address: string) {
   return baseToken
 }
 
-async function getPools(chainId: ChainId) {
+async function getPools(client: PrismaClient, chainId: ChainId) {
   const startTime = performance.now()
 
   const batchSize = 2500
@@ -86,9 +86,9 @@ async function getPools(chainId: ChainId) {
     const requestStartTime = performance.now()
     let result = []
     if (!cursor) {
-      result = await getPoolsByPagination(chainId, batchSize)
+      result = await getPoolsByPagination(client, chainId, batchSize)
     } else {
-      result = await getPoolsByPagination(chainId, batchSize, 1, { id: cursor })
+      result = await getPoolsByPagination(client, chainId, batchSize, 1, { id: cursor })
     }
 
     cursor = result.length == batchSize ? result[result.length - 1]?.id : null
@@ -109,14 +109,16 @@ async function getPools(chainId: ChainId) {
 }
 
 async function getPoolsByPagination(
+  client: PrismaClient,
   chainId: ChainId,
   take: number,
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
 ): Promise<Pool[]> {
-  const client = await createClient()
   return client.pool.findMany({
     take,
+    skip,
+    cursor,
     select: {
       id: true,
       address: true,
@@ -201,12 +203,11 @@ function calculatePrices(
   return tokensWithPrices
 }
 
-async function updateTokenPrices(price: Price, tokens: { id: string; price: number }[]) {
+async function updateTokenPrices(client: PrismaClient, price: Price, tokens: { id: string; price: number }[]) {
   const startTime = performance.now()
   const batchSize = 250
   let updatedCount = 0
 
-  const client = await createClient()
   for (let i = 0; i < tokens.length; i += batchSize) {
     const batch = tokens.slice(i, i + batchSize)
     const requests = batch.map((token) => {

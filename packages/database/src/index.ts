@@ -1,5 +1,4 @@
 import { Prisma, PrismaClient } from '@prisma/client'
-
 export * from '@prisma/client'
 
 export async function createClient() {
@@ -33,7 +32,7 @@ export async function createClient() {
     storage: {
       type: 'redis',
       options: { client: redis, invalidation: { referencesTTL: 24 * 60 * 60 } },
-    },
+    } as any, // Issue open on github,
     onHit: (key: string) => {
       console.log('Hit: ✅', key)
     },

@@ -4,6 +4,7 @@ import { useTrade } from '../../lib/useTrade'
 import { TradeLegType, TradeType, UseTradeReturn } from '@sushiswap/react-query'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
+import { UseCrossChainTradeReturn } from '../../lib/useCrossChainTrade/types'
 
 const tokenFromRToken = (token: TradeLegType['tokenFrom']) => {
   if (token.address === '' || !token.address) return Native.onChain(Number(token.chainId))
@@ -21,7 +22,7 @@ const tokenFromRToken = (token: TradeLegType['tokenFrom']) => {
 
 // Can render a tines multi route
 export const TradeRoute: FC<{
-  trade: UseTradeReturn | undefined
+  trade: UseTradeReturn | UseCrossChainTradeReturn | undefined
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
 }> = ({ open, setOpen, trade }) => {

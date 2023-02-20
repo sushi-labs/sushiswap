@@ -1,6 +1,6 @@
 import { Popover } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
-import { ChainId, chains } from '@sushiswap/chain'
+import { ChainId, chainName, chains } from '@sushiswap/chain'
 import { classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
@@ -47,7 +47,9 @@ export const HeaderNetworkSelector: FC<{ networks: ChainId[]; selectedNetwork?: 
       {({ open }) => (
         <Popover.Button as={Button} variant="outlined" color="default" size="md" className="!font-medium">
           <NetworkIcon chainId={selected} width={20} height={20} />
-          <div className="hidden xl:block">{chains[selected].name.split(' ')[0]}</div>
+          <div className="hidden xl:block">
+            {chainName?.[selected]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
+          </div>
           <ChevronDownIcon
             width={24}
             height={24}

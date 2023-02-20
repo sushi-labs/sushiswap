@@ -1,11 +1,12 @@
-import { createClient, Prisma } from '@sushiswap/database'
+import { createClient, Prisma, PrismaClient } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 export async function whitelistPools() {
+  const client = await createClient()
   try {
     const startTime = performance.now()
 
-    await start()
+    await start(client)
 
     const endTime = performance.now()
     console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
@@ -17,19 +18,19 @@ export async function whitelistPools() {
   }
 }
 
-async function start() {
-  const client = await createClient()
+async function start(client: PrismaClient) {
   const approvedTokensResult = await client.token.findMany({
     select: {
       id: true,
     },
     where: {
+      isFeeOnTransfer: false,
       status: 'APPROVED',
     },
   })
 
   const approvedTokens = approvedTokensResult.map((token) => token.id)
-  console.log(`Fetched ${approvedTokens.length} approved tokens.`)
+  console.log(`Fetched ${approvedTokens.length} tokens (approved and not fee on transfer).`)
 
   const batchSize = 10000
   let cursor = null
@@ -40,9 +41,9 @@ async function start() {
     const requestStartTime = performance.now()
     let result = []
     if (!cursor) {
-      result = await getPoolsAddresses(approvedTokens, batchSize)
+      result = await getPoolsAddresses(client, approvedTokens, batchSize)
     } else {
-      result = await getPoolsAddresses(approvedTokens, batchSize, 1, { id: cursor })
+      result = await getPoolsAddresses(client, approvedTokens, batchSize, 1, { id: cursor })
     }
     cursor = result.length == batchSize ? result[result.length - 1].id : null
     totalCount += result.length
@@ -84,12 +85,12 @@ async function start() {
 }
 
 async function getPoolsAddresses(
+  client: PrismaClient,
   approvedIds: string[],
   take: number,
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
 ) {
-  const client = await createClient()
   const approvedTokens = await client.pool.findMany({
     take,
     skip,

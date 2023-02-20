@@ -33,6 +33,7 @@ const BLOCKCHAIN: Record<number, string> = {
   [ChainId.PALM]: 'palm',
   [ChainId.POLYGON]: 'polygon',
   [ChainId.TELOS]: 'telos',
+  [ChainId.BTTC]: 'bttc',
 }
 
 const AvaxLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/avax.svg'
