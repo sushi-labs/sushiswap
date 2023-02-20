@@ -56,8 +56,7 @@ export const getTrade = async ({
     chainId &&
     amountSpecified &&
     amountSpecified.greaterThan(0) &&
-    pools &&
-    pools.length > 0
+    pools
   ) {
     if (tradeType === TradeType.EXACT_INPUT) {
       if (

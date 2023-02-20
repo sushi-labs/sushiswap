@@ -64,9 +64,9 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   })
 
   const isWrap =
-    appType === AppType.Swap && token0.isNative && token1.wrapped.address === Native.onChain(network0).wrapped.address
+    appType === AppType.Swap && token0?.isNative && token1?.wrapped.address === Native.onChain(network0).wrapped.address
   const isUnwrap =
-    appType === AppType.Swap && token1.isNative && token0.wrapped.address === Native.onChain(network0).wrapped.address
+    appType === AppType.Swap && token1?.isNative && token0?.wrapped.address === Native.onChain(network0).wrapped.address
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
@@ -190,11 +190,11 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 <h1 className="flex flex-wrap justify-center gap-1 font-semibold text-lg items-center">
                   You {isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'}
                   <span className="text-red px-0.5">
-                    {trade?.amountIn?.toSignificant(6)} {token0.symbol}
+                    {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
                   </span>{' '}
                   {isWrap ? 'to' : isUnwrap ? 'to' : 'for'}{' '}
                   <span className="text-blue px-0.5">
-                    {trade?.amountOut?.toSignificant(6)} {token1.symbol}.
+                    {trade?.amountOut?.toSignificant(6)} {token1?.symbol}.
                   </span>
                 </h1>
               ) : (

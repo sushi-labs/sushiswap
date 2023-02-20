@@ -43,6 +43,7 @@ export const usePoolsQuery = (variables: UsePoolsParams, select: UsePoolsQuerySe
     ],
     queryFn: async () => queryFn(variables),
     select,
+    enabled: Boolean(variables.currencyA && variables.currencyB),
   })
 }
 

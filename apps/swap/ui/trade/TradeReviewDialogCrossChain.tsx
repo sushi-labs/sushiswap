@@ -45,11 +45,11 @@ export const TradeReviewDialogCrossChain: FC = () => {
               <Skeleton.Text fontSize="text-3xl" className="w-2/3" />
             ) : (
               <h1 className="text-3xl font-semibold dark:text-slate-50">
-                Receive {trade?.amountOut?.toSignificant(6)} {token1.symbol}
+                Receive {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
               </h1>
             )}
             <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
-              Swap {amount?.toSignificant(6)} {token0.symbol}
+              Swap {amount?.toSignificant(6)} {token0?.symbol}
             </h1>
           </div>
           <div className="min-w-[56px] min-h-[56px]">
@@ -62,7 +62,11 @@ export const TradeReviewDialogCrossChain: FC = () => {
                   </div>
                 }
               >
-                <Currency.Icon currency={token1} width={56} height={56} />
+                {token1 ? (
+                  <Currency.Icon currency={token1} width={56} height={56} />
+                ) : (
+                  <Skeleton.Circle radius={56} className="dark:bg-slate-800 bg-gray-100" />
+                )}
               </Badge>
             </div>
           </div>
@@ -96,7 +100,7 @@ export const TradeReviewDialogCrossChain: FC = () => {
                 {isFetching ? (
                   <Skeleton.Text align="right" fontSize="text-sm" className="w-1/2" />
                 ) : (
-                  `${trade?.minAmountOut?.toSignificant(6)} ${token1.symbol}`
+                  `${trade?.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
                 )}
               </List.KeyValue>
               <List.KeyValue title="Network fee">
@@ -157,7 +161,7 @@ export const TradeReviewDialogCrossChain: FC = () => {
                     ) : isWritePending ? (
                       <Dots>Confirm Swap</Dots>
                     ) : (
-                      `Swap ${token0.symbol} for ${token1.symbol}`
+                      `Swap ${token0?.symbol} for ${token1?.symbol}`
                     )}
                   </Button>
                 )}

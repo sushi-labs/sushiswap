@@ -1,5 +1,4 @@
 import { Type, Type as Currency } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
 import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
 import { Address, readContracts } from 'wagmi'
 import { ChainId } from '@sushiswap/chain'
@@ -65,7 +64,7 @@ export const getBentoboxTotals = async (chainId: ChainId | undefined, currencies
   })
 
   if (allResolved) return result
-  return undefined
+  return null
 }
 
 export const getBentoboxTotal = async ({ chainId, currency }: { chainId: ChainId; currency: Type }) => {

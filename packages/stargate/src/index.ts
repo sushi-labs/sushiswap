@@ -1,10 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
 import {
   addressMapToTokenMap,
-  Currency,
   DAI_ADDRESS,
   FRAX_ADDRESS,
   Token,
+  Type,
   USDC,
   USDC_ADDRESS,
   USDT,
@@ -476,7 +476,8 @@ export const STARGATE_CONFIRMATION_SECONDS = {
   [ChainId.FANTOM]: STARGATE_BLOCK_CONFIRMATIONS[ChainId.FANTOM] * 2,
 } as const
 
-export function isStargateBridgeToken(currency: Currency) {
+export function isStargateBridgeToken(currency: Type | undefined) {
+  if (!currency) return false
   return STARGATE_BRIDGE_TOKEN_ADDRESSES[currency.chainId].includes(currency.wrapped.address)
 }
 
@@ -490,7 +491,7 @@ export const STARGATE_TOKEN = new Token({
 
 export type StargateChainId = keyof typeof STARGATE_CHAIN_ID
 
-export type StargateBridgeTokens = typeof STARGATE_BRIDGE_TOKENS[StargateChainId]
+export type StargateBridgeTokens = (typeof STARGATE_BRIDGE_TOKENS)[StargateChainId]
 
 export type StargateBridgeToken = StargateBridgeTokens[number]
 

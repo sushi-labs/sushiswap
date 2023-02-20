@@ -7,6 +7,7 @@ import {
   isShortCurrencyName,
   Native,
   SUSHI,
+  Token,
   tryParseAmount,
   Type,
 } from '@sushiswap/currency'
@@ -48,8 +49,8 @@ interface InternalSwapState {
 }
 
 interface SwapState {
-  token0: Type
-  token1: Type
+  token0: Type | undefined
+  token1: Type | undefined
   network0: ChainId
   network1: ChainId
   amount: Amount<Type> | undefined
@@ -134,20 +135,37 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   })
 
   const state = useMemo(() => {
-    const token0 = isShortCurrencyName(fromChainId, fromCurrencyId)
-      ? currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
-      : customTokens && isAddress(fromCurrencyId) && customTokens[`${toChainId}:${getAddress(fromCurrencyId)}`]
-      ? customTokens[`${toChainId}:${getAddress(fromCurrencyId)}`]
-      : tokenFrom
-      ? tokenFrom
-      : Native.onChain(fromChainId ? fromChainId : ChainId.ETHEREUM)
-    const token1 = isShortCurrencyName(toChainId, toCurrencyId)
-      ? currencyFromShortCurrencyName(toChainId, toCurrencyId)
-      : customTokens && isAddress(toCurrencyId) && customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]
-      ? customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]
-      : tokenTo
-      ? tokenTo
-      : SUSHI[toChainId && toChainId in SUSHI ? (toChainId as keyof typeof SUSHI) : ChainId.ETHEREUM]
+    let token0: Type | undefined = undefined
+    let isTokenFromLoading = false
+    if (isShortCurrencyName(fromChainId, fromCurrencyId)) {
+      token0 = currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
+    } else if (isAddress(fromCurrencyId)) {
+      if (customTokens && customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]) {
+        token0 = customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]
+      } else if (customTokens && !customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]) {
+        token0 = tokenFrom
+      } else {
+        isTokenFromLoading = true
+      }
+    } else {
+      token0 = Native.onChain(fromChainId ? fromChainId : ChainId.ETHEREUM)
+    }
+
+    let token1: Type | undefined = undefined
+    let isTokenToLoading = false
+    if (isShortCurrencyName(toChainId, toCurrencyId)) {
+      token1 = currencyFromShortCurrencyName(toChainId, toCurrencyId)
+    } else if (isAddress(toCurrencyId)) {
+      if (customTokens && customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]) {
+        token1 = customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]
+      } else if (customTokens && !customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]) {
+        token1 = tokenTo
+      } else {
+        isTokenToLoading = true
+      }
+    } else {
+      token1 = Native.onChain(toChainId ? toChainId : ChainId.ETHEREUM)
+    }
 
     return {
       ...internalState,
@@ -192,9 +210,9 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
 
   const api = useMemo(() => {
     const setNetworks = (chainId: ChainId) => {
-      const token0 = state.token0.chainId === chainId ? state.token0 : Native.onChain(chainId)
+      const token0 = state.token0?.chainId === chainId ? state.token0 : Native.onChain(chainId)
       const token1 =
-        state.token1.chainId === chainId
+        state.token1?.chainId === chainId
           ? state.token1.isNative
             ? state.token1.symbol
             : state.token1.wrapped.address
@@ -217,7 +235,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     }
     const setNetwork0 = (chainId: ChainId) => {
       const token0 =
-        state.token0.chainId === chainId
+        state.token0?.chainId === chainId
           ? state.token0.isNative
             ? state.token0.symbol
             : state.token0.wrapped.address
@@ -238,7 +256,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     }
     const setNetwork1 = (chainId: ChainId) => {
       const token1 =
-        state.token1.chainId === chainId
+        state.token1?.chainId === chainId
           ? state.token1.isNative
             ? state.token1.symbol
             : state.token1.wrapped.address
@@ -328,7 +346,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
             : ChainId.ARBITRUM
           : state.network1
       const token1 =
-        state.token1.chainId === network1
+        state.token1?.chainId === network1
           ? state.token1.isNative
             ? state.token1.symbol
             : state.token1.wrapped.address
@@ -391,10 +409,10 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     state.network0,
     state.network1,
     state.token0,
-    state.token1.chainId,
-    state.token1.isNative,
-    state.token1.symbol,
-    state.token1.wrapped.address,
+    state.token1?.chainId,
+    state.token1?.isNative,
+    state.token1?.symbol,
+    state.token1?.wrapped.address,
   ])
 
   useEffect(() => {

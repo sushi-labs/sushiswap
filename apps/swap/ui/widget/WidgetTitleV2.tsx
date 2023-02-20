@@ -21,7 +21,7 @@ export const WidgetTitleV2 = () => {
   })
 
   const [inputUSD, outputUSD, price] = useMemo(() => {
-    if (!prices0 || !prices1) {
+    if (!prices0 || !prices1 || !token0 || !token1) {
       return ['0.00', '0.00', '0.00']
     }
 
@@ -59,7 +59,7 @@ export const WidgetTitleV2 = () => {
           </h1>
         </>
       )}
-      {tokensLoading || isPrice0Loading || isPrice1Loading ? (
+      {tokensLoading || isPrice0Loading || isPrice1Loading || !token0 || !token1 ? (
         <Skeleton.Text fontSize="text-sm" className="w-2/4" />
       ) : (
         <button

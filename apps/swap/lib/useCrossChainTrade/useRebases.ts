@@ -15,6 +15,7 @@ const queryFn = async ({ chainId, currencies }: UseBentoboxTotalsParams) => awai
 export const useBentoboxTotals = (variables: UseBentoboxTotalsParams) => {
   return useQuery({
     queryKey: ['useBentoboxTotals', { chainId: variables.chainId, currencies: variables.currencies }],
+    enabled: Boolean(variables.currencies),
     queryFn: async () => queryFn(variables),
     select: (data) => {
       if (!data) return undefined

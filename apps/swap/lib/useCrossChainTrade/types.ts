@@ -10,8 +10,8 @@ import { Signature } from '@ethersproject/bytes'
 export interface UseCrossChainTradeParams {
   network0: ChainId
   network1: ChainId
-  token0: Type
-  token1: Type
+  token0: Type | undefined
+  token1: Type | undefined
   amount: Amount<Type> | undefined
   slippagePercentage: string
   recipient: string | undefined

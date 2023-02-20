@@ -17,9 +17,9 @@ export const SwapButton: FC = () => {
   const [checked, setChecked] = useState(false)
 
   const isWrap =
-    appType === AppType.Swap && token0.isNative && token1.wrapped.address === Native.onChain(network0).wrapped.address
+    appType === AppType.Swap && token0?.isNative && token1?.wrapped.address === Native.onChain(network0).wrapped.address
   const isUnwrap =
-    appType === AppType.Swap && token1.isNative && token0.wrapped.address === Native.onChain(network0).wrapped.address
+    appType === AppType.Swap && token1?.isNative && token0?.wrapped.address === Native.onChain(network0).wrapped.address
 
   // Reset
   useEffect(() => {

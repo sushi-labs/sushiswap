@@ -174,11 +174,11 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
                 <h1 className="flex flex-wrap justify-center gap-1 font-semibold text-lg items-center">
                   You sold
                   <span className="text-red px-0.5">
-                    {trade?.amountIn?.toSignificant(6)} {token0.symbol}
+                    {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
                   </span>{' '}
                   for
                   <span className="text-blue px-0.5">
-                    {trade?.amountOut?.toSignificant(6)} {token1.symbol}.
+                    {trade?.amountOut?.toSignificant(6)} {token1?.symbol}.
                   </span>
                 </h1>
               ) : (

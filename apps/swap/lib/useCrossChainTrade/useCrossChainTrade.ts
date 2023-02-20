@@ -33,11 +33,11 @@ export const useCrossChainTradeQuery = (
 ) => {
   // First we'll check if bridge tokens for srcChainId includes srcToken, if so use srcToken as srcBridgeToken,
   // else take first stargate bridge token as srcBridgeToken
-  const srcBridgeToken = token0.isToken && isStargateBridgeToken(token0) ? token0 : STARGATE_BRIDGE_TOKENS[network0][0]
+  const srcBridgeToken = token0?.isToken && isStargateBridgeToken(token0) ? token0 : STARGATE_BRIDGE_TOKENS[network0][0]
 
   // First we'll check if bridge tokens for dstChainId includes dstToken, if so use dstToken as dstBridgeToken,
   // else take first stargate bridge token as dstBridgeToken
-  const dstBridgeToken = token1.isToken && isStargateBridgeToken(token1) ? token1 : STARGATE_BRIDGE_TOKENS[network1][0]
+  const dstBridgeToken = token1?.isToken && isStargateBridgeToken(token1) ? token1 : STARGATE_BRIDGE_TOKENS[network1][0]
 
   // A cross chain swap, a swap on the source and a swap on the destination
   const crossChainSwap = !isStargateBridgeToken(token0) && !isStargateBridgeToken(token1)
@@ -66,7 +66,30 @@ export const useCrossChainTradeQuery = (
   const contract = useSushiXSwapContract(network0)
 
   return useQuery({
-    queryKey: ['crossChainTrade', { network0, network1, token0, token1, amount, slippagePercentage, recipient }],
+    queryKey: [
+      'crossChainTrade',
+      {
+        network0,
+        network1,
+        srcBridgeToken,
+        dstBridgeToken,
+        srcCurrencyA,
+        srcCurrencyB,
+        dstCurrencyA,
+        dstCurrencyB,
+        amount,
+        slippagePercentage,
+        recipient,
+        crossChainSwap,
+        transfer,
+        swapTransfer,
+        transferSwap,
+        srcRebases,
+        dstRebases,
+        srcPools: srcPools?.length,
+        dstPools: dstPools?.length,
+      },
+    ],
     queryFn: async () => {
       const swapSlippage = slippagePercentage
         ? new Percent(Number(slippagePercentage === 'AUTO' ? 0.5 : slippagePercentage) * 100, 10_000)
@@ -176,7 +199,6 @@ export const useCrossChainTradeQuery = (
 
       const nanoId = nanoid()
 
-      console.log({ srcTrade, dstTrade })
       // console.log({ recipient, amount, network0, network1, dstMinimumAmountOut, srcRebases, dstRebases, contract })
       const [srcInputCurrencyRebase, srcOutputCurrencyRebase] = srcRebases || [undefined, undefined]
       const [, dstOutputCurrencyRebase] = dstRebases || [undefined, undefined]
@@ -190,7 +212,9 @@ export const useCrossChainTradeQuery = (
         !srcInputCurrencyRebase ||
         !srcOutputCurrencyRebase ||
         !dstOutputCurrencyRebase ||
-        !contract
+        !contract ||
+        !token0 ||
+        !token1
       ) {
         return {
           priceImpact: [priceImpact.numerator.toString(), priceImpact.denominator.toString()],
@@ -285,7 +309,9 @@ export const useCrossChainTradeQuery = (
           srcFeeData &&
           dstFeeData &&
           srcRebases &&
-          dstRebases
+          dstRebases &&
+          dstPools.length > 0 &&
+          srcPools.length > 0
       ),
   })
 }
@@ -296,9 +322,9 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
 
   const select: UseCrossChainTradeQuerySelect = useCallback(
     (data) => {
-      const amountIn = data.amountIn ? Amount.fromRawAmount(token0, data.amountIn) : undefined
-      const amountOut = data.amountOut ? Amount.fromRawAmount(token1, data.amountOut) : undefined
-      const minAmountOut = data.minAmountOut ? Amount.fromRawAmount(token1, data.minAmountOut) : undefined
+      const amountIn = data.amountIn && token0 ? Amount.fromRawAmount(token0, data.amountIn) : undefined
+      const amountOut = data.amountOut && token1 ? Amount.fromRawAmount(token1, data.amountOut) : undefined
+      const minAmountOut = data.minAmountOut && token1 ? Amount.fromRawAmount(token1, data.minAmountOut) : undefined
       const swapPrice = amountIn && amountOut ? new Price({ baseAmount: amountIn, quoteAmount: amountOut }) : undefined
       const priceImpact = data.priceImpact
         ? new Percent(JSBI.BigInt(data.priceImpact[0]), JSBI.BigInt(data.priceImpact[1]))
