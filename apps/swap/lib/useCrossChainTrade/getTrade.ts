@@ -89,14 +89,19 @@ export const getTrade = async ({
           Amount.fromShare(currencyOut.wrapped, tridentRoute.amountOutBN.toString(), currencyOutRebase)
         )
 
-        return Trade.exactIn(
-          useLegacy ? legacyRoute : tridentRoute,
-          amountSpecified,
-          currencyOut,
-          useLegacy ? TradeVersion.V1 : TradeVersion.V2,
-          !useLegacy ? currencyInRebase : undefined,
-          !useLegacy ? currencyOutRebase : undefined
-        )
+        if (legacyRoute.status === RouteStatus.Success || tridentRoute.status === RouteStatus.Success) {
+          console.debug(`Found ${useLegacy ? 'Legacy' : 'Trident'} route`, useLegacy ? legacyRoute : tridentRoute)
+          return Trade.exactIn(
+            useLegacy ? legacyRoute : tridentRoute,
+            amountSpecified,
+            currencyOut,
+            useLegacy ? TradeVersion.V1 : TradeVersion.V2,
+            !useLegacy ? currencyInRebase : undefined,
+            !useLegacy ? currencyOutRebase : undefined
+          )
+        } else {
+          console.debug('No legacy or trident route', legacyRoute, tridentRoute)
+        }
       }
 
       const legacyRoute = findSingleRouteExactIn(
