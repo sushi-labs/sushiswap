@@ -6,7 +6,7 @@ import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo, useState } from 'react'
 import resolveConfig from 'tailwindcss/resolveConfig'
-import { useGraphPool } from '../../lib/hooks/api/useGraphPair'
+import { useGraphPool } from '../../lib/hooks/api/useGraphPool'
 
 import tailwindConfig from '../../tailwind.config.js'
 

@@ -1,2 +1,2 @@
 export * from './useUserPositions'
-export * from './useGraphPair'
+export * from './useGraphPool'

@@ -60,7 +60,7 @@ export const PositionsTable: FC = () => {
     <GenericTable<PositionWithPool>
       table={table}
       HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
-      loading={!userPositions && isValidating}
+      loading={isValidating}
       placeholder="No positions found"
       pageSize={Math.max(userPositions?.length || 0, 5)}
       linkFormatter={rowLink}

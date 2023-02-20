@@ -1,10 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
 import { UserPosition } from '@sushiswap/graph-client'
-import { parseArgs, Pools, usePools } from '@sushiswap/client'
+import { parseArgs, Pools } from '@sushiswap/client'
 import { useMemo } from 'react'
 import useSWR from 'swr'
 import { PositionWithPool } from '../../../types'
-import { useSWRConfig } from 'swr'
+import { useGraphPools } from './useGraphPools'
 
 export interface GetUserArgs {
   id?: string
@@ -26,32 +26,21 @@ const transformPositions = (positions?: UserPosition[], pools?: Pools) =>
         .filter((position): position is PositionWithPool => !!position.pool)
     : []
 
-export async function getUserPositions(args: GetUserArgs): Promise<UserPosition[]> {
-  const url = getUserPositionsUrl(args)
-  if (!url) throw new Error('GetUser: Missing id or chainIds.')
-
-  return fetch(url).then((data) => data.json())
-}
-
 export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
   const { data: positions } = useSWR<UserPosition[]>(
     shouldFetch && args.id ? getUserPositionsUrl(args) : null,
     async (url) => fetch(url).then((data) => data.json())
   )
 
-  const { data: pools, isValidating } = usePools({
-    args: { ids: positions?.map((position) => position.pool) },
-    swrConfig: useSWRConfig(),
-    shouldFetch: !!positions,
-  })
+  const pools = useGraphPools(positions?.map((position) => position.pool) || [])
 
   return useMemo(
     () => ({
       data: transformPositions(positions, pools).filter((position) =>
         !!args.chainIds ? args.chainIds?.includes(position.chainId) : true
       ),
-      isValidating,
+      isValidating: !positions || !pools || (positions.length > 0 && pools.length === 0),
     }),
-    [args.chainIds, isValidating, pools, positions]
+    [args.chainIds, pools, positions]
   )
 }
