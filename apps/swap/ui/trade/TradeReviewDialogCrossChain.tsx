@@ -141,32 +141,34 @@ export const TradeReviewDialogCrossChain: FC = () => {
         </div>
         <div className="pt-4">
           <ApproveBentoboxController chainId={network0} contract={getSushiXSwapContractConfig(network0).address}>
-            {({ approvalState }) => (
-              <ConfirmationDialogCrossChain
-                enabled={Boolean(
-                  approvalState === ApprovalState.APPROVED ||
-                    (approvalState === ApprovalState.PENDING && bentoboxSignature)
-                )}
-              >
-                {({ onClick, isWritePending, isLoading, isConfirming }) => (
-                  <Button
-                    size="xl"
-                    fullWidth
-                    loading={isLoading}
-                    onClick={onClick}
-                    disabled={isWritePending || Boolean(isLoading && +value > 0) || isFetching}
-                  >
-                    {isConfirming ? (
-                      <Dots>Confirming transaction</Dots>
-                    ) : isWritePending ? (
-                      <Dots>Confirm Swap</Dots>
-                    ) : (
-                      `Swap ${token0?.symbol} for ${token1?.symbol}`
-                    )}
-                  </Button>
-                )}
-              </ConfirmationDialogCrossChain>
-            )}
+            {({ approvalState }) => {
+              return (
+                <ConfirmationDialogCrossChain
+                  enabled={Boolean(
+                    approvalState === ApprovalState.APPROVED ||
+                      (approvalState === ApprovalState.PENDING && bentoboxSignature)
+                  )}
+                >
+                  {({ onClick, isWritePending, isLoading, isConfirming }) => (
+                    <Button
+                      size="xl"
+                      fullWidth
+                      loading={isLoading}
+                      onClick={onClick}
+                      disabled={isWritePending || Boolean(isLoading && +value > 0) || isFetching}
+                    >
+                      {isConfirming ? (
+                        <Dots>Confirming transaction</Dots>
+                      ) : isWritePending ? (
+                        <Dots>Confirm Swap</Dots>
+                      ) : (
+                        `Swap ${token0?.symbol} for ${token1?.symbol}`
+                      )}
+                    </Button>
+                  )}
+                </ConfirmationDialogCrossChain>
+              )
+            }}
           </ApproveBentoboxController>
         </div>
       </div>

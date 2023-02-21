@@ -1943,6 +1943,7 @@ importers:
       tiny-warning: ^1.0.3
       tsup: 6.5.0
       typescript: 4.9.4
+      zod: 3.20.2
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
@@ -1955,6 +1956,7 @@ importers:
       '@sushiswap/trident': 1.0.0-canary.53
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
+      zod: 3.20.2
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -2120,6 +2122,7 @@ importers:
       tiny-invariant: ^1.2.0
       tsup: 6.5.0
       typescript: 4.9.4
+      zod: 3.20.2
     dependencies:
       '@ethersproject/address': 5.7.0
       '@ethersproject/units': 5.7.0
@@ -2127,6 +2130,7 @@ importers:
       '@sushiswap/math': link:../math
       lodash.flatmap: 4.5.0
       tiny-invariant: 1.3.1
+      zod: 3.20.2
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest

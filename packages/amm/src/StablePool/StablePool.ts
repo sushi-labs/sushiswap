@@ -7,6 +7,7 @@ import { InsufficientInputAmountError, InsufficientReservesError } from '../erro
 import { Fee } from '../Fee'
 import { Pool } from '../Pool'
 import { computeStablePoolAddress } from './computeStablePoolAddress'
+import { SerializedStablePool, stablePoolSchema } from './zod'
 
 interface Rebase {
   elastic: JSBI
@@ -499,6 +500,42 @@ export class StablePool implements Pool {
           JSBI.subtract(this.reserve0.quotient, amount0)
         )
       )
+    )
+  }
+
+  public serialize(): SerializedStablePool {
+    return stablePoolSchema.parse({
+      reserve0: this.tokenAmounts[0].serialize(),
+      reserve1: this.tokenAmounts[1].serialize(),
+      fee: this.fee,
+      total0: {
+        base: this.total0.base.toString(),
+        elastic: this.total0.base.toString(),
+      },
+      total1: {
+        base: this.total1.base.toString(),
+        elastic: this.total1.base.toString(),
+      },
+    })
+  }
+
+  public static deserialize(pool: SerializedStablePool): StablePool {
+    const rebase0: Rebase = {
+      base: JSBI.BigInt(pool.total0.base),
+      elastic: JSBI.BigInt(pool.total0.elastic),
+    }
+
+    const rebase1: Rebase = {
+      base: JSBI.BigInt(pool.total1.base),
+      elastic: JSBI.BigInt(pool.total1.elastic),
+    }
+
+    return new StablePool(
+      Amount.deserialize(pool.reserve0),
+      Amount.deserialize(pool.reserve1),
+      pool.fee,
+      rebase0,
+      rebase1
     )
   }
 }

@@ -1,12 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type as Currency, Type, WNATIVE } from '@sushiswap/currency'
 import {
-  ConstantProductPool,
   FACTORY_ADDRESS,
   findMultiRouteExactIn,
   findSingleRouteExactIn,
-  Pair,
-  StablePool,
   Trade,
   TradeType,
   Version as TradeVersion,

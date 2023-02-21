@@ -1,6 +1,6 @@
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import React, { FC, useCallback, useState } from 'react'
 import Switch from '@sushiswap/ui/future/components/Switch'
-import { useSwapState } from '../trade/TradeProvider'
+import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { AppType } from '@sushiswap/ui/types'
 import { classNames } from '@sushiswap/ui'
 import { ShuffleIcon } from '@sushiswap/ui/future/components/icons'
@@ -10,20 +10,21 @@ import { Explainer } from '@sushiswap/ui/future/components/Explainer'
 
 export const CrossChainBanner: FC = () => {
   const { appType } = useSwapState()
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(appType !== AppType.Swap)
+  const { setAppType } = useSwapActions()
 
-  const handleChange = useCallback((checked: boolean) => {
-    if (checked) setOpen(true)
-    else setOpen(false)
-  }, [])
-
-  useEffect(() => {
-    if (appType === AppType.xSwap) {
-      setOpen(true)
-    } else {
-      setOpen(false)
-    }
-  }, [appType])
+  const handleChange = useCallback(
+    (checked: boolean) => {
+      if (checked) {
+        setOpen(true)
+        setAppType(AppType.xSwap)
+      } else {
+        setOpen(false)
+        setAppType(AppType.Swap)
+      }
+    },
+    [setAppType]
+  )
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-xl mb-4">

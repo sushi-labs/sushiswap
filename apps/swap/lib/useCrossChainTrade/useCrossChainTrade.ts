@@ -69,31 +69,13 @@ export const useCrossChainTradeQuery = (
     queryKey: [
       'crossChainTrade',
       {
+        token0,
+        token1,
         network0,
         network1,
-        srcBridgeToken,
-        dstBridgeToken,
-        srcCurrencyA,
-        srcCurrencyB,
-        dstCurrencyA,
-        dstCurrencyB,
         amount,
         slippagePercentage,
         recipient,
-        crossChainSwap,
-        transfer,
-        swapTransfer,
-        transferSwap,
-        srcRebases,
-        dstRebases,
-        srcPools:
-          (srcPools?.pairs?.length || 0) +
-          (srcPools?.constantProductPools?.length || 0) +
-          (srcPools?.stablePools?.length || 0),
-        dstPools:
-          (dstPools?.pairs?.length || 0) +
-          (dstPools?.constantProductPools?.length || 0) +
-          (dstPools?.stablePools?.length || 0),
       },
     ],
     queryFn: async () => {
@@ -302,7 +284,20 @@ export const useCrossChainTradeQuery = (
     keepPreviousData: false,
     cacheTime: 0,
     select,
-    enabled: enabled && Boolean(network0 && network1 && token0 && token1 && amount && srcFeeData && dstFeeData),
+    enabled:
+      enabled &&
+      Boolean(
+        network0 &&
+          network1 &&
+          token0 &&
+          token1 &&
+          amount &&
+          srcFeeData &&
+          dstFeeData &&
+          srcPools &&
+          srcRebases &&
+          (transferSwap ? dstPools && dstRebases : true)
+      ),
   })
 }
 

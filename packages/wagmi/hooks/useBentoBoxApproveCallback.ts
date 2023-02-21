@@ -34,13 +34,17 @@ export function useBentoBoxApproveCallback({
   enabled?: boolean
 }): [ApprovalState, Signature | undefined, () => Promise<void>] {
   const { address, connector } = useAccount()
+  const [signature, setSignature] = useState<Signature>()
 
   const { config } = usePrepareContractWrite({
     ...getBentoBoxContractConfig(chainId),
     chainId,
     functionName: 'setMasterContractApproval',
-    args: !!masterContract && !!address ? [address, masterContract, true, 0, HashZero, HashZero] : undefined,
-    enabled: enabled && !!masterContract && !!address,
+    args:
+      !!masterContract && !!address && signature
+        ? [address, masterContract, true, signature.v, signature.r as Address, signature.s as Address]
+        : undefined,
+    enabled: Boolean(enabled && !!masterContract && !!address && signature),
   })
 
   const { writeAsync } = useContractWrite(config)
@@ -62,8 +66,6 @@ export function useBentoBoxApproveCallback({
     args: address ? [address] : undefined,
     enabled: isAddress(address as string),
   })
-
-  const [signature, setSignature] = useState<Signature>()
 
   const { signTypedDataAsync } = useSignTypedData()
 

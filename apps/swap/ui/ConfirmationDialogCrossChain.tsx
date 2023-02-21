@@ -36,7 +36,7 @@ enum ConfirmationDialogState {
   Sign,
 }
 
-export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps> = ({ children, enabled = true }) => {
+export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps> = ({ children, enabled = false }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
   const { appType, review, network0, token0, token1 } = useSwapState()

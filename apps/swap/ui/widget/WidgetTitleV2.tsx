@@ -49,12 +49,11 @@ export const WidgetTitleV2 = () => {
     <div className="flex flex-col gap-2 mb-4 sm:mt-10 mt-2">
       {tokensLoading ? (
         <>
-          <Skeleton.Text fontSize="text-2xl" className="w-1/3" />
-          <Skeleton.Text fontSize="text-2xl" className="w-2/4" />
+          <Skeleton.Text fontSize="text-4xl" className="w-2/4" />
         </>
       ) : (
         <>
-          <h1 className="flex items-center gap-2 text-2xl sm:text-4xl font-medium text-gray-900 dark:text-slate-50 max-h-[36px] sm:max-h-[44px]">
+          <h1 className="flex items-center gap-2 text-4xl font-medium text-gray-900 dark:text-slate-50 max-h-[36px] sm:max-h-[44px]">
             Trade
           </h1>
         </>

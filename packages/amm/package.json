@@ -42,7 +42,8 @@
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident": "1.0.0-canary.53",
     "tiny-invariant": "^1.2.0",
-    "tiny-warning": "^1.0.3"
+    "tiny-warning": "^1.0.3",
+    "zod": "3.20.2"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

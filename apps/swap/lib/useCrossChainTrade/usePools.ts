@@ -6,7 +6,15 @@ import { getConstantProductPools } from './getConstantProductPools'
 import { getStablePools } from './getStablePools'
 import { Type } from '@sushiswap/currency'
 import { getCurrencyCombinations } from '@sushiswap/router'
-import { ConstantProductPool, Pair, StablePool, TradeType } from '@sushiswap/amm'
+import {
+  ConstantProductPool,
+  Pair,
+  SerializedStablePool,
+  SerializedConstantProductPool,
+  SerializedPair,
+  StablePool,
+  TradeType,
+} from '@sushiswap/amm'
 import { ConstantProductPoolState, PairState, StablePoolState } from '@sushiswap/wagmi'
 
 interface UsePoolsParams {
@@ -61,22 +69,24 @@ export const usePools = (variables: UsePoolsParams) => {
     return {
       pairs: Object.values(
         data.pairs
-          .filter((result): result is [PairState.EXISTS, Pair] => Boolean(result[0] === PairState.EXISTS && result[1]))
-          .map(([, pair]) => pair)
+          .filter((result): result is [PairState.EXISTS, SerializedPair] =>
+            Boolean(result[0] === PairState.EXISTS && result[1])
+          )
+          .map(([, pair]) => Pair.deserialize(pair))
       ),
       constantProductPools: Object.values(
         data.constantProductPools
-          .filter((result): result is [ConstantProductPoolState.EXISTS, ConstantProductPool] =>
+          .filter((result): result is [ConstantProductPoolState.EXISTS, SerializedConstantProductPool] =>
             Boolean(result[0] === ConstantProductPoolState.EXISTS && result[1])
           )
-          .map(([, pair]) => pair)
+          .map(([, pair]) => ConstantProductPool.deserialize(pair))
       ),
       stablePools: Object.values(
         data.stablePools
-          .filter((result): result is [StablePoolState.EXISTS, StablePool] =>
+          .filter((result): result is [StablePoolState.EXISTS, SerializedStablePool] =>
             Boolean(result[0] === StablePoolState.EXISTS && result[1])
           )
-          .map(([, pair]) => pair)
+          .map(([, pair]) => StablePool.deserialize(pair))
       ),
     }
   }, [])

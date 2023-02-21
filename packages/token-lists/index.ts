@@ -81,4 +81,17 @@ export class WrappedTokenInfo implements Token {
   public get wrapped(): Token {
     return this
   }
+
+  public serialize() {
+    return {
+      type: 'token',
+      isNative: this.isNative,
+      isToken: this.isToken,
+      name: this.name,
+      symbol: this.symbol,
+      decimals: this.decimals,
+      chainId: this.chainId,
+      address: this.address,
+    }
+  }
 }

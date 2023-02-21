@@ -125,7 +125,7 @@ export const getStablePools = async (
         parseInt(fees[i].toString()),
         { base: JSBI.BigInt(totals[0].base), elastic: JSBI.BigInt(totals[0].elastic) },
         { base: JSBI.BigInt(totals[1].base), elastic: JSBI.BigInt(totals[1].elastic) }
-      ),
+      ).serialize(),
     ]
   })
 }

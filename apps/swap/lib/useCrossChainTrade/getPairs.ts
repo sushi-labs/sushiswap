@@ -1,13 +1,13 @@
 import { Amount, Type as Currency } from '@sushiswap/currency'
 import { readContracts } from 'wagmi'
-import { Pair } from '@sushiswap/amm'
+import { Pair, SerializedPair } from '@sushiswap/amm'
 import { getPairs as _getPairs, PairState } from '@sushiswap/wagmi'
 import { ChainId } from '@sushiswap/chain'
 
 export const getPairs = async (
   chainId: ChainId | undefined,
   currencies: [Currency | undefined, Currency | undefined][]
-) => {
+): Promise<[PairState, SerializedPair | null][]> => {
   const [tokensA, tokensB, contracts] = _getPairs(chainId, currencies)
 
   const data = await readContracts({
@@ -26,7 +26,10 @@ export const getPairs = async (
     const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
     return [
       PairState.EXISTS,
-      new Pair(Amount.fromRawAmount(token0, reserve0.toString()), Amount.fromRawAmount(token1, reserve1.toString())),
+      new Pair(
+        Amount.fromRawAmount(token0, reserve0.toString()),
+        Amount.fromRawAmount(token1, reserve1.toString())
+      ).serialize(),
     ]
   })
 }

@@ -7,6 +7,7 @@ import { InsufficientInputAmountError, InsufficientReservesError } from '../erro
 import { Fee } from '../Fee'
 import { Pool } from '../Pool'
 import { computeConstantProductPoolAddress } from './computeConstantProductPoolAddress'
+import { constantProductPoolSchema, SerializedConstantProductPool } from './zod'
 
 export class ConstantProductPool implements Pool {
   public readonly liquidityToken: Token
@@ -317,6 +318,24 @@ export class ConstantProductPool implements Pool {
           JSBI.subtract(this.reserve0.quotient, amount0)
         )
       )
+    )
+  }
+
+  public serialize(): SerializedConstantProductPool {
+    return constantProductPoolSchema.parse({
+      reserve0: this.tokenAmounts[0].serialize(),
+      reserve1: this.tokenAmounts[1].serialize(),
+      fee: this.fee,
+      twap: this.twap,
+    })
+  }
+
+  public static deserialize(pool: SerializedConstantProductPool): ConstantProductPool {
+    return new ConstantProductPool(
+      Amount.deserialize(pool.reserve0),
+      Amount.deserialize(pool.reserve1),
+      pool.fee,
+      pool.twap
     )
   }
 }
