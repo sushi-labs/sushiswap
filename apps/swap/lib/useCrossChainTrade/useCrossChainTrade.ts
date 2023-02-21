@@ -305,7 +305,7 @@ export const useCrossChainTradeQuery = (
           dstFeeData &&
           srcPools &&
           srcRebases &&
-          (transferSwap ? dstPools && dstRebases : true)
+          (crossChainSwap ? dstPools && dstRebases : true)
       ),
   })
 }

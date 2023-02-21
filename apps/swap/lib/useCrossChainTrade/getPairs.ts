@@ -1,6 +1,6 @@
 import { Amount, Type as Currency } from '@sushiswap/currency'
 import { readContracts } from 'wagmi'
-import { Pair, SerializedPair } from '@sushiswap/amm'
+import { Pair } from '@sushiswap/amm'
 import { getPairs as _getPairs, PairState } from '@sushiswap/wagmi'
 import { ChainId } from '@sushiswap/chain'
 
