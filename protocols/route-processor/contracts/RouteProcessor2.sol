@@ -185,17 +185,19 @@ contract RouteProcessor2 {
   }
 
   function wrapNative(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
-    uint8 direction = stream.readUint8();
+    uint8 directionAndFake = stream.readUint8();
     address to = stream.readAddress();
 
-    if (direction > 0) {  // wrap native
+    if (directionAndFake & 1 == 1) {  // wrap native
       address wrapToken = stream.readAddress();
       uint amount = address(this).balance;
-      IWETH(wrapToken).deposit{value: amount}();
+      if (directionAndFake & 2 == 0) IWETH(wrapToken).deposit{value: amount}();
       if (to != address(this)) IERC20(wrapToken).safeTransfer(to, amount);
     } else { // unwrap native
-      if (from != address(this)) IERC20(tokenIn).safeTransferFrom(from, address(this), amountIn);
-      IWETH(tokenIn).withdraw(amountIn);
+      if (directionAndFake & 2 == 0) {
+        if (from != address(this)) IERC20(tokenIn).safeTransferFrom(from, address(this), amountIn);
+        IWETH(tokenIn).withdraw(amountIn);
+      }
       payable(to).transfer(address(this).balance);
     }
   }

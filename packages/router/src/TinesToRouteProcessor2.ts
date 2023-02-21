@@ -1,14 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
-import { Type, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { getBigNumber, MultiRoute, RouteLeg, RouteStatus, RToken } from '@sushiswap/tines'
-import { BigNumber } from 'ethers'
+import { MultiRoute, RouteLeg, RouteStatus, RToken } from '@sushiswap/tines'
 
 import { HEXer } from './HEXer'
 import { PoolCode } from './pools/PoolCode'
-
-function last<T>(arr: T[]): T {
-  return arr[arr.length - 1]
-}
 
 enum TokenType {
   ERC20 = 'ERC20',
@@ -52,10 +46,8 @@ class TinesToRouteProcessor2 {
         else if (getTokenType(token) == TokenType.ERC20) res += this.processERC20Code(true, token, route, toAddress)
         else res += this.processBentoCode(token, route, toAddress)
       } else {
-        if (token.address == '') {
-          if (this.chainId == ChainId.CELO) res += this.processERC20Code(true, token, route, toAddress)
-          else res += this.processNativeCode(token, route, toAddress)
-        } else res += this.processERC20Code(false, token, route, toAddress)
+        if (token.address == '') res += this.processNativeCode(token, route, toAddress)
+        else res += this.processERC20Code(false, token, route, toAddress)
       }
     })
 

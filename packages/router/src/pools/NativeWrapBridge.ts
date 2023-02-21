@@ -1,3 +1,4 @@
+import { ChainId } from '@sushiswap/chain'
 import type { BridgeUnlimited, MultiRoute, RouteLeg } from '@sushiswap/tines'
 
 import { HEXer } from '../HEXer'
@@ -25,11 +26,12 @@ export class NativeWrapBridgePoolCode extends PoolCode {
   }
 
   getSwapCodeForRouteProcessor2(leg: RouteLeg, _route: MultiRoute, to: string): string {
+    const fake = leg.tokenFrom.chainId == ChainId.CELO ? 2 : 0 // no real wrap at celo - fake wrap code is generated
     if (leg.tokenFrom.tokenId == this.pool.token0.tokenId) {
       // wrap - deposit
       const code = new HEXer()
         .uint8(2) // wrapNative pool type
-        .uint8(1) // wrap action
+        .uint8(1 + fake) // wrap action
         .address(to) // where to transfer native coin after unwrapping
         .address(this.pool.address) // wrap token
         .toString()
@@ -38,7 +40,7 @@ export class NativeWrapBridgePoolCode extends PoolCode {
       // unwrap - withdraw
       const code = new HEXer()
         .uint8(2) // wrapNative pool type
-        .uint8(0) // unwrap action
+        .uint8(0 + fake) // unwrap action
         .address(to) // where to transfer native coin after unwrapping
         //.address(this.pool.address) - don't need because processToken knows the token
         .toString()
