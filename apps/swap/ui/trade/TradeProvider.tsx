@@ -151,7 +151,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       if (customTokens && customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]) {
         token0 = customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]
         isTokenFromLoading = false
-      } else if (customTokens && !customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]) {
+      } else if (tokenFrom) {
         token0 = tokenFrom
         isTokenFromLoading = false
       }
@@ -169,7 +169,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       if (customTokens && customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]) {
         token1 = customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]
         isTokenToLoading = false
-      } else if (customTokens && !customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]) {
+      } else if (tokenTo) {
         token1 = tokenTo
         isTokenToLoading = false
       }
@@ -200,10 +200,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           customTokens &&
           !customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]) ||
         false,
-      tokensLoading:
-        customTokensLoading ||
-        (isAddress(fromCurrencyId) && isTokenFromLoading) ||
-        (isAddress(toCurrencyId) && isTokenToLoading),
+      tokensLoading: customTokensLoading || isTokenFromLoading || isTokenToLoading,
     }
   }, [
     customTokens,
