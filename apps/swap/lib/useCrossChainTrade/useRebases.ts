@@ -8,6 +8,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 interface UseBentoboxTotalsParams {
   chainId: ChainId
   currencies: (Type | undefined)[]
+  enabled?: boolean
 }
 
 const queryFn = async ({ chainId, currencies }: UseBentoboxTotalsParams) => await getBentoboxTotals(chainId, currencies)
@@ -15,7 +16,7 @@ const queryFn = async ({ chainId, currencies }: UseBentoboxTotalsParams) => awai
 export const useBentoboxTotals = (variables: UseBentoboxTotalsParams) => {
   return useQuery({
     queryKey: ['useBentoboxTotals', { chainId: variables.chainId, currencies: variables.currencies }],
-    enabled: Boolean(variables.currencies),
+    enabled: Boolean(variables.currencies) && (variables.enabled || true),
     queryFn: async () => queryFn(variables),
     select: (data) => {
       if (!data) return undefined

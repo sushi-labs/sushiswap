@@ -22,6 +22,7 @@ interface UsePoolsParams {
   currencyA: Type | undefined
   currencyB: Type | undefined
   tradeType?: TradeType
+  enabled?: boolean
 }
 
 export type UsePoolsReturn = {
@@ -60,7 +61,7 @@ export const usePoolsQuery = (variables: UsePoolsParams, select: UsePoolsQuerySe
     ],
     queryFn: async () => queryFn(variables),
     select,
-    enabled: Boolean(variables.currencyA && variables.currencyB),
+    enabled: Boolean(variables.currencyA && variables.currencyB) && (variables.enabled || true),
   })
 }
 
