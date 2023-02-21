@@ -136,35 +136,39 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
 
   const state = useMemo(() => {
     let token0: Type | undefined = undefined
-    let isTokenFromLoading = false
+    let isTokenFromLoading = true
     if (isShortCurrencyName(fromChainId, fromCurrencyId)) {
       token0 = currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
+      isTokenFromLoading = false
     } else if (isAddress(fromCurrencyId)) {
       if (customTokens && customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]) {
         token0 = customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]
+        isTokenFromLoading = false
       } else if (customTokens && !customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]) {
         token0 = tokenFrom
-      } else {
-        isTokenFromLoading = true
+        isTokenFromLoading = false
       }
     } else {
       token0 = Native.onChain(fromChainId ? fromChainId : ChainId.ETHEREUM)
+      isTokenFromLoading = false
     }
 
     let token1: Type | undefined = undefined
-    let isTokenToLoading = false
+    let isTokenToLoading = true
     if (isShortCurrencyName(toChainId, toCurrencyId)) {
       token1 = currencyFromShortCurrencyName(toChainId, toCurrencyId)
+      isTokenToLoading = false
     } else if (isAddress(toCurrencyId)) {
       if (customTokens && customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]) {
         token1 = customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]
+        isTokenToLoading = false
       } else if (customTokens && !customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]) {
         token1 = tokenTo
-      } else {
-        isTokenToLoading = true
+        isTokenToLoading = false
       }
     } else {
       token1 = Native.onChain(toChainId ? toChainId : ChainId.ETHEREUM)
+      isTokenToLoading = false
     }
 
     return {
