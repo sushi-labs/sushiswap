@@ -48,7 +48,6 @@ export const useTrade = (variables: UseTradeParams) => {
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
       if (data && amount && data.getBestRoute && fromToken && toToken) {
-
           const amountIn = Amount.fromRawAmount(fromToken, data.getBestRoute.amountInBN)
           const amountOut = Amount.fromRawAmount(toToken, data.getBestRoute.amountOutBN)
           const isOffset = chainId === ChainId.POLYGON && carbonOffset

@@ -6,15 +6,7 @@ import { getConstantProductPools } from './getConstantProductPools'
 import { getStablePools } from './getStablePools'
 import { Type } from '@sushiswap/currency'
 import { getCurrencyCombinations } from '@sushiswap/router'
-import {
-  ConstantProductPool,
-  Pair,
-  SerializedStablePool,
-  SerializedConstantProductPool,
-  SerializedPair,
-  StablePool,
-  TradeType,
-} from '@sushiswap/amm'
+import { ConstantProductPool, Pair, StablePool, TradeType } from '@sushiswap/amm'
 import { ConstantProductPoolState, PairState, StablePoolState } from '@sushiswap/wagmi'
 
 interface UsePoolsParams {
@@ -56,6 +48,7 @@ const queryFn = async ({ currencyA, currencyB, chainId, tradeType = TradeType.EX
 export const usePoolsQuery = (variables: UsePoolsParams, select: UsePoolsQuerySelect) => {
   return useQuery({
     queryKey: [
+      'NoCache',
       'usePools',
       { chainId: variables.chainId, currencyA: variables.currencyA, currencyB: variables.currencyB },
     ],
@@ -70,24 +63,22 @@ export const usePools = (variables: UsePoolsParams) => {
     return {
       pairs: Object.values(
         data.pairs
-          .filter((result): result is [PairState.EXISTS, SerializedPair] =>
-            Boolean(result[0] === PairState.EXISTS && result[1])
-          )
-          .map(([, pair]) => Pair.deserialize(pair))
+          .filter((result): result is [PairState.EXISTS, Pair] => Boolean(result[0] === PairState.EXISTS && result[1]))
+          .map(([, pair]) => pair)
       ),
       constantProductPools: Object.values(
         data.constantProductPools
-          .filter((result): result is [ConstantProductPoolState.EXISTS, SerializedConstantProductPool] =>
+          .filter((result): result is [ConstantProductPoolState.EXISTS, ConstantProductPool] =>
             Boolean(result[0] === ConstantProductPoolState.EXISTS && result[1])
           )
-          .map(([, pair]) => ConstantProductPool.deserialize(pair))
+          .map(([, pair]) => pair)
       ),
       stablePools: Object.values(
         data.stablePools
-          .filter((result): result is [StablePoolState.EXISTS, SerializedStablePool] =>
+          .filter((result): result is [StablePoolState.EXISTS, StablePool] =>
             Boolean(result[0] === StablePoolState.EXISTS && result[1])
           )
-          .map(([, pair]) => StablePool.deserialize(pair))
+          .map(([, pair]) => pair)
       ),
     }
   }, [])

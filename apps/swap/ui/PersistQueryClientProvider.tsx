@@ -7,7 +7,14 @@ export const PersistQueryClientProvider: FC<{ children: ReactNode }> = ({ childr
   return (
     <_PersistQueryClientProvider
       client={queryClient}
-      persistOptions={{ persister }}
+      persistOptions={{
+        persister,
+        dehydrateOptions: {
+          shouldDehydrateQuery: (query) => {
+            return !query.queryKey.includes('NoCache')
+          },
+        },
+      }}
       onSuccess={() => {
         queryClient.resumePausedMutations().then(() => {
           void queryClient.invalidateQueries()

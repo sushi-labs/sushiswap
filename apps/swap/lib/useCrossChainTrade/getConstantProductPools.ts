@@ -138,7 +138,7 @@ export const getConstantProductPools = async (
         Amount.fromRawAmount(p.token1, reserves._reserve1.toString()),
         parseInt(swapFee.toString()),
         reserves._blockTimestampLast !== 0
-      ).serialize(),
+      ),
     ]
   })
 }

@@ -75,6 +75,7 @@ export const useCrossChainTradeQuery = (
 
   return useQuery({
     queryKey: [
+      'NoCache',
       'crossChainTrade',
       {
         token0,

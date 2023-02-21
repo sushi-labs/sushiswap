@@ -5,6 +5,7 @@ import { useSlippageTolerance } from './useSlippageTolerance'
 import { useCarbonOffset } from './useCarbonOffset'
 import { useCrossChainTrade } from './useCrossChainTrade/useCrossChainTrade'
 import { useMemo } from 'react'
+import * as net from 'net'
 
 type ObjectType<T> = T extends true ? ReturnType<typeof useCrossChainTrade> : ReturnType<typeof _useTrade>
 
@@ -39,7 +40,7 @@ export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): 
   })
 
   return useMemo(() => {
-    if (crossChain) return crossChainTrade
+    if (network0 !== network1) return crossChainTrade
     return sameChainTrade
-  }, [crossChain, crossChainTrade, sameChainTrade]) as ObjectType<T>
+  }, [crossChainTrade, network0, network1, sameChainTrade]) as ObjectType<T>
 }
