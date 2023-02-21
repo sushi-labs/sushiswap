@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { ChainId } from '@sushiswap/chain'
-import { useCallback } from 'react'
 import { getPairs } from './getPairs'
 import { getConstantProductPools } from './getConstantProductPools'
 import { getStablePools } from './getStablePools'
@@ -23,8 +22,6 @@ export type UsePoolsReturn = {
   stablePools: StablePool[] | undefined
 }
 
-type UsePoolsQuerySelect = (data: Awaited<ReturnType<typeof queryFn>>) => UsePoolsReturn
-
 const queryFn = async ({ currencyA, currencyB, chainId, tradeType = TradeType.EXACT_INPUT }: UsePoolsParams) => {
   const [currencyIn, currencyOut] =
     tradeType === TradeType.EXACT_INPUT ? [currencyA, currencyB] : [currencyB, currencyA]
@@ -45,43 +42,39 @@ const queryFn = async ({ currencyA, currencyB, chainId, tradeType = TradeType.EX
   }
 }
 
-export const usePoolsQuery = (variables: UsePoolsParams, select: UsePoolsQuerySelect) => {
+export const usePools = (variables: UsePoolsParams) => {
   return useQuery({
     queryKey: [
       'NoCache',
       'usePools',
       { chainId: variables.chainId, currencyA: variables.currencyA, currencyB: variables.currencyB },
     ],
-    queryFn: async () => queryFn(variables),
-    select,
+    queryFn: async () => {
+      const data = await queryFn(variables)
+      return {
+        pairs: Object.values(
+          data.pairs
+            .filter((result): result is [PairState.EXISTS, Pair] =>
+              Boolean(result[0] === PairState.EXISTS && result[1])
+            )
+            .map(([, pair]) => pair)
+        ),
+        constantProductPools: Object.values(
+          data.constantProductPools
+            .filter((result): result is [ConstantProductPoolState.EXISTS, ConstantProductPool] =>
+              Boolean(result[0] === ConstantProductPoolState.EXISTS && result[1])
+            )
+            .map(([, pair]) => pair)
+        ),
+        stablePools: Object.values(
+          data.stablePools
+            .filter((result): result is [StablePoolState.EXISTS, StablePool] =>
+              Boolean(result[0] === StablePoolState.EXISTS && result[1])
+            )
+            .map(([, pair]) => pair)
+        ),
+      }
+    },
     enabled: Boolean(variables.currencyA && variables.currencyB) && (variables.enabled || true),
   })
-}
-
-export const usePools = (variables: UsePoolsParams) => {
-  const select: UsePoolsQuerySelect = useCallback((data) => {
-    return {
-      pairs: Object.values(
-        data.pairs
-          .filter((result): result is [PairState.EXISTS, Pair] => Boolean(result[0] === PairState.EXISTS && result[1]))
-          .map(([, pair]) => pair)
-      ),
-      constantProductPools: Object.values(
-        data.constantProductPools
-          .filter((result): result is [ConstantProductPoolState.EXISTS, ConstantProductPool] =>
-            Boolean(result[0] === ConstantProductPoolState.EXISTS && result[1])
-          )
-          .map(([, pair]) => pair)
-      ),
-      stablePools: Object.values(
-        data.stablePools
-          .filter((result): result is [StablePoolState.EXISTS, StablePool] =>
-            Boolean(result[0] === StablePoolState.EXISTS && result[1])
-          )
-          .map(([, pair]) => pair)
-      ),
-    }
-  }, [])
-
-  return usePoolsQuery(variables, select)
 }

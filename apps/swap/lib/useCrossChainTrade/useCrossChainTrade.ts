@@ -28,6 +28,7 @@ export const useCrossChainTradeQuery = (
     recipient,
     enabled,
     bentoboxSignature,
+    tradeId,
   }: UseCrossChainTradeParams,
   select: UseCrossChainTradeQuerySelect
 ) => {
@@ -62,12 +63,12 @@ export const useCrossChainTradeQuery = (
   const { data: dstFeeData } = useFeeData({ chainId: network1, enabled })
   const { data: srcRebases } = useBentoboxTotals({
     chainId: network0,
-    currencies: [srcCurrencyA, srcCurrencyB],
+    currencies: [token0, srcBridgeToken],
     enabled,
   })
   const { data: dstRebases } = useBentoboxTotals({
     chainId: network1,
-    currencies: [dstCurrencyA, dstCurrencyB],
+    currencies: [dstBridgeToken, token1],
     enabled,
   })
 
@@ -78,6 +79,7 @@ export const useCrossChainTradeQuery = (
       'NoCache',
       'crossChainTrade',
       {
+        tradeId,
         token0,
         token1,
         network0,
@@ -194,8 +196,6 @@ export const useCrossChainTradeQuery = (
         priceImpact = new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
       }
 
-      const nanoId = nanoid()
-
       // console.log({ recipient, amount, network0, network1, dstMinimumAmountOut, srcRebases, dstRebases, contract })
       const [srcInputCurrencyRebase, srcOutputCurrencyRebase] = srcRebases || [undefined, undefined]
       const [, dstOutputCurrencyRebase] = dstRebases || [undefined, undefined]
@@ -266,7 +266,7 @@ export const useCrossChainTradeQuery = (
           srcBridgeToken,
           dstBridgeToken,
           dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined,
-          nanoId
+          tradeId
         )
       }
 
@@ -305,7 +305,7 @@ export const useCrossChainTradeQuery = (
           dstFeeData &&
           srcPools &&
           srcRebases &&
-          (crossChainSwap ? dstPools && dstRebases : true)
+          dstRebases
       ),
   })
 }

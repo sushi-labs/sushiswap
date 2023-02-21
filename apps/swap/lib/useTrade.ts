@@ -4,13 +4,13 @@ import { useSwapState } from '../ui/trade/TradeProvider'
 import { useSlippageTolerance } from './useSlippageTolerance'
 import { useCarbonOffset } from './useCarbonOffset'
 import { useCrossChainTrade } from './useCrossChainTrade/useCrossChainTrade'
-import { useMemo } from 'react'
-import * as net from 'net'
+import { useMemo, useState } from 'react'
+import { nanoid } from 'nanoid'
 
 type ObjectType<T> = T extends true ? ReturnType<typeof useCrossChainTrade> : ReturnType<typeof _useTrade>
 
 export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): ObjectType<T> {
-  const { token0, token1, network0, network1, amount, recipient, bentoboxSignature } = useSwapState()
+  const { token0, token1, network0, network1, amount, recipient, bentoboxSignature, tradeId } = useSwapState()
   const [slippageTolerance] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
 
@@ -28,6 +28,7 @@ export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): 
   })
 
   const crossChainTrade = useCrossChainTrade({
+    tradeId,
     network0,
     network1,
     token0,

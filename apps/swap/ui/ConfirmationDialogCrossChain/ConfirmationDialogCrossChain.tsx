@@ -1,19 +1,26 @@
 import { FC, ReactNode, useCallback, useState } from 'react'
-import { useSwapActions, useSwapState } from './trade/TradeProvider'
 import { AppType } from '@sushiswap/ui/types'
-import { useAccount, useContractWrite, useNetwork, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
-import { useTrade } from '../lib/useTrade'
+import {
+  useAccount,
+  useContractEvent,
+  useContractWrite,
+  useNetwork,
+  usePrepareContractWrite,
+  UserRejectedRequestError,
+} from 'wagmi'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { useBalances, useCreateNotification } from '@sushiswap/react-query'
 import { SendTransactionResult } from 'wagmi/actions'
 import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { BarLoader } from '@sushiswap/ui/future/components/BarLoader'
-import { Loader } from '@sushiswap/ui/future/components/Loader'
-import { CheckMarkIcon } from '@sushiswap/ui/future/components/icons/CheckmarkIcon'
-import { FailedMarkIcon } from '@sushiswap/ui/future/components/icons/FailedMarkIcon'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { Divider, failedState, finishedState, GetStateComponent, pendingState, StepState } from './StepStates'
+import { ConfirmationDialogContent } from './ConfirmationDialogContent'
+import { useSwapActions, useSwapState } from '../trade/TradeProvider'
+import { useTrade } from '../../lib/useTrade'
+import { formatBytes32String } from 'ethers/lib/utils'
+import { nanoid } from 'nanoid'
 
 interface ConfirmationDialogCrossChainProps {
   enabled?: boolean
@@ -21,33 +28,34 @@ interface ConfirmationDialogCrossChainProps {
     onClick,
     isWritePending,
   }: {
+    error: Error | null
     onClick(): void
+    isError: boolean
     isWritePending: boolean
     isLoading: boolean
     isConfirming: boolean
   }): ReactNode
 }
 
-enum ConfirmationDialogState {
-  Undefined,
-  Pending,
-  Success,
-  Failed,
-  Sign,
-}
-
 export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps> = ({ children, enabled = false }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
-  const { appType, review, network0, token0, token1 } = useSwapState()
-  const { setReview, setBentoboxSignature } = useSwapActions()
+  const { appType, review, network0, network1, tradeId } = useSwapState()
+  const { setReview, setBentoboxSignature, setTradeId } = useSwapActions()
   const [open, setOpen] = useState(false)
   const { data: trade } = useTrade({ crossChain: true })
-  const [dialogState, setDialogState] = useState<ConfirmationDialogState>(ConfirmationDialogState.Undefined)
+
+  const [dstTxhash, setDstTxHash] = useState<string>()
+  const [stepStates, setStepStates] = useState<{ source: StepState; bridge: StepState; dest: StepState }>({
+    source: StepState.NotStarted,
+    bridge: StepState.NotStarted,
+    dest: StepState.NotStarted,
+  })
+
   const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
   const { refetch: refetchNetwork1Balances } = useBalances({ account: address, chainId: network0 })
   const { mutate: storeNotification } = useCreateNotification({ account: address })
-  const { config } = usePrepareContractWrite({
+  const { config, isError, error } = usePrepareContractWrite({
     chainId: network0,
     address: getSushiXSwapContractConfig(network0).address,
     abi: getSushiXSwapContractConfig(network0).abi,
@@ -85,18 +93,35 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     [trade, network0, storeNotification]
   )
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+  const {
+    writeAsync,
+    isLoading: isWritePending,
+    data,
+  } = useContractWrite({
     ...config,
     onSuccess: (data) => {
       setReview(false)
 
       data
         .wait()
-        .then(() => setDialogState(ConfirmationDialogState.Success))
-        .catch(() => setDialogState(ConfirmationDialogState.Failed))
+        .then(() => {
+          setStepStates({
+            source: StepState.Success,
+            bridge: StepState.Pending,
+            dest: StepState.NotStarted,
+          })
+        })
+        .catch(() => {
+          setStepStates({
+            source: StepState.Failed,
+            bridge: StepState.NotStarted,
+            dest: StepState.NotStarted,
+          })
+        })
         .finally(() => {
-          Promise.all([refetchNetwork0Balances(), refetchNetwork1Balances()])
+          void Promise.all([refetchNetwork0Balances(), refetchNetwork1Balances()])
           setBentoboxSignature(undefined)
+          setTradeId(nanoid())
         })
     },
     onSettled,
@@ -107,30 +132,69 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
 
     // Reset after half a second because of dialog close animation
     setTimeout(() => {
-      setDialogState(ConfirmationDialogState.Undefined)
+      setStepStates({
+        source: StepState.NotStarted,
+        bridge: StepState.NotStarted,
+        dest: StepState.NotStarted,
+      })
     }, 500)
   }, [])
 
   const onClick = useCallback(() => {
-    if (dialogState === ConfirmationDialogState.Pending) {
+    if (pendingState(stepStates)) {
       setOpen(true)
     } else if (review) {
+      setOpen(true)
+      setStepStates({
+        source: StepState.Sign,
+        bridge: StepState.NotStarted,
+        dest: StepState.NotStarted,
+      })
+
       const promise = writeAsync?.()
       if (promise) {
         promise
           .then(() => {
-            setDialogState(ConfirmationDialogState.Pending)
+            setStepStates({
+              source: StepState.Pending,
+              bridge: StepState.NotStarted,
+              dest: StepState.NotStarted,
+            })
             setOpen(true)
           })
           .catch((e: unknown) => {
             if (e instanceof UserRejectedRequestError) onComplete()
-            else setDialogState(ConfirmationDialogState.Failed)
+            else {
+              setStepStates({
+                source: StepState.Failed,
+                bridge: StepState.NotStarted,
+                dest: StepState.NotStarted,
+              })
+            }
           })
       }
     } else {
       setReview(true)
     }
-  }, [dialogState, onComplete, review, setReview, writeAsync])
+  }, [onComplete, review, setReview, stepStates, writeAsync])
+
+  useContractEvent({
+    ...getSushiXSwapContractConfig(network1),
+    chainId: network1,
+    eventName: 'StargateSushiXSwapDst',
+    once: false,
+    listener: (context, failed, { transactionHash }) => {
+      console.log(context, formatBytes32String(tradeId))
+      if (context === formatBytes32String(tradeId)) {
+        setDstTxHash(transactionHash)
+        setStepStates((prev) => ({
+          ...prev,
+          bridge: StepState.Success,
+          dest: failed ? StepState.PartialSuccess : StepState.Success,
+        }))
+      }
+    },
+  })
 
   return (
     <>
@@ -138,62 +202,36 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
         onClick,
         isWritePending,
         isLoading: !writeAsync,
-        isConfirming: false,
+        error,
+        isError,
+        isConfirming: stepStates.source === StepState.Sign,
       })}
-      <Dialog open={open} unmount={false} onClose={() => setOpen(false)}>
+      <Dialog
+        open={open}
+        unmount={false}
+        onClose={() => (failedState(stepStates) || finishedState(stepStates) ? setOpen(false) : {})}
+      >
         <Dialog.Content>
           <div className="flex flex-col gap-5 items-center justify-center">
-            {[ConfirmationDialogState.Failed, ConfirmationDialogState.Success].includes(dialogState) ? (
+            {finishedState(stepStates) ? (
               <BarLoader transitionDuration={4000} onComplete={onComplete} />
             ) : (
               <div className="h-1" />
             )}
             <div className="py-5">
-              {dialogState === ConfirmationDialogState.Pending || isWritePending ? (
-                <Loader size={100} strokeWidth={1} className="!text-blue" />
-              ) : dialogState === ConfirmationDialogState.Success ? (
-                <CheckMarkIcon width={100} height={100} />
-              ) : (
-                <FailedMarkIcon width={100} height={100} />
-              )}
+              <div className="flex gap-3 relative">
+                <GetStateComponent index={1} state={stepStates.source} />
+                <Divider />
+                <GetStateComponent index={2} state={stepStates.bridge} />
+                <Divider />
+                <GetStateComponent index={3} state={stepStates.dest} />
+              </div>
             </div>
-            <div className="flex flex-col items-center">
-              {dialogState === ConfirmationDialogState.Sign ? (
-                <h1 className="flex flex-wrap justify-center gap-1 font-medium text-lg items-center leading-normal">
-                  Please sign order with your wallet.
-                </h1>
-              ) : dialogState === ConfirmationDialogState.Pending ? (
-                <h1 className="flex flex-wrap justify-center gap-1 font-medium text-lg items-center leading-normal">
-                  Waiting for your{' '}
-                  <span className="text-blue hover:underline cursor-pointer">
-                    <Dots>transaction</Dots>
-                  </span>{' '}
-                  to be confirmed on the blockchain.
-                </h1>
-              ) : dialogState === ConfirmationDialogState.Success ? (
-                <h1 className="flex flex-wrap justify-center gap-1 font-semibold text-lg items-center">
-                  You sold
-                  <span className="text-red px-0.5">
-                    {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
-                  </span>{' '}
-                  for
-                  <span className="text-blue px-0.5">
-                    {trade?.amountOut?.toSignificant(6)} {token1?.symbol}.
-                  </span>
-                </h1>
-              ) : (
-                <h1 className="flex flex-wrap justify-center gap-1 font-semibold text-lg items-center">
-                  <span className="text-red">Oops!</span> Your{' '}
-                  <span className="text-blue hover:underline cursor-pointer">transaction</span> failed
-                </h1>
-              )}
+            <div className="flex flex-col items-center mb-4">
+              <ConfirmationDialogContent dialogState={stepStates} txHash={data?.hash} dstTxHash={dstTxhash} />
             </div>
             <Button fullWidth color="blue" variant="outlined" size="xl" onClick={() => setOpen(false)}>
-              {dialogState === ConfirmationDialogState.Success
-                ? 'Make another swap'
-                : dialogState === ConfirmationDialogState.Failed
-                ? 'Try again'
-                : 'Close'}
+              {failedState(stepStates) ? 'Try again' : finishedState(stepStates) ? 'Make another swap' : 'Close'}
             </Button>
           </div>
         </Dialog.Content>

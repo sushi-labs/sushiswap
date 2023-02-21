@@ -19,6 +19,7 @@ import { createToast, NotificationData } from '@sushiswap/ui/future/components/t
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
 import { getRouteProcessorAddressForChainId } from 'lib/getRouteProcessorAddressForChainId'
+import { Chain } from '@sushiswap/chain'
 
 interface ConfirmationDialogProps {
   children({
@@ -102,7 +103,11 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     [trade, network0, isWrap, isUnwrap, storeNotification]
   )
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+  const {
+    writeAsync,
+    isLoading: isWritePending,
+    data,
+  } = useContractWrite({
     ...config,
     onSuccess: (data) => {
       setReview(false)
@@ -181,9 +186,14 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               ) : dialogState === ConfirmationDialogState.Pending ? (
                 <h1 className="flex flex-wrap justify-center gap-1 font-medium text-lg items-center leading-normal">
                   Waiting for your{' '}
-                  <span className="text-blue hover:underline cursor-pointer">
+                  <a
+                    target="_blank"
+                    href={data?.hash ? Chain.from(network0).getTxUrl(data.hash) : ''}
+                    className="text-blue hover:underline cursor-pointer"
+                    rel="noreferrer"
+                  >
                     <Dots>transaction</Dots>
-                  </span>{' '}
+                  </a>{' '}
                   to be confirmed on the blockchain.
                 </h1>
               ) : dialogState === ConfirmationDialogState.Success ? (

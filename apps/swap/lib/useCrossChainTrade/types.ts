@@ -1,6 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Type } from '@sushiswap/currency'
-import { HexString } from '@sushiswap/types'
 import { Percent } from '@sushiswap/math'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Action } from '../SushiXSwap'
@@ -8,6 +7,7 @@ import { TradeType } from '@sushiswap/react-query'
 import { Signature } from '@ethersproject/bytes'
 
 export interface UseCrossChainTradeParams {
+  tradeId: string
   network0: ChainId
   network1: ChainId
   token0: Type | undefined

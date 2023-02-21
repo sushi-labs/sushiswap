@@ -1327,6 +1327,7 @@ importers:
       '@ethersproject/constants': 5.7.0
       '@headlessui/react': ^1.7.3
       '@heroicons/react': 2.0.13
+      '@layerzerolabs/scan-client': 0.0.0-beta.6
       '@playwright/test': 1.28.1
       '@sushiswap/abi': workspace:*
       '@sushiswap/address': workspace:*
@@ -1385,6 +1386,7 @@ importers:
       '@ethersproject/constants': 5.7.0
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 2.0.13_react@18.2.0
+      '@layerzerolabs/scan-client': 0.0.0-beta.6
       '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/address': link:../../packages/address
       '@sushiswap/amm': link:../../packages/amm

@@ -21,6 +21,7 @@ import { getAddress, isAddress } from 'ethers/lib/utils'
 import { watchNetwork } from 'wagmi/actions'
 import { STARGATE_SUPPORTED_CHAIN_IDS } from '@sushiswap/stargate'
 import { Signature } from '@ethersproject/bytes'
+import { nanoid } from 'nanoid'
 
 export const queryParamsSchema = z.object({
   fromChainId: z.coerce
@@ -42,6 +43,7 @@ export const queryParamsSchema = z.object({
 })
 
 interface InternalSwapState {
+  tradeId: string
   review: boolean
   recipient: string | undefined
   value: string
@@ -76,12 +78,14 @@ type SwapApi = {
   setAppType(appType: AppType): void
   setSearch(currency: Type): void
   setBentoboxSignature(signature: Signature | undefined): void
+  setTradeId(id: string): void
 }
 
 export const SwapStateContext = createContext<State>({} as State)
 export const SwapActionsContext = createContext<SwapApi>({} as SwapApi)
 
 type Actions =
+  | { type: 'setTradeId'; value: string }
   | { type: 'setValue'; value: string }
   | { type: 'setRecipient'; recipient: string }
   | { type: 'setReview'; value: boolean }
@@ -89,6 +93,8 @@ type Actions =
 
 const reducer = (state: InternalSwapState, action: Actions): InternalSwapState => {
   switch (action.type) {
+    case 'setTradeId':
+      return { ...state, tradeId: action.value }
     case 'setReview':
       return { ...state, review: action.value }
     case 'setRecipient':
@@ -115,18 +121,19 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { query, push } = useRouter()
   const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount: _amount } = queryParamsSchema.parse(query)
   const { data: customTokens, isLoading: customTokensLoading } = useCustomTokens()
-  const { data: tokenFrom, isLoading: isTokenFromLoading } = useToken({
+  const { data: tokenFrom } = useToken({
     chainId: fromChainId,
     address: fromCurrencyId,
   })
 
-  const { data: tokenTo, isLoading: isTokenToLoading } = useToken({
+  const { data: tokenTo } = useToken({
     chainId: toChainId,
     address: toCurrencyId,
   })
 
   // console.log(isAddress(fromCurrencyId), !tokenFrom, isTokenFromFetchedAfterMount)
   const [internalState, dispatch] = useReducer(reducer, {
+    tradeId: nanoid(),
     review: false,
     // TODO: no recipient
     recipient: address ? address : undefined,
@@ -204,8 +211,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     fromChainId,
     fromCurrencyId,
     internalState,
-    isTokenFromLoading,
-    isTokenToLoading,
     toChainId,
     toCurrencyId,
     tokenFrom,
@@ -391,8 +396,10 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     const setRecipient = (recipient: string) => dispatch({ type: 'setRecipient', recipient })
     const setReview = (value: boolean) => dispatch({ type: 'setReview', value })
     const setBentoboxSignature = (value: Signature) => dispatch({ type: 'setBentoboxSignature', value })
+    const setTradeId = (value: string) => dispatch({ type: 'setTradeId', value })
 
     return {
+      setTradeId,
       setNetworks,
       setNetwork0,
       setNetwork1,
