@@ -190,9 +190,8 @@ contract RouteProcessor2 {
 
     if (directionAndFake & 1 == 1) {  // wrap native
       address wrapToken = stream.readAddress();
-      uint amount = address(this).balance;
-      if (directionAndFake & 2 == 0) IWETH(wrapToken).deposit{value: amount}();
-      if (to != address(this)) IERC20(wrapToken).safeTransfer(to, amount);
+      if (directionAndFake & 2 == 0) IWETH(wrapToken).deposit{value: amountIn}();
+      if (to != address(this)) IERC20(wrapToken).safeTransfer(to, amountIn);
     } else { // unwrap native
       if (directionAndFake & 2 == 0) {
         if (from != address(this)) IERC20(tokenIn).safeTransferFrom(from, address(this), amountIn);
