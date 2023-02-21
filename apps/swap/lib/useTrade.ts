@@ -4,8 +4,7 @@ import { useSwapState } from '../ui/trade/TradeProvider'
 import { useSlippageTolerance } from './useSlippageTolerance'
 import { useCarbonOffset } from './useCarbonOffset'
 import { useCrossChainTrade } from './useCrossChainTrade/useCrossChainTrade'
-import { useMemo, useState } from 'react'
-import { nanoid } from 'nanoid'
+import { useMemo } from 'react'
 
 type ObjectType<T> = T extends true ? ReturnType<typeof useCrossChainTrade> : ReturnType<typeof _useTrade>
 

@@ -16,7 +16,7 @@ export const useTradeQuery = (
   select: UseTradeQuerySelect
 ) => {
     return useQuery({
-        queryKey: ['getTrade', {chainId, fromToken, toToken, amount, gasPrice, recipient}],
+        queryKey: ['NoCache', 'getTrade', {chainId, fromToken, toToken, amount, gasPrice, recipient}],
         queryFn: async () => {
             const res = await (
                 await fetch(
