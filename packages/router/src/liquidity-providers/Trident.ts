@@ -8,7 +8,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
-import { Address, Client, multicall, watchBlockNumber } from 'viem'
+import { Address, PublicClient } from 'viem'
 
 import { getPoolsByTokenIds, getTopPools, PoolResponse } from '../lib/api'
 import { LiquidityProvider, LiquidityProviders } from '../liquidity-providers/LiquidityProvider'
@@ -62,7 +62,7 @@ export class TridentProvider extends LiquidityProvider {
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 1000
   readonly ON_DEMAND_POOL_SIZE = 20
 
-  constructor(chainId: ChainId, client: Client) {
+  constructor(chainId: ChainId, client: PublicClient) {
     super(chainId, client)
     if (
       !(chainId in this.bentoBox) ||
@@ -113,7 +113,7 @@ export class TridentProvider extends LiquidityProvider {
     const stablePools = pools.filter((p) => p.type === 'STABLE_POOL')
     const sortedTokens = this.poolResponseToSortedTokens(pools)
 
-    const classicReservePromise = multicall(this.client, {
+    const classicReservePromise = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
       contracts: pools.map(
@@ -127,7 +127,7 @@ export class TridentProvider extends LiquidityProvider {
       ),
     })
 
-    const stableReservePromise = multicall(this.client, {
+    const stableReservePromise = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
       contracts: stablePools.map(
@@ -141,7 +141,7 @@ export class TridentProvider extends LiquidityProvider {
       ),
     })
 
-    const totalsPromise = multicall(this.client, {
+    const totalsPromise = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
       contracts: sortedTokens.map(
@@ -156,7 +156,7 @@ export class TridentProvider extends LiquidityProvider {
       ),
     })
 
-    const balancesPromise = multicall(this.client, {
+    const balancesPromise = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
       contracts: sortedTokens.map(
@@ -255,7 +255,7 @@ export class TridentProvider extends LiquidityProvider {
 
     const bridges = Array.from(this.bridges.values())
 
-    const initClassicReservePromise = multicall(this.client, {
+    const initClassicReservePromise = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
       contracts: initialClassicPools.map(
@@ -268,7 +268,7 @@ export class TridentProvider extends LiquidityProvider {
           } as const)
       ),
     })
-    const onDemandClassicReservePromise = multicall(this.client, {
+    const onDemandClassicReservePromise = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
       contracts: onDemandClassicPools.map(
@@ -282,7 +282,7 @@ export class TridentProvider extends LiquidityProvider {
       ),
     })
 
-    const initStableReservePromise = multicall(this.client, {
+    const initStableReservePromise = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
       contracts: initialStablePools.map(
@@ -296,7 +296,7 @@ export class TridentProvider extends LiquidityProvider {
       ),
     })
 
-    const onDemandStableReservePromise = multicall(this.client, {
+    const onDemandStableReservePromise = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
       contracts: onDemandStablePools.map(
@@ -310,7 +310,7 @@ export class TridentProvider extends LiquidityProvider {
       ),
     })
 
-    const totalsPromise = multicall(this.client, {
+    const totalsPromise = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
       contracts: bridges.map(
@@ -325,7 +325,7 @@ export class TridentProvider extends LiquidityProvider {
       ),
     })
 
-    const balancesPromise = multicall(this.client, {
+    const balancesPromise = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
       contracts: bridges.map(
@@ -491,7 +491,7 @@ export class TridentProvider extends LiquidityProvider {
     this.initialStablePools = new Map()
     this.bridges = new Map()
 
-    this.unwatchBlockNumber = watchBlockNumber(this.client, {
+    this.unwatchBlockNumber = this.client.watchBlockNumber({
       onBlockNumber: (blockNumber) => {
         this.lastUpdateBlock = Number(blockNumber)
         if (!this.isInitialized) {

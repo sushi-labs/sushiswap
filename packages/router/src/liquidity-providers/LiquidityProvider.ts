@@ -1,6 +1,6 @@
 import { ChainId, chainShortName } from '@sushiswap/chain'
 import type { Token } from '@sushiswap/currency'
-import { Client } from 'viem'
+import { PublicClient } from 'viem'
 
 import type { PoolCode } from '../pools/PoolCode'
 
@@ -22,12 +22,12 @@ export enum LiquidityProviders {
 
 export abstract class LiquidityProvider {
   chainId: ChainId
-  client: Client
+  client: PublicClient
   stateId = 0
   lastUpdateBlock = 0
   readonly ON_DEMAND_POOLS_BLOCK_LIFETIME = 150
 
-  constructor(chainId: ChainId, client: Client) {
+  constructor(chainId: ChainId, client: PublicClient) {
     this.chainId = chainId
     this.client = client
   }

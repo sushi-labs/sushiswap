@@ -33,7 +33,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "viem": "0.0.1-alpha.24",
+    "viem": "0.0.1-alpha.28",
     "node-fetch": "2.6.6",
     "@ethersproject/abi": "5.7.0",
     "@ethersproject/address": "5.7.0",

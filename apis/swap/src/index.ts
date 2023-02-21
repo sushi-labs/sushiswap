@@ -157,8 +157,9 @@ import {
   optimism,
   polygon,
 } from '@sushiswap/viem-config'
-import { createClient, http } from 'viem'
+// import { createPublicClient, http } from 'viem'
 // import { arbitrum, bsc, celo, mainnet, optimism, polygon } from 'viem/chains'
+import { createPublicClient, http, PublicClient } from 'viem'
 
 // Run the server!
 const start = async () => {
@@ -167,7 +168,7 @@ const start = async () => {
       ChainId.ARBITRUM_NOVA,
       new DataFetcher(
         ChainId.ARBITRUM_NOVA,
-        createClient({
+        createPublicClient({
           chain: arbitrumNova,
           transport: http(arbitrumNova.rpcUrls.default.http[0]),
         })
@@ -177,7 +178,7 @@ const start = async () => {
       ChainId.AVALANCHE,
       new DataFetcher(
         ChainId.AVALANCHE,
-        createClient({
+        createPublicClient({
           chain: avalanche,
           transport: http(avalanche.rpcUrls.default.http[0]),
         })
@@ -187,7 +188,7 @@ const start = async () => {
       ChainId.BOBA,
       new DataFetcher(
         ChainId.BOBA,
-        createClient({
+        createPublicClient({
           chain: boba,
           transport: http(boba.rpcUrls.default.http[0]),
         })
@@ -197,7 +198,7 @@ const start = async () => {
       ChainId.BOBA_AVAX,
       new DataFetcher(
         ChainId.BOBA_AVAX,
-        createClient({
+        createPublicClient({
           chain: bobaAvax,
           transport: http(bobaAvax.rpcUrls.default.http[0]),
         })
@@ -207,7 +208,7 @@ const start = async () => {
       ChainId.BOBA_BNB,
       new DataFetcher(
         ChainId.BOBA_BNB,
-        createClient({
+        createPublicClient({
           chain: bobaBnb,
           transport: http(bobaBnb.rpcUrls.default.http[0]),
         })
@@ -217,7 +218,7 @@ const start = async () => {
       ChainId.BSC,
       new DataFetcher(
         ChainId.BSC,
-        createClient({
+        createPublicClient({
           chain: bsc,
           transport: http(bsc.rpcUrls.default.http[0]),
         })
@@ -227,7 +228,7 @@ const start = async () => {
       ChainId.BTTC,
       new DataFetcher(
         ChainId.BTTC,
-        createClient({
+        createPublicClient({
           chain: bttc,
           transport: http(bttc.rpcUrls.default.http[0]),
         })
@@ -237,9 +238,9 @@ const start = async () => {
       ChainId.ETHEREUM,
       new DataFetcher(
         ChainId.ETHEREUM,
-        createClient({
+        createPublicClient({
           chain: mainnet,
-          transport: http(mainnet.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+          transport: http(`${mainnet.rpcUrls.alchemy.http}/${process.env.ALCHEMY_ID}`)
         })
       )
     )
@@ -247,7 +248,7 @@ const start = async () => {
       ChainId.POLYGON,
       new DataFetcher(
         ChainId.POLYGON,
-        createClient({
+        createPublicClient({
           chain: polygon,
           transport: http(polygon.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
         })
@@ -257,7 +258,7 @@ const start = async () => {
       ChainId.ARBITRUM,
       new DataFetcher(
         ChainId.ARBITRUM,
-        createClient({
+        createPublicClient({
           chain: arbitrum,
           transport: http(arbitrum.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
         })
@@ -267,7 +268,7 @@ const start = async () => {
       ChainId.OPTIMISM,
       new DataFetcher(
         ChainId.OPTIMISM,
-        createClient({
+        createPublicClient({
           chain: optimism,
           transport: http(optimism.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
         })
@@ -277,10 +278,10 @@ const start = async () => {
       ChainId.CELO,
       new DataFetcher(
         ChainId.CELO,
-        createClient({
+        createPublicClient({
           chain: celo,
           transport: http(celo.rpcUrls.default.http[0]),
-        })
+        }) as PublicClient
       )
     )
 
@@ -288,7 +289,7 @@ const start = async () => {
       ChainId.FANTOM,
       new DataFetcher(
         ChainId.FANTOM,
-        createClient({
+        createPublicClient({
           chain: fantom,
           transport: http(fantom.rpcUrls.default.http[0]),
         })
@@ -298,7 +299,7 @@ const start = async () => {
       ChainId.FUSE,
       new DataFetcher(
         ChainId.FUSE,
-        createClient({
+        createPublicClient({
           chain: fuse,
           transport: http(fuse.rpcUrls.default.http[0]),
         })
@@ -308,7 +309,7 @@ const start = async () => {
       ChainId.GNOSIS,
       new DataFetcher(
         ChainId.GNOSIS,
-        createClient({
+        createPublicClient({
           chain: gnosis,
           transport: http(gnosis.rpcUrls.default.http[0]),
         })
@@ -318,7 +319,7 @@ const start = async () => {
       ChainId.KAVA,
       new DataFetcher(
         ChainId.KAVA,
-        createClient({
+        createPublicClient({
           chain: kava,
           transport: http(kava.rpcUrls.default.http[1]),
         })
@@ -328,7 +329,7 @@ const start = async () => {
       ChainId.METIS,
       new DataFetcher(
         ChainId.METIS,
-        createClient({
+        createPublicClient({
           chain: metis,
           transport: http(metis.rpcUrls.default.http[0]),
         })
@@ -338,7 +339,7 @@ const start = async () => {
       ChainId.MOONBEAM,
       new DataFetcher(
         ChainId.MOONBEAM,
-        createClient({
+        createPublicClient({
           chain: moonbeam,
           transport: http(moonbeam.rpcUrls.default.http[0]),
         })
@@ -348,7 +349,7 @@ const start = async () => {
       ChainId.MOONRIVER,
       new DataFetcher(
         ChainId.MOONRIVER,
-        createClient({
+        createPublicClient({
           chain: moonriver,
           transport: http(moonriver.rpcUrls.default.http[0]),
         })
@@ -358,7 +359,7 @@ const start = async () => {
       ChainId.HARMONY,
       new DataFetcher(
         ChainId.HARMONY,
-        createClient({
+        createPublicClient({
           chain: harmony,
           transport: http(harmony.rpcUrls.default.http[0]),
         })

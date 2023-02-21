@@ -6,7 +6,7 @@ import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/rout
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
-import { Address, Client, multicall, watchBlockNumber } from 'viem'
+import { Address, PublicClient } from 'viem'
 
 import { getPoolsByTokenIds, getTopPools } from '../lib/api'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
@@ -30,7 +30,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   initCodeHash: { [chainId: number]: string } = {}
   constructor(
     chainId: ChainId,
-    client: Client,
+    client: PublicClient,
     factory: { [chainId: number]: Address },
     initCodeHash: { [chainId: number]: string }
   ) {
@@ -65,8 +65,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     }
 
     const pools = Array.from(topPools.values())
-
-    const results = await multicall(this.client, {
+    const results = await this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
       contracts: pools.map(
@@ -162,7 +161,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       const onDemandPools = Array.from(this.onDemandPools.values()).map((pi) => pi.poolCode)
 
       const [initialPoolsReserves, onDemandPoolsReserves] = await Promise.all([
-        multicall(this.client, {
+        this.client.multicall({
           multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
           allowFailure: true,
           contracts: initialPools.map(
@@ -175,7 +174,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
               } as const)
           ),
         }),
-        multicall(this.client, {
+        this.client.multicall({
           multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
           allowFailure: true,
           contracts: onDemandPools.map(
@@ -253,8 +252,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   startFetchPoolsData() {
     this.stopFetchPoolsData()
     this.initialPools = new Map()
-
-    this.unwatchBlockNumber = watchBlockNumber(this.client, {
+    this.unwatchBlockNumber = this.client.watchBlockNumber({
       onBlockNumber: (blockNumber) => {
         this.lastUpdateBlock = Number(blockNumber)
 
@@ -265,6 +263,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         }
       },
     })
+
   }
 
   private removeStalePools(currentBlockNumber: number) {
