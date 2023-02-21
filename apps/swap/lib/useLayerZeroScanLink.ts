@@ -22,15 +22,24 @@ export const useLayerZeroScanLink = ({
       if (txHash && network0 in STARGATE_CHAIN_ID && network1 in STARGATE_CHAIN_ID) {
         const result = await client.getMessagesBySrcTxHash(txHash)
         if (result.messages.length > 0) {
-          const { srcUaAddress, dstUaAddress, srcUaNonce } = result.messages[0]
-          return `https://layerzeroscan.com/${
-            STARGATE_CHAIN_ID[network0 as StargateChainId]
-          }/address/${srcUaAddress}/message/${
-            STARGATE_CHAIN_ID[network1 as StargateChainId]
-          }/address/${dstUaAddress}/nonce/${srcUaNonce}`
+          const { srcUaAddress, dstUaAddress, srcUaNonce, status, dstTxHash } = result.messages[0]
+          return {
+            link: `https://layerzeroscan.com/${
+              STARGATE_CHAIN_ID[network0 as StargateChainId]
+            }/address/${srcUaAddress}/message/${
+              STARGATE_CHAIN_ID[network1 as StargateChainId]
+            }/address/${dstUaAddress}/nonce/${srcUaNonce}`,
+            status,
+            dstTxHash,
+          }
         }
       }
-      return null
+
+      return {
+        link: undefined,
+        status: undefined,
+        dstTxHash: undefined,
+      }
     },
     refetchInterval: 2000,
     enabled: !!txHash,

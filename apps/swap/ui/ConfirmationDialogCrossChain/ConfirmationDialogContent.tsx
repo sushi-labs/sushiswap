@@ -8,21 +8,20 @@ import { useTrade } from '../../lib/useTrade'
 import { StepState } from './StepStates'
 import { shortenAddress } from '@sushiswap/format'
 import { useLayerZeroScanLink } from '../../lib/useLayerZeroScanLink'
+import { ArrowLongRightIcon } from '@heroicons/react/20/solid'
 
 interface ConfirmationDialogContent {
   txHash?: string
   dstTxHash?: string
+  lzUrl?: string
   dialogState: { source: StepState; bridge: StepState; dest: StepState }
 }
 
-export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHash, dstTxHash, dialogState }) => {
-  const { tradeId, network0, network1, token0, token1, recipient } = useSwapState()
+export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHash, lzUrl, dstTxHash, dialogState }) => {
+  const { network0, network1, token0, token1, recipient } = useSwapState()
   const { data: trade } = useTrade({ crossChain: true })
-  const { data: lzScanLink } = useLayerZeroScanLink({ tradeId, network1, network0, txHash })
 
-  const swapOnSource = !isStargateBridgeToken(token0)
   const swapOnDest = !isStargateBridgeToken(token1)
-  const srcBridgeToken = token0?.isToken && isStargateBridgeToken(token0) ? token0 : STARGATE_BRIDGE_TOKENS[network0][0]
   const dstBridgeToken = token1?.isToken && isStargateBridgeToken(token1) ? token1 : STARGATE_BRIDGE_TOKENS[network1][0]
 
   if (dialogState.source === StepState.Sign) {
@@ -34,42 +33,24 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
   }
 
   if (dialogState.source === StepState.Pending) {
-    if (swapOnSource) {
-      return (
-        <h1 className="flex flex-wrap justify-center gap-1 font-medium text-lg items-center leading-normal">
-          Swapping
-          <a
-            target="_blank"
-            href={txHash ? Chain.from(network0).getTxUrl(txHash) : ''}
-            className="text-blue hover:underline cursor-pointer"
-            rel="noreferrer"
-          >
-            <Dots>
-              {token0?.symbol} for {srcBridgeToken.symbol}
-            </Dots>
-          </a>{' '}
-          <span className="flex items-center gap-1">
-            on <NetworkIcon chainId={network0} type="naked" width={24} height={24} /> {Chain.from(network0).name}
-          </span>
-        </h1>
-      )
-    } else {
-      return (
-        <h1 className="flex flex-wrap justify-center gap-1 font-medium text-lg items-center leading-normal">
-          Waiting for your{' '}
-          <a
-            target="_blank"
-            href={txHash ? Chain.from(network0).getTxUrl(txHash) : ''}
-            className={classNames(txHash ? 'text-blue' : 'pointer-events-none', 'hover:underline cursor-pointer')}
-            rel="noreferrer"
-          >
-            <Dots>transaction</Dots>
-          </a>{' '}
-          to be confirmed on <NetworkIcon chainId={network0} type="naked" width={16} height={16} />{' '}
-          {Chain.from(network0).name}
-        </h1>
-      )
-    }
+    return (
+      <h1 className="flex flex-wrap justify-center gap-1 font-medium text-lg items-center leading-normal">
+        Waiting for your{' '}
+        <a
+          target="_blank"
+          href={txHash ? Chain.from(network0).getTxUrl(txHash) : ''}
+          className={classNames(txHash ? 'text-blue' : 'pointer-events-none', 'hover:underline cursor-pointer')}
+          rel="noreferrer"
+        >
+          <Dots>transaction</Dots>
+        </a>{' '}
+        to be confirmed on{' '}
+        <div className="min-w-4 min-h-4">
+          <NetworkIcon chainId={network0} type="naked" width={16} height={16} />
+        </div>{' '}
+        {Chain.from(network0).name}
+      </h1>
+    )
   }
 
   if (dialogState.source === StepState.Failed) {
@@ -87,8 +68,8 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
         Bridging{' '}
         <a
           target="_blank"
-          href={lzScanLink || ''}
-          className={classNames(lzScanLink ? 'text-blue' : 'pointer-events-none', 'hover:underline cursor-pointer')}
+          href={lzUrl || ''}
+          className={classNames(lzUrl ? 'text-blue' : 'pointer-events-none', 'hover:underline cursor-pointer')}
           rel="noreferrer"
         >
           <Dots>to destination chain</Dots>
@@ -128,21 +109,23 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
   if (dialogState.dest === StepState.Success) {
     if (swapOnDest) {
       return (
-        <h1 className="flex flex-wrap justify-center gap-1 font-medium text-lg items-center">
-          You sold
-          <span className="text-red px-0.5 font-semibold">
-            {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
-          </span>{' '}
-          for
-          <span className="text-blue px-0.5 font-semibold">
-            {trade?.amountOut?.toSignificant(6)} {token1?.symbol}.
+        <div className="flex flex-col justify-center gap-3">
+          <span className="flex flex-wrap whitespace-nowrap justify-center gap-1 font-medium text-lg items-center">
+            You sold
+            <span className="text-red px-0.5 font-semibold">
+              {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
+            </span>{' '}
+            for
+            <span className="text-blue px-0.5 font-semibold">
+              {trade?.amountOut?.toSignificant(6)} {token1?.symbol}.
+            </span>
           </span>
-          <br />
-          <span className="flex items-center gap-1">
-            From <NetworkIcon chainId={network0} type="naked" width={24} height={24} /> {Chain.from(network0).name} to{' '}
-            <NetworkIcon chainId={network1} type="naked" width={24} height={24} /> {Chain.from(network1).name}
+          <span className="text-lg text-center justify-center flex items-center gap-3">
+            <NetworkIcon chainId={network0} width={24} height={24} />{' '}
+            <ArrowLongRightIcon width={24} height={24} className="text-gray-300 dark:text-slate-500" />
+            <NetworkIcon chainId={network1} width={24} height={24} />
           </span>
-        </h1>
+        </div>
       )
     } else {
       return (

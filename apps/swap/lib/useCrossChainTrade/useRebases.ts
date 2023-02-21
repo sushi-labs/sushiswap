@@ -19,7 +19,7 @@ export const useBentoboxTotals = (variables: UseBentoboxTotalsParams) => {
     enabled: Boolean(variables.currencies) && (variables.enabled || true),
     queryFn: async () => {
       const data = await queryFn(variables)
-      if (!data) return undefined
+      if (!data) return null
 
       return data.map(({ base, elastic }) => ({
         base: JSBI.BigInt(BigNumber.from(base)),

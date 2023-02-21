@@ -24,7 +24,7 @@ interface UseTradeParams {
   enabled?: boolean
   pools: UsePoolsReturn | undefined
   feeData: FetchFeeDataResult | undefined
-  rebases: { base: JSBI; elastic: JSBI }[] | undefined
+  rebases: { base: JSBI; elastic: JSBI }[] | null | undefined
 }
 
 export const getTrade = async ({

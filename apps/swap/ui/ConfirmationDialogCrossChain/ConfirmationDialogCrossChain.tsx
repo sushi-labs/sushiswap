@@ -1,13 +1,6 @@
-import { FC, ReactNode, useCallback, useState } from 'react'
+import { FC, ReactNode, useCallback, useEffect, useState } from 'react'
 import { AppType } from '@sushiswap/ui/types'
-import {
-  useAccount,
-  useContractEvent,
-  useContractWrite,
-  useNetwork,
-  usePrepareContractWrite,
-  UserRejectedRequestError,
-} from 'wagmi'
+import { useAccount, useContractWrite, useNetwork, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { useBalances, useCreateNotification } from '@sushiswap/react-query'
 import { SendTransactionResult } from 'wagmi/actions'
@@ -19,8 +12,8 @@ import { Divider, failedState, finishedState, GetStateComponent, pendingState, S
 import { ConfirmationDialogContent } from './ConfirmationDialogContent'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { useTrade } from '../../lib/useTrade'
-import { formatBytes32String } from 'ethers/lib/utils'
 import { nanoid } from 'nanoid'
+import { useLayerZeroScanLink } from '../../lib/useLayerZeroScanLink'
 
 interface ConfirmationDialogCrossChainProps {
   enabled?: boolean
@@ -45,11 +38,10 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
   const [open, setOpen] = useState(false)
   const { data: trade } = useTrade({ crossChain: true })
 
-  const [dstTxhash, setDstTxHash] = useState<string>()
   const [stepStates, setStepStates] = useState<{ source: StepState; bridge: StepState; dest: StepState }>({
-    source: StepState.NotStarted,
-    bridge: StepState.NotStarted,
-    dest: StepState.NotStarted,
+    source: StepState.Success,
+    bridge: StepState.Success,
+    dest: StepState.Success,
   })
 
   const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
@@ -178,23 +170,23 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     }
   }, [onComplete, review, setReview, stepStates, writeAsync])
 
-  useContractEvent({
-    ...getSushiXSwapContractConfig(network1),
-    chainId: network1,
-    eventName: 'StargateSushiXSwapDst',
-    once: false,
-    listener: (context, failed, { transactionHash }) => {
-      console.log(context, formatBytes32String(tradeId))
-      if (context === formatBytes32String(tradeId)) {
-        setDstTxHash(transactionHash)
-        setStepStates((prev) => ({
-          ...prev,
-          bridge: StepState.Success,
-          dest: failed ? StepState.PartialSuccess : StepState.Success,
-        }))
-      }
-    },
-  })
+  const { data: lzData } = useLayerZeroScanLink({ tradeId, network1, network0, txHash: data?.hash })
+
+  useEffect(() => {
+    if (lzData?.status === 'DELIVERED') {
+      setStepStates({
+        source: StepState.Success,
+        bridge: StepState.Success,
+        dest: StepState.Success,
+      })
+    }
+    if (lzData?.status === 'FAILED') {
+      setStepStates((prev) => ({
+        ...prev,
+        dest: StepState.PartialSuccess,
+      }))
+    }
+  }, [lzData?.status])
 
   return (
     <>
@@ -213,11 +205,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
       >
         <Dialog.Content>
           <div className="flex flex-col gap-5 items-center justify-center">
-            {finishedState(stepStates) ? (
-              <BarLoader transitionDuration={4000} onComplete={onComplete} />
-            ) : (
-              <div className="h-1" />
-            )}
+            <div className="h-1" />
             <div className="py-5">
               <div className="flex gap-3 relative">
                 <GetStateComponent index={1} state={stepStates.source} />
@@ -228,7 +216,12 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
               </div>
             </div>
             <div className="flex flex-col items-center mb-4">
-              <ConfirmationDialogContent dialogState={stepStates} txHash={data?.hash} dstTxHash={dstTxhash} />
+              <ConfirmationDialogContent
+                dialogState={stepStates}
+                lzUrl={lzData?.link}
+                txHash={data?.hash}
+                dstTxHash={lzData?.dstTxHash}
+              />
             </div>
             <Button fullWidth color="blue" variant="outlined" size="xl" onClick={() => setOpen(false)}>
               {failedState(stepStates) ? 'Try again' : finishedState(stepStates) ? 'Make another swap' : 'Close'}
