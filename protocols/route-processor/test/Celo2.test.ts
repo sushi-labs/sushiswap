@@ -84,15 +84,7 @@ if (process.env.INFURA_API_KEY) {
     it('cUSDC => CELO', async () => {
       const user = '0xed30404098da5948d8B3cBD7958ceB641F2C352c' // has cUSDC and approved 800000 to the RP
       const signer = await provider.getUncheckedSigner(user)
-      await makeSwap(
-        dataFetcher,
-        signer,
-        cUSDC,
-        WNATIVE[chainId], //Native.onChain(chainId),
-        user,
-        user,
-        getBigNumber(800000)
-      )
+      await makeSwap(dataFetcher, signer, cUSDC, Native.onChain(chainId), user, user, getBigNumber(800000))
     })
   })
 }
