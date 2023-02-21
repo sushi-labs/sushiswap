@@ -46,8 +46,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   readonly ON_DEMAND_POOL_SIZE = 20
 
   async initialize() {
-    this.isInitialized = true
     const type = this.getType()
+    this.isInitialized = true
 
     const topPools = await getTopPools(
       this.chainId,
@@ -77,7 +77,11 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
             functionName: 'getReserves',
           } as const)
       ),
+    }).catch((e) => {
+      console.warn(`${this.getLogPrefix()} - INIT: multicall failed, message: ${e.message}`)
+      return undefined
     })
+    
 
     pools.map((pool, i) => {
       const res0 = results?.[i]?.result?.[0]
@@ -160,6 +164,10 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       const initialPools = Array.from(this.initialPools.values())
       const onDemandPools = Array.from(this.onDemandPools.values()).map((pi) => pi.poolCode)
 
+      if (initialPools.length === 0 && onDemandPools.length === 0) {
+        return
+      }
+
       const [initialPoolsReserves, onDemandPoolsReserves] = await Promise.all([
         this.client.multicall({
           multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
@@ -173,6 +181,9 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
                 functionName: 'getReserves',
               } as const)
           ),
+        }).catch((e) => {
+          console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+          return undefined
         }),
         this.client.multicall({
           multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
@@ -186,6 +197,9 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
                 functionName: 'getReserves',
               } as const)
           ),
+        }).catch((e) => {
+          console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+          return undefined
         }),
       ])
 
@@ -199,9 +213,10 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     reserves: (
       | { error: Error; result?: undefined; status: 'error' }
       | { error?: undefined; result: readonly [bigint, bigint, number]; status: 'success' }
-    )[],
+    )[]|undefined,
     type: 'INITIAL' | 'ON_DEMAND'
   ) {
+    if (!reserves) return
     pools.forEach((poolCode, i) => {
       const pool = poolCode.pool
       const res0 = reserves?.[i]?.result?.[0]
@@ -262,6 +277,9 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
           this.updatePools(Number(blockNumber))
         }
       },
+      onError: (error) => {
+        console.error(`${this.getLogPrefix()} - Error watching block number: ${error.message}`)
+      }
     })
 
   }

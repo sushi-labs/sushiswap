@@ -159,7 +159,7 @@ import {
 } from '@sushiswap/viem-config'
 // import { createPublicClient, http } from 'viem'
 // import { arbitrum, bsc, celo, mainnet, optimism, polygon } from 'viem/chains'
-import { createPublicClient, http, PublicClient } from 'viem'
+import { createPublicClient,http, PublicClient } from 'viem'
 
 // Run the server!
 const start = async () => {
@@ -250,7 +250,7 @@ const start = async () => {
         ChainId.POLYGON,
         createPublicClient({
           chain: polygon,
-          transport: http(polygon.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+          transport: http(polygon.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID)
         })
       )
     )
@@ -271,8 +271,9 @@ const start = async () => {
         createPublicClient({
           chain: optimism,
           transport: http(optimism.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
-        })
+        }
       )
+    )
     )
     dataFetcherMap.set(
       ChainId.CELO,
@@ -321,7 +322,7 @@ const start = async () => {
         ChainId.KAVA,
         createPublicClient({
           chain: kava,
-          transport: http(kava.rpcUrls.default.http[1]),
+          transport: http(kava.rpcUrls.default.http[0]),
         })
       )
     )

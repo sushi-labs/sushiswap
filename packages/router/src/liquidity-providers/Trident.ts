@@ -125,6 +125,8 @@ export class TridentProvider extends LiquidityProvider {
             functionName: 'getReserves',
           } as const)
       ),
+    }).catch((e) => {
+      console.warn(`${this.getLogPrefix()} - INIT: multicall failed, message: ${e.message}`)
     })
 
     const stableReservePromise = this.client.multicall({
@@ -139,6 +141,8 @@ export class TridentProvider extends LiquidityProvider {
             functionName: 'getReserves',
           } as const)
       ),
+    }).catch((e) => {
+      console.warn(`${this.getLogPrefix()} - INIT: multicall failed, message: ${e.message}`)
     })
 
     const totalsPromise = this.client.multicall({
@@ -154,6 +158,8 @@ export class TridentProvider extends LiquidityProvider {
             functionName: 'totals',
           } as const)
       ),
+    }).catch((e) => {
+      console.warn(`${this.getLogPrefix()} - INIT: multicall failed, message: ${e.message}`)
     })
 
     const balancesPromise = this.client.multicall({
@@ -169,6 +175,8 @@ export class TridentProvider extends LiquidityProvider {
             functionName: 'balanceOf',
           } as const)
       ),
+    }).catch((e) => {
+      console.warn(`${this.getLogPrefix()} - INIT: multicall failed, message: ${e.message}`)
     })
 
     const [classicReserves, stableReserves, totals, balances] = await Promise.all([
@@ -247,11 +255,17 @@ export class TridentProvider extends LiquidityProvider {
 
   async updatePools(): Promise<void> {
     this.removeStalePools()
+
     const initialClassicPools = Array.from(this.initialClassicPools.values())
     const initialStablePools = Array.from(this.initialStablePools.values())
 
     const onDemandClassicPools = Array.from(this.onDemandClassicPools.values()).map((p) => p.poolCode)
     const onDemandStablePools = Array.from(this.onDemandStablePools.values()).map((p) => p.poolCode)
+
+
+    if (initialClassicPools.length === 0 && initialStablePools.length === 0 && onDemandClassicPools.length === 0 && onDemandStablePools.length === 0) {
+      return
+    }
 
     const bridges = Array.from(this.bridges.values())
 
@@ -267,6 +281,9 @@ export class TridentProvider extends LiquidityProvider {
             functionName: 'getReserves',
           } as const)
       ),
+    }).catch((e) => {
+      console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+      return undefined
     })
     const onDemandClassicReservePromise = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
@@ -280,6 +297,9 @@ export class TridentProvider extends LiquidityProvider {
             functionName: 'getReserves',
           } as const)
       ),
+    }).catch((e) => {
+      console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+      return undefined
     })
 
     const initStableReservePromise = this.client.multicall({
@@ -294,6 +314,9 @@ export class TridentProvider extends LiquidityProvider {
             functionName: 'getReserves',
           } as const)
       ),
+    }).catch((e) => {
+      console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+      return undefined
     })
 
     const onDemandStableReservePromise = this.client.multicall({
@@ -308,6 +331,9 @@ export class TridentProvider extends LiquidityProvider {
             functionName: 'getReserves',
           } as const)
       ),
+    }).catch((e) => {
+      console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+      return undefined
     })
 
     const totalsPromise = this.client.multicall({
@@ -323,6 +349,9 @@ export class TridentProvider extends LiquidityProvider {
             functionName: 'totals',
           } as const)
       ),
+    }).catch((e) => {
+      console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+      return undefined
     })
 
     const balancesPromise = this.client.multicall({
@@ -338,6 +367,9 @@ export class TridentProvider extends LiquidityProvider {
             functionName: 'balanceOf',
           } as const)
       ),
+    }).catch((e) => {
+      console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+      return undefined
     })
 
     const [initClassicReserves, onDemandClassicReserves, initStableReserves, onDemandStableReserves, totals, balances] =
@@ -500,6 +532,9 @@ export class TridentProvider extends LiquidityProvider {
           this.updatePools()
         }
       },
+      onError: (error) => {
+        console.error(`${this.getLogPrefix()} - Error watching block number: ${error.message}`)
+      }
     })
   }
 
@@ -565,8 +600,9 @@ export class TridentProvider extends LiquidityProvider {
           result: readonly [bigint, bigint, number]
           status: 'success'
         }
-    )[]
+    )[]|undefined
   ) {
+    if (!reserves) return
     poolCodes.forEach((pc, i) => {
       const pool = pc.pool
       const res0 = reserves?.[i]?.result?.[0]
@@ -605,8 +641,9 @@ export class TridentProvider extends LiquidityProvider {
           result: readonly [bigint, bigint]
           status: 'success'
         }
-    )[]
+    )[]|undefined
   ) {
+    if (!reserves) return
     poolCodes.forEach((pc, i) => {
       const pool = pc.pool as StableSwapRPool
       const total0 = rebases.get(pool.token0.address)
