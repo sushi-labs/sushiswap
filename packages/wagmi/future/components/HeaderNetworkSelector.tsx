@@ -1,6 +1,6 @@
 import { Popover } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
-import { ChainId, chainName, chains } from '@sushiswap/chain'
+import { ChainId, chainName } from '@sushiswap/chain'
 import { classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
@@ -10,10 +10,11 @@ import { useBreakpoint } from '@sushiswap/ui/future/lib/useBreakpoint'
 import React, { FC, useCallback } from 'react'
 import { ProviderRpcError, useNetwork, UserRejectedRequestError, useSwitchNetwork } from 'wagmi'
 
-export const HeaderNetworkSelector: FC<{ networks: ChainId[]; selectedNetwork?: ChainId }> = ({
-  networks,
-  selectedNetwork,
-}) => {
+export const HeaderNetworkSelector: FC<{
+  networks: ChainId[]
+  selectedNetwork?: ChainId
+  onChange?(chainId: ChainId): void
+}> = ({ networks, selectedNetwork, onChange }) => {
   const { switchNetworkAsync } = useSwitchNetwork()
   const { chain } = useNetwork()
   const { isSm } = useBreakpoint('sm')
@@ -23,6 +24,10 @@ export const HeaderNetworkSelector: FC<{ networks: ChainId[]; selectedNetwork?: 
       if (switchNetworkAsync) {
         try {
           await switchNetworkAsync(el)
+          if (selectedNetwork !== el && onChange) {
+            onChange(el)
+          }
+
           close()
         } catch (e) {
           if (e instanceof UserRejectedRequestError) return
@@ -32,10 +37,10 @@ export const HeaderNetworkSelector: FC<{ networks: ChainId[]; selectedNetwork?: 
         }
       }
     },
-    [switchNetworkAsync]
+    [onChange, selectedNetwork, switchNetworkAsync]
   )
 
-  const selected = chain?.id || selectedNetwork || ChainId.ETHEREUM
+  const selected = selectedNetwork || chain?.id || ChainId.ETHEREUM
 
   return (
     <NetworkSelector

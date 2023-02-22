@@ -478,6 +478,7 @@ export const STARGATE_CONFIRMATION_SECONDS = {
 
 export function isStargateBridgeToken(currency: Type | undefined) {
   if (!currency) return false
+  if (!STARGATE_BRIDGE_TOKEN_ADDRESSES[currency.chainId]) return false
   return STARGATE_BRIDGE_TOKEN_ADDRESSES[currency.chainId].includes(currency.wrapped.address)
 }
 

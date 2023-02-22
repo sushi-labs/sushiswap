@@ -31,15 +31,22 @@ export const NetworkCheck: FC = () => {
 
   return (
     <Collapsible open={open}>
-      <div className="flex gap-4 items-center justify-center bg-blue/20 text-blue-900 dark:text-blue-300 dark:bg-blue/25 w-full py-3 font-medium">
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-center bg-blue/20 text-blue-900 dark:text-blue-300 dark:bg-blue/25 w-full py-3 font-medium">
         <p className="px-4">
           App network ({chainName?.[network0]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}){' '}
           {"doesn't"} match network selected in wallet (
           {chain?.id ? chainName?.[chain.id]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim() : ''}).
         </p>
-        <div className="flex justify-end px-3">
-          <Button fullWidth onClick={() => switchNetwork?.(network0)} variant="filled" color="blue" size="sm">
-            Change Network
+        <div className="block flex justify-end px-3 w-full sm:w-[unset]">
+          <Button
+            fullWidth
+            onClick={() => switchNetwork?.(network0)}
+            variant="filled"
+            color="blue"
+            size="sm"
+            className="whitespace-nowrap"
+          >
+            Switch to {Chain.from(network0).name?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
           </Button>
         </div>
       </div>

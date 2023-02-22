@@ -33,11 +33,13 @@ export const useCrossChainTradeQuery = (
 ) => {
   // First we'll check if bridge tokens for srcChainId includes srcToken, if so use srcToken as srcBridgeToken,
   // else take first stargate bridge token as srcBridgeToken
-  const srcBridgeToken = token0?.isToken && isStargateBridgeToken(token0) ? token0 : STARGATE_BRIDGE_TOKENS[network0][0]
+  const srcBridgeToken =
+    token0?.isToken && isStargateBridgeToken(token0) ? token0 : STARGATE_BRIDGE_TOKENS[network0]?.[0]
 
   // First we'll check if bridge tokens for dstChainId includes dstToken, if so use dstToken as dstBridgeToken,
   // else take first stargate bridge token as dstBridgeToken
-  const dstBridgeToken = token1?.isToken && isStargateBridgeToken(token1) ? token1 : STARGATE_BRIDGE_TOKENS[network1][0]
+  const dstBridgeToken =
+    token1?.isToken && isStargateBridgeToken(token1) ? token1 : STARGATE_BRIDGE_TOKENS[network1]?.[0]
 
   // A cross chain swap, a swap on the source and a swap on the destination
   const crossChainSwap = !isStargateBridgeToken(token0) && !isStargateBridgeToken(token1)
