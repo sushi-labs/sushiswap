@@ -2,19 +2,19 @@
 
 import { Transition } from '@headlessui/react'
 import { shortenAddress } from '@sushiswap/format'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 
 import { useSwapState } from './TradeProvider'
 import { useTrade } from '../../lib/useTrade'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
-import { classNames } from '@sushiswap/ui'
+import { AppType, classNames } from '@sushiswap/ui'
 import { warningSeverity, warningSeverityClassName } from '../../lib/warningSeverity'
 import { TradeRoute } from './TradeRoute'
 import { ZERO } from '@sushiswap/math'
 
 export const TradeStats: FC = () => {
   const [open, setOpen] = useState(false)
-  const { value, recipient, network0, network1 } = useSwapState()
+  const { value, recipient, network0, network1, appType } = useSwapState()
   const { isLoading, isFetching, data: trade } = useTrade({ crossChain: network0 !== network1 })
   const loading = Boolean(isLoading && +value > 0) || isFetching
 
@@ -47,10 +47,11 @@ export const TradeStats: FC = () => {
               'text-sm font-semibold text-gray-700 text-right dark:text-slate-400'
             )}
           >
-            {isLoading ? (
+            {+value > 0 && isLoading ? (
               <Skeleton.Box className="h-4 py-0.5 w-[120px] rounded-md" />
+            ) : trade?.priceImpact ? (
+              `${trade?.priceImpact?.lessThan(ZERO) ? '+' : '-'}${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%`
             ) : (
-              `${trade?.priceImpact?.lessThan(ZERO) ? '+' : '-'}${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%` ??
               'N/A'
             )}
           </span>
@@ -68,7 +69,7 @@ export const TradeStats: FC = () => {
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">Recipient</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading ? (
+            {+value > 0 && loading ? (
               <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
             ) : recipient ? (
               shortenAddress(recipient)
@@ -80,28 +81,30 @@ export const TradeStats: FC = () => {
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">Network fee</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading ? (
+            {+value > 0 && loading ? (
               <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
-            ) : trade?.gasSpent !== '0' ? (
+            ) : trade?.gasSpent && trade.gasSpent !== '0' ? (
               `~$${trade?.gasSpent}`
             ) : (
               'N/A'
             )}
           </span>
         </div>
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-700 dark:text-slate-400">Smart order route</span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading ? (
-              <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
-            ) : (
-              <button onClick={() => setOpen(true)} className="text-sm text-blue font-semibold">
-                View
-              </button>
-            )}
-            <TradeRoute trade={trade} open={open} setOpen={setOpen} />
-          </span>
-        </div>
+        {appType === AppType.Swap && (
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-700 dark:text-slate-400">Smart order route</span>
+            <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+              {+value > 0 && loading ? (
+                <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
+              ) : (
+                <button onClick={() => setOpen(true)} className="text-sm text-blue font-semibold">
+                  View
+                </button>
+              )}
+              <TradeRoute trade={trade} open={open} setOpen={setOpen} />
+            </span>
+          </div>
+        )}
         {/*<div className="h-[2px] bg-gray-200 dark:bg-slate-800 w-full my-3" />*/}
         {/*<div className="flex justify-between items-start gap-2">*/}
         {/*  <span className="font-medium text-gray-900 dark:text-slate-100 mt-px">Expected output</span>*/}
