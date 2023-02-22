@@ -26,5 +26,6 @@ export const useBentoboxTotals = (variables: UseBentoboxTotalsParams) => {
         elastic: JSBI.BigInt(BigNumber.from(elastic)),
       }))
     },
+    refetchInterval: 10000,
   })
 }

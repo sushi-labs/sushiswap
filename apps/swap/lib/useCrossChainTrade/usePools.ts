@@ -83,6 +83,7 @@ export const usePools = (variables: UsePoolsParams) => {
       { chainId: variables.chainId, currencyA: variables.currencyA, currencyB: variables.currencyB },
     ],
     queryFn: async () => await getPools(variables),
+    refetchInterval: 10000,
     enabled: Boolean(variables.enabled || true),
   })
 }
