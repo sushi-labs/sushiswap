@@ -159,7 +159,7 @@ import {
 } from '@sushiswap/viem-config'
 // import { createPublicClient, http } from 'viem'
 // import { arbitrum, bsc, celo, mainnet, optimism, polygon } from 'viem/chains'
-import { createPublicClient,http, PublicClient } from 'viem'
+import { createPublicClient, fallback, http, PublicClient } from 'viem'
 
 // Run the server!
 const start = async () => {
@@ -180,7 +180,7 @@ const start = async () => {
         ChainId.AVALANCHE,
         createPublicClient({
           chain: avalanche,
-          transport: http(avalanche.rpcUrls.default.http[0]),
+          transport: fallback([http(avalanche.rpcUrls.default.http[0]), http('https://rpc.ankr.com/avalanche')]),
         })
       )
     )
@@ -190,7 +190,7 @@ const start = async () => {
         ChainId.BOBA,
         createPublicClient({
           chain: boba,
-          transport: http(boba.rpcUrls.default.http[0]),
+          transport: fallback([http(boba.rpcUrls.default.http[0]), http('https://lightning-replica.boba.network')]),
         })
       )
     )
@@ -200,7 +200,7 @@ const start = async () => {
         ChainId.BOBA_AVAX,
         createPublicClient({
           chain: bobaAvax,
-          transport: http(bobaAvax.rpcUrls.default.http[0]),
+          transport: fallback([http(bobaAvax.rpcUrls.default.http[0]), http('https://replica.avax.boba.network')]),
         })
       )
     )
@@ -210,7 +210,7 @@ const start = async () => {
         ChainId.BOBA_BNB,
         createPublicClient({
           chain: bobaBnb,
-          transport: http(bobaBnb.rpcUrls.default.http[0]),
+          transport: fallback([http(bobaBnb.rpcUrls.default.http[0]), http('https://replica.bnb.boba.network')]),
         })
       )
     )
@@ -220,7 +220,12 @@ const start = async () => {
         ChainId.BSC,
         createPublicClient({
           chain: bsc,
-          transport: http(bsc.rpcUrls.default.http[0]),
+          transport: fallback([
+            http(bsc.rpcUrls.default.http[0]),
+            http('https://bsc-dataseed.binance.org'),
+            http('https://bsc-dataseed1.binance.org'),
+            http('https://bsc-dataseed2.binance.org'),
+          ]),
         })
       )
     )
@@ -240,7 +245,10 @@ const start = async () => {
         ChainId.ETHEREUM,
         createPublicClient({
           chain: mainnet,
-          transport: http(`${mainnet.rpcUrls.alchemy.http}/${process.env.ALCHEMY_ID}`)
+          transport: fallback([
+            http(`${mainnet.rpcUrls.alchemy.http}/${process.env.ALCHEMY_ID}`),
+            http('https://eth.llamarpc.com'),
+          ]),
         })
       )
     )
@@ -250,7 +258,10 @@ const start = async () => {
         ChainId.POLYGON,
         createPublicClient({
           chain: polygon,
-          transport: http(polygon.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID)
+          transport: fallback([
+            http(polygon.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+            http('https://polygon.llamarpc.com'),
+          ]),
         })
       )
     )
@@ -260,7 +271,10 @@ const start = async () => {
         ChainId.ARBITRUM,
         createPublicClient({
           chain: arbitrum,
-          transport: http(arbitrum.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+          transport: fallback([
+            http(arbitrum.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+            http('https://rpc.ankr.com/arbitrum'),
+          ]),
         })
       )
     )
@@ -270,10 +284,12 @@ const start = async () => {
         ChainId.OPTIMISM,
         createPublicClient({
           chain: optimism,
-          transport: http(optimism.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
-        }
+          transport: fallback([
+            http(optimism.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+            http('https://rpc.ankr.com/optimism'),
+          ]),
+        })
       )
-    )
     )
     dataFetcherMap.set(
       ChainId.CELO,
@@ -292,7 +308,11 @@ const start = async () => {
         ChainId.FANTOM,
         createPublicClient({
           chain: fantom,
-          transport: http(fantom.rpcUrls.default.http[0]),
+          transport: fallback([
+            http(fantom.rpcUrls.default.http[0]),
+            http('https://rpc.fantom.network'),
+            http('https://rpc2.fantom.network'),
+          ]),
         })
       )
     )
@@ -312,7 +332,7 @@ const start = async () => {
         ChainId.GNOSIS,
         createPublicClient({
           chain: gnosis,
-          transport: http(gnosis.rpcUrls.default.http[0]),
+          transport: fallback([http(gnosis.rpcUrls.default.http[0]), http('https://rpc.ankr.com/gnosis')]),
         })
       )
     )
@@ -322,7 +342,7 @@ const start = async () => {
         ChainId.KAVA,
         createPublicClient({
           chain: kava,
-          transport: http(kava.rpcUrls.default.http[0]),
+          transport: fallback([http(kava.rpcUrls.default.http[0]), http(kava.rpcUrls.default.http[1])]),
         })
       )
     )
@@ -342,7 +362,7 @@ const start = async () => {
         ChainId.MOONBEAM,
         createPublicClient({
           chain: moonbeam,
-          transport: http(moonbeam.rpcUrls.default.http[0]),
+          transport: fallback([http(moonbeam.rpcUrls.default.http[0]), http('https://rpc.ankr.com/moonbeam')]),
         })
       )
     )
@@ -362,7 +382,7 @@ const start = async () => {
         ChainId.HARMONY,
         createPublicClient({
           chain: harmony,
-          transport: http(harmony.rpcUrls.default.http[0]),
+          transport: fallback([http(harmony.rpcUrls.default.http[0]), http('https://rpc.ankr.com/harmony')]),
         })
       )
     )
