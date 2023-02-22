@@ -6,7 +6,7 @@ import { shortenAddress } from '@sushiswap/format'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import React, { FC, useCallback, useState } from 'react'
+import React, { FC, useCallback } from 'react'
 
 import { useSwapActions, useSwapState } from './TradeProvider'
 import { useTrade } from '../../lib/useTrade'
@@ -16,7 +16,6 @@ import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { useSlippageTolerance } from '../../lib/useSlippageTolerance'
 import { Collapsible, NetworkIcon } from '@sushiswap/ui'
-import { ArrowLongRightIcon } from '@heroicons/react/20/solid'
 import { ApproveBentoboxController } from '@sushiswap/wagmi/future/components'
 import { ApprovalState, getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain/ConfirmationDialogCrossChain'
@@ -29,7 +28,6 @@ export const TradeReviewDialogCrossChain: FC = () => {
   const [slippageTolerance] = useSlippageTolerance()
   const { data: trade, isFetching } = useTrade({ crossChain: true })
 
-  console.log(slippageTolerance)
   const onClose = useCallback(() => setReview(false), [setReview])
 
   // Don't unmount this dialog since that will slow down the opening callback

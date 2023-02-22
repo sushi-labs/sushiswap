@@ -327,6 +327,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     }
     const setToken1 = (currency: Type) => {
       const _toCurrencyId = currency.isNative ? currency.symbol : currency.wrapped.address
+
       void push(
         {
           pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
@@ -370,6 +371,8 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           ? state.token1.isNative
             ? state.token1.symbol
             : state.token1.wrapped.address
+          : state.token0?.symbol === 'SUSHI'
+          ? Native.onChain(network1).symbol
           : 'SUSHI'
 
       void push(
