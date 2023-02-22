@@ -23,6 +23,7 @@ import { ApproveBentoboxController } from '@sushiswap/wagmi/future/components'
 import { ApprovalState, getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain/ConfirmationDialogCrossChain'
 import { warningSeverity } from '../../lib/warningSeverity'
+import { ZERO } from '@sushiswap/math'
 
 export const TradeReviewDialogCrossChain: FC = () => {
   const [open, setOpen] = useState(false)
@@ -91,7 +92,9 @@ export const TradeReviewDialogCrossChain: FC = () => {
                 {isFetching ? (
                   <Skeleton.Text align="right" fontSize="text-sm" className="w-1/5" />
                 ) : (
-                  numeral(trade?.priceImpact ?? 0).format('0.00%')
+                  `${trade?.priceImpact?.lessThan(ZERO) ? '+' : '-'}${Math.abs(
+                    Number(trade?.priceImpact?.toFixed(2))
+                  )}%`
                 )}
               </List.KeyValue>
               <List.KeyValue
