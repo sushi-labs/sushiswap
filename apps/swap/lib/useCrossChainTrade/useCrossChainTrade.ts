@@ -156,7 +156,6 @@ export const useCrossChainTradeQuery = (
         rebases: dstRebases,
       })
 
-      console.log({ srcTrade, dstTrade, dstPools })
       // Output amount displayed... not including slippage for sameChainSwap, transferSwap, crossChainSwap
       let dstAmountOut: Amount<Type> | undefined
       if (transfer) {

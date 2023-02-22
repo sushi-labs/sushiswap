@@ -75,11 +75,10 @@ export const TradeReviewDialogCrossChain: FC = () => {
           <List>
             <List.Control>
               <List.KeyValue title="Network">
-                <div className="flex items-center gap-1 whitespace-nowrap truncate">
+                <div className="w-full justify-end gap-1 whitespace-nowrap truncate">
                   {chainName?.[network0]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
-                  <div className="min-w-4 min-h-4">
-                    <ArrowLongRightIcon width={16} height={16} />
-                  </div>
+                  <br />
+                  <span className="text-gray-400 dark:text-slate-500">to</span>{' '}
                   {chainName?.[network1]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
                 </div>
               </List.KeyValue>
