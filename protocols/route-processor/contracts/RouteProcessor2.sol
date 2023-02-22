@@ -177,7 +177,7 @@ contract RouteProcessor2 {
   function swap(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
     uint8 poolType = stream.readUint8();
     if (poolType == 0) swapUniV2(stream, from, tokenIn, amountIn);
-    //else if (poolType == 1) swapUniV3(stream, tokenIn, amountIn);
+    else if (poolType == 1) swapUniV3(stream, from, tokenIn, amountIn);
     else if (poolType == 2) wrapNative(stream, from, tokenIn, amountIn);
     else if (poolType == 3) bentoBridge(stream, from, tokenIn, amountIn);
     else if (poolType == 4) swapTrident(stream, from, tokenIn, amountIn);
@@ -259,9 +259,8 @@ contract RouteProcessor2 {
   /// @notice Performs a UniV3 pool swap
   /// @param amountIn amount of tokens to swap
   /// @param stream [Pool, TokenIn, Direction, To]
-  function swapUniV3(uint256 amountIn, uint256 stream) private {
+  function swapUniV3(uint256 stream, address /*from*/, address tokenIn, uint256 amountIn) private {
     address pool = stream.readAddress();
-    address tokenIn = stream.readAddress();
     bool zeroForOne = stream.readUint8() > 0;
     address recipient = stream.readAddress();
 
@@ -273,6 +272,7 @@ contract RouteProcessor2 {
       zeroForOne ? MIN_SQRT_RATIO + 1 : MAX_SQRT_RATIO - 1,
       abi.encode(tokenIn)
     );
+    require(lastCalledPool == IMPOSSIBLE_POOL_ADDRESS, 'RouteProcessor.swapUniV3: unexpected'); // Just to be sure
   }
 
   /// @notice Called to `msg.sender` after executing a swap via IUniswapV3Pool#swap.
@@ -293,7 +293,7 @@ contract RouteProcessor2 {
     lastCalledPool = IMPOSSIBLE_POOL_ADDRESS;
     address tokenIn = abi.decode(data, (address));
     int256 amount = amount0Delta > 0 ? amount0Delta : amount1Delta;
-    require(amount > 0, 'RouteProcessor.uniswapV3SwapCallback: no positive amount');
+    require(amount > 0, 'RouteProcessor.uniswapV3SwapCallback: not positive amount');
     IERC20(tokenIn).safeTransfer(msg.sender, uint256(amount));
   }
 }
