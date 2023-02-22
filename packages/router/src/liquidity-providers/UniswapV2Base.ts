@@ -4,11 +4,12 @@ import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
+import { add, getUnixTime } from 'date-fns'
 import { BigNumber } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 import { Address, PublicClient } from 'viem'
 
-import { getPoolsByTokenIds, getTopPools } from '../lib/api'
+import { getPoolsByTokenIds, getTopPools, PoolResponse } from '../lib/api'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
@@ -18,16 +19,24 @@ interface PoolInfo {
 }
 
 export abstract class UniswapV2BaseProvider extends LiquidityProvider {
+  readonly TOP_POOL_SIZE = 155
+  readonly TOP_POOL_LIQUIDITY_THRESHOLD = 5000
+  readonly ON_DEMAND_POOL_SIZE = 20
+  readonly REFRESH_INITIAL_POOLS_INTERVAL = 60 // SECONDS
+
   initialPools: Map<string, PoolCode> = new Map()
   poolsByTrade: Map<string, string[]> = new Map()
   onDemandPools: Map<string, PoolInfo> = new Map()
 
   blockListener?: () => void
   unwatchBlockNumber?: () => void
+
   fee = 0.003
   isInitialized = false
   factory: { [chainId: number]: Address } = {}
   initCodeHash: { [chainId: number]: string } = {}
+  refreshInitialPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL} ))
+
   constructor(
     chainId: ChainId,
     client: PublicClient,
@@ -41,30 +50,20 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       throw new Error(`${this.getType()} cannot be instantiated for chainid ${chainId}, no factory or initCodeHash`)
     }
   }
-  readonly TOP_POOL_SIZE = 155
-  readonly TOP_POOL_LIQUIDITY_THRESHOLD = 5000
-  readonly ON_DEMAND_POOL_SIZE = 20
 
   async initialize() {
-    const type = this.getType()
     this.isInitialized = true
+    const pools = await this.getInitialPools()
 
-    const topPools = await getTopPools(
-      this.chainId,
-      type === LiquidityProviders.UniswapV2 ? 'Uniswap' : type,
-      type === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
-      ['CONSTANT_PRODUCT_POOL'],
-      this.TOP_POOL_SIZE,
-      this.TOP_POOL_LIQUIDITY_THRESHOLD
-    )
-    if (topPools.size > 0) {
-      console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${topPools.size}`)
+    if (pools.length > 0) {
+      console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${pools.length}`)
     } else {
       console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
-      return
+      return []
     }
 
-    const pools = Array.from(topPools.values())
+    // TODO: generate pools from a list of tokens, exclude if they are included in the list above, multicall to see if the rest exist, keep the pools that exist.
+
     const results = await this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
@@ -82,7 +81,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       return undefined
     })
     
-
     pools.map((pool, i) => {
       const res0 = results?.[i]?.result?.[0]
       const res1 = results?.[i]?.result?.[1]
@@ -109,9 +107,21 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     console.debug(`${this.getLogPrefix()} - INIT, WATCHING ${this.initialPools.size} POOLS`)
   }
 
-  async getOnDemandPools(t0: Token, t1: Token): Promise<void> {
-    console.debug(`****** MEM - ${this.getType()} INITIAL POOLS:`, this.initialPools.size)
+  private async getInitialPools(): Promise<PoolResponse[]> {
+    const topPools = await getTopPools(
+      this.chainId,
+      this.getType() === LiquidityProviders.UniswapV2 ? 'Uniswap' : this.getType(),
+      this.getType() === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
+      ['CONSTANT_PRODUCT_POOL'],
+      this.TOP_POOL_SIZE,
+      this.TOP_POOL_LIQUIDITY_THRESHOLD
+    )
+    
+    return Array.from(topPools.values())
+  }
 
+
+  async getOnDemandPools(t0: Token, t1: Token): Promise<void> {
     const type = this.getType()
 
     const poolsOnDemand = await getPoolsByTokenIds(
@@ -160,6 +170,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     if (this.isInitialized) {
 
       this.removeStalePools(currentBlockNumber)
+      this.refreshInitialPools()
 
       const initialPools = Array.from(this.initialPools.values())
       const onDemandPools = Array.from(this.onDemandPools.values()).map((pi) => pi.poolCode)
@@ -182,7 +193,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
               } as const)
           ),
         }).catch((e) => {
-          console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+          console.warn(`${this.getLogPrefix()} - UPDATE: initPools multicall failed, message: ${e.message}`)
           return undefined
         }),
         this.client.multicall({
@@ -198,7 +209,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
               } as const)
           ),
         }).catch((e) => {
-          console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+          console.warn(`${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${e.message}`)
           return undefined
         }),
       ])
@@ -206,6 +217,37 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       this.updatePoolWithReserves(initialPools, initialPoolsReserves, 'INITIAL')
       this.updatePoolWithReserves(onDemandPools, onDemandPoolsReserves, 'ON_DEMAND')
     }
+  }
+
+  private async refreshInitialPools() {
+
+    if (this.refreshInitialPoolsTimestamp > getUnixTime(Date.now())) {
+      return
+    }
+
+    this.refreshInitialPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL} ))
+
+
+    const freshInitPools = await this.getInitialPools()
+      // TODO: ideally this should remove pools which are no longer included too, but since the list shouldn't change much,
+      // we can keep them in memory and they will disappear the next time the server is restarted  
+    const poolsToAdd = freshInitPools.filter((pool) => !this.initialPools.has(pool.address))
+    poolsToAdd.forEach((pool) => {
+      const rPool = new ConstantProductRPool(
+        pool.address,
+        pool.token0 as RToken,
+        pool.token1 as RToken,
+        this.fee,
+        BigNumber.from(0),
+        BigNumber.from(0)
+      )
+      const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
+      this.initialPools.set(pool.address, pc)
+      ++this.stateId
+      console.log(`${this.getLogPrefix()} - REFRESH INITIAL POOLS: Added pool ${pool.address} (${pool.token0.symbol}/${pool.token1.symbol})`)
+    })
+    
+    console.debug(`* MEM ${this.getLogPrefix()} INIT COUNT: ${this.initialPools.size} ON DEMAND COUNT: ${this.onDemandPools.size}`)
   }
 
   private updatePoolWithReserves(
@@ -270,7 +312,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     this.unwatchBlockNumber = this.client.watchBlockNumber({
       onBlockNumber: (blockNumber) => {
         this.lastUpdateBlock = Number(blockNumber)
-
         if (!this.isInitialized) {
           this.initialize()
         } else {
@@ -281,7 +322,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         console.error(`${this.getLogPrefix()} - Error watching block number: ${error.message}`)
       }
     })
-
   }
 
   private removeStalePools(currentBlockNumber: number) {
@@ -293,7 +333,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       }
     }
     if (removed > 0) {
-      console.log(`${this.getLogPrefix()} -Removed ${removed} stale pools`)
+      console.log(`${this.getLogPrefix()} STALE: Removed ${removed} stale pools`)
     }
   }
 
@@ -301,6 +341,12 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     this.getOnDemandPools(t0, t1)
   }
 
+  /**
+   * The pools returned are the initial pools, plus any on demand pools that have been fetched for the two tokens. 
+   * @param t0 
+   * @param t1 
+   * @returns 
+   */
   getCurrentPoolList(t0: Token, t1: Token): PoolCode[] {
     const tradeId = this.getTradeId(t0, t1)
     const poolsByTrade = this.poolsByTrade.get(tradeId) ?? []

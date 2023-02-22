@@ -7,6 +7,7 @@ import {
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
+import { add, getUnixTime } from 'date-fns'
 import { BigNumber } from 'ethers'
 import { Address, PublicClient } from 'viem'
 
@@ -42,6 +43,11 @@ interface PoolInfo {
 }
 
 export class TridentProvider extends LiquidityProvider {
+  readonly TOP_POOL_SIZE = 155
+  readonly TOP_POOL_LIQUIDITY_THRESHOLD = 1000
+  readonly ON_DEMAND_POOL_SIZE = 20
+  readonly REFRESH_INITIAL_POOLS_INTERVAL = 60 // SECONDS
+
   isInitialized = false
   initialClassicPools: Map<string, PoolCode> = new Map()
   initialStablePools: Map<string, PoolCode> = new Map()
@@ -54,13 +60,10 @@ export class TridentProvider extends LiquidityProvider {
   bentoBox = BENTOBOX_ADDRESS
   constantProductPoolFactory = CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS
   stablePoolFactory = STABLE_POOL_FACTORY_ADDRESS
+  refreshInitialPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL} ))
 
   blockListener?: () => void
   unwatchBlockNumber?: () => void
-
-  readonly TOP_POOL_SIZE = 155
-  readonly TOP_POOL_LIQUIDITY_THRESHOLD = 1000
-  readonly ON_DEMAND_POOL_SIZE = 20
 
   constructor(chainId: ChainId, client: PublicClient) {
     super(chainId, client)
@@ -81,8 +84,29 @@ export class TridentProvider extends LiquidityProvider {
     return 'Trident'
   }
 
-  async initialize(blockNumber: number) {
+  async initialize() {
     this.isInitialized = true
+    const pools = await this.getInitialPools()
+    if (pools.length > 0) {
+      console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${pools.length}`)
+    } else {
+      console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
+      return []
+    }
+
+    await this.initPools(pools)
+
+    // TODO: generate pools from a list of tokens, exclude if they are included in the list above, multicall to see if the rest exist, keep the pools that exist.
+
+    console.debug(
+      `${this.getLogPrefix()} - INIT, WATCHING ${this.initialClassicPools.size} CLASSIC AND ${
+        this.initialStablePools.size
+      } STABLE POOLS`
+    )
+  }
+
+  
+  private async getInitialPools(): Promise<PoolResponse[]> {
     const topPools = await getTopPools(
       this.chainId,
       'SushiSwap',
@@ -91,22 +115,10 @@ export class TridentProvider extends LiquidityProvider {
       this.TOP_POOL_SIZE,
       this.TOP_POOL_LIQUIDITY_THRESHOLD
     )
-
-    if (topPools.size > 0) {
-      console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${topPools.size}`)
-    } else {
-      console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
-      return
-    }
-
-    await this.initPools(Array.from(topPools.values()))
-
-    console.debug(
-      `${this.getLogPrefix()} - INIT, WATCHING ${this.initialClassicPools.size} CLASSIC AND ${
-        this.initialStablePools.size
-      } STABLE POOLS`
-    )
+    
+    return Array.from(topPools.values())
   }
+
 
   async initPools(pools: PoolResponse[]): Promise<void> {
     const classicPools = pools.filter((p) => p.type === 'CONSTANT_PRODUCT_POOL')
@@ -255,6 +267,8 @@ export class TridentProvider extends LiquidityProvider {
 
   async updatePools(): Promise<void> {
     this.removeStalePools()
+
+    this.refreshInitialPools()
 
     const initialClassicPools = Array.from(this.initialClassicPools.values())
     const initialStablePools = Array.from(this.initialStablePools.values())
@@ -421,13 +435,6 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   async getOnDemandPools(t0: Token, t1: Token): Promise<void> {
-    console.debug(
-      `****** MEM - ${this.getLogPrefix()} init classic pools: ${this.initialClassicPools.size} 
-      on demand classic pools: ${this.onDemandClassicPools.size} 
-      init stable pools: ${this.initialStablePools.size} 
-      on demand stable pools: ${this.onDemandStablePools.size} 
-      bridges: ${this.bridges.size}`
-    )
 
     const poolsOnDemand = await getPoolsByTokenIds(
       this.chainId,
@@ -517,6 +524,96 @@ export class TridentProvider extends LiquidityProvider {
     })
   }
 
+  
+  private async refreshInitialPools() {
+
+    if (this.refreshInitialPoolsTimestamp > getUnixTime(Date.now())) {
+      return
+    }
+
+    this.refreshInitialPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL} ))
+    const pools = await this.getInitialPools()
+    
+    const poolsToAdd = pools.filter((pool) => !this.initialClassicPools.has(pool.address) || !this.initialStablePools.has(pool.address))
+    if (poolsToAdd.length === 0) {
+      return 
+    }
+
+    const initClassicPools = poolsToAdd.filter(
+      (p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.initialClassicPools.has(p.address)
+    )
+    const initStablePools = poolsToAdd.filter((p) => p.type === 'STABLE_POOL' && this.initialStablePools.has(p.address))
+
+    const sortedTokens = this.poolResponseToSortedTokens(poolsToAdd)
+
+    sortedTokens.forEach((t, i) => {
+      if (!this.bridges.has(t.address)) {
+        const pool = new BridgeBento(
+          `Bento bridge for ${t.symbol}`,
+          t as RToken,
+          convertTokenToBento(t),
+          BigNumber.from(0),
+          BigNumber.from(0),
+          BigNumber.from(0)
+        )
+        this.bridges.set(
+          t.address,
+          new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
+        )
+        ++this.stateId
+        console.log(`${this.getLogPrefix()} - REFRESH INITIAL POOLS: Added bridge (${pool.token0.symbol})`)
+      }
+    })
+
+    initClassicPools.forEach((pr) => {
+      const existingPool = this.initialClassicPools.get(pr.address)
+      if (existingPool === undefined) {
+        const tokens = [convertTokenToBento(pr.token0), convertTokenToBento(pr.token1)]
+        const rPool = new ConstantProductRPool(
+          pr.address,
+          tokens[0],
+          tokens[1],
+          pr.swapFee,
+          BigNumber.from(0),
+          BigNumber.from(0)
+        )
+        const pc = new BentoPoolCode(rPool, this.getType(), this.getPoolProviderName())
+        this.initialClassicPools.set(pr.address, pc)
+        console.log(`${this.getLogPrefix()} - REFRESH INITIAL POOLS: Added classic pool ${rPool.address} (${rPool.token0.symbol}/${rPool.token1.symbol})`)
+      } 
+    })
+
+    initStablePools.forEach((pr) => {
+      const existingPool = this.initialStablePools.get(pr.address)
+      if (existingPool === undefined) {
+        const stablePool = new StableSwapRPool(
+          pr.address,
+          convertTokenToBento(pr.token0),
+          convertTokenToBento(pr.token1),
+          pr.swapFee,
+          BigNumber.from(0),
+          BigNumber.from(0),
+          pr.token0.decimals,
+          pr.token1.decimals,
+          { elastic: BigNumber.from(0), base: BigNumber.from(0) },
+          { elastic: BigNumber.from(0), base: BigNumber.from(0) }
+        )
+        this.initialStablePools.set(pr.address, new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName()))
+        console.log(`${this.getLogPrefix()} - REFRESH INITIAL POOLS: Added stable pool ${stablePool.address} (${stablePool.token0.symbol}/${stablePool.token1.symbol})`)
+      }
+    })
+
+    console.debug(
+      `****** MEM - ${this.getLogPrefix()} 
+      init classic pools: ${this.initialClassicPools.size} 
+      on demand classic pools: ${this.onDemandClassicPools.size} 
+      init stable pools: ${this.initialStablePools.size} 
+      on demand stable pools: ${this.onDemandStablePools.size} 
+      bridges: ${this.bridges.size}`
+    )
+  }
+
+
   startFetchPoolsData() {
     this.stopFetchPoolsData()
     this.initialClassicPools = new Map()
@@ -527,7 +624,7 @@ export class TridentProvider extends LiquidityProvider {
       onBlockNumber: (blockNumber) => {
         this.lastUpdateBlock = Number(blockNumber)
         if (!this.isInitialized) {
-          this.initialize(Number(blockNumber))
+          this.initialize()
         } else {
           this.updatePools()
         }
