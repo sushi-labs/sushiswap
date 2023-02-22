@@ -7,19 +7,16 @@ import {
   isShortCurrencyName,
   Native,
   SUSHI,
-  Token,
   tryParseAmount,
   Type,
 } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
-import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, useReducer } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
 import { useAccount } from 'wagmi'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
 import { useCustomTokens, useToken, useTokens } from '@sushiswap/react-query'
 import { getAddress, isAddress } from 'ethers/lib/utils'
-import { watchNetwork } from 'wagmi/actions'
-import { STARGATE_SUPPORTED_CHAIN_IDS } from '@sushiswap/stargate'
 import { Signature } from '@ethersproject/bytes'
 import { nanoid } from 'nanoid'
 
@@ -439,26 +436,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     state.token1?.symbol,
     state.token1?.wrapped.address,
   ])
-
-  useEffect(() => {
-    if (isConnected) {
-      const unwatch = watchNetwork(({ chain }) => {
-        console.log(chain)
-        if (chain) {
-          if (state.appType === AppType.Swap) {
-            api.setNetworks(chain.id)
-          }
-
-          if (state.appType === AppType.xSwap) {
-            api.setNetwork0(chain.id)
-          }
-        }
-      })
-      return () => unwatch()
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected])
 
   return (
     <SwapActionsContext.Provider value={api}>
