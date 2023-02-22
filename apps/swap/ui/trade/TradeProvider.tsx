@@ -16,7 +16,7 @@ import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, us
 import { useAccount } from 'wagmi'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
-import { useCustomTokens, useToken } from '@sushiswap/react-query'
+import { useCustomTokens, useToken, useTokens } from '@sushiswap/react-query'
 import { getAddress, isAddress } from 'ethers/lib/utils'
 import { watchNetwork } from 'wagmi/actions'
 import { STARGATE_SUPPORTED_CHAIN_IDS } from '@sushiswap/stargate'
@@ -121,6 +121,8 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { query, push } = useRouter()
   const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount: _amount } = queryParamsSchema.parse(query)
   const { data: customTokens, isLoading: customTokensLoading } = useCustomTokens()
+  const { data: tokenMapFrom } = useTokens({ chainId: fromChainId })
+  const { data: tokenMapTo } = useTokens({ chainId: toChainId })
   const { data: tokenFrom } = useToken({
     chainId: fromChainId,
     address: fromCurrencyId,
@@ -148,7 +150,10 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       token0 = currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
       isTokenFromLoading = false
     } else if (isAddress(fromCurrencyId)) {
-      if (customTokens && customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]) {
+      if (tokenMapFrom && tokenMapFrom[getAddress(fromCurrencyId)]) {
+        token0 = tokenMapFrom[getAddress(fromCurrencyId)]
+        isTokenFromLoading = false
+      } else if (customTokens && customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]) {
         token0 = customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]
         isTokenFromLoading = false
       } else if (tokenFrom) {
@@ -166,7 +171,10 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       token1 = currencyFromShortCurrencyName(toChainId, toCurrencyId)
       isTokenToLoading = false
     } else if (isAddress(toCurrencyId)) {
-      if (customTokens && customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]) {
+      if (tokenMapTo && tokenMapTo[getAddress(toCurrencyId)]) {
+        token1 = tokenMapTo[getAddress(toCurrencyId)]
+        isTokenToLoading = false
+      } else if (customTokens && customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]) {
         token1 = customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]
         isTokenToLoading = false
       } else if (tokenTo) {
@@ -190,6 +198,8 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         (isAddress(fromCurrencyId) &&
           !tokenFrom &&
           !isTokenFromLoading &&
+          tokenMapFrom &&
+          !tokenMapFrom[getAddress(fromCurrencyId)] &&
           customTokens &&
           !customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]) ||
         false,
@@ -197,6 +207,8 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         (isAddress(toCurrencyId) &&
           !tokenTo &&
           !isTokenToLoading &&
+          tokenMapTo &&
+          !tokenMapTo[getAddress(toCurrencyId)] &&
           customTokens &&
           !customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]) ||
         false,
@@ -211,6 +223,8 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     toChainId,
     toCurrencyId,
     tokenFrom,
+    tokenMapFrom,
+    tokenMapTo,
     tokenTo,
   ])
 
@@ -426,6 +440,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   useEffect(() => {
     if (isConnected) {
       const unwatch = watchNetwork(({ chain }) => {
+        console.log(chain)
         if (chain) {
           if (state.appType === AppType.Swap) {
             api.setNetworks(chain.id)

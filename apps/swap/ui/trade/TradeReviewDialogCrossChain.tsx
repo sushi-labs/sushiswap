@@ -157,7 +157,7 @@ export const TradeReviewDialogCrossChain: FC = () => {
                         size="xl"
                         loading={isLoading && !isError}
                         onClick={onClick}
-                        disabled={isWritePending || Boolean(isLoading && +value > 0) || isFetching || isError}
+                        disabled={isWritePending || Boolean(isLoading && +value > 0) || isError}
                         color={isError ? 'red' : warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
                       >
                         {isError ? (

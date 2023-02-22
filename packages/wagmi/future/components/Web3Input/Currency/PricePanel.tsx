@@ -29,7 +29,7 @@ export const PricePanel: FC<PricePanel> = ({ loading, price, currency, value, us
   }
 
   return (
-    <p className="font-medium text-lg flex items-center select-none text-gray-500 dark:text-slate-400">
+    <p className="font-medium text-lg flex items-baseline select-none text-gray-500 dark:text-slate-400">
       {!loading && price?.equalTo(ZERO) ? (
         <span className="text-sm flex items-center">Price not available</span>
       ) : (
@@ -40,7 +40,7 @@ export const PricePanel: FC<PricePanel> = ({ loading, price, currency, value, us
       {!(!loading && price?.equalTo(ZERO)) && usdPctChange && (
         <span
           className={classNames(
-            'text-sm',
+            'text-sm pl-1',
             usdPctChange === 0
               ? ''
               : usdPctChange > 0
