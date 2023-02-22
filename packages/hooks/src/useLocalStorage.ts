@@ -1,7 +1,18 @@
 // Hook
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 export const useLocalStorage = (key: string, initialValue?: string | number | boolean) => {
+  // To trigger rerenders globally
+  useEffect(() => {
+    const listener = () => {
+      const item = window.localStorage.getItem(key)
+      if (item) setStoredValue(JSON.parse(item))
+    }
+    window.addEventListener(key, listener)
+
+    return () => window.removeEventListener(key, listener)
+  }, [])
+
   // State to store our value
   // Pass initial state function to useState so logic is only executed once
   const [storedValue, setStoredValue] = useState(() => {
@@ -15,7 +26,6 @@ export const useLocalStorage = (key: string, initialValue?: string | number | bo
       return item ? JSON.parse(item) : initialValue
     } catch (error) {
       // If error also return initialValue
-      console.log(error)
       return initialValue
     }
   })
@@ -31,6 +41,8 @@ export const useLocalStorage = (key: string, initialValue?: string | number | bo
       if (typeof window !== 'undefined') {
         window.localStorage.setItem(key, JSON.stringify(valueToStore))
       }
+
+      window.dispatchEvent(new Event(key))
     } catch (error) {
       // A more advanced implementation would handle the error case
       console.log(error)

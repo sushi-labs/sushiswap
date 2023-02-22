@@ -10,12 +10,10 @@ import React, { FC, useCallback, useState } from 'react'
 
 import { useSwapActions, useSwapState } from './TradeProvider'
 import { useTrade } from '../../lib/useTrade'
-import numeral from 'numeral'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Dots } from '@sushiswap/ui/future/components/Dots'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { TradeRoute } from './TradeRoute'
 import { useSlippageTolerance } from '../../lib/useSlippageTolerance'
 import { Collapsible, NetworkIcon } from '@sushiswap/ui'
 import { ArrowLongRightIcon } from '@heroicons/react/20/solid'
@@ -26,12 +24,12 @@ import { warningSeverity } from '../../lib/warningSeverity'
 import { ZERO } from '@sushiswap/math'
 
 export const TradeReviewDialogCrossChain: FC = () => {
-  const [open, setOpen] = useState(false)
   const { review, token0, token1, recipient, network0, network1, amount, value, bentoboxSignature } = useSwapState()
   const { setReview } = useSwapActions()
   const [slippageTolerance] = useSlippageTolerance()
   const { data: trade, isFetching } = useTrade({ crossChain: true })
 
+  console.log(slippageTolerance)
   const onClose = useCallback(() => setReview(false), [setReview])
 
   // Don't unmount this dialog since that will slow down the opening callback
