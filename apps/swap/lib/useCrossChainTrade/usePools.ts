@@ -42,6 +42,39 @@ const queryFn = async ({ currencyA, currencyB, chainId, tradeType = TradeType.EX
   }
 }
 
+export const getPools = async (variables: UsePoolsParams) => {
+  if (!variables.currencyA || !variables.currencyB) {
+    return {
+      pairs: [],
+      constantProductPools: [],
+      stablePools: [],
+    }
+  }
+
+  const data = await queryFn(variables)
+  return {
+    pairs: Object.values(
+      data.pairs
+        .filter((result): result is [PairState.EXISTS, Pair] => Boolean(result[0] === PairState.EXISTS && result[1]))
+        .map(([, pair]) => pair)
+    ),
+    constantProductPools: Object.values(
+      data.constantProductPools
+        .filter((result): result is [ConstantProductPoolState.EXISTS, ConstantProductPool] =>
+          Boolean(result[0] === ConstantProductPoolState.EXISTS && result[1])
+        )
+        .map(([, pair]) => pair)
+    ),
+    stablePools: Object.values(
+      data.stablePools
+        .filter((result): result is [StablePoolState.EXISTS, StablePool] =>
+          Boolean(result[0] === StablePoolState.EXISTS && result[1])
+        )
+        .map(([, pair]) => pair)
+    ),
+  }
+}
+
 export const usePools = (variables: UsePoolsParams) => {
   return useQuery({
     queryKey: [
@@ -49,32 +82,7 @@ export const usePools = (variables: UsePoolsParams) => {
       'usePools',
       { chainId: variables.chainId, currencyA: variables.currencyA, currencyB: variables.currencyB },
     ],
-    queryFn: async () => {
-      const data = await queryFn(variables)
-      return {
-        pairs: Object.values(
-          data.pairs
-            .filter((result): result is [PairState.EXISTS, Pair] =>
-              Boolean(result[0] === PairState.EXISTS && result[1])
-            )
-            .map(([, pair]) => pair)
-        ),
-        constantProductPools: Object.values(
-          data.constantProductPools
-            .filter((result): result is [ConstantProductPoolState.EXISTS, ConstantProductPool] =>
-              Boolean(result[0] === ConstantProductPoolState.EXISTS && result[1])
-            )
-            .map(([, pair]) => pair)
-        ),
-        stablePools: Object.values(
-          data.stablePools
-            .filter((result): result is [StablePoolState.EXISTS, StablePool] =>
-              Boolean(result[0] === StablePoolState.EXISTS && result[1])
-            )
-            .map(([, pair]) => pair)
-        ),
-      }
-    },
-    enabled: Boolean(variables.currencyA && variables.currencyB) && (variables.enabled || true),
+    queryFn: async () => await getPools(variables),
+    enabled: Boolean(variables.enabled || true),
   })
 }

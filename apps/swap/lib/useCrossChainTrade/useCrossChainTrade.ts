@@ -86,6 +86,8 @@ export const useCrossChainTradeQuery = (
         amount,
         slippagePercentage,
         recipient,
+        srcPools,
+        dstPools,
       },
     ],
     queryFn: async () => {
@@ -154,6 +156,7 @@ export const useCrossChainTradeQuery = (
         rebases: dstRebases,
       })
 
+      console.log({ srcTrade, dstTrade, dstPools })
       // Output amount displayed... not including slippage for sameChainSwap, transferSwap, crossChainSwap
       let dstAmountOut: Amount<Type> | undefined
       if (transfer) {
@@ -303,6 +306,7 @@ export const useCrossChainTradeQuery = (
           srcFeeData &&
           dstFeeData &&
           srcPools &&
+          dstPools &&
           srcRebases &&
           dstRebases
       ),
