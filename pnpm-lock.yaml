@@ -3979,6 +3979,7 @@ importers:
       '@graphql-mesh/transform-type-merging': latest
       '@graphql-mesh/utils': latest
       '@sushiswap/abi': workspace:*
+      '@sushiswap/address': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
@@ -4015,6 +4016,7 @@ importers:
       '@google-cloud/run': 0.3.0
       '@google-cloud/scheduler': 3.1.0
       '@sushiswap/abi': link:../../packages/abi
+      '@sushiswap/address': link:../../packages/address
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/math': link:../../packages/math

@@ -1,9 +1,12 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
+import { totalsAbi } from '@sushiswap/abi'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import type { ChainId } from '@sushiswap/chain'
 import { Prisma, PrismaClient, Token } from '@sushiswap/database'
-import { calcTokenPrices, ConstantProductRPool } from '@sushiswap/tines'
+import { calcTokenPrices, ConstantProductRPool, Rebase, RPool, StableSwapRPool } from '@sushiswap/tines'
+import { Address, readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
 import { PoolType, Price, ProtocolVersion } from '../config.js'
@@ -12,23 +15,12 @@ const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, 
 
 export async function prices(
   chainId: ChainId,
-  version: ProtocolVersion,
-  type: PoolType,
   base: string,
   price: Price,
   minimumLiquidity = 500000000
 ) {
   const client = new PrismaClient()
   try {
-    if (!Object.values(CURRENT_SUPPORTED_VERSIONS).includes(version)) {
-      throw new Error(
-        `Protocol version (${version}) not supported, supported versions: ${CURRENT_SUPPORTED_VERSIONS.join(',')}`
-      )
-    }
-    if (type !== PoolType.CONSTANT_PRODUCT_POOL) {
-      throw new Error(`Pool type ${type} not supported, supported types: ${PoolType.CONSTANT_PRODUCT_POOL}`)
-    }
-
     if (!Object.values(Price).includes(price)) {
       throw new Error(`Price (${price}) not supported, supported price types: ${Object.values(Price).join(',')}`)
     }
@@ -38,13 +30,13 @@ export async function prices(
 
     const startTime = performance.now()
 
-    console.log(`Arguments: CHAIN_ID: ${chainId}, VERSION: ${version}, TYPE: ${type}, BASE: ${base}, PRICE: ${price}`)
+    console.log(`Arguments: CHAIN_ID: ${chainId}, BASE: ${base}, PRICE: ${price}`)
 
     const baseToken = await getBaseToken(client, chainId, base)
     const pools = await getPools(client, chainId)
 
-    const { constantProductPools, tokens } = transform(pools)
-    const tokensToUpdate = calculatePrices(constantProductPools, minimumLiquidity, baseToken, tokens)
+    const { rPools, tokens } = await transform(chainId, pools)
+    const tokensToUpdate = calculatePrices(rPools, minimumLiquidity, baseToken, tokens)
     await updateTokenPrices(client, price, tokensToUpdate)
 
     const endTime = performance.now()
@@ -132,7 +124,7 @@ async function getPoolsByPagination(
     where: {
       isWhitelisted: true,
       chainId,
-      type: PoolType.CONSTANT_PRODUCT_POOL,
+      type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
       version: {
         in: CURRENT_SUPPORTED_VERSIONS,
       },
@@ -140,9 +132,12 @@ async function getPoolsByPagination(
   })
 }
 
-function transform(pools: Pool[]) {
+async function transform(chainId: ChainId, pools: Pool[]) {
   const tokens: Map<string, Token> = new Map()
-  const constantProductPools: ConstantProductRPool[] = []
+  const stablePools = pools.filter((pool) => pool.type === PoolType.STABLE_POOL)
+  const rebases = await fetchRebases(stablePools, chainId)
+
+  const rPools: RPool[] = []
   pools.forEach((pool) => {
     const token0 = {
       address: pool.token0.address,
@@ -156,29 +151,85 @@ function transform(pools: Pool[]) {
     }
     if (!tokens.has(token0.address)) tokens.set(token0.address, pool.token0)
     if (!tokens.has(token1.address)) tokens.set(token1.address, pool.token1)
-
-    constantProductPools.push(
-      new ConstantProductRPool(
-        pool.address,
-        token0,
-        token1,
-        pool.swapFee,
-        BigNumber.from(pool.reserve0),
-        BigNumber.from(pool.reserve1)
+    if (pool.type === PoolType.CONSTANT_PRODUCT_POOL) {
+      rPools.push(
+        new ConstantProductRPool(
+          pool.address,
+          token0,
+          token1,
+          pool.swapFee,
+          BigNumber.from(pool.reserve0),
+          BigNumber.from(pool.reserve1)
+        )
       )
-    )
+    } else if (pool.type === PoolType.STABLE_POOL) {
+      const total0 = rebases.get(token0.address)
+      const total1 = rebases.get(token1.address)
+      if (total0 && total1) {
+        rPools.push(
+          new StableSwapRPool(
+            pool.address,
+            token0,
+            token1,
+            pool.swapFee,
+            BigNumber.from(pool.reserve0),
+            BigNumber.from(pool.reserve1),
+            pool.token0.decimals,
+            pool.token1.decimals,
+            total0,
+            total1
+          )
+        )
+      }
+    }
   })
-  return { constantProductPools, tokens }
+  return { rPools, tokens }
+}
+
+async function fetchRebases(pools: Pool[], chainId: ChainId) {
+  const tokenMap = new Map<string, Token>()
+  pools.forEach((pool) => {
+    tokenMap.set(pool.token0.address, pool.token0)
+    tokenMap.set(pool.token1.address, pool.token1)
+  })
+  const tokensDedup = Array.from(tokenMap.values())
+  const tok0: [string, Token][] = tokensDedup.map((t) => [
+    t.address.toLocaleLowerCase().substring(2).padStart(40, '0'),
+    t,
+  ])
+  const sortedTokens = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([, t]) => t)
+
+  const totals = await readContracts({
+    allowFailure: true,
+    contracts: sortedTokens.map(
+      (t) =>
+        ({
+          args: [t.address as Address],
+          address: BENTOBOX_ADDRESS[chainId] as Address,
+          chainId: chainId,
+          abi: totalsAbi,
+          functionName: 'totals',
+        } as const)
+    ),
+  })
+
+  const rebases: Map<string, Rebase> = new Map()
+  sortedTokens.forEach((t, i) => {
+    const total = totals[i]
+    if (total === undefined || total === null) return
+    rebases.set(t.address, total)
+  })
+  return rebases
 }
 
 function calculatePrices(
-  constantProductPools: ConstantProductRPool[],
+  pools: RPool[],
   minimumLiquidity: number | undefined,
   baseToken: { symbol: string; address: string; name: string; decimals: number },
   tokens: Map<string, Token>
 ) {
   const startTime = performance.now()
-  const results = calcTokenPrices(constantProductPools, baseToken, minimumLiquidity)
+  const results = calcTokenPrices(pools, baseToken, minimumLiquidity)
   const endTime = performance.now()
   console.log(`calcTokenPrices() found ${results.size} prices (${((endTime - startTime) / 1000).toFixed(1)}s). `)
 
