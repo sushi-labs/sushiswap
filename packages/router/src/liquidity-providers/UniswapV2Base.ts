@@ -144,7 +144,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       pools.map((pool) => pool.address)
     )
 
-    const validUntilTimestamp = getUnixTime(add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME }))
+    const validUntilTimestamp = getUnixTime(add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME_IN_SECONDS }))
 
     let created = 0
     let updated = 0
@@ -169,7 +169,9 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         ++updated
       }
     })
-    console.debug(`${this.getLogPrefix()} - ON DEMAND: Created ${created} pools, extended 'lifetime' for ${updated} pools`)
+    console.debug(
+      `${this.getLogPrefix()} - ON DEMAND: Created ${created} pools, extended 'lifetime' for ${updated} pools`
+    )
   }
 
   async updatePools() {

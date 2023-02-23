@@ -25,7 +25,7 @@ export abstract class LiquidityProvider {
   client: PublicClient
   stateId = 0
   lastUpdateBlock = 0
-  readonly ON_DEMAND_POOLS_LIFETIME = 60
+  readonly ON_DEMAND_POOLS_LIFETIME_IN_SECONDS = 60
 
   constructor(chainId: ChainId, client: PublicClient) {
     this.chainId = chainId

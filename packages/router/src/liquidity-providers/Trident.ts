@@ -480,7 +480,7 @@ export class TridentProvider extends LiquidityProvider {
       this.getTradeId(t0, t1),
       pools.map((pool) => pool.address)
     )
-    const validUntilTimestamp = getUnixTime(add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME }))
+    const validUntilTimestamp = getUnixTime(add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME_IN_SECONDS }))
 
     const sortedTokens = this.poolResponseToSortedTokens(pools)
     let newBridges = 0
@@ -551,8 +551,10 @@ export class TridentProvider extends LiquidityProvider {
         ++updated
       }
     })
-    
-    console.debug(`${this.getLogPrefix()} - ON DEMAND: Created ${created} pools, extended 'lifetime' for ${updated} pools and added ${newBridges} bridges`)
+
+    console.debug(
+      `${this.getLogPrefix()} - ON DEMAND: Created ${created} pools, extended 'lifetime' for ${updated} pools and added ${newBridges} bridges`
+    )
   }
 
   private async refreshInitialPools() {
