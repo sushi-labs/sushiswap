@@ -9,7 +9,7 @@ import { calcTokenPrices, ConstantProductRPool, Rebase, RPool, StableSwapRPool }
 import { Address, readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
-import { PoolType, Price, ProtocolVersion } from '../config.js'
+import { PoolType, Price, ProtocolName, ProtocolVersion } from '../config.js'
 
 const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 
@@ -122,12 +122,24 @@ async function getPoolsByPagination(
       reserve1: true,
     },
     where: {
-      isWhitelisted: true,
-      chainId,
-      type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
-      version: {
-        in: CURRENT_SUPPORTED_VERSIONS,
-      },
+      OR: [
+        {
+          isWhitelisted: true,
+          chainId,
+          type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
+          version: {
+            in: CURRENT_SUPPORTED_VERSIONS,
+          },
+        },
+        {
+          chainId,
+          protocol: ProtocolName.SUSHISWAP,
+          type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
+          version: {
+            in: CURRENT_SUPPORTED_VERSIONS,
+          },
+        }
+      ]
     },
   })
 }
