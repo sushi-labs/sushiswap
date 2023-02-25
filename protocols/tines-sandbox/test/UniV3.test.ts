@@ -1,12 +1,10 @@
-import { CL_MAX_TICK, CL_MIN_TICK, CLTick, getBigNumber, RToken, UniV3Pool } from '@sushiswap/tines'
-import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
-import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
+import { CL_MAX_TICK, CL_MIN_TICK, getBigNumber, UniV3Pool } from '@sushiswap/tines'
 import { expect } from 'chai'
-import { BigNumber, BigNumberish, Contract, ContractFactory, Signer } from 'ethers'
+import { BigNumber, BigNumberish, Contract } from 'ethers'
 import { ethers } from 'hardhat'
 import seedrandom from 'seedrandom'
 
-const ZERO = getBigNumber(0)
+import { createRandomUniV3Pool, createUniV3Env, createUniV3Pool, UniV3Environment } from '../dist'
 
 // Map of fee to tickSpacing
 const feeAmountTickSpacing: number[] = []
@@ -33,57 +31,6 @@ function expectCloseValues(_a: number | BigNumber, _b: number | BigNumber, accur
   return res
 }
 
-interface Environment {
-  user: Signer
-  tokenFactory: ContractFactory
-  UniV3Factory: Contract
-  positionManager: Contract
-  testRouter: Contract
-}
-
-async function createEnv(): Promise<Environment> {
-  const [user] = await ethers.getSigners()
-
-  const tokenFactory = await ethers.getContractFactory('ERC20Mock', user)
-
-  const UniV3FactoryFactory = await ethers.getContractFactory('UniswapV3Factory')
-  const UniV3Factory = await UniV3FactoryFactory.deploy()
-  await UniV3Factory.deployed()
-
-  const WETH9Factory = await ethers.getContractFactory(WETH9.abi, WETH9.bytecode)
-  const WETH9Contract = await WETH9Factory.deploy()
-  await WETH9Contract.deployed()
-
-  const NonfungiblePositionManagerFactory = await ethers.getContractFactory(
-    NonfungiblePositionManager.abi,
-    NonfungiblePositionManager.bytecode
-  )
-  const NonfungiblePositionManagerContract = await NonfungiblePositionManagerFactory.deploy(
-    UniV3Factory.address,
-    WETH9Contract.address,
-    '0x0000000000000000000000000000000000000000'
-  )
-  const positionManager = await NonfungiblePositionManagerContract.deployed()
-
-  const TestRouterFactory = await ethers.getContractFactory('TestRouter')
-  const testRouter = await TestRouterFactory.deploy()
-  await testRouter.deployed()
-
-  return {
-    user,
-    tokenFactory,
-    UniV3Factory,
-    positionManager,
-    testRouter,
-  }
-}
-
-interface Position {
-  from: number
-  to: number
-  val: number
-}
-
 interface PoolInfo {
   contract: Contract
   tinesPool: UniV3Pool
@@ -105,85 +52,6 @@ export async function getPoolState(pool: Contract) {
     unlocked: slot[6],
   }
   return PoolState
-}
-
-function isLess(a: Contract, b: Contract): boolean {
-  const addrA = a.address.toLowerCase().substring(2).padStart(40, '0')
-  const addrB = b.address.toLowerCase().substring(2).padStart(40, '0')
-  return addrA < addrB
-}
-
-const tokenSupply = getBigNumber(Math.pow(2, 255))
-async function createPool(env: Environment, fee: number, price: number, positions: Position[]): Promise<PoolInfo> {
-  const sqrtPriceX96 = getBigNumber(Math.sqrt(price) * Math.pow(2, 96))
-  const tickSpacing = feeAmountTickSpacing[fee]
-  expect(tickSpacing).not.undefined
-
-  const _token0Contract = await env.tokenFactory.deploy('Token0', 'Token0', tokenSupply)
-  const _token1Contract = await env.tokenFactory.deploy('Token1', 'Token1', tokenSupply)
-  const [token0Contract, token1Contract] = isLess(_token0Contract, _token1Contract)
-    ? [_token0Contract, _token1Contract]
-    : [_token1Contract, _token0Contract]
-
-  const token0: RToken = { name: 'Token0', symbol: 'Token0', address: token0Contract.address }
-  const token1: RToken = { name: 'Token1', symbol: 'Token1', address: token1Contract.address }
-
-  await token0Contract.approve(env.testRouter.address, tokenSupply)
-  await token1Contract.approve(env.testRouter.address, tokenSupply)
-
-  await env.positionManager.createAndInitializePoolIfNecessary(
-    token0Contract.address,
-    token1Contract.address,
-    getBigNumber(fee),
-    sqrtPriceX96
-  )
-
-  const poolAddress = await env.UniV3Factory.getPool(token0Contract.address, token1Contract.address, fee)
-  const poolF = await ethers.getContractFactory('UniswapV3Pool')
-  const pool = poolF.attach(poolAddress)
-
-  const tickMap = new Map<number, BigNumber>()
-  for (let i = 0; i < positions.length; ++i) {
-    const position = positions[i]
-    expect(position.from % tickSpacing).to.equal(0)
-    expect(position.to % tickSpacing).to.equal(0)
-
-    const liquidity = getBigNumber(position.val)
-    await env.testRouter.mint(poolAddress, position.from, position.to, liquidity)
-
-    let tickLiquidity = tickMap.get(position.from)
-    tickLiquidity = tickLiquidity === undefined ? liquidity : tickLiquidity.add(liquidity)
-    tickMap.set(position.from, tickLiquidity)
-
-    tickLiquidity = tickMap.get(position.to) || ZERO
-    tickLiquidity = tickLiquidity.sub(liquidity)
-    tickMap.set(position.to, tickLiquidity)
-  }
-
-  const slot = await pool.slot0()
-  const ticks: CLTick[] = Array.from(tickMap.entries())
-    .sort((a, b) => a[0] - b[0])
-    .map(([index, DLiquidity]) => ({ index, DLiquidity }))
-
-  const tinesPool = new UniV3Pool(
-    pool.address,
-    token0,
-    token1,
-    fee / 1e6,
-    await token0Contract.balanceOf(pool.address),
-    await token1Contract.balanceOf(pool.address),
-    slot[1],
-    await pool.liquidity(),
-    sqrtPriceX96,
-    ticks
-  )
-
-  return {
-    contract: pool,
-    tinesPool,
-    token0Contract,
-    token1Contract,
-  }
 }
 
 // EVM calculations with 256 integers are not very precise in case of small numbers.
@@ -242,10 +110,8 @@ function checkPrice(pool: UniV3Pool) {
   expectCloseValues(direction ? price1 : price2, realPrice, 10 / inp)
 }
 
-const counter = new Map<number, [number, number]>()
-
 async function checkSwap(
-  env: Environment,
+  env: UniV3Environment,
   pool: PoolInfo,
   amount: number | BigNumberish,
   direction: boolean,
@@ -332,7 +198,7 @@ async function getRandomSwapParams(rnd: () => number, pool: PoolInfo): Promise<[
   return [amount, direction]
 }
 
-async function monkeyTest(env: Environment, pool: PoolInfo, seed: string, iterations: number, printTick = false) {
+async function monkeyTest(env: UniV3Environment, pool: PoolInfo, seed: string, iterations: number, printTick = false) {
   const rnd: () => number = seedrandom(seed) // random [0, 1)
   for (let i = 0; i < iterations; ++i) {
     const [amount, direction] = await getRandomSwapParams(rnd, pool)
@@ -340,173 +206,144 @@ async function monkeyTest(env: Environment, pool: PoolInfo, seed: string, iterat
   }
 }
 
-function getRndLin(rnd: () => number, min: number, max: number) {
-  return rnd() * (max - min) + min
-}
-function getRndLinInt(rnd: () => number, min: number, max: number) {
-  return Math.floor(getRndLin(rnd, min, max))
-}
-
-async function createRandomPool(env: Environment, seed: string, positionNumber: number, price?: number) {
-  const rnd: () => number = seedrandom(seed) // random [0, 1)
-
-  const fee = [500, 3000, 10000][getRndLinInt(rnd, 0, 3)]
-  const tickSpacing = feeAmountTickSpacing[fee]
-  const RANGE = Math.floor((CL_MAX_TICK - CL_MIN_TICK) / tickSpacing)
-  const SHIFT = -Math.floor(-CL_MIN_TICK / tickSpacing) * tickSpacing
-
-  const positions: Position[] = []
-  for (let i = 0; i < positionNumber; ++i) {
-    const pos1 = getRndLinInt(rnd, 0, RANGE)
-    const pos2 = (pos1 + getRndLinInt(rnd, 1, RANGE - 1)) % RANGE
-    const from = Math.min(pos1, pos2) * tickSpacing + SHIFT
-    const to = Math.max(pos1, pos2) * tickSpacing + SHIFT
-    console.assert(CL_MIN_TICK <= from && from < to && to <= CL_MAX_TICK, `Wrong from-to range ${from} - ${to}`)
-    positions.push({ from, to, val: getRndLin(rnd, 0.01, 30) * 1e18 })
-  }
-  price = price === undefined ? getRndLin(rnd, 0.01, 100) : price
-  //console.log(positions, price, fee)
-  return await createPool(env, fee, price, positions)
-}
-
 describe('Uni V3', () => {
-  let env: Environment
+  let env: UniV3Environment
 
   before(async () => {
-    env = await createEnv()
+    env = await createUniV3Env(ethers)
   })
 
   it('Empty pool', async () => {
-    const pool = await createPool(env, 3000, 1, [])
+    const pool = await createUniV3Pool(env, 3000, 1, [])
     await checkSwap(env, pool, 100, true)
     await checkSwap(env, pool, 100, false)
   })
 
   describe('One position', () => {
     it('No tick crossing', async () => {
-      const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
+      const pool = await createUniV3Pool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
       await checkSwap(env, pool, 1e16, true)
-      const pool2 = await createPool(env, 3000, 4, [{ from: -1200, to: 18000, val: 1e18 }])
+      const pool2 = await createUniV3Pool(env, 3000, 4, [{ from: -1200, to: 18000, val: 1e18 }])
       await checkSwap(env, pool2, 1e16, false)
     })
 
     it('Tick crossing', async () => {
-      const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
+      const pool = await createUniV3Pool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
       await checkSwap(env, pool, 1e18, true)
-      const pool2 = await createPool(env, 3000, 4, [{ from: -1200, to: 18000, val: 1e18 }])
+      const pool2 = await createUniV3Pool(env, 3000, 4, [{ from: -1200, to: 18000, val: 1e18 }])
       await checkSwap(env, pool2, 1e20, false)
     })
 
     it('Swap exact to tick', async () => {
-      const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
+      const pool = await createUniV3Pool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
       await checkSwap(env, pool, '616469173272709204', true) // before tick
-      const pool2 = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
+      const pool2 = await createUniV3Pool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
       await checkSwap(env, pool2, '616469173272709205', true) // after tick
-      const pool3 = await createPool(env, 3000, 4, [{ from: -1200, to: 18000, val: 1e18 }])
+      const pool3 = await createUniV3Pool(env, 3000, 4, [{ from: -1200, to: 18000, val: 1e18 }])
       await checkSwap(env, pool3, '460875064077414607', false) // before tick
-      const pool4 = await createPool(env, 3000, 4, [{ from: -1200, to: 18000, val: 1e18 }])
+      const pool4 = await createUniV3Pool(env, 3000, 4, [{ from: -1200, to: 18000, val: 1e18 }])
       await checkSwap(env, pool4, '460875064077414607', false) // after tick
     })
 
     it('From 0 zone to not 0 zone', async () => {
-      const pool = await createPool(env, 3000, 50, [{ from: -1200, to: 18000, val: 1e18 }])
+      const pool = await createUniV3Pool(env, 3000, 50, [{ from: -1200, to: 18000, val: 1e18 }])
       await checkSwap(env, pool, 1e17, true)
-      // const pool2 = await createPool(env, 3000, 0.1, [{ from: -1200, to: 18000, val: 1e18 }])
+      // const pool2 = await createUniV3Pool(env, 3000, 0.1, [{ from: -1200, to: 18000, val: 1e18 }])
       // await checkSwap(env, pool2, 1e17, false)
     })
 
     it('From 0 zone through ticks to 0 zone', async () => {
-      const pool = await createPool(env, 3000, 50, [{ from: -1200, to: 18000, val: 1e18 }])
+      const pool = await createUniV3Pool(env, 3000, 50, [{ from: -1200, to: 18000, val: 1e18 }])
       await checkSwap(env, pool, 1e18, true)
-      const pool2 = await createPool(env, 3000, 0.1, [{ from: -1200, to: 18000, val: 1e18 }])
+      const pool2 = await createUniV3Pool(env, 3000, 0.1, [{ from: -1200, to: 18000, val: 1e18 }])
       await checkSwap(env, pool2, 1e19, false)
     })
 
     it('Special case 1', async () => {
-      const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
+      const pool = await createUniV3Pool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
       await checkSwap(env, pool, 1e18, true)
       await checkSwap(env, pool, 1, false, true)
     })
 
     it.skip('Monkey test', async () => {
-      const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
+      const pool = await createUniV3Pool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
       await monkeyTest(env, pool, 'test1', 1000, true)
     })
   })
 
   describe('Two positions', () => {
     it('Special 1', async () => {
-      const pool = await createPool(env, 3000, 12.310868067131443, [
+      const pool = await createUniV3Pool(env, 3000, 12.310868067131443, [
         { from: -1200, to: 18000, val: 1e18 },
         { from: 24000, to: 48000, val: 5e18 },
       ])
       await checkSwap(env, pool, 85433172055732540, true)
     })
     it('Special 2', async () => {
-      const pool = await createPool(env, 3000, 121.48126046130433, [
+      const pool = await createUniV3Pool(env, 3000, 121.48126046130433, [
         { from: -1200, to: 18000, val: 1e18 },
         { from: 24000, to: 48000, val: 5e18 },
       ])
       await checkSwap(env, pool, '154350003013680480', true)
     })
     it('Special 3', async () => {
-      const pool = await createPool(env, 3000, 6.857889404362659, [
+      const pool = await createUniV3Pool(env, 3000, 6.857889404362659, [
         { from: -1200, to: 18000, val: 2e18 },
         { from: 12000, to: 24000, val: 6e18 },
       ])
       await checkSwap(env, pool, '994664157591385500', true)
     })
     it('No overlapping small monkey test', async () => {
-      const pool = await createPool(env, 3000, 3, [
+      const pool = await createUniV3Pool(env, 3000, 3, [
         { from: -1200, to: 18000, val: 1e18 },
         { from: 24000, to: 48000, val: 5e18 },
       ])
       await monkeyTest(env, pool, 'small', 10)
     })
     it.skip('No overlapping big monkey test', async () => {
-      const pool = await createPool(env, 3000, 3, [
+      const pool = await createUniV3Pool(env, 3000, 3, [
         { from: -1200, to: 18000, val: 1e18 },
         { from: 24000, to: 48000, val: 5e18 },
       ])
       await monkeyTest(env, pool, 'big', 1000, true)
     })
     it('Touching positions small monkey test', async () => {
-      const pool = await createPool(env, 3000, 4, [
+      const pool = await createUniV3Pool(env, 3000, 4, [
         { from: -1200, to: 18000, val: 1e18 },
         { from: 18000, to: 42000, val: 5e18 },
       ])
       await monkeyTest(env, pool, '_small', 10)
     })
     it.skip('Touching positions big monkey test', async () => {
-      const pool = await createPool(env, 3000, 4, [
+      const pool = await createUniV3Pool(env, 3000, 4, [
         { from: -1200, to: 18000, val: 1e18 },
         { from: 18000, to: 42000, val: 5e18 },
       ])
       await monkeyTest(env, pool, '_big', 1000, true)
     })
     it('Overlapped positions small monkey test', async () => {
-      const pool = await createPool(env, 3000, 8, [
+      const pool = await createUniV3Pool(env, 3000, 8, [
         { from: -1200, to: 18000, val: 2e18 },
         { from: 12000, to: 24000, val: 6e18 },
       ])
       await monkeyTest(env, pool, 'Small', 10)
     })
     it.skip('Overlapped positions small monkey test', async () => {
-      const pool = await createPool(env, 3000, 8, [
+      const pool = await createUniV3Pool(env, 3000, 8, [
         { from: -1200, to: 18000, val: 2e18 },
         { from: 12000, to: 24000, val: 6e18 },
       ])
       await monkeyTest(env, pool, 'Big', 1000, true)
     })
     it('Nested positions small monkey test', async () => {
-      const pool = await createPool(env, 3000, 8, [
+      const pool = await createUniV3Pool(env, 3000, 8, [
         { from: -1200, to: 24000, val: 2e18 },
         { from: 6000, to: 12000, val: 6e18 },
       ])
       await monkeyTest(env, pool, '_small_', 10)
     })
     it.skip('Nested positions big monkey test', async () => {
-      const pool = await createPool(env, 3000, 8, [
+      const pool = await createUniV3Pool(env, 3000, 8, [
         { from: -1200, to: 24000, val: 2e18 },
         { from: 6000, to: 12000, val: 6e18 },
       ])
@@ -515,7 +352,7 @@ describe('Uni V3', () => {
   })
   it.skip('Random pool monkey test', async () => {
     for (let i = 0; i < 10; ++i) {
-      const pool = await createRandomPool(env, 'pool' + i, 100)
+      const pool = await createRandomUniV3Pool(env, 'pool' + i, 100)
       await monkeyTest(env, pool, 'monkey' + i, 100, true)
     }
   })

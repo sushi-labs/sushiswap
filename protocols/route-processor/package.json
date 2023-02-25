@@ -52,6 +52,7 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/tines": "workspace:*",
+    "@sushiswap/tines-sandbox": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@typechain/ethers-v5": "^10.0.0",
     "@typechain/hardhat": "^6.1.0",
