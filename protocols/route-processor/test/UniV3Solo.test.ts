@@ -37,10 +37,10 @@ interface TestEnvironment {
 }
 
 async function getTestEnvironment(): Promise<TestEnvironment> {
-  await network.provider.request({
-    method: 'hardhat_reset',
-    params: [],
-  })
+  // await network.provider.request({
+  //   method: 'hardhat_reset',
+  //   params: [],
+  // })
 
   const chainId = network.config.chainId as ChainId
   const RouteProcessor = await ethers.getContractFactory('RouteProcessor2')
