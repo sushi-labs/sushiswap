@@ -120,11 +120,16 @@ contract RouteProcessor2 {
     amountOut = balanceOutFinal - balanceOutInitial;
   }
 
+  /// @notice Processes native coin: call swap for all pools that swap from native coin
+  /// @param stream Streamed process program
   function processNative(uint256 stream) private {
     uint256 amountTotal = address(this).balance;
     distributeAndSwap(stream, address(this), NATIVE_ADDRESS, amountTotal);
   }
 
+  /// @notice Processes ERC20 token from this contract balance:
+  /// @notice Call swap for all pools that swap from this token
+  /// @param stream Streamed process program
   function processMyERC20(uint256 stream) private {
     address token = stream.readAddress();
     uint256 amountTotal = IERC20(token).balanceOf(address(this));
@@ -134,11 +139,20 @@ contract RouteProcessor2 {
     distributeAndSwap(stream, address(this), token, amountTotal);
   }
   
+  /// @notice Processes ERC20 token from msg.sender balance:
+  /// @notice Call swap for all pools that swap from this token
+  /// @param stream Streamed process program
+  /// @param amountTotal Amount of tokens to take from msg.sender
   function processUserERC20(uint256 stream, uint256 amountTotal) private {
     address token = stream.readAddress();
     distributeAndSwap(stream, msg.sender, token, amountTotal);
   }
 
+  /// @notice Distributes amountTotal to several pools according to their shares and calls swap for each pool
+  /// @param stream Streamed process program
+  /// @param from Where to take liquidity for swap
+  /// @param tokenIn Input token
+  /// @param amountTotal Total amount of tokenIn for swaps 
   function distributeAndSwap(uint256 stream, address from, address tokenIn, uint256 amountTotal) private {
     uint8 num = stream.readUint8();
     unchecked {
@@ -151,13 +165,18 @@ contract RouteProcessor2 {
     }
   }
 
-  // Should be used for tokens with only 1 output pool, if pool's input liquidity
-  // already have been transfered to pool 
+  /// @notice Processes ERC20 token for cases when the token has only one output pool
+  /// @notice In this case liquidity is already at pool balance. This is an optimization
+  /// @notice Call swap for all pools that swap from this token
+  /// @param stream Streamed process program
   function processOnePool(uint256 stream) private {
     address token = stream.readAddress();
     swap(stream, address(this), token, 0);
   }
 
+  /// @notice Processes Bento tokens 
+  /// @notice Call swap for all pools that swap from this token
+  /// @param stream Streamed process program
   function processInsideBento(uint256 stream) private {
     address token = stream.readAddress();
     uint8 num = stream.readUint8();
@@ -174,6 +193,11 @@ contract RouteProcessor2 {
     }
   }
 
+  /// @notice Makes swap
+  /// @param stream Streamed process program
+  /// @param from Where to take liquidity for swap
+  /// @param tokenIn Input token
+  /// @param amountIn Amount of tokenIn to take for swap
   function swap(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
     uint8 poolType = stream.readUint8();
     if (poolType == 0) swapUniV2(stream, from, tokenIn, amountIn);
@@ -184,6 +208,11 @@ contract RouteProcessor2 {
     else revert('RouteProcessor: Unknown pool type');
   }
 
+  /// @notice Wraps/unwraps native token
+  /// @param stream [direction & fake, recipient, wrapToken?]
+  /// @param from Where to take liquidity for swap
+  /// @param tokenIn Input token
+  /// @param amountIn Amount of tokenIn to take for swap
   function wrapNative(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
     uint8 directionAndFake = stream.readUint8();
     address to = stream.readAddress();
@@ -201,6 +230,11 @@ contract RouteProcessor2 {
     }
   }
 
+  /// @notice Bridge/unbridge tokens to/from Bento
+  /// @param stream [direction, recipient]
+  /// @param from Where to take liquidity for swap
+  /// @param tokenIn Input token
+  /// @param amountIn Amount of tokenIn to take for swap
   function bentoBridge(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
     uint8 direction = stream.readUint8();
     address to = stream.readAddress();
@@ -225,6 +259,11 @@ contract RouteProcessor2 {
     }
   }
 
+  /// @notice UniswapV2 pool swap
+  /// @param stream [pool, direction, recipient]
+  /// @param from Where to take liquidity for swap
+  /// @param tokenIn Input token
+  /// @param amountIn Amount of tokenIn to take for swap
   function swapUniV2(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
     address pool = stream.readAddress();
     uint8 direction = stream.readUint8();
@@ -245,6 +284,11 @@ contract RouteProcessor2 {
     IUniswapV2Pair(pool).swap(amount0Out, amount1Out, to, new bytes(0));
   }
 
+  /// @notice Trident pool swap
+  /// @param stream [pool, swapData]
+  /// @param from Where to take liquidity for swap
+  /// @param tokenIn Input token
+  /// @param amountIn Amount of tokenIn to take for swap
   function swapTrident(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
     address pool = stream.readAddress();
     bytes memory swapData = stream.readBytes();
@@ -256,9 +300,11 @@ contract RouteProcessor2 {
     IPool(pool).swap(swapData);
   }
 
-  /// @notice Performs a UniV3 pool swap
-  /// @param amountIn amount of tokens to swap
-  /// @param stream [Pool, TokenIn, Direction, To]
+  /// @notice UniswapV3 pool swap
+  /// @param stream [pool, direction, recipient]
+  /// @param from Where to take liquidity for swap
+  /// @param tokenIn Input token
+  /// @param amountIn Amount of tokenIn to take for swap
   function swapUniV3(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
     address pool = stream.readAddress();
     bool zeroForOne = stream.readUint8() > 0;
