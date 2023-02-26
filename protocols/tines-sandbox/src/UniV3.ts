@@ -6,6 +6,11 @@ import { expect } from 'chai'
 import { BigNumber, Contract, ContractFactory, ethers, Signer } from 'ethers'
 import seedrandom from 'seedrandom'
 
+import ERC20Mock from '../artifacts/contracts/ERC20Mock.sol/ERC20Mock.json'
+import TestRouter from '../artifacts/contracts/TestRouter.sol/TestRouter.json'
+import UniswapV3Factory from '../artifacts/contracts/UniswapV3FactoryFlat.sol/UniswapV3Factory.json'
+import UniswapV3Pool from '../artifacts/contracts/UniswapV3FactoryFlat.sol/UniswapV3Pool.json'
+
 const ZERO = getBigNumber(0)
 
 // Map of fee to tickSpacing
@@ -31,9 +36,9 @@ export async function createUniV3Env(
 ): Promise<UniV3Environment> {
   const user = userDeployContracts || (await ethers.getSigners())[0]
 
-  const tokenFactory = await ethers.getContractFactory('ERC20Mock', user)
+  const tokenFactory = await ethers.getContractFactory(ERC20Mock.abi, ERC20Mock.bytecode, user)
 
-  const UniV3FactoryFactory = await ethers.getContractFactory('UniswapV3Factory')
+  const UniV3FactoryFactory = await ethers.getContractFactory(UniswapV3Factory.abi, UniswapV3Factory.bytecode)
   const UniV3Factory = await UniV3FactoryFactory.deploy()
   await UniV3Factory.deployed()
 
@@ -52,7 +57,7 @@ export async function createUniV3Env(
   )
   const positionManager = await NonfungiblePositionManagerContract.deployed()
 
-  const TestRouterFactory = await ethers.getContractFactory('TestRouter')
+  const TestRouterFactory = await ethers.getContractFactory(TestRouter.abi, TestRouter.bytecode)
   const testRouter = await TestRouterFactory.deploy()
   await testRouter.deployed()
 
@@ -72,7 +77,7 @@ export interface UniV3Position {
   val: number
 }
 
-interface PoolInfo {
+export interface UniV3PoolInfo {
   contract: Contract
   tinesPool: UniV3Pool
   token0Contract: Contract
@@ -91,7 +96,7 @@ export async function createUniV3Pool(
   fee: number,
   price: number,
   positions: UniV3Position[]
-): Promise<PoolInfo> {
+): Promise<UniV3PoolInfo> {
   const sqrtPriceX96 = getBigNumber(Math.sqrt(price) * Math.pow(2, 96))
   const tickSpacing = feeAmountTickSpacing[fee]
   expect(tickSpacing).not.undefined
@@ -102,8 +107,14 @@ export async function createUniV3Pool(
     ? [_token0Contract, _token1Contract]
     : [_token1Contract, _token0Contract]
 
-  const token0: RToken = { name: 'Token0', symbol: 'Token0', address: token0Contract.address }
-  const token1: RToken = { name: 'Token1', symbol: 'Token1', address: token1Contract.address }
+  const chainId = env.ethers.provider.network.chainId
+  const token0: RToken = {
+    chainId,
+    name: 'Token0',
+    symbol: 'Token0',
+    address: token0Contract.address,
+  }
+  const token1: RToken = { chainId, name: 'Token1', symbol: 'Token1', address: token1Contract.address }
 
   await token0Contract.approve(env.testRouter.address, tokenSupply)
   await token1Contract.approve(env.testRouter.address, tokenSupply)
@@ -116,7 +127,7 @@ export async function createUniV3Pool(
   )
 
   const poolAddress = await env.UniV3Factory.getPool(token0Contract.address, token1Contract.address, fee)
-  const poolF = await env.ethers.getContractFactory('UniswapV3Pool')
+  const poolF = await env.ethers.getContractFactory(UniswapV3Pool.abi, UniswapV3Pool.bytecode)
   const pool = poolF.attach(poolAddress)
 
   const tickMap = new Map<number, BigNumber>()
@@ -175,7 +186,7 @@ export async function createRandomUniV3Pool(
   seed: string,
   positionNumber: number,
   price?: number
-) {
+): Promise<UniV3PoolInfo> {
   const rnd: () => number = seedrandom(seed) // random [0, 1)
 
   const fee = [500, 3000, 10000][getRndLinInt(rnd, 0, 3)]

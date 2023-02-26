@@ -3,6 +3,9 @@
 pragma solidity 0.8.10;
 
 interface IUniswapV3Pool {
+  function token0() external returns (address);
+  function token1() external returns (address);
+
   function swap(
     address recipient,
     bool zeroForOne,

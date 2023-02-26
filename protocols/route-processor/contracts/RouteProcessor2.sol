@@ -259,10 +259,12 @@ contract RouteProcessor2 {
   /// @notice Performs a UniV3 pool swap
   /// @param amountIn amount of tokens to swap
   /// @param stream [Pool, TokenIn, Direction, To]
-  function swapUniV3(uint256 stream, address /*from*/, address tokenIn, uint256 amountIn) private {
+  function swapUniV3(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
     address pool = stream.readAddress();
     bool zeroForOne = stream.readUint8() > 0;
     address recipient = stream.readAddress();
+
+    if (from != address(this)) IERC20(tokenIn).safeTransferFrom(from, address(this), uint256(amountIn));
 
     lastCalledPool = pool;
     IUniswapV3Pool(pool).swap(
