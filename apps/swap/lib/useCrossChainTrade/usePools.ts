@@ -36,9 +36,11 @@ const queryFn = async ({ currencyA, currencyB, chainId, tradeType = TradeType.EX
     currencyIn && currencyOut && chainId ? getCurrencyCombinations(chainId, currencyIn, currencyOut) : []
 
   const [pairs, constantProductPools, stablePools] = await Promise.all([
-    chainId in FACTORY_ADDRESS ? getPairs(chainId, currencyCombinations) : [],
-    chainId in CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS ? getConstantProductPools(chainId, currencyCombinations) : [],
-    chainId in STABLE_POOL_FACTORY_ADDRESS ? getStablePools(chainId, currencyCombinations) : [],
+    chainId in FACTORY_ADDRESS ? getPairs(chainId, currencyCombinations) : Promise.resolve([]),
+    chainId in CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS
+      ? getConstantProductPools(chainId, currencyCombinations)
+      : Promise.resolve([]),
+    chainId in STABLE_POOL_FACTORY_ADDRESS ? getStablePools(chainId, currencyCombinations) : Promise.resolve([]),
   ])
 
   return {
