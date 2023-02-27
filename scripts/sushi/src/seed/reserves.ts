@@ -5,7 +5,7 @@ import { Prisma,PrismaClient } from '@sushiswap/database'
 import { readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
-import { PoolType, ProtocolVersion } from '../config.js'
+import { PoolType, ProtocolName, ProtocolVersion } from '../config.js'
 
 const CPP_RESERVES_ABI = [
   {
@@ -133,14 +133,27 @@ async function getPoolsPagination(
       reserve1: true,
     },
     where: {
-      chainId,
-      version: {
-        in: SUPPORTED_VERSIONS,
-      },
-      type: {
-        in: SUPPORTED_TYPES,
-      },
-      isWhitelisted: true,
+      OR: [
+        {
+          chainId,
+          version: {
+            in: SUPPORTED_VERSIONS,
+          },
+          type: {
+            in: SUPPORTED_TYPES,
+          },
+          isWhitelisted: true,
+        }, 
+        {
+          chainId,
+          protocol: ProtocolName.SUSHISWAP,
+          type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
+          version: {
+            in: SUPPORTED_VERSIONS,
+          },
+        }
+      ]
+    
     },
   })
 }
