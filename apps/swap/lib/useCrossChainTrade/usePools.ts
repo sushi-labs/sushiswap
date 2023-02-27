@@ -84,7 +84,7 @@ export const getPools = async (variables: UsePoolsParams) => {
 export const usePools = (variables: UsePoolsParams) => {
   return useQuery({
     queryKey: [
-      'NoCache',
+      'NoPersist',
       'usePools',
       { chainId: variables.chainId, currencyA: variables.currencyA, currencyB: variables.currencyB },
     ],

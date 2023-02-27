@@ -19,7 +19,7 @@ const POPULAR_TOKENS = [
   '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',
   '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
   '0xdac17f958d2ee523a2206206994597c13d831ec7',
-  '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+  // '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
 ]
 
 export const SearchPanel: FC = () => {
