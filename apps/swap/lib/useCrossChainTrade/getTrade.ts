@@ -10,7 +10,7 @@ import {
 } from '@sushiswap/amm'
 import { BigNumber } from 'ethers'
 import { RouteStatus } from '@sushiswap/tines'
-import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from '../useClientTrade'
+import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from '../../config'
 import { UsePoolsReturn } from './usePools'
 import { FetchFeeDataResult } from 'wagmi/actions'
 import { JSBI } from '@sushiswap/math'

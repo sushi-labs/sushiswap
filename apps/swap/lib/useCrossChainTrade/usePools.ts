@@ -5,9 +5,14 @@ import { getConstantProductPools } from './getConstantProductPools'
 import { getStablePools } from './getStablePools'
 import { Type } from '@sushiswap/currency'
 import { getCurrencyCombinations } from '@sushiswap/router'
-import { ConstantProductPool, Pair, StablePool, TradeType } from '@sushiswap/amm'
+import { ConstantProductPool, FACTORY_ADDRESS, Pair, StablePool, TradeType } from '@sushiswap/amm'
 import { ConstantProductPoolState, PairState, StablePoolState } from '@sushiswap/wagmi'
-import { TRIDENT_ENABLED_NETWORKS, AMM_ENABLED_NETWORKS } from '../../config'
+import {
+  TRIDENT_ENABLED_NETWORKS,
+  AMM_ENABLED_NETWORKS,
+  CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS,
+  STABLE_POOL_FACTORY_ADDRESS,
+} from '../../config'
 
 interface UsePoolsParams {
   chainId: ChainId
@@ -31,9 +36,9 @@ const queryFn = async ({ currencyA, currencyB, chainId, tradeType = TradeType.EX
     currencyIn && currencyOut && chainId ? getCurrencyCombinations(chainId, currencyIn, currencyOut) : []
 
   const [pairs, constantProductPools, stablePools] = await Promise.all([
-    AMM_ENABLED_NETWORKS.includes(chainId as number) ? getPairs(chainId, currencyCombinations) : [],
-    TRIDENT_ENABLED_NETWORKS.includes(chainId as number) ? getConstantProductPools(chainId, currencyCombinations) : [],
-    TRIDENT_ENABLED_NETWORKS.includes(chainId as number) ? getStablePools(chainId, currencyCombinations) : [],
+    chainId in FACTORY_ADDRESS ? getPairs(chainId, currencyCombinations) : [],
+    chainId in CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS ? getConstantProductPools(chainId, currencyCombinations) : [],
+    chainId in STABLE_POOL_FACTORY_ADDRESS ? getStablePools(chainId, currencyCombinations) : [],
   ])
 
   return {

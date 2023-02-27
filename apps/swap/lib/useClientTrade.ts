@@ -22,20 +22,11 @@ import {
   usePairs,
   PairState,
 } from '@sushiswap/wagmi'
+import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from 'config'
 
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { useFeeData } from 'wagmi'
-
-export const STABLE_POOL_FACTORY_ADDRESS: Record<number, string> = {
-  [ChainId.POLYGON]: '0x2A0Caa28331bC6a18FF195f06694f90671dE70f2',
-  [ChainId.OPTIMISM]: '0x827179dD56d07A7eeA32e3873493835da2866976',
-}
-
-export const CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS: Record<number, string> = {
-  [ChainId.OPTIMISM]: '0x93395129bd3fcf49d95730D3C2737c17990fF328',
-  [ChainId.POLYGON]: '0x28890e3C0aA9B4b48b1a716f46C9abc9B12abfab',
-}
 
 export type UseTradeOutput =
   | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
