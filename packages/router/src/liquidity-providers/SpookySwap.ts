@@ -1,11 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
-import { Client } from 'viem'
+import { PublicClient } from 'viem'
 
 import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class SpookySwapProvider extends UniswapV2BaseProvider {
-  constructor(chainId: ChainId, client: Client) {
+  constructor(chainId: ChainId, client: PublicClient) {
     const factory = {
       [ChainId.FANTOM]: '0x152eE697f2E276fA89E96742e9bB9aB1F2E61bE3',
     } as const

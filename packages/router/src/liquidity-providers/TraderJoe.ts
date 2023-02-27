@@ -1,11 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
-import { Client } from 'viem'
+import { PublicClient } from 'viem'
 
 import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class TraderJoeProvider extends UniswapV2BaseProvider {
-  constructor(chainId: ChainId, client: Client) {
+  constructor(chainId: ChainId, client: PublicClient) {
     const factory = {
       [ChainId.AVALANCHE]: '0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10',
     } as const

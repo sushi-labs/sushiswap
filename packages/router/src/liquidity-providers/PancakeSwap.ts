@@ -1,12 +1,12 @@
 import { ChainId } from '@sushiswap/chain'
-import { Client } from 'viem'
+import { PublicClient } from 'viem'
 
 import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class PancakeSwapProvider extends UniswapV2BaseProvider {
   fee = 0.0025
-  constructor(chainId: ChainId, client: Client) {
+  constructor(chainId: ChainId, client: PublicClient) {
     const factory = {
       [ChainId.ETHEREUM]: '0x1097053Fd2ea711dad45caCcc45EfF7548fCB362',
       [ChainId.BSC]: '0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73',

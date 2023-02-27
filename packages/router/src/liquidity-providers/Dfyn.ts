@@ -1,11 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
-import { Client } from 'viem'
+import { PublicClient } from 'viem'
 
 import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class DfynProvider extends UniswapV2BaseProvider {
-  constructor(chainId: ChainId, client: Client) {
+  constructor(chainId: ChainId, client: PublicClient) {
     const factory = {
       [ChainId.POLYGON]: '0xE7Fb3e833eFE5F9c441105EB65Ef8b261266423B',
       [ChainId.FANTOM]: '0xd9820a17053d6314B20642E465a84Bf01a3D64f5',
