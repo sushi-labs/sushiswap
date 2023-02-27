@@ -5,17 +5,12 @@ import { FC } from 'react'
 import { SWRConfig } from 'swr'
 
 import { Layout, PoolFilters, PoolsFiltersProvider, PoolsSection, SushiBarSection } from '../components'
-import { getSushiBar } from '../lib/api'
 import { getPoolCount, getPoolCountUrl, getPools, getPoolsUrl } from '@sushiswap/client'
 import { defaultPoolsArgs } from '../lib/constants'
 import { unstable_serialize } from 'swr/infinite'
 
 export const getStaticProps: GetStaticProps = async () => {
-  const [pools, poolCount, bar] = await Promise.all([
-    getPools(defaultPoolsArgs),
-    getPoolCount(defaultPoolsArgs),
-    getSushiBar(),
-  ])
+  const [pools, poolCount] = await Promise.all([getPools(defaultPoolsArgs), getPoolCount(defaultPoolsArgs)])
 
   return {
     props: {
@@ -23,7 +18,6 @@ export const getStaticProps: GetStaticProps = async () => {
         // Need unstable_serialize for SWRInfinite: https://github.com/vercel/swr/discussions/2164
         [unstable_serialize(() => getPoolsUrl(defaultPoolsArgs))]: pools,
         [getPoolCountUrl(defaultPoolsArgs)]: poolCount,
-        [`/earn/api/bar`]: bar,
       },
       revalidate: 60,
     },
@@ -62,7 +56,6 @@ export const _Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
             </div>
           </div>
         </section>
-        <SushiBarSection />
         <PoolsFiltersProvider passedFilters={filters}>
           <PoolsSection />
         </PoolsFiltersProvider>

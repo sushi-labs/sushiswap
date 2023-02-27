@@ -17,7 +17,10 @@ const schema = z.object({
 })
 
 const Pools: FC = () => {
-  const { query } = useRouter()
+  const { query, isReady } = useRouter()
+
+  console.log({ isReady, query })
+
   const filters = useMemo(() => (query ? schema.parse(query) : undefined), [query])
 
   return <_Pools filters={filters} />
