@@ -7,7 +7,7 @@ import { Type } from '@sushiswap/currency'
 import { getCurrencyCombinations } from '@sushiswap/router'
 import { ConstantProductPool, Pair, StablePool, TradeType } from '@sushiswap/amm'
 import { ConstantProductPoolState, PairState, StablePoolState } from '@sushiswap/wagmi'
-import { TRIDENT_ENABLED_NETWORKS } from '../../config'
+import { TRIDENT_ENABLED_NETWORKS, AMM_ENABLED_NETWORKS } from '../../config'
 
 interface UsePoolsParams {
   chainId: ChainId
@@ -31,7 +31,7 @@ const queryFn = async ({ currencyA, currencyB, chainId, tradeType = TradeType.EX
     currencyIn && currencyOut && chainId ? getCurrencyCombinations(chainId, currencyIn, currencyOut) : []
 
   const [pairs, constantProductPools, stablePools] = await Promise.all([
-    getPairs(chainId, currencyCombinations),
+    AMM_ENABLED_NETWORKS.includes(chainId as number) ? getPairs(chainId, currencyCombinations) : [],
     TRIDENT_ENABLED_NETWORKS.includes(chainId as number) ? getConstantProductPools(chainId, currencyCombinations) : [],
     TRIDENT_ENABLED_NETWORKS.includes(chainId as number) ? getStablePools(chainId, currencyCombinations) : [],
   ])
