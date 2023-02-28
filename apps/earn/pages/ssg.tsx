@@ -22,7 +22,7 @@ export const getStaticProps: GetStaticProps = async () => {
   }
 }
 
-const Pools: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
+export const Pools: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
       <_Pools />

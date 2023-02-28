@@ -2,6 +2,7 @@ import { XIcon } from '@heroicons/react/outline'
 import { CheckIcon } from '@heroicons/react/solid'
 import type { PoolType, PoolVersion } from '@sushiswap/client'
 import { classNames, Network, Select, Switch, Typography } from '@sushiswap/ui'
+import { useRouter } from 'next/router'
 import { FC } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../../../../config'
@@ -10,10 +11,10 @@ import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { TableFiltersSearchToken } from './TableFiltersSearchToken'
 
 export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters = false }) => {
+  const router = useRouter()
   const { chainIds, poolTypes, poolVersions, incentivizedOnly, setFilters } = usePoolFilters()
   const poolTypesValue = Object.keys(AVAILABLE_POOL_TYPE_MAP).length === poolTypes.length ? [] : poolTypes
   const poolVersionsValue = Object.keys(AVAILABLE_VERSION_MAP).length === poolVersions.length ? [] : poolVersions
-
   return (
     <>
       <div className="flex flex-wrap gap-3 mb-4">
@@ -136,7 +137,20 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             </Typography>
             <Switch
               checked={incentivizedOnly}
-              onChange={(checked) => setFilters({ incentivizedOnly: checked })}
+              onChange={(checked) => {
+                setFilters({ incentivizedOnly: checked })
+                router.replace(
+                  {
+                    pathname: router.pathname,
+                    query: {
+                      ...router.query,
+                      incentivizedOnly: checked,
+                    },
+                  },
+                  undefined,
+                  { shallow: true }
+                )
+              }}
               size="sm"
               uncheckedIcon={<XIcon />}
               checkedIcon={<CheckIcon />}
