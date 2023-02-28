@@ -23,10 +23,12 @@ import {
   PairState,
 } from '@sushiswap/wagmi'
 import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from 'config'
+import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap/sushiswap/exports'
 
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { useFeeData } from 'wagmi'
+import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
 
 export type UseTradeOutput =
   | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
@@ -41,7 +43,7 @@ export type UseTradeOutput =
  * @param otherCurrency the desired output/payment currency
  */
 export function useTrade(
-  chainId: ChainId,
+  chainId: UniswapV2Router02ChainId | BentoBoxV1ChainId,
   tradeType: TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT,
   amountSpecified?: Amount<Currency>,
   mainCurrency?: Currency,
@@ -60,13 +62,21 @@ export function useTrade(
   const currencyCombinations = useCurrencyCombinations(chainId, currencyIn, currencyOut)
 
   // Legacy SushiSwap pairs
-  const { data: pairs } = usePairs(chainId, currencyCombinations)
+  const { data: pairs } = usePairs(chainId as UniswapV2Router02ChainId, currencyCombinations, {
+    enabled: isUniswapV2Router02ChainId(chainId),
+  })
 
   // Trident constant product pools
-  const { data: constantProductPools } = useGetConstantProductPools(chainId, currencyCombinations)
+  const { data: constantProductPools } = useGetConstantProductPools(
+    chainId as BentoBoxV1ChainId,
+    currencyCombinations,
+    { enabled: isBentoBoxV1ChainId(chainId) }
+  )
 
   // Trident constant product pools
-  const { data: stablePools } = useGetStablePools(chainId, currencyCombinations)
+  const { data: stablePools } = useGetStablePools(chainId as BentoBoxV1ChainId, currencyCombinations, {
+    enabled: isBentoBoxV1ChainId(chainId),
+  })
 
   // Combined legacy and trident pools
   const pools = useMemo(
@@ -96,8 +106,12 @@ export function useTrade(
     [pools]
   )
 
-  const currencyInRebase = useBentoBoxTotal(chainId, currencyIn)
-  const currencyOutRebase = useBentoBoxTotal(chainId, currencyOut)
+  const currencyInRebase = useBentoBoxTotal(chainId as BentoBoxV1ChainId, currencyIn, {
+    enabled: isBentoBoxV1ChainId(chainId),
+  })
+  const currencyOutRebase = useBentoBoxTotal(chainId as BentoBoxV1ChainId, currencyOut, {
+    enabled: isBentoBoxV1ChainId(chainId),
+  })
 
   return useMemo(() => {
     if (

@@ -6,6 +6,7 @@ import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { formatBytes32String } from 'ethers/lib/utils'
 import { FC, useEffect, useState } from 'react'
 import { useContractEvent, useWaitForTransaction } from 'wagmi'
+import { SushiXSwapChainId } from '@sushiswap/sushixswap/exports'
 
 import { TransactionProgressStep } from './TransactionProgressStep'
 
@@ -38,7 +39,7 @@ export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({
   const [delayed, setDelayed] = useState<boolean>(false)
 
   useContractEvent({
-    ...getSushiXSwapContractConfig(outputAmount?.currency.chainId),
+    ...getSushiXSwapContractConfig(outputAmount?.currency.chainId as SushiXSwapChainId),
     chainId: outputAmount?.currency.chainId,
     eventName: 'StargateSushiXSwapDst',
     listener: (context, success, { transactionHash }) => {

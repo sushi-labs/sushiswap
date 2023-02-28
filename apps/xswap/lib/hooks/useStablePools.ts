@@ -1,5 +1,6 @@
 import { Interface } from '@ethersproject/abi'
 import { StablePool } from '@sushiswap/amm'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
 import { Amount, Token, Type as Currency } from '@sushiswap/currency'
 import { useBentoBoxTotals } from '@sushiswap/wagmi'
 import STABLE_POOL_ABI from 'abis/stable-pool.json'
@@ -25,7 +26,7 @@ interface PoolData {
 }
 
 export function useStablePools(
-  chainId: number | undefined,
+  chainId: BentoBoxV1ChainId | undefined,
   currencies: [Currency | undefined, Currency | undefined][]
 ): [StablePoolState, StablePool | null][] {
   const { data: latestBlockNumber } = useBlockNumber({ chainId })

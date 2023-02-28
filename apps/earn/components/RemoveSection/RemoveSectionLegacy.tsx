@@ -6,6 +6,7 @@ import { calculateGasMargin } from '@sushiswap/gas'
 import { Pair } from '@sushiswap/graph-client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
+import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap/exports'
 import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
@@ -38,7 +39,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
   const isMounted = useIsMounted()
   const { address } = useAccount()
   const deadline = useTransactionDeadline(pair.chainId)
-  const contract = useSushiSwapRouterContract(pair.chainId)
+  const contract = useSushiSwapRouterContract(pair.chainId as UniswapV2Router02ChainId)
   const [{ slippageTolerance }] = useSettings()
   const [, { createNotification }] = useNotifications(address)
 
@@ -53,7 +54,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
 
   const {
     data: [poolState, pool],
-  } = usePair(pair.chainId, token0, token1)
+  } = usePair(pair.chainId as UniswapV2Router02ChainId, token0, token1)
   const { balance } = usePoolPosition()
   const totalSupply = useTotalSupply(liquidityToken)
 
@@ -275,7 +276,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
                         className="whitespace-nowrap"
                         fullWidth
                         amount={amountToRemove}
-                        address={getSushiSwapRouterContractConfig(pair.chainId).address as Address}
+                        address={
+                          getSushiSwapRouterContractConfig(pair.chainId as UniswapV2Router02ChainId).address as Address
+                        }
                       />
                     </Approve.Components>
                   }

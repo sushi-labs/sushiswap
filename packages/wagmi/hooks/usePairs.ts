@@ -1,5 +1,10 @@
 import { computePairAddress, FACTORY_ADDRESS, Pair } from '@sushiswap/amm'
 import { Amount, Token, Type as Currency, Type } from '@sushiswap/currency'
+import {
+  uniswapV2FactoryAddress,
+  UniswapV2Router02ChainId,
+  UniswapV2FactoryChainId,
+} from '@sushiswap/sushiswap/exports'
 import { useMemo } from 'react'
 import { useContractReads } from 'wagmi'
 
@@ -14,7 +19,10 @@ export enum PairState {
   INVALID,
 }
 
-export function getPairs(chainId: number | undefined, currencies: [Currency | undefined, Currency | undefined][]) {
+export function getPairs(
+  chainId: UniswapV2Router02ChainId | undefined,
+  currencies: [Currency | undefined, Currency | undefined][]
+) {
   const filtered = currencies.filter((currencies): currencies is [Type, Type] => {
     const [currencyA, currencyB] = currencies
     return Boolean(
@@ -39,7 +47,7 @@ export function getPairs(chainId: number | undefined, currencies: [Currency | un
   const contracts = filtered.map(([currencyA, currencyB]) => ({
     chainId,
     address: computePairAddress({
-      factoryAddress: FACTORY_ADDRESS[currencyA.chainId],
+      factoryAddress: uniswapV2FactoryAddress[currencyA.chainId as UniswapV2FactoryChainId],
       tokenA: currencyA.wrapped,
       tokenB: currencyB.wrapped,
     }),
@@ -57,7 +65,7 @@ interface UsePairsReturn {
 }
 
 export function usePairs(
-  chainId: number | undefined,
+  chainId: UniswapV2Router02ChainId | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
   config?: Omit<NonNullable<UseContractReadsConfig>, 'contracts'>
 ): UsePairsReturn {
@@ -106,7 +114,7 @@ interface UsePairReturn {
 }
 
 export function usePair(
-  chainId: number,
+  chainId: UniswapV2Router02ChainId,
   tokenA?: Currency,
   tokenB?: Currency,
   config?: Omit<UseContractReadsConfig, 'contracts'>

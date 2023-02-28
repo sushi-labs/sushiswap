@@ -35,7 +35,6 @@ import {
   useBentoBoxTotal,
   usePrices,
   useSushiXSwapContract,
-  useSushiXSwapContractWithProvider,
   Wallet,
 } from '@sushiswap/wagmi'
 import {
@@ -300,7 +299,7 @@ const Widget: FC<Swap> = ({
 
   const contract = useSushiXSwapContract(srcChainId)
 
-  const contractWithProvider = useSushiXSwapContractWithProvider(srcChainId)
+  const contractWithProvider = useSushiXSwapContract(srcChainId)
 
   // Parse the srcTypedAmount into a srcAmount
   const srcAmount = useMemo<Amount<Type> | undefined>(() => {

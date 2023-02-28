@@ -1,7 +1,6 @@
 import { ArrowCircleLeftIcon } from '@heroicons/react/outline'
 import { DevTool } from '@hookform/devtools'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ChainId } from '@sushiswap/chain'
 import { useIsMounted } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import Link from 'next/link'
@@ -20,8 +19,9 @@ import {
   ReviewSection,
 } from '.'
 import { CreateStreamsTableSection } from './CreateStreamsTableSection'
+import { FuroStreamRouterChainId } from '@sushiswap/furo/exports'
 
-export const CreateMultipleForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
+export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
   const isMounted = useIsMounted()
   const [review, setReview] = useState(false)
   const methods = useForm<CreateMultipleStreamFormSchemaType>({

@@ -1,7 +1,7 @@
 import { DevTool } from '@hookform/devtools'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { nanoid } from '@reduxjs/toolkit'
-import { ChainId } from '@sushiswap/chain'
+import { FuroStreamRouterChainId } from '@sushiswap/furo/exports'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Form } from '@sushiswap/ui'
 import { FC, useEffect } from 'react'
@@ -23,7 +23,7 @@ export const CREATE_STREAM_DEFAULT_VALUES: CreateStreamFormSchemaType = {
   fundSource: FundSource.WALLET,
 }
 
-export const CreateForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
+export const CreateForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
   const isMounted = useIsMounted()
   const methods = useForm<CreateStreamFormSchemaType>({
     resolver: zodResolver(CreateStreamModelSchema),

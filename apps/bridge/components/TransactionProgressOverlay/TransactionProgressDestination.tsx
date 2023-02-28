@@ -1,4 +1,5 @@
 import chains from '@sushiswap/chain'
+import { SushiXSwapChainId } from '@sushiswap/sushixswap/exports'
 import { NetworkIcon } from '@sushiswap/ui'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { formatBytes32String } from 'ethers/lib/utils'
@@ -29,7 +30,9 @@ export const TransactionProgressDestination: FC<TransactionProgressDestination> 
   const [, { createSuccessNotification, createFailedNotification }] = useNotifications(address)
 
   useContractEvent({
-    ...getSushiXSwapContractConfig(dstAmountOut?.currency.chainId),
+    ...(dstAmountOut?.currency.chainId
+      ? getSushiXSwapContractConfig(dstAmountOut.currency.chainId as SushiXSwapChainId)
+      : {}),
     chainId: dstAmountOut?.currency.chainId,
     eventName: 'StargateSushiXSwapDst',
     listener: (context, success, { transactionHash }) => {

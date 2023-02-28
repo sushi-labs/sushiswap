@@ -5,12 +5,12 @@ import { Menu, Transition } from '@headlessui/react'
 import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/24/solid'
 import { ApproveBentoboxController } from '../../components'
 import { Address } from 'wagmi'
-import { ChainId } from '@sushiswap/chain'
 import { NotificationData } from '@sushiswap/ui/future/components/toast'
 import { Signature } from '@ethersproject/bytes'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
 
 export interface ApproveBentoboxProps extends ButtonProps<'button'> {
-  chainId: ChainId
+  chainId: BentoBoxV1ChainId
   id: string
   contract: Address
   enabled?: boolean
@@ -65,7 +65,7 @@ export const ApproveBentobox: FC<ApproveBentoboxProps> = ({
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
             >
-              <Menu.Button as="div" role="button" className="text-center text-xs text-blue cursor-pointer">
+              <Menu.Button as="div" role="button" className="text-xs text-center cursor-pointer text-blue">
                 <InformationCircleIcon width={18} height={18} className="text-white" />
               </Menu.Button>
               <Transition
@@ -85,7 +85,7 @@ export const ApproveBentobox: FC<ApproveBentoboxProps> = ({
                     master contract once.
                     <a
                       target="_blank"
-                      className="text-blue dark:text-blue dark:font-semibold flex gap-1 items-center hover:text-blue-700"
+                      className="flex items-center gap-1 text-blue dark:text-blue dark:font-semibold hover:text-blue-700"
                       href="https://www.sushi.com/academy/articles/what-is-bentobox"
                       rel="noreferrer"
                     >

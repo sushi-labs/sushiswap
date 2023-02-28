@@ -9,12 +9,12 @@ import { NetworkIcon } from '../icons'
 import { Search } from '../input/Search'
 import { NetworkSelectorProps } from './index'
 
-export const NetworkSelectorDialog: FC<Omit<NetworkSelectorProps, 'variant'>> = ({
+export const NetworkSelectorDialog = <T extends number>({
   networks,
   onSelect,
   selected,
   children,
-}) => {
+}: Omit<NetworkSelectorProps<T>, 'variant'>) => {
   const [query, setQuery] = useState<string>('')
 
   return (

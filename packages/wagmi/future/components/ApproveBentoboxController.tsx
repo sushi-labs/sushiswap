@@ -1,13 +1,12 @@
-import React, { FC, ReactNode, useEffect } from 'react'
-import { ApprovalState, useBentoBoxApproveCallback, useERC20ApproveCallback } from '../../hooks'
-import { Amount, Currency } from '@sushiswap/currency'
+import { FC, ReactNode } from 'react'
+import { ApprovalState, useBentoBoxApproveCallback } from '../../hooks'
 import { NotificationData } from '@sushiswap/ui/future/components/toast'
 import { Signature } from '@ethersproject/bytes'
-import { ChainId } from '@sushiswap/chain'
 import { Address } from 'wagmi'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
 
 interface ApproveBentoboxController {
-  chainId: ChainId
+  chainId: BentoBoxV1ChainId
   contract: Address
   enabled?: boolean
   onSuccess?: (data: NotificationData) => void

@@ -1,3 +1,4 @@
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
 import { tryParseAmount } from '@sushiswap/currency'
 import { Pair } from '@sushiswap/graph-client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
@@ -84,7 +85,7 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
         poolAddress={pair.id}
         poolState={poolState}
         pool={pool}
-        chainId={pair.chainId}
+        chainId={pair.chainId as BentoBoxV1ChainId}
         token0={token0}
         token1={token1}
         input0={parsedInput0}

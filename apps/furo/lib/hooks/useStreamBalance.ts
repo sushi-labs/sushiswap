@@ -1,4 +1,5 @@
 import { Amount, Token } from '@sushiswap/currency'
+import { FuroStreamChainId } from '@sushiswap/furo/exports'
 import { JSBI } from '@sushiswap/math'
 import { getFuroStreamContractConfig, useBentoBoxContract, useFuroStreamContract } from '@sushiswap/wagmi'
 import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
@@ -9,13 +10,17 @@ import { Address, useBlockNumber, useContractRead } from 'wagmi'
 
 import { useSingleContractMultipleData } from '../../lib/state/multicall'
 import { ErrorState, LoadingState, SuccessState } from './types'
-export function useStreamBalance(chainId?: number, streamId?: string, token?: Token): Amount<Token> | undefined {
+export function useStreamBalance(
+  chainId?: FuroStreamChainId,
+  streamId?: string,
+  token?: Token
+): Amount<Token> | undefined {
   const {
     data: balance,
     error: balanceError,
     isLoading: balanceLoading,
   } = useContractRead({
-    ...getFuroStreamContractConfig(chainId),
+    ...(chainId ? getFuroStreamContractConfig(chainId) : {}),
     functionName: 'streamBalanceOf',
     chainId,
     enabled: !!chainId && !!streamId,
@@ -28,7 +33,7 @@ export function useStreamBalance(chainId?: number, streamId?: string, token?: To
     error: rebaseError,
     isLoading: rebaseLoading,
   } = useContractRead({
-    ...getBentoBoxContractConfig(chainId),
+    ...(chainId ? getBentoBoxContractConfig(chainId) : {}),
     functionName: 'totals',
     chainId,
     enabled: !!chainId && !!token?.address,
@@ -48,7 +53,7 @@ export function useStreamBalance(chainId?: number, streamId?: string, token?: To
 }
 
 export type UseStreamBalances = (
-  chainId: number,
+  chainId: FuroStreamChainId,
   streamIds: [string][],
   tokens: Token[],
   options?: ListenerOptions

@@ -8,8 +8,10 @@ import {
   TradeType,
   Version as TradeVersion,
 } from '@sushiswap/amm'
+import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
+import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap/sushiswap/exports'
 import { RouteStatus } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
@@ -62,6 +64,13 @@ export const useTrade: UseTrade = ({
   tridentEnabled = true,
   ammEnabled = true,
 }) => {
+  if (ammEnabled && !isUniswapV2Router02ChainId(chainId))
+    throw new Error(`ChainId Error: Legacy is not available on ${ChainId[chainId]} and ammEnabled is enabled.`)
+
+  // TODO: Use trident chainId instead of Bento
+  if (tridentEnabled && !isBentoBoxV1ChainId(chainId))
+    throw new Error(`ChainId Error: BentoBox is not available on ${ChainId[chainId]} and tridentEnabled is enabled.`)
+
   const { data } = useFeeData({
     chainId,
   })
@@ -81,7 +90,7 @@ export const useTrade: UseTrade = ({
     data: pairs,
     isLoading: isPairsLoading,
     isError: isPairsError,
-  } = usePairs(chainId, currencyCombinations, { enabled: ammEnabled })
+  } = usePairs(chainId as UniswapV2Router02ChainId, currencyCombinations, { enabled: ammEnabled })
 
   // Trident constant product pools
   const {
@@ -111,7 +120,7 @@ export const useTrade: UseTrade = ({
     [pools]
   )
 
-  const rebases = useBentoBoxTotals(chainId, currencies)
+  const rebases = useBentoBoxTotals(chainId as BentoBoxV1ChainId, currencies)
   const currencyInRebase = currencyIn ? rebases?.[currencyIn.wrapped.address] : undefined
   const currencyOutRebase = currencyOut ? rebases?.[currencyOut.wrapped.address] : undefined
 

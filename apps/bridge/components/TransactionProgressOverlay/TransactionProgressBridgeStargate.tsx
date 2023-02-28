@@ -1,6 +1,7 @@
 import { createClient } from '@layerzerolabs/scan-client'
 import chains from '@sushiswap/chain'
 import { STARGATE_CHAIN_ID, STARGATE_TOKEN } from '@sushiswap/stargate'
+import { SushiXSwapChainId } from '@sushiswap/sushixswap/exports'
 import { Link, Typography } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
@@ -43,7 +44,9 @@ export const TransactionProgressBridgeStargate: FC<TransactionProgressBridgeStar
   const [lzLink, setLzLink] = useState<string>()
 
   useContractEvent({
-    ...getSushiXSwapContractConfig(dstAmountOut?.currency.chainId),
+    ...(dstAmountOut?.currency.chainId
+      ? getSushiXSwapContractConfig(dstAmountOut.currency.chainId as SushiXSwapChainId)
+      : {}),
     chainId: dstAmountOut?.currency.chainId,
     eventName: 'StargateSushiXSwapDst',
     listener: (context, success, { transactionHash }) => {

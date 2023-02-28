@@ -15,10 +15,11 @@ import { Stream } from '../../lib'
 import { useStreamBalance } from '../../lib'
 import { useCreateNotification } from '@sushiswap/react-query'
 import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { FuroStreamChainId } from '@sushiswap/furo/exports'
 
 interface WithdrawModalProps {
   stream?: Stream
-  chainId: ChainId
+  chainId: FuroStreamChainId
 }
 
 export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {

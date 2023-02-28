@@ -7,12 +7,12 @@ import { NetworkIcon } from '../icons'
 import { Search } from '../input/Search'
 import { NetworkSelectorProps } from './index'
 
-export const NetworkSelectorMenu: FC<Omit<NetworkSelectorProps, 'variant'>> = ({
+export const NetworkSelectorMenu = <T extends number>({
   selected,
   onSelect,
   networks = [],
   children,
-}) => {
+}: Omit<NetworkSelectorProps<T>, 'variant'>) => {
   const [query, setQuery] = useState('')
 
   return (
