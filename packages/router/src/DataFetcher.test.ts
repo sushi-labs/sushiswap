@@ -1,8 +1,8 @@
-import { ChainId } from '@sushiswap/chain'
-import { Native, USDC } from '@sushiswap/currency'
-import { createClient, fallback, http } from 'viem'
-import { mainnet } from 'viem/chains'
-import { DataFetcher } from './DataFetcher'
+// import { ChainId } from '@sushiswap/chain'
+// import { Native, USDC } from '@sushiswap/currency'
+// import { createClient, fallback, http } from 'viem'
+// import { mainnet } from 'viem/chains'
+// import { DataFetcher } from './DataFetcher'
 
 // import { DataFetcher } from './DataFetcher'
 // import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
@@ -54,3 +54,5 @@ import { DataFetcher } from './DataFetcher'
 //     expect(blockNumber).not.toBeUndefined
 //   })
 // })
+
+export {}
