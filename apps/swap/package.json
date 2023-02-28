@@ -30,7 +30,6 @@
     "@sushiswap/math": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/route-processor": "workspace:*",
-    "@sushiswap/router": "workspace:*",
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/sushixswap": "workspace:*",
     "@sushiswap/smart-order-router": "workspace:*",
