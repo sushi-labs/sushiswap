@@ -2,7 +2,7 @@ import { PoolType } from '@sushiswap/client'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import { z } from 'zod'
-import { _Pools } from '.'
+import { Pools as _Pools } from '../../components'
 
 const schema = z.object({
   chainIds: z

@@ -1,38 +1,9 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { Button, Link, OnsenIcon, Typography } from '@sushiswap/ui'
-import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { FC } from 'react'
-import { SWRConfig } from 'swr'
+import { Layout, PoolFilters, PoolsFiltersProvider, PoolsSection } from '../components'
 
-import { Layout, PoolFilters, PoolsFiltersProvider, PoolsSection, SushiBarSection } from '../components'
-import { getPoolCount, getPoolCountUrl, getPools, getPoolsUrl } from '@sushiswap/client'
-import { defaultPoolsArgs } from '../lib/constants'
-import { unstable_serialize } from 'swr/infinite'
-
-export const getStaticProps: GetStaticProps = async () => {
-  const [pools, poolCount] = await Promise.all([getPools(defaultPoolsArgs), getPoolCount(defaultPoolsArgs)])
-
-  return {
-    props: {
-      fallback: {
-        // Need unstable_serialize for SWRInfinite: https://github.com/vercel/swr/discussions/2164
-        [unstable_serialize(() => getPoolsUrl(defaultPoolsArgs))]: pools,
-        [getPoolCountUrl(defaultPoolsArgs)]: poolCount,
-      },
-      revalidate: 60,
-    },
-  }
-}
-
-const Pools: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
-  return (
-    <SWRConfig value={{ fallback }}>
-      <_Pools />
-    </SWRConfig>
-  )
-}
-
-export const _Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
+export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
   return (
     <Layout>
       <div className="flex flex-col gap-10 md:gap-16">
