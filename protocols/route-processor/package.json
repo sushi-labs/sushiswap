@@ -50,7 +50,7 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
-    "@sushiswap/router": "workspace:*",
+    "@sushiswap/smart-order-router": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@typechain/ethers-v5": "^10.0.0",

@@ -1,5 +1,5 @@
 {
-  "name": "@sushiswap/router-config",
+  "name": "@sushiswap/smart-order-router-config",
   "version": "0.0.0",
   "private": true,
   "description": "Sushi Router Config",
@@ -12,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
-    "directory": "packages/config/react-query"
+    "directory": "packages/config/smart-order-router"
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewlilley.com>",

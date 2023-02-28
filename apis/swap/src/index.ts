@@ -9,7 +9,7 @@ import {
   // findSpecialRoute,
   DataFetcher,
   Router,
-} from '@sushiswap/router'
+} from '@sushiswap/smart-order-router'
 import { BigNumber } from 'ethers'
 import fastify from 'fastify'
 import { performance } from 'perf_hooks'

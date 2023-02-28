@@ -4,7 +4,7 @@ import { getPairs } from './getPairs'
 import { getConstantProductPools } from './getConstantProductPools'
 import { getStablePools } from './getStablePools'
 import { Type } from '@sushiswap/currency'
-import { getCurrencyCombinations } from '@sushiswap/router'
+import { getCurrencyCombinations } from '@sushiswap/smart-order-router'
 import { ConstantProductPool, FACTORY_ADDRESS, Pair, StablePool, TradeType } from '@sushiswap/amm'
 import { ConstantProductPoolState, PairState, StablePoolState } from '@sushiswap/wagmi'
 import {

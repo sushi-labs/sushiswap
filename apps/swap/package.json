@@ -29,7 +29,7 @@
     "@sushiswap/math": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/route-processor": "workspace:*",
-    "@sushiswap/router": "workspace:*",
+    "@sushiswap/smart-order-router": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
     "@sushiswap/types": "workspace:*",
     "@sushiswap/tines": "workspace:*",

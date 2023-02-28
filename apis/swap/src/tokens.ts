@@ -7,19 +7,9 @@ import {
   isShortCurrencyNameSupported,
   Token,
 } from '@sushiswap/currency'
-import { configureChains, createClient } from '@wagmi/core'
 import { getAddress, isAddress } from 'ethers/lib/utils'
 import fetch from 'node-fetch'
 import { z } from 'zod'
-
-import { allChains } from './chains'
-import { allProviders } from './providers'
-
-const { provider } = configureChains(allChains, allProviders)
-createClient({
-  autoConnect: true,
-  provider,
-})
 
 const tokenSchema = z.object({
   address: z.coerce.string().transform((address) => address.toLowerCase()),
