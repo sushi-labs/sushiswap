@@ -4,6 +4,7 @@ pragma solidity 0.8.10;
 
 import '../interfaces/IUniswapV2Pair.sol';
 import '../interfaces/IUniswapV3Pool.sol';
+import '../interfaces/ITridentCLPool.sol';
 import '../interfaces/IBentoBoxMinimal.sol';
 import '../interfaces/IPool.sol';
 import '../interfaces/IWETH.sol';
@@ -205,6 +206,7 @@ contract RouteProcessor2 {
     else if (poolType == 2) wrapNative(stream, from, tokenIn, amountIn);
     else if (poolType == 3) bentoBridge(stream, from, tokenIn, amountIn);
     else if (poolType == 4) swapTrident(stream, from, tokenIn, amountIn);
+    else if (poolType == 5) swapTridentCL(stream, from, tokenIn, amountIn);
     else revert('RouteProcessor: Unknown pool type');
   }
 
@@ -340,6 +342,52 @@ contract RouteProcessor2 {
     (address tokenIn, address from) = abi.decode(data, (address, address));
     int256 amount = amount0Delta > 0 ? amount0Delta : amount1Delta;
     require(amount > 0, 'RouteProcessor.uniswapV3SwapCallback: not positive amount');
+
+    if (from == address(this)) IERC20(tokenIn).safeTransfer(msg.sender, uint256(amount));
+     else IERC20(tokenIn).safeTransferFrom(from, msg.sender, uint256(amount));
+  }
+
+  /// @notice TridentCL pool swap
+  /// @param stream [pool, direction, recipient]
+  /// @param from Where to take liquidity for swap
+  /// @param tokenIn Input token
+  /// @param amountIn Amount of tokenIn to take for swap
+  function swapTridentCL(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
+    address pool = stream.readAddress();
+    bool zeroForOne = stream.readUint8() > 0;
+    address recipient = stream.readAddress();
+
+    lastCalledPool = pool;
+    ITridentCLPool(pool).swap(
+      recipient,
+      zeroForOne,
+      int256(amountIn),
+      zeroForOne ? MIN_SQRT_RATIO + 1 : MAX_SQRT_RATIO - 1,
+      false,
+      abi.encode(tokenIn, from)
+    );
+    require(lastCalledPool == IMPOSSIBLE_POOL_ADDRESS, 'RouteProcessor.swapTridentCL: unexpected'); // Just to be sure
+  }
+
+  /// @notice Called to `msg.sender` after executing a swap via ITridentCLPool#swap.
+  /// @dev In the implementation you must pay the pool tokens owed for the swap.
+  /// The caller of this method must be checked to be a TridentCLPool deployed by the canonical TridentCLFactory.
+  /// amount0Delta and amount1Delta can both be 0 if no tokens were swapped.
+  /// @param amount0Delta The amount of token0 that was sent (negative) or must be received (positive) by the pool by
+  /// the end of the swap. If positive, the callback must send that amount of token0 to the pool.
+  /// @param amount1Delta The amount of token1 that was sent (negative) or must be received (positive) by the pool by
+  /// the end of the swap. If positive, the callback must send that amount of token1 to the pool.
+  /// @param data Any data passed through by the caller via the ITridentCLPoolActions#swap call
+  function tridentCLSwapCallback(
+    int256 amount0Delta,
+    int256 amount1Delta,
+    bytes calldata data
+  ) external {
+    require(msg.sender == lastCalledPool, 'RouteProcessor.TridentCLSwapCallback: call from unknown source');
+    lastCalledPool = IMPOSSIBLE_POOL_ADDRESS;
+    (address tokenIn, address from) = abi.decode(data, (address, address));
+    int256 amount = amount0Delta > 0 ? amount0Delta : amount1Delta;
+    require(amount > 0, 'RouteProcessor.TridentCLSwapCallback: not positive amount');
 
     if (from == address(this)) IERC20(tokenIn).safeTransfer(msg.sender, uint256(amount));
      else IERC20(tokenIn).safeTransferFrom(from, msg.sender, uint256(amount));
