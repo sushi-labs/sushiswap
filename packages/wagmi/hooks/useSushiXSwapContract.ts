@@ -1,7 +1,7 @@
 import { sushiXSwapAddress, sushiXSwapAbi, SushiXSwapChainId } from '@sushiswap/sushixswap/exports'
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
-import { useProvider } from 'wagmi'
+import { useProvider, useSigner } from 'wagmi'
 
 export const getSushiXSwapContractConfig = (chainId: SushiXSwapChainId) => ({
   address: sushiXSwapAddress[chainId],
@@ -9,13 +9,14 @@ export const getSushiXSwapContractConfig = (chainId: SushiXSwapChainId) => ({
 })
 
 export function useSushiXSwapContract(chainId: SushiXSwapChainId | undefined) {
-  const signerOrProvider = useProvider({ chainId })
+  const provider = useProvider({ chainId })
+  const { data: signer } = useSigner({ chainId })
 
   return useMemo(() => {
     if (!chainId) return null
 
-    return getContract({ ...getSushiXSwapContractConfig(chainId), signerOrProvider })
-  }, [chainId, signerOrProvider])
+    return getContract({ ...getSushiXSwapContractConfig(chainId), signerOrProvider: signer ?? provider })
+  }, [chainId, provider, signer])
 }
 
 export type SushiXSwap = NonNullable<ReturnType<typeof useSushiXSwapContract>>
