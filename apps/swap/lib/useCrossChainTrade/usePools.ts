@@ -4,7 +4,7 @@ import { getPairs } from './getPairs'
 import { getConstantProductPools } from './getConstantProductPools'
 import { getStablePools } from './getStablePools'
 import { Type } from '@sushiswap/currency'
-import { getCurrencyCombinations } from '@sushiswap/router'
+import { getCurrencyCombinations } from '@sushiswap/smart-order-router'
 import { ConstantProductPool, FACTORY_ADDRESS, Pair, StablePool, TradeType } from '@sushiswap/amm'
 import { ConstantProductPoolState, PairState, StablePoolState } from '@sushiswap/wagmi'
 import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from '../../config'
@@ -33,13 +33,15 @@ const queryFn = async ({ currencyA, currencyB, chainId, tradeType = TradeType.EX
     currencyIn && currencyOut && chainId ? getCurrencyCombinations(chainId, currencyIn, currencyOut) : []
 
   const [pairs, constantProductPools, stablePools] = await Promise.all([
-    chainId in FACTORY_ADDRESS && isUniswapV2Router02ChainId(chainId) ? getPairs(chainId, currencyCombinations) : [],
+    chainId in FACTORY_ADDRESS && isUniswapV2Router02ChainId(chainId)
+      ? getPairs(chainId, currencyCombinations)
+      : Promise.resolve([]),
     chainId in CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS && isBentoBoxV1ChainId(chainId)
       ? getConstantProductPools(chainId, currencyCombinations)
-      : [],
+      : Promise.resolve([]),
     chainId in STABLE_POOL_FACTORY_ADDRESS && isBentoBoxV1ChainId(chainId)
       ? getStablePools(chainId, currencyCombinations)
-      : [],
+      : Promise.resolve([]),
   ])
 
   return {
@@ -85,7 +87,7 @@ export const getPools = async (variables: UsePoolsParams): Promise<UsePoolsRetur
 export const usePools = (variables: UsePoolsParams) => {
   return useQuery({
     queryKey: [
-      'NoCache',
+      'NoPersist',
       'usePools',
       { chainId: variables.chainId, currencyA: variables.currencyA, currencyB: variables.currencyB },
     ],

@@ -14,7 +14,7 @@ const ITEMS = [
     label: 'Core',
     items: [
       { type: AppType.Swap, subtitle: 'The easiest way to trade' },
-      { type: AppType.xSwap, subtitle: 'Cross-chain swapping made easy' },
+      // { type: AppType.xSwap, subtitle: 'Cross-chain swapping made easy' },
       { type: AppType.Earn, subtitle: 'Earn fees by providing liquidity' },
     ],
   },

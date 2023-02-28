@@ -11,6 +11,7 @@ import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
 import { useAutoConnect } from '@sushiswap/wagmi'
 import { useRouter } from 'next/router'
 import { queryParamsSchema, useSwapActions } from './trade/TradeProvider'
+import { useAccount } from 'wagmi'
 
 export const Header: FC = () => {
   const { isAutoConnecting } = useAutoConnect()
@@ -37,8 +38,7 @@ export const Header: FC = () => {
           )
         }
       >
-        <NavLink title="Tokens" href="https://sushi.com/analytics" />
-        <NavLink title="Pools" href="https://sushi.com/earn" />
+        <NavLink title="Earn" href="https://sushi.com/earn" />
       </GlobalNav>
       <Search.Panel />
     </Search>

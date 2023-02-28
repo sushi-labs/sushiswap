@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { useToken } from 'wagmi'
+import { Address, useToken } from 'wagmi'
 import { queryParamsSchema, useSwapActions, useSwapState } from './trade/TradeProvider'
 import { useRouter } from 'next/router'
 import { isAddress } from 'ethers/lib/utils'
@@ -19,13 +19,13 @@ export const TokenNotFoundDialog = () => {
   const { mutate: addCustomToken } = useAddCustomToken()
 
   const { data: _token0 } = useToken({
-    address: fromCurrencyId as `0x${string}`,
+    address: fromCurrencyId as Address,
     chainId: network0,
     enabled: isAddress(fromCurrencyId) && token0NotInList,
   })
 
   const { data: _token1 } = useToken({
-    address: toCurrencyId as `0x${string}`,
+    address: toCurrencyId as Address,
     chainId: network1,
     enabled: isAddress(toCurrencyId) && token1NotInList,
   })

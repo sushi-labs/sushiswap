@@ -31,7 +31,6 @@ import type { PoolCode } from './pools/PoolCode'
 export class DataFetcher {
   chainId: ChainId
   providers: LiquidityProvider[] = []
-  lastProviderStates: Map<LiquidityProviders, number> = new Map()
   // Provider to poolAddress to PoolCode
   poolCodes: Map<LiquidityProviders, Map<string, PoolCode>> = new Map()
   stateId = 0
@@ -175,19 +174,8 @@ export class DataFetcher {
     const token1 = this.transformToken(t1)
     const result: Map<string, PoolCode> = new Map()
     this.providers.forEach((p) => {
-      // if (!this._providerIsIncluded(p.getType(), providers)) return
-      if (p.getCurrentPoolStateId() !== this.lastProviderStates.get(p.getType())) {
-        this.lastProviderStates.set(p.getType(), p.getCurrentPoolStateId())
-        const poolCodes = p.getCurrentPoolList(token0, token1)
-        let pcMap = this.poolCodes.get(p.getType())
-        if (pcMap === undefined) {
-          pcMap = new Map()
-          this.poolCodes.set(p.getType(), pcMap)
-        }
-        poolCodes.forEach((pc) => (pcMap as Map<string, PoolCode>).set(pc.pool.address, pc))
-      }
-      const pcMap = this.poolCodes.get(p.getType())
-      if (pcMap) Array.from(pcMap.entries()).forEach(([addr, pc]) => result.set(addr, pc))
+      const poolCodes = p.getCurrentPoolList(token0, token1)
+      poolCodes.forEach((pc) => result.set(pc.pool.address, pc))
     })
 
     return result
@@ -198,14 +186,6 @@ export class DataFetcher {
     const token1 = this.transformToken(t1)
     const pcMap = this.getCurrentPoolCodeMap(token0, token1)
     return Array.from(pcMap.values())
-  }
-
-  getCurrentPoolStateId(providers?: LiquidityProviders[]) {
-    let state = 0
-    this.providers.forEach((p) => {
-      if (this._providerIsIncluded(p.getType(), providers)) state += p.getCurrentPoolStateId()
-    })
-    return state
   }
 
   // returns the last processed by all LP block number

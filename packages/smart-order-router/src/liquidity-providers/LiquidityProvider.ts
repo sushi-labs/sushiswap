@@ -23,7 +23,6 @@ export enum LiquidityProviders {
 export abstract class LiquidityProvider {
   chainId: ChainId
   client: PublicClient
-  stateId = 0
   lastUpdateBlock = 0
   readonly ON_DEMAND_POOLS_LIFETIME_IN_SECONDS = 60
 
@@ -59,13 +58,6 @@ export abstract class LiquidityProvider {
    */
   abstract getCurrentPoolList(t0: Token, t1: Token): PoolCode[]
 
-  /**
-   * Returns current stateId
-   * @returns current stateId
-   */
-  getCurrentPoolStateId() {
-    return this.stateId
-  }
 
   abstract stopFetchPoolsData(): void
 

@@ -22,7 +22,7 @@ const hydrate = (data: Record<string, number>) => {
 
 export const usePrices = ({ chainId }: UsePrices) => {
   return useQuery({
-    queryKey: ['NoCache', `https://token-price.sushi.com/v0/${chainId}`],
+    queryKey: ['NoPersist', `https://token-price.sushi.com/v0/${chainId}`],
     queryFn: async () => fetch(`https://token-price.sushi.com/v0/${chainId}`).then((response) => response.json()),
     staleTime: 20000,
     enabled: Boolean(chainId),

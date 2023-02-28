@@ -33,6 +33,7 @@
     "@sushiswap/router": "workspace:*",
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/sushixswap": "workspace:*",
+    "@sushiswap/smart-order-router": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
     "@sushiswap/types": "workspace:*",
     "@sushiswap/tines": "workspace:*",

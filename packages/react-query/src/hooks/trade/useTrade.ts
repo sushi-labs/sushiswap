@@ -16,21 +16,19 @@ export const useTradeQuery = (
   select: UseTradeQuerySelect
 ) => {
     return useQuery({
-        queryKey: ['NoCache', 'getTrade', {chainId, fromToken, toToken, amount, gasPrice, recipient}],
+        queryKey: ['NoPersist', 'getTrade', {chainId, fromToken, toToken, amount, gasPrice, recipient}],
         queryFn: async () => {
-            const res = await (
-                await fetch(
-                    `${
-                        process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0'
-                    }?chainId=${chainId}&fromTokenId=${
-                        fromToken?.isNative ? nativeCurrencyIds[chainId] : fromToken?.wrapped.address
-                    }&toTokenId=${
-                        toToken?.isNative ? nativeCurrencyIds[chainId] : toToken?.wrapped.address
-                    }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}${recipient ? `&to=${recipient}` : ''}`
-                )
-            ).json()
-
-            return tradeValidator.parse(res)
+            // TODO: Sort this out, use URL/URLSearchParams...
+            const res = await fetch(
+                `${
+                    process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0'
+                }?chainId=${chainId}&fromTokenId=${
+                    fromToken?.isNative ? nativeCurrencyIds[chainId] : fromToken?.wrapped.address
+                }&toTokenId=${
+                    toToken?.isNative ? nativeCurrencyIds[chainId] : toToken?.wrapped.address
+                }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}${recipient ? `&to=${recipient}` : ''}&preferSushi=true`
+            )
+            return tradeValidator.parse(await res.json())
         },
         refetchOnWindowFocus: true,
         refetchInterval: 10000,

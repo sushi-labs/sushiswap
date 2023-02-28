@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type, USDC, WNATIVE } from '@sushiswap/currency'
-import { DataFetcher, Router } from '@sushiswap/router'
+import { DataFetcher, Router } from '@sushiswap/smart-order-router'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber } from 'ethers'

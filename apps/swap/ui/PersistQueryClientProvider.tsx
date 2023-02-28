@@ -11,7 +11,7 @@ export const PersistQueryClientProvider: FC<{ children: ReactNode }> = ({ childr
         persister,
         dehydrateOptions: {
           shouldDehydrateQuery: (query) => {
-            return !query.queryKey.includes('NoCache')
+            return !query.queryKey.includes('NoPersist')
           },
         },
       }}

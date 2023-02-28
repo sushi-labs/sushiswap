@@ -13,7 +13,7 @@ import {
   // findSpecialRoute,
   DataFetcher,
   Router,
-} from '@sushiswap/router'
+} from '@sushiswap/smart-order-router'
 import { BigNumber } from 'ethers'
 import fastify from 'fastify'
 import { performance } from 'perf_hooks'
@@ -44,11 +44,12 @@ const querySchema = z.object({
   gasPrice: z.coerce.number().int().gte(1),
   amount: z.coerce.bigint(),
   to: z.optional(z.string()),
+  preferSushi: z.coerce.boolean().default(false),
 })
 
 // Declare a route
 server.get('/v0', async (request) => {
-  const { chainId, fromTokenId, toTokenId, amount, gasPrice, to } = querySchema.parse(request.query)
+  const { chainId, fromTokenId, toTokenId, amount, gasPrice, to, preferSushi } = querySchema.parse(request.query)
   // console.log({ chainId, fromTokenId, toTokenId, amount, gasPrice, to })
   const tokenStartTime = performance.now()
   const [fromToken, toToken] = await Promise.all([getToken(chainId, fromTokenId), getToken(chainId, toTokenId)])
@@ -68,16 +69,7 @@ server.get('/v0', async (request) => {
   const routeStartTime = performance.now()
   const poolCodesMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
 
-  // const bestRoute = findSpecialRoute(
-  //   poolCodesMap,
-  //   chainId,
-  //   fromToken,
-  //   BigNumber.from(amount.toString()),
-  //   toToken,
-  //   gasPrice ?? 30e9
-  // )
-
-  const bestRoute = Router.findBestRoute(
+  const bestRoute = Router[preferSushi ? 'findSpecialRoute' : 'findBestRoute'](
     poolCodesMap,
     chainId,
     fromToken,
@@ -263,6 +255,7 @@ const start = async () => {
           chain: arbitrum,
           transport: fallback([
             http(arbitrum.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+            // http(optimism.rpcUrls.default.http[0]),
             http('https://rpc.ankr.com/arbitrum'),
           ]),
         })
@@ -276,6 +269,7 @@ const start = async () => {
           chain: optimism,
           transport: fallback([
             http(optimism.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+            // http(optimism.rpcUrls.default.http[0]),
             http('https://rpc.ankr.com/optimism'),
           ]),
         })

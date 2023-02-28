@@ -77,7 +77,7 @@ export const useCrossChainTradeQuery = (
 
   return useQuery({
     queryKey: [
-      'NoCache',
+      'NoPersist',
       'crossChainTrade',
       {
         tradeId,

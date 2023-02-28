@@ -2,7 +2,7 @@ import { keccak256, pack } from '@ethersproject/solidity'
 import { getReservesAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
+import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/smart-order-router-config'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { add, getUnixTime } from 'date-fns'
 import { BigNumber } from 'ethers'
@@ -100,7 +100,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         )
         const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
         this.initialPools.set(pool.address, pc)
-        ++this.stateId
       } else {
         console.error(`${this.getLogPrefix()} - ERROR INIT SYNC, Failed to fetch reserves for pool: ${pool.address}`)
       }
@@ -252,7 +251,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       )
       const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
       this.initialPools.set(pool.address, pc)
-      ++this.stateId
       console.log(
         `${this.getLogPrefix()} - REFRESH INITIAL POOLS: Added pool ${pool.address} (${pool.token0.symbol}/${
           pool.token1.symbol
@@ -291,7 +289,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
               pool.token1.symbol
             } ${res0BN.toString()} ${res1BN.toString()}`
           )
-          ++this.stateId
         }
       } else {
         console.error(
