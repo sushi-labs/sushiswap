@@ -9,7 +9,6 @@ import {
   TradeType,
   Version as TradeVersion,
 } from '@sushiswap/amm'
-import { ChainId } from '@sushiswap/chain'
 import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
 import { RouteStatus } from '@sushiswap/tines'
 import { useBentoBoxTotal, useCurrencyCombinations } from '@sushiswap/wagmi'
@@ -17,6 +16,7 @@ import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } fr
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { useFeeData } from 'wagmi'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
 
 import { ConstantProductPoolState, useConstantProductPools } from './useConstantProductPools'
 import { PairState, usePairs } from './usePairs'
@@ -35,7 +35,7 @@ export type UseTradeOutput =
  * @param otherCurrency the desired output/payment currency
  */
 export function useTrade(
-  chainId: ChainId,
+  chainId: BentoBoxV1ChainId,
   tradeType: TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT,
   amountSpecified?: Amount<Currency>,
   mainCurrency?: Currency,

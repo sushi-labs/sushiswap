@@ -9,6 +9,7 @@ import { HexString } from '@sushiswap/types'
 import { getSushiXSwapContractConfig, SushiXSwap } from '@sushiswap/wagmi'
 import { Address } from 'abitype'
 import { formatBytes32String } from 'ethers/lib/utils'
+import { sushiXSwapAddress, SushiXSwapChainId } from '@sushiswap/sushixswap/exports'
 
 export enum Action {
   // Master contract approval
@@ -245,14 +246,14 @@ export class SushiBridge {
     this.srcCooker = new SrcCooker({
       chainId: this.srcChainId,
       debug,
-      masterContract: getSushiXSwapContractConfig(this.srcToken.chainId).address,
+      masterContract: sushiXSwapAddress[this.srcToken.chainId as SushiXSwapChainId],
       user,
     })
 
     this.dstCooker = new DstCooker({
       chainId: this.dstChainId,
       debug,
-      masterContract: getSushiXSwapContractConfig(this.dstToken.chainId).address,
+      masterContract: sushiXSwapAddress[this.dstToken.chainId as SushiXSwapChainId],
       user,
     })
   }

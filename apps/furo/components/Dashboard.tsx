@@ -1,6 +1,7 @@
 import { Tab } from '@headlessui/react'
 import { CheckIcon, PaperAirplaneIcon, XIcon } from '@heroicons/react/outline'
 import { Token } from '@sushiswap/currency'
+import { FuroStreamChainId } from '@sushiswap/furo/exports'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Chip, classNames, Menu, Switch, Typography } from '@sushiswap/ui'
 import stringify from 'fast-json-stable-stringify'
@@ -15,13 +16,13 @@ import { toToken, useStreamBalances } from '../lib'
 import { Streams, Vestings } from '../types'
 import { FuroTableType, StreamTable } from './Table'
 
-const fetcher = (params: any) =>
-  fetch(params)
+const fetcher = (url: string) =>
+  fetch(url)
     .then((res) => res.json())
     .catch((e) => console.log(stringify(e)))
 
 export const Dashboard: FC<{
-  chainId: number
+  chainId: FuroStreamChainId
   address: string
   showOutgoing: boolean
 }> = ({ chainId, address, showOutgoing }) => {

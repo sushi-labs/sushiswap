@@ -22,6 +22,7 @@ import {
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
 
 import {
   approveMasterContractAction,
@@ -55,7 +56,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
   const [percentage, setPercentage] = useState<string>('')
   const percentToRemove = useMemo(() => new Percent(percentage, 100), [percentage])
   const tokens = useMemo(() => [token0, token1], [token0, token1])
-  const rebases = useBentoBoxTotals(pair.chainId, tokens)
+  const rebases = useBentoBoxTotals(pair.chainId as BentoBoxV1ChainId, tokens)
   const { balance } = usePoolPosition()
 
   const slpAmountToRemove = useMemo(() => {

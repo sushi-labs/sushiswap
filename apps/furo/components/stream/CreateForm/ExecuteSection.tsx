@@ -2,7 +2,6 @@ import { isAddress } from '@ethersproject/address'
 import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
 import { BENTOBOX_ADDRESS } from '@sushiswap/address'
-import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
@@ -14,6 +13,7 @@ import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 're
 import { useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
+import { FuroStreamRouterChainId } from '@sushiswap/furo/exports'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../../lib'
 import { ZFundSourceToFundSource, ZTokenToToken } from '../../../lib/zod'
@@ -21,7 +21,7 @@ import { CreateStreamFormSchemaType } from './schema'
 import { useCreateNotification } from '@sushiswap/react-query'
 import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
 
-export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
+export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
   const { address } = useAccount()
   const contract = useFuroStreamRouterContract(chainId)
   const [signature, setSignature] = useState<Signature>()

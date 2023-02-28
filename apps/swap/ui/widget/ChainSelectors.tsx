@@ -7,11 +7,14 @@ import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { ArrowRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { STARGATE_SUPPORTED_CHAIN_IDS } from '@sushiswap/stargate'
 import { classNames } from '@sushiswap/ui'
+import { SushiXSwapChainId } from '@sushiswap/sushixswap/exports'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
+
 export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
   const { network0, network1 } = useSwapState()
   const { setNetwork0, setNetwork1, switchTokens } = useSwapActions()
 
-  const handleSelect0 = useCallback<NetworkSelectorOnSelectCallback>(
+  const handleSelect0 = useCallback<NetworkSelectorOnSelectCallback<(typeof STARGATE_SUPPORTED_CHAIN_IDS)[number]>>(
     (el, close) => {
       setNetwork0(el)
       close()
@@ -30,7 +33,7 @@ export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
   return (
     <div className={classNames(open ? '' : 'hidden', 'pt-6')}>
       <div className="relative">
-        <div className="inset-0 absolute flex justify-center items-center">
+        <div className="absolute inset-0 flex items-center justify-center">
           <button
             onClick={switchTokens}
             type="button"
@@ -44,7 +47,7 @@ export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
 
         <div className="grid grid-cols-2 gap-[60px] border-gray-200 dark:border-slate-800">
           <div className="z-10">
-            <NetworkSelector
+            <NetworkSelector<(typeof STARGATE_SUPPORTED_CHAIN_IDS)[number]>
               networks={STARGATE_SUPPORTED_CHAIN_IDS}
               variant="dialog"
               selected={network0}
@@ -57,10 +60,10 @@ export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
                 <span className="flex gap-1 items-center font-medium px-1 text-xs text-gray-500 dark:text-slate-400 pt-0.5">
                   From
                 </span>
-                <div className="flex items-center w-full justify-between">
-                  <div className="flex gap-1 items-center overflow-hidden">
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-1 overflow-hidden">
                     <NetworkIcon type="naked" chainId={network0} width={32} height={32} />
-                    <span className="w-full truncate text-left w-full">{Chain.from(network0).name}</span>
+                    <span className="w-full text-left truncate">{Chain.from(network0).name}</span>
                   </div>
                   <div className="min-w-4 min-h-4">
                     <ChevronDownIcon width={16} height={16} strokeWidth={3} />
@@ -83,10 +86,10 @@ export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
                 <span className="flex gap-1 items-center font-medium px-1 text-xs text-gray-500 dark:text-slate-400 pt-0.5">
                   To
                 </span>
-                <div className="flex items-center w-full justify-between">
-                  <div className="flex gap-1 items-center justify-start overflow-hidden">
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center justify-start gap-1 overflow-hidden">
                     <NetworkIcon type="naked" chainId={network1} width={32} height={32} />
-                    <span className="w-full truncate text-left w-full">{Chain.from(network1).name}</span>
+                    <span className="w-full text-left truncate">{Chain.from(network1).name}</span>
                   </div>
                   <div className="min-w-4 min-h-4">
                     <ChevronDownIcon width={16} height={16} strokeWidth={3} />

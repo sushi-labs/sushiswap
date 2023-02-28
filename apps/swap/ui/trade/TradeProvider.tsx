@@ -6,7 +6,6 @@ import {
   currencyFromShortCurrencyName,
   isShortCurrencyName,
   Native,
-  SUSHI,
   tryParseAmount,
   Type,
 } from '@sushiswap/currency'
@@ -19,6 +18,8 @@ import { useCustomTokens, useToken, useTokens } from '@sushiswap/react-query'
 import { getAddress, isAddress } from 'ethers/lib/utils'
 import { Signature } from '@ethersproject/bytes'
 import { nanoid } from 'nanoid'
+import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
+import { SushiXSwapChainId, isSushiXSwapChainId } from '@sushiswap/sushixswap/exports'
 
 export const queryParamsSchema = z.object({
   fromChainId: z.coerce
@@ -26,13 +27,21 @@ export const queryParamsSchema = z.object({
     .int()
     .gte(0)
     .lte(2 ** 256)
-    .default(ChainId.ETHEREUM),
+    .default(ChainId.ETHEREUM)
+    .refine((chainId) => isBentoBoxV1ChainId(chainId) && isSushiXSwapChainId(chainId), {
+      message: 'ChainId not supported.',
+    })
+    .transform((chainId) => chainId as BentoBoxV1ChainId & SushiXSwapChainId),
   toChainId: z.coerce
     .number()
     .int()
     .gte(0)
     .lte(2 ** 256)
-    .default(ChainId.ETHEREUM),
+    .default(ChainId.ETHEREUM)
+    .refine((chainId) => isBentoBoxV1ChainId(chainId), {
+      message: 'ChainId not supported.',
+    })
+    .transform((chainId) => chainId as BentoBoxV1ChainId),
   fromCurrencyId: z.string().default('NATIVE'),
   toCurrencyId: z.string().default('SUSHI'),
   amount: z.optional(z.coerce.bigint()),
@@ -50,8 +59,8 @@ interface InternalSwapState {
 interface SwapState {
   token0: Type | undefined
   token1: Type | undefined
-  network0: ChainId
-  network1: ChainId
+  network0: BentoBoxV1ChainId & SushiXSwapChainId
+  network1: BentoBoxV1ChainId
   amount: Amount<Type> | undefined
   appType: AppType
   token0NotInList: boolean
@@ -65,7 +74,7 @@ type SwapApi = {
   setReview(value: boolean): void
   setRecipient(recipient: string): void
   setNetworks(chainId: ChainId): void
-  setNetwork0(chainId: ChainId): void
+  setNetwork0(chainId: BentoBoxV1ChainId & SushiXSwapChainId): void
   setNetwork1(chainId: ChainId): void
   setToken0(currency: Type): void
   setToken1(currency: Type): void
@@ -114,7 +123,7 @@ interface SwapProviderProps {
 }
 
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
-  const { address, isConnected } = useAccount()
+  const { address } = useAccount()
   const { query, push } = useRouter()
   const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount: _amount } = queryParamsSchema.parse(query)
   const { data: customTokens, isLoading: customTokensLoading } = useCustomTokens()

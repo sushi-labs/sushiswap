@@ -1,12 +1,11 @@
-import { AddressZero } from '@ethersproject/constants'
 import { Type as Currency } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import { getBentoBoxContractConfig } from './useBentoBoxContract'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
+import { BentoBoxV1ChainId, bentoBoxV1Address } from '@sushiswap/bentobox/exports'
 
 type UseBentoBoxTotals = (
-  chainId: number | undefined,
+  chainId: BentoBoxV1ChainId | undefined,
   currencies: (Currency | undefined)[],
   config?: Parameters<typeof useContractReads>[0]
 ) => Record<string, { base: JSBI; elastic: JSBI }> | undefined
@@ -22,41 +21,43 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies, config
 
   const contracts = useMemo(
     () =>
-      addresses.map(
-        (address) =>
-          ({
-            chainId,
-            address: getBentoBoxContractConfig(chainId).address,
-            abi: [
-              {
-                inputs: [
+      chainId
+        ? addresses.map(
+            (address) =>
+              ({
+                chainId,
+                address: bentoBoxV1Address[chainId],
+                abi: [
                   {
-                    internalType: 'contract IERC20',
-                    name: '',
-                    type: 'address',
+                    inputs: [
+                      {
+                        internalType: 'contract IERC20',
+                        name: '',
+                        type: 'address',
+                      },
+                    ],
+                    name: 'totals',
+                    outputs: [
+                      {
+                        internalType: 'uint128',
+                        name: 'elastic',
+                        type: 'uint128',
+                      },
+                      {
+                        internalType: 'uint128',
+                        name: 'base',
+                        type: 'uint128',
+                      },
+                    ],
+                    stateMutability: 'view',
+                    type: 'function',
                   },
-                ],
-                name: 'totals',
-                outputs: [
-                  {
-                    internalType: 'uint128',
-                    name: 'elastic',
-                    type: 'uint128',
-                  },
-                  {
-                    internalType: 'uint128',
-                    name: 'base',
-                    type: 'uint128',
-                  },
-                ],
-                stateMutability: 'view',
-                type: 'function',
-              },
-            ] as const,
-            functionName: 'totals',
-            args: [address as Address],
-          } as const)
-      ),
+                ] as const,
+                functionName: 'totals',
+                args: [address as Address],
+              } as const)
+          )
+        : undefined,
     [addresses, chainId]
   )
 
@@ -64,7 +65,7 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies, config
     contracts,
     watch: !(typeof config?.enabled !== undefined && !config?.enabled),
     keepPreviousData: true,
-    enabled: Boolean((getBentoBoxContractConfig(chainId).address as string) !== AddressZero),
+    enabled: !!chainId,
   })
 
   return useMemo(() => {
@@ -82,7 +83,7 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies, config
 }
 
 export const useBentoBoxTotal = (
-  chainId: number | undefined,
+  chainId: BentoBoxV1ChainId | undefined,
   currency: Currency | undefined,
   config?: Parameters<typeof useContractReads>[0]
 ): { base: JSBI; elastic: JSBI } | undefined => {

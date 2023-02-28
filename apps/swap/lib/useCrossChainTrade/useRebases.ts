@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
-import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { getBentoboxTotals } from './getBentoboxTotals'
 import { JSBI } from '@sushiswap/math'
 import { BigNumber } from '@ethersproject/bignumber'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
 
 interface UseBentoboxTotalsParams {
-  chainId: ChainId
+  chainId: BentoBoxV1ChainId
   currencies: (Type | undefined)[]
   enabled?: boolean
 }

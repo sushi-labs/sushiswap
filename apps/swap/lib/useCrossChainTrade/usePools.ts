@@ -7,12 +7,9 @@ import { Type } from '@sushiswap/currency'
 import { getCurrencyCombinations } from '@sushiswap/smart-order-router'
 import { ConstantProductPool, FACTORY_ADDRESS, Pair, StablePool, TradeType } from '@sushiswap/amm'
 import { ConstantProductPoolState, PairState, StablePoolState } from '@sushiswap/wagmi'
-import {
-  TRIDENT_ENABLED_NETWORKS,
-  AMM_ENABLED_NETWORKS,
-  CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS,
-  STABLE_POOL_FACTORY_ADDRESS,
-} from '../../config'
+import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from '../../config'
+import { isUniswapV2Router02ChainId } from '@sushiswap/sushiswap/exports'
+import { isBentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
 
 interface UsePoolsParams {
   chainId: ChainId
@@ -36,11 +33,15 @@ const queryFn = async ({ currencyA, currencyB, chainId, tradeType = TradeType.EX
     currencyIn && currencyOut && chainId ? getCurrencyCombinations(chainId, currencyIn, currencyOut) : []
 
   const [pairs, constantProductPools, stablePools] = await Promise.all([
-    chainId in FACTORY_ADDRESS ? getPairs(chainId, currencyCombinations) : Promise.resolve([]),
-    chainId in CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS
+    chainId in FACTORY_ADDRESS && isUniswapV2Router02ChainId(chainId)
+      ? getPairs(chainId, currencyCombinations)
+      : Promise.resolve([]),
+    chainId in CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS && isBentoBoxV1ChainId(chainId)
       ? getConstantProductPools(chainId, currencyCombinations)
       : Promise.resolve([]),
-    chainId in STABLE_POOL_FACTORY_ADDRESS ? getStablePools(chainId, currencyCombinations) : Promise.resolve([]),
+    chainId in STABLE_POOL_FACTORY_ADDRESS && isBentoBoxV1ChainId(chainId)
+      ? getStablePools(chainId, currencyCombinations)
+      : Promise.resolve([]),
   ])
 
   return {
@@ -50,7 +51,7 @@ const queryFn = async ({ currencyA, currencyB, chainId, tradeType = TradeType.EX
   }
 }
 
-export const getPools = async (variables: UsePoolsParams) => {
+export const getPools = async (variables: UsePoolsParams): Promise<UsePoolsReturn> => {
   if (!variables.currencyA || !variables.currencyB) {
     return {
       pairs: [],
@@ -64,21 +65,21 @@ export const getPools = async (variables: UsePoolsParams) => {
     pairs: Object.values(
       data.pairs
         .filter((result): result is [PairState.EXISTS, Pair] => Boolean(result[0] === PairState.EXISTS && result[1]))
-        .map(([, pair]) => pair)
+        .map(([, pair]) => pair as Pair)
     ),
     constantProductPools: Object.values(
       data.constantProductPools
         .filter((result): result is [ConstantProductPoolState.EXISTS, ConstantProductPool] =>
           Boolean(result[0] === ConstantProductPoolState.EXISTS && result[1])
         )
-        .map(([, pair]) => pair)
+        .map(([, pair]) => pair as ConstantProductPool)
     ),
     stablePools: Object.values(
       data.stablePools
         .filter((result): result is [StablePoolState.EXISTS, StablePool] =>
           Boolean(result[0] === StablePoolState.EXISTS && result[1])
         )
-        .map(([, pair]) => pair)
+        .map(([, pair]) => pair as StablePool)
     ),
   }
 }

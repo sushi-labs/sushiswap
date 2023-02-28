@@ -4,7 +4,11 @@ import cors from '@fastify/cors'
 import rateLimit from '@fastify/rate-limit'
 import { ChainId } from '@sushiswap/chain'
 import { Native, nativeCurrencyIds } from '@sushiswap/currency'
-import routeProcessorExports from '@sushiswap/route-processor/exports'
+import {
+  isRouteProcessorChainId,
+  routeProcessorAddress,
+  RouteProcessorChainId,
+} from '@sushiswap/route-processor/exports'
 import {
   // findSpecialRoute,
   DataFetcher,
@@ -32,7 +36,9 @@ const querySchema = z.object({
     .int()
     .gte(0)
     .lte(2 ** 256)
-    .default(ChainId.ETHEREUM),
+    .default(ChainId.ETHEREUM)
+    .refine((chainId) => isRouteProcessorChainId(chainId), { message: 'ChainId not supported.' })
+    .transform((chainId) => chainId as RouteProcessorChainId),
   fromTokenId: z.string().default(nativeCurrencyIds[ChainId.ETHEREUM]),
   toTokenId: z.string().default('SUSHI'),
   gasPrice: z.coerce.number().int().gte(1),
@@ -40,15 +46,6 @@ const querySchema = z.object({
   to: z.optional(z.string()),
   preferSushi: z.coerce.boolean().default(false),
 })
-
-export function getRouteProcessorAddressForChainId(chainId: ChainId) {
-  if (!(chainId in routeProcessorExports)) {
-    throw new Error(`Unsupported route processor network for ${chainId}`)
-  }
-
-  return routeProcessorExports[chainId.toString() as keyof Omit<typeof routeProcessorExports, '31337'>][0].contracts
-    .RouteProcessor.address
-}
 
 // Declare a route
 server.get('/v0', async (request) => {
@@ -115,14 +112,7 @@ server.get('/v0', async (request) => {
     },
     // getRouteAsArray: Router.routeToArray(dataFetcher, bestRoute),
     getCurrentRouteRPParams: to
-      ? Router.routeProcessorParams(
-          poolCodesMap,
-          bestRoute,
-          fromToken,
-          toToken,
-          to,
-          getRouteProcessorAddressForChainId(chainId)
-        )
+      ? Router.routeProcessorParams(poolCodesMap, bestRoute, fromToken, toToken, to, routeProcessorAddress[chainId])
       : undefined,
   }
 })

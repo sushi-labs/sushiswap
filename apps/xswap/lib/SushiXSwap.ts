@@ -12,12 +12,12 @@ import {
   StargateChainId,
 } from '@sushiswap/stargate'
 import { getBigNumber } from '@sushiswap/tines'
-import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { ContractTransaction } from 'ethers'
 import { formatBytes32String } from 'ethers/lib/utils'
 import { SushiXSwap as SushiXSwapContract } from '@sushiswap/wagmi'
 import { Address } from 'wagmi'
 import { HexString } from '@sushiswap/types'
+import { sushiXSwapAddress, SushiXSwapChainId } from '@sushiswap/sushixswap/exports'
 
 export type Complex = [
   {
@@ -298,7 +298,7 @@ export abstract class Cooker implements Cooker {
                         ['address', 'address', 'bool'],
                         [
                           leg.tokenFrom.address,
-                          getSushiXSwapContractConfig(trade.inputAmount.currency.chainId).address,
+                          sushiXSwapAddress[trade.inputAmount.currency.chainId as SushiXSwapChainId],
                           false,
                         ]
                       ),
@@ -320,7 +320,7 @@ export abstract class Cooker implements Cooker {
                         ['address', 'address', 'bool'],
                         [
                           leg.tokenFrom.address,
-                          getSushiXSwapContractConfig(trade.inputAmount.currency.chainId).address,
+                          sushiXSwapAddress[trade.inputAmount.currency.chainId as SushiXSwapChainId],
                           false,
                         ]
                       ),
@@ -483,14 +483,14 @@ export class SushiXSwap {
     this.srcCooker = new SrcCooker({
       chainId: this.srcChainId,
       debug,
-      masterContract: getSushiXSwapContractConfig(this.srcToken.chainId).address,
+      masterContract: sushiXSwapAddress[this.srcToken.chainId as SushiXSwapChainId],
       user,
     })
 
     this.dstCooker = new DstCooker({
       chainId: this.dstChainId,
       debug,
-      masterContract: getSushiXSwapContractConfig(this.dstToken.chainId).address,
+      masterContract: sushiXSwapAddress[this.dstToken.chainId as SushiXSwapChainId],
       user,
     })
   }

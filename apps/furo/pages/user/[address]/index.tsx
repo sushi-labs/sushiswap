@@ -13,6 +13,7 @@ const Dashboard = dynamic(() => import('../../../components/Dashboard').then((mo
 import { NextSeo } from 'next-seo'
 
 import { type Stream as StreamDTO, type Transaction as TransactionDTO } from '../../../.graphclient'
+import { FuroStreamChainId } from '@sushiswap/furo/exports'
 
 interface Props {
   fallback?: {
@@ -36,7 +37,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
 
 const UserDashboard: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
   const router = useRouter()
-  const chainId = router.query.chainId ? Number(router.query.chainId) : ChainId.ETHEREUM
+  const chainId = (router.query.chainId ? Number(router.query.chainId) : ChainId.ETHEREUM) as FuroStreamChainId
   const address = router.query.address as string
   const show = router.query.show
 

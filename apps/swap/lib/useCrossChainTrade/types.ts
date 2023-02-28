@@ -1,15 +1,16 @@
-import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Type } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Action } from '../SushiXSwap'
 import { TradeType } from '@sushiswap/react-query'
 import { Signature } from '@ethersproject/bytes'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
+import { SushiXSwapChainId } from '@sushiswap/sushixswap/exports'
 
 export interface UseCrossChainTradeParams {
   tradeId: string
-  network0: ChainId
-  network1: ChainId
+  network0: BentoBoxV1ChainId & SushiXSwapChainId
+  network1: BentoBoxV1ChainId
   token0: Type | undefined
   token1: Type | undefined
   amount: Amount<Type> | undefined

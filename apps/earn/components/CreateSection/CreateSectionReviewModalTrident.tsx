@@ -10,9 +10,8 @@ import {
   Fee,
   StablePool,
 } from '@sushiswap/amm'
-import { ChainId } from '@sushiswap/chain'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
 import { Amount, Type } from '@sushiswap/currency'
-import { Percent } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
@@ -35,11 +34,11 @@ import {
   getAsEncodedAction,
   LiquidityInput,
 } from '../../lib/actions'
-import { useNotifications, useSettings } from '../../lib/state/storage'
+import { useNotifications } from '../../lib/state/storage'
 import { AddSectionReviewModal } from '../AddSection'
 
 interface CreateSectionReviewModalTridentProps {
-  chainId: ChainId
+  chainId: BentoBoxV1ChainId
   token0: Type | undefined
   token1: Type | undefined
   input0: Amount<Type> | undefined
@@ -68,11 +67,11 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const stablePoolFactory = useStablePoolFactoryContract(chainId)
   const [, { createNotification }] = useNotifications(address)
 
-  const [{ slippageTolerance }] = useSettings()
+  // const [{ slippageTolerance }] = useSettings()
 
-  const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(slippageTolerance * 100), 10_000)
-  }, [slippageTolerance])
+  // const slippagePercent = useMemo(() => {
+  //   return new Percent(Math.floor(slippageTolerance * 100), 10_000)
+  // }, [slippageTolerance])
 
   const totals = useBentoBoxTotals(
     chainId,
@@ -263,13 +262,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     ]
   )
 
-  const {
-    sendTransaction,
-    isLoading: isWritePending,
-    error,
-    data,
-    isSuccess,
-  } = useSendTransaction({
+  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
     chainId,
     prepare,
     onSettled,
