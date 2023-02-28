@@ -366,3 +366,7 @@ export const KLIMA_ADDRESS = {
 export const QUICK_ADDRESS = {
   [ChainId.POLYGON]: '0x831753dd7087cac61ab5644b308642cc1c33dc13',
 } as const
+
+export const LINK_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x514910771AF9Ca656af840dff83E8264EcF986CA',
+} as const

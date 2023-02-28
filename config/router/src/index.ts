@@ -17,6 +17,7 @@ import {
   KP3R_ADDRESS,
   LDO,
   LDO_ADDRESS,
+  LINK,
   LUSD,
   MIM,
   NFTX,
@@ -57,6 +58,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     FRAX[ChainId.ETHEREUM],
     OHM[ChainId.ETHEREUM],
     NFTX[ChainId.ETHEREUM],
+    LINK[ChainId.ETHEREUM],
   ],
 
   [ChainId.RINKEBY]: [WNATIVE[ChainId.RINKEBY], USDC[ChainId.RINKEBY]],

@@ -17,6 +17,7 @@ import {
   KLIMA_ADDRESS,
   KP3R_ADDRESS,
   LDO_ADDRESS,
+  LINK_ADDRESS,
   LUSD_ADDRESS,
   MAI_ADDRESS,
   MIM_ADDRESS,
@@ -579,3 +580,12 @@ export const QUICK = addressMapToTokenMap(
   },
   QUICK_ADDRESS
 ) as Record<keyof typeof QUICK_ADDRESS, Token>
+
+export const LINK = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'LINK',
+    name: 'ChainLink Token',
+  },
+  LINK_ADDRESS
+) as Record<keyof typeof LINK_ADDRESS, Token>
