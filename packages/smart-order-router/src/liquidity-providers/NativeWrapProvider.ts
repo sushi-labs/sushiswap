@@ -22,7 +22,6 @@ export class NativeWrapProvider extends LiquidityProvider {
     }
     const bridge = new BridgeUnlimited(WNATIVE_ADDRESS[chainId], nativeRToken, WNATIVE[chainId] as RToken, 0, 50_000)
     this.poolCodes = [new NativeWrapBridgePoolCode(bridge, LiquidityProviders.NativeWrap)]
-    this.stateId = 0
     this.lastUpdateBlock = -1
   }
 

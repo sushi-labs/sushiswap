@@ -219,7 +219,6 @@ export class TridentProvider extends LiquidityProvider {
       )
       const pc = new BentoPoolCode(rPool, this.getType(), this.getPoolProviderName())
       this.initialClassicPools.set(pr.address, pc)
-      ++this.stateId
     })
 
     const rebases: Map<string, Rebase> = new Map()
@@ -267,7 +266,6 @@ export class TridentProvider extends LiquidityProvider {
         totals1
       )
       this.initialStablePools.set(pr.address, new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName()))
-      ++this.stateId
     })
   }
 
@@ -500,7 +498,6 @@ export class TridentProvider extends LiquidityProvider {
           t.address,
           new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
         )
-        ++this.stateId
         ++newBridges
       }
     })
@@ -593,7 +590,6 @@ export class TridentProvider extends LiquidityProvider {
           t.address,
           new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
         )
-        ++this.stateId
         console.log(`${this.getLogPrefix()} - REFRESH INITIAL POOLS: Added bridge (${pool.token0.symbol})`)
       }
     })
@@ -760,7 +756,6 @@ export class TridentProvider extends LiquidityProvider {
       }
 
       pool.updateReserves(res0BN, res1BN)
-      ++this.stateId
       console.info(
         `${this.getLogPrefix()} - SYNC, classic pool: ${pool.address} ${pool.token0.symbol}/${
           pool.token1.symbol
@@ -795,7 +790,6 @@ export class TridentProvider extends LiquidityProvider {
         const current = pool.getTotal0()
         if (!total0.elastic.eq(current.elastic) || !total0.base.eq(current.base)) {
           pool.updateTotal0(total0)
-          ++this.stateId
         }
       }
       const total1 = rebases.get(pool.token1.address)
@@ -803,7 +797,6 @@ export class TridentProvider extends LiquidityProvider {
         const current = pool.getTotal1()
         if (!total1.elastic.eq(current.elastic) || !total1.base.eq(current.base)) {
           pool.updateTotal1(total1)
-          ++this.stateId
         }
       }
       const res0 = reserves?.[i]?.result?.[0]
@@ -817,7 +810,6 @@ export class TridentProvider extends LiquidityProvider {
       // Always updating because reserve0 and 1 is being converted to amount and adjusted to wei using realReservesToAdjusted()
       // but the res0 and res1 are not adjusted.
       pool.updateReserves(toShareBN(res0BN, pool.getTotal0()), toShareBN(res1BN, pool.getTotal1()))
-      ++this.stateId
     })
   }
 

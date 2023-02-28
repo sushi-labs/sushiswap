@@ -100,7 +100,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         )
         const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
         this.initialPools.set(pool.address, pc)
-        ++this.stateId
       } else {
         console.error(`${this.getLogPrefix()} - ERROR INIT SYNC, Failed to fetch reserves for pool: ${pool.address}`)
       }
@@ -252,7 +251,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       )
       const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
       this.initialPools.set(pool.address, pc)
-      ++this.stateId
       console.log(
         `${this.getLogPrefix()} - REFRESH INITIAL POOLS: Added pool ${pool.address} (${pool.token0.symbol}/${
           pool.token1.symbol
@@ -291,7 +289,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
               pool.token1.symbol
             } ${res0BN.toString()} ${res1BN.toString()}`
           )
-          ++this.stateId
         }
       } else {
         console.error(
