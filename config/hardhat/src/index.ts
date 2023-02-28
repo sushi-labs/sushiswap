@@ -8,11 +8,78 @@ import '@typechain/hardhat'
 import 'hardhat-deploy'
 import 'hardhat-deploy-ethers'
 
-import type { HardhatUserConfig } from 'hardhat/config'
+import { readFileSync, writeFileSync } from 'fs'
+import { HardhatUserConfig, task } from 'hardhat/config'
+import { TASK_EXPORT } from 'hardhat-deploy'
+import type { MultiExport } from 'hardhat-deploy/types'
 
 const accounts = {
   mnemonic: process.env.MNEMONIC || 'test test test test test test test test test test test junk',
   accountsBalance: '990000000000000000000',
+}
+
+export const EXPORT_TASK = () => {
+  task(TASK_EXPORT, async (args, hre, runSuper) => {
+    await runSuper()
+
+    const parsed: MultiExport = JSON.parse(readFileSync('./exports.json', { encoding: 'utf-8' }))
+    delete parsed['31337']
+
+    const contractNames = Array.from(
+      new Set(Object.values(parsed).flatMap(([{ contracts }]: any) => Object.keys(contracts)))
+    )
+
+    writeFileSync(
+      './exports.ts',
+      `
+import type { AddNumberToNumberString } from "@sushiswap/types"` +
+        contractNames
+          .map((contractName) => {
+            const lowerCaseName = contractName.charAt(0).toLowerCase() + contractName.slice(1)
+
+            const chainIds = Object.values(parsed).flatMap((exp) =>
+              exp.filter(({ contracts }) => contracts[contractName]).map((exp) => exp.chainId)
+            )
+
+            const contractExports = Object.fromEntries(
+              Object.entries(parsed)
+                .map(
+                  ([chainId, [exp]]) =>
+                    [
+                      chainId,
+                      [
+                        {
+                          ...exp,
+                          contracts: Object.fromEntries(
+                            Object.entries(exp.contracts).filter(([name]) => name === contractName)
+                          ),
+                        },
+                      ],
+                    ] as const
+                )
+                .filter(([chainId]) => chainIds.includes(chainId))
+            )
+
+            console.log(contractExports)
+
+            return `
+export const ${lowerCaseName}Exports = ${JSON.stringify(contractExports)} as const
+export type ${contractName}Exports = typeof ${lowerCaseName}Exports
+export type ${contractName}Export = ${contractName}Exports[keyof typeof ${lowerCaseName}Exports][number]
+export type ${contractName}ChainId = AddNumberToNumberString<${contractName}Export['chainId']>
+export type ${contractName}Contracts = ${contractName}Export['contracts']
+export type ${contractName}ContractName = keyof ${contractName}Contracts
+export type ${contractName}Contract = ${contractName}Contracts[${contractName}ContractName]
+export const ${lowerCaseName}Address = Object.fromEntries(
+  Object.entries(${lowerCaseName}Exports)
+  .map(([chainId, data]) => [parseInt(chainId), data[0].contracts['${contractName}'].address])
+) as {
+    [chainId in ${contractName}Export['chainId']]: ${contractName}Exports[chainId][number]['contracts'][${contractName}ContractName]['address']
+    }\n`
+          })
+          .join('')
+    )
+  })
 }
 
 export const defaultConfig: HardhatUserConfig = {

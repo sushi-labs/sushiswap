@@ -52,6 +52,7 @@
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
+    "@sushiswap/types": "workspace:*",
     "@tenderly/hardhat-tenderly": "^1.0.13",
     "@types/chai": "^4.3.3",
     "@types/node": "^17.0.33",

@@ -1,10 +1,8 @@
 import '@nomiclabs/hardhat-ethers'
 
-import { defaultConfig } from '@sushiswap/hardhat-config'
-import { readFileSync, writeFileSync } from 'fs'
+import { defaultConfig, EXPORT_TASK } from '@sushiswap/hardhat-config'
 import { TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD } from 'hardhat/builtin-tasks/task-names'
-import { HardhatUserConfig, subtask, task } from 'hardhat/config'
-import { TASK_EXPORT } from 'hardhat-deploy'
+import { HardhatUserConfig, subtask } from 'hardhat/config'
 import path from 'path'
 
 const accounts = {
@@ -12,34 +10,7 @@ const accounts = {
   accountsBalance: '10000000000000000000000000',
 }
 
-task(TASK_EXPORT, async (args, hre, runSuper) => {
-  await runSuper()
-
-  const parsed = JSON.parse(readFileSync('./exports.json', { encoding: 'utf-8' }))
-
-  delete parsed['31337']
-
-  const string = JSON.stringify(parsed)
-
-  writeFileSync(
-    './exports.ts',
-    `
-export const routeProcessorExports = ${string} as const
-export type RouteProcessorExports = typeof routeProcessorExports
-export type RouteProcessorExport = RouteProcessorExports[keyof typeof routeProcessorExports][number]
-export type RouteProcessorChainId = RouteProcessorExport['chainId']
-export type RouteProcessorContracts = RouteProcessorExport['contracts']
-export type RouteProcessorContractName = keyof RouteProcessorContracts
-export type RouteProcessorContract = RouteProcessorContracts[RouteProcessorContractName]
-// export const routeProcessorAddress = Object.fromEntries(
-//   Object.entries(routeProcessorExports).map(([chainId, data]) => [parseInt(chainId), data[0].contracts.RouteProcessor.address])
-// ) as {
-//   [chainId in RouteProcessorChainId]: RouteProcessorExports[chainId][number]['contracts']['RouteProcessor']['address']
-// }
-export default routeProcessorExports
-  `
-  )
-})
+EXPORT_TASK()
 
 subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVersion: string }, hre, runSuper) => {
   if (solcVersion === '0.8.10') {

@@ -1,17 +1,10 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 import '@nomiclabs/hardhat-ethers'
 
-import { defaultConfig } from '@sushiswap/hardhat-config'
-import { readFileSync, writeFileSync } from 'fs'
-import { HardhatUserConfig, task } from 'hardhat/config'
-import { TASK_EXPORT } from 'hardhat-deploy'
+import { defaultConfig, EXPORT_TASK } from '@sushiswap/hardhat-config'
+import { HardhatUserConfig } from 'hardhat/config'
 
-task(TASK_EXPORT, async (args, hre, runSuper) => {
-  await runSuper()
-
-  const exports = readFileSync('./exports.json', { encoding: 'utf-8' })
-  writeFileSync('./exports.ts', `export default ${exports} as const`)
-})
+EXPORT_TASK()
 
 const config: HardhatUserConfig = {
   ...defaultConfig,
