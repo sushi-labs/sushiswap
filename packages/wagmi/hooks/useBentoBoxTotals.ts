@@ -1,7 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Type as Currency } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
+import { getBentoBoxContractConfig } from './useBentoBoxContract'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
 

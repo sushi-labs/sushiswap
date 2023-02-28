@@ -1,5 +1,5 @@
 import { Type, Type as Currency } from '@sushiswap/currency'
-import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
+import { getBentoBoxContractConfig } from '@sushiswap/wagmi'
 import { Address, readContracts } from 'wagmi'
 import { ChainId } from '@sushiswap/chain'
 

@@ -1,5 +1,50 @@
 import { client } from '@sushiswap/database'
 
+// import { allChains, allProviders } from '@sushiswap/wagmi-config'
+// import { Address, configureChains, createClient, fetchToken } from '@wagmi/core'
+
+// const { provider } = configureChains(allChains, allProviders)
+// createClient({
+//   autoConnect: true,
+//   provider,
+// })
+
+// export async function getToken(chainId: number, address: string) {
+//   try {
+//     const token = await client.token.findFirstOrThrow({
+//       select: {
+//         id: true,
+//         address: true,
+//         name: true,
+//         symbol: true,
+//         decimals: true,
+//         isCommon: true,
+//         isFeeOnTransfer: true,
+//       },
+//       where: {
+//         AND: {
+//           chainId,
+//           address,
+//           status: 'APPROVED',
+//         },
+//       },
+//     })
+//     await client.$disconnect()
+//     return token
+//   } catch (e) {
+//     console.log(`Token not found in db: ${address} on chain ${chainId}`, e)
+//   }
+
+//   try {
+//     const token = await fetchToken({ chainId, address: address as Address })
+//     return token
+//   } catch (e) {
+//     console.log(`Token fetch fallback failed: ${address} on chain ${chainId}`, e)
+//   }
+
+//   throw new Error('Token not found')
+// }
+
 export async function getToken(chainId: number, address: string) {
   const token = await client.token.findFirstOrThrow({
     select: {

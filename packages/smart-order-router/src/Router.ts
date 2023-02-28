@@ -1,10 +1,18 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token, Type, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { findMultiRouteExactIn, getBigNumber, MultiRoute, NetworkInfo, RPool, RToken } from '@sushiswap/tines'
+import {
+  findMultiRouteExactIn,
+  getBigNumber,
+  MultiRoute,
+  NetworkInfo,
+  RouteStatus,
+  RPool,
+  RToken,
+} from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 
 import { convertTokenToBento, getBentoChainId } from './lib/convert'
-import type { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
+import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { PoolCode } from './pools/PoolCode'
 import { getRouteProcessorCode } from './TinesToRouteProcessor'
 
@@ -32,6 +40,33 @@ export interface RPParams {
 export type PoolFilter = (list: RPool) => boolean
 
 export class Router {
+  static findSpecialRoute(
+    poolCodesMap: Map<string, PoolCode>,
+    chainId: ChainId,
+    fromToken: Type,
+    amountIn: BigNumber,
+    toToken: Type,
+    gasPrice: number,
+    maxPriceImpact = 10 // 10%
+  ) {
+    // Find preferrable route
+    const preferrableRoute = Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice, [
+      LiquidityProviders.NativeWrap,
+      LiquidityProviders.SushiSwap,
+      LiquidityProviders.Trident,
+    ])
+    // If the route is successful and the price impact is less than maxPriceImpact, then return the route
+    if (
+      preferrableRoute.status === RouteStatus.Success &&
+      preferrableRoute.priceImpact !== undefined &&
+      preferrableRoute.priceImpact < maxPriceImpact / 100
+    ) {
+      return preferrableRoute
+    }
+    // Otherwise, find the route using all possible liquidity providers
+    return Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice)
+  }
+
   static findBestRoute(
     poolCodesMap: Map<string, PoolCode>,
     chainId: ChainId,

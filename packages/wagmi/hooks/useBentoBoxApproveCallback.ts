@@ -2,7 +2,7 @@ import { Signature, splitSignature } from '@ethersproject/bytes'
 import { AddressZero, HashZero } from '@ethersproject/constants'
 import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { NotificationData } from '@sushiswap/ui'
-import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
+import { getBentoBoxContractConfig } from './useBentoBoxContract'
 import { useCallback, useMemo, useState } from 'react'
 import {
   Address,

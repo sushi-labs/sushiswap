@@ -16,17 +16,17 @@ if (!parsed.success) {
   process.exit(1)
 }
 
-declare global {
-  namespace NodeJS {
-    // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface ProcessEnv extends z.infer<typeof envSchema> {}
-  }
-}
-
 // declare global {
 //   namespace NodeJS {
-//     interface Process {
-//       env: z.infer<typeof envSchema>
-//     }
+//     // eslint-disable-next-line @typescript-eslint/no-empty-interface
+//     interface ProcessEnv extends z.infer<typeof envSchema> {}
 //   }
 // }
+
+declare global {
+  namespace NodeJS {
+    interface Process {
+      env: z.infer<typeof envSchema>
+    }
+  }
+}
