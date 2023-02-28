@@ -62,6 +62,7 @@ import type { NumberStringToNumber } from "@sushiswap/types"` +
 export const ${lowerCaseName}Exports = ${JSON.stringify(contractExports)} as const
 export type ${contractName}Exports = typeof ${lowerCaseName}Exports
 export type ${contractName}ChainId = NumberStringToNumber<keyof ${contractName}Exports>
+export const is${contractName}ChainId = (chainId: number): chainId is ${contractName}ChainId => chainId in ${lowerCaseName}Exports
 export const ${lowerCaseName}Address = Object.fromEntries(
   Object.entries(${lowerCaseName}Exports).map(([chainId, data]) => [parseInt(chainId), data.address])
 ) as {[chainId in keyof ${contractName}Exports]: ${contractName}Exports[chainId]['address']}
