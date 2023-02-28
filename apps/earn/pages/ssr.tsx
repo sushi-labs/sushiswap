@@ -1,13 +1,13 @@
-import { GetStaticProps, InferGetStaticPropsType } from 'next'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC } from 'react'
 import { SWRConfig } from 'swr'
 
-import { Pools as _Pools } from '../../components'
+import { Pools as _Pools } from '../components'
 import { getPoolCount, getPoolCountUrl, getPools, getPoolsUrl } from '@sushiswap/client'
-import { defaultPoolsArgs } from '../../lib/constants'
+import { defaultPoolsArgs } from '../lib/constants'
 import { unstable_serialize } from 'swr/infinite'
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const [pools, poolCount] = await Promise.all([getPools(defaultPoolsArgs), getPoolCount(defaultPoolsArgs)])
 
   return {
@@ -22,7 +22,7 @@ export const getStaticProps: GetStaticProps = async () => {
   }
 }
 
-const Pools: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
+const Pools: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
       <_Pools />

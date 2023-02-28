@@ -9,12 +9,12 @@ export async function middleware(req: NextRequest) {
     if (search !== '') {
       // CSR when search params are present
       const url = req.nextUrl.clone()
-      url.pathname = '/index/csr'
+      url.pathname = '/csr'
       return NextResponse.rewrite(url)
     } else {
       // SSG when no search params are present
       const url = req.nextUrl.clone()
-      url.pathname = '/index/ssg'
+      url.pathname = '/ssg'
       return NextResponse.rewrite(url)
     }
   }

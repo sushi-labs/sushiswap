@@ -18,11 +18,6 @@ const nextConfig = {
         permanent: true,
         basePath: false,
       },
-      {
-        source: '/index/:path*',
-        destination: '/',
-        permanent: true,
-      },
     ]
   },
 }
