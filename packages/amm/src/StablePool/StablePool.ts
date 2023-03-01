@@ -1,6 +1,6 @@
 import { Amount, Price, Share, Token } from '@sushiswap/currency'
 import { JSBI, sqrt, ZERO } from '@sushiswap/math'
-import EXPORTS from '@sushiswap/trident/exports/all.json'
+import EXPORTS from '@sushiswap/trident/exports.json'
 import invariant from 'tiny-invariant'
 
 import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'

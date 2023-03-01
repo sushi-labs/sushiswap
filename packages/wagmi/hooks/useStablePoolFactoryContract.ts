@@ -1,4 +1,4 @@
-import tridentExports from '@sushiswap/trident/exports/all.json'
+import tridentExports from '@sushiswap/trident/exports.json'
 import { useContract, useProvider } from 'wagmi'
 
 export const getStablePoolFactoryContract = (chainId: number | undefined) => ({

@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import tridentExports from '@sushiswap/trident/exports/all.json'
+import tridentExports from '@sushiswap/trident/exports.json'
 import { HexString } from '@sushiswap/types'
 
 export type TridentExport = (typeof tridentExports)[keyof typeof tridentExports][number]
