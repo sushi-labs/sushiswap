@@ -8,8 +8,8 @@ import { getCurrencyCombinations } from '@sushiswap/smart-order-router'
 import { ConstantProductPool, FACTORY_ADDRESS, Pair, StablePool, TradeType } from '@sushiswap/amm'
 import { ConstantProductPoolState, PairState, StablePoolState } from '@sushiswap/wagmi'
 import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from '../../config'
-import { isUniswapV2Router02ChainId } from '@sushiswap/sushiswap/exports'
-import { isBentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
+import { isUniswapV2Router02ChainId } from '@sushiswap/sushiswap'
+import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 interface UsePoolsParams {
   chainId: ChainId

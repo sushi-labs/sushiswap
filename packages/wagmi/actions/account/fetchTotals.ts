@@ -1,14 +1,13 @@
-import { bentoBoxV1Abi } from '@sushiswap/abi'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
+import { bentoBoxV1Abi, bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Address, readContracts } from '@wagmi/core'
 
-export async function fetchTotals(args: { token: Address; user: Address; chainId: number }[]) {
+export async function fetchTotals(args: { token: Address; user: Address; chainId: BentoBoxV1ChainId }[]) {
   const contracts = args.map(({ token, chainId }) => ({
     chainId,
-    address: BENTOBOX_ADDRESS[chainId] as Address,
+    address: bentoBoxV1Address[chainId],
     functionName: 'totals' as const,
     args: [token as Address] as const,
-    abi: bentoBoxV1Abi,
+    abi: bentoBoxV1Abi[chainId],
   }))
 
   const totals = await readContracts({

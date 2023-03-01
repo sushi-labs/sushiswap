@@ -1,7 +1,6 @@
 import { isAddress } from '@ethersproject/address'
 import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, classNames, Dots, Typography } from '@sushiswap/ui'
 import { Approve, useBentoBoxTotal, useFuroVestingRouterContract } from '@sushiswap/wagmi'
@@ -19,7 +18,8 @@ import { CreateVestingFormSchemaType } from '../schema'
 import CreateFormReviewModalBase from './CreateFormReviewModalBase'
 import { useCreateNotification } from '@sushiswap/react-query'
 import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
-import { FuroVestingRouterChainId } from '@sushiswap/furo/exports'
+import { FuroVestingRouterChainId } from '@sushiswap/furo'
+import { bentoBoxV1Address } from '@sushiswap/bentobox'
 
 interface Item {
   title: string
@@ -231,7 +231,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
                   fullWidth
                   enabled={isValid && !isValidating && !!_totalAmount}
                   amount={_totalAmount}
-                  address={BENTOBOX_ADDRESS[chainId]}
+                  address={bentoBoxV1Address[chainId]}
                 />
               </Approve.Components>
             }

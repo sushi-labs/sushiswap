@@ -1,4 +1,4 @@
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { tryParseAmount } from '@sushiswap/currency'
 import { Pair } from '@sushiswap/graph-client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'

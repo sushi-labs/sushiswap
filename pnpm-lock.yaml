@@ -2418,6 +2418,7 @@ importers:
       '@sushiswap/abi': workspace:*
       '@sushiswap/address': workspace:*
       '@sushiswap/amm': workspace:*
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -2449,6 +2450,7 @@ importers:
       '@sushiswap/abi': link:../abi
       '@sushiswap/address': link:../address
       '@sushiswap/amm': link:../amm
+      '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../chain
       '@sushiswap/currency': link:../currency
       '@sushiswap/math': link:../math
@@ -3653,6 +3655,7 @@ importers:
       '@graphql-mesh/utils': latest
       '@sushiswap/abi': workspace:*
       '@sushiswap/address': workspace:*
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
@@ -3690,6 +3693,7 @@ importers:
       '@google-cloud/scheduler': 3.2.0
       '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/address': link:../../packages/address
+      '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/math': link:../../packages/math

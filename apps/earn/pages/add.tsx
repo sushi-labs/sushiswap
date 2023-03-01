@@ -31,14 +31,14 @@ import {
 } from '../components'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import { isUniswapV2Router02ChainId } from '@sushiswap/sushiswap/exports'
+import { isUniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 
 import { CreateSectionReviewModalTrident } from '../components/CreateSection'
 import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '../config'
 import { isConstantProductPool, isLegacyPool, isStablePool } from '../lib/functions'
 import { useCustomTokens } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
-import { isBentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
+import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 const LINKS: BreadcrumbLink[] = [
   {

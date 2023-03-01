@@ -1,7 +1,7 @@
 import { ArrowCircleLeftIcon } from '@heroicons/react/outline'
 import { DevTool } from '@hookform/devtools'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FuroVestingRouterChainId } from '@sushiswap/furo/exports'
+import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { useIsMounted } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import Link from 'next/link'

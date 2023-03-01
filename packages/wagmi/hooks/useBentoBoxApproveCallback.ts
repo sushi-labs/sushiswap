@@ -1,6 +1,5 @@
 import { Signature, splitSignature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { NotificationData } from '@sushiswap/ui'
 import { getBentoBoxContractConfig } from './useBentoBoxContract'
 import { useCallback, useMemo, useState } from 'react'
@@ -16,7 +15,7 @@ import {
 
 import { ApprovalState } from './useERC20ApproveCallback'
 import { isAddress } from '@ethersproject/address'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
+import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useBentoBoxApproveCallback({
@@ -81,7 +80,7 @@ export function useBentoBoxApproveCallback({
   const legacyApproval = useCallback(async () => {
     if (
       !address ||
-      !(chainId && chainId in BENTOBOX_ADDRESS) ||
+      !(chainId && isBentoBoxV1ChainId(chainId)) ||
       !masterContract ||
       approvalState !== ApprovalState.NOT_APPROVED ||
       !writeAsync
@@ -111,7 +110,7 @@ export function useBentoBoxApproveCallback({
   const approveBentoBox = useCallback(async (): Promise<void> => {
     if (
       !address ||
-      !(chainId && chainId in BENTOBOX_ADDRESS) ||
+      !(chainId && isBentoBoxV1ChainId(chainId)) ||
       !masterContract ||
       approvalState !== ApprovalState.NOT_APPROVED
     ) {
@@ -145,7 +144,7 @@ export function useBentoBoxApproveCallback({
         domain: {
           name: 'BentoBox V1',
           chainId,
-          verifyingContract: BENTOBOX_ADDRESS[chainId],
+          verifyingContract: bentoBoxV1Address[chainId],
         },
         types: {
           SetMasterContractApproval: [

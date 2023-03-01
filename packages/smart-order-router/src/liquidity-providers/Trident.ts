@@ -1,10 +1,6 @@
 import { balanceOfAbi, getReservesAbi, getStableReservesAbi, totalsAbi } from '@sushiswap/abi'
-import {
-  BENTOBOX_ADDRESS,
-  CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS,
-  STABLE_POOL_FACTORY_ADDRESS,
-} from '@sushiswap/address'
-import { ChainId } from '@sushiswap/chain'
+import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from '@sushiswap/address'
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Token } from '@sushiswap/currency'
 import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
 import { add, getUnixTime } from 'date-fns'
@@ -43,6 +39,9 @@ interface PoolInfo {
 }
 
 export class TridentProvider extends LiquidityProvider {
+  // Need to override for type narrowing
+  chainId: BentoBoxV1ChainId
+
   readonly TOP_POOL_SIZE = 155
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 1000
   readonly ON_DEMAND_POOL_SIZE = 20
@@ -57,7 +56,7 @@ export class TridentProvider extends LiquidityProvider {
   poolsByTrade: Map<string, string[]> = new Map()
 
   bridges: Map<string, PoolCode> = new Map()
-  bentoBox = BENTOBOX_ADDRESS
+  bentoBox = bentoBoxV1Address
   constantProductPoolFactory = CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS
   stablePoolFactory = STABLE_POOL_FACTORY_ADDRESS
   refreshInitialPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
@@ -65,8 +64,9 @@ export class TridentProvider extends LiquidityProvider {
   blockListener?: () => void
   unwatchBlockNumber?: () => void
 
-  constructor(chainId: ChainId, client: PublicClient) {
+  constructor(chainId: BentoBoxV1ChainId, client: PublicClient) {
     super(chainId, client)
+    this.chainId = chainId
     if (
       !(chainId in this.bentoBox) ||
       !(chainId in this.constantProductPoolFactory) ||
@@ -167,7 +167,7 @@ export class TridentProvider extends LiquidityProvider {
           (t) =>
             ({
               args: [t.address as Address],
-              address: this.bentoBox[this.chainId] as Address,
+              address: this.bentoBox[this.chainId],
               chainId: this.chainId,
               abi: totalsAbi,
               functionName: 'totals',

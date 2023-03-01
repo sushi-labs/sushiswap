@@ -2,7 +2,7 @@ import { Type as Currency } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
-import { BentoBoxV1ChainId, bentoBoxV1Address } from '@sushiswap/bentobox/exports'
+import { BentoBoxV1ChainId, bentoBoxV1Address } from '@sushiswap/bentobox'
 
 type UseBentoBoxTotals = (
   chainId: BentoBoxV1ChainId | undefined,

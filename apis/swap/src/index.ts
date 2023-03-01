@@ -4,11 +4,7 @@ import cors from '@fastify/cors'
 import rateLimit from '@fastify/rate-limit'
 import { ChainId } from '@sushiswap/chain'
 import { Native, nativeCurrencyIds } from '@sushiswap/currency'
-import {
-  isRouteProcessorChainId,
-  routeProcessorAddress,
-  RouteProcessorChainId,
-} from '@sushiswap/route-processor/exports'
+import { isRouteProcessorChainId, routeProcessorAddress, RouteProcessorChainId } from '@sushiswap/route-processor'
 import {
   // findSpecialRoute,
   DataFetcher,

@@ -8,7 +8,7 @@ import '@typechain/hardhat'
 import 'hardhat-deploy'
 import 'hardhat-deploy-ethers'
 
-import { readFileSync, writeFileSync } from 'fs'
+import { copyFileSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { HardhatUserConfig, task } from 'hardhat/config'
 import { TASK_EXPORT } from 'hardhat-deploy'
 import type { MultiExport } from 'hardhat-deploy/types'
@@ -22,7 +22,10 @@ export const EXPORT_TASK = () => {
   task(TASK_EXPORT, async (args, hre, runSuper) => {
     await runSuper()
 
-    const parsed: MultiExport = JSON.parse(readFileSync('./exports.json', { encoding: 'utf-8' }))
+    copyFileSync('./exports.json', './exports/exports.json')
+    unlinkSync('./exports.json')
+
+    const parsed: MultiExport = JSON.parse(readFileSync('./exports/exports.json', { encoding: 'utf-8' }))
     delete parsed['31337']
 
     const contractNames = Array.from(
@@ -30,7 +33,7 @@ export const EXPORT_TASK = () => {
     )
 
     writeFileSync(
-      './exports.ts',
+      './exports/exports.ts',
       `
 import type { NumberStringToNumber } from "@sushiswap/types"` +
         contractNames

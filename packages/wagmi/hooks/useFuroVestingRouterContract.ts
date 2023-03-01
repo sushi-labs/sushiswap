@@ -1,4 +1,4 @@
-import { furoVestingRouterAbi, furoVestingRouterAddress, FuroVestingRouterChainId } from '@sushiswap/furo/exports'
+import { furoVestingRouterAbi, furoVestingRouterAddress, FuroVestingRouterChainId } from '@sushiswap/furo'
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
 import { useProvider } from 'wagmi'

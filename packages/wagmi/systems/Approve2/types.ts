@@ -1,5 +1,5 @@
 import { Signature } from '@ethersproject/bytes'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Type } from '@sushiswap/currency'
 import { ButtonProps, NotificationData } from '@sushiswap/ui'
 import { ReactNode } from 'react'

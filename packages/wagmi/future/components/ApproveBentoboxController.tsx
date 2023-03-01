@@ -3,7 +3,7 @@ import { ApprovalState, useBentoBoxApproveCallback } from '../../hooks'
 import { NotificationData } from '@sushiswap/ui/future/components/toast'
 import { Signature } from '@ethersproject/bytes'
 import { Address } from 'wagmi'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 interface ApproveBentoboxController {
   chainId: BentoBoxV1ChainId

@@ -2,7 +2,7 @@
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import { totalsAbi } from '@sushiswap/abi'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
+import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import type { ChainId } from '@sushiswap/chain'
 import { Prisma, PrismaClient, Token } from '@sushiswap/database'
 import { calcTokenPrices, ConstantProductRPool, Rebase, RPool, StableSwapRPool } from '@sushiswap/tines'
@@ -13,12 +13,7 @@ import { PoolType, Price, ProtocolName, ProtocolVersion } from '../config.js'
 
 const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 
-export async function prices(
-  chainId: ChainId,
-  base: string,
-  price: Price,
-  minimumLiquidity = 500000000
-) {
+export async function prices(chainId: ChainId, base: string, price: Price, minimumLiquidity = 500000000) {
   const client = new PrismaClient()
   try {
     if (!Object.values(Price).includes(price)) {
@@ -138,8 +133,8 @@ async function getPoolsByPagination(
           version: {
             in: CURRENT_SUPPORTED_VERSIONS,
           },
-        }
-      ]
+        },
+      ],
     },
   })
 }
@@ -147,7 +142,7 @@ async function getPoolsByPagination(
 async function transform(chainId: ChainId, pools: Pool[]) {
   const tokens: Map<string, Token> = new Map()
   const stablePools = pools.filter((pool) => pool.type === PoolType.STABLE_POOL)
-  const rebases = await fetchRebases(stablePools, chainId)
+  const rebases = isBentoBoxV1ChainId(chainId) ? await fetchRebases(stablePools, chainId) : undefined
 
   const rPools: RPool[] = []
   pools.forEach((pool) => {
@@ -175,8 +170,8 @@ async function transform(chainId: ChainId, pools: Pool[]) {
         )
       )
     } else if (pool.type === PoolType.STABLE_POOL) {
-      const total0 = rebases.get(token0.address)
-      const total1 = rebases.get(token1.address)
+      const total0 = rebases?.get(token0.address)
+      const total1 = rebases?.get(token1.address)
       if (total0 && total1) {
         rPools.push(
           new StableSwapRPool(
@@ -198,7 +193,7 @@ async function transform(chainId: ChainId, pools: Pool[]) {
   return { rPools, tokens }
 }
 
-async function fetchRebases(pools: Pool[], chainId: ChainId) {
+async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId) {
   const tokenMap = new Map<string, Token>()
   pools.forEach((pool) => {
     tokenMap.set(pool.token0.address, pool.token0)
@@ -217,7 +212,7 @@ async function fetchRebases(pools: Pool[], chainId: ChainId) {
       (t) =>
         ({
           args: [t.address as Address],
-          address: BENTOBOX_ADDRESS[chainId] as Address,
+          address: bentoBoxV1Address[chainId],
           chainId: chainId,
           abi: totalsAbi,
           functionName: 'totals',

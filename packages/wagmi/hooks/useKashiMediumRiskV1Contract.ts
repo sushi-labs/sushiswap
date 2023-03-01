@@ -1,8 +1,4 @@
-import {
-  kashiPairMediumRiskV1Address,
-  kashiPairMediumRiskV1Abi,
-  KashiPairMediumRiskV1ChainId,
-} from '@sushiswap/kashi/exports'
+import { kashiPairMediumRiskV1Address, kashiPairMediumRiskV1Abi, KashiPairMediumRiskV1ChainId } from '@sushiswap/kashi'
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
 import { useProvider } from 'wagmi'

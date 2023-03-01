@@ -19,7 +19,7 @@ import { createToast, NotificationData } from '@sushiswap/ui/future/components/t
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
 import { Chain } from '@sushiswap/chain'
-import { routeProcessorAddress } from '@sushiswap/route-processor/exports'
+import { routeProcessorAddress } from '@sushiswap/route-processor'
 
 interface ConfirmationDialogProps {
   children({

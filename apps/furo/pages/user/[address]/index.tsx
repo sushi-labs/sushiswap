@@ -13,7 +13,7 @@ const Dashboard = dynamic(() => import('../../../components/Dashboard').then((mo
 import { NextSeo } from 'next-seo'
 
 import { type Stream as StreamDTO, type Transaction as TransactionDTO } from '../../../.graphclient'
-import { FuroStreamChainId } from '@sushiswap/furo/exports'
+import { FuroStreamChainId } from '@sushiswap/furo'
 
 interface Props {
   fallback?: {

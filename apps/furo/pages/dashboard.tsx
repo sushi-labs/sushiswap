@@ -7,7 +7,7 @@ import { NextSeo } from 'next-seo'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 
 import { BackgroundVector, Dashboard, Layout } from '../components'
-import { FuroStreamChainId } from '@sushiswap/furo/exports'
+import { FuroStreamChainId } from '@sushiswap/furo'
 
 export default function DashboardPage() {
   const router = useRouter()

@@ -1,3 +1,4 @@
+import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId, chainShortName } from '@sushiswap/chain'
 import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
 // const { provider } = configureChains(allChains, allProviders, { pollingInterval: 10000, minQuorum: 1, targetQuorum: 1 })
@@ -5,7 +6,7 @@ import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
 //   autoConnect: true,
 //   provider,
 // })
-import { Client, PublicClient } from 'viem'
+import { PublicClient } from 'viem'
 
 // import { configureChains, createClient } from '@wagmi/core'
 // import { allChains } from './chains'
@@ -65,7 +66,7 @@ export class DataFetcher {
       }
     }
 
-    if (this._providerIsIncluded(LiquidityProviders.Trident, providers)) {
+    if (this._providerIsIncluded(LiquidityProviders.Trident, providers) && isBentoBoxV1ChainId(this.chainId)) {
       try {
         const provider = new TridentProvider(this.chainId, this.client)
         this.providers.push(provider)

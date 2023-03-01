@@ -19,7 +19,7 @@ import { SushiXSwap as SushiXSwapContract } from '@sushiswap/wagmi'
 import { Address } from 'wagmi'
 import { HexString } from '@sushiswap/types'
 import { readContract } from 'wagmi/actions'
-import { SushiXSwapChainId } from '@sushiswap/sushixswap/exports'
+import { SushiXSwapChainId } from '@sushiswap/sushixswap'
 
 export type Complex = [
   {

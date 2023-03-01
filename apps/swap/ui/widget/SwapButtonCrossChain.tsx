@@ -7,7 +7,7 @@ import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useTrade } from '../../lib/useTrade'
 import { warningSeverity } from '../../lib/warningSeverity'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
+import { bentoBoxV1Address } from '@sushiswap/bentobox'
 
 export const SwapButtonCrossChain: FC = () => {
   const { amount, network0, network1, value } = useSwapState()
@@ -42,7 +42,7 @@ export const SwapButtonCrossChain: FC = () => {
                   fullWidth
                   size="xl"
                   amount={amount}
-                  contract={BENTOBOX_ADDRESS[network0]}
+                  contract={bentoBoxV1Address[network0]}
                 >
                   <Button
                     disabled={
@@ -64,7 +64,7 @@ export const SwapButtonCrossChain: FC = () => {
         </Checker.Connect>
       </div>
       {warningSeverity(trade?.priceImpact) > 3 && (
-        <div className="rounded-xl px-4 py-3 bg-red/20 mt-4 flex items-start">
+        <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
           <input
             id="expert-checkbox"
             type="checkbox"

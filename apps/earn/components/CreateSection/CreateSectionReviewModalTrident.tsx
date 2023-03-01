@@ -2,7 +2,6 @@ import { defaultAbiCoder } from '@ethersproject/abi'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import {
   computeConstantProductPoolAddress,
   computeStablePoolAddress,
@@ -10,7 +9,7 @@ import {
   Fee,
   StablePool,
 } from '@sushiswap/amm'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
+import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Type } from '@sushiswap/currency'
 import { Button, Dots } from '@sushiswap/ui'
 import {
@@ -293,8 +292,8 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
                 className="whitespace-nowrap"
                 fullWidth
                 amount={input0}
-                address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
-                enabled={Boolean(chain && BENTOBOX_ADDRESS[chain?.id])}
+                address={chain ? bentoBoxV1Address[chain.id as BentoBoxV1ChainId] : undefined}
+                enabled={Boolean(chain && isBentoBoxV1ChainId(chain.id))}
               />
               <Approve.Token
                 id="create-trident-approve-token1"
@@ -302,8 +301,8 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
                 className="whitespace-nowrap"
                 fullWidth
                 amount={input1}
-                address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
-                enabled={Boolean(chain && BENTOBOX_ADDRESS[chain?.id])}
+                address={chain ? bentoBoxV1Address[chain.id as BentoBoxV1ChainId] : undefined}
+                enabled={Boolean(chain && isBentoBoxV1ChainId(chain.id))}
               />
             </Approve.Components>
           }
