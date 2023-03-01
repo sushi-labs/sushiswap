@@ -1,5 +1,5 @@
 import { computeStablePoolAddress, Fee, StablePool } from '@sushiswap/amm'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Currency, Token, Type } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { BigNumber } from 'ethers'

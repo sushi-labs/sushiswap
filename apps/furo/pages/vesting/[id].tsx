@@ -26,7 +26,7 @@ import {
 import VestingChart2 from '../../components/vesting/VestingChart2'
 import { getRebase, getVesting, getVestingTransactions, Vesting } from '../../lib'
 import { ChartHover } from '../../types'
-import { FuroVestingChainId } from '@sushiswap/furo/exports'
+import { FuroVestingChainId } from '@sushiswap/furo'
 
 interface Props {
   fallback?: {

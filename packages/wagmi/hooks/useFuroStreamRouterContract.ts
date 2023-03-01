@@ -1,4 +1,4 @@
-import { furoStreamRouterAbi, furoStreamRouterAddress, FuroStreamRouterChainId } from '@sushiswap/furo/exports'
+import { furoStreamRouterAbi, furoStreamRouterAddress, FuroStreamRouterChainId } from '@sushiswap/furo'
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
 import { useProvider } from 'wagmi'

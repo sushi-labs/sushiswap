@@ -1,4 +1,4 @@
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { classNames, NotificationData } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
 

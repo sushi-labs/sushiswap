@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { uniswapV2Router02Abi, uniswapV2Router02Address, UniswapV2Router02ChainId } from '@sushiswap/sushiswap/exports'
+import { uniswapV2Router02Abi, uniswapV2Router02Address, UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
 import { useProvider, useSigner } from 'wagmi'

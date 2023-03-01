@@ -3,7 +3,7 @@ import { Type } from '@sushiswap/currency'
 import { getBentoboxTotals } from './getBentoboxTotals'
 import { JSBI } from '@sushiswap/math'
 import { BigNumber } from '@ethersproject/bignumber'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 interface UseBentoboxTotalsParams {
   chainId: BentoBoxV1ChainId

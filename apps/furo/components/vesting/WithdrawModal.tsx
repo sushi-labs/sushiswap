@@ -12,7 +12,7 @@ import { SendTransactionResult } from 'wagmi/actions'
 import { useVestingBalance, Vesting } from '../../lib'
 import { useCreateNotification } from '@sushiswap/react-query'
 import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
-import { FuroVestingChainId } from '@sushiswap/furo/exports'
+import { FuroVestingChainId } from '@sushiswap/furo'
 
 interface WithdrawModalProps {
   vesting?: Vesting

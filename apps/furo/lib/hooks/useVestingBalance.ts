@@ -1,5 +1,5 @@
 import { Amount, Token } from '@sushiswap/currency'
-import { FuroVestingChainId } from '@sushiswap/furo/exports'
+import { FuroVestingChainId } from '@sushiswap/furo'
 import { JSBI } from '@sushiswap/math'
 import { getFuroVestingContractConfig, getBentoBoxContractConfig } from '@sushiswap/wagmi'
 import { BigNumber } from 'ethers'

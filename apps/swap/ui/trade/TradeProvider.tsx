@@ -18,8 +18,8 @@ import { useCustomTokens, useToken, useTokens } from '@sushiswap/react-query'
 import { getAddress, isAddress } from 'ethers/lib/utils'
 import { Signature } from '@ethersproject/bytes'
 import { nanoid } from 'nanoid'
-import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
-import { SushiXSwapChainId, isSushiXSwapChainId } from '@sushiswap/sushixswap/exports'
+import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { SushiXSwapChainId, isSushiXSwapChainId } from '@sushiswap/sushixswap'
 
 export const queryParamsSchema = z.object({
   fromChainId: z.coerce

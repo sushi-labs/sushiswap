@@ -20,7 +20,7 @@ import { useTransactionDeadline } from '../../lib/hooks'
 import { useNotifications, useSettings } from '../../lib/state/storage'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
-import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap/exports'
+import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 
 interface AddSectionReviewModalLegacyProps {
   poolState: PairState

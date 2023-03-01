@@ -58,7 +58,6 @@ export abstract class LiquidityProvider {
    */
   abstract getCurrentPoolList(t0: Token, t1: Token): PoolCode[]
 
-
   abstract stopFetchPoolsData(): void
 
   /**

@@ -1,7 +1,7 @@
 import { ConstantProductPool, Fee, Pair, StablePool } from '@sushiswap/amm'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Type } from '@sushiswap/currency'
-import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap/exports'
+import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 import { ReactElement } from 'react'
 
 import { ConstantProductPoolState, PairState, StablePoolState } from '../../hooks'

@@ -2,7 +2,7 @@ import { Amount, Type as Currency } from '@sushiswap/currency'
 import { readContracts } from 'wagmi'
 import { Pair } from '@sushiswap/amm'
 import { getPairs as _getPairs, PairState } from '@sushiswap/wagmi'
-import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap/exports'
+import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 
 export const getPairs = async (
   chainId: UniswapV2Router02ChainId | undefined,

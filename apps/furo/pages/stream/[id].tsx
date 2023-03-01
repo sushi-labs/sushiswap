@@ -22,7 +22,7 @@ import {
 import { BalanceChart, WithdrawModal } from '../../components/stream'
 import { getRebase, getStream, getStreamTransactions, Stream } from '../../lib'
 import { ChartHover } from '../../types'
-import { FuroStreamChainId } from '@sushiswap/furo/exports'
+import { FuroStreamChainId } from '@sushiswap/furo'
 
 interface Props {
   fallback?: {

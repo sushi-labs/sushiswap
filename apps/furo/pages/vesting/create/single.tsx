@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { FuroVestingRouterChainId } from '@sushiswap/furo/exports'
+import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { Breadcrumb, BreadcrumbLink } from '@sushiswap/ui'
 import { NextSeo } from 'next-seo'
 import { useNetwork } from 'wagmi'

@@ -1,7 +1,7 @@
 import { Tab } from '@headlessui/react'
 import { CheckIcon, PaperAirplaneIcon, XIcon } from '@heroicons/react/outline'
 import { Token } from '@sushiswap/currency'
-import { FuroStreamChainId } from '@sushiswap/furo/exports'
+import { FuroStreamChainId } from '@sushiswap/furo'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Chip, classNames, Menu, Switch, Typography } from '@sushiswap/ui'
 import stringify from 'fast-json-stable-stringify'

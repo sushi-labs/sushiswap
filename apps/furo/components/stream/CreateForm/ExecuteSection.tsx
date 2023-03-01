@@ -1,7 +1,6 @@
 import { isAddress } from '@ethersproject/address'
 import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
@@ -13,13 +12,14 @@ import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 're
 import { useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
-import { FuroStreamRouterChainId } from '@sushiswap/furo/exports'
+import { FuroStreamRouterChainId } from '@sushiswap/furo'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../../lib'
 import { ZFundSourceToFundSource, ZTokenToToken } from '../../../lib/zod'
 import { CreateStreamFormSchemaType } from './schema'
 import { useCreateNotification } from '@sushiswap/react-query'
 import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { bentoBoxV1Address } from '@sushiswap/bentobox'
 
 export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
   const { address } = useAccount()
@@ -164,7 +164,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = ({ chain
               id="furo-create-single-stream-approve-token"
               enabled={formValid && _amount?.greaterThan(ZERO)}
               amount={_amount}
-              address={BENTOBOX_ADDRESS[chainId]}
+              address={bentoBoxV1Address[chainId]}
             />
           </Approve.Components>
         }

@@ -15,7 +15,7 @@ import { Stream } from '../../lib'
 import { useStreamBalance } from '../../lib'
 import { useCreateNotification } from '@sushiswap/react-query'
 import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
-import { FuroStreamChainId } from '@sushiswap/furo/exports'
+import { FuroStreamChainId } from '@sushiswap/furo'
 
 interface WithdrawModalProps {
   stream?: Stream

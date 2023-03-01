@@ -1,7 +1,12 @@
 import { Amount, Token } from '@sushiswap/currency'
-import { FuroStreamChainId } from '@sushiswap/furo/exports'
+import { FuroStreamChainId } from '@sushiswap/furo'
 import { JSBI } from '@sushiswap/math'
-import { getFuroStreamContractConfig, getBentoBoxContractConfig, useBentoBoxContract, useFuroStreamContract } from '@sushiswap/wagmi'
+import {
+  getFuroStreamContractConfig,
+  getBentoBoxContractConfig,
+  useBentoBoxContract,
+  useFuroStreamContract,
+} from '@sushiswap/wagmi'
 import { ListenerOptions } from '@uniswap/redux-multicall/dist/types'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'

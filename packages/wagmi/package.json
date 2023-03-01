@@ -30,7 +30,6 @@
     "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^2.0.13",
     "@sushiswap/abi": "workspace:*",
-    "@sushiswap/address": "workspace:*",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",

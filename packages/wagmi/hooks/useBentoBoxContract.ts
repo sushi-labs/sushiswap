@@ -1,4 +1,4 @@
-import { bentoBoxV1Abi, bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
+import { bentoBoxV1Abi, bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
 import { useProvider } from 'wagmi'

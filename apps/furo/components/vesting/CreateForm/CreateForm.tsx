@@ -1,7 +1,7 @@
 import { DevTool } from '@hookform/devtools'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { nanoid } from '@reduxjs/toolkit'
-import { FuroVestingRouterChainId } from '@sushiswap/furo/exports'
+import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Button, Form } from '@sushiswap/ui'
 import { FC, useEffect } from 'react'

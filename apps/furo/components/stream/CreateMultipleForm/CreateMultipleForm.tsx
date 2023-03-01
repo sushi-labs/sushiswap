@@ -19,7 +19,7 @@ import {
   ReviewSection,
 } from '.'
 import { CreateStreamsTableSection } from './CreateStreamsTableSection'
-import { FuroStreamRouterChainId } from '@sushiswap/furo/exports'
+import { FuroStreamRouterChainId } from '@sushiswap/furo'
 
 export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
   const isMounted = useIsMounted()

@@ -7,7 +7,7 @@ import { ApproveBentoboxController } from '../../components'
 import { Address } from 'wagmi'
 import { NotificationData } from '@sushiswap/ui/future/components/toast'
 import { Signature } from '@ethersproject/bytes'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox/exports'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 export interface ApproveBentoboxProps extends ButtonProps<'button'> {
   chainId: BentoBoxV1ChainId

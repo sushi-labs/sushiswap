@@ -1,7 +1,7 @@
 import { tryParseAmount } from '@sushiswap/currency'
 import { Pair } from '@sushiswap/graph-client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap/exports'
+import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 import { Button, Dots } from '@sushiswap/ui'
 import { Checker, PairState, usePair } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'

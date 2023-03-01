@@ -43,6 +43,7 @@
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/address": "workspace:*",
     "@sushiswap/amm": "workspace:*",
+    "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/math": "workspace:*",
