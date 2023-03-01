@@ -15,7 +15,7 @@ export async function getToken(chainId: number, address: string) {
       AND: {
         chainId,
         address,
-        status: 'APPROVED',
+        // status: 'APPROVED',
       },
     },
   })
