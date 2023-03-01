@@ -29,6 +29,7 @@ export const PoolsTable: FC = () => {
       chainIds: chainIds,
       tokenSymbols,
       isIncentivized: incentivizedOnly || undefined, // will filter farms out if set to false, undefined will be filtered out by the parser
+      isWhitelisted: true, // can be added to filters later, need to put it here so fallback works
       orderBy: sorting[0]?.id,
       orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
       poolTypes: poolTypes as PoolType[],
@@ -37,7 +38,7 @@ export const PoolsTable: FC = () => {
     [chainIds, tokenSymbols, incentivizedOnly, sorting, poolTypes, poolVersions]
   )
 
-  const { data: pools, isValidating, size, setSize } = usePoolsInfinite({ args, swrConfig: useSWRConfig() })
+  const { data: pools, isValidating, setSize } = usePoolsInfinite({ args, swrConfig: useSWRConfig() })
   const { data: poolCount } = usePoolCount({ args, swrConfig: useSWRConfig() })
   const data = useMemo(() => pools?.flat() || [], [pools])
 
@@ -55,6 +56,7 @@ export const PoolsTable: FC = () => {
     getSortedRowModel: getSortedRowModel(),
     manualSorting: true,
     manualPagination: true,
+    sortDescFirst: true,
   })
 
   useEffect(() => {

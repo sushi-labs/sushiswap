@@ -33,4 +33,5 @@ export const defaultPoolsArgs: GetPoolsArgs = {
   orderDir: 'desc',
   poolTypes: Object.keys(AVAILABLE_POOL_TYPE_MAP) as PoolType[],
   poolVersions: Object.keys(AVAILABLE_VERSION_MAP) as PoolVersion[],
+  isWhitelisted: true,
 }
