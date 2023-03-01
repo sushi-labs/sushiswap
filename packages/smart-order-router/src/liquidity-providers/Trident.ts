@@ -45,7 +45,7 @@ interface PoolInfo {
 
 export class TridentProvider extends LiquidityProvider {
   // Need to override for type narrowing
-  chainId: BentoBoxV1ChainId
+  chainId: BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId
 
   readonly TOP_POOL_SIZE = 155
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 1000

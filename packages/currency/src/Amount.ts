@@ -27,9 +27,18 @@ export class Amount<T extends Type> extends Fraction {
   ): Amount<T> {
     if (JSBI.EQ(rebase.base, ZERO)) return new Amount(currency, shares)
 
-    const elastic = JSBI.divide(JSBI.multiply(JSBI.BigInt(shares), rebase.elastic), rebase.base)
+    const elastic = JSBI.divide(
+      JSBI.multiply(JSBI.BigInt(typeof shares === 'bigint' ? shares.toString() : shares), rebase.elastic),
+      rebase.base
+    )
 
-    if (roundUp && JSBI.LT(JSBI.divide(JSBI.multiply(elastic, rebase.base), rebase.elastic), JSBI.BigInt(shares))) {
+    if (
+      roundUp &&
+      JSBI.LT(
+        JSBI.divide(JSBI.multiply(elastic, rebase.base), rebase.elastic),
+        JSBI.BigInt(typeof shares === 'bigint' ? shares.toString() : shares)
+      )
+    ) {
       return new Amount(currency, JSBI.add(elastic, JSBI.BigInt(1)))
     }
 

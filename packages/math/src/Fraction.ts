@@ -23,12 +23,17 @@ class Fraction {
   public readonly denominator: JSBI
 
   public constructor(numerator: BigintIsh, denominator: BigintIsh = JSBI.BigInt(1)) {
-    this.numerator = JSBI.BigInt(numerator)
-    this.denominator = JSBI.BigInt(denominator)
+    this.numerator = JSBI.BigInt(typeof numerator === 'bigint' ? numerator.toString() : numerator)
+    this.denominator = JSBI.BigInt(typeof denominator === 'bigint' ? denominator.toString() : denominator)
   }
 
   private static tryParseFraction(fractionish: BigintIsh | Fraction): Fraction {
-    if (fractionish instanceof JSBI || typeof fractionish === 'number' || typeof fractionish === 'string')
+    if (
+      fractionish instanceof JSBI ||
+      typeof fractionish === 'number' ||
+      typeof fractionish === 'string' ||
+      typeof fractionish === 'bigint'
+    )
       return new Fraction(fractionish)
 
     if ('numerator' in fractionish && 'denominator' in fractionish) return fractionish
