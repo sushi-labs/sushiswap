@@ -9,6 +9,7 @@ import { SerializedToken, tokenSchema } from './zod'
  * Represents an ERC20 token with a unique address and some metadata.
  */
 export class Token extends Currency {
+  public readonly id: string
   public readonly isNative = false as const
   public readonly isToken = true as const
 
@@ -46,6 +47,7 @@ export class Token extends Currency {
     })
     try {
       this.address = getAddress(address)
+      this.id = `${chainId}:${address}`
     } catch {
       throw `${address} is not a valid address`
     }

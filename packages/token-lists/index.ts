@@ -12,6 +12,7 @@ interface TagInfo extends TagDetails {
  * Token instances created from token info on a token list.
  */
 export class WrappedTokenInfo implements Token {
+  public readonly id: string
   public readonly isNative = false as const
   public readonly isToken = true as const
   public readonly list?: TokenList
@@ -21,6 +22,7 @@ export class WrappedTokenInfo implements Token {
   readonly rebase = { base: JSBI.BigInt(1), elastic: JSBI.BigInt(1) }
 
   constructor(tokenInfo: TokenInfo, list?: TokenList) {
+    this.id = `${tokenInfo.chainId}:${tokenInfo.address}`
     this.tokenInfo = tokenInfo
     this.list = list
   }

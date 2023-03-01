@@ -8,12 +8,14 @@ import { Type } from './Type'
 import { nativeSchema, SerializedNative } from './zod'
 
 export class Native extends Currency {
+  public readonly id: string
   public readonly isNative = true as const
   public readonly isToken = false as const
   public readonly symbol: string
   public readonly name: string
   protected constructor(native: { chainId: number; decimals: number; symbol: string; name: string }) {
     super(native)
+    this.id = `${native.chainId}:NATIVE`
     this.symbol = native.symbol
     this.name = native.name
   }
