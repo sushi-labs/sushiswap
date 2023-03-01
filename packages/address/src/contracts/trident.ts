@@ -1,14 +1,14 @@
 import { ChainId } from '@sushiswap/chain'
-import tridentExports from '@sushiswap/trident/exports.json'
+import { ConstantProductPoolFactoryChainId, StablePoolFactoryChainId } from '@sushiswap/trident'
 import { HexString } from '@sushiswap/types'
 
-export type TridentExport = (typeof tridentExports)[keyof typeof tridentExports][number]
-export type TridentExportChainId = TridentExport['chainId']
-export type TridentExportContracts = TridentExport['contracts']
+// export type TridentExport = (typeof tridentExports)[keyof typeof tridentExports][number]
+// export type TridentExportChainId = TridentExport['chainId']
+// export type TridentExportContracts = TridentExport['contracts']
 
 // StablePoolFactory
 // ConstantProductPoolFactory
-export const STABLE_POOL_FACTORY_ADDRESS: Partial<Record<TridentExportChainId, HexString>> = {
+export const STABLE_POOL_FACTORY_ADDRESS: Partial<Record<StablePoolFactoryChainId, HexString>> = {
   [ChainId.ARBITRUM]: '0xc2fB256ABa36852DCcEA92181eC6b355f09A0288',
   [ChainId.AVALANCHE]: '0x7770978eED668a3ba661d51a773d3a992Fc9DDCB',
   [ChainId.BSC]: '0xA4C0363edD74F55AC8f316a3Bf447F8aa09607D3',
@@ -19,7 +19,7 @@ export const STABLE_POOL_FACTORY_ADDRESS: Partial<Record<TridentExportChainId, H
   [ChainId.POLYGON]: '0x2A0Caa28331bC6a18FF195f06694f90671dE70f2',
 }
 
-export const CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS: Partial<Record<TridentExportChainId, HexString>> = {
+export const CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS: Partial<Record<ConstantProductPoolFactoryChainId, HexString>> = {
   [ChainId.ARBITRUM]: '0xc79Ae87E9f55761c08e346B98dDdf070C9872787',
   [ChainId.AVALANCHE]: '0xb84a043bc4fCA97B7a74eD7dAaB1Bf12A8DF929F',
   [ChainId.BSC]: '0x3D2f8ae0344d38525d2AE96Ab750B83480c0844F',

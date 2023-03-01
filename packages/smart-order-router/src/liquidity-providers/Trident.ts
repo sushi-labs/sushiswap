@@ -1,8 +1,13 @@
 import { balanceOfAbi, getReservesAbi, getStableReservesAbi, totalsAbi } from '@sushiswap/abi'
-import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from '@sushiswap/address'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Token } from '@sushiswap/currency'
 import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
+import {
+  constantProductPoolFactoryAddress,
+  ConstantProductPoolFactoryChainId,
+  stablePoolFactoryAddress,
+  StablePoolFactoryChainId,
+} from '@sushiswap/trident'
 import { add, getUnixTime } from 'date-fns'
 import { BigNumber } from 'ethers'
 import { Address, PublicClient } from 'viem'
@@ -57,14 +62,17 @@ export class TridentProvider extends LiquidityProvider {
 
   bridges: Map<string, PoolCode> = new Map()
   bentoBox = bentoBoxV1Address
-  constantProductPoolFactory = CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS
-  stablePoolFactory = STABLE_POOL_FACTORY_ADDRESS
+  constantProductPoolFactory = constantProductPoolFactoryAddress
+  stablePoolFactory = stablePoolFactoryAddress
   refreshInitialPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
 
   blockListener?: () => void
   unwatchBlockNumber?: () => void
 
-  constructor(chainId: BentoBoxV1ChainId, client: PublicClient) {
+  constructor(
+    chainId: BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId,
+    client: PublicClient
+  ) {
     super(chainId, client)
     this.chainId = chainId
     if (

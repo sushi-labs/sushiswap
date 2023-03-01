@@ -1,6 +1,6 @@
 import { Amount, Price, Share, Token } from '@sushiswap/currency'
 import { JSBI, ONE, sqrt, ZERO } from '@sushiswap/math'
-import EXPORTS from '@sushiswap/trident/exports.json'
+import { constantProductPoolFactoryAddress, ConstantProductPoolFactoryChainId } from '@sushiswap/trident'
 import invariant from 'tiny-invariant'
 
 import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
@@ -20,7 +20,7 @@ export class ConstantProductPool implements Pool {
 
   public static getAddress(tokenA: Token, tokenB: Token, fee: Fee, twap: boolean): string {
     return computeConstantProductPoolAddress({
-      factoryAddress: (EXPORTS as any)[tokenA.chainId][0].contracts.ConstantProductPoolFactory.address,
+      factoryAddress: constantProductPoolFactoryAddress[tokenA.chainId as ConstantProductPoolFactoryChainId],
       tokenA,
       tokenB,
       fee,

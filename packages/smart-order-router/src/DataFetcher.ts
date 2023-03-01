@@ -1,6 +1,7 @@
 import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId, chainShortName } from '@sushiswap/chain'
 import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
+import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
 // const { provider } = configureChains(allChains, allProviders, { pollingInterval: 10000, minQuorum: 1, targetQuorum: 1 })
 // createClient({
 //   autoConnect: true,
@@ -66,7 +67,11 @@ export class DataFetcher {
       }
     }
 
-    if (this._providerIsIncluded(LiquidityProviders.Trident, providers) && isBentoBoxV1ChainId(this.chainId)) {
+    if (
+      this._providerIsIncluded(LiquidityProviders.Trident, providers) &&
+      isBentoBoxV1ChainId(this.chainId) &&
+      (isConstantProductPoolFactoryChainId(this.chainId) || isStablePoolFactoryChainId(this.chainId))
+    ) {
       try {
         const provider = new TridentProvider(this.chainId, this.client)
         this.providers.push(provider)

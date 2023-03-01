@@ -30,7 +30,7 @@
   "scripts": {
     "build": "TS_NODE_TRANSPILE_ONLY=1 hardhat compile",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf artifacts && rm -rf cache && rm -rf exports && rm -rf typechain",
-    "export": "hardhat export --export-all exports.json",
+    "export": "hardhat export --export-all exports.json && cd exports && tsc --init && tsc --declaration",
     "node": "hardhat node"
   },
   "devDependencies": {

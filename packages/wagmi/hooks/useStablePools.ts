@@ -2,6 +2,7 @@ import { computeStablePoolAddress, Fee, StablePool } from '@sushiswap/amm'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Currency, Token, Type } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
+import { isStablePoolFactoryChainId } from '@sushiswap/trident'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
@@ -271,7 +272,7 @@ export function useStablePools(chainId: number, pools: PoolInput[]): [StablePool
       abi: stablePoolAbi,
       functionName: 'getReserves',
     })),
-    enabled: poolsAddresses.length > 0 && getStablePoolFactoryContract(chainId)?.address,
+    enabled: poolsAddresses.length > 0 && isStablePoolFactoryChainId(chainId),
     watch: true,
     keepPreviousData: true,
   })

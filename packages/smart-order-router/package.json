@@ -48,6 +48,8 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/tines": "workspace:*",
+    "@sushiswap/sushiswap": "workspace:*",
+    "@sushiswap/trident": "workspace:*",
     "ethereum-multicall": "2.15.0",
     "ethers": "5.7.2",
     "lodash.flatmap": "^4.5.0",

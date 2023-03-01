@@ -18,14 +18,81 @@ const accounts = {
   accountsBalance: '990000000000000000000',
 }
 
+// export const EXPORT_TASK = () => {
+//   task(TASK_EXPORT, async (args, hre, runSuper) => {
+//     await runSuper()
+
+//     copyFileSync('./exports.json', './exports/exports.json')
+//     unlinkSync('./exports.json')
+
+//     const parsed: MultiExport = JSON.parse(readFileSync('./exports/exports.json', { encoding: 'utf-8' }))
+//     delete parsed['31337']
+
+//     const contractNames = Array.from(
+//       new Set(Object.values(parsed).flatMap(([{ contracts }]: any) => Object.keys(contracts)))
+//     )
+
+//     writeFileSync(
+//       './exports/exports.ts',
+//       `
+// import type { NumberStringToNumber } from "@sushiswap/types"` +
+//         contractNames
+//           .map((contractName) => {
+//             const lowerCaseName = contractName.charAt(0).toLowerCase() + contractName.slice(1)
+
+//             const chainIds = Object.values(parsed).flatMap((exp) =>
+//               exp.filter(({ contracts }) => contracts[contractName]).map((exp) => exp.chainId)
+//             )
+
+//             const contractExports = Object.fromEntries(
+//               Object.entries(parsed)
+//                 .filter(([chainId]) => chainIds.includes(chainId))
+//                 .map(
+//                   ([chainId, [exp]]) =>
+//                     [
+//                       chainId,
+//                       {
+//                         ...Object.entries(exp.contracts)
+//                           .filter(([name]) => {
+//                             // console.log('name: ', name, 'contractName: ', contractName)
+//                             return name !== contractName
+//                           })
+//                           .map(([, contract]) => contract)[0],
+//                       },
+//                     ] as const
+//                 )
+//             )
+
+//             return `
+// export const ${lowerCaseName}Exports = ${JSON.stringify(contractExports)} as const
+// export type ${contractName}Exports = typeof ${lowerCaseName}Exports
+// export type ${contractName}ChainId = NumberStringToNumber<keyof ${contractName}Exports>
+// export const is${contractName}ChainId = (chainId: number): chainId is ${contractName}ChainId => chainId in ${lowerCaseName}Exports
+// export const ${lowerCaseName}Address = Object.fromEntries(
+//   Object.entries(${lowerCaseName}Exports).map(([chainId, data]) => [parseInt(chainId), data.address])
+// ) as {[chainId in keyof ${contractName}Exports]: ${contractName}Exports[chainId]['address']}
+// export const ${lowerCaseName}Abi = Object.fromEntries(
+//   Object.entries(${lowerCaseName}Exports).map(([chainId, data]) => [parseInt(chainId), data.abi])
+// ) as {[chainId in keyof ${contractName}Exports]: ${contractName}Exports[chainId]['abi']}
+// \n`
+//           })
+//           .join('')
+//     )
+//   })
+// }
+
 export const EXPORT_TASK = () => {
   task(TASK_EXPORT, async (args, hre, runSuper) => {
     await runSuper()
 
-    copyFileSync('./exports.json', './exports/exports.json')
-    unlinkSync('./exports.json')
+    // try {
+    //   mkdirSync('exports')
+    // } catch (e) {}
 
-    const parsed: MultiExport = JSON.parse(readFileSync('./exports/exports.json', { encoding: 'utf-8' }))
+    copyFileSync('exports.json', 'exports/exports.json')
+    unlinkSync('exports.json')
+
+    const parsed: MultiExport = JSON.parse(readFileSync('exports/exports.json', { encoding: 'utf-8' }))
     delete parsed['31337']
 
     const contractNames = Array.from(
@@ -51,7 +118,7 @@ import type { NumberStringToNumber } from "@sushiswap/types"` +
                     [
                       chainId,
                       {
-                        ...exp,
+                        // ...exp,
                         ...Object.entries(exp.contracts)
                           .filter(([name]) => name === contractName)
                           .map(([, contract]) => contract)[0],

@@ -1,6 +1,6 @@
 import { Amount, Price, Share, Token } from '@sushiswap/currency'
 import { JSBI, sqrt, ZERO } from '@sushiswap/math'
-import EXPORTS from '@sushiswap/trident/exports.json'
+import { stablePoolFactoryAddress, StablePoolFactoryChainId } from '@sushiswap/trident'
 import invariant from 'tiny-invariant'
 
 import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
@@ -28,7 +28,7 @@ export class StablePool implements Pool {
 
   public static getAddress(tokenA: Token, tokenB: Token, fee: Fee): string {
     return computeStablePoolAddress({
-      factoryAddress: (EXPORTS as any)[tokenA.chainId][0].contracts.StablePoolFactory.address,
+      factoryAddress: stablePoolFactoryAddress[tokenA.chainId as StablePoolFactoryChainId],
       tokenA,
       tokenB,
       fee,
