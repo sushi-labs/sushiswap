@@ -1,7 +1,10 @@
+import { chainShortNameToChainId } from '@sushiswap/chain'
 import { NextResponse, type NextRequest } from 'next/server'
 
+const shortNameIdRegexp = new RegExp(/(\w+):0x.*?(?=(?:\/|$))/)
+
 export async function middleware(req: NextRequest) {
-  const { pathname, search, searchParams } = req.nextUrl
+  const { pathname, search } = req.nextUrl
 
   // Index handling
   if (pathname === '/' && search !== '') {
@@ -10,9 +13,34 @@ export async function middleware(req: NextRequest) {
     return NextResponse.rewrite(url)
   }
 
-  return NextResponse.next()
+  // Matches paths that include /arb1:0x1234abcd/, starts and ends after '/'
+  if (pathname.match(shortNameIdRegexp)) {
+    // eslint-disable-next-line
+    const pairId = pathname.match(shortNameIdRegexp)![0]
+    const [chainShortName, address] = pairId.split(':')
+    const chainId = String(chainShortNameToChainId[chainShortName])
+
+    // Already rewritten / invalid chainShortName
+    if (chainId === 'undefined') return NextResponse.next()
+
+    const url = req.nextUrl.clone()
+    url.pathname = pathname.replace(pairId, `${chainId}:${address}`)
+
+    return NextResponse.redirect(url)
+  }
+
+  if (pathname.startsWith('/')) return NextResponse.next()
 }
 
 export const config = {
-  matcher: '/',
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
 }
