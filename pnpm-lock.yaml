@@ -1476,7 +1476,6 @@ importers:
 
   config/smart-order-router:
     specifiers:
-      '@sushiswap/address': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -1486,7 +1485,6 @@ importers:
       tsup: 6.5.0
       typescript: 4.9.4
     dependencies:
-      '@sushiswap/address': link:../../packages/address
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
     devDependencies:
@@ -1652,41 +1650,6 @@ importers:
       jest: 29.3.1
       tsup: 6.5.0
       typescript: 4.9.4
-    devDependencies:
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/typescript-config': link:../../config/typescript
-      '@types/jest': 29.2.4
-      eslint: 8.29.0
-      jest: 29.3.1
-      tsup: 6.5.0_typescript@4.9.4
-      typescript: 4.9.4
-
-  packages/address:
-    specifiers:
-      '@sushiswap/bentobox': workspace:*
-      '@sushiswap/chain': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/sushiswap': workspace:*
-      '@sushiswap/trident': workspace:*
-      '@sushiswap/types': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@types/jest': ^29.2.0
-      eslint: 8.29.0
-      jest: 29.3.1
-      tsup: 6.5.0
-      typescript: 4.9.4
-      zod: 3.20.2
-    dependencies:
-      '@sushiswap/bentobox': link:../../protocols/bentobox
-      '@sushiswap/chain': link:../chain
-      '@sushiswap/sushiswap': link:../../protocols/sushiswap
-      '@sushiswap/trident': link:../../protocols/trident
-      '@sushiswap/types': link:../types
-      zod: 3.20.2
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -2410,7 +2373,6 @@ importers:
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/solidity': 5.7.0
       '@sushiswap/abi': workspace:*
-      '@sushiswap/address': workspace:*
       '@sushiswap/amm': workspace:*
       '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
@@ -2429,7 +2391,6 @@ importers:
       '@types/node-fetch': 2.6.2
       date-fns: 2.29.3
       eslint: 8.29.0
-      ethereum-multicall: 2.15.0
       ethers: 5.7.2
       lodash.flatmap: ^4.5.0
       node-fetch: 2.6.6
@@ -2444,7 +2405,6 @@ importers:
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/solidity': 5.7.0
       '@sushiswap/abi': link:../abi
-      '@sushiswap/address': link:../address
       '@sushiswap/amm': link:../amm
       '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../chain
@@ -2454,7 +2414,6 @@ importers:
       '@sushiswap/tines': link:../tines
       '@sushiswap/trident': link:../../protocols/trident
       date-fns: 2.29.3
-      ethereum-multicall: 2.15.0
       ethers: 5.7.2
       lodash.flatmap: 4.5.0
       node-fetch: 2.6.6
