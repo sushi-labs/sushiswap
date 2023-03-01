@@ -8,7 +8,7 @@ import { useUserPositions } from '../../lib/hooks/api/useUserPositions'
 import { PoolsTable, PositionsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'
 
-export const PoolsSection: FC = () => {
+export const PoolsSection: FC<{ isReady?: boolean }> = ({ isReady }) => {
   const { address } = useAccount()
   const [tab, setTab] = useState<number>(0)
   const { data: userPositions } = useUserPositions({ id: address as string }, !!address)
@@ -44,7 +44,7 @@ export const PoolsSection: FC = () => {
         <TableFilters showAllFilters={tab === 0} />
         <Tab.Panels>
           <Tab.Panel unmount={false}>
-            <PoolsTable />
+            <PoolsTable isReady={isReady} />
           </Tab.Panel>
           <Tab.Panel unmount={!address}>
             <PositionsTable />

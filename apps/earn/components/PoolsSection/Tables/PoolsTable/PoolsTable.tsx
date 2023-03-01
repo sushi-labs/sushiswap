@@ -15,7 +15,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 // @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, FEES_COLUMN, APR_COLUMN]
 
-export const PoolsTable: FC = () => {
+export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady } = { isReady: true }) => {
   const { chainIds, tokenSymbols, poolTypes, poolVersions, incentivizedOnly } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
@@ -38,8 +38,12 @@ export const PoolsTable: FC = () => {
     [chainIds, tokenSymbols, incentivizedOnly, sorting, poolTypes, poolVersions]
   )
 
-  const { data: pools, isValidating, setSize } = usePoolsInfinite({ args, swrConfig: useSWRConfig() })
-  const { data: poolCount } = usePoolCount({ args, swrConfig: useSWRConfig() })
+  const {
+    data: pools,
+    isValidating,
+    setSize,
+  } = usePoolsInfinite({ args, shouldFetch: isReady, swrConfig: useSWRConfig() })
+  const { data: poolCount } = usePoolCount({ args, shouldFetch: isReady, swrConfig: useSWRConfig() })
   const data = useMemo(() => pools?.flat() || [], [pools])
 
   const table = useReactTable<Pool>({
@@ -98,7 +102,7 @@ export const PoolsTable: FC = () => {
       >
         <GenericTable<Pool>
           table={table}
-          loading={!pools && isValidating}
+          loading={(!pools && isValidating) || !isReady}
           HoverElement={isMd ? PoolQuickHoverTooltip : undefined}
           placeholder="No pools found"
           pageSize={PAGE_SIZE}

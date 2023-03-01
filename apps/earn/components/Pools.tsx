@@ -3,7 +3,7 @@ import { Button, Link, OnsenIcon, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 import { Layout, PoolFilters, PoolsFiltersProvider, PoolsSection } from '../components'
 
-export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
+export const Pools: FC<{ filters?: Partial<PoolFilters>; isReady?: boolean }> = ({ filters, isReady }) => {
   return (
     <Layout>
       <div className="flex flex-col gap-10 md:gap-16">
@@ -28,7 +28,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
           </div>
         </section>
         <PoolsFiltersProvider passedFilters={filters}>
-          <PoolsSection />
+          <PoolsSection isReady={isReady} />
         </PoolsFiltersProvider>
       </div>
     </Layout>
