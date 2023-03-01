@@ -12,7 +12,6 @@ export class UniswapV2Provider extends UniswapV2BaseProvider {
     const initCodeHash = {
       [ChainId.ETHEREUM]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
     } as const
-
     super(chainId, client, factory, initCodeHash)
   }
   getType(): LiquidityProviders {

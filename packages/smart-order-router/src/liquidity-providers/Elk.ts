@@ -25,7 +25,7 @@ export class ElkProvider extends UniswapV2BaseProvider {
       // [ChainId.OKEX]: '0x1116f8B82028324f2065078b4ff6b47F1Cc22B97',
     } as const
     const initCodeHash = {
-      [ChainId.AVALANCHE]: '84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
+      [ChainId.AVALANCHE]: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
       [ChainId.POLYGON]: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
       [ChainId.FANTOM]: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
       [ChainId.GNOSIS]: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
