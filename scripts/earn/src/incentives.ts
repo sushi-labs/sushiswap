@@ -23,11 +23,11 @@ export async function execute() {
     console.log(`EXTRACT - Extracted farms from ${farms.length} chains.`)
 
     // TRANSFORM
-    const { incentivesToCreate, incentivesToUpdate, tokens } = await transform(farms)
+    const { incentivesToCreate, incentivesToUpdate, incentivesToDelete, tokens } = await transform(farms)
 
     // // LOAD
     await createTokens(tokens)
-    await mergeIncentives(incentivesToCreate, incentivesToUpdate)
+    await mergeIncentives(incentivesToCreate, incentivesToUpdate, incentivesToDelete)
     await updatePoolsWithIncentivesTotalApr()
 
     const endTime = performance.now()
@@ -79,6 +79,7 @@ async function extract() {
 async function transform(data: ChefReturn[]): Promise<{
   incentivesToCreate: Prisma.IncentiveCreateManyInput[]
   incentivesToUpdate: Prisma.IncentiveCreateManyInput[]
+  incentivesToDelete: string[]
   tokens: Prisma.TokenCreateManyInput[]
 }> {
   const tokens: Prisma.TokenCreateManyInput[] = []
@@ -118,7 +119,7 @@ async function transform(data: ChefReturn[]): Promise<{
     })
     .flat()
 
-  const { incentivesToCreate, incentivesToUpdate } = await filterIncentives(incentives)
+  const { incentivesToCreate, incentivesToUpdate, incentivesToDelete } = await filterIncentives(incentives)
 
-  return { incentivesToCreate, incentivesToUpdate, tokens }
+  return { incentivesToCreate, incentivesToUpdate, incentivesToDelete, tokens }
 }
