@@ -63,7 +63,7 @@
     "@types/react-window": "^1.8.5",
     "autoprefixer": "10.4.13",
     "eslint": "8.29.0",
-    "next": "13.1.1",
+    "next": "13.2.3",
     "postcss": "8.4.21",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -78,7 +78,7 @@
     "tailwindcss": "3.2.4"
   },
   "optionalDependencies": {
-    "next": "13.1.1",
+    "next": "13.2.3",
     "wagmi": "0.9.1"
   }
 }

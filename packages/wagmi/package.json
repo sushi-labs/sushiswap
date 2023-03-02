@@ -63,7 +63,7 @@
     "@wagmi/core": "0.8.1",
     "eslint": "8.29.0",
     "ethers": "5.7.2",
-    "next": "13.1.1",
+    "next": "13.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tsup": "6.5.0",
@@ -79,6 +79,6 @@
     "wagmi": "0.9.1"
   },
   "optionalDependencies": {
-    "next": "13.1.1"
+    "next": "13.2.3"
   }
 }

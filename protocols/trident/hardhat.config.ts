@@ -35,6 +35,7 @@ subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVers
 })
 
 const config: HardhatUserConfig = {
+  ...defaultConfig,
   namedAccounts: {
     deployer: {
       default: 0,
@@ -104,7 +105,6 @@ const config: HardhatUserConfig = {
       },
     ],
   },
-  ...defaultConfig,
 }
 
 export default config
