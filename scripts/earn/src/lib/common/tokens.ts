@@ -112,17 +112,32 @@ export async function getTokenBalancesOf(_tokens: string[], address: string, cha
       } as const)
   )
 
-  const result = await readContracts({
-    allowFailure: true,
-    contracts: [...balanceOfCalls, ...decimalCalls],
-  })
+  const [balancesOf, decimals] = await Promise.all([
+    readContracts({
+      allowFailure: true,
+      contracts: balanceOfCalls,
+    }),
+    readContracts({
+      allowFailure: true,
+      contracts: decimalCalls,
+    }),
+  ])
 
-  const balancesOf = result.splice(0, balanceOfCalls.length) as unknown as BigNumber[]
-  const decimals = result.splice(0, decimalCalls.length) as unknown as number[]
+  return tokens
+    .map((token, i) => {
+      const balance = balancesOf[i]
+      const decimal = decimals[i]
 
-  return tokens.map((token, i) => ({
-    token,
-    // so that we don't need to seed new pairs
-    balance: !balancesOf[i] || balancesOf[i]?.eq(0) ? 1 : divBigNumberToNumber(balancesOf[i], decimals[i]),
-  }))
+      if (balance === null || decimal === null) {
+        console.log(`Balance / decimal fetch failed for ${token} on ${ChainId[chainId]}`)
+        return null
+      }
+
+      return {
+        token,
+        // so that we don't need to seed new pairs
+        balance: balancesOf[i]?.eq(0) ? 1 : divBigNumberToNumber(balancesOf[i], decimals[i]),
+      }
+    })
+    .filter((token): token is NonNullable<typeof token> => Boolean(token))
 }
