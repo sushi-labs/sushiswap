@@ -57,7 +57,7 @@
     "dotenv": "16.0.3",
     "eslint": "8.29.0",
     "ethers": "5.7.2",
-    "hardhat": "2.12.6",
+    "hardhat": "2.12.7",
     "hardhat-contract-sizer": "2.6.1",
     "hardhat-deploy": "0.11.22",
     "hardhat-gas-reporter": "1.0.9",
