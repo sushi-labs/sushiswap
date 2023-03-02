@@ -15,6 +15,7 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "strictNullChecks": true
   }
 }

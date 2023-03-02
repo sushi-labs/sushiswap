@@ -30,14 +30,11 @@ const SEO: DefaultSeoProps = {
   },
 }
 
-type Props = {
-  children?: React.ReactNode
-  maxWidth?: MaxWidth
-  backdrop?: React.ReactNode
-  className?: string
-}
-
-export default function PartnerLayout({ children }: Props) {
+export default function PartnerLayout({
+  children, // will be a page or nested layout
+}: {
+  children: React.ReactNode
+}) {
   return (
     <>
       <DefaultSeo {...SEO} />
