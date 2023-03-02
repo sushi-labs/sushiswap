@@ -4,12 +4,12 @@ import cors from '@fastify/cors'
 import rateLimit from '@fastify/rate-limit'
 import { ChainId } from '@sushiswap/chain'
 import { Native, nativeCurrencyIds } from '@sushiswap/currency'
-import routeProcessorExports from '@sushiswap/route-processor/exports'
+import { isRouteProcessorChainId, routeProcessorAddress, RouteProcessorChainId } from '@sushiswap/route-processor'
 import {
   // findSpecialRoute,
   DataFetcher,
   Router,
-} from '@sushiswap/router'
+} from '@sushiswap/smart-order-router'
 import { BigNumber } from 'ethers'
 import fastify from 'fastify'
 import { performance } from 'perf_hooks'
@@ -32,26 +32,20 @@ const querySchema = z.object({
     .int()
     .gte(0)
     .lte(2 ** 256)
-    .default(ChainId.ETHEREUM),
+    .default(ChainId.ETHEREUM)
+    .refine((chainId) => isRouteProcessorChainId(chainId), { message: 'ChainId not supported.' })
+    .transform((chainId) => chainId as RouteProcessorChainId),
   fromTokenId: z.string().default(nativeCurrencyIds[ChainId.ETHEREUM]),
   toTokenId: z.string().default('SUSHI'),
   gasPrice: z.coerce.number().int().gte(1),
   amount: z.coerce.bigint(),
   to: z.optional(z.string()),
+  preferSushi: z.coerce.boolean().default(false),
 })
-
-export function getRouteProcessorAddressForChainId(chainId: ChainId) {
-  if (!(chainId in routeProcessorExports)) {
-    throw new Error(`Unsupported route processor network for ${chainId}`)
-  }
-
-  return routeProcessorExports[chainId.toString() as keyof Omit<typeof routeProcessorExports, '31337'>][0].contracts
-    .RouteProcessor.address
-}
 
 // Declare a route
 server.get('/v0', async (request) => {
-  const { chainId, fromTokenId, toTokenId, amount, gasPrice, to } = querySchema.parse(request.query)
+  const { chainId, fromTokenId, toTokenId, amount, gasPrice, to, preferSushi } = querySchema.parse(request.query)
   // console.log({ chainId, fromTokenId, toTokenId, amount, gasPrice, to })
   const tokenStartTime = performance.now()
   const [fromToken, toToken] = await Promise.all([getToken(chainId, fromTokenId), getToken(chainId, toTokenId)])
@@ -71,16 +65,7 @@ server.get('/v0', async (request) => {
   const routeStartTime = performance.now()
   const poolCodesMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
 
-  // const bestRoute = findSpecialRoute(
-  //   poolCodesMap,
-  //   chainId,
-  //   fromToken,
-  //   BigNumber.from(amount.toString()),
-  //   toToken,
-  //   gasPrice ?? 30e9
-  // )
-
-  const bestRoute = Router.findBestRoute(
+  const bestRoute = Router[preferSushi ? 'findSpecialRoute' : 'findBestRoute'](
     poolCodesMap,
     chainId,
     fromToken,
@@ -123,14 +108,7 @@ server.get('/v0', async (request) => {
     },
     // getRouteAsArray: Router.routeToArray(dataFetcher, bestRoute),
     getCurrentRouteRPParams: to
-      ? Router.routeProcessorParams(
-          poolCodesMap,
-          bestRoute,
-          fromToken,
-          toToken,
-          to,
-          getRouteProcessorAddressForChainId(chainId)
-        )
+      ? Router.routeProcessorParams(poolCodesMap, bestRoute, fromToken, toToken, to, routeProcessorAddress[chainId])
       : undefined,
   }
 })
@@ -157,8 +135,9 @@ import {
   optimism,
   polygon,
 } from '@sushiswap/viem-config'
-import { createClient, http } from 'viem'
+// import { createPublicClient, http } from 'viem'
 // import { arbitrum, bsc, celo, mainnet, optimism, polygon } from 'viem/chains'
+import { createPublicClient, fallback, http, PublicClient } from 'viem'
 
 // Run the server!
 const start = async () => {
@@ -167,7 +146,7 @@ const start = async () => {
       ChainId.ARBITRUM_NOVA,
       new DataFetcher(
         ChainId.ARBITRUM_NOVA,
-        createClient({
+        createPublicClient({
           chain: arbitrumNova,
           transport: http(arbitrumNova.rpcUrls.default.http[0]),
         })
@@ -177,9 +156,9 @@ const start = async () => {
       ChainId.AVALANCHE,
       new DataFetcher(
         ChainId.AVALANCHE,
-        createClient({
+        createPublicClient({
           chain: avalanche,
-          transport: http(avalanche.rpcUrls.default.http[0]),
+          transport: fallback([http(avalanche.rpcUrls.default.http[0]), http('https://rpc.ankr.com/avalanche')]),
         })
       )
     )
@@ -187,9 +166,9 @@ const start = async () => {
       ChainId.BOBA,
       new DataFetcher(
         ChainId.BOBA,
-        createClient({
+        createPublicClient({
           chain: boba,
-          transport: http(boba.rpcUrls.default.http[0]),
+          transport: fallback([http(boba.rpcUrls.default.http[0]), http('https://lightning-replica.boba.network')]),
         })
       )
     )
@@ -197,9 +176,9 @@ const start = async () => {
       ChainId.BOBA_AVAX,
       new DataFetcher(
         ChainId.BOBA_AVAX,
-        createClient({
+        createPublicClient({
           chain: bobaAvax,
-          transport: http(bobaAvax.rpcUrls.default.http[0]),
+          transport: fallback([http(bobaAvax.rpcUrls.default.http[0]), http('https://replica.avax.boba.network')]),
         })
       )
     )
@@ -207,9 +186,9 @@ const start = async () => {
       ChainId.BOBA_BNB,
       new DataFetcher(
         ChainId.BOBA_BNB,
-        createClient({
+        createPublicClient({
           chain: bobaBnb,
-          transport: http(bobaBnb.rpcUrls.default.http[0]),
+          transport: fallback([http(bobaBnb.rpcUrls.default.http[0]), http('https://replica.bnb.boba.network')]),
         })
       )
     )
@@ -217,9 +196,14 @@ const start = async () => {
       ChainId.BSC,
       new DataFetcher(
         ChainId.BSC,
-        createClient({
+        createPublicClient({
           chain: bsc,
-          transport: http(bsc.rpcUrls.default.http[0]),
+          transport: fallback([
+            http(bsc.rpcUrls.default.http[0]),
+            http('https://bsc-dataseed.binance.org'),
+            http('https://bsc-dataseed1.binance.org'),
+            http('https://bsc-dataseed2.binance.org'),
+          ]),
         })
       )
     )
@@ -227,7 +211,7 @@ const start = async () => {
       ChainId.BTTC,
       new DataFetcher(
         ChainId.BTTC,
-        createClient({
+        createPublicClient({
           chain: bttc,
           transport: http(bttc.rpcUrls.default.http[0]),
         })
@@ -237,9 +221,12 @@ const start = async () => {
       ChainId.ETHEREUM,
       new DataFetcher(
         ChainId.ETHEREUM,
-        createClient({
+        createPublicClient({
           chain: mainnet,
-          transport: http(mainnet.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+          transport: fallback([
+            http(`${mainnet.rpcUrls.alchemy.http}/${process.env.ALCHEMY_ID}`),
+            http('https://eth.llamarpc.com'),
+          ]),
         })
       )
     )
@@ -247,9 +234,12 @@ const start = async () => {
       ChainId.POLYGON,
       new DataFetcher(
         ChainId.POLYGON,
-        createClient({
+        createPublicClient({
           chain: polygon,
-          transport: http(polygon.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+          transport: fallback([
+            http(polygon.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+            http('https://polygon.llamarpc.com'),
+          ]),
         })
       )
     )
@@ -257,9 +247,13 @@ const start = async () => {
       ChainId.ARBITRUM,
       new DataFetcher(
         ChainId.ARBITRUM,
-        createClient({
+        createPublicClient({
           chain: arbitrum,
-          transport: http(arbitrum.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+          transport: fallback([
+            http(arbitrum.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+            // http(optimism.rpcUrls.default.http[0]),
+            http('https://rpc.ankr.com/arbitrum'),
+          ]),
         })
       )
     )
@@ -267,9 +261,13 @@ const start = async () => {
       ChainId.OPTIMISM,
       new DataFetcher(
         ChainId.OPTIMISM,
-        createClient({
+        createPublicClient({
           chain: optimism,
-          transport: http(optimism.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+          transport: fallback([
+            http(optimism.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
+            // http(optimism.rpcUrls.default.http[0]),
+            http('https://rpc.ankr.com/optimism'),
+          ]),
         })
       )
     )
@@ -277,10 +275,10 @@ const start = async () => {
       ChainId.CELO,
       new DataFetcher(
         ChainId.CELO,
-        createClient({
+        createPublicClient({
           chain: celo,
           transport: http(celo.rpcUrls.default.http[0]),
-        })
+        }) as PublicClient
       )
     )
 
@@ -288,9 +286,13 @@ const start = async () => {
       ChainId.FANTOM,
       new DataFetcher(
         ChainId.FANTOM,
-        createClient({
+        createPublicClient({
           chain: fantom,
-          transport: http(fantom.rpcUrls.default.http[0]),
+          transport: fallback([
+            http(fantom.rpcUrls.default.http[0]),
+            http('https://rpc.fantom.network'),
+            http('https://rpc2.fantom.network'),
+          ]),
         })
       )
     )
@@ -298,7 +300,7 @@ const start = async () => {
       ChainId.FUSE,
       new DataFetcher(
         ChainId.FUSE,
-        createClient({
+        createPublicClient({
           chain: fuse,
           transport: http(fuse.rpcUrls.default.http[0]),
         })
@@ -308,9 +310,9 @@ const start = async () => {
       ChainId.GNOSIS,
       new DataFetcher(
         ChainId.GNOSIS,
-        createClient({
+        createPublicClient({
           chain: gnosis,
-          transport: http(gnosis.rpcUrls.default.http[0]),
+          transport: fallback([http(gnosis.rpcUrls.default.http[0]), http('https://rpc.ankr.com/gnosis')]),
         })
       )
     )
@@ -318,9 +320,9 @@ const start = async () => {
       ChainId.KAVA,
       new DataFetcher(
         ChainId.KAVA,
-        createClient({
+        createPublicClient({
           chain: kava,
-          transport: http(kava.rpcUrls.default.http[1]),
+          transport: fallback([http(kava.rpcUrls.default.http[0]), http(kava.rpcUrls.default.http[1])]),
         })
       )
     )
@@ -328,7 +330,7 @@ const start = async () => {
       ChainId.METIS,
       new DataFetcher(
         ChainId.METIS,
-        createClient({
+        createPublicClient({
           chain: metis,
           transport: http(metis.rpcUrls.default.http[0]),
         })
@@ -338,9 +340,9 @@ const start = async () => {
       ChainId.MOONBEAM,
       new DataFetcher(
         ChainId.MOONBEAM,
-        createClient({
+        createPublicClient({
           chain: moonbeam,
-          transport: http(moonbeam.rpcUrls.default.http[0]),
+          transport: fallback([http(moonbeam.rpcUrls.default.http[0]), http('https://rpc.ankr.com/moonbeam')]),
         })
       )
     )
@@ -348,7 +350,7 @@ const start = async () => {
       ChainId.MOONRIVER,
       new DataFetcher(
         ChainId.MOONRIVER,
-        createClient({
+        createPublicClient({
           chain: moonriver,
           transport: http(moonriver.rpcUrls.default.http[0]),
         })
@@ -358,9 +360,9 @@ const start = async () => {
       ChainId.HARMONY,
       new DataFetcher(
         ChainId.HARMONY,
-        createClient({
+        createPublicClient({
           chain: harmony,
-          transport: http(harmony.rpcUrls.default.http[0]),
+          transport: fallback([http(harmony.rpcUrls.default.http[0]), http('https://rpc.ankr.com/harmony')]),
         })
       )
     )

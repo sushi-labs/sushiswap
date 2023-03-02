@@ -6,7 +6,6 @@ import { classNames } from '@sushiswap/ui'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { Explainer } from '@sushiswap/ui/future/components/Explainer'
-import { useLocalStorage } from '@sushiswap/hooks'
 import { useSlippageTolerance } from '../../lib/useSlippageTolerance'
 
 const TABS = ['0.1', '0.5', '1.0']

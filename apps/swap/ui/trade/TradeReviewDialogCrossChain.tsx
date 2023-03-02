@@ -1,30 +1,28 @@
 'use client'
 
-import { ArrowLeftIcon, ArrowRightIcon, PlusIcon } from '@heroicons/react/24/outline'
+import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { Chain, chainName } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import React, { FC, useCallback, useState } from 'react'
+import React, { FC, useCallback } from 'react'
 
 import { useSwapActions, useSwapState } from './TradeProvider'
 import { useTrade } from '../../lib/useTrade'
-import numeral from 'numeral'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Dots } from '@sushiswap/ui/future/components/Dots'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain'
-import { TradeRoute } from './TradeRoute'
 import { useSlippageTolerance } from '../../lib/useSlippageTolerance'
-import { NetworkIcon } from '@sushiswap/ui'
-import { ArrowLongRightIcon } from '@heroicons/react/20/solid'
+import { Collapsible, NetworkIcon } from '@sushiswap/ui'
 import { ApproveBentoboxController } from '@sushiswap/wagmi/future/components'
 import { ApprovalState, getSushiXSwapContractConfig } from '@sushiswap/wagmi'
+import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain/ConfirmationDialogCrossChain'
+import { warningSeverity } from '../../lib/warningSeverity'
+import { ZERO } from '@sushiswap/math'
 
 export const TradeReviewDialogCrossChain: FC = () => {
-  const [open, setOpen] = useState(false)
   const { review, token0, token1, recipient, network0, network1, amount, value, bentoboxSignature } = useSwapState()
   const { setReview } = useSwapActions()
   const [slippageTolerance] = useSlippageTolerance()
@@ -45,11 +43,11 @@ export const TradeReviewDialogCrossChain: FC = () => {
               <Skeleton.Text fontSize="text-3xl" className="w-2/3" />
             ) : (
               <h1 className="text-3xl font-semibold dark:text-slate-50">
-                Receive {trade?.amountOut?.toSignificant(6)} {token1.symbol}
+                Receive {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
               </h1>
             )}
             <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
-              Swap {amount?.toSignificant(6)} {token0.symbol}
+              Swap {amount?.toSignificant(6)} {token0?.symbol}
             </h1>
           </div>
           <div className="min-w-[56px] min-h-[56px]">
@@ -62,7 +60,11 @@ export const TradeReviewDialogCrossChain: FC = () => {
                   </div>
                 }
               >
-                <Currency.Icon currency={token1} width={56} height={56} />
+                {token1 ? (
+                  <Currency.Icon currency={token1} width={56} height={56} />
+                ) : (
+                  <Skeleton.Circle radius={56} className="dark:bg-slate-800 bg-gray-100" />
+                )}
               </Badge>
             </div>
           </div>
@@ -71,11 +73,10 @@ export const TradeReviewDialogCrossChain: FC = () => {
           <List>
             <List.Control>
               <List.KeyValue title="Network">
-                <div className="flex items-center gap-1 whitespace-nowrap truncate">
+                <div className="w-full justify-end gap-1 whitespace-nowrap truncate">
                   {chainName?.[network0]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
-                  <div className="min-w-4 min-h-4">
-                    <ArrowLongRightIcon width={16} height={16} />
-                  </div>
+                  <br />
+                  <span className="text-gray-400 dark:text-slate-500">to</span>{' '}
                   {chainName?.[network1]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
                 </div>
               </List.KeyValue>
@@ -86,7 +87,9 @@ export const TradeReviewDialogCrossChain: FC = () => {
                 {isFetching ? (
                   <Skeleton.Text align="right" fontSize="text-sm" className="w-1/5" />
                 ) : (
-                  numeral(trade?.priceImpact ?? 0).format('0.00%')
+                  `${trade?.priceImpact?.lessThan(ZERO) ? '+' : '-'}${Math.abs(
+                    Number(trade?.priceImpact?.toFixed(2))
+                  )}%`
                 )}
               </List.KeyValue>
               <List.KeyValue
@@ -96,7 +99,7 @@ export const TradeReviewDialogCrossChain: FC = () => {
                 {isFetching ? (
                   <Skeleton.Text align="right" fontSize="text-sm" className="w-1/2" />
                 ) : (
-                  `${trade?.minAmountOut?.toSignificant(6)} ${token1.symbol}`
+                  `${trade?.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
                 )}
               </List.KeyValue>
               <List.KeyValue title="Network fee">
@@ -105,16 +108,6 @@ export const TradeReviewDialogCrossChain: FC = () => {
                 ) : (
                   `~$${trade?.gasSpent ?? '0.00'}`
                 )}
-              </List.KeyValue>
-              <List.KeyValue title="Smart Order Route">
-                {isFetching ? (
-                  <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" />
-                ) : (
-                  <button onClick={() => setOpen(true)} className="text-sm text-blue font-semibold">
-                    View
-                  </button>
-                )}
-                <TradeRoute trade={trade} open={open} setOpen={setOpen} />
               </List.KeyValue>
             </List.Control>
           </List>
@@ -137,32 +130,46 @@ export const TradeReviewDialogCrossChain: FC = () => {
         </div>
         <div className="pt-4">
           <ApproveBentoboxController chainId={network0} contract={getSushiXSwapContractConfig(network0).address}>
-            {({ approvalState }) => (
-              <ConfirmationDialogCrossChain
-                enabled={Boolean(
-                  approvalState === ApprovalState.APPROVED ||
-                    (approvalState === ApprovalState.PENDING && bentoboxSignature)
-                )}
-              >
-                {({ onClick, isWritePending, isLoading, isConfirming }) => (
-                  <Button
-                    size="xl"
-                    fullWidth
-                    loading={isLoading}
-                    onClick={onClick}
-                    disabled={isWritePending || Boolean(isLoading && +value > 0) || isFetching}
-                  >
-                    {isConfirming ? (
-                      <Dots>Confirming transaction</Dots>
-                    ) : isWritePending ? (
-                      <Dots>Confirm Swap</Dots>
-                    ) : (
-                      `Swap ${token0.symbol} for ${token1.symbol}`
-                    )}
-                  </Button>
-                )}
-              </ConfirmationDialogCrossChain>
-            )}
+            {({ approvalState }) => {
+              return (
+                <ConfirmationDialogCrossChain
+                  enabled={Boolean(
+                    approvalState === ApprovalState.APPROVED ||
+                      (approvalState === ApprovalState.PENDING && bentoboxSignature)
+                  )}
+                >
+                  {({ onClick, isWritePending, isLoading, isError, error, isConfirming }) => (
+                    <div className="space-y-4">
+                      <Button
+                        fullWidth
+                        size="xl"
+                        loading={isLoading && !isError}
+                        onClick={onClick}
+                        disabled={isWritePending || Boolean(isLoading && +value > 0) || isError}
+                        color={isError ? 'red' : warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+                      >
+                        {isError ? (
+                          'Shoot! Something went wrong :('
+                        ) : isConfirming ? (
+                          <Dots>Confirming transaction</Dots>
+                        ) : isWritePending ? (
+                          <Dots>Confirm Swap</Dots>
+                        ) : (
+                          `Swap ${token0?.symbol} for ${token1?.symbol}`
+                        )}
+                      </Button>
+                      <Collapsible open={!!error}>
+                        <div className="scroll bg-red/20 text-red-700 dark:bg-black/20 p-2 px-3 rounded-lg border border-slate-200/10 text-[10px] break-all max-h-[80px] overflow-y-auto">
+                          {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                          {/* @ts-ignore */}
+                          <code>{error ? ('data' in error ? error?.data?.message : error.message) : ''}</code>
+                        </div>
+                      </Collapsible>
+                    </div>
+                  )}
+                </ConfirmationDialogCrossChain>
+              )
+            }}
           </ApproveBentoboxController>
         </div>
       </div>

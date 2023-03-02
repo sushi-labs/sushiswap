@@ -3,7 +3,6 @@ import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, StargateChainId } from '
 import { useSushiXSwapContract } from '@sushiswap/wagmi'
 import { JSBI, Percent } from '@sushiswap/math'
 import { Amount, Native, Price, Token, tryParseAmount, Type, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { nanoid } from 'nanoid'
 import { useQuery } from '@tanstack/react-query'
 import { getTrade } from './getTrade'
 import { getBridgeFees } from './getBridgeFees'
@@ -28,16 +27,19 @@ export const useCrossChainTradeQuery = (
     recipient,
     enabled,
     bentoboxSignature,
+    tradeId,
   }: UseCrossChainTradeParams,
   select: UseCrossChainTradeQuerySelect
 ) => {
   // First we'll check if bridge tokens for srcChainId includes srcToken, if so use srcToken as srcBridgeToken,
   // else take first stargate bridge token as srcBridgeToken
-  const srcBridgeToken = token0.isToken && isStargateBridgeToken(token0) ? token0 : STARGATE_BRIDGE_TOKENS[network0][0]
+  const srcBridgeToken =
+    token0?.isToken && isStargateBridgeToken(token0) ? token0 : STARGATE_BRIDGE_TOKENS[network0]?.[0]
 
   // First we'll check if bridge tokens for dstChainId includes dstToken, if so use dstToken as dstBridgeToken,
   // else take first stargate bridge token as dstBridgeToken
-  const dstBridgeToken = token1.isToken && isStargateBridgeToken(token1) ? token1 : STARGATE_BRIDGE_TOKENS[network1][0]
+  const dstBridgeToken =
+    token1?.isToken && isStargateBridgeToken(token1) ? token1 : STARGATE_BRIDGE_TOKENS[network1]?.[0]
 
   // A cross chain swap, a swap on the source and a swap on the destination
   const crossChainSwap = !isStargateBridgeToken(token0) && !isStargateBridgeToken(token1)
@@ -56,17 +58,40 @@ export const useCrossChainTradeQuery = (
   const dstCurrencyA = crossChainSwap || transferSwap ? dstBridgeToken : undefined
   const dstCurrencyB = crossChainSwap || transferSwap ? token1 : undefined
 
-  const { data: srcPools } = usePools({ chainId: network0, currencyA: srcCurrencyA, currencyB: srcCurrencyB })
-  const { data: dstPools } = usePools({ chainId: network1, currencyA: dstCurrencyA, currencyB: dstCurrencyB })
-  const { data: srcFeeData } = useFeeData({ chainId: network0 })
-  const { data: dstFeeData } = useFeeData({ chainId: network1 })
-  const { data: srcRebases } = useBentoboxTotals({ chainId: network0, currencies: [srcCurrencyA, srcCurrencyB] })
-  const { data: dstRebases } = useBentoboxTotals({ chainId: network1, currencies: [dstCurrencyA, dstCurrencyB] })
+  const { data: srcPools } = usePools({ chainId: network0, currencyA: srcCurrencyA, currencyB: srcCurrencyB, enabled })
+  const { data: dstPools } = usePools({ chainId: network1, currencyA: dstCurrencyA, currencyB: dstCurrencyB, enabled })
+  const { data: srcFeeData } = useFeeData({ chainId: network0, enabled })
+  const { data: dstFeeData } = useFeeData({ chainId: network1, enabled })
+  const { data: srcRebases } = useBentoboxTotals({
+    chainId: network0,
+    currencies: [token0, srcBridgeToken],
+    enabled,
+  })
+  const { data: dstRebases } = useBentoboxTotals({
+    chainId: network1,
+    currencies: [dstBridgeToken, token1],
+    enabled,
+  })
 
   const contract = useSushiXSwapContract(network0)
 
   return useQuery({
-    queryKey: ['crossChainTrade', { network0, network1, token0, token1, amount, slippagePercentage, recipient }],
+    queryKey: [
+      'NoPersist',
+      'crossChainTrade',
+      {
+        tradeId,
+        token0,
+        token1,
+        network0,
+        network1,
+        amount,
+        slippagePercentage,
+        recipient,
+        srcPools,
+        dstPools,
+      },
+    ],
     queryFn: async () => {
       const swapSlippage = slippagePercentage
         ? new Percent(Number(slippagePercentage === 'AUTO' ? 0.5 : slippagePercentage) * 100, 10_000)
@@ -174,9 +199,6 @@ export const useCrossChainTradeQuery = (
         priceImpact = new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
       }
 
-      const nanoId = nanoid()
-
-      console.log({ srcTrade, dstTrade })
       // console.log({ recipient, amount, network0, network1, dstMinimumAmountOut, srcRebases, dstRebases, contract })
       const [srcInputCurrencyRebase, srcOutputCurrencyRebase] = srcRebases || [undefined, undefined]
       const [, dstOutputCurrencyRebase] = dstRebases || [undefined, undefined]
@@ -190,7 +212,9 @@ export const useCrossChainTradeQuery = (
         !srcInputCurrencyRebase ||
         !srcOutputCurrencyRebase ||
         !dstOutputCurrencyRebase ||
-        !contract
+        !contract ||
+        !token0 ||
+        !token1
       ) {
         return {
           priceImpact: [priceImpact.numerator.toString(), priceImpact.denominator.toString()],
@@ -245,7 +269,7 @@ export const useCrossChainTradeQuery = (
           srcBridgeToken,
           dstBridgeToken,
           dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined,
-          nanoId
+          tradeId
         )
       }
 
@@ -269,7 +293,7 @@ export const useCrossChainTradeQuery = (
     },
     refetchOnWindowFocus: true,
     refetchInterval: 10000,
-    keepPreviousData: !!amount,
+    keepPreviousData: false,
     cacheTime: 0,
     select,
     enabled:
@@ -280,10 +304,10 @@ export const useCrossChainTradeQuery = (
           token0 &&
           token1 &&
           amount &&
-          srcPools &&
-          dstPools &&
           srcFeeData &&
           dstFeeData &&
+          srcPools &&
+          dstPools &&
           srcRebases &&
           dstRebases
       ),
@@ -296,9 +320,9 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
 
   const select: UseCrossChainTradeQuerySelect = useCallback(
     (data) => {
-      const amountIn = data.amountIn ? Amount.fromRawAmount(token0, data.amountIn) : undefined
-      const amountOut = data.amountOut ? Amount.fromRawAmount(token1, data.amountOut) : undefined
-      const minAmountOut = data.minAmountOut ? Amount.fromRawAmount(token1, data.minAmountOut) : undefined
+      const amountIn = data.amountIn && token0 ? Amount.fromRawAmount(token0, data.amountIn) : undefined
+      const amountOut = data.amountOut && token1 ? Amount.fromRawAmount(token1, data.amountOut) : undefined
+      const minAmountOut = data.minAmountOut && token1 ? Amount.fromRawAmount(token1, data.minAmountOut) : undefined
       const swapPrice = amountIn && amountOut ? new Price({ baseAmount: amountIn, quoteAmount: amountOut }) : undefined
       const priceImpact = data.priceImpact
         ? new Percent(JSBI.BigInt(data.priceImpact[0]), JSBI.BigInt(data.priceImpact[1]))

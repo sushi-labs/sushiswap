@@ -17,7 +17,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   try {
     const token = await getToken(chainId, address)
     return response.status(200).json(token)
-  } catch (error) {
+  } catch (error: unknown) {
     return response.status(404).send('Not found')
   }
 }

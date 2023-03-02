@@ -7,6 +7,7 @@ import { BigNumber } from 'ethers'
 import { getContract } from 'wagmi/actions'
 import { getBentoboxTotals } from './getBentoboxTotals'
 import { JSBI } from '@sushiswap/math'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 interface PoolData {
   address: string
@@ -30,7 +31,7 @@ const pairsUnique = (currencies: [Currency | undefined, Currency | undefined][])
 }
 
 export const getStablePools = async (
-  chainId: number | undefined,
+  chainId: BentoBoxV1ChainId,
   currencies: [Currency | undefined, Currency | undefined][]
 ) => {
   const contract = getContract({

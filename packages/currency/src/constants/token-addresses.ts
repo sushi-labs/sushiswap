@@ -372,3 +372,7 @@ export const QUICK_ADDRESS = {
 export const OP_ADDRESS = {
   [ChainId.OPTIMISM]: '0x4200000000000000000000000000000000000042',
 } as const
+
+export const LINK_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x514910771AF9Ca656af840dff83E8264EcF986CA',
+} as const

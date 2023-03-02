@@ -19,6 +19,7 @@ import { SushiXSwap as SushiXSwapContract } from '@sushiswap/wagmi'
 import { Address } from 'wagmi'
 import { HexString } from '@sushiswap/types'
 import { readContract } from 'wagmi/actions'
+import { SushiXSwapChainId } from '@sushiswap/sushixswap'
 
 export type Complex = [
   {
@@ -299,7 +300,7 @@ export abstract class Cooker implements Cooker {
                         ['address', 'address', 'bool'],
                         [
                           leg.tokenFrom.address,
-                          getSushiXSwapContractConfig(trade.inputAmount.currency.chainId).address,
+                          getSushiXSwapContractConfig(trade.inputAmount.currency.chainId as SushiXSwapChainId).address,
                           false,
                         ]
                       ),
@@ -321,7 +322,7 @@ export abstract class Cooker implements Cooker {
                         ['address', 'address', 'bool'],
                         [
                           leg.tokenFrom.address,
-                          getSushiXSwapContractConfig(trade.inputAmount.currency.chainId).address,
+                          getSushiXSwapContractConfig(trade.inputAmount.currency.chainId as SushiXSwapChainId).address,
                           false,
                         ]
                       ),
@@ -484,14 +485,14 @@ export class SushiXSwap {
     this.srcCooker = new SrcCooker({
       chainId: this.srcChainId,
       debug,
-      masterContract: getSushiXSwapContractConfig(this.srcToken.chainId).address,
+      masterContract: getSushiXSwapContractConfig(this.srcToken.chainId as SushiXSwapChainId).address,
       user,
     })
 
     this.dstCooker = new DstCooker({
       chainId: this.dstChainId,
       debug,
-      masterContract: getSushiXSwapContractConfig(this.dstToken.chainId).address,
+      masterContract: getSushiXSwapContractConfig(this.dstToken.chainId as SushiXSwapChainId).address,
       user,
     })
   }

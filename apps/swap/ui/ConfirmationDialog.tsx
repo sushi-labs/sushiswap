@@ -18,7 +18,8 @@ import { useBalances, useCreateNotification } from '@sushiswap/react-query'
 import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
-import { getRouteProcessorAddressForChainId } from 'lib/getRouteProcessorAddressForChainId'
+import { Chain } from '@sushiswap/chain'
+import { routeProcessorAddress } from '@sushiswap/route-processor'
 
 interface ConfirmationDialogProps {
   children({
@@ -55,7 +56,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
 
   const { config, isError, error } = usePrepareContractWrite({
     chainId: network0,
-    address: getRouteProcessorAddressForChainId(network0),
+    address: routeProcessorAddress[network0],
     abi: routeProcessorAbi,
     functionName: trade?.functionName,
     args: trade?.writeArgs,
@@ -64,9 +65,9 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   })
 
   const isWrap =
-    appType === AppType.Swap && token0.isNative && token1.wrapped.address === Native.onChain(network0).wrapped.address
+    appType === AppType.Swap && token0?.isNative && token1?.wrapped.address === Native.onChain(network0).wrapped.address
   const isUnwrap =
-    appType === AppType.Swap && token1.isNative && token0.wrapped.address === Native.onChain(network0).wrapped.address
+    appType === AppType.Swap && token1?.isNative && token0?.wrapped.address === Native.onChain(network0).wrapped.address
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
@@ -102,7 +103,11 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     [trade, network0, isWrap, isUnwrap, storeNotification]
   )
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+  const {
+    writeAsync,
+    isLoading: isWritePending,
+    data,
+  } = useContractWrite({
     ...config,
     onSuccess: (data) => {
       setReview(false)
@@ -158,7 +163,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       })}
       <Dialog open={open} unmount={false} onClose={() => setOpen(false)}>
         <Dialog.Content>
-          <div className="flex flex-col gap-5 items-center justify-center">
+          <div className="flex flex-col items-center justify-center gap-5">
             {[ConfirmationDialogState.Failed, ConfirmationDialogState.Success].includes(dialogState) ? (
               <BarLoader transitionDuration={4000} onComplete={onComplete} />
             ) : (
@@ -175,32 +180,37 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
             </div>
             <div className="flex flex-col items-center">
               {dialogState === ConfirmationDialogState.Sign ? (
-                <h1 className="flex flex-wrap justify-center gap-1 font-medium text-lg items-center leading-normal">
+                <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-medium leading-normal">
                   Please sign order with your wallet.
                 </h1>
               ) : dialogState === ConfirmationDialogState.Pending ? (
-                <h1 className="flex flex-wrap justify-center gap-1 font-medium text-lg items-center leading-normal">
+                <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-medium leading-normal">
                   Waiting for your{' '}
-                  <span className="text-blue hover:underline cursor-pointer">
+                  <a
+                    target="_blank"
+                    href={data?.hash ? Chain.from(network0).getTxUrl(data.hash) : ''}
+                    className="cursor-pointer text-blue hover:underline"
+                    rel="noreferrer"
+                  >
                     <Dots>transaction</Dots>
-                  </span>{' '}
+                  </a>{' '}
                   to be confirmed on the blockchain.
                 </h1>
               ) : dialogState === ConfirmationDialogState.Success ? (
-                <h1 className="flex flex-wrap justify-center gap-1 font-semibold text-lg items-center">
+                <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-semibold">
                   You {isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'}
                   <span className="text-red px-0.5">
-                    {trade?.amountIn?.toSignificant(6)} {token0.symbol}
+                    {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
                   </span>{' '}
                   {isWrap ? 'to' : isUnwrap ? 'to' : 'for'}{' '}
                   <span className="text-blue px-0.5">
-                    {trade?.amountOut?.toSignificant(6)} {token1.symbol}.
+                    {trade?.amountOut?.toSignificant(6)} {token1?.symbol}.
                   </span>
                 </h1>
               ) : (
-                <h1 className="flex flex-wrap justify-center gap-1 font-semibold text-lg items-center">
+                <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-semibold">
                   <span className="text-red">Oops!</span> Your{' '}
-                  <span className="text-blue hover:underline cursor-pointer">transaction</span> failed
+                  <span className="cursor-pointer text-blue hover:underline">transaction</span> failed
                 </h1>
               )}
             </div>

@@ -9,7 +9,7 @@ import { useMemo } from 'react'
 type ObjectType<T> = T extends true ? ReturnType<typeof useCrossChainTrade> : ReturnType<typeof _useTrade>
 
 export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): ObjectType<T> {
-  const { token0, token1, network0, network1, amount, recipient, bentoboxSignature } = useSwapState()
+  const { token0, token1, network0, network1, amount, recipient, bentoboxSignature, tradeId } = useSwapState()
   const [slippageTolerance] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
 
@@ -27,6 +27,7 @@ export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): 
   })
 
   const crossChainTrade = useCrossChainTrade({
+    tradeId,
     network0,
     network1,
     token0,
@@ -39,7 +40,7 @@ export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): 
   })
 
   return useMemo(() => {
-    if (crossChain) return crossChainTrade
+    if (network0 !== network1) return crossChainTrade
     return sameChainTrade
-  }, [crossChain, crossChainTrade, sameChainTrade]) as ObjectType<T>
+  }, [crossChainTrade, network0, network1, sameChainTrade]) as ObjectType<T>
 }

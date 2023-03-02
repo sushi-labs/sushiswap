@@ -29,15 +29,16 @@ import {
   SettingsOverlay,
 } from '../components'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { SWRConfig } from 'swr'
+import { SWRConfig, useSWRConfig } from 'swr'
+import { isUniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 
 import { CreateSectionReviewModalTrident } from '../components/CreateSection'
 import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '../config'
 import { isConstantProductPool, isLegacyPool, isStablePool } from '../lib/functions'
 import { useCustomTokens } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
+import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { usePool } from '@sushiswap/client'
-import { useSWRConfig } from 'swr'
 
 const LINKS: BreadcrumbLink[] = [
   {
@@ -77,28 +78,42 @@ const Add = () => {
           <PoolFinder
             components={
               <PoolFinder.Components>
-                <PoolFinder.LegacyPool
-                  chainId={chainId}
-                  token0={token0}
-                  token1={token1}
-                  enabled={AMM_ENABLED_NETWORKS.includes(chainId)}
-                />
-                <PoolFinder.ConstantProductPool
-                  chainId={chainId}
-                  token0={token0}
-                  token1={token1}
-                  enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId) && poolType === PoolFinderType.Classic}
-                  fee={FEE_MAP[fee]}
-                  twap={false}
-                />
-                <PoolFinder.StablePool
-                  chainId={chainId}
-                  token0={token0}
-                  token1={token1}
-                  enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId) && poolType === PoolFinderType.Stable}
-                  fee={FEE_MAP[fee]}
-                  twap={false}
-                />
+                {isUniswapV2Router02ChainId(chainId) ? (
+                  <PoolFinder.LegacyPool
+                    chainId={chainId}
+                    token0={token0}
+                    token1={token1}
+                    /* TODO?: Migrate to type guard only */
+                    enabled={AMM_ENABLED_NETWORKS.includes(chainId)}
+                  />
+                ) : (
+                  <></>
+                )}
+                {/* TODO: Migrate to trident (possibly speicifc pooltype) type guard */}
+                {isBentoBoxV1ChainId(chainId) ? (
+                  <>
+                    <PoolFinder.ConstantProductPool
+                      chainId={chainId}
+                      token0={token0}
+                      token1={token1}
+                      /* TODO?: Migrate to type guard only */
+                      enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId) && poolType === PoolFinderType.Classic}
+                      fee={FEE_MAP[fee]}
+                      twap={false}
+                    />
+                    <PoolFinder.StablePool
+                      chainId={chainId}
+                      token0={token0}
+                      token1={token1}
+                      /* TODO?: Migrate to type guard only */
+                      enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId) && poolType === PoolFinderType.Stable}
+                      fee={FEE_MAP[fee]}
+                      twap={false}
+                    />
+                  </>
+                ) : (
+                  <></>
+                )}
               </PoolFinder.Components>
             }
           >
@@ -313,7 +328,7 @@ const _Add: FC<AddProps> = ({
                       fundSource={FundSource.WALLET}
                       amounts={[parsedInput0, parsedInput1]}
                     >
-                      {pool && (isConstantProductPool(pool) || isStablePool(pool)) && (
+                      {pool && (isConstantProductPool(pool) || isStablePool(pool)) && isBentoBoxV1ChainId(chainId) && (
                         <AddSectionReviewModalTrident
                           poolAddress={pool.liquidityToken.address}
                           // TODO: Shouldnt need to cast if this is done right
@@ -332,23 +347,24 @@ const _Add: FC<AddProps> = ({
                           )}
                         </AddSectionReviewModalTrident>
                       )}
-                      {((pool && isLegacyPool(pool)) || (!pool && !tridentPoolIfCreate)) && (
-                        <AddSectionReviewModalLegacy
-                          poolState={poolState as PairState}
-                          chainId={chainId}
-                          token0={token0}
-                          token1={token1}
-                          input0={parsedInput0}
-                          input1={parsedInput1}
-                        >
-                          {({ isWritePending, setOpen }) => (
-                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                              {isWritePending ? <Dots>Confirm transaction</Dots> : title}
-                            </Button>
-                          )}
-                        </AddSectionReviewModalLegacy>
-                      )}
-                      {!pool && tridentPoolIfCreate && (
+                      {((pool && isLegacyPool(pool)) || (!pool && !tridentPoolIfCreate)) &&
+                        isUniswapV2Router02ChainId(chainId) && (
+                          <AddSectionReviewModalLegacy
+                            poolState={poolState as PairState}
+                            chainId={chainId}
+                            token0={token0}
+                            token1={token1}
+                            input0={parsedInput0}
+                            input1={parsedInput1}
+                          >
+                            {({ isWritePending, setOpen }) => (
+                              <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                                {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                              </Button>
+                            )}
+                          </AddSectionReviewModalLegacy>
+                        )}
+                      {!pool && tridentPoolIfCreate && isBentoBoxV1ChainId(chainId) && (
                         <CreateSectionReviewModalTrident
                           chainId={chainId}
                           token0={token0}

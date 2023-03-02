@@ -1,7 +1,6 @@
 import { Native, Token, Type } from '@sushiswap/currency'
 import React, { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
-import { useTrade } from '../../lib/useTrade'
-import { TradeLegType, TradeType, UseTradeReturn } from '@sushiswap/react-query'
+import { TradeLegType, UseTradeReturn } from '@sushiswap/react-query'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { UseCrossChainTradeReturn } from '../../lib/useCrossChainTrade/types'
@@ -32,8 +31,9 @@ export const TradeRoute: FC<{
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <Dialog.Content className="max-h-[320px] sm:max-h-[560px] overflow-y-scroll scroll dark:bg-slate-900 bg-white">
-        <div className="flex flex-col gap-5">
+      <Dialog.Content className="max-h-[320px] sm:max-h-[560px] overflow-y-scroll scroll dark:!bg-slate-800 bg-white">
+        <div className="flex flex-col gap-4">
+          <Dialog.Header title="Optimized route" />
           {trade?.route?.legs?.map((directPath, i) => (
             <ComplexRoutePath
               key={i}
@@ -71,49 +71,25 @@ const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolT
   }, [portion])
 
   return (
-    <div className="relative grid grid-cols-10">
-      <div className="absolute inset-0 z-0 flex items-center pointer-events-none">
-        <svg viewBox="850 0 300 200" width="100%" height="35" className="text-gray-300 dark:text-slate-700">
-          <line
-            x1="0"
-            x2="3000"
-            y1="100"
-            y2="100"
-            stroke="currentColor"
-            strokeWidth="20"
-            strokeLinecap="round"
-            strokeDasharray="1, 45"
-          />
-        </svg>
+    <div
+      ref={ref}
+      className="relative grid grid-cols-12 gap-3 rounded-full border-gray-200 dark:border-black/[0.12] bg-gray-200 dark:bg-black/[0.12] border-2 p-2"
+    >
+      <div
+        className="absolute z-[0] inset-0 rounded-full pointer-events-none bg-white dark:bg-slate-700/[0.6]"
+        style={{ width: `calc(24px + ${width}px)` }}
+      />
+      <div className="z-[1] col-span-3 text-xs font-semibold text-gray-900 dark:text-slate-200 flex items-center gap-2">
+        <Currency.Icon disableLink currency={fromToken} width={16} height={16} />
+        <span className="truncate">{fromToken.symbol}</span>
       </div>
-      <div className="z-[10] col-span-4 flex justify-start items-center">
-        <div
-          ref={ref}
-          className="relative flex items-center justify-between gap-2 p-2 overflow-hidden bg-white rounded-full dark:bg-slate-800 w-[150px]"
-        >
-          <div
-            className="absolute inset-0 rounded-full pointer-events-none bg-blue/20 dark:bg-slate-700"
-            style={{ width: `calc(28px + ${width}px)` }}
-          />
-          <div className="z-[10] flex items-center gap-1">
-            <Currency.Icon disableLink currency={fromToken} width={16} height={16} />
-            <span className="text-xs font-semibold text-gray-900 dark:text-slate-50 truncate">{fromToken.symbol}</span>
-          </div>
-          <span className="text-xs font-semibold z-[10] text-gray-900 dark:text-slate-50">
-            {Number(portion * 100).toFixed(2)}%
-          </span>
-        </div>
+      <div className="z-[1] col-span-2 text-xs font-semibold text-gray-500 dark:text-slate-500 truncate text-right">
+        {Number(portion * 100).toFixed(2)}%
       </div>
-      <div className="z-[10] col-span-3 flex justify-center items-center">
-        <span className="truncate flex items-center h-5 px-1.5 text-[10px] font-semibold text-gray-900 bg-white rounded-lg whitespace-nowrap dark:bg-slate-800 dark:text-slate-400">
-          {title}
-        </span>
-      </div>
-      <div className="z-[10] col-span-3 flex justify-end items-center">
-        <div className="px-2 bg-white dark:bg-slate-700 h-[32px] rounded-full flex items-center gap-1">
-          <Currency.Icon disableLink currency={toToken} width={16} height={16} />
-          <span className="text-xs font-semibold text-gray-900 dark:text-slate-200">{toToken.symbol}</span>
-        </div>
+      <div className="z-[1] col-span-4 text-xs font-semibold text-gray-900 dark:text-slate-200 truncate">{title}</div>
+      <div className="z-[1] col-span-3 text-xs font-semibold text-gray-900 dark:text-slate-200 flex items-center justify-end gap-2">
+        <Currency.Icon disableLink currency={toToken} width={16} height={16} />
+        <span className="text-xs font-semibold text-gray-900 dark:text-slate-200 truncate">{toToken.symbol}</span>
       </div>
     </div>
   )

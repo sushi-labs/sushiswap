@@ -1,6 +1,7 @@
 import { tryParseAmount } from '@sushiswap/currency'
 import { Pool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
+import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 import { Button, Dots } from '@sushiswap/ui'
 import { Checker, PairState, usePair } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
@@ -18,7 +19,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   }>({ input0: '', input1: '' })
   const {
     data: [poolState, pool],
-  } = usePair(_pool.chainId, token0, token1)
+  } = usePair(_pool.chainId as UniswapV2Router02ChainId, token0, token1)
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
@@ -64,7 +65,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
     return (
       <AddSectionReviewModalLegacy
         poolState={poolState}
-        chainId={_pool.chainId}
+        chainId={_pool.chainId as UniswapV2Router02ChainId}
         token0={token0}
         token1={token1}
         input0={parsedInput0}

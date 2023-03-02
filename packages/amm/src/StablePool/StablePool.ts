@@ -1,12 +1,13 @@
 import { Amount, Price, Share, Token } from '@sushiswap/currency'
 import { JSBI, sqrt, ZERO } from '@sushiswap/math'
-import EXPORTS from '@sushiswap/trident/exports/all.json'
+import { stablePoolFactoryAddress, StablePoolFactoryChainId } from '@sushiswap/trident'
 import invariant from 'tiny-invariant'
 
 import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
 import { Fee } from '../Fee'
 import { Pool } from '../Pool'
 import { computeStablePoolAddress } from './computeStablePoolAddress'
+import { SerializedStablePool, stablePoolSchema } from './zod'
 
 interface Rebase {
   elastic: JSBI
@@ -27,7 +28,7 @@ export class StablePool implements Pool {
 
   public static getAddress(tokenA: Token, tokenB: Token, fee: Fee): string {
     return computeStablePoolAddress({
-      factoryAddress: (EXPORTS as any)[tokenA.chainId][0].contracts.StablePoolFactory.address,
+      factoryAddress: stablePoolFactoryAddress[tokenA.chainId as StablePoolFactoryChainId],
       tokenA,
       tokenB,
       fee,
@@ -499,6 +500,42 @@ export class StablePool implements Pool {
           JSBI.subtract(this.reserve0.quotient, amount0)
         )
       )
+    )
+  }
+
+  public serialize(): SerializedStablePool {
+    return stablePoolSchema.parse({
+      reserve0: this.tokenAmounts[0].serialize(),
+      reserve1: this.tokenAmounts[1].serialize(),
+      fee: this.fee,
+      total0: {
+        base: this.total0.base.toString(),
+        elastic: this.total0.base.toString(),
+      },
+      total1: {
+        base: this.total1.base.toString(),
+        elastic: this.total1.base.toString(),
+      },
+    })
+  }
+
+  public static deserialize(pool: SerializedStablePool): StablePool {
+    const rebase0: Rebase = {
+      base: JSBI.BigInt(pool.total0.base),
+      elastic: JSBI.BigInt(pool.total0.elastic),
+    }
+
+    const rebase1: Rebase = {
+      base: JSBI.BigInt(pool.total1.base),
+      elastic: JSBI.BigInt(pool.total1.elastic),
+    }
+
+    return new StablePool(
+      Amount.deserialize(pool.reserve0),
+      Amount.deserialize(pool.reserve1),
+      pool.fee,
+      rebase0,
+      rebase1
     )
   }
 }

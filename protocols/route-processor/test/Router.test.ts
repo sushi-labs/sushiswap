@@ -28,7 +28,7 @@ import {
   PoolFilter,
   Router,
   RPParams,
-} from '@sushiswap/router'
+} from '@sushiswap/smart-order-router'
 import { BridgeBento, getBigNumber, MultiRoute, RPool, StableSwapRPool } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'

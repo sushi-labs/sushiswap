@@ -1,7 +1,7 @@
 import { DevTool } from '@hookform/devtools'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { nanoid } from '@reduxjs/toolkit'
-import { ChainId } from '@sushiswap/chain'
+import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Button, Form } from '@sushiswap/ui'
 import { FC, useEffect } from 'react'
@@ -30,7 +30,7 @@ export const CREATE_VEST_DEFAULT_VALUES: CreateVestingFormSchemaType = {
   },
 }
 
-export const CreateForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
+export const CreateForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId }) => {
   const isMounted = useIsMounted()
   const methods = useForm<CreateVestingFormSchemaType & FormErrors>({
     resolver: zodResolver(CreateVestingModelSchema),

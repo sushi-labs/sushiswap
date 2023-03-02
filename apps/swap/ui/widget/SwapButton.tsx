@@ -7,8 +7,8 @@ import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useTrade } from '../../lib/useTrade'
 import { Native } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
-import { getRouteProcessorAddressForChainId } from 'lib/getRouteProcessorAddressForChainId'
 import { warningSeverity } from '../../lib/warningSeverity'
+import { routeProcessorAddress } from '@sushiswap/route-processor'
 
 export const SwapButton: FC = () => {
   const { appType, amount, network0, network1, value, token0, token1 } = useSwapState()
@@ -17,9 +17,9 @@ export const SwapButton: FC = () => {
   const [checked, setChecked] = useState(false)
 
   const isWrap =
-    appType === AppType.Swap && token0.isNative && token1.wrapped.address === Native.onChain(network0).wrapped.address
+    appType === AppType.Swap && token0?.isNative && token1?.wrapped.address === Native.onChain(network0).wrapped.address
   const isUnwrap =
-    appType === AppType.Swap && token1.isNative && token0.wrapped.address === Native.onChain(network0).wrapped.address
+    appType === AppType.Swap && token1?.isNative && token0?.wrapped.address === Native.onChain(network0).wrapped.address
 
   // Reset
   useEffect(() => {
@@ -39,7 +39,7 @@ export const SwapButton: FC = () => {
                 fullWidth
                 size="xl"
                 amount={amount}
-                contract={getRouteProcessorAddressForChainId(network0)}
+                contract={routeProcessorAddress[network0]}
               >
                 <Button
                   disabled={
@@ -66,7 +66,7 @@ export const SwapButton: FC = () => {
         </Checker.Connect>
       </div>
       {warningSeverity(trade?.priceImpact) > 3 && (
-        <div className="rounded-xl px-4 py-3 bg-red/20 mt-4 flex items-start">
+        <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">
           <input
             id="expert-checkbox"
             type="checkbox"

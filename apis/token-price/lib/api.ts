@@ -16,8 +16,8 @@ export async function getPrice(chainId: number, address: string, date: Date, cur
     select: { address: true, derivedUSD: true, derivedNative: true },
     where:
       currency === Currency.USD
-        ? { AND: { chainId, address, status: 'APPROVED', derivedUSD: { gt: 0 }, updatedAt: { gt: date } } }
-        : { AND: { chainId, address, status: 'APPROVED', derivedNative: { gt: 0 }, updatedAt: { gt: date } } },
+        ? { AND: { chainId, address, derivedUSD: { gt: 0 }, updatedAt: { gt: date } } }
+        : { AND: { chainId, address, derivedNative: { gt: 0 }, updatedAt: { gt: date } } },
   })
   await client.$disconnect()
 
@@ -45,8 +45,8 @@ export async function getPricesByChainId(chainId: number, date: Date, currency: 
     select: { address: true, derivedUSD: true, derivedNative: true },
     where:
       currency === Currency.USD
-        ? { AND: { chainId, status: 'APPROVED', derivedUSD: { gt: 0 }, updatedAt: { gt: date } } }
-        : { AND: { chainId, status: 'APPROVED', derivedNative: { gt: 0 }, updatedAt: { gt: date } } },
+        ? { AND: { chainId, derivedUSD: { gt: 0 }, updatedAt: { gt: date } } }
+        : { AND: { chainId, derivedNative: { gt: 0 }, updatedAt: { gt: date } } },
   })
   await client.$disconnect()
   if (!prices.length) {

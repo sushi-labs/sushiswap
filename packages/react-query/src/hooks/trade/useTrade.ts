@@ -16,21 +16,19 @@ export const useTradeQuery = (
   select: UseTradeQuerySelect
 ) => {
     return useQuery({
-        queryKey: ['getTrade', {chainId, fromToken, toToken, amount, gasPrice, recipient}],
+        queryKey: ['NoPersist', 'getTrade', {chainId, fromToken, toToken, amount, gasPrice, recipient}],
         queryFn: async () => {
-            const res = await (
-                await fetch(
-                    `${
-                        process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0'
-                    }?chainId=${chainId}&fromTokenId=${
-                        fromToken.isNative ? nativeCurrencyIds[chainId] : fromToken.wrapped.address
-                    }&toTokenId=${
-                        toToken.isNative ? nativeCurrencyIds[chainId] : toToken.wrapped.address
-                    }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}${recipient ? `&to=${recipient}` : ''}`
-                )
-            ).json()
-
-            return tradeValidator.parse(res)
+            // TODO: Sort this out, use URL/URLSearchParams...
+            const res = await fetch(
+                `${
+                    process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0'
+                }?chainId=${chainId}&fromTokenId=${
+                    fromToken?.isNative ? nativeCurrencyIds[chainId] : fromToken?.wrapped.address
+                }&toTokenId=${
+                    toToken?.isNative ? nativeCurrencyIds[chainId] : toToken?.wrapped.address
+                }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}${recipient ? `&to=${recipient}` : ''}&preferSushi=true`
+            )
+            return tradeValidator.parse(await res.json())
         },
         refetchOnWindowFocus: true,
         refetchInterval: 10000,
@@ -47,8 +45,7 @@ export const useTrade = (variables: UseTradeParams) => {
 
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
-      if (data && amount && data.getBestRoute) {
-
+      if (data && amount && data.getBestRoute && fromToken && toToken) {
           const amountIn = Amount.fromRawAmount(fromToken, data.getBestRoute.amountInBN)
           const amountOut = Amount.fromRawAmount(toToken, data.getBestRoute.amountOutBN)
           const isOffset = chainId === ChainId.POLYGON && carbonOffset

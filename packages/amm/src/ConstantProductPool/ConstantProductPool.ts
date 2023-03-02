@@ -1,12 +1,13 @@
 import { Amount, Price, Share, Token } from '@sushiswap/currency'
 import { JSBI, ONE, sqrt, ZERO } from '@sushiswap/math'
-import EXPORTS from '@sushiswap/trident/exports/all.json'
+import { constantProductPoolFactoryAddress, ConstantProductPoolFactoryChainId } from '@sushiswap/trident'
 import invariant from 'tiny-invariant'
 
 import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
 import { Fee } from '../Fee'
 import { Pool } from '../Pool'
 import { computeConstantProductPoolAddress } from './computeConstantProductPoolAddress'
+import { constantProductPoolSchema, SerializedConstantProductPool } from './zod'
 
 export class ConstantProductPool implements Pool {
   public readonly liquidityToken: Token
@@ -19,7 +20,7 @@ export class ConstantProductPool implements Pool {
 
   public static getAddress(tokenA: Token, tokenB: Token, fee: Fee, twap: boolean): string {
     return computeConstantProductPoolAddress({
-      factoryAddress: (EXPORTS as any)[tokenA.chainId][0].contracts.ConstantProductPoolFactory.address,
+      factoryAddress: constantProductPoolFactoryAddress[tokenA.chainId as ConstantProductPoolFactoryChainId],
       tokenA,
       tokenB,
       fee,
@@ -317,6 +318,24 @@ export class ConstantProductPool implements Pool {
           JSBI.subtract(this.reserve0.quotient, amount0)
         )
       )
+    )
+  }
+
+  public serialize(): SerializedConstantProductPool {
+    return constantProductPoolSchema.parse({
+      reserve0: this.tokenAmounts[0].serialize(),
+      reserve1: this.tokenAmounts[1].serialize(),
+      fee: this.fee,
+      twap: this.twap,
+    })
+  }
+
+  public static deserialize(pool: SerializedConstantProductPool): ConstantProductPool {
+    return new ConstantProductPool(
+      Amount.deserialize(pool.reserve0),
+      Amount.deserialize(pool.reserve1),
+      pool.fee,
+      pool.twap
     )
   }
 }

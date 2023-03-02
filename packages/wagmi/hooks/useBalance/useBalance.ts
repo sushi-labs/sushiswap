@@ -1,11 +1,12 @@
 import { isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { bentoBoxV1Abi } from '@sushiswap/abi'
+import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { JSBI, ZERO } from '@sushiswap/math'
-import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
+import { getBentoBoxContractConfig } from '../useBentoBoxContract'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, erc20ABI, useBalance as useWagmiBalance, useContractReads } from 'wagmi'
@@ -74,7 +75,11 @@ export const useBalances: UseBalances = ({
       }
     })
 
-    if (loadBentobox) {
+    if (loadBentobox && chainId) {
+      if (!isBentoBoxV1ChainId(chainId)) {
+        throw new Error(`ChainId Error: BentoBox is not available on ${ChainId[chainId]} and loadBentobox is enabled.`)
+      }
+
       const totals = validatedTokenAddresses.map((token) => ({
         chainId,
         ...getBentoBoxContractConfig(chainId),

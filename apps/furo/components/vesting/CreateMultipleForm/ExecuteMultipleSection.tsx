@@ -1,8 +1,6 @@
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
-import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, Dots } from '@sushiswap/ui'
@@ -20,9 +18,11 @@ import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount }
 import { CreateMultipleVestingFormSchemaType } from './schema'
 import { useCreateNotification } from '@sushiswap/react-query'
 import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { FuroVestingRouterChainId } from '@sushiswap/furo'
+import { bentoBoxV1Address } from '@sushiswap/bentobox'
 
 export const ExecuteMultipleSection: FC<{
-  chainId: ChainId
+  chainId: FuroVestingRouterChainId
   isReview: boolean
 }> = ({ chainId, isReview }) => {
   const { address } = useAccount()
@@ -188,7 +188,7 @@ export const ExecuteMultipleSection: FC<{
               enabled={!!amount}
               key={index}
               amount={amount}
-              address={BENTOBOX_ADDRESS[chainId]}
+              address={bentoBoxV1Address[chainId]}
             />
           ))}
         </Approve.Components>

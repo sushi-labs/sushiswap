@@ -1,32 +1,44 @@
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import Switch from '@sushiswap/ui/future/components/Switch'
-import { useSwapState } from '../trade/TradeProvider'
+import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { AppType } from '@sushiswap/ui/types'
 import { classNames } from '@sushiswap/ui'
 import { ShuffleIcon } from '@sushiswap/ui/future/components/icons'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { ChainSelectors } from './ChainSelectors'
 import { Explainer } from '@sushiswap/ui/future/components/Explainer'
+import { STARGATE_SUPPORTED_CHAIN_IDS } from '@sushiswap/stargate'
 
 export const CrossChainBanner: FC = () => {
-  const { appType } = useSwapState()
-  const [open, setOpen] = useState(false)
+  const { appType, network0 } = useSwapState()
+  const [open, setOpen] = useState(appType !== AppType.Swap)
+  const { setAppType } = useSwapActions()
 
-  const handleChange = useCallback((checked: boolean) => {
-    if (checked) setOpen(true)
-    else setOpen(false)
-  }, [])
+  const handleChange = useCallback(
+    (checked: boolean) => {
+      if (checked) {
+        setOpen(true)
+        setAppType(AppType.xSwap)
+      } else {
+        setOpen(false)
+        setAppType(AppType.Swap)
+      }
+    },
+    [setAppType]
+  )
 
   useEffect(() => {
-    if (appType === AppType.xSwap) {
-      setOpen(true)
-    } else {
-      setOpen(false)
-    }
+    if (appType === AppType.xSwap) setOpen(true)
+    if (appType === AppType.Swap) setOpen(false)
   }, [appType])
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-xl mb-4">
+    <div
+      className={classNames(
+        !STARGATE_SUPPORTED_CHAIN_IDS.includes(network0 as number) ? 'opacity-40 pointer-events-none' : '',
+        'bg-white dark:bg-slate-900 rounded-xl mb-4'
+      )}
+    >
       <div
         className={classNames(
           'flex flex-col bg-gradient-to-r from-blue/[0.15] to-pink/[0.15] hover:from-blue/20 hover:to-pink/20 saturate-[2] dark:saturate-[1] px-4 py-3 rounded-xl'

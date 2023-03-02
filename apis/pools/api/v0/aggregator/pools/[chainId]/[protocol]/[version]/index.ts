@@ -4,7 +4,7 @@ import { getAggregatorPoolsByTokenIds } from '../../../../../../../lib/api/index
 import { AggregatorPoolsByTokenIdsSchema } from '../../../../../../../lib/schemas/index.js'
 
 const handler = async (_request: VercelRequest, response: VercelResponse) => {
-  response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=60')
+  response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=2592000')
 
   const result = AggregatorPoolsByTokenIdsSchema.safeParse(_request.query)
   if (!result.success) {

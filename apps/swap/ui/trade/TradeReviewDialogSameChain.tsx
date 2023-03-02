@@ -32,9 +32,9 @@ export const TradeReviewDialogSameChain: FC = () => {
 
   const onClose = useCallback(() => setReview(false), [setReview])
   const isWrap =
-    appType === AppType.Swap && token0.isNative && token1.wrapped.address === Native.onChain(network0).wrapped.address
+    appType === AppType.Swap && token0?.isNative && token1?.wrapped.address === Native.onChain(network0).wrapped.address
   const isUnwrap =
-    appType === AppType.Swap && token1.isNative && token0.wrapped.address === Native.onChain(network0).wrapped.address
+    appType === AppType.Swap && token1?.isNative && token0?.wrapped.address === Native.onChain(network0).wrapped.address
   const isSwap = !isWrap && !isUnwrap
 
   // Don't unmount this dialog since that will slow down the opening callback
@@ -50,11 +50,11 @@ export const TradeReviewDialogSameChain: FC = () => {
               <Skeleton.Text fontSize="text-3xl" className="w-2/3" />
             ) : (
               <h1 className="text-3xl font-semibold dark:text-slate-50">
-                Buy {trade?.amountOut?.toSignificant(6)} {token1.symbol}
+                Buy {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
               </h1>
             )}
             <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
-              {isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Sell'} {amount?.toSignificant(6)} {token0.symbol}
+              {isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Sell'} {amount?.toSignificant(6)} {token0?.symbol}
             </h1>
           </div>
           <div className="min-w-[56px] min-h-[56px]">
@@ -72,7 +72,11 @@ export const TradeReviewDialogSameChain: FC = () => {
                   </div>
                 }
               >
-                <Currency.Icon currency={token1} width={56} height={56} />
+                {token1 ? (
+                  <Currency.Icon currency={token1} width={56} height={56} />
+                ) : (
+                  <Skeleton.Circle radius={56} className="dark:bg-slate-800 bg-gray-100" />
+                )}
               </Badge>
             </div>
           </div>
@@ -117,7 +121,7 @@ export const TradeReviewDialogSameChain: FC = () => {
                   {isFetching ? (
                     <Skeleton.Text align="right" fontSize="text-sm" className="w-1/2" />
                   ) : (
-                    `${trade?.minAmountOut?.toSignificant(6)} ${token1.symbol}`
+                    `${trade?.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
                   )}
                 </List.KeyValue>
               )}
@@ -168,7 +172,7 @@ export const TradeReviewDialogSameChain: FC = () => {
                   size="xl"
                   loading={isLoading && !isError}
                   onClick={onClick}
-                  disabled={isWritePending || Boolean(isLoading && +value > 0) || isFetching || isError}
+                  disabled={isWritePending || Boolean(isLoading && +value > 0) || isError}
                   color={isError ? 'red' : warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
                 >
                   {isError ? (
@@ -182,7 +186,7 @@ export const TradeReviewDialogSameChain: FC = () => {
                   ) : isUnwrap ? (
                     'Unwrap'
                   ) : (
-                    `Swap ${token0.symbol} for ${token1.symbol}`
+                    `Swap ${token0?.symbol} for ${token1?.symbol}`
                   )}
                 </Button>
                 <Collapsible open={!!error}>

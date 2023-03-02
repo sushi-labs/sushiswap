@@ -1,10 +1,10 @@
 import { Type, Type as Currency } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
-import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
+import { getBentoBoxContractConfig } from '@sushiswap/wagmi'
 import { Address, readContracts } from 'wagmi'
 import { ChainId } from '@sushiswap/chain'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
-export const getBentoboxTotals = async (chainId: ChainId | undefined, currencies: (Currency | undefined)[]) => {
+export const getBentoboxTotals = async (chainId: BentoBoxV1ChainId, currencies: (Currency | undefined)[]) => {
   const addresses = currencies
     .filter((currency): currency is Currency => Boolean(currency && currency.wrapped))
     .map((token) => token.wrapped.address)
@@ -65,10 +65,12 @@ export const getBentoboxTotals = async (chainId: ChainId | undefined, currencies
   })
 
   if (allResolved) return result
-  return undefined
+  return null
 }
 
-export const getBentoboxTotal = async ({ chainId, currency }: { chainId: ChainId; currency: Type }) => {
+export const getBentoboxTotal = async ({ chainId, currency }: { chainId: BentoBoxV1ChainId; currency: Type }) => {
+  if (!chainId) return undefined
+
   const totals = await getBentoboxTotals(chainId, [currency])
 
   if (!totals || !currency) {

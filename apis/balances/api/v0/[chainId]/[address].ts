@@ -1,5 +1,4 @@
-import { allChains } from '@sushiswap/wagmi-config/chains'
-import { allProviders } from '@sushiswap/wagmi-config/providers'
+import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { Address, configureChains, createClient, erc20ABI, fetchBalance, readContracts } from '@wagmi/core'
 import { fetch } from '@whatwg-node/fetch'

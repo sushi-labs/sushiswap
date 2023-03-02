@@ -29,16 +29,6 @@ const protocolSchema = z.object({
   poolType: z.nativeEnum(PoolType).optional(),
 })
 
-const commonSchema = z.object({
-  chainId: z.coerce
-    .number()
-    .int()
-    .gte(0)
-    .lte(2 ** 256),
-  version: z.nativeEnum(ProtocolVersion),
-  poolType: z.nativeEnum(PoolType),
-})
-
 const chainIdOnlySchema = z.object({
   chainId: z.coerce
     .number()
@@ -55,8 +45,6 @@ const priceSchema = z.object({
     .lte(2 ** 256),
   base: z.string(),
   price: z.nativeEnum(Price),
-  version: z.nativeEnum(ProtocolVersion),
-  poolType: z.nativeEnum(PoolType),
 })
 
 app.get('/', (req, res) => {
@@ -245,9 +233,9 @@ app.get(
       return res.status(400).json(result.error.format())
     }
 
-    const { chainId, version, poolType, base, price } = result.data
+    const { chainId, base, price } = result.data
     try {
-      await prices(chainId, version, poolType, base, price)
+      await prices(chainId, base, price)
       res.sendStatus(200)
     } catch (err) {
       res.status(500).send(err)

@@ -1,19 +1,16 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type as Currency, Type, WNATIVE } from '@sushiswap/currency'
 import {
-  ConstantProductPool,
   FACTORY_ADDRESS,
   findMultiRouteExactIn,
   findSingleRouteExactIn,
-  Pair,
-  StablePool,
   Trade,
   TradeType,
   Version as TradeVersion,
 } from '@sushiswap/amm'
 import { BigNumber } from 'ethers'
 import { RouteStatus } from '@sushiswap/tines'
-import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from '../useClientTrade'
+import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from '../../config'
 import { UsePoolsReturn } from './usePools'
 import { FetchFeeDataResult } from 'wagmi/actions'
 import { JSBI } from '@sushiswap/math'
@@ -27,7 +24,7 @@ interface UseTradeParams {
   enabled?: boolean
   pools: UsePoolsReturn | undefined
   feeData: FetchFeeDataResult | undefined
-  rebases: { base: JSBI; elastic: JSBI }[] | undefined
+  rebases: { base: JSBI; elastic: JSBI }[] | null | undefined
 }
 
 export const getTrade = async ({
@@ -56,8 +53,7 @@ export const getTrade = async ({
     chainId &&
     amountSpecified &&
     amountSpecified.greaterThan(0) &&
-    pools &&
-    pools.length > 0
+    pools
   ) {
     if (tradeType === TradeType.EXACT_INPUT) {
       if (
@@ -68,7 +64,7 @@ export const getTrade = async ({
           currencyIn.wrapped,
           currencyOut.wrapped,
           BigNumber.from(amountSpecified.quotient.toString()),
-          pools.filter((pool): pool is Pair => pool instanceof Pair),
+          pools.pairs || [],
           WNATIVE[amountSpecified.currency.chainId],
           feeData.gasPrice.toNumber()
         )
@@ -77,10 +73,7 @@ export const getTrade = async ({
           currencyIn.wrapped,
           currencyOut.wrapped,
           BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
-          [
-            ...pools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
-            ...pools.filter((pool): pool is StablePool => pool instanceof StablePool),
-          ],
+          [...(pools.constantProductPools || []), ...(pools.stablePools || [])],
           WNATIVE[amountSpecified.currency.chainId],
           feeData.gasPrice.toNumber()
         )
@@ -108,7 +101,7 @@ export const getTrade = async ({
         currencyIn.wrapped,
         currencyOut.wrapped,
         BigNumber.from(amountSpecified.quotient.toString()),
-        pools.filter((pool): pool is Pair => pool instanceof Pair),
+        pools.pairs || [],
         WNATIVE[amountSpecified.currency.chainId],
         feeData.gasPrice.toNumber()
       )
@@ -125,10 +118,7 @@ export const getTrade = async ({
         currencyIn.wrapped,
         currencyOut.wrapped,
         BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
-        [
-          ...pools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
-          ...pools.filter((pool): pool is StablePool => pool instanceof StablePool),
-        ],
+        [...(pools.constantProductPools || []), ...(pools.stablePools || [])],
         WNATIVE[amountSpecified.currency.chainId],
         feeData.gasPrice.toNumber()
       )

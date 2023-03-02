@@ -166,7 +166,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           </TokenSelector>
         )}
       </div>
-      <div className="flex flex-row justify-between h-[36px]">
+      <div className="flex flex-row items-center justify-between h-[36px]">
         <PricePanel
           value={value}
           currency={currency}

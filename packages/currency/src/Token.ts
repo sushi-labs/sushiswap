@@ -3,11 +3,13 @@ import invariant from 'tiny-invariant'
 
 import { Currency } from './Currency'
 import { Type } from './Type'
+import { SerializedToken, tokenSchema } from './zod'
 
 /**
  * Represents an ERC20 token with a unique address and some metadata.
  */
 export class Token extends Currency {
+  public readonly id: string
   public readonly isNative = false as const
   public readonly isToken = true as const
 
@@ -45,6 +47,7 @@ export class Token extends Currency {
     })
     try {
       this.address = getAddress(address)
+      this.id = `${chainId}:${address}`
     } catch {
       throw `${address} is not a valid address`
     }
@@ -75,5 +78,29 @@ export class Token extends Currency {
    */
   public get wrapped(): Token {
     return this
+  }
+
+  /**
+   * Serialize to JSON object
+   */
+  public serialize(): SerializedToken {
+    return tokenSchema.parse({
+      isNative: this.isNative,
+      name: this.name,
+      symbol: this.symbol,
+      decimals: this.decimals,
+      chainId: this.chainId,
+      address: this.address,
+    })
+  }
+
+  public static deserialize({ name, symbol, address, decimals, chainId }: SerializedToken): Token {
+    return new Token({
+      name,
+      symbol,
+      address,
+      decimals,
+      chainId,
+    })
   }
 }

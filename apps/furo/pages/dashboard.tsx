@@ -7,6 +7,7 @@ import { NextSeo } from 'next-seo'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 
 import { BackgroundVector, Dashboard, Layout } from '../components'
+import { FuroStreamChainId } from '@sushiswap/furo'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -115,7 +116,11 @@ export default function DashboardPage() {
         }
       >
         {activeChain && address && (
-          <Dashboard chainId={activeChain.id} address={address} showOutgoing={router.query.show === 'outgoing'} />
+          <Dashboard
+            chainId={activeChain.id as FuroStreamChainId}
+            address={address}
+            showOutgoing={router.query.show === 'outgoing'}
+          />
         )}
       </Layout>
     </>

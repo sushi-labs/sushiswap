@@ -1,4 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
+import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { Breadcrumb, BreadcrumbLink } from '@sushiswap/ui'
 import { NextSeo } from 'next-seo'
 import { useNetwork } from 'wagmi'
@@ -19,7 +20,7 @@ const LINKS: BreadcrumbLink[] = [
 
 const SingleStream = () => {
   const { chain } = useNetwork()
-  const chainId = chain?.id || ChainId.ETHEREUM
+  const chainId = (chain?.id || ChainId.ETHEREUM) as FuroStreamRouterChainId
 
   return (
     <>
