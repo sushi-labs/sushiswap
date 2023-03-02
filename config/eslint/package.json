@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@types/eslint": "8.4.10",
-    "@types/node": "^16.0.0",
+    "@types/node": "^18.0.0",
     "eslint-config-next": "13.1.2",
     "eslint-config-prettier": "8.5.0",
     "eslint-config-turbo": "0.0.7",

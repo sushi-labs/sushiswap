@@ -77,7 +77,7 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
     "@types/jest": "^29.2.0",
-    "@types/node": "^16.0.0",
+    "@types/node": "^18.0.0",
     "@types/numeral": "2.0.2",
     "@wagmi/core": "0.8.1",
     "eslint": "8.29.0",

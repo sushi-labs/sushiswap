@@ -42,7 +42,7 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/pools-api": "workspace:*",
-    "@types/node": "^16.0.0",
+    "@types/node": "^18.0.0",
     "eslint": "8.29.0",
     "swr": "2.0.3",
     "tsup": "6.5.0",
