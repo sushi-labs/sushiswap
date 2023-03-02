@@ -1,9 +1,9 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
+
 import {
   closeValues,
   ConstantProductRPool,
   getBigNumber,
-  HybridRPool,
   MultiRoute,
   NetworkInfo,
   RouteLeg,
@@ -14,6 +14,7 @@ import {
 } from '../src'
 import { BridgeUnlimited } from '../src/BridgeBidirectionalUnlimited'
 import { BridgeStargateV04OneWay } from '../src/BridgeStargateV04OneWay'
+import { CurveRPool } from '../src/CurvePool'
 
 const MIN_TOKEN_PRICE = 1e-6
 const MAX_TOKEN_PRICE = 1e6
@@ -46,12 +47,12 @@ export function createNetwork(
   garantedStableTokens = 1
 ): Network {
   const tokens = []
-  for (var i = 0; i < tokenNumber; ++i) {
+  for (let i = 0; i < tokenNumber; ++i) {
     tokens.push(createRandomToken(rnd, '' + i, i < garantedStableTokens))
   }
 
   const pools: RPool[] = []
-  for (i = 0; i < tokenNumber; ++i) {
+  for (let i = 0; i < tokenNumber; ++i) {
     for (let j = i + 1; j < tokenNumber; ++j) {
       const r = rnd()
       if (r < density) {
@@ -161,7 +162,7 @@ function getCPPool(rnd: () => number, t0: TToken, t1: TToken) {
     t0 = t1
     t1 = t
   }
-  let price = t0.price / t1.price
+  const price = t0.price / t1.price
 
   const fee = getPoolFee(rnd)
   const imbalance = getPoolImbalance(rnd)
@@ -266,7 +267,7 @@ function getHybridPool(rnd: () => number, t0: RToken, t1: RToken) {
   console.assert(reserve0 >= MIN_LIQUIDITY && reserve0 <= MAX_LIQUIDITY, 'Error reserve0 clculation')
   console.assert(reserve1 >= MIN_LIQUIDITY && reserve1 <= MAX_LIQUIDITY, 'Error reserve1 clculation ' + reserve1)
 
-  return new HybridRPool(
+  return new CurveRPool(
     `pool hb ${t0.name} ${t1.name} ${reserve0} ${1} ${fee}`,
     t0,
     t1,
@@ -480,6 +481,7 @@ export function expectCloseValues(
         `\n precision = ${Math.abs(a / b - 1)}, expected < ${precision}` +
         `${additionalInfo == '' ? '' : '\n' + additionalInfo}`
     )
+    // eslint-disable-next-line no-debugger
     debugger
   }
   expect(res).toBeTruthy()
