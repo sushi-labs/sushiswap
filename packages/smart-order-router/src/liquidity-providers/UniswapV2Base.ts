@@ -83,7 +83,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         return undefined
       })
 
-    pools.map((pool, i) => {
+    pools.forEach((pool, i) => {
       const res0 = results?.[i]?.result?.[0]
       const res1 = results?.[i]?.result?.[1]
 

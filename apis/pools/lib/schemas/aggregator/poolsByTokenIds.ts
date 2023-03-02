@@ -12,7 +12,7 @@ export const AggregatorPoolsByTokenIdsSchema = z.object({
   poolTypes: z.string().transform((poolTypes) => poolTypes?.split(',') as PoolType[]),
   token0: z.string().transform((s) => s.toLowerCase()),
   token1: z.string().transform((s) => s.toLowerCase()),
-  size: z.coerce.number().int().gte(0).lte(1000),
+  take: z.coerce.number().int().gte(0).lte(1000),
   excludeTopPoolsSize: z.coerce.number().int().gte(0).lte(1000),
   topPoolMinLiquidity: z.coerce.number().int().optional(),
 })
