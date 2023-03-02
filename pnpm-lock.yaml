@@ -13363,6 +13363,7 @@ packages:
 
   /@walletconnect/qrcode-modal/1.8.0:
     resolution: {integrity: sha512-BueaFefaAi8mawE45eUtztg3ZFbsAH4DDXh1UNwdUlsvFMjqcYzLUG0xZvDd6z2eOpbgDg2N3bl6gF0KONj1dg==}
+    deprecated: 'WalletConnect''s v1 SDKs are now deprecated. Please upgrade to a v2 SDK. For details see: https://docs.walletconnect.com/'
     dependencies:
       '@walletconnect/browser-utils': 1.8.0
       '@walletconnect/mobile-registry': 1.4.0
@@ -19844,12 +19845,6 @@ packages:
   /fast-levenshtein/2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
-  /fast-querystring/1.1.0:
-    resolution: {integrity: sha512-LWkjBCZlxjnSanuPpZ6mHswjy8hQv3VcPJsQB3ltUF2zjvrycr0leP3TSTEEfvQ1WEMSRl5YNsGqaft9bjLqEw==}
-    dependencies:
-      fast-decode-uri-component: 1.0.1
-    dev: false
-
   /fast-querystring/1.1.1:
     resolution: {integrity: sha512-qR2r+e3HvhEFmpdHMv//U8FnFlnYjaC6QKDuaXALDkw2kvHO8WDjxH+f/rHGR4Me4pnk8p9JAkRNTjYHAKRn2Q==}
     dependencies:
@@ -20051,7 +20046,7 @@ packages:
     engines: {node: '>=14'}
     dependencies:
       fast-deep-equal: 3.1.3
-      fast-querystring: 1.1.0
+      fast-querystring: 1.1.1
       safe-regex2: 2.0.0
     dev: false
 

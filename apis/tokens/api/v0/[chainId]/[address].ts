@@ -1,7 +1,16 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { Address, configureChains, createClient, fetchToken } from '@wagmi/core'
 import { z } from 'zod'
 
 import { getToken } from '../../../lib/api.js'
+import { allChains } from '@sushiswap/wagmi-config/chains'
+import { allProviders } from '@sushiswap/wagmi-config/providers'
+
+const { provider } = configureChains(allChains, allProviders)
+createClient({
+  autoConnect: true,
+  provider,
+})
 
 const schema = z.object({
   chainId: z.coerce
@@ -17,8 +26,27 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   try {
     const token = await getToken(chainId, address)
     return response.status(200).json(token)
-  } catch (error: unknown) {
-    return response.status(404).send('Not found')
+  } catch (error) {
+    const tokenFromContract = await fetchToken({
+      chainId,
+      address: address as Address,
+    }).catch(() => {
+      return undefined
+    })
+    if (tokenFromContract) {
+      return response
+        .status(200)
+        .json({
+          id: `${chainId}:${tokenFromContract.address}`,
+          address: tokenFromContract.address,
+          name: tokenFromContract.name,
+          symbol: tokenFromContract.symbol,
+          decimals: tokenFromContract.decimals,
+          isCommon: false,
+        })
+    } else {
+      return response.status(404).send('Not found')
+    }
   }
 }
 
