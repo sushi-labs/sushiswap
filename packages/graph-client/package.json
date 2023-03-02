@@ -28,6 +28,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
+    "build": "graphclient build --fileType js --throwOnInvalidConfig",
     "generate": "graphclient build --fileType js --throwOnInvalidConfig",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
