@@ -1,6 +1,6 @@
 import { SUBGRAPH_HOST, SUSHISWAP_SUBGRAPH_NAME, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 
-import { QueryResolvers, Token } from '../../.graphclient'
+import { QueryResolvers, Token } from '../../.graphclient/index.js'
 
 export const tokenById: QueryResolvers['tokenById'] = async (root, args, context, info): Promise<Token> => {
   const [chainId, address] = args.id.split(':')

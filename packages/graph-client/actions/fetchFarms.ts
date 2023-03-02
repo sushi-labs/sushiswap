@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import type { ChainId } from '@sushiswap/chain'
 import fetch from 'isomorphic-unfetch'
 
 // TODO: Move API to OpenAPI, use graph-mesh to fetch
@@ -28,4 +28,5 @@ export interface FarmAPI {
   }
 }
 
-export const fetchFarms = async (): Promise<FarmAPI> => fetch('https://farm.sushi.com/v0').then((data) => data.json())
+export const fetchFarms = async (): Promise<FarmAPI> =>
+  fetch('https://farm.sushi.com/v0').then((data: any) => data.json())

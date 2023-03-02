@@ -9,7 +9,7 @@ import {
 } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 
-import { Factory, Query, QueryResolvers, Resolvers } from '../../.graphclient'
+import { Factory, Query, QueryResolvers, Resolvers } from '../../.graphclient/index.js'
 
 export const factoriesByChainIds: QueryResolvers['factoriesByChainIds'] = async (
   root,
@@ -19,7 +19,7 @@ export const factoriesByChainIds: QueryResolvers['factoriesByChainIds'] = async 
 ): Promise<Query['factoriesByChainIds']> => {
   return Promise.allSettled<Query['factoriesByChainIds'][]>([
     ...args.chainIds
-      .filter((el): el is typeof TRIDENT_ENABLED_NETWORKS[number] => TRIDENT_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is (typeof TRIDENT_ENABLED_NETWORKS)[number] => TRIDENT_ENABLED_NETWORKS.includes(el))
       .map((chainId) =>
         context.Trident.Query.factories({
           root,
@@ -41,7 +41,7 @@ export const factoriesByChainIds: QueryResolvers['factoriesByChainIds'] = async 
         })
       ),
     ...args.chainIds
-      .filter((el): el is typeof SUSHISWAP_ENABLED_NETWORKS[number] => SUSHISWAP_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is (typeof SUSHISWAP_ENABLED_NETWORKS)[number] => SUSHISWAP_ENABLED_NETWORKS.includes(el))
       .map((chainId) =>
         context.SushiSwap.Query.factories({
           root,

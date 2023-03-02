@@ -43,7 +43,7 @@
     "cli-table3": "0.6.3",
     "commander": "9.4.1",
     "date-fns": "2.29.3",
-    "isomorphic-unfetch": "3.1.0",
+    "isomorphic-unfetch": "4.0.2",
     "listr": "0.14.3",
     "numeral": "2.0.6",
     "ora": "5.4.1"

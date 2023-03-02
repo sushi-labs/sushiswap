@@ -7,24 +7,24 @@ import { USDC_ADDRESS } from '@sushiswap/currency'
 
 import { PoolType, Price, PROTOCOL_JOBS, ProtocolName, ProtocolVersion, TRACKED_CHAIN_IDS } from './config.js'
 
-if (!process.env.GC_PROJECT_ID) {
+if (!process.env['GC_PROJECT_ID']) {
   throw new Error('GC_PROJECT_ID is not set')
 }
 
-if (!process.env.GC_SERVICE_NAME) {
+if (!process.env['GC_SERVICE_NAME']) {
   throw new Error('GC_SERVICE_NAME is not set')
 }
 
-if (!process.env.GC_SERVICE_ACCOUNT_EMAIL) {
+if (!process.env['GC_SERVICE_ACCOUNT_EMAIL']) {
   throw new Error('GC_SERVICE_ACCOUNT_EMAIL is not set')
 }
 
 const serviceClient = new run.v2.ServicesClient()
 const schedulerClient = new scheduler.CloudSchedulerClient()
 
-const GC_PROJECT_ID = process.env.GC_PROJECT_ID
-const GC_SERVICE_NAME = process.env.GC_SERVICE_NAME
-const GC_SERVICE_ACCOUNT_EMAIL = process.env.GC_SERVICE_ACCOUNT_EMAIL
+const GC_PROJECT_ID = process.env['GC_PROJECT_ID']
+const GC_SERVICE_NAME = process.env['GC_SERVICE_NAME']
+const GC_SERVICE_ACCOUNT_EMAIL = process.env['GC_SERVICE_ACCOUNT_EMAIL']
 const LOCATION_ID = 'us-east4'
 
 async function main() {

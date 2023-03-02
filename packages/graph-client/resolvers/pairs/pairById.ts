@@ -10,11 +10,10 @@ import {
 } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 
-import { getBuiltGraphSDK, Pair, QueryResolvers } from '../../.graphclient'
-import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
-import { TridentTypes } from '../../.graphclient/sources/Trident/types'
-import { getIncentivesByPoolId } from '../../lib/incentives'
-import { transformPair } from '../../transformers'
+import { getBuiltGraphSDK, Pair, QueryResolvers } from '../../.graphclient/index.js'
+import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
+import { TridentTypes } from '../../.graphclient/sources/Trident/types.js'
+import { transformPair } from '../../transformers/index.js'
 
 const sdk = getBuiltGraphSDK()
 

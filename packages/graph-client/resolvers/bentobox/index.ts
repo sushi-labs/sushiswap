@@ -1,5 +1,5 @@
-import { Resolvers } from '../../.graphclient'
-import { rebasesByChainIds } from './rebasesByChainIds'
+import { Resolvers } from '../../.graphclient/index.js'
+import { rebasesByChainIds } from './rebasesByChainIds.js'
 
 export const resolvers: Resolvers = {
   // BentoBox: {

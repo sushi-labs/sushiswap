@@ -19,7 +19,7 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "lint": "TIMING=1 eslint src --fix",    
-    "generate": "graphclient build --fileType js --throwOnInvalidConfig",
+    "build": "graphclient build --fileType js --throwOnInvalidConfig",
     "server": "ts-node --swc src/server.ts",
     "start": "ts-node --swc src/server.ts",
     "setup": "ts-node src/setup-schedulers.ts",
@@ -45,7 +45,7 @@
     "@wagmi/core": "0.8.1",
     "connect-timeout": "1.9.0",
     "express": "4.18.2",
-    "isomorphic-unfetch": "3.1.0",
+    "isomorphic-unfetch": "4.0.2",
     "zod": "3.20.2"
   },
   "devDependencies": {

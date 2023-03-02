@@ -2,15 +2,8 @@ import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId, chainShortName } from '@sushiswap/chain'
 import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
-// const { provider } = configureChains(allChains, allProviders, { pollingInterval: 10000, minQuorum: 1, targetQuorum: 1 })
-// createClient({
-//   autoConnect: true,
-//   provider,
-// })
 import { PublicClient } from 'viem'
 
-// import { configureChains, createClient } from '@wagmi/core'
-// import { allChains } from './chains'
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { DfynProvider } from './liquidity-providers/Dfyn'
 import { ElkProvider } from './liquidity-providers/Elk'
@@ -45,7 +38,7 @@ export class DataFetcher {
 
   _providerIsIncluded(lp: LiquidityProviders, liquidity?: LiquidityProviders[]) {
     if (!liquidity) return true
-    if (lp == LiquidityProviders.NativeWrap) return true
+    if (lp === LiquidityProviders.NativeWrap) return true
     return liquidity.some((l) => l == lp)
   }
 

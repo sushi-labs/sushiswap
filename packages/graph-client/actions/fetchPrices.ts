@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import type { ChainId } from '@sushiswap/chain'
 import fetch from 'isomorphic-unfetch'
 
 export interface PriceAPI {
@@ -6,4 +6,4 @@ export interface PriceAPI {
 }
 
 export const fetchPricesByChainId = async (chainId: ChainId): Promise<PriceAPI> =>
-  fetch(`https://token-price.sushi.com/v0/${chainId}`).then((data) => data.json())
+  fetch(`https://token-price.sushi.com/v0/${chainId}`).then((data: any) => data.json())
