@@ -1,4 +1,4 @@
-import type { ChainId } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import {
   SUBGRAPH_HOST,
   SUSHISWAP_SUBGRAPH_NAME,
@@ -8,7 +8,7 @@ import {
 } from '@sushiswap/graph-config'
 import { isSushiSwapChain, isTridentChain } from '@sushiswap/validate'
 import { erc20ABI, readContracts } from '@wagmi/core'
-import type { BigNumber } from 'ethers'
+import { BigNumber } from 'ethers'
 
 import { divBigNumberToNumber } from './utils.js'
 
@@ -26,9 +26,10 @@ const getExchangeTokens = async (ids: string[], chainId: SushiSwapChainId): Prom
   const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
   const sdk = getBuiltGraphSDK({
-    path: SUBGRAPH_HOST[chainId],
+    host: SUBGRAPH_HOST[chainId],
     name: subgraphName,
   })
+
   // waiting for new subgraph to sync
   const { tokens, bundle } = await sdk.Tokens({
     where: { id_in: ids.map((id) => id.toLowerCase()) },
@@ -37,8 +38,8 @@ const getExchangeTokens = async (ids: string[], chainId: SushiSwapChainId): Prom
   return tokens.map((token) => ({
     id: token.id,
     symbol: token.symbol,
-    decimals: Number(token.decimals),
     name: token.name,
+    decimals: Number(token.decimals),
     liquidity: Number(token.liquidity),
     derivedUSD: token.price.derivedNative * bundle?.nativePrice,
   }))
@@ -88,7 +89,7 @@ export const getTokens = async (ids: string[], chainId: SushiSwapChainId | Tride
 
 export async function getTokenBalancesOf(_tokens: string[], address: string, chainId: ChainId) {
   // not fully erc20, farm not active
-  const tokens = _tokens.filter(token => token !== "0x0c810E08fF76E2D0beB51B10b4614b8f2b4438F9")
+  const tokens = _tokens.filter((token) => token !== '0x0c810E08fF76E2D0beB51B10b4614b8f2b4438F9')
 
   const balanceOfCalls = tokens.map(
     (token) =>
@@ -111,17 +112,32 @@ export async function getTokenBalancesOf(_tokens: string[], address: string, cha
       } as const)
   )
 
-  const result = await readContracts({
-    allowFailure: true,
-    contracts: [...balanceOfCalls, ...decimalCalls],
-  })
+  const [balancesOf, decimals] = await Promise.all([
+    readContracts({
+      allowFailure: true,
+      contracts: balanceOfCalls,
+    }),
+    readContracts({
+      allowFailure: true,
+      contracts: decimalCalls,
+    }),
+  ])
 
-  const balancesOf = result.splice(0, balanceOfCalls.length) as unknown as BigNumber[]
-  const decimals = result.splice(0, decimalCalls.length) as unknown as number[]
+  return tokens
+    .map((token, i) => {
+      const balance = balancesOf[i]
+      const decimal = decimals[i]
 
-  return tokens.map((token, i) => ({
-    token,
-    // TODO: when response is null, should we return 0 or exclude the token completely? why is null returned?
-    balance: balancesOf[i] !== undefined && balancesOf[i] !== null ? divBigNumberToNumber(balancesOf[i], decimals[i]) : 0,
-  }))
+      if (balance === null || decimal === null) {
+        console.log(`Balance / decimal fetch failed for ${token} on ${ChainId[chainId]}`)
+        return null
+      }
+
+      return {
+        token,
+        // so that we don't need to seed new pairs
+        balance: balancesOf[i]?.eq(0) ? 1 : divBigNumberToNumber(balancesOf[i], decimals[i]),
+      }
+    })
+    .filter((token): token is NonNullable<typeof token> => Boolean(token))
 }
