@@ -15,10 +15,12 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 // @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, FEES_COLUMN, APR_COLUMN]
 
-export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady } = { isReady: true }) => {
+export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady }) => {
   const { chainIds, tokenSymbols, poolTypes, poolVersions, incentivizedOnly } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
+
+  const shouldLoad = isReady === undefined || !!isReady
 
   const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
@@ -42,8 +44,8 @@ export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady } = { isReady: t
     data: pools,
     isValidating,
     setSize,
-  } = usePoolsInfinite({ args, shouldFetch: isReady, swrConfig: useSWRConfig() })
-  const { data: poolCount } = usePoolCount({ args, shouldFetch: isReady, swrConfig: useSWRConfig() })
+  } = usePoolsInfinite({ args, shouldFetch: shouldLoad, swrConfig: useSWRConfig() })
+  const { data: poolCount } = usePoolCount({ args, shouldFetch: shouldLoad, swrConfig: useSWRConfig() })
   const data = useMemo(() => pools?.flat() || [], [pools])
 
   const table = useReactTable<Pool>({
@@ -102,7 +104,7 @@ export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady } = { isReady: t
       >
         <GenericTable<Pool>
           table={table}
-          loading={(!pools && isValidating) || !isReady}
+          loading={(!pools && isValidating) || !shouldLoad}
           HoverElement={isMd ? PoolQuickHoverTooltip : undefined}
           placeholder="No pools found"
           pageSize={PAGE_SIZE}
