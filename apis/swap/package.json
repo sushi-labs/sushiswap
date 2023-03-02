@@ -22,7 +22,6 @@
   "files": [
     "dist"
   ],
-  "type": "module",
   "scripts": {
     "start": "ts-node --swc src/index.ts",
     "server": "ts-node --swc src/index.ts",

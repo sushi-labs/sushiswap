@@ -53,6 +53,9 @@ yarn-error.log*
 # typechain
 typechain
 
+# exports
+exports
+
 # cache
 cache
 
