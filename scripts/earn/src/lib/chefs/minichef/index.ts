@@ -71,7 +71,7 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
 
         const stakedLiquidityUSD = (pool.pair.liquidityUSD * pool.lpBalance) / pool.pair.totalSupply
 
-        let incentives: Farm['incentives'] = []
+        const incentives: Farm['incentives'] = []
 
         if (sushiRewardPerDay && sushiRewardPerDay > 0) {
           incentives.push({
@@ -111,7 +111,7 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
               rewardPerSecond = divBigNumberToNumber(pool.rewarder.rewardPerSecond, token.decimals)
             }
 
-            if (rewardPerSecond) {
+            if (!isNaN(rewardPerSecond)) {
               const rewardPerDay = secondsInDay * rewardPerSecond
               const rewardPerYearUSD = daysInYear * rewardPerDay * token.derivedUSD
 
@@ -132,8 +132,6 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
             }
           }
         }
-
-        incentives = incentives.filter((incentive) => incentive.apr !== 0)
 
         acc[pool.pair.id] = {
           id: pool.id,

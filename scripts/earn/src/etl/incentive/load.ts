@@ -9,14 +9,12 @@ import { performance } from 'perf_hooks'
  */
 export async function mergeIncentives(
   incentivesToCreate: Prisma.IncentiveCreateManyInput[],
-  incentivesToUpdate: Prisma.IncentiveCreateManyInput[],
-  incentivesToDelete: string[]
+  incentivesToUpdate: Prisma.IncentiveCreateManyInput[]
 ) {
   const incentivesAlreadyExist = await hasIncentives()
   if (incentivesAlreadyExist) {
     await updateIncentives(incentivesToUpdate)
     await createIncentives(incentivesToCreate)
-    await deleteIncentives(incentivesToDelete)
   } else {
     await createIncentives(incentivesToCreate)
   }
@@ -67,29 +65,6 @@ async function createIncentives(incentives: Prisma.IncentiveCreateManyInput[]) {
   }
   const endTime = performance.now()
   console.log(`LOAD - Created ${count} incentives. (${((endTime - startTime) / 1000).toFixed(1)}s)`)
-}
-
-async function deleteIncentives(incentives: string[]) {
-  if (incentives.length === 0) {
-    return
-  }
-
-  let count = 0
-  const batchSize = 500
-  const startTime = performance.now()
-  for (let i = 0; i < incentives.length; i += batchSize) {
-    const created = await client.incentive.deleteMany({
-      where: {
-        id: {
-          in: incentives.slice(i, i + batchSize),
-        },
-      },
-    })
-    console.log(`LOAD - Batched and deleted ${created.count} incentives`)
-    count += created.count
-  }
-  const endTime = performance.now()
-  console.log(`LOAD - Deleted ${count} incentives. (${((endTime - startTime) / 1000).toFixed(1)}s)`)
 }
 
 async function hasIncentives() {
