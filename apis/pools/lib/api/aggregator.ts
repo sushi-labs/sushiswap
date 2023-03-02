@@ -124,9 +124,6 @@ export async function getAggregatorPoolsByTokenIds(args: typeof AggregatorPoolsB
             OR: [
               {
                 token0Id: token0Id,
-                token0: {
-                  isFeeOnTransfer: false,
-                },
                 token1: {
                   status: 'APPROVED',
                   isFeeOnTransfer: false,
@@ -136,9 +133,6 @@ export async function getAggregatorPoolsByTokenIds(args: typeof AggregatorPoolsB
                 token1Id: token0Id,
                 token0: {
                   status: 'APPROVED',
-                  isFeeOnTransfer: false,
-                },
-                token1: {
                   isFeeOnTransfer: false,
                 },
               },
@@ -155,9 +149,6 @@ export async function getAggregatorPoolsByTokenIds(args: typeof AggregatorPoolsB
             OR: [
               {
                 token0Id: token0Id,
-                token0: {
-                  isFeeOnTransfer: false,
-                },
                 token1: {
                   status: 'APPROVED',
                   isFeeOnTransfer: false,
@@ -167,9 +158,6 @@ export async function getAggregatorPoolsByTokenIds(args: typeof AggregatorPoolsB
                 token1Id: token0Id,
                 token0: {
                   status: 'APPROVED',
-                  isFeeOnTransfer: false,
-                },
-                token1: {
                   isFeeOnTransfer: false,
                 },
               },
@@ -194,9 +182,6 @@ export async function getAggregatorPoolsByTokenIds(args: typeof AggregatorPoolsB
             OR: [
               {
                 token0Id: token1Id,
-                token0: {
-                  isFeeOnTransfer: false,
-                },
                 token1: {
                   status: 'APPROVED',
                   isFeeOnTransfer: false,
@@ -206,9 +191,6 @@ export async function getAggregatorPoolsByTokenIds(args: typeof AggregatorPoolsB
                 token1Id: token1Id,
                 token0: {
                   status: 'APPROVED',
-                  isFeeOnTransfer: false,
-                },
-                token1: {
                   isFeeOnTransfer: false,
                 },
               },
@@ -225,9 +207,6 @@ export async function getAggregatorPoolsByTokenIds(args: typeof AggregatorPoolsB
             OR: [
               {
                 token0Id: token1Id,
-                token0: {
-                  isFeeOnTransfer: false,
-                },
                 token1: {
                   status: 'APPROVED',
                   isFeeOnTransfer: false,
@@ -237,9 +216,6 @@ export async function getAggregatorPoolsByTokenIds(args: typeof AggregatorPoolsB
                 token1Id: token1Id,
                 token0: {
                   status: 'APPROVED',
-                  isFeeOnTransfer: false,
-                },
-                token1: {
                   isFeeOnTransfer: false,
                 },
               },
