@@ -7,8 +7,8 @@ import {
   TridentChainId,
 } from '@sushiswap/graph-config'
 import { isSushiSwapChain, isTridentChain } from '@sushiswap/validate'
-import { erc20ABI, readContracts } from '@wagmi/core'
-import type { BigNumber } from 'ethers'
+import { Address, erc20ABI, readContracts } from '@wagmi/core'
+import { BigNumber } from 'ethers'
 
 import { divBigNumberToNumber } from './utils.js'
 
@@ -88,13 +88,13 @@ export const getTokens = async (ids: string[], chainId: SushiSwapChainId | Tride
 
 export async function getTokenBalancesOf(_tokens: string[], address: string, chainId: ChainId) {
   // not fully erc20, farm not active
-  const tokens = _tokens.filter(token => token !== "0x0c810E08fF76E2D0beB51B10b4614b8f2b4438F9")
+  const tokens = _tokens.filter((token) => token !== '0x0c810E08fF76E2D0beB51B10b4614b8f2b4438F9')
 
   const balanceOfCalls = tokens.map(
     (token) =>
       ({
         address: token,
-        args: [address as `0x${string}`],
+        args: [address as Address],
         chainId: chainId,
         abi: erc20ABI,
         functionName: 'balanceOf',
@@ -104,24 +104,30 @@ export async function getTokenBalancesOf(_tokens: string[], address: string, cha
   const decimalCalls = tokens.map(
     (token) =>
       ({
-        address: token,
+        address: token as Address,
         chainId: chainId,
         abi: erc20ABI,
         functionName: 'decimals',
       } as const)
   )
 
-  const result = await readContracts({
-    allowFailure: true,
-    contracts: [...balanceOfCalls, ...decimalCalls],
-  })
-
-  const balancesOf = result.splice(0, balanceOfCalls.length) as unknown as BigNumber[]
-  const decimals = result.splice(0, decimalCalls.length) as unknown as number[]
+  const [balancesOf, decimals] = await Promise.all([
+    readContracts({
+      allowFailure: true,
+      contracts: balanceOfCalls,
+    }),
+    readContracts({
+      allowFailure: true,
+      contracts: decimalCalls,
+    }),
+  ])
 
   return tokens.map((token, i) => ({
     token,
     // TODO: when response is null, should we return 0 or exclude the token completely? why is null returned?
-    balance: balancesOf[i] !== undefined && balancesOf[i] !== null ? divBigNumberToNumber(balancesOf[i], decimals[i]) : 0,
+    balance:
+      BigNumber.isBigNumber(balancesOf?.[i]) && typeof decimals?.[i] === 'number'
+        ? divBigNumberToNumber(balancesOf[i] as BigNumber, decimals[i] as number)
+        : 0,
   }))
 }

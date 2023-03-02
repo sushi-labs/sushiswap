@@ -1,13 +1,19 @@
 {
-  "extends": "@sushiswap/typescript-config/node16-strictest-esm.combined.json",
-  "include": [".graphclient", "src"],
+  "extends": "@sushiswap/typescript-config/esm.json",
+  "include": ["src"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "./dist",
     "rootDir": ".",
+    "lib": ["ESNext"],
+    "module": "ESNext",
     "moduleResolution": "nodenext",
-    "module": "esnext"
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "downlevelIteration": true
     },
     "ts-node": {
       "swc": true,

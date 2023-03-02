@@ -119,12 +119,7 @@
       "cache": false
     },
     "check": {
-      "dependsOn": [
-        "//#generate",
-        "//#build-config", 
-        "//#build-packages", 
-        "//#build-protocols"
-      ],
+      "dependsOn": ["^build"],
       "cache": false
     },
     "dev": {
@@ -153,35 +148,6 @@
     },
     "validate": {
       "cache": false
-    },
-    "//#generate": {
-      "dependsOn": [],
-      "outputs": [
-        "typechain/**/*", 
-        ".graphclient/**/*", 
-        ".mesh/**/*"
-      ],
-      "inputs": []
-    },
-    "//#build-config": {
-      "dependsOn": [],
-      "outputs": ["dist/**/*"],
-      "inputs": []
-    },
-    "//#build-packages": {
-      "dependsOn": [],
-      "outputs": [
-        ".graphclient/**/*",
-        "dist/**/*"
-      ],
-      "inputs": []
-    },
-    "//#build-protocols": {
-      "dependsOn": [],
-      "outputs": ["typechain/**/*", "artifacts/**/*", "cache/**/*"],
-      "inputs": [
-        "contracts/**/*"
-      ]
     }
   }
 }

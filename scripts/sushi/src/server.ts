@@ -57,7 +57,7 @@ app.get(
     req.setTimeout(600000)
 
     const result = protocolSchema.safeParse(req.query)
-    if (!result.success) {
+    if (result.success === false) {
       return res.status(400).send(result.error.format())
     }
 
@@ -122,47 +122,40 @@ app.get(
         } else {
           res.status(400).send('Not a valid version')
         }
-      }
-      else if (name === ProtocolName.APESWAP) {
+      } else if (name === ProtocolName.APESWAP) {
         if (version === ProtocolVersion.V2) {
           await apeSwapV2()
           res.sendStatus(200)
         } else {
           res.status(400).send('Not a valid version')
         }
-      }
-      else if (name === ProtocolName.JETSWAP) {
+      } else if (name === ProtocolName.JETSWAP) {
         if (version === ProtocolVersion.V2) {
           await jetSwapV2()
           res.sendStatus(200)
         } else {
           res.status(400).send('Not a valid version')
         }
-      }
-      else if (name === ProtocolName.DFYN) {
+      } else if (name === ProtocolName.DFYN) {
         if (version === ProtocolVersion.V2) {
           await dfynV2()
           res.sendStatus(200)
         } else {
           res.status(400).send('Not a valid version')
         }
-      }
-      else if (name === ProtocolName.ELK) {
+      } else if (name === ProtocolName.ELK) {
         if (version === ProtocolVersion.V2) {
           await elkV2()
           res.sendStatus(200)
         } else {
           res.sendStatus(400).send('Not a valid version')
         }
-      }
-      else {
-        res
-          .status(400)
-          .send('Could not find protocol. valid protocols are: ' + Object.values(ProtocolName).join(','))
+      } else {
+        res.status(400).send('Could not find protocol. valid protocols are: ' + Object.values(ProtocolName).join(','))
       }
     } catch (err) {
       res.status(500).send(err)
-    } 
+    }
   },
   timeout('600s')
 )
@@ -173,7 +166,7 @@ app.get(
     req.setTimeout(300000)
 
     const result = chainIdOnlySchema.safeParse(req.query)
-    if (!result.success) {
+    if (result.success === false) {
       return res.status(400).json(result.error.format())
     }
     const { chainId } = result.data
@@ -182,7 +175,7 @@ app.get(
       res.sendStatus(200)
     } catch (err) {
       res.status(500).send(err)
-    } 
+    }
   },
   timeout('300s')
 )
@@ -193,7 +186,7 @@ app.get(
     req.setTimeout(300000)
 
     const result = chainIdOnlySchema.safeParse(req.query)
-    if (!result.success) {
+    if (result.success === false) {
       return res.status(400).json(result.error.format())
     }
 
@@ -203,7 +196,7 @@ app.get(
       res.sendStatus(200)
     } catch (err) {
       res.status(500).send(err)
-    } 
+    }
   },
   timeout('300s')
 )
@@ -218,7 +211,7 @@ app.get(
       res.sendStatus(200)
     } catch (err) {
       res.status(500).send(err)
-    } 
+    }
   },
   timeout('300s')
 )
@@ -229,7 +222,7 @@ app.get(
     req.setTimeout(300000)
 
     const result = priceSchema.safeParse(req.query)
-    if (!result.success) {
+    if (result.success === false) {
       return res.status(400).json(result.error.format())
     }
 
@@ -239,7 +232,7 @@ app.get(
       res.sendStatus(200)
     } catch (err) {
       res.status(500).send(err)
-    } 
+    }
   },
   timeout('300s')
 )

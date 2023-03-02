@@ -1,14 +1,14 @@
 import { complexRewarderTimeAbi, miniChefAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { MINICHEF_SUBGRAPH_NAME, SUBGRAPH_HOST, SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
-import { readContract, readContracts } from '@wagmi/core'
+import { Address, readContract, readContracts } from '@wagmi/core'
 import { BigNumber } from 'ethers'
 
 import { MINICHEF_ADDRESS } from '../../../config.js'
 
 export async function getPoolLength(chainId: ChainId) {
   const poolLengthCall = {
-    address: MINICHEF_ADDRESS[chainId],
+    address: MINICHEF_ADDRESS[chainId] as Address,
     chainId: chainId,
     abi: miniChefAbi,
     functionName: 'poolLength',
@@ -19,7 +19,7 @@ export async function getPoolLength(chainId: ChainId) {
 
 export async function getTotalAllocPoint(chainId: ChainId) {
   const totalAllocPointCall = {
-    address: MINICHEF_ADDRESS[chainId],
+    address: MINICHEF_ADDRESS[chainId] as Address,
     chainId: chainId,
     abi: miniChefAbi,
     functionName: 'totalAllocPoint',
@@ -30,7 +30,7 @@ export async function getTotalAllocPoint(chainId: ChainId) {
 
 export async function getSushiPerSecond(chainId: ChainId) {
   const sushiPerSecondCall = {
-    address: MINICHEF_ADDRESS[chainId],
+    address: MINICHEF_ADDRESS[chainId] as Address,
     chainId: chainId,
     abi: miniChefAbi,
     functionName: 'sushiPerSecond',
@@ -43,7 +43,7 @@ export async function getPoolInfos(poolLength: number, chainId: ChainId) {
   const poolInfoCalls = [...Array(poolLength)].map(
     (_, i) =>
       ({
-        address: MINICHEF_ADDRESS[chainId],
+        address: MINICHEF_ADDRESS[chainId] as Address,
         args: [BigNumber.from(i)],
         chainId: chainId,
         abi: miniChefAbi,
@@ -61,7 +61,7 @@ export async function getLpTokens(poolLength: number, chainId: ChainId) {
   const lpTokenCalls = [...Array(poolLength)].map(
     (_, i) =>
       ({
-        address: MINICHEF_ADDRESS[chainId],
+        address: MINICHEF_ADDRESS[chainId] as Address,
         args: [BigNumber.from(i)],
         chainId: chainId,
         abi: miniChefAbi,
@@ -79,7 +79,7 @@ export async function getRewarders(poolLength: number, chainId: ChainId) {
   const rewarderCalls = [...Array(poolLength)].map(
     (_, i) =>
       ({
-        address: MINICHEF_ADDRESS[chainId],
+        address: MINICHEF_ADDRESS[chainId] as Address,
         args: [BigNumber.from(i)],
         chainId: chainId,
         abi: miniChefAbi,
@@ -168,7 +168,7 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
           pools: poolIds.map((_, i) => ({
             // Minichef pool ID
             id: poolIds[i],
-            allocPoint: Number(poolInfos[i].allocPoint),
+            allocPoint: Number(poolInfos?.[i]?.allocPoint),
           })),
           totalAllocPoint: poolInfos.reduce((acc, cur) => (acc += cur.allocPoint.toNumber()), 0),
           rewardToken: rewarder.rewardToken,

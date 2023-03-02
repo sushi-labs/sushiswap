@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
-import { SUSHI } from '@sushiswap/currency'
+import { SUSHI, SUSHI_ADDRESS } from '@sushiswap/currency'
 import type { SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
+import type { Address } from '@wagmi/core'
 import { daysInYear, secondsInDay } from 'date-fns'
 
 import { MINICHEF_ADDRESS } from '../../../config.js'
@@ -15,24 +16,24 @@ import {
   getSushiPerSecond,
   getTotalAllocPoint,
 } from './fetchers.js'
-
 export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): Promise<ChefReturn> {
-
   try {
     // SUSHI token / minichef is not on these chains
     if (chainId === ChainId.ARBITRUM_NOVA || chainId === ChainId.OPTIMISM || chainId === ChainId.BTTC) {
       return { chainId, farms: null }
     }
 
+    // @ts-ignore
     const [poolLength, totalAllocPoint, sushiPerSecond, rewarderInfos, [{ derivedUSD: sushiPriceUSD }]] =
       await Promise.all([
         getPoolLength(chainId),
         getTotalAllocPoint(chainId),
         getSushiPerSecond(chainId),
         getRewarderInfos(chainId),
-        getTokens([SUSHI[ChainId.ETHEREUM].address], ChainId.ETHEREUM),
+        getTokens([SUSHI_ADDRESS[ChainId.ETHEREUM]], ChainId.ETHEREUM),
       ])
-    const sushiPerDay = secondsInDay * divBigNumberToNumber(sushiPerSecond, SUSHI[chainId]?.decimals ?? 18)
+    const sushiPerDay =
+      secondsInDay * divBigNumberToNumber(sushiPerSecond, SUSHI[chainId as keyof typeof SUSHI]?.decimals ?? 18)
 
     console.log(
       `MiniChef ${chainId} - pools: ${poolLength}, sushiPerDay: ${sushiPerDay}, rewarderInfos: ${rewarderInfos.length}, totalAllocPoint: ${totalAllocPoint}`
@@ -50,15 +51,15 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
 
     const [pairs, lpBalances] = await Promise.all([
       getPairs(lpTokens, chainId),
-      getTokenBalancesOf(lpTokens, MINICHEF_ADDRESS[chainId], chainId),
+      getTokenBalancesOf(lpTokens, MINICHEF_ADDRESS[chainId] as Address, chainId),
     ])
 
     const pools = [...Array(poolLength.toNumber())].map((_, i) => ({
       id: i,
       poolInfo: poolInfos[i],
       lpBalance: lpBalances.find(({ token }) => token === lpTokens[i])?.balance,
-      pair: pairs.find((pair) => pair.id === lpTokens[i].toLowerCase()),
-      rewarder: rewarderInfos.find((rewarderInfo) => rewarderInfo.id === rewarders[i].toLowerCase()),
+      pair: pairs.find((pair) => pair.id === lpTokens?.[i]?.toLowerCase()),
+      rewarder: rewarderInfos.find((rewarderInfo) => rewarderInfo.id === rewarders?.[i]?.toLowerCase()),
     }))
 
     return {
@@ -66,7 +67,7 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
       farms: pools.reduce<Record<string, Farm>>((acc, pool) => {
         // console.log('this', pool.pair, pool.lpBalance)
 
-        if (!pool.pair || typeof pool.lpBalance !== 'number') return acc
+        if (!pool.pair || typeof pool.lpBalance !== 'number' || !pool.poolInfo) return acc
 
         const sushiRewardPerDay = sushiPerDay * (pool.poolInfo.allocPoint.toNumber() / totalAllocPoint.toNumber())
         const sushiRewardPerYearUSD = daysInYear * sushiRewardPerDay * sushiPriceUSD
@@ -80,13 +81,13 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
             apr: sushiRewardPerYearUSD / stakedLiquidityUSD,
             rewardPerDay: sushiRewardPerDay,
             rewardToken: {
-              address: SUSHI[chainId]?.address ?? '',
-              name: SUSHI[chainId]?.name ?? '',
-              decimals: SUSHI[chainId]?.decimals ?? 18,
-              symbol: SUSHI[chainId]?.symbol ?? '',
+              address: SUSHI[chainId as keyof typeof SUSHI]?.address ?? '',
+              name: SUSHI[chainId as keyof typeof SUSHI]?.name ?? '',
+              decimals: SUSHI[chainId as keyof typeof SUSHI]?.decimals ?? 18,
+              symbol: SUSHI[chainId as keyof typeof SUSHI]?.symbol ?? '',
             },
             rewarder: {
-              address: MINICHEF_ADDRESS[chainId],
+              address: MINICHEF_ADDRESS[chainId] as Address,
               type: 'Primary',
             },
           })

@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI } from '@sushiswap/currency'
+import type { Address } from '@wagmi/core'
 import { daysInYear, secondsInDay } from 'date-fns'
 
 import { MASTERCHEF_V2_ADDRESS } from '../../../config.js'
@@ -46,15 +47,15 @@ export async function getMasterChefV2(): Promise<ChefReturn> {
 
   const [pairs, lpBalances] = await Promise.all([
     getPairs(lpTokens, ChainId.ETHEREUM),
-    getTokenBalancesOf(lpTokens, MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM], ChainId.ETHEREUM),
+    getTokenBalancesOf(lpTokens, MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM] as Address, ChainId.ETHEREUM),
   ])
 
   const pools = [...Array(poolLength?.toNumber()).keys()].map((_, i) => ({
     id: i,
     poolInfo: poolInfos[i],
     lpBalance: lpBalances.find(({ token }) => token === lpTokens[i])?.balance,
-    pair: pairs.find((pair) => pair.id === lpTokens[i].toLowerCase()),
-    rewarder: rewarderInfos.find((rewarderInfo) => rewarderInfo.id === rewarders[i].toLowerCase()),
+    pair: pairs.find((pair) => pair.id === lpTokens?.[i]?.toLowerCase()),
+    rewarder: rewarderInfos.find((rewarderInfo) => rewarderInfo.id === rewarders?.[i]?.toLowerCase()),
   }))
 
   const blocksPerDay = averageBlockTime ? secondsInDay / averageBlockTime : 0
@@ -65,7 +66,7 @@ export async function getMasterChefV2(): Promise<ChefReturn> {
   return {
     chainId: ChainId.ETHEREUM,
     farms: pools.reduce<Record<string, Farm>>((acc, pool) => {
-      if (!pool.pair || !pool.lpBalance) return acc
+      if (!pool.pair || !pool.lpBalance || !pool.poolInfo) return acc
 
       const sushiRewardPerDay = sushiPerDay * (pool.poolInfo.allocPoint.toNumber() / totalAllocPoint.toNumber())
       const sushiRewardPerYearUSD = daysInYear * sushiRewardPerDay * sushiPriceUSD
@@ -83,7 +84,7 @@ export async function getMasterChefV2(): Promise<ChefReturn> {
             symbol: SUSHI[ChainId.ETHEREUM].symbol ?? '',
           },
           rewarder: {
-            address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
+            address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM] as Address,
             type: 'Primary',
           },
         },

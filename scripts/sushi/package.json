@@ -52,7 +52,7 @@
     "@sushiswap/database": "workspace:*",
     "@graphprotocol/client-add-source-name": "latest",
     "@graphprotocol/client-auto-pagination": "latest",
-    "@graphprotocol/client-cli": "2.2.18",
+    "@graphprotocol/client-cli": "2.2.19",
     "@graphql-mesh/cache-localforage": "latest",
     "@graphql-mesh/cross-helpers": "latest",
     "@graphql-mesh/graphql": "latest",

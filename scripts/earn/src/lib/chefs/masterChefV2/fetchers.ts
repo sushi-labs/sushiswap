@@ -1,13 +1,13 @@
 import { masterChefV2Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
-import { readContract, readContracts } from '@wagmi/core'
+import { Address, readContract, readContracts } from '@wagmi/core'
 import { BigNumber } from 'ethers'
 
 import { MASTERCHEF_V2_ADDRESS } from '../../../config.js'
 
 export async function getPoolLength() {
   const poolLengthCall = {
-    address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
+    address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM] as Address,
     chainId: ChainId.ETHEREUM,
     abi: masterChefV2Abi,
     functionName: 'poolLength',
@@ -18,7 +18,7 @@ export async function getPoolLength() {
 
 export async function getTotalAllocPoint() {
   const totalAllocPointCall = {
-    address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
+    address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM] as Address,
     chainId: ChainId.ETHEREUM,
     abi: masterChefV2Abi,
     functionName: 'totalAllocPoint',
@@ -29,7 +29,7 @@ export async function getTotalAllocPoint() {
 
 export async function getSushiPerBlock() {
   const sushiPerBlockCall = {
-    address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
+    address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM] as Address,
     chainId: ChainId.ETHEREUM,
     abi: masterChefV2Abi,
     functionName: 'sushiPerBlock',
@@ -42,7 +42,7 @@ export async function getPoolInfos(poolLength: number) {
   const poolInfoCalls = [...Array(poolLength)].map(
     (_, i) =>
       ({
-        address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
+        address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM] as Address,
         args: [BigNumber.from(i)],
         chainId: ChainId.ETHEREUM,
         abi: masterChefV2Abi,
@@ -60,7 +60,7 @@ export async function getLpTokens(poolLength: number) {
   const lpTokenCalls = [...Array(poolLength)].map(
     (_, i) =>
       ({
-        address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
+        address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM] as Address,
         args: [BigNumber.from(i)],
         chainId: ChainId.ETHEREUM,
         abi: masterChefV2Abi,
@@ -78,7 +78,7 @@ export async function getRewarders(poolLength: number) {
   const rewarderCalls = [...Array(poolLength)].map(
     (_, i) =>
       ({
-        address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
+        address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM] as Address,
         args: [BigNumber.from(i)],
         chainId: ChainId.ETHEREUM,
         abi: masterChefV2Abi,
