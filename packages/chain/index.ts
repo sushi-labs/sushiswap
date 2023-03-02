@@ -62,6 +62,50 @@ export enum Type {
   Shard = 'shard',
 }
 
+// ????
+// export const ChainId = {
+//   ETHEREUM: 1,
+//   ROPSTEN: 3,
+//   RINKEBY: 4,
+//   GÖRLI: 5,
+//   KOVAN: 42,
+//   POLYGON: 137,
+//   POLYGON_TESTNET: 80001,
+//   FANTOM: 250,
+//   FANTOM_TESTNET: 4002,
+//   GNOSIS: 100,
+//   BSC: 56,
+//   BSC_TESTNET: 97,
+//   ARBITRUM: 42161,
+//   ARBITRUM_NOVA: 42170,
+//   ARBITRUM_TESTNET: 79377087078960,
+//   AVALANCHE: 43114,
+//   AVALANCHE_TESTNET: 43113,
+//   HECO: 128,
+//   HECO_TESTNET: 256,
+//   HARMONY: 1666600000,
+//   HARMONY_TESTNET: 1666700000,
+//   OKEX: 66,
+//   OKEX_TESTNET: 65,
+//   CELO: 42220,
+//   PALM: 11297108109,
+//   MOONRIVER: 1285,
+//   FUSE: 122,
+//   TELOS: 40,
+//   MOONBEAM: 1284,
+//   OPTIMISM: 10,
+//   KAVA: 2222,
+//   METIS: 1088,
+//   BOBA: 288,
+//   BOBA_AVAX: 43288,
+//   BOBA_BNB: 56288,
+//   BTTC: 199,
+// } as const
+
+// export type ChainId = (typeof ChainId)[keyof typeof ChainId]
+
+// export const isChainId = (chainId: number): chainId is ChainId => Object.values(ChainId).includes(chainId as ChainId)
+
 export enum ChainId {
   ETHEREUM = 1,
   ROPSTEN = 3,
