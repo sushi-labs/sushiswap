@@ -64,26 +64,39 @@
       "outputs": []
     },
     "start": {
-      "dependsOn": ["^build", "^db:generate", "generate"],
+      "dependsOn": [
+        "^build", 
+        "^db:generate", 
+        "generate"
+      ],
       "cache": false,
       "persistent": true
     },
     "generate": {
-      "outputs": [".graphclient/**/*", ".mesh/**/*", "typechain/**/*", "artifacts/**/*", "cache/**/*"]
+      "outputs": [
+        ".graphclient/**/*", 
+        ".mesh/**/*", 
+        "typechain/**/*", 
+        "artifacts/**/*"
+      ]
     },
     "build": {
       "outputs": [
         ".vercel/**/*",
         ".next/**/*",
-        ".graphclient/**/*",
-        ".mesh/**/*",
         "dist/**/*",
         "typechain/**/*",
         "artifacts/**/*",
         "public/**/*",
         "storybook-static/**/*"
       ],
-      "dependsOn": ["^db:generate", "^build", "db:generate", "generate", "export"],
+      "dependsOn": [
+        "^db:generate", 
+        "^build", 
+        "db:generate", 
+        "generate",
+        "export"
+      ],
       "env": [
         "ROOT_URL",
         "ACADEMY_URL",
@@ -99,8 +112,7 @@
         "XSWAP_URL",
         "DATABASE_URL",
         "EARN_DATABASE_URL",
-        "REDIS_URL",
-        "TS_NODE_TRANSPILE_ONLY"
+        "REDIS_URL"
       ]
     },
     "clean": {
