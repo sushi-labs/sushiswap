@@ -1,9 +1,8 @@
-import {  Prisma,PrismaClient } from '@sushiswap/database'
+import { createClient, Prisma, PrismaClient } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
-
 export async function whitelistPools() {
-  const client = new PrismaClient()
+  const client = await createClient()
   try {
     const startTime = performance.now()
 
@@ -13,9 +12,9 @@ export async function whitelistPools() {
     console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
   } catch (e) {
     console.error(e)
-    await client.$disconnect()
+    await (await createClient()).$disconnect()
   } finally {
-    await client.$disconnect()
+    await (await createClient()).$disconnect()
   }
 }
 

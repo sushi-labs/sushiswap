@@ -1,5 +1,5 @@
 import { formatPercent } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { classNames, Currency as UICurrency, Typography } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
@@ -7,7 +7,7 @@ import { incentiveRewardToToken } from '../../../lib/functions'
 import { AddSectionMyPositionStaked } from './AddSectionMyPositionStaked'
 import { AddSectionMyPositionUnstaked } from './AddSectionMyPositionUnstaked'
 
-export const AddSectionMyPosition: FC<{ pair: Pair }> = ({ pair }) => {
+export const AddSectionMyPosition: FC<{ pool: Pool }> = ({ pool }) => {
   return (
     <div className="flex flex-col bg-white bg-opacity-[0.04] rounded-2xl">
       <div className="flex flex-col gap-4 p-5">
@@ -16,29 +16,30 @@ export const AddSectionMyPosition: FC<{ pair: Pair }> = ({ pair }) => {
             Total APR:
           </Typography>
           <Typography variant="xs" weight={500} className="text-right text-slate-300">
-            {formatPercent(pair.apr)}
+            {formatPercent(pool.feeApr)}
           </Typography>
-          {pair.farm && (
+          {pool.incentives && (
             <>
               <Typography variant="xs" weight={500} className="text-slate-300">
                 Fee APR:
               </Typography>
               <Typography variant="xs" weight={500} className="text-right text-slate-300">
-                {formatPercent(pair.feeApr)}
+                {formatPercent(pool.feeApr)}
               </Typography>
               <Typography variant="xs" weight={500} className="text-slate-300">
                 Reward APR:
               </Typography>
               <Typography variant="xs" weight={500} className="text-right text-slate-300">
-                {formatPercent(pair.incentiveApr)}
+                {/* Reward APR */}
+                {formatPercent(pool.incentiveApr)}
               </Typography>
               <Typography variant="xs" weight={500} className="text-slate-300">
                 Farming Rewards:
               </Typography>
-              <div className={classNames(pair.farm.incentives?.length === 2 ? '-mr-2' : '', 'flex justify-end ')}>
+              <div className={classNames(pool.incentives?.length === 2 ? '-mr-2' : '', 'flex justify-end ')}>
                 <UICurrency.IconList iconWidth={16} iconHeight={16}>
-                  {pair.farm.incentives?.map((incentive, index) => (
-                    <UICurrency.Icon key={index} currency={incentiveRewardToToken(pair.chainId, incentive)} />
+                  {pool.incentives?.map((incentive, index) => (
+                    <UICurrency.Icon key={index} currency={incentiveRewardToToken(pool.chainId, incentive)} />
                   ))}
                 </UICurrency.IconList>
               </div>
@@ -51,7 +52,7 @@ export const AddSectionMyPosition: FC<{ pair: Pair }> = ({ pair }) => {
       </div>
       <div className="p-5 space-y-5">
         <AddSectionMyPositionUnstaked />
-        {pair.farm && <AddSectionMyPositionStaked />}
+        {pool.incentives && <AddSectionMyPositionStaked />}
       </div>
     </div>
   )

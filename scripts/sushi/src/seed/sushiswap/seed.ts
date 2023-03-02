@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { client, Prisma, PrismaClient } from '@sushiswap/database'
+import { createClient, Prisma, PrismaClient } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 import { getBuiltGraphSDK, PairsQuery } from '../../../.graphclient/index.js'
@@ -12,7 +12,7 @@ const PROTOCOL = ProtocolName.SUSHISWAP
 const VERSIONS = ['LEGACY', 'TRIDENT']
 
 export async function sushiSwap() {
-  const client = new PrismaClient()
+  const client = await createClient()
   try {
     const startTime = performance.now()
     console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}`)

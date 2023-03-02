@@ -1,4 +1,5 @@
 import { TransactionRequest } from '@ethersproject/providers'
+import { ChefType } from '@sushiswap/client'
 import { Amount, Token } from '@sushiswap/currency'
 import { NotificationData } from '@sushiswap/ui/future/components/toast'
 import { Dispatch, SetStateAction, useCallback } from 'react'
@@ -7,11 +8,10 @@ import { SendTransactionResult } from 'wagmi/actions'
 
 import { useMasterChefContract } from '../useMasterChefContract'
 import { useSendTransaction } from '../useSendTransaction'
-import { Chef } from './useMasterChef'
 
 interface UseMasterChefDepositParams {
   chainId: number
-  chef: Chef
+  chef: ChefType
   pid: number
   onSuccess?(data: NotificationData): void
   amount?: Amount<Token>
@@ -54,7 +54,9 @@ export const useMasterChefDeposit: UseMasterChefDeposit = ({ chainId, onSuccess,
         to: contract.address,
         data: contract.interface.encodeFunctionData(
           'deposit',
-          chef === Chef.MASTERCHEF ? [pid, amount.quotient.toString()] : [pid, amount.quotient.toString(), address]
+          chef === ChefType.MasterChefV1
+            ? [pid, amount.quotient.toString()]
+            : [pid, amount.quotient.toString(), address]
         ),
       })
     },

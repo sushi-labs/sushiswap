@@ -1,25 +1,16 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { z } from 'zod'
 
-import { getEarnPool } from '../../../lib/api.js'
-
-const schema = z.object({
-  chainId: z.coerce
-    .number()
-    .int()
-    .gte(0)
-    .lte(2 ** 256),
-  address: z.coerce.string(),
-})
+import { getEarnPool } from '../../../lib/api/earn.js'
+import { PoolApiSchema } from '../../../lib/schemas/index.js'
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
-  const result = schema.safeParse(request.query)
+  response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=60')
+
+  const result = PoolApiSchema.safeParse(request.query)
   if (!result.success) {
     return response.status(400).json(result.error.format())
   }
-  const { chainId, address } = result.data
-
-  const pool = await getEarnPool(chainId, address)
+  const pool = await getEarnPool(result.data)
   return response.status(200).json(pool)
 }
 

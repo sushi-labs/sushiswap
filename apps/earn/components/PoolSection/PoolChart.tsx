@@ -1,18 +1,19 @@
 import { formatPercent, formatUSD } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { AppearOnMount, classNames, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo, useState } from 'react'
 import resolveConfig from 'tailwindcss/resolveConfig'
+import { useGraphPool } from '../../lib/hooks/api/useGraphPool'
 
 import tailwindConfig from '../../tailwind.config.js'
 
 const tailwind = resolveConfig(tailwindConfig)
 
 interface PoolChartProps {
-  pair: Pair
+  pool: Pool
 }
 
 enum PoolChartType {
@@ -38,19 +39,23 @@ const chartTimespans: Record<PoolChartPeriod, number> = {
   [PoolChartPeriod.All]: Infinity,
 }
 
-export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
+export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
+  const graphPair = useGraphPool(pool)
+
   const [chartType, setChartType] = useState<PoolChartType>(PoolChartType.Volume)
   const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Week)
   const [xData, yData] = useMemo(() => {
     const data =
-      chartTimespans[chartPeriod] <= chartTimespans[PoolChartPeriod.Week] ? pair.hourSnapshots : pair.daySnapshots
+      chartTimespans[chartPeriod] <= chartTimespans[PoolChartPeriod.Week]
+        ? graphPair.hourSnapshots
+        : graphPair.daySnapshots
     const currentDate = Math.round(Date.now())
-    const [x, y] = data.reduce<[number[], number[]]>(
+    const [x, y] = (data || []).reduce<[number[], number[]]>(
       (acc, cur) => {
         if (cur.date * 1000 >= currentDate - chartTimespans[chartPeriod]) {
           acc[0].push(cur.date)
           if (chartType === PoolChartType.Fees) {
-            acc[1].push(Number(cur.volumeUSD * (pair.swapFee / 10000)))
+            acc[1].push(Number(cur.volumeUSD * (pool.swapFee * 100)))
           } else if (chartType === PoolChartType.Volume) {
             acc[1].push(Number(cur.volumeUSD))
           } else if (chartType === PoolChartType.TVL) {
@@ -65,7 +70,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
     )
 
     return [x.reverse(), y.reverse()]
-  }, [chartPeriod, pair.hourSnapshots, pair.daySnapshots, pair.swapFee, chartType])
+  }, [chartPeriod, graphPair.hourSnapshots, graphPair.daySnapshots, chartType, pool.swapFee])
 
   // Transient update for performance
   const onMouseOver = useCallback(
@@ -80,11 +85,11 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
       }
 
       if (chartType === PoolChartType.Volume) {
-        valueNodes[1].innerHTML = formatUSD(value * (pair.swapFee / 10000))
+        valueNodes[1].innerHTML = formatUSD(value * (pool.swapFee * 100))
       }
       nameNodes[0].innerHTML = format(new Date(name * 1000), 'dd MMM yyyy HH:mm')
     },
-    [chartType, pair.swapFee]
+    [chartType, pool.swapFee]
   )
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
@@ -279,7 +284,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           {chartType === PoolChartType.Volume && (
             <span className="text-sm font-medium text-slate-300">
               <span className="text-xs top-[-2px] relative">•</span>{' '}
-              <span className="hoveredItemValue">{formatUSD(yData[yData.length - 1] * (pair.swapFee / 10000))}</span>{' '}
+              <span className="hoveredItemValue">{formatUSD(yData[yData.length - 1] * (pool.swapFee * 100))}</span>{' '}
               earned
             </span>
           )}

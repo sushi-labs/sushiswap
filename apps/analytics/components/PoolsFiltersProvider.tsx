@@ -1,13 +1,14 @@
 import { ChainId } from '@sushiswap/chain'
-import { createContext, FC, ReactNode, useCallback, useContext, useState } from 'react'
+import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 
 enum Filters {
-  myTokensOnly = 'myTokensOnly',
-  singleSidedStakingOnly = 'singleSidedStakingOnly',
-  stablePairsOnly = 'stablePairsOnly',
-  selectedNetworks = 'selectedNetworks',
+  tokenSymbols = 'tokenSymbols',
+  chainIds = 'chainIds',
+  poolTypes = 'poolTypes',
+  poolVersions = 'poolVersions',
+  incentivizedOnly = 'incentivizedOnly',
 }
 
 export enum SelectedTable {
@@ -16,39 +17,38 @@ export enum SelectedTable {
 }
 
 interface FilterContext {
-  query: string
-  extraQuery: string
-  [Filters.myTokensOnly]: boolean
-  [Filters.singleSidedStakingOnly]: boolean
-  [Filters.stablePairsOnly]: boolean
-  [Filters.selectedNetworks]: ChainId[]
+  [Filters.tokenSymbols]: undefined | string[]
+  [Filters.chainIds]: ChainId[]
   selectedTable: SelectedTable
   setFilters(filters: Partial<Omit<FilterContext, 'setFilters'>>): void
 }
 
 const FilterContext = createContext<FilterContext | undefined>(undefined)
 
+export type PoolFilters = Omit<FilterContext, 'setFilters'>
+
 interface PoolsFiltersProvider {
   children?: ReactNode
+  passedFilters?: Partial<PoolFilters>
 }
 
-export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => {
-  const [filters, _setFilters] = useState({
-    query: '',
-    extraQuery: '',
-    [Filters.myTokensOnly]: false,
-    [Filters.singleSidedStakingOnly]: false,
-    [Filters.stablePairsOnly]: false,
-    [Filters.selectedNetworks]: SUPPORTED_CHAIN_IDS,
-    selectedTable: SelectedTable.Markets,
-  })
+const defaultFilters: PoolFilters = {
+  [Filters.tokenSymbols]: undefined,
+  [Filters.chainIds]: SUPPORTED_CHAIN_IDS,
+  selectedTable: SelectedTable.Markets,
+}
 
-  const setFilters = useCallback((filters: Partial<Omit<FilterContext, 'setFilters'>>) => {
+export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children, passedFilters }) => {
+  const [filters, _setFilters] = useState({ ...defaultFilters, ...passedFilters })
+
+  const setFilters = useCallback((filters: PoolFilters) => {
     _setFilters((prevState) => ({
       ...prevState,
       ...filters,
     }))
   }, [])
+
+  useEffect(() => setFilters({ ...defaultFilters, ...passedFilters }), [passedFilters, setFilters])
 
   return (
     <FilterContext.Provider

@@ -1,25 +1,25 @@
 import { tryParseAmount } from '@sushiswap/currency'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 import { Button, Dots } from '@sushiswap/ui'
 import { Checker, PairState, usePair } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
 
-import { useTokensFromPair } from '../../lib/hooks'
+import { useTokensFromPool } from '../../lib/hooks'
 import { AddSectionReviewModalLegacy } from './AddSectionReviewModalLegacy'
 import { AddSectionWidget } from './AddSectionWidget'
 
-export const AddSectionLegacy: FC<{ pair: Pair }> = ({ pair }) => {
+export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const isMounted = useIsMounted()
-  const { token0, token1 } = useTokensFromPair(pair)
+  const { token0, token1 } = useTokensFromPool(_pool)
   const [{ input0, input1 }, setTypedAmounts] = useState<{
     input0: string
     input1: string
   }>({ input0: '', input1: '' })
   const {
     data: [poolState, pool],
-  } = usePair(pair.chainId as UniswapV2Router02ChainId, token0, token1)
+  } = usePair(_pool.chainId as UniswapV2Router02ChainId, token0, token1)
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
@@ -65,7 +65,7 @@ export const AddSectionLegacy: FC<{ pair: Pair }> = ({ pair }) => {
     return (
       <AddSectionReviewModalLegacy
         poolState={poolState}
-        chainId={pair.chainId as UniswapV2Router02ChainId}
+        chainId={_pool.chainId as UniswapV2Router02ChainId}
         token0={token0}
         token1={token1}
         input0={parsedInput0}
@@ -73,8 +73,8 @@ export const AddSectionLegacy: FC<{ pair: Pair }> = ({ pair }) => {
       >
         {({ isWritePending, setOpen }) => (
           <AddSectionWidget
-            isFarm={!!pair.farm}
-            chainId={pair.chainId}
+            isFarm={!!_pool.incentives && _pool.incentives.length > 0}
+            chainId={_pool.chainId}
             input0={input0}
             input1={input1}
             token0={token0}
@@ -91,11 +91,11 @@ export const AddSectionLegacy: FC<{ pair: Pair }> = ({ pair }) => {
                   </Button>
                 }
               >
-                <Checker.Network fullWidth size="md" chainId={pair.chainId}>
+                <Checker.Network fullWidth size="md" chainId={_pool.chainId}>
                   <Checker.Amounts
                     fullWidth
                     size="md"
-                    chainId={pair.chainId}
+                    chainId={_pool.chainId}
                     fundSource={FundSource.WALLET}
                     amounts={[parsedInput0, parsedInput1]}
                   >
@@ -116,8 +116,8 @@ export const AddSectionLegacy: FC<{ pair: Pair }> = ({ pair }) => {
     isMounted,
     onChangeToken0TypedAmount,
     onChangeToken1TypedAmount,
-    pair.chainId,
-    pair.farm,
+    _pool.chainId,
+    _pool.incentives,
     parsedInput0,
     parsedInput1,
     poolState,

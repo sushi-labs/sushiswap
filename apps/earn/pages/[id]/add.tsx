@@ -1,13 +1,11 @@
 import { ExternalLinkIcon } from '@heroicons/react/solid'
-import { chainShortName } from '@sushiswap/chain'
 import { formatPercent } from '@sushiswap/format'
-import { getBuiltGraphSDK, Pair } from '@sushiswap/graph-client'
 import { AppearOnMount, BreadcrumbLink, Container, Link, Typography } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
-import useSWR, { SWRConfig } from 'swr'
+import { SWRConfig, useSWRConfig } from 'swr'
 
 import {
   AddSectionLegacy,
@@ -18,17 +16,17 @@ import {
   PoolPositionProvider,
   PoolPositionStakedProvider,
 } from '../../components'
-import { GET_POOL_TYPE_MAP } from '../../lib/constants'
+import { POOL_TYPE_MAP } from '../../lib/constants'
+import { getPool, getPools, getPoolUrl, Pool, usePool } from '@sushiswap/client'
+import { ChainId } from '@sushiswap/chain'
 
-const LINKS = ({ pair }: { pair: Pair }): BreadcrumbLink[] => [
+const LINKS = (pool: Pool): BreadcrumbLink[] => [
   {
-    href: `/${pair.id}`,
-    label: `${pair.name} - ${GET_POOL_TYPE_MAP[pair.type as keyof typeof GET_POOL_TYPE_MAP]} - ${formatPercent(
-      pair.swapFee / 10000
-    )}`,
+    href: `/${pool.id}`,
+    label: `${pool.name} - ${POOL_TYPE_MAP[pool.type]} - ${formatPercent(pool.swapFee * 100)}`,
   },
   {
-    href: `/${pair.id}/add`,
+    href: `/${pool.id}/add`,
     label: `Add Liquidity`,
   },
 ]
@@ -55,22 +53,25 @@ const Add: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) =
 
 const _Add = () => {
   const router = useRouter()
-  const { data } = useSWR<{ pair: Pair }>(`/earn/api/pool/${router.query.id}`, (url) =>
-    fetch(url).then((response) => response.json())
-  )
 
-  if (!data) return <></>
-  const { pair } = data
+  const [chainId, address] = (router.query.id as string).split(':') as [ChainId, string]
+  const { data: pool } = usePool({
+    args: { chainId, address },
+    swrConfig: useSWRConfig(),
+    shouldFetch: Boolean(chainId && address),
+  })
+
+  if (!pool) return <></>
 
   return (
-    <PoolPositionProvider pair={pair}>
-      <PoolPositionStakedProvider pair={pair}>
-        <Layout breadcrumbs={LINKS(data)}>
+    <PoolPositionProvider pool={pool}>
+      <PoolPositionStakedProvider pool={pool}>
+        <Layout breadcrumbs={LINKS(pool)}>
           <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
             <div className="hidden md:block" />
             <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
-              {pair.source === 'TRIDENT' ? <AddSectionTrident pair={pair} /> : <AddSectionLegacy pair={pair} />}
-              <AddSectionStake poolAddress={pair.id} />
+              {pool.version === 'TRIDENT' ? <AddSectionTrident pool={pool} /> : <AddSectionLegacy pool={pool} />}
+              <AddSectionStake poolId={pool.id} />
               <Container className="flex justify-center">
                 <Link.External
                   href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"
@@ -85,7 +86,7 @@ const _Add = () => {
             </div>
             <div className="order-1 sm:order-3">
               <AppearOnMount>
-                <AddSectionMyPosition pair={pair} />
+                <AddSectionMyPosition pool={pool} />
               </AppearOnMount>
             </div>
           </div>
@@ -107,22 +108,16 @@ export const getStaticPaths: GetStaticPaths = async () => {
     }
   }
 
-  const sdk = getBuiltGraphSDK()
-  const { pairs } = await sdk.PairsByChainIds({
-    first: 250,
-    orderBy: 'liquidityUSD',
-    orderDirection: 'desc',
-    chainIds: SUPPORTED_CHAIN_IDS,
-  })
+  const pools = await getPools({ take: 100, orderBy: 'liquidityUSD', orderDir: 'desc', chainIds: SUPPORTED_CHAIN_IDS })
 
   // Get the paths we want to pre-render based on pairs
-  const paths = pairs
+  const paths = pools
     .sort(({ liquidityUSD: a }, { liquidityUSD: b }) => {
       return Number(b) - Number(a)
     })
     .slice(0, 250)
-    .map((pair, i) => ({
-      params: { id: `${chainShortName[pair.chainId]}:${pair.address}` },
+    .map((pool) => ({
+      params: { id: pool.id },
     }))
 
   // We'll pre-render only these paths at build time.
@@ -132,16 +127,15 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const sdk = getBuiltGraphSDK()
-  const id = params?.id as string
-  const { pair } = await sdk.PairById({ id })
-  if (!pair) {
-    throw new Error(`Failed to fetch pair, received ${pair}`)
+  const [chainId, address] = (params?.id as string).split(':') as [ChainId, string]
+  const pool = await getPool({ chainId, address })
+  if (!pool) {
+    throw new Error(`Failed to fetch pool, received ${pool}`)
   }
   return {
     props: {
       fallback: {
-        [`/earn/api/pool/${id}`]: { pair },
+        [getPoolUrl({ chainId, address })]: pool,
       },
     },
     revalidate: 60,

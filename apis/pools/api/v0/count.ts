@@ -1,53 +1,18 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { z } from 'zod'
 
-import { getEarnPoolCount } from '../../lib/api.js'
-import type { PoolType } from '../../lib/index.js'
-
-const schema = z.object({
-  chainIds: z
-    .string()
-    .transform((val) => val.split(',').map((v) => parseInt(v)))
-    .optional(),
-  isIncentivized: z.coerce
-    .string()
-    .transform((val) => {
-      if (val === 'true') {
-        return true
-      } else if (val === 'false') {
-        return false
-      } else {
-        throw new Error('isIncentivized must true or false')
-      }
-    })
-    .optional(),
-  isWhitelisted: z.coerce
-    .string()
-    .transform((val) => {
-      if (val === 'true') {
-        return true
-      } else if (val === 'false') {
-        return false
-      } else {
-        throw new Error('isWhitelisted must true or false')
-      }
-    })
-    .optional(),
-  poolTypes: z
-    .string()
-    .optional()
-    .transform((poolTypes) => poolTypes?.split(',') as PoolType[]),
-})
+import { getEarnPoolCount } from '../../lib/api/earn.js'
+import { PoolCountApiSchema } from '../../lib/schemas/index.js'
 
 const handler = async (_request: VercelRequest, response: VercelResponse) => {
-  const result = schema.safeParse(_request.query)
+  response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=300')
+
+  const result = PoolCountApiSchema.safeParse(_request.query)
   if (!result.success) {
     return response.status(400).json(result.error.format())
   }
 
-  const { chainIds, isIncentivized, isWhitelisted, poolTypes } = result.data
-  const count = await getEarnPoolCount({ chainIds, isIncentivized, isWhitelisted, poolTypes })
-  return response.status(200).json({ count })
+  const count = await getEarnPoolCount(result.data)
+  return response.status(200).json(count)
 }
 
 export default handler

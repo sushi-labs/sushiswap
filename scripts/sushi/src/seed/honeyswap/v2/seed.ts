@@ -1,5 +1,5 @@
 import { ChainId, chainName } from '@sushiswap/chain'
-import { client, Prisma, PrismaClient } from '@sushiswap/database'
+import { createClient, Prisma, PrismaClient } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 import { getBuiltGraphSDK, V2PairsQuery } from '../../../../.graphclient/index.js'
@@ -15,7 +15,7 @@ const SWAP_FEE = 0.0025
 const TWAP_ENABLED = true
 
 export async function honeySwapV2() {
-  const client = new PrismaClient()
+  const client = await createClient()
   try {
     const startTime = performance.now()
     console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}`)
@@ -26,9 +26,9 @@ export async function honeySwapV2() {
     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
   } catch (e) {
     console.error(e)
-    await client.$disconnect()
+    await (await createClient()).$disconnect()
   } finally {
-    await client.$disconnect()
+    await (await createClient()).$disconnect()
   }
 }
 

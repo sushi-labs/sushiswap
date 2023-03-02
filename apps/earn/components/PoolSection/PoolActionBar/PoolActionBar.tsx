@@ -1,4 +1,4 @@
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { useBreakpoint } from '@sushiswap/hooks'
 import { AppearOnMount, Typography } from '@sushiswap/ui'
 import { FC, Fragment, useState } from 'react'
@@ -7,10 +7,10 @@ import { PoolActionBarPositionDialog } from './PoolActionBarPositionDialog'
 import { PoolActionBarPositionRewards } from './PoolActionBarPositionRewards'
 
 interface PoolActionBarProps {
-  pair: Pair
+  pool: Pool
 }
 
-export const PoolActionBar: FC<PoolActionBarProps> = ({ pair }) => {
+export const PoolActionBar: FC<PoolActionBarProps> = ({ pool }) => {
   const [openPosition, setOpenPosition] = useState<boolean>(false)
   const [openRewards, setOpenRewards] = useState<boolean>(false)
   const { isLg } = useBreakpoint('lg')
@@ -27,7 +27,7 @@ export const PoolActionBar: FC<PoolActionBarProps> = ({ pair }) => {
                 My Position
               </Typography>
             </button>
-            {pair.farm && (
+            {pool.incentives && (
               <button onClick={() => setOpenRewards(true)} className="inline-flex px-4 py-3 cursor-pointer">
                 <Typography variant="sm" weight={600} className="text-slate-50">
                   My Rewards
@@ -36,8 +36,8 @@ export const PoolActionBar: FC<PoolActionBarProps> = ({ pair }) => {
             )}
           </div>
         </div>
-        <PoolActionBarPositionDialog pair={pair} open={openPosition} setOpen={setOpenPosition} />
-        {pair.farm && <PoolActionBarPositionRewards pair={pair} open={openRewards} setOpen={setOpenRewards} />}
+        <PoolActionBarPositionDialog pool={pool} open={openPosition} setOpen={setOpenPosition} />
+        {pool.incentives && <PoolActionBarPositionRewards pool={pool} open={openRewards} setOpen={setOpenRewards} />}
       </div>
     </AppearOnMount>
   )

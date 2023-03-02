@@ -1,19 +1,16 @@
-import { UserWithFarm } from '@sushiswap/graph-client'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
+import { PositionWithPool } from '../../../../../types'
 
-import { PairAPRCell } from './PairAPRCell'
-import { PairChainCell } from './PairChainCell'
-import { PairNameCell } from './PairNameCell'
-import { PairValueCell } from './PairValueCell'
-import { PairVolume24hCell } from './PairVolume24hCell'
+import { PoolAPRCell, PoolChainCell, PoolNameCell, PoolVolume1dCell } from '../../SharedCells'
+import { PairValueCell } from './PoolValueCell'
 
-type TData = UserWithFarm
+type TData = PositionWithPool
 
 export const NETWORK_COLUMN: ColumnDef<TData, unknown> = {
   id: 'network',
   header: 'Network',
-  cell: (props) => <PairChainCell row={props.row.original} />,
+  cell: (props) => <PoolChainCell row={props.row.original} />,
   size: 50,
   meta: {
     skeleton: <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />,
@@ -23,7 +20,7 @@ export const NETWORK_COLUMN: ColumnDef<TData, unknown> = {
 export const NAME_COLUMN: ColumnDef<TData, unknown> = {
   id: 'name',
   header: 'Name',
-  cell: (props) => <PairNameCell row={props.row.original} />,
+  cell: (props) => <PoolNameCell row={props.row.original.pool} />,
   size: 160,
   meta: {
     skeleton: (
@@ -43,8 +40,8 @@ export const NAME_COLUMN: ColumnDef<TData, unknown> = {
 export const APR_COLUMN: ColumnDef<TData, unknown> = {
   id: 'apr',
   header: 'APR',
-  accessorFn: (row) => row.pair.apr,
-  cell: (props) => <PairAPRCell row={props.row.original} />,
+  accessorFn: (row) => row.pool.totalApr,
+  cell: (props) => <PoolAPRCell row={props.row.original.pool} />,
   size: 150,
   meta: {
     className: 'justify-end',
@@ -55,7 +52,7 @@ export const APR_COLUMN: ColumnDef<TData, unknown> = {
 export const VALUE_COLUMN: ColumnDef<TData, unknown> = {
   id: 'value',
   header: 'Value',
-  accessorFn: (row) => row.valueUSD,
+  accessorFn: (row) => (Number(row.balance) / Number(row.pool.totalSupply)) * Number(row.pool.liquidityUSD),
   cell: (props) => <PairValueCell row={props.row.original} />,
   size: 100,
   meta: {
@@ -67,7 +64,7 @@ export const VALUE_COLUMN: ColumnDef<TData, unknown> = {
 export const VOLUME_COLUMN: ColumnDef<TData, unknown> = {
   id: 'volume',
   header: 'Volume (24h)',
-  cell: (props) => <PairVolume24hCell row={props.row.original} />,
+  cell: (props) => <PoolVolume1dCell row={props.row.original.pool} />,
   size: 100,
   meta: {
     className: 'justify-end',

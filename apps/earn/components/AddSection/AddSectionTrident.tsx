@@ -1,6 +1,6 @@
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { tryParseAmount } from '@sushiswap/currency'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Button, Dots } from '@sushiswap/ui'
 import {
@@ -12,32 +12,39 @@ import {
 } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
 
-import { useTokensFromPair } from '../../lib/hooks'
+import { useTokensFromPool } from '../../lib/hooks'
 import { AddSectionReviewModalTrident } from './AddSectionReviewModalTrident'
 import { AddSectionWidget } from './AddSectionWidget'
 
-export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
+export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const isMounted = useIsMounted()
-  const { token0, token1 } = useTokensFromPair(pair)
+  const { token0, token1 } = useTokensFromPool(_pool)
   const [{ input0, input1 }, setTypedAmounts] = useState<{
     input0: string
     input1: string
   }>({ input0: '', input1: '' })
 
+  // TODO: Standardize fee format
   const [constantProductPoolState, constantProductPool] = useConstantProductPool(
-    pair.chainId,
+    _pool.chainId,
     token0,
     token1,
-    pair.swapFee,
-    pair.twapEnabled
+    _pool.swapFee * 10000,
+    _pool.twapEnabled
   )
-  const [stablePoolState, stablePool] = useStablePool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
+  const [stablePoolState, stablePool] = useStablePool(
+    _pool.chainId,
+    token0,
+    token1,
+    _pool.swapFee * 10000,
+    _pool.twapEnabled
+  )
 
   const [poolState, pool] = useMemo(() => {
-    if (pair.type === 'STABLE_POOL') return [stablePoolState, stablePool]
-    if (pair.type === 'CONSTANT_PRODUCT_POOL') return [constantProductPoolState, constantProductPool]
+    if (_pool.type === 'STABLE_POOL') return [stablePoolState, stablePool]
+    if (_pool.type === 'CONSTANT_PRODUCT_POOL') return [constantProductPoolState, constantProductPool]
     return [undefined, undefined]
-  }, [constantProductPool, constantProductPoolState, pair.type, stablePool, stablePoolState])
+  }, [constantProductPool, constantProductPoolState, _pool.type, stablePool, stablePoolState])
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
@@ -82,10 +89,10 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
   return useMemo(
     () => (
       <AddSectionReviewModalTrident
-        poolAddress={pair.id}
+        poolAddress={_pool.id}
         poolState={poolState}
         pool={pool}
-        chainId={pair.chainId as BentoBoxV1ChainId}
+        chainId={_pool.chainId as BentoBoxV1ChainId}
         token0={token0}
         token1={token1}
         input0={parsedInput0}
@@ -93,8 +100,8 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
       >
         {({ isWritePending, setOpen }) => (
           <AddSectionWidget
-            isFarm={!!pair.farm}
-            chainId={pair.chainId}
+            isFarm={!!_pool.incentives && _pool.incentives.length > 0}
+            chainId={_pool.chainId}
             input0={input0}
             input1={input1}
             token0={token0}
@@ -120,11 +127,11 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
                   </Button>
                 }
               >
-                <Checker.Network fullWidth size="md" chainId={pair.chainId}>
+                <Checker.Network fullWidth size="md" chainId={_pool.chainId}>
                   <Checker.Amounts
                     fullWidth
                     size="md"
-                    chainId={pair.chainId}
+                    chainId={_pool.chainId}
                     fundSource={FundSource.WALLET}
                     amounts={[parsedInput0, parsedInput1]}
                   >
@@ -140,14 +147,14 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
       </AddSectionReviewModalTrident>
     ),
     [
+      _pool.chainId,
+      _pool.id,
+      _pool.incentives,
       input0,
       input1,
       isMounted,
       onChangeToken0TypedAmount,
       onChangeToken1TypedAmount,
-      pair.chainId,
-      pair.farm,
-      pair.id,
       parsedInput0,
       parsedInput1,
       pool,

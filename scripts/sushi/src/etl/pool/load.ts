@@ -3,6 +3,7 @@ import { performance } from 'perf_hooks'
 
 export async function createPools(client: PrismaClient, pools: Prisma.PoolCreateManyInput[]) {
   const startTime = performance.now()
+
   const created = await client.pool.createMany({
     data: pools,
     skipDuplicates: true,
@@ -17,8 +18,14 @@ export async function createPools(client: PrismaClient, pools: Prisma.PoolCreate
   }
 }
 
-export async function getLatestPoolTimestamp(client: PrismaClient, chainId: number, protocol: string, versions: string[]) {
+export async function getLatestPoolTimestamp(
+  client: PrismaClient,
+  chainId: number,
+  protocol: string,
+  versions: string[]
+) {
   const startTime = performance.now()
+
   const latestPool = await client.pool.findFirst({
     select: {
       address: true,
@@ -35,6 +42,7 @@ export async function getLatestPoolTimestamp(client: PrismaClient, chainId: numb
       generatedAt: 'desc',
     },
   })
+
   const endTime = performance.now()
   const duration = ((endTime - startTime) / 1000).toFixed(1)
   if (!latestPool) {

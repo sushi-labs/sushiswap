@@ -160,28 +160,11 @@ query CrossChainToken($id: ID!, $now: Int!, $chainId: Int!) {
         id
         apr
         feeApr
-        incentiveApr
         daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
           id
           date
           volumeUSD
           apr
-        }
-        farm {
-          id
-          incentives {
-            apr
-            rewardPerDay
-            rewardToken {
-              address
-              symbol
-              decimals
-            }
-            rewarderAddress
-            rewarderType
-          }
-          chefType
-          poolType
         }
       }
     }

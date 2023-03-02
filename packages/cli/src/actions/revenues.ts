@@ -9,7 +9,7 @@ import { REVENUES_SUPPORTED_CHAIN_NAMES } from '../config'
 const sdk = getBuiltGraphSDK()
 
 type Arguments = {
-  network?: typeof REVENUES_SUPPORTED_CHAIN_NAMES[number]
+  network?: (typeof REVENUES_SUPPORTED_CHAIN_NAMES)[number]
   days?: string
 }
 
@@ -137,7 +137,7 @@ async function getAllPairsWithFarms(chainIds: number[], blockNumber: number) {
   // eslint-disable-next-line no-constant-condition
   while (true) {
     const pairs = (
-      await sdk.PairsWithFarms({
+      await sdk.PairsByChainIds({
         chainIds: chainIds,
         orderBy: 'id',
         orderDirection: 'asc',
@@ -153,7 +153,18 @@ async function getAllPairsWithFarms(chainIds: number[], blockNumber: number) {
     }
     id = pairs[999].address
   }
-  return allPairs
+
+  const incentivizedPools = await (await import('@sushiswap/client')).getPools({ isIncentivized: true, take: 1000 })
+
+  return allPairs.map((pair) => {
+    const incentivizedPool = incentivizedPools.find(({ id }) => id === pair.id)
+    if (!incentivizedPool) return pair
+
+    return {
+      ...pair,
+      incentives: incentivizedPool.incentives,
+    }
+  })
 }
 
 async function processRevenues(lastBlocks: Block[], pastBlocks: Block[], sushiPriceUSD: number, days: number) {
@@ -188,8 +199,8 @@ async function processRevenues(lastBlocks: Block[], pastBlocks: Block[], sushiPr
 
         let spent = 0
         //process spending
-        if (pair.farm) {
-          const sushiIncentive = pair.farm.incentives.find((incentive) => {
+        if ('incentives' in pair && pair.incentives.length > 0) {
+          const sushiIncentive = pair.incentives.find((incentive) => {
             return (
               incentive.rewardToken.address.toLowerCase() ==
               SUSHI_ADDRESS[pair.chainId as keyof typeof SUSHI_ADDRESS].toLowerCase()

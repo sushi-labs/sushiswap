@@ -1,7 +1,7 @@
 import '../lib/wagmi.js'
 
 import { ChainId } from '@sushiswap/chain'
-import { Prisma,PrismaClient } from '@sushiswap/database'
+import { createClient, Prisma, PrismaClient } from '@sushiswap/database'
 import { readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
@@ -58,7 +58,7 @@ const SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, Protocol
 const SUPPORTED_TYPES = [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL]
 
 export async function reserves(chainId: ChainId) {
-  const client = new PrismaClient()
+  const client = await createClient()
   try {
     const startTime = performance.now()
     console.log(`RESERVES - CHAIN_ID: ${chainId}, VERSIONS: ${SUPPORTED_VERSIONS}, TYPE: ${SUPPORTED_TYPES}`)

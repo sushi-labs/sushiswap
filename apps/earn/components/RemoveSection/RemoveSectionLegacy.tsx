@@ -3,7 +3,7 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount, Native } from '@sushiswap/currency'
 import { calculateGasMargin } from '@sushiswap/gas'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
 import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
@@ -22,24 +22,24 @@ import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 're
 import { Address, useAccount, useNetwork } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
-import { useTokensFromPair, useTransactionDeadline, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
+import { useTokensFromPool, useTransactionDeadline, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
 import { useNotifications, useSettings } from '../../lib/state/storage'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
 interface RemoveSectionLegacyProps {
-  pair: Pair
+  pool: Pool
 }
 
 const DEFAULT_REMOVE_LIQUIDITY_SLIPPAGE_TOLERANCE = new Percent(5, 100)
 
-export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
-  const { token0, token1, liquidityToken } = useTokensFromPair(pair)
+export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pool: _pool }) => {
+  const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
   const { chain } = useNetwork()
   const isMounted = useIsMounted()
   const { address } = useAccount()
-  const deadline = useTransactionDeadline(pair.chainId)
-  const contract = useSushiSwapRouterContract(pair.chainId as UniswapV2Router02ChainId)
+  const deadline = useTransactionDeadline(_pool.chainId)
+  const contract = useSushiSwapRouterContract(_pool.chainId as UniswapV2Router02ChainId)
   const [{ slippageTolerance }] = useSettings()
   const [, { createNotification }] = useNotifications(address)
 
@@ -54,7 +54,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
 
   const {
     data: [poolState, pool],
-  } = usePair(pair.chainId as UniswapV2Router02ChainId, token0, token1)
+  } = usePair(_pool.chainId as UniswapV2Router02ChainId, token0, token1)
   const { balance } = usePoolPosition()
   const totalSupply = useTotalSupply(liquidityToken)
 
@@ -62,7 +62,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
     return [pool?.reserve0, pool?.reserve1]
   }, [pool?.reserve0, pool?.reserve1])
 
-  const underlying = useUnderlyingTokenBalanceFromPair({
+  const underlying = useUnderlyingTokenBalanceFromPool({
     reserve0,
     reserve1,
     totalSupply,
@@ -155,14 +155,14 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
         }
 
         const withNative =
-          Native.onChain(pair.chainId).wrapped.address === pool.token0.address ||
-          Native.onChain(pair.chainId).wrapped.address === pool.token1.address
+          Native.onChain(_pool.chainId).wrapped.address === pool.token0.address ||
+          Native.onChain(_pool.chainId).wrapped.address === pool.token1.address
 
         let methodNames
         let args: any
 
         if (withNative) {
-          const token1IsNative = Native.onChain(pair.chainId).wrapped.address === pool.token1.wrapped.address
+          const token1IsNative = Native.onChain(_pool.chainId).wrapped.address === pool.token1.wrapped.address
           methodNames = ['removeLiquidityETH', 'removeLiquidityETHSupportingFeeOnTransferTokens']
           args = [
             token1IsNative ? pool.token0.wrapped.address : pool.token1.wrapped.address,
@@ -224,14 +224,14 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
       balance,
       minAmount0,
       minAmount1,
-      pair.chainId,
-      percentToRemove,
       deadline,
+      _pool.chainId,
+      percentToRemove,
     ]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
-    chainId: pair.chainId,
+    chainId: _pool.chainId,
     prepare,
     onSettled,
   })
@@ -239,8 +239,8 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
   return (
     <div>
       <RemoveSectionWidget
-        isFarm={!!pair.farm}
-        chainId={pair.chainId}
+        isFarm={!!_pool.incentives && _pool.incentives.length > 0}
+        chainId={_pool.chainId}
         percentage={percentage}
         token0={token0}
         token1={token1}
@@ -257,7 +257,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
               </Button>
             }
           >
-            <Checker.Network fullWidth size="md" chainId={pair.chainId}>
+            <Checker.Network fullWidth size="md" chainId={_pool.chainId}>
               <Checker.Custom
                 showGuardIfTrue={+percentage <= 0}
                 guard={
@@ -277,7 +277,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
                         fullWidth
                         amount={amountToRemove}
                         address={
-                          getSushiSwapRouterContractConfig(pair.chainId as UniswapV2Router02ChainId).address as Address
+                          getSushiSwapRouterContractConfig(_pool.chainId as UniswapV2Router02ChainId).address as Address
                         }
                       />
                     </Approve.Components>

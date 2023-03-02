@@ -2,40 +2,13 @@ fragment UserFields on User {
   id
 }
 
-query CrossChainUserWithFarms($id: ID!, $chainIds: [Int!]!, $block: Block_height) {
-  crossChainUserWithFarms(id: $id, chainIds: $chainIds, block: $block) {
+query CrossChainUserPositions($id: ID!, $chainIds: [Int!]!) {
+  crossChainUserPositions(id: $id, chainIds: $chainIds) {
     id
+    pool
     chainId
-    valueUSD
-    pair {
-      ...PairFields
-      feeApr
-      incentiveApr
-      farm {
-        ...FarmFields
-      }
-    }
+    balance
+    unstakedBalance
+    stakedBalance
   }
 }
-
-# query UserWithLiquidityPositions(
-#   $id: ID!
-#   $chainIds: [Int!]!
-# ) {
-#   userWithLiquidityPositions(
-#     id: $id
-#     chainIds: $chainIds
-#   ) {
-#     id
-#     positions {
-#       chainId
-#       valueUSD
-#       pair {
-#       ...PairFields
-#         farm {
-#           ...FarmFields
-#         }
-#       }
-#     }
-#   }
-# }

@@ -1,4 +1,4 @@
-import { client } from '@sushiswap/database'
+import { createClient } from '@sushiswap/database'
 
 // import { allChains, allProviders } from '@sushiswap/wagmi-config'
 // import { Address, configureChains, createClient, fetchToken } from '@wagmi/core'
@@ -46,6 +46,7 @@ import { client } from '@sushiswap/database'
 // }
 
 export async function getToken(chainId: number, address: string) {
+  const client = await createClient()
   const token = await client.token.findFirstOrThrow({
     select: {
       id: true,
@@ -70,6 +71,7 @@ export async function getToken(chainId: number, address: string) {
 }
 
 export async function getTokenIdsByChainId(chainId: number) {
+  const client = await createClient()
   const ids = await client.token.findMany({
     select: {
       id: true,
@@ -86,6 +88,7 @@ export async function getTokenIdsByChainId(chainId: number) {
 }
 
 export async function getTokenAddressesByChainId(chainId: number) {
+  const client = await createClient()
   const addresses = await client.token.findMany({
     select: {
       address: true,
@@ -102,6 +105,7 @@ export async function getTokenAddressesByChainId(chainId: number) {
 }
 
 export async function getTokensByChainId(chainId: number) {
+  const client = await createClient()
   const tokens = await client.token.findMany({
     select: {
       id: true,
@@ -124,6 +128,7 @@ export async function getTokensByChainId(chainId: number) {
 }
 
 export async function getTokens() {
+  const client = await createClient()
   const tokens = await client.token.findMany({
     select: {
       id: true,

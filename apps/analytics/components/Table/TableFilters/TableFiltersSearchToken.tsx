@@ -17,12 +17,12 @@ export const TableFiltersSearchToken: FC = () => {
   const debouncedExtraQuery = useDebounce(_extraQuery, 400)
 
   useEffect(() => {
-    setFilters({ query: debouncedQuery })
-  }, [debouncedQuery, setFilters])
-
-  useEffect(() => {
-    setFilters({ extraQuery: debouncedExtraQuery })
-  }, [debouncedExtraQuery, setFilters])
+    if (!(debouncedExtraQuery || debouncedQuery)) {
+      setFilters({ tokenSymbols: undefined })
+    } else {
+      setFilters({ tokenSymbols: [debouncedQuery, debouncedExtraQuery].filter((query) => query !== '') })
+    }
+  }, [_extraQuery, _query, debouncedExtraQuery, debouncedQuery, setFilters])
 
   useEffect(() => {
     if (!extra) {
@@ -81,7 +81,7 @@ export const TableFiltersSearchToken: FC = () => {
         leaveFrom="transform max-w-[200px]"
         leaveTo="transform max-w-0"
       >
-        <div className="h-full py-3 px-2">
+        <div className="h-full px-2 py-3">
           <div className="w-px h-full bg-slate-200/20" />
         </div>
         <Transition

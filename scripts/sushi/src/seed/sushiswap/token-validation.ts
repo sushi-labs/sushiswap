@@ -1,4 +1,4 @@
-// import { client } from '@sushiswap/database'
+// import { createClient } from '@sushiswap/database'
 // import fetch from 'isomorphic-unfetch'
 // import { performance } from 'perf_hooks'
 
@@ -19,6 +19,7 @@
 //   // LOAD
 //   const batchSize = 200
 //   let count = 0
+//   const client = await createClient()
 //   for (let i = 0; i < transformedTokens.length; i += batchSize) {
 //     const batch = transformedTokens.slice(i, i + batchSize)
 //     const updates = batch.map((token) => client.token.update(token))
@@ -53,10 +54,10 @@
 
 // main()
 //   .then(async () => {
-//     await client.$disconnect()
+//     await (await createClient()).$disconnect()
 //   })
 //   .catch(async (e) => {
 //     console.error(e)
-//     await client.$disconnect()
+//     await (await createClient()).$disconnect()
 //     process.exit(1)
 //   })

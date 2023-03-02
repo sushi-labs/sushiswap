@@ -2,7 +2,7 @@ import 'dotenv/config'
 import './lib/wagmi.js'
 
 import { ChainId } from '@sushiswap/chain'
-import { client, Prisma } from '@sushiswap/database'
+import { createClient, Prisma } from '@sushiswap/database'
 import { MINICHEF_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
@@ -34,9 +34,9 @@ export async function execute() {
     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
   } catch (e) {
     console.error(e)
-    await client.$disconnect()
+    await (await createClient()).$disconnect()
   } finally {
-    await client.$disconnect()
+    await (await createClient()).$disconnect()
   }
 }
 

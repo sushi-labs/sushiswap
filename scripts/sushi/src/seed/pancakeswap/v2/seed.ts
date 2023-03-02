@@ -1,5 +1,5 @@
 import { ChainId, chainName } from '@sushiswap/chain'
-import { Prisma, PrismaClient } from '@sushiswap/database'
+import { createClient, Prisma, PrismaClient } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 import { getBuiltGraphSDK, PCSPairsQuery } from '../../../../.graphclient/index.js'
@@ -15,7 +15,7 @@ const SWAP_FEE = 0.0025
 const TWAP_ENABLED = true
 
 export async function pancakeSwapV2() {
-  const client = new PrismaClient()
+  const client = await createClient()
   try {
     const startTime = performance.now()
     console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}`)

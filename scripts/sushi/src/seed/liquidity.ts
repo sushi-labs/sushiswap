@@ -1,7 +1,7 @@
 import '../lib/wagmi.js'
 
 import { ChainId } from '@sushiswap/chain'
-import { Prisma, PrismaClient, Token as PrismaToken } from '@sushiswap/database'
+import { createClient, Prisma, PrismaClient, Token as PrismaToken } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 import { PoolType, ProtocolVersion } from '../config.js'
@@ -9,9 +9,8 @@ import { PoolType, ProtocolVersion } from '../config.js'
 const SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 const SUPPORTED_TYPES = [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL]
 
-
 export async function liquidity(chainId: ChainId) {
-  const client = new PrismaClient()
+  const client = await createClient()
   try {
     const startTime = performance.now()
     console.log(`LIQUIDITY - CHAIN_ID: ${chainId}, VERSIONS: ${SUPPORTED_VERSIONS}, TYPE: ${SUPPORTED_TYPES}`)
@@ -24,9 +23,9 @@ export async function liquidity(chainId: ChainId) {
     console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
   } catch (e) {
     console.error(e)
-    await client.$disconnect()
+    await (await createClient()).$disconnect()
   } finally {
-    await client.$disconnect()
+    await (await createClient()).$disconnect()
   }
 }
 

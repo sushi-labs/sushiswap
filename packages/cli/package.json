@@ -35,6 +35,7 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
+    "@sushiswap/client": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/log": "workspace:*",
     "@sushiswap/validate": "workspace:*",

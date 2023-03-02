@@ -15,7 +15,7 @@ import fastify from 'fastify'
 import { performance } from 'perf_hooks'
 import { z } from 'zod'
 
-import { getToken } from './tokens'
+import { getToken } from './tokens.js'
 
 const server = fastify({ logger: true })
 server.register(cors)

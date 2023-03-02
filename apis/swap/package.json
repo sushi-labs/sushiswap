@@ -22,6 +22,7 @@
   "files": [
     "dist"
   ],
+  "type": "module",
   "scripts": {
     "start": "ts-node --swc src/index.ts",
     "server": "ts-node --swc src/index.ts",
@@ -46,7 +47,7 @@
     "@fastify/cors": "8.2.0",
     "@fastify/rate-limit": "7.6.0",
     "zod": "3.20.2",
-    "node-fetch": "2.x"
+    "@whatwg-node/fetch": "latest"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
