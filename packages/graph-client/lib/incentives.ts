@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import fetch from 'isomorphic-unfetch'
+import fetch from 'node-fetch';
 
 export interface Incentive {
   poolId: string

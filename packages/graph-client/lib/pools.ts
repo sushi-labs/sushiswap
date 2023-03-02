@@ -1,4 +1,4 @@
-import fetch from 'isomorphic-unfetch'
+import fetch from 'node-fetch'
 
 enum PoolType {
   CONSTANT_PRODUCT_POOL = 'CONSTANT_PRODUCT_POOL',

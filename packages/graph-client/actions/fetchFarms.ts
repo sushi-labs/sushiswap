@@ -1,5 +1,5 @@
 import type { ChainId } from '@sushiswap/chain'
-import fetch from 'isomorphic-unfetch'
+import fetch from 'node-fetch';
 
 // TODO: Move API to OpenAPI, use graph-mesh to fetch
 export interface Farm {

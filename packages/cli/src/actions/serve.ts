@@ -2,7 +2,7 @@ import { formatUSD } from '@sushiswap/format'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import chalk from 'chalk'
 
-import { CHAIN_NAME_TO_CHAIN_ID, EXCHANGE_SUBGRAPH_NAME, MAKER_ADDRESS, SUBGRAPH_HOST } from '../config'
+import { CHAIN_NAME_TO_CHAIN_ID, EXCHANGE_SUBGRAPH_NAME, MAKER_ADDRESS, SUBGRAPH_HOST } from '../config.js'
 
 type Arguments = {
   network?: keyof typeof CHAIN_NAME_TO_CHAIN_ID

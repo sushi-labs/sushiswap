@@ -1,5 +1,5 @@
 import type { ChainId } from '@sushiswap/chain'
-import fetch from 'isomorphic-unfetch'
+import fetch from 'node-fetch';
 
 export interface PriceAPI {
   [key: string]: number

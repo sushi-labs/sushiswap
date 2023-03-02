@@ -124,9 +124,6 @@ export async function getAggregatorPoolsByTokenIds(args: typeof AggregatorPoolsB
             OR: [
               {
                 token0Id: token0Id,
-                token0: {
-                  isFeeOnTransfer: false,
-                },
                 token1: {
                   status: 'APPROVED',
                   isFeeOnTransfer: false,
@@ -136,9 +133,6 @@ export async function getAggregatorPoolsByTokenIds(args: typeof AggregatorPoolsB
                 token1Id: token0Id,
                 token0: {
                   status: 'APPROVED',
-                  isFeeOnTransfer: false,
-                },
-                token1: {
                   isFeeOnTransfer: false,
                 },
               },
@@ -155,9 +149,6 @@ export async function getAggregatorPoolsByTokenIds(args: typeof AggregatorPoolsB
             OR: [
               {
                 token0Id: token0Id,
-                token0: {
-                  isFeeOnTransfer: false,
-                },
                 token1: {
                   status: 'APPROVED',
                   isFeeOnTransfer: false,
@@ -167,9 +158,6 @@ export async function getAggregatorPoolsByTokenIds(args: typeof AggregatorPoolsB
                 token1Id: token0Id,
                 token0: {
                   status: 'APPROVED',
-                  isFeeOnTransfer: false,
-                },
-                token1: {
                   isFeeOnTransfer: false,
                 },
               },
@@ -194,9 +182,6 @@ export async function getAggregatorPoolsByTokenIds(args: typeof AggregatorPoolsB
             OR: [
               {
                 token0Id: token1Id,
-                token0: {
-                  isFeeOnTransfer: false,
-                },
                 token1: {
                   status: 'APPROVED',
                   isFeeOnTransfer: false,
@@ -206,9 +191,6 @@ export async function getAggregatorPoolsByTokenIds(args: typeof AggregatorPoolsB
                 token1Id: token1Id,
                 token0: {
                   status: 'APPROVED',
-                  isFeeOnTransfer: false,
-                },
-                token1: {
                   isFeeOnTransfer: false,
                 },
               },
@@ -225,9 +207,6 @@ export async function getAggregatorPoolsByTokenIds(args: typeof AggregatorPoolsB
             OR: [
               {
                 token0Id: token1Id,
-                token0: {
-                  isFeeOnTransfer: false,
-                },
                 token1: {
                   status: 'APPROVED',
                   isFeeOnTransfer: false,
@@ -237,9 +216,6 @@ export async function getAggregatorPoolsByTokenIds(args: typeof AggregatorPoolsB
                 token1Id: token1Id,
                 token0: {
                   status: 'APPROVED',
-                  isFeeOnTransfer: false,
-                },
-                token1: {
                   isFeeOnTransfer: false,
                 },
               },
@@ -277,15 +253,15 @@ export async function getAggregatorPoolsByTokenIds(args: typeof AggregatorPoolsB
   const filteredToken1Pools = token1Pools.filter((p) => !topPoolIds.includes(p.id))
   // console.log(`After excluding top pools: t0: ${filteredToken0Pools.length}, t1: ${filteredToken1Pools.length}`)
 
-  if (filteredToken0Pools.length >= args.size / 2 && filteredToken1Pools.length >= args.size / 2) {
-    token0PoolSize = args.size / 2
-    token1PoolSize = args.size / 2
-  } else if (filteredToken0Pools.length >= args.size / 2 && filteredToken1Pools.length < args.size / 2) {
+  if (filteredToken0Pools.length >= args.take / 2 && filteredToken1Pools.length >= args.take / 2) {
+    token0PoolSize = args.take / 2
+    token1PoolSize = args.take / 2
+  } else if (filteredToken0Pools.length >= args.take / 2 && filteredToken1Pools.length < args.take / 2) {
     token1PoolSize = filteredToken1Pools.length
-    token0PoolSize = args.size - filteredToken1Pools.length
-  } else if (filteredToken1Pools.length >= args.size / 2 && filteredToken0Pools.length < args.size / 2) {
+    token0PoolSize = args.take - filteredToken1Pools.length
+  } else if (filteredToken1Pools.length >= args.take / 2 && filteredToken0Pools.length < args.take / 2) {
     token0PoolSize = filteredToken0Pools.length
-    token1PoolSize = args.size - filteredToken0Pools.length
+    token1PoolSize = args.take - filteredToken0Pools.length
   } else {
     token0PoolSize = filteredToken0Pools.length
     token1PoolSize = filteredToken1Pools.length
