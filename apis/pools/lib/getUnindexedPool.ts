@@ -130,6 +130,7 @@ export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnTy
     incentiveApr: 0,
     totalApr: 0,
     isIncentivized: false,
+    wasIncentivized: false,
     isBlacklisted: false,
     incentives: [],
     type: poolType,
