@@ -9,7 +9,6 @@ import { client, Prisma } from '@sushiswap/database'
 export async function filterIncentives(incentives: Prisma.IncentiveCreateManyInput[]): Promise<{
   incentivesToCreate: Prisma.IncentiveCreateManyInput[]
   incentivesToUpdate: Prisma.IncentiveCreateManyInput[]
-  incentivesToDelete: string[]
 }> {
   const incentiveSelect = Prisma.validator<Prisma.IncentiveSelect>()({
     id: true,
@@ -75,23 +74,13 @@ export async function filterIncentives(incentives: Prisma.IncentiveCreateManyInp
     }
     return false
   })
-  const incentivesToDelete = incentiveFound
-    .filter((incentive) => {
-      const incentiveStillExists = incentives.find((i) => i.id === incentive.id)
-      if (!incentiveStillExists) {
-        return true
-      }
-      return false
-    })
-    .map((incentive) => incentive.id)
 
   console.log(
     `TRANSFORM - Filtering incentives\n
     ${incentivesToCreate.length} incentives should be created.\n
     ${incentivesAlreadyUpToDate} incentives are already up to date.\n
-    ${incentivesToUpdate.length} incentives should be updated.\n
-    ${incentivesToDelete.length} incentives should be deleted.`
+    ${incentivesToUpdate.length} incentives should be updated.\n`
   )
 
-  return { incentivesToCreate, incentivesToUpdate, incentivesToDelete }
+  return { incentivesToCreate, incentivesToUpdate }
 }
