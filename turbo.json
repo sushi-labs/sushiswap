@@ -80,7 +80,6 @@
         "dist/**/*",
         "typechain/**/*",
         "artifacts/**/*",
-        "cache/**/*",
         "public/**/*",
         "storybook-static/**/*"
       ],
