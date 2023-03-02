@@ -13,6 +13,7 @@
     "deploy",
     "deployments",
     "scripts",
+    "exports",
     "typechain"
   ],
   "scripts": {
@@ -28,9 +29,6 @@
     "test:debug": "cross-env TS_NODE_TRANSPILE_ONLY=1 mocha --inspect-brk",
     "test:gas": "cross-env REPORT_GAS=true yarn test",
     "test_render": "cross-env TS_NODE_TRANSPILE_ONLY=1 mocha ./test/Rendering.test.ts"
-  },
-  "dependencies": {
-    "ethereum-multicall": "^2.15.0"
   },
   "devDependencies": {
     "@ethersproject/abi": "5.7.0",
@@ -65,7 +63,6 @@
     "cross-env": "^7.0.0",
     "dotenv": "16.0.3",
     "eslint": "8.29.0",
-    "ethereum-multicall": "^2.15.0",
     "ethers": "5.7.2",
     "hardhat": "2.12.4",
     "hardhat-contract-sizer": "2.6.1",
