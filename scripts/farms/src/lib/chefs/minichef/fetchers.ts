@@ -140,6 +140,8 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
             '0x3c61b93b64f59b5091a11a071083598ee8b5cb64',
             '0x1a140bed2ec8ce72ee3723d18fd5d50851e455fd',
             '0xccc3760a0a315937877687bc99df4edb0f7315b4',
+            '0x294eadcc534084c1333dc99e1afcf3e92c5c1297',
+            '0xb873813f710093cbc17836297a6fefcfc6989faf',
           ],
           [ChainId.GNOSIS]: ['0xb291149e478dbdd2cd2528ad4088ee5c8376df1e'],
           [ChainId.ARBITRUM_NOVA]: [

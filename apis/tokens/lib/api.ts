@@ -60,7 +60,8 @@ export async function getToken(chainId: number, address: string) {
       AND: {
         chainId,
         address,
-        status: 'APPROVED',
+        // If asking for the token directly, we probably want to see it even if it's not approved
+        // status: 'APPROVED',
       },
     },
   })
