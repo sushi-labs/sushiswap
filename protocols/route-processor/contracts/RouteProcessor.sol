@@ -19,6 +19,14 @@ contract RouteProcessor {
 
   IBentoBoxMinimal public immutable bentoBox;
 
+  uint private unlocked = 1;
+  modifier lock() {
+      require(unlocked == 1, 'RouteProcessor is locked');
+      unlocked = 2;
+      _;
+      unlocked = 1;
+  }
+
   constructor(address _bentoBox) {
     bentoBox = IBentoBoxMinimal(_bentoBox);
   }
@@ -26,7 +34,7 @@ contract RouteProcessor {
   /// @notice For native unwrapping
   receive() external payable {}
 
-  /// @notice Processes the route generated off-chain
+  /// @notice Processes the route generated off-chain. Has a lock
   /// @param tokenIn Address of the input token
   /// @param amountIn Amount of the input token
   /// @param tokenOut Address of the output token
@@ -39,9 +47,47 @@ contract RouteProcessor {
     uint256 amountOutMin,
     address to,
     bytes memory route
-  ) external payable returns (uint256 amountOut) {
-    require(tx.origin == msg.sender, 'Call from not EOA'); // Prevents reentrance
+  ) external payable lock returns (uint256 amountOut) {
+    return processRouteInternal(tokenIn, amountIn, tokenOut, amountOutMin, to, route);
+  }
 
+  /// @notice Transfers some value to <transferValueTo> and then processes the route
+  /// @param transferValueTo Address where the value should be transferred
+  /// @param amountValueTransfer How much value to transfer
+  /// @param tokenIn Address of the input token
+  /// @param amountIn Amount of the input token
+  /// @param tokenOut Address of the output token
+  /// @param amountOutMin Minimum amount of the output token
+  /// @return amountOut Actual amount of the output token
+  function transferValueAndprocessRoute(
+    address payable transferValueTo,
+    uint256 amountValueTransfer,
+    address tokenIn,
+    uint256 amountIn,
+    address tokenOut,
+    uint256 amountOutMin,
+    address to,
+    bytes memory route
+  ) external payable lock returns (uint256 amountOut) {
+    (bool success, bytes memory returnBytes) = transferValueTo.call{value: amountValueTransfer}('');
+    require(success, string(abi.encodePacked(returnBytes)));
+    return processRouteInternal(tokenIn, amountIn, tokenOut, amountOutMin, to, route);
+  }
+
+  /// @notice Processes the route generated off-chain
+  /// @param tokenIn Address of the input token
+  /// @param amountIn Amount of the input token
+  /// @param tokenOut Address of the output token
+  /// @param amountOutMin Minimum amount of the output token
+  /// @return amountOut Actual amount of the output token
+  function processRouteInternal(
+    address tokenIn,
+    uint256 amountIn,
+    address tokenOut,
+    uint256 amountOutMin,
+    address to,
+    bytes memory route
+  ) private returns (uint256 amountOut) {
     uint256 amountInAcc = 0;
     uint256 balanceInitial = tokenOut == NATIVE_ADDRESS ? 
       address(to).balance : IERC20(tokenOut).balanceOf(to);
@@ -58,7 +104,10 @@ contract RouteProcessor {
           amountInAcc += distributeERC20Amounts(stream, tokenIn); // initial distribution
         else if (commandCode == 5)
           amountInAcc += wrapAndDistributeERC20Amounts(stream); // wrap natives and initial distribution        
-        else if (commandCode == 6) unwrapNative(to, stream);
+        else if (commandCode == 6) 
+          unwrapNative(to, stream);
+        else if (commandCode == 7)
+          amountInAcc += distributeERC20AmountsFromRP(stream, tokenIn); // initial distribution
         else revert('Unknown command code');
       } else if (commandCode < 24) {
         if (commandCode == 20) bentoDepositAmountFromBento(stream, tokenIn);
@@ -166,13 +215,12 @@ contract RouteProcessor {
     }
   }
 
-  /// @notice Wraps all native inputs and distributes wrapped ERC20 tokens from RouteProcessor to addresses
+  /// @notice Distributes input ERC20 tokens from this contract to addresses. Tokens should be approved
   /// @notice Expected to be called for initial liquidity transfer from the user to pools, so we know exact amounts
-  /// @param stream [WrapToken, ArrayLength, ...[To, Amount][]]. An array of destinations and token amounts
+  /// @param stream [ArrayLength, ...[To, Amount][]]. An array of destinations and token amounts
+  /// @param token Token to distribute
   /// @return amountTotal Total amount distributed
-  function wrapAndDistributeERC20Amounts(uint256 stream) private returns (uint256 amountTotal) {
-    address token = stream.readAddress();
-    IWETH(token).deposit{value: msg.value}();
+  function distributeERC20AmountsFromRP(uint256 stream, address token) private returns (uint256 amountTotal) {
     uint8 num = stream.readUint8();
     amountTotal = 0;
     for (uint256 i = 0; i < num; ++i) {
@@ -181,7 +229,24 @@ contract RouteProcessor {
       amountTotal += amount;
       IERC20(token).safeTransfer(to, amount);
     }
-    require(msg.value == amountTotal, "RouteProcessor: invalid input amount");
+  }
+
+  /// @notice Wraps all native inputs and distributes wrapped ERC20 tokens from RouteProcessor to addresses
+  /// @notice Expected to be called for initial liquidity transfer from the user to pools, so we know exact amounts
+  /// @param stream [WrapToken, ArrayLength, ...[To, Amount][]]. An array of destinations and token amounts
+  /// @return amountTotal Total amount distributed
+  function wrapAndDistributeERC20Amounts(uint256 stream) private returns (uint256 amountTotal) {
+    address token = stream.readAddress();
+    IWETH(token).deposit{value: address(this).balance}();
+    uint8 num = stream.readUint8();
+    amountTotal = 0;
+    for (uint256 i = 0; i < num; ++i) {
+      address to = stream.readAddress();
+      uint256 amount = stream.readUint();
+      amountTotal += amount;
+      IERC20(token).safeTransfer(to, amount);
+    }
+    require(address(this).balance == 0, "RouteProcessor: invalid input amount");
   }
 
   /// @notice Distributes input BentoBox tokens from msg.sender to addresses. Tokens should be approved

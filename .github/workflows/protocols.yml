@@ -20,6 +20,7 @@ env:
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
   ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
   ALCHEMY_POLYGON_API_KEY: ${{ secrets.ALCHEMY_POLYGON_API_KEY }}
+  ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
 
 jobs:
   ci:

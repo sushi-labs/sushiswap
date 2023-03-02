@@ -9,7 +9,6 @@ import stringify from 'fast-json-stable-stringify'
 import { getMasterChefV1 } from './lib/chefs/masterChefV1/index.js'
 import { getMasterChefV2 } from './lib/chefs/masterChefV2/index.js'
 import { getMinichef } from './lib/chefs/minichef/index.js'
-import { redis } from './lib/redis.js'
 
 export async function execute() {
   console.log(`Updating farms`)
@@ -39,7 +38,9 @@ export async function execute() {
   }
   console.log(`Total farms: ${totalFarms}`)
 
-  await redis.hset(
+  // eslint-disable-next-line turbo/no-undeclared-env-vars
+  if (process.env.DRY_RUN) return
+  ;(await import('./lib/redis.js')).redis.hset(
     'farms',
     Object.fromEntries(
       combined

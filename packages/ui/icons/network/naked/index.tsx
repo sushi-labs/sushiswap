@@ -6,6 +6,8 @@ import { ArbitrumNovaNaked } from './ArbitrumNovaNaked'
 import { AvalancheNaked } from './AvalancheNaked'
 import { BinanceNaked } from './BinanceNaked'
 import { BobaNaked } from './BobaNaked'
+import { BobaBNBNaked } from './BobaBNBNaked'
+import { BobaAvaxNaked } from './BobaAvaxNaked'
 import { BttcNaked } from './BttcNaked'
 import { CeloNaked } from './CeloNaked'
 import { EthereumNaked } from './EthereumNaked'
@@ -29,6 +31,8 @@ export * from './ArbitrumNovaNaked'
 export * from './AvalancheNaked'
 export * from './BinanceNaked'
 export * from './BobaNaked'
+export * from './BobaBNBNaked'
+export * from './BobaAvaxNaked'
 export * from './BttcNaked'
 export * from './CeloNaked'
 export * from './EthereumNaked'
@@ -69,7 +73,7 @@ export const NETWORK_NAKED_ICON: Record<number, (props: React.ComponentProps<'sv
   [ChainId.OKEX]: OkexNaked,
   [ChainId.PALM]: PalmNaked,
   [ChainId.BOBA]: BobaNaked,
-  [ChainId.BOBA_AVAX]: BobaNaked,
-  [ChainId.BOBA_BNB]: BobaNaked,
+  [ChainId.BOBA_AVAX]: BobaAvaxNaked,
+  [ChainId.BOBA_BNB]: BobaBNBNaked,
   [ChainId.BTTC]: BttcNaked,
 }

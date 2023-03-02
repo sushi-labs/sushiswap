@@ -1,6 +1,5 @@
 import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
-import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import { calculateGasMargin } from '@sushiswap/gas'
 import { Percent } from '@sushiswap/math'
@@ -12,7 +11,7 @@ import {
   useSendTransaction,
   useSushiSwapRouterContract,
 } from '@sushiswap/wagmi'
-import { BigNumber, BigNumberish } from 'ethers'
+import { BigNumber } from 'ethers'
 import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { Address, useAccount, useNetwork } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
@@ -21,9 +20,11 @@ import { useTransactionDeadline } from '../../lib/hooks'
 import { useNotifications, useSettings } from '../../lib/state/storage'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
+import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
+
 interface AddSectionReviewModalLegacyProps {
   poolState: PairState
-  chainId: ChainId
+  chainId: UniswapV2Router02ChainId
   token0: Type | undefined
   token1: Type | undefined
   input0: Amount<Type> | undefined
@@ -190,6 +191,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
               </Approve.Components>
             }
             render={({ approved }) => {
+              // console.log({ approved, isWritePending })
               return (
                 <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}

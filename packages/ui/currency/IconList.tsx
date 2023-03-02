@@ -19,6 +19,8 @@ export const IconList: FC<IconListProps> = ({ children, iconWidth, iconHeight })
                   ...child.props,
                   width: iconWidth || child.props.width,
                   height: iconHeight || child.props.height,
+                  minWidth: iconWidth || child.props.minWidth,
+                  minHeight: iconHeight || child.props.height,
                 })}
               </div>
             )

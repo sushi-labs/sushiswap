@@ -1,14 +1,19 @@
-import { useSlippageTolerance, useTrade as _useTrade } from '@sushiswap/react-query'
+import { useTrade as _useTrade } from '@sushiswap/react-query'
 import { useFeeData } from 'wagmi'
 import { useSwapState } from '../ui/trade/TradeProvider'
-import { useCrossChainTrade } from './useCrossChainTrade'
+import { useSlippageTolerance } from './useSlippageTolerance'
+import { useCarbonOffset } from './useCarbonOffset'
+import { useCrossChainTrade } from './useCrossChainTrade/useCrossChainTrade'
+import { useMemo } from 'react'
 
-export const useTrade = () => {
-  const { token0, token1, network0, network1, amount, recipient } = useSwapState()
+type ObjectType<T> = T extends true ? ReturnType<typeof useCrossChainTrade> : ReturnType<typeof _useTrade>
 
-  const { data: slippageTolerance } = useSlippageTolerance()
-  const { data: feeData } = useFeeData()
+export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): ObjectType<T> {
+  const { token0, token1, network0, network1, amount, recipient, bentoboxSignature, tradeId } = useSwapState()
+  const [slippageTolerance] = useSlippageTolerance()
+  const [carbonOffset] = useCarbonOffset()
 
+  const { data: feeData } = useFeeData({ chainId: network0 })
   const sameChainTrade = _useTrade({
     chainId: network0,
     fromToken: token0,
@@ -17,20 +22,25 @@ export const useTrade = () => {
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     gasPrice: feeData?.gasPrice?.toNumber(),
     recipient,
-    enabled: network0 === network1,
+    enabled: !crossChain && network0 === network1,
+    carbonOffset,
   })
 
   const crossChainTrade = useCrossChainTrade({
-    chainId: network0,
-    fromToken: token0,
-    toToken: token1,
+    tradeId,
+    network0,
+    network1,
+    token0,
+    token1,
     amount: amount,
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
-    gasPrice: feeData?.gasPrice?.toNumber(),
     recipient,
-    enabled: network0 !== network1,
+    enabled: crossChain && network0 !== network1,
+    bentoboxSignature,
   })
 
-  if (network0 === network1) return sameChainTrade
-  return crossChainTrade
+  return useMemo(() => {
+    if (network0 !== network1) return crossChainTrade
+    return sameChainTrade
+  }, [crossChainTrade, network0, network1, sameChainTrade]) as ObjectType<T>
 }

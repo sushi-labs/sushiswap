@@ -1,18 +1,21 @@
-import { furoVestingAbi } from '@sushiswap/abi'
-import furoExports from '@sushiswap/furo/exports'
-import { Address, useContract, useProvider } from 'wagmi'
+import { furoVestingAbi, furoVestingAddress, FuroVestingChainId } from '@sushiswap/furo'
+import { getContract } from '@wagmi/core'
+import { useMemo } from 'react'
+import { useProvider } from 'wagmi'
 
-export const getFuroVestingContractConfig = (chainId: number | undefined) => ({
-  address: (furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroVesting
-    ?.address ?? '') as Address,
-  abi: furoVestingAbi,
+export const getFuroVestingContractConfig = (chainId: FuroVestingChainId) => ({
+  address: furoVestingAddress[chainId],
+  abi: furoVestingAbi[chainId],
 })
 
-export function useFuroVestingContract(chainId: number | undefined) {
-  return useContract({
-    ...getFuroVestingContractConfig(chainId),
-    signerOrProvider: useProvider({ chainId }),
-  })
+export function useFuroVestingContract(chainId: FuroVestingChainId | undefined) {
+  const signerOrProvider = useProvider({ chainId })
+
+  return useMemo(() => {
+    if (!chainId) return null
+
+    return getContract({ ...getFuroVestingContractConfig(chainId), signerOrProvider })
+  }, [chainId, signerOrProvider])
 }
 
 export type FuroVesting = NonNullable<ReturnType<typeof useFuroVestingContract>>

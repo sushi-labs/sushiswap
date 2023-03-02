@@ -1,56 +1,82 @@
 import '../lib/wagmi.js'
 
-import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
-import IUniswapV2PairArtifact from '@uniswap/v2-core/build/IUniswapV2Pair.json' assert { type: 'json' }
+import { Prisma,PrismaClient } from '@sushiswap/database'
 import { readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
-import { PoolType, ProtocolVersion } from '../config.js'
+import { PoolType, ProtocolName, ProtocolVersion } from '../config.js'
 
-const prisma = new PrismaClient()
-if (process.env.CHAIN_ID === undefined) {
-  throw new Error('CHAIN_ID env var not set')
+const CPP_RESERVES_ABI = [
+  {
+    inputs: [],
+    name: 'getReserves',
+    outputs: [
+      {
+        internalType: 'uint112',
+        name: '_reserve0',
+        type: 'uint112',
+      },
+      {
+        internalType: 'uint112',
+        name: '_reserve1',
+        type: 'uint112',
+      },
+      {
+        internalType: 'uint32',
+        name: '_blockTimestampLast',
+        type: 'uint32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+]
+
+const STABLE_RESERVES_ABI = [
+  {
+    inputs: [],
+    name: 'getReserves',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '_reserve0',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_reserve1',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+]
+
+const SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
+const SUPPORTED_TYPES = [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL]
+
+export async function reserves(chainId: ChainId) {
+  const client = new PrismaClient()
+  try {
+    const startTime = performance.now()
+    console.log(`RESERVES - CHAIN_ID: ${chainId}, VERSIONS: ${SUPPORTED_VERSIONS}, TYPE: ${SUPPORTED_TYPES}`)
+    const pools = await getPools(client, chainId)
+    const poolsWithReserve = await getReserves(chainId, pools)
+    await updatePoolsWithReserve(client, chainId, poolsWithReserve)
+
+    const endTime = performance.now()
+    console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  } catch (e) {
+    console.error(e)
+    await client.$disconnect()
+  } finally {
+    await client.$disconnect()
+  }
 }
 
-if (process.env.VERSION === undefined || process.env.TYPE === undefined) {
-  throw new Error('VERSION, and TYPE env vars must be set, e.g. VERSION=V2 TYPE=CONSTANT_PRODUCT_POOL.')
-}
-
-const CHAIN_ID = Number(process.env.CHAIN_ID) as ChainId
-const TYPE = process.env.TYPE
-
-if (TYPE !== PoolType.CONSTANT_PRODUCT_POOL) {
-  throw new Error(
-    `Pool type not supported, ${TYPE}. Current implementation only supports ${PoolType.CONSTANT_PRODUCT_POOL}`
-  )
-}
-
-const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2,
-  ProtocolVersion.LEGACY,
-  ProtocolVersion.TRIDENT]
-  
-if (!Object.values(CURRENT_SUPPORTED_VERSIONS).includes(process.env.VERSION as ProtocolVersion)) {
-  throw new Error(
-    `Protocol version (${process.env.VERSION}) not supported, supported versions: ${CURRENT_SUPPORTED_VERSIONS.join(',')}`
-  )
-}
-
-const VERSIONS = ['V2', 'LEGACY', 'TRIDENT']
-
-async function main() {
-  const startTime = performance.now()
-  
-  console.log(`CHAIN_ID: ${CHAIN_ID}, VERSIONS: ${VERSIONS}, TYPE: ${TYPE}`)
-  const pools = await getPools(CHAIN_ID, VERSIONS, TYPE)
-  const poolsWithReserve = await getReserves(CHAIN_ID, pools)
-  await updatePoolsWithReserve(CHAIN_ID, poolsWithReserve)
-  
-  const endTime = performance.now()
-  console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
-}
-
-async function getPools(chainId: ChainId, versions: string[], type: string) {
+async function getPools(client: PrismaClient, chainId: ChainId) {
   const startTime = performance.now()
 
   const batchSize = 2500
@@ -61,9 +87,9 @@ async function getPools(chainId: ChainId, versions: string[], type: string) {
     const requestStartTime = performance.now()
     let result = []
     if (!cursor) {
-      result = await getPoolsAddresses(chainId, versions, type, batchSize)
+      result = await getPoolsPagination(client, chainId, batchSize)
     } else {
-      result = await getPoolsAddresses(chainId, versions, type, batchSize, 1, { id: cursor })
+      result = await getPoolsPagination(client, chainId, batchSize, 1, { id: cursor })
     }
     cursor = result.length == batchSize ? result[result.length - 1].id : null
     totalCount += result.length
@@ -76,78 +102,103 @@ async function getPools(chainId: ChainId, versions: string[], type: string) {
     )
   } while (cursor != null)
 
-  const poolAddresses = results.flat().map((pool) => pool.address)
+  const pools = results.flat()
 
   const endTime = performance.now()
 
-  console.log(`Fetched ${poolAddresses.length} pool addresses (${((endTime - startTime) / 1000).toFixed(1)}s). `)
-  return poolAddresses
+  console.log(`Fetched ${pools.length} pool addresses (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  const poolsMap = new Map<string, PoolResult>()
+  pools.forEach((pool) => {
+    poolsMap.set(pool.address, pool)
+  })
+  return poolsMap
 }
 
-async function getPoolsAddresses(
+async function getPoolsPagination(
+  client: PrismaClient,
   chainId: ChainId,
-  versions: string[],
-  type: string,
   take?: number,
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
-): Promise<{ id: string; address: string }[]> {
-
-  return prisma.pool.findMany({
+) {
+  return client.pool.findMany({
     take,
     skip,
     cursor,
     select: {
       id: true,
       address: true,
+      type: true,
+      reserve0: true,
+      reserve1: true,
     },
     where: {
-      chainId,
-      version: {
-        in: versions,
-      },
-      type,
-      isWhitelisted: true,
+      OR: [
+        {
+          chainId,
+          version: {
+            in: SUPPORTED_VERSIONS,
+          },
+          type: {
+            in: SUPPORTED_TYPES,
+          },
+          isWhitelisted: true,
+        }, 
+        {
+          chainId,
+          protocol: ProtocolName.SUSHISWAP,
+          type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
+          version: {
+            in: SUPPORTED_VERSIONS,
+          },
+        }
+      ]
+    
     },
   })
 }
 
-async function getReserves(chainId: ChainId, poolAddresses: string[]) {
+async function getReserves(chainId: ChainId, pools: Map<string, PoolResult>) {
   const startTime = performance.now()
   const poolsWithReserve: PoolWithReserve[] = []
-  const batchSize = poolAddresses.length > 2500 ? 2500 : poolAddresses.length
+  const batchSize = pools.size > 250 ? 250 : pools.size
 
   let totalSuccessCount = 0
   let totalFailedCount = 0
-  for (let i = 0; i < poolAddresses.length; i += batchSize) {
-    const max = i + batchSize <= poolAddresses.length ? i + batchSize : i + (poolAddresses.length % batchSize)
-    const batch = poolAddresses.slice(i, max).map((address) => ({
-      address,
-      chainId,
-      abi: IUniswapV2PairArtifact.abi,
-      functionName: 'getReserves',
-      allowFailure: true,
-    }))
+  for (let i = 0; i < pools.size; i += batchSize) {
+    const max = i + batchSize <= pools.size ? i + batchSize : i + (pools.size % batchSize)
+
+    const batch = Array.from(pools.values())
+      .slice(i, max)
+      .map((pool) => ({
+        address: pool.address,
+        chainId,
+        abi: pool.type === PoolType.CONSTANT_PRODUCT_POOL ? CPP_RESERVES_ABI : STABLE_RESERVES_ABI,
+        functionName: 'getReserves',
+        allowFailure: true,
+      }))
     const batchStartTime = performance.now()
     const reserves: any = await readContracts({
       contracts: batch,
     })
 
     let failures = 0
-    const mappedPools = poolAddresses.slice(i, max).reduce<PoolWithReserve[]>((prev, address, i) => {
-      if (!reserves[i] || !reserves[i].reserve0 || !reserves[i].reserve1) {
-        failures++
-        return prev
-      }
-      return [
-        ...prev,
-        {
-          address,
-          reserve0: reserves[i].reserve0.toString() as string,
-          reserve1: reserves[i].reserve1.toString() as string,
-        },
-      ]
-    }, [])
+    const mappedPools = Array.from(pools.values())
+      .slice(i, max)
+      .reduce<PoolWithReserve[]>((prev, pool, i) => {
+        if (reserves[i] === null || reserves[i] === undefined) {
+          failures++
+          return prev
+        }
+        return [
+          ...prev,
+          {
+            address: pool.address,
+            reserve0: reserves[i][0].toString() as string,
+            reserve1: reserves[i][1].toString() as string,
+          },
+        ]
+      }, [])
 
     if (failures > 0) {
       console.log(`Failed to fetch reserves for ${failures} pools.`)
@@ -156,10 +207,7 @@ async function getReserves(chainId: ChainId, poolAddresses: string[]) {
     totalFailedCount += failures
     totalSuccessCount += mappedPools.length
     console.log(
-      `Fetched reserves, ${totalSuccessCount}/${poolAddresses.length} (${(
-        (batchEndTime - batchStartTime) /
-        1000
-      ).toFixed(1)}s). `
+      `Fetched a batch with reserves, ${batchSize} (${((batchEndTime - batchStartTime) / 1000).toFixed(1)}s). `
     )
 
     poolsWithReserve.push(...mappedPools)
@@ -168,15 +216,32 @@ async function getReserves(chainId: ChainId, poolAddresses: string[]) {
   const endTime = performance.now()
 
   console.log(
-    `Successfully fetched reserves for ${totalSuccessCount} pools, fails: ${totalFailedCount} (${(
+    `Finished fetching reserves for ${totalSuccessCount} pools, fails: ${totalFailedCount} (${(
       (endTime - startTime) /
       1000
     ).toFixed(1)}s). `
   )
-  return poolsWithReserve
+
+  const poolsToUpdate: PoolWithReserve[] = []
+
+  poolsWithReserve.forEach((pool) => {
+    const poolResult = pools.get(pool.address)
+    if (poolResult !== undefined && (poolResult.reserve0 !== pool.reserve0 || poolResult.reserve1 !== pool.reserve1)) {
+      // console.log(
+      //   `Pool ${pool.address} needs to be updated. Old reserve0: ${poolResult.reserve0}, new reserve0: ${pool.reserve0}. Old reserve1: ${poolResult.reserve1}, new reserve1: ${pool.reserve1}.`
+      // )
+      poolsToUpdate.push(pool)
+    }
+  })
+
+  if (poolsToUpdate.length !== pools.size) {
+    console.log(`${poolsToUpdate.length} out of ${pools.size} pools need to be updated`)
+  }
+
+  return poolsToUpdate
 }
 
-async function updatePoolsWithReserve(chainId: ChainId, pools: PoolWithReserve[]) {
+async function updatePoolsWithReserve(client: PrismaClient, chainId: ChainId, pools: PoolWithReserve[]) {
   const startTime = performance.now()
   const batchSize = 250
   let updatedCount = 0
@@ -185,7 +250,8 @@ async function updatePoolsWithReserve(chainId: ChainId, pools: PoolWithReserve[]
     const batch = pools.slice(i, i + batchSize)
     const requests = batch.map((pool) => {
       const id = chainId.toString().concat(':').concat(pool.address.toLowerCase())
-      return prisma.pool.update({
+
+      return client.pool.update({
         select: { id: true }, // select only the `id` field, otherwise it returns everything and we don't use the data after updating.
         where: { id },
         data: {
@@ -197,13 +263,14 @@ async function updatePoolsWithReserve(chainId: ChainId, pools: PoolWithReserve[]
     const startTime = performance.now()
     const responses = await Promise.all(requests)
     const endTime = performance.now()
+    updatedCount += responses.length
     console.log(
       `Updated ${responses.length} pools, ${updatedCount}/${pools.length} (${((endTime - startTime) / 1000).toFixed(
         1
       )}s).`
     )
-    updatedCount += responses.length
   }
+
   const endTime = performance.now()
   console.log(`LOAD - Updated a total of ${updatedCount} pools (${((endTime - startTime) / 1000).toFixed(1)}s). `)
 }
@@ -214,12 +281,10 @@ interface PoolWithReserve {
   reserve1: string
 }
 
-main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
+interface PoolResult {
+  address: string
+  id: string
+  type: string
+  reserve0: string
+  reserve1: string
+}

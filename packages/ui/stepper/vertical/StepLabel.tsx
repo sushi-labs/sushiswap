@@ -1,4 +1,4 @@
-import { CheckCircleIcon } from '@heroicons/react/solid'
+import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import { FC } from 'react'
 
 import { CircleWithText } from '../../icons'

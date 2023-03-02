@@ -9,7 +9,7 @@ const nextConfig = {
   eslint: {
     dirs: ['pages', 'components', 'lib', 'app', 'ui'],
   },
-  transpilePackages: ['@sushiswap/ui13', '@sushiswap/wagmi13'],
+  transpilePackages: ['@sushiswap/ui', '@sushiswap/wagmi'],
   async redirects() {
     return [
       {

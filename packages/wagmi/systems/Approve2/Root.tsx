@@ -1,6 +1,6 @@
-import { ChainId } from '@sushiswap/chain'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { classNames, NotificationData } from '@sushiswap/ui'
-import React, { FC, ReactNode } from 'react'
+import { FC, ReactNode } from 'react'
 
 import { ApprovalState } from '../../hooks'
 import { Bentobox } from './Bentobox'
@@ -8,7 +8,7 @@ import { Token } from './Token'
 import { ApprovalType, ApproveDefinition } from './types'
 
 export interface RootProps {
-  chainId: ChainId | undefined
+  chainId: BentoBoxV1ChainId | undefined
   className?: string
   children: ReactNode
   definition: ApproveDefinition

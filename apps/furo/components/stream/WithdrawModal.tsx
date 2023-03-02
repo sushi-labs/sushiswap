@@ -14,11 +14,12 @@ import { BottomPanel, CurrencyInputBase } from '../../components'
 import { Stream } from '../../lib'
 import { useStreamBalance } from '../../lib'
 import { useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui13/components/toast'
+import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { FuroStreamChainId } from '@sushiswap/furo'
 
 interface WithdrawModalProps {
   stream?: Stream
-  chainId: ChainId
+  chainId: FuroStreamChainId
 }
 
 export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {

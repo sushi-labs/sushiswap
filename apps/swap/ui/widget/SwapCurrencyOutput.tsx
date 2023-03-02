@@ -1,16 +1,16 @@
 'use client'
 
-import { Web3Input } from '@sushiswap/wagmi13/components/Web3Input'
+import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import React, { FC } from 'react'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { usePctChange } from '../../lib/usePctChange'
 import { useTrade } from '../../lib/useTrade'
 
 export const SwapCurrencyOutput: FC = () => {
-  const { token1, network1, value, tokensLoading } = useSwapState()
+  const { network0, token1, network1, value, tokensLoading } = useSwapState()
   const { setToken1 } = useSwapActions()
   const usdPctChange = usePctChange()
-  const { isLoading, isFetching, data: trade } = useTrade()
+  const { isLoading, isFetching, data: trade } = useTrade({ crossChain: network0 !== network1 })
 
   return (
     <Web3Input.Currency
@@ -19,7 +19,7 @@ export const SwapCurrencyOutput: FC = () => {
       disabled
       chainId={network1}
       onSelect={setToken1}
-      value={trade?.amountOut?.toExact() ?? ''}
+      value={trade?.amountOut?.toSignificant() ?? ''}
       currency={token1}
       usdPctChange={usdPctChange}
       loading={Boolean(isLoading && +value > 0) || isFetching}

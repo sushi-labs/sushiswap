@@ -84,7 +84,7 @@
         "public/**/*",
         "storybook-static/**/*"
       ],
-      "dependsOn": ["^db:generate", "^build", "db:generate", "generate"],
+      "dependsOn": ["^db:generate", "^build", "db:generate", "generate", "export"],
       "env": [
         "ROOT_URL",
         "ACADEMY_URL",
@@ -100,7 +100,8 @@
         "XSWAP_URL",
         "DATABASE_URL",
         "EARN_DATABASE_URL",
-        "REDIS_URL"
+        "REDIS_URL",
+        "TS_NODE_TRANSPILE_ONLY"
       ]
     },
     "clean": {
@@ -120,17 +121,14 @@
       "cache": false,
       "persistent": true
     },
-    "validate": {
-      "cache": false
-    },
     "anvil": {
       "cache": false,
       "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL"],
       "persistent": true
     },
     "export": {
-      "dependsOn": ["build"],
-      "outputs": ["exports.json", "exports.ts"],
+      "dependsOn": ["^build"],
+      "outputs": ["exports/**/*"],
       "cache": true
     },
     "node": {
@@ -141,6 +139,9 @@
     "server": {
       "persistent": true,
       "dependsOn": ["^build"]
+    },
+    "validate": {
+      "cache": false
     },
     "//#generate": {
       "dependsOn": [],

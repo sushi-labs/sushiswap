@@ -1,6 +1,8 @@
 import { computeStablePoolAddress, Fee, StablePool } from '@sushiswap/amm'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Currency, Token, Type } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
+import { isStablePoolFactoryChainId } from '@sushiswap/trident'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
@@ -32,7 +34,7 @@ interface PoolData {
 type Config = Omit<NonNullable<Parameters<typeof useContractReads>['0']>, 'contracts'>
 
 export function useGetStablePools(
-  chainId: number | undefined,
+  chainId: BentoBoxV1ChainId | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
   config: Config = { enabled: true }
 ): {
@@ -270,7 +272,7 @@ export function useStablePools(chainId: number, pools: PoolInput[]): [StablePool
       abi: stablePoolAbi,
       functionName: 'getReserves',
     })),
-    enabled: poolsAddresses.length > 0 && getStablePoolFactoryContract(chainId)?.address,
+    enabled: poolsAddresses.length > 0 && isStablePoolFactoryChainId(chainId),
     watch: true,
     keepPreviousData: true,
   })
@@ -282,7 +284,7 @@ export function useStablePools(chainId: number, pools: PoolInput[]): [StablePool
       const tokenA = pools[i][0]?.wrapped
       const tokenB = pools[i][1]?.wrapped
       const fee = pools[i]?.[2]
-      const twap = pools[i]?.[3]
+      // const twap = pools[i]?.[3]
       const total0 = pools[i]?.[4]
       const total1 = pools[i]?.[5]
 

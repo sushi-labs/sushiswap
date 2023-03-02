@@ -1,6 +1,6 @@
-import { useContractRead } from 'wagmi'
+import {useContractRead} from 'wagmi'
 
-import { getMulticall3ContractConfig } from './useMulticall3Contract'
+import {getMulticall3ContractConfig} from './useMulticall3Contract'
 
 // TODO: Readd direct export, not sure why it's not working
 export const useCurrentBlockTimestamp = (chainId: number | undefined, enabled = true) => {

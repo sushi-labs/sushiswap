@@ -1,25 +1,25 @@
 import { useDebounce } from '@sushiswap/hooks'
-import { Search } from '@sushiswap/ui13/components/input/Search'
+import { Search } from '@sushiswap/ui/future/components/input/Search'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 
 import { useSearchContext } from './SearchProvider'
-import { List } from '@sushiswap/ui13/components/list/List'
+import { List } from '@sushiswap/ui/future/components/list/List'
 import { usePrice, useTokenList } from '@sushiswap/react-query'
-import { Badge } from '@sushiswap/ui13/components/Badge'
-import { NetworkIcon } from '@sushiswap/ui13/components/icons'
-import { classNames } from '@sushiswap/ui13'
-import { Skeleton } from '@sushiswap/ui13/components/skeleton'
-import { Dialog } from '@sushiswap/ui13/components/dialog'
+import { Badge } from '@sushiswap/ui/future/components/Badge'
+import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
+import { classNames } from '@sushiswap/ui'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { Token } from '@sushiswap/currency'
 import { Chain } from '@sushiswap/chain'
-import { Currency } from '@sushiswap/ui13/components/currency'
+import { Currency } from '@sushiswap/ui/future/components/currency'
 
 const POPULAR_TOKENS = [
   '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',
   '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
   '0xdac17f958d2ee523a2206206994597c13d831ec7',
-  '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+  // '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
 ]
 
 export const SearchPanel: FC = () => {
@@ -43,7 +43,7 @@ export const SearchPanel: FC = () => {
           {query && query.length > 2 && (
             <List className="pt-6">
               <List.Label className="text-sm">{Chain.from(network1).name}</List.Label>
-              <List.Control className="scroll max-h-[368px]">
+              <List.Control className="scroll max-h-[368px] !p-1">
                 {isLoading ? (
                   <RowSkeleton />
                 ) : tokenList && Object.keys(tokenList).length > 0 ? (
@@ -61,7 +61,7 @@ export const SearchPanel: FC = () => {
           {query && query.length > 2 && (
             <List className="pt-6">
               <List.Label className="text-sm">Other networks</List.Label>
-              <List.Control className="scroll max-h-[368px]">
+              <List.Control className="scroll max-h-[368px] !p-1">
                 {isLoading ? (
                   <RowSkeleton />
                 ) : tokenList && Object.keys(tokenList).length > 0 ? (
@@ -78,7 +78,7 @@ export const SearchPanel: FC = () => {
           )}
           <List className="pt-6">
             <List.Label className="text-sm">Popular tokens</List.Label>
-            <List.Control>
+            <List.Control className="!p-1">
               {popularTokensList &&
                 Object.values(popularTokensList)?.map((el) => <Row currency={el} key={`example-${el.address}`} />)}
             </List.Control>
@@ -90,21 +90,21 @@ export const SearchPanel: FC = () => {
 }
 
 const Row: FC<{ currency: Token }> = ({ currency }) => {
-  const { setToken1 } = useSwapActions()
+  const { setSearch } = useSwapActions()
   const { setOpen } = useSearchContext()
   const { data: price, isLoading } = usePrice({ address: currency.address, chainId: currency.chainId })
 
   const handleClick = useCallback(() => {
-    setToken1(currency)
+    setSearch(currency)
     setOpen(false)
-  }, [currency, setOpen, setToken1])
+  }, [currency, setOpen, setSearch])
 
   if (isLoading) return <RowSkeleton />
 
   return (
     <button
       onClick={handleClick}
-      className="w-full cursor-pointer flex justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
+      className="w-full cursor-pointer flex justify-between px-3 py-2 rounded-lg hover:bg-blue/10 dark:hover:bg-slate-700"
     >
       <div className="flex items-center gap-5">
         <div className="w-9 h-9">

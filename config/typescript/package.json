@@ -16,24 +16,37 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "exports": {
-    "./base.json": "./hardhat.json",
+    "./base-strictest.json": "./base-strictest.json",
+    "./base.json": "./base.json",
     "./esm.json": "./esm.json",
     "./hardhat.json": "./hardhat.json",
-    "./nextjs.json": "./node14.json",
-    "./node14.json": "./node14.json",
+    "./nextjs-strictest.json": "./nextjs-strictest.json",
+    "./nextjs.json": "./nextjs.json",
+    "./node16-strictest-esm.combined.json": "./node16-strictest-esm.combined.json",
+    "./node16-strictest.combined.json": "./node16-strictest.combined.json",
     "./node16.json": "./node16.json",
-    "./node18.json": "./node18.json",
     "./node18-strictest-esm.combined.json": "./node18-strictest-esm.combined.json",
-    "./react-library.json": "./react-library.json"
+    "./node18-strictest.combined.json": "./node18-strictest.combined.json",
+    "./node18-vercel.json": "./node18-vercel.json",
+    "./node18.json": "./node18.json",
+    "./react-library.json": "./react-library.json",
+    "./strictest.json": "./strictest.json"
   },
   "files": [
+    "./base-strictest.json",
     "./base.json",
     "./esm.json",
     "./hardhat.json",
+    "./nextjs-strictest.json",
     "./nextjs.json",
-    "./node14.json",
+    "./node16-strictest-esm.combined.json",
+    "./node16-strictest.combined.json",
     "./node16.json",
     "./node18-strictest-esm.combined.json",
-    "./react-library.json"
+    "./node18-strictest.combined.json",
+    "./node18-vercel.json",
+    "./node18.json",
+    "./react-library.json",
+    "./strictest.json"
   ]
 }

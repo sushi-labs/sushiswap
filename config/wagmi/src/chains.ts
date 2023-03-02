@@ -150,8 +150,8 @@ export const otherChains: Chain[] = [
   },
   {
     id: ChainId.HARMONY,
-    name: 'Gnosis Chain',
-    network: 'gnosis',
+    name: 'Harmony',
+    network: 'harmony',
     nativeCurrency: { name: 'ONE', symbol: 'ONE', decimals: 18 },
     rpcUrls: {
       default: {
@@ -496,6 +496,33 @@ export const otherChains: Chain[] = [
       multicall3: {
         address: '0x2c46217Fae90D302d1Fb5467ADA504bC2A84f448',
         blockCreated: 3652,
+      },
+    },
+  },
+  {
+    id: ChainId.BOBA_BNB,
+    name: 'Boba BNB',
+    network: 'boba-bnb',
+    nativeCurrency: { name: 'Boba', symbol: 'BOBA', decimals: 18 },
+    rpcUrls: {
+      default: {
+        http: ['https://bnb.boba.network'],
+      },
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'Boba BNB Mainnet Explorer',
+        url: 'https://blockexplorer.bnb.boba.network/',
+      },
+      default: {
+        name: 'Boba BNB Mainnet Explorer',
+        url: 'https://blockexplorer.bnb.boba.network/',
+      },
+    },
+    contracts: {
+      multicall3: {
+        address: '0x67dA5f2FfaDDfF067AB9d5F025F8810634d84287',
+        blockCreated: 18871,
       },
     },
   },

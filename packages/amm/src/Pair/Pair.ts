@@ -5,6 +5,7 @@ import invariant from 'tiny-invariant'
 import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
 import { computePairAddress } from './computePairAddress'
 import { FACTORY_ADDRESS } from './constants'
+import { pairSchema, SerializedPair } from './zod'
 
 export class Pair {
   public readonly liquidityToken: Token
@@ -182,7 +183,7 @@ export class Pair {
       totalSupplyAdjusted = totalSupply
     } else {
       invariant(!!kLast, 'K_LAST')
-      const kLastParsed = JSBI.BigInt(kLast)
+      const kLastParsed = JSBI.BigInt(typeof kLast === 'bigint' ? kLast.toString() : kLast)
       if (!JSBI.equal(kLastParsed, ZERO)) {
         const rootK = sqrt(JSBI.multiply(this.reserve0.quotient, this.reserve1.quotient))
         const rootKLast = sqrt(kLastParsed)
@@ -203,5 +204,16 @@ export class Pair {
       token,
       JSBI.divide(JSBI.multiply(liquidity.quotient, this.reserveOf(token).quotient), totalSupplyAdjusted.quotient)
     )
+  }
+
+  public serialize(): SerializedPair {
+    return pairSchema.parse({
+      reserve0: this.tokenAmounts[0].serialize(),
+      reserve1: this.tokenAmounts[1].serialize(),
+    })
+  }
+
+  public static deserialize(pair: SerializedPair): Pair {
+    return new Pair(Amount.deserialize(pair.reserve0), Amount.deserialize(pair.reserve1))
   }
 }

@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 export async function createPools(client: PrismaClient, pools: Prisma.PoolCreateManyInput[]) {
@@ -38,7 +38,7 @@ export async function getLatestPoolTimestamp(client: PrismaClient, chainId: numb
   const endTime = performance.now()
   const duration = ((endTime - startTime) / 1000).toFixed(1)
   if (!latestPool) {
-    throw new Error('No pool found, make sure the database is seeded with pools first.')
+    return null
   }
   const latestPoolTimestamp = (latestPool.generatedAt.getTime() / 1000).toFixed()
   console.log(`Latest pool ${latestPool.address}, creation timestamp: ${latestPoolTimestamp} (${duration}s)`)

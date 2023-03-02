@@ -141,9 +141,9 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
       )
       .sort((a, b) => {
         if (args.orderDirection === 'asc') {
-          return a[args.orderBy || 'liquidityUSD'] - b[args.orderBy || 'liquidityUSD']
+          return a['liquidityUSD'] - b['liquidityUSD']
         } else if (args.orderDirection === 'desc') {
-          return b[args.orderBy || 'liquidityUSD'] - a[args.orderBy || 'liquidityUSD']
+          return b['liquidityUSD'] - a['liquidityUSD']
         }
         return 0
       }),

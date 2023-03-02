@@ -1,5 +1,5 @@
 import { Popover } from '@headlessui/react'
-import { ChevronDownIcon, SearchIcon } from '@heroicons/react/solid'
+import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { classNames, DEFAULT_INPUT_UNSTYLED, NetworkIcon, Typography } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
@@ -21,7 +21,7 @@ export const NetworkSelector: FC<NetworkSelectorNewProps> = ({ supportedNetworks
   const panel = (
     <Popover.Panel className="flex flex-col w-full sm:w-[320px] fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] mt-4 sm:rounded-xl rounded-b-none shadow-md shadow-black/[0.3] bg-slate-900 border border-slate-200/20">
       <div className="flex gap-2 items-center p-4 pb-3">
-        <SearchIcon width={20} height={20} className="text-slate-500" />
+        <MagnifyingGlassIcon width={20} height={20} className="text-slate-500" />
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -46,7 +46,7 @@ export const NetworkSelector: FC<NetworkSelectorNewProps> = ({ supportedNetworks
               <div className="flex items-center gap-2">
                 <NetworkIcon type="naked" chainId={el} width={22} height={22} />
                 <Typography variant="sm" weight={500} className="text-slate-50">
-                  {chainName[el]}
+                  {chainName[el]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
                 </Typography>
               </div>
               {chain?.id === el && <div className="w-2 h-2 mr-1 rounded-full bg-green" />}
@@ -68,7 +68,9 @@ export const NetworkSelector: FC<NetworkSelectorNewProps> = ({ supportedNetworks
               )}
             >
               <NetworkIcon chainId={chainId} width={20} height={20} />
-              <div className="hidden sm:block">{chainName?.[chainId]?.split(' ')[0]}</div>
+              <div className="hidden sm:block">
+                {chainName?.[chainId]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
+              </div>
               <ChevronDownIcon
                 width={20}
                 height={20}

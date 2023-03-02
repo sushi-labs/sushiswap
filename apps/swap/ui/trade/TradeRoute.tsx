@@ -1,37 +1,96 @@
-'use client'
+import { Native, Token, Type } from '@sushiswap/currency'
+import React, { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
+import { TradeLegType, UseTradeReturn } from '@sushiswap/react-query'
+import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Dialog } from '@sushiswap/ui/future/components/dialog'
+import { UseCrossChainTradeReturn } from '../../lib/useCrossChainTrade/types'
 
-import { FC } from 'react'
-import { useTrade } from '../../lib/useTrade'
-import { Drawer } from '@sushiswap/ui13/components/drawer'
-import { List } from '@sushiswap/ui13/components/list/List'
+const tokenFromRToken = (token: TradeLegType['tokenFrom']) => {
+  if (token.address === '' || !token.address) return Native.onChain(Number(token.chainId))
+  // TODO: move this to api, it should return a number?
+  const chainId = token.chainId.toString().startsWith('Bento ')
+    ? Number(token.chainId.toString().split(' ')[1])
+    : Number(token.chainId)
+  return new Token({
+    address: token.address,
+    symbol: token.symbol,
+    chainId,
+    decimals: 18,
+  })
+}
 
-export const TradeRoute: FC = () => {
-  const { data: trade } = useTrade()
+// Can render a tines multi route
+export const TradeRoute: FC<{
+  trade: UseTradeReturn | UseCrossChainTradeReturn | undefined
+  open: boolean
+  setOpen: Dispatch<SetStateAction<boolean>>
+}> = ({ open, setOpen, trade }) => {
+  const onClose = useCallback(() => {
+    setOpen(false)
+  }, [setOpen])
 
   return (
-    <Drawer.Panel>
-      {trade?.route && trade?.route.length > 4 && (
-        <div className="w-full px-3 flex flex-col gap-1 pt-5">
-          <List>
-            <List.Label className="text-sm">Route</List.Label>
-            <List.Control>
-              <List.KeyValue title={trade?.route[0].split(':')[0]}>{trade?.route[0].split(':')[1]}</List.KeyValue>
-              <List.KeyValue title="Input">{trade?.route[1].split(':')[1]}</List.KeyValue>
-              <List.KeyValue title="Output">{trade?.route[trade?.route.length - 2].split(':')[1]}</List.KeyValue>
-            </List.Control>
-          </List>
-          <List className="!pt-6">
-            <List.Label className="text-sm">Path</List.Label>
-            <List.Control>
-              {trade?.route.slice(2, -2).map((s, i) => (
-                <div key={i} className="py-3 px-4 text-xs font-medium text-gray-600 dark:text-slate-400">
-                  {s}
-                </div>
-              ))}
-            </List.Control>
-          </List>
+    <Dialog open={open} onClose={onClose}>
+      <Dialog.Content className="max-h-[320px] sm:max-h-[560px] overflow-y-scroll scroll dark:!bg-slate-800 bg-white">
+        <div className="flex flex-col gap-4">
+          <Dialog.Header title="Optimized route" />
+          {trade?.route?.legs?.map((directPath, i) => (
+            <ComplexRoutePath
+              key={i}
+              fromToken={tokenFromRToken(directPath.tokenFrom)}
+              toToken={tokenFromRToken(directPath.tokenTo)}
+              poolType={directPath.poolType}
+              poolFee={directPath.poolFee}
+              portion={directPath.absolutePortion}
+              title={`${directPath.poolName}`}
+            />
+          ))}
         </div>
-      )}
-    </Drawer.Panel>
+      </Dialog.Content>
+    </Dialog>
+  )
+}
+
+interface ComplexRoutePathProps {
+  fromToken: Type
+  toToken: Type
+  poolType: 'Stable' | 'Classic' | 'Unknown'
+  poolFee: number
+  portion: number
+  title: string
+}
+
+const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolType, poolFee, portion, title }) => {
+  const ref = useRef<HTMLDivElement>(null)
+  const [width, setWidth] = useState(0)
+
+  useEffect(() => {
+    if (ref.current) {
+      setWidth((ref.current.offsetWidth - 28) * Number(portion))
+    }
+  }, [portion])
+
+  return (
+    <div
+      ref={ref}
+      className="relative grid grid-cols-12 gap-3 rounded-full border-gray-200 dark:border-black/[0.12] bg-gray-200 dark:bg-black/[0.12] border-2 p-2"
+    >
+      <div
+        className="absolute z-[0] inset-0 rounded-full pointer-events-none bg-white dark:bg-slate-700/[0.6]"
+        style={{ width: `calc(24px + ${width}px)` }}
+      />
+      <div className="z-[1] col-span-3 text-xs font-semibold text-gray-900 dark:text-slate-200 flex items-center gap-2">
+        <Currency.Icon disableLink currency={fromToken} width={16} height={16} />
+        <span className="truncate">{fromToken.symbol}</span>
+      </div>
+      <div className="z-[1] col-span-2 text-xs font-semibold text-gray-500 dark:text-slate-500 truncate text-right">
+        {Number(portion * 100).toFixed(2)}%
+      </div>
+      <div className="z-[1] col-span-4 text-xs font-semibold text-gray-900 dark:text-slate-200 truncate">{title}</div>
+      <div className="z-[1] col-span-3 text-xs font-semibold text-gray-900 dark:text-slate-200 flex items-center justify-end gap-2">
+        <Currency.Icon disableLink currency={toToken} width={16} height={16} />
+        <span className="text-xs font-semibold text-gray-900 dark:text-slate-200 truncate">{toToken.symbol}</span>
+      </div>
+    </div>
   )
 }

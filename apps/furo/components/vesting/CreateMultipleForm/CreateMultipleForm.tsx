@@ -1,7 +1,7 @@
 import { ArrowCircleLeftIcon } from '@heroicons/react/outline'
 import { DevTool } from '@hookform/devtools'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ChainId } from '@sushiswap/chain'
+import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { useIsMounted } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import Link from 'next/link'
@@ -15,7 +15,7 @@ import { ImportZoneSection } from './ImportZoneSection'
 import { ReviewSection } from './ReviewSection'
 import { CreateMultipleVestingFormSchemaType, CreateMultipleVestingModelSchema } from './schema'
 
-export const CreateMultipleForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
+export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId }) => {
   const isMounted = useIsMounted()
   const [review, setReview] = useState(false)
   const methods = useForm<CreateMultipleVestingFormSchemaType>({
@@ -63,7 +63,7 @@ export const CreateMultipleForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
             </div>
           </ImportErrorProvider>
         </div>
-        {process.env.NODE_ENV === 'development' && isMounted && <DevTool control={control} />}
+        {/* {process.env.NODE_ENV === 'development' && isMounted && <DevTool control={control} />} */}
       </FormProvider>
     </div>
   )

@@ -1,5 +1,5 @@
-import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
+import { client, PoolType, PoolVersion, Prisma } from '@sushiswap/database'
 import { SUBGRAPH_HOST, TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
@@ -13,8 +13,6 @@ const FIRST_TIME_SEED = process.env.FIRST_TIME_SEED === 'true'
 if (FIRST_TIME_SEED) {
   console.log('FIRST_TIME_SEED is true')
 }
-
-const client = new PrismaClient()
 
 export async function execute() {
   try {
@@ -33,13 +31,13 @@ export async function execute() {
 
     for (let i = 0; i < tokens.length; i += batchSize) {
       const batch = tokens.slice(i, i + batchSize)
-      await createTokens(client, batch)
+      await createTokens(batch)
     }
 
     for (let i = 0; i < pools.length; i += batchSize) {
       const batch = pools.slice(i, i + batchSize)
-      const filteredPools = await filterPools(client, batch)
-      await mergePools(client, filteredPools, FIRST_TIME_SEED)
+      const filteredPools = await filterPools(batch)
+      await mergePools(filteredPools, FIRST_TIME_SEED)
     }
     const endTime = performance.now()
 
@@ -56,7 +54,7 @@ async function extract() {
   const result: { chainId: ChainId; data: PairsQuery[] }[] = []
   const subgraphs = [
     TRIDENT_CHAINS.map((chainId) => {
-      const _chainId = chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]
+      const _chainId = chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
       return { chainId, host: SUBGRAPH_HOST[_chainId], name: TRIDENT_SUBGRAPH_NAME[_chainId] }
     }),
     SUSHISWAP_CHAINS.map((chainId) => {
@@ -90,7 +88,7 @@ async function extract() {
           where,
         })
         .catch((e: string) => {
-          console.log({ e })
+          console.error({ e })
           return undefined
         })
         .catch(() => undefined)
@@ -144,19 +142,37 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               })
             )
             const isAprValid = Number(pair.aprUpdatedAtTimestamp) > unix24hAgo
-            const apr = isAprValid ? Number(pair.apr) : 0
+            const feeApr = isAprValid ? Number(pair.apr) : 0
             const regex = /([^\w ]|_|-)/g
             const name = pair.token0.symbol
               .replace(regex, '')
               .slice(0, 15)
               .concat('-')
               .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
+            let version: PoolVersion
+            if (pair.source == PoolVersion.LEGACY) {
+              version = PoolVersion.LEGACY
+            } else if (pair.source == PoolVersion.TRIDENT) {
+              version = PoolVersion.TRIDENT
+            } else {
+              throw new Error('Unknown pool version')
+            }
+            let type: PoolType
+
+            if (pair.type == PoolType.CONSTANT_PRODUCT_POOL) {
+              type = PoolType.CONSTANT_PRODUCT_POOL
+            } else if (pair.type == PoolType.STABLE_POOL) {
+              type = PoolType.STABLE_POOL
+            } else {
+              throw new Error('Unknown pool type')
+            }
+
             return Prisma.validator<Prisma.SushiPoolCreateManyInput>()({
               id: exchange.chainId.toString().concat(':').concat(pair.id),
               address: pair.id,
               name: name,
-              version: pair.source,
-              type: pair.type,
+              version,
+              type,
               chainId: exchange.chainId,
               swapFee: Number(pair.swapFee) / 10000,
               twapEnabled: pair.twapEnabled,
@@ -165,14 +181,14 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               reserve0: pair.reserve0,
               reserve1: pair.reserve1,
               totalSupply: pair.liquidity,
-              apr,
+              feeApr,
               liquidityUSD: pair.liquidityUSD,
               liquidityNative: pair.liquidityNative,
               volumeUSD: pair.volumeUSD,
               volumeNative: pair.volumeNative,
               token0Price: pair.token0Price,
               token1Price: pair.token1Price,
-              totalApr: apr,
+              totalApr: feeApr,
               createdAtBlockNumber: BigInt(pair.createdAtBlock),
             })
           })

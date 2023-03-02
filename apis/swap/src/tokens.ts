@@ -7,7 +7,7 @@ import {
   isShortCurrencyNameSupported,
   Token,
 } from '@sushiswap/currency'
-import { getAddress } from 'ethers/lib/utils'
+import { getAddress, isAddress } from 'ethers/lib/utils'
 import fetch from 'node-fetch'
 import { z } from 'zod'
 
@@ -58,10 +58,17 @@ export async function getToken(chainId: ChainId, tokenId: string) {
   const isShortNameSupported = isShortCurrencyNameSupported(chainId)
   const tokenIdIsShortName = isShortCurrencyName(chainId, tokenId)
 
-  return isShortNameSupported && tokenIdIsShortName
-    ? currencyFromShortCurrencyName(chainId, tokenId)
-    : new Token({
-        chainId,
-        ...(await fetcher(chainId, tokenId)),
-      })
+  // console.log({ isShortNameSupported, tokenIdIsShortName, tokenId })
+
+  if (isShortNameSupported && tokenIdIsShortName) return currencyFromShortCurrencyName(chainId, tokenId)
+
+  if (!isAddress(tokenId)) throw new Error(`Invalid token address: ${tokenId}`)
+
+  // Fallback?
+  // const { address, decimals, name, symbol } = await fetchToken({ address: getAddress(tokenId), chainId })
+
+  return new Token({
+    chainId,
+    ...(await fetcher(chainId, tokenId)),
+  })
 }

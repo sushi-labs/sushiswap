@@ -14,8 +14,9 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "type": "module",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "module": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
   "files": [
@@ -23,7 +24,7 @@
   ],
   "scripts": {
     "prebuild": "npm run db:generate",
-    "build": "tsup src/index.ts --format esm,cjs --dts --external prisma/client",
+    "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "db:generate": "prisma generate",
@@ -42,8 +43,8 @@
   },
   "dependencies": {
     "@prisma/client": "4.8.1",
-    "ioredis": "5.2.4",
-    "prisma-redis-middleware": "4.5.0"
+    "ioredis": "5.3.1",
+    "prisma-redis-middleware": "4.6.0"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

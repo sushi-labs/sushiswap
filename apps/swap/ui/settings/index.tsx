@@ -1,13 +1,14 @@
 'use client'
 
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
-import { Dialog } from '@sushiswap/ui13/components/dialog'
-import { List } from '@sushiswap/ui13/components/list/List'
+import { Dialog } from '@sushiswap/ui/future/components/dialog'
+import { List } from '@sushiswap/ui/future/components/list/List'
 import React, { FC, useState } from 'react'
 
 import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
 import { SlippageTolerance } from './SlippageTolerance'
+import * as module from 'module'
 
 export enum SettingsModule {
   CarbonOffset = 'CarbonOffset',
@@ -33,6 +34,7 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules }) => {
       />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="!bg-gray-100 dark:!bg-slate-900 flex flex-col gap-3">
+          <Dialog.Header title="Settings" onClose={() => setOpen(false)} />
           {modules.includes(SettingsModule.SlippageTolerance) && (
             <List className="!pt-0">
               <List.Control>
@@ -40,12 +42,14 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules }) => {
               </List.Control>
             </List>
           )}
-          <List className="!pt-0">
-            <List.Control>
-              {modules.includes(SettingsModule.CarbonOffset) && <CarbonOffset />}
-              {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}
-            </List.Control>
-          </List>
+          {modules.length > 1 && (
+            <List className="!pt-0">
+              <List.Control>
+                {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}
+                {modules.includes(SettingsModule.CarbonOffset) && <CarbonOffset />}
+              </List.Control>
+            </List>
+          )}
         </Dialog.Content>
       </Dialog>
     </>

@@ -243,6 +243,22 @@ export class Chain implements Chain {
     }
     return ''
   }
+
+  static txUrl(chainId: number, txHash: string): string {
+    return Chain.fromChainId(chainId).getTxUrl(txHash)
+  }
+
+  static blockUrl(chainId: number, blockHashOrHeight: string): string {
+    return Chain.fromChainId(chainId).getBlockUrl(blockHashOrHeight)
+  }
+
+  static tokenUrl(chainId: number, tokenAddress: string): string {
+    return Chain.fromChainId(chainId).getTokenUrl(tokenAddress)
+  }
+
+  static accountUrl(chainId: number, accountAddress: string): string {
+    return Chain.fromChainId(chainId).getAccountUrl(accountAddress)
+  }
 }
 
 // ChainId array

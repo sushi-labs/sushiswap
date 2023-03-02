@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 
-import { getPool } from '../../../lib/api'
+import { getEarnPool } from '../../../lib/api.js'
 
 const schema = z.object({
   chainId: z.coerce
@@ -19,7 +19,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   }
   const { chainId, address } = result.data
 
-  const pool = await getPool(chainId, address)
+  const pool = await getEarnPool(chainId, address)
   return response.status(200).json(pool)
 }
 

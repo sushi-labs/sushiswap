@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@sushiswap/chain": "workspace:*",
-    "@vercel/node": "2.8.2",
+    "@vercel/node": "2.9.8",
     "@wagmi/core": "0.8.10-cjs",
     "lodash.zip": "4.2.0",
     "node-fetch": "2.6.6",
@@ -33,7 +33,7 @@
     "@types/node-fetch": "2.6.2",
     "eslint": "8.29.0",
     "typescript": "4.9.4",
-    "vercel": "28.10.1"
+    "vercel": "28.16.7"
   },
   "engines": {
     "node": ">=18.0.0"

@@ -8,9 +8,9 @@
     "lint": "TIMING=1 eslint --fix ."
   },
   "dependencies": {
-    "@vercel/node": "2.8.2",
+    "@vercel/node": "2.9.8",
     "date-fns": "2.29.3",
-    "ioredis": "5.2.4"
+    "ioredis": "5.3.1"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
@@ -19,6 +19,6 @@
     "@sushiswap/typescript-config": "workspace:*",
     "eslint": "8.29.0",
     "typescript": "4.9.4",
-    "vercel": "28.10.1"
+    "vercel": "28.16.7"
   }
 }

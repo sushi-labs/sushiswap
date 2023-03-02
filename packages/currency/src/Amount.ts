@@ -1,9 +1,11 @@
 import { Big, BigintIsh, Fraction, JSBI, MAX_UINT256, Rounding, ZERO } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
+import { Native } from './Native'
 import { Share } from './Share'
 import { Token } from './Token'
 import { Type } from './Type'
+import { amountSchema, SerializedAmount } from './zod'
 
 export class Amount<T extends Type> extends Fraction {
   public readonly currency: T
@@ -25,9 +27,18 @@ export class Amount<T extends Type> extends Fraction {
   ): Amount<T> {
     if (JSBI.EQ(rebase.base, ZERO)) return new Amount(currency, shares)
 
-    const elastic = JSBI.divide(JSBI.multiply(JSBI.BigInt(shares), rebase.elastic), rebase.base)
+    const elastic = JSBI.divide(
+      JSBI.multiply(JSBI.BigInt(typeof shares === 'bigint' ? shares.toString() : shares), rebase.elastic),
+      rebase.base
+    )
 
-    if (roundUp && JSBI.LT(JSBI.divide(JSBI.multiply(elastic, rebase.base), rebase.elastic), JSBI.BigInt(shares))) {
+    if (
+      roundUp &&
+      JSBI.LT(
+        JSBI.divide(JSBI.multiply(elastic, rebase.base), rebase.elastic),
+        JSBI.BigInt(typeof shares === 'bigint' ? shares.toString() : shares)
+      )
+    ) {
       return new Amount(currency, JSBI.add(elastic, JSBI.BigInt(1)))
     }
 
@@ -114,5 +125,17 @@ export class Amount<T extends Type> extends Fraction {
   public get wrapped(): Amount<Token> {
     if (this.currency.isToken) return this as Amount<Token>
     return Amount.fromFractionalAmount(this.currency.wrapped, this.numerator, this.denominator)
+  }
+
+  public serialize(): SerializedAmount {
+    return amountSchema.parse({
+      amount: this.quotient.toString(),
+      currency: this.currency.serialize(),
+    })
+  }
+
+  public static deserialize<T extends Type>(amount: SerializedAmount): Amount<T> {
+    if (amount.currency.isNative) return Amount.fromRawAmount(Native.deserialize(amount.currency) as T, amount.amount)
+    return Amount.fromRawAmount(Token.deserialize(amount.currency) as T, amount.amount)
   }
 }

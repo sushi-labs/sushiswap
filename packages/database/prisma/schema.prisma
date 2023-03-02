@@ -14,6 +14,29 @@ enum TokenStatus {
   DISAPPROVED
 }
 
+enum PoolVersion {
+  LEGACY
+  TRIDENT
+  V3
+}
+
+enum PoolType {
+  CONCENTRATED_LIQUIDITY_POOL
+  STABLE_POOL
+  CONSTANT_PRODUCT_POOL
+}
+
+enum ChefType {
+  MasterChefV1 
+  MasterChefV2
+  MiniChef
+}
+
+enum RewarderType {
+  Primary
+  Secondary
+}
+
 model Token {
   id       String      @id // chainId:address
   address  String
@@ -22,6 +45,9 @@ model Token {
   symbol   String
   decimals Int
   status   TokenStatus @default(UNKNOWN)
+  
+  isFeeOnTransfer Boolean @default(false)
+  isCommon Boolean @default(false)
 
   derivedUSD    Decimal?
   derivedNative Decimal?
@@ -85,14 +111,14 @@ model SushiPool {
   address              String
   name                 String
   chainId              Int
-  version              String
-  type                 String
+  version              PoolVersion
+  type                 PoolType
   token0               Token       @relation("token0", fields: [token0Id], references: [id])
   token0Id             String
   token1               Token       @relation("token1", fields: [token1Id], references: [id])
   token1Id             String
-  swapFee              Float?
-  twapEnabled          Boolean?
+  swapFee              Float
+  twapEnabled          Boolean
   reserve0             String 
   reserve1             String 
   totalSupply          String 
@@ -102,14 +128,15 @@ model SushiPool {
   volumeNative         Decimal
   token0Price          String
   token1Price          String
-  apr                  Float?
-  totalApr             Float?
+  feeApr               Float       @default(0)
+  incentiveApr         Float       @default(0)
+  totalApr             Float       @default(0)
   isIncentivized       Boolean     @default(false)
   incentives           Incentive[]
-  volume1d             Decimal?
-  fees1d               Decimal?
-  volume1w             Decimal?
-  fees1w               Decimal?
+  volume1d             Decimal     @default(0)
+  fees1d               Decimal     @default(0)
+  volume1w             Decimal     @default(0)
+  fees1w               Decimal     @default(0)
   createdAtBlockNumber BigInt      @db.UnsignedBigInt
   isBlacklisted        Boolean     @default(false)
   generatedAt          DateTime    @default(now())
@@ -128,7 +155,7 @@ model SushiPool {
 model Incentive {
   id              String @id // poolAddress_rewarderAddress
   chainId         Int
-  type            String
+  chefType        ChefType
   apr             Float
   rewardPerDay    Float
   rewardToken     Token  @relation(fields: [rewardTokenId], references: [id])
@@ -137,7 +164,7 @@ model Incentive {
   poolId          String
   pid             Int
   rewarderAddress String
-  rewarderType    String
+  rewarderType    RewarderType
 
   @@index(fields: [id])
   @@index(fields: [poolId])

@@ -1,86 +1,51 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
-import { Prisma, PrismaClient, Token } from '@prisma/client'
-import { ChainId } from '@sushiswap/chain'
-import { calcTokenPrices, ConstantProductRPool } from '@sushiswap/tines'
+import { totalsAbi } from '@sushiswap/abi'
+import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import type { ChainId } from '@sushiswap/chain'
+import { Prisma, PrismaClient, Token } from '@sushiswap/database'
+import { calcTokenPrices, ConstantProductRPool, Rebase, RPool, StableSwapRPool } from '@sushiswap/tines'
+import { Address, readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
-import { PoolType, Price, ProtocolVersion } from '../config.js'
-
-const prisma = new PrismaClient()
-
-if (process.env.CHAIN_ID === undefined) {
-  throw new Error('CHAIN_ID env var not set')
-}
-
-if (
-  process.env.VERSION === undefined ||
-  process.env.TYPE === undefined ||
-  process.env.BASE === undefined ||
-  process.env.PRICE === undefined
-) {
-  throw new Error(
-    'VERSION, TYPE, BASE and PRICE env vars must be set, e.g. CHAIN_ID=137 VERSION=V2 TYPE=CONSTANT_PRODUCT_POOL BASE=0x2791bca1f2de4661ed88a30c99a7a9449aa84174 PRICE=USD'
-  )
-}
-if (!isAddress(process.env.BASE)) {
-  throw new Error(`${process.env.BASE} is not a valid address`)
-}
-const BASE = process.env.BASE.toLowerCase()
-const CHAIN_ID = Number(process.env.CHAIN_ID) as ChainId
-const TYPE = process.env.TYPE
-
-if (TYPE !== PoolType.CONSTANT_PRODUCT_POOL) {
-  throw new Error(
-    `Pool type not supported, ${TYPE}. Current implementation only supports ${PoolType.CONSTANT_PRODUCT_POOL}`
-  )
-}
+import { PoolType, Price, ProtocolName, ProtocolVersion } from '../config.js'
 
 const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 
-if (!Object.values(CURRENT_SUPPORTED_VERSIONS).includes(process.env.VERSION as ProtocolVersion)) {
-  throw new Error(
-    `Protocol version (${process.env.VERSION}) not supported, supported versions: ${CURRENT_SUPPORTED_VERSIONS.join(
-      ','
-    )}`
-  )
+export async function prices(chainId: ChainId, base: string, price: Price, minimumLiquidity = 500000000) {
+  const client = new PrismaClient()
+  try {
+    if (!Object.values(Price).includes(price)) {
+      throw new Error(`Price (${price}) not supported, supported price types: ${Object.values(Price).join(',')}`)
+    }
+    if (!isAddress(base)) {
+      throw new Error(`${base} is not a valid address`)
+    }
+
+    const startTime = performance.now()
+
+    console.log(`Arguments: CHAIN_ID: ${chainId}, BASE: ${base}, PRICE: ${price}`)
+
+    const baseToken = await getBaseToken(client, chainId, base)
+    const pools = await getPools(client, chainId)
+
+    const { rPools, tokens } = await transform(chainId, pools)
+    const tokensToUpdate = calculatePrices(rPools, minimumLiquidity, baseToken, tokens)
+    await updateTokenPrices(client, price, tokensToUpdate)
+
+    const endTime = performance.now()
+    console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  } catch (e) {
+    console.error(e)
+    await client.$disconnect()
+  } finally {
+    await client.$disconnect()
+  }
 }
 
-if (!Object.values(Price).includes(process.env.PRICE as Price)) {
-  throw new Error(
-    `Price (${process.env.PRICE}) not supported, supported price types: ${Object.values(Price).join(',')}`
-  )
-}
-
-
-const PRICE = process.env.PRICE as Price
-const MINIMUM_LIQUIDITY = process.env.MINIMUM_LIQUIDITY ? Number(process.env.MINIMUM_LIQUIDITY) : 500000000 // Defaults to 500 USD when base is usdc, only base being used atm
-
-
-const VERSIONS = ['V2', 'LEGACY', 'TRIDENT']
-
-async function main() {
-  const startTime = performance.now()
-
-  console.log(
-    `Arguments: CHAIN_ID: ${CHAIN_ID}, VERSION: ${process.env.VERSION}, TYPE: ${TYPE}, BASE: ${process.env.BASE}, PRICE: ${process.env.PRICE}`
-  )
-
-  const baseToken = await getBaseToken(CHAIN_ID, BASE)
-  const pools = await getPools(CHAIN_ID)
-
-
-  const { constantProductPools, tokens } = transform(pools)
-  const tokensToUpdate = calculatePrices(constantProductPools, baseToken, tokens)
-  await updateTokenPrices(tokensToUpdate)
-
-  const endTime = performance.now()
-  console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
-}
-
-async function getBaseToken(chainId: ChainId, address: string) {
-  const baseToken = await prisma.token.findFirst({
+async function getBaseToken(client: PrismaClient, chainId: ChainId, address: string) {
+  const baseToken = await client.token.findFirst({
     select: {
       address: true,
       name: true,
@@ -97,7 +62,7 @@ async function getBaseToken(chainId: ChainId, address: string) {
   return baseToken
 }
 
-async function getPools(chainId: ChainId) {
+async function getPools(client: PrismaClient, chainId: ChainId) {
   const startTime = performance.now()
 
   const batchSize = 2500
@@ -108,11 +73,12 @@ async function getPools(chainId: ChainId) {
     const requestStartTime = performance.now()
     let result = []
     if (!cursor) {
-      result = await getPoolsByPagination(chainId, batchSize)
+      result = await getPoolsByPagination(client, chainId, batchSize)
     } else {
-      result = await getPoolsByPagination(chainId, batchSize, 1, { id: cursor })
+      result = await getPoolsByPagination(client, chainId, batchSize, 1, { id: cursor })
     }
-    cursor = result.length == batchSize ? result[result.length - 1].id : null
+
+    cursor = result.length == batchSize ? result[result.length - 1]?.id : null
     totalCount += result.length
     results.push(result)
     const requestEndTime = performance.now()
@@ -130,12 +96,13 @@ async function getPools(chainId: ChainId) {
 }
 
 async function getPoolsByPagination(
+  client: PrismaClient,
   chainId: ChainId,
   take: number,
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
 ): Promise<Pool[]> {
-  return prisma.pool.findMany({
+  return client.pool.findMany({
     take,
     skip,
     cursor,
@@ -150,21 +117,35 @@ async function getPoolsByPagination(
       reserve1: true,
     },
     where: {
-      isWhitelisted: true,
-      chainId,
-      type: PoolType.CONSTANT_PRODUCT_POOL,
-      version: {
-        in: VERSIONS,
-      },
+      OR: [
+        {
+          isWhitelisted: true,
+          chainId,
+          type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
+          version: {
+            in: CURRENT_SUPPORTED_VERSIONS,
+          },
+        },
+        {
+          chainId,
+          protocol: ProtocolName.SUSHISWAP,
+          type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
+          version: {
+            in: CURRENT_SUPPORTED_VERSIONS,
+          },
+        },
+      ],
     },
   })
 }
 
-function transform(pools: Pool[]) {
+async function transform(chainId: ChainId, pools: Pool[]) {
   const tokens: Map<string, Token> = new Map()
-  const constantProductPools: ConstantProductRPool[] = []
-  pools.forEach((pool) => {
+  const stablePools = pools.filter((pool) => pool.type === PoolType.STABLE_POOL)
+  const rebases = isBentoBoxV1ChainId(chainId) ? await fetchRebases(stablePools, chainId) : undefined
 
+  const rPools: RPool[] = []
+  pools.forEach((pool) => {
     const token0 = {
       address: pool.token0.address,
       name: pool.token0.name,
@@ -177,28 +158,85 @@ function transform(pools: Pool[]) {
     }
     if (!tokens.has(token0.address)) tokens.set(token0.address, pool.token0)
     if (!tokens.has(token1.address)) tokens.set(token1.address, pool.token1)
-    
-    constantProductPools.push(
-      new ConstantProductRPool(
-        pool.address,
-        token0,
-        token1,
-        pool.swapFee,
-        BigNumber.from(pool.reserve0),
-        BigNumber.from(pool.reserve1)
+    if (pool.type === PoolType.CONSTANT_PRODUCT_POOL) {
+      rPools.push(
+        new ConstantProductRPool(
+          pool.address,
+          token0,
+          token1,
+          pool.swapFee,
+          BigNumber.from(pool.reserve0),
+          BigNumber.from(pool.reserve1)
+        )
       )
-    )
+    } else if (pool.type === PoolType.STABLE_POOL) {
+      const total0 = rebases?.get(token0.address)
+      const total1 = rebases?.get(token1.address)
+      if (total0 && total1) {
+        rPools.push(
+          new StableSwapRPool(
+            pool.address,
+            token0,
+            token1,
+            pool.swapFee,
+            BigNumber.from(pool.reserve0),
+            BigNumber.from(pool.reserve1),
+            pool.token0.decimals,
+            pool.token1.decimals,
+            total0,
+            total1
+          )
+        )
+      }
+    }
   })
-  return { constantProductPools, tokens }
+  return { rPools, tokens }
+}
+
+async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId) {
+  const tokenMap = new Map<string, Token>()
+  pools.forEach((pool) => {
+    tokenMap.set(pool.token0.address, pool.token0)
+    tokenMap.set(pool.token1.address, pool.token1)
+  })
+  const tokensDedup = Array.from(tokenMap.values())
+  const tok0: [string, Token][] = tokensDedup.map((t) => [
+    t.address.toLocaleLowerCase().substring(2).padStart(40, '0'),
+    t,
+  ])
+  const sortedTokens = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([, t]) => t)
+
+  const totals = await readContracts({
+    allowFailure: true,
+    contracts: sortedTokens.map(
+      (t) =>
+        ({
+          args: [t.address as Address],
+          address: bentoBoxV1Address[chainId],
+          chainId: chainId,
+          abi: totalsAbi,
+          functionName: 'totals',
+        } as const)
+    ),
+  })
+
+  const rebases: Map<string, Rebase> = new Map()
+  sortedTokens.forEach((t, i) => {
+    const total = totals[i]
+    if (total === undefined || total === null) return
+    rebases.set(t.address, total)
+  })
+  return rebases
 }
 
 function calculatePrices(
-  constantProductPools: ConstantProductRPool[],
+  pools: RPool[],
+  minimumLiquidity: number | undefined,
   baseToken: { symbol: string; address: string; name: string; decimals: number },
   tokens: Map<string, Token>
 ) {
   const startTime = performance.now()
-  const results = calcTokenPrices(constantProductPools, baseToken, MINIMUM_LIQUIDITY)
+  const results = calcTokenPrices(pools, baseToken, minimumLiquidity)
   const endTime = performance.now()
   console.log(`calcTokenPrices() found ${results.size} prices (${((endTime - startTime) / 1000).toFixed(1)}s). `)
 
@@ -206,7 +244,7 @@ function calculatePrices(
 
   for (const [rToken, value] of results.entries()) {
     const token = tokens.get(rToken.address)
-    if (!token){
+    if (!token) {
       console.log(`Token not found: ${rToken.symbol}~${rToken.address}~${value}`)
       continue
     }
@@ -223,7 +261,7 @@ function calculatePrices(
   return tokensWithPrices
 }
 
-async function updateTokenPrices(tokens: { id: string; price: number }[]) {
+async function updateTokenPrices(client: PrismaClient, price: Price, tokens: { id: string; price: number }[]) {
   const startTime = performance.now()
   const batchSize = 250
   let updatedCount = 0
@@ -231,8 +269,8 @@ async function updateTokenPrices(tokens: { id: string; price: number }[]) {
   for (let i = 0; i < tokens.length; i += batchSize) {
     const batch = tokens.slice(i, i + batchSize)
     const requests = batch.map((token) => {
-      const data = PRICE === Price.USD ? { derivedUSD: token.price } : { derivedETH: token.price }
-      return prisma.token.update({
+      const data = price === Price.USD ? { derivedUSD: token.price } : { derivedETH: token.price }
+      return client.token.update({
         select: { id: true }, // select only the `id` field, otherwise it returns everything and we don't use the data after updating.
         where: { id: token.id },
         data,
@@ -256,12 +294,3 @@ interface Pool {
   reserve0: string
   reserve1: string
 }
-main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })

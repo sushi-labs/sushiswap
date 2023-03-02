@@ -1,4 +1,4 @@
-import { NotificationStoredData} from '@sushiswap/ui13/components/toast'
+import { NotificationStoredData} from '@sushiswap/ui/future/components/toast'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 export const useNotifications = ({ account }: { account: string }) => {

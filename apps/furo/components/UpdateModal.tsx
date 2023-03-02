@@ -2,7 +2,6 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
@@ -16,14 +15,15 @@ import { SendTransactionResult } from 'wagmi/actions'
 
 import { CurrencyInput } from '../components'
 import { Stream } from '../lib'
-import { createToast, NotificationData } from '@sushiswap/ui13/components/toast'
+import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
 import { useCreateNotification } from '@sushiswap/react-query'
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 interface UpdateModalProps {
   stream?: Stream
   abi: NonNullable<Parameters<typeof useContract>['0']>['abi']
   address: string
-  chainId: ChainId
+  chainId: BentoBoxV1ChainId
 }
 
 export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contractAddress, chainId }) => {
@@ -244,7 +244,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
                   <Approve.Token
                     enabled={amountAsEntity?.greaterThan(0)}
                     amount={amountAsEntity}
-                    address={BENTOBOX_ADDRESS[chainId]}
+                    address={bentoBoxV1Address[chainId]}
                     fullWidth
                     size="md"
                   />

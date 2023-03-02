@@ -1,45 +1,10 @@
 import { Listbox, Transition } from '@headlessui/react'
-import { ChevronDownIcon, ExternalLinkIcon } from '@heroicons/react/outline'
+import { ChevronDownIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 import useScrollPosition from '@react-hook/window-scroll'
 import { useBreakpoint, useIsMounted } from '@sushiswap/hooks'
-import Image from 'next/legacy/image'
 import React, { Fragment } from 'react'
 
-import { classNames, Container, IconButton, Link, MaxWidth, Select, SushiIcon, Typography } from '..'
-
-export enum AppType {
-  Root = 'Explore Apps',
-  Blog = 'Blog',
-  Bridge = 'Bridge',
-  Swap = 'Swap',
-  xSwap = 'xSwap',
-  Furo = 'Streaming',
-  Legacy = 'Sushi 1.0',
-  Internal = 'Internal',
-  Kashi = 'Lend & Borrow',
-  Analytics = 'Analytics',
-  Invest = 'Earn',
-  Partner = 'Partner',
-  Widget = 'Widget',
-  Academy = 'Academy',
-}
-
-const LINK = {
-  [AppType.Root]: '/',
-  [AppType.Legacy]: '/',
-  [AppType.Blog]: '/blog',
-  [AppType.Bridge]: '/bridge',
-  [AppType.Swap]: '/swap',
-  [AppType.xSwap]: '/xswap',
-  [AppType.Furo]: '/furo',
-  [AppType.Internal]: '/internal',
-  [AppType.Kashi]: '/kashi',
-  [AppType.Analytics]: '/analytics',
-  [AppType.Invest]: '/earn',
-  [AppType.Partner]: '/partner',
-  [AppType.Widget]: '/widget',
-  [AppType.Academy]: '/academy',
-}
+import { AppType, classNames, Container, IconButton, Link, MaxWidth, Select, SushiIcon, Typography } from '..'
 
 export interface HeaderProps extends React.HTMLProps<HTMLElement> {
   nav?: JSX.Element
@@ -147,11 +112,11 @@ export function Header({
                   <Select.Option
                     as="a"
                     href="https://www.sushi.com/earn"
-                    key={AppType.Invest}
-                    value={AppType.Invest}
+                    key={AppType.Earn}
+                    value={AppType.Earn}
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
                   >
-                    {AppType.Invest}
+                    {AppType.Earn}
                     <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
                       Earn fees by providing liquidity
                     </Typography>
@@ -235,7 +200,7 @@ export function Header({
                   >
                     <div className="flex items-center gap-1">
                       <span>{AppType.Legacy}</span>
-                      <ExternalLinkIcon width={14} height={14} />
+                      <ArrowTopRightOnSquareIcon width={14} height={14} />
                     </div>
                     <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
                       Prefer the old app?

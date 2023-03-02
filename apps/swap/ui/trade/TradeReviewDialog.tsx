@@ -2,10 +2,11 @@ import { FC } from 'react'
 import { useSwapState } from './TradeProvider'
 import { TradeReviewDialogSameChain } from './TradeReviewDialogSameChain'
 import { TradeReviewDialogCrossChain } from './TradeReviewDialogCrossChain'
+import { AppType } from '@sushiswap/ui/types'
 
 export const TradeReviewDialog: FC = () => {
-  const { network0, network1 } = useSwapState()
+  const { appType } = useSwapState()
 
-  if (network0 === network1) return <TradeReviewDialogSameChain />
+  if (appType === AppType.Swap) return <TradeReviewDialogSameChain />
   return <TradeReviewDialogCrossChain />
 }

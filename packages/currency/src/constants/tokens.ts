@@ -17,12 +17,15 @@ import {
   KLIMA_ADDRESS,
   KP3R_ADDRESS,
   LDO_ADDRESS,
+  LINK_ADDRESS,
   LUSD_ADDRESS,
   MAI_ADDRESS,
   MIM_ADDRESS,
   NFTX_ADDRESS,
   OHM_ADDRESS,
+  OP_ADDRESS,
   PRIMATE_ADDRESS,
+  QUICK_ADDRESS,
   renBTC_ADDRESS,
   rETH2_ADDRESS,
   sETH2_ADDRESS,
@@ -569,3 +572,30 @@ export const KLIMA = addressMapToTokenMap(
   },
   KLIMA_ADDRESS
 ) as Record<keyof typeof KLIMA_ADDRESS, Token>
+
+export const QUICK = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'QUICK',
+    name: 'Quickswap',
+  },
+  QUICK_ADDRESS
+) as Record<keyof typeof QUICK_ADDRESS, Token>
+
+export const OP = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'OP',
+    name: 'Optimism',
+  },
+  OP_ADDRESS
+) as Record<keyof typeof OP_ADDRESS, Token>
+
+export const LINK = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'LINK',
+    name: 'ChainLink Token',
+  },
+  LINK_ADDRESS
+) as Record<keyof typeof LINK_ADDRESS, Token>

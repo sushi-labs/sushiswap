@@ -12,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
-    "directory": "scripts/routing"
+    "directory": "apis/swap"
   },
   "license": "MIT",
   "main": "dist/index.js",
@@ -36,11 +36,15 @@
   },
   "dependencies": {
     "ethers": "5.7.2",
+    "viem": "0.0.1-alpha.35",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
-    "@sushiswap/router": "workspace:*",
+    "@sushiswap/smart-order-router": "workspace:*",
+    "@sushiswap/route-processor": "workspace:*",
+    "@sushiswap/viem-config": "workspace:*",
     "fastify": "4.11.0",
     "@fastify/cors": "8.2.0",
+    "@fastify/rate-limit": "7.6.0",
     "zod": "3.20.2",
     "node-fetch": "2.x"
   },

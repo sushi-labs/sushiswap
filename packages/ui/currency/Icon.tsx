@@ -1,4 +1,4 @@
-import { QuestionMarkCircleIcon } from '@heroicons/react/solid'
+import { QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
 import chains, { ChainId } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/currency'
 import { WrappedTokenInfo } from '@sushiswap/token-lists'
@@ -33,6 +33,7 @@ const BLOCKCHAIN: Record<number, string> = {
   [ChainId.PALM]: 'palm',
   [ChainId.POLYGON]: 'polygon',
   [ChainId.TELOS]: 'telos',
+  [ChainId.BTTC]: 'bttc',
 }
 
 const AvaxLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/avax.svg'

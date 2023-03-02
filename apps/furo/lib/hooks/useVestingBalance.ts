@@ -1,17 +1,22 @@
 import { Amount, Token } from '@sushiswap/currency'
+import { FuroVestingChainId } from '@sushiswap/furo'
 import { JSBI } from '@sushiswap/math'
-import { getFuroVestingContractConfig } from '@sushiswap/wagmi'
-import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
+import { getFuroVestingContractConfig, getBentoBoxContractConfig } from '@sushiswap/wagmi'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, useContractRead } from 'wagmi'
-export function useVestingBalance(chainId?: number, vestingId?: string, token?: Token): Amount<Token> | undefined {
+
+export function useVestingBalance(
+  chainId?: FuroVestingChainId,
+  vestingId?: string,
+  token?: Token
+): Amount<Token> | undefined {
   const {
     data: balance,
     error: balanceError,
     isLoading: balanceLoading,
   } = useContractRead({
-    ...getFuroVestingContractConfig(chainId),
+    ...(chainId ? getFuroVestingContractConfig(chainId) : {}),
     functionName: 'vestBalance',
     chainId,
     enabled: !!chainId && !!vestingId,
@@ -24,7 +29,7 @@ export function useVestingBalance(chainId?: number, vestingId?: string, token?: 
     error: rebaseError,
     isLoading: rebaseLoading,
   } = useContractRead({
-    ...getBentoBoxContractConfig(chainId),
+    ...(chainId ? getBentoBoxContractConfig(chainId) : {}),
     functionName: 'totals',
     chainId,
     enabled: !!chainId && !!token,

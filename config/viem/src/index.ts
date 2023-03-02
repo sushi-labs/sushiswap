@@ -1,0 +1,510 @@
+import { ChainId } from '@sushiswap/chain'
+import type { Address } from 'viem'
+import {
+  arbitrum,
+  // arbitrumGoerli,
+  // aurora,
+  // auroraGoerli,
+  avalanche,
+  //  avalancheFuji,
+  // bronos,
+  // bronosTestnet,
+  bsc,
+  // bscTestnet,
+  // canto,
+  celo,
+  // celoAlfajores,
+  // crossbell,
+  // evmos,
+  //  evmosTestnet,
+  fantom,
+  // fantomTestnet,
+  // filecoin,
+  // filecoinTestnet,
+  // foundry,
+  // goerli,
+  gnosis as _gnosis,
+  // gnosisChiado,
+  // hardhat,
+  // iotex,
+  // iotexTestnet,
+  // localhost,
+  mainnet,
+  metis as _metis,
+  // metisGoerli,
+  optimism,
+  //  optimismGoerli,
+  polygon,
+  // polygonMumbai,
+  // sepolia,
+  //  taraxa,
+  // taraxaTestnet,
+  //  zkSync,
+  // zkSyncTestnet,
+} from 'viem/chains'
+
+export {
+  arbitrum,
+  // arbitrumGoerli,
+  // aurora,
+  // auroraGoerli,
+  avalanche,
+  //  avalancheFuji,
+  // bronos,
+  // bronosTestnet,
+  bsc,
+  // bscTestnet,
+  // canto,
+  celo,
+  // celoAlfajores,
+  // crossbell,
+  // evmos,
+  //  evmosTestnet,
+  fantom,
+  // fantomTestnet,
+  // filecoin,
+  // filecoinTestnet,
+  // foundry,
+  // goerli,
+  // gnosis,
+  // gnosisChiado,
+  // hardhat,
+  // iotex,
+  // iotexTestnet,
+  // localhost,
+  mainnet,
+  // metis,
+  // metisGoerli,
+  optimism,
+  //  optimismGoerli,
+  polygon,
+  // polygonMumbai,
+  // sepolia,
+  //  taraxa,
+  // taraxaTestnet,
+  //  zkSync,
+  // zkSyncTestnet,
+}
+
+export const gnosis = {
+  ..._gnosis,
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
+      blockCreated: 21022491,
+    },
+  },
+}
+
+export const metis = {
+  ..._metis,
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
+      blockCreated: 2338552,
+    },
+  },
+}
+
+export const harmony = {
+  id: ChainId.HARMONY,
+  name: 'Harmony',
+  network: 'harmony',
+  nativeCurrency: { name: 'ONE', symbol: 'ONE', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://api.harmony.one'],
+    },
+    public: {
+      http: ['https://api.harmony.one'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Harmony Blockchain Explorer',
+      url: 'https://explorer.harmony.one',
+    },
+    default: {
+      name: 'Harmony Blockchain Explorer',
+      url: 'https://explorer.harmony.one',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
+      blockCreated: 24185753,
+    },
+  },
+} as const
+
+export const moonbeam = {
+  id: ChainId.MOONBEAM,
+  name: 'Moonbeam',
+  network: 'moonbeam',
+  nativeCurrency: { name: 'Glimmer', symbol: 'GLMR', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.api.moonbeam.network'],
+    },
+    public: {
+      http: ['https://rpc.api.moonbeam.network'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Moonscan',
+      url: 'https://moonbeam.moonscan.io',
+    },
+    default: {
+      name: 'Moonscan',
+      url: 'https://moonbeam.moonscan.io',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
+      blockCreated: 609002,
+    },
+  },
+} as const
+
+export const moonriver = {
+  id: ChainId.MOONRIVER,
+  name: 'Moonriver',
+  network: 'moonriver',
+  nativeCurrency: { name: 'Moonriver', symbol: 'MOVR', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.api.moonriver.moonbeam.network'],
+    },
+    public: {
+      http: ['https://rpc.api.moonriver.moonbeam.network'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Moonscan',
+      url: 'https://moonriver.moonscan.io',
+    },
+    default: {
+      name: 'Moonscan',
+      url: 'https://moonriver.moonscan.io',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
+      blockCreated: 1597904,
+    },
+  },
+} as const
+
+export const kava = {
+  id: ChainId.KAVA,
+  name: 'Kava',
+  network: 'kava',
+  nativeCurrency: { name: 'Kava', symbol: 'KAVA', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://evm.kava.io', 'https://evm2.kava.io'],
+    },
+    public: {
+      http: ['https://evm.kava.io', 'https://evm2.kava.io'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Kavascan',
+      url: 'https://explorer.kava.io/',
+    },
+    default: {
+      name: 'Kavascan',
+      url: 'https://explorer.kava.io/',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0x1578f6d2D3168acF41b506AA666A521994F6BAB6' as Address,
+      blockCreated: 1176602,
+    },
+  },
+} as const
+
+export const fuse = {
+  id: ChainId.FUSE,
+  name: 'Fuse',
+  network: 'fuse',
+  nativeCurrency: { name: 'Fuse', symbol: 'FUSE', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.fuse.io'],
+    },
+    public: {
+      http: ['https://rpc.fuse.io'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Fusescan',
+      url: 'https://explorer.fuse.io/',
+    },
+    default: {
+      name: 'Fuse Explorer',
+      url: 'https://explorer.fuse.io/',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
+      blockCreated: 16146628,
+    },
+  },
+} as const
+
+export const arbitrumNova = {
+  id: ChainId.ARBITRUM_NOVA,
+  name: 'Arbitrum Nova',
+  network: 'arbitrumnova',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://nova.arbitrum.io/rpc'],
+    },
+    public: {
+      http: ['https://nova.arbitrum.io/rpc'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Arbitrum Nova Chain Explorer',
+      url: 'https://nova-explorer.arbitrum.io/',
+    },
+    default: {
+      name: 'Arbitrum Nova Chain Explorer',
+      url: 'https://nova-explorer.arbitrum.io/',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0x4d81f45fcde2B1C9A93Bde5495dc3553bbEC8EFa' as Address,
+      blockCreated: 400008,
+    },
+  },
+} as const
+
+export const okex = {
+  id: ChainId.OKEX,
+  name: 'OKXChain',
+  network: 'okxchain',
+  nativeCurrency: { name: 'OKC Token', symbol: 'OKT', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://exchainrpc.okex.org'],
+    },
+    public: {
+      http: ['https://exchainrpc.okex.org'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'OKC Explorer',
+      url: 'https://www.oklink.com/en/okc/',
+    },
+    default: {
+      name: 'OKC Explorer',
+      url: 'https://www.oklink.com/en/okc/',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
+      blockCreated: 10364792,
+    },
+  },
+} as const
+
+export const heco = {
+  id: ChainId.HECO,
+  name: 'Huobi ECO Chain',
+  network: 'huobieco',
+  nativeCurrency: { name: 'Huobi Token', symbol: 'HT', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://http-mainnet.hecochain.com'],
+    },
+    public: {
+      http: ['https://http-mainnet.hecochain.com'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'HecoInfo',
+      url: 'https://www.hecoinfo.com/',
+    },
+    default: {
+      name: 'Heco Explorer',
+      url: 'https://www.hecoinfo.com/',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
+      blockCreated: 14413501,
+    },
+  },
+} as const
+
+export const palm = {
+  id: ChainId.PALM,
+  name: 'Palm',
+  network: 'palm',
+  nativeCurrency: { name: 'Palm', symbol: 'PALM', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b'],
+    },
+    public: {
+      http: ['https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Palm Explorer',
+      url: 'https://explorer.palm.io/',
+    },
+    default: {
+      name: 'Palm Explorer',
+      url: 'https://explorer.palm.io/',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0x80C7DD17B01855a6D2347444a0FCC36136a314de' as Address,
+      blockCreated: 8005532,
+    },
+  },
+} as const
+
+export const boba = {
+  id: ChainId.BOBA,
+  name: 'Boba',
+  network: 'boba',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://mainnet.boba.network'],
+    },
+    public: {
+      http: ['https://mainnet.boba.network'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Bobascan',
+      url: 'https://bobascan.com/',
+    },
+    default: {
+      name: 'Bobascan',
+      url: 'https://bobascan.com/',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11' as Address,
+      blockCreated: 446859,
+    },
+  },
+} as const
+
+export const bobaAvax = {
+  id: ChainId.BOBA_AVAX,
+  name: 'Boba Avax',
+  network: 'boba-avax',
+  nativeCurrency: { name: 'Boba', symbol: 'BOBA', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://avax.boba.network'],
+    },
+    public: {
+      http: ['https://avax.boba.network'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Boba Avalanche Mainnet Explorer',
+      url: 'https://blockexplorer.avax.boba.network/',
+    },
+    default: {
+      name: 'Boba Avalanche Mainnet Explorer',
+      url: 'https://blockexplorer.avax.boba.network/',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0x2c46217Fae90D302d1Fb5467ADA504bC2A84f448' as Address,
+      blockCreated: 3652,
+    },
+  },
+} as const
+
+export const bobaBnb = {
+  id: ChainId.BOBA_BNB,
+  name: 'Boba BNB',
+  network: 'boba-bnb',
+  nativeCurrency: { name: 'Boba', symbol: 'BOBA', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://bnb.boba.network'],
+    },
+    public: {
+      http: ['https://bnb.boba.network'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Boba BNB Mainnet Explorer',
+      url: 'https://blockexplorer.bnb.boba.network/',
+    },
+    default: {
+      name: 'Boba BNB Mainnet Explorer',
+      url: 'https://blockexplorer.bnb.boba.network/',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0x67dA5f2FfaDDfF067AB9d5F025F8810634d84287' as Address,
+      blockCreated: 18871,
+    },
+  },
+} as const
+
+export const bttc = {
+  id: ChainId.BTTC,
+  name: 'BitTorrent Chain',
+  network: 'btt',
+  nativeCurrency: { name: 'BitTorrent', symbol: 'BTT', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.bittorrentchain.io'],
+    },
+    public: {
+      http: ['https://rpc.bittorrentchain.io'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'BitTorrent Chain Explorer',
+      url: 'https://bttcscan.com/',
+    },
+    default: {
+      name: 'BitTorrent Chain Explorer',
+      url: 'https://bttcscan.com/',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0x67dA5f2FfaDDfF067AB9d5F025F8810634d84287' as Address,
+      blockCreated: 13014184,
+    },
+  },
+} as const

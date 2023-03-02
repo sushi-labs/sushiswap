@@ -8,14 +8,18 @@
   --color: #ffffff;
 }
 
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: dark) {
   :root {
-    color-scheme: dark !important;
-    --background-color: #0f172a !important;
-    --color: #ffffff !important;
+    color-scheme: dark;
+    --background-color: #0f172a;
+    --color: #ffffff;
   }
 }
 
-/* :root {
-  color-scheme: dark;
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --background-color: #f4f5f6;
+    --color: #000;
+  }
 } */

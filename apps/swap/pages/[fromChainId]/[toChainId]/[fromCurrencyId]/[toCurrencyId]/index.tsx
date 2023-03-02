@@ -1,17 +1,15 @@
 import { ChainId } from '@sushiswap/chain'
-import Container from '@sushiswap/ui13/components/Container'
+import Container from '@sushiswap/ui/future/components/Container'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import React, { FC } from 'react'
 
-import { SwapProvider } from '../../../../../ui/trade/TradeProvider'
 import { TradeReviewDialogSameChain } from '../../../../../ui/trade/TradeReviewDialogSameChain'
 import { TradeStats } from '../../../../../ui/trade/TradeStats'
-import { SwapButton } from '../../../../../ui/widget/SwapButton'
 import { Widget } from '../../../../../ui/widget/Widget'
-import { TradeRoute } from '../../../../../ui/trade/TradeRoute'
-import { Drawer } from '@sushiswap/ui13/components/drawer'
+import { Drawer } from '@sushiswap/ui/future/components/drawer'
 import { NetworkCheck } from '../../../../../ui/NetworkCheck'
 import { TokenNotFoundDialog } from '../../../../../ui/TokenNotFoundDialog'
+import { TradeReviewDialog } from '../../../../../ui/trade/TradeReviewDialog'
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
@@ -39,20 +37,20 @@ export async function getStaticPaths() {
 
 const Page: FC = ({}: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
-    <Container maxWidth={520} className="space-y-8 p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
-      <Drawer.Root>
-        <NetworkCheck />
-        <Widget />
-        <TradeStats />
-        <TradeReviewDialogSameChain />
-        <SwapButton />
-        <TradeRoute />
-        <TokenNotFoundDialog />
-      </Drawer.Root>
+    <>
+      <NetworkCheck />
+      <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
+        <Drawer.Root>
+          <Widget />
+          <TradeStats />
+          <TradeReviewDialog />
+          <TokenNotFoundDialog />
+        </Drawer.Root>
 
-      {/*spacer for fixed positioned swap button */}
-      <div className="h-[68px] w-full" />
-    </Container>
+        {/*spacer for fixed positioned swap button */}
+        <div className="h-[68px] w-full" />
+      </Container>
+    </>
   )
 }
 

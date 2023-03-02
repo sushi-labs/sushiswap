@@ -3,21 +3,23 @@
 import { ChainId } from '@sushiswap/chain'
 import {
   Amount,
+  currencyFromShortCurrencyName,
+  isShortCurrencyName,
   Native,
-  SUSHI,
   tryParseAmount,
   Type,
-  isShortCurrencyName,
-  currencyFromShortCurrencyName,
 } from '@sushiswap/currency'
-import { AppType } from '@sushiswap/ui13/types'
-import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, useReducer } from 'react'
+import { AppType } from '@sushiswap/ui/types'
+import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
 import { useAccount } from 'wagmi'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
-import { useCustomTokens, useToken } from '@sushiswap/react-query'
+import { useCustomTokens, useToken, useTokens } from '@sushiswap/react-query'
 import { getAddress, isAddress } from 'ethers/lib/utils'
-// import { watchNetwork } from '@wagmi/core'
+import { Signature } from '@ethersproject/bytes'
+import { nanoid } from 'nanoid'
+import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { SushiXSwapChainId, isSushiXSwapChainId } from '@sushiswap/sushixswap'
 
 export const queryParamsSchema = z.object({
   fromChainId: z.coerce
@@ -25,13 +27,21 @@ export const queryParamsSchema = z.object({
     .int()
     .gte(0)
     .lte(2 ** 256)
-    .default(ChainId.ETHEREUM),
+    .default(ChainId.ETHEREUM)
+    .refine((chainId) => isBentoBoxV1ChainId(chainId) && isSushiXSwapChainId(chainId), {
+      message: 'ChainId not supported.',
+    })
+    .transform((chainId) => chainId as BentoBoxV1ChainId & SushiXSwapChainId),
   toChainId: z.coerce
     .number()
     .int()
     .gte(0)
     .lte(2 ** 256)
-    .default(ChainId.ETHEREUM),
+    .default(ChainId.ETHEREUM)
+    .refine((chainId) => isBentoBoxV1ChainId(chainId), {
+      message: 'ChainId not supported.',
+    })
+    .transform((chainId) => chainId as BentoBoxV1ChainId),
   fromCurrencyId: z.string().default('NATIVE'),
   toCurrencyId: z.string().default('SUSHI'),
   amount: z.optional(z.coerce.bigint()),
@@ -39,16 +49,18 @@ export const queryParamsSchema = z.object({
 })
 
 interface InternalSwapState {
+  tradeId: string
   review: boolean
   recipient: string | undefined
   value: string
+  bentoboxSignature: Signature | undefined
 }
 
 interface SwapState {
-  token0: Type
-  token1: Type
-  network0: ChainId
-  network1: ChainId
+  token0: Type | undefined
+  token1: Type | undefined
+  network0: BentoBoxV1ChainId & SushiXSwapChainId
+  network1: BentoBoxV1ChainId
   amount: Amount<Type> | undefined
   appType: AppType
   token0NotInList: boolean
@@ -61,25 +73,34 @@ type State = InternalSwapState & SwapState
 type SwapApi = {
   setReview(value: boolean): void
   setRecipient(recipient: string): void
-  setNetwork0(chainId: ChainId): void
+  setNetworks(chainId: ChainId): void
+  setNetwork0(chainId: BentoBoxV1ChainId & SushiXSwapChainId): void
   setNetwork1(chainId: ChainId): void
   setToken0(currency: Type): void
   setToken1(currency: Type): void
   setValue(value: string): void
   switchTokens(): void
   setTokens(currency0: Type, currency1: Type): void
+  setAppType(appType: AppType): void
+  setSearch(currency: Type): void
+  setBentoboxSignature(signature: Signature | undefined): void
+  setTradeId(id: string): void
 }
 
 export const SwapStateContext = createContext<State>({} as State)
 export const SwapActionsContext = createContext<SwapApi>({} as SwapApi)
 
 type Actions =
+  | { type: 'setTradeId'; value: string }
   | { type: 'setValue'; value: string }
   | { type: 'setRecipient'; recipient: string }
   | { type: 'setReview'; value: boolean }
+  | { type: 'setBentoboxSignature'; value: Signature }
 
 const reducer = (state: InternalSwapState, action: Actions): InternalSwapState => {
   switch (action.type) {
+    case 'setTradeId':
+      return { ...state, tradeId: action.value }
     case 'setReview':
       return { ...state, review: action.value }
     case 'setRecipient':
@@ -88,6 +109,11 @@ const reducer = (state: InternalSwapState, action: Actions): InternalSwapState =
       return {
         ...state,
         value: action.value,
+      }
+    case 'setBentoboxSignature':
+      return {
+        ...state,
+        bentoboxSignature: action.value,
       }
   }
 }
@@ -101,39 +127,70 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { query, push } = useRouter()
   const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount: _amount } = queryParamsSchema.parse(query)
   const { data: customTokens, isLoading: customTokensLoading } = useCustomTokens()
-  const { data: tokenFrom, isLoading: isTokenFromLoading } = useToken({
+  const { data: tokenMapFrom } = useTokens({ chainId: fromChainId })
+  const { data: tokenMapTo } = useTokens({ chainId: toChainId })
+  const { data: tokenFrom } = useToken({
     chainId: fromChainId,
     address: fromCurrencyId,
   })
 
-  const { data: tokenTo, isLoading: isTokenToLoading } = useToken({
+  const { data: tokenTo } = useToken({
     chainId: toChainId,
     address: toCurrencyId,
   })
 
   // console.log(isAddress(fromCurrencyId), !tokenFrom, isTokenFromFetchedAfterMount)
   const [internalState, dispatch] = useReducer(reducer, {
+    tradeId: nanoid(),
     review: false,
     // TODO: no recipient
     recipient: address ? address : undefined,
     value: _amount ? _amount.toString() : '',
+    bentoboxSignature: undefined,
   })
 
   const state = useMemo(() => {
-    const token0 = isShortCurrencyName(fromChainId, fromCurrencyId)
-      ? currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
-      : customTokens && isAddress(fromCurrencyId) && customTokens[`${toChainId}:${getAddress(fromCurrencyId)}`]
-      ? customTokens[`${toChainId}:${getAddress(fromCurrencyId)}`]
-      : tokenFrom
-      ? tokenFrom
-      : Native.onChain(fromChainId ? fromChainId : ChainId.ETHEREUM)
-    const token1 = isShortCurrencyName(toChainId, toCurrencyId)
-      ? currencyFromShortCurrencyName(toChainId, toCurrencyId)
-      : customTokens && isAddress(toCurrencyId) && customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]
-      ? customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]
-      : tokenTo
-      ? tokenTo
-      : SUSHI[toChainId && toChainId in SUSHI ? (toChainId as keyof typeof SUSHI) : ChainId.ETHEREUM]
+    let token0: Type | undefined = undefined
+    let isTokenFromLoading = true
+    if (isShortCurrencyName(fromChainId, fromCurrencyId)) {
+      token0 = currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
+      isTokenFromLoading = false
+    } else if (isAddress(fromCurrencyId)) {
+      if (tokenMapFrom && tokenMapFrom[getAddress(fromCurrencyId)]) {
+        token0 = tokenMapFrom[getAddress(fromCurrencyId)]
+        isTokenFromLoading = false
+      } else if (customTokens && customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]) {
+        token0 = customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]
+        isTokenFromLoading = false
+      } else if (tokenFrom) {
+        token0 = tokenFrom
+        isTokenFromLoading = false
+      }
+    } else {
+      token0 = Native.onChain(fromChainId ? fromChainId : ChainId.ETHEREUM)
+      isTokenFromLoading = false
+    }
+
+    let token1: Type | undefined = undefined
+    let isTokenToLoading = true
+    if (isShortCurrencyName(toChainId, toCurrencyId)) {
+      token1 = currencyFromShortCurrencyName(toChainId, toCurrencyId)
+      isTokenToLoading = false
+    } else if (isAddress(toCurrencyId)) {
+      if (tokenMapTo && tokenMapTo[getAddress(toCurrencyId)]) {
+        token1 = tokenMapTo[getAddress(toCurrencyId)]
+        isTokenToLoading = false
+      } else if (customTokens && customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]) {
+        token1 = customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]
+        isTokenToLoading = false
+      } else if (tokenTo) {
+        token1 = tokenTo
+        isTokenToLoading = false
+      }
+    } else {
+      token1 = Native.onChain(toChainId ? toChainId : ChainId.ETHEREUM)
+      isTokenToLoading = false
+    }
 
     return {
       ...internalState,
@@ -147,6 +204,8 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         (isAddress(fromCurrencyId) &&
           !tokenFrom &&
           !isTokenFromLoading &&
+          tokenMapFrom &&
+          !tokenMapFrom[getAddress(fromCurrencyId)] &&
           customTokens &&
           !customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]) ||
         false,
@@ -154,13 +213,12 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         (isAddress(toCurrencyId) &&
           !tokenTo &&
           !isTokenToLoading &&
+          tokenMapTo &&
+          !tokenMapTo[getAddress(toCurrencyId)] &&
           customTokens &&
           !customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]) ||
         false,
-      tokensLoading:
-        customTokensLoading ||
-        (isAddress(fromCurrencyId) && isTokenFromLoading) ||
-        (isAddress(toCurrencyId) && isTokenToLoading),
+      tokensLoading: customTokensLoading || isTokenFromLoading || isTokenToLoading,
     }
   }, [
     customTokens,
@@ -168,43 +226,81 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     fromChainId,
     fromCurrencyId,
     internalState,
-    isTokenFromLoading,
-    isTokenToLoading,
     toChainId,
     toCurrencyId,
     tokenFrom,
+    tokenMapFrom,
+    tokenMapTo,
     tokenTo,
   ])
 
   const api = useMemo(() => {
-    const setNetwork0 = (chainId: ChainId) =>
+    const setNetworks = (chainId: ChainId) => {
+      const token0 = state.token0?.chainId === chainId ? state.token0 : Native.onChain(chainId)
+      const token1 =
+        state.token1?.chainId === chainId
+          ? state.token1.isNative
+            ? state.token1.symbol
+            : state.token1.wrapped.address
+          : 'SUSHI'
+
       void push(
         {
           pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
           query: {
             ...query,
-            fromCurrencyId: Native.onChain(chainId).symbol,
-            toCurrencyId: 'SUSHI',
+            fromCurrencyId: token0.isNative ? token0.symbol : token0.wrapped.address,
+            toCurrencyId: token1,
             fromChainId: chainId,
-          },
-        },
-        undefined,
-        { shallow: true }
-      )
-    const setNetwork1 = (chainId: ChainId) =>
-      void push(
-        {
-          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
-          query: {
-            ...query,
-            fromCurrencyId: Native.onChain(chainId).symbol,
-            toCurrencyId: 'SUSHI',
             toChainId: chainId,
           },
         },
         undefined,
         { shallow: true }
       )
+    }
+    const setNetwork0 = (chainId: ChainId) => {
+      const token0 =
+        state.token0?.chainId === chainId
+          ? state.token0.isNative
+            ? state.token0.symbol
+            : state.token0.wrapped.address
+          : Native.onChain(chainId).symbol
+
+      void push(
+        {
+          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
+          query: {
+            ...query,
+            fromCurrencyId: token0,
+            fromChainId: chainId,
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
+    }
+    const setNetwork1 = (chainId: ChainId) => {
+      const token1 =
+        state.token1?.chainId === chainId
+          ? state.token1.isNative
+            ? state.token1.symbol
+            : state.token1.wrapped.address
+          : 'SUSHI'
+
+      void push(
+        {
+          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
+          query: {
+            ...query,
+            toCurrencyId: token1,
+            toChainId: chainId,
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
+    }
     const setTokens = (currency0: Type, currency1: Type) => {
       void push(
         {
@@ -237,6 +333,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     }
     const setToken1 = (currency: Type) => {
       const _toCurrencyId = currency.isNative ? currency.symbol : currency.wrapped.address
+
       void push(
         {
           pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
@@ -266,12 +363,64 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         undefined,
         { shallow: true }
       )
+    const setAppType = (appType: AppType) => {
+      const network1 =
+        appType === AppType.Swap
+          ? state.network0
+          : state.network1 === state.network0
+          ? state.network1 === ChainId.ARBITRUM
+            ? ChainId.ETHEREUM
+            : ChainId.ARBITRUM
+          : state.network1
+      const token1 =
+        state.token1?.chainId === network1
+          ? state.token1.isNative
+            ? state.token1.symbol
+            : state.token1.wrapped.address
+          : state.token0?.symbol === 'SUSHI'
+          ? Native.onChain(network1).symbol
+          : 'SUSHI'
+
+      void push(
+        {
+          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
+          query: {
+            ...query,
+            toChainId: network1,
+            toCurrencyId: token1,
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
+    }
+    const setSearch = (currency: Type) => {
+      const _toCurrencyId = currency.isNative ? currency.symbol : currency.wrapped.address
+      void push(
+        {
+          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
+          query: {
+            ...query,
+            fromChainId: currency.chainId,
+            toChainId: currency.chainId,
+            fromCurrencyId: Native.onChain(currency.chainId).symbol,
+            toCurrencyId: _toCurrencyId,
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
+    }
 
     const setValue = (value: string) => dispatch({ type: 'setValue', value })
     const setRecipient = (recipient: string) => dispatch({ type: 'setRecipient', recipient })
     const setReview = (value: boolean) => dispatch({ type: 'setReview', value })
+    const setBentoboxSignature = (value: Signature) => dispatch({ type: 'setBentoboxSignature', value })
+    const setTradeId = (value: string) => dispatch({ type: 'setTradeId', value })
 
     return {
+      setTradeId,
+      setNetworks,
       setNetwork0,
       setNetwork1,
       setToken0,
@@ -281,13 +430,21 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setRecipient,
       setReview,
       setTokens,
+      setAppType,
+      setSearch,
+      setBentoboxSignature,
     }
-  }, [push, query])
-
-  // useEffect(() => {
-  //   const unwatch = watchNetwork(({ chain }) => (chain ? api.setNetwork0(chain.id) : undefined))
-  //   return () => unwatch()
-  // }, [api])
+  }, [
+    push,
+    query,
+    state.network0,
+    state.network1,
+    state.token0,
+    state.token1?.chainId,
+    state.token1?.isNative,
+    state.token1?.symbol,
+    state.token1?.wrapped.address,
+  ])
 
   return (
     <SwapActionsContext.Provider value={api}>

@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo } from 'react'
-import { Dialog } from '@sushiswap/ui13/components/dialog'
-import { useToken } from 'wagmi'
+import { Dialog } from '@sushiswap/ui/future/components/dialog'
+import { Address, useToken } from 'wagmi'
 import { queryParamsSchema, useSwapActions, useSwapState } from './trade/TradeProvider'
 import { useRouter } from 'next/router'
 import { isAddress } from 'ethers/lib/utils'
-import { currencyFromShortCurrencyName, Native, Token } from '@sushiswap/currency'
-import { List } from '@sushiswap/ui13/components/list/List'
-import { Button } from '@sushiswap/ui13/components/button'
+import { defaultQuoteCurrency, Native, Token } from '@sushiswap/currency'
+import { List } from '@sushiswap/ui/future/components/list/List'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { useAddCustomToken } from '@sushiswap/react-query'
@@ -14,18 +14,18 @@ import { useAddCustomToken } from '@sushiswap/react-query'
 export const TokenNotFoundDialog = () => {
   const { query } = useRouter()
   const { fromCurrencyId, toCurrencyId } = queryParamsSchema.parse(query)
-  const { token0NotInList, token1NotInList, network0, network1 } = useSwapState()
+  const { tokensLoading, token0NotInList, token1NotInList, network0, network1 } = useSwapState()
   const { setToken0, setToken1, setTokens } = useSwapActions()
   const { mutate: addCustomToken } = useAddCustomToken()
 
   const { data: _token0 } = useToken({
-    address: fromCurrencyId as `0x${string}`,
+    address: fromCurrencyId as Address,
     chainId: network0,
     enabled: isAddress(fromCurrencyId) && token0NotInList,
   })
 
   const { data: _token1 } = useToken({
-    address: toCurrencyId as `0x${string}`,
+    address: toCurrencyId as Address,
     chainId: network1,
     enabled: isAddress(toCurrencyId) && token1NotInList,
   })
@@ -69,18 +69,15 @@ export const TokenNotFoundDialog = () => {
   )
 
   const reset = useCallback(() => {
-    setTokens(Native.onChain(network0), currencyFromShortCurrencyName(network1, 'SUSHI'))
+    // @ts-ignore
+    setTokens(Native.onChain(network0), defaultQuoteCurrency[network1])
   }, [network0, network1, setTokens])
 
   return (
-    <Dialog open={token0NotInList || token1NotInList} onClose={() => {}}>
-      <Dialog.Content className="flex flex-col gap-4 px-4 sm:!rounded-[24px]">
+    <Dialog open={!tokensLoading && (token0NotInList || token1NotInList)} onClose={() => {}}>
+      <Dialog.Content className="flex flex-col gap-4">
         <>
-          <div className="flex justify-between items-center py-2">
-            <span className="text-lg font-semibold dark:text-slate-50 text-gray-900">
-              Unknown Token{token0 && token1 ? 's' : ''}
-            </span>
-          </div>
+          <Dialog.Header title={`Unknown Token${token0 && token1 ? 's' : ''}`} />
           <p className="text-gray-700 dark:text-slate-400">
             Anyone can create a token, including creating fake versions of existing tokens that claim to represent
             projects. If you purchase this token, you may not be able to sell it back.

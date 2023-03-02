@@ -1,6 +1,6 @@
 import React, { FC, ReactNode, useState } from 'react'
 import { TimeAgo } from '../date'
-import { ExternalLinkIcon } from '@heroicons/react/outline'
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 
 interface ToastContent {
   icon?: ReactNode
@@ -26,7 +26,7 @@ export const ToastContent: FC<ToastContent> = ({ icon, href, summary, code = fal
                 className="flex items-center text-sm font-medium gap-2 text-gray-700 dark:text-slate-400"
                 rel="noreferrer"
               >
-                View on explorer <ExternalLinkIcon width={16} height={16} strokeWidth={2} />
+                View on explorer <ArrowTopRightOnSquareIcon width={16} height={16} strokeWidth={2} />
               </a>
             )}
             <span className="text-[10px] font-medium text-gray-600 dark:text-slate-400">

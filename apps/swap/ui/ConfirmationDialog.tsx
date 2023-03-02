@@ -1,33 +1,34 @@
 'use client'
 
-import { BarLoader } from '@sushiswap/ui13/components/BarLoader'
-import { Button } from '@sushiswap/ui13/components/button'
-import { Dialog } from '@sushiswap/ui13/components/dialog'
-import { Dots } from '@sushiswap/ui13/components/Dots'
-import { CheckMarkIcon } from '@sushiswap/ui13/components/icons/CheckmarkIcon'
-import { FailedMarkIcon } from '@sushiswap/ui13/components/icons/FailedMarkIcon'
-import { Loader } from '@sushiswap/ui13/components/Loader'
+import { BarLoader } from '@sushiswap/ui/future/components/BarLoader'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { Dialog } from '@sushiswap/ui/future/components/dialog'
+import { Dots } from '@sushiswap/ui/future/components/Dots'
+import { CheckMarkIcon } from '@sushiswap/ui/future/components/icons/CheckmarkIcon'
+import { FailedMarkIcon } from '@sushiswap/ui/future/components/icons/FailedMarkIcon'
+import { Loader } from '@sushiswap/ui/future/components/Loader'
 import { FC, ReactNode, useCallback, useState } from 'react'
 
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
 import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
-import { ROUTE_PROCESSOR_ADDRESS } from '@sushiswap/address'
-import { ChainId } from '@sushiswap/chain'
-import ROUTE_PROCESSOR_ABI from '../abis/route-processor.json'
+import { routeProcessorAbi } from '@sushiswap/abi'
 import { useTrade } from '../lib/useTrade'
-import { BigNumber } from 'ethers'
 import { SendTransactionResult } from 'wagmi/actions'
 import { useBalances, useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui13/components/toast'
-import { AppType } from '@sushiswap/ui13/types'
+import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
+import { Chain } from '@sushiswap/chain'
+import { routeProcessorAddress } from '@sushiswap/route-processor'
 
 interface ConfirmationDialogProps {
   children({
     onClick,
     isWritePending,
   }: {
+    error: Error | null
     onClick(): void
+    isError: boolean
     isWritePending: boolean
     isLoading: boolean
     isConfirming: boolean
@@ -45,29 +46,28 @@ enum ConfirmationDialogState {
 export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) => {
   const { address } = useAccount()
   const { setReview } = useSwapActions()
-  const { appType, network0, network1, token0, token1, review } = useSwapState()
-  const { data: trade } = useTrade()
+  const { appType, network0, token0, token1, review } = useSwapState()
+  const { data: trade } = useTrade({ crossChain: false })
   const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
-  const { refetch: refetchNetwork1Balances } = useBalances({ account: address, chainId: network0 })
   const { mutate: storeNotification } = useCreateNotification({ account: address })
 
   const [open, setOpen] = useState(false)
   const [dialogState, setDialogState] = useState<ConfirmationDialogState>(ConfirmationDialogState.Undefined)
 
-  const { config } = usePrepareContractWrite({
-    chainId: ChainId.POLYGON,
-    address: ROUTE_PROCESSOR_ADDRESS[ChainId.POLYGON],
-    abi: ROUTE_PROCESSOR_ABI,
-    functionName: 'processRoute',
+  const { config, isError, error } = usePrepareContractWrite({
+    chainId: network0,
+    address: routeProcessorAddress[network0],
+    abi: routeProcessorAbi,
+    functionName: trade?.functionName,
     args: trade?.writeArgs,
-    enabled: Boolean(trade?.writeArgs) && network0 === network1,
-    overrides: token0.isNative && trade?.writeArgs?.[1] ? { value: BigNumber.from(trade?.writeArgs?.[1]) } : undefined,
+    enabled: Boolean(trade?.writeArgs) && appType === AppType.Swap,
+    overrides: trade?.overrides,
   })
 
   const isWrap =
-    appType === AppType.Swap && token0.isNative && token1.wrapped.address === Native.onChain(network0).wrapped.address
+    appType === AppType.Swap && token0?.isNative && token1?.wrapped.address === Native.onChain(network0).wrapped.address
   const isUnwrap =
-    appType === AppType.Swap && token1.isNative && token0.wrapped.address === Native.onChain(network0).wrapped.address
+    appType === AppType.Swap && token1?.isNative && token0?.wrapped.address === Native.onChain(network0).wrapped.address
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
@@ -103,7 +103,11 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     [trade, network0, isWrap, isUnwrap, storeNotification]
   )
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+  const {
+    writeAsync,
+    isLoading: isWritePending,
+    data,
+  } = useContractWrite({
     ...config,
     onSuccess: (data) => {
       setReview(false)
@@ -112,10 +116,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         .wait()
         .then(() => setDialogState(ConfirmationDialogState.Success))
         .catch(() => setDialogState(ConfirmationDialogState.Failed))
-        .finally(() => {
-          if (appType === AppType.Swap) void refetchNetwork0Balances()
-          if (appType === AppType.xSwap) void Promise.all([refetchNetwork0Balances(), refetchNetwork1Balances()])
-        })
+        .finally(() => refetchNetwork0Balances())
     },
     onSettled,
   })
@@ -156,11 +157,13 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         onClick,
         isWritePending,
         isLoading: !writeAsync,
+        error,
+        isError,
         isConfirming: dialogState === ConfirmationDialogState.Pending,
       })}
       <Dialog open={open} unmount={false} onClose={() => setOpen(false)}>
         <Dialog.Content>
-          <div className="flex flex-col gap-5 items-center justify-center">
+          <div className="flex flex-col items-center justify-center gap-5">
             {[ConfirmationDialogState.Failed, ConfirmationDialogState.Success].includes(dialogState) ? (
               <BarLoader transitionDuration={4000} onComplete={onComplete} />
             ) : (
@@ -177,32 +180,37 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
             </div>
             <div className="flex flex-col items-center">
               {dialogState === ConfirmationDialogState.Sign ? (
-                <h1 className="flex flex-wrap justify-center gap-1 font-medium text-lg items-center leading-normal">
+                <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-medium leading-normal">
                   Please sign order with your wallet.
                 </h1>
               ) : dialogState === ConfirmationDialogState.Pending ? (
-                <h1 className="flex flex-wrap justify-center gap-1 font-medium text-lg items-center leading-normal">
+                <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-medium leading-normal">
                   Waiting for your{' '}
-                  <span className="text-blue hover:underline cursor-pointer">
+                  <a
+                    target="_blank"
+                    href={data?.hash ? Chain.from(network0).getTxUrl(data.hash) : ''}
+                    className="cursor-pointer text-blue hover:underline"
+                    rel="noreferrer"
+                  >
                     <Dots>transaction</Dots>
-                  </span>{' '}
+                  </a>{' '}
                   to be confirmed on the blockchain.
                 </h1>
               ) : dialogState === ConfirmationDialogState.Success ? (
-                <h1 className="flex flex-wrap justify-center gap-1 font-semibold text-lg items-center">
+                <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-semibold">
                   You {isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'}
                   <span className="text-red px-0.5">
-                    {trade?.amountIn?.toSignificant(6)} {token1.symbol}
+                    {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
                   </span>{' '}
                   {isWrap ? 'to' : isUnwrap ? 'to' : 'for'}{' '}
                   <span className="text-blue px-0.5">
-                    {trade?.amountOut?.toSignificant(6)} {token0.symbol}.
+                    {trade?.amountOut?.toSignificant(6)} {token1?.symbol}.
                   </span>
                 </h1>
               ) : (
-                <h1 className="flex flex-wrap justify-center gap-1 font-semibold text-lg items-center">
+                <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-semibold">
                   <span className="text-red">Oops!</span> Your{' '}
-                  <span className="text-blue hover:underline cursor-pointer">transaction</span> failed
+                  <span className="cursor-pointer text-blue hover:underline">transaction</span> failed
                 </h1>
               )}
             </div>

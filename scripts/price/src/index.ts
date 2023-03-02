@@ -11,8 +11,7 @@ import {
 import { getUnixTime } from 'date-fns'
 import stringify from 'fast-json-stable-stringify'
 
-import { pager } from './pager'
-import redis from './redis'
+import { pager } from './pager.js'
 
 async function getSushiSwapResults() {
   const results = await Promise.all(
@@ -90,7 +89,7 @@ export async function execute() {
     // No need to go through everything if there's just going to be one entry anyway
     if (sources.length === 1) {
       const uniqueTokens = new Map()
-      sources[0].tokens.forEach((token) => uniqueTokens.set(token.id, token.priceUSD))
+      sources[0]?.tokens.forEach((token) => uniqueTokens.set(token.id, token.priceUSD))
       tokens = Array.from(uniqueTokens.entries()).map(([id, priceUSD]) => ({
         id,
         priceUSD,
@@ -123,12 +122,14 @@ export async function execute() {
 
     return {
       chainId,
-      updatedAtBlock: sources[0].updatedAtBlock,
+      updatedAtBlock: sources[0]?.updatedAtBlock,
       updatedAtTimestamp: getUnixTime(Date.now()),
       tokens,
     }
   })
 
+  if (process.env['DRY_RUN']) return
+  const { redis } = await import('./redis.js');
   await redis.hset(
     'prices',
     Object.fromEntries(

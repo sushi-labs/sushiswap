@@ -1,7 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
 import { CheckCircleIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { Button, classNames, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { Checker, useFuroVestingContract } from '@sushiswap/wagmi'
@@ -12,11 +11,12 @@ import { SendTransactionResult } from 'wagmi/actions'
 
 import { useVestingBalance, Vesting } from '../../lib'
 import { useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui13/components/toast'
+import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { FuroVestingChainId } from '@sushiswap/furo'
 
 interface WithdrawModalProps {
   vesting?: Vesting
-  chainId: ChainId
+  chainId: FuroVestingChainId
 }
 
 export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {

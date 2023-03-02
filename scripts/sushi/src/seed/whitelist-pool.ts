@@ -1,29 +1,37 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import {  Prisma,PrismaClient } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
-const prisma = new PrismaClient()
 
-async function main() {
-  const startTime = performance.now()
+export async function whitelistPools() {
+  const client = new PrismaClient()
+  try {
+    const startTime = performance.now()
 
-  await start()
+    await start(client)
 
-  const endTime = performance.now()
-  console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+    const endTime = performance.now()
+    console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  } catch (e) {
+    console.error(e)
+    await client.$disconnect()
+  } finally {
+    await client.$disconnect()
+  }
 }
 
-async function start() {
-  const approvedTokensResult = await prisma.token.findMany({
+async function start(client: PrismaClient) {
+  const approvedTokensResult = await client.token.findMany({
     select: {
       id: true,
     },
     where: {
+      isFeeOnTransfer: false,
       status: 'APPROVED',
     },
   })
 
   const approvedTokens = approvedTokensResult.map((token) => token.id)
-  console.log(`Fetched ${approvedTokens.length} approved tokens.`)
+  console.log(`Fetched ${approvedTokens.length} tokens (approved and not fee on transfer).`)
 
   const batchSize = 10000
   let cursor = null
@@ -34,9 +42,9 @@ async function start() {
     const requestStartTime = performance.now()
     let result = []
     if (!cursor) {
-      result = await getPoolsAddresses(approvedTokens, batchSize)
+      result = await getPoolsAddresses(client, approvedTokens, batchSize)
     } else {
-      result = await getPoolsAddresses(approvedTokens, batchSize, 1, { id: cursor })
+      result = await getPoolsAddresses(client, approvedTokens, batchSize, 1, { id: cursor })
     }
     cursor = result.length == batchSize ? result[result.length - 1].id : null
     totalCount += result.length
@@ -60,7 +68,7 @@ async function start() {
   for (let i = 0; i < poolsToUpdate.length; i += updatePoolsBatchSize) {
     const batch = poolsToUpdate.slice(i, i + updatePoolsBatchSize)
     const batchToUpdate = batch.map((id) =>
-      prisma.pool.update({
+      client.pool.update({
         where: {
           id,
         },
@@ -78,12 +86,13 @@ async function start() {
 }
 
 async function getPoolsAddresses(
+  client: PrismaClient,
   approvedIds: string[],
   take: number,
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
 ) {
-  const approvedTokens = await prisma.pool.findMany({
+  const approvedTokens = await client.pool.findMany({
     take,
     skip,
     cursor,
@@ -99,13 +108,3 @@ async function getPoolsAddresses(
 
   return approvedTokens
 }
-
-main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })

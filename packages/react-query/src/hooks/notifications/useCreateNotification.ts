@@ -1,4 +1,4 @@
-import {NotificationData, NotificationStoredData} from '@sushiswap/ui13/components/toast'
+import {NotificationData, NotificationStoredData} from '@sushiswap/ui/future/components/toast'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {nanoid} from "nanoid";
 

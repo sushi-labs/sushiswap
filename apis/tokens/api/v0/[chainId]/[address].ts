@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 
-import { getToken } from '../../../lib/api'
+import { getToken } from '../../../lib/api.js'
 
 const schema = z.object({
   chainId: z.coerce
@@ -17,7 +17,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   try {
     const token = await getToken(chainId, address)
     return response.status(200).json(token)
-  } catch (error) {
+  } catch (error: unknown) {
     return response.status(404).send('Not found')
   }
 }

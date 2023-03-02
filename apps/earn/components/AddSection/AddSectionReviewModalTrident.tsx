@@ -2,9 +2,8 @@ import { defaultAbiCoder } from '@ethersproject/abi'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushiswap/amm'
-import { ChainId } from '@sushiswap/chain'
+import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
@@ -30,7 +29,7 @@ interface AddSectionReviewModalTridentProps {
   poolAddress: string
   poolState: ConstantProductPoolState | StablePoolState | undefined
   pool: ConstantProductPool | StablePool | null | undefined
-  chainId: ChainId
+  chainId: BentoBoxV1ChainId
   token0: Type | undefined
   token1: Type | undefined
   input0: Amount<Type> | undefined
@@ -271,8 +270,8 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
                   className="whitespace-nowrap"
                   fullWidth
                   amount={input0}
-                  address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
-                  enabled={Boolean(chain && BENTOBOX_ADDRESS[chain?.id])}
+                  address={chain ? bentoBoxV1Address[chain?.id as BentoBoxV1ChainId] : undefined}
+                  enabled={Boolean(chain && isBentoBoxV1ChainId(chain.id))}
                 />
                 <Approve.Token
                   id="add-liquidity-trident-approve-token1"
@@ -280,8 +279,8 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
                   className="whitespace-nowrap"
                   fullWidth
                   amount={input1}
-                  address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
-                  enabled={Boolean(chain && BENTOBOX_ADDRESS[chain?.id])}
+                  address={chain ? bentoBoxV1Address[chain.id as BentoBoxV1ChainId] : undefined}
+                  enabled={Boolean(chain && isBentoBoxV1ChainId(chain.id))}
                 />
               </Approve.Components>
             }

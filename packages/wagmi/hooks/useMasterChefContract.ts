@@ -1,8 +1,8 @@
-import { masterChefV1Abi, masterChefV2Abi, miniChefAbi } from '@sushiswap/abi'
-import { ChainId } from '@sushiswap/chain'
-import { Address, useContract, useProvider } from 'wagmi'
+import {masterChefV1Abi, masterChefV2Abi, miniChefAbi} from '@sushiswap/abi'
+import {ChainId} from '@sushiswap/chain'
+import {Address, useContract, useProvider} from 'wagmi'
 
-import { Chef } from './useMasterChef'
+import {Chef} from './useMasterChef'
 
 // TODO move to package
 export const MASTERCHEF_ADDRESS = {
@@ -30,6 +30,11 @@ export const MINICHEF_ADDRESS = {
   [ChainId.KAVA]: '0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5',
   [ChainId.METIS]: '0x1334c8e873E1cae8467156e2A81d1C8b566B2da1',
   [ChainId.BOBA]: '0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3',
+  [ChainId.ARBITRUM_NOVA]: '0xC09756432dAD2FF50B2D40618f7B04546DD20043',
+  [ChainId.BTTC]: '0xC09756432dAD2FF50B2D40618f7B04546DD20043',
+  [ChainId.OPTIMISM]: '0xB25157bF349295a7Cd31D1751973f426182070D6',
+  [ChainId.AVALANCHE]: '0xe11252176CEDd4a493Aec9767192C06A04A6B04F',
+  [ChainId.BSC]: '0x5219C5E32b9FFf87F29d5A833832c29134464aaa',
 } as const
 
 export const _getMasterChefContractConfig = (chainId: keyof typeof MASTERCHEF_ADDRESS) =>

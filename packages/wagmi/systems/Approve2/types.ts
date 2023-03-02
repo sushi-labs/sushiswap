@@ -1,5 +1,5 @@
 import { Signature } from '@ethersproject/bytes'
-import { ChainId } from '@sushiswap/chain'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Type } from '@sushiswap/currency'
 import { ButtonProps, NotificationData } from '@sushiswap/ui'
 import { ReactNode } from 'react'
@@ -24,7 +24,7 @@ interface ApprovalTypeBase {
   index: number
   enabled?: boolean
   buttonProps: Omit<ButtonProps<'button'>, 'onClick'>
-  chainId: ChainId | undefined
+  chainId: BentoBoxV1ChainId | undefined
   onSuccess(data: NotificationData): void
 }
 

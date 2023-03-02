@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { Prisma,PrismaClient } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 export async function createTokens(client: PrismaClient, tokens: Prisma.TokenCreateManyInput[]) {
@@ -10,7 +10,7 @@ export async function createTokens(client: PrismaClient, tokens: Prisma.TokenCre
     data: tokens,
     skipDuplicates: true,
   })
- 
+
   const endTime = performance.now()
   const duration = ((endTime - startTime) / 1000).toFixed(1)
   if (created.count > 0) {

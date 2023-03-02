@@ -1,40 +1,35 @@
-import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
+import { client, Prisma, PrismaClient } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 import { getBuiltGraphSDK, PairsQuery } from '../../../.graphclient/index.js'
 import { ProtocolName } from '../../config.js'
 import { createPools, getLatestPoolTimestamp } from '../../etl/pool/load.js'
 import { createTokens } from '../../etl/token/load.js'
-import {
-  GRAPH_HOST,
-  LEGACY_SUBGRAPH_NAME,
-  SUSHISWAP_CHAINS,
-  TRIDENT_CHAINS,
-  TRIDENT_SUBGRAPH_NAME
-} from './config.js'
-
-const client = new PrismaClient()
+import { GRAPH_HOST, LEGACY_SUBGRAPH_NAME, SUSHISWAP_CHAINS, TRIDENT_CHAINS, TRIDENT_SUBGRAPH_NAME } from './config.js'
 
 const PROTOCOL = ProtocolName.SUSHISWAP
 const VERSIONS = ['LEGACY', 'TRIDENT']
 
-const FIRST_TIME_SEED = process.env.FIRST_TIME_SEED === 'true'
-if (FIRST_TIME_SEED) {
-  console.log('FIRST_TIME_SEED is true')
+export async function sushiSwap() {
+  const client = new PrismaClient()
+  try {
+    const startTime = performance.now()
+    console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}`)
+
+    await start(client)
+
+    const endTime = performance.now()
+    console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
+  } catch (e) {
+    console.error(e)
+    await client.$disconnect()
+  } finally {
+    await client.$disconnect()
+  }
 }
 
-async function main() {
-  const startTime = performance.now()
-  console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}`)
-
-  await start()
-
-  const endTime = performance.now()
-  console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
-}
-
-async function start() {
+async function start(client: PrismaClient) {
   const subgraphs = [
     TRIDENT_CHAINS.map((chainId) => {
       return { chainId, host: GRAPH_HOST[chainId], name: TRIDENT_SUBGRAPH_NAME[chainId] }
@@ -51,10 +46,9 @@ async function start() {
   for (const subgraph of subgraphs) {
     const chainId = subgraph.chainId
 
-    let latestPoolTimestamp: string | null = null
-    if (!FIRST_TIME_SEED) {
-      latestPoolTimestamp = await getLatestPoolTimestamp(client, chainId, PROTOCOL, VERSIONS)
-    }
+    // Continue from the latest pool creation timestamp,
+    // if null, then it's the first time seeding and we grab everything
+    const latestPoolTimestamp = await getLatestPoolTimestamp(client, chainId, PROTOCOL, VERSIONS)
 
     const sdk = getBuiltGraphSDK({ chainId, host: subgraph.host, name: subgraph.name })
 
@@ -166,19 +160,9 @@ function transform(
       twapEnabled: pair.twapEnabled,
       token0Id: chainId.toString().concat(':').concat(pair.token0.id),
       token1Id: chainId.toString().concat(':').concat(pair.token1.id),
-      liquidityUSD: pair.liquidityUSD,
+      liquidityUSD: 0,
     })
   })
 
   return { pools: poolsTransformed, tokens }
 }
-
-main()
-  .then(async () => {
-    await client.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await client.$disconnect()
-    process.exit(1)
-  })

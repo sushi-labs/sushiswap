@@ -1,8 +1,8 @@
 import 'dotenv/config'
 import './lib/wagmi.js'
 
-import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
+import { client, Prisma } from '@sushiswap/database'
 import { MINICHEF_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
@@ -12,8 +12,6 @@ import { updatePoolsWithIncentivesTotalApr } from './etl/pool/index.js'
 import { createTokens } from './etl/token/load.js'
 import { getMasterChefV1, getMasterChefV2, getMinichef } from './lib/index.js'
 import { ChefReturn } from './lib/types.js'
-
-const client = new PrismaClient()
 
 export async function execute() {
   try {
@@ -28,9 +26,9 @@ export async function execute() {
     const { incentivesToCreate, incentivesToUpdate, tokens } = await transform(farms)
 
     // // LOAD
-    await createTokens(client, tokens)
-    await mergeIncentives(client, incentivesToCreate, incentivesToUpdate)
-    await updatePoolsWithIncentivesTotalApr(client)
+    await createTokens(tokens)
+    await mergeIncentives(incentivesToCreate, incentivesToUpdate)
+    await updatePoolsWithIncentivesTotalApr()
 
     const endTime = performance.now()
     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
@@ -71,7 +69,7 @@ async function extract() {
         }, incentives: ${incentiveCount}`
       )
     } else {
-      console.log(`Chain ID: ${combination.chainId}. Error.`)
+      console.error(`Chain ID: ${combination.chainId}. Error.`)
     }
   }
   console.log(`Total farms: ${totalFarms}, total incentives: ${totalIncentives}`)
@@ -104,7 +102,7 @@ async function transform(data: ChefReturn[]): Promise<{
               return Prisma.validator<Prisma.IncentiveCreateManyInput>()({
                 id: poolAddress.concat(':').concat(incentive.rewarder.address),
                 chainId: chainId,
-                type: farm.chefType,
+                chefType: farm.chefType,
                 apr: isNaN(incentive.apr) || incentive.apr === Infinity ? 0 : incentive.apr,
                 rewardTokenId: chainId.toString().concat(':').concat(incentive.rewardToken.address.toLowerCase()),
                 rewardPerDay: incentive.rewardPerDay,
@@ -120,7 +118,7 @@ async function transform(data: ChefReturn[]): Promise<{
     })
     .flat()
 
-  const { incentivesToCreate, incentivesToUpdate } = await filterIncentives(client, incentives)
+  const { incentivesToCreate, incentivesToUpdate } = await filterIncentives(incentives)
 
   return { incentivesToCreate, incentivesToUpdate, tokens }
 }

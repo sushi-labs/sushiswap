@@ -1,4 +1,4 @@
-import '@sushiswap/ui13/index.css'
+import '@sushiswap/ui/index.css'
 
 import React, { FC } from 'react'
 
@@ -7,7 +7,7 @@ import { WagmiProvider } from '../ui/WagmiProvider'
 import { PersistQueryClientProvider } from '../ui/PersistQueryClientProvider'
 import Head from 'next/head'
 import { AppProps } from 'next/app'
-import { ToastContainer } from '@sushiswap/ui13/components/toast'
+import { ToastContainer } from '@sushiswap/ui/future/components/toast'
 import { SwapProvider } from 'ui/trade/TradeProvider'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
@@ -19,7 +19,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="icon" type="image/png" sizes="16x16" href="/swap/favicon-16x16.png?v=1" />
         <link rel="manifest" href="/swap/manifest.json?v=1" />
         <link rel="mask-icon" href="/swap/safari-pinned-tab.svg?v=1" color="#fa52a0" />
-        <link rel="shortcut icon" href="/swap/favicon.ico?v=1" />
       </Head>
       <WagmiProvider>
         <PersistQueryClientProvider>

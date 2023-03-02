@@ -1,4 +1,4 @@
-import Container from '@sushiswap/ui13/components/Container'
+import Container from '@sushiswap/ui/future/components/Container'
 import { FC, ReactNode } from 'react'
 
 export const FixedButtonContainer: FC<{ children: ReactNode }> = ({ children }) => {
