@@ -18,7 +18,10 @@
   "main": ".graphclient/index.js",
   "types": ".graphclient/index.d.ts",
   "files": [
-    ".graphclient"
+    ".graphclient",
+    "lib",
+    "resolvers",
+    "transformers"
   ],
   "exports": {
     ".": {

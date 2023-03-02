@@ -1,6 +1,10 @@
 {
   "extends": "@sushiswap/typescript-config/esm.json",
-  "include": ["actions", "resolvers", "lib", "transformers"],
+  "include": [
+    "lib", 
+    "resolvers", 
+    "transformers"
+  ],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
