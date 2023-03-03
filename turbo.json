@@ -48,10 +48,11 @@
         "storybook-static/**/*"
       ],
       "dependsOn": [
-        "^generate",
-        "^build",
-        "^export",
-        "generate"
+        "^db:generate", 
+        "^build", 
+        "db:generate", 
+        "generate",
+        "export"
       ],
       "env": [
         "ROOT_URL",
@@ -67,6 +68,7 @@
         "SWAP_URL",
         "XSWAP_URL",
         "DATABASE_URL",
+        "EARN_DATABASE_URL",
         "REDIS_URL"
       ]
     },
@@ -74,7 +76,29 @@
       "cache": false
     },
     "check": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^generate", 
+        "^build", 
+        "^export",
+        "generate"
+      ],
+      "cache": false
+    },
+    "db:init": {
+      "outputs": ["prisma/**/*"],
+      "cache": false
+    },
+    "db:pull": {
+      "outputs": ["prisma/**/*"],
+      "dependsOn": ["db:init"],
+      "cache": false,
+      "env": ["DATABASE_URL"]
+    },
+    "db:generate": {
+      "dependsOn": [],
+      "cache": false
+    },
+    "db:push": {
       "cache": false
     },
     "dev": {
@@ -83,7 +107,7 @@
       "persistent": true
     },
     "export": {
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "outputs": ["exports/**/*"],
       "cache": true
     },

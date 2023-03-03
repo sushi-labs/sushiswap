@@ -5,6 +5,7 @@ import { Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
 import { FC } from 'react'
 import { useGraphPool } from '../../lib/hooks'
+import { ChainId } from '@sushiswap/chain'
 
 interface PoolStats {
   pool: Pool
@@ -12,7 +13,11 @@ interface PoolStats {
 
 export const PoolStats: FC<PoolStats> = ({ pool }) => {
   const { data: prices } = usePrices({ chainId: pool.chainId })
-  const nativePrice = prices?.[Native.onChain(pool.chainId).wrapped.address]
+  let nativePrice = prices?.[Native.onChain(pool.chainId).wrapped.address]
+
+  if (pool.chainId === ChainId.POLYGON) {
+    nativePrice = prices?.['0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619']
+  }
 
   const {
     liquidityNative,

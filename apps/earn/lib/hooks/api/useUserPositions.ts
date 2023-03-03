@@ -24,7 +24,7 @@ const transformPositions = (positions?: UserPosition[], pools?: Pools) =>
           return { ...position, pool }
         })
         .filter((position): position is PositionWithPool => !!position.pool)
-    : []
+    : undefined
 
 export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
   const { data: positions } = useSWR<UserPosition[]>(
@@ -33,14 +33,17 @@ export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
   )
 
   const pools = useGraphPools(positions?.map((position) => position.pool) || [])
+  const isValidating = !positions || !pools || (positions.length > 0 && pools.length === 0)
 
   return useMemo(
     () => ({
-      data: transformPositions(positions, pools).filter((position) =>
-        !!args.chainIds ? args.chainIds?.includes(position.chainId) : true
-      ),
-      isValidating: !positions || !pools || (positions.length > 0 && pools.length === 0),
+      data: !isValidating
+        ? transformPositions(positions, pools)?.filter((position) =>
+            !!args.chainIds ? args.chainIds?.includes(position.chainId) : true
+          )
+        : undefined,
+      isValidating,
     }),
-    [args.chainIds, pools, positions]
+    [args.chainIds, isValidating, pools, positions]
   )
 }

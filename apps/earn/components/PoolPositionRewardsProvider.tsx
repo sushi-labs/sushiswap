@@ -34,7 +34,7 @@ interface PoolPositionStakedProviderProps {
 }
 
 export const PoolPositionRewardsProvider: FC<PoolPositionStakedProviderProps> = ({ pool, children }) => {
-  if (!pool?.incentives || pool.incentives.length === 0)
+  if (!pool?.wasIncentivized)
     return (
       <Context.Provider
         value={{

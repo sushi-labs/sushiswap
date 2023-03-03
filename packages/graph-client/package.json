@@ -34,7 +34,7 @@
     "build": "tsc",
     "generate": "graphclient build --fileType js --throwOnInvalidConfig",
     "check": "tsc --pretty --noEmit",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "clean": "rm -rf .turbo .graphclient node_modules",
     "dev": "graphclient serve-dev",
     "lint": "TIMING=1 eslint . --fix",
     "prepublishOnly": "pnpm build",
