@@ -9,7 +9,7 @@ import {
 } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 
-import { Query, QueryResolvers, Resolvers } from '../../.graphclient'
+import { Query, QueryResolvers, Resolvers } from '../../.graphclient/index.js'
 
 export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
   root,

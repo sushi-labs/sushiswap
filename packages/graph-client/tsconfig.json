@@ -1,8 +1,25 @@
 {
-  "extends": "@sushiswap/typescript-config/node16.json",
-  "include": [".graphclient/**/*.ts"],
+  "extends": "@sushiswap/typescript-config/esm.json",
+  "include": [
+    "lib", 
+    "resolvers",
+    "transformers"
+  ],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
-    "outDir": "dist"
+    "rootDir": ".",
+    "lib": ["ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "nodenext",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "downlevelIteration": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true
+  },
+  "ts-node": {
+    "swc": true,
+    "esm": true
   }
 }

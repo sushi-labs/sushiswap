@@ -1,5 +1,5 @@
-import { Resolvers } from '../../.graphclient'
-import { bundlesByChainIds } from './bundlesByChainIds'
+import { Resolvers } from '../../.graphclient/index.js'
+import { bundlesByChainIds } from './bundlesByChainIds.js'
 
 export const resolvers: Resolvers = {
   Bundle: {

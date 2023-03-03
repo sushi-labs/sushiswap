@@ -1,8 +1,8 @@
-import { Resolvers } from '../../.graphclient'
-import { pairById } from './pairById'
-import { pairsByChainId } from './pairsByChainId'
-import { pairsByChainIds } from './pairsByChainIds'
-import { pairsByIds } from './pairsByIds'
+import { Resolvers } from '../../.graphclient/index.js'
+import { pairById } from './pairById.js'
+import { pairsByChainId } from './pairsByChainId.js'
+import { pairsByChainIds } from './pairsByChainIds.js'
+import { pairsByIds } from './pairsByIds.js'
 
 export const resolvers: Resolvers = {
   Pair: {

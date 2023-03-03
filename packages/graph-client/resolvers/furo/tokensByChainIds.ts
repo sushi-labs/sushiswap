@@ -4,8 +4,8 @@ import { FURO_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { GraphQLResolveInfo } from 'graphql'
 
-import { Query, QueryfuroTokensByChainIdsArgs, QueryResolvers, RequireFields } from '../../.graphclient'
-import { FuroStreamTypes } from '../../.graphclient/sources/FuroStream/types'
+import { Query, QueryfuroTokensByChainIdsArgs, QueryResolvers, RequireFields } from '../../.graphclient/index.js'
+import { FuroStreamTypes } from '../../.graphclient/sources/FuroStream/types.js'
 
 export const _furoTokensByChainIds = async (
   root = {},

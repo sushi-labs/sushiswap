@@ -18,35 +18,13 @@
     "tsconfig.json"
   ],
   "pipeline": {
-    "db:init": {
-      "outputs": ["prisma/**/*"],
-      "cache": false
-    },
-    "db:pull": {
-      "outputs": ["prisma/**/*"],
-      "dependsOn": ["db:init"],
+    "anvil": {
       "cache": false,
-      "env": ["DATABASE_URL"]
-    },
-    "db:generate": {
-      "dependsOn": [],
-      "cache": false
-    },
-    "db:push": {
-      "cache": false
-    },
-    "playwright": {
-      "cache": false,
-      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
-    },
-    "test": {
-      "dependsOn": ["build"],
-      "outputs": ["coverage/**/*"],
-      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
-    },
-    "test-e2e-playwright": {
-      "cache": false,
-      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
+      "env": [
+        "ANVIL_BLOCK_NUMBER", 
+        "ANVIL_FORK_URL"
+      ],
+      "persistent": true
     },
     "blog#build": {
       "dependsOn": ["^build", "generate"],
@@ -59,31 +37,10 @@
         "public/**/*"
       ]
     },
-    "lint": {
-      "dependsOn": ["^build"],
-      "outputs": []
-    },
-    "start": {
-      "dependsOn": [
-        "^build", 
-        "^db:generate", 
-        "generate"
-      ],
-      "cache": false,
-      "persistent": true
-    },
-    "generate": {
-      "outputs": [
-        ".graphclient/**/*", 
-        ".mesh/**/*", 
-        "typechain/**/*", 
-        "artifacts/**/*"
-      ]
-    },
     "build": {
       "outputs": [
-        ".vercel/**/*",
         ".next/**/*",
+        ".vercel/**/*",
         "dist/**/*",
         "typechain/**/*",
         "artifacts/**/*",
@@ -119,17 +76,31 @@
       "cache": false
     },
     "check": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false
+    },
+    "db:init": {
+      "outputs": ["prisma/**/*"],
+      "cache": false
+    },
+    "db:pull": {
+      "outputs": ["prisma/**/*"],
+      "dependsOn": ["db:init"],
+      "cache": false,
+      "env": ["DATABASE_URL"]
+    },
+    "db:generate": {
+      "dependsOn": [],
+      "cache": false
+    },
+    "db:push": {
       "cache": false
     },
     "dev": {
-      "dependsOn": ["^build", "^db:generate", "generate"],
+      "dependsOn": ["^build"],
       "cache": false,
-      "persistent": true
-    },
-    "anvil": {
-      "cache": false,
-      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL"],
       "persistent": true
     },
     "export": {
@@ -137,14 +108,47 @@
       "outputs": ["exports/**/*"],
       "cache": true
     },
-    "node": {
+    "generate": {
+      "outputs": [
+        ".graphclient/**/*", 
+        ".mesh/**/*", 
+        "typechain/**/*",
+        "artifacts/**/*"
+      ],
+      "cache": false
+    },
+    "lint": {
       "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "node": {
+      "dependsOn": ["build"],
       "outputs": ["deployments/**/*"],
       "persistent": true
     },
+    "playwright": {
+      "cache": false,
+      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
+    },
     "server": {
       "persistent": true,
-      "dependsOn": ["^build"]
+      "dependsOn": ["build"]
+    },
+    "start": {
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false,
+      "persistent": true
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": ["coverage/**/*"],
+      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
+    },
+    "test-e2e-playwright": {
+      "cache": false,
+      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
     },
     "validate": {
       "cache": false

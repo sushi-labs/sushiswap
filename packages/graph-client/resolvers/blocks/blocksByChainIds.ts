@@ -2,8 +2,8 @@
 import { BLOCKS_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 
-import { Query, QueryblocksByChainIdsArgs, QueryResolvers, RequireFields } from '../../.graphclient'
-import { BlocksTypes } from '../../.graphclient/sources/Blocks/types'
+import { Query, QueryblocksByChainIdsArgs, QueryResolvers, RequireFields } from '../../.graphclient/index.js'
+import { BlocksTypes } from '../../.graphclient/sources/Blocks/types.js'
 
 export const _blocksByChainIds = async (
   root = {},

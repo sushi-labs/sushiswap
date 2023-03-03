@@ -3,6 +3,7 @@ packages:
   - 'apps/*'
   - 'config/*'
   - 'examples/*'
+  - 'jobs/**'
   - 'packages/**'
   - 'protocols/*'
   - 'subgraphs/*'

@@ -3,8 +3,9 @@ import { SUSHI_ADDRESS } from '@sushiswap/currency'
 import { Block, getBuiltGraphSDK } from '@sushiswap/graph-client'
 import chalk from 'chalk'
 import CliTable3 from 'cli-table3'
+import fetch from 'node-fetch'
 
-import { REVENUES_SUPPORTED_CHAIN_NAMES } from '../config'
+import { REVENUES_SUPPORTED_CHAIN_NAMES } from '../config.js'
 
 const sdk = getBuiltGraphSDK()
 
