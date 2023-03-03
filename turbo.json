@@ -18,23 +18,6 @@
     "tsconfig.json"
   ],
   "pipeline": {
-    "db:init": {
-      "outputs": ["prisma/**/*"],
-      "cache": false
-    },
-    "db:pull": {
-      "outputs": ["prisma/**/*"],
-      "dependsOn": ["db:init"],
-      "cache": false,
-      "env": ["DATABASE_URL"]
-    },
-    "db:generate": {
-      "dependsOn": [],
-      "cache": false
-    },
-    "db:push": {
-      "cache": false
-    },
     "playwright": {
       "cache": false,
       "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
@@ -65,9 +48,7 @@
     },
     "start": {
       "dependsOn": [
-        "^build", 
-        "^db:generate", 
-        "generate"
+        "build"
       ],
       "cache": false,
       "persistent": true
@@ -76,13 +57,13 @@
       "outputs": [
         ".graphclient/**/*", 
         ".mesh/**/*", 
-        "typechain/**/*", 
+        "typechain/**/*",
         "artifacts/**/*"
-      ]
+      ],
+      "cache": false
     },
     "build": {
       "outputs": [
-        ".graphclient/**/*", 
         ".next/**/*",
         ".vercel/**/*",
         "dist/**/*",
@@ -92,11 +73,10 @@
         "storybook-static/**/*"
       ],
       "dependsOn": [
-        "^db:generate", 
-        "^build", 
-        "db:generate", 
-        "generate",
-        "export"
+        "^generate",
+        "^build",
+        "^export",
+        "generate"
       ],
       "env": [
         "ROOT_URL",
@@ -120,11 +100,11 @@
       "cache": false
     },
     "check": {
-      "dependsOn": ["^build", "build"],
+      "dependsOn": ["build"],
       "cache": false
     },
     "dev": {
-      "dependsOn": ["^build", "^db:generate", "generate"],
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     },
@@ -134,18 +114,18 @@
       "persistent": true
     },
     "export": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["build"],
       "outputs": ["exports/**/*"],
       "cache": true
     },
     "node": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["build"],
       "outputs": ["deployments/**/*"],
       "persistent": true
     },
     "server": {
       "persistent": true,
-      "dependsOn": ["^build"]
+      "dependsOn": ["build"]
     },
     "validate": {
       "cache": false
