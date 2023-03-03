@@ -28,4 +28,18 @@ export class BentoPoolCode extends PoolCode {
 
     return code
   }
+
+  getSwapCodeForRouteProcessor2(leg: RouteLeg, _route: MultiRoute, to: string): string {
+    // TODO: add unwrap bento = true optimization
+    const coder = new ethers.utils.AbiCoder()
+    // address tokenIn, address recipient, bool unwrapBento
+    const poolData = coder.encode(['address', 'address', 'bool'], [leg.tokenFrom.address, to, false])
+    const code = new HEXer()
+      .uint8(4) // swapTrident
+      .address(leg.poolAddress)
+      .bytes(poolData)
+      .toString()
+
+    return code
+  }
 }

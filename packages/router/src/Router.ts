@@ -15,6 +15,7 @@ import type { DataFetcher } from './DataFetcher'
 import type { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { convertTokenToBento, getBentoChainId } from './liquidity-providers/Trident'
 import { getRouteProcessorCode } from './TinesToRouteProcessor'
+import { getRouteProcessor2Code } from './TinesToRouteProcessor2'
 
 type RouteCallBack = (r: MultiRoute) => void
 
@@ -156,6 +157,20 @@ export class Router {
     }
   }
 
+  getCurrentRouteRP2Params(to: string, RPAddr: string, maxPriceImpact = 0.005): RPParams | undefined {
+    if (this.currentBestRoute !== undefined) {
+      return Router.routeProcessor2Params(
+        this.dataFetcher,
+        this.currentBestRoute,
+        this.fromToken,
+        this.toToken,
+        to,
+        RPAddr,
+        maxPriceImpact
+      )
+    }
+  }
+
   getCurrentRouteHumanString(shiftPrimary = '', shiftSub = '    '): string | void {
     if (this.currentBestRoute !== undefined) {
       return Router.routeToHumanString(
@@ -244,6 +259,30 @@ export class Router {
       amountOutMin,
       to,
       routeCode: getRouteProcessorCode(route, RPAddr, to, dataFetcher.getCurrentPoolCodeMap()),
+      value: fromToken instanceof Token ? undefined : route.amountInBN,
+    }
+  }
+
+  static routeProcessor2Params(
+    dataFetcher: DataFetcher,
+    route: MultiRoute,
+    fromToken: Type,
+    toToken: Type,
+    to: string,
+    RPAddr: string,
+    maxPriceImpact = 0.005
+  ): RPParams {
+    const tokenIn = fromToken instanceof Token ? fromToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const tokenOut = toToken instanceof Token ? toToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const amountOutMin = route.amountOutBN.mul(getBigNumber((1 - maxPriceImpact) * 1_000_000)).div(1_000_000)
+
+    return {
+      tokenIn,
+      amountIn: route.amountInBN,
+      tokenOut,
+      amountOutMin,
+      to,
+      routeCode: getRouteProcessor2Code(route, RPAddr, to, dataFetcher.getCurrentPoolCodeMap()),
       value: fromToken instanceof Token ? undefined : route.amountInBN,
     }
   }

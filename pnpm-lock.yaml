@@ -3403,6 +3403,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/router': workspace:*
       '@sushiswap/tines': workspace:*
+      '@sushiswap/tines-sandbox': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@typechain/ethers-v5': ^10.0.0
       '@typechain/hardhat': ^6.1.0
@@ -3454,6 +3455,7 @@ importers:
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/router': link:../../packages/router
       '@sushiswap/tines': link:../../packages/tines
+      '@sushiswap/tines-sandbox': link:../tines-sandbox
       '@sushiswap/typescript-config': link:../../config/typescript
       '@typechain/ethers-v5': 10.1.1_k6bdrczrdxrxopgjlr5kov2hw4
       '@typechain/hardhat': 6.1.4_x6zcho6lo2lfcmjlgmaahzgooe
@@ -3622,9 +3624,11 @@ importers:
       hardhat-watcher: 2.5.0
       prettier: 2.8.1
       prettier-plugin-solidity: 1.1.0
+      seedrandom: ^3.0.5
       solidity-coverage: 0.8.2
       ts-generator: 0.1.1
       ts-node: 10.9.1
+      tsup: 6.5.0
       typechain: 8.1.1
       typescript: 4.9.4
     devDependencies:
@@ -3666,9 +3670,11 @@ importers:
       hardhat-watcher: 2.5.0_hardhat@2.12.6
       prettier: 2.8.1
       prettier-plugin-solidity: 1.1.0_prettier@2.8.1
+      seedrandom: 3.0.5
       solidity-coverage: 0.8.2_hardhat@2.12.6
       ts-generator: 0.1.1
       ts-node: 10.9.1_zpb5kzpnyozdjq4cwaojlul57u
+      tsup: 6.5.0_z6wznmtyb6ovnulj6iujpct7um
       typechain: 8.1.1_typescript@4.9.4
       typescript: 4.9.4
 
@@ -30803,8 +30809,6 @@ packages:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -30830,14 +30834,13 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
+      - postcss
       - ts-node
 
   /tailwindcss/3.2.4_postcss@8.4.19:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -30863,6 +30866,7 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
+      - postcss
       - ts-node
     dev: true
 
@@ -30870,8 +30874,6 @@ packages:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -30897,6 +30899,7 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
+      - postcss
       - ts-node
     dev: true
 
