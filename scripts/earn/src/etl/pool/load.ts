@@ -106,15 +106,7 @@ export async function updatePoolsWithIncentivesTotalApr() {
   const client = await createClient()
   const poolsWithIncentives = await client.sushiPool.findMany({
     where: {
-      OR: [
-        {
-          // Will match pools with incentives that were *just* deleted as well
-          isIncentivized: true,
-        },
-        {
-          incentives: { some: {} },
-        },
-      ],
+      incentives: { some: {} },
     },
     include: {
       incentives: {
