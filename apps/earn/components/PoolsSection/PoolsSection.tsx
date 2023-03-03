@@ -25,7 +25,7 @@ export const PoolsSection: FC<{ isReady?: boolean }> = ({ isReady }) => {
               )
             }
           >
-            All Yields
+            All Pools
           </Tab>
 
           {address && (

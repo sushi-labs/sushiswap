@@ -24,7 +24,7 @@ import { useSWRConfig } from 'swr/_internal'
 const LINKS = (pool: Pool): BreadcrumbLink[] => [
   {
     href: `/${pool.id}`,
-    label: `${pool.name} - ${POOL_TYPE_MAP[pool.type]} - ${formatPercent(pool.swapFee * 100)}`,
+    label: `${pool.name} - ${POOL_TYPE_MAP[pool.type]} - ${formatPercent(pool.swapFee)}`,
   },
   {
     href: `/${pool.id}/remove`,
