@@ -2,7 +2,7 @@
   "extends": "@sushiswap/typescript-config/esm.json",
   "include": [
     "lib", 
-    "resolvers", 
+    "resolvers",
     "transformers"
   ],
   "exclude": ["node_modules"],
