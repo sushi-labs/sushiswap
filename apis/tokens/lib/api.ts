@@ -1,73 +1,57 @@
 import { createClient } from '@sushiswap/database'
 
-// import { allChains, allProviders } from '@sushiswap/wagmi-config'
-// import { Address, configureChains, createClient, fetchToken } from '@wagmi/core'
+import { Address, configureChains, createClient as createWagmiClient, fetchToken } from '@wagmi/core'
 
-// const { provider } = configureChains(allChains, allProviders)
-// createClient({
-//   autoConnect: true,
-//   provider,
-// })
+import { allChains } from '@sushiswap/wagmi-config/chains'
+import { allProviders } from '@sushiswap/wagmi-config/providers'
 
-// export async function getToken(chainId: number, address: string) {
-//   try {
-//     const token = await client.token.findFirstOrThrow({
-//       select: {
-//         id: true,
-//         address: true,
-//         name: true,
-//         symbol: true,
-//         decimals: true,
-//         isCommon: true,
-//         isFeeOnTransfer: true,
-//       },
-//       where: {
-//         AND: {
-//           chainId,
-//           address,
-//           status: 'APPROVED',
-//         },
-//       },
-//     })
-//     await client.$disconnect()
-//     return token
-//   } catch (e) {
-//     console.log(`Token not found in db: ${address} on chain ${chainId}`, e)
-//   }
-
-//   try {
-//     const token = await fetchToken({ chainId, address: address as Address })
-//     return token
-//   } catch (e) {
-//     console.log(`Token fetch fallback failed: ${address} on chain ${chainId}`, e)
-//   }
-
-//   throw new Error('Token not found')
-// }
+const { provider } = configureChains(allChains, allProviders)
+createWagmiClient({
+  autoConnect: true,
+  provider,
+})
 
 export async function getToken(chainId: number, address: string) {
   const client = await createClient()
-  const token = await client.token.findFirstOrThrow({
-    select: {
-      id: true,
-      address: true,
-      name: true,
-      symbol: true,
-      decimals: true,
-      isCommon: true,
-      isFeeOnTransfer: true,
-    },
-    where: {
-      AND: {
+  try {
+    const token = await client.token.findFirstOrThrow({
+      select: {
+        id: true,
+        address: true,
+        name: true,
+        symbol: true,
+        decimals: true,
+        isCommon: true,
+        isFeeOnTransfer: true,
+      },
+      where: {
         chainId,
         address,
-        // If asking for the token directly, we probably want to see it even if it's not approved
-        // status: 'APPROVED',
       },
-    },
-  })
-  await client.$disconnect()
-  return token
+    })
+    await client.$disconnect()
+    return token
+  } catch (e) {
+    await client.$disconnect()
+    const tokenFromContract = await fetchToken({
+      chainId,
+      address: address as Address,
+    }).catch(() => {
+      return undefined
+    })
+    if (tokenFromContract) {
+      return {
+        id: `${chainId}:${tokenFromContract.address}`,
+        address: tokenFromContract.address,
+        name: tokenFromContract.name,
+        symbol: tokenFromContract.symbol,
+        decimals: tokenFromContract.decimals,
+        isCommon: false,
+      }
+    } else {
+      throw new Error('Token not found')
+    }
+  }
 }
 
 export async function getTokenIdsByChainId(chainId: number) {
@@ -146,6 +130,93 @@ export async function getTokens() {
       },
     },
   })
+  await client.$disconnect()
+  return tokens ? tokens : []
+}
+
+export async function getPopularTokens(chainId: number) {
+  const client = await createClient()
+
+  const approvedTokens = await client.token.findMany({
+    select: {
+      id: true,
+      address: true,
+      name: true,
+      symbol: true,
+      decimals: true,
+      isCommon: true,
+      isFeeOnTransfer: true,
+      pools0: {
+        select: {
+          liquidityUSD: true,
+        },
+        where: {
+          isWhitelisted: true,
+          liquidityUSD: {
+            gt: 50,
+          },
+        },
+      },
+      pools1: {
+        select: {
+          liquidityUSD: true,
+        },
+        where: {
+          isWhitelisted: true,
+          liquidityUSD: {
+            gt: 50,
+          },
+        },
+      },
+    },
+    where: {
+      chainId,
+      status: 'APPROVED',
+    },
+  })
+
+  const filteredTokens = approvedTokens
+    .map((token) => {
+      const liquidity =
+        token.pools0.reduce((a, b) => a + Number(b.liquidityUSD) / 2, 0) +
+        token.pools1.reduce((a, b) => a + Number(b.liquidityUSD) / 2, 0)
+      return {
+        id: token.id,
+        address: token.address,
+        name: token.name,
+        symbol: token.symbol,
+        decimals: token.decimals,
+        isCommon: token.isCommon,
+        isFeeOnTransfer: token.isFeeOnTransfer,
+        liquidityUSD: Number(liquidity.toFixed(0)),
+      }
+    })
+    .sort((a, b) => b.liquidityUSD - a.liquidityUSD)
+    .slice(0, 10)
+
+  await client.$disconnect()
+  return filteredTokens ? filteredTokens : []
+}
+
+export async function getCommonTokens(chainId: number) {
+  const client = await createClient()
+  const tokens = await client.token.findMany({
+    select: {
+      id: true,
+      address: true,
+      name: true,
+      symbol: true,
+      decimals: true,
+      isCommon: true,
+      isFeeOnTransfer: true,
+    },
+    where: {
+      chainId,
+      isCommon: true,
+      status: 'APPROVED',
+    },
+  })
+
   await client.$disconnect()
   return tokens ? tokens : []
 }
