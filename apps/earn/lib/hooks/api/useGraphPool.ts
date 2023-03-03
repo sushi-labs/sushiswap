@@ -34,6 +34,6 @@ export const useGraphPool = (pool: Pool) => {
       reserve0: token0 && graphPool ? Amount.fromRawAmount(token0, graphPool.reserve0) : null,
       reserve1: token1 && graphPool ? Amount.fromRawAmount(token1, graphPool.reserve1) : null,
       totalSupply: liquidityToken && graphPool ? Amount.fromRawAmount(liquidityToken, graphPool.liquidity) : null,
-    } as const
+    }
   }, [graphPool, liquidityToken, token0, token1])
 }

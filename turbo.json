@@ -45,7 +45,10 @@
         "typechain/**/*",
         "artifacts/**/*",
         "public/**/*",
-        "storybook-static/**/*"
+        "storybook-static/**/*",
+        "lib/**/*",
+        "resolvers/**/*",
+        "transformers/**/*"
       ],
       "dependsOn": [
         "^db:generate", 
