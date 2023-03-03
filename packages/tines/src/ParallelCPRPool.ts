@@ -17,14 +17,10 @@ export class ParallelCPRPool extends RPool {
   jumps1?: JumpInfo[]
 
   constructor(inputToken: RToken, pools: ConstantProductRPool[], gasPrice: number) {
-    super(
-      'ParallelCPRPool',
-      pools[0].token0,
-      pools[0].token1,
-      0,
+    super('ParallelCPRPool', pools[0].tokens, 0, [
       getBigNumber(pools.reduce((a, b) => a + b.reserve0Number, 0)),
-      getBigNumber(pools.reduce((a, b) => a + b.reserve1Number / (1 - b.fee), 0))
-    )
+      getBigNumber(pools.reduce((a, b) => a + b.reserve1Number / (1 - b.fee), 0)),
+    ])
     // this.pools = pools.map((p):[ConstantProductRPool, number] => [p, p.getLiquidity()/(1-p.fee)])
     //   .sort(([_1, l1], [_2, l2]) => l1-l2)
     // console.log("pools", this.pools.map(p => p[0].getLiquidity()));
@@ -42,7 +38,7 @@ export class ParallelCPRPool extends RPool {
     direction: boolean,
     prevJump?: JumpInfo
   ): JumpInfo | undefined {
-    const dir = (this.token0.tokenId === pool.token0.tokenId) === direction
+    const dir = (this.token0.tokenId === pool.tokens[0].tokenId) === direction
     const poolPrice = pool.calcPrice(0, dir, true)
     const y = dir ? pool.reserve1Number : pool.reserve0Number
     if (prevJump === undefined)

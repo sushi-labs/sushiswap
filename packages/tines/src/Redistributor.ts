@@ -17,7 +17,7 @@ class Pool {
     this.from = fromIndex
     this.to = toIndex
     this.edge = edge
-    this.direction = edge.pool.token0.tokenId === from.token.tokenId
+    this.direction = edge.pool.tokens[0].tokenId === from.token.tokenId
   }
 
   calcOutByIn(amountIn: number): number {
@@ -104,15 +104,15 @@ export class Redistributor {
       for (let j = i + 1; j < this.tokenNumber; ++j) {
         const paths = this.getPaths(i, j)
         if (paths !== undefined && paths.length > 1) {
-          this.redistrPaths(i, j, paths)
+          //this.redistrPaths(i, j, paths)
         }
       }
     }
   }
 
-  redistrPaths(from: number, to: number, paths: Pool[]) {
-    // TODO: this code was taken from investigation part, should be rearranged for current environment
-    /*if (amountIn == 0) {
+  //redistrPaths(from: number, to: number, paths: Pool[]) {
+  // TODO: this code was taken from investigation part, should be rearranged for current environment
+  /*if (amountIn == 0) {
       return [0, 0, [1]];
     }
 
@@ -144,7 +144,7 @@ export class Redistributor {
     }
 
     return [out, gas, distr];*/
-  }
+  //}
 
   calcOutput(from: number, to: number, paths: Pool[], amountIn: number): number {
     if (from == to) return amountIn

@@ -19,44 +19,34 @@ export function setTokenId(...tokens: RToken[]) {
 
 export abstract class RPool {
   readonly address: string
-  readonly token0: RToken
-  readonly token1: RToken
+  readonly tokens: RToken[]
   readonly fee: number
-  reserve0: BigNumber
-  reserve1: BigNumber
+  reserves: BigNumber[]
   readonly minLiquidity: number
   readonly swapGasCost: number
 
   constructor(
     address: string,
-    token0: RToken,
-    token1: RToken,
+    tokens: RToken[],
     fee: number,
-    reserve0: BigNumber,
-    reserve1: BigNumber,
+    reserves: BigNumber[],
     minLiquidity = TYPICAL_MINIMAL_LIQUIDITY,
     swapGasCost = TYPICAL_SWAP_GAS_COST
   ) {
     this.address = address
-    this.token0 = token0
-    this.token1 = token1
-    setTokenId(this.token0, this.token1)
+    this.tokens = tokens
+    setTokenId(...tokens)
     this.fee = fee
     this.minLiquidity = minLiquidity
     this.swapGasCost = swapGasCost
-    this.reserve0 = reserve0
-    this.reserve1 = reserve1
+    this.reserves = reserves
   }
 
-  updateReserves(res0: BigNumber, res1: BigNumber) {
-    this.reserve0 = res0
-    this.reserve1 = res1
+  updateReserves(res: BigNumber[]) {
+    this.reserves = res
   }
-  getReserve0() {
-    return this.reserve0
-  }
-  getReserve1() {
-    return this.reserve1
+  getReserve(i: number) {
+    return this.reserves[i]
   }
 
   // Returns [<output amount>, <gas consumption estimation>]
@@ -83,16 +73,15 @@ export class ConstantProductRPool extends RPool {
   reserve1Number: number
 
   constructor(address: string, token0: RToken, token1: RToken, fee: number, reserve0: BigNumber, reserve1: BigNumber) {
-    super(address, token0, token1, fee, reserve0, reserve1)
+    super(address, [token0, token1], fee, [reserve0, reserve1])
     this.reserve0Number = parseInt(reserve0.toString())
     this.reserve1Number = parseInt(reserve1.toString())
   }
 
-  updateReserves(res0: BigNumber, res1: BigNumber) {
-    this.reserve0 = res0
-    this.reserve0Number = parseInt(res0.toString())
-    this.reserve1 = res1
-    this.reserve1Number = parseInt(res1.toString())
+  updateReserves(res: BigNumber[]) {
+    this.reserves = res
+    this.reserve0Number = parseInt(res[0].toString())
+    this.reserve1Number = parseInt(res[1].toString())
   }
 
   calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {

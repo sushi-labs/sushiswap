@@ -42,7 +42,7 @@ function simulateRouting(network: Network, route: MultiRoute) {
     // Take swap parms
     const pool = network.pools.find((p) => p.address == l.poolAddress) as RPool
     expect(pool).toBeDefined()
-    const direction = pool.token0.tokenId == l.tokenFrom.tokenId
+    const direction = pool.tokens[0].tokenId == l.tokenFrom.tokenId
     const granularityOut = direction ? pool?.granularity1() : pool?.granularity0()
 
     // Check assumedAmountIn <-> assumedAmountOut correspondance
@@ -97,7 +97,7 @@ export function exportNetwork(network: Network, from: RToken, to: RToken, route:
   const allPools = new Map<string, RPool>()
   network.pools.forEach((p) => allPools.set(p.address, p))
   const usedPools = new Map<string, boolean>()
-  route.legs.forEach((l) => usedPools.set(l.poolAddress, l.tokenFrom === allPools.get(l.poolAddress)?.token0))
+  route.legs.forEach((l) => usedPools.set(l.poolAddress, l.tokenFrom === allPools.get(l.poolAddress)?.tokens[0]))
 
   function edgeStyle(p: RPool) {
     const u = usedPools.get(p.address)
@@ -116,7 +116,7 @@ export function exportNetwork(network: Network, from: RToken, to: RToken, route:
     ${network.tokens.map((t) => `{ id: ${t.name}, label: "${nodeLabel(t)}"}`).join(',\n\t\t')}
   ]);\n`
   const edges = `var edges = new vis.DataSet([
-    ${network.pools.map((p) => `{ from: ${p.token0.name}, to: ${p.token1.name}${edgeStyle(p)}}`).join(',\n\t\t')}
+    ${network.pools.map((p) => `{ from: ${p.tokens[0].name}, to: ${p.tokens[1].name}${edgeStyle(p)}}`).join(',\n\t\t')}
   ]);\n`
   const data = `var data = {
       nodes: nodes,
@@ -154,7 +154,7 @@ export function exportPrices(network: Network, baseTokenIndex: number) {
     ${network.tokens.map((t) => `{ id: ${t.name}, label: "${nodeLabel(t)}"}`).join(',\n\t\t')}
   ]);\n`
   const edges = `var edges = new vis.DataSet([
-    ${network.pools.map((p) => `{ from: ${p.token0.name}, to: ${p.token1.name}${edgeStyle(p)}}`).join(',\n\t\t')}
+    ${network.pools.map((p) => `{ from: ${p.tokens[0].name}, to: ${p.tokens[1].name}${edgeStyle(p)}}`).join(',\n\t\t')}
   ]);\n`
   const data = `var data = {
       nodes: nodes,
@@ -185,7 +185,7 @@ export function printRoute(route: MultiRoute, network: Network) {
   route.legs.forEach((l, i) => {
     const pool = network.pools.find((p) => p.address == l.poolAddress) as RPool
     const inp = (liquidity.get(parseInt(l.tokenFrom.name)) as number) * l.absolutePortion
-    const { out } = pool.calcOutByIn(inp, pool.token0.tokenId == l.tokenFrom.tokenId)
+    const { out } = pool.calcOutByIn(inp, pool.tokens[0].tokenId == l.tokenFrom.tokenId)
     const price_in = atomPrice(l.tokenFrom as TToken) / atomPrice(route.fromToken as TToken)
     const price_out = atomPrice(l.tokenTo as TToken) / atomPrice(route.fromToken as TToken)
     const diff = numberPrecision(100 * ((out * price_out) / inp / price_in - 1))

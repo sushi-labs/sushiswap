@@ -131,7 +131,7 @@ interface Variants {
 
 function choice(rnd: () => number, obj: Variants) {
   let total = 0
-  Object.entries(obj).forEach(([_, p]) => (total += p))
+  Object.entries(obj).forEach((p) => (total += p[1]))
   if (total <= 0) throw new Error('Error 62')
   const val = rnd() * total
   let past = 0
@@ -245,7 +245,7 @@ function getPoolA(rnd: () => number) {
 }
 
 // price is always 1
-function getHybridPool(rnd: () => number, t0: RToken, t1: RToken) {
+export function getHybridPool(rnd: () => number, t0: RToken, t1: RToken) {
   const fee = getPoolFee(rnd)
   const imbalance = getPoolImbalance(rnd)
   const A = getPoolA(rnd)
@@ -430,17 +430,17 @@ export function createMultipleNetworksWithStargateBridge(
 function getTokenPools(network: Network): Map<RToken, RPool[]> {
   const tokenPools = new Map<RToken, RPool[]>()
   network.pools.forEach((p) => {
-    const pools0 = tokenPools.get(p.token0)
+    const pools0 = tokenPools.get(p.tokens[0])
     if (pools0) {
       pools0.push(p)
     } else {
-      tokenPools.set(p.token0, [p])
+      tokenPools.set(p.tokens[0], [p])
     }
-    const pools1 = tokenPools.get(p.token1)
+    const pools1 = tokenPools.get(p.tokens[1])
     if (pools1) {
       pools1.push(p)
     } else {
-      tokenPools.set(p.token1, [p])
+      tokenPools.set(p.tokens[1], [p])
     }
   })
   return tokenPools
@@ -456,7 +456,7 @@ function getAllConnectedTokens(start: RToken, tokenPools: Map<RToken, RPool[]>):
     }
     connected.add(token)
     tokenPools.get(token)?.forEach((p) => {
-      const token2 = token == p.token0 ? p.token1 : p.token0
+      const token2 = token == p.tokens[0] ? p.tokens[1] : p.tokens[0]
       nextTokens.push(token2)
     })
   }
@@ -520,7 +520,7 @@ export function checkRoute(
 
   // amountOut checks
   if (route.status !== RouteStatus.NoWay) expect(route.amountOut).toBeGreaterThan(0)
-  const outPriceToIn = atomPrice(to) / atomPrice(from)
+  //const outPriceToIn = atomPrice(to) / atomPrice(from)
   // Slippage can be arbitrary
   // Slippage is always not-negative
   // const maxGrow = Math.pow(MAX_POOL_IMBALANCE, route.legs.length)
@@ -559,10 +559,10 @@ export function checkRoute(
     expect(usedPools.get(l.poolAddress)).toBeUndefined()
     usedPools.set(l.poolAddress, true)
     const pool = poolMap.get(l.poolAddress) as RPool
-    usedTokens.set(pool.token0, usedTokens.get(pool.token0) || [])
-    usedTokens.get(pool.token0)?.push(l)
-    usedTokens.set(pool.token1, usedTokens.get(pool.token1) || [])
-    usedTokens.get(pool.token1)?.push(l)
+    usedTokens.set(pool.tokens[0], usedTokens.get(pool.tokens[0]) || [])
+    usedTokens.get(pool.tokens[0])?.push(l)
+    usedTokens.set(pool.tokens[1], usedTokens.get(pool.tokens[1]) || [])
+    usedTokens.get(pool.tokens[1])?.push(l)
   })
   usedTokens.forEach((legs, t) => {
     if (t === from) {

@@ -16,7 +16,7 @@ export class BridgeStargateV04OneWay extends RPool {
     whitelisted: boolean,
     swapGasCost = 150_000
   ) {
-    super(id, token0, token1, Number.NaN, BigNumber.from(0), BigNumber.from(0), 0, swapGasCost)
+    super(id, [token0, token1], Number.NaN, [BigNumber.from(0), BigNumber.from(0)], 0, swapGasCost)
     this.bridgeState = bridgeState
     this.whitelisted = whitelisted
   }
@@ -38,10 +38,12 @@ export class BridgeStargateV04OneWay extends RPool {
     return { out, gasSpent: this.swapGasCost }
   }
 
-  calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars, no-unused-vars
+  calcInByOut(_amountOut: number, _direction: boolean): { inp: number; gasSpent: number } {
     throw new Error('calcInByOut for BridgeStargateV04OneWay')
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars, no-unused-vars
   calcCurrentPriceWithoutFee(_direction: boolean): number {
     return 1
   }

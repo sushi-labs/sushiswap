@@ -92,7 +92,7 @@ export class UniV3Pool extends RPool {
     sqrtPriceX96: BigNumber,
     ticks: CLTick[]
   ) {
-    super(address, token0, token1, fee, reserve0, reserve1, TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST)
+    super(address, [token0, token1], fee, [reserve0, reserve1], TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST)
     this.ticks = ticks
     if (this.ticks.length === 0) {
       this.ticks.push({ index: CL_MIN_TICK, DLiquidity: ZERO })
@@ -107,7 +107,7 @@ export class UniV3Pool extends RPool {
   }
 
   updateState(reserve0: BigNumber, reserve1: BigNumber, tick: number, liquidity: BigNumber, sqrtPriceX96: BigNumber) {
-    this.updateReserves(reserve0, reserve1)
+    this.updateReserves([reserve0, reserve1])
     this.liquidity = liquidity
     this.sqrtPriceX96 = sqrtPriceX96
     this.nearestTick = this._findTickForPrice(tick)

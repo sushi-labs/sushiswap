@@ -1,5 +1,6 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
-import { getBigNumber, StableSwapRPool, closeValues } from '../src'
+
+import { closeValues, getBigNumber, StableSwapRPool } from '../src'
 
 const token0 = {
   name: 'Token0',
@@ -62,13 +63,13 @@ function createPool(
 function checkCurveInvariant(pool: StableSwapRPool, amountIn: number, amountOut: number, direction: boolean) {
   amountIn *= direction ? pool.decimalsCompensation0 : pool.decimalsCompensation1
   amountOut *= direction ? pool.decimalsCompensation1 : pool.decimalsCompensation0
-  const prev_y = parseFloat((direction ? pool.reserve1 : pool.reserve0).toString())
+  const prev_y = parseFloat((direction ? pool.reserves[1] : pool.reserves[0]).toString())
   if (prev_y < amountOut * (1 + 1e-12)) return true // precision doens't allow to make the check -- too big swap
 
   const k = pool.computeK()
   const amountInWithoutFee = amountIn * (1 - pool.fee)
-  const x = (direction ? pool.reserve0 : pool.reserve1).add(getBigNumber(amountInWithoutFee))
-  const y = (direction ? pool.reserve1 : pool.reserve0).sub(getBigNumber(amountOut))
+  const x = (direction ? pool.reserves[0] : pool.reserves[1]).add(getBigNumber(amountInWithoutFee))
+  const y = (direction ? pool.reserves[1] : pool.reserves[0]).sub(getBigNumber(amountOut))
 
   const new_k = x.mul(y).mul(x.mul(x).add(y.mul(y)))
   const diff = new_k.sub(k).abs()
@@ -101,7 +102,7 @@ function checkSwap(pool: StableSwapRPool, amountIn: number, direction: boolean):
   expect(inp).not.toBeNaN()
   expect(inp).toBeGreaterThanOrEqual(0)
 
-  const prev_y = parseFloat((direction ? pool.reserve1 : pool.reserve0).toString())
+  const prev_y = parseFloat((direction ? pool.reserves[1] : pool.reserves[0]).toString())
   if (prev_y > out * (1 + 1e-12))
     // else precision doens't allow to make the check -- too big swap
     expectCloseValues(inp, amountIn, 1e-6)
@@ -125,27 +126,27 @@ function checkPoolPriceCalculation(pool: StableSwapRPool) {
   expect(Math.abs(price1 * price2 - 1)).toBeLessThan(1e-9)
 
   let poolScaled = pool
-  if (pool.reserve0.lt(E33)) {
+  if (pool.reserves[0].lt(E33)) {
     poolScaled = new StableSwapRPool( // Scale E21 times
       pool.address,
-      pool.token0,
-      pool.token1,
+      pool.tokens[0],
+      pool.tokens[1],
       pool.fee,
-      pool.getReserve0().mul(E33),
-      pool.getReserve1().mul(E33),
+      pool.getReserve(0).mul(E33),
+      pool.getReserve(1).mul(E33),
       pool.decimals0,
       pool.decimals1,
       pool.total0.rebaseBN,
       pool.total1.rebaseBN
     )
   }
-  const inp = parseFloat(poolScaled.reserve0.toString()) / 1e15
+  const inp = parseFloat(poolScaled.reserves[0].toString()) / 1e15
   const { out } = poolScaled.calcOutByIn(inp / (1 - pool.fee), true)
   const expected_price = out / inp
   expect(Math.abs(price1 / expected_price - 1)).toBeLessThan(1e-7)
 }
 
-function numberPrecision(n: number, precision = 2) {
+export function numberPrecision(n: number, precision = 2) {
   if (n == 0) return 0
   const digits = Math.ceil(Math.log10(n))
   if (digits >= precision) return Math.round(n)
@@ -173,7 +174,9 @@ describe('StableSwap test', () => {
 
           expectCloseValues(out1, out2, 1e-10)
           expect(out1).toBeLessThanOrEqual(amountIn * 0.9970000001)
-        } catch (e) {} // CalcOutByIn could throw exception
+        } catch (e) {
+          // CalcOutByIn could throw exception
+        }
       }
     })
     it('total is 0', () => {
@@ -191,7 +194,9 @@ describe('StableSwap test', () => {
 
             expect(out1).toEqual(out2)
             expect(out1).toBeLessThanOrEqual(amountIn * 0.997)
-          } catch (e) {} // CalcOutByIn could throw exception
+          } catch (e) {
+            // CalcOutByIn could throw exception
+          }
         }
       }
     })
@@ -212,7 +217,9 @@ describe('StableSwap test', () => {
           const out2 = checkSwap(pool, amountIn * 1e12, false)
 
           expect(out1).toBeLessThanOrEqual(out2)
-        } catch (e) {} // CalcOutByIn could throw exception
+        } catch (e) {
+          // CalcOutByIn could throw exception
+        }
       }
     })
     it('Big disbalance, regular values', () => {
@@ -224,7 +231,9 @@ describe('StableSwap test', () => {
           const out2 = checkSwap(pool, amountIn, false)
 
           expect(out1).toBeLessThanOrEqual(out2)
-        } catch (e) {} // CalcOutByIn could throw exception
+        } catch (e) {
+          // CalcOutByIn could throw exception
+        }
       }
     })
     it('Ideal balance, huge swap values', () => {
@@ -239,7 +248,9 @@ describe('StableSwap test', () => {
 
           expectCloseValues(out1, out2, 1e-10)
           expect(out1).toBeLessThanOrEqual(maxReserve)
-        } catch (e) {} // CalcOutByIn could throw exception
+        } catch (e) {
+          // CalcOutByIn could throw exception
+        }
       }
     })
   })

@@ -17,22 +17,21 @@ export class CurveRPool extends RPool {
     reserve0: BigNumber,
     reserve1: BigNumber
   ) {
-    super(address, token0, token1, fee, reserve0, reserve1)
+    super(address, [token0, token1], fee, [reserve0, reserve1])
     this.A = A
     this.D = BigNumber.from(0)
   }
 
-  updateReserves(res0: BigNumber, res1: BigNumber) {
+  updateReserves(res: BigNumber[]) {
     this.D = BigNumber.from(0)
-    this.reserve0 = res0
-    this.reserve1 = res1
+    this.reserves = res
   }
 
   computeLiquidity(): BigNumber {
     if (!this.D.eq(0)) return this.D // already calculated
 
-    const r0 = this.reserve0
-    const r1 = this.reserve1
+    const r0 = this.reserves[0]
+    const r1 = this.reserves[1]
 
     if (r0.isZero() && r1.isZero()) return BigNumber.from(0)
 
@@ -82,8 +81,8 @@ export class CurveRPool extends RPool {
   }
 
   calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
-    const xBN = direction ? this.reserve0 : this.reserve1
-    const yBN = direction ? this.reserve1 : this.reserve0
+    const xBN = direction ? this.reserves[0] : this.reserves[1]
+    const yBN = direction ? this.reserves[1] : this.reserves[0]
     const xNewBN = xBN.add(getBigNumber(amountIn * (1 - this.fee)))
     const yNewBN = this.computeY(xNewBN)
     const dy = parseInt(yBN.sub(yNewBN).toString())
@@ -92,8 +91,8 @@ export class CurveRPool extends RPool {
   }
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
-    const xBN = direction ? this.reserve0 : this.reserve1
-    const yBN = direction ? this.reserve1 : this.reserve0
+    const xBN = direction ? this.reserves[0] : this.reserves[1]
+    const yBN = direction ? this.reserves[1] : this.reserves[0]
     let yNewBN = yBN.sub(getBigNumber(amountOut))
     if (yNewBN.lt(1))
       // lack of precision
@@ -111,7 +110,7 @@ export class CurveRPool extends RPool {
   }
 
   calcPrice(amountIn: number, direction: boolean, takeFeeIntoAccount: boolean): number {
-    const xBN = direction ? this.reserve0 : this.reserve1
+    const xBN = direction ? this.reserves[0] : this.reserves[1]
     const x = parseInt(xBN.toString())
     const oneMinusFee = takeFeeIntoAccount ? 1 - this.fee : 1
     const D = parseInt(this.computeLiquidity().toString())

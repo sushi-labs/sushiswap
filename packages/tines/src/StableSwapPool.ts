@@ -73,14 +73,10 @@ export class StableSwapRPool extends RPool {
     total0: Rebase,
     total1: Rebase
   ) {
-    super(
-      address,
-      token0,
-      token1,
-      fee,
+    super(address, [token0, token1], fee, [
       realReservesToAdjusted(reserve0, total0, decimals0),
-      realReservesToAdjusted(reserve1, total1, decimals1)
-    )
+      realReservesToAdjusted(reserve1, total1, decimals1),
+    ])
     this.k = BigNumber.from(0)
     this.decimals0 = decimals0
     this.decimals1 = decimals1
@@ -90,11 +86,10 @@ export class StableSwapRPool extends RPool {
     this.total1 = new RebaseInternal(total1)
   }
 
-  getReserve0() {
-    return adjustedReservesToReal(this.reserve0, this.total0.rebaseBN, this.decimals0)
-  }
-  getReserve1() {
-    return adjustedReservesToReal(this.reserve1, this.total1.rebaseBN, this.decimals1)
+  getReserve(i: number) {
+    if (i == 0) return adjustedReservesToReal(this.reserves[0], this.total0.rebaseBN, this.decimals0)
+    if (i == 1) return adjustedReservesToReal(this.reserves[1], this.total1.rebaseBN, this.decimals1)
+    throw new Error('StableSwapRPool: Unsupported reserve number ' + i)
   }
   granularity0(): number {
     return Math.max(1 / this.decimalsCompensation0, 1)
@@ -103,10 +98,12 @@ export class StableSwapRPool extends RPool {
     return Math.max(1 / this.decimalsCompensation1, 1)
   }
 
-  updateReserves(res0: BigNumber, res1: BigNumber) {
+  updateReserves(res: BigNumber[]) {
     this.k = BigNumber.from(0)
-    this.reserve0 = realReservesToAdjusted(res0, this.total0.rebaseBN, this.decimals0)
-    this.reserve1 = realReservesToAdjusted(res1, this.total1.rebaseBN, this.decimals1)
+    this.reserves = [
+      realReservesToAdjusted(res[0], this.total0.rebaseBN, this.decimals0),
+      realReservesToAdjusted(res[1], this.total1.rebaseBN, this.decimals1),
+    ]
   }
 
   getTotal0() {
@@ -132,8 +129,8 @@ export class StableSwapRPool extends RPool {
 
   computeK(): BigNumber {
     if (this.k.isZero()) {
-      const x = this.reserve0
-      const y = this.reserve1
+      const x = this.reserves[0]
+      const y = this.reserves[1]
       this.k = x.mul(y).mul(x.mul(x).add(y.mul(y)))
     }
     return this.k
@@ -159,8 +156,8 @@ export class StableSwapRPool extends RPool {
   calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
     amountIn = direction ? this.total0.toAmount(amountIn) : this.total1.toAmount(amountIn)
     amountIn *= direction ? this.decimalsCompensation0 : this.decimalsCompensation1
-    const x = direction ? this.reserve0 : this.reserve1
-    const y = direction ? this.reserve1 : this.reserve0
+    const x = direction ? this.reserves[0] : this.reserves[1]
+    const y = direction ? this.reserves[1] : this.reserves[0]
     const xNew = x.add(getBigNumber(Math.floor(amountIn * (1 - this.fee))))
     const yNew = this.computeY(xNew, y)
     const outA = parseInt(y.sub(yNew).toString()) - 1 // with precision loss compensation
@@ -168,7 +165,7 @@ export class StableSwapRPool extends RPool {
     const outC = direction ? this.total1.toShare(outB) : this.total0.toShare(outB)
     const out = outC / (direction ? this.decimalsCompensation1 : this.decimalsCompensation0)
 
-    const initialReserve = direction ? this.getReserve1() : this.getReserve0()
+    const initialReserve = direction ? this.getReserve(1) : this.getReserve(0)
     if (initialReserve.sub(getBigNumber(out)).lt(this.minLiquidity)) throw new Error('StableSwap OutOfLiquidity')
 
     return { out, gasSpent: this.swapGasCost }
@@ -177,8 +174,8 @@ export class StableSwapRPool extends RPool {
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
     amountOut = direction ? this.total0.toAmount(amountOut) : this.total1.toAmount(amountOut)
     amountOut *= direction ? this.decimalsCompensation1 : this.decimalsCompensation0
-    const x = direction ? this.reserve0 : this.reserve1
-    const y = direction ? this.reserve1 : this.reserve0
+    const x = direction ? this.reserves[0] : this.reserves[1]
+    const y = direction ? this.reserves[1] : this.reserves[0]
     const yNew = y.sub(getBigNumber(Math.ceil(amountOut)))
     if (yNew.lt(this.minLiquidity)) {
       // not possible swap
@@ -194,8 +191,8 @@ export class StableSwapRPool extends RPool {
   }
 
   calcCurrentPriceWithoutFee(direction: boolean): number {
-    const calcDirection = this.reserve0.gt(this.reserve1)
-    const xBN = calcDirection ? this.reserve0 : this.reserve1
+    const calcDirection = this.reserves[0].gt(this.reserves[1])
+    const xBN = calcDirection ? this.reserves[0] : this.reserves[1]
     const x = parseInt(xBN.toString())
     const k = parseInt(this.computeK().toString())
     const q = k / x / 2
