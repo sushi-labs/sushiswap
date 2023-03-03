@@ -31,7 +31,8 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "generate": "graphclient build --fileType js --throwOnInvalidConfig && tsc",
+    "build": "tsc",
+    "generate": "graphclient build --fileType js --throwOnInvalidConfig",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "graphclient serve-dev",
