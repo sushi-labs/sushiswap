@@ -31,7 +31,7 @@ export const usePrices = ({
   } = useQuery(
     queryKey,
     () => fetch(`https://token-price.sushi.com/v1/${chainId}`).then((response) => response.json()),
-    { staleTime: 20000, enabled: Boolean(chainId), ...options }
+    { staleTime: 60000, enabled: Boolean(chainId), ...options }
   )
 
   return useMemo(() => {

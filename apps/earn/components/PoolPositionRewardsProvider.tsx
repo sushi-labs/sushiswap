@@ -53,9 +53,9 @@ export const PoolPositionRewardsProvider: FC<PoolPositionStakedProviderProps> = 
   return (
     <_PoolPositionRewardsProvider
       pool={pool}
-      farmId={Number(pool.incentives[0].pid)}
-      chefType={pool.incentives[0].chefType}
-      incentives={pool.incentives}
+      farmId={Number(pool?.incentives?.[0]?.pid)}
+      chefType={pool?.incentives?.[0]?.chefType}
+      incentives={pool?.incentives}
     >
       {children}
     </_PoolPositionRewardsProvider>

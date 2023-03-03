@@ -5,7 +5,7 @@ import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
 import { AppearOnMount, Currency, Link, NetworkIcon, Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
-import { FC, useMemo } from 'react'
+import { FC } from 'react'
 
 import { useGraphPool } from '../../lib/hooks'
 import { FarmRewardsAvailableTooltip } from '../FarmRewardsAvailableTooltip'
