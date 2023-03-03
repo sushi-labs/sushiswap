@@ -1,3 +1,4 @@
+import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { formatNumber, formatPercent, formatUSD } from '@sushiswap/format'
 import { Pair } from '@sushiswap/graph-client'
@@ -11,7 +12,12 @@ interface PoolStats {
 
 export const PoolStats: FC<PoolStats> = ({ pair }) => {
   const { data: prices } = usePrices({ chainId: pair.chainId })
-  const nativePrice = prices?.[Native.onChain(pair.chainId).wrapped.address]
+  let nativePrice = prices?.[Native.onChain(pair.chainId).wrapped.address]
+
+  if (pair.chainId === ChainId.POLYGON) {
+    nativePrice = prices?.['0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619']
+  }
+
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
