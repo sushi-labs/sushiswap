@@ -31,11 +31,10 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsc",
-    "generate": "graphclient build --fileType js --throwOnInvalidConfig",
+    "build": "graphclient build --fileType js --throwOnInvalidConfig && tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo .graphclient node_modules",
-    "dev": "graphclient serve-dev",
+    "dev": "graphclient serve-dev", 
     "lint": "TIMING=1 eslint . --fix",
     "prepublishOnly": "pnpm build",
     "start": "graphclient serve-prod",

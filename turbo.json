@@ -115,7 +115,7 @@
         "typechain/**/*",
         "artifacts/**/*"
       ],
-      "cache": false
+      "cache": true
     },
     "lint": {
       "dependsOn": ["^build"],
