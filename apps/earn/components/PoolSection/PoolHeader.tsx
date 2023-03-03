@@ -17,12 +17,7 @@ interface PoolHeader {
 export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
   const { data: prices } = usePrices({ chainId: pool.chainId })
 
-  const { token0, token1, reserve0, reserve1, liquidityToken } = useGraphPool(pool)
-
-  const price = useMemo(
-    () => (reserve0 && reserve1 ? new Price({ baseAmount: reserve0, quoteAmount: reserve1 }) : null),
-    [reserve0, reserve1]
-  )
+  const { token0, token1, liquidityToken } = useGraphPool(pool)
 
   return (
     <div className="flex flex-col gap-5">
@@ -82,8 +77,8 @@ export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
           <Typography variant="sm" weight={600} className="text-slate-300">
             <AppearOnMount>
               {token0.symbol} ={' '}
-              {prices?.[token1.wrapped.address] && price
-                ? formatUSD(Number(price.toFixed(6)) * Number(prices[token1.wrapped.address].toSignificant(6)))
+              {prices?.[token0.wrapped.address]
+                ? formatUSD(Number(prices[token0.wrapped.address].toSignificant(6)))
                 : `$0.00`}
             </AppearOnMount>
           </Typography>
@@ -93,8 +88,8 @@ export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
           <Typography variant="sm" weight={600} className="text-slate-300">
             <AppearOnMount>
               {token1.symbol} ={' '}
-              {prices?.[token0.wrapped.address] && price
-                ? formatUSD(Number(prices[token0.wrapped.address].toSignificant(6)) / Number(price.toSignificant(6)))
+              {prices?.[token1.wrapped.address]
+                ? formatUSD(Number(prices[token1.wrapped.address].toSignificant(6)))
                 : '$0.00'}{' '}
             </AppearOnMount>
           </Typography>

@@ -1,9 +1,9 @@
-import {getAddress, isAddress} from '@ethersproject/address'
-import {Fraction} from '@sushiswap/math'
-import {UseQueryOptions} from '@tanstack/react-query'
-import {parseUnits} from 'ethers/lib/utils'
-import {useMemo} from 'react'
-import {useQuery} from 'wagmi'
+import { getAddress, isAddress } from '@ethersproject/address'
+import { Fraction } from '@sushiswap/math'
+import { UseQueryOptions } from '@tanstack/react-query'
+import { parseUnits } from 'ethers/lib/utils'
+import { useMemo } from 'react'
+import { useQuery } from 'wagmi'
 
 // type UsePrices = ({
 //   chainId,
@@ -23,14 +23,14 @@ export const usePrices = ({
     'queryKey' | 'queryFn' | 'initialData'
   >
 }) => {
-  const queryKey = useMemo(() => [`https://token-price.sushi.com/v0/${chainId}`], [chainId])
+  const queryKey = useMemo(() => [`https://token-price.sushi.com/v1/${chainId}`], [chainId])
   const {
     data: pricesMap,
     isError,
     isLoading,
   } = useQuery(
     queryKey,
-    () => fetch(`https://token-price.sushi.com/v0/${chainId}`).then((response) => response.json()),
+    () => fetch(`https://token-price.sushi.com/v1/${chainId}`).then((response) => response.json()),
     { staleTime: 20000, enabled: Boolean(chainId), ...options }
   )
 
