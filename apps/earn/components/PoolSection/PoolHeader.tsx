@@ -49,7 +49,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
                 </Typography>
               </div>
               <Typography variant="xs" className="text-slate-300">
-                Fee: {pool.swapFee * 100}%
+                Fee: {formatPercent(pool.swapFee)}
               </Typography>
             </Link.External>
           </div>

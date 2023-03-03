@@ -13,11 +13,11 @@ interface PoolStats {
 
 export const PoolStats: FC<PoolStats> = ({ pool }) => {
   const { data: prices } = usePrices({ chainId: pool.chainId })
-  let nativePrice = prices?.[Native.onChain(pool.chainId).wrapped.address]
+  const nativePrice = prices?.[Native.onChain(pool.chainId).wrapped.address]
 
-  if (pool.chainId === ChainId.POLYGON) {
-    nativePrice = prices?.['0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619']
-  }
+  // if (pool.chainId === ChainId.POLYGON) {
+  //   nativePrice = prices?.['0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619']
+  // }
 
   const {
     liquidityNative,
