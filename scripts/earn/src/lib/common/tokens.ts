@@ -1,4 +1,4 @@
-import type { ChainId } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import {
   SUBGRAPH_HOST,
   SUSHISWAP_SUBGRAPH_NAME,
@@ -8,7 +8,6 @@ import {
 } from '@sushiswap/graph-config'
 import { isSushiSwapChain, isTridentChain } from '@sushiswap/validate'
 import { Address, erc20ABI, readContracts } from '@wagmi/core'
-import { BigNumber } from 'ethers'
 
 import { divBigNumberToNumber } from './utils.js'
 
@@ -26,9 +25,10 @@ const getExchangeTokens = async (ids: string[], chainId: SushiSwapChainId): Prom
   const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
   const sdk = getBuiltGraphSDK({
-    path: SUBGRAPH_HOST[chainId],
+    host: SUBGRAPH_HOST[chainId],
     name: subgraphName,
   })
+
   // waiting for new subgraph to sync
   const { tokens, bundle } = await sdk.Tokens({
     where: { id_in: ids.map((id) => id.toLowerCase()) },
@@ -37,8 +37,8 @@ const getExchangeTokens = async (ids: string[], chainId: SushiSwapChainId): Prom
   return tokens.map((token) => ({
     id: token.id,
     symbol: token.symbol,
-    decimals: Number(token.decimals),
     name: token.name,
+    decimals: Number(token.decimals),
     liquidity: Number(token.liquidity),
     derivedUSD: token.price.derivedNative * bundle?.nativePrice,
   }))
@@ -122,12 +122,21 @@ export async function getTokenBalancesOf(_tokens: string[], address: string, cha
     }),
   ])
 
-  return tokens.map((token, i) => ({
-    token,
-    // TODO: when response is null, should we return 0 or exclude the token completely? why is null returned?
-    balance:
-      BigNumber.isBigNumber(balancesOf?.[i]) && typeof decimals?.[i] === 'number'
-        ? divBigNumberToNumber(balancesOf[i] as BigNumber, decimals[i] as number)
-        : 0,
-  }))
+  return tokens
+    .map((token, i) => {
+      const balance = balancesOf[i]
+      const decimal = decimals[i]
+
+      if (balance === null || decimal === null) {
+        console.log(`Balance / decimal fetch failed for ${token} on ${ChainId[chainId]}`)
+        return null
+      }
+
+      return {
+        token,
+        // so that we don't need to seed new pairs
+        balance: balancesOf[i]?.eq(0) ? 1 : divBigNumberToNumber(balancesOf[i], decimals[i]),
+      }
+    })
+    .filter((token): token is NonNullable<typeof token> => Boolean(token))
 }

@@ -18,8 +18,7 @@ import {
 } from './fetchers.js'
 export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): Promise<ChefReturn> {
   try {
-    // SUSHI token / minichef is not on these chains
-    if (chainId === ChainId.ARBITRUM_NOVA || chainId === ChainId.OPTIMISM || chainId === ChainId.BTTC) {
+    if (!(chainId in SUSHI)) {
       return { chainId, farms: null }
     }
 
@@ -44,7 +43,7 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
       getLpTokens(poolLength.toNumber(), chainId),
       getRewarders(poolLength.toNumber(), chainId),
       getTokens(
-        rewarderInfos.map((rewarder) => rewarder.rewardToken),
+        rewarderInfos.map((rewarder) => rewarder?.rewardToken),
         chainId
       ),
     ])
@@ -97,7 +96,7 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
           const token = tokens.find((token) => token.id === pool.rewarder?.rewardToken)
 
           if (token) {
-            let rewardPerSecond
+            let rewardPerSecond = 0
             // Multipool rewarder
             if (pool.rewarder.pools) {
               const poolInfo = pool.rewarder.pools.find((rewaderPool) => rewaderPool.id === pool.id)

@@ -132,6 +132,7 @@ model SushiPool {
   incentiveApr         Float       @default(0)
   totalApr             Float       @default(0)
   isIncentivized       Boolean     @default(false)
+  wasIncentivized      Boolean     @default(false)
   incentives           Incentive[]
   volume1d             Decimal     @default(0)
   fees1d               Decimal     @default(0)

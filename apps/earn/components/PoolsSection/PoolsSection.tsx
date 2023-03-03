@@ -1,6 +1,6 @@
 import { Tab } from '@headlessui/react'
 // import { UserWithFarm } from '@sushiswap/graph-client'
-import { Chip, classNames } from '@sushiswap/ui'
+import { Chip, classNames, Loader } from '@sushiswap/ui'
 import { FC, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { useUserPositions } from '../../lib/hooks/api/useUserPositions'
@@ -11,7 +11,7 @@ import { TableFilters } from './Tables/TableFilters'
 export const PoolsSection: FC<{ isReady?: boolean }> = ({ isReady }) => {
   const { address } = useAccount()
   const [tab, setTab] = useState<number>(0)
-  const { data: userPositions } = useUserPositions({ id: address as string }, !!address)
+  const { data: userPositions, isValidating } = useUserPositions({ id: address as string }, !!address)
 
   return (
     <section className="flex flex-col">
@@ -37,7 +37,16 @@ export const PoolsSection: FC<{ isReady?: boolean }> = ({ isReady }) => {
                 )
               }
             >
-              My Positions <Chip label={userPositions?.length || '0'} size="sm" color="blue" />
+              My Positions{' '}
+              <>
+                <Chip
+                  label={userPositions?.length ?? ''}
+                  icon={isValidating && <Loader size={8} scale={10} />}
+                  size="sm"
+                  color="blue"
+                  className="min-w-[32px]"
+                />
+              </>
             </Tab>
           )}
         </div>
