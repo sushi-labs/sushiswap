@@ -66,18 +66,20 @@ export const TradeStats: FC = () => {
         {/*    )}*/}
         {/*  </span>*/}
         {/*</div>*/}
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-700 dark:text-slate-400">Recipient</span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {+value > 0 && loading ? (
-              <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
-            ) : recipient ? (
-              shortenAddress(recipient)
-            ) : (
-              'N/A'
-            )}
-          </span>
-        </div>
+
+        {recipient ? (
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-700 dark:text-slate-400">Recipient</span>
+            <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+              {+value > 0 && loading ? (
+                <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
+              ) : (
+                shortenAddress(recipient)
+              )}
+            </span>
+          </div>
+        ) : null}
+
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">Network fee</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
