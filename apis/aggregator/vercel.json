@@ -9,7 +9,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/v0/:chainId/pools", "destination": "/api/v0/:chainId/pools/:protocol/:version" },
-    { "source": "/v0/:chainId/top-pools", "destination": "/api/v0/:chainId/top-pools/:protocol/:version" }
+    { "source": "/v0/:chainId/pools/:protocol/:version", "destination": "/api/v0/:chainId/pools/:protocol/:version" },
+    { "source": "/v0/:chainId/top-pools/:protocol/:version", "destination": "/api/v0/:chainId/top-pools/:protocol/:version" }
   ]
 }
