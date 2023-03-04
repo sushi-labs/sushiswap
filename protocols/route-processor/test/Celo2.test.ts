@@ -7,7 +7,7 @@ import { BigNumber, Signer } from 'ethers'
 import { ethers } from 'hardhat'
 
 //const RouteProcessorAddr = '0x9B3fF703FA9C8B467F5886d7b61E61ba07a9b51c'
-const RouteProcessorAddr = '0x3e1116eA5034f5D73a7B530071709D54A4109F5f' // new Route Processor
+const RouteProcessorAddr = '0xf267704dd1393c26b39a6d41f49bea233b34f722' // new Route Processor
 
 const cUSDC = new Token({
   chainId: ChainId.CELO,
@@ -38,9 +38,9 @@ async function makeSwap(
   expect(route?.status).equal(RouteStatus.Success)
 
   if (route) {
-    const rpParams = Router.routeProcessorParams(dataFetcher, route, fromToken, toToken, to, RouteProcessorAddr)
+    const rpParams = Router.routeProcessor2Params(dataFetcher, route, fromToken, toToken, to, RouteProcessorAddr)
 
-    const RouteProcessorFactory = await ethers.getContractFactory('RouteProcessor', signer)
+    const RouteProcessorFactory = await ethers.getContractFactory('RouteProcessor2', signer)
     const RouteProcessor = RouteProcessorFactory.attach(RouteProcessorAddr)
     const res = await RouteProcessor.callStatic.processRoute(
       rpParams.tokenIn,
@@ -84,15 +84,7 @@ if (process.env.INFURA_API_KEY) {
     it('cUSDC => CELO', async () => {
       const user = '0xed30404098da5948d8B3cBD7958ceB641F2C352c' // has cUSDC and approved 800000 to the RP
       const signer = await provider.getUncheckedSigner(user)
-      await makeSwap(
-        dataFetcher,
-        signer,
-        cUSDC,
-        WNATIVE[chainId], //Native.onChain(chainId),
-        user,
-        user,
-        getBigNumber(800000)
-      )
+      await makeSwap(dataFetcher, signer, cUSDC, Native.onChain(chainId), user, user, getBigNumber(800000))
     })
   })
 }

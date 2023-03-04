@@ -1,11 +1,8 @@
-import { Native } from '@sushiswap/currency'
 import { formatNumber, formatPercent, formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
 import { Typography } from '@sushiswap/ui'
-import { usePrices } from '@sushiswap/wagmi'
 import { FC } from 'react'
 import { useGraphPool } from '../../lib/hooks'
-import { ChainId } from '@sushiswap/chain'
 
 interface PoolStats {
   pool: Pool
@@ -20,7 +17,6 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
   // }
 
   const {
-    liquidityNative,
     liquidityUSD,
     liquidity1dChange,
     fees1d,

@@ -2,9 +2,13 @@
   "name": "@sushiswap/tines-sandbox",
   "version": "0.0.0",
   "private": true,
-  "description": "Sndbox for Tines testing",
+  "description": "Sandbox for Tines testing",
   "license": "UNLICENSED",
   "author": "Ilya Lyalin",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "source": "src/index.ts",
+  "typings": "dist/index.d.ts",
   "files": [
     "artifacts",
     "contracts",
@@ -15,7 +19,7 @@
     "typechain"
   ],
   "scripts": {
-    "build": "TS_NODE_TRANSPILE_ONLY=1 hardhat compile",
+    "build": "TS_NODE_TRANSPILE_ONLY=1 hardhat compile && tsup src/index.ts --format esm,cjs --dts",
     "clean": "rm -rf .turbo node_modules artifacts cache exports typechain",
     "console": "hardhat console",
     "get-deploy-code": "ts-node ./deploy/GetDeployCode.ts",
@@ -67,7 +71,9 @@
     "hardhat-watcher": "2.5.0",
     "prettier": "2.8.1",
     "prettier-plugin-solidity": "1.1.0",
+    "seedrandom": "^3.0.5",
     "solidity-coverage": "0.8.2",
+    "tsup": "6.5.0",
     "ts-generator": "0.1.1",
     "ts-node": "10.9.1",
     "typechain": "8.1.1",

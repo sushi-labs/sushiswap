@@ -113,26 +113,28 @@ async function getPoolsByPagination(
 function transform(pools: Pool[]) {
   const poolsToUpdate: PoolWithLiquidity[] = []
   for (const pool of pools) {
-    const pt0 = pool.token0
-    const pt1 = pool.token1
-    if (pt0.derivedUSD === null && pt1.derivedUSD === null) continue
+    const t0 = pool.token0
+    const t1 = pool.token1
+    if (t0.derivedUSD === null && t1.derivedUSD === null) continue
 
     if (
-      pool.token0.derivedUSD !== null &&
-      pool.token0.derivedUSD.gt(0) &&
-      pool.token1.derivedUSD !== null &&
-      pool.token1.derivedUSD.gt(0)
+      t0.derivedUSD !== null &&
+      t0.status === 'APPROVED' &&
+      t0.derivedUSD.gt(0) &&
+      t1.derivedUSD !== null &&
+      t1.status === 'APPROVED' &&
+      t1.derivedUSD.gt(0)
     ) {
-      const amount0 = (Number(pool.reserve0) / 10 ** pool.token0.decimals) * Number(pool.token0.derivedUSD)
-      const amount1 = (Number(pool.reserve1) / 10 ** pool.token1.decimals) * Number(pool.token1.derivedUSD)
+      const amount0 = (Number(pool.reserve0) / 10 ** t0.decimals) * Number(t0.derivedUSD)
+      const amount1 = (Number(pool.reserve1) / 10 ** t1.decimals) * Number(t1.derivedUSD)
       const liquidityUSD = amount0 + amount1
       poolsToUpdate.push({ id: pool.id, liquidityUSD: liquidityUSD.toString() })
-    } else if (pool.token0.derivedUSD !== null && pool.token0.derivedUSD.gt(0)) {
-      const amount0 = (Number(pool.reserve0) / 10 ** pool.token0.decimals) * Number(pool.token0.derivedUSD)
+    } else if (t0.derivedUSD !== null && t0.derivedUSD.gt(0) && t0.status === 'APPROVED') {
+      const amount0 = (Number(pool.reserve0) / 10 ** t0.decimals) * Number(t0.derivedUSD)
       const liquidityUSD = amount0 * 2
       poolsToUpdate.push({ id: pool.id, liquidityUSD: liquidityUSD.toString() })
-    } else if (pool.token1.derivedUSD !== null && pool.token1.derivedUSD.gt(0)) {
-      const amount1 = (Number(pool.reserve1) / 10 ** pool.token1.decimals) * Number(pool.token1.derivedUSD)
+    } else if (t1.derivedUSD !== null && t1.derivedUSD.gt(0) && t1.status === 'APPROVED') {
+      const amount1 = (Number(pool.reserve1) / 10 ** t1.decimals) * Number(t1.derivedUSD)
       const liquidityUSD = amount1 * 2
       poolsToUpdate.push({ id: pool.id, liquidityUSD: liquidityUSD.toString() })
     }

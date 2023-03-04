@@ -75,4 +75,13 @@ export class BentoBridgePoolCode extends PoolCode {
       }
     }
   }
+
+  getSwapCodeForRouteProcessor2(leg: RouteLeg, _route: MultiRoute, to: string): string {
+    const code = new HEXer()
+      .uint8(3) // bentoBridge
+      .uint8(leg.tokenFrom.chainId == this.pool.token0.chainId ? 1 : 0) // direction = deposit/withdraw
+      .address(to)
+      .toString()
+    return code
+  }
 }

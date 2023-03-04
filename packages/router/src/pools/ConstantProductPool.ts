@@ -21,4 +21,15 @@ export class ConstantProductPoolCode extends PoolCode {
     console.assert(code.length == 62 * 2, 'getSwapCodeForRouteProcessor unexpected code length')
     return code
   }
+
+  getSwapCodeForRouteProcessor2(leg: RouteLeg, _route: MultiRoute, to: string): string {
+    const code = new HEXer()
+      .uint8(0) // uniV2 pool
+      .address(this.pool.address)
+      .bool(leg.tokenFrom.address == this.pool.token0.address)
+      .address(to)
+      //.bool(presended)
+      .toString()
+    return code
+  }
 }

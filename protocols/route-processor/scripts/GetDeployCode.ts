@@ -9,7 +9,7 @@ console.log('BentoBox: ', bentoBoxV1Address[chainId])
 getCode()
 
 async function getCode() {
-  const RouteProcessor = await ethers.getContractFactory('RouteProcessor')
+  const RouteProcessor = await ethers.getContractFactory('RouteProcessor2')
   const deplTrans = RouteProcessor.getDeployTransaction(
     bentoBoxV1Address[chainId] || '0x0000000000000000000000000000000000000000'
   )
