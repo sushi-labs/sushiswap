@@ -11,6 +11,7 @@ import { JetSwapProvider } from './liquidity-providers/JetSwap'
 import { LiquidityProvider, LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
 import { NetSwapProvider } from './liquidity-providers/NetSwap'
+import { PancakeSwapProvider } from './liquidity-providers/PancakeSwap'
 import { QuickSwapProvider } from './liquidity-providers/QuickSwap'
 import { SpookySwapProvider } from './liquidity-providers/SpookySwap'
 import { SushiProvider } from './liquidity-providers/Sushi'
@@ -143,6 +144,15 @@ export class DataFetcher {
     if (this._providerIsIncluded(LiquidityProviders.NetSwap, providers)) {
       try {
         const provider = new NetSwapProvider(this.chainId, this.client)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+    
+    if (this._providerIsIncluded(LiquidityProviders.PancakeSwap, providers)) {
+      try {
+        const provider = new PancakeSwapProvider(this.chainId, this.client)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
