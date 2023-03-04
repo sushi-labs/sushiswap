@@ -1,11 +1,12 @@
 import type { MultiRoute, RouteLeg, UniV3Pool } from '@sushiswap/tines'
 
 import { HEXer } from '../HEXer'
+import { LiquidityProviders } from '../liquidity-providers'
 import { PoolCode } from './PoolCode'
 
 export class UniV3PoolCode extends PoolCode {
-  constructor(pool: UniV3Pool, providerName: string) {
-    super(pool, `${providerName} ${pool.fee * 100}%`)
+  constructor(pool: UniV3Pool, liquidityProvider: LiquidityProviders, providerName: string) {
+    super(pool, liquidityProvider, `${providerName} ${pool.fee * 100}%`)
   }
 
   override getStartPoint(): string {

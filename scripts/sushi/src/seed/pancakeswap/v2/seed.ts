@@ -52,7 +52,7 @@ async function start(client: PrismaClient) {
     }
     console.log(`Loading data from chain: ${chainName[chainId]}(${chainId}), ${PANCAKESWAP_SUBGRAPH_NAME[chainId]}`)
     let pairCount = 0
-    let cursor = '0xad275c9330db6e5c5edfea53297ad513c136211c'
+    let cursor = ''
 
     do {
       const startTime = performance.now()
