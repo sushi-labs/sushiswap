@@ -508,8 +508,8 @@ export class TridentProvider extends LiquidityProvider {
     pools.forEach((pool, i) => {
       const res = reserves[i]
       if (res === undefined) return
-      if (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1])) {
-        pool.updateReserves(res[0], res[1])
+      if (!pool.reserves[0].eq(res[0]) || !pool.reserves[1].eq(res[1])) {
+        pool.updateReserves(res)
         ++this.stateId
       }
     })
@@ -527,7 +527,7 @@ export class TridentProvider extends LiquidityProvider {
     )
     await totalsPromise
     pools.forEach((pool, i) => {
-      const total0 = this.lastFetchedTotals.get(pool.token0.address)
+      const total0 = this.lastFetchedTotals.get(pool.tokens[0].address)
       if (total0) {
         const current = pool.getTotal0()
         if (!total0.elastic.eq(current.elastic) || !total0.base.eq(current.base)) {
@@ -535,7 +535,7 @@ export class TridentProvider extends LiquidityProvider {
           ++this.stateId
         }
       }
-      const total1 = this.lastFetchedTotals.get(pool.token1.address)
+      const total1 = this.lastFetchedTotals.get(pool.tokens[1].address)
       if (total1) {
         const current = pool.getTotal1()
         if (!total1.elastic.eq(current.elastic) || !total1.base.eq(current.base)) {
@@ -545,8 +545,8 @@ export class TridentProvider extends LiquidityProvider {
       }
 
       const res = reserves[i]
-      if (res !== undefined && (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1]))) {
-        pool.updateReserves(toShareBN(res[0], pool.getTotal0()), toShareBN(res[1], pool.getTotal1()))
+      if (res !== undefined && (!pool.reserves[0].eq(res[0]) || !pool.reserves[1].eq(res[1]))) {
+        pool.updateReserves([toShareBN(res[0], pool.getTotal0()), toShareBN(res[1], pool.getTotal1())])
         ++this.stateId
       }
     })
@@ -561,10 +561,10 @@ export class TridentProvider extends LiquidityProvider {
       BentoBoxAddr,
       totalsABI,
       'totals',
-      bridges.map((b) => [b.token0.address])
+      bridges.map((b) => [b.tokens[0].address])
     )
     const balancesPromise = this.multiCallProvider.multiContractCall(
-      bridges.map((b) => b.token0.address),
+      bridges.map((b) => b.tokens[0].address),
       balanceOfABI,
       'balanceOf',
       [BentoBoxAddr]
@@ -575,14 +575,14 @@ export class TridentProvider extends LiquidityProvider {
 
     totals.forEach((t, i) => {
       if (t === undefined) return
-      this.lastFetchedTotals.set(bridges[i].token0.address, t)
+      this.lastFetchedTotals.set(bridges[i].tokens[0].address, t)
     })
 
     bridges.forEach((br, i) => {
       const total = totals[i]
       if (total == undefined) return
-      if (!br.reserve0.eq(total.elastic) || !br.reserve1.eq(total.base)) {
-        br.updateReserves(total.elastic, total.base)
+      if (!br.reserves[0].eq(total.elastic) || !br.reserves[1].eq(total.base)) {
+        br.updateReserves([total.elastic, total.base])
         ++this.stateId
       }
       const balance = balances[i]

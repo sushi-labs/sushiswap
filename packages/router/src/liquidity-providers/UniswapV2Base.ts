@@ -120,8 +120,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       const res = reserves[i]
       if (res !== undefined) {
         const pool = poolAddr.get(addr) as RPool
-        if (!res[0].eq(pool.reserve0) || !res[1].eq(pool.reserve1)) {
-          pool.updateReserves(res[0], res[1])
+        if (!res[0].eq(pool.reserves[0]) || !res[1].eq(pool.reserves[1])) {
+          pool.updateReserves(res)
           ++this.stateId
         }
       }

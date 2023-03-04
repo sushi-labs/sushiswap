@@ -13,7 +13,7 @@ export class BentoBridgePoolCode extends PoolCode {
   }
 
   override getStartPoint(leg: RouteLeg): string {
-    if (leg.tokenFrom.chainId == this.pool.token0.chainId) {
+    if (leg.tokenFrom.chainId == this.pool.tokens[0].chainId) {
       // bento deposit
       return this.bentoBoxAddress
     } else {
@@ -22,7 +22,7 @@ export class BentoBridgePoolCode extends PoolCode {
   }
 
   getSwapCodeForRouteProcessor(leg: RouteLeg, route: MultiRoute, to: string, exactAmount?: BigNumber): string {
-    if (leg.tokenFrom.chainId == this.pool.token0.chainId) {
+    if (leg.tokenFrom.chainId == this.pool.tokens[0].chainId) {
       // bento deposit
       if (leg.tokenFrom.tokenId === route.fromToken.tokenId) {
         // input token with exactAmount
@@ -78,7 +78,7 @@ export class BentoBridgePoolCode extends PoolCode {
   getSwapCodeForRouteProcessor2(leg: RouteLeg, _route: MultiRoute, to: string): string {
     const code = new HEXer()
       .uint8(3) // bentoBridge
-      .uint8(leg.tokenFrom.chainId == this.pool.token0.chainId ? 1 : 0) // direction = deposit/withdraw
+      .uint8(leg.tokenFrom.chainId == this.pool.tokens[0].chainId ? 1 : 0) // direction = deposit/withdraw
       .address(to)
       .toString()
     return code
