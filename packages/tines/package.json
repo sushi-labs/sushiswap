@@ -37,7 +37,7 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@types/node": "^17.0.35",
+    "@types/node": "^18.0.0",
     "@types/seedrandom": "^3.0.1",
     "eslint": "8.29.0",
     "seedrandom": "^3.0.5",

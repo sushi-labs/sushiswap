@@ -49,7 +49,7 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@types/node": "18.11.12",
+    "@types/node": "^18.0.0",
     "ethers": "5.7.2",
     "hardhat": "2.12.7",
     "tsup": "6.5.0",
