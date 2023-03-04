@@ -10,9 +10,34 @@ import {
   DataFetcher,
   Router,
 } from '@sushiswap/smart-order-router'
+import {
+  arbitrum,
+  arbitrumNova,
+  avalanche,
+  boba,
+  bobaAvax,
+  bobaBnb,
+  bsc,
+  bttc,
+  celo,
+  fantom,
+  fuse,
+  gnosis,
+  harmony,
+  kava,
+  mainnet,
+  metis,
+  moonbeam,
+  moonriver,
+  optimism,
+  polygon,
+} from '@sushiswap/viem-config'
 import { BigNumber } from 'ethers'
 import fastify from 'fastify'
 import { performance } from 'perf_hooks'
+// import { createPublicClient, http } from 'viem'
+// import { arbitrum, bsc, celo, mainnet, optimism, polygon } from 'viem/chains'
+import { createPublicClient, fallback, http, PublicClient } from 'viem'
 import { z } from 'zod'
 
 import { getToken } from './tokens'
@@ -112,32 +137,6 @@ server.get('/v0', async (request) => {
       : undefined,
   }
 })
-
-import {
-  arbitrum,
-  arbitrumNova,
-  avalanche,
-  boba,
-  bobaAvax,
-  bobaBnb,
-  bsc,
-  bttc,
-  celo,
-  fantom,
-  fuse,
-  gnosis,
-  harmony,
-  kava,
-  mainnet,
-  metis,
-  moonbeam,
-  moonriver,
-  optimism,
-  polygon,
-} from '@sushiswap/viem-config'
-// import { createPublicClient, http } from 'viem'
-// import { arbitrum, bsc, celo, mainnet, optimism, polygon } from 'viem/chains'
-import { createPublicClient, fallback, http, PublicClient } from 'viem'
 
 // Run the server!
 const start = async () => {

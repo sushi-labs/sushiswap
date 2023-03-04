@@ -20,6 +20,7 @@ import {
   LINK,
   LUSD,
   MIM,
+  Native,
   NFTX,
   OHM,
   PRIMATE,
@@ -348,6 +349,7 @@ export const CUSTOM_BASES: {
 
 export const COMMON_BASES = {
   [ChainId.ETHEREUM]: [
+    Native.onChain(ChainId.ETHEREUM),
     WNATIVE[ChainId.ETHEREUM],
     WBTC[ChainId.ETHEREUM],
     USDC[ChainId.ETHEREUM],
@@ -359,15 +361,24 @@ export const COMMON_BASES = {
   [ChainId.GÖRLI]: [],
   [ChainId.KOVAN]: [],
   [ChainId.GNOSIS]: [
+    Native.onChain(ChainId.GNOSIS),
     WNATIVE[ChainId.GNOSIS],
     WETH9[ChainId.GNOSIS],
     USDC[ChainId.GNOSIS],
     USDT[ChainId.GNOSIS],
     DAI[ChainId.GNOSIS],
   ],
-  [ChainId.BSC]: [WNATIVE[ChainId.BSC], WETH9[ChainId.BSC], USDC[ChainId.BSC], USDT[ChainId.BSC], DAI[ChainId.BSC]],
+  [ChainId.BSC]: [
+    Native.onChain(ChainId.BSC),
+    WNATIVE[ChainId.BSC],
+    WETH9[ChainId.BSC],
+    USDC[ChainId.BSC],
+    USDT[ChainId.BSC],
+    DAI[ChainId.BSC],
+  ],
   [ChainId.BSC_TESTNET]: [],
   [ChainId.POLYGON]: [
+    Native.onChain(ChainId.POLYGON),
     WNATIVE[ChainId.POLYGON],
     WBTC[ChainId.POLYGON],
     WETH9[ChainId.POLYGON],
@@ -377,6 +388,7 @@ export const COMMON_BASES = {
   ],
   [ChainId.POLYGON_TESTNET]: [],
   [ChainId.AVALANCHE]: [
+    Native.onChain(ChainId.AVALANCHE),
     WNATIVE[ChainId.AVALANCHE],
     WETH9[ChainId.AVALANCHE],
     WBTC[ChainId.AVALANCHE],
@@ -388,6 +400,7 @@ export const COMMON_BASES = {
   ],
   [ChainId.AVALANCHE_TESTNET]: [],
   [ChainId.ARBITRUM_NOVA]: [
+    Native.onChain(ChainId.ARBITRUM_NOVA),
     WNATIVE[ChainId.ARBITRUM_NOVA],
     WBTC[ChainId.ARBITRUM_NOVA],
     USDC[ChainId.ARBITRUM_NOVA],
@@ -395,6 +408,7 @@ export const COMMON_BASES = {
     DAI[ChainId.ARBITRUM_NOVA],
   ],
   [ChainId.BOBA]: [
+    Native.onChain(ChainId.BOBA),
     WNATIVE[ChainId.BOBA],
     USDC[ChainId.BOBA],
     USDT[ChainId.BOBA],
@@ -403,6 +417,7 @@ export const COMMON_BASES = {
     WBTC[ChainId.BOBA],
   ],
   [ChainId.FANTOM]: [
+    Native.onChain(ChainId.FANTOM),
     WNATIVE[ChainId.FANTOM],
     WBTC[ChainId.FANTOM],
     WETH9[ChainId.FANTOM],
@@ -413,6 +428,7 @@ export const COMMON_BASES = {
   ],
   [ChainId.FANTOM_TESTNET]: [],
   [ChainId.ARBITRUM]: [
+    Native.onChain(ChainId.ARBITRUM),
     WNATIVE[ChainId.ARBITRUM],
     WBTC[ChainId.ARBITRUM],
     USDC[ChainId.ARBITRUM],
@@ -422,6 +438,7 @@ export const COMMON_BASES = {
   ],
   [ChainId.ARBITRUM_TESTNET]: [],
   [ChainId.HARMONY]: [
+    Native.onChain(ChainId.HARMONY),
     WNATIVE[ChainId.HARMONY],
     WETH9[ChainId.HARMONY],
     USDC[ChainId.HARMONY],
@@ -430,6 +447,7 @@ export const COMMON_BASES = {
   ],
   [ChainId.HARMONY_TESTNET]: [],
   [ChainId.HECO]: [
+    Native.onChain(ChainId.HECO),
     WNATIVE[ChainId.HECO],
     WETH9[ChainId.HECO],
     USDC[ChainId.HECO],
@@ -438,6 +456,7 @@ export const COMMON_BASES = {
   ],
   [ChainId.HECO_TESTNET]: [],
   [ChainId.OKEX]: [
+    Native.onChain(ChainId.OKEX),
     WNATIVE[ChainId.OKEX],
     WETH9[ChainId.OKEX],
     USDC[ChainId.OKEX],
@@ -446,14 +465,16 @@ export const COMMON_BASES = {
   ],
   [ChainId.OKEX_TESTNET]: [],
   [ChainId.CELO]: [
-    WNATIVE[ChainId.CELO],
+    Native.onChain(ChainId.CELO),
+    // WNATIVE[ChainId.CELO],
     WETH9[ChainId.CELO],
     USDC[ChainId.CELO],
     USDT[ChainId.CELO],
     DAI[ChainId.CELO],
   ],
-  [ChainId.PALM]: [WNATIVE[ChainId.PALM], WETH9[ChainId.PALM]],
+  [ChainId.PALM]: [Native.onChain(ChainId.PALM), WNATIVE[ChainId.PALM], WETH9[ChainId.PALM]],
   [ChainId.MOONRIVER]: [
+    Native.onChain(ChainId.MOONRIVER),
     WNATIVE[ChainId.MOONRIVER],
     WETH9[ChainId.MOONRIVER],
     USDC[ChainId.MOONRIVER],
@@ -462,6 +483,7 @@ export const COMMON_BASES = {
     FRAX[ChainId.MOONRIVER],
   ],
   [ChainId.FUSE]: [
+    Native.onChain(ChainId.FUSE),
     WNATIVE[ChainId.FUSE],
     WBTC[ChainId.FUSE],
     WETH9[ChainId.FUSE],
@@ -469,8 +491,15 @@ export const COMMON_BASES = {
     USDT[ChainId.FUSE],
     DAI[ChainId.FUSE],
   ],
-  [ChainId.TELOS]: [WNATIVE[ChainId.TELOS], WETH9[ChainId.TELOS], USDC[ChainId.TELOS], USDT[ChainId.TELOS]],
+  [ChainId.TELOS]: [
+    Native.onChain(ChainId.TELOS),
+    WNATIVE[ChainId.TELOS],
+    WETH9[ChainId.TELOS],
+    USDC[ChainId.TELOS],
+    USDT[ChainId.TELOS],
+  ],
   [ChainId.MOONBEAM]: [
+    Native.onChain(ChainId.MOONBEAM),
     WNATIVE[ChainId.MOONBEAM],
     WETH9[ChainId.MOONBEAM],
     USDC[ChainId.MOONBEAM],
@@ -478,6 +507,7 @@ export const COMMON_BASES = {
     DAI[ChainId.MOONBEAM],
   ],
   [ChainId.OPTIMISM]: [
+    Native.onChain(ChainId.OPTIMISM),
     WNATIVE[ChainId.OPTIMISM],
     WBTC[ChainId.OPTIMISM],
     USDC[ChainId.OPTIMISM],
@@ -485,6 +515,7 @@ export const COMMON_BASES = {
     DAI[ChainId.OPTIMISM],
   ],
   [ChainId.KAVA]: [
+    Native.onChain(ChainId.KAVA),
     WNATIVE[ChainId.KAVA],
     WBTC[ChainId.KAVA],
     WETH9[ChainId.KAVA],
@@ -493,6 +524,7 @@ export const COMMON_BASES = {
     DAI[ChainId.KAVA],
   ],
   [ChainId.METIS]: [
+    Native.onChain(ChainId.METIS),
     WNATIVE[ChainId.METIS],
     WBTC[ChainId.METIS],
     WETH9[ChainId.METIS],
@@ -500,8 +532,14 @@ export const COMMON_BASES = {
     USDT[ChainId.METIS],
     DAI[ChainId.METIS],
   ],
-  [ChainId.BOBA_AVAX]: [WNATIVE[ChainId.BOBA_AVAX], USDC[ChainId.BOBA_AVAX], USDT[ChainId.BOBA_AVAX]],
+  [ChainId.BOBA_AVAX]: [
+    Native.onChain(ChainId.BOBA_AVAX),
+    WNATIVE[ChainId.BOBA_AVAX],
+    USDC[ChainId.BOBA_AVAX],
+    USDT[ChainId.BOBA_AVAX],
+  ],
   [ChainId.BOBA_BNB]: [
+    Native.onChain(ChainId.BOBA_BNB),
     WNATIVE[ChainId.BOBA_BNB],
     new Token({
       chainId: ChainId.BOBA_BNB,
@@ -513,5 +551,5 @@ export const COMMON_BASES = {
     USDC[ChainId.BOBA_BNB],
     USDT[ChainId.BOBA_BNB],
   ],
-  [ChainId.BTTC]: [WNATIVE[ChainId.BTTC], USDC[ChainId.BTTC], USDT[ChainId.BTTC]],
+  [ChainId.BTTC]: [Native.onChain(ChainId.BTTC), WNATIVE[ChainId.BTTC], USDC[ChainId.BTTC], USDT[ChainId.BTTC]],
 } as const

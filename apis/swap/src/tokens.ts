@@ -58,17 +58,17 @@ export async function getToken(chainId: ChainId, tokenId: string) {
   const isShortNameSupported = isShortCurrencyNameSupported(chainId)
   const tokenIdIsShortName = isShortCurrencyName(chainId, tokenId)
 
-  // console.log({ isShortNameSupported, tokenIdIsShortName, tokenId })
-
   if (isShortNameSupported && tokenIdIsShortName) return currencyFromShortCurrencyName(chainId, tokenId)
 
   if (!isAddress(tokenId)) throw new Error(`Invalid token address: ${tokenId}`)
 
-  // Fallback?
-  // const { address, decimals, name, symbol } = await fetchToken({ address: getAddress(tokenId), chainId })
+  const { name, symbol, decimals, address } = await fetcher(chainId, tokenId)
 
   return new Token({
     chainId,
-    ...(await fetcher(chainId, tokenId)),
+    address,
+    symbol,
+    name,
+    decimals,
   })
 }
