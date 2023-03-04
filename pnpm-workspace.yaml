@@ -7,4 +7,3 @@ packages:
   - 'packages/**'
   - 'protocols/*'
   - 'subgraphs/*'
-  - 'scripts/*'
