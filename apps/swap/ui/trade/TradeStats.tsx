@@ -47,56 +47,64 @@ export const TradeStats: FC = () => {
               'text-sm font-semibold text-gray-700 text-right dark:text-slate-400'
             )}
           >
-            {+value > 0 && isLoading ? (
+            {loading || !trade?.priceImpact ? (
               <Skeleton.Box className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : trade?.priceImpact ? (
               `${trade?.priceImpact?.lessThan(ZERO) ? '+' : '-'}${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%`
+            ) : null}
+          </span>
+        </div>
+
+        <div className="flex justify-between items-center gap-2">
+          <span className="text-sm text-gray-700 dark:text-slate-400">Est. received</span>
+          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            {loading || !trade?.amountOut ? (
+              <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
             ) : (
-              'N/A'
+              `${trade?.amountOut?.toSignificant(6) ?? '0.00'} ${trade?.amountOut?.currency?.symbol ?? ''}`
             )}
           </span>
         </div>
-        {/*<div className="flex justify-between items-center gap-2">*/}
-        {/*  <span className="text-sm text-gray-700 dark:text-slate-400">Minimum received</span>*/}
-        {/*  <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">*/}
-        {/*    {loading ? (*/}
-        {/*      <Skeleton.Text fontSize="text-sm" className="w-[120px]" />*/}
-        {/*    ) : (*/}
-        {/*      `${trade?.minAmountOut?.toSignificant(6) ?? '0.00'} ${token1.symbol}`*/}
-        {/*    )}*/}
-        {/*  </span>*/}
-        {/*</div>*/}
 
-        {recipient ? (
+        <div className="flex justify-between items-center gap-2">
+          <span className="text-sm text-gray-700 dark:text-slate-400">Min. received</span>
+          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            {loading || !trade?.minAmountOut ? (
+              <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
+            ) : (
+              `${trade?.minAmountOut?.toSignificant(6) ?? '0.00'} ${trade?.amountOut?.currency?.symbol ?? ''}`
+            )}
+          </span>
+        </div>
+
+        {/* {recipient ? (
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-700 dark:text-slate-400">Recipient</span>
             <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-              {+value > 0 && loading ? (
+              {loading || !recipient ? (
                 <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
               ) : (
                 shortenAddress(recipient)
               )}
             </span>
           </div>
-        ) : null}
+        ) : null} */}
 
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">Network fee</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {+value > 0 && loading ? (
+            {loading || !trade?.gasSpent || trade.gasSpent === '0' ? (
               <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
             ) : trade?.gasSpent && trade.gasSpent !== '0' ? (
               `~$${trade?.gasSpent}`
-            ) : (
-              'N/A'
-            )}
+            ) : null}
           </span>
         </div>
         {appType === AppType.Swap && (
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-700 dark:text-slate-400">Smart order route</span>
+            <span className="text-sm text-gray-700 dark:text-slate-400">Route</span>
             <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-              {+value > 0 && loading ? (
+              {loading ? (
                 <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
               ) : (
                 <button onClick={() => setOpen(true)} className="text-sm text-blue font-semibold">
