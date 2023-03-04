@@ -74,22 +74,6 @@ export class DataFetcher {
       }
     }
 
-    if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
-      try {
-        const provider = new UniswapV2Provider(this.chainId, this.client)
-        this.providers.push(provider)
-      } catch (e: any) {
-        // console.warn(e.message)
-      }
-    }
-    if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers)) {
-      try {
-        const provider = new QuickSwapProvider(this.chainId, this.client)
-        this.providers.push(provider)
-      } catch (e: any) {
-        // console.warn(e.message)
-      }
-    }
     if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers)) {
       try {
         const provider = new ApeSwapProvider(this.chainId, this.client)
@@ -98,6 +82,7 @@ export class DataFetcher {
         // console.warn(e.message)
       }
     }
+
     if (this._providerIsIncluded(LiquidityProviders.Dfyn, providers)) {
       try {
         const provider = new DfynProvider(this.chainId, this.client)
@@ -106,6 +91,7 @@ export class DataFetcher {
         // console.warn(e.message)
       }
     }
+
     if (this._providerIsIncluded(LiquidityProviders.Elk, providers)) {
       try {
         const provider = new ElkProvider(this.chainId, this.client)
@@ -114,9 +100,46 @@ export class DataFetcher {
         // console.warn(e.message)
       }
     }
+
+    // if (this._providerIsIncluded(LiquidityProviders.HoneySwap, providers)) {
+    //   try {
+    //     const provider = new HoneySwapProvider(this.chainId, this.client)
+    //     this.providers.push(provider)
+    //   } catch (e: any) {
+    //     // console.warn(e.message)
+    //   }
+    // }
+
     if (this._providerIsIncluded(LiquidityProviders.JetSwap, providers)) {
       try {
         const provider = new JetSwapProvider(this.chainId, this.client)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+
+    if (this._providerIsIncluded(LiquidityProviders.NetSwap, providers)) {
+      try {
+        const provider = new NetSwapProvider(this.chainId, this.client)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+
+    if (this._providerIsIncluded(LiquidityProviders.PancakeSwap, providers)) {
+      try {
+        const provider = new PancakeSwapProvider(this.chainId, this.client)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+
+    if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers)) {
+      try {
+        const provider = new QuickSwapProvider(this.chainId, this.client)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -141,18 +164,18 @@ export class DataFetcher {
       }
     }
 
-    if (this._providerIsIncluded(LiquidityProviders.NetSwap, providers)) {
+    // if (this._providerIsIncluded(LiquidityProviders.UbeSwap, providers)) {
+    //   try {
+    //     const provider = new UbeSwapProvider(this.chainId, this.client)
+    //     this.providers.push(provider)
+    //   } catch (e: any) {
+    //     // console.warn(e.message)
+    //   }
+    // }
+
+    if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
       try {
-        const provider = new NetSwapProvider(this.chainId, this.client)
-        this.providers.push(provider)
-      } catch (e: any) {
-        // console.warn(e.message)
-      }
-    }
-    
-    if (this._providerIsIncluded(LiquidityProviders.PancakeSwap, providers)) {
-      try {
-        const provider = new PancakeSwapProvider(this.chainId, this.client)
+        const provider = new UniswapV2Provider(this.chainId, this.client)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)

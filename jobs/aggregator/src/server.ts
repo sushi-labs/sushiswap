@@ -14,12 +14,15 @@ import { pancakeSwapV2 } from './seed/pancakeswap/v2/seed.js'
 import { prices } from './seed/price.js'
 import { quickswapV2 } from './seed/quickswap/v2/seed.js'
 import { reserves } from './seed/reserves.js'
+import { spiritSwapV2 } from './seed/spiritswap/v2/seed.js'
 import { spookySwapV2 } from './seed/spookyswap/v2/seed.js'
 import { sushiSwap } from './seed/sushiswap/seed.js'
 import { traderJoeV2 } from './seed/trader-joe/v2/seed.js'
 import { ubeSwapV2 } from './seed/ubeswap/v2/seed.js'
 import { uniswapV2 } from './seed/uniswap/v2/seed.js'
 import { whitelistPools } from './seed/whitelist-pool.js'
+import { whitelistPools2 } from './seed/whitelist-pool-2.js'
+import { whitelistTokens2 } from './seed/whitelist-tokens-2.js'
 
 const app = express()
 
@@ -150,6 +153,13 @@ app.get(
         } else {
           res.sendStatus(400).send('Not a valid version')
         }
+      } else if (name === ProtocolName.SPIRITSWAP) {
+        if (version === ProtocolVersion.V2) {
+          await spiritSwapV2()
+          res.sendStatus(200)
+        } else {
+          res.sendStatus(400).send('Not a valid version')
+        }
       } else {
         res.status(400).send('Could not find protocol. valid protocols are: ' + Object.values(ProtocolName).join(','))
       }
@@ -217,6 +227,34 @@ app.get(
 )
 
 app.get(
+  '/whitelist-pools-2',
+  async (req, res) => {
+    req.setTimeout(300000)
+
+    try {
+      await whitelistPools2()
+      res.sendStatus(200)
+    } catch (err) {
+      res.status(500).send(err)
+    }
+  },
+  timeout('300s')
+)
+app.get(
+  '/whitelist-tokens-2',
+  async (req, res) => {
+    req.setTimeout(300000)
+
+    try {
+      await whitelistTokens2()
+      res.sendStatus(200)
+    } catch (err) {
+      res.status(500).send(err)
+    }
+  },
+  timeout('300s')
+)
+app.get(
   '/price',
   async (req, res) => {
     req.setTimeout(300000)
@@ -238,3 +276,5 @@ app.get(
 )
 
 app.listen(8080)
+
+console.log('Server listening on port 8080')

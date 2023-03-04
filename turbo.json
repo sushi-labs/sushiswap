@@ -140,6 +140,12 @@
       "dependsOn": [
         "build"
       ],
+      "env": [
+        "PRODUCTION_DATABASE_URL",
+        "PREVIEW_DATABASE_URL",
+        "REDIS_URL",
+        "DATABASE_URL"
+      ],
       "cache": false,
       "persistent": true
     },

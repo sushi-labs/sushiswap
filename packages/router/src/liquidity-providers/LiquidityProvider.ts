@@ -18,6 +18,8 @@ export enum LiquidityProviders {
   SpookySwap = 'SpookySwap',
   NetSwap = 'NetSwap',
   NativeWrap = 'NativeWrap',
+  HoneySwap = 'HoneySwap',
+  UbeSwap = 'UbeSwap',
 }
 
 export abstract class LiquidityProvider {

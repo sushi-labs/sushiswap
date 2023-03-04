@@ -26,10 +26,6 @@
       "types": "./dist/chains.d.ts",
       "default": "./dist/chains.js"
     },
-    "./config": {
-      "types": "./dist/config.d.ts",
-      "default": "./dist/config.js"
-    },
     "./providers": {
       "types": "./dist/providers.d.ts",
       "default": "./dist/providers.js"

@@ -89,6 +89,7 @@ transforms:
 
 additionalResolvers:
   - ./resolvers/index.js
+
 documents:
   - ./query.graphql
 

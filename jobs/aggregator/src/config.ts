@@ -21,6 +21,7 @@ export enum ProtocolName {
   JETSWAP = 'JetSwap',
   DFYN = 'Dfyn',
   ELK = 'Elk',
+  SPIRITSWAP = 'SpiritSwap',
 }
 
 export enum PoolType {

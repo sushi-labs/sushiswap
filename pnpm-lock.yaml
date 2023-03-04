@@ -1698,15 +1698,22 @@ importers:
       '@graphprotocol/client-auto-pagination': latest
       '@graphprotocol/client-auto-type-merging': latest
       '@graphprotocol/client-cli': 2.2.19
+      '@graphql-mesh/cache-localforage': latest
+      '@graphql-mesh/cross-helpers': latest
+      '@graphql-mesh/graphql': latest
+      '@graphql-mesh/http': latest
+      '@graphql-mesh/merger-stitching': latest
+      '@graphql-mesh/runtime': latest
+      '@graphql-mesh/store': latest
       '@graphql-mesh/transform-filter-schema': latest
       '@graphql-mesh/transform-prefix': latest
       '@graphql-mesh/transform-prune': latest
       '@graphql-mesh/transform-rename': latest
       '@graphql-mesh/transform-type-merging': latest
+      '@graphql-mesh/utils': latest
       '@graphql-tools/merge': latest
       '@sushiswap/abi': workspace:*
       '@sushiswap/chain': workspace:*
-      '@sushiswap/core': ^2.0.0-canary.1
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -1721,6 +1728,7 @@ importers:
       '@types/connect-timeout': 0.0.36
       '@types/express': 4.17.15
       '@wagmi/core': 0.8.1
+      '@whatwg-node/fetch': latest
       connect-timeout: 1.9.0
       date-fns: 2.29.3
       dotenv: 16.0.3
@@ -1734,29 +1742,39 @@ importers:
       tsup: 6.5.0
       typescript: 4.9.4
     dependencies:
-      '@sushiswap/abi': link:../../packages/abi
-      '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/core': 2.0.0-canary.1
-      '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/graph-config': link:../../config/graph
-      '@sushiswap/validate': link:../../packages/validate
-      '@sushiswap/wagmi-config': link:../../config/wagmi
-      '@wagmi/core': 0.8.1_c4tpmuajjwy7vjodfmym27ncri
-      connect-timeout: 1.9.0
-      ethers: 5.7.2
-      express: 4.18.2
-    devDependencies:
       '@graphprotocol/client-add-source-name': 1.0.17_graphql@16.6.0
       '@graphprotocol/client-auto-pagination': 1.1.15_graphql@16.6.0
       '@graphprotocol/client-auto-type-merging': 1.0.22_graphql@16.6.0
       '@graphprotocol/client-cli': 2.2.19_ropnvtok2nb6ypywo4y7tkficu
+      '@graphql-mesh/cache-localforage': 0.7.14_graphql@16.6.0
+      '@graphql-mesh/cross-helpers': 0.3.3_graphql@16.6.0
+      '@graphql-mesh/graphql': 0.34.7_graphql@16.6.0
+      '@graphql-mesh/http': 0.3.20_graphql@16.6.0
+      '@graphql-mesh/merger-stitching': 0.18.16_graphql@16.6.0
+      '@graphql-mesh/runtime': 0.46.15_graphql@16.6.0
+      '@graphql-mesh/store': 0.9.14_graphql@16.6.0
       '@graphql-mesh/transform-filter-schema': 0.15.17_graphql@16.6.0
       '@graphql-mesh/transform-prefix': 0.12.15_graphql@16.6.0
       '@graphql-mesh/transform-prune': 0.1.14_graphql@16.6.0
       '@graphql-mesh/transform-rename': 0.14.15_graphql@16.6.0
       '@graphql-mesh/transform-type-merging': 0.5.14_graphql@16.6.0
+      '@graphql-mesh/utils': 0.43.14_graphql@16.6.0
       '@graphql-tools/merge': 8.3.18_graphql@16.6.0
+      '@sushiswap/abi': link:../../packages/abi
+      '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/database': link:../../packages/database
+      '@sushiswap/graph-config': link:../../config/graph
+      '@sushiswap/validate': link:../../packages/validate
+      '@sushiswap/wagmi-config': link:../../config/wagmi
+      '@wagmi/core': 0.8.1_c4tpmuajjwy7vjodfmym27ncri
+      '@whatwg-node/fetch': 0.8.2
+      connect-timeout: 1.9.0
+      date-fns: 2.29.3
+      ethers: 5.7.2
+      express: 4.18.2
+      graphql: 16.6.0
+    devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/prettier-config': link:../../config/prettier
@@ -1765,10 +1783,8 @@ importers:
       '@swc/helpers': 0.4.14
       '@types/connect-timeout': 0.0.36
       '@types/express': 4.17.15
-      date-fns: 2.29.3
       dotenv: 16.0.3
       eslint: 8.29.0
-      graphql: 16.6.0
       jest: 29.3.1_ts-node@10.9.1
       prettier: 2.8.1
       ts-node: 10.9.1_rmzwhy4t3g2w4jfehjrsbeodby
@@ -6233,7 +6249,7 @@ packages:
       - react-native-windows
       - supports-color
       - utf-8-validate
-    dev: true
+    dev: false
 
   /@graphprotocol/client-cli/2.2.19_ykzowzmb7rcumunkscnbisnkom:
     resolution: {integrity: sha512-KqFxSCpaXSSAcJcX4JbZy1dCG1ueH7Ou8hPrPIV5gJPHzkypqzkTrfE0nugsBEZveXqpowkcV1ecQbKDlKP5fA==}
@@ -6281,6 +6297,7 @@ packages:
       '@repeaterjs/repeater': 3.0.4
       graphql: 16.6.0
       tslib: 2.5.0
+    dev: false
 
   /@graphprotocol/client-polling-live/1.1.0_graphql@16.6.0:
     resolution: {integrity: sha512-6k07fJ3rmp+u+nrorF6fpXLHFTDKy9ibevr71qiwOluuso9T9Fn1tI56XRdz0xkimdosFAex+GwXyTags7EKHg==}
@@ -10506,10 +10523,6 @@ packages:
   /@sushiswap/core/1.4.2:
     resolution: {integrity: sha512-Khd2i6Bob9uk7dCgVkhUioEoxRP28m6aj25MegAHvnJyxZPVzZDhxSkeL6wdv5MeAp2DwHkYqUq03KDfVTTP4Q==}
 
-  /@sushiswap/core/2.0.0-canary.1:
-    resolution: {integrity: sha512-6YFT4EKgm0XgfwCBsKx5HrDtRI6EvhZHipjBKegdTV0b2zKuXnmdyZ+RwPCr0mCKq2pKB0qIiqCxfbgXYDlLCQ==}
-    dev: false
-
   /@sushiswap/default-token-list/41.1.0:
     resolution: {integrity: sha512-FhSThijv0CvaPk88aEgIGY1AWHrm5puQTAROrholQtbGLvwgbl7tzWKDkwVPf5RJ+CWFWYqO+TBsl5HtAChbtw==}
     dev: false
@@ -10683,7 +10696,7 @@ packages:
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
-      tailwindcss: 3.2.4_postcss@8.4.21
+      tailwindcss: 3.2.4
     dev: false
 
   /@tanstack/match-sorter-utils/8.7.2:
@@ -13971,7 +13984,7 @@ packages:
   /axios/0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
@@ -26094,6 +26107,7 @@ packages:
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.1
+    dev: true
 
   /postcss-js/4.0.0:
     resolution: {integrity: sha512-77QESFBwgX4irogGVPgQ5s07vLvFqWr228qZY+w6lW599cRlK/HmnlivnnVUxkjHnCu4J16PDMHcH+e+2HbvTQ==}
@@ -26111,6 +26125,7 @@ packages:
     dependencies:
       camelcase-css: 2.0.1
       postcss: 8.4.21
+    dev: true
 
   /postcss-load-config/3.1.4:
     resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
@@ -26142,6 +26157,7 @@ packages:
       lilconfig: 2.0.6
       postcss: 8.4.21
       yaml: 1.10.2
+    dev: true
 
   /postcss-load-config/3.1.4_ts-node@10.9.1:
     resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
@@ -26250,6 +26266,7 @@ packages:
     dependencies:
       postcss: 8.4.21
       postcss-selector-parser: 6.0.11
+    dev: true
 
   /postcss-selector-parser/6.0.10:
     resolution: {integrity: sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w==}
@@ -26292,6 +26309,7 @@ packages:
       nanoid: 3.3.4
       picocolors: 1.0.0
       source-map-js: 1.0.2
+    dev: true
 
   /postinstall-postinstall/2.1.0:
     resolution: {integrity: sha512-7hQX6ZlZXIoRiWNrbMQaLzUUfH+sSx39u8EJ9HYuDc1kLo9IXKWjM5RSquZN1ad5GnH8CGFM78fsAAQi3OKEEQ==}
@@ -28450,7 +28468,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
@@ -29232,8 +29250,6 @@ packages:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -29259,14 +29275,13 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
+      - postcss
       - ts-node
 
   /tailwindcss/3.2.4_postcss@8.4.21:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -29292,7 +29307,9 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
+      - postcss
       - ts-node
+    dev: true
 
   /tapable/2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
