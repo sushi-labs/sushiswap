@@ -103,7 +103,7 @@ function createProtocolJobRequest(
   const urlPath = `/protocol?name=${protocol}`
     .concat(version ? `&version=${version}` : '')
     .concat(poolType ? `&poolType=${poolType}` : '')
-  return createJobRequest(jobName, baseUrl, urlPath, '*/10 * * * *')
+  return createJobRequest(jobName, baseUrl, urlPath, '* * * * *')
 }
 
 function createReserveJobRequest(chainId: ChainId, baseUrl: string) {
@@ -117,12 +117,9 @@ function createLiquidityJobRequest(chainId: ChainId, baseUrl: string) {
 }
 
 function createPriceJobRequest(chainId: ChainId, baseUrl: string) {
-  const usdcAddress =
-    chainId !== ChainId.BTTC
-      ? USDC_ADDRESS[chainId as keyof typeof USDC_ADDRESS]
-      : '0xae17940943ba9440540940db0f1877f101d39e8b' // USDC_E on BTTC
+  const usdcAddress = USDC_ADDRESS[chainId as keyof typeof USDC_ADDRESS]
 
-  const urlPath = `/price?chainId=${chainId}&version=${ProtocolVersion.V2}&poolType=${PoolType.CONSTANT_PRODUCT_POOL}&base=${usdcAddress}&price=${Price.USD}`
+  const urlPath = `/price?chainId=${chainId}&base=${usdcAddress}&price=${Price.USD}`
   return createJobRequest(`PRICES-${chainShortName[chainId]}-${chainId}`, baseUrl, urlPath, '13,28,43,58 * * * *')
 }
 

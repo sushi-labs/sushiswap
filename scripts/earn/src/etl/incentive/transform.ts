@@ -17,9 +17,6 @@ export async function filterIncentives(incentives: Prisma.IncentiveCreateManyInp
   })
 
   const incentiveFound = await client.incentive.findMany({
-    where: {
-      id: { in: incentives.map((incentive) => incentive.id) },
-    },
     select: incentiveSelect,
   })
 
@@ -77,11 +74,12 @@ export async function filterIncentives(incentives: Prisma.IncentiveCreateManyInp
     }
     return false
   })
+
   console.log(
     `TRANSFORM - Filtering incentives\n
-    ${incentivesToCreate.length} incentives should be created\n
-    ${incentivesAlreadyUpToDate} incentives are already up to date\n
-    ${incentivesToUpdate.length} incentives should be updated.`
+    ${incentivesToCreate.length} incentives should be created.\n
+    ${incentivesAlreadyUpToDate} incentives are already up to date.\n
+    ${incentivesToUpdate.length} incentives should be updated.\n`
   )
 
   return { incentivesToCreate, incentivesToUpdate }

@@ -103,9 +103,7 @@ async function createPools(pools: Prisma.SushiPoolCreateManyInput[]) {
 export async function updatePoolsWithIncentivesTotalApr() {
   const poolsWithIncentives = await client.sushiPool.findMany({
     where: {
-      incentives: {
-        some: {},
-      },
+      incentives: { some: {} },
     },
     include: {
       incentives: {
@@ -132,6 +130,7 @@ export async function updatePoolsWithIncentivesTotalApr() {
         totalApr,
         incentiveApr,
         isIncentivized,
+        wasIncentivized: true,
       },
     })
   })
