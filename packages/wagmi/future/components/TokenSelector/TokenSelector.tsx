@@ -49,7 +49,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
     const { data: balancesMap } = useBalances({ chainId, account: address })
 
     const _onSelect = useCallback(
-      (currency: Token) => {
+      (currency: Type) => {
         if (onSelect) {
           onSelect(currency)
         }
@@ -95,7 +95,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
                         startIcon={<Currency.Icon currency={base} width={16} height={16} disableLink={true} />}
                         color="default"
                         variant="outlined"
-                        key={base.address}
+                        key={base.id}
                         onClick={() => _onSelect(base)}
                       >
                         {base.symbol}

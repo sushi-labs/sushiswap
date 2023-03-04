@@ -111,8 +111,6 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
       return LOGO[currency.chainId]
     }
 
-    return `https://cdn.sushi.com/image/upload/tokens/${currency.chainId}/${currency.wrapped.address}.jpg`
-
     if (currency instanceof WrappedTokenInfo && currency.logoURI) {
       return currency.logoURI
     }
