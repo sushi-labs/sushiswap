@@ -27,18 +27,21 @@ import {
   SelectNetworkWidget,
   SelectPoolTypeWidget,
   SettingsOverlay,
-} from '../components'
+} from '../../../components'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { SWRConfig, useSWRConfig } from 'swr'
 import { isUniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 
-import { CreateSectionReviewModalTrident } from '../components/CreateSection'
-import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '../config'
-import { isConstantProductPool, isLegacyPool, isStablePool } from '../lib/functions'
-import { useCustomTokens } from '../lib/state/storage'
-import { useTokens } from '../lib/state/token-lists'
+import { CreateSectionReviewModalTrident } from '../../../components/CreateSection'
+import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '../../../config'
+import { isConstantProductPool, isLegacyPool, isStablePool } from '../../../lib/functions'
+import { useCustomTokens } from '../../../lib/state/storage'
+import { useTokens } from '../../../lib/state/token-lists'
 import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { usePool } from '@sushiswap/client'
+import { SUPPORTED_CHAIN_IDS } from '../../../config'
+import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
+import { Router, useRouter } from 'next/router'
 
 const LINKS: BreadcrumbLink[] = [
   {
@@ -47,8 +50,37 @@ const LINKS: BreadcrumbLink[] = [
   },
 ]
 
-const Add = () => {
-  const [chainId, setChainId] = useState(ChainId.ETHEREUM)
+// This function gets called at build time on server-side.
+// It may be called again, on a serverless function, if
+// revalidation is enabled and a new request comes in
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const chainId = params?.add?.[0] ? (parseInt(params?.add?.[0] as string) as ChainId) : ChainId.ETHEREUM
+  return {
+    props: {
+      chainId,
+    },
+  }
+}
+
+// This function gets called at build time on server-side.
+// It may be called again, on a serverless function, if
+// the path has not been generated.
+export const getStaticPaths: GetStaticPaths = async () => {
+  // Get the paths we want to pre-render based on supported chain ids
+  const paths = SUPPORTED_CHAIN_IDS.map((chainId) => ({
+    params: { add: [chainId.toString()] },
+  }))
+
+  // We'll pre-render only these paths at build time.
+  // { fallback: 'blocking' } will server-render pages
+  // on-demand if the path doesn't exist.
+  return { paths, fallback: 'blocking' }
+}
+
+function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
+  console.log({ chainId: props.chainId })
+  const router = useRouter()
+  const [chainId, setChainId] = useState(props.chainId)
   const [fee, setFee] = useState(2)
   const [poolType, setPoolType] = useState(PoolFinderType.Classic)
 
@@ -136,7 +168,7 @@ const Add = () => {
               return (
                 <_Add
                   chainId={chainId}
-                  setChainId={setChainId}
+                  setChainId={(chainId) => router.push(`/add/${chainId}`, `/add/${chainId}`, { shallow: true })}
                   fee={fee}
                   setFee={setFee}
                   pool={pool}
