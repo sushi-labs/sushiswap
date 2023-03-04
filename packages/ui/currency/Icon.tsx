@@ -107,9 +107,11 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
   const src = useMemo(() => {
     if (!currency) return null
 
-    if (currency.isNative) {
+    if (currency.isNative && currency.chainId in LOGO) {
       return LOGO[currency.chainId]
     }
+
+    return `https://cdn.sushi.com/image/upload/tokens/${currency.chainId}/${currency.wrapped.address}.jpg`
 
     if (currency instanceof WrappedTokenInfo && currency.logoURI) {
       return currency.logoURI
@@ -120,9 +122,7 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
     // e.g.
     // https://currency.sushi.com/1/eth.jpg - ETH
     // https://currency.sushi.com/1/0x...jpg - WETH
-    return `https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/network/${
-      BLOCKCHAIN[currency.chainId]
-    }/${currency.wrapped.address}.jpg`
+    return `https://cdn.sushi.com/image/upload/tokens/${currency.chainId}/${currency.wrapped.address}.jpg`
   }, [currency])
 
   useEffect(() => {

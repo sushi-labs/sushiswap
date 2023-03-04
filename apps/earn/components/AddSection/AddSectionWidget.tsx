@@ -12,6 +12,7 @@ import { FC, ReactNode } from 'react'
 import { useCustomTokens } from '../../lib/state/storage'
 import { useTokens } from '../../lib/state/token-lists'
 import { SettingsOverlay } from '../SettingsOverlay'
+import { useTokenList } from '@sushiswap/react-query'
 
 interface AddSectionWidgetProps {
   isFarm: boolean
