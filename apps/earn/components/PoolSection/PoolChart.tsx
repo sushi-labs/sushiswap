@@ -167,6 +167,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
         {
           name: 'Volume',
           type: chartType === PoolChartType.TVL || chartType === PoolChartType.APR ? 'line' : 'bar',
+          smooth: true,
           xAxisIndex: 0,
           yAxisIndex: 0,
           itemStyle: {

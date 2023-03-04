@@ -52,9 +52,9 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
               <Typography variant="sm" weight={500} className="flex gap-1 text-slate-50">
                 {token0.symbol} <span className="text-slate-500">/</span> {token1.symbol}
               </Typography>
-              <Typography variant="xxs" className="text-slate-400">
+              {/* <Typography variant="xxs" className="text-slate-400">
                 SushiSwap Farm
-              </Typography>
+              </Typography> */}
             </div>
           </div>
           <Typography variant="xs" weight={600} className="flex gap-1.5 items-end text-slate-400">
