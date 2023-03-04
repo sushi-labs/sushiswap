@@ -43,10 +43,11 @@ export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
   const graphPair = useGraphPool(pool)
 
   const [chartType, setChartType] = useState<PoolChartType>(PoolChartType.Volume)
-  const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Week)
+  const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Month)
+
   const [xData, yData] = useMemo(() => {
     const data =
-      chartTimespans[chartPeriod] <= chartTimespans[PoolChartPeriod.Week]
+      chartTimespans[chartPeriod] < chartTimespans[PoolChartPeriod.Week]
         ? graphPair.hourSnapshots
         : graphPair.daySnapshots
     const currentDate = Math.round(Date.now())
@@ -87,9 +88,12 @@ export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
       if (chartType === PoolChartType.Volume) {
         valueNodes[1].innerHTML = formatUSD(value * (pool.swapFee * 100))
       }
-      nameNodes[0].innerHTML = format(new Date(name * 1000), 'dd MMM yyyy HH:mm')
+      nameNodes[0].innerHTML = format(
+        new Date(name * 1000),
+        `dd MMM yyyy${chartTimespans[chartPeriod] < chartTimespans[PoolChartPeriod.Week] ? ' p' : ''}`
+      )
     },
-    [chartType, pool.swapFee]
+    [chartPeriod, chartType, pool.swapFee]
   )
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
@@ -115,7 +119,12 @@ export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
               chartType === PoolChartType.APR ? formatPercent(params[0].value) : formatUSD(params[0].value)
             }</span>
             <span class="text-xs text-slate-400 font-medium">${
-              date instanceof Date && !isNaN(date?.getTime()) ? format(date, 'dd MMM yyyy HH:mm') : ''
+              date instanceof Date && !isNaN(date?.getTime())
+                ? format(
+                    date,
+                    `dd MMM yyyy${chartTimespans[chartPeriod] < chartTimespans[PoolChartPeriod.Week] ? ' p' : ''}`
+                  )
+                : ''
             }</span>
           </div>`
         },
@@ -144,7 +153,6 @@ export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
         {
           show: false,
           type: 'category',
-          boundaryGap: true,
           data: xData,
         },
       ],
@@ -152,10 +160,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
         {
           show: false,
           type: 'value',
-          scale: true,
           name: 'Volume',
-          max: 'dataMax',
-          min: 'dataMin',
         },
       ],
       series: [
