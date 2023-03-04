@@ -13,10 +13,10 @@ import { BigNumber } from 'ethers'
 import { Address, PublicClient } from 'viem'
 
 import { getPoolsByTokenIds, getTopPools, PoolResponse } from '../lib/api'
-import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
 import { BentoPoolCode } from '../pools/BentoPool'
 import type { PoolCode } from '../pools/PoolCode'
+import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
 export function convertToNumbers(arr: BigNumber[]): (number | undefined)[] {
   return arr.map((a) => {

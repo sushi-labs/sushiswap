@@ -23,7 +23,7 @@ export async function getPoolsByTokenIds(
 ) {
   try {
     const pools = await fetch(
-      `https://aggregator.sushi.com/v0/${chainId}/pools/${protocol}/${version}?poolTypes=${poolTypes.join(
+      `https://aggregator-git-feature-swap.sushi.com/v0/${chainId}/pools/${protocol}/${version}?poolTypes=${poolTypes.join(
         ','
       )}&token0=${token0Address}&token1=${token1Address}&take=${size}&excludeTopPoolsSize=${excludeTopPoolsSize}&topPoolMinLiquidity=${topPoolMinLiquidity}`
     )
@@ -76,7 +76,7 @@ export async function getTopPools(
 ) {
   try {
     const pools = await fetch(
-      `https://aggregator.sushi.com/v0/${chainId}/top-pools/${protocol}/${version}?poolTypes=${poolTypes.join(
+      `https://aggregator-git-feature-swap.sushi.com/v0/${chainId}/top-pools/${protocol}/${version}?poolTypes=${poolTypes.join(
         ','
       )}&take=${size}&minLiquidity=${minLiquidity}`
     ).then((data) => data.json())
