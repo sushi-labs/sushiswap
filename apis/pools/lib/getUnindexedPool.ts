@@ -4,7 +4,7 @@ import { allChains } from '@sushiswap/wagmi-config/chains'
 import { allProviders } from '@sushiswap/wagmi-config/providers'
 import { Address, configureChains, createClient, fetchToken, FetchTokenResult, readContracts } from '@wagmi/core'
 
-import type { getEarnPool } from './api/earn.js'
+import type { getEarnPool } from './api/index.js'
 
 const { provider } = configureChains(allChains, allProviders)
 

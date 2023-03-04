@@ -2,12 +2,18 @@
   "name": "@sushiswap/balances-api",
   "version": "0.0.0",
   "private": true,
-  "description": "Sushi Balances API",
+  "description": "Sushi gitBalances API",
   "keywords": [
     "sushi",
     "balances",
     "api"
   ],
+  "homepage": "https://www.sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "apis/balances"
+  },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "type": "module",

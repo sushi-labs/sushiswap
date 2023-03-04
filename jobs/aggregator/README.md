@@ -1,4 +1,4 @@
-# Sushi seed scripts
+# Aggregator job
 
 ## Usage
 

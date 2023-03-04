@@ -1,4 +1,4 @@
-# Earn DB seed scripts
+# Pool job
 
 ## Usage
 

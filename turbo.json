@@ -5,8 +5,7 @@
     "NODE_ENV",
     "ALCHEMY_ID",
     "GITHUB_TOKEN",
-    "NEXT_PUBLIC_ALCHEMY_ID",
-    "SKIP_BUILD_STATIC_GENERATION"
+    "NEXT_PUBLIC_ALCHEMY_ID"
   ],
   "globalDependencies": [
     ".eslintignore",
