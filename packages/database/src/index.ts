@@ -18,30 +18,29 @@ export async function createClient() {
   const { createPrismaRedisCache } = await import('prisma-redis-middleware')
 
   if (!process.env['DATABASE_URL']) throw new Error('DATABASE_URL is required')
-  if (!process.env['REDIS_URL']) throw new Error('REDIS_URL is required')
 
-  const redis = new Redis(process.env['REDIS_URL'])
-
-  const cacheMiddleware = createPrismaRedisCache({
-    models: [
-      { model: 'Token', cacheTime: 900 },
-      { model: 'Incentive', cacheTime: 180 },
-      { model: 'Pool', cacheTime: 24 * 60 * 60 },
-      { model: 'SushiPool', cacheTime: 900 },
-    ],
-    storage: {
-      type: 'redis',
-      options: { client: redis, invalidation: { referencesTTL: 24 * 60 * 60 } },
-    } as any, // Issue open on github,
-    onHit: (key: string) => {
-      console.log('Hit: ✅', key)
-    },
-    onMiss: (key: string) => {
-      console.log('Miss: ❌', key)
-    },
-  })
-
-  client.$use(cacheMiddleware as Prisma.Middleware)
+  if (process.env['REDIS_URL']) {
+    const redis = new Redis(process.env['REDIS_URL'])
+    const cacheMiddleware = createPrismaRedisCache({
+      models: [
+        { model: 'Token', cacheTime: 900 },
+        { model: 'Incentive', cacheTime: 180 },
+        { model: 'Pool', cacheTime: 24 * 60 * 60 },
+        { model: 'SushiPool', cacheTime: 900 },
+      ],
+      storage: {
+        type: 'redis',
+        options: { client: redis, invalidation: { referencesTTL: 24 * 60 * 60 } },
+      } as any, // Issue open on github,
+      onHit: (key: string) => {
+        console.log('Hit: ✅', key)
+      },
+      onMiss: (key: string) => {
+        console.log('Miss: ❌', key)
+      },
+    })
+    client.$use(cacheMiddleware as Prisma.Middleware)
+  }
 
   return client
 }
