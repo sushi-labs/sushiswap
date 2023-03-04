@@ -141,6 +141,7 @@ export const ${lowerCaseName}Address = Object.fromEntries(
 export const ${lowerCaseName}Abi = Object.fromEntries(
   Object.entries(${lowerCaseName}Exports).map(([chainId, data]) => [parseInt(chainId), data.abi])
 ) as {[chainId in keyof ${contractName}Exports]: ${contractName}Exports[chainId]['abi']}
+export const ${lowerCaseName}ChainIds = Object.keys(${lowerCaseName}Exports).map(chainId => parseInt(chainId)) as ${contractName}ChainId[]
 \n`
           })
           .join('')
