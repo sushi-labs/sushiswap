@@ -23,7 +23,7 @@ export async function getPoolsByTokenIds(
 ) {
   try {
     const pools = await fetch(
-      `https://aggregator.sushi.com/v0/${chainId}/pools/${chainId}/${protocol}/${version}?poolTypes=${poolTypes.join(
+      `https://aggregator.sushi.com/v0/${chainId}/pools/${protocol}/${version}?poolTypes=${poolTypes.join(
         ','
       )}&token0=${token0Address}&token1=${token1Address}&take=${size}&excludeTopPoolsSize=${excludeTopPoolsSize}&topPoolMinLiquidity=${topPoolMinLiquidity}`
     )
