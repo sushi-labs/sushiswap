@@ -5,7 +5,7 @@ import { tryParseAmount, Type } from '@sushiswap/currency'
 import { Pair as PairDTO } from '@sushiswap/graph-client'
 import { FundSource } from '@sushiswap/hooks'
 import { AppearOnMount, BreadcrumbLink, Button, Container, Dots, Loader } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui/widget'
+import { Widget } from '@sushiswap/ui'
 import {
   Checker,
   ConstantProductPoolState,
@@ -28,7 +28,7 @@ import {
   SelectNetworkWidget,
   SelectPoolTypeWidget,
   SettingsOverlay,
-} from 'components'
+} from '../components'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
@@ -185,7 +185,10 @@ const _Add: FC<AddProps> = ({
 
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
   const tokenMap = useTokens(chainId)
-  const [{ input0, input1 }, setTypedAmounts] = useState<{ input0: string; input1: string }>({ input0: '', input1: '' })
+  const [{ input0, input1 }, setTypedAmounts] = useState<{
+    input0: string
+    input1: string
+  }>({ input0: '', input1: '' })
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]

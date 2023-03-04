@@ -7,7 +7,7 @@ import {
   TRIDENT_SUBGRAPH_NAME,
   TridentChainId,
 } from '@sushiswap/graph-config'
-import { isSushiSwapChain,isTridentChain } from '@sushiswap/validate'
+import { isSushiSwapChain, isTridentChain } from '@sushiswap/validate'
 import { getProvider } from '@sushiswap/wagmi'
 import { Contract } from 'ethers'
 import { erc20ABI } from 'wagmi'
@@ -62,7 +62,10 @@ export const getTridentTokenKPI = async (id: string, chainId: TridentChainId): P
   }
 }
 
-export const getTokenKPI = async (id: string, chainId: ChainId): Promise<TokenKPI | undefined> => {
+export const getTokenKPI = async (
+  id: string,
+  chainId: SushiSwapChainId | TridentChainId
+): Promise<TokenKPI | undefined> => {
   const [exchangeToken, tridentToken] = await Promise.all([
     isSushiSwapChain(chainId) ? getExchangeTokenKPI(id, chainId) : undefined,
     isTridentChain(chainId) ? getTridentTokenKPI(id, chainId) : undefined,

@@ -1,0 +1,133 @@
+@tailwind base;
+
+@import 'react-datepicker/dist/react-datepicker.css';
+@import '@fontsource/inter/variable.css';
+
+@tailwind components;
+@tailwind utilities;
+
+@import './variables.css';
+@import "./components/skeleton/Skeleton.css";
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+  touch-action: manipulation;
+  background-color: var(--background-color) !important;
+}
+
+body {
+  position: relative;
+  min-height: 100%;
+  margin: 0;
+  background-color: transparent !important;
+}
+
+html,
+body {
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--color);
+  overscroll-behavior-x: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none; /* for Internet Explorer, Edge */
+  scrollbar-width: none; /* for Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+*.scroll {
+  overflow-y: overlay;
+}
+
+*.scroll::-webkit-scrollbar {
+  width: 14px;
+  height: 18px;
+}
+
+*.scroll::-webkit-scrollbar-thumb {
+  height: 30px;
+  border: 4px solid rgba(0, 0, 0, 0);
+  background-clip: padding-box;
+  background-color: rgba(0, 0, 0, 0.2);
+  -webkit-border-radius: 7px;
+  -webkit-box-shadow: inset -1px -1px 0px rgba(255, 255, 255, 0.05), inset 1px 1px 0px rgba(255, 255, 255, 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  *.scroll::-webkit-scrollbar-thumb {
+    height: 30px;
+    border: 4px solid rgba(255, 255, 255, 0);
+    background-clip: padding-box;
+    background-color: rgba(255, 255, 255, 0.2);
+    -webkit-border-radius: 7px;
+    -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+  }
+}
+
+*.scroll::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+*.scroll::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+@layer utilities {
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='search']::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+  }
+
+  button:focus,
+  input:focus,
+  a:focus,
+  img:focus {
+    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0;
+  }
+
+  button:focus-within,
+  input:focus-within,
+  a:focus-within,
+  img:focus-within {
+    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0;
+  }
+
+  button:focus-visible,
+  input:focus-visible,
+  a:focus-visible,
+  img:focus-visible {
+    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0;
+  }
+}
+
+@keyframes snowfall {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 110vh, 0);
+  }
+}

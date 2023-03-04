@@ -343,7 +343,8 @@ export class Graph {
     pools: RPool[],
     start: RToken,
     baseTokenOrNetworks: RToken | NetworkInfo[],
-    gasPriceSingleNetwork?: number
+    gasPriceSingleNetwork?: number,
+    minPriceLiquidity = 0
   ) {
     const networks: NetworkInfo[] =
       baseTokenOrNetworks instanceof Array
@@ -376,7 +377,7 @@ export class Graph {
     //   }
     // })
     const startV = this.getVert(start)
-    if (startV !== undefined) this.setPricesStable(startV, 1, networks)
+    if (startV !== undefined) this.setPricesStable(startV, 1, networks, minPriceLiquidity)
   }
 
   getVert(t: RToken): Vertice | undefined {
@@ -389,7 +390,7 @@ export class Graph {
   }
 
   // Set prices using greedy algorithm
-  setPricesStable(from: Vertice, price: number, networks: NetworkInfo[]) {
+  setPricesStable(from: Vertice, price: number, networks: NetworkInfo[], minLiquidity = 0) {
     const processedVert = new Set<Vertice>()
     let nextEdges: Edge[] = []
     const edgeValues = new Map<Edge, number>()
@@ -397,8 +398,14 @@ export class Graph {
 
     function addVertice(v: Vertice, price: number) {
       v.price = price
-      const newEdges = v.edges.filter((e) => !processedVert.has(v.getNeibour(e) as Vertice))
-      newEdges.forEach((e) => edgeValues.set(e, price * parseInt(e.reserve(v).toString())))
+      const newEdges = v.edges.filter((e) => {
+        if (processedVert.has(v.getNeibour(e) as Vertice)) return false
+        if (e.pool.alwaysAppropriateForPricing()) return true
+        const liquidity = price * parseInt(e.reserve(v).toString())
+        if (liquidity < minLiquidity) return false
+        edgeValues.set(e, liquidity)
+        return true
+      })
       newEdges.sort((e1, e2) => value(e1) - value(e2))
       const res: Edge[] = []
       while (nextEdges.length && newEdges.length) {

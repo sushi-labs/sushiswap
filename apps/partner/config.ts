@@ -22,3 +22,6 @@ export const SUPPORTED_CHAINS = [
   ChainId.BOBA_AVAX,
   ChainId.ARBITRUM_NOVA,
 ] as const
+
+export type SupportedChainIds = typeof SUPPORTED_CHAINS
+export type SupportedChainId = SupportedChainIds[number]

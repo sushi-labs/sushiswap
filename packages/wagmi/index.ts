@@ -18,5 +18,3 @@ export * from './systems'
 
 // Re-export wagmi
 // export * from '@wagmi/core'
-
-export * from './calculateGasMargin'

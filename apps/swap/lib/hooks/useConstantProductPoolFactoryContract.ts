@@ -1,7 +1,7 @@
 import { Interface } from '@ethersproject/abi'
 import { Contract } from '@ethersproject/contracts'
-import CONSTANT_PRODUCT_POOL_FACTORY_ABI from 'abis/constant-product-pool-factory.json'
-import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS } from 'config'
+import CONSTANT_PRODUCT_POOL_FACTORY_ABI from '../../abis/constant-product-pool-factory.json'
+import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS } from '../../config'
 import { useMemo } from 'react'
 import { useProvider } from 'wagmi'
 

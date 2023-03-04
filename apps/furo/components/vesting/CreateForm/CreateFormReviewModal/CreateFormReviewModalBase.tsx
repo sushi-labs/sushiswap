@@ -122,7 +122,7 @@ const CreateFormReviewModalBase: FC<CreateFormReviewModalBase> = ({ chainId, chi
             <Typography variant="xs" className="!leading-5 text-slate-400 mt-6 text-center">
               This will create a stream to{' '}
               <span className="font-medium text-slate-50 hover:text-blue">
-                <a target="_blank" href={Chain.from(chainId).getAccountUrl(recipient)} rel="noreferrer">
+                <a target="_blank" href={Chain.from(chainId)?.getAccountUrl(recipient)} rel="noreferrer">
                   {shortenAddress(recipient)}
                 </a>
               </span>{' '}

@@ -1,10 +1,10 @@
-import { ChainId } from '@sushiswap/chain'
+import { SupportedChainId } from 'config'
 import { useProvider } from 'wagmi'
 
 import { tokenLists } from './token-lists'
 
 interface Props {
-  chainId: ChainId
+  chainId: SupportedChainId
 }
 
 // Wagmi wrapper for redux token lists

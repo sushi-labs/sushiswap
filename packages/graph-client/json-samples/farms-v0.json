@@ -14,7 +14,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -49,7 +52,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -66,7 +72,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -95,7 +104,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -112,7 +124,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -135,7 +150,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -152,7 +170,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -193,7 +214,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -216,7 +240,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -239,7 +266,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -274,7 +304,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -297,7 +330,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -320,7 +356,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -361,7 +400,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -384,7 +426,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -419,7 +464,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -454,13 +502,23 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.30936449183145914,
             "rewardPerDay": 14999.99999904,
-            "rewardToken": { "address": "0x00813e3421e1367353bfe7615c7f7f133c89df74", "decimals": 18, "symbol": "SPS" },
-            "rewarder": { "address": "0xf6a15e94ef40f5b927d301c8af06012411ecca69", "type": "Secondary" }
+            "rewardToken": {
+              "address": "0x00813e3421e1367353bfe7615c7f7f133c89df74",
+              "decimals": 18,
+              "symbol": "SPS"
+            },
+            "rewarder": {
+              "address": "0xf6a15e94ef40f5b927d301c8af06012411ecca69",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -477,7 +535,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -506,7 +567,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -559,7 +623,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -576,7 +643,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -611,7 +681,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.37642072975829993,
@@ -621,7 +694,10 @@
               "decimals": 18,
               "symbol": "GODS"
             },
-            "rewarder": { "address": "0xdc7f3bb3f032aea63b5e26c63bc9694bf16ab9ee", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xdc7f3bb3f032aea63b5e26c63bc9694bf16ab9ee",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -638,7 +714,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.46686608505085453,
@@ -648,7 +727,10 @@
               "decimals": 18,
               "symbol": "VEGA"
             },
-            "rewarder": { "address": "0x51d8a431f8b6c25f3b987e0bb8dd3cfb01366b79", "type": "Secondary" }
+            "rewarder": {
+              "address": "0x51d8a431f8b6c25f3b987e0bb8dd3cfb01366b79",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -689,7 +771,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -712,7 +797,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -729,7 +817,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -776,7 +867,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -823,7 +917,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -852,7 +949,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.03974465000340844,
@@ -862,7 +962,10 @@
               "decimals": 18,
               "symbol": "THOR"
             },
-            "rewarder": { "address": "0x34c8ab3bda8e1b68a4f69766e2d4f71f39c8ec09", "type": "Secondary" }
+            "rewarder": {
+              "address": "0x34c8ab3bda8e1b68a4f69766e2d4f71f39c8ec09",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -897,7 +1000,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -920,7 +1026,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -955,7 +1064,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -972,7 +1084,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -984,8 +1099,15 @@
           {
             "apr": 0.4303976236860368,
             "rewardPerDay": 6168.96,
-            "rewardToken": { "address": "0x725c263e32c72ddc3a19bea12c5a0479a81ee688", "decimals": 18, "symbol": "BMI" },
-            "rewarder": { "address": "0xf166427ee8175aa30d6b58d10e0b044eeed3b9de", "type": "Secondary" }
+            "rewardToken": {
+              "address": "0x725c263e32c72ddc3a19bea12c5a0479a81ee688",
+              "decimals": 18,
+              "symbol": "BMI"
+            },
+            "rewarder": {
+              "address": "0xf166427ee8175aa30d6b58d10e0b044eeed3b9de",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1020,7 +1142,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.8406064290828786,
@@ -1030,7 +1155,10 @@
               "decimals": 18,
               "symbol": "RADAR"
             },
-            "rewarder": { "address": "0x6558e44e58aee09fb24cb63a6a8270baebd6122f", "type": "Secondary" }
+            "rewarder": {
+              "address": "0x6558e44e58aee09fb24cb63a6a8270baebd6122f",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1047,7 +1175,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1064,7 +1195,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1087,7 +1221,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1110,13 +1247,23 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.7699077670297786,
             "rewardPerDay": 1999.9999999999957,
-            "rewardToken": { "address": "0x9ab7bb7fdc60f4357ecfef43986818a2a3569c62", "decimals": 18, "symbol": "GOG" },
-            "rewarder": { "address": "0xd254a8f7ffeb6ecd76bedb2acbcf04f196c9d7a2", "type": "Secondary" }
+            "rewardToken": {
+              "address": "0x9ab7bb7fdc60f4357ecfef43986818a2a3569c62",
+              "decimals": 18,
+              "symbol": "GOG"
+            },
+            "rewarder": {
+              "address": "0xd254a8f7ffeb6ecd76bedb2acbcf04f196c9d7a2",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1145,7 +1292,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1180,7 +1330,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1239,7 +1392,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1274,7 +1430,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1297,7 +1456,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1320,7 +1482,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1349,7 +1514,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1366,7 +1534,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1407,7 +1578,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1460,7 +1634,10 @@
               "decimals": 18,
               "symbol": "WNCG"
             },
-            "rewarder": { "address": "0xe7ec4353fa1c8393281dcf94e069bc4b823d907c", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xe7ec4353fa1c8393281dcf94e069bc4b823d907c",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1489,7 +1666,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1554,7 +1734,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1571,7 +1754,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1588,7 +1774,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1617,7 +1806,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1652,13 +1844,23 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.367584369220504,
             "rewardPerDay": 10584.415584415585,
-            "rewardToken": { "address": "0x25f8087ead173b73d6e8b84329989a8eea16cf73", "decimals": 18, "symbol": "YGG" },
-            "rewarder": { "address": "0x083773a02311894a7e5710d62662bfbd268e10ec", "type": "Secondary" }
+            "rewardToken": {
+              "address": "0x25f8087ead173b73d6e8b84329989a8eea16cf73",
+              "decimals": 18,
+              "symbol": "YGG"
+            },
+            "rewarder": {
+              "address": "0x083773a02311894a7e5710d62662bfbd268e10ec",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1675,7 +1877,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1692,7 +1897,10 @@
               "decimals": 10,
               "symbol": "xcRMRK"
             },
-            "rewarder": { "address": "0xbec5a9803ff6f66e4287611a5c146a812d1456e2", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xbec5a9803ff6f66e4287611a5c146a812d1456e2",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1739,7 +1947,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1762,7 +1973,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1779,7 +1993,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1832,7 +2049,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1849,7 +2069,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1884,7 +2107,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1919,7 +2145,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -1984,7 +2213,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2019,7 +2251,10 @@
               "decimals": 18,
               "symbol": "MARS4"
             },
-            "rewarder": { "address": "0xf313455fa32db78a02aebf824624cf914abe2533", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xf313455fa32db78a02aebf824624cf914abe2533",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2036,7 +2271,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2053,13 +2291,23 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.5751230801094498,
             "rewardPerDay": 14999999999.999998,
-            "rewardToken": { "address": "0x3b484b82567a09e2588a13d54d032153f0c0aee0", "decimals": 18, "symbol": "SOS" },
-            "rewarder": { "address": "0x2646cbb689bce70dd7d8e041ea35b1879412059c", "type": "Secondary" }
+            "rewardToken": {
+              "address": "0x3b484b82567a09e2588a13d54d032153f0c0aee0",
+              "decimals": 18,
+              "symbol": "SOS"
+            },
+            "rewarder": {
+              "address": "0x2646cbb689bce70dd7d8e041ea35b1879412059c",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2082,7 +2330,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2099,7 +2350,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2116,7 +2370,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2151,7 +2408,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2168,7 +2428,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2185,7 +2448,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2202,7 +2468,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2219,7 +2488,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.29275586627198585,
@@ -2229,7 +2501,10 @@
               "decimals": 18,
               "symbol": "ALCX"
             },
-            "rewarder": { "address": "0x7519c93fc5073e15d89131fd38118d73a72370f8", "type": "Secondary" }
+            "rewarder": {
+              "address": "0x7519c93fc5073e15d89131fd38118d73a72370f8",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2246,7 +2521,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2263,7 +2541,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2280,7 +2561,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2363,7 +2647,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2398,7 +2685,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2427,7 +2717,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2462,7 +2755,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2485,7 +2781,10 @@
               "decimals": 18,
               "symbol": "PRIMATE"
             },
-            "rewarder": { "address": "0x173ea048c2b5a3b234ffe40eb3c8859802778bf3", "type": "Secondary" }
+            "rewarder": {
+              "address": "0x173ea048c2b5a3b234ffe40eb3c8859802778bf3",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2514,7 +2813,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2537,7 +2839,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2554,7 +2859,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2589,7 +2897,10 @@
               "decimals": 18,
               "symbol": "BLOCK"
             },
-            "rewarder": { "address": "0x754e3f0123a96eb7f8d81a8e067375115bbb82f7", "type": "Secondary" }
+            "rewarder": {
+              "address": "0x754e3f0123a96eb7f8d81a8e067375115bbb82f7",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2624,7 +2935,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2671,7 +2985,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2688,7 +3005,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2705,7 +3025,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2746,7 +3069,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2769,7 +3095,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2786,7 +3115,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2809,7 +3141,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2832,7 +3167,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.5057357892450803,
@@ -2842,7 +3180,10 @@
               "decimals": 18,
               "symbol": "NFTL"
             },
-            "rewarder": { "address": "0xdf3754b114a523d8b0b3647018fe2b5ef28d15b6", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xdf3754b114a523d8b0b3647018fe2b5ef28d15b6",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2889,7 +3230,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd", "type": "Primary" }
+            "rewarder": {
+              "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2906,13 +3250,23 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.4301425819647006,
             "rewardPerDay": 10107.999936,
-            "rewardToken": { "address": "0x4c19596f5aaff459fa38b0f7ed92f11ae6543784", "decimals": 8, "symbol": "TRU" },
-            "rewarder": { "address": "0xc0482b9d1ff34f7cd98e3a0a4584298492acf550", "type": "Secondary" }
+            "rewardToken": {
+              "address": "0x4c19596f5aaff459fa38b0f7ed92f11ae6543784",
+              "decimals": 8,
+              "symbol": "TRU"
+            },
+            "rewarder": {
+              "address": "0xc0482b9d1ff34f7cd98e3a0a4584298492acf550",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2941,7 +3295,10 @@
               "decimals": 18,
               "symbol": "DIVER"
             },
-            "rewarder": { "address": "0x40610c4c136bfa63b98ec58f2f392958fe8a8f5d", "type": "Secondary" }
+            "rewarder": {
+              "address": "0x40610c4c136bfa63b98ec58f2f392958fe8a8f5d",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2958,7 +3315,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d", "type": "Primary" }
+            "rewarder": {
+              "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.5719587494192586,
@@ -2968,7 +3328,10 @@
               "decimals": 18,
               "symbol": "SAK3"
             },
-            "rewarder": { "address": "0x330045c1ea0d7eea6ff8c1e9c8f7a461e125d199", "type": "Secondary" }
+            "rewarder": {
+              "address": "0x330045c1ea0d7eea6ff8c1e9c8f7a461e125d199",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -2998,7 +3361,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3", "type": "Primary" }
+            "rewarder": {
+              "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3015,7 +3381,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3", "type": "Primary" }
+            "rewarder": {
+              "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3032,7 +3401,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3", "type": "Primary" }
+            "rewarder": {
+              "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3061,7 +3433,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3", "type": "Primary" }
+            "rewarder": {
+              "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3096,13 +3471,23 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3", "type": "Primary" }
+            "rewarder": {
+              "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.008307953025870873,
             "rewardPerDay": 0.4666666666752,
-            "rewardToken": { "address": "0x9c58bacc331c9aa871afd802db6379a98e80cedb", "decimals": 18, "symbol": "GNO" },
-            "rewarder": { "address": "0x3f505b5cff05d04f468db65e27e72ec45a12645f", "type": "Secondary" }
+            "rewardToken": {
+              "address": "0x9c58bacc331c9aa871afd802db6379a98e80cedb",
+              "decimals": 18,
+              "symbol": "GNO"
+            },
+            "rewarder": {
+              "address": "0x3f505b5cff05d04f468db65e27e72ec45a12645f",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3119,7 +3504,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3", "type": "Primary" }
+            "rewarder": {
+              "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3198,7 +3586,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.25606470103830675,
@@ -3208,7 +3599,10 @@
               "decimals": 18,
               "symbol": "pZUG"
             },
-            "rewarder": { "address": "0xb52b4b6779553a89e7f5f6f1d463595d88e88822", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xb52b4b6779553a89e7f5f6f1d463595d88e88822",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3231,7 +3625,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.00017023058051149768,
@@ -3241,7 +3638,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3258,7 +3658,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3275,7 +3678,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.00003687790290641123,
@@ -3285,7 +3691,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3302,7 +3711,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.0070683543257522045,
@@ -3312,7 +3724,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3329,7 +3744,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.0004607180522875318,
@@ -3339,7 +3757,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3356,7 +3777,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.00013257143862319538,
@@ -3366,7 +3790,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3401,7 +3828,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.0001301464391645683,
@@ -3411,7 +3841,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3440,7 +3873,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.00016574654342607547,
@@ -3450,7 +3886,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3467,13 +3906,23 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.8300316270679302,
             "rewardPerDay": 11111.1111072,
-            "rewardToken": { "address": "0x5ec03c1f7fa7ff05ec476d19e34a22eddb48acdc", "decimals": 18, "symbol": "ZED" },
-            "rewarder": { "address": "0x0fc98e524095f7a0f09eb9786beba120060f8004", "type": "Secondary" }
+            "rewardToken": {
+              "address": "0x5ec03c1f7fa7ff05ec476d19e34a22eddb48acdc",
+              "decimals": 18,
+              "symbol": "ZED"
+            },
+            "rewarder": {
+              "address": "0x0fc98e524095f7a0f09eb9786beba120060f8004",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3490,7 +3939,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.00002238858237871092,
@@ -3500,7 +3952,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3535,7 +3990,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.00001825170638084063,
@@ -3545,7 +4003,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3598,7 +4059,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.00007162472533804743,
@@ -3608,7 +4072,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3625,7 +4092,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.00005111955352959559,
@@ -3635,7 +4105,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3676,7 +4149,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.00010588481059199269,
@@ -3686,7 +4162,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3715,7 +4194,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.00006748673279796267,
@@ -3725,7 +4207,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3748,7 +4233,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.0003442249083761641,
@@ -3758,7 +4246,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3781,7 +4272,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.00011465455964477,
@@ -3791,7 +4285,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3808,7 +4305,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.00007250940818656164,
@@ -3818,7 +4318,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3847,7 +4350,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.00001085817262235614,
@@ -3857,7 +4363,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3880,7 +4389,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.00006350370052756492,
@@ -3890,7 +4402,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3907,7 +4422,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.0006081162513408521,
@@ -3917,7 +4435,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3940,7 +4461,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.0034879071485448697,
@@ -3950,7 +4474,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3967,7 +4494,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -3984,7 +4514,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.000045038017106285557,
@@ -3994,7 +4527,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4011,7 +4547,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4034,7 +4573,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.000037487854508053524,
@@ -4044,7 +4586,10 @@
               "decimals": 18,
               "symbol": "WMATIC"
             },
-            "rewarder": { "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4067,7 +4612,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F", "type": "Primary" }
+            "rewarder": {
+              "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4091,7 +4639,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5", "type": "Primary" }
+            "rewarder": {
+              "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.14606359942852842,
@@ -4101,7 +4652,10 @@
               "decimals": 18,
               "symbol": "WFTM"
             },
-            "rewarder": { "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4118,7 +4672,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5", "type": "Primary" }
+            "rewarder": {
+              "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.0346397568730157,
@@ -4128,7 +4685,10 @@
               "decimals": 18,
               "symbol": "WFTM"
             },
-            "rewarder": { "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4145,7 +4705,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5", "type": "Primary" }
+            "rewarder": {
+              "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.09387187554638148,
@@ -4155,7 +4718,10 @@
               "decimals": 18,
               "symbol": "WFTM"
             },
-            "rewarder": { "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4172,7 +4738,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5", "type": "Primary" }
+            "rewarder": {
+              "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.06789006201586188,
@@ -4182,7 +4751,10 @@
               "decimals": 18,
               "symbol": "WFTM"
             },
-            "rewarder": { "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4199,7 +4771,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5", "type": "Primary" }
+            "rewarder": {
+              "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.07207827311960932,
@@ -4209,7 +4784,10 @@
               "decimals": 18,
               "symbol": "WFTM"
             },
-            "rewarder": { "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4226,7 +4804,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5", "type": "Primary" }
+            "rewarder": {
+              "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.11070666134823064,
@@ -4236,7 +4817,10 @@
               "decimals": 18,
               "symbol": "WFTM"
             },
-            "rewarder": { "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4253,7 +4837,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5", "type": "Primary" }
+            "rewarder": {
+              "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.07946647882310423,
@@ -4263,7 +4850,10 @@
               "decimals": 18,
               "symbol": "WFTM"
             },
-            "rewarder": { "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4280,7 +4870,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5", "type": "Primary" }
+            "rewarder": {
+              "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.0782763893877225,
@@ -4290,7 +4883,10 @@
               "decimals": 18,
               "symbol": "WFTM"
             },
-            "rewarder": { "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4307,7 +4903,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5", "type": "Primary" }
+            "rewarder": {
+              "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.061790976375004664,
@@ -4317,7 +4916,10 @@
               "decimals": 18,
               "symbol": "WFTM"
             },
-            "rewarder": { "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4334,7 +4936,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5", "type": "Primary" }
+            "rewarder": {
+              "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.03853547675627753,
@@ -4344,7 +4949,10 @@
               "decimals": 18,
               "symbol": "WFTM"
             },
-            "rewarder": { "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4368,7 +4976,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3", "type": "Primary" }
+            "rewarder": {
+              "address": "0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.2066730012655189,
@@ -4378,7 +4989,10 @@
               "decimals": 18,
               "symbol": "BOBA"
             },
-            "rewarder": { "address": "0xf731202a3cf7efa9368c2d7bd613926f7a144db5", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xf731202a3cf7efa9368c2d7bd613926f7a144db5",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4395,7 +5009,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3", "type": "Primary" }
+            "rewarder": {
+              "address": "0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.23814108986132257,
@@ -4405,7 +5022,10 @@
               "decimals": 18,
               "symbol": "BOBA"
             },
-            "rewarder": { "address": "0xf731202a3cf7efa9368c2d7bd613926f7a144db5", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xf731202a3cf7efa9368c2d7bd613926f7a144db5",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4422,7 +5042,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3", "type": "Primary" }
+            "rewarder": {
+              "address": "0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.19698895253136658,
@@ -4432,7 +5055,10 @@
               "decimals": 18,
               "symbol": "BOBA"
             },
-            "rewarder": { "address": "0xf731202a3cf7efa9368c2d7bd613926f7a144db5", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xf731202a3cf7efa9368c2d7bd613926f7a144db5",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4449,7 +5075,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3", "type": "Primary" }
+            "rewarder": {
+              "address": "0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4479,7 +5108,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x1334c8e873E1cae8467156e2A81d1C8b566B2da1", "type": "Primary" }
+            "rewarder": {
+              "address": "0x1334c8e873E1cae8467156e2A81d1C8b566B2da1",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Trident"
@@ -4502,7 +5134,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x1334c8e873E1cae8467156e2A81d1C8b566B2da1", "type": "Primary" }
+            "rewarder": {
+              "address": "0x1334c8e873E1cae8467156e2A81d1C8b566B2da1",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Trident"
@@ -4519,7 +5154,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x1334c8e873E1cae8467156e2A81d1C8b566B2da1", "type": "Primary" }
+            "rewarder": {
+              "address": "0x1334c8e873E1cae8467156e2A81d1C8b566B2da1",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Trident"
@@ -4580,7 +5218,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5", "type": "Primary" }
+            "rewarder": {
+              "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4597,7 +5238,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5", "type": "Primary" }
+            "rewarder": {
+              "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4626,7 +5270,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5", "type": "Primary" }
+            "rewarder": {
+              "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4643,7 +5290,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5", "type": "Primary" }
+            "rewarder": {
+              "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4660,7 +5310,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5", "type": "Primary" }
+            "rewarder": {
+              "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4677,7 +5330,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5", "type": "Primary" }
+            "rewarder": {
+              "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4694,7 +5350,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5", "type": "Primary" }
+            "rewarder": {
+              "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4711,7 +5370,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5", "type": "Primary" }
+            "rewarder": {
+              "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4728,7 +5390,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5", "type": "Primary" }
+            "rewarder": {
+              "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4745,7 +5410,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5", "type": "Primary" }
+            "rewarder": {
+              "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4787,7 +5455,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5", "type": "Primary" }
+            "rewarder": {
+              "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Trident"
@@ -4804,7 +5475,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5", "type": "Primary" }
+            "rewarder": {
+              "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Trident"
@@ -4821,7 +5495,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5", "type": "Primary" }
+            "rewarder": {
+              "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Trident"
@@ -4838,7 +5515,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5", "type": "Primary" }
+            "rewarder": {
+              "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.29273334027498543,
@@ -4848,7 +5528,10 @@
               "decimals": 18,
               "symbol": "WKAVA"
             },
-            "rewarder": { "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Trident"
@@ -4871,7 +5554,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5", "type": "Primary" }
+            "rewarder": {
+              "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Trident"
@@ -4895,7 +5581,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3", "type": "Primary" }
+            "rewarder": {
+              "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4912,7 +5601,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3", "type": "Primary" }
+            "rewarder": {
+              "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4929,7 +5621,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3", "type": "Primary" }
+            "rewarder": {
+              "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4946,7 +5641,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3", "type": "Primary" }
+            "rewarder": {
+              "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4969,7 +5667,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3", "type": "Primary" }
+            "rewarder": {
+              "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.24702798531657022,
@@ -4979,7 +5680,10 @@
               "decimals": 18,
               "symbol": "SPELL"
             },
-            "rewarder": { "address": "0x3c61b93b64f59b5091a11a071083598ee8b5cb64", "type": "Secondary" }
+            "rewarder": {
+              "address": "0x3c61b93b64f59b5091a11a071083598ee8b5cb64",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -4996,7 +5700,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3", "type": "Primary" }
+            "rewarder": {
+              "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -5013,7 +5720,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3", "type": "Primary" }
+            "rewarder": {
+              "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.19643920104584364,
@@ -5023,7 +5733,10 @@
               "decimals": 18,
               "symbol": "gOHM"
             },
-            "rewarder": { "address": "0xae961a7d116bfd9b2534ad27fe4d178ed188c87a", "type": "Secondary" }
+            "rewarder": {
+              "address": "0xae961a7d116bfd9b2534ad27fe4d178ed188c87a",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -5046,7 +5759,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3", "type": "Primary" }
+            "rewarder": {
+              "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+              "type": "Primary"
+            }
           },
           {
             "apr": 0.4318853266981927,
@@ -5056,7 +5772,10 @@
               "decimals": 18,
               "symbol": "MAGIC"
             },
-            "rewarder": { "address": "0x1a9c20e2b0ac11ebecbdca626bba566c4ce8e606", "type": "Secondary" }
+            "rewarder": {
+              "address": "0x1a9c20e2b0ac11ebecbdca626bba566c4ce8e606",
+              "type": "Secondary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -5073,7 +5792,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3", "type": "Primary" }
+            "rewarder": {
+              "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -5097,7 +5819,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x8084936982D089130e001b470eDf58faCA445008", "type": "Primary" }
+            "rewarder": {
+              "address": "0x8084936982D089130e001b470eDf58faCA445008",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -5114,7 +5839,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x8084936982D089130e001b470eDf58faCA445008", "type": "Primary" }
+            "rewarder": {
+              "address": "0x8084936982D089130e001b470eDf58faCA445008",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -5149,7 +5877,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x8084936982D089130e001b470eDf58faCA445008", "type": "Primary" }
+            "rewarder": {
+              "address": "0x8084936982D089130e001b470eDf58faCA445008",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -5166,7 +5897,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x8084936982D089130e001b470eDf58faCA445008", "type": "Primary" }
+            "rewarder": {
+              "address": "0x8084936982D089130e001b470eDf58faCA445008",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"
@@ -5189,7 +5923,10 @@
               "decimals": 18,
               "symbol": "SUSHI"
             },
-            "rewarder": { "address": "0x8084936982D089130e001b470eDf58faCA445008", "type": "Primary" }
+            "rewarder": {
+              "address": "0x8084936982D089130e001b470eDf58faCA445008",
+              "type": "Primary"
+            }
           }
         ],
         "poolType": "Legacy"

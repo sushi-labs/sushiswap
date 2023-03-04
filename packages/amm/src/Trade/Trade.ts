@@ -59,8 +59,14 @@ export class Trade<
    */
   public readonly priceImpact: Percent = new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
 
-  public readonly currencyInRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) }
-  public readonly currencyOutRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) }
+  public readonly currencyInRebase = {
+    base: JSBI.BigInt(0),
+    elastic: JSBI.BigInt(0),
+  }
+  public readonly currencyOutRebase = {
+    base: JSBI.BigInt(0),
+    elastic: JSBI.BigInt(0),
+  }
 
   /**
    * Constructs an exact in trade with the given amount in and route
@@ -77,7 +83,11 @@ export class Trade<
     currencyOutRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) }
   ): Trade<TInput, TOutput, Type.EXACT_INPUT, TVersion> {
     return new Trade(
-      { ...route, fromToken: amountIn.currency as RToken, toToken: currencyOut as RToken },
+      {
+        ...route,
+        fromToken: amountIn.currency as RToken,
+        toToken: currencyOut as RToken,
+      },
       Type.EXACT_INPUT,
       version,
       currencyInRebase,
@@ -100,7 +110,11 @@ export class Trade<
     currencyOutRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) }
   ): Trade<TInput, TOutput, Type.EXACT_OUTPUT, TVersion> {
     return new Trade(
-      { ...route, fromToken: currencyIn as RToken, toToken: amountOut.currency as RToken },
+      {
+        ...route,
+        fromToken: currencyIn as RToken,
+        toToken: amountOut.currency as RToken,
+      },
       Type.EXACT_OUTPUT,
       version,
       currencyInRebase,
@@ -121,9 +135,19 @@ export class Trade<
     this.currencyInRebase = currencyInRebase
     this.currencyOutRebase = currencyOutRebase
 
-    const amountIn = Amount.fromShare(route.fromToken as TInput, route.amountInBN.toString(), currencyInRebase, tradeVersion===Version.V2)
+    const amountIn = Amount.fromShare(
+      route.fromToken as TInput,
+      route.amountInBN.toString(),
+      currencyInRebase,
+      tradeVersion === Version.V2
+    )
 
-    const amountOut = Amount.fromShare(route.toToken as TOutput, route.amountOutBN.toString(), currencyOutRebase, tradeVersion===Version.V2)
+    const amountOut = Amount.fromShare(
+      route.toToken as TOutput,
+      route.amountOutBN.toString(),
+      currencyOutRebase,
+      tradeVersion === Version.V2
+    )
 
     if (tradeType === Type.EXACT_INPUT) {
       this.inputAmount = Amount.fromFractionalAmount(amountIn.currency, amountIn.numerator, amountIn.denominator)

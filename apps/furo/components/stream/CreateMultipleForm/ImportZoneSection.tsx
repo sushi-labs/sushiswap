@@ -84,7 +84,12 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
             const tokenMap = tokens?.reduce<Record<string, Token>>((acc, result) => {
               if (result) {
                 const { address, symbol, decimals } = result
-                acc[address.toLowerCase()] = new Token({ address, symbol, decimals, chainId })
+                acc[address.toLowerCase()] = new Token({
+                  address,
+                  symbol,
+                  decimals,
+                  chainId,
+                })
               }
               return acc
             }, {})
@@ -113,7 +118,10 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
                   _recipient = undefined
                   errors.streams[index + nrOfStreams] = {
                     ...errors.streams[index + nrOfStreams],
-                    recipient: { type: 'custom', message: `${recipient} is not a valid address` },
+                    recipient: {
+                      type: 'custom',
+                      message: `${recipient} is not a valid address`,
+                    },
                   }
                 }
 
@@ -122,7 +130,10 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
                   errors.streams[index + nrOfStreams] = {
                     ...errors.streams[index + nrOfStreams],
                     dates: {
-                      startDate: { type: 'custom', message: `${startDate} is not a valid unix timestamp` },
+                      startDate: {
+                        type: 'custom',
+                        message: `${startDate} is not a valid unix timestamp`,
+                      },
                     },
                   }
                 }
@@ -133,7 +144,10 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
                     ...errors.streams[index + nrOfStreams],
                     dates: {
                       ...errors.streams[index + nrOfStreams]?.dates,
-                      endDate: { type: 'custom', message: `${endDate} is not a valid unix timestamp` },
+                      endDate: {
+                        type: 'custom',
+                        message: `${endDate} is not a valid unix timestamp`,
+                      },
                     },
                   }
                 }

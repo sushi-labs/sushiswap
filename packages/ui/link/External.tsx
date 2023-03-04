@@ -9,7 +9,6 @@ const COLOR = {
 export type Color = 'primary' | 'blue'
 
 export interface ExternalLinkProps extends Omit<HTMLProps<HTMLAnchorElement>, 'as' | 'ref' | 'onClick'> {
-  href: string
   color?: Color
   startIcon?: JSX.Element
   endIcon?: JSX.Element

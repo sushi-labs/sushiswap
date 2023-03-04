@@ -1,11 +1,12 @@
 import { ChainId, ChainKey } from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
-import { CHAIN_NAME } from '@sushiswap/graph-config'
+import { CHAIN_NAME, SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
 import Cors from 'cors'
 import { ethers } from 'ethers'
 import stringify from 'fast-json-stable-stringify'
 import { getOctokit, getTokenKPI, Token } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
+
 interface Body {
   tokenAddress: string
   tokenData: Token
@@ -31,6 +32,16 @@ function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: any) {
     })
   })
 }
+
+// TODO: Zod validation
+// import { z } from "zod";
+// const schema = z.object({
+//     tokenAddress: ,
+//     tokenData: ,
+//     tokenIcon: ,
+//     chainId: ,
+//     listType: ,
+// })
 
 // TODO: Clean up by extracting octokit calls
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -192,7 +203,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     sha: currentListData?.sha,
   })
 
-  const exchangeData = await getTokenKPI(tokenAddress, chainId)
+  const exchangeData = await getTokenKPI(tokenAddress, chainId as SushiSwapChainId | TridentChainId)
 
   // Open List PR
   const {

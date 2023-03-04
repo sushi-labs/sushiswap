@@ -5,8 +5,9 @@ import { AddressZero, Zero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Currency, Native, Share, Token } from '@sushiswap/currency'
 import { STARGATE_BRIDGE_TOKENS, STARGATE_CHAIN_ID, STARGATE_POOL_ID, StargateChainId } from '@sushiswap/stargate'
-import { SushiXSwap as SushiXSwapContract } from '@sushiswap/sushixswap/typechain'
-import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
+import { HexString } from '@sushiswap/types'
+import { getSushiXSwapContractConfig, SushiXSwap } from '@sushiswap/wagmi'
+import { Address } from 'abitype'
 import { formatBytes32String } from 'ethers/lib/utils'
 
 export enum Action {
@@ -41,9 +42,9 @@ export abstract class Cooker implements Cooker {
   readonly actions: Action[] = []
   readonly values: BigNumber[] = []
   readonly datas: string[] = []
-  readonly chainId: number
+  readonly chainId: StargateChainId
   readonly debug: boolean
-  readonly masterContract: string
+  readonly masterContract: Address
   readonly user: string
   constructor({
     chainId,
@@ -51,9 +52,9 @@ export abstract class Cooker implements Cooker {
     masterContract,
     user,
   }: {
-    chainId: number
+    chainId: StargateChainId
     debug?: boolean
-    masterContract: string
+    masterContract: Address
     user: string
   }) {
     this.chainId = chainId
@@ -192,7 +193,7 @@ export class SushiBridge {
 
   readonly dstCooker: DstCooker
 
-  readonly contract: SushiXSwapContract
+  readonly contract: SushiXSwap
 
   readonly crossChain: boolean
 
@@ -222,7 +223,7 @@ export class SushiBridge {
     srcUseBentoBox: boolean
     dstUseBentoBox: boolean
     user: string
-    contract: SushiXSwapContract
+    contract: SushiXSwap
     debug?: boolean
   }) {
     this.srcToken = srcToken
@@ -359,12 +360,12 @@ export class SushiBridge {
           STARGATE_CHAIN_ID[this.dstCooker.chainId],
           1,
           this.dstCooker.masterContract,
-          gasSpent,
-          0,
+          BigNumber.from(gasSpent),
+          BigNumber.from(0),
           defaultAbiCoder.encode(
             ['address', 'uint8[]', 'uint256[]', 'bytes[]'],
             [this.user, this.dstCooker.actions, this.dstCooker.values, this.dstCooker.datas]
-          )
+          ) as HexString
         )
       : [Zero, Zero]
   }

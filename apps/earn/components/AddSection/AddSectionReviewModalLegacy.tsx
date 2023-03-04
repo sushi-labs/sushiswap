@@ -2,16 +2,17 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
+import { calculateGasMargin } from '@sushiswap/gas'
 import { Percent } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
-  calculateGasMargin,
   getSushiSwapRouterContractConfig,
   PairState,
   useSendTransaction,
   useSushiSwapRouterContract,
 } from '@sushiswap/wagmi'
+import { BigNumber, BigNumberish } from 'ethers'
 import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { Address, useAccount, useNetwork } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
@@ -108,17 +109,19 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
         const withNative = token0.isNative || token1.isNative
 
         if (withNative) {
-          const value = (token1.isNative ? input1 : input0).quotient.toString()
+          const value = BigNumber.from((token1.isNative ? input1 : input0).quotient.toString())
           const args = [
-            (token1.isNative ? token0 : token1).wrapped.address,
-            (token1.isNative ? input0 : input1).quotient.toString(),
-            (token1.isNative ? minAmount0 : minAmount1).quotient.toString(),
-            (token1.isNative ? minAmount1 : minAmount0).quotient.toString(),
+            (token1.isNative ? token0 : token1).wrapped.address as Address,
+            BigNumber.from((token1.isNative ? input0 : input1).quotient.toString()),
+            BigNumber.from((token1.isNative ? minAmount0 : minAmount1).quotient.toString()),
+            BigNumber.from((token1.isNative ? minAmount1 : minAmount0).quotient.toString()),
             address,
-            deadline.toHexString(),
-          ]
+            BigNumber.from(deadline.toHexString()),
+          ] as const
 
-          const gasLimit = await contract.estimateGas.addLiquidityETH(...args, { value })
+          const gasLimit = await contract.estimateGas.addLiquidityETH(...args, {
+            value,
+          })
           setRequest({
             from: address,
             to: contract.address,
@@ -128,15 +131,15 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
           })
         } else {
           const args = [
-            token0.wrapped.address,
-            token1.wrapped.address,
-            input0.quotient.toString(),
-            input1.quotient.toString(),
-            minAmount0.quotient.toString(),
-            minAmount1.quotient.toString(),
+            token0.wrapped.address as Address,
+            token1.wrapped.address as Address,
+            BigNumber.from(input0.quotient.toString()),
+            BigNumber.from(input1.quotient.toString()),
+            BigNumber.from(minAmount0.quotient.toString()),
+            BigNumber.from(minAmount1.quotient.toString()),
             address,
-            deadline.toHexString(),
-          ]
+            BigNumber.from(deadline.toHexString()),
+          ] as const
 
           const gasLimit = await contract.estimateGas.addLiquidity(...args, {})
           setRequest({
@@ -187,6 +190,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
               </Approve.Components>
             }
             render={({ approved }) => {
+              // console.log({ approved, isWritePending })
               return (
                 <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}

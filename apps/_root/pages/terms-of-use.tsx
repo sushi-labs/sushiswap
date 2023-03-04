@@ -10,19 +10,19 @@ const TermsOfUse = () => {
         <Typography variant="hero" weight={700} className="text-center">
           Sushi Website Terms Of Use
         </Typography>
-        <Typography variant="xl" className="text-neutral-400 text-center">
+        <Typography variant="xl" className="text-center text-neutral-400">
           Legal Information & Notices
         </Typography>
       </div>
-      <div className="prose mx-auto h-px bg-neutral-800 w-full my-3" />
-      <div className="prose prose-dark mx-auto">
-        <p className="text-neutral-400 leading-6">
+      <div className="h-px mx-auto my-3 prose bg-neutral-800 w-full" />
+      <div className="mx-auto prose prose-dark">
+        <p className="leading-6 text-neutral-400">
           Information provided on this Site is for general educational purposes only and is not intended to constitute
           investment or other advice on financial products. Such information is not, and should not be read as, an offer
           or recommendation to buy or sell or a solicitation of an offer or recommendation to buy or sell any particular
           digital asset or to use any particular investment strategy.
         </p>
-        <p className="text-neutral-400 leading-6">
+        <p className="leading-6 text-neutral-400">
           Sushi makes no representations as to the accuracy, completeness, timeliness, suitability, or validity of any
           information on this Site and will not be liable for any errors, omissions, or delays in this information or
           any losses, injuries, or damages arising from its display or use. Unless otherwise noted, all images are the

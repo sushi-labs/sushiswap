@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "resolveJsonModule": true,
+    "resolveJsonModule": true
   },
   "exclude": ["node_modules"],
   "extends": "@sushiswap/typescript-config/node16.json",

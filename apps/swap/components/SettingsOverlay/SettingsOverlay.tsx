@@ -1,7 +1,7 @@
 import { CogIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import { classNames, IconButton, Overlay, SlideIn } from '@sushiswap/ui'
-import { useSettings } from 'lib/state/storage'
+import { useSettings } from '../../lib/state/storage'
 import { FC, useState } from 'react'
 
 import { CarbonOffsetOverlay } from './CarbonOffsetOverlay'

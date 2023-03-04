@@ -74,7 +74,12 @@ export const CustomTokensOverlay: FC = () => {
                 <TokenSelectorCustomTokenRow
                   style={style}
                   currency={currency}
-                  onRemove={() => removeCustomToken({ chainId: currency.chainId, address: currency.wrapped.address })}
+                  onRemove={() =>
+                    removeCustomToken({
+                      chainId: currency.chainId,
+                      address: currency.wrapped.address,
+                    })
+                  }
                 />
               )}
             />

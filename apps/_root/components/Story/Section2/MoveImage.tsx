@@ -6,7 +6,11 @@ import { useRef } from 'react'
 export const MoveImage = () => {
   const isSmallScreen = useIsSmScreen()
   const scrollRef = useRef(null)
-  const { scrollYProgress } = useScroll({ target: scrollRef, axis: 'y', offset: ['end end', 'start end'] })
+  const { scrollYProgress } = useScroll({
+    target: scrollRef,
+    axis: 'y',
+    offset: ['end end', 'start end'],
+  })
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0])
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.5])
 

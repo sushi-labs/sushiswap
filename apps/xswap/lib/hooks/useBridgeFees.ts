@@ -1,7 +1,7 @@
 import { stargateFeeLibraryV03Abi, stargatePoolAbi } from '@sushiswap/abi'
 import { Amount, Currency, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import { STARGATE_CHAIN_ID, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID } from '@sushiswap/stargate'
+import { StargateChainId, STARGATE_CHAIN_ID, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID } from '@sushiswap/stargate'
 import { useSushiXSwapContractWithProvider } from '@sushiswap/wagmi'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
@@ -15,9 +15,9 @@ export const useBridgeFees = ({
   dstBridgeToken,
 }: {
   amount?: Amount<Currency>
-  srcChainId: number
+  srcChainId: StargateChainId
   srcBridgeToken: Token
-  dstChainId: number
+  dstChainId: StargateChainId
   dstBridgeToken: Token
 }) => {
   const contract = useSushiXSwapContractWithProvider(srcChainId)

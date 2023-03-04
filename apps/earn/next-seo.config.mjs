@@ -1,10 +1,10 @@
 // @ts-check
 /** @type {import('next-seo').DefaultSeoProps} */
-export default {
+const config = {
   titleTemplate: '%s | Sushi',
   title: 'Earn',
   defaultTitle: 'Earn',
-  description: 'Earn fees by providing liquidity and staking SUSHI into xSUSHI.',
+  description: 'Earn fees by providing liquidity.',
   //   canonical: 'https://www.sushi.com/pool',
   //   mobileAlternate: {
   //     media: '',
@@ -20,7 +20,7 @@ export default {
     url: 'https://www.sushi.com/earn',
     type: 'website',
     title: 'Earn',
-    description: 'Earn fees by providing liquidity and staking SUSHI into xSUSHI.',
+    description: 'Earn fees by providing liquidity.',
     images: [
       {
         url: 'https://www.sushi.com/earn/og-image.jpg',
@@ -34,3 +34,4 @@ export default {
     site_name: 'Sushi',
   },
 }
+export default config

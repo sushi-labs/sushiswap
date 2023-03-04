@@ -40,7 +40,16 @@ export const Root: FC<RootProps> = ({ className, children, definition, onSuccess
       default:
       case ApprovalType.Token: {
         const { address, amount, type, enabled, buttonProps } = element
-        return APPROVE_BUTTON_MAP[type]({ address, amount, type, enabled, buttonProps, chainId, onSuccess, index })
+        return APPROVE_BUTTON_MAP[type]({
+          address,
+          amount,
+          type,
+          enabled,
+          buttonProps,
+          chainId,
+          onSuccess,
+          index,
+        })
       }
     }
   })

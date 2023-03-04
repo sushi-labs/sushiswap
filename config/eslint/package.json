@@ -1,0 +1,50 @@
+{
+  "name": "@sushiswap/eslint-config",
+  "version": "0.1.1",
+  "description": "Sushi Config",
+  "keywords": [
+    "sushi",
+    "config",
+    "eslint"
+  ],
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "base/index.js",
+    "hardhat/index.js",
+    "nextjs/index.js",
+    "react/index.js"
+  ],
+  "dependencies": {
+    "eslint-config-next": "13.1.2",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-config-turbo": "0.0.7",
+    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-simple-import-sort": "8.0.0",
+    "eslint-plugin-testing-library": "5.9.1",
+    "eslint-plugin-unused-imports": "2.0.0"
+  },
+  "devDependencies": {
+    "@types/eslint": "8.4.10",
+    "@types/node": "^16.0.0",
+    "eslint-config-next": "13.1.2",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-config-turbo": "0.0.7",
+    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-simple-import-sort": "8.0.0",
+    "eslint-plugin-testing-library": "5.9.1",
+    "eslint-plugin-unused-imports": "2.0.0"
+  },
+  "peerDependencies": {
+    "eslint": "*",
+    "eslint-config-next": "*",
+    "eslint-config-prettier": "*",
+    "eslint-config-turbo": "*",
+    "eslint-plugin-prettier": "*",
+    "eslint-plugin-simple-import-sort": "*",
+    "eslint-plugin-testing-library": "*",
+    "eslint-plugin-unused-imports": "*"
+  }
+}

@@ -80,7 +80,7 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
             </div>
             <a
               target="_blank"
-              href={Chain.from(stream.remainingAmount.currency.chainId).getTxUrl(stream.txHash)}
+              href={Chain.from(stream.remainingAmount.currency.chainId)?.getTxUrl(stream.txHash)}
               rel="noreferrer"
               className="-mt-1 -mr-1 p-1 hover:bg-[rgba(255,255,255,0.12)] rounded-full text-slate-400 hover:text-slate-300"
             >

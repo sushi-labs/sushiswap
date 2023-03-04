@@ -1,43 +1,15 @@
-import { ChainId } from '@sushiswap/chain'
-import transpileModules from 'next-transpile-modules'
+import defaultNextConfig from '@sushiswap/nextjs-config'
 
-const withTranspileModules = transpileModules([
-  '@sushiswap/redux-localstorage',
-  '@sushiswap/redux-token-lists',
-  '@sushiswap/ui',
-  '@sushiswap/wagmi',
-])
-
-// @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  ...defaultNextConfig,
   basePath: '/furo',
-  reactStrictMode: true,
-  swcMinify: false,
-  experimental: {
-    esmExternals: 'loose',
-  },
-  images: {
-    loader: 'cloudinary',
-    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-  },
-  productionBrowserSourceMaps: true,
-  serverRuntimeConfig: {},
-  publicRuntimeConfig: {
-    supportedChainIds: [
-      ChainId.ETHEREUM,
-      ChainId.ARBITRUM,
-      ChainId.AVALANCHE,
-      ChainId.BSC,
-      ChainId.FANTOM,
-      ChainId.GNOSIS,
-      ChainId.HARMONY,
-      ChainId.MOONBEAM,
-      ChainId.MOONRIVER,
-      ChainId.OPTIMISM,
-      ChainId.POLYGON,
-    ],
-  },
+  transpilePackages: [
+    '@sushiswap/redux-token-lists',
+    '@sushiswap/redux-localstorage',
+    '@sushiswap/wagmi',
+    '@sushiswap/ui',
+  ],
   async redirects() {
     return [
       {
@@ -50,4 +22,4 @@ const nextConfig = {
   },
 }
 
-export default withTranspileModules(nextConfig)
+export default nextConfig

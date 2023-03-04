@@ -10,7 +10,10 @@ import { getBuiltGraphSDK } from '.graphclient'
 // @ts-ignore
 const bentoBoxKpiReducer = (previousValue, currentValue, i, array) => {
   if (i === array.length - 1) {
-    return previousValue.map((kpi: any) => ({ ...kpi, value: formatNumber(kpi.value) }))
+    return previousValue.map((kpi: any) => ({
+      ...kpi,
+      value: formatNumber(kpi.value),
+    }))
   }
 
   const [

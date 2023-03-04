@@ -4,22 +4,21 @@ import chain from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Currency, IconButton, NetworkIcon, Overlay, SlideIn, Typography } from '@sushiswap/ui'
-import { Icon } from '@sushiswap/ui/currency/Icon'
 import React, { CSSProperties, FC, useMemo, useState } from 'react'
 
 import { TokenSelectorProps } from './TokenSelector'
 
-export const TokenSelectorCustomTokenRow: FC<{ style: CSSProperties; currency: Type; onRemove(): void }> = ({
-  style,
-  currency,
-  onRemove,
-}) => {
+export const TokenSelectorCustomTokenRow: FC<{
+  style: CSSProperties
+  currency: Type
+  onRemove(): void
+}> = ({ style, currency, onRemove }) => {
   return (
     <div className="flex items-center w-full p-4" style={style}>
       <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
         <div className="flex flex-row items-center flex-grow gap-2">
           <div className="w-7 h-7">
-            <Icon currency={currency} width={28} height={28} />
+            <Currency.Icon currency={currency} width={28} height={28} />
           </div>
           <div className="flex flex-col items-start">
             <Typography variant="xs" weight={500} className="text-slate-200">
@@ -109,7 +108,11 @@ export const TokenSelectorCustomTokensOverlay: FC<TokenSelectorSettingsOverlayPr
                   style={style}
                   currency={currency}
                   onRemove={() =>
-                    onRemoveToken && onRemoveToken({ chainId: currency.chainId, address: currency.wrapped.address })
+                    onRemoveToken &&
+                    onRemoveToken({
+                      chainId: currency.chainId,
+                      address: currency.wrapped.address,
+                    })
                   }
                 />
               )}

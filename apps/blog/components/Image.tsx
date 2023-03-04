@@ -1,8 +1,8 @@
 import { classNames } from '@sushiswap/ui'
 import NextImage from 'next/legacy/image'
 import { FC } from 'react'
+import { Image as ImageType } from 'types'
 
-import { UploadFileEntity } from '../.mesh'
 import { getOptimizedMedia, isMediaVideo } from '../lib/media'
 
 interface ImageProps {
@@ -12,7 +12,7 @@ interface ImageProps {
   layout?: 'fill' | 'responsive'
   objectFit?: 'cover' | 'contain'
   className?: string
-  image: UploadFileEntity
+  image: ImageType
 }
 
 export const Image: FC<ImageProps> = ({
@@ -38,7 +38,11 @@ export const Image: FC<ImageProps> = ({
         {...(height && { height })}
         style={{ objectFit: 'cover', height }}
       >
-        <source src={getOptimizedMedia({ metadata: image.attributes.provider_metadata })} />
+        <source
+          src={getOptimizedMedia({
+            metadata: image.attributes.provider_metadata,
+          })}
+        />
       </video>
     )
   }
@@ -53,7 +57,11 @@ export const Image: FC<ImageProps> = ({
       width={width || _width || 640}
       height={height || _height || 400}
       objectFit={objectFit}
-      src={getOptimizedMedia({ metadata: image.attributes.provider_metadata, width, height })}
+      src={getOptimizedMedia({
+        metadata: image.attributes.provider_metadata,
+        width,
+        height,
+      })}
       alt={alternativeText || ''}
     />
   )

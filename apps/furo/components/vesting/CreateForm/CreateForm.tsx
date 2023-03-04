@@ -54,7 +54,10 @@ export const CreateForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
   useEffect(() => {
     if (startDate && cliffEnabled && cliffEndDate) {
       if (cliffEndDate < startDate) {
-        setError('cliff.cliffEndDate', { type: 'custom', message: 'Must be later than start date' })
+        setError('cliff.cliffEndDate', {
+          type: 'custom',
+          message: 'Must be later than start date',
+        })
       } else {
         clearErrors('cliff.cliffEndDate')
       }

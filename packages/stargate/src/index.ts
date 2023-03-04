@@ -1,6 +1,15 @@
-import { addressMapToTokenMap } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
-import { Currency, DAI_ADDRESS, FRAX_ADDRESS, Token, USDC, USDC_ADDRESS, USDT, USDT_ADDRESS } from '@sushiswap/currency'
+import {
+  addressMapToTokenMap,
+  Currency,
+  DAI_ADDRESS,
+  FRAX_ADDRESS,
+  Token,
+  USDC,
+  USDC_ADDRESS,
+  USDT,
+  USDT_ADDRESS,
+} from '@sushiswap/currency'
 
 // Ethereum: 101
 // BNB: 102
@@ -10,7 +19,7 @@ import { Currency, DAI_ADDRESS, FRAX_ADDRESS, Token, USDC, USDC_ADDRESS, USDT, U
 // Optimism: 111
 // Fantom: 112
 
-export const STARGATE_CHAIN_ID: Record<number, number> = {
+export const STARGATE_CHAIN_ID = {
   // MAINNETS
   [ChainId.ETHEREUM]: 101,
   [ChainId.BSC]: 102,
@@ -29,7 +38,7 @@ export const STARGATE_CHAIN_ID: Record<number, number> = {
   // TODO: Depreciated, replace with goerli
   // [ChainId.OPTIMISM_KOVAN_TESTNET]: 10011,
   [ChainId.FANTOM_TESTNET]: 10012,
-}
+} as const
 
 export const STARGATE_WIDGET_ADDRESS = {
   [ChainId.ETHEREUM]: '0x02489ac60F7f581445b7D2Dd59bb0A415A1009Df',
@@ -253,8 +262,8 @@ export const STARGATE_MAI = addressMapToTokenMap(
   STARGATE_MAI_ADDRESS
 )
 
-// export const STARGATE_BRIDGE_TOKENS: Record<number, Token[]> = {
-export const STARGATE_BRIDGE_TOKENS = {
+export const STARGATE_BRIDGE_TOKENS: Record<number, Token[]> = {
+  // MAINNETS
   [ChainId.ETHEREUM]: [
     // STARGATE_ETH[ChainId.ETHEREUM],
     STARGATE_USDC[ChainId.ETHEREUM],
@@ -291,7 +300,17 @@ export const STARGATE_BRIDGE_TOKENS = {
     STARGATE_FRAX[ChainId.ETHEREUM],
     STARGATE_MAI[ChainId.ETHEREUM],
   ],
-} as const
+  // TESTNETS
+  // [ChainId.RINKEBY]: [],
+  // [ChainId.BSC_TESTNET]: [],
+  // [ChainId.AVALANCHE_TESTNET]: [],
+  // [ChainId.POLYGON_TESTNET]: [],
+  // TODO: Depreciated, replace with goerli
+  // [ChainId.ARBITRUM_RINKEBY_TESTNET]: [],
+  // TODO: Depreciated, replace with goerli
+  // [ChainId.OPTIMISM_KOVAN_TESTNET]: [],
+  // [ChainId.FANTOM_TESTNET]: [],
+}
 
 export const STARGATE_BRIDGE_TOKEN_ADDRESSES: Record<number, string[]> = {
   [ChainId.ETHEREUM]: [
@@ -445,9 +464,9 @@ export const STARGATE_BLOCK_CONFIRMATIONS = {
   [ChainId.ARBITRUM]: 20,
   [ChainId.OPTIMISM]: 20,
   [ChainId.FANTOM]: 5,
-}
+} as const
 
-export const STARGATE_CONFIRMATION_SECONDS: Record<keyof typeof STARGATE_BLOCK_CONFIRMATIONS, number> = {
+export const STARGATE_CONFIRMATION_SECONDS = {
   [ChainId.ETHEREUM]: STARGATE_BLOCK_CONFIRMATIONS[ChainId.ETHEREUM] * 14,
   [ChainId.BSC]: STARGATE_BLOCK_CONFIRMATIONS[ChainId.BSC] * 3,
   [ChainId.AVALANCHE]: STARGATE_BLOCK_CONFIRMATIONS[ChainId.AVALANCHE] * 3,
@@ -455,7 +474,7 @@ export const STARGATE_CONFIRMATION_SECONDS: Record<keyof typeof STARGATE_BLOCK_C
   [ChainId.ARBITRUM]: STARGATE_BLOCK_CONFIRMATIONS[ChainId.ARBITRUM] * 15,
   [ChainId.OPTIMISM]: STARGATE_BLOCK_CONFIRMATIONS[ChainId.OPTIMISM] * 13,
   [ChainId.FANTOM]: STARGATE_BLOCK_CONFIRMATIONS[ChainId.FANTOM] * 2,
-}
+} as const
 
 export function isStargateBridgeToken(currency: Currency) {
   return STARGATE_BRIDGE_TOKEN_ADDRESSES[currency.chainId].includes(currency.wrapped.address)
@@ -469,6 +488,18 @@ export const STARGATE_TOKEN = new Token({
   name: 'StargateToken',
 })
 
-export type StargateChainId = keyof typeof STARGATE_BRIDGE_TOKENS
+export type StargateChainId = keyof typeof STARGATE_CHAIN_ID
 
-export type StargateToken = typeof STARGATE_BRIDGE_TOKENS[StargateChainId]
+export type StargateBridgeTokens = typeof STARGATE_BRIDGE_TOKENS[StargateChainId]
+
+export type StargateBridgeToken = StargateBridgeTokens[number]
+
+export const STARGATE_SUPPORTED_CHAIN_IDS = [
+  ChainId.ETHEREUM,
+  ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
+  ChainId.POLYGON,
+  ChainId.FANTOM,
+  ChainId.BSC,
+  ChainId.OPTIMISM,
+] as const

@@ -2,20 +2,14 @@ sources:
   - name: Trident
     handler:
       graphql:
-        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:sushi-qa/trident-polygon}
-    transforms:
-      - autoPagination:
-          validateSchema: true
+        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:sushi-v2/trident-polygon}
   - name: Exchange
     handler:
       graphql:
         endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:sushi-0m/sushiswap-ethereum-v2}
-    transforms:
-      - autoPagination:
-          validateSchema: true
+
 documents:
   - ./query.graphql
 
 codegen:
   contextType: 'MeshContext & { name: string; host: string; path: string; }'
-

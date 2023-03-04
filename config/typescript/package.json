@@ -1,0 +1,42 @@
+{
+  "name": "@sushiswap/typescript-config",
+  "version": "0.1.0",
+  "description": "Sushi TypeScript Config",
+  "keywords": [
+    "sushi",
+    "typescript",
+    "config"
+  ],
+  "homepage": "https://www.sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "packages/config/typescript"
+  },
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "exports": {
+    "./base.json": "./hardhat.json",
+    "./esm.json": "./esm.json",
+    "./hardhat.json": "./hardhat.json",
+    "./nextjs.json": "./node14.json",
+    "./node14.json": "./node14.json",
+    "./node16.json": "./node16.json",
+    "./node16-strictest-esm.combined.json": "./node16-strictest-esm.combined.json",
+    "./node18.json": "./node18.json",
+    "./node18-strictest-esm.combined.json": "./node18-strictest-esm.combined.json",
+    "./node18-vercel.json": "./node18-vercel.json",
+    "./react-library.json": "./react-library.json"
+  },
+  "files": [
+    "./base.json",
+    "./esm.json",
+    "./hardhat.json",
+    "./nextjs.json",
+    "./node14.json",
+    "./node16.json",
+    "./node18-strictest-esm.combined.json",
+    "./node18-vercel.json",
+    "./react-library.json"
+  ]
+}

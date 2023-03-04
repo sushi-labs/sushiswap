@@ -2,8 +2,8 @@ import { Container } from '@sushiswap/ui'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
+import { Article, MediaBlock as MediaBlockType, RichTextBlock as RichTextBlockType } from 'types'
 
-import { ArticleEntity, ComponentSharedMedia, ComponentSharedRichText } from '../.mesh'
 import {
   ArticleAuthors,
   ArticleFooter,
@@ -18,6 +18,16 @@ import {
 import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../lib/api'
 
 export async function getStaticPaths() {
+  // When this is true (in preview environments) don't
+  // prerender any static pages
+  // (faster builds, but slower initial page load)
+  if (process.env.SKIP_BUILD_STATIC_GENERATION === 'true') {
+    return {
+      paths: [],
+      fallback: 'blocking',
+    }
+  }
+
   const allArticles = await getAllArticlesBySlug()
 
   return {
@@ -50,7 +60,7 @@ export async function getStaticProps({
   return {
     props: {
       article: data.articles.data[0],
-      latestArticles: data.moreArticles.data,
+      latestArticles: data?.moreArticles?.data,
       preview: !!preview,
     },
     revalidate: 60,
@@ -58,8 +68,8 @@ export async function getStaticProps({
 }
 
 interface ArticlePage {
-  article?: ArticleEntity
-  latestArticles?: ArticleEntity[]
+  article?: Article
+  latestArticles?: Article[]
   preview: boolean
 }
 
@@ -83,12 +93,12 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
               {article?.attributes?.blocks?.map((block, i) => {
                 // @ts-ignore
                 if (block?.__typename === 'ComponentSharedRichText') {
-                  return <RichTextBlock block={block as ComponentSharedRichText} key={i} />
+                  return <RichTextBlock block={block as RichTextBlockType} key={i} />
                 }
 
                 // @ts-ignore
                 if (block?.__typename === 'ComponentSharedMedia') {
-                  return <MediaBlock block={block as ComponentSharedMedia} key={i} />
+                  return <MediaBlock block={block as MediaBlockType} key={i} />
                 }
 
                 // @ts-ignore

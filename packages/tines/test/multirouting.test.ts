@@ -266,8 +266,16 @@ describe('Multirouting for bridge topology', () => {
   })
 
   it('very small swap', () => {
-    const token0 = { name: 'Token0', address: 'Token0Address', symbol: 'Token0Symbol' }
-    const token1 = { name: 'Token1', address: 'Token1Address', symbol: 'Token1Symbol' }
+    const token0 = {
+      name: 'Token0',
+      address: 'Token0Address',
+      symbol: 'Token0Symbol',
+    }
+    const token1 = {
+      name: 'Token1',
+      address: 'Token1Address',
+      symbol: 'Token1Symbol',
+    }
     const pool = getPool([token0, token1], 0, 1, [1, 2], 1e18, 0.03, 0)
     const res = findMultiRouteExactIn(token0, token1, 100, [pool], token1, 200)
     expect(res.amountOut).toBeGreaterThan(0)

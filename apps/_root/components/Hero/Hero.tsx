@@ -3,7 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI } from '@sushiswap/currency'
 import { useInterval } from '@sushiswap/hooks'
 import { App, Button, classNames, Container, Typography } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui/widget'
+import { Widget } from '@sushiswap/ui'
 import { CurrencyInput } from '@sushiswap/wagmi/components/Web3Input/Currency'
 import { motion } from 'framer-motion'
 import React, { FC, useEffect, useState } from 'react'
@@ -38,20 +38,20 @@ export const Hero: FC = () => {
 
   return (
     <section className="relative">
-      <Container maxWidth="5xl" className="mx-auto px-4">
+      <Container maxWidth="5xl" className="px-4 mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[auto_400px] flex justify-between gap-[100px]">
           <div className="flex flex-col">
             <Typography variant="hero" weight={800} className="text-neutral-50 leading-[3.5rem]">
               Buy and Sell Instantly on Sushi. <br /> <span className="text-blue"> {TITLES[index]}.</span>
             </Typography>
-            <Typography variant="lg" className="text-neutral-400 mt-3">
+            <Typography variant="lg" className="mt-3 text-neutral-400">
               No registration needed. Over 400 tokens to trade at your fingertips.
             </Typography>
             <div className="mt-10">
               <Search />
             </div>
           </div>
-          <div className="hidden relative lg:flex justify-end">
+          <div className="relative justify-end hidden lg:flex">
             <motion.div
               initial={{ opacity: 0, scale: 1.5 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -87,7 +87,7 @@ export const Hero: FC = () => {
                     </div>
                   </motion.div>
                   <CurrencyInput
-                    className="p-3  "
+                    className="p-3 "
                     value={valueIndex >= 0 ? VALUES[valueIndex].value0 : ''}
                     onChange={() => {}}
                     onSelect={() => {}}
@@ -108,7 +108,7 @@ export const Hero: FC = () => {
                   </div>
                   <div className="bg-slate-800">
                     <CurrencyInput
-                      className=" p-3"
+                      className="p-3 "
                       value={valueIndex >= 0 ? VALUES[valueIndex].value1 : ''}
                       onChange={() => {}}
                       onSelect={() => {}}

@@ -1,23 +1,25 @@
 import { ArticleJsonLd } from 'next-seo'
 import { FC } from 'react'
+import useSWR from 'swr'
 
-import { Global } from '.mesh'
+import SEO from '../../next-seo.config'
+import { ArticleEntityResponseCollection } from '.mesh'
 
-interface BlogSeo {
-  seo: Global
+export const BlogSeo: FC = () => {
+  const { data: articlesData } = useSWR<ArticleEntityResponseCollection>('/articles')
+
+  return (
+    <ArticleJsonLd
+      type="Blog"
+      url={SEO.openGraph.url}
+      title={SEO.title}
+      description={SEO.description}
+      authorName="Sushi"
+      images={SEO.openGraph.images}
+      datePublished={articlesData?.data[0].attributes?.publishedAt}
+      dateModified={articlesData?.data[0].attributes?.updatedAt}
+    />
+  )
 }
-
-export const BlogSeo: FC<BlogSeo> = ({ seo }) => (
-  <ArticleJsonLd
-    type="Blog"
-    url="https://www.sushi.com/blog"
-    title={seo.siteName}
-    description={seo.siteDescription}
-    authorName="Sushi"
-    images={[seo.defaultSeo.shareImage.data.attributes.url]}
-    datePublished={seo.createdAt}
-    dateModified={seo.updatedAt}
-  />
-)
 
 export default BlogSeo

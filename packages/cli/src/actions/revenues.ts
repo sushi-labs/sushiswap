@@ -13,7 +13,13 @@ type Arguments = {
   days?: string
 }
 
-type PairRevenue = { name: string; address: string; revenue: number; spent: number; volume: number }
+type PairRevenue = {
+  name: string
+  address: string
+  revenue: number
+  spent: number
+  volume: number
+}
 
 export async function revenues(args: Arguments) {
   const days = args.days ? Number(args.days) : 1
@@ -172,14 +178,22 @@ async function processRevenues(lastBlocks: Block[], pastBlocks: Block[], sushiPr
 
       for (const pair of lastPairs) {
         if (!revenues[chainName[pair.chainId]]) {
-          revenues[chainName[pair.chainId]] = { revenue: 0, volume: 0, spent: 0, pairs: [] }
+          revenues[chainName[pair.chainId]] = {
+            revenue: 0,
+            volume: 0,
+            spent: 0,
+            pairs: [],
+          }
         }
 
         let spent = 0
         //process spending
         if (pair.farm) {
           const sushiIncentive = pair.farm.incentives.find((incentive) => {
-            return incentive.rewardToken.address.toLowerCase() == SUSHI_ADDRESS[pair.chainId].toLowerCase()
+            return (
+              incentive.rewardToken.address.toLowerCase() ==
+              SUSHI_ADDRESS[pair.chainId as keyof typeof SUSHI_ADDRESS].toLowerCase()
+            )
           })
           if (sushiIncentive) {
             spent = Number(sushiIncentive.rewardPerDay) * Number(sushiPriceUSD) * days

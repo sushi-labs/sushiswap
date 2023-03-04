@@ -22,6 +22,16 @@ export type TableProps = {
   Paginator: FC<PaginatorProps>
 }
 
-export const Table: TableProps = { container, thead, table, tr, thr, th, td, tbody, Paginator }
+export const Table: TableProps = {
+  container,
+  thead,
+  table,
+  tr,
+  thr,
+  th,
+  td,
+  tbody,
+  Paginator,
+}
 
 export * from './GenericTable'

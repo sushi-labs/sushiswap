@@ -1,12 +1,12 @@
-import bentoBoxExports from '@sushiswap/bentobox/exports.json'
 import { INIT_CODE_HASH } from '@sushiswap/amm'
+import bentoBoxExports from '@sushiswap/bentobox/exports'
 import {
   STARGATE_BRIDGE_TOKENS,
   STARGATE_ROUTER_ADDRESS,
   STARGATE_USDC_ADDRESS,
   STARGATE_WIDGET_ADDRESS,
 } from '@sushiswap/stargate'
-import sushiSwapExports from '@sushiswap/sushiswap/exports.json'
+import sushiSwapExports from '@sushiswap/sushiswap/exports'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/types'
 

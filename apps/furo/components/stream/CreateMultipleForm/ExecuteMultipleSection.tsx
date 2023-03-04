@@ -19,7 +19,10 @@ import { useNotifications } from '../../../lib/state/storage'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
 import { CreateMultipleStreamFormSchemaType } from './schema'
 
-export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }> = ({ chainId, isReview }) => {
+export const ExecuteMultipleSection: FC<{
+  chainId: ChainId
+  isReview: boolean
+}> = ({ chainId, isReview }) => {
   const { address } = useAccount()
   const contract = useFuroStreamRouterContract(chainId)
   const [, { createNotification }] = useNotifications(address)

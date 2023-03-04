@@ -17,12 +17,12 @@ query FactoryDaySnapshots(
   $chainIds: [Int!]!
 ) {
   factoryDaySnapshots: factoryDaySnapshotsByChainIds(
-    first: $first, 
-    skip: $skip, 
-    where: $where, 
-    orderBy: $orderBy, 
-    orderDirection: $orderDirection, 
-    block: $block, 
+    first: $first
+    skip: $skip
+    where: $where
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    block: $block
     chainIds: $chainIds
   ) {
     chainId

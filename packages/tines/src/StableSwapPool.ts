@@ -8,12 +8,12 @@ export interface Rebase {
   base: BigNumber
 }
 
-function toAmountBN(share: BigNumber, total: Rebase) {
+export function toAmountBN(share: BigNumber, total: Rebase) {
   if (total.base.isZero() || total.elastic.isZero()) return share
   return share.mul(total.elastic).div(total.base)
 }
 
-function toShareBN(elastic: BigNumber, total: Rebase) {
+export function toShareBN(elastic: BigNumber, total: Rebase) {
   if (total.base.isZero() || total.elastic.isZero()) return elastic
   return elastic.mul(total.base).div(total.elastic)
 }
@@ -107,6 +107,27 @@ export class StableSwapRPool extends RPool {
     this.k = BigNumber.from(0)
     this.reserve0 = realReservesToAdjusted(res0, this.total0.rebaseBN, this.decimals0)
     this.reserve1 = realReservesToAdjusted(res1, this.total1.rebaseBN, this.decimals1)
+  }
+
+  getTotal0() {
+    return this.total0.rebaseBN
+  }
+
+  getTotal1() {
+    return this.total1.rebaseBN
+  }
+
+  updateTotals(total0: Rebase, total1: Rebase) {
+    this.total0 = new RebaseInternal(total0)
+    this.total1 = new RebaseInternal(total1)
+  }
+
+  updateTotal0(total0: Rebase) {
+    this.total0 = new RebaseInternal(total0)
+  }
+
+  updateTotal1(total1: Rebase) {
+    this.total1 = new RebaseInternal(total1)
   }
 
   computeK(): BigNumber {

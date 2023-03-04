@@ -37,7 +37,10 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
 
     useEffect(() => {
       if (!enabled && dispatch && index !== undefined) {
-        dispatch({ type: 'update', payload: { state: [ApprovalState.APPROVED, undefined, false], index } })
+        dispatch({
+          type: 'update',
+          payload: { state: [ApprovalState.APPROVED, undefined, false], index },
+        })
       }
     }, [dispatch, enabled, index])
 

@@ -33,7 +33,13 @@ export const ZTokenToToken = ZToken.transform(({ address, decimals, chainId, sym
     return Native.onChain(chainId)
   }
 
-  return new Token({ address: address as string, decimals, chainId, symbol, name })
+  return new Token({
+    address: address as string,
+    decimals,
+    chainId,
+    symbol,
+    name,
+  })
 })
 
 export const ZFundSourceToFundSource = ZFundSource.optional().transform((fundSource) => {

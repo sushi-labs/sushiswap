@@ -50,7 +50,7 @@ export type GetPoolsQuery = Omit<QuerypairsWithFarmsArgs, 'where' | 'pagination'
 
 export const getPools = async (query?: GetPoolsQuery) => {
   try {
-    console.log('get pools')
+    // console.log('get pools')
     const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 1))))
     const start = getUnixTime(date)
 
@@ -70,16 +70,16 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
     const farmsOnly = query?.farmsOnly === 'true'
 
-    console.log('before pairs', {
-      first,
-      skip,
-      pagination,
-      where,
-      orderBy,
-      orderDirection,
-      chainIds,
-      farmsOnly,
-    })
+    // console.log('before pairs', {
+    //   first,
+    //   skip,
+    //   pagination,
+    //   where,
+    //   orderBy,
+    //   orderDirection,
+    //   chainIds,
+    //   farmsOnly,
+    // })
     const { pairs } = await sdk.PairsWithFarms({
       first,
       skip,
@@ -90,10 +90,10 @@ export const getPools = async (query?: GetPoolsQuery) => {
       chainIds,
       farmsOnly,
     })
-    console.log('after pairs', pairs)
+    // console.log('after pairs', pairs)
     return pairs
   } catch (error: any) {
-    console.log('here', error)
+    // console.log('here', error)
     throw new Error(error)
   }
 }

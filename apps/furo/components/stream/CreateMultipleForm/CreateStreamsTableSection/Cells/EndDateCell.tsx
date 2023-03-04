@@ -14,7 +14,10 @@ export const EndDateCell: FC<CellProps> = ({ index }) => {
   // https://github.com/colinhacks/zod/issues/1394
   useEffect(() => {
     if (startDate && endDate && endDate < startDate) {
-      setError(`streams.${index}.dates.endDate`, { type: 'custom', message: 'Must be later than start date' })
+      setError(`streams.${index}.dates.endDate`, {
+        type: 'custom',
+        message: 'Must be later than start date',
+      })
     } else {
       clearErrors(`streams.${index}.dates.endDate`)
     }

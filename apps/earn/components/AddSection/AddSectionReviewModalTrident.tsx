@@ -205,7 +205,10 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
           data: batchAction({
             contract,
             actions: [
-              approveMasterContractAction({ router: contract, signature: permit }),
+              approveMasterContractAction({
+                router: contract,
+                signature: permit,
+              }),
               getAsEncodedAction({
                 contract,
                 fn: 'addLiquidity',

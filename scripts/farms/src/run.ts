@@ -1,4 +1,4 @@
-import { execute } from './'
+import { execute } from './index.js'
 
 async function main() {
   await execute()

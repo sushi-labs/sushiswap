@@ -128,7 +128,7 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId, onBack }) => {
                         {el.recipient && isAddress(el.recipient) && (
                           <Link.External
                             className="flex items-center gap-1 text-blue hover:underline-none hover:text-blue-400"
-                            href={Chain.from(chainId).getAccountUrl(el.recipient)}
+                            href={Chain.from(chainId)?.getAccountUrl(el.recipient)}
                           >
                             {shortenAddress(el.recipient)} <ExternalLinkIcon width={16} height={16} />
                           </Link.External>

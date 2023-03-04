@@ -1,7 +1,6 @@
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { useDebounce } from '@sushiswap/hooks'
-import { Loader } from '@sushiswap/ui'
-import Checkbox from '@sushiswap/ui/checkbox/Checkbox'
+import { Checkbox, Loader } from '@sushiswap/ui'
 import { SubgraphTable } from 'components/subgraphs/SubgraphTable'
 import stringify from 'fast-json-stable-stringify'
 import { Subgraph } from 'lib'

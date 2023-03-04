@@ -30,7 +30,9 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
           <Select
             value={poolTypesValue}
             onChange={(values: string[]) =>
-              setFilters({ selectedPoolTypes: values.length === 0 ? Object.keys(AVAILABLE_POOL_TYPE_MAP) : values })
+              setFilters({
+                selectedPoolTypes: values.length === 0 ? Object.keys(AVAILABLE_POOL_TYPE_MAP) : values,
+              })
             }
             button={
               <Select.Button className="ring-offset-slate-900 !bg-slate-700">

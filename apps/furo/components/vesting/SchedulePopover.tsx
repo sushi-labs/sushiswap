@@ -36,7 +36,7 @@ export const SchedulePopover: FC<Props> = ({ vesting, schedule }) => {
                 <span className="font-medium text-slate-200 hover:text-blue">
                   <a
                     target="_blank"
-                    href={Chain.from(vesting.remainingAmount.currency.chainId).getAccountUrl(vesting.recipient.id)}
+                    href={Chain.from(vesting.remainingAmount.currency.chainId)?.getAccountUrl(vesting.recipient.id)}
                     rel="noreferrer"
                   >
                     {shortenAddress(vesting.recipient.id)}
@@ -57,7 +57,7 @@ export const SchedulePopover: FC<Props> = ({ vesting, schedule }) => {
               </Typography>
               <a
                 target="_blank"
-                href={Chain.from(vesting.remainingAmount.currency.chainId).getTxUrl(vesting.txHash)}
+                href={Chain.from(vesting.remainingAmount.currency.chainId)?.getTxUrl(vesting.txHash)}
                 rel="noreferrer"
                 className="-mt-1 -mr-1 p-1 hover:bg-[rgba(255,255,255,0.12)] rounded-full text-slate-400 hover:text-slate-300"
               >

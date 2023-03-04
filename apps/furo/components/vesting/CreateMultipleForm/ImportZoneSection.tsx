@@ -63,7 +63,10 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
                   const [tokenAddress] = cur.split(',')
                   if (tokenAddress !== AddressZero) {
                     acc.push(
-                      fetchToken({ address: tokenAddress as Address, chainId }).catch(() => {
+                      fetchToken({
+                        address: tokenAddress as Address,
+                        chainId,
+                      }).catch(() => {
                         if (!errors.vestings?.[index]) {
                           errors.vestings = []
                         }
@@ -86,7 +89,12 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
             const tokenMap = tokens?.reduce<Record<string, Token>>((acc, result) => {
               if (result) {
                 const { address, symbol, decimals } = result
-                acc[address.toLowerCase()] = new Token({ address, symbol, decimals, chainId })
+                acc[address.toLowerCase()] = new Token({
+                  address,
+                  symbol,
+                  decimals,
+                  chainId,
+                })
               }
               return acc
             }, {})
@@ -122,7 +130,10 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
                   _recipient = undefined
                   errors.vestings[index + nrOfVests] = {
                     ...errors.vestings[index + nrOfVests],
-                    recipient: { type: 'custom', message: `${recipient} is not a valid address` },
+                    recipient: {
+                      type: 'custom',
+                      message: `${recipient} is not a valid address`,
+                    },
                   }
                 }
 
@@ -130,7 +141,10 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
                   _startDate = undefined
                   errors.vestings[index + nrOfVests] = {
                     ...errors.vestings[index + nrOfVests],
-                    startDate: { type: 'custom', message: `${startDate} is not a valid unix timestamp` },
+                    startDate: {
+                      type: 'custom',
+                      message: `${startDate} is not a valid unix timestamp`,
+                    },
                   }
                 }
 
@@ -142,7 +156,10 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
                       ...errors.vestings[index + nrOfVests]?.cliff,
                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                       // @ts-ignore
-                      cliffEndDate: { type: 'custom', message: `${cliffEndDate} is not a valid unix timestamp` },
+                      cliffEndDate: {
+                        type: 'custom',
+                        message: `${cliffEndDate} is not a valid unix timestamp`,
+                      },
                     },
                   }
                 }

@@ -1,7 +1,6 @@
 import { Listbox } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import { App, classNames, Link, Select, Typography } from '@sushiswap/ui'
-import { AppType } from '@sushiswap/ui/app/Header'
+import { App, AppType, classNames, Link, Select, Typography } from '@sushiswap/ui'
 import { DOCS_URL } from 'common/helpers'
 import { getDifficulties, getProducts } from 'lib/api'
 import { useRouter } from 'next/router'

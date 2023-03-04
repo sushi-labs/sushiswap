@@ -24,7 +24,13 @@ export interface State {
 }
 
 export type ApprovalAction =
-  | { type: 'update'; payload: { state: [ApprovalState, ReactElement | undefined, boolean]; index: number } }
+  | {
+      type: 'update'
+      payload: {
+        state: [ApprovalState, ReactElement | undefined, boolean]
+        index: number
+      }
+    }
   | { type: 'remove'; payload: { index: number } }
 
 const reducer = (state: State, action: ApprovalAction) => {
@@ -93,7 +99,10 @@ const Controller: FC<Props> = ({ className, components, render, onSuccess }) => 
       return state.approvals[index]?.[1]
     }
 
-    return render({ approved: state.isApproved && initialized, isUnknown: state.isUnknown && initialized })
+    return render({
+      approved: state.isApproved && initialized,
+      isUnknown: state.isUnknown && initialized,
+    })
   }, [initialized, render, state.approvals, state.isApproved, state.isUnknown])
 
   // Only render renderProp since we can't get approval states on the server anyway

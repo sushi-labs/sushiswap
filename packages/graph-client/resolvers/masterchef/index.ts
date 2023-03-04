@@ -37,7 +37,11 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
             console.error(`MasterChefV1 users query failed on ${chainId}`, users)
             return []
           }
-          return users.map((user) => ({ ...user, chainId, chainName: chainName[chainId] }))
+          return users.map((user) => ({
+            ...user,
+            chainId,
+            chainName: chainName[chainId],
+          }))
         }),
         context.MasterChefV2.Query.MASTERCHEF_V2_users({
           root,
@@ -54,7 +58,11 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
             console.error(`MasterChefV2 users query failed on ${chainId}`, users)
             return []
           }
-          return users.map((user) => ({ ...user, chainId, chainName: chainName[chainId] }))
+          return users.map((user) => ({
+            ...user,
+            chainId,
+            chainName: chainName[chainId],
+          }))
         }),
       ]),
     ...args.chainIds
@@ -77,7 +85,11 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
               console.error(`MiniChefV2 users query failed on ${chainId}`, users)
               return []
             }
-            return users.map((user) => ({ ...user, chainId, chainName: chainName[chainId] }))
+            return users.map((user) => ({
+              ...user,
+              chainId,
+              chainName: chainName[chainId],
+            }))
           })
         // fetcher({ chainId, subgraphName: MINICHEF_SUBGRAPH_NAME[chainId], subgraphHost: SUBGRAPH_HOST[chainId] })
       ),

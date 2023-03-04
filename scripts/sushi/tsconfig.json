@@ -1,0 +1,19 @@
+{
+  "extends": "@sushiswap/typescript-config/node16.json",
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "./dist",
+    "rootDir": ".",
+    "lib": ["ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "node16",
+    "esModuleInterop": true,
+  },
+  "resolveJsonModule": true,
+  "ts-node": {
+    "swc": true,
+    "esm": true
+  }
+}

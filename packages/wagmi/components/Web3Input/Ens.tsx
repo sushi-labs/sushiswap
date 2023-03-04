@@ -1,5 +1,4 @@
-import { Chip, classNames, DEFAULT_INPUT_UNSTYLED, Input, Loader } from '@sushiswap/ui'
-import { AddressProps } from '@sushiswap/ui/input/Address'
+import { AddressProps, Chip, classNames, DEFAULT_INPUT_UNSTYLED, Input, Loader } from '@sushiswap/ui'
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 
 import { Account } from '../Account'
@@ -55,14 +54,14 @@ export const EnsInput = forwardRef<HTMLInputElement, EnsInputProps>(
               {...rest}
             />
             {showEns && typedRef.current && typedRef.current.length > 0 && !(isLoading || isFetching) && (
-              <div className="absolute top-1 bottom-0 flex items-start right-1">
-                <div className="rounded-2xl overflow-hidden bg-slate-800 shadow-md">
+              <div className="absolute bottom-0 flex items-start top-1 right-1">
+                <div className="overflow-hidden shadow-md rounded-2xl bg-slate-800">
                   <Chip label={typedRef.current} color="green" />
                 </div>
               </div>
             )}
             {(isLoading || isFetching) && (
-              <div className="absolute right-3 flex items-center justify-center top-0 bottom-0">
+              <div className="absolute top-0 bottom-0 flex items-center justify-center right-3">
                 <Loader width={16} />
               </div>
             )}

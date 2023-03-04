@@ -5,11 +5,11 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { JSBI, ZERO } from '@sushiswap/math'
+import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, erc20ABI, useBalance as useWagmiBalance, useContractReads } from 'wagmi'
 
-import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
 import { BalanceMap } from './types'
 
 type UseBalancesParams = {
@@ -114,7 +114,10 @@ export const useBalances: UseBalances = ({
           elastic: BigNumber
         }
         if (base && elastic && data[i + 2 * validatedTokenAddresses.length]) {
-          const rebase = { base: JSBI.BigInt(base.toString()), elastic: JSBI.BigInt(elastic.toString()) }
+          const rebase = {
+            base: JSBI.BigInt(base.toString()),
+            elastic: JSBI.BigInt(elastic.toString()),
+          }
           const amount = Amount.fromShare(
             validatedTokens[i],
             (data[i + 2 * validatedTokenAddresses.length] as unknown as BigNumber).toString(),
@@ -192,7 +195,14 @@ export const useBalance: UseBalance = ({
   loadBentobox = false,
 }) => {
   const currencies = useMemo(() => [currency], [currency])
-  const { data, isLoading, isError } = useBalances({ watch, chainId, currencies, account, enabled, loadBentobox })
+  const { data, isLoading, isError } = useBalances({
+    watch,
+    chainId,
+    currencies,
+    account,
+    enabled,
+    loadBentobox,
+  })
 
   return useMemo(() => {
     const walletBalance = currency

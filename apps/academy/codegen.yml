@@ -1,6 +1,6 @@
 overwrite: true
-schema: "http://localhost:1337/graphql"
+schema: 'http://localhost:1337/graphql'
 generates:
   ./types.ts:
     plugins:
-      - "typescript"
+      - 'typescript'

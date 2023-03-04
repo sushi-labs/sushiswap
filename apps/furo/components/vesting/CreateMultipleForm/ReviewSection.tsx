@@ -164,8 +164,18 @@ const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
   startDate,
 }) => {
   const _currency = useTokenFromZToken(currency)
-  const totalAmount = calculateTotalAmount({ currency, cliff, stepAmount, stepPayouts })
-  const endDate = calculateEndDate({ cliff, startDate, stepPayouts, stepConfig })
+  const totalAmount = calculateTotalAmount({
+    currency,
+    cliff,
+    stepAmount,
+    stepPayouts,
+  })
+  const endDate = calculateEndDate({
+    cliff,
+    startDate,
+    stepPayouts,
+    stepConfig,
+  })
   const [_cliffAmount, _stepAmount] = useMemo(() => {
     return [
       cliff.cliffEnabled ? tryParseAmount(cliff.cliffAmount?.toString(), _currency) : undefined,
@@ -179,7 +189,7 @@ const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
         {recipient && (
           <UILink.External
             className="flex items-center gap-1 text-blue hover:underline-none hover:text-blue-400"
-            href={Chain.from(chainId).getAccountUrl(recipient)}
+            href={Chain.from(chainId)?.getAccountUrl(recipient) ?? ''}
           >
             {shortenAddress(recipient)} <ExternalLinkIcon width={16} height={16} />
           </UILink.External>

@@ -17,6 +17,7 @@ import {
   DifficultyEntityResponseCollection,
   Global,
   ProductEntity,
+  ProductEntityResponseCollection,
   TopicEntity,
   TopicEntityResponseCollection,
 } from '../.mesh'
@@ -74,14 +75,18 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
 
   const { data: articlesData } = useSWR<ArticleEntityResponseCollection>('/articles')
   const { data: difficultiesData } = useSWR<DifficultyEntityResponseCollection>('/difficulties')
-  const { data: productsData } = useSWR<TopicEntityResponseCollection>('/products')
+  const { data: productsData } = useSWR<ProductEntityResponseCollection>('/products')
   const { data: topicsData } = useSWR<TopicEntityResponseCollection>('/topics')
   const { data: filterData, isValidating } = useSWR(
     [`/articles`, selectedTopic, selectedDifficulty, selectedProduct],
     async (_url, searchTopic, searchDifficulty, searchProduct) => {
       const filters = {
-        ...(searchDifficulty?.id && { difficulty: { id: { eq: searchDifficulty?.id } } }),
-        ...(searchProduct?.id && { products: { id: { eq: searchProduct?.id } } }),
+        ...(searchDifficulty?.id && {
+          difficulty: { id: { eq: searchDifficulty?.id } },
+        }),
+        ...(searchProduct?.id && {
+          products: { id: { eq: searchProduct?.id } },
+        }),
         ...(searchTopic?.id && { topics: { id: { eq: searchTopic?.id } } }),
       }
 
@@ -92,7 +97,12 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
         })
       )?.articles
     },
-    { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false, revalidateOnMount: false }
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      revalidateOnReconnect: false,
+      revalidateOnMount: false,
+    }
   )
 
   const loading = useDebounce(isValidating, 400)
@@ -114,11 +124,11 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const handleSelectDifficulty = (difficulty: DifficultyEntity) => {
     setSelectedDifficulty((current) => (current?.id === difficulty.id ? undefined : difficulty))
   }
-  const handleSelectTopic = (topic: TopicEntity) => {
+  const handleSelectTopic = (topic: TopicEntity & { isProduct?: boolean }) => {
     if (selectedProduct) setSelectedProduct(undefined)
     setSelectedTopic((current) => (current?.id === topic.id ? undefined : topic))
   }
-  const handleSelectProduct = (product: ProductEntity) => {
+  const handleSelectProduct = (product: ProductEntity & { isProduct?: boolean }) => {
     if (selectedTopic) setSelectedTopic(undefined)
     setSelectedProduct((current) => (current?.id === product.id ? undefined : product))
   }
@@ -170,8 +180,8 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             >
               <Disclosure.Panel className="grid grid-cols-2 gap-3 mt-9 sm:hidden">
                 <Select
-                  onChange={(value: TopicEntity & { isProduct?: boolean }) =>
-                    value.isProduct ? handleSelectProduct(value) : handleSelectTopic(value)
+                  onChange={([value, isProduct]: [TopicEntity, false] | [ProductEntity, true]) =>
+                    isProduct ? handleSelectProduct(value) : handleSelectTopic(value)
                   }
                   button={
                     <Listbox.Button
@@ -190,7 +200,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                       <SelectOption
                         className="text-xs"
                         key={`product_${product.id}`}
-                        value={{ ...product, isProduct: true }}
+                        value={[product, true]}
                         title={product.attributes?.name}
                         isSelected={selectedProduct?.id === product.id}
                       />
@@ -199,7 +209,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                       <SelectOption
                         className="text-xs"
                         key={`topic_${topic.id}`}
-                        value={topic}
+                        value={[topic, false]}
                         title={topic.attributes?.name}
                         isSelected={selectedTopic?.id === topic.id}
                       />
@@ -294,9 +304,15 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
               href={{
                 pathname: '/articles',
                 query: {
-                  ...(selectedDifficulty && { difficulty: selectedDifficulty.attributes?.slug }),
-                  ...(selectedProduct && { product: selectedProduct.attributes?.slug }),
-                  ...(selectedTopic && { topic: selectedTopic.attributes?.slug }),
+                  ...(selectedDifficulty && {
+                    difficulty: selectedDifficulty.attributes?.slug,
+                  }),
+                  ...(selectedProduct && {
+                    product: selectedProduct.attributes?.slug,
+                  }),
+                  ...(selectedTopic && {
+                    topic: selectedTopic.attributes?.slug,
+                  }),
                 },
               }}
               legacyBehavior

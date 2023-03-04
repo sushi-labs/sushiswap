@@ -2,7 +2,7 @@ import { Disclosure, Transition } from '@headlessui/react'
 import { Fee } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Tab, Tooltip, Typography } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui/widget'
+import { Widget } from '@sushiswap/ui'
 import React, { FC, memo } from 'react'
 
 import { TRIDENT_ENABLED_NETWORKS } from '../../config'

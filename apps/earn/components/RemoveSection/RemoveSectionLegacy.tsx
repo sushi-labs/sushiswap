@@ -2,13 +2,13 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount, Native } from '@sushiswap/currency'
+import { calculateGasMargin } from '@sushiswap/gas'
 import { Pair } from '@sushiswap/graph-client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
-  calculateGasMargin,
   Checker,
   getSushiSwapRouterContractConfig,
   PairState,

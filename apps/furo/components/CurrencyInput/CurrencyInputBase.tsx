@@ -70,7 +70,10 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = forwardRef<HTMLInputElem
           {bottomPanel &&
             React.cloneElement(
               bottomPanel,
-              { ...bottomPanel.props, onChange: bottomPanel.props.onChange ?? onChange },
+              {
+                ...bottomPanel.props,
+                onChange: bottomPanel.props.onChange ?? onChange,
+              },
               bottomPanel.props.children
             )}
         </div>

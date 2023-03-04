@@ -14,6 +14,12 @@ https://pnpm.io/installation
 
 `pnpm exec turbo run dev --filter=swap`
 
+#### Vercel APIs
+
+These need to be run from their own folder at the moment in development.
+
+`pnpm exec vercel dev`
+
 ### Build
 
 `pnpm run build`
@@ -40,9 +46,7 @@ https://pnpm.io/installation
 
 ## APIs
 
-- `path-finder`
-- `token-list`
-- `token-price`
+...
 
 ### Creating a new API
 
@@ -50,14 +54,7 @@ https://pnpm.io/installation
 
 ## Apps
 
-- `_root`
-- `analytics`
-- `blog`
-- `furo`
-- `kashi`
-- `miso`
-- `swap`
-- `partner`
+...
 
 ### Creating a new app
 
@@ -65,27 +62,17 @@ https://pnpm.io/installation
 
 <!-- `pnpm exec @sushiswap/cli create-app example-app` -->
 
+## Config
+
+...
+
+### Creating a new config
+
+`git checkout -b feature/example-config`
+
 ## Packages
 
-- `@sushiswap/chain`
-- `@sushiswap/cli`
-- `@sushiswap/currency`
-- `@sushiswap/amm`
-- `@sushiswap/format`
-- `@sushiswap/graph-client`
-- `@sushiswap/hooks`
-- `@sushiswap/math`
-- `@sushiswap/eslint-config`
-- `@sushiswap/hardhat-config`
-- `@sushiswap/prettier-config`
-- `@sushiswap/typescript-config`
-- `@sushiswap/redux-logs`
-- `@sushiswap/redux-token-lists`
-- `@sushiswap/stargate`
-- `@sushiswap/tines`
-- `@sushiswap/token-lists`
-- `@sushiswap/ui`
-- `@sushiswap/wagmi`
+...
 
 ### Creating a new package
 
@@ -93,16 +80,19 @@ https://pnpm.io/installation
 
 ## Protocols
 
-- `@sushiswap/bentobox`
-- `@sushiswap/furo`
-- `@sushiswap/kashi`
-- `@sushiswap/miso`
-- `@sushiswap/sushiswap`
-- `@sushiswap/sushixswap`
+...
 
 ### Creating a new protocol
 
 `git checkout -b feature/example-protocol`
+
+## Subgraphs
+
+...
+
+### Creating a new subgraph
+
+`git checkout -b feature/example-subgraph`
 
 ## Disclaimer
 

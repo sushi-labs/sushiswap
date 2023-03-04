@@ -110,5 +110,11 @@ export const pairById: QueryResolvers['pairById'] = async (root, args, context, 
   // const farms = await context.FarmsV0.Query.farmsv0(root, args, context, info)
   const farms = await getFarms()
 
-  return transformPair({ pair, pair1d, pair2d, pair1w, farm: farms?.[chainId]?.farms?.[address.toLowerCase()] })
+  return transformPair({
+    pair,
+    pair1d,
+    pair2d,
+    pair1w,
+    farm: farms?.[chainId]?.farms?.[address.toLowerCase()],
+  })
 }

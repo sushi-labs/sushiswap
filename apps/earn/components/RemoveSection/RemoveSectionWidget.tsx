@@ -14,7 +14,7 @@ import {
   Input,
   Typography,
 } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui/widget'
+import { Widget } from '@sushiswap/ui'
 import { FC, Fragment, ReactNode, useState } from 'react'
 import { useAccount } from 'wagmi'
 

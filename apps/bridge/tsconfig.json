@@ -1,10 +1,5 @@
 {
   "extends": "@sushiswap/typescript-config/nextjs.json",
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "middleware.ts.bk"],
-  "exclude": ["node_modules"],
-  "compilerOptions": {
-    "baseUrl": ".",
-    "strictNullChecks": true,
-    "downlevelIteration": true
-  }
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }

@@ -1,5 +1,5 @@
 import { CheckIcon, XCircleIcon } from '@heroicons/react/solid'
-import chains, { ChainId } from '@sushiswap/chain'
+import { ChainId, chainName } from '@sushiswap/chain'
 import { FC } from 'react'
 
 import { classNames, NetworkIcon, Typography } from '..'
@@ -59,7 +59,7 @@ export const SelectorMenu: FC<SelectorMenuProps> = ({ networks, selectedNetworks
                       : 'text-slate-400'
                   )}
                 >
-                  {chains[network].name}
+                  {chainName[network]}
                 </Typography>
               </div>
               <div className="flex justify-end">

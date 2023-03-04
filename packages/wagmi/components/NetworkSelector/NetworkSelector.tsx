@@ -1,6 +1,6 @@
 import { Popover } from '@headlessui/react'
 import { ChevronDownIcon, SearchIcon } from '@heroicons/react/solid'
-import chains, { ChainId } from '@sushiswap/chain'
+import { ChainId, chainName } from '@sushiswap/chain'
 import { classNames, DEFAULT_INPUT_UNSTYLED, NetworkIcon, Typography } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
@@ -32,7 +32,7 @@ export const NetworkSelector: FC<NetworkSelectorNewProps> = ({ supportedNetworks
       <div className="mx-4 border-b border-slate-200/10" />
       <div className="p-2 max-h-[300px] scroll">
         {supportedNetworks
-          .filter((el) => (query ? chains[el].name.toLowerCase().includes(query.toLowerCase()) : Boolean))
+          .filter((el) => (query ? chainName[el].toLowerCase().includes(query.toLowerCase()) : Boolean))
           .map((el) => (
             <div
               onClick={() => {
@@ -46,7 +46,7 @@ export const NetworkSelector: FC<NetworkSelectorNewProps> = ({ supportedNetworks
               <div className="flex items-center gap-2">
                 <NetworkIcon type="naked" chainId={el} width={22} height={22} />
                 <Typography variant="sm" weight={500} className="text-slate-50">
-                  {chains[el].name}
+                  {chainName[el]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
                 </Typography>
               </div>
               {chain?.id === el && <div className="w-2 h-2 mr-1 rounded-full bg-green" />}
@@ -68,7 +68,9 @@ export const NetworkSelector: FC<NetworkSelectorNewProps> = ({ supportedNetworks
               )}
             >
               <NetworkIcon chainId={chainId} width={20} height={20} />
-              <div className="hidden sm:block">{chains[chainId].name.split(' ')[0]}</div>
+              <div className="hidden sm:block">
+                {chainName?.[chainId]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
+              </div>
               <ChevronDownIcon
                 width={20}
                 height={20}

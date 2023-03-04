@@ -2,7 +2,7 @@ import { ChevronDownIcon } from '@heroicons/react/outline'
 import chains from '@sushiswap/chain'
 import { ZERO } from '@sushiswap/math'
 import { classNames, Dialog, NetworkIcon, SlideIn, Typography } from '@sushiswap/ui'
-import { Icon } from '@sushiswap/ui/currency/Icon'
+import { Currency } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
 import React, { FC, ReactNode, useMemo } from 'react'
 
@@ -56,7 +56,7 @@ export const BridgeReviewModalBase: FC<BridgeReviewModalBase> = ({ open, setOpen
                       <div className="flex items-center justify-end gap-2 text-right">
                         {amount && (
                           <div className="w-5 h-5">
-                            <Icon currency={amount.currency} width={20} height={20} />
+                            <Currency.Icon currency={amount.currency} width={20} height={20} />
                           </div>
                         )}
                         <Typography variant="h3" weight={500} className="text-right text-slate-50">
@@ -91,7 +91,7 @@ export const BridgeReviewModalBase: FC<BridgeReviewModalBase> = ({ open, setOpen
                       <div className="flex items-center justify-end gap-2 text-right">
                         {dstAmountOut && (
                           <div className="w-5 h-5">
-                            <Icon currency={dstAmountOut.currency} width={20} height={20} />
+                            <Currency.Icon currency={dstAmountOut.currency} width={20} height={20} />
                           </div>
                         )}
                         <Typography variant="h3" weight={500} className="text-right text-slate-50">

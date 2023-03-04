@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { AddressZero } from '@ethersproject/constants'
 import { Amount, Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { useBreakpoint } from '@sushiswap/hooks'
@@ -47,7 +49,6 @@ export const StreamTable: FC<FuroTableProps> = ({
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
-  // @ts-ignore
   const [columns] = useState([
     STREAMED_COLUMN,
     STATUS_COLUMN,
@@ -111,7 +112,12 @@ export const StreamTable: FC<FuroTableProps> = ({
     } else if (isSm) {
       setColumnVisibility({})
     } else {
-      setColumnVisibility({ status: false, from: false, type: false, startDate: false })
+      setColumnVisibility({
+        status: false,
+        from: false,
+        type: false,
+        startDate: false,
+      })
     }
   }, [isMd, isSm])
 

@@ -19,7 +19,12 @@ interface VestingChart {
 }
 
 const Timer: FC<{ date: Date }> = ({ date }) => {
-  const [remaining, setRemaining] = useState<{ days: string; hours: string; minutes: string; seconds: string }>()
+  const [remaining, setRemaining] = useState<{
+    days: string
+    hours: string
+    minutes: string
+    seconds: string
+  }>()
 
   useInterval(() => {
     const now = Date.now()
@@ -76,11 +81,12 @@ const Timer: FC<{ date: Date }> = ({ date }) => {
   )
 }
 
-const Block: FC<{ vesting: Vesting; period: Period; length: number; className: string }> = ({
-  vesting,
-  period,
-  length,
-}) => {
+const Block: FC<{
+  vesting: Vesting
+  period: Period
+  length: number
+  className: string
+}> = ({ vesting, period, length }) => {
   const now = vesting.status === FuroStatus.CANCELLED ? vesting.modifiedAtTimestamp.getTime() : Date.now()
   const unlocked = period.date.getTime() < now
   const end = period.date.getTime()
@@ -180,7 +186,7 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
                   </Typography>
                 </Typography>
                 <Typography variant="sm" className="text-slate-500" weight={500}>
-                  / {formatNumber(vesting?.remainingAmount.toSignificant(6))} {vesting?.token.symbol} Total
+                  / {formatNumber(vesting?.totalAmount.toSignificant(6))} {vesting?.token.symbol} Total
                 </Typography>
               </div>
             </div>

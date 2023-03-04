@@ -13,6 +13,7 @@ const BLOCKCHAIN: Record<number, string> = {
   [ChainId.ARBITRUM]: 'arbitrum',
   [ChainId.AVALANCHE]: 'avalanche',
   [ChainId.BOBA_AVAX]: 'boba-avax',
+  [ChainId.BOBA_BNB]: 'boba-bnb',
   [ChainId.BOBA]: 'boba',
   [ChainId.BSC]: 'bsc',
   [ChainId.CELO]: 'celo',
@@ -32,6 +33,7 @@ const BLOCKCHAIN: Record<number, string> = {
   [ChainId.PALM]: 'palm',
   [ChainId.POLYGON]: 'polygon',
   [ChainId.TELOS]: 'telos',
+  [ChainId.BTTC]: 'bttc',
 }
 
 const AvaxLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/avax.svg'
@@ -89,6 +91,7 @@ const LOGO: Record<number, string> = {
   [ChainId.METIS]: MetisLogo,
   [ChainId.BOBA]: EthereumLogo,
   [ChainId.BOBA_AVAX]: BobaLogo,
+  [ChainId.BOBA_BNB]: BobaLogo,
   [ChainId.BTTC]: BttcLogo,
 }
 

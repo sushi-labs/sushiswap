@@ -1,10 +1,9 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Type as Currency } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
+import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
-
-import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
 
 type UseBentoBoxTotals = (
   chainId: number | undefined,
@@ -65,14 +64,17 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies, config
     contracts,
     watch: !(typeof config?.enabled !== undefined && !config?.enabled),
     keepPreviousData: true,
-    enabled: Boolean(getBentoBoxContractConfig(chainId).address !== AddressZero),
+    enabled: Boolean((getBentoBoxContractConfig(chainId).address as string) !== AddressZero),
   })
 
   return useMemo(() => {
     return totals?.reduce<Record<string, { base: JSBI; elastic: JSBI }>>((previousValue, currentValue, i) => {
       if (!currentValue) return previousValue
       const { base, elastic } = currentValue
-      const rebase = { base: JSBI.BigInt(base), elastic: JSBI.BigInt(elastic) }
+      const rebase = {
+        base: JSBI.BigInt(base),
+        elastic: JSBI.BigInt(elastic),
+      }
       previousValue[addresses[i]] = rebase
       return previousValue
     }, {})

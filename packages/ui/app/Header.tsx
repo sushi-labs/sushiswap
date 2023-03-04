@@ -5,7 +5,7 @@ import { useBreakpoint, useIsMounted } from '@sushiswap/hooks'
 import Image from 'next/legacy/image'
 import React, { Fragment } from 'react'
 
-import { classNames, Container, IconButton, Link, MaxWidth, Select, Typography } from '..'
+import { classNames, Container, IconButton, Link, MaxWidth, Select, SushiIcon, Typography } from '..'
 
 export enum AppType {
   Root = 'Explore Apps',
@@ -97,13 +97,7 @@ export function Header({
         <div className="flex items-center flex-grow gap-3">
           <a className="flex flex-row items-center gap-1.5" href="/">
             <div className="w-7 h-7">
-              <Image
-                src="https://res.cloudinary.com/sushi-cdn/image/upload/v1670419151/xmaslogo1-trimmy_puyjsw.png"
-                layout="responsive"
-                width={28}
-                height={28}
-              />
-              {/*<SushiIcon width="100%" height="100%" className="mr-2 hover:animate-heartbeat" />*/}
+              <SushiIcon width="100%" height="100%" className="mr-2 hover:animate-heartbeat" />
             </div>
           </a>
           <div className="bg-slate-200/10 w-0.5 h-[20px]" />

@@ -130,7 +130,9 @@ const Error: FC<{ k: string; v: FieldError }> = ({ k, v }) => {
   )
 }
 
-const FieldErrorRenderer: FC<{ errors: FieldErrors<CreateMultipleVestingFormSchemaType> }> = ({ errors }) => {
+const FieldErrorRenderer: FC<{
+  errors: FieldErrors<CreateMultipleVestingFormSchemaType>
+}> = ({ errors }) => {
   return (
     <>
       {Array.isArray(errors?.vestings) &&

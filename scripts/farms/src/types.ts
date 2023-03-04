@@ -1,3 +1,5 @@
+import { ChainId } from '@sushiswap/chain'
+
 export interface Farm {
   id: number
   incentives: {
@@ -15,4 +17,9 @@ export interface Farm {
   }[]
   chefType: 'MasterChefV1' | 'MasterChefV2' | 'MiniChef'
   poolType: 'Legacy' | 'Trident' | 'Kashi' | 'Unknown'
+}
+
+export interface ChefReturn {
+  chainId: ChainId
+  farms: Record<string, Farm> | null
 }

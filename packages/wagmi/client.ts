@@ -14,7 +14,7 @@ export type Client = ReturnType<typeof createClient>
 
 const isTest = process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_PLAYWRIGHT_ENABLED === 'true'
 
-const { chains, provider, webSocketProvider }: CreateClientConfig & { chains: Chain[] } = isTest
+const { chains, provider }: CreateClientConfig & { chains: Chain[] } = isTest
   ? configureChains(
       [foundry],
       [
@@ -29,7 +29,6 @@ const { chains, provider, webSocketProvider }: CreateClientConfig & { chains: Ch
 
 export const client: Client = createClient({
   provider,
-  webSocketProvider,
   logger: {
     warn: null,
   },

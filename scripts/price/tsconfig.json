@@ -1,10 +1,16 @@
 {
-  "extends": "@sushiswap/typescript-config/node16.json",
+  "extends": "@sushiswap/typescript-config/node16-strictest-esm.combined.json",
   "include": [".graphclient", "src"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "./dist",
-    "rootDir": "."
-  }
+    "rootDir": ".",
+    "moduleResolution": "nodenext",
+    "module": "esnext"
+    },
+    "ts-node": {
+      "swc": true,
+      "esm": true
+    },
 }

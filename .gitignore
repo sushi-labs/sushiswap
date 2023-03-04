@@ -71,7 +71,6 @@ artifacts
 **/public/worker-*.js.map
 
 # prisma
-# prisma
 
 # screenshots
 screenshots
@@ -84,3 +83,7 @@ playwright-report
 
 test-results/
 results/
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts

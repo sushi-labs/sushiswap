@@ -210,7 +210,10 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
           data: batchAction({
             contract,
             actions: [
-              approveMasterContractAction({ router: contract, signature: permit }),
+              approveMasterContractAction({
+                router: contract,
+                signature: permit,
+              }),
               deployNewPoolAction({
                 assets: [input0.currency, input1.currency],
                 factory: factory.address,

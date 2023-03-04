@@ -15,7 +15,10 @@ export const StartDateCell: FC<CellProps> = ({ index }) => {
   // https://github.com/colinhacks/zod/issues/1394
   useEffect(() => {
     if (startDate && startDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()) {
-      setError(`vestings.${index}.startDate`, { type: 'custom', message: 'Must be at least 5 minutes from now' })
+      setError(`vestings.${index}.startDate`, {
+        type: 'custom',
+        message: 'Must be at least 5 minutes from now',
+      })
     } else {
       clearErrors(`vestings.${index}.startDate`)
     }

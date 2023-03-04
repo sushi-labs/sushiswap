@@ -38,11 +38,11 @@ export const STARGATE_TOKEN = new Token({
   name: 'StargateToken',
 })
 
-export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: boolean }> = ({
-  data,
-  showExtra = false,
-  hideStatus = false,
-}) => {
+export const Notification: FC<{
+  data: string
+  showExtra?: boolean
+  hideStatus?: boolean
+}> = ({ data, showExtra = false, hideStatus = false }) => {
   const notification: NotificationData = JSON.parse(data)
   const { status } = useWaitForTransaction({
     chainId: notification.chainId,

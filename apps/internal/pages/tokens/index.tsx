@@ -1,10 +1,8 @@
 import { SearchIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { useDebounce } from '@sushiswap/hooks'
-import { classNames, Network } from '@sushiswap/ui'
-import { DEFAULT_INPUT_UNSTYLED } from '@sushiswap/ui/input'
-import { Layout } from 'components'
-import { TokenTable } from 'components/tokens/TokenTable'
+import { classNames, DEFAULT_INPUT_UNSTYLED, Network } from '@sushiswap/ui'
+import { Layout, TokenTable } from 'components'
 import { TOKENS_SUPPORTED_CHAIN_IDS } from 'config'
 import stringify from 'fast-json-stable-stringify'
 import { getTokens, Token } from 'lib'
@@ -13,7 +11,10 @@ import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const tokens = await getTokens({ chainIds: TOKENS_SUPPORTED_CHAIN_IDS, filter: '' })
+  const tokens = await getTokens({
+    chainIds: TOKENS_SUPPORTED_CHAIN_IDS,
+    filter: '',
+  })
   return {
     props: {
       fallback: {
@@ -63,7 +64,10 @@ const _TokensPage: FC = () => {
   const debouncedFilter = useDebounce(filter, 400)
 
   const { data: tokens } = useSWR<Token[]>(
-    { url: '/internal/api/tokens', args: { filter: debouncedFilter, chainIds } },
+    {
+      url: '/internal/api/tokens',
+      args: { filter: debouncedFilter, chainIds },
+    },
     fetcher
   )
 

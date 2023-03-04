@@ -33,7 +33,11 @@ export function usePairs(
           tokenA.chainId === tokenB.chainId &&
           !tokenA.equals(tokenB) &&
           FACTORY_ADDRESS[tokenA.chainId]
-          ? computePairAddress({ factoryAddress: FACTORY_ADDRESS[tokenA.chainId], tokenA, tokenB })
+          ? computePairAddress({
+              factoryAddress: FACTORY_ADDRESS[tokenA.chainId],
+              tokenA,
+              tokenB,
+            })
           : undefined
       }),
     [tokens]

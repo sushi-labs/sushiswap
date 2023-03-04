@@ -1,7 +1,7 @@
 import { chains } from '@sushiswap/chain'
 import invariant from 'tiny-invariant'
 
-import { WNATIVE } from './constants'
+import { WNATIVE } from './constants/tokens'
 import { Currency } from './Currency'
 import { Token } from './Token'
 import { Type } from './Type'
@@ -37,7 +37,12 @@ export class Native extends Currency {
 
     const { decimals, name, symbol } = nativeCurrency
 
-    return (this.cache[chainId] = new Native({ chainId, decimals, name, symbol }))
+    return (this.cache[chainId] = new Native({
+      chainId,
+      decimals,
+      name,
+      symbol,
+    }))
   }
 
   public equals(other: Type): boolean {

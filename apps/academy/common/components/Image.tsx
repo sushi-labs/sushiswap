@@ -38,7 +38,11 @@ export const Image: FC<ImageProps> = ({
         {...(height && { height })}
         style={{ objectFit: 'cover', height }}
       >
-        <source src={getOptimizedMedia({ metadata: image.attributes.provider_metadata })} />
+        <source
+          src={getOptimizedMedia({
+            metadata: image.attributes.provider_metadata,
+          })}
+        />
       </video>
     )
   }
@@ -53,7 +57,11 @@ export const Image: FC<ImageProps> = ({
       width={width || _width || 640}
       height={height || _height || 400}
       objectFit={objectFit}
-      src={getOptimizedMedia({ metadata: image.attributes.provider_metadata, width, height })}
+      src={getOptimizedMedia({
+        metadata: image.attributes.provider_metadata,
+        width,
+        height,
+      })}
       alt={alternativeText || ''}
     />
   )

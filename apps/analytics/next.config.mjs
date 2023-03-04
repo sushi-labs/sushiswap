@@ -1,25 +1,10 @@
-import transpileModules from 'next-transpile-modules'
+import defaultNextConfig from '@sushiswap/nextjs-config'
 
-const withTranspileModules = transpileModules(['@sushiswap/redux-localstorage', '@sushiswap/wagmi', '@sushiswap/ui'])
-
-// @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  ...defaultNextConfig,
   basePath: '/analytics',
-  reactStrictMode: true,
-  swcMinify: false,
-  experimental: {
-    esmExternals: 'loose',
-  },
-  images: {
-    loader: 'cloudinary',
-    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-  },
-  experimental: {
-    esmExternals: 'loose',
-  },
-  productionBrowserSourceMaps: true,
-  staticPageGenerationTimeout: 180,
+  transpilePackages: ['@sushiswap/redux-localstorage', '@sushiswap/wagmi', '@sushiswap/ui'],
   async redirects() {
     return [
       {
@@ -28,20 +13,8 @@ const nextConfig = {
         permanent: true,
         basePath: false,
       },
-      {
-        source: '/analytics',
-        has: [
-          {
-            type: 'host',
-            value: 'analytics((-)+(arbitrum|avalanche|bsc|celo|ftm|fuse|harmony|moonriver|polygon|xdai))?.sushi.com',
-          },
-        ],
-        destination: 'https://www.sushi.com/analytics',
-        permanent: true,
-        basePath: false,
-      },
     ]
   },
 }
 
-export default withTranspileModules(nextConfig)
+export default nextConfig
