@@ -22,6 +22,7 @@ export const useGraphPool = (pool: Pool) => {
       token1,
       liquidityToken,
       liquidityNative: graphPool ? Number(graphPool?.liquidityNative) : null,
+      liquidityUSD: graphPool ? Number(graphPool?.liquidityUSD) : null,
       liquidity1dChange: graphPool ? Number(graphPool?.liquidity1dChange ?? 0) : null,
       fees1d: graphPool ? Number(graphPool?.fees1d ?? 0) : null,
       fees1dChange: graphPool ? Number(graphPool?.fees1dChange ?? 0) : null,
