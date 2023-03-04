@@ -44,6 +44,7 @@ export default function Home() {
   })
   const { watch } = methods
   const [chainId, setChainId] = useState<ChainId>(ChainId.ETHEREUM)
+  // @ts-ignore
   const [tokenAddress, logoUri, logoFile, background, listType] = watch([
     'tokenAddress',
     'logoUri',

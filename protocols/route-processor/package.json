@@ -49,7 +49,7 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
-    "@sushiswap/smart-order-router": "workspace:*",
+    "@sushiswap/router": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/types": "workspace:*",

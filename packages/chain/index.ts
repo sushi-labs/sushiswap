@@ -143,7 +143,7 @@ export enum ChainId {
   BOBA_AVAX = 43288,
   BOBA_BNB = 56288,
   BTTC = 199,
-  SEPOLIA = 11155111,
+  // SEPOLIA = 11155111,
 }
 
 export enum ChainKey {
@@ -185,7 +185,7 @@ export enum ChainKey {
   BOBA_AVAX = 'boba-avax',
   BOBA_BNB = 'boba-bnb',
   BTTC = 'bttc',
-  SEPOLIA = 'sepolia',
+  // SEPOLIA = 'sepolia',
 }
 
 // const CHAINS = [

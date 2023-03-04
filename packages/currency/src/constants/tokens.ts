@@ -442,7 +442,7 @@ export const WNATIVE = {
     symbol: 'WBTT',
     name: 'Wrapped BitTorrent Token',
   }),
-  [ChainId.SEPOLIA]: WETH9[ChainId.SEPOLIA],
+  // [ChainId.SEPOLIA]: WETH9[ChainId.SEPOLIA],
 } as const
 
 export const SUSHI = addressMapToTokenMap(

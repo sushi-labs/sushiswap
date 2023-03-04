@@ -14,7 +14,7 @@ import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { Token } from '@sushiswap/currency'
 import { Chain } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/ui/future/components/currency'
-import { COMMON_BASES } from '@sushiswap/smart-order-router-config'
+import { COMMON_BASES } from '@sushiswap/router-config'
 
 export const SearchPanel: FC = () => {
   const { network1 } = useSwapState()

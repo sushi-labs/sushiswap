@@ -69,45 +69,6 @@ importers:
       ts-node: 10.9.1_@types+node@18.11.18
       turbo: 1.6.3
 
-  apis/allowances:
-    specifiers:
-      '@sushiswap/chain': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/wagmi-config': workspace:*
-      '@types/lodash.zip': 4.2.7
-      '@types/node': ^18.0.0
-      '@types/node-fetch': 2.6.2
-      '@vercel/node': 2.9.8
-      '@wagmi/core': 0.8.10-cjs
-      '@whatwg-node/fetch': latest
-      eslint: 8.29.0
-      lodash.zip: 4.2.0
-      typescript: 4.9.4
-      vercel: 28.16.7
-      zod: 3.20.2
-    dependencies:
-      '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/wagmi-config': link:../../config/wagmi
-      '@vercel/node': 2.9.8
-      '@wagmi/core': 0.8.10-cjs_4umapwpw55xijlh2mknjgcn4rq
-      '@whatwg-node/fetch': 0.8.2_@types+node@18.11.18
-      lodash.zip: 4.2.0
-      zod: 3.20.2
-    devDependencies:
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/typescript-config': link:../../config/typescript
-      '@types/lodash.zip': 4.2.7
-      '@types/node': 18.11.18
-      '@types/node-fetch': 2.6.2
-      eslint: 8.29.0
-      typescript: 4.9.4
-      vercel: 28.16.7
-
   apis/balances:
     specifiers:
       '@sushiswap/chain': workspace:*
@@ -219,7 +180,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/route-processor': workspace:*
-      '@sushiswap/smart-order-router': workspace:*
+      '@sushiswap/router': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/viem-config': workspace:*
       '@swc/core': 1.3.26
@@ -242,7 +203,7 @@ importers:
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/route-processor': link:../../protocols/route-processor
-      '@sushiswap/smart-order-router': link:../../packages/smart-order-router
+      '@sushiswap/router': link:../../packages/router
       '@sushiswap/viem-config': link:../../config/viem
       '@whatwg-node/fetch': 0.8.2
       ethers: 5.7.2
@@ -1156,8 +1117,8 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query': workspace:*
       '@sushiswap/route-processor': workspace:*
-      '@sushiswap/smart-order-router': workspace:*
-      '@sushiswap/smart-order-router-config': workspace:*
+      '@sushiswap/router': workspace:*
+      '@sushiswap/router-config': workspace:*
       '@sushiswap/stargate': workspace:*
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/sushixswap': workspace:*
@@ -1215,8 +1176,8 @@ importers:
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/react-query': link:../../packages/react-query
       '@sushiswap/route-processor': link:../../protocols/route-processor
-      '@sushiswap/smart-order-router': link:../../packages/smart-order-router
-      '@sushiswap/smart-order-router-config': link:../../config/smart-order-router
+      '@sushiswap/router': link:../../packages/router
+      '@sushiswap/router-config': link:../../config/router
       '@sushiswap/stargate': link:../../packages/stargate
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
@@ -1410,7 +1371,7 @@ importers:
       tsup: 6.5.0_typescript@4.9.4
       typescript: 4.9.4
 
-  config/smart-order-router:
+  config/router:
     specifiers:
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
@@ -1573,6 +1534,253 @@ importers:
       '@types/node': 18.11.18
       eslint: 8.29.0
       tsup: 6.5.0_typescript@4.9.4
+      typescript: 4.9.4
+
+  jobs/pool:
+    specifiers:
+      '@graphprotocol/client-add-source-name': latest
+      '@graphprotocol/client-auto-pagination': latest
+      '@graphprotocol/client-auto-type-merging': latest
+      '@graphprotocol/client-cli': 2.2.19
+      '@graphql-mesh/transform-filter-schema': latest
+      '@graphql-mesh/transform-prefix': latest
+      '@graphql-mesh/transform-prune': latest
+      '@graphql-mesh/transform-rename': latest
+      '@graphql-mesh/transform-type-merging': latest
+      '@graphql-tools/merge': latest
+      '@sushiswap/abi': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/core': ^2.0.0-canary.1
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/database': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/graph-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/validate': workspace:*
+      '@sushiswap/wagmi-config': workspace:*
+      '@swc/core': 1.3.26
+      '@swc/helpers': 0.4.14
+      '@types/connect-timeout': 0.0.36
+      '@types/express': 4.17.15
+      '@wagmi/core': 0.8.1
+      connect-timeout: 1.9.0
+      date-fns: 2.29.3
+      dotenv: 16.0.3
+      eslint: 8.29.0
+      ethers: 5.7.2
+      express: 4.18.2
+      graphql: 16.6.0
+      jest: 29.3.1
+      prettier: 2.8.1
+      ts-node: 10.9.1
+      tsup: 6.5.0
+      typescript: 4.9.4
+    dependencies:
+      '@sushiswap/abi': link:../../packages/abi
+      '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/core': 2.0.0-canary.1
+      '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/graph-config': link:../../config/graph
+      '@sushiswap/validate': link:../../packages/validate
+      '@sushiswap/wagmi-config': link:../../config/wagmi
+      '@wagmi/core': 0.8.1_c4tpmuajjwy7vjodfmym27ncri
+      connect-timeout: 1.9.0
+      ethers: 5.7.2
+      express: 4.18.2
+    devDependencies:
+      '@graphprotocol/client-add-source-name': 1.0.17_graphql@16.6.0
+      '@graphprotocol/client-auto-pagination': 1.1.15_graphql@16.6.0
+      '@graphprotocol/client-auto-type-merging': 1.0.22_graphql@16.6.0
+      '@graphprotocol/client-cli': 2.2.19_ropnvtok2nb6ypywo4y7tkficu
+      '@graphql-mesh/transform-filter-schema': 0.15.17_graphql@16.6.0
+      '@graphql-mesh/transform-prefix': 0.12.15_graphql@16.6.0
+      '@graphql-mesh/transform-prune': 0.1.14_graphql@16.6.0
+      '@graphql-mesh/transform-rename': 0.14.15_graphql@16.6.0
+      '@graphql-mesh/transform-type-merging': 0.5.14_graphql@16.6.0
+      '@graphql-tools/merge': 8.3.18_graphql@16.6.0
+      '@sushiswap/database': link:../../packages/database
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/typescript-config': link:../../config/typescript
+      '@swc/core': 1.3.26
+      '@swc/helpers': 0.4.14
+      '@types/connect-timeout': 0.0.36
+      '@types/express': 4.17.15
+      date-fns: 2.29.3
+      dotenv: 16.0.3
+      eslint: 8.29.0
+      graphql: 16.6.0
+      jest: 29.3.1_ts-node@10.9.1
+      prettier: 2.8.1
+      ts-node: 10.9.1_rmzwhy4t3g2w4jfehjrsbeodby
+      tsup: 6.5.0_vgdeoebqqv2xyi4fvs54ol24bu
+      typescript: 4.9.4
+
+  jobs/price:
+    specifiers:
+      '@graphprotocol/client-auto-pagination': latest
+      '@graphprotocol/client-cli': 2.2.19
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/graph-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@swc/core': 1.3.26
+      '@swc/helpers': 0.4.14
+      '@types/express': 4.17.15
+      date-fns: 2.29.3
+      dotenv: 16.0.3
+      eslint: 8.29.0
+      express: 4.18.2
+      fast-json-stable-stringify: 2.1.0
+      graphql: 16.6.0
+      ioredis: 5.3.1
+      jest: 29.3.1
+      prettier: 2.8.1
+      ts-node: 10.9.1
+      typescript: 4.9.4
+    dependencies:
+      '@graphprotocol/client-auto-pagination': 1.1.15_graphql@16.6.0
+      '@graphprotocol/client-cli': 2.2.19_erstqrng57z6woex75r4i3v24q
+      '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/graph-config': link:../../config/graph
+      date-fns: 2.29.3
+      express: 4.18.2
+      fast-json-stable-stringify: 2.1.0
+      graphql: 16.6.0
+      ioredis: 5.3.1
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/typescript-config': link:../../config/typescript
+      '@swc/core': 1.3.26
+      '@swc/helpers': 0.4.14
+      '@types/express': 4.17.15
+      dotenv: 16.0.3
+      eslint: 8.29.0
+      jest: 29.3.1_ts-node@10.9.1
+      prettier: 2.8.1
+      ts-node: 10.9.1_rmzwhy4t3g2w4jfehjrsbeodby
+      typescript: 4.9.4
+
+  jobs/sushi:
+    specifiers:
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@google-cloud/run': 0.3.0
+      '@google-cloud/scheduler': ^3.1.0
+      '@graphprotocol/client-add-source-name': latest
+      '@graphprotocol/client-auto-pagination': latest
+      '@graphprotocol/client-cli': 2.2.19
+      '@graphql-mesh/cache-localforage': latest
+      '@graphql-mesh/cross-helpers': latest
+      '@graphql-mesh/graphql': latest
+      '@graphql-mesh/http': latest
+      '@graphql-mesh/json-schema': latest
+      '@graphql-mesh/merger-bare': latest
+      '@graphql-mesh/merger-stitching': latest
+      '@graphql-mesh/plugin-mock': latest
+      '@graphql-mesh/runtime': latest
+      '@graphql-mesh/store': latest
+      '@graphql-mesh/transform-filter-schema': latest
+      '@graphql-mesh/transform-prefix': latest
+      '@graphql-mesh/transform-prune': latest
+      '@graphql-mesh/transform-rename': latest
+      '@graphql-mesh/transform-type-merging': latest
+      '@graphql-mesh/utils': latest
+      '@sushiswap/abi': workspace:*
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/database': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/wagmi-config': workspace:*
+      '@swc/core': 1.3.26
+      '@swc/helpers': 0.4.14
+      '@types/connect-timeout': 0.0.36
+      '@types/express': 4.17.15
+      '@uniswap/v2-core': 1.0.1
+      '@wagmi/core': 0.8.1
+      '@whatwg-node/fetch': 0.7.0
+      connect-timeout: 1.9.0
+      dotenv: 16.0.3
+      eslint: 8.29.0
+      express: 4.18.2
+      graphql: 16.6.0
+      ioredis: 5.3.1
+      isomorphic-unfetch: 4.0.2
+      jest: 29.3.1
+      prettier: 2.8.1
+      ts-node: 10.9.1
+      tsup: 6.5.0
+      typescript: 4.9.4
+      zod: 3.20.2
+    dependencies:
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@google-cloud/run': 0.3.0
+      '@google-cloud/scheduler': 3.1.0
+      '@sushiswap/abi': link:../../packages/abi
+      '@sushiswap/bentobox': link:../../protocols/bentobox
+      '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/math': link:../../packages/math
+      '@sushiswap/tines': link:../../packages/tines
+      '@sushiswap/wagmi-config': link:../../config/wagmi
+      '@uniswap/v2-core': 1.0.1
+      '@wagmi/core': 0.8.1_typescript@4.9.4
+      connect-timeout: 1.9.0
+      express: 4.18.2
+      isomorphic-unfetch: 4.0.2
+      zod: 3.20.2
+    devDependencies:
+      '@graphprotocol/client-add-source-name': 1.0.17_graphql@16.6.0
+      '@graphprotocol/client-auto-pagination': 1.1.15_graphql@16.6.0
+      '@graphprotocol/client-cli': 2.2.19_erstqrng57z6woex75r4i3v24q
+      '@graphql-mesh/cache-localforage': 0.7.14_graphql@16.6.0
+      '@graphql-mesh/cross-helpers': 0.3.3_graphql@16.6.0
+      '@graphql-mesh/graphql': 0.34.7_graphql@16.6.0
+      '@graphql-mesh/http': 0.3.20_graphql@16.6.0
+      '@graphql-mesh/json-schema': 0.37.16_graphql@16.6.0
+      '@graphql-mesh/merger-bare': 0.16.16_graphql@16.6.0
+      '@graphql-mesh/merger-stitching': 0.18.16_graphql@16.6.0
+      '@graphql-mesh/plugin-mock': 0.1.14_graphql@16.6.0
+      '@graphql-mesh/runtime': 0.46.15_graphql@16.6.0
+      '@graphql-mesh/store': 0.9.14_graphql@16.6.0
+      '@graphql-mesh/transform-filter-schema': 0.15.17_graphql@16.6.0
+      '@graphql-mesh/transform-prefix': 0.12.15_graphql@16.6.0
+      '@graphql-mesh/transform-prune': 0.1.14_graphql@16.6.0
+      '@graphql-mesh/transform-rename': 0.14.15_graphql@16.6.0
+      '@graphql-mesh/transform-type-merging': 0.5.14_graphql@16.6.0
+      '@graphql-mesh/utils': 0.43.14_graphql@16.6.0
+      '@sushiswap/database': link:../../packages/database
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/typescript-config': link:../../config/typescript
+      '@swc/core': 1.3.26
+      '@swc/helpers': 0.4.14
+      '@types/connect-timeout': 0.0.36
+      '@types/express': 4.17.15
+      '@whatwg-node/fetch': 0.7.0
+      dotenv: 16.0.3
+      eslint: 8.29.0
+      graphql: 16.6.0
+      ioredis: 5.3.1
+      jest: 29.3.1_ts-node@10.9.1
+      prettier: 2.8.1
+      ts-node: 10.9.1_rmzwhy4t3g2w4jfehjrsbeodby
+      tsup: 6.5.0_vgdeoebqqv2xyi4fvs54ol24bu
       typescript: 4.9.4
 
   packages/abi:
@@ -2315,7 +2523,7 @@ importers:
       react-redux: 8.0.5_ie75ejlwqy5zh3tldgt7pftwcu
       typescript: 4.9.4
 
-  packages/smart-order-router:
+  packages/router:
     specifiers:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
@@ -2330,7 +2538,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/smart-order-router-config': workspace:*
+      '@sushiswap/router-config': workspace:*
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/trident': workspace:*
@@ -2373,7 +2581,7 @@ importers:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/smart-order-router-config': link:../../config/smart-order-router
+      '@sushiswap/router-config': link:../../config/router
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/lodash.flatmap': 4.5.7
       '@types/node': 18.11.18
@@ -2648,8 +2856,8 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query': workspace:*
-      '@sushiswap/smart-order-router': workspace:*
-      '@sushiswap/smart-order-router-config': workspace:*
+      '@sushiswap/router': workspace:*
+      '@sushiswap/router-config': workspace:*
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/sushixswap': workspace:*
       '@sushiswap/tines': workspace:*
@@ -2696,8 +2904,8 @@ importers:
       '@sushiswap/hooks': link:../hooks
       '@sushiswap/math': link:../math
       '@sushiswap/react-query': link:../react-query
-      '@sushiswap/smart-order-router': link:../smart-order-router
-      '@sushiswap/smart-order-router-config': link:../../config/smart-order-router
+      '@sushiswap/router': link:../router
+      '@sushiswap/router-config': link:../../config/router
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
       '@sushiswap/tines': link:../tines
@@ -2885,7 +3093,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/smart-order-router': workspace:*
+      '@sushiswap/router': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
@@ -2934,7 +3142,7 @@ importers:
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/smart-order-router': link:../../packages/smart-order-router
+      '@sushiswap/router': link:../../packages/router
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/typescript-config': link:../../config/typescript
@@ -6882,7 +7090,7 @@ packages:
       '@graphql-tools/graphql-file-loader': 7.5.16_graphql@16.6.0
       '@graphql-tools/load': 7.8.12_graphql@16.6.0
       '@graphql-tools/utils': 9.2.1_graphql@16.6.0
-      '@whatwg-node/fetch': 0.8.1
+      '@whatwg-node/fetch': 0.8.2
       camel-case: 4.1.2
       graphql: 16.6.0
       param-case: 3.0.4
@@ -6914,7 +7122,7 @@ packages:
       '@graphql-tools/graphql-file-loader': 7.5.16_graphql@16.6.0
       '@graphql-tools/load': 7.8.12_graphql@16.6.0
       '@graphql-tools/utils': 9.2.1_graphql@16.6.0
-      '@whatwg-node/fetch': 0.8.1_@types+node@18.11.18
+      '@whatwg-node/fetch': 0.8.2_@types+node@18.11.18
       camel-case: 4.1.2
       graphql: 16.6.0
       param-case: 3.0.4
@@ -10625,7 +10833,7 @@ packages:
   /@swc/helpers/0.4.14:
     resolution: {integrity: sha512-4C7nX/dvpzB7za4Ql9K81xK3HPxCpHMgwTZVyf+9JQ6VUbn9jjZVN7/Nkdz/Ugzs2CSjqnL/UPXroiVBVHUWUw==}
     dependencies:
-      tslib: 2.4.1
+      tslib: 2.5.0
 
   /@szmarczak/http-timer/1.1.2:
     resolution: {integrity: sha512-XIB2XbzHTN6ieIjfIMV9hlVcfPU26s2vafYWQcZHWXHOxiaRZYEDKEwdl129Zyg50+foYV2jCgtrqSA6qNuNSA==}
@@ -11119,7 +11327,7 @@ packages:
     resolution: {integrity: sha512-PVb6Bg2QuscZ30FvOU7z4guG6c926D9YRvOxEaelzndpMsvP+YM74Q/dAFASpg2l6+XLalxSGxcq/lrgYWZtyQ==}
     dependencies:
       '@babel/parser': 7.20.7
-      '@babel/types': 7.20.7
+      '@babel/types': 7.21.2
       '@types/babel__generator': 7.6.4
       '@types/babel__template': 7.4.1
       '@types/babel__traverse': 7.18.3
@@ -11128,20 +11336,20 @@ packages:
   /@types/babel__generator/7.6.4:
     resolution: {integrity: sha512-tFkciB9j2K755yrTALxD44McOrk+gfpIpvC3sxHjRawj6PfnQxrse4Clq5y/Rq+G3mrBurMax/lG8Qn2t9mSsg==}
     dependencies:
-      '@babel/types': 7.20.7
+      '@babel/types': 7.21.2
     dev: true
 
   /@types/babel__template/7.4.1:
     resolution: {integrity: sha512-azBFKemX6kMg5Io+/rdGT0dkGreboUVR0Cdm3fz9QJWpaQGJRQXl7C+6hOTCZcMll7KFyEQpgbYI2lHdsS4U7g==}
     dependencies:
       '@babel/parser': 7.20.7
-      '@babel/types': 7.20.7
+      '@babel/types': 7.21.2
     dev: true
 
   /@types/babel__traverse/7.18.3:
     resolution: {integrity: sha512-1kbcJ40lLB7MHsj39U4Sh1uTd2E7rLEa79kmDpI6cy+XiXsteB3POdQomoq4FxszMrO3ZYchkhYJw7A2862b3w==}
     dependencies:
-      '@babel/types': 7.20.7
+      '@babel/types': 7.21.2
     dev: true
 
   /@types/big.js/6.1.6:
@@ -13121,28 +13329,6 @@ packages:
       - '@types/node'
     dev: true
 
-  /@whatwg-node/fetch/0.8.1:
-    resolution: {integrity: sha512-Fkd1qQHK2tAWxKlC85h9L86Lgbq3BzxMnHSnTsnzNZMMzn6Xi+HlN8/LJ90LxorhSqD54td+Q864LgwUaYDj1Q==}
-    dependencies:
-      '@peculiar/webcrypto': 1.4.1
-      '@whatwg-node/node-fetch': 0.3.0
-      busboy: 1.6.0
-      urlpattern-polyfill: 6.0.2
-      web-streams-polyfill: 3.2.1
-    transitivePeerDependencies:
-      - '@types/node'
-
-  /@whatwg-node/fetch/0.8.1_@types+node@18.11.18:
-    resolution: {integrity: sha512-Fkd1qQHK2tAWxKlC85h9L86Lgbq3BzxMnHSnTsnzNZMMzn6Xi+HlN8/LJ90LxorhSqD54td+Q864LgwUaYDj1Q==}
-    dependencies:
-      '@peculiar/webcrypto': 1.4.1
-      '@whatwg-node/node-fetch': 0.3.0_@types+node@18.11.18
-      busboy: 1.6.0
-      urlpattern-polyfill: 6.0.2
-      web-streams-polyfill: 3.2.1
-    transitivePeerDependencies:
-      - '@types/node'
-
   /@whatwg-node/fetch/0.8.2:
     resolution: {integrity: sha512-6u1xGzFZvskJpQXhWreR9s1/4nsuY4iFRsTb4BC3NiDHmzgj/Hu1Ovt4iHs5KAjLzbnsjaQOI5f5bQPucqvPsQ==}
     dependencies:
@@ -13174,29 +13360,6 @@ packages:
       busboy: 1.6.0
       tslib: 2.5.0
     dev: true
-
-  /@whatwg-node/node-fetch/0.3.0:
-    resolution: {integrity: sha512-mPM8WnuHiI/3kFxDeE0SQQXAElbz4onqmm64fEGCwYEcBes2UsvIDI8HwQIqaXCH42A9ajJUPv4WsYoN/9oG6w==}
-    peerDependencies:
-      '@types/node': ^18.0.6
-    dependencies:
-      '@whatwg-node/events': 0.0.2
-      busboy: 1.6.0
-      fast-querystring: 1.1.1
-      fast-url-parser: 1.1.3
-      tslib: 2.5.0
-
-  /@whatwg-node/node-fetch/0.3.0_@types+node@18.11.18:
-    resolution: {integrity: sha512-mPM8WnuHiI/3kFxDeE0SQQXAElbz4onqmm64fEGCwYEcBes2UsvIDI8HwQIqaXCH42A9ajJUPv4WsYoN/9oG6w==}
-    peerDependencies:
-      '@types/node': ^18.0.6
-    dependencies:
-      '@types/node': 18.11.18
-      '@whatwg-node/events': 0.0.2
-      busboy: 1.6.0
-      fast-querystring: 1.1.1
-      fast-url-parser: 1.1.3
-      tslib: 2.5.0
 
   /@whatwg-node/node-fetch/0.3.1:
     resolution: {integrity: sha512-/U4onp5eBkRHfFe/VL+ppyupqj7z6iBtjcuPSosQNH2/y+LxRn5lyFb7Vqhb5DokjrDMjssLcqiVYnx+UABFsw==}
@@ -13472,7 +13635,6 @@ packages:
     resolution: {integrity: sha512-xjIYgE8HBrkpd/sJqOGNspf8uHG+NOHGOw6a/Urj8taM2EXfdNAH2oFcPeIFfsv3+kz/mJrS5VuMqbNLjCa2vw==}
     engines: {node: '>=0.4.0'}
     hasBin: true
-    dev: true
 
   /address/1.2.2:
     resolution: {integrity: sha512-4B/qKCfeE/ODUaAUpSwfzazo5x29WD4r3vXiWsB7I2mSDAihwEqKO+g8GELZUQSSAo5e1XTYh3ZVfLyxBc12nA==}
@@ -14229,7 +14391,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@babel/template': 7.20.7
-      '@babel/types': 7.20.7
+      '@babel/types': 7.21.2
       '@types/babel__core': 7.1.20
       '@types/babel__traverse': 7.18.3
     dev: true
@@ -22193,7 +22355,7 @@ packages:
       jest-util: 29.3.1
       jest-validate: 29.3.1
       prompts: 2.4.2
-      yargs: 17.6.2
+      yargs: 17.7.1
     transitivePeerDependencies:
       - '@types/node'
       - supports-color
@@ -22221,7 +22383,7 @@ packages:
       jest-util: 29.3.1
       jest-validate: 29.3.1
       prompts: 2.4.2
-      yargs: 17.6.2
+      yargs: 17.7.1
     transitivePeerDependencies:
       - '@types/node'
       - supports-color
@@ -22249,7 +22411,7 @@ packages:
       jest-util: 29.3.1
       jest-validate: 29.3.1
       prompts: 2.4.2
-      yargs: 17.6.2
+      yargs: 17.7.1
     transitivePeerDependencies:
       - '@types/node'
       - supports-color
@@ -22277,7 +22439,7 @@ packages:
       jest-util: 29.3.1
       jest-validate: 29.3.1
       prompts: 2.4.2
-      yargs: 17.6.2
+      yargs: 17.7.1
     transitivePeerDependencies:
       - '@types/node'
       - supports-color
@@ -22677,7 +22839,7 @@ packages:
       '@babel/plugin-syntax-jsx': 7.18.6_@babel+core@7.20.7
       '@babel/plugin-syntax-typescript': 7.20.0_@babel+core@7.20.7
       '@babel/traverse': 7.20.10
-      '@babel/types': 7.20.7
+      '@babel/types': 7.21.2
       '@jest/expect-utils': 29.3.1
       '@jest/transform': 29.3.1
       '@jest/types': 29.3.1
@@ -29876,7 +30038,7 @@ packages:
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.3
       '@types/node': 18.11.18
-      acorn: 8.8.1
+      acorn: 8.8.2
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1
@@ -29906,7 +30068,7 @@ packages:
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.3
       '@types/node': 18.11.18
-      acorn: 8.8.1
+      acorn: 8.8.2
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1
@@ -29936,7 +30098,7 @@ packages:
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.3
       '@types/node': 14.18.33
-      acorn: 8.8.1
+      acorn: 8.8.2
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1
@@ -29966,7 +30128,7 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.3
-      acorn: 8.8.1
+      acorn: 8.8.2
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1

@@ -39,7 +39,7 @@
     "viem": "0.0.1-alpha.38",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
-    "@sushiswap/smart-order-router": "workspace:*",
+    "@sushiswap/router": "workspace:*",
     "@sushiswap/route-processor": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
     "fastify": "4.11.0",

@@ -39,4 +39,5 @@ export const defaultQuoteCurrency = {
   [ChainId.BOBA_AVAX]: USDC[ChainId.BOBA_AVAX],
   [ChainId.BOBA_BNB]: USDC[ChainId.BOBA_BNB],
   // [ChainId.BTTC]: USDT[ChainId.BTTC],
+  // [ChainId.SEPOLIA]: USDT[ChainId.SEPOLIA],
 } as const

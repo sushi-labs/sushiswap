@@ -1,7 +1,7 @@
 import { weth9Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI, Token, WNATIVE } from '@sushiswap/currency'
-import { BentoBox, RouteCreator } from '@sushiswap/smart-order-router'
+import { BentoBox, RouteCreator } from '@sushiswap/router'
 import { getBigNumber, MultiRoute } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { ethers, network } from 'hardhat'

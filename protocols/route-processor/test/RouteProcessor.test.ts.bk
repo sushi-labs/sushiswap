@@ -1,7 +1,7 @@
 import { bentoBoxV1Abi, erc20Abi, weth9Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI, Token, WBTC, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { BentoBox, HEXer, Swapper } from '@sushiswap/smart-order-router'
+import { BentoBox, HEXer, Swapper } from '@sushiswap/router'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { Contract } from 'ethers'

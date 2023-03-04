@@ -9,7 +9,7 @@ import {
   // findSpecialRoute,
   DataFetcher,
   Router,
-} from '@sushiswap/smart-order-router'
+} from '@sushiswap/router'
 import {
   arbitrum,
   arbitrumNova,

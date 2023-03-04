@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
 
-import { getToken } from '../../../../../lib/api.js'
+import { getToken } from '../../../../../lib/api'
 
 const schema = z.object({
   chainId: z.coerce
