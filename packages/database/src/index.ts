@@ -36,8 +36,7 @@ export async function createClient(
   const Redis = (await import('ioredis')).default
   const { createPrismaRedisCache } = await import('prisma-redis-middleware')
 
-  // if (!process.env['DATABASE_URL']) throw new Error('DATABASE_URL is required')
-  // if (!process.env['REDIS_URL']) throw new Error('REDIS_URL is required')
+  if (!process.env['DATABASE_URL']) throw new Error('DATABASE_URL is required')
 
   if (process.env['REDIS_URL']) {
     const redis = new Redis(process.env['REDIS_URL'])
