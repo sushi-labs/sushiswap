@@ -39,6 +39,7 @@
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
+    "@sushiswap/smart-order-router-config": "workspace:*",
     "@sushiswap/validate": "workspace:*",
     "@tanstack/react-query": "4.20.4",
     "@tanstack/react-query-devtools": "4.22.0",

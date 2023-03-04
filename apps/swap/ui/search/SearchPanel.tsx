@@ -14,13 +14,7 @@ import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { Token } from '@sushiswap/currency'
 import { Chain } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/ui/future/components/currency'
-
-const POPULAR_TOKENS = [
-  '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',
-  '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
-  '0xdac17f958d2ee523a2206206994597c13d831ec7',
-  // '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
-]
+import { COMMON_BASES } from '@sushiswap/smart-order-router-config'
 
 export const SearchPanel: FC = () => {
   const { network1 } = useSwapState()
@@ -29,7 +23,10 @@ export const SearchPanel: FC = () => {
   const filter = useMemo(() => (debouncedQuery ? [debouncedQuery] : 'showNone'), [debouncedQuery])
 
   const { data: tokenList } = useTokenList(filter)
-  const { data: popularTokensList } = useTokenList(POPULAR_TOKENS)
+  const { data: popularTokensList } = useTokenList(
+    // TODO: we should have ETH as an option...
+    useMemo(() => [...COMMON_BASES[network1].map((t) => t.wrapped.address)], [network1])
+  )
   const { open, setOpen } = useSearchContext()
 
   const onClose = useCallback(() => setOpen(false), [setOpen])
@@ -124,7 +121,7 @@ const Row: FC<{ currency: Token }> = ({ currency }) => {
       </div>
       {price && (
         <div className="flex flex-col">
-          <span className="font-medium text-gray-900 dark:text-slate-100 text-right">${price?.toFixed(2)}</span>
+          <span className="font-medium text-gray-900 dark:text-slate-100 text-right">${price?.toSignificant(2)}</span>
           <span
             className={classNames(
               // change > 0 ? 'text-green' : 'text-red',

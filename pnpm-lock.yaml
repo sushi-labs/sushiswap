@@ -1143,6 +1143,7 @@ importers:
       '@sushiswap/react-query': workspace:*
       '@sushiswap/route-processor': workspace:*
       '@sushiswap/smart-order-router': workspace:*
+      '@sushiswap/smart-order-router-config': workspace:*
       '@sushiswap/stargate': workspace:*
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/sushixswap': workspace:*
@@ -1200,6 +1201,7 @@ importers:
       '@sushiswap/react-query': link:../../packages/react-query
       '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/smart-order-router': link:../../packages/smart-order-router
+      '@sushiswap/smart-order-router-config': link:../../config/smart-order-router
       '@sushiswap/stargate': link:../../packages/stargate
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/sushixswap': link:../../protocols/sushixswap

@@ -237,19 +237,41 @@ const CHAINS = [
 const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA]
 
 export class Chain implements Chain {
+  public static fromRaw(data: (typeof CHAINS)[number]) {
+    return new Chain(data)
+  }
   public static from(chainId: number) {
     return chains[chainId]
   }
   public static fromShortName(shortName: string) {
-    const _shortName = chainShortName[shortName]
-    if (!_shortName) throw new Error(`Unknown chain short name: ${shortName}`)
-    return chains[_shortName]
+    const chainId = chainShortNameToChainId[shortName]
+    if (!chainId) throw new Error(`Unknown chain short name: ${shortName}`)
+    return Chain.from(chainId)
   }
   public static fromChainId(chainId: number) {
-    return chains[chainId]
+    return Chain.from(chainId)
+  }
+  public static txUrl(chainId: number, txHash: string): string {
+    return Chain.fromChainId(chainId).getTxUrl(txHash)
+  }
+  public static blockUrl(chainId: number, blockHashOrHeight: string): string {
+    return Chain.fromChainId(chainId).getBlockUrl(blockHashOrHeight)
+  }
+  public static tokenUrl(chainId: number, tokenAddress: string): string {
+    return Chain.fromChainId(chainId).getTokenUrl(tokenAddress)
+  }
+  public static accountUrl(chainId: number, accountAddress: string): string {
+    return Chain.fromChainId(chainId).getAccountUrl(accountAddress)
   }
   constructor(data: (typeof CHAINS)[number]) {
     Object.assign(this, data)
+
+    // process name overrides
+    for (const target of ['Mainnet', 'Opera', 'Mainnet Shard 0']) {
+      if (data.name.includes(target)) {
+        this.name = data.name.replace(target, '').trim()
+      }
+    }
   }
   getTxUrl(txHash: string): string {
     if (!this.explorers) return ''
@@ -287,23 +309,16 @@ export class Chain implements Chain {
     }
     return ''
   }
-
-  static txUrl(chainId: number, txHash: string): string {
-    return Chain.fromChainId(chainId).getTxUrl(txHash)
-  }
-
-  static blockUrl(chainId: number, blockHashOrHeight: string): string {
-    return Chain.fromChainId(chainId).getBlockUrl(blockHashOrHeight)
-  }
-
-  static tokenUrl(chainId: number, tokenAddress: string): string {
-    return Chain.fromChainId(chainId).getTokenUrl(tokenAddress)
-  }
-
-  static accountUrl(chainId: number, accountAddress: string): string {
-    return Chain.fromChainId(chainId).getAccountUrl(accountAddress)
-  }
 }
+
+// Chain Id => Chain mapping
+export const chains = Object.fromEntries(CHAINS.map((data): [ChainId, Chain] => [data.chainId, new Chain(data)]))
+
+// L2 Chains array
+const L2_CHAINS = CHAINS.filter((data) => 'parent' in data && data.parent.type === Type.L2)
+
+// Chain Id => Chain mapping
+export const chainsL2 = Object.fromEntries(L2_CHAINS.map((data): [ChainId, Chain] => [data.chainId, new Chain(data)]))
 
 // ChainId array
 export const chainIds = CHAINS.map((chain) => chain.chainId)
@@ -314,18 +329,13 @@ export const chainShortNameToChainId = Object.fromEntries(
 )
 
 // Chain Id => Short Name mapping
-export const chainShortName = Object.fromEntries(CHAINS.map((data): [number, string] => [data.chainId, data.shortName]))
+export const chainShortName = Object.fromEntries(
+  CHAINS.map((data): [number, string] => [data.chainId, Chain.fromRaw(data).shortName])
+)
 
 // Chain Id => Chain Name mapping
-export const chainName = Object.fromEntries(CHAINS.map((data): [number, string] => [data.chainId, data.name]))
-
-// Chain Id => Chain mapping
-export const chains = Object.fromEntries(CHAINS.map((data): [ChainId, Chain] => [data.chainId, new Chain(data)]))
-
-// L2 Chains array
-const L2_CHAINS = CHAINS.filter((data) => 'parent' in data && data.parent.type === Type.L2)
-
-// Chain Id => Chain mapping
-export const chainsL2 = Object.fromEntries(L2_CHAINS.map((data): [ChainId, Chain] => [data.chainId, new Chain(data)]))
+export const chainName = Object.fromEntries(
+  CHAINS.map((data): [number, string] => [data.chainId, Chain.fromRaw(data).name])
+)
 
 export default chains

@@ -11,6 +11,7 @@ import { AppType, classNames } from '@sushiswap/ui'
 import { warningSeverity, warningSeverityClassName } from '../../lib/warningSeverity'
 import { TradeRoute } from './TradeRoute'
 import { ZERO } from '@sushiswap/math'
+import { chainName } from '@sushiswap/chain'
 
 export const TradeStats: FC = () => {
   const [open, setOpen] = useState(false)
@@ -40,7 +41,7 @@ export const TradeStats: FC = () => {
         {/*  </span>*/}
         {/*</div>*/}
         <div className="flex justify-between items-center gap-2">
-          <span className="text-sm text-gray-700 dark:text-slate-400">Price Impact</span>
+          <span className="text-sm text-gray-700 dark:text-slate-400">Price impact</span>
           <span
             className={classNames(
               warningSeverityClassName(warningSeverity(trade?.priceImpact)),
@@ -91,7 +92,7 @@ export const TradeStats: FC = () => {
         ) : null} */}
 
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-700 dark:text-slate-400">Network fee</span>
+          <span className="text-sm text-gray-700 dark:text-slate-400">{chainName[network0]} network fee</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             {loading || !trade?.gasSpent || trade.gasSpent === '0' ? (
               <Skeleton.Text fontSize="text-sm" className="w-[120px]" />

@@ -346,7 +346,7 @@ export const CUSTOM_BASES: {
   [chainId: number]: { [tokenAddress: string]: Token[] }
 } = {}
 
-export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
+export const COMMON_BASES = {
   [ChainId.ETHEREUM]: [
     WNATIVE[ChainId.ETHEREUM],
     WBTC[ChainId.ETHEREUM],
@@ -514,4 +514,4 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
     USDT[ChainId.BOBA_BNB],
   ],
   [ChainId.BTTC]: [WNATIVE[ChainId.BTTC], USDC[ChainId.BTTC], USDT[ChainId.BTTC]],
-}
+} as const
