@@ -5,6 +5,7 @@ import { useSlippageTolerance } from './useSlippageTolerance'
 import { useCarbonOffset } from './useCarbonOffset'
 import { useCrossChainTrade } from './useCrossChainTrade/useCrossChainTrade'
 import { useMemo } from 'react'
+import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap'
 
 type ObjectType<T> = T extends true ? ReturnType<typeof useCrossChainTrade> : ReturnType<typeof _useTrade>
 
@@ -28,14 +29,14 @@ export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): 
 
   const crossChainTrade = useCrossChainTrade({
     tradeId,
-    network0,
-    network1,
+    network0: network0 as SushiXSwapChainId,
+    network1: network1 as SushiXSwapChainId,
     token0,
     token1,
     amount: amount,
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     recipient,
-    enabled: crossChain && network0 !== network1,
+    enabled: crossChain && network0 !== network1 && isSushiXSwapChainId(network0) && isSushiXSwapChainId(network1),
     bentoboxSignature,
   })
 

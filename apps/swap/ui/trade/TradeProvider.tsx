@@ -18,8 +18,16 @@ import { useCustomTokens, useToken, useTokens } from '@sushiswap/react-query'
 import { getAddress, isAddress } from 'ethers/lib/utils'
 import { Signature } from '@ethersproject/bytes'
 import { nanoid } from 'nanoid'
-import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { SushiXSwapChainId, isSushiXSwapChainId } from '@sushiswap/sushixswap'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { SushiXSwapChainId } from '@sushiswap/sushixswap'
+import { isUniswapV2FactoryChainId, UniswapV2FactoryChainId } from '@sushiswap/sushiswap'
+import {
+  isConstantProductPoolFactoryChainId,
+  isStablePoolFactoryChainId,
+  StablePoolFactoryChainId,
+  ConstantProductPoolFactoryChainId,
+} from '@sushiswap/trident'
+import { SwapChainId } from 'types'
 
 export const queryParamsSchema = z.object({
   fromChainId: z.coerce
@@ -28,20 +36,32 @@ export const queryParamsSchema = z.object({
     .gte(0)
     .lte(2 ** 256)
     .default(ChainId.ETHEREUM)
-    .refine((chainId) => isBentoBoxV1ChainId(chainId) && isSushiXSwapChainId(chainId), {
-      message: 'ChainId not supported.',
-    })
-    .transform((chainId) => chainId as BentoBoxV1ChainId & SushiXSwapChainId),
+    .refine(
+      (chainId) =>
+        isUniswapV2FactoryChainId(chainId) ||
+        isConstantProductPoolFactoryChainId(chainId) ||
+        isStablePoolFactoryChainId(chainId),
+      {
+        message: 'ChainId not supported.',
+      }
+    )
+    .transform((chainId) => chainId as SwapChainId),
   toChainId: z.coerce
     .number()
     .int()
     .gte(0)
     .lte(2 ** 256)
     .default(ChainId.ETHEREUM)
-    .refine((chainId) => isBentoBoxV1ChainId(chainId), {
-      message: 'ChainId not supported.',
-    })
-    .transform((chainId) => chainId as BentoBoxV1ChainId),
+    .refine(
+      (chainId) =>
+        isUniswapV2FactoryChainId(chainId) ||
+        isConstantProductPoolFactoryChainId(chainId) ||
+        isStablePoolFactoryChainId(chainId),
+      {
+        message: 'ChainId not supported.',
+      }
+    )
+    .transform((chainId) => chainId as SwapChainId),
   fromCurrencyId: z.string().default('NATIVE'),
   toCurrencyId: z.string().default('SUSHI'),
   amount: z.optional(z.coerce.bigint()),
@@ -59,8 +79,8 @@ interface InternalSwapState {
 interface SwapState {
   token0: Type | undefined
   token1: Type | undefined
-  network0: BentoBoxV1ChainId & SushiXSwapChainId
-  network1: BentoBoxV1ChainId
+  network0: SwapChainId
+  network1: SwapChainId
   amount: Amount<Type> | undefined
   appType: AppType
   token0NotInList: boolean
@@ -73,8 +93,8 @@ type State = InternalSwapState & SwapState
 type SwapApi = {
   setReview(value: boolean): void
   setRecipient(recipient: string): void
-  setNetworks(chainId: ChainId): void
-  setNetwork0(chainId: BentoBoxV1ChainId & SushiXSwapChainId): void
+  setNetworks(chainId: SwapChainId): void
+  setNetwork0(chainId: SwapChainId): void
   setNetwork1(chainId: ChainId): void
   setToken0(currency: Type): void
   setToken1(currency: Type): void

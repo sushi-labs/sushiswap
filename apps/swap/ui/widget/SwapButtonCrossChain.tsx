@@ -6,8 +6,8 @@ import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useTrade } from '../../lib/useTrade'
 import { warningSeverity } from '../../lib/warningSeverity'
-import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
-import { bentoBoxV1Address } from '@sushiswap/bentobox'
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { sushiXSwapAddress, SushiXSwapChainId } from '@sushiswap/sushixswap'
 
 export const SwapButtonCrossChain: FC = () => {
   const { amount, network0, network1, value } = useSwapState()
@@ -32,9 +32,9 @@ export const SwapButtonCrossChain: FC = () => {
               <Checker.ApproveBentobox
                 fullWidth
                 size="xl"
-                chainId={network0}
+                chainId={network0 as BentoBoxV1ChainId}
                 id="approve-bentobox"
-                contract={getSushiXSwapContractConfig(network0).address}
+                contract={sushiXSwapAddress[network0 as SushiXSwapChainId]}
                 onSignature={setBentoboxSignature}
               >
                 <Checker.ApproveERC20
@@ -42,7 +42,7 @@ export const SwapButtonCrossChain: FC = () => {
                   fullWidth
                   size="xl"
                   amount={amount}
-                  contract={bentoBoxV1Address[network0]}
+                  contract={bentoBoxV1Address[network0 as BentoBoxV1ChainId]}
                 >
                   <Button
                     disabled={

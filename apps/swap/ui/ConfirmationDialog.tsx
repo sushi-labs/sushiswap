@@ -19,7 +19,7 @@ import { createToast, NotificationData } from '@sushiswap/ui/future/components/t
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
 import { Chain } from '@sushiswap/chain'
-import { routeProcessorAddress } from '@sushiswap/route-processor'
+import { isRouteProcessorChainId, routeProcessorAddress, RouteProcessorChainId } from '@sushiswap/route-processor'
 
 interface ConfirmationDialogProps {
   children({
@@ -56,11 +56,11 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
 
   const { config, isError, error } = usePrepareContractWrite({
     chainId: network0,
-    address: routeProcessorAddress[network0],
+    address: routeProcessorAddress[network0 as RouteProcessorChainId],
     abi: routeProcessorAbi,
     functionName: trade?.functionName,
     args: trade?.writeArgs,
-    enabled: Boolean(trade?.writeArgs) && appType === AppType.Swap,
+    enabled: Boolean(trade?.writeArgs) && appType === AppType.Swap && isRouteProcessorChainId(network0),
     overrides: trade?.overrides,
   })
 

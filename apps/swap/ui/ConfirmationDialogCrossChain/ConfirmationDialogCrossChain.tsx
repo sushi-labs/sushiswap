@@ -14,6 +14,7 @@ import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { useTrade } from '../../lib/useTrade'
 import { nanoid } from 'nanoid'
 import { useLayerZeroScanLink } from '../../lib/useLayerZeroScanLink'
+import { SushiXSwapChainId } from '@sushiswap/sushixswap'
 
 interface ConfirmationDialogCrossChainProps {
   enabled?: boolean
@@ -48,9 +49,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
   const { refetch: refetchNetwork1Balances } = useBalances({ account: address, chainId: network0 })
   const { mutate: storeNotification } = useCreateNotification({ account: address })
   const { config, isError, error } = usePrepareContractWrite({
-    chainId: network0,
-    address: getSushiXSwapContractConfig(network0).address,
-    abi: getSushiXSwapContractConfig(network0).abi,
+    ...getSushiXSwapContractConfig(network0 as SushiXSwapChainId),
     functionName: trade?.functionName,
     args: trade?.writeArgs,
     enabled: Boolean(trade?.writeArgs) && appType === AppType.xSwap && chain?.id === network0 && enabled,

@@ -35,6 +35,7 @@
     "@sushiswap/stargate": "workspace:*",
     "@sushiswap/types": "workspace:*",
     "@sushiswap/tines": "workspace:*",
+    "@sushiswap/trident": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",

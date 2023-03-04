@@ -17,10 +17,12 @@ import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { useSlippageTolerance } from '../../lib/useSlippageTolerance'
 import { Collapsible, NetworkIcon } from '@sushiswap/ui'
 import { ApproveBentoboxController } from '@sushiswap/wagmi/future/components'
-import { ApprovalState, getSushiXSwapContractConfig } from '@sushiswap/wagmi'
+import { ApprovalState } from '@sushiswap/wagmi'
 import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain/ConfirmationDialogCrossChain'
 import { warningSeverity } from '../../lib/warningSeverity'
 import { ZERO } from '@sushiswap/math'
+import { sushiXSwapAddress, SushiXSwapChainId } from '@sushiswap/sushixswap'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 export const TradeReviewDialogCrossChain: FC = () => {
   const { review, token0, token1, recipient, network0, network1, amount, value, bentoboxSignature } = useSwapState()
@@ -117,7 +119,7 @@ export const TradeReviewDialogCrossChain: FC = () => {
                 <List.KeyValue title="Recipient">
                   <a
                     target="_blank"
-                    href={Chain.fromChainId(network0)?.getAccountUrl(recipient) ?? '#'}
+                    href={Chain.accountUrl(network0, recipient) ?? '#'}
                     className="flex gap-2 items-center text-blue cursor-pointer"
                     rel="noreferrer"
                   >
@@ -129,7 +131,10 @@ export const TradeReviewDialogCrossChain: FC = () => {
           )}
         </div>
         <div className="pt-4">
-          <ApproveBentoboxController chainId={network0} contract={getSushiXSwapContractConfig(network0).address}>
+          <ApproveBentoboxController
+            chainId={network0 as BentoBoxV1ChainId}
+            contract={sushiXSwapAddress[network0 as SushiXSwapChainId]}
+          >
             {({ approvalState }) => {
               return (
                 <ConfirmationDialogCrossChain

@@ -8,7 +8,7 @@ import { useTrade } from '../../lib/useTrade'
 import { Native } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
 import { warningSeverity } from '../../lib/warningSeverity'
-import { routeProcessorAddress } from '@sushiswap/route-processor'
+import { routeProcessorAddress, RouteProcessorChainId } from '@sushiswap/route-processor'
 
 export const SwapButton: FC = () => {
   const { appType, amount, network0, network1, value, token0, token1 } = useSwapState()
@@ -39,7 +39,7 @@ export const SwapButton: FC = () => {
                 fullWidth
                 size="xl"
                 amount={amount}
-                contract={routeProcessorAddress[network0]}
+                contract={routeProcessorAddress[network0 as RouteProcessorChainId]}
               >
                 <Button
                   disabled={
