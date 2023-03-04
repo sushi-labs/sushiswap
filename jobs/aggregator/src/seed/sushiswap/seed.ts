@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { createClient, Prisma, PrismaClient } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
-import { getBuiltGraphSDK, PairsQuery } from '../../../.graphclient/index.js.js.js.js.js'
+import { getBuiltGraphSDK, PairsQuery } from '../../../.graphclient/index.js'
 import { ProtocolName } from '../../config.js'
 import { createPools, getLatestPoolTimestamp } from '../../etl/pool/load.js'
 import { createTokens } from '../../etl/token/load.js'

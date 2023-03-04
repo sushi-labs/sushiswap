@@ -93,7 +93,7 @@ export async function getRewarders(poolLength: number) {
 }
 
 export async function getRewarderInfos() {
-  const { getBuiltGraphSDK } = await import('../../../../.graphclient/index.js.js.js.js')
+  const { getBuiltGraphSDK } = await import('../../../../.graphclient/index.js')
   const sdk = getBuiltGraphSDK()
 
   const { rewarders } = await sdk.MasterChefV2Rewarders({

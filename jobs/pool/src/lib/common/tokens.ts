@@ -21,7 +21,7 @@ interface Token {
 }
 
 const getExchangeTokens = async (ids: string[], chainId: SushiSwapChainId): Promise<Token[]> => {
-  const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js.js.js.js')
+  const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
   const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
   const sdk = getBuiltGraphSDK({
@@ -45,7 +45,7 @@ const getExchangeTokens = async (ids: string[], chainId: SushiSwapChainId): Prom
 }
 
 const getTridentTokens = async (ids: string[], chainId: TridentChainId): Promise<Token[]> => {
-  const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js.js.js.js')
+  const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
   const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
   const sdk = getBuiltGraphSDK({

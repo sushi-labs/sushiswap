@@ -8,6 +8,12 @@
     "pools",
     "api"
   ],
+  "homepage": "https://www.sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "apis/pools"
+  },
   "license": "MIT",
   "author": "Ola Stenberg <hello@olastenberg.com>",
   "type": "module",

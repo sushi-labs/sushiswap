@@ -3,7 +3,7 @@ import { createClient } from '@sushiswap/database'
 import { SUBGRAPH_HOST, TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
-import { Block, getBuiltGraphSDK, Pair } from '../.graphclient/index.js.js.js.js'
+import { Block, getBuiltGraphSDK, Pair } from '../.graphclient/index.js'
 import { EXCHANGE_SUBGRAPH_NAME, SUSHISWAP_CHAINS, TRIDENT_CHAINS } from './config.js'
 import { PoolMinimal, updatePoolsWithVolumeAndFee } from './etl/pool/index.js'
 

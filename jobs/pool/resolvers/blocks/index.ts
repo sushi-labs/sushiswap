@@ -1,6 +1,6 @@
 import { addSeconds, getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays } from 'date-fns'
 
-import type { Block, Resolvers, ResolverTypeWrapper } from '../../.graphclient/index.js.js.js.js'
+import type { Block, Resolvers, ResolverTypeWrapper } from '../../.graphclient/index.js'
 import { _blocksByChainIds, blocksByChainIds } from './blocksByChainIds.js'
 
 export const resolvers: Resolvers = {
