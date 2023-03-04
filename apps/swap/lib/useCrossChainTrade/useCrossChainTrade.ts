@@ -225,7 +225,6 @@ export const useCrossChainTradeQuery = (
           writeArgs: undefined,
           route: undefined,
           functionName: 'cook',
-          currentRouteHumanString: '',
           overrides: undefined,
         } as UseCrossChainSelect
       }
@@ -287,7 +286,6 @@ export const useCrossChainTradeQuery = (
         writeArgs: [sushiXSwap.srcCooker.actions, sushiXSwap.srcCooker.values, sushiXSwap.srcCooker.datas],
         route: {},
         functionName: 'cook',
-        currentRouteHumanString: '',
         overrides: { value },
       } as UseCrossChainSelect
     },
@@ -355,7 +353,6 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
         writeArgs: undefined,
         route: undefined,
         functionName: 'cook',
-        currentRouteHumanString: '',
         overrides: undefined,
       }
     },

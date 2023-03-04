@@ -45,19 +45,19 @@ export const useTrade = (variables: UseTradeParams) => {
 
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
-      if (data && amount && data.getBestRoute && fromToken && toToken) {
-          const amountIn = Amount.fromRawAmount(fromToken, data.getBestRoute.amountInBN)
-          const amountOut = Amount.fromRawAmount(toToken, data.getBestRoute.amountOutBN)
+      if (data && amount && data.route && fromToken && toToken) {
+          const amountIn = Amount.fromRawAmount(fromToken, data.route.amountInBN)
+          const amountOut = Amount.fromRawAmount(toToken, data.route.amountOutBN)
           const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
-          let writeArgs: UseTradeReturnWriteArgs = data?.getCurrentRouteRPParams
+          let writeArgs: UseTradeReturnWriteArgs = data?.args
               ? [
-                  data.getCurrentRouteRPParams.tokenIn as HexString,
-                  BigNumber.from(data.getCurrentRouteRPParams.amountIn),
-                  data.getCurrentRouteRPParams.tokenOut as HexString,
-                  BigNumber.from(data.getCurrentRouteRPParams.amountOutMin),
-                  data.getCurrentRouteRPParams.to as HexString,
-                  data.getCurrentRouteRPParams.routeCode as HexString,
+                  data.args.tokenIn as HexString,
+                  BigNumber.from(data.args.amountIn),
+                  data.args.tokenOut as HexString,
+                  BigNumber.from(data.args.amountOutMin),
+                  data.args.to as HexString,
+                  data.args.routeCode as HexString,
               ]
               : undefined
           let overrides = fromToken.isNative && writeArgs?.[1] ? { value: BigNumber.from(writeArgs?.[1]) } : undefined
@@ -72,7 +72,7 @@ export const useTrade = (variables: UseTradeParams) => {
                   baseAmount: amount,
                   quoteAmount: amountOut
               }) : undefined,
-              priceImpact: new Percent(JSBI.BigInt(Math.round(data.getBestRoute.priceImpact * 10000)), JSBI.BigInt(10000)),
+              priceImpact: new Percent(JSBI.BigInt(Math.round(data.route.priceImpact * 10000)), JSBI.BigInt(10000)),
               amountIn,
               amountOut,
               minAmountOut: Amount.fromRawAmount(
@@ -80,12 +80,11 @@ export const useTrade = (variables: UseTradeParams) => {
                   calculateSlippageAmount(amountOut, new Percent(Math.floor(+slippagePercentage * 100), 10_000))[0]
               ),
               gasSpent: price
-                  ? Amount.fromRawAmount(Native.onChain(chainId), data.getBestRoute.gasSpent * 1e9)
+                  ? Amount.fromRawAmount(Native.onChain(chainId), data.route.gasSpent * 1e9)
                       .multiply(price.asFraction)
                       .toSignificant(4)
                   : undefined,
-              route: data.getBestRoute,
-              currentRouteHumanString: data?.getCurrentRouteHumanString,
+              route: data.route,
               functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
               writeArgs,
               overrides
@@ -102,7 +101,6 @@ export const useTrade = (variables: UseTradeParams) => {
             writeArgs: undefined,
             route: undefined,
             functionName: 'processRoute',
-            currentRouteHumanString: '',
             overrides: undefined
         }
     },

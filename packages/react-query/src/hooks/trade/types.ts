@@ -30,8 +30,7 @@ export interface UseTradeReturn {
   gasSpent: string | undefined
   functionName: 'processRoute' | 'transferValueAndprocessRoute'
   writeArgs: UseTradeReturnWriteArgs
-  route: TradeType['getBestRoute']
-  currentRouteHumanString: string
+  route: TradeType['route']
   overrides: { value: BigNumber} | undefined
 }
 

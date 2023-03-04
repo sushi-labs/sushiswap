@@ -25,9 +25,7 @@ export const legValidator = z.object({
 })
 
 export const tradeValidator = z.object({
-  getCurrentRouteHumanString: z.string(),
-  // getCurrentRouteHumanArray: z.array(z.string()),
-  getBestRoute: z.object({
+  route: z.object({
     status: z.string(),
     fromToken: tokenValidator,
     toToken: tokenValidator,
@@ -45,7 +43,7 @@ export const tradeValidator = z.object({
     totalAmountOut: z.number(),
     totalAmountOutBN: z.string(),
   }).optional(),
-  getCurrentRouteRPParams: z.optional(
+  args: z.optional(
     z.object({
       amountIn: z.object({
         type: z.string(),

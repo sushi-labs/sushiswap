@@ -114,8 +114,7 @@ server.get('/v0', async (request) => {
   const routeEndTime = performance.now()
   console.log(`findSpecialRoute(..) (${(routeEndTime - routeStartTime).toFixed(0)} ms) `)
   return {
-    getCurrentRouteHumanString: Router.routeToHumanString(poolCodesMap, bestRoute, fromToken, toToken),
-    getBestRoute: {
+    route: {
       status: bestRoute?.status,
       fromToken: bestRoute?.fromToken?.address === '' ? Native.onChain(chainId) : bestRoute?.fromToken,
       toToken: bestRoute?.toToken?.address === '' ? Native.onChain(chainId) : bestRoute?.toToken,
@@ -131,8 +130,7 @@ server.get('/v0', async (request) => {
       gasSpent: bestRoute?.gasSpent,
       legs: bestRoute?.legs,
     },
-    // getRouteAsArray: Router.routeToArray(dataFetcher, bestRoute),
-    getCurrentRouteRPParams: to
+    args: to
       ? Router.routeProcessorParams(poolCodesMap, bestRoute, fromToken, toToken, to, routeProcessorAddress[chainId])
       : undefined,
   }

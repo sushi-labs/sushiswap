@@ -143,6 +143,7 @@ export enum ChainId {
   BOBA_AVAX = 43288,
   BOBA_BNB = 56288,
   BTTC = 199,
+  SEPOLIA = 11155111,
 }
 
 export enum ChainKey {
@@ -184,60 +185,63 @@ export enum ChainKey {
   BOBA_AVAX = 'boba-avax',
   BOBA_BNB = 'boba-bnb',
   BTTC = 'bttc',
+  SEPOLIA = 'sepolia',
 }
 
-const CHAINS = [
-  ...raw,
-  {
-    name: 'Boba Avax',
-    chain: 'Boba Avax',
-    rpc: ['https://avax.boba.network', 'wss://wss.avax.boba.network', 'https://replica.avax.boba.network'],
-    faucets: [],
-    nativeCurrency: {
-      name: 'Boba Token',
-      symbol: 'BOBA',
-      decimals: 18,
-    },
-    infoURL: 'https://boba.network',
-    shortName: 'bobaavax',
-    chainId: 43288,
-    networkId: 43288,
-    explorers: [
-      {
-        name: 'Boba Avax Explorer',
-        url: 'https://blockexplorer.avax.boba.network',
-        standard: Standard.None,
-      },
-    ],
-  },
-  {
-    name: 'Boba BNB',
-    chain: 'Boba BNB',
-    rpc: ['https://bnb.boba.network', 'wss://wss.bnb.boba.network', 'https://replica.bnb.boba.network'],
-    faucets: [],
-    nativeCurrency: {
-      name: 'Boba Token',
-      symbol: 'BOBA',
-      decimals: 18,
-    },
-    infoURL: 'https://boba.network',
-    shortName: 'bobabnb',
-    chainId: 56288,
-    networkId: 56288,
-    explorers: [
-      {
-        name: 'Boba BNB Explorer',
-        url: 'https://blockexplorer.bnb.boba.network',
-        standard: Standard.None,
-      },
-    ],
-  },
-] as const
+// const CHAINS = [
+//   ...raw,
+//   {
+//     name: 'Boba Avax',
+//     chain: 'Boba Avax',
+//     rpc: ['https://avax.boba.network', 'wss://wss.avax.boba.network', 'https://replica.avax.boba.network'],
+//     faucets: [],
+//     nativeCurrency: {
+//       name: 'Boba Token',
+//       symbol: 'BOBA',
+//       decimals: 18,
+//     },
+//     infoURL: 'https://boba.network',
+//     shortName: 'bobaavax',
+//     chainId: 43288,
+//     networkId: 43288,
+//     explorers: [
+//       {
+//         name: 'Boba Avax Explorer',
+//         url: 'https://blockexplorer.avax.boba.network',
+//         standard: Standard.None,
+//       },
+//     ],
+//   },
+//   {
+//     name: 'Boba BNB',
+//     chain: 'Boba BNB',
+//     rpc: ['https://bnb.boba.network', 'wss://wss.bnb.boba.network', 'https://replica.bnb.boba.network'],
+//     faucets: [],
+//     nativeCurrency: {
+//       name: 'Boba Token',
+//       symbol: 'BOBA',
+//       decimals: 18,
+//     },
+//     infoURL: 'https://boba.network',
+//     shortName: 'bobabnb',
+//     chainId: 56288,
+//     networkId: 56288,
+//     explorers: [
+//       {
+//         name: 'Boba BNB Explorer',
+//         url: 'https://blockexplorer.bnb.boba.network',
+//         standard: Standard.None,
+//       },
+//     ],
+//   },
+// ] as const
 
 const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA]
 
+type Data = (typeof raw)[number]
+
 export class Chain implements Chain {
-  public static fromRaw(data: (typeof CHAINS)[number]) {
+  public static fromRaw(data: Data) {
     return new Chain(data)
   }
   public static from(chainId: number) {
@@ -263,15 +267,18 @@ export class Chain implements Chain {
   public static accountUrl(chainId: number, accountAddress: string): string {
     return Chain.fromChainId(chainId).getAccountUrl(accountAddress)
   }
-  constructor(data: (typeof CHAINS)[number]) {
+  constructor(data: Data) {
     Object.assign(this, data)
 
     // process name overrides
-    for (const target of ['Mainnet', 'Opera', 'Mainnet Shard 0']) {
+    const targets = ['Mainnet', 'Opera', 'Mainnet Shard 0']
+    for (const target of targets) {
       if (data.name.includes(target)) {
         this.name = data.name.replace(target, '').trim()
       }
     }
+
+    // process explorer overrides etc...
   }
   getTxUrl(txHash: string): string {
     if (!this.explorers) return ''
@@ -312,30 +319,31 @@ export class Chain implements Chain {
 }
 
 // Chain Id => Chain mapping
-export const chains = Object.fromEntries(CHAINS.map((data): [ChainId, Chain] => [data.chainId, new Chain(data)]))
-
-// L2 Chains array
-const L2_CHAINS = CHAINS.filter((data) => 'parent' in data && data.parent.type === Type.L2)
+export const chains = Object.fromEntries(raw.map((data): [ChainId, Chain] => [data.chainId, new Chain(data)]))
 
 // Chain Id => Chain mapping
-export const chainsL2 = Object.fromEntries(L2_CHAINS.map((data): [ChainId, Chain] => [data.chainId, new Chain(data)]))
+export const chainsL2 = Object.fromEntries(
+  raw
+    .filter((data) => 'parent' in data && data.parent.type === Type.L2)
+    .map((data): [ChainId, Chain] => [data.chainId, new Chain(data)])
+)
 
 // ChainId array
-export const chainIds = CHAINS.map((chain) => chain.chainId)
+export const chainIds = raw.map((chain) => chain.chainId)
 
 // Chain Short Name => Chain Id mapping
 export const chainShortNameToChainId = Object.fromEntries(
-  CHAINS.map((data): [string, number] => [data.shortName, data.chainId])
+  raw.map((data): [string, number] => [data.shortName, data.chainId])
 )
 
 // Chain Id => Short Name mapping
 export const chainShortName = Object.fromEntries(
-  CHAINS.map((data): [number, string] => [data.chainId, Chain.fromRaw(data).shortName])
+  raw.map((data): [number, string] => [data.chainId, Chain.fromRaw(data).shortName])
 )
 
 // Chain Id => Chain Name mapping
 export const chainName = Object.fromEntries(
-  CHAINS.map((data): [number, string] => [data.chainId, Chain.fromRaw(data).name])
+  raw.map((data): [number, string] => [data.chainId, Chain.fromRaw(data).name])
 )
 
 export default chains

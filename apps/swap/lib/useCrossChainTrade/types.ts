@@ -38,8 +38,7 @@ export interface UseCrossChainTradeReturn {
   gasSpent: string | undefined
   functionName: 'cook'
   writeArgs: [Action[], BigNumber[], `0x${string}`[]] | undefined
-  route: TradeType['getBestRoute']
-  currentRouteHumanString: string
+  route: TradeType['route']
   overrides: { value: BigNumber } | undefined
 }
 

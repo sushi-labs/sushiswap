@@ -116,27 +116,6 @@ export const TradeStats: FC = () => {
             </span>
           </div>
         )}
-        {/*<div className="h-[2px] bg-gray-200 dark:bg-slate-800 w-full my-3" />*/}
-        {/*<div className="flex justify-between items-start gap-2">*/}
-        {/*  <span className="font-medium text-gray-900 dark:text-slate-100 mt-px">Expected output</span>*/}
-        {/*  <div className="flex flex-col justify-end">*/}
-        {/*    <span className="text-xl text-right font-semibold text-gray-900 dark:text-slate-100">*/}
-        {/*      {loading ? (*/}
-        {/*        <Skeleton.Text fontSize="text-xl" className="w-[120px]" />*/}
-        {/*      ) : (*/}
-        {/*        `${trade?.amountOut?.toSignificant(6) ?? '0.00'} ${token1.symbol}`*/}
-        {/*      )}*/}
-        {/*    </span>*/}
-        {/*    {recipient && (*/}
-        {/*      <span className="text-xs font-medium text-gray-900 text-right dark:text-slate-100">*/}
-        {/*        to: {shortenAddress(recipient)}*/}
-        {/*      </span>*/}
-        {/*    )}*/}
-        {/*  </div>*/}
-        {/*</div>*/}
-        {/*<pre className="whitespace-pre-wrap mt-3 p-3 dark:bg-slate-800 bg-white rounded-xl">*/}
-        {/*  {trade?.currentRouteHumanString}*/}
-        {/*</pre>*/}
       </div>
     </Transition>
   )
