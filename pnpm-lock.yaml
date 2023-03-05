@@ -1117,6 +1117,83 @@ importers:
       typechain: 8.1.1_typescript@4.9.4
       typescript: 4.9.4
 
+  apps/governance-dashboard:
+    specifiers:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/contracts': 5.7.0
+      '@ethersproject/experimental': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      '@graphprotocol/client-add-source-name': latest
+      '@graphprotocol/client-auto-pagination': latest
+      '@graphprotocol/client-cli': 2.2.18
+      '@headlessui/react': ^1.7.3
+      '@heroicons/react': ^1.0.5
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/format': workspace:*
+      '@sushiswap/graph-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/ui': workspace:*
+      '@sushiswap/validate': workspace:*
+      '@sushiswap/wagmi': workspace:*
+      '@types/node': 18.11.18
+      '@types/react': ^18.0.0
+      autoprefixer: ^10.4.2
+      eslint: 8.29.0
+      ethers: 5.7.2
+      graphql: 16.6.0
+      next: 13.1.1
+      next-seo: 5.15.0
+      postcss: 8.4.21
+      react: 18.2.0
+      react-dom: 18.2.0
+      tailwindcss: 3.2.4
+      typescript: 4.9.4
+      wagmi: 0.9.1
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/contracts': 5.7.0
+      '@ethersproject/experimental': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
+      '@heroicons/react': 1.0.6_react@18.2.0
+      '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/format': link:../../packages/format
+      '@sushiswap/graph-config': link:../../config/graph
+      '@sushiswap/ui': link:../../packages/ui
+      '@sushiswap/validate': link:../../packages/validate
+      '@sushiswap/wagmi': link:../../packages/wagmi
+      ethers: 5.7.2
+      next: 13.1.1_biqbaboplfbrettd7655fr4n2y
+      next-seo: 5.15.0_q76c2b4vyoegvsbrcwkfvimnai
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      wagmi: 0.9.1_5fkdkfy2bkgsnhvxgn477z7iae
+    devDependencies:
+      '@graphprotocol/client-add-source-name': 1.0.17_graphql@16.6.0
+      '@graphprotocol/client-auto-pagination': 1.1.15_graphql@16.6.0
+      '@graphprotocol/client-cli': 2.2.18_ykzowzmb7rcumunkscnbisnkom
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/nextjs-config': link:../../config/nextjs
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/typescript-config': link:../../config/typescript
+      '@types/node': 18.11.18
+      '@types/react': 18.0.26
+      autoprefixer: 10.4.13_postcss@8.4.21
+      eslint: 8.29.0
+      graphql: 16.6.0
+      postcss: 8.4.21
+      tailwindcss: 3.2.4_postcss@8.4.21
+      typescript: 4.9.4
+
   apps/internal:
     specifiers:
       '@graphprotocol/client-add-source-name': latest
