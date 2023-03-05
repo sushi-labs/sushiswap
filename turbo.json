@@ -50,14 +50,8 @@
     },
     "blog#build": {
       "dependsOn": ["^build", "generate"],
-      "env": [
-        "STRAPI_PREVIEW_SECRET"
-      ],
-      "outputs": [
-        ".mesh/**/*", 
-        ".next/**/*", 
-        "public/**/*"
-      ]
+      "env": ["STRAPI_PREVIEW_SECRET"],
+      "outputs": [".mesh/**/*", ".next/**/*", "public/**/*"]
     },
     "lint": {
       "dependsOn": ["^build"],
@@ -100,19 +94,15 @@
         "XSWAP_URL",
         "DATABASE_URL",
         "EARN_DATABASE_URL",
-        "REDIS_URL"
+        "REDIS_URL",
+        "GOVERNANCE_DASHBOARD_URL"
       ]
     },
     "clean": {
       "cache": false
     },
     "check": {
-      "dependsOn": [
-        "//#generate",
-        "//#build-config", 
-        "//#build-packages", 
-        "//#build-protocols"
-      ],
+      "dependsOn": ["//#generate", "//#build-config", "//#build-packages", "//#build-protocols"],
       "cache": false
     },
     "dev": {
@@ -144,11 +134,7 @@
     },
     "//#generate": {
       "dependsOn": [],
-      "outputs": [
-        "typechain/**/*", 
-        ".graphclient/**/*", 
-        ".mesh/**/*"
-      ],
+      "outputs": ["typechain/**/*", ".graphclient/**/*", ".mesh/**/*"],
       "inputs": []
     },
     "//#build-config": {
@@ -158,18 +144,13 @@
     },
     "//#build-packages": {
       "dependsOn": [],
-      "outputs": [
-        ".graphclient/**/*",
-        "dist/**/*"
-      ],
+      "outputs": [".graphclient/**/*", "dist/**/*"],
       "inputs": []
     },
     "//#build-protocols": {
       "dependsOn": [],
       "outputs": ["typechain/**/*", "artifacts/**/*", "cache/**/*"],
-      "inputs": [
-        "contracts/**/*"
-      ]
+      "inputs": ["contracts/**/*"]
     }
   }
 }

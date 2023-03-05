@@ -40,6 +40,7 @@ const LINK = {
   [AppType.Partner]: '/partner',
   [AppType.Widget]: '/widget',
   [AppType.Academy]: '/academy',
+  [AppType.Governance_Dashboard]: '/governance-dashboard',
 }
 
 export interface HeaderProps extends React.HTMLProps<HTMLElement> {

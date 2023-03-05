@@ -13,6 +13,7 @@ const {
   SWAP_URL,
   XSWAP_URL,
   ACADEMY_URL,
+  GOVERNANCE_DASHBOARD_URL,
 } = process.env
 
 /** @type {import('next').NextConfig} */
@@ -125,6 +126,14 @@ const nextConfig = {
       {
         source: '/earn/:path*',
         destination: `${EARN_URL}/earn/:path*`,
+      },
+      {
+        source: '/governance-dashboard',
+        destination: `${GOVERNANCE_DASHBOARD_URL}/governance-dashboard`,
+      },
+      {
+        source: '/governance-dashboard/:path*',
+        destination: `${GOVERNANCE_DASHBOARD_URL}/governance-dashboard/:path*`,
       },
     ]
   },
