@@ -22,6 +22,7 @@ export enum AppType {
   Partner = 'Partner',
   Widget = 'Widget',
   Academy = 'Academy',
+  Governance_Dashboard = 'Governance Dashboard',
 }
 
 const LINK = {
