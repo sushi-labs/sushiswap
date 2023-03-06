@@ -18,13 +18,13 @@ const nextConfig = {
         permanent: true,
         basePath: false,
       },
-      {
-        source: '/swap',
-        // Change to /1/1/ETH/SUSHI before launch
-        destination: '/swap/137/137/MATIC/SUSHI',
-        permanent: true,
-        basePath: false,
-      },
+      // {
+      //   source: '/swap',
+      //   // Change to /1/1/ETH/SUSHI before launch
+      //   destination: '/swap/137:MATIC/137:SUSHI',
+      //   permanent: true,
+      //   basePath: false,
+      // },
     ]
   },
 }

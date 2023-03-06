@@ -17,7 +17,9 @@ export const Header: FC = () => {
   const { isAutoConnecting } = useAutoConnect()
   const { setNetworks } = useSwapActions()
   const { query } = useRouter()
-  const { fromChainId } = queryParamsSchema.parse(query)
+  const {
+    fromCurrency: { fromChainId },
+  } = queryParamsSchema.parse(query)
 
   return (
     <Search>

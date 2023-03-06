@@ -13,7 +13,10 @@ import { useAddCustomToken } from '@sushiswap/react-query'
 
 export const TokenNotFoundDialog = () => {
   const { query } = useRouter()
-  const { fromCurrencyId, toCurrencyId } = queryParamsSchema.parse(query)
+  const {
+    fromCurrency: { fromCurrencyId },
+    toCurrency: { toCurrencyId },
+  } = queryParamsSchema.parse(query)
   const { tokensLoading, token0NotInList, token1NotInList, network0, network1 } = useSwapState()
   const { setToken0, setToken1, setTokens } = useSwapActions()
   const { mutate: addCustomToken } = useAddCustomToken()

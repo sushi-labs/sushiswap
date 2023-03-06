@@ -3,22 +3,19 @@ import Container from '@sushiswap/ui/future/components/Container'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import React, { FC } from 'react'
 
-import { TradeReviewDialogSameChain } from '../../../../../ui/trade/TradeReviewDialogSameChain'
-import { TradeStats } from '../../../../../ui/trade/TradeStats'
-import { Widget } from '../../../../../ui/widget/Widget'
+import { TradeStats } from '../../../ui/trade/TradeStats'
+import { Widget } from '../../../ui/widget/Widget'
 import { Drawer } from '@sushiswap/ui/future/components/drawer'
-import { NetworkCheck } from '../../../../../ui/NetworkCheck'
-import { TokenNotFoundDialog } from '../../../../../ui/TokenNotFoundDialog'
-import { TradeReviewDialog } from '../../../../../ui/trade/TradeReviewDialog'
+import { NetworkCheck } from '../../../ui/NetworkCheck'
+import { TokenNotFoundDialog } from '../../../ui/TokenNotFoundDialog'
+import { TradeReviewDialog } from '../../../ui/trade/TradeReviewDialog'
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
       initialState: {
-        fromChainId: params?.fromChainId ?? ChainId.ETHEREUM,
-        toChainId: params?.toChainId ?? ChainId.ETHEREUM,
-        fromCurrencyId: params?.fromCurrencyId ?? 'NATIVE',
-        toCurrencyId: params?.toCurrencyId ?? 'SUSHI',
+        fromCurrency: params?.fromCurrency ?? `${ChainId.ETHEREUM}:NATIVE`,
+        toCurrency: params?.toCurrency ?? `${ChainId.ETHEREUM}:SUSHI`,
       },
     },
   }
