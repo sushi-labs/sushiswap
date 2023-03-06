@@ -6,7 +6,7 @@ interface Props {
   className?: string
   description?: string
   padding?: number
-  icon(props: React.ComponentProps<'svg'>): JSX.Element
+  icon(props: React.ComponentProps<'svg'>): JSX.Element | null
   iconProps: Omit<React.ComponentProps<'svg'>, 'width' | 'height'> & {
     width: number
     height: number

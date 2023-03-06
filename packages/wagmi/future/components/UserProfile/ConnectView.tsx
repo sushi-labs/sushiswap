@@ -10,7 +10,7 @@ import { List } from '@sushiswap/ui/future/components/list/List'
 import React, { FC, SVGProps, useCallback } from 'react'
 import { useConnect } from 'wagmi'
 
-const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element> = {
+const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element | null> = {
   Injected: ChevronDoubleDownIcon,
   MetaMask: MetamaskIcon,
   'Trust Wallet': TrustWalletIcon,
