@@ -35,7 +35,10 @@ export const TokenSelectorListFilterByQuery: FC<Props> = ({
   includeNative = true,
 }) => {
   const tokenMapValues = useMemo(() => (tokenMap ? Object.values(tokenMap) : []), [tokenMap])
-  const customTokenMapValues = useMemo(() => (customTokenMap ? Object.values(customTokenMap) : []), [customTokenMap])
+  const customTokenMapValues = useMemo(
+    () => (customTokenMap ? Object.values(customTokenMap).filter((el) => el.chainId === chainId) : []),
+    [chainId, customTokenMap]
+  )
   const [query, setQuery] = useState<string>('')
   const debouncedQuery = useDebounce(query, 400)
   const _includeNative =

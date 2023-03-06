@@ -8,7 +8,7 @@ interface Props {
   title: string
   subtitle?: ReactNode
   onClick?(): void
-  hoverIcon?: (props: SVGProps<SVGSVGElement>) => JSX.Element
+  hoverIcon?: (props: SVGProps<SVGSVGElement>) => JSX.Element | null
   hoverIconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'> & {
     width: number
     height: number

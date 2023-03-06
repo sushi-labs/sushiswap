@@ -18,12 +18,6 @@ import { TokenSelectorCustomTokensOverlay } from './TokenSelectorCustomTokensOve
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { COMMON_BASES } from '@sushiswap/router-config'
-import { AppearOnMount, classNames, Loader } from '@sushiswap/ui'
-import { AddressZero } from '@ethersproject/constants'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { CheckCircleIcon } from '@heroicons/react/20/solid'
-import { Icon } from '@sushiswap/ui/future/components/currency/Icon'
-import { ZERO } from '@sushiswap/math'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 
 interface TokenSelectorProps {
