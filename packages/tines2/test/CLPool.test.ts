@@ -106,7 +106,7 @@ function getMaxInputApprox(pool: CLRPool, direction: boolean): number {
   let prevOutput = -1
   let input = 10
   while (1) {
-    const output = pool.calcOutByIn(input, direction).out
+    const output = pool.calcOutByIn2(input, direction).out
     if (output === prevOutput) {
       return input / 2
     }
@@ -119,10 +119,10 @@ function getMaxInputApprox(pool: CLRPool, direction: boolean): number {
 describe('CL pool test', () => {
   it('0->0', () => {
     const pool = getRandomCLPool(rnd, 2, 100, 1e10)
-    expect(pool.calcOutByIn(0, true).out).toEqual(0)
-    expect(pool.calcOutByIn(0, false).out).toEqual(0)
-    expect(pool.calcInByOut(0, true).inp).toEqual(0)
-    expect(pool.calcInByOut(0, false).inp).toEqual(0)
+    expect(pool.calcOutByIn2(0, true).out).toEqual(0)
+    expect(pool.calcOutByIn2(0, false).out).toEqual(0)
+    expect(pool.calcInByOut2(0, true).inp).toEqual(0)
+    expect(pool.calcInByOut2(0, false).inp).toEqual(0)
   })
 
   const expectedCalculationPrecision = 1e-12
@@ -136,9 +136,9 @@ describe('CL pool test', () => {
         const direction = rnd() > 0.5
         const maxInput = direction ? maxXInput : maxYInput
         const input = getRandomExp(rnd, 1, maxInput * 1.2)
-        const output = pool.calcOutByIn(input, direction).out
-        const input2 = pool.calcInByOut(output, direction).inp
-        const output2 = pool.calcOutByIn(input2, direction).out
+        const output = pool.calcOutByIn2(input, direction).out
+        const input2 = pool.calcInByOut2(output, direction).inp
+        const output2 = pool.calcOutByIn2(input2, direction).out
         const precision1 = Math.abs(input / input2 - 1)
         const precision2 = Math.abs(output / output2 - 1)
         expect(precision1 < expectedCalculationPrecision || precision2 < expectedCalculationPrecision)

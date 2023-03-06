@@ -96,31 +96,31 @@ export class Edge {
     if (v === this.vert1) {
       if (this.direction) {
         if (amountIn < this.amountOutPrevious) {
-          const { inp, gasSpent } = this.pool.calcInByOut(this.amountOutPrevious - amountIn, true)
+          const { inp, gasSpent } = this.pool.calcInByOut2(this.amountOutPrevious - amountIn, true)
           res = this.amountInPrevious - inp
           gas = gasSpent
         } else {
-          const { out, gasSpent } = this.pool.calcOutByIn(amountIn - this.amountOutPrevious, false)
+          const { out, gasSpent } = this.pool.calcOutByIn2(amountIn - this.amountOutPrevious, false)
           res = out + this.amountInPrevious
           gas = gasSpent
         }
       } else {
-        const { out, gasSpent } = this.pool.calcOutByIn(this.amountOutPrevious + amountIn, false)
+        const { out, gasSpent } = this.pool.calcOutByIn2(this.amountOutPrevious + amountIn, false)
         res = out - this.amountInPrevious
         gas = gasSpent
       }
     } else {
       if (this.direction) {
-        const { out, gasSpent } = this.pool.calcOutByIn(this.amountInPrevious + amountIn, true)
+        const { out, gasSpent } = this.pool.calcOutByIn2(this.amountInPrevious + amountIn, true)
         res = out - this.amountOutPrevious
         gas = gasSpent
       } else {
         if (amountIn < this.amountInPrevious) {
-          const { inp, gasSpent } = this.pool.calcInByOut(this.amountInPrevious - amountIn, false)
+          const { inp, gasSpent } = this.pool.calcInByOut2(this.amountInPrevious - amountIn, false)
           res = this.amountOutPrevious - inp
           gas = gasSpent
         } else {
-          const { out, gasSpent } = this.pool.calcOutByIn(amountIn - this.amountInPrevious, true)
+          const { out, gasSpent } = this.pool.calcOutByIn2(amountIn - this.amountInPrevious, true)
           res = out + this.amountOutPrevious
           gas = gasSpent
         }
@@ -137,31 +137,31 @@ export class Edge {
     if (v === this.vert1) {
       if (!this.direction) {
         if (amountOut < this.amountOutPrevious) {
-          const { out, gasSpent } = this.pool.calcOutByIn(this.amountOutPrevious - amountOut, false)
+          const { out, gasSpent } = this.pool.calcOutByIn2(this.amountOutPrevious - amountOut, false)
           res = this.amountInPrevious - out
           gas = gasSpent
         } else {
-          const { inp, gasSpent } = this.pool.calcInByOut(amountOut - this.amountOutPrevious, true)
+          const { inp, gasSpent } = this.pool.calcInByOut2(amountOut - this.amountOutPrevious, true)
           res = inp + this.amountInPrevious
           gas = gasSpent
         }
       } else {
-        const { inp, gasSpent } = this.pool.calcInByOut(this.amountOutPrevious + amountOut, true)
+        const { inp, gasSpent } = this.pool.calcInByOut2(this.amountOutPrevious + amountOut, true)
         res = inp - this.amountInPrevious
         gas = gasSpent
       }
     } else {
       if (!this.direction) {
-        const { inp, gasSpent } = this.pool.calcInByOut(this.amountInPrevious + amountOut, false)
+        const { inp, gasSpent } = this.pool.calcInByOut2(this.amountInPrevious + amountOut, false)
         res = inp - this.amountOutPrevious
         gas = gasSpent
       } else {
         if (amountOut < this.amountInPrevious) {
-          const { out, gasSpent } = this.pool.calcOutByIn(this.amountInPrevious - amountOut, true)
+          const { out, gasSpent } = this.pool.calcOutByIn2(this.amountInPrevious - amountOut, true)
           res = this.amountOutPrevious - out
           gas = gasSpent
         } else {
-          const { inp, gasSpent } = this.pool.calcInByOut(amountOut - this.amountInPrevious, false)
+          const { inp, gasSpent } = this.pool.calcInByOut2(amountOut - this.amountInPrevious, false)
           res = inp + this.amountOutPrevious
           gas = gasSpent
         }
@@ -218,12 +218,12 @@ export class Edge {
     } else console.error('Error 221')
 
     if (directionNew) {
-      const calc = this.pool.calcOutByIn(amountInNew, true).out
+      const calc = this.pool.calcOutByIn2(amountInNew, true).out
       const res = closeValues(amountOutNew, calc, 1e-6)
       if (!res) console.log('Err 225-1 !!', amountOutNew, calc, Math.abs(calc / amountOutNew - 1))
       return res
     } else {
-      const calc = this.pool.calcOutByIn(amountOutNew, false).out
+      const calc = this.pool.calcOutByIn2(amountOutNew, false).out
       const res = closeValues(amountInNew, calc, 1e-6)
       if (!res) console.log('Err 225-2!!', amountInNew, calc, Math.abs(calc / amountInNew - 1))
       return res
@@ -258,14 +258,14 @@ export class Edge {
         const granularity = this.pool.granularity1()
         return closeValues(
           this.amountOutPrevious / granularity,
-          this.pool.calcOutByIn(this.amountInPrevious, this.direction).out / granularity,
+          this.pool.calcOutByIn2(this.amountInPrevious, this.direction).out / granularity,
           1e-9
         )
       } else {
         const granularity = this.pool.granularity0()
         return closeValues(
           this.amountInPrevious / granularity,
-          this.pool.calcOutByIn(this.amountOutPrevious, this.direction).out / granularity,
+          this.pool.calcOutByIn2(this.amountOutPrevious, this.direction).out / granularity,
           1e-9,
           `"${this.pool.address}" ${inPrev} ${to?.bestIncome} ${from.bestIncome}`
         )
@@ -423,7 +423,7 @@ export class Graph {
         ? [bestEdge.vert1, bestEdge.vert0]
         : [bestEdge.vert0, bestEdge.vert1]
       if (processedVert.has(vTo)) continue
-      const p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
+      const p = bestEdge.pool.calcCurrentPriceWithoutFee2(vFrom === bestEdge.vert1)
       addVertice(vTo, vFrom.price * p) //, vFrom.gasPrice / p)
     }
 
@@ -472,7 +472,7 @@ export class Graph {
         ? [bestEdge.vert1, bestEdge.vert0]
         : [bestEdge.vert0, bestEdge.vert1]
       if (processedVert.has(vTo)) continue
-      const p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
+      const p = bestEdge.pool.calcCurrentPriceWithoutFee2(vFrom === bestEdge.vert1)
       addVertice(vTo, vFrom.price * p, vFrom.gasPrice / p)
     }
   }
@@ -489,7 +489,7 @@ export class Graph {
       const e = ed[0]
       const v = e.vert0 === from ? e.vert1 : e.vert0
       if (v.price !== 0) return
-      const p = e.pool.calcCurrentPriceWithoutFee(from === e.vert1)
+      const p = e.pool.calcCurrentPriceWithoutFee2(from === e.vert1)
       this.setPrices(v, price * p, gasPrice / p)
     })
   }
@@ -844,7 +844,7 @@ export class Graph {
     let prevToken = from
     path.forEach((edge) => {
       const direction = edge.vert0 === prevToken
-      const edgePrice = edge.pool.calcCurrentPriceWithoutFee(direction)
+      const edgePrice = edge.pool.calcCurrentPriceWithoutFee2(direction)
       p *= edgePrice
       prevToken = prevToken.getNeibour(edge) as Vertice
     })
@@ -1127,7 +1127,7 @@ export class Graph {
       console.assert(inputTotal !== undefined, 'Internal Error 564')
       const input = (inputTotal as number) * l.swapPortion
       amounts.set(l.tokenFrom.tokenId as string, (inputTotal as number) - input)
-      const output = pool.calcOutByIn(input, direction).out
+      const output = pool.calcOutByIn2(input, direction).out
 
       const vertNext = (vert as Vertice).getNeibour(edge) as Vertice
       const prevAmount = amounts.get(vertNext.token.tokenId as string)
@@ -1160,7 +1160,7 @@ export class Graph {
       const totalAssumed = totalOutputAssumed.get(l.tokenFrom.tokenId as string)
       console.assert(totalAssumed !== undefined, 'Internal Error 903')
       const output = ((outputTotal as number) * l.assumedAmountOut) / (totalAssumed as number)
-      const input = pool.calcInByOut(output, direction).inp
+      const input = pool.calcInByOut2(output, direction).inp
 
       const vertNext = (vert as Vertice).getNeibour(edge) as Vertice
       const prevAmount = amounts.get(vertNext.token.tokenId as string)

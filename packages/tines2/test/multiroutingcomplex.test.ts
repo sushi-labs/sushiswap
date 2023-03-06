@@ -46,7 +46,7 @@ function simulateRouting(network: Network, route: MultiRoute) {
     const granularityOut = direction ? pool?.granularity1() : pool?.granularity0()
 
     // Check assumedAmountIn <-> assumedAmountOut correspondance
-    const expectedOut = pool?.calcOutByIn(l.assumedAmountIn, direction).out
+    const expectedOut = pool?.calcOutByIn2(l.assumedAmountIn, direction).out
     expectCloseValues(expectedOut / granularityOut, l.assumedAmountOut / granularityOut, 1e-11)
 
     // Calc legInput
@@ -62,7 +62,7 @@ function simulateRouting(network: Network, route: MultiRoute) {
     diff.set(l.tokenFrom.tokenId as string, inputTokenDiff - legInputDiff)
 
     // check assumedAmountOut
-    const { out: legOutput, gasSpent } = pool.calcOutByIn(legInput, direction)
+    const { out: legOutput, gasSpent } = pool.calcOutByIn2(legInput, direction)
     const precision = legInputDiff / l.assumedAmountIn
     expectCloseValues(legOutput / granularityOut, l.assumedAmountOut / granularityOut, precision + 1e-11)
     gasSpentTotal += gasSpent
@@ -185,7 +185,7 @@ export function printRoute(route: MultiRoute, network: Network) {
   route.legs.forEach((l, i) => {
     const pool = network.pools.find((p) => p.address == l.poolAddress) as RPool
     const inp = (liquidity.get(parseInt(l.tokenFrom.name)) as number) * l.absolutePortion
-    const { out } = pool.calcOutByIn(inp, pool.tokens[0].tokenId == l.tokenFrom.tokenId)
+    const { out } = pool.calcOutByIn2(inp, pool.tokens[0].tokenId == l.tokenFrom.tokenId)
     const price_in = atomPrice(l.tokenFrom as TToken) / atomPrice(route.fromToken as TToken)
     const price_out = atomPrice(l.tokenTo as TToken) / atomPrice(route.fromToken as TToken)
     const diff = numberPrecision(100 * ((out * price_out) / inp / price_in - 1))

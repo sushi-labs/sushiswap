@@ -55,19 +55,19 @@ class RPool {
   // direction - direction of swap. true for Token 0 to Token 1, false otherwise
   // Returns {out: output amount, gasSpent: gas consumption estimation for the swap}
   // Must throw if the rest of output liquidity is lesser than minLiquidity
-  abstract calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number }
+  abstract calcOutByIn2(amountIn: number, direction: boolean): { out: number; gasSpent: number }
 
   // Calculates pool's input having output amount
   // amountOut - output amount
   // direction - direction of swap. true for Token 0 to Token 1, false otherwise
   // Returns {inp: input amount, gasSpent: gas consumption estimation for the swap}
   // Must return Number.POSITIVE_INFINITY if amountOut is more than the pool can return
-  abstract calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number }
+  abstract calcInByOut2(amountOut: number, direction: boolean): { inp: number; gasSpent: number }
 
   // Returns current price in the pool without taking fee into account
   // direction = true - price(Token0)/price(Token1),
   // direction = false - price(Token1)/price(Token0)
-  abstract calcCurrentPriceWithoutFee(direction: boolean): number
+  abstract calcCurrentPriceWithoutFee2(direction: boolean): number
 }
 ```
 

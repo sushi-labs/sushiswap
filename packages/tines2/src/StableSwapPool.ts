@@ -153,7 +153,7 @@ export class StableSwapRPool extends RPool {
     return y
   }
 
-  calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
+  calcOutByIn2(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
     amountIn = direction ? this.total0.toAmount(amountIn) : this.total1.toAmount(amountIn)
     amountIn *= direction ? this.decimalsCompensation0 : this.decimalsCompensation1
     const x = direction ? this.reserves[0] : this.reserves[1]
@@ -171,7 +171,7 @@ export class StableSwapRPool extends RPool {
     return { out, gasSpent: this.swapGasCost }
   }
 
-  calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
+  calcInByOut2(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
     amountOut = direction ? this.total0.toAmount(amountOut) : this.total1.toAmount(amountOut)
     amountOut *= direction ? this.decimalsCompensation1 : this.decimalsCompensation0
     const x = direction ? this.reserves[0] : this.reserves[1]
@@ -190,7 +190,7 @@ export class StableSwapRPool extends RPool {
     return { inp, gasSpent: this.swapGasCost }
   }
 
-  calcCurrentPriceWithoutFee(direction: boolean): number {
+  calcCurrentPriceWithoutFee2(direction: boolean): number {
     const calcDirection = this.reserves[0].gt(this.reserves[1])
     const xBN = calcDirection ? this.reserves[0] : this.reserves[1]
     const x = parseInt(xBN.toString())

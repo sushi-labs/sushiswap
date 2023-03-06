@@ -27,7 +27,7 @@ export class BridgeStargateV04OneWay extends RPool {
     return parseInt(feesTotal.toString())
   }
 
-  calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
+  calcOutByIn2(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
     if (!direction) throw new Error('Wrong way for BridgeStargateV04OneWay')
     const fees = getStarGateFeesV04(this.bridgeState, this.whitelisted, getBigNumber(amountIn))
     const maxAmount = parseInt(this.bridgeState.currentBalance.sub(fees.lpFee).add(fees.eqReward).toString())
@@ -39,12 +39,12 @@ export class BridgeStargateV04OneWay extends RPool {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars, no-unused-vars
-  calcInByOut(_amountOut: number, _direction: boolean): { inp: number; gasSpent: number } {
-    throw new Error('calcInByOut for BridgeStargateV04OneWay')
+  calcInByOut2(_amountOut: number, _direction: boolean): { inp: number; gasSpent: number } {
+    throw new Error('calcInByOut2 for BridgeStargateV04OneWay')
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars, no-unused-vars
-  calcCurrentPriceWithoutFee(_direction: boolean): number {
+  calcCurrentPriceWithoutFee2(_direction: boolean): number {
     return 1
   }
 

@@ -126,7 +126,7 @@ export class UniV3Pool extends RPool {
     return a
   }
 
-  calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
+  calcOutByIn2(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
     let nextTickToCross = direction ? this.nearestTick : this.nearestTick + 1
     const currentPriceBN = this.sqrtPriceX96
     let currentPrice = parseInt(currentPriceBN.toString()) / two96
@@ -205,7 +205,7 @@ export class UniV3Pool extends RPool {
     return { out: outAmount, gasSpent: BASE_GAS_CONSUMPTION + STEP_GAS_CONSUMPTION * stepCounter } // TODO: more accurate gas prediction
   }
 
-  calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
+  calcInByOut2(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
     let nextTickToCross = direction ? this.nearestTick : this.nearestTick + 1
     const currentPriceBN = this.sqrtPriceX96
     let currentPrice = parseInt(currentPriceBN.toString()) / two96
@@ -271,7 +271,7 @@ export class UniV3Pool extends RPool {
     return { inp: input / (1 - this.fee), gasSpent: BASE_GAS_CONSUMPTION + STEP_GAS_CONSUMPTION * stepCounter }
   }
 
-  calcCurrentPriceWithoutFee(direction: boolean): number {
+  calcCurrentPriceWithoutFee2(direction: boolean): number {
     const currentPrice = parseInt(this.sqrtPriceX96.toString()) / two96
     const p = currentPrice * currentPrice
     return direction ? p : 1 / p

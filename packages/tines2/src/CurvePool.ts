@@ -80,7 +80,7 @@ export class CurveRPool extends RPool {
     return y
   }
 
-  calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
+  calcOutByIn2(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
     const xBN = direction ? this.reserves[0] : this.reserves[1]
     const yBN = direction ? this.reserves[1] : this.reserves[0]
     const xNewBN = xBN.add(getBigNumber(amountIn * (1 - this.fee)))
@@ -90,7 +90,7 @@ export class CurveRPool extends RPool {
     return { out: dy, gasSpent: this.swapGasCost }
   }
 
-  calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
+  calcInByOut2(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
     const xBN = direction ? this.reserves[0] : this.reserves[1]
     const yBN = direction ? this.reserves[1] : this.reserves[0]
     let yNewBN = yBN.sub(getBigNumber(amountOut))
@@ -105,7 +105,7 @@ export class CurveRPool extends RPool {
     return { inp: input, gasSpent: this.swapGasCost }
   }
 
-  calcCurrentPriceWithoutFee(direction: boolean): number {
+  calcCurrentPriceWithoutFee2(direction: boolean): number {
     return this.calcPrice(0, direction, false)
   }
 

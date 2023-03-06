@@ -51,11 +51,25 @@ export abstract class RPool {
 
   // Returns [<output amount>, <gas consumption estimation>]
   // Should throw if the rest of liquidity is lesser than minLiquidity
-  abstract calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number }
-  abstract calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number }
-  abstract calcCurrentPriceWithoutFee(direction: boolean): number
+  abstract calcOutByIn2(amountIn: number, direction: boolean): { out: number; gasSpent: number }
+  abstract calcInByOut2(amountOut: number, direction: boolean): { inp: number; gasSpent: number }
+  abstract calcCurrentPriceWithoutFee2(direction: boolean): number
 
-  // precision of calcOutByIn
+  // new interface
+  calcOutByIn(from: number, to: number, amountIn: number): { out: number; gasSpent: number } {
+    if (from > 1 || to > 1 || from == to) throw new Error(`unsupported calcOutByIn ${from} => ${to}`)
+    return this.calcOutByIn2(amountIn, from < to)
+  }
+  calcInByOut(from: number, to: number, amountIn: number): { inp: number; gasSpent: number } {
+    if (from > 1 || to > 1 || from == to) throw new Error(`unsupported calcInByOut ${from} => ${to}`)
+    return this.calcInByOut2(amountIn, from < to)
+  }
+  calcCurrentPriceWithoutFee(from: number, to: number): number {
+    if (from > 1 || to > 1 || from == to) throw new Error(`unsupported calcInByOut ${from} => ${to}`)
+    return this.calcCurrentPriceWithoutFee2(from < to)
+  }
+
+  // precision of calcOutByIn2
   granularity0() {
     return 1
   }
@@ -84,7 +98,7 @@ export class ConstantProductRPool extends RPool {
     this.reserve1Number = parseInt(res[1].toString())
   }
 
-  calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
+  calcOutByIn2(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
     const x = direction ? this.reserve0Number : this.reserve1Number
     const y = direction ? this.reserve1Number : this.reserve0Number
     const out = (y * amountIn) / (x / (1 - this.fee) + amountIn)
@@ -92,7 +106,7 @@ export class ConstantProductRPool extends RPool {
     return { out, gasSpent: this.swapGasCost }
   }
 
-  calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
+  calcInByOut2(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
     const x = direction ? this.reserve0Number : this.reserve1Number
     const y = direction ? this.reserve1Number : this.reserve0Number
     if (y - amountOut < this.minLiquidity)
@@ -103,7 +117,7 @@ export class ConstantProductRPool extends RPool {
     return { inp: input, gasSpent: this.swapGasCost }
   }
 
-  calcCurrentPriceWithoutFee(direction: boolean): number {
+  calcCurrentPriceWithoutFee2(direction: boolean): number {
     return this.calcPrice(0, direction, false)
   }
 

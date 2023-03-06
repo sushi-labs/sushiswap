@@ -47,10 +47,10 @@ function expectCloseValues(
 }
 
 function checkBridging(bridge: BridgeBento, amount: number) {
-  const share = bridge.calcOutByIn(amount, true).out
+  const share = bridge.calcOutByIn2(amount, true).out
 
   try {
-    const amount2 = bridge.calcOutByIn(share, false).out
+    const amount2 = bridge.calcOutByIn2(share, false).out
     expectCloseValues(amount, amount2, 1e-10)
   } catch (e) {
     expect(bridge.freeLiquidity).toBeDefined()
@@ -63,10 +63,10 @@ function checkBridging(bridge: BridgeBento, amount: number) {
     expect(out).toBeGreaterThan(bridge.freeLiquidity as number)
   }
 
-  const amount3 = bridge.calcInByOut(share, true).inp
+  const amount3 = bridge.calcInByOut2(share, true).inp
   expectCloseValues(amount, amount3, 1e-10)
 
-  const share2 = bridge.calcInByOut(amount, false).inp
+  const share2 = bridge.calcInByOut2(amount, false).inp
   if (bridge.freeLiquidity !== undefined && amount > bridge.freeLiquidity) {
     expect(share2).toEqual(Number.POSITIVE_INFINITY)
   } else {
@@ -74,12 +74,12 @@ function checkBridging(bridge: BridgeBento, amount: number) {
   }
 
   if (amount != 0) {
-    const price = bridge.calcCurrentPriceWithoutFee(true)
+    const price = bridge.calcCurrentPriceWithoutFee2(true)
     expectCloseValues(share / amount, price, 1e-10)
   }
 
   if (share != 0) {
-    const price = bridge.calcCurrentPriceWithoutFee(false)
+    const price = bridge.calcCurrentPriceWithoutFee2(false)
     expectCloseValues(amount / share, price, 1e-10)
   }
 }

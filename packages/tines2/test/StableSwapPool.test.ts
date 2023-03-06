@@ -81,7 +81,7 @@ function checkCurveInvariant(pool: StableSwapRPool, amountIn: number, amountOut:
 }
 
 function checkSwap(pool: StableSwapRPool, amountIn: number, direction: boolean): number {
-  const { out, gasSpent } = pool.calcOutByIn(amountIn, direction)
+  const { out, gasSpent } = pool.calcOutByIn2(amountIn, direction)
 
   expect(gasSpent).toBeDefined()
   expect(gasSpent).not.toBeNaN()
@@ -92,7 +92,7 @@ function checkSwap(pool: StableSwapRPool, amountIn: number, direction: boolean):
   expect(out).toBeGreaterThanOrEqual(0)
   expect(checkCurveInvariant(pool, amountIn, out, direction)).toBeTruthy()
 
-  const { inp, gasSpent: gasSpent2 } = pool.calcInByOut(out, direction)
+  const { inp, gasSpent: gasSpent2 } = pool.calcInByOut2(out, direction)
 
   expect(gasSpent2).toBeDefined()
   expect(gasSpent2).not.toBeNaN()
@@ -112,8 +112,8 @@ function checkSwap(pool: StableSwapRPool, amountIn: number, direction: boolean):
 
 const E33 = getBigNumber(1e33)
 function checkPoolPriceCalculation(pool: StableSwapRPool) {
-  const price1 = pool.calcCurrentPriceWithoutFee(true)
-  const price2 = pool.calcCurrentPriceWithoutFee(false)
+  const price1 = pool.calcCurrentPriceWithoutFee2(true)
+  const price2 = pool.calcCurrentPriceWithoutFee2(false)
 
   expect(price1).toBeDefined()
   expect(price1).not.toBeNaN()
@@ -141,7 +141,7 @@ function checkPoolPriceCalculation(pool: StableSwapRPool) {
     )
   }
   const inp = parseFloat(poolScaled.reserves[0].toString()) / 1e15
-  const { out } = poolScaled.calcOutByIn(inp / (1 - pool.fee), true)
+  const { out } = poolScaled.calcOutByIn2(inp / (1 - pool.fee), true)
   const expected_price = out / inp
   expect(Math.abs(price1 / expected_price - 1)).toBeLessThan(1e-7)
 }
@@ -155,7 +155,7 @@ export function numberPrecision(n: number, precision = 2) {
 }
 
 describe('StableSwap test', () => {
-  describe('calcOutByIn & calcInByOut', () => {
+  describe('calcOutByIn2 & calcInByOut2', () => {
     it('Ideal balance, regular values', () => {
       const pool = createPool(
         v,
@@ -313,17 +313,17 @@ describe('StableSwap test', () => {
 
   it('special case', () => {
     const pool = createPool(BigNumber.from(5028472782), BigNumber.from(5028350937))
-    const { inp } = pool.calcInByOut(47716160591158, true)
+    const { inp } = pool.calcInByOut2(47716160591158, true)
     expect(inp).toEqual(Number.POSITIVE_INFINITY)
   })
 
   it('super low amount in/out', () => {
     const pool = createPool(v, v, 0.0005)
 
-    const { inp } = pool.calcInByOut(5, true)
+    const { inp } = pool.calcInByOut2(5, true)
     expect(inp).toBeGreaterThanOrEqual(5)
 
-    const { out } = pool.calcOutByIn(5, true)
+    const { out } = pool.calcOutByIn2(5, true)
     expect(out).toBeLessThanOrEqual(5)
   })
 
@@ -331,15 +331,15 @@ describe('StableSwap test', () => {
   //   const pool = createPool(v, v.add(v.div(100)))
   //   const amountIn = parseInt(v.div(1000).toString())
   //   const start0 = performance.now()
-  //   for (let i = 0; i < 100; ++i) pool.calcOutByIn(amountIn * i, i % 2 == 0)
+  //   for (let i = 0; i < 100; ++i) pool.calcOutByIn2(amountIn * i, i % 2 == 0)
   //   const start1 = performance.now()
-  //   for (let i = 0; i < 100; ++i) pool.calcInByOut(amountIn * i, i % 2 == 0)
+  //   for (let i = 0; i < 100; ++i) pool.calcInByOut2(amountIn * i, i % 2 == 0)
   //   const start2 = performance.now()
-  //   for (let i = 0; i < 1000; ++i) pool.calcCurrentPriceWithoutFee(i % 2 == 0)
+  //   for (let i = 0; i < 1000; ++i) pool.calcCurrentPriceWithoutFee2(i % 2 == 0)
   //   const finish = performance.now()
   //   const t1 = numberPrecision((start1 - start0) / 100)
   //   const t2 = numberPrecision((start2 - start1) / 100)
   //   const t3 = numberPrecision((finish - start2) / 1000)
-  //   console.log(`StableSwap pool calcOutByIn: ${t1}ms, calcInByOut: ${t2}ms, price: ${t3}ms`)
+  //   console.log(`StableSwap pool calcOutByIn2: ${t1}ms, calcInByOut2: ${t2}ms, price: ${t3}ms`)
   // })
 })
