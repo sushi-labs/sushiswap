@@ -1,35 +1,30 @@
-import { App, AppType, BuyCrypto } from '@sushiswap/ui'
-import { NetworkSelector } from '@sushiswap/wagmi'
-import { Profile } from '@sushiswap/wagmi/components/Wallet/Profile'
-import React from 'react'
-import { useAccount } from 'wagmi'
+import { useAutoConnect } from '@sushiswap/wagmi'
+import React, { FC } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
-import { useNotifications } from '../lib/state/storage'
 
-export const Header = () => {
-  const { address } = useAccount()
-  const [notifications, { clearNotifications }] = useNotifications(address)
+import { GlobalNav, NavLink } from '@sushiswap/ui/future/components/GlobalNav'
+import { HeaderNetworkSelector } from '@sushiswap/wagmi/future/components/HeaderNetworkSelector'
+import { UserProfile } from '@sushiswap/wagmi/future/components/UserProfile'
+import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
+
+export const Header: FC = () => {
+  const { isAutoConnecting } = useAutoConnect()
 
   return (
-    <App.Header
-      appType={AppType.Earn}
-      nav={
-        <App.NavItemList>
-          <App.NavItem href="https://www.sushi.com/swap" label="Swap" />
-          <App.NavItem href="https://www.sushi.com/earn" label="Earn" />
-          <BuyCrypto address={address} />
-        </App.NavItemList>
+    <GlobalNav
+      rightElement={
+        isAutoConnecting ? (
+          <></>
+        ) : (
+          <AppearOnMount className="flex gap-2">
+            <HeaderNetworkSelector networks={SUPPORTED_CHAIN_IDS} />
+            <UserProfile networks={SUPPORTED_CHAIN_IDS} />
+          </AppearOnMount>
+        )
       }
     >
-      <div className="flex gap-2">
-        <NetworkSelector supportedNetworks={SUPPORTED_CHAIN_IDS} />
-        <Profile
-          supportedNetworks={SUPPORTED_CHAIN_IDS}
-          notifications={notifications}
-          clearNotifications={clearNotifications}
-        />
-      </div>
-    </App.Header>
+      <NavLink title="Swap" href="https://sushi.com/swap" />
+    </GlobalNav>
   )
 }

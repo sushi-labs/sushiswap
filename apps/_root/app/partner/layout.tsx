@@ -1,7 +1,7 @@
 'use client'
 
-import { App, AppType, MaxWidth } from '@sushiswap/ui'
 import { DefaultSeo, DefaultSeoProps } from 'next-seo'
+import { GlobalNav } from '@sushiswap/ui/future/components/GlobalNav'
 
 const SEO: DefaultSeoProps = {
   titleTemplate: '%s | Partner',
@@ -38,8 +38,8 @@ export default function PartnerLayout({
   return (
     <>
       <DefaultSeo {...SEO} />
-      <App.Header appType={AppType.Partner} withScrollBackground />
-      <div className="flex items-center justify-center w-full">{children}</div>
+      <GlobalNav />
+      <div className="flex items-center justify-center w-full my-10">{children}</div>
     </>
   )
 }

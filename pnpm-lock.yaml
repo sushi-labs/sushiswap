@@ -1141,7 +1141,7 @@ importers:
       '@ethersproject/bytes': 5.7.0
       '@ethersproject/constants': 5.7.0
       '@headlessui/react': ^1.7.3
-      '@heroicons/react': 2.0.13
+      '@heroicons/react': 2.0.16
       '@layerzerolabs/scan-client': 0.0.0-beta.6
       '@playwright/test': 1.28.1
       '@sushiswap/abi': workspace:*
@@ -1205,7 +1205,7 @@ importers:
       '@ethersproject/bytes': 5.7.0
       '@ethersproject/constants': 5.7.0
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
-      '@heroicons/react': 2.0.13_react@18.2.0
+      '@heroicons/react': 2.0.16_react@18.2.0
       '@layerzerolabs/scan-client': 0.0.0-beta.6
       '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/amm': link:../../packages/amm
@@ -2765,7 +2765,7 @@ importers:
     specifiers:
       '@fontsource/inter': ^4.5.10
       '@headlessui/react': ^1.7.3
-      '@heroicons/react': 2.0.13
+      '@heroicons/react': 2.0.16
       '@popperjs/core': ^2.11.5
       '@react-hook/window-scroll': ^1.3.0
       '@sushiswap/chain': workspace:*
@@ -2812,7 +2812,7 @@ importers:
     dependencies:
       '@fontsource/inter': 4.5.14
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
-      '@heroicons/react': 2.0.13_react@18.2.0
+      '@heroicons/react': 2.0.16_react@18.2.0
       '@popperjs/core': 2.11.6
       '@react-hook/window-scroll': 1.3.0_react@18.2.0
       '@sushiswap/chain': link:../chain
@@ -2897,7 +2897,7 @@ importers:
       '@gnosis.pm/safe-apps-sdk': ^7.8.0
       '@gnosis.pm/safe-apps-wagmi': 1.2.0
       '@headlessui/react': ^1.7.3
-      '@heroicons/react': ^2.0.13
+      '@heroicons/react': ^2.0.16
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
       '@sushiswap/bentobox': workspace:*
@@ -2948,7 +2948,7 @@ importers:
       '@gnosis.pm/safe-apps-sdk': 7.8.0
       '@gnosis.pm/safe-apps-wagmi': 1.2.0_@wagmi+core@0.8.1
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
-      '@heroicons/react': 2.0.13_react@18.2.0
+      '@heroicons/react': 2.0.16_react@18.2.0
       '@sushiswap/abi': link:../abi
       '@sushiswap/amm': link:../amm
       '@sushiswap/bentobox': link:../../protocols/bentobox
@@ -8470,6 +8470,15 @@ packages:
       react: '>= 16'
     dependencies:
       react: 18.2.0
+    dev: true
+
+  /@heroicons/react/2.0.16_react@18.2.0:
+    resolution: {integrity: sha512-x89rFxH3SRdYaA+JCXwfe+RkE1SFTo9GcOkZettHer71Y3T7V+ogKmfw5CjTazgS3d0ClJ7p1NA+SP7VQLQcLw==}
+    peerDependencies:
+      react: '>= 16'
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /@hookform/devtools/4.3.0_ib3m5ricvtkl2cll7qpr2f6lvq:
     resolution: {integrity: sha512-DTTTYJ9j+L4Nd/qj0k41WNbRF/qNQfZxbHwUupFeQWu6JOJ5Ak5ksxuoCbfSWrsXV5EPSmcfhpsDos0IOlwhsg==}
@@ -10696,7 +10705,7 @@ packages:
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
-      tailwindcss: 3.2.4_postcss@8.4.21
+      tailwindcss: 3.2.4
     dev: false
 
   /@tanstack/match-sorter-utils/8.7.2:
@@ -13984,7 +13993,7 @@ packages:
   /axios/0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
@@ -23678,7 +23687,7 @@ packages:
     dev: false
 
   /lodash.topath/4.5.2:
-    resolution: {integrity: sha512-1/W4dM+35DwvE/iEd1M9ekewOSTlpFekhw9mhAtrwjVqUr83/ilQiyAvmg4tVX7Unkcfl1KC+i9WdaT4B6aQcg==}
+    resolution: {integrity: sha1-NhY1Hzu6YZlKCTGYlmC9AyVP0Ak=}
 
   /lodash.truncate/4.4.2:
     resolution: {integrity: sha512-jttmRe7bRse52OsWIMDLaXxWqRAmtIUccAQ3garviCqJjafXOfNMO0yMfNpdD6zbGaTU0P5Nz7e7gAT6cKmJRw==}
@@ -26101,6 +26110,7 @@ packages:
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.1
+    dev: true
 
   /postcss-js/4.0.0:
     resolution: {integrity: sha512-77QESFBwgX4irogGVPgQ5s07vLvFqWr228qZY+w6lW599cRlK/HmnlivnnVUxkjHnCu4J16PDMHcH+e+2HbvTQ==}
@@ -26118,6 +26128,7 @@ packages:
     dependencies:
       camelcase-css: 2.0.1
       postcss: 8.4.21
+    dev: true
 
   /postcss-load-config/3.1.4:
     resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
@@ -26149,6 +26160,7 @@ packages:
       lilconfig: 2.0.6
       postcss: 8.4.21
       yaml: 1.10.2
+    dev: true
 
   /postcss-load-config/3.1.4_ts-node@10.9.1:
     resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
@@ -26163,7 +26175,7 @@ packages:
         optional: true
     dependencies:
       lilconfig: 2.0.6
-      ts-node: 10.9.1_rmzwhy4t3g2w4jfehjrsbeodby
+      ts-node: 10.9.1_awa2wsr5thmg3i7jqycphctjfq
       yaml: 1.10.2
     dev: true
 
@@ -26257,6 +26269,7 @@ packages:
     dependencies:
       postcss: 8.4.21
       postcss-selector-parser: 6.0.11
+    dev: true
 
   /postcss-selector-parser/6.0.10:
     resolution: {integrity: sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w==}
@@ -26299,6 +26312,7 @@ packages:
       nanoid: 3.3.4
       picocolors: 1.0.0
       source-map-js: 1.0.2
+    dev: true
 
   /postinstall-postinstall/2.1.0:
     resolution: {integrity: sha512-7hQX6ZlZXIoRiWNrbMQaLzUUfH+sSx39u8EJ9HYuDc1kLo9IXKWjM5RSquZN1ad5GnH8CGFM78fsAAQi3OKEEQ==}
@@ -27060,7 +27074,7 @@ packages:
       utf8: 3.0.0
 
   /react-native-path/0.0.5:
-    resolution: {integrity: sha512-WJr256xBquk7X2O83QYWKqgLg43Zg3SrgjPc/kr0gCD2LoXA+2L72BW4cmstH12GbGeutqs/eXk3jgDQ2iCSvQ==}
+    resolution: {integrity: sha1-oE5Lc6U1qKfPFcbnYOJ9t3ia+xM=}
 
   /react-onclickoutside/6.12.2_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-NMXGa223OnsrGVp5dJHkuKxQ4czdLmXSp5jSV9OqiCky9LOpPATn3vLldc+q5fK3gKbEHvr7J1u0yhBh/xYkpA==}
@@ -28457,7 +28471,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
@@ -29239,8 +29253,6 @@ packages:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -29266,14 +29278,13 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
+      - postcss
       - ts-node
 
   /tailwindcss/3.2.4_postcss@8.4.21:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -29299,7 +29310,9 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
+      - postcss
       - ts-node
+    dev: true
 
   /tapable/2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
