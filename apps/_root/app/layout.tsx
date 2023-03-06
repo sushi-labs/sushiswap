@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <App.Footer />
               <ToastContainer className="mt-[50px]" />
             </App.Shell>
-            <div className="z-[-1] bg-gradient-radial fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
+            <div className="z-[-1] fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
           </ThemeProvider>
         </WagmiConfig>
       </body>

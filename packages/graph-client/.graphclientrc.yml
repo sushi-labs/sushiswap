@@ -132,6 +132,12 @@ sources:
           includeTypes: false
           ignore:
             - _SubgraphErrorPolicy_
+  
+  - name: GraphNode
+    handler:
+      graphql:
+        endpoint: https://{context.node:api.thegraph.com/index-node/graphql}
+
 
 # Had to disable global transforms since we have a jsonSchema handler in here now...
 transforms:
@@ -260,8 +266,61 @@ additionalTypeDefs: |
   extend type LiquidityPosition {
     chainId: Int!
   }
+
+  extend type BentoBoxKpi {
+    chainId: BigInt
+  }
+  extend type StrategyKpi {
+    chainId: BigInt
+  }
+
+  enum SubgraphType {
+    Current
+    Pending
+  }
+  enum SubgraphStatus {
+    Synced
+    Syncing
+    Failed
+  }
+  type Subgraph {
+    subgraphName: String
+    subgraphId: String
+    type: SubgraphType
+    status: SubgraphStatus
+    startBlock: BigInt
+    lastSyncedBlock: BigInt
+    chainHeadBlock: BigInt
+    hasFailed: Boolean
+    nonFatalErrorCount: BigInt
+    entityCount: BigInt
+  }
+  input SubgraphWithNode {
+    subgraphName: String!
+    nodeUrl: String!
+  }
+
   # Query Extensions
   extend type Query {
+    # Internal app
+    
+    subgraphs(subgraphs: [SubgraphWithNode!]!, type: SubgraphType!): [Subgraph!]!
+
+    crossChainBentoBoxKpis(
+      first: Int!
+      chainIds: [BigInt!]!
+    ): [BentoBoxKpi!]!
+    crossChainStrategyKpis(
+      skip: Int = 0
+      first: Int = 100
+      where: StrategyKpi_filter
+      orderBy: StrategyKpi_orderBy
+      orderDirection: OrderDirection
+      block: Block_height
+      chainIds: [Int!]!
+    ): [StrategyKpi!]!
+
+    # / Internal app
     furoTokensByChainIds(
       skip: Int = 0
       chainIds: [Int!]!
