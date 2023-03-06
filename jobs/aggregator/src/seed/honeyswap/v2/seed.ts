@@ -8,7 +8,7 @@ import { createPools, getLatestPoolTimestamp } from '../../../etl/pool/load.js'
 import { createTokens } from '../../../etl/token/load.js'
 import { GRAPH_HOST, HONEYSWAP_V2_SUBGRAPH_NAME, HONEYSWAP_V2_SUPPORTED_CHAINS } from '../config.js'
 
-const PROTOCOL = ProtocolName.UBESWAP
+const PROTOCOL = ProtocolName.HONEYSWAP
 const VERSION = ProtocolVersion.V2
 const CONSTANT_PRODUCT_POOL = PoolType.CONSTANT_PRODUCT_POOL
 const SWAP_FEE = 0.0025
