@@ -92,8 +92,9 @@ export const TokenTable: FC<TokenTable> = ({ tokens }) => {
   return (
     <GenericTable<Token>
       table={table}
-      columns={[] as any[]}
       // getLink={(row) => chains[row.chainId].getTokenUrl(row.id.split(':')[1])}
+      pageSize={10}
+      placeholder="Test"
     />
   )
 }
