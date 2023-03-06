@@ -7,6 +7,7 @@ import { PublicClient } from 'viem'
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { DfynProvider } from './liquidity-providers/Dfyn'
 import { ElkProvider } from './liquidity-providers/Elk'
+import { HoneySwapProvider } from './liquidity-providers/HoneySwap'
 import { JetSwapProvider } from './liquidity-providers/JetSwap'
 import { LiquidityProvider, LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
@@ -17,6 +18,7 @@ import { SpookySwapProvider } from './liquidity-providers/SpookySwap'
 import { SushiProvider } from './liquidity-providers/Sushi'
 import { TraderJoeProvider } from './liquidity-providers/TraderJoe'
 import { TridentProvider } from './liquidity-providers/Trident'
+import { UbeSwapProvider } from './liquidity-providers/UbeSwap'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import type { PoolCode } from './pools/PoolCode'
 
@@ -101,14 +103,14 @@ export class DataFetcher {
       }
     }
 
-    // if (this._providerIsIncluded(LiquidityProviders.HoneySwap, providers)) {
-    //   try {
-    //     const provider = new HoneySwapProvider(this.chainId, this.client)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.HoneySwap, providers)) {
+      try {
+        const provider = new HoneySwapProvider(this.chainId, this.client)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
     if (this._providerIsIncluded(LiquidityProviders.JetSwap, providers)) {
       try {
@@ -164,14 +166,14 @@ export class DataFetcher {
       }
     }
 
-    // if (this._providerIsIncluded(LiquidityProviders.UbeSwap, providers)) {
-    //   try {
-    //     const provider = new UbeSwapProvider(this.chainId, this.client)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.UbeSwap, providers)) {
+      try {
+        const provider = new UbeSwapProvider(this.chainId, this.client)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
     if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
       try {
