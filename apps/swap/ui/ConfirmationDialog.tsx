@@ -20,6 +20,8 @@ import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
 import { Chain } from '@sushiswap/chain'
 import { isRouteProcessorChainId, routeProcessorAddress, RouteProcessorChainId } from '@sushiswap/route-processor'
+import { createErrorToast } from '@sushiswap/ui'
+import { swapErrorToUserReadableMessage } from '../lib/swapErrorToUserReadableMessage'
 
 interface ConfirmationDialogProps {
   children({
@@ -119,6 +121,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         .finally(() => refetchNetwork0Balances())
     },
     onSettled,
+    onError: (data) => createErrorToast(swapErrorToUserReadableMessage(data), false),
   })
 
   const onComplete = useCallback(() => {

@@ -15,6 +15,8 @@ import { useTrade } from '../../lib/useTrade'
 import { nanoid } from 'nanoid'
 import { useLayerZeroScanLink } from '../../lib/useLayerZeroScanLink'
 import { SushiXSwapChainId } from '@sushiswap/sushixswap'
+import { createErrorToast } from '@sushiswap/ui'
+import { swapErrorToUserReadableMessage } from '../../lib/swapErrorToUserReadableMessage'
 
 interface ConfirmationDialogCrossChainProps {
   enabled?: boolean
@@ -116,6 +118,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
         })
     },
     onSettled,
+    onError: (data) => createErrorToast(swapErrorToUserReadableMessage(data), false),
   })
 
   const onComplete = useCallback(() => {

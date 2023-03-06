@@ -119,6 +119,7 @@ export const createErrorToast = (message: string | undefined, code: boolean) => 
     {
       ...TOAST_OPTIONS,
       toastId,
+      autoClose: 10000,
     }
   )
 }
