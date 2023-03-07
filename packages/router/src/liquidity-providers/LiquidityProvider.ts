@@ -20,6 +20,7 @@ export enum LiquidityProviders {
   NativeWrap = 'NativeWrap',
   HoneySwap = 'HoneySwap',
   UbeSwap = 'UbeSwap',
+  Biswap = 'Biswap',
 }
 
 export abstract class LiquidityProvider {

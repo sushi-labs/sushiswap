@@ -5,6 +5,7 @@ import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from 
 import { PublicClient } from 'viem'
 
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
+import { BiswapProvider } from './liquidity-providers/Biswap'
 import { DfynProvider } from './liquidity-providers/Dfyn'
 import { ElkProvider } from './liquidity-providers/Elk'
 import { HoneySwapProvider } from './liquidity-providers/HoneySwap'
@@ -79,6 +80,15 @@ export class DataFetcher {
     if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers)) {
       try {
         const provider = new ApeSwapProvider(this.chainId, this.client)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+
+    if (this._providerIsIncluded(LiquidityProviders.Biswap, providers)) {
+      try {
+        const provider = new BiswapProvider(this.chainId, this.client)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)

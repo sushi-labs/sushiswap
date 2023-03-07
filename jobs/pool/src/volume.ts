@@ -1,6 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
 import { createClient } from '@sushiswap/database'
-import { SUBGRAPH_HOST, TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import {
+  SUBGRAPH_HOST,
+  SWAP_ENABLED_NETWORKS,
+  TRIDENT_ENABLED_NETWORKS,
+  TRIDENT_SUBGRAPH_NAME,
+} from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
 import { Block, getBuiltGraphSDK, Pair } from '../.graphclient/index.js'
@@ -43,8 +48,8 @@ export async function execute() {
 async function extract() {
   const graphClientSdk = getBuiltGraphSDK()
   const [{ oneDayBlocks }, { oneWeekBlocks }] = await Promise.all([
-    graphClientSdk.OneDayBlocks({ chainIds: SUSHISWAP_CHAINS }),
-    graphClientSdk.OneWeekBlocks({ chainIds: SUSHISWAP_CHAINS }),
+    graphClientSdk.OneDayBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    graphClientSdk.OneWeekBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
   ])
 
   const [pairs, pairs1d, pairs1w] = await Promise.all([
