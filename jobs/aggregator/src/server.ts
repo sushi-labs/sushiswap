@@ -1,3 +1,5 @@
+import 'dotenv/config'
+
 import timeout from 'connect-timeout'
 import express from 'express'
 import { z } from 'zod'
