@@ -46,7 +46,7 @@ export const NetworkCheck: FC = () => {
             size="sm"
             className="whitespace-nowrap"
           >
-            Switch to {Chain.from(network0).name?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
+            Switch to {Chain.fromChainId(network0).name}
           </Button>
         </div>
       </div>
