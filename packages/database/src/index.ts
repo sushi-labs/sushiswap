@@ -10,27 +10,24 @@ export async function createClient(
         url: process.env['DATABASE_URL'] as string,
       },
     },
+    log: ['query'],
   }
 ) {
   const cacheKey = JSON.stringify(options)
-
   if (!cache.has(cacheKey)) {
-    cache.set(cacheKey, new PrismaClient(options))
+    if (process.env['NODE_ENV'] === 'production') {
+      const client = new PrismaClient(options)
+      cache.set(cacheKey, client)
+    } else {
+      if (!global.prisma) {
+        global.prisma = new PrismaClient(options)
+      }
+      const client = global.prisma
+      cache.set(cacheKey, client)
+    }
   }
 
   const client = cache.get(cacheKey) as PrismaClient
-
-  // THIS WAS CAUSING ISSUE WITH WHITELISTING...
-  // I needed access to multiple clients.
-
-  // if (process.env['NODE_ENV'] === 'production') {
-  //   client = new PrismaClient(options)
-  // } else {
-  //   if (!global.prisma) {
-  //     global.prisma = new PrismaClient(options)
-  //   }
-  //   client = global.prisma
-  // }
 
   await import('dotenv/config')
   const Redis = (await import('ioredis')).default
