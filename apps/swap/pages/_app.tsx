@@ -9,6 +9,7 @@ import Head from 'next/head'
 import { AppProps } from 'next/app'
 import { ToastContainer } from '@sushiswap/ui/future/components/toast'
 import { SwapProvider } from 'ui/trade/TradeProvider'
+import { Onramper } from '@sushiswap/wagmi/future/components'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
@@ -23,8 +24,10 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       <WagmiProvider>
         <PersistQueryClientProvider>
           <SwapProvider>
-            <Header />
-            <Component {...pageProps} />
+            <Onramper.Provider>
+              <Header />
+              <Component {...pageProps} />
+            </Onramper.Provider>
           </SwapProvider>
           <ToastContainer />
         </PersistQueryClientProvider>

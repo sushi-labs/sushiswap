@@ -9,6 +9,7 @@ import { Drawer } from '@sushiswap/ui/future/components/drawer'
 import { NetworkCheck } from '../../../ui/NetworkCheck'
 import { TokenNotFoundDialog } from '../../../ui/TokenNotFoundDialog'
 import { TradeReviewDialog } from '../../../ui/trade/TradeReviewDialog'
+import { Onramper } from '@sushiswap/wagmi/future/components'
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
@@ -47,6 +48,9 @@ const Page: FC = ({}: InferGetStaticPropsType<typeof getStaticProps>) => {
         {/*spacer for fixed positioned swap button */}
         <div className="h-[68px] w-full" />
       </Container>
+
+      {/*lossless component that can be triggered using Onramper.Button*/}
+      <Onramper.Panel />
     </>
   )
 }

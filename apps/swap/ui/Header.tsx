@@ -12,6 +12,9 @@ import { useAutoConnect } from '@sushiswap/wagmi'
 import { useRouter } from 'next/router'
 import { queryParamsSchema, useSwapActions } from './trade/TradeProvider'
 import { useAccount } from 'wagmi'
+import Nav from '@sushiswap/ui/app/Nav'
+import { Onramper } from '@sushiswap/wagmi/future/components'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 export const Header: FC = () => {
   const { isAutoConnecting } = useAutoConnect()
@@ -41,6 +44,11 @@ export const Header: FC = () => {
         }
       >
         <NavLink title="Earn" href="https://sushi.com/earn" />
+        <Onramper.Button>
+          <Button as="span" color="default" variant="empty" size="md">
+            Buy Crypto
+          </Button>
+        </Onramper.Button>
       </GlobalNav>
       <Search.Panel />
     </Search>

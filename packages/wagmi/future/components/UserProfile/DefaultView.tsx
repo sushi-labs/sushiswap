@@ -19,6 +19,7 @@ import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import { useBalance, useDisconnect, useEnsAvatar } from 'wagmi'
 import { ProfileView } from './index'
 import { usePrice } from '@sushiswap/react-query'
+import { Onramper } from '../Onramper'
 
 interface DefaultProps {
   chainId: ChainId
@@ -69,14 +70,14 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
             </ClipboardController>
           </div>
           <div className="flex gap-5">
-            <IconButton
-              as="a"
-              target="_blank"
-              icon={CreditCardIcon}
-              iconProps={{ width: 18, height: 18 }}
-              href={getOnrampURL(OnRampProvider.Transak, address)}
-              description="Buy Crypto"
-            />
+            <Onramper.Button>
+              <IconButton
+                as="div"
+                icon={CreditCardIcon}
+                iconProps={{ width: 18, height: 18 }}
+                description="Buy Crypto"
+              />
+            </Onramper.Button>
             <ClipboardController hideTooltip>
               {({ setCopied, isCopied }) => (
                 <IconButton
