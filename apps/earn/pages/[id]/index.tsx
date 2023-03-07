@@ -24,6 +24,7 @@ import {
 } from '../../components'
 import { POOL_TYPE_MAP } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
+import { NextSeo } from 'next-seo'
 
 const LINKS = (pool: Pool): BreadcrumbLink[] => [
   {
@@ -34,9 +35,11 @@ const LINKS = (pool: Pool): BreadcrumbLink[] => [
 
 const Pool: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (
-    <SWRConfig value={{ fallback }}>
-      <_Pool />
-    </SWRConfig>
+    <>
+      <SWRConfig value={{ fallback }}>
+        <_Pool />
+      </SWRConfig>
+    </>
   )
 }
 
@@ -53,39 +56,42 @@ const _Pool = () => {
   if (!pool) return <></>
 
   return (
-    <PoolPositionProvider pool={pool}>
-      <PoolPositionStakedProvider pool={pool}>
-        <PoolPositionRewardsProvider pool={pool}>
-          <Layout breadcrumbs={LINKS(pool)}>
-            <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
-              <div className="flex flex-col order-1 gap-9">
-                <PoolHeader pool={pool} />
-                <hr className="my-3 border-t border-slate-200/5" />
-                <PoolChart pool={pool} />
-                <AppearOnMount>
-                  <PoolStats pool={pool} />
-                </AppearOnMount>
-                <PoolComposition pool={pool} />
-                <PoolRewards pool={pool} />
-              </div>
+    <>
+      <NextSeo title={`${pool.name} - ${formatPercent(pool.swapFee)}`} />
+      <PoolPositionProvider pool={pool}>
+        <PoolPositionStakedProvider pool={pool}>
+          <PoolPositionRewardsProvider pool={pool}>
+            <Layout breadcrumbs={LINKS(pool)}>
+              <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
+                <div className="flex flex-col order-1 gap-9">
+                  <PoolHeader pool={pool} />
+                  <hr className="my-3 border-t border-slate-200/5" />
+                  <PoolChart pool={pool} />
+                  <AppearOnMount>
+                    <PoolStats pool={pool} />
+                  </AppearOnMount>
+                  <PoolComposition pool={pool} />
+                  <PoolRewards pool={pool} />
+                </div>
 
-              <div className="flex flex-col order-2 gap-4">
-                <AppearOnMount>
-                  <div className="flex flex-col gap-10">
-                    <PoolMyRewards pool={pool} />
-                    <PoolPosition pool={pool} />
+                <div className="flex flex-col order-2 gap-4">
+                  <AppearOnMount>
+                    <div className="flex flex-col gap-10">
+                      <PoolMyRewards pool={pool} />
+                      <PoolPosition pool={pool} />
+                    </div>
+                  </AppearOnMount>
+                  <div className="hidden lg:flex">
+                    <PoolButtons pool={pool} />
                   </div>
-                </AppearOnMount>
-                <div className="hidden lg:flex">
-                  <PoolButtons pool={pool} />
                 </div>
               </div>
-            </div>
-          </Layout>
-          <PoolActionBar pool={pool} />
-        </PoolPositionRewardsProvider>
-      </PoolPositionStakedProvider>
-    </PoolPositionProvider>
+            </Layout>
+            <PoolActionBar pool={pool} />
+          </PoolPositionRewardsProvider>
+        </PoolPositionStakedProvider>
+      </PoolPositionProvider>
+    </>
   )
 }
 

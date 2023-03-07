@@ -19,6 +19,7 @@ import {
 import { POOL_TYPE_MAP } from '../../lib/constants'
 import { getPool, getPools, getPoolUrl, Pool, usePool } from '@sushiswap/client'
 import { ChainId } from '@sushiswap/chain'
+import { NextSeo } from 'next-seo'
 
 const LINKS = (pool: Pool): BreadcrumbLink[] => [
   {
@@ -64,36 +65,39 @@ const _Add = () => {
   if (!pool) return <></>
 
   return (
-    <PoolPositionProvider pool={pool}>
-      <PoolPositionStakedProvider pool={pool}>
-        <Layout breadcrumbs={LINKS(pool)}>
-          <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
-            <div className="hidden md:block" />
-            <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
-              {pool.version === 'TRIDENT' ? <AddSectionTrident pool={pool} /> : <AddSectionLegacy pool={pool} />}
-              <AddSectionStake poolId={pool.id} />
-              <Container className="flex justify-center">
-                <Link.External
-                  href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"
-                  className="flex justify-center px-6 py-4 decoration-slate-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
-                >
-                  <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-500">
-                    Learn more about liquidity and yield farming
-                    <ExternalLinkIcon width={16} height={16} className="text-slate-500" />
-                  </Typography>
-                </Link.External>
-              </Container>
+    <>
+      <NextSeo title={`Add liquidity ${pool.name} - ${formatPercent(pool.swapFee)}`} />
+      <PoolPositionProvider pool={pool}>
+        <PoolPositionStakedProvider pool={pool}>
+          <Layout breadcrumbs={LINKS(pool)}>
+            <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
+              <div className="hidden md:block" />
+              <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
+                {pool.version === 'TRIDENT' ? <AddSectionTrident pool={pool} /> : <AddSectionLegacy pool={pool} />}
+                <AddSectionStake poolId={pool.id} />
+                <Container className="flex justify-center">
+                  <Link.External
+                    href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"
+                    className="flex justify-center px-6 py-4 decoration-slate-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
+                  >
+                    <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-500">
+                      Learn more about liquidity and yield farming
+                      <ExternalLinkIcon width={16} height={16} className="text-slate-500" />
+                    </Typography>
+                  </Link.External>
+                </Container>
+              </div>
+              <div className="order-1 sm:order-3">
+                <AppearOnMount>
+                  <AddSectionMyPosition pool={pool} />
+                </AppearOnMount>
+              </div>
             </div>
-            <div className="order-1 sm:order-3">
-              <AppearOnMount>
-                <AddSectionMyPosition pool={pool} />
-              </AppearOnMount>
-            </div>
-          </div>
-          <div className="z-[-1] bg-gradient-radial fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
-        </Layout>
-      </PoolPositionStakedProvider>
-    </PoolPositionProvider>
+            <div className="z-[-1] bg-gradient-radial fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
+          </Layout>
+        </PoolPositionStakedProvider>
+      </PoolPositionProvider>
+    </>
   )
 }
 
