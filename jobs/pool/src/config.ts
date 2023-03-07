@@ -15,7 +15,7 @@ export const SUSHISWAP_CHAINS = [
   ChainId.HARMONY,
   ChainId.ARBITRUM_NOVA,
   ChainId.BOBA,
-]
+] as const
 
 export const TRIDENT_CHAINS = [
   ChainId.POLYGON,
@@ -26,7 +26,7 @@ export const TRIDENT_CHAINS = [
   ChainId.AVALANCHE,
   ChainId.BSC,
   ChainId.BTTC,
-]
+] as const
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ETHEREUM]: 'sushi-v2/sushiswap-ethereum',

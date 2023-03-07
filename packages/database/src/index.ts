@@ -10,7 +10,7 @@ export async function createClient(
         url: process.env['DATABASE_URL'] as string,
       },
     },
-    log: ['query'],
+    // log: ['query'],
   }
 ) {
   const cacheKey = JSON.stringify(options)
