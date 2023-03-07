@@ -11,7 +11,9 @@ import { useAccount } from 'wagmi'
 import { TokenSelector } from '../../TokenSelector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
-import { NativeAddress, useBalances, usePrice } from '@sushiswap/react-query'
+import { NativeAddress, usePrice } from '@sushiswap/react-query'
+import { useBalance, useBalances } from '../../../../hooks'
+import { FundSource } from '@sushiswap/hooks'
 
 export interface CurrencyInputProps {
   id?: string
@@ -56,18 +58,19 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
     inputRef.current?.focus()
   }, [disabled])
 
-  const { data: _balance, isLoading: isBalanceLoading } = useBalances({ chainId, account: address })
+  const { data: _balance, isLoading: isBalanceLoading } = useBalance({
+    chainId,
+    account: address,
+    currency,
+    loadBentobox: false,
+  })
   const { data: price, isLoading: isPriceLoading } = usePrice({
     chainId: currency?.chainId,
     address: currency?.wrapped.address,
   })
 
   const _value = useMemo(() => tryParseAmount(value, currency), [value, currency])
-  const balance = currency
-    ? currency.isNative
-      ? _balance?.[NativeAddress]
-      : _balance?.[currency.wrapped.address]
-    : undefined
+  const balance = _balance?.[FundSource.WALLET]
   const insufficientBalance = address && type === 'INPUT' && balance && _value && balance.lessThan(_value)
 
   // If currency changes, trim input to decimals

@@ -7,9 +7,10 @@ interface TooltipProps {
   children: ReactNode
   description: string
   transitionDelay?: number
+  className?: string
 }
 
-export const Tooltip: FC<TooltipProps> = ({ children, description, transitionDelay = 0 }) => {
+export const Tooltip: FC<TooltipProps> = ({ children, description, transitionDelay = 0, className }) => {
   const [open, setOpen] = useState(false)
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null)
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null)
@@ -45,7 +46,7 @@ export const Tooltip: FC<TooltipProps> = ({ children, description, transitionDel
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
-          className={classNames('', open ? '' : 'hidden')}
+          className={classNames('', open ? '' : 'hidden', className)}
         >
           <span className="bg-gray-600 text-white px-2 py-1 rounded-xl whitespace-nowrap text-[10px] leading-normal">
             {description}

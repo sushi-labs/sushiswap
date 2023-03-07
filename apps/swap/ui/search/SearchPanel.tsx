@@ -4,7 +4,7 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 
 import { useSearchContext } from './SearchProvider'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import { usePrice, useTokenList } from '@sushiswap/react-query'
+import { usePrice, useTokenList, useTokenSearch } from '@sushiswap/react-query'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { classNames } from '@sushiswap/ui'
@@ -15,6 +15,8 @@ import { Token } from '@sushiswap/currency'
 import { Chain } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { COMMON_BASES } from '@sushiswap/router-config'
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
 
 export const SearchPanel: FC = () => {
   const { network1 } = useSwapState()
@@ -22,8 +24,9 @@ export const SearchPanel: FC = () => {
   const debouncedQuery = useDebounce(query, 500)
   const filter = useMemo(() => (debouncedQuery ? [debouncedQuery] : 'showNone'), [debouncedQuery])
 
-  const { data: tokenList } = useTokenList(filter)
-  const { data: popularTokensList } = useTokenList(
+  const { data: tokenSearch, isLoading: isTokenSearchLoading } = useTokenSearch({ address: debouncedQuery })
+  const { data: tokenList, isLoading: isTokenListLoading } = useTokenList(filter)
+  const { data: popularTokensList, isLoading: isPopularListLoading } = useTokenList(
     // TODO: we should have ETH as an option...
     useMemo(() => [...COMMON_BASES[network1].map((t) => t.wrapped.address)], [network1])
   )
@@ -31,6 +34,36 @@ export const SearchPanel: FC = () => {
 
   const onClose = useCallback(() => setOpen(false), [setOpen])
   const isLoading = Boolean(query !== debouncedQuery && query && query?.length > 2)
+
+  const currentNetworkResults = useMemo(() => {
+    return [
+      ...(tokenList && Object.keys(tokenList).length > 0
+        ? Object.values(tokenList)
+            .filter((el) => el.chainId === network1)
+            .map((el) => ({ token: el, official: true }))
+        : []),
+      ...(tokenSearch && Object.keys(tokenSearch).length > 0
+        ? Object.values(tokenSearch).filter(
+            (el) => el.token.chainId === network1 && !tokenList?.[`${el.token.chainId}:${el.token.address}`]
+          )
+        : []),
+    ]
+  }, [network1, tokenList, tokenSearch])
+
+  const otherNetworkResults = useMemo(() => {
+    return [
+      ...(tokenList && Object.keys(tokenList).length > 0
+        ? Object.values(tokenList)
+            .filter((el) => el.chainId !== network1)
+            .map((el) => ({ token: el, official: true }))
+        : []),
+      ...(tokenSearch && Object.keys(tokenSearch).length > 0
+        ? Object.values(tokenSearch).filter(
+            (el) => el.token.chainId !== network1 && !tokenList?.[`${el.token.chainId}:${el.token.address}`]
+          )
+        : []),
+    ]
+  }, [network1, tokenList, tokenSearch])
 
   return (
     <Dialog variant="opaque" open={open} onClose={onClose} className="fixed inset-0 z-[1080]">
@@ -41,12 +74,12 @@ export const SearchPanel: FC = () => {
             <List className="pt-6">
               <List.Label className="text-sm">{Chain.from(network1).name}</List.Label>
               <List.Control className="scroll max-h-[368px] !p-1">
-                {isLoading ? (
+                {isLoading || isTokenSearchLoading || isTokenListLoading ? (
                   <RowSkeleton />
-                ) : tokenList && Object.keys(tokenList).length > 0 ? (
-                  Object.values(tokenList)
-                    .filter((el) => el.chainId === network1)
-                    .map((el, i) => <Row currency={el} key={`example-${i}-${el.address}`} />)
+                ) : currentNetworkResults?.length > 0 ? (
+                  currentNetworkResults.map((el, i) => (
+                    <Row currency={el.token} key={`example-${i}-${el.token.address}`} supported={el.official} />
+                  ))
                 ) : (
                   <div className="h-[60px] flex items-center justify-center text-xs font-semibold text-gray-400 dark:text-slate-500">
                     No results found
@@ -59,12 +92,12 @@ export const SearchPanel: FC = () => {
             <List className="pt-6">
               <List.Label className="text-sm">Other networks</List.Label>
               <List.Control className="scroll max-h-[368px] !p-1">
-                {isLoading ? (
+                {isLoading || isTokenSearchLoading || isTokenListLoading ? (
                   <RowSkeleton />
-                ) : tokenList && Object.keys(tokenList).length > 0 ? (
-                  Object.values(tokenList)
-                    .filter((el) => el.chainId !== network1)
-                    .map((el, i) => <Row currency={el} key={`example-${i}-${el.address}`} />)
+                ) : otherNetworkResults.length > 0 ? (
+                  otherNetworkResults.map((el, i) => (
+                    <Row currency={el.token} key={`example-${i}-${el.token.address}`} supported={el.official} />
+                  ))
                 ) : (
                   <div className="h-[60px] flex items-center justify-center text-xs font-semibold text-gray-400 dark:text-slate-500">
                     No results found
@@ -76,8 +109,14 @@ export const SearchPanel: FC = () => {
           <List className="pt-6">
             <List.Label className="text-sm">Popular tokens</List.Label>
             <List.Control className="!p-1">
-              {popularTokensList &&
-                Object.values(popularTokensList)?.map((el) => <Row currency={el} key={`example-${el.address}`} />)}
+              {isPopularListLoading ? (
+                <RowSkeleton />
+              ) : (
+                popularTokensList &&
+                Object.values(popularTokensList)?.map((el) => (
+                  <Row currency={el} key={`example-${el.address}`} supported={true} />
+                ))
+              )}
             </List.Control>
           </List>
         </div>
@@ -86,7 +125,7 @@ export const SearchPanel: FC = () => {
   )
 }
 
-const Row: FC<{ currency: Token }> = ({ currency }) => {
+const Row: FC<{ currency: Token; supported?: boolean }> = ({ currency, supported = false }) => {
   const { setSearch } = useSwapActions()
   const { setOpen } = useSearchContext()
   const { data: price, isLoading } = usePrice({ address: currency.address, chainId: currency.chainId })
@@ -113,7 +152,15 @@ const Row: FC<{ currency: Token }> = ({ currency }) => {
           </Badge>
         </div>
         <div className="flex flex-col">
-          <span className="font-medium text-gray-900 dark:text-slate-100">{currency.name}</span>
+          <div className="flex gap-1 items-center">
+            <span className="font-medium text-gray-900 dark:text-slate-100">{currency.name}</span>
+
+            {!supported && (
+              <Tooltip description="Not in official tokenlist" className="z-[2000]">
+                <ExclamationTriangleIcon width={18} height={18} />
+              </Tooltip>
+            )}
+          </div>
           <div className="flex gap-1 items-center">
             <span className="font-medium text-sm text-gray-500 dark:text-slate-400">{currency.symbol}</span>
           </div>
