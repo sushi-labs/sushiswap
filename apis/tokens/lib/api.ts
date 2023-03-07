@@ -220,3 +220,26 @@ export async function getCommonTokens(chainId: number) {
   await client.$disconnect()
   return tokens ? tokens : []
 }
+
+export async function getTokensByAddress(address: string) {
+  const client = await createClient()
+  const tokens = await client.token.findMany({
+    select: {
+      id: true,
+      chainId: true,
+      address: true,
+      name: true,
+      symbol: true,
+      decimals: true,
+      isCommon: true,
+      isFeeOnTransfer: true,
+      status: true,
+    },
+    where: {
+      address,
+    },
+  })
+
+  await client.$disconnect()
+  return tokens ? tokens : []
+}
