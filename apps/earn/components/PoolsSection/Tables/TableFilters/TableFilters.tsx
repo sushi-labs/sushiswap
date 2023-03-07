@@ -139,17 +139,6 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
               checked={incentivizedOnly}
               onChange={(checked) => {
                 setFilters({ incentivizedOnly: checked })
-                router.replace(
-                  {
-                    pathname: router.pathname,
-                    query: {
-                      ...router.query,
-                      incentivizedOnly: checked,
-                    },
-                  },
-                  undefined,
-                  { shallow: true }
-                )
               }}
               size="sm"
               uncheckedIcon={<XIcon />}
