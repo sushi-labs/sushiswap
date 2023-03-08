@@ -24,8 +24,8 @@ export const SearchPanel: FC = () => {
   const debouncedQuery = useDebounce(query, 500)
   const filter = useMemo(() => (debouncedQuery ? [debouncedQuery] : 'showNone'), [debouncedQuery])
 
-  const { data: tokenSearch, isLoading: isTokenSearchLoading } = useTokenSearch({ address: debouncedQuery })
-  const { data: tokenList, isLoading: isTokenListLoading } = useTokenList(filter)
+  const { data: tokenSearch } = useTokenSearch({ address: debouncedQuery })
+  const { data: tokenList } = useTokenList(filter)
   const { data: popularTokensList, isLoading: isPopularListLoading } = useTokenList(
     // TODO: we should have ETH as an option...
     useMemo(() => [...COMMON_BASES[network1].map((t) => t.wrapped.address)], [network1])
@@ -79,7 +79,7 @@ export const SearchPanel: FC = () => {
             <List className="pt-6">
               <List.Label className="text-sm">{Chain.from(network1).name}</List.Label>
               <List.Control className="scroll max-h-[368px] !p-1">
-                {isLoading || isTokenSearchLoading || isTokenListLoading ? (
+                {isLoading ? (
                   <RowSkeleton />
                 ) : currentNetworkResults?.length > 0 ? (
                   currentNetworkResults.map((el, i) => (
@@ -97,7 +97,7 @@ export const SearchPanel: FC = () => {
             <List className="pt-6">
               <List.Label className="text-sm">Other networks</List.Label>
               <List.Control className="scroll max-h-[368px] !p-1">
-                {isLoading || isTokenSearchLoading || isTokenListLoading ? (
+                {isLoading ? (
                   <RowSkeleton />
                 ) : otherNetworkResults.length > 0 ? (
                   otherNetworkResults.map((el, i) => (
