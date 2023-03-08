@@ -74,7 +74,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   // We'll pre-render only these paths at build time.
   // { fallback: 'blocking' } will server-render pages
   // on-demand if the path doesn't exist.
-  return { paths, fallback: 'blocking' }
+  return { paths, fallback: false }
 }
 
 function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
@@ -168,7 +168,10 @@ function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
               return (
                 <_Add
                   chainId={chainId}
-                  setChainId={(chainId) => router.push(`/add/${chainId}`, `/add/${chainId}`, { shallow: true })}
+                  setChainId={(chainId) => {
+                    router.push(`/add/${chainId}`, `/add/${chainId}`, { shallow: true })
+                    setChainId(chainId)
+                  }}
                   fee={fee}
                   setFee={setFee}
                   pool={pool}
