@@ -15,16 +15,18 @@ type Data = Array<{
   decimals: number
 }>
 
-const hydrate = (data: Data) => {
+const hydrate = (data: Data, _chainId: ChainId) => {
   return data.reduce<Record<string, Token>>((acc, { id, name, symbol, decimals }) => {
     const [chainId, address] = id.split(':')
-    acc[getAddress(address)] = new Token({
-      chainId,
-      name,
-      decimals,
-      symbol,
-      address,
-    })
+    if (_chainId === +chainId) {
+      acc[getAddress(address)] = new Token({
+        chainId,
+        name,
+        decimals,
+        symbol,
+        address,
+      })
+    }
     return acc
   }, {})
 }
@@ -32,8 +34,10 @@ const hydrate = (data: Data) => {
 export const useTokens = ({ chainId }: UseTokensParams) => {
   return useQuery({
     queryKey: ['tokens', { chainId }],
-    queryFn: async () =>
-        fetch(`https://tokens.sushi.com/v0/${chainId}`).then((response) => response.json()),
-    select: hydrate
+    queryFn: async () => {
+      return fetch(`https://tokens.sushi.com/v0`).then((response) => response.json())
+    },
+    select: (data) => hydrate(data, chainId),
+    cacheTime: 1000
   })
 }
