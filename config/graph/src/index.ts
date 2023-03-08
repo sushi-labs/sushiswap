@@ -143,7 +143,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.FUSE]: 'sushiswap/fuse-blocks',
   [ChainId.KOVAN]: 'blocklytics/kovan-blocks',
   [ChainId.MOONBEAM]: 'sushiswap/moonbeam-blocks',
-  [ChainId.OPTIMISM]: 'kybernetwork/optimism-blocks',
+  [ChainId.OPTIMISM]: 'beethovenxfi/optimism-blocks',
   [ChainId.KAVA]: 'sushiswap/blocks-kava',
   [ChainId.METIS]: 'sushiswap/blocks-metis',
   [ChainId.ARBITRUM_NOVA]: 'sushiswap/blocks-arbitrum-nova',
