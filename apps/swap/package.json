@@ -51,6 +51,7 @@
     "ethers": "^5.7.0",
     "next": "13.2.3",
     "next-seo": "5.15.0",
+    "next-axiom": "0.17.0",
     "numeral": "2.0.6",
     "nanoid": "4.0.0",
     "react": "18.2.0",
