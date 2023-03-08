@@ -120,15 +120,14 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
             hoverIcon={ChevronRightIcon}
             hoverIconProps={{ width: 20, height: 20 }}
           />
-          <List.MenuItem
-            icon={CreditCardIcon}
-            target="_blank"
-            as="a"
-            href={getOnrampURL(OnRampProvider.Transak, address)}
-            title="Buy Crypto"
-            hoverIcon={LinkIcon}
-            hoverIconProps={{ width: 20, height: 20, className: 'text-blue' }}
-          />
+          <Onramper.Button className="w-full">
+            <List.MenuItem
+              icon={CreditCardIcon}
+              title="Buy Crypto"
+              hoverIcon={ChevronRightIcon}
+              hoverIconProps={{ width: 20, height: 20 }}
+            />
+          </Onramper.Button>
         </List.Control>
       </List>
     </>
