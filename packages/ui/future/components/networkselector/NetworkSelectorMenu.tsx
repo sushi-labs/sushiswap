@@ -61,7 +61,7 @@ export const NetworkSelectorMenu = <T extends number>({
                             <p
                               className={classNames(
                                 selected === el ? 'font-semibold text-gray-900' : 'font-medium text-gray-500',
-                                'text-sm group-hover:text-gray-900 dark:text-slate-300 group-hover:dark:text-slate-50'
+                                'text-sm group-hover:text-gray-900 dark:text-slate-300 dark:group-hover:text-slate-50'
                               )}
                             >
                               {chains[el].name}

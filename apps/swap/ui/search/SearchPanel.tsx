@@ -7,7 +7,7 @@ import { List } from '@sushiswap/ui/future/components/list/List'
 import { usePrice, useTokenList, useTokenSearch } from '@sushiswap/react-query'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
-import { classNames } from '@sushiswap/ui'
+import { Button, classNames } from '@sushiswap/ui'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
@@ -24,8 +24,8 @@ export const SearchPanel: FC = () => {
   const debouncedQuery = useDebounce(query, 500)
   const filter = useMemo(() => (debouncedQuery ? [debouncedQuery] : 'showNone'), [debouncedQuery])
 
-  const { data: tokenSearch, isLoading: isTokenSearchLoading } = useTokenSearch({ address: debouncedQuery })
-  const { data: tokenList, isLoading: isTokenListLoading } = useTokenList(filter)
+  const { data: tokenSearch } = useTokenSearch({ address: debouncedQuery })
+  const { data: tokenList } = useTokenList(filter)
   const { data: popularTokensList, isLoading: isPopularListLoading } = useTokenList(
     // TODO: we should have ETH as an option...
     useMemo(() => [...COMMON_BASES[network1].map((t) => t.wrapped.address)], [network1])
@@ -68,13 +68,18 @@ export const SearchPanel: FC = () => {
   return (
     <Dialog variant="opaque" open={open} onClose={onClose} className="fixed inset-0 z-[1080]">
       <div>
-        <Search id="search-input" loading={isLoading} onChange={setQuery} value={query ?? ''} />
+        <div className="flex items-center gap-4">
+          <Search id="search-input" loading={isLoading} onChange={setQuery} value={query ?? ''} />
+          <Button variant="empty" onClick={onClose} size="md" className="px-0">
+            Cancel
+          </Button>
+        </div>
         <div className="scroll relative">
           {query && query.length > 2 && (
             <List className="pt-6">
               <List.Label className="text-sm">{Chain.from(network1).name}</List.Label>
               <List.Control className="scroll max-h-[368px] !p-1">
-                {isLoading || isTokenSearchLoading || isTokenListLoading ? (
+                {isLoading ? (
                   <RowSkeleton />
                 ) : currentNetworkResults?.length > 0 ? (
                   currentNetworkResults.map((el, i) => (
@@ -92,7 +97,7 @@ export const SearchPanel: FC = () => {
             <List className="pt-6">
               <List.Label className="text-sm">Other networks</List.Label>
               <List.Control className="scroll max-h-[368px] !p-1">
-                {isLoading || isTokenSearchLoading || isTokenListLoading ? (
+                {isLoading ? (
                   <RowSkeleton />
                 ) : otherNetworkResults.length > 0 ? (
                   otherNetworkResults.map((el, i) => (
