@@ -1,4 +1,5 @@
 import defaultNextConfig from '@sushiswap/nextjs-config'
+import { withAxiom } from 'next-axiom'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -29,4 +30,4 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+export default withAxiom(nextConfig)

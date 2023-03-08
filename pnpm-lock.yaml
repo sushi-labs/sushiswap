@@ -1190,6 +1190,7 @@ importers:
       ethers: ^5.7.0
       nanoid: 4.0.0
       next: 13.2.3
+      next-axiom: 0.17.0
       next-seo: 5.15.0
       numeral: 2.0.6
       postcss: 8.4.21
@@ -1238,6 +1239,7 @@ importers:
       ethers: 5.7.2
       nanoid: 4.0.0
       next: 13.2.3_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.17.0_next@13.2.3
       next-seo: 5.15.0_nvzgbose6yf6w7ijjprgspqefi
       numeral: 2.0.6
       react: 18.2.0
@@ -23923,7 +23925,7 @@ packages:
     dev: false
 
   /lodash.topath/4.5.2:
-    resolution: {integrity: sha1-NhY1Hzu6YZlKCTGYlmC9AyVP0Ak=}
+    resolution: {integrity: sha512-1/W4dM+35DwvE/iEd1M9ekewOSTlpFekhw9mhAtrwjVqUr83/ilQiyAvmg4tVX7Unkcfl1KC+i9WdaT4B6aQcg==}
 
   /lodash.truncate/4.4.2:
     resolution: {integrity: sha512-jttmRe7bRse52OsWIMDLaXxWqRAmtIUccAQ3garviCqJjafXOfNMO0yMfNpdD6zbGaTU0P5Nz7e7gAT6cKmJRw==}
@@ -25243,6 +25245,16 @@ packages:
     resolution: {integrity: sha512-dBpDMdxv9Irdq66304OLfEmQ9tbNRFnFTuZiLo+bD+r332bBmMJ8GBLXklIXXgxd3+v9+KUnZaUR5PJMa75Gsg==}
     engines: {node: '>= 0.4.0'}
     dev: true
+
+  /next-axiom/0.17.0_next@13.2.3:
+    resolution: {integrity: sha512-qFdnH50SvRjJUAmNjGIYLcRc4tO/U4R1h9WUuniiwaucXAH5KhL06m7TT3WWD2U1HbulwSfC0R+NlPASOx1XlQ==}
+    engines: {node: '>=15'}
+    peerDependencies:
+      next: ^12.1.4 || ^13
+    dependencies:
+      next: 13.2.3_biqbaboplfbrettd7655fr4n2y
+      whatwg-fetch: 3.6.2
+    dev: false
 
   /next-seo/5.15.0_nvzgbose6yf6w7ijjprgspqefi:
     resolution: {integrity: sha512-LGbcY91yDKGMb7YI+28n3g+RuChUkt6pXNpa8FkfKkEmNiJkeRDEXTnnjVtwT9FmMhG6NH8qwHTelGrlYm9rgg==}
@@ -27310,7 +27322,7 @@ packages:
       utf8: 3.0.0
 
   /react-native-path/0.0.5:
-    resolution: {integrity: sha1-oE5Lc6U1qKfPFcbnYOJ9t3ia+xM=}
+    resolution: {integrity: sha512-WJr256xBquk7X2O83QYWKqgLg43Zg3SrgjPc/kr0gCD2LoXA+2L72BW4cmstH12GbGeutqs/eXk3jgDQ2iCSvQ==}
 
   /react-onclickoutside/6.12.2_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-NMXGa223OnsrGVp5dJHkuKxQ4czdLmXSp5jSV9OqiCky9LOpPATn3vLldc+q5fK3gKbEHvr7J1u0yhBh/xYkpA==}

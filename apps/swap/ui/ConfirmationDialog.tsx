@@ -22,6 +22,7 @@ import { Chain } from '@sushiswap/chain'
 import { isRouteProcessorChainId, routeProcessorAddress, RouteProcessorChainId } from '@sushiswap/route-processor'
 import { createErrorToast } from '@sushiswap/ui'
 import { swapErrorToUserReadableMessage } from '../lib/swapErrorToUserReadableMessage'
+import { log } from 'next-axiom'
 
 interface ConfirmationDialogProps {
   children({
@@ -48,7 +49,7 @@ enum ConfirmationDialogState {
 export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) => {
   const { address } = useAccount()
   const { setReview } = useSwapActions()
-  const { appType, network0, token0, token1, review } = useSwapState()
+  const { appType, network0, token0, token1, review, amount } = useSwapState()
   const { data: trade } = useTrade({ crossChain: false })
   const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
   const { mutate: storeNotification } = useCreateNotification({ account: address })
@@ -121,7 +122,12 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         .finally(() => refetchNetwork0Balances())
     },
     onSettled,
-    onError: (data) => createErrorToast(swapErrorToUserReadableMessage(data), false),
+    onError: (data) => {
+      log.error('Swap failed', {
+        trade,
+      })
+      createErrorToast(swapErrorToUserReadableMessage(data), false)
+    },
   })
 
   const onComplete = useCallback(() => {

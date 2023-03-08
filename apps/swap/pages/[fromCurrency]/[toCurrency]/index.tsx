@@ -33,7 +33,7 @@ export async function getStaticPaths() {
   }
 }
 
-const Page: FC = ({}: InferGetStaticPropsType<typeof getStaticProps>) => {
+export const Page: FC = ({}: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <>
       <NetworkCheck />
