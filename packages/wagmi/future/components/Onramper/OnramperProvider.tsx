@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useState } from 'react'
+import { Onramper } from '.'
 
 interface OnramperContext {
   open: boolean
@@ -19,6 +20,7 @@ export const OnramperProvider: FC<ProviderProps> = ({ children }) => {
   return (
     <OnramperContext.Provider value={{ open, setOpen }}>
       {typeof children === 'function' ? children({ open, setOpen }) : children}
+      <Onramper.Panel />
     </OnramperContext.Provider>
   )
 }

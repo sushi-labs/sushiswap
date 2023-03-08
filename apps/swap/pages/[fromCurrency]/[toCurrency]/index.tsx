@@ -48,9 +48,6 @@ const Page: FC = ({}: InferGetStaticPropsType<typeof getStaticProps>) => {
         {/*spacer for fixed positioned swap button */}
         <div className="h-[68px] w-full" />
       </Container>
-
-      {/*lossless component that can be triggered using Onramper.Button*/}
-      <Onramper.Panel />
     </>
   )
 }
