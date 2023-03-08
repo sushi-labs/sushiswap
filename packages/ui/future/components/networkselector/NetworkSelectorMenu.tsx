@@ -1,7 +1,7 @@
 import { Popover, Transition } from '@headlessui/react'
 import chains from '@sushiswap/chain'
 import classNames from 'classnames'
-import React, { FC, useState } from 'react'
+import React, { useState } from 'react'
 
 import { NetworkIcon } from '../icons'
 import { Search } from '../input/Search'
@@ -33,13 +33,14 @@ export const NetworkSelectorMenu = <T extends number>({
               <div className="p-2 flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white dark:bg-slate-800">
                 <Popover.Panel>
                   <Search
-                    className="bg-gray-100 dark:bg-slate-700"
+                    className="!bg-gray-100 dark:!bg-slate-700"
                     id=""
                     value={query}
                     loading={false}
                     onChange={setQuery}
                   />
-                  <div className="py-2 max-h-[300px] scroll">
+                  <div className="h-px w-full bg-gray-100 mt-2" />
+                  <div className="pt-2 max-h-[300px] scroll">
                     {networks
                       .filter((el) => (query ? chains[el].name.toLowerCase().includes(query.toLowerCase()) : Boolean))
                       .map((el) => (

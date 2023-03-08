@@ -31,7 +31,7 @@ export const NetworkCheck: FC = () => {
 
   return (
     <Collapsible open={open}>
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-center bg-blue/20 text-blue-900 dark:text-blue-300 dark:bg-blue/25 w-full py-3 font-medium">
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-center bg-gray-200 border-gray-300 dark:bg-slate-800 text-gray-900 dark:text-slate-400 w-full py-3 font-medium border-b dark:border-slate-200/10">
         <p className="px-4">
           App network ({chainName?.[network0]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}){' '}
           {"doesn't"} match network selected in wallet (
