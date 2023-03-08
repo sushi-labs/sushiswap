@@ -21,6 +21,7 @@ import { nanoid } from 'nanoid'
 import { isUniswapV2FactoryChainId } from '@sushiswap/sushiswap'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
 import { SwapChainId } from 'types'
+import { useEffectDebugger } from '@sushiswap/hooks'
 
 export const queryParamsSchema = z.object({
   fromCurrency: z
@@ -467,12 +468,13 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setSearch,
       setBentoboxSignature,
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     push,
     query,
     state.network0,
     state.network1,
-    state.token0,
     state.token1?.chainId,
     state.token1?.isNative,
     state.token1?.symbol,
