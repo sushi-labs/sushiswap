@@ -40,6 +40,10 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function 
             'font-medium w-full bg-transparent !p-0 placeholder:font-medium placeholder:text-gray-400 placeholder:dark:text-slate-500 text-gray-900 dark:text-slate-200',
             DEFAULT_INPUT_NO_RINGS
           )}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
         />
       ) : (
         <input
