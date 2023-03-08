@@ -49,8 +49,8 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
               <Currency.Icon currency={token1} />
             </Currency.IconList>
             <div className="flex flex-col">
-              <Typography variant="sm" weight={500} className="flex gap-1 text-slate-50">
-                {token0.symbol} <span className="text-slate-500">/</span> {token1.symbol}
+              <Typography variant="sm" weight={500} className="flex gap-1 text-gray-900 dark:text-slate-50">
+                {token0.symbol} <span className="text-gray-900 dark:text-slate-500">/</span> {token1.symbol}
               </Typography>
               {/* <Typography variant="xxs" className="text-slate-400">
                 SushiSwap Farm
@@ -75,26 +75,26 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
           </Typography>
         </div>
         <div className="flex flex-col gap-1">
-          <Typography variant="sm" weight={600} className="flex gap-3 text-slate-50">
+          <Typography variant="sm" weight={600} className="flex gap-3 text-gray-900 dark:text-slate-50">
             <span className="text-slate-400">APR:</span> {formatPercent(row.pool.totalApr)}
           </Typography>
-          <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-slate-50">
+          <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-gray-900 dark:text-slate-50">
             <span className="text-slate-400">Rewards:</span> {formatPercent(row.pool.incentiveApr)}
           </Typography>
-          <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-slate-50">
+          <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-gray-900 dark:text-slate-50">
             <span className="text-slate-400">Fees:</span> {formatPercent(row.pool.feeApr)}
           </Typography>
         </div>
       </div>
       <hr className="my-3 border-t border-slate-200/10" />
       <div className="flex flex-col gap-1.5">
-        <Typography variant="xs" className="mb-1 text-slate-500">
+        <Typography variant="xs" className="mb-1 text-gray-900 dark:text-slate-500">
           Position
         </Typography>
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Currency.Icon currency={token0} width={18} height={18} />
-            <Typography variant="sm" weight={600} className="text-slate-50">
+            <Typography variant="sm" weight={600} className="text-gray-900 dark:text-slate-50">
               {underlying0?.toSignificant(6) || '0.00'} {token0?.symbol}
             </Typography>
           </div>
@@ -105,7 +105,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Currency.Icon currency={token1} width={18} height={18} />
-            <Typography variant="sm" weight={600} className="text-slate-50">
+            <Typography variant="sm" weight={600} className="text-gray-900 dark:text-slate-50">
               {underlying1?.toSignificant(6) || '0.00'} {token1?.symbol}
             </Typography>
           </div>
@@ -116,13 +116,13 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
       </div>
       {row.pool.incentives && (
         <div className="flex flex-col gap-1.5 mt-4">
-          <Typography variant="xs" className="mb-1 text-slate-500">
+          <Typography variant="xs" className="mb-1 text-gray-900 dark:text-slate-500">
             Staked Position
           </Typography>
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <Currency.Icon currency={token0} width={18} height={18} />
-              <Typography variant="sm" weight={600} className="text-slate-50">
+              <Typography variant="sm" weight={600} className="text-gray-900 dark:text-slate-50">
                 {stakedUnderlying0?.toSignificant(6) || '0.00'} {token0?.symbol}
               </Typography>
             </div>
@@ -133,7 +133,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <Currency.Icon currency={token1} width={18} height={18} />
-              <Typography variant="sm" weight={600} className="text-slate-50">
+              <Typography variant="sm" weight={600} className="text-gray-900 dark:text-slate-50">
                 {stakedUnderlying1?.toSignificant(6) || '0.00'} {token1?.symbol}
               </Typography>
             </div>
@@ -145,14 +145,14 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
       )}
       {row.pool.incentives && pendingRewards.length > 0 && (
         <div className="flex flex-col gap-1.5 mt-4">
-          <Typography variant="xs" className="mb-1 text-slate-500">
+          <Typography variant="xs" className="mb-1 text-gray-900 dark:text-slate-500">
             Farmed Rewards
           </Typography>
           {pendingRewards.map((reward, index) => (
             <div className="flex items-center justify-between gap-2" key={index}>
               <div className="flex items-center gap-2">
                 <Currency.Icon currency={rewardTokens[index]} width={18} height={18} />
-                <Typography variant="sm" weight={600} className="text-slate-50">
+                <Typography variant="sm" weight={600} className="text-gray-900 dark:text-slate-50">
                   {reward?.toSignificant(6) || '0.00'} {rewardTokens[index]?.symbol}
                 </Typography>
               </div>

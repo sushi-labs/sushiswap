@@ -28,7 +28,7 @@ const _PairValueCell: FC<Row<PositionWithPool>> = ({ row }) => {
   const valueUSD = (Number(row.balance) / Number(row.pool.totalSupply)) * Number(row.pool.liquidityUSD)
 
   return (
-    <Typography variant="sm" weight={600} className="text-right text-slate-50">
+    <Typography variant="sm" weight={600} className="text-right text-gray-900 dark:text-slate-50">
       {formatUSD(valueUSD)}
     </Typography>
   )
