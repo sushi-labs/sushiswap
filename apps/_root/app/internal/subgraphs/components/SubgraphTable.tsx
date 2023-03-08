@@ -1,11 +1,13 @@
+'use client'
+
 import { RefreshIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { formatNumber, formatPercent } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { CheckIcon, NetworkIcon, Tooltip } from '@sushiswap/ui'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { GenericTable } from 'components/Table'
-import { Subgraph } from 'lib'
+import { GenericTable } from '@sushiswap/ui/table'
+import { Subgraph } from '../lib'
 
 interface SubgraphTable {
   subgraphs: Subgraph[]
@@ -111,10 +113,12 @@ export function SubgraphTable({ subgraphs, groupBy }: SubgraphTable) {
   })
 
   return (
-    <GenericTable
+    // @ts-ignore
+    <GenericTable<Subgraph>
       table={table}
       // @ts-ignore
       columns={columns}
+      pageSize={20}
       getLink={(row) => `https://thegraph.com/hosted-service/subgraph/${row.subgraphName}`}
     />
   )

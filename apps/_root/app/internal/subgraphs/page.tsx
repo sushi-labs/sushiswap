@@ -1,28 +1,13 @@
+'use client'
+
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { useDebounce } from '@sushiswap/hooks'
 import { Checkbox, Loader } from '@sushiswap/ui'
-import { SubgraphTable } from 'components/subgraphs/SubgraphTable'
-import stringify from 'fast-json-stable-stringify'
-import { Subgraph } from 'lib'
+import { SubgraphTable } from './components/SubgraphTable'
+import { getSubgraphs, Subgraph } from './lib'
 import { useMemo, useState } from 'react'
 import useSWR from 'swr'
-
-const fetcher = async ({
-  url,
-  args,
-}: {
-  url: string
-  args: {
-    filter: string
-  }
-}) => {
-  const _url = new URL(url, window.location.origin)
-
-  return fetch(_url.href + '?' + new URLSearchParams(args))
-    .then((res) => res.json())
-    .then((data: Subgraph[]) => data)
-    .catch((e) => console.log(stringify(e)))
-}
+import stringify from 'fast-json-stable-stringify'
 
 const SubgraphsPage = () => {
   const [filterBy, setFilter] = useState<string>('')
@@ -30,10 +15,11 @@ const SubgraphsPage = () => {
   const [groupBy, setGroupBy] = useState<keyof Subgraph>('category')
   const [blocks, setBlocks] = useState<{ title: string; subgraphs: Subgraph[] }[]>([])
 
-  const { data, isValidating } = useSWR(
-    { url: '/internal/api/subgraphs', args: { filter: debouncedFilterBy } },
-    fetcher
+  const { data, isValidating, error } = useSWR(stringify(['subgraphs', debouncedFilterBy]), () =>
+    getSubgraphs({ filter: debouncedFilterBy })
   )
+
+  console.log(data, error)
 
   const subgraphs = useMemo(() => data || [], [data])
 
@@ -81,8 +67,8 @@ const SubgraphsPage = () => {
             </div>
           </div>
           <div className="flex flex-col items-center w-full space-y-6">
-            {blocks.map((block) => (
-              <div key={block.title} className="space-y-2">
+            {blocks.map((block, i) => (
+              <div key={i} className="space-y-2">
                 <div>{block.title}</div>
                 <SubgraphTable subgraphs={block.subgraphs} groupBy={groupBy} />
               </div>

@@ -7,47 +7,20 @@ import { classNames, DEFAULT_INPUT_UNSTYLED, Network } from '@sushiswap/ui'
 import { TokenTable } from './components/TokenTable'
 import { TOKENS_SUPPORTED_CHAIN_IDS } from './config'
 import stringify from 'fast-json-stable-stringify'
-import { Token } from './lib'
+import { getTokens, Token } from './lib'
 import { FC, useState } from 'react'
 import useSWR from 'swr'
 
-const fetcher = ({
-  url,
-  args,
-}: {
-  url: string
-  args: {
-    chainIds: ChainId[]
-    filter: string
-  }
-}) => {
-  const _url = new URL(url, window.location.origin)
-
-  if (args.chainIds) {
-    _url.searchParams.set('chainIds', stringify(args.chainIds))
-  }
-
-  if (args.filter) {
-    _url.searchParams.set('filter', stringify(args.filter))
-  }
-
-  return fetch(_url.href)
-    .then((res) => res.json())
-    .catch((e) => console.log(stringify(e)))
-}
-
 const TokensPage: FC = () => {
   const [filter, setFilter] = useState<string>('')
-  const [chainIds, setChainIds] = useState<ChainId[]>(TOKENS_SUPPORTED_CHAIN_IDS)
+  const [chainIds, setChainIds] = useState<ChainId[]>([ChainId.ETHEREUM])
   const debouncedFilter = useDebounce(filter, 400)
 
-  const { data: tokens } = useSWR<Token[]>(
-    {
-      url: '/internal/api/tokens',
-      args: { filter: debouncedFilter, chainIds },
-    },
-    fetcher
+  const { data: tokens } = useSWR<Token[]>(stringify(['tokens', debouncedFilter, chainIds]), () =>
+    getTokens({ chainIds, filter: debouncedFilter })
   )
+
+  console.log(tokens)
 
   return (
     <div className="flex flex-col gap-10 md:gap-16">

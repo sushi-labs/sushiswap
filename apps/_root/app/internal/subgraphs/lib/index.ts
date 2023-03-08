@@ -11,7 +11,7 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { getBuiltGraphSDK } from '.graphclient'
+import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 
 export type Subgraph = Awaited<ReturnType<typeof getSubgraphs>>[0]
 
@@ -31,7 +31,7 @@ const CATEGORIES = {
 } as const
 
 type CategoryKey = keyof typeof CATEGORIES
-type Category = typeof CATEGORIES[CategoryKey]
+type Category = (typeof CATEGORIES)[CategoryKey]
 
 const NODE_URLS: Record<number, string> = {
   ...Object.keys(SUBGRAPH_HOST)
@@ -60,7 +60,7 @@ const parseCategories = () => {
         // @ts-ignore
         Object.keys(CATEGORIES[categoryKey]).map(
           // @ts-ignore
-          (chainKey: keyof typeof CATEGORIES['BENTOBOX']) => ({
+          (chainKey: keyof (typeof CATEGORIES)['BENTOBOX']) => ({
             chainId: Number(String(chainKey).split('-')[0]),
             // @ts-ignore
             subgraphName: CATEGORIES[categoryKey][chainKey] as string,

@@ -2,7 +2,7 @@ import { XIcon } from '@heroicons/react/solid'
 import { Token as TokenEntity } from '@sushiswap/currency'
 import { CheckIcon, Currency, Loader, Menu, Typography } from '@sushiswap/ui'
 import stringify from 'fast-json-stable-stringify'
-import { Token, TokenLogo } from 'lib'
+import { getTokenLogos, Token, TokenLogo } from './../lib'
 import Image from 'next/legacy/image'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
@@ -16,9 +16,7 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
   const [selectedLogoURI, setSelectedLogoURI] = useState<string>()
   const [addState, setAddState] = useState<'ready' | 'submitting' | 'error'>('ready')
 
-  const { data: tokenLogos } = useSWR<TokenLogo[]>('tokenLogos', () =>
-    fetch('/internal/api/tokens/tokenLogos').then((data) => data.json())
-  )
+  const { data: tokenLogos } = useSWR<TokenLogo[]>('tokenLogos', () => getTokenLogos())
 
   const _token = useMemo(
     () =>
@@ -49,7 +47,7 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
             })
           })
 
-        const result = await fetch(process.env.NEXT_PUBLIC_PARTNER_URL + '/partner/api/submitToken', {
+        const result = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/partner/api/submitToken', {
           headers: {
             Accept: '*/*',
             'Content-Type': 'application/json',
