@@ -7,7 +7,7 @@ import { List } from '@sushiswap/ui/future/components/list/List'
 import { usePrice, useTokenList, useTokenSearch } from '@sushiswap/react-query'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
-import { classNames } from '@sushiswap/ui'
+import { Button, classNames } from '@sushiswap/ui'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
@@ -68,7 +68,12 @@ export const SearchPanel: FC = () => {
   return (
     <Dialog variant="opaque" open={open} onClose={onClose} className="fixed inset-0 z-[1080]">
       <div>
-        <Search id="search-input" loading={isLoading} onChange={setQuery} value={query ?? ''} />
+        <div className="flex items-center gap-4">
+          <Search id="search-input" loading={isLoading} onChange={setQuery} value={query ?? ''} />
+          <Button variant="empty" onClick={onClose} size="md" className="px-0">
+            Cancel
+          </Button>
+        </div>
         <div className="scroll relative">
           {query && query.length > 2 && (
             <List className="pt-6">

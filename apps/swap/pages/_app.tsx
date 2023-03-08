@@ -10,6 +10,7 @@ import { AppProps } from 'next/app'
 import { ToastContainer } from '@sushiswap/ui/future/components/toast'
 import { SwapProvider } from 'ui/trade/TradeProvider'
 import { Onramper } from '@sushiswap/wagmi/future/components'
+import { SplashController } from '../ui/SplashController'
 
 export { reportWebVitals } from 'next-axiom'
 
@@ -26,10 +27,12 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       <WagmiProvider>
         <PersistQueryClientProvider>
           <SwapProvider>
+            {/*<SplashController>*/}
             <Onramper.Provider>
               <Header />
               <Component {...pageProps} />
             </Onramper.Provider>
+            {/*</SplashController>*/}
           </SwapProvider>
           <ToastContainer />
         </PersistQueryClientProvider>

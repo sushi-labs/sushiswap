@@ -66,7 +66,7 @@ export const WidgetTitleV2 = () => {
           className="text-sm flex items-center gap-1 font-bold text-gray-600 dark:text-slate-400 hover:text-blue cursor-pointer"
         >
           <ArrowTrendingUpIcon width={16} height={16} />
-          <span className="flex items-baseline gap-1">
+          <span className="flex items-baseline gap-1 whitespace-nowrap scroll hide-scrollbar">
             1 {invert ? token0.symbol : token1.symbol}{' '}
             <span className="font-normal text-xs">(${invert ? inputUSD : outputUSD})</span> = {price}{' '}
             {invert ? token1.symbol : token0.symbol}{' '}
