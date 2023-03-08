@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { ConstantProductRPool, RPool, RToken, setTokenId } from './PrimaryPools'
+import { ConstantProductRPool, DefaultPoolState, PoolState, RPool, RToken, setTokenId } from './PrimaryPools'
 import { StableSwapRPool } from './StableSwapPool'
 import { ASSERT, closeValues, DEBUG, getBigNumber } from './Utils'
 
@@ -18,6 +18,13 @@ export interface RouteLeg {
 
   swapPortion: number // for router contract
   absolutePortion: number // to depict at webpage for user
+}
+
+function testeq(a: number, b: number) {
+  if (Math.abs(a / b - 1) > 1e-12) {
+    console.error('Different values !!!! ', a, b)
+    debugger
+  }
 }
 
 export enum RouteStatus {
@@ -55,7 +62,9 @@ export class Edge {
   pool: RPool
   vert0: Vertice
   vert1: Vertice
+  vertices: Vertice[]
 
+  poolState?: PoolState
   canBeUsed: boolean
   direction: boolean
   amountInPrevious: number // How many liquidity were passed from vert0 to vert1
@@ -68,6 +77,7 @@ export class Edge {
     this.pool = p
     this.vert0 = v0
     this.vert1 = v1
+    this.vertices = [v0, v1]
     this.amountInPrevious = 0
     this.amountOutPrevious = 0
     this.canBeUsed = true
@@ -129,6 +139,10 @@ export class Edge {
 
     // this.testApply(v, amountIn, out);
 
+    const v2 = this.pool.calcOutput(v === this.vert0 ? 0 : 1, v === this.vert0 ? 1 : 0, amountIn, this.poolState)
+    testeq(-v2.amountOut, res)
+    testeq(gas, v2.gasSpent)
+
     return { out: res, gasSpent: gas - this.spentGas }
   }
 
@@ -169,6 +183,10 @@ export class Edge {
     }
 
     // this.testApply(v, amountIn, out);
+
+    const v2 = this.pool.calcOutput(v === this.vert0 ? 0 : 1, v === this.vert0 ? 1 : 0, -amountOut, this.poolState)
+    testeq(v2.amountOut, res)
+    testeq(gas, v2.gasSpent)
 
     return { inp: res, gasSpent: gas - this.spentGas }
   }
@@ -250,8 +268,24 @@ export class Edge {
         this.amountInPrevious = -inNew
         this.amountOutPrevious = -outNew
       }
+
+      if (from == this.vert0)
+        this.poolState = this.pool.applyChanges(0, from.bestIncome, 1, -to.bestIncome, this.spentGasNew, this.poolState)
+      else
+        this.poolState = this.pool.applyChanges(0, -to.bestIncome, 1, from.bestIncome, this.spentGasNew, this.poolState)
     } else console.error('Error 221')
     this.spentGas = this.spentGasNew
+
+    const state = this.poolState as DefaultPoolState
+    if (this.direction) {
+      testeq(this.amountInPrevious, state.flow[0])
+      testeq(this.amountOutPrevious, -state.flow[1])
+      testeq(this.spentGas, state.gasSpent)
+    } else {
+      testeq(this.amountInPrevious, -state.flow[0])
+      testeq(this.amountOutPrevious, state.flow[1])
+      testeq(this.spentGas, state.gasSpent)
+    }
 
     ASSERT(() => {
       if (this.direction) {
@@ -872,6 +906,7 @@ export class Graph {
       e.amountInPrevious = 0
       e.amountOutPrevious = 0
       e.direction = true
+      e.poolState = undefined
     })
     let output = 0
     let gasSpentInit = 0
@@ -963,6 +998,7 @@ export class Graph {
       e.amountInPrevious = 0
       e.amountOutPrevious = 0
       e.direction = true
+      e.poolState = undefined
     })
     let input = 0
     let gasSpentInit = 0

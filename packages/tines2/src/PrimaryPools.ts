@@ -17,6 +17,14 @@ export function setTokenId(...tokens: RToken[]) {
   })
 }
 
+export interface PoolState {
+  gasSpent: number
+}
+
+export interface DefaultPoolState extends PoolState {
+  flow: number[]
+}
+
 export abstract class RPool {
   readonly address: string
   readonly tokens: RToken[]
@@ -56,14 +64,98 @@ export abstract class RPool {
   abstract calcCurrentPriceWithoutFee2(direction: boolean): number
 
   // new interface
-  calcOutByIn(from: number, to: number, amountIn: number): { out: number; gasSpent: number } {
-    if (from > 1 || to > 1 || from == to) throw new Error(`unsupported calcOutByIn ${from} => ${to}`)
-    return this.calcOutByIn2(amountIn, from < to)
+  getNewState(
+    from: number,
+    to: number,
+    amountIn: number,
+    statePrev?: PoolState
+  ): { amountOut: number; newState: PoolState } {
+    if (from > 1 || to > 1 || from == to) throw new Error(`unsupported getNewState ${from} => ${to}`)
+    const state: DefaultPoolState =
+      statePrev !== undefined
+        ? { flow: (statePrev as DefaultPoolState).flow.slice(), gasSpent: statePrev.gasSpent }
+        : {
+            flow: this.tokens.map(() => 0),
+            gasSpent: 0,
+          }
+    const newInput = (state.flow[from] += amountIn)
+    if (newInput >= 0) {
+      const res = this.calcOutByIn2(newInput, from < to)
+      const amountOut = res.out + state.flow[to]
+      state.flow[to] = -res.out
+      state.gasSpent = res.gasSpent
+      console.assert(amountOut >= 0, 'Wrong pool output0 value: ' + amountOut)
+      return { amountOut, newState: state }
+    } else {
+      const res = this.calcInByOut2(-newInput, from < to)
+      const amountOut = state.flow[to] - res.inp
+      state.flow[to] = res.inp
+      state.gasSpent = res.gasSpent
+      console.assert(amountOut >= 0, 'Wrong pool output1 value: ' + amountOut)
+      return { amountOut, newState: state }
+    }
   }
-  calcInByOut(from: number, to: number, amountIn: number): { inp: number; gasSpent: number } {
-    if (from > 1 || to > 1 || from == to) throw new Error(`unsupported calcInByOut ${from} => ${to}`)
-    return this.calcInByOut2(amountIn, from < to)
+  calcOutput(
+    from: number,
+    to: number,
+    amountIn: number,
+    statePrev?: PoolState
+  ): { amountOut: number; gasSpent: number } {
+    if (from > 1 || to > 1 || from == to) throw new Error(`unsupported calcOutput ${from} => ${to}`)
+    if (statePrev === undefined) {
+      if (amountIn > 0) {
+        const res = this.calcOutByIn2(amountIn, from < to)
+        return { amountOut: -res.out, gasSpent: res.gasSpent }
+      } else {
+        const res = this.calcInByOut2(-amountIn, to < from)
+        return { amountOut: res.inp, gasSpent: res.gasSpent }
+      }
+    } else {
+      const state = statePrev as DefaultPoolState
+      const newInput = state.flow[from] + amountIn
+      let amountOut = 0,
+        gasSpent = 0
+      if (newInput >= 0) {
+        const res = this.calcOutByIn2(newInput, from < to)
+        amountOut = -res.out - state.flow[to]
+        gasSpent = res.gasSpent
+      } else {
+        const res = this.calcInByOut2(-newInput, to < from)
+        amountOut = res.inp - state.flow[to]
+        gasSpent = res.gasSpent
+      }
+      console.assert(amountOut * amountIn <= 0, 'Wrong pool output1 value: ' + amountIn + '->' + amountOut)
+      return { amountOut, gasSpent }
+    }
   }
+  applyChanges(
+    from: number,
+    fromDelta: number,
+    to: number,
+    toDelta: number,
+    gasSpent: number,
+    statePrev?: PoolState
+  ): PoolState {
+    const state: DefaultPoolState =
+      statePrev !== undefined
+        ? (statePrev as DefaultPoolState)
+        : {
+            flow: this.tokens.map(() => 0),
+            gasSpent: 0,
+          }
+    state.flow[from] += fromDelta
+    state.flow[to] += toDelta
+    state.gasSpent = gasSpent
+    return state
+  }
+  // calcOutByIn(from: number, to: number, amountIn: number): { out: number; gasSpent: number } {
+  //   if (from > 1 || to > 1 || from == to) throw new Error(`unsupported calcOutByIn ${from} => ${to}`)
+  //   return this.calcOutByIn2(amountIn, from < to)
+  // }
+  // calcInByOut(from: number, to: number, amountIn: number): { inp: number; gasSpent: number } {
+  //   if (from > 1 || to > 1 || from == to) throw new Error(`unsupported calcInByOut ${from} => ${to}`)
+  //   return this.calcInByOut2(amountIn, from < to)
+  // }
   calcCurrentPriceWithoutFee(from: number, to: number): number {
     if (from > 1 || to > 1 || from == to) throw new Error(`unsupported calcInByOut ${from} => ${to}`)
     return this.calcCurrentPriceWithoutFee2(from < to)
