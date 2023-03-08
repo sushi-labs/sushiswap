@@ -352,8 +352,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     }
   }
 
-  fetchPoolsForToken(t0: Token, t1: Token): void {
-    this.getOnDemandPools(t0, t1)
+  async fetchPoolsForToken(t0: Token, t1: Token): Promise<void> {
+    await this.getOnDemandPools(t0, t1)
   }
 
   /**

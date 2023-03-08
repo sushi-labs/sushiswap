@@ -81,12 +81,6 @@ server.get('/v0', async (request) => {
   if (!dataFetcher) {
     throw new Error(`Unsupported chainId ${chainId}`)
   }
-  const dataFetcherStartTime = performance.now()
-  dataFetcher.fetchPoolsForToken(fromToken, toToken)
-  const dataFetcherEndTime = performance.now()
-  console.log(
-    `dataFetcher.fetchPoolsForToken(fromToken, toToken) (${(dataFetcherEndTime - dataFetcherStartTime).toFixed(0)} ms) `
-  )
   const routeStartTime = performance.now()
   const poolCodesMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
 
@@ -99,17 +93,30 @@ server.get('/v0', async (request) => {
     gasPrice ?? 30e9
   )
 
-  console.log('ROUTE WITH RESERVES:')
-  for (const leg of bestRoute.legs) {
-    const p = poolCodesMap.get(leg.poolAddress)
-    if (p) {
-      console.log(
-        `${p.pool.address} ${p.pool.token0.symbol}/${p.pool.token1.symbol}, r0: ${p.pool.reserve0} r1: ${p.pool.reserve1}`
-      )
-    } else {
-      console.log('pool not found')
-    }
+  if (bestRoute.status !== 'NoWay') {
+    dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  } else {
+    const dataFetcherStartTime = performance.now()
+    await dataFetcher.fetchPoolsForToken(fromToken, toToken)
+    const dataFetcherEndTime = performance.now()
+    console.log(
+      `dataFetcher.fetchPoolsForToken(fromToken, toToken) (${(dataFetcherEndTime - dataFetcherStartTime).toFixed(
+        0
+      )} ms) `
+    )
   }
+
+  // console.log('ROUTE:')
+  // for (const leg of bestRoute.legs) {
+  //   const p = poolCodesMap.get(leg.poolAddress)
+  //   if (p) {
+  //     console.log(
+  //       `${p.pool.address} ${p.pool.token0.symbol}/${p.pool.token1.symbol}, r0: ${p.pool.reserve0} r1: ${p.pool.reserve1}`
+  //     )
+  //   } else {
+  //     console.log('pool not found')
+  //   }
+  // }
 
   const routeEndTime = performance.now()
   console.log(`findSpecialRoute(..) (${(routeEndTime - routeStartTime).toFixed(0)} ms) `)
