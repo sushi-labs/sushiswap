@@ -54,7 +54,7 @@ const LINKS: BreadcrumbLink[] = [
 // It may be called again, on a serverless function, if
 // revalidation is enabled and a new request comes in
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const chainId = params?.add?.[0] ? (parseInt(params?.add?.[0] as string) as ChainId) : ChainId.ETHEREUM
+  const chainId = params?.chainId ? (parseInt(params.chainId as string) as ChainId) : ChainId.ETHEREUM
   return {
     props: {
       chainId,
@@ -68,7 +68,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 export const getStaticPaths: GetStaticPaths = async () => {
   // Get the paths we want to pre-render based on supported chain ids
   const paths = SUPPORTED_CHAIN_IDS.map((chainId) => ({
-    params: { add: [chainId.toString()] },
+    params: { chainId: chainId.toString() },
   }))
 
   // We'll pre-render only these paths at build time.
@@ -77,8 +77,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   return { paths, fallback: false }
 }
 
-function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
-  console.log({ chainId: props.chainId })
+export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter()
   const [chainId, setChainId] = useState(props.chainId)
   const [fee, setFee] = useState(2)

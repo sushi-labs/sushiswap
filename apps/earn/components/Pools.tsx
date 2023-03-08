@@ -18,10 +18,10 @@ export const Pools: FC<{ filters?: Partial<PoolFilters>; isReady?: boolean }> = 
           </div>
           <div className="flex justify-end flex-grow not-prose">
             <div className="flex flex-col gap-3 w-full lg:w-[200px]">
-              <Link.Internal href={`/add/${chain?.id ? `/${chain.id}` : ''}`}>
+              <Link.Internal href={`/add${chain?.id ? `/${chain.id}` : ''}`}>
                 <Button
                   as="a"
-                  href={`/add/${chain?.id ? `/${chain.id}` : ''}`}
+                  href={`/add${chain?.id ? `/${chain.id}` : ''}`}
                   fullWidth
                   color="blue"
                   startIcon={<PlusIcon width={16} height={16} />}
