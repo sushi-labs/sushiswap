@@ -65,6 +65,12 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     args: trade?.writeArgs,
     enabled: Boolean(trade?.writeArgs) && appType === AppType.Swap && isRouteProcessorChainId(network0),
     overrides: trade?.overrides,
+    onError: (error) => {
+      log.error('Swap prepare failed', {
+        trade,
+        error,
+      })
+    },
   })
 
   const isWrap =
@@ -122,11 +128,12 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         .finally(() => refetchNetwork0Balances())
     },
     onSettled,
-    onError: (data) => {
+    onError: (error) => {
       log.error('Swap failed', {
         trade,
+        error,
       })
-      createErrorToast(swapErrorToUserReadableMessage(data), false)
+      createErrorToast(swapErrorToUserReadableMessage(error), false)
     },
   })
 
