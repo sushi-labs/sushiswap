@@ -35,7 +35,6 @@ export async function getStaticPaths() {
 export const Page: FC = ({}: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <>
-      <NetworkCheck />
       <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
         <Drawer.Root>
           <Widget />
