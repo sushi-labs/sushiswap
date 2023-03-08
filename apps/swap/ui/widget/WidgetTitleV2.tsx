@@ -63,7 +63,7 @@ export const WidgetTitleV2 = () => {
       ) : (
         <button
           onClick={() => setInvert((invert) => !invert)}
-          className="text-sm flex items-center gap-1 font-bold text-blue-600 hover:text-blue-800 cursor-pointer"
+          className="text-sm flex items-center gap-1 font-bold text-gray-600 dark:text-slate-400 hover:text-blue cursor-pointer"
         >
           <ArrowTrendingUpIcon width={16} height={16} />
           <span className="flex items-baseline gap-1">
