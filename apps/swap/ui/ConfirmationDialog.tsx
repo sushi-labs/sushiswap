@@ -51,7 +51,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const { setReview } = useSwapActions()
   const { appType, network0, token0, token1, review, amount } = useSwapState()
   const { data: trade } = useTrade({ crossChain: false })
-  const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
+  // const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
   const { mutate: storeNotification } = useCreateNotification({ account: address })
 
   const [open, setOpen] = useState(false)
@@ -141,7 +141,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         .wait()
         .then(() => setDialogState(ConfirmationDialogState.Success))
         .catch(() => setDialogState(ConfirmationDialogState.Failed))
-        .finally(() => refetchNetwork0Balances())
+      // .finally(() => refetchNetwork0Balances())
     },
     onSettled,
     onError: (error) => {
