@@ -73,7 +73,9 @@
         "XSWAP_URL",
         "DATABASE_URL",
         "EARN_DATABASE_URL",
-        "REDIS_URL"
+        "REDIS_URL",
+        "SWAP_API_V0_BASE_URL",
+        "AGGREGATOR_API_V0_BASE_URL"
       ]
     },
     "clean": {
@@ -152,7 +154,9 @@
         "PREVIEW_DATABASE_URL",
         "REDIS_URL",
         "DATABASE_URL",
-        "ALCHEMY_ID"
+        "ALCHEMY_ID",
+        "SWAP_API_V0_BASE_URL",
+        "AGGREGATOR_API_V0_BASE_URL"
       ],
       "cache": false,
       "persistent": true
