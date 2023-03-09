@@ -3,12 +3,11 @@ import Container from '@sushiswap/ui/future/components/Container'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import React, { FC } from 'react'
 
-import { TradeStats } from '../../../ui/trade/TradeStats'
-import { Widget } from '../../../ui/widget/Widget'
+import { TradeStats } from '../../../../../ui/trade/TradeStats'
+import { Widget } from '../../../../../ui/widget/Widget'
 import { Drawer } from '@sushiswap/ui/future/components/drawer'
-import { NetworkCheck } from '../../../ui/NetworkCheck'
-import { TokenNotFoundDialog } from '../../../ui/TokenNotFoundDialog'
-import { TradeReviewDialog } from '../../../ui/trade/TradeReviewDialog'
+import { TokenNotFoundDialog } from '../../../../../ui/TokenNotFoundDialog'
+import { TradeReviewDialog } from '../../../../../ui/trade/TradeReviewDialog'
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
