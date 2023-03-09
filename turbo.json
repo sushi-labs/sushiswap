@@ -47,7 +47,9 @@
         "storybook-static/**/*",
         "lib/**/*",
         "resolvers/**/*",
-        "transformers/**/*"
+        "transformers/**/*",
+        ".graphclient/**/*",
+        ".mesh/**/*"
       ],
       "dependsOn": [
         "^db:generate", 
@@ -117,7 +119,7 @@
         "typechain/**/*",
         "artifacts/**/*"
       ],
-      "cache": true
+      "cache": false
     },
     "lint": {
       "dependsOn": ["^build"],
@@ -136,9 +138,14 @@
       "persistent": true,
       "dependsOn": ["build"]
     },
+    
     "start": {
-      "dependsOn": [
-        "build"
+      "dependsOn": [        
+        "^db:generate", 
+        "^build", 
+        "db:generate", 
+        "generate",
+        "export"
       ],
       "env": [
         "PRODUCTION_DATABASE_URL",
