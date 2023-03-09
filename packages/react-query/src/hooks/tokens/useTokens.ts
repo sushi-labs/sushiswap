@@ -33,11 +33,12 @@ const hydrate = (data: Data, _chainId: ChainId) => {
 
 export const useTokens = ({ chainId }: UseTokensParams) => {
   return useQuery({
-    queryKey: ['tokens', { chainId }],
+    queryKey: ['https://tokens.sushi.com/v0'],
     queryFn: async () => {
       return fetch(`https://tokens.sushi.com/v0`).then((response) => response.json())
     },
     select: (data) => hydrate(data, chainId),
+    keepPreviousData: true,
     staleTime: 900, // 15 mins
     cacheTime: 86400 // 24hs
   })
