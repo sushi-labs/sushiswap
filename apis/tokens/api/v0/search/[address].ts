@@ -8,7 +8,7 @@ const schema = z.object({
 })
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
-  response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600')
+  response.setHeader('Cache-Control', 's-maxage=900, stale-while-revalidate=86400')
   const { address } = schema.parse(request.query)
   try {
     const tokens = await getTokensByAddress(address)
