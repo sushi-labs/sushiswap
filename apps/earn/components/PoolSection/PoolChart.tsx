@@ -47,11 +47,12 @@ export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
 
   const [xData, yData] = useMemo(() => {
     const data =
-      chartTimespans[chartPeriod] < chartTimespans[PoolChartPeriod.Week]
+      (chartTimespans[chartPeriod] < chartTimespans[PoolChartPeriod.Week]
         ? graphPair.hourSnapshots
-        : graphPair.daySnapshots
+        : graphPair.daySnapshots) || []
+
     const currentDate = Math.round(Date.now())
-    const [x, y]: [number[], number[]] = (data || []).reduce<[number[], number[]]>(
+    const [x, y]: [number[], number[]] = data.reduce<[number[], number[]]>(
       (acc, cur) => {
         if (cur.date * 1000 >= currentDate - chartTimespans[chartPeriod]) {
           acc[0].push(cur.date)
