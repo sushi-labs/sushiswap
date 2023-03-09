@@ -36,7 +36,8 @@ class Token {
 
 export async function main() {
   const client = await createClient()
-  const token = new Token(56288, '0x4a2c2838c3907D024916c3f4Fe07832745Ae4bec', 'APPROVED')
+  // const token = new Token(56288, '0x4a2c2838c3907D024916c3f4Fe07832745Ae4bec', 'APPROVED')
+  const token = new Token(1, '0x0', 'DISAPPROVED')
   try {
     const foundToken = await client.token.findFirst({
       where: {
