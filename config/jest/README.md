@@ -1,3 +1,0 @@
-# Jest Config
-
-...
