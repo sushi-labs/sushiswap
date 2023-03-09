@@ -17,12 +17,12 @@ export function setTokenId(...tokens: RToken[]) {
   })
 }
 
-export interface PoolState {
-  gasSpent: number
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface PoolState {}
 
 export interface DefaultPoolState extends PoolState {
   flow: number[]
+  gasSpent: number
 }
 
 export abstract class RPool {
@@ -81,11 +81,11 @@ export abstract class RPool {
       if (newInput >= 0) {
         const res = this.calcOutByIn2(newInput, from < to)
         diff = -res.out - state.flow[to]
-        gasSpent = res.gasSpent
+        gasSpent = res.gasSpent - state.gasSpent
       } else {
         const res = this.calcInByOut2(-newInput, to < from)
         diff = res.inp - state.flow[to]
-        gasSpent = res.gasSpent
+        gasSpent = res.gasSpent - state.gasSpent
       }
       console.assert(diff * amountIn <= 0, 'Wrong pool output1 value: ' + amountIn + '->' + diff)
       return { diff, gasSpent }
