@@ -1,0 +1,166 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "CI",
+    "NODE_ENV",
+    "ALCHEMY_ID",
+    "GITHUB_TOKEN",
+    "NEXT_PUBLIC_ALCHEMY_ID"
+  ],
+  "globalDependencies": [
+    ".eslintignore",
+    ".eslint.js",
+    ".npmrc",
+    ".nvmrc",
+    ".prettierignore",
+    ".prettierrc.js",
+    "tsconfig.json"
+  ],
+  "pipeline": {
+    "anvil": {
+      "cache": false,
+      "env": [
+        "ANVIL_BLOCK_NUMBER", 
+        "ANVIL_FORK_URL"
+      ],
+      "persistent": true
+    },
+    "blog#build": {
+      "dependsOn": ["^build", "generate"],
+      "env": [
+        "STRAPI_PREVIEW_SECRET"
+      ],
+      "outputs": [
+        ".mesh/**/*", 
+        ".next/**/*", 
+        "public/**/*"
+      ]
+    },
+    "build": {
+      "outputs": [
+        ".next/**/*",
+        ".vercel/**/*",
+        "dist/**/*",
+        "typechain/**/*",
+        "artifacts/**/*",
+        "public/**/*",
+        "storybook-static/**/*",
+        "lib/**/*",
+        "resolvers/**/*",
+        "transformers/**/*"
+      ],
+      "dependsOn": [
+        "^db:generate", 
+        "^build", 
+        "db:generate", 
+        "generate",
+        "export"
+      ],
+      "env": [
+        "ROOT_URL",
+        "ACADEMY_URL",
+        "ANALYTICS_URL",
+        "BLOG_URL",
+        "BRIDGE_URL",
+        "EARN_URL",
+        "FURO_URL",
+        "INTERNAL_URL",
+        "KASHI_URL",
+        "PARTNER_URL",
+        "SWAP_URL",
+        "XSWAP_URL",
+        "DATABASE_URL",
+        "EARN_DATABASE_URL",
+        "REDIS_URL"
+      ]
+    },
+    "clean": {
+      "cache": false
+    },
+    "check": {
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false
+    },
+    "db:init": {
+      "outputs": ["prisma/**/*"],
+      "cache": false
+    },
+    "db:pull": {
+      "outputs": ["prisma/**/*"],
+      "dependsOn": ["db:init"],
+      "cache": false,
+      "env": ["DATABASE_URL"]
+    },
+    "db:generate": {
+      "dependsOn": [],
+      "cache": false
+    },
+    "db:push": {
+      "cache": false
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true
+    },
+    "export": {
+      "dependsOn": ["^build"],
+      "outputs": ["exports/**/*"],
+      "cache": true
+    },
+    "generate": {
+      "outputs": [
+        ".graphclient/**/*", 
+        ".mesh/**/*", 
+        "typechain/**/*",
+        "artifacts/**/*"
+      ],
+      "cache": true
+    },
+    "lint": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "node": {
+      "dependsOn": ["build"],
+      "outputs": ["deployments/**/*"],
+      "persistent": true
+    },
+    "playwright": {
+      "cache": false,
+      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
+    },
+    "server": {
+      "persistent": true,
+      "dependsOn": ["build"]
+    },
+    "start": {
+      "dependsOn": [
+        "build"
+      ],
+      "env": [
+        "PRODUCTION_DATABASE_URL",
+        "PREVIEW_DATABASE_URL",
+        "REDIS_URL",
+        "DATABASE_URL",
+        "ALCHEMY_ID"
+      ],
+      "cache": false,
+      "persistent": true
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": ["coverage/**/*"],
+      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
+    },
+    "test-e2e-playwright": {
+      "cache": false,
+      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
+    },
+    "validate": {
+      "cache": false
+    }
+  }
+}

@@ -1,0 +1,7 @@
+sources:
+  - name: CMS
+    handler:
+      graphql:
+        endpoint: https://sushi-strapi-cms.herokuapp.com/graphql
+documents:
+  - ./query.graphql

@@ -1,0 +1,7 @@
+query Bundles($chainIds: [Int!]!) {
+  bundles: bundlesByChainIds(chainIds: $chainIds) {
+    id
+    chainId
+    nativePrice
+  }
+}

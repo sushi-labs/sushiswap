@@ -1,0 +1,9 @@
+{
+  "extends": "@sushiswap/typescript-config/node18-vercel.json",
+  "include": ["."],
+  "exclude": ["node_modules", ".vercel"],
+  // Need to specify even though it's in the base config file, don't know why
+  "compilerOptions": {
+    "module": "esnext"
+  }
+}

@@ -1,0 +1,14 @@
+fragment UserFields on User {
+  id
+}
+
+query CrossChainUserPositions($id: ID!, $chainIds: [Int!]!) {
+  crossChainUserPositions(id: $id, chainIds: $chainIds) {
+    id
+    pool
+    chainId
+    balance
+    unstakedBalance
+    stakedBalance
+  }
+}

@@ -1,0 +1,35 @@
+query Factories($chainIds: [Int!]!) {
+  factories: factoriesByChainIds(chainIds: $chainIds) {
+    id
+    chainId
+    pairCount
+    tokenCount
+  }
+}
+
+query FactoryDaySnapshots(
+  $first: Int = 365
+  $skip: Int = 0
+  $where: FactoryDaySnapshot_filter
+  $orderBy: FactoryDaySnapshot_orderBy = date
+  $orderDirection: OrderDirection = desc
+  $block: Block_height
+  $chainIds: [Int!]!
+) {
+  factoryDaySnapshots: factoryDaySnapshotsByChainIds(
+    first: $first
+    skip: $skip
+    where: $where
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    block: $block
+    chainIds: $chainIds
+  ) {
+    chainId
+    id
+    date
+    volumeUSD
+    liquidityUSD
+    feesUSD
+  }
+}

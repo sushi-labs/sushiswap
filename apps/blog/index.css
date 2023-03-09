@@ -1,0 +1,7 @@
+body {
+  font-size: 14px;
+}
+
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}

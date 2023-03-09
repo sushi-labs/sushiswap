@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+enum TokenStatus {
+  APPROVED
+  UNKNOWN
+  DISAPPROVED
+}
+
+enum PoolVersion {
+  LEGACY
+  TRIDENT
+  V3
+}
+
+enum PoolType {
+  CONCENTRATED_LIQUIDITY_POOL
+  STABLE_POOL
+  CONSTANT_PRODUCT_POOL
+}
+
+enum ChefType {
+  MasterChefV1 
+  MasterChefV2
+  MiniChef
+}
+
+enum RewarderType {
+  Primary
+  Secondary
+}
+
+model Token {
+  id       String      @id // chainId:address
+  address  String
+  chainId  Int
+  name     String
+  symbol   String
+  decimals Int
+  status   TokenStatus @default(UNKNOWN)
+  
+  isFeeOnTransfer Boolean @default(false)
+  isCommon Boolean @default(false)
+
+  derivedUSD    Decimal?
+  derivedNative Decimal?
+
+  generatedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  pools0 Pool[] @relation("token0")
+  pools1 Pool[] @relation("token1")
+  sushiPools0 SushiPool[] @relation("token0")
+  sushiPools1 SushiPool[] @relation("token1")
+  incentives  Incentive[]
+
+  @@unique([chainId, address])
+  @@index(fields: [id])
+  @@index(fields: [address])
+  @@index(fields: [chainId])
+  @@index(fields: [address, chainId])
+  @@index(fields: [chainId, status])
+  @@index(fields: [chainId, status, derivedUSD])
+  @@index(fields: [chainId, status, derivedNative])
+}
+
+model Pool {
+  id            String  @id // chainId:address
+  address       String
+  name          String
+  chainId       Int
+  protocol      String
+  version       String
+  type          String
+  isWhitelisted Boolean @default(false)
+  token0        Token   @relation("token0", fields: [token0Id], references: [id])
+  token0Id      String
+  token1        Token   @relation("token1", fields: [token1Id], references: [id])
+  token1Id      String
+
+  swapFee      Float
+  twapEnabled  Boolean
+  reserve0     String  @default("0")
+  reserve1     String  @default("0")
+  liquidityUSD Decimal
+
+  generatedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index(fields: [id])
+  @@index(fields: [isWhitelisted])
+  @@index(fields: [chainId])
+  @@index(fields: [address])
+  @@index(fields: [chainId, version, type])
+  @@index(fields: [chainId, protocol, version, type])
+  @@index(fields: [token0Id])
+  @@index(fields: [token1Id])
+  @@index(fields: [generatedAt])
+}
+
+
+model SushiPool {
+  id                   String      @id // chainId_address
+  address              String
+  name                 String
+  chainId              Int
+  version              PoolVersion
+  type                 PoolType
+  token0               Token       @relation("token0", fields: [token0Id], references: [id])
+  token0Id             String
+  token1               Token       @relation("token1", fields: [token1Id], references: [id])
+  token1Id             String
+  swapFee              Float
+  twapEnabled          Boolean
+  reserve0             String 
+  reserve1             String 
+  totalSupply          String 
+  liquidityUSD         Decimal
+  liquidityNative      Decimal
+  volumeUSD            Decimal
+  volumeNative         Decimal
+  token0Price          String
+  token1Price          String
+  feeApr               Float       @default(0)
+  incentiveApr         Float       @default(0)
+  totalApr             Float       @default(0)
+  isIncentivized       Boolean     @default(false)
+  wasIncentivized      Boolean     @default(false)
+  incentives           Incentive[]
+  volume1d             Decimal     @default(0)
+  fees1d               Decimal     @default(0)
+  volume1w             Decimal     @default(0)
+  fees1w               Decimal     @default(0)
+  createdAtBlockNumber BigInt      @db.UnsignedBigInt
+  isBlacklisted        Boolean     @default(false)
+  generatedAt          DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+
+  @@index(fields: [id])
+  @@index(fields: [chainId])
+  @@index(fields: [address])
+  @@index(fields: [chainId, version, type])
+  @@index(fields: [liquidityUSD, chainId])
+  @@index(fields: [totalApr, chainId])
+  @@index(fields: [token0Id])
+  @@index(fields: [token1Id])
+}
+
+model Incentive {
+  id              String @id // poolAddress_rewarderAddress
+  chainId         Int
+  chefType        ChefType
+  apr             Float
+  rewardPerDay    Float
+  rewardToken     Token  @relation(fields: [rewardTokenId], references: [id])
+  rewardTokenId   String
+  pool            SushiPool   @relation(fields: [poolId], references: [id])
+  poolId          String
+  pid             Int
+  rewarderAddress String
+  rewarderType    RewarderType
+
+  @@index(fields: [id])
+  @@index(fields: [poolId])
+  @@index(fields: [rewardTokenId])
+  @@index(fields: [chainId, rewardTokenId])
+}

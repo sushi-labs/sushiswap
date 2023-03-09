@@ -1,0 +1,38 @@
+fragment TokenFields on Token {
+  id
+  chainId
+  name
+  liquidityUSD
+  symbol
+  decimals
+  volumeUSD
+  feesUSD
+  price {
+    derivedNative
+  }
+}
+
+query TokensByChainIds(
+  $first: Int = 20
+  $skip: Int = 0
+  $where: Token_filter
+  $orderBy: Token_orderBy = liquidityUSD
+  $orderDirection: OrderDirection = desc
+  $block: Block_height
+  $pagination: Pagination
+  $chainIds: [Int!]!
+) {
+  tokens: tokensByChainIds(
+    first: $first
+    skip: $skip
+    pagination: $pagination
+    where: $where
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    block: $block
+    chainIds: $chainIds
+  ) {
+    ...TokenFields
+    source
+  }
+}

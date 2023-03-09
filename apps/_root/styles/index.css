@@ -1,0 +1,21 @@
+html {
+  background-color: black !important;
+  /* color: white; */
+}
+
+button:focus {
+  outline: none !important;
+}
+
+input:focus {
+  box-shadow: none !important;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
