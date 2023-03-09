@@ -51,7 +51,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
         ? graphPair.hourSnapshots
         : graphPair.daySnapshots
     const currentDate = Math.round(Date.now())
-    const [x, y] = (data || []).reduce<[number[], number[]]>(
+    const [x, y]: [number[], number[]] = (data || []).reduce<[number[], number[]]>(
       (acc, cur) => {
         if (cur.date * 1000 >= currentDate - chartTimespans[chartPeriod]) {
           acc[0].push(cur.date)
