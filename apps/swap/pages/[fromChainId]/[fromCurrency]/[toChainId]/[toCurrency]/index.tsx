@@ -1,35 +1,10 @@
-import { ChainId } from '@sushiswap/chain'
 import Container from '@sushiswap/ui/future/components/Container'
-import { GetStaticProps, InferGetStaticPropsType } from 'next'
-import React, { FC } from 'react'
-
 import { TradeStats } from '../../../../../ui/trade/TradeStats'
 import { Widget } from '../../../../../ui/widget/Widget'
 import { Drawer } from '@sushiswap/ui/future/components/drawer'
 import { TokenNotFoundDialog } from '../../../../../ui/TokenNotFoundDialog'
 import { TradeReviewDialog } from '../../../../../ui/trade/TradeReviewDialog'
-
-// export const getStaticProps: GetStaticProps = async ({ params }) => {
-//   return {
-//     props: {
-//       initialState: {
-//         fromCurrency: params?.fromCurrency ?? `${ChainId.ETHEREUM}:NATIVE`,
-//         toCurrency: params?.toCurrency ?? `${ChainId.ETHEREUM}:SUSHI`,
-//       },
-//     },
-//   }
-// }
-
-// export async function getStaticPaths() {
-//   // We can do some pretty cool optimizations here by generating the combinations
-//   // of potential swap parameters
-
-//   // for now, we'll just use blocking mode so that params are available immediately
-//   return {
-//     paths: [],
-//     fallback: 'blocking',
-//   }
-// }
+import { FC } from 'react'
 
 export const Page: FC = () => {
   return (
