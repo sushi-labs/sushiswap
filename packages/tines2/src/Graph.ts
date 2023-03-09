@@ -20,13 +20,6 @@ export interface RouteLeg {
   absolutePortion: number // to depict at webpage for user
 }
 
-function testeq(a: number, b: number) {
-  if (Math.abs(a / b - 1) > 1e-12) {
-    console.error('Different values !!!! ', a, b)
-    debugger
-  }
-}
-
 export enum RouteStatus {
   Success = 'Success',
   NoWay = 'NoWay',
@@ -101,96 +94,12 @@ export class Edge {
     return v === this.vert0 ? this.pool.getReserve(0) : this.pool.getReserve(1)
   }
 
-  calcOutput(v: Vertice, amountIn: number): { out: number; gasSpent: number } {
-    let res, gas
-    if (v === this.vert1) {
-      if (this.direction) {
-        if (amountIn < this.amountOutPrevious) {
-          const { inp, gasSpent } = this.pool.calcInByOut2(this.amountOutPrevious - amountIn, true)
-          res = this.amountInPrevious - inp
-          gas = gasSpent
-        } else {
-          const { out, gasSpent } = this.pool.calcOutByIn2(amountIn - this.amountOutPrevious, false)
-          res = out + this.amountInPrevious
-          gas = gasSpent
-        }
-      } else {
-        const { out, gasSpent } = this.pool.calcOutByIn2(this.amountOutPrevious + amountIn, false)
-        res = out - this.amountInPrevious
-        gas = gasSpent
-      }
-    } else {
-      if (this.direction) {
-        const { out, gasSpent } = this.pool.calcOutByIn2(this.amountInPrevious + amountIn, true)
-        res = out - this.amountOutPrevious
-        gas = gasSpent
-      } else {
-        if (amountIn < this.amountInPrevious) {
-          const { inp, gasSpent } = this.pool.calcInByOut2(this.amountInPrevious - amountIn, false)
-          res = this.amountOutPrevious - inp
-          gas = gasSpent
-        } else {
-          const { out, gasSpent } = this.pool.calcOutByIn2(amountIn - this.amountInPrevious, true)
-          res = out + this.amountOutPrevious
-          gas = gasSpent
-        }
-      }
-    }
-
-    // this.testApply(v, amountIn, out);
-
-    const v2 = this.pool.calcDiff(v === this.vert0 ? 0 : 1, v === this.vert0 ? 1 : 0, amountIn, this.poolState)
-    testeq(-v2.diff, res)
-    testeq(gas - this.spentGas, v2.gasSpent)
-
-    return { out: res, gasSpent: gas - this.spentGas }
+  calcOutput(v: Vertice, amountIn: number): { diff: number; gasSpent: number } {
+    return this.pool.calcDiff(v === this.vert0 ? 0 : 1, v === this.vert0 ? 1 : 0, amountIn, this.poolState)
   }
 
-  calcInput(v: Vertice, amountOut: number): { inp: number; gasSpent: number } {
-    let res, gas
-    if (v === this.vert1) {
-      if (!this.direction) {
-        if (amountOut < this.amountOutPrevious) {
-          const { out, gasSpent } = this.pool.calcOutByIn2(this.amountOutPrevious - amountOut, false)
-          res = this.amountInPrevious - out
-          gas = gasSpent
-        } else {
-          const { inp, gasSpent } = this.pool.calcInByOut2(amountOut - this.amountOutPrevious, true)
-          res = inp + this.amountInPrevious
-          gas = gasSpent
-        }
-      } else {
-        const { inp, gasSpent } = this.pool.calcInByOut2(this.amountOutPrevious + amountOut, true)
-        res = inp - this.amountInPrevious
-        gas = gasSpent
-      }
-    } else {
-      if (!this.direction) {
-        const { inp, gasSpent } = this.pool.calcInByOut2(this.amountInPrevious + amountOut, false)
-        res = inp - this.amountOutPrevious
-        gas = gasSpent
-      } else {
-        if (amountOut < this.amountInPrevious) {
-          const { out, gasSpent } = this.pool.calcOutByIn2(this.amountInPrevious - amountOut, true)
-          res = this.amountOutPrevious - out
-          gas = gasSpent
-        } else {
-          const { inp, gasSpent } = this.pool.calcInByOut2(amountOut - this.amountInPrevious, false)
-          res = inp + this.amountOutPrevious
-          gas = gasSpent
-        }
-      }
-    }
-
-    // this.testApply(v, amountIn, out);
-
-    const v2 = this.pool.calcDiff(v === this.vert0 ? 0 : 1, v === this.vert0 ? 1 : 0, -amountOut, this.poolState)
-    if (amountOut == 0) {
-      testeq(v2.diff, 0)
-    } else testeq(v2.diff, res)
-    testeq(gas - this.spentGas, v2.gasSpent)
-
-    return { inp: res, gasSpent: gas - this.spentGas }
+  calcInput(v: Vertice, amountOut: number): { diff: number; gasSpent: number } {
+    return this.pool.calcDiff(v === this.vert0 ? 0 : 1, v === this.vert0 ? 1 : 0, amountOut, this.poolState)
   }
 
   checkMinimalLiquidityExceededAfterSwap(from: Vertice, amountOut: number): boolean {
@@ -277,17 +186,6 @@ export class Edge {
         this.poolState = this.pool.applyChanges(0, -to.bestIncome, 1, from.bestIncome, this.spentGasNew, this.poolState)
     } else console.error('Error 221')
     this.spentGas = this.spentGasNew
-
-    const state = this.poolState as DefaultPoolState
-    if (this.direction) {
-      testeq(this.amountInPrevious, state.flow[0])
-      testeq(this.amountOutPrevious, -state.flow[1])
-      testeq(this.spentGas, state.gasSpent)
-    } else {
-      testeq(this.amountInPrevious, -state.flow[0])
-      testeq(this.amountOutPrevious, state.flow[1])
-      testeq(this.spentGas, state.gasSpent)
-    }
 
     ASSERT(() => {
       if (this.direction) {
@@ -685,12 +583,12 @@ export class Graph {
         if (processedVert.has(v2)) return
         let newIncome: number, gas
         try {
-          const { out, gasSpent } = e.calcOutput(closestVert as Vertice, (closestVert as Vertice).bestIncome)
-          if (!isFinite(out) || !isFinite(gasSpent))
+          const { diff, gasSpent } = e.calcOutput(closestVert as Vertice, (closestVert as Vertice).bestIncome)
+          if (!isFinite(diff) || !isFinite(gasSpent))
             // Math errors protection
             return
 
-          newIncome = out
+          newIncome = -diff
           gas = gasSpent
         } catch (err) {
           // Any arithmetic error or out-of-liquidity
@@ -797,12 +695,12 @@ export class Graph {
         if (processedVert.has(v2)) return
         let newIncome: number, gas
         try {
-          const { inp, gasSpent } = e.calcInput(closestVert as Vertice, (closestVert as Vertice).bestIncome)
-          if (!isFinite(inp) || !isFinite(gasSpent))
+          const { diff, gasSpent } = e.calcInput(closestVert as Vertice, -(closestVert as Vertice).bestIncome)
+          if (!isFinite(diff) || !isFinite(gasSpent))
             // Math errors protection
             return
-          if (inp < 0) return // No enouph liquidity in the pool
-          newIncome = inp
+          if (diff < 0) return // No enouph liquidity in the pool
+          newIncome = diff
           gas = gasSpent
         } catch (e) {
           // Any arithmetic error or out-of-liquidity
