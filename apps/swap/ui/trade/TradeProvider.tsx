@@ -29,6 +29,7 @@ export const queryParamsSchema = z.object({
     .gte(0)
     .lte(2 ** 256)
     .default(ChainId.ETHEREUM)
+    .transform((chainId) => chainId as SwapChainId)
     .refine(
       (chainId) =>
         isUniswapV2FactoryChainId(chainId) ||
@@ -42,6 +43,7 @@ export const queryParamsSchema = z.object({
     .gte(0)
     .lte(2 ** 256)
     .default(ChainId.ETHEREUM)
+    .transform((chainId) => chainId as SwapChainId)
     .refine(
       (chainId) =>
         isUniswapV2FactoryChainId(chainId) ||
