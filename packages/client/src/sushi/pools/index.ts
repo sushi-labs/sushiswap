@@ -1,4 +1,4 @@
-export const POOL_API = 'https://pools-git-feature-add-incentive-integration.sushi.com'
+export const POOL_API = 'https://pools.sushi.com'
 
 export * from './count.js'
 export * from './pool.js'
