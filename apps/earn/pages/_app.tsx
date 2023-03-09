@@ -1,4 +1,5 @@
 import '@sushiswap/ui/index.css'
+import '../variables.css'
 
 import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
@@ -17,6 +18,8 @@ import { store } from '../store'
 import { WagmiConfig } from 'wagmi'
 
 import SEO from '../next-seo.config.mjs'
+import { PersistQueryClientProvider } from '../components/PersistQueryClientProvider'
+import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
 
 declare global {
   interface Window {
@@ -53,16 +56,20 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
 
       <WagmiConfig client={client}>
         <Provider store={store}>
-          <ThemeProvider>
-            <App.Shell>
-              <DefaultSeo {...SEO} />
-              <Header />
-              <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
-              <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
-              <App.Footer />
-              <ToastContainer className="mt-[50px]" />
-            </App.Shell>
-          </ThemeProvider>
+          <PersistQueryClientProvider>
+            <ThemeProvider>
+              <Onramper.Provider>
+                <App.Shell>
+                  <DefaultSeo {...SEO} />
+                  <Header />
+                  <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
+                  <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
+                  <App.Footer />
+                  <ToastContainer className="mt-[50px]" />
+                </App.Shell>
+              </Onramper.Provider>
+            </ThemeProvider>
+          </PersistQueryClientProvider>
         </Provider>
       </WagmiConfig>
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />

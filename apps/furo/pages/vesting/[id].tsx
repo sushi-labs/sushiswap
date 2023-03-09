@@ -1,11 +1,11 @@
 import { Breadcrumb, BreadcrumbLink, ProgressBar, ProgressColor } from '@sushiswap/ui'
-import { getFuroVestingContractConfig, useWalletState } from '@sushiswap/wagmi'
+import { getFuroVestingContractConfig } from '@sushiswap/wagmi'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import { useConnect, useNetwork } from 'wagmi'
+import { useNetwork } from 'wagmi'
 
 import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '../../.graphclient'
 import {
@@ -26,6 +26,7 @@ import {
 import VestingChart2 from '../../components/vesting/VestingChart2'
 import { getRebase, getVesting, getVestingTransactions, Vesting } from '../../lib'
 import { ChartHover } from '../../types'
+import { FuroVestingChainId } from '@sushiswap/furo'
 
 interface Props {
   fallback?: {
@@ -75,10 +76,8 @@ const LINKS = (id: string): BreadcrumbLink[] => [
 const _VestingPage: FC = () => {
   const { chain } = useNetwork()
   const router = useRouter()
-  const chainId = Number(router.query.chainId as string)
+  const chainId = Number(router.query.chainId as string) as FuroVestingChainId
   const id = Number(router.query.id as string)
-  const connect = useConnect()
-  const { connecting, reconnecting } = useWalletState(!!connect.pendingConnector)
   const [hover, setHover] = useState<ChartHover>(ChartHover.NONE)
 
   const { data: furo } = useSWR<VestingDTO>(`/furo/api/vesting/${chainId}/${id}`, (url) =>

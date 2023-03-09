@@ -11,6 +11,7 @@
 @import './input/Input.css';
 @import './skeleton/Skeleton.css';
 @import './input/DatePicker.css';
+@import "./future/components/skeleton/Skeleton.css";
 
 *,
 *:before,
@@ -23,7 +24,6 @@ html {
   box-sizing: border-box;
   touch-action: manipulation;
   background-color: var(--background-color) !important;
-  overflow-y: scroll;
 }
 
 body {
@@ -62,12 +62,23 @@ body {
 }
 
 *.scroll::-webkit-scrollbar-thumb {
-  height: 6px;
-  border: 4px solid rgba(255, 255, 255, 0);
+  height: 30px;
+  border: 4px solid rgba(0, 0, 0, 0);
   background-clip: padding-box;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(0, 0, 0, 0.2);
   -webkit-border-radius: 7px;
-  -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: inset -1px -1px 0px rgba(255, 255, 255, 0.05), inset 1px 1px 0px rgba(255, 255, 255, 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  *.scroll::-webkit-scrollbar-thumb {
+    height: 30px;
+    border: 4px solid rgba(255, 255, 255, 0);
+    background-clip: padding-box;
+    background-color: rgba(255, 255, 255, 0.2);
+    -webkit-border-radius: 7px;
+    -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+  }
 }
 
 *.scroll::-webkit-scrollbar-button {
@@ -92,6 +103,27 @@ body {
   }
   input[type='search']::-webkit-search-cancel-button {
     -webkit-appearance: none;
+  }
+
+  button:focus,
+  input:focus,
+  a:focus,
+  img:focus {
+    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0;
+  }
+
+  button:focus-within,
+  input:focus-within,
+  a:focus-within,
+  img:focus-within {
+    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0;
+  }
+
+  button:focus-visible,
+  input:focus-visible,
+  a:focus-visible,
+  img:focus-visible {
+    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0;
   }
 }
 

@@ -1,5 +1,6 @@
 import '@sushiswap/ui/index.css'
 import 'styles/index.css'
+import '../variables.css'
 
 import { useIsSmScreen } from '@sushiswap/hooks'
 import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'

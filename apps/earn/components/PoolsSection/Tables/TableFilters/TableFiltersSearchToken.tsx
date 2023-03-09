@@ -17,12 +17,12 @@ export const TableFiltersSearchToken: FC = () => {
   const debouncedExtraQuery = useDebounce(_extraQuery, 400)
 
   useEffect(() => {
-    setFilters({ query: debouncedQuery })
-  }, [debouncedQuery, setFilters])
-
-  useEffect(() => {
-    setFilters({ extraQuery: debouncedExtraQuery })
-  }, [debouncedExtraQuery, setFilters])
+    if (!(debouncedExtraQuery || debouncedQuery)) {
+      setFilters({ tokenSymbols: undefined })
+    } else {
+      setFilters({ tokenSymbols: [debouncedQuery, debouncedExtraQuery].filter((query) => query !== '') })
+    }
+  }, [_extraQuery, _query, debouncedExtraQuery, debouncedQuery, setFilters])
 
   useEffect(() => {
     if (!extra) {

@@ -1,13 +1,17 @@
 import type { MultiRoute, RouteLeg, RPool } from '@sushiswap/tines'
 import type { BigNumber } from 'ethers'
 
+import { LiquidityProviders } from '../liquidity-providers'
+
 // RPool extention for RP coding
 export abstract class PoolCode {
   pool: RPool
+  liquidityProvider: LiquidityProviders
   poolName: string
 
-  constructor(pool: RPool, poolName: string) {
+  constructor(pool: RPool, liquidityProvider: LiquidityProviders, poolName: string) {
     this.pool = pool
+    this.liquidityProvider = liquidityProvider
     this.poolName = poolName
   }
 

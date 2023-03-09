@@ -1,5 +1,5 @@
 import { formatUSD } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { useBreakpoint } from '@sushiswap/hooks'
 import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
@@ -10,10 +10,10 @@ import { PoolPositionDesktop } from './PoolPositionDesktop'
 import { PoolPositionStakedDesktop } from './PoolPositionStakedDesktop'
 
 interface PoolPositionProps {
-  pair: Pair
+  pool: Pool
 }
 
-export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
+export const PoolPosition: FC<PoolPositionProps> = ({ pool }) => {
   const { value0, value1 } = usePoolPosition()
   const { value0: stakedValue0, value1: stakedValue1 } = usePoolPositionStaked()
   const { isLg } = useBreakpoint('lg')
@@ -32,8 +32,8 @@ export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
           </Typography>
         </div>
       </div>
-      <PoolPositionDesktop pair={pair} />
-      <PoolPositionStakedDesktop pair={pair} />
+      <PoolPositionDesktop pool={pool} />
+      <PoolPositionStakedDesktop pool={pool} />
     </div>
   )
 }

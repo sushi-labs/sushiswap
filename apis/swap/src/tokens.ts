@@ -7,7 +7,7 @@ import {
   isShortCurrencyNameSupported,
   Token,
 } from '@sushiswap/currency'
-import { getAddress } from 'ethers/lib/utils'
+import { getAddress, isAddress } from 'ethers/lib/utils'
 import fetch from 'node-fetch'
 import { z } from 'zod'
 
@@ -29,7 +29,28 @@ function setCache(chainId: ChainId, tokenId: string, token: typeof tokenSchema['
 
 // ! Only Polygon tokens are currently pre-cached
 async function populateCache() {
-  const chainIds = [ChainId.POLYGON]
+  const chainIds = [
+    ChainId.ARBITRUM,
+    ChainId.AVALANCHE,
+    ChainId.BSC,
+    ChainId.CELO,
+    ChainId.ETHEREUM,
+    ChainId.FANTOM,
+    ChainId.FUSE,
+    ChainId.GNOSIS,
+    ChainId.MOONBEAM,
+    ChainId.MOONRIVER,
+    ChainId.POLYGON,
+    ChainId.HARMONY,
+    ChainId.ARBITRUM_NOVA,
+    ChainId.BOBA,
+    ChainId.BOBA_AVAX,
+    ChainId.BOBA_BNB,
+    ChainId.OPTIMISM,
+    ChainId.KAVA,
+    ChainId.METIS,
+    ChainId.BTTC,
+  ]
 
   for (const chainId of chainIds) {
     const tokens = z
@@ -58,10 +79,17 @@ export async function getToken(chainId: ChainId, tokenId: string) {
   const isShortNameSupported = isShortCurrencyNameSupported(chainId)
   const tokenIdIsShortName = isShortCurrencyName(chainId, tokenId)
 
-  return isShortNameSupported && tokenIdIsShortName
-    ? currencyFromShortCurrencyName(chainId, tokenId)
-    : new Token({
-        chainId,
-        ...(await fetcher(chainId, tokenId)),
-      })
+  if (isShortNameSupported && tokenIdIsShortName) return currencyFromShortCurrencyName(chainId, tokenId)
+
+  if (!isAddress(tokenId)) throw new Error(`Invalid token address: ${tokenId}`)
+
+  const { name, symbol, decimals, address } = await fetcher(chainId, tokenId)
+
+  return new Token({
+    chainId,
+    address,
+    symbol,
+    name,
+    decimals,
+  })
 }

@@ -13,11 +13,13 @@ import { SendTransactionResult } from 'wagmi/actions'
 import { BottomPanel, CurrencyInputBase } from '../../components'
 import { Stream } from '../../lib'
 import { useStreamBalance } from '../../lib'
-import { useNotifications } from '../../lib/state/storage'
+import { useCreateNotification } from '@sushiswap/react-query'
+import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { FuroStreamChainId } from '@sushiswap/furo'
 
 interface WithdrawModalProps {
   stream?: Stream
-  chainId: ChainId
+  chainId: FuroStreamChainId
 }
 
 export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
@@ -25,7 +27,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
   const balance = useStreamBalance(chainId, stream?.id, stream?.token)
   const contract = useFuroStreamContract(chainId)
-  const [, { createNotification }] = useNotifications(address)
+  const { mutate: storeNotification } = useCreateNotification({ account: address })
 
   const [open, setOpen] = useState(false)
   const [input, setInput] = useState<string>('')
@@ -42,7 +44,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
 
       const ts = new Date().getTime()
 
-      createNotification({
+      const notificationData: NotificationData = {
         type: 'withdrawStream',
         txHash: data.hash,
         chainId: chainId,
@@ -54,9 +56,11 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
           completed: `Successfully withdrawn ${amount.toSignificant(6)} ${amount.currency.symbol}`,
           failed: 'Something went wrong withdrawing from stream',
         },
-      })
+      }
+
+      storeNotification(createToast(notificationData))
     },
-    [amount, chainId, createNotification]
+    [amount, chainId, storeNotification]
   )
 
   const prepare = useCallback(

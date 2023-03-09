@@ -9,15 +9,15 @@ import { Widget } from '@sushiswap/ui'
 import { useTotalSupply } from '@sushiswap/wagmi'
 import { FC, Fragment, ReactNode, useMemo, useState } from 'react'
 
-import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
+import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 
 interface RemoveSectionUnstakeWidget {
   chainId: ChainId
   value: string
   setValue(value: string): void
-  reserve0: Amount<Type>
-  reserve1: Amount<Type>
+  reserve0: Amount<Type> | null
+  reserve1: Amount<Type> | null
   liquidityToken: Token
   children: ReactNode
 }
@@ -39,7 +39,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
     return tryParseAmount(value, liquidityToken)
   }, [liquidityToken, value])
 
-  const underlying = useUnderlyingTokenBalanceFromPair({
+  const underlying = useUnderlyingTokenBalanceFromPool({
     reserve0,
     reserve1,
     totalSupply,
@@ -75,7 +75,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
             {({ open }) => (
               <>
                 <Disclosure.Button className="w-full pr-4">
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <Widget.Header title="Unstake Liquidity" className="!pb-3" />
                     <div
                       className={classNames(
@@ -98,12 +98,12 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                   leaveTo="transform max-h-0"
                 >
                   <Disclosure.Panel unmount={false}>
-                    <Typography variant="sm" className="text-slate-400 px-3 pb-5">
+                    <Typography variant="sm" className="px-3 pb-5 text-slate-400">
                       Unstake your liquidity tokens first if you mean to remove your liquidity position
                     </Typography>
                     <div className="flex flex-col gap-3 p-3">
                       <div className="flex items-center gap-2">
-                        <div className="flex flex-grow justify-between items-center">
+                        <div className="flex items-center justify-between flex-grow">
                           <Input.Percent
                             onUserInput={setValue}
                             value={value}
@@ -125,12 +125,12 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                         </div>
                         <div className="min-w-[56px] -mr-[10px]">
                           <Currency.IconList iconHeight={28} iconWidth={28}>
-                            <Currency.Icon currency={reserve0.currency} />
-                            <Currency.Icon currency={reserve1.currency} />
+                            <Currency.Icon currency={reserve0?.currency} />
+                            <Currency.Icon currency={reserve1?.currency} />
                           </Currency.IconList>
                         </div>
                       </div>
-                      <div className="grid grid-cols-3 pb-2 justify-between items-center">
+                      <div className="grid items-center justify-between grid-cols-3 pb-2">
                         <Transition
                           appear
                           as={Fragment}
@@ -162,7 +162,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                             as="button"
                             variant="sm"
                             weight={500}
-                            className="col-span-2 justify-end flex text-slate-300 hover:text-slate-200 truncate"
+                            className="flex justify-end col-span-2 truncate text-slate-300 hover:text-slate-200"
                           >
                             Balance: {balance?.toSignificant(6)}
                           </Typography>

@@ -1,5 +1,5 @@
 import { formatUSD } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { Button, Currency, Dialog, Typography } from '@sushiswap/ui'
 import { Checker } from '@sushiswap/wagmi'
 import { FC, useCallback } from 'react'
@@ -7,12 +7,12 @@ import { FC, useCallback } from 'react'
 import { usePoolPositionRewards } from '../../PoolPositionRewardsProvider'
 
 interface PoolActionBarPositionRewardsProps {
-  pair: Pair
+  pool: Pool
   open: boolean
   setOpen(open: boolean): void
 }
 
-export const PoolActionBarPositionRewards: FC<PoolActionBarPositionRewardsProps> = ({ pair, open, setOpen }) => {
+export const PoolActionBarPositionRewards: FC<PoolActionBarPositionRewardsProps> = ({ pool, open, setOpen }) => {
   const { pendingRewards, values, rewardTokens, isError, isLoading, harvest } = usePoolPositionRewards()
   const handleClose = useCallback(() => {
     setOpen(false)
@@ -59,7 +59,7 @@ export const PoolActionBarPositionRewards: FC<PoolActionBarPositionRewardsProps>
         </div>
         <div className="px-2 mt-3">
           <Checker.Connected fullWidth size="md">
-            <Checker.Network fullWidth size="md" chainId={pair.chainId}>
+            <Checker.Network fullWidth size="md" chainId={pool.chainId}>
               <Button size="md" fullWidth onClick={harvest}>
                 Claim
               </Button>

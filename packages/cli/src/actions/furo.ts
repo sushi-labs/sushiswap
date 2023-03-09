@@ -2,11 +2,12 @@ import { ChainId, ChainKey } from '@sushiswap/chain'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import chalk from 'chalk'
 import CliTable3 from 'cli-table3'
+import fetch from 'node-fetch'
 
-import { FURO_SUPPORTED_CHAIN_NAMES, REVENUES_SUPPORTED_CHAIN_NAMES } from '../config'
+import { FURO_SUPPORTED_CHAIN_NAMES, REVENUES_SUPPORTED_CHAIN_NAMES } from '../config.js'
 
 type Arguments = {
-  network?: typeof REVENUES_SUPPORTED_CHAIN_NAMES[number]
+  network?: (typeof REVENUES_SUPPORTED_CHAIN_NAMES)[number]
 }
 export async function furo(args: Arguments) {
   const sdk = getBuiltGraphSDK()
@@ -58,7 +59,7 @@ export async function furo(args: Arguments) {
     return ChainId[token.chainId].toLowerCase() + ':' + token.id
   })
   const symbolToPrice: { [symbol: string]: number } = {}
-  await fetch('https://coins.llama.fi/prices/current/' + tokensDefillamaPriceQuery.join(',')).then((data) =>
+  await fetch('https://coins.llama.fi/prices/current/' + tokensDefillamaPriceQuery.join(',')).then((data: any) =>
     data.json().then((data) => {
       Object.values(data.coins).map((token: any) => {
         symbolToPrice[token.symbol] = token.price

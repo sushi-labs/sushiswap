@@ -1,8 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
+import { Pool } from '@sushiswap/client'
 import { Token } from '@sushiswap/currency'
-import { Incentive } from '@sushiswap/graph-client'
 
-export const incentiveRewardToToken = (chainId: ChainId, incentive: Incentive): Token => {
+export const incentiveRewardToToken = (chainId: ChainId, incentive: Pool['incentives'][0]): Token => {
   return new Token({
     chainId,
     address: incentive.rewardToken.address,

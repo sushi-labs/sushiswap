@@ -1,5 +1,6 @@
 import '@sushiswap/ui/index.css'
 import '../index.css'
+import '../variables.css'
 
 import { Cloudinary } from '@cloudinary/url-gen'
 import { App, ThemeProvider } from '@sushiswap/ui'

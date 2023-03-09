@@ -9,7 +9,7 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { FactoryDaySnapshot, Query, QueryResolvers } from '../../.graphclient'
+import { FactoryDaySnapshot, Query, QueryResolvers } from '../../.graphclient/index.js'
 
 export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsByChainIds'] = async (
   root,
@@ -19,7 +19,7 @@ export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsB
 ): Promise<Query['factoryDaySnapshotsByChainIds']> =>
   Promise.all<Query['factoryDaySnapshotsByChainIds'][]>([
     ...args.chainIds
-      .filter((el): el is typeof TRIDENT_ENABLED_NETWORKS[number] => TRIDENT_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is (typeof TRIDENT_ENABLED_NETWORKS)[number] => TRIDENT_ENABLED_NETWORKS.includes(el))
       .map((chainId) =>
         context.Trident.Query.factoryDaySnapshots({
           root,
@@ -43,7 +43,7 @@ export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsB
         })
       ),
     ...args.chainIds
-      .filter((el): el is typeof SUSHISWAP_ENABLED_NETWORKS[number] => SUSHISWAP_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is (typeof SUSHISWAP_ENABLED_NETWORKS)[number] => SUSHISWAP_ENABLED_NETWORKS.includes(el))
       .map((chainId) =>
         context.SushiSwap.Query.factoryDaySnapshots({
           root,

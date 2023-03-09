@@ -1,12 +1,9 @@
-import { getPools, GetPoolsQuery } from '../../lib/api'
+import { getPools } from '@sushiswap/client'
 import { GetServerSideProps } from 'next'
 import { getServerSideSitemap, ISitemapField } from 'next-sitemap'
-import stringify from 'fast-json-stable-stringify'
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const pools = await getPools({
-    pagination: stringify({ pageIndex: 0, pageSize: 1000 }),
-  } as GetPoolsQuery)
+  const pools = await getPools({ take: 500 })
 
   const ids = pools.map((pool) => pool.id)
 

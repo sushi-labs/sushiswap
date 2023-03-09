@@ -3,7 +3,7 @@ import { ErrorCode } from '@ethersproject/logger'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Currency } from '@sushiswap/currency'
 import { calculateGasMargin } from '@sushiswap/gas'
-import { createErrorToast, NotificationData } from '@sushiswap/ui'
+import { createErrorToast, NotificationData } from '@sushiswap/ui/future/components/toast'
 import { BigNumber } from 'ethers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
@@ -31,8 +31,8 @@ export enum ApprovalState {
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useERC20ApproveCallback(
   watch: boolean,
-  amountToApprove?: Amount<Currency>,
-  spender?: string,
+  amountToApprove: Amount<Currency> | undefined,
+  spender: string | undefined,
   onSuccess?: (data: NotificationData) => void
 ): [ApprovalState, () => void] {
   const { address } = useAccount()
@@ -40,10 +40,11 @@ export function useERC20ApproveCallback(
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined, e: Error | null) => {
-      // TODO: ignore until wagmi workaround on ethers error
+      // Property code does exist on object
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      if (e?.code === ErrorCode.ACTION_REJECTED) {
-        createErrorToast(e?.message, true)
+      if (e && e.code !== ErrorCode.ACTION_REJECTED) {
+        createErrorToast(e.message, true)
       }
 
       if (data && onSuccess && amountToApprove) {

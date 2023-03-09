@@ -2,7 +2,6 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
@@ -16,23 +15,26 @@ import { SendTransactionResult } from 'wagmi/actions'
 
 import { CurrencyInput } from '../components'
 import { Stream } from '../lib'
-import { useNotifications } from '../lib/state/storage'
+import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { useCreateNotification } from '@sushiswap/react-query'
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 interface UpdateModalProps {
   stream?: Stream
   abi: NonNullable<Parameters<typeof useContract>['0']>['abi']
   address: string
-  chainId: ChainId
+  chainId: BentoBoxV1ChainId
 }
 
 export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contractAddress, chainId }) => {
   const { address } = useAccount()
-  const [, { createNotification }] = useNotifications(address)
   const [open, setOpen] = useState(false)
   const [topUp, setTopUp] = useState(false)
   const [changeEndDate, setChangeEndDate] = useState(false)
   const [amount, setAmount] = useState<string>('')
   const [endDate, setEndDate] = useState<Date | null>(null)
+  const { mutate: storeNotification } = useCreateNotification({ account: address })
+
   const contract = useContract({
     address: contractAddress,
     abi: abi,
@@ -56,7 +58,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
       if (!data || !amount) return
 
       const ts = new Date().getTime()
-      createNotification({
+      const notificationData: NotificationData = {
         type: 'updateStream',
         txHash: data.hash,
         chainId,
@@ -68,9 +70,11 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
           completed: `Successfully updated stream`,
           failed: 'Something went wrong updating the stream',
         },
-      })
+      }
+
+      storeNotification(createToast(notificationData))
     },
-    [amount, chainId, createNotification]
+    [amount, chainId, storeNotification]
   )
 
   const prepare = useCallback(
@@ -234,13 +238,13 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
           </div>
           <div>
             <Approve
-              onSuccess={createNotification}
+              onSuccess={(data) => storeNotification(createToast(data))}
               components={
                 <Approve.Components>
                   <Approve.Token
                     enabled={amountAsEntity?.greaterThan(0)}
                     amount={amountAsEntity}
-                    address={BENTOBOX_ADDRESS[chainId]}
+                    address={bentoBoxV1Address[chainId]}
                     fullWidth
                     size="md"
                   />

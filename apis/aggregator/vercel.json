@@ -1,0 +1,15 @@
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/v0/:chainId/pools/:protocol/:version", "destination": "/api/v0/:chainId/pools/:protocol/:version" },
+    { "source": "/v0/:chainId/top-pools/:protocol/:version", "destination": "/api/v0/:chainId/top-pools/:protocol/:version" }
+  ]
+}

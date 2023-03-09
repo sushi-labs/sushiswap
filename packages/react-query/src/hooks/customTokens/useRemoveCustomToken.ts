@@ -1,6 +1,5 @@
-import chains from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {Token} from '@sushiswap/currency'
+import {useMutation, useQueryClient} from '@tanstack/react-query'
 
 export const useRemoveCustomToken = () => {
   const queryClient = useQueryClient()
@@ -10,7 +9,7 @@ export const useRemoveCustomToken = () => {
       queryClient.setQueryData<Record<string, Token>>(['customTokens'], (prevData) => {
         if (!prevData) return {}
         return Object.entries(prevData).reduce<Record<string, Token>>((acc, [k, v]) => {
-          if (k !== `${chains[currency.chainId].shortName}:${currency.address}`) {
+          if (k !== `${currency.chainId}:${currency.address}`) {
             acc[k] = v
           }
 

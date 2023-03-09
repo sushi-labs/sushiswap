@@ -1,4 +1,3 @@
-import chains from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
@@ -14,12 +13,12 @@ export const useAddCustomToken = () => {
           } else {
             return {
               ...prevData,
-              [`${chains[currency.chainId].shortName}:${currency.address}`]: currency,
+              [`${currency.chainId}:${currency.address}`]: currency,
             }
           }
         } else {
           return {
-            [`${chains[currency.chainId].shortName}:${currency.address}`]: currency,
+            [`${currency.chainId}:${currency.address}`]: currency,
           }
         }
       })

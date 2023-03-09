@@ -25,7 +25,7 @@
   "dependencies": {
     "@fontsource/inter": "^4.5.10",
     "@headlessui/react": "^1.7.3",
-    "@heroicons/react": "^1.0.6",
+    "@heroicons/react": "2.0.16",
     "@popperjs/core": "^2.11.5",
     "@react-hook/window-scroll": "^1.3.0",
     "@sushiswap/chain": "workspace:*",
@@ -44,7 +44,8 @@
     "react-datepicker": "^4.8.0",
     "react-dropzone": "^14.2.2",
     "react-jazzicon": "^1.0.4",
-    "react-spring": "^9.4.4",
+    "react-popper": "^2.3.0",
+    "react-spring": "9.6.1",
     "react-toastify": "^8.2.0",
     "react-virtualized-auto-sizer": "^1.0.6",
     "react-window": "^1.8.7",
@@ -62,7 +63,7 @@
     "@types/react-window": "^1.8.5",
     "autoprefixer": "10.4.13",
     "eslint": "8.29.0",
-    "next": "13.1.1",
+    "next": "13.2.3",
     "postcss": "8.4.21",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -77,7 +78,7 @@
     "tailwindcss": "3.2.4"
   },
   "optionalDependencies": {
-    "next": "13.1.1",
+    "next": "13.2.3",
     "wagmi": "0.9.1"
   }
 }

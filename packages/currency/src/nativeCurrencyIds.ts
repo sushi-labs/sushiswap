@@ -38,4 +38,5 @@ export const nativeCurrencyIds = {
   [ChainId.BOBA_AVAX]: 'BOBA',
   [ChainId.BOBA_BNB]: 'BOBA',
   [ChainId.BTTC]: 'BTT',
+  // [ChainId.SEPOLIA]: 'ETH',
 } as const

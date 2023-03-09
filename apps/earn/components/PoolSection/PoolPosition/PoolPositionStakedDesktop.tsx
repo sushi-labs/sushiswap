@@ -1,20 +1,20 @@
 import { formatUSD } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { Currency, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { useTokensFromPair } from '../../../lib/hooks'
+import { useTokensFromPool } from '../../../lib/hooks'
 import { usePoolPositionStaked } from '../../PoolPositionStakedProvider'
 
 interface PoolPositionStakedDesktopProps {
-  pair: Pair
+  pool: Pool
 }
 
-export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ pair }) => {
-  const { token0, token1 } = useTokensFromPair(pair)
+export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ pool }) => {
+  const { token0, token1 } = useTokensFromPool(pool)
   const { value1, value0, underlying1, underlying0, isLoading, isError } = usePoolPositionStaked()
 
-  if (!pair.farm) return <></>
+  if (!pool.incentives) return <></>
 
   if (isLoading && !isError) {
     return (

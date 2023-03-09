@@ -1,4 +1,3 @@
-
 import { Token } from './Token'
 
 export function addressMapToTokenMap(

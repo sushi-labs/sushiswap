@@ -1,6 +1,6 @@
 import { addSeconds, getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays } from 'date-fns'
 
-import { getBuiltGraphSDK } from '../.graphclient'
+import { getBuiltGraphSDK } from '../.graphclient/index.js'
 
 const sdk = getBuiltGraphSDK()
 

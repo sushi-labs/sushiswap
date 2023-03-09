@@ -1,19 +1,17 @@
 import { Tab } from '@headlessui/react'
-import { UserWithFarm } from '@sushiswap/graph-client'
-import { Chip, classNames } from '@sushiswap/ui'
+// import { UserWithFarm } from '@sushiswap/graph-client'
+import { Chip, classNames, Loader } from '@sushiswap/ui'
 import { FC, useState } from 'react'
-import useSWR from 'swr'
 import { useAccount } from 'wagmi'
+import { useUserPositions } from '../../lib/hooks/api/useUserPositions'
 
 import { PoolsTable, PositionsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'
 
-export const PoolsSection: FC = () => {
+export const PoolsSection: FC<{ isReady?: boolean }> = ({ isReady }) => {
   const { address } = useAccount()
   const [tab, setTab] = useState<number>(0)
-  const { data: userWithFarms } = useSWR<UserWithFarm[]>(address ? [`/earn/api/user/${address}`] : null, (url) =>
-    fetch(url).then((response) => response.json())
-  )
+  const { data: userPositions, isValidating } = useUserPositions({ id: address as string }, !!address)
 
   return (
     <section className="flex flex-col">
@@ -27,7 +25,7 @@ export const PoolsSection: FC = () => {
               )
             }
           >
-            All Yields
+            All Pools
           </Tab>
 
           {address && (
@@ -39,14 +37,23 @@ export const PoolsSection: FC = () => {
                 )
               }
             >
-              My Positions <Chip label={userWithFarms?.length || '0'} size="sm" color="blue" />
+              My Positions{' '}
+              <>
+                <Chip
+                  label={userPositions?.length ?? ''}
+                  icon={isValidating && <Loader size={8} scale={10} />}
+                  size="sm"
+                  color="blue"
+                  className="min-w-[32px]"
+                />
+              </>
             </Tab>
           )}
         </div>
         <TableFilters showAllFilters={tab === 0} />
         <Tab.Panels>
           <Tab.Panel unmount={false}>
-            <PoolsTable />
+            <PoolsTable isReady={isReady} />
           </Tab.Panel>
           <Tab.Panel unmount={!address}>
             <PositionsTable />

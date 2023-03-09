@@ -1,23 +1,24 @@
 import { formatPercent, formatUSD } from '@sushiswap/format'
-import { UserWithFarm } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { useTokensFromPair } from '../../../../lib/hooks'
+import { useTokensFromPool } from '../../../../lib/hooks'
+import { PositionWithPool } from '../../../../types'
 import { PoolPositionProvider, usePoolPosition } from '../../../PoolPositionProvider'
 import { PoolPositionRewardsProvider, usePoolPositionRewards } from '../../../PoolPositionRewardsProvider'
 import { PoolPositionStakedProvider, usePoolPositionStaked } from '../../../PoolPositionStakedProvider'
 import { ICON_SIZE } from '../contants'
 
 interface PositionQuickHoverTooltipProps {
-  row: UserWithFarm
+  row: PositionWithPool
 }
 
 export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row }) => {
   return (
-    <PoolPositionProvider watch={false} pair={row.pair}>
-      <PoolPositionStakedProvider watch={false} pair={row.pair}>
-        <PoolPositionRewardsProvider pair={row.pair}>
+    <PoolPositionProvider watch={false} pool={row.pool}>
+      <PoolPositionStakedProvider watch={false} pool={row.pool}>
+        <PoolPositionRewardsProvider pool={row.pool}>
           <_PositionQuickHoverTooltip row={row} />
         </PoolPositionRewardsProvider>
       </PoolPositionStakedProvider>
@@ -26,7 +27,7 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
 }
 
 const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row }) => {
-  const { token0, token1 } = useTokensFromPair(row.pair)
+  const { token0, token1 } = useTokensFromPool(row.pool)
 
   const { underlying0, underlying1, value1, value0 } = usePoolPosition()
   const {
@@ -51,9 +52,9 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
               <Typography variant="sm" weight={500} className="flex gap-1 text-slate-50">
                 {token0.symbol} <span className="text-slate-500">/</span> {token1.symbol}
               </Typography>
-              <Typography variant="xxs" className="text-slate-400">
+              {/* <Typography variant="xxs" className="text-slate-400">
                 SushiSwap Farm
-              </Typography>
+              </Typography> */}
             </div>
           </div>
           <Typography variant="xs" weight={600} className="flex gap-1.5 items-end text-slate-400">
@@ -61,28 +62,27 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
               color="gray"
               size="sm"
               label={
-                row.pair.type === 'CONSTANT_PRODUCT_POOL'
+                row.pool.type === 'CONSTANT_PRODUCT_POOL'
                   ? 'Classic'
-                  : row.pair.type === 'STABLE_POOL'
+                  : row.pool.type === 'STABLE_POOL'
                   ? 'Stable'
-                  : // @ts-ignore
-                  row.pair.type === 'CONCENTRATED_LIQUIDITY_POOL'
+                  : row.pool.type === 'CONCENTRATED_LIQUIDITY_POOL'
                   ? 'Concentrated'
                   : ''
               }
             />
-            Fee {row.pair.swapFee / 100}%
+            Fee {row.pool.swapFee * 100}%
           </Typography>
         </div>
         <div className="flex flex-col gap-1">
           <Typography variant="sm" weight={600} className="flex gap-3 text-slate-50">
-            <span className="text-slate-400">APR:</span> {formatPercent(row.pair.apr)}
+            <span className="text-slate-400">APR:</span> {formatPercent(row.pool.totalApr)}
           </Typography>
           <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-slate-50">
-            <span className="text-slate-400">Rewards:</span> {formatPercent(row.pair.incentiveApr)}
+            <span className="text-slate-400">Rewards:</span> {formatPercent(row.pool.incentiveApr)}
           </Typography>
           <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-slate-50">
-            <span className="text-slate-400">Fees:</span> {formatPercent(row.pair.feeApr)}
+            <span className="text-slate-400">Fees:</span> {formatPercent(row.pool.feeApr)}
           </Typography>
         </div>
       </div>
@@ -114,7 +114,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
           </Typography>
         </div>
       </div>
-      {row.pair.farm && (
+      {row.pool.incentives && (
         <div className="flex flex-col gap-1.5 mt-4">
           <Typography variant="xs" className="mb-1 text-slate-500">
             Staked Position
@@ -143,7 +143,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
           </div>
         </div>
       )}
-      {row.pair.farm && pendingRewards.length > 0 && (
+      {row.pool.incentives && pendingRewards.length > 0 && (
         <div className="flex flex-col gap-1.5 mt-4">
           <Typography variant="xs" className="mb-1 text-slate-500">
             Farmed Rewards
@@ -164,12 +164,12 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
         </div>
       )}
       <div className="flex justify-end gap-2 mt-8 mb-2">
-        <Link.Internal href={`/${row.pair.id}/remove`} passHref={true}>
+        <Link.Internal href={`/${row.pool.id}/remove`} passHref={true}>
           <Button as="a" size="sm" variant="outlined" fullWidth>
             Withdraw
           </Button>
         </Link.Internal>
-        <Link.Internal href={`/${row.pair.id}/add`} passHref={true}>
+        <Link.Internal href={`/${row.pool.id}/add`} passHref={true}>
           <Button as="a" size="sm" fullWidth>
             Deposit
           </Button>

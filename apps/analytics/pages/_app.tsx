@@ -1,6 +1,7 @@
 import '@sushiswap/ui/index.css'
+import '../variables.css'
 
-import { App, AppType, ThemeProvider, ToastContainer } from '@sushiswap/ui'
+import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
 import { SUPPORTED_CHAIN_IDS } from 'config'
@@ -15,6 +16,7 @@ import { store } from 'store'
 import { WagmiConfig } from 'wagmi'
 
 import SEO from '../next-seo.config.mjs'
+import { GlobalNav } from '@sushiswap/ui/future/components/GlobalNav'
 
 declare global {
   interface Window {
@@ -69,13 +71,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           <ThemeProvider>
             <App.Shell>
               <DefaultSeo {...SEO} />
-              <App.Header appType={AppType.Analytics} maxWidth="6xl">
-                {/*<Wallet.Button*/}
-                {/*  size="sm"*/}
-                {/*  className="border-none shadow-md whitespace-nowrap"*/}
-                {/*  supportedNetworks={SUPPORTED_CHAIN_IDS}*/}
-                {/*/>*/}
-              </App.Header>
+              <GlobalNav />
               <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
               <App.Footer />
               <ToastContainer className="mt-[50px]" />

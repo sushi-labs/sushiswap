@@ -1,17 +1,17 @@
 import { formatUSD } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { Currency, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { useTokensFromPair } from '../../../lib/hooks'
+import { useTokensFromPool } from '../../../lib/hooks'
 import { usePoolPosition } from '../../PoolPositionProvider'
 
 interface PoolPositionProps {
-  pair: Pair
+  pool: Pool
 }
 
-export const PoolPositionDesktop: FC<PoolPositionProps> = ({ pair }) => {
-  const { token1, token0 } = useTokensFromPair(pair)
+export const PoolPositionDesktop: FC<PoolPositionProps> = ({ pool }) => {
+  const { token1, token0 } = useTokensFromPool(pool)
   const { underlying1, underlying0, value1, value0, isError, isLoading } = usePoolPosition()
 
   if (isLoading && !isError) {
@@ -36,7 +36,7 @@ export const PoolPositionDesktop: FC<PoolPositionProps> = ({ pair }) => {
   if (!isLoading && !isError) {
     return (
       <div className="flex flex-col gap-3 px-5 py-4">
-        {pair.farm && (
+        {pool.incentives && (
           <div className="flex items-center justify-between mb-1">
             <Typography variant="sm" weight={600} className="text-slate-100">
               Unstaked Position

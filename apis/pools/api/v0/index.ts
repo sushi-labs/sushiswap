@@ -1,55 +1,17 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { z } from 'zod'
 
-import type { PoolType } from '../../lib/index.js'
-import { getPools } from '../../lib/api.js'
+import { getEarnPools } from './../../lib/api/index.js'
+import { PoolsApiSchema } from './../../lib/schemas/index.js'
 
-const schema = z.object({
-  chainIds: z
-    .string()
-    .transform((val) => val.split(',').map((v) => parseInt(v)))
-    .optional(),
-  isIncentivized: z.coerce
-    .string()
-    .transform((val) => {
-      if (val === 'true') {
-        return true
-      } else if (val === 'false') {
-        return false
-      } else {
-        throw new Error('isIncentivized must true or false')
-      }
-    })
-    .optional(),
-  isWhitelisted: z.coerce
-    .string()
-    .transform((val) => {
-      if (val === 'true') {
-        return true
-      } else if (val === 'false') {
-        return false
-      } else {
-        throw new Error('isWhitelisted must true or false')
-      }
-    })
-    .optional(),
-  poolTypes: z
-    .string()
-    .optional()
-    .transform((poolTypes) => poolTypes?.split(',') as PoolType[]),
-  cursor: z.string().optional(),
-  orderBy: z.string().default('liquidityUSD'),
-  orderDir: z.enum(['asc', 'desc']).default('desc'),
-})
+const handler = async (request: VercelRequest, response: VercelResponse) => {
+  response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=300')
 
-const handler = async (_request: VercelRequest, response: VercelResponse) => {
-  const result = schema.safeParse(_request.query)
+  const result = PoolsApiSchema.safeParse(request.query)
   if (!result.success) {
     return response.status(400).json(result.error.format())
   }
 
-  const { chainIds, isIncentivized, isWhitelisted, poolTypes, cursor, orderBy, orderDir } = result.data
-  const pools = await getPools({ chainIds, isIncentivized, isWhitelisted, poolTypes, cursor, orderBy, orderDir })
+  const pools = await getEarnPools(result.data)
   return response.status(200).json(pools)
 }
 

@@ -1,5 +1,5 @@
 import { Listbox } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/solid'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import classNames from 'classnames'
 import React, { FC, forwardRef, ReactNode } from 'react'
 

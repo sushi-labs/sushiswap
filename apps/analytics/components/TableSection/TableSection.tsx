@@ -3,13 +3,13 @@ import { classNames, Network } from '@sushiswap/ui'
 import { FC, useCallback } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../../config'
-import { PairTable } from '../PairTable'
+import { PoolTable } from '../PoolTable'
 import { SelectedTable, usePoolFilters } from '../PoolsFiltersProvider'
 import { TableFilters } from '../Table/TableFilters'
 import { TokenTable } from '../TokenTable'
 
 export const TableSection: FC = () => {
-  const { selectedNetworks, setFilters } = usePoolFilters()
+  const { chainIds, setFilters } = usePoolFilters()
 
   const onChange = useCallback(
     (val: number) => {
@@ -48,12 +48,12 @@ export const TableSection: FC = () => {
         <TableFilters />
         <Network.Selector
           networks={SUPPORTED_CHAIN_IDS}
-          selectedNetworks={selectedNetworks}
-          onChange={(selectedNetworks) => setFilters({ selectedNetworks })}
+          selectedNetworks={chainIds}
+          onChange={(chainIds) => setFilters({ chainIds })}
         />
         <Tab.Panels>
           <Tab.Panel unmount={false}>
-            <PairTable />
+            <PoolTable />
           </Tab.Panel>
           <Tab.Panel unmount={false}>
             <TokenTable />

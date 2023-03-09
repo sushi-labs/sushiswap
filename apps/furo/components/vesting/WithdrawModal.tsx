@@ -1,7 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
 import { CheckCircleIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { Button, classNames, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { Checker, useFuroVestingContract } from '@sushiswap/wagmi'
@@ -11,11 +10,13 @@ import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { useVestingBalance, Vesting } from '../../lib'
-import { useNotifications } from '../../lib/state/storage'
+import { useCreateNotification } from '@sushiswap/react-query'
+import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { FuroVestingChainId } from '@sushiswap/furo'
 
 interface WithdrawModalProps {
   vesting?: Vesting
-  chainId: ChainId
+  chainId: FuroVestingChainId
 }
 
 export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
@@ -24,14 +25,14 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
   const { address } = useAccount()
   const balance = useVestingBalance(chainId, vesting?.id, vesting?.token)
   const contract = useFuroVestingContract(chainId)
-  const [, { createNotification }] = useNotifications(address)
+  const { mutate: storeNotification } = useCreateNotification({ account: address })
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
       if (!data || !balance) return
 
       const ts = new Date().getTime()
-      createNotification({
+      const notificationData: NotificationData = {
         type: 'withdrawVesting',
         txHash: data.hash,
         chainId,
@@ -43,9 +44,11 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
           completed: `Successfully withdrawn ${balance.toSignificant(6)} ${balance.currency.symbol}`,
           failed: 'Something went wrong withdrawing from vesting schedule',
         },
-      })
+      }
+
+      storeNotification(createToast(notificationData))
     },
-    [balance, chainId, createNotification]
+    [balance, chainId, storeNotification]
   )
 
   const prepare = useCallback(

@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { nanoid } from 'nanoid'
-import React, { ReactNode } from 'react'
+import React from 'react'
 import { toast, ToastOptions } from 'react-toastify'
 
 import { ToastButtons } from './ToastButtons'
@@ -46,16 +46,21 @@ export interface NotificationData {
     | 'createMultipleVesting'
   chainId: ChainId
   summary: {
-    pending: ReactNode | Array<ReactNode>
-    completed: ReactNode | Array<ReactNode>
-    failed: ReactNode | Array<ReactNode>
-    info?: ReactNode | Array<ReactNode>
+    pending: string
+    completed: string
+    failed: string
+    info?: string
   }
   href?: string
   txHash: `0x${string}`
   groupTimestamp: number
   timestamp: number
   promise: Promise<any>
+}
+
+export interface NotificationStoredData extends Omit<NotificationData, 'summary' | 'promise'> {
+  id: string
+  summary: string
 }
 
 export const createInlineToast = (props: NotificationData) => {
@@ -67,7 +72,7 @@ export const createInlineToast = (props: NotificationData) => {
   })
 }
 
-export const createToast = (props: NotificationData) => {
+export const createToast = (props: NotificationData): NotificationData => {
   const onDismiss = () => toast.dismiss(props.txHash)
 
   // Spawn new toasts based on promise result
@@ -94,10 +99,12 @@ export const createToast = (props: NotificationData) => {
       })
     })
 
-  return toast(<ToastPending {...props} onDismiss={onDismiss} />, {
+  toast(<ToastPending {...props} onDismiss={onDismiss} />, {
     ...TOAST_OPTIONS,
     toastId: props.txHash,
   })
+
+  return props
 }
 
 export const createErrorToast = (message: string | undefined, code: boolean) => {
@@ -106,12 +113,13 @@ export const createErrorToast = (message: string | undefined, code: boolean) => 
   const toastId = `failed:${nanoid()}`
   toast(
     <>
-      <ToastContent title="Error Occurred" summary={message} code={code} />
+      <ToastContent summary={message} code={code} />
       <ToastButtons onDismiss={() => toast.dismiss(toastId)} />
     </>,
     {
       ...TOAST_OPTIONS,
       toastId,
+      autoClose: 10000,
     }
   )
 }

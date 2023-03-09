@@ -1,4 +1,4 @@
-import { ExclamationIcon, ExternalLinkIcon } from '@heroicons/react/outline'
+import { ExclamationCircleIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 import chain from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
@@ -30,7 +30,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
             <div className="w-10 h-10 overflow-hidden bg-white rounded-full">
               <div className="flex items-center justify-center w-full h-full bg-red/10">
                 <div className="w-5 h-5">
-                  <ExclamationIcon width={20} height={20} className="text-red" />
+                  <ExclamationCircleIcon width={20} height={20} className="text-red" />
                 </div>
               </div>
             </div>
@@ -69,7 +69,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
                   className="flex items-center gap-1 text-blue hover:text-blue-400"
                   href={chain[currency.chainId].getTokenUrl(currency.wrapped.address)}
                 >
-                  View on Explorer <ExternalLinkIcon width={16} height={16} />
+                  View on Explorer <ArrowTopRightOnSquareIcon width={16} height={16} />
                 </Typography>
                 <Typography weight={500} variant="xs" className="flex justify-end text-slate-400">
                   <CopyHelper toCopy={shortenAddress(currency.wrapped.address)}>

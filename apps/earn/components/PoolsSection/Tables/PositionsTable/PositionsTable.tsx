@@ -1,11 +1,10 @@
-import { UserWithFarm } from '@sushiswap/graph-client'
 import { useBreakpoint } from '@sushiswap/hooks'
 import { GenericTable } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
-import stringify from 'fast-json-stable-stringify'
 import React, { FC, useCallback, useEffect, useState } from 'react'
-import useSWR from 'swr'
 import { useAccount } from 'wagmi'
+import { useUserPositions } from '../../../../lib/hooks/api/useUserPositions'
+import { PositionWithPool } from '../../../../types'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, VALUE_COLUMN } from './Cells/columns'
@@ -14,10 +13,9 @@ import { PositionQuickHoverTooltip } from './PositionQuickHoverTooltip'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, VALUE_COLUMN, APR_COLUMN]
-// VOLUME_COLUMN
 
 export const PositionsTable: FC = () => {
-  const { selectedNetworks } = usePoolFilters()
+  const { chainIds } = usePoolFilters()
   const { address } = useAccount()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
@@ -25,15 +23,10 @@ export const PositionsTable: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'value', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
 
-  const { data: userWithFarms, isValidating } = useSWR<UserWithFarm[]>(
-    address ? `/earn/api/user/${address}${selectedNetworks ? `?networks=${stringify(selectedNetworks)}` : ''}` : null,
-    (url) => fetch(url).then((response) => response.json())
-  )
+  const { data: userPositions, isValidating } = useUserPositions({ id: address, chainIds })
 
-  // console.log({userWithFarms})
-
-  const table = useReactTable<UserWithFarm>({
-    data: userWithFarms || [],
+  const table = useReactTable<PositionWithPool>({
+    data: userPositions || [],
     state: {
       sorting,
       columnVisibility,
@@ -59,17 +52,17 @@ export const PositionsTable: FC = () => {
     }
   }, [isMd, isSm])
 
-  const rowLink = useCallback((row: UserWithFarm) => {
-    return `/${row.id}`
+  const rowLink = useCallback((row: PositionWithPool) => {
+    return `/${row.pool.id}`
   }, [])
 
   return (
-    <GenericTable<UserWithFarm>
+    <GenericTable<PositionWithPool>
       table={table}
       HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
-      loading={!userWithFarms && isValidating}
+      loading={isValidating}
       placeholder="No positions found"
-      pageSize={Math.max(userWithFarms?.length || 0, 5)}
+      pageSize={Math.max(userPositions?.length || 0, 5)}
       linkFormatter={rowLink}
     />
   )

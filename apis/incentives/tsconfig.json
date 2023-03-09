@@ -1,5 +1,0 @@
-{
-  "extends": "@sushiswap/typescript-config/node18-strictest-esm.combined.json",
-  "include": ["."],
-  "exclude": ["node_modules", ".vercel"]
-}

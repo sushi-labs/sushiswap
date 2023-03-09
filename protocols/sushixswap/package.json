@@ -16,20 +16,21 @@
     "directory": "protocols/sushixswap"
   },
   "license": "MIT",
+  "main": "exports/exports.js",
+  "types": "exports/exports.d.ts",
   "author": "Sarang",
   "files": [
     "artifacts",
     "contracts",
     "deploy",
     "deployments",
-    "exports",
     "typechain"
   ],
   "scripts": {
     "build": "TS_NODE_TRANSPILE_ONLY=1 hardhat compile",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf artifacts && rm -rf cache && rm -rf exports && rm -rf typechain",
+    "clean": "rm -rf .turbo node_modules artifacts cache exports typechain",
     "compile": "hardhat compile",
-    "export": "hardhat export --export-all exports.json",
+    "export": "hardhat export --export-all exports.json && cd exports && (ls tsconfig.json || tsc --init) && tsc --declaration",
     "node": "hardhat node",
     "test": "hardhat test"
   },
@@ -52,9 +53,10 @@
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
+    "@sushiswap/types": "workspace:*",
     "@tenderly/hardhat-tenderly": "^1.0.13",
     "@types/chai": "^4.3.3",
-    "@types/node": "^17.0.33",
+    "@types/node": "^18.0.0",
     "@types/seedrandom": "^3.0.1",
     "chai": "^4.3.6",
     "eslint": "8.29.0",
