@@ -374,11 +374,13 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/redux-token-lists': workspace:*
       '@sushiswap/sushi-data': 1.0.26
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/validate': workspace:*
       '@sushiswap/wagmi': workspace:*
+      '@tanstack/react-table': 8.5.0
       '@types/cors': ^2.8.13
       '@types/node': ^18.0.0
       '@types/react': ^18.0.0
@@ -428,10 +430,12 @@ importers:
       '@sushiswap/graph-client': link:../../packages/graph-client
       '@sushiswap/graph-config': link:../../config/graph
       '@sushiswap/hooks': link:../../packages/hooks
+      '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/sushi-data': 1.0.26
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/validate': link:../../packages/validate
       '@sushiswap/wagmi': link:../../packages/wagmi
+      '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
       '@uniswap/token-lists': 1.0.0-beta.30
       '@vercel/analytics': 0.1.5_react@18.2.0
       cors: 2.8.5

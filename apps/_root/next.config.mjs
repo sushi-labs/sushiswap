@@ -7,9 +7,7 @@ const {
   BRIDGE_URL,
   EARN_URL,
   FURO_URL,
-  INTERNAL_URL,
   KASHI_URL,
-  PARTNER_URL,
   SWAP_URL,
   XSWAP_URL,
   ACADEMY_URL,
@@ -88,14 +86,6 @@ const nextConfig = {
       {
         source: '/furo/:path*',
         destination: `${FURO_URL}/furo/:path*`,
-      },
-      {
-        source: '/partner',
-        destination: `${PARTNER_URL}/partner`,
-      },
-      {
-        source: '/partner/:path*',
-        destination: `${PARTNER_URL}/partner/:path*`,
       },
       {
         source: '/swap',
