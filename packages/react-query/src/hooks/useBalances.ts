@@ -18,6 +18,7 @@ export const useBalancesQuery = ({ chainId, account }: UseBalances, select: UseB
   useQuery({
     queryKey: ['NoPersist', `https://balances.sushi.com/v0/${chainId}/${account}`],
     queryFn: () => fetch(`https://balances.sushi.com/v0/${chainId}/${account}`).then((response) => response.json()),
+    staleTime: 900, // 15 mins
     cacheTime: 3600, // 1hr
     enabled: Boolean(chainId && account),
     select,
