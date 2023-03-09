@@ -66,7 +66,7 @@ export abstract class RPool {
   calcDiff(from: number, to: number, amountIn: number, statePrev?: PoolState): { diff: number; gasSpent: number } {
     if (from > 1 || to > 1 || from == to) throw new Error(`unsupported calcOutput ${from} => ${to}`)
     if (statePrev === undefined) {
-      if (amountIn > 0) {
+      if (amountIn >= 0) {
         const res = this.calcOutByIn2(amountIn, from < to)
         return { diff: -res.out, gasSpent: res.gasSpent }
       } else {

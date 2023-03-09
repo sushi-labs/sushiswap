@@ -185,7 +185,9 @@ export class Edge {
     // this.testApply(v, amountIn, out);
 
     const v2 = this.pool.calcDiff(v === this.vert0 ? 0 : 1, v === this.vert0 ? 1 : 0, -amountOut, this.poolState)
-    testeq(v2.diff, res)
+    if (amountOut == 0) {
+      testeq(v2.diff, 0)
+    } else testeq(v2.diff, res)
     testeq(gas, v2.gasSpent)
 
     return { inp: res, gasSpent: gas - this.spentGas }
