@@ -63,71 +63,35 @@ export abstract class RPool {
   abstract calcInByOut2(amountOut: number, direction: boolean): { inp: number; gasSpent: number }
   abstract calcCurrentPriceWithoutFee2(direction: boolean): number
 
-  // new interface
-  getNewState(
-    from: number,
-    to: number,
-    amountIn: number,
-    statePrev?: PoolState
-  ): { amountOut: number; newState: PoolState } {
-    if (from > 1 || to > 1 || from == to) throw new Error(`unsupported getNewState ${from} => ${to}`)
-    const state: DefaultPoolState =
-      statePrev !== undefined
-        ? { flow: (statePrev as DefaultPoolState).flow.slice(), gasSpent: statePrev.gasSpent }
-        : {
-            flow: this.tokens.map(() => 0),
-            gasSpent: 0,
-          }
-    const newInput = (state.flow[from] += amountIn)
-    if (newInput >= 0) {
-      const res = this.calcOutByIn2(newInput, from < to)
-      const amountOut = res.out + state.flow[to]
-      state.flow[to] = -res.out
-      state.gasSpent = res.gasSpent
-      console.assert(amountOut >= 0, 'Wrong pool output0 value: ' + amountOut)
-      return { amountOut, newState: state }
-    } else {
-      const res = this.calcInByOut2(-newInput, from < to)
-      const amountOut = state.flow[to] - res.inp
-      state.flow[to] = res.inp
-      state.gasSpent = res.gasSpent
-      console.assert(amountOut >= 0, 'Wrong pool output1 value: ' + amountOut)
-      return { amountOut, newState: state }
-    }
-  }
-  calcOutput(
-    from: number,
-    to: number,
-    amountIn: number,
-    statePrev?: PoolState
-  ): { amountOut: number; gasSpent: number } {
+  calcDiff(from: number, to: number, amountIn: number, statePrev?: PoolState): { diff: number; gasSpent: number } {
     if (from > 1 || to > 1 || from == to) throw new Error(`unsupported calcOutput ${from} => ${to}`)
     if (statePrev === undefined) {
       if (amountIn > 0) {
         const res = this.calcOutByIn2(amountIn, from < to)
-        return { amountOut: -res.out, gasSpent: res.gasSpent }
+        return { diff: -res.out, gasSpent: res.gasSpent }
       } else {
         const res = this.calcInByOut2(-amountIn, to < from)
-        return { amountOut: res.inp, gasSpent: res.gasSpent }
+        return { diff: res.inp, gasSpent: res.gasSpent }
       }
     } else {
       const state = statePrev as DefaultPoolState
       const newInput = state.flow[from] + amountIn
-      let amountOut = 0,
+      let diff = 0,
         gasSpent = 0
       if (newInput >= 0) {
         const res = this.calcOutByIn2(newInput, from < to)
-        amountOut = -res.out - state.flow[to]
+        diff = -res.out - state.flow[to]
         gasSpent = res.gasSpent
       } else {
         const res = this.calcInByOut2(-newInput, to < from)
-        amountOut = res.inp - state.flow[to]
+        diff = res.inp - state.flow[to]
         gasSpent = res.gasSpent
       }
-      console.assert(amountOut * amountIn <= 0, 'Wrong pool output1 value: ' + amountIn + '->' + amountOut)
-      return { amountOut, gasSpent }
+      console.assert(diff * amountIn <= 0, 'Wrong pool output1 value: ' + amountIn + '->' + diff)
+      return { diff, gasSpent }
     }
   }
+
   applyChanges(
     from: number,
     fromDelta: number,
@@ -148,14 +112,7 @@ export abstract class RPool {
     state.gasSpent = gasSpent
     return state
   }
-  // calcOutByIn(from: number, to: number, amountIn: number): { out: number; gasSpent: number } {
-  //   if (from > 1 || to > 1 || from == to) throw new Error(`unsupported calcOutByIn ${from} => ${to}`)
-  //   return this.calcOutByIn2(amountIn, from < to)
-  // }
-  // calcInByOut(from: number, to: number, amountIn: number): { inp: number; gasSpent: number } {
-  //   if (from > 1 || to > 1 || from == to) throw new Error(`unsupported calcInByOut ${from} => ${to}`)
-  //   return this.calcInByOut2(amountIn, from < to)
-  // }
+
   calcCurrentPriceWithoutFee(from: number, to: number): number {
     if (from > 1 || to > 1 || from == to) throw new Error(`unsupported calcInByOut ${from} => ${to}`)
     return this.calcCurrentPriceWithoutFee2(from < to)
