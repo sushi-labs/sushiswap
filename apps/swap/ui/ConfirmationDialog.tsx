@@ -66,6 +66,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     enabled: Boolean(trade?.writeArgs) && appType === AppType.Swap && isRouteProcessorChainId(network0),
     overrides: trade?.overrides,
     onError: (error) => {
+      if (error.message.startsWith('user rejected transaction')) return
       log.error('Swap prepare failed', {
         trade,
         error,
@@ -144,6 +145,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     },
     onSettled,
     onError: (error) => {
+      if (error.message.startsWith('user rejected transaction')) return
       log.error('Swap failed', {
         trade,
         error,
