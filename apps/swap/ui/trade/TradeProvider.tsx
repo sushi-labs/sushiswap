@@ -312,16 +312,20 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
             : state.token1.wrapped.address
           : 'SUSHI'
 
-      void push({
-        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
-        query: {
-          ...query,
-          fromChainId: chainId,
-          fromCurrency: token0.isNative ? token0.symbol : token0.wrapped.address,
-          toChainId: chainId,
-          toCurrency: token1,
+      void push(
+        {
+          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          query: {
+            ...query,
+            fromChainId: chainId,
+            fromCurrency: token0.isNative ? token0.symbol : token0.wrapped.address,
+            toChainId: chainId,
+            toCurrency: token1,
+          },
         },
-      })
+        undefined,
+        { shallow: true }
+      )
     }
     const setNetwork0 = (chainId: ChainId) => {
       const fromCurrency =
@@ -331,14 +335,18 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
             : state.token0.wrapped.address
           : Native.onChain(chainId).symbol
 
-      void push({
-        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
-        query: {
-          ...query,
-          fromChainId: chainId,
-          fromCurrency,
+      void push(
+        {
+          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          query: {
+            ...query,
+            fromChainId: chainId,
+            fromCurrency,
+          },
         },
-      })
+        undefined,
+        { shallow: true }
+      )
     }
     const setNetwork1 = (chainId: ChainId) => {
       const toCurrency =
@@ -348,64 +356,84 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
             : state.token1.wrapped.address
           : 'SUSHI'
 
-      void push({
-        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
-        query: {
-          ...query,
-          toChainId: chainId,
-          toCurrency,
+      void push(
+        {
+          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          query: {
+            ...query,
+            toChainId: chainId,
+            toCurrency,
+          },
         },
-      })
+        undefined,
+        { shallow: true }
+      )
     }
     const setTokens = (currency0: Type, currency1: Type) => {
-      void push({
-        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
-        query: {
-          ...query,
-          fromChainId: currency0.chainId,
-          fromCurrency: currency0.isNative ? currency0.symbol : currency0.wrapped.address,
-          toChainId: currency1.chainId,
-          toCurrency: currency1.isNative ? currency1.symbol : currency1.wrapped.address,
+      void push(
+        {
+          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          query: {
+            ...query,
+            fromChainId: currency0.chainId,
+            fromCurrency: currency0.isNative ? currency0.symbol : currency0.wrapped.address,
+            toChainId: currency1.chainId,
+            toCurrency: currency1.isNative ? currency1.symbol : currency1.wrapped.address,
+          },
         },
-      })
+        undefined,
+        { shallow: true }
+      )
     }
     const setToken0 = (currency: Type) => {
       const fromCurrency = currency.isNative ? currency.symbol : currency.wrapped.address
-      void push({
-        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
-        query: {
-          ...query,
-          fromChainId: currency.chainId,
-          fromCurrency,
-          toChainId: query.toCurrency === fromCurrency ? query.fromChainId : query.toChainId,
-          toCurrency: query.toCurrency === fromCurrency ? query.fromCurrency : query.toCurrency,
+      void push(
+        {
+          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          query: {
+            ...query,
+            fromChainId: currency.chainId,
+            fromCurrency,
+            toChainId: query.toCurrency === fromCurrency ? query.fromChainId : query.toChainId,
+            toCurrency: query.toCurrency === fromCurrency ? query.fromCurrency : query.toCurrency,
+          },
         },
-      })
+        undefined,
+        { shallow: true }
+      )
     }
     const setToken1 = (currency: Type) => {
       const toCurrency = currency.isNative ? currency.symbol : currency.wrapped.address
-      void push({
-        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
-        query: {
-          ...query,
-          fromChainId: query.fromCurrency === toCurrency ? query.toChainId : query.fromChainId,
-          fromCurrency: query.fromCurrency === toCurrency ? query.toCurrency : query.fromCurrency,
-          toChainId: currency.chainId,
-          toCurrency,
+      void push(
+        {
+          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          query: {
+            ...query,
+            fromChainId: query.fromCurrency === toCurrency ? query.toChainId : query.fromChainId,
+            fromCurrency: query.fromCurrency === toCurrency ? query.toCurrency : query.fromCurrency,
+            toChainId: currency.chainId,
+            toCurrency,
+          },
         },
-      })
+        undefined,
+        { shallow: true }
+      )
     }
     const switchTokens = () =>
-      void push({
-        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
-        query: {
-          ...query,
-          fromChainId: query.toChainId,
-          fromCurrency: query.toCurrency,
-          toChainId: query.fromChainId,
-          toCurrency: query.fromCurrency,
+      void push(
+        {
+          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          query: {
+            ...query,
+            fromChainId: query.toChainId,
+            fromCurrency: query.toCurrency,
+            toChainId: query.fromChainId,
+            toCurrency: query.fromCurrency,
+          },
         },
-      })
+        undefined,
+        { shallow: true }
+      )
     const setAppType = (appType: AppType) => {
       const network1 =
         appType === AppType.Swap
@@ -443,26 +471,34 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           : state.token0?.symbol === 'SUSHI'
           ? Native.onChain(network1).symbol
           : 'SUSHI'
-      void push({
-        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
-        query: {
-          ...query,
-          toChainId: network1,
-          toCurrency: token1,
+      void push(
+        {
+          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          query: {
+            ...query,
+            toChainId: network1,
+            toCurrency: token1,
+          },
         },
-      })
+        undefined,
+        { shallow: true }
+      )
     }
     const setSearch = (currency: Type) => {
-      void push({
-        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
-        query: {
-          ...query,
-          fromChainId: currency.chainId,
-          fromCurrency: Native.onChain(currency.chainId).symbol,
-          toChainId: currency.chainId,
-          toCurrency: currency.isNative ? currency.symbol : currency.wrapped.address,
+      void push(
+        {
+          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          query: {
+            ...query,
+            fromChainId: currency.chainId,
+            fromCurrency: Native.onChain(currency.chainId).symbol,
+            toChainId: currency.chainId,
+            toCurrency: currency.isNative ? currency.symbol : currency.wrapped.address,
+          },
         },
-      })
+        undefined,
+        { shallow: true }
+      )
     }
 
     const setValue = (value: string) => dispatch({ type: 'setValue', value })
