@@ -4,8 +4,8 @@ import React, { FC } from 'react'
 
 import { Header } from '../ui/Header'
 import { WagmiProvider } from '../ui/WagmiProvider'
-// import { PersistQueryClientProvider } from '../ui/PersistQueryClientProvider'
-import { QueryClientProvider } from '../ui/QueryClientProvider'
+import { PersistQueryClientProvider } from '../ui/PersistQueryClientProvider'
+// import { QueryClientProvider } from '../ui/QueryClientProvider'
 import Head from 'next/head'
 import { AppProps } from 'next/app'
 import { ToastContainer } from '@sushiswap/ui/future/components/toast'
@@ -27,7 +27,8 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="mask-icon" href="/swap/safari-pinned-tab.svg?v=1" color="#fa52a0" />
       </Head>
       <WagmiProvider>
-        <QueryClientProvider>
+        <PersistQueryClientProvider>
+          {/* <QueryClientProvider> */}
           <SwapProvider>
             {/*<SplashController>*/}
             <Onramper.Provider>
@@ -38,7 +39,8 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             {/*</SplashController>*/}
           </SwapProvider>
           <ToastContainer />
-        </QueryClientProvider>
+        </PersistQueryClientProvider>
+        {/* </QueryClientProvider> */}
       </WagmiProvider>
     </>
   )
