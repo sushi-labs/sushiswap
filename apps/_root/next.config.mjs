@@ -2,6 +2,8 @@ import defaultNextConfig from '@sushiswap/nextjs-config'
 
 const { ANALYTICS_URL, BLOG_URL, EARN_URL, FURO_URL, SWAP_URL, ACADEMY_URL } = process.env
 
+import { withAxiom } from 'next-axiom'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   ...defaultNextConfig,
@@ -112,4 +114,4 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+export default withAxiom(nextConfig)

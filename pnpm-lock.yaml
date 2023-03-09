@@ -397,6 +397,7 @@ importers:
       graphql-request: ^5.0.0
       nanoid: 4.0.0
       next: 13.2.3
+      next-axiom: 0.17.0
       next-seo: 5.15.0
       next-sitemap: 3.1.43
       octokit: ^2.0.4
@@ -445,6 +446,7 @@ importers:
       graphql-request: 5.1.0
       nanoid: 4.0.0
       next: 13.2.3_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.17.0_next@13.2.3
       next-seo: 5.15.0_nvzgbose6yf6w7ijjprgspqefi
       next-sitemap: 3.1.43_next@13.2.3
       octokit: 2.0.10
