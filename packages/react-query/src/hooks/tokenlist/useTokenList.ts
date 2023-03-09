@@ -15,6 +15,8 @@ export const useTokenListQuery = (select: UseTokenListQuerySelect) =>
     },
     select,
     keepPreviousData: true,
+    staleTime: 900, // 15 mins
+    cacheTime: 3600, // 1hr
   })
 
 export const useTokenList = (filter?: 'showNone' | string[]) => {
