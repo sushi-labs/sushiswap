@@ -1,18 +1,16 @@
 import { CheckIcon } from '@heroicons/react/solid'
-import type { PoolType, PoolVersion } from '@sushiswap/client'
-import { classNames, Network, Select, Switch, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { useRouter } from 'next/router'
 import React, { FC, Fragment } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../../../../config'
-import { AVAILABLE_POOL_TYPE_MAP, AVAILABLE_VERSION_MAP, POOL_TYPE_MAP } from '../../../../lib/constants'
+import { AVAILABLE_POOL_TYPE_MAP, AVAILABLE_VERSION_MAP } from '../../../../lib/constants'
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { TableFiltersSearchToken } from './TableFiltersSearchToken'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Listbox, Transition } from '@headlessui/react'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
-import chains, { Chain } from '@sushiswap/chain'
-import { CheckMarkIcon } from '@sushiswap/ui/future/components/icons/CheckmarkIcon'
+import { Chain } from '@sushiswap/chain'
 import { ChevronDownIcon } from '@heroicons/react/outline'
 
 export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters = false }) => {
@@ -24,7 +22,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
 
   return (
     <div className="flex flex-col gap-4 mb-4">
-      <div className="h-px bg-gray-200 w-full" />
+      <div className="h-px bg-gray-200 dark:bg-slate-200/5 w-full" />
       <div className="flex gap-4">
         <TableFiltersSearchToken />
         <Listbox
@@ -97,7 +95,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
           )}
         </Listbox>
       </div>
-      <div className="h-px bg-gray-200 w-full" />
+      <div className="h-px bg-gray-200 dark:bg-slate-200/5 w-full" />
       <div className="flex flex-wrap items-center gap-3">
         <div
           className={classNames(
@@ -105,21 +103,6 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             'transition-opacity ease-in duration-150 flex gap-3 flex-wrap items-center'
           )}
         >
-          <Button
-            onClick={() =>
-              setFilters({
-                poolTypes: poolTypes.includes('CONSTANT_PRODUCT_POOL')
-                  ? poolTypes.filter((el) => el !== 'CONSTANT_PRODUCT_POOL')
-                  : [...poolTypes, 'CONSTANT_PRODUCT_POOL'],
-              })
-            }
-            size="sm"
-            variant={poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'outlined' : 'empty'}
-            color={poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'blue' : 'default'}
-          >
-            Classic
-          </Button>
-
           <Button
             onClick={() =>
               setFilters({
@@ -146,7 +129,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             variant={poolVersions.includes('LEGACY') ? 'outlined' : 'empty'}
             color={poolVersions.includes('LEGACY') ? 'blue' : 'default'}
           >
-            Legacy
+            V1
           </Button>
           <Button
             onClick={() =>
@@ -160,7 +143,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             variant={poolVersions.includes('TRIDENT') ? 'outlined' : 'empty'}
             color={poolVersions.includes('TRIDENT') ? 'blue' : 'default'}
           >
-            Trident
+            V2
           </Button>
           <Button
             onClick={() => setFilters({ incentivizedOnly: !incentivizedOnly })}

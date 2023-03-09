@@ -1,94 +1,62 @@
 import { formatNumber, formatPercent } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
-import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
+import { Currency, Link } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { incentiveRewardToToken } from '../../../../lib/functions'
-import { useTokensFromPool } from '../../../../lib/hooks'
-import { ICON_SIZE } from '../contants'
+import { List } from '@sushiswap/ui/future/components/list/List'
+import Button from '@sushiswap/ui/future/components/button/Button'
 
 interface PoolQuickHoverTooltipProps {
   row: Pool
 }
 
 export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) => {
-  const { token0, token1 } = useTokensFromPool(row)
-
   return (
-    <div className="flex flex-col p-2 !pb-0">
-      <div className="flex justify-between gap-8">
-        <div className="flex flex-col gap-1">
-          <div className="flex gap-1">
-            <Currency.IconList iconWidth={ICON_SIZE} iconHeight={ICON_SIZE}>
-              <Currency.Icon currency={token0} />
-              <Currency.Icon currency={token1} />
-            </Currency.IconList>
-            <div className="flex flex-col">
-              <Typography variant="sm" weight={500} className="flex gap-1 text-gray-900 dark:text-slate-50">
-                {token0.symbol} <span className="text-gray-900 dark:text-slate-500">/</span> {token1.symbol}
-              </Typography>
-              {/* <Typography variant="xxs" className="text-slate-400">
-                SushiSwap Farm
-              </Typography> */}
-            </div>
-          </div>
-          <Typography variant="xs" weight={600} className="flex gap-1.5 items-end text-slate-400">
-            <Chip
-              color="gray"
-              size="sm"
-              label={
-                row.type === 'CONSTANT_PRODUCT_POOL'
-                  ? 'Classic'
-                  : row.type === 'STABLE_POOL'
-                  ? 'Stable'
-                  : row.type === 'CONCENTRATED_LIQUIDITY_POOL'
-                  ? 'Concentrated'
-                  : ''
-              }
-            />
-            Fee {row.swapFee * 100}%
-          </Typography>
-        </div>
-        <div className="flex flex-col gap-1">
-          <Typography variant="sm" weight={600} className="flex gap-3 text-gray-900 dark:text-slate-50">
-            <span className="text-slate-400">APR:</span> {formatPercent(row.totalApr)}
-          </Typography>
-          <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-gray-900 dark:text-slate-50">
-            <span className="text-slate-400">Rewards:</span> {formatPercent(row.incentiveApr)}
-          </Typography>
-          <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-gray-900 dark:text-slate-50">
-            <span className="text-slate-400">Fees:</span> {formatPercent(row.feeApr)}
-          </Typography>
-        </div>
+    <div className="flex flex-col p-2 gap-3">
+      <div className="flex flex-col gap-1">
+        <span className="text-[10px] text-gray-500 dark:text-slate-500">
+          <span className="font-semibold text-gray-900 dark:text-slate-50">Total APR</span> • Rewards + Fees
+        </span>
+        <span className="text-3xl font-medium text-gray-900 dark:text-slate-50">
+          {formatPercent(row.totalApr)}{' '}
+          <span className="text-[10px] text-gray-500 dark:text-slate-500">
+            {formatPercent(row.incentiveApr)} + {formatPercent(row.feeApr)}
+          </span>
+        </span>
       </div>
-      {!!row?.incentives?.length && (
-        <>
-          <hr className="my-3 border-t border-slate-200/10" />
-          <div className="flex flex-col gap-1.5">
-            <Typography variant="xs" className="mb-1 text-gray-900 dark:text-slate-500">
-              Reward Emission
-            </Typography>
-            {row.incentives.map((incentive, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <Currency.Icon currency={incentiveRewardToToken(row.chainId, incentive)} width={18} height={18} />
-                <Typography variant="sm" weight={600} className="text-gray-900 dark:text-slate-50">
-                  <span>
-                    {formatNumber(incentive.rewardPerDay)} {incentive.rewardToken.symbol}
-                  </span>{' '}
-                  <span className="font-normal text-gray-700 dark:text-slate-300">per day</span>
-                </Typography>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-      <div className="flex justify-end gap-2 mt-4 mb-2">
+      <div className="flex">
         <Link.Internal href={`/${row.id}/add`} passHref={true}>
-          <Button as="a" size="sm" fullWidth>
+          <Button as="a" size="sm" variant="outlined">
             Deposit
           </Button>
         </Link.Internal>
       </div>
+
+      {!!row?.incentives?.length && (
+        <>
+          <List className="!pt-5">
+            <div className="flex justify-between">
+              <List.Label>Reward Emission</List.Label>
+              <span className="text-[10px] text-gray-500">per day</span>
+            </div>
+            <List.Control className="bg-gray-100 dark:bg-slate-700">
+              {row.incentives.map((incentive, index) => (
+                <List.Item
+                  key={index}
+                  icon={Currency.Icon}
+                  iconProps={{
+                    currency: incentiveRewardToToken(row.chainId, incentive),
+                    width: 18,
+                    height: 18,
+                  }}
+                  title={`${formatNumber(incentive.rewardPerDay)} ${incentive.rewardToken.symbol}`}
+                />
+              ))}
+            </List.Control>
+          </List>
+        </>
+      )}
     </div>
   )
 }
