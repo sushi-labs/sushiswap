@@ -39,7 +39,7 @@ export const NetworkSelectorMenu = <T extends number>({
                     loading={false}
                     onChange={setQuery}
                   />
-                  <div className="h-px w-full bg-gray-100 mt-2" />
+                  <div className="h-px w-full bg-gray-100 dark:bg-slate-200/5 mt-2" />
                   <div className="pt-2 max-h-[300px] scroll">
                     {networks
                       .filter((el) => (query ? chains[el].name.toLowerCase().includes(query.toLowerCase()) : Boolean))
