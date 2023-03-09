@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { ConstantProductRPool, DefaultPoolState, PoolState, RPool, RToken, setTokenId } from './PrimaryPools'
+import { ConstantProductRPool, PoolState, RPool, RToken, setTokenId } from './PrimaryPools'
 import { StableSwapRPool } from './StableSwapPool'
 import { ASSERT, closeValues, DEBUG, getBigNumber } from './Utils'
 
@@ -88,6 +88,7 @@ export class Edge {
     this.spentGas = 0
     this.spentGasNew = 0
     this.bestEdgeIncome = 0
+    this.poolState = undefined
   }
 
   reserve(v: Vertice): BigNumber {
@@ -100,63 +101,6 @@ export class Edge {
 
   calcInput(v: Vertice, amountOut: number): { diff: number; gasSpent: number } {
     return this.pool.calcDiff(v === this.vert0 ? 0 : 1, v === this.vert0 ? 1 : 0, amountOut, this.poolState)
-  }
-
-  checkMinimalLiquidityExceededAfterSwap(from: Vertice, amountOut: number): boolean {
-    if (from === this.vert0) {
-      const r1 = parseInt(this.pool.getReserve(1).toString())
-      if (this.direction) {
-        return r1 - amountOut - this.amountOutPrevious < this.pool.minLiquidity
-      } else {
-        return r1 - amountOut + this.amountOutPrevious < this.pool.minLiquidity
-      }
-    } else {
-      const r0 = parseInt(this.pool.getReserve(0).toString())
-      if (this.direction) {
-        return r0 - amountOut + this.amountInPrevious < this.pool.minLiquidity
-      } else {
-        return r0 - amountOut - this.amountInPrevious < this.pool.minLiquidity
-      }
-    }
-  }
-
-  // doesn't used in production - just for testing
-  testApply(from: Vertice, amountIn: number, amountOut: number) {
-    console.assert(this.amountInPrevious * this.amountOutPrevious >= 0)
-    const inPrev = this.direction ? this.amountInPrevious : -this.amountInPrevious
-    const outPrev = this.direction ? this.amountOutPrevious : -this.amountOutPrevious
-    const to = from.getNeibour(this)
-    let directionNew,
-      amountInNew = 0,
-      amountOutNew = 0
-    if (to) {
-      const inInc = from === this.vert0 ? amountIn : -amountOut
-      const outInc = from === this.vert0 ? amountOut : -amountIn
-      const inNew = inPrev + inInc
-      const outNew = outPrev + outInc
-      console.assert(inNew * outNew >= 0)
-      if (inNew >= 0) {
-        directionNew = true
-        amountInNew = inNew
-        amountOutNew = outNew
-      } else {
-        directionNew = false
-        amountInNew = -inNew
-        amountOutNew = -outNew
-      }
-    } else console.error('Error 221')
-
-    if (directionNew) {
-      const calc = this.pool.calcOutByIn2(amountInNew, true).out
-      const res = closeValues(amountOutNew, calc, 1e-6)
-      if (!res) console.log('Err 225-1 !!', amountOutNew, calc, Math.abs(calc / amountOutNew - 1))
-      return res
-    } else {
-      const calc = this.pool.calcOutByIn2(amountOutNew, false).out
-      const res = closeValues(amountInNew, calc, 1e-6)
-      if (!res) console.log('Err 225-2!!', amountInNew, calc, Math.abs(calc / amountInNew - 1))
-      return res
-    }
   }
 
   applySwap(from: Vertice) {
@@ -437,78 +381,6 @@ export class Graph {
     return vert
   }
 
-  /*exportPath(from: RToken, to: RToken) {
-
-    const fromVert = this.getVert(from) as Vertice
-    const toVert = this.getVert(to) as Vertice
-    const initValue = (fromVert.bestIncome * fromVert.price) / toVert.price
-
-    const route = new Set<Edge>()
-    for (let v = toVert; v !== fromVert; v = v.getNeibour(v.bestSource) as Vertice) {
-      if (v.bestSource) route.add(v.bestSource)
-    }
-
-    function edgeStyle(e: Edge) {
-      const finish = e.vert1.bestSource === e
-      const start = e.vert0.bestSource === e
-      let label
-      if (e.bestEdgeIncome === -1) label = 'label: "low_liq"'
-      if (e.bestEdgeIncome !== 0) label = `label: "${print((e.bestEdgeIncome / initValue - 1) * 100, 3)}%"`
-      const edgeValue = route.has(e) ? 'value: 2' : undefined
-      let arrow
-      if (finish && start) arrow = 'arrows: "from,to"'
-      if (finish) arrow = 'arrows: "to"'
-      if (start) arrow = 'arrows: "from"'
-      return ['', label, edgeValue, arrow].filter((a) => a !== undefined).join(', ')
-    }
-
-    function print(n: number, digits: number) {
-      let out
-      if (n === 0) out = '0'
-      else {
-        const n0 = n > 0 ? n : -n
-        const shift = digits - Math.ceil(Math.log(n0) / Math.LN10)
-        if (shift <= 0) out = `${Math.round(n0)}`
-        else {
-          const mult = Math.pow(10, shift)
-          out = `${Math.round(n0 * mult) / mult}`
-        }
-        if (n < 0) out = -out
-      }
-      return out
-    }
-
-    function nodeLabel(v: Vertice) {
-      const value = (v.bestIncome * v.price) / toVert.price
-      const income = `${print(value, 3)}`
-      const total = `${print(v.bestTotal, 3)}`
-      // const income = `${print((value/initValue-1)*100, 3)}%`
-      // const total = `${print((v.bestTotal/initValue-1)*100, 3)}%`
-      const checkLine = v.checkLine === -1 ? undefined : `${v.checkLine}`
-      return [checkLine, income, total].filter((a) => a !== undefined).join(':')
-    }
-
-    const nodes = `var nodes = new vis.DataSet([
-      ${this.vertices.map((t) => `{ id: ${t.token.name}, label: "${nodeLabel(t)}"}`).join(',\n\t\t')}
-    ]);\n`
-    const edges = `var edges = new vis.DataSet([
-      ${this.edges
-        .map((p) => `{ from: ${p.vert0.token.name}, to: ${p.vert1.token.name}${edgeStyle(p)}}`)
-        .join(',\n\t\t')}
-    ]);\n`
-    const data = `var data = {
-        nodes: nodes,
-        edges: edges,
-    };\n`
-
-    // TODO: This should be removed, this pacakge will not be installable on a client while this remains.
-    const fs = require("fs");
-    fs.writeFileSync(
-      "D:/Info/Notes/GraphVisualization/data.js",
-      nodes + edges + data
-    );
-  }*/
-
   findBestPathExactIn(
     from: RToken,
     to: RToken,
@@ -595,10 +467,6 @@ export class Graph {
           e.bestEdgeIncome = -1
           return
         }
-        // if (e.checkMinimalLiquidityExceededAfterSwap(closestVert as Vertice, newIncome)) {
-        //   e.bestEdgeIncome = -1
-        //   return
-        // }
         const newGasSpent = (closestVert as Vertice).gasSpent + gas
         const price = v2.price / finish.price
         const gasPrice = v2.gasPrice * price
