@@ -22,6 +22,10 @@ function createTopology(t: Topology): [Graph, Vertice, Vertice] {
     console.assert(edge[0] == parseInt(e.vert0.token.name), 'internal Error 28')
     console.assert(edge[1] == parseInt(e.vert1.token.name), 'internal Error 29')
     e.direction = edge[0] == parseInt(e.vert0.token.name)
+    e.poolState = {
+      flow: e.direction ? [1, -1] : [-1, 1],
+      gasSpent: 60_000,
+    }
   })
   g.getOrCreateVertice(tokens[0])
   g.getOrCreateVertice(tokens[tokens.length - 1])
@@ -67,13 +71,22 @@ function applyPath(p: Edge[], from: Vertice, to: Vertice) {
       e.direction = v == e.vert0
       e.amountInPrevious = 1
       e.amountOutPrevious = 1
+      e.poolState = {
+        flow: e.direction ? [1, -1] : [-1, 1],
+        gasSpent: 60_000,
+      }
     } else {
+      const flow = (e.poolState as { flow: number[] }).flow
       if (e.direction == (v == e.vert0)) {
         e.amountInPrevious++
         e.amountOutPrevious++
+        flow[0] = Math.sign(flow[0]) * (Math.abs(flow[0]) + 1)
+        flow[1] = Math.sign(flow[1]) * (Math.abs(flow[1]) + 1)
       } else {
         e.amountInPrevious--
         e.amountOutPrevious--
+        flow[0] = Math.sign(flow[0]) * (Math.abs(flow[0]) - 1)
+        flow[1] = Math.sign(flow[1]) * (Math.abs(flow[1]) - 1)
       }
     }
     console.assert(e.amountOutPrevious >= 0)

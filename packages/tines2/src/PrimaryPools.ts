@@ -118,6 +118,11 @@ export abstract class RPool {
     return this.calcCurrentPriceWithoutFee2(from < to)
   }
 
+  getFlow(vertice: number, state?: PoolState) {
+    if (state === undefined) return 0
+    return (state as DefaultPoolState).flow[vertice]
+  }
+
   // precision of calcOutByIn2
   granularity0() {
     return 1

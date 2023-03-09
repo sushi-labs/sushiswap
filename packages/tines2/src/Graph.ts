@@ -71,6 +71,8 @@ export class Edge {
     this.vert0 = v0
     this.vert1 = v1
     this.vertices = [v0, v1]
+    v0.addEdge(this, 0)
+    v1.addEdge(this, 1)
     this.amountInPrevious = 0
     this.amountOutPrevious = 0
     this.canBeUsed = true
@@ -150,11 +152,16 @@ export class Edge {
       }
     }, `Error 225`)
   }
+
+  getFlow(vertice: number) {
+    return this.pool.getFlow(vertice, this.poolState)
+  }
 }
 
 export class Vertice {
   token: RToken
   edges: Edge[]
+  placeInEdge: number[]
 
   price: number
   gasPrice: number
@@ -169,6 +176,7 @@ export class Vertice {
     this.token = t
     setTokenId(this.token)
     this.edges = []
+    this.placeInEdge = []
     this.price = 0
     this.gasPrice = 0
     this.bestIncome = 0
@@ -176,6 +184,11 @@ export class Vertice {
     this.bestTotal = 0
     this.bestSource = undefined
     this.checkLine = -1
+  }
+
+  addEdge(e: Edge, place: number) {
+    this.edges.push(e)
+    this.placeInEdge.push(place)
   }
 
   cleanTmpData() {
@@ -192,21 +205,11 @@ export class Vertice {
   }
 
   getOutputEdges(): Edge[] {
-    return this.edges.filter((e) => {
-      if (!e.canBeUsed) return false
-      if (e.amountInPrevious === 0) return false
-      if (e.direction !== (e.vert0 === this)) return false
-      return true
-    })
+    return this.edges.filter((e, i) => e.canBeUsed && e.getFlow(this.placeInEdge[i]) > 0)
   }
 
   getInputEdges(): Edge[] {
-    return this.edges.filter((e) => {
-      if (!e.canBeUsed) return false
-      if (e.amountInPrevious === 0) return false
-      if (e.direction === (e.vert0 === this)) return false
-      return true
-    })
+    return this.edges.filter((e, i) => e.canBeUsed && e.getFlow(this.placeInEdge[i]) < 0)
   }
 }
 
@@ -244,16 +247,8 @@ export class Graph {
       const v0 = this.getOrCreateVertice(p.tokens[0])
       const v1 = this.getOrCreateVertice(p.tokens[1])
       const edge = new Edge(p, v0, v1)
-      v0.edges.push(edge)
-      v1.edges.push(edge)
       this.edges.push(edge)
     })
-    // networks.forEach((n) => {
-    //   const baseVert = this.getVert(n.baseToken)
-    //   if (baseVert) {
-    //     this.setPricesStable(baseVert, n.baseTokenPrice, n.gasPrice, true)
-    //   }
-    // })
     const startV = this.getVert(start)
     if (startV !== undefined) this.setPricesStable(startV, 1, networks, minPriceLiquidity)
   }
