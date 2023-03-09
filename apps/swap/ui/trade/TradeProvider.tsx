@@ -146,13 +146,10 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     chainId: fromChainId,
     address: fromCurrency,
   })
-
   const { data: tokenTo } = useToken({
     chainId: toChainId,
     address: toCurrency,
   })
-
-  // console.log(isAddress(fromCurrencyId), !tokenFrom, isTokenFromFetchedAfterMount)
   const [internalState, dispatch] = useReducer(reducer, {
     tradeId: nanoid(),
     review: false,
@@ -408,6 +405,15 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       //   //   network1 = state.network1
       //   // }
       // }
+      // const token1 =
+      //   state.token1?.chainId === network1
+      //     ? state.token1.isNative
+      //       ? state.token1.symbol
+      //       : state.token1.wrapped.address
+      //     : state.token0?.symbol === 'SUSHI'
+      //     ? Native.onChain(network1).symbol
+      //     : 'SUSHI'
+
       const token1 =
         state.token1?.chainId === network1
           ? state.token1.isNative
@@ -416,6 +422,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           : state.token0?.symbol === 'SUSHI'
           ? Native.onChain(network1).symbol
           : 'SUSHI'
+
       void push(
         {
           pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',

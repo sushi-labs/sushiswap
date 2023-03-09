@@ -11,7 +11,7 @@ export const useLocalStorage = (key: string, initialValue?: string | number | bo
     window.addEventListener(key, listener)
 
     return () => window.removeEventListener(key, listener)
-  }, [])
+  }, [key])
 
   // State to store our value
   // Pass initial state function to useState so logic is only executed once
