@@ -21,69 +21,95 @@ import { nanoid } from 'nanoid'
 import { isUniswapV2FactoryChainId } from '@sushiswap/sushiswap'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
 import { SwapChainId } from 'types'
-import { useEffectDebugger } from '@sushiswap/hooks'
 
 export const queryParamsSchema = z.object({
-  fromCurrency: z
-    .string()
-    .transform((val) => {
-      const [chainId, fromCurrencyId] = val.split(':')
-      return {
-        fromChainId: +chainId as SwapChainId,
-        fromCurrencyId,
-      }
-    })
+  fromChainId: z.coerce
+    .number()
+    .int()
+    .gte(0)
+    .lte(2 ** 256)
+    .default(ChainId.ETHEREUM)
     .refine(
-      ({ fromChainId }) => {
-        return z.coerce
-          .number()
-          .int()
-          .gte(0)
-          .lte(2 ** 256)
-          .default(ChainId.ETHEREUM)
-          .refine(
-            (chainId) =>
-              isUniswapV2FactoryChainId(chainId) ||
-              isConstantProductPoolFactoryChainId(chainId) ||
-              isStablePoolFactoryChainId(chainId)
-          )
-          .parse(fromChainId)
-      },
-      {
-        message: 'ChainId not supported.',
-      }
-    )
-    .default(`${ChainId.ETHEREUM}:NATIVE`),
-  toCurrency: z
-    .string()
-    .transform((val) => {
-      const [chainId, toCurrencyId] = val.split(':')
-      return {
-        toChainId: +chainId as SwapChainId,
-        toCurrencyId,
-      }
-    })
+      (chainId) =>
+        isUniswapV2FactoryChainId(chainId) ||
+        isConstantProductPoolFactoryChainId(chainId) ||
+        isStablePoolFactoryChainId(chainId)
+    ),
+  fromCurrency: z.string(),
+  toChainId: z.coerce
+    .number()
+    .int()
+    .gte(0)
+    .lte(2 ** 256)
+    .default(ChainId.ETHEREUM)
     .refine(
-      ({ toChainId }) => {
-        return z.coerce
-          .number()
-          .int()
-          .gte(0)
-          .lte(2 ** 256)
-          .default(ChainId.ETHEREUM)
-          .refine(
-            (chainId) =>
-              isUniswapV2FactoryChainId(chainId) ||
-              isConstantProductPoolFactoryChainId(chainId) ||
-              isStablePoolFactoryChainId(chainId)
-          )
-          .parse(toChainId)
-      },
-      {
-        message: 'ChainId not supported.',
-      }
-    )
-    .default(`${ChainId.ETHEREUM}:SUSHI`),
+      (chainId) =>
+        isUniswapV2FactoryChainId(chainId) ||
+        isConstantProductPoolFactoryChainId(chainId) ||
+        isStablePoolFactoryChainId(chainId)
+    ),
+  toCurrency: z.string(),
+
+  // fromCurrency: z
+  //   .string()
+  //   .transform((val) => {
+  //     const [chainId, fromCurrencyId] = val.split(':')
+  //     return {
+  //       fromChainId: +chainId as SwapChainId,
+  //       fromCurrencyId,
+  //     }
+  //   })
+  //   .refine(
+  //     ({ fromChainId }) => {
+  //       return z.coerce
+  //         .number()
+  //         .int()
+  //         .gte(0)
+  //         .lte(2 ** 256)
+  //         .default(ChainId.ETHEREUM)
+  //         .refine(
+  //           (chainId) =>
+  //             isUniswapV2FactoryChainId(chainId) ||
+  //             isConstantProductPoolFactoryChainId(chainId) ||
+  //             isStablePoolFactoryChainId(chainId)
+  //         )
+  //         .parse(fromChainId)
+  //     },
+  //     {
+  //       message: 'ChainId not supported.',
+  //     }
+  //   )
+  //   .default(`${ChainId.ETHEREUM}:NATIVE`),
+  // toCurrency: z
+  //   .string()
+  //   .transform((val) => {
+  //     const [chainId, toCurrencyId] = val.split(':')
+  //     return {
+  //       toChainId: +chainId as SwapChainId,
+  //       toCurrencyId,
+  //     }
+  //   })
+  //   .refine(
+  //     ({ toChainId }) => {
+  //       return z.coerce
+  //         .number()
+  //         .int()
+  //         .gte(0)
+  //         .lte(2 ** 256)
+  //         .default(ChainId.ETHEREUM)
+  //         .refine(
+  //           (chainId) =>
+  //             isUniswapV2FactoryChainId(chainId) ||
+  //             isConstantProductPoolFactoryChainId(chainId) ||
+  //             isStablePoolFactoryChainId(chainId)
+  //         )
+  //         .parse(toChainId)
+  //     },
+  //     {
+  //       message: 'ChainId not supported.',
+  //     }
+  //   )
+  //   .default(`${ChainId.ETHEREUM}:SUSHI`),
   amount: z.optional(z.coerce.bigint()),
   recipient: z.optional(z.string()),
 })
@@ -165,22 +191,18 @@ interface SwapProviderProps {
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { address } = useAccount()
   const { query, push } = useRouter()
-  const {
-    fromCurrency: { fromChainId, fromCurrencyId },
-    toCurrency: { toChainId, toCurrencyId },
-    amount: _amount,
-  } = queryParamsSchema.parse(query)
+  const { fromChainId, fromCurrency, toChainId, toCurrency, amount: _amount } = queryParamsSchema.parse(query)
   const { data: customTokens, isLoading: customTokensLoading } = useCustomTokens()
   const { data: tokenMapFrom } = useTokens({ chainId: fromChainId })
   const { data: tokenMapTo } = useTokens({ chainId: toChainId })
   const { data: tokenFrom } = useToken({
     chainId: fromChainId,
-    address: fromCurrencyId,
+    address: fromCurrency,
   })
 
   const { data: tokenTo } = useToken({
     chainId: toChainId,
-    address: toCurrencyId,
+    address: toCurrency,
   })
 
   // console.log(isAddress(fromCurrencyId), !tokenFrom, isTokenFromFetchedAfterMount)
@@ -196,15 +218,15 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const state = useMemo(() => {
     let token0: Type | undefined = undefined
     let isTokenFromLoading = true
-    if (isShortCurrencyName(fromChainId, fromCurrencyId)) {
-      token0 = currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
+    if (isShortCurrencyName(fromChainId, fromCurrency)) {
+      token0 = currencyFromShortCurrencyName(fromChainId, fromCurrency)
       isTokenFromLoading = false
-    } else if (isAddress(fromCurrencyId)) {
-      if (tokenMapFrom && tokenMapFrom[getAddress(fromCurrencyId)]) {
-        token0 = tokenMapFrom[getAddress(fromCurrencyId)]
+    } else if (isAddress(fromCurrency)) {
+      if (tokenMapFrom && tokenMapFrom[getAddress(fromCurrency)]) {
+        token0 = tokenMapFrom[getAddress(fromCurrency)]
         isTokenFromLoading = false
-      } else if (customTokens && customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]) {
-        token0 = customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]
+      } else if (customTokens && customTokens[`${fromChainId}:${getAddress(fromCurrency)}`]) {
+        token0 = customTokens[`${fromChainId}:${getAddress(fromCurrency)}`]
         isTokenFromLoading = false
       } else if (tokenFrom) {
         token0 = tokenFrom
@@ -217,15 +239,15 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
 
     let token1: Type | undefined = undefined
     let isTokenToLoading = true
-    if (isShortCurrencyName(toChainId, toCurrencyId)) {
-      token1 = currencyFromShortCurrencyName(toChainId, toCurrencyId)
+    if (isShortCurrencyName(toChainId, toCurrency)) {
+      token1 = currencyFromShortCurrencyName(toChainId, toCurrency)
       isTokenToLoading = false
-    } else if (isAddress(toCurrencyId)) {
-      if (tokenMapTo && tokenMapTo[getAddress(toCurrencyId)]) {
-        token1 = tokenMapTo[getAddress(toCurrencyId)]
+    } else if (isAddress(toCurrency)) {
+      if (tokenMapTo && tokenMapTo[getAddress(toCurrency)]) {
+        token1 = tokenMapTo[getAddress(toCurrency)]
         isTokenToLoading = false
-      } else if (customTokens && customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]) {
-        token1 = customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]
+      } else if (customTokens && customTokens[`${toChainId}:${getAddress(toCurrency)}`]) {
+        token1 = customTokens[`${toChainId}:${getAddress(toCurrency)}`]
         isTokenToLoading = false
       } else if (tokenTo) {
         token1 = tokenTo
@@ -245,22 +267,22 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       network1: toChainId,
       amount: tryParseAmount(internalState.value ? internalState.value.toString() : undefined, token0),
       token0NotInList:
-        (isAddress(fromCurrencyId) &&
+        (isAddress(fromCurrency) &&
           !tokenFrom &&
           !isTokenFromLoading &&
           tokenMapFrom &&
-          !tokenMapFrom[getAddress(fromCurrencyId)] &&
+          !tokenMapFrom[getAddress(fromCurrency)] &&
           customTokens &&
-          !customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]) ||
+          !customTokens[`${fromChainId}:${getAddress(fromCurrency)}`]) ||
         false,
       token1NotInList:
-        (isAddress(toCurrencyId) &&
+        (isAddress(toCurrency) &&
           !tokenTo &&
           !isTokenToLoading &&
           tokenMapTo &&
-          !tokenMapTo[getAddress(toCurrencyId)] &&
+          !tokenMapTo[getAddress(toCurrency)] &&
           customTokens &&
-          !customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]) ||
+          !customTokens[`${toChainId}:${getAddress(toCurrency)}`]) ||
         false,
       tokensLoading: customTokensLoading || isTokenFromLoading || isTokenToLoading,
     }
@@ -268,10 +290,10 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     customTokens,
     customTokensLoading,
     fromChainId,
-    fromCurrencyId,
+    fromCurrency,
     internalState,
     toChainId,
-    toCurrencyId,
+    toCurrency,
     tokenFrom,
     tokenMapFrom,
     tokenMapTo,
@@ -288,117 +310,100 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
             : state.token1.wrapped.address
           : 'SUSHI'
 
-      void push(
-        {
-          pathname: '/[fromCurrency]/[toCurrency]',
-          query: {
-            ...query,
-            fromCurrency: `${chainId}:${token0.isNative ? token0.symbol : token0.wrapped.address}`,
-            toCurrency: `${chainId}:${token1}`,
-          },
+      void push({
+        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+        query: {
+          ...query,
+          fromChainId: chainId,
+          fromCurrency: token0.isNative ? token0.symbol : token0.wrapped.address,
+          toChainId: chainId,
+          toCurrency: token1,
         },
-        undefined,
-        { shallow: true }
-      )
+      })
     }
     const setNetwork0 = (chainId: ChainId) => {
-      const token0 =
+      const fromCurrency =
         state.token0?.chainId === chainId
           ? state.token0.isNative
             ? state.token0.symbol
             : state.token0.wrapped.address
           : Native.onChain(chainId).symbol
 
-      void push(
-        {
-          pathname: '/[fromCurrency]/[toCurrency]',
-          query: {
-            ...query,
-            fromCurrency: `${chainId}:${token0}`,
-          },
+      void push({
+        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+        query: {
+          ...query,
+          fromChainId: chainId,
+          fromCurrency,
         },
-        undefined,
-        { shallow: true }
-      )
+      })
     }
     const setNetwork1 = (chainId: ChainId) => {
-      const token1 =
+      const toCurrency =
         state.token1?.chainId === chainId
           ? state.token1.isNative
             ? state.token1.symbol
             : state.token1.wrapped.address
           : 'SUSHI'
 
-      void push(
-        {
-          pathname: '/[fromCurrency]/[toCurrency]',
-          query: {
-            ...query,
-            toCurrency: `${chainId}:${token1}`,
-          },
+      void push({
+        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+        query: {
+          ...query,
+          toChainId: chainId,
+          toCurrency,
         },
-        undefined,
-        { shallow: true }
-      )
+      })
     }
     const setTokens = (currency0: Type, currency1: Type) => {
-      void push(
-        {
-          pathname: '/[fromCurrency]/[toCurrency]',
-          query: {
-            ...query,
-            fromCurrency: `${currency0.chainId}:${currency0.isNative ? currency0.symbol : currency0.wrapped.address}`,
-            toCurrency: `${currency1.chainId}:${currency1.isNative ? currency1.symbol : currency1.wrapped.address}`,
-          },
+      void push({
+        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+        query: {
+          ...query,
+          fromChainId: currency0.chainId,
+          fromCurrency: currency0.isNative ? currency0.symbol : currency0.wrapped.address,
+          toChainId: currency1.chainId,
+          toCurrency: currency1.isNative ? currency1.symbol : currency1.wrapped.address,
         },
-        undefined,
-        { shallow: true }
-      )
+      })
     }
     const setToken0 = (currency: Type) => {
-      const _fromCurrency = `${currency.chainId}:${currency.isNative ? currency.symbol : currency.wrapped.address}`
-      void push(
-        {
-          pathname: '/[fromCurrency]/[toCurrency]',
-          query: {
-            ...query,
-            fromCurrency: _fromCurrency,
-            toCurrency: query.toCurrency === _fromCurrency ? query.fromCurrency : query.toCurrency,
-          },
+      const fromCurrency = currency.isNative ? currency.symbol : currency.wrapped.address
+      void push({
+        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+        query: {
+          ...query,
+          fromChainId: currency.chainId,
+          fromCurrency,
+          toChainId: query.toCurrency === fromCurrency ? query.fromChainId : query.toChainId,
+          toCurrency: query.toCurrency === fromCurrency ? query.fromCurrency : query.toCurrency,
         },
-        undefined,
-        { shallow: true }
-      )
+      })
     }
     const setToken1 = (currency: Type) => {
-      const _toCurrency = `${currency.chainId}:${currency.isNative ? currency.symbol : currency.wrapped.address}`
-
-      void push(
-        {
-          pathname: '/[fromCurrency]/[toCurrency]',
-          query: {
-            ...query,
-            fromCurrency: query.fromCurrency === _toCurrency ? query.toCurrency : query.fromCurrency,
-            toCurrency: _toCurrency,
-          },
+      const toCurrency = currency.isNative ? currency.symbol : currency.wrapped.address
+      void push({
+        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+        query: {
+          ...query,
+          fromChainId: query.fromCurrency === toCurrency ? query.toChainId : query.fromChainId,
+          fromCurrency: query.fromCurrency === toCurrency ? query.toCurrency : query.fromCurrency,
+          toChainId: currency.chainId,
+          toCurrency,
         },
-        undefined,
-        { shallow: true }
-      )
+      })
     }
     const switchTokens = () =>
-      void push(
-        {
-          pathname: '/[fromCurrency]/[toCurrency]',
-          query: {
-            ...query,
-            fromCurrency: query.toCurrency,
-            toCurrency: query.fromCurrency,
-          },
+      void push({
+        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+        query: {
+          ...query,
+          fromChainId: query.toChainId,
+          fromCurrency: query.toCurrency,
+          toChainId: query.fromChainId,
+          toCurrency: query.fromCurrency,
         },
-        undefined,
-        { shallow: true }
-      )
+      })
     const setAppType = (appType: AppType) => {
       const network1 =
         appType === AppType.Swap
@@ -408,6 +413,26 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
             ? ChainId.ETHEREUM
             : ChainId.ARBITRUM
           : state.network1
+
+      // let network1 = state.network0
+
+      // if (appType === AppType.xSwap) {
+      //   network1 = state.network0 !== ChainId.ARBITRUM ? ChainId.ARBITRUM : ChainId.ETHEREUM
+
+      //   // if (state.network0 !== state.network1) {
+      //   //   //
+      //   // }
+
+      //   // if (state.network1 === state.network0) {
+      //   //   if (state.network1 === ChainId.ARBITRUM) {
+      //   //     network1 = ChainId.ETHEREUM
+      //   //   } else {
+      //   //     network1 = ChainId.ARBITRUM
+      //   //   }
+      //   // } else {
+      //   //   network1 = state.network1
+      //   // }
+      // }
       const token1 =
         state.token1?.chainId === network1
           ? state.token1.isNative
@@ -416,34 +441,26 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           : state.token0?.symbol === 'SUSHI'
           ? Native.onChain(network1).symbol
           : 'SUSHI'
-
-      void push(
-        {
-          pathname: '/[fromCurrency]/[toCurrency]',
-          query: {
-            ...query,
-            toCurrency: `${network1}:${token1}`,
-          },
+      void push({
+        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+        query: {
+          ...query,
+          toChainId: network1,
+          toCurrency: token1,
         },
-        undefined,
-        { shallow: true }
-      )
+      })
     }
     const setSearch = (currency: Type) => {
-      const _toCurrency = `${currency.chainId}:${currency.isNative ? currency.symbol : currency.wrapped.address}`
-
-      void push(
-        {
-          pathname: '/[fromCurrency]/[toCurrency]',
-          query: {
-            ...query,
-            fromCurrency: `${currency.chainId}:${Native.onChain(currency.chainId).symbol}`,
-            toCurrency: _toCurrency,
-          },
+      void push({
+        pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+        query: {
+          ...query,
+          fromChainId: currency.chainId,
+          fromCurrency: Native.onChain(currency.chainId).symbol,
+          toChainId: currency.chainId,
+          toCurrency: currency.isNative ? currency.symbol : currency.wrapped.address,
         },
-        undefined,
-        { shallow: true }
-      )
+      })
     }
 
     const setValue = (value: string) => dispatch({ type: 'setValue', value })
