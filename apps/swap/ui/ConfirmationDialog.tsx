@@ -121,6 +121,21 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     onSuccess: (data) => {
       setReview(false)
 
+      // Log swap success internal, mixed, or external
+      if (trade?.route?.legs?.every((leg) => leg.poolName === 'SushiSwap' || leg.poolName === 'Trident')) {
+        log.info('Swap success (internal)', {
+          trade,
+        })
+      } else if (trade?.route?.legs?.some((leg) => leg.poolName === 'SushiSwap' || leg.poolName === 'Trident')) {
+        log.info('Swap success (mix)', {
+          trade,
+        })
+      } else if (trade?.route?.legs?.every((leg) => leg.poolName !== 'SushiSwap' && leg.poolName !== 'Trident')) {
+        log.info('Swap success (external)', {
+          trade,
+        })
+      }
+
       data
         .wait()
         .then(() => setDialogState(ConfirmationDialogState.Success))
