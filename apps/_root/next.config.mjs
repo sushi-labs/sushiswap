@@ -88,10 +88,6 @@ const nextConfig = {
         destination: `${FURO_URL}/furo/:path*`,
       },
       {
-        source: '/swap',
-        destination: `${SWAP_URL}/swap`,
-      },
-      {
         source: '/academy',
         destination: `${ACADEMY_URL}/academy`,
       },
@@ -100,16 +96,20 @@ const nextConfig = {
         destination: `${ACADEMY_URL}/academy/:path*`,
       },
       {
+        source: '/swap',
+        destination: `${SWAP_URL}/swap`,
+      },
+      {
         source: '/swap/:path*',
         destination: `${SWAP_URL}/swap/:path*`,
       },
       {
         source: '/xswap',
-        destination: `${XSWAP_URL}/xswap`,
+        destination: `${SWAP_URL}/swap`,
       },
       {
         source: '/xswap/:path*',
-        destination: `${XSWAP_URL}/xswap/:path*`,
+        destination: `${SWAP_URL}/swap/:path*`,
       },
       {
         source: '/earn',
