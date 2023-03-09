@@ -21,7 +21,7 @@ export const useTradeQuery = (
             // TODO: Sort this out, use URL/URLSearchParams...
             const res = await fetch(
                 `${
-                    process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0'
+                    process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0'
                 }?chainId=${chainId}&fromTokenId=${
                     fromToken?.isNative ? nativeCurrencyIds[chainId] : fromToken?.wrapped.address
                 }&toTokenId=${

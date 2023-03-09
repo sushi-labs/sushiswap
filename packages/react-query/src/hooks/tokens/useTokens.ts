@@ -38,5 +38,7 @@ export const useTokens = ({ chainId }: UseTokensParams) => {
       return fetch(`https://tokens.sushi.com/v0`).then((response) => response.json())
     },
     select: (data) => hydrate(data, chainId),
+    staleTime: 900, // 15 mins
+    cacheTime: 86400 // 24hs
   })
 }

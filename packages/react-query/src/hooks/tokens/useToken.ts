@@ -50,5 +50,7 @@ export const useToken = ({ chainId, address }: UseTokenParams) => {
         keepPreviousData: true,
         refetchOnWindowFocus: false,
         retry: false,
+        staleTime: 900, // 15 mins
+        cacheTime: 86400 // 24hs
     })
 }
