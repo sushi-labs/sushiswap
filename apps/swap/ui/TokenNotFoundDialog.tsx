@@ -13,24 +13,21 @@ import { useAddCustomToken } from '@sushiswap/react-query'
 
 export const TokenNotFoundDialog = () => {
   const { query } = useRouter()
-  const {
-    fromCurrency: { fromCurrencyId },
-    toCurrency: { toCurrencyId },
-  } = queryParamsSchema.parse(query)
+  const { fromChainId, fromCurrency, toChainId, toCurrency } = queryParamsSchema.parse(query)
   const { tokensLoading, token0NotInList, token1NotInList, network0, network1 } = useSwapState()
   const { setToken0, setToken1, setTokens } = useSwapActions()
   const { mutate: addCustomToken } = useAddCustomToken()
 
   const { data: _token0 } = useToken({
-    address: fromCurrencyId as Address,
+    address: fromCurrency as Address,
     chainId: network0,
-    enabled: isAddress(fromCurrencyId) && token0NotInList,
+    enabled: isAddress(fromCurrency) && token0NotInList,
   })
 
   const { data: _token1 } = useToken({
-    address: toCurrencyId as Address,
+    address: toCurrency as Address,
     chainId: network1,
-    enabled: isAddress(toCurrencyId) && token1NotInList,
+    enabled: isAddress(toCurrency) && token1NotInList,
   })
 
   const [token0, token1] = useMemo(() => {
@@ -93,11 +90,11 @@ export const TokenNotFoundDialog = () => {
                   Could not retrieve token info for{' '}
                   <a
                     target="_blank"
-                    href={Chain.from(network0).getTokenUrl(fromCurrencyId)}
+                    href={Chain.from(network0).getTokenUrl(fromCurrency)}
                     className="text-blue font-medium"
                     rel="noreferrer"
                   >
-                    {shortenAddress(fromCurrencyId)}
+                    {shortenAddress(fromCurrency)}
                   </a>{' '}
                   are you sure this token is on {Chain.from(network0).name}?
                 </p>
@@ -112,11 +109,11 @@ export const TokenNotFoundDialog = () => {
                   Could not retrieve token info for{' '}
                   <a
                     target="_blank"
-                    href={Chain.from(network1).getTokenUrl(toCurrencyId)}
+                    href={Chain.from(network1).getTokenUrl(toCurrency)}
                     className="text-blue font-medium"
                     rel="noreferrer"
                   >
-                    {shortenAddress(toCurrencyId)}
+                    {shortenAddress(toCurrency)}
                   </a>{' '}
                   are you sure this token is on {Chain.from(network1).name}?
                 </p>

@@ -34,9 +34,12 @@ export const queryParamsSchema = z.object({
       (chainId) =>
         isUniswapV2FactoryChainId(chainId) ||
         isConstantProductPoolFactoryChainId(chainId) ||
-        isStablePoolFactoryChainId(chainId)
+        isStablePoolFactoryChainId(chainId),
+      {
+        message: 'ChainId not supported.',
+      }
     ),
-  fromCurrency: z.string(),
+  fromCurrency: z.string().default('NATIVE'),
   toChainId: z.coerce
     .number()
     .int()
@@ -48,70 +51,12 @@ export const queryParamsSchema = z.object({
       (chainId) =>
         isUniswapV2FactoryChainId(chainId) ||
         isConstantProductPoolFactoryChainId(chainId) ||
-        isStablePoolFactoryChainId(chainId)
+        isStablePoolFactoryChainId(chainId),
+      {
+        message: 'ChainId not supported.',
+      }
     ),
-  toCurrency: z.string(),
-
-  // fromCurrency: z
-  //   .string()
-  //   .transform((val) => {
-  //     const [chainId, fromCurrencyId] = val.split(':')
-  //     return {
-  //       fromChainId: +chainId as SwapChainId,
-  //       fromCurrencyId,
-  //     }
-  //   })
-  //   .refine(
-  //     ({ fromChainId }) => {
-  //       return z.coerce
-  //         .number()
-  //         .int()
-  //         .gte(0)
-  //         .lte(2 ** 256)
-  //         .default(ChainId.ETHEREUM)
-  //         .refine(
-  //           (chainId) =>
-  //             isUniswapV2FactoryChainId(chainId) ||
-  //             isConstantProductPoolFactoryChainId(chainId) ||
-  //             isStablePoolFactoryChainId(chainId)
-  //         )
-  //         .parse(fromChainId)
-  //     },
-  //     {
-  //       message: 'ChainId not supported.',
-  //     }
-  //   )
-  //   .default(`${ChainId.ETHEREUM}:NATIVE`),
-  // toCurrency: z
-  //   .string()
-  //   .transform((val) => {
-  //     const [chainId, toCurrencyId] = val.split(':')
-  //     return {
-  //       toChainId: +chainId as SwapChainId,
-  //       toCurrencyId,
-  //     }
-  //   })
-  //   .refine(
-  //     ({ toChainId }) => {
-  //       return z.coerce
-  //         .number()
-  //         .int()
-  //         .gte(0)
-  //         .lte(2 ** 256)
-  //         .default(ChainId.ETHEREUM)
-  //         .refine(
-  //           (chainId) =>
-  //             isUniswapV2FactoryChainId(chainId) ||
-  //             isConstantProductPoolFactoryChainId(chainId) ||
-  //             isStablePoolFactoryChainId(chainId)
-  //         )
-  //         .parse(toChainId)
-  //     },
-  //     {
-  //       message: 'ChainId not supported.',
-  //     }
-  //   )
-  //   .default(`${ChainId.ETHEREUM}:SUSHI`),
+  toCurrency: z.string().default('SUSHI'),
   amount: z.optional(z.coerce.bigint()),
   recipient: z.optional(z.string()),
 })

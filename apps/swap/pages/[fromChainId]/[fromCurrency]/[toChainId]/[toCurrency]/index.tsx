@@ -9,29 +9,29 @@ import { Drawer } from '@sushiswap/ui/future/components/drawer'
 import { TokenNotFoundDialog } from '../../../../../ui/TokenNotFoundDialog'
 import { TradeReviewDialog } from '../../../../../ui/trade/TradeReviewDialog'
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  return {
-    props: {
-      initialState: {
-        fromCurrency: params?.fromCurrency ?? `${ChainId.ETHEREUM}:NATIVE`,
-        toCurrency: params?.toCurrency ?? `${ChainId.ETHEREUM}:SUSHI`,
-      },
-    },
-  }
-}
+// export const getStaticProps: GetStaticProps = async ({ params }) => {
+//   return {
+//     props: {
+//       initialState: {
+//         fromCurrency: params?.fromCurrency ?? `${ChainId.ETHEREUM}:NATIVE`,
+//         toCurrency: params?.toCurrency ?? `${ChainId.ETHEREUM}:SUSHI`,
+//       },
+//     },
+//   }
+// }
 
-export async function getStaticPaths() {
-  // We can do some pretty cool optimizations here by generating the combinations
-  // of potential swap parameters
+// export async function getStaticPaths() {
+//   // We can do some pretty cool optimizations here by generating the combinations
+//   // of potential swap parameters
 
-  // for now, we'll just use blocking mode so that params are available immediately
-  return {
-    paths: [],
-    fallback: 'blocking',
-  }
-}
+//   // for now, we'll just use blocking mode so that params are available immediately
+//   return {
+//     paths: [],
+//     fallback: 'blocking',
+//   }
+// }
 
-export const Page: FC = ({}: InferGetStaticPropsType<typeof getStaticProps>) => {
+export const Page: FC = () => {
   return (
     <>
       <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
