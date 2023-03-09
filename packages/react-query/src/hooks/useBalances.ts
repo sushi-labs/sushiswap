@@ -17,7 +17,7 @@ interface UseBalances {
 export const useBalancesQuery = ({ chainId, account }: UseBalances, select: UseBalancesQuerySelect) =>
   useQuery({
     queryKey: ['NoPersist', `https://balances.sushi.com/v0/${chainId}/${account}`],
-    queryFn: () => fetch(`http://localhost:3000/v0/${chainId}/${account}`).then((response) => response.json()),
+    queryFn: () => fetch(`https://balances.sushi.com/v0/${chainId}/${account}`).then((response) => response.json()),
     staleTime: 900, // 15 mins
     cacheTime: 3600, // 1hr
     enabled: Boolean(chainId && account),
