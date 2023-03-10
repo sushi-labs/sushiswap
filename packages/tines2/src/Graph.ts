@@ -208,6 +208,18 @@ export class Vertice {
     return this.edges.filter((e, i) => e.canBeUsed && e.getFlow(this.placeInEdge[i]) > 0)
   }
 
+  getOutputEdgesWithFlow(): [Edge, number][] {
+    const res: [Edge, number][] = []
+    for (let i = 0; i < this.edges.length; ++i) {
+      const edge = this.edges[i]
+      if (!edge.canBeUsed) continue
+      const flow = edge.getFlow(this.placeInEdge[i])
+      if (flow <= 0) continue
+      res.push([edge, flow])
+    }
+    return res
+  }
+
   getInputEdges(): Edge[] {
     return this.edges.filter((e, i) => e.canBeUsed && e.getFlow(this.placeInEdge[i]) < 0)
   }
@@ -852,12 +864,9 @@ export class Graph {
     const legs: RouteLeg[] = []
     let gasSpent = 0
     vertices.forEach((n) => {
-      const outEdges = n.getOutputEdges().map((e) => {
-        const from = this.edgeFrom(e)
-        return from ? [e, from.vert, from.amount] : [e]
-      })
+      const outEdges = n.getOutputEdgesWithFlow()
 
-      let outAmount = outEdges.reduce((a, b) => a + (b[2] as number), 0)
+      let outAmount = outEdges.reduce((a, b) => a + b[1], 0)
       if (outAmount <= 0) return
 
       const total = outAmount
@@ -867,14 +876,10 @@ export class Graph {
       // const total = Number(outAmount)
       // const totalTest = outAmount
 
-      // console.debug('BEFORE', { outAmount, total, totalTest })
-
       outEdges.forEach((e, i) => {
-        const p = e[2] as number
+        const p = e[1]
         const quantity = i + 1 === outEdges.length ? 1 : p / outAmount
         const edge = e[0] as Edge
-
-        // console.debug(`edge iter ${0}`, { e, p })
 
         const poolType =
           edge.pool instanceof StableSwapRPool
@@ -895,19 +900,11 @@ export class Graph {
           absolutePortion: p / total,
         })
         gasSpent += (e[0] as Edge).pool.swapGasCost
-        // console.debug('before amountOut mutation', { total, outAmount })
         outAmount -= p
-        // console.debug('after amountOut mutation', { total, outAmount })
       })
-      // console.debug('AFTER', { outAmount, total, totalTest }, outAmount / total)
       console.assert(outAmount / total < 1e-12, 'Error 281')
     })
     return { legs, gasSpent, topologyWasChanged }
-  }
-
-  edgeFrom(e: Edge): { vert: Vertice; amount: number } | undefined {
-    if (e.amountInPrevious === 0) return undefined
-    return e.direction ? { vert: e.vert0, amount: e.amountInPrevious } : { vert: e.vert1, amount: e.amountOutPrevious }
   }
 
   // TODO: make full test coverage!
