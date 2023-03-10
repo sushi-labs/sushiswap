@@ -1,9 +1,10 @@
-import './env'
+import './env.js'
 
 import cors from '@fastify/cors'
 import rateLimit from '@fastify/rate-limit'
 import { ChainId } from '@sushiswap/chain'
 import { Native, nativeCurrencyIds } from '@sushiswap/currency'
+import { createClient } from '@sushiswap/database'
 import { isRouteProcessorChainId, routeProcessorAddress, RouteProcessorChainId } from '@sushiswap/route-processor'
 import {
   // findSpecialRoute,
@@ -33,17 +34,19 @@ import {
   polygon,
 } from '@sushiswap/viem-config'
 import { BigNumber } from 'ethers'
-import fastify from 'fastify'
+import { fastify } from 'fastify'
 import { performance } from 'perf_hooks'
 // import { createPublicClient, http } from 'viem'
 // import { arbitrum, bsc, celo, mainnet, optimism, polygon } from 'viem/chains'
 import { createPublicClient, fallback, http, PublicClient } from 'viem'
 import { z } from 'zod'
 
-import { getToken } from './tokens'
+import { getToken } from './tokens.js'
 
 const server = fastify({ logger: true })
 server.register(cors)
+// eslint-disable-next-line
+// @ts-ignore default export not working
 server.register(rateLimit, {
   max: 100,
   timeWindow: '1 minute',
@@ -146,7 +149,7 @@ server.get('/v0', async (request) => {
 // Run the server!
 const start = async () => {
   try {
-    const databaseClient = await ((await import('@sushiswap/database')).createClient())
+    const databaseClient = await createClient()
 
     dataFetcherMap.set(
       ChainId.ARBITRUM_NOVA,

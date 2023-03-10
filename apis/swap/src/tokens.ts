@@ -7,8 +7,8 @@ import {
   isShortCurrencyNameSupported,
   Token,
 } from '@sushiswap/currency'
-import { getAddress, isAddress } from 'ethers/lib/utils'
-import fetch from 'node-fetch'
+import { fetch } from '@whatwg-node/fetch'
+import { getAddress, isAddress } from 'ethers/lib/utils.js'
 import { z } from 'zod'
 
 const tokenSchema = z.object({
