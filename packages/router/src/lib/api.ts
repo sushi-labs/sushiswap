@@ -1,5 +1,7 @@
 import { Token } from '@sushiswap/currency'
-import fetch from 'node-fetch'
+import { PrismaClient } from '@sushiswap/database'
+
+import { getPoolsByTokenIds, getTopPools as getTopPoolsFromDb } from './database'
 
 export interface PoolResponse {
   address: string
@@ -10,30 +12,30 @@ export interface PoolResponse {
   token1: Token
 }
 
-export async function getPoolsByTokenIds(
+export async function getOnDemandPools(
+  client: PrismaClient,
   chainId: number,
   protocol: string,
   version: string,
   poolTypes: ('CONSTANT_PRODUCT_POOL' | 'CONCENTRATED_LIQUIDITY_POOL' | 'STABLE_POOL')[],
-  token0Address: string,
-  token1Address: string,
+  token0: string,
+  token1: string,
   excludeTopPoolsSize: number,
   topPoolMinLiquidity: number,
-  size: number
+  take: number
 ) {
   try {
-    const pools = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_AGGREGATOR_API_V0_BASE_URL || 'https://aggregator-git-feature-swap.sushi.com/v0'
-      }/${chainId}/pools/${protocol}/${version}?poolTypes=${poolTypes.join(
-        ','
-      )}&token0=${token0Address}&token1=${token1Address}&take=${size}&excludeTopPoolsSize=${excludeTopPoolsSize}&topPoolMinLiquidity=${topPoolMinLiquidity}`
-    )
-      .then((data) => data.json())
-      .catch((e: any) => {
-        console.log(e.message)
-        return new Map<string, PoolResponse>()
-      })
+    const pools = await getPoolsByTokenIds(client, {
+      chainId,
+      protocol,
+      version,
+      poolTypes,
+      token0,
+      token1,
+      excludeTopPoolsSize,
+      topPoolMinLiquidity,
+      take,
+    })
 
     const poolMap: Map<string, PoolResponse> = new Map()
     for (const pool of pools) {
@@ -69,23 +71,16 @@ export async function getPoolsByTokenIds(
 }
 
 export async function getTopPools(
+  client: PrismaClient,
   chainId: number,
   protocol: string,
   version: string,
   poolTypes: ('CONSTANT_PRODUCT_POOL' | 'CONCENTRATED_LIQUIDITY_POOL' | 'STABLE_POOL')[],
-  size: number,
+  take: number,
   minLiquidity: number
 ) {
   try {
-    const pools = await fetch(
-      `${
-        process.env.AGGREGATOR_API_V0_BASE_URL ||
-        process.env.NEXT_PUBLIC_AGGREGATOR_API_V0_BASE_URL ||
-        'https://aggregator.sushi.com/v0'
-      }/${chainId}/top-pools/${protocol}/${version}?poolTypes=${poolTypes.join(
-        ','
-      )}&take=${size}&minLiquidity=${minLiquidity}`
-    ).then((data) => data.json())
+    const pools = await getTopPoolsFromDb(client, { chainId, protocol, version, poolTypes, take, minLiquidity })
     const poolMap: Map<string, PoolResponse> = new Map()
 
     for (const pool of pools) {

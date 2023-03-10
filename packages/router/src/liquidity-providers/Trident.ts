@@ -1,6 +1,7 @@
 import { balanceOfAbi, getReservesAbi, getStableReservesAbi, totalsAbi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Token } from '@sushiswap/currency'
+import { PrismaClient } from '@sushiswap/database'
 import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
 import {
   constantProductPoolFactoryAddress,
@@ -12,7 +13,7 @@ import { add, getUnixTime } from 'date-fns'
 import { BigNumber } from 'ethers'
 import { Address, PublicClient } from 'viem'
 
-import { getPoolsByTokenIds, getTopPools, PoolResponse } from '../lib/api'
+import { getOnDemandPools as getOnDemandPoolsFromDb, getTopPools, PoolResponse } from '../lib/api'
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
 import { BentoPoolCode } from '../pools/BentoPool'
 import type { PoolCode } from '../pools/PoolCode'
@@ -69,12 +70,16 @@ export class TridentProvider extends LiquidityProvider {
   blockListener?: () => void
   unwatchBlockNumber?: () => void
 
+  databaseClient: PrismaClient
+
   constructor(
     chainId: BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId,
-    client: PublicClient
+    web3Client: PublicClient,
+    databaseClient: PrismaClient
   ) {
-    super(chainId, client)
+    super(chainId, web3Client)
     this.chainId = chainId
+    this.databaseClient = databaseClient
     if (
       !(chainId in this.bentoBox) ||
       !(chainId in this.constantProductPoolFactory) ||
@@ -115,6 +120,7 @@ export class TridentProvider extends LiquidityProvider {
 
   private async getInitialPools(): Promise<PoolResponse[]> {
     const topPools = await getTopPools(
+      this.databaseClient,
       this.chainId,
       'SushiSwap',
       'TRIDENT',
@@ -464,7 +470,8 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   async getOnDemandPools(t0: Token, t1: Token): Promise<void> {
-    const poolsOnDemand = await getPoolsByTokenIds(
+    const poolsOnDemand = await getOnDemandPoolsFromDb(
+      this.databaseClient,
       this.chainId,
       'SushiSwap',
       'TRIDENT',

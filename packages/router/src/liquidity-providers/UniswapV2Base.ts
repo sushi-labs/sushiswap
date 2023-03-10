@@ -2,6 +2,7 @@ import { keccak256, pack } from '@ethersproject/solidity'
 import { getReservesAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
+import { PrismaClient } from '@sushiswap/database'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { add, getUnixTime } from 'date-fns'
@@ -9,7 +10,7 @@ import { BigNumber } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 import { Address, PublicClient } from 'viem'
 
-import { getPoolsByTokenIds, getTopPools, PoolResponse } from '../lib/api'
+import { getOnDemandPools, getTopPools, PoolResponse } from '../lib/api'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
@@ -36,19 +37,22 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   factory: { [chainId: number]: Address } = {}
   initCodeHash: { [chainId: number]: string } = {}
   refreshInitialPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
+  databaseClient: PrismaClient
 
   constructor(
     chainId: ChainId,
-    client: PublicClient,
+    web3Client: PublicClient,
+    databaseClient: PrismaClient,
     factory: { [chainId: number]: Address },
     initCodeHash: { [chainId: number]: string }
   ) {
-    super(chainId, client)
+    super(chainId, web3Client)
     this.factory = factory
     this.initCodeHash = initCodeHash
     if (!(chainId in this.factory) || !(chainId in this.initCodeHash)) {
       throw new Error(`${this.getType()} cannot be instantiated for chainid ${chainId}, no factory or initCodeHash`)
     }
+    this.databaseClient = databaseClient
   }
 
   async initialize() {
@@ -61,8 +65,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
       return []
     }
-
-    // TODO: generate pools from a list of tokens, exclude if they are included in the list above, multicall to see if the rest exist, keep the pools that exist.
 
     const results = await this.client
       .multicall({
@@ -110,6 +112,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
   private async getInitialPools(): Promise<PoolResponse[]> {
     const topPools = await getTopPools(
+      this.databaseClient,
       this.chainId,
       this.getType() === LiquidityProviders.UniswapV2 ? 'Uniswap' : this.getType(),
       this.getType() === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
@@ -124,7 +127,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   async getOnDemandPools(t0: Token, t1: Token): Promise<void> {
     const type = this.getType()
 
-    const poolsOnDemand = await getPoolsByTokenIds(
+    const poolsOnDemand = await getOnDemandPools(
+      this.databaseClient,
       this.chainId,
       type === LiquidityProviders.UniswapV2 ? 'Uniswap' : type,
       type === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',

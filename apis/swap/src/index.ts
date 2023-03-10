@@ -4,6 +4,7 @@ import cors from '@fastify/cors'
 import rateLimit from '@fastify/rate-limit'
 import { ChainId } from '@sushiswap/chain'
 import { Native, nativeCurrencyIds } from '@sushiswap/currency'
+import { createClient as createDatabaseClient } from '@sushiswap/database'
 import { isRouteProcessorChainId, routeProcessorAddress, RouteProcessorChainId } from '@sushiswap/route-processor'
 import {
   // findSpecialRoute,
@@ -146,6 +147,7 @@ server.get('/v0', async (request) => {
 // Run the server!
 const start = async () => {
   try {
+    const databaseClient = await createDatabaseClient()
     dataFetcherMap.set(
       ChainId.ARBITRUM_NOVA,
       new DataFetcher(
@@ -153,7 +155,8 @@ const start = async () => {
         createPublicClient({
           chain: arbitrumNova,
           transport: http(arbitrumNova.rpcUrls.default.http[0]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -163,7 +166,8 @@ const start = async () => {
         createPublicClient({
           chain: avalanche,
           transport: fallback([http(avalanche.rpcUrls.default.http[0]), http('https://rpc.ankr.com/avalanche')]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -173,7 +177,8 @@ const start = async () => {
         createPublicClient({
           chain: boba,
           transport: fallback([http(boba.rpcUrls.default.http[0]), http('https://lightning-replica.boba.network')]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -183,7 +188,8 @@ const start = async () => {
         createPublicClient({
           chain: bobaAvax,
           transport: fallback([http(bobaAvax.rpcUrls.default.http[0]), http('https://replica.avax.boba.network')]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -193,7 +199,8 @@ const start = async () => {
         createPublicClient({
           chain: bobaBnb,
           transport: fallback([http(bobaBnb.rpcUrls.default.http[0]), http('https://replica.bnb.boba.network')]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -208,7 +215,8 @@ const start = async () => {
             http('https://bsc-dataseed1.binance.org'),
             http('https://bsc-dataseed2.binance.org'),
           ]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -218,7 +226,8 @@ const start = async () => {
         createPublicClient({
           chain: bttc,
           transport: http(bttc.rpcUrls.default.http[0]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -231,7 +240,8 @@ const start = async () => {
             http(`${mainnet.rpcUrls.alchemy.http}/${process.env.ALCHEMY_ID}`),
             http('https://eth.llamarpc.com'),
           ]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -244,7 +254,8 @@ const start = async () => {
             http(polygon.rpcUrls.alchemy.http + '/' + process.env.ALCHEMY_ID),
             http('https://polygon.llamarpc.com'),
           ]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -258,7 +269,8 @@ const start = async () => {
             // http(optimism.rpcUrls.default.http[0]),
             http('https://rpc.ankr.com/arbitrum'),
           ]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -272,7 +284,8 @@ const start = async () => {
             // http(optimism.rpcUrls.default.http[0]),
             http('https://rpc.ankr.com/optimism'),
           ]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -282,7 +295,8 @@ const start = async () => {
         createPublicClient({
           chain: celo,
           transport: http(celo.rpcUrls.default.http[0]),
-        }) as PublicClient
+        }) as PublicClient,
+        databaseClient
       )
     )
 
@@ -297,7 +311,8 @@ const start = async () => {
             http('https://rpc.fantom.network'),
             http('https://rpc2.fantom.network'),
           ]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -307,7 +322,8 @@ const start = async () => {
         createPublicClient({
           chain: fuse,
           transport: http(fuse.rpcUrls.default.http[0]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -317,7 +333,8 @@ const start = async () => {
         createPublicClient({
           chain: gnosis,
           transport: fallback([http(gnosis.rpcUrls.default.http[0]), http('https://rpc.ankr.com/gnosis')]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -327,7 +344,8 @@ const start = async () => {
         createPublicClient({
           chain: kava,
           transport: fallback([http(kava.rpcUrls.default.http[0]), http(kava.rpcUrls.default.http[1])]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -337,7 +355,8 @@ const start = async () => {
         createPublicClient({
           chain: metis,
           transport: http(metis.rpcUrls.default.http[0]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -347,7 +366,8 @@ const start = async () => {
         createPublicClient({
           chain: moonbeam,
           transport: fallback([http(moonbeam.rpcUrls.default.http[0]), http('https://rpc.ankr.com/moonbeam')]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -357,7 +377,8 @@ const start = async () => {
         createPublicClient({
           chain: moonriver,
           transport: http(moonriver.rpcUrls.default.http[0]),
-        })
+        }),
+        databaseClient
       )
     )
     dataFetcherMap.set(
@@ -367,7 +388,8 @@ const start = async () => {
         createPublicClient({
           chain: harmony,
           transport: fallback([http(harmony.rpcUrls.default.http[0]), http('https://rpc.ankr.com/harmony')]),
-        })
+        }),
+        databaseClient
       )
     )
 

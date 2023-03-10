@@ -1,6 +1,7 @@
 import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId, chainShortName } from '@sushiswap/chain'
 import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
+import { PrismaClient } from '@sushiswap/database'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
 import { PublicClient } from 'viem'
 
@@ -33,11 +34,13 @@ export class DataFetcher {
   // Provider to poolAddress to PoolCode
   poolCodes: Map<LiquidityProviders, Map<string, PoolCode>> = new Map()
   stateId = 0
-  client: PublicClient
+  web3Client: PublicClient
+  databaseClient: PrismaClient
 
-  constructor(chainId: ChainId, client: PublicClient) {
+  constructor(chainId: ChainId, web3Client: PublicClient, databaseClient: PrismaClient) {
     this.chainId = chainId
-    this.client = client
+    this.web3Client = web3Client
+    this.databaseClient = databaseClient
   }
 
   _providerIsIncluded(lp: LiquidityProviders, liquidity?: LiquidityProviders[]) {
@@ -53,11 +56,11 @@ export class DataFetcher {
     this.stopDataFetching()
     this.poolCodes = new Map()
 
-    this.providers = [new NativeWrapProvider(this.chainId, this.client)]
+    this.providers = [new NativeWrapProvider(this.chainId, this.web3Client)]
 
     if (this._providerIsIncluded(LiquidityProviders.SushiSwap, providers)) {
       try {
-        const provider = new SushiProvider(this.chainId, this.client)
+        const provider = new SushiProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -70,7 +73,7 @@ export class DataFetcher {
       (isConstantProductPoolFactoryChainId(this.chainId) || isStablePoolFactoryChainId(this.chainId))
     ) {
       try {
-        const provider = new TridentProvider(this.chainId, this.client)
+        const provider = new TridentProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -79,7 +82,7 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers)) {
       try {
-        const provider = new ApeSwapProvider(this.chainId, this.client)
+        const provider = new ApeSwapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -88,7 +91,7 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.Biswap, providers)) {
       try {
-        const provider = new BiswapProvider(this.chainId, this.client)
+        const provider = new BiswapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -97,7 +100,7 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.Dfyn, providers)) {
       try {
-        const provider = new DfynProvider(this.chainId, this.client)
+        const provider = new DfynProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -106,7 +109,7 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.Elk, providers)) {
       try {
-        const provider = new ElkProvider(this.chainId, this.client)
+        const provider = new ElkProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -115,7 +118,7 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.HoneySwap, providers)) {
       try {
-        const provider = new HoneySwapProvider(this.chainId, this.client)
+        const provider = new HoneySwapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -124,7 +127,7 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.JetSwap, providers)) {
       try {
-        const provider = new JetSwapProvider(this.chainId, this.client)
+        const provider = new JetSwapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -133,7 +136,7 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.NetSwap, providers)) {
       try {
-        const provider = new NetSwapProvider(this.chainId, this.client)
+        const provider = new NetSwapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -142,7 +145,7 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.PancakeSwap, providers)) {
       try {
-        const provider = new PancakeSwapProvider(this.chainId, this.client)
+        const provider = new PancakeSwapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -151,7 +154,7 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers)) {
       try {
-        const provider = new QuickSwapProvider(this.chainId, this.client)
+        const provider = new QuickSwapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -160,7 +163,7 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.SpookySwap, providers)) {
       try {
-        const provider = new SpookySwapProvider(this.chainId, this.client)
+        const provider = new SpookySwapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -169,7 +172,7 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.TraderJoe, providers)) {
       try {
-        const provider = new TraderJoeProvider(this.chainId, this.client)
+        const provider = new TraderJoeProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -178,7 +181,7 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.UbeSwap, providers)) {
       try {
-        const provider = new UbeSwapProvider(this.chainId, this.client)
+        const provider = new UbeSwapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -187,7 +190,7 @@ export class DataFetcher {
 
     if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
       try {
-        const provider = new UniswapV2Provider(this.chainId, this.client)
+        const provider = new UniswapV2Provider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
