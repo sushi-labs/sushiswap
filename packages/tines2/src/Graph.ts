@@ -622,25 +622,13 @@ export class Graph {
       const res = this.vertices.every((v) => {
         let total = 0
         let totalModule = 0
-        v.edges.forEach((e) => {
-          if (e.vert0 === v) {
-            if (e.direction) {
-              total -= e.amountInPrevious
-            } else {
-              total += e.amountInPrevious
-            }
-            totalModule += e.amountInPrevious
-          } else {
-            if (e.direction) {
-              total += e.amountOutPrevious
-            } else {
-              total -= e.amountOutPrevious
-            }
-            totalModule += e.amountOutPrevious
-          }
+        v.edges.forEach((e, i) => {
+          const flow = e.getFlow(v.placeInEdge[i])
+          total += flow
+          totalModule += Math.abs(flow)
         })
-        if (v === from) return total <= 0
-        if (v === to) return total >= 0
+        if (v === from) return total >= 0
+        if (v === to) return total <= 0
         if (totalModule === 0) return total === 0
         return Math.abs(total / totalModule) < 1e10
       })
@@ -894,7 +882,7 @@ export class Graph {
           poolFee: edge.pool.fee,
           tokenFrom: n.token,
           tokenTo: (n.getNeibour(edge) as Vertice).token,
-          assumedAmountIn: edge.direction ? edge.amountInPrevious : edge.amountOutPrevious,
+          assumedAmountIn: p,
           assumedAmountOut: edge.direction ? edge.amountOutPrevious : edge.amountInPrevious,
           swapPortion: quantity,
           absolutePortion: p / total,
