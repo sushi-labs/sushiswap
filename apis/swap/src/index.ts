@@ -4,7 +4,6 @@ import cors from '@fastify/cors'
 import rateLimit from '@fastify/rate-limit'
 import { ChainId } from '@sushiswap/chain'
 import { Native, nativeCurrencyIds } from '@sushiswap/currency'
-import { createClient as createDatabaseClient } from '@sushiswap/database'
 import { isRouteProcessorChainId, routeProcessorAddress, RouteProcessorChainId } from '@sushiswap/route-processor'
 import {
   // findSpecialRoute,
@@ -147,7 +146,8 @@ server.get('/v0', async (request) => {
 // Run the server!
 const start = async () => {
   try {
-    const databaseClient = await createDatabaseClient()
+    const databaseClient = await ((await import('@sushiswap/database')).createClient())
+
     dataFetcherMap.set(
       ChainId.ARBITRUM_NOVA,
       new DataFetcher(
