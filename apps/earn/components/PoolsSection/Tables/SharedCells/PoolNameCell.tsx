@@ -1,7 +1,7 @@
 import { formatNumber } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
 import { useInViewport } from '@sushiswap/hooks'
-import { classNames, Currency, NetworkIcon, Typography } from '@sushiswap/ui'
+import { classNames, Currency, NetworkIcon } from '@sushiswap/ui'
 import { FC, useRef } from 'react'
 
 import { useTokensFromPool } from '../../../../lib/hooks'
@@ -26,7 +26,7 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
       <div className="flex flex-col">
         <span className="text-sm flex items-center gap-1 text-gray-900 dark:text-slate-50">
           {token0.symbol} <span className="text-gray-900 dark:text-slate-500">/</span> {token1.symbol}{' '}
-          <div className={classNames('bg-gray-200 dark:bg-slate-700 rounded-lg px-1 py-0.5 ml-1')}>
+          <div className={classNames('text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1')}>
             {formatNumber(row.swapFee * 100)}%
           </div>
         </span>
