@@ -7,6 +7,8 @@ export async function middleware(req: NextRequest) {
     const url = req.nextUrl.clone()
 
     if (search === '') {
+      console.log('here')
+
       url.pathname = '/1/NATIVE/1/SUSHI'
     } else {
       if (searchParams.has('chainId') && searchParams.has('token0') && searchParams.has('token1')) {

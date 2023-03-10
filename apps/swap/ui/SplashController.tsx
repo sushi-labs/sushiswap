@@ -1,38 +1,15 @@
-import { FC, ReactNode, useEffect, useState } from 'react'
-import { useNetwork } from 'wagmi'
+import { FC, ReactNode } from 'react'
 import { useRouter } from 'next/router'
 import { SushiIcon } from '@sushiswap/ui'
 import { Transition } from '@headlessui/react'
-import { usePrevious } from '@sushiswap/hooks'
-import { useAutoConnect } from '@sushiswap/wagmi'
-import { useSwapActions } from './trade/TradeProvider'
-import { currencyFromShortCurrencyName, Native } from '@sushiswap/currency'
 
 export const SplashController: FC<{ children: ReactNode }> = ({ children }) => {
-  const { isAutoConnecting } = useAutoConnect()
-  const { chain } = useNetwork()
   const { isReady } = useRouter()
-  const { setTokens } = useSwapActions()
-  const [open, setOpen] = useState(true)
-  const isPrevConnecting = usePrevious(isAutoConnecting)
-
-  useEffect(() => {
-    if (isPrevConnecting && !isAutoConnecting && isReady) setOpen(false)
-  }, [chain?.id, isAutoConnecting, isPrevConnecting, isReady])
-
-  useEffect(() => {
-    if (chain?.id) {
-      setTokens(Native.onChain(chain.id), currencyFromShortCurrencyName(chain.id, 'SUSHI' as never))
-      setOpen(false)
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chain?.id])
 
   return (
     <>
-      {open && (
-        <div className="fixed inset-0 bg-slate-900 z-[1080] flex items-center justify-center">
+      {!isReady && (
+        <div className="fixed inset-0 bg-gray-100 dark:bg-slate-900 z-[1080] flex items-center justify-center">
           <Transition
             appear
             show={true}

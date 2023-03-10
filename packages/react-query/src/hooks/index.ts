@@ -1,4 +1,3 @@
-export * from './customTokens'
 export * from './notifications'
 export * from './prices'
 export * from './tokenlist'
