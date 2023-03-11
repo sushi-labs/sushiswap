@@ -19,17 +19,17 @@ export class BridgeBento extends RPool {
     base: BigNumber,
     freeLiquidity?: BigNumber
   ) {
-    super(address, [tokenEthereum, tokenBento], 0, [elastic, base], BENTO_MINIMUM_SHARE_BALANCE, BRIDGING_GAS_COST)
+    super(address, tokenEthereum, tokenBento, 0, elastic, base, BENTO_MINIMUM_SHARE_BALANCE, BRIDGING_GAS_COST)
     this.elastic = parseInt(elastic.toString())
     this.base = parseInt(base.toString())
     this.freeLiquidity = freeLiquidity === undefined ? undefined : parseInt(freeLiquidity.toString())
   }
 
-  //[elastic, base]
-  updateReserves(res: BigNumber[]) {
-    this.reserves = res
-    this.elastic = parseInt(res[0].toString())
-    this.base = parseInt(res[1].toString())
+  updateReserves(elastic: BigNumber, base: BigNumber) {
+    this.reserve0 = elastic
+    this.elastic = parseInt(elastic.toString())
+    this.reserve1 = base
+    this.base = parseInt(base.toString())
   }
 
   // direction == true -> deposit: calcs output shares by input amounts

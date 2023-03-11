@@ -88,7 +88,7 @@ export class CLRPool extends RPool {
     nearestTick: number,
     ticks: CLTick[]
   ) {
-    super(address, [token0, token1], fee, [reserve0, reserve1], TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST)
+    super(address, token0, token1, fee, reserve0, reserve1, TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST)
     this.tickSpacing = tickSpacing
     this.liquidity = liquidity
     this.sqrtPriceX96 = sqrtPriceX96

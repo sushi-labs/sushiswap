@@ -88,7 +88,7 @@ export class Edge {
   }
 
   reserve(v: Vertice): BigNumber {
-    return v === this.vert0 ? this.pool.getReserve(0) : this.pool.getReserve(1)
+    return v === this.vert0 ? this.pool.getReserve0() : this.pool.getReserve1()
   }
 
   calcOutput(v: Vertice, amountIn: number): { out: number; gasSpent: number } {
@@ -175,14 +175,14 @@ export class Edge {
 
   checkMinimalLiquidityExceededAfterSwap(from: Vertice, amountOut: number): boolean {
     if (from === this.vert0) {
-      const r1 = parseInt(this.pool.getReserve(1).toString())
+      const r1 = parseInt(this.pool.getReserve1().toString())
       if (this.direction) {
         return r1 - amountOut - this.amountOutPrevious < this.pool.minLiquidity
       } else {
         return r1 - amountOut + this.amountOutPrevious < this.pool.minLiquidity
       }
     } else {
-      const r0 = parseInt(this.pool.getReserve(0).toString())
+      const r0 = parseInt(this.pool.getReserve0().toString())
       if (this.direction) {
         return r0 - amountOut + this.amountInPrevious < this.pool.minLiquidity
       } else {
@@ -363,8 +363,8 @@ export class Graph {
     this.edges = []
     this.tokens = new Map()
     pools.forEach((p) => {
-      const v0 = this.getOrCreateVertice(p.tokens[0])
-      const v1 = this.getOrCreateVertice(p.tokens[1])
+      const v0 = this.getOrCreateVertice(p.token0)
+      const v1 = this.getOrCreateVertice(p.token1)
       const edge = new Edge(p, v0, v1)
       v0.edges.push(edge)
       v1.edges.push(edge)
@@ -484,9 +484,8 @@ export class Graph {
     from.gasPrice = gasPrice
     const edges = from.edges
       .map((e): [Edge, number] => [e, parseInt(e.reserve(from).toString())])
-      .sort((r1, r2) => r2[1] - r1[1])
-    edges.forEach((ed) => {
-      const e = ed[0]
+      .sort(([_1, r1], [_2, r2]) => r2 - r1)
+    edges.forEach(([e, _]) => {
       const v = e.vert0 === from ? e.vert1 : e.vert0
       if (v.price !== 0) return
       const p = e.pool.calcCurrentPriceWithoutFee(from === e.vert1)
@@ -1200,8 +1199,7 @@ export class Graph {
   }
 
   removeWeakestEdge(verts: Vertice[]) {
-    let minVert: Vertice = verts[0],
-      minVertNext: Vertice
+    let minVert: Vertice, minVertNext: Vertice
     let minOutput = Number.MAX_VALUE
     verts.forEach((v1, i) => {
       const v2 = i === 0 ? verts[verts.length - 1] : verts[i - 1]
@@ -1216,7 +1214,7 @@ export class Graph {
         minOutput = out
       }
     })
-
+    // @ts-ignore
     minVert.getOutputEdges().forEach((e) => {
       if (minVert.getNeibour(e) !== minVertNext) return
       e.canBeUsed = false

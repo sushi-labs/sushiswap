@@ -1,9 +1,9 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
-
 import {
   closeValues,
   ConstantProductRPool,
   getBigNumber,
+  HybridRPool,
   MultiRoute,
   NetworkInfo,
   RouteLeg,
@@ -14,7 +14,6 @@ import {
 } from '../src'
 import { BridgeUnlimited } from '../src/BridgeBidirectionalUnlimited'
 import { BridgeStargateV04OneWay } from '../src/BridgeStargateV04OneWay'
-import { CurveRPool } from '../src/CurvePool'
 
 const MIN_TOKEN_PRICE = 1e-6
 const MAX_TOKEN_PRICE = 1e6
@@ -47,12 +46,12 @@ export function createNetwork(
   garantedStableTokens = 1
 ): Network {
   const tokens = []
-  for (let i = 0; i < tokenNumber; ++i) {
+  for (var i = 0; i < tokenNumber; ++i) {
     tokens.push(createRandomToken(rnd, '' + i, i < garantedStableTokens))
   }
 
   const pools: RPool[] = []
-  for (let i = 0; i < tokenNumber; ++i) {
+  for (i = 0; i < tokenNumber; ++i) {
     for (let j = i + 1; j < tokenNumber; ++j) {
       const r = rnd()
       if (r < density) {
@@ -131,7 +130,7 @@ interface Variants {
 
 function choice(rnd: () => number, obj: Variants) {
   let total = 0
-  Object.entries(obj).forEach((p) => (total += p[1]))
+  Object.entries(obj).forEach(([_, p]) => (total += p))
   if (total <= 0) throw new Error('Error 62')
   const val = rnd() * total
   let past = 0
@@ -162,7 +161,7 @@ function getCPPool(rnd: () => number, t0: TToken, t1: TToken) {
     t0 = t1
     t1 = t
   }
-  const price = t0.price / t1.price
+  let price = t0.price / t1.price
 
   const fee = getPoolFee(rnd)
   const imbalance = getPoolImbalance(rnd)
@@ -245,7 +244,7 @@ function getPoolA(rnd: () => number) {
 }
 
 // price is always 1
-export function getHybridPool(rnd: () => number, t0: RToken, t1: RToken) {
+function getHybridPool(rnd: () => number, t0: RToken, t1: RToken) {
   const fee = getPoolFee(rnd)
   const imbalance = getPoolImbalance(rnd)
   const A = getPoolA(rnd)
@@ -267,7 +266,7 @@ export function getHybridPool(rnd: () => number, t0: RToken, t1: RToken) {
   console.assert(reserve0 >= MIN_LIQUIDITY && reserve0 <= MAX_LIQUIDITY, 'Error reserve0 clculation')
   console.assert(reserve1 >= MIN_LIQUIDITY && reserve1 <= MAX_LIQUIDITY, 'Error reserve1 clculation ' + reserve1)
 
-  return new CurveRPool(
+  return new HybridRPool(
     `pool hb ${t0.name} ${t1.name} ${reserve0} ${1} ${fee}`,
     t0,
     t1,
@@ -430,17 +429,17 @@ export function createMultipleNetworksWithStargateBridge(
 function getTokenPools(network: Network): Map<RToken, RPool[]> {
   const tokenPools = new Map<RToken, RPool[]>()
   network.pools.forEach((p) => {
-    const pools0 = tokenPools.get(p.tokens[0])
+    const pools0 = tokenPools.get(p.token0)
     if (pools0) {
       pools0.push(p)
     } else {
-      tokenPools.set(p.tokens[0], [p])
+      tokenPools.set(p.token0, [p])
     }
-    const pools1 = tokenPools.get(p.tokens[1])
+    const pools1 = tokenPools.get(p.token1)
     if (pools1) {
       pools1.push(p)
     } else {
-      tokenPools.set(p.tokens[1], [p])
+      tokenPools.set(p.token1, [p])
     }
   })
   return tokenPools
@@ -456,7 +455,7 @@ function getAllConnectedTokens(start: RToken, tokenPools: Map<RToken, RPool[]>):
     }
     connected.add(token)
     tokenPools.get(token)?.forEach((p) => {
-      const token2 = token == p.tokens[0] ? p.tokens[1] : p.tokens[0]
+      const token2 = token == p.token0 ? p.token1 : p.token0
       nextTokens.push(token2)
     })
   }
@@ -481,7 +480,6 @@ export function expectCloseValues(
         `\n precision = ${Math.abs(a / b - 1)}, expected < ${precision}` +
         `${additionalInfo == '' ? '' : '\n' + additionalInfo}`
     )
-    // eslint-disable-next-line no-debugger
     debugger
   }
   expect(res).toBeTruthy()
@@ -520,7 +518,7 @@ export function checkRoute(
 
   // amountOut checks
   if (route.status !== RouteStatus.NoWay) expect(route.amountOut).toBeGreaterThan(0)
-  //const outPriceToIn = atomPrice(to) / atomPrice(from)
+  const outPriceToIn = atomPrice(to) / atomPrice(from)
   // Slippage can be arbitrary
   // Slippage is always not-negative
   // const maxGrow = Math.pow(MAX_POOL_IMBALANCE, route.legs.length)
@@ -559,10 +557,10 @@ export function checkRoute(
     expect(usedPools.get(l.poolAddress)).toBeUndefined()
     usedPools.set(l.poolAddress, true)
     const pool = poolMap.get(l.poolAddress) as RPool
-    usedTokens.set(pool.tokens[0], usedTokens.get(pool.tokens[0]) || [])
-    usedTokens.get(pool.tokens[0])?.push(l)
-    usedTokens.set(pool.tokens[1], usedTokens.get(pool.tokens[1]) || [])
-    usedTokens.get(pool.tokens[1])?.push(l)
+    usedTokens.set(pool.token0, usedTokens.get(pool.token0) || [])
+    usedTokens.get(pool.token0)?.push(l)
+    usedTokens.set(pool.token1, usedTokens.get(pool.token1) || [])
+    usedTokens.get(pool.token1)?.push(l)
   })
   usedTokens.forEach((legs, t) => {
     if (t === from) {
