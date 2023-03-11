@@ -41,12 +41,12 @@ export async function createClient(
       models: [
         { model: 'Token', cacheTime: 900 },
         { model: 'Incentive', cacheTime: 180 },
-        { model: 'Pool', cacheTime: 24 * 60 * 60 },
+        { model: 'Pool', cacheTime: 60 },
         { model: 'SushiPool', cacheTime: 900 },
       ],
       storage: {
         type: 'redis',
-        options: { client: redis, invalidation: { referencesTTL: 24 * 60 * 60 } },
+        options: { client: redis, invalidation: { referencesTTL: 900 } },
       } as any, // Issue open on github,
       onHit: (key: string) => {
         console.log('Hit: ✅', key)
