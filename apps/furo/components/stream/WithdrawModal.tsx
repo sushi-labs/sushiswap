@@ -1,3 +1,4 @@
+import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
 import { CheckCircleIcon } from '@heroicons/react/solid'
@@ -69,7 +70,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
         data: contract.interface.encodeFunctionData('withdrawFromStream', [
           BigNumber.from(stream.id),
           BigNumber.from(amount.toShare(stream.rebase).quotient.toString()),
-          withdrawTo ?? stream.recipient.id,
+          isAddress(withdrawTo ?? '') ? withdrawTo : stream.recipient.id,
           fundSource === FundSource.BENTOBOX,
           '0x',
         ]),
