@@ -4,7 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { Pool, PrismaClient } from '@sushiswap/database'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { ConstantProductRPool, RToken } from '@sushiswap/tines'
+import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
 import { add, getUnixTime } from 'date-fns'
 import { BigNumber } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
@@ -183,12 +183,16 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
     const validUntilTimestamp = getUnixTime(add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME_IN_SECONDS }))
 
+    if (pools.length === 0) {
+      return
+    }
+
     let created = 0
     let updated = 0
+    const poolCodesToCreate: PoolCode[] = []
     pools.forEach((pool) => {
       const existingPool = this.onDemandPools.get(pool.address)
       if (existingPool === undefined) {
- 
         const token0 = new Token({
           chainId: this.chainId,
           address: pool.token0.address,
@@ -205,23 +209,56 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         }) as RToken
         const rPool = new ConstantProductRPool(
           pool.address,
-          token0, 
+          token0,
           token1,
           this.fee,
           BigNumber.from(0),
           BigNumber.from(0)
         )
-
         const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
-        this.onDemandPools.set(pool.address, { poolCode: pc, validUntilTimestamp })
-        ++created
+        poolCodesToCreate.push(pc)
       } else {
         existingPool.validUntilTimestamp = validUntilTimestamp
         ++updated
       }
     })
+
+    const reserves = await this.client
+      .multicall({
+        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        allowFailure: true,
+        contracts: poolCodesToCreate.map(
+          (poolCode) =>
+            ({
+              address: poolCode.pool.address as Address,
+              chainId: this.chainId,
+              abi: getReservesAbi,
+              functionName: 'getReserves',
+            } as const)
+        ),
+      })
+      .catch((e) => {
+        console.warn(`${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${e.message}`)
+        return undefined
+      })
+
+    poolCodesToCreate.forEach((poolCode, i) => {
+      const pool = poolCode.pool
+      const res0 = reserves?.[i]?.result?.[0]
+      const res1 = reserves?.[i]?.result?.[1]
+
+      if (res0 !== undefined && res1 !== undefined) {
+        pool.updateReserves(BigNumber.from(res0), BigNumber.from(res1))
+        this.onDemandPools.set(pool.address, { poolCode, validUntilTimestamp })
+        ++created
+      } else {
+        console.error(`${this.getLogPrefix()} - ERROR FETCHING RESERVES, initialize on demand pool: ${pool.address}`) 
+        // TODO: some pools seem to be initialized with 0 in reserves, they should just be ignored, shouldn't log error
+      }
+    })
+
     console.debug(
-      `${this.getLogPrefix()} - ON DEMAND: Created ${created} pools, extended 'lifetime' for ${updated} pools`
+      `${this.getLogPrefix()} - ON DEMAND: Created and fetched reserves for ${created} pools, extended 'lifetime' for ${updated} pools`
     )
   }
 
