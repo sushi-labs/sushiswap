@@ -10,7 +10,6 @@ import { AppProps } from 'next/app'
 import { ToastContainer } from '@sushiswap/ui/future/components/toast'
 import { SwapProvider } from 'ui/trade/TradeProvider'
 import { Onramper } from '@sushiswap/wagmi/future/components'
-import { SplashController } from '../ui/SplashController'
 import { NetworkCheck } from '../ui/NetworkCheck'
 
 export { reportWebVitals } from 'next-axiom'

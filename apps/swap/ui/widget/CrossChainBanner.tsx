@@ -71,7 +71,7 @@ export const CrossChainBanner: FC = () => {
             </span>
           </div>
           <div className="flex justify-end flex-grow">
-            <Switch checked={open} onChange={handleChange} />
+            <Switch className="transition duration-200" checked={open} onChange={handleChange} />
           </div>
         </div>
         <ChainSelectors open={open} />
