@@ -3,7 +3,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { RPool, RToken } from './PrimaryPools'
 import { getBigNumber } from './Utils'
 
-export class CurvePoolPool extends RPool {
+export class CurvePool extends RPool {
   readonly A: number
   D: BigNumber // set it to 0 if reserves are changed !!
 
