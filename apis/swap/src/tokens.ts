@@ -55,7 +55,7 @@ async function populateCache() {
   for (const chainId of chainIds) {
     const tokens = z
       .array(tokenSchema)
-      .parse(await fetch(`https://tokens.sushi.com/v0/${chainId}`).then((data) => data.json()))
+      .parse(await fetch(`https://tokens-git-feature-swap.sushi.com/v0/${chainId}`).then((data) => data.json()))
     tokens.forEach((token) => setCache(chainId, token.address, token))
   }
 }
@@ -67,7 +67,7 @@ async function fetcher(chainId: ChainId, tokenId: string) {
   if (cachedToken) return cachedToken
 
   const token = tokenSchema.parse(
-    await fetch(`https://tokens.sushi.com/v0/${chainId}/${getAddress(tokenId)}`).then((data) => data.json())
+    await fetch(`https://tokens-git-feature-swap.sushi.com/v0/${chainId}/${getAddress(tokenId)}`).then((data) => data.json())
   )
 
   setCache(chainId, tokenId, token)

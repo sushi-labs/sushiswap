@@ -2,7 +2,7 @@ import { keccak256, pack } from '@ethersproject/solidity'
 import { getReservesAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { PrismaClient } from '@sushiswap/database'
+import { Pool, PrismaClient } from '@sushiswap/database'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { add, getUnixTime } from 'date-fns'
@@ -10,7 +10,14 @@ import { BigNumber } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 import { Address, PublicClient } from 'viem'
 
-import { getOnDemandPools, getTopPools, PoolResponse } from '../lib/api'
+import {
+  filterOnDemandPools,
+  getAllPools,
+  getOnDemandPools,
+  getTopPools,
+  PoolResponse,
+  PoolResponse2,
+} from '../lib/api'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
@@ -28,6 +35,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   initialPools: Map<string, PoolCode> = new Map()
   poolsByTrade: Map<string, string[]> = new Map()
   onDemandPools: Map<string, PoolInfo> = new Map()
+  availablePools: Map<string, PoolResponse2> = new Map()
 
   blockListener?: () => void
   unwatchBlockNumber?: () => void
@@ -56,11 +64,28 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   }
 
   async initialize() {
+    // TODO: retry logic, every X seconds? dont init until the end of the function ideally.
     this.isInitialized = true
-    const pools = await this.getInitialPools()
+    const availablePools = await getAllPools(
+      this.databaseClient,
+      this.chainId,
+      this.getType() === LiquidityProviders.UniswapV2 ? 'Uniswap' : this.getType(),
+      this.getType() === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
+      ['CONSTANT_PRODUCT_POOL']
+    )
+    console.debug(`${this.getLogPrefix()} - available: ${availablePools.size}`)
 
-    if (pools.length > 0) {
-      console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${pools.length}`)
+    this.availablePools = availablePools
+
+    // TODO: check if they are sorted? should be.
+    const whitelistedPools = Array.from(availablePools.values()).filter((pool) => pool.isWhitelisted)
+    const topPools = whitelistedPools.slice(
+      0,
+      whitelistedPools.length >= this.TOP_POOL_SIZE ? this.TOP_POOL_SIZE : whitelistedPools.length
+    )
+
+    if (topPools.length > 0) {
+      console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${topPools.length}`)
     } else {
       console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
       return []
@@ -70,7 +95,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        contracts: pools.map(
+        contracts: topPools.map(
           (pool) =>
             ({
               address: pool.address as Address,
@@ -85,17 +110,29 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         return undefined
       })
 
-    pools.forEach((pool, i) => {
+    topPools.forEach((pool, i) => {
       const res0 = results?.[i]?.result?.[0]
       const res1 = results?.[i]?.result?.[1]
 
       if (res0 && res1) {
-        const toks = [pool.token0, pool.token1]
-
+        const token0 = new Token({
+          chainId: this.chainId,
+          address: pool.token0.address,
+          decimals: pool.token0.decimals,
+          symbol: pool.token0.symbol,
+          name: pool.token0.name,
+        }) as RToken
+        const token1 = new Token({
+          chainId: this.chainId,
+          address: pool.token1.address,
+          decimals: pool.token1.decimals,
+          symbol: pool.token1.symbol,
+          name: pool.token1.name,
+        }) as RToken
         const rPool = new ConstantProductRPool(
           pool.address,
-          toks[0] as RToken,
-          toks[1] as RToken,
+          token0,
+          token1,
           this.fee,
           BigNumber.from(res0),
           BigNumber.from(res1)
@@ -111,41 +148,38 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   }
 
   private async getInitialPools(): Promise<PoolResponse[]> {
-    const topPools = await getTopPools(
-      this.databaseClient,
-      this.chainId,
-      this.getType() === LiquidityProviders.UniswapV2 ? 'Uniswap' : this.getType(),
-      this.getType() === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
-      ['CONSTANT_PRODUCT_POOL'],
-      this.TOP_POOL_SIZE,
-      this.TOP_POOL_LIQUIDITY_THRESHOLD
-    )
+    // const initialPools = await getAllPools(
+    //   this.databaseClient,
+    //   this.chainId,
+    //   this.getType() === LiquidityProviders.UniswapV2 ? 'Uniswap' : this.getType(),
+    //   this.getType() === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
+    //   ['CONSTANT_PRODUCT_POOL']
+    // )
 
-    return Array.from(topPools.values())
+    // Put in memory, filter client side, create top pools. Keep the rest as poolsAvailable
+    return []
+    // const topPools = await getTopPools(
+    //   this.databaseClient,
+    //   this.chainId,
+    //   this.getType() === LiquidityProviders.UniswapV2 ? 'Uniswap' : this.getType(),
+    //   this.getType() === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
+    //   ['CONSTANT_PRODUCT_POOL'],
+    //   this.TOP_POOL_SIZE,
+    //   this.TOP_POOL_LIQUIDITY_THRESHOLD
+    // )
+
+    // return Array.from(topPools.values())
   }
 
   async getOnDemandPools(t0: Token, t1: Token): Promise<void> {
-    const type = this.getType()
-
-    const poolsOnDemand = await getOnDemandPools(
-      this.databaseClient,
-      this.chainId,
-      type === LiquidityProviders.UniswapV2 ? 'Uniswap' : type,
-      type === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
-      ['CONSTANT_PRODUCT_POOL'],
+    const topPoolAddresses = Array.from(this.initialPools.keys())
+    const pools = filterOnDemandPools(
+      Array.from(this.availablePools.values()),
       t0.address,
       t1.address,
-      this.TOP_POOL_SIZE,
-      this.TOP_POOL_LIQUIDITY_THRESHOLD,
+      topPoolAddresses,
       this.ON_DEMAND_POOL_SIZE
-    )
-
-    const pools = Array.from(poolsOnDemand.values()).filter((pool) => !this.initialPools.has(pool.address))
-
-    this.poolsByTrade.set(
-      this.getTradeId(t0, t1),
-      pools.map((pool) => pool.address)
-    )
+    ).filter((pool) => !this.onDemandPools.has(pool.address) || this.initialPools.has(pool.address))
 
     const validUntilTimestamp = getUnixTime(add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME_IN_SECONDS }))
 
@@ -154,11 +188,25 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     pools.forEach((pool) => {
       const existingPool = this.onDemandPools.get(pool.address)
       if (existingPool === undefined) {
-        const toks = [pool.token0, pool.token1]
+ 
+        const token0 = new Token({
+          chainId: this.chainId,
+          address: pool.token0.address,
+          decimals: pool.token0.decimals,
+          symbol: pool.token0.symbol,
+          name: pool.token0.name,
+        }) as RToken
+        const token1 = new Token({
+          chainId: this.chainId,
+          address: pool.token1.address,
+          decimals: pool.token1.decimals,
+          symbol: pool.token1.symbol,
+          name: pool.token1.name,
+        }) as RToken
         const rPool = new ConstantProductRPool(
           pool.address,
-          toks[0] as RToken,
-          toks[1] as RToken,
+          token0, 
+          token1,
           this.fee,
           BigNumber.from(0),
           BigNumber.from(0)
@@ -240,27 +288,27 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
     this.refreshInitialPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
 
-    const freshInitPools = await this.getInitialPools()
-    // TODO: ideally this should remove pools which are no longer included too, but since the list shouldn't change much,
-    // we can keep them in memory and they will disappear the next time the server is restarted
-    const poolsToAdd = freshInitPools.filter((pool) => !this.initialPools.has(pool.address))
-    poolsToAdd.forEach((pool) => {
-      const rPool = new ConstantProductRPool(
-        pool.address,
-        pool.token0 as RToken,
-        pool.token1 as RToken,
-        this.fee,
-        BigNumber.from(0),
-        BigNumber.from(0)
-      )
-      const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
-      this.initialPools.set(pool.address, pc)
-      console.log(
-        `${this.getLogPrefix()} - REFRESH INITIAL POOLS: Added pool ${pool.address} (${pool.token0.symbol}/${
-          pool.token1.symbol
-        })`
-      )
-    })
+    // const freshInitPools = await this.getInitialPools()
+    // // TODO: ideally this should remove pools which are no longer included too, but since the list shouldn't change much,
+    // // we can keep them in memory and they will disappear the next time the server is restarted
+    // const poolsToAdd = freshInitPools.filter((pool) => !this.initialPools.has(pool.address))
+    // poolsToAdd.forEach((pool) => {
+    //   const rPool = new ConstantProductRPool(
+    //     pool.address,
+    //     pool.token0 as RToken,
+    //     pool.token1 as RToken,
+    //     this.fee,
+    //     BigNumber.from(0),
+    //     BigNumber.from(0)
+    //   )
+    //   const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
+    //   this.initialPools.set(pool.address, pc)
+    //   console.log(
+    //     `${this.getLogPrefix()} - REFRESH INITIAL POOLS: Added pool ${pool.address} (${pool.token0.symbol}/${
+    //       pool.token1.symbol
+    //     })`
+    //   )
+    // })
 
     console.debug(
       `* MEM ${this.getLogPrefix()} INIT COUNT: ${this.initialPools.size} ON DEMAND COUNT: ${this.onDemandPools.size}`

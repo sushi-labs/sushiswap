@@ -35,6 +35,80 @@ export const AggregatorTopPools = z.object({
   minLiquidity: z.coerce.number().int().optional(),
 })
 
+export const AllPools = z.object({
+  chainId: z.coerce
+    .number()
+    .int()
+    .gte(0)
+    .lte(2 ** 256),
+  protocol: z.string(),
+  version: z.string(),
+  poolTypes: z.string().transform((poolTypes) => poolTypes?.split(',') as PoolType[]),
+})
+
+
+export async function getAllPools(client: PrismaClient, args: typeof AllPools._output) {
+  const where: Prisma.PoolWhereInput = {
+    // isWhitelisted: true, // TODO: remove this, figure out how to speed queries up. workaround to get data faster while testing.
+    // Perhaps do offset pagination, iterate through... X amount of pools?
+    // What about PCS?
+    chainId: args.chainId,
+    protocol: args.protocol,
+    version: args.version,
+    type: { in: args.poolTypes },
+  }
+
+  try {
+    const pools = await client.pool.findMany({
+      where,
+      take: 5000,
+      orderBy: {
+        liquidityUSD: 'desc',
+      },
+      select: {
+        address: true,
+        twapEnabled: true,
+        swapFee: true,
+        type: true,
+        isWhitelisted: true, // TODO: REMOVE? add offset pagination?
+        liquidityUSD: true,
+        token0: {
+          select: {
+            id: true,
+            address: true,
+            status: true,
+            name: true,
+            symbol: true,
+            decimals: true,
+            isFeeOnTransfer: true,
+            isCommon: true,
+          },
+        },
+        token1: {
+          select: {
+            id: true,
+            address: true,
+            name: true,
+            status: true,
+            symbol: true,
+            decimals: true,
+            isFeeOnTransfer: true,
+            isCommon: true,
+          },
+        },
+      },
+    })
+    await client.$disconnect()
+    return pools as unknown as DecimalToString<typeof pools>
+  } catch (e: any) {
+    console.error(e.message)
+    await client.$disconnect()
+    return []
+  }
+}
+
+
+
 export async function getTopPools(client: PrismaClient, args: typeof AggregatorTopPools._output) {
   let where: Prisma.PoolWhereInput = {
     chainId: args.chainId,
@@ -93,6 +167,7 @@ export async function getTopPools(client: PrismaClient, args: typeof AggregatorT
     await client.$disconnect()
     return pools
   } catch (e: any) {
+    console.error(e.message)
     await client.$disconnect()
     return []
   }
@@ -313,7 +388,7 @@ export async function getPoolsByTokenIds(client: PrismaClient, args: typeof Aggr
     return pools as unknown as DecimalToString<typeof pools>
   } catch (e: any) {
     await client.$disconnect()
-    console.error(e)
+    console.error(e.message)
     return []
   }
 }
