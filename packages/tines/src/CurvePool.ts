@@ -5,7 +5,6 @@ import { getBigNumber } from './Utils'
 
 export class HybridRPool extends RPool {
   readonly A: number
-  readonly A_PRECISION = 100
   D: BigNumber // set it to 0 if reserves are changed !!
 
   constructor(
@@ -45,10 +44,9 @@ export class HybridRPool extends RPool {
       prevD = D
       D = nA
         .mul(s)
-        .div(this.A_PRECISION)
         .add(dP.mul(2))
         .mul(D)
-        .div(nA.div(this.A_PRECISION).sub(1).mul(D).add(dP.mul(3)))
+        .div(nA.sub(1).mul(D).add(dP.mul(3)))
       if (D.sub(prevD).abs().lte(1)) {
         break
       }
@@ -65,8 +63,8 @@ export class HybridRPool extends RPool {
     const c = D.mul(D)
       .div(x.mul(2))
       .mul(D)
-      .div((nA * 2) / this.A_PRECISION)
-    const b = D.mul(this.A_PRECISION).div(nA).add(x)
+      .div(nA * 2)
+    const b = D.div(nA).add(x)
 
     let yPrev
     let y = D
@@ -115,7 +113,7 @@ export class HybridRPool extends RPool {
     const x = parseInt(xBN.toString())
     const oneMinusFee = takeFeeIntoAccount ? 1 - this.fee : 1
     const D = parseInt(this.computeLiquidity().toString())
-    const A = this.A / this.A_PRECISION
+    const A = this.A
     const xI = x + amountIn
     const b = 4 * A * xI + D - 4 * A * D
     const ac4 = (D * D * D) / xI
