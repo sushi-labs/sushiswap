@@ -40,7 +40,7 @@ export default function GovernanceDashboardLayout({
     <>
       <DefaultSeo {...SEO} />
       <GlobalNav />
-      <div className="flex items-center justify-center w-full my-10">{children}</div>
+      <main className="text-gray-50">{children}</main>
     </>
   )
 }
