@@ -13,7 +13,7 @@ import { add, getUnixTime } from 'date-fns'
 import { BigNumber } from 'ethers'
 import { Address, PublicClient } from 'viem'
 
-import { getOnDemandPools as getOnDemandPoolsFromDb, getTopPools, PoolResponse } from '../lib/api'
+import { filterOnDemandPools, getAllPools, PoolResponse2 } from '../lib/api'
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
 import { BentoPoolCode } from '../pools/BentoPool'
 import type { PoolCode } from '../pools/PoolCode'
@@ -60,6 +60,7 @@ export class TridentProvider extends LiquidityProvider {
   onDemandClassicPools: Map<string, PoolInfo> = new Map()
   onDemandStablePools: Map<string, PoolInfo> = new Map()
   poolsByTrade: Map<string, string[]> = new Map()
+  availablePools: Map<string, PoolResponse2> = new Map()
 
   bridges: Map<string, PoolCode> = new Map()
   bentoBox = bentoBoxV1Address
@@ -98,41 +99,56 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   async initialize() {
+    // TODO: retry logic, every X seconds? dont flag as true until the end of the function ideally. add isInitalizing? to avoid it being called twice before completed.
     this.isInitialized = true
-    const pools = await this.getInitialPools()
-    if (pools.length > 0) {
-      console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${pools.length}`)
+    const availablePools = await getAllPools(this.databaseClient, this.chainId, 'SushiSwap', 'TRIDENT', [
+      'CONSTANT_PRODUCT_POOL',
+      'STABLE_POOL',
+    ])
+
+    console.debug(`${this.getLogPrefix()} - available: ${availablePools.size}`)
+    this.availablePools = availablePools
+
+    // TODO: generate pools from a list of tokens, exclude if they are included in the list above, multicall to see if the rest exist, keep the pools that exist.
+
+    const whitelistedPools = Array.from(availablePools.values()).filter((pool) => pool.isWhitelisted)
+    const topPools = whitelistedPools.slice(
+      0,
+      whitelistedPools.length >= this.TOP_POOL_SIZE ? this.TOP_POOL_SIZE : whitelistedPools.length
+    )
+
+    if (topPools.length > 0) {
+      console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${topPools.length}`)
     } else {
       console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
       return []
     }
 
-    await this.initPools(pools)
+    await this.initPools(topPools)
 
-    // TODO: generate pools from a list of tokens, exclude if they are included in the list above, multicall to see if the rest exist, keep the pools that exist.
-
-    console.debug(
-      `${this.getLogPrefix()} - INIT, WATCHING ${this.initialClassicPools.size} CLASSIC AND ${
-        this.initialStablePools.size
-      } STABLE POOLS`
-    )
+    // console.debug(
+    //   `${this.getLogPrefix()} - INIT, WATCHING ${this.initialClassicPools.size} CLASSIC AND ${
+    //     this.initialStablePools.size
+    //   } STABLE POOLS`
+    // )
   }
 
-  private async getInitialPools(): Promise<PoolResponse[]> {
-    const topPools = await getTopPools(
-      this.databaseClient,
-      this.chainId,
-      'SushiSwap',
-      'TRIDENT',
-      ['CONSTANT_PRODUCT_POOL', 'STABLE_POOL'],
-      this.TOP_POOL_SIZE,
-      this.TOP_POOL_LIQUIDITY_THRESHOLD
-    )
+  private async getInitialPools(): Promise<PoolResponse2[]> {
+    // const topPools = await getTopPools(
+    //   this.databaseClient,
+    //   this.chainId,
+    //   'SushiSwap',
+    //   'TRIDENT',
+    //   ['CONSTANT_PRODUCT_POOL', 'STABLE_POOL'],
+    //   this.TOP_POOL_SIZE,
+    //   this.TOP_POOL_LIQUIDITY_THRESHOLD
+    // )
 
-    return Array.from(topPools.values())
+    // return Array.from(topPools.values())
+    return []
   }
 
-  async initPools(pools: PoolResponse[]): Promise<void> {
+  async initPools(pools: PoolResponse2[]): Promise<void> {
     const classicPools = pools.filter((p) => p.type === 'CONSTANT_PRODUCT_POOL')
     const stablePools = pools.filter((p) => p.type === 'STABLE_POOL')
     const sortedTokens = this.poolResponseToSortedTokens(pools)
@@ -218,21 +234,24 @@ export class TridentProvider extends LiquidityProvider {
       balancesPromise,
     ])
 
-    classicPools.forEach((pr, i) => {
+    classicPools.forEach((pool, i) => {
       const res0 = classicReserves?.[i]?.result?.[0]
       const res1 = classicReserves?.[i]?.result?.[1]
       if (!res0 || !res1) return
-      const tokens = [convertTokenToBento(pr.token0), convertTokenToBento(pr.token1)]
+      const tokens = [
+        convertTokenToBento(this.mapToToken(pool.token0)),
+        convertTokenToBento(this.mapToToken(pool.token1)),
+      ]
       const rPool = new ConstantProductRPool(
-        pr.address,
+        pool.address,
         tokens[0],
         tokens[1],
-        pr.swapFee,
+        pool.swapFee,
         BigNumber.from(res0),
         BigNumber.from(res1)
       )
       const pc = new BentoPoolCode(rPool, this.getType(), this.getPoolProviderName())
-      this.initialClassicPools.set(pr.address, pc)
+      this.initialClassicPools.set(pool.address, pc)
     })
 
     const rebases: Map<string, Rebase> = new Map()
@@ -251,35 +270,43 @@ export class TridentProvider extends LiquidityProvider {
         BigNumber.from(balance)
       )
       this.bridges.set(
-        t.address,
+        t.address.toLowerCase(),
         new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
       )
-      rebases.set(t.address, {
+      rebases.set(t.address.toLowerCase(), {
         elastic: BigNumber.from(elastic),
         base: BigNumber.from(base),
       })
     })
 
-    stablePools.forEach((pr, i) => {
+    stablePools.forEach((pool, i) => {
       const res0 = stableReserves?.[i]?.result?.[0]
       const res1 = stableReserves?.[i]?.result?.[1]
-      const totals0 = rebases.get(pr.token0.address)
-      const totals1 = rebases.get(pr.token1.address)
+      const totals0 = rebases.get(pool.token0.address)
+      const totals1 = rebases.get(pool.token1.address)
+
       if (!res0 || !res1 || totals0 === undefined || totals1 === undefined) return
 
+      const tokens = [
+        convertTokenToBento(this.mapToToken(pool.token0)),
+        convertTokenToBento(this.mapToToken(pool.token1)),
+      ]
       const stablePool = new StableSwapRPool(
-        pr.address,
-        convertTokenToBento(pr.token0),
-        convertTokenToBento(pr.token1),
-        pr.swapFee,
+        pool.address,
+        tokens[0],
+        tokens[1],
+        pool.swapFee,
         toShareBN(BigNumber.from(res0), totals0),
         toShareBN(BigNumber.from(res1), totals1),
-        pr.token0.decimals,
-        pr.token1.decimals,
+        pool.token0.decimals,
+        pool.token1.decimals,
         totals0,
         totals1
       )
-      this.initialStablePools.set(pr.address, new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName()))
+      this.initialStablePools.set(
+        pool.address,
+        new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName())
+      )
     })
   }
 
@@ -446,7 +473,7 @@ export class TridentProvider extends LiquidityProvider {
       }
       const elasticBN = BigNumber.from(elastic)
       const baseBN = BigNumber.from(base)
-      rebases.set(t.address, {
+      rebases.set(t.address.toLowerCase(), {
         elastic: elasticBN,
         base: baseBN,
       })
@@ -470,35 +497,54 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   async getOnDemandPools(t0: Token, t1: Token): Promise<void> {
-    const poolsOnDemand = await getOnDemandPoolsFromDb(
-      this.databaseClient,
-      this.chainId,
-      'SushiSwap',
-      'TRIDENT',
-      ['CONSTANT_PRODUCT_POOL', 'STABLE_POOL'],
+    // const poolsOnDemand = await getOnDemandPoolsFromDb(
+    //   this.databaseClient,
+    //   this.chainId,
+    //   'SushiSwap',
+    //   'TRIDENT',
+    //   ['CONSTANT_PRODUCT_POOL', 'STABLE_POOL'],
+    //   t0.address,
+    //   t1.address,
+    //   this.TOP_POOL_SIZE,
+    //   this.TOP_POOL_LIQUIDITY_THRESHOLD,
+    //   this.ON_DEMAND_POOL_SIZE
+    // )
+    const topPoolAddresses = [...this.initialClassicPools.keys(), ...this.initialStablePools.keys()]
+    const pools = filterOnDemandPools(
+      Array.from(this.availablePools.values()),
       t0.address,
       t1.address,
-      this.TOP_POOL_SIZE,
-      this.TOP_POOL_LIQUIDITY_THRESHOLD,
+      topPoolAddresses,
       this.ON_DEMAND_POOL_SIZE
     )
-    console.debug(`${this.getLogPrefix()} - ON DEMAND: Begin fetching reserves for ${poolsOnDemand.size} pools`)
-    const pools = Array.from(poolsOnDemand.values())
-    const onDemandClassicPools = pools.filter(
-      (p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.initialClassicPools.has(p.address)
-    )
-    const onDemandStablePools = pools.filter((p) => p.type === 'STABLE_POOL' && this.initialStablePools.has(p.address))
+
+    if (pools.length === 0) {
+      return
+    }
 
     this.poolsByTrade.set(
       this.getTradeId(t0, t1),
       pools.map((pool) => pool.address)
     )
+
+    const onDemandClassicPools = pools.filter(
+      (p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.initialClassicPools.has(p.address)
+    )
+    const onDemandStablePools = pools.filter((p) => p.type === 'STABLE_POOL' && this.initialStablePools.has(p.address))
     const validUntilTimestamp = getUnixTime(add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME_IN_SECONDS }))
 
     const sortedTokens = this.poolResponseToSortedTokens(pools)
     let newBridges = 0
     let updated = 0
     let created = 0
+    const classicPoolCodesToCreate: PoolCode[] = []
+    const stablePoolCodesToCreate: PoolCode[] = []
+    const bridgesToCreate: BentoBridgePoolCode[] = []
+
+    // sortedTokens.forEach((t, i) => {
+
+    // })
+
     sortedTokens.forEach((t, i) => {
       if (!this.bridges.has(t.address)) {
         const pool = new BridgeBento(
@@ -509,8 +555,7 @@ export class TridentProvider extends LiquidityProvider {
           BigNumber.from(0),
           BigNumber.from(0)
         )
-        this.bridges.set(
-          t.address,
+        bridgesToCreate.push(
           new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
         )
         ++newBridges
@@ -520,7 +565,10 @@ export class TridentProvider extends LiquidityProvider {
     onDemandClassicPools.forEach((pr) => {
       const existingPool = this.onDemandClassicPools.get(pr.address)
       if (existingPool === undefined) {
-        const tokens = [convertTokenToBento(pr.token0), convertTokenToBento(pr.token1)]
+        const tokens = [
+          convertTokenToBento(this.mapToToken(pr.token0)),
+          convertTokenToBento(this.mapToToken(pr.token1)),
+        ]
         const rPool = new ConstantProductRPool(
           pr.address,
           tokens[0],
@@ -531,8 +579,9 @@ export class TridentProvider extends LiquidityProvider {
         )
         const pc = new BentoPoolCode(rPool, this.getType(), this.getPoolProviderName())
 
-        this.onDemandClassicPools.set(pr.address, { poolCode: pc, validUntilTimestamp })
-        ++created
+        classicPoolCodesToCreate.push(pc)
+        // this.onDemandClassicPools.set(pr.address, { poolCode: pc, validUntilTimestamp })
+        // ++created
       } else {
         existingPool.validUntilTimestamp = validUntilTimestamp
         ++updated
@@ -542,10 +591,14 @@ export class TridentProvider extends LiquidityProvider {
     onDemandStablePools.forEach((pr) => {
       const existingPool = this.onDemandStablePools.get(pr.address)
       if (existingPool === undefined) {
+        const tokens = [
+          convertTokenToBento(this.mapToToken(pr.token0)),
+          convertTokenToBento(this.mapToToken(pr.token1)),
+        ]
         const stablePool = new StableSwapRPool(
           pr.address,
-          convertTokenToBento(pr.token0),
-          convertTokenToBento(pr.token1),
+          tokens[0],
+          tokens[1],
           pr.swapFee,
           BigNumber.from(0),
           BigNumber.from(0),
@@ -556,16 +609,173 @@ export class TridentProvider extends LiquidityProvider {
         )
 
         const pc = new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName())
-        this.onDemandStablePools.set(pr.address, { poolCode: pc, validUntilTimestamp: validUntilTimestamp })
-        ++created
+
+        stablePoolCodesToCreate.push(pc)
+        // this.onDemandStablePools.set(pr.address, { poolCode: pc, validUntilTimestamp: validUntilTimestamp })
+        // ++created
       } else {
         existingPool.validUntilTimestamp = validUntilTimestamp
         ++updated
       }
     })
 
+    const classicReservePromise = this.client
+      .multicall({
+        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        allowFailure: true,
+        contracts: classicPoolCodesToCreate.map(
+          (pc) =>
+            ({
+              address: pc.pool.address as Address,
+              chainId: this.chainId,
+              abi: getReservesAbi,
+              functionName: 'getReserves',
+            } as const)
+        ),
+      })
+      .catch((e) => {
+        console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+        return undefined
+      })
+
+    const stableReservePromise = this.client
+      .multicall({
+        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        allowFailure: true,
+        contracts: stablePoolCodesToCreate.map(
+          (pc) =>
+            ({
+              address: pc.pool.address as Address,
+              chainId: this.chainId,
+              abi: getStableReservesAbi,
+              functionName: 'getReserves',
+            } as const)
+        ),
+      })
+      .catch((e) => {
+        console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+        return undefined
+      })
+
+    const totalsPromise = this.client
+      .multicall({
+        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        allowFailure: true,
+        contracts: bridgesToCreate.map(
+          (b) =>
+            ({
+              args: [b.pool.token0.address as Address],
+              address: this.bentoBox[this.chainId] as Address,
+              chainId: this.chainId,
+              abi: totalsAbi,
+              functionName: 'totals',
+            } as const)
+        ),
+      })
+      .catch((e) => {
+        console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+        return undefined
+      })
+
+    const balancesPromise = this.client
+      .multicall({
+        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        allowFailure: true,
+        contracts: bridgesToCreate.map(
+          (b) =>
+            ({
+              args: [this.bentoBox[this.chainId] as Address],
+              address: b.pool.token0.address as Address,
+              chainId: this.chainId,
+              abi: balanceOfAbi,
+              functionName: 'balanceOf',
+            } as const)
+        ),
+      })
+      .catch((e) => {
+        console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+        return undefined
+      })
+
+    const [classicReserves, stableReserves, totals, balances] = await Promise.all([
+      classicReservePromise,
+      stableReservePromise,
+      totalsPromise,
+      balancesPromise,
+    ])
+
+    classicPoolCodesToCreate.forEach((poolCode, i) => {
+      const pool = poolCode.pool
+      const res0 = classicReserves?.[i]?.result?.[0]
+      const res1 = classicReserves?.[i]?.result?.[1]
+
+      if (res0 !== undefined && res1 !== undefined) {
+        pool.updateReserves(BigNumber.from(res0), BigNumber.from(res1))
+        this.onDemandClassicPools.set(pool.address, { poolCode, validUntilTimestamp })
+        ++created
+        console.debug(`${this.getLogPrefix()} - ON DEMAND CREATION: ${pool.address} classic (${pool.token0.symbol}/${pool.token1.symbol})`) 
+      } else {
+        console.error(`${this.getLogPrefix()} - ERROR FETCHING RESERVES, initialize on demand pool: ${pool.address}`)
+        // TODO: some pools seem to be initialized with 0 in reserves, they should just be ignored, shouldn't log error
+      }
+    })
+
+    const rebases: Map<string, Rebase> = new Map()
+
+    bridgesToCreate.forEach((bc, i) => {
+      const bridge = bc.pool as BridgeBento
+      const t = bridge.token0
+      const elastic = totals?.[i]?.result?.[0]
+      const base = totals?.[i]?.result?.[1]
+      const balance = balances?.[i]?.result
+      if (!elastic || !base || !balance) {
+        return
+      }
+      const elasticBN = BigNumber.from(elastic)
+      const baseBN = BigNumber.from(base)
+      rebases.set(t.address.toLowerCase(), {
+        elastic: elasticBN,
+        base: baseBN,
+      })
+      bridge.updateReserves(elasticBN, baseBN)
+      bridge.freeLiquidity = Number(balance)
+      this.bridges.set(bridge.address.toLowerCase(), bc)
+    })
+
+    stablePoolCodesToCreate.forEach((poolCode, i) => {
+      const pool = poolCode.pool as StableSwapRPool
+      const total0 = rebases.get(pool.token0.address)
+      if (total0) {
+        const current = pool.getTotal0()
+        if (!total0.elastic.eq(current.elastic) || !total0.base.eq(current.base)) {
+          pool.updateTotal0(total0)
+        }
+      }
+      const total1 = rebases.get(pool.token1.address)
+      if (total1) {
+        const current = pool.getTotal1()
+        if (!total1.elastic.eq(current.elastic) || !total1.base.eq(current.base)) {
+          pool.updateTotal1(total1)
+        }
+      }
+      const res0 = stableReserves?.[i]?.result?.[0]
+      const res1 = stableReserves?.[i]?.result?.[1]
+
+      const res0BN = BigNumber.from(res0)
+      const res1BN = BigNumber.from(res1)
+      if (!res0 || !res1 || !pool.reserve0.eq(res0BN) || !pool.reserve1.eq(res1BN)) {
+        return
+      }
+      pool.updateReserves(toShareBN(res0BN, pool.getTotal0()), toShareBN(res1BN, pool.getTotal1()))
+
+      this.onDemandStablePools.set(pool.address, { poolCode, validUntilTimestamp })
+
+      console.debug(`${this.getLogPrefix()} - ON DEMAND CREATION: ${pool.address} stable (${pool.token0.symbol}/${pool.token1.symbol})`) 
+      ++created
+    })
+
     console.debug(
-      `${this.getLogPrefix()} - ON DEMAND: Created ${created} pools, extended 'lifetime' for ${updated} pools and added ${newBridges} bridges`
+      `${this.getLogPrefix()} - ON DEMAND: Created and fetched reserves for ${created} pools, extended 'lifetime' for ${updated} pools and added ${newBridges} bridges`
     )
   }
 
@@ -575,88 +785,87 @@ export class TridentProvider extends LiquidityProvider {
     }
 
     this.refreshInitialPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
-    const pools = await this.getInitialPools()
+    // const pools = await this.getInitialPools()
 
-    const poolsToAdd = pools.filter(
-      (pool) => !this.initialClassicPools.has(pool.address) || !this.initialStablePools.has(pool.address)
-    )
-    if (poolsToAdd.length === 0) {
-      return
-    }
+    // const poolsToAdd = pools.filter(
+    //   (pool) => !this.initialClassicPools.has(pool.address) || !this.initialStablePools.has(pool.address)
+    // )
+    // if (poolsToAdd.length === 0) {
+    //   return
+    // }
 
-    const initClassicPools = poolsToAdd.filter(
-      (p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.initialClassicPools.has(p.address)
-    )
-    const initStablePools = poolsToAdd.filter((p) => p.type === 'STABLE_POOL' && this.initialStablePools.has(p.address))
+    // const initClassicPools = poolsToAdd.filter(
+    //   (p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.initialClassicPools.has(p.address)
+    // )
+    // const initStablePools = poolsToAdd.filter((p) => p.type === 'STABLE_POOL' && this.initialStablePools.has(p.address))
+    // const sortedTokens = this.poolResponseToSortedTokens(poolsToAdd)
 
-    const sortedTokens = this.poolResponseToSortedTokens(poolsToAdd)
+    // sortedTokens.forEach((t, i) => {
+    //   if (!this.bridges.has(t.address)) {
+    //     const pool = new BridgeBento(
+    //       `Bento bridge for ${t.symbol}`,
+    //       t as RToken,
+    //       convertTokenToBento(t),
+    //       BigNumber.from(0),
+    //       BigNumber.from(0),
+    //       BigNumber.from(0)
+    //     )
+    //     this.bridges.set(
+    //       t.address,
+    //       new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
+    //     )
+    //     console.log(`${this.getLogPrefix()} - REFRESH INITIAL POOLS: Added bridge (${pool.token0.symbol})`)
+    //   }
+    // })
 
-    sortedTokens.forEach((t, i) => {
-      if (!this.bridges.has(t.address)) {
-        const pool = new BridgeBento(
-          `Bento bridge for ${t.symbol}`,
-          t as RToken,
-          convertTokenToBento(t),
-          BigNumber.from(0),
-          BigNumber.from(0),
-          BigNumber.from(0)
-        )
-        this.bridges.set(
-          t.address,
-          new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
-        )
-        console.log(`${this.getLogPrefix()} - REFRESH INITIAL POOLS: Added bridge (${pool.token0.symbol})`)
-      }
-    })
+    // initClassicPools.forEach((pr) => {
+    //   const existingPool = this.initialClassicPools.get(pr.address)
+    //   if (existingPool === undefined) {
+    //     const tokens = [convertTokenToBento(this.mapToToken(pr.token0)), convertTokenToBento(this.mapToToken(pr.token1))]
+    //     const rPool = new ConstantProductRPool(
+    //       pr.address,
+    //       tokens[0],
+    //       tokens[1],
+    //       pr.swapFee,
+    //       BigNumber.from(0),
+    //       BigNumber.from(0)
+    //     )
+    //     const pc = new BentoPoolCode(rPool, this.getType(), this.getPoolProviderName())
+    //     this.initialClassicPools.set(pr.address, pc)
+    //     console.log(
+    //       `${this.getLogPrefix()} - REFRESH INITIAL POOLS: Added classic pool ${rPool.address} (${
+    //         rPool.token0.symbol
+    //       }/${rPool.token1.symbol})`
+    //     )
+    //   }
+    // })
 
-    initClassicPools.forEach((pr) => {
-      const existingPool = this.initialClassicPools.get(pr.address)
-      if (existingPool === undefined) {
-        const tokens = [convertTokenToBento(pr.token0), convertTokenToBento(pr.token1)]
-        const rPool = new ConstantProductRPool(
-          pr.address,
-          tokens[0],
-          tokens[1],
-          pr.swapFee,
-          BigNumber.from(0),
-          BigNumber.from(0)
-        )
-        const pc = new BentoPoolCode(rPool, this.getType(), this.getPoolProviderName())
-        this.initialClassicPools.set(pr.address, pc)
-        console.log(
-          `${this.getLogPrefix()} - REFRESH INITIAL POOLS: Added classic pool ${rPool.address} (${
-            rPool.token0.symbol
-          }/${rPool.token1.symbol})`
-        )
-      }
-    })
-
-    initStablePools.forEach((pr) => {
-      const existingPool = this.initialStablePools.get(pr.address)
-      if (existingPool === undefined) {
-        const stablePool = new StableSwapRPool(
-          pr.address,
-          convertTokenToBento(pr.token0),
-          convertTokenToBento(pr.token1),
-          pr.swapFee,
-          BigNumber.from(0),
-          BigNumber.from(0),
-          pr.token0.decimals,
-          pr.token1.decimals,
-          { elastic: BigNumber.from(0), base: BigNumber.from(0) },
-          { elastic: BigNumber.from(0), base: BigNumber.from(0) }
-        )
-        this.initialStablePools.set(
-          pr.address,
-          new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName())
-        )
-        console.log(
-          `${this.getLogPrefix()} - REFRESH INITIAL POOLS: Added stable pool ${stablePool.address} (${
-            stablePool.token0.symbol
-          }/${stablePool.token1.symbol})`
-        )
-      }
-    })
+    // initStablePools.forEach((pr) => {
+    //   const existingPool = this.initialStablePools.get(pr.address)
+    //   if (existingPool === undefined) {
+    //     const stablePool = new StableSwapRPool(
+    //       pr.address,
+    //       convertTokenToBento(this.mapToToken(pr.token0)),
+    //       convertTokenToBento(this.mapToToken(pr.token1)),
+    //       pr.swapFee,
+    //       BigNumber.from(0),
+    //       BigNumber.from(0),
+    //       pr.token0.decimals,
+    //       pr.token1.decimals,
+    //       { elastic: BigNumber.from(0), base: BigNumber.from(0) },
+    //       { elastic: BigNumber.from(0), base: BigNumber.from(0) }
+    //     )
+    //     this.initialStablePools.set(
+    //       pr.address,
+    //       new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName())
+    //     )
+    //     console.log(
+    //       `${this.getLogPrefix()} - REFRESH INITIAL POOLS: Added stable pool ${stablePool.address} (${
+    //         stablePool.token0.symbol
+    //       }/${stablePool.token1.symbol})`
+    //     )
+    //   }
+    // })
 
     console.debug(
       `****** MEM - ${this.getLogPrefix()} 
@@ -828,11 +1037,29 @@ export class TridentProvider extends LiquidityProvider {
     })
   }
 
-  private poolResponseToSortedTokens(poolResults: PoolResponse[]) {
+  private poolResponseToSortedTokens(poolResults: PoolResponse2[]) {
     const tokenMap = new Map<string, Token>()
     poolResults.forEach((pool) => {
-      tokenMap.set(pool.token0.address, pool.token0)
-      tokenMap.set(pool.token1.address, pool.token1)
+      tokenMap.set(
+        pool.token0.address,
+        new Token({
+          chainId: this.chainId,
+          address: pool.token0.address,
+          decimals: pool.token0.decimals,
+          symbol: pool.token0.symbol,
+          name: pool.token0.name,
+        })
+      )
+      tokenMap.set(
+        pool.token1.address,
+        new Token({
+          chainId: this.chainId,
+          address: pool.token1.address,
+          decimals: pool.token1.decimals,
+          symbol: pool.token1.symbol,
+          name: pool.token1.name,
+        })
+      )
     })
     const tokensDedup = Array.from(tokenMap.values())
     // tokens sorting
@@ -841,5 +1068,25 @@ export class TridentProvider extends LiquidityProvider {
       t,
     ])
     return tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([, t]) => t)
+  }
+
+  private mapToToken({
+    address,
+    decimals,
+    symbol,
+    name,
+  }: {
+    address: string
+    decimals: number
+    symbol: string
+    name: string
+  }): Token {
+    return new Token({
+      chainId: this.chainId,
+      address,
+      decimals,
+      symbol,
+      name,
+    })
   }
 }

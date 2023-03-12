@@ -67,18 +67,18 @@ export class DataFetcher {
       }
     }
 
-    // if (
-    //   this._providerIsIncluded(LiquidityProviders.Trident, providers) &&
-    //   isBentoBoxV1ChainId(this.chainId) &&
-    //   (isConstantProductPoolFactoryChainId(this.chainId) || isStablePoolFactoryChainId(this.chainId))
-    // ) {
-    //   try {
-    //     const provider = new TridentProvider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (
+      this._providerIsIncluded(LiquidityProviders.Trident, providers) &&
+      isBentoBoxV1ChainId(this.chainId) &&
+      (isConstantProductPoolFactoryChainId(this.chainId) || isStablePoolFactoryChainId(this.chainId))
+    ) {
+      try {
+        const provider = new TridentProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
     if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers)) {
       try {

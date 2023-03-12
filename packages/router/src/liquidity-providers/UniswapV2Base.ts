@@ -64,7 +64,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   }
 
   async initialize() {
-    // TODO: retry logic, every X seconds? dont init until the end of the function ideally.
+    // TODO: retry logic, every X seconds? dont flag as true until the end of the function ideally. add isInitalizing? to avoid it being called twice before completed.
     this.isInitialized = true
     const availablePools = await getAllPools(
       this.databaseClient,
@@ -179,13 +179,18 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       t1.address,
       topPoolAddresses,
       this.ON_DEMAND_POOL_SIZE
-    ).filter((pool) => !this.onDemandPools.has(pool.address) || this.initialPools.has(pool.address))
-
-    const validUntilTimestamp = getUnixTime(add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME_IN_SECONDS }))
-
+    )
+    
     if (pools.length === 0) {
+      console.info(`${this.getLogPrefix()} - No on demand pools found for ${t0.symbol}/${t1.symbol}`)
       return
     }
+
+    this.poolsByTrade.set(
+      this.getTradeId(t0, t1),
+      pools.map((pool) => pool.address)
+    )
+    const validUntilTimestamp = getUnixTime(add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME_IN_SECONDS }))
 
     let created = 0
     let updated = 0
@@ -250,6 +255,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       if (res0 !== undefined && res1 !== undefined) {
         pool.updateReserves(BigNumber.from(res0), BigNumber.from(res1))
         this.onDemandPools.set(pool.address, { poolCode, validUntilTimestamp })
+        console.debug(`${this.getLogPrefix()} - ON DEMAND CREATION: ${pool.address} (${pool.token0.symbol}/${pool.token1.symbol})`) 
         ++created
       } else {
         console.error(`${this.getLogPrefix()} - ERROR FETCHING RESERVES, initialize on demand pool: ${pool.address}`) 
