@@ -8,7 +8,7 @@ export const StreamedCell: FC<CellProps> = ({ row }) => {
     <div className="flex gap-3">
       <ProgressBar
         showLabel={false}
-        className="min-w-[100px] max-w-[100px] h-3"
+        className="min-w-[70px] max-w-[80px] h-3"
         progress={Number(row.streamedPercentage?.divide(100).toSignificant(4))}
         color={ProgressColor.BLUE}
       />

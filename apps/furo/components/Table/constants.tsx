@@ -8,6 +8,7 @@ import { FromCell } from './FromCell'
 import { StartDateCell } from './StartDateCell'
 import { StatusCell } from './StatusCell'
 import { StreamedCell } from './StreamedCell'
+import { StreamIdCell } from './StreamIdCell'
 import { FuroTableType } from './StreamTable'
 import { TypeCell } from './TypeCell'
 
@@ -40,6 +41,16 @@ export const FROM_COLUMN = (tableType: FuroTableType): ColumnDef<Stream | Vestin
     className: 'justify-end',
   },
 })
+
+export const STREAM_ID_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
+    id: 'streamId',
+    header: 'Stream ID',
+    cell: (props) => <StreamIdCell row={props.row.original} />,
+    meta: {
+        skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
+        className: 'justify-end',
+    }
+}
 
 export const START_DATE_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   id: 'startDate',

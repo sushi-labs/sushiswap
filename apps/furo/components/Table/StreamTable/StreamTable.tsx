@@ -13,7 +13,7 @@ import {
   AMOUNT_COLUMN,
   FROM_COLUMN,
   START_DATE_COLUMN,
-  STATUS_COLUMN,
+  STATUS_COLUMN, STREAM_ID_COLUMN,
   STREAMED_COLUMN,
   TYPE_COLUMN,
 } from '../constants'
@@ -56,6 +56,7 @@ export const StreamTable: FC<FuroTableProps> = ({
     AMOUNT_COLUMN,
     FROM_COLUMN(type),
     START_DATE_COLUMN,
+    STREAM_ID_COLUMN
   ])
 
   const [columnVisibility, setColumnVisibility] = useState({})
@@ -117,6 +118,7 @@ export const StreamTable: FC<FuroTableProps> = ({
         from: false,
         type: false,
         startDate: false,
+        streamId: false,
       })
     }
   }, [isMd, isSm])
