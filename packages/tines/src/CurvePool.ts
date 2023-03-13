@@ -113,7 +113,7 @@ export class CurvePool extends RPool {
     const x = parseInt(xBN.toString())
     const oneMinusFee = takeFeeIntoAccount ? 1 - this.fee : 1
     const D = parseInt(this.computeLiquidity().toString())
-    const A = this.A
+    const A = this.A / 2
     const xI = x + amountIn
     const b = 4 * A * xI + D - 4 * A * D
     const ac4 = (D * D * D) / xI

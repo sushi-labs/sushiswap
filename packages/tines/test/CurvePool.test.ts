@@ -1,4 +1,5 @@
 import { BigNumberish } from '@ethersproject/bignumber'
+import seedrandom from 'seedrandom'
 
 import { closeValues, CurvePool, getBigNumber } from '../src'
 
@@ -11,6 +12,19 @@ const token1 = {
   name: 'Token1',
   address: 'token1_address',
   symbol: 'Token2Symbol',
+}
+
+export function getRandomLin(rnd: () => number, min: number, max: number) {
+  return rnd() * (max - min) + min
+}
+
+export function getRandomExp(rnd: () => number, min: number, max: number) {
+  const minL = Math.log(min)
+  const maxL = Math.log(max)
+  const v = rnd() * (maxL - minL) + minL
+  const res = Math.exp(v)
+  console.assert(res <= max && res >= min, 'Random value is out of the range')
+  return res
 }
 
 function expectCloseValues(
@@ -87,6 +101,8 @@ function checkPoolPriceCalculation(pool: CurvePool) {
   expect(price2).not.toBeNaN()
   expect(price2).toBeGreaterThan(0)
 
+  console.log(price1, price2, pool.A, pool.fee, pool.reserve0.toString(), pool.reserve1.toString())
+
   expect(Math.abs(price1 * price2 - 1)).toBeLessThan(1e-9)
 
   let poolScaled = pool
@@ -108,11 +124,30 @@ function checkPoolPriceCalculation(pool: CurvePool) {
   expect(Math.abs(price1 / expected_price - 1)).toBeLessThan(1e-7)
 }
 
+function createRandomPool(rnd: () => number) {
+  const reserve0 = getRandomExp(rnd, 1e6, 1e30)
+  return createPool({
+    A: Math.round(getRandomExp(rnd, 1, 10_000)),
+    fee: Math.round(getRandomLin(rnd, 1, 100)) / 10_000,
+    reserve0,
+    reserve1: reserve0 * getRandomExp(rnd, 1 / 1000, 1000),
+  })
+}
+
 describe('Curve1 2 tokens pools check', () => {
   it('TypicalPool', () => {
     const pool = createPool({ A: 2000, fee: 1e-4, reserve0: 1e13, reserve1: 1e13 })
     checkSwap(pool, 1e8, true)
     checkSwap(pool, 1e8, false)
+    checkPoolPriceCalculation(pool)
+  })
+
+  it('Random test', () => {
+    const testSeed = '2' // Change it to change random generator values
+    const rnd: () => number = seedrandom(testSeed) // random [0, 1)
+    const pool = createRandomPool(rnd)
+    checkSwap(pool, parseInt(pool.getReserve0().toString()) / 100, true)
+    checkSwap(pool, parseInt(pool.getReserve1().toString()) / 100, false)
     checkPoolPriceCalculation(pool)
   })
 })
