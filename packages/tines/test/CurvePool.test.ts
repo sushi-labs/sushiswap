@@ -146,8 +146,12 @@ describe('Curve1 2 tokens pools check', () => {
     const testSeed = '2' // Change it to change random generator values
     const rnd: () => number = seedrandom(testSeed) // random [0, 1)
     const pool = createRandomPool(rnd)
-    checkSwap(pool, parseInt(pool.getReserve0().toString()) / 100, true)
-    checkSwap(pool, parseInt(pool.getReserve1().toString()) / 100, false)
     checkPoolPriceCalculation(pool)
+    for (let i = 0; i < 100; ++i) {
+      const amountInPortion = getRandomExp(rnd, 1e-5, 1e-10)
+      console.log(amountInPortion)
+      checkSwap(pool, parseInt(pool.getReserve0().toString()) * amountInPortion, true)
+      checkSwap(pool, parseInt(pool.getReserve1().toString()) * amountInPortion, false)
+    }
   })
 })
