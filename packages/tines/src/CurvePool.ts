@@ -85,7 +85,7 @@ export class CurvePool extends RPool {
     const xNewBN = xBN.add(getBigNumber(amountIn * (1 - this.fee)))
     const yNewBN = this.computeY(xNewBN)
     const dy = parseInt(yBN.sub(yNewBN).toString())
-    if (parseInt(yNewBN.toString()) < this.minLiquidity) throw 'Hybrid OutOfLiquidity'
+    if (parseInt(yNewBN.toString()) < this.minLiquidity) throw 'Curve OutOfLiquidity'
     return { out: dy, gasSpent: this.swapGasCost }
   }
 

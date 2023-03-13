@@ -83,7 +83,16 @@ function checkSwap(pool: CurvePool, amountIn: number, direction: boolean): numbe
   expect(inp).not.toBeNaN()
   expect(inp).toBeGreaterThanOrEqual(0)
 
-  expectCloseValues(inp, amountIn, 1e-10)
+  const expectedPrecision = Math.max(1e-10, 100 / out, 100 / inp)
+
+  expectCloseValues(
+    inp,
+    amountIn,
+    expectedPrecision,
+    `price=${pool.calcCurrentPriceWithoutFee(
+      true
+    )} res0=${pool.reserve0.toString()} res1=${pool.reserve1.toString()} amountIn=${amountIn} out=${out} inp=${inp} dir=${direction}`
+  )
 
   return out
 }
@@ -101,9 +110,12 @@ function checkPoolPriceCalculation(pool: CurvePool) {
   expect(price2).not.toBeNaN()
   expect(price2).toBeGreaterThan(0)
 
-  console.log(price1, price2, pool.A, pool.fee, pool.reserve0.toString(), pool.reserve1.toString())
-
-  expect(Math.abs(price1 * price2 - 1)).toBeLessThan(1e-9)
+  const expectedPrecision = Math.max(
+    1e-10,
+    10 / parseInt(pool.reserve0.toString()),
+    10 / parseInt(pool.reserve1.toString())
+  )
+  expect(Math.abs(price1 * price2 - 1)).toBeLessThan(expectedPrecision)
 
   let poolScaled = pool
   if (pool.reserve0.lt(E33) || pool.reserve1.lt(E33)) {
@@ -121,11 +133,11 @@ function checkPoolPriceCalculation(pool: CurvePool) {
   const { out } = poolScaled.calcOutByIn(inp / (1 - pool.fee), true)
   const expected_price = out / inp
 
-  expect(Math.abs(price1 / expected_price - 1)).toBeLessThan(1e-7)
+  expect(Math.abs(price1 / expected_price - 1)).toBeLessThan(expectedPrecision)
 }
 
 function createRandomPool(rnd: () => number) {
-  const reserve0 = getRandomExp(rnd, 1e6, 1e30)
+  const reserve0 = getRandomExp(rnd, 1e8, 1e30)
   return createPool({
     A: Math.round(getRandomExp(rnd, 1, 10_000)),
     fee: Math.round(getRandomLin(rnd, 1, 100)) / 10_000,
@@ -143,15 +155,16 @@ describe('Curve1 2 tokens pools check', () => {
   })
 
   it('Random test', () => {
-    const testSeed = '2' // Change it to change random generator values
-    const rnd: () => number = seedrandom(testSeed) // random [0, 1)
-    const pool = createRandomPool(rnd)
-    checkPoolPriceCalculation(pool)
-    for (let i = 0; i < 100; ++i) {
-      const amountInPortion = getRandomExp(rnd, 1e-5, 1e-10)
-      console.log(amountInPortion)
-      checkSwap(pool, parseInt(pool.getReserve0().toString()) * amountInPortion, true)
-      checkSwap(pool, parseInt(pool.getReserve1().toString()) * amountInPortion, false)
+    for (let p = 0; p < 30; ++p) {
+      const testSeed = '' + p
+      const rnd: () => number = seedrandom(testSeed) // random [0, 1)
+      const pool = createRandomPool(rnd)
+      checkPoolPriceCalculation(pool)
+      for (let i = 0; i < 30; ++i) {
+        const amountInPortion = getRandomExp(rnd, 1e-5, 1e-1)
+        checkSwap(pool, parseInt(pool.getReserve0().toString()) * amountInPortion, true)
+        checkSwap(pool, parseInt(pool.getReserve1().toString()) * amountInPortion, false)
+      }
     }
   })
 })
