@@ -2,6 +2,7 @@ import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline'
 import chains, { ChainId } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/currency'
 import { WrappedTokenInfo } from '@sushiswap/token-lists'
+import Image, { ImageProps } from 'next/legacy/image'
 import { DetailedHTMLProps, FC, ImgHTMLAttributes, useEffect, useMemo, useState } from 'react'
 
 import { ExternalLink } from '../ExternalLink'
@@ -118,25 +119,19 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
   const [error, setError] = useState(false)
 
   const src = useMemo(() => {
-    if (currency.isNative) {
-      return LOGO[currency.chainId]
-    }
-
-    if (currency instanceof WrappedTokenInfo && currency.logoURI) {
-      return currency.logoURI
-    }
-
-    // TODO: Currency logos should be accessed via proxy such as...
-    // https://currency.sushi.com/{chainId}/{identifier}.jpg
-    // e.g.
-    // https://currency.sushi.com/1/eth.jpg - ETH
-    // https://currency.sushi.com/1/0x...jpg - WETH
-    return `https://cdn.sushi.com/image/upload/tokens/${currency.chainId}/${currency.wrapped.address}.jpg`
+    if (!currency) return null
+    return `tokens/${currency.chainId}/${currency.wrapped.address}.jpg`
   }, [currency])
 
   useEffect(() => {
     setError(false)
   }, [src])
+
+  const placeholder = useMemo(() => {
+    if (!rest.width || !rest.height) return 'empty'
+    if (rest.width < 40 || rest.height < 40) return 'empty'
+    return 'blur'
+  }, [rest?.width, rest?.height])
 
   if (error) {
     if (disableLink) {
@@ -182,13 +177,18 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
 
   if (disableLink) {
     return (
-      <img
+      <Image
         key={src}
         onError={() => setError(true)}
-        placeholder={rest?.width && rest?.height && rest?.width >= 40 && rest?.height >= 40 ? 'blur' : 'empty'}
         src={src}
         alt={currency.name}
         className="rounded-full"
+        // @ts-ignore
+        placeholder={placeholder}
+        // @ts-ignore
+        width={rest.width}
+        // @ts-ignore
+        height={rest.height}
         {...rest}
       />
     )
@@ -196,13 +196,18 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
 
   return (
     <ExternalLink className="flex" href={chains[currency.chainId].getTokenUrl(currency.wrapped.address)}>
-      <img
+      <Image
         key={src}
         onError={() => setError(true)}
-        placeholder={rest?.width && rest?.height && rest?.width >= 40 && rest?.height >= 40 ? 'blur' : 'empty'}
         src={src}
         alt={currency.name}
         className="rounded-full"
+        // @ts-ignore
+        placeholder={placeholder}
+        // @ts-ignore
+        width={rest.width}
+        // @ts-ignore
+        height={rest.height}
         {...rest}
       />
     </ExternalLink>

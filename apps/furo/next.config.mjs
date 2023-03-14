@@ -3,6 +3,10 @@ import defaultNextConfig from '@sushiswap/nextjs-config'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   ...defaultNextConfig,
+  images: {
+    loader: 'cloudinary',
+    path: 'https://cdn.sushi.com/image/upload/',
+  },
   basePath: '/furo',
   transpilePackages: [
     '@sushiswap/redux-token-lists',
