@@ -56,7 +56,7 @@ async function createCurvePool(address: string): Promise<PoolInfo> {
 
 it('test', async () => {
   const res = await setTokenBalance(
-    '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+    '0x853d955acef822db058eb8505911ed77f175b99e',
     '0x0000000000000000000000000000000000000010',
     1000n
   )
