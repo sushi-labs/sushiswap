@@ -123,16 +123,26 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       setReview(false)
 
       // Log swap success internal, mixed, or external
-      if (trade?.route?.legs?.every((leg) => leg.poolName === 'SushiSwap' || leg.poolName === 'Trident')) {
+      if (
+        trade?.route?.legs?.every((leg) => leg.poolName.startsWith('SushiSwap') || leg.poolName.startsWith('Trident'))
+      ) {
         log.info('Swap success (internal)', {
           trade,
         })
-      } else if (trade?.route?.legs?.some((leg) => leg.poolName === 'SushiSwap' || leg.poolName === 'Trident')) {
+      } else if (
+        trade?.route?.legs?.some((leg) => leg.poolName.startsWith('SushiSwap') || leg.poolName.startsWith('Trident'))
+      ) {
         log.info('Swap success (mix)', {
           trade,
         })
-      } else if (trade?.route?.legs?.every((leg) => leg.poolName !== 'SushiSwap' && leg.poolName !== 'Trident')) {
+      } else if (
+        trade?.route?.legs?.every((leg) => !leg.poolName.startsWith('SushiSwap') && leg.poolName.startsWith('Trident'))
+      ) {
         log.info('Swap success (external)', {
+          trade,
+        })
+      } else {
+        log.info('Swap success (unknown)', {
           trade,
         })
       }
