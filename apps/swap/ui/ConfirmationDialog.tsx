@@ -119,6 +119,10 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     data,
   } = useContractWrite({
     ...config,
+    request: {
+      ...config.request,
+      gasLimit: config.request?.gasLimit.mul(120).div(100),
+    },
     onSuccess: (data) => {
       setReview(false)
 
