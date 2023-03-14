@@ -80,7 +80,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
         +slippagePercentage / 100
       )
 
-      if (route) {
+      if (route && args) {
         const amountIn = Amount.fromRawAmount(fromToken, route.amountInBN.toString())
         const amountOut = Amount.fromRawAmount(toToken, route.amountOutBN.toString())
         const isOffset = chainId === ChainId.POLYGON && carbonOffset
@@ -116,7 +116,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
             : new Percent(0),
           amountIn,
           amountOut,
-          minAmountOut: amountOut,
+          minAmountOut: writeArgs?.[3] ? Amount.fromRawAmount(toToken, writeArgs[3].toString()) : undefined,
           gasSpent: price
             ? Amount.fromRawAmount(Native.onChain(chainId), route.gasSpent * 1e9)
                 .multiply(price.asFraction)

@@ -28,7 +28,6 @@ export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enable
 
   for (const pool of rPools) {
     if (isBentoBoxV1ChainId(variables.chainId) && pool instanceof BridgeBento) {
-      console.log('bento bridge', { pool })
       poolCodeMap.set(
         pool.address,
         new BentoBridgePoolCode(pool, LiquidityProviders.Trident, 'Trident', bentoBoxV1Address[variables.chainId])
@@ -45,11 +44,7 @@ export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enable
     } else if (pool instanceof ConstantProductPool) {
       poolCodeMap.set(
         pool.liquidityToken.address,
-        new ConstantProductPoolCode(
-          convertPoolOrPairtoRPool(pool) as ConstantProductRPool,
-          LiquidityProviders.Trident,
-          'Trident'
-        )
+        new BentoPoolCode(convertPoolOrPairtoRPool(pool) as ConstantProductRPool, LiquidityProviders.Trident, 'Trident')
       )
     } else if (pool instanceof StablePool) {
       poolCodeMap.set(
