@@ -147,31 +147,6 @@ importers:
       typescript: 4.9.4
       vercel: 28.16.7
 
-  apis/farm:
-    specifiers:
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@vercel/node': 2.9.8
-      date-fns: 2.29.3
-      eslint: 8.29.0
-      ioredis: 5.3.1
-      typescript: 4.9.4
-      vercel: 28.16.7
-    dependencies:
-      '@vercel/node': 2.9.8
-      date-fns: 2.29.3
-      ioredis: 5.3.1
-    devDependencies:
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/typescript-config': link:../../config/typescript
-      eslint: 8.29.0
-      typescript: 4.9.4
-      vercel: 28.16.7
-
   apis/pools:
     specifiers:
       '@sushiswap/abi': workspace:*
@@ -2880,12 +2855,14 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query': workspace:*
+      '@sushiswap/route-processor': workspace:*
       '@sushiswap/router': workspace:*
       '@sushiswap/router-config': workspace:*
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/sushixswap': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/trident': workspace:*
+      '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi-config': workspace:*
@@ -2928,12 +2905,14 @@ importers:
       '@sushiswap/hooks': link:../hooks
       '@sushiswap/math': link:../math
       '@sushiswap/react-query': link:../react-query
+      '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/router': link:../router
       '@sushiswap/router-config': link:../../config/router
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
       '@sushiswap/tines': link:../tines
       '@sushiswap/trident': link:../../protocols/trident
+      '@sushiswap/types': link:../types
       '@sushiswap/ui': link:../ui
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@tanstack/react-query': 4.20.4_biqbaboplfbrettd7655fr4n2y
@@ -23968,7 +23947,7 @@ packages:
     dev: false
 
   /lodash.topath/4.5.2:
-    resolution: {integrity: sha512-1/W4dM+35DwvE/iEd1M9ekewOSTlpFekhw9mhAtrwjVqUr83/ilQiyAvmg4tVX7Unkcfl1KC+i9WdaT4B6aQcg==}
+    resolution: {integrity: sha1-NhY1Hzu6YZlKCTGYlmC9AyVP0Ak=}
 
   /lodash.truncate/4.4.2:
     resolution: {integrity: sha512-jttmRe7bRse52OsWIMDLaXxWqRAmtIUccAQ3garviCqJjafXOfNMO0yMfNpdD6zbGaTU0P5Nz7e7gAT6cKmJRw==}
@@ -27363,7 +27342,7 @@ packages:
       utf8: 3.0.0
 
   /react-native-path/0.0.5:
-    resolution: {integrity: sha512-WJr256xBquk7X2O83QYWKqgLg43Zg3SrgjPc/kr0gCD2LoXA+2L72BW4cmstH12GbGeutqs/eXk3jgDQ2iCSvQ==}
+    resolution: {integrity: sha1-oE5Lc6U1qKfPFcbnYOJ9t3ia+xM=}
 
   /react-onclickoutside/6.12.2_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-NMXGa223OnsrGVp5dJHkuKxQ4czdLmXSp5jSV9OqiCky9LOpPATn3vLldc+q5fK3gKbEHvr7J1u0yhBh/xYkpA==}

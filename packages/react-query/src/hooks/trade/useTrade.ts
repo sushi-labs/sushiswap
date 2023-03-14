@@ -1,10 +1,8 @@
 import {BigNumber} from '@ethersproject/bignumber'
-import { routeProcessorAbi } from '@sushiswap/abi'
 import {calculateSlippageAmount} from '@sushiswap/amm'
 import {ChainId} from "@sushiswap/chain";
 import {Amount, Native, nativeCurrencyIds, Price, WNATIVE_ADDRESS} from '@sushiswap/currency'
 import {JSBI, Percent, ZERO} from '@sushiswap/math'
-import { routeProcessorAddress, RouteProcessorChainId } from '@sushiswap/route-processor'
 import {HexString} from '@sushiswap/types'
 import {useQuery} from '@tanstack/react-query'
 import {useCallback} from 'react'
@@ -71,8 +69,6 @@ export const useTrade = (variables: UseTradeParams) => {
           }
 
           return {
-              address: routeProcessorAddress[chainId as RouteProcessorChainId],
-              abi: routeProcessorAbi,
               swapPrice: amountOut.greaterThan(ZERO) ? new Price({
                   baseAmount: amount,
                   quoteAmount: amountOut
@@ -97,8 +93,6 @@ export const useTrade = (variables: UseTradeParams) => {
       }
 
         return {
-            abi: undefined,
-            address: undefined,
             swapPrice: undefined,
             priceImpact: undefined,
             amountIn: undefined,

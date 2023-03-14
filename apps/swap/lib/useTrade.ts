@@ -42,8 +42,6 @@ export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): 
     recipient,
     enabled: isFallback,
     carbonOffset,
-    // TODO
-    signature: undefined,
   })
 
   const crossChainTrade = useCrossChainTrade({

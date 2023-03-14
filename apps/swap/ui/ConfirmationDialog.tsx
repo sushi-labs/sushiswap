@@ -59,8 +59,8 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
 
   const { config, isError, error } = usePrepareContractWrite({
     chainId: network0,
-    address: trade?.address,
-    abi: trade?.abi,
+    address: routeProcessorAddress[network0 as RouteProcessorChainId],
+    abi: routeProcessorAbi,
     functionName: trade?.functionName,
     args: trade?.writeArgs,
     enabled: Boolean(trade?.writeArgs) && appType === AppType.Swap && isRouteProcessorChainId(network0),
