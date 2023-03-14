@@ -6,8 +6,8 @@ import { getContract } from 'wagmi/actions'
 import { JSBI } from '@sushiswap/math'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { stablePoolAbi, stablePoolFactoryAbi } from '@sushiswap/abi'
-import { getBentoboxTotals } from '../../bentobox'
 import { getStablePoolFactoryContract } from '../../../contracts/actions'
+import { pairsUnique, tokensUnique } from './utils'
 
 export enum StablePoolState {
   LOADING,
@@ -22,24 +22,10 @@ interface PoolData {
   token1: Token
 }
 
-const pairsUnique = (currencies: [Currency | undefined, Currency | undefined][]) => {
-  const pairsMap = new Map<string, [Token, Token]>()
-  currencies.map(([c1, c2]) => {
-    if (c1 && c2) {
-      const addr1 = c1.wrapped.address as string | undefined
-      const addr2 = c2.wrapped.address as string | undefined
-      if (addr1 !== undefined && addr2 !== undefined) {
-        if (addr1.toLowerCase() < addr2.toLowerCase()) pairsMap.set(addr1 + addr2, [c1, c2] as [Token, Token])
-        else pairsMap.set(addr2 + addr1, [c2, c1] as [Token, Token])
-      }
-    }
-  })
-  return Array.from(pairsMap.values())
-}
-
 export const getStablePools = async (
   chainId: BentoBoxV1ChainId,
-  currencies: [Currency | undefined, Currency | undefined][]
+  currencies: [Currency | undefined, Currency | undefined][],
+  totals: { base: string; elastic: string }[] | null
 ) => {
   const contract = getContract({
     ...getStablePoolFactoryContract(chainId),
@@ -47,9 +33,7 @@ export const getStablePools = async (
 
   const _pairsUnique = pairsUnique(currencies)
   const _pairsUniqueAddr = _pairsUnique.map(([t0, t1]) => [t0.address, t1.address])
-  const tokensUnique = Array.from(
-    new Set(_pairsUnique.reduce<Token[]>((previousValue, currentValue) => previousValue.concat(currentValue), []))
-  )
+  const _tokensUnique = tokensUnique(_pairsUnique)
 
   const callStatePoolsCount = await readContracts({
     contracts: _pairsUniqueAddr.map((el) => ({
@@ -120,8 +104,6 @@ export const getStablePools = async (
       functionName: 'swapFee',
     })),
   })
-
-  const totals = await getBentoboxTotals(chainId, tokensUnique)
 
   return pools.map((p, i) => {
     if (!reserves?.[i] || !fees?.[i] || !totals || !totals?.[0] || !totals?.[1]) return [StablePoolState.LOADING, null]
