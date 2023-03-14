@@ -96,18 +96,26 @@ server.get('/v0', async (request) => {
     gasPrice ?? 30e9
   )
 
-  if (bestRoute.status !== 'NoWay') {
-    dataFetcher.fetchPoolsForToken(fromToken, toToken)
-  } else {
-    const dataFetcherStartTime = performance.now()
-    await dataFetcher.fetchPoolsForToken(fromToken, toToken)
-    const dataFetcherEndTime = performance.now()
+  // if (bestRoute.status !== 'NoWay') {
+  //   dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  // } else {
+  //   const dataFetcherStartTime = performance.now()
+  //   await dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  //   const dataFetcherEndTime = performance.now()
+  //   console.log(
+  //     `dataFetcher.fetchPoolsForToken(fromToken, toToken) (${(dataFetcherEndTime - dataFetcherStartTime).toFixed(
+  //       0
+  //     )} ms) `
+  //   )
+  // }
+  const dataFetcherStartTime = performance.now()
+  await dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  const dataFetcherEndTime = performance.now()
     console.log(
       `dataFetcher.fetchPoolsForToken(fromToken, toToken) (${(dataFetcherEndTime - dataFetcherStartTime).toFixed(
         0
       )} ms) `
     )
-  }
 
   // console.log('ROUTE:')
   // for (const leg of bestRoute.legs) {
