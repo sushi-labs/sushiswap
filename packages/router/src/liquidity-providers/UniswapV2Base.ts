@@ -2,7 +2,7 @@ import { keccak256, pack } from '@ethersproject/solidity'
 import { getReservesAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { Pool, PrismaClient } from '@sushiswap/database'
+import { PrismaClient } from '@sushiswap/database'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
 import { add, getUnixTime } from 'date-fns'
@@ -13,9 +13,6 @@ import { Address, PublicClient } from 'viem'
 import {
   filterOnDemandPools,
   getAllPools,
-  getOnDemandPools,
-  getTopPools,
-  PoolResponse,
   PoolResponse2,
 } from '../lib/api'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
@@ -147,7 +144,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     console.debug(`${this.getLogPrefix()} - INIT, WATCHING ${this.initialPools.size} POOLS`)
   }
 
-  private async getInitialPools(): Promise<PoolResponse[]> {
+  private async getInitialPools(): Promise<PoolResponse2[]> {
     // const initialPools = await getAllPools(
     //   this.databaseClient,
     //   this.chainId,
