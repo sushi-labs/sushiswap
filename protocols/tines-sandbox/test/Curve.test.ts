@@ -1,9 +1,9 @@
-import { getStorageAt, setStorageAt } from '@nomicfoundation/hardhat-network-helpers'
 import { erc20Abi } from '@sushiswap/abi'
-import { CurvePool, getBigNumber, RToken } from '@sushiswap/tines'
-import { BigNumber, BigNumberish, Contract } from 'ethers'
-import { keccak256 } from 'ethers/lib/utils'
+import { CurvePool, RToken } from '@sushiswap/tines'
+import { Contract } from 'ethers'
 import { ethers } from 'hardhat'
+
+import { setTokenBalance } from '../src/SetTokenBalance'
 
 interface PoolInfo {
   poolContract: Contract
@@ -53,21 +53,6 @@ async function createCurvePool(address: string): Promise<PoolInfo> {
 // async function checkSwap(poolInfo: PoolInfo, from: number, to: number, amountIn: number) {
 //   const balanceOutBefore = await poolInfo.tokenContracts[to].
 // }
-
-async function setTokenBalance(token: string, user: string, balance: bigint): Promise<boolean> {
-  if (user.startsWith('0x')) user = user.substring(2)
-  const tokenContract = new Contract(token, erc20Abi, ethers.provider)
-
-  for (let i = 0; i < 50; ++i) {
-    const slotData = '0x' + user.padStart(64, '0') + Number(i).toString(16).padStart(64, '0')
-    const slot = keccak256(slotData)
-    await setStorageAt(token, slot, balance)
-    const resBalance = (await tokenContract.balanceOf(user)) as BigNumber
-    console.log(i, resBalance.toString())
-    if (!resBalance.isZero() && resBalance.toString() === balance.toString()) return true
-  }
-  return false
-}
 
 it('test', async () => {
   const res = await setTokenBalance(
