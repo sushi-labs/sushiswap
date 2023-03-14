@@ -5,7 +5,7 @@ import { BigNumber } from 'ethers'
 import { Address, readContracts } from 'wagmi'
 
 import { getContract } from 'wagmi/actions'
-import { getConstantProductPoolFactoryContract } from '@sushiswap/wagmi'
+import { getConstantProductPoolFactoryContract } from '../../../contracts/actions'
 
 export enum ConstantProductPoolState {
   LOADING,

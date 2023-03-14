@@ -1,21 +1,28 @@
-import { useQuery } from '@tanstack/react-query'
 import { Type } from '@sushiswap/currency'
-import { getBentoboxTotals } from './getBentoboxTotals'
 import { JSBI } from '@sushiswap/math'
-import { BigNumber } from '@ethersproject/bignumber'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BigNumber } from 'ethers'
+import { getBentoboxTotals } from '../actions'
+import { useQuery } from '@tanstack/react-query'
+import { ChainId } from '@sushiswap/chain'
+import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 interface UseBentoboxTotalsParams {
-  chainId: BentoBoxV1ChainId
+  chainId: ChainId
   currencies: (Type | undefined)[]
   enabled?: boolean
 }
 
-const queryFn = async ({ chainId, currencies }: UseBentoboxTotalsParams) => await getBentoboxTotals(chainId, currencies)
+const queryFn = async ({ chainId, currencies }: UseBentoboxTotalsParams) => {
+  if (isBentoBoxV1ChainId(chainId)) {
+    return await getBentoboxTotals(chainId, currencies)
+  }
+
+  return undefined
+}
 
 export const useBentoboxTotals = (variables: UseBentoboxTotalsParams) => {
   return useQuery({
-    queryKey: ['NoPersist', 'useBentoboxTotals', { chainId: variables.chainId, currencies: variables.currencies }],
+    queryKey: ['useBentoboxTotals', { chainId: variables.chainId, currencies: variables.currencies }],
     enabled: Boolean(variables.currencies) && (variables.enabled || true),
     queryFn: async () => {
       const data = await queryFn(variables)

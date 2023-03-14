@@ -63,6 +63,7 @@ export const queryParamsSchema = z.object({
 })
 
 interface InternalSwapState {
+  isFallback: boolean
   tradeId: string
   review: boolean
   recipient: string | undefined
@@ -97,6 +98,7 @@ type SwapApi = {
   setSearch(currency: Type): void
   setBentoboxSignature(signature: Signature | undefined): void
   setTradeId(id: string): void
+  setFallback(val: boolean): void
 }
 
 export const SwapStateContext = createContext<State>({} as State)
@@ -108,6 +110,7 @@ type Actions =
   | { type: 'setRecipient'; recipient: string }
   | { type: 'setReview'; value: boolean }
   | { type: 'setBentoboxSignature'; value: Signature }
+  | { type: 'setFallback'; value: boolean }
 
 const reducer = (state: InternalSwapState, action: Actions): InternalSwapState => {
   switch (action.type) {
@@ -126,6 +129,11 @@ const reducer = (state: InternalSwapState, action: Actions): InternalSwapState =
       return {
         ...state,
         bentoboxSignature: action.value,
+      }
+    case 'setFallback':
+      return {
+        ...state,
+        isFallback: action.value,
       }
   }
 }
@@ -157,6 +165,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { data: tokenTo, isInitialLoading: isTokenToLoading } = useToken({ chainId: toChainId, address: toCurrency })
 
   const [internalState, dispatch] = useReducer(reducer, {
+    isFallback: false,
     tradeId: nanoid(),
     review: false,
     // TODO: no recipient
@@ -377,6 +386,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     const setReview = (value: boolean) => dispatch({ type: 'setReview', value })
     const setBentoboxSignature = (value: Signature) => dispatch({ type: 'setBentoboxSignature', value })
     const setTradeId = (value: string) => dispatch({ type: 'setTradeId', value })
+    const setFallback = (value: boolean) => dispatch({ type: 'setFallback', value })
 
     return {
       setTradeId,
@@ -393,6 +403,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setAppType,
       setSearch,
       setBentoboxSignature,
+      setFallback,
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

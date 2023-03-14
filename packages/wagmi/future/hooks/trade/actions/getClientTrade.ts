@@ -10,35 +10,34 @@ import {
 } from '@sushiswap/amm'
 import { BigNumber } from 'ethers'
 import { RouteStatus } from '@sushiswap/tines'
-import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from '../../config'
-import { UsePoolsReturn } from './usePools'
 import { FetchFeeDataResult } from 'wagmi/actions'
 import { JSBI } from '@sushiswap/math'
+import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
+import { UsePoolsReturn } from '../../pools'
 
-interface UseTradeParams {
+export interface GetTradeParams {
   chainId: ChainId
   tradeType?: TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT
-  amountSpecified: Amount<Currency> | undefined
-  currencyA: Type | undefined
-  currencyB: Type | undefined
+  amount: Amount<Currency> | undefined
+  fromToken: Type | undefined
+  toToken: Type | undefined
   enabled?: boolean
   pools: UsePoolsReturn | undefined
   feeData: FetchFeeDataResult | undefined
   rebases: { base: JSBI; elastic: JSBI }[] | null | undefined
 }
 
-export const getTrade = async ({
+export const getClientTrade = async ({
   chainId,
-  amountSpecified,
-  currencyA,
-  currencyB,
-  pools,
+  amount,
+  fromToken,
+  toToken,
   tradeType = TradeType.EXACT_INPUT,
+  pools,
   feeData,
   rebases: totals,
-}: UseTradeParams) => {
-  const [currencyIn, currencyOut] =
-    tradeType === TradeType.EXACT_INPUT ? [currencyA, currencyB] : [currencyB, currencyA]
+}: GetTradeParams) => {
+  const [currencyIn, currencyOut] = tradeType === TradeType.EXACT_INPUT ? [fromToken, toToken] : [toToken, fromToken]
 
   const [currencyInRebase, currencyOutRebase] = totals ? totals : [undefined, undefined]
 
@@ -51,30 +50,30 @@ export const getTrade = async ({
     currencyOutRebase &&
     currencyIn.wrapped.address !== currencyOut.wrapped.address &&
     chainId &&
-    amountSpecified &&
-    amountSpecified.greaterThan(0) &&
+    amount &&
+    amount.greaterThan(0) &&
     pools
   ) {
     if (tradeType === TradeType.EXACT_INPUT) {
       if (
         chainId in FACTORY_ADDRESS &&
-        (chainId in CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS || chainId in STABLE_POOL_FACTORY_ADDRESS)
+        (isConstantProductPoolFactoryChainId(chainId) || isStablePoolFactoryChainId(chainId))
       ) {
         const legacyRoute = findSingleRouteExactIn(
           currencyIn.wrapped,
           currencyOut.wrapped,
-          BigNumber.from(amountSpecified.quotient.toString()),
+          BigNumber.from(amount.quotient.toString()),
           pools.pairs || [],
-          WNATIVE[amountSpecified.currency.chainId],
+          WNATIVE[amount.currency.chainId],
           feeData.gasPrice.toNumber()
         )
 
         const tridentRoute = findMultiRouteExactIn(
           currencyIn.wrapped,
           currencyOut.wrapped,
-          BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
+          BigNumber.from(amount.toShare(currencyInRebase).quotient.toString()),
           [...(pools.constantProductPools || []), ...(pools.stablePools || [])],
-          WNATIVE[amountSpecified.currency.chainId],
+          WNATIVE[amount.currency.chainId],
           feeData.gasPrice.toNumber()
         )
 
@@ -86,7 +85,7 @@ export const getTrade = async ({
           console.debug(`Found ${useLegacy ? 'Legacy' : 'Trident'} route`, useLegacy ? legacyRoute : tridentRoute)
           return Trade.exactIn(
             useLegacy ? legacyRoute : tridentRoute,
-            amountSpecified,
+            amount,
             currencyOut,
             useLegacy ? TradeVersion.V1 : TradeVersion.V2,
             !useLegacy ? currencyInRebase : undefined,
@@ -100,15 +99,15 @@ export const getTrade = async ({
       const legacyRoute = findSingleRouteExactIn(
         currencyIn.wrapped,
         currencyOut.wrapped,
-        BigNumber.from(amountSpecified.quotient.toString()),
+        BigNumber.from(amount.quotient.toString()),
         pools.pairs || [],
-        WNATIVE[amountSpecified.currency.chainId],
+        WNATIVE[amount.currency.chainId],
         feeData.gasPrice.toNumber()
       )
 
       if (legacyRoute.status === RouteStatus.Success) {
         console.debug('Found legacy route', legacyRoute)
-        return Trade.exactIn(legacyRoute, amountSpecified, currencyOut, TradeVersion.V1)
+        return Trade.exactIn(legacyRoute, amount, currencyOut, TradeVersion.V1)
       } else {
         console.debug('No legacy route', legacyRoute)
       }
@@ -117,21 +116,14 @@ export const getTrade = async ({
       const tridentRoute = findMultiRouteExactIn(
         currencyIn.wrapped,
         currencyOut.wrapped,
-        BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
+        BigNumber.from(amount.toShare(currencyInRebase).quotient.toString()),
         [...(pools.constantProductPools || []), ...(pools.stablePools || [])],
-        WNATIVE[amountSpecified.currency.chainId],
+        WNATIVE[amount.currency.chainId],
         feeData.gasPrice.toNumber()
       )
       if (tridentRoute.status === RouteStatus.Success) {
         console.debug('Found trident route', tridentRoute)
-        return Trade.exactIn(
-          tridentRoute,
-          amountSpecified,
-          currencyOut,
-          TradeVersion.V2,
-          currencyInRebase,
-          currencyOutRebase
-        )
+        return Trade.exactIn(tridentRoute, amount, currencyOut, TradeVersion.V2, currencyInRebase, currencyOutRebase)
       } else {
         console.debug('No trident route', tridentRoute)
       }

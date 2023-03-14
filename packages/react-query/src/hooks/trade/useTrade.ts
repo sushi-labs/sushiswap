@@ -1,8 +1,10 @@
 import {BigNumber} from '@ethersproject/bignumber'
+import { routeProcessorAbi } from '@sushiswap/abi'
 import {calculateSlippageAmount} from '@sushiswap/amm'
 import {ChainId} from "@sushiswap/chain";
 import {Amount, Native, nativeCurrencyIds, Price, WNATIVE_ADDRESS} from '@sushiswap/currency'
 import {JSBI, Percent, ZERO} from '@sushiswap/math'
+import { routeProcessorAddress, RouteProcessorChainId } from '@sushiswap/route-processor'
 import {HexString} from '@sushiswap/types'
 import {useQuery} from '@tanstack/react-query'
 import {useCallback} from 'react'
@@ -12,22 +14,22 @@ import {UseTradeParams, UseTradeQuerySelect, UseTradeReturnWriteArgs} from './ty
 import {tradeValidator} from './validator'
 
 export const useTradeQuery = (
-  { chainId, fromToken, toToken, amount, gasPrice = 50, recipient, enabled }: UseTradeParams,
+  { chainId, fromToken, toToken, amount, gasPrice = 50, recipient, enabled, onError }: UseTradeParams,
   select: UseTradeQuerySelect
 ) => {
     return useQuery({
         queryKey: ['NoPersist', 'getTrade', {chainId, fromToken, toToken, amount, gasPrice, recipient}],
         queryFn: async () => {
-            // TODO: Sort this out, use URL/URLSearchParams...
-            const res = await fetch(
-                `${
-                    process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0'
-                }?chainId=${chainId}&fromTokenId=${
-                    fromToken?.isNative ? nativeCurrencyIds[chainId] : fromToken?.wrapped.address
-                }&toTokenId=${
-                    toToken?.isNative ? nativeCurrencyIds[chainId] : toToken?.wrapped.address
-                }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}${recipient ? `&to=${recipient}` : ''}&preferSushi=true`
-            )
+            const params = new URL(process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0')
+            params.searchParams.set('chainId', `${chainId}`)
+            params.searchParams.set('fromTokenId', `${fromToken?.isNative ? nativeCurrencyIds[chainId] : fromToken?.wrapped.address}`)
+            params.searchParams.set('toTokenId', `${toToken?.isNative ? nativeCurrencyIds[chainId] : toToken?.wrapped.address}`)
+            params.searchParams.set('amount', `${amount?.quotient.toString()}`)
+            params.searchParams.set('gasPrice', `${gasPrice}`)
+            params.searchParams.set('to', `${recipient}`)
+            params.searchParams.set('preferSushi', 'true')
+
+            const res = await fetch(params.toString())
             return tradeValidator.parse(await res.json())
         },
         refetchOnWindowFocus: true,
@@ -36,6 +38,7 @@ export const useTradeQuery = (
         cacheTime: 0,
         select,
         enabled: enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
+        onError,
     })
 }
 
@@ -68,6 +71,8 @@ export const useTrade = (variables: UseTradeParams) => {
           }
 
           return {
+              address: routeProcessorAddress[chainId as RouteProcessorChainId],
+              abi: routeProcessorAbi,
               swapPrice: amountOut.greaterThan(ZERO) ? new Price({
                   baseAmount: amount,
                   quoteAmount: amountOut
@@ -92,6 +97,8 @@ export const useTrade = (variables: UseTradeParams) => {
       }
 
         return {
+            abi: undefined,
+            address: undefined,
             swapPrice: undefined,
             priceImpact: undefined,
             amountIn: undefined,

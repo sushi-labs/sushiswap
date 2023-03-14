@@ -1,13 +1,20 @@
 import { Amount, Currency, Token } from '@sushiswap/currency'
 import { StablePool } from '@sushiswap/amm'
-import { getStablePoolFactoryContract, StablePoolState } from '@sushiswap/wagmi'
 import { Address, readContracts } from 'wagmi'
-import { stablePoolAbi, stablePoolFactoryAbi } from '@sushiswap/wagmi/abis'
 import { BigNumber } from 'ethers'
 import { getContract } from 'wagmi/actions'
-import { getBentoboxTotals } from './getBentoboxTotals'
 import { JSBI } from '@sushiswap/math'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { stablePoolAbi, stablePoolFactoryAbi } from '@sushiswap/abi'
+import { getBentoboxTotals } from '../../bentobox'
+import { getStablePoolFactoryContract } from '../../../contracts/actions'
+
+export enum StablePoolState {
+  LOADING,
+  NOT_EXISTS,
+  EXISTS,
+  INVALID,
+}
 
 interface PoolData {
   address: string

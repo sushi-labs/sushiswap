@@ -17,11 +17,14 @@ export interface UseTradeParams {
   recipient: string | undefined
   enabled: boolean
   carbonOffset: boolean
+  onError?(e: Error): void
 }
 
 export type UseTradeReturnWriteArgs = [HexString, BigNumber, HexString, BigNumber, HexString, BigNumber, HexString, HexString] | [HexString, BigNumber, HexString, BigNumber, HexString, HexString] | undefined
 
 export interface UseTradeReturn {
+  abi: any
+  address: string | undefined
   swapPrice: Price<Type, Type> | undefined
   priceImpact: Percent | undefined
   amountIn: Amount<Type> | undefined

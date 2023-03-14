@@ -4,15 +4,13 @@ import { useSushiXSwapContract } from '@sushiswap/wagmi'
 import { JSBI, Percent } from '@sushiswap/math'
 import { Amount, Native, Price, Token, tryParseAmount, Type, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { useQuery } from '@tanstack/react-query'
-import { getTrade } from './getTrade'
 import { getBridgeFees } from './getBridgeFees'
 import { SushiXSwap } from '../SushiXSwap'
 import { useCallback } from 'react'
 import { UseCrossChainSelect, UseCrossChainTradeParams, UseCrossChainTradeQuerySelect } from './types'
-import { usePools } from './usePools'
 import { useFeeData } from 'wagmi'
-import { useBentoboxTotals } from './useRebases'
 import { usePrice } from '@sushiswap/react-query'
+import { getClientTrade, useBentoboxTotals, usePools } from '@sushiswap/wagmi/future/hooks'
 
 const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
 
@@ -97,11 +95,11 @@ export const useCrossChainTradeQuery = (
         ? new Percent(Number(slippagePercentage === 'AUTO' ? 0.5 : slippagePercentage) * 100, 10_000)
         : SWAP_DEFAULT_SLIPPAGE
 
-      const srcTrade = await getTrade({
+      const srcTrade = await getClientTrade({
         chainId: network0,
-        amountSpecified: crossChainSwap || swapTransfer ? amount : undefined,
-        currencyA: srcCurrencyA,
-        currencyB: srcCurrencyB,
+        amount: crossChainSwap || swapTransfer ? amount : undefined,
+        fromToken: srcCurrencyA,
+        toToken: srcCurrencyB,
         pools: srcPools,
         feeData: srcFeeData,
         rebases: srcRebases,
@@ -147,12 +145,12 @@ export const useCrossChainTradeQuery = (
           )
         : undefined
 
-      const dstTrade = await getTrade({
+      const dstTrade = await getClientTrade({
         chainId: network1,
         tradeType: TradeType.EXACT_INPUT,
-        amountSpecified: crossChainSwap || transferSwap ? dstAmountIn : undefined,
-        currencyA: dstCurrencyA,
-        currencyB: dstCurrencyB,
+        amount: crossChainSwap || transferSwap ? dstAmountIn : undefined,
+        fromToken: dstCurrencyA,
+        toToken: dstCurrencyB,
         pools: dstPools,
         feeData: dstFeeData,
         rebases: dstRebases,
