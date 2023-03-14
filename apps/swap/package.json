@@ -48,7 +48,7 @@
     "@layerzerolabs/scan-client": "0.0.0-beta.6",
     "@vercel/analytics": "0.1.5",
     "date-fns": "2.29.3",
-    "ethers": "^5.7.0",
+    "ethers": "5.7.2",
     "next": "13.2.3",
     "next-seo": "5.15.0",
     "next-axiom": "0.17.0",
