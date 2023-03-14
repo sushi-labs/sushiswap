@@ -5,8 +5,7 @@ import { BridgeBento, BridgeUnlimited, ConstantProductRPool, RToken, StableSwapR
 import { BentoPoolCode } from '@sushiswap/router/dist/pools/BentoPool'
 import { LiquidityProviders } from '@sushiswap/router'
 import { BentoBridgePoolCode } from '@sushiswap/router/dist/pools/BentoBridge'
-import { getBentoBoxContractConfig } from '../../../../hooks'
-import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
 import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
 import { convertPoolOrPairtoRPool } from '@sushiswap/amm/dist/Trade/convertPoolOrPairtoRPool'
@@ -16,6 +15,8 @@ import { NativeWrapBridgePoolCode } from '@sushiswap/router/dist/pools/NativeWra
 export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enabled'>) => {
   const { pairs, stablePools, constantProductPools, bridgeBentoPools } = await getAllPools(variables)
 
+  console.log({ bridgeBentoPools })
+
   const rPools = [
     ...(pairs || []),
     ...(stablePools || []),
@@ -23,33 +24,40 @@ export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enable
     ...(bridgeBentoPools || []),
   ]
 
-  const bentoAddress = isBentoBoxV1ChainId(variables.chainId)
-    ? getBentoBoxContractConfig(variables.chainId).address
-    : undefined
+  const poolCodeMap = new Map<string, PoolCode>()
 
-  const rp = rPools.reduce<Map<string, PoolCode>>((acc, cur) => {
-    if (cur instanceof BridgeBento && bentoAddress) {
-      acc.set(cur.address, new BentoBridgePoolCode(cur, LiquidityProviders.Trident, 'Trident', bentoAddress))
-      return acc
+  for (const pool of rPools) {
+    if (isBentoBoxV1ChainId(variables.chainId) && pool instanceof BridgeBento) {
+      console.log('bento bridge', { pool })
+      poolCodeMap.set(
+        pool.address,
+        new BentoBridgePoolCode(pool, LiquidityProviders.Trident, 'Trident', bentoBoxV1Address[variables.chainId])
+      )
+    } else if (pool instanceof Pair) {
+      poolCodeMap.set(
+        pool.liquidityToken.address,
+        new ConstantProductPoolCode(
+          convertPoolOrPairtoRPool(pool) as ConstantProductRPool,
+          LiquidityProviders.SushiSwap,
+          'SushiSwap'
+        )
+      )
+    } else if (pool instanceof ConstantProductPool) {
+      poolCodeMap.set(
+        pool.liquidityToken.address,
+        new ConstantProductPoolCode(
+          convertPoolOrPairtoRPool(pool) as ConstantProductRPool,
+          LiquidityProviders.Trident,
+          'Trident'
+        )
+      )
+    } else if (pool instanceof StablePool) {
+      poolCodeMap.set(
+        pool.liquidityToken.address,
+        new BentoPoolCode(convertPoolOrPairtoRPool(pool) as StableSwapRPool, LiquidityProviders.Trident, 'Trident')
+      )
     }
-
-    if (!(cur instanceof BridgeBento)) {
-      const rpool = convertPoolOrPairtoRPool(cur)
-      if (cur instanceof Pair && rpool instanceof ConstantProductRPool) {
-        acc.set(rpool.address, new ConstantProductPoolCode(rpool, LiquidityProviders.SushiSwap, 'SushiSwap'))
-      }
-
-      if (cur instanceof ConstantProductPool && rpool instanceof ConstantProductRPool) {
-        acc.set(rpool.address, new ConstantProductPoolCode(rpool, LiquidityProviders.Trident, 'Trident'))
-      }
-
-      if (cur instanceof StablePool && rpool instanceof StableSwapRPool) {
-        acc.set(rpool.address, new BentoPoolCode(rpool, LiquidityProviders.Trident, 'Trident'))
-      }
-    }
-
-    return acc
-  }, new Map<string, PoolCode>())
+  }
 
   const bridge = new BridgeUnlimited(
     Native.onChain(variables.chainId).wrapped.address,
@@ -64,7 +72,7 @@ export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enable
     50_000
   )
 
-  rp.set(bridge.address, new NativeWrapBridgePoolCode(bridge, LiquidityProviders.NativeWrap))
+  poolCodeMap.set(bridge.address, new NativeWrapBridgePoolCode(bridge, LiquidityProviders.NativeWrap))
 
-  return rp
+  return poolCodeMap
 }

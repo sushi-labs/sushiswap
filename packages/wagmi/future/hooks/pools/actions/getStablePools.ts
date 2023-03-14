@@ -25,7 +25,7 @@ interface PoolData {
 export const getStablePools = async (
   chainId: BentoBoxV1ChainId,
   currencies: [Currency | undefined, Currency | undefined][],
-  totals: { base: string; elastic: string }[] | null
+  totals: { base: BigNumber; elastic: BigNumber }[] | null
 ) => {
   const contract = getContract({
     ...getStablePoolFactoryContract(chainId),

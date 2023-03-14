@@ -1,7 +1,8 @@
-import { Type, Type as Currency } from '@sushiswap/currency'
+import { Type as Currency } from '@sushiswap/currency'
 import { Address, readContracts } from 'wagmi'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { getBentoBoxContractConfig } from '../../../../hooks'
+import { bentoBoxV1TotalsAbi } from '@sushiswap/abi'
 
 export const getBentoboxTotals = async (chainId: BentoBoxV1ChainId, currencies: (Currency | undefined)[]) => {
   const addresses = currencies
@@ -13,56 +14,18 @@ export const getBentoboxTotals = async (chainId: BentoBoxV1ChainId, currencies: 
       ({
         chainId,
         address: getBentoBoxContractConfig(chainId).address,
-        abi: [
-          {
-            inputs: [
-              {
-                internalType: 'contract IERC20',
-                name: '',
-                type: 'address',
-              },
-            ],
-            name: 'totals',
-            outputs: [
-              {
-                internalType: 'uint128',
-                name: 'elastic',
-                type: 'uint128',
-              },
-              {
-                internalType: 'uint128',
-                name: 'base',
-                type: 'uint128',
-              },
-            ],
-            stateMutability: 'view',
-            type: 'function',
-          },
-        ] as const,
+        abi: bentoBoxV1TotalsAbi,
         functionName: 'totals',
         args: [address as Address],
       } as const)
   )
 
-  const totals = await readContracts({
-    allowFailure: false,
-    contracts,
-  })
-
-  const result: { base: string; elastic: string }[] = []
-  let allResolved = true
-  currencies.forEach((currency, index) => {
-    if (totals?.[index]) {
-      const { base, elastic } = totals[index]
-      result[index] = {
-        base: base.toHexString(),
-        elastic: elastic.toHexString(),
-      }
-    } else {
-      allResolved = false
-    }
-  })
-
-  if (allResolved) return result
-  return null
+  try {
+    return readContracts({
+      allowFailure: false,
+      contracts,
+    })
+  } catch {
+    return null
+  }
 }

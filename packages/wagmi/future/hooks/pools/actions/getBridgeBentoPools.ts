@@ -1,10 +1,8 @@
 import { Token } from '@sushiswap/currency'
-import { readContracts } from 'wagmi'
+import { Address, readContracts } from 'wagmi'
 import { BigNumber } from 'ethers'
-import { getContract } from 'wagmi/actions'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { balanceOfAbi } from '@sushiswap/abi'
-import { getBentoBoxContractConfig } from '../../../../hooks'
 import { BridgeBento, RToken } from '@sushiswap/tines'
 import { convertTokenToBento } from '@sushiswap/router/dist/liquidity-providers/Trident'
 
@@ -18,20 +16,19 @@ export enum BridgeBentoState {
 export const getBridgeBentoPools = async (
   chainId: BentoBoxV1ChainId,
   currencies: Token[],
-  totals: { base: string; elastic: string }[] | null
+  totals: { base: BigNumber; elastic: BigNumber }[] | null
 ) => {
-  const contract = getContract({
-    ...getBentoBoxContractConfig(chainId),
-  })
-
   const balances = await readContracts({
-    contracts: currencies.map((currency) => ({
-      address: contract.address,
-      chainId,
-      abi: balanceOfAbi,
-      functionName: 'balanceOf',
-      args: [currency.wrapped.address],
-    })),
+    contracts: currencies.map(
+      (currency) =>
+        ({
+          address: currency.wrapped.address as Address,
+          chainId,
+          abi: balanceOfAbi,
+          functionName: 'balanceOf',
+          args: [bentoBoxV1Address[chainId] as Address],
+        } as const)
+    ),
   })
 
   return currencies.map((el, i) => {
@@ -39,15 +36,17 @@ export const getBridgeBentoPools = async (
       return [BridgeBentoState.LOADING, null]
     }
 
+    const { base, elastic } = totals[i]
+
     return [
       BridgeBentoState.EXISTS,
       new BridgeBento(
         `Bento bridge for ${el.symbol}`,
         el as RToken,
         convertTokenToBento(el),
-        BigNumber.from(0),
-        BigNumber.from(0),
-        BigNumber.from(0)
+        elastic,
+        base,
+        balances?.[i]
       ),
     ]
   })
