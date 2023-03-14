@@ -1,44 +1,27 @@
-import { getClientTrade } from '../actions'
 import { useQuery } from '@tanstack/react-query'
-import { usePools } from '../../pools'
-import { useFeeData, useProvider } from 'wagmi'
+import { usePoolsCodeMap } from '../../pools'
+import { useFeeData } from 'wagmi'
 import { ChainId } from '@sushiswap/chain'
-import { Amount, Currency, Native, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { SushiSwapRouter, Trade, TradeType, Version } from '@sushiswap/amm'
-import { usePrice, UseTradeParams } from '@sushiswap/react-query'
-import { Percent } from '@sushiswap/math'
-import { useTransactionDeadline } from '../../utils'
-import { BigNumber, BigNumberish, Contract } from 'ethers'
-import { getBigNumber } from '@sushiswap/tines'
-import {
-  getSushiSwapKlimaRouterContractConfig,
-  getSushiSwapRouterContractConfig,
-  getTridentRouterContractConfig,
-} from '../../../../hooks'
-import { defaultAbiCoder } from 'ethers/lib/utils'
-import { AddressZero, Zero } from '@ethersproject/constants'
-import { getContract } from 'wagmi/actions'
-import { isUniswapV2Router02ChainId } from '@sushiswap/sushiswap'
-import { isTridentRouterChainId } from '@sushiswap/trident'
-import { useBentoboxTotals } from '../../bentobox'
-import { approveMasterContractAction, batchAction, unwrapWETHAction } from '../actions/contractActions'
-import { Signature } from '@ethersproject/bytes'
+import { Amount, Native, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { usePrice, UseTradeParams, UseTradeReturnWriteArgs } from '@sushiswap/react-query'
+import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { BigNumber } from 'ethers'
+import { Router } from '@sushiswap/router'
+import { isRouteProcessorChainId, routeProcessorAddress } from '@sushiswap/route-processor'
+import { HexString } from '@sushiswap/types'
 
-const KLIMA_FEE = Amount.fromRawAmount(Native.onChain(ChainId.POLYGON), '20000000000000000')
+export const useClientTrade = (variables: UseTradeParams) => {
+  const { chainId, fromToken, toToken, slippagePercentage, carbonOffset, amount, enabled, recipient } = variables
 
-interface UseClientTrade extends UseTradeParams {
-  signature: Signature | undefined
-}
-
-export const useClientTrade = (variables: UseClientTrade) => {
-  const { chainId, fromToken, toToken, slippagePercentage, carbonOffset, amount, enabled, recipient, signature } =
-    variables
-
-  const { data: pools } = usePools({ chainId, currencyA: fromToken, currencyB: toToken, enabled })
   const { data: feeData } = useFeeData({ chainId, enabled })
   const { data: price } = usePrice({ chainId, address: WNATIVE_ADDRESS[chainId] })
-  const { data: deadline } = useTransactionDeadline({ chainId, enabled })
-  const { data: rebases } = useBentoboxTotals({ chainId, currencies: [fromToken, toToken], enabled })
+  const { data: poolsCodeMap } = usePoolsCodeMap({
+    chainId,
+    currencyA: fromToken,
+    currencyB: toToken,
+    enabled,
+    withBentoPools: true,
+  })
 
   return useQuery({
     queryKey: [
@@ -50,281 +33,100 @@ export const useClientTrade = (variables: UseClientTrade) => {
         amount,
         slippagePercentage,
         recipient,
-        pools,
+        poolsCodeMap,
       },
     ],
     queryFn: async () => {
-      const isOffset = chainId === ChainId.POLYGON && carbonOffset
-      const slippage = new Percent(Math.floor(+slippagePercentage * 100), 10_000)
-      const trade = await getClientTrade({
+      if (
+        !poolsCodeMap ||
+        !isRouteProcessorChainId(chainId) ||
+        !fromToken ||
+        !amount ||
+        !toToken ||
+        !feeData?.gasPrice ||
+        !recipient
+      )
+        return {
+          abi: undefined,
+          address: undefined,
+          swapPrice: undefined,
+          priceImpact: undefined,
+          amountIn: undefined,
+          amountOut: undefined,
+          minAmountOut: undefined,
+          gasSpent: undefined,
+          writeArgs: undefined,
+          route: undefined,
+          functionName: 'processRoute',
+          overrides: undefined,
+        }
+
+      const route = Router.findSushiRoute(
+        poolsCodeMap,
         chainId,
-        amount,
+        fromToken,
+        BigNumber.from(amount.quotient.toString()),
+        toToken,
+        feeData.gasPrice.toNumber()
+      )
+
+      const args = Router.routeProcessorParams(
+        poolsCodeMap,
+        route,
         fromToken,
         toToken,
-        tradeType: TradeType.EXACT_INPUT,
-        pools,
-        feeData,
-        rebases,
-      })
+        recipient,
+        routeProcessorAddress[chainId],
+        +slippagePercentage / 100
+      )
 
-      let contract
-      let writeArgs
-      let functionName = ''
-      let value = ''
-      let sushiSwapRouter: Contract | undefined = undefined
-      let tridentRouter: Contract | undefined = undefined
-      let klimaRouter: Contract | undefined = undefined
+      if (route) {
+        const amountIn = Amount.fromRawAmount(fromToken, route.amountInBN.toString())
+        const amountOut = Amount.fromRawAmount(toToken, route.amountOutBN.toString())
+        const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
-      if (isUniswapV2Router02ChainId(chainId)) sushiSwapRouter = getContract(getSushiSwapRouterContractConfig(chainId))
-      if (isTridentRouterChainId(chainId)) tridentRouter = getContract(getTridentRouterContractConfig(chainId))
-      if (isOffset) klimaRouter = getContract(getSushiSwapKlimaRouterContractConfig(chainId))
+        let writeArgs: UseTradeReturnWriteArgs = args
+          ? [
+              args.tokenIn as HexString,
+              BigNumber.from(args.amountIn),
+              args.tokenOut as HexString,
+              BigNumber.from(args.amountOutMin),
+              args.to as HexString,
+              args.routeCode as HexString,
+            ]
+          : undefined
+        let overrides = fromToken.isNative && writeArgs?.[1] ? { value: BigNumber.from(writeArgs?.[1]) } : undefined
 
-      // REPLACE WITH RP CODE
-      if (trade && recipient) {
-        if (trade.isV1() && sushiSwapRouter) {
-          if (!deadline) return
-
-          const { methodName, args } = SushiSwapRouter.swapCallParameters(
-            trade as Trade<Currency, Currency, TradeType, Version.V1>,
-            {
-              feeOnTransfer: false,
-              allowedSlippage: slippage,
-              recipient,
-              deadline: deadline.toNumber(),
-            }
-          )
-
-          if (trade.inputAmount.currency.isNative) {
-            value = isOffset ? trade.inputAmount.add(KLIMA_FEE).toHex() : trade.inputAmount.toHex()
-          } else if (isOffset) {
-            value = KLIMA_FEE.toHex()
+        if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
+          writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', BigNumber.from('20000000000000000'), ...writeArgs]
+          overrides = {
+            value: BigNumber.from(fromToken.isNative ? writeArgs[3] : '0').add(BigNumber.from('20000000000000000')),
           }
+        }
 
-          contract = isOffset && klimaRouter ? klimaRouter : sushiSwapRouter
-          functionName = methodName
-          writeArgs = args
-        } else if (tridentRouter && trade.isV2()) {
-          const [inputCurrencyRebase, outputCurrencyRebase] = rebases || [undefined, undefined]
-          if (!tridentRouter || !inputCurrencyRebase || !outputCurrencyRebase) return
-
-          const actions = [approveMasterContractAction({ router: tridentRouter, signature })]
-
-          if (trade.isSinglePool()) {
-            actions.push(
-              tridentRouter.interface.encodeFunctionData('exactInputSingleWithNativeToken', [
-                {
-                  tokenIn: trade.inputAmount.currency.isNative
-                    ? AddressZero
-                    : trade.inputAmount.currency.wrapped.address,
-                  amountIn: BigNumber.from(trade.inputAmount.quotient.toString()),
-                  amountOutMinimum: BigNumber.from(
-                    trade.minimumAmountOut(slippage).toShare(outputCurrencyRebase).quotient.toString()
-                  ),
-                  pool: trade.route.legs[0].poolAddress,
-                  data: defaultAbiCoder.encode(
-                    ['address', 'address', 'bool'],
-                    [
-                      trade.route.legs[0].tokenFrom.address,
-                      trade.outputAmount.currency.isNative ? tridentRouter.address : recipient,
-                      true,
-                    ]
-                  ),
-                },
-              ])
-            )
-          } else if (trade.isSingle()) {
-            actions.push(
-              tridentRouter.interface.encodeFunctionData('exactInputWithNativeToken', [
-                {
-                  tokenIn: trade.inputAmount.currency.isNative
-                    ? AddressZero
-                    : trade.inputAmount.currency.wrapped.address,
-                  amountIn: BigNumber.from(trade.inputAmount.quotient.toString()),
-                  amountOutMinimum: BigNumber.from(
-                    trade.minimumAmountOut(slippage).toShare(outputCurrencyRebase).quotient.toString()
-                  ),
-                  path: trade.route.legs.map((leg, i) => {
-                    const isLastLeg = i === trade.route.legs.length - 1
-                    return {
-                      pool: leg.poolAddress,
-                      data: defaultAbiCoder.encode(
-                        ['address', 'address', 'bool'],
-                        [
-                          leg.tokenFrom.address,
-                          isLastLeg
-                            ? trade.outputAmount.currency.isNative
-                              ? tridentRouter?.address
-                              : recipient
-                            : trade.route.legs[i + 1].poolAddress,
-                          isLastLeg,
-                        ]
-                      ),
-                    }
-                  }),
-                },
-              ])
-            )
-          } else if (trade.isComplex()) {
-            // complex trade
-            const initialPathCount = trade.route.legs.filter(
-              (leg) => leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
-            ).length
-
-            const [initialPath, percentagePath, output] = trade.route.legs.reduce<
-              [
-                {
-                  tokenIn: string
-                  pool: string
-                  native: boolean
-                  amount: BigNumberish
-                  data: string
-                }[],
-                {
-                  tokenIn: string
-                  pool: string
-                  balancePercentage: BigNumberish
-                  data: string
-                }[],
-                {
-                  token: string
-                  to: string
-                  unwrapBento: boolean
-                  minAmount: BigNumberish
-                }[]
-              ]
-            >(
-              ([initialPath, percentagePath, output], leg, i) => {
-                const isInitialPath = leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
-                if (isInitialPath) {
-                  return [
-                    [
-                      ...initialPath,
-                      {
-                        tokenIn: trade.inputAmount.currency.isNative ? AddressZero : leg.tokenFrom.address,
-                        pool: leg.poolAddress,
-                        amount:
-                          initialPathCount > 1 && i === initialPathCount - 1
-                            ? BigNumber.from(trade.inputAmount.quotient.toString()).sub(
-                                initialPath.reduce(
-                                  (previousValue, currentValue) => previousValue.add(currentValue.amount),
-                                  Zero
-                                )
-                              )
-                            : BigNumber.from(trade.inputAmount.quotient.toString())
-                                .mul(Math.round(leg.absolutePortion * 1e6))
-                                .div(1e6),
-                        native: true,
-                        data: defaultAbiCoder.encode(
-                          ['address', 'address', 'bool'],
-                          [
-                            leg.tokenFrom.address,
-                            getTridentRouterContractConfig(trade.inputAmount.currency.chainId).address,
-                            false,
-                          ]
-                        ),
-                      },
-                    ],
-                    percentagePath,
-                    output,
-                  ]
-                } else {
-                  return [
-                    initialPath,
-                    [
-                      ...percentagePath,
-                      {
-                        tokenIn: leg.tokenFrom.address,
-                        pool: leg.poolAddress,
-                        balancePercentage: getBigNumber(leg.swapPortion * 10 ** 8),
-                        data: defaultAbiCoder.encode(
-                          ['address', 'address', 'bool'],
-                          [
-                            leg.tokenFrom.address,
-                            getTridentRouterContractConfig(trade.inputAmount.currency.chainId).address,
-                            false,
-                          ]
-                        ),
-                      },
-                    ],
-                    output,
-                  ]
-                }
-              },
-              [
-                [],
-                [],
-                [
-                  {
-                    token: trade.outputAmount.currency.wrapped.address,
-                    to: trade.outputAmount.currency.isNative ? tridentRouter.address : recipient,
-                    unwrapBento: true,
-                    minAmount: trade?.minimumAmountOut(slippage)?.toShare(outputCurrencyRebase).quotient.toString(),
-                  },
-                ],
-              ]
-            )
-            actions.push(
-              tridentRouter.interface.encodeFunctionData('complexPath', [{ initialPath, percentagePath, output }])
-            )
-          }
-
-          if (trade.inputAmount.currency.isNative) {
-            value = trade.inputAmount.toHex()
-          }
-          if (trade.outputAmount.currency.isNative) {
-            // unwrap
-            actions.push(
-              unwrapWETHAction({
-                router: tridentRouter,
-                recipient: recipient,
+        return {
+          swapPrice: amountOut.greaterThan(ZERO)
+            ? new Price({
+                baseAmount: amount,
+                quoteAmount: amountOut,
               })
-            )
-          }
-
-          contract = tridentRouter
-          functionName = 'multicall'
-          writeArgs = batchAction({
-            contract: tridentRouter,
-            actions,
-            encode: false,
-          })
+            : undefined,
+          priceImpact: route.priceImpact
+            ? new Percent(JSBI.BigInt(Math.round(route.priceImpact * 10000)), JSBI.BigInt(10000))
+            : new Percent(0),
+          amountIn,
+          amountOut,
+          minAmountOut: amountOut,
+          gasSpent: price
+            ? Amount.fromRawAmount(Native.onChain(chainId), route.gasSpent * 1e9)
+                .multiply(price.asFraction)
+                .toSignificant(4)
+            : undefined,
+          route,
+          functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
+          writeArgs,
+          overrides,
         }
-
-        if (functionName && writeArgs && contract) {
-          return {
-            address: contract.address,
-            abi: contract.interface,
-            swapPrice: trade.executionPrice,
-            priceImpact: trade.priceImpact,
-            amountIn: trade.inputAmount,
-            amountOut: trade.outputAmount,
-            minAmountOut: trade.minimumAmountOut(slippage),
-            gasSpent: price
-              ? Amount.fromRawAmount(Native.onChain(chainId), trade.route.gasSpent * 1e9)
-                  .multiply(price.asFraction)
-                  .toSignificant(4)
-              : undefined,
-            route: trade.route,
-            functionName,
-            writeArgs,
-            overrides: { value },
-          }
-        }
-      }
-
-      return {
-        abi: undefined,
-        address: undefined,
-        swapPrice: undefined,
-        priceImpact: undefined,
-        amountIn: undefined,
-        amountOut: undefined,
-        minAmountOut: undefined,
-        gasSpent: undefined,
-        writeArgs: undefined,
-        route: undefined,
-        functionName: 'processRoute',
-        overrides: undefined,
       }
     },
     refetchInterval: 10000,

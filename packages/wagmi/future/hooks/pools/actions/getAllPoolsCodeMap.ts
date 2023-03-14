@@ -8,8 +8,9 @@ import { LiquidityProviders } from '@sushiswap/router'
 import { BentoBridgePoolCode } from '@sushiswap/router/dist/pools/BentoBridge'
 import { getBentoBoxContractConfig } from '../../../../hooks'
 import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
 
-export const getAllPoolsPcMap = async (variables: Omit<UsePoolsParams, 'enabled'>) => {
+export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enabled'>) => {
   const { pairs, stablePools, constantProductPools, bridgeBentoPools } = await getAllPools(variables)
 
   const rPools = [
@@ -21,19 +22,19 @@ export const getAllPoolsPcMap = async (variables: Omit<UsePoolsParams, 'enabled'
     ? getBentoBoxContractConfig(variables.chainId).address
     : undefined
 
-  const pc = rPools.reduce<Record<string, ConstantProductPoolCode | BentoPoolCode>>((acc, cur) => {
+  return rPools.reduce<Map<string, PoolCode>>((acc, cur) => {
     if (cur instanceof ConstantProductRPool) {
-      acc[cur.address] = new ConstantProductPoolCode(cur, LiquidityProviders.SushiSwap, 'SushiSwap')
+      acc.set(cur.address, new ConstantProductPoolCode(cur, LiquidityProviders.SushiSwap, 'SushiSwap'))
     }
 
     if (cur instanceof StableSwapRPool) {
-      acc[cur.address] = new BentoPoolCode(cur, LiquidityProviders.Trident, 'Trident')
+      acc.set(cur.address, new BentoPoolCode(cur, LiquidityProviders.Trident, 'Trident'))
     }
 
     if (cur instanceof BridgeBento && bentoAddress) {
-      acc[cur.address] = new BentoBridgePoolCode(cur, LiquidityProviders.Trident, 'Trident', bentoAddress)
+      acc.set(cur.address, new BentoBridgePoolCode(cur, LiquidityProviders.Trident, 'Trident', bentoAddress))
     }
 
     return acc
-  }, {})
+  }, new Map<string, PoolCode>())
 }
