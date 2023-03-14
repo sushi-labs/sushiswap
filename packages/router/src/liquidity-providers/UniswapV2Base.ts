@@ -221,8 +221,9 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   async updatePools() {
     if (this.isInitialized) {
       this.removeStalePools()
-      await this.discoverNewPools()
-      await this.updateAvailablePools()
+      // The two calls below are Async functions, but we do not want them to block. If they find any pools they will be updated next interval
+      this.discoverNewPools()
+      this.updateAvailablePools()
 
       const initialPools = Array.from(this.topPools.values())
       const onDemandPools = Array.from(this.onDemandPools.values()).map((pi) => pi.poolCode)

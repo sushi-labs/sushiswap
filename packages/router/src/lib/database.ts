@@ -2,7 +2,6 @@
 import type * as _ from '@prisma/client/runtime'
 
 import { DecimalToString, Prisma, PrismaClient } from '@sushiswap/database'
-import { performance } from 'perf_hooks'
 import type { PoolType } from '@sushiswap/database'
 import { z } from 'zod'
 
@@ -71,36 +70,31 @@ export async function getAllPools(client: PrismaClient, args: typeof AllPools._o
       version: args.version,
       type: { in: args.poolTypes },
     }
-    const startTime = performance.now()
 
     const batchSize = 1000
     let cursor = null
     const results = []
     let totalCount = 0
     do {
-      const requestStartTime = performance.now()
       let result = []
       if (!cursor) {
         result = await getPoolsPagination(client, where, batchSize)
       } else {
         result = await getPoolsPagination(client, where, batchSize, 1, { id: cursor })
       }
-      const requestEndTime = performance.now()
-
       cursor = result.length == batchSize ? result[result.length - 1]?.id : null
       totalCount += result.length
 
       results.push(result)
-      const duration = ((requestEndTime - requestStartTime) / 1000).toFixed(1)
       console.debug(
         `${args.chainId}-${args.protocol}-${args.version} Fetched a batch of pools with ${result.length} 
-         cursor: ${cursor}, total: ${totalCount} (${duration}s).`
+         cursor: ${cursor}, total: ${totalCount}.`
       )
     } while (cursor != null)
-    const endTime = performance.now()
     const flatResult = results.flat()
-    const totalDuration = ((endTime - startTime) / 1000).toFixed(1)
-    console.debug(`${args.chainId}-${args.protocol}-${args.version} Fetched ${flatResult.length} (${totalDuration}s).`)
+    console.debug(`${args.chainId}-${args.protocol}-${args.version} Fetched ${flatResult.length}`)
+
+  
 
     await client.$disconnect()
     return flatResult as unknown as DecimalToString<typeof flatResult>

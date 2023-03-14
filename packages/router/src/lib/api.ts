@@ -44,14 +44,13 @@ export async function getAllPools(
   return poolMap
 }
 
-
 export async function discoverNewPools(
   client: PrismaClient,
   chainId: number,
   protocol: string,
   version: string,
   poolTypes: ('CONSTANT_PRODUCT_POOL' | 'CONCENTRATED_LIQUIDITY_POOL' | 'STABLE_POOL')[],
-  date: Date,
+  date: Date
 ) {
   const pools = await getNewPools(client, { chainId, protocol, version, poolTypes, date })
   const poolMap = new Map(pools.map((pool) => [pool.address, pool as PoolResponse2]))
@@ -69,12 +68,16 @@ export function filterOnDemandPools(
   let token1PoolSize = 0
   const token0Pools = pools.filter(
     (p) =>
-      (p.token0.address === token0Address.toLowerCase() && !p.token1.isFeeOnTransfer && p.token1.status === 'APPROVED') ||
-      (p.token1.address === token0Address.toLowerCase() && !p.token0.isFeeOnTransfer  && p.token0.status === 'APPROVED')
+      (p.token0.address === token0Address.toLowerCase() &&
+        !p.token1.isFeeOnTransfer &&
+        p.token1.status === 'APPROVED') ||
+      (p.token1.address === token0Address.toLowerCase() && !p.token0.isFeeOnTransfer && p.token0.status === 'APPROVED')
   )
   const token1Pools = pools.filter(
     (p) =>
-      (p.token0.address === token1Address.toLowerCase() && !p.token1.isFeeOnTransfer  && p.token1.status === 'APPROVED') ||
+      (p.token0.address === token1Address.toLowerCase() &&
+        !p.token1.isFeeOnTransfer &&
+        p.token1.status === 'APPROVED') ||
       (p.token1.address === token1Address.toLowerCase() && !p.token0.isFeeOnTransfer && p.token0.status === 'APPROVED')
   )
   // console.log(`Flattened pools, recieved: t0: ${token0Pools.length}, t1: ${token1Pools.length}`)
@@ -83,7 +86,7 @@ export function filterOnDemandPools(
   const filteredToken0Pools = token0Pools.filter((p) => !topPoolAddresses.includes(p.address))
   const filteredToken1Pools = token1Pools.filter((p) => !topPoolAddresses.includes(p.address))
   // console.log(`After excluding top pools: t0: ${filteredToken0Pools.length}, t1: ${filteredToken1Pools.length}`)
-  
+
   if (filteredToken0Pools.length >= size / 2 && filteredToken1Pools.length >= size / 2) {
     token0PoolSize = size / 2
     token1PoolSize = size / 2
@@ -105,36 +108,47 @@ export function filterOnDemandPools(
     .sort((a, b) => Number(b.liquidityUSD) - Number(a.liquidityUSD))
     .slice(0, token1PoolSize)
 
-  return [...pools0, ...pools1].flat()
+  return Array.from(new Set([...pools0, ...pools1].flat()))
 }
 
+export function filterTopPools(pools: PoolResponse2[], size: number) {
+  const safePools = pools.filter(
+    (p) =>
+      p.token0.status === 'APPROVED' &&
+      !p.token0.isFeeOnTransfer &&
+      p.token1.status === 'APPROVED' &&
+      !p.token1.isFeeOnTransfer
+  )
+  if (safePools.map(p => p.address).includes('0x46a05503abc6f029e19564595adfa02e651f279f')) {
+    console.log("0x46a05503abc6f029e19564595adfa02e651f279f POOL IS SAFE")
+  }
 
-export function filterTopPools(
-  pools: PoolResponse2[],
-  size: number
-) {
-  const safePools = pools.filter((p) => 
-  p.token0.status === 'APPROVED' && p.token0.isFeeOnTransfer === false &&
-   p.token1.status === 'APPROVED' && p.token1.isFeeOnTransfer === false)
   const commonPools = safePools.filter((p) => p.token0.isCommon && p.token1.isCommon)
-  const topPools = safePools.sort((a, b) => Number(b.liquidityUSD) - Number(a.liquidityUSD)).slice(0, size - commonPools.length)
-  .slice(0, size)
+  if (commonPools.map(p => p.address).includes('0x46a05503abc6f029e19564595adfa02e651f279f')) {
+    console.log("0x46a05503abc6f029e19564595adfa02e651f279f POOL IS COMMON")
+  }
+  const topPools = safePools
+    .sort((a, b) => Number(b.liquidityUSD) - Number(a.liquidityUSD))
+    .slice(0, safePools.length <= size ? size : size - commonPools.length)
+    console.log('commonPools' + commonPools.length, 'topPools' + topPools.length)
 
   return [...topPools, ...commonPools]
 }
 
-
-export function mapToken(chainId: number, {
-  address,
-  decimals,
-  symbol,
-  name,
-}: {
-  address: string
-  decimals: number
-  symbol: string
-  name: string
-}): Token {
+export function mapToken(
+  chainId: number,
+  {
+    address,
+    decimals,
+    symbol,
+    name,
+  }: {
+    address: string
+    decimals: number
+    symbol: string
+    name: string
+  }
+): Token {
   return new Token({
     chainId,
     address,
