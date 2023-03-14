@@ -1,5 +1,6 @@
 export { useBreakpoint } from './useBreakpoint'
 export { useCopyClipboard } from './useCopyClipboard'
+export * from './useCustomTokens'
 export { useDebounce } from './useDebounce'
 export * from './useEffectDebugger'
 export * from './useFundSourceToggler'

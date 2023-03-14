@@ -1,71 +1,50 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback } from 'react'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { Address, useToken } from 'wagmi'
 import { queryParamsSchema, useSwapActions, useSwapState } from './trade/TradeProvider'
 import { useRouter } from 'next/router'
-import { isAddress } from 'ethers/lib/utils'
 import { defaultQuoteCurrency, Native, Token } from '@sushiswap/currency'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
-import { useAddCustomToken } from '@sushiswap/react-query'
+import { useToken } from '@sushiswap/react-query'
+import { useCustomTokens } from '@sushiswap/hooks'
 
 export const TokenNotFoundDialog = () => {
   const { query } = useRouter()
   const { fromChainId, fromCurrency, toChainId, toCurrency } = queryParamsSchema.parse(query)
-  const { tokensLoading, token0NotInList, token1NotInList, network0, network1 } = useSwapState()
+  const { network0, network1 } = useSwapState()
   const { setToken0, setToken1, setTokens } = useSwapActions()
-  const { mutate: addCustomToken } = useAddCustomToken()
+  const { mutate: customTokensMutate, hasToken } = useCustomTokens()
 
-  const { data: _token0 } = useToken({
-    address: fromCurrency as Address,
-    chainId: network0,
-    enabled: isAddress(fromCurrency) && token0NotInList,
+  const { data: tokenFrom, isInitialLoading: tokenFromLoading } = useToken({
+    chainId: fromChainId,
+    address: fromCurrency,
+    withStatus: true,
   })
 
-  const { data: _token1 } = useToken({
-    address: toCurrency as Address,
-    chainId: network1,
-    enabled: isAddress(toCurrency) && token1NotInList,
+  const { data: tokenTo, isInitialLoading: tokenToLoading } = useToken({
+    chainId: toChainId,
+    address: toCurrency,
+    withStatus: true,
   })
 
-  const [token0, token1] = useMemo(() => {
-    return [
-      _token0
-        ? new Token({
-            address: _token0.address,
-            symbol: _token0.symbol,
-            decimals: _token0.decimals,
-            chainId: network0,
-            name: _token0.name,
-          })
-        : undefined,
-      _token1
-        ? new Token({
-            address: _token1.address,
-            symbol: _token1.symbol,
-            decimals: _token1.decimals,
-            chainId: network0,
-            name: _token1.name,
-          })
-        : undefined,
-    ]
-  }, [_token0, _token1, network0])
+  const token0NotInList = Boolean(tokenFrom?.status !== 'APPROVED' && tokenFrom?.token && !hasToken(tokenFrom?.token))
+  const token1NotInList = Boolean(tokenTo?.status !== 'APPROVED' && tokenTo?.token && !hasToken(tokenTo?.token))
 
   const onImport = useCallback(
     ([token0, token1]: (Token | undefined)[]) => {
       if (token0) {
-        addCustomToken(token0)
+        customTokensMutate('add', token0)
         setToken0(token0)
       }
 
       if (token1) {
-        addCustomToken(token1)
+        customTokensMutate('add', token1)
         setToken1(token1)
       }
     },
-    [addCustomToken, setToken0, setToken1]
+    [customTokensMutate, setToken0, setToken1]
   )
 
   const reset = useCallback(() => {
@@ -74,17 +53,20 @@ export const TokenNotFoundDialog = () => {
   }, [network0, network1, setTokens])
 
   return (
-    <Dialog open={!tokensLoading && (token0NotInList || token1NotInList)} onClose={() => {}}>
+    <Dialog
+      open={Boolean(!tokenFromLoading && !tokenToLoading && (token0NotInList || token1NotInList))}
+      onClose={() => {}}
+    >
       <Dialog.Content className="flex flex-col gap-4">
         <>
-          <Dialog.Header title={`Unknown Token${token0 && token1 ? 's' : ''}`} />
+          <Dialog.Header title={`Unknown Token${tokenFrom?.token && tokenTo?.token ? 's' : ''}`} />
           <p className="text-gray-700 dark:text-slate-400">
             Anyone can create a token, including creating fake versions of existing tokens that claim to represent
             projects. If you purchase this token, you may not be able to sell it back.
           </p>
-          {token0NotInList && !token0 && (
+          {token0NotInList && (
             <List>
-              <List.Label>Token {token0 && token1 ? '1' : ''}</List.Label>
+              <List.Label>Token {tokenFrom?.token && tokenTo?.token ? '1' : ''}</List.Label>
               <List.Control>
                 <p className="p-3 text-sm text-gray-900 dark:text-slate-50">
                   Could not retrieve token info for{' '}
@@ -101,9 +83,9 @@ export const TokenNotFoundDialog = () => {
               </List.Control>
             </List>
           )}
-          {token1NotInList && !token1 && (
+          {token1NotInList && !tokenTo?.token && (
             <List>
-              <List.Label>Token {token0 && token1 ? '2' : ''}</List.Label>
+              <List.Label>Token {tokenFrom?.token && tokenTo?.token ? '2' : ''}</List.Label>
               <List.Control>
                 <p className="p-3 text-sm text-gray-900 dark:text-slate-50">
                   Could not retrieve token info for{' '}
@@ -120,46 +102,46 @@ export const TokenNotFoundDialog = () => {
               </List.Control>
             </List>
           )}
-          {token0 && (
+          {tokenFrom?.token && (
             <List>
-              <List.Label>Token {token0 && token1 ? '1' : ''}</List.Label>
+              <List.Label>Token {tokenFrom.token && tokenTo?.token ? '1' : ''}</List.Label>
               <List.Control>
-                <List.KeyValue title="Name">{token0?.name}</List.KeyValue>
-                <List.KeyValue title="Symbol">{token0?.symbol}</List.KeyValue>
+                <List.KeyValue title="Name">{tokenFrom.token.name}</List.KeyValue>
+                <List.KeyValue title="Symbol">{tokenFrom.token.symbol}</List.KeyValue>
                 <List.KeyValue title="Address">
                   <a
                     target="_blank"
-                    href={Chain.from(network1).getTokenUrl(token0.address)}
+                    href={Chain.from(network1).getTokenUrl(tokenFrom.token.address)}
                     className="text-blue"
                     rel="noreferrer"
                   >
-                    {shortenAddress(token0.address)}
+                    {shortenAddress(tokenFrom.token.address)}
                   </a>
                 </List.KeyValue>
               </List.Control>
             </List>
           )}
-          {token1 && (
+          {tokenTo?.token && (
             <List>
-              <List.Label>Token {token0 && token1 ? '2' : ''}</List.Label>
+              <List.Label>Token {tokenFrom?.token && tokenTo?.token ? '2' : ''}</List.Label>
               <List.Control>
-                <List.KeyValue title="Name">{token1?.name}</List.KeyValue>
-                <List.KeyValue title="Symbol">{token1?.symbol}</List.KeyValue>
+                <List.KeyValue title="Name">{tokenTo.token.name}</List.KeyValue>
+                <List.KeyValue title="Symbol">{tokenTo.token.symbol}</List.KeyValue>
                 <List.KeyValue title="Address">
                   <a
                     target="_blank"
-                    href={Chain.from(network1).getTokenUrl(token1.address)}
+                    href={Chain.from(network1).getTokenUrl(tokenTo.token.address)}
                     className="text-blue"
                     rel="noreferrer"
                   >
-                    {shortenAddress(token1.address)}
+                    {shortenAddress(tokenTo.token.address)}
                   </a>
                 </List.KeyValue>
               </List.Control>
             </List>
           )}
-          {(token0NotInList && token0) || (token1NotInList && token1) ? (
-            <Button size="xl" onClick={() => onImport([token0, token1])}>
+          {(token0NotInList && tokenFrom?.token) || (token1NotInList && tokenTo?.token) ? (
+            <Button size="xl" onClick={() => onImport([tokenFrom?.token, tokenTo?.token])}>
               I understand
             </Button>
           ) : (

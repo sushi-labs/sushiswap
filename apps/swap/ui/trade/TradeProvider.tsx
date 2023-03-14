@@ -6,6 +6,7 @@ import {
   currencyFromShortCurrencyName,
   isShortCurrencyName,
   Native,
+  Token,
   tryParseAmount,
   Type,
 } from '@sushiswap/currency'
@@ -14,8 +15,8 @@ import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } 
 import { useAccount } from 'wagmi'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
-import { useCustomTokens, useToken, useTokens } from '@sushiswap/react-query'
-import { getAddress, isAddress } from 'ethers/lib/utils'
+import { useToken } from '@sushiswap/react-query'
+import { isAddress } from 'ethers/lib/utils'
 import { Signature } from '@ethersproject/bytes'
 import { nanoid } from 'nanoid'
 import { isUniswapV2FactoryChainId } from '@sushiswap/sushiswap'
@@ -76,8 +77,6 @@ interface SwapState {
   network1: SwapChainId
   amount: Amount<Type> | undefined
   appType: AppType
-  token0NotInList: boolean
-  token1NotInList: boolean
   tokensLoading: boolean
 }
 
@@ -135,21 +134,28 @@ interface SwapProviderProps {
   children: ReactNode
 }
 
+const getTokenFromUrl = (chainId: ChainId, currencyId: string, token: Token | undefined, isLoading: boolean) => {
+  if (isLoading) {
+    return undefined
+  } else if (isShortCurrencyName(chainId, currencyId)) {
+    return currencyFromShortCurrencyName(chainId, currencyId)
+  } else if (isAddress(currencyId) && token) {
+    return token
+  } else {
+    return Native.onChain(chainId ? chainId : ChainId.ETHEREUM)
+  }
+}
+
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { address } = useAccount()
   const { query, push } = useRouter()
   const { fromChainId, fromCurrency, toChainId, toCurrency, amount: _amount } = queryParamsSchema.parse(query)
-  const { data: customTokens, isLoading: customTokensLoading } = useCustomTokens()
-  const { data: tokenMapFrom } = useTokens({ chainId: fromChainId })
-  const { data: tokenMapTo } = useTokens({ chainId: toChainId })
-  const { data: tokenFrom } = useToken({
+  const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useToken({
     chainId: fromChainId,
     address: fromCurrency,
   })
-  const { data: tokenTo } = useToken({
-    chainId: toChainId,
-    address: toCurrency,
-  })
+  const { data: tokenTo, isInitialLoading: isTokenToLoading } = useToken({ chainId: toChainId, address: toCurrency })
+
   const [internalState, dispatch] = useReducer(reducer, {
     tradeId: nanoid(),
     review: false,
@@ -160,47 +166,8 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   })
 
   const state = useMemo(() => {
-    let token0: Type | undefined = undefined
-    let isTokenFromLoading = true
-    if (isShortCurrencyName(fromChainId, fromCurrency)) {
-      token0 = currencyFromShortCurrencyName(fromChainId, fromCurrency)
-      isTokenFromLoading = false
-    } else if (isAddress(fromCurrency)) {
-      if (tokenMapFrom && tokenMapFrom[getAddress(fromCurrency)]) {
-        token0 = tokenMapFrom[getAddress(fromCurrency)]
-        isTokenFromLoading = false
-      } else if (customTokens && customTokens[`${fromChainId}:${getAddress(fromCurrency)}`]) {
-        token0 = customTokens[`${fromChainId}:${getAddress(fromCurrency)}`]
-        isTokenFromLoading = false
-      } else if (tokenFrom) {
-        token0 = tokenFrom
-        isTokenFromLoading = false
-      }
-    } else {
-      token0 = Native.onChain(fromChainId ? fromChainId : ChainId.ETHEREUM)
-      isTokenFromLoading = false
-    }
-
-    let token1: Type | undefined = undefined
-    let isTokenToLoading = true
-    if (isShortCurrencyName(toChainId, toCurrency)) {
-      token1 = currencyFromShortCurrencyName(toChainId, toCurrency)
-      isTokenToLoading = false
-    } else if (isAddress(toCurrency)) {
-      if (tokenMapTo && tokenMapTo[getAddress(toCurrency)]) {
-        token1 = tokenMapTo[getAddress(toCurrency)]
-        isTokenToLoading = false
-      } else if (customTokens && customTokens[`${toChainId}:${getAddress(toCurrency)}`]) {
-        token1 = customTokens[`${toChainId}:${getAddress(toCurrency)}`]
-        isTokenToLoading = false
-      } else if (tokenTo) {
-        token1 = tokenTo
-        isTokenToLoading = false
-      }
-    } else {
-      token1 = Native.onChain(toChainId ? toChainId : ChainId.ETHEREUM)
-      isTokenToLoading = false
-    }
+    const token0 = getTokenFromUrl(fromChainId, fromCurrency, tokenFrom, isTokenFromLoading)
+    const token1 = getTokenFromUrl(toChainId, toCurrency, tokenTo, isTokenToLoading)
 
     return {
       ...internalState,
@@ -210,37 +177,17 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       network0: fromChainId,
       network1: toChainId,
       amount: tryParseAmount(internalState.value ? internalState.value.toString() : undefined, token0),
-      token0NotInList:
-        (isAddress(fromCurrency) &&
-          !tokenFrom &&
-          !isTokenFromLoading &&
-          tokenMapFrom &&
-          !tokenMapFrom[getAddress(fromCurrency)] &&
-          customTokens &&
-          !customTokens[`${fromChainId}:${getAddress(fromCurrency)}`]) ||
-        false,
-      token1NotInList:
-        (isAddress(toCurrency) &&
-          !tokenTo &&
-          !isTokenToLoading &&
-          tokenMapTo &&
-          !tokenMapTo[getAddress(toCurrency)] &&
-          customTokens &&
-          !customTokens[`${toChainId}:${getAddress(toCurrency)}`]) ||
-        false,
-      tokensLoading: customTokensLoading || isTokenFromLoading || isTokenToLoading,
+      tokensLoading: isTokenFromLoading || isTokenToLoading,
     }
   }, [
-    customTokens,
-    customTokensLoading,
     fromChainId,
     fromCurrency,
     internalState,
+    isTokenFromLoading,
+    isTokenToLoading,
     toChainId,
     toCurrency,
     tokenFrom,
-    tokenMapFrom,
-    tokenMapTo,
     tokenTo,
   ])
 
@@ -385,34 +332,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
             ? ChainId.ETHEREUM
             : ChainId.ARBITRUM
           : state.network1
-
-      // let network1 = state.network0
-
-      // if (appType === AppType.xSwap) {
-      //   network1 = state.network0 !== ChainId.ARBITRUM ? ChainId.ARBITRUM : ChainId.ETHEREUM
-
-      //   // if (state.network0 !== state.network1) {
-      //   //   //
-      //   // }
-
-      //   // if (state.network1 === state.network0) {
-      //   //   if (state.network1 === ChainId.ARBITRUM) {
-      //   //     network1 = ChainId.ETHEREUM
-      //   //   } else {
-      //   //     network1 = ChainId.ARBITRUM
-      //   //   }
-      //   // } else {
-      //   //   network1 = state.network1
-      //   // }
-      // }
-      // const token1 =
-      //   state.token1?.chainId === network1
-      //     ? state.token1.isNative
-      //       ? state.token1.symbol
-      //       : state.token1.wrapped.address
-      //     : state.token0?.symbol === 'SUSHI'
-      //     ? Native.onChain(network1).symbol
-      //     : 'SUSHI'
 
       const token1 =
         state.token1?.chainId === network1

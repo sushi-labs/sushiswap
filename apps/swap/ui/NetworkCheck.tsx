@@ -4,7 +4,6 @@ import { useNetwork, useSwitchNetwork } from 'wagmi'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Chain, chainName } from '@sushiswap/chain'
-import { Collapsible } from '@sushiswap/ui/future/components/animation/Collapsible'
 
 export const NetworkCheck: FC = () => {
   const [open, setOpen] = useState(false)
@@ -29,27 +28,27 @@ export const NetworkCheck: FC = () => {
     }
   }, [chain, isMounted, network0])
 
+  if (!open) return <></>
+
   return (
-    <Collapsible open={open}>
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-center bg-gray-200 border-gray-300 dark:bg-slate-800 text-gray-900 dark:text-slate-400 w-full py-3 font-medium border-b dark:border-slate-200/10">
-        <p className="px-4">
-          App network ({chainName?.[network0]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}){' '}
-          {"doesn't"} match network selected in wallet (
-          {chain?.id ? chainName?.[chain.id]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim() : ''}).
-        </p>
-        <div className="block flex justify-end px-3 w-full sm:w-[unset]">
-          <Button
-            fullWidth
-            onClick={() => switchNetwork?.(network0)}
-            variant="filled"
-            color="blue"
-            size="sm"
-            className="whitespace-nowrap"
-          >
-            Switch to {Chain.fromChainId(network0).name}
-          </Button>
-        </div>
+    <div className="flex flex-col sm:flex-row gap-4 items-center justify-center bg-gray-200 border-gray-300 dark:bg-slate-800 text-gray-900 dark:text-slate-400 w-full py-3 font-medium border-b dark:border-slate-200/10">
+      <p className="px-4">
+        App network ({chainName?.[network0]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}){' '}
+        {"doesn't"} match network selected in wallet (
+        {chain?.id ? chainName?.[chain.id]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim() : ''}).
+      </p>
+      <div className="block flex justify-end px-3 w-full sm:w-[unset]">
+        <Button
+          fullWidth
+          onClick={() => switchNetwork?.(network0)}
+          variant="filled"
+          color="blue"
+          size="sm"
+          className="whitespace-nowrap"
+        >
+          Switch to {Chain.fromChainId(network0).name}
+        </Button>
       </div>
-    </Collapsible>
+    </div>
   )
 }
