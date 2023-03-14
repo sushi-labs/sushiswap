@@ -28,6 +28,7 @@ export abstract class LiquidityProvider {
   client: PublicClient
   lastUpdateBlock = 0
   readonly ON_DEMAND_POOLS_LIFETIME_IN_SECONDS = 60
+  readonly FETCH_AVAILABLE_POOLS_AFTER_SECONDS = 180 // TODO: set it back to 900, temp value atm.
 
   constructor(chainId: ChainId, client: PublicClient) {
     this.chainId = chainId

@@ -6,7 +6,7 @@ import { performance } from 'perf_hooks'
 import type { PoolType } from '@sushiswap/database'
 import { z } from 'zod'
 
-export const AllPools = z.object({
+const AllPools = z.object({
   chainId: z.coerce
     .number()
     .int()
@@ -16,6 +16,52 @@ export const AllPools = z.object({
   version: z.string(),
   poolTypes: z.string().transform((poolTypes) => poolTypes?.split(',') as PoolType[]),
 })
+
+const DiscoverNewPools = z.object({
+  chainId: z.coerce
+    .number()
+    .int()
+    .gte(0)
+    .lte(2 ** 256),
+  protocol: z.string(),
+  version: z.string(),
+  poolTypes: z.string().transform((poolTypes) => poolTypes?.split(',') as PoolType[]),
+  date: z.string().transform((date) => new Date(date)),
+})
+
+const SELECT = {
+  id: true,
+  address: true,
+  twapEnabled: true,
+  isWhitelisted: true,
+  swapFee: true,
+  type: true,
+  liquidityUSD: true,
+  token0: {
+    select: {
+      id: true,
+      address: true,
+      status: true,
+      name: true,
+      symbol: true,
+      decimals: true,
+      isFeeOnTransfer: true,
+      isCommon: true,
+    },
+  },
+  token1: {
+    select: {
+      id: true,
+      address: true,
+      name: true,
+      status: true,
+      symbol: true,
+      decimals: true,
+      isFeeOnTransfer: true,
+      isCommon: true,
+    },
+  },
+}
 
 export async function getAllPools(client: PrismaClient, args: typeof AllPools._output) {
   try {
@@ -72,43 +118,6 @@ async function getPoolsPagination(
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
 ) {
-  const select =
-    // Prisma.validator<Prisma.PoolSelect>()(
-    {
-      id: true,
-      address: true,
-      twapEnabled: true,
-      isWhitelisted: true,
-      swapFee: true,
-      type: true,
-      liquidityUSD: true,
-      token0: {
-        select: {
-          id: true,
-          address: true,
-          status: true,
-          name: true,
-          symbol: true,
-          decimals: true,
-          isFeeOnTransfer: true,
-          isCommon: true,
-        },
-      },
-      token1: {
-        select: {
-          id: true,
-          address: true,
-          name: true,
-          status: true,
-          symbol: true,
-          decimals: true,
-          isFeeOnTransfer: true,
-          isCommon: true,
-        },
-      },
-    }
-  // )
-
   const pools = await client.pool.findMany({
     where,
     orderBy: [
@@ -122,7 +131,24 @@ async function getPoolsPagination(
     take,
     skip,
     cursor,
-    select,
+    select: SELECT,
+  })
+  return pools as unknown as DecimalToString<typeof pools>
+}
+
+export async function getNewPools(client: PrismaClient, args: typeof DiscoverNewPools._output) {
+  const where: Prisma.PoolWhereInput = {
+    chainId: args.chainId,
+    protocol: args.protocol,
+    version: args.version,
+    type: { in: args.poolTypes },
+    generatedAt: {
+      gt: args.date,
+    },
+  }
+  const pools = await client.pool.findMany({
+    where,
+    select: SELECT,
   })
   return pools as unknown as DecimalToString<typeof pools>
 }

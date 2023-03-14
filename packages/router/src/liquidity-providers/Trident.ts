@@ -13,7 +13,7 @@ import { add, getUnixTime } from 'date-fns'
 import { BigNumber } from 'ethers'
 import { Address, PublicClient } from 'viem'
 
-import { filterOnDemandPools, getAllPools, PoolResponse2 } from '../lib/api'
+import { filterOnDemandPools, getAllPools, mapToken, PoolResponse2 } from '../lib/api'
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
 import { BentoPoolCode } from '../pools/BentoPool'
 import type { PoolCode } from '../pools/PoolCode'
@@ -239,8 +239,9 @@ export class TridentProvider extends LiquidityProvider {
       const res1 = classicReserves?.[i]?.result?.[1]
       if (!res0 || !res1) return
       const tokens = [
-        convertTokenToBento(this.mapToToken(pool.token0)),
-        convertTokenToBento(this.mapToToken(pool.token1)),
+        
+        convertTokenToBento(mapToken(this.chainId, pool.token0)),
+        convertTokenToBento(mapToken(this.chainId, pool.token1)),
       ]
       const rPool = new ConstantProductRPool(
         pool.address,
@@ -288,8 +289,8 @@ export class TridentProvider extends LiquidityProvider {
       if (!res0 || !res1 || totals0 === undefined || totals1 === undefined) return
 
       const tokens = [
-        convertTokenToBento(this.mapToToken(pool.token0)),
-        convertTokenToBento(this.mapToToken(pool.token1)),
+        convertTokenToBento(mapToken(this.chainId, pool.token0)),
+        convertTokenToBento(mapToken(this.chainId, pool.token1)),
       ]
       const stablePool = new StableSwapRPool(
         pool.address,
@@ -566,8 +567,8 @@ export class TridentProvider extends LiquidityProvider {
       const existingPool = this.onDemandClassicPools.get(pr.address)
       if (existingPool === undefined) {
         const tokens = [
-          convertTokenToBento(this.mapToToken(pr.token0)),
-          convertTokenToBento(this.mapToToken(pr.token1)),
+          convertTokenToBento(mapToken(this.chainId, pr.token0)),
+          convertTokenToBento(mapToken(this.chainId, pr.token1)),
         ]
         const rPool = new ConstantProductRPool(
           pr.address,
@@ -592,8 +593,8 @@ export class TridentProvider extends LiquidityProvider {
       const existingPool = this.onDemandStablePools.get(pr.address)
       if (existingPool === undefined) {
         const tokens = [
-          convertTokenToBento(this.mapToToken(pr.token0)),
-          convertTokenToBento(this.mapToToken(pr.token1)),
+          convertTokenToBento(mapToken(this.chainId, pr.token0)),
+          convertTokenToBento(mapToken(this.chainId, pr.token1)),
         ]
         const stablePool = new StableSwapRPool(
           pr.address,
@@ -1070,23 +1071,5 @@ export class TridentProvider extends LiquidityProvider {
     return tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([, t]) => t)
   }
 
-  private mapToToken({
-    address,
-    decimals,
-    symbol,
-    name,
-  }: {
-    address: string
-    decimals: number
-    symbol: string
-    name: string
-  }): Token {
-    return new Token({
-      chainId: this.chainId,
-      address,
-      decimals,
-      symbol,
-      name,
-    })
-  }
+
 }

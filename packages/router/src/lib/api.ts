@@ -1,6 +1,7 @@
+import { Token } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
 
-import { getAllPools as getAllPoolsFromDb } from './database'
+import { getAllPools as getAllPoolsFromDb, getNewPools } from './database'
 
 export interface PoolResponse2 {
   type: string
@@ -39,6 +40,20 @@ export async function getAllPools(
   poolTypes: ('CONSTANT_PRODUCT_POOL' | 'CONCENTRATED_LIQUIDITY_POOL' | 'STABLE_POOL')[]
 ) {
   const pools = await getAllPoolsFromDb(client, { chainId, protocol, version, poolTypes })
+  const poolMap = new Map(pools.map((pool) => [pool.address, pool as PoolResponse2]))
+  return poolMap
+}
+
+
+export async function discoverNewPools(
+  client: PrismaClient,
+  chainId: number,
+  protocol: string,
+  version: string,
+  poolTypes: ('CONSTANT_PRODUCT_POOL' | 'CONCENTRATED_LIQUIDITY_POOL' | 'STABLE_POOL')[],
+  date: Date,
+) {
+  const pools = await getNewPools(client, { chainId, protocol, version, poolTypes, date })
   const poolMap = new Map(pools.map((pool) => [pool.address, pool as PoolResponse2]))
   return poolMap
 }
@@ -91,4 +106,40 @@ export function filterOnDemandPools(
     .slice(0, token1PoolSize)
 
   return [...pools0, ...pools1].flat()
+}
+
+
+export function filterTopPools(
+  pools: PoolResponse2[],
+  size: number
+) {
+  const safePools = pools.filter((p) => 
+  p.token0.status === 'APPROVED' && p.token0.isFeeOnTransfer === false &&
+   p.token1.status === 'APPROVED' && p.token1.isFeeOnTransfer === false)
+  const commonPools = safePools.filter((p) => p.token0.isCommon && p.token1.isCommon)
+  const topPools = safePools.sort((a, b) => Number(b.liquidityUSD) - Number(a.liquidityUSD)).slice(0, size - commonPools.length)
+  .slice(0, size)
+
+  return [...topPools, ...commonPools]
+}
+
+
+export function mapToken(chainId: number, {
+  address,
+  decimals,
+  symbol,
+  name,
+}: {
+  address: string
+  decimals: number
+  symbol: string
+  name: string
+}): Token {
+  return new Token({
+    chainId,
+    address,
+    decimals,
+    symbol,
+    name,
+  })
 }
