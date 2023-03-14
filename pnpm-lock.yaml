@@ -3590,10 +3590,12 @@ importers:
       '@ethersproject/bytes': ^5.0.0
       '@ethersproject/providers': 5.7.2
       '@ethersproject/solidity': 5.7.0
+      '@nomicfoundation/hardhat-network-helpers': ^1.0.8
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@nomiclabs/hardhat-etherscan': 3.1.3
       '@nomiclabs/hardhat-solhint': 2.0.1
       '@openzeppelin/contracts': 4.8.0
+      '@sushiswap/abi': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hardhat-config': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -3636,10 +3638,12 @@ importers:
       '@ethersproject/bytes': 5.7.0
       '@ethersproject/providers': 5.7.2
       '@ethersproject/solidity': 5.7.0
+      '@nomicfoundation/hardhat-network-helpers': 1.0.8_hardhat@2.12.6
       '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_n3rx3kkfcos7o3ij5m4a4n7ngq
       '@nomiclabs/hardhat-etherscan': 3.1.3_hardhat@2.12.6
       '@nomiclabs/hardhat-solhint': 2.0.1_hardhat@2.12.6
       '@openzeppelin/contracts': 4.8.0
+      '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/hardhat-config': link:../../config/hardhat
       '@sushiswap/jest-config': link:../../config/jest
@@ -10309,6 +10313,15 @@ packages:
       rustbn.js: 0.2.0
     transitivePeerDependencies:
       - supports-color
+
+  /@nomicfoundation/hardhat-network-helpers/1.0.8_hardhat@2.12.6:
+    resolution: {integrity: sha512-MNqQbzUJZnCMIYvlniC3U+kcavz/PhhQSsY90tbEtUyMj/IQqsLwIRZa4ctjABh3Bz0KCh9OXUZ7Yk/d9hr45Q==}
+    peerDependencies:
+      hardhat: ^2.9.5
+    dependencies:
+      ethereumjs-util: 7.1.5
+      hardhat: 2.12.6_z6wznmtyb6ovnulj6iujpct7um
+    dev: true
 
   /@nomicfoundation/solidity-analyzer-darwin-arm64/0.1.0:
     resolution: {integrity: sha512-vEF3yKuuzfMHsZecHQcnkUrqm8mnTWfJeEVFHpg+cO+le96xQA4lAJYdUan8pXZohQxv1fSReQsn4QGNuBNuCw==}
@@ -28044,6 +28057,7 @@ packages:
       prettier: 2.8.1
       semver: 7.3.8
       solidity-comments-extractor: 0.0.7
+    dev: false
     optional: true
 
   /prettier-plugin-solidity/1.1.1_prettier@2.8.2:
@@ -28066,6 +28080,7 @@ packages:
       prettier: '>=2.2.0'
     dependencies:
       prettier: 2.8.1
+    dev: false
     optional: true
 
   /prettier-plugin-tailwindcss/0.2.1_prettier@2.8.2:
