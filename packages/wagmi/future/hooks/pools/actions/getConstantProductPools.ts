@@ -6,6 +6,7 @@ import { Address, readContracts } from 'wagmi'
 
 import { getContract } from 'wagmi/actions'
 import { getConstantProductPoolFactoryContract } from '../../../contracts/actions'
+import { pairsUnique } from './utils'
 
 export enum ConstantProductPoolState {
   LOADING,
@@ -18,21 +19,6 @@ interface PoolData {
   address: string
   token0: Token
   token1: Token
-}
-
-const pairsUnique = (currencies: [Currency | undefined, Currency | undefined][]) => {
-  const pairsMap = new Map<string, [Token, Token]>()
-  currencies.map(([c1, c2]) => {
-    if (c1 && c2) {
-      const addr1 = c1.wrapped.address as string | undefined
-      const addr2 = c2.wrapped.address as string | undefined
-      if (addr1 !== undefined && addr2 !== undefined) {
-        if (addr1.toLowerCase() < addr2.toLowerCase()) pairsMap.set(addr1 + addr2, [c1, c2] as [Token, Token])
-        else pairsMap.set(addr2 + addr1, [c2, c1] as [Token, Token])
-      }
-    }
-  })
-  return Array.from(pairsMap.values())
 }
 
 export const getConstantProductPools = async (
