@@ -17,8 +17,8 @@ export const getStaticProps: GetStaticProps = async () => {
         [unstable_serialize(() => getPoolsUrl(defaultPoolsArgs))]: pools,
         [unstable_serialize(() => getPoolCountUrl(defaultPoolsArgs))]: poolCount,
       },
-      revalidate: 60,
     },
+    revalidate: 60,
   }
 }
 
