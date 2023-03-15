@@ -11,6 +11,7 @@ import { getBentoboxTotals } from '../../bentobox'
 import { pairsUnique, tokensUnique } from './utils'
 import { BridgeBento } from '@sushiswap/tines'
 import { BridgeBentoState, getBridgeBentoPools } from './getBridgeBentoPools'
+import { Type } from '@sushiswap/currency'
 
 const queryFn = async ({
   currencyA,
@@ -18,12 +19,15 @@ const queryFn = async ({
   chainId,
   tradeType = TradeType.EXACT_INPUT,
   withBentoPools = false,
+  withCombinations = true,
 }: UsePoolsParams) => {
   const [currencyIn, currencyOut] =
     tradeType === TradeType.EXACT_INPUT ? [currencyA, currencyB] : [currencyB, currencyA]
 
-  const currencyCombinations =
-    currencyIn && currencyOut && chainId ? getCurrencyCombinations(chainId, currencyIn, currencyOut) : []
+  let currencyCombinations: [Type | undefined, Type | undefined][] = [[currencyIn, currencyOut]]
+  if (withCombinations && currencyIn && currencyOut && chainId) {
+    currencyCombinations = getCurrencyCombinations(chainId, currencyIn, currencyOut)
+  }
 
   const _tokensUnique = tokensUnique(pairsUnique(currencyCombinations))
   const totals = isBentoBoxV1ChainId(chainId) ? await getBentoboxTotals(chainId, _tokensUnique) : null
@@ -49,7 +53,9 @@ const queryFn = async ({
   }
 }
 
-export const getAllPools = async (variables: Omit<UsePoolsParams, 'enabled'>): Promise<UsePoolsReturn> => {
+export const getAllPools = async (
+  variables: Omit<UsePoolsParams, 'enabled'> & { asMap?: boolean }
+): Promise<UsePoolsReturn> => {
   if (!variables.currencyA || !variables.currencyB) {
     return {
       pairs: [],

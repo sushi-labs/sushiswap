@@ -185,8 +185,6 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
         alt={currency.name}
         className="rounded-full"
         // @ts-ignore
-        placeholder={placeholder}
-        // @ts-ignore
         width={rest.width}
         // @ts-ignore
         height={rest.height}
@@ -204,8 +202,6 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
         src={src}
         alt={currency.name}
         className="rounded-full"
-        // @ts-ignore
-        placeholder={placeholder}
         // @ts-ignore
         width={rest.width}
         // @ts-ignore

@@ -734,6 +734,7 @@ importers:
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/tailwindcss-config': workspace:*
       '@sushiswap/token-lists': workspace:*
+      '@sushiswap/trident': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi': workspace:*
@@ -806,6 +807,7 @@ importers:
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/token-lists': link:../../packages/token-lists
+      '@sushiswap/trident': link:../../protocols/trident
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@sushiswap/wagmi-config': link:../../config/wagmi

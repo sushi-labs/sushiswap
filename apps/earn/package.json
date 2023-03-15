@@ -39,6 +39,7 @@
     "@sushiswap/redux-localstorage": "workspace:*",
     "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",
+    "@sushiswap/trident": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
