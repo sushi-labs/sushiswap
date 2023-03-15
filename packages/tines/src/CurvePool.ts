@@ -7,8 +7,10 @@ export class CurvePool extends RPool {
   readonly A: number
   D: BigNumber // set it to 0 if reserves are changed !!
 
-  rate0: BigNumber
-  rate1: BigNumber
+  rate0BN: BigNumber
+  rate1BN: BigNumber
+  rate0: number
+  rate1: number
   reserve0Rated: BigNumber
   reserve1Rated: BigNumber
 
@@ -25,8 +27,10 @@ export class CurvePool extends RPool {
     this.A = A
     this.D = BigNumber.from(0)
     const decimalsMin = Math.min(this.token0.decimals, this.token1.decimals)
-    this.rate0 = getBigNumber(Math.pow(10, this.token0.decimals - decimalsMin))
-    this.rate1 = getBigNumber(Math.pow(10, this.token1.decimals - decimalsMin))
+    this.rate0 = Math.pow(10, this.token1.decimals - decimalsMin)
+    this.rate1 = Math.pow(10, this.token0.decimals - decimalsMin)
+    this.rate0BN = getBigNumber(this.rate0)
+    this.rate1BN = getBigNumber(this.rate1)
     this.reserve0Rated = this.reserve0.mul(this.rate0)
     this.reserve1Rated = this.reserve1.mul(this.rate1)
   }
@@ -92,16 +96,18 @@ export class CurvePool extends RPool {
   }
 
   calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
+    amountIn *= direction ? this.rate0 : this.rate1
     const xBN = direction ? this.reserve0Rated : this.reserve1Rated
     const yBN = direction ? this.reserve1Rated : this.reserve0Rated
     const xNewBN = xBN.add(getBigNumber(amountIn * (1 - this.fee)))
     const yNewBN = this.computeY(xNewBN)
-    const dy = parseInt(yBN.sub(yNewBN).toString())
+    const dy = parseInt(yBN.sub(yNewBN).toString()) / (direction ? this.rate1 : this.rate0)
     if (parseInt(yNewBN.toString()) < this.minLiquidity) throw 'Curve pool OutOfLiquidity'
     return { out: dy, gasSpent: this.swapGasCost }
   }
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
+    amountOut *= direction ? this.rate1 : this.rate0
     const xBN = direction ? this.reserve0Rated : this.reserve1Rated
     const yBN = direction ? this.reserve1Rated : this.reserve0Rated
     let yNewBN = yBN.sub(getBigNumber(amountOut))
@@ -110,7 +116,9 @@ export class CurvePool extends RPool {
       yNewBN = BigNumber.from(1)
 
     const xNewBN = this.computeY(yNewBN)
-    const input = Math.round(parseInt(xNewBN.sub(xBN).toString()) / (1 - this.fee))
+    const input = Math.round(
+      parseInt(xNewBN.sub(xBN).toString()) / (1 - this.fee) / (direction ? this.rate0 : this.rate1)
+    )
 
     //if (input < 1) input = 1
     return { inp: input, gasSpent: this.swapGasCost }
@@ -130,7 +138,8 @@ export class CurvePool extends RPool {
     const b = 4 * A * xI + D - 4 * A * D
     const ac4 = (D * D * D) / xI
     const Ds = Math.sqrt(b * b + 4 * A * ac4)
-    const res = (0.5 - (2 * b - ac4 / xI) / Ds / 4) * oneMinusFee
-    return res
+    const price = (0.5 - (2 * b - ac4 / xI) / Ds / 4) * oneMinusFee
+    const scale = this.rate0 / this.rate1
+    return direction ? price * scale : price / scale
   }
 }
