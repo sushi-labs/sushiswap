@@ -63,16 +63,25 @@ async function createCurvePoolInfo(poolAddress: string, user: Signer, initialBal
 
     const tokenContract = new Contract(token, erc20Abi, user)
     await tokenContract.approve(poolAddress, initialBalance.toString())
-
     tokenContracts.push(tokenContract)
-    tokenTines.push({ address: token, name: token, symbol: token, chainId })
+
+    const decimals = await tokenContract.decimals()
+    tokenTines.push({ address: token, name: token, symbol: token, chainId, decimals })
   }
 
   const A = await poolContract.A()
   const fee = await poolContract.fee()
   const reserves = await Promise.all(tokenContracts.map((_, i) => poolContract.balances(i)))
 
-  const poolTines = new CurvePool(poolAddress, tokenTines[0], tokenTines[1], fee / 1e10, A, reserves[0], reserves[1])
+  const poolTines = new CurvePool(
+    poolAddress,
+    tokenTines[0],
+    tokenTines[1],
+    fee.toNumber() / 1e10,
+    A.toNumber(),
+    reserves[0],
+    reserves[1]
+  )
 
   return {
     poolContract,
