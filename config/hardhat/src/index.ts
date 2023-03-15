@@ -266,7 +266,7 @@ export const defaultConfig: HardhatUserConfig = {
       saveDeployments: true,
     },
     consensyszkevmgoerli: {
-      url: `https://consensys-zkevm-goerli-prealpha.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      url: `https://consensys-zkevm-goerli-prealpha.infura.io/v3/53fca4c2b95a43cca82a11e8b573256b`,
       accounts,
       chainId: 59140,
       live: true,

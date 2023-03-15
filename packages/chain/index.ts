@@ -269,7 +269,7 @@ const additional = [
   {
     name: 'ConsenSys zkEVM Goreli',
     chain: 'ConsenSys zkEVM',
-    rpc: ['https://consensys-zkevm-goerli-prealpha.infura.io/v3'],
+    rpc: ['https://consensys-zkevm-goerli-prealpha.infura.io/v3/53fca4c2b95a43cca82a11e8b573256b'],
     faucets: [],
     nativeCurrency: {
       name: 'Ethereum',

@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { OP, SUSHI, USDC } from './constants'
+import { OP, SUSHI, USDC, WETH9 } from './constants'
 
 export const defaultQuoteCurrency = {
   [ChainId.ETHEREUM]: SUSHI[ChainId.ETHEREUM],
@@ -40,4 +40,7 @@ export const defaultQuoteCurrency = {
   [ChainId.BOBA_BNB]: USDC[ChainId.BOBA_BNB],
   // [ChainId.BTTC]: USDT[ChainId.BTTC],
   // [ChainId.SEPOLIA]: USDT[ChainId.SEPOLIA],
+  [ChainId.CONSENSUS_ZKEVM_TESTNET]: WETH9[ChainId.CONSENSUS_ZKEVM_TESTNET],
+  [ChainId.SCROLL_ALPHA_TESTNET]: WETH9[ChainId.SCROLL_ALPHA_TESTNET],
+  [ChainId.BASE_TESTNET]: WETH9[ChainId.BASE_TESTNET],
 } as const
