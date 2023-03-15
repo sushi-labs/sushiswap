@@ -12,5 +12,19 @@
     { "source": "/v0", "destination": "/api/v0" },
     { "source": "/v0/count", "destination": "/api/v0/count" },
     { "source": "/v0/:chainId/:address", "destination": "/api/v0/:chainId/:address" }
-  ]
+  ],
+  "functions": {
+    "api/v0/index.js": {
+      "maxDuration": 15
+    },
+    "api/v0/count.js": {
+      "maxDuration": 15
+    },
+    "api/v0/[chainId]/index.js": {
+      "maxDuration": 15
+    },
+    "api/v0/[chainId]/[address].js": {
+      "maxDuration": 15
+    }
+  }
 }
