@@ -4,7 +4,7 @@ import { getEarnPoolCount } from '../../lib/api/index.js'
 import { PoolCountApiSchema } from '../../lib/schemas/index.js'
 
 const handler = async (_request: VercelRequest, response: VercelResponse) => {
-  response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=300')
+  response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
 
   const result = PoolCountApiSchema.safeParse(_request.query)
   if (!result.success) {
