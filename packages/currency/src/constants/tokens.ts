@@ -452,6 +452,7 @@ export const WNATIVE = {
   }),
   [ChainId.CONSENSUS_ZKEVM_TESTNET]: WETH9[ChainId.CONSENSUS_ZKEVM_TESTNET],
   [ChainId.SCROLL_ALPHA_TESTNET]: WETH9[ChainId.SCROLL_ALPHA_TESTNET],
+  [ChainId.BASE_TESTNET]: WETH9[ChainId.BASE_TESTNET],
 } as const
 
 export const SUSHI = addressMapToTokenMap(

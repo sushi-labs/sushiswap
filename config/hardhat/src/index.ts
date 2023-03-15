@@ -272,6 +272,13 @@ export const defaultConfig: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
     },
+    basegoerli: {
+      url: 'https://goerli.base.org',
+      accounts,
+      chainId: 84531,
+      live: true,
+      saveDeployments: true,
+    },
     ethereum: {
       url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts,

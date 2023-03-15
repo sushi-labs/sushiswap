@@ -146,6 +146,7 @@ export enum ChainId {
   // SEPOLIA = 11155111,
   CONSENSUS_ZKEVM_TESTNET = 59140,
   SCROLL_ALPHA_TESTNET = 534353,
+  BASE_TESTNET = 84531,
 }
 
 export enum ChainKey {
@@ -187,6 +188,9 @@ export enum ChainKey {
   BOBA_AVAX = 'boba-avax',
   BOBA_BNB = 'boba-bnb',
   BTTC = 'bttc',
+  CONSENSUS_ZKEVM_TESTNET = 'consensus-zkevm-testnet',
+  SCROLL_ALPHA_TESTNET = 'scroll-alpha-testnet',
+  BASE_TESTNET = 'base-testnet',
   // SEPOLIA = 'sepolia',
 }
 
@@ -281,6 +285,28 @@ const additional = [
         name: 'ConsenSys zkEVM Goreli Explorer',
         url: 'https://explorer.goerli.zkevm.consensys.net',
         standard: Standard.None,
+      },
+    ],
+  },
+  {
+    name: 'Base Goreli',
+    chain: 'Base',
+    rpc: ['https://goerli.base.org'],
+    faucets: [],
+    nativeCurrency: {
+      name: 'Ethereum',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    infoURL: 'https://docs.base.org',
+    shortName: 'basegoerli',
+    chainId: 84531,
+    networkId: 84531,
+    explorers: [
+      {
+        name: 'Base Goreli Explorer',
+        url: 'https://goerli.basescan.org',
+        standard: Standard.Eip3091,
       },
     ],
   },
