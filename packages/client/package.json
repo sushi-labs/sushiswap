@@ -44,7 +44,7 @@
     "@sushiswap/pools-api": "workspace:*",
     "@types/node": "^18.0.0",
     "eslint": "8.29.0",
-    "swr": "2.0.3",
+    "swr": "2.1.0",
     "tsup": "6.5.0",
     "typescript": "4.9.4",
     "react": "18.2.0"

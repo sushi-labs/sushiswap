@@ -572,7 +572,7 @@ importers:
       react-dom: 18.2.0
       react-infinite-scroll-component: ^6.1.0
       react-redux: 8.0.5
-      swr: 2.0.3
+      swr: 2.1.0
       tailwindcss: 3.2.4
       typescript: 4.9.4
       wagmi: 0.9.1
@@ -619,7 +619,7 @@ importers:
       autoprefixer: 10.4.13_postcss@8.4.21
       eslint: 8.29.0
       postcss: 8.4.21
-      swr: 2.0.3_react@18.2.0
+      swr: 2.1.0_react@18.2.0
       tailwindcss: 3.2.4_postcss@8.4.21
       typescript: 4.9.4
 
@@ -771,7 +771,7 @@ importers:
       react-dom: 18.2.0
       react-infinite-scroll-component: ^6.1.0
       react-redux: 8.0.5
-      swr: ^2.0.3
+      swr: 2.1.0
       tailwindcss: 3.2.4
       typescript: 4.9.4
       wagmi: 0.9.1
@@ -831,7 +831,7 @@ importers:
       react-dom: 18.2.0_react@18.2.0
       react-infinite-scroll-component: 6.1.0_react@18.2.0
       react-redux: 8.0.5_ie75ejlwqy5zh3tldgt7pftwcu
-      swr: 2.0.3_react@18.2.0
+      swr: 2.1.0_react@18.2.0
       wagmi: 0.9.1_5fkdkfy2bkgsnhvxgn477z7iae
       zod: 3.20.2
     devDependencies:
@@ -1972,7 +1972,7 @@ importers:
       '@whatwg-node/fetch': latest
       eslint: 8.29.0
       react: 18.2.0
-      swr: 2.0.3
+      swr: 2.1.0
       tslib: latest
       tsup: 6.5.0
       typescript: 4.9.4
@@ -1990,7 +1990,7 @@ importers:
       '@types/node': 18.11.18
       eslint: 8.29.0
       react: 18.2.0
-      swr: 2.0.3_react@18.2.0
+      swr: 2.1.0_react@18.2.0
       tsup: 6.5.0_typescript@4.9.4
       typescript: 4.9.4
 
@@ -2064,7 +2064,7 @@ importers:
 
   packages/database:
     specifiers:
-      '@prisma/client': 4.11.0
+      '@prisma/client': 4.8.1
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -2072,14 +2072,13 @@ importers:
       '@types/jest': ^29.2.0
       '@types/node': ^18.0.0
       dotenv: 16.0.3
-      edge-runtime: 2.1.2
       eslint: 8.29.0
       jest: 29.3.1
-      prisma: 4.11.0
+      prisma: 4.8.1
       tsup: 6.5.0
       typescript: 4.9.4
     dependencies:
-      '@prisma/client': 4.11.0_prisma@4.11.0
+      '@prisma/client': 4.8.1_prisma@4.8.1
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -2088,10 +2087,9 @@ importers:
       '@types/jest': 29.2.4
       '@types/node': 18.11.18
       dotenv: 16.0.3
-      edge-runtime: 2.1.2
       eslint: 8.29.0
       jest: 29.3.1_@types+node@18.11.18
-      prisma: 4.11.0
+      prisma: 4.8.1
       tsup: 6.5.0_typescript@4.9.4
       typescript: 4.9.4
 
@@ -5040,30 +5038,13 @@ packages:
   /@edge-runtime/format/1.1.0:
     resolution: {integrity: sha512-MkLDDtPhXZIMx83NykdFmOpF7gVWIdd6GBHYb8V/E+PKWvD2pK/qWx9B30oN1iDJ2XBm0SGDjz02S8nDHI9lMQ==}
 
-  /@edge-runtime/format/2.0.1:
-    resolution: {integrity: sha512-aE+9DtBvQyg349srixtXEUNauWtIv5HTKPy8Q9dvG1NvpldVIvvhcDBI+SuvDVM8kQl8phbYnp2NTNloBCn/Yg==}
-    engines: {node: '>=14'}
-    dev: true
-
   /@edge-runtime/primitives/2.0.0:
     resolution: {integrity: sha512-AXqUq1zruTJAICrllUvZcgciIcEGHdF6KJ3r6FM0n4k8LpFxZ62tPWVIJ9HKm+xt+ncTBUZxwgUaQ73QMUQEKw==}
-
-  /@edge-runtime/primitives/2.1.2:
-    resolution: {integrity: sha512-SR04SMDybALlhIYIi0hiuEUwIl0b7Sn+RKwQkX6hydg4+AKMzBNDFhj2nqHDD1+xkHArV9EhmJIb6iGjShwSzg==}
-    engines: {node: '>=14'}
-    dev: true
 
   /@edge-runtime/vm/2.0.0:
     resolution: {integrity: sha512-BOLrAX8IWHRXu1siZocwLguKJPEUv7cr+rG8tI4hvHgMdIsBWHJlLeB8EjuUVnIURFrUiM49lVKn8DRrECmngw==}
     dependencies:
       '@edge-runtime/primitives': 2.0.0
-
-  /@edge-runtime/vm/2.1.2:
-    resolution: {integrity: sha512-j4H5S26NJhYOyjVMN8T/YJuwwslfnEX1P0j6N2Rq1FaubgNowdYunA9nlO7lg8Rgjv6dqJ2zKuM7GD1HFtNSGw==}
-    engines: {node: '>=14'}
-    dependencies:
-      '@edge-runtime/primitives': 2.1.2
-    dev: true
 
   /@emotion/babel-plugin/11.10.5:
     resolution: {integrity: sha512-xE7/hyLHJac7D2Ve9dKroBBZqBT7WuPQmWcq7HSGb84sUuP4mlOWoB8dvVfD9yk5DHkU1m6RW7xSoDtnQHNQeA==}
@@ -10102,8 +10083,8 @@ packages:
   /@popperjs/core/2.11.6:
     resolution: {integrity: sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==}
 
-  /@prisma/client/4.11.0_prisma@4.11.0:
-    resolution: {integrity: sha512-0INHYkQIqgAjrt7NzhYpeDQi8x3Nvylc2uDngKyFDDj1tTRQ4uV1HnVmd1sQEraeVAN63SOK0dgCKQHlvjL0KA==}
+  /@prisma/client/4.8.1_prisma@4.8.1:
+    resolution: {integrity: sha512-d4xhZhETmeXK/yZ7K0KcVOzEfI5YKGGEr4F5SBV04/MU4ncN/HcE28sy3e4Yt8UFW0ZuImKFQJE+9rWt9WbGSQ==}
     engines: {node: '>=14.17'}
     requiresBuild: true
     peerDependencies:
@@ -10112,16 +10093,16 @@ packages:
       prisma:
         optional: true
     dependencies:
-      '@prisma/engines-version': 4.11.0-57.8fde8fef4033376662cad983758335009d522acb
-      prisma: 4.11.0
+      '@prisma/engines-version': 4.8.0-61.d6e67a83f971b175a593ccc12e15c4a757f93ffe
+      prisma: 4.8.1
     dev: false
 
-  /@prisma/engines-version/4.11.0-57.8fde8fef4033376662cad983758335009d522acb:
-    resolution: {integrity: sha512-3Vd8Qq06d5xD8Ch5WauWcUUrsVPdMC6Ge8ILji8RFfyhUpqon6qSyGM0apvr1O8n8qH8cKkEFqRPsYjuz5r83g==}
+  /@prisma/engines-version/4.8.0-61.d6e67a83f971b175a593ccc12e15c4a757f93ffe:
+    resolution: {integrity: sha512-MHSOSexomRMom8QN4t7bu87wPPD+pa+hW9+71JnVcF3DqyyO/ycCLhRL1we3EojRpZxKvuyGho2REQsMCvxcJw==}
     dev: false
 
-  /@prisma/engines/4.11.0:
-    resolution: {integrity: sha512-0AEBi2HXGV02cf6ASsBPhfsVIbVSDC9nbQed4iiY5eHttW9ZtMxHThuKZE1pnESbr8HRdgmFSa/Kn4OSNYuibg==}
+  /@prisma/engines/4.8.1:
+    resolution: {integrity: sha512-93tctjNXcIS+i/e552IO6tqw17sX8liivv8WX9lDMCpEEe3ci+nT9F+1oHtAafqruXLepKF80i/D20Mm+ESlOw==}
     requiresBuild: true
 
   /@protobufjs/aspromise/1.1.2:
@@ -17139,21 +17120,6 @@ packages:
       pretty-bytes: 5.6.0
       pretty-ms: 7.0.1
       time-span: 4.0.0
-
-  /edge-runtime/2.1.2:
-    resolution: {integrity: sha512-Y6QtWVM+SBd89eN04b64TuEdxZ9nwLwwsgPfu0SZ0hlZmBpiOKjgPdZp3mexDnu+ftS+XJjydDppukRkYkL45Q==}
-    engines: {node: '>=14'}
-    hasBin: true
-    dependencies:
-      '@edge-runtime/format': 2.0.1
-      '@edge-runtime/vm': 2.1.2
-      exit-hook: 2.2.1
-      mri: 1.2.0
-      picocolors: 1.0.0
-      pretty-bytes: 5.6.0
-      pretty-ms: 7.0.1
-      time-span: 4.0.0
-    dev: true
 
   /ee-first/1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
@@ -26803,13 +26769,13 @@ packages:
     dependencies:
       parse-ms: 2.1.0
 
-  /prisma/4.11.0:
-    resolution: {integrity: sha512-4zZmBXssPUEiX+GeL0MUq/Yyie4ltiKmGu7jCJFnYMamNrrulTBc+D+QwAQSJ01tyzeGHlD13kOnqPwRipnlNw==}
+  /prisma/4.8.1:
+    resolution: {integrity: sha512-ZMLnSjwulIeYfaU1O6/LF6PEJzxN5par5weykxMykS9Z6ara/j76JH3Yo2AH3bgJbPN4Z6NeCK9s5fDkzf33cg==}
     engines: {node: '>=14.17'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 4.11.0
+      '@prisma/engines': 4.8.1
 
   /private/0.1.8:
     resolution: {integrity: sha512-VvivMrbvd2nKkiG38qjULzlc+4Vx4wm/whI9pQD35YrARNnhxeiRktSOhSukRLFNlzg6Br/cJPet5J/u19r/mg==}
@@ -28787,7 +28753,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.2
+      follow-redirects: 1.15.2_debug@4.3.4
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
@@ -29513,8 +29479,8 @@ packages:
       react: 18.2.0
     dev: false
 
-  /swr/2.0.3_react@18.2.0:
-    resolution: {integrity: sha512-sGvQDok/AHEWTPfhUWXEHBVEXmgGnuahyhmRQbjl9XBYxT/MSlAzvXEKQpyM++bMPaI52vcWS2HiKNaW7+9OFw==}
+  /swr/2.1.0_react@18.2.0:
+    resolution: {integrity: sha512-4hYl5p3/KalQ1MORealM79g/DtLohmud6yyfXw5l4wjtFksYUnocRFudvyaoUtgj3FrVNK9lS25Av9dsZYvz0g==}
     engines: {pnpm: '7'}
     peerDependencies:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0
