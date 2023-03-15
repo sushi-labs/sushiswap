@@ -260,6 +260,7 @@ export const defaultConfig: HardhatUserConfig = {
     },
     'scroll-alpha-testnet': {
       url: `https://alpha-rpc.scroll.io/l2`,
+      accounts,
       chainId: 534353,
       live: true,
       saveDeployments: true,

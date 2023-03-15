@@ -3387,6 +3387,8 @@ importers:
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@openzeppelin/contracts': 4.7.3
       '@rari-capital/solmate': 6.2.0
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hardhat-config': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -3405,6 +3407,8 @@ importers:
       '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_yab2ug5tvye2kp6e24l5x3z7uy
       '@openzeppelin/contracts': 4.7.3
       '@rari-capital/solmate': 6.2.0
+      '@sushiswap/bentobox': link:../bentobox
+      '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/hardhat-config': link:../../config/hardhat
       '@sushiswap/jest-config': link:../../config/jest
@@ -23980,7 +23984,7 @@ packages:
     dev: false
 
   /lodash.topath/4.5.2:
-    resolution: {integrity: sha1-NhY1Hzu6YZlKCTGYlmC9AyVP0Ak=}
+    resolution: {integrity: sha512-1/W4dM+35DwvE/iEd1M9ekewOSTlpFekhw9mhAtrwjVqUr83/ilQiyAvmg4tVX7Unkcfl1KC+i9WdaT4B6aQcg==}
 
   /lodash.truncate/4.4.2:
     resolution: {integrity: sha512-jttmRe7bRse52OsWIMDLaXxWqRAmtIUccAQ3garviCqJjafXOfNMO0yMfNpdD6zbGaTU0P5Nz7e7gAT6cKmJRw==}
@@ -27386,7 +27390,7 @@ packages:
       utf8: 3.0.0
 
   /react-native-path/0.0.5:
-    resolution: {integrity: sha1-oE5Lc6U1qKfPFcbnYOJ9t3ia+xM=}
+    resolution: {integrity: sha512-WJr256xBquk7X2O83QYWKqgLg43Zg3SrgjPc/kr0gCD2LoXA+2L72BW4cmstH12GbGeutqs/eXk3jgDQ2iCSvQ==}
 
   /react-onclickoutside/6.12.2_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-NMXGa223OnsrGVp5dJHkuKxQ4czdLmXSp5jSV9OqiCky9LOpPATn3vLldc+q5fK3gKbEHvr7J1u0yhBh/xYkpA==}
@@ -28788,7 +28792,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1

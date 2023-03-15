@@ -1,4 +1,4 @@
-import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
+import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/types'
 
@@ -24,7 +24,7 @@ const deployFunction: DeployFunction = async function ({
 
   // const wnative = await ethers.getContractOrNull<WETH9>("WETH9");
 
-  if (!bentoBox && !(chainId in BENTOBOX_ADDRESS) && !process.env.BENTOBOX_ADDRESS) {
+  if (!bentoBox && !isBentoBoxV1ChainId(chainId) && !process.env.BENTOBOX_ADDRESS) {
     throw Error(`No BENTOBOX on chain #${chainId}!`)
   }
 
@@ -39,8 +39,8 @@ const deployFunction: DeployFunction = async function ({
       barFeeTo,
       bentoBox
         ? bentoBox.address
-        : chainId in BENTOBOX_ADDRESS
-        ? BENTOBOX_ADDRESS[chainId]
+        : isBentoBoxV1ChainId(chainId)
+        ? bentoBoxV1Address[chainId]
         : process.env.BENTOBOX_ADDRESS,
     ],
     deterministicDeployment: false,
