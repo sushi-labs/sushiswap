@@ -26,7 +26,7 @@
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo node_modules dist",
-    "db:generate": "prisma generate",
+    "db:generate": "prisma generate --data-proxy",
     "db:pull": "prisma db pull",
     "db:push": "prisma db push --skip-generate",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
@@ -40,9 +40,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@prisma/client": "4.8.1",
-    "ioredis": "5.3.1",
-    "prisma-redis-middleware": "4.6.0"
+    "@prisma/client": "4.8.1"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

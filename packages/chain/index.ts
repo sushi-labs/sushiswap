@@ -408,7 +408,7 @@ export const chainsL2 = Object.fromEntries(
 )
 
 // ChainId array
-export const chainIds = raw.map((chain) => chain.chainId)
+export const chainIds = RAW.map((chain) => chain.chainId)
 
 // Chain Short Name => Chain Id mapping
 export const chainShortNameToChainId = Object.fromEntries(

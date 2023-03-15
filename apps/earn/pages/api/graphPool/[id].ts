@@ -9,7 +9,7 @@ const schema = z.object({
 
 // uses thegraph, not the pools api
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+  res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
 
   const result = schema.safeParse(req.query)
   if (!result.success) {

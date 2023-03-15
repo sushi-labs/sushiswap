@@ -52,6 +52,7 @@ export const getStaticProps: GetStaticProps = async () => {
         [`/analytics/api/bundles`]: bundles,
       },
     },
+    revalidate: 900,
   }
 }
 
