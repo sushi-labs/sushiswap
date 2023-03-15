@@ -2072,17 +2072,14 @@ importers:
       '@types/jest': ^29.2.0
       '@types/node': ^18.0.0
       dotenv: 16.0.3
+      edge-runtime: 2.1.2
       eslint: 8.29.0
-      ioredis: 5.3.1
       jest: 29.3.1
       prisma: 4.11.0
-      prisma-redis-middleware: 4.6.1
       tsup: 6.5.0
       typescript: 4.9.4
     dependencies:
       '@prisma/client': 4.11.0_prisma@4.11.0
-      ioredis: 5.3.1
-      prisma-redis-middleware: 4.6.1
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -2091,6 +2088,7 @@ importers:
       '@types/jest': 29.2.4
       '@types/node': 18.11.18
       dotenv: 16.0.3
+      edge-runtime: 2.1.2
       eslint: 8.29.0
       jest: 29.3.1_@types+node@18.11.18
       prisma: 4.11.0
@@ -5042,13 +5040,30 @@ packages:
   /@edge-runtime/format/1.1.0:
     resolution: {integrity: sha512-MkLDDtPhXZIMx83NykdFmOpF7gVWIdd6GBHYb8V/E+PKWvD2pK/qWx9B30oN1iDJ2XBm0SGDjz02S8nDHI9lMQ==}
 
+  /@edge-runtime/format/2.0.1:
+    resolution: {integrity: sha512-aE+9DtBvQyg349srixtXEUNauWtIv5HTKPy8Q9dvG1NvpldVIvvhcDBI+SuvDVM8kQl8phbYnp2NTNloBCn/Yg==}
+    engines: {node: '>=14'}
+    dev: true
+
   /@edge-runtime/primitives/2.0.0:
     resolution: {integrity: sha512-AXqUq1zruTJAICrllUvZcgciIcEGHdF6KJ3r6FM0n4k8LpFxZ62tPWVIJ9HKm+xt+ncTBUZxwgUaQ73QMUQEKw==}
+
+  /@edge-runtime/primitives/2.1.2:
+    resolution: {integrity: sha512-SR04SMDybALlhIYIi0hiuEUwIl0b7Sn+RKwQkX6hydg4+AKMzBNDFhj2nqHDD1+xkHArV9EhmJIb6iGjShwSzg==}
+    engines: {node: '>=14'}
+    dev: true
 
   /@edge-runtime/vm/2.0.0:
     resolution: {integrity: sha512-BOLrAX8IWHRXu1siZocwLguKJPEUv7cr+rG8tI4hvHgMdIsBWHJlLeB8EjuUVnIURFrUiM49lVKn8DRrECmngw==}
     dependencies:
       '@edge-runtime/primitives': 2.0.0
+
+  /@edge-runtime/vm/2.1.2:
+    resolution: {integrity: sha512-j4H5S26NJhYOyjVMN8T/YJuwwslfnEX1P0j6N2Rq1FaubgNowdYunA9nlO7lg8Rgjv6dqJ2zKuM7GD1HFtNSGw==}
+    engines: {node: '>=14'}
+    dependencies:
+      '@edge-runtime/primitives': 2.1.2
+    dev: true
 
   /@emotion/babel-plugin/11.10.5:
     resolution: {integrity: sha512-xE7/hyLHJac7D2Ve9dKroBBZqBT7WuPQmWcq7HSGb84sUuP4mlOWoB8dvVfD9yk5DHkU1m6RW7xSoDtnQHNQeA==}
@@ -14074,13 +14089,6 @@ packages:
     hasBin: true
     dev: true
 
-  /async-cache-dedupe/1.9.0:
-    resolution: {integrity: sha512-2BM06Rje0v4sNdi0hH3buCCFsHS7C1bwvrL1hXEpIof0maV90VCVJ+sSS3fT2YKhhMiDcOozFr5K0AQHjHbvFA==}
-    dependencies:
-      mnemonist: 0.39.5
-      safe-stable-stringify: 2.4.2
-    dev: false
-
   /async-eventemitter/0.2.4:
     resolution: {integrity: sha512-pd20BwL7Yt1zwDFy+8MX8F1+WCT8aQeKj0kQnTrH9WaeRETlRamVhD0JtRPmrV4GfOJ2F9CvdQkZeZhnh2TuHw==}
     dependencies:
@@ -17131,6 +17139,21 @@ packages:
       pretty-bytes: 5.6.0
       pretty-ms: 7.0.1
       time-span: 4.0.0
+
+  /edge-runtime/2.1.2:
+    resolution: {integrity: sha512-Y6QtWVM+SBd89eN04b64TuEdxZ9nwLwwsgPfu0SZ0hlZmBpiOKjgPdZp3mexDnu+ftS+XJjydDppukRkYkL45Q==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dependencies:
+      '@edge-runtime/format': 2.0.1
+      '@edge-runtime/vm': 2.1.2
+      exit-hook: 2.2.1
+      mri: 1.2.0
+      picocolors: 1.0.0
+      pretty-bytes: 5.6.0
+      pretty-ms: 7.0.1
+      time-span: 4.0.0
+    dev: true
 
   /ee-first/1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
@@ -26779,16 +26802,6 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       parse-ms: 2.1.0
-
-  /prisma-redis-middleware/4.6.1:
-    resolution: {integrity: sha512-J4TiXSGZo1taUmiMlVnmMXMffAT8eEt0Arc3hM/bGR2KNzrzwbLXGdhUjtYcEs5TDqiLTZXnlHCM8rIzcH2FiA==}
-    engines: {node: ^16.x || ^18.x, npm: ^7.x || ^8.x || ^9.x}
-    dependencies:
-      async-cache-dedupe: 1.9.0
-      ioredis: 5.3.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
 
   /prisma/4.11.0:
     resolution: {integrity: sha512-4zZmBXssPUEiX+GeL0MUq/Yyie4ltiKmGu7jCJFnYMamNrrulTBc+D+QwAQSJ01tyzeGHlD13kOnqPwRipnlNw==}
