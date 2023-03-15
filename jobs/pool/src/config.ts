@@ -1,50 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
 
-export const SUSHISWAP_CHAINS = [
-  ChainId.ARBITRUM,
-  ChainId.AVALANCHE,
-  ChainId.BSC,
-  ChainId.CELO,
-  ChainId.ETHEREUM,
-  ChainId.FANTOM,
-  ChainId.FUSE,
-  ChainId.GNOSIS,
-  ChainId.MOONBEAM,
-  ChainId.MOONRIVER,
-  ChainId.POLYGON,
-  ChainId.HARMONY,
-  ChainId.ARBITRUM_NOVA,
-  ChainId.BOBA,
-] as const
-
-export const TRIDENT_CHAINS = [
-  ChainId.POLYGON,
-  ChainId.OPTIMISM,
-  ChainId.METIS,
-  ChainId.KAVA,
-  ChainId.ARBITRUM,
-  ChainId.AVALANCHE,
-  ChainId.BSC,
-  ChainId.BTTC,
-] as const
-
-export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.ETHEREUM]: 'sushi-v2/sushiswap-ethereum',
-  [ChainId.AVALANCHE]: 'sushi-v2/sushiswap-avalanche',
-  [ChainId.ARBITRUM]: 'sushi-v2/sushiswap-arbitrum',
-  [ChainId.BSC]: 'sushi-v2/sushiswap-bsc',
-  [ChainId.CELO]: 'sushi-v2/sushiswap-celo',
-  [ChainId.FANTOM]: 'sushi-v2/sushiswap-fantom',
-  [ChainId.FUSE]: 'sushi-v2/sushiswap-fuse',
-  [ChainId.GNOSIS]: 'sushi-v2/sushiswap-gnosis',
-  [ChainId.MOONBEAM]: 'sushi-v2/sushiswap-moonbeam',
-  [ChainId.MOONRIVER]: 'sushi-v2/sushiswap-moonriver',
-  [ChainId.HARMONY]: 'olastenberg/sushiswap-harmony-fix',
-  [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
-  [ChainId.POLYGON]: 'sushi-v2/sushiswap-polygon',
-  [ChainId.BOBA]: 'sushi-v2/sushiswap-boba',
-}
-
 export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging'
 export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2'
 
