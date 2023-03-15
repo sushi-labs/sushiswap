@@ -110,8 +110,7 @@ function hashStringToColor(str: string) {
   return '#' + ('0' + r.toString(16)).substr(-2) + ('0' + g.toString(16)).substr(-2) + ('0' + b.toString(16)).substr(-2)
 }
 
-export interface IconProps
-  extends Omit<DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>, 'src'> {
+export interface IconProps extends Omit<ImageProps, 'src'> {
   currency: Currency
   disableLink?: boolean
 }
