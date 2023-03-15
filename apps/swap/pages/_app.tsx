@@ -11,6 +11,9 @@ import { ToastContainer } from '@sushiswap/ui/future/components/toast'
 import { SwapProvider } from 'ui/trade/TradeProvider'
 import { Onramper } from '@sushiswap/wagmi/future/components'
 import { SplashController } from '../ui/SplashController'
+import { NetworkCheck } from '../ui/NetworkCheck'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { queryClient } from '@sushiswap/react-query'
 
 export { reportWebVitals } from 'next-axiom'
 
@@ -25,17 +28,20 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="mask-icon" href="/swap/safari-pinned-tab.svg?v=1" color="#fa52a0" />
       </Head>
       <WagmiProvider>
-        <PersistQueryClientProvider>
+        {/*<PersistQueryClientProvider>*/}
+        <QueryClientProvider client={queryClient}>
           <SwapProvider>
-            {/*<SplashController>*/}
-            <Onramper.Provider>
-              <Header />
-              <Component {...pageProps} />
-            </Onramper.Provider>
-            {/*</SplashController>*/}
+            <SplashController>
+              <Onramper.Provider>
+                <NetworkCheck />
+                <Header />
+                <Component {...pageProps} />
+              </Onramper.Provider>
+            </SplashController>
           </SwapProvider>
           <ToastContainer />
-        </PersistQueryClientProvider>
+          {/*</PersistQueryClientProvider>*/}
+        </QueryClientProvider>
       </WagmiProvider>
     </>
   )

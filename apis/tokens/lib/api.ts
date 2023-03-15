@@ -23,6 +23,7 @@ export async function getToken(chainId: number, address: string) {
         decimals: true,
         isCommon: true,
         isFeeOnTransfer: true,
+        status: true,
       },
       where: {
         chainId,

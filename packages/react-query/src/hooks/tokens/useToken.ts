@@ -4,10 +4,13 @@ import { Token } from '@sushiswap/currency'
 import { useQuery } from '@tanstack/react-query'
 import {useCallback} from "react";
 
-interface UseTokenParams {
+interface UseTokenParams<T extends boolean> {
     chainId: ChainId | undefined
     address: string | undefined
+    withStatus?: T
 }
+
+type UseTokenReturn<T> = T extends true ? { token: Token, status: 'UNKNOWN' | 'APPROVED' | 'DISAPPROVED' } : Token
 
 type Data = {
     id: string
@@ -15,25 +18,35 @@ type Data = {
     name: string
     symbol: string
     decimals: number
+    status: 'UNKNOWN' | 'APPROVED' | 'DISAPPROVED'
 }
 
-const hydrate = (chainId: ChainId | undefined, data: Data) => {
+const hydrate = <T extends boolean>(chainId: ChainId | undefined, data: Data, withStatus: T | undefined): UseTokenReturn<T> | undefined => {
     if (data && chainId) {
         const { address, name, symbol, decimals } = data
-        return new Token({
+        const token = new Token({
             chainId,
             name,
             decimals,
             symbol,
             address,
         })
+
+        if (withStatus) {
+            return {
+                token,
+                status: data.status
+            } as UseTokenReturn<T>
+        }
+
+        return token as UseTokenReturn<T>
     }
 
     return undefined
 }
 
-export const useToken = ({ chainId, address }: UseTokenParams) => {
-    const select = useCallback((data: Data) => hydrate(chainId, data), [chainId])
+export const useToken = <T extends boolean = false>({ chainId, address, withStatus }: UseTokenParams<T>) => {
+    const select = useCallback((data: Data) => hydrate<T>(chainId, data, withStatus), [chainId, withStatus])
 
     return useQuery({
         queryKey: ['token', { chainId, address }],
@@ -50,5 +63,7 @@ export const useToken = ({ chainId, address }: UseTokenParams) => {
         keepPreviousData: true,
         refetchOnWindowFocus: false,
         retry: false,
+        staleTime: 900, // 15 mins
+        cacheTime: 86400 // 24hs
     })
 }

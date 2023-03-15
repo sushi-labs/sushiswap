@@ -31,6 +31,8 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
+    "@matterlabs/hardhat-zksync-deploy": "0.6.2",
+    "@matterlabs/hardhat-zksync-solc": "0.3.14",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
     "@nomiclabs/hardhat-etherscan": "3.1.3",
     "@nomiclabs/hardhat-solhint": "2.0.1",

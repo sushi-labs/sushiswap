@@ -24,6 +24,8 @@ declare global {
   }
 }
 
+export { reportWebVitals } from 'next-axiom'
+
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const isSmallScreen = useIsSmScreen()
   const router = useRouter()

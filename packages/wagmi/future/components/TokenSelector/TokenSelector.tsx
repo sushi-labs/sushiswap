@@ -1,6 +1,6 @@
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
-import { useAddCustomToken, useBalances, useCustomTokens, useTokens } from '@sushiswap/react-query'
+import { useBalances, useTokens } from '@sushiswap/react-query'
 import { SlideIn } from '@sushiswap/ui/future/components/animation'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
@@ -19,6 +19,7 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { COMMON_BASES } from '@sushiswap/router-config'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { useCustomTokens } from '@sushiswap/hooks'
 
 interface TokenSelectorProps {
   id: string
@@ -32,13 +33,12 @@ interface TokenSelectorProps {
 export const TokenSelector: FC<TokenSelectorProps> = memo(
   function TokenSelector({ id, selected, onSelect, chainId, children, currencies }) {
     const { address } = useAccount()
-    const { mutate: onAddCustomToken } = useAddCustomToken()
+    const { data: customTokenMap, mutate: customTokenMutate } = useCustomTokens()
 
     const [open, setOpen] = useState(false)
     const handleClose = useCallback(() => setOpen(false), [])
 
     const { data: tokenMap } = useTokens({ chainId })
-    const { data: customTokenMap } = useCustomTokens()
     const { data: pricesMap } = usePrices({ chainId })
     const { data: balancesMap } = useBalances({ chainId, account: address })
 
@@ -55,10 +55,10 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
 
     const handleImport = useCallback(
       (currency: Token) => {
-        onAddCustomToken(currency)
+        customTokenMutate('add', currency)
         _onSelect(currency)
       },
-      [_onSelect, onAddCustomToken]
+      [_onSelect, customTokenMutate]
     )
 
     return (

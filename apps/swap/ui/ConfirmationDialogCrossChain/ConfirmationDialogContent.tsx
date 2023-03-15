@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import { Chain } from '@sushiswap/chain'
 import { Dots } from '@sushiswap/ui/future/components/Dots'
 import { classNames, Currency, NetworkIcon } from '@sushiswap/ui'
@@ -7,7 +7,6 @@ import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_TOKEN } from '@
 import { useTrade } from '../../lib/useTrade'
 import { StepState } from './StepStates'
 import { shortenAddress } from '@sushiswap/format'
-import { useLayerZeroScanLink } from '../../lib/useLayerZeroScanLink'
 import { ArrowLongRightIcon } from '@heroicons/react/20/solid'
 
 interface ConfirmationDialogContent {

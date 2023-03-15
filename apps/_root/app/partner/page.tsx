@@ -34,7 +34,7 @@ export interface FormType {
   listType: 'default-token-list' | 'community-token-list'
 }
 
-export default function Home() {
+export default function Partner() {
   const methods = useForm<FormType>({
     resolver: yupResolver(schema),
     defaultValues: {

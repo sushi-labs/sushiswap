@@ -17,6 +17,7 @@ export interface UseTradeParams {
   recipient: string | undefined
   enabled: boolean
   carbonOffset: boolean
+  onError?(e: Error): void
 }
 
 export type UseTradeReturnWriteArgs = [HexString, BigNumber, HexString, BigNumber, HexString, BigNumber, HexString, HexString] | [HexString, BigNumber, HexString, BigNumber, HexString, HexString] | undefined

@@ -1,5 +1,5 @@
-import { ArrowTopRightOnSquareIcon, ExclamationTriangleIcon, LinkIcon, PlusIcon } from '@heroicons/react/24/outline'
-import chain, { Chain } from '@sushiswap/chain'
+import { ArrowTopRightOnSquareIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { Chain } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { SlideIn } from '@sushiswap/ui/future/components/animation'
 import { Button } from '@sushiswap/ui/future/components/button'
@@ -7,8 +7,6 @@ import { Icon } from '@sushiswap/ui/future/components/currency/Icon'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Overlay } from '@sushiswap/ui/future/components/overlay'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
-import { Currency } from '@sushiswap/ui'
 import { shortenAddress } from '@sushiswap/format'
 
 interface TokenSelectorImportRow {

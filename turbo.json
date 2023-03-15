@@ -47,7 +47,9 @@
         "storybook-static/**/*",
         "lib/**/*",
         "resolvers/**/*",
-        "transformers/**/*"
+        "transformers/**/*",
+        ".graphclient/**/*",
+        ".mesh/**/*"
       ],
       "dependsOn": [
         "^db:generate", 
@@ -57,21 +59,19 @@
         "export"
       ],
       "env": [
+        "DATABASE_URL",
+        "REDIS_URL",
         "ROOT_URL",
         "ACADEMY_URL",
         "ANALYTICS_URL",
         "BLOG_URL",
-        "BRIDGE_URL",
         "EARN_URL",
         "FURO_URL",
-        "INTERNAL_URL",
-        "KASHI_URL",
-        "PARTNER_URL",
         "SWAP_URL",
-        "XSWAP_URL",
-        "DATABASE_URL",
-        "EARN_DATABASE_URL",
-        "REDIS_URL"
+        "SWAP_API_V0_BASE_URL",
+        "AGGREGATOR_API_V0_BASE_URL",
+        "POOLS_API_V0_BASE_URL",
+        "TOKENS_API_V0_BASE_URL"
       ]
     },
     "clean": {
@@ -117,7 +117,7 @@
         "typechain/**/*",
         "artifacts/**/*"
       ],
-      "cache": true
+      "cache": false
     },
     "lint": {
       "dependsOn": ["^build"],
@@ -136,16 +136,25 @@
       "persistent": true,
       "dependsOn": ["build"]
     },
+    
     "start": {
-      "dependsOn": [
-        "build"
+      "dependsOn": [        
+        "^db:generate", 
+        "^build", 
+        "db:generate", 
+        "generate",
+        "export"
       ],
       "env": [
         "PRODUCTION_DATABASE_URL",
         "PREVIEW_DATABASE_URL",
         "REDIS_URL",
         "DATABASE_URL",
-        "ALCHEMY_ID"
+        "ALCHEMY_ID",
+        "SWAP_API_V0_BASE_URL",
+        "AGGREGATOR_API_V0_BASE_URL",
+        "POOLS_API_V0_BASE_URL",
+        "TOKENS_API_V0_BASE_URL"
       ],
       "cache": false,
       "persistent": true

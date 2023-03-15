@@ -1,8 +1,7 @@
 import { TrashIcon } from '@heroicons/react/24/outline'
 import chains from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { useIsMounted } from '@sushiswap/hooks'
-import { useCustomTokens, useRemoveCustomToken } from '@sushiswap/react-query'
+import { useCustomTokens, useIsMounted } from '@sushiswap/hooks'
 import { SlideIn } from '@sushiswap/ui/future/components/animation'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Overlay } from '@sushiswap/ui/future/components/overlay'
@@ -11,8 +10,7 @@ import { Button } from '@sushiswap/ui/future/components/button'
 
 export const TokenSelectorCustomTokensOverlay: FC = () => {
   const isMounted = useIsMounted()
-  const { data: customTokens } = useCustomTokens()
-  const { mutate: onRemoveToken } = useRemoveCustomToken()
+  const { data: customTokens, mutate } = useCustomTokens()
 
   const [open, setOpen] = useState<boolean>(false)
 
@@ -48,7 +46,7 @@ export const TokenSelectorCustomTokensOverlay: FC = () => {
                     key={token.address}
                     title={token.symbol || ''}
                     subtitle={chains[token.chainId].name}
-                    onClick={() => onRemoveToken(token.wrapped)}
+                    onClick={() => mutate('remove', token.wrapped)}
                     hoverIcon={TrashIcon}
                   />
                 ))

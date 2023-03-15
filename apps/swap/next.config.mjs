@@ -4,6 +4,10 @@ import { withAxiom } from 'next-axiom'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   ...defaultNextConfig,
+  images: {
+    loader: 'cloudinary',
+    path: 'https://cdn.sushi.com/image/upload/',
+  },
   basePath: '/swap',
   // By default, Next.js only runs ESLint on the 'pages' and 'utils' directories
   // so we have to add additional directories to the dirs.

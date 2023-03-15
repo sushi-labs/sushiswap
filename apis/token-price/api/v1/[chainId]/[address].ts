@@ -16,6 +16,7 @@ const schema = z.object({
 })
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
+  response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600')
   const { chainId, address, currency } = schema.parse(request.query)
   const oneWeekAgo = sub(new Date(), { days: 7 })
   const dateThreshold = roundToNearestMinutes(oneWeekAgo, { nearestTo: 10 })

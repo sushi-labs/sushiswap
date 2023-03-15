@@ -14,7 +14,7 @@ import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequ
 import { routeProcessorAbi } from '@sushiswap/abi'
 import { useTrade } from '../lib/useTrade'
 import { SendTransactionResult } from 'wagmi/actions'
-import { useBalances, useCreateNotification } from '@sushiswap/react-query'
+import { useCreateNotification } from '@sushiswap/react-query'
 import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
@@ -49,9 +49,9 @@ enum ConfirmationDialogState {
 export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) => {
   const { address } = useAccount()
   const { setReview } = useSwapActions()
-  const { appType, network0, token0, token1, review, amount } = useSwapState()
+  const { appType, network0, token0, token1, review } = useSwapState()
   const { data: trade } = useTrade({ crossChain: false })
-  const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
+  // const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
   const { mutate: storeNotification } = useCreateNotification({ account: address })
 
   const [open, setOpen] = useState(false)
@@ -65,6 +65,13 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     args: trade?.writeArgs,
     enabled: Boolean(trade?.writeArgs) && appType === AppType.Swap && isRouteProcessorChainId(network0),
     overrides: trade?.overrides,
+    onError: (error) => {
+      if (error.message.startsWith('user rejected transaction')) return
+      log.error('Swap prepare failed', {
+        trade,
+        error,
+      })
+    },
   })
 
   const isWrap =
@@ -112,21 +119,52 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     data,
   } = useContractWrite({
     ...config,
+    request: {
+      ...config.request,
+      gasLimit: config.request?.gasLimit.mul(120).div(100),
+    },
     onSuccess: (data) => {
       setReview(false)
+
+      // Log swap success internal, mixed, or external
+      if (
+        trade?.route?.legs?.every((leg) => leg.poolName.startsWith('SushiSwap') || leg.poolName.startsWith('Trident'))
+      ) {
+        log.info('Swap success (internal)', {
+          trade,
+        })
+      } else if (
+        trade?.route?.legs?.some((leg) => leg.poolName.startsWith('SushiSwap') || leg.poolName.startsWith('Trident'))
+      ) {
+        log.info('Swap success (mix)', {
+          trade,
+        })
+      } else if (
+        trade?.route?.legs?.every((leg) => !leg.poolName.startsWith('SushiSwap') && leg.poolName.startsWith('Trident'))
+      ) {
+        log.info('Swap success (external)', {
+          trade,
+        })
+      } else {
+        log.info('Swap success (unknown)', {
+          trade,
+        })
+      }
 
       data
         .wait()
         .then(() => setDialogState(ConfirmationDialogState.Success))
         .catch(() => setDialogState(ConfirmationDialogState.Failed))
-        .finally(() => refetchNetwork0Balances())
+      // .finally(() => refetchNetwork0Balances())
     },
     onSettled,
-    onError: (data) => {
+    onError: (error) => {
+      if (error.message.startsWith('user rejected transaction')) return
       log.error('Swap failed', {
         trade,
+        error,
       })
-      createErrorToast(swapErrorToUserReadableMessage(data), false)
+      createErrorToast(swapErrorToUserReadableMessage(error), false)
     },
   })
 

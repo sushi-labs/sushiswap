@@ -1,10 +1,15 @@
 import { ChainId } from '@sushiswap/chain'
 import { createClient, PoolType, PoolVersion, Prisma } from '@sushiswap/database'
-import { SUBGRAPH_HOST, TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import {
+  SUBGRAPH_HOST,
+  SUSHISWAP_ENABLED_NETWORKS,
+  SUSHISWAP_SUBGRAPH_NAME,
+  TRIDENT_ENABLED_NETWORKS,
+  TRIDENT_SUBGRAPH_NAME,
+} from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
 import { getBuiltGraphSDK, PairsQuery } from '../.graphclient/index.js'
-import { EXCHANGE_SUBGRAPH_NAME, SUSHISWAP_CHAINS, TRIDENT_CHAINS } from './config.js'
 import { mergePools } from './etl/pool/index.js'
 import { filterPools } from './etl/pool/index.js'
 import { createTokens } from './etl/token/load.js'
@@ -53,15 +58,15 @@ export async function execute() {
 async function extract() {
   const result: { chainId: ChainId; data: PairsQuery[] }[] = []
   const subgraphs = [
-    TRIDENT_CHAINS.map((chainId) => {
+    TRIDENT_ENABLED_NETWORKS.map((chainId) => {
       const _chainId = chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
       return { chainId, host: SUBGRAPH_HOST[_chainId], name: TRIDENT_SUBGRAPH_NAME[_chainId] }
     }),
-    SUSHISWAP_CHAINS.map((chainId) => {
+    SUSHISWAP_ENABLED_NETWORKS.map((chainId) => {
       return {
         chainId,
         host: SUBGRAPH_HOST[Number(chainId) as keyof typeof SUBGRAPH_HOST],
-        name: EXCHANGE_SUBGRAPH_NAME[chainId],
+        name: SUSHISWAP_SUBGRAPH_NAME[chainId],
       }
     }),
     // [{ chainId: ChainId.POLYGON, host: GRAPH_HOST[ChainId.POLYGON], name: 'sushi-0m/trident-polygon' }], // TODO: do we want the first trident deployment to be included?
