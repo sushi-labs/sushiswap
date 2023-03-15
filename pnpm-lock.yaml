@@ -147,31 +147,6 @@ importers:
       typescript: 4.9.4
       vercel: 28.16.7
 
-  apis/farm:
-    specifiers:
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@vercel/node': 2.9.8
-      date-fns: 2.29.3
-      eslint: 8.29.0
-      ioredis: 5.3.1
-      typescript: 4.9.4
-      vercel: 28.16.7
-    dependencies:
-      '@vercel/node': 2.9.8
-      date-fns: 2.29.3
-      ioredis: 5.3.1
-    devDependencies:
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/typescript-config': link:../../config/typescript
-      eslint: 8.29.0
-      typescript: 4.9.4
-      vercel: 28.16.7
-
   apis/pools:
     specifiers:
       '@sushiswap/abi': workspace:*
@@ -374,11 +349,13 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/redux-token-lists': workspace:*
       '@sushiswap/sushi-data': 1.0.26
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/validate': workspace:*
       '@sushiswap/wagmi': workspace:*
+      '@tanstack/react-table': 8.5.0
       '@types/cors': ^2.8.13
       '@types/node': ^18.0.0
       '@types/react': ^18.0.0
@@ -395,6 +372,7 @@ importers:
       graphql-request: ^5.0.0
       nanoid: 4.0.0
       next: 13.2.3
+      next-axiom: 0.17.0
       next-seo: 5.15.0
       next-sitemap: 3.1.43
       octokit: ^2.0.4
@@ -428,10 +406,12 @@ importers:
       '@sushiswap/graph-client': link:../../packages/graph-client
       '@sushiswap/graph-config': link:../../config/graph
       '@sushiswap/hooks': link:../../packages/hooks
+      '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/sushi-data': 1.0.26
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/validate': link:../../packages/validate
       '@sushiswap/wagmi': link:../../packages/wagmi
+      '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
       '@uniswap/token-lists': 1.0.0-beta.30
       '@vercel/analytics': 0.1.5_react@18.2.0
       cors: 2.8.5
@@ -441,6 +421,7 @@ importers:
       graphql-request: 5.1.0
       nanoid: 4.0.0
       next: 13.2.3_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.17.0_next@13.2.3
       next-seo: 5.15.0_nvzgbose6yf6w7ijjprgspqefi
       next-sitemap: 3.1.43_next@13.2.3
       octokit: 2.0.10
@@ -757,10 +738,10 @@ importers:
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi': workspace:*
       '@sushiswap/wagmi-config': workspace:*
-      '@tanstack/query-sync-storage-persister': 4.14.5
-      '@tanstack/react-query': 4.14.5
-      '@tanstack/react-query-devtools': 4.14.5
-      '@tanstack/react-query-persist-client': 4.14.5
+      '@tanstack/query-sync-storage-persister': 4.20.4
+      '@tanstack/react-query': 4.20.4
+      '@tanstack/react-query-devtools': 4.20.4
+      '@tanstack/react-query-persist-client': 4.20.4
       '@tanstack/react-table': 8.5.0
       '@types/lodash.orderby': 4.6.7
       '@types/lodash.sortby': 4.7.7
@@ -828,10 +809,10 @@ importers:
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@sushiswap/wagmi-config': link:../../config/wagmi
-      '@tanstack/query-sync-storage-persister': 4.14.5
-      '@tanstack/react-query': 4.14.5_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 4.14.5_gyxsqtja23hdhagyzodcyyjlny
-      '@tanstack/react-query-persist-client': 4.14.5_5ranp5o74eejvyb3vbwp2u74vy
+      '@tanstack/query-sync-storage-persister': 4.20.4
+      '@tanstack/react-query': 4.20.4_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.20.4_fu3ixcwltlssi3ozitelgaebme
+      '@tanstack/react-query-persist-client': 4.20.4_l2azqzttlggxzjcfejyd3icfe4
       '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
       '@vercel/analytics': 0.1.5_react@18.2.0
       date-fns: 2.29.3
@@ -918,9 +899,9 @@ importers:
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi': workspace:*
       '@sushiswap/wagmi-config': workspace:*
-      '@tanstack/react-query': 4.14.5
-      '@tanstack/react-query-devtools': 4.14.5
-      '@tanstack/react-query-persist-client': 4.14.5
+      '@tanstack/react-query': 4.20.4
+      '@tanstack/react-query-devtools': 4.20.4
+      '@tanstack/react-query-persist-client': 4.20.4
       '@tanstack/react-table': 8.5.0
       '@types/lodash.clonedeep': ^4.5.7
       '@types/node': ^18.0.0
@@ -998,9 +979,9 @@ importers:
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
-      '@tanstack/react-query': 4.14.5_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 4.14.5_gyxsqtja23hdhagyzodcyyjlny
-      '@tanstack/react-query-persist-client': 4.14.5_5ranp5o74eejvyb3vbwp2u74vy
+      '@tanstack/react-query': 4.20.4_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.20.4_fu3ixcwltlssi3ozitelgaebme
+      '@tanstack/react-query-persist-client': 4.20.4_l2azqzttlggxzjcfejyd3icfe4
       '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
       '@uniswap/redux-multicall': 1.1.8_h42dxqlbhai3nbvwo53ks2s3ie
       '@uniswap/token-lists': 1.0.0-beta.31
@@ -1059,81 +1040,6 @@ importers:
       typechain: 8.1.1_typescript@4.9.4
       typescript: 4.9.4
 
-  apps/internal:
-    specifiers:
-      '@graphprotocol/client-add-source-name': latest
-      '@graphprotocol/client-auto-pagination': latest
-      '@graphprotocol/client-cli': 2.2.19
-      '@headlessui/react': ^1.7.3
-      '@heroicons/react': ^1.0.0
-      '@octokit/auth-app': ^4.0.4
-      '@sushiswap/chain': workspace:*
-      '@sushiswap/currency': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/format': workspace:*
-      '@sushiswap/graph-client': workspace:*
-      '@sushiswap/graph-config': workspace:*
-      '@sushiswap/hooks': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/nextjs-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/redux-token-lists': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/ui': workspace:*
-      '@tanstack/react-table': ^8.5.13
-      '@types/node': ^18.0.0
-      '@types/react': ^18.0.0
-      '@types/react-dom': ^18.0.0
-      autoprefixer: 10.4.13
-      eslint: 8.29.0
-      fast-json-stable-stringify: 2.1.0
-      graphql: 16.6.0
-      next: 13.2.3
-      octokit: ^2.0.4
-      postcss: 8.4.21
-      react: 18.2.0
-      react-dom: 18.2.0
-      swr: ^1.3.0
-      tailwindcss: 3.2.4
-      typescript: 4.9.4
-    dependencies:
-      '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
-      '@heroicons/react': 1.0.6_react@18.2.0
-      '@octokit/auth-app': 4.0.7
-      '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/format': link:../../packages/format
-      '@sushiswap/graph-client': link:../../packages/graph-client
-      '@sushiswap/graph-config': link:../../config/graph
-      '@sushiswap/hooks': link:../../packages/hooks
-      '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
-      '@sushiswap/ui': link:../../packages/ui
-      '@tanstack/react-table': 8.7.4_biqbaboplfbrettd7655fr4n2y
-      fast-json-stable-stringify: 2.1.0
-      graphql: 16.6.0
-      next: 13.2.3_biqbaboplfbrettd7655fr4n2y
-      octokit: 2.0.10
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      swr: 1.3.0_react@18.2.0
-    devDependencies:
-      '@graphprotocol/client-add-source-name': 1.0.18_graphql@16.6.0
-      '@graphprotocol/client-auto-pagination': 1.1.16_graphql@16.6.0
-      '@graphprotocol/client-cli': 2.2.19_ykzowzmb7rcumunkscnbisnkom
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/nextjs-config': link:../../config/nextjs
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/typescript-config': link:../../config/typescript
-      '@types/node': 18.11.18
-      '@types/react': 18.0.26
-      '@types/react-dom': 18.0.10
-      autoprefixer: 10.4.13_postcss@8.4.21
-      eslint: 8.29.0
-      postcss: 8.4.21
-      tailwindcss: 3.2.4_postcss@8.4.21
-      typescript: 4.9.4
-
   apps/swap:
     specifiers:
       '@ethersproject/abi': 5.7.0
@@ -1171,10 +1077,10 @@ importers:
       '@sushiswap/validate': workspace:*
       '@sushiswap/wagmi': workspace:*
       '@sushiswap/wagmi-config': workspace:*
-      '@tanstack/query-sync-storage-persister': 4.14.5
-      '@tanstack/react-query': 4.14.5
-      '@tanstack/react-query-devtools': 4.14.5
-      '@tanstack/react-query-persist-client': 4.14.5
+      '@tanstack/query-sync-storage-persister': 4.20.4
+      '@tanstack/react-query': 4.20.4
+      '@tanstack/react-query-devtools': 4.20.4
+      '@tanstack/react-query-persist-client': 4.20.4
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/react': 13.4.0
       '@testing-library/user-event': 14.4.3
@@ -1187,7 +1093,7 @@ importers:
       concurrently: 7.6.0
       date-fns: 2.29.3
       eslint: 8.29.0
-      ethers: ^5.7.0
+      ethers: 5.7.2
       nanoid: 4.0.0
       next: 13.2.3
       next-axiom: 0.17.0
@@ -1230,10 +1136,10 @@ importers:
       '@sushiswap/validate': link:../../packages/validate
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@sushiswap/wagmi-config': link:../../config/wagmi
-      '@tanstack/query-sync-storage-persister': 4.14.5
-      '@tanstack/react-query': 4.14.5_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 4.14.5_gyxsqtja23hdhagyzodcyyjlny
-      '@tanstack/react-query-persist-client': 4.14.5_5ranp5o74eejvyb3vbwp2u74vy
+      '@tanstack/query-sync-storage-persister': 4.20.4
+      '@tanstack/react-query': 4.20.4_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.20.4_fu3ixcwltlssi3ozitelgaebme
+      '@tanstack/react-query-persist-client': 4.20.4_l2azqzttlggxzjcfejyd3icfe4
       '@vercel/analytics': 0.1.5_react@18.2.0
       date-fns: 2.29.3
       ethers: 5.7.2
@@ -1398,8 +1304,8 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
-      '@tanstack/react-query': 4.14.5
-      '@tanstack/react-query-devtools': 4.14.5
+      '@tanstack/react-query': 4.20.4
+      '@tanstack/react-query-devtools': 4.20.4
       tsup: 6.5.0
       typescript: 4.9.4
     dependencies:
@@ -1409,8 +1315,8 @@ importers:
       '@sushiswap/jest-config': link:../jest
       '@sushiswap/prettier-config': link:../prettier
       '@sushiswap/typescript-config': link:../typescript
-      '@tanstack/react-query': 4.14.5
-      '@tanstack/react-query-devtools': 4.14.5_5ranp5o74eejvyb3vbwp2u74vy
+      '@tanstack/react-query': 4.20.4
+      '@tanstack/react-query-devtools': 4.20.4_l2azqzttlggxzjcfejyd3icfe4
       tsup: 6.5.0_typescript@4.9.4
       typescript: 4.9.4
 
@@ -1662,16 +1568,16 @@ importers:
       '@graphql-mesh/cross-helpers': 0.3.3_graphql@16.6.0
       '@graphql-mesh/graphql': 0.34.8_graphql@16.6.0
       '@graphql-mesh/http': 0.3.21_graphql@16.6.0
-      '@graphql-mesh/json-schema': 0.37.18_graphql@16.6.0
+      '@graphql-mesh/json-schema': 0.37.19_graphql@16.6.0
       '@graphql-mesh/merger-bare': 0.16.17_graphql@16.6.0
       '@graphql-mesh/merger-stitching': 0.18.17_graphql@16.6.0
-      '@graphql-mesh/plugin-mock': 0.1.15_graphql@16.6.0
+      '@graphql-mesh/plugin-mock': 0.1.16_graphql@16.6.0
       '@graphql-mesh/runtime': 0.46.16_graphql@16.6.0
       '@graphql-mesh/store': 0.9.15_graphql@16.6.0
       '@graphql-mesh/transform-filter-schema': 0.15.18_graphql@16.6.0
-      '@graphql-mesh/transform-prefix': 0.12.16_graphql@16.6.0
+      '@graphql-mesh/transform-prefix': 0.12.17_graphql@16.6.0
       '@graphql-mesh/transform-prune': 0.1.15_graphql@16.6.0
-      '@graphql-mesh/transform-rename': 0.14.16_graphql@16.6.0
+      '@graphql-mesh/transform-rename': 0.14.17_graphql@16.6.0
       '@graphql-mesh/transform-type-merging': 0.5.15_graphql@16.6.0
       '@graphql-mesh/utils': 0.43.15_graphql@16.6.0
       '@sushiswap/database': link:../../packages/database
@@ -1756,9 +1662,9 @@ importers:
       '@graphql-mesh/runtime': 0.46.16_graphql@16.6.0
       '@graphql-mesh/store': 0.9.15_graphql@16.6.0
       '@graphql-mesh/transform-filter-schema': 0.15.18_graphql@16.6.0
-      '@graphql-mesh/transform-prefix': 0.12.16_graphql@16.6.0
+      '@graphql-mesh/transform-prefix': 0.12.17_graphql@16.6.0
       '@graphql-mesh/transform-prune': 0.1.15_graphql@16.6.0
-      '@graphql-mesh/transform-rename': 0.14.16_graphql@16.6.0
+      '@graphql-mesh/transform-rename': 0.14.17_graphql@16.6.0
       '@graphql-mesh/transform-type-merging': 0.5.15_graphql@16.6.0
       '@graphql-mesh/utils': 0.43.15_graphql@16.6.0
       '@graphql-tools/merge': 8.4.0_graphql@16.6.0
@@ -1797,6 +1703,19 @@ importers:
     specifiers:
       '@graphprotocol/client-auto-pagination': latest
       '@graphprotocol/client-cli': 2.2.19
+      '@graphql-mesh/cache-localforage': latest
+      '@graphql-mesh/cache-redis': latest
+      '@graphql-mesh/cross-helpers': latest
+      '@graphql-mesh/graphql': latest
+      '@graphql-mesh/http': latest
+      '@graphql-mesh/json-schema': latest
+      '@graphql-mesh/merger-bare': latest
+      '@graphql-mesh/merger-stitching': latest
+      '@graphql-mesh/plugin-mock': latest
+      '@graphql-mesh/runtime': latest
+      '@graphql-mesh/store': latest
+      '@graphql-mesh/utils': latest
+      '@graphql-tools/merge': latest
       '@sushiswap/chain': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/graph-config': workspace:*
@@ -1806,6 +1725,7 @@ importers:
       '@swc/core': 1.3.26
       '@swc/helpers': 0.4.14
       '@types/express': 4.17.15
+      '@whatwg-node/fetch': latest
       date-fns: 2.29.3
       dotenv: 16.0.3
       eslint: 8.29.0
@@ -1819,9 +1739,23 @@ importers:
       typescript: 4.9.4
     dependencies:
       '@graphprotocol/client-auto-pagination': 1.1.16_graphql@16.6.0
-      '@graphprotocol/client-cli': 2.2.19_erstqrng57z6woex75r4i3v24q
+      '@graphprotocol/client-cli': 2.2.19_6gqbvtbwyxgt3zdouycpjhuzii
+      '@graphql-mesh/cache-localforage': 0.7.15_graphql@16.6.0
+      '@graphql-mesh/cache-redis': 0.11.16_graphql@16.6.0
+      '@graphql-mesh/cross-helpers': 0.3.3_graphql@16.6.0
+      '@graphql-mesh/graphql': 0.34.8_graphql@16.6.0
+      '@graphql-mesh/http': 0.3.21_graphql@16.6.0
+      '@graphql-mesh/json-schema': 0.37.19_graphql@16.6.0
+      '@graphql-mesh/merger-bare': 0.16.17_graphql@16.6.0
+      '@graphql-mesh/merger-stitching': 0.18.17_graphql@16.6.0
+      '@graphql-mesh/plugin-mock': 0.1.16_graphql@16.6.0
+      '@graphql-mesh/runtime': 0.46.16_graphql@16.6.0
+      '@graphql-mesh/store': 0.9.15_graphql@16.6.0
+      '@graphql-mesh/utils': 0.43.15_graphql@16.6.0
+      '@graphql-tools/merge': 8.4.0_graphql@16.6.0
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/graph-config': link:../../config/graph
+      '@whatwg-node/fetch': 0.8.2
       date-fns: 2.29.3
       express: 4.18.2
       fast-json-stable-stringify: 2.1.0
@@ -2255,9 +2189,9 @@ importers:
       '@graphprotocol/client-auto-type-merging': 1.0.23_graphql@16.6.0
       '@graphprotocol/client-cli': 2.2.19_n4lt5oyks53kz7jxi7ky6oorvu
       '@graphql-mesh/transform-filter-schema': 0.15.18_graphql@16.6.0
-      '@graphql-mesh/transform-prefix': 0.12.16_graphql@16.6.0
+      '@graphql-mesh/transform-prefix': 0.12.17_graphql@16.6.0
       '@graphql-mesh/transform-prune': 0.1.15_graphql@16.6.0
-      '@graphql-mesh/transform-rename': 0.14.16_graphql@16.6.0
+      '@graphql-mesh/transform-rename': 0.14.17_graphql@16.6.0
       '@graphql-mesh/transform-type-merging': 0.5.15_graphql@16.6.0
       '@graphql-tools/merge': 8.4.0_graphql@16.6.0
       '@sushiswap/chain': link:../chain
@@ -2429,6 +2363,7 @@ importers:
       '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/units': ^5.7.0
+      '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
@@ -2437,15 +2372,17 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query-config': workspace:*
+      '@sushiswap/route-processor': workspace:*
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
-      '@tanstack/react-query': 4.14.5
-      '@tanstack/react-query-devtools': 4.14.5
-      '@tanstack/react-query-persist-client': 4.14.5
+      '@tanstack/react-query': 4.20.4
+      '@tanstack/react-query-devtools': 4.20.4
+      '@tanstack/react-query-persist-client': 4.20.4
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
       eslint: 8.29.0
+      ethers: 5.7.2
       idb-keyval: 6.2.0
       nanoid: 4.0.0
       react: 18.2.0
@@ -2457,15 +2394,18 @@ importers:
       '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/units': 5.7.0
+      '@sushiswap/abi': link:../abi
       '@sushiswap/amm': link:../amm
       '@sushiswap/chain': link:../chain
       '@sushiswap/currency': link:../currency
       '@sushiswap/math': link:../math
+      '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/types': link:../types
       '@sushiswap/ui': link:../ui
-      '@tanstack/react-query': 4.14.5_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 4.14.5_gyxsqtja23hdhagyzodcyyjlny
-      '@tanstack/react-query-persist-client': 4.14.5_5ranp5o74eejvyb3vbwp2u74vy
+      '@tanstack/react-query': 4.20.4_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.20.4_fu3ixcwltlssi3ozitelgaebme
+      '@tanstack/react-query-persist-client': 4.20.4_l2azqzttlggxzjcfejyd3icfe4
+      ethers: 5.7.2
       idb-keyval: 6.2.0
       nanoid: 4.0.0
       zod: 3.20.2
@@ -2915,12 +2855,14 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query': workspace:*
+      '@sushiswap/route-processor': workspace:*
       '@sushiswap/router': workspace:*
       '@sushiswap/router-config': workspace:*
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/sushixswap': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/trident': workspace:*
+      '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi-config': workspace:*
@@ -2963,12 +2905,14 @@ importers:
       '@sushiswap/hooks': link:../hooks
       '@sushiswap/math': link:../math
       '@sushiswap/react-query': link:../react-query
+      '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/router': link:../router
       '@sushiswap/router-config': link:../../config/router
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
       '@sushiswap/tines': link:../tines
       '@sushiswap/trident': link:../../protocols/trident
+      '@sushiswap/types': link:../types
       '@sushiswap/ui': link:../ui
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@tanstack/react-query': 4.20.4_biqbaboplfbrettd7655fr4n2y
@@ -6258,6 +6202,7 @@ packages:
       - react-native-windows
       - supports-color
       - utf-8-validate
+    dev: true
 
   /@graphprotocol/client-cli/2.2.19_n4lt5oyks53kz7jxi7ky6oorvu:
     resolution: {integrity: sha512-KqFxSCpaXSSAcJcX4JbZy1dCG1ueH7Ou8hPrPIV5gJPHzkypqzkTrfE0nugsBEZveXqpowkcV1ecQbKDlKP5fA==}
@@ -6339,6 +6284,7 @@ packages:
       '@repeaterjs/repeater': 3.0.4
       graphql: 16.6.0
       tslib: 2.5.0
+    dev: true
 
   /@graphprotocol/client-polling-live/1.1.0_vtgccemkbbyiexldjkr2oir634:
     resolution: {integrity: sha512-6k07fJ3rmp+u+nrorF6fpXLHFTDKy9ibevr71qiwOluuso9T9Fn1tI56XRdz0xkimdosFAex+GwXyTags7EKHg==}
@@ -6751,6 +6697,26 @@ packages:
       - react-native
       - react-native-windows
     dev: true
+
+  /@graphql-mesh/cache-redis/0.11.16_graphql@16.6.0:
+    resolution: {integrity: sha512-zxdzik/27ywnQLDY5fXQVZnnaXUKtPOazKPN2iToAGAX1OuHNs5ov61p7RzPZA5xx1Ajm7AUDTbg5p85u03l7Q==}
+    peerDependencies:
+      graphql: '*'
+    dependencies:
+      '@graphql-mesh/cross-helpers': 0.3.3_graphql@16.6.0
+      '@graphql-mesh/string-interpolation': 0.4.2_graphql@16.6.0
+      '@graphql-mesh/types': 0.91.7_graphql@16.6.0
+      '@graphql-mesh/utils': 0.43.15_graphql@16.6.0
+      graphql: 16.6.0
+      ioredis: 5.3.1
+      ioredis-mock: 8.2.6_ioredis@5.3.1
+      tslib: 2.5.0
+    transitivePeerDependencies:
+      - '@types/ioredis-mock'
+      - react-native
+      - react-native-windows
+      - supports-color
+    dev: false
 
   /@graphql-mesh/cli/0.82.24_erstqrng57z6woex75r4i3v24q:
     resolution: {integrity: sha512-bJN9uzRJnhA+dkmVz5VEll6mCyNrc7GKOE7mnj9Qyi7VxLMbvB/NSN7BVLlbBJuL7Yz/Wz8Vo7FGkrqQmfzTgQ==}
@@ -7214,8 +7180,8 @@ packages:
       - react-native-windows
     dev: true
 
-  /@graphql-mesh/json-schema/0.37.18_graphql@16.6.0:
-    resolution: {integrity: sha512-6wdH2loaqu7RaUBDMQKxirGLhpwnyRKVZi9ln4D5PLvGjuoGjeqZmUo1mIdM7abY3vzBKfxSZob5COXbZsLNwA==}
+  /@graphql-mesh/json-schema/0.37.19_graphql@16.6.0:
+    resolution: {integrity: sha512-WFKKwe4g4UYXDxWe+vnvxOUW0jSCAVCowly3w3HStExawwLAeX8G6r59jHtkbDPoduqtk+ctiOB3CerPN6w08A==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -7226,7 +7192,7 @@ packages:
       '@graphql-mesh/utils': 0.43.15_graphql@16.6.0
       '@graphql-tools/utils': 9.2.1_graphql@16.6.0
       '@json-schema-tools/meta-schema': 1.7.0
-      '@omnigraph/json-schema': 0.38.18_graphql@16.6.0
+      '@omnigraph/json-schema': 0.38.19_graphql@16.6.0
       graphql: 16.6.0
       graphql-compose: 9.0.10_graphql@16.6.0
       json-machete: 0.18.15_graphql@16.6.0
@@ -7235,7 +7201,6 @@ packages:
       - '@types/node'
       - react-native
       - react-native-windows
-    dev: true
 
   /@graphql-mesh/merger-bare/0.16.16_graphql@16.6.0:
     resolution: {integrity: sha512-oiaInZz4H1Iuq9sPOls1YthUINF7NsZHHR9RpNCkuRVWEwDNsCLh/sKSGvc3XYQZMByTpgllfitf1oZ5zPVI3A==}
@@ -7268,7 +7233,6 @@ packages:
     transitivePeerDependencies:
       - react-native
       - react-native-windows
-    dev: true
 
   /@graphql-mesh/merger-bare/0.16.4_graphql@16.6.0:
     resolution: {integrity: sha512-OwjqHYxzFtrwxS0sa5j7+f/JG10U/amIWt+ev+H9fdeUmjnztlp2rqnDqYNHQ3/sXmlM/+CJOPoC5DdEmLRnvg==}
@@ -7345,8 +7309,8 @@ packages:
       - react-native-windows
     dev: true
 
-  /@graphql-mesh/plugin-mock/0.1.15_graphql@16.6.0:
-    resolution: {integrity: sha512-N84DZ+Z3qXtdH1DNTFqoW6u+sW7jVdwaslIvZL9LCaCGuDodZLd93QzazE6THBnJzJWO0lNYfZxLcabgzbuezg==}
+  /@graphql-mesh/plugin-mock/0.1.16_graphql@16.6.0:
+    resolution: {integrity: sha512-36/1Pwqqcv0cqEr1Lwsa2QO2EMCEgU/b3Tef1uN0jZOJ07xjzHq+18gV1gaIgjpU86AzzEAtoHr8P8iANNN6XA==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -7359,12 +7323,11 @@ packages:
       '@graphql-tools/utils': 9.2.1_graphql@16.6.0
       faker: 5.5.3
       graphql: 16.6.0
-      graphql-scalars: 1.20.1_graphql@16.6.0
+      graphql-scalars: 1.20.4_graphql@16.6.0
       tslib: 2.5.0
     transitivePeerDependencies:
       - react-native
       - react-native-windows
-    dev: true
 
   /@graphql-mesh/runtime/0.46.15_graphql@16.6.0:
     resolution: {integrity: sha512-LefwojpknBN1C0DlaqCd3ahBbnWjj/RbyUPrQWruQVkL/N0vgeFG5s5kTy7NwyT+kjF0pwDnaNY/WCxIufhCbA==}
@@ -7551,8 +7514,8 @@ packages:
       - react-native
       - react-native-windows
 
-  /@graphql-mesh/transform-prefix/0.12.16_graphql@16.6.0:
-    resolution: {integrity: sha512-uHP6NBnhZVX3b17ByBcZVAbdL06Wu1vf90bs6tcRpqBULCrLLmpvedNUDT/sP1rx+vVHjdRp229Ihl1zKAoCuQ==}
+  /@graphql-mesh/transform-prefix/0.12.17_graphql@16.6.0:
+    resolution: {integrity: sha512-jjsHjK4tTnd88bgZaqH6HB074FSGlTBpLvL4eqtNJ2HjDG8WQHtoqevmYe3DSawpqwT7wwT2kP4+TqNj7ClLWw==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -7562,7 +7525,7 @@ packages:
       '@graphql-tools/utils': 9.2.1_graphql@16.6.0
       '@graphql-tools/wrap': 9.3.7_graphql@16.6.0
       graphql: 16.6.0
-      graphql-scalars: 1.20.1_graphql@16.6.0
+      graphql-scalars: 1.20.4_graphql@16.6.0
       tslib: 2.5.0
     transitivePeerDependencies:
       - react-native
@@ -7578,8 +7541,8 @@ packages:
       graphql: 16.6.0
       tslib: 2.5.0
 
-  /@graphql-mesh/transform-rename/0.14.16_graphql@16.6.0:
-    resolution: {integrity: sha512-qo/P2ryHiUJiyvgQZhxjl5cVfFvHAATYIF7umAUvfxokwGPTJ/m6YU+OCEIv9QZtj6mvTImCZxfFTdYVdE04Ow==}
+  /@graphql-mesh/transform-rename/0.14.17_graphql@16.6.0:
+    resolution: {integrity: sha512-5EsVEnK5ON8Yk8Tj4WYRBbcpigi0F8Nfms0t8Uyc86YEW7jUt8540HuuypyWjSf2Zx7NXuAeoLxEvmXUZklo9Q==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -7589,7 +7552,7 @@ packages:
       '@graphql-tools/utils': 9.2.1_graphql@16.6.0
       '@graphql-tools/wrap': 9.3.7_graphql@16.6.0
       graphql: 16.6.0
-      graphql-scalars: 1.20.1_graphql@16.6.0
+      graphql-scalars: 1.20.4_graphql@16.6.0
       tslib: 2.5.0
     transitivePeerDependencies:
       - react-native
@@ -8305,6 +8268,15 @@ packages:
       graphql: 16.6.0
       tslib: 2.5.0
 
+  /@graphql-tools/merge/8.4.0:
+    resolution: {integrity: sha512-3XYCWe0d3I4F1azNj1CdShlbHfTIfiDgj00R9uvFH8tHKh7i1IWN3F7QQYovcHKhayaR6zPok3YYMESYQcBoaA==}
+    peerDependencies:
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+    dependencies:
+      '@graphql-tools/utils': 9.2.1
+      tslib: 2.5.0
+    dev: true
+
   /@graphql-tools/merge/8.4.0_graphql@16.6.0:
     resolution: {integrity: sha512-3XYCWe0d3I4F1azNj1CdShlbHfTIfiDgj00R9uvFH8tHKh7i1IWN3F7QQYovcHKhayaR6zPok3YYMESYQcBoaA==}
     peerDependencies:
@@ -8325,7 +8297,6 @@ packages:
       fast-json-stable-stringify: 2.1.0
       graphql: 16.6.0
       tslib: 2.5.0
-    dev: true
 
   /@graphql-tools/optimize/1.3.1_graphql@16.6.0:
     resolution: {integrity: sha512-5j5CZSRGWVobt4bgRRg7zhjPiSimk+/zIuColih8E8DxuFOaJ+t0qu7eZS5KXWBkjcd4BPNuhUPpNlEmHPqVRQ==}
@@ -8764,6 +8735,10 @@ packages:
   /@humanwhocodes/object-schema/1.2.1:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
 
+  /@ioredis/as-callback/3.0.0:
+    resolution: {integrity: sha512-Kqv1rZ3WbgOrS+hgzJ5xG5WQuhvzzSTRYvNeyPMLOAM78MHSnuKI20JeJGbpuAt//LCuP0vsexZcorqW7kWhJg==}
+    dev: false
+
   /@ioredis/commands/1.2.0:
     resolution: {integrity: sha512-Sx1pU8EM64o2BrqNpEO1CNLtKQwyhuXuqyfH7oGKCk+1a33d2r5saW8zNwm3j6BTExtjrv2BxTgzzkMwts6vGg==}
 
@@ -9100,7 +9075,6 @@ packages:
 
   /@json-schema-tools/meta-schema/1.7.0:
     resolution: {integrity: sha512-3pDzVUssW3hVnf8gvSu1sKaVIpLyvmpbxgGfkUoaBiErFKRS2CZOufHD0pUFoa5e6Cd5oa72s402nJbnDz76CA==}
-    dev: true
 
   /@juggle/resize-observer/3.4.0:
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
@@ -9972,8 +9946,8 @@ packages:
       aggregate-error: 3.1.0
     dev: false
 
-  /@omnigraph/json-schema/0.38.18_graphql@16.6.0:
-    resolution: {integrity: sha512-6NBB2B2CDjcz+oezLznfbnFyhiPW0dAoADHzF2rtZojYAYGgPhYilpwCOo6X8o7gToBrGuvHxsNsMZWbP7rCbg==}
+  /@omnigraph/json-schema/0.38.19_graphql@16.6.0:
+    resolution: {integrity: sha512-p3iMqAuqpBhAk4P9nZdHlpLlgOI3gFDEKQ995ThNRyAcPnSO/b30SEoUUAKSghG38xr9d/KykDu97/p66w+1JA==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -9989,7 +9963,7 @@ packages:
       dset: 3.1.2
       graphql: 16.6.0
       graphql-compose: 9.0.10_graphql@16.6.0
-      graphql-scalars: 1.20.1_graphql@16.6.0
+      graphql-scalars: 1.20.4_graphql@16.6.0
       json-machete: 0.18.15_graphql@16.6.0
       pascal-case: 3.1.2
       qs: 6.11.0
@@ -10000,7 +9974,6 @@ packages:
       - '@types/node'
       - react-native
       - react-native-windows
-    dev: true
 
   /@openzeppelin/contracts/3.1.0:
     resolution: {integrity: sha512-dVXDnUKxrAKLzPdCRkz+N8qsVkK1XxJ6kk3zuI6zaQmcKxN7CkizoDP7lXxcs/Mi2I0mxceTRjJBqlzFffLJrQ==}
@@ -10952,30 +10925,13 @@ packages:
     dependencies:
       remove-accents: 0.4.2
 
-  /@tanstack/query-core/4.14.5:
-    resolution: {integrity: sha512-Su1AyrPb6xnm7wXTvpN5tt+B7LViYSh9k04vvuc6+eMVH0HkE9ktZTXibRrTvV83BI1KP5MG7v/k90ne/4zQzw==}
-
   /@tanstack/query-core/4.20.4:
     resolution: {integrity: sha512-lhLtGVNJDsJ/DyZXrLzekDEywQqRVykgBqTmkv0La32a/RleILXy6JMLBb7UmS3QCatg/F/0N9/5b0i5j6IKcA==}
-
-  /@tanstack/query-persist-client-core/4.14.5:
-    resolution: {integrity: sha512-L3PKTR4XEyEwPSAmtWq5ZGd5O5MGo5/BTLidhfW/nr9+updlsHTQfDAHMmE1aaWehU+PYbFH8ws1qBpJiJ/S8g==}
-    peerDependencies:
-      '@tanstack/query-core': 4.14.5
-    dev: false
 
   /@tanstack/query-persist-client-core/4.20.4:
     resolution: {integrity: sha512-MzrRC9esSEpD/kY28Zi4YqkWvuOUmpO67vpgCkQszOLbAHLMeEibId3njXxIZXDPg5fvX3HaAwFS7GheuMuKFg==}
     peerDependencies:
       '@tanstack/query-core': 4.20.4
-
-  /@tanstack/query-sync-storage-persister/4.14.5:
-    resolution: {integrity: sha512-+ZqGzAUQOTqPASCqUgzbRU9TszCK50wojwV8Hy4lfBms6SXUSN8suioOi8ZuADkHL810LBMTbhM++nbvEA5Pyw==}
-    dependencies:
-      '@tanstack/query-persist-client-core': 4.14.5
-    transitivePeerDependencies:
-      - '@tanstack/query-core'
-    dev: false
 
   /@tanstack/query-sync-storage-persister/4.20.4:
     resolution: {integrity: sha512-+LrpqZDScy9FfyJJGSY6/sMbgi9zHbDCXWOwpKJ2aPfTblk0cAJDjlM7rS49FXZD//edEJehm9SgRhFN2/9pSg==}
@@ -10984,44 +10940,33 @@ packages:
     transitivePeerDependencies:
       - '@tanstack/query-core'
 
-  /@tanstack/react-query-devtools/4.14.5_5ranp5o74eejvyb3vbwp2u74vy:
-    resolution: {integrity: sha512-LQqHRWdOh3DcWUa3oPjp7qqbIKfAZo3eu4NYmEEiWvV7CKuEDWCEGDEofdqHsvUJVk6LPQ3wCEaZB+fA4HaYvg==}
+  /@tanstack/react-query-devtools/4.20.4_fu3ixcwltlssi3ozitelgaebme:
+    resolution: {integrity: sha512-4e4wOmqAYjLS1RQ7gRBLCk3koCjbOfCMvbxS3CPCAN5+FLBemLAvoYvFJ/i/7DPsIsltGwsnd7YAFFGMzdSx7A==}
     peerDependencies:
-      '@tanstack/react-query': 4.14.5
+      '@tanstack/react-query': 4.20.4
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@tanstack/match-sorter-utils': 8.7.2
-      '@tanstack/react-query': 4.14.5
-      superjson: 1.12.1
-      use-sync-external-store: 1.2.0
-    dev: true
-
-  /@tanstack/react-query-devtools/4.14.5_gyxsqtja23hdhagyzodcyyjlny:
-    resolution: {integrity: sha512-LQqHRWdOh3DcWUa3oPjp7qqbIKfAZo3eu4NYmEEiWvV7CKuEDWCEGDEofdqHsvUJVk6LPQ3wCEaZB+fA4HaYvg==}
-    peerDependencies:
-      '@tanstack/react-query': 4.14.5
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      '@tanstack/match-sorter-utils': 8.7.2
-      '@tanstack/react-query': 4.14.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query': 4.20.4_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       superjson: 1.12.1
       use-sync-external-store: 1.2.0_react@18.2.0
     dev: false
 
-  /@tanstack/react-query-persist-client/4.14.5_5ranp5o74eejvyb3vbwp2u74vy:
-    resolution: {integrity: sha512-RG39cq4t9bfR+K/xvrpJIoHqYU3MPeZoUFPzy0QR2sWE35Y4Cx8+IuRxGoxhjbZVD1aiB1TJFQtJy958puFYEw==}
+  /@tanstack/react-query-devtools/4.20.4_l2azqzttlggxzjcfejyd3icfe4:
+    resolution: {integrity: sha512-4e4wOmqAYjLS1RQ7gRBLCk3koCjbOfCMvbxS3CPCAN5+FLBemLAvoYvFJ/i/7DPsIsltGwsnd7YAFFGMzdSx7A==}
     peerDependencies:
-      '@tanstack/react-query': 4.14.5
+      '@tanstack/react-query': 4.20.4
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
-      '@tanstack/query-persist-client-core': 4.14.5
-      '@tanstack/react-query': 4.14.5_biqbaboplfbrettd7655fr4n2y
-    transitivePeerDependencies:
-      - '@tanstack/query-core'
-    dev: false
+      '@tanstack/match-sorter-utils': 8.7.2
+      '@tanstack/react-query': 4.20.4
+      superjson: 1.12.1
+      use-sync-external-store: 1.2.0
+    dev: true
 
   /@tanstack/react-query-persist-client/4.20.4_l2azqzttlggxzjcfejyd3icfe4:
     resolution: {integrity: sha512-fJvYdULQEa+PV7M3WzWNPWiP/VmWflyiISwIzu2/wC6TnsH7CzXwUwy5PvTl89AR26GR0/U5J6f+oS6JhLVJxQ==}
@@ -11033,8 +10978,8 @@ packages:
     transitivePeerDependencies:
       - '@tanstack/query-core'
 
-  /@tanstack/react-query/4.14.5:
-    resolution: {integrity: sha512-CuWl/SxSB0zHhHaTja8LNhy9Vdk+vk9IkW3Oiq3lo4gPnTguHmbUzfjEA1x3RfvPeHfPMuq/pYMSbV+CX4aDQA==}
+  /@tanstack/react-query/4.20.4:
+    resolution: {integrity: sha512-SJRxx13k/csb9lXAJfycgVA1N/yU/h3bvRNWP0+aHMfMjmbyX82FdoAcckDBbOdEyAupvb0byelNHNeypCFSyA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
@@ -11045,27 +10990,9 @@ packages:
       react-native:
         optional: true
     dependencies:
-      '@tanstack/query-core': 4.14.5
+      '@tanstack/query-core': 4.20.4
       use-sync-external-store: 1.2.0
     dev: true
-
-  /@tanstack/react-query/4.14.5_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-CuWl/SxSB0zHhHaTja8LNhy9Vdk+vk9IkW3Oiq3lo4gPnTguHmbUzfjEA1x3RfvPeHfPMuq/pYMSbV+CX4aDQA==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-    dependencies:
-      '@tanstack/query-core': 4.14.5
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      use-sync-external-store: 1.2.0_react@18.2.0
-    dev: false
 
   /@tanstack/react-query/4.20.4_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-SJRxx13k/csb9lXAJfycgVA1N/yU/h3bvRNWP0+aHMfMjmbyX82FdoAcckDBbOdEyAupvb0byelNHNeypCFSyA==}
@@ -11096,25 +11023,8 @@ packages:
       react-dom: 18.2.0_react@18.2.0
     dev: false
 
-  /@tanstack/react-table/8.7.4_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-4Q1OV3kUSxbtekclS3sqjCyCDowqCPruUCfHm1nGoPSmVLRCHoQ1E2rmzTVGeocEKgV9TDnj39tOgGwcADPuPA==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      react: '>=16'
-      react-dom: '>=16'
-    dependencies:
-      '@tanstack/table-core': 8.7.4
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-    dev: false
-
   /@tanstack/table-core/8.5.0:
     resolution: {integrity: sha512-YqyY28DyYQy5tmhmR9BYilVvszJn5ivHHxtpFIRrtxyoJIRLFske6jV8+Pz2zV8wkucfTBubqpp/IqhYWoJ4fA==}
-    engines: {node: '>=12'}
-    dev: false
-
-  /@tanstack/table-core/8.7.4:
-    resolution: {integrity: sha512-OPhzca7e83KGukxLpZ+4F9OBp9CZXi9b/OGJBH8dlC3wpffcSSDczYGUGJKG7wirXQ6cUVYL+9G6UrrdnblKNQ==}
     engines: {node: '>=12'}
     dev: false
 
@@ -19458,7 +19368,6 @@ packages:
 
   /faker/5.5.3:
     resolution: {integrity: sha512-wLTv2a28wjUyWkbnX7u/ABZBkUkIF2fCd73V6P2oFqEGEktDfzWx4UxrSqtPRw0xPRAcjeAOIiJWqZm3pP4u3g==}
-    dev: true
 
   /fast-decode-uri-component/1.0.1:
     resolution: {integrity: sha512-WKgKWg5eUxvRZGwW8FvfbaH7AXSh2cL+3j5fMGzUMCxWBJ3dV3a7Wz8y2f/uQ0e3B6WmodD3oS54jTQ9HVTIIg==}
@@ -19593,6 +19502,22 @@ packages:
       ua-parser-js: 0.7.32
     transitivePeerDependencies:
       - encoding
+
+  /fengari-interop/0.1.3_fengari@0.1.4:
+    resolution: {integrity: sha512-EtZ+oTu3kEwVJnoymFPBVLIbQcCoy9uWCVnMA6h3M/RqHkUBsLYp29+RRHf9rKr6GwjubWREU1O7RretFIXjHw==}
+    peerDependencies:
+      fengari: ^0.1.0
+    dependencies:
+      fengari: 0.1.4
+    dev: false
+
+  /fengari/0.1.4:
+    resolution: {integrity: sha512-6ujqUuiIYmcgkGz8MGAdERU57EIluGGPSUgGPTsco657EHa+srq0S3/YUl/r9kx1+D+d4rGfYObd+m8K22gB1g==}
+    dependencies:
+      readline-sync: 1.4.10
+      sprintf-js: 1.1.2
+      tmp: 0.0.33
+    dev: false
 
   /fetch-blob/3.2.0:
     resolution: {integrity: sha512-7yAQpD2UMJzLi1Dqv7qFYnPbaPx7ZfFK6PiIxQ4PfkGPyNyl2Ugx+a/umUonmKqjhM4DnfbMvdX6otXq83soQQ==}
@@ -20576,7 +20501,6 @@ packages:
       graphql-type-json: 0.3.2_graphql@16.6.0
     transitivePeerDependencies:
       - graphql
-    dev: true
 
   /graphql-config/4.4.0_@types+node@18.11.18:
     resolution: {integrity: sha512-QUrX7R4htnTBTi83a0IlIilWVfiLEG8ANFlHRcxoZiTvOXTbgan67SUdGe1OlopbDuyNgtcy4ladl3Gvk4C36A==}
@@ -20589,7 +20513,7 @@ packages:
       '@graphql-tools/graphql-file-loader': 7.5.16
       '@graphql-tools/json-file-loader': 7.4.14
       '@graphql-tools/load': 7.8.12
-      '@graphql-tools/merge': 8.3.18
+      '@graphql-tools/merge': 8.4.0
       '@graphql-tools/url-loader': 7.17.13_@types+node@18.11.18
       '@graphql-tools/utils': 9.2.1
       cosmiconfig: 8.0.0
@@ -20645,14 +20569,14 @@ packages:
       - encoding
     dev: false
 
-  /graphql-scalars/1.20.1_graphql@16.6.0:
-    resolution: {integrity: sha512-HCSosMh8l/DVYL3/wCesnZOb+gbiaO/XlZQEIKOkWDJUGBrc15xWAs5TCQVmrycT0tbEInii+J8eoOyMwxx8zg==}
+  /graphql-scalars/1.20.4_graphql@16.6.0:
+    resolution: {integrity: sha512-/hDzWcphV/aV4MEx2pqVMMekBLi9VXYD/HrJSclpOCLkSB/dE3Rb5VVZBXsQhgBxqeCsE7K0PEO2/cWAUzQsrQ==}
     engines: {node: '>=10'}
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
       graphql: 16.6.0
-      tslib: 2.4.1
+      tslib: 2.5.0
 
   /graphql-tag/2.12.6_graphql@16.6.0:
     resolution: {integrity: sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg==}
@@ -20669,7 +20593,6 @@ packages:
       graphql: '>=0.8.0'
     dependencies:
       graphql: 16.6.0
-    dev: true
 
   /graphql-ws/5.11.2_graphql@16.6.0:
     resolution: {integrity: sha512-4EiZ3/UXYcjm+xFGP544/yW1+DVI8ZpKASFbzrV5EDTFWJp0ZvLl4Dy2fSZAzz9imKp5pZMIcjB0x/H69Pv/6w==}
@@ -21716,6 +21639,20 @@ packages:
     resolution: {integrity: sha512-b23PteSnYXSONJ6JQXRAlvJhuw8KOtkqa87W4wDtvMrud/DTJd5X+NpOOI+O/zZwVq6v0VLAaJ+1EDViKEuN9g==}
     dependencies:
       fp-ts: 1.19.3
+
+  /ioredis-mock/8.2.6_ioredis@5.3.1:
+    resolution: {integrity: sha512-Dc4fWVicryn1O6ZLT77TgKTATVBnk4XpUAYMQetKTLlKs4j7+/+6SUTYy0xnsQHVJedR0RBP3nCeqePobU/kog==}
+    engines: {node: '>=12.22'}
+    peerDependencies:
+      '@types/ioredis-mock': ^8
+      ioredis: ^5
+    dependencies:
+      '@ioredis/as-callback': 3.0.0
+      '@ioredis/commands': 1.2.0
+      fengari: 0.1.4
+      fengari-interop: 0.1.3_fengari@0.1.4
+      ioredis: 5.3.1
+    dev: false
 
   /ioredis/5.2.5:
     resolution: {integrity: sha512-7HKo/ClM2DGLRXdFq8ruS3Uuadensz4A76wPOU0adqlOqd1qkhoLPDaBhmVhUhNGpB+J65/bhLmNB8DDY99HJQ==}
@@ -23217,7 +23154,6 @@ packages:
       - '@types/node'
       - react-native
       - react-native-windows
-    dev: true
 
   /json-parse-better-errors/1.0.2:
     resolution: {integrity: sha512-mrqyZKfX5EhL7hvqcV6WG1yYjnjeuYDzDhhcAAUrq8Po85NBQBJP+ZDUT75qZQ98IkUoBqdkExkukOU7Ts2wrw==}
@@ -23885,7 +23821,6 @@ packages:
 
   /lodash.keys/4.2.0:
     resolution: {integrity: sha512-J79MkJcp7Df5mizHiVNpjoHXLi4HLjh9VLS/M7lQSGoQ+0oQ+lWEigREkqKyizPB1IawvQLLKY8mzEcm1tkyxQ==}
-    dev: true
 
   /lodash.lowercase/4.3.0:
     resolution: {integrity: sha512-UcvP1IZYyDKyEL64mmrwoA1AbFu5ahojhTtkOUr1K9dbuxzS9ev8i4TxMMGCqRC9TE8uDaSoufNAXxRPNTseVA==}
@@ -23900,7 +23835,6 @@ packages:
 
   /lodash.omit/4.5.0:
     resolution: {integrity: sha512-XeqSp49hNGmlkj2EJlfrQFIzQ6lXdNro9sddtQzcJY8QaoC2GO0DT7xaIokHeyM+mIT0mPMlPvkYzg2xCuHdZg==}
-    dev: true
 
   /lodash.once/4.1.1:
     resolution: {integrity: sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg==}
@@ -23925,18 +23859,16 @@ packages:
     dev: false
 
   /lodash.topath/4.5.2:
-    resolution: {integrity: sha512-1/W4dM+35DwvE/iEd1M9ekewOSTlpFekhw9mhAtrwjVqUr83/ilQiyAvmg4tVX7Unkcfl1KC+i9WdaT4B6aQcg==}
+    resolution: {integrity: sha1-NhY1Hzu6YZlKCTGYlmC9AyVP0Ak=}
 
   /lodash.truncate/4.4.2:
     resolution: {integrity: sha512-jttmRe7bRse52OsWIMDLaXxWqRAmtIUccAQ3garviCqJjafXOfNMO0yMfNpdD6zbGaTU0P5Nz7e7gAT6cKmJRw==}
 
   /lodash.without/4.4.0:
     resolution: {integrity: sha512-M3MefBwfDhgKgINVuBJCO1YR3+gf6s9HNJsIiZ/Ru77Ws6uTb9eBuvrkpzO+9iLoAaRodGuq7tyrPCx+74QYGQ==}
-    dev: true
 
   /lodash.xor/4.5.0:
     resolution: {integrity: sha512-sVN2zimthq7aZ5sPGXnSz32rZPuqcparVW50chJQe+mzTYV+IsxSsl/2gnkWWE2Of7K3myBQBqtLKOUEHJKRsQ==}
-    dev: true
 
   /lodash.zip/4.2.0:
     resolution: {integrity: sha512-C7IOaBBK/0gMORRBd8OETNx3kmOkgIWIPvyDpZSCTwUrpYmgZwJkjZeOD8ww4xbOUOs4/attY+pciKvadNfFbg==}
@@ -27322,7 +27254,7 @@ packages:
       utf8: 3.0.0
 
   /react-native-path/0.0.5:
-    resolution: {integrity: sha512-WJr256xBquk7X2O83QYWKqgLg43Zg3SrgjPc/kr0gCD2LoXA+2L72BW4cmstH12GbGeutqs/eXk3jgDQ2iCSvQ==}
+    resolution: {integrity: sha1-oE5Lc6U1qKfPFcbnYOJ9t3ia+xM=}
 
   /react-onclickoutside/6.12.2_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-NMXGa223OnsrGVp5dJHkuKxQ4czdLmXSp5jSV9OqiCky9LOpPATn3vLldc+q5fK3gKbEHvr7J1u0yhBh/xYkpA==}
@@ -27594,6 +27526,11 @@ packages:
     engines: {node: '>=8.10.0'}
     dependencies:
       picomatch: 2.3.1
+
+  /readline-sync/1.4.10:
+    resolution: {integrity: sha512-gNva8/6UAe8QYepIQH/jQ2qn91Qj0B9sYjMBBs3QOB8F2CXcKgLxQaJRP76sWVRQt+QU+8fAkCbCvjjMFu7Ycw==}
+    engines: {node: '>= 0.8.0'}
+    dev: false
 
   /real-require/0.1.0:
     resolution: {integrity: sha512-r/H9MzAWtrv8aSVjPCMFpDMl5q66GqtmmRkRjpHTsp4zBAa+snZyiQNlMONiUmEJcsnaw0wCauJ2GWODr/aFkg==}
@@ -28991,6 +28928,10 @@ packages:
   /sprintf-js/1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
 
+  /sprintf-js/1.1.2:
+    resolution: {integrity: sha512-VE0SOVEHCk7Qc8ulkWw3ntAzXuqf7S2lvwQaDLRnUeIEaKNQJzV6BwmLKhOqT61aGhfUMrXeaBk+oDGCzvhcug==}
+    dev: false
+
   /sshpk/1.17.0:
     resolution: {integrity: sha512-/9HIEs1ZXGhSPE8X6Ccm7Nam1z8KcoCqPdI7ecm1N33EzAetWahvQWVqLZtaZQ+IDKX4IyA2o0gBzqIMkAagHQ==}
     engines: {node: '>=0.10.0'}
@@ -29854,7 +29795,6 @@ packages:
       lodash.omit: 4.5.0
       lodash.without: 4.4.0
       lodash.xor: 4.5.0
-    dev: true
 
   /to-object-path/0.3.0:
     resolution: {integrity: sha512-9mWHdnGRuh3onocaHzukyvCZhzvr6tiflAy/JRFXcJX0TjgfWA9pk9t8CMbzmBE4Jfw58pXbkngtBtqYxzNEyg==}
@@ -30911,7 +30851,6 @@ packages:
 
   /url-join/4.0.1:
     resolution: {integrity: sha512-jk1+QP6ZJqyOiuEI9AEWQfju/nB2Pw466kbA0LEZljHwKeMgd9WrAEgEGxjPDD2+TNbbb37rTyhEfrCXfuKXnA==}
-    dev: true
 
   /url-parse-lax/3.0.0:
     resolution: {integrity: sha512-NjFKA0DidqPa5ciFcSrXnAltTtzz84ogy+NebPvfEgAck0+TNg4UJ4IN+fB7zRZfbgUf0syOo9MDxFkDSMuFaQ==}

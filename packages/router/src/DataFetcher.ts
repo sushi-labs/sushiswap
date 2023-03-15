@@ -207,10 +207,10 @@ export class DataFetcher {
     this.providers.forEach((p) => p.stopFetchPoolsData())
   }
 
-  fetchPoolsForToken(t0: Type, t1: Type) {
+  async fetchPoolsForToken(t0: Type, t1: Type): Promise<void> {
     const token0 = this.transformToken(t0)
     const token1 = this.transformToken(t1)
-    this.providers.forEach((p) => p.fetchPoolsForToken(token0, token1))
+    await Promise.all(this.providers.map((p) => p.fetchPoolsForToken(token0, token1)))
   }
 
   getCurrentPoolCodeMap(t0: Type, t1: Type): Map<string, PoolCode> {

@@ -22,10 +22,10 @@ export const TokenStats: FC<TokenStatsProps> = ({ token }) => {
         <Typography weight={500} className="text-slate-50">
           {tvl.includes('NaN') ? '$0.00' : tvl}
         </Typography>
-        <Typography variant="xs" weight={500} className={reserveChange > 0 ? 'text-green' : 'text-red'}>
+        {/* <Typography variant="xs" weight={500} className={reserveChange > 0 ? 'text-green' : 'text-red'}>
           {reserveChange > 0 ? '+' : '-'}
           {formatNumber(Math.abs(reserveChange))}%
-        </Typography>
+        </Typography> */}
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
@@ -34,10 +34,10 @@ export const TokenStats: FC<TokenStatsProps> = ({ token }) => {
         <Typography weight={500} className="text-slate-50">
           {volume.includes('NaN') ? '$0.00' : volume}
         </Typography>
-        <Typography variant="xs" weight={500} className={reserveChange > 0 ? 'text-green' : 'text-red'}>
+        {/* <Typography variant="xs" weight={500} className={reserveChange > 0 ? 'text-green' : 'text-red'}>
           {reserveChange > 0 ? '+' : '-'}
           {formatNumber(Math.abs(reserveChange))}%
-        </Typography>
+        </Typography> */}
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
@@ -46,10 +46,10 @@ export const TokenStats: FC<TokenStatsProps> = ({ token }) => {
         <Typography weight={500} className="text-slate-50">
           {fees.includes('NaN') ? '$0.00' : fees}
         </Typography>
-        <Typography variant="xs" weight={500} className={reserveChange > 0 ? 'text-green' : 'text-red'}>
+        {/* <Typography variant="xs" weight={500} className={reserveChange > 0 ? 'text-green' : 'text-red'}>
           {reserveChange > 0 ? '+' : '-'}
           {formatNumber(Math.abs(reserveChange))}%
-        </Typography>
+        </Typography> */}
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
@@ -58,10 +58,10 @@ export const TokenStats: FC<TokenStatsProps> = ({ token }) => {
         <Typography weight={500} className="text-slate-50">
           {fees.includes('NaN') ? '$0.00' : fees}
         </Typography>
-        <Typography variant="xs" weight={500} className={reserveChange > 0 ? 'text-green' : 'text-red'}>
+        {/* <Typography variant="xs" weight={500} className={reserveChange > 0 ? 'text-green' : 'text-red'}>
           {reserveChange > 0 ? '+' : '-'}
           {formatNumber(Math.abs(reserveChange))}%
-        </Typography>
+        </Typography> */}
       </div>
     </div>
   )

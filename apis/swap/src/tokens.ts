@@ -29,7 +29,28 @@ function setCache(chainId: ChainId, tokenId: string, token: typeof tokenSchema['
 
 // ! Only Polygon tokens are currently pre-cached
 async function populateCache() {
-  const chainIds = [ChainId.POLYGON]
+  const chainIds = [
+    ChainId.ARBITRUM,
+    ChainId.AVALANCHE,
+    ChainId.BSC,
+    ChainId.CELO,
+    ChainId.ETHEREUM,
+    ChainId.FANTOM,
+    ChainId.FUSE,
+    ChainId.GNOSIS,
+    ChainId.MOONBEAM,
+    ChainId.MOONRIVER,
+    ChainId.POLYGON,
+    ChainId.HARMONY,
+    ChainId.ARBITRUM_NOVA,
+    ChainId.BOBA,
+    ChainId.BOBA_AVAX,
+    ChainId.BOBA_BNB,
+    ChainId.OPTIMISM,
+    ChainId.KAVA,
+    ChainId.METIS,
+    ChainId.BTTC,
+  ]
 
   for (const chainId of chainIds) {
     const tokens = z

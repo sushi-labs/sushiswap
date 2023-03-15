@@ -124,7 +124,7 @@ export const PoolTable: FC = () => {
           HoverElement={isMd ? PoolQuickHoverTooltip : undefined}
           placeholder="No pools found"
           pageSize={PAGE_SIZE}
-          linkFormatter={rowLink}
+          // linkFormatter={rowLink}
         />
       </InfiniteScroll>
     </>

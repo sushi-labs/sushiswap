@@ -104,8 +104,6 @@ export const SUBGRAPH_HOST = {
   [ChainId.OKEX]: '',
   [ChainId.HECO]: '',
   [ChainId.KOVAN]: '',
-  [ChainId.BOBA_AVAX]: 'subgraphs.sushi.com/subgraphs/name',
-  [ChainId.BOBA_BNB]: 'subgraphs.sushi.com/subgraphs/name',
 } as const
 
 export const BENTOBOX_SUBGRAPH_NAME = {

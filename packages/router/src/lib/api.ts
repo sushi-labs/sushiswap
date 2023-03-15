@@ -79,7 +79,9 @@ export async function getTopPools(
   try {
     const pools = await fetch(
       `${
-        process.env.NEXT_PUBLIC_AGGREGATOR_API_V0_BASE_URL || 'https://aggregator-git-feature-swap.sushi.com/v0'
+        process.env.AGGREGATOR_API_V0_BASE_URL ||
+        process.env.NEXT_PUBLIC_AGGREGATOR_API_V0_BASE_URL ||
+        'https://aggregator.sushi.com/v0'
       }/${chainId}/top-pools/${protocol}/${version}?poolTypes=${poolTypes.join(
         ','
       )}&take=${size}&minLiquidity=${minLiquidity}`

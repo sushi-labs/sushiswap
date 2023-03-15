@@ -12,6 +12,7 @@ const schema = z.object({
 })
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
+  response.setHeader('Cache-Control', 's-maxage=900, stale-while-revalidate=86400')
   const { chainId } = schema.parse(request.query)
   const token = await getTokenAddressesByChainId(chainId)
   return response.status(200).json(token.map(({ address }) => address))

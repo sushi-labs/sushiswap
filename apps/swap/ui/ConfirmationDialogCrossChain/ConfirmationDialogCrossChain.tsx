@@ -47,8 +47,8 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     dest: StepState.Success,
   })
 
-  const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
-  const { refetch: refetchNetwork1Balances } = useBalances({ account: address, chainId: network0 })
+  // const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
+  // const { refetch: refetchNetwork1Balances } = useBalances({ account: address, chainId: network0 })
   const { mutate: storeNotification } = useCreateNotification({ account: address })
   const { config, isError, error } = usePrepareContractWrite({
     ...getSushiXSwapContractConfig(network0 as SushiXSwapChainId),
@@ -112,7 +112,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
           })
         })
         .finally(() => {
-          void Promise.all([refetchNetwork0Balances(), refetchNetwork1Balances()])
+          // void Promise.all([refetchNetwork0Balances(), refetchNetwork1Balances()])
           setBentoboxSignature(undefined)
           setTradeId(nanoid())
         })

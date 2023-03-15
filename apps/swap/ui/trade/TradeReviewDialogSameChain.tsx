@@ -133,7 +133,7 @@ export const TradeReviewDialogSameChain: FC = () => {
                 )}
               </List.KeyValue>
               {isSwap && (
-                <List.KeyValue title="Smart Order Route">
+                <List.KeyValue title="Route">
                   {isFetching ? (
                     <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" />
                   ) : (

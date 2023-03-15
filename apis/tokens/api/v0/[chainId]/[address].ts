@@ -3,7 +3,6 @@ import { z } from 'zod'
 
 import { getToken } from '../../../lib/api.js'
 
-
 const schema = z.object({
   chainId: z.coerce
     .number()
@@ -14,6 +13,7 @@ const schema = z.object({
 })
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
+  response.setHeader('Cache-Control', 's-maxage=900, stale-while-revalidate=86400')
   const { chainId, address } = schema.parse(request.query)
   try {
     const token = await getToken(chainId, address)

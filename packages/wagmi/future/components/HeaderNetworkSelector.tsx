@@ -21,19 +21,20 @@ export const HeaderNetworkSelector: FC<{
 
   const onSwitchNetwork = useCallback<NetworkSelectorOnSelectCallback>(
     async (el, close) => {
-      if (switchNetworkAsync) {
-        try {
+      try {
+        if (switchNetworkAsync) {
           await switchNetworkAsync(el)
-          if (selectedNetwork !== el && onChange) {
-            onChange(el)
-          }
+        }
 
-          close()
-        } catch (e) {
-          if (e instanceof UserRejectedRequestError) return
-          if (e instanceof ProviderRpcError) {
-            createErrorToast(e.message, true)
-          }
+        if (selectedNetwork !== el && onChange) {
+          onChange(el)
+        }
+
+        close()
+      } catch (e) {
+        if (e instanceof UserRejectedRequestError) return
+        if (e instanceof ProviderRpcError) {
+          createErrorToast(e.message, true)
         }
       }
     },
