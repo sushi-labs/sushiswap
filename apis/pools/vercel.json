@@ -16,7 +16,7 @@
   "functions": {
     "api/v0/index.ts": {
       "memory": 256,
-      "maxDuration": 15
+      "maxDuration": 30
     },
     "api/v0/count.ts": {
       "memory": 256,
