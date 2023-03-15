@@ -144,6 +144,8 @@ export enum ChainId {
   BOBA_BNB = 56288,
   BTTC = 199,
   // SEPOLIA = 11155111,
+  CONSENSUS_ZKEVM_TESTNET = 59140,
+  SCROLL_ALPHA_TESTNET = 534353,
 }
 
 export enum ChainKey {
