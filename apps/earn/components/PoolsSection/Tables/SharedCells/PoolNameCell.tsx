@@ -1,7 +1,8 @@
 import { formatNumber } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
 import { useInViewport } from '@sushiswap/hooks'
-import { classNames, Currency, NetworkIcon, Typography } from '@sushiswap/ui'
+import { classNames, NetworkIcon, Typography } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui/future/components/currency'
 import { FC, useRef } from 'react'
 
 import { useTokensFromPool } from '../../../../lib/hooks'
