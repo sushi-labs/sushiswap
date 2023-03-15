@@ -1,5 +1,6 @@
 import { BigNumberish } from '@ethersproject/bignumber'
 import seedrandom from 'seedrandom'
+import { RToken } from '../dist'
 
 import { closeValues, CurvePool, getBigNumber } from '../src'
 
@@ -14,6 +15,12 @@ const token1 = {
   address: 'token1_address',
   symbol: 'Token2Symbol',
   decimals: 18,
+}
+const token2 = {
+  name: 'Token1',
+  address: 'token1_address',
+  symbol: 'Token2Symbol',
+  decimals: 6,
 }
 
 export function getRandomLin(rnd: () => number, min: number, max: number) {
@@ -52,7 +59,11 @@ function expectCloseValues(
   return res
 }
 
-function createPool(params: { A: number; fee: number; reserve0: number; reserve1: number }): CurvePool {
+function createPool(
+  params: { A: number; fee: number; reserve0: number; reserve1: number },
+  token0: RToken,
+  token1: RToken
+): CurvePool {
   return new CurvePool(
     'curve pool',
     token0,
@@ -138,19 +149,23 @@ function checkPoolPriceCalculation(pool: CurvePool) {
   expect(Math.abs(price1 / expected_price - 1)).toBeLessThan(expectedPrecision)
 }
 
-function createRandomPool(rnd: () => number) {
+function createRandomPool(rnd: () => number, token0: RToken, token1: RToken) {
   const reserve0 = getRandomExp(rnd, 1e8, 1e30)
-  return createPool({
-    A: Math.round(getRandomExp(rnd, 1, 10_000)),
-    fee: Math.round(getRandomLin(rnd, 1, 100)) / 10_000,
-    reserve0,
-    reserve1: reserve0 * getRandomExp(rnd, 1 / 1000, 1000),
-  })
+  return createPool(
+    {
+      A: Math.round(getRandomExp(rnd, 1, 10_000)),
+      fee: Math.round(getRandomLin(rnd, 1, 100)) / 10_000,
+      reserve0,
+      reserve1: reserve0 * getRandomExp(rnd, 1 / 1000, 1000),
+    },
+    token0,
+    token1
+  )
 }
 
 describe('Curve1 2 tokens pools check', () => {
   it('TypicalPool', () => {
-    const pool = createPool({ A: 2000, fee: 1e-4, reserve0: 1e13, reserve1: 1e13 })
+    const pool = createPool({ A: 2000, fee: 1e-4, reserve0: 1e13, reserve1: 1e13 }, token0, token1)
     checkSwap(pool, 1e8, true)
     checkSwap(pool, 1e8, false)
     checkPoolPriceCalculation(pool)
@@ -160,7 +175,7 @@ describe('Curve1 2 tokens pools check', () => {
     for (let p = 0; p < 30; ++p) {
       const testSeed = '' + p
       const rnd: () => number = seedrandom(testSeed) // random [0, 1)
-      const pool = createRandomPool(rnd)
+      const pool = createRandomPool(rnd, token0, token1)
       checkPoolPriceCalculation(pool)
       for (let i = 0; i < 30; ++i) {
         const amountInPortion = getRandomExp(rnd, 1e-5, 1e-1)

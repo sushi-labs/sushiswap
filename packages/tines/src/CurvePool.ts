@@ -7,6 +7,11 @@ export class CurvePool extends RPool {
   readonly A: number
   D: BigNumber // set it to 0 if reserves are changed !!
 
+  rate0: BigNumber
+  rate1: BigNumber
+  reserve0Rated: BigNumber
+  reserve1Rated: BigNumber
+
   constructor(
     address: string,
     token0: RToken,
@@ -19,19 +24,26 @@ export class CurvePool extends RPool {
     super(address, token0, token1, fee, reserve0, reserve1)
     this.A = A
     this.D = BigNumber.from(0)
+    const decimalsMin = Math.min(this.token0.decimals, this.token1.decimals)
+    this.rate0 = getBigNumber(Math.pow(10, this.token0.decimals - decimalsMin))
+    this.rate1 = getBigNumber(Math.pow(10, this.token1.decimals - decimalsMin))
+    this.reserve0Rated = this.reserve0.mul(this.rate0)
+    this.reserve1Rated = this.reserve1.mul(this.rate1)
   }
 
   updateReserves(res0: BigNumber, res1: BigNumber) {
     this.D = BigNumber.from(0)
     this.reserve0 = res0
     this.reserve1 = res1
+    this.reserve0Rated = this.reserve0.mul(this.rate0)
+    this.reserve1Rated = this.reserve1.mul(this.rate1)
   }
 
   computeLiquidity(): BigNumber {
     if (!this.D.eq(0)) return this.D // already calculated
 
-    const r0 = this.reserve0
-    const r1 = this.reserve1
+    const r0 = this.reserve0Rated
+    const r1 = this.reserve1Rated
 
     if (r0.isZero() && r1.isZero()) return BigNumber.from(0)
 
@@ -80,18 +92,18 @@ export class CurvePool extends RPool {
   }
 
   calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
-    const xBN = direction ? this.reserve0 : this.reserve1
-    const yBN = direction ? this.reserve1 : this.reserve0
+    const xBN = direction ? this.reserve0Rated : this.reserve1Rated
+    const yBN = direction ? this.reserve1Rated : this.reserve0Rated
     const xNewBN = xBN.add(getBigNumber(amountIn * (1 - this.fee)))
     const yNewBN = this.computeY(xNewBN)
     const dy = parseInt(yBN.sub(yNewBN).toString())
-    if (parseInt(yNewBN.toString()) < this.minLiquidity) throw 'Curve OutOfLiquidity'
+    if (parseInt(yNewBN.toString()) < this.minLiquidity) throw 'Curve pool OutOfLiquidity'
     return { out: dy, gasSpent: this.swapGasCost }
   }
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
-    const xBN = direction ? this.reserve0 : this.reserve1
-    const yBN = direction ? this.reserve1 : this.reserve0
+    const xBN = direction ? this.reserve0Rated : this.reserve1Rated
+    const yBN = direction ? this.reserve1Rated : this.reserve0Rated
     let yNewBN = yBN.sub(getBigNumber(amountOut))
     if (yNewBN.lt(1))
       // lack of precision
@@ -109,7 +121,7 @@ export class CurvePool extends RPool {
   }
 
   calcPrice(amountIn: number, direction: boolean, takeFeeIntoAccount: boolean): number {
-    const xBN = direction ? this.reserve0 : this.reserve1
+    const xBN = direction ? this.reserve0Rated : this.reserve1Rated
     const x = parseInt(xBN.toString())
     const oneMinusFee = takeFeeIntoAccount ? 1 - this.fee : 1
     const D = parseInt(this.computeLiquidity().toString())
