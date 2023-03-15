@@ -26,6 +26,7 @@ function TokenToRToken(t: Type): RToken {
     name: t.name,
     symbol: t.symbol,
     chainId: t.chainId,
+    decimals: 18,
   }
   return nativeRToken
 }

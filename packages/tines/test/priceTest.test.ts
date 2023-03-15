@@ -1,9 +1,7 @@
-// @ts-nocheck
 import seedrandom from 'seedrandom'
-import { RToken } from '../dist'
-import { calcTokenPrices } from '../src'
 
-import { atomPrice, createNetwork, expectCloseValues, MAX_POOL_IMBALANCE } from './utils'
+import { calcTokenPrices } from '../src'
+import { createNetwork, expectCloseValues, MAX_POOL_IMBALANCE, TToken } from './utils'
 
 const GAS_PRICE = 50 * 1e-9
 
@@ -17,11 +15,12 @@ it('Token price calculation is correct for minLiquidity = 0', () => {
   const prices = calcTokenPrices(network.pools, baseToken)
   Array.from(prices.keys()).forEach((v) => {
     const t = network.tokens.find((t) => t.tokenId === v.tokenId) as TToken
+    const price = (v as TToken).price
     if (v.tokenId === baseToken.tokenId) {
-      expectCloseValues(v.price, 1, 1e-10)
+      expectCloseValues(price, 1, 1e-10)
     }
-    if (v.price !== 0) {
-      expectCloseValues(v.price, t.price / baseToken.price, 5 * (MAX_POOL_IMBALANCE - 1))
+    if (price !== 0) {
+      expectCloseValues(price, t.price / baseToken.price, 5 * (MAX_POOL_IMBALANCE - 1))
     }
   })
   expect(prices.size).toEqual(network.tokens.length)
@@ -32,11 +31,12 @@ it('Token price calculation is correct for minLiquidity != 0', () => {
   const prices = calcTokenPrices(network.pools, baseToken, 1e26)
   Array.from(prices.keys()).forEach((v) => {
     const t = network.tokens.find((t) => t.tokenId === v.tokenId) as TToken
+    const price = (v as TToken).price
     if (v.tokenId === baseToken.tokenId) {
-      expectCloseValues(v.price, 1, 1e-10)
+      expectCloseValues(price, 1, 1e-10)
     }
-    if (v.price !== 0) {
-      expectCloseValues(v.price, t.price / baseToken.price, 5 * (MAX_POOL_IMBALANCE - 1))
+    if (price !== 0) {
+      expectCloseValues(price, t.price / baseToken.price, 5 * (MAX_POOL_IMBALANCE - 1))
     }
   })
   expect(prices.size).toBeLessThan(network.tokens.length)

@@ -7,11 +7,13 @@ const token0 = {
   name: 'Token0',
   address: 'token0_address',
   symbol: 'Token1Symbol',
+  decimals: 18,
 }
 const token1 = {
   name: 'Token1',
   address: 'token1_address',
   symbol: 'Token2Symbol',
+  decimals: 18,
 }
 
 export function getRandomLin(rnd: () => number, min: number, max: number) {
