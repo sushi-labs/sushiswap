@@ -4,6 +4,7 @@ import { Currency } from '@sushiswap/currency'
 import { WrappedTokenInfo } from '@sushiswap/token-lists'
 import Image, { ImageProps } from 'next/legacy/image'
 import { FC, useEffect, useMemo, useState } from 'react'
+import { cloudinaryImageLoader } from '../cloudinary'
 
 import { GradientCircleIcon } from '../icons'
 import { Link } from '../link'
@@ -165,6 +166,7 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
         src={src}
         alt={currency.name}
         className="rounded-full"
+        loader={cloudinaryImageLoader}
         {...rest}
       />
     )
@@ -180,6 +182,7 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
         src={src}
         alt={currency.name}
         className="rounded-full"
+        loader={cloudinaryImageLoader}
         {...rest}
       />
     </Link.External>
