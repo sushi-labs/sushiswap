@@ -964,6 +964,37 @@ export default [
     ]
   },
   {
+    "name": "Base Goerli Testnet",
+    "chain": "ETH",
+    "rpc": [
+      "https://goerli.base.org"
+    ],
+    "faucets": [
+      "https://www.coinbase.com/faucets/base-ethereum-goerli-faucet"
+    ],
+    "nativeCurrency": {
+      "name": "Goerli Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "infoURL": "https://base.org",
+    "shortName": "basegor",
+    "chainId": 84531,
+    "networkId": 84531,
+    "explorers": [
+      {
+        "name": "basescan",
+        "url": "https://goerli.basescan.org",
+        "standard": "none"
+      },
+      {
+        "name": "basescout",
+        "url": "https://base-goerli.blockscout.com",
+        "standard": "none"
+      }
+    ]
+  },
+  {
     "name": "Scroll Alpha Testnet",
     "chain": "ETH",
     "status": "incubating",
