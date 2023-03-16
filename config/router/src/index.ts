@@ -557,5 +557,6 @@ export const COMMON_BASES = {
     WNATIVE[ChainId.CONSENSUS_ZKEVM_TESTNET],
   ],
   [ChainId.SCROLL_ALPHA_TESTNET]: [Native.onChain(ChainId.SCROLL_ALPHA_TESTNET), WNATIVE[ChainId.SCROLL_ALPHA_TESTNET]],
+  [ChainId.BASE_TESTNET]: [Native.onChain(ChainId.BASE_TESTNET), WNATIVE[ChainId.BASE_TESTNET]],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const
