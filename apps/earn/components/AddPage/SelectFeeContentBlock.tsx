@@ -24,7 +24,7 @@ export const SelectFeeContentBlock = () => {
             className={({ checked }) =>
               classNames(
                 checked ? 'ring ring-blue' : '',
-                'px-6 h-20 flex items-center rounded-xl bg-white dark:bg-slate-800/40 cursor-pointer'
+                'px-6 h-14 flex items-center rounded-xl bg-white dark:bg-slate-800/40 cursor-pointer'
               )
             }
           >
@@ -40,7 +40,7 @@ export const SelectFeeContentBlock = () => {
             className={({ checked }) =>
               classNames(
                 checked ? 'ring ring-blue' : '',
-                'px-6 h-20 flex items-center rounded-xl bg-white dark:bg-slate-800/40 cursor-pointer'
+                'px-6 h-14 flex items-center rounded-xl bg-white dark:bg-slate-800/40 cursor-pointer'
               )
             }
           >
@@ -56,7 +56,7 @@ export const SelectFeeContentBlock = () => {
             className={({ checked }) =>
               classNames(
                 checked ? 'ring ring-blue' : '',
-                'px-6 h-20 flex items-center rounded-xl bg-white dark:bg-slate-800/40 cursor-pointer'
+                'px-6 h-14 flex items-center rounded-xl bg-white dark:bg-slate-800/40 cursor-pointer'
               )
             }
           >
@@ -72,7 +72,7 @@ export const SelectFeeContentBlock = () => {
             className={({ checked }) =>
               classNames(
                 checked ? 'ring ring-blue' : '',
-                'px-6 h-20 flex items-center rounded-xl bg-white dark:bg-slate-800/40 cursor-pointer'
+                'px-6 h-14 flex items-center rounded-xl bg-white dark:bg-slate-800/40 cursor-pointer'
               )
             }
           >
