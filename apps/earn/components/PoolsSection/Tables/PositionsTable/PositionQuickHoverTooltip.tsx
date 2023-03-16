@@ -9,6 +9,7 @@ import { List } from '@sushiswap/ui/future/components/list/List'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { ArrowDownIcon, MinusIcon, PlusIcon } from '@heroicons/react/solid'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
+import { ZERO } from '@sushiswap/math'
 
 interface PositionQuickHoverTooltipProps {
   row: PositionWithPool
@@ -77,6 +78,36 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
       </div>
 
       <div className="max-h-[240px] scroll border-t border-gray-200 dark:border-slate-200/5 mt-2">
+        {row.pool.incentives && pendingRewards.length > 0 && (
+          <>
+            <List className="!pt-5">
+              <List.Label>Pending rewards</List.Label>
+              <List.Control className="bg-gray-100 dark:bg-slate-700">
+                {pendingRewards.map((reward, index) => (
+                  <List.Item
+                    key={index}
+                    icon={Currency.Icon}
+                    iconProps={{
+                      currency: reward?.currency,
+                      width: 24,
+                      height: 24,
+                    }}
+                    title={
+                      <div className="flex gap-2 items-baseline">
+                        {reward?.toSignificant(6) || '0.00'} {rewardTokens[index]?.symbol}
+                        <span className="text-[10px] text-gray-600 dark:text-slate-400">
+                          {' '}
+                          {formatUSD(values[index])}
+                        </span>
+                      </div>
+                    }
+                  />
+                ))}
+              </List.Control>
+            </List>
+          </>
+        )}
+
         <List className="!pt-5">
           <div className="flex justify-between">
             <List.Label>Position</List.Label>
@@ -116,7 +147,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
           </List.Control>
         </List>
 
-        {row.pool.incentives && (
+        {row.pool.incentives && stakedUnderlying0?.greaterThan(ZERO) && stakedUnderlying1?.greaterThan(ZERO) && (
           <List className="!pt-5">
             <div className="flex justify-between">
               <List.Label>Staked Position</List.Label>
@@ -124,7 +155,6 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
             </div>
             <List.Control className="bg-gray-100 dark:bg-slate-700">
               <List.Item
-                loading={!stakedUnderlying0}
                 icon={Currency.Icon}
                 iconProps={{
                   currency: stakedUnderlying0?.currency,
@@ -139,7 +169,6 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
                 }
               />
               <List.Item
-                loading={!stakedUnderlying1}
                 icon={Currency.Icon}
                 iconProps={{
                   currency: stakedUnderlying1?.currency,
@@ -155,36 +184,6 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
               />
             </List.Control>
           </List>
-        )}
-
-        {row.pool.incentives && pendingRewards.length > 0 && (
-          <>
-            <List className="!pt-5">
-              <List.Label>Pending rewards</List.Label>
-              <List.Control className="bg-gray-100 dark:bg-slate-700">
-                {pendingRewards.map((reward, index) => (
-                  <List.Item
-                    key={index}
-                    icon={Currency.Icon}
-                    iconProps={{
-                      currency: reward?.currency,
-                      width: 24,
-                      height: 24,
-                    }}
-                    title={
-                      <div className="flex gap-2 items-baseline">
-                        {reward?.toSignificant(6) || '0.00'} {rewardTokens[index]?.symbol}
-                        <span className="text-[10px] text-gray-600 dark:text-slate-400">
-                          {' '}
-                          {formatUSD(values[index])}
-                        </span>
-                      </div>
-                    }
-                  />
-                ))}
-              </List.Control>
-            </List>
-          </>
         )}
       </div>
     </div>
