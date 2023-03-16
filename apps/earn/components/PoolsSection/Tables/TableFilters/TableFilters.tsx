@@ -106,52 +106,71 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
           <Button
             onClick={() =>
               setFilters({
-                poolTypes: poolTypes.includes('STABLE_POOL')
-                  ? poolTypes.filter((el) => el !== 'STABLE_POOL')
-                  : [...poolTypes, 'STABLE_POOL'],
-              })
-            }
-            size="sm"
-            variant={poolTypes.includes('STABLE_POOL') ? 'outlined' : 'empty'}
-            color={poolTypes.includes('STABLE_POOL') ? 'blue' : 'default'}
-          >
-            Stable
-          </Button>
-          <Button
-            onClick={() =>
-              setFilters({
                 poolVersions: poolVersions.includes('LEGACY')
                   ? poolVersions.filter((el) => el !== 'LEGACY')
                   : [...poolVersions, 'LEGACY'],
+                poolTypes:
+                  poolTypes.includes('CONSTANT_PRODUCT_POOL') && !poolVersions.includes('TRIDENT')
+                    ? poolTypes.filter((el) => el !== 'CONSTANT_PRODUCT_POOL')
+                    : [...poolTypes, 'CONSTANT_PRODUCT_POOL'],
               })
             }
             size="sm"
-            variant={poolVersions.includes('LEGACY') ? 'outlined' : 'empty'}
-            color={poolVersions.includes('LEGACY') ? 'blue' : 'default'}
+            variant={
+              poolVersions.includes('LEGACY') && poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'outlined' : 'empty'
+            }
+            color={poolVersions.includes('LEGACY') && poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'blue' : 'default'}
           >
-            V1
+            Classic V1
           </Button>
+
           <Button
             onClick={() =>
               setFilters({
                 poolVersions: poolVersions.includes('TRIDENT')
                   ? poolVersions.filter((el) => el !== 'TRIDENT')
                   : [...poolVersions, 'TRIDENT'],
+                poolTypes:
+                  poolTypes.includes('CONSTANT_PRODUCT_POOL') && !poolVersions.includes('LEGACY')
+                    ? poolTypes.filter((el) => el !== 'CONSTANT_PRODUCT_POOL')
+                    : [...poolTypes, 'CONSTANT_PRODUCT_POOL'],
               })
             }
             size="sm"
-            variant={poolVersions.includes('TRIDENT') ? 'outlined' : 'empty'}
-            color={poolVersions.includes('TRIDENT') ? 'blue' : 'default'}
+            variant={
+              poolVersions.includes('TRIDENT') && poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'outlined' : 'empty'
+            }
+            color={poolVersions.includes('TRIDENT') && poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'blue' : 'default'}
           >
-            V2
+            Classic V2
           </Button>
+
+          <Button
+            onClick={() =>
+              setFilters({
+                poolVersions:
+                  poolVersions.includes('TRIDENT') && !poolTypes.includes('CONSTANT_PRODUCT_POOL')
+                    ? poolVersions.filter((el) => el !== 'TRIDENT')
+                    : [...poolVersions, 'TRIDENT'],
+                poolTypes: poolTypes.includes('STABLE_POOL')
+                  ? poolTypes.filter((el) => el !== 'STABLE_POOL')
+                  : [...poolTypes, 'STABLE_POOL'],
+              })
+            }
+            size="sm"
+            variant={poolVersions.includes('TRIDENT') && poolTypes.includes('STABLE_POOL') ? 'outlined' : 'empty'}
+            color={poolVersions.includes('TRIDENT') && poolTypes.includes('STABLE_POOL') ? 'blue' : 'default'}
+          >
+            Stable V2
+          </Button>
+
           <Button
             onClick={() => setFilters({ incentivizedOnly: !incentivizedOnly })}
             size="sm"
             variant={incentivizedOnly ? 'outlined' : 'empty'}
             color={incentivizedOnly ? 'blue' : 'default'}
           >
-            Farms
+            Farms Only
           </Button>
         </div>
       </div>
