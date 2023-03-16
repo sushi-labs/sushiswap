@@ -110,42 +110,26 @@ async function checkSwap(poolInfo: PoolInfo, from: number, to: number, amountIn:
   expectCloseValues(realOut, expectedOut.out, 1e-9)
 }
 
-it('Curve fraxusdc', async () => {
-  const testSeed = 'Curve consistency check'
-  const rnd: () => number = seedrandom(testSeed) // random [0, 1)
+const CurvePools: [string, string][] = [
+  ['0xdcef968d416a41cdac0ed8702fac8128a64241a2', 'fraxusdc'],
+  ['0xf253f83aca21aabd2a20553ae0bf7f65c755a07f', 'sbtc2'],
+]
 
-  const [user] = await ethers.getSigners()
-  const poolInfo = await createCurvePoolInfo(
-    '0xdcef968d416a41cdac0ed8702fac8128a64241a2', // fraxusdc
-    user,
-    BigInt(1e30)
-  )
-
-  const res0 = parseInt(poolInfo.poolTines.reserve0.toString())
-  const res1 = parseInt(poolInfo.poolTines.reserve1.toString())
-  for (let i = 0; i < 3; ++i) {
-    const amountInPortion = getRandomExp(rnd, 1e-5, 1)
-    await checkSwap(poolInfo, 0, 1, res0 * amountInPortion)
-    await checkSwap(poolInfo, 1, 0, res1 * amountInPortion)
-  }
-})
-
-it('Curve sbtc2', async () => {
-  const testSeed = 'Curve consistency check 2'
-  const rnd: () => number = seedrandom(testSeed) // random [0, 1)
-
-  const [user] = await ethers.getSigners()
-  const poolInfo = await createCurvePoolInfo(
-    '0xf253f83aca21aabd2a20553ae0bf7f65c755a07f', // sbtc2
-    user,
-    BigInt(1e30)
-  )
-
-  const res0 = parseInt(poolInfo.poolTines.reserve0.toString())
-  const res1 = parseInt(poolInfo.poolTines.reserve1.toString())
-  for (let i = 0; i < 3; ++i) {
-    const amountInPortion = getRandomExp(rnd, 1e-5, 1)
-    await checkSwap(poolInfo, 0, 1, res0 * amountInPortion)
-    await checkSwap(poolInfo, 1, 0, res1 * amountInPortion)
+describe.only('Real Curve pools consistency check', () => {
+  for (let i = 0; i < CurvePools.length; ++i) {
+    const [addr, name] = CurvePools[i]
+    it(`${name} (${addr})`, async () => {
+      const testSeed = addr
+      const rnd: () => number = seedrandom(testSeed) // random [0, 1)
+      const [user] = await ethers.getSigners()
+      const poolInfo = await createCurvePoolInfo(addr, user, BigInt(1e30))
+      const res0 = parseInt(poolInfo.poolTines.reserve0.toString())
+      const res1 = parseInt(poolInfo.poolTines.reserve1.toString())
+      for (let i = 0; i < 10; ++i) {
+        const amountInPortion = getRandomExp(rnd, 1e-5, 1)
+        await checkSwap(poolInfo, 0, 1, res0 * amountInPortion)
+        await checkSwap(poolInfo, 1, 0, res1 * amountInPortion)
+      }
+    })
   }
 })
