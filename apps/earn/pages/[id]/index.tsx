@@ -67,9 +67,7 @@ const _Pool = () => {
                   <PoolHeader pool={pool} />
                   <hr className="my-3 border-t border-slate-200/5" />
                   <PoolChart pool={pool} />
-                  <AppearOnMount>
-                    <PoolStats pool={pool} />
-                  </AppearOnMount>
+                  <PoolStats pool={pool} />
                   <PoolComposition pool={pool} />
                   <PoolRewards pool={pool} />
                 </div>
