@@ -22,21 +22,29 @@ export const SelectNetworkContentBlock = () => {
         </>
       }
     >
-      <NetworkSelector networks={SUPPORTED_CHAIN_IDS} selected={chainId} onSelect={setChainId} variant="menu">
-        {({ open }) => (
-          <Popover.Button as={Button} size="xl" variant="outlined" color="default">
-            <NetworkIcon chainId={chainId} width={28} height={28} />
-            <div className="hidden xl:block">
-              {Chain.from(chainId).name?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
-            </div>
-            <ChevronDownIcon
-              width={24}
-              height={24}
-              className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
-            />
-          </Popover.Button>
-        )}
-      </NetworkSelector>
+      <div className="flex relative z-[100]">
+        <NetworkSelector
+          networks={SUPPORTED_CHAIN_IDS}
+          selected={chainId}
+          onSelect={setChainId}
+          variant="menu"
+          align="left"
+        >
+          {({ open }) => (
+            <Popover.Button as={Button} size="xl" variant="outlined" color="default">
+              <NetworkIcon chainId={chainId} width={28} height={28} />
+              <div className="hidden xl:block">
+                {Chain.from(chainId).name?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
+              </div>
+              <ChevronDownIcon
+                width={24}
+                height={24}
+                className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
+              />
+            </Popover.Button>
+          )}
+        </NetworkSelector>
+      </div>
     </ContentBlock>
   )
 }
