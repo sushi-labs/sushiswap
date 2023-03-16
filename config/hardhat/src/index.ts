@@ -250,7 +250,7 @@ export const defaultConfig: HardhatUserConfig = {
       hardfork: process.env.CODE_COVERAGE ? 'berlin' : 'london',
       forking: {
         enabled: process.env.FORKING === 'true',
-        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
       },
     },
     'zksync-testnet': {
@@ -273,7 +273,7 @@ export const defaultConfig: HardhatUserConfig = {
       saveDeployments: true,
     },
     ethereum: {
-      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
       accounts,
       chainId: 1,
       live: true,
@@ -290,7 +290,7 @@ export const defaultConfig: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     rinkeby: {
-      url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
       accounts,
       chainId: 4,
       live: true,
@@ -300,7 +300,7 @@ export const defaultConfig: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     goerli: {
-      url: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
       accounts,
       chainId: 5,
       live: true,
@@ -309,7 +309,7 @@ export const defaultConfig: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     kovan: {
-      url: `https://eth-kovan.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://eth-kovan.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
       accounts,
       chainId: 42,
       live: true,

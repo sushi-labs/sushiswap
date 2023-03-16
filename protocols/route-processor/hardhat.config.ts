@@ -47,7 +47,7 @@ const config: HardhatUserConfig = {
   //   // hardhat: {
   //   //   forking: {
   //   //     enabled: true,
-  //   //     url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+  //   //     url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
   //   //     blockNumber: 16240100,
   //   //   },
   //   //   accounts: {
@@ -59,7 +59,7 @@ const config: HardhatUserConfig = {
   //     // polygon
   //     forking: {
   //       enabled: true,
-  //       url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+  //       url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
   //       blockNumber: 37180000,
   //     },
   //     accounts: {
@@ -68,7 +68,7 @@ const config: HardhatUserConfig = {
   //     chainId: 137,
   //   },
   //   // ethereum: {
-  //   //   url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+  //   //   url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
   //   //   accounts,
   //   //   chainId: 1,
   //   //   hardfork: process.env.CODE_COVERAGE ? 'berlin' : 'london',
