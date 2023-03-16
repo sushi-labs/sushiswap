@@ -37,6 +37,7 @@
     "viem": "0.0.1-alpha.38",
     "node-fetch": "2.6.6",
     "date-fns": "2.29.3",
+    "@prisma/client": "4.8.1",
     "@ethersproject/abi": "5.7.0",
     "@ethersproject/address": "5.7.0",
     "@ethersproject/bignumber": "5.7.0",
