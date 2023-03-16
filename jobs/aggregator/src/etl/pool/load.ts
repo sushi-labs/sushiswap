@@ -18,37 +18,27 @@ export async function createPools(client: PrismaClient, pools: Prisma.PoolCreate
   }
 }
 
-export async function getLatestPoolTimestamp(
-  client: PrismaClient,
-  chainId: number,
-  protocol: string,
-  versions: string[]
-) {
+export async function isProtocolExisting(client: PrismaClient, chainId: number, protocol: string, version: string) {
   const startTime = performance.now()
 
   const latestPool = await client.pool.findFirst({
     select: {
       address: true,
-      generatedAt: true,
     },
     where: {
       protocol,
-      version: {
-        in: versions,
-      },
+      version,
       chainId,
     },
     orderBy: {
       generatedAt: 'desc',
     },
   })
+  const protocolExists = latestPool !== null
 
   const endTime = performance.now()
   const duration = ((endTime - startTime) / 1000).toFixed(1)
-  if (!latestPool) {
-    return null
-  }
-  const latestPoolTimestamp = (latestPool.generatedAt.getTime() / 1000).toFixed()
-  console.log(`Latest pool ${latestPool.address}, creation timestamp: ${latestPoolTimestamp} (${duration}s)`)
-  return latestPoolTimestamp
+
+  console.log(`${chainId} ${protocol} ${version}, has pools: ${protocolExists}. (${duration}s)`)
+  return protocolExists
 }

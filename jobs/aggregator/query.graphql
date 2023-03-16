@@ -19,6 +19,7 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
     swapFee
     twapEnabled
     liquidityUSD
+    createdAtTimestamp
   }
 }
 
@@ -52,6 +53,7 @@ query V2Pairs(
       decimals
     }
     liquidityUSD: reserveUSD
+    createdAtTimestamp
   }
 }
 
@@ -87,6 +89,7 @@ query V3Pairs(
     }
     feeTier
     liquidityUSD: totalValueLockedUSD
+    createdAtTimestamp
   }
 }
 
@@ -106,6 +109,7 @@ query PCSPairs($first: Int = 1000, $skip: Int = 0, $where: MINIMAL_Pair_filter, 
       decimals
     }
     name
+    createdAtTimestamp: timestamp
   }
 }
 
@@ -130,6 +134,7 @@ query TraderJoePairs($first: Int = 1000, $skip: Int = 0, $where: TJ_Pair_filter,
       decimals
     }
     liquidityUSD: reserveUSD
+    createdAtTimestamp:timestamp
   }
 }
 
@@ -148,5 +153,6 @@ query MessariPairs($first: Int = 1000, $skip: Int = 0, $where: MESSARI_Liquidity
       decimals
     }
     liquidityUSD: totalValueLockedUSD
+    createdAtTimestamp: createdTimestamp
   }
 }

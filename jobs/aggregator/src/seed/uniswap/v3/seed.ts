@@ -4,7 +4,7 @@ import { performance } from 'perf_hooks'
 
 import { getBuiltGraphSDK, V3PairsQuery } from '../../../../.graphclient/index.js'
 import { PoolType, ProtocolName, ProtocolVersion } from '../../../config.js'
-import { createPools, getLatestPoolTimestamp } from '../../../etl/pool/load.js'
+import { createPools, isProtocolExisting } from '../../../etl/pool/load.js'
 import { createTokens } from '../../../etl/token/load.js'
 import { GRAPH_HOST, UNISWAP_V3_SUBGRAPH_NAME, UNISWAP_V3_SUPPORTED_CHAINS } from '../config.js'
 
@@ -42,7 +42,7 @@ async function start(client: PrismaClient) {
   for (const chainId of UNISWAP_V3_SUPPORTED_CHAINS) {
     // Continue from the latest pool creation timestamp,
     // if null, then it's the first time seeding and we grab everything
-    const latestPoolTimestamp = await getLatestPoolTimestamp(client, chainId, PROTOCOL, [VERSION])
+    const latestPoolTimestamp = await isProtocolExisting(client, chainId, PROTOCOL, [VERSION])
 
     const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: UNISWAP_V3_SUBGRAPH_NAME[chainId] })
     if (!UNISWAP_V3_SUBGRAPH_NAME[chainId]) {

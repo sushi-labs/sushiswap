@@ -4,7 +4,7 @@ import { performance } from 'perf_hooks'
 
 import { getBuiltGraphSDK, PairsQuery } from '../../../.graphclient/index.js'
 import { ProtocolName } from '../../config.js'
-import { createPools, getLatestPoolTimestamp } from '../../etl/pool/load.js'
+import { createPools, isProtocolExisting } from '../../etl/pool/load.js'
 import { createTokens } from '../../etl/token/load.js'
 import { GRAPH_HOST, LEGACY_SUBGRAPH_NAME, SUSHISWAP_CHAINS, TRIDENT_CHAINS, TRIDENT_SUBGRAPH_NAME } from './config.js'
 
@@ -31,11 +31,11 @@ export async function sushiSwap() {
 
 async function start(client: PrismaClient) {
   const subgraphs = [
-    TRIDENT_CHAINS.map((chainId) => {
-      return { chainId, host: GRAPH_HOST[chainId], name: TRIDENT_SUBGRAPH_NAME[chainId] }
-    }),
+    // TRIDENT_CHAINS.map((chainId) => {
+    //   return { chainId, host: GRAPH_HOST[chainId], name: TRIDENT_SUBGRAPH_NAME[chainId], version: 'TRIDENT' }
+    // }),
     SUSHISWAP_CHAINS.map((chainId) => {
-      return { chainId, host: GRAPH_HOST[chainId], name: LEGACY_SUBGRAPH_NAME[chainId] }
+      return { chainId, host: GRAPH_HOST[chainId], name: LEGACY_SUBGRAPH_NAME[chainId], version: 'LEGACY' }
     }),
   ].flat()
 
@@ -48,8 +48,8 @@ async function start(client: PrismaClient) {
 
     // Continue from the latest pool creation timestamp,
     // if null, then it's the first time seeding and we grab everything
-    const latestPoolTimestamp = await getLatestPoolTimestamp(client, chainId, PROTOCOL, VERSIONS)
-
+    const latestPoolTimestamp = await isProtocolExisting(client, chainId, PROTOCOL, subgraph.version)
+    console.log(new Date(Number(latestPoolTimestamp) * 1000))
     const sdk = getBuiltGraphSDK({ chainId, host: subgraph.host, name: subgraph.name })
 
     console.log(`Loading data from ${subgraph.host} ${subgraph.name}`)
@@ -59,7 +59,7 @@ async function start(client: PrismaClient) {
     do {
       const startTime = performance.now()
       let where = {}
-      if (latestPoolTimestamp) {
+      if (latestPoolTimestamp !== null) {
         where =
           cursor !== ''
             ? { id_gt: cursor, createdAtTimestamp_gt: latestPoolTimestamp }
@@ -87,14 +87,17 @@ async function start(client: PrismaClient) {
           1000
         ).toFixed(1)}s) `
       )
+      // request.pairs.forEach((pair) => {
+      //   console.log(`${pair.id}`)
+      // })
 
-      if (request) {
-        const { tokens, pools } = transform(chainId, request)
-        // NOTE: This shouldn't have to be async, but was seeing this error:
-        // (unlocked closed connection) (CallerID: planetscale-admin)'
-        // this script doesn't have to be super fast, so keeping it async to not throttle the db
-        await Promise.all([createTokens(client, tokens), createPools(client, pools)])
-      }
+      // if (request) {
+      //   const { tokens, pools } = transform(chainId, request)
+      //   // NOTE: This shouldn't have to be async, but was seeing this error:
+      //   // (unlocked closed connection) (CallerID: planetscale-admin)'
+      //   // this script doesn't have to be super fast, so keeping it async to not throttle the db
+      //   await Promise.all([createTokens(client, tokens), createPools(client, pools)])
+      // }
 
       const newCursor = request?.pairs[request.pairs.length - 1]?.id ?? ''
       cursor = newCursor
