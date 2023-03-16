@@ -4,7 +4,16 @@ import { BigNumber, Contract } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
 import { ethers } from 'hardhat'
 
+// Sometimes token contract is a proxy without delegate call
+// So, its storage is in other contract and we need to work with it
+const TokenProxyMap: Record<string, string> = {
+  '0xfe18be6b3bd88a2d2a7f928d00292e7a9963cfc6': '0x4F6296455F8d754c19821cF1EC8FeBF2cD456E67', // Ethereum sBTC
+}
+
 export async function setTokenBalance(token: string, user: string, balance: bigint): Promise<boolean> {
+  const realContract = TokenProxyMap[token.toLowerCase()]
+  token = realContract || token
+
   if (user.startsWith('0x')) user = user.substring(2)
   const tokenContract = new Contract(token, erc20Abi, ethers.provider)
 

@@ -1,4 +1,3 @@
-import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
 import { erc20Abi } from '@sushiswap/abi'
 import { CurvePool, getBigNumber, RToken } from '@sushiswap/tines'
 import { expect } from 'chai'
@@ -42,7 +41,6 @@ interface PoolInfo {
   poolTines: CurvePool
   user: Signer
   userAddress: string
-  snapshot: SnapshotRestorer
 }
 
 async function createCurvePoolInfo(poolAddress: string, user: Signer, initialBalance: bigint): Promise<PoolInfo> {
@@ -50,7 +48,7 @@ async function createCurvePoolInfo(poolAddress: string, user: Signer, initialBal
   const poolContract = new Contract(
     poolAddress,
     [
-      'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) returns (string)',
+      'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) returns (uint256)',
       'function A() pure returns (uint256)',
       'function fee() pure returns (uint256)',
       'function coins(uint256) pure returns (address)',
@@ -95,35 +93,21 @@ async function createCurvePoolInfo(poolAddress: string, user: Signer, initialBal
     reserves[1]
   )
 
-  const snapshot = await takeSnapshot()
-
   return {
     poolContract,
     tokenContracts,
     poolTines,
     user,
     userAddress,
-    snapshot,
   }
 }
 
-async function checkSwap(poolInfo: PoolInfo, from: number, to: number, amountIn: number): Promise<number> {
-  await poolInfo.snapshot.restore()
-
-  // Alternative way (without snapshot restore) - to update reserves
-  // const reserves = await Promise.all(poolInfo.tokenContracts.map((_, i) => poolInfo.poolContract.balances(i)))
-  // poolInfo.poolTines.updateReserves(reserves[0], reserves[1])
-
-  const expectedOut = poolInfo.poolTines.calcOutByIn(amountIn, from < to)
-
-  const balanceOutBefore = await poolInfo.tokenContracts[to].balanceOf(poolInfo.userAddress)
-  await poolInfo.poolContract.exchange(from, to, getBigNumber(amountIn), 0)
-  const balanceOutAfter = await poolInfo.tokenContracts[to].balanceOf(poolInfo.userAddress)
-  const realOutBN = balanceOutAfter.sub(balanceOutBefore)
+async function checkSwap(poolInfo: PoolInfo, from: number, to: number, amountIn: number) {
+  const expectedOut = poolInfo.poolTines.calcOutByIn(Math.round(amountIn), from < to)
+  const realOutBN = await poolInfo.poolContract.callStatic.exchange(from, to, getBigNumber(amountIn), 0)
   const realOut = parseInt(realOutBN.toString())
 
   expectCloseValues(realOut, expectedOut.out, 1e-9)
-  return Math.abs(realOut / expectedOut.out - 1)
 }
 
 it('Curve fraxusdc', async () => {
@@ -133,6 +117,26 @@ it('Curve fraxusdc', async () => {
   const [user] = await ethers.getSigners()
   const poolInfo = await createCurvePoolInfo(
     '0xdcef968d416a41cdac0ed8702fac8128a64241a2', // fraxusdc
+    user,
+    BigInt(1e30)
+  )
+
+  const res0 = parseInt(poolInfo.poolTines.reserve0.toString())
+  const res1 = parseInt(poolInfo.poolTines.reserve1.toString())
+  for (let i = 0; i < 3; ++i) {
+    const amountInPortion = getRandomExp(rnd, 1e-5, 1)
+    await checkSwap(poolInfo, 0, 1, res0 * amountInPortion)
+    await checkSwap(poolInfo, 1, 0, res1 * amountInPortion)
+  }
+})
+
+it('Curve sbtc2', async () => {
+  const testSeed = 'Curve consistency check 2'
+  const rnd: () => number = seedrandom(testSeed) // random [0, 1)
+
+  const [user] = await ethers.getSigners()
+  const poolInfo = await createCurvePoolInfo(
+    '0xf253f83aca21aabd2a20553ae0bf7f65c755a07f', // sbtc2
     user,
     BigInt(1e30)
   )
