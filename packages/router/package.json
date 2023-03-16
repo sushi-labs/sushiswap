@@ -53,6 +53,8 @@
     "ethers": "5.7.2",
     "lodash.flatmap": "^4.5.0",
     "tiny-invariant": "^1.2.0",
+    "zod": "3.20.2",
+    "@sushiswap/database": "workspace:*",
     "tiny-warning": "^1.0.3"
   },
   "devDependencies": {
