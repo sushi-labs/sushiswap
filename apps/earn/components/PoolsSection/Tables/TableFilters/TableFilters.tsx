@@ -109,62 +109,56 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
                 poolVersions: poolVersions.includes('LEGACY')
                   ? poolVersions.filter((el) => el !== 'LEGACY')
                   : [...poolVersions, 'LEGACY'],
-                poolTypes:
-                  poolTypes.includes('CONSTANT_PRODUCT_POOL') && !poolVersions.includes('TRIDENT')
-                    ? poolTypes.filter((el) => el !== 'CONSTANT_PRODUCT_POOL')
-                    : [...poolTypes, 'CONSTANT_PRODUCT_POOL'],
               })
             }
             size="sm"
-            variant={
-              poolVersions.includes('LEGACY') && poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'outlined' : 'empty'
-            }
-            color={poolVersions.includes('LEGACY') && poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'blue' : 'default'}
+            variant={poolVersions.includes('LEGACY') ? 'outlined' : 'empty'}
+            color={poolVersions.includes('LEGACY') ? 'blue' : 'default'}
           >
-            Classic V1
+            V1
           </Button>
-
           <Button
             onClick={() =>
               setFilters({
-                poolVersions:
-                  poolVersions.includes('TRIDENT') && !poolTypes.includes('STABLE_POOL')
-                    ? poolVersions.filter((el) => el !== 'TRIDENT')
-                    : [...poolVersions, 'TRIDENT'],
-                poolTypes:
-                  poolTypes.includes('CONSTANT_PRODUCT_POOL') && !poolVersions.includes('LEGACY')
-                    ? poolTypes.filter((el) => el !== 'CONSTANT_PRODUCT_POOL')
-                    : [...poolTypes, 'CONSTANT_PRODUCT_POOL'],
+                poolVersions: poolVersions.includes('TRIDENT')
+                  ? poolVersions.filter((el) => el !== 'TRIDENT')
+                  : [...poolVersions, 'TRIDENT'],
               })
             }
             size="sm"
-            variant={
-              poolVersions.includes('TRIDENT') && poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'outlined' : 'empty'
-            }
-            color={poolVersions.includes('TRIDENT') && poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'blue' : 'default'}
+            variant={poolVersions.includes('TRIDENT') ? 'outlined' : 'empty'}
+            color={poolVersions.includes('TRIDENT') ? 'blue' : 'default'}
           >
-            Classic V2
+            V2
           </Button>
-
           <Button
             onClick={() =>
               setFilters({
-                poolVersions:
-                  poolVersions.includes('TRIDENT') && !poolTypes.includes('CONSTANT_PRODUCT_POOL')
-                    ? poolVersions.filter((el) => el !== 'TRIDENT')
-                    : [...poolVersions, 'TRIDENT'],
                 poolTypes: poolTypes.includes('STABLE_POOL')
                   ? poolTypes.filter((el) => el !== 'STABLE_POOL')
                   : [...poolTypes, 'STABLE_POOL'],
               })
             }
             size="sm"
-            variant={poolVersions.includes('TRIDENT') && poolTypes.includes('STABLE_POOL') ? 'outlined' : 'empty'}
-            color={poolVersions.includes('TRIDENT') && poolTypes.includes('STABLE_POOL') ? 'blue' : 'default'}
+            variant={poolTypes.includes('STABLE_POOL') ? 'outlined' : 'empty'}
+            color={poolTypes.includes('STABLE_POOL') ? 'blue' : 'default'}
           >
-            Stable V2
+            Stable
           </Button>
-
+          <Button
+            onClick={() =>
+              setFilters({
+                poolTypes: poolTypes.includes('CONSTANT_PRODUCT_POOL')
+                  ? poolTypes.filter((el) => el !== 'CONSTANT_PRODUCT_POOL')
+                  : [...poolTypes, 'CONSTANT_PRODUCT_POOL'],
+              })
+            }
+            size="sm"
+            variant={poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'outlined' : 'empty'}
+            color={poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'blue' : 'default'}
+          >
+            Classic
+          </Button>
           <Button
             onClick={() => setFilters({ incentivizedOnly: !incentivizedOnly })}
             size="sm"
