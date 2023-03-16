@@ -10,11 +10,15 @@ import {
   Pair,
   StablePool,
 } from '@sushiswap/amm'
-import { add } from 'husky'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { getConstantProductPoolFactoryContract, getStablePoolFactoryContract } from '../../../../hooks'
 import { isUniswapV2FactoryChainId, uniswapV2FactoryAddress } from '@sushiswap/sushiswap'
+import {
+  constantProductPoolFactoryAddress,
+  isConstantProductPoolFactoryChainId,
+  isStablePoolFactoryChainId,
+  stablePoolFactoryAddress,
+} from '@sushiswap/trident'
 
 const getPoolAddress = ({
   chainId,
@@ -32,17 +36,17 @@ const getPoolAddress = ({
   const [tokenA, tokenB] = token0.wrapped.sortsBefore(token1.wrapped)
     ? [token0.wrapped, token1.wrapped]
     : [token1.wrapped, token0.wrapped]
-  if (poolType === PoolType.StablePool)
+  if (poolType === PoolType.StablePool && isStablePoolFactoryChainId(chainId))
     return computeStablePoolAddress({
-      factoryAddress: getStablePoolFactoryContract(chainId).address,
+      factoryAddress: stablePoolFactoryAddress[chainId],
       tokenA,
       tokenB,
       fee,
     })
 
-  if (poolType === PoolType.ConstantProduct)
+  if (poolType === PoolType.ConstantProduct && isConstantProductPoolFactoryChainId(chainId))
     return computeConstantProductPoolAddress({
-      factoryAddress: getConstantProductPoolFactoryContract(chainId).address,
+      factoryAddress: constantProductPoolFactoryAddress[chainId],
       tokenA,
       tokenB,
       fee,
@@ -73,7 +77,7 @@ export const usePoolsAsMap = (variables: UsePoolsAsMapParams) => {
     queryFn: async () => {
       const data = await getAllPools({ ...variables, asMap: true, withCombinations: false, withBentoPools: false })
       const pools = [...(data.pairs || []), ...(data.stablePools || []), ...(data.constantProductPools || [])]
-
+      console.log({ data })
       return pools.reduce<Record<string, Pair | ConstantProductPool | StablePool>>((acc, cur) => {
         acc[cur.liquidityToken.address] = cur
         return acc

@@ -128,19 +128,37 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
 
       // Log swap success internal, mixed, or external
       if (
-        trade?.route?.legs?.every((leg) => leg.poolName.startsWith('SushiSwap') || leg.poolName.startsWith('Trident'))
+        trade?.route?.legs?.every(
+          (leg) =>
+            leg.poolName.startsWith('Wrap') ||
+            leg.poolName.startsWith('SushiSwap') ||
+            leg.poolName.startsWith('Trident') ||
+            leg.poolName.startsWith('BentoBridge')
+        )
       ) {
         log.info('Swap success (internal)', {
           trade,
         })
       } else if (
-        trade?.route?.legs?.some((leg) => leg.poolName.startsWith('SushiSwap') || leg.poolName.startsWith('Trident'))
+        !trade?.route?.legs?.every(
+          (leg) =>
+            leg.poolName.startsWith('Wrap') ||
+            leg.poolName.startsWith('SushiSwap') ||
+            leg.poolName.startsWith('Trident') ||
+            leg.poolName.startsWith('BentoBridge')
+        )
       ) {
         log.info('Swap success (mix)', {
           trade,
         })
       } else if (
-        trade?.route?.legs?.every((leg) => !leg.poolName.startsWith('SushiSwap') && leg.poolName.startsWith('Trident'))
+        trade?.route?.legs?.every(
+          (leg) =>
+            !leg.poolName.startsWith('Wrap') &&
+            !leg.poolName.startsWith('SushiSwap') &&
+            !leg.poolName.startsWith('Trident') &&
+            !leg.poolName.startsWith('BentoBridge')
+        )
       ) {
         log.info('Swap success (external)', {
           trade,

@@ -106,20 +106,6 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
           <Button
             onClick={() =>
               setFilters({
-                poolTypes: poolTypes.includes('STABLE_POOL')
-                  ? poolTypes.filter((el) => el !== 'STABLE_POOL')
-                  : [...poolTypes, 'STABLE_POOL'],
-              })
-            }
-            size="sm"
-            variant={poolTypes.includes('STABLE_POOL') ? 'outlined' : 'empty'}
-            color={poolTypes.includes('STABLE_POOL') ? 'blue' : 'default'}
-          >
-            Stable
-          </Button>
-          <Button
-            onClick={() =>
-              setFilters({
                 poolVersions: poolVersions.includes('LEGACY')
                   ? poolVersions.filter((el) => el !== 'LEGACY')
                   : [...poolVersions, 'LEGACY'],
@@ -146,12 +132,40 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             V2
           </Button>
           <Button
+            onClick={() =>
+              setFilters({
+                poolTypes: poolTypes.includes('STABLE_POOL')
+                  ? poolTypes.filter((el) => el !== 'STABLE_POOL')
+                  : [...poolTypes, 'STABLE_POOL'],
+              })
+            }
+            size="sm"
+            variant={poolTypes.includes('STABLE_POOL') ? 'outlined' : 'empty'}
+            color={poolTypes.includes('STABLE_POOL') ? 'blue' : 'default'}
+          >
+            Stable
+          </Button>
+          <Button
+            onClick={() =>
+              setFilters({
+                poolTypes: poolTypes.includes('CONSTANT_PRODUCT_POOL')
+                  ? poolTypes.filter((el) => el !== 'CONSTANT_PRODUCT_POOL')
+                  : [...poolTypes, 'CONSTANT_PRODUCT_POOL'],
+              })
+            }
+            size="sm"
+            variant={poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'outlined' : 'empty'}
+            color={poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'blue' : 'default'}
+          >
+            Classic
+          </Button>
+          <Button
             onClick={() => setFilters({ incentivizedOnly: !incentivizedOnly })}
             size="sm"
             variant={incentivizedOnly ? 'outlined' : 'empty'}
             color={incentivizedOnly ? 'blue' : 'default'}
           >
-            Farms
+            Farms Only
           </Button>
         </div>
       </div>
