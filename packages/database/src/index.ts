@@ -20,17 +20,20 @@ const defaultPrismaClientOptions = {
   // log: ['query'],
 } satisfies Prisma.PrismaClientOptions
 
+const cache = new Map<string, PrismaClient>()
+
 export async function createClient(options = defaultPrismaClientOptions) {
   await import('dotenv/config')
   if (!process.env['DATABASE_URL']) throw new Error('DATABASE_URL is required')
 
-  const cache = process.env['NODE_ENV'] === 'production' ? new Map<string, PrismaClient>() : global.prisma
+  const _cache =
+    process.env['NODE_ENV'] === 'production' ? cache : !global.prisma ? (global.prisma = new Map()) : global.prisma
 
   const key = JSON.stringify(options)
-  if (!cache.has(key)) {
-    cache.set(key, new PrismaClient(options))
+  if (!_cache.has(key)) {
+    _cache.set(key, new PrismaClient(options))
   }
-  const client = cache.get(key) as PrismaClient
+  const client = _cache.get(key) as PrismaClient
 
   // if (process.env['REDIS_URL']) {
   //   const Redis = (await import('ioredis')).default
