@@ -13,7 +13,7 @@ const Row: FC<RowProps> = ({ children, className, size = 'default', ...props }) 
     className={classNames(
       className,
       size === 'default' ? 'h-[52px]' : 'h-[72px]',
-      'w-full hover:bg-gray-50 font-medium border-b border-gray-100'
+      'w-full hover:bg-gray-50 font-medium border-b border-gray-100 dark:border-slate-200/5'
     )}
   >
     {children}

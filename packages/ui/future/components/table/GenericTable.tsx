@@ -7,6 +7,7 @@ import { LoadingOverlay } from '../../../loader'
 import { Typography } from '../../../typography'
 import classNames from 'classnames'
 import { Popover } from '../Popover'
+import { useIsMounted } from '@sushiswap/hooks'
 
 interface GenericTableProps<C> {
   table: ReactTableType<C>
@@ -34,8 +35,7 @@ export const GenericTable = <T extends { id: string }>({
 }: GenericTableProps<T>) => {
   const [showOverlay, setShowOverlay] = useState(false)
   const [popupInvisible, setPopupInvisible] = useState(false)
-
-  const headers = table.getFlatHeaders()
+  const isMounted = useIsMounted()
 
   return (
     <>
@@ -85,7 +85,7 @@ export const GenericTable = <T extends { id: string }>({
           <Table.tbody>
             {!loading &&
               table.getRowModel().rows.map((row) => {
-                if (HoverElement) {
+                if (HoverElement && isMounted) {
                   return (
                     <Popover
                       key={row.id}
