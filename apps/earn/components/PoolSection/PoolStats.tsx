@@ -17,14 +17,16 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
   // }
 
   const {
-    liquidityUSD,
-    liquidity1dChange,
-    fees1d,
-    fees1dChange,
-    volume1d,
-    volume1dChange,
-    txCount1d,
-    txCount1dChange,
+    data: {
+      liquidityUSD,
+      liquidity1dChange,
+      fees1d,
+      fees1dChange,
+      volume1d,
+      volume1dChange,
+      txCount1d,
+      txCount1dChange,
+    },
   } = useGraphPool(pool)
 
   return (

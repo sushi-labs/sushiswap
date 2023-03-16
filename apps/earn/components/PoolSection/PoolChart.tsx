@@ -40,7 +40,7 @@ const chartTimespans: Record<PoolChartPeriod, number> = {
 }
 
 export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
-  const graphPair = useGraphPool(pool)
+  const { data: graphPair, isLoading } = useGraphPool(pool)
 
   const [chartType, setChartType] = useState<PoolChartType>(PoolChartType.Volume)
   const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Month)
@@ -188,7 +188,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
         },
       ],
     }),
-    [onMouseOver, chartType, xData, yData]
+    [xData, chartType, yData, onMouseOver, chartPeriod]
   )
 
   return (
@@ -301,7 +301,34 @@ export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
           </Typography>
         )}
       </div>
-      <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} />
+      <ReactECharts
+        option={DEFAULT_OPTION}
+        showLoading={isLoading}
+        loadingOption={{
+          text: 'loading',
+          // @ts-ignore
+          color: tailwind.theme.colors.blue['500'],
+          textColor: 'inherit',
+          maskColor: 'rgba(255, 255, 255, 0)',
+          zlevel: 0,
+
+          // Font size. Available since `v4.8.0`.
+          fontSize: 12,
+          // Show an animated "spinner" or not. Available since `v4.8.0`.
+          showSpinner: true,
+          // Radius of the "spinner". Available since `v4.8.0`.
+          spinnerRadius: 10,
+          // Line width of the "spinner". Available since `v4.8.0`.
+          lineWidth: 5,
+          // Font thick weight. Available since `v5.0.1`.
+          fontWeight: 'normal',
+          // Font style. Available since `v5.0.1`.
+          fontStyle: 'normal',
+          // Font family. Available since `v5.0.1`.
+          fontFamily: 'sans-serif',
+        }}
+        style={{ height: 400 }}
+      />
     </div>
   )
 }

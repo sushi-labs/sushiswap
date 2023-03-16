@@ -38,7 +38,7 @@ export const RemoveSectionUnstake: FC<{ poolId: string }> = ({ poolId }) => {
 export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pool, chefType, farmId }) => {
   const createNotification = useCreateNotification()
   const [value, setValue] = useState('')
-  const { reserve0, reserve1, liquidityToken } = useGraphPool(pool)
+  const { data: { reserve0, reserve1, liquidityToken } } = useGraphPool(pool)
   const { balance } = usePoolPositionStaked()
 
   const amount = useMemo(() => {

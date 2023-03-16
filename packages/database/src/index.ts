@@ -4,7 +4,12 @@ export * from '@prisma/client'
 // const { Prisma, PrismaClient } =   await import('@prisma/client/edge')
 // const { Prisma, PrismaClient } =   await import('@prisma/client')
 
-const cache = process.env['NODE_ENV'] === 'production' ? new Map<string, PrismaClient>() : global.prisma
+// PrismaClient is attached to the `global` object in development to prevent
+// exhausting your database connection limit.
+//
+// Learn more:
+// https://pris.ly/d/help/next-js-best-practices
+declare let global: { prisma: Map<string, PrismaClient> }
 
 const defaultPrismaClientOptions = {
   datasources: {
@@ -18,6 +23,8 @@ const defaultPrismaClientOptions = {
 export async function createClient(options = defaultPrismaClientOptions) {
   await import('dotenv/config')
   if (!process.env['DATABASE_URL']) throw new Error('DATABASE_URL is required')
+
+  const cache = process.env['NODE_ENV'] === 'production' ? new Map<string, PrismaClient>() : global.prisma
 
   const key = JSON.stringify(options)
   if (!cache.has(key)) {
@@ -52,13 +59,6 @@ export async function createClient(options = defaultPrismaClientOptions) {
 
   return client
 }
-
-// PrismaClient is attached to the `global` object in development to prevent
-// exhausting your database connection limit.
-//
-// Learn more:
-// https://pris.ly/d/help/next-js-best-practices
-declare let global: { prisma: Map<string, PrismaClient> }
 
 /** Deep-replaces the Prisma.Decimal type with string, which prisma actually returns.
  * 
