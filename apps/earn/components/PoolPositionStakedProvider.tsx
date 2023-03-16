@@ -78,7 +78,9 @@ const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({
   children,
 }) => {
   const createNotification = useCreateNotification()
-  const { reserve0, reserve1, totalSupply, liquidityToken } = useGraphPool(pool)
+  const {
+    data: { reserve0, reserve1, totalSupply, liquidityToken },
+  } = useGraphPool(pool)
   const { balance, isLoading, isError, isWritePending, isWriteError } = useMasterChef({
     chainId: pool.chainId,
     chef: chefType,

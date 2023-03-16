@@ -13,7 +13,9 @@ interface PoolCompositionProps {
 
 export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
   const { data: prices } = usePrices({ chainId: pool.chainId })
-  const { token0, token1, reserve0, reserve1, liquidityNative } = useGraphPool(pool)
+  const {
+    data: { token0, token1, reserve0, reserve1, liquidityNative },
+  } = useGraphPool(pool)
 
   return (
     <div className="flex flex-col w-full gap-4">

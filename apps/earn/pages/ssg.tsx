@@ -15,10 +15,10 @@ export const getStaticProps: GetStaticProps = async () => {
       fallback: {
         // Need unstable_serialize for SWRInfinite: https://github.com/vercel/swr/discussions/2164
         [unstable_serialize(() => getPoolsUrl(defaultPoolsArgs))]: pools,
-        [getPoolCountUrl(defaultPoolsArgs)]: poolCount,
+        [unstable_serialize(() => getPoolCountUrl(defaultPoolsArgs))]: poolCount,
       },
-      revalidate: 60,
     },
+    revalidate: 60,
   }
 }
 

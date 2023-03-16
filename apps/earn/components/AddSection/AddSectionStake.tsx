@@ -55,7 +55,9 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pool, chefType, title, far
   const { address } = useAccount()
   const [, { createNotification }] = useNotifications(address)
   const [value, setValue] = useState('')
-  const { reserve1, reserve0, liquidityToken } = useGraphPool(pool)
+  const {
+    data: { reserve1, reserve0, liquidityToken },
+  } = useGraphPool(pool)
   const { balance } = usePoolPosition()
 
   const amount = useMemo(() => {
