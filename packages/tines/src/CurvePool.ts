@@ -23,7 +23,7 @@ export class CurvePool extends RPool {
     reserve0: BigNumber,
     reserve1: BigNumber
   ) {
-    super(address, token0, token1, fee, reserve0, reserve1)
+    super(address, token0, token1, fee, reserve0, reserve1, undefined, 90_000)
     this.A = A
     this.D = BigNumber.from(0)
     const decimalsMin = Math.min(this.token0.decimals, this.token1.decimals)
@@ -44,7 +44,7 @@ export class CurvePool extends RPool {
   }
 
   computeLiquidity(): BigNumber {
-    if (!this.D.eq(0)) return this.D // already calculated
+    if (!this.D.isZero()) return this.D // already calculated
 
     const r0 = this.reserve0Rated
     const r1 = this.reserve1Rated
@@ -99,25 +99,25 @@ export class CurvePool extends RPool {
     amountIn *= direction ? this.rate0 : this.rate1
     const xBN = direction ? this.reserve0Rated : this.reserve1Rated
     const yBN = direction ? this.reserve1Rated : this.reserve0Rated
-    const xNewBN = xBN.add(getBigNumber(amountIn * (1 - this.fee)))
+    const xNewBN = xBN.add(getBigNumber(amountIn /* * (1 - this.fee)*/))
     const yNewBN = this.computeY(xNewBN)
     const dy = parseInt(yBN.sub(yNewBN).toString()) / (direction ? this.rate1 : this.rate0)
     if (parseInt(yNewBN.toString()) < this.minLiquidity) throw 'Curve pool OutOfLiquidity'
-    return { out: dy, gasSpent: this.swapGasCost }
+    return { out: dy * (1 - this.fee), gasSpent: this.swapGasCost }
   }
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
     amountOut *= direction ? this.rate1 : this.rate0
     const xBN = direction ? this.reserve0Rated : this.reserve1Rated
     const yBN = direction ? this.reserve1Rated : this.reserve0Rated
-    let yNewBN = yBN.sub(getBigNumber(amountOut))
+    let yNewBN = yBN.sub(getBigNumber(amountOut / (1 - this.fee)))
     if (yNewBN.lt(1))
       // lack of precision
       yNewBN = BigNumber.from(1)
 
     const xNewBN = this.computeY(yNewBN)
     const input = Math.round(
-      parseInt(xNewBN.sub(xBN).toString()) / (1 - this.fee) / (direction ? this.rate0 : this.rate1)
+      parseInt(xNewBN.sub(xBN).toString()) /* / (1 - this.fee)*/ / (direction ? this.rate0 : this.rate1)
     )
 
     //if (input < 1) input = 1
