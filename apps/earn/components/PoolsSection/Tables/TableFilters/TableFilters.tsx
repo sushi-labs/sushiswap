@@ -127,9 +127,10 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
           <Button
             onClick={() =>
               setFilters({
-                poolVersions: poolVersions.includes('TRIDENT')
-                  ? poolVersions.filter((el) => el !== 'TRIDENT')
-                  : [...poolVersions, 'TRIDENT'],
+                poolVersions:
+                  poolVersions.includes('TRIDENT') && !poolTypes.includes('STABLE_POOL')
+                    ? poolVersions.filter((el) => el !== 'TRIDENT')
+                    : [...poolVersions, 'TRIDENT'],
                 poolTypes:
                   poolTypes.includes('CONSTANT_PRODUCT_POOL') && !poolVersions.includes('LEGACY')
                     ? poolTypes.filter((el) => el !== 'CONSTANT_PRODUCT_POOL')
