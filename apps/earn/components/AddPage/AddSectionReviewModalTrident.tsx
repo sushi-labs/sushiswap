@@ -3,25 +3,21 @@ import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushiswap/amm'
-import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { Dots } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
 import {
-  Approve,
   ConstantProductPoolState,
-  getSushiSwapRouterContractConfig,
-  getTridentRouterContractConfig,
   StablePoolState,
   useBentoBoxTotals,
   useSendTransaction,
   useTotalSupply,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
-import { Checker } from '@sushiswap/wagmi/future/systems'
-import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
+import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
+import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from '../../lib/actions'
@@ -58,7 +54,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   permit,
 }) => {
   const { address } = useAccount()
-  const { chain } = useNetwork()
+
   const liquidityToken = useMemo(() => {
     return new Token({
       address: poolAddress.includes(':') ? poolAddress.split(':')[1] : poolAddress,
@@ -135,11 +131,11 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
-      if (!data || !chain?.id || !token0 || !token1) return
+      if (!data || !chainId || !token0 || !token1) return
       const ts = new Date().getTime()
       createNotification({
         type: 'mint',
-        chainId: chain.id,
+        chainId,
         txHash: data.hash,
         promise: data.wait(),
         summary: {
@@ -151,14 +147,14 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         groupTimestamp: ts,
       })
     },
-    [chain?.id, createNotification, token0, token1]
+    [chainId, createNotification, token0, token1]
   )
 
   const prepare = useCallback(
     async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       try {
         if (
-          !chain?.id ||
+          !chainId ||
           !pool ||
           !token0 ||
           !token1 ||
@@ -227,7 +223,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
       }
     },
     [
-      chain?.id,
+      chainId,
       pool,
       token0,
       token1,

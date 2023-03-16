@@ -12,7 +12,7 @@ import {
 import { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
 import { ChainId } from '@sushiswap/chain'
 import { z } from 'zod'
-import { isUniswapV2FactoryChainId, uniswapV2FactoryAddress, UniswapV2FactoryChainId } from '@sushiswap/sushiswap'
+import { isUniswapV2FactoryChainId, UniswapV2FactoryChainId } from '@sushiswap/sushiswap'
 import { isAddress } from 'ethers/lib/utils'
 import { useToken } from '@sushiswap/react-query'
 import { useRouter } from 'next/router'
@@ -22,18 +22,9 @@ import {
   isStablePoolFactoryChainId,
   StablePoolFactoryChainId,
 } from '@sushiswap/trident'
-import { PoolType, usePool, usePoolsAsMap } from '@sushiswap/wagmi/future/hooks'
-import {
-  computeConstantProductPoolAddress,
-  computePairAddress,
-  computeStablePoolAddress,
-  ConstantProductPool,
-  Fee,
-  Pair,
-  StablePool,
-} from '@sushiswap/amm'
+import { PoolType, usePoolsAsMap } from '@sushiswap/wagmi/future/hooks'
+import { ConstantProductPool, Fee, Pair, StablePool } from '@sushiswap/amm'
 import { Signature } from '@ethersproject/bytes'
-import { getConstantProductPoolFactoryContract, getStablePoolFactoryContract } from '@sushiswap/wagmi'
 import { UseQueryResult } from '@tanstack/react-query'
 
 export type EarnChainId = StablePoolFactoryChainId | ConstantProductPoolFactoryChainId | UniswapV2FactoryChainId
@@ -74,7 +65,10 @@ interface AddPositionState {
   chainId: ChainId
   amount0: Amount<Type> | undefined
   amount1: Amount<Type> | undefined
-  poolQuery: UseQueryResult<{pool: Pair | ConstantProductPool | StablePool | undefined; map: Record<string, Pair | ConstantProductPool | StablePool>}>
+  poolQuery: UseQueryResult<{
+    pool: Pair | ConstantProductPool | StablePool | undefined
+    map: Record<string, Pair | ConstantProductPool | StablePool>
+  }>
   isTrident: boolean
 }
 

@@ -144,6 +144,9 @@ export enum ChainId {
   BOBA_BNB = 56288,
   BTTC = 199,
   // SEPOLIA = 11155111,
+  CONSENSUS_ZKEVM_TESTNET = 59140,
+  SCROLL_ALPHA_TESTNET = 534353,
+  BASE_TESTNET = 84531,
 }
 
 export enum ChainKey {
@@ -185,6 +188,9 @@ export enum ChainKey {
   BOBA_AVAX = 'boba-avax',
   BOBA_BNB = 'boba-bnb',
   BTTC = 'bttc',
+  CONSENSUS_ZKEVM_TESTNET = 'consensus-zkevm-testnet',
+  SCROLL_ALPHA_TESTNET = 'scroll-alpha-testnet',
+  BASE_TESTNET = 'base-testnet',
   // SEPOLIA = 'sepolia',
 }
 
@@ -236,9 +242,81 @@ export enum ChainKey {
 //   },
 // ] as const
 
+const additional = [
+  {
+    name: 'Scroll Alpha Testnet',
+    chain: 'Scroll',
+    rpc: ['https://alpha-rpc.scroll.io/l2'],
+    faucets: [],
+    features: [],
+    nativeCurrency: {
+      name: 'Ethereum',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    infoURL: 'https://scroll.io',
+    shortName: 'scrollalpha',
+    chainId: 534353,
+    networkId: 534353,
+    explorers: [
+      {
+        name: 'Scroll Alpha Explorer',
+        url: 'https://blockscout.scroll.io',
+        standard: Standard.None,
+      },
+    ],
+  },
+  {
+    name: 'ConsenSys zkEVM Goreli',
+    chain: 'ConsenSys zkEVM',
+    rpc: ['https://consensys-zkevm-goerli-prealpha.infura.io/v3/53fca4c2b95a43cca82a11e8b573256b'],
+    faucets: [],
+    nativeCurrency: {
+      name: 'Ethereum',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    infoURL: 'https://docs.zkevm.consensys.net',
+    shortName: 'consensuszkevmgoerli',
+    chainId: 59140,
+    networkId: 59140,
+    explorers: [
+      {
+        name: 'ConsenSys zkEVM Goreli Explorer',
+        url: 'https://explorer.goerli.zkevm.consensys.net',
+        standard: Standard.None,
+      },
+    ],
+  },
+  {
+    name: 'Base Goreli',
+    chain: 'Base',
+    rpc: ['https://goerli.base.org'],
+    faucets: [],
+    nativeCurrency: {
+      name: 'Ethereum',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    infoURL: 'https://docs.base.org',
+    shortName: 'basegoerli',
+    chainId: 84531,
+    networkId: 84531,
+    explorers: [
+      {
+        name: 'Base Goreli Explorer',
+        url: 'https://goerli.basescan.org',
+        standard: Standard.Eip3091,
+      },
+    ],
+  },
+] as const
+
+const RAW = [...raw, ...additional] as const
+
 const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA]
 
-type Data = (typeof raw)[number]
+type Data = (typeof RAW)[number]
 
 export class Chain implements Chain {
   public static fromRaw(data: Data) {
@@ -319,13 +397,14 @@ export class Chain implements Chain {
 }
 
 // Chain Id => Chain mapping
-export const chains = Object.fromEntries(raw.map((data): [ChainId, Chain] => [data.chainId, new Chain(data)]))
+export const chains = Object.fromEntries(RAW.map((data): [ChainId, Chain] => [data.chainId, new Chain(data)]))
 
 // Chain Id => Chain mapping
 export const chainsL2 = Object.fromEntries(
-  raw
-    .filter((data) => 'parent' in data && data.parent.type === Type.L2)
-    .map((data): [ChainId, Chain] => [data.chainId, new Chain(data)])
+  RAW.filter((data) => 'parent' in data && data.parent.type === Type.L2).map((data): [ChainId, Chain] => [
+    data.chainId,
+    new Chain(data),
+  ])
 )
 
 // ChainId array
@@ -333,17 +412,17 @@ export const chainIds = raw.map((chain) => chain.chainId)
 
 // Chain Short Name => Chain Id mapping
 export const chainShortNameToChainId = Object.fromEntries(
-  raw.map((data): [string, number] => [data.shortName, data.chainId])
+  RAW.map((data): [string, number] => [data.shortName, data.chainId])
 )
 
 // Chain Id => Short Name mapping
 export const chainShortName = Object.fromEntries(
-  raw.map((data): [number, string] => [data.chainId, Chain.fromRaw(data).shortName])
+  RAW.map((data): [number, string] => [data.chainId, Chain.fromRaw(data).shortName])
 )
 
 // Chain Id => Chain Name mapping
 export const chainName = Object.fromEntries(
-  raw.map((data): [number, string] => [data.chainId, Chain.fromRaw(data).name])
+  RAW.map((data): [number, string] => [data.chainId, Chain.fromRaw(data).name])
 )
 
 export default chains
