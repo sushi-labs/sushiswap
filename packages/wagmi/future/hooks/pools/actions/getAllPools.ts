@@ -66,7 +66,7 @@ export const getAllPools = async (
   }
 
   const data = await queryFn(variables)
-
+  console.log(data)
   return {
     pairs: Object.values(
       data.pairs

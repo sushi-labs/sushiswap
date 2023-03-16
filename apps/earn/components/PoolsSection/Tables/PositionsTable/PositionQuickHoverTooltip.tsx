@@ -1,14 +1,14 @@
 import { formatPercent, formatUSD } from '@sushiswap/format'
-import { Pool } from '@sushiswap/client'
-import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
-import { FC } from 'react'
-
-import { useTokensFromPool } from '../../../../lib/hooks'
+import { Currency, Link } from '@sushiswap/ui'
+import React, { FC, useCallback } from 'react'
 import { PositionWithPool } from '../../../../types'
 import { PoolPositionProvider, usePoolPosition } from '../../../PoolPositionProvider'
 import { PoolPositionRewardsProvider, usePoolPositionRewards } from '../../../PoolPositionRewardsProvider'
 import { PoolPositionStakedProvider, usePoolPositionStaked } from '../../../PoolPositionStakedProvider'
-import { ICON_SIZE } from '../contants'
+import { List } from '@sushiswap/ui/future/components/list/List'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { ArrowDownIcon, MinusIcon, PlusIcon } from '@heroicons/react/solid'
+import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 interface PositionQuickHoverTooltipProps {
   row: PositionWithPool
@@ -27,8 +27,8 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
 }
 
 const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row }) => {
-  const { token0, token1 } = useTokensFromPool(row.pool)
-
+  const { switchNetwork } = useSwitchNetwork()
+  const { chain } = useNetwork()
   const { underlying0, underlying1, value1, value0 } = usePoolPosition()
   const {
     underlying1: stakedUnderlying1,
@@ -37,143 +37,155 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
     value1: stakedValue1,
   } = usePoolPositionStaked()
 
-  const { pendingRewards, rewardTokens, values } = usePoolPositionRewards()
+  const { pendingRewards, rewardTokens, values, harvest } = usePoolPositionRewards()
+
+  const _harvest = useCallback(() => {
+    if (row.pool.chainId !== chain?.id) {
+      switchNetwork?.(row.pool.chainId)
+    } else if (harvest) {
+      harvest()
+    }
+  }, [chain?.id, harvest, row.pool.chainId, switchNetwork])
 
   return (
-    <div className="flex flex-col p-2 !pb-0">
-      <div className="flex justify-between gap-8">
-        <div className="flex flex-col gap-1">
-          <div className="flex gap-1">
-            <Currency.IconList iconWidth={ICON_SIZE} iconHeight={ICON_SIZE}>
-              <Currency.Icon currency={token0} />
-              <Currency.Icon currency={token1} />
-            </Currency.IconList>
-            <div className="flex flex-col">
-              <Typography variant="sm" weight={500} className="flex gap-1 text-gray-900 dark:text-slate-50">
-                {token0.symbol} <span className="text-gray-900 dark:text-slate-500">/</span> {token1.symbol}
-              </Typography>
-              {/* <Typography variant="xxs" className="text-slate-400">
-                SushiSwap Farm
-              </Typography> */}
-            </div>
+    <div className="flex flex-col p-2 gap-3">
+      <div className="flex flex-col gap-1">
+        <span className="text-[10px] text-gray-500 dark:text-slate-500">
+          <span className="font-semibold text-gray-900 dark:text-slate-50">Total APR</span> • Rewards + Fees
+        </span>
+        <span className="text-3xl font-medium text-gray-900 dark:text-slate-50">
+          {formatPercent(row.pool.totalApr)}{' '}
+          <span className="text-[10px] text-gray-500 dark:text-slate-500">
+            {formatPercent(row.pool.incentiveApr)} + {formatPercent(row.pool.feeApr)}
+          </span>
+        </span>
+      </div>
+      <div className="flex gap-2">
+        <Link.Internal href={`/${row.pool.id}/add`} passHref={true}>
+          <Button as="a" size="xs" variant="outlined">
+            <PlusIcon width={16} height={16} /> Deposit
+          </Button>
+        </Link.Internal>
+        <Link.Internal href={`/${row.pool.id}/remove`} passHref={true}>
+          <Button as="a" size="xs" variant="outlined">
+            <MinusIcon width={16} height={16} /> Withdraw
+          </Button>
+        </Link.Internal>
+        <Button as="a" size="xs" variant="outlined" onClick={_harvest}>
+          <ArrowDownIcon width={16} height={16} /> Claim
+        </Button>
+      </div>
+
+      <div className="max-h-[240px] scroll border-t border-gray-200 dark:border-slate-200/5 mt-2">
+        <List className="!pt-5">
+          <div className="flex justify-between">
+            <List.Label>Position</List.Label>
+            <List.Label>{formatUSD(value0 + value1)}</List.Label>
           </div>
-          <Typography variant="xs" weight={600} className="flex gap-1.5 items-end text-slate-400">
-            <Chip
-              color="gray"
-              size="sm"
-              label={
-                row.pool.type === 'CONSTANT_PRODUCT_POOL'
-                  ? 'Classic'
-                  : row.pool.type === 'STABLE_POOL'
-                  ? 'Stable'
-                  : row.pool.type === 'CONCENTRATED_LIQUIDITY_POOL'
-                  ? 'Concentrated'
-                  : ''
+          <List.Control className="bg-gray-100 dark:bg-slate-700">
+            <List.Item
+              loading={!underlying0}
+              icon={Currency.Icon}
+              iconProps={{
+                currency: underlying0?.currency,
+                width: 24,
+                height: 24,
+              }}
+              title={
+                <div className="flex gap-2 items-baseline">
+                  {underlying0?.toSignificant(6)} {underlying0?.currency.symbol}
+                  <span className="text-[10px] text-gray-600 dark:text-slate-400">{formatUSD(value0)}</span>
+                </div>
               }
             />
-            Fee {row.pool.swapFee * 100}%
-          </Typography>
-        </div>
-        <div className="flex flex-col gap-1">
-          <Typography variant="sm" weight={600} className="flex gap-3 text-gray-900 dark:text-slate-50">
-            <span className="text-slate-400">APR:</span> {formatPercent(row.pool.totalApr)}
-          </Typography>
-          <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-gray-900 dark:text-slate-50">
-            <span className="text-slate-400">Rewards:</span> {formatPercent(row.pool.incentiveApr)}
-          </Typography>
-          <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-gray-900 dark:text-slate-50">
-            <span className="text-slate-400">Fees:</span> {formatPercent(row.pool.feeApr)}
-          </Typography>
-        </div>
-      </div>
-      <hr className="my-3 border-t border-slate-200/10" />
-      <div className="flex flex-col gap-1.5">
-        <Typography variant="xs" className="mb-1 text-gray-900 dark:text-slate-500">
-          Position
-        </Typography>
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Currency.Icon currency={token0} width={18} height={18} />
-            <Typography variant="sm" weight={600} className="text-gray-900 dark:text-slate-50">
-              {underlying0?.toSignificant(6) || '0.00'} {token0?.symbol}
-            </Typography>
-          </div>
-          <Typography variant="xs" className="text-slate-400">
-            {formatUSD(value0)}
-          </Typography>
-        </div>
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Currency.Icon currency={token1} width={18} height={18} />
-            <Typography variant="sm" weight={600} className="text-gray-900 dark:text-slate-50">
-              {underlying1?.toSignificant(6) || '0.00'} {token1?.symbol}
-            </Typography>
-          </div>
-          <Typography variant="xs" className="text-slate-400">
-            {formatUSD(value1)}
-          </Typography>
-        </div>
-      </div>
-      {row.pool.incentives && (
-        <div className="flex flex-col gap-1.5 mt-4">
-          <Typography variant="xs" className="mb-1 text-gray-900 dark:text-slate-500">
-            Staked Position
-          </Typography>
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <Currency.Icon currency={token0} width={18} height={18} />
-              <Typography variant="sm" weight={600} className="text-gray-900 dark:text-slate-50">
-                {stakedUnderlying0?.toSignificant(6) || '0.00'} {token0?.symbol}
-              </Typography>
+            <List.Item
+              loading={!underlying1}
+              icon={Currency.Icon}
+              iconProps={{
+                currency: underlying1?.currency,
+                width: 24,
+                height: 24,
+              }}
+              title={
+                <div className="flex gap-2 items-baseline">
+                  {underlying1?.toSignificant(6)} {underlying1?.currency.symbol}
+                  <span className="text-[10px] text-gray-600 dark:text-slate-400">{formatUSD(value1)}</span>
+                </div>
+              }
+            />
+          </List.Control>
+        </List>
+
+        {row.pool.incentives && (
+          <List className="!pt-5">
+            <div className="flex justify-between">
+              <List.Label>Staked Position</List.Label>
+              <List.Label>{formatUSD(stakedValue0 + stakedValue1)}</List.Label>
             </div>
-            <Typography variant="xs" className="text-slate-400">
-              {formatUSD(stakedValue0)}
-            </Typography>
-          </div>
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <Currency.Icon currency={token1} width={18} height={18} />
-              <Typography variant="sm" weight={600} className="text-gray-900 dark:text-slate-50">
-                {stakedUnderlying1?.toSignificant(6) || '0.00'} {token1?.symbol}
-              </Typography>
-            </div>
-            <Typography variant="xs" className="text-slate-400">
-              {formatUSD(stakedValue1)}
-            </Typography>
-          </div>
-        </div>
-      )}
-      {row.pool.incentives && pendingRewards.length > 0 && (
-        <div className="flex flex-col gap-1.5 mt-4">
-          <Typography variant="xs" className="mb-1 text-gray-900 dark:text-slate-500">
-            Farmed Rewards
-          </Typography>
-          {pendingRewards.map((reward, index) => (
-            <div className="flex items-center justify-between gap-2" key={index}>
-              <div className="flex items-center gap-2">
-                <Currency.Icon currency={rewardTokens[index]} width={18} height={18} />
-                <Typography variant="sm" weight={600} className="text-gray-900 dark:text-slate-50">
-                  {reward?.toSignificant(6) || '0.00'} {rewardTokens[index]?.symbol}
-                </Typography>
-              </div>
-              <Typography variant="xs" className="text-slate-400">
-                {formatUSD(values[index])}
-              </Typography>
-            </div>
-          ))}
-        </div>
-      )}
-      <div className="flex justify-end gap-2 mt-8 mb-2">
-        <Link.Internal href={`/${row.pool.id}/remove`} passHref={true}>
-          <Button as="a" size="sm" variant="outlined" fullWidth>
-            Withdraw
-          </Button>
-        </Link.Internal>
-        <Link.Internal href={`/${row.pool.id}/add`} passHref={true}>
-          <Button as="a" size="sm" fullWidth>
-            Deposit
-          </Button>
-        </Link.Internal>
+            <List.Control className="bg-gray-100 dark:bg-slate-700">
+              <List.Item
+                loading={!stakedUnderlying0}
+                icon={Currency.Icon}
+                iconProps={{
+                  currency: stakedUnderlying0?.currency,
+                  width: 24,
+                  height: 24,
+                }}
+                title={
+                  <div className="flex gap-2 items-baseline">
+                    {stakedUnderlying0?.toSignificant(6)} {stakedUnderlying0?.currency.symbol}
+                    <span className="text-[10px] text-gray-600 dark:text-slate-400">{formatUSD(stakedValue1)}</span>
+                  </div>
+                }
+              />
+              <List.Item
+                loading={!stakedUnderlying1}
+                icon={Currency.Icon}
+                iconProps={{
+                  currency: stakedUnderlying1?.currency,
+                  width: 24,
+                  height: 24,
+                }}
+                title={
+                  <div className="flex gap-2 items-baseline">
+                    {stakedUnderlying1?.toSignificant(6) || '0.00'} {stakedUnderlying1?.currency.symbol}
+                    <span className="text-[10px] text-gray-600 dark:text-slate-400">{formatUSD(stakedValue1)}</span>
+                  </div>
+                }
+              />
+            </List.Control>
+          </List>
+        )}
+
+        {row.pool.incentives && pendingRewards.length > 0 && (
+          <>
+            <List className="!pt-5">
+              <List.Label>Pending rewards</List.Label>
+              <List.Control className="bg-gray-100 dark:bg-slate-700">
+                {pendingRewards.map((reward, index) => (
+                  <List.Item
+                    key={index}
+                    icon={Currency.Icon}
+                    iconProps={{
+                      currency: reward?.currency,
+                      width: 24,
+                      height: 24,
+                    }}
+                    title={
+                      <div className="flex gap-2 items-baseline">
+                        {reward?.toSignificant(6) || '0.00'} {rewardTokens[index]?.symbol}
+                        <span className="text-[10px] text-gray-600 dark:text-slate-400">
+                          {' '}
+                          {formatUSD(values[index])}
+                        </span>
+                      </div>
+                    }
+                  />
+                ))}
+              </List.Control>
+            </List>
+          </>
+        )}
       </div>
     </div>
   )

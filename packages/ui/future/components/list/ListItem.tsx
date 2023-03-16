@@ -1,12 +1,14 @@
 import classNames from 'classnames'
 import React, { ReactNode } from 'react'
 import { PolymorphicComponentProps } from '../../../types'
+import { Skeleton } from '../skeleton'
 
 interface Props {
-  title: string
+  title: ReactNode
   subtitle?: ReactNode
   onClick?(): void
   value?: ReactNode
+  loading?: boolean
 }
 
 export type ListItemProps<P extends React.ElementType, C extends React.ElementType> = {
@@ -27,6 +29,7 @@ export const ListItem: ListItemComponent = ({
   onClick,
   className,
   value,
+  loading = false,
   ...rest
 }) => {
   const Component = as || 'button'
@@ -42,24 +45,44 @@ export const ListItem: ListItemComponent = ({
         'relative flex gap-4 px-4 py-3 w-full cursor-pointer'
       )}
     >
-      {Icon && (
-        <div
-          style={{ minWidth: iconProps?.width ?? 18, minHeight: iconProps?.height ?? 18, paddingTop: subtitle ? 1 : 0 }}
-        >
-          {React.createElement(Icon, {
-            width: 18,
-            height: 18,
-            strokeWidth: 2,
-            ...iconProps,
-            className: classNames(iconProps?.className, 'text-blue-500 rounded-full'),
-          })}
-        </div>
+      {loading ? (
+        <>
+          {Icon && <Skeleton.Circle radius={iconProps?.width ?? 18} />}
+          <div className="flex flex-col gap-0.5 items-start w-full">
+            <Skeleton.Text fontSize="text-sm" />
+            {subtitle && <Skeleton.Text fontSize="text-xs" />}
+          </div>
+        </>
+      ) : (
+        <>
+          {Icon && (
+            <div
+              style={{
+                minWidth: iconProps?.width ?? 18,
+                minHeight: iconProps?.height ?? 18,
+                paddingTop: subtitle ? 1 : 0,
+              }}
+            >
+              {React.createElement(Icon, {
+                width: 18,
+                height: 18,
+                strokeWidth: 2,
+                ...iconProps,
+                className: classNames(iconProps?.className, 'text-blue-500 rounded-full'),
+              })}
+            </div>
+          )}
+          <div className="flex flex-col gap-0.5 items-start">
+            <span className="text-sm font-medium dark:text-slate-200">{title}</span>
+            {subtitle && <span className="text-[10px] text-gray-700 dark:text-slate-400 text-left">{subtitle}</span>}
+          </div>
+          {typeof value === 'string' ? (
+            <span className="text-xs text-gray-500 dark:text-slate-500">{value}</span>
+          ) : (
+            value
+          )}
+        </>
       )}
-      <div className="flex flex-col gap-0.5 items-start">
-        <span className="text-sm font-medium dark:text-slate-200">{title}</span>
-        {subtitle && <span className="text-[10px] text-gray-700 dark:text-slate-400 text-left">{subtitle}</span>}
-      </div>
-      {typeof value === 'string' ? <span className="text-xs text-gray-500 dark:text-slate-500">{value}</span> : value}
     </Component>
   )
 }

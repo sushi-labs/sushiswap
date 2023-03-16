@@ -180,6 +180,7 @@ export const AddPositionProvider: FC<AddPositionProviderProps> = ({ children }) 
     }
   }, [chainId, internalState, isTokenFromLoading, isTokenToLoading, poolQuery, token0, token1])
 
+  console.log(poolQuery)
   const api = useMemo(() => {
     const setChainId = (chainId: ChainId) => {
       void push(
@@ -188,6 +189,8 @@ export const AddPositionProvider: FC<AddPositionProviderProps> = ({ children }) 
           query: {
             ...query,
             chainId,
+            fromCurrency: Native.onChain(chainId).symbol,
+            toCurrency: 'SUSHI',
           },
         },
         undefined,

@@ -1,11 +1,12 @@
 import { formatNumber, formatPercent } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
 import { Currency, Link } from '@sushiswap/ui'
-import { FC } from 'react'
+import React, { FC } from 'react'
 
 import { incentiveRewardToToken } from '../../../../lib/functions'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import Button from '@sushiswap/ui/future/components/button/Button'
+import { PlusIcon } from '@heroicons/react/solid'
 
 interface PoolQuickHoverTooltipProps {
   row: Pool
@@ -27,8 +28,8 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
       </div>
       <div className="flex">
         <Link.Internal href={`/${row.id}/add`} passHref={true}>
-          <Button as="a" size="sm" variant="outlined">
-            Deposit
+          <Button as="a" size="xs" variant="outlined">
+            <PlusIcon width={16} height={16} /> Deposit
           </Button>
         </Link.Internal>
       </div>
@@ -38,7 +39,7 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
           <List className="!pt-5">
             <div className="flex justify-between">
               <List.Label>Reward Emission</List.Label>
-              <span className="text-[10px] text-gray-500">per day</span>
+              <List.Label>per day</List.Label>
             </div>
             <List.Control className="bg-gray-100 dark:bg-slate-700">
               {row.incentives.map((incentive, index) => (

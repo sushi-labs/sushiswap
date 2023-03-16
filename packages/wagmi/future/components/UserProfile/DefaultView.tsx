@@ -112,7 +112,7 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
         </div>
       </div>
       <List>
-        <List.Control className="bg-gray-100 dark:!bg-slate-700">
+        <List.Control className="bg-gray-100">
           <List.MenuItem
             icon={InboxArrowDownIcon}
             title="Transactions"
