@@ -17,7 +17,9 @@ interface PoolHeader {
 export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
   const { data: prices } = usePrices({ chainId: pool.chainId })
 
-  const { token0, token1, liquidityToken } = useGraphPool(pool)
+  const {
+    data: { token0, token1, liquidityToken },
+  } = useGraphPool(pool)
 
   return (
     <div className="flex flex-col gap-5">
