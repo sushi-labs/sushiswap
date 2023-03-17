@@ -13,7 +13,8 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "strictNullChecks": true
   },
   "ts-node": {
     "swc": true,

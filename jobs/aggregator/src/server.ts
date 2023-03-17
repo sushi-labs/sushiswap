@@ -18,7 +18,8 @@ import { quickswapV2 } from './seed/quickswap/v2/seed.js'
 import { reserves } from './seed/reserves.js'
 import { spiritSwapV2 } from './seed/spiritswap/v2/seed.js'
 import { spookySwapV2 } from './seed/spookyswap/v2/seed.js'
-import { sushiSwap } from './seed/sushiswap/seed.js'
+import { sushiSwapLegacy } from './seed/sushiswap/legacy.js'
+import { sushiSwapTrident } from './seed/sushiswap/trident.js'
 import { traderJoeV2 } from './seed/trader-joe/v2/seed.js'
 import { ubeSwapV2 } from './seed/ubeswap/v2/seed.js'
 import { uniswapV2 } from './seed/uniswap/v2/seed.js'
@@ -32,6 +33,12 @@ const protocolSchema = z.object({
   name: z.nativeEnum(ProtocolName),
   version: z.nativeEnum(ProtocolVersion).optional(),
   poolType: z.nativeEnum(PoolType).optional(),
+  dryRun: z.coerce
+  .string()
+  .transform((val) => val === 'true'),
+  initialRun: z.coerce
+  .string()
+  .transform((val) => val === 'true'),
 })
 
 const chainIdOnlySchema = z.object({
@@ -66,10 +73,17 @@ app.get(
       return res.status(400).send(result.error.format())
     }
 
-    const { name, version, poolType } = result.data
+    const { name, version, poolType, dryRun, initialRun } = result.data
     try {
       if (name === ProtocolName.SUSHISWAP) {
-        await sushiSwap() // Includes legacy, trident and stable pools
+        if (version === ProtocolVersion.LEGACY) {
+          await sushiSwapLegacy({dryRun, initialRun})
+        } else if (version === ProtocolVersion.TRIDENT) {
+          await sushiSwapTrident({dryRun, initialRun})
+        } else {
+          res.status(400).send('Not a valid version')
+        }
+        
         res.sendStatus(200)
       } else if (name === ProtocolName.UNISWAP) {
         if (version === ProtocolVersion.V2) {
