@@ -7,6 +7,12 @@ import seedrandom from 'seedrandom'
 
 import { setTokenBalance } from '../src/SetTokenBalance'
 
+enum CurvePoolType {
+  Legacy = 'Legacy', // 'exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) -> uint256'
+  Legacy_ETH = 'Legacy_ETH', // like Legacy, but raw ETH as one of tokens
+  Factory = 'Factory', // 'exchange(unt128 i, unt128 j, uint256 dx, uint256 min_dy) -> uint256'
+}
+
 export function getRandomExp(rnd: () => number, min: number, max: number) {
   const minL = Math.log(min)
   const maxL = Math.log(max)
@@ -43,12 +49,20 @@ interface PoolInfo {
   userAddress: string
 }
 
-async function createCurvePoolInfo(poolAddress: string, user: Signer, initialBalance: bigint): Promise<PoolInfo> {
+async function createCurvePoolInfo(
+  poolAddress: string,
+  poolType: CurvePoolType,
+  user: Signer,
+  initialBalance: bigint
+): Promise<PoolInfo> {
   const chainId = ethers.provider.network.chainId
   const poolContract = new Contract(
     poolAddress,
     [
       'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns (uint256)',
+      // poolType == CurvePoolType.Legacy || poolType == CurvePoolType.Legacy_ETH
+      //   ? 'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns (uint256)'
+      //   : 'function exchange(uint256 i, uint256 j, uint256 dx, uint256 min_dy) payable returns (uint256)',
       'function A() pure returns (uint256)',
       'function fee() pure returns (uint256)',
       'function coins(uint256) pure returns (address)',
@@ -117,20 +131,21 @@ async function checkSwap(poolInfo: PoolInfo, from: number, to: number, amountIn:
   expectCloseValues(realOut, expectedOut.out, 1e-9)
 }
 
-const CurvePools: [string, string][] = [
-  ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', 'steth'],
-  ['0xdcef968d416a41cdac0ed8702fac8128a64241a2', 'fraxusdc'],
-  ['0xf253f83aca21aabd2a20553ae0bf7f65c755a07f', 'sbtc2'],
+const CurvePools: [string, string, CurvePoolType][] = [
+  ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', 'steth', CurvePoolType.Legacy_ETH],
+  ['0xdcef968d416a41cdac0ed8702fac8128a64241a2', 'fraxusdc', CurvePoolType.Legacy],
+  ['0x828b154032950c8ff7cf8085d841723db2696056', 'stETH concentrated', CurvePoolType.Factory],
+  ['0xf253f83aca21aabd2a20553ae0bf7f65c755a07f', 'sbtc2', CurvePoolType.Legacy],
 ]
 
 describe.only('Real Curve pools consistency check', () => {
   for (let i = 0; i < CurvePools.length; ++i) {
-    const [addr, name] = CurvePools[i]
-    it(`${name} (${addr})`, async () => {
+    const [addr, name, poolType] = CurvePools[i]
+    it(`${name} (${addr}, ${poolType})`, async () => {
       const testSeed = addr
       const rnd: () => number = seedrandom(testSeed) // random [0, 1)
       const [user] = await ethers.getSigners()
-      const poolInfo = await createCurvePoolInfo(addr, user, BigInt(1e30))
+      const poolInfo = await createCurvePoolInfo(addr, poolType, user, BigInt(1e30))
       const res0 = parseInt(poolInfo.poolTines.reserve0.toString())
       const res1 = parseInt(poolInfo.poolTines.reserve1.toString())
       for (let i = 0; i < 10; ++i) {
