@@ -37,7 +37,7 @@ function expectCloseValues(_a: number | BigNumber, _b: number | BigNumber, accur
 
 interface PoolInfo {
   poolContract: Contract
-  tokenContracts: Contract[]
+  tokenContracts: (Contract | undefined)[]
   poolTines: CurvePool
   user: Signer
   userAddress: string
@@ -48,7 +48,7 @@ async function createCurvePoolInfo(poolAddress: string, user: Signer, initialBal
   const poolContract = new Contract(
     poolAddress,
     [
-      'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) returns (uint256)',
+      'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns (uint256)',
       'function A() pure returns (uint256)',
       'function fee() pure returns (uint256)',
       'function coins(uint256) pure returns (address)',
@@ -67,16 +67,21 @@ async function createCurvePoolInfo(poolAddress: string, user: Signer, initialBal
     } catch (e) {
       break
     }
+    if (token == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
+      // native
+      tokenContracts.push(undefined)
+      tokenTines.push({ address: token, name: token, symbol: token, chainId, decimals: 18 })
+    } else {
+      const res = await setTokenBalance(token, userAddress, initialBalance)
+      expect(res).equal(true)
 
-    const res = await setTokenBalance(token, userAddress, initialBalance)
-    expect(res).equal(true)
+      const tokenContract = new Contract(token, erc20Abi, user)
+      await tokenContract.approve(poolAddress, initialBalance.toString())
+      tokenContracts.push(tokenContract)
 
-    const tokenContract = new Contract(token, erc20Abi, user)
-    await tokenContract.approve(poolAddress, initialBalance.toString())
-    tokenContracts.push(tokenContract)
-
-    const decimals = await tokenContract.decimals()
-    tokenTines.push({ address: token, name: token, symbol: token, chainId, decimals })
+      const decimals = await tokenContract.decimals()
+      tokenTines.push({ address: token, name: token, symbol: token, chainId, decimals })
+    }
   }
 
   const A = await poolContract.A()
@@ -104,13 +109,16 @@ async function createCurvePoolInfo(poolAddress: string, user: Signer, initialBal
 
 async function checkSwap(poolInfo: PoolInfo, from: number, to: number, amountIn: number) {
   const expectedOut = poolInfo.poolTines.calcOutByIn(Math.round(amountIn), from < to)
-  const realOutBN = await poolInfo.poolContract.callStatic.exchange(from, to, getBigNumber(amountIn), 0)
+  const realOutBN = await poolInfo.poolContract.callStatic.exchange(from, to, getBigNumber(amountIn), 0, {
+    value: poolInfo.tokenContracts[from] === undefined ? getBigNumber(amountIn) : 0,
+  })
   const realOut = parseInt(realOutBN.toString())
 
   expectCloseValues(realOut, expectedOut.out, 1e-9)
 }
 
 const CurvePools: [string, string][] = [
+  ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', 'steth'],
   ['0xdcef968d416a41cdac0ed8702fac8128a64241a2', 'fraxusdc'],
   ['0xf253f83aca21aabd2a20553ae0bf7f65c755a07f', 'sbtc2'],
 ]

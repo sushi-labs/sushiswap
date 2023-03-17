@@ -17,12 +17,17 @@ export async function setTokenBalance(token: string, user: string, balance: bigi
   if (user.startsWith('0x')) user = user.substring(2)
   const tokenContract = new Contract(token, erc20Abi, ethers.provider)
 
+  const balancePrimary = (await tokenContract.balanceOf(user)) as BigNumber
+
   for (let i = 0; i < 50; ++i) {
     const slotData = '0x' + user.padStart(64, '0') + Number(i).toString(16).padStart(64, '0')
     const slot = keccak256(slotData)
     await setStorageAt(token, slot, balance)
     const resBalance = (await tokenContract.balanceOf(user)) as BigNumber
-    if (!resBalance.isZero() && resBalance.toString() === balance.toString()) return true
+    if (!resBalance.isZero()) {
+      if (resBalance.toString() === balance.toString()) return true // balance was set
+      if (!resBalance.eq(balancePrimary)) return true // also set, but changed by some way. Example: stEth
+    }
   }
   return false
 }
