@@ -69,20 +69,19 @@ export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady }) => {
   useEffect(() => {
     if (isSm && !isMd) {
       setColumnVisibility({
-        volume: false,
+        volume1d: false,
         network: false,
         rewards: false,
-        fees: false,
+        fees1d: false,
       })
     } else if (isSm) {
       setColumnVisibility({})
     } else {
       setColumnVisibility({
-        volume: false,
         network: false,
         rewards: false,
         liquidityUSD: false,
-        fees: false,
+        fees1d: false,
       })
     }
   }, [isMd, isSm])
