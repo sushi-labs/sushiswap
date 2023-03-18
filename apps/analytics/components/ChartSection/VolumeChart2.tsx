@@ -138,7 +138,7 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex justify-between">
-        <div className={classNames('pb-2 font-semibold text-sm')}>Volume</div>
+        <div className={classNames('font-semibold text-sm')}>Volume</div>
         <div className="flex gap-4">
           {/* <button
             onClick={() => setChartPeriod(TvlChartPeriod.Day)}

@@ -162,7 +162,7 @@ export const TVLChart: FC<{ stats?: Pair[] }> = ({ stats }) => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex justify-between">
-        <div className={classNames('pb-2 font-semibold text-sm')}>TVL</div>
+        <div className={classNames('font-semibold text-sm')}>TVL</div>
         <div className="flex gap-4">
           <button
             onClick={() => setChartPeriod(TvlChartPeriod.Day)}
