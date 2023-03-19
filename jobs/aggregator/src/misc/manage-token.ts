@@ -15,9 +15,9 @@ class Token {
   constructor(
     chainId: ChainId,
     address: string,
-    status: 'APPROVED' | 'DISAPPROVED' | 'UNKNOWN' = undefined,
-    isFeeOnTransfer: boolean = undefined,
-    isCommon: boolean = undefined
+    status: 'APPROVED' | 'DISAPPROVED' | 'UNKNOWN' | undefined = undefined,
+    isFeeOnTransfer: boolean | undefined = undefined,
+    isCommon: boolean | undefined = undefined
   ) {
     if (!isAddress(address)) {
       throw new Error(`Invalid address: ${address}`)

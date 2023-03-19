@@ -20,8 +20,6 @@ export async function createPools(client: PrismaClient, pools: Prisma.PoolCreate
 }
 
 export async function getNonExistingPools(client: PrismaClient, pools: Prisma.PoolCreateManyInput[]) {
-  const startTime = performance.now()
-
   const existingPools = await client.pool.findMany({
     where: {
       id: {
@@ -32,10 +30,6 @@ export async function getNonExistingPools(client: PrismaClient, pools: Prisma.Po
       id: true,
     },
   })
-
-  const endTime = performance.now()
-  const duration = ((endTime - startTime) / 1000).toFixed(1)
-  console.log(`LOAD - Found ${existingPools.length} existing pools. (${duration}s) `)
 
   const existingPoolIds = existingPools.map((pool) => pool.id)
   return pools.filter((pool) => !existingPoolIds.includes(pool.id))

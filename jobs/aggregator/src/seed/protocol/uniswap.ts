@@ -4,8 +4,6 @@ import { performance } from 'perf_hooks'
 
 import {
   getBuiltGraphSDK,
-  PairsQuery,
-  PairsQueryVariables,
   Sdk,
   V2PairsQuery,
   V2PairsQueryVariables,
@@ -81,14 +79,14 @@ export class UniswapSchema {
           }
 
           const { result } = await this.getPools(sdk, { ...query, where })
-
-          if (result.pairs.length === batchSize) {
-            cursor = result.pairs[result.pairs.length - 1]?.id ?? ''
+          const currentPairCount = result.V2_pairs.length
+          if (currentPairCount === batchSize) {
+            cursor = result.V2_pairs[currentPairCount - 1]?.id ?? ''
           }
-          totalPairCount += result.pairs.length
+          totalPairCount += currentPairCount
           console.log(
             `${this.logPrefix(config)} - ${chainName[chainId]}(${chainId}), ${graphHost}/${subgraph}` +
-              `: Found ${result.pairs.length} pools.`
+              `: Found ${currentPairCount} pools.`
           )
 
           if (!dryRun) {
@@ -97,7 +95,7 @@ export class UniswapSchema {
           } else {
             console.log(
               `${this.logPrefix(config)} - ${chainName[chainId]}(${chainId}), ${graphHost}/${subgraph}` +
-                `: This IS A DRY RUN, ${result.pairs.length} pools would have been created.`
+                `: This IS A DRY RUN, ${currentPairCount} pools would have been created.`
             )
           }
         } while (cursor !== '')
@@ -107,19 +105,19 @@ export class UniswapSchema {
         )
       } else {
         const query = newestPool
-          ? {
+          ? ({
               first: 1000,
               where: {
                 createdAtTimestamp_gt: newestPool.timestamp,
               },
               orderBy: 'createdAtTimestamp',
               orderDirection: 'desc',
-            }
-          : {
+            } as V2PairsQueryVariables)
+          : ({
               first: 1000,
               orderBy: 'createdAtTimestamp',
               orderDirection: 'desc',
-            }
+            } as V2PairsQueryVariables)
         const { result, newestPool: subgraphNewestPool } = await this.getPools(sdk, query)
         if (!result.V2_pairs.length) {
           console.log(`${this.logPrefix(config)} No new pools found for ${chainId}`)
@@ -229,238 +227,8 @@ export class UniswapSchema {
         liquidityUSD: 0,
       })
     })
-
     return { pools: poolsTransformed, tokens }
   }
-
-  //   function transformMessari(
-  //     chainId: ChainId,
-  //     config: SeedConfiguration,
-  //     data: MessariPairsQuery
-  //   ): {
-  //     pools: Prisma.PoolCreateManyInput[]
-  //     tokens: Prisma.TokenCreateManyInput[]
-  //   } {
-  //     const { protocol, version } = config
-  //     const type = config.poolConfiguration?.type
-  //     const swapFee = config.poolConfiguration?.swapFee
-  //     const twapEnabled = config.poolConfiguration?.twapEnabled
-  //     if (!type || !swapFee || !twapEnabled) {
-  //       throw new Error(
-  //         `${logPrefix(
-  //           config
-  //         )} - ERROR: Pool type, swap fee and twapEnabled are all required when transforming pools using schema: ${
-  //           config.schema
-  //         }.`
-  //       )
-  //     }
-
-  //     const tokens: Prisma.TokenCreateManyInput[] = []
-  //     const uniqueTokens: Set<string> = new Set()
-  //     const poolsTransformed = data.MESSARI_liquidityPools.map((pair) => {
-  //       if (!uniqueTokens.has(pair.inputTokens[0].id)) {
-  //         uniqueTokens.add(pair.inputTokens[0].id)
-  //         tokens.push(
-  //           Prisma.validator<Prisma.TokenCreateManyInput>()({
-  //             id: chainId.toString().concat(':').concat(pair.inputTokens[0].id),
-  //             address: pair.inputTokens[0].id,
-  //             chainId,
-  //             name: pair.inputTokens[0].name,
-  //             symbol: pair.inputTokens[0].symbol,
-  //             decimals: Number(pair.inputTokens[0].decimals),
-  //           })
-  //         )
-  //       }
-  //       if (!uniqueTokens.has(pair.inputTokens[1].id)) {
-  //         uniqueTokens.add(pair.inputTokens[1].id)
-  //         tokens.push(
-  //           Prisma.validator<Prisma.TokenCreateManyInput>()({
-  //             id: chainId.toString().concat(':').concat(pair.inputTokens[1].id),
-  //             address: pair.inputTokens[1].id,
-  //             chainId: chainId,
-  //             name: pair.inputTokens[1].name,
-  //             symbol: pair.inputTokens[1].symbol,
-  //             decimals: Number(pair.inputTokens[1].decimals),
-  //           })
-  //         )
-  //       }
-
-  //       const regex = /([^\w ]|_|-)/g
-  //       const name = pair.inputTokens[0].symbol
-  //         .replace(regex, '')
-  //         .slice(0, 15)
-  //         .concat('-')
-  //         .concat(pair.inputTokens[1].symbol.replace(regex, '').slice(0, 15))
-  //       return Prisma.validator<Prisma.PoolCreateManyInput>()({
-  //         id: chainId.toString().concat(':').concat(pair.id),
-  //         address: pair.id,
-  //         name,
-  //         protocol,
-  //         version,
-  //         type,
-  //         chainId,
-  //         swapFee,
-  //         twapEnabled,
-  //         token0Id: chainId.toString().concat(':').concat(pair.inputTokens[0].id),
-  //         token1Id: chainId.toString().concat(':').concat(pair.inputTokens[1].id),
-  //         liquidityUSD: 0,
-  //       })
-  //     })
-
-  //     return { pools: poolsTransformed, tokens }
-  //   }
-
-  //   function transformTraderJoe(
-  //     chainId: ChainId,
-  //     config: SeedConfiguration,
-  //     data: TraderJoePairsQuery
-  //   ): {
-  //     pools: Prisma.PoolCreateManyInput[]
-  //     tokens: Prisma.TokenCreateManyInput[]
-  //   } {
-  //     const { protocol, version } = config
-  //     const type = config.poolConfiguration?.type
-  //     const swapFee = config.poolConfiguration?.swapFee
-  //     const twapEnabled = config.poolConfiguration?.twapEnabled
-  //     if (!type || !swapFee || !twapEnabled) {
-  //       throw new Error(
-  //         `${logPrefix(
-  //           config
-  //         )} - ERROR: Pool type, swap fee and twapEnabled are all required when transforming pools using schema: ${
-  //           config.schema
-  //         }.`
-  //       )
-  //     }
-  //     const tokens: Prisma.TokenCreateManyInput[] = []
-  //     const uniqueTokens: Set<string> = new Set()
-  //     const poolsTransformed = data.TJ_pairs.map((pair) => {
-  //       if (!uniqueTokens.has(pair.token0.id)) {
-  //         uniqueTokens.add(pair.token0.id)
-  //         tokens.push(
-  //           Prisma.validator<Prisma.TokenCreateManyInput>()({
-  //             id: chainId.toString().concat(':').concat(pair.token0.id),
-  //             address: pair.token0.id,
-  //             chainId,
-  //             name: pair.token0.name,
-  //             symbol: pair.token0.symbol,
-  //             decimals: Number(pair.token0.decimals),
-  //           })
-  //         )
-  //       }
-  //       if (!uniqueTokens.has(pair.token1.id)) {
-  //         uniqueTokens.add(pair.token1.id)
-  //         tokens.push(
-  //           Prisma.validator<Prisma.TokenCreateManyInput>()({
-  //             id: chainId.toString().concat(':').concat(pair.token1.id),
-  //             address: pair.token1.id,
-  //             chainId: chainId,
-  //             name: pair.token1.name,
-  //             symbol: pair.token1.symbol,
-  //             decimals: Number(pair.token1.decimals),
-  //           })
-  //         )
-  //       }
-
-  //       const regex = /([^\w ]|_|-)/g
-  //       const name = pair.token0.symbol
-  //         .replace(regex, '')
-  //         .slice(0, 15)
-  //         .concat('-')
-  //         .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
-  //       return Prisma.validator<Prisma.PoolCreateManyInput>()({
-  //         id: chainId.toString().concat(':').concat(pair.id),
-  //         address: pair.id,
-  //         name,
-  //         protocol,
-  //         version,
-  //         type,
-  //         chainId,
-  //         swapFee,
-  //         twapEnabled,
-  //         token0Id: chainId.toString().concat(':').concat(pair.token0.id),
-  //         token1Id: chainId.toString().concat(':').concat(pair.token1.id),
-  //         liquidityUSD: 0,
-  //       })
-  //     })
-
-  //     return { pools: poolsTransformed, tokens }
-  //   }
-
-  //   function transformPancakeSwap(
-  //     chainId: ChainId,
-  //     config: SeedConfiguration,
-  //     data: PCSPairsQuery
-  //   ): {
-  //     pools: Prisma.PoolCreateManyInput[]
-  //     tokens: Prisma.TokenCreateManyInput[]
-  //   } {
-  //     const { protocol, version } = config
-  //     const type = config.poolConfiguration?.type
-  //     const swapFee = config.poolConfiguration?.swapFee
-  //     const twapEnabled = config.poolConfiguration?.twapEnabled
-  //     if (!type || !swapFee || !twapEnabled) {
-  //       throw new Error(
-  //         `${logPrefix(
-  //           config
-  //         )} - ERROR: Pool type, swap fee and twapEnabled are all required when transforming pools using schema: ${
-  //           config.schema
-  //         }.`
-  //       )
-  //     }
-  //     const tokens: Prisma.TokenCreateManyInput[] = []
-  //     const uniqueTokens: Set<string> = new Set()
-  //     const poolsTransformed = data.MINIMAL_pairs.map((pair) => {
-  //       if (!uniqueTokens.has(pair.token0.id)) {
-  //         uniqueTokens.add(pair.token0.id)
-  //         tokens.push(
-  //           Prisma.validator<Prisma.TokenCreateManyInput>()({
-  //             id: chainId.toString().concat(':').concat(pair.token0.id),
-  //             address: pair.token0.id,
-  //             chainId,
-  //             name: pair.token0.name,
-  //             symbol: pair.token0.symbol,
-  //             decimals: Number(pair.token0.decimals),
-  //           })
-  //         )
-  //       }
-  //       if (!uniqueTokens.has(pair.token1.id)) {
-  //         uniqueTokens.add(pair.token1.id)
-  //         tokens.push(
-  //           Prisma.validator<Prisma.TokenCreateManyInput>()({
-  //             id: chainId.toString().concat(':').concat(pair.token1.id),
-  //             address: pair.token1.id,
-  //             chainId: chainId,
-  //             name: pair.token1.name,
-  //             symbol: pair.token1.symbol,
-  //             decimals: Number(pair.token1.decimals),
-  //           })
-  //         )
-  //       }
-
-  //       const regex = /([^\w ]|_|-)/g
-  //       const name = pair.token0.symbol
-  //         .replace(regex, '')
-  //         .slice(0, 15)
-  //         .concat('-')
-  //         .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
-  //       return Prisma.validator<Prisma.PoolCreateManyInput>()({
-  //         id: chainId.toString().concat(':').concat(pair.id),
-  //         address: pair.id,
-  //         name,
-  //         protocol,
-  //         version,
-  //         type,
-  //         chainId,
-  //         swapFee,
-  //         twapEnabled,
-  //         token0Id: chainId.toString().concat(':').concat(pair.token0.id),
-  //         token1Id: chainId.toString().concat(':').concat(pair.token1.id),
-  //         liquidityUSD: 0,
-  //       })
-  //     })
-
-  //     return { pools: poolsTransformed, tokens }
-  //   }
 
   static logPrefix(config: SeedConfiguration): string {
     return `${config.protocol} ${config.version}`

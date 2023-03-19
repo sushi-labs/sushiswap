@@ -14,7 +14,7 @@ import { liquidity } from './seed/liquidity.js'
 import { netSwapV2 } from './seed/netswap/v2/seed.js'
 import { pancakeSwapV2 } from './seed/pancakeswap/v2/seed.js'
 import { prices } from './seed/price.js'
-import { quickswapV2 } from './seed/quickswap/v2/seed.js'
+import { quickSwapV2 } from './seed/quickswap/v2/seed.js'
 import { reserves } from './seed/reserves.js'
 import { spiritSwapV2 } from './seed/spiritswap/v2/seed.js'
 import { spookySwapV2 } from './seed/spookyswap/v2/seed.js'
@@ -87,7 +87,7 @@ app.get(
         res.sendStatus(200)
       } else if (name === ProtocolName.UNISWAP) {
         if (version === ProtocolVersion.V2) {
-          await uniswapV2()
+          await uniswapV2({dryRun, initialRun})
           res.sendStatus(200)
         } else {
           res.status(400).send('Not a valid version')
@@ -101,7 +101,7 @@ app.get(
         }
       } else if (name === ProtocolName.QUICKSWAP) {
         if (version === ProtocolVersion.V2) {
-          await quickswapV2()
+          await quickSwapV2({dryRun, initialRun})
           res.sendStatus(200)
         } else {
           res.status(400).send('Not a valid version')
@@ -122,21 +122,21 @@ app.get(
         }
       } else if (name === ProtocolName.UBESWAP) {
         if (version === ProtocolVersion.V2) {
-          await ubeSwapV2()
+          await ubeSwapV2({dryRun, initialRun})
           res.sendStatus(200)
         } else {
           res.status(400).send('Not a valid version')
         }
       } else if (name === ProtocolName.HONEYSWAP) {
         if (version === ProtocolVersion.V2) {
-          await honeySwapV2()
+          await honeySwapV2({dryRun, initialRun})
           res.sendStatus(200)
         } else {
           res.status(400).send('Not a valid version')
         }
       } else if (name === ProtocolName.NETSWAP) {
         if (version === ProtocolVersion.V2) {
-          await netSwapV2()
+          await netSwapV2({dryRun, initialRun})
           res.sendStatus(200)
         } else {
           res.status(400).send('Not a valid version')
@@ -150,21 +150,21 @@ app.get(
         }
       } else if (name === ProtocolName.JETSWAP) {
         if (version === ProtocolVersion.V2) {
-          await jetSwapV2()
+          await jetSwapV2({dryRun, initialRun})
           res.sendStatus(200)
         } else {
           res.status(400).send('Not a valid version')
         }
       } else if (name === ProtocolName.DFYN) {
         if (version === ProtocolVersion.V2) {
-          await dfynV2()
+          await dfynV2({dryRun, initialRun})
           res.sendStatus(200)
         } else {
           res.status(400).send('Not a valid version')
         }
       } else if (name === ProtocolName.ELK) {
         if (version === ProtocolVersion.V2) {
-          await elkV2()
+          await elkV2({dryRun, initialRun})
           res.sendStatus(200)
         } else {
           res.sendStatus(400).send('Not a valid version')
