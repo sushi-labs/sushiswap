@@ -1,3 +1,4 @@
+import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
 import { erc20Abi } from '@sushiswap/abi'
 import { CurvePool, getBigNumber, RToken } from '@sushiswap/tines'
 import { expect } from 'chai'
@@ -9,8 +10,9 @@ import { setTokenBalance } from '../src/SetTokenBalance'
 
 enum CurvePoolType {
   Legacy = 'Legacy', // 'exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) -> uint256'
+  LegacyV2 = 'LegacyV2', // 'function coins(int128) pure returns (address)'
   Legacy_ETH = 'Legacy_ETH', // like Legacy, but raw ETH as one of tokens
-  Factory = 'Factory', // 'exchange(unt128 i, unt128 j, uint256 dx, uint256 min_dy) -> uint256'
+  Factory = 'Factory',
 }
 
 export function getRandomExp(rnd: () => number, min: number, max: number) {
@@ -42,11 +44,13 @@ function expectCloseValues(_a: number | BigNumber, _b: number | BigNumber, accur
 }
 
 interface PoolInfo {
+  poolType: CurvePoolType
   poolContract: Contract
   tokenContracts: (Contract | undefined)[]
   poolTines: CurvePool
   user: Signer
   userAddress: string
+  snapshot: SnapshotRestorer
 }
 
 async function createCurvePoolInfo(
@@ -59,14 +63,17 @@ async function createCurvePoolInfo(
   const poolContract = new Contract(
     poolAddress,
     [
-      'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns (uint256)',
-      // poolType == CurvePoolType.Legacy || poolType == CurvePoolType.Legacy_ETH
-      //   ? 'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns (uint256)'
-      //   : 'function exchange(uint256 i, uint256 j, uint256 dx, uint256 min_dy) payable returns (uint256)',
+      poolType !== CurvePoolType.LegacyV2
+        ? 'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns (uint256)'
+        : 'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns ()',
       'function A() pure returns (uint256)',
       'function fee() pure returns (uint256)',
-      'function coins(uint256) pure returns (address)',
-      'function balances(uint256) pure returns (uint256)',
+      poolType !== CurvePoolType.LegacyV2
+        ? 'function coins(uint256) pure returns (address)'
+        : 'function coins(int128) pure returns (address)',
+      poolType !== CurvePoolType.LegacyV2
+        ? 'function balances(uint256) pure returns (uint256)'
+        : 'function balances(int128) pure returns (uint256)',
     ],
     user
   )
@@ -87,7 +94,7 @@ async function createCurvePoolInfo(
       tokenTines.push({ address: token, name: token, symbol: token, chainId, decimals: 18 })
     } else {
       const res = await setTokenBalance(token, userAddress, initialBalance)
-      expect(res).equal(true)
+      expect(res).equal(true, 'Wrong setTokenBalance for ' + token)
 
       const tokenContract = new Contract(token, erc20Abi, user)
       await tokenContract.approve(poolAddress, initialBalance.toString())
@@ -112,20 +119,34 @@ async function createCurvePoolInfo(
     reserves[1]
   )
 
+  const snapshot = await takeSnapshot()
   return {
+    poolType,
     poolContract,
     tokenContracts,
     poolTines,
     user,
     userAddress,
+    snapshot,
   }
 }
 
 async function checkSwap(poolInfo: PoolInfo, from: number, to: number, amountIn: number) {
   const expectedOut = poolInfo.poolTines.calcOutByIn(Math.round(amountIn), from < to)
-  const realOutBN = await poolInfo.poolContract.callStatic.exchange(from, to, getBigNumber(amountIn), 0, {
-    value: poolInfo.tokenContracts[from] === undefined ? getBigNumber(amountIn) : 0,
-  })
+  let realOutBN: BigNumber
+  if (poolInfo.poolType !== CurvePoolType.LegacyV2) {
+    realOutBN = await poolInfo.poolContract.callStatic.exchange(from, to, getBigNumber(amountIn), 0, {
+      value: poolInfo.tokenContracts[from] === undefined ? getBigNumber(amountIn) : 0,
+    })
+  } else {
+    poolInfo.snapshot.restore()
+    const balanceBefore = await poolInfo.tokenContracts[to]?.balanceOf(poolInfo.userAddress)
+    await poolInfo.poolContract.exchange(from, to, getBigNumber(amountIn), 0, {
+      value: poolInfo.tokenContracts[from] === undefined ? getBigNumber(amountIn) : 0,
+    })
+    const balanceAfter = await poolInfo.tokenContracts[to]?.balanceOf(poolInfo.userAddress)
+    realOutBN = balanceAfter.sub(balanceBefore)
+  }
   const realOut = parseInt(realOutBN.toString())
 
   expectCloseValues(realOut, expectedOut.out, 1e-9)
@@ -136,9 +157,16 @@ const CurvePools: [string, string, CurvePoolType][] = [
   ['0xdcef968d416a41cdac0ed8702fac8128a64241a2', 'fraxusdc', CurvePoolType.Legacy],
   ['0x828b154032950c8ff7cf8085d841723db2696056', 'stETH concentrated', CurvePoolType.Factory],
   ['0xf253f83aca21aabd2a20553ae0bf7f65c755a07f', 'sbtc2', CurvePoolType.Legacy],
+  ['0x9d0464996170c6b9e75eed71c68b99ddedf279e8', 'cvxCRV', CurvePoolType.Factory],
+  ['0x453d92c7d4263201c69aacfaf589ed14202d83a4', 'yCRV', CurvePoolType.Factory],
+  ['0xc5424b857f758e906013f3555dad202e4bdb4567', 'seth', CurvePoolType.Legacy],
+  ['0x9848482da3ee3076165ce6497eda906e66bb85c5', 'pETH', CurvePoolType.Factory],
+  ['0xf7b55c3732ad8b2c2da7c24f30a69f55c54fb717', 'cdCRV', CurvePoolType.Factory],
+  ['0xc897b98272aa23714464ea2a0bd5180f1b8c0025', 'msETH', CurvePoolType.Factory],
+  ['0x93054188d876f558f4a66b2ef1d97d16edf0895b', 'ren', CurvePoolType.LegacyV2],
 ]
 
-describe.only('Real Curve pools consistency check', () => {
+describe('Real Curve pools consistency check', () => {
   for (let i = 0; i < CurvePools.length; ++i) {
     const [addr, name, poolType] = CurvePools[i]
     it(`${name} (${addr}, ${poolType})`, async () => {
