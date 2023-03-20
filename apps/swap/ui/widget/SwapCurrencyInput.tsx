@@ -16,6 +16,10 @@ export const SwapCurrencyInput: FC = () => {
     setValue(debouncedValue)
   }, [setValue, debouncedValue])
 
+  useEffect(() => {
+    setLocalValue(value)
+  }, [value])
+
   return (
     <Web3Input.Currency
       type="INPUT"
