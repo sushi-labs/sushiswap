@@ -1,12 +1,25 @@
 'use client'
 
 import { Tab } from '@headlessui/react'
+import { classNames } from '@sushiswap/ui'
 import Container from '@sushiswap/ui/future/components/Container'
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Hero } from './components'
 
+const DATE_FILTER = ['month', 'quarter', 'year'] as const
+type DateFilterKey = (typeof DATE_FILTER)[number]
+type DateFilter = { key: DateFilterKey; title: string }
+
+const FILTERS: DateFilter[] = [
+  { key: 'month', title: 'Last Month' },
+  { key: 'quarter', title: 'Last Quarter' },
+  { key: 'year', title: 'Last Year' },
+]
+
 export default function GovernanceDashboard() {
+  const [dateFilter, setDateFilter] = useState(FILTERS[0])
+
   return (
     <Tab.Group>
       <Hero />
@@ -17,11 +30,18 @@ export default function GovernanceDashboard() {
               <div className="flex justify-between items-center">
                 <h2 className="font-bold text-2xl">Latest @ Sushi</h2>
                 <div className="flex gap-2">
-                  <button className="rounded-full h-10 px-4 bg-slate-700/40 border border-slate-700/40">
-                    Last Month
-                  </button>
-                  <button className="rounded-full h-10 px-4 border border-slate-700/40">Last Month</button>
-                  <button className="rounded-full h-10 px-4 border border-slate-700/40">Last Month</button>
+                  {FILTERS.map((filter) => (
+                    <button
+                      className={classNames(
+                        'rounded-full h-10 px-4 ring-1 ring-slate-700/40',
+                        dateFilter.key === filter.key ? 'bg-slate-700/40' : 'hover:bg-slate-700/20'
+                      )}
+                      key={filter.key}
+                      onClick={() => setDateFilter(filter)}
+                    >
+                      {filter.title}
+                    </button>
+                  ))}
                 </div>
               </div>
               <div className="flex gap-6">
