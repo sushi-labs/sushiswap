@@ -46,6 +46,7 @@ export const SwapButton: FC = () => {
                   <Button
                     disabled={
                       !trade?.amountOut?.greaterThan(ZERO) ||
+                      trade?.route?.status === 'NoWay' ||
                       Boolean(isLoading && +value > 0) ||
                       isFetching ||
                       (!checked && warningSeverity(trade?.priceImpact) > 3)
@@ -57,6 +58,8 @@ export const SwapButton: FC = () => {
                   >
                     {!checked && warningSeverity(trade?.priceImpact) >= 3
                       ? 'Price impact too high'
+                      : trade?.route?.status === 'NoWay'
+                      ? 'No trade found'
                       : isWrap
                       ? 'Wrap'
                       : isUnwrap

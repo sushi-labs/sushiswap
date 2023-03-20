@@ -8,6 +8,7 @@ import { useTrade } from '../../lib/useTrade'
 import { warningSeverity } from '../../lib/warningSeverity'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { sushiXSwapAddress, SushiXSwapChainId } from '@sushiswap/sushixswap'
+import { ZERO } from '@sushiswap/math'
 
 export const SwapButtonCrossChain: FC = () => {
   const { amount, network0, network1, value } = useSwapState()
@@ -47,6 +48,8 @@ export const SwapButtonCrossChain: FC = () => {
                   <Checker.Success tag="xswap">
                     <Button
                       disabled={
+                        !trade?.amountOut?.greaterThan(ZERO) ||
+                        trade?.route?.status === 'NoWay' ||
                         Boolean(isLoading && +value > 0) ||
                         isFetching ||
                         (!checked && warningSeverity(trade?.priceImpact) > 3)
@@ -56,7 +59,11 @@ export const SwapButtonCrossChain: FC = () => {
                       size="xl"
                       onClick={() => setReview(true)}
                     >
-                      {!checked && warningSeverity(trade?.priceImpact) >= 3 ? 'Price impact too high' : 'Swap'}
+                      {!checked && warningSeverity(trade?.priceImpact) >= 3
+                        ? 'Price impact too high'
+                        : trade?.route?.status === 'NoWay'
+                        ? 'No trade found'
+                        : 'Swap'}
                     </Button>
                   </Checker.Success>
                 </Checker.ApproveERC20>
