@@ -15,6 +15,7 @@ import { TokenNameCell } from './TokenCells/TokenNameCell'
 import { TokenPriceCell } from './TokenCells/TokenPriceCell'
 import { TokenVolumeCell } from './TokenCells/TokenVolumeCell'
 import { Pool } from '@sushiswap/client'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 
 export const ICON_SIZE = 20
 export const PAGE_SIZE = 20
@@ -25,7 +26,7 @@ export const NETWORK_COLUMN: ColumnDef<Pool, unknown> = {
   cell: (props) => <ChainCell row={props.row.original} />,
   size: 30,
   meta: {
-    skeleton: <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />,
+    skeleton: <Skeleton.Circle radius={26} />,
   },
 }
 
@@ -35,7 +36,17 @@ export const NAME_COLUMN: ColumnDef<Pool, unknown> = {
   cell: (props) => <PoolNameCell row={props.row.original} />,
   size: 160,
   meta: {
-    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+    skeleton: (
+      <div className="flex items-center w-full gap-2">
+        <div className="flex items-center">
+          <Skeleton.Circle radius={ICON_SIZE} />
+          <Skeleton.Circle radius={ICON_SIZE} className="-ml-[12px]" />
+        </div>
+        <div className="flex flex-col w-full">
+          <Skeleton.Text fontSize="text-lg" />
+        </div>
+      </div>
+    ),
   },
 }
 
@@ -47,7 +58,7 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }
 
@@ -59,7 +70,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }
 
@@ -71,7 +82,7 @@ export const VOLUME_7D_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }
 
@@ -83,7 +94,7 @@ export const FEES_1D_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }
 
@@ -95,7 +106,7 @@ export const FEES_7D_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }
 
@@ -107,7 +118,7 @@ export const APR_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }
 
@@ -117,7 +128,7 @@ export const TOKEN_CHAIN_COLUMN: ColumnDef<Token, unknown> = {
   cell: (props) => <ChainCell row={props.row.original} />,
   size: 30,
   meta: {
-    skeleton: <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />,
+    skeleton: <Skeleton.Circle radius={26} />,
   },
 }
 
@@ -127,7 +138,7 @@ export const TOKEN_NAME_COLUMN: ColumnDef<Token, unknown> = {
   cell: (props) => <TokenNameCell row={props.row.original} />,
   size: 160,
   meta: {
-    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }
 
@@ -138,7 +149,7 @@ export const TOKEN_LIQUIDITY_COLUMN: ColumnDef<Token, unknown> = {
   size: 160,
   meta: {
     className: 'justify-end',
-    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }
 
@@ -149,7 +160,7 @@ export const TOKEN_PRICE_COLUMN: ColumnDef<Token, unknown> = {
   size: 160,
   meta: {
     className: 'justify-end',
-    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }
 
@@ -160,6 +171,6 @@ export const TOKEN_VOLUME_COLUMN: ColumnDef<Token, unknown> = {
   size: 160,
   meta: {
     className: 'justify-end',
-    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }

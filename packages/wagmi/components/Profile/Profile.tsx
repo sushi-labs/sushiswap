@@ -67,7 +67,7 @@ export const Profile: FC<ProfileProps> = ({ notifications, clearNotifications, s
                 )}
               >
                 {avatar ? (
-                  <Image alt="ens-avatar" src={avatar} width={20} height={20} className="rounded-full" />
+                  <img alt="ens-avatar" src={avatar} width={20} height={20} className="rounded-full" />
                 ) : (
                   <JazzIcon diameter={20} address={address} />
                 )}

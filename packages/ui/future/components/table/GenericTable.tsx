@@ -166,6 +166,7 @@ export const GenericTable = <T extends { id: string }>({
                 } else {
                   return (
                     <Table.tr
+                      key={row.id}
                       onClick={(e) => {
                         if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
                           setPopupInvisible(true)

@@ -56,7 +56,7 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
           <div className="text-sm font-semibold flex items-center gap-1.5 text-gray-700 dark:text-slate-200">
             {avatar ? (
               <div className="w-4 h-4">
-                <Image alt="ens-avatar" src={avatar} width={16} height={16} className="rounded-full" />
+                <img alt="ens-avatar" src={avatar} width={16} height={16} className="rounded-full" />
               </div>
             ) : (
               <JazzIcon diameter={16} address={address} />
