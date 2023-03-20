@@ -25,9 +25,13 @@ Start a script by hitting an endpoint, see [server.ts](src/server.ts)
 Example: `https://localhost:8080/protocol?name=SushiSwap`
 
 ## Endpoints
+The `/protocols`endpoints below have two additional flags, `initialRun=true` and `dryRun=true`
 
-- `http://localhost:8080/protocol?name=SushiSwap`
+`dryRun=true` does not write to the database, only fetching from subgraphs and reading from the database.
+`initialRun=true` will fetch everything and try to write it to the database. NOTE: This should not run as a job, first seeding should be done, as they might take some time to run.
 
+- `http://localhost:8080/protocol?name=SushiSwap&version=LEGACY`
+- `http://localhost:8080/protocol?name=SushiSwap&version=TRIDENT`
 - `http://localhost:8080/protocol?name=ApeSwap&version=V2`
 - `http://localhost:8080/protocol?name=Dfyn&version=V2`
 - `http://localhost:8080/protocol?name=Elk&version=V2`
