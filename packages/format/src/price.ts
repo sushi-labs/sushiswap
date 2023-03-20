@@ -5,5 +5,5 @@ export const formatUSD = (value: string | number, inputString = '$0.00a'): strin
   if (value < 0.0001) return numeral(value).format('$0.000000a')
   if (value < 0.001) return numeral(value).format('$0.0000a')
   if (value < 0.01) return numeral(value).format('$0.000a')
-  return Intl.NumberFormat('en', { notation: 'compact' }).format(Number(value))
+  return numeral(value).format(inputString)
 }
