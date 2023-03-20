@@ -17,14 +17,16 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
   // }
 
   const {
-    liquidityUSD,
-    liquidity1dChange,
-    fees1d,
-    fees1dChange,
-    volume1d,
-    volume1dChange,
-    txCount1d,
-    txCount1dChange,
+    data: {
+      liquidityUSD,
+      liquidity1dChange,
+      fees1d,
+      fees1dChange,
+      volume1d,
+      volume1dChange,
+      txCount1d,
+      txCount1dChange,
+    },
   } = useGraphPool(pool)
 
   return (
@@ -41,7 +43,11 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             {liquidity1dChange > 0 ? '+' : '-'}
             {formatPercent(Math.abs(liquidity1dChange))}
           </Typography>
-        ) : null}
+        ) : (
+          <Typography variant="xs" weight={500} className="text-slate-50">
+            -
+          </Typography>
+        )}
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
@@ -55,7 +61,11 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             {volume1dChange > 0 ? '+' : '-'}
             {formatPercent(Math.abs(volume1dChange))}
           </Typography>
-        ) : null}
+        ) : (
+          <Typography variant="xs" weight={500} className="text-slate-50">
+            -
+          </Typography>
+        )}
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
@@ -69,7 +79,11 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             {fees1dChange > 0 ? '+' : '-'}
             {formatPercent(Math.abs(fees1dChange))}
           </Typography>
-        ) : null}
+        ) : (
+          <Typography variant="xs" weight={500} className="text-slate-50">
+            -
+          </Typography>
+        )}
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
@@ -84,7 +98,11 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             {txCount1dChange > 0 ? '+' : '-'}
             {formatPercent(Math.abs(txCount1dChange))}
           </Typography>
-        ) : null}
+        ) : (
+          <Typography variant="xs" weight={500} className="text-slate-50">
+            -
+          </Typography>
+        )}
       </div>
     </div>
   )

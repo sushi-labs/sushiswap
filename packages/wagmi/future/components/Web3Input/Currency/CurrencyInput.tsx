@@ -64,7 +64,8 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
     currency,
     loadBentobox: false,
   })
-  const { data: price, isLoading: isPriceLoading } = usePrice({
+
+  const { data: price, isInitialLoading: isPriceLoading } = usePrice({
     chainId: currency?.chainId,
     address: currency?.wrapped.address,
   })
@@ -167,6 +168,25 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
               </button>
             )}
           </TokenSelector>
+        )}
+        {!onSelect && (
+          <div
+            id={`${id}-button`}
+            className={classNames(
+              'flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium whitespace-nowrap'
+            )}
+          >
+            {currency ? (
+              <>
+                <div className="w-[28px] h-[28px] mr-0.5">
+                  <Currency.Icon disableLink currency={currency} width={28} height={28} />
+                </div>
+                {currency.symbol}
+              </>
+            ) : (
+              <span className="text-gray-400 dark:text-slate-500">No token selected</span>
+            )}
+          </div>
         )}
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">

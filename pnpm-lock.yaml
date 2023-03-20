@@ -69,45 +69,6 @@ importers:
       ts-node: 10.9.1_@types+node@18.11.18
       turbo: 1.6.3
 
-  apis/aggregator:
-    specifiers:
-      '@sushiswap/abi': workspace:*
-      '@sushiswap/database': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/validate': workspace:*
-      '@sushiswap/wagmi-config': workspace:*
-      '@types/node': ^18.0.0
-      '@vercel/node': 2.9.8
-      '@wagmi/core': 0.8.1
-      deepmerge-ts: ^4.3.0
-      dotenv: 16.0.3
-      eslint: 8.29.0
-      typescript: 4.9.4
-      vercel: 28.16.7
-      zod: 3.20.2
-    dependencies:
-      '@sushiswap/abi': link:../../packages/abi
-      '@sushiswap/database': link:../../packages/database
-      '@sushiswap/validate': link:../../packages/validate
-      '@sushiswap/wagmi-config': link:../../config/wagmi
-      '@vercel/node': 2.9.8
-      '@wagmi/core': 0.8.1_typescript@4.9.4
-      deepmerge-ts: 4.3.0
-      zod: 3.20.2
-    devDependencies:
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/typescript-config': link:../../config/typescript
-      '@types/node': 18.11.18
-      dotenv: 16.0.3
-      eslint: 8.29.0
-      typescript: 4.9.4
-      vercel: 28.16.7
-
   apis/balances:
     specifiers:
       '@sushiswap/chain': workspace:*
@@ -189,9 +150,10 @@ importers:
   apis/swap:
     specifiers:
       '@fastify/cors': 8.2.0
-      '@fastify/rate-limit': 7.6.0
+      '@fastify/rate-limit': 8.0.0
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
+      '@sushiswap/database': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -201,7 +163,6 @@ importers:
       '@sushiswap/viem-config': workspace:*
       '@swc/core': 1.3.26
       '@swc/helpers': 0.4.14
-      '@types/node-fetch': 2.x
       '@whatwg-node/fetch': latest
       dotenv: 16.0.3
       eslint: 8.29.0
@@ -215,9 +176,10 @@ importers:
       zod: 3.20.2
     dependencies:
       '@fastify/cors': 8.2.0
-      '@fastify/rate-limit': 7.6.0
+      '@fastify/rate-limit': 8.0.0
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/database': link:../../packages/database
       '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/router': link:../../packages/router
       '@sushiswap/viem-config': link:../../config/viem
@@ -233,7 +195,6 @@ importers:
       '@sushiswap/typescript-config': link:../../config/typescript
       '@swc/core': 1.3.26
       '@swc/helpers': 0.4.14
-      '@types/node-fetch': 2.6.2
       dotenv: 16.0.3
       eslint: 8.29.0
       jest: 29.3.1_ts-node@10.9.1
@@ -572,7 +533,7 @@ importers:
       react-dom: 18.2.0
       react-infinite-scroll-component: ^6.1.0
       react-redux: 8.0.5
-      swr: 2.0.3
+      swr: 2.1.0
       tailwindcss: 3.2.4
       typescript: 4.9.4
       wagmi: 0.9.1
@@ -619,7 +580,7 @@ importers:
       autoprefixer: 10.4.13_postcss@8.4.21
       eslint: 8.29.0
       postcss: 8.4.21
-      swr: 2.0.3_react@18.2.0
+      swr: 2.1.0_react@18.2.0
       tailwindcss: 3.2.4_postcss@8.4.21
       typescript: 4.9.4
 
@@ -734,6 +695,7 @@ importers:
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/tailwindcss-config': workspace:*
       '@sushiswap/token-lists': workspace:*
+      '@sushiswap/trident': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi': workspace:*
@@ -771,7 +733,7 @@ importers:
       react-dom: 18.2.0
       react-infinite-scroll-component: ^6.1.0
       react-redux: 8.0.5
-      swr: ^2.0.3
+      swr: 2.1.0
       tailwindcss: 3.2.4
       typescript: 4.9.4
       wagmi: 0.9.1
@@ -806,6 +768,7 @@ importers:
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/token-lists': link:../../packages/token-lists
+      '@sushiswap/trident': link:../../protocols/trident
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@sushiswap/wagmi-config': link:../../config/wagmi
@@ -831,7 +794,7 @@ importers:
       react-dom: 18.2.0_react@18.2.0
       react-infinite-scroll-component: 6.1.0_react@18.2.0
       react-redux: 8.0.5_ie75ejlwqy5zh3tldgt7pftwcu
-      swr: 2.0.3_react@18.2.0
+      swr: 2.1.0_react@18.2.0
       wagmi: 0.9.1_5fkdkfy2bkgsnhvxgn477z7iae
       zod: 3.20.2
     devDependencies:
@@ -1216,6 +1179,8 @@ importers:
 
   config/hardhat:
     specifiers:
+      '@matterlabs/hardhat-zksync-deploy': 0.6.2
+      '@matterlabs/hardhat-zksync-solc': 0.3.14
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@nomiclabs/hardhat-etherscan': 3.1.3
       '@nomiclabs/hardhat-solhint': 2.0.1
@@ -1238,6 +1203,8 @@ importers:
       typechain: 8.1.1
       typescript: 4.9.4
     dependencies:
+      '@matterlabs/hardhat-zksync-deploy': 0.6.2_4tzilew2vuitdwerzusliplz24
+      '@matterlabs/hardhat-zksync-solc': 0.3.14_hardhat@2.12.7
       '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_4tzilew2vuitdwerzusliplz24
       '@nomiclabs/hardhat-etherscan': 3.1.3_hardhat@2.12.7
       '@nomiclabs/hardhat-solhint': 2.0.1_hardhat@2.12.7
@@ -1817,8 +1784,8 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@types/node': ^18.0.0
       eslint: 8.29.0
-      tiny-invariant: ^1.2.0
-      tiny-warning: ^1.0.3
+      tiny-invariant: 1.3.1
+      tiny-warning: 1.0.3
       tsup: 6.5.0
       typescript: 4.9.4
       zod: 3.20.2
@@ -1970,7 +1937,7 @@ importers:
       '@whatwg-node/fetch': latest
       eslint: 8.29.0
       react: 18.2.0
-      swr: 2.0.3
+      swr: 2.1.0
       tslib: latest
       tsup: 6.5.0
       typescript: 4.9.4
@@ -1988,7 +1955,7 @@ importers:
       '@types/node': 18.11.18
       eslint: 8.29.0
       react: 18.2.0
-      swr: 2.0.3_react@18.2.0
+      swr: 2.1.0_react@18.2.0
       tsup: 6.5.0_typescript@4.9.4
       typescript: 4.9.4
 
@@ -2034,7 +2001,7 @@ importers:
       eslint: 8.29.0
       jest: 29.3.1
       lodash.flatmap: 4.5.0
-      tiny-invariant: ^1.2.0
+      tiny-invariant: 1.3.1
       tsup: 6.5.0
       typescript: 4.9.4
       zod: 3.20.2
@@ -2071,16 +2038,12 @@ importers:
       '@types/node': ^18.0.0
       dotenv: 16.0.3
       eslint: 8.29.0
-      ioredis: 5.3.1
       jest: 29.3.1
       prisma: 4.8.1
-      prisma-redis-middleware: 4.6.0
       tsup: 6.5.0
       typescript: 4.9.4
     dependencies:
       '@prisma/client': 4.8.1_prisma@4.8.1
-      ioredis: 5.3.1
-      prisma-redis-middleware: 4.6.0
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -2309,7 +2272,7 @@ importers:
       eslint: 8.29.0
       jest: 29.3.1
       jsbi: ^4.1.0
-      tiny-invariant: ^1.2.0
+      tiny-invariant: 1.3.1
       toformat: ^2.0.0
       tsup: 6.5.0
       typescript: 4.9.4
@@ -2530,11 +2493,13 @@ importers:
       '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/solidity': 5.7.0
+      '@prisma/client': 4.8.1
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
       '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
+      '@sushiswap/database': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
@@ -2552,16 +2517,18 @@ importers:
       ethers: 5.7.2
       lodash.flatmap: ^4.5.0
       node-fetch: 2.6.6
-      tiny-invariant: ^1.2.0
-      tiny-warning: ^1.0.3
+      tiny-invariant: 1.3.1
+      tiny-warning: 1.0.3
       tsup: 6.5.0
       typescript: 4.9.4
       viem: 0.0.1-alpha.38
+      zod: 3.20.2
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/solidity': 5.7.0
+      '@prisma/client': 4.8.1
       '@sushiswap/abi': link:../abi
       '@sushiswap/amm': link:../amm
       '@sushiswap/bentobox': link:../../protocols/bentobox
@@ -2577,8 +2544,10 @@ importers:
       node-fetch: 2.6.6
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
-      viem: 0.0.1-alpha.38_typescript@4.9.4
+      viem: 0.0.1-alpha.38_4umapwpw55xijlh2mknjgcn4rq
+      zod: 3.20.2
     devDependencies:
+      '@sushiswap/database': link:../database
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/prettier-config': link:../../config/prettier
@@ -2603,7 +2572,7 @@ importers:
       '@types/jest': ^29.2.0
       eslint: 8.29.0
       jest: 29.3.1
-      tiny-invariant: ^1.2.0
+      tiny-invariant: 1.3.1
       tsup: 6.5.0
       typescript: 4.9.4
     devDependencies:
@@ -2663,7 +2632,7 @@ importers:
       '@uniswap/token-lists': ^1.0.0-beta.29
       eslint: 8.29.0
       jest: 29.3.1
-      tiny-invariant: ^1.2.0
+      tiny-invariant: 1.3.1
       typescript: 4.9.4
     devDependencies:
       '@ethersproject/address': 5.7.0
@@ -3385,6 +3354,8 @@ importers:
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@openzeppelin/contracts': 4.7.3
       '@rari-capital/solmate': 6.2.0
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hardhat-config': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -3403,6 +3374,8 @@ importers:
       '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_yab2ug5tvye2kp6e24l5x3z7uy
       '@openzeppelin/contracts': 4.7.3
       '@rari-capital/solmate': 6.2.0
+      '@sushiswap/bentobox': link:../bentobox
+      '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/hardhat-config': link:../../config/hardhat
       '@sushiswap/jest-config': link:../../config/jest
@@ -4785,6 +4758,10 @@ packages:
       '@babel/helper-validator-identifier': 7.19.1
       to-fast-properties: 2.0.0
 
+  /@balena/dockerignore/1.0.2:
+    resolution: {integrity: sha512-wMue2Sy4GAVTk6Ic4tJVcnfdau+gx2EnG7S+uAEe+TWJFqE4YoWN4/H8MSLj4eYJKxGg26lZwboEniNiNwZQ6Q==}
+    dev: false
+
   /@bcoe/v8-coverage/0.2.3:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
     dev: true
@@ -5953,8 +5930,8 @@ packages:
       fast-json-stringify: 5.5.0
     dev: false
 
-  /@fastify/rate-limit/7.6.0:
-    resolution: {integrity: sha512-XOS7J17dp7d45hMUzBFGJC6B/8znr4/wicvl4gxnbI/upf2ShoOasvLl5J10BFQW/ccqdNURXISb7eHf4Ac4nQ==}
+  /@fastify/rate-limit/8.0.0:
+    resolution: {integrity: sha512-73pQFgpx6RMmY5nriYQW0AIATZpa/OAvWa5PQ9JHEqgjKMLNv9zLAphWIRh5914aN6sqtv8sLICr3Tp1NbXQIQ==}
     dependencies:
       fastify-plugin: 4.5.0
       ms: 2.1.3
@@ -9216,6 +9193,32 @@ packages:
       - supports-color
     dev: true
 
+  /@matterlabs/hardhat-zksync-deploy/0.6.2_4tzilew2vuitdwerzusliplz24:
+    resolution: {integrity: sha512-TRGbYXqFdLspaGRjNRWFcej0i8+OgYodDPFVRMg/3KJvC0QLViEEcBZ2cpBqC/R5fydsIql5KXe8ZVMz22AeqA==}
+    peerDependencies:
+      ethers: ~5.7.2
+      hardhat: ^2.12.6
+      zksync-web3: ^0.13.4
+    dependencies:
+      chalk: 4.1.2
+      ethers: 5.7.2
+      hardhat: 2.12.7_typescript@4.9.4
+    dev: false
+
+  /@matterlabs/hardhat-zksync-solc/0.3.14_hardhat@2.12.7:
+    resolution: {integrity: sha512-iKuQ+vvnpv3K2lkFO41xpJcNWH0KHJ/5JbOboTlPZATVR7F3GJeHfJL+GG4wkxKXnxZczpxyQqC4rAfMKvRaDg==}
+    peerDependencies:
+      hardhat: ^2.12.6
+    dependencies:
+      '@nomiclabs/hardhat-docker': 2.0.2
+      chalk: 4.1.2
+      dockerode: 3.3.5
+      hardhat: 2.12.7_typescript@4.9.4
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+    dev: false
+
   /@metamask/eth-sig-util/4.0.1:
     resolution: {integrity: sha512-tghyZKLHZjcdlDqCA3gNZmLeR0XvOE9U1qoQO9ohyAZT6Pya+H9vkBPcsyXytmYLNgVoin7CKCmweo/R43V+tQ==}
     engines: {node: '>=12.0.0'}
@@ -9651,6 +9654,17 @@ packages:
       '@nomicfoundation/solidity-analyzer-win32-arm64-msvc': 0.1.0
       '@nomicfoundation/solidity-analyzer-win32-ia32-msvc': 0.1.0
       '@nomicfoundation/solidity-analyzer-win32-x64-msvc': 0.1.0
+
+  /@nomiclabs/hardhat-docker/2.0.2:
+    resolution: {integrity: sha512-XgGEpRT3wlA1VslyB57zyAHV+oll8KnV1TjwnxxC1tpAL04/lbdwpdO5KxInVN8irMSepqFpsiSkqlcnvbE7Ng==}
+    dependencies:
+      dockerode: 2.5.8
+      fs-extra: 7.0.1
+      node-fetch: 2.6.7
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+    dev: false
 
   /@nomiclabs/hardhat-etherscan/3.1.3_hardhat@2.12.4:
     resolution: {integrity: sha512-UeNO97j0lwOHqX7mrH6SfQQBdXq1Ng6eFr7uJKuQOrq2UVTWGD70lE5QO4fAFVPz9ao+xlNpMyIqSR7+OaDR+Q==}
@@ -10111,6 +10125,19 @@ packages:
 
   /@popperjs/core/2.11.6:
     resolution: {integrity: sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==}
+
+  /@prisma/client/4.8.1:
+    resolution: {integrity: sha512-d4xhZhETmeXK/yZ7K0KcVOzEfI5YKGGEr4F5SBV04/MU4ncN/HcE28sy3e4Yt8UFW0ZuImKFQJE+9rWt9WbGSQ==}
+    engines: {node: '>=14.17'}
+    requiresBuild: true
+    peerDependencies:
+      prisma: '*'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+    dependencies:
+      '@prisma/engines-version': 4.8.0-61.d6e67a83f971b175a593ccc12e15c4a757f93ffe
+    dev: false
 
   /@prisma/client/4.8.1_prisma@4.8.1:
     resolution: {integrity: sha512-d4xhZhETmeXK/yZ7K0KcVOzEfI5YKGGEr4F5SBV04/MU4ncN/HcE28sy3e4Yt8UFW0ZuImKFQJE+9rWt9WbGSQ==}
@@ -13494,6 +13521,14 @@ packages:
     resolution: {integrity: sha512-GpSwvyXOcOOlV70vbnzjj4fW5xW/FdUF6nQEt1ENy7m4ZCczi1+/buVUPAqmGfqznsORNFzUMjctTIp8a9tuCQ==}
     dev: false
 
+  /JSONStream/1.3.2:
+    resolution: {integrity: sha512-mn0KSip7N4e0UDPZHnqDsHECo5uGQrixQKnAskOM1BIB8hd7QKbd6il8IPRPudPHOeHiECoCFqhyMaRO9+nWyA==}
+    hasBin: true
+    dependencies:
+      jsonparse: 1.3.1
+      through: 2.3.8
+    dev: false
+
   /JSONStream/1.3.5:
     resolution: {integrity: sha512-E+iruNOY8VV9s4JEbe1aNEm6MiszPRr/UfcHMz0TQh1BXSxHK+ASV1R6W4HpjBhSeS+54PIsAMCBmwD06LLsqQ==}
     hasBin: true
@@ -13560,6 +13595,7 @@ packages:
         optional: true
     dependencies:
       typescript: 4.9.4
+    dev: true
 
   /abort-controller/3.0.0:
     resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}
@@ -14090,14 +14126,6 @@ packages:
     resolution: {integrity: sha512-97a+l2LBU3Op3bBQEff79i/E4jMD2ZLFD8rHx9B6mXyB2uQwhJQYfiDqUwtfjF4QA1F2qs//N6Cw8LetMbQjcw==}
     hasBin: true
     dev: true
-
-  /async-cache-dedupe/1.8.0:
-    resolution: {integrity: sha512-igRdbMUs8JeDP8niH6E2/QYPhrch85sO/JM5OXFz2QzME6PJJ046aMc3mCkMTL38l8kQHIh0mNqoSSwKLyihCg==}
-    dependencies:
-      abstract-logging: 2.0.1
-      mnemonist: 0.39.5
-      safe-stable-stringify: 2.4.2
-    dev: false
 
   /async-eventemitter/0.2.4:
     resolution: {integrity: sha512-pd20BwL7Yt1zwDFy+8MX8F1+WCT8aQeKj0kQnTrH9WaeRETlRamVhD0JtRPmrV4GfOJ2F9CvdQkZeZhnh2TuHw==}
@@ -15044,6 +15072,13 @@ packages:
       unorm: 1.6.0
     dev: false
 
+  /bl/1.2.3:
+    resolution: {integrity: sha512-pvcNpa0UU69UT341rO6AYy4FVAIkUHuZXRIWbq+zHnsVcRzDDjIAhGuuYoi0d//cwIwtt4pkpKycWEfjdV+vww==}
+    dependencies:
+      readable-stream: 2.3.7
+      safe-buffer: 5.2.1
+    dev: false
+
   /bl/4.1.0:
     resolution: {integrity: sha512-1W07cM9gS6DcLperZfFSj+bWLtaPGSOHWhPiGzXmvVJbRLdG82sH/Kn8EtW1VqWVA54AKf2h5k5BbnIbwF3h6w==}
     dependencies:
@@ -15321,6 +15356,12 @@ packages:
     requiresBuild: true
     dependencies:
       node-gyp-build: 4.5.0
+
+  /buildcheck/0.0.3:
+    resolution: {integrity: sha512-pziaA+p/wdVImfcbsZLNF32EiWyujlQLwolMqUQE8xpKNOH7KmZQaY8sXN7DGOEzPAElo9QTaeNRfGnf3iOJbA==}
+    engines: {node: '>=10.0.0'}
+    dev: false
+    optional: true
 
   /bundle-require/3.1.2_esbuild@0.15.18:
     resolution: {integrity: sha512-Of6l6JBAxiyQ5axFxUM6dYeP/W7X2Sozeo/4EYB9sJhL+dqL7TKjg+shwxp6jlu/6ZSERfsYtIpSJ1/x3XkAEA==}
@@ -16201,6 +16242,16 @@ packages:
       parse-json: 5.2.0
       path-type: 4.0.0
 
+  /cpu-features/0.0.4:
+    resolution: {integrity: sha512-fKiZ/zp1mUwQbnzb9IghXtHtDoTMtNeb8oYGx6kX2SYfhnG0HNdBEBIzB9b5KlXu5DQPhfy3mInbBxFcgwAr3A==}
+    engines: {node: '>=10.0.0'}
+    requiresBuild: true
+    dependencies:
+      buildcheck: 0.0.3
+      nan: 2.17.0
+    dev: false
+    optional: true
+
   /crc-32/1.2.2:
     resolution: {integrity: sha512-ROmzCKrTnOwybPcJApAA6WBWij23HVfGVNKqqrZpuyZOHqK2CwHSvpGuyt/UNNvaIjEd8X5IFGp4Mh+Ie1IHJQ==}
     engines: {node: '>=0.8'}
@@ -16945,6 +16996,52 @@ packages:
     dependencies:
       asap: 2.0.6
       lodash.clone: 4.5.0
+
+  /docker-modem/1.0.9:
+    resolution: {integrity: sha512-lVjqCSCIAUDZPAZIeyM125HXfNvOmYYInciphNrLrylUtKyW66meAjSPXWchKVzoIYZx69TPnAepVSSkeawoIw==}
+    engines: {node: '>= 0.8'}
+    dependencies:
+      JSONStream: 1.3.2
+      debug: 3.2.7
+      readable-stream: 1.0.34
+      split-ca: 1.0.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /docker-modem/3.0.8:
+    resolution: {integrity: sha512-f0ReSURdM3pcKPNS30mxOHSbaFLcknGmQjwSfmbcdOw1XWKXVhukM3NJHhr7NpY9BIyyWQb0EBo3KQvvuU5egQ==}
+    engines: {node: '>= 8.0'}
+    dependencies:
+      debug: 4.3.4
+      readable-stream: 3.6.0
+      split-ca: 1.0.1
+      ssh2: 1.11.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /dockerode/2.5.8:
+    resolution: {integrity: sha512-+7iOUYBeDTScmOmQqpUYQaE7F4vvIt6+gIZNHWhqAQEI887tiPFB9OvXI/HzQYqfUNvukMK+9myLW63oTJPZpw==}
+    engines: {node: '>= 0.8'}
+    dependencies:
+      concat-stream: 1.6.2
+      docker-modem: 1.0.9
+      tar-fs: 1.16.3
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /dockerode/3.3.5:
+    resolution: {integrity: sha512-/0YNa3ZDNeLr/tSckmD69+Gq+qVNhvKfAHNeZJBnp7EOP6RGKV8ORrJHkUn20So5wU+xxT7+1n5u8PjHbfjbSA==}
+    engines: {node: '>= 8.0'}
+    dependencies:
+      '@balena/dockerignore': 1.0.2
+      docker-modem: 3.0.8
+      tar-fs: 2.0.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /doctrine/2.1.0:
     resolution: {integrity: sha512-35mSku4ZXK0vfCuHEDAwt55dg2jNajHZ1odvF+8SSr82EsZY4QmXfuWso8oEd8zRhVObSN18aM0CjSdoBX7zIw==}
@@ -19969,7 +20066,6 @@ packages:
 
   /fs-constants/1.0.0:
     resolution: {integrity: sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==}
-    dev: true
 
   /fs-extra/0.30.0:
     resolution: {integrity: sha512-UvSPKyhMn6LEd/WpUaV9C9t3zATuqoqfWc3QdPhPLb58prN9tqYPlPWi8Krxi44loBoUzlobqZ3+8tGpxxSzwA==}
@@ -21726,23 +21822,6 @@ packages:
       fengari: 0.1.4
       fengari-interop: 0.1.3_fengari@0.1.4
       ioredis: 5.3.1
-    dev: false
-
-  /ioredis/5.2.5:
-    resolution: {integrity: sha512-7HKo/ClM2DGLRXdFq8ruS3Uuadensz4A76wPOU0adqlOqd1qkhoLPDaBhmVhUhNGpB+J65/bhLmNB8DDY99HJQ==}
-    engines: {node: '>=12.22.0'}
-    dependencies:
-      '@ioredis/commands': 1.2.0
-      cluster-key-slot: 1.1.2
-      debug: 4.3.4
-      denque: 2.1.0
-      lodash.defaults: 4.2.0
-      lodash.isarguments: 3.1.0
-      redis-errors: 1.2.0
-      redis-parser: 3.0.0
-      standard-as-callback: 2.1.0
-    transitivePeerDependencies:
-      - supports-color
     dev: false
 
   /ioredis/5.3.1:
@@ -24917,7 +24996,6 @@ packages:
 
   /mkdirp-classic/0.5.3:
     resolution: {integrity: sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==}
-    dev: true
 
   /mkdirp-promise/5.0.1:
     resolution: {integrity: sha512-Hepn5kb1lJPtVW84RFT40YG1OddBNTOVUZR2bzQUHc+Z03en8/3uX0+060JDhcEzyO08HmipsN9DcnFMxhIL9w==}
@@ -25180,6 +25258,11 @@ packages:
       object-assign: 4.1.1
       thenify-all: 1.6.0
     dev: true
+
+  /nan/2.17.0:
+    resolution: {integrity: sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==}
+    dev: false
+    optional: true
 
   /nano-json-stream-parser/0.1.2:
     resolution: {integrity: sha512-9MqxMH/BSJC7dnLsEMPyfN5Dvoo49IsPFYMcHw3Bcfc2kN0lpHRBSzlMSVx4HGyJ7s9B31CyBTVehWJoQ8Ctew==}
@@ -26738,16 +26821,6 @@ packages:
     dependencies:
       parse-ms: 2.1.0
 
-  /prisma-redis-middleware/4.6.0:
-    resolution: {integrity: sha512-qo3HtSTdy1kbbtSSSsoAyqlXddJI7fnlOM4xnAMr9hQypmg7+xuc3Zp/VVaTtuuVRE3ZQFifNV2Oj08rb16NrQ==}
-    engines: {node: ^16.x || ^18.x, npm: ^7.x || ^8.x || ^9.0.0}
-    dependencies:
-      async-cache-dedupe: 1.8.0
-      ioredis: 5.2.5
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
   /prisma/4.8.1:
     resolution: {integrity: sha512-ZMLnSjwulIeYfaU1O6/LF6PEJzxN5par5weykxMykS9Z6ara/j76JH3Yo2AH3bgJbPN4Z6NeCK9s5fDkzf33cg==}
     engines: {node: '>=14.17'}
@@ -26964,6 +27037,13 @@ packages:
     resolution: {integrity: sha512-cbDzN76BMlcGG46OImrgpkMf/VkCnupj8JhsrpBw3aWBM9ye345aYnqitmZCgauBkc0HbbRRn9hCnsa3k2FNUg==}
     dependencies:
       looper: 2.0.0
+    dev: false
+
+  /pump/1.0.3:
+    resolution: {integrity: sha512-8k0JupWme55+9tCVE+FS5ULT3K6AbgqrGa58lTT49RpyfwwcGedHqaC5LlQNdEAumn/wFsu6aPwkuPMioy8kqw==}
+    dependencies:
+      end-of-stream: 1.4.4
+      once: 1.4.0
     dev: false
 
   /pump/2.0.1:
@@ -28973,6 +29053,10 @@ packages:
   /spdx-license-ids/3.0.12:
     resolution: {integrity: sha512-rr+VVSXtRhO4OHbXUiAF7xW3Bo9DuuF6C5jH+q/x15j2jniycgKbxU09Hr0WqlSLUs4i4ltHGXqTe7VHclYWyA==}
 
+  /split-ca/1.0.1:
+    resolution: {integrity: sha512-Q5thBSxp5t8WPTTJQS59LrGqOZqOsrhDGDVm8azCqIBjSBd7nd9o2PM+mDulQQkh8h//4U6hFZnc/mul8t5pWQ==}
+    dev: false
+
   /split-on-first/1.1.0:
     resolution: {integrity: sha512-43ZssAJaMusuKWL8sKUBQXHWOpq8d6CfN/u1p4gUzfJkM05C8rxTmYrkIPTXapZpORA6LkkzcUulJ8FqA7Uudw==}
     engines: {node: '>=6'}
@@ -28999,6 +29083,18 @@ packages:
 
   /sprintf-js/1.1.2:
     resolution: {integrity: sha512-VE0SOVEHCk7Qc8ulkWw3ntAzXuqf7S2lvwQaDLRnUeIEaKNQJzV6BwmLKhOqT61aGhfUMrXeaBk+oDGCzvhcug==}
+    dev: false
+
+  /ssh2/1.11.0:
+    resolution: {integrity: sha512-nfg0wZWGSsfUe/IBJkXVll3PEZ//YH2guww+mP88gTpuSU4FtZN7zu9JoeTGOyCNx2dTDtT9fOpWwlzyj4uOOw==}
+    engines: {node: '>=10.16.0'}
+    requiresBuild: true
+    dependencies:
+      asn1: 0.2.6
+      bcrypt-pbkdf: 1.0.2
+    optionalDependencies:
+      cpu-features: 0.0.4
+      nan: 2.17.0
     dev: false
 
   /sshpk/1.17.0:
@@ -29435,8 +29531,8 @@ packages:
       react: 18.2.0
     dev: false
 
-  /swr/2.0.3_react@18.2.0:
-    resolution: {integrity: sha512-sGvQDok/AHEWTPfhUWXEHBVEXmgGnuahyhmRQbjl9XBYxT/MSlAzvXEKQpyM++bMPaI52vcWS2HiKNaW7+9OFw==}
+  /swr/2.1.0_react@18.2.0:
+    resolution: {integrity: sha512-4hYl5p3/KalQ1MORealM79g/DtLohmud6yyfXw5l4wjtFksYUnocRFudvyaoUtgj3FrVNK9lS25Av9dsZYvz0g==}
     engines: {pnpm: '7'}
     peerDependencies:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0
@@ -29598,6 +29694,24 @@ packages:
       through: 2.3.8
     dev: false
 
+  /tar-fs/1.16.3:
+    resolution: {integrity: sha512-NvCeXpYx7OsmOh8zIOP/ebG55zZmxLE0etfWRbWok+q2Qo8x/vOR/IJT1taADXPe+jsiu9axDb3X4B+iIgNlKw==}
+    dependencies:
+      chownr: 1.1.4
+      mkdirp: 0.5.6
+      pump: 1.0.3
+      tar-stream: 1.6.2
+    dev: false
+
+  /tar-fs/2.0.1:
+    resolution: {integrity: sha512-6tzWDMeroL87uF/+lin46k+Q+46rAJ0SyPGz7OW7wTgblI273hsBqk2C1j0/xNadNLKDTUL9BukSjB7cwgmlPA==}
+    dependencies:
+      chownr: 1.1.4
+      mkdirp-classic: 0.5.3
+      pump: 3.0.0
+      tar-stream: 2.2.0
+    dev: false
+
   /tar-fs/2.1.1:
     resolution: {integrity: sha512-V0r2Y9scmbDRLCNex/+hYzvp/zyYjvFbHPNgVTKfQvVrb6guiE/fxP+XblDNR011utopbkex2nM4dHNV6GDsng==}
     dependencies:
@@ -29606,6 +29720,19 @@ packages:
       pump: 3.0.0
       tar-stream: 2.2.0
     dev: true
+
+  /tar-stream/1.6.2:
+    resolution: {integrity: sha512-rzS0heiNf8Xn7/mpdSVVSMAWAoy9bfb1WOTYC78Z0UQKeKa/CWS8FOq0lKGNa8DWKAn9gxjCvMLYc5PGXYlK2A==}
+    engines: {node: '>= 0.8.0'}
+    dependencies:
+      bl: 1.2.3
+      buffer-alloc: 1.2.0
+      end-of-stream: 1.4.4
+      fs-constants: 1.0.0
+      readable-stream: 2.3.7
+      to-buffer: 1.1.1
+      xtend: 4.0.2
+    dev: false
 
   /tar-stream/2.2.0:
     resolution: {integrity: sha512-ujeqbceABgwMZxEJnk2HDY2DlnUZ+9oEcb1KzTVfYHio0UE6dG71n60d8D2I4qNvleWrrXpmjpt7vZeF1LnMZQ==}
@@ -29616,7 +29743,6 @@ packages:
       fs-constants: 1.0.0
       inherits: 2.0.4
       readable-stream: 3.6.0
-    dev: true
 
   /tar/4.4.19:
     resolution: {integrity: sha512-a20gEsvHnWe0ygBY8JbxoM4w3SJdhc7ZAuxkLqh+nvNQN2IOt0B5lLgM490X5Hl8FF0dl0tOf2ewFYAlIFgzVA==}
@@ -29846,6 +29972,10 @@ packages:
   /tmpl/1.0.5:
     resolution: {integrity: sha512-3f0uOEAQwIqGuWW2MVzYg8fV/QNnc/IpuJNG837rLuczAaLVHslWHZQj4IGiEl5Hs3kkbhwL9Ab7Hrsmuj+Smw==}
     dev: true
+
+  /to-buffer/1.1.1:
+    resolution: {integrity: sha512-lx9B5iv7msuFYE3dytT+KE5tap+rNYw+K4jVkb9R/asAb+pbBSM17jtunHplhBe6RRJdZx3Pn2Jph24O32mOVg==}
+    dev: false
 
   /to-fast-properties/1.0.3:
     resolution: {integrity: sha512-lxrWP8ejsq+7E3nNjwYmUBMAgjMTZoTI+sdBOpvNyijeDLa29LUn9QaoXAHv4+Z578hbmHHJKZknzxVtvo77og==}
@@ -31186,6 +31316,7 @@ packages:
       - typescript
       - utf-8-validate
       - zod
+    dev: true
 
   /vlq/0.2.3:
     resolution: {integrity: sha512-DRibZL6DsNhIgYQ+wNdWDL2SL3bKPlVrRiBqV5yuMm++op8W4kGFtaQfCs4KEJn0wBZcHVHJ3eoywX8983k1ow==}

@@ -13,9 +13,8 @@ export enum PairState {
 
 export const getPairs = async (
   chainId: UniswapV2Router02ChainId | undefined,
-  currencies: [Currency | undefined, Currency | undefined][],
-  asRPool = false
-) => {
+  currencies: [Currency | undefined, Currency | undefined][]
+): Promise<[PairState, Pair | null][]> => {
   const filtered = currencies.filter((currencies): currencies is [Type, Type] => {
     const [currencyA, currencyB] = currencies
     return Boolean(

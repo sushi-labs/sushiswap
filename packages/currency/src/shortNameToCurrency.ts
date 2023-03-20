@@ -188,6 +188,18 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     WONE: WNATIVE[ChainId.HARMONY],
     SUSHI: SUSHI[ChainId.HARMONY],
   },
+  [ChainId.SCROLL_ALPHA_TESTNET]: {
+    ETH: Native.onChain(ChainId.SCROLL_ALPHA_TESTNET),
+    WETH: WNATIVE[ChainId.SCROLL_ALPHA_TESTNET],
+  },
+  [ChainId.CONSENSUS_ZKEVM_TESTNET]: {
+    ETH: Native.onChain(ChainId.CONSENSUS_ZKEVM_TESTNET),
+    WETH: WNATIVE[ChainId.CONSENSUS_ZKEVM_TESTNET],
+  },
+  [ChainId.BASE_TESTNET]: {
+    ETH: Native.onChain(ChainId.BASE_TESTNET),
+    WETH: WNATIVE[ChainId.BASE_TESTNET],
+  },
 } as const
 
 export type ShortCurrencyNameChainId = keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY

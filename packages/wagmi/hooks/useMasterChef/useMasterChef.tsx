@@ -6,7 +6,7 @@ import { Amount, SUSHI, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
 import { NotificationData } from '@sushiswap/ui/future/components/toast'
 import { BigNumber } from 'ethers'
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
-import { Address, erc20ABI, useAccount, useContractReads } from 'wagmi'
+import { Address, erc20ABI, useAccount, useContractReads, useNetwork } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import {
@@ -46,6 +46,7 @@ export const useMasterChef: UseMasterChef = ({
   enabled = true,
   onSuccess,
 }) => {
+  const { chain } = useNetwork()
   const { address } = useAccount()
   const contract = useMasterChefContract(chainId, chef)
 
@@ -269,6 +270,7 @@ export const useMasterChef: UseMasterChef = ({
     chainId,
     onSettled,
     prepare,
+    enabled: chainId === chain?.id,
   })
 
   return useMemo(() => {

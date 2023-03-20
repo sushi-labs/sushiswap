@@ -1,5 +1,4 @@
 import { useBreakpoint } from '@sushiswap/hooks'
-import { GenericTable, Loader } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -10,6 +9,8 @@ import { PoolQuickHoverTooltip } from './PoolQuickHoverTooltip'
 import { Pool, GetPoolsArgs, usePoolsInfinite, usePoolCount, PoolType, PoolVersion } from '@sushiswap/client'
 import { useSWRConfig } from 'swr'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
+import { Loader } from '@sushiswap/ui/future/components/Loader'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -68,20 +69,19 @@ export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady }) => {
   useEffect(() => {
     if (isSm && !isMd) {
       setColumnVisibility({
-        volume: false,
+        volume1d: false,
         network: false,
         rewards: false,
-        fees: false,
+        fees1d: false,
       })
     } else if (isSm) {
       setColumnVisibility({})
     } else {
       setColumnVisibility({
-        volume: false,
         network: false,
         rewards: false,
         liquidityUSD: false,
-        fees: false,
+        fees1d: false,
       })
     }
   }, [isMd, isSm])

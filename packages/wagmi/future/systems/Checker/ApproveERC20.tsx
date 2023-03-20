@@ -10,8 +10,9 @@ import { NotificationData } from '@sushiswap/ui/future/components/toast'
 export interface ApproveERC20Props extends ButtonProps<'button'> {
   id: string
   amount: Amount<Type> | undefined
-  contract: string
+  contract: string | undefined
   onSuccess?: (data: NotificationData) => void
+  enabled?: boolean
 }
 
 export const ApproveERC20: FC<ApproveERC20Props> = ({
@@ -25,13 +26,14 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
   as,
   size,
   onSuccess,
+  enabled = true,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
 
   return (
     <ApproveTokenController amount={amount} contract={contract} onSuccess={onSuccess}>
       {({ approvalState, onApprove }) => {
-        if (approvalState === ApprovalState.APPROVED) {
+        if (approvalState === ApprovalState.APPROVED || !enabled || !contract) {
           return <>{children}</>
         }
 

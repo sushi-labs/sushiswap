@@ -1,7 +1,7 @@
 import { formatNumber } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
 import { useInViewport } from '@sushiswap/hooks'
-import { classNames, NetworkIcon, Typography } from '@sushiswap/ui'
+import { classNames, NetworkIcon } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { FC, useRef } from 'react'
 
@@ -14,7 +14,7 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
   const ref = useRef<HTMLDivElement>(null)
   const inViewport = useInViewport(ref)
   return (
-    <div className="flex items-center gap-3 sm:gap-0">
+    <div className="flex items-center gap-2 sm:gap-0">
       <div className="hidden sm:flex">
         <Currency.IconList iconWidth={ICON_SIZE} iconHeight={ICON_SIZE}>
           <Currency.Icon disableLink currency={token0} priority={inViewport} />
@@ -22,19 +22,19 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
         </Currency.IconList>
       </div>
       <div className="flex sm:hidden">
-        <NetworkIcon chainId={row.chainId} width={ICON_SIZE} height={ICON_SIZE} />
+        <NetworkIcon chainId={row.chainId} className="w-[16px] h-[16px] sm:w-[26px] sm:h-[26px]" />
       </div>
       <div className="flex flex-col">
-        <Typography variant="sm" weight={500} className="flex items-center gap-1 text-slate-50">
-          {token0.symbol} <span className="text-slate-500">/</span> {token1.symbol}{' '}
-          <div className={classNames('bg-slate-700 rounded-lg px-1 py-0.5 ml-1')}>
+        <span className="text-sm flex items-center gap-1 text-gray-900 dark:text-slate-50">
+          {token0.symbol} <span className="text-gray-900 dark:text-slate-500">/</span> {token1.symbol}{' '}
+          <div className={classNames('text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1')}>
             {formatNumber(row.swapFee * 100)}%
           </div>
-        </Typography>
-        <Typography variant="xxs" className="text-slate-400">
-          {row.type === 'STABLE_POOL' && 'Stable'}
-          {row.type === 'CONSTANT_PRODUCT_POOL' && 'Classic'}
-        </Typography>
+        </span>
+        {/*<span className="text-xs text-gray-600 dark:text-slate-400">*/}
+        {/*  {row.type === 'STABLE_POOL' && 'Stable'}*/}
+        {/*  {row.type === 'CONSTANT_PRODUCT_POOL' && 'Classic'}*/}
+        {/*</span>*/}
       </div>
     </div>
   )

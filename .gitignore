@@ -65,6 +65,12 @@ generated
 # artifacts
 artifacts
 
+# artifacts zk
+artifacts-zk
+
+# cache zk
+cache-zk
+
 # workers
 **/public/sw.js
 **/public/workbox-*.js

@@ -12,7 +12,7 @@ import { TokenStats } from '../../components/TokenSection/TokenStats'
 import { getBundles, getToken } from '../../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+  res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
   const [token, bundles] = await Promise.all([getToken(query.id as string), getBundles()])
   return {
     props: {

@@ -12,7 +12,8 @@ const schema = z.object({
 })
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  res.setHeader('Cache-Control', 'public, max-age=5, stale-while-revalidate=59')
+  res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
+
   if (!req.query?.id) res.status(422)
 
   const result = schema.safeParse(req.query)

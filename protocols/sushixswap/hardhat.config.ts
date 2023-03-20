@@ -58,7 +58,7 @@ const config: HardhatUserConfig = {
   // },
   // networks: {
   //   ethereum: {
-  //     url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+  //     url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
   //     live: true,
   //     chainId: 1,
   //     saveDeployments: true,

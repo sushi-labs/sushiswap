@@ -443,6 +443,16 @@ export const WNATIVE = {
     name: 'Wrapped BitTorrent Token',
   }),
   // [ChainId.SEPOLIA]: WETH9[ChainId.SEPOLIA],
+  [ChainId.BTTC]: new Token({
+    chainId: ChainId.BTTC,
+    address: WNATIVE_ADDRESS[ChainId.BTTC],
+    decimals: 18,
+    symbol: 'WETH',
+    name: 'Wrapped BitTorrent Token',
+  }),
+  [ChainId.CONSENSUS_ZKEVM_TESTNET]: WETH9[ChainId.CONSENSUS_ZKEVM_TESTNET],
+  [ChainId.SCROLL_ALPHA_TESTNET]: WETH9[ChainId.SCROLL_ALPHA_TESTNET],
+  [ChainId.BASE_TESTNET]: WETH9[ChainId.BASE_TESTNET],
 } as const
 
 export const SUSHI = addressMapToTokenMap(

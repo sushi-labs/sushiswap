@@ -552,5 +552,11 @@ export const COMMON_BASES = {
     USDT[ChainId.BOBA_BNB],
   ],
   [ChainId.BTTC]: [Native.onChain(ChainId.BTTC), WNATIVE[ChainId.BTTC], USDC[ChainId.BTTC], USDT[ChainId.BTTC]],
+  [ChainId.CONSENSUS_ZKEVM_TESTNET]: [
+    Native.onChain(ChainId.CONSENSUS_ZKEVM_TESTNET),
+    WNATIVE[ChainId.CONSENSUS_ZKEVM_TESTNET],
+  ],
+  [ChainId.SCROLL_ALPHA_TESTNET]: [Native.onChain(ChainId.SCROLL_ALPHA_TESTNET), WNATIVE[ChainId.SCROLL_ALPHA_TESTNET]],
+  [ChainId.BASE_TESTNET]: [Native.onChain(ChainId.BASE_TESTNET), WNATIVE[ChainId.BASE_TESTNET]],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const

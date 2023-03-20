@@ -139,8 +139,6 @@ export async function getMasterChefV2(): Promise<ChefReturn> {
         }
       }
 
-      incentives = incentives.filter((incentive) => incentive.apr !== 0)
-
       acc[pool.pair.id] = {
         id: pool.id,
         incentives: incentives,
