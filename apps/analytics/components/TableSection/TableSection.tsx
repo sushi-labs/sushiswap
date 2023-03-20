@@ -31,13 +31,13 @@ export const TableSection: FC = () => {
             )}
           </Tab>
 
-          <Tab as={Fragment}>
+          {/* <Tab as={Fragment}>
             {({ selected }) => (
               <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
                 Tokens
               </Button>
             )}
-          </Tab>
+          </Tab> */}
         </div>
         <TableFilters />
         <Tab.Panels>
