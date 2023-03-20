@@ -1,8 +1,7 @@
 'use client'
 
 import { Transition } from '@headlessui/react'
-import { shortenAddress } from '@sushiswap/format'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useState } from 'react'
 
 import { useSwapState } from './TradeProvider'
 import { useTrade } from '../../lib/useTrade'
@@ -15,13 +14,13 @@ import { chainName } from '@sushiswap/chain'
 
 export const TradeStats: FC = () => {
   const [open, setOpen] = useState(false)
-  const { value, recipient, network0, network1, appType } = useSwapState()
+  const { value, network0, network1, appType } = useSwapState()
   const { isLoading, isFetching, data: trade } = useTrade({ crossChain: network0 !== network1 })
   const loading = Boolean(isLoading && +value > 0) || isFetching
 
   return (
     <Transition
-      show={+value > 0}
+      show={+value > 0 && trade?.route?.status !== 'NoWay'}
       enter="transition duration-300 ease-out"
       enterFrom="transform translate-y-[16px] opacity-0"
       enterTo="transform translate-y-0 opacity-100"
@@ -30,16 +29,6 @@ export const TradeStats: FC = () => {
       leaveTo="transform translate-y-[16px] opacity-0"
     >
       <div className="w-full px-3 flex flex-col gap-1">
-        {/*<div className="flex justify-between items-center gap-2">*/}
-        {/*  <span className="text-sm text-gray-700 dark:text-slate-400">Slippage tolerance</span>*/}
-        {/*  <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">*/}
-        {/*    {isLoading ? (*/}
-        {/*      <Skeleton.Box className="h-4 py-0.5 w-[120px] rounded-md" />*/}
-        {/*    ) : (*/}
-        {/*      `${slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance}%`*/}
-        {/*    )}*/}
-        {/*  </span>*/}
-        {/*</div>*/}
         <div className="flex justify-between items-center gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">Price impact</span>
           <span
