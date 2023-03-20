@@ -1,7 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/graph-client'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { Table } from '@sushiswap/ui'
+import { Table } from '@sushiswap/ui/future/components/table'
+import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import stringify from 'fast-json-stable-stringify'
 import React, { FC, useEffect, useMemo, useState } from 'react'
@@ -9,7 +10,6 @@ import useSWR from 'swr'
 
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import {
-  GenericTable,
   PAGE_SIZE,
   TOKEN_CHAIN_COLUMN,
   TOKEN_LIQUIDITY_COLUMN,
@@ -117,11 +117,10 @@ export const TokenTable: FC = () => {
     <div>
       <GenericTable<Token>
         table={table}
-        columns={COLUMNS}
         loading={!tokens && isValidating}
         placeholder="No tokens found"
         pageSize={PAGE_SIZE}
-        linkFormatter={(id: string) => `/analytics/token/${id}`}
+        linkFormatter={(row) => `/analytics/token/${row.id}`}
       />
       <Table.Paginator
         hasPrev={pagination.pageIndex > 0}
