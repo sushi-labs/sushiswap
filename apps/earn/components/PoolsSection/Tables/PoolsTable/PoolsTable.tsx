@@ -104,8 +104,7 @@ export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady }) => {
       >
         <GenericTable<Pool>
           table={table}
-          loading={true}
-          // loading={(!pools && isValidating) || !shouldLoad}
+          loading={(!pools && isValidating) || !shouldLoad}
           HoverElement={isMd ? PoolQuickHoverTooltip : undefined}
           placeholder="No pools found"
           pageSize={PAGE_SIZE}
