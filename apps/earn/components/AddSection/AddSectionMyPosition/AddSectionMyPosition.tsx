@@ -16,7 +16,7 @@ export const AddSectionMyPosition: FC<{ pool: Pool }> = ({ pool }) => {
             Total APR:
           </Typography>
           <Typography variant="xs" weight={500} className="text-right text-slate-300">
-            {formatPercent(pool.feeApr)}
+            {formatPercent(pool.feeApr + pool.incentiveApr)}
           </Typography>
           {pool.incentives && (
             <>

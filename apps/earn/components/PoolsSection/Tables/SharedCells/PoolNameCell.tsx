@@ -14,7 +14,7 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
   const ref = useRef<HTMLDivElement>(null)
   const inViewport = useInViewport(ref)
   return (
-    <div className="flex items-center gap-3 sm:gap-0">
+    <div className="flex items-center gap-2 sm:gap-0">
       <div className="hidden sm:flex">
         <Currency.IconList iconWidth={ICON_SIZE} iconHeight={ICON_SIZE}>
           <Currency.Icon disableLink currency={token0} priority={inViewport} />
@@ -22,7 +22,7 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
         </Currency.IconList>
       </div>
       <div className="flex sm:hidden">
-        <NetworkIcon chainId={row.chainId} width={ICON_SIZE} height={ICON_SIZE} />
+        <NetworkIcon chainId={row.chainId} className="w-[16px] h-[16px] sm:w-[26px] sm:h-[26px]" />
       </div>
       <div className="flex flex-col">
         <span className="text-sm flex items-center gap-1 text-gray-900 dark:text-slate-50">

@@ -163,6 +163,61 @@ export const GenericTable = <T extends { id: string }>({
                       </Popover.Panel>
                     </Popover>
                   )
+                } else {
+                  return (
+                    <Table.tr
+                      key={row.id}
+                      onClick={(e) => {
+                        if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
+                          setPopupInvisible(true)
+                          setTimeout(() => setShowOverlay(true), 250)
+                        }
+                      }}
+                      className="cursor-pointer"
+                    >
+                      {row.getVisibleCells().map((cell, i) => {
+                        return (
+                          <Table.td
+                            className="!px-0 relative"
+                            style={{
+                              ...(cell.column.columnDef.maxSize && {
+                                maxWidth: cell.column.columnDef.maxSize,
+                              }),
+                              ...(cell.column.columnDef.size && {
+                                width: cell.column.columnDef.size,
+                              }),
+                              ...(cell.column.columnDef.minSize && {
+                                minWidth: cell.column.columnDef.minSize,
+                              }),
+                            }}
+                            key={cell.id}
+                          >
+                            {linkFormatter ? (
+                              <Link.Internal href={linkFormatter(row.original)} passHref={true}>
+                                <a
+                                  className={classNames(
+                                    'absolute inset-0 flex items-center px-3 sm:px-4',
+                                    cell.column.columnDef.meta?.className
+                                  )}
+                                >
+                                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                </a>
+                              </Link.Internal>
+                            ) : (
+                              <div
+                                className={classNames(
+                                  'absolute inset-0 flex items-center px-3 sm:px-4',
+                                  cell.column.columnDef.meta?.className
+                                )}
+                              >
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </div>
+                            )}
+                          </Table.td>
+                        )
+                      })}
+                    </Table.tr>
+                  )
                 }
               })}
             {!loading &&
