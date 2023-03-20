@@ -165,7 +165,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { data: tokenTo, isInitialLoading: isTokenToLoading } = useToken({ chainId: toChainId, address: toCurrency })
 
   const [internalState, dispatch] = useReducer(reducer, {
-    isFallback: false,
+    isFallback: true,
     tradeId: nanoid(),
     review: false,
     // TODO: no recipient
