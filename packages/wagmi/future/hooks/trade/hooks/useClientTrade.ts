@@ -95,6 +95,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
               args.routeCode as HexString,
             ]
           : undefined
+
         let overrides = fromToken.isNative && writeArgs?.[1] ? { value: BigNumber.from(writeArgs?.[1]) } : undefined
 
         if (writeArgs && isOffset && chainId === ChainId.POLYGON) {

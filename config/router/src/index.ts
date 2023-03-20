@@ -264,11 +264,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDT[ChainId.BOBA_AVAX],
     USDC[ChainId.BOBA_AVAX],
   ],
-
   [ChainId.BOBA_BNB]: [
     WNATIVE[ChainId.BOBA_BNB],
     new Token({
-      chainId: ChainId.BOBA_AVAX,
+      chainId: ChainId.BOBA_BNB,
       address: '0x4200000000000000000000000000000000000023',
       decimals: 18,
       symbol: 'BNB',
@@ -277,7 +276,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDT[ChainId.BOBA_BNB],
     USDC[ChainId.BOBA_BNB],
   ],
-  [ChainId.BTTC]: [WNATIVE[ChainId.BTTC]],
+  [ChainId.BTTC]: [WNATIVE[ChainId.BTTC], USDC[ChainId.BTTC], USDT[ChainId.BTTC]],
 }
 
 export const ADDITIONAL_BASES: {
