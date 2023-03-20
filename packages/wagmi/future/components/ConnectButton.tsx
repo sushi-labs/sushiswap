@@ -11,7 +11,7 @@ import {
 } from '@sushiswap/ui/future/components/icons'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Loader } from '@sushiswap/ui/future/components/Loader'
-import React, { Fragment, useCallback } from 'react'
+import React, { Fragment, useCallback, useMemo } from 'react'
 import { useConnect } from 'wagmi'
 import { classNames } from '@sushiswap/ui'
 
@@ -41,6 +41,17 @@ export const ConnectButton = <C extends React.ElementType>({ hack, children, hid
     },
     [connect, connectors]
   )
+
+  const _connectors = useMemo(() => {
+    const conns = [...connectors]
+    const injected = conns.find((el) => el.id === 'injected')
+
+    if (injected) {
+      return [injected, ...conns.filter((el) => el.id !== 'injected' && el.name !== injected.name)]
+    }
+
+    return conns
+  }, [connectors])
 
   // Pending confirmation state
   // Awaiting wallet confirmation
@@ -85,15 +96,17 @@ export const ConnectButton = <C extends React.ElementType>({ hack, children, hid
             >
               <Popover.Panel className="p-2 flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white dark:bg-slate-800">
                 <List.Control className="bg-gray-100 dark:!bg-slate-700">
-                  {connectors.map((connector) => (
-                    <List.MenuItem
-                      onClick={() => onSelect(connector.id)}
-                      icon={Icons[connector.name]}
-                      title={connector.name == 'Safe' ? 'Gnosis Safe' : connector.name}
-                      key={connector.id}
-                      hoverIcon={ChevronRightIcon}
-                    />
-                  ))}
+                  {_connectors.map((connector) => {
+                    return (
+                      <List.MenuItem
+                        onClick={() => onSelect(connector.id)}
+                        icon={Icons[connector.name]}
+                        title={connector.name == 'Safe' ? 'Gnosis Safe' : connector.name}
+                        key={connector.id}
+                        hoverIcon={ChevronRightIcon}
+                      />
+                    )
+                  })}
                 </List.Control>
               </Popover.Panel>
             </div>

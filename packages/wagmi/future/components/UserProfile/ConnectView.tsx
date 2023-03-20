@@ -7,7 +7,7 @@ import {
   WalletConnectIcon,
 } from '@sushiswap/ui/future/components/icons'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import React, { FC, SVGProps, useCallback } from 'react'
+import React, { FC, SVGProps, useCallback, useMemo } from 'react'
 import { useConnect } from 'wagmi'
 
 const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element | null> = {
@@ -22,25 +22,36 @@ const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element | nu
 export const ConnectView: FC<{ onSelect(): void }> = ({ onSelect }) => {
   const { connectors, connect } = useConnect()
 
+  const _connectors = useMemo(() => {
+    const conns = [...connectors]
+    const injected = conns.find((el) => el.id === 'injected')
+
+    if (injected) {
+      return [injected, ...conns.filter((el) => el.id !== 'injected' && el.name !== injected.name)]
+    }
+
+    return conns
+  }, [connectors])
+
   const _onSelect = useCallback(
     (connectorId: string) => {
       onSelect()
       setTimeout(
         () =>
           connect({
-            connector: connectors.find((el) => el.id === connectorId),
+            connector: _connectors.find((el) => el.id === connectorId),
           }),
         250
       )
     },
-    [connect, connectors, onSelect]
+    [connect, _connectors, onSelect]
   )
 
   return (
     <List className="!p-0">
       {/* <List.Label>Wallet</List.Label> */}
       <List.Control className="bg-gray-100 dark:!bg-slate-700">
-        {connectors.map((connector) => (
+        {_connectors.map((connector) => (
           <List.MenuItem
             onClick={() => _onSelect(connector.id)}
             icon={Icons[connector.name]}
