@@ -54,7 +54,8 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     ...getSushiXSwapContractConfig(network0 as SushiXSwapChainId),
     functionName: trade?.functionName,
     args: trade?.writeArgs,
-    enabled: Boolean(trade?.writeArgs) && appType === AppType.xSwap && chain?.id === network0 && enabled,
+    enabled:
+      Boolean(trade?.writeArgs) && Boolean(review) && appType === AppType.xSwap && chain?.id === network0 && enabled,
     overrides: trade?.overrides,
   })
 

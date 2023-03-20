@@ -63,7 +63,8 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     abi: routeProcessorAbi,
     functionName: trade?.functionName,
     args: trade?.writeArgs,
-    enabled: Boolean(trade?.writeArgs) && appType === AppType.Swap && isRouteProcessorChainId(network0),
+    enabled:
+      Boolean(trade?.writeArgs) && Boolean(review) && appType === AppType.Swap && isRouteProcessorChainId(network0),
     overrides: trade?.overrides,
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return

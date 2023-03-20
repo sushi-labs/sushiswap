@@ -36,7 +36,7 @@ export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enable
       poolCodeMap.set(
         pool.liquidityToken.address,
         new ConstantProductPoolCode(
-          convertPoolOrPairtoRPool(pool) as ConstantProductRPool,
+          convertPoolOrPairtoRPool(pool, true) as ConstantProductRPool,
           LiquidityProviders.SushiSwap,
           'SushiSwap'
         )
@@ -44,12 +44,20 @@ export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enable
     } else if (pool instanceof ConstantProductPool) {
       poolCodeMap.set(
         pool.liquidityToken.address,
-        new BentoPoolCode(convertPoolOrPairtoRPool(pool) as ConstantProductRPool, LiquidityProviders.Trident, 'Trident')
+        new BentoPoolCode(
+          convertPoolOrPairtoRPool(pool, true) as ConstantProductRPool,
+          LiquidityProviders.Trident,
+          'Trident'
+        )
       )
     } else if (pool instanceof StablePool) {
       poolCodeMap.set(
         pool.liquidityToken.address,
-        new BentoPoolCode(convertPoolOrPairtoRPool(pool) as StableSwapRPool, LiquidityProviders.Trident, 'Trident')
+        new BentoPoolCode(
+          convertPoolOrPairtoRPool(pool, true) as StableSwapRPool,
+          LiquidityProviders.Trident,
+          'Trident'
+        )
       )
     }
   }
