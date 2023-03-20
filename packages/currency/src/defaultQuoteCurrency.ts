@@ -38,7 +38,7 @@ export const defaultQuoteCurrency = {
   [ChainId.BOBA]: USDC[ChainId.BOBA],
   [ChainId.BOBA_AVAX]: USDC[ChainId.BOBA_AVAX],
   [ChainId.BOBA_BNB]: USDC[ChainId.BOBA_BNB],
-  // [ChainId.BTTC]: USDT[ChainId.BTTC],
+  [ChainId.BTTC]: SUSHI[ChainId.BTTC],
   // [ChainId.SEPOLIA]: USDT[ChainId.SEPOLIA],
   [ChainId.CONSENSUS_ZKEVM_TESTNET]: WETH9[ChainId.CONSENSUS_ZKEVM_TESTNET],
   [ChainId.SCROLL_ALPHA_TESTNET]: WETH9[ChainId.SCROLL_ALPHA_TESTNET],

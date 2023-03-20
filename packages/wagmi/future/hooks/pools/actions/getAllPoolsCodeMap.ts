@@ -15,8 +15,6 @@ import { NativeWrapBridgePoolCode } from '@sushiswap/router/dist/pools/NativeWra
 export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enabled'>) => {
   const { pairs, stablePools, constantProductPools, bridgeBentoPools } = await getAllPools(variables)
 
-  console.log({ bridgeBentoPools })
-
   const rPools = [
     ...(pairs || []),
     ...(stablePools || []),

@@ -4,7 +4,6 @@ import React, { FC } from 'react'
 
 import { Header } from '../ui/Header'
 import { WagmiProvider } from '../ui/WagmiProvider'
-import { PersistQueryClientProvider } from '../ui/PersistQueryClientProvider'
 import Head from 'next/head'
 import { AppProps } from 'next/app'
 import { ToastContainer } from '@sushiswap/ui/future/components/toast'
