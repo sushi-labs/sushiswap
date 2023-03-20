@@ -219,7 +219,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
             fromCurrency: token0.isNative ? token0.symbol : token0.wrapped.address,
             toChainId: chainId,
             toCurrency: token1,
-            amount: '0',
           },
         },
         undefined,
