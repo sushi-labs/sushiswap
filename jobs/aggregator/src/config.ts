@@ -59,7 +59,8 @@ export const TRACKED_CHAIN_IDS = [
 ]
 
 export const PROTOCOL_JOBS: ProtocolJob[] = [
-  { protocol: ProtocolName.SUSHISWAP },
+  { protocol: ProtocolName.SUSHISWAP, version: ProtocolVersion.LEGACY },
+  { protocol: ProtocolName.SUSHISWAP, version: ProtocolVersion.LEGACY },
   { protocol: ProtocolName.UNISWAP, version: ProtocolVersion.V2 },
   { protocol: ProtocolName.PANCAKESWAP, version: ProtocolVersion.V2 },
   { protocol: ProtocolName.QUICKSWAP, version: ProtocolVersion.V2 },

@@ -33,17 +33,17 @@ async function start(client: PrismaClient) {
   console.log(`Fetched ${approvedTokens.length} tokens (approved and not fee on transfer).`)
 
   const batchSize = 10000
-  let cursor = null
+  let cursor: string | null = null
   const poolsToUpdate: string[] = []
   let totalCount = 0
 
   do {
     const requestStartTime = performance.now()
-    let result = []
+    let result: { id: string }[] = []
     if (!cursor) {
-      result = await getPoolsAddresses(client, approvedTokens, batchSize)
+      result = await getPoolIds(client, approvedTokens, batchSize)
     } else {
-      result = await getPoolsAddresses(client, approvedTokens, batchSize, 1, { id: cursor })
+      result = await getPoolIds(client, approvedTokens, batchSize, 1, { id: cursor })
     }
     cursor = result.length == batchSize ? result[result.length - 1].id : null
     totalCount += result.length
@@ -84,7 +84,7 @@ async function start(client: PrismaClient) {
   console.log(`LOAD - COMPLETE, ${updatePoolCount} pools whitelisted.`)
 }
 
-async function getPoolsAddresses(
+async function getPoolIds(
   client: PrismaClient,
   approvedIds: string[],
   take: number,

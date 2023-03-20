@@ -80,12 +80,12 @@ async function getPools(client: PrismaClient, chainId: ChainId) {
   const startTime = performance.now()
 
   const batchSize = 2500
-  let cursor = null
-  const results = []
+  let cursor: string|null = null
+  const results: PoolResult[][] = []
   let totalCount = 0
   do {
     const requestStartTime = performance.now()
-    let result = []
+    let result: PoolResult[] = []
     if (!cursor) {
       result = await getPoolsPagination(client, chainId, batchSize)
     } else {
@@ -120,7 +120,7 @@ async function getPoolsPagination(
   take?: number,
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
-) {
+): Promise<PoolResult[]> {
   return client.pool.findMany({
     take,
     skip,

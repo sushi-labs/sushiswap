@@ -66,12 +66,12 @@ async function getPools(client: PrismaClient, chainId: ChainId) {
   const startTime = performance.now()
 
   const batchSize = 2500
-  let cursor = null
-  const results = []
+  let cursor: string | null = null
+  const results: Pool[][] = []
   let totalCount = 0
   do {
     const requestStartTime = performance.now()
-    let result = []
+    let result: Pool[] = []
     if (!cursor) {
       result = await getPoolsByPagination(client, chainId, batchSize)
     } else {
@@ -240,7 +240,7 @@ function calculatePrices(
   const endTime = performance.now()
   console.log(`calcTokenPrices() found ${results.size} prices (${((endTime - startTime) / 1000).toFixed(1)}s). `)
 
-  const tokensWithPrices = []
+  const tokensWithPrices: { id: string; price: number }[] = []
 
   for (const [rToken, value] of results.entries()) {
     const token = tokens.get(rToken.address)

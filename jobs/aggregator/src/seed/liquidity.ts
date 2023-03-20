@@ -32,12 +32,12 @@ export async function liquidity(chainId: ChainId) {
 async function getPools(client: PrismaClient, chainId: ChainId) {
   const startTime = performance.now()
   const batchSize = 2500
-  let cursor = null
+  let cursor: string|null = null
   const results: Pool[] = []
   let totalCount = 0
   do {
     const requestStartTime = performance.now()
-    let result = []
+    let result: Pool[] = []
     if (!cursor) {
       result = await getPoolsByPagination(client, chainId, batchSize)
     } else {
