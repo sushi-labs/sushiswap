@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { PrismaClient } from '@sushiswap/database'
+
 import { PoolType, ProtocolName, ProtocolVersion } from '../../config.js'
 
 export interface NewestPool {
@@ -22,8 +22,3 @@ export interface SeedConfiguration {
   poolConfiguration?: OptionalPoolConfiguration
   newestPool?: NewestPool
 }
-
-// export abstract class ProtocolBase {
-//    static run(config: SeedConfiguration): Promise<NewestPool | undefined>
-//   static logPrefix(config: SeedConfiguration): string
-// }

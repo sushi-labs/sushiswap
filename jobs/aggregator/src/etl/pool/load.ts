@@ -34,28 +34,3 @@ export async function getNonExistingPools(client: PrismaClient, pools: Prisma.Po
   const existingPoolIds = existingPools.map((pool) => pool.id)
   return pools.filter((pool) => !existingPoolIds.includes(pool.id))
 }
-
-export async function isProtocolExisting(client: PrismaClient, chainId: number, protocol: ProtocolName, version: ProtocolVersion) {
-  const startTime = performance.now()
-
-  const latestPool = await client.pool.findFirst({
-    select: {
-      address: true,
-    },
-    where: {
-      protocol,
-      version,
-      chainId,
-    },
-    orderBy: {
-      generatedAt: 'desc',
-    },
-  })
-  const protocolExists = latestPool !== null
-
-  const endTime = performance.now()
-  const duration = ((endTime - startTime) / 1000).toFixed(1)
-
-  console.log(`${chainId} ${protocol} ${version}, has pools: ${protocolExists}. (${duration}s)`)
-  return protocolExists
-}
