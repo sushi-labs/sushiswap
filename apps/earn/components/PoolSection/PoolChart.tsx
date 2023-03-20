@@ -87,7 +87,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
       }
 
       if (chartType === PoolChartType.Volume) {
-        valueNodes[1].innerHTML = formatUSD(value * (pool.swapFee * 100))
+        valueNodes[1].innerHTML = formatUSD(value * pool.swapFee)
       }
       nameNodes[0].innerHTML = format(
         new Date(name * 1000),
@@ -292,7 +292,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
             <span className="text-sm font-medium text-slate-300">
               <span className="text-xs top-[-2px] relative">•</span>{' '}
               <span className="hoveredItemValue">
-                {formatUSD(Number(yData[yData.length - 1] * pool.swapFee).toFixed(2))}
+                {formatUSD(Number(yData[yData.length - 1]) * Number(pool.swapFee))}
               </span>{' '}
               earned
             </span>
