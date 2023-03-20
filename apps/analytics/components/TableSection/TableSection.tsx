@@ -44,9 +44,9 @@ export const TableSection: FC = () => {
           <Tab.Panel unmount={false}>
             <PoolTable />
           </Tab.Panel>
-          <Tab.Panel unmount={false}>
+          {/* <Tab.Panel unmount={false}>
             <TokenTable />
-          </Tab.Panel>
+          </Tab.Panel> */}
         </Tab.Panels>
       </Tab.Group>
     </section>
