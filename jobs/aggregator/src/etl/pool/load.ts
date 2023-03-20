@@ -1,6 +1,5 @@
 import type { Prisma, PrismaClient } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
-import { ProtocolName, ProtocolVersion } from 'src/config.js'
 
 export async function createPools(client: PrismaClient, pools: Prisma.PoolCreateManyInput[]) {
   const startTime = performance.now()
