@@ -55,7 +55,7 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
             >
-              <Menu.Button className="text-center text-xs text-blue cursor-pointer">
+              <Menu.Button as="div" role="button" className="text-center text-xs text-blue cursor-pointer">
                 <InformationCircleIcon width={18} height={18} className="text-white" />
               </Menu.Button>
               <Transition

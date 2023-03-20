@@ -23,6 +23,7 @@ import { isRouteProcessorChainId, routeProcessorAddress, RouteProcessorChainId }
 import { createErrorToast } from '@sushiswap/ui'
 import { swapErrorToUserReadableMessage } from '../lib/swapErrorToUserReadableMessage'
 import { log } from 'next-axiom'
+import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
 interface ConfirmationDialogProps {
   children({
@@ -50,9 +51,10 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const { address } = useAccount()
   const { setReview } = useSwapActions()
   const { appType, network0, token0, token1, review } = useSwapState()
+  const { approved } = useApproved('swap')
   const { data: trade } = useTrade({ crossChain: false })
-  // const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
   const { mutate: storeNotification } = useCreateNotification({ account: address })
+  // const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
 
   const [open, setOpen] = useState(false)
   const [dialogState, setDialogState] = useState<ConfirmationDialogState>(ConfirmationDialogState.Undefined)
@@ -63,8 +65,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     abi: routeProcessorAbi,
     functionName: trade?.functionName,
     args: trade?.writeArgs,
-    enabled:
-      Boolean(trade?.writeArgs) && Boolean(review) && appType === AppType.Swap && isRouteProcessorChainId(network0),
+    enabled: Boolean(trade?.writeArgs) && appType === AppType.Swap && isRouteProcessorChainId(network0) && approved,
     overrides: trade?.overrides,
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
