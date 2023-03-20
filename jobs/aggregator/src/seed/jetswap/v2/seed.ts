@@ -2,9 +2,9 @@ import { ChainId } from '@sushiswap/chain'
 import { createClient } from '@sushiswap/database'
 
 import { PoolType, ProtocolName, ProtocolVersion } from '../../../config.js'
-import { NewestPool, SeedConfiguration } from '../../protocol/index.js'
-import { UniswapSchema } from '../../protocol/uniswap.js'
-import { GRAPH_HOST,JETSWAP_V2_SUBGRAPH_NAME, JETSWAP_V2_SUPPORTED_CHAINS } from '../config.js'
+import { NewestPool, SeedConfiguration } from '../../base/index.js'
+import { UniswapSchema } from '../../base/uniswap.js'
+import { GRAPH_HOST, JETSWAP_V2_SUBGRAPH_NAME, JETSWAP_V2_SUPPORTED_CHAINS } from '../config.js'
 
 const LAST_CREATED_POOL_TIMESTAMP_BY_CHAIN_ID: Map<ChainId, NewestPool> = new Map()
 
@@ -27,8 +27,8 @@ export async function jetSwapV2({ dryRun, initialRun }: { dryRun: boolean; initi
       poolConfiguration: {
         type: PoolType.CONSTANT_PRODUCT_POOL,
         swapFee: 0.003,
-        twapEnabled: true
-      }
+        twapEnabled: true,
+      },
     } as SeedConfiguration
   })
 

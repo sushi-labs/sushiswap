@@ -18,7 +18,6 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
     source
     swapFee
     twapEnabled
-    liquidityUSD
     createdAtTimestamp
   }
 }
@@ -52,7 +51,6 @@ query V2Pairs(
       symbol
       decimals
     }
-    liquidityUSD: reserveUSD
     createdAtTimestamp
   }
 }
@@ -88,13 +86,19 @@ query V3Pairs(
       decimals
     }
     feeTier
-    liquidityUSD: totalValueLockedUSD
     createdAtTimestamp
   }
 }
 
-query PCSPairs($first: Int = 1000, $skip: Int = 0, $where: MINIMAL_Pair_filter, $block: MINIMAL_Block_height) {
-  MINIMAL_pairs(first: $first, skip: $skip, where: $where, block: $block) {
+query PCSPairs(
+  $first: Int = 1000, 
+  $skip: Int = 0, 
+  $where: MINIMAL_Pair_filter, 
+  $block: MINIMAL_Block_height, 
+  $orderBy: MINIMAL_Pair_orderBy,
+  $orderDirection: MINIMAL_OrderDirection
+) {
+  MINIMAL_pairs(first: $first, skip: $skip, where: $where, block: $block, orderBy: $orderBy, orderDirection: $orderDirection) {
     id
     token0 {
       id
@@ -109,16 +113,18 @@ query PCSPairs($first: Int = 1000, $skip: Int = 0, $where: MINIMAL_Pair_filter, 
       decimals
     }
     name
-    createdAtTimestamp: timestamp
+    timestamp
   }
 }
 
-query TraderJoePairs($first: Int = 1000, $skip: Int = 0, $where: TJ_Pair_filter, $block: TJ_Block_height) {
+query TraderJoePairs($first: Int = 1000, $skip: Int = 0, $where: TJ_Pair_filter, $block: TJ_Block_height, $orderBy: TJ_Pair_orderBy, $orderDirection: TJ_OrderDirection) {
   TJ_pairs(
     first: $first
     skip: $skip
     where: $where
     block: $block
+    orderBy: $orderBy
+    orderDirection: $orderDirection
   ) {
     id
     token0 {
@@ -133,17 +139,18 @@ query TraderJoePairs($first: Int = 1000, $skip: Int = 0, $where: TJ_Pair_filter,
       symbol
       decimals
     }
-    liquidityUSD: reserveUSD
-    createdAtTimestamp:timestamp
+    timestamp
   }
 }
 
-query MessariPairs($first: Int = 1000, $skip: Int = 0, $where: MESSARI_LiquidityPool_filter, $block: MESSARI_Block_height) {
+query MessariPairs($first: Int = 1000, $skip: Int = 0, $where: MESSARI_LiquidityPool_filter, $block: MESSARI_Block_height, $orderBy: MESSARI_LiquidityPool_orderBy, $orderDirection: MESSARI_OrderDirection) {
   MESSARI_liquidityPools(
     first: $first
     skip: $skip
     where: $where
     block: $block
+    orderBy: $orderBy
+    orderDirection: $orderDirection
   ) {
     id
     inputTokens {
@@ -152,7 +159,6 @@ query MessariPairs($first: Int = 1000, $skip: Int = 0, $where: MESSARI_Liquidity
       symbol
       decimals
     }
-    liquidityUSD: totalValueLockedUSD
-    createdAtTimestamp: createdTimestamp
+    createdTimestamp
   }
 }

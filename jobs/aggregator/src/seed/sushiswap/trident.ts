@@ -3,8 +3,8 @@ import { createClient } from '@sushiswap/database'
 import { SUBGRAPH_HOST, TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 
 import { ProtocolName, ProtocolVersion } from '../../config.js'
-import { NewestPool, SeedConfiguration } from '../protocol/index.js'
-import { SushiSwapSchema } from '../protocol/sushi.js'
+import { NewestPool, SeedConfiguration } from '../base/index.js'
+import { SushiSwapSchema } from '../base/sushi.js'
 
 const LAST_CREATED_POOL_TIMESTAMP_BY_CHAIN_ID: Map<ChainId, NewestPool> = new Map()
 

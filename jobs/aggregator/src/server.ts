@@ -94,7 +94,7 @@ app.get(
         }
       } else if (name === ProtocolName.PANCAKESWAP) {
         if (version === ProtocolVersion.V2) {
-          await pancakeSwapV2()
+          await pancakeSwapV2({dryRun, initialRun})
           res.sendStatus(200)
         } else {
           res.status(400).send('Not a valid version')
@@ -108,14 +108,14 @@ app.get(
         }
       } else if (name === ProtocolName.TRADERJOE) {
         if (version === ProtocolVersion.V2) {
-          await traderJoeV2()
+          await traderJoeV2({dryRun, initialRun})
           res.sendStatus(200)
         } else {
           res.status(400).send('Not a valid version')
         }
       } else if (name === ProtocolName.SPOOKYSWAP) {
         if (version === ProtocolVersion.V2) {
-          await spookySwapV2()
+          await spookySwapV2({dryRun, initialRun})
           res.sendStatus(200)
         } else {
           res.status(400).send('Not a valid version')
@@ -143,7 +143,7 @@ app.get(
         }
       } else if (name === ProtocolName.APESWAP) {
         if (version === ProtocolVersion.V2) {
-          await apeSwapV2()
+          await apeSwapV2({dryRun, initialRun})
           res.sendStatus(200)
         } else {
           res.status(400).send('Not a valid version')
@@ -171,7 +171,7 @@ app.get(
         }
       } else if (name === ProtocolName.SPIRITSWAP) {
         if (version === ProtocolVersion.V2) {
-          await spiritSwapV2()
+          await spiritSwapV2({dryRun, initialRun})
           res.sendStatus(200)
         } else {
           res.sendStatus(400).send('Not a valid version')

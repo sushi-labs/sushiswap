@@ -9,7 +9,7 @@ export const GRAPH_HOST: Record<number | string, string> = {
 
 export const PANCAKESWAP_V2_SUPPORTED_CHAINS = [ChainId.BSC, ChainId.ETHEREUM]
 
-export const PANCAKESWAP_SUBGRAPH_NAME: Record<number | string, string> = {
+export const PANCAKESWAP_V2_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.BSC]: 'pancakeswap/pairs',
   [ChainId.ETHEREUM]: 'pancakeswap/exhange-eth',
 }
