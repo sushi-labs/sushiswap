@@ -1,5 +1,5 @@
 import { AddressZero } from '@ethersproject/constants'
-import { expect, Page, test } from '@playwright/test'
+import { chromium, expect, Page, test } from '@playwright/test'
 import { chainName } from '@sushiswap/chain'
 import { Native, SUSHI_ADDRESS, USDC_ADDRESS } from '@sushiswap/currency'
 
@@ -30,7 +30,12 @@ test.beforeEach(async ({ page }) => {
   page.on('pageerror', (err) => {
     console.log(err)
   })
+
   await page.goto(PLAYWRIGHT_URL)
+  
+  const connectWallet = page.locator('[testdata-id=connect-wallet-button]')
+  await connectWallet.click()
+
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {

@@ -71,7 +71,8 @@
         "SWAP_API_V0_BASE_URL",
         "AGGREGATOR_API_V0_BASE_URL",
         "POOLS_API_V0_BASE_URL",
-        "TOKENS_API_V0_BASE_URL"
+        "TOKENS_API_V0_BASE_URL",
+        "NODE_ENV"
       ]
     },
     "clean": {
