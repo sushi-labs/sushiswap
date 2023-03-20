@@ -58,6 +58,7 @@ export const useCrossChainTradeQuery = (
 
   const { data: srcPools } = usePools({ chainId: network0, currencyA: srcCurrencyA, currencyB: srcCurrencyB, enabled })
   const { data: dstPools } = usePools({ chainId: network1, currencyA: dstCurrencyA, currencyB: dstCurrencyB, enabled })
+
   const { data: srcFeeData } = useFeeData({ chainId: network0, enabled })
   const { data: dstFeeData } = useFeeData({ chainId: network1, enabled })
   const { data: srcRebases } = useBentoboxTotals({
