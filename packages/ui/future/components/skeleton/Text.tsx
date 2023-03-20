@@ -60,12 +60,7 @@ const ALIGN = {
 export const Text: FC<TextProps> = ({ align = 'left', className, fontSize = 'text-base', ...props }) => {
   return (
     <div {...props} className={classNames(ALIGN[align], STYLES[fontSize], PADDING[fontSize], 'flex w-full')}>
-      <div
-        className={classNames(
-          className,
-          'flex w-full h-full bg-gray-200 dark:bg-slate-700 rounded-md overflow-hidden shimmer-fast'
-        )}
-      />
+      <div className={classNames(className, 'flex w-full h-full rounded-md overflow-hidden shimmer')} />
     </div>
   )
 }

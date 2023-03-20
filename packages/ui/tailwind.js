@@ -16,10 +16,6 @@ module.exports = {
     extend: {
       backgroundImage: () => ({
         'gradient-radial': 'radial-gradient(#13213E, #111829)',
-        'shimmer-gradient':
-          'linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.03) 30%, rgba(255, 255, 255, 0.06) 50%, rgba(255, 255, 255, 0.03) 70%, rgba(255, 255, 255, 0) 100%)',
-        'shimmer-gradient-dark':
-          'linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.03) 30%, rgba(0, 0, 0, 0.06) 50%, rgba(0, 0, 0, 0.03) 70%, rgba(0, 0, 0, 0) 100%)',
       }),
       boxShadow: {
         'depth-1': '0px 3px 6px rgba(15, 15, 15, 0.5)',
@@ -51,6 +47,7 @@ module.exports = {
         'wave-fast': 'shimmer 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         dash: 'dash 1.5s 2s ease-out infinite',
         'dash-check': 'dash-check 1.5s 2s ease-out infinite',
+        skeleton: 'skeleton 8s ease-in-out infinite',
       },
       keyframes: {
         shimmer: {
@@ -103,6 +100,14 @@ module.exports = {
           },
           '100%': {
             strokeDashoffset: 900,
+          },
+        },
+        skeleton: {
+          '0%': {
+            backgroundPosition: '200% 0',
+          },
+          '100%': {
+            backgroundPosition: '-200% 0',
           },
         },
       },
