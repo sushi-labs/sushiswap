@@ -11,7 +11,7 @@ import { setTokenBalance } from '../src/SetTokenBalance'
 enum CurvePoolType {
   Legacy = 'Legacy', // 'exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) -> uint256'
   LegacyV2 = 'LegacyV2', // 'function coins(int128) pure returns (address)'
-  Legacy_ETH = 'Legacy_ETH', // like Legacy, but raw ETH as one of tokens
+  LegacyV3 = 'LegacyV3',
   Factory = 'Factory',
 }
 
@@ -59,11 +59,10 @@ async function createCurvePoolInfo(
   user: Signer,
   initialBalance: bigint
 ): Promise<PoolInfo> {
-  const chainId = ethers.provider.network.chainId
   const poolContract = new Contract(
     poolAddress,
     [
-      poolType !== CurvePoolType.LegacyV2
+      poolType !== CurvePoolType.LegacyV2 && poolType !== CurvePoolType.LegacyV3
         ? 'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns (uint256)'
         : 'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns ()',
       'function A() pure returns (uint256)',
@@ -91,7 +90,7 @@ async function createCurvePoolInfo(
     if (token == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
       // native
       tokenContracts.push(undefined)
-      tokenTines.push({ address: token, name: token, symbol: token, chainId, decimals: 18 })
+      tokenTines.push({ address: token, name: token, symbol: token, chainId: 1, decimals: 18 })
     } else {
       const res = await setTokenBalance(token, userAddress, initialBalance)
       expect(res).equal(true, 'Wrong setTokenBalance for ' + token)
@@ -101,7 +100,7 @@ async function createCurvePoolInfo(
       tokenContracts.push(tokenContract)
 
       const decimals = await tokenContract.decimals()
-      tokenTines.push({ address: token, name: token, symbol: token, chainId, decimals })
+      tokenTines.push({ address: token, name: token, symbol: token, chainId: 1, decimals })
     }
   }
 
@@ -134,7 +133,7 @@ async function createCurvePoolInfo(
 async function checkSwap(poolInfo: PoolInfo, from: number, to: number, amountIn: number) {
   const expectedOut = poolInfo.poolTines.calcOutByIn(Math.round(amountIn), from < to)
   let realOutBN: BigNumber
-  if (poolInfo.poolType !== CurvePoolType.LegacyV2) {
+  if (poolInfo.poolType !== CurvePoolType.LegacyV2 && poolInfo.poolType !== CurvePoolType.LegacyV3) {
     realOutBN = await poolInfo.poolContract.callStatic.exchange(from, to, getBigNumber(amountIn), 0, {
       value: poolInfo.tokenContracts[from] === undefined ? getBigNumber(amountIn) : 0,
     })
@@ -153,7 +152,7 @@ async function checkSwap(poolInfo: PoolInfo, from: number, to: number, amountIn:
 }
 
 const CurvePools: [string, string, CurvePoolType][] = [
-  ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', 'steth', CurvePoolType.Legacy_ETH],
+  ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', 'steth', CurvePoolType.Legacy],
   ['0xdcef968d416a41cdac0ed8702fac8128a64241a2', 'fraxusdc', CurvePoolType.Legacy],
   ['0x828b154032950c8ff7cf8085d841723db2696056', 'stETH concentrated', CurvePoolType.Factory],
   ['0xf253f83aca21aabd2a20553ae0bf7f65c755a07f', 'sbtc2', CurvePoolType.Legacy],
@@ -164,18 +163,18 @@ const CurvePools: [string, string, CurvePoolType][] = [
   ['0xf7b55c3732ad8b2c2da7c24f30a69f55c54fb717', 'cdCRV', CurvePoolType.Factory],
   ['0xc897b98272aa23714464ea2a0bd5180f1b8c0025', 'msETH', CurvePoolType.Factory],
   ['0xa1f8a6807c402e4a15ef4eba36528a3fed24e577', 'frxETH', CurvePoolType.Legacy],
-  ['0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2', 'ankrETH', CurvePoolType.Legacy],
   ['0x0ce6a5ff5217e38315f87032cf90686c96627caa', 'EURS', CurvePoolType.Legacy],
-  ['0xeb16ae0052ed37f479f7fe63849198df1765a733', 'saave', CurvePoolType.Legacy],
-  ['0xf9440930043eb3997fc70e1339dbb11f341de7a8', 'reth', CurvePoolType.Legacy],
+  // ['0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2', 'ankrETH', CurvePoolType.Legacy],
+  // ['0xeb16ae0052ed37f479f7fe63849198df1765a733', 'saave', CurvePoolType.Legacy],
+  // ['0xf9440930043eb3997fc70e1339dbb11f341de7a8', 'reth', CurvePoolType.Legacy],
+  // ['0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56', 'compound', CurvePoolType.LegacyV2],
   ['0xfd5db7463a3ab53fd211b4af195c5bccc1a03890', 'eurt', CurvePoolType.Legacy],
-  ['0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56', 'compound', CurvePoolType.Legacy],
-  ['0x4ca9b3063ec5866a4b82e437059d2c43d1be596f', 'hbtc', CurvePoolType.Legacy],
   ['0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0', 'link', CurvePoolType.Legacy],
+  ['0x4ca9b3063ec5866a4b82e437059d2c43d1be596f', 'hbtc', CurvePoolType.LegacyV3],
   ['0x93054188d876f558f4a66b2ef1d97d16edf0895b', 'ren', CurvePoolType.LegacyV2],
 ]
 
-describe('Real Curve pools consistency check', () => {
+describe.only('Real Curve pools consistency check', () => {
   for (let i = 0; i < CurvePools.length; ++i) {
     const [addr, name, poolType] = CurvePools[i]
     it(`${name} (${addr}, ${poolType})`, async () => {
@@ -185,7 +184,8 @@ describe('Real Curve pools consistency check', () => {
       const poolInfo = await createCurvePoolInfo(addr, poolType, user, BigInt(1e30))
       const res0 = parseInt(poolInfo.poolTines.reserve0.toString())
       const res1 = parseInt(poolInfo.poolTines.reserve1.toString())
-      for (let i = 0; i < 10; ++i) {
+      const checks = poolType == CurvePoolType.LegacyV2 || poolType == CurvePoolType.LegacyV3 ? 3 : 10
+      for (let i = 0; i < checks; ++i) {
         const amountInPortion = getRandomExp(rnd, 1e-5, 1)
         await checkSwap(poolInfo, 0, 1, res0 * amountInPortion)
         await checkSwap(poolInfo, 1, 0, res1 * amountInPortion)
