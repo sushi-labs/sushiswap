@@ -9,6 +9,7 @@ import { Native } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
 import { warningSeverity } from '../../lib/warningSeverity'
 import { routeProcessorAddress, RouteProcessorChainId } from '@sushiswap/route-processor'
+import { ZERO } from '@sushiswap/math'
 
 export const SwapButton: FC = () => {
   const { appType, amount, network0, network1, value, token0, token1 } = useSwapState()
@@ -44,6 +45,7 @@ export const SwapButton: FC = () => {
                 <Checker.Success tag="swap">
                   <Button
                     disabled={
+                      !trade?.amountOut?.greaterThan(ZERO) ||
                       Boolean(isLoading && +value > 0) ||
                       isFetching ||
                       (!checked && warningSeverity(trade?.priceImpact) > 3)

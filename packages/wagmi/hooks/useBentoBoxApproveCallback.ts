@@ -11,6 +11,7 @@ import {
   usePrepareContractWrite,
   UserRejectedRequestError,
   useSignTypedData,
+  useWaitForTransaction,
 } from 'wagmi'
 
 import { ApprovalState } from './useERC20ApproveCallback'
@@ -47,7 +48,10 @@ export function useBentoBoxApproveCallback({
     enabled: Boolean(enabled && !!masterContract && !!address && signature && chainId),
   })
 
-  const { writeAsync } = useContractWrite(config)
+  const { writeAsync, data, isLoading: isWritePending } = useContractWrite(config)
+  const { isLoading: isWaitPending } = useWaitForTransaction({
+    hash: data?.hash,
+  })
 
   const { data: isBentoBoxApproved, isLoading } = useContractRead({
     ...(chainId ? getBentoBoxContractConfig(chainId) : {}),
@@ -73,9 +77,9 @@ export function useBentoBoxApproveCallback({
   const approvalState: ApprovalState = useMemo(() => {
     if (isLoading) return ApprovalState.LOADING
     if (isBentoBoxApproved === undefined) return ApprovalState.UNKNOWN
-    if (signature && !isBentoBoxApproved) return ApprovalState.PENDING
+    if ((signature && !isBentoBoxApproved) || isWritePending || isWaitPending) return ApprovalState.PENDING
     return isBentoBoxApproved ? ApprovalState.APPROVED : ApprovalState.NOT_APPROVED
-  }, [isBentoBoxApproved, signature, isLoading])
+  }, [isLoading, isBentoBoxApproved, signature, isWritePending, isWaitPending])
 
   const legacyApproval = useCallback(async () => {
     if (
