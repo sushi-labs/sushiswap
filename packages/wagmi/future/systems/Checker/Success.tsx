@@ -11,6 +11,9 @@ export const Success: FC<SuccessProps> = ({ children, tag }) => {
 
   useEffect(() => {
     setApproved(true)
+    return () => {
+      setApproved(false)
+    }
   }, [])
 
   return <>{children}</>

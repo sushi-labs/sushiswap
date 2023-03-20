@@ -40,6 +40,7 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
         return (
           <Button
             as={as}
+            disabled={approvalState !== ApprovalState.NOT_APPROVED}
             loading={[ApprovalState.LOADING, ApprovalState.PENDING].includes(approvalState)}
             testdata-id={id}
             variant={variant}

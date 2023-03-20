@@ -209,7 +209,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           ? state.token1.isNative
             ? state.token1.symbol
             : state.token1.wrapped.address
-          : defaultQuoteCurrency[chainId].symbol
+          : defaultQuoteCurrency[chainId].address
 
       void push(
         {
@@ -254,7 +254,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           ? state.token1.isNative
             ? state.token1.symbol
             : state.token1.wrapped.address
-          : defaultQuoteCurrency[chainId].symbol
+          : defaultQuoteCurrency[chainId].address
 
       void push(
         {
@@ -351,7 +351,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
             : state.token1.wrapped.address
           : state.token0?.symbol === defaultQuoteCurrency[network1 as keyof typeof defaultQuoteCurrency].symbol
           ? Native.onChain(network1).symbol
-          : defaultQuoteCurrency[network1 as keyof typeof defaultQuoteCurrency].symbol
+          : defaultQuoteCurrency[network1 as keyof typeof defaultQuoteCurrency].address
 
       void push(
         {
