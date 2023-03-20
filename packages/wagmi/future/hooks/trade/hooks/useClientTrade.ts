@@ -37,15 +37,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
       },
     ],
     queryFn: async () => {
-      if (
-        !poolsCodeMap ||
-        !isRouteProcessorChainId(chainId) ||
-        !fromToken ||
-        !amount ||
-        !toToken ||
-        !feeData?.gasPrice ||
-        !recipient
-      )
+      if (!poolsCodeMap || !isRouteProcessorChainId(chainId) || !fromToken || !amount || !toToken || !feeData?.gasPrice)
         return {
           abi: undefined,
           address: undefined,
@@ -70,17 +62,20 @@ export const useClientTrade = (variables: UseTradeParams) => {
         feeData.gasPrice.toNumber()
       )
 
-      const args = Router.routeProcessorParams(
-        poolsCodeMap,
-        route,
-        fromToken,
-        toToken,
-        recipient,
-        routeProcessorAddress[chainId],
-        +slippagePercentage / 100
-      )
+      let args = undefined
+      if (recipient) {
+        args = Router.routeProcessorParams(
+          poolsCodeMap,
+          route,
+          fromToken,
+          toToken,
+          recipient,
+          routeProcessorAddress[chainId],
+          +slippagePercentage / 100
+        )
+      }
 
-      if (route && args) {
+      if (route) {
         const amountIn = Amount.fromRawAmount(fromToken, route.amountInBN.toString())
         const amountOut = Amount.fromRawAmount(toToken, route.amountOutBN.toString())
         const isOffset = chainId === ChainId.POLYGON && carbonOffset

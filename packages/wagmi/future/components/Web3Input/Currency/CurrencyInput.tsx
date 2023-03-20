@@ -50,8 +50,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   currencyLoading,
   currencies,
 }) => {
-  const [init, setInit] = useState(true)
-  const { address, status } = useAccount()
+  const { address } = useAccount()
   const inputRef = useRef<HTMLInputElement>(null)
   const focusInput = useCallback(() => {
     if (disabled) return
@@ -63,6 +62,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
     account: address,
     currency,
     loadBentobox: false,
+    watch: true,
   })
 
   const { data: price, isInitialLoading: isPriceLoading } = usePrice({
@@ -86,21 +86,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currency])
 
-  useEffect(() => {
-    if (status !== 'disconnected' && !loading && !isBalanceLoading && !isPriceLoading && !currencyLoading) {
-      setInit(false)
-    }
-
-    if (status === 'disconnected' && !loading && !currencyLoading) {
-      setInit(false)
-    }
-  }, [currencyLoading, isBalanceLoading, isPriceLoading, loading, status])
-
-  const walletLoading = ['connecting'].includes(status)
-  const isLoading =
-    !init && status === 'connected'
-      ? walletLoading || loading || isBalanceLoading || isPriceLoading || currencyLoading
-      : loading || currencyLoading
+  const isLoading = loading || currencyLoading
 
   return (
     <div
@@ -113,12 +99,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
       onClick={focusInput}
     >
       <div className="relative flex items-center gap-4">
-        {init ? (
-          <div className="flex gap-4 items-center justify-between flex-grow h-[44px]">
-            <Skeleton.Box className="w-full h-[32px] rounded-lg" />
-            <Skeleton.Box className="w-1/2 h-[32px] rounded-lg" />
-          </div>
-        ) : isLoading ? (
+        {isLoading ? (
           <div className="flex gap-1 items-center justify-between flex-grow h-[44px]">
             <Skeleton.Box className="w-1/2 h-[32px] rounded-lg" />
           </div>
@@ -135,7 +116,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             maxDecimals={currency?.decimals}
           />
         )}
-        {onSelect && !init && (
+        {onSelect && (
           <TokenSelector
             id={`${id}-token-selector`}
             currencies={currencies}
@@ -195,12 +176,12 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           currency={currency}
           usdPctChange={usdPctChange}
           error={insufficientBalance ? 'Exceeds Balance' : undefined}
-          loading={isLoading || init}
+          loading={isPriceLoading}
           price={price}
         />
         <BalancePanel
           id={id}
-          loading={isLoading || init}
+          loading={address && isBalanceLoading}
           chainId={chainId}
           account={address}
           onChange={onChange}

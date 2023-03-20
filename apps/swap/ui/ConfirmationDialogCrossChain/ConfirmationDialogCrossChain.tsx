@@ -55,7 +55,12 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     functionName: trade?.functionName,
     args: trade?.writeArgs,
     enabled:
-      Boolean(trade?.writeArgs) && Boolean(review) && appType === AppType.xSwap && chain?.id === network0 && approved,
+      Boolean(trade?.writeArgs) &&
+      Boolean(review) &&
+      appType === AppType.xSwap &&
+      chain?.id === network0 &&
+      approved &&
+      trade?.route?.status !== 'NoWay',
     overrides: trade?.overrides,
   })
 
