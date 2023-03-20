@@ -11,7 +11,7 @@ import {
   Type,
 } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
-import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, useReducer } from 'react'
 import { useAccount } from 'wagmi'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
@@ -58,7 +58,7 @@ export const queryParamsSchema = z.object({
       }
     ),
   toCurrency: z.string().default('SUSHI'),
-  amount: z.optional(z.coerce.bigint()),
+  amount: z.optional(z.coerce.string()),
   recipient: z.optional(z.string()),
 })
 
@@ -219,6 +219,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
             fromCurrency: token0.isNative ? token0.symbol : token0.wrapped.address,
             toChainId: chainId,
             toCurrency: token1,
+            amount: '0',
           },
         },
         undefined,
@@ -417,6 +418,12 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     state.token1?.symbol,
     state.token1?.wrapped.address,
   ])
+
+  useEffect(() => {
+    if (_amount && internalState.value !== _amount) {
+      api.setValue(_amount)
+    }
+  }, [_amount, api, internalState.value])
 
   return (
     <SwapActionsContext.Provider value={api}>
