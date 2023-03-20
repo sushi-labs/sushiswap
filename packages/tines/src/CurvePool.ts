@@ -31,16 +31,16 @@ export class CurvePool extends RPool {
     this.rate1 = Math.pow(10, this.token0.decimals - decimalsMin)
     this.rate0BN = getBigNumber(this.rate0)
     this.rate1BN = getBigNumber(this.rate1)
-    this.reserve0Rated = this.reserve0.mul(this.rate0)
-    this.reserve1Rated = this.reserve1.mul(this.rate1)
+    this.reserve0Rated = this.reserve0.mul(this.rate0BN)
+    this.reserve1Rated = this.reserve1.mul(this.rate1BN)
   }
 
   updateReserves(res0: BigNumber, res1: BigNumber) {
     this.D = BigNumber.from(0)
     this.reserve0 = res0
     this.reserve1 = res1
-    this.reserve0Rated = this.reserve0.mul(this.rate0)
-    this.reserve1Rated = this.reserve1.mul(this.rate1)
+    this.reserve0Rated = this.reserve0.mul(this.rate0BN)
+    this.reserve1Rated = this.reserve1.mul(this.rate1BN)
   }
 
   computeLiquidity(): BigNumber {

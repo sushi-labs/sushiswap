@@ -9,6 +9,7 @@ import { ethers } from 'hardhat'
 const TokenProxyMap: Record<string, string> = {
   '0xfe18be6b3bd88a2d2a7f928d00292e7a9963cfc6': '0x4F6296455F8d754c19821cF1EC8FeBF2cD456E67', // Ethereum sBTC
   '0x5e74c9036fb86bd7ecdcb084a0673efc32ea31cb': '0x34A5ef81d18F3a305aE9C2d7DF42beef4c79031c', // Ethereum sETH
+  '0xd71ecff9342a5ced620049e616c5035f1db98620': '0x6568D9e750fC44AF00f857885Dfb8281c00529c4', // Ethereum sEUR
 }
 
 const cache: Record<string, number> = {}
