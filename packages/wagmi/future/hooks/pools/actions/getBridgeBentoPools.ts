@@ -16,7 +16,7 @@ export enum BridgeBentoState {
 export const getBridgeBentoPools = async (
   chainId: BentoBoxV1ChainId,
   currencies: Token[],
-  totals: { base: BigNumber; elastic: BigNumber }[] | null
+  totals: Map<string,{ base: BigNumber; elastic: BigNumber }>
 ) => {
   const balances = await readContracts({
     contracts: currencies.map(
@@ -32,11 +32,12 @@ export const getBridgeBentoPools = async (
   })
 
   return currencies.map((el, i) => {
-    if (!totals?.[i] || !balances?.[i]) {
+    const total = totals.get(el.address)
+    if (!total || !balances?.[i]) {
       return [BridgeBentoState.LOADING, null]
     }
 
-    const { base, elastic } = totals[i]
+    const { base, elastic } = total
 
     return [
       BridgeBentoState.EXISTS,

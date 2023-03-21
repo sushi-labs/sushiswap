@@ -34,7 +34,7 @@ export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enable
       poolCodeMap.set(
         pool.liquidityToken.address,
         new ConstantProductPoolCode(
-          convertPoolOrPairtoRPool(pool, true) as ConstantProductRPool,
+          convertPoolOrPairtoRPool(pool) as ConstantProductRPool,
           LiquidityProviders.SushiSwap,
           'SushiSwap'
         )

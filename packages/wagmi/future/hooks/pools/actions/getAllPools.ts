@@ -12,6 +12,7 @@ import { pairsUnique, tokensUnique } from './utils'
 import { BridgeBento } from '@sushiswap/tines'
 import { BridgeBentoState, getBridgeBentoPools } from './getBridgeBentoPools'
 import { Type } from '@sushiswap/currency'
+import { BigNumber } from 'ethers'
 
 const queryFn = async ({
   currencyA,
@@ -30,18 +31,28 @@ const queryFn = async ({
   }
 
   const _tokensUnique = tokensUnique(pairsUnique(currencyCombinations))
-  const totals = isBentoBoxV1ChainId(chainId) ? await getBentoboxTotals(chainId, _tokensUnique) : null
+  const _totals = isBentoBoxV1ChainId(chainId) ? await getBentoboxTotals(chainId, _tokensUnique) : null
 
+  const totalsMap: Map<
+    string,
+    {
+      elastic: BigNumber
+      base: BigNumber
+    }
+  > = new Map()
+  _totals?.forEach((total, index) => {
+    totalsMap.set(_tokensUnique[index].wrapped.address, total)
+  })
   const [pairs, constantProductPools, stablePools, bridgeBentoPools] = await Promise.all([
     isUniswapV2Router02ChainId(chainId) ? getPairs(chainId, currencyCombinations) : Promise.resolve([]),
     isConstantProductPoolFactoryChainId(chainId) && isBentoBoxV1ChainId(chainId)
       ? getConstantProductPools(chainId, currencyCombinations)
       : Promise.resolve([]),
     isStablePoolFactoryChainId(chainId) && isBentoBoxV1ChainId(chainId)
-      ? getStablePools(chainId, currencyCombinations, totals)
+      ? getStablePools(chainId, currencyCombinations, totalsMap)
       : Promise.resolve([]),
     isBentoBoxV1ChainId(chainId) && withBentoPools
-      ? getBridgeBentoPools(chainId, _tokensUnique, totals)
+      ? getBridgeBentoPools(chainId, _tokensUnique, totalsMap)
       : Promise.resolve([]),
   ])
 
