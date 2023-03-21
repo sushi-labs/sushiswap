@@ -208,7 +208,6 @@ export const useBalance: UseBalance = ({
     enabled,
     loadBentobox,
   })
-
   return useMemo(() => {
     const walletBalance = currency
       ? data?.[currency.isNative ? AddressZero : currency.wrapped.address]?.[FundSource.WALLET]
@@ -217,6 +216,8 @@ export const useBalance: UseBalance = ({
       ? data?.[currency.isNative ? AddressZero : currency.wrapped.address]?.[FundSource.BENTOBOX]
       : undefined
 
+      console.log("BALANCE HOOK RAN FOR " + currency?.symbol, walletBalance?.toExact())
+      console.log({data})
     return {
       isError: isError,
       isLoading: isLoading,

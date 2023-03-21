@@ -63,7 +63,7 @@ export const Button: ButtonComponent = React.forwardRef(
           className,
           disabled || loading ? BUTTON_CLASSES['btn-disabled'] : ''
         )}
-        testdata-id={`${testId}`}
+        testdata-id={`${testId}-button`}
         {...rest}
       >
         {loading ? (

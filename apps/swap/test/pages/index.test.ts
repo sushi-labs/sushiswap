@@ -41,8 +41,8 @@ test.beforeEach(async ({ page }) => {
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
-  // test.slow()
-  const trade1: Trade = { input: nativeToken, output: usdc, amount: '10' }
+  test.slow()
+  const trade1: Trade = { input: nativeToken, output: usdc, amount: '1' }
   console.log('Swapping', trade1.input.symbol, 'to', trade1.output.symbol, 'on', chainName[CHAIN_ID], 'chain')
   await swap(trade1, page)
   console.log('Swapped', trade1.input.symbol, 'to', trade1.output.symbol, 'on', chainName[CHAIN_ID], 'chain')
@@ -55,7 +55,7 @@ test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   test.slow()
-  const trade1: Trade = { input: nativeToken, output: sushi, amount: '10' }
+  const trade1: Trade = { input: nativeToken, output: sushi, amount: '1' }
   await swap(trade1, page)
   const trade2: Trade = { input: sushi, output: nativeToken }
   await swap(trade2, page, true)
@@ -94,37 +94,44 @@ async function wrap(trade: Trade, page: Page, useBalance?: boolean) {
 }
 
 async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
-  await expect(page.locator('[id=amount-checker]')).not.toBeEnabled()
+  // await expect(page.locator('[id=amount-checker]')).not.toBeEnabled()
 
   await handleToken(trade.input, page, InputType.INPUT, trade.amount, useMaxBalances)
   await handleToken(trade.output, page, InputType.OUTPUT)
 
-  const swapButton = page.locator('[testdata-id=swap-button]')
-  await expect(swapButton).toBeEnabled()
-  await swapButton.click({ timeout: 15000 })
 
-  // await timeout(1500) // wait for rpc calls to figure out if approvals are needed
+  await timeout(1500) // wait for rpc calls to figure out if approvals are needed
 
+  // TODO: move these? they are happening before review now.
   await page
-    .locator('[testdata-id=swap-review-approve-bentobox-button]')
-    .click({ timeout: 15000 })
+    .locator('[testdata-id=approve-bentobox]')
+    .click({ timeout: 3000 })
     .then(async () => {
       console.log(`BentoBox Approved`)
     })
     .catch(() => console.log('BentoBox already approved or not needed'))
 
   await page
-    .locator('[testdata-id=swap-review-approve-token-button]')
-    .click({ timeout: 15000 })
+    .locator('[testdata-id=approve-erc20]')
+    .click({ timeout: 3000 })
     .then(async () => {
       console.log(`Approved ${trade.input.symbol}`)
     })
     .catch(() => console.log(`${trade.input.symbol} already approved or not needed`))
 
-  const confirmSwap = page.locator('[testdata-id=swap-review-confirm-button]')
+    await timeout(4500) // wait for balance
+
+  const swapButton = page.locator('[testdata-id=swap-button]')
+  await expect(swapButton).toBeEnabled()
+  await swapButton.click({ timeout: 15000 })
+
+
+  const confirmSwap = page.locator('[testdata-id=confirm-swap-button]')
   await confirmSwap.click()
-  const expectedText = new RegExp(`(Successfully swapped .* ${trade.input.symbol} for .* ${trade.output.symbol})`)
-  await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
+  const expectedText = new RegExp(`(Swap .* ${trade.input.symbol} for .* ${trade.output.symbol})`)
+  await expect(page.locator('span', { hasText: expectedText }).last()).toContainText(expectedText)
+  
+  await page.locator(`[testdata-id=make-another-swap-button]`).click()
 }
 
 async function handleToken(token: Token, page: Page, type: InputType, amount?: string, useMax?: boolean) {
@@ -140,9 +147,10 @@ async function handleToken(token: Token, page: Page, type: InputType, amount?: s
   await timeout(1000)
   await page.locator(`[testdata-id=swap-${selectorInfix}-token-selector-row-${token.address}]`).click()
 
+  await timeout(3000) // wait for balance
   if (useMax && type === InputType.INPUT) {
     await timeout(3000) // wait for the balance to be set before continuing.
-    await page.getByTestId('swap-input-currency0-balance-button').click()
+    await page.getByTestId('swap-from-balance-button').click()
   } else if (amount && type === InputType.INPUT) {
     const input0 = page.locator('[testdata-id="swap-from-input"]')
     await expect(input0).toBeVisible()

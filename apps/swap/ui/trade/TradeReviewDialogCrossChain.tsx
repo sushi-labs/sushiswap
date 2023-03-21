@@ -36,10 +36,10 @@ export const TradeReviewDialogCrossChain: FC = () => {
   return (
     <Dialog open={review} unmount={false} onClose={onClose} variant="opaque">
       <div className="max-w-[504px] mx-auto">
-        <button onClick={onClose} className="pl-0 p-3">
+        <button onClick={onClose} className="p-3 pl-0">
           <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
         </button>
-        <div className="flex justify-between gap-4 items-start py-2">
+        <div className="flex items-start justify-between gap-4 py-2">
           <div className="flex flex-col flex-grow gap-1">
             {isFetching ? (
               <Skeleton.Text fontSize="text-3xl" className="w-2/3" />
@@ -57,7 +57,7 @@ export const TradeReviewDialogCrossChain: FC = () => {
               <Badge
                 position="bottom-right"
                 badgeContent={
-                  <div className="bg-gray-100 rounded-full border-2 border-gray-100 dark:border-slate-500">
+                  <div className="bg-gray-100 border-2 border-gray-100 rounded-full dark:border-slate-500">
                     <NetworkIcon width={24} height={24} chainId={network1} />
                   </div>
                 }
@@ -65,7 +65,7 @@ export const TradeReviewDialogCrossChain: FC = () => {
                 {token1 ? (
                   <Currency.Icon currency={token1} width={56} height={56} />
                 ) : (
-                  <Skeleton.Circle radius={56} className="dark:bg-slate-800 bg-gray-100" />
+                  <Skeleton.Circle radius={56} className="bg-gray-100 dark:bg-slate-800" />
                 )}
               </Badge>
             </div>
@@ -75,7 +75,7 @@ export const TradeReviewDialogCrossChain: FC = () => {
           <List>
             <List.Control>
               <List.KeyValue title="Network">
-                <div className="w-full justify-end gap-1 whitespace-nowrap truncate">
+                <div className="justify-end w-full gap-1 truncate whitespace-nowrap">
                   {chainName?.[network0]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
                   <br />
                   <span className="text-gray-400 dark:text-slate-500">to</span>{' '}
@@ -120,7 +120,7 @@ export const TradeReviewDialogCrossChain: FC = () => {
                   <a
                     target="_blank"
                     href={Chain.accountUrl(network0, recipient) ?? '#'}
-                    className="flex gap-2 items-center text-blue cursor-pointer"
+                    className="flex items-center gap-2 cursor-pointer text-blue"
                     rel="noreferrer"
                   >
                     {shortenAddress(recipient)}

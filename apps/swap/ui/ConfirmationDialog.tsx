@@ -286,7 +286,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 </h1>
               )}
             </div>
-            <Button fullWidth color="blue" variant="outlined" size="xl" onClick={() => setOpen(false)}>
+            <Button fullWidth color="blue" variant="outlined" size="xl" onClick={() => setOpen(false)} testId="make-another-swap">
               {dialogState === ConfirmationDialogState.Success
                 ? 'Make another swap'
                 : dialogState === ConfirmationDialogState.Failed
