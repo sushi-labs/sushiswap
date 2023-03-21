@@ -1,5 +1,5 @@
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
-import { Chain, configureChains, createClient, CreateClientConfig } from 'wagmi'
+import { Chain, configureChains, createClient, CreateClientConfig, mainnet } from 'wagmi'
 import { foundry } from 'wagmi/chains'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
@@ -15,16 +15,27 @@ export type Client = ReturnType<typeof createClient>
 
 const isTest = process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_PLAYWRIGHT_ENABLED === 'true'
 
-const { chains, provider }: CreateClientConfig & { chains: Chain[] } = 
-configureChains(
-  [foundry],
+const { chains, provider }: CreateClientConfig & { chains: Chain[] } = configureChains(
+  [ 
+  //   { 
+  //   ...foundry,
+  //   contracts: {
+  //     multicall3: {
+  //       address: "0xca11bde05977b3631167028862be2a173976ca11",
+  //       blockCreated: 14353601
+  //     }
+  //   }
+  // },
+  mainnet
+],
   [
     jsonRpcProvider({
       rpc: (chain_) => ({
-        http: chain_.rpcUrls.default.http[0],
+        http: foundry.rpcUrls.default.http[0],
       }),
     }),
-  ]
+  ],
+  { pollingInterval: 8_000 }
 )
 
 // isTest
@@ -42,11 +53,11 @@ configureChains(
 
 export const client: Client = createClient({
   provider,
-  logger: {
-    warn: null,
-  },
+  // logger: {
+  //   warn: null,
+  // },
   autoConnect: false,
-  connectors: [ new MockConnector({ options: { signer: getSigners()[0] } }) ],
+  connectors: [new MockConnector({ options: { signer: getSigners()[0] } })],
   // connectors: isTest
   //   ? [new MockConnector({ options: { signer: getSigners()[0] } })]
   //   : [
