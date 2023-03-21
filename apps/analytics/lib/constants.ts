@@ -5,4 +5,5 @@ export const defaultPoolsArgs: GetPoolsArgs = {
   chainIds: SUPPORTED_CHAIN_IDS,
   orderBy: 'liquidityUSD',
   orderDir: 'desc',
+  isWhitelisted: true,
 }

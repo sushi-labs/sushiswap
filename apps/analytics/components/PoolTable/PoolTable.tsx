@@ -52,6 +52,7 @@ export const PoolTable: FC = () => {
       tokenSymbols,
       orderBy: sorting[0]?.id,
       orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
+      isWhitelisted: true,
     }),
     [chainIds, sorting, tokenSymbols]
   )
