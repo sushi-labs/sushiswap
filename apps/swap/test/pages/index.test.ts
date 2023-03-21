@@ -2,6 +2,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { chromium, expect, Page, test } from '@playwright/test'
 import { chainName } from '@sushiswap/chain'
 import { Native, SUSHI_ADDRESS, USDC_ADDRESS } from '@sushiswap/currency'
+import { client } from '@sushiswap/wagmi'
 
 if (!process.env.CHAIN_ID) throw new Error('CHAIN_ID env var not set')
 if (!process.env.PLAYWRIGHT_URL) throw new Error('PLAYWRIGHT_URL env var not set')
@@ -33,13 +34,14 @@ test.beforeEach(async ({ page }) => {
 
   await page.goto(PLAYWRIGHT_URL)
   
-  const connectWallet = page.locator('[testdata-id=connect-wallet-button]')
-  await connectWallet.click()
+  // client.
+  // const connectWallet = page.locator('[testdata-id=connect-wallet-button]')
+  // await connectWallet.click()
 
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
-  test.slow()
+  // test.slow()
   const trade1: Trade = { input: nativeToken, output: usdc, amount: '10' }
   console.log('Swapping', trade1.input.symbol, 'to', trade1.output.symbol, 'on', chainName[CHAIN_ID], 'chain')
   await swap(trade1, page)
@@ -126,26 +128,23 @@ async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
 }
 
 async function handleToken(token: Token, page: Page, type: InputType, amount?: string, useMax?: boolean) {
-  const selectorInfix = `${type === InputType.INPUT ? 'input' : 'output'}-currency${
-    type === InputType.INPUT ? '0' : '1'
-  }`
+  const selectorInfix = `${type === InputType.INPUT ? 'from' : 'to'}`
 
   // Open token list
-  const tokenOutputList = page.getByTestId(`swap-${selectorInfix}-button`)
-  expect(tokenOutputList).toBeVisible()
-  await tokenOutputList.click()
+  const tokenSelector = page.locator(`[testdata-id=swap-${selectorInfix}-button]`)
+  expect(tokenSelector).toBeVisible()
+  await tokenSelector.click()
 
-  await page.fill(`[testdata-id=swap-${selectorInfix}-token-selector-dialog-address-input]`, token.symbol)
-  // TODO: for a way to "await" the discovery of the list instead of arbitrary timeout
+
+  await page.fill(`[testdata-id=swap-${selectorInfix}-token-selector-address-input]`, token.symbol)
   await timeout(1000)
-  await page.locator(`[testdata-id=swap-${selectorInfix}-token-selector-dialog-row-${token.address}]`).click()
+  await page.locator(`[testdata-id=swap-${selectorInfix}-token-selector-row-${token.address}]`).click()
 
   if (useMax && type === InputType.INPUT) {
-    // TODO: for a way to "await" the discovery of the balance instead of arbitrary timeout
     await timeout(3000) // wait for the balance to be set before continuing.
     await page.getByTestId('swap-input-currency0-balance-button').click()
   } else if (amount && type === InputType.INPUT) {
-    const input0 = page.locator('[testdata-id="swap-input-currency0-input"]')
+    const input0 = page.locator('[testdata-id="swap-from-input"]')
     await expect(input0).toBeVisible()
     await input0.fill(amount)
   }

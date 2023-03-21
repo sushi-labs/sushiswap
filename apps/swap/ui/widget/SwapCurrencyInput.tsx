@@ -22,8 +22,9 @@ export const SwapCurrencyInput: FC = () => {
 
   return (
     <Web3Input.Currency
+      id="swap-from"
       type="INPUT"
-      className="p-3 dark:bg-slate-800 bg-white rounded-xl"
+      className="p-3 bg-white dark:bg-slate-800 rounded-xl"
       chainId={network0}
       onSelect={setToken0}
       value={localValue}

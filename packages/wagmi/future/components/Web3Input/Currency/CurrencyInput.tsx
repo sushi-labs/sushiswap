@@ -146,6 +146,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             {({ setOpen }) => (
               <button
                 id={`${id}-button`}
+                testdata-id={`${id}-button`}
                 onClick={(e) => {
                   setOpen(true)
                   e.stopPropagation()

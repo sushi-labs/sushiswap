@@ -5,13 +5,13 @@ import { createClient, CreateClientConfig, WagmiConfig, WagmiConfigProps } from 
 import { arbitrum, mainnet, optimism, polygon } from 'wagmi/chains'
 import { MockConnector } from 'wagmi/connectors/mock'
 
-import { getProvider, getSigners, WalletSigner } from './utils'
+import { getProvider, getSigners, testChains, WalletSigner } from './utils'
 
 type SetupClient = Partial<CreateClientConfig> & { signer?: WalletSigner }
 export function setupClient({ signer = getSigners()[0], ...config }: SetupClient = {}) {
   return createClient({
     connectors: [new MockConnector({ options: { signer } })],
-    provider: ({ chainId }) => getProvider({ chainId, chains: [mainnet, polygon, arbitrum, optimism] }),
+    provider: ({ chainId }) => getProvider({ chainId, chains: testChains }),
     ...config,
   })
 }
