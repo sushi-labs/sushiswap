@@ -1,3 +1,4 @@
+import { Provider } from '@ethersproject/providers'
 import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
 import { erc20Abi } from '@sushiswap/abi'
 import { CurvePool, getBigNumber, RToken } from '@sushiswap/tines'
@@ -53,7 +54,7 @@ interface PoolInfo {
   snapshot: SnapshotRestorer
 }
 
-async function getPoolRatio(poolAddress: string): Promise<number> {
+async function getPoolRatio(poolAddress: string, provider: Provider): Promise<number> {
   // collection of freaks
   switch (poolAddress.toLowerCase()) {
     case '0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2': {
@@ -71,7 +72,7 @@ async function getPoolRatio(poolAddress: string): Promise<number> {
       const rETH = new Contract(
         '0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593',
         ['function getExchangeRate() pure returns (uint256)'],
-        ethers.provider
+        provider
       )
       const ratio = await rETH.getExchangeRate()
       return parseInt(ratio.toString()) / 1e18
@@ -144,7 +145,7 @@ async function createCurvePoolInfo(
     A.toNumber(),
     reserves[0],
     reserves[1],
-    await getPoolRatio(poolAddress)
+    await getPoolRatio(poolAddress, user.provider as Provider)
   )
 
   const snapshot = await takeSnapshot()
