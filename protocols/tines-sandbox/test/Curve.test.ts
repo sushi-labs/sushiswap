@@ -230,7 +230,7 @@ describe.only('Real Curve pools consistency check', () => {
       const poolInfo = await createCurvePoolInfo(addr, poolType, user, BigInt(1e30))
       const res0 = parseInt(poolInfo.poolTines.reserve0.toString())
       const res1 = parseInt(poolInfo.poolTines.reserve1.toString())
-      const checks = poolType == CurvePoolType.LegacyV2 || poolType == CurvePoolType.LegacyV3 ? 3 : 10
+      const checks = poolType == CurvePoolType.LegacyV2 || poolType == CurvePoolType.LegacyV3 ? 30 : 100
       for (let i = 0; i < checks; ++i) {
         const amountInPortion = getRandomExp(rnd, 1e-5, 1)
         await checkSwap(poolInfo, 0, 1, res0 * amountInPortion, precision)
