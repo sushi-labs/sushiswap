@@ -1,6 +1,5 @@
 import { ExternalLinkIcon } from '@heroicons/react/solid'
 import chains from '@sushiswap/chain'
-import { Price } from '@sushiswap/currency'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
 import { AppearOnMount, Currency, Link, NetworkIcon, Typography } from '@sushiswap/ui'

@@ -1,4 +1,3 @@
-import { ChainId } from '@sushiswap/chain'
 import { nanoid } from 'nanoid'
 import React from 'react'
 import { toast, ToastOptions } from 'react-toastify'
@@ -8,8 +7,8 @@ import { ToastCompleted } from './ToastCompleted'
 import { ToastContent } from './ToastContent'
 import { ToastFailed } from './ToastFailed'
 import { ToastInfo } from './ToastInfo'
-import { ToastInline } from './ToastInline'
 import { ToastPending } from './ToastPending'
+import { createNotification, PromiseNotification, ResolvedNotification } from '@sushiswap/dexie'
 
 export const TOAST_OPTIONS: ToastOptions = {
   position: 'top-right',
@@ -23,56 +22,7 @@ export const TOAST_OPTIONS: ToastOptions = {
   icon: false,
 }
 
-export interface NotificationData {
-  type:
-    | 'send'
-    | 'stargate'
-    | 'swap'
-    | 'mint'
-    | 'burn'
-    | 'approval'
-    | 'enterBar'
-    | 'leaveBar'
-    | 'claimRewards'
-    | 'withdrawStream'
-    | 'cancelStream'
-    | 'transferStream'
-    | 'transferVesting'
-    | 'updateStream'
-    | 'withdrawVesting'
-    | 'createStream'
-    | 'createMultipleStream'
-    | 'createVesting'
-    | 'createMultipleVesting'
-  chainId: ChainId
-  summary: {
-    pending: string
-    completed: string
-    failed: string
-    info?: string
-  }
-  href?: string
-  txHash: `0x${string}`
-  groupTimestamp: number
-  timestamp: number
-  promise: Promise<any>
-}
-
-export interface NotificationStoredData extends Omit<NotificationData, 'summary' | 'promise'> {
-  id: string
-  summary: string
-}
-
-export const createInlineToast = (props: NotificationData) => {
-  const onDismiss = () => toast.dismiss(props.txHash)
-
-  return toast(<ToastInline {...props} onDismiss={onDismiss} />, {
-    ...TOAST_OPTIONS,
-    toastId: props.txHash,
-  })
-}
-
-export const createToast = (props: NotificationData): NotificationData => {
+export const createToast = (props: PromiseNotification) => {
   const onDismiss = () => toast.dismiss(props.txHash)
 
   // Spawn new toasts based on promise result
@@ -82,7 +32,7 @@ export const createToast = (props: NotificationData): NotificationData => {
 
       // Spawn success notification
       const toastId = `completed:${props.txHash}`
-      toast(<ToastCompleted {...props} onDismiss={() => toast.dismiss(toastId)} />, {
+      toast(<ToastCompleted {...props} summary={props.summary.completed} onDismiss={() => toast.dismiss(toastId)} />, {
         ...TOAST_OPTIONS,
         toastId,
         autoClose: 5000,
@@ -93,18 +43,18 @@ export const createToast = (props: NotificationData): NotificationData => {
 
       // Spawn error notification
       const toastId = `failed:${props.txHash}`
-      toast(<ToastFailed {...props} onDismiss={() => toast.dismiss(toastId)} />, {
+      toast(<ToastFailed {...props} summary={props.summary.failed} onDismiss={() => toast.dismiss(toastId)} />, {
         ...TOAST_OPTIONS,
         toastId,
       })
     })
 
-  toast(<ToastPending {...props} onDismiss={onDismiss} />, {
+  toast(<ToastPending {...props} summary={props.summary.pending} onDismiss={onDismiss} />, {
     ...TOAST_OPTIONS,
     toastId: props.txHash,
   })
 
-  return props
+  return createNotification(props)
 }
 
 export const createErrorToast = (message: string | undefined, code: boolean) => {
@@ -123,29 +73,35 @@ export const createErrorToast = (message: string | undefined, code: boolean) => 
   )
 }
 
-export const createSuccessToast = (props: Omit<NotificationData, 'promise'>) => {
+export const createSuccessToast = (props: ResolvedNotification) => {
   const toastId = `completed:${props.txHash}`
   toast(<ToastCompleted {...props} onDismiss={() => toast.dismiss(toastId)} />, {
     ...TOAST_OPTIONS,
     toastId,
     autoClose: 5000,
   })
+
+  return createNotification(props)
 }
 
-export const createFailedToast = (props: Omit<NotificationData, 'promise'>) => {
+export const createFailedToast = (props: ResolvedNotification) => {
   const toastId = `failed:${props.txHash}`
   toast(<ToastFailed {...props} onDismiss={() => toast.dismiss(toastId)} />, {
     ...TOAST_OPTIONS,
     toastId,
     autoClose: 5000,
   })
+
+  return createNotification(props)
 }
 
-export const createInfoToast = (props: Omit<NotificationData, 'promise'>) => {
+export const createInfoToast = (props: ResolvedNotification) => {
   const toastId = `info:${props.txHash}`
   toast(<ToastInfo {...props} onDismiss={() => toast.dismiss(toastId)} />, {
     ...TOAST_OPTIONS,
     toastId,
     autoClose: 5000,
   })
+
+  return createNotification(props)
 }

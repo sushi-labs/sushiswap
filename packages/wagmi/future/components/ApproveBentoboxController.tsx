@@ -1,15 +1,14 @@
 import { FC, ReactNode } from 'react'
 import { ApprovalState, useBentoBoxApproveCallback } from '../../hooks'
-import { NotificationData } from '@sushiswap/ui/future/components/toast'
 import { Signature } from '@ethersproject/bytes'
 import { Address } from 'wagmi'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { PromiseNotification } from '@sushiswap/dexie'
 
 interface ApproveBentoboxController {
   chainId: BentoBoxV1ChainId
   contract: Address
   enabled?: boolean
-  onSuccess?: (data: NotificationData) => void
   onSignature?: (data: Signature) => void
 
   children({
@@ -25,7 +24,6 @@ interface ApproveBentoboxController {
 export const ApproveBentoboxController: FC<ApproveBentoboxController> = ({
   chainId,
   contract,
-  onSuccess,
   enabled = true,
   children,
   onSignature,
@@ -34,7 +32,6 @@ export const ApproveBentoboxController: FC<ApproveBentoboxController> = ({
     chainId,
     masterContract: contract,
     enabled: enabled && Boolean(!!contract && !!chainId),
-    onSuccess,
     onSignature,
   })
 

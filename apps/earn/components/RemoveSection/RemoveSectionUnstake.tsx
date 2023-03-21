@@ -5,7 +5,7 @@ import { AppearOnMount, Button, Dots } from '@sushiswap/ui'
 import { Approve, Checker, getMasterChefContractConfig, useMasterChefWithdraw } from '@sushiswap/wagmi'
 import { FC, useMemo, useState } from 'react'
 
-import { useCreateNotification, useGraphPool } from '../../lib/hooks'
+import { useGraphPool } from '../../lib/hooks'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
 import { useSWRConfig } from 'swr'
@@ -36,9 +36,10 @@ export const RemoveSectionUnstake: FC<{ poolId: string }> = ({ poolId }) => {
 }
 
 export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pool, chefType, farmId }) => {
-  const createNotification = useCreateNotification()
   const [value, setValue] = useState('')
-  const { data: { reserve0, reserve1, liquidityToken } } = useGraphPool(pool)
+  const {
+    data: { reserve0, reserve1, liquidityToken },
+  } = useGraphPool(pool)
   const { balance } = usePoolPositionStaked()
 
   const amount = useMemo(() => {
@@ -50,7 +51,6 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pool, chefType
     amount,
     pid: farmId,
     chef: chefType,
-    onSuccess: createNotification,
   })
 
   return (
@@ -69,7 +69,6 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pool, chefType
             guard={<Button size="md">Insufficient Balance</Button>}
           >
             <Approve
-              onSuccess={createNotification}
               className="flex-grow !justify-end"
               components={
                 <Approve.Components>

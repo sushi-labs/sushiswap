@@ -3,12 +3,13 @@
 import '@sushiswap/ui/index.css'
 import '../variables.css'
 
-import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
+import { App, ThemeProvider } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
 import Head from 'next/head'
 import { WagmiConfig } from 'wagmi'
 
 import React from 'react'
+import { ToastContainer } from '@sushiswap/ui/future/components/toast'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

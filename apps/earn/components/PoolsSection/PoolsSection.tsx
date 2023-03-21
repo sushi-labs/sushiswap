@@ -1,13 +1,11 @@
 import { Tab } from '@headlessui/react'
-import { Chip, Loader } from '@sushiswap/ui'
 import React, { FC, Fragment, useState } from 'react'
 import { useAccount } from 'wagmi'
-import { useUserPositions } from '../../lib/hooks/api/useUserPositions'
+import { useUserPositions } from '../../lib/hooks'
 
 import { PoolsTable, PositionsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
 
 export const PoolsSection: FC<{ isReady?: boolean }> = ({ isReady }) => {
   const { address } = useAccount()

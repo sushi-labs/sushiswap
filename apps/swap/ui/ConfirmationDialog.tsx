@@ -14,13 +14,11 @@ import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequ
 import { routeProcessorAbi } from '@sushiswap/abi'
 import { useTrade } from '../lib/useTrade'
 import { SendTransactionResult } from 'wagmi/actions'
-import { useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
 import { Chain } from '@sushiswap/chain'
 import { isRouteProcessorChainId, routeProcessorAddress, RouteProcessorChainId } from '@sushiswap/route-processor'
-import { createErrorToast } from '@sushiswap/ui'
 import { swapErrorToUserReadableMessage } from '../lib/swapErrorToUserReadableMessage'
 import { log } from 'next-axiom'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
@@ -53,7 +51,6 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const { appType, network0, token0, token1, review } = useSwapState()
   const { approved } = useApproved('swap')
   const { data: trade } = useTrade({ crossChain: false })
-  const { mutate: storeNotification } = useCreateNotification({ account: address })
   // const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
 
   const [open, setOpen] = useState(false)
@@ -91,7 +88,8 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       if (!trade || !network0 || !data) return
 
       const ts = new Date().getTime()
-      const notificationData: NotificationData = {
+      createToast({
+        account: address,
         type: 'swap',
         chainId: network0,
         txHash: data.hash,
@@ -113,11 +111,9 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         },
         timestamp: ts,
         groupTimestamp: ts,
-      }
-
-      storeNotification(createToast(notificationData))
+      })
     },
-    [trade, network0, isWrap, isUnwrap, storeNotification]
+    [trade, network0, address, isWrap, isUnwrap]
   )
 
   const {

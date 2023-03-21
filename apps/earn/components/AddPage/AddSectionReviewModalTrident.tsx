@@ -21,8 +21,9 @@ import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from '../../lib/actions'
-import { useNotifications, useSettings } from '../../lib/state/storage'
+import { useSettings } from '../../lib/state/storage'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 
 interface AddSectionReviewModalTridentProps {
   poolAddress: string
@@ -65,7 +66,6 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     })
   }, [chainId, poolAddress])
 
-  const [, { createNotification }] = useNotifications(address)
   const totalSupply = useTotalSupply(liquidityToken)
   const tokens = useMemo(() => [token0, token1], [token0, token1])
   const rebases = useBentoBoxTotals(chainId, tokens)
@@ -133,7 +133,8 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     (data: SendTransactionResult | undefined) => {
       if (!data || !chainId || !token0 || !token1) return
       const ts = new Date().getTime()
-      createNotification({
+      void createToast({
+        account: address,
         type: 'mint',
         chainId,
         txHash: data.hash,
@@ -147,7 +148,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         groupTimestamp: ts,
       })
     },
-    [chainId, createNotification, token0, token1]
+    [chainId, address, token0, token1]
   )
 
   const prepare = useCallback(
@@ -222,21 +223,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         //
       }
     },
-    [
-      chainId,
-      pool,
-      token0,
-      token1,
-      chainId,
-      contract,
-      input0,
-      input1,
-      address,
-      minAmount0,
-      minAmount1,
-      liquidityMinted,
-      permit,
-    ]
+    [chainId, pool, token0, token1, contract, input0, input1, address, minAmount0, minAmount1, liquidityMinted, permit]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({

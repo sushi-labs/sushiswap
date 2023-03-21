@@ -1,7 +1,7 @@
 import '@sushiswap/ui/index.css'
 import '../variables.css'
 
-import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
+import { App, ThemeProvider } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
 import type { AppProps } from 'next/app'
@@ -21,6 +21,7 @@ import SEO from '../next-seo.config.mjs'
 import store from '../store'
 import { PersistQueryClientProvider } from '../components/PersistQueryClientProvider'
 import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
+import { ToastContainer } from '@sushiswap/ui/future/components/toast'
 
 declare global {
   interface Window {

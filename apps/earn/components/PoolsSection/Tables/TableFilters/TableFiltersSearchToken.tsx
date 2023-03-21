@@ -1,7 +1,4 @@
-import { Transition } from '@headlessui/react'
-import { SearchIcon, XCircleIcon } from '@heroicons/react/solid'
 import { useDebounce } from '@sushiswap/hooks'
-import { classNames, DEFAULT_INPUT_UNSTYLED, IconButton } from '@sushiswap/ui'
 import React, { FC, useEffect, useState } from 'react'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
@@ -12,7 +9,7 @@ export const TableFiltersSearchToken: FC = () => {
 
   const [_query, setQuery] = useState<string>('')
   const [_extraQuery, setExtraQuery] = useState<string>('')
-  const [extra, setExtra] = useState(false)
+  const [extra] = useState(false)
 
   const debouncedQuery = useDebounce(_query, 400)
   const debouncedExtraQuery = useDebounce(_extraQuery, 400)

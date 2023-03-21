@@ -16,16 +16,12 @@ import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { useSlippageTolerance } from '../../lib/useSlippageTolerance'
 import { Collapsible, NetworkIcon } from '@sushiswap/ui'
-import { ApproveBentoboxController } from '@sushiswap/wagmi/future/components'
-import { ApprovalState } from '@sushiswap/wagmi'
 import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain/ConfirmationDialogCrossChain'
 import { warningSeverity } from '../../lib/warningSeverity'
 import { ZERO } from '@sushiswap/math'
-import { sushiXSwapAddress, SushiXSwapChainId } from '@sushiswap/sushixswap'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 export const TradeReviewDialogCrossChain: FC = () => {
-  const { review, token0, token1, recipient, network0, network1, amount, value, bentoboxSignature } = useSwapState()
+  const { review, token0, token1, recipient, network0, network1, amount, value } = useSwapState()
   const { setReview } = useSwapActions()
   const [slippageTolerance] = useSlippageTolerance()
   const { data: trade, isFetching } = useTrade({ crossChain: true })

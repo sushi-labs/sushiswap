@@ -7,7 +7,6 @@ import { useAccount } from 'wagmi'
 
 import { incentiveRewardToToken } from '../lib/functions'
 import { useTokenAmountDollarValues, useTokensFromPool } from '../lib/hooks'
-import { useNotifications } from '../lib/state/storage'
 
 interface PoolPositionRewardsContext {
   pendingRewards: (Amount<Token> | undefined)[]
@@ -72,7 +71,6 @@ export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> 
   const { address: account } = useAccount()
   const { liquidityToken } = useTokensFromPool(pool)
 
-  const [, { createNotification }] = useNotifications(account)
   const [rewardTokens, rewarderAddresses, types] = useMemo(() => {
     return incentives.reduce<[Token[], string[], RewarderType[]]>(
       (acc, incentive) => {
@@ -104,7 +102,6 @@ export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> 
     chef: chefType,
     pid: farmId,
     token: liquidityToken,
-    onSuccess: createNotification,
   })
 
   const values = useTokenAmountDollarValues({

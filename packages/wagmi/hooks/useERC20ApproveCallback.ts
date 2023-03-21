@@ -3,7 +3,7 @@ import { ErrorCode } from '@ethersproject/logger'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Currency } from '@sushiswap/currency'
 import { calculateGasMargin } from '@sushiswap/gas'
-import { createErrorToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
 import { BigNumber } from 'ethers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
@@ -33,8 +33,7 @@ export enum ApprovalState {
 export function useERC20ApproveCallback(
   watch: boolean,
   amountToApprove: Amount<Currency> | undefined,
-  spender: string | undefined,
-  onSuccess?: (data: NotificationData) => void
+  spender: string | undefined
 ): [ApprovalState, () => void] {
   const { address } = useAccount()
   const { data: signer } = useSigner()
@@ -48,9 +47,10 @@ export function useERC20ApproveCallback(
         createErrorToast(e.message, true)
       }
 
-      if (data && onSuccess && amountToApprove) {
+      if (data && amountToApprove) {
         const ts = new Date().getTime()
-        onSuccess({
+        void createToast({
+          account: address,
           type: 'approval',
           chainId: amountToApprove.currency.chainId,
           txHash: data.hash,
@@ -65,7 +65,7 @@ export function useERC20ApproveCallback(
         })
       }
     },
-    [amountToApprove, onSuccess]
+    [address, amountToApprove]
   )
 
   const [request, setRequest] = useState<TransactionRequest & { to: string }>()

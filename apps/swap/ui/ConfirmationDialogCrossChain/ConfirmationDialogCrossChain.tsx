@@ -1,10 +1,16 @@
-import { FC, ReactNode, useCallback, useEffect, useState } from 'react'
+import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { AppType } from '@sushiswap/ui/types'
-import { useAccount, useContractWrite, useNetwork, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
+import {
+  useAccount,
+  useContractWrite,
+  useNetwork,
+  usePrepareContractWrite,
+  UserRejectedRequestError,
+  useTransaction,
+} from 'wagmi'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
-import { useCreateNotification } from '@sushiswap/react-query'
 import { SendTransactionResult } from 'wagmi/actions'
-import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { createErrorToast, createInfoToast, createToast } from '@sushiswap/ui/future/components/toast'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Divider, failedState, finishedState, GetStateComponent, pendingState, StepState } from './StepStates'
@@ -14,9 +20,10 @@ import { useTrade } from '../../lib/useTrade'
 import { nanoid } from 'nanoid'
 import { useLayerZeroScanLink } from '../../lib/useLayerZeroScanLink'
 import { SushiXSwapChainId } from '@sushiswap/sushixswap'
-import { createErrorToast } from '@sushiswap/ui'
 import { swapErrorToUserReadableMessage } from '../../lib/swapErrorToUserReadableMessage'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { Chain } from '@sushiswap/chain'
+import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
 
 interface ConfirmationDialogCrossChainProps {
   children({
@@ -35,11 +42,12 @@ interface ConfirmationDialogCrossChainProps {
 export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps> = ({ children }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
-  const { appType, review, network0, network1, tradeId } = useSwapState()
+  const { appType, review, network0, token0, token1, network1, tradeId } = useSwapState()
   const { setReview, setBentoboxSignature, setTradeId } = useSwapActions()
   const [open, setOpen] = useState(false)
   const { data: trade } = useTrade({ crossChain: true })
   const { approved } = useApproved('xswap')
+  const groupTs = useRef<number>()
 
   const [stepStates, setStepStates] = useState<{ source: StepState; bridge: StepState; dest: StepState }>({
     source: StepState.Success,
@@ -47,9 +55,18 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     dest: StepState.Success,
   })
 
+  const srcBridgeToken =
+    token0?.isToken && isStargateBridgeToken(token0) ? token0 : STARGATE_BRIDGE_TOKENS[network0]?.[0]
+  const dstBridgeToken =
+    token1?.isToken && isStargateBridgeToken(token1) ? token1 : STARGATE_BRIDGE_TOKENS[network1]?.[0]
+  const crossChainSwap = !isStargateBridgeToken(token0) && !isStargateBridgeToken(token1)
+  const swapTransfer = !isStargateBridgeToken(token0) && isStargateBridgeToken(token1)
+  const transferSwap = isStargateBridgeToken(token0) && !isStargateBridgeToken(token1)
+  const srcCurrencyB = crossChainSwap || swapTransfer ? srcBridgeToken : token1
+  const dstCurrencyA = crossChainSwap || transferSwap ? dstBridgeToken : undefined
+
   // const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
   // const { refetch: refetchNetwork1Balances } = useBalances({ account: address, chainId: network0 })
-  const { mutate: storeNotification } = useCreateNotification({ account: address })
   const { config, isError, error } = usePrepareContractWrite({
     ...getSushiXSwapContractConfig(network0 as SushiXSwapChainId),
     functionName: trade?.functionName,
@@ -68,28 +85,27 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     (data: SendTransactionResult | undefined) => {
       if (!trade || !network0 || !data) return
 
-      const ts = new Date().getTime()
-      const notificationData: NotificationData = {
+      groupTs.current = new Date().getTime()
+      void createToast({
+        account: address,
         type: 'swap',
         chainId: network0,
         txHash: data.hash,
         promise: data.wait(),
         summary: {
-          pending: `Swapping ${trade.amountIn?.toSignificant(6)} ${
-            trade.amountIn?.currency.symbol
-          } to ${trade.amountOut?.toSignificant(6)} ${trade.amountOut?.currency.symbol}`,
-          completed: `Swap ${trade.amountIn?.toSignificant(6)} ${
-            trade.amountIn?.currency.symbol
-          } to ${trade.amountOut?.toSignificant(6)} ${trade.amountOut?.currency.symbol}`,
-          failed: `Something went wrong when trying to swap ${trade.amountIn?.currency.symbol} to ${trade.amountOut?.currency.symbol}`,
+          pending: `Swapping ${trade.amountIn?.toSignificant(6)} ${trade.amountIn?.currency.symbol} to bridge token ${
+            srcCurrencyB?.symbol
+          }`,
+          completed: `Swap ${trade.amountIn?.toSignificant(6)} ${trade.amountIn?.currency.symbol} to bridge token ${
+            srcCurrencyB?.symbol
+          }`,
+          failed: `Something went wrong when trying to swap ${trade.amountIn?.currency.symbol} to bridge token`,
         },
-        timestamp: ts,
-        groupTimestamp: ts,
-      }
-
-      storeNotification(createToast(notificationData))
+        timestamp: groupTs.current,
+        groupTimestamp: groupTs.current,
+      })
     },
-    [trade, network0, storeNotification]
+    [trade, network0, srcCurrencyB?.symbol, address]
   )
 
   const {
@@ -179,6 +195,10 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
   }, [onComplete, review, setReview, stepStates, writeAsync])
 
   const { data: lzData } = useLayerZeroScanLink({ tradeId, network1, network0, txHash: data?.hash })
+  const { data: receipt } = useTransaction({
+    chainId: network1,
+    hash: lzData?.dstTxHash as `0x${string}` | undefined,
+  })
 
   useEffect(() => {
     if (lzData?.status === 'DELIVERED') {
@@ -195,6 +215,48 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
       }))
     }
   }, [lzData?.status])
+
+  useEffect(() => {
+    if (lzData?.link && groupTs.current && stepStates.source === StepState.Success) {
+      void createInfoToast({
+        account: address,
+        type: 'stargate',
+        chainId: network0,
+        txHash: '0x',
+        href: lzData.link,
+        summary: `Bridging ${srcCurrencyB?.symbol} from ${Chain.from(network0).name} to ${Chain.from(network1).name}`,
+        timestamp: new Date().getTime(),
+        groupTimestamp: groupTs.current,
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lzData?.link])
+
+  useEffect(() => {
+    if (receipt && groupTs.current) {
+      void createToast({
+        account: address,
+        type: 'swap',
+        chainId: network1,
+        txHash: receipt.hash as `0x${string}`,
+        promise: receipt.wait(),
+        summary: {
+          pending: `Swapping ${dstCurrencyA?.symbol} to ${trade?.amountOut?.toSignificant(6)} ${
+            trade?.amountOut?.currency.symbol
+          }`,
+          completed: `Swap ${dstCurrencyA?.symbol} to ${trade?.amountOut?.toSignificant(6)} ${
+            trade?.amountOut?.currency.symbol
+          }`,
+          failed: `Something went wrong when trying to swap ${
+            dstCurrencyA?.symbol
+          } to ${trade?.amountOut?.toSignificant(6)} ${trade?.amountOut?.currency.symbol}`,
+        },
+        timestamp: new Date().getTime(),
+        groupTimestamp: groupTs.current,
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [receipt])
 
   return (
     <>

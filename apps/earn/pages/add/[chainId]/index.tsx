@@ -41,7 +41,7 @@ import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { usePool } from '@sushiswap/client'
 import { SUPPORTED_CHAIN_IDS } from '../../../config'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
-import { Router, useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 
 const LINKS: BreadcrumbLink[] = [
   {

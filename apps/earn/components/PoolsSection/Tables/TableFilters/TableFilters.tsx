@@ -1,10 +1,8 @@
 import { CheckIcon } from '@heroicons/react/solid'
 import { classNames } from '@sushiswap/ui'
-import { useRouter } from 'next/router'
 import React, { FC, Fragment } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../../../../config'
-import { AVAILABLE_POOL_TYPE_MAP, AVAILABLE_VERSION_MAP } from '../../../../lib/constants'
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { TableFiltersSearchToken } from './TableFiltersSearchToken'
 import { Button } from '@sushiswap/ui/future/components/button'
@@ -14,10 +12,7 @@ import { Chain } from '@sushiswap/chain'
 import { ChevronDownIcon } from '@heroicons/react/outline'
 
 export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters = false }) => {
-  const router = useRouter()
   const { chainIds, poolTypes, poolVersions, incentivizedOnly, setFilters } = usePoolFilters()
-  const poolTypesValue = Object.keys(AVAILABLE_POOL_TYPE_MAP).length === poolTypes.length ? [] : poolTypes
-  const poolVersionsValue = Object.keys(AVAILABLE_VERSION_MAP).length === poolVersions.length ? [] : poolVersions
   const values = SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds
 
   return (

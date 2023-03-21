@@ -35,6 +35,7 @@
     "@sushiswap/client": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/dexie": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/furo": "workspace:*",
     "@sushiswap/gas": "workspace:*",

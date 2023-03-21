@@ -25,7 +25,7 @@ export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady }) => {
 
   const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
-  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: PAGE_SIZE })
+  const [, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: PAGE_SIZE })
 
   const args = useMemo<GetPoolsArgs>(
     () => ({

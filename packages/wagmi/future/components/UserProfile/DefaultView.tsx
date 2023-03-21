@@ -13,8 +13,6 @@ import { ClipboardController } from '@sushiswap/ui/future/components/ClipboardCo
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { JazzIcon } from '@sushiswap/ui/future/components/icons/JazzIcon'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import { getOnrampURL, OnRampProvider } from '@sushiswap/ui/future/lib/getOnrampURL'
-import Image from 'next/legacy/image'
 import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import { useBalance, useDisconnect, useEnsAvatar } from 'wagmi'
 import { ProfileView } from './index'
