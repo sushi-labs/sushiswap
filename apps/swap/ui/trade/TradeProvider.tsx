@@ -4,6 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import {
   Amount,
   currencyFromShortCurrencyName,
+  defaultQuoteCurrency,
   isShortCurrencyName,
   Native,
   Token,
@@ -201,14 +202,14 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   ])
 
   const api = useMemo(() => {
-    const setNetworks = (chainId: ChainId) => {
+    const setNetworks = (chainId: keyof typeof defaultQuoteCurrency) => {
       const token0 = state.token0?.chainId === chainId ? state.token0 : Native.onChain(chainId)
       const token1 =
         state.token1?.chainId === chainId
           ? state.token1.isNative
             ? state.token1.symbol
             : state.token1.wrapped.address
-          : 'SUSHI'
+          : defaultQuoteCurrency[chainId].address
 
       void push(
         {
@@ -225,6 +226,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         { shallow: true }
       )
     }
+
     const setNetwork0 = (chainId: ChainId) => {
       const fromCurrency =
         state.token0?.chainId === chainId
@@ -246,13 +248,13 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         { shallow: true }
       )
     }
-    const setNetwork1 = (chainId: ChainId) => {
+    const setNetwork1 = (chainId: keyof typeof defaultQuoteCurrency) => {
       const toCurrency =
         state.token1?.chainId === chainId
           ? state.token1.isNative
             ? state.token1.symbol
             : state.token1.wrapped.address
-          : 'SUSHI'
+          : defaultQuoteCurrency[chainId].address
 
       void push(
         {
@@ -347,9 +349,9 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           ? state.token1.isNative
             ? state.token1.symbol
             : state.token1.wrapped.address
-          : state.token0?.symbol === 'SUSHI'
+          : state.token0?.symbol === defaultQuoteCurrency[network1 as keyof typeof defaultQuoteCurrency].symbol
           ? Native.onChain(network1).symbol
-          : 'SUSHI'
+          : defaultQuoteCurrency[network1 as keyof typeof defaultQuoteCurrency].address
 
       void push(
         {

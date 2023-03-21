@@ -18,7 +18,7 @@ export function findSingleRouteExactIn(
     from as RToken,
     to as RToken,
     amountIn,
-    pools.map(convertPoolOrPairtoRPool),
+    pools.map((pool) => convertPoolOrPairtoRPool(pool)),
     baseToken as RToken,
     gasPrice
   )

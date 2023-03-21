@@ -21,7 +21,7 @@ export function convertTokenToBento(token: Token): RToken {
   return t
 }
 
-export function convertPoolOrPairtoRPool(pool: Pool | Pair): RPool {
+export function convertPoolOrPairtoRPool(pool: Pool | Pair, convertTokensToBento = false): RPool {
   if (pool instanceof Pair) {
     return new ConstantProductRPool(
       pool.liquidityToken.address,
@@ -34,8 +34,8 @@ export function convertPoolOrPairtoRPool(pool: Pool | Pair): RPool {
   } else if (pool instanceof ConstantProductPool) {
     return new ConstantProductRPool(
       pool.liquidityToken.address,
-      convertTokenToBento(pool.token0.wrapped),
-      convertTokenToBento(pool.token1.wrapped),
+      convertTokensToBento ? convertTokenToBento(pool.token0.wrapped) : (pool.assets[0].wrapped as RToken),
+      convertTokensToBento ? convertTokenToBento(pool.token1.wrapped) : (pool.assets[1].wrapped as RToken),
       // pool.assets[0].wrapped as RToken,
       // pool.assets[1].wrapped as RToken,
       pool.fee / 10000,
@@ -47,8 +47,8 @@ export function convertPoolOrPairtoRPool(pool: Pool | Pair): RPool {
       pool.liquidityToken.address,
       // pool.token0 as RToken,
       // pool.token1 as RToken,
-      convertTokenToBento(pool.token0.wrapped),
-      convertTokenToBento(pool.token1.wrapped),
+      convertTokensToBento ? convertTokenToBento(pool.token0.wrapped) : (pool.token0 as RToken),
+      convertTokensToBento ? convertTokenToBento(pool.token1.wrapped) : (pool.token1 as RToken),
       pool.fee / 10000,
       BigNumber.from(
         pool.reserve0

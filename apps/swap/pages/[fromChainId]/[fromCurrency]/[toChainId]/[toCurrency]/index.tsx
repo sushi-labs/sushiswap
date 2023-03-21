@@ -5,16 +5,19 @@ import { Drawer } from '@sushiswap/ui/future/components/drawer'
 import { TokenNotFoundDialog } from '../../../../../ui/TokenNotFoundDialog'
 import { TradeReviewDialog } from '../../../../../ui/trade/TradeReviewDialog'
 import { FC } from 'react'
+import { Checker } from '@sushiswap/wagmi/future/systems'
 
 export const Page: FC = () => {
   return (
     <>
       <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
         <Drawer.Root>
-          <Widget />
-          <TradeStats />
-          <TradeReviewDialog />
-          <TokenNotFoundDialog />
+          <Checker.Root>
+            <Widget />
+            <TradeStats />
+            <TradeReviewDialog />
+            <TokenNotFoundDialog />
+          </Checker.Root>
         </Drawer.Root>
 
         {/*spacer for fixed positioned swap button */}

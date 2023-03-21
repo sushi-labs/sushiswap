@@ -15,6 +15,7 @@ import {
   UserRejectedRequestError,
   useSendTransaction,
   useSigner,
+  useWaitForTransaction,
 } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
@@ -73,12 +74,23 @@ export function useERC20ApproveCallback(
     request,
   })
 
-  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+  const {
+    sendTransaction,
+    data,
+    isLoading: isWritePending,
+  } = useSendTransaction({
     ...config,
     onSettled,
   })
 
-  const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
+  const { isLoading: isWaitPending } = useWaitForTransaction({
+    hash: data?.hash,
+  })
+
+  const token = useMemo(
+    () => (amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined),
+    [amountToApprove?.currency]
+  )
   const { data: currentAllowance, isLoading } = useERC20Allowance(watch, token, address ?? undefined, spender)
 
   // check the current approval status
@@ -86,14 +98,14 @@ export function useERC20ApproveCallback(
     if (isLoading) return ApprovalState.LOADING
     if (!amountToApprove || !spender) return ApprovalState.UNKNOWN
     if (amountToApprove.currency.isNative) return ApprovalState.APPROVED
-    if (isWritePending) return ApprovalState.PENDING
+    if (isWritePending || isWaitPending) return ApprovalState.PENDING
 
     // We might not have enough data to know whether we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN
 
     // amountToApprove will be defined if currentAllowance is
     return currentAllowance.lessThan(amountToApprove) ? ApprovalState.NOT_APPROVED : ApprovalState.APPROVED
-  }, [amountToApprove, currentAllowance, isLoading, isWritePending, spender])
+  }, [amountToApprove, currentAllowance, isLoading, isWaitPending, isWritePending, spender])
 
   const tokenContract = useContract({
     address: token?.address ?? AddressZero,

@@ -2,11 +2,10 @@ import { FC, ReactNode, useCallback, useEffect, useState } from 'react'
 import { AppType } from '@sushiswap/ui/types'
 import { useAccount, useContractWrite, useNetwork, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
-import { useBalances, useCreateNotification } from '@sushiswap/react-query'
+import { useCreateNotification } from '@sushiswap/react-query'
 import { SendTransactionResult } from 'wagmi/actions'
 import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { BarLoader } from '@sushiswap/ui/future/components/BarLoader'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Divider, failedState, finishedState, GetStateComponent, pendingState, StepState } from './StepStates'
 import { ConfirmationDialogContent } from './ConfirmationDialogContent'
@@ -17,9 +16,9 @@ import { useLayerZeroScanLink } from '../../lib/useLayerZeroScanLink'
 import { SushiXSwapChainId } from '@sushiswap/sushixswap'
 import { createErrorToast } from '@sushiswap/ui'
 import { swapErrorToUserReadableMessage } from '../../lib/swapErrorToUserReadableMessage'
+import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
 interface ConfirmationDialogCrossChainProps {
-  enabled?: boolean
   children({
     onClick,
     isWritePending,
@@ -33,13 +32,14 @@ interface ConfirmationDialogCrossChainProps {
   }): ReactNode
 }
 
-export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps> = ({ children, enabled = false }) => {
+export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps> = ({ children }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
   const { appType, review, network0, network1, tradeId } = useSwapState()
   const { setReview, setBentoboxSignature, setTradeId } = useSwapActions()
   const [open, setOpen] = useState(false)
   const { data: trade } = useTrade({ crossChain: true })
+  const { approved } = useApproved('xswap')
 
   const [stepStates, setStepStates] = useState<{ source: StepState; bridge: StepState; dest: StepState }>({
     source: StepState.Success,
@@ -55,7 +55,12 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     functionName: trade?.functionName,
     args: trade?.writeArgs,
     enabled:
-      Boolean(trade?.writeArgs) && Boolean(review) && appType === AppType.xSwap && chain?.id === network0 && enabled,
+      Boolean(trade?.writeArgs) &&
+      Boolean(review) &&
+      appType === AppType.xSwap &&
+      chain?.id === network0 &&
+      approved &&
+      trade?.route?.status !== 'NoWay',
     overrides: trade?.overrides,
   })
 
