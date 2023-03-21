@@ -54,15 +54,31 @@ interface PoolInfo {
 }
 
 async function getPoolRatio(poolAddress: string): Promise<number> {
-  if (poolAddress.toLowerCase() !== '0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2') return 1
-  // Very special pool (((((((
-  const ankrETH = new Contract(
-    '0xE95A203B1a91a908F9B9CE46459d101078c2c3cb',
-    ['function ratio() pure returns (uint256)'],
-    ethers.provider
-  )
-  const ratio = await ankrETH.ratio()
-  return 1e18 / parseInt(ratio.toString())
+  // collection of freaks
+  switch (poolAddress.toLowerCase()) {
+    case '0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2': {
+      //ankrETH pool
+      const ankrETH = new Contract(
+        '0xE95A203B1a91a908F9B9CE46459d101078c2c3cb',
+        ['function ratio() pure returns (uint256)'],
+        ethers.provider
+      )
+      const ratio = await ankrETH.ratio()
+      return 1e18 / parseInt(ratio.toString())
+    }
+    case '0xf9440930043eb3997fc70e1339dbb11f341de7a8': {
+      // rETH pool
+      const rETH = new Contract(
+        '0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593',
+        ['function getExchangeRate() pure returns (uint256)'],
+        ethers.provider
+      )
+      const ratio = await rETH.getExchangeRate()
+      return parseInt(ratio.toString()) / 1e18
+    }
+    default:
+      return 1
+  }
 }
 
 async function createCurvePoolInfo(
@@ -179,7 +195,7 @@ const CurvePools: [string, string, CurvePoolType][] = [
   ['0x0ce6a5ff5217e38315f87032cf90686c96627caa', 'EURS', CurvePoolType.Legacy],
   ['0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2', 'ankrETH', CurvePoolType.Legacy],
   // ['0xeb16ae0052ed37f479f7fe63849198df1765a733', 'saave', CurvePoolType.Legacy],
-  // ['0xf9440930043eb3997fc70e1339dbb11f341de7a8', 'reth', CurvePoolType.Legacy],
+  ['0xf9440930043eb3997fc70e1339dbb11f341de7a8', 'reth', CurvePoolType.Legacy],
   // ['0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56', 'compound', CurvePoolType.LegacyV2],
   ['0xfd5db7463a3ab53fd211b4af195c5bccc1a03890', 'eurt', CurvePoolType.Legacy],
   ['0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0', 'link', CurvePoolType.Legacy],
