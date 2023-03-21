@@ -53,6 +53,18 @@ interface PoolInfo {
   snapshot: SnapshotRestorer
 }
 
+async function getPoolRatio(poolAddress: string): Promise<number> {
+  if (poolAddress.toLowerCase() !== '0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2') return 1
+  // Very special pool (((((((
+  const ankrETH = new Contract(
+    '0xE95A203B1a91a908F9B9CE46459d101078c2c3cb',
+    ['function ratio() pure returns (uint256)'],
+    ethers.provider
+  )
+  const ratio = await ankrETH.ratio()
+  return 1e18 / parseInt(ratio.toString())
+}
+
 async function createCurvePoolInfo(
   poolAddress: string,
   poolType: CurvePoolType,
@@ -115,7 +127,8 @@ async function createCurvePoolInfo(
     fee.toNumber() / 1e10,
     A.toNumber(),
     reserves[0],
-    reserves[1]
+    reserves[1],
+    await getPoolRatio(poolAddress)
   )
 
   const snapshot = await takeSnapshot()
@@ -164,7 +177,7 @@ const CurvePools: [string, string, CurvePoolType][] = [
   ['0xc897b98272aa23714464ea2a0bd5180f1b8c0025', 'msETH', CurvePoolType.Factory],
   ['0xa1f8a6807c402e4a15ef4eba36528a3fed24e577', 'frxETH', CurvePoolType.Legacy],
   ['0x0ce6a5ff5217e38315f87032cf90686c96627caa', 'EURS', CurvePoolType.Legacy],
-  // ['0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2', 'ankrETH', CurvePoolType.Legacy],
+  ['0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2', 'ankrETH', CurvePoolType.Legacy],
   // ['0xeb16ae0052ed37f479f7fe63849198df1765a733', 'saave', CurvePoolType.Legacy],
   // ['0xf9440930043eb3997fc70e1339dbb11f341de7a8', 'reth', CurvePoolType.Legacy],
   // ['0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56', 'compound', CurvePoolType.LegacyV2],

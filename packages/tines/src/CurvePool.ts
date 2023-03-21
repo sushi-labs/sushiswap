@@ -8,7 +8,7 @@ export class CurvePool extends RPool {
   D: BigNumber // set it to 0 if reserves are changed !!
 
   rate0BN: BigNumber
-  rate1BN: BigNumber
+  rate1BN18: BigNumber
   rate0: number
   rate1: number
   reserve0Rated: BigNumber
@@ -21,18 +21,19 @@ export class CurvePool extends RPool {
     fee: number,
     A: number,
     reserve0: BigNumber,
-    reserve1: BigNumber
+    reserve1: BigNumber,
+    ratio = 1 // is used for some pools with liquid stake tokens - like ankrETH
   ) {
     super(address, token0, token1, fee, reserve0, reserve1, undefined, 90_000)
     this.A = A
     this.D = BigNumber.from(0)
     const decimalsMin = Math.min(this.token0.decimals, this.token1.decimals)
     this.rate0 = Math.pow(10, this.token1.decimals - decimalsMin)
-    this.rate1 = Math.pow(10, this.token0.decimals - decimalsMin)
+    this.rate1 = Math.pow(10, this.token0.decimals - decimalsMin) * ratio
     this.rate0BN = getBigNumber(this.rate0)
-    this.rate1BN = getBigNumber(this.rate1)
+    this.rate1BN18 = getBigNumber(this.rate1 * 1e18) // 18 digits for precision
     this.reserve0Rated = this.reserve0.mul(this.rate0BN)
-    this.reserve1Rated = this.reserve1.mul(this.rate1BN)
+    this.reserve1Rated = this.reserve1.mul(this.rate1BN18).div(getBigNumber(1e18))
   }
 
   updateReserves(res0: BigNumber, res1: BigNumber) {
@@ -40,7 +41,7 @@ export class CurvePool extends RPool {
     this.reserve0 = res0
     this.reserve1 = res1
     this.reserve0Rated = this.reserve0.mul(this.rate0BN)
-    this.reserve1Rated = this.reserve1.mul(this.rate1BN)
+    this.reserve1Rated = this.reserve1.mul(this.rate1BN18).div(getBigNumber(1e18))
   }
 
   computeLiquidity(): BigNumber {
