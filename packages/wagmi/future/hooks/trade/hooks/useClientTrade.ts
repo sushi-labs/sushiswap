@@ -126,6 +126,6 @@ export const useClientTrade = (variables: UseTradeParams) => {
       }
     },
     refetchInterval: 10000,
-    enabled: Boolean(enabled && poolsCodeMap && feeData),
+    enabled: Boolean(enabled && poolsCodeMap && feeData && fromToken && toToken && chainId),
   })
 }
