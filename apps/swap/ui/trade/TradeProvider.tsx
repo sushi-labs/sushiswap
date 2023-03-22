@@ -112,8 +112,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { fromChainId, toChainId, fromCurrency, toCurrency, amount, recipient, review } = queryParamsSchema.parse(query)
   const { token0, token1 } = useTokenState()
 
-  console.log({ fromChainId, toChainId, fromCurrency, toCurrency })
-
   const [internalState, dispatch] = useReducer(reducer, {
     isFallback: true,
     tradeId: nanoid(),
