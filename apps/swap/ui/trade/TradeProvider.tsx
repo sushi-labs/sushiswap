@@ -307,6 +307,10 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
             pathname,
             query: {
               ...query,
+              fromChainId,
+              fromCurrency,
+              toChainId,
+              toCurrency,
               amount: value,
             },
           },
