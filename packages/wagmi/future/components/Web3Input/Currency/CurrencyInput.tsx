@@ -181,7 +181,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
         />
         <BalancePanel
           id={id}
-          loading={address && isLoading}
+          loading={isLoading}
           chainId={chainId}
           account={address}
           onChange={onChange}
