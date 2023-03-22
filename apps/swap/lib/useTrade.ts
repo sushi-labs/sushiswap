@@ -4,10 +4,9 @@ import { useSwapActions, useSwapState } from '../ui/trade/TradeProvider'
 import { useSlippageTolerance } from './useSlippageTolerance'
 import { useCarbonOffset } from './useCarbonOffset'
 import { useCrossChainTrade } from './useCrossChainTrade/useCrossChainTrade'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap'
 import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
-import { useEffectDebugger } from '@sushiswap/hooks'
 
 type ObjectType<T> = T extends true ? ReturnType<typeof useCrossChainTrade> : ReturnType<typeof _useTrade>
 

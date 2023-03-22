@@ -126,6 +126,6 @@ export const useClientTrade = (variables: UseTradeParams) => {
       }
     },
     refetchInterval: 10000,
-    enabled,
+    enabled: Boolean(enabled && poolsCodeMap && feeData),
   })
 }
