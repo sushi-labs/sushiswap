@@ -105,33 +105,29 @@ export const TradeStats: FC = () => {
           <div className="flex justify-between items-center border-t border-gray-200 dark:border-slate-200/5 mt-2 pt-2">
             <span className="font-medium text-sm text-gray-700 dark:text-slate-400">Recipient</span>
             <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
-              {loading || !trade?.minAmountOut ? (
-                <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
-              ) : (
-                <a
-                  target="_blank"
-                  href={Chain.from(network0).getAccountUrl(recipient)}
-                  className={classNames(
-                    address !== recipient ? 'text-yellow-600' : 'text-gray-700',
-                    'transition-all flex gap-1 items-center'
-                  )}
-                  rel="noreferrer"
-                >
-                  <AddressToEnsResolver address={recipient}>
-                    {({ isLoading, data }) => {
-                      return <>{isLoading || !data ? shortenAddress(recipient) : data}</>
-                    }}
-                  </AddressToEnsResolver>
-                  {address !== recipient && (
-                    <Explainer iconSize={18} placement="bottom" className="!text-yellow">
-                      <span className="text-gray-500 dark:text-slate-400 font-medium">
-                        Recipient is different from the connected wallet address. If this is expected, ignore this
-                        warning.
-                      </span>
-                    </Explainer>
-                  )}
-                </a>
-              )}
+              <a
+                target="_blank"
+                href={Chain.from(network0).getAccountUrl(recipient)}
+                className={classNames(
+                  address !== recipient ? 'text-yellow-600' : 'text-gray-700',
+                  'transition-all flex gap-1 items-center'
+                )}
+                rel="noreferrer"
+              >
+                <AddressToEnsResolver address={recipient}>
+                  {({ isLoading, data }) => {
+                    return <>{isLoading || !data ? shortenAddress(recipient) : data}</>
+                  }}
+                </AddressToEnsResolver>
+                {address !== recipient && (
+                  <Explainer iconSize={18} placement="bottom" className="!text-yellow">
+                    <span className="text-gray-500 dark:text-slate-400 font-medium">
+                      Recipient is different from the connected wallet address. If this is expected, ignore this
+                      warning.
+                    </span>
+                  </Explainer>
+                )}
+              </a>
             </span>
           </div>
         )}
