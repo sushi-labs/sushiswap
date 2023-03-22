@@ -23,45 +23,8 @@ import { nanoid } from 'nanoid'
 import { isUniswapV2FactoryChainId } from '@sushiswap/sushiswap'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
 import { SwapChainId } from 'types'
-
-export const queryParamsSchema = z.object({
-  fromChainId: z.coerce
-    .number()
-    .int()
-    .gte(0)
-    .lte(2 ** 256)
-    .default(ChainId.ETHEREUM)
-    .transform((chainId) => chainId as SwapChainId)
-    .refine(
-      (chainId) =>
-        isUniswapV2FactoryChainId(chainId) ||
-        isConstantProductPoolFactoryChainId(chainId) ||
-        isStablePoolFactoryChainId(chainId),
-      {
-        message: 'ChainId not supported.',
-      }
-    ),
-  fromCurrency: z.string().default('NATIVE'),
-  toChainId: z.coerce
-    .number()
-    .int()
-    .gte(0)
-    .lte(2 ** 256)
-    .default(ChainId.ETHEREUM)
-    .transform((chainId) => chainId as SwapChainId)
-    .refine(
-      (chainId) =>
-        isUniswapV2FactoryChainId(chainId) ||
-        isConstantProductPoolFactoryChainId(chainId) ||
-        isStablePoolFactoryChainId(chainId),
-      {
-        message: 'ChainId not supported.',
-      }
-    ),
-  toCurrency: z.string().default('SUSHI'),
-  amount: z.optional(z.coerce.string()),
-  recipient: z.optional(z.string()),
-})
+import { queryParamsSchema } from '../../lib/queryParamsSchema'
+import { useTokenState } from '../TokenProvider'
 
 interface InternalSwapState {
   isFallback: boolean
@@ -143,27 +106,11 @@ interface SwapProviderProps {
   children: ReactNode
 }
 
-const getTokenFromUrl = (chainId: ChainId, currencyId: string, token: Token | undefined, isLoading: boolean) => {
-  if (isLoading) {
-    return undefined
-  } else if (isShortCurrencyName(chainId, currencyId)) {
-    return currencyFromShortCurrencyName(chainId, currencyId)
-  } else if (isAddress(currencyId) && token) {
-    return token
-  } else {
-    return Native.onChain(chainId ? chainId : ChainId.ETHEREUM)
-  }
-}
-
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { address } = useAccount()
   const { query, push } = useRouter()
-  const { fromChainId, fromCurrency, toChainId, toCurrency, amount: _amount } = queryParamsSchema.parse(query)
-  const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useToken({
-    chainId: fromChainId,
-    address: fromCurrency,
-  })
-  const { data: tokenTo, isInitialLoading: isTokenToLoading } = useToken({ chainId: toChainId, address: toCurrency })
+  const { fromChainId, toChainId, amount: _amount } = queryParamsSchema.parse(query)
+  const { token0, token1 } = useTokenState()
 
   const [internalState, dispatch] = useReducer(reducer, {
     isFallback: true,
@@ -171,14 +118,11 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     review: false,
     // TODO: no recipient
     recipient: address ? address : undefined,
-    value: _amount ? _amount.toString() : '',
+    value: _amount === '0' ? '' : _amount?.toString() ?? '',
     bentoboxSignature: undefined,
   })
 
   const state = useMemo(() => {
-    const token0 = getTokenFromUrl(fromChainId, fromCurrency, tokenFrom, isTokenFromLoading)
-    const token1 = getTokenFromUrl(toChainId, toCurrency, tokenTo, isTokenToLoading)
-
     return {
       ...internalState,
       appType: fromChainId === toChainId ? AppType.Swap : AppType.xSwap,
@@ -187,19 +131,9 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       network0: fromChainId,
       network1: toChainId,
       amount: tryParseAmount(internalState.value ? internalState.value.toString() : undefined, token0),
-      tokensLoading: isTokenFromLoading || isTokenToLoading,
+      tokensLoading: false,
     }
-  }, [
-    fromChainId,
-    fromCurrency,
-    internalState,
-    isTokenFromLoading,
-    isTokenToLoading,
-    toChainId,
-    toCurrency,
-    tokenFrom,
-    tokenTo,
-  ])
+  }, [fromChainId, internalState, toChainId, token0, token1])
 
   const api = useMemo(() => {
     const setNetworks = (chainId: keyof typeof defaultQuoteCurrency) => {
@@ -220,10 +154,10 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
             fromCurrency: token0.isNative ? token0.symbol : token0.wrapped.address,
             toChainId: chainId,
             toCurrency: token1,
+            amount: '0',
           },
         },
-        undefined,
-        { shallow: true }
+        undefined
       )
     }
 
@@ -421,10 +355,10 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   ])
 
   useEffect(() => {
-    if (_amount && internalState.value !== _amount) {
+    if (_amount) {
       api.setValue(_amount)
     }
-  }, [_amount, api, internalState.value])
+  }, [_amount, api])
 
   return (
     <SwapActionsContext.Provider value={api}>

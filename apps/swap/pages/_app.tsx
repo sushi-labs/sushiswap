@@ -13,6 +13,7 @@ import { SplashController } from '../ui/SplashController'
 import { NetworkCheck } from '../ui/NetworkCheck'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '@sushiswap/react-query'
+import { TokenProvider } from '../ui/TokenProvider'
 
 export { reportWebVitals } from 'next-axiom'
 
@@ -29,15 +30,17 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       <WagmiProvider>
         {/*<PersistQueryClientProvider>*/}
         <QueryClientProvider client={queryClient}>
-          <SwapProvider>
+          <TokenProvider>
             <SplashController>
-              <Onramper.Provider>
-                <NetworkCheck />
-                <Header />
-                <Component {...pageProps} />
-              </Onramper.Provider>
+              <SwapProvider>
+                <Onramper.Provider>
+                  <NetworkCheck />
+                  <Header />
+                  <Component {...pageProps} />
+                </Onramper.Provider>
+              </SwapProvider>
             </SplashController>
-          </SwapProvider>
+          </TokenProvider>
           <ToastContainer />
           {/*</PersistQueryClientProvider>*/}
         </QueryClientProvider>

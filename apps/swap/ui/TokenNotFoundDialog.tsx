@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { queryParamsSchema, useSwapActions, useSwapState } from './trade/TradeProvider'
+import { useSwapActions, useSwapState } from './trade/TradeProvider'
 import { useRouter } from 'next/router'
 import { defaultQuoteCurrency, Native, Token } from '@sushiswap/currency'
 import { List } from '@sushiswap/ui/future/components/list/List'
@@ -9,6 +9,7 @@ import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { useToken } from '@sushiswap/react-query'
 import { useCustomTokens } from '@sushiswap/hooks'
+import { queryParamsSchema } from '../lib/queryParamsSchema'
 
 export const TokenNotFoundDialog = () => {
   const { query } = useRouter()

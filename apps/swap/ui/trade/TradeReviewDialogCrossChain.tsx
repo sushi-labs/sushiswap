@@ -30,7 +30,7 @@ export const TradeReviewDialogCrossChain: FC = () => {
 
   // Don't unmount this dialog since that will slow down the opening callback
   return (
-    <Dialog open={review} unmount={false} onClose={onClose} variant="opaque">
+    <Dialog open={review} onClose={onClose} variant="opaque">
       <div className="max-w-[504px] mx-auto">
         <button onClick={onClose} className="pl-0 p-3">
           <ArrowLeftIcon strokeWidth={3} width={24} height={24} />

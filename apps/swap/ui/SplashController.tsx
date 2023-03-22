@@ -2,15 +2,15 @@ import { FC, ReactNode } from 'react'
 import { useRouter } from 'next/router'
 import { SushiIcon } from '@sushiswap/ui'
 import { Transition } from '@headlessui/react'
-import { useSwapState } from './trade/TradeProvider'
+import { useTokenState } from './TokenProvider'
 
 export const SplashController: FC<{ children: ReactNode }> = ({ children }) => {
-  const { token0, token1 } = useSwapState()
+  const { token0, token1 } = useTokenState()
   const { isReady } = useRouter()
 
   return (
     <>
-      {(!isReady || !token0 || !token1) && (
+      {!isReady || !token0 || !token1 ? (
         <div className="fixed inset-0 bg-gray-100 dark:bg-slate-900 z-[1080] flex items-center justify-center">
           <Transition
             appear
@@ -25,8 +25,9 @@ export const SplashController: FC<{ children: ReactNode }> = ({ children }) => {
             <SushiIcon width={112} height={112} />
           </Transition>
         </div>
+      ) : (
+        children
       )}
-      {children}
     </>
   )
 }
