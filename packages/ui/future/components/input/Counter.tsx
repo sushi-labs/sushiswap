@@ -48,6 +48,10 @@ export const Counter = forwardRef<HTMLInputElement, CounterProps>(
                   )
                 : undefined
             }
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck="false"
+            autoComplete="new-password"
             {...rest}
           />
           <button

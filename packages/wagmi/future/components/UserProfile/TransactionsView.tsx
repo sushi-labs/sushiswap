@@ -34,7 +34,7 @@ export const TransactionsView: FC<TransactionsProps> = ({ setView, address }) =>
         <List.Label>Transactions</List.Label>
         <List.Control className="bg-gray-100 dark:bg-slate-700">
           <div className="flex flex-col gap-3 max-h-[300px] scroll">
-            {notifications ? (
+            {notifications && Object.keys(notifications).length > 0 ? (
               Object.entries(notifications)
                 .reverse()
                 .map(([, notifications], index) => {
