@@ -109,15 +109,15 @@ interface SwapProviderProps {
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { address } = useAccount()
   const { query, push } = useRouter()
-  const { fromChainId, toChainId, amount: _amount } = queryParamsSchema.parse(query)
+  const { fromChainId, toChainId, amount: _amount, recipient, review } = queryParamsSchema.parse(query)
   const { token0, token1 } = useTokenState()
 
   const [internalState, dispatch] = useReducer(reducer, {
     isFallback: true,
     tradeId: nanoid(),
-    review: false,
+    review: review ? review : false,
     // TODO: no recipient
-    recipient: address ? address : undefined,
+    recipient: recipient ? recipient : address ? address : undefined,
     value: _amount === '0' ? '' : _amount?.toString() ?? '',
     bentoboxSignature: undefined,
   })
