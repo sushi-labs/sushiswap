@@ -25,6 +25,12 @@ const nextConfig = {
       },
       // {
       //   source: '/swap',
+      //   destination: '/swap?fromChainId=1&fromCurrency=ETH&toChainId=1&toCurrency=SUSHI',
+      //   permanent: true,
+      //   basePath: false,
+      // },
+      // {
+      //   source: '/swap',
       //   // Change to /1/1/ETH/SUSHI before launch
       //   destination: '/swap/137:MATIC/137:SUSHI',
       //   permanent: true,

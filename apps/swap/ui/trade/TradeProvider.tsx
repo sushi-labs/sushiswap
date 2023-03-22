@@ -108,17 +108,26 @@ interface SwapProviderProps {
 
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { address } = useAccount()
-  const { query, push } = useRouter()
-  const { fromChainId, toChainId, amount: _amount, recipient, review } = queryParamsSchema.parse(query)
+  const { query, push, pathname } = useRouter()
+  const {
+    fromChainId,
+    toChainId,
+    fromCurrency,
+    toCurrency,
+    amount: _amount,
+    recipient,
+    review,
+  } = queryParamsSchema.parse(query)
   const { token0, token1 } = useTokenState()
+
+  console.log({ fromChainId, toChainId, fromCurrency, toCurrency })
 
   const [internalState, dispatch] = useReducer(reducer, {
     isFallback: true,
     tradeId: nanoid(),
     review: review ? review : false,
-    // TODO: no recipient
     recipient: recipient ? recipient : address ? address : undefined,
-    value: _amount === '0' ? '' : _amount?.toString() ?? '',
+    value: !_amount || _amount === '0' ? '' : _amount,
     bentoboxSignature: undefined,
   })
 
@@ -147,14 +156,14 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
 
       void push(
         {
-          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          pathname,
           query: {
             ...query,
             fromChainId: chainId,
             fromCurrency: token0.isNative ? token0.symbol : token0.wrapped.address,
             toChainId: chainId,
             toCurrency: token1,
-            amount: '0',
+            amount: '',
           },
         },
         undefined
@@ -171,7 +180,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
 
       void push(
         {
-          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          pathname,
           query: {
             ...query,
             fromChainId: chainId,
@@ -192,7 +201,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
 
       void push(
         {
-          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          pathname,
           query: {
             ...query,
             toChainId: chainId,
@@ -206,7 +215,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     const setTokens = (currency0: Type, currency1: Type) => {
       void push(
         {
-          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          pathname,
           query: {
             ...query,
             fromChainId: currency0.chainId,
@@ -221,15 +230,23 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     }
     const setToken0 = (currency: Type) => {
       const fromCurrency = currency.isNative ? currency.symbol : currency.wrapped.address
+
+      console.log({
+        fromChainId: currency.chainId,
+        fromCurrency,
+        toChainId: query.toCurrency === fromCurrency ? fromChainId : toChainId,
+        toCurrency: query.toCurrency === fromCurrency ? fromCurrency : toCurrency,
+      })
+
       void push(
         {
-          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          pathname,
           query: {
             ...query,
             fromChainId: currency.chainId,
             fromCurrency,
-            toChainId: query.toCurrency === fromCurrency ? query.fromChainId : query.toChainId,
-            toCurrency: query.toCurrency === fromCurrency ? query.fromCurrency : query.toCurrency,
+            toChainId: toCurrency === fromCurrency ? fromChainId : toChainId,
+            toCurrency: toCurrency === fromCurrency ? fromCurrency : toCurrency,
           },
         },
         undefined,
@@ -240,11 +257,11 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       const toCurrency = currency.isNative ? currency.symbol : currency.wrapped.address
       void push(
         {
-          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          pathname,
           query: {
             ...query,
-            fromChainId: query.fromCurrency === toCurrency ? query.toChainId : query.fromChainId,
-            fromCurrency: query.fromCurrency === toCurrency ? query.toCurrency : query.fromCurrency,
+            fromChainId: fromCurrency === toCurrency ? toChainId : fromChainId,
+            fromCurrency: fromCurrency === toCurrency ? toCurrency : fromCurrency,
             toChainId: currency.chainId,
             toCurrency,
           },
@@ -256,7 +273,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     const switchTokens = () =>
       void push(
         {
-          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          pathname,
           query: {
             ...query,
             fromChainId: query.toChainId,
@@ -289,7 +306,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
 
       void push(
         {
-          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          pathname,
           query: {
             ...query,
             toChainId: network1,
@@ -303,7 +320,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     const setSearch = (currency: Type) => {
       void push(
         {
-          pathname: '/[fromChainId]/[fromCurrency]/[toChainId]/[toCurrency]',
+          pathname,
           query: {
             ...query,
             fromChainId: currency.chainId,
