@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 
 import { ARB, BUSD, GNO, OP, SUSHI, USDC, WETH9 } from './constants'
+import { Token } from './Token'
 
 export const defaultQuoteCurrency = {
   [ChainId.ETHEREUM]: SUSHI[ChainId.ETHEREUM],
@@ -36,8 +37,20 @@ export const defaultQuoteCurrency = {
   [ChainId.KAVA]: SUSHI[ChainId.KAVA],
   [ChainId.METIS]: SUSHI[ChainId.METIS],
   [ChainId.BOBA]: USDC[ChainId.BOBA],
-  [ChainId.BOBA_AVAX]: USDC[ChainId.BOBA_AVAX],
-  [ChainId.BOBA_BNB]: USDC[ChainId.BOBA_BNB],
+  [ChainId.BOBA_AVAX]: new Token({
+    chainId: ChainId.BOBA_AVAX,
+    address: '0x4200000000000000000000000000000000000023',
+    decimals: 18,
+    symbol: 'AVAX',
+    name: 'Avalanche',
+  }),
+  [ChainId.BOBA_BNB]: new Token({
+    chainId: ChainId.BOBA_BNB,
+    address: '0x4200000000000000000000000000000000000023',
+    decimals: 18,
+    symbol: 'BNB',
+    name: 'Binance Coin',
+  }),
   [ChainId.BTTC]: SUSHI[ChainId.BTTC],
   // [ChainId.SEPOLIA]: USDT[ChainId.SEPOLIA],
   [ChainId.CONSENSUS_ZKEVM_TESTNET]: WETH9[ChainId.CONSENSUS_ZKEVM_TESTNET],
