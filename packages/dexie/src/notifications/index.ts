@@ -1,3 +1,4 @@
+export * from './createNotification'
 export * from './types'
 export * from './useClearNotifications'
 export * from './useCreateNotification'

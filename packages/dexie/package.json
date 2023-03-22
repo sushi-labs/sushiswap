@@ -43,6 +43,8 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
+    "@sushiswap/chain": "workspace:*",
+    "@sushiswap/currency": "workspace:*",
     "dexie": "^3.2.3",
     "dexie-react-hooks": "^1.1.3",
     "lodash.groupby": "^4.6.0"

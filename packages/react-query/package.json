@@ -51,6 +51,7 @@
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/dexie": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/types": "workspace:*",
     "@sushiswap/ui": "workspace:*",

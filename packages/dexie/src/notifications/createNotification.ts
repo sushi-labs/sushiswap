@@ -1,6 +1,4 @@
-import {useCallback} from "react";
-
-import {db} from "../../db";
+import {db} from "../db";
 import {isPromise, PromiseNotification, ResolvedNotification} from "./types";
 
 export const createNotification = async (payload: PromiseNotification | ResolvedNotification) => {
@@ -37,8 +35,4 @@ export const createNotification = async (payload: PromiseNotification | Resolved
             groupTimestamp: payload.groupTimestamp
         })
     }
-}
-
-export const useCreateNotification = ({ account } : { account: string | `0x${string}`| undefined}) => {
-   return useCallback(createNotification, [account])
 }
