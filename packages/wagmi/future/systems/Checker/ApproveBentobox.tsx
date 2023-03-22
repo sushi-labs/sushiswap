@@ -5,7 +5,6 @@ import { Menu, Transition } from '@headlessui/react'
 import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/24/solid'
 import { ApproveBentoboxController } from '../../components'
 import { Address } from 'wagmi'
-import { NotificationData } from '@sushiswap/ui/future/components/toast'
 import { Signature } from '@ethersproject/bytes'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
@@ -14,7 +13,6 @@ export interface ApproveBentoboxProps extends ButtonProps<'button'> {
   id: string
   contract: Address
   enabled?: boolean
-  onSuccess?: (data: NotificationData) => void
   onSignature?: (data: Signature) => void
 }
 
@@ -29,19 +27,12 @@ export const ApproveBentobox: FC<ApproveBentoboxProps> = ({
   as,
   size,
   enabled = true,
-  onSuccess,
   onSignature,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
 
   return (
-    <ApproveBentoboxController
-      contract={contract}
-      chainId={chainId}
-      enabled={enabled}
-      onSuccess={onSuccess}
-      onSignature={onSignature}
-    >
+    <ApproveBentoboxController contract={contract} chainId={chainId} enabled={enabled} onSignature={onSignature}>
       {({ approvalState, onApprove, signature }) => {
         if (approvalState === ApprovalState.APPROVED || (approvalState === ApprovalState.PENDING && signature)) {
           return <>{children}</>

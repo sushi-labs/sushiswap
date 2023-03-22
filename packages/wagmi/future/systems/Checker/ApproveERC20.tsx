@@ -5,13 +5,11 @@ import { Amount, Type } from '@sushiswap/currency'
 import { ApprovalState } from '../../../hooks'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/24/solid'
-import { NotificationData } from '@sushiswap/ui/future/components/toast'
 
 export interface ApproveERC20Props extends ButtonProps<'button'> {
   id: string
   amount: Amount<Type> | undefined
   contract: string | undefined
-  onSuccess?: (data: NotificationData) => void
   enabled?: boolean
 }
 
@@ -25,13 +23,12 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
   fullWidth,
   as,
   size,
-  onSuccess,
   enabled = true,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
 
   return (
-    <ApproveTokenController amount={amount} contract={contract} onSuccess={onSuccess}>
+    <ApproveTokenController amount={amount} contract={contract}>
       {({ approvalState, onApprove }) => {
         if (approvalState === ApprovalState.APPROVED || !enabled || !contract) {
           return <>{children}</>

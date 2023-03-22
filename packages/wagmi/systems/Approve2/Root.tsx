@@ -1,18 +1,19 @@
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { classNames, NotificationData } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
 
 import { ApprovalState } from '../../hooks'
 import { Bentobox } from './Bentobox'
 import { Token } from './Token'
 import { ApprovalType, ApproveDefinition } from './types'
+import { PromiseNotification } from '@sushiswap/dexie'
 
 export interface RootProps {
   chainId: BentoBoxV1ChainId | undefined
   className?: string
   children: ReactNode
   definition: ApproveDefinition
-  onSuccess(data: NotificationData): void
+  onSuccess(data: PromiseNotification): void
 }
 
 const APPROVE_BUTTON_MAP = {

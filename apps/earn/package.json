@@ -30,6 +30,7 @@
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/dexie": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/gas": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",

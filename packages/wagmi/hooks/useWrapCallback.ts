@@ -2,13 +2,13 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
-import { NotificationData } from '@sushiswap/ui/future/components/toast'
 import { Dispatch, SetStateAction, useCallback } from 'react'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { useSendTransaction } from './useSendTransaction'
 import { useWETH9Contract } from './useWETH9Contract'
+import { PromiseNotification } from '@sushiswap/dexie'
 
 export enum WrapType {
   Wrap = 'Wrap',
@@ -18,7 +18,7 @@ export enum WrapType {
 type UseWrapCallbackParams = {
   chainId: ChainId | undefined
   wrapType: WrapType
-  onSuccess?(data: NotificationData): void
+  onSuccess?(data: PromiseNotification): void
   amount: Amount<Type> | undefined
 }
 
@@ -33,6 +33,7 @@ export const useWrapCallback: UseWrapCallback = ({ chainId, wrapType, amount, on
       if (data && onSuccess && amount && chainId) {
         const ts = new Date().getTime()
         onSuccess({
+          account: address,
           type: wrapType === WrapType.Wrap ? 'enterBar' : 'leaveBar',
           chainId,
           txHash: data.hash,
@@ -51,7 +52,7 @@ export const useWrapCallback: UseWrapCallback = ({ chainId, wrapType, amount, on
         })
       }
     },
-    [amount, chainId, onSuccess, wrapType]
+    [address, amount, chainId, onSuccess, wrapType]
   )
 
   const prepare = useCallback(

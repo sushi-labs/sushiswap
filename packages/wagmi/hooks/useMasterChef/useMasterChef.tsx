@@ -3,7 +3,6 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
 import { ChefType } from '@sushiswap/client'
 import { Amount, SUSHI, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
-import { NotificationData } from '@sushiswap/ui/future/components/toast'
 import { BigNumber } from 'ethers'
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
 import { Address, erc20ABI, useAccount, useContractReads, useNetwork } from 'wagmi'
@@ -16,6 +15,7 @@ import {
   useMasterChefContract,
 } from '../useMasterChefContract'
 import { useSendTransaction } from '../useSendTransaction'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 
 interface UseMasterChefReturn extends Pick<ReturnType<typeof useContractReads>, 'isLoading' | 'isError'> {
   balance: Amount<Token> | undefined
@@ -31,21 +31,12 @@ interface UseMasterChefParams {
   pid: number
   token: Token
   enabled?: boolean
-  onSuccess?(data: NotificationData): void
   watch?: boolean
 }
 
 type UseMasterChef = (params: UseMasterChefParams) => UseMasterChefReturn
 
-export const useMasterChef: UseMasterChef = ({
-  chainId,
-  watch = true,
-  chef,
-  pid,
-  token,
-  enabled = true,
-  onSuccess,
-}) => {
+export const useMasterChef: UseMasterChef = ({ chainId, watch = true, chef, pid, token, enabled = true }) => {
   const { chain } = useNetwork()
   const { address } = useAccount()
   const contract = useMasterChefContract(chainId, chef)
@@ -205,9 +196,10 @@ export const useMasterChef: UseMasterChef = ({
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
-      if (onSuccess && data) {
+      if (data) {
         const ts = new Date().getTime()
-        onSuccess({
+        void createToast({
+          account: address,
           type: 'claimRewards',
           chainId,
           txHash: data.hash,
@@ -222,7 +214,7 @@ export const useMasterChef: UseMasterChef = ({
         })
       }
     },
-    [chainId, onSuccess]
+    [chainId, address]
   )
 
   const prepare = useCallback(

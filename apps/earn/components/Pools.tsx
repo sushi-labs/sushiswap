@@ -1,5 +1,5 @@
 import { PlusIcon } from '@heroicons/react/solid'
-import { Button, Link, OnsenIcon, Typography } from '@sushiswap/ui'
+import { Button, Link, OnsenIcon } from '@sushiswap/ui'
 import { FC } from 'react'
 import { useNetwork } from 'wagmi'
 import { Layout, PoolFilters, PoolsFiltersProvider, PoolsSection } from '../components'

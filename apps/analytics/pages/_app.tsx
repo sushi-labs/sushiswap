@@ -1,7 +1,7 @@
 import '@sushiswap/ui/index.css'
 import '../variables.css'
 
-import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
+import { App, ThemeProvider } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
 import { SUPPORTED_CHAIN_IDS } from 'config'
@@ -17,6 +17,7 @@ import { WagmiConfig } from 'wagmi'
 
 import SEO from '../next-seo.config.mjs'
 import { GlobalNav } from '@sushiswap/ui/future/components/GlobalNav'
+import { ToastContainer } from '@sushiswap/ui/future/components/toast'
 
 declare global {
   interface Window {

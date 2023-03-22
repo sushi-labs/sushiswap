@@ -1,6 +1,5 @@
 import { Signature, splitSignature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
-import { NotificationData } from '@sushiswap/ui'
 import { getBentoBoxContractConfig } from './useBentoBoxContract'
 import { useCallback, useMemo, useState } from 'react'
 import {
@@ -17,6 +16,7 @@ import {
 import { ApprovalState } from './useERC20ApproveCallback'
 import { isAddress } from '@ethersproject/address'
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useBentoBoxApproveCallback({
@@ -24,14 +24,12 @@ export function useBentoBoxApproveCallback({
   masterContract,
   watch = true,
   onSignature,
-  onSuccess,
   enabled = true,
 }: {
   chainId: BentoBoxV1ChainId | undefined
   masterContract?: Address
   watch?: boolean
   onSignature?(payload: Signature): void
-  onSuccess?(data: NotificationData): void
   enabled?: boolean
 }): [ApprovalState, Signature | undefined, () => Promise<void>] {
   const { address, connector } = useAccount()
@@ -93,23 +91,22 @@ export function useBentoBoxApproveCallback({
     }
 
     const data = await writeAsync()
-    if (onSuccess) {
-      const ts = new Date().getTime()
-      onSuccess({
-        type: 'approval',
-        chainId,
-        txHash: data.hash,
-        promise: data.wait(),
-        summary: {
-          pending: `Approving BentoBox Master Contract`,
-          completed: `Successfully approved the master contract`,
-          failed: 'Something went wrong approving the master contract',
-        },
-        groupTimestamp: ts,
-        timestamp: ts,
-      })
-    }
-  }, [address, approvalState, chainId, masterContract, onSuccess, writeAsync])
+    const ts = new Date().getTime()
+    void createToast({
+      account: address,
+      type: 'approval',
+      chainId,
+      txHash: data.hash,
+      promise: data.wait(),
+      summary: {
+        pending: `Approving BentoBox Master Contract`,
+        completed: `Successfully approved the master contract`,
+        failed: 'Something went wrong approving the master contract',
+      },
+      groupTimestamp: ts,
+      timestamp: ts,
+    })
+  }, [address, approvalState, chainId, masterContract, writeAsync])
 
   const approveBentoBox = useCallback(async (): Promise<void> => {
     if (

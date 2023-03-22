@@ -1,6 +1,5 @@
 import React, { FC, ReactNode, useState } from 'react'
 import { TimeAgo } from '../TimeAgo'
-import { ExternalLink } from '../ExternalLink'
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 
 interface ToastContent {

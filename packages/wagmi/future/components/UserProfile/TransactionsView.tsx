@@ -1,11 +1,11 @@
 import { ArrowLeftIcon } from '@heroicons/react/24/solid'
-import { useClearNotifications, useNotifications } from '@sushiswap/react-query/hooks/notifications'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import React, { Dispatch, FC, SetStateAction } from 'react'
 
 import { ProfileView } from './index'
 import { NotificationGroup } from './NotificationGroup'
+import { useClearNotifications, useNotifications } from '@sushiswap/dexie'
 
 interface TransactionsProps {
   address: `0x${string}`
@@ -13,10 +13,8 @@ interface TransactionsProps {
 }
 
 export const TransactionsView: FC<TransactionsProps> = ({ setView, address }) => {
-  const { data: notifications } = useNotifications({ account: address })
-  const { mutate: clearNotifications } = useClearNotifications({
-    account: address,
-  })
+  const notifications = useNotifications({ account: address })
+  const clearNotifications = useClearNotifications({ account: address })
 
   return (
     <div className="p-2">
