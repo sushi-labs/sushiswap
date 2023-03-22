@@ -47,17 +47,9 @@ export const WidgetTitleV2 = () => {
 
   return (
     <div className="flex flex-col gap-2 mb-4 sm:mt-10 mt-2">
-      {tokensLoading ? (
-        <>
-          <Skeleton.Text fontSize="text-4xl" className="w-2/4" />
-        </>
-      ) : (
-        <>
-          <h1 className="flex items-center gap-2 text-4xl font-medium text-gray-900 dark:text-slate-50 max-h-[36px] sm:max-h-[44px]">
-            Trade
-          </h1>
-        </>
-      )}
+      <h1 className="flex items-center gap-2 text-4xl font-medium text-gray-900 dark:text-slate-50 max-h-[36px] sm:max-h-[44px]">
+        Trade
+      </h1>
       {tokensLoading || isPrice0Loading || isPrice1Loading || !token0 || !token1 ? (
         <Skeleton.Text fontSize="text-sm" className="w-2/4" />
       ) : (
