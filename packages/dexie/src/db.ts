@@ -8,7 +8,7 @@ export class SushiswapDexie extends Dexie {
     tokens!: Table<SavedToken>
 
     constructor() {
-        super('sushiswapDB');
+        super('sushi');
         this.version(1).stores({
             notifications: '++id, account, chainId, href, txHash, summary, type, timestamp, groupTimestamp',
             tokens: 'id, address, chainId, decimals, name, symbol, status'

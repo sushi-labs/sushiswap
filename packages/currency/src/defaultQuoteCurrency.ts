@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { OP, SUSHI, USDC, WETH9 } from './constants'
+import { ARB, BUSD, GNO, OP, SUSHI, USDC, WETH9 } from './constants'
 
 export const defaultQuoteCurrency = {
   [ChainId.ETHEREUM]: SUSHI[ChainId.ETHEREUM],
@@ -12,11 +12,11 @@ export const defaultQuoteCurrency = {
   // [ChainId.POLYGON_TESTNET]: SUSHI[ChainId.POLYGON_TESTNET],
   [ChainId.FANTOM]: SUSHI[ChainId.FANTOM],
   // [ChainId.FANTOM_TESTNET]: SUSHI[ChainId.FANTOM_TESTNET],
-  [ChainId.GNOSIS]: SUSHI[ChainId.GNOSIS],
-  [ChainId.BSC]: SUSHI[ChainId.BSC],
+  [ChainId.GNOSIS]: GNO[ChainId.GNOSIS],
+  [ChainId.BSC]: BUSD[ChainId.BSC],
   // [ChainId.BSC_TESTNET]: SUSHI[ChainId.BSC_TESTNET],
-  [ChainId.ARBITRUM]: SUSHI[ChainId.ARBITRUM],
-  [ChainId.ARBITRUM_NOVA]: SUSHI[ChainId.ARBITRUM_NOVA],
+  [ChainId.ARBITRUM]: ARB[ChainId.ARBITRUM],
+  [ChainId.ARBITRUM_NOVA]: ARB[ChainId.ARBITRUM_NOVA],
   // [ChainId.ARBITRUM_TESTNET]: 'SUSHI',
   [ChainId.AVALANCHE]: SUSHI[ChainId.AVALANCHE],
   // [ChainId.AVALANCHE_TESTNET]: 'SUSHI',

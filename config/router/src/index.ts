@@ -2,6 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import {
   APE,
   APE_ADDRESS,
+  ARB,
   BCT,
   BCT_ADDRESS,
   DAI,
@@ -11,6 +12,7 @@ import {
   FRAX_ADDRESS,
   FXS,
   FXS_ADDRESS,
+  GNO,
   KLIMA,
   KLIMA_ADDRESS,
   KP3R,
@@ -362,6 +364,7 @@ export const COMMON_BASES = {
   [ChainId.GNOSIS]: [
     Native.onChain(ChainId.GNOSIS),
     WNATIVE[ChainId.GNOSIS],
+    GNO[ChainId.GNOSIS],
     WETH9[ChainId.GNOSIS],
     USDC[ChainId.GNOSIS],
     USDT[ChainId.GNOSIS],
@@ -401,6 +404,7 @@ export const COMMON_BASES = {
   [ChainId.ARBITRUM_NOVA]: [
     Native.onChain(ChainId.ARBITRUM_NOVA),
     WNATIVE[ChainId.ARBITRUM_NOVA],
+    ARB[ChainId.ARBITRUM_NOVA],
     WBTC[ChainId.ARBITRUM_NOVA],
     USDC[ChainId.ARBITRUM_NOVA],
     USDT[ChainId.ARBITRUM_NOVA],
@@ -429,6 +433,7 @@ export const COMMON_BASES = {
   [ChainId.ARBITRUM]: [
     Native.onChain(ChainId.ARBITRUM),
     WNATIVE[ChainId.ARBITRUM],
+    ARB[ChainId.ARBITRUM],
     WBTC[ChainId.ARBITRUM],
     USDC[ChainId.ARBITRUM],
     USDT[ChainId.ARBITRUM],

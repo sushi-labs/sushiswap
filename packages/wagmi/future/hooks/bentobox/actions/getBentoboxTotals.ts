@@ -30,4 +30,3 @@ export const getBentoboxTotals = async (chainId: BentoBoxV1ChainId, currencies: 
     return null
   }
 }
-
