@@ -36,8 +36,10 @@ export const Input = forwardRef<HTMLInputElement, PercentProps>(
           // universal input options
           inputMode="decimal"
           title="Token Amount"
-          autoComplete="off"
           autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
+          autoComplete="new-password"
           // text-specific options
           type="text"
           pattern="^[0-9]*$"
