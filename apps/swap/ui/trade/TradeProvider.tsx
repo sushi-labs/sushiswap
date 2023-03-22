@@ -230,14 +230,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     }
     const setToken0 = (currency: Type) => {
       const fromCurrency = currency.isNative ? currency.symbol : currency.wrapped.address
-
-      console.log({
-        fromChainId: currency.chainId,
-        fromCurrency,
-        toChainId: query.toCurrency === fromCurrency ? fromChainId : toChainId,
-        toCurrency: query.toCurrency === fromCurrency ? fromCurrency : toCurrency,
-      })
-
       void push(
         {
           pathname,
