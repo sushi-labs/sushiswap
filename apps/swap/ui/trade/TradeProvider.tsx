@@ -334,7 +334,22 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       }
       dispatch({ type: 'setValue', value })
     }
-    const setRecipient = (recipient: string) => dispatch({ type: 'setRecipient', recipient })
+    const setRecipient = (recipient: string) => {
+      if (recipient !== query.recipient) {
+        void push(
+          {
+            pathname,
+            query: {
+              ...query,
+              recipient,
+            },
+          },
+          undefined,
+          { shallow: true }
+        )
+      }
+      dispatch({ type: 'setRecipient', recipient })
+    }
     const setReview = (value: boolean) => dispatch({ type: 'setReview', value })
     const setBentoboxSignature = (value: Signature) => dispatch({ type: 'setBentoboxSignature', value })
     const setTradeId = (value: string) => dispatch({ type: 'setTradeId', value })
