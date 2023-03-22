@@ -6,6 +6,7 @@ import {
   AAVE_ADDRESS,
   ANKR_ADDRESS,
   APE_ADDRESS,
+  ARB_ADDRESS,
   BCT_ADDRESS,
   BUSD_ADDRESS,
   COMP_ADDRESS,
@@ -13,6 +14,7 @@ import {
   FEI_ADDRESS,
   FRAX_ADDRESS,
   FXS_ADDRESS,
+  GNO_ADDRESS,
   JPY_ADDRESS,
   KLIMA_ADDRESS,
   KP3R_ADDRESS,
@@ -41,6 +43,24 @@ import {
   WNATIVE_ADDRESS,
   XSUSHI_ADDRESS,
 } from './token-addresses'
+
+export const GNO = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'GNO',
+    name: 'Gnosis Token',
+  },
+  GNO_ADDRESS
+) as Record<keyof typeof GNO_ADDRESS, Token>
+
+export const ARB = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'ARB',
+    name: 'Arbitrum',
+  },
+  ARB_ADDRESS
+) as Record<keyof typeof ARB_ADDRESS, Token>
 
 export const KP3R = addressMapToTokenMap(
   {

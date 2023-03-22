@@ -1,5 +1,15 @@
 import { ChainId } from '@sushiswap/chain'
 
+export const GNO_ADDRESS = {
+  [ChainId.GNOSIS]: '0x9C58BAcC331c9aa871AFD802DB6379a98e80CEdb',
+} as const
+
+export const ARB_ADDRESS = {
+  [ChainId.ARBITRUM]: '0x912CE59144191C1204E64559FE8253a0e49E6548',
+  [ChainId.ARBITRUM_NOVA]: '0xf823C3cD3CeBE0a1fA952ba88Dc9EEf8e0Bf46AD',
+  [ChainId.ETHEREUM]: '0xB50721BCf8d664c30412Cfbc6cf7a15145234ad1',
+} as const
+
 export const KP3R_ADDRESS = {
   [ChainId.ETHEREUM]: '0x1cEB5cB57C4D4E2b2433641b95Dd330A33185A44',
 } as const

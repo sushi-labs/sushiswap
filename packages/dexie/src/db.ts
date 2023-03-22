@@ -6,7 +6,7 @@ export class SushiswapDexie extends Dexie {
     notifications!: Table<ResolvedNotification & { account: string }>
 
     constructor() {
-        super('sushiswapDB');
+        super('sushi');
         this.version(1).stores({
             notifications: '++id, account, chainId, href, txHash, summary, type, timestamp, groupTimestamp', // Primary key and indexed props
         })

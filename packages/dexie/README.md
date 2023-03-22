@@ -1,3 +1,3 @@
-# Next.js
+# Dexie
 
-Next.js library
+Dexie library
