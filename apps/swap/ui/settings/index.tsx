@@ -9,12 +9,14 @@ import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
 import { SlippageTolerance } from './SlippageTolerance'
 import * as module from 'module'
+import { RoutingApi } from './RoutingApi'
 
 export enum SettingsModule {
   CarbonOffset = 'CarbonOffset',
   CustomTokens = 'CustomTokens',
   SlippageTolerance = 'SlippageTolerance',
   ExpertMode = 'ExpertMode',
+  RoutingApi = 'RoutingApi',
 }
 
 interface SettingsOverlayProps {
@@ -47,6 +49,13 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules }) => {
               <List.Control>
                 {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}
                 {modules.includes(SettingsModule.CarbonOffset) && <CarbonOffset />}
+              </List.Control>
+            </List>
+          )}
+          {modules.includes(SettingsModule.RoutingApi) && (
+            <List className="!pt-0">
+              <List.Control>
+                <RoutingApi />
               </List.Control>
             </List>
           )}

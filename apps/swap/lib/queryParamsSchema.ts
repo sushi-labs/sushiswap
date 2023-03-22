@@ -39,7 +39,7 @@ export const queryParamsSchema = z.object({
       }
     ),
   toCurrency: z.string().default('SUSHI'),
-  amount: z.optional(z.coerce.string()),
+  amount: z.string().default(''),
   recipient: z.optional(z.coerce.string()),
   review: z.optional(z.coerce.boolean()),
 })

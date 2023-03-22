@@ -109,25 +109,15 @@ interface SwapProviderProps {
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { address } = useAccount()
   const { query, push, pathname } = useRouter()
-  const {
-    fromChainId,
-    toChainId,
-    fromCurrency,
-    toCurrency,
-    amount: _amount,
-    recipient,
-    review,
-  } = queryParamsSchema.parse(query)
+  const { fromChainId, toChainId, fromCurrency, toCurrency, amount, recipient, review } = queryParamsSchema.parse(query)
   const { token0, token1 } = useTokenState()
-
-  console.log({ fromChainId, toChainId, fromCurrency, toCurrency })
 
   const [internalState, dispatch] = useReducer(reducer, {
     isFallback: true,
     tradeId: nanoid(),
     review: review ? review : false,
     recipient: recipient ? recipient : address ? address : undefined,
-    value: !_amount || _amount === '0' ? '' : _amount,
+    value: !amount || amount === '0' ? '' : amount,
     bentoboxSignature: undefined,
   })
 
@@ -230,14 +220,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     }
     const setToken0 = (currency: Type) => {
       const fromCurrency = currency.isNative ? currency.symbol : currency.wrapped.address
-
-      console.log({
-        fromChainId: currency.chainId,
-        fromCurrency,
-        toChainId: query.toCurrency === fromCurrency ? fromChainId : toChainId,
-        toCurrency: query.toCurrency === fromCurrency ? fromCurrency : toCurrency,
-      })
-
       void push(
         {
           pathname,
@@ -334,8 +316,38 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       )
     }
 
-    const setValue = (value: string) => dispatch({ type: 'setValue', value })
-    const setRecipient = (recipient: string) => dispatch({ type: 'setRecipient', recipient })
+    const setValue = (value: string) => {
+      if (value !== query.amount) {
+        void push(
+          {
+            pathname,
+            query: {
+              ...query,
+              amount: value,
+            },
+          },
+          undefined,
+          { shallow: true }
+        )
+      }
+      dispatch({ type: 'setValue', value })
+    }
+    const setRecipient = (recipient: string) => {
+      if (recipient !== query.recipient) {
+        void push(
+          {
+            pathname,
+            query: {
+              ...query,
+              recipient,
+            },
+          },
+          undefined,
+          { shallow: true }
+        )
+      }
+      dispatch({ type: 'setRecipient', recipient })
+    }
     const setReview = (value: boolean) => dispatch({ type: 'setReview', value })
     const setBentoboxSignature = (value: Signature) => dispatch({ type: 'setBentoboxSignature', value })
     const setTradeId = (value: string) => dispatch({ type: 'setTradeId', value })
@@ -358,24 +370,19 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setBentoboxSignature,
       setFallback,
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    fromChainId,
+    fromCurrency,
+    pathname,
     push,
     query,
     state.network0,
     state.network1,
-    state.token1?.chainId,
-    state.token1?.isNative,
-    state.token1?.symbol,
-    state.token1?.wrapped.address,
+    state.token0,
+    state.token1,
+    toChainId,
+    toCurrency,
   ])
-
-  useEffect(() => {
-    if (_amount) {
-      api.setValue(_amount)
-    }
-  }, [_amount, api])
 
   return (
     <SwapActionsContext.Provider value={api}>

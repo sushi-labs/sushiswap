@@ -352,6 +352,7 @@ export const COMMON_BASES = {
   [ChainId.ETHEREUM]: [
     Native.onChain(ChainId.ETHEREUM),
     WNATIVE[ChainId.ETHEREUM],
+    SUSHI[ChainId.ETHEREUM],
     WBTC[ChainId.ETHEREUM],
     USDC[ChainId.ETHEREUM],
     USDT[ChainId.ETHEREUM],
