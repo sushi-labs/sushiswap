@@ -43,6 +43,7 @@ const queryFn = async ({
   _totals?.forEach((total, index) => {
     totalsMap.set(_tokensUnique[index].wrapped.address, total)
   })
+  
   const [pairs, constantProductPools, stablePools, bridgeBentoPools] = await Promise.all([
     isUniswapV2Router02ChainId(chainId) ? getPairs(chainId, currencyCombinations) : Promise.resolve([]),
     isConstantProductPoolFactoryChainId(chainId) && isBentoBoxV1ChainId(chainId)
