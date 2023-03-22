@@ -43,7 +43,7 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function 
           autoCorrect="off"
           autoCapitalize="off"
           spellCheck="false"
-          autoComplete="new-password"
+          autoComplete="off"
         />
       ) : (
         <input
@@ -59,7 +59,7 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function 
           autoCorrect="off"
           autoCapitalize="off"
           spellCheck="false"
-          autoComplete="new-password"
+          autoComplete="off"
         />
       )}
       {(loading || value) && (

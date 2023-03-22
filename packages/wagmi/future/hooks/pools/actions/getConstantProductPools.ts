@@ -1,6 +1,7 @@
 import { constantProductPoolAbi, constantProductPoolFactoryAbi } from '@sushiswap/abi'
 import { ConstantProductPool } from '@sushiswap/amm'
 import { Amount, Currency, Token } from '@sushiswap/currency'
+import { isConstantProductPoolFactoryChainId } from '@sushiswap/trident'
 import { BigNumber } from 'ethers'
 import { Address, readContracts } from 'wagmi'
 
@@ -22,12 +23,14 @@ interface PoolData {
 }
 
 export const getConstantProductPools = async (
-  chainId: number | undefined,
+  chainId: number,
   currencies: [Currency | undefined, Currency | undefined][]
 ) => {
-  const contract = getContract({
-    ...getConstantProductPoolFactoryContract(chainId),
-  })
+  // if (!isConstantProductPoolFactoryChainId(chainId)) {
+  //   return []
+  // }
+
+  const contract = getContract(getConstantProductPoolFactoryContract(chainId))
 
   const _pairsUnique = pairsUnique(currencies)
   const _pairsUniqueAddr = _pairsUnique.map(([t0, t1]) => [t0.address, t1.address])
