@@ -11,6 +11,7 @@ import { warningSeverity, warningSeverityClassName } from '../../lib/warningSeve
 import { TradeRoute } from './TradeRoute'
 import { ZERO } from '@sushiswap/math'
 import { chainName } from '@sushiswap/chain'
+import { UseTradeReturn } from '@sushiswap/react-query'
 
 export const TradeStats: FC = () => {
   const [open, setOpen] = useState(false)
@@ -101,7 +102,7 @@ export const TradeStats: FC = () => {
                   View
                 </button>
               )}
-              <TradeRoute trade={trade} open={open} setOpen={setOpen} />
+              <TradeRoute trade={trade as UseTradeReturn | undefined} open={open} setOpen={setOpen} />
             </span>
           </div>
         )}

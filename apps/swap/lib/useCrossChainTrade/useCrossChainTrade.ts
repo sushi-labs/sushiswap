@@ -1,7 +1,7 @@
 import { TradeType } from '@sushiswap/amm'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, StargateChainId } from '@sushiswap/stargate'
 import { useSushiXSwapContract } from '@sushiswap/wagmi'
-import { JSBI, Percent } from '@sushiswap/math'
+import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { Amount, Native, Price, Token, tryParseAmount, Type, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { useQuery } from '@tanstack/react-query'
 import { getBridgeFees } from './getBridgeFees'
@@ -222,7 +222,7 @@ export const useCrossChainTradeQuery = (
           minAmountOut: dstMinimumAmountOut?.quotient.toString(),
           gasSpent: undefined,
           writeArgs: undefined,
-          route: undefined,
+          route: { status: '' },
           functionName: 'cook',
           overrides: undefined,
         } as UseCrossChainSelect
@@ -283,7 +283,9 @@ export const useCrossChainTradeQuery = (
         minAmountOut: dstMinimumAmountOut?.quotient.toString(),
         gasSpent: fee.toString(),
         writeArgs: [sushiXSwap.srcCooker.actions, sushiXSwap.srcCooker.values, sushiXSwap.srcCooker.datas],
-        route: {},
+        route: {
+          status: '',
+        },
         functionName: 'cook',
         overrides: { value },
       } as UseCrossChainSelect
@@ -328,6 +330,9 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
       if (data && amountIn && amountOut && data.priceImpact && data.minAmountOut) {
         return {
           ...data,
+          route: {
+            status: amountIn?.greaterThan(ZERO) && !amountOut ? 'NoWay' : '',
+          },
           gasSpent:
             data.gasSpent && price
               ? Amount.fromRawAmount(Native.onChain(variables.network0), data.gasSpent)
@@ -350,7 +355,9 @@ export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
         minAmountOut,
         gasSpent: undefined,
         writeArgs: undefined,
-        route: undefined,
+        route: {
+          status: amountIn?.greaterThan(ZERO) && !amountOut ? 'NoWay' : '',
+        },
         functionName: 'cook',
         overrides: undefined,
       }
