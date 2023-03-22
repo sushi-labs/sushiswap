@@ -7,7 +7,6 @@ import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class SushiProvider extends UniswapV2BaseProvider {
-
   constructor(chainId: ChainId, web3Client: PublicClient, databaseClient: PrismaClient) {
     const factory = FACTORY_ADDRESS as { [chainId: number]: `0x${string}` }
     super(chainId, web3Client, databaseClient, factory, INIT_CODE_HASH)

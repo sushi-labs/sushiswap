@@ -51,9 +51,9 @@ export const PricePanel: FC<PricePanel> = ({ loading, price, currency, value, us
           )}
         >
           {' '}
-          {`${usdPctChange === 0 ? '' : usdPctChange > 0 ? '(+' : '('}${
-            usdPctChange === 0 ? '0.00' : usdPctChange?.toFixed(2)
-          }%)`}
+          {`${usdPctChange?.toFixed(2) === '0.00' ? '' : usdPctChange > 0 ? '(+' : '('}${
+            usdPctChange?.toFixed(2) === '0.00' ? '' : `${usdPctChange?.toFixed(2)}%)`
+          }`}
         </span>
       )}
     </p>
