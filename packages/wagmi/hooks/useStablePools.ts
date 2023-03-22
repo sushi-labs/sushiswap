@@ -9,7 +9,7 @@ import { Address, useContractReads } from 'wagmi'
 
 import { stablePoolAbi, stablePoolFactoryAbi } from '../abis'
 import { useBentoBoxTotals } from './useBentoBoxTotals'
-import { getStablePoolFactoryContract, useStablePoolFactoryContract } from './useStablePoolFactoryContract'
+import { useStablePoolFactoryContract } from './useStablePoolFactoryContract'
 
 export enum StablePoolState {
   LOADING,
