@@ -1,30 +1,17 @@
 'use client'
 
 import { ChainId } from '@sushiswap/chain'
-import {
-  Amount,
-  currencyFromShortCurrencyName,
-  defaultQuoteCurrency,
-  isShortCurrencyName,
-  Native,
-  Token,
-  tryParseAmount,
-  Type,
-} from '@sushiswap/currency'
+import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
 import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, useReducer } from 'react'
 import { useAccount } from 'wagmi'
-import { z } from 'zod'
 import { useRouter } from 'next/router'
-import { useToken } from '@sushiswap/react-query'
-import { isAddress } from 'ethers/lib/utils'
 import { Signature } from '@ethersproject/bytes'
 import { nanoid } from 'nanoid'
-import { isUniswapV2FactoryChainId } from '@sushiswap/sushiswap'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
 import { SwapChainId } from 'types'
 import { queryParamsSchema } from '../../lib/queryParamsSchema'
 import { useTokenState } from '../TokenProvider'
+import { useEffectDebugger } from '@sushiswap/hooks'
 
 interface InternalSwapState {
   isFallback: boolean
@@ -140,7 +127,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       const token1 =
         state.token1?.chainId === chainId
           ? state.token1.isNative
-            ? state.token1.symbol
+            ? 'NATIVE'
             : state.token1.wrapped.address
           : defaultQuoteCurrency[chainId].address
 
@@ -150,7 +137,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           query: {
             ...query,
             fromChainId: chainId,
-            fromCurrency: token0.isNative ? token0.symbol : token0.wrapped.address,
+            fromCurrency: token0.isNative ? 'NATIVE' : token0.wrapped.address,
             toChainId: chainId,
             toCurrency: token1,
             amount: '',
@@ -162,11 +149,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
 
     const setNetwork0 = (chainId: ChainId) => {
       const fromCurrency =
-        state.token0?.chainId === chainId
-          ? state.token0.isNative
-            ? state.token0.symbol
-            : state.token0.wrapped.address
-          : Native.onChain(chainId).symbol
+        state.token0?.chainId === chainId ? (state.token0.isNative ? 'NATIVE' : state.token0.wrapped.address) : 'NATIVE'
 
       void push(
         {
@@ -185,7 +168,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       const toCurrency =
         state.token1?.chainId === chainId
           ? state.token1.isNative
-            ? state.token1.symbol
+            ? 'NATIVE'
             : state.token1.wrapped.address
           : defaultQuoteCurrency[chainId].address
 
@@ -209,9 +192,9 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           query: {
             ...query,
             fromChainId: currency0.chainId,
-            fromCurrency: currency0.isNative ? currency0.symbol : currency0.wrapped.address,
+            fromCurrency: currency0.isNative ? 'NATIVE' : currency0.wrapped.address,
             toChainId: currency1.chainId,
-            toCurrency: currency1.isNative ? currency1.symbol : currency1.wrapped.address,
+            toCurrency: currency1.isNative ? 'NATIVE' : currency1.wrapped.address,
           },
         },
         undefined,
@@ -219,16 +202,16 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       )
     }
     const setToken0 = (currency: Type) => {
-      const fromCurrency = currency.isNative ? currency.symbol : currency.wrapped.address
+      const _fromCurrency = currency.isNative ? 'NATIVE' : currency.wrapped.address
       void push(
         {
           pathname,
           query: {
             ...query,
             fromChainId: currency.chainId,
-            fromCurrency,
-            toChainId: toCurrency === fromCurrency ? fromChainId : toChainId,
-            toCurrency: toCurrency === fromCurrency ? fromCurrency : toCurrency,
+            fromCurrency: _fromCurrency,
+            toChainId: toCurrency === _fromCurrency ? fromChainId : toChainId,
+            toCurrency: toCurrency === _fromCurrency ? fromCurrency : toCurrency,
           },
         },
         undefined,
@@ -236,16 +219,17 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       )
     }
     const setToken1 = (currency: Type) => {
-      const toCurrency = currency.isNative ? currency.symbol : currency.wrapped.address
+      const _toCurrency = currency.isNative ? 'NATIVE' : currency.wrapped.address
+
       void push(
         {
           pathname,
           query: {
             ...query,
-            fromChainId: fromCurrency === toCurrency ? toChainId : fromChainId,
-            fromCurrency: fromCurrency === toCurrency ? toCurrency : fromCurrency,
+            fromChainId: fromCurrency === _toCurrency ? toChainId : fromChainId,
+            fromCurrency: fromCurrency === _toCurrency ? toCurrency : fromCurrency,
             toChainId: currency.chainId,
-            toCurrency,
+            toCurrency: _toCurrency,
           },
         },
         undefined,
@@ -280,10 +264,10 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       const token1 =
         state.token1?.chainId === network1
           ? state.token1.isNative
-            ? state.token1.symbol
+            ? 'NATIVE'
             : state.token1.wrapped.address
           : state.token0?.symbol === defaultQuoteCurrency[network1 as keyof typeof defaultQuoteCurrency].symbol
-          ? Native.onChain(network1).symbol
+          ? 'NATIVE'
           : defaultQuoteCurrency[network1 as keyof typeof defaultQuoteCurrency].address
 
       void push(
@@ -306,9 +290,9 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           query: {
             ...query,
             fromChainId: currency.chainId,
-            fromCurrency: Native.onChain(currency.chainId).symbol,
+            fromCurrency: 'NATIVE',
             toChainId: currency.chainId,
-            toCurrency: currency.isNative ? currency.symbol : currency.wrapped.address,
+            toCurrency: currency.isNative ? 'NATIVE' : currency.wrapped.address,
           },
         },
         undefined,

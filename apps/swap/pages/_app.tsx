@@ -28,7 +28,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="mask-icon" href="/swap/safari-pinned-tab.svg?v=1" color="#fa52a0" />
       </Head>
       <WagmiProvider>
-        {/*<PersistQueryClientProvider>*/}
         <QueryClientProvider client={queryClient}>
           <TokenProvider>
             <SplashController>
@@ -42,7 +41,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             </SplashController>
           </TokenProvider>
           <ToastContainer />
-          {/*</PersistQueryClientProvider>*/}
         </QueryClientProvider>
       </WagmiProvider>
     </>

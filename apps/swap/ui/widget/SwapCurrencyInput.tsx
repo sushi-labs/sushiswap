@@ -9,20 +9,7 @@ import { useTokenState } from '../TokenProvider'
 export const SwapCurrencyInput: FC = () => {
   const { tokensLoading } = useTokenState()
   const { token0, value, network0 } = useSwapState()
-  const [localValue, setLocalValue] = useState(value)
   const { setToken0, setValue } = useSwapActions()
-  const debouncedValue = useDebounce(localValue, 250)
-
-  // To avoid slow input
-  useEffect(() => {
-    setValue(debouncedValue)
-  }, [setValue, debouncedValue])
-
-  useEffect(() => {
-    if (value !== localValue && value === '0') {
-      setLocalValue('')
-    }
-  }, [value])
 
   return (
     <Web3Input.Currency
@@ -30,8 +17,8 @@ export const SwapCurrencyInput: FC = () => {
       className="p-3 dark:bg-slate-800 bg-white rounded-xl"
       chainId={network0}
       onSelect={setToken0}
-      value={localValue}
-      onChange={setLocalValue}
+      value={value}
+      onChange={setValue}
       currency={token0}
       loading={tokensLoading}
       currencyLoading={tokensLoading}

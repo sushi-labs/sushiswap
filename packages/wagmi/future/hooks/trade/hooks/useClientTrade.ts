@@ -9,6 +9,7 @@ import { BigNumber } from 'ethers'
 import { Router } from '@sushiswap/router'
 import { isRouteProcessorChainId, routeProcessorAddress } from '@sushiswap/route-processor'
 import { HexString } from '@sushiswap/types'
+import { calculateSlippageAmount } from '@sushiswap/amm'
 
 export const useClientTrade = (variables: UseTradeParams) => {
   const { chainId, fromToken, toToken, slippagePercentage, carbonOffset, amount, enabled, recipient } = variables
@@ -112,7 +113,12 @@ export const useClientTrade = (variables: UseTradeParams) => {
             : new Percent(0),
           amountIn,
           amountOut,
-          minAmountOut: writeArgs?.[3] ? Amount.fromRawAmount(toToken, writeArgs[3].toString()) : undefined,
+          minAmountOut: writeArgs?.[3]
+            ? Amount.fromRawAmount(toToken, writeArgs[3].toString())
+            : Amount.fromRawAmount(
+                toToken,
+                calculateSlippageAmount(amountOut, new Percent(Math.floor(0.5 * 100), 10_000))[0]
+              ),
           gasSpent: price
             ? Amount.fromRawAmount(Native.onChain(chainId), route.gasSpent * 1e9)
                 .multiply(price.asFraction)
