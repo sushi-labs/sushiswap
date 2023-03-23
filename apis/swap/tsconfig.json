@@ -1,9 +1,17 @@
 {
-  "extends": "@sushiswap/typescript-config/node18-vercel.json",
-  "include": ["."],
-  "exclude": ["node_modules", ".vercel"],
-  // Need to specify even though it's in the base config file, don't know why
+  "extends": "@sushiswap/typescript-config/node18-strictest-esm.combined.json",
+  "include": [".graphclient", "src/**/*.ts"],
+  "exclude": ["node_modules", "dist"],
   "compilerOptions": {
-    "module": "esnext"
+    "baseUrl": ".",
+    "outDir": "./dist",
+    "rootDir": ".",
+    "moduleResolution": "nodenext",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
+  },
+  "ts-node": {
+    "esm": true,
+    "swc": true
   }
 }

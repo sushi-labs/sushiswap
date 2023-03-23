@@ -1,8 +1,9 @@
 import '@sushiswap/ui/index.css'
 import 'styles/index.css'
+import '../variables.css'
 
 import { useIsSmScreen } from '@sushiswap/hooks'
-import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
+import { App, ThemeProvider } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
 import { MotionConfig } from 'framer-motion'
@@ -16,12 +17,15 @@ import { WagmiConfig } from 'wagmi'
 
 import { Header } from '../components'
 import SEO from '../next-seo.config.mjs'
+import { ToastContainer } from '@sushiswap/ui/future/components/toast'
 
 declare global {
   interface Window {
     dataLayer: Record<string, any>[]
   }
 }
+
+export { reportWebVitals } from 'next-axiom'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const isSmallScreen = useIsSmScreen()

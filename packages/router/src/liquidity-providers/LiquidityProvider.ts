@@ -1,9 +1,7 @@
-import type { ChainId } from '@sushiswap/chain'
+import { ChainId, chainShortName } from '@sushiswap/chain'
 import type { Token } from '@sushiswap/currency'
-import type { ethers } from 'ethers'
+import { PublicClient } from 'viem'
 
-import type { Limited } from '../Limited'
-import type { MultiCallProvider } from '../MulticallProvider'
 import type { PoolCode } from '../pools/PoolCode'
 
 export enum LiquidityProviders {
@@ -12,58 +10,78 @@ export enum LiquidityProviders {
   Trident = 'Trident',
   QuickSwap = 'QuickSwap',
   ApeSwap = 'ApeSwap',
+  PancakeSwap = 'PancakeSwap',
+  TraderJoe = 'TraderJoe',
   Dfyn = 'Dfyn',
   Elk = 'Elk',
   JetSwap = 'JetSwap',
+  SpookySwap = 'SpookySwap',
+  NetSwap = 'NetSwap',
   NativeWrap = 'NativeWrap',
+  HoneySwap = 'HoneySwap',
+  UbeSwap = 'UbeSwap',
+  Biswap = 'Biswap',
 }
 
 export abstract class LiquidityProvider {
-  limited: Limited
-  chainDataProvider: ethers.providers.BaseProvider
-  multiCallProvider: MultiCallProvider
   chainId: ChainId
-  stateId = 0
+  client: PublicClient
   lastUpdateBlock = 0
+  readonly ON_DEMAND_POOLS_LIFETIME_IN_SECONDS = 60
+  readonly FETCH_AVAILABLE_POOLS_AFTER_SECONDS = 900
 
-  constructor(
-    chainDataProvider: ethers.providers.BaseProvider,
-    multiCallProvider: MultiCallProvider,
-    chainId: ChainId,
-    l: Limited
-  ) {
-    this.limited = l
-    this.chainDataProvider = chainDataProvider
-    this.multiCallProvider = multiCallProvider
+  constructor(chainId: ChainId, client: PublicClient) {
     this.chainId = chainId
+    this.client = client
   }
 
   abstract getType(): LiquidityProviders
 
-  // The name of liquidity provider to be used for pool naming. For example, 'Sushiswap'
+  /**
+   * The name of liquidity provider to be used for pool naming. For example, 'SushiSwap'
+   */
   abstract getPoolProviderName(): string
 
-  // To start ferch pools data. Can fetch data for the most used or big pools even before
-  // to/from tokens are known
+  /**
+   * Initiates event listeners for top pools
+   */
   abstract startFetchPoolsData(): void
 
-  // start fetching pools data for tokens t0, t1, if it is not fetched before
-  // call if for to and from tokens
-  abstract fetchPoolsForToken(t0: Token, t1: Token): void
+  /**
+   * Fetches relevant pools for the given tokens
+   * @param t0 Token
+   * @param t1 Token
+   */
+  abstract fetchPoolsForToken(t0: Token, t1: Token): Promise<void>
 
-  // Returns current pools data
-  abstract getCurrentPoolList(): PoolCode[]
+  /**
+   * Returns a list of PoolCode
+   * @param t0 Token
+   * @param t1 Token
+   * @returns PoolCode[]
+   */
+  abstract getCurrentPoolList(t0: Token, t1: Token): PoolCode[]
 
-  // If pools data were changed then stateId should be increased
-  getCurrentPoolStateId() {
-    return this.stateId
-  }
-
-  // Stops all network activity
   abstract stopFetchPoolsData(): void
 
-  // returns the last processed block number
+  /**
+   * Returns last processed block number
+   * @returns last processed block number
+   */
   getLastUpdateBlock(): number {
     return this.lastUpdateBlock
   }
+
+  /**
+   * Logs a message with the following format:
+   * <chainId>~<lastUpdateBlock>~<providerName>
+   * Example: 1~123456~SushiSwap
+   * @returns string
+   */
+  getLogPrefix(): string {
+    return `${chainShortName[this.chainId]}/${this.chainId}~${this.lastUpdateBlock}~${this.getType()}`
+  }
+
+  getTradeId = (t0: Token, t1: Token) =>
+    [t0.address, t1.address].sort((first, second) => (first > second ? -1 : 1)).join(':')
 }

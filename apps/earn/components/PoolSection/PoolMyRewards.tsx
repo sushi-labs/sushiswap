@@ -1,5 +1,5 @@
 import { formatUSD } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { useBreakpoint } from '@sushiswap/hooks'
 import { Button, Currency, Typography } from '@sushiswap/ui'
 import { Checker } from '@sushiswap/wagmi'
@@ -8,14 +8,14 @@ import { FC } from 'react'
 import { usePoolPositionRewards } from '../PoolPositionRewardsProvider'
 
 interface PoolMyRewardsProps {
-  pair: Pair
+  pool: Pool
 }
 
-export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pair }) => {
+export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pool }) => {
   const { pendingRewards, rewardTokens, harvest, isError, values, isLoading } = usePoolPositionRewards()
   const { isLg } = useBreakpoint('lg')
 
-  if (!isLg || (!pair?.farm?.incentives?.length && !pendingRewards?.length)) return <></>
+  if (!isLg || (!pool?.incentives?.length && !pendingRewards?.length)) return <></>
 
   return (
     <div className="flex flex-col gap-3">
@@ -57,7 +57,7 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pair }) => {
         </div>
       </div>
       <Checker.Connected fullWidth size="md">
-        <Checker.Network fullWidth size="md" chainId={pair.chainId}>
+        <Checker.Network fullWidth size="md" chainId={pool.chainId}>
           <Button size="md" fullWidth onClick={harvest}>
             Claim
           </Button>

@@ -2,7 +2,7 @@ import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount, Native } from '@sushiswap/currency'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
@@ -22,6 +22,7 @@ import {
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 import {
   approveMasterContractAction,
@@ -31,21 +32,22 @@ import {
   sweep,
   unwrapWETHAction,
 } from '../../lib/actions'
-import { useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
-import { useNotifications, useSettings } from '../../lib/state/storage'
+import { useTokensFromPool, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
+import { useSettings } from '../../lib/state/storage'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 
 interface RemoveSectionTridentProps {
-  pair: Pair
+  pool: Pool
 }
 
-export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) => {
+export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pool: _pool }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
-  const { token0, token1, liquidityToken } = useTokensFromPair(pair)
+  const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
   const isMounted = useIsMounted()
-  const contract = useTridentRouterContract(pair.chainId)
+  const contract = useTridentRouterContract(_pool.chainId)
   const [{ slippageTolerance }] = useSettings()
   const [permit, setPermit] = useState<Signature>()
   const slippagePercent = useMemo(() => {
@@ -55,35 +57,40 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
   const [percentage, setPercentage] = useState<string>('')
   const percentToRemove = useMemo(() => new Percent(percentage, 100), [percentage])
   const tokens = useMemo(() => [token0, token1], [token0, token1])
-  const rebases = useBentoBoxTotals(pair.chainId, tokens)
+  const rebases = useBentoBoxTotals(_pool.chainId as BentoBoxV1ChainId, tokens)
   const { balance } = usePoolPosition()
 
   const slpAmountToRemove = useMemo(() => {
     return balance?.[FundSource.WALLET].multiply(percentToRemove)
   }, [balance, percentToRemove])
 
+  // TODO: Standardize fee format
   const [constantProductPoolState, constantProductPool] = useConstantProductPool(
-    pair.chainId,
+    _pool.chainId,
     token0,
     token1,
-    pair.swapFee,
-    pair.twapEnabled
+    _pool.swapFee * 10000,
+    _pool.twapEnabled
   )
 
-  const [stablePoolState, stablePool] = useStablePool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
+  const [stablePoolState, stablePool] = useStablePool(
+    _pool.chainId,
+    token0,
+    token1,
+    _pool.swapFee * 10000,
+    _pool.twapEnabled
+  )
 
   const [poolState, pool] = useMemo(() => {
-    if (pair.type === 'STABLE_POOL') return [stablePoolState, stablePool]
-    if (pair.type === 'CONSTANT_PRODUCT_POOL') return [constantProductPoolState, constantProductPool]
+    if (_pool.type === 'STABLE_POOL') return [stablePoolState, stablePool]
+    if (_pool.type === 'CONSTANT_PRODUCT_POOL') return [constantProductPoolState, constantProductPool]
 
     return [undefined, undefined]
-  }, [constantProductPool, constantProductPoolState, pair.type, stablePool, stablePoolState])
+  }, [_pool.type, constantProductPool, constantProductPoolState, stablePool, stablePoolState])
 
   const totalSupply = useTotalSupply(liquidityToken)
 
-  const [, { createNotification }] = useNotifications(address)
-
-  const underlying = useUnderlyingTokenBalanceFromPair({
+  const underlying = useUnderlyingTokenBalanceFromPool({
     reserve0: pool?.reserve0,
     reserve1: pool?.reserve1,
     totalSupply,
@@ -126,7 +133,8 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
       if (!data || !chain?.id) return
 
       const ts = new Date().getTime()
-      createNotification({
+      void createToast({
+        account: address,
         type: 'burn',
         chainId: chain.id,
         txHash: data.hash,
@@ -140,7 +148,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
         groupTimestamp: ts,
       })
     },
-    [chain?.id, createNotification, token0.symbol, token1.symbol]
+    [address, chain?.id, token0.symbol, token1.symbol]
   )
 
   const prepare = useCallback(
@@ -151,7 +159,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
           !pool ||
           !token0 ||
           !token1 ||
-          !pair.chainId ||
+          !_pool.chainId ||
           !contract ||
           !minAmount0 ||
           !minAmount1 ||
@@ -177,9 +185,9 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
 
         let indexOfWETH = -1
         indexOfWETH =
-          minAmount0.wrapped.currency.address === Native.onChain(pair.chainId).wrapped.address ? 0 : indexOfWETH
+          minAmount0.wrapped.currency.address === Native.onChain(_pool.chainId).wrapped.address ? 0 : indexOfWETH
         indexOfWETH =
-          minAmount1.wrapped.currency.address === Native.onChain(pair.chainId).wrapped.address ? 1 : indexOfWETH
+          minAmount1.wrapped.currency.address === Native.onChain(_pool.chainId).wrapped.address ? 1 : indexOfWETH
 
         const actions = [
           approveMasterContractAction({ router: contract, signature: permit }),
@@ -225,7 +233,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
       pool,
       token0,
       token1,
-      pair.chainId,
+      _pool.chainId,
       contract,
       minAmount0,
       minAmount1,
@@ -237,7 +245,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
-    chainId: pair.chainId,
+    chainId: _pool.chainId,
     prepare,
     onSettled,
   })
@@ -245,8 +253,8 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
   return (
     <div>
       <RemoveSectionWidget
-        isFarm={!!pair.farm}
-        chainId={pair.chainId}
+        isFarm={!!_pool.incentives && _pool.incentives.length > 0}
+        chainId={_pool.chainId}
         percentage={percentage}
         token0={token0}
         token1={token1}
@@ -272,7 +280,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
               </Button>
             }
           >
-            <Checker.Network size="md" chainId={pair.chainId}>
+            <Checker.Network size="md" chainId={_pool.chainId}>
               <Checker.Custom
                 showGuardIfTrue={+percentage <= 0}
                 guard={
@@ -282,7 +290,6 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
                 }
               >
                 <Approve
-                  onSuccess={createNotification}
                   className="flex-grow !justify-end"
                   components={
                     <Approve.Components>
@@ -291,7 +298,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
                         size="md"
                         className="whitespace-nowrap"
                         fullWidth
-                        address={getTridentRouterContractConfig(pair.chainId).address}
+                        address={getTridentRouterContractConfig(_pool.chainId).address}
                         onSignature={setPermit}
                       />
                       <Approve.Token
@@ -300,7 +307,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
                         className="whitespace-nowrap"
                         fullWidth
                         amount={slpAmountToRemove}
-                        address={getTridentRouterContractConfig(pair.chainId).address}
+                        address={getTridentRouterContractConfig(_pool.chainId).address}
                       />
                     </Approve.Components>
                   }

@@ -1,33 +1,33 @@
 import { TransactionRequest } from '@ethersproject/providers'
+import { ChefType } from '@sushiswap/client'
 import { Amount, Token } from '@sushiswap/currency'
-import { NotificationData } from '@sushiswap/ui'
 import { Dispatch, SetStateAction, useCallback } from 'react'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { useMasterChefContract } from '../useMasterChefContract'
 import { useSendTransaction } from '../useSendTransaction'
-import { Chef } from './useMasterChef'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 
 interface UseMasterChefDepositParams {
   chainId: number
-  chef: Chef
+  chef: ChefType
   pid: number
-  onSuccess?(data: NotificationData): void
   amount?: Amount<Token>
 }
 
 type UseMasterChefDeposit = (params: UseMasterChefDepositParams) => ReturnType<typeof useSendTransaction>
 
-export const useMasterChefDeposit: UseMasterChefDeposit = ({ chainId, onSuccess, amount, chef, pid }) => {
+export const useMasterChefDeposit: UseMasterChefDeposit = ({ chainId, amount, chef, pid }) => {
   const { address } = useAccount()
   const contract = useMasterChefContract(chainId, chef)
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
-      if (onSuccess && data && amount) {
+      if (data && amount) {
         const ts = new Date().getTime()
-        onSuccess({
+        createToast({
+          account: address,
           type: 'mint',
           chainId,
           txHash: data.hash,
@@ -42,7 +42,7 @@ export const useMasterChefDeposit: UseMasterChefDeposit = ({ chainId, onSuccess,
         })
       }
     },
-    [amount, chainId, onSuccess]
+    [amount, chainId, address]
   )
 
   const prepare = useCallback(
@@ -54,7 +54,9 @@ export const useMasterChefDeposit: UseMasterChefDeposit = ({ chainId, onSuccess,
         to: contract.address,
         data: contract.interface.encodeFunctionData(
           'deposit',
-          chef === Chef.MASTERCHEF ? [pid, amount.quotient.toString()] : [pid, amount.quotient.toString(), address]
+          chef === ChefType.MasterChefV1
+            ? [pid, amount.quotient.toString()]
+            : [pid, amount.quotient.toString(), address]
         ),
       })
     },

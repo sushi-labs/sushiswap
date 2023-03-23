@@ -53,6 +53,9 @@ yarn-error.log*
 # typechain
 typechain
 
+# exports
+exports
+
 # cache
 cache
 
@@ -61,6 +64,12 @@ generated
 
 # artifacts
 artifacts
+
+# artifacts zk
+artifacts-zk
+
+# cache zk
+cache-zk
 
 # workers
 **/public/sw.js

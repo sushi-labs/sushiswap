@@ -23,6 +23,7 @@ module.exports = {
       }),
       boxShadow: {
         'depth-1': '0px 3px 6px rgba(15, 15, 15, 0.5)',
+        'hover-card': 'rgb(101 119 134 / 20%) 0px 0px 15px, rgb(101 119 134 / 15%) 0px 0px 3px 1px',
       },
       colors: {
         blue: {
@@ -47,6 +48,10 @@ module.exports = {
         heartbeat: 'heartbeat 1s ease 0.2s infinite normal forwards',
         rotate: 'rotate360 1s cubic-bezier(0.83, 0, 0.17, 1) infinite',
         wave: 'shimmer 1.25s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'wave-fast': 'shimmer 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        dash: 'dash 1.5s 2s ease-out infinite',
+        'dash-check': 'dash-check 1.5s 2s ease-out infinite',
+        skeleton: 'skeleton 8s ease-in-out infinite',
       },
       keyframes: {
         shimmer: {
@@ -83,6 +88,30 @@ module.exports = {
           },
           to: {
             transform: 'rotate(360deg)',
+          },
+        },
+        dash: {
+          '0%': {
+            strokeDashoffset: 1000,
+          },
+          '100%': {
+            strokeDashoffset: 0,
+          },
+        },
+        'dash-check': {
+          '0%': {
+            strokeDashoffset: -100,
+          },
+          '100%': {
+            strokeDashoffset: 900,
+          },
+        },
+        skeleton: {
+          '0%': {
+            backgroundPosition: '200% 0',
+          },
+          '100%': {
+            backgroundPosition: '-200% 0',
           },
         },
       },

@@ -1,11 +1,5 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
-import {
-  Bundle,
-  getBuiltGraphSDK,
-  Pagination,
-  QuerypairsWithFarmsArgs,
-  QuerytokensByChainIdsArgs,
-} from '@sushiswap/graph-client'
+import { Bundle, getBuiltGraphSDK, Pagination, QuerytokensByChainIdsArgs } from '@sushiswap/graph-client'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 
@@ -20,63 +14,6 @@ export const getBundles = async () => {
     acc[cur.chainId] = cur
     return acc
   }, {})
-}
-
-export type GetPoolCountQuery = Partial<{
-  networks: string
-}>
-
-export const getPoolCount = async (query?: GetPoolCountQuery) => {
-  const { factories } = await sdk.Factories({
-    chainIds: SUPPORTED_CHAIN_IDS,
-  })
-
-  const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
-
-  return factories.reduce((sum, cur) => {
-    if (chainIds.includes(cur.chainId)) {
-      sum = sum + Number(cur.pairCount)
-    }
-    return sum
-  }, 0)
-}
-
-export type GetPoolsQuery = Omit<QuerypairsWithFarmsArgs, 'where' | 'pagination'> & {
-  networks: string
-  where?: string
-  pagination: string
-}
-
-export const getPools = async (query?: GetPoolsQuery) => {
-  try {
-    const pagination: Pagination = query?.pagination
-      ? JSON.parse(query.pagination)
-      : {
-          pageIndex: 0,
-          pageSize: 20,
-        }
-    const first = pagination?.pageIndex && pagination?.pageSize ? (pagination.pageIndex + 1) * pagination.pageSize : 20
-    const skip = 0
-    const where = query?.where ? { ...JSON.parse(query.where) } : {}
-    const orderBy = query?.orderBy || 'liquidityUSD'
-    const orderDirection = query?.orderDirection || 'desc'
-    const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
-
-    const { pairs } = await sdk.PairsWithFarms({
-      first,
-      skip,
-      pagination,
-      where,
-      orderBy,
-      orderDirection,
-      chainIds,
-    })
-
-    return pairs
-  } catch (error: any) {
-    console.log(error)
-    throw new Error(error)
-  }
 }
 
 export type GetTokensQuery = Omit<QuerytokensByChainIdsArgs, 'where' | 'pagination'> & {

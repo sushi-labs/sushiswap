@@ -4,6 +4,7 @@ import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import chalk from 'chalk'
 import Table from 'cli-table3'
 import { addYears, getUnixTime } from 'date-fns'
+import fetch from 'node-fetch'
 import numeral from 'numeral'
 
 const secondsPerBlock = 13.4

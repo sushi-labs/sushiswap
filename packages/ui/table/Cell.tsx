@@ -6,7 +6,7 @@ const HeadCell: FC<
 > = ({ children, className, ...props }) => (
   <td
     className={classNames(
-      'h-[52px] px-3 sm:px-4 overflow-hidden text-sm text-high-emphesis whitespace-nowrap',
+      'h-[52px] px-3 sm:px-4 overflow-hidden text-sm dark:text-slate-200 text-gray-700 whitespace-nowrap',
       className
     )}
     {...props}

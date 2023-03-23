@@ -35,12 +35,12 @@ const SelectRoot: FC<SelectProps> = ({
             <Transition
               as={Fragment}
               show={open}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-out duration-100"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
+              enter="transition duration-300 ease-out"
+              enterFrom="transform translate-y-[-16px] opacity-0"
+              enterTo="transform translate-y-0 opacity-100"
+              leave="transition duration-300 ease-out"
+              leaveFrom="transform translate-y-0 opacity-100"
+              leaveTo="transform translate-y-[-16px] opacity-0"
             >
               {children}
             </Transition>

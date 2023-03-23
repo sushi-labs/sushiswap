@@ -1,11 +1,9 @@
+import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { Address, configureChains, createClient, erc20ABI, fetchBalance, readContracts } from '@wagmi/core'
+import { fetch } from '@whatwg-node/fetch'
 import zip from 'lodash.zip'
-import fetch from 'node-fetch'
 import { z } from 'zod'
-
-import { allChains } from '../../../chains'
-import { allProviders } from '../../../providers'
 
 const { provider } = configureChains(allChains, allProviders)
 createClient({
@@ -26,7 +24,7 @@ const querySchema = z.object({
 const tokensSchema = z.array(z.coerce.string())
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
-  response.setHeader('Cache-Control', 'max-age=5, s-maxage=5')
+  response.setHeader('Cache-Control', 'max-age=1, stale-while-revalidate=59')
   const { chainId, address } = querySchema.parse(request.query)
 
   const res = await fetch(`https://tokens.sushi.com/v0/${chainId}/addresses`)

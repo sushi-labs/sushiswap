@@ -22,6 +22,7 @@ import {
 import { BalanceChart, WithdrawModal } from '../../components/stream'
 import { getRebase, getStream, getStreamTransactions, Stream } from '../../lib'
 import { ChartHover } from '../../types'
+import { FuroStreamChainId } from '@sushiswap/furo'
 
 interface Props {
   fallback?: {
@@ -65,7 +66,7 @@ const LINKS = (id: string) => [
 const _Streams: FC = () => {
   const { chain } = useNetwork()
   const router = useRouter()
-  const chainId = Number(router.query.chainId as string)
+  const chainId = Number(router.query.chainId as string) as FuroStreamChainId
   const id = Number(router.query.id as string)
 
   const { data: transactions } = useSWR<TransactionDTO[]>(`/furo/api/stream/${chainId}/${id}/transactions`, (url) =>

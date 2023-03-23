@@ -1,8 +1,9 @@
-//// @ts-nocheck
+// @ts-nocheck
+
 import { ChainId } from '@sushiswap/chain'
 import { Type, USDC, USDT } from '@sushiswap/currency'
 import { getBigNumber, MultiRoute } from '@sushiswap/tines'
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber } from 'ethers'
 import https from 'https'
 
 import { DataFetcher } from '../DataFetcher'
@@ -17,7 +18,6 @@ async function getAPIObject(url: string, data: Record<string, string | number | 
     .filter((k) => k !== undefined)
     .join('&')
   const urlWithParams = url + '?' + params
-  //console.log(urlWithParams)
 
   return new Promise((result, reject) => {
     https
@@ -38,7 +38,7 @@ async function getAPIObject(url: string, data: Record<string, string | number | 
   })
 }
 
-async function quote(
+async function quote1InchV5(
   chainId: ChainId,
   fromTokenAddress: string,
   toTokenAddress: string,
@@ -57,7 +57,7 @@ async function quote(
   return resp.toTokenAmount
 }
 
-async function quote2(
+async function quote1InchV1_4(
   chainId: ChainId,
   fromTokenAddress: string,
   toTokenAddress: string,
@@ -80,11 +80,11 @@ async function quote2(
 interface Environment {
   chainId: ChainId
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  provider: any
+  // provider: any
   dataFetcher: DataFetcher
 }
 
-function getEnvironment(chainId: ChainId): Environment {
+function getEnvironment(chainId: ChainId, lps: LiquidityProviders[]): Environment {
   let network
   switch (chainId) {
     case ChainId.ETHEREUM:
@@ -95,13 +95,11 @@ function getEnvironment(chainId: ChainId): Environment {
       break
     default:
   }
-  const provider = new ethers.providers.AlchemyProvider(network, process.env.ALCHEMY_API_KEY)
-  const dataFetcher = new DataFetcher(provider, chainId)
-  dataFetcher.startDataFetching()
+  const dataFetcher = new DataFetcher(chainId)
+  dataFetcher.startDataFetching(lps)
 
   return {
     chainId,
-    provider,
     dataFetcher,
   }
 }
@@ -114,15 +112,15 @@ async function route(
   gasPrice: number,
   providers?: LiquidityProviders[]
 ): Promise<MultiRoute> {
-  env.dataFetcher.fetchPoolsForToken(from, to)
-  const router = new Router(env.dataFetcher, from, BigNumber.from(amount), to, gasPrice, providers)
-  return new Promise((res) => {
-    router.startRouting((r) => {
-      router.stopRouting()
-      //console.log(router.getCurrentRouteHumanString())
-      res(r)
-    })
-  })
+  return Router.findBestRoute(
+    env.dataFetcher.getCurrentPoolCodeMap(from, to),
+    env.chainId,
+    from,
+    BigNumber.from(amount),
+    to,
+    gasPrice,
+    providers
+  )
 }
 
 function getProtocol(lp: LiquidityProviders, chainId: ChainId) {
@@ -163,10 +161,16 @@ async function test(
 ) {
   const fromAddress = from.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : from.address
   const toAddress = to.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : to.address
-  const res1 = await quote(env.chainId, fromAddress, toAddress, amount, gasPrice, providers)
-  const res2 = await quote2(env.chainId, fromAddress, toAddress, amount, gasPrice, providers)
-  const res3 = await route(env, from, to, amount, gasPrice, providers)
-  return [parseInt(res1), parseInt(res2), res3.amountOut]
+  const [
+    // res1,
+    res2,
+    res3,
+  ] = await Promise.all([
+    // quote1InchV5(env.chainId, fromAddress, toAddress, amount, gasPrice, providers), // NOTE: trident not supported in v5
+    quote1InchV1_4(env.chainId, fromAddress, toAddress, amount, gasPrice, providers),
+    route(env, from, to, amount, gasPrice, providers),
+  ])
+  return [parseInt(res2), res3.amountOut]
 }
 
 async function testTrident() {
@@ -177,9 +181,10 @@ async function testTrident() {
     const to = USDC[chainId]
     const gasPrice = 100e9
     const providers = [LiquidityProviders.Trident]
-    const env = getEnvironment(chainId)
+    const env = getEnvironment(chainId, providers)
+    await delay(5000)
     env.dataFetcher.fetchPoolsForToken(from, to)
-    await delay(3000)
+    await delay(5000)
     for (let i = 6; i < 15; ++i) {
       const amount = getBigNumber(Math.pow(10, i)).toString()
       const res = await test(env, from, to, amount, gasPrice, providers)
@@ -188,6 +193,7 @@ async function testTrident() {
         res.map((e) => e / divisor)
       )
     }
+    env.dataFetcher.stopDataFetching()
   } catch (e) {
     console.log('Error', e)
   }

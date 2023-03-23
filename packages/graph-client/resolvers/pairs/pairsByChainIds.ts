@@ -9,9 +9,9 @@ import {
 } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 
-import { Query, QuerypairsByChainIdsArgs, QueryResolvers } from '../../.graphclient'
-import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
-import { TridentTypes } from '../../.graphclient/sources/Trident/types'
+import { Query, QuerypairsByChainIdsArgs, QueryResolvers } from '../../.graphclient/index.js'
+import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
+import { TridentTypes } from '../../.graphclient/sources/Trident/types.js'
 
 const BLACKLIST = {
   [ChainId.ARBITRUM]: [
@@ -37,7 +37,7 @@ export const _pairsByChainIds = async (
 ): Promise<Query['pairsByChainIds']> => {
   return Promise.all<Query['pairsByChainIds'][]>([
     ...args.chainIds
-      .filter((chainId): chainId is typeof SUSHISWAP_ENABLED_NETWORKS[number] =>
+      .filter((chainId): chainId is (typeof SUSHISWAP_ENABLED_NETWORKS)[number] =>
         SUSHISWAP_ENABLED_NETWORKS.includes(chainId)
       )
       .map((chainId) =>
@@ -73,7 +73,7 @@ export const _pairsByChainIds = async (
         })
       ),
     ...args.chainIds
-      .filter((chainId): chainId is typeof TRIDENT_ENABLED_NETWORKS[number] =>
+      .filter((chainId): chainId is (typeof TRIDENT_ENABLED_NETWORKS)[number] =>
         TRIDENT_ENABLED_NETWORKS.includes(chainId)
       )
       .map((chainId) =>

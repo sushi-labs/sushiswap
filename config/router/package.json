@@ -12,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
-    "directory": "packages/config/react-query"
+    "directory": "packages/config/router"
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewlilley.com>",
@@ -34,7 +34,6 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@sushiswap/address": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*"
   },

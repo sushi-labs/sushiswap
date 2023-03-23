@@ -1,5 +1,5 @@
 import { useIsMounted } from '@sushiswap/hooks'
-import { classNames, NotificationData } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import React, { Children, cloneElement, FC, isValidElement, ReactElement, ReactNode, useMemo, useReducer } from 'react'
 
 import { ApprovalState } from '../../hooks'
@@ -7,12 +7,12 @@ import { BentoApproveButton } from './BentoApproveButton'
 import { ComponentsWrapper } from './ComponentsWrapper'
 import { TokenApproveButton } from './TokenApproveButton'
 import { ApproveButton } from './types'
+import { PromiseNotification } from '@sushiswap/dexie'
 
 interface Props {
   className?: string
   components: ReactElement<ApproveButton<'button'>>
   render({ isUnknown, approved }: { approved: boolean | undefined; isUnknown: boolean | undefined }): ReactNode
-  onSuccess(data: NotificationData): void
 }
 
 export interface State {
@@ -58,7 +58,7 @@ const reducer = (state: State, action: ApprovalAction) => {
   }
 }
 
-const Controller: FC<Props> = ({ className, components, render, onSuccess }) => {
+const Controller: FC<Props> = ({ className, components, render }) => {
   const isMounted = useIsMounted()
   const [state, dispatch] = useReducer(reducer, {
     approvals: [],
@@ -84,14 +84,13 @@ const Controller: FC<Props> = ({ className, components, render, onSuccess }) => 
             index,
             allApproved: state.isApproved,
             initialized,
-            onSuccess,
           })
         }
 
         return null
       })
     )
-  }, [components, initialized, onSuccess, state.isApproved])
+  }, [components, initialized, state.isApproved])
 
   const button = useMemo(() => {
     const index = state.approvals.findIndex((el) => el?.[0] === ApprovalState.NOT_APPROVED)

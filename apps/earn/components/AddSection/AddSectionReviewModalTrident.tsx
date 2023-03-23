@@ -2,9 +2,8 @@ import { defaultAbiCoder } from '@ethersproject/abi'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushiswap/amm'
-import { ChainId } from '@sushiswap/chain'
+import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
@@ -23,14 +22,15 @@ import { useAccount, useNetwork } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from '../../lib/actions'
-import { useNotifications, useSettings } from '../../lib/state/storage'
+import { useSettings } from '../../lib/state/storage'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 
 interface AddSectionReviewModalTridentProps {
   poolAddress: string
   poolState: ConstantProductPoolState | StablePoolState | undefined
   pool: ConstantProductPool | StablePool | null | undefined
-  chainId: ChainId
+  chainId: BentoBoxV1ChainId
   token0: Type | undefined
   token1: Type | undefined
   input0: Amount<Type> | undefined
@@ -65,7 +65,6 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     })
   }, [chainId, poolAddress])
 
-  const [, { createNotification }] = useNotifications(address)
   const totalSupply = useTotalSupply(liquidityToken)
   const tokens = useMemo(() => [token0, token1], [token0, token1])
   const rebases = useBentoBoxTotals(chainId, tokens)
@@ -133,7 +132,8 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     (data: SendTransactionResult | undefined) => {
       if (!data || !chain?.id || !token0 || !token1) return
       const ts = new Date().getTime()
-      createNotification({
+      createToast({
+        account: address,
         type: 'mint',
         chainId: chain.id,
         txHash: data.hash,
@@ -147,7 +147,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         groupTimestamp: ts,
       })
     },
-    [chain?.id, createNotification, token0, token1]
+    [address, chain?.id, token0, token1]
   )
 
   const prepare = useCallback(
@@ -252,7 +252,6 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         {children({ isWritePending, setOpen })}
         <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} setOpen={setOpen}>
           <Approve
-            onSuccess={createNotification}
             className="flex-grow !justify-end"
             components={
               <Approve.Components>
@@ -271,8 +270,8 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
                   className="whitespace-nowrap"
                   fullWidth
                   amount={input0}
-                  address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
-                  enabled={Boolean(chain && BENTOBOX_ADDRESS[chain?.id])}
+                  address={chain ? bentoBoxV1Address[chain?.id as BentoBoxV1ChainId] : undefined}
+                  enabled={Boolean(chain && isBentoBoxV1ChainId(chain.id))}
                 />
                 <Approve.Token
                   id="add-liquidity-trident-approve-token1"
@@ -280,8 +279,8 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
                   className="whitespace-nowrap"
                   fullWidth
                   amount={input1}
-                  address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
-                  enabled={Boolean(chain && BENTOBOX_ADDRESS[chain?.id])}
+                  address={chain ? bentoBoxV1Address[chain.id as BentoBoxV1ChainId] : undefined}
+                  enabled={Boolean(chain && isBentoBoxV1ChainId(chain.id))}
                 />
               </Approve.Components>
             }
@@ -296,6 +295,6 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         </AddSectionReviewModal>
       </>
     ),
-    [chain, chainId, children, createNotification, input0, input1, isWritePending, open, sendTransaction]
+    [chain, chainId, children, input0, input1, isWritePending, open, sendTransaction]
   )
 }

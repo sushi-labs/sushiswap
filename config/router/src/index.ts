@@ -2,6 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import {
   APE,
   APE_ADDRESS,
+  ARB,
   BCT,
   BCT_ADDRESS,
   DAI,
@@ -11,6 +12,7 @@ import {
   FRAX_ADDRESS,
   FXS,
   FXS_ADDRESS,
+  GNO,
   KLIMA,
   KLIMA_ADDRESS,
   KP3R,
@@ -20,6 +22,7 @@ import {
   LINK,
   LUSD,
   MIM,
+  Native,
   NFTX,
   OHM,
   PRIMATE,
@@ -263,11 +266,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDT[ChainId.BOBA_AVAX],
     USDC[ChainId.BOBA_AVAX],
   ],
-
   [ChainId.BOBA_BNB]: [
     WNATIVE[ChainId.BOBA_BNB],
     new Token({
-      chainId: ChainId.BOBA_AVAX,
+      chainId: ChainId.BOBA_BNB,
       address: '0x4200000000000000000000000000000000000023',
       decimals: 18,
       symbol: 'BNB',
@@ -276,7 +278,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDT[ChainId.BOBA_BNB],
     USDC[ChainId.BOBA_BNB],
   ],
-  [ChainId.BTTC]: [WNATIVE[ChainId.BTTC]],
+  [ChainId.BTTC]: [WNATIVE[ChainId.BTTC], USDC[ChainId.BTTC], USDT[ChainId.BTTC]],
 }
 
 export const ADDITIONAL_BASES: {
@@ -346,9 +348,11 @@ export const CUSTOM_BASES: {
   [chainId: number]: { [tokenAddress: string]: Token[] }
 } = {}
 
-export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
+export const COMMON_BASES = {
   [ChainId.ETHEREUM]: [
+    Native.onChain(ChainId.ETHEREUM),
     WNATIVE[ChainId.ETHEREUM],
+    SUSHI[ChainId.ETHEREUM],
     WBTC[ChainId.ETHEREUM],
     USDC[ChainId.ETHEREUM],
     USDT[ChainId.ETHEREUM],
@@ -359,15 +363,25 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
   [ChainId.GÖRLI]: [],
   [ChainId.KOVAN]: [],
   [ChainId.GNOSIS]: [
+    Native.onChain(ChainId.GNOSIS),
     WNATIVE[ChainId.GNOSIS],
+    GNO[ChainId.GNOSIS],
     WETH9[ChainId.GNOSIS],
     USDC[ChainId.GNOSIS],
     USDT[ChainId.GNOSIS],
     DAI[ChainId.GNOSIS],
   ],
-  [ChainId.BSC]: [WNATIVE[ChainId.BSC], WETH9[ChainId.BSC], USDC[ChainId.BSC], USDT[ChainId.BSC], DAI[ChainId.BSC]],
+  [ChainId.BSC]: [
+    Native.onChain(ChainId.BSC),
+    WNATIVE[ChainId.BSC],
+    WETH9[ChainId.BSC],
+    USDC[ChainId.BSC],
+    USDT[ChainId.BSC],
+    DAI[ChainId.BSC],
+  ],
   [ChainId.BSC_TESTNET]: [],
   [ChainId.POLYGON]: [
+    Native.onChain(ChainId.POLYGON),
     WNATIVE[ChainId.POLYGON],
     WBTC[ChainId.POLYGON],
     WETH9[ChainId.POLYGON],
@@ -377,6 +391,7 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
   ],
   [ChainId.POLYGON_TESTNET]: [],
   [ChainId.AVALANCHE]: [
+    Native.onChain(ChainId.AVALANCHE),
     WNATIVE[ChainId.AVALANCHE],
     WETH9[ChainId.AVALANCHE],
     WBTC[ChainId.AVALANCHE],
@@ -388,13 +403,16 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
   ],
   [ChainId.AVALANCHE_TESTNET]: [],
   [ChainId.ARBITRUM_NOVA]: [
+    Native.onChain(ChainId.ARBITRUM_NOVA),
     WNATIVE[ChainId.ARBITRUM_NOVA],
+    ARB[ChainId.ARBITRUM_NOVA],
     WBTC[ChainId.ARBITRUM_NOVA],
     USDC[ChainId.ARBITRUM_NOVA],
     USDT[ChainId.ARBITRUM_NOVA],
     DAI[ChainId.ARBITRUM_NOVA],
   ],
   [ChainId.BOBA]: [
+    Native.onChain(ChainId.BOBA),
     WNATIVE[ChainId.BOBA],
     USDC[ChainId.BOBA],
     USDT[ChainId.BOBA],
@@ -403,6 +421,7 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
     WBTC[ChainId.BOBA],
   ],
   [ChainId.FANTOM]: [
+    Native.onChain(ChainId.FANTOM),
     WNATIVE[ChainId.FANTOM],
     WBTC[ChainId.FANTOM],
     WETH9[ChainId.FANTOM],
@@ -413,7 +432,9 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
   ],
   [ChainId.FANTOM_TESTNET]: [],
   [ChainId.ARBITRUM]: [
+    Native.onChain(ChainId.ARBITRUM),
     WNATIVE[ChainId.ARBITRUM],
+    ARB[ChainId.ARBITRUM],
     WBTC[ChainId.ARBITRUM],
     USDC[ChainId.ARBITRUM],
     USDT[ChainId.ARBITRUM],
@@ -422,6 +443,7 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
   ],
   [ChainId.ARBITRUM_TESTNET]: [],
   [ChainId.HARMONY]: [
+    Native.onChain(ChainId.HARMONY),
     WNATIVE[ChainId.HARMONY],
     WETH9[ChainId.HARMONY],
     USDC[ChainId.HARMONY],
@@ -430,6 +452,7 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
   ],
   [ChainId.HARMONY_TESTNET]: [],
   [ChainId.HECO]: [
+    Native.onChain(ChainId.HECO),
     WNATIVE[ChainId.HECO],
     WETH9[ChainId.HECO],
     USDC[ChainId.HECO],
@@ -438,6 +461,7 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
   ],
   [ChainId.HECO_TESTNET]: [],
   [ChainId.OKEX]: [
+    Native.onChain(ChainId.OKEX),
     WNATIVE[ChainId.OKEX],
     WETH9[ChainId.OKEX],
     USDC[ChainId.OKEX],
@@ -446,14 +470,16 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
   ],
   [ChainId.OKEX_TESTNET]: [],
   [ChainId.CELO]: [
-    WNATIVE[ChainId.CELO],
+    Native.onChain(ChainId.CELO),
+    // WNATIVE[ChainId.CELO],
     WETH9[ChainId.CELO],
     USDC[ChainId.CELO],
     USDT[ChainId.CELO],
     DAI[ChainId.CELO],
   ],
-  [ChainId.PALM]: [WNATIVE[ChainId.PALM], WETH9[ChainId.PALM]],
+  [ChainId.PALM]: [Native.onChain(ChainId.PALM), WNATIVE[ChainId.PALM], WETH9[ChainId.PALM]],
   [ChainId.MOONRIVER]: [
+    Native.onChain(ChainId.MOONRIVER),
     WNATIVE[ChainId.MOONRIVER],
     WETH9[ChainId.MOONRIVER],
     USDC[ChainId.MOONRIVER],
@@ -462,6 +488,7 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
     FRAX[ChainId.MOONRIVER],
   ],
   [ChainId.FUSE]: [
+    Native.onChain(ChainId.FUSE),
     WNATIVE[ChainId.FUSE],
     WBTC[ChainId.FUSE],
     WETH9[ChainId.FUSE],
@@ -469,8 +496,15 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
     USDT[ChainId.FUSE],
     DAI[ChainId.FUSE],
   ],
-  [ChainId.TELOS]: [WNATIVE[ChainId.TELOS], WETH9[ChainId.TELOS], USDC[ChainId.TELOS], USDT[ChainId.TELOS]],
+  [ChainId.TELOS]: [
+    Native.onChain(ChainId.TELOS),
+    WNATIVE[ChainId.TELOS],
+    WETH9[ChainId.TELOS],
+    USDC[ChainId.TELOS],
+    USDT[ChainId.TELOS],
+  ],
   [ChainId.MOONBEAM]: [
+    Native.onChain(ChainId.MOONBEAM),
     WNATIVE[ChainId.MOONBEAM],
     WETH9[ChainId.MOONBEAM],
     USDC[ChainId.MOONBEAM],
@@ -478,6 +512,7 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
     DAI[ChainId.MOONBEAM],
   ],
   [ChainId.OPTIMISM]: [
+    Native.onChain(ChainId.OPTIMISM),
     WNATIVE[ChainId.OPTIMISM],
     WBTC[ChainId.OPTIMISM],
     USDC[ChainId.OPTIMISM],
@@ -485,6 +520,7 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
     DAI[ChainId.OPTIMISM],
   ],
   [ChainId.KAVA]: [
+    Native.onChain(ChainId.KAVA),
     WNATIVE[ChainId.KAVA],
     WBTC[ChainId.KAVA],
     WETH9[ChainId.KAVA],
@@ -493,6 +529,7 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
     DAI[ChainId.KAVA],
   ],
   [ChainId.METIS]: [
+    Native.onChain(ChainId.METIS),
     WNATIVE[ChainId.METIS],
     WBTC[ChainId.METIS],
     WETH9[ChainId.METIS],
@@ -500,7 +537,31 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
     USDT[ChainId.METIS],
     DAI[ChainId.METIS],
   ],
-  [ChainId.BOBA_AVAX]: [WNATIVE[ChainId.BOBA_AVAX], USDC[ChainId.BOBA_AVAX], USDT[ChainId.BOBA_AVAX]],
-  [ChainId.BOBA_BNB]: [WNATIVE[ChainId.BOBA_BNB], USDC[ChainId.BOBA_BNB], USDT[ChainId.BOBA_BNB]],
-  [ChainId.BTTC]: [WNATIVE[ChainId.BTTC]],
-}
+  [ChainId.BOBA_AVAX]: [
+    Native.onChain(ChainId.BOBA_AVAX),
+    WNATIVE[ChainId.BOBA_AVAX],
+    USDC[ChainId.BOBA_AVAX],
+    USDT[ChainId.BOBA_AVAX],
+  ],
+  [ChainId.BOBA_BNB]: [
+    Native.onChain(ChainId.BOBA_BNB),
+    WNATIVE[ChainId.BOBA_BNB],
+    new Token({
+      chainId: ChainId.BOBA_BNB,
+      symbol: 'BNB',
+      name: 'Binance Coin',
+      decimals: 18,
+      address: '0x4200000000000000000000000000000000000023',
+    }),
+    USDC[ChainId.BOBA_BNB],
+    USDT[ChainId.BOBA_BNB],
+  ],
+  [ChainId.BTTC]: [Native.onChain(ChainId.BTTC), WNATIVE[ChainId.BTTC], USDC[ChainId.BTTC], USDT[ChainId.BTTC]],
+  [ChainId.CONSENSUS_ZKEVM_TESTNET]: [
+    Native.onChain(ChainId.CONSENSUS_ZKEVM_TESTNET),
+    WNATIVE[ChainId.CONSENSUS_ZKEVM_TESTNET],
+  ],
+  [ChainId.SCROLL_ALPHA_TESTNET]: [Native.onChain(ChainId.SCROLL_ALPHA_TESTNET), WNATIVE[ChainId.SCROLL_ALPHA_TESTNET]],
+  [ChainId.BASE_TESTNET]: [Native.onChain(ChainId.BASE_TESTNET), WNATIVE[ChainId.BASE_TESTNET]],
+  // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
+} as const

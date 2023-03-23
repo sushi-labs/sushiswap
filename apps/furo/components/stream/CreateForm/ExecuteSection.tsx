@@ -1,8 +1,6 @@
 import { isAddress } from '@ethersproject/address'
 import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
-import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
@@ -14,16 +12,17 @@ import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 're
 import { useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
+import { FuroStreamRouterChainId } from '@sushiswap/furo'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../../lib'
-import { useNotifications } from '../../../lib/state/storage'
 import { ZFundSourceToFundSource, ZTokenToToken } from '../../../lib/zod'
 import { CreateStreamFormSchemaType } from './schema'
+import { createToast } from '@sushiswap/ui/future/components/toast'
+import { bentoBoxV1Address } from '@sushiswap/bentobox'
 
-export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
+export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
   const { address } = useAccount()
   const contract = useFuroStreamRouterContract(chainId)
-  const [, { createNotification }] = useNotifications(address)
   const [signature, setSignature] = useState<Signature>()
 
   const {
@@ -51,7 +50,8 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
 
       const ts = new Date().getTime()
 
-      createNotification({
+      createToast({
+        account: address,
         type: 'createStream',
         chainId: chainId,
         txHash: data.hash,
@@ -65,7 +65,7 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
         groupTimestamp: ts,
       })
     },
-    [_amount, chainId, createNotification]
+    [_amount, chainId, address]
   )
 
   const prepare = useCallback(
@@ -147,7 +147,6 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
   return (
     <Form.Buttons className="flex flex-col items-end gap-3">
       <Approve
-        onSuccess={createNotification}
         className="!items-end"
         components={
           <Approve.Components>
@@ -161,7 +160,7 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
               id="furo-create-single-stream-approve-token"
               enabled={formValid && _amount?.greaterThan(ZERO)}
               amount={_amount}
-              address={BENTOBOX_ADDRESS[chainId]}
+              address={bentoBoxV1Address[chainId]}
             />
           </Approve.Components>
         }
