@@ -22,6 +22,7 @@ import { isRouteProcessorChainId, routeProcessorAddress, RouteProcessorChainId }
 import { swapErrorToUserReadableMessage } from '../lib/swapErrorToUserReadableMessage'
 import { log } from 'next-axiom'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useSlippageTolerance } from '../lib/useSlippageTolerance'
 
 interface ConfirmationDialogProps {
   children({
@@ -51,6 +52,8 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const { appType, network0, token0, token1, review } = useSwapState()
   const { approved } = useApproved('swap')
   const { data: trade } = useTrade({ crossChain: false })
+  const [slippageTolerance] = useSlippageTolerance()
+
   // const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
 
   const [open, setOpen] = useState(false)
@@ -70,9 +73,15 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       trade?.route?.status !== 'NoWay',
     overrides: trade?.overrides,
     onError: (error) => {
-      if (error.message.startsWith('user rejected transaction')) return
+      const message = error.message.toLowerCase()
+      if (message.includes('user rejected') || message.includes('user cancelled')) {
+        return
+      }
+
       log.error('Swap prepare error', {
         trade,
+        config,
+        slippageTolerance,
         error,
       })
     },
