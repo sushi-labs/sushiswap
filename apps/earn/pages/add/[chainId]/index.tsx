@@ -42,6 +42,7 @@ import { usePool } from '@sushiswap/client'
 import { SUPPORTED_CHAIN_IDS } from '../../../config'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
+import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
 
 const LINKS: BreadcrumbLink[] = [
   {
@@ -101,6 +102,8 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
 
   const tridentPoolIfCreate = TRIDENT_ENABLED_NETWORKS.includes(chainId)
 
+  console.log({ tridentPoolIfCreate })
+
   return (
     <SWRConfig>
       <Layout breadcrumbs={LINKS}>
@@ -109,46 +112,34 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
           <PoolFinder
             components={
               <PoolFinder.Components>
-                {isUniswapV2Router02ChainId(chainId) ? (
-                  <PoolFinder.LegacyPool
-                    chainId={chainId}
-                    token0={token0}
-                    token1={token1}
-                    /* TODO?: Migrate to type guard only */
-                    enabled={AMM_ENABLED_NETWORKS.includes(chainId)}
-                  />
-                ) : (
-                  <></>
-                )}
-                {/* TODO: Migrate to trident (possibly speicifc pooltype) type guard */}
-                {isBentoBoxV1ChainId(chainId) ? (
-                  <>
-                    <PoolFinder.ConstantProductPool
-                      chainId={chainId}
-                      token0={token0}
-                      token1={token1}
-                      /* TODO?: Migrate to type guard only */
-                      enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId) && poolType === PoolFinderType.Classic}
-                      fee={FEE_MAP[fee]}
-                      twap={false}
-                    />
-                    <PoolFinder.StablePool
-                      chainId={chainId}
-                      token0={token0}
-                      token1={token1}
-                      /* TODO?: Migrate to type guard only */
-                      enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId) && poolType === PoolFinderType.Stable}
-                      fee={FEE_MAP[fee]}
-                      twap={false}
-                    />
-                  </>
-                ) : (
-                  <></>
-                )}
+                <PoolFinder.LegacyPool
+                  chainId={chainId}
+                  token0={token0}
+                  token1={token1}
+                  /* TODO?: Migrate to type guard only */
+                  enabled={isUniswapV2Router02ChainId(chainId) && !isConstantProductPoolFactoryChainId(chainId)}
+                />
+                <PoolFinder.ConstantProductPool
+                  chainId={chainId}
+                  token0={token0}
+                  token1={token1}
+                  enabled={isConstantProductPoolFactoryChainId(chainId) && poolType === PoolFinderType.Classic}
+                  fee={FEE_MAP[fee]}
+                  twap={false}
+                />
+                <PoolFinder.StablePool
+                  chainId={chainId}
+                  token0={token0}
+                  token1={token1}
+                  enabled={isStablePoolFactoryChainId(chainId) && poolType === PoolFinderType.Stable}
+                  fee={FEE_MAP[fee]}
+                  twap={false}
+                />
               </PoolFinder.Components>
             }
           >
             {({ pool: [poolState, pool] }) => {
+              console.log([poolState, pool])
               const title =
                 !token0 || !token1 ? (
                   'Select Tokens'
@@ -168,7 +159,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
                 <_Add
                   chainId={chainId}
                   setChainId={(chainId) => {
-                    router.push(`/add/${chainId}`, `/add/${chainId}`, { shallow: true })
+                    // router.push(`/add/${chainId}`, `/add/${chainId}`, { shallow: true })
                     setChainId(chainId)
                   }}
                   fee={fee}
@@ -428,7 +419,7 @@ const _Add: FC<AddProps> = ({
               <Container maxWidth={400} className="mx-auto">
                 <AddSectionStake
                   title="4. Stake Liquidity"
-                  poolId={`${chainShortName[chainId]}:${pool.liquidityToken.address}`}
+                  poolId={`${chainShortName?.[chainId]}:${pool.liquidityToken.address}`}
                 />
               </Container>
             </PoolPositionStakedProvider>
