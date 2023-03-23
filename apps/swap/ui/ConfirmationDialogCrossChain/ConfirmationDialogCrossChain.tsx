@@ -24,6 +24,7 @@ import { swapErrorToUserReadableMessage } from '../../lib/swapErrorToUserReadabl
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { Chain } from '@sushiswap/chain'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
+import { log } from 'next-axiom'
 
 interface ConfirmationDialogCrossChainProps {
   children({
@@ -79,6 +80,13 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
       approved &&
       trade?.route?.status !== 'NoWay',
     overrides: trade?.overrides,
+    onError: (error) => {
+      if (error.message.startsWith('user rejected transaction')) return
+      log.error('Cross Chain Swap prepare failed', {
+        trade,
+        error,
+      })
+    },
   })
 
   const onSettled = useCallback(
@@ -120,6 +128,9 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
       data
         .wait()
         .then(() => {
+          log.info('Cross Chain Swap success (source)', {
+            trade,
+          })
           setStepStates({
             source: StepState.Success,
             bridge: StepState.Pending,
@@ -127,6 +138,9 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
           })
         })
         .catch(() => {
+          log.info('Cross Chain Swap failed (source)', {
+            trade,
+          })
           setStepStates({
             source: StepState.Failed,
             bridge: StepState.NotStarted,
@@ -140,7 +154,14 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
         })
     },
     onSettled,
-    onError: (data) => createErrorToast(swapErrorToUserReadableMessage(data), false),
+    onError: (error) => {
+      if (error.message.startsWith('user rejected transaction')) return
+      log.error('Cross Chain Swap failed', {
+        trade,
+        error,
+      })
+      createErrorToast(swapErrorToUserReadableMessage(error), false)
+    },
   })
 
   const onComplete = useCallback(() => {
