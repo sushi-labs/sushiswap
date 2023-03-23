@@ -122,10 +122,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     data,
   } = useContractWrite({
     ...config,
-    request: {
-      ...config.request,
-      gasLimit: config.request?.gasLimit.mul(120).div(100),
-    },
+    ...(config.request && { request: { ...config.request, gasLimit: config.request.gasLimit.mul(120).div(100) } }),
     onSuccess: (data) => {
       setReview(false)
 
@@ -190,6 +187,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
           ) {
             log.info('Swap failed (internal)', {
               trade,
+              data,
             })
           } else if (
             !trade?.route?.legs?.every(
@@ -202,6 +200,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
           ) {
             log.info('Swap failed (mix)', {
               trade,
+              data,
             })
           } else if (
             trade?.route?.legs?.every(
@@ -214,10 +213,12 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
           ) {
             log.info('Swap failed (external)', {
               trade,
+              data,
             })
           } else {
             log.info('Swap failed (unknown)', {
               trade,
+              data,
             })
           }
         })
