@@ -15,6 +15,7 @@ import { FC, useCallback, useMemo, useState } from 'react'
 import { useTokensFromPool } from '../../lib/hooks'
 import { AddSectionReviewModalTrident } from './AddSectionReviewModalTrident'
 import { AddSectionWidget } from './AddSectionWidget'
+import { ZERO } from '@sushiswap/math'
 
 export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const isMounted = useIsMounted()
@@ -52,7 +53,11 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
 
   const onChangeToken0TypedAmount = useCallback(
     (value: string) => {
-      if (poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS) {
+      if (
+        poolState === ConstantProductPoolState.NOT_EXISTS ||
+        poolState === StablePoolState.NOT_EXISTS ||
+        (pool?.reserve0.equalTo(ZERO) && pool?.reserve1.equalTo(ZERO))
+      ) {
         setTypedAmounts((prev) => ({
           ...prev,
           input0: value,
@@ -70,7 +75,11 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
 
   const onChangeToken1TypedAmount = useCallback(
     (value: string) => {
-      if (poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS) {
+      if (
+        poolState === ConstantProductPoolState.NOT_EXISTS ||
+        poolState === StablePoolState.NOT_EXISTS ||
+        (pool?.reserve0.equalTo(ZERO) && pool?.reserve1.equalTo(ZERO))
+      ) {
         setTypedAmounts((prev) => ({
           ...prev,
           input1: value,
