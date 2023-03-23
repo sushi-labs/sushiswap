@@ -80,7 +80,6 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
 
       log.error('Swap prepare error', {
         trade,
-        config,
         slippageTolerance,
         error,
       })
