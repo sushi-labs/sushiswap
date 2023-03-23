@@ -1,7 +1,7 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
 import { ChainId, chainShortName } from '@sushiswap/chain'
-import { tryParseAmount, Type } from '@sushiswap/currency'
+import { defaultQuoteCurrency, Native, tryParseAmount, Type, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { AppearOnMount, BreadcrumbLink, Button, Container, Dots, Loader } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui'
@@ -69,7 +69,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 export const getStaticPaths: GetStaticPaths = async () => {
   // Get the paths we want to pre-render based on supported chain ids
   const paths = SUPPORTED_CHAIN_IDS.map((chainId) => ({
-    params: { chainId: chainId.toString() },
+    params: {
+      chainId: chainId.toString(),
+    },
   }))
 
   // We'll pre-render only these paths at build time.
@@ -84,12 +86,14 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
   const [fee, setFee] = useState(2)
   const [poolType, setPoolType] = useState(PoolFinderType.Classic)
 
-  const [token0, setToken0] = useState<Type | undefined>()
-  const [token1, setToken1] = useState<Type | undefined>()
+  const [token0, setToken0] = useState<Type | undefined>(Native.onChain(chainId))
+  const [token1, setToken1] = useState<Type | undefined>(
+    defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency]
+  )
 
   useEffect(() => {
-    setToken0(undefined)
-    setToken1(undefined)
+    setToken0(Native.onChain(chainId))
+    setToken1(defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency])
   }, [chainId])
 
   // Reset default fee if switching networks and not on a trident enabled network
@@ -101,8 +105,6 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
   }, [chainId])
 
   const tridentPoolIfCreate = TRIDENT_ENABLED_NETWORKS.includes(chainId)
-
-  console.log({ tridentPoolIfCreate })
 
   return (
     <SWRConfig>
@@ -116,14 +118,17 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
                   chainId={chainId}
                   token0={token0}
                   token1={token1}
-                  /* TODO?: Migrate to type guard only */
-                  enabled={isUniswapV2Router02ChainId(chainId) && !isConstantProductPoolFactoryChainId(chainId)}
+                  enabled={isUniswapV2Router02ChainId(chainId)}
                 />
                 <PoolFinder.ConstantProductPool
                   chainId={chainId}
                   token0={token0}
                   token1={token1}
-                  enabled={isConstantProductPoolFactoryChainId(chainId) && poolType === PoolFinderType.Classic}
+                  enabled={
+                    isConstantProductPoolFactoryChainId(chainId) &&
+                    poolType === PoolFinderType.Classic &&
+                    TRIDENT_ENABLED_NETWORKS.includes(chainId)
+                  }
                   fee={FEE_MAP[fee]}
                   twap={false}
                 />
@@ -131,7 +136,11 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
                   chainId={chainId}
                   token0={token0}
                   token1={token1}
-                  enabled={isStablePoolFactoryChainId(chainId) && poolType === PoolFinderType.Stable}
+                  enabled={
+                    isStablePoolFactoryChainId(chainId) &&
+                    poolType === PoolFinderType.Stable &&
+                    TRIDENT_ENABLED_NETWORKS.includes(chainId)
+                  }
                   fee={FEE_MAP[fee]}
                   twap={false}
                 />
@@ -139,7 +148,6 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
             }
           >
             {({ pool: [poolState, pool] }) => {
-              console.log([poolState, pool])
               const title =
                 !token0 || !token1 ? (
                   'Select Tokens'
@@ -159,7 +167,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
                 <_Add
                   chainId={chainId}
                   setChainId={(chainId) => {
-                    // router.push(`/add/${chainId}`, `/add/${chainId}`, { shallow: true })
+                    router.push(`/add/${chainId}`, `/add/${chainId}`, { shallow: true })
                     setChainId(chainId)
                   }}
                   fee={fee}
