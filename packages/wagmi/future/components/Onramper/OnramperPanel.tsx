@@ -48,7 +48,7 @@ export const OnramperPanel: FC = () => {
         '*'
       )
     }
-  }, [iframe])
+  }, [iframe, iframe?.contentWindow, isDark])
 
   return (
     <Dialog open={open} unmount={false} onClose={onClose}>
