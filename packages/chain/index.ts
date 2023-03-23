@@ -356,6 +356,10 @@ export class Chain implements Chain {
       }
     }
 
+    if (data.name === 'Boba Network') {
+      this.name = 'Boba Eth'
+    }
+
     // process explorer overrides etc...
   }
   getTxUrl(txHash: string): string {
