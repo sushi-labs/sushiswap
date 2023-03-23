@@ -126,9 +126,8 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     onSuccess: (data) => {
       setReview(false)
 
-      data
-        .wait()
-        .then(() => {
+      data.wait().then(
+        () => {
           setDialogState(ConfirmationDialogState.Success)
           // Log swap success internal, mixed, or external
           if (
@@ -172,8 +171,8 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               trade,
             })
           }
-        })
-        .catch(() => {
+        },
+        (error) => {
           setDialogState(ConfirmationDialogState.Failed)
           // Log swap success internal, mixed, or external
           if (
@@ -185,9 +184,10 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 leg.poolName.startsWith('BentoBridge')
             )
           ) {
-            log.info('Swap failed (internal)', {
+            log.error('Swap failed (internal)', {
               trade,
               data,
+              error,
             })
           } else if (
             !trade?.route?.legs?.every(
@@ -198,9 +198,10 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 leg.poolName.startsWith('BentoBridge')
             )
           ) {
-            log.info('Swap failed (mix)', {
+            log.error('Swap failed (mix)', {
               trade,
               data,
+              error,
             })
           } else if (
             trade?.route?.legs?.every(
@@ -211,17 +212,20 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 !leg.poolName.startsWith('BentoBridge')
             )
           ) {
-            log.info('Swap failed (external)', {
+            log.error('Swap failed (external)', {
               trade,
               data,
+              error,
             })
           } else {
-            log.info('Swap failed (unknown)', {
+            log.error('Swap failed (unknown)', {
               trade,
               data,
+              error,
             })
           }
-        })
+        }
+      )
       // .finally(() => refetchNetwork0Balances())
     },
     onSettled,
