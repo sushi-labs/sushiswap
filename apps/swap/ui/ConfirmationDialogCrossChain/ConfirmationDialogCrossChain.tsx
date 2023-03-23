@@ -82,7 +82,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     overrides: trade?.overrides,
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
-      log.error('Cross Chain Swap prepare failed', {
+      log.error('Cross Chain Swap prepare error', {
         trade,
         error,
       })
@@ -156,7 +156,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     onSettled,
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
-      log.error('Cross Chain Swap failed', {
+      log.error('Cross Chain Swap error', {
         trade,
         error,
       })
