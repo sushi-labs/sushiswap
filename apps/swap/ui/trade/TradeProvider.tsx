@@ -3,7 +3,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
-import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, useReducer } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
 import { useAccount } from 'wagmi'
 import { useRouter } from 'next/router'
 import { Signature } from '@ethersproject/bytes'
@@ -11,13 +11,11 @@ import { nanoid } from 'nanoid'
 import { SwapChainId } from 'types'
 import { queryParamsSchema } from '../../lib/queryParamsSchema'
 import { useTokenState } from '../TokenProvider'
-import { useEffectDebugger } from '@sushiswap/hooks'
 
 interface InternalSwapState {
   isFallback: boolean
   tradeId: string
   review: boolean
-  recipient: string | undefined
   value: string
   bentoboxSignature: Signature | undefined
 }
@@ -30,6 +28,7 @@ interface SwapState {
   amount: Amount<Type> | undefined
   appType: AppType
   tokensLoading: boolean
+  recipient: string | undefined
 }
 
 type State = InternalSwapState & SwapState
@@ -58,7 +57,6 @@ export const SwapActionsContext = createContext<SwapApi>({} as SwapApi)
 type Actions =
   | { type: 'setTradeId'; value: string }
   | { type: 'setValue'; value: string }
-  | { type: 'setRecipient'; recipient: string }
   | { type: 'setReview'; value: boolean }
   | { type: 'setBentoboxSignature'; value: Signature }
   | { type: 'setFallback'; value: boolean }
@@ -69,8 +67,6 @@ const reducer = (state: InternalSwapState, action: Actions): InternalSwapState =
       return { ...state, tradeId: action.value }
     case 'setReview':
       return { ...state, review: action.value }
-    case 'setRecipient':
-      return { ...state, recipient: action.recipient }
     case 'setValue':
       return {
         ...state,
@@ -103,7 +99,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     isFallback: true,
     tradeId: nanoid(),
     review: review ? review : false,
-    recipient: recipient ? recipient : address ? address : undefined,
     value: !amount || amount === '0' ? '' : amount,
     bentoboxSignature: undefined,
   })
@@ -334,7 +329,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           { shallow: true }
         )
       }
-      dispatch({ type: 'setRecipient', recipient })
     }
     const setReview = (value: boolean) => dispatch({ type: 'setReview', value })
     const setBentoboxSignature = (value: Signature) => dispatch({ type: 'setBentoboxSignature', value })
@@ -375,7 +369,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   return (
     <SwapActionsContext.Provider value={api}>
       <SwapStateContext.Provider
-        value={useMemo(() => ({ ...state, recipient: state.recipient ?? address }), [address, state])}
+        value={useMemo(() => ({ ...state, recipient: recipient ?? address }), [address, recipient, state])}
       >
         {children}
       </SwapStateContext.Provider>

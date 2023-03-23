@@ -103,13 +103,13 @@ export const TradeStats: FC = () => {
         )}
         {recipient && isAddress(recipient) && (
           <div className="flex justify-between items-center border-t border-gray-200 dark:border-slate-200/5 mt-2 pt-2">
-            <span className="font-medium text-sm text-gray-700 dark:text-slate-400">Recipient</span>
+            <span className="font-medium text-sm text-gray-700 dark:text-slate-300">Recipient</span>
             <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
               <a
                 target="_blank"
                 href={Chain.from(network0).getAccountUrl(recipient)}
                 className={classNames(
-                  address !== recipient ? 'text-yellow-600' : 'text-gray-700',
+                  address !== recipient ? 'text-yellow-600' : 'text-gray-700 dark:text-slate-300',
                   'transition-all flex gap-1 items-center'
                 )}
                 rel="noreferrer"
