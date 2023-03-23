@@ -149,6 +149,8 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
           ) {
             log.info('Swap success (internal)', {
               trade,
+              data,
+              receipt,
             })
           } else if (
             !trade?.route?.legs?.every(
@@ -161,6 +163,8 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
           ) {
             log.info('Swap success (mix)', {
               trade,
+              data,
+              receipt,
             })
           } else if (
             trade?.route?.legs?.every(
@@ -173,10 +177,14 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
           ) {
             log.info('Swap success (external)', {
               trade,
+              data,
+              receipt,
             })
           } else {
             log.info('Swap success (unknown)', {
               trade,
+              data,
+              receipt,
             })
           }
         } else {
