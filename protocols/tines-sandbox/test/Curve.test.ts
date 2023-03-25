@@ -9,6 +9,12 @@ import seedrandom from 'seedrandom'
 
 import { setTokenBalance } from '../src/SetTokenBalance'
 
+const FACTORY_ADDRESSES = [
+  '0x0959158b6040d32d04c301a72cbfd6b39e21c9ae',
+  '0xb9fc157394af804a3578134a6585c0dc9cc990d4',
+  '0xf18056bbd320e96a48e3fbf8bc061322531aac99',
+]
+
 enum CurvePoolType {
   Legacy = 'Legacy', // 'exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) -> uint256'
   LegacyV2 = 'LegacyV2', // 'function coins(int128) pure returns (address)'
@@ -54,7 +60,29 @@ interface PoolInfo {
   snapshot: SnapshotRestorer
 }
 
-async function getPoolRatio(poolAddress: string, provider: Provider): Promise<number> {
+async function getPoolRatio(poolAddress: string, poolType: CurvePoolType, provider: Provider): Promise<number> {
+  const pool = new Contract(
+    poolAddress,
+    [
+      poolType !== CurvePoolType.LegacyV2
+        ? 'function coins(uint256) pure returns (address)'
+        : 'function coins(int128) pure returns (address)',
+    ],
+    provider
+  )
+  const token1 = await pool.coins(1)
+  if (token1.toLowerCase() == '0x6c3f90f043a72fa612cbac8115ee7e52bde6e490') {
+    // Metapool with 3-pool second token
+    const basePool = new Contract(
+      '0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7',
+      ['function get_virtual_price() pure returns (uint256)'],
+      provider
+    )
+    const price = await basePool.get_virtual_price()
+    // 1e18 is not always appropriate, but there is no way to find self.rate_multiplier value
+    return parseInt(price.toString()) / 1e18
+  }
+
   // collection of freaks
   switch (poolAddress.toLowerCase()) {
     case '0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2': {
@@ -62,7 +90,7 @@ async function getPoolRatio(poolAddress: string, provider: Provider): Promise<nu
       const ankrETH = new Contract(
         '0xE95A203B1a91a908F9B9CE46459d101078c2c3cb',
         ['function ratio() pure returns (uint256)'],
-        ethers.provider
+        provider
       )
       const ratio = await ankrETH.ratio()
       return 1e18 / parseInt(ratio.toString())
@@ -161,7 +189,7 @@ async function createCurvePoolInfo(
     A.toNumber(),
     reserves[0],
     reserves[1],
-    await getPoolRatio(poolAddress, user.provider as Provider)
+    await getPoolRatio(poolAddress, poolType, user.provider as Provider)
   )
 
   const snapshot = await takeSnapshot()
@@ -220,22 +248,80 @@ const CurvePools: [string, string, CurvePoolType, number?][] = [
   ['0x93054188d876f558f4a66b2ef1d97d16edf0895b', 'ren', CurvePoolType.LegacyV2],
 ]
 
-describe.only('Real Curve pools consistency check', () => {
-  for (let i = 0; i < CurvePools.length; ++i) {
-    const [addr, name, poolType, precision = 1e-9] = CurvePools[i]
-    it(`${name} (${addr}, ${poolType})`, async () => {
-      const testSeed = addr
-      const rnd: () => number = seedrandom(testSeed) // random [0, 1)
-      const [user] = await ethers.getSigners()
-      const poolInfo = await createCurvePoolInfo(addr, poolType, user, BigInt(1e30))
-      const res0 = parseInt(poolInfo.poolTines.reserve0.toString())
-      const res1 = parseInt(poolInfo.poolTines.reserve1.toString())
-      const checks = poolType == CurvePoolType.LegacyV2 || poolType == CurvePoolType.LegacyV3 ? 3 : 10
-      for (let i = 0; i < checks; ++i) {
-        const amountInPortion = getRandomExp(rnd, 1e-5, 1)
-        await checkSwap(poolInfo, 0, 1, res0 * amountInPortion, precision)
-        await checkSwap(poolInfo, 1, 0, res1 * amountInPortion, precision)
-      }
-    })
+async function forEachFactoryPool(provider: Provider, func: (address: string, factoryName: string) => void) {
+  const processedPoolSet = new Set<string>()
+  for (let f = 0; f < FACTORY_ADDRESSES.length; ++f) {
+    const factoryAddress = FACTORY_ADDRESSES[f]
+    const factoryContract = new Contract(
+      factoryAddress,
+      [
+        'function pool_count() pure returns (uint256)',
+        'function pool_list(uint256) pure returns (address)',
+        'function get_n_coins(address) pure returns (uint256)',
+      ],
+      provider
+    )
+
+    const poolNum = await factoryContract.pool_count()
+    for (let i = 0; i < poolNum; ++i) {
+      const poolAddress = await factoryContract.pool_list(i)
+      if (processedPoolSet.has(poolAddress)) continue
+      processedPoolSet.add(poolAddress)
+      //const coins = await factoryContract.get_n_coins(poolAddress)
+      await func(poolAddress, `#${f}`)
+    }
   }
+}
+
+async function process2CoinsPool(
+  poolAddress: string,
+  name: string,
+  poolType: CurvePoolType,
+  precision: number
+): Promise<string> {
+  const testSeed = poolAddress
+  const rnd: () => number = seedrandom(testSeed) // random [0, 1)
+  const [user] = await ethers.getSigners()
+  let poolInfo
+  try {
+    poolInfo = await createCurvePoolInfo(poolAddress, poolType, user, BigInt(1e30))
+  } catch (e) {
+    return 'skipped (pool init error)'
+  }
+  if (poolInfo.tokenContracts.length > 2) return `skipped (${poolInfo.tokenContracts.length} tokens)`
+  const res0 = parseInt(poolInfo.poolTines.reserve0.toString())
+  const res1 = parseInt(poolInfo.poolTines.reserve1.toString())
+  const checks = poolType == CurvePoolType.LegacyV2 || poolType == CurvePoolType.LegacyV3 ? 3 : 10
+  for (let i = 0; i < checks; ++i) {
+    const amountInPortion = getRandomExp(rnd, 1e-5, 1)
+    await checkSwap(poolInfo, 0, 1, res0 * amountInPortion, precision)
+    await checkSwap(poolInfo, 1, 0, res1 * amountInPortion, precision)
+  }
+  return 'passed'
+}
+
+describe.only('Real Curve pools consistency check', () => {
+  describe('Not-Factory pools by whitelist', () => {
+    for (let i = 0; i < CurvePools.length; ++i) {
+      const [poolAddress, name, poolType, precision = 1e-9] = CurvePools[i]
+      it(`${name} (${poolAddress}, ${poolType})`, async () => {
+        const result = await process2CoinsPool(poolAddress, name, poolType, precision)
+        expect(result).equal('passed')
+      })
+    }
+  })
+  it(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
+    let i = 0
+    const skipFirst = 0
+    const [user] = await ethers.getSigners()
+    await forEachFactoryPool(user.provider as Provider, async (poolAddress: string, factoryName: string) => {
+      if (i < skipFirst) {
+        ++i
+        return
+      }
+      process.stdout.write(`Factory pool ${++i} ${poolAddress} Factory ${factoryName} processing ... `)
+      const result = await process2CoinsPool(poolAddress, `Factory ${factoryName}`, CurvePoolType.Factory, 1e-9)
+      console.log(result)
+    })
+  })
 })
