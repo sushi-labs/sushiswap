@@ -39,20 +39,26 @@ export const useClientTrade = (variables: UseTradeParams) => {
     ],
     queryFn: async () => {
       if (!poolsCodeMap || !isRouteProcessorChainId(chainId) || !fromToken || !amount || !toToken || !feeData?.gasPrice)
-        return {
-          abi: undefined,
-          address: undefined,
-          swapPrice: undefined,
-          priceImpact: undefined,
-          amountIn: undefined,
-          amountOut: undefined,
-          minAmountOut: undefined,
-          gasSpent: undefined,
-          writeArgs: undefined,
-          route: undefined,
-          functionName: 'processRoute',
-          overrides: undefined,
-        }
+        return new Promise((res) =>
+          setTimeout(
+            () =>
+              res({
+                abi: undefined,
+                address: undefined,
+                swapPrice: undefined,
+                priceImpact: undefined,
+                amountIn: undefined,
+                amountOut: undefined,
+                minAmountOut: undefined,
+                gasSpent: undefined,
+                writeArgs: undefined,
+                route: undefined,
+                functionName: 'processRoute',
+                overrides: undefined,
+              }),
+            250
+          )
+        )
 
       const route = Router.findSushiRoute(
         poolsCodeMap,
@@ -101,34 +107,44 @@ export const useClientTrade = (variables: UseTradeParams) => {
           }
         }
 
-        return {
-          swapPrice: amountOut.greaterThan(ZERO)
-            ? new Price({
-                baseAmount: amount,
-                quoteAmount: amountOut,
-              })
-            : undefined,
-          priceImpact: route.priceImpact
-            ? new Percent(JSBI.BigInt(Math.round(route.priceImpact * 10000)), JSBI.BigInt(10000))
-            : new Percent(0),
-          amountIn,
-          amountOut,
-          minAmountOut: writeArgs?.[3]
-            ? Amount.fromRawAmount(toToken, writeArgs[3].toString())
-            : Amount.fromRawAmount(
-                toToken,
-                calculateSlippageAmount(amountOut, new Percent(Math.floor(0.5 * 100), 10_000))[0]
-              ),
-          gasSpent: price
-            ? Amount.fromRawAmount(Native.onChain(chainId), route.gasSpent * 1e9)
-                .multiply(price.asFraction)
-                .toSignificant(4)
-            : undefined,
-          route,
-          functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
-          writeArgs,
-          overrides,
-        }
+        return new Promise((res) =>
+          setTimeout(
+            () =>
+              res({
+                swapPrice: amountOut.greaterThan(ZERO)
+                  ? new Price({
+                      baseAmount: amount,
+                      quoteAmount: amountOut,
+                    })
+                  : undefined,
+                priceImpact: route.priceImpact
+                  ? new Percent(JSBI.BigInt(Math.round(route.priceImpact * 10000)), JSBI.BigInt(10000))
+                  : new Percent(0),
+                amountIn,
+                amountOut,
+                minAmountOut: writeArgs?.[3]
+                  ? Amount.fromRawAmount(toToken, writeArgs[3].toString())
+                  : Amount.fromRawAmount(
+                      toToken,
+                      calculateSlippageAmount(amountOut, new Percent(Math.floor(0.5 * 100), 10_000))[0]
+                    ),
+                gasSpent:
+                  price && feeData.gasPrice
+                    ? Amount.fromRawAmount(
+                        Native.onChain(chainId),
+                        JSBI.multiply(JSBI.BigInt(feeData.gasPrice), JSBI.BigInt(route.gasSpent * 1.2))
+                      )
+                        .multiply(price.asFraction)
+                        .toSignificant(4)
+                    : undefined,
+                route,
+                functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
+                writeArgs,
+                overrides,
+              }),
+            250
+          )
+        )
       }
     },
     refetchInterval: 10000,
