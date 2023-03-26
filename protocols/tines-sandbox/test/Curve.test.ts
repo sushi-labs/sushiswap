@@ -213,7 +213,11 @@ async function createCurvePoolInfo(
       expect(res).equal(true, 'Wrong setTokenBalance for ' + token)
 
       const tokenContract = new Contract(token, erc20Abi, user)
-      await tokenContract.approve(poolAddress, initialBalance.toString())
+      try {
+        await tokenContract.approve(poolAddress, initialBalance.toString())
+      } catch (_) {
+        // in try block because crv token (0xD533a949740bb3306d119CC777fa900bA034cd52) doesn't allow re-approve (((
+      }
       tokenContracts.push(tokenContract)
 
       const decimals = await tokenContract.decimals()
