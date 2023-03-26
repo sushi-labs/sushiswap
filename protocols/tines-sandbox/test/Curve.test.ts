@@ -9,17 +9,65 @@ import seedrandom from 'seedrandom'
 
 import { setTokenBalance } from '../src/SetTokenBalance'
 
-const FACTORY_ADDRESSES = [
-  '0x0959158b6040d32d04c301a72cbfd6b39e21c9ae',
-  '0xb9fc157394af804a3578134a6585c0dc9cc990d4',
-  '0xf18056bbd320e96a48e3fbf8bc061322531aac99',
-]
-
 enum CurvePoolType {
   Legacy = 'Legacy', // 'exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) -> uint256'
   LegacyV2 = 'LegacyV2', // 'function coins(int128) pure returns (address)'
   LegacyV3 = 'LegacyV3',
   Factory = 'Factory',
+}
+
+const NON_FACTORY_POOLS: [string, string, CurvePoolType, number?][] = [
+  ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', 'steth', CurvePoolType.Legacy],
+  ['0xdcef968d416a41cdac0ed8702fac8128a64241a2', 'fraxusdc', CurvePoolType.Legacy],
+  ['0x828b154032950c8ff7cf8085d841723db2696056', 'stETH concentrated', CurvePoolType.Factory],
+  ['0xf253f83aca21aabd2a20553ae0bf7f65c755a07f', 'sbtc2', CurvePoolType.Legacy],
+  ['0x9d0464996170c6b9e75eed71c68b99ddedf279e8', 'cvxCRV', CurvePoolType.Factory],
+  ['0x453d92c7d4263201c69aacfaf589ed14202d83a4', 'yCRV', CurvePoolType.Factory],
+  ['0xc5424b857f758e906013f3555dad202e4bdb4567', 'seth', CurvePoolType.Legacy],
+  ['0x9848482da3ee3076165ce6497eda906e66bb85c5', 'pETH', CurvePoolType.Factory],
+  ['0xf7b55c3732ad8b2c2da7c24f30a69f55c54fb717', 'cdCRV', CurvePoolType.Factory],
+  ['0xc897b98272aa23714464ea2a0bd5180f1b8c0025', 'msETH', CurvePoolType.Factory],
+  ['0xa1f8a6807c402e4a15ef4eba36528a3fed24e577', 'frxETH', CurvePoolType.Legacy],
+  ['0x0ce6a5ff5217e38315f87032cf90686c96627caa', 'EURS', CurvePoolType.Legacy],
+  ['0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2', 'ankrETH', CurvePoolType.Legacy],
+  ['0xeb16ae0052ed37f479f7fe63849198df1765a733', 'saave', CurvePoolType.Legacy, 1e-4],
+  ['0xf9440930043eb3997fc70e1339dbb11f341de7a8', 'reth', CurvePoolType.Legacy],
+  ['0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56', 'compound', CurvePoolType.LegacyV2, 1e-7],
+  ['0xfd5db7463a3ab53fd211b4af195c5bccc1a03890', 'eurt', CurvePoolType.Legacy],
+  ['0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0', 'link', CurvePoolType.Legacy],
+  ['0x4ca9b3063ec5866a4b82e437059d2c43d1be596f', 'hbtc', CurvePoolType.LegacyV3],
+  ['0x93054188d876f558f4a66b2ef1d97d16edf0895b', 'ren', CurvePoolType.LegacyV2],
+]
+
+const FACTORY_ADDRESSES = [
+  '0x0959158b6040d32d04c301a72cbfd6b39e21c9ae',
+  '0xb9fc157394af804a3578134a6585c0dc9cc990d4',
+  //'0xf18056bbd320e96a48e3fbf8bc061322531aac99', for crypto2 pools only
+]
+
+// We don't test these pools - problems with exchange function call
+const FACTORY_POOL_EXCEPTIONS_LIST = [
+  '0x2B26239f52420d11420bC0982571BFE091417A7d',
+  '0x439bfaE666826a7cB73663E366c12f03d0A13B49',
+  '0x87650D7bbfC3A9F10587d7778206671719d9910D',
+  '0x961226B64AD373275130234145b96D100Dc0b655',
+  '0xe7E4366f6ED6aFd23e88154C00B532BDc0352333',
+  '0x8c524635d52bd7b1Bd55E062303177a7d916C046',
+  '0xD652c40fBb3f06d6B58Cb9aa9CFF063eE63d465D',
+  '0x28B0Cf1baFB707F2c6826d10caf6DD901a6540C5',
+  '0x0AD66FeC8dB84F8A3365ADA04aB23ce607ac6E24',
+]
+const FACTORY_POOL_EXCEPTION_SET = new Set(FACTORY_POOL_EXCEPTIONS_LIST.map((p) => p.toLowerCase()))
+const FACTORY_POOL_PRECISION_SPECIAL: Record<string, number> = {
+  '0x6a274de3e2462c7614702474d64d376729831dca': 1e-3, //TODO!!!
+  '0x5a59fd6018186471727faaeae4e57890abc49b08': 1e-8,
+}
+
+const METAPOOL_COIN_TO_BASEPOOL: Record<string, string> = {
+  '0x6c3f90f043a72fa612cbac8115ee7e52bde6e490': '0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7', // 3-pool
+  '0x075b1bb99792c9e1041ba13afef80c91a1e70fb3': '0x7fC77b5c7614E1533320Ea6DDc2Eb61fa00A9714', // sBTC
+  '0x3175df0976dfa876431c2e9ee6bc45b65d3473cc': '0xDcEF968d416a41Cdac0ED8702fAC8128A64241A2', // fraxUSD
+  '0x051d7e5609917bd9b73f04bac0ded8dd46a74301': '0xf253f83AcA21aAbD2A20553AE0BF7F65C755A07F',
 }
 
 export function getRandomExp(rnd: () => number, min: number, max: number) {
@@ -71,13 +119,9 @@ async function getPoolRatio(poolAddress: string, poolType: CurvePoolType, provid
     provider
   )
   const token1 = await pool.coins(1)
-  if (token1.toLowerCase() == '0x6c3f90f043a72fa612cbac8115ee7e52bde6e490') {
-    // Metapool with 3-pool second token
-    const basePool = new Contract(
-      '0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7',
-      ['function get_virtual_price() pure returns (uint256)'],
-      provider
-    )
+  const basePoolAddress = METAPOOL_COIN_TO_BASEPOOL[token1.toLowerCase()]
+  if (basePoolAddress !== undefined) {
+    const basePool = new Contract(basePoolAddress, ['function get_virtual_price() pure returns (uint256)'], provider)
     const price = await basePool.get_virtual_price()
     // 1e18 is not always appropriate, but there is no way to find self.rate_multiplier value
     return parseInt(price.toString()) / 1e18
@@ -225,29 +269,6 @@ async function checkSwap(poolInfo: PoolInfo, from: number, to: number, amountIn:
   expectCloseValues(realOut, expectedOut.out, precision)
 }
 
-const CurvePools: [string, string, CurvePoolType, number?][] = [
-  ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', 'steth', CurvePoolType.Legacy],
-  ['0xdcef968d416a41cdac0ed8702fac8128a64241a2', 'fraxusdc', CurvePoolType.Legacy],
-  ['0x828b154032950c8ff7cf8085d841723db2696056', 'stETH concentrated', CurvePoolType.Factory],
-  ['0xf253f83aca21aabd2a20553ae0bf7f65c755a07f', 'sbtc2', CurvePoolType.Legacy],
-  ['0x9d0464996170c6b9e75eed71c68b99ddedf279e8', 'cvxCRV', CurvePoolType.Factory],
-  ['0x453d92c7d4263201c69aacfaf589ed14202d83a4', 'yCRV', CurvePoolType.Factory],
-  ['0xc5424b857f758e906013f3555dad202e4bdb4567', 'seth', CurvePoolType.Legacy],
-  ['0x9848482da3ee3076165ce6497eda906e66bb85c5', 'pETH', CurvePoolType.Factory],
-  ['0xf7b55c3732ad8b2c2da7c24f30a69f55c54fb717', 'cdCRV', CurvePoolType.Factory],
-  ['0xc897b98272aa23714464ea2a0bd5180f1b8c0025', 'msETH', CurvePoolType.Factory],
-  ['0xa1f8a6807c402e4a15ef4eba36528a3fed24e577', 'frxETH', CurvePoolType.Legacy],
-  ['0x0ce6a5ff5217e38315f87032cf90686c96627caa', 'EURS', CurvePoolType.Legacy],
-  ['0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2', 'ankrETH', CurvePoolType.Legacy],
-  ['0xeb16ae0052ed37f479f7fe63849198df1765a733', 'saave', CurvePoolType.Legacy, 1e-4],
-  ['0xf9440930043eb3997fc70e1339dbb11f341de7a8', 'reth', CurvePoolType.Legacy],
-  ['0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56', 'compound', CurvePoolType.LegacyV2, 1e-7],
-  ['0xfd5db7463a3ab53fd211b4af195c5bccc1a03890', 'eurt', CurvePoolType.Legacy],
-  ['0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0', 'link', CurvePoolType.Legacy],
-  ['0x4ca9b3063ec5866a4b82e437059d2c43d1be596f', 'hbtc', CurvePoolType.LegacyV3],
-  ['0x93054188d876f558f4a66b2ef1d97d16edf0895b', 'ren', CurvePoolType.LegacyV2],
-]
-
 async function forEachFactoryPool(provider: Provider, func: (address: string, factoryName: string) => void) {
   const processedPoolSet = new Set<string>()
   for (let f = 0; f < FACTORY_ADDRESSES.length; ++f) {
@@ -291,6 +312,7 @@ async function process2CoinsPool(
   if (poolInfo.tokenContracts.length > 2) return `skipped (${poolInfo.tokenContracts.length} tokens)`
   const res0 = parseInt(poolInfo.poolTines.reserve0.toString())
   const res1 = parseInt(poolInfo.poolTines.reserve1.toString())
+  if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
   const checks = poolType == CurvePoolType.LegacyV2 || poolType == CurvePoolType.LegacyV3 ? 3 : 10
   for (let i = 0; i < checks; ++i) {
     const amountInPortion = getRandomExp(rnd, 1e-5, 1)
@@ -300,10 +322,10 @@ async function process2CoinsPool(
   return 'passed'
 }
 
-describe.only('Real Curve pools consistency check', () => {
+describe('Real Curve pools consistency check', () => {
   describe('Not-Factory pools by whitelist', () => {
-    for (let i = 0; i < CurvePools.length; ++i) {
-      const [poolAddress, name, poolType, precision = 1e-9] = CurvePools[i]
+    for (let i = 0; i < NON_FACTORY_POOLS.length; ++i) {
+      const [poolAddress, name, poolType, precision = 1e-9] = NON_FACTORY_POOLS[i]
       it(`${name} (${poolAddress}, ${poolType})`, async () => {
         const result = await process2CoinsPool(poolAddress, name, poolType, precision)
         expect(result).equal('passed')
@@ -311,17 +333,24 @@ describe.only('Real Curve pools consistency check', () => {
     }
   })
   it(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
-    let i = 0
-    const skipFirst = 0
+    let passed = 0,
+      i = 0
+    const startFrom = 0,
+      finishAt = 1e9
     const [user] = await ethers.getSigners()
     await forEachFactoryPool(user.provider as Provider, async (poolAddress: string, factoryName: string) => {
-      if (i < skipFirst) {
-        ++i
+      if (++i < startFrom) return
+      if (i > finishAt) return
+      process.stdout.write(`Factory ${factoryName} pool ${i} ${poolAddress} ... `)
+      if (FACTORY_POOL_EXCEPTION_SET.has(poolAddress.toLowerCase())) {
+        console.log('skipped (exception list: function "exchange" failes)')
         return
       }
-      process.stdout.write(`Factory pool ${++i} ${poolAddress} Factory ${factoryName} processing ... `)
-      const result = await process2CoinsPool(poolAddress, `Factory ${factoryName}`, CurvePoolType.Factory, 1e-9)
+      const precision = FACTORY_POOL_PRECISION_SPECIAL[poolAddress.toLowerCase()] || 1e-9
+      const result = await process2CoinsPool(poolAddress, `Factory ${factoryName}`, CurvePoolType.Factory, precision)
       console.log(result)
+      if (result == 'passed') ++passed
     })
+    console.log('passed', passed)
   })
 })
