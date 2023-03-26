@@ -6,7 +6,7 @@ import { Amount, Native, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { usePrice, UseTradeParams, UseTradeReturnWriteArgs } from '@sushiswap/react-query'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { BigNumber } from 'ethers'
-import { Router } from '@sushiswap/router'
+import { LiquidityProviders, Router } from '@sushiswap/router'
 import { isRouteProcessorChainId, routeProcessorAddress } from '@sushiswap/route-processor'
 import { HexString } from '@sushiswap/types'
 import { calculateSlippageAmount } from '@sushiswap/amm'
@@ -54,13 +54,23 @@ export const useClientTrade = (variables: UseTradeParams) => {
           overrides: undefined,
         }
 
-      const route = Router.findSushiRoute(
+      // const route = Router.findSushiRoute(
+      //   poolsCodeMap,
+      //   chainId,
+      //   fromToken,
+      //   BigNumber.from(amount.quotient.toString()),
+      //   toToken,
+      //   feeData.gasPrice.toNumber()
+      // )
+      
+      const route = Router.findBestRoute(
         poolsCodeMap,
         chainId,
         fromToken,
         BigNumber.from(amount.quotient.toString()),
         toToken,
-        feeData.gasPrice.toNumber()
+        feeData.gasPrice.toNumber(),
+        [LiquidityProviders.UniswapV3, LiquidityProviders.NativeWrap],
       )
 
       let args = undefined

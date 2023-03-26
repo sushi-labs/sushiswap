@@ -20,7 +20,6 @@ import {
   ConstantProductPoolState,
   usePairs,
   PairState,
-  useV3Pools,
 } from '@sushiswap/wagmi'
 import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from 'config'
 import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
@@ -78,12 +77,6 @@ export function useTrade(
   const { data: stablePools } = useGetStablePools(chainId as BentoBoxV1ChainId, currencyCombinations, {
     enabled: isBentoBoxV1ChainId(chainId),
   })
-
-  // V3 Pools
-  const { data: v3Pools } = useV3Pools(chainId as ChainId, currencyCombinations, {
-    enabled: isUniswapV2Router02ChainId(chainId),
-  })
-
 
   // Combined legacy and trident pools
   const pools = useMemo(
