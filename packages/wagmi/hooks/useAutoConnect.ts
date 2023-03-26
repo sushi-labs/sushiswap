@@ -1,13 +1,20 @@
-import { useEffect } from 'react'
-import { useClient, useConnect } from 'wagmi'
+import { useEffect, useMemo, useState } from 'react'
+import { useAccount, useClient, useConnect } from 'wagmi'
 
 const AUTOCONNECTED_CONNECTOR_IDS = ['safe']
 
 export const useAutoConnect = () => {
   const client = useClient()
-  const { connect, connectors } = useConnect()
+  const { isConnected } = useAccount()
+  const { connect, connectAsync, connectors } = useConnect({ onSuccess: () => setIsAutoConnecting(false) })
+  const [isAutoConnecting, setIsAutoConnecting] = useState(false)
 
   useEffect(() => {
+    if (isAutoConnecting) return
+    if (isConnected) return
+
+    setIsAutoConnecting(true)
+
     const ready = connectors.filter((c) => AUTOCONNECTED_CONNECTOR_IDS.includes(c.id)).some((c) => c.ready)
     if (ready) {
       AUTOCONNECTED_CONNECTOR_IDS.forEach((connectorId) => {
@@ -18,8 +25,29 @@ export const useAutoConnect = () => {
       })
     } else {
       ;(async () => {
-        await client.autoConnect()
+        const lastUsedConnector = client.storage?.getItem('wallet')
+
+        const sorted = lastUsedConnector
+          ? [...connectors].sort((x) => (x.id === lastUsedConnector ? -1 : 1))
+          : connectors
+
+        let triedOnce = false
+        for (const connector of sorted) {
+          if (!connector.ready || !connector.isAuthorized) continue
+          const isAuthorized = await connector.isAuthorized()
+          if (!isAuthorized) continue
+
+          await connectAsync({ connector })
+          triedOnce = true
+          break
+        }
+
+        if (!triedOnce) {
+          setIsAutoConnecting(false)
+        }
       })()
     }
-  }, [client, connect, connectors])
+  }, [])
+
+  return useMemo(() => ({ isAutoConnecting }), [isAutoConnecting])
 }

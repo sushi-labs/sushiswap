@@ -104,8 +104,6 @@ export const SUBGRAPH_HOST = {
   [ChainId.OKEX]: '',
   [ChainId.HECO]: '',
   [ChainId.KOVAN]: '',
-  [ChainId.BOBA_AVAX]: 'subgraphs.sushi.com/subgraphs/name',
-  [ChainId.BOBA_BNB]: 'subgraphs.sushi.com/subgraphs/name',
 } as const
 
 export const BENTOBOX_SUBGRAPH_NAME = {
@@ -143,7 +141,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.FUSE]: 'sushiswap/fuse-blocks',
   [ChainId.KOVAN]: 'blocklytics/kovan-blocks',
   [ChainId.MOONBEAM]: 'sushiswap/moonbeam-blocks',
-  [ChainId.OPTIMISM]: 'kybernetwork/optimism-blocks',
+  [ChainId.OPTIMISM]: 'beethovenxfi/optimism-blocks',
   [ChainId.KAVA]: 'sushiswap/blocks-kava',
   [ChainId.METIS]: 'sushiswap/blocks-metis',
   [ChainId.ARBITRUM_NOVA]: 'sushiswap/blocks-arbitrum-nova',

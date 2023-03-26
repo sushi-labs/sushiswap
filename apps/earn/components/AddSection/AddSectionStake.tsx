@@ -1,38 +1,32 @@
 import { Transition } from '@headlessui/react'
 import { tryParseAmount } from '@sushiswap/currency'
-import { Pair } from '@sushiswap/graph-client'
+import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, Dots, Typography } from '@sushiswap/ui'
-import { Approve, Checker, Chef, getMasterChefContractConfig, useMasterChefDeposit } from '@sushiswap/wagmi'
+import { Approve, Checker, getMasterChefContractConfig, useMasterChefDeposit } from '@sushiswap/wagmi'
 import { FC, Fragment, useMemo, useState } from 'react'
-import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
-import { CHEF_TYPE_MAP } from '../../lib/constants'
-import { useTokensFromPair } from '../../lib/hooks'
-import { useNotifications } from '../../lib/state/storage'
+import { useGraphPool } from '../../lib/hooks'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { AddSectionStakeWidget } from './AddSectionStakeWidget'
+import { useSWRConfig } from 'swr'
 
 interface AddSectionStakeProps {
-  pair: Pair
-  chefType: Chef
+  pool: Pool
+  chefType: ChefType
   title?: string
   farmId: number
 }
 
-export const AddSectionStake: FC<{ poolAddress: string; title?: string }> = ({ poolAddress, title }) => {
+export const AddSectionStake: FC<{ poolId: string; title?: string }> = ({ poolId, title }) => {
   const isMounted = useIsMounted()
-  const { data } = useSWR<{ pair: Pair }>(`/earn/api/pool/${poolAddress}`, (url) =>
-    fetch(url).then((response) => response.json())
-  )
+  const { data: pool } = usePool({ args: poolId, swrConfig: useSWRConfig() })
 
-  if (!data) return <></>
+  if (!pool) return <></>
 
-  const { pair } = data
-
-  if (!pair?.farm?.chefType || !isMounted || !pair.farm.id) return <></>
+  if (!pool?.incentives || pool.incentives.length === 0 || !isMounted) return <></>
 
   return (
     <Transition
@@ -46,21 +40,23 @@ export const AddSectionStake: FC<{ poolAddress: string; title?: string }> = ({ p
       leaveTo="transform opacity-0"
     >
       <_AddSectionStake
-        pair={pair}
-        chefType={CHEF_TYPE_MAP[pair.farm.chefType as keyof typeof CHEF_TYPE_MAP]}
+        pool={pool}
+        chefType={pool.incentives[0].chefType}
         title={title}
-        farmId={Number(pair.farm.id)}
+        farmId={Number(pool.incentives[0].pid)}
       />
     </Transition>
   )
 }
 
-const _AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, title, farmId }) => {
+const _AddSectionStake: FC<AddSectionStakeProps> = ({ pool, chefType, title, farmId }) => {
   const [hover, setHover] = useState(false)
   const { address } = useAccount()
-  const [, { createNotification }] = useNotifications(address)
+
   const [value, setValue] = useState('')
-  const { reserve1, reserve0, liquidityToken } = useTokensFromPair(pair)
+  const {
+    data: { reserve1, reserve0, liquidityToken },
+  } = useGraphPool(pool)
   const { balance } = usePoolPosition()
 
   const amount = useMemo(() => {
@@ -72,7 +68,6 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, title, far
     chainId: liquidityToken.chainId,
     chef: chefType,
     pid: farmId,
-    onSuccess: createNotification,
   })
 
   return (
@@ -96,7 +91,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, title, far
       <div className={balance?.[FundSource.WALLET]?.greaterThan(ZERO) ? '' : 'opacity-40 pointer-events-none'}>
         <AddSectionStakeWidget
           title={title}
-          chainId={pair.chainId}
+          chainId={pool.chainId}
           value={value}
           setValue={setValue}
           reserve0={reserve0}
@@ -104,10 +99,9 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, title, far
           liquidityToken={liquidityToken}
         >
           <Checker.Connected size="md">
-            <Checker.Network size="md" chainId={pair.chainId}>
-              <Checker.Amounts size="md" chainId={pair.chainId} amounts={[amount]} fundSource={FundSource.WALLET}>
+            <Checker.Network size="md" chainId={pool.chainId}>
+              <Checker.Amounts size="md" chainId={pool.chainId} amounts={[amount]} fundSource={FundSource.WALLET}>
                 <Approve
-                  onSuccess={createNotification}
                   className="flex-grow !justify-end"
                   components={
                     <Approve.Components>
@@ -116,8 +110,8 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, title, far
                         className="whitespace-nowrap"
                         fullWidth
                         amount={amount}
-                        address={getMasterChefContractConfig(pair.chainId, chefType)?.address}
-                        enabled={Boolean(getMasterChefContractConfig(pair.chainId, chefType)?.address)}
+                        address={getMasterChefContractConfig(pool.chainId, chefType)?.address}
+                        enabled={Boolean(getMasterChefContractConfig(pool.chainId, chefType)?.address)}
                       />
                     </Approve.Components>
                   }

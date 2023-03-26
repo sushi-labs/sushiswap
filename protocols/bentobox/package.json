@@ -10,7 +10,14 @@
   "bugs": {
     "url": "https://github.com/sushiswap/sushiswap/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "protocols/bentobox"
+  },
   "license": "UNLICENSED",
+  "main": "exports/exports.js",
+  "types": "exports/exports.d.ts",
   "files": [
     "artifacts",
     "contracts",
@@ -21,13 +28,10 @@
   ],
   "scripts": {
     "build": "TS_NODE_TRANSPILE_ONLY=1 hardhat compile",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf artifacts && rm -rf cache && rm -rf exports && rm -rf typechain",
+    "clean": "rm -rf .turbo node_modules artifacts cache exports typechain",
     "deploy": "hardhat deploy",
-    "export": "hardhat export --export-all exports.json",
+    "export": "hardhat export --export-all exports.json && tsc -p tsconfig.exports.json --declaration",
     "node": "hardhat node"
-  },
-  "dependencies": {
-    "@sushiswap/currency": "workspace:*"
   },
   "devDependencies": {
     "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc",
@@ -37,12 +41,14 @@
     "@nomiclabs/hardhat-etherscan": "3.1.3",
     "@nomiclabs/hardhat-solhint": "2.0.1",
     "@nomiclabs/hardhat-waffle": "2.0.3",
+    "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/hardhat-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@types/node": "18.11.12",
+    "@sushiswap/types": "workspace:*",
+    "@types/node": "^18.0.0",
     "eslint": "8.29.0",
     "ethers": "5.7.2",
     "hardhat": "2.12.4",

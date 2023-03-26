@@ -7,12 +7,148 @@ import '@tenderly/hardhat-tenderly'
 import '@typechain/hardhat'
 import 'hardhat-deploy'
 import 'hardhat-deploy-ethers'
+import '@matterlabs/hardhat-zksync-deploy'
+import '@matterlabs/hardhat-zksync-solc'
 
-import type { HardhatUserConfig } from 'hardhat/config'
+import { copyFileSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
+import { HardhatUserConfig, task } from 'hardhat/config'
+import { TASK_EXPORT } from 'hardhat-deploy'
+import type { MultiExport } from 'hardhat-deploy/types'
 
 const accounts = {
   mnemonic: process.env.MNEMONIC || 'test test test test test test test test test test test junk',
   accountsBalance: '990000000000000000000',
+}
+
+// export const EXPORT_TASK = () => {
+//   task(TASK_EXPORT, async (args, hre, runSuper) => {
+//     await runSuper()
+
+//     copyFileSync('./exports.json', './exports/exports.json')
+//     unlinkSync('./exports.json')
+
+//     const parsed: MultiExport = JSON.parse(readFileSync('./exports/exports.json', { encoding: 'utf-8' }))
+//     delete parsed['31337']
+
+//     const contractNames = Array.from(
+//       new Set(Object.values(parsed).flatMap(([{ contracts }]: any) => Object.keys(contracts)))
+//     )
+
+//     writeFileSync(
+//       './exports/exports.ts',
+//       `
+// import type { NumberStringToNumber } from "@sushiswap/types"` +
+//         contractNames
+//           .map((contractName) => {
+//             const lowerCaseName = contractName.charAt(0).toLowerCase() + contractName.slice(1)
+
+//             const chainIds = Object.values(parsed).flatMap((exp) =>
+//               exp.filter(({ contracts }) => contracts[contractName]).map((exp) => exp.chainId)
+//             )
+
+//             const contractExports = Object.fromEntries(
+//               Object.entries(parsed)
+//                 .filter(([chainId]) => chainIds.includes(chainId))
+//                 .map(
+//                   ([chainId, [exp]]) =>
+//                     [
+//                       chainId,
+//                       {
+//                         ...Object.entries(exp.contracts)
+//                           .filter(([name]) => {
+//                             // console.log('name: ', name, 'contractName: ', contractName)
+//                             return name !== contractName
+//                           })
+//                           .map(([, contract]) => contract)[0],
+//                       },
+//                     ] as const
+//                 )
+//             )
+
+//             return `
+// export const ${lowerCaseName}Exports = ${JSON.stringify(contractExports)} as const
+// export type ${contractName}Exports = typeof ${lowerCaseName}Exports
+// export type ${contractName}ChainId = NumberStringToNumber<keyof ${contractName}Exports>
+// export const is${contractName}ChainId = (chainId: number): chainId is ${contractName}ChainId => chainId in ${lowerCaseName}Exports
+// export const ${lowerCaseName}Address = Object.fromEntries(
+//   Object.entries(${lowerCaseName}Exports).map(([chainId, data]) => [parseInt(chainId), data.address])
+// ) as {[chainId in keyof ${contractName}Exports]: ${contractName}Exports[chainId]['address']}
+// export const ${lowerCaseName}Abi = Object.fromEntries(
+//   Object.entries(${lowerCaseName}Exports).map(([chainId, data]) => [parseInt(chainId), data.abi])
+// ) as {[chainId in keyof ${contractName}Exports]: ${contractName}Exports[chainId]['abi']}
+// \n`
+//           })
+//           .join('')
+//     )
+//   })
+// }
+
+export const EXPORT_TASK = () => {
+  task(TASK_EXPORT, async (args, hre, runSuper) => {
+    await runSuper()
+
+    try {
+      mkdirSync('exports')
+    } catch (e) {
+      //
+    }
+
+    copyFileSync('exports.json', 'exports/exports.json')
+    unlinkSync('exports.json')
+
+    const parsed: MultiExport = JSON.parse(readFileSync('exports/exports.json', { encoding: 'utf-8' }))
+    delete parsed['31337']
+
+    const contractNames = Array.from(
+      new Set(Object.values(parsed).flatMap(([{ contracts }]: any) => Object.keys(contracts)))
+    )
+
+    writeFileSync(
+      './exports/exports.ts',
+      `
+import type { NumberStringToNumber } from "@sushiswap/types"` +
+        contractNames
+          .map((contractName) => {
+            const lowerCaseName = contractName.charAt(0).toLowerCase() + contractName.slice(1)
+
+            const chainIds = Object.values(parsed).flatMap((exp) =>
+              exp.filter(({ contracts }) => contracts[contractName]).map((exp) => exp.chainId)
+            )
+
+            const contractExports = Object.fromEntries(
+              Object.entries(parsed)
+                .map(
+                  ([chainId, [exp]]) =>
+                    [
+                      chainId,
+                      {
+                        // ...exp,
+                        ...Object.entries(exp.contracts)
+                          .filter(([name]) => name === contractName)
+                          .map(([, contract]) => contract)[0],
+                      },
+                    ] as const
+                )
+                .filter(([chainId]) => chainIds.includes(chainId))
+            )
+
+            return ` 
+export const ${lowerCaseName}Exports = ${JSON.stringify(contractExports)} as const
+export type ${contractName}Exports = typeof ${lowerCaseName}Exports
+export type ${contractName}ChainId = NumberStringToNumber<keyof ${contractName}Exports>
+export const is${contractName}ChainId = (chainId: number): chainId is ${contractName}ChainId => chainId in ${lowerCaseName}Exports
+export const ${lowerCaseName}Address = Object.fromEntries(
+  Object.entries(${lowerCaseName}Exports).map(([chainId, data]) => [parseInt(chainId), data.address])
+) as {[chainId in keyof ${contractName}Exports]: ${contractName}Exports[chainId]['address']}
+export const ${lowerCaseName}Abi = Object.fromEntries(
+  Object.entries(${lowerCaseName}Exports).map(([chainId, data]) => [parseInt(chainId), data.abi])
+) as {[chainId in keyof ${contractName}Exports]: ${contractName}Exports[chainId]['abi']}
+export const ${lowerCaseName}ChainIds = Object.keys(${lowerCaseName}Exports).map(chainId => parseInt(chainId)) as ${contractName}ChainId[]
+\n`
+          })
+          .join('')
+    )
+  })
 }
 
 export const defaultConfig: HardhatUserConfig = {
@@ -78,6 +214,7 @@ export const defaultConfig: HardhatUserConfig = {
       metis: 'api-key',
       // bobaAvax: 'api-key',
       bttc: process.env.BTTC_API_KEY || '',
+      gnosis: process.env.GNOSIS_API_KEY || '',
     },
   },
   tenderly: {
@@ -91,6 +228,11 @@ export const defaultConfig: HardhatUserConfig = {
     // discriminateTypes: boolean;
     // tsNocheck: boolean;
     // externalArtifacts?: string[];
+  },
+  zksolc: {
+    version: '1.3.1',
+    compilerSource: 'binary',
+    settings: {},
   },
   networks: {
     localhost: {
@@ -108,11 +250,37 @@ export const defaultConfig: HardhatUserConfig = {
       hardfork: process.env.CODE_COVERAGE ? 'berlin' : 'london',
       forking: {
         enabled: process.env.FORKING === 'true',
-        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
       },
     },
+    'zksync-testnet': {
+      url: 'https://zksync2-testnet.zksync.dev', // URL of the zkSync network RPC
+      ethNetwork: 'goerli', // Can also be the RPC URL of the Ethereum network (e.g. `https://goerli.infura.io/v3/<API_KEY>`)
+      zksync: true,
+    },
+    'scroll-alpha-testnet': {
+      url: `https://alpha-rpc.scroll.io/l2`,
+      accounts,
+      chainId: 534353,
+      live: true,
+      saveDeployments: true,
+    },
+    consensyszkevmgoerli: {
+      url: `https://consensys-zkevm-goerli-prealpha.infura.io/v3/53fca4c2b95a43cca82a11e8b573256b`,
+      accounts,
+      chainId: 59140,
+      live: true,
+      saveDeployments: true,
+    },
+    basegoerli: {
+      url: 'https://goerli.base.org',
+      accounts,
+      chainId: 84531,
+      live: true,
+      saveDeployments: true,
+    },
     ethereum: {
-      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
       accounts,
       chainId: 1,
       live: true,
@@ -129,7 +297,7 @@ export const defaultConfig: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     rinkeby: {
-      url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
       accounts,
       chainId: 4,
       live: true,
@@ -139,7 +307,7 @@ export const defaultConfig: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     goerli: {
-      url: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
       accounts,
       chainId: 5,
       live: true,
@@ -148,7 +316,7 @@ export const defaultConfig: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     kovan: {
-      url: `https://eth-kovan.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://eth-kovan.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
       accounts,
       chainId: 42,
       live: true,

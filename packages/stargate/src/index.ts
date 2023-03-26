@@ -1,10 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
 import {
   addressMapToTokenMap,
-  Currency,
   DAI_ADDRESS,
   FRAX_ADDRESS,
   Token,
+  Type,
   USDC,
   USDC_ADDRESS,
   USDT,
@@ -29,15 +29,16 @@ export const STARGATE_CHAIN_ID = {
   [ChainId.OPTIMISM]: 111,
   [ChainId.FANTOM]: 112,
   // TESTNETS
-  [ChainId.RINKEBY]: 10001,
-  [ChainId.BSC_TESTNET]: 10002,
-  [ChainId.AVALANCHE_TESTNET]: 10006,
-  [ChainId.POLYGON_TESTNET]: 10009,
+  // TODO: Depreciated, replace with goerli
+  // [ChainId.RINKEBY]: 10001,
+  // [ChainId.BSC_TESTNET]: 10002,
+  // [ChainId.AVALANCHE_TESTNET]: 10006,
+  // [ChainId.POLYGON_TESTNET]: 10009,
   // TODO: Depreciated, replace with goerli
   // [ChainId.ARBITRUM_RINKEBY_TESTNET]: 10010,
   // TODO: Depreciated, replace with goerli
   // [ChainId.OPTIMISM_KOVAN_TESTNET]: 10011,
-  [ChainId.FANTOM_TESTNET]: 10012,
+  // [ChainId.FANTOM_TESTNET]: 10012,
 } as const
 
 export const STARGATE_WIDGET_ADDRESS = {
@@ -59,7 +60,6 @@ export const STARGATE_ROUTER_ADDRESS = {
   [ChainId.OPTIMISM]: '0xB0D502E938ed5f4df2E681fE6E419ff29631d62b',
   [ChainId.ARBITRUM]: '0x53Bf833A5d6c4ddA888F69c22C88C9f356a41614',
   // Testnets
-  [ChainId.RINKEBY]: '0x82A0F5F531F9ce0df1DF5619f74a0d3fA31FF561',
   [ChainId.BSC_TESTNET]: '0xbB0f1be1E9CE9cB27EA5b0c3a85B7cc3381d8176',
   [ChainId.AVALANCHE_TESTNET]: '0x13093E05Eb890dfA6DacecBdE51d24DabAb2Faa1',
   [ChainId.POLYGON_TESTNET]: '0x817436a076060D158204d955E5403b6Ed0A5fac0',
@@ -106,7 +106,6 @@ export const STARGATE_USDC_ADDRESS = {
   [ChainId.ARBITRUM]: USDC_ADDRESS[ChainId.ARBITRUM],
   [ChainId.FANTOM]: USDC_ADDRESS[ChainId.FANTOM],
   // Testnets
-  [ChainId.RINKEBY]: '0x1717A0D5C8705EE89A8aD6E808268D6A826C97A4',
   [ChainId.AVALANCHE_TESTNET]: '0x4A0D1092E9df255cf95D72834Ea9255132782318',
   // TODO: Depreciated, replace with goerli
   // [ChainId.ARBITRUM_RINKEBY_TESTNET]: '0x1EA8Fb2F671620767f41559b663b86B1365BBc3d',
@@ -133,13 +132,6 @@ export const STARGATE_USDC: Record<keyof typeof STARGATE_USDC_ADDRESS, Token> = 
   [ChainId.ARBITRUM]: USDC[ChainId.ARBITRUM],
   // Testnets
 
-  [ChainId.RINKEBY]: new Token({
-    chainId: ChainId.RINKEBY,
-    address: STARGATE_USDC_ADDRESS[ChainId.RINKEBY],
-    decimals: 6,
-    symbol: 'USDC',
-    name: 'USD Coin',
-  }),
   [ChainId.AVALANCHE_TESTNET]: new Token({
     chainId: ChainId.AVALANCHE_TESTNET,
     address: STARGATE_USDC_ADDRESS[ChainId.AVALANCHE_TESTNET],
@@ -476,7 +468,9 @@ export const STARGATE_CONFIRMATION_SECONDS = {
   [ChainId.FANTOM]: STARGATE_BLOCK_CONFIRMATIONS[ChainId.FANTOM] * 2,
 } as const
 
-export function isStargateBridgeToken(currency: Currency) {
+export function isStargateBridgeToken(currency: Type | undefined) {
+  if (!currency) return false
+  if (!STARGATE_BRIDGE_TOKEN_ADDRESSES[currency.chainId]) return false
   return STARGATE_BRIDGE_TOKEN_ADDRESSES[currency.chainId].includes(currency.wrapped.address)
 }
 
@@ -490,7 +484,7 @@ export const STARGATE_TOKEN = new Token({
 
 export type StargateChainId = keyof typeof STARGATE_CHAIN_ID
 
-export type StargateBridgeTokens = typeof STARGATE_BRIDGE_TOKENS[StargateChainId]
+export type StargateBridgeTokens = (typeof STARGATE_BRIDGE_TOKENS)[StargateChainId]
 
 export type StargateBridgeToken = StargateBridgeTokens[number]
 

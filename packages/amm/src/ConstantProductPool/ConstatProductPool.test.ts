@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Token, USDC_ADDRESS, WETH9, WETH9_ADDRESS } from '@sushiswap/currency'
-import EXPORTS from '@sushiswap/trident/exports/all.json'
+import { constantProductPoolFactoryAddress } from '@sushiswap/trident'
 
 import { InsufficientInputAmountError } from '../errors'
 import { computeConstantProductPoolAddress } from './computeConstantProductPoolAddress'
@@ -31,7 +31,7 @@ describe('computePoolAddress', () => {
     const twap = true
 
     const address = computeConstantProductPoolAddress({
-      factoryAddress: (EXPORTS as any)[ChainId.OPTIMISM]?.[0].contracts.ConstantProductPoolFactory.address,
+      factoryAddress: constantProductPoolFactoryAddress[ChainId.OPTIMISM],
       tokenA,
       tokenB,
       fee,

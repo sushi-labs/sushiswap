@@ -9,9 +9,14 @@ import {
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { GraphQLResolveInfo } from 'graphql'
 
-import { Query, QueryliquidityPositionsByChainIdsArgs, QueryResolvers, RequireFields } from '../../.graphclient'
-import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
-import { TridentTypes } from '../../.graphclient/sources/Trident/types'
+import {
+  Query,
+  QueryliquidityPositionsByChainIdsArgs,
+  QueryResolvers,
+  RequireFields,
+} from '../../.graphclient/index.js'
+import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
+import { TridentTypes } from '../../.graphclient/sources/Trident/types.js'
 
 export const _liquidityPositionsByChainIds = async (
   root = {},
@@ -21,7 +26,7 @@ export const _liquidityPositionsByChainIds = async (
 ) => {
   const liquidityPositions = await Promise.allSettled<Query['liquidityPositionsByChainIds'][]>([
     ...args.chainIds
-      .filter((el): el is typeof SUSHISWAP_ENABLED_NETWORKS[number] => SUSHISWAP_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is (typeof SUSHISWAP_ENABLED_NETWORKS)[number] => SUSHISWAP_ENABLED_NETWORKS.includes(el))
       .map((chainId) =>
         context.SushiSwap.Query.liquidityPositions({
           root,
@@ -45,7 +50,7 @@ export const _liquidityPositionsByChainIds = async (
         })
       ),
     ...args.chainIds
-      .filter((el): el is typeof TRIDENT_ENABLED_NETWORKS[number] => TRIDENT_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is (typeof TRIDENT_ENABLED_NETWORKS)[number] => TRIDENT_ENABLED_NETWORKS.includes(el))
       .map((chainId) =>
         context.Trident.Query.liquidityPositions({
           root,

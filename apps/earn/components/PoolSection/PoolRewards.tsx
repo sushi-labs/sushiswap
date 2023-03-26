@@ -1,12 +1,12 @@
 import { formatNumber, formatPercent } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { Currency, Table, Typography } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
 import { incentiveRewardToToken } from '../../lib/functions'
 
-export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
-  if (!pair?.farm?.incentives?.length) return <></>
+export const PoolRewards: FC<{ pool: Pool }> = ({ pool }) => {
+  if (!pool?.incentives?.length) return <></>
 
   return (
     <>
@@ -18,7 +18,7 @@ export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
           <Typography variant="sm" weight={400} className="text-slate-400">
             Reward APR:{' '}
             <span className="font-semibold text-slate-50">
-              {pair.incentiveApr > 0 ? formatPercent(pair.incentiveApr) : 'n/a'}
+              {pool.incentiveApr > 0 ? formatPercent(pool.incentiveApr) : 'n/a'}
             </span>
           </Typography>
         </div>
@@ -35,13 +35,13 @@ export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
               </Table.thr>
             </Table.thead>
             <Table.tbody>
-              {pair.farm.incentives ? (
-                pair.farm.incentives.map((incentive, idx) => (
+              {pool.incentives ? (
+                pool.incentives.map((incentive, idx) => (
                   <Table.tr key={idx}>
                     <Table.td>
                       <div className="flex items-center gap-3">
                         <Currency.Icon
-                          currency={incentiveRewardToToken(pair.chainId, incentive)}
+                          currency={incentiveRewardToToken(pool.chainId, incentive)}
                           width={24}
                           height={24}
                         />

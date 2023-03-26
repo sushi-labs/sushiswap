@@ -1,22 +1,33 @@
-import { ChainId } from '@sushiswap/chain'
-import { Native } from '@sushiswap/currency'
 import { formatNumber, formatPercent, formatUSD } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { Typography } from '@sushiswap/ui'
-import { usePrices } from '@sushiswap/wagmi'
 import { FC } from 'react'
+import { useGraphPool } from '../../lib/hooks'
 
 interface PoolStats {
-  pair: Pair
+  pool: Pool
 }
 
-export const PoolStats: FC<PoolStats> = ({ pair }) => {
-  const { data: prices } = usePrices({ chainId: pair.chainId })
-  let nativePrice = prices?.[Native.onChain(pair.chainId).wrapped.address]
+export const PoolStats: FC<PoolStats> = ({ pool }) => {
+  // const { data: prices } = usePrices({ chainId: pool.chainId })
+  // let nativePrice = prices?.[Native.onChain(pool.chainId).wrapped.address]
 
-  if (pair.chainId === ChainId.POLYGON) {
-    nativePrice = prices?.['0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619']
-  }
+  // if (pool.chainId === ChainId.POLYGON) {
+  //   nativePrice = prices?.['0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619']
+  // }
+
+  const {
+    data: {
+      liquidityUSD,
+      liquidity1dChange,
+      fees1d,
+      fees1dChange,
+      volume1d,
+      volume1dChange,
+      txCount1d,
+      txCount1dChange,
+    },
+  } = useGraphPool(pool)
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -25,42 +36,54 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
           Liquidity
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatUSD(pair.liquidityNative * Number(nativePrice?.toFixed(4)))}
+          {formatUSD(liquidityUSD ?? 0)}
         </Typography>
-        {pair.liquidity1dChange ? (
-          <Typography variant="xs" weight={500} className={pair.liquidity1dChange > 0 ? 'text-green' : 'text-red'}>
-            {pair.liquidity1dChange > 0 ? '+' : '-'}
-            {formatPercent(Math.abs(pair.liquidity1dChange))}
+        {liquidity1dChange ? (
+          <Typography variant="xs" weight={500} className={liquidity1dChange > 0 ? 'text-green' : 'text-red'}>
+            {liquidity1dChange > 0 ? '+' : '-'}
+            {formatPercent(Math.abs(liquidity1dChange))}
           </Typography>
-        ) : null}
+        ) : (
+          <Typography variant="xs" weight={500} className="text-slate-50">
+            -
+          </Typography>
+        )}
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
           Volume (24h)
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatUSD(pair.volume1d)}
+          {formatUSD(volume1d ?? 0)}
         </Typography>
-        {pair.volume1dChange ? (
-          <Typography variant="xs" weight={500} className={pair.volume1dChange > 0 ? 'text-green' : 'text-red'}>
-            {pair.volume1dChange > 0 ? '+' : '-'}
-            {formatPercent(Math.abs(pair.volume1dChange))}
+        {volume1dChange ? (
+          <Typography variant="xs" weight={500} className={volume1dChange > 0 ? 'text-green' : 'text-red'}>
+            {volume1dChange > 0 ? '+' : '-'}
+            {formatPercent(Math.abs(volume1dChange))}
           </Typography>
-        ) : null}
+        ) : (
+          <Typography variant="xs" weight={500} className="text-slate-50">
+            -
+          </Typography>
+        )}
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
           Fees (24h)
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatUSD(pair.volume1d * (pair.swapFee / 10000))}
+          {formatUSD(fees1d ?? 0)}
         </Typography>
-        {pair.volume1dChange ? (
-          <Typography variant="xs" weight={500} className={pair.volume1dChange > 0 ? 'text-green' : 'text-red'}>
-            {pair.volume1dChange > 0 ? '+' : '-'}
-            {formatPercent(Math.abs(pair.volume1dChange))}
+        {fees1dChange ? (
+          <Typography variant="xs" weight={500} className={fees1dChange > 0 ? 'text-green' : 'text-red'}>
+            {fees1dChange > 0 ? '+' : '-'}
+            {formatPercent(Math.abs(fees1dChange))}
           </Typography>
-        ) : null}
+        ) : (
+          <Typography variant="xs" weight={500} className="text-slate-50">
+            -
+          </Typography>
+        )}
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
@@ -68,14 +91,18 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
         </Typography>
         <Typography weight={500} className="text-slate-50">
           {/* Don't need decimals for a count */}
-          {formatNumber(pair.txCount1d).replace('.00', '')}
+          {formatNumber(txCount1d).replace('.00', '')}
         </Typography>
-        {pair.txCount1dChange ? (
-          <Typography variant="xs" weight={500} className={pair.txCount1dChange > 0 ? 'text-green' : 'text-red'}>
-            {pair.txCount1dChange > 0 ? '+' : '-'}
-            {formatPercent(Math.abs(pair.txCount1dChange))}
+        {txCount1dChange ? (
+          <Typography variant="xs" weight={500} className={txCount1dChange > 0 ? 'text-green' : 'text-red'}>
+            {txCount1dChange > 0 ? '+' : '-'}
+            {formatPercent(Math.abs(txCount1dChange))}
           </Typography>
-        ) : null}
+        ) : (
+          <Typography variant="xs" weight={500} className="text-slate-50">
+            -
+          </Typography>
+        )}
       </div>
     </div>
   )

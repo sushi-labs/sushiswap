@@ -32,13 +32,11 @@
 
 // if (!program.args.length) program.help()
 
-import 'isomorphic-unfetch'
-
 import { program } from 'commander'
 
-import { bar, bentobox, chef, maker, revenues, serve } from './actions'
-import { furo } from './actions/furo'
-import { FURO_SUPPORTED_CHAIN_NAMES, MAKER_SUPPORTED_CHAIN_NAMES, REVENUES_SUPPORTED_CHAIN_NAMES } from './config'
+import { furo } from './actions/furo.js'
+import { bar, bentobox, chef, maker, revenues, serve } from './actions/index.js'
+import { FURO_SUPPORTED_CHAIN_NAMES, MAKER_SUPPORTED_CHAIN_NAMES, REVENUES_SUPPORTED_CHAIN_NAMES } from './config.js'
 
 program.version('0.0.0').description('Sushi CLI')
 

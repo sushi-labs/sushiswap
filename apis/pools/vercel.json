@@ -12,5 +12,23 @@
     { "source": "/v0", "destination": "/api/v0" },
     { "source": "/v0/count", "destination": "/api/v0/count" },
     { "source": "/v0/:chainId/:address", "destination": "/api/v0/:chainId/:address" }
-  ]
+  ],
+  "functions": {
+    "api/v0/index.ts": {
+      "memory": 256,
+      "maxDuration": 30
+    },
+    "api/v0/count.ts": {
+      "memory": 256,
+      "maxDuration": 15
+    },
+    "api/v0/[chainId]/index.ts": {
+      "memory": 256,
+      "maxDuration": 15
+    },
+    "api/v0/[chainId]/[address].ts": {
+      "memory": 256,
+      "maxDuration": 15
+    }
+  }
 }

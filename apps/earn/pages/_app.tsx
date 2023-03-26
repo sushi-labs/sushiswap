@@ -1,6 +1,7 @@
 import '@sushiswap/ui/index.css'
+import '../variables.css'
 
-import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
+import { App, ThemeProvider } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
 import { Header } from '../components'
@@ -17,6 +18,10 @@ import { store } from '../store'
 import { WagmiConfig } from 'wagmi'
 
 import SEO from '../next-seo.config.mjs'
+import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { queryClient } from '@sushiswap/react-query'
+import { ToastContainer } from '@sushiswap/ui/future/components/toast'
 
 declare global {
   interface Window {
@@ -53,16 +58,19 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
 
       <WagmiConfig client={client}>
         <Provider store={store}>
-          <ThemeProvider>
-            <App.Shell>
-              <DefaultSeo {...SEO} />
-              <Header />
-              <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
-              <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
-              <App.Footer />
-              <ToastContainer className="mt-[50px]" />
-            </App.Shell>
-          </ThemeProvider>
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider>
+              <Onramper.Provider>
+                <App.Shell>
+                  <DefaultSeo {...SEO} />
+                  <Header />
+                  <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
+                  <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
+                  <ToastContainer className="mt-[50px]" />
+                </App.Shell>
+              </Onramper.Provider>
+            </ThemeProvider>
+          </QueryClientProvider>
         </Provider>
       </WagmiConfig>
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />

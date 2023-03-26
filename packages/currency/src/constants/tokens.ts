@@ -6,6 +6,7 @@ import {
   AAVE_ADDRESS,
   ANKR_ADDRESS,
   APE_ADDRESS,
+  ARB_ADDRESS,
   BCT_ADDRESS,
   BUSD_ADDRESS,
   COMP_ADDRESS,
@@ -13,6 +14,7 @@ import {
   FEI_ADDRESS,
   FRAX_ADDRESS,
   FXS_ADDRESS,
+  GNO_ADDRESS,
   JPY_ADDRESS,
   KLIMA_ADDRESS,
   KP3R_ADDRESS,
@@ -23,6 +25,7 @@ import {
   MIM_ADDRESS,
   NFTX_ADDRESS,
   OHM_ADDRESS,
+  OP_ADDRESS,
   PRIMATE_ADDRESS,
   QUICK_ADDRESS,
   renBTC_ADDRESS,
@@ -40,6 +43,24 @@ import {
   WNATIVE_ADDRESS,
   XSUSHI_ADDRESS,
 } from './token-addresses'
+
+export const GNO = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'GNO',
+    name: 'Gnosis Token',
+  },
+  GNO_ADDRESS
+) as Record<keyof typeof GNO_ADDRESS, Token>
+
+export const ARB = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'ARB',
+    name: 'Arbitrum',
+  },
+  ARB_ADDRESS
+) as Record<keyof typeof ARB_ADDRESS, Token>
 
 export const KP3R = addressMapToTokenMap(
   {
@@ -441,6 +462,10 @@ export const WNATIVE = {
     symbol: 'WBTT',
     name: 'Wrapped BitTorrent Token',
   }),
+  // [ChainId.SEPOLIA]: WETH9[ChainId.SEPOLIA],
+  [ChainId.CONSENSUS_ZKEVM_TESTNET]: WETH9[ChainId.CONSENSUS_ZKEVM_TESTNET],
+  [ChainId.SCROLL_ALPHA_TESTNET]: WETH9[ChainId.SCROLL_ALPHA_TESTNET],
+  [ChainId.BASE_TESTNET]: WETH9[ChainId.BASE_TESTNET],
 } as const
 
 export const SUSHI = addressMapToTokenMap(
@@ -580,6 +605,15 @@ export const QUICK = addressMapToTokenMap(
   },
   QUICK_ADDRESS
 ) as Record<keyof typeof QUICK_ADDRESS, Token>
+
+export const OP = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'OP',
+    name: 'Optimism',
+  },
+  OP_ADDRESS
+) as Record<keyof typeof OP_ADDRESS, Token>
 
 export const LINK = addressMapToTokenMap(
   {

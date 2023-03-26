@@ -1,9 +1,6 @@
-import { Token } from '@sushiswap/currency'
-import { Pair } from '@sushiswap/graph-client'
-import { Chef, Incentive } from '@sushiswap/wagmi'
+import { UserPosition } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 
-export interface PairWithFarmRewards extends Pair {
-  incentives: Incentive<Token>[]
-  farmId: number | undefined
-  chefType: Chef | undefined
+export interface PositionWithPool extends Omit<UserPosition, 'pool'> {
+  pool: Pool
 }

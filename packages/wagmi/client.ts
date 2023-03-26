@@ -9,6 +9,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
 import { SafeConnector } from './connectors/safe'
 import { getSigners } from './test/utils'
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 
 export type Client = ReturnType<typeof createClient>
 
@@ -40,6 +41,13 @@ export const client: Client = createClient({
           chains,
           options: {
             shimDisconnect: true,
+          },
+        }),
+        new MetaMaskConnector({
+          chains,
+          options: {
+            shimDisconnect: true,
+            shimChainChangedDisconnect: false,
           },
         }),
         new WalletConnectConnector({

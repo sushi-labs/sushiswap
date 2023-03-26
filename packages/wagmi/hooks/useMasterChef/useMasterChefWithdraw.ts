@@ -1,33 +1,33 @@
 import { TransactionRequest } from '@ethersproject/providers'
+import { ChefType } from '@sushiswap/client'
 import { Amount, Token } from '@sushiswap/currency'
-import { NotificationData } from '@sushiswap/ui'
 import { Dispatch, SetStateAction, useCallback } from 'react'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { useMasterChefContract } from '../useMasterChefContract'
 import { useSendTransaction } from '../useSendTransaction'
-import { Chef } from './useMasterChef'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 
 interface UseMasterChefWithdrawParams {
   chainId: number
-  chef: Chef
+  chef: ChefType
   pid: number
-  onSuccess?(data: NotificationData): void
   amount?: Amount<Token>
 }
 
 type UseMasterChefWithdraw = (params: UseMasterChefWithdrawParams) => ReturnType<typeof useSendTransaction>
 
-export const useMasterChefWithdraw: UseMasterChefWithdraw = ({ chainId, onSuccess, amount, chef, pid }) => {
+export const useMasterChefWithdraw: UseMasterChefWithdraw = ({ chainId, amount, chef, pid }) => {
   const { address } = useAccount()
   const contract = useMasterChefContract(chainId, chef)
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
-      if (onSuccess && data && amount) {
+      if (data && amount) {
         const ts = new Date().getTime()
-        onSuccess({
+        void createToast({
+          account: address,
           type: 'burn',
           chainId,
           txHash: data.hash,
@@ -42,7 +42,7 @@ export const useMasterChefWithdraw: UseMasterChefWithdraw = ({ chainId, onSucces
         })
       }
     },
-    [amount, chainId, onSuccess]
+    [amount, chainId, address]
   )
 
   const prepare = useCallback(
@@ -53,8 +53,10 @@ export const useMasterChefWithdraw: UseMasterChefWithdraw = ({ chainId, onSucces
         from: address,
         to: contract.address,
         data: contract.interface.encodeFunctionData(
-          chef === Chef.MINICHEF ? 'withdrawAndHarvest' : 'withdraw',
-          chef === Chef.MASTERCHEF ? [pid, amount.quotient.toString()] : [pid, amount.quotient.toString(), address]
+          chef === ChefType.MiniChef ? 'withdrawAndHarvest' : 'withdraw',
+          chef === ChefType.MasterChefV1
+            ? [pid, amount.quotient.toString()]
+            : [pid, amount.quotient.toString(), address]
         ),
       })
     },

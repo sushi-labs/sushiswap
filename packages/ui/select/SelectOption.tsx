@@ -1,5 +1,5 @@
 import { Listbox, Transition } from '@headlessui/react'
-import { ArrowRightIcon } from '@heroicons/react/solid'
+import { ArrowRightIcon } from '@heroicons/react/20/solid'
 import classNames from 'classnames'
 import { FC, forwardRef, Fragment, ReactNode, useState } from 'react'
 

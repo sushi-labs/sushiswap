@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
 import { getAddress, isAddress } from '@ethersproject/address'
-import { Fraction } from '@sushiswap/math'
 import { parseUnits } from '@ethersproject/units'
+import { Fraction } from '@sushiswap/math'
+import { useQuery } from '@tanstack/react-query'
 
 interface UsePrices {
   chainId: number | undefined
@@ -22,9 +22,10 @@ const hydrate = (data: Record<string, number>) => {
 
 export const usePrices = ({ chainId }: UsePrices) => {
   return useQuery({
-    queryKey: [`https://token-price.sushi.com/v0/${chainId}`],
+    queryKey: ['NoPersist', `https://token-price.sushi.com/v0/${chainId}`],
     queryFn: async () => fetch(`https://token-price.sushi.com/v0/${chainId}`).then((response) => response.json()),
-    staleTime: 20000,
+    staleTime: 900, // 15 mins
+    cacheTime: 3600, // 1hr
     enabled: Boolean(chainId),
     select: hydrate,
   })

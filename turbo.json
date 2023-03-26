@@ -5,8 +5,7 @@
     "NODE_ENV",
     "ALCHEMY_ID",
     "GITHUB_TOKEN",
-    "NEXT_PUBLIC_ALCHEMY_ID",
-    "SKIP_BUILD_STATIC_GENERATION"
+    "NEXT_PUBLIC_ALCHEMY_ID"
   ],
   "globalDependencies": [
     ".eslintignore",
@@ -18,6 +17,72 @@
     "tsconfig.json"
   ],
   "pipeline": {
+    "anvil": {
+      "cache": false,
+      "env": [
+        "ANVIL_BLOCK_NUMBER", 
+        "ANVIL_FORK_URL"
+      ],
+      "persistent": true
+    },
+    "blog#build": {
+      "dependsOn": ["^build", "generate"],
+      "env": [
+        "STRAPI_PREVIEW_SECRET"
+      ],
+      "outputs": [
+        ".mesh/**/*", 
+        ".next/**/*", 
+        "public/**/*"
+      ]
+    },
+    "build": {
+      "outputs": [
+        ".next/**/*",
+        ".vercel/**/*",
+        "dist/**/*",
+        "typechain/**/*",
+        "artifacts/**/*",
+        "public/**/*",
+        "storybook-static/**/*",
+        "lib/**/*",
+        "resolvers/**/*",
+        "transformers/**/*",
+        ".graphclient/**/*",
+        ".mesh/**/*"
+      ],
+      "dependsOn": [
+        "^db:generate", 
+        "^build", 
+        "db:generate", 
+        "generate",
+        "export"
+      ],
+      "env": [
+        "DATABASE_URL",
+        "REDIS_URL",
+        "ROOT_URL",
+        "ACADEMY_URL",
+        "ANALYTICS_URL",
+        "BLOG_URL",
+        "EARN_URL",
+        "FURO_URL",
+        "SWAP_URL",
+        "SWAP_API_V0_BASE_URL",
+        "AGGREGATOR_API_V0_BASE_URL",
+        "POOLS_API_V0_BASE_URL",
+        "TOKENS_API_V0_BASE_URL"
+      ]
+    },
+    "clean": {
+      "cache": false
+    },
+    "check": {
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false
+    },
     "db:init": {
       "outputs": ["prisma/**/*"],
       "cache": false
@@ -35,9 +100,64 @@
     "db:push": {
       "cache": false
     },
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true
+    },
+    "export": {
+      "dependsOn": ["^build"],
+      "outputs": ["exports/**/*"],
+      "cache": true
+    },
+    "generate": {
+      "outputs": [
+        ".graphclient/**/*", 
+        ".mesh/**/*", 
+        "typechain/**/*",
+        "artifacts/**/*"
+      ],
+      "cache": false
+    },
+    "lint": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "node": {
+      "dependsOn": ["build"],
+      "outputs": ["deployments/**/*"],
+      "persistent": true
+    },
     "playwright": {
       "cache": false,
       "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
+    },
+    "server": {
+      "persistent": true,
+      "dependsOn": ["build"]
+    },
+    
+    "start": {
+      "dependsOn": [        
+        "^db:generate", 
+        "^build", 
+        "db:generate", 
+        "generate",
+        "export"
+      ],
+      "env": [
+        "PRODUCTION_DATABASE_URL",
+        "PREVIEW_DATABASE_URL",
+        "REDIS_URL",
+        "DATABASE_URL",
+        "ALCHEMY_ID",
+        "SWAP_API_V0_BASE_URL",
+        "AGGREGATOR_API_V0_BASE_URL",
+        "POOLS_API_V0_BASE_URL",
+        "TOKENS_API_V0_BASE_URL"
+      ],
+      "cache": false,
+      "persistent": true
     },
     "test": {
       "dependsOn": ["build"],
@@ -48,128 +168,8 @@
       "cache": false,
       "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
     },
-    "blog#build": {
-      "dependsOn": ["^build", "generate"],
-      "env": [
-        "STRAPI_PREVIEW_SECRET"
-      ],
-      "outputs": [
-        ".mesh/**/*", 
-        ".next/**/*", 
-        "public/**/*"
-      ]
-    },
-    "lint": {
-      "dependsOn": ["^build"],
-      "outputs": []
-    },
-    "start": {
-      "dependsOn": ["^build", "^db:generate", "generate"],
-      "cache": false,
-      "persistent": true
-    },
-    "generate": {
-      "outputs": [".graphclient/**/*", ".mesh/**/*", "typechain/**/*", "artifacts/**/*", "cache/**/*"]
-    },
-    "build": {
-      "outputs": [
-        ".vercel/**/*",
-        ".next/**/*",
-        ".graphclient/**/*",
-        ".mesh/**/*",
-        "dist/**/*",
-        "typechain/**/*",
-        "artifacts/**/*",
-        "cache/**/*",
-        "public/**/*",
-        "storybook-static/**/*"
-      ],
-      "dependsOn": ["^db:generate", "^build", "db:generate", "generate"],
-      "env": [
-        "ROOT_URL",
-        "ACADEMY_URL",
-        "ANALYTICS_URL",
-        "BLOG_URL",
-        "BRIDGE_URL",
-        "EARN_URL",
-        "FURO_URL",
-        "INTERNAL_URL",
-        "KASHI_URL",
-        "PARTNER_URL",
-        "SWAP_URL",
-        "XSWAP_URL",
-        "DATABASE_URL",
-        "EARN_DATABASE_URL",
-        "REDIS_URL"
-      ]
-    },
-    "clean": {
-      "cache": false
-    },
-    "check": {
-      "dependsOn": [
-        "//#generate",
-        "//#build-config", 
-        "//#build-packages", 
-        "//#build-protocols"
-      ],
-      "cache": false
-    },
-    "dev": {
-      "dependsOn": ["^build", "^db:generate", "generate"],
-      "cache": false,
-      "persistent": true
-    },
     "validate": {
       "cache": false
-    },
-    "anvil": {
-      "cache": false,
-      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL"],
-      "persistent": true
-    },
-    "export": {
-      "dependsOn": ["build"],
-      "outputs": ["exports.json", "exports.ts"],
-      "cache": true
-    },
-    "node": {
-      "dependsOn": ["^build"],
-      "outputs": ["deployments/**/*"],
-      "persistent": true
-    },
-    "server": {
-      "persistent": true,
-      "dependsOn": ["^build"]
-    },
-    "//#generate": {
-      "dependsOn": [],
-      "outputs": [
-        "typechain/**/*", 
-        ".graphclient/**/*", 
-        ".mesh/**/*"
-      ],
-      "inputs": []
-    },
-    "//#build-config": {
-      "dependsOn": [],
-      "outputs": ["dist/**/*"],
-      "inputs": []
-    },
-    "//#build-packages": {
-      "dependsOn": [],
-      "outputs": [
-        ".graphclient/**/*",
-        "dist/**/*"
-      ],
-      "inputs": []
-    },
-    "//#build-protocols": {
-      "dependsOn": [],
-      "outputs": ["typechain/**/*", "artifacts/**/*", "cache/**/*"],
-      "inputs": [
-        "contracts/**/*"
-      ]
     }
   }
 }

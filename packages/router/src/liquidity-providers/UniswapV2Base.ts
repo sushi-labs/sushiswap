@@ -1,134 +1,408 @@
 import { keccak256, pack } from '@ethersproject/solidity'
+import { getReservesAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
+import { PrismaClient } from '@sushiswap/database'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
-import type { ethers } from 'ethers'
+import { add, getDate, getUnixTime } from 'date-fns'
+import { BigNumber } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
+import { Address, PublicClient } from 'viem'
 
-import type { Limited } from '../Limited'
-import { convertToBigNumberPair, MultiCallProvider } from '../MulticallProvider'
+import { discoverNewPools, filterOnDemandPools, filterTopPools, getAllPools, mapToken, PoolResponse2 } from '../lib/api'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
-import { LiquidityProvider } from './LiquidityProvider'
-
-const getReservesAbi = [
-  {
-    inputs: [],
-    name: 'getReserves',
-    outputs: [
-      {
-        internalType: 'uint112',
-        name: '_reserve0',
-        type: 'uint112',
-      },
-      {
-        internalType: 'uint112',
-        name: '_reserve1',
-        type: 'uint112',
-      },
-      {
-        internalType: 'uint32',
-        name: '_blockTimestampLast',
-        type: 'uint32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-]
+import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
+interface PoolInfo {
+  poolCode: PoolCode
+  validUntilTimestamp: number
+}
 
 export abstract class UniswapV2BaseProvider extends LiquidityProvider {
-  fetchedPools: Map<string, number> = new Map()
-  poolCodes: PoolCode[] = []
+  readonly TOP_POOL_SIZE = 155
+  readonly TOP_POOL_LIQUIDITY_THRESHOLD = 5000
+  readonly ON_DEMAND_POOL_SIZE = 20
+  readonly REFRESH_INITIAL_POOLS_INTERVAL = 60 // SECONDS
+
+  topPools: Map<string, PoolCode> = new Map()
+  poolsByTrade: Map<string, string[]> = new Map()
+  onDemandPools: Map<string, PoolInfo> = new Map()
+  availablePools: Map<string, PoolResponse2> = new Map()
+
   blockListener?: () => void
+  unwatchBlockNumber?: () => void
+
   fee = 0.003
-  abstract factory: { [chainId: number]: string }
-  abstract initCodeHash: { [chainId: number]: string }
+  isInitialized = false
+  factory: { [chainId: number]: Address } = {}
+  initCodeHash: { [chainId: number]: string } = {}
+  latestPoolCreatedAtTimestamp = new Date()
+  discoverNewPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
+  refreshAvailablePoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.FETCH_AVAILABLE_POOLS_AFTER_SECONDS }))
+  databaseClient: PrismaClient
+
   constructor(
-    chainDataProvider: ethers.providers.BaseProvider,
-    multiCallProvider: MultiCallProvider,
     chainId: ChainId,
-    l: Limited
+    web3Client: PublicClient,
+    databaseClient: PrismaClient,
+    factory: { [chainId: number]: Address },
+    initCodeHash: { [chainId: number]: string }
   ) {
-    super(chainDataProvider, multiCallProvider, chainId, l)
+    super(chainId, web3Client)
+    this.factory = factory
+    this.initCodeHash = initCodeHash
+    if (!(chainId in this.factory) || !(chainId in this.initCodeHash)) {
+      throw new Error(`${this.getType()} cannot be instantiated for chainid ${chainId}, no factory or initCodeHash`)
+    }
+    this.databaseClient = databaseClient
   }
-  async getPools(tokens: Token[]): Promise<void> {
-    if (!(this.chainId in this.factory)) {
-      // No sushiswap for this network
-      this.lastUpdateBlock = -1
+
+  async initialize() {
+    // TODO: retry logic, every X seconds? dont flag as true until the end of the function ideally. add isInitalizing? to avoid it being called twice before completed.
+    this.isInitialized = true
+    const availablePools = await this.getInitialPools()
+    console.debug(`${this.getLogPrefix()} - TOTAL POOLS: ${availablePools.size}`)
+
+    this.availablePools = availablePools
+
+    const topPools = filterTopPools(Array.from(availablePools.values()), this.TOP_POOL_SIZE)
+
+    if (topPools.length > 0) {
+      console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${topPools.length}`)
+    } else {
+      console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
+      return []
+    }
+
+    const results = await this.client
+      .multicall({
+        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        allowFailure: true,
+        contracts: topPools.map(
+          (pool) =>
+            ({
+              address: pool.address as Address,
+              chainId: this.chainId,
+              abi: getReservesAbi,
+              functionName: 'getReserves',
+            } as const)
+        ),
+      })
+      .catch((e) => {
+        console.warn(`${this.getLogPrefix()} - INIT: multicall failed, message: ${e.message}`)
+        return undefined
+      })
+
+    topPools.forEach((pool, i) => {
+      const res0 = results?.[i]?.result?.[0]
+      const res1 = results?.[i]?.result?.[1]
+
+      if (res0 && res1) {
+        const token0 = mapToken(this.chainId, pool.token0) as RToken
+        const token1 = mapToken(this.chainId, pool.token1) as RToken
+        const rPool = new ConstantProductRPool(
+          pool.address,
+          token0,
+          token1,
+          this.fee,
+          BigNumber.from(res0),
+          BigNumber.from(res1)
+        )
+        const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
+        this.topPools.set(pool.address, pc)
+      } else {
+        console.error(`${this.getLogPrefix()} - ERROR INIT SYNC, Failed to fetch reserves for pool: ${pool.address}`)
+      }
+    })
+
+    console.debug(`${this.getLogPrefix()} - INIT, WATCHING ${this.topPools.size} POOLS`)
+  }
+
+  private async getInitialPools(): Promise<Map<string, PoolResponse2>> {
+    const pools = await getAllPools(
+      this.databaseClient,
+      this.chainId,
+      this.getType() === LiquidityProviders.UniswapV2 ? 'Uniswap' : this.getType(),
+      this.getType() === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
+      ['CONSTANT_PRODUCT_POOL']
+    )
+    return pools
+  }
+
+  async getOnDemandPools(t0: Token, t1: Token): Promise<void> {
+    const topPoolAddresses = Array.from(this.topPools.keys())
+    const pools = filterOnDemandPools(
+      Array.from(this.availablePools.values()),
+      t0.address,
+      t1.address,
+      topPoolAddresses,
+      this.ON_DEMAND_POOL_SIZE
+    )
+
+    if (pools.length === 0) {
+      console.info(`${this.getLogPrefix()} - No on demand pools found for ${t0.symbol}/${t1.symbol}`)
       return
     }
 
-    // tokens deduplication
-    const tokenMap = new Map<string, Token>()
-    tokens.forEach((t) => tokenMap.set(t.address.toLocaleLowerCase().substring(2).padStart(40, '0'), t))
-    const tokensDedup = Array.from(tokenMap.values())
-    // tokens sorting
-    const tok0: [string, Token][] = tokensDedup.map((t) => [
-      t.address.toLocaleLowerCase().substring(2).padStart(40, '0'),
-      t,
-    ])
-    tokens = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([_, t]) => t)
+    this.poolsByTrade.set(
+      this.getTradeId(t0, t1),
+      pools.map((pool) => pool.address)
+    )
+    const validUntilTimestamp = getUnixTime(add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME_IN_SECONDS }))
 
-    const poolAddr: Map<string, [Token, Token]> = new Map()
-    for (let i = 0; i < tokens.length; ++i) {
-      const t0 = tokens[i]
-      for (let j = i + 1; j < tokens.length; ++j) {
-        const t1 = tokens[j]
+    let created = 0
+    let updated = 0
+    const poolCodesToCreate: PoolCode[] = []
+    pools.forEach((pool) => {
+      const existingPool = this.onDemandPools.get(pool.address)
+      if (existingPool === undefined) {
+        const token0 = mapToken(this.chainId, pool.token0) as RToken
+        const token1 = mapToken(this.chainId, pool.token1) as RToken
 
-        const addr = this._getPoolAddress(t0, t1)
-        if (this.fetchedPools.get(addr) === undefined) {
-          poolAddr.set(addr, [t0, t1])
-          this.fetchedPools.set(addr, 1)
+        const rPool = new ConstantProductRPool(
+          pool.address,
+          token0,
+          token1,
+          this.fee,
+          BigNumber.from(0),
+          BigNumber.from(0)
+        )
+        const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
+        poolCodesToCreate.push(pc)
+      } else {
+        existingPool.validUntilTimestamp = validUntilTimestamp
+        ++updated
+      }
+    })
+
+    const reserves = await this.client
+      .multicall({
+        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        allowFailure: true,
+        contracts: poolCodesToCreate.map(
+          (poolCode) =>
+            ({
+              address: poolCode.pool.address as Address,
+              chainId: this.chainId,
+              abi: getReservesAbi,
+              functionName: 'getReserves',
+            } as const)
+        ),
+      })
+      .catch((e) => {
+        console.warn(`${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${e.message}`)
+        return undefined
+      })
+
+    poolCodesToCreate.forEach((poolCode, i) => {
+      const pool = poolCode.pool
+      const res0 = reserves?.[i]?.result?.[0]
+      const res1 = reserves?.[i]?.result?.[1]
+
+      if (res0 !== undefined && res1 !== undefined) {
+        pool.updateReserves(BigNumber.from(res0), BigNumber.from(res1))
+        this.onDemandPools.set(pool.address, { poolCode, validUntilTimestamp })
+        console.debug(
+          `${this.getLogPrefix()} - ON DEMAND CREATION: ${pool.address} (${pool.token0.symbol}/${pool.token1.symbol})`
+        )
+        ++created
+      } else {
+        console.error(`${this.getLogPrefix()} - ERROR FETCHING RESERVES, initialize on demand pool: ${pool.address}`)
+        // TODO: some pools seem to be initialized with 0 in reserves, they should just be ignored, shouldn't log error
+      }
+    })
+
+    console.debug(
+      `${this.getLogPrefix()} - ON DEMAND: Created and fetched reserves for ${created} pools, extended 'lifetime' for ${updated} pools`
+    )
+  }
+
+  async updatePools() {
+    if (this.isInitialized) {
+      this.removeStalePools()
+      // The two calls below are Async functions, but we do not want them to block. If they find any pools they will be updated next interval
+      this.discoverNewPools()
+      this.updateAvailablePools()
+
+      const initialPools = Array.from(this.topPools.values())
+      const onDemandPools = Array.from(this.onDemandPools.values()).map((pi) => pi.poolCode)
+
+      if (initialPools.length === 0 && onDemandPools.length === 0) {
+        return
+      }
+
+      const [initialPoolsReserves, onDemandPoolsReserves] = await Promise.all([
+        this.client
+          .multicall({
+            multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+            allowFailure: true,
+            contracts: initialPools.map(
+              (poolCode) =>
+                ({
+                  address: poolCode.pool.address as Address,
+                  chainId: this.chainId,
+                  abi: getReservesAbi,
+                  functionName: 'getReserves',
+                } as const)
+            ),
+          })
+          .catch((e) => {
+            console.warn(`${this.getLogPrefix()} - UPDATE: initPools multicall failed, message: ${e.message}`)
+            return undefined
+          }),
+        this.client
+          .multicall({
+            multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+            allowFailure: true,
+            contracts: onDemandPools.map(
+              (poolCode) =>
+                ({
+                  address: poolCode.pool.address as Address,
+                  chainId: this.chainId,
+                  abi: getReservesAbi,
+                  functionName: 'getReserves',
+                } as const)
+            ),
+          })
+          .catch((e) => {
+            console.warn(`${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${e.message}`)
+            return undefined
+          }),
+      ])
+
+      this.updatePoolWithReserves(initialPools, initialPoolsReserves, 'INITIAL')
+      this.updatePoolWithReserves(onDemandPools, onDemandPoolsReserves, 'ON_DEMAND')
+    }
+  }
+
+  private async discoverNewPools() {
+    if (this.discoverNewPoolsTimestamp > getUnixTime(Date.now())) {
+      return
+    }
+
+    this.discoverNewPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
+
+    const newDate = new Date()
+    const discoveredPools = await discoverNewPools(
+      this.databaseClient,
+      this.chainId,
+      this.getType() === LiquidityProviders.UniswapV2 ? 'Uniswap' : this.getType(),
+      this.getType() === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
+      ['CONSTANT_PRODUCT_POOL'],
+      this.latestPoolCreatedAtTimestamp
+    )
+
+    if (discoveredPools.size > 0) {
+      let addedPools = 0
+      this.latestPoolCreatedAtTimestamp = newDate
+      discoveredPools.forEach((pool) => {
+        if (!this.availablePools.has(pool.address)) {
+          this.availablePools.set(pool.address, pool)
+          addedPools++
         }
+      })
+      if (addedPools > 0) {
+        this.prioritizeTopPools()
       }
     }
 
-    const addrs = Array.from(poolAddr.keys())
-    const reserves = convertToBigNumberPair(
-      await this.multiCallProvider.multiContractCall(addrs, getReservesAbi, 'getReserves', [])
+    console.debug(
+      `* MEM ${this.getLogPrefix()} INIT COUNT: ${this.topPools.size} ON DEMAND COUNT: ${this.onDemandPools.size}`
+    )
+  }
+
+  private async updateAvailablePools() {
+    if (this.refreshAvailablePoolsTimestamp > getUnixTime(Date.now())) {
+      return
+    }
+
+    this.refreshAvailablePoolsTimestamp = getUnixTime(
+      add(Date.now(), { seconds: this.FETCH_AVAILABLE_POOLS_AFTER_SECONDS })
     )
 
-    addrs.forEach((addr, i) => {
-      const res = reserves[i]
-      if (res !== undefined) {
-        const toks = poolAddr.get(addr) as [Token, Token]
-        const rPool = new ConstantProductRPool(addr, toks[0] as RToken, toks[1] as RToken, this.fee, res[0], res[1])
-        const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
-        this.poolCodes.push(pc)
-        ++this.stateId
-      }
+    const freshInitPools = await this.getInitialPools()
+
+    freshInitPools.forEach((updatedPool) => {
+      // Don't do `this.availablePools = freshInitPools`, in case the db requests for any reason fail, it shouldn't be completely overwritten.
+      this.availablePools.set(updatedPool.address, updatedPool)
+    })
+    this.prioritizeTopPools()
+  }
+
+  private prioritizeTopPools() {
+    const newTopPools = filterTopPools(Array.from(this.availablePools.values()), this.TOP_POOL_SIZE)
+
+    const currentTopPoolAddresses = Array.from(this.topPools.keys())
+    const newTopPoolAddresses = Array.from(newTopPools.map((pool) => pool.address))
+    const poolsToRemove = currentTopPoolAddresses.filter((x) => !newTopPoolAddresses.includes(x))
+    const poolsToAdd = newTopPoolAddresses.filter((x) => !currentTopPoolAddresses.includes(x))
+
+    poolsToRemove.forEach((address) => {
+      this.topPools.delete(address)
+      console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Removed ${address} from top pools`)
     })
 
-    // if it is the first obtained pool list
-    if (this.lastUpdateBlock == 0) this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
+    poolsToAdd.forEach((address) => {
+      const poolsToCreate = this.availablePools.get(address)
+      if (poolsToCreate) {
+        const token0 = mapToken(this.chainId, poolsToCreate.token0) as RToken
+        const token1 = mapToken(this.chainId, poolsToCreate.token1) as RToken
+        const rPool = new ConstantProductRPool(
+          poolsToCreate.address,
+          token0,
+          token1,
+          this.fee,
+          BigNumber.from(0),
+          BigNumber.from(0)
+        )
+        const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
+        this.topPools.set(poolsToCreate.address, pc)
+
+        console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Added ${address} to top pools`)
+      } else {
+        console.warn(`${this.getLogPrefix()} - PRIORITIZE POOLS: Could not find pool, unexpected state.`)
+      }
+    })
   }
-  // TODO: remove too often updates if the network generates too many blocks
-  async updatePoolsData() {
-    if (this.poolCodes.length == 0) return
 
-    const poolAddr = new Map<string, RPool>()
-    this.poolCodes.forEach((p) => poolAddr.set(p.pool.address, p.pool))
-    const addrs = this.poolCodes.map((p) => p.pool.address)
+  private updatePoolWithReserves(
+    pools: PoolCode[],
+    reserves:
+      | (
+          | { error: Error; result?: undefined; status: 'error' }
+          | { error?: undefined; result: readonly [bigint, bigint, number]; status: 'success' }
+        )[]
+      | undefined,
+    type: 'INITIAL' | 'ON_DEMAND'
+  ) {
+    if (!reserves) return
+    pools.forEach((poolCode, i) => {
+      const pool = poolCode.pool
+      const res0 = reserves?.[i]?.result?.[0]
+      const res1 = reserves?.[i]?.result?.[1]
 
-    const reserves = convertToBigNumberPair(
-      await this.multiCallProvider.multiContractCall(addrs, getReservesAbi, 'getReserves', [])
-    )
-
-    addrs.forEach((addr, i) => {
-      const res = reserves[i]
-      if (res !== undefined) {
-        const pool = poolAddr.get(addr) as RPool
-        if (!res[0].eq(pool.reserve0) || !res[1].eq(pool.reserve1)) {
-          pool.updateReserves(res[0], res[1])
-          ++this.stateId
+      if (res0 && res1) {
+        const res0BN = BigNumber.from(res0)
+        const res1BN = BigNumber.from(res1)
+        if (!pool.reserve0.eq(res0BN) || !pool.reserve1.eq(res1BN)) {
+          pool.updateReserves(res0BN, res1BN)
+          console.info(
+            `${this.getLogPrefix()} - SYNC, ${type}: ${pool.address} ${pool.token0.symbol}/${
+              pool.token1.symbol
+            } ${res0BN.toString()} ${res1BN.toString()}`
+          )
         }
+      } else {
+        console.error(
+          `${this.getLogPrefix()} - ERROR UPDATING RESERVES for a ${type} pool, Failed to fetch reserves for pool: ${
+            pool.address
+          }`
+        )
       }
     })
-
-    this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
   }
+
   _getPoolAddress(t1: Token, t2: Token): string {
     return getCreate2Address(
       this.factory[this.chainId as keyof typeof this.factory],
@@ -136,6 +410,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       this.initCodeHash[this.chainId as keyof typeof this.initCodeHash]
     )
   }
+
+  // TODO: Decide if this is worth keeping as fallback in case fetching top pools fails? only used on initial load.
   _getProspectiveTokens(t0: Token, t1: Token) {
     const set = new Set<Token>([
       t0,
@@ -146,24 +422,63 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     ])
     return Array.from(set)
   }
+
   startFetchPoolsData() {
     this.stopFetchPoolsData()
-    this.poolCodes = []
-    this.fetchedPools.clear()
-    this.getPools(BASES_TO_CHECK_TRADES_AGAINST[this.chainId]) // starting the process
-    this.blockListener = () => {
-      this.updatePoolsData()
+    this.topPools = new Map()
+    this.unwatchBlockNumber = this.client.watchBlockNumber({
+      onBlockNumber: (blockNumber) => {
+        this.lastUpdateBlock = Number(blockNumber)
+        if (!this.isInitialized) {
+          this.initialize()
+        } else {
+          this.updatePools()
+        }
+      },
+      onError: (error) => {
+        console.error(`${this.getLogPrefix()} - Error watching block number: ${error.message}`)
+      },
+    })
+  }
+
+  private removeStalePools() {
+    let removed = 0
+    const now = getUnixTime(Date.now())
+    for (const poolInfo of this.onDemandPools.values()) {
+      if (poolInfo.validUntilTimestamp < now) {
+        this.onDemandPools.delete(poolInfo.poolCode.pool.address)
+        removed++
+      }
     }
-    this.chainDataProvider.on('block', this.blockListener)
+    if (removed > 0) {
+      console.log(`${this.getLogPrefix()} STALE: Removed ${removed} stale pools`)
+    }
   }
-  fetchPoolsForToken(t0: Token, t1: Token): void {
-    this.getPools(this._getProspectiveTokens(t0, t1))
+
+  async fetchPoolsForToken(t0: Token, t1: Token): Promise<void> {
+    await this.getOnDemandPools(t0, t1)
   }
-  getCurrentPoolList(): PoolCode[] {
-    return this.poolCodes
+
+  /**
+   * The pools returned are the initial pools, plus any on demand pools that have been fetched for the two tokens.
+   * @param t0
+   * @param t1
+   * @returns
+   */
+  getCurrentPoolList(t0: Token, t1: Token): PoolCode[] {
+    const tradeId = this.getTradeId(t0, t1)
+    const poolsByTrade = this.poolsByTrade.get(tradeId) ?? []
+    const onDemandPoolCodes = poolsByTrade
+      ? Array.from(this.onDemandPools)
+          .filter(([poolAddress]) => poolsByTrade.includes(poolAddress))
+          .map(([, p]) => p.poolCode)
+      : []
+
+    return [...this.topPools.values(), onDemandPoolCodes].flat()
   }
+
   stopFetchPoolsData() {
-    if (this.blockListener) this.chainDataProvider.off('block', this.blockListener)
+    if (this.unwatchBlockNumber) this.unwatchBlockNumber()
     this.blockListener = undefined
   }
 }

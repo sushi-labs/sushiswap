@@ -1,0 +1,9 @@
+{
+  "extends": "@sushiswap/typescript-config/hardhat.json",
+  "include": ["scripts", "test", "deploy", "typechain"],
+  "exclude": ["soljson-v0.6.12+commit.27d51765.js"],
+  "files": ["hardhat.config.ts"],
+  "compilerOptions": {
+    "resolveJsonModule": true
+  }
+}

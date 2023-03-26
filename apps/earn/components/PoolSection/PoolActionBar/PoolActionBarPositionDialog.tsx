@@ -1,22 +1,22 @@
 import { formatUSD } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 import { FundSource } from '@sushiswap/hooks'
 import { Currency, Dialog, Typography } from '@sushiswap/ui'
 import { FC, useCallback } from 'react'
 
-import { useTokensFromPair } from '../../../lib/hooks'
+import { useTokensFromPool } from '../../../lib/hooks'
 import { usePoolPosition } from '../../PoolPositionProvider'
 import { usePoolPositionStaked } from '../../PoolPositionStakedProvider'
 import { PoolButtons } from '../PoolButtons'
 
 interface PoolActionBarPositionDialogProps {
-  pair: Pair
+  pool: Pool
   open: boolean
   setOpen(open: boolean): void
 }
 
-export const PoolActionBarPositionDialog: FC<PoolActionBarPositionDialogProps> = ({ pair, open, setOpen }) => {
-  const { token0, token1 } = useTokensFromPair(pair)
+export const PoolActionBarPositionDialog: FC<PoolActionBarPositionDialogProps> = ({ pool, open, setOpen }) => {
+  const { token0, token1 } = useTokensFromPool(pool)
   const { balance, isError, isLoading, value0, value1, underlying1, underlying0 } = usePoolPosition()
   const {
     balance: stakedBalance,
@@ -139,7 +139,7 @@ export const PoolActionBarPositionDialog: FC<PoolActionBarPositionDialogProps> =
         )}
 
         <div className="px-2 mt-3">
-          <PoolButtons pair={pair} />
+          <PoolButtons pool={pool} />
         </div>
       </Dialog.Content>
     </Dialog>

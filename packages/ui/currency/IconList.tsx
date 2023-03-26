@@ -14,11 +14,13 @@ export const IconList: FC<IconListProps> = ({ children, iconWidth, iconHeight })
         {Children.map(children, (child) => {
           if (isValidElement(child)) {
             return (
-              <div className="rounded-full inline-flex shadow-sm shadow-black ring-1 ring-black/10 z-10">
+              <div className="rounded-full inline-flex dark:shadow-sm dark:shadow-black dark:ring-1 dark:ring-black/10 z-10">
                 {cloneElement(child, {
                   ...child.props,
                   width: iconWidth || child.props.width,
                   height: iconHeight || child.props.height,
+                  minWidth: iconWidth || child.props.minWidth,
+                  minHeight: iconHeight || child.props.height,
                 })}
               </div>
             )

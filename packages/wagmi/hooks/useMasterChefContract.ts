@@ -1,8 +1,7 @@
 import { masterChefV1Abi, masterChefV2Abi, miniChefAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
+import { ChefType } from '@sushiswap/client'
 import { Address, useContract, useProvider } from 'wagmi'
-
-import { Chef } from './useMasterChef'
 
 // TODO move to package
 export const MASTERCHEF_ADDRESS = {
@@ -61,14 +60,15 @@ export const getMiniChefContractConfig = (chainId: keyof typeof MINICHEF_ADDRESS
 
 export const getMasterChefContractConfig = (
   chainId: keyof typeof MASTERCHEF_ADDRESS | keyof typeof MASTERCHEF_V2_ADDRESS | keyof typeof MINICHEF_ADDRESS,
-  chef: Chef
+  chef: ChefType
 ) => {
-  if (chef === Chef.MASTERCHEF) return _getMasterChefContractConfig(chainId as keyof typeof MASTERCHEF_ADDRESS)
-  if (chef === Chef.MASTERCHEF_V2) return getMasterChefContractV2Config(chainId as keyof typeof MASTERCHEF_V2_ADDRESS)
-  if (chef === Chef.MINICHEF) return getMiniChefContractConfig(chainId as keyof typeof MINICHEF_ADDRESS)
+  if (chef === ChefType.MasterChefV1) return _getMasterChefContractConfig(chainId as keyof typeof MASTERCHEF_ADDRESS)
+  if (chef === ChefType.MasterChefV2)
+    return getMasterChefContractV2Config(chainId as keyof typeof MASTERCHEF_V2_ADDRESS)
+  if (chef === ChefType.MiniChef) return getMiniChefContractConfig(chainId as keyof typeof MINICHEF_ADDRESS)
 }
 
-export function useMasterChefContract(chainId: number, chef: Chef): ReturnType<typeof useContract> {
+export function useMasterChefContract(chainId: number, chef: ChefType) {
   const signerOrProvider = useProvider({ chainId })
   // @ts-ignore - Workaround for TS#4058
   return useContract({

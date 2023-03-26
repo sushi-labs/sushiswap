@@ -11,13 +11,11 @@ import {
 } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 
-import type { DataFetcher } from './DataFetcher'
-import type { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
-import { convertTokenToBento, getBentoChainId } from './liquidity-providers/Trident'
+import { convertTokenToBento, getBentoChainId } from './lib/convert'
+import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
+import { PoolCode } from './pools/PoolCode'
 import { getRouteProcessorCode } from './TinesToRouteProcessor'
 import { getRouteProcessor2Code } from './TinesToRouteProcessor2'
-
-type RouteCallBack = (r: MultiRoute) => void
 
 function TokenToRToken(t: Type): RToken {
   if (t instanceof Token) return t as RToken
@@ -44,171 +42,51 @@ export interface RPParams {
 export type PoolFilter = (list: RPool) => boolean
 
 export class Router {
-  dataFetcher: DataFetcher
-  fromToken: Type
-  amountIn: BigNumber
-  toToken: Type
-  gasPrice: number
-  providers?: LiquidityProviders[] | undefined // all providers if undefined
-  minUpdateDelay: number
-  poolFilter?: PoolFilter
+  static findSushiRoute(
+    poolCodesMap: Map<string, PoolCode>,
+    chainId: ChainId,
+    fromToken: Type,
+    amountIn: BigNumber,
+    toToken: Type,
+    gasPrice: number
+  ) {
+    return Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice, [
+      LiquidityProviders.NativeWrap,
+      LiquidityProviders.SushiSwap,
+      LiquidityProviders.Trident,
+    ])
+  }
 
-  dataFetcherPreviousState = 0
-  routeCallBack?: RouteCallBack
-  currentBestRoute?: MultiRoute | undefined
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  timer?: any // timer from setInterval
-
-  constructor(
-    dataFetcher: DataFetcher,
+  static findSpecialRoute(
+    poolCodesMap: Map<string, PoolCode>,
+    chainId: ChainId,
     fromToken: Type,
     amountIn: BigNumber,
     toToken: Type,
     gasPrice: number,
-    providers?: LiquidityProviders[], // all providers if undefined
-    poolFilter?: PoolFilter,
-    minUpdateDelay = 1000 // Minimal delay between routing update
+    maxPriceImpact = 10 // 10%
   ) {
-    this.dataFetcher = dataFetcher
-    this.fromToken = fromToken
-    this.amountIn = amountIn
-    this.toToken = toToken
-    this.gasPrice = gasPrice
-    this.providers = providers
-    this.minUpdateDelay = minUpdateDelay
-    this.poolFilter = poolFilter
-  }
-
-  startRouting(p: RouteCallBack) {
-    this.stopRouting()
-    this.routeCallBack = p
-    this.currentBestRoute = undefined
-    this.dataFetcherPreviousState = 0
-    this._checkRouteUpdate() // Maybe a route is ready
-    this.timer = setInterval(() => this._checkRouteUpdate(), this.minUpdateDelay)
-  }
-
-  // To stop gather pool data and routing calculation
-  stopRouting() {
-    if (this.timer) clearInterval(this.timer)
-    this.timer = undefined
-  }
-
-  getBestRoute() {
-    return this.currentBestRoute
-  }
-
-  _checkRouteUpdate() {
-    const currentDataFetcherStateId = this.dataFetcher.getCurrentPoolStateId(this.providers)
-    if (this.dataFetcherPreviousState != currentDataFetcherStateId) {
-      this.dataFetcherPreviousState = currentDataFetcherStateId
-
-      const networks: NetworkInfo[] = [
-        {
-          chainId: this.dataFetcher.chainId,
-          baseToken: WNATIVE[this.dataFetcher.chainId] as RToken,
-          gasPrice: this.gasPrice as number,
-        },
-        {
-          chainId: getBentoChainId(this.dataFetcher.chainId),
-          baseToken: convertTokenToBento(WNATIVE[this.dataFetcher.chainId]),
-          gasPrice: this.gasPrice as number,
-        },
-      ]
-
-      let pools = this.dataFetcher.getCurrentPoolCodeList(this.providers).map((pc) => pc.pool)
-      if (this.poolFilter) pools = pools.filter(this.poolFilter)
-
-      const route = findMultiRouteExactIn(
-        TokenToRToken(this.fromToken),
-        TokenToRToken(this.toToken),
-        this.amountIn,
-        pools,
-        networks,
-        this.gasPrice
-      )
-
-      if (route.status != RouteStatus.NoWay) {
-        this.currentBestRoute = route
-        if (this.routeCallBack) this.routeCallBack(route)
-      }
+    // Find preferrable route
+    const preferrableRoute = Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice, [
+      LiquidityProviders.NativeWrap,
+      LiquidityProviders.SushiSwap,
+      LiquidityProviders.Trident,
+    ])
+    // If the route is successful and the price impact is less than maxPriceImpact, then return the route
+    if (
+      preferrableRoute.status === RouteStatus.Success &&
+      preferrableRoute.priceImpact !== undefined &&
+      preferrableRoute.priceImpact < maxPriceImpact / 100
+    ) {
+      return preferrableRoute
     }
-  }
-
-  changeRouteParams(fromToken: Type, amountIn: BigNumber, toToken: Type, gasPrice: number) {
-    this.fromToken = fromToken
-    this.amountIn = amountIn
-    this.toToken = toToken
-    this.gasPrice = gasPrice
-    this.currentBestRoute = undefined
-    this._checkRouteUpdate() // Recalc route immediately
-  }
-
-  getCurrentRouteRPParams(to: string, RPAddr: string, maxPriceImpact = 0.005): RPParams | undefined {
-    if (this.currentBestRoute !== undefined) {
-      return Router.routeProcessorParams(
-        this.dataFetcher,
-        this.currentBestRoute,
-        this.fromToken,
-        this.toToken,
-        to,
-        RPAddr,
-        maxPriceImpact
-      )
-    }
-  }
-
-  getCurrentRouteRP2Params(to: string, RPAddr: string, maxPriceImpact = 0.005): RPParams | undefined {
-    if (this.currentBestRoute !== undefined) {
-      return Router.routeProcessor2Params(
-        this.dataFetcher,
-        this.currentBestRoute,
-        this.fromToken,
-        this.toToken,
-        to,
-        RPAddr,
-        maxPriceImpact
-      )
-    }
-  }
-
-  getCurrentRouteHumanString(shiftPrimary = '', shiftSub = '    '): string | void {
-    if (this.currentBestRoute !== undefined) {
-      return Router.routeToHumanString(
-        this.dataFetcher,
-        this.currentBestRoute,
-        this.fromToken,
-        this.toToken,
-        shiftPrimary,
-        shiftSub
-      )
-    }
-  }
-
-  getCurrentRouteHumanArray(): string[] | void {
-    if (this.currentBestRoute !== undefined) {
-      const poolCodesMap = this.dataFetcher.getCurrentPoolCodeMap()
-      return [
-        `Route Status: ${this.currentBestRoute.status}`,
-        `Input: ${this.currentBestRoute.amountInBN.div(BigNumber.from(10).pow(this.fromToken.decimals))} ${
-          this.fromToken.symbol
-        }`,
-        ...this.currentBestRoute.legs.map((l, i) => {
-          return (
-            `${i + 1}. ${l.tokenFrom.symbol} ${Math.round(l.absolutePortion * 100)}%` +
-            ` -> [${poolCodesMap.get(l.poolAddress)?.poolName}] -> ${l.tokenTo.symbol}`
-          )
-        }),
-        `Output: ${this.currentBestRoute.amountOutBN.div(BigNumber.from(10).pow(this.toToken.decimals))} ${
-          this.toToken.symbol
-        }`,
-        `Price Impact: ${(Number(this.currentBestRoute.priceImpact) * 100).toFixed(2)}%`,
-      ]
-    }
+    // Otherwise, find the route using all possible liquidity providers
+    return Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice)
   }
 
   static findBestRoute(
-    dataFetcher: DataFetcher,
+    poolCodesMap: Map<string, PoolCode>,
+    chainId: ChainId,
     fromToken: Type,
     amountIn: BigNumber,
     toToken: Type,
@@ -218,25 +96,46 @@ export class Router {
   ): MultiRoute {
     const networks: NetworkInfo[] = [
       {
-        chainId: dataFetcher.chainId,
-        baseToken: WNATIVE[dataFetcher.chainId] as RToken,
+        chainId: chainId,
+        baseToken: WNATIVE[chainId] as RToken,
         gasPrice: gasPrice as number,
       },
       {
-        chainId: getBentoChainId(dataFetcher.chainId),
-        baseToken: convertTokenToBento(WNATIVE[dataFetcher.chainId]),
+        chainId: getBentoChainId(chainId),
+        baseToken: convertTokenToBento(WNATIVE[chainId]),
         gasPrice: gasPrice as number,
       },
     ]
 
-    let pools = dataFetcher.getCurrentPoolCodeList(providers).map((pc) => pc.pool)
+    let poolCodes = Array.from(poolCodesMap.values())
+    if (providers) {
+      poolCodes = poolCodes.filter((pc) => providers.includes(pc.liquidityProvider))
+    }
+
+    let pools = Array.from(poolCodes).map((pc) => pc.pool)
+
     if (poolFilter) pools = pools.filter(poolFilter)
 
-    return findMultiRouteExactIn(TokenToRToken(fromToken), TokenToRToken(toToken), amountIn, pools, networks, gasPrice)
+    const route = findMultiRouteExactIn(
+      TokenToRToken(fromToken),
+      TokenToRToken(toToken),
+      amountIn,
+      pools,
+      networks,
+      gasPrice
+    )
+
+    return {
+      ...route,
+      legs: route.legs.map((l) => ({
+        ...l,
+        poolName: poolCodesMap.get(l.poolAddress)?.poolName ?? 'Unknown Pool',
+      })),
+    }
   }
 
   static routeProcessorParams(
-    dataFetcher: DataFetcher,
+    poolCodesMap: Map<string, PoolCode>,
     route: MultiRoute,
     fromToken: Type,
     toToken: Type,
@@ -259,13 +158,13 @@ export class Router {
       tokenOut,
       amountOutMin,
       to,
-      routeCode: getRouteProcessorCode(route, RPAddr, to, dataFetcher.getCurrentPoolCodeMap()),
+      routeCode: getRouteProcessorCode(route, RPAddr, to, poolCodesMap),
       value: fromToken instanceof Token ? undefined : route.amountInBN,
     }
   }
 
   static routeProcessor2Params(
-    dataFetcher: DataFetcher,
+    poolCodesMap: Map<string, PoolCode>,
     route: MultiRoute,
     fromToken: Type,
     toToken: Type,
@@ -283,21 +182,20 @@ export class Router {
       tokenOut,
       amountOutMin,
       to,
-      routeCode: getRouteProcessor2Code(route, RPAddr, to, dataFetcher.getCurrentPoolCodeMap()),
+      routeCode: getRouteProcessor2Code(route, RPAddr, to, poolCodesMap),
       value: fromToken instanceof Token ? undefined : route.amountInBN,
     }
   }
 
   // Human-readable route printing
   static routeToHumanString(
-    dataFetcher: DataFetcher,
+    poolCodesMap: Map<string, PoolCode>,
     route: MultiRoute,
     fromToken: Type,
     toToken: Type,
     shiftPrimary = '',
     shiftSub = '    '
   ): string {
-    const poolCodesMap = dataFetcher.getCurrentPoolCodeMap()
     let res = ''
     res += shiftPrimary + 'Route Status: ' + route.status + '\n'
     res += shiftPrimary + `Input: ${route.amountIn / Math.pow(10, fromToken.decimals)} ${fromToken.symbol}\n`

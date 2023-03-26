@@ -1,47 +1,45 @@
 import { tryParseAmount } from '@sushiswap/currency'
-import { Pair } from '@sushiswap/graph-client'
+import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
 import { AppearOnMount, Button, Dots } from '@sushiswap/ui'
-import { Approve, Checker, Chef, getMasterChefContractConfig, useMasterChefWithdraw } from '@sushiswap/wagmi'
+import { Approve, Checker, getMasterChefContractConfig, useMasterChefWithdraw } from '@sushiswap/wagmi'
 import { FC, useMemo, useState } from 'react'
-import useSWR from 'swr'
 
-import { CHEF_TYPE_MAP } from '../../lib/constants'
-import { useCreateNotification, useTokensFromPair } from '../../lib/hooks'
+import { useGraphPool } from '../../lib/hooks'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
+import { useSWRConfig } from 'swr'
 
 interface AddSectionStakeProps {
-  pair: Pair
-  chefType: Chef
+  pool: Pool
+  chefType: ChefType
   farmId: number
 }
 
-export const RemoveSectionUnstake: FC<{ poolAddress: string }> = ({ poolAddress }) => {
+export const RemoveSectionUnstake: FC<{ poolId: string }> = ({ poolId }) => {
   const isMounted = useIsMounted()
-  const { data } = useSWR<{ pair: Pair }>(`/earn/api/pool/${poolAddress}`, (url) =>
-    fetch(url).then((response) => response.json())
-  )
+  const { data: pool } = usePool({ args: poolId, swrConfig: useSWRConfig() })
 
-  if (!data) return <></>
-  const { pair } = data
-  if (!pair?.farm?.chefType || !isMounted || !pair.farm.id) return <></>
+  if (!pool) return <></>
+
+  if (!pool?.incentives || pool.incentives.length === 0 || !isMounted) return <></>
 
   return (
     <AppearOnMount show={true}>
       <_RemoveSectionUnstake
-        pair={pair}
-        chefType={CHEF_TYPE_MAP[pair.farm.chefType as keyof typeof CHEF_TYPE_MAP]}
-        farmId={Number(pair.farm.id)}
+        pool={pool}
+        chefType={pool.incentives[0].chefType}
+        farmId={Number(pool.incentives[0].pid)}
       />
     </AppearOnMount>
   )
 }
 
-export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType, farmId }) => {
-  const createNotification = useCreateNotification()
+export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pool, chefType, farmId }) => {
   const [value, setValue] = useState('')
-  const { reserve0, reserve1, liquidityToken } = useTokensFromPair(pair)
+  const {
+    data: { reserve0, reserve1, liquidityToken },
+  } = useGraphPool(pool)
   const { balance } = usePoolPositionStaked()
 
   const amount = useMemo(() => {
@@ -53,12 +51,11 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType
     amount,
     pid: farmId,
     chef: chefType,
-    onSuccess: createNotification,
   })
 
   return (
     <RemoveSectionUnstakeWidget
-      chainId={pair.chainId}
+      chainId={pool.chainId}
       value={value}
       setValue={setValue}
       reserve0={reserve0}
@@ -66,13 +63,12 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType
       liquidityToken={liquidityToken}
     >
       <Checker.Connected size="md">
-        <Checker.Network size="md" chainId={pair.chainId}>
+        <Checker.Network size="md" chainId={pool.chainId}>
           <Checker.Custom
             showGuardIfTrue={Boolean(amount && balance && amount.greaterThan(balance))}
             guard={<Button size="md">Insufficient Balance</Button>}
           >
             <Approve
-              onSuccess={createNotification}
               className="flex-grow !justify-end"
               components={
                 <Approve.Components>
@@ -81,8 +77,8 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType
                     className="whitespace-nowrap"
                     fullWidth
                     amount={amount}
-                    address={getMasterChefContractConfig(pair.chainId, chefType)?.address}
-                    enabled={Boolean(getMasterChefContractConfig(pair.chainId, chefType)?.address)}
+                    address={getMasterChefContractConfig(pool.chainId, chefType)?.address}
+                    enabled={Boolean(getMasterChefContractConfig(pool.chainId, chefType)?.address)}
                   />
                 </Approve.Components>
               }

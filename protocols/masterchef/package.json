@@ -29,8 +29,7 @@
   ],
   "scripts": {
     "build": "TS_NODE_TRANSPILE_ONLY=1 hardhat compile",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf artifacts && rm -rf cache && rm -rf exports && rm -rf typechain",
-    "export": "hardhat export --export-all exports.json",
+    "clean": "rm -rf .turbo node_modules artifacts cache exports typechain",
     "node": "hardhat node"
   },
   "devDependencies": {
@@ -43,7 +42,8 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@tenderly/hardhat-tenderly": "^1.0.13",
-    "@types/node": "^17.0.33",
+    "@sushiswap/types": "workspace:*",
+    "@types/node": "^18.0.0",
     "eslint": "8.29.0",
     "hardhat": "2.12.4",
     "hardhat-deploy": "0.11.22",

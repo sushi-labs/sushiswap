@@ -5,14 +5,17 @@ import { WNATIVE } from './constants/tokens'
 import { Currency } from './Currency'
 import { Token } from './Token'
 import { Type } from './Type'
+import { nativeSchema, SerializedNative } from './zod'
 
 export class Native extends Currency {
+  public readonly id: string
   public readonly isNative = true as const
   public readonly isToken = false as const
   public readonly symbol: string
   public readonly name: string
   protected constructor(native: { chainId: number; decimals: number; symbol: string; name: string }) {
     super(native)
+    this.id = `${native.chainId}:NATIVE`
     this.symbol = native.symbol
     this.name = native.name
   }
@@ -47,5 +50,19 @@ export class Native extends Currency {
 
   public equals(other: Type): boolean {
     return other.isNative && other.chainId === this.chainId
+  }
+
+  public serialize(): SerializedNative {
+    return nativeSchema.parse({
+      isNative: this.isNative,
+      name: this.name,
+      symbol: this.symbol,
+      decimals: this.decimals,
+      chainId: this.chainId,
+    })
+  }
+
+  public static deserialize(native: SerializedNative): Native {
+    return Native.onChain(native.chainId)
   }
 }
