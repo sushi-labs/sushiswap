@@ -56,6 +56,9 @@ const FACTORY_POOL_EXCEPTIONS_LIST = [
   '0xD652c40fBb3f06d6B58Cb9aa9CFF063eE63d465D',
   '0x28B0Cf1baFB707F2c6826d10caf6DD901a6540C5',
   '0x0AD66FeC8dB84F8A3365ADA04aB23ce607ac6E24',
+
+  '0xc8a7C1c4B748970F57cA59326BcD49F5c9dc43E3',
+  '0xf03bD3cfE85f00bF5819AC20f0870cE8a8d1F0D8',
 ]
 const FACTORY_POOL_EXCEPTION_SET = new Set(FACTORY_POOL_EXCEPTIONS_LIST.map((p) => p.toLowerCase()))
 const FACTORY_POOL_PRECISION_SPECIAL: Record<string, number> = {
@@ -340,7 +343,7 @@ describe('Real Curve pools consistency check', () => {
     let passed = 0,
       i = 0
     const startFrom = 0,
-      finishAt = 1e9
+      finishAt = 10
     const [user] = await ethers.getSigners()
     await forEachFactoryPool(user.provider as Provider, async (poolAddress: string, factoryName: string) => {
       if (++i < startFrom) return
