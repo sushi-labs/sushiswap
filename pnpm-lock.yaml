@@ -2819,6 +2819,61 @@ importers:
       tsup: 6.5.0_k22f457wtryv7dv7ltdlwpdpdm
       typescript: 4.9.4
 
+  packages/v3-sdk:
+    specifiers:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/solidity': 5.7.0
+      '@sushiswap/amm': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/trident': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/node': ^18.0.0
+      '@uniswap/swap-router-contracts': 1.3.0
+      '@uniswap/v3-core': 1.0.1
+      '@uniswap/v3-periphery': 1.4.3
+      '@uniswap/v3-staker': 1.0.2
+      eslint: 8.29.0
+      tiny-invariant: 1.3.1
+      tiny-warning: 1.0.3
+      tsup: 6.5.0
+      typescript: 4.9.4
+      zod: 3.20.2
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/solidity': 5.7.0
+      '@sushiswap/amm': link:../amm
+      '@sushiswap/chain': link:../chain
+      '@sushiswap/currency': link:../currency
+      '@sushiswap/math': link:../math
+      '@sushiswap/tines': link:../tines
+      '@sushiswap/trident': link:../../protocols/trident
+      '@uniswap/swap-router-contracts': 1.3.0
+      '@uniswap/v3-core': 1.0.1
+      '@uniswap/v3-periphery': 1.4.3
+      '@uniswap/v3-staker': 1.0.2
+      tiny-invariant: 1.3.1
+      tiny-warning: 1.0.3
+      zod: 3.20.2
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/typescript-config': link:../../config/typescript
+      '@types/node': 18.11.18
+      eslint: 8.29.0
+      tsup: 6.5.0_typescript@4.9.4
+      typescript: 4.9.4
+
   packages/validate:
     specifiers:
       '@sushiswap/chain': workspace*
@@ -10282,6 +10337,10 @@ packages:
     resolution: {integrity: sha512-dVXDnUKxrAKLzPdCRkz+N8qsVkK1XxJ6kk3zuI6zaQmcKxN7CkizoDP7lXxcs/Mi2I0mxceTRjJBqlzFffLJrQ==}
     dev: true
 
+  /@openzeppelin/contracts/3.4.1-solc-0.7-2:
+    resolution: {integrity: sha512-tAG9LWg8+M2CMu7hIsqHPaTyG4uDzjr6mhvH96LvOpLZZj6tgzTluBt+LsCf1/QaYrlis6pITvpIaIhE+iZB+Q==}
+    dev: false
+
   /@openzeppelin/contracts/3.4.2-solc-0.7:
     resolution: {integrity: sha512-W6QmqgkADuFcTLzHL8vVoNBtkwjvQRpYIAom7KiUNoLKghyx3FgH0GBjt8NRvigV1ZmMOBllvE1By1C+bi8WpA==}
 
@@ -11232,7 +11291,7 @@ packages:
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
-      tailwindcss: 3.2.4_postcss@8.4.21
+      tailwindcss: 3.2.4
     dev: false
 
   /@tanstack/match-sorter-utils/8.7.2:
@@ -12485,6 +12544,20 @@ packages:
       react-redux: 8.0.5_ie75ejlwqy5zh3tldgt7pftwcu
     dev: false
 
+  /@uniswap/swap-router-contracts/1.3.0:
+    resolution: {integrity: sha512-iKvCuRkHXEe0EMjOf8HFUISTIhlxI57kKFllf3C3PUIE0HmwxrayyoflwAz5u/TRsFGYqJ9IjX2UgzLCsrNa5A==}
+    engines: {node: '>=10'}
+    dependencies:
+      '@openzeppelin/contracts': 3.4.2-solc-0.7
+      '@uniswap/v2-core': 1.0.1
+      '@uniswap/v3-core': 1.0.0
+      '@uniswap/v3-periphery': 1.4.1
+      dotenv: 14.3.2
+      hardhat-watcher: 2.5.0
+    transitivePeerDependencies:
+      - hardhat
+    dev: false
+
   /@uniswap/token-lists/1.0.0-beta.30:
     resolution: {integrity: sha512-HwY2VvkQ8lNR6ks5NqQfAtg+4IZqz3KV1T8d2DlI8emIn9uMmaoFbIOg0nzjqAVKKnZSbMTRRtUoAh6mmjRvog==}
     engines: {node: '>=10'}
@@ -12505,7 +12578,6 @@ packages:
   /@uniswap/v3-core/1.0.1:
     resolution: {integrity: sha512-7pVk4hEm00j9tc71Y9+ssYpO6ytkeI0y7WE9P6UcmNzhxPePwyAxImuhVsTqWK9YFvzgtvzJHi64pBl4jUzKMQ==}
     engines: {node: '>=10'}
-    dev: true
 
   /@uniswap/v3-periphery/1.4.1:
     resolution: {integrity: sha512-Ab0ZCKOQrQMKIcpBTezTsEhWfQjItd0TtkCG8mPhoQu+wC67nPaf4hYUhM6wGHeFUmDiYY5MpEQuokB0ENvoTg==}
@@ -12530,7 +12602,15 @@ packages:
       '@uniswap/v2-core': 1.0.1
       '@uniswap/v3-core': 1.0.0
       base64-sol: 1.0.1
-    dev: true
+
+  /@uniswap/v3-staker/1.0.2:
+    resolution: {integrity: sha512-+swIh/yhY9GQGyQxT4Gz54aXYLK+uc3qsmIvaAX+FjvhcL9TGOvS9tXbQsCZM4AJW63vj6TLsmHIjGMIePL1BQ==}
+    engines: {node: '>=10'}
+    dependencies:
+      '@openzeppelin/contracts': 3.4.1-solc-0.7-2
+      '@uniswap/v3-core': 1.0.0
+      '@uniswap/v3-periphery': 1.4.3
+    dev: false
 
   /@vanilla-extract/babel-plugin-debug-ids/1.0.1:
     resolution: {integrity: sha512-ynyKqsJiMzM1/yiIJ6QdqpWKlK4IMJJWREpPtaemZrE1xG1B4E/Nfa6YazuDWjDkCJC1tRIpEGnVs+pMIjUxyw==}
@@ -13680,7 +13760,7 @@ packages:
     resolution: {integrity: sha512-d7qzIvbbBm6d0VpJGlRbp/G9PTLRCcpS9fRNnfjE87ZbWbB05vBzHkaUyOs2zaTny/GPuBzrEY2QewoLj4+5JQ==}
     dependencies:
       '@whatwg-node/fetch': 0.8.4
-      '@whatwg-node/server': 0.7.1
+      '@whatwg-node/server': 0.7.5
       tslib: 2.5.0
     transitivePeerDependencies:
       - '@types/node'
@@ -13689,7 +13769,7 @@ packages:
     resolution: {integrity: sha512-d7qzIvbbBm6d0VpJGlRbp/G9PTLRCcpS9fRNnfjE87ZbWbB05vBzHkaUyOs2zaTny/GPuBzrEY2QewoLj4+5JQ==}
     dependencies:
       '@whatwg-node/fetch': 0.8.4_@types+node@18.11.18
-      '@whatwg-node/server': 0.7.1_@types+node@18.11.18
+      '@whatwg-node/server': 0.7.5_@types+node@18.11.18
       tslib: 2.5.0
     transitivePeerDependencies:
       - '@types/node'
@@ -13722,26 +13802,18 @@ packages:
     transitivePeerDependencies:
       - '@types/node'
 
-  /@whatwg-node/server/0.7.1:
-    resolution: {integrity: sha512-kXZeJ+8vLD8Snewq0N1TB2cWPu6z91ymrRRLDx0KHmbsSrsPIdrXxoHBAvFBxTQz3u2O4IYsyhHetAnBBrrWgA==}
-    dependencies:
-      '@whatwg-node/fetch': 0.8.4
-      tslib: 2.5.0
-    transitivePeerDependencies:
-      - '@types/node'
-
-  /@whatwg-node/server/0.7.1_@types+node@18.11.18:
-    resolution: {integrity: sha512-kXZeJ+8vLD8Snewq0N1TB2cWPu6z91ymrRRLDx0KHmbsSrsPIdrXxoHBAvFBxTQz3u2O4IYsyhHetAnBBrrWgA==}
-    dependencies:
-      '@whatwg-node/fetch': 0.8.4_@types+node@18.11.18
-      tslib: 2.5.0
-    transitivePeerDependencies:
-      - '@types/node'
-
   /@whatwg-node/server/0.7.5:
     resolution: {integrity: sha512-xTDJdPqr/wULxW3mGXQXD92SRXUm6jwQxqIvyHG17dykRTd21HuCaS2ggBn5lSAM/sYjjrT+OYv3fXbtS4+Mjw==}
     dependencies:
       '@whatwg-node/fetch': 0.8.4
+      tslib: 2.5.0
+    transitivePeerDependencies:
+      - '@types/node'
+
+  /@whatwg-node/server/0.7.5_@types+node@18.11.18:
+    resolution: {integrity: sha512-xTDJdPqr/wULxW3mGXQXD92SRXUm6jwQxqIvyHG17dykRTd21HuCaS2ggBn5lSAM/sYjjrT+OYv3fXbtS4+Mjw==}
+    dependencies:
+      '@whatwg-node/fetch': 0.8.4_@types+node@18.11.18
       tslib: 2.5.0
     transitivePeerDependencies:
       - '@types/node'
@@ -14465,7 +14537,7 @@ packages:
   /axios/0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
@@ -17333,6 +17405,11 @@ packages:
     resolution: {integrity: sha512-SErOMvge0ZUyWd5B0NXMQlDkN+8r+HhVUsxgOO7IoPDOdDRD2JjExpN6y3KnFR66jsJMwSn1pqIivhU5rcJiNg==}
     engines: {node: '>=12'}
     dev: true
+
+  /dotenv/14.3.2:
+    resolution: {integrity: sha512-vwEppIphpFdvaMCaHfCEv9IgwcxMljMw2TnAQBB4VWPvzXQLTb82jwmdOKzlEVUL3gNFT4l4TPKO+Bn+sqcrVQ==}
+    engines: {node: '>=12'}
+    dev: false
 
   /dotenv/16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
@@ -26724,6 +26801,7 @@ packages:
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.1
+    dev: true
 
   /postcss-js/4.0.0:
     resolution: {integrity: sha512-77QESFBwgX4irogGVPgQ5s07vLvFqWr228qZY+w6lW599cRlK/HmnlivnnVUxkjHnCu4J16PDMHcH+e+2HbvTQ==}
@@ -26741,6 +26819,7 @@ packages:
     dependencies:
       camelcase-css: 2.0.1
       postcss: 8.4.21
+    dev: true
 
   /postcss-load-config/3.1.4:
     resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
@@ -26772,6 +26851,7 @@ packages:
       lilconfig: 2.0.6
       postcss: 8.4.21
       yaml: 1.10.2
+    dev: true
 
   /postcss-load-config/3.1.4_ts-node@10.9.1:
     resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
@@ -26786,7 +26866,7 @@ packages:
         optional: true
     dependencies:
       lilconfig: 2.0.6
-      ts-node: 10.9.1_rmzwhy4t3g2w4jfehjrsbeodby
+      ts-node: 10.9.1_awa2wsr5thmg3i7jqycphctjfq
       yaml: 1.10.2
     dev: true
 
@@ -26880,6 +26960,7 @@ packages:
     dependencies:
       postcss: 8.4.21
       postcss-selector-parser: 6.0.11
+    dev: true
 
   /postcss-selector-parser/6.0.10:
     resolution: {integrity: sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w==}
@@ -26922,6 +27003,7 @@ packages:
       nanoid: 3.3.4
       picocolors: 1.0.0
       source-map-js: 1.0.2
+    dev: true
 
   /postinstall-postinstall/2.1.0:
     resolution: {integrity: sha512-7hQX6ZlZXIoRiWNrbMQaLzUUfH+sSx39u8EJ9HYuDc1kLo9IXKWjM5RSquZN1ad5GnH8CGFM78fsAAQi3OKEEQ==}
@@ -29088,7 +29170,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
@@ -29890,8 +29972,6 @@ packages:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -29917,14 +29997,13 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
+      - postcss
       - ts-node
 
   /tailwindcss/3.2.4_postcss@8.4.21:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -29950,7 +30029,9 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
+      - postcss
       - ts-node
+    dev: true
 
   /tapable/2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
