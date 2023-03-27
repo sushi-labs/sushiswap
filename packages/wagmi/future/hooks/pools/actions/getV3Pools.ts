@@ -26,11 +26,20 @@ interface PoolData {
 /**
  * The default factory tick spacings by fee amount.
  */
-export declare const TICK_SPACINGS: {
-  [amount in FeeAmount]: number
+export const TICK_SPACINGS: { [amount in FeeAmount]: number } = {
+  [FeeAmount.LOWEST]: 1,
+  [FeeAmount.LOW]: 10,
+  [FeeAmount.MEDIUM]: 60,
+  [FeeAmount.HIGH]: 200,
 }
 
-const NUMBER_OF_SURRONDING_TICKS = 125
+// TODO: figure out how many ticks we need depending on fee
+export const NUMBER_OF_SURROUNDING_TICKS: { [amount in FeeAmount]: number } = {
+  [FeeAmount.LOWEST]: 125,
+  [FeeAmount.LOW]: 100,
+  [FeeAmount.MEDIUM]: 75,
+  [FeeAmount.HIGH]: 50,
+}
 
 const tickLensAbi = [
   {
@@ -69,10 +78,10 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
   >((list, [tokenA, tokenB]) => {
     if (tokenA !== undefined && tokenB !== undefined) {
       return list.concat([
-        // [tokenA, tokenB, 100],
-        [tokenA, tokenB, 500],
-        [tokenA, tokenB, 3000],
-        [tokenA, tokenB, 10000],
+        [tokenA, tokenB, FeeAmount.LOWEST],
+        [tokenA, tokenB, FeeAmount.LOW],
+        [tokenA, tokenB, FeeAmount.MEDIUM],
+        [tokenA, tokenB, FeeAmount.HIGH],
       ])
     }
     return []
@@ -140,16 +149,6 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
       } as const)
   )
 
-  const tickSpacingContracts = existingPools.map(
-    ([, poolData]) =>
-      ({
-        chainId,
-        address: poolData.address,
-        abi: uniswapV3PoolAbi,
-        functionName: 'tickSpacing',
-      } as const)
-  )
-
   const token0Contracts = existingPools.map(
     ([, poolData]) =>
       ({
@@ -172,35 +171,12 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
       } as const)
   )
 
-  const [liquidity, tickSpacing, token0Balances, token1Balances] = await Promise.all([
-    readContracts({
-      contracts: liquidityContracts,
-    }),
-    readContracts({
-      contracts: tickSpacingContracts,
-    }),
-    readContracts({
-      contracts: token0Contracts,
-    }),
-    readContracts({
-      contracts: token1Contracts,
-    }),
-  ])
-  const isContractLengthsNull =
-    liquidityContracts.length === 0 ||
-    tickSpacingContracts.length === 0 ||
-    token0Contracts.length === 0 ||
-    token1Contracts.length === 0
-
-  if (isContractLengthsNull) return [[V3PoolState.INVALID, null]]
-  if (!liquidity || !tickSpacing || !token0Balances || !token1Balances)
-    return existingPools.map(() => [V3PoolState.LOADING, null])
-
-  const minIndexes = existingPools.map(([, poolData], i) =>
-    bitmapIndex(poolData.tick - NUMBER_OF_SURRONDING_TICKS * tickSpacing[i], tickSpacing[i])
+  
+  const minIndexes = existingPools.map(([, poolData]) =>
+    bitmapIndex(poolData.tick - NUMBER_OF_SURROUNDING_TICKS[poolData.fee] * TICK_SPACINGS[poolData.fee], TICK_SPACINGS[poolData.fee])
   )
-  const maxIndexes = existingPools.map(([, poolData], i) =>
-    bitmapIndex(poolData.tick + NUMBER_OF_SURRONDING_TICKS * tickSpacing[i], tickSpacing[i])
+  const maxIndexes = existingPools.map(([, poolData]) =>
+    bitmapIndex(poolData.tick + NUMBER_OF_SURROUNDING_TICKS[poolData.fee] * TICK_SPACINGS[poolData.fee], TICK_SPACINGS[poolData.fee])
   )
 
   const lowerTicksContracts = existingPools.map(
@@ -225,7 +201,16 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
       } as const)
   )
 
-  const [lowerTickResults, upperTickResults] = await Promise.all([
+  const [liquidity, token0Balances, token1Balances, lowerTickResults, upperTickResults] = await Promise.all([
+    readContracts({
+      contracts: liquidityContracts,
+    }),
+    readContracts({
+      contracts: token0Contracts,
+    }),
+    readContracts({
+      contracts: token1Contracts,
+    }),
     readContracts({
       contracts: lowerTicksContracts,
     }),
@@ -233,22 +218,29 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
       contracts: upperTicksContracts,
     }),
   ])
+  const isContractLengthsNull =
+    liquidityContracts.length === 0 ||
+    token0Contracts.length === 0 ||
+    token1Contracts.length === 0 ||
+    lowerTicksContracts.length === 0 ||
+    upperTicksContracts.length === 0
 
-  const tickContractsLengthIsNull = lowerTicksContracts.length === 0 || upperTicksContracts.length === 0
+  if (isContractLengthsNull) return [[V3PoolState.INVALID, null]]
+  if (!liquidity || !token0Balances || !token1Balances || !lowerTickResults || !upperTickResults)
+    return existingPools.map(() => [V3PoolState.LOADING, null])
 
-  if (tickContractsLengthIsNull) return [[V3PoolState.INVALID, null]]
-  if (!lowerTickResults || !upperTickResults) return existingPools.map(() => [V3PoolState.LOADING, null])
+
 
   return existingPools.map(([, pool], i) => {
     if (
       !liquidity?.[i] ||
-      !tickSpacing?.[i] ||
       !token0Balances?.[i] ||
       !token1Balances?.[i] ||
       !lowerTickResults?.[i] ||
       !upperTickResults?.[i]
     )
       return [V3PoolState.LOADING, null]
+    // if (slot0.[i].eq(0)) return [V3PoolState.INVALID, null]
     const lowerTicks = lowerTickResults[i].map((tick) => {
       return {
         index: tick.tick,

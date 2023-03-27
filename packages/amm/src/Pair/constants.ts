@@ -71,7 +71,7 @@ export const FACTORY_ADDRESS: Record<string | number, string> = {
 /**
  * The default factory enabled fee amounts, denominated in hundredths of bips.
  */
-export declare enum FeeAmount {
+export enum FeeAmount {
   LOWEST = 100,
   LOW = 500,
   MEDIUM = 3000,
