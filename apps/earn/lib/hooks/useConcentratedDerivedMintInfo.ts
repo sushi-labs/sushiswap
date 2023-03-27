@@ -8,11 +8,10 @@ import {
   TICK_SPACINGS,
   TickMath,
   tickToPrice,
-} from '@uniswap/v3-sdk'
+} from '@sushiswap/v3-sdk'
 import { usePool, PoolState } from 'hooks/usePools'
 import { ReactNode, useCallback, useMemo } from 'react'
 
-import { tryParseTick } from './utils'
 import { JSBI, Rounding } from '@sushiswap/math'
 import { Amount, Currency, Price, Token, tryParseAmount } from '@sushiswap/currency'
 import { Bound, Field } from '../constants'
@@ -21,7 +20,7 @@ import {
   useConcentratedMintActionHandlers,
   useConcentratedMintState,
 } from '../../components/ConcentratedLiquidityProvider'
-import { getTickToPrice } from '../functions'
+import { getTickToPrice, tryParseTick } from '../functions'
 import { Fee } from '@sushiswap/amm'
 
 export function useConcentratedDerivedMintInfo(

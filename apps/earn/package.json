@@ -42,6 +42,7 @@
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",
     "@sushiswap/trident": "workspace:*",
+    "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
