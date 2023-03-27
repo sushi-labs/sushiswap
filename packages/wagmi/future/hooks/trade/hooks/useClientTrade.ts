@@ -62,6 +62,9 @@ export const useClientTrade = (variables: UseTradeParams) => {
       //   toToken,
       //   feeData.gasPrice.toNumber()
       // )
+
+      const logPools = Array.from(poolsCodeMap.values()).map((pc) => (`${pc.pool.token0.symbol}/${pc.pool.token1.symbol}-${pc.pool.fee}\n`)).join('* ')
+      console.log(`Pools found ${poolsCodeMap.size}: ${logPools}`)
       
       const route = Router.findBestRoute(
         poolsCodeMap,
@@ -89,9 +92,10 @@ export const useClientTrade = (variables: UseTradeParams) => {
       if (route) {
         const amountIn = Amount.fromRawAmount(fromToken, route.amountInBN.toString())
         const amountOut = Amount.fromRawAmount(toToken, route.amountOutBN.toString())
-        const isOffset = chainId === ChainId.POLYGON && carbonOffset
+        // const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
-        let writeArgs: UseTradeReturnWriteArgs = args
+        // let writeArgs: UseTradeReturnWriteArgs = args
+        const writeArgs: UseTradeReturnWriteArgs = args
           ? [
               args.tokenIn as HexString,
               BigNumber.from(args.amountIn),
@@ -102,14 +106,15 @@ export const useClientTrade = (variables: UseTradeParams) => {
             ]
           : undefined
 
-        let overrides = fromToken.isNative && writeArgs?.[1] ? { value: BigNumber.from(writeArgs?.[1]) } : undefined
+        const overrides = fromToken.isNative && writeArgs?.[1] ? { value: BigNumber.from(writeArgs?.[1]) } : undefined
+        // let overrides = fromToken.isNative && writeArgs?.[1] ? { value: BigNumber.from(writeArgs?.[1]) } : undefined
 
-        if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
-          writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', BigNumber.from('20000000000000000'), ...writeArgs]
-          overrides = {
-            value: BigNumber.from(fromToken.isNative ? writeArgs[3] : '0').add(BigNumber.from('20000000000000000')),
-          }
-        }
+        // if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
+        //   writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', BigNumber.from('20000000000000000'), ...writeArgs]
+        //   overrides = {
+        //     value: BigNumber.from(fromToken.isNative ? writeArgs[3] : '0').add(BigNumber.from('20000000000000000')),
+        //   }
+        // }
 
         return {
           swapPrice: amountOut.greaterThan(ZERO)
@@ -135,7 +140,8 @@ export const useClientTrade = (variables: UseTradeParams) => {
                 .toSignificant(4)
             : undefined,
           route,
-          functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
+          // functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
+          functionName: 'processRoute',
           writeArgs,
           overrides,
         }
