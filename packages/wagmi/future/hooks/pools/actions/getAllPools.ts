@@ -57,8 +57,8 @@ const queryFn = async ({
   //     ? getBridgeBentoPools(chainId, _tokensUnique, totalsMap)
   //     : Promise.resolve([]),
   // ])
-  const filteredCurrencyCombinations = currencyCombinations.filter(([a, b]) =>  a === currencyA || b === currencyA || a === currencyB || b === currencyB)
-  const v3Pools = await getV3Pools(chainId, filteredCurrencyCombinations)
+  // const filteredCurrencyCombinations = currencyCombinations.filter(([a, b]) =>  a === currencyA || b === currencyA || a === currencyB || b === currencyB)
+  const v3Pools = await getV3Pools(chainId, currencyCombinations)
   console.log({v3Pools})
 
   return {

@@ -28,7 +28,7 @@ export function getCurrencyCombinations(chainId: ChainId, currencyA: Type, curre
     // token B against all bases
     ...bases.map((base): [Token, Token] => [tokenB, base]),
     // each base against all bases
-    ...basePairs,
+    // ...basePairs, // TODO: only disabled for testing. Need to limit the number of pairs
   ]
     .filter((tokens): tokens is [Token, Token] => Boolean(tokens[0] && tokens[1]))
     .filter(([t0, t1]) => t0.address !== t1.address)
