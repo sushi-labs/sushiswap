@@ -35,3 +35,13 @@ export const defaultPoolsArgs: GetPoolsArgs = {
   poolVersions: Object.keys(AVAILABLE_VERSION_MAP) as PoolVersion[],
   isWhitelisted: true,
 }
+
+export enum Bound {
+  LOWER = 'LOWER',
+  UPPER = 'UPPER',
+}
+
+export enum Field {
+  CURRENCY_A = 'CURRENCY_A',
+  CURRENCY_B = 'CURRENCY_B',
+}

@@ -1,10 +1,13 @@
-import { Disclosure, Transition } from '@headlessui/react'
-import chains, { ChainId } from '@sushiswap/chain'
-import { classNames, Network, NetworkIcon, Typography } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui'
+import { Popover } from '@headlessui/react'
+import { ChainId, chainName } from '@sushiswap/chain'
+import { classNames, NetworkIcon } from '@sushiswap/ui'
 import React, { FC, memo } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../../config'
+import { NetworkSelector } from '@sushiswap/ui/future/components/networkselector'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { ChevronDownIcon } from '@heroicons/react/solid'
+import { ContentBlock } from '../AddPage/ContentBlock'
 
 interface SelectNetworkWidgetProps {
   selectedNetwork: ChainId
@@ -16,52 +19,36 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function S
   onSelect,
 }) {
   return (
-    <Widget id="selectNetwork" maxWidth={400} className="!bg-slate-800">
-      <Widget.Content>
-        <Disclosure>
-          {() => (
-            <>
-              <Disclosure.Button className="w-full pr-3">
-                <div className="flex items-center justify-between">
-                  <Widget.Header title="1. Select Network" className="!pb-3" />
-                  <div className={classNames('w-6 h-6')}>
-                    <NetworkIcon chainId={selectedNetwork} width={24} height={24} />
-                  </div>
-                </div>
-              </Disclosure.Button>
-              <Transition
-                unmount={false}
-                className="transition-[max-height] overflow-hidden"
-                enter="duration-300 ease-in-out"
-                enterFrom="transform max-h-0"
-                enterTo="transform max-h-[380px]"
-                leave="transition-[max-height] duration-250 ease-in-out"
-                leaveFrom="transform max-h-[380px]"
-                leaveTo="transform max-h-0"
-              >
-                <Disclosure.Panel unmount={false}>
-                  <div className="p-3 space-y-3">
-                    <Typography variant="xs" className="text-slate-300">
-                      Selected:{' '}
-                      <Typography variant="xs" weight={600} as="span" className="text-slate-100">
-                        {chains[selectedNetwork].name}
-                      </Typography>
-                    </Typography>
-                    <Network.Selector
-                      className="!ring-offset-slate-700"
-                      networks={SUPPORTED_CHAIN_IDS}
-                      selectedNetworks={[selectedNetwork]}
-                      exclusive={true}
-                      onChange={(networks) => onSelect(networks[0])}
-                      renderer={(element) => <Disclosure.Button>{element}</Disclosure.Button>}
-                    />
-                  </div>
-                </Disclosure.Panel>
-              </Transition>
-            </>
+    <ContentBlock
+      title={
+        <>
+          Which <span className="text-gray-900 dark:text-white">network</span> would you like to provide liquidity on?
+        </>
+      }
+    >
+      <div className="flex relative z-[100]">
+        <NetworkSelector
+          networks={SUPPORTED_CHAIN_IDS}
+          selected={selectedNetwork}
+          onSelect={onSelect}
+          variant="menu"
+          align="left"
+        >
+          {({ open }) => (
+            <Popover.Button as={Button} variant="outlined" color="default" size="xl" className="!font-medium">
+              <NetworkIcon chainId={selectedNetwork} width={20} height={20} />
+              <div className="hidden xl:block">
+                {chainName?.[selectedNetwork]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
+              </div>
+              <ChevronDownIcon
+                width={24}
+                height={24}
+                className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
+              />
+            </Popover.Button>
           )}
-        </Disclosure>
-      </Widget.Content>
-    </Widget>
+        </NetworkSelector>
+      </div>
+    </ContentBlock>
   )
 })

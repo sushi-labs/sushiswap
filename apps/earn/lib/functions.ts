@@ -1,7 +1,8 @@
 import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
+import { Price, Token } from '@sushiswap/currency'
 import { Pool } from '@sushiswap/client'
+import { tickToPrice } from '@uniswap/v3-sdk'
 
 export const isConstantProductPool = (
   pool: Pair | ConstantProductPool | StablePool | null
@@ -24,4 +25,11 @@ export const incentiveRewardToToken = (chainId: ChainId, incentive: Pool['incent
     symbol: incentive.rewardToken.symbol,
     decimals: incentive.rewardToken.decimals,
   })
+}
+
+export function getTickToPrice(baseToken?: Token, quoteToken?: Token, tick?: number): Price<Token, Token> | undefined {
+  if (!baseToken || !quoteToken || typeof tick !== 'number') {
+    return undefined
+  }
+  return tickToPrice(baseToken, quoteToken, tick)
 }
