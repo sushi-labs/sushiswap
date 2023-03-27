@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
-import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES } from '@sushiswap/router-config'
+import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, COMMON_BASES, CUSTOM_BASES } from '@sushiswap/router-config'
 import flatMap from 'lodash.flatmap'
 
 export function getCurrencyCombinations(chainId: ChainId, currencyA: Type, currencyB: Type) {
@@ -28,7 +28,7 @@ export function getCurrencyCombinations(chainId: ChainId, currencyA: Type, curre
     // token B against all bases
     ...bases.map((base): [Token, Token] => [tokenB, base]),
     // each base against all bases
-    // ...basePairs, // TODO: only disabled for testing. Need to limit the number of pairs
+    ...basePairs, 
   ]
     .filter((tokens): tokens is [Token, Token] => Boolean(tokens[0] && tokens[1]))
     .filter(([t0, t1]) => t0.address !== t1.address)
@@ -46,4 +46,28 @@ export function getCurrencyCombinations(chainId: ChainId, currencyA: Type, curre
 
       return true
     })
+}
+
+
+export function getV3CurrencyCombinations(chainId: ChainId, currencyA: Type, currencyB: Type) {
+  const [tokenA, tokenB] = chainId ? [currencyA?.wrapped, currencyB?.wrapped] : [undefined, undefined]
+
+  const common = chainId in BASES_TO_CHECK_TRADES_AGAINST ? BASES_TO_CHECK_TRADES_AGAINST[chainId] : []
+
+
+  if (!tokenA || !tokenB) {
+    return []
+  }
+
+  return [
+    // the direct pair
+    [tokenA, tokenB],
+    // token A against all bases
+    ...common.map((common): [Token, Token] => [tokenA, common]),
+    // token B against all bases
+    ...common.map((common): [Token, Token] => [tokenB, common]),
+
+  ]
+    .filter((tokens): tokens is [Token, Token] => Boolean(tokens[0] && tokens[1]))
+    .filter(([t0, t1]) => t0.address !== t1.address)
 }

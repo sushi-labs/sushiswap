@@ -196,13 +196,12 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
   if (!liquidity || !tickSpacing || !token0Balances || !token1Balances)
     return existingPools.map(() => [V3PoolState.LOADING, null])
 
-  const minIndexes = existingPools.map(([, poolData], i) => {
-    return bitmapIndex(poolData.tick - NUMBER_OF_SURRONDING_TICKS * tickSpacing[i], tickSpacing[i])
-  })
-
-  const maxIndexes = existingPools.map(([, poolData], i) => {
-    return bitmapIndex(poolData.tick + NUMBER_OF_SURRONDING_TICKS * tickSpacing[i], tickSpacing[i])
-  })
+  const minIndexes = existingPools.map(([, poolData], i) =>
+    bitmapIndex(poolData.tick - NUMBER_OF_SURRONDING_TICKS * tickSpacing[i], tickSpacing[i])
+  )
+  const maxIndexes = existingPools.map(([, poolData], i) =>
+    bitmapIndex(poolData.tick + NUMBER_OF_SURRONDING_TICKS * tickSpacing[i], tickSpacing[i])
+  )
 
   const lowerTicksContracts = existingPools.map(
     ([, poolData], i) =>
@@ -234,13 +233,11 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
       contracts: upperTicksContracts,
     }),
   ])
-  
+
   const tickContractsLengthIsNull = lowerTicksContracts.length === 0 || upperTicksContracts.length === 0
 
   if (tickContractsLengthIsNull) return [[V3PoolState.INVALID, null]]
-  if (!lowerTickResults || !upperTickResults)
-    return existingPools.map(() => [V3PoolState.LOADING, null])
-
+  if (!lowerTickResults || !upperTickResults) return existingPools.map(() => [V3PoolState.LOADING, null])
 
   return existingPools.map(([, pool], i) => {
     if (
@@ -270,16 +267,16 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
         pool.address,
         pool.token0 as RToken,
         pool.token1 as RToken,
-        pool.fee / 10_000,  // TODO: FIX THIS, wrong fee?
+        pool.fee / 1_000_000,
         token0Balances[i],
         token1Balances[i],
         pool.tick,
         liquidity[i],
         pool.sqrtPriceX96,
         [lowerTicks, upperTicks]
-        // .sort( 
-        //   (a, b) => a[0].index - b[0].index) // TODO: might need to sort these before passing them in. Can't remember where I've seen Ilya do it.
-        .flat()
+          // .sort(
+          //   (a, b) => a[0].index - b[0].index) // TODO: might need to sort these before passing them in. Can't remember where I've seen Ilya do it.
+          .flat()
       ),
       ,
     ]

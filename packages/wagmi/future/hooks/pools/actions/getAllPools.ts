@@ -1,7 +1,7 @@
 import { ConstantProductPool, Pair, StablePool, TradeType } from '@sushiswap/amm'
 import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { isUniswapV2Router02ChainId } from '@sushiswap/sushiswap'
-import { getCurrencyCombinations } from '@sushiswap/router'
+import { getCurrencyCombinations, getV3CurrencyCombinations } from '@sushiswap/router'
 import { ConstantProductPoolState, getConstantProductPools } from './getConstantProductPools'
 import { getStablePools, StablePoolState } from './getStablePools'
 import { UsePoolsParams, UsePoolsReturn } from '../types'
@@ -30,6 +30,12 @@ const queryFn = async ({
   if (withCombinations && currencyIn && currencyOut && chainId) {
     currencyCombinations = getCurrencyCombinations(chainId, currencyIn, currencyOut)
   }
+  
+  let v3CurrencyCombinations: [Type | undefined, Type | undefined][] = [[currencyIn, currencyOut]]
+  if (withCombinations && currencyIn && currencyOut && chainId) {
+    v3CurrencyCombinations = getV3CurrencyCombinations(chainId, currencyIn, currencyOut)
+  }
+
 
   const _tokensUnique = tokensUnique(pairsUnique(currencyCombinations))
   // const _totals = isBentoBoxV1ChainId(chainId) ? await getBentoboxTotals(chainId, _tokensUnique) : null
@@ -58,8 +64,11 @@ const queryFn = async ({
   //     : Promise.resolve([]),
   // ])
   // const filteredCurrencyCombinations = currencyCombinations.filter(([a, b]) =>  a === currencyA || b === currencyA || a === currencyB || b === currencyB)
-  const v3Pools = await getV3Pools(chainId, currencyCombinations)
-  console.log({v3Pools})
+  const v3Pools = await getV3Pools(chainId, v3CurrencyCombinations)
+
+  // v3Pools.forEach(([pool]) => {
+  //   // console.log(`${pool}`)
+  // })
 
   return {
     // pairs,
