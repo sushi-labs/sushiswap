@@ -32,18 +32,18 @@ const queryFn = async ({
   }
 
   const _tokensUnique = tokensUnique(pairsUnique(currencyCombinations))
-  const _totals = isBentoBoxV1ChainId(chainId) ? await getBentoboxTotals(chainId, _tokensUnique) : null
+  // const _totals = isBentoBoxV1ChainId(chainId) ? await getBentoboxTotals(chainId, _tokensUnique) : null
 
-  const totalsMap: Map<
-    string,
-    {
-      elastic: BigNumber
-      base: BigNumber
-    }
-  > = new Map()
-  _totals?.forEach((total, index) => {
-    totalsMap.set(_tokensUnique[index].wrapped.address, total)
-  })
+  // const totalsMap: Map<
+  //   string,
+  //   {
+  //     elastic: BigNumber
+  //     base: BigNumber
+  //   }
+  // > = new Map()
+  // _totals?.forEach((total, index) => {
+  //   totalsMap.set(_tokensUnique[index].wrapped.address, total)
+  // })
   
   // const [pairs, constantProductPools, stablePools, bridgeBentoPools] = await Promise.all([
   //   isUniswapV2Router02ChainId(chainId) ? getPairs(chainId, currencyCombinations) : Promise.resolve([]),
@@ -57,7 +57,8 @@ const queryFn = async ({
   //     ? getBridgeBentoPools(chainId, _tokensUnique, totalsMap)
   //     : Promise.resolve([]),
   // ])
-  const v3Pools = await getV3Pools(chainId, currencyCombinations)
+  const filteredCurrencyCombinations = currencyCombinations.filter(([a, b]) =>  a === currencyA || b === currencyA || a === currencyB || b === currencyB)
+  const v3Pools = await getV3Pools(chainId, filteredCurrencyCombinations)
   console.log({v3Pools})
 
   return {

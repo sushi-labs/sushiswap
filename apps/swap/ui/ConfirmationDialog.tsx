@@ -11,18 +11,18 @@ import { FC, ReactNode, useCallback, useState } from 'react'
 
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
 import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
-import { routeProcessorAbi } from '@sushiswap/abi'
 import { useTrade } from '../lib/useTrade'
 import { SendTransactionResult } from 'wagmi/actions'
 import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
 import { Chain } from '@sushiswap/chain'
-import { isRouteProcessorChainId, routeProcessorAddress, RouteProcessorChainId } from '@sushiswap/route-processor'
+import { isRouteProcessor2ChainId, routeProcessor2Address, RouteProcessor2ChainId } from '@sushiswap/route-processor'
 import { swapErrorToUserReadableMessage } from '../lib/swapErrorToUserReadableMessage'
 import { log } from 'next-axiom'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { useSlippageTolerance } from '../lib/useSlippageTolerance'
+import { routeProcessor2Abi } from '@sushiswap/abi'
 
 interface ConfirmationDialogProps {
   children({
@@ -61,14 +61,14 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
 
   const { config, isError, error } = usePrepareContractWrite({
     chainId: network0,
-    address: routeProcessorAddress[network0 as RouteProcessorChainId],
-    abi: routeProcessorAbi,
+    address: routeProcessor2Address[network0 as RouteProcessor2ChainId],
+    abi: routeProcessor2Abi,
     functionName: trade?.functionName,
     args: trade?.writeArgs,
     enabled:
       Boolean(trade?.writeArgs) &&
       appType === AppType.Swap &&
-      isRouteProcessorChainId(network0) &&
+      isRouteProcessor2ChainId(network0) &&
       approved &&
       trade?.route?.status !== 'NoWay',
     overrides: trade?.overrides,

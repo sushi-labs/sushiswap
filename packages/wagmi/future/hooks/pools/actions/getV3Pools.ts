@@ -30,7 +30,7 @@ export declare const TICK_SPACINGS: {
   [amount in FeeAmount]: number
 }
 
-const NUMBER_OF_SURRONDING_TICKS = 50
+const NUMBER_OF_SURRONDING_TICKS = 125
 
 const tickLensAbi = [
   {
