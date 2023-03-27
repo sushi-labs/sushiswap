@@ -19,7 +19,7 @@
     "typechain"
   ],
   "scripts": {
-    "build": "TS_NODE_TRANSPILE_ONLY=1 hardhat compile && tsup src/index.ts --format esm,cjs --dts",
+    "build": "TS_NODE_TRANSPILE_ONLY=1 hardhat compile && tsup-node src/index.ts",
     "clean": "rm -rf .turbo node_modules artifacts cache exports typechain",
     "console": "hardhat console",
     "get-deploy-code": "ts-node ./deploy/GetDeployCode.ts",
