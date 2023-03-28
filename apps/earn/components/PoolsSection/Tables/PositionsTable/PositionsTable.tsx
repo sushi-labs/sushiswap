@@ -3,16 +3,17 @@ import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable
 import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
-import { useUserPositions } from '../../../../lib/hooks/api/useUserPositions'
+import { useUserPositions } from '../../../../lib/hooks'
 import { PositionWithPool } from '../../../../types'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
-import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, VALUE_COLUMN } from './Cells/columns'
+import { APR_COLUMN, NAME_COLUMN, VALUE_COLUMN } from './Cells/columns'
 import { PositionQuickHoverTooltip } from './PositionQuickHoverTooltip'
+import { ClassicPoolIcon } from '@sushiswap/ui/future/components/icons'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, VALUE_COLUMN, APR_COLUMN]
+const COLUMNS = [NAME_COLUMN, VALUE_COLUMN, APR_COLUMN]
 
 export const PositionsTable: FC = () => {
   const { chainIds } = usePoolFilters()
@@ -39,13 +40,12 @@ export const PositionsTable: FC = () => {
 
   useEffect(() => {
     if (isSm && !isMd) {
-      setColumnVisibility({ volume: false, network: false })
+      setColumnVisibility({ volume: false })
     } else if (isSm) {
       setColumnVisibility({})
     } else {
       setColumnVisibility({
         volume: false,
-        network: false,
         apr: false,
         liquidityUSD: false,
       })
@@ -57,13 +57,19 @@ export const PositionsTable: FC = () => {
   }, [])
 
   return (
-    <GenericTable<PositionWithPool>
-      table={table}
-      HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
-      loading={isValidating}
-      placeholder="No positions found"
-      pageSize={Math.max(userPositions?.length || 0, 5)}
-      linkFormatter={rowLink}
-    />
+    <>
+      <h1 className="flex gap-2 items-center justify-end font-medium text-xl text-slate-200 py-4 px-3">
+        <ClassicPoolIcon width={22} height={22} />
+        Classic
+      </h1>
+      <GenericTable<PositionWithPool>
+        table={table}
+        HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
+        loading={isValidating}
+        placeholder="No positions found"
+        pageSize={Math.max(userPositions?.length || 0, 5)}
+        linkFormatter={rowLink}
+      />
+    </>
   )
 }

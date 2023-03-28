@@ -6,6 +6,7 @@ import { useUserPositions } from '../../lib/hooks'
 import { PoolsTable, PositionsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { ConcentratedPositionsTable } from './Tables/PositionsTable/ConcentratedPositionsTable'
 
 export const PoolsSection: FC<{ isReady?: boolean }> = ({ isReady }) => {
   const { address } = useAccount()
@@ -44,6 +45,7 @@ export const PoolsSection: FC<{ isReady?: boolean }> = ({ isReady }) => {
           </Tab.Panel>
           <Tab.Panel unmount={!address}>
             <PositionsTable />
+            <ConcentratedPositionsTable />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>

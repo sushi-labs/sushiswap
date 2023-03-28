@@ -71,25 +71,6 @@ export const SelectPricesWidget: FC<SelectPriceWidget> = ({
       }
     >
       <div>
-        <div className="flex justify-end mb-3">
-          <RadioGroup
-            value={chartType}
-            onChange={setChartType}
-            className="flex cursor-pointer rounded-lg overflow-hidden"
-          >
-            {Object.keys(ChartType).map((val, i) => (
-              <RadioGroup.Option
-                key={val}
-                className={({ checked }) =>
-                  classNames(checked ? 'bg-white/[0.04]' : 'bg-slate-900 opacity-40', 'text-[10px] px-2 py-1')
-                }
-                value={val}
-              >
-                {val}
-              </RadioGroup.Option>
-            ))}
-          </RadioGroup>
-        </div>
         <LiquidityChartRangeInput
           chainId={chainId}
           currencyA={token0}

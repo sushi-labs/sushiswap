@@ -76,7 +76,7 @@ export function Add() {
           <h1 className="text-lg text-slate-400">Create a new liquidity position</h1>
         </div>
         <div className="h-0.5 w-full bg-slate-200/5 my-10" />
-        <div className="flex justify-start">
+        <div className="flex justify-center">
           <div className="sm:w-[340px] md:w-[572px] gap-10">
             <ConcentratedLiquidityURLStateProvider>
               <ConcentratedLiquidityProvider>
@@ -106,10 +106,10 @@ const _Add: FC = () => {
     ticks,
     ticksAtLimit,
     pool,
-    poolState,
     depositADisabled,
     depositBDisabled,
     invalidPool,
+    position,
   } = useConcentratedDerivedMintInfo({
     existingPosition: undefined,
   })
@@ -283,12 +283,14 @@ const _Add: FC = () => {
                       <AddSectionReviewModalConcentrated
                         input0={amounts[0]}
                         input1={amounts[1]}
-                        pool={pool}
-                        poolState={poolState}
+                        position={position}
+                        noLiquidity={noLiquidity}
+                        price={price}
+                        pricesAtTicks={pricesAtTicks}
                       >
-                        {({ isWritePending, setOpen }) => (
-                          <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                            {isWritePending ? <Dots>Confirm transaction</Dots> : 'Preview'}
+                        {({ setOpen }) => (
+                          <Button fullWidth onClick={() => setOpen(true)} size="md">
+                            Preview
                           </Button>
                         )}
                       </AddSectionReviewModalConcentrated>

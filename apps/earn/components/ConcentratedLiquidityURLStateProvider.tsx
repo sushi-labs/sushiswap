@@ -30,9 +30,15 @@ export const queryParamsSchema = z.object({
     .optional()
     .default(FeeAmount.MEDIUM)
     .transform((fee) => fee as FeeAmount | undefined),
+  tokenId: z.coerce
+    .number()
+    .int()
+    .transform((val) => val.toString())
+    .optional(),
 })
 
 type State = {
+  tokenId: string | undefined
   chainId: ConstantProductPoolFactoryChainId
   token0: Type | undefined
   token1: Type | undefined
@@ -64,7 +70,7 @@ const getTokenFromUrl = (chainId: ChainId, currencyId: string, token: Token | un
 
 export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLStateProvider> = ({ children }) => {
   const { query, push, pathname } = useRouter()
-  const { chainId, fromCurrency, toCurrency, feeAmount: _feeAmount } = queryParamsSchema.parse(query)
+  const { chainId, fromCurrency, toCurrency, feeAmount: _feeAmount, tokenId } = queryParamsSchema.parse(query)
   const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useToken({
     chainId,
     address: fromCurrency,
@@ -141,6 +147,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
     }
 
     return {
+      tokenId,
       feeAmount,
       token0,
       token1,
@@ -152,6 +159,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
       setFeeAmount,
     }
   }, [
+    tokenId,
     _feeAmount,
     chainId,
     fromCurrency,

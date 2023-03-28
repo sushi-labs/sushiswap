@@ -1,12 +1,5 @@
 'use client'
 
-import { BarLoader } from '@sushiswap/ui/future/components/BarLoader'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
-import { CheckMarkIcon } from '@sushiswap/ui/future/components/icons/CheckmarkIcon'
-import { FailedMarkIcon } from '@sushiswap/ui/future/components/icons/FailedMarkIcon'
-import { Loader } from '@sushiswap/ui/future/components/Loader'
 import { FC, ReactNode, useCallback, useState } from 'react'
 
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
@@ -17,12 +10,15 @@ import { SendTransactionResult } from 'wagmi/actions'
 import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
-import { Chain } from '@sushiswap/chain'
 import { isRouteProcessorChainId, routeProcessorAddress, RouteProcessorChainId } from '@sushiswap/route-processor'
 import { swapErrorToUserReadableMessage } from '../lib/swapErrorToUserReadableMessage'
 import { log } from 'next-axiom'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { useSlippageTolerance } from '../lib/useSlippageTolerance'
+import {
+  ConfirmationDialog as UIConfirmationDialog,
+  ConfirmationDialogState,
+} from '@sushiswap/ui/dialog/ConfirmationDialog'
 
 interface ConfirmationDialogProps {
   children({
@@ -36,14 +32,6 @@ interface ConfirmationDialogProps {
     isLoading: boolean
     isConfirming: boolean
   }): ReactNode
-}
-
-enum ConfirmationDialogState {
-  Undefined,
-  Pending,
-  Success,
-  Failed,
-  Sign,
 }
 
 export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) => {
@@ -293,69 +281,28 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         isError,
         isConfirming: dialogState === ConfirmationDialogState.Pending,
       })}
-      <Dialog open={open} unmount={false} onClose={() => setOpen(false)}>
-        <Dialog.Content>
-          <div className="flex flex-col items-center justify-center gap-5">
-            {[ConfirmationDialogState.Failed, ConfirmationDialogState.Success].includes(dialogState) ? (
-              <BarLoader transitionDuration={4000} onComplete={onComplete} />
-            ) : (
-              <div className="h-1" />
-            )}
-            <div className="py-5">
-              {dialogState === ConfirmationDialogState.Pending || isWritePending ? (
-                <Loader size={100} strokeWidth={1} className="!text-blue" />
-              ) : dialogState === ConfirmationDialogState.Success ? (
-                <CheckMarkIcon width={100} height={100} />
-              ) : (
-                <FailedMarkIcon width={100} height={100} />
-              )}
-            </div>
-            <div className="flex flex-col items-center">
-              {dialogState === ConfirmationDialogState.Sign ? (
-                <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-medium leading-normal">
-                  Please sign order with your wallet.
-                </h1>
-              ) : dialogState === ConfirmationDialogState.Pending ? (
-                <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-medium leading-normal">
-                  Waiting for your{' '}
-                  <a
-                    target="_blank"
-                    href={data?.hash ? Chain.from(network0).getTxUrl(data.hash) : ''}
-                    className="cursor-pointer text-blue hover:underline"
-                    rel="noreferrer"
-                  >
-                    <Dots>transaction</Dots>
-                  </a>{' '}
-                  to be confirmed on the blockchain.
-                </h1>
-              ) : dialogState === ConfirmationDialogState.Success ? (
-                <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-semibold">
-                  You {isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'}
-                  <span className="text-red px-0.5">
-                    {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
-                  </span>{' '}
-                  {isWrap ? 'to' : isUnwrap ? 'to' : 'for'}{' '}
-                  <span className="text-blue px-0.5">
-                    {trade?.amountOut?.toSignificant(6)} {token1?.symbol}.
-                  </span>
-                </h1>
-              ) : (
-                <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-semibold">
-                  <span className="text-red">Oops!</span> Your{' '}
-                  <span className="cursor-pointer text-blue hover:underline">transaction</span> failed
-                </h1>
-              )}
-            </div>
-            <Button fullWidth color="blue" variant="outlined" size="xl" onClick={() => setOpen(false)}>
-              {dialogState === ConfirmationDialogState.Success
-                ? 'Make another swap'
-                : dialogState === ConfirmationDialogState.Failed
-                ? 'Try again'
-                : 'Close'}
-            </Button>
-          </div>
-        </Dialog.Content>
-      </Dialog>
+      <UIConfirmationDialog
+        chainId={network0}
+        txHash={data?.hash}
+        open={open}
+        setOpen={() => setOpen(false)}
+        state={dialogState}
+        isWritePending={isWritePending}
+        onComplete={onComplete}
+        successMessage={
+          <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-semibold">
+            You {isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'}
+            <span className="text-red px-0.5">
+              {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
+            </span>{' '}
+            {isWrap ? 'to' : isUnwrap ? 'to' : 'for'}{' '}
+            <span className="text-blue px-0.5">
+              {trade?.amountOut?.toSignificant(6)} {token1?.symbol}.
+            </span>
+          </h1>
+        }
+        buttonSuccessMessage="Make another swap"
+      />
     </>
   )
 }

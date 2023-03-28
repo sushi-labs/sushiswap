@@ -4,7 +4,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { PAGE_SIZE } from '../contants'
-import { APR_COLUMN, FEES_COLUMN, NAME_COLUMN, NETWORK_COLUMN, TVL_COLUMN, VOLUME_COLUMN } from './Cells/columns'
+import { APR_COLUMN, FEES_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN } from './Cells/columns'
 import { PoolQuickHoverTooltip } from './PoolQuickHoverTooltip'
 import { Pool, GetPoolsArgs, usePoolsInfinite, usePoolCount, PoolType, PoolVersion } from '@sushiswap/client'
 import { useSWRConfig } from 'swr'
@@ -14,7 +14,7 @@ import { Loader } from '@sushiswap/ui/future/components/Loader'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, FEES_COLUMN, APR_COLUMN]
+const COLUMNS = [NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, FEES_COLUMN, APR_COLUMN]
 
 export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady }) => {
   const { chainIds, tokenSymbols, poolTypes, poolVersions, incentivizedOnly } = usePoolFilters()
@@ -70,7 +70,6 @@ export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady }) => {
     if (isSm && !isMd) {
       setColumnVisibility({
         volume1d: false,
-        network: false,
         rewards: false,
         fees1d: false,
       })
@@ -78,7 +77,6 @@ export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady }) => {
       setColumnVisibility({})
     } else {
       setColumnVisibility({
-        network: false,
         rewards: false,
         liquidityUSD: false,
         fees1d: false,

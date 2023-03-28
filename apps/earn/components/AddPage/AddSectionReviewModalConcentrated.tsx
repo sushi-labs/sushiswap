@@ -1,209 +1,185 @@
-import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
-import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount, Type } from '@sushiswap/currency'
-import { Percent } from '@sushiswap/math'
-import { Dots } from '@sushiswap/ui'
+import { Percent, ZERO } from '@sushiswap/math'
+import { classNames, Collapsible, Dots } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { useSendTransaction } from '@sushiswap/wagmi'
-import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount } from 'wagmi'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { useAccount, UserRejectedRequestError } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 import { createToast } from '@sushiswap/ui/future/components/toast'
-import { PoolState } from '../../lib/hooks/useConcentratedLiquidityPools'
-import { Pool } from '@sushiswap/v3-sdk'
+import { FeeAmount, NonfungiblePositionManager } from '@sushiswap/v3-sdk'
 import { useConcentratedLiquidityURLState } from '../ConcentratedLiquidityURLStateProvider'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
+import { useV3NFTPositionManagerContract } from '@sushiswap/wagmi/hooks/useNFTPositionManagerContract'
+import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
+import { useConcentratedDerivedMintInfo } from '../../lib/hooks/useConcentratedDerivedMintInfo'
+import {
+  ConfirmationDialog as UIConfirmationDialog,
+  ConfirmationDialogState,
+} from '@sushiswap/ui/dialog/ConfirmationDialog'
+import { Dialog } from '@sushiswap/ui/future/components/dialog'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { Badge } from '@sushiswap/ui/future/components/Badge'
+import { Currency } from '@sushiswap/ui/future/components/currency'
+import { List } from '@sushiswap/ui/future/components/list/List'
+import { Chain } from '@sushiswap/chain'
+import { AddSectionConfirmModalConcentrated } from './AddSectionConfirmModalConcentrated'
+import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/solid'
+import { Bound } from '../../lib/constants'
 
-interface AddSectionReviewModalConcentratedProps {
-  poolState: PoolState
-  pool: Pool | null | undefined
+interface AddSectionReviewModalConcentratedProps
+  extends Pick<
+    ReturnType<typeof useConcentratedDerivedMintInfo>,
+    'noLiquidity' | 'position' | 'price' | 'pricesAtTicks'
+  > {
   input0: Amount<Type> | undefined
   input1: Amount<Type> | undefined
-  children({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }): ReactNode
+  children({ open, setOpen }: { open: boolean; setOpen(open: boolean): void }): ReactNode
 }
 
 export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentratedProps> = ({
-  poolState,
-  pool,
   input0,
   input1,
   children,
+  noLiquidity,
+  position,
+  price,
+  pricesAtTicks,
 }) => {
+  const { chainId, feeAmount } = useConcentratedLiquidityURLState()
   const [open, setOpen] = useState(false)
-  const { token0, token1, chainId } = useConcentratedLiquidityURLState()
-  const { address } = useAccount()
 
-  const [slippageTolerance] = useSlippageTolerance()
-  const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
-  }, [slippageTolerance])
+  const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
 
-  const [minAmount0, minAmount1] = useMemo(() => {
-    return [
-      input0
-        ? poolState === PoolState.NOT_EXISTS
-          ? input0
-          : Amount.fromRawAmount(input0.currency, calculateSlippageAmount(input0, slippagePercent)[0])
-        : undefined,
-      input1
-        ? poolState === PoolState.NOT_EXISTS
-          ? input1
-          : Amount.fromRawAmount(input1.currency, calculateSlippageAmount(input1, slippagePercent)[0])
-        : undefined,
-    ]
-  }, [poolState, input0, input1, slippagePercent])
+  const [minPriceDiff, maxPriceDiff] = useMemo(() => {
+    if (!price || !priceLower || !priceUpper) return [undefined, undefined]
+    const min = +priceLower?.toFixed(4)
+    const cur = +price?.toFixed(4)
+    const max = +priceUpper?.toFixed(4)
 
-  const onSettled = useCallback(
-    (data: SendTransactionResult | undefined) => {
-      if (!data || !chainId || !token0 || !token1) return
-      const ts = new Date().getTime()
-      void createToast({
-        account: address,
-        type: 'mint',
-        chainId,
-        txHash: data.hash,
-        promise: data.wait(),
-        summary: {
-          pending: `Adding liquidity to the ${token0.symbol}/${token1.symbol} pair`,
-          completed: `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`,
-          failed: 'Something went wrong when adding liquidity',
-        },
-        timestamp: ts,
-        groupTimestamp: ts,
-      })
-    },
-    [chainId, address, token0, token1]
-  )
+    return [(((min - cur) / cur) * 100).toFixed(2), (((max - cur) / cur) * 100).toFixed(2)]
+  }, [price, priceLower, priceUpper])
 
-  // async function onAdd() {
-  //   if (!chainId || !provider || !address) return
-  //
-  //   if (!positionManager || !baseCurrency || !quoteCurrency) {
-  //     return
-  //   }
-  //
-  //   if (position && deadline) {
-  //     const useNative = baseCurrency.isNative ? baseCurrency : quoteCurrency.isNative ? quoteCurrency : undefined
-  //     const { calldata, value } =
-  //       hasExistingPosition && tokenId
-  //         ? NonfungiblePositionManager.addCallParameters(position, {
-  //             tokenId,
-  //             slippageTolerance: slippagePercent,
-  //             deadline: deadline.toString(),
-  //             useNative,
-  //           })
-  //         : NonfungiblePositionManager.addCallParameters(position, {
-  //             slippageTolerance: slippagePercent,
-  //             recipient: address,
-  //             deadline: deadline.toString(),
-  //             useNative,
-  //             createPool: noLiquidity,
-  //           })
-  //
-  //     let txn: { to: string; data: string; value: string } = {
-  //       to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
-  //       data: calldata,
-  //       value,
-  //     }
-  //
-  //     if (argentWalletContract) {
-  //       const amountA = parsedAmounts[Field.CURRENCY_A]
-  //       const amountB = parsedAmounts[Field.CURRENCY_B]
-  //       const batch = [
-  //         ...(amountA && amountA.currency.isToken
-  //           ? [approveAmountCalldata(amountA, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId])]
-  //           : []),
-  //         ...(amountB && amountB.currency.isToken
-  //           ? [approveAmountCalldata(amountB, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId])]
-  //           : []),
-  //         {
-  //           to: txn.to,
-  //           data: txn.data,
-  //           value: txn.value,
-  //         },
-  //       ]
-  //       const data = argentWalletContract.interface.encodeFunctionData('wc_multiCall', [batch])
-  //       txn = {
-  //         to: argentWalletContract.address,
-  //         data,
-  //         value: '0x0',
-  //       }
-  //     }
-  //
-  //     setAttemptingTxn(true)
-  //
-  //     provider
-  //       .getSigner()
-  //       .estimateGas(txn)
-  //       .then((estimate) => {
-  //         const newTxn = {
-  //           ...txn,
-  //           gasLimit: calculateGasMargin(estimate),
-  //         }
-  //
-  //         return provider
-  //           .getSigner()
-  //           .sendTransaction(newTxn)
-  //           .then((response: TransactionResponse) => {
-  //             setAttemptingTxn(false)
-  //             addTransaction(response, {
-  //               type: TransactionType.ADD_LIQUIDITY_V3_POOL,
-  //               baseCurrencyId: currencyId(baseCurrency),
-  //               quoteCurrencyId: currencyId(quoteCurrency),
-  //               createPool: Boolean(noLiquidity),
-  //               expectedAmountBaseRaw: parsedAmounts[Field.CURRENCY_A]?.quotient?.toString() ?? '0',
-  //               expectedAmountQuoteRaw: parsedAmounts[Field.CURRENCY_B]?.quotient?.toString() ?? '0',
-  //               feeAmount: position.pool.fee,
-  //             })
-  //             setTxHash(response.hash)
-  //             sendEvent({
-  //               category: 'Liquidity',
-  //               action: 'Add',
-  //               label: [currencies[Field.CURRENCY_A]?.symbol, currencies[Field.CURRENCY_B]?.symbol].join('/'),
-  //             })
-  //           })
-  //       })
-  //       .catch((error) => {
-  //         console.error('Failed to send transaction', error)
-  //         setAttemptingTxn(false)
-  //         // we only care if the error is something _other_ than the user rejected the tx
-  //         if (error?.code !== 4001) {
-  //           console.error(error)
-  //         }
-  //       })
-  //   } else {
-  //     return
-  //   }
-  // }
-
-  const prepare = useCallback(
-    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {},
-    []
-  )
-
-  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
-    chainId,
-    prepare,
-    onSettled,
-    onSuccess: close,
-  })
-
+  const close = useCallback(() => setOpen(false), [])
   return (
     <>
-      {children({ isWritePending, setOpen })}
-      <AddSectionReviewModal
-        chainId={chainId}
-        input0={input0}
-        input1={input1}
-        open={open}
-        setOpen={() => setOpen(false)}
-      >
-        <Button size="xl" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
-          {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
-        </Button>
-      </AddSectionReviewModal>
+      {children({ open, setOpen })}
+      <Dialog open={open} unmount={false} onClose={close} variant="opaque">
+        <div className="max-w-[504px] mx-auto">
+          <button onClick={close} className="pl-0 p-3">
+            <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
+          </button>
+          <div className="flex justify-between gap-4 items-start py-2">
+            <div className="flex flex-col flex-grow gap-1">
+              <h1 className="text-3xl font-semibold dark:text-slate-50">
+                {input0?.currency.symbol}/{input1?.currency.symbol}
+              </h1>
+              <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">Add Liquidity</h1>
+            </div>
+            <div className="-mr-[20px]">
+              {input0 && input1 && (
+                <Currency.IconList iconWidth={56} iconHeight={56}>
+                  <Currency.Icon currency={input0?.currency} width={56} height={56} />
+                  <Currency.Icon currency={input1?.currency} width={56} height={56} />
+                </Currency.IconList>
+              )}
+            </div>
+          </div>
+          {/*{warningSeverity(trade?.priceImpact) >= 3 && (*/}
+          {/*  <div className="rounded-xl px-4 py-3 bg-red/20 mt-4">*/}
+          {/*    <span className="text-red-600 font-medium text-sm">*/}
+          {/*      High price impact. You will lose a significant portion of your funds in this trade due to price impact.*/}
+          {/*    </span>*/}
+          {/*  </div>*/}
+          {/*)}*/}
+          <div className="flex flex-col gap-3">
+            <List>
+              <List.Control>
+                <List.KeyValue title="Network">{Chain.from(chainId).name}</List.KeyValue>
+                {feeAmount && <List.KeyValue title="Fee Tier">{`${+feeAmount / 10000}%`}</List.KeyValue>}
+              </List.Control>
+            </List>
+            <List>
+              <List.Control>
+                <List.KeyValue
+                  title={`Minimum Price`}
+                  subtitle={`Your position will be 100% composed of ${input0?.currency.symbol} at this price`}
+                >
+                  <div className="flex flex-col gap-1">
+                    {priceLower?.toSignificant(6)} <span className="text-xs text-slate-400">{minPriceDiff}%</span>
+                  </div>
+                </List.KeyValue>
+                <List.KeyValue title="Price" subtitle={`Current price`}>
+                  {price?.toSignificant(6)}
+                </List.KeyValue>
+                <List.KeyValue
+                  title={`Maximum Price`}
+                  subtitle={`Your position will be 100% composed of ${input1?.currency.symbol} at this price`}
+                >
+                  <div className="flex flex-col gap-1">
+                    {priceUpper?.toSignificant(6)} <span className="text-xs text-slate-400">+{maxPriceDiff}%</span>
+                  </div>
+                </List.KeyValue>{' '}
+              </List.Control>
+            </List>
+            <List>
+              <List.Control>
+                {input0 && (
+                  <List.KeyValue title={`${input0?.currency.symbol}`}>
+                    <div className="flex items-center gap-2">
+                      <Currency.Icon currency={input0.currency} width={18} height={18} />
+                      {input0?.toSignificant(6)} {input0?.currency.symbol}
+                    </div>
+                  </List.KeyValue>
+                )}
+                {input1 && (
+                  <List.KeyValue title={`${input1?.currency.symbol}`}>
+                    <div className="flex items-center gap-2">
+                      <Currency.Icon currency={input1.currency} width={18} height={18} />
+                      {input1?.toSignificant(6)} {input1?.currency.symbol}
+                    </div>
+                  </List.KeyValue>
+                )}
+              </List.Control>
+            </List>
+          </div>
+          <div className="pt-4">
+            <AddSectionConfirmModalConcentrated position={position} noLiquidity={noLiquidity} closeReview={close}>
+              {({ onClick, isWritePending, isLoading, isError, error, isConfirming }) => (
+                <div className="space-y-4">
+                  <Button
+                    fullWidth
+                    size="xl"
+                    loading={isLoading && !isError}
+                    onClick={onClick}
+                    disabled={isWritePending || Boolean(isLoading) || isError}
+                    color={isError ? 'red' : 'blue'}
+                  >
+                    {isError ? (
+                      'Shoot! Something went wrong :('
+                    ) : isConfirming ? (
+                      <Dots>Confirming transaction</Dots>
+                    ) : isWritePending ? (
+                      <Dots>Confirm Add</Dots>
+                    ) : (
+                      'Add Liquidity'
+                    )}
+                  </Button>
+                  <Collapsible open={!!error}>
+                    <div className="scroll bg-red/20 text-red-700 dark:bg-black/20 p-2 px-3 rounded-lg border border-slate-200/10 text-[10px] break-all max-h-[80px] overflow-y-auto">
+                      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                      {/* @ts-ignore */}
+                      <code>{error ? ('data' in error ? error?.data?.message : error.message) : ''}</code>
+                    </div>
+                  </Collapsible>
+                </div>
+              )}
+            </AddSectionConfirmModalConcentrated>
+          </div>
+        </div>
+      </Dialog>
     </>
   )
 }
