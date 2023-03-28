@@ -6257,7 +6257,6 @@ packages:
       - react-native-windows
       - supports-color
       - utf-8-validate
-    dev: false
 
   /@graphprotocol/client-cli/2.2.19_erstqrng57z6woex75r4i3v24q:
     resolution: {integrity: sha512-KqFxSCpaXSSAcJcX4JbZy1dCG1ueH7Ou8hPrPIV5gJPHzkypqzkTrfE0nugsBEZveXqpowkcV1ecQbKDlKP5fA==}
@@ -6327,7 +6326,6 @@ packages:
       - react-native-windows
       - supports-color
       - utf-8-validate
-    dev: false
 
   /@graphprotocol/client-cli/2.2.19_ykzowzmb7rcumunkscnbisnkom:
     resolution: {integrity: sha512-KqFxSCpaXSSAcJcX4JbZy1dCG1ueH7Ou8hPrPIV5gJPHzkypqzkTrfE0nugsBEZveXqpowkcV1ecQbKDlKP5fA==}
