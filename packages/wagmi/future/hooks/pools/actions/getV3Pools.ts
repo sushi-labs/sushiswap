@@ -35,10 +35,10 @@ export const TICK_SPACINGS: { [amount in FeeAmount]: number } = {
 
 // TODO: figure out how many ticks we need depending on fee
 export const NUMBER_OF_SURROUNDING_TICKS: { [amount in FeeAmount]: number } = {
-  [FeeAmount.LOWEST]: 125,
-  [FeeAmount.LOW]: 100,
-  [FeeAmount.MEDIUM]: 75,
-  [FeeAmount.HIGH]: 50,
+  [FeeAmount.LOWEST]: 1000,
+  [FeeAmount.LOW]: 1000,
+  [FeeAmount.MEDIUM]: 1000,
+  [FeeAmount.HIGH]: 1000,
 }
 
 const tickLensAbi = [
