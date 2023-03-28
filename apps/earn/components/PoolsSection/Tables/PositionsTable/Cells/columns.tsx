@@ -83,7 +83,7 @@ export const NAME_COLUMN_V3: ColumnDef<ConcentratedLiquidityPosition, unknown> =
   id: 'name',
   header: 'Name',
   cell: (props) => <PoolNameCellV3 row={props.row.original} />,
-  size: 60,
+  size: 160,
   meta: {
     skeleton: (
       <div className="flex items-center w-full gap-2">
@@ -103,7 +103,8 @@ export const PRICE_RANGE_COLUMN: ColumnDef<ConcentratedLiquidityPosition, unknow
   id: 'priceRange',
   header: 'Price Range',
   cell: (props) => <PriceRangeCell row={props.row.original} />,
-  size: 60,
+  size: 160,
+  maxSize: 160,
   meta: {
     skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
@@ -114,7 +115,9 @@ export const POSITION_SIZE_CELL: ColumnDef<ConcentratedLiquidityPosition, unknow
   header: 'Position Size',
   cell: (props) => <PositionSizeCell row={props.row.original} />,
   size: 60,
+  maxSize: 60,
   meta: {
+    className: 'justify-end',
     skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }
@@ -124,7 +127,9 @@ export const POSITION_UNCLAIMED_CELL: ColumnDef<ConcentratedLiquidityPosition, u
   header: 'Unclaimed',
   cell: (props) => <UnclaimedCell row={props.row.original} />,
   size: 60,
+  maxSize: 60,
   meta: {
+    className: 'justify-end',
     skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }
