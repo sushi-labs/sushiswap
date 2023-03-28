@@ -66,9 +66,6 @@ const queryFn = async ({
   // const filteredCurrencyCombinations = currencyCombinations.filter(([a, b]) =>  a === currencyA || b === currencyA || a === currencyB || b === currencyB)
   const v3Pools = await getV3Pools(chainId, v3CurrencyCombinations)
 
-  // v3Pools.forEach(([pool]) => {
-  //   // console.log(`${pool}`)
-  // })
 
   return {
     // pairs,

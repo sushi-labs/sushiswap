@@ -20,7 +20,7 @@ interface PoolData {
   token1: Token
   fee: FeeAmount
   sqrtPriceX96: BigNumber
-  tick: number
+  activeTick: number
 }
 
 /**
@@ -65,7 +65,7 @@ const tickLensAbi = [
   },
 ] as const
 
-const getActiveTick = (tickCurrent: number | undefined, feeAmount: FeeAmount | undefined) =>
+const getActiveTick = (tickCurrent: number, feeAmount: FeeAmount) =>
   tickCurrent && feeAmount ? Math.floor(tickCurrent / TICK_SPACINGS[feeAmount]) * TICK_SPACINGS[feeAmount] : undefined
 
 const bitmapIndex = (tick: number, tickSpacing: number) => {
@@ -131,7 +131,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
       {
         address: slot0Contracts[i].address,
         sqrtPriceX96,
-        tick,
+        activeTick: getActiveTick(tick, fee),
         token0,
         token1,
         fee,
@@ -171,12 +171,17 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
       } as const)
   )
 
-  
   const minIndexes = existingPools.map(([, poolData]) =>
-    bitmapIndex(poolData.tick - NUMBER_OF_SURROUNDING_TICKS[poolData.fee] * TICK_SPACINGS[poolData.fee], TICK_SPACINGS[poolData.fee])
+    bitmapIndex(
+      poolData.activeTick - NUMBER_OF_SURROUNDING_TICKS[poolData.fee] * TICK_SPACINGS[poolData.fee],
+      TICK_SPACINGS[poolData.fee]
+    )
   )
   const maxIndexes = existingPools.map(([, poolData]) =>
-    bitmapIndex(poolData.tick + NUMBER_OF_SURROUNDING_TICKS[poolData.fee] * TICK_SPACINGS[poolData.fee], TICK_SPACINGS[poolData.fee])
+    bitmapIndex(
+      poolData.activeTick + NUMBER_OF_SURROUNDING_TICKS[poolData.fee] * TICK_SPACINGS[poolData.fee],
+      TICK_SPACINGS[poolData.fee]
+    )
   )
 
   const lowerTicksContracts = existingPools.map(
@@ -229,8 +234,6 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
   if (!liquidity || !token0Balances || !token1Balances || !lowerTickResults || !upperTickResults)
     return existingPools.map(() => [V3PoolState.LOADING, null])
 
-
-
   return existingPools.map(([, pool], i) => {
     if (
       !liquidity?.[i] ||
@@ -240,19 +243,19 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
       !upperTickResults?.[i]
     )
       return [V3PoolState.LOADING, null]
-    // if (slot0.[i].eq(0)) return [V3PoolState.INVALID, null]
-    const lowerTicks = lowerTickResults[i].map((tick) => {
-      return {
+
+    const lowerTicks =
+      lowerTickResults[i].map((tick) => ({
         index: tick.tick,
         DLiquidity: tick.liquidityGross,
-      }
-    })
-    const upperTicks = upperTickResults[i].map((tick) => {
-      return {
+      })) ?? []
+    const upperTicks =
+      upperTickResults[i].map((tick) => ({
         index: tick.tick,
         DLiquidity: tick.liquidityGross,
-      }
-    })
+      })) ?? []
+    const ticks = [...lowerTicks, ...upperTicks].sort((a, b) => a.index - b.index)
+
     return [
       V3PoolState.EXISTS,
       new UniV3Pool(
@@ -262,15 +265,11 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
         pool.fee / 1_000_000,
         token0Balances[i],
         token1Balances[i],
-        pool.tick,
+        pool.activeTick,
         liquidity[i],
         pool.sqrtPriceX96,
-        [lowerTicks, upperTicks]
-          // .sort(
-          //   (a, b) => a[0].index - b[0].index) // TODO: might need to sort these before passing them in. Can't remember where I've seen Ilya do it.
-          .flat()
+        ticks
       ),
-      ,
     ]
   })
 }
