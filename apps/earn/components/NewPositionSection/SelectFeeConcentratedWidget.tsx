@@ -1,46 +1,42 @@
 import { RadioGroup } from '@headlessui/react'
-import { Fee } from '@sushiswap/amm'
 import { classNames } from '@sushiswap/ui'
 import React, { FC, memo } from 'react'
 
 import { ContentBlock } from '../AddPage/ContentBlock'
-
-interface SelectFeeWidgetProps {
-  fee: number
-  setFee(fee: number): void
-}
-
-export const FEE_MAP = [Fee.LOW, Fee.MEDIUM, Fee.DEFAULT, Fee.HIGH]
+import { FeeAmount } from '@sushiswap/v3-sdk'
+import { useConcentratedLiquidityURLState } from '../ConcentratedLiquidityURLStateProvider'
 
 export const FEE_OPTIONS = [
   {
-    value: Fee.LOW,
+    value: FeeAmount.LOWEST,
     subtitle: 'Best for very stable pairs.',
   },
   {
-    value: Fee.MEDIUM,
+    value: FeeAmount.LOW,
     subtitle: 'Best for less volatile pairs.',
   },
   {
-    value: Fee.DEFAULT,
+    value: FeeAmount.MEDIUM,
     subtitle: 'Best for most pairs.',
   },
   {
-    value: Fee.HIGH,
+    value: FeeAmount.HIGH,
     subtitle: 'Best for volatile pairs.',
   },
 ]
 
-export const SelectFeeWidget: FC<SelectFeeWidgetProps> = memo(function SelectFeeWidget({ fee, setFee }) {
+export const SelectFeeConcentratedWidget: FC = memo(function SelectFeeWidget({}) {
+  const { feeAmount, setFeeAmount } = useConcentratedLiquidityURLState()
+
   return (
     <ContentBlock
       title={
         <>
-          Which <span className="text-gray-900 dark:text-white">fee tier</span> do you prefer?
+          What percentage for <span className="text-gray-900 dark:text-white">fees</span> do you prefer?
         </>
       }
     >
-      <RadioGroup value={fee} onChange={setFee} className="grid grid-cols-2 gap-4">
+      <RadioGroup value={feeAmount} onChange={setFeeAmount} className="grid grid-cols-2 gap-4">
         {FEE_OPTIONS.map((option) => (
           <RadioGroup.Option
             key={option.value}
@@ -54,7 +50,7 @@ export const SelectFeeWidget: FC<SelectFeeWidgetProps> = memo(function SelectFee
           >
             <div className="flex flex-col">
               <span className="text-gray-900 dark:text-slate-50 font-medium flex gap-4">
-                {option.value / 100}% Fees{' '}
+                {option.value / 10000}% Fees{' '}
               </span>
               <span className="text-gray-500 dark:text-slate-400 text-sm">{option.subtitle}</span>
             </div>

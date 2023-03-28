@@ -8,9 +8,9 @@ import { Bound } from '../../lib/constants'
 import { ContentBlock } from '../AddPage/ContentBlock'
 import LiquidityChartRangeInput from '../LiquidityChartRangeInput'
 import { useConcentratedMintActionHandlers } from '../ConcentratedLiquidityProvider'
-import { Input } from '@sushiswap/ui/future/components/input'
+import { DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui/future/components/input'
 import { useConcentratedDerivedMintInfo, useRangeHopCallbacks } from '../../lib/hooks/useConcentratedDerivedMintInfo'
-import { Fee } from '@sushiswap/amm'
+import { useConcentratedLiquidityURLState } from '../ConcentratedLiquidityURLStateProvider'
 
 enum ChartType {
   Liquidity = 'Liquidity',
@@ -25,22 +25,22 @@ enum Range {
   One = 'x ÷ 1.01',
 }
 
-interface SelectPricesWidget {
-  token0: Type | undefined
-  token1: Type | undefined
-  feeAmount: Fee
-}
+type SelectPriceWidget = Pick<
+  ReturnType<typeof useConcentratedDerivedMintInfo>,
+  'ticks' | 'ticksAtLimit' | 'pricesAtTicks' | 'pool' | 'price' | 'invertPrice'
+>
 
-export const SelectPricesWidget: FC<SelectPricesWidget> = ({ token0, token1, feeAmount }) => {
+export const SelectPricesWidget: FC<SelectPriceWidget> = ({
+  ticks,
+  ticksAtLimit,
+  pricesAtTicks,
+  price,
+  invertPrice,
+  pool,
+}) => {
+  const { chainId, token0, token1, feeAmount } = useConcentratedLiquidityURLState()
   const [range, setRange] = useState<Range>(Range.Unset)
   const [chartType, setChartType] = useState<ChartType>(ChartType.Liquidity)
-  const { ticks, pricesAtTicks, ticksAtLimit, pool } = useConcentratedDerivedMintInfo(
-    token0,
-    token1,
-    feeAmount,
-    token0,
-    false
-  )
   const { onLeftRangeInput, onRightRangeInput } = useConcentratedMintActionHandlers()
 
   // TODO
@@ -59,14 +59,14 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({ token0, token1, fee
   )
 
   const isSorted = token0 && token1 && token0.wrapped.sortsBefore(token1.wrapped)
-  const leftPrice = useMemo(() => (isSorted ? priceLower : priceUpper?.invert()), [])
-  const rightPrice = useMemo(() => (isSorted ? priceUpper : priceLower?.invert()), [])
+  const leftPrice = useMemo(() => (isSorted ? priceLower : priceUpper?.invert()), [isSorted, priceLower, priceUpper])
+  const rightPrice = useMemo(() => (isSorted ? priceUpper : priceLower?.invert()), [isSorted, priceLower, priceUpper])
 
   return (
     <ContentBlock
       title={
         <>
-          What <span className="text-gray-900 dark:text-white">price range</span> do you want to add liquidity to?
+          Between which <span className="text-gray-900 dark:text-white">prices</span> do you want to provide liquidity?
         </>
       }
     >
@@ -91,12 +91,12 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({ token0, token1, fee
           </RadioGroup>
         </div>
         <LiquidityChartRangeInput
+          chainId={chainId}
           currencyA={token0}
           currencyB={token1}
           feeAmount={feeAmount}
           ticksAtLimit={ticksAtLimit}
-          // price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
-          price={undefined}
+          price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
           priceLower={priceLower}
           priceUpper={priceUpper}
           onLeftRangeInput={onLeftRangeInput}
@@ -128,7 +128,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({ token0, token1, fee
             <PriceBlock
               token0={token0}
               token1={token1}
-              label="Min Price."
+              label="Min Price"
               value={ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER] ? '0' : leftPrice?.toSignificant(5) ?? ''}
               onUserInput={onLeftRangeInput}
               decrement={isSorted ? getDecrementLower : getIncrementUpper}
@@ -139,7 +139,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({ token0, token1, fee
             <PriceBlock
               token0={token0}
               token1={token1}
-              label="Max Price."
+              label="Max Price"
               value={ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER] ? '∞' : rightPrice?.toSignificant(5) ?? ''}
               onUserInput={onRightRangeInput}
               decrement={isSorted ? getDecrementUpper : getIncrementLower}
@@ -232,11 +232,16 @@ export const PriceBlock: FC<PriceBlockProps> = ({
         'flex flex-col gap-2 w-full bg-white/[0.04] rounded-lg p-3'
       )}
     >
-      <p className="font-medium text-xs text-slate-300">{label}</p>
+      <p className="font-medium text-sm text-slate-400">{label}</p>
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <Input.Numeric value={value} onUserInput={onUserInput} disabled={locked} />
-          <p className="font-medium text-[10px] text-slate-400">
+          <Input.Numeric
+            value={localValue}
+            onUserInput={setLocalValue}
+            disabled={locked}
+            className={classNames(DEFAULT_INPUT_UNSTYLED, 'without-ring !text-3xl !px-0 !py-2 shadow-none')}
+          />
+          <p className="font-medium text-xs text-slate-500">
             {token1?.symbol} per {token0?.symbol}
           </p>
         </div>

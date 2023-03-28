@@ -9,6 +9,7 @@ import { isAddress } from 'ethers/lib/utils'
 import { z } from 'zod'
 import { ConstantProductPoolFactoryChainId, isConstantProductPoolFactoryChainId } from '@sushiswap/trident'
 import { Fee } from '@sushiswap/amm'
+import { FeeAmount } from '@sushiswap/v3-sdk'
 
 export const queryParamsSchema = z.object({
   chainId: z.coerce
@@ -26,7 +27,9 @@ export const queryParamsSchema = z.object({
   feeAmount: z.coerce
     .number()
     .int()
-    .transform((fee) => fee as Fee),
+    .optional()
+    .default(FeeAmount.MEDIUM)
+    .transform((fee) => fee as FeeAmount | undefined),
 })
 
 type State = {
@@ -34,11 +37,11 @@ type State = {
   token0: Type | undefined
   token1: Type | undefined
   tokensLoading: boolean
-  feeAmount: Fee
+  feeAmount: FeeAmount | undefined
   setNetwork(chainId: ChainId): void
   setToken0(currency: Type): void
   setToken1(currency: Type): void
-  setFeeAmount(feeAmount: Fee): void
+  setFeeAmount(feeAmount: FeeAmount): void
 }
 
 export const TokenStateContext = createContext<State>({} as State)
@@ -72,7 +75,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
   const state = useMemo(() => {
     const token0 = getTokenFromUrl(chainId, fromCurrency, tokenFrom, isTokenFromLoading)
     const token1 = getTokenFromUrl(chainId, toCurrency, tokenTo, isTokenToLoading)
-    const feeAmount = _feeAmount && Object.values(Fee).includes(_feeAmount) ? _feeAmount : Fee.DEFAULT
+    const feeAmount = _feeAmount && Object.values(FeeAmount).includes(_feeAmount) ? _feeAmount : undefined
 
     const setNetwork = (chainId: ChainId) => {
       const fromCurrency =
@@ -123,7 +126,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
         { shallow: true }
       )
     }
-    const setFeeAmount = (feeAmount: Fee) => {
+    const setFeeAmount = (feeAmount: FeeAmount) => {
       void push(
         {
           pathname,

@@ -1,17 +1,22 @@
-import { Fee } from '@sushiswap/amm'
-import { Type } from '@sushiswap/currency'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
+
+import { ChartEntry } from './types'
+import { Currency } from '@sushiswap/currency'
+import { FeeAmount } from '@sushiswap/v3-sdk'
+import { ChainId } from '@sushiswap/chain'
 
 export function useDensityChartData({
+  chainId,
   currencyA,
   currencyB,
   feeAmount,
 }: {
-  currencyA: Type | undefined
-  currencyB: Type | undefined
-  feeAmount: Fee | undefined
+  chainId: ChainId
+  currencyA: Currency | undefined
+  currencyB: Currency | undefined
+  feeAmount: FeeAmount | undefined
 }) {
-  // const { isLoading, error, data } = usePoolActiveLiquidity(currencyA, currencyB, feeAmount)
+  // const { isLoading, error, data } = usePoolActiveLiquidity({ chainId, currencyA, currencyB, feeAmount })
 
   // const formatData = useCallback(() => {
   //   if (!data?.length) {
@@ -35,7 +40,7 @@ export function useDensityChartData({
   //
   //   return newData
   // }, [data])
-
+  //
   // return useMemo(() => {
   //   return {
   //     isLoading,
@@ -44,11 +49,9 @@ export function useDensityChartData({
   //   }
   // }, [isLoading, error, formatData])
 
-  return useMemo(() => {
-    return {
-      isLoading: false,
-      error: undefined,
-      formattedData: [],
-    }
-  }, [])
+  return {
+    isLoading: false,
+    error: false,
+    formattedData: [],
+  }
 }

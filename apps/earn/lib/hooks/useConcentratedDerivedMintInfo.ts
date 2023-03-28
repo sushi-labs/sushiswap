@@ -9,7 +9,6 @@ import {
   TickMath,
   tickToPrice,
 } from '@sushiswap/v3-sdk'
-import { usePool, PoolState } from 'hooks/usePools'
 import { ReactNode, useCallback, useMemo } from 'react'
 
 import { JSBI, Rounding } from '@sushiswap/math'
@@ -21,16 +20,15 @@ import {
   useConcentratedMintState,
 } from '../../components/ConcentratedLiquidityProvider'
 import { getTickToPrice, tryParseTick } from '../functions'
-import { Fee } from '@sushiswap/amm'
+import { PoolState, usePool } from './useConcentratedLiquidityPools'
+import { useConcentratedLiquidityURLState } from '../../components/ConcentratedLiquidityURLStateProvider'
 
-export function useConcentratedDerivedMintInfo(
-  currencyA?: Currency,
-  currencyB?: Currency,
-  feeAmount?: Fee,
-  baseCurrency?: Currency,
+export function useConcentratedDerivedMintInfo({
+  existingPosition,
+}: {
   // override for existing position
   existingPosition?: Position
-): {
+}): {
   pool?: Pool | null
   poolState: PoolState
   ticks: { [bound in Bound]?: number | undefined }
@@ -55,11 +53,15 @@ export function useConcentratedDerivedMintInfo(
   invertPrice: boolean
   ticksAtLimit: { [bound in Bound]?: boolean | undefined }
 } {
+  const { token0: currencyA, token1: currencyB, chainId, feeAmount } = useConcentratedLiquidityURLState()
+  const baseCurrency = currencyA
+
   const { address: account } = useAccount()
 
   const { independentField, typedValue, leftRangeTypedValue, rightRangeTypedValue, startPriceTypedValue } =
     useConcentratedMintState()
 
+  console.log(leftRangeTypedValue, rightRangeTypedValue)
   const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A
 
   // currencies
@@ -84,7 +86,13 @@ export function useConcentratedDerivedMintInfo(
   )
 
   // pool
-  const [poolState, pool] = usePool(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B], feeAmount)
+  const [poolState, pool] = usePool({
+    chainId,
+    token0: currencies[Field.CURRENCY_A],
+    token1: currencies[Field.CURRENCY_B],
+    feeAmount,
+  })
+
   const noLiquidity = poolState === PoolState.NOT_EXISTS
 
   // note to parse inputs in reverse

@@ -20,8 +20,7 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({ chainId, token0, to
     <ContentBlock
       title={
         <>
-          Choose the <span className="text-gray-900 dark:text-white">token pair</span> you would like to add liquidity
-          to.
+          Which <span className="text-gray-900 dark:text-white">token pair</span> would you like to add liquidity to?
         </>
       }
     >

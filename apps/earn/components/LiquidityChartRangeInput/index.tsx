@@ -1,5 +1,4 @@
 import { ChartBarIcon, InboxIcon, StopIcon } from '@heroicons/react/solid'
-import { Fee } from '@sushiswap/amm'
 import { Price, Token, Type } from '@sushiswap/currency'
 import { Loader } from '@sushiswap/ui'
 import { format } from 'd3'
@@ -11,33 +10,29 @@ import { Bound } from '../../lib/constants'
 import { Chart } from './Chart'
 import { useDensityChartData } from './hooks'
 import { ZoomLevels } from './types'
+import { FeeAmount } from '@sushiswap/v3-sdk'
+import { ChainId } from '@sushiswap/chain'
 
-const ZOOM_LEVELS: Record<Fee, ZoomLevels> = {
-  [Fee.LOW]: {
+const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
+  [FeeAmount.LOWEST]: {
     initialMin: 0.999,
     initialMax: 1.001,
     min: 0.00001,
     max: 1.5,
   },
-  [Fee.MEDIUM]: {
+  [FeeAmount.LOW]: {
     initialMin: 0.999,
     initialMax: 1.001,
     min: 0.00001,
     max: 1.5,
   },
-  [Fee.DEFAULT]: {
+  [FeeAmount.MEDIUM]: {
     initialMin: 0.5,
     initialMax: 2,
     min: 0.00001,
     max: 20,
   },
-  [Fee.AVERAGE]: {
-    initialMin: 0.5,
-    initialMax: 2,
-    min: 0.00001,
-    max: 20,
-  },
-  [Fee.HIGH]: {
+  [FeeAmount.HIGH]: {
     initialMin: 0.5,
     initialMax: 2,
     min: 0.00001,
@@ -60,6 +55,7 @@ const InfoBox: FC<InfoBoxProps> = ({ message, icon }) => {
 }
 
 export default function LiquidityChartRangeInput({
+  chainId,
   currencyA,
   currencyB,
   feeAmount,
@@ -71,9 +67,10 @@ export default function LiquidityChartRangeInput({
   onRightRangeInput,
   interactive,
 }: {
+  chainId: ChainId
   currencyA: Type | undefined
   currencyB: Type | undefined
-  feeAmount?: Fee
+  feeAmount?: FeeAmount
   ticksAtLimit: { [bound in Bound]?: boolean | undefined }
   price: number | undefined
   priceLower?: Price<Token, Token>
@@ -85,6 +82,7 @@ export default function LiquidityChartRangeInput({
   const isSorted = currencyA && currencyB && currencyA?.wrapped.sortsBefore(currencyB?.wrapped)
 
   const { isLoading, error, formattedData } = useDensityChartData({
+    chainId,
     currencyA,
     currencyB,
     feeAmount,
@@ -187,7 +185,7 @@ export default function LiquidityChartRangeInput({
             brushLabels={brushLabelValue}
             brushDomain={brushDomain}
             onBrushDomainChange={onBrushDomainChangeEnded}
-            zoomLevels={ZOOM_LEVELS[feeAmount ?? Fee.MEDIUM]}
+            zoomLevels={ZOOM_LEVELS[feeAmount ?? FeeAmount.MEDIUM]}
             ticksAtLimit={ticksAtLimit}
           />
         </div>

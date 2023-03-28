@@ -715,6 +715,7 @@ importers:
       '@types/numeral': 2.0.2
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
+      '@uniswap/v3-core': 1.0.1
       '@vercel/analytics': 0.1.5
       autoprefixer: 10.4.13
       d3: ^7.8.3
@@ -783,6 +784,7 @@ importers:
       '@tanstack/react-query-devtools': 4.20.4_fu3ixcwltlssi3ozitelgaebme
       '@tanstack/react-query-persist-client': 4.20.4_l2azqzttlggxzjcfejyd3icfe4
       '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
+      '@uniswap/v3-core': 1.0.1
       '@vercel/analytics': 0.1.5_react@18.2.0
       d3: 7.8.3
       date-fns: 2.29.3
@@ -6255,6 +6257,7 @@ packages:
       - react-native-windows
       - supports-color
       - utf-8-validate
+    dev: false
 
   /@graphprotocol/client-cli/2.2.19_erstqrng57z6woex75r4i3v24q:
     resolution: {integrity: sha512-KqFxSCpaXSSAcJcX4JbZy1dCG1ueH7Ou8hPrPIV5gJPHzkypqzkTrfE0nugsBEZveXqpowkcV1ecQbKDlKP5fA==}
@@ -6324,6 +6327,7 @@ packages:
       - react-native-windows
       - supports-color
       - utf-8-validate
+    dev: false
 
   /@graphprotocol/client-cli/2.2.19_ykzowzmb7rcumunkscnbisnkom:
     resolution: {integrity: sha512-KqFxSCpaXSSAcJcX4JbZy1dCG1ueH7Ou8hPrPIV5gJPHzkypqzkTrfE0nugsBEZveXqpowkcV1ecQbKDlKP5fA==}
@@ -10013,6 +10017,7 @@ packages:
       ethereum-waffle: 3.4.4_typescript@4.9.4
       ethers: 5.7.2
       hardhat: 2.12.7_typescript@4.9.4
+    dev: false
 
   /@nomiclabs/hardhat-waffle/2.0.3_wbuyzbpylyffimtnvu4mpyxac4:
     resolution: {integrity: sha512-049PHSnI1CZq6+XTbrMbMv5NaL7cednTfPenx02k3cEh8wBMLa6ys++dBETJa6JjfwgA9nBhhHQ173LJv6k2Pg==}
@@ -11543,6 +11548,7 @@ packages:
       ts-essentials: 7.0.3_typescript@4.9.4
       typechain: 8.1.1_typescript@4.9.4
       typescript: 4.9.4
+    dev: false
 
   /@typechain/ethers-v5/10.1.1_k6bdrczrdxrxopgjlr5kov2hw4:
     resolution: {integrity: sha512-o6nffJBxwmeX1ZiZpdnP/tqGd/7M7iYvQC88ZXaFFoyAGh7eYncynzVjOJV0XmaKzAc6puqyqZrnva+gJbk4sw==}
@@ -11610,6 +11616,7 @@ packages:
       fs-extra: 9.1.0
       hardhat: 2.12.7_typescript@4.9.4
       typechain: 8.1.1_typescript@4.9.4
+    dev: false
 
   /@typechain/hardhat/6.1.4_f7os7urksuhznqnplcsh6idvzi:
     resolution: {integrity: sha512-S8k5d1Rjc+plwKpkorlifmh72M7Ki0XNUOVVLtdbcA/vLaEkuqZSJFdddpBgS5QxiJP+6CbRa/yO6EVTE2+fMQ==}
@@ -18615,6 +18622,7 @@ packages:
     transitivePeerDependencies:
       - eslint-import-resolver-webpack
       - supports-color
+    dev: false
 
   /eslint-config-next/13.1.2_eslint@8.29.0:
     resolution: {integrity: sha512-zdRAQOr8v69ZwJRtBrGqAqm160ONqKxU/pV1FB1KlgfyqveGsLZmlQ7l31otwtw763901J7xdiTVkj2y3YxXZA==}
@@ -18663,6 +18671,7 @@ packages:
     transitivePeerDependencies:
       - eslint-import-resolver-webpack
       - supports-color
+    dev: false
 
   /eslint-config-prettier/8.5.0:
     resolution: {integrity: sha512-obmWKLUNCnhtQRKc+tmnYuQl0pFU1ibYJQ5BGhTVB08bHe9wC8qUeG7c08dj9XX+AuPj1YSGSQIHl1pnDHZR0Q==}
@@ -18686,6 +18695,7 @@ packages:
       eslint: '>6.6.0'
     dependencies:
       eslint-plugin-turbo: 0.0.7
+    dev: false
 
   /eslint-config-turbo/0.0.7_eslint@8.29.0:
     resolution: {integrity: sha512-WbrGlyfs94rOXrhombi1wjIAYGdV2iosgJRndOZtmDQeq5GLTzYmBUCJQZWtLBEBUPCj96RxZ2OL7Cn+xv/Azg==}
@@ -19039,6 +19049,7 @@ packages:
     dependencies:
       eslint-config-prettier: 8.5.0
       prettier-linter-helpers: 1.0.0
+    dev: false
 
   /eslint-plugin-react-hooks/4.6.0:
     resolution: {integrity: sha512-oFc7Itz9Qxh2x4gNHStv3BqJq54ExXmfC+a1NjAta66IAN87Wu0R/QArgIS9qKzX3dXKPI9H5crl9QchNMY9+g==}
@@ -19140,6 +19151,7 @@ packages:
     resolution: {integrity: sha512-bXgJQ+lqhtQBCuWY/FUWdB27j4+lqcvXv5rUARkzbeWLwea+S5eBZEQrhnO+WgX3ZoJHVj0cn943iyXwByHHQw==}
     peerDependencies:
       eslint: '>=5.0.0'
+    dev: false
 
   /eslint-plugin-simple-import-sort/8.0.0_eslint@8.29.0:
     resolution: {integrity: sha512-bXgJQ+lqhtQBCuWY/FUWdB27j4+lqcvXv5rUARkzbeWLwea+S5eBZEQrhnO+WgX3ZoJHVj0cn943iyXwByHHQw==}
@@ -19159,6 +19171,7 @@ packages:
     transitivePeerDependencies:
       - supports-color
       - typescript
+    dev: false
 
   /eslint-plugin-testing-library/5.9.1_eslint@8.29.0:
     resolution: {integrity: sha512-6BQp3tmb79jLLasPHJmy8DnxREe+2Pgf7L+7o09TSWPfdqqtQfRZmZNetr5mOs3yqZk/MRNxpN3RUpJe0wB4LQ==}
@@ -19198,6 +19211,7 @@ packages:
         optional: true
     dependencies:
       eslint-rule-composer: 0.3.0
+    dev: false
 
   /eslint-plugin-unused-imports/2.0.0_sszylvi5nmtzprfiifxgtfqxlq:
     resolution: {integrity: sha512-3APeS/tQlTrFa167ThtP0Zm0vctjr4M44HMpeg1P4bK6wItarumq0Ma82xorMKdFsWpphQBlRPzw/pxiVELX1A==}
@@ -27482,6 +27496,7 @@ packages:
       prettier: 2.8.1
       semver: 7.3.8
       solidity-comments-extractor: 0.0.7
+    dev: false
     optional: true
 
   /prettier-plugin-solidity/1.1.1_prettier@2.8.2:
@@ -27504,6 +27519,7 @@ packages:
       prettier: '>=2.2.0'
     dependencies:
       prettier: 2.8.1
+    dev: false
     optional: true
 
   /prettier-plugin-tailwindcss/0.2.1_prettier@2.8.2:

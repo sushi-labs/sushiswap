@@ -1,5 +1,5 @@
 import { usePrevious } from '@sushiswap/hooks'
-import { brushHandleAccentPath, brushHandlePath, OffScreenHandle } from 'components/LiquidityChartRangeInput/svg'
+import { brushHandleAccentPath, brushHandlePath, OffScreenHandle } from './svg'
 import { BrushBehavior, brushX, D3BrushEvent, ScaleLinear, select } from 'd3'
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
