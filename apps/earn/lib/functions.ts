@@ -1,6 +1,18 @@
 import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
-import { DAI, Native, Price, Token, USDC, USDT, WBTC } from '@sushiswap/currency'
+import {
+  DAI,
+  DAI_ADDRESS,
+  Native,
+  Price,
+  Token,
+  USDC,
+  USDC_ADDRESS,
+  USDT,
+  USDT_ADDRESS,
+  WBTC,
+  WBTC_ADDRESS,
+} from '@sushiswap/currency'
 import { Pool } from '@sushiswap/client'
 import {
   tickToPrice,
@@ -114,7 +126,11 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
   const chainId = position.amount0.currency.chainId
 
   // if token0 is a dollar-stable asset, set it as the quote token
-  const stables = [DAI[chainId], USDC[chainId], USDT[chainId]]
+  const stables = [
+    DAI[chainId as keyof typeof DAI_ADDRESS],
+    USDC[chainId as keyof typeof USDC_ADDRESS],
+    USDT[chainId as keyof typeof USDT_ADDRESS],
+  ]
   if (stables.some((stable) => stable.equals(token0))) {
     return {
       priceLower: position.token0PriceUpper.invert(),
@@ -125,7 +141,7 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
   }
 
   // if token1 is an ETH-/BTC-stable asset, set it as the base token
-  const bases = [Native.onChain(chainId).wrapped, WBTC[chainId]]
+  const bases = [Native.onChain(chainId).wrapped, WBTC[chainId as keyof typeof WBTC_ADDRESS]]
   if (bases.some((base) => base && base.equals(token1))) {
     return {
       priceLower: position.token0PriceUpper.invert(),

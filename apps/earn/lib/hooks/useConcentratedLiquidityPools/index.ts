@@ -1,9 +1,8 @@
 import { Token, Type } from '@sushiswap/currency'
 import { computePoolAddress, FeeAmount, Pool } from '@sushiswap/v3-sdk'
 import { BigintIsh, JSBI } from '@sushiswap/math'
-import { useContractReads } from 'wagmi'
+import { Address, useContractReads } from 'wagmi'
 import { useMemo } from 'react'
-import IUniswapV3PoolStateABI from './abi'
 import { ChainId } from '@sushiswap/chain'
 
 // Classes are expensive to instantiate, so this caches the recently instantiated pools.
@@ -111,12 +110,31 @@ export function usePools({
     isLoading: slot0sLoading,
     isError: slot0sError,
   } = useContractReads({
-    contracts: poolAddresses.map((el) => ({
-      chainId,
-      address: el,
-      abi: IUniswapV3PoolStateABI,
-      functionName: 'slot0',
-    })),
+    contracts: poolAddresses.map(
+      (el) =>
+        ({
+          chainId,
+          address: el as Address,
+          abi: [
+            {
+              inputs: [],
+              name: 'slot0',
+              outputs: [
+                { internalType: 'uint160', name: 'sqrtPriceX96', type: 'uint160' },
+                { internalType: 'int24', name: 'tick', type: 'int24' },
+                { internalType: 'uint16', name: 'observationIndex', type: 'uint16' },
+                { internalType: 'uint16', name: 'observationCardinality', type: 'uint16' },
+                { internalType: 'uint16', name: 'observationCardinalityNext', type: 'uint16' },
+                { internalType: 'uint8', name: 'feeProtocol', type: 'uint8' },
+                { internalType: 'bool', name: 'unlocked', type: 'bool' },
+              ],
+              stateMutability: 'view',
+              type: 'function',
+            },
+          ],
+          functionName: 'slot0',
+        } as const)
+    ),
   })
 
   const {
@@ -124,12 +142,23 @@ export function usePools({
     isLoading: liquiditiesLoading,
     isError: liquiditiesError,
   } = useContractReads({
-    contracts: poolAddresses.map((el) => ({
-      chainId,
-      address: el,
-      abi: IUniswapV3PoolStateABI,
-      functionName: 'liquidity',
-    })),
+    contracts: poolAddresses.map(
+      (el) =>
+        ({
+          chainId,
+          address: el as Address,
+          abi: [
+            {
+              inputs: [],
+              name: 'liquidity',
+              outputs: [{ internalType: 'uint128', name: '', type: 'uint128' }],
+              stateMutability: 'view',
+              type: 'function',
+            },
+          ],
+          functionName: 'liquidity',
+        } as const)
+    ),
   })
 
   return useMemo(() => {
@@ -152,7 +181,14 @@ export function usePools({
       if (!slot0.sqrtPriceX96 || slot0.sqrtPriceX96.eq(0)) return [PoolState.NOT_EXISTS, null]
 
       try {
-        const pool = PoolCache.getPool(token0, token1, fee, slot0.sqrtPriceX96, liquidity, slot0.tick)
+        const pool = PoolCache.getPool(
+          token0,
+          token1,
+          fee,
+          JSBI.BigInt(slot0.sqrtPriceX96),
+          JSBI.BigInt(liquidity),
+          slot0.tick
+        )
         return [PoolState.EXISTS, pool]
       } catch (error) {
         console.error('Error when constructing the pool', error)

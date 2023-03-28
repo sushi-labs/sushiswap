@@ -21,19 +21,19 @@ import {
   SelectNetworkWidget,
   SelectPoolTypeWidget,
   SelectTokensWidget,
-} from '../../../components'
+} from '../../../../components'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
 import { isUniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 
-import { CreateSectionReviewModalTrident } from '../../../components/CreateSection'
-import { SUPPORTED_CHAIN_IDS, TRIDENT_ENABLED_NETWORKS } from '../../../config'
-import { isConstantProductPool, isLegacyPool, isStablePool } from '../../../lib/functions'
+import { CreateSectionReviewModalTrident } from '../../../../components/CreateSection'
+import { SUPPORTED_CHAIN_IDS, TRIDENT_ENABLED_NETWORKS } from '../../../../config'
+import { isConstantProductPool, isLegacyPool, isStablePool } from '../../../../lib/functions'
 import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
-import { ContentBlock } from '../../../components/AddPage/ContentBlock'
+import { ContentBlock } from '../../../../components/AddPage/ContentBlock'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import Link from 'next/link'
 

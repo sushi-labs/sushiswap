@@ -52,7 +52,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 // the path has not been generated.
 export const getStaticPaths: GetStaticPaths = async () => {
   // Get the paths we want to pre-render based on supported chain ids
-  const paths = SUPPORTED_CHAIN_IDS.map((chainId) => ({
+  // TODO SUPPORTED_CHAIN_IDS
+  const paths = [ChainId.ARBITRUM].map((chainId) => ({
     params: {
       chainId: chainId.toString(),
     },

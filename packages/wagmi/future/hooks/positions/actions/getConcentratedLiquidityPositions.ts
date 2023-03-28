@@ -1,9 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
 import { getV3NFTPositionManagerContract } from '../../../../hooks/useNFTPositionManagerContract'
-import { readContracts } from 'wagmi'
+import { Address, readContracts } from 'wagmi'
 import { getConcentratedLiquidityPositionsFromTokenIds } from './getConcentratedLiquidityPositionsFromTokenIds'
 import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
 import { ConcentratedLiquidityPosition } from '../types'
+import { BigNumber } from 'ethers'
 
 export const getConcentratedLiquidityPositions = async ({
   account,
@@ -15,12 +16,36 @@ export const getConcentratedLiquidityPositions = async ({
   if (!account) return undefined
 
   const result = await readContracts({
-    contracts: chainIds.map((el) => ({
-      ...getV3NFTPositionManagerContract(el),
-      chainId: el,
-      functionName: 'balanceOf',
-      args: [account ?? undefined],
-    })),
+    contracts: chainIds.map(
+      (el) =>
+        ({
+          address: getV3NFTPositionManagerContract(el).address,
+          abi: [
+            {
+              inputs: [
+                {
+                  internalType: 'address',
+                  name: 'owner',
+                  type: 'address',
+                },
+              ],
+              name: 'balanceOf',
+              outputs: [
+                {
+                  internalType: 'uint256',
+                  name: '',
+                  type: 'uint256',
+                },
+              ],
+              stateMutability: 'view',
+              type: 'function',
+            },
+          ],
+          chainId: el,
+          functionName: 'balanceOf',
+          args: [account ?? undefined],
+        } as const)
+    ),
   })
 
   // we don't expect any account balance to ever exceed the bounds of max safe int
@@ -39,12 +64,41 @@ export const getConcentratedLiquidityPositions = async ({
   })
 
   const tokenIdResults = await readContracts({
-    contracts: tokenIdsArgs.map(([_chainId, account, index]) => ({
-      ...getV3NFTPositionManagerContract(_chainId),
-      chainId: _chainId,
-      functionName: 'tokenOfOwnerByIndex',
-      args: [account, index],
-    })),
+    contracts: tokenIdsArgs.map(
+      ([_chainId, account, index]) =>
+        ({
+          chainId: _chainId,
+          address: getV3NFTPositionManagerContract(_chainId).address,
+          abi: [
+            {
+              inputs: [
+                {
+                  internalType: 'address',
+                  name: 'owner',
+                  type: 'address',
+                },
+                {
+                  internalType: 'uint256',
+                  name: 'index',
+                  type: 'uint256',
+                },
+              ],
+              name: 'tokenOfOwnerByIndex',
+              outputs: [
+                {
+                  internalType: 'uint256',
+                  name: '',
+                  type: 'uint256',
+                },
+              ],
+              stateMutability: 'view',
+              type: 'function',
+            },
+          ],
+          functionName: 'tokenOfOwnerByIndex',
+          args: [account, BigNumber.from(index)],
+        } as const)
+    ),
   })
 
   const tokenIds = tokenIdResults.map((el, i) => ({
