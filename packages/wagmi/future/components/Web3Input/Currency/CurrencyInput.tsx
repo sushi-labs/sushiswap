@@ -86,7 +86,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currency])
 
-  const isLoading = loading || currencyLoading || isBalanceLoading || isPriceLoading
+  const isLoading = loading || currencyLoading || isBalanceLoading
 
   return (
     <div
@@ -176,7 +176,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           currency={currency}
           usdPctChange={usdPctChange}
           error={insufficientBalance ? 'Exceeds Balance' : undefined}
-          loading={isLoading}
+          loading={isLoading || isPriceLoading}
           price={price}
         />
         <BalancePanel

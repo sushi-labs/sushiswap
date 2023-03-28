@@ -24,8 +24,9 @@ export const usePrices = ({ chainId }: UsePrices) => {
   return useQuery({
     queryKey: ['NoPersist', `https://token-price.sushi.com/v0/${chainId}`],
     queryFn: async () => fetch(`https://token-price.sushi.com/v0/${chainId}`).then((response) => response.json()),
-    staleTime: 900, // 15 mins
-    cacheTime: 3600, // 1hr
+    staleTime: 900000, // 15 mins
+    cacheTime: 3600000, // 1hr
+    refetchOnWindowFocus: false,
     enabled: Boolean(chainId),
     select: hydrate,
   })
