@@ -7,10 +7,14 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Bound } from '../../lib/constants'
 import { ContentBlock } from '../AddPage/ContentBlock'
 import LiquidityChartRangeInput from '../LiquidityChartRangeInput'
-import { useConcentratedMintActionHandlers } from '../ConcentratedLiquidityProvider'
+import {
+  useConcentratedDerivedMintInfo,
+  useConcentratedMintActionHandlers,
+  useRangeHopCallbacks,
+} from '../ConcentratedLiquidityProvider'
 import { DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui/future/components/input'
-import { useConcentratedDerivedMintInfo, useRangeHopCallbacks } from '../../lib/hooks/useConcentratedDerivedMintInfo'
 import { useConcentratedLiquidityURLState } from '../ConcentratedLiquidityURLStateProvider'
+import { useAccount } from 'wagmi'
 
 enum ChartType {
   Liquidity = 'Liquidity',
@@ -25,22 +29,20 @@ enum Range {
   One = 'x ÷ 1.01',
 }
 
-type SelectPriceWidget = Pick<
-  ReturnType<typeof useConcentratedDerivedMintInfo>,
-  'ticks' | 'ticksAtLimit' | 'pricesAtTicks' | 'pool' | 'price' | 'invertPrice'
->
-
-export const SelectPricesWidget: FC<SelectPriceWidget> = ({
-  ticks,
-  ticksAtLimit,
-  pricesAtTicks,
-  price,
-  invertPrice,
-  pool,
-}) => {
+export const SelectPricesWidget: FC = ({}) => {
+  const { address } = useAccount()
   const { chainId, token0, token1, feeAmount } = useConcentratedLiquidityURLState()
+  const { price, invertPrice, pricesAtTicks, ticks, ticksAtLimit, pool } = useConcentratedDerivedMintInfo({
+    chainId,
+    account: address,
+    token0,
+    token1,
+    baseToken: token0,
+    feeAmount,
+    existingPosition: undefined,
+  })
+
   const [range, setRange] = useState<Range>(Range.Unset)
-  const [chartType, setChartType] = useState<ChartType>(ChartType.Liquidity)
   const { onLeftRangeInput, onRightRangeInput } = useConcentratedMintActionHandlers()
 
   // TODO

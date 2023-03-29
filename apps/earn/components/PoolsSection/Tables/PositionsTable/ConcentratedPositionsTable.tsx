@@ -29,7 +29,6 @@ export const ConcentratedPositionsTable: FC = () => {
 
   const { data: positions, isLoading } = useConcentratedLiquidityPositions({ account: address, chainIds })
 
-  console.log(positions)
   const table = useReactTable<ConcentratedLiquidityPosition>({
     data: positions || [],
     // state: {
@@ -58,7 +57,7 @@ export const ConcentratedPositionsTable: FC = () => {
   // }, [isMd, isSm])
 
   const rowLink = useCallback((row: ConcentratedLiquidityPosition) => {
-    return `/${row.id}`
+    return `/position/${row.chainId}:${row.tokenId}`
   }, [])
 
   return (

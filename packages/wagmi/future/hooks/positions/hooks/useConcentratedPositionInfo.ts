@@ -1,0 +1,54 @@
+import { getConcentratedLiquidityPool } from '../../pools'
+import { useQuery } from '@tanstack/react-query'
+import { ChainId } from '@sushiswap/chain'
+import { Type } from '@sushiswap/currency'
+import { Position } from '@sushiswap/v3-sdk'
+import { useConcentratedLiquidityPositionsFromTokenId } from './useConcentratedPositionsFromTokenId'
+
+interface UseConcentratedLiquidityPositionsFromTokenIdParams {
+  token0: Type | undefined
+  token1: Type | undefined
+  tokenId: number | string | undefined
+  chainId: ChainId
+  enabled?: boolean
+}
+
+export const useConcentratedPositionInfo = ({
+  token0,
+  token1,
+  tokenId,
+  chainId,
+  enabled = true,
+}: UseConcentratedLiquidityPositionsFromTokenIdParams) => {
+  const { data: positionDetails } = useConcentratedLiquidityPositionsFromTokenId({
+    chainId,
+    tokenId,
+  })
+
+  return useQuery({
+    queryKey: ['useConcentratedPositionInfo', { chainId, token0, token1, tokenId, positionDetails }],
+    queryFn: async () => {
+      const pool = await getConcentratedLiquidityPool({
+        chainId,
+        token0,
+        token1,
+        feeAmount: positionDetails?.fee,
+      })
+
+      let position = undefined
+      if (pool && positionDetails) {
+        position = new Position({
+          pool,
+          liquidity: positionDetails.liquidity.toString(),
+          tickLower: positionDetails.tickLower,
+          tickUpper: positionDetails.tickUpper,
+        })
+      }
+
+      return position
+    },
+    refetchInterval: 10000,
+    enabled: Boolean(token0 && token1 && chainId && enabled && positionDetails),
+    keepPreviousData: true,
+  })
+}

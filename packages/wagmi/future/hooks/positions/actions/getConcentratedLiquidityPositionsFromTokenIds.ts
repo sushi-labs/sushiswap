@@ -2,13 +2,13 @@ import { BigNumber } from 'ethers'
 import { readContracts } from 'wagmi'
 import { getV3NFTPositionManagerContract } from '../../../../hooks/useNFTPositionManagerContract'
 import { ChainId } from '@sushiswap/chain'
-import { ConcentratedLiquidityPosition } from '../types'
+import { ConcentratedLiquidityPositionInfo } from '../types'
 
 export const getConcentratedLiquidityPositionsFromTokenIds = async ({
   tokenIds,
 }: {
   tokenIds: { chainId: ChainId; tokenId: BigNumber }[]
-}): Promise<Omit<ConcentratedLiquidityPosition, 'fees'>[]> => {
+}): Promise<ConcentratedLiquidityPositionInfo[]> => {
   const results = await readContracts({
     contracts: tokenIds.map(
       (el) =>

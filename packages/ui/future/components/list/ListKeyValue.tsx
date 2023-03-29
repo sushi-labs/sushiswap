@@ -1,12 +1,30 @@
 import React, { FC, ReactNode } from 'react'
+import { Skeleton } from '../skeleton'
 
-export interface ListKeyValueProps {
-  title: string
-  subtitle?: string
-  children: ReactNode
-}
+export type ListKeyValueProps =
+  | {
+      title: string
+      subtitle?: string
+      children: ReactNode
+      skeleton?: never
+    }
+  | { title?: never; subtitle?: boolean; children?: never; skeleton?: boolean }
 
-export const ListKeyValue: FC<ListKeyValueProps> = ({ title, subtitle, children }) => {
+export const ListKeyValue: FC<ListKeyValueProps> = ({ title, subtitle, children, skeleton }) => {
+  if (skeleton) {
+    return (
+      <div className="grid grid-cols-2 gap-2 py-3 px-4">
+        <div className="flex flex-col gap-0.5">
+          <Skeleton.Text fontSize="text-sm" />
+          {subtitle && <Skeleton.Text fontSize="text-xs" />}
+        </div>
+        <div className="flex justify-end">
+          <Skeleton.Text fontSize="text-sm" />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="grid grid-cols-2 gap-2 py-3 px-4">
       <div className="flex flex-col gap-0.5">

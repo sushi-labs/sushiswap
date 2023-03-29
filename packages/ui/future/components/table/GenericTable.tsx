@@ -133,7 +133,7 @@ export const GenericTable = <T extends { id: string }>({
                                 key={cell.id}
                               >
                                 {linkFormatter ? (
-                                  <Link.Internal href={linkFormatter(row.original)} passHref={true}>
+                                  <Link.Internal href={linkFormatter(row.original)} passHref={true} shallow={true}>
                                     <a
                                       className={classNames(
                                         'absolute inset-0 flex items-center px-3 sm:px-4',

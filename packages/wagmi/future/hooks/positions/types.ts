@@ -19,3 +19,5 @@ export interface ConcentratedLiquidityPosition {
   tokensOwed0: BigNumber
   tokensOwed1: BigNumber
 }
+
+export type ConcentratedLiquidityPositionInfo = Omit<ConcentratedLiquidityPosition, 'fees'>

@@ -8,7 +8,6 @@ import { useToken } from '@sushiswap/react-query'
 import { isAddress } from 'ethers/lib/utils'
 import { z } from 'zod'
 import { ConstantProductPoolFactoryChainId, isConstantProductPoolFactoryChainId } from '@sushiswap/trident'
-import { Fee } from '@sushiswap/amm'
 import { FeeAmount } from '@sushiswap/v3-sdk'
 
 export const queryParamsSchema = z.object({
@@ -27,9 +26,8 @@ export const queryParamsSchema = z.object({
   feeAmount: z.coerce
     .number()
     .int()
-    .optional()
     .default(FeeAmount.MEDIUM)
-    .transform((fee) => fee as FeeAmount | undefined),
+    .transform((fee) => fee as FeeAmount),
   tokenId: z.coerce
     .number()
     .int()
@@ -43,7 +41,7 @@ type State = {
   token0: Type | undefined
   token1: Type | undefined
   tokensLoading: boolean
-  feeAmount: FeeAmount | undefined
+  feeAmount: FeeAmount
   setNetwork(chainId: ChainId): void
   setToken0(currency: Type): void
   setToken1(currency: Type): void
@@ -70,7 +68,7 @@ const getTokenFromUrl = (chainId: ChainId, currencyId: string, token: Token | un
 
 export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLStateProvider> = ({ children }) => {
   const { query, push, pathname } = useRouter()
-  const { chainId, fromCurrency, toCurrency, feeAmount: _feeAmount, tokenId } = queryParamsSchema.parse(query)
+  const { chainId, fromCurrency, toCurrency, feeAmount, tokenId } = queryParamsSchema.parse(query)
   const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useToken({
     chainId,
     address: fromCurrency,
@@ -81,7 +79,6 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
   const state = useMemo(() => {
     const token0 = getTokenFromUrl(chainId, fromCurrency, tokenFrom, isTokenFromLoading)
     const token1 = getTokenFromUrl(chainId, toCurrency, tokenTo, isTokenToLoading)
-    const feeAmount = _feeAmount && Object.values(FeeAmount).includes(_feeAmount) ? _feeAmount : undefined
 
     const setNetwork = (chainId: ChainId) => {
       const fromCurrency =
@@ -159,18 +156,18 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
       setFeeAmount,
     }
   }, [
-    tokenId,
-    _feeAmount,
     chainId,
     fromCurrency,
-    isTokenFromLoading,
-    isTokenToLoading,
-    pathname,
-    push,
-    query,
-    toCurrency,
     tokenFrom,
+    isTokenFromLoading,
+    toCurrency,
     tokenTo,
+    isTokenToLoading,
+    tokenId,
+    feeAmount,
+    push,
+    pathname,
+    query,
   ])
 
   return <TokenStateContext.Provider value={state}>{children}</TokenStateContext.Provider>

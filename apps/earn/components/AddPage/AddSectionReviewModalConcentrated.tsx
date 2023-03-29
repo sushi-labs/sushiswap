@@ -1,54 +1,48 @@
-import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Type } from '@sushiswap/currency'
-import { Percent, ZERO } from '@sushiswap/math'
-import { classNames, Collapsible, Dots } from '@sushiswap/ui'
+import { Collapsible, Dots } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { useSendTransaction } from '@sushiswap/wagmi'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount, UserRejectedRequestError } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
-import { AddSectionReviewModal } from './AddSectionReviewModal'
-import { createToast } from '@sushiswap/ui/future/components/toast'
-import { FeeAmount, NonfungiblePositionManager } from '@sushiswap/v3-sdk'
-import { useConcentratedLiquidityURLState } from '../ConcentratedLiquidityURLStateProvider'
-import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
-import { useV3NFTPositionManagerContract } from '@sushiswap/wagmi/hooks/useNFTPositionManagerContract'
-import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
-import { useConcentratedDerivedMintInfo } from '../../lib/hooks/useConcentratedDerivedMintInfo'
-import {
-  ConfirmationDialog as UIConfirmationDialog,
-  ConfirmationDialogState,
-} from '@sushiswap/ui/dialog/ConfirmationDialog'
+import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import { Chain } from '@sushiswap/chain'
+import { Chain, ChainId } from '@sushiswap/chain'
 import { AddSectionConfirmModalConcentrated } from './AddSectionConfirmModalConcentrated'
-import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/solid'
+import { ArrowLeftIcon } from '@heroicons/react/solid'
 import { Bound } from '../../lib/constants'
+import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
+import { FeeAmount, Position } from '@sushiswap/v3-sdk'
 
 interface AddSectionReviewModalConcentratedProps
   extends Pick<
     ReturnType<typeof useConcentratedDerivedMintInfo>,
     'noLiquidity' | 'position' | 'price' | 'pricesAtTicks'
   > {
+  chainId: ChainId
+  feeAmount: FeeAmount | undefined
+  token0: Type | undefined
+  token1: Type | undefined
   input0: Amount<Type> | undefined
   input1: Amount<Type> | undefined
+  existingPosition: Position | undefined
+  tokenId: number | string | undefined
   children({ open, setOpen }: { open: boolean; setOpen(open: boolean): void }): ReactNode
 }
 
 export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentratedProps> = ({
+  chainId,
+  feeAmount,
+  token0,
+  token1,
   input0,
   input1,
   children,
   noLiquidity,
   position,
+  existingPosition,
   price,
   pricesAtTicks,
+  tokenId,
 }) => {
-  const { chainId, feeAmount } = useConcentratedLiquidityURLState()
   const [open, setOpen] = useState(false)
 
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
@@ -74,15 +68,15 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
           <div className="flex justify-between gap-4 items-start py-2">
             <div className="flex flex-col flex-grow gap-1">
               <h1 className="text-3xl font-semibold dark:text-slate-50">
-                {input0?.currency.symbol}/{input1?.currency.symbol}
+                {token0?.symbol}/{token1?.symbol}
               </h1>
               <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">Add Liquidity</h1>
             </div>
             <div className="-mr-[20px]">
-              {input0 && input1 && (
+              {token0 && token1 && (
                 <Currency.IconList iconWidth={56} iconHeight={56}>
-                  <Currency.Icon currency={input0?.currency} width={56} height={56} />
-                  <Currency.Icon currency={input1?.currency} width={56} height={56} />
+                  <Currency.Icon currency={token0} width={56} height={56} />
+                  <Currency.Icon currency={token1} width={56} height={56} />
                 </Currency.IconList>
               )}
             </div>
@@ -116,10 +110,10 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                 </List.KeyValue>
                 <List.KeyValue
                   title={`Maximum Price`}
-                  subtitle={`Your position will be 100% composed of ${input1?.currency.symbol} at this price`}
+                  subtitle={`Your position will be 100% composed of ${token0?.symbol} at this price`}
                 >
                   <div className="flex flex-col gap-1">
-                    {priceUpper?.toSignificant(6)} <span className="text-xs text-slate-400">+{maxPriceDiff}%</span>
+                    {priceUpper?.toSignificant(6)} <span className="text-xs text-slate-400">{maxPriceDiff}%</span>
                   </div>
                 </List.KeyValue>{' '}
               </List.Control>
@@ -146,7 +140,16 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
             </List>
           </div>
           <div className="pt-4">
-            <AddSectionConfirmModalConcentrated position={position} noLiquidity={noLiquidity} closeReview={close}>
+            <AddSectionConfirmModalConcentrated
+              position={position}
+              existingPosition={existingPosition}
+              noLiquidity={noLiquidity}
+              closeReview={close}
+              token0={token0}
+              token1={token1}
+              chainId={chainId}
+              tokenId={tokenId}
+            >
               {({ onClick, isWritePending, isLoading, isError, error, isConfirming }) => (
                 <div className="space-y-4">
                   <Button

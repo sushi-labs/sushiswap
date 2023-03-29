@@ -1,21 +1,21 @@
 import { classNames } from '@sushiswap/ui'
 import { FC, useMemo } from 'react'
 
-import { ConcentratedLiquidityPosition } from '@sushiswap/wagmi/future/hooks'
+import { ConcentratedLiquidityPosition, useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { useToken } from '@sushiswap/react-query'
 import { Row } from '../../SharedCells/types'
 import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/react/solid'
 import { Position } from '@sushiswap/v3-sdk'
-import { usePool } from '../../../../../lib/hooks/useConcentratedLiquidityPools'
 import { JSBI } from '@sushiswap/math'
 import { getPriceOrderingFromPositionForUI } from '../../../../../lib/functions'
 
 export const PriceRangeCell: FC<Row<ConcentratedLiquidityPosition>> = ({ row }) => {
   const { data: token0 } = useToken({ chainId: row.chainId, address: row.token0 })
   const { data: token1 } = useToken({ chainId: row.chainId, address: row.token1 })
-  const [, pool] = usePool({ chainId: row.chainId, token0, token1, feeAmount: row.fee })
+  const { data: pool } = useConcentratedLiquidityPool({ chainId: row.chainId, token0, token1, feeAmount: row.fee })
+
   const position = useMemo(() => {
-    if (pool && row.liquidity && typeof row.tickLower === 'number' && typeof row.tickUpper === 'number') {
+    if (pool && row.liquidity) {
       return new Position({
         pool,
         liquidity: JSBI.BigInt(row.liquidity),
