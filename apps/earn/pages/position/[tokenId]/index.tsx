@@ -1,8 +1,8 @@
-import React, { FC, useMemo } from 'react'
-import { SWRConfig } from 'swr'
+import React, { FC, useMemo, useState } from 'react'
+import useSWR, { SWRConfig } from 'swr'
 import { Layout } from '../../../components'
 import Link from 'next/link'
-import { ArrowLeftIcon } from '@heroicons/react/solid'
+import { ArrowLeftIcon, ChartBarIcon, MinusIcon, PlusIcon } from '@heroicons/react/solid'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
 import { ChainId } from '@sushiswap/chain'
@@ -25,6 +25,8 @@ import { getPriceOrderingFromPositionForUI } from '../../../lib/functions'
 import { ConcentratedLiquidityWidget } from '../../../components/ConcentratedLiquidityWidget'
 import { useAccount } from 'wagmi'
 import { ConcentratedLiquidityProvider } from '../../../components/ConcentratedLiquidityProvider'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { RadioGroup } from '@headlessui/react'
 
 const PositionPage = () => {
   return (
@@ -48,9 +50,17 @@ const queryParamsSchema = z.object({
     }),
 })
 
+enum SelectedTab {
+  Analytics,
+  DecreaseLiq,
+  IncreaseLiq,
+}
+
 const Position: FC = () => {
   const { address } = useAccount()
   const { query } = useRouter()
+  const [tab, setTab] = useState<SelectedTab>(SelectedTab.Analytics)
+
   const {
     tokenId: [chainId, tokenId],
   } = queryParamsSchema.parse(query)
@@ -100,6 +110,35 @@ const Position: FC = () => {
           <h1 className="text-xl font-medium text-gray-600 dark:text-slate-400">
             You{"'"}re adding more liquidity to an existing position
           </h1>
+          <RadioGroup value={tab} onChange={setTab} className="flex gap-2 mt-3">
+            <RadioGroup.Option
+              value={SelectedTab.Analytics}
+              as={Button}
+              startIcon={<ChartBarIcon width={18} height={18} />}
+              variant={tab === SelectedTab.Analytics ? 'outlined' : 'empty'}
+              color={tab === SelectedTab.Analytics ? 'blue' : 'default'}
+            >
+              Analytics
+            </RadioGroup.Option>
+            <RadioGroup.Option
+              value={SelectedTab.IncreaseLiq}
+              as={Button}
+              startIcon={<PlusIcon width={18} height={18} />}
+              variant={tab === SelectedTab.IncreaseLiq ? 'outlined' : 'empty'}
+              color={tab === SelectedTab.IncreaseLiq ? 'blue' : 'default'}
+            >
+              Increase Liquidity
+            </RadioGroup.Option>{' '}
+            <RadioGroup.Option
+              value={SelectedTab.DecreaseLiq}
+              as={Button}
+              startIcon={<MinusIcon width={18} height={18} />}
+              variant={tab === SelectedTab.DecreaseLiq ? 'outlined' : 'empty'}
+              color={tab === SelectedTab.DecreaseLiq ? 'blue' : 'default'}
+            >
+              Decrease Liquidity
+            </RadioGroup.Option>
+          </RadioGroup>
         </div>
         <div className="h-0.5 w-full bg-gray-900/5 dark:bg-slate-200/5 my-10" />
         <div className="flex gap-6 h-[52px]">
@@ -238,16 +277,24 @@ const Position: FC = () => {
             </List>
           </div>
           <div className="flex flex-col gap-10 w-full mt-10">
-            <ConcentratedLiquidityWidget
-              chainId={chainId}
-              account={address}
-              token0={token0}
-              token1={token1}
-              feeAmount={positionDetails?.fee}
-              tokensLoading={token0Loading || token1Loading}
-              existingPosition={position}
-              tokenId={tokenId}
-            />
+            <div className={tab === SelectedTab.Analytics ? 'block' : 'hidden'}>
+              <h1 className="text-5xl">Analytics Here</h1>
+            </div>
+            <div className={tab === SelectedTab.IncreaseLiq ? 'block' : 'hidden'}>
+              <ConcentratedLiquidityWidget
+                chainId={chainId}
+                account={address}
+                token0={token0}
+                token1={token1}
+                feeAmount={positionDetails?.fee}
+                tokensLoading={token0Loading || token1Loading}
+                existingPosition={position}
+                tokenId={tokenId}
+              />
+            </div>
+            <div className={tab === SelectedTab.DecreaseLiq ? 'block' : 'hidden'}>
+              <h1 className="text-5xl">Decrease liq here</h1>
+            </div>
           </div>
         </div>
       </Layout>

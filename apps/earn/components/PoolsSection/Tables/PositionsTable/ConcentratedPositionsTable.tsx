@@ -65,7 +65,7 @@ export const ConcentratedPositionsTable: FC = () => {
       {({ open }) => (
         <>
           <Disclosure.Button className={classNames(open ? '' : 'border-b border-slate-200/5', 'w-full group')}>
-            <h1 className="flex gap-2 items-center justify-between font-semibold text-sm text-slate-200 group-hover:text-slate-50 py-4 px-4">
+            <h1 className="flex gap-2 items-center justify-between font-semibold text-sm text-gray-700 group-hover:text-gray-900 dark:text-slate-200 dark:group-hover:text-slate-50 py-4 px-4">
               <span className="flex items-center gap-3">
                 <ConcentratedCurveIcon width={20} height={20} className="saturate-200" /> Concentrated Liquidity
                 Positions {positions ? `(${positions.length})` : ''}
