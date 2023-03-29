@@ -7,6 +7,7 @@ import type { PoolCode } from '../pools/PoolCode'
 export enum LiquidityProviders {
   SushiSwap = 'SushiSwap',
   UniswapV2 = 'UniswapV2',
+  UniswapV3 = 'UniswapV3',
   Trident = 'Trident',
   QuickSwap = 'QuickSwap',
   ApeSwap = 'ApeSwap',
