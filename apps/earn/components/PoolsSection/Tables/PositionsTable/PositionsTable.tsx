@@ -10,6 +10,9 @@ import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { APR_COLUMN, NAME_COLUMN, VALUE_COLUMN } from './Cells/columns'
 import { PositionQuickHoverTooltip } from './PositionQuickHoverTooltip'
 import { ClassicPoolIcon } from '@sushiswap/ui/future/components/icons'
+import { Disclosure } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/solid'
+import { classNames, Collapsible } from '@sushiswap/ui'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -57,19 +60,41 @@ export const PositionsTable: FC = () => {
   }, [])
 
   return (
-    <>
-      <h1 className="flex gap-2 items-center justify-end font-medium text-xl text-slate-200 py-4 px-3">
-        <ClassicPoolIcon width={22} height={22} />
-        Classic
-      </h1>
-      <GenericTable<PositionWithPool>
-        table={table}
-        HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
-        loading={isValidating}
-        placeholder="No positions found"
-        pageSize={Math.max(userPositions?.length || 0, 5)}
-        linkFormatter={rowLink}
-      />
-    </>
+    <Disclosure>
+      {({ open }) => (
+        <>
+          <Disclosure.Button className={classNames(open ? '' : '', 'w-full group')}>
+            <h1 className="flex gap-2 items-center justify-between font-semibold text-sm text-slate-200 group-hover:text-slate-50 py-4 px-4">
+              <span className="flex items-center gap-3">
+                <ClassicPoolIcon width={20} height={20} className="saturate-200" /> Legacy Positions{' '}
+                {userPositions ? `(${userPositions.length})` : ''}
+              </span>
+              <div className="flex items-center gap-1">
+                <button className="text-blue group-hover:text-blue-600 text-sm">{open ? 'Collapse' : 'Expand'}</button>
+                <ChevronDownIcon
+                  width={24}
+                  height={24}
+                  className={classNames(
+                    'transition-all',
+                    open ? 'rotate-180' : 'rotate-0',
+                    'text-blue group-hover:text-blue-600'
+                  )}
+                />
+              </div>
+            </h1>
+          </Disclosure.Button>
+          <Collapsible open={open}>
+            <GenericTable<PositionWithPool>
+              table={table}
+              HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
+              loading={isValidating}
+              placeholder="No positions found"
+              pageSize={Math.max(userPositions?.length || 0, 5)}
+              linkFormatter={rowLink}
+            />
+          </Collapsible>
+        </>
+      )}
+    </Disclosure>
   )
 }

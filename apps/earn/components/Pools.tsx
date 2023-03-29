@@ -7,7 +7,7 @@ import { Layout, PoolFilters, PoolsFiltersProvider, PoolsSection } from '../comp
 export const Pools: FC<{ filters?: Partial<PoolFilters>; isReady?: boolean }> = ({ filters, isReady }) => {
   const { chain } = useNetwork()
   return (
-    <Layout>
+    <Layout maxWidth="7xl">
       <div className="flex flex-col gap-10 md:gap-16">
         <section className="flex flex-col gap-6 lg:flex-row">
           <div className="max-w-md flex flex-col gap-2">

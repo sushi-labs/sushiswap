@@ -1,7 +1,6 @@
 import { Tab } from '@headlessui/react'
 import React, { FC, Fragment, useState } from 'react'
 import { useAccount } from 'wagmi'
-import { useUserPositions } from '../../lib/hooks'
 
 import { PoolsTable, PositionsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'
@@ -11,7 +10,6 @@ import { ConcentratedPositionsTable } from './Tables/PositionsTable/Concentrated
 export const PoolsSection: FC<{ isReady?: boolean }> = ({ isReady }) => {
   const { address } = useAccount()
   const [tab, setTab] = useState<number>(0)
-  const { data: userPositions } = useUserPositions({ id: address as string }, !!address)
 
   return (
     <section className="flex flex-col">
@@ -29,23 +27,23 @@ export const PoolsSection: FC<{ isReady?: boolean }> = ({ isReady }) => {
             <Tab as={Fragment}>
               {({ selected }) => (
                 <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
-                  My Positions{' '}
-                  <div className="bg-blue/10 rounded-full w-5 h-5 flex items-center justify-center text-blue font-semibold text-xs">
-                    {userPositions?.length ?? ''}
-                  </div>
+                  My Positions
                 </Button>
               )}
             </Tab>
           )}
         </div>
-        <TableFilters showAllFilters={tab === 0} />
         <Tab.Panels>
           <Tab.Panel unmount={false}>
+            <TableFilters showAllFilters={tab === 0} />
             <PoolsTable isReady={isReady} />
           </Tab.Panel>
           <Tab.Panel unmount={!address}>
-            <PositionsTable />
-            <ConcentratedPositionsTable />
+            <div className="border-t border-slate-200/5">
+              <ConcentratedPositionsTable />
+              <div className="h-px bg-slate-200/5 w-full" />
+              <PositionsTable />
+            </div>
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
