@@ -254,5 +254,10 @@ export const KASHI_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ARBITRUM]: 'sushiswap/kashi-arbitrum',
 } as const
 
+export const CONCENTRATED_SUBGRAPH_NAME: Record<number, string> = {
+  [ChainId.ETHEREUM]: 'uniswap/uniswap-v3',
+  [ChainId.ARBITRUM]: 'ianlapham/arbitrum-minimal',
+}
+
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM
 export const DEFAULT_CHAIN_NAME = CHAIN_NAME[DEFAULT_CHAIN_ID]
