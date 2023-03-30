@@ -1,4 +1,4 @@
-import { Amount, Type } from '@sushiswap/currency'
+import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
 import { Collapsible, Dots } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
@@ -11,6 +11,7 @@ import { ArrowLeftIcon } from '@heroicons/react/solid'
 import { Bound } from '../../lib/constants'
 import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
 import { FeeAmount, Position } from '@sushiswap/v3-sdk'
+import { useTokenAmountDollarValues } from '../../lib/hooks'
 
 interface AddSectionReviewModalConcentratedProps
   extends Pick<
@@ -47,16 +48,25 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
 
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
 
-  const [minPriceDiff, maxPriceDiff] = useMemo(() => {
-    if (!price || !priceLower || !priceUpper) return [undefined, undefined]
-    const min = +priceLower?.toFixed(4)
-    const cur = +price?.toFixed(4)
-    const max = +priceUpper?.toFixed(4)
+  const isSorted = token0 && token1 && token0.wrapped.sortsBefore(token1.wrapped)
+  const leftPrice = useMemo(() => (isSorted ? priceLower : priceUpper?.invert()), [isSorted, priceLower, priceUpper])
+  const rightPrice = useMemo(() => (isSorted ? priceUpper : priceLower?.invert()), [isSorted, priceLower, priceUpper])
+  const midPrice = useMemo(() => (isSorted ? price : price?.invert()), [isSorted, price])
 
-    return [(((min - cur) / cur) * 100).toFixed(2), (((max - cur) / cur) * 100).toFixed(2)]
-  }, [price, priceLower, priceUpper])
+  const [minPriceDiff, maxPriceDiff] = useMemo(() => {
+    if (!midPrice || !token0 || !token1 || !leftPrice || !rightPrice) return [0, 0]
+    const min = +leftPrice?.toFixed(4)
+    const cur = +midPrice?.toFixed(4)
+    const max = +rightPrice?.toFixed(4)
+
+    return [((min - cur) / cur) * 100, ((max - cur) / cur) * 100]
+  }, [leftPrice, midPrice, rightPrice, token0, token1])
 
   const close = useCallback(() => setOpen(false), [])
+
+  const fiatAmounts = useMemo(() => [tryParseAmount('1', token0), tryParseAmount('1', token1)], [token0, token1])
+  const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId, amounts: fiatAmounts })
+
   return (
     <>
       {children({ open, setOpen })}
@@ -67,12 +77,12 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
           </button>
           <div className="flex justify-between gap-4 items-start py-2">
             <div className="flex flex-col flex-grow gap-1">
-              <h1 className="text-3xl font-semibold dark:text-slate-50">
+              <h1 className="text-3xl font-semibold text-gray-900 dark:text-slate-50">
                 {token0?.symbol}/{token1?.symbol}
               </h1>
-              <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">Add Liquidity</h1>
+              <h1 className="text-lg font-medium text-gray-600 dark:text-slate-300">Add Liquidity</h1>
             </div>
-            <div className="-mr-[20px]">
+            <div>
               {token0 && token1 && (
                 <Currency.IconList iconWidth={56} iconHeight={56}>
                   <Currency.Icon currency={token0} width={56} height={56} />
@@ -102,18 +112,31 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                   subtitle={`Your position will be 100% composed of ${input0?.currency.symbol} at this price`}
                 >
                   <div className="flex flex-col gap-1">
-                    {priceLower?.toSignificant(6)} <span className="text-xs text-slate-400">{minPriceDiff}%</span>
+                    {leftPrice?.toSignificant(6)} {token1?.symbol}
+                    <span className="text-xs text-gray-500 dark:text-slate-400">
+                      ${(fiatAmountsAsNumber[0] * (1 + +(minPriceDiff || 0) / 100)).toFixed(2)} (
+                      {minPriceDiff.toFixed(2)}%)
+                    </span>
                   </div>
                 </List.KeyValue>
-                <List.KeyValue title="Price" subtitle={`Current price`}>
-                  {price?.toSignificant(6)}
+                <List.KeyValue title="Market Price" subtitle={`Current price as determined by the ratio of the pool`}>
+                  <div className="flex flex-col gap-1">
+                    {midPrice?.toSignificant(6)} {token1?.symbol}
+                    <span className="text-xs text-gray-500 dark:text-slate-400">
+                      ${fiatAmountsAsNumber[0].toFixed(2)}
+                    </span>
+                  </div>
                 </List.KeyValue>
                 <List.KeyValue
                   title={`Maximum Price`}
-                  subtitle={`Your position will be 100% composed of ${token0?.symbol} at this price`}
+                  subtitle={`Your position will be 100% composed of ${token1?.symbol} at this price`}
                 >
                   <div className="flex flex-col gap-1">
-                    {priceUpper?.toSignificant(6)} <span className="text-xs text-slate-400">{maxPriceDiff}%</span>
+                    {rightPrice?.toSignificant(6)} {token1?.symbol}
+                    <span className="text-xs text-gray-500 dark:text-slate-400">
+                      ${(fiatAmountsAsNumber[0] * (1 + +(maxPriceDiff || 0) / 100)).toFixed(2)} (
+                      {maxPriceDiff.toFixed(2)}%)
+                    </span>{' '}
                   </div>
                 </List.KeyValue>{' '}
               </List.Control>

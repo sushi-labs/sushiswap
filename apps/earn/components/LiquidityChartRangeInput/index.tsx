@@ -47,9 +47,11 @@ interface InfoBoxProps {
 
 const InfoBox: FC<InfoBoxProps> = ({ message, icon }) => {
   return (
-    <div className="w-full items-center flex flex-col justify-center h-full bg-white/[0.02] rounded-lg">
+    <div className="w-full items-center flex flex-col justify-center h-full bg-white dark:bg-white/[0.02] rounded-lg">
       {icon}
-      {message && <span className="font-medium text-sm mt-5 text-center p-2.5 text-slate-400">{message}</span>}
+      {message && (
+        <span className="font-medium text-sm mt-5 text-center p-2.5 text-gray-600 dark:text-slate-400">{message}</span>
+      )}
     </div>
   )
 }

@@ -60,7 +60,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
       const ts = new Date().getTime()
       void createToast({
         account,
-        type: 'mint',
+        type: 'burn',
         chainId,
         txHash: data.hash,
         promise: data.wait(),

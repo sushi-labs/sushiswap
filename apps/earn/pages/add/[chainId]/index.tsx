@@ -1,35 +1,28 @@
-import { ArrowLeftIcon, LockClosedIcon, PlusIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
-import { BreadcrumbLink, Button, classNames } from '@sushiswap/ui'
-import { Checker } from '@sushiswap/wagmi/future/systems'
+import { ArrowLeftIcon } from '@heroicons/react/solid'
+import { Chain, ChainId } from '@sushiswap/chain'
+import { BreadcrumbLink, NetworkIcon } from '@sushiswap/ui'
 import { Layout, SelectNetworkWidget, SelectPricesWidget, SelectTokensWidget } from '../../../components'
-import React, { FC, Fragment, useCallback, useMemo } from 'react'
+import React, { FC, useMemo } from 'react'
 import { SWRConfig } from 'swr'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { ContentBlock } from '../../../components/AddPage/ContentBlock'
-import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import Link from 'next/link'
-import {
-  ConcentratedLiquidityProvider,
-  useConcentratedDerivedMintInfo,
-  useConcentratedMintActionHandlers,
-  useConcentratedMintState,
-} from '../../../components/ConcentratedLiquidityProvider'
-import { Bound, Field } from '../../../lib/constants'
+import { ConcentratedLiquidityProvider } from '../../../components/ConcentratedLiquidityProvider'
 import {
   ConcentratedLiquidityURLStateProvider,
   useConcentratedLiquidityURLState,
 } from '../../../components/ConcentratedLiquidityURLStateProvider'
 import { SelectFeeConcentratedWidget } from '../../../components/NewPositionSection/SelectFeeConcentratedWidget'
-import { Transition } from '@headlessui/react'
-import { AddSectionReviewModalConcentrated } from '../../../components/AddPage/AddSectionReviewModalConcentrated'
 import { ConcentratedLiquidityWidget } from '../../../components/ConcentratedLiquidityWidget'
 import { useAccount } from 'wagmi'
-import {
-  useConcentratedLiquidityPositionsFromTokenId,
-  useConcentratedPositionInfo,
-} from '@sushiswap/wagmi/future/hooks'
-import { BigNumber } from '@ethersproject/bignumber'
+import { useConcentratedLiquidityPool, useConcentratedPositionInfo } from '@sushiswap/wagmi/future/hooks'
+import { Badge } from '@sushiswap/ui/future/components/Badge'
+import { Currency } from '@sushiswap/ui/future/components/currency'
+import { List } from '@sushiswap/ui/future/components/list/List'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { tryParseAmount } from '@sushiswap/currency'
+import { useTokenAmountDollarValues } from '../../../lib/hooks'
+import { formatUSD } from '@sushiswap/format'
 
 const LINKS: BreadcrumbLink[] = [
   {
@@ -77,11 +70,11 @@ export function Add() {
             <ArrowLeftIcon width={24} className="text-slate-50" />
           </Link>
           <h1 className="text-3xl font-medium mt-2">Add Liquidity</h1>
-          <h1 className="text-lg text-slate-400">Create a new liquidity position</h1>
+          <h1 className="text-lg text-gray-600 dark:text-slate-400">Create a new liquidity position</h1>
         </div>
-        <div className="h-0.5 w-full bg-slate-200/5 my-10" />
+        <div className="h-0.5 w-full bg-gray-900/5 dark:bg-slate-200/5 my-10" />
         <div className="flex justify-center">
-          <div className="sm:w-[340px] md:w-[572px] gap-10">
+          <div className="flex lg:grid lg:grid-cols-[404px_auto] gap-20">
             <ConcentratedLiquidityURLStateProvider>
               <ConcentratedLiquidityProvider>
                 <_Add />
@@ -106,40 +99,110 @@ const _Add: FC = () => {
     token1,
   })
 
-  return (
-    <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">
-      <SelectNetworkWidget selectedNetwork={chainId} onSelect={setNetwork} />
-      <SelectTokensWidget
-        chainId={chainId}
-        token0={token0}
-        token1={token1}
-        setToken0={setToken0}
-        setToken1={setToken1}
-      />
-      <SelectFeeConcentratedWidget />
-      <SelectPricesWidget />
+  const { data: pool, isLoading } = useConcentratedLiquidityPool({ chainId, token0, token1, feeAmount })
 
-      <ContentBlock
-        title={
-          <>
-            How much <span className="text-gray-900 dark:text-white">liquidity</span> do you want to provide?
-          </>
-        }
-      >
-        <ConcentratedLiquidityWidget
+  const fiatAmounts = useMemo(() => [tryParseAmount('1', token0), tryParseAmount('1', token1)], [token0, token1])
+  const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId, amounts: fiatAmounts })
+
+  return (
+    <>
+      <div className="hidden lg:block">
+        <div className="lg:grid grid-cols-2 items-center gap-6 sticky top-[96px]">
+          <div className="flex min-w-[44px] mb-4">
+            <Badge
+              className="border-2 border-slate-900 rounded-full z-[11] !bottom-0 right-[-15%]"
+              position="bottom-right"
+              badgeContent={
+                chainId ? (
+                  <NetworkIcon chainId={chainId} width={24} height={24} />
+                ) : (
+                  <div className="w-6 h-6 rounded-full bg-gray-300" />
+                )
+              }
+            >
+              <Currency.IconList iconWidth={48} iconHeight={48}>
+                {token0 ? (
+                  <Currency.Icon currency={token0} />
+                ) : (
+                  <div className="w-[48px] h-[48px] rounded-full bg-gray-300 dark:bg-slate-800" />
+                )}
+                {token1 ? (
+                  <Currency.Icon currency={token1} />
+                ) : (
+                  <div className="w-[48px] h-[48px] rounded-full bg-gray-300 dark:bg-slate-800" />
+                )}
+              </Currency.IconList>
+            </Badge>
+          </div>
+          <div className="col-span-2 flex flex-col gap-2">
+            <List.Label className="px-3">Network</List.Label>
+            <div className="flex font-medium items-center gap-2 rounded-xl px-3">
+              <NetworkIcon chainId={chainId} width={24} height={24} /> {Chain.from(chainId).name}
+            </div>
+          </div>
+          <div className="col-span-2 flex flex-col gap-2">
+            <List.Label className="px-3">Fee Tier</List.Label>
+            <div className="flex items-center font-medium gap-2 rounded-xl px-3 ">{feeAmount / 10000}% Fee</div>
+          </div>
+          <div className="col-span-2 flex flex-col gap-2">
+            <List.Label className="px-3">Pool Type</List.Label>
+            <div className="flex items-center font-medium gap-2 rounded-xl px-3">Concentrated Liquidity</div>
+          </div>
+          <div className="col-span-2 flex flex-col gap-2">
+            <List.Label className="px-3">Current Price</List.Label>
+            {isLoading || !pool || !token0 || !token1 ? (
+              <Skeleton.Text />
+            ) : (
+              <div className="flex items-baseline font-medium gap-1.5 rounded-xl px-3">
+                {token0.symbol} = {pool.priceOf(token0.wrapped)?.toSignificant(4)} {token1.symbol}
+                <span className="text-sm text-gray-600 dark:text-slate-400">${fiatAmountsAsNumber[0].toFixed(2)}</span>
+              </div>
+            )}
+            {isLoading || !pool || !token0 || !token1 ? (
+              <Skeleton.Text />
+            ) : (
+              <div className="flex items-baseline font-medium gap-1.5 rounded-xl px-3">
+                {token1.symbol} = {pool.priceOf(token1.wrapped)?.toSignificant(4)} {token0.symbol}
+                <span className="text-sm text-gray-600 dark:text-slate-400">${fiatAmountsAsNumber[1].toFixed(2)}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col order-3 gap-[64px]  pb-40 sm:order-2">
+        <SelectNetworkWidget selectedNetwork={chainId} onSelect={setNetwork} />
+        <SelectTokensWidget
           chainId={chainId}
-          account={address}
           token0={token0}
           token1={token1}
           setToken0={setToken0}
           setToken1={setToken1}
-          feeAmount={feeAmount}
-          tokensLoading={tokensLoading}
-          existingPosition={position}
-          tokenId={tokenId}
         />
-      </ContentBlock>
-    </div>
+        <SelectFeeConcentratedWidget />
+        <SelectPricesWidget />
+
+        <ContentBlock
+          title={
+            <>
+              How much <span className="text-gray-900 dark:text-white">liquidity</span> do you want to provide?
+            </>
+          }
+        >
+          <ConcentratedLiquidityWidget
+            chainId={chainId}
+            account={address}
+            token0={token0}
+            token1={token1}
+            setToken0={setToken0}
+            setToken1={setToken1}
+            feeAmount={feeAmount}
+            tokensLoading={tokensLoading}
+            existingPosition={position}
+            tokenId={tokenId}
+          />
+        </ContentBlock>
+      </div>
+    </>
   )
 }
 

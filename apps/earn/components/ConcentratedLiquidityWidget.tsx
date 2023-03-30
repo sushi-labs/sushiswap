@@ -49,7 +49,6 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
   const { data: owner, isLoading: isOwnerLoading } = useConcentratedPositionOwner({ tokenId })
 
   const isOwner = owner === account
-  const baseToken = token0
 
   const {
     dependentField,
@@ -69,7 +68,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
     account,
     token0,
     token1,
-    baseToken,
+    baseToken: token0,
     feeAmount,
     existingPosition,
   })

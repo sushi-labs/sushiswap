@@ -18,7 +18,7 @@ import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { classNames, NetworkIcon } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import { tryParseAmount } from '@sushiswap/currency'
+import { Amount, tryParseAmount } from '@sushiswap/currency'
 import { useTokenAmountDollarValues } from '../../../lib/hooks'
 import { formatUSD } from '@sushiswap/format'
 import { getPriceOrderingFromPositionForUI } from '../../../lib/functions'
@@ -28,6 +28,8 @@ import { ConcentratedLiquidityProvider } from '../../../components/ConcentratedL
 import { Button } from '@sushiswap/ui/future/components/button'
 import { RadioGroup } from '@headlessui/react'
 import { ConcentratedLiquidityRemoveWidget } from '../../../components/ConcentratedLiquidityRemoveWidget'
+import { JSBI } from '@sushiswap/math'
+import { ConcentratedLiquidityCollectButton } from '../../../components/ConcentratedLiquidityCollectButton'
 
 const PositionPage = () => {
   return (
@@ -60,7 +62,7 @@ enum SelectedTab {
 const Position: FC = () => {
   const { address } = useAccount()
   const { query } = useRouter()
-  const [tab, setTab] = useState<SelectedTab>(SelectedTab.Analytics)
+  const [tab, setTab] = useState<SelectedTab>(SelectedTab.IncreaseLiq)
   const mutateAmount0Ref = useRef<HTMLSpanElement | null>(null)
   const mutateAmount1Ref = useRef<HTMLSpanElement | null>(null)
 
@@ -136,6 +138,16 @@ const Position: FC = () => {
     }
   }, [tab])
 
+  const amounts = useMemo(() => {
+    if (positionDetails && positionDetails.fees && token0 && token1)
+      return [
+        Amount.fromRawAmount(token0, JSBI.BigInt(positionDetails.fees[0])),
+        Amount.fromRawAmount(token1, JSBI.BigInt(positionDetails.fees[1])),
+      ]
+
+    return [undefined, undefined]
+  }, [positionDetails, token0, token1])
+
   return (
     <SWRConfig>
       <Layout>
@@ -143,9 +155,13 @@ const Position: FC = () => {
           <Link href="/" shallow={true}>
             <ArrowLeftIcon width={24} className="dark:text-slate-50 text-gray-900" />
           </Link>
-          <h1 className="text-3xl font-semibold mt-2 text-gray-900 dark:text-slate-50">Increase Position</h1>
+          <h1 className="text-3xl font-semibold mt-2 text-gray-900 dark:text-slate-50">
+            {tab === SelectedTab.IncreaseLiq ? 'Increase Liquidity' : 'Decrease Liquidity'}
+          </h1>
           <h1 className="text-xl font-medium text-gray-600 dark:text-slate-400">
-            You{"'"}re adding more liquidity to an existing position
+            {tab === SelectedTab.IncreaseLiq
+              ? "You're adding more liquidity to an existing position"
+              : "You're remove liquidity from an existing position"}
           </h1>
           <RadioGroup value={tab} onChange={setTab} className="flex gap-2 mt-3 flex-wrap">
             {/*<RadioGroup.Option*/}
@@ -226,7 +242,7 @@ const Position: FC = () => {
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-2">
                         <Currency.Icon currency={position.amount0.currency} width={18} height={18} />
-                        {position.amount0.toSignificant(6)} {position.amount0.currency.symbol}
+                        {position.amount0.toSignificant(4)} {position.amount0.currency.symbol}
                       </div>
                       <span ref={mutateAmount0Ref}></span>
                     </div>
@@ -239,9 +255,60 @@ const Position: FC = () => {
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-2">
                         <Currency.Icon currency={position.amount1.currency} width={18} height={18} />
-                        {position.amount1.toSignificant(6)} {position.amount1.currency.symbol}
+                        {position.amount1.toSignificant(4)} {position.amount1.currency.symbol}
                       </div>
                       <span ref={mutateAmount1Ref}></span>
+                    </div>
+                  </List.KeyValue>
+                ) : (
+                  <List.KeyValue skeleton />
+                )}
+              </List.Control>
+            </List>
+            <List className="!gap-1">
+              <div className="flex justify-between items-center">
+                <List.Label>Unclaimed fees</List.Label>
+                <ConcentratedLiquidityCollectButton
+                  position={position}
+                  positionDetails={positionDetails}
+                  token0={token0}
+                  token1={token1}
+                  account={address}
+                  chainId={chainId}
+                >
+                  {({ sendTransaction, isLoading }) => (
+                    <Button
+                      disabled={isLoading}
+                      onClick={() => sendTransaction?.()}
+                      size="xs"
+                      variant="empty"
+                      className="!h-[24px] font-bold"
+                    >
+                      Collect
+                    </Button>
+                  )}
+                </ConcentratedLiquidityCollectButton>
+              </div>
+              <List.Control>
+                {amounts[0] ? (
+                  <List.KeyValue title={`${amounts[0].currency.symbol}`}>
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        <Currency.Icon currency={amounts[0].currency} width={18} height={18} />
+                        {amounts[0].toSignificant(4)} {amounts[0].currency.symbol}
+                      </div>
+                    </div>
+                  </List.KeyValue>
+                ) : (
+                  <List.KeyValue skeleton />
+                )}
+                {amounts[1] ? (
+                  <List.KeyValue title={`${amounts[1].currency.symbol}`}>
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        <Currency.Icon currency={amounts[1].currency} width={18} height={18} />
+                        {amounts[1].toSignificant(4)} {amounts[1].currency.symbol}
+                      </div>
                     </div>
                   </List.KeyValue>
                 ) : (

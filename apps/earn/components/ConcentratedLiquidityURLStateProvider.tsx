@@ -46,6 +46,7 @@ type State = {
   setToken0(currency: Type): void
   setToken1(currency: Type): void
   setFeeAmount(feeAmount: FeeAmount): void
+  switchTokens(): void
 }
 
 export const TokenStateContext = createContext<State>({} as State)
@@ -142,6 +143,20 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
         { shallow: true }
       )
     }
+    const switchTokens = () => {
+      void push(
+        {
+          pathname,
+          query: {
+            ...query,
+            fromCurrency: token1?.isNative ? 'NATIVE' : token1?.wrapped.address,
+            toCurrency: token0?.isNative ? 'NATIVE' : token0?.wrapped.address,
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
+    }
 
     return {
       tokenId,
@@ -154,6 +169,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
       setToken1,
       setNetwork,
       setFeeAmount,
+      switchTokens,
     }
   }, [
     chainId,
