@@ -79,7 +79,7 @@ export class TridentProvider extends LiquidityProvider {
   constructor(
     chainId: BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId,
     web3Client: PublicClient,
-    databaseClient: PrismaClient
+    databaseClient?: PrismaClient
   ) {
     super(chainId, web3Client)
     this.chainId = chainId
@@ -515,7 +515,6 @@ export class TridentProvider extends LiquidityProvider {
       (p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.topClassicPools.has(p.address)),
       pools.filter((p) => p.type === 'STABLE_POOL' && this.topStablePools.has(p.address))
     ] : await TridentStaticPoolFetcher.getStaticPools(this.client, this.chainId, t0, t1)
-
     // await TridentStaticPoolFetcher.getStaticPools(this.client, this.chainId, t0, t1)
 
     // const onDemandClassicPools = pools.filter(
@@ -525,7 +524,7 @@ export class TridentProvider extends LiquidityProvider {
     // const onDemandStablePools = pools.filter((p) => p.type === 'STABLE_POOL' && this.topStablePools.has(p.address))
     const validUntilTimestamp = getUnixTime(add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME_IN_SECONDS }))
 
-    const sortedTokens = this.poolResponseToSortedTokens(pools)
+    const sortedTokens = this.poolResponseToSortedTokens([...onDemandClassicPools, ...onDemandStablePools].flat())
     let newBridges = 0
     let updated = 0
     let created = 0
@@ -553,14 +552,11 @@ export class TridentProvider extends LiquidityProvider {
     onDemandClassicPools.forEach((pr) => {
       const existingPool = this.onDemandClassicPools.get(pr.address)
       if (existingPool === undefined) {
-        const tokens = [
-          convertTokenToBento(pr.token0),
-          convertTokenToBento(pr.token1 as RToken),
-        ]
+        if (!pr.swapFee) return
         const rPool = new ConstantProductRPool(
           pr.address,
-          tokens[0],
-          tokens[1],
+          convertTokenToBento( pr.token0 as Token ),
+          convertTokenToBento(pr.token1 as Token ),
           pr.swapFee,
           BigNumber.from(0),
           BigNumber.from(0)
@@ -577,14 +573,11 @@ export class TridentProvider extends LiquidityProvider {
     onDemandStablePools.forEach((pr) => {
       const existingPool = this.onDemandStablePools.get(pr.address)
       if (existingPool === undefined) {
-        const tokens = [
-          convertTokenToBento(mapToken(this.chainId, pr.token0)),
-          convertTokenToBento(mapToken(this.chainId, pr.token1)),
-        ]
+        if (!pr.swapFee) return
         const stablePool = new StableSwapRPool(
           pr.address,
-          tokens[0],
-          tokens[1],
+          convertTokenToBento( pr.token0 as Token ),
+          convertTokenToBento(pr.token1 as Token ),
           pr.swapFee,
           BigNumber.from(0),
           BigNumber.from(0),
@@ -704,7 +697,8 @@ export class TridentProvider extends LiquidityProvider {
           })`
         )
       } else {
-        console.error(`${this.getLogPrefix()} - ERROR FETCHING RESERVES, initialize on demand pool: ${pool.address}`)
+
+        console.error(`${this.getLogPrefix()} - ERROR FETCHING RESERVES: ${pool.address}, pool does not exist?`)
         // TODO: some pools seem to be initialized with 0 in reserves, they should just be ignored, shouldn't log error
       }
     })
@@ -1101,11 +1095,11 @@ export class TridentProvider extends LiquidityProvider {
     })
   }
 
-  private poolResponseToSortedTokens(poolResults: PoolResponse2[]) {
+  private poolResponseToSortedTokens(poolResults: (PoolResponse2 | TridentStaticPool)[]) {
     const tokenMap = new Map<string, Token>()
     poolResults.forEach((pool) => {
-      tokenMap.set(pool.token0.address, mapToken(this.chainId, pool.token0))
-      tokenMap.set(pool.token1.address, mapToken(this.chainId, pool.token1))
+      tokenMap.set(pool.token0.address, pool.token0 as Token)
+      tokenMap.set(pool.token1.address, pool.token1 as Token)
     })
     const tokensDedup = Array.from(tokenMap.values())
     // tokens sorting

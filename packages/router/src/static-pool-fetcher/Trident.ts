@@ -11,7 +11,7 @@ export interface TridentStaticPool {
   token0: Token
   token1: Token
   type: 'STABLE_POOL' | 'CONSTANT_PRODUCT_POOL'
-  fee?: number
+  swapFee?: number
 }
 
 export class TridentStaticPoolFetcher {
@@ -22,9 +22,10 @@ export class TridentStaticPoolFetcher {
     t2: Token
   ): Promise<[TridentStaticPool[], TridentStaticPool[]]> {
     const pools = await Promise.all([
-        this.getPools(client, chainId, t1, t2, 'STABLE_POOL'),
         this.getPools(client, chainId, t1, t2, 'CONSTANT_PRODUCT_POOL'),
+        this.getPools(client, chainId, t1, t2, 'STABLE_POOL'),
     ])
+
     return pools
   }
 
@@ -59,12 +60,12 @@ export class TridentStaticPoolFetcher {
         })
     
         const callStatePoolsCountProcessed = callStatePoolsCount
-          ?.map((s, i) => [i, s ? parseInt(s.toString()) : 0] as [number, number])
+          ?.map((s, i) => [i, s?.result ? parseInt(s.result.toString()) : 0] as [number, number])
           .filter(([, length]) => length)
-          .map(([i, length]) => [_pairsUniqueAddr[i][0] as Address, _pairsUniqueAddr[i][1] as Address, 0, length] as const)
+          .map(([i, length]) => [_pairsUniqueAddr[i][0] as Address, _pairsUniqueAddr[i][1] as Address, BigInt(0), BigInt(length)] as const)
     
         const pairsUniqueProcessed = callStatePoolsCount
-          ?.map((s, i) => [i, s ? parseInt(s.toString()) : 0] as [number, number])
+          ?.map((s, i) => [i, s?.result ? parseInt(s.result.toString()) : 0] as [number, number])
           .filter(([, length]) => length)
           .map(([i]) => [_pairsUnique[i][0], _pairsUnique[i][1]])
     
@@ -78,7 +79,7 @@ export class TridentStaticPoolFetcher {
                 address: factoryAddress,
                 abi: factoryAbi,
                 functionName: 'getPools',
-                args: [args[0], args[1], BigInt(args[2]), BigInt(args[3])],
+                args,
               } as const)
           ),
         })
@@ -91,7 +92,7 @@ export class TridentStaticPoolFetcher {
                 address,
                 token0: pairsUniqueProcessed?.[i][0] as Token,
                 token1: pairsUniqueProcessed?.[i][1] as Token,
-                type: 'STABLE_POOL',
+                type,
               })
             )
         })
@@ -112,14 +113,14 @@ export class TridentStaticPoolFetcher {
           ),
         })
         const results: TridentStaticPool[] = []
-    
+
         pools.forEach((p, i) => {
           const fee = fees?.[i]?.result
     
           if (!fee) return
           results.push({
             ...p,
-            fee: Number(fee) / 10_000,
+            swapFee: Number(fee) / 10_000,
           })
         })
         return results
