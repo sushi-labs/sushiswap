@@ -37,7 +37,7 @@ enum Range {
 export const SelectPricesWidget: FC = ({}) => {
   const { address } = useAccount()
   const { chainId, token0, token1, feeAmount, switchTokens } = useConcentratedLiquidityURLState()
-  const { price, invertPrice, pricesAtTicks, ticks, ticksAtLimit, pool } = useConcentratedDerivedMintInfo({
+  const { price, invertPrice, pricesAtTicks, ticks, ticksAtLimit, pool, noLiquidity } = useConcentratedDerivedMintInfo({
     chainId,
     account: address,
     token0,
@@ -55,14 +55,8 @@ export const SelectPricesWidget: FC = ({}) => {
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
 
-  const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper } = useRangeHopCallbacks(
-    token0,
-    token1,
-    feeAmount,
-    tickLower,
-    tickUpper,
-    pool
-  )
+  const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } =
+    useRangeHopCallbacks(token0, token1, feeAmount, tickLower, tickUpper, pool)
 
   const isSorted = token0 && token1 && token0.wrapped.sortsBefore(token1.wrapped)
   const leftPrice = useMemo(() => (isSorted ? priceLower : priceUpper?.invert()), [isSorted, priceLower, priceUpper])
@@ -142,9 +136,11 @@ export const SelectPricesWidget: FC = ({}) => {
                 {isSorted ? token1?.symbol : token0?.symbol}
               </Button>
             </div>
-            <Button size="xs" variant="empty" color="blue">
-              Full Range
-            </Button>
+            {!noLiquidity && (
+              <Button size="xs" variant="empty" color="blue" onClick={getSetFullRange}>
+                Full Range
+              </Button>
+            )}
           </div>
           <div className="flex gap-2">
             <PriceBlock
@@ -159,6 +155,7 @@ export const SelectPricesWidget: FC = ({}) => {
               incrementDisabled={ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]}
               priceDiff={minPriceDiff}
               priceFiat={fiatAmountsAsNumber[0]}
+              fullRange={Boolean(ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER])}
             />
             <PriceBlock
               token0={token0}
@@ -172,6 +169,7 @@ export const SelectPricesWidget: FC = ({}) => {
               decrementDisabled={ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]}
               priceDiff={maxPriceDiff}
               priceFiat={fiatAmountsAsNumber[0]}
+              fullRange={Boolean(ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER])}
             />
           </div>
         </div>
@@ -193,6 +191,7 @@ interface PriceBlockProps {
   locked?: boolean
   priceDiff: number
   priceFiat: number
+  fullRange: boolean
 }
 
 export const PriceBlock: FC<PriceBlockProps> = ({
@@ -208,6 +207,7 @@ export const PriceBlock: FC<PriceBlockProps> = ({
   value,
   priceDiff,
   priceFiat,
+  fullRange,
 }) => {
   //  for focus state, styled components doesnt let you select input parent container
   const [active, setActive] = useState(false)
@@ -272,17 +272,19 @@ export const PriceBlock: FC<PriceBlockProps> = ({
             className={classNames(DEFAULT_INPUT_UNSTYLED, 'without-ring !text-3xl !px-0 !pt-1 !pb-2 shadow-none')}
             tabIndex={0}
           />
-          <p className="text-sm text-gray-500 dark:text-slate-500">
-            {token0?.symbol} = ${(priceFiat * (1 + priceDiff / 100)).toFixed(2)} ({priceDiff.toFixed(2)}%)
-          </p>
+          {!fullRange && (
+            <p className="text-sm text-gray-500 dark:text-slate-500">
+              {token0?.symbol} = ${(priceFiat * (1 + priceDiff / 100)).toFixed(2)} ({priceDiff.toFixed(2)}%)
+            </p>
+          )}
         </div>
         <div className="flex flex-col gap-2">
           <button
             disabled={incrementDisabled}
             onClick={handleIncrement}
             className={classNames(
-              incrementDisabled ? 'opacity-40' : '',
-              'hover:bg-gray-300 dark:hover:bg-slate-600 flex items-center justify-center w-5 h-5 bg-gray-200 dark:bg-slate-700 rounded-full'
+              incrementDisabled ? 'opacity-40' : 'hover:bg-gray-300 dark:hover:bg-slate-600',
+              'flex items-center justify-center w-5 h-5 bg-gray-200 dark:bg-slate-700 rounded-full'
             )}
             tabIndex={-1}
           >
@@ -292,8 +294,8 @@ export const PriceBlock: FC<PriceBlockProps> = ({
             disabled={decrementDisabled}
             onClick={handleDecrement}
             className={classNames(
-              decrementDisabled ? 'opacity-40' : '',
-              'hover:bg-gray-300 dark:hover:bg-slate-600 flex items-center justify-center w-5 h-5 bg-gray-200 dark:bg-slate-700 rounded-full'
+              decrementDisabled ? 'opacity-40' : 'hover:bg-gray-300 dark:hover:bg-slate-600',
+              'flex items-center justify-center w-5 h-5 bg-gray-200 dark:bg-slate-700 rounded-full'
             )}
             tabIndex={-1}
           >
