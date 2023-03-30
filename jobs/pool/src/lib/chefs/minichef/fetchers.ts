@@ -108,12 +108,7 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
     name: subgraphName,
   })
 
-  const { rewarders } = await sdk.MiniChefRewarders({
-    where: {
-      id_not: '0x0000000000000000000000000000000000000000',
-      rewardToken_not: '0x0000000000000000000000000000000000000000',
-    },
-  })
+  const { rewarders } = await sdk.MiniChefRewarders()
   console.log(`Retrieved ${rewarders.length} rewarders from ${subgraphName}`)
 
   return Promise.all(
@@ -143,6 +138,7 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
             '0xccc3760a0a315937877687bc99df4edb0f7315b4',
             '0x294eadcc534084c1333dc99e1afcf3e92c5c1297',
             '0xb873813f710093cbc17836297a6fefcfc6989faf',
+            '0xa15a0789112d9aa7e40e76bfaa39ae36cc0aad3c',
           ],
           [ChainId.GNOSIS]: ['0xb291149e478dbdd2cd2528ad4088ee5c8376df1e'],
           [ChainId.ARBITRUM_NOVA]: [
