@@ -1,524 +1,464 @@
-// import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-// import { erc20Abi, weth9Abi } from '@sushiswap/abi'
-// import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
-// import { ChainId, chainName } from '@sushiswap/chain'
-// import {
-//   DAI,
-//   DAI_ADDRESS,
-//   FRAX,
-//   FRAX_ADDRESS,
-//   FXS,
-//   FXS_ADDRESS,
-//   Native,
-//   SUSHI,
-//   SUSHI_ADDRESS,
-//   Token,
-//   Type,
-//   USDC,
-//   USDC_ADDRESS,
-//   USDT,
-//   USDT_ADDRESS,
-//   WNATIVE,
-// } from '@sushiswap/currency'
-// import { getCurrencyCombinations, LiquidityProviders, PoolFilter, Router } from '@sushiswap/router'
-// import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
-// import { BridgeBento, getBigNumber, RPool, RToken, StableSwapRPool } from '@sushiswap/tines'
-// import { expect } from 'chai'
-// import { BigNumber, Contract } from 'ethers'
-// import { ethers, network } from 'hardhat'
-// import seedrandom from 'seedrandom'
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { erc20Abi, weth9Abi } from '@sushiswap/abi'
+import bentoBoxExports from '@sushiswap/bentobox/exports'
+import { ChainId, chainName } from '@sushiswap/chain'
+import {
+  DAI,
+  DAI_ADDRESS,
+  FRAX,
+  FRAX_ADDRESS,
+  FXS,
+  FXS_ADDRESS,
+  Native,
+  SUSHI,
+  SUSHI_ADDRESS,
+  Token,
+  Type,
+  USDC,
+  USDC_ADDRESS,
+  USDT,
+  USDT_ADDRESS,
+  WNATIVE,
+} from '@sushiswap/currency'
+import {
+  DataFetcher,
+  findSpecialRoute,
+  getRoutingAnyChartSankeyData,
+  LiquidityProviders,
+  PoolFilter,
+  Router,
+  RPParams,
+} from '@sushiswap/router'
+import { BridgeBento, getBigNumber, MultiRoute, RPool, StableSwapRPool } from '@sushiswap/tines'
+import { expect } from 'chai'
+import { BigNumber, Contract } from 'ethers'
+import { ethers, network } from 'hardhat'
+import seedrandom from 'seedrandom'
 
-// import { TestDataFetcher } from './TestDataFetcher'
+function getRandomExp(rnd: () => number, min: number, max: number) {
+  const minL = Math.log(min)
+  const maxL = Math.log(max)
+  const v = rnd() * (maxL - minL) + minL
+  const res = Math.exp(v)
+  console.assert(res <= max && res >= min, 'Random value is out of the range')
+  return res
+}
 
-// function TokenToRToken(t: Type): RToken {
-//   if (t instanceof Token) return t as RToken
-//   const nativeRToken: RToken = {
-//     address: '',
-//     name: t.name,
-//     symbol: t.symbol,
-//     decimals: t.decimals,
-//     chainId: t.chainId,
-//   }
-//   return nativeRToken
-// }
+const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
-// function getRandomExp(rnd: () => number, min: number, max: number) {
-//   const minL = Math.log(min)
-//   const maxL = Math.log(max)
-//   const v = rnd() * (maxL - minL) + minL
-//   const res = Math.exp(v)
-//   console.assert(res <= max && res >= min, 'Random value is out of the range')
-//   return res
-// }
+class Waiter {
+  resolved = false
 
-// const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
+  async wait() {
+    while (!this.resolved) {
+      await delay(500)
+    }
+  }
 
-// class Waiter {
-//   resolved = false
+  resolve() {
+    this.resolved = true
+  }
+}
 
-//   async wait() {
-//     while (!this.resolved) {
-//       await delay(500)
-//     }
-//   }
+interface TestEnvironment {
+  chainId: ChainId
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  provider: any
+  rp: Contract
+  user: SignerWithAddress
+  user2: SignerWithAddress
+  dataFetcher: DataFetcher
+}
 
-//   resolve() {
-//     this.resolved = true
-//   }
-// }
+async function getTestEnvironment(): Promise<TestEnvironment> {
+  //console.log('Prepare Environment:')
 
-// interface TestEnvironment {
-//   chainId: BentoBoxV1ChainId
-//   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//   provider: any
-//   rp: Contract
-//   user: SignerWithAddress
-//   user2: SignerWithAddress
-//   // poolCodesMap: Map<string, PoolCode>
-//   // dataFetcher: DataFetcher
-// }
+  //console.log('    Create DataFetcher ...')
+  const provider = ethers.provider
+  const chainId = network.config.chainId as ChainId
+  const dataFetcher = new DataFetcher(provider, chainId)
 
-// async function getTestEnvironment(): Promise<TestEnvironment> {
-//   //console.log('Prepare Environment:')
+  console.log('THIS', { chainId, bentoBoxExports })
 
-//   //console.log('    Create DataFetcher ...')
-//   const provider = ethers.provider
-//   const chainId = network.config.chainId as BentoBoxV1ChainId
-//   // const dataFetcher = new DataFetcher(provider, chainId)
+  dataFetcher.startDataFetching()
 
-//   // console.log('THIS', { chainId, bentoBoxExports })
+  //console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
+  const RouteProcessor = await ethers.getContractFactory('RouteProcessor')
+  const routeProcessor = await RouteProcessor.deploy(
+    bentoBoxExports[chainId.toString() as keyof typeof bentoBoxExports][0]?.contracts?.BentoBoxV1.address
+  )
+  await routeProcessor.deployed()
+  //console.log('    Block Number:', provider.blockNumber)
 
-//   // dataFetcher.startDataFetching()
+  console.log(`Network: ${chainName[chainId]}, Forked Block: ${provider.blockNumber}`)
+  //console.log('    User creation ...')
+  const [Alice] = await ethers.getSigners()
 
-//   //console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
-//   const RouteProcessor = await ethers.getContractFactory('RouteProcessor')
-//   const routeProcessor = await RouteProcessor.deploy(bentoBoxV1Address[chainId])
-//   await routeProcessor.deployed()
+  return {
+    chainId,
+    provider,
+    rp: routeProcessor,
+    user: Alice,
+    user2: await ethers.getSigner('0xbc4a6be1285893630d45c881c6c343a65fdbe278'),
+    dataFetcher,
+  }
+}
 
-//   //console.log('    Block Number:', provider.blockNumber)
+// all pool data assumed to be updated
+async function makeSwap(
+  env: TestEnvironment,
+  fromToken: Type,
+  amountIn: BigNumber,
+  toToken: Type,
+  providers?: LiquidityProviders[],
+  poolFilter?: PoolFilter,
+  makeSankeyDiagram = false
+): Promise<[BigNumber, number] | undefined> {
+  //console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
-//   console.log(`Network: ${chainName[chainId]}, Forked Block: ${provider.blockNumber}`)
-//   //console.log('    User creation ...')
-//   const [Alice] = await ethers.getSigners()
+  if (fromToken instanceof Token) {
+    //console.log(`Approve user's ${fromToken.symbol} to the route processor ...`)
+    const WrappedBaseTokenContract = await new ethers.Contract(fromToken.address, erc20Abi, env.user)
+    await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
+  }
 
-//   return {
-//     chainId,
-//     provider,
-//     rp: routeProcessor,
-//     user: Alice,
-//     user2: await ethers.getSigner('0xbc4a6be1285893630d45c881c6c343a65fdbe278'),
-//     // dataFetcher,
-//   }
-// }
+  //console.log('Create Route ...')
+  env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  const waiter = new Waiter()
+  const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
+  router.startRouting(() => {
+    //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
+    const printed = makeSankeyDiagram
+      ? getRoutingAnyChartSankeyData(router.getBestRoute() as MultiRoute)
+      : router.getCurrentRouteHumanString()
+    console.log(printed)
+    waiter.resolve()
+  })
+  await waiter.wait()
+  router.stopRouting()
 
-// // all pool data assumed to be updated
-// async function makeSwap(
-//   env: TestEnvironment,
-//   fromToken: Type,
-//   amountIn: BigNumber,
-//   toToken: Type,
-//   poolCodeMap: Map<string, PoolCode>,
-//   providers?: LiquidityProviders[],
-//   // poolFilter?: PoolFilter,
-//   makeSankeyDiagram = false
-// ): Promise<[BigNumber, number] | undefined> {
-//   console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
+  //console.log('Create route processor code ...')
+  const rpParams = router.getCurrentRouteRPParams(env.user.address, env.rp.address)
+  if (rpParams === undefined) return
 
-//   // console.log('updMakeSwap 0')
-//   if (fromToken instanceof Token) {
-//     //console.log(`Approve user's ${fromToken.symbol} to the route processor ...`)
-//     const WrappedBaseTokenContract = new ethers.Contract(fromToken.address, erc20Abi, env.user)
-//     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
-//   }
+  //console.log('Call route processor (may take long time for the first launch)...')
+  const route = router.getBestRoute() as MultiRoute
+  let balanceOutBNBefore: BigNumber
+  let toTokenContract: Contract | undefined = undefined
+  if (toToken instanceof Token) {
+    toTokenContract = await new ethers.Contract(toToken.address, weth9Abi, env.user)
+    balanceOutBNBefore = await toTokenContract.connect(env.user).balanceOf(env.user.address)
+  } else {
+    balanceOutBNBefore = await env.user.getBalance()
+  }
+  let tx
+  if (rpParams.value)
+    tx = await env.rp.processRoute(
+      rpParams.tokenIn,
+      rpParams.amountIn,
+      rpParams.tokenOut,
+      rpParams.amountOutMin,
+      rpParams.to,
+      rpParams.routeCode,
+      { value: rpParams.value }
+    )
+  else
+    tx = await env.rp.processRoute(
+      rpParams.tokenIn,
+      rpParams.amountIn,
+      rpParams.tokenOut,
+      rpParams.amountOutMin,
+      rpParams.to,
+      rpParams.routeCode
+    )
+  const receipt = await tx.wait()
 
-//   //console.log('Create Route ...')
-//   // env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
-//   // const waiter = new Waiter()
-//   // const router = new Router(new Map(), fromToken, amountIn, toToken, 30e9, providers, poolFilter)
-//   // router.startRouting(() => {
-//   //   //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
-//   //   const printed = makeSankeyDiagram
-//   //     ? getRoutingAnyChartSankeyData(router.getBestRoute() as MultiRoute)
-//   //     : router.getCurrentRouteHumanString()
-//   //   console.log(printed)
-//   //   waiter.resolve()
-//   // })
-//   // await waiter.wait()
-//   // router.stopRouting()
-//   // console.log({poolCodeMap})
-//   // Array.from(poolCodeMap.values()).forEach((p) => {
-//   //   console.log(`${p.pool.token0.symbol}/${p.pool.token1.symbol} ${p.pool.address}`)
-//   // })
+  // const trace = await network.provider.send('debug_traceTransaction', [receipt.transactionHash])
+  // printGasUsage(trace)
 
-//   const route = Router.findBestRoute(
-//     poolCodeMap,
-//     env.chainId,
-//     fromToken,
-//     amountIn,
-//     toToken,
-//     30e9,
-//     providers ?? [LiquidityProviders.SushiSwap, LiquidityProviders.NativeWrap]
-//   )
+  //console.log("Fetching user's output balance ...")
+  let balanceOutBN: BigNumber
+  if (toTokenContract) {
+    balanceOutBN = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
+  } else {
+    balanceOutBN = (await env.user.getBalance()).sub(balanceOutBNBefore)
+    balanceOutBN = balanceOutBN.add(receipt.effectiveGasPrice.mul(receipt.gasUsed))
+  }
+  const slippage = parseInt(balanceOutBN.sub(route.amountOutBN).mul(10_000).div(route.amountOutBN).toString())
 
-//   console.log({ route })
+  if (slippage !== 0) {
+    console.log(`expected amountOut: ${route.amountOutBN.toString()}`)
+    console.log(`real amountOut:     ${balanceOutBN.toString()}`)
+    console.log(`slippage: ${slippage / 100}%`)
+  }
+  console.log(`gas use: ${receipt.gasUsed.toString()}`)
+  expect(slippage).equal(0)
 
-//   // const route = findMultiRouteExactIn(
-//   //   TokenToRToken(fromToken),
-//   //   TokenToRToken(toToken),
-//   //   amountIn,
-//   //   Array.from(pools.values()),
-//   //   networks,
-//   //   gasPrice
-//   // )
+  return [balanceOutBN, receipt.blockNumber]
+}
 
-//   //console.log('Create route processor code ...')
-//   const rpParams = Router.routeProcessorParams(poolCodeMap, route, fromToken, toToken, env.user.address, env.rp.address)
-//   // console.log({rpParams})
-//   expect(rpParams).not.undefined
+async function dataUpdated(env: TestEnvironment, minBlockNumber: number) {
+  for (;;) {
+    if (env.dataFetcher.getLastUpdateBlock() >= minBlockNumber) return
+    await delay(500)
+  }
+}
 
-//   //console.log('Call route processor (may take long time for the first launch)...')
-//   // const route = router.getBestRoute() as MultiRoute
-//   let balanceOutBNBefore: BigNumber
-//   let toTokenContract: Contract | undefined = undefined
-//   if (toToken instanceof Token) {
-//     toTokenContract = new ethers.Contract(toToken.address, weth9Abi, env.user)
-//     balanceOutBNBefore = await toTokenContract.connect(env.user).balanceOf(env.user.address)
-//   } else {
-//     balanceOutBNBefore = await env.user.getBalance()
-//   }
-//   let tx
-//   if (rpParams.value) {
-//     tx = await env.rp.processRoute(
-//       rpParams.tokenIn,
-//       rpParams.amountIn,
-//       rpParams.tokenOut,
-//       rpParams.amountOutMin,
-//       rpParams.to,
-//       rpParams.routeCode,
-//       { value: rpParams.value }
-//     )
-//   } else {
-//     tx = await env.rp.processRoute(
-//       rpParams.tokenIn,
-//       rpParams.amountIn,
-//       rpParams.tokenOut,
-//       rpParams.amountOutMin,
-//       rpParams.to,
-//       rpParams.routeCode
-//     )
-//   }
-//   const receipt = await tx.wait()
+async function updMakeSwap(
+  env: TestEnvironment,
+  fromToken: Type,
+  toToken: Type,
+  lastCallResult: BigNumber | [BigNumber | undefined, number],
+  providers?: LiquidityProviders[],
+  poolFilter?: PoolFilter,
+  makeSankeyDiagram = false
+): Promise<[BigNumber | undefined, number]> {
+  const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
+  if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
 
-//   // const trace = await network.provider.send('debug_traceTransaction', [receipt.transactionHash])
-//   // printGasUsage(trace)
+  console.log('')
+  //console.log('Wait data update for min block', waitBlock)
+  await dataUpdated(env, waitBlock)
 
-//   //console.log("Fetching user's output balance ...")
-//   let balanceOutBN: BigNumber
-//   if (toTokenContract) {
-//     balanceOutBN = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
-//   } else {
-//     balanceOutBN = (await env.user.getBalance()).sub(balanceOutBNBefore)
-//     balanceOutBN = balanceOutBN.add(receipt.effectiveGasPrice.mul(receipt.gasUsed))
-//   }
-//   const slippage = parseInt(balanceOutBN.sub(route.amountOutBN).mul(10_000).div(route.amountOutBN).toString())
+  const res = await makeSwap(env, fromToken, amountIn, toToken, providers, poolFilter, makeSankeyDiagram)
+  expect(res).not.undefined
+  if (res === undefined) return [undefined, waitBlock]
+  else return res
+}
 
-//   if (slippage !== 0) {
-//     console.log(`expected amountOut: ${route.amountOutBN.toString()}`)
-//     console.log(`real amountOut:     ${balanceOutBN.toString()}`)
-//     console.log(`slippage: ${slippage / 100}%`)
-//   }
-//   console.log(`gas use: ${receipt.gasUsed.toString()}`)
-//   expect(slippage).equal(0)
+async function checkTransferAndRoute(
+  env: TestEnvironment,
+  fromToken: Type,
+  toToken: Type,
+  lastCallResult: BigNumber | [BigNumber | undefined, number]
+): Promise<[BigNumber | undefined, number]> {
+  const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
+  if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
+  await dataUpdated(env, waitBlock)
 
-//   return [balanceOutBN, receipt.blockNumber]
-// }
+  if (fromToken instanceof Token) {
+    const WrappedBaseTokenContract = await new ethers.Contract(fromToken.address, erc20Abi, env.user)
+    await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
+  }
 
-// // async function dataUpdated(env: TestEnvironment, minBlockNumber: number) {
-// //   for (;;) {
-// //     if (env.dataFetcher.getLastUpdateBlock() >= minBlockNumber) return
-// //     await delay(500)
-// //   }
-// // }
+  env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  const waiter = new Waiter()
+  const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9)
+  router.startRouting(() => {
+    // const printed = router.getCurrentRouteHumanString()
+    // console.log(printed)
+    waiter.resolve()
+  })
+  await waiter.wait()
+  router.stopRouting()
+  //console.log(router.getBestRoute()?.legs)
 
-// async function updMakeSwap(
-//   env: TestEnvironment,
-//   fromToken: Type,
-//   toToken: Type,
-//   lastCallResult: BigNumber | [BigNumber | undefined, number],
-//   // poolCodeMap: Map<string, PoolCode>,
-//   provider?: LiquidityProviders,
-//   poolFilter?: PoolFilter,
-//   makeSankeyDiagram = false
-// ): Promise<[BigNumber | undefined, number]> {
-//   const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
-//   // console.log({amountIn, waitBlock})
-//   if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
+  const rpParams = router.getCurrentRouteRPParams(env.user.address, env.rp.address) as RPParams
+  const transferValue = getBigNumber(0.02 * Math.pow(10, Native.onChain(env.chainId).decimals))
+  rpParams.value = (rpParams.value || BigNumber.from(0)).add(transferValue)
 
-//   const currencyCombination = getCurrencyCombinations(env.chainId, fromToken, toToken)
-//   const poolCodeMap = await TestDataFetcher.getPairs(
-//     env.chainId,
-//     env.provider,
-//     provider ?? LiquidityProviders.SushiSwap,
-//     currencyCombination
-//   )
+  const balanceUser2Before = await env.user2.getBalance()
 
-//   const res = await makeSwap(env, fromToken, amountIn, toToken, poolCodeMap)
-//   expect(res).not.undefined
-//   if (res === undefined) return [undefined, waitBlock]
-//   else return res
-// }
+  let balanceOutBNBefore: BigNumber
+  let toTokenContract: Contract | undefined = undefined
+  if (toToken instanceof Token) {
+    toTokenContract = await new ethers.Contract(toToken.address, weth9Abi, env.user)
+    balanceOutBNBefore = await toTokenContract.connect(env.user).balanceOf(env.user.address)
+  } else {
+    balanceOutBNBefore = await env.user.getBalance()
+  }
+  const tx = await env.rp.transferValueAndprocessRoute(
+    env.user2.address,
+    transferValue,
+    rpParams.tokenIn,
+    rpParams.amountIn,
+    rpParams.tokenOut,
+    rpParams.amountOutMin,
+    rpParams.to,
+    rpParams.routeCode,
+    { value: rpParams.value }
+  )
+  const receipt = await tx.wait()
 
-// async function checkTransferAndRoute(
-//   env: TestEnvironment,
-//   fromToken: Type,
-//   toToken: Type,
-//   lastCallResult: BigNumber | [BigNumber | undefined, number],
-//   providers?: LiquidityProviders[],
-// ): Promise<[BigNumber | undefined, number]> {
-//   const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
-//   if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
-//   // await dataUpdated(env, waitBlock)
+  let balanceOutBN: BigNumber
+  if (toTokenContract) {
+    balanceOutBN = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
+  } else {
+    balanceOutBN = (await env.user.getBalance()).sub(balanceOutBNBefore)
+    balanceOutBN = balanceOutBN.add(receipt.effectiveGasPrice.mul(receipt.gasUsed))
+    balanceOutBN = balanceOutBN.add(transferValue)
+  }
+  expect(balanceOutBN.gte(rpParams.amountOutMin)).equal(true)
 
-//   if (fromToken instanceof Token) {
-//     const WrappedBaseTokenContract = await new ethers.Contract(fromToken.address, erc20Abi, env.user)
-//     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
-//   }
+  const balanceUser2After = await env.user2.getBalance()
+  const transferredValue = balanceUser2After.sub(balanceUser2Before)
+  expect(transferredValue.eq(transferValue)).equal(true)
 
-//   // env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
-//   // const waiter = new Waiter()
-//   // const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9)
-//   // router.startRouting(() => {
-//   //   // const printed = router.getCurrentRouteHumanString()
-//   //   // console.log(printed)
-//   //   waiter.resolve()
-//   // })
-//   // await waiter.wait()
-//   // router.stopRouting()
-//   //console.log(router.getBestRoute()?.legs)
-//   const poolsCodeMap = new Map()
-//   const route = Router.findBestRoute(poolsCodeMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers ?? [LiquidityProviders.SushiSwap])
-//   const rpParams = Router.routeProcessorParams(
-//     poolsCodeMap,
-//     route,
-//     fromToken,
-//     toToken,
-//     env.user.address,
-//     env.rp.address
-//   )
-//   // const rpParams = router.getCurrentRouteRPParams(env.user.address, env.rp.address) as RPParams
-//   const transferValue = getBigNumber(0.02 * Math.pow(10, Native.onChain(env.chainId).decimals))
-//   rpParams.value = (rpParams.value || BigNumber.from(0)).add(transferValue)
+  return [balanceOutBN, receipt.blockNumber]
+}
 
-//   const balanceUser2Before = await env.user2.getBalance()
+// skipped because took too long time. Unskip to check the RP
+describe('End-to-end Router test', async function () {
+  let env: TestEnvironment
+  let chainId: ChainId
+  let intermidiateResult: [BigNumber | undefined, number] = [undefined, 1]
+  let testTokensSet: (Type | undefined)[]
+  let SUSHI_LOCAL: Token
+  let USDC_LOCAL: Token
 
-//   let balanceOutBNBefore: BigNumber
-//   let toTokenContract: Contract | undefined = undefined
-//   if (toToken instanceof Token) {
-//     toTokenContract = new ethers.Contract(toToken.address, weth9Abi, env.user)
-//     balanceOutBNBefore = await toTokenContract.connect(env.user).balanceOf(env.user.address)
-//   } else {
-//     balanceOutBNBefore = await env.user.getBalance()
-//   }
-//   const tx = await env.rp.transferValueAndprocessRoute(
-//     env.user2.address,
-//     transferValue,
-//     rpParams.tokenIn,
-//     rpParams.amountIn,
-//     rpParams.tokenOut,
-//     rpParams.amountOutMin,
-//     rpParams.to,
-//     rpParams.routeCode,
-//     { value: rpParams.value }
-//   )
-//   const receipt = await tx.wait()
+  before(async () => {
+    env = await getTestEnvironment()
+    chainId = env.chainId
 
-//   let balanceOutBN: BigNumber
-//   if (toTokenContract) {
-//     balanceOutBN = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
-//   } else {
-//     balanceOutBN = (await env.user.getBalance()).sub(balanceOutBNBefore)
-//     balanceOutBN = balanceOutBN.add(receipt.effectiveGasPrice.mul(receipt.gasUsed))
-//     balanceOutBN = balanceOutBN.add(transferValue)
-//   }
-//   expect(balanceOutBN.gte(rpParams.amountOutMin)).equal(true)
+    type SUSHI_CHAINS = keyof typeof SUSHI_ADDRESS
+    type USDC_CHAINS = keyof typeof USDC_ADDRESS
+    type USDT_CHAINS = keyof typeof USDT_ADDRESS
+    type DAI_CHAINS = keyof typeof DAI_ADDRESS
+    type FRAX_CHAINS = keyof typeof FRAX_ADDRESS
+    type FXS_CHAINS = keyof typeof FXS_ADDRESS
+    SUSHI_LOCAL = SUSHI[chainId as SUSHI_CHAINS]
+    USDC_LOCAL = USDC[chainId as USDC_CHAINS]
+    testTokensSet = [
+      Native.onChain(chainId),
+      WNATIVE[chainId],
+      SUSHI[chainId as SUSHI_CHAINS],
+      USDC[chainId as USDC_CHAINS],
+      USDT[chainId as USDT_CHAINS],
+      DAI[chainId as DAI_CHAINS],
+      FRAX[chainId as FRAX_CHAINS],
+      FXS[chainId as FXS_CHAINS],
+    ]
+  })
 
-//   const balanceUser2After = await env.user2.getBalance()
-//   const transferredValue = balanceUser2After.sub(balanceUser2Before)
-//   expect(transferredValue.eq(transferValue)).equal(true)
+  it('Native => SUSHI => Native', async function () {
+    intermidiateResult[0] = getBigNumber(1000000 * 1e18)
+    intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
+    intermidiateResult = await updMakeSwap(env, SUSHI_LOCAL, Native.onChain(chainId), intermidiateResult)
+  })
 
-//   return [balanceOutBN, receipt.blockNumber]
-// }
+  it('Native => WrappedNative => Native', async function () {
+    intermidiateResult[0] = getBigNumber(1 * 1e18)
+    intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), WNATIVE[chainId], intermidiateResult)
+    intermidiateResult = await updMakeSwap(env, WNATIVE[chainId], Native.onChain(chainId), intermidiateResult)
+  })
 
-// // skipped because took too long time. Unskip to check the RP
-// describe('End-to-end Router test', async function () {
-//   let env: TestEnvironment
-//   let chainId: ChainId
-//   let intermidiateResult: [BigNumber | undefined, number] = [undefined, 1]
-//   let testTokensSet: (Type | undefined)[]
-//   let SUSHI_LOCAL: Token
-//   let USDC_LOCAL: Token
+  it('Trident Native => SUSHI => Native (Polygon only)', async function () {
+    if (chainId == ChainId.POLYGON) {
+      intermidiateResult[0] = getBigNumber(10_000 * 1e18)
+      intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI[chainId], intermidiateResult, [
+        LiquidityProviders.Trident,
+      ])
+      intermidiateResult = await updMakeSwap(env, SUSHI[chainId], Native.onChain(chainId), intermidiateResult, [
+        LiquidityProviders.Trident,
+      ])
+    }
+  })
 
-//   before(async () => {
-//     env = await getTestEnvironment()
-//     chainId = env.chainId
+  it('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async function () {
+    const filter = (pool: RPool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
+    if (chainId == ChainId.POLYGON) {
+      intermidiateResult[0] = getBigNumber(10_000 * 1e18)
+      intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], intermidiateResult)
+      intermidiateResult = await updMakeSwap(env, USDC[chainId], USDT[chainId], intermidiateResult, undefined, filter)
+      intermidiateResult = await updMakeSwap(env, USDT[chainId], DAI[chainId], intermidiateResult, undefined, filter)
+      intermidiateResult = await updMakeSwap(env, DAI[chainId], USDC[chainId], intermidiateResult, undefined, filter)
+    }
+  })
 
-//     type SUSHI_CHAINS = keyof typeof SUSHI_ADDRESS
-//     type USDC_CHAINS = keyof typeof USDC_ADDRESS
-//     type USDT_CHAINS = keyof typeof USDT_ADDRESS
-//     type DAI_CHAINS = keyof typeof DAI_ADDRESS
-//     type FRAX_CHAINS = keyof typeof FRAX_ADDRESS
-//     type FXS_CHAINS = keyof typeof FXS_ADDRESS
-//     SUSHI_LOCAL = SUSHI[chainId as SUSHI_CHAINS]
-//     USDC_LOCAL = USDC[chainId as USDC_CHAINS]
-//     testTokensSet = [
-//       Native.onChain(chainId),
-//       WNATIVE[chainId],
-//       SUSHI[chainId as SUSHI_CHAINS],
-//       USDC[chainId as USDC_CHAINS],
-//       USDT[chainId as USDT_CHAINS],
-//       DAI[chainId as DAI_CHAINS],
-//       FRAX[chainId as FRAX_CHAINS],
-//       FXS[chainId as FXS_CHAINS],
-//     ]
-//   })
+  function getNextToken(rnd: () => number, previousTokenIndex: number): number {
+    for (;;) {
+      const next = Math.floor(rnd() * testTokensSet.length)
+      if (next == previousTokenIndex) continue
+      if (testTokensSet[next] === undefined) continue
+      return next
+    }
+  }
 
-//   it('Native => SUSHI => Native', async function () {
-//     intermidiateResult[0] = getBigNumber(1000 * 1e18)
-//     const currency0 = Native.onChain(chainId)
-//     const currency1 = SUSHI_LOCAL
+  it.skip('Random swap test', async function () {
+    const testSeed = '10' // Change it to change random generator values
+    const rnd: () => number = seedrandom(testSeed) // random [0, 1)
+    let routeCounter = 0
+    for (let i = 0; i < 100; ++i) {
+      let currentToken = 0
+      intermidiateResult[0] = getBigNumber(getRandomExp(rnd, 1e15, 1e24))
+      for (;;) {
+        const nextToken = getNextToken(rnd, currentToken)
+        console.log('Round # ', i + 1, ' Total Route # ', ++routeCounter)
+        intermidiateResult = await updMakeSwap(
+          env,
+          testTokensSet[currentToken] as Type,
+          testTokensSet[nextToken] as Type,
+          intermidiateResult
+        )
+        currentToken = nextToken
+        if (currentToken == 0) break
+      }
+    }
+  })
 
-//     intermidiateResult = await updMakeSwap(env, currency0, currency1, intermidiateResult)
-//     intermidiateResult = await updMakeSwap(env, currency1, currency0, intermidiateResult)
-//   })
+  it('Special Router', async function () {
+    env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI_LOCAL)
+    const route = findSpecialRoute(env.dataFetcher, Native.onChain(chainId), getBigNumber(1 * 1e18), SUSHI_LOCAL, 30e9)
+    expect(route).not.undefined
+  })
 
-//   it('Native => WrappedNative => Native', async function () {
-//     intermidiateResult[0] = getBigNumber(1 * 1e18)
-//     const currency0 = Native.onChain(chainId)
-//     const currency1 = WNATIVE[chainId]
-//     intermidiateResult = await updMakeSwap(env, currency0, currency1, intermidiateResult)
-//     intermidiateResult = await updMakeSwap(env, currency1, currency0, intermidiateResult)
-//   })
+  if (network.config.chainId == ChainId.POLYGON) {
+    it('Transfer value and route 1', async function () {
+      intermidiateResult[0] = getBigNumber(1e18)
+      intermidiateResult = await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
+      intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, USDC_LOCAL, intermidiateResult)
+      intermidiateResult = await checkTransferAndRoute(env, USDC_LOCAL, Native.onChain(chainId), intermidiateResult)
+    })
 
-//   it('Trident Native => SUSHI => Native (Polygon only)', async function () {
-//     if (chainId == ChainId.POLYGON) {
-//       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
-//       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI[chainId], intermidiateResult, LiquidityProviders.Trident)
-//       intermidiateResult = await updMakeSwap(env, SUSHI[chainId], Native.onChain(chainId), intermidiateResult, LiquidityProviders.Trident)
-//     }
-//   })
+    it('Transfer value and route 2', async function () {
+      intermidiateResult[0] = getBigNumber(1e18)
+      intermidiateResult = await checkTransferAndRoute(
+        env,
+        Native.onChain(chainId),
+        WNATIVE[chainId],
+        intermidiateResult
+      )
+      intermidiateResult = await checkTransferAndRoute(env, WNATIVE[chainId], SUSHI_LOCAL, intermidiateResult)
+      intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, WNATIVE[chainId], intermidiateResult)
+      intermidiateResult = await checkTransferAndRoute(
+        env,
+        WNATIVE[chainId],
+        Native.onChain(chainId),
+        intermidiateResult
+      )
+    })
 
-//   it('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async function () {
-//     const filter = (pool: RPool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
-//     if (chainId == ChainId.POLYGON) {
-//       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
-//       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], intermidiateResult)
-//       intermidiateResult = await updMakeSwap(env, USDC[chainId], USDT[chainId], intermidiateResult, undefined, filter)
-//       intermidiateResult = await updMakeSwap(env, USDT[chainId], DAI[chainId], intermidiateResult, undefined, filter)
-//       intermidiateResult = await updMakeSwap(env, DAI[chainId], USDC[chainId], intermidiateResult, undefined, filter)
-//     }
-//   })
+    it('Transfer value and route 3 - check EOA', async function () {
+      intermidiateResult[0] = getBigNumber(1e18)
+      env.user2 = await ethers.getSigner('0x0000000000000000000000000000000000000001')
+      intermidiateResult = await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
+      intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, USDC_LOCAL, intermidiateResult)
+      intermidiateResult = await checkTransferAndRoute(env, USDC_LOCAL, Native.onChain(chainId), intermidiateResult)
+    })
 
-//   function getNextToken(rnd: () => number, previousTokenIndex: number): number {
-//     for (;;) {
-//       const next = Math.floor(rnd() * testTokensSet.length)
-//       if (next == previousTokenIndex) continue
-//       if (testTokensSet[next] === undefined) continue
-//       return next
-//     }
-//   }
+    it('Transfer value and route 4 - not payable address', async function () {
+      intermidiateResult[0] = getBigNumber(1e18)
+      env.user2 = await ethers.getSigner('0x597A9bc3b24C2A578CCb3aa2c2C62C39427c6a49')
+      let throwed = false
+      try {
+        await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
+      } catch (e) {
+        throwed = true
+      }
+      expect(throwed, 'Transfer value to not payable address should fail').equal(true)
+    })
+  }
 
-//   it.skip('Random swap test', async function () {
-//     const testSeed = '10' // Change it to change random generator values
-//     const rnd: () => number = seedrandom(testSeed) // random [0, 1)
-//     let routeCounter = 0
-//     for (let i = 0; i < 100; ++i) {
-//       let currentToken = 0
-//       intermidiateResult[0] = getBigNumber(getRandomExp(rnd, 1e15, 1e24))
-//       for (;;) {
-//         const nextToken = getNextToken(rnd, currentToken)
-//         console.log('Round # ', i + 1, ' Total Route # ', ++routeCounter)
-//         intermidiateResult = await updMakeSwap(
-//           env,
-//           testTokensSet[currentToken] as Type,
-//           testTokensSet[nextToken] as Type,
-//           intermidiateResult
-//         )
-//         currentToken = nextToken
-//         if (currentToken == 0) break
-//       }
-//     }
-//   })
-
-//   it('Special Router', async function () {
-//     const poolsCodeMap = new Map() // TODO: fetch route
-//     const route = Router.findSpecialRoute(
-//       poolsCodeMap,
-//       env.chainId,
-//       Native.onChain(chainId),
-//       getBigNumber(1 * 1e18),
-//       SUSHI_LOCAL,
-//       30e9
-//     )
-//     expect(route).not.undefined
-//   })
-
-//   if (network.config.chainId == ChainId.POLYGON) {
-//     it('Transfer value and route 1', async function () {
-//       intermidiateResult[0] = getBigNumber(1e18)
-//       intermidiateResult = await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
-//       intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, USDC_LOCAL, intermidiateResult)
-//       intermidiateResult = await checkTransferAndRoute(env, USDC_LOCAL, Native.onChain(chainId), intermidiateResult)
-//     })
-
-//     it('Transfer value and route 2', async function () {
-//       intermidiateResult[0] = getBigNumber(1e18)
-//       intermidiateResult = await checkTransferAndRoute(
-//         env,
-//         Native.onChain(chainId),
-//         WNATIVE[chainId],
-//         intermidiateResult
-//       )
-//       intermidiateResult = await checkTransferAndRoute(env, WNATIVE[chainId], SUSHI_LOCAL, intermidiateResult)
-//       intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, WNATIVE[chainId], intermidiateResult)
-//       intermidiateResult = await checkTransferAndRoute(
-//         env,
-//         WNATIVE[chainId],
-//         Native.onChain(chainId),
-//         intermidiateResult
-//       )
-//     })
-
-//     it('Transfer value and route 3 - check EOA', async function () {
-//       intermidiateResult[0] = getBigNumber(1e18)
-//       env.user2 = await ethers.getSigner('0x0000000000000000000000000000000000000001')
-//       intermidiateResult = await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
-//       intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, USDC_LOCAL, intermidiateResult)
-//       intermidiateResult = await checkTransferAndRoute(env, USDC_LOCAL, Native.onChain(chainId), intermidiateResult)
-//     })
-
-//     it('Transfer value and route 4 - not payable address', async function () {
-//       intermidiateResult[0] = getBigNumber(1e18)
-//       env.user2 = await ethers.getSigner('0x597A9bc3b24C2A578CCb3aa2c2C62C39427c6a49')
-//       let throwed = false
-//       try {
-//         await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
-//       } catch (e) {
-//         throwed = true
-//       }
-//       expect(throwed, 'Transfer value to not payable address should fail').equal(true)
-//     })
-//   }
-
-//   it.skip('AnyChart Sankey Diargam data generation Native=>SUSHI', async function () {
-//     intermidiateResult[0] = getBigNumber(1000000 * 1e18)
-//     intermidiateResult = await updMakeSwap(
-//       env,
-//       Native.onChain(chainId),
-//       SUSHI_LOCAL,
-//       intermidiateResult,
-//       undefined,
-//       undefined,
-//       true
-//     )
-//   })
-// })
+  it.skip('AnyChart Sankey Diargam data generation Native=>SUSHI', async function () {
+    intermidiateResult[0] = getBigNumber(1000000 * 1e18)
+    intermidiateResult = await updMakeSwap(
+      env,
+      Native.onChain(chainId),
+      SUSHI_LOCAL,
+      intermidiateResult,
+      undefined,
+      undefined,
+      true
+    )
+  })
+})

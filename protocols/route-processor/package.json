@@ -51,7 +51,6 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/tines": "workspace:*",
-    "@sushiswap/trident": "workspace:*",
     "@sushiswap/tines-sandbox": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/types": "workspace:*",

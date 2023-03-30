@@ -40,8 +40,8 @@ subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVers
 
 const config: HardhatUserConfig = {
   ...defaultConfig,
-  defaultNetwork: 'hardhat',
-  networks: {
+  // defaultNetwork: 'hardhat',
+  // networks: {
   //   localhost: {},
   //   ...defaultConfig.networks,
   //   // hardhat: {
@@ -55,18 +55,6 @@ const config: HardhatUserConfig = {
   //   //   },
   //   //   chainId: 1,
   //   // },
-      hardhat: {
-      forking: {
-        enabled: true,
-        url: `https://arb-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
-        blockNumber: 74973812,
-      },
-      accounts: {
-        accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
-      },
-      chainId: 42161,
-    },
-
   //   hardhat: {
   //     // polygon
   //     forking: {
@@ -94,7 +82,7 @@ const config: HardhatUserConfig = {
   //   //   url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
   //   //   accounts,
   //   // },
-  },
+  // },
   solidity: {
     compilers: [
       {
