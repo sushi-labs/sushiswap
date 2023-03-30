@@ -1,13 +1,14 @@
-import { Dispatch, FC, ReactElement, ReactNode, SetStateAction, useCallback } from 'react'
+import { Dispatch, FC, ReactElement, SetStateAction, useCallback } from 'react'
 import { SendTransactionResult } from 'wagmi/actions'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { TransactionRequest } from '@ethersproject/providers'
 import { JSBI } from '@sushiswap/math'
-import { Amount, Native, Type } from '@sushiswap/currency'
+import { Amount, Type } from '@sushiswap/currency'
 import { NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
 import { useSendTransaction } from '@sushiswap/wagmi'
 import { ChainId } from '@sushiswap/chain'
 import { ConcentratedLiquidityPosition } from '@sushiswap/wagmi/future/hooks'
+import { unwrapToken } from '../lib/functions'
 
 interface ConcentratedLiquidityCollectButton {
   positionDetails: ConcentratedLiquidityPosition | undefined
@@ -18,6 +19,7 @@ interface ConcentratedLiquidityCollectButton {
   chainId: ChainId
   children(params: ReturnType<typeof useSendTransaction>): ReactElement
 }
+
 export const ConcentratedLiquidityCollectButton: FC<ConcentratedLiquidityCollectButton> = ({
   account,
   chainId,
@@ -62,18 +64,8 @@ export const ConcentratedLiquidityCollectButton: FC<ConcentratedLiquidityCollect
 
         const { calldata, value } = NonfungiblePositionManager.collectCallParameters({
           tokenId: positionDetails.tokenId.toString(),
-          expectedCurrencyOwed0:
-            feeValue0 ??
-            Amount.fromRawAmount(
-              token0.wrapped.address === Native.onChain(chainId).wrapped.address ? Native.onChain(chainId) : token0,
-              0
-            ),
-          expectedCurrencyOwed1:
-            feeValue1 ??
-            Amount.fromRawAmount(
-              token0.wrapped.address === Native.onChain(chainId).wrapped.address ? Native.onChain(chainId) : token0,
-              0
-            ),
+          expectedCurrencyOwed0: feeValue0 ?? Amount.fromRawAmount(unwrapToken(token0), 0),
+          expectedCurrencyOwed1: feeValue1 ?? Amount.fromRawAmount(unwrapToken(token1), 0),
           recipient: account,
         })
 

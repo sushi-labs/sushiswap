@@ -7,6 +7,7 @@ import { Row } from '../../SharedCells/types'
 import { JSBI } from '@sushiswap/math'
 import { useTokenAmountDollarValues } from '../../../../../lib/hooks'
 import { Amount } from '@sushiswap/currency'
+import { unwrapToken } from '../../../../../lib/functions'
 
 export const UnclaimedCell: FC<Row<ConcentratedLiquidityPosition>> = ({ row }) => {
   const { data: token0 } = useToken({ chainId: row.chainId, address: row.token0 })
@@ -14,8 +15,8 @@ export const UnclaimedCell: FC<Row<ConcentratedLiquidityPosition>> = ({ row }) =
   const amounts = useMemo(() => {
     if (row.fees && token0 && token1)
       return [
-        Amount.fromRawAmount(token0, JSBI.BigInt(row.fees[0])),
-        Amount.fromRawAmount(token1, JSBI.BigInt(row.fees[1])),
+        Amount.fromRawAmount(unwrapToken(token0), JSBI.BigInt(row.fees[0])),
+        Amount.fromRawAmount(unwrapToken(token1), JSBI.BigInt(row.fees[1])),
       ]
 
     return [undefined, undefined]

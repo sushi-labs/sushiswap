@@ -6,6 +6,7 @@ import {
   Native,
   Price,
   Token,
+  Type,
   USDC,
   USDC_ADDRESS,
   USDT,
@@ -168,4 +169,10 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
     quote: token1,
     base: token0,
   }
+}
+
+export const unwrapToken = (currency: Type) => {
+  return currency.wrapped.address === Native.onChain(currency.chainId).wrapped.address
+    ? Native.onChain(currency.chainId)
+    : currency
 }

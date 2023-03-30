@@ -15,6 +15,7 @@ import { useSlippageTolerance } from '../lib/hooks/useSlippageTolerance'
 import { Amount, Native, Type } from '@sushiswap/currency'
 import { useSendTransaction } from '@sushiswap/wagmi'
 import { ConfirmationDialogState } from '@sushiswap/ui/dialog/ConfirmationDialog'
+import { unwrapToken } from '../lib/functions'
 
 interface ConcentratedLiquidityRemoveWidget {
   token0: Type | undefined
@@ -83,19 +84,9 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
       const discountedAmount1 = position ? liquidityPercentage.multiply(position.amount1.quotient).quotient : undefined
 
       const liquidityValue0 =
-        token0 && discountedAmount0
-          ? Amount.fromRawAmount(
-              token0.wrapped.address === Native.onChain(chainId).wrapped.address ? Native.onChain(chainId) : token0,
-              discountedAmount0
-            )
-          : undefined
+        token0 && discountedAmount0 ? Amount.fromRawAmount(unwrapToken(token0), discountedAmount0) : undefined
       const liquidityValue1 =
-        token1 && discountedAmount1
-          ? Amount.fromRawAmount(
-              token1.wrapped.address === Native.onChain(chainId).wrapped.address ? Native.onChain(chainId) : token1,
-              discountedAmount1
-            )
-          : undefined
+        token1 && discountedAmount1 ? Amount.fromRawAmount(unwrapToken(token1), discountedAmount1) : undefined
 
       if (
         token0 &&
@@ -135,7 +126,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
         })
       }
     },
-    [account, chainId, deadline, position, positionDetails, slippagePercent, token0, token1, value]
+    [account, deadline, position, positionDetails, slippagePercent, token0, token1, value]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({

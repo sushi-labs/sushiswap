@@ -19,9 +19,9 @@ import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { classNames, NetworkIcon } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Amount, tryParseAmount } from '@sushiswap/currency'
-import { useTokenAmountDollarValues } from '../../../lib/hooks'
+import { usePriceInverter, useTokenAmountDollarValues } from '../../../lib/hooks'
 import { formatUSD } from '@sushiswap/format'
-import { getPriceOrderingFromPositionForUI } from '../../../lib/functions'
+import { getPriceOrderingFromPositionForUI, unwrapToken } from '../../../lib/functions'
 import { ConcentratedLiquidityWidget } from '../../../components/ConcentratedLiquidityWidget'
 import { useAccount } from 'wagmi'
 import { ConcentratedLiquidityProvider } from '../../../components/ConcentratedLiquidityProvider'
@@ -62,9 +62,8 @@ enum SelectedTab {
 const Position: FC = () => {
   const { address } = useAccount()
   const { query } = useRouter()
+  const [invert, setInvert] = useState(false)
   const [tab, setTab] = useState<SelectedTab>(SelectedTab.IncreaseLiq)
-  const mutateAmount0Ref = useRef<HTMLSpanElement | null>(null)
-  const mutateAmount1Ref = useRef<HTMLSpanElement | null>(null)
 
   const {
     tokenId: [chainId, tokenId],
@@ -93,60 +92,50 @@ const Position: FC = () => {
 
   const fiatAmounts = useMemo(() => [tryParseAmount('1', token0), tryParseAmount('1', token1)], [token0, token1])
   const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId, amounts: fiatAmounts })
-  const { priceLower, priceUpper } = getPriceOrderingFromPositionForUI(position)
+  const priceOrdering = getPriceOrderingFromPositionForUI(position)
+
+  const { priceLower, priceUpper, base, quote } = usePriceInverter({
+    priceLower: priceOrdering.priceLower,
+    priceUpper: priceOrdering.priceUpper,
+    base: token0,
+    quote: token1,
+    invert,
+  })
+
+  const outOfRange =
+    pool &&
+    quote &&
+    priceLower &&
+    priceUpper &&
+    (pool.priceOf(quote).lessThan(priceLower) || pool.priceOf(quote).greaterThan(priceUpper))
 
   const [minPriceDiff, maxPriceDiff] = useMemo(() => {
-    if (!pool || !token0 || !pool.priceOf(token0) || !priceLower || !priceUpper) return [0, 0]
-    const min = +priceLower?.toFixed(4)
-    const cur = +pool.priceOf(token0)?.toFixed(4)
-    const max = +priceUpper?.toFixed(4)
+    if (!pool || !token0 || !token1 || !priceLower || !priceUpper || !base || !quote) return [0, 0]
+    const min = +priceLower?.toFixed(10)
+    const cur = +pool.priceOf(quote)?.toFixed(10)
+    const max = +priceUpper?.toFixed(10)
+
+    if (!invert) {
+      return [-100 * ((max - cur) / max), -100 * ((min - cur) / min)]
+    }
 
     return [((min - cur) / cur) * 100, ((max - cur) / cur) * 100]
-  }, [pool, priceLower, priceUpper, token0])
+  }, [base, invert, pool, priceLower, priceUpper, quote, token0, token1])
 
-  const onMutateRefs = useCallback(
-    (val: string, remove: boolean, input?: 'a' | 'b') => {
-      if (mutateAmount0Ref.current && mutateAmount1Ref.current && position) {
-        if (input === 'a' || input === undefined) {
-          mutateAmount0Ref.current.className = remove ? 'text-blue' : 'text-green'
-          mutateAmount0Ref.current.innerHTML =
-            Number(val) > 0
-              ? `${remove ? '-' : '+'}${remove ? position.amount0.multiply(val).divide(100).toSignificant(6) : val} ${
-                  position.amount0.currency.symbol
-                }`
-              : ''
-        }
-
-        if (input === 'b' || input === undefined) {
-          mutateAmount1Ref.current.className = remove ? 'text-blue' : 'text-green'
-          mutateAmount1Ref.current.innerHTML =
-            Number(val) > 0
-              ? `${remove ? '-' : '+'}${remove ? position.amount1.multiply(val).divide(100).toSignificant(6) : val} ${
-                  position.amount1.currency.symbol
-                }`
-              : ''
-        }
-      }
-    },
-    [position]
+  const [_token0, _token1] = useMemo(
+    () => [token0 ? unwrapToken(token0) : undefined, token1 ? unwrapToken(token1) : undefined],
+    [token0, token1]
   )
 
-  useEffect(() => {
-    if (mutateAmount0Ref.current && mutateAmount1Ref.current) {
-      mutateAmount0Ref.current.innerHTML = ''
-      mutateAmount1Ref.current.innerHTML = ''
-    }
-  }, [tab])
-
   const amounts = useMemo(() => {
-    if (positionDetails && positionDetails.fees && token0 && token1)
+    if (positionDetails && positionDetails.fees && _token0 && _token1)
       return [
-        Amount.fromRawAmount(token0, JSBI.BigInt(positionDetails.fees[0])),
-        Amount.fromRawAmount(token1, JSBI.BigInt(positionDetails.fees[1])),
+        Amount.fromRawAmount(_token0, JSBI.BigInt(positionDetails.fees[0])),
+        Amount.fromRawAmount(_token1, JSBI.BigInt(positionDetails.fees[1])),
       ]
 
     return [undefined, undefined]
-  }, [positionDetails, token0, token1])
+  }, [_token0, _token1, positionDetails])
 
   return (
     <SWRConfig>
@@ -216,10 +205,10 @@ const Position: FC = () => {
           )}
 
           <div className="flex flex-col flex-grow">
-            {pool ? (
+            {pool && _token0 && _token1 ? (
               <>
                 <h1 className="text-xl text-gray-900 dark:text-slate-50 font-semibold">
-                  {pool.token0.symbol}/{pool.token1.symbol}
+                  {_token0.symbol}/{_token1.symbol}
                 </h1>
                 <p className="font-medium text-gray-700 dark:text-slate-400">Concentrated • {pool.fee / 10000}%</p>
               </>
@@ -237,27 +226,25 @@ const Position: FC = () => {
             <List>
               <List.Label>Deposits</List.Label>
               <List.Control>
-                {position?.amount0 ? (
-                  <List.KeyValue title={`${position?.amount0.currency.symbol}`}>
+                {position?.amount0 && _token0 ? (
+                  <List.KeyValue title={`${_token0.symbol}`}>
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-2">
-                        <Currency.Icon currency={position.amount0.currency} width={18} height={18} />
-                        {position.amount0.toSignificant(4)} {position.amount0.currency.symbol}
+                        <Currency.Icon currency={_token0} width={18} height={18} />
+                        {position.amount0.toSignificant(4)} {_token0.symbol}
                       </div>
-                      <span ref={mutateAmount0Ref}></span>
                     </div>
                   </List.KeyValue>
                 ) : (
                   <List.KeyValue skeleton />
                 )}
-                {position?.amount1 ? (
-                  <List.KeyValue title={`${position?.amount1.currency.symbol}`}>
+                {position?.amount1 && _token1 ? (
+                  <List.KeyValue title={`${_token1.symbol}`}>
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-2">
-                        <Currency.Icon currency={position.amount1.currency} width={18} height={18} />
-                        {position.amount1.toSignificant(4)} {position.amount1.currency.symbol}
+                        <Currency.Icon currency={_token1} width={18} height={18} />
+                        {position.amount1.toSignificant(4)} {_token1.symbol}
                       </div>
-                      <span ref={mutateAmount1Ref}></span>
                     </div>
                   </List.KeyValue>
                 ) : (
@@ -316,20 +303,58 @@ const Position: FC = () => {
                 )}
               </List.Control>
             </List>
-            <List>
-              <List.Label>Price Range</List.Label>
+            <List className="!gap-1">
+              <div className="flex items-center justify-between">
+                <List.Label>Price Range</List.Label>
+                {_token0 && _token1 && (
+                  <RadioGroup value={invert} onChange={setInvert} className="flex">
+                    <RadioGroup.Option
+                      value={true}
+                      as={Button}
+                      size="xs"
+                      color={invert ? 'blue' : 'default'}
+                      variant="empty"
+                      className="!h-[24px] font-bold"
+                    >
+                      {_token0.symbol}
+                    </RadioGroup.Option>
+                    <RadioGroup.Option
+                      value={false}
+                      as={Button}
+                      color={invert ? 'default' : 'blue'}
+                      size="xs"
+                      variant="empty"
+                      className="!h-[24px] font-bold"
+                    >
+                      {_token1.symbol}
+                    </RadioGroup.Option>
+                  </RadioGroup>
+                )}
+              </div>
               <List.Control className="flex flex-col gap-3 p-4">
                 <div className="p-4 inline-flex flex-col gap-2 bg-gray-50 dark:bg-white/[0.02] rounded-xl">
                   <div className="flex">
-                    <div className="px-2 py-1 flex items-center gap-1 rounded-full bg-yellow/10">
-                      <div className="w-3 h-3 bg-yellow rounded-full" />
-                      <span className="text-xs text-yellow-900 dark:text-yellow font-medium">Inactive</span>
+                    <div
+                      className={classNames(
+                        outOfRange ? 'bg-yellow/10' : 'bg-green/10',
+                        'px-2 py-1 flex items-center gap-1 rounded-full'
+                      )}
+                    >
+                      <div className={classNames(outOfRange ? 'bg-yellow' : 'bg-green', 'w-3 h-3 rounded-full')} />
+                      {outOfRange ? (
+                        <span className="text-xs text-yellow-900 dark:text-yellow font-medium">Inactive</span>
+                      ) : (
+                        <span className="text-xs text-green font-medium">In Range</span>
+                      )}
                     </div>
                   </div>
-                  {pool ? (
+                  {pool && _token0 && _token1 ? (
                     <span className="text-sm text-gray-600 dark:text-slate-200 px-1">
-                      <b>{pool.token0Price.toSignificant(6)}</b> {pool.token0.symbol} per {pool.token1.symbol} (
-                      {formatUSD(fiatAmountsAsNumber[0])})
+                      <b>
+                        1 {invert ? _token1.symbol : _token0.symbol} ={' '}
+                        {pool[invert ? 'token1Price' : 'token0Price'].toSignificant(6)}
+                      </b>{' '}
+                      {invert ? _token0.symbol : _token1.symbol} (${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)})
                     </span>
                   ) : (
                     <Skeleton.Text fontSize="text-sm" />
@@ -338,21 +363,21 @@ const Position: FC = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-4 flex flex-col gap-3 bg-gray-50 dark:bg-white/[0.02] rounded-xl">
                     <div className="flex">
-                      <div className="px-2 py-1 font-medium text-xs gap-1 rounded-full bg-blue/10 text-blue">
+                      <div className="px-2 py-1 font-medium text-xs gap-1 rounded-full bg-pink/10 text-pink">
                         Min Price
                       </div>
                     </div>
                     <div className="flex flex-col">
-                      {priceLower && pool ? (
+                      {priceLower && pool && _token0 && _token1 ? (
                         <span className="font-medium">
-                          {priceLower?.toSignificant(4)} {pool.token1.symbol}
+                          {priceLower?.toSignificant(4)} {base?.symbol}
                         </span>
                       ) : (
                         <Skeleton.Text />
                       )}
-                      {priceUpper && pool ? (
+                      {priceLower && pool && _token0 && _token1 ? (
                         <span className="text-sm text-gray-500">
-                          {formatUSD(fiatAmountsAsNumber[0] * (1 + minPriceDiff / 100))} ({minPriceDiff.toFixed(2)}%)
+                          ${(fiatAmountsAsNumber[0] * (1 + minPriceDiff / 100)).toFixed(2)} ({minPriceDiff.toFixed(2)}%)
                         </span>
                       ) : (
                         <Skeleton.Text />
@@ -361,21 +386,21 @@ const Position: FC = () => {
                   </div>
                   <div className="p-4 inline-flex flex-col gap-3 bg-gray-50 dark:bg-white/[0.02] rounded-xl">
                     <div className="flex">
-                      <div className="px-2 py-1 flex items-center font-medium text-xs gap-1 rounded-full bg-pink/10 text-pink">
-                        Min Price
+                      <div className="px-2 py-1 flex items-center font-medium text-xs gap-1 rounded-full bg-blue/10 text-blue">
+                        Max Price
                       </div>
                     </div>
                     <div className="flex flex-col">
-                      {priceUpper && pool ? (
+                      {priceUpper && pool && _token1 && _token0 ? (
                         <span className="font-medium">
-                          {priceUpper?.toSignificant(4)} {pool.token1.symbol}
+                          {priceUpper?.toSignificant(4)} {base?.symbol}
                         </span>
                       ) : (
                         <Skeleton.Text />
                       )}
-                      {priceUpper && pool ? (
+                      {priceUpper && pool && _token1 && _token0 ? (
                         <span className="text-sm text-gray-500">
-                          {formatUSD(fiatAmountsAsNumber[0] * (1 + maxPriceDiff / 100))} ({maxPriceDiff.toFixed(2)}%)
+                          ${(fiatAmountsAsNumber[0] * (1 + maxPriceDiff / 100)).toFixed(2)} ({maxPriceDiff.toFixed(2)}%)
                         </span>
                       ) : (
                         <Skeleton.Text />
@@ -402,7 +427,6 @@ const Position: FC = () => {
                   tokensLoading={token0Loading || token1Loading}
                   existingPosition={position}
                   tokenId={tokenId}
-                  onChange={(val, input) => onMutateRefs(val, false, input)}
                 />
               </div>
             </div>
@@ -414,7 +438,6 @@ const Position: FC = () => {
                 chainId={chainId}
                 position={position}
                 positionDetails={positionDetails}
-                onChange={(val) => onMutateRefs(val, true)}
               />
             </div>
           </div>
