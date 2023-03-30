@@ -50,7 +50,9 @@ const InfoBox: FC<InfoBoxProps> = ({ message, icon }) => {
     <div className="w-full items-center flex flex-col justify-center h-full bg-white dark:bg-white/[0.02] rounded-lg">
       {icon}
       {message && (
-        <span className="font-medium text-sm mt-5 text-center p-2.5 text-gray-600 dark:text-slate-400">{message}</span>
+        <span className="font-medium text-sm mt-5 text-center p-2.5 text-gray-600 dark:text-slate-400 text-slate-600">
+          {message}
+        </span>
       )}
     </div>
   )
@@ -155,16 +157,16 @@ export default function LiquidityChartRangeInput({
           icon={<InboxIcon width={16} stroke="currentColor" className="text-slate-200" />}
         />
       ) : isLoading ? (
-        <InfoBox icon={<Loader size={16} stroke="currentColor" className="text-slate-400" />} />
+        <InfoBox icon={<Loader size={16} stroke="currentColor" className="dark:text-slate-400 text-slate-600" />} />
       ) : error ? (
         <InfoBox
           message="Liquidity data not available."
-          icon={<StopIcon width={16} stroke="currentColor" className="text-slate-400" />}
+          icon={<StopIcon width={16} stroke="currentColor" className="dark:text-slate-400 text-slate-600" />}
         />
       ) : !formattedData || formattedData.length === 0 || !price ? (
         <InfoBox
           message="There is no liquidity data."
-          icon={<ChartBarIcon width={16} stroke="currentColor" className="text-slate-400" />}
+          icon={<ChartBarIcon width={16} stroke="currentColor" className="dark:text-slate-400 text-slate-600" />}
         />
       ) : (
         <div className="relative items-center justify-center">

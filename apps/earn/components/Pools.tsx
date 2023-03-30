@@ -1,5 +1,6 @@
 import { PlusIcon } from '@heroicons/react/solid'
-import { Button, Link, OnsenIcon } from '@sushiswap/ui'
+import { Link, OnsenIcon } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { FC } from 'react'
 import { useNetwork } from 'wagmi'
 import { Layout, PoolFilters, PoolsFiltersProvider, PoolsSection } from '../components'
@@ -23,13 +24,14 @@ export const Pools: FC<{ filters?: Partial<PoolFilters>; isReady?: boolean }> = 
                   fullWidth
                   color="blue"
                   startIcon={<PlusIcon width={16} height={16} />}
+                  size="lg"
                 >
                   New Position
                 </Button>
               </Link.Internal>
 
               <Link.External href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe">
-                <Button fullWidth color="gray" startIcon={<OnsenIcon width={16} height={16} />}>
+                <Button fullWidth color="default" size="lg" startIcon={<OnsenIcon width={16} height={16} />}>
                   Join Onsen
                 </Button>
               </Link.External>

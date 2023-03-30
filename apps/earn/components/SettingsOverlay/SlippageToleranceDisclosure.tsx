@@ -43,7 +43,11 @@ export const SlippageToleranceDisclosure: FC = () => {
                 />
               </div>
               <div className="flex gap-1">
-                <Typography variant="sm" weight={500} className="group-hover:text-slate-200 text-slate-400">
+                <Typography
+                  variant="sm"
+                  weight={500}
+                  className="group-hover:text-slate-200 dark:text-slate-400 text-slate-600"
+                >
                   {slippageToleranceType === 'auto' ? 'Auto' : `Custom (${slippageTolerance}%)`}
                 </Typography>
                 <div
@@ -92,7 +96,7 @@ export const SlippageToleranceDisclosure: FC = () => {
                           placeholder="1"
                           className={classNames(DEFAULT_INPUT_UNSTYLED, '')}
                         />
-                        <Typography variant="xs" weight={500} className="text-slate-400">
+                        <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
                           %
                         </Typography>
                       </div>

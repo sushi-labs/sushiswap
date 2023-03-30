@@ -52,7 +52,7 @@ export const SelectFeeConcentratedWidget: FC = memo(function SelectFeeWidget({})
               <span className="text-gray-900 dark:text-slate-50 font-medium flex gap-4">
                 {option.value / 10000}% Fees{' '}
               </span>
-              <span className="text-gray-500 dark:text-slate-400 text-sm">{option.subtitle}</span>
+              <span className="text-gray-500 dark:text-slate-400 text-slate-600 text-sm">{option.subtitle}</span>
             </div>
           </RadioGroup.Option>
         ))}

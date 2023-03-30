@@ -67,7 +67,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
           </Typography>
         </div>
       </Transition>
-      <Widget id="removeLiquidity" maxWidth={400} className="bg-slate-800">
+      <Widget id="removeLiquidity" maxWidth={400} className="dark:bg-slate-800 bg-white">
         <Widget.Content>
           <Disclosure defaultOpen={true}>
             {({ open }) => (
@@ -87,7 +87,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                             <ChevronDownIcon
                               width={24}
                               height={24}
-                              className="group-hover:text-slate-200 text-slate-300"
+                              className="text-gray-700 hover:text-gray-800 dark:group-hover:text-slate-200 dark:text-slate-300"
                             />
                           </div>
                         </div>
@@ -136,7 +136,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                       </div>
                       <div className="grid items-center justify-between grid-cols-3 pb-2">
                         <AppearOnMount show={Boolean(balance?.[FundSource.WALLET])}>
-                          <Typography variant="sm" weight={500} className="text-slate-300 hover:text-slate-20">
+                          <Typography variant="sm" weight={500} className="text-gray-900 dark:text-slate-300">
                             {formatUSD((value0 + value1) * (+percentage / 100))}
                           </Typography>
                         </AppearOnMount>
@@ -149,7 +149,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                             as="button"
                             variant="sm"
                             weight={500}
-                            className="truncate text-slate-300 hover:text-slate-200"
+                            className="truncate text-gray-700 hover:text-gray-800 dark:text-slate-300 dark:hover:text-slate-200"
                           >
                             Balance: {balance?.[FundSource.WALLET].toSignificant(6)}
                           </Typography>
@@ -167,35 +167,47 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                         leaveTo="transform max-h-0"
                       >
                         <div className="flex flex-col gap-3 py-3 pt-5 border-t border-slate-200/5">
-                          <Typography variant="sm" weight={400} className="pb-1 text-slate-400">
+                          <Typography variant="sm" weight={400} className="pb-1 dark:text-slate-400 text-gray-600">
                             You&apos;ll receive at least:
                           </Typography>
 
                           <div className="flex items-center justify-between">
-                            <Typography variant="sm" weight={500} className="flex items-center gap-2 text-slate-50">
+                            <Typography
+                              variant="sm"
+                              weight={500}
+                              className="flex items-center gap-2 dark:text-slate-50 text-gray-900"
+                            >
                               {token0 && <UICurrency.Icon currency={token0} width={20} height={20} />}
-                              <span className="text-slate-400">
-                                <span className="text-slate-50">{token0Minimum?.toSignificant(6)}</span>{' '}
+                              <span className="dark:text-slate-400 text-gray-600">
+                                <span className="dark:text-slate-50 text-gray-900">
+                                  {token0Minimum?.toSignificant(6)}
+                                </span>{' '}
                                 {Native.onChain(chainId).wrapped.address === token0.wrapped.address
                                   ? Native.onChain(chainId).symbol
                                   : token0Minimum?.currency.symbol}
                               </span>
                             </Typography>
-                            <Typography variant="xs" className="text-slate-400">
+                            <Typography variant="xs" className="dark:text-slate-400 text-gray-600">
                               {formatUSD(value0 * (+percentage / 100))}
                             </Typography>
                           </div>
                           <div className="flex items-center justify-between">
-                            <Typography variant="sm" weight={500} className="flex items-center gap-2 text-slate-50">
+                            <Typography
+                              variant="sm"
+                              weight={500}
+                              className="flex items-center gap-2 dark:text-slate-50 text-gray-900"
+                            >
                               {token1 && <UICurrency.Icon currency={token1} width={20} height={20} />}
-                              <span className="text-slate-400">
-                                <span className="text-slate-50">{token1Minimum?.toSignificant(6)}</span>{' '}
+                              <span className="dark:text-slate-400 text-gray-600">
+                                <span className="dark:text-slate-50 text-gray-900">
+                                  {token1Minimum?.toSignificant(6)}
+                                </span>{' '}
                                 {Native.onChain(chainId).wrapped.address === token1.wrapped.address
                                   ? Native.onChain(chainId).symbol
                                   : token1Minimum?.currency.symbol}
                               </span>
                             </Typography>
-                            <Typography variant="xs" className="text-slate-400">
+                            <Typography variant="xs" className="dark:text-slate-400 text-gray-600">
                               {formatUSD(value1 * (+percentage / 100))}
                             </Typography>
                           </div>

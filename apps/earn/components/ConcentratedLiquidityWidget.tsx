@@ -147,8 +147,8 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
           >
             <div className="bg-gray-200 dark:bg-slate-800 absolute inset-0 z-[1] rounded-xl flex items-center justify-center">
               <div className="flex-col gap-2 absolute inset-0 flex items-center justify-center text-center text-sm font-medium px-10">
-                <LockClosedIcon width={24} height={24} className="text-gray-400 dark:text-slate-400" />
-                <span className="text-slate-400">
+                <LockClosedIcon width={24} height={24} className="text-gray-400 dark:text-slate-400 text-slate-600" />
+                <span className="dark:text-slate-400 text-slate-600">
                   The market price is outside your specified price range. Single-asset deposit only.{' '}
                   <a
                     // TODO
@@ -177,7 +177,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
         </div>
         <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
           <button type="button" className="p-2 bg-gray-100 dark:bg-slate-900 rounded-full z-10">
-            <PlusIcon strokeWidth={3} className="w-4 h-4 text-gray-500 dark:text-slate-400" />
+            <PlusIcon strokeWidth={3} className="w-4 h-4 text-gray-500 dark:text-slate-400 text-slate-600" />
           </button>
         </div>
         <div className="relative">
@@ -193,8 +193,8 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
           >
             <div className="bg-gray-200 dark:bg-slate-800 absolute inset-0 z-[1] rounded-xl flex items-center justify-center">
               <div className="flex-col gap-2 absolute inset-0 flex items-center justify-center text-center text-sm font-medium px-10">
-                <LockClosedIcon width={24} height={24} className="text-gray-400 dark:text-slate-400" />
-                <span className="text-slate-400">
+                <LockClosedIcon width={24} height={24} className="text-gray-400 dark:text-slate-400 text-slate-600" />
+                <span className="dark:text-slate-400 text-slate-600">
                   The market price is outside your specified price range. Single-asset deposit only.{' '}
                   <a
                     // TODO

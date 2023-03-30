@@ -146,7 +146,7 @@ const Position: FC = () => {
           <h1 className="text-3xl font-semibold mt-2 text-gray-900 dark:text-slate-50">
             {tab === SelectedTab.IncreaseLiq ? 'Increase Liquidity' : 'Decrease Liquidity'}
           </h1>
-          <h1 className="text-xl font-medium text-gray-600 dark:text-slate-400">
+          <h1 className="text-xl font-medium text-gray-600 dark:dark:text-slate-400 text-slate-600">
             {tab === SelectedTab.IncreaseLiq
               ? "You're adding more liquidity to an existing position"
               : "You're remove liquidity from an existing position"}
@@ -209,7 +209,9 @@ const Position: FC = () => {
                 <h1 className="text-xl text-gray-900 dark:text-slate-50 font-semibold">
                   {_token0.symbol}/{_token1.symbol}
                 </h1>
-                <p className="font-medium text-gray-700 dark:text-slate-400">Concentrated • {pool.fee / 10000}%</p>
+                <p className="font-medium text-gray-700 dark:dark:text-slate-400 text-slate-600">
+                  Concentrated • {pool.fee / 10000}%
+                </p>
               </>
             ) : (
               <>

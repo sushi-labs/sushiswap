@@ -60,7 +60,7 @@ export const SelectPoolTypeWidget: FC<SelectPoolTypeWidgetProps> = memo(function
                     <StarIcon width={12} height={12} className="text-yellow" />
                   )}
                 </span>
-                <span className="text-gray-500 dark:text-slate-400 text-sm">
+                <span className="text-gray-500 dark:text-slate-400 text-slate-600 text-sm">
                   {checked && (
                     <div className="absolute right-3 bg-blue rounded-full p-0.5">
                       <CheckIcon width={12} height={12} />

@@ -41,7 +41,10 @@ export const PoolNameCellV3: FC<Row<ConcentratedLiquidityPosition>> = ({ row }) 
           {_token0?.symbol} <span className="text-gray-900 dark:text-slate-500">/</span> {_token1?.symbol}{' '}
           <div className={classNames('text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1')}></div>
         </span>
-        <span className="text-xs text-gray-600 dark:text-slate-400"> {formatNumber(row.fee / 10000)}%</span>
+        <span className="text-xs text-gray-600 dark:text-slate-400 text-slate-600">
+          {' '}
+          {formatNumber(row.fee / 10000)}%
+        </span>
       </div>
     </div>
   )

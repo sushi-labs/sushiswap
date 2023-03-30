@@ -50,7 +50,7 @@ export const PoolActionBarPositionRewards: FC<PoolActionBarPositionRewardsProps>
                     {reward?.toSignificant(6)} {rewardTokens[index].symbol}
                   </Typography>
                 </div>
-                <Typography variant="xs" weight={500} className="text-slate-400">
+                <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
                   {formatUSD(values[index])}
                 </Typography>
               </div>

@@ -69,7 +69,9 @@ export function Add() {
             <ArrowLeftIcon width={24} className="text-slate-50" />
           </Link>
           <h1 className="text-3xl font-medium mt-2">Add Liquidity</h1>
-          <h1 className="text-lg text-gray-600 dark:text-slate-400">Create a new liquidity position</h1>
+          <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
+            Create a new liquidity position
+          </h1>
         </div>
         <div className="h-0.5 w-full bg-gray-900/5 dark:bg-slate-200/5 my-10" />
         <div className="flex justify-center">
@@ -141,7 +143,9 @@ const _Add: FC = () => {
                   <h1 className="text-xl text-gray-900 dark:text-slate-50 font-semibold">
                     {token0.symbol}/{token1.symbol}
                   </h1>
-                  <p className="font-medium text-gray-700 dark:text-slate-400">Concentrated • {feeAmount / 10000}%</p>
+                  <p className="font-medium text-gray-700 dark:dark:text-slate-400 text-slate-600">
+                    Concentrated • {feeAmount / 10000}%
+                  </p>
                 </>
               ) : (
                 <>

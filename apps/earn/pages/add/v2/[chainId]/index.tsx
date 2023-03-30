@@ -107,7 +107,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
             <ArrowLeftIcon width={24} className="text-slate-50" />
           </Link>
           <h1 className="text-3xl font-medium mt-2">Add Liquidity</h1>
-          <h1 className="text-lg text-slate-400">Create a new liquidity position</h1>
+          <h1 className="text-lg dark:text-slate-400 text-slate-600">Create a new liquidity position</h1>
           <div className="h-0.5 w-full bg-slate-200/5" />
         </div>
         <div className="grid grid-cols-1 sm:w-[340px] md:w-[572px] gap-10">
@@ -323,7 +323,7 @@ const _Add: FC<AddProps> = ({
           />
           <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
             <button type="button" className="p-2 bg-gray-100 dark:bg-slate-900 rounded-full z-10">
-              <PlusIcon strokeWidth={3} className="w-4 h-4 text-gray-500 dark:text-slate-400" />
+              <PlusIcon strokeWidth={3} className="w-4 h-4 text-gray-500 dark:dark:text-slate-400 text-slate-600" />
             </button>
           </div>
           <Web3Input.Currency

@@ -262,7 +262,7 @@ export const PriceBlock: FC<PriceBlockProps> = ({
         'flex flex-col gap-2 w-full bg-white dark:bg-white/[0.04] rounded-lg p-3'
       )}
     >
-      <p className="font-medium text-sm text-gray-600 dark:text-slate-400">{label}</p>
+      <p className="font-medium text-sm text-gray-600 dark:text-slate-400 text-slate-600">{label}</p>
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <Input.Numeric

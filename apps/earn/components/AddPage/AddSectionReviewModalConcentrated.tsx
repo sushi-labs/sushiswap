@@ -113,7 +113,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                 >
                   <div className="flex flex-col gap-1">
                     {leftPrice?.toSignificant(6)} {token1?.symbol}
-                    <span className="text-xs text-gray-500 dark:text-slate-400">
+                    <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
                       ${(fiatAmountsAsNumber[0] * (1 + +(minPriceDiff || 0) / 100)).toFixed(2)} (
                       {minPriceDiff.toFixed(2)}%)
                     </span>
@@ -122,7 +122,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                 <List.KeyValue title="Market Price" subtitle={`Current price as determined by the ratio of the pool`}>
                   <div className="flex flex-col gap-1">
                     {midPrice?.toSignificant(6)} {token1?.symbol}
-                    <span className="text-xs text-gray-500 dark:text-slate-400">
+                    <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
                       ${fiatAmountsAsNumber[0].toFixed(2)}
                     </span>
                   </div>
@@ -133,7 +133,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                 >
                   <div className="flex flex-col gap-1">
                     {rightPrice?.toSignificant(6)} {token1?.symbol}
-                    <span className="text-xs text-gray-500 dark:text-slate-400">
+                    <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
                       ${(fiatAmountsAsNumber[0] * (1 + +(maxPriceDiff || 0) / 100)).toFixed(2)} (
                       {maxPriceDiff.toFixed(2)}%)
                     </span>{' '}
