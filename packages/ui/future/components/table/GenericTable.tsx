@@ -16,6 +16,7 @@ interface GenericTableProps<C> {
   placeholder: ReactNode
   pageSize: number
   linkFormatter?(row: C): string
+  loadingOverlay?: boolean
 }
 
 declare module '@tanstack/react-table' {
@@ -32,6 +33,7 @@ export const GenericTable = <T extends { id: string }>({
   placeholder,
   pageSize,
   linkFormatter,
+  loadingOverlay = true,
 }: GenericTableProps<T>) => {
   const [showOverlay, setShowOverlay] = useState(false)
   const [popupInvisible, setPopupInvisible] = useState(false)
@@ -39,7 +41,7 @@ export const GenericTable = <T extends { id: string }>({
 
   return (
     <>
-      <LoadingOverlay show={showOverlay} />
+      {loadingOverlay && <LoadingOverlay show={showOverlay} />}
       <Table.container>
         <Table.table style={{ minHeight: (pageSize + 1) * 52 }}>
           <Table.thead>
@@ -110,7 +112,9 @@ export const GenericTable = <T extends { id: string }>({
                           onClick={(e) => {
                             if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
                               setPopupInvisible(true)
-                              setTimeout(() => setShowOverlay(true), 250)
+                              if (loadingOverlay) {
+                                setTimeout(() => setShowOverlay(true), 250)
+                              }
                             }
                           }}
                           className="cursor-pointer"

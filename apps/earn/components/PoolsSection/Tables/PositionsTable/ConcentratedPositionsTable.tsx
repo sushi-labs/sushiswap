@@ -91,6 +91,7 @@ export const ConcentratedPositionsTable: FC = () => {
               placeholder="No positions found"
               pageSize={Math.max(positions?.length || 0, 5)}
               linkFormatter={rowLink}
+              loadingOverlay={false}
             />
           </Collapsible>
         </>
