@@ -6,7 +6,6 @@ import { useAccount, UserRejectedRequestError } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
-import { useConcentratedLiquidityURLState } from '../ConcentratedLiquidityURLStateProvider'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 import { useV3NFTPositionManagerContract } from '@sushiswap/wagmi/hooks/useNFTPositionManagerContract'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
@@ -17,6 +16,7 @@ import {
 import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
+import { useEffectDebugger } from '@sushiswap/hooks'
 
 interface AddSectionConfirmModalConcentratedProps
   extends Pick<ReturnType<typeof useConcentratedDerivedMintInfo>, 'noLiquidity' | 'position'> {
@@ -55,7 +55,6 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
   const { address } = useAccount()
 
   const { data: deadline } = useTransactionDeadline({ chainId })
-  const positionManager = useV3NFTPositionManagerContract(chainId)
   const [slippageTolerance] = useSlippageTolerance()
   const hasExistingPosition = !!existingPosition
 
@@ -88,7 +87,7 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
 
   const prepare = useCallback(
     async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!chainId || !address || !positionManager || !token0 || !token1) return
+      if (!chainId || !address || !token0 || !token1) return
 
       if (position && deadline) {
         const useNative = token0.isNative ? token0 : token1.isNative ? token1 : undefined
@@ -109,25 +108,14 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
               })
 
         setRequest({
-          to: positionManager.address,
+          // TODO make dynamic
+          to: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
           data: calldata,
           value,
         })
       }
     },
-    [
-      address,
-      chainId,
-      deadline,
-      hasExistingPosition,
-      noLiquidity,
-      position,
-      positionManager,
-      slippagePercent,
-      token0,
-      token1,
-      tokenId,
-    ]
+    [address, chainId, deadline, hasExistingPosition, noLiquidity, position, slippagePercent, token0, token1, tokenId]
   )
 
   const onComplete = useCallback(() => {

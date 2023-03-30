@@ -1,0 +1,229 @@
+import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { classNames } from '@sushiswap/ui'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { ChainId } from '@sushiswap/chain'
+import { ConcentratedLiquidityPosition, useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { List } from '@sushiswap/ui/future/components/list/List'
+import { Currency } from '@sushiswap/ui/future/components/currency'
+import { NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
+import { SendTransactionResult } from 'wagmi/actions'
+import { createToast } from '@sushiswap/ui/future/components/toast'
+import { TransactionRequest } from '@ethersproject/providers'
+import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { useSlippageTolerance } from '../lib/hooks/useSlippageTolerance'
+import { Amount, Native, Type } from '@sushiswap/currency'
+import { useSendTransaction } from '@sushiswap/wagmi'
+import { ConfirmationDialogState } from '@sushiswap/ui/dialog/ConfirmationDialog'
+
+interface ConcentratedLiquidityRemoveWidget {
+  token0: Type | undefined
+  token1: Type | undefined
+  account: string | undefined
+  chainId: ChainId
+  positionDetails: ConcentratedLiquidityPosition | undefined
+  position: Position | undefined
+  onChange?(val: string): void
+}
+
+export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWidget> = ({
+  token0,
+  token1,
+  account,
+  onChange,
+  chainId,
+  position,
+  positionDetails,
+}) => {
+  const [value, setValue] = useState<string>('0')
+  const [slippageTolerance] = useSlippageTolerance()
+  const { data: deadline } = useTransactionDeadline({ chainId })
+
+  const slippagePercent = useMemo(() => {
+    return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
+  }, [slippageTolerance])
+
+  const _onChange = useCallback(
+    (val: string) => {
+      setValue(val)
+      if (onChange) {
+        onChange(val)
+      }
+    },
+    [onChange]
+  )
+
+  const onSettled = useCallback(
+    (data: SendTransactionResult | undefined) => {
+      if (!data || !position) return
+
+      const ts = new Date().getTime()
+      void createToast({
+        account,
+        type: 'mint',
+        chainId,
+        txHash: data.hash,
+        promise: data.wait(),
+        summary: {
+          pending: `Removing liquidity from the ${position.amount0.currency.symbol}/${position.amount1.currency.symbol} pair`,
+          completed: `Successfully removed liquidity from the ${position.amount0.currency.symbol}/${position.amount1.currency.symbol} pair`,
+          failed: 'Something went wrong when removing liquidity',
+        },
+        timestamp: ts,
+        groupTimestamp: ts,
+      })
+    },
+    [position, account, chainId]
+  )
+
+  const prepare = useCallback(
+    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
+      const liquidityPercentage = new Percent(value, 100)
+      const discountedAmount0 = position ? liquidityPercentage.multiply(position.amount0.quotient).quotient : undefined
+      const discountedAmount1 = position ? liquidityPercentage.multiply(position.amount1.quotient).quotient : undefined
+
+      const liquidityValue0 =
+        token0 && discountedAmount0
+          ? Amount.fromRawAmount(
+              token0.wrapped.address === Native.onChain(chainId).wrapped.address ? Native.onChain(chainId) : token0,
+              discountedAmount0
+            )
+          : undefined
+      const liquidityValue1 =
+        token1 && discountedAmount1
+          ? Amount.fromRawAmount(
+              token1.wrapped.address === Native.onChain(chainId).wrapped.address ? Native.onChain(chainId) : token1,
+              discountedAmount1
+            )
+          : undefined
+
+      if (
+        token0 &&
+        token1 &&
+        position &&
+        account &&
+        positionDetails &&
+        deadline &&
+        liquidityValue0 &&
+        liquidityValue1 &&
+        liquidityPercentage.greaterThan(ZERO)
+      ) {
+        const feeValue0 = positionDetails.fees
+          ? Amount.fromRawAmount(token0, JSBI.BigInt(positionDetails.fees[0]))
+          : undefined
+        const feeValue1 = positionDetails.fees
+          ? Amount.fromRawAmount(token0, JSBI.BigInt(positionDetails.fees[1]))
+          : undefined
+
+        const { calldata, value: _value } = NonfungiblePositionManager.removeCallParameters(position, {
+          tokenId: positionDetails.tokenId.toString(),
+          liquidityPercentage,
+          slippageTolerance: slippagePercent,
+          deadline: deadline.toString(),
+          collectOptions: {
+            expectedCurrencyOwed0: feeValue0 ?? Amount.fromRawAmount(liquidityValue0.currency, 0),
+            expectedCurrencyOwed1: feeValue1 ?? Amount.fromRawAmount(liquidityValue1.currency, 0),
+            recipient: account,
+          },
+        })
+
+        setRequest({
+          // TODO make dynamic
+          to: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
+          data: calldata,
+          value: _value,
+        })
+      }
+    },
+    [account, chainId, deadline, position, positionDetails, slippagePercent, token0, token1, value]
+  )
+
+  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+    chainId,
+    prepare,
+    onSettled,
+    enabled: +value > 0,
+  })
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
+        <List.Label>Amount</List.Label>
+        <div className="rounded-xl bg-white dark:bg-slate-800 pb-2 p-3 overflow-hidden space-y-2">
+          <div className="flex justify-between gap-4">
+            <div>
+              <h1 className="text-3xl dark:text-slate-50 text-gray-900 py-1">{value}%</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="outlined" color="blue" size="sm" onClick={() => _onChange('25')}>
+                25%
+              </Button>
+              <Button variant="outlined" size="sm" onClick={() => _onChange('50')}>
+                50%
+              </Button>
+              <Button variant="outlined" size="sm" onClick={() => _onChange('75')}>
+                75%
+              </Button>
+              <Button variant="outlined" size="sm" onClick={() => _onChange('100')}>
+                Max
+              </Button>
+            </div>
+          </div>
+          <div className="pb-3 pt-2 px-1">
+            <input
+              value={value}
+              onChange={(e) => _onChange(e.target.value)}
+              type="range"
+              min="1"
+              max="100"
+              className="w-full h-1 bg-gray-200 rounded-lg range-lg appearance-none cursor-pointer dark:bg-gray-700"
+            />
+          </div>
+        </div>
+      </div>
+      <List>
+        <List.Label>{"You'll"} Receive</List.Label>
+        <List.Control>
+          {position?.amount0 ? (
+            <List.KeyValue title={`${position?.amount0.currency.symbol}`}>
+              <div className="flex items-center gap-2">
+                <Currency.Icon currency={position.amount0.currency} width={18} height={18} />
+                <span>
+                  {position.amount0.multiply(value).divide(100).toSignificant(6)} {position.amount0.currency.symbol}
+                </span>
+              </div>
+            </List.KeyValue>
+          ) : (
+            <List.KeyValue skeleton />
+          )}
+          {position?.amount1 ? (
+            <List.KeyValue title={`${position?.amount1.currency.symbol}`}>
+              <div className="flex items-center gap-2">
+                <Currency.Icon currency={position.amount1.currency} width={18} height={18} />
+                <span>
+                  {position.amount1.multiply(value).divide(100).toSignificant(6)} {position.amount1.currency.symbol}
+                </span>
+              </div>
+            </List.KeyValue>
+          ) : (
+            <List.KeyValue skeleton />
+          )}
+        </List.Control>
+      </List>
+
+      <Checker.Connect fullWidth size="xl">
+        <Checker.Network fullWidth size="xl" chainId={chainId}>
+          <Button
+            loading={isWritePending}
+            disabled={+value === 0}
+            fullWidth
+            onClick={() => sendTransaction?.()}
+            size="xl"
+          >
+            {+value === 0 ? 'Enter Amount' : 'Remove'}
+          </Button>
+        </Checker.Network>
+      </Checker.Connect>
+    </div>
+  )
+}

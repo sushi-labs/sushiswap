@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { Layout } from '../../../components'
 import Link from 'next/link'
@@ -16,7 +16,7 @@ import { useToken } from '@sushiswap/react-query'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { NetworkIcon } from '@sushiswap/ui'
+import { classNames, NetworkIcon } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { tryParseAmount } from '@sushiswap/currency'
 import { useTokenAmountDollarValues } from '../../../lib/hooks'
@@ -27,6 +27,7 @@ import { useAccount } from 'wagmi'
 import { ConcentratedLiquidityProvider } from '../../../components/ConcentratedLiquidityProvider'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { RadioGroup } from '@headlessui/react'
+import { ConcentratedLiquidityRemoveWidget } from '../../../components/ConcentratedLiquidityRemoveWidget'
 
 const PositionPage = () => {
   return (
@@ -60,6 +61,8 @@ const Position: FC = () => {
   const { address } = useAccount()
   const { query } = useRouter()
   const [tab, setTab] = useState<SelectedTab>(SelectedTab.Analytics)
+  const mutateAmount0Ref = useRef<HTMLSpanElement | null>(null)
+  const mutateAmount1Ref = useRef<HTMLSpanElement | null>(null)
 
   const {
     tokenId: [chainId, tokenId],
@@ -99,6 +102,40 @@ const Position: FC = () => {
     return [((min - cur) / cur) * 100, ((max - cur) / cur) * 100]
   }, [pool, priceLower, priceUpper, token0])
 
+  const onMutateRefs = useCallback(
+    (val: string, remove: boolean, input?: 'a' | 'b') => {
+      if (mutateAmount0Ref.current && mutateAmount1Ref.current && position) {
+        if (input === 'a' || input === undefined) {
+          mutateAmount0Ref.current.className = remove ? 'text-blue' : 'text-green'
+          mutateAmount0Ref.current.innerHTML =
+            Number(val) > 0
+              ? `${remove ? '-' : '+'}${remove ? position.amount0.multiply(val).divide(100).toSignificant(6) : val} ${
+                  position.amount0.currency.symbol
+                }`
+              : ''
+        }
+
+        if (input === 'b' || input === undefined) {
+          mutateAmount1Ref.current.className = remove ? 'text-blue' : 'text-green'
+          mutateAmount1Ref.current.innerHTML =
+            Number(val) > 0
+              ? `${remove ? '-' : '+'}${remove ? position.amount1.multiply(val).divide(100).toSignificant(6) : val} ${
+                  position.amount1.currency.symbol
+                }`
+              : ''
+        }
+      }
+    },
+    [position]
+  )
+
+  useEffect(() => {
+    if (mutateAmount0Ref.current && mutateAmount1Ref.current) {
+      mutateAmount0Ref.current.innerHTML = ''
+      mutateAmount1Ref.current.innerHTML = ''
+    }
+  }, [tab])
+
   return (
     <SWRConfig>
       <Layout>
@@ -110,16 +147,16 @@ const Position: FC = () => {
           <h1 className="text-xl font-medium text-gray-600 dark:text-slate-400">
             You{"'"}re adding more liquidity to an existing position
           </h1>
-          <RadioGroup value={tab} onChange={setTab} className="flex gap-2 mt-3">
-            <RadioGroup.Option
-              value={SelectedTab.Analytics}
-              as={Button}
-              startIcon={<ChartBarIcon width={18} height={18} />}
-              variant={tab === SelectedTab.Analytics ? 'outlined' : 'empty'}
-              color={tab === SelectedTab.Analytics ? 'blue' : 'default'}
-            >
-              Analytics
-            </RadioGroup.Option>
+          <RadioGroup value={tab} onChange={setTab} className="flex gap-2 mt-3 flex-wrap">
+            {/*<RadioGroup.Option*/}
+            {/*  value={SelectedTab.Analytics}*/}
+            {/*  as={Button}*/}
+            {/*  startIcon={<ChartBarIcon width={18} height={18} />}*/}
+            {/*  variant={tab === SelectedTab.Analytics ? 'outlined' : 'empty'}*/}
+            {/*  color={tab === SelectedTab.Analytics ? 'blue' : 'default'}*/}
+            {/*>*/}
+            {/*  Analytics*/}
+            {/*</RadioGroup.Option>*/}
             <RadioGroup.Option
               value={SelectedTab.IncreaseLiq}
               as={Button}
@@ -186,9 +223,12 @@ const Position: FC = () => {
               <List.Control>
                 {position?.amount0 ? (
                   <List.KeyValue title={`${position?.amount0.currency.symbol}`}>
-                    <div className="flex items-center gap-2">
-                      <Currency.Icon currency={position.amount0.currency} width={18} height={18} />
-                      {position.amount0.toSignificant(6)} {position.amount0.currency.symbol}
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        <Currency.Icon currency={position.amount0.currency} width={18} height={18} />
+                        {position.amount0.toSignificant(6)} {position.amount0.currency.symbol}
+                      </div>
+                      <span ref={mutateAmount0Ref}></span>
                     </div>
                   </List.KeyValue>
                 ) : (
@@ -196,9 +236,12 @@ const Position: FC = () => {
                 )}
                 {position?.amount1 ? (
                   <List.KeyValue title={`${position?.amount1.currency.symbol}`}>
-                    <div className="flex items-center gap-2">
-                      <Currency.Icon currency={position.amount1.currency} width={18} height={18} />
-                      {position.amount1.toSignificant(6)} {position.amount1.currency.symbol}
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        <Currency.Icon currency={position.amount1.currency} width={18} height={18} />
+                        {position.amount1.toSignificant(6)} {position.amount1.currency.symbol}
+                      </div>
+                      <span ref={mutateAmount1Ref}></span>
                     </div>
                   </List.KeyValue>
                 ) : (
@@ -276,24 +319,36 @@ const Position: FC = () => {
               </List.Control>
             </List>
           </div>
-          <div className="flex flex-col gap-10 w-full mt-10">
+          <div className="flex flex-col gap-10 w-full">
             <div className={tab === SelectedTab.Analytics ? 'block' : 'hidden'}>
               <h1 className="text-5xl">Analytics Here</h1>
             </div>
             <div className={tab === SelectedTab.IncreaseLiq ? 'block' : 'hidden'}>
-              <ConcentratedLiquidityWidget
-                chainId={chainId}
-                account={address}
+              <div className="flex flex-col gap-3 pt-3">
+                <List.Label>Amount</List.Label>
+                <ConcentratedLiquidityWidget
+                  chainId={chainId}
+                  account={address}
+                  token0={token0}
+                  token1={token1}
+                  feeAmount={positionDetails?.fee}
+                  tokensLoading={token0Loading || token1Loading}
+                  existingPosition={position}
+                  tokenId={tokenId}
+                  onChange={(val, input) => onMutateRefs(val, false, input)}
+                />
+              </div>
+            </div>
+            <div className={classNames('pt-3', tab === SelectedTab.DecreaseLiq ? 'block' : 'hidden')}>
+              <ConcentratedLiquidityRemoveWidget
                 token0={token0}
                 token1={token1}
-                feeAmount={positionDetails?.fee}
-                tokensLoading={token0Loading || token1Loading}
-                existingPosition={position}
-                tokenId={tokenId}
+                account={address}
+                chainId={chainId}
+                position={position}
+                positionDetails={positionDetails}
+                onChange={(val) => onMutateRefs(val, true)}
               />
-            </div>
-            <div className={tab === SelectedTab.DecreaseLiq ? 'block' : 'hidden'}>
-              <h1 className="text-5xl">Decrease liq here</h1>
             </div>
           </div>
         </div>

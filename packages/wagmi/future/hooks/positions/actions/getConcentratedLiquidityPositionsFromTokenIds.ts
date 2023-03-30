@@ -2,13 +2,14 @@ import { BigNumber } from 'ethers'
 import { readContracts } from 'wagmi'
 import { getV3NFTPositionManagerContract } from '../../../../hooks/useNFTPositionManagerContract'
 import { ChainId } from '@sushiswap/chain'
-import { ConcentratedLiquidityPositionInfo } from '../types'
+import { ConcentratedLiquidityPosition } from '../types'
+import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
 
 export const getConcentratedLiquidityPositionsFromTokenIds = async ({
   tokenIds,
 }: {
   tokenIds: { chainId: ChainId; tokenId: BigNumber }[]
-}): Promise<ConcentratedLiquidityPositionInfo[]> => {
+}): Promise<ConcentratedLiquidityPosition[]> => {
   const results = await readContracts({
     contracts: tokenIds.map(
       (el) =>
@@ -97,6 +98,8 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
     ),
   })
 
+  const fees = await getConcentratedLiquidityPositionFees({ tokenIds })
+
   return results.map((call, i) => {
     const tokenId = tokenIds[i].tokenId
     const result = call
@@ -105,6 +108,7 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
       chainId: tokenIds[i].chainId,
       tokenId,
       fee: result.fee,
+      fees: fees[i],
       feeGrowthInside0LastX128: result.feeGrowthInside0LastX128,
       feeGrowthInside1LastX128: result.feeGrowthInside1LastX128,
       liquidity: result.liquidity,

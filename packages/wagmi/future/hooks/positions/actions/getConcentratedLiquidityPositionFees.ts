@@ -3,19 +3,17 @@ import { getV3NFTPositionManagerContract } from '../../../../hooks/useNFTPositio
 import { ChainId } from '@sushiswap/chain'
 import { getContract } from 'wagmi/actions'
 import { getProvider } from '../../../../provider'
+import { getConcentratedPositionOwners } from '../../pools/actions/getConcentratedPositionOwner'
 
 const MAX_UINT128 = BigNumber.from(2).pow(128).sub(1)
 
 export const getConcentratedLiquidityPositionFees = async ({
-  account,
   tokenIds,
 }: {
-  account: `0x${string}` | undefined
   tokenIds: { chainId: ChainId; tokenId: BigNumber }[]
 }) => {
-  if (!account) return undefined
-
-  const promises = tokenIds.map(async (el) => {
+  const owners = await getConcentratedPositionOwners({ tokenIds })
+  const promises = tokenIds.map(async (el, i) => {
     const contract = getContract({
       address: getV3NFTPositionManagerContract(el.chainId).address,
       abi: [
@@ -72,11 +70,11 @@ export const getConcentratedLiquidityPositionFees = async ({
     const result = await contract.callStatic.collect(
       {
         tokenId: el.tokenId,
-        recipient: account,
+        recipient: owners[i],
         amount0Max: MAX_UINT128,
         amount1Max: MAX_UINT128,
       },
-      { from: account }
+      { from: owners[i] }
     )
 
     if (result) {

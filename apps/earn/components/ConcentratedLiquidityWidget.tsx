@@ -1,5 +1,5 @@
 import React, { FC, Fragment, useCallback, useMemo } from 'react'
-import { Button, classNames } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { Transition } from '@headlessui/react'
 import { LockClosedIcon, PlusIcon } from '@heroicons/react/solid'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
@@ -15,6 +15,7 @@ import { ChainId } from '@sushiswap/chain'
 import { FeeAmount, Position } from '@sushiswap/v3-sdk'
 import { Type } from '@sushiswap/currency'
 import { useConcentratedPositionOwner } from '@sushiswap/wagmi/future/hooks/positions/hooks/useConcentratedPositionOwner'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 interface ConcentratedLiquidityWidget {
   chainId: ChainId
@@ -27,6 +28,7 @@ interface ConcentratedLiquidityWidget {
   tokensLoading: boolean
   tokenId: number | string | undefined
   existingPosition: Position | undefined
+  onChange?(val: string, input: 'a' | 'b'): void
 }
 
 export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
@@ -40,6 +42,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
   tokensLoading,
   tokenId,
   existingPosition,
+  onChange,
 }) => {
   const { onFieldAInput, onFieldBInput } = useConcentratedMintActionHandlers()
   const { independentField, typedValue } = useConcentratedMintState()
@@ -76,8 +79,26 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
     [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
   }
 
-  const _onFieldAInput = useCallback((val: string) => onFieldAInput(val, noLiquidity), [noLiquidity, onFieldAInput])
-  const _onFieldBInput = useCallback((val: string) => onFieldBInput(val, noLiquidity), [noLiquidity, onFieldBInput])
+  const _onFieldAInput = useCallback(
+    (val: string) => {
+      onFieldAInput(val, noLiquidity)
+      if (onChange) {
+        onChange(val, 'a')
+      }
+    },
+    [noLiquidity, onChange, onFieldAInput]
+  )
+
+  const _onFieldBInput = useCallback(
+    (val: string) => {
+      onFieldBInput(val, noLiquidity)
+      if (onChange) {
+        onChange(val, 'b')
+      }
+    },
+    [noLiquidity, onChange, onFieldBInput]
+  )
+
   const amounts = useMemo(() => {
     const amounts = []
     if (!depositADisabled) amounts.push(parsedAmounts[Field.CURRENCY_A])
@@ -236,7 +257,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                     existingPosition={existingPosition}
                   >
                     {({ setOpen }) => (
-                      <Button fullWidth onClick={() => setOpen(true)} size="md">
+                      <Button fullWidth onClick={() => setOpen(true)} size="xl">
                         Preview
                       </Button>
                     )}

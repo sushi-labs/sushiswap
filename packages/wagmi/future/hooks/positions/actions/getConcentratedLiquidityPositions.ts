@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { getV3NFTPositionManagerContract } from '../../../../hooks/useNFTPositionManagerContract'
-import { Address, readContracts } from 'wagmi'
+import { readContracts } from 'wagmi'
 import { getConcentratedLiquidityPositionsFromTokenIds } from './getConcentratedLiquidityPositionsFromTokenIds'
 import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
 import { ConcentratedLiquidityPosition } from '../types'
@@ -107,7 +107,8 @@ export const getConcentratedLiquidityPositions = async ({
   }))
 
   const positions = await getConcentratedLiquidityPositionsFromTokenIds({ tokenIds })
-  const fees = await getConcentratedLiquidityPositionFees({ account, tokenIds })
+  const fees = await getConcentratedLiquidityPositionFees({ tokenIds })
+
   return positions.map((el, i) => ({
     ...el,
     fees: fees ? fees[i] : undefined,

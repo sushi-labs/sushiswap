@@ -10,7 +10,7 @@ export interface ConcentratedLiquidityPosition {
   token0: string
   token1: string
   fee: number
-  fees: [BigNumber, BigNumber] | undefined
+  fees: BigNumber[] | undefined
   tickLower: number
   tickUpper: number
   liquidity: BigNumber
@@ -19,5 +19,3 @@ export interface ConcentratedLiquidityPosition {
   tokensOwed0: BigNumber
   tokensOwed1: BigNumber
 }
-
-export type ConcentratedLiquidityPositionInfo = Omit<ConcentratedLiquidityPosition, 'fees'>
