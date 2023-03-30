@@ -34,7 +34,6 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
           return <>{children}</>
         }
 
-        console.log(approvalState)
         return (
           <Button
             as={as}
