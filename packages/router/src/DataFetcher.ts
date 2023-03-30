@@ -35,9 +35,11 @@ export class DataFetcher {
   poolCodes: Map<LiquidityProviders, Map<string, PoolCode>> = new Map()
   stateId = 0
   web3Client: PublicClient
-  databaseClient: PrismaClient
+  databaseClient: PrismaClient | undefined = undefined
+  
+  constructor(chainId: ChainId, web3Client: PublicClient)
 
-  constructor(chainId: ChainId, web3Client: PublicClient, databaseClient: PrismaClient) {
+  constructor(chainId: ChainId, web3Client: PublicClient, databaseClient?: PrismaClient) {
     this.chainId = chainId
     this.web3Client = web3Client
     this.databaseClient = databaseClient
@@ -67,18 +69,18 @@ export class DataFetcher {
       }
     }
 
-    if (
-      this._providerIsIncluded(LiquidityProviders.Trident, providers) &&
-      isBentoBoxV1ChainId(this.chainId) &&
-      (isConstantProductPoolFactoryChainId(this.chainId) || isStablePoolFactoryChainId(this.chainId))
-    ) {
-      try {
-        const provider = new TridentProvider(this.chainId, this.web3Client, this.databaseClient)
-        this.providers.push(provider)
-      } catch (e: any) {
-        // console.warn(e.message)
-      }
-    }
+    // if (
+    //   this._providerIsIncluded(LiquidityProviders.Trident, providers) &&
+    //   isBentoBoxV1ChainId(this.chainId) &&
+    //   (isConstantProductPoolFactoryChainId(this.chainId) || isStablePoolFactoryChainId(this.chainId))
+    // ) {
+    //   try {
+    //     const provider = new TridentProvider(this.chainId, this.web3Client, this.databaseClient)
+    //     this.providers.push(provider)
+    //   } catch (e: any) {
+    //     // console.warn(e.message)
+    //   }
+    // }
 
     // if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers)) {
     //   try {

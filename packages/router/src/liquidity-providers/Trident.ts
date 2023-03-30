@@ -17,6 +17,7 @@ import { discoverNewPools, filterOnDemandPools, filterTopPools, getAllPools, map
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
 import { BentoPoolCode } from '../pools/BentoPool'
 import type { PoolCode } from '../pools/PoolCode'
+import { TridentStaticPool, TridentStaticPoolFetcher } from '../static-pool-fetcher/Trident'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
 export function convertToNumbers(arr: BigNumber[]): (number | undefined)[] {
@@ -73,7 +74,7 @@ export class TridentProvider extends LiquidityProvider {
   blockListener?: () => void
   unwatchBlockNumber?: () => void
 
-  databaseClient: PrismaClient
+  databaseClient: PrismaClient | undefined
 
   constructor(
     chainId: BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId,
@@ -129,11 +130,14 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   private async getInitialPools(): Promise<Map<string, PoolResponse2>> {
+    if (this.databaseClient) {
     const pools = await getAllPools(this.databaseClient, this.chainId, 'SushiSwap', 'TRIDENT', [
       'CONSTANT_PRODUCT_POOL',
       'STABLE_POOL',
     ])
     return pools
+    }
+    return new Map()
   }
 
   async initPools(pools: PoolResponse2[]): Promise<void> {
@@ -496,20 +500,29 @@ export class TridentProvider extends LiquidityProvider {
       this.ON_DEMAND_POOL_SIZE
     )
 
-    if (pools.length === 0) {
-      return
-    }
+    
+
+    // if (pools.length === 0) {
+    //   // pools = 
+    //   // return
+    // }
 
     this.poolsByTrade.set(
       this.getTradeId(t0, t1),
       pools.map((pool) => pool.address)
     )
+    const [ onDemandClassicPools, onDemandStablePools ] = pools.length > 0 ? [pools.filter(
+      (p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.topClassicPools.has(p.address)),
+      pools.filter((p) => p.type === 'STABLE_POOL' && this.topStablePools.has(p.address))
+    ] : await TridentStaticPoolFetcher.getStaticPools(this.client, this.chainId, t0, t1)
 
-    const onDemandClassicPools = pools.filter(
-      (p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.topClassicPools.has(p.address)
-    )
+    // await TridentStaticPoolFetcher.getStaticPools(this.client, this.chainId, t0, t1)
 
-    const onDemandStablePools = pools.filter((p) => p.type === 'STABLE_POOL' && this.topStablePools.has(p.address))
+    // const onDemandClassicPools = pools.filter(
+    //   (p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.topClassicPools.has(p.address)
+    // )
+
+    // const onDemandStablePools = pools.filter((p) => p.type === 'STABLE_POOL' && this.topStablePools.has(p.address))
     const validUntilTimestamp = getUnixTime(add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME_IN_SECONDS }))
 
     const sortedTokens = this.poolResponseToSortedTokens(pools)
@@ -541,8 +554,8 @@ export class TridentProvider extends LiquidityProvider {
       const existingPool = this.onDemandClassicPools.get(pr.address)
       if (existingPool === undefined) {
         const tokens = [
-          convertTokenToBento(mapToken(this.chainId, pr.token0)),
-          convertTokenToBento(mapToken(this.chainId, pr.token1)),
+          convertTokenToBento(pr.token0),
+          convertTokenToBento(pr.token1 as RToken),
         ]
         const rPool = new ConstantProductRPool(
           pr.address,
@@ -761,6 +774,10 @@ export class TridentProvider extends LiquidityProvider {
 
   private async discoverNewPools() {
     if (this.discoverNewPoolsTimestamp > getUnixTime(Date.now())) {
+      return
+    }
+
+    if (!this.databaseClient) {
       return
     }
 
