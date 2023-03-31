@@ -1,5 +1,4 @@
-import { RadioGroup } from '@headlessui/react'
-import { MinusIcon, PlusIcon } from '@heroicons/react/solid'
+import { MinusIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/react/solid'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
@@ -16,11 +15,9 @@ import { DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui/future/components/i
 import { useConcentratedLiquidityURLState } from '../ConcentratedLiquidityURLStateProvider'
 import { useAccount } from 'wagmi'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
-import { ChainId } from '@sushiswap/chain'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { List } from '@sushiswap/ui/currency/List'
-import { getPriceOrderingFromPositionForUI } from '../../lib/functions'
 import { useIsMounted } from '@sushiswap/hooks'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 
 enum ChartType {
   Liquidity = 'Liquidity',
@@ -37,16 +34,18 @@ enum Range {
 
 export const SelectPricesWidget: FC = ({}) => {
   const { address } = useAccount()
+  const [invert, setInvert] = useState(false)
   const { chainId, token0, token1, feeAmount, switchTokens } = useConcentratedLiquidityURLState()
-  const { price, invertPrice, pricesAtTicks, ticks, ticksAtLimit, pool, noLiquidity } = useConcentratedDerivedMintInfo({
-    chainId,
-    account: address,
-    token0,
-    token1,
-    baseToken: token0,
-    feeAmount,
-    existingPosition: undefined,
-  })
+  const { price, invertPrice, pricesAtTicks, ticks, ticksAtLimit, pool, noLiquidity, isLoading } =
+    useConcentratedDerivedMintInfo({
+      chainId,
+      account: address,
+      token0,
+      token1,
+      baseToken: token0,
+      feeAmount,
+      existingPosition: undefined,
+    })
 
   const { onLeftRangeInput, onRightRangeInput } = useConcentratedMintActionHandlers()
 
@@ -84,19 +83,40 @@ export const SelectPricesWidget: FC = ({}) => {
       }
     >
       <div>
-        <LiquidityChartRangeInput
-          chainId={chainId}
-          currencyA={token0}
-          currencyB={token1}
-          feeAmount={feeAmount}
-          ticksAtLimit={ticksAtLimit}
-          price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
-          priceLower={priceLower}
-          priceUpper={priceUpper}
-          onLeftRangeInput={onLeftRangeInput}
-          onRightRangeInput={onRightRangeInput}
-          interactive={!hasExistingPosition}
-        />
+        <div className="flex flex-col gap-3">
+          <div className="flex lg:hidden justify-end">
+            {isLoading || !pool || !token0 || !token1 ? (
+              <Skeleton.Text fontSize="text-xs" />
+            ) : (
+              <div
+                onClick={() => setInvert((prev) => !prev)}
+                role="button"
+                className="text-xs flex items-center font-semibold gap-1.5 rounded-xl text-blue hover:text-blue-600"
+              >
+                <SwitchHorizontalIcon width={16} height={16} />
+                <div className="flex items-baseline gap-1.5">
+                  {invert ? token1.symbol : token0.symbol} ={' '}
+                  {pool.priceOf(invert ? token1.wrapped : token0.wrapped)?.toSignificant(4)}{' '}
+                  {invert ? token0.symbol : token1.symbol}
+                  <span className="text-xs font-normal">${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)}</span>
+                </div>
+              </div>
+            )}
+          </div>
+          <LiquidityChartRangeInput
+            chainId={chainId}
+            currencyA={token0}
+            currencyB={token1}
+            feeAmount={feeAmount}
+            ticksAtLimit={ticksAtLimit}
+            price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
+            priceLower={priceLower}
+            priceUpper={priceUpper}
+            onLeftRangeInput={onLeftRangeInput}
+            onRightRangeInput={onRightRangeInput}
+            interactive={!hasExistingPosition}
+          />
+        </div>
         <div className="flex flex-col gap-3 pt-4">
           {/*<RadioGroup value={range} onChange={setRange} className="flex gap-2">*/}
           {/*  {Object.keys(Range)*/}
@@ -119,7 +139,7 @@ export const SelectPricesWidget: FC = ({}) => {
           {/*    })}*/}
           {/*</RadioGroup>*/}
           <div className="flex items-center justify-between gap-2">
-            <div className="flex gap-2 rounded-xl bg-white p-1">
+            <div className="flex gap-2 rounded-xl bg-white dark:bg-white/[0.02] p-1">
               <Button
                 onClick={switchTokens}
                 variant={isSorted ? 'outlined' : 'empty'}
