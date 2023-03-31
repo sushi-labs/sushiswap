@@ -1,6 +1,6 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
-import bentoBoxExports from '@sushiswap/bentobox/exports'
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId, chainName } from '@sushiswap/chain'
 import {
   DAI,
@@ -20,20 +20,14 @@ import {
   USDT_ADDRESS,
   WNATIVE,
 } from '@sushiswap/currency'
-import {
-  DataFetcher,
-  findSpecialRoute,
-  getRoutingAnyChartSankeyData,
-  LiquidityProviders,
-  PoolFilter,
-  Router,
-  RPParams,
-} from '@sushiswap/router'
-import { BridgeBento, getBigNumber, MultiRoute, RPool, StableSwapRPool } from '@sushiswap/tines'
+import { DataFetcher, LiquidityProviders, PoolFilter, Router } from '@sushiswap/router'
+import { BridgeBento, getBigNumber, RPool, StableSwapRPool } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
 import seedrandom from 'seedrandom'
+import { createPublicClient, http } from 'viem'
+import { hardhat } from 'viem/chains'
 
 function getRandomExp(rnd: () => number, min: number, max: number) {
   const minL = Math.log(min)
@@ -73,22 +67,48 @@ interface TestEnvironment {
 async function getTestEnvironment(): Promise<TestEnvironment> {
   //console.log('Prepare Environment:')
 
+  // const client = createTestClient({
+  //   chain: {
+  //     ...hardhat,
+  //     contracts: {
+  //       multicall3: {
+  //         address: '0xca11bde05977b3631167028862be2a173976ca11',
+  //         blockCreated: 14353601,
+  //       },
+  //     },
+  //   },
+  //   mode: 'hardhat',
+  //   transport: http(),
+  // })
+
+  const client = createPublicClient({
+    chain: {
+      ...hardhat,
+      contracts: {
+        multicall3: {
+          address: '0xca11bde05977b3631167028862be2a173976ca11',
+          blockCreated: 25770160,
+        },
+      },
+    },
+    // mode: 'hardhat',
+    transport: http(),
+  })
+
   //console.log('    Create DataFetcher ...')
   const provider = ethers.provider
   const chainId = network.config.chainId as ChainId
-  const dataFetcher = new DataFetcher(provider, chainId)
+  const dataFetcher = new DataFetcher(chainId, client)
 
-  console.log('THIS', { chainId, bentoBoxExports })
+  console.log({ chainId, url: ethers.provider.connection.url, otherurl: network.config.forking.url })
 
   dataFetcher.startDataFetching()
 
-  //console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
+  console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
   const RouteProcessor = await ethers.getContractFactory('RouteProcessor')
-  const routeProcessor = await RouteProcessor.deploy(
-    bentoBoxExports[chainId.toString() as keyof typeof bentoBoxExports][0]?.contracts?.BentoBoxV1.address
-  )
+  const routeProcessor = await RouteProcessor.deploy(bentoBoxV1Address[chainId as BentoBoxV1ChainId])
   await routeProcessor.deployed()
-  //console.log('    Block Number:', provider.blockNumber)
+  console.log('    Block Number:', provider.blockNumber)
 
   console.log(`Network: ${chainName[chainId]}, Forked Block: ${provider.blockNumber}`)
   //console.log('    User creation ...')
@@ -124,25 +144,31 @@ async function makeSwap(
 
   //console.log('Create Route ...')
   env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
-  const waiter = new Waiter()
-  const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
-  router.startRouting(() => {
-    //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
-    const printed = makeSankeyDiagram
-      ? getRoutingAnyChartSankeyData(router.getBestRoute() as MultiRoute)
-      : router.getCurrentRouteHumanString()
-    console.log(printed)
-    waiter.resolve()
-  })
-  await waiter.wait()
-  router.stopRouting()
+
+  const pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
+
+  // const waiter = new Waiter()
+  // const router = new Router(env.dataFetcher.poolCodes, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
+  // router.startRouting(() => {
+  //   //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
+  //   const printed = makeSankeyDiagram
+  //     ? getRoutingAnyChartSankeyData(router.getBestRoute() as MultiRoute)
+  //     : router.getCurrentRouteHumanString()
+  //   console.log(printed)
+  //   waiter.resolve()
+  // })
+  // await waiter.wait()
+  // router.stopRouting()
 
   //console.log('Create route processor code ...')
-  const rpParams = router.getCurrentRouteRPParams(env.user.address, env.rp.address)
+
+  const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
+
+  const rpParams = Router.routeProcessorParams(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
   if (rpParams === undefined) return
 
   //console.log('Call route processor (may take long time for the first launch)...')
-  const route = router.getBestRoute() as MultiRoute
+
   let balanceOutBNBefore: BigNumber
   let toTokenContract: Contract | undefined = undefined
   if (toToken instanceof Token) {
@@ -242,18 +268,22 @@ async function checkTransferAndRoute(
   }
 
   env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
-  const waiter = new Waiter()
-  const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9)
-  router.startRouting(() => {
-    // const printed = router.getCurrentRouteHumanString()
-    // console.log(printed)
-    waiter.resolve()
-  })
-  await waiter.wait()
-  router.stopRouting()
+  // const waiter = new Waiter()
+  // const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9)
+  // router.startRouting(() => {
+  //   // const printed = router.getCurrentRouteHumanString()
+  //   // console.log(printed)
+  //   waiter.resolve()
+  // })
+  // await waiter.wait()
+  // router.stopRouting()
   //console.log(router.getBestRoute()?.legs)
 
-  const rpParams = router.getCurrentRouteRPParams(env.user.address, env.rp.address) as RPParams
+  const pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
+  const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9)
+  const rpParams = Router.routeProcessorParams(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
+
+  // const rpParams = Router.getCurrentRouteRPParams(env.user.address, env.rp.address) as RPParams
   const transferValue = getBigNumber(0.02 * Math.pow(10, Native.onChain(env.chainId).decimals))
   rpParams.value = (rpParams.value || BigNumber.from(0)).add(transferValue)
 
@@ -398,7 +428,17 @@ describe('End-to-end Router test', async function () {
 
   it('Special Router', async function () {
     env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI_LOCAL)
-    const route = findSpecialRoute(env.dataFetcher, Native.onChain(chainId), getBigNumber(1 * 1e18), SUSHI_LOCAL, 30e9)
+
+    const pcMap = env.dataFetcher.getCurrentPoolCodeMap(Native.onChain(chainId), SUSHI_LOCAL)
+
+    const route = Router.findSpecialRoute(
+      pcMap,
+      chainId,
+      Native.onChain(chainId),
+      getBigNumber(1 * 1e18),
+      SUSHI_LOCAL,
+      30e9
+    )
     expect(route).not.undefined
   })
 
