@@ -101,58 +101,83 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
           <Button
             onClick={() =>
               setFilters({
+                poolVersions: poolVersions.includes('V3')
+                  ? poolVersions.filter((el) => el !== 'V3')
+                  : [...poolVersions, 'V3'],
+                poolTypes: poolTypes.includes('CONCENTRATED_LIQUIDITY_POOL')
+                  ? poolTypes.filter((el) => el !== 'CONCENTRATED_LIQUIDITY_POOL')
+                  : [...poolTypes, 'CONCENTRATED_LIQUIDITY_POOL'],
+              })
+            }
+            size="sm"
+            variant={
+              poolVersions.includes('V3') && poolTypes.includes('CONCENTRATED_LIQUIDITY_POOL') ? 'outlined' : 'empty'
+            }
+            color={
+              poolVersions.includes('V3') && poolTypes.includes('CONCENTRATED_LIQUIDITY_POOL') ? 'blue' : 'default'
+            }
+          >
+            SushiSwap V3
+          </Button>
+          <Button
+            onClick={() =>
+              setFilters({
                 poolVersions: poolVersions.includes('LEGACY')
                   ? poolVersions.filter((el) => el !== 'LEGACY')
                   : [...poolVersions, 'LEGACY'],
+                poolTypes:
+                  poolTypes.includes('CONSTANT_PRODUCT_POOL') && !poolVersions.includes('TRIDENT')
+                    ? poolTypes.filter((el) => el !== 'CONSTANT_PRODUCT_POOL')
+                    : [...poolTypes, 'CONSTANT_PRODUCT_POOL'],
               })
             }
             size="sm"
-            variant={poolVersions.includes('LEGACY') ? 'outlined' : 'empty'}
-            color={poolVersions.includes('LEGACY') ? 'blue' : 'default'}
-          >
-            V1
-          </Button>
-          <Button
-            onClick={() =>
-              setFilters({
-                poolVersions: poolVersions.includes('TRIDENT')
-                  ? poolVersions.filter((el) => el !== 'TRIDENT')
-                  : [...poolVersions, 'TRIDENT'],
-              })
+            variant={
+              poolVersions.includes('LEGACY') && poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'outlined' : 'empty'
             }
-            size="sm"
-            variant={poolVersions.includes('TRIDENT') ? 'outlined' : 'empty'}
-            color={poolVersions.includes('TRIDENT') ? 'blue' : 'default'}
+            color={poolVersions.includes('LEGACY') && poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'blue' : 'default'}
           >
-            V2
+            SushiSwap V2
           </Button>
+
           <Button
             onClick={() =>
               setFilters({
+                poolVersions:
+                  poolVersions.includes('TRIDENT') && !poolTypes.includes('CONSTANT_PRODUCT_POOL')
+                    ? poolVersions.filter((el) => el !== 'TRIDENT')
+                    : [...poolVersions, 'TRIDENT'],
                 poolTypes: poolTypes.includes('STABLE_POOL')
                   ? poolTypes.filter((el) => el !== 'STABLE_POOL')
                   : [...poolTypes, 'STABLE_POOL'],
               })
             }
             size="sm"
-            variant={poolTypes.includes('STABLE_POOL') ? 'outlined' : 'empty'}
-            color={poolTypes.includes('STABLE_POOL') ? 'blue' : 'default'}
+            variant={poolVersions.includes('TRIDENT') && poolTypes.includes('STABLE_POOL') ? 'outlined' : 'empty'}
+            color={poolVersions.includes('TRIDENT') && poolTypes.includes('STABLE_POOL') ? 'blue' : 'default'}
           >
-            Stable
+            🔱 Stable
           </Button>
           <Button
             onClick={() =>
               setFilters({
-                poolTypes: poolTypes.includes('CONSTANT_PRODUCT_POOL')
-                  ? poolTypes.filter((el) => el !== 'CONSTANT_PRODUCT_POOL')
-                  : [...poolTypes, 'CONSTANT_PRODUCT_POOL'],
+                poolVersions:
+                  poolVersions.includes('TRIDENT') && !poolTypes.includes('STABLE_POOL')
+                    ? poolVersions.filter((el) => el !== 'TRIDENT')
+                    : [...poolVersions, 'TRIDENT'],
+                poolTypes:
+                  poolTypes.includes('CONSTANT_PRODUCT_POOL') && !poolVersions.includes('LEGACY')
+                    ? poolTypes.filter((el) => el !== 'CONSTANT_PRODUCT_POOL')
+                    : [...poolTypes, 'CONSTANT_PRODUCT_POOL'],
               })
             }
             size="sm"
-            variant={poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'outlined' : 'empty'}
-            color={poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'blue' : 'default'}
+            variant={
+              poolVersions.includes('TRIDENT') && poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'outlined' : 'empty'
+            }
+            color={poolVersions.includes('TRIDENT') && poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'blue' : 'default'}
           >
-            Classic
+            🔱 Classic
           </Button>
           <Button
             onClick={() => setFilters({ incentivizedOnly: !incentivizedOnly })}
