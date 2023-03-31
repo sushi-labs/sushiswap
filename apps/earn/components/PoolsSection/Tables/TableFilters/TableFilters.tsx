@@ -185,7 +185,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             variant={incentivizedOnly ? 'outlined' : 'empty'}
             color={incentivizedOnly ? 'blue' : 'default'}
           >
-            Farms Only
+            🧑‍🌾 Farms
           </Button>
         </div>
       </div>
