@@ -89,7 +89,7 @@ export class TridentStaticPoolFetcher {
           if (s?.result)
             s.result.forEach((address) =>
               pools.push({
-                address,
+                address: address.toLowerCase(),
                 token0: pairsUniqueProcessed?.[i][0] as Token,
                 token1: pairsUniqueProcessed?.[i][1] as Token,
                 type,

@@ -507,15 +507,16 @@ export class TridentProvider extends LiquidityProvider {
     //   // return
     // }
 
-    this.poolsByTrade.set(
-      this.getTradeId(t0, t1),
-      pools.map((pool) => pool.address)
-    )
     const [ onDemandClassicPools, onDemandStablePools ] = pools.length > 0 ? [pools.filter(
       (p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.topClassicPools.has(p.address)),
-      pools.filter((p) => p.type === 'STABLE_POOL' && this.topStablePools.has(p.address))
+      pools.filter((p) => p.type === 'STABLE_POOL' && !this.topStablePools.has(p.address))
     ] : await TridentStaticPoolFetcher.getStaticPools(this.client, this.chainId, t0, t1)
-    // await TridentStaticPoolFetcher.getStaticPools(this.client, this.chainId, t0, t1)
+
+    
+    this.poolsByTrade.set(
+      this.getTradeId(t0, t1),
+      [onDemandClassicPools, onDemandStablePools].flat().map((pool) => pool.address)
+    )
 
     // const onDemandClassicPools = pools.filter(
     //   (p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.topClassicPools.has(p.address)
@@ -728,12 +729,14 @@ export class TridentProvider extends LiquidityProvider {
     stablePoolCodesToCreate.forEach((poolCode, i) => {
       const pool = poolCode.pool as StableSwapRPool
       const total0 = rebases.get(pool.token0.address)
+
       if (total0) {
         const current = pool.getTotal0()
         if (!total0.elastic.eq(current.elastic) || !total0.base.eq(current.base)) {
           pool.updateTotal0(total0)
         }
       }
+
       const total1 = rebases.get(pool.token1.address)
       if (total1) {
         const current = pool.getTotal1()
@@ -741,12 +744,13 @@ export class TridentProvider extends LiquidityProvider {
           pool.updateTotal1(total1)
         }
       }
+
       const res0 = stableReserves?.[i]?.result?.[0]
       const res1 = stableReserves?.[i]?.result?.[1]
 
       const res0BN = BigNumber.from(res0)
       const res1BN = BigNumber.from(res1)
-      if (!res0 || !res1 || !pool.reserve0.eq(res0BN) || !pool.reserve1.eq(res1BN)) {
+      if (!res0 || !res1) {
         return
       }
       pool.updateReserves(toShareBN(res0BN, pool.getTotal0()), toShareBN(res1BN, pool.getTotal1()))

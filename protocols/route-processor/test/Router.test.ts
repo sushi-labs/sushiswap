@@ -21,7 +21,7 @@ import {
   WNATIVE,
 } from '@sushiswap/currency'
 import { DataFetcher, LiquidityProviders, PoolFilter, Router } from '@sushiswap/router'
-import { BridgeBento, getBigNumber, RPool, StableSwapRPool } from '@sushiswap/tines'
+import { BridgeBento, BridgeUnlimited, getBigNumber, RPool, StableSwapRPool } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
@@ -84,18 +84,15 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   const client = createPublicClient({
     chain: {
       ...hardhat,
-      // contracts: {
-      //   multicall3: {
-      //     address: '0xca11bde05977b3631167028862be2a173976ca11',
-      //     blockCreated: 25770160,
-      //   },
-      // },
+      contracts: {
+        multicall3: {
+          address: '0xca11bde05977b3631167028862be2a173976ca11',
+          blockCreated: 25770160,
+        },
+      },
     },
-    // mode: 'hardhat',
-    // transport: http(),
     transport: custom(network.provider),
   })
-
   //console.log('    Create DataFetcher ...')
   const provider = ethers.provider
   const chainId = network.config.chainId as ChainId
@@ -139,12 +136,12 @@ async function makeSwap(
 
   if (fromToken instanceof Token) {
     //console.log(`Approve user's ${fromToken.symbol} to the route processor ...`)
-    const WrappedBaseTokenContract = await new ethers.Contract(fromToken.address, erc20Abi, env.user)
+    const WrappedBaseTokenContract = new ethers.Contract(fromToken.address, erc20Abi, env.user)
     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
   }
 
   //console.log('Create Route ...')
-  env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
 
   const pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
 
@@ -162,9 +159,11 @@ async function makeSwap(
   // router.stopRouting()
 
   //console.log('Create route processor code ...')
+  // Array.from(pcMap.values()).forEach( pc =>
+  //   console.log(`${pc.liquidityProvider} ${pc.pool.token0.symbol}/${pc.pool.token1.symbol}  ${pc.pool.reserve0} ${pc.pool.reserve1} `)
+  // )
 
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
-
   const rpParams = Router.routeProcessorParams(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
   if (rpParams === undefined) return
 
@@ -227,7 +226,7 @@ async function makeSwap(
 async function dataUpdated(env: TestEnvironment, minBlockNumber: number) {
   for (;;) {
     if (env.dataFetcher.getLastUpdateBlock() >= minBlockNumber) return
-    await delay(500)
+    await delay(4000)
   }
 }
 
@@ -243,7 +242,6 @@ async function updMakeSwap(
   const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
   if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
 
-  console.log('')
   //console.log('Wait data update for min block', waitBlock)
   await dataUpdated(env, waitBlock)
 
@@ -268,7 +266,7 @@ async function checkTransferAndRoute(
     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
   }
 
-  env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
   // const waiter = new Waiter()
   // const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9)
   // router.startRouting(() => {
@@ -385,8 +383,9 @@ describe('End-to-end Router test', async function () {
     }
   })
 
-  it('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async function () {
+  it.only('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async function () {
     const filter = (pool: RPool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
+    // || pool instanceof Wr
     if (chainId == ChainId.POLYGON) {
       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], intermidiateResult)
@@ -428,7 +427,7 @@ describe('End-to-end Router test', async function () {
   })
 
   it('Special Router', async function () {
-    env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI_LOCAL)
+    await env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI_LOCAL)
 
     const pcMap = env.dataFetcher.getCurrentPoolCodeMap(Native.onChain(chainId), SUSHI_LOCAL)
 
