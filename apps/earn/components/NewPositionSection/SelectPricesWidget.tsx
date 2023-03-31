@@ -20,6 +20,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { List } from '@sushiswap/ui/currency/List'
 import { getPriceOrderingFromPositionForUI } from '../../lib/functions'
+import { useIsMounted } from '@sushiswap/hooks'
 
 enum ChartType {
   Liquidity = 'Liquidity',
@@ -209,6 +210,7 @@ export const PriceBlock: FC<PriceBlockProps> = ({
   priceFiat,
   fullRange,
 }) => {
+  const isMounted = useIsMounted()
   //  for focus state, styled components doesnt let you select input parent container
   const [active, setActive] = useState(false)
 
@@ -272,7 +274,7 @@ export const PriceBlock: FC<PriceBlockProps> = ({
             className={classNames(DEFAULT_INPUT_UNSTYLED, 'without-ring !text-3xl !px-0 !pt-1 !pb-2 shadow-none')}
             tabIndex={0}
           />
-          {!fullRange && (
+          {!fullRange && isMounted && (
             <p className="text-sm text-gray-500 dark:text-slate-500">
               {token0?.symbol} = ${(priceFiat * (1 + priceDiff / 100)).toFixed(2)} ({priceDiff.toFixed(2)}%)
             </p>

@@ -193,6 +193,7 @@ export function useConcentratedDerivedMintInfo({
   depositBDisabled: boolean
   invertPrice: boolean
   ticksAtLimit: { [bound in Bound]?: boolean | undefined }
+  isLoading: boolean
 } {
   const { independentField, typedValue, leftRangeTypedValue, rightRangeTypedValue, startPriceTypedValue } =
     useConcentratedMintState()
@@ -221,17 +222,14 @@ export function useConcentratedDerivedMintInfo({
   )
 
   // pool
-  const {
-    data: pool,
-    isLoading,
-    isError,
-  } = useConcentratedLiquidityPool({
+  const usePool = useConcentratedLiquidityPool({
     chainId,
     token0: currencies[Field.CURRENCY_A],
     token1: currencies[Field.CURRENCY_B],
     feeAmount,
   })
 
+  const { data: pool, isLoading, isError } = usePool
   const noLiquidity = !isLoading && !isError && !pool
 
   // note to parse inputs in reverse
@@ -516,26 +514,50 @@ export function useConcentratedDerivedMintInfo({
 
   const invalidPool = isError
 
-  return {
-    dependentField,
-    currencies,
-    pool,
-    parsedAmounts,
-    ticks,
-    price,
-    pricesAtTicks,
-    pricesAtLimit,
-    position,
-    noLiquidity,
-    errorMessage,
-    invalidPool,
-    invalidRange,
-    outOfRange,
-    depositADisabled,
-    depositBDisabled,
-    invertPrice,
-    ticksAtLimit,
-  }
+  return useMemo(
+    () => ({
+      dependentField,
+      currencies,
+      pool,
+      parsedAmounts,
+      ticks,
+      price,
+      pricesAtTicks,
+      pricesAtLimit,
+      position,
+      noLiquidity,
+      errorMessage,
+      invalidPool,
+      invalidRange,
+      outOfRange,
+      depositADisabled,
+      depositBDisabled,
+      invertPrice,
+      ticksAtLimit,
+      ...usePool,
+    }),
+    [
+      currencies,
+      dependentField,
+      depositADisabled,
+      depositBDisabled,
+      errorMessage,
+      invalidPool,
+      invalidRange,
+      invertPrice,
+      noLiquidity,
+      outOfRange,
+      parsedAmounts,
+      pool,
+      position,
+      price,
+      pricesAtLimit,
+      pricesAtTicks,
+      ticks,
+      ticksAtLimit,
+      usePool,
+    ]
+  )
 }
 
 export function useRangeHopCallbacks(

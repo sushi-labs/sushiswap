@@ -64,6 +64,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
     depositBDisabled,
     invalidPool,
     position,
+    isLoading: isPoolLoading,
   } = useConcentratedDerivedMintInfo({
     chainId,
     account,
@@ -173,7 +174,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             onSelect={setToken0}
             currency={token0}
             disabled={depositADisabled}
-            loading={tokensLoading}
+            loading={tokensLoading || isOwnerLoading || isPoolLoading}
           />
         </div>
         <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
@@ -218,7 +219,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             onChange={_onFieldBInput}
             onSelect={setToken1}
             currency={token1}
-            loading={tokensLoading}
+            loading={tokensLoading || isOwnerLoading || isPoolLoading}
             disabled={depositBDisabled}
           />
         </div>
