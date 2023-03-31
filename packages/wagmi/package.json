@@ -25,7 +25,7 @@
     "@ethersproject/logger": "5.7.0",
     "@ethersproject/providers": "5.7.2",
     "@gnosis.pm/safe-apps-provider": "^0.14.0",
-    "@gnosis.pm/safe-apps-sdk": "^7.8.0",
+    "@gnosis.pm/safe-apps-sdk": "7.8.0",
     "@gnosis.pm/safe-apps-wagmi": "1.2.0",
     "@headlessui/react": "1.7.7",
     "@heroicons/react": "2.0.13",
@@ -53,7 +53,7 @@
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
-    "@tanstack/react-query": "4.20.4",
+    "@tanstack/react-query": "4.28.0",
     "@uniswap/v2-core": "1.0.1",
     "@uniswap/v3-periphery": "1.4.1"
   },
