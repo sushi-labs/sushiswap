@@ -1,9 +1,18 @@
 import { useContractRead } from 'wagmi'
 import { BigNumber } from 'ethers'
+import { ChainId } from '@sushiswap/chain'
 
 // TODO Factory address
-export const useConcentratedPositionOwner = ({ tokenId }: { tokenId: number | string | undefined }) => {
+export const useConcentratedPositionOwner = ({
+  chainId,
+  tokenId,
+}: {
+  chainId: ChainId | undefined
+  tokenId: number | string | undefined
+}) => {
   return useContractRead({
+    chainId,
+    // TODO: Dynamic position manager address
     address: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
     abi: [
       {
@@ -28,6 +37,6 @@ export const useConcentratedPositionOwner = ({ tokenId }: { tokenId: number | st
     ],
     functionName: 'ownerOf',
     args: [BigNumber.from(tokenId ? tokenId : 0)],
-    enabled: Boolean(tokenId),
+    enabled: Boolean(chainId) && Boolean(tokenId),
   })
 }
