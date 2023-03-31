@@ -26,9 +26,9 @@ import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
 import seedrandom from 'seedrandom'
-import { createPublicClient, http } from 'viem'
+import { createPublicClient } from 'viem'
+import { custom } from 'viem'
 import { hardhat } from 'viem/chains'
-
 function getRandomExp(rnd: () => number, min: number, max: number) {
   const minL = Math.log(min)
   const maxL = Math.log(max)
@@ -84,15 +84,16 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   const client = createPublicClient({
     chain: {
       ...hardhat,
-      contracts: {
-        multicall3: {
-          address: '0xca11bde05977b3631167028862be2a173976ca11',
-          blockCreated: 25770160,
-        },
-      },
+      // contracts: {
+      //   multicall3: {
+      //     address: '0xca11bde05977b3631167028862be2a173976ca11',
+      //     blockCreated: 25770160,
+      //   },
+      // },
     },
     // mode: 'hardhat',
-    transport: http(),
+    // transport: http(),
+    transport: custom(network.provider),
   })
 
   //console.log('    Create DataFetcher ...')
