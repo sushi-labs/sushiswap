@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@ethersproject/address": "5.7.0",
-    "@headlessui/react": "^1.7.3",
+    "@headlessui/react": "1.7.7",
     "@heroicons/react": "^1.0.0",
     "@reduxjs/toolkit": "1.9.1",
     "@sushiswap/chain": "workspace:*",
