@@ -18,6 +18,10 @@ import { useTokenAmountDollarValues } from '../../lib/hooks'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import {
+  useConcentratedLiquidityPositionsFromTokenId,
+  useConcentratedPositionInfo,
+} from '@sushiswap/wagmi/future/hooks'
 
 enum ChartType {
   Liquidity = 'Liquidity',
@@ -35,7 +39,7 @@ enum Range {
 export const SelectPricesWidget: FC = ({}) => {
   const { address } = useAccount()
   const [invert, setInvert] = useState(false)
-  const { chainId, token0, token1, feeAmount, switchTokens } = useConcentratedLiquidityURLState()
+  const { chainId, token0, token1, feeAmount, switchTokens, tokenId } = useConcentratedLiquidityURLState()
   const { price, invertPrice, pricesAtTicks, ticks, ticksAtLimit, pool, noLiquidity, isLoading } =
     useConcentratedDerivedMintInfo({
       chainId,
@@ -49,8 +53,11 @@ export const SelectPricesWidget: FC = ({}) => {
 
   const { onLeftRangeInput, onRightRangeInput } = useConcentratedMintActionHandlers()
 
-  // TODO
-  const hasExistingPosition = false
+  const { data: existingPosition, isLoading: positionLoading } = useConcentratedLiquidityPositionsFromTokenId({
+    chainId,
+    tokenId,
+  })
+  const hasExistingPosition = !!existingPosition && !positionLoading
 
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
