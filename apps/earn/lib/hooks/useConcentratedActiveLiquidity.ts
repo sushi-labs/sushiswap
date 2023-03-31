@@ -1,12 +1,13 @@
 import { Token, Type } from '@sushiswap/currency'
 import { computePoolAddress, FeeAmount, TICK_SPACINGS, tickToPrice, FACTORY_ADDRESS } from '@sushiswap/v3-sdk'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { ChainId } from '@sushiswap/chain'
 import { JSBI } from '@sushiswap/math'
 import computeSurroundingTicks from '../functions'
 import useSWR from 'swr'
 import { getAllV3Ticks } from '../api'
+import { useQuery } from '@tanstack/react-query'
 
 const PRICE_FIXED_DIGITS = 8
 
@@ -31,24 +32,25 @@ const useAllV3Ticks = ({
   token1: Type | undefined
   feeAmount: FeeAmount | undefined
 }) => {
-  const address = useMemo(() => {
-    if (token0 && token1 && feeAmount) {
-      return computePoolAddress({
-        // TODO chainId
-        factoryAddress: FACTORY_ADDRESS,
-        tokenA: token0.wrapped,
-        tokenB: token1.wrapped,
-        fee: feeAmount,
-      })
-    }
+  return useQuery({
+    queryKey: ['getAllV3Ticks', { chainId, token0, token1, feeAmount }],
+    queryFn: async () => {
+      if (token0 && token1 && feeAmount) {
+        const address = computePoolAddress({
+          // TODO harcdoded chainId
+          factoryAddress: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
+          tokenA: token0.wrapped,
+          tokenB: token1.wrapped,
+          fee: feeAmount,
+        })
 
-    return undefined
-  }, [feeAmount, token0, token1])
+        return await getAllV3Ticks(`${chainId}:${address.toLowerCase()}`)
+      }
 
-  return useSWR<Awaited<ReturnType<typeof getAllV3Ticks>>>(
-    address ? `/earn/api/tickData/${chainId}:${address}` : null,
-    async (url) => fetch(url).then((data) => data.json())
-  )
+      return null
+    },
+    enabled: Boolean(token0 && token1 && feeAmount),
+  })
 }
 
 export const useConcentratedActiveLiquidity = ({
@@ -76,6 +78,7 @@ export const useConcentratedActiveLiquidity = ({
   const activeTick = useMemo(() => getActiveTick(pool?.tickCurrent, feeAmount), [pool, feeAmount])
   const { isLoading, error, data: ticks } = useAllV3Ticks({ token0, token1, feeAmount, chainId })
 
+  console.log(ticks)
   return useMemo(() => {
     if (!token0 || !token1 || activeTick === undefined || !pool || !ticks || ticks.length === 0 || isLoading) {
       return {
