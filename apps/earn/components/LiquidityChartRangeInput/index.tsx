@@ -87,8 +87,8 @@ export default function LiquidityChartRangeInput({
 
   const { isLoading, error, formattedData } = useDensityChartData({
     chainId,
-    currencyA,
-    currencyB,
+    token0: currencyA,
+    token1: currencyB,
     feeAmount,
   })
 

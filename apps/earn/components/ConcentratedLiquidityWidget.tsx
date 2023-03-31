@@ -58,6 +58,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
     invalidRange,
     price,
     pricesAtTicks,
+    ticksAtLimit,
     ticks,
     depositADisabled,
     depositBDisabled,
@@ -252,6 +253,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                     noLiquidity={noLiquidity}
                     price={price}
                     pricesAtTicks={pricesAtTicks}
+                    ticksAtLimit={ticksAtLimit}
                     tokenId={tokenId}
                     existingPosition={existingPosition}
                   >

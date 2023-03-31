@@ -16,7 +16,7 @@ import { useTokenAmountDollarValues } from '../../lib/hooks'
 interface AddSectionReviewModalConcentratedProps
   extends Pick<
     ReturnType<typeof useConcentratedDerivedMintInfo>,
-    'noLiquidity' | 'position' | 'price' | 'pricesAtTicks'
+    'noLiquidity' | 'position' | 'price' | 'pricesAtTicks' | 'ticksAtLimit'
   > {
   chainId: ChainId
   feeAmount: FeeAmount | undefined
@@ -42,6 +42,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
   existingPosition,
   price,
   pricesAtTicks,
+  ticksAtLimit,
   tokenId,
 }) => {
   const [open, setOpen] = useState(false)
@@ -52,6 +53,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
   const leftPrice = useMemo(() => (isSorted ? priceLower : priceUpper?.invert()), [isSorted, priceLower, priceUpper])
   const rightPrice = useMemo(() => (isSorted ? priceUpper : priceLower?.invert()), [isSorted, priceLower, priceUpper])
   const midPrice = useMemo(() => (isSorted ? price : price?.invert()), [isSorted, price])
+  const isFullRange = Boolean(ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER])
 
   const [minPriceDiff, maxPriceDiff] = useMemo(() => {
     if (!midPrice || !token0 || !token1 || !leftPrice || !rightPrice) return [0, 0]
@@ -112,11 +114,15 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                   subtitle={`Your position will be 100% composed of ${input0?.currency.symbol} at this price`}
                 >
                   <div className="flex flex-col gap-1">
-                    {leftPrice?.toSignificant(6)} {token1?.symbol}
-                    <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
-                      ${(fiatAmountsAsNumber[0] * (1 + +(minPriceDiff || 0) / 100)).toFixed(2)} (
-                      {minPriceDiff.toFixed(2)}%)
-                    </span>
+                    {isFullRange ? '0' : leftPrice?.toSignificant(6)} {token1?.symbol}
+                    {isFullRange ? (
+                      ''
+                    ) : (
+                      <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
+                        ${(fiatAmountsAsNumber[0] * (1 + +(minPriceDiff || 0) / 100)).toFixed(2)} (
+                        {minPriceDiff.toFixed(2)}%)
+                      </span>
+                    )}
                   </div>
                 </List.KeyValue>
                 <List.KeyValue title="Market Price" subtitle={`Current price as determined by the ratio of the pool`}>
@@ -132,11 +138,15 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                   subtitle={`Your position will be 100% composed of ${token1?.symbol} at this price`}
                 >
                   <div className="flex flex-col gap-1">
-                    {rightPrice?.toSignificant(6)} {token1?.symbol}
-                    <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
-                      ${(fiatAmountsAsNumber[0] * (1 + +(maxPriceDiff || 0) / 100)).toFixed(2)} (
-                      {maxPriceDiff.toFixed(2)}%)
-                    </span>{' '}
+                    {isFullRange ? '∞' : rightPrice?.toSignificant(6)} {token1?.symbol}
+                    {isFullRange ? (
+                      ''
+                    ) : (
+                      <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
+                        ${(fiatAmountsAsNumber[0] * (1 + +(maxPriceDiff || 0) / 100)).toFixed(2)} (
+                        {maxPriceDiff.toFixed(2)}%)
+                      </span>
+                    )}{' '}
                   </div>
                 </List.KeyValue>{' '}
               </List.Control>
