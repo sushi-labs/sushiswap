@@ -21,7 +21,7 @@
     "@ethersproject/logger": "5.7.0",
     "@ethersproject/providers": "5.7.2",
     "@ethersproject/solidity": "5.7.0",
-    "@headlessui/react": "^1.7.3",
+    "@headlessui/react": "1.7.7",
     "@heroicons/react": "^1.0.0",
     "@reduxjs/toolkit": "1.9.1",
     "@sushiswap/abi": "workspace:*",

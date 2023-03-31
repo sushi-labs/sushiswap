@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@ethersproject/address": "5.7.0",
-    "@headlessui/react": "^1.7.7",
+    "@headlessui/react": "1.7.7",
     "@heroicons/react": "^1.0.0",
     "@hookform/resolvers": "2.9.10",
     "@octokit/auth-app": "^4.0.4",

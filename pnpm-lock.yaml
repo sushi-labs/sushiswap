@@ -294,7 +294,7 @@ importers:
   apps/_root:
     specifiers:
       '@ethersproject/address': 5.7.0
-      '@headlessui/react': ^1.7.7
+      '@headlessui/react': 1.7.7
       '@heroicons/react': ^1.0.0
       '@hookform/resolvers': 2.9.10
       '@octokit/auth-app': ^4.0.4
@@ -355,7 +355,7 @@ importers:
       zod: 3.20.2
     dependencies:
       '@ethersproject/address': 5.7.0
-      '@headlessui/react': 1.7.13_biqbaboplfbrettd7655fr4n2y
+      '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@hookform/resolvers': 2.9.10_react-hook-form@7.41.2
       '@octokit/auth-app': 4.0.9
@@ -421,8 +421,8 @@ importers:
       '@cloudinary/url-gen': ^1.8.0
       '@graphql-mesh/cli': 0.82.3
       '@graphql-mesh/graphql': 0.33.3
-      '@headlessui/react': ^1.6.6
-      '@heroicons/react': ^2.0.11
+      '@headlessui/react': 1.7.7
+      '@heroicons/react': 2.0.13
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -435,7 +435,7 @@ importers:
       '@types/qs': ^6.9.7
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
-      and: ^0.0.3
+      and: 0.0.3
       autoprefixer: 10.4.13
       classnames: 2.3.2
       date-fns: 2.29.3
@@ -455,7 +455,7 @@ importers:
       typescript: 4.9.4
     dependencies:
       '@cloudinary/url-gen': 1.9.2
-      '@headlessui/react': 1.7.13_biqbaboplfbrettd7655fr4n2y
+      '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/ui': link:../../packages/ui
       '@tailwindcss/typography': 0.5.9_tailwindcss@3.2.4
@@ -473,7 +473,7 @@ importers:
     devDependencies:
       '@graphql-mesh/cli': 0.82.3_3q6avhgaaacez4ctqk4xik246q
       '@graphql-mesh/graphql': 0.33.3_3q6avhgaaacez4ctqk4xik246q
-      '@heroicons/react': 2.0.16_react@18.2.0
+      '@heroicons/react': 2.0.13_react@18.2.0
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/nextjs-config': link:../../config/nextjs
@@ -494,7 +494,7 @@ importers:
   apps/analytics:
     specifiers:
       '@ethersproject/address': 5.7.0
-      '@headlessui/react': ^1.7.3
+      '@headlessui/react': 1.7.7
       '@heroicons/react': ^1.0.0
       '@reduxjs/toolkit': 1.9.1
       '@sushiswap/chain': workspace:*
@@ -539,7 +539,7 @@ importers:
       wagmi: 0.9.1
     dependencies:
       '@ethersproject/address': 5.7.0
-      '@headlessui/react': 1.7.13_biqbaboplfbrettd7655fr4n2y
+      '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@reduxjs/toolkit': 1.9.1_k4ae6lp43ej6mezo3ztvx6pykq
       '@sushiswap/chain': link:../../packages/chain
@@ -671,7 +671,7 @@ importers:
       '@ethersproject/logger': 5.7.0
       '@ethersproject/providers': 5.7.2
       '@ethersproject/solidity': 5.7.0
-      '@headlessui/react': ^1.7.3
+      '@headlessui/react': 1.7.7
       '@heroicons/react': ^1.0.0
       '@reduxjs/toolkit': 1.9.1
       '@sushiswap/abi': workspace:*
@@ -754,7 +754,7 @@ importers:
       '@ethersproject/logger': 5.7.0
       '@ethersproject/providers': 5.7.2
       '@ethersproject/solidity': 5.7.0
-      '@headlessui/react': 1.7.13_biqbaboplfbrettd7655fr4n2y
+      '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@reduxjs/toolkit': 1.9.1_k4ae6lp43ej6mezo3ztvx6pykq
       '@sushiswap/abi': link:../../packages/abi
@@ -845,7 +845,7 @@ importers:
       '@graphprotocol/client-add-source-name': latest
       '@graphprotocol/client-auto-pagination': latest
       '@graphprotocol/client-cli': 2.2.19
-      '@headlessui/react': ^1.7.3
+      '@headlessui/react': 1.7.7
       '@heroicons/react': ^1.0.0
       '@hookform/devtools': 4.3.0
       '@hookform/resolvers': 2.9.10
@@ -934,7 +934,7 @@ importers:
       '@ethersproject/solidity': 5.7.0
       '@ethersproject/strings': 5.7.0
       '@ethersproject/units': 5.7.0
-      '@headlessui/react': 1.7.13_biqbaboplfbrettd7655fr4n2y
+      '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@hookform/resolvers': 2.9.10_react-hook-form@7.41.2
       '@reduxjs/toolkit': 1.9.1_k4ae6lp43ej6mezo3ztvx6pykq
@@ -1021,8 +1021,8 @@ importers:
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/bytes': 5.7.0
       '@ethersproject/constants': 5.7.0
-      '@headlessui/react': ^1.7.3
-      '@heroicons/react': 2.0.16
+      '@headlessui/react': 1.7.7
+      '@heroicons/react': 2.0.13
       '@layerzerolabs/scan-client': 0.0.0-beta.6
       '@playwright/test': 1.28.1
       '@sushiswap/abi': workspace:*
@@ -1087,8 +1087,8 @@ importers:
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/bytes': 5.7.0
       '@ethersproject/constants': 5.7.0
-      '@headlessui/react': 1.7.13_biqbaboplfbrettd7655fr4n2y
-      '@heroicons/react': 2.0.16_react@18.2.0
+      '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
+      '@heroicons/react': 2.0.13_react@18.2.0
       '@layerzerolabs/scan-client': 0.0.0-beta.6
       '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/amm': link:../../packages/amm
@@ -2730,8 +2730,8 @@ importers:
   packages/ui:
     specifiers:
       '@fontsource/inter': ^4.5.10
-      '@headlessui/react': ^1.7.3
-      '@heroicons/react': 2.0.16
+      '@headlessui/react': 1.7.7
+      '@heroicons/react': 2.0.13
       '@popperjs/core': ^2.11.5
       '@react-hook/window-scroll': ^1.3.0
       '@sushiswap/chain': workspace:*
@@ -2769,7 +2769,7 @@ importers:
       react-popper: ^2.3.0
       react-spring: 9.6.1
       react-toastify: ^8.2.0
-      react-virtualized-auto-sizer: ^1.0.6
+      react-virtualized-auto-sizer: 1.0.7
       react-window: ^1.8.7
       tailwindcss: 3.2.4
       tsup: 6.5.0
@@ -2778,8 +2778,8 @@ importers:
       wagmi: 0.9.1
     dependencies:
       '@fontsource/inter': 4.5.15
-      '@headlessui/react': 1.7.13_biqbaboplfbrettd7655fr4n2y
-      '@heroicons/react': 2.0.16_react@18.2.0
+      '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
+      '@heroicons/react': 2.0.13_react@18.2.0
       '@popperjs/core': 2.11.7
       '@react-hook/window-scroll': 1.3.0_react@18.2.0
       '@sushiswap/chain': link:../chain
@@ -2802,7 +2802,7 @@ importers:
       react-popper: 2.3.0_d52dtujcogewjimhlbpfze4rs4
       react-spring: 9.6.1_biqbaboplfbrettd7655fr4n2y
       react-toastify: 8.2.0_biqbaboplfbrettd7655fr4n2y
-      react-virtualized-auto-sizer: 1.0.9_biqbaboplfbrettd7655fr4n2y
+      react-virtualized-auto-sizer: 1.0.7_biqbaboplfbrettd7655fr4n2y
       react-window: 1.8.8_biqbaboplfbrettd7655fr4n2y
       use-resize-observer: 9.1.0_biqbaboplfbrettd7655fr4n2y
     optionalDependencies:
@@ -2919,8 +2919,8 @@ importers:
       '@gnosis.pm/safe-apps-provider': ^0.14.0
       '@gnosis.pm/safe-apps-sdk': ^7.8.0
       '@gnosis.pm/safe-apps-wagmi': 1.2.0
-      '@headlessui/react': ^1.7.3
-      '@heroicons/react': ^2.0.16
+      '@headlessui/react': 1.7.7
+      '@heroicons/react': 2.0.13
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
       '@sushiswap/bentobox': workspace:*
@@ -2974,8 +2974,8 @@ importers:
       '@gnosis.pm/safe-apps-provider': 0.14.0
       '@gnosis.pm/safe-apps-sdk': 7.8.0
       '@gnosis.pm/safe-apps-wagmi': 1.2.0_@wagmi+core@0.8.1
-      '@headlessui/react': 1.7.13_biqbaboplfbrettd7655fr4n2y
-      '@heroicons/react': 2.0.16_react@18.2.0
+      '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
+      '@heroicons/react': 2.0.13_react@18.2.0
       '@sushiswap/abi': link:../abi
       '@sushiswap/amm': link:../amm
       '@sushiswap/bentobox': link:../../protocols/bentobox
@@ -9010,8 +9010,8 @@ packages:
       yargs: 16.2.0
     dev: false
 
-  /@headlessui/react/1.7.13_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-9n+EQKRtD9266xIHXdY5MfiXPDfYwl7zBM7KOx2Ae3Gdgxy8QML1FkCMjq6AsOf0l6N9uvI4HcFtuFlenaldKg==}
+  /@headlessui/react/1.7.7_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-BqDOd/tB9u2tA0T3Z0fn18ktw+KbVwMnkxxsGPIH2hzssrQhKB5n/6StZOyvLYP/FsYtvuXfi9I0YowKPv2c1w==}
     engines: {node: '>=10'}
     peerDependencies:
       react: ^16 || ^17 || ^18
@@ -9029,8 +9029,8 @@ packages:
     dependencies:
       react: 18.2.0
 
-  /@heroicons/react/2.0.16_react@18.2.0:
-    resolution: {integrity: sha512-x89rFxH3SRdYaA+JCXwfe+RkE1SFTo9GcOkZettHer71Y3T7V+ogKmfw5CjTazgS3d0ClJ7p1NA+SP7VQLQcLw==}
+  /@heroicons/react/2.0.13_react@18.2.0:
+    resolution: {integrity: sha512-iSN5XwmagrnirWlYEWNPdCDj9aRYVD/lnK3JlsC9/+fqGF80k8C7rl+1HCvBX0dBoagKqOFBs6fMhJJ1hOg1EQ==}
     peerDependencies:
       react: '>= 16'
     dependencies:
@@ -25111,7 +25111,7 @@ packages:
     dev: false
 
   /lodash.topath/4.5.2:
-    resolution: {integrity: sha1-NhY1Hzu6YZlKCTGYlmC9AyVP0Ak=}
+    resolution: {integrity: sha512-1/W4dM+35DwvE/iEd1M9ekewOSTlpFekhw9mhAtrwjVqUr83/ilQiyAvmg4tVX7Unkcfl1KC+i9WdaT4B6aQcg==}
 
   /lodash.truncate/4.4.2:
     resolution: {integrity: sha512-jttmRe7bRse52OsWIMDLaXxWqRAmtIUccAQ3garviCqJjafXOfNMO0yMfNpdD6zbGaTU0P5Nz7e7gAT6cKmJRw==}
@@ -28601,7 +28601,7 @@ packages:
       utf8: 3.0.0
 
   /react-native-path/0.0.5:
-    resolution: {integrity: sha1-oE5Lc6U1qKfPFcbnYOJ9t3ia+xM=}
+    resolution: {integrity: sha512-WJr256xBquk7X2O83QYWKqgLg43Zg3SrgjPc/kr0gCD2LoXA+2L72BW4cmstH12GbGeutqs/eXk3jgDQ2iCSvQ==}
 
   /react-onclickoutside/6.13.0_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-ty8So6tcUpIb+ZE+1HAhbLROvAIJYyJe/1vRrrcmW+jLsaM+/powDRqxzo6hSh9CuRZGSL1Q8mvcF5WRD93a0A==}
@@ -28734,8 +28734,9 @@ packages:
       react-dom: 18.2.0_react@18.2.0
     dev: false
 
-  /react-virtualized-auto-sizer/1.0.9_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-O1pYgygCDtFKa9GaKJtX5Ws/QRqxkx2zPlXZqEoRXCMmnNuhoMk5nhXCQqixsc1AcrUzOJwKdzEaDAU9WQ6aJQ==}
+  /react-virtualized-auto-sizer/1.0.7_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-Mxi6lwOmjwIjC1X4gABXMJcKHsOo0xWl3E3ugOgufB8GJU+MqrtY35aBuvCYv/razQ1Vbp7h1gWJjGjoNN5pmA==}
+    engines: {node: '>8.0.0'}
     peerDependencies:
       react: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0-rc
       react-dom: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0-rc
