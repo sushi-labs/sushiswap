@@ -6,6 +6,7 @@ import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class HoneySwapProvider extends UniswapV2BaseProvider {
+
   constructor(chainId: ChainId, web3Client: PublicClient, databaseClient: PrismaClient) {
     const factory = {
       [ChainId.GNOSIS]: '0xA818b4F111Ccac7AA31D0BCc0806d64F2E0737D7',

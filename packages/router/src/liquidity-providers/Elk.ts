@@ -6,6 +6,7 @@ import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class ElkProvider extends UniswapV2BaseProvider {
+
   constructor(chainId: ChainId, web3Client: PublicClient, databaseClient: PrismaClient) {
     const factory = {
       [ChainId.AVALANCHE]: '0x091d35d7F63487909C863001ddCA481c6De47091',

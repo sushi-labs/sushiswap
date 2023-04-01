@@ -291,14 +291,17 @@ export class TridentProvider extends LiquidityProvider {
         totals0,
         totals1
       )
-      this.topStablePools.set(pool.address, new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName()))
+      this.topStablePools.set(
+        pool.address,
+        new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName())
+      )
     })
   }
 
   async updatePools(): Promise<void> {
     this.removeStalePools()
 
-    // The two calls below are Async functions, but we do not want them to block. If they find any pools they will be updated next interval
+      // The two calls below are Async functions, but we do not want them to block. If they find any pools they will be updated next interval
     this.discoverNewPools()
     this.updateAvailablePools()
 
@@ -581,6 +584,7 @@ export class TridentProvider extends LiquidityProvider {
         const pc = new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName())
 
         stablePoolCodesToCreate.push(pc)
+
       } else {
         existingPool.validUntilTimestamp = validUntilTimestamp
         ++updated
@@ -918,6 +922,7 @@ export class TridentProvider extends LiquidityProvider {
       }
     })
   }
+
 
   startFetchPoolsData() {
     this.stopFetchPoolsData()

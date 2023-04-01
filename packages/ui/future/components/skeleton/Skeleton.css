@@ -1,3 +1,3 @@
 .shimmer {
-  @apply animate-skeleton bg-gradient-to-r from-gray-50 via-gray-200 via-gray-200 to-gray-50 dark:from-slate-800 dark:via-slate-700 dark:via-slate-700 dark:to-slate-800 bg-[length:400%_100%];
+  @apply animate-skeleton bg-gradient-to-r from-gray-50 via-gray-200 via-gray-200 to-gray-50 dark:from-slate-800 dark:via-slate-700 dark:via-slate-700 dark:to-slate-800 bg-[length:400%_100%]
 }
