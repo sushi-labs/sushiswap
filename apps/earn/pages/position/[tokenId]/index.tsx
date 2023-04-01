@@ -136,14 +136,16 @@ const Position: FC = () => {
     return [undefined, undefined]
   }, [_token0, _token1, positionDetails])
 
+  console.log(token0, _token0)
+
   return (
     <SWRConfig>
       <Layout>
         <div className="flex flex-col gap-2">
           <Link href="/" shallow={true}>
-            <ArrowLeftIcon width={24} className="dark:text-slate-50 text-gray-900" />
+            <ArrowLeftIcon width={24} className="text-gray-900 dark:text-slate-50" />
           </Link>
-          <h1 className="text-3xl font-semibold mt-2 text-gray-900 dark:text-slate-50">
+          <h1 className="mt-2 text-3xl font-semibold text-gray-900 dark:text-slate-50">
             {tab === SelectedTab.IncreaseLiq ? 'Increase Liquidity' : 'Decrease Liquidity'}
           </h1>
           <h1 className="text-xl font-medium text-gray-600 dark:dark:text-slate-400 text-slate-600">
@@ -151,7 +153,7 @@ const Position: FC = () => {
               ? "You're adding more liquidity to an existing position"
               : "You're remove liquidity from an existing position"}
           </h1>
-          <RadioGroup value={tab} onChange={setTab} className="flex gap-2 mt-3 flex-wrap">
+          <RadioGroup value={tab} onChange={setTab} className="flex flex-wrap gap-2 mt-3">
             {/*<RadioGroup.Option*/}
             {/*  value={SelectedTab.Analytics}*/}
             {/*  as={Button}*/}
@@ -206,7 +208,7 @@ const Position: FC = () => {
           <div className="flex flex-col flex-grow">
             {pool && _token0 && _token1 ? (
               <>
-                <h1 className="text-xl text-gray-900 dark:text-slate-50 font-semibold">
+                <h1 className="text-xl font-semibold text-gray-900 dark:text-slate-50">
                   {_token0.symbol}/{_token1.symbol}
                 </h1>
                 <p className="font-medium text-gray-700 dark:dark:text-slate-400 text-slate-600">
@@ -254,7 +256,7 @@ const Position: FC = () => {
               </List.Control>
             </List>
             <List className="!gap-1">
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <List.Label>Unclaimed fees</List.Label>
                 <ConcentratedLiquidityCollectButton
                   position={position}
@@ -343,14 +345,14 @@ const Position: FC = () => {
                     >
                       <div className={classNames(outOfRange ? 'bg-yellow' : 'bg-green', 'w-3 h-3 rounded-full')} />
                       {outOfRange ? (
-                        <span className="text-xs text-yellow-900 dark:text-yellow font-medium">Inactive</span>
+                        <span className="text-xs font-medium text-yellow-900 dark:text-yellow">Inactive</span>
                       ) : (
-                        <span className="text-xs text-green font-medium">In Range</span>
+                        <span className="text-xs font-medium text-green">In Range</span>
                       )}
                     </div>
                   </div>
                   {pool && _token0 && _token1 ? (
-                    <span className="text-sm text-gray-600 dark:text-slate-200 px-1">
+                    <span className="px-1 text-sm text-gray-600 dark:text-slate-200">
                       <b>
                         1 {invert ? _token1.symbol : _token0.symbol} ={' '}
                         {pool[invert ? 'token1Price' : 'token0Price'].toSignificant(6)}
@@ -364,7 +366,7 @@ const Position: FC = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-4 flex flex-col gap-3 bg-gray-50 dark:bg-white/[0.02] rounded-xl">
                     <div className="flex">
-                      <div className="px-2 py-1 font-medium text-xs gap-1 rounded-full bg-pink/10 text-pink">
+                      <div className="gap-1 px-2 py-1 text-xs font-medium rounded-full bg-pink/10 text-pink">
                         Min Price
                       </div>
                     </div>
@@ -387,7 +389,7 @@ const Position: FC = () => {
                   </div>
                   <div className="p-4 inline-flex flex-col gap-3 bg-gray-50 dark:bg-white/[0.02] rounded-xl">
                     <div className="flex">
-                      <div className="px-2 py-1 flex items-center font-medium text-xs gap-1 rounded-full bg-blue/10 text-blue">
+                      <div className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-blue/10 text-blue">
                         Max Price
                       </div>
                     </div>
@@ -412,7 +414,7 @@ const Position: FC = () => {
               </List.Control>
             </List>
           </div>
-          <div className="flex flex-col gap-10 w-full">
+          <div className="flex flex-col w-full gap-10">
             <div className={tab === SelectedTab.Analytics ? 'block' : 'hidden'}>
               <h1 className="text-5xl">Analytics Here</h1>
             </div>
@@ -422,8 +424,8 @@ const Position: FC = () => {
                 <ConcentratedLiquidityWidget
                   chainId={chainId}
                   account={address}
-                  token0={token0}
-                  token1={token1}
+                  token0={_token0}
+                  token1={_token1}
                   feeAmount={positionDetails?.fee}
                   tokensLoading={token0Loading || token1Loading}
                   existingPosition={position}
@@ -433,8 +435,8 @@ const Position: FC = () => {
             </div>
             <div className={classNames('pt-3', tab === SelectedTab.DecreaseLiq ? 'block' : 'hidden')}>
               <ConcentratedLiquidityRemoveWidget
-                token0={token0}
-                token1={token1}
+                token0={_token0}
+                token1={_token1}
                 account={address}
                 chainId={chainId}
                 position={position}
