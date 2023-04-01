@@ -1,6 +1,6 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox/exports/exports'
 import { ChainId, chainName } from '@sushiswap/chain'
 import {
   DAI,
