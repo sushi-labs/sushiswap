@@ -82,7 +82,9 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
               <h1 className="text-3xl font-semibold text-gray-900 dark:text-slate-50">
                 {token0?.symbol}/{token1?.symbol}
               </h1>
-              <h1 className="text-lg font-medium text-gray-600 dark:text-slate-300">Add Liquidity</h1>
+              <h1 className="text-lg font-medium text-gray-600 dark:text-slate-300">
+                {noLiquidity ? 'Create liquidity pool' : 'Add liquidity'}
+              </h1>
             </div>
             <div>
               {token0 && token1 && (

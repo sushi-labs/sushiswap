@@ -111,7 +111,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
   return (
     <div className={classNames('flex flex-col gap-4')}>
       {noLiquidity && (
-        <div className="bg-red/10 text-red rounded-xl p-6 font-medium">
+        <div className="bg-blue/10 text-blue rounded-xl p-6 font-medium">
           This pool must be initialized before you can add liquidity. To initialize, select a starting price for the
           pool. Then, enter your liquidity price range and deposit amount. Gas fees will be higher than usual due to the
           initialization transaction.
@@ -135,7 +135,12 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
         </div>
       )}
 
-      {noLiquidity && <input value={startPriceTypedValue} onChange={(e) => onStartPriceInput(e.target.value)} />}
+      {noLiquidity && (
+        <div>
+          <label>Start price</label>
+          <input value={startPriceTypedValue} onChange={(e) => onStartPriceInput(e.target.value)} />
+        </div>
+      )}
       <div
         className={classNames(
           tickLower === undefined || tickUpper === undefined || invalidPool || invalidRange
@@ -240,7 +245,8 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                 fullWidth
                 id="approve-erc20-0"
                 amount={parsedAmounts[Field.CURRENCY_A]}
-                contract="0xC36442b4a4522E871399CD717aBDD847Ab11FE88"
+                // TODO dynamic
+                contract="0xF0cBce1942A68BEB3d1b73F0dd86C8DCc363eF49"
                 enabled={!depositADisabled}
               >
                 <Checker.ApproveERC20
@@ -248,7 +254,8 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                   fullWidth
                   id="approve-erc20-1"
                   amount={parsedAmounts[Field.CURRENCY_B]}
-                  contract="0xC36442b4a4522E871399CD717aBDD847Ab11FE88"
+                  // TODO dynamic
+                  contract="0xF0cBce1942A68BEB3d1b73F0dd86C8DCc363eF49"
                   enabled={!depositBDisabled}
                 >
                   <AddSectionReviewModalConcentrated

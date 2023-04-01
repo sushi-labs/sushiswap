@@ -7,7 +7,6 @@ import { SendTransactionResult } from 'wagmi/actions'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
-import { useV3NFTPositionManagerContract } from '@sushiswap/wagmi/hooks/useNFTPositionManagerContract'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import {
   ConfirmationDialog as UIConfirmationDialog,
@@ -16,7 +15,6 @@ import {
 import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
-import { useEffectDebugger } from '@sushiswap/hooks'
 
 interface AddSectionConfirmModalConcentratedProps
   extends Pick<ReturnType<typeof useConcentratedDerivedMintInfo>, 'noLiquidity' | 'position'> {
@@ -74,15 +72,21 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
         txHash: data.hash,
         promise: data.wait(),
         summary: {
-          pending: `Adding liquidity to the ${token0.symbol}/${token1.symbol} pair`,
-          completed: `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`,
-          failed: 'Something went wrong when adding liquidity',
+          pending: noLiquidity
+            ? `Creating the ${token0.symbol}/${token1.symbol} liquidity pool`
+            : `Adding liquidity to the ${token0.symbol}/${token1.symbol} pair`,
+          completed: noLiquidity
+            ? `Created the ${token0.symbol}/${token1.symbol} liquidity pool`
+            : `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`,
+          failed: noLiquidity
+            ? 'Something went wrong when trying to create the pool'
+            : 'Something went wrong when adding liquidity',
         },
         timestamp: ts,
         groupTimestamp: ts,
       })
     },
-    [token0, token1, address, chainId]
+    [token0, token1, address, chainId, noLiquidity]
   )
 
   const prepare = useCallback(

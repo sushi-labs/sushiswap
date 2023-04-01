@@ -20,7 +20,7 @@ export const getConcentratedLiquidityPools = async ({
 }: {
   chainId: ChainId
   poolKeys: [Type | undefined, Type | undefined, FeeAmount | undefined][]
-}): Promise<Pool[]> => {
+}): Promise<(Pool | null)[]> => {
   let poolTokens: ([Token, Token, FeeAmount] | undefined)[]
   if (!chainId) {
     poolTokens = new Array(poolKeys.length)
@@ -103,18 +103,18 @@ export const getConcentratedLiquidityPools = async ({
 
   return poolKeys.map((_key, index) => {
     const tokens = poolTokens[index]
-    if (!tokens) throw new Error('Invalid concentrated liquidity pool')
+    if (!tokens) return null
     const [token0, token1, fee] = tokens
 
-    if (!slot0s[index]) throw new Error('Invalid concentrated liquidity pool')
+    if (!slot0s[index]) return null
     const slot0 = slot0s[index]
 
-    if (!liquidities[index]) throw new Error('Invalid concentrated liquidity pool')
+    if (!liquidities[index]) return null
     const liquidity = liquidities[index]
 
-    if (!tokens || !slot0 || !liquidity) throw new Error('Invalid concentrated liquidity pool')
-    if (!slot0 || !liquidity) throw new Error('Concentrated liquidity pool doesnt exist')
-    if (!slot0.sqrtPriceX96 || slot0.sqrtPriceX96.eq(0)) throw new Error('Concentrated liquidity pool doesnt exist')
+    if (!tokens || !slot0 || !liquidity) return null
+    if (!slot0 || !liquidity) return null
+    if (!slot0.sqrtPriceX96 || slot0.sqrtPriceX96.eq(0)) return null
 
     return new Pool(token0, token1, fee, JSBI.BigInt(slot0.sqrtPriceX96), JSBI.BigInt(liquidity), slot0.tick)
   })
@@ -130,7 +130,7 @@ export const getConcentratedLiquidityPool = async ({
   token0: Type | undefined
   token1: Type | undefined
   feeAmount: FeeAmount | undefined
-}): Promise<Pool> => {
+}): Promise<Pool | null> => {
   const poolKeys: [Type | undefined, Type | undefined, FeeAmount | undefined][] = [[token0, token1, feeAmount]]
   return (await getConcentratedLiquidityPools({ poolKeys, chainId }))[0]
 }

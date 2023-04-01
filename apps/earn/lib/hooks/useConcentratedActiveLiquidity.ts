@@ -83,7 +83,6 @@ export const useConcentratedActiveLiquidity = ({
   const activeTick = useMemo(() => getActiveTick(pool?.tickCurrent, feeAmount), [pool, feeAmount])
   const { isLoading, error, data: ticks } = useAllV3Ticks({ token0, token1, feeAmount, chainId })
 
-  console.log(ticks)
   return useMemo(() => {
     if (!token0 || !token1 || activeTick === undefined || !pool || !ticks || ticks.length === 0 || isLoading) {
       return {
