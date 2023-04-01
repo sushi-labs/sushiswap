@@ -44,8 +44,8 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
   existingPosition,
   onChange,
 }) => {
-  const { onFieldAInput, onFieldBInput } = useConcentratedMintActionHandlers()
-  const { independentField, typedValue } = useConcentratedMintState()
+  const { onFieldAInput, onFieldBInput, onStartPriceInput } = useConcentratedMintActionHandlers()
+  const { independentField, typedValue, startPriceTypedValue } = useConcentratedMintState()
   const { data: owner, isLoading: isOwnerLoading } = useConcentratedPositionOwner({ chainId, tokenId })
 
   const isOwner = owner === account
@@ -110,6 +110,13 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
 
   return (
     <div className={classNames('flex flex-col gap-4')}>
+      {noLiquidity && (
+        <div className="bg-red/10 text-red rounded-xl p-6 font-medium">
+          This pool must be initialized before you can add liquidity. To initialize, select a starting price for the
+          pool. Then, enter your liquidity price range and deposit amount. Gas fees will be higher than usual due to the
+          initialization transaction.
+        </div>
+      )}
       {!!existingPosition && !isOwner && !isOwnerLoading && (
         <div className="bg-red/10 text-red rounded-xl p-6 font-medium">
           You are not the owner of this LP position. You will not be able to withdraw the liquidity from this position
@@ -128,6 +135,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
         </div>
       )}
 
+      {noLiquidity && <input value={startPriceTypedValue} onChange={(e) => onStartPriceInput(e.target.value)} />}
       <div
         className={classNames(
           tickLower === undefined || tickUpper === undefined || invalidPool || invalidRange
