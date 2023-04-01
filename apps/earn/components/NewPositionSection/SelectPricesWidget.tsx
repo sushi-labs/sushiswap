@@ -118,7 +118,7 @@ export const SelectPricesWidget: FC = ({}) => {
                 value={startPriceTypedValue}
                 onChange={onStartPriceInput}
                 id="start-price-input"
-                caption="Your pool needs a starting price"
+                caption="Your pool needs a starting price somewhere between the min. and max. price"
               />
             </div>
           ) : (

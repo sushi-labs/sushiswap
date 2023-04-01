@@ -20,7 +20,7 @@ export function Text<T extends string | number>({ label, value, onChange, id, ca
   )
 
   return (
-    <div>
+    <div className="space-y-1">
       <div className="relative">
         <input
           type="text"
@@ -54,7 +54,7 @@ export function Text<T extends string | number>({ label, value, onChange, id, ca
           </div>
         )}
       </div>
-      {caption && <span className="text-xs text-gray-500 px-4">{caption}</span>}
+      {caption && <span className="text-xs text-gray-500 px-4 inline-block">{caption}</span>}
     </div>
   )
 }
