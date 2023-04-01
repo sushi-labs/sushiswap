@@ -127,7 +127,14 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                     )}
                   </div>
                 </List.KeyValue>
-                <List.KeyValue title="Market Price" subtitle={`Current price as determined by the ratio of the pool`}>
+                <List.KeyValue
+                  title={noLiquidity ? 'Starting Price' : 'Market Price'}
+                  subtitle={
+                    noLiquidity
+                      ? `Starting price as determined by you`
+                      : `Current price as determined by the ratio of the pool`
+                  }
+                >
                   <div className="flex flex-col gap-1">
                     {midPrice?.toSignificant(6)} {token1?.symbol}
                     <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">

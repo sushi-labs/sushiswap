@@ -9,6 +9,7 @@ import LiquidityChartRangeInput from '../LiquidityChartRangeInput'
 import {
   useConcentratedDerivedMintInfo,
   useConcentratedMintActionHandlers,
+  useConcentratedMintState,
   useRangeHopCallbacks,
 } from '../ConcentratedLiquidityProvider'
 import { DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui/future/components/input'
@@ -51,8 +52,8 @@ export const SelectPricesWidget: FC = ({}) => {
       existingPosition: undefined,
     })
 
-  const { onLeftRangeInput, onRightRangeInput } = useConcentratedMintActionHandlers()
-
+  const { onLeftRangeInput, onRightRangeInput, onStartPriceInput } = useConcentratedMintActionHandlers()
+  const { startPriceTypedValue } = useConcentratedMintState()
   const { data: existingPosition, isLoading: positionLoading } = useConcentratedLiquidityPositionsFromTokenId({
     chainId,
     tokenId,
@@ -110,19 +111,31 @@ export const SelectPricesWidget: FC = ({}) => {
               </div>
             )}
           </div>
-          <LiquidityChartRangeInput
-            chainId={chainId}
-            currencyA={token0}
-            currencyB={token1}
-            feeAmount={feeAmount}
-            ticksAtLimit={ticksAtLimit}
-            price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
-            priceLower={priceLower}
-            priceUpper={priceUpper}
-            onLeftRangeInput={onLeftRangeInput}
-            onRightRangeInput={onRightRangeInput}
-            interactive={!hasExistingPosition}
-          />
+          {noLiquidity ? (
+            <div className="pb-2">
+              <Input.Text
+                label="Start price"
+                value={startPriceTypedValue}
+                onChange={onStartPriceInput}
+                id="start-price-input"
+                caption="Your pool needs a starting price"
+              />
+            </div>
+          ) : (
+            <LiquidityChartRangeInput
+              chainId={chainId}
+              currencyA={token0}
+              currencyB={token1}
+              feeAmount={feeAmount}
+              ticksAtLimit={ticksAtLimit}
+              price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
+              priceLower={priceLower}
+              priceUpper={priceUpper}
+              onLeftRangeInput={onLeftRangeInput}
+              onRightRangeInput={onRightRangeInput}
+              interactive={!hasExistingPosition}
+            />
+          )}
         </div>
         <div className="flex flex-col gap-3 pt-4">
           {/*<RadioGroup value={range} onChange={setRange} className="flex gap-2">*/}

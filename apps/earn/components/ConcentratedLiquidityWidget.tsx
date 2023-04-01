@@ -16,6 +16,7 @@ import { FeeAmount, Position } from '@sushiswap/v3-sdk'
 import { Type } from '@sushiswap/currency'
 import { useConcentratedPositionOwner } from '@sushiswap/wagmi/future/hooks/positions/hooks/useConcentratedPositionOwner'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { Input } from '@sushiswap/ui/future/components/input'
 
 interface ConcentratedLiquidityWidget {
   chainId: ChainId
@@ -132,13 +133,6 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
       {invalidRange && (
         <div className="bg-yellow/10 text-yellow rounded-xl p-6 font-medium">
           Invalid range selected. The minimum price must be lower than the maximum price.
-        </div>
-      )}
-
-      {noLiquidity && (
-        <div>
-          <label>Start price</label>
-          <input value={startPriceTypedValue} onChange={(e) => onStartPriceInput(e.target.value)} />
         </div>
       )}
       <div
