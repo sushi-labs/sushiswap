@@ -4,8 +4,8 @@ import { JSBI } from '@sushiswap/math'
 import { Address, readContracts } from 'wagmi'
 import { ChainId } from '@sushiswap/chain'
 
-// TODO MAKE DYNAMIC
-const v3CoreFactoryAddress = '0x1F98431c8aD98523631AE4a59f267346ea31F984'
+// TODO: MAKE DYNAMIC
+const v3CoreFactoryAddress = '0x1af415a1EbA07a4986a52B6f2e7dE7003D82231e'
 
 export enum ConcentratedLiquidityPoolState {
   LOADING,
