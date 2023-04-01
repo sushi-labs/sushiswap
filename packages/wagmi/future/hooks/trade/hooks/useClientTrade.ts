@@ -73,7 +73,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
         BigNumber.from(amount.quotient.toString()),
         toToken,
         feeData.gasPrice.toNumber(),
-        [LiquidityProviders.UniswapV3, LiquidityProviders.NativeWrap],
+        [LiquidityProviders.SushiSwapV3, LiquidityProviders.NativeWrap],
       )
 
       let args = undefined

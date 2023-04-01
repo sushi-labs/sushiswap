@@ -88,8 +88,8 @@ export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enable
         pool.address,
         new UniV3PoolCode(
           pool,
-          LiquidityProviders.UniswapV3,
-          'UniSwapV3'
+          LiquidityProviders.SushiSwapV3,
+          'SushiSwapV3'
         )
       )
     }

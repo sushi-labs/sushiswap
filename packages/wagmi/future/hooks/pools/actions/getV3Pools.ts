@@ -102,7 +102,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
       ({
         chainId,
         address: computeV3PoolAddress({
-          factoryAddress: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
+          factoryAddress: '0x1af415a1EbA07a4986a52B6f2e7dE7003D82231e',
           tokenA: currencyA.wrapped,
           tokenB: currencyB.wrapped,
           fee,
@@ -188,7 +188,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
     ([, poolData], i) =>
       ({
         chainId,
-        address: '0xbfd8137f7d1516D3ea5cA83523914859ec47F573' as Address,
+        address: '0x8516944E89f296eb6473d79aED1Ba12088016c9e' as Address,
         args: [poolData.address as Address, minIndexes[i]],
         abi: tickLensAbi,
         functionName: 'getPopulatedTicksInWord',
@@ -199,7 +199,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
     ([, poolData], i) =>
       ({
         chainId,
-        address: '0xbfd8137f7d1516D3ea5cA83523914859ec47F573' as Address,
+        address: '0x8516944E89f296eb6473d79aED1Ba12088016c9e' as Address,
         args: [poolData.address as Address, maxIndexes[i]],
         abi: tickLensAbi,
         functionName: 'getPopulatedTicksInWord',
