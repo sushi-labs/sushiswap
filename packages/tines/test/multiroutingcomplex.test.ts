@@ -1,4 +1,3 @@
-// @ts-nocheck
 import seedrandom from 'seedrandom'
 
 import {
@@ -9,11 +8,9 @@ import {
   findSingleRouteExactOut,
   Graph,
   MultiRoute,
-  RouteLeg,
   RouteStatus,
-  RToken,
 } from '../src'
-import { ConstantProductRPool, HybridRPool, RPool } from '../src/PrimaryPools'
+import { RPool } from '../src/PrimaryPools'
 import { checkRouteResult } from './snapshots/snapshot'
 import {
   atomPrice,
@@ -23,6 +20,8 @@ import {
   expectCloseValues,
   getRandom,
   MAX_POOL_IMBALANCE,
+  Network,
+  TToken,
 } from './utils'
 
 const testSeed = '1' // Change it to change random generator values
@@ -38,8 +37,10 @@ function simulateRouting(network: Network, route: MultiRoute) {
   diff.set(route.fromToken.tokenId as string, 0)
   route.legs.forEach((l) => {
     // Take swap parms
-    const pool = network.pools.find((p) => p.address == l.poolAddress)
-    expect(pool).toBeDefined()
+    const pool0 = network.pools.find((p) => p.address == l.poolAddress)
+    expect(pool0).toBeDefined()
+    const pool = pool0 as RPool
+
     const direction = pool.token0.tokenId == l.tokenFrom.tokenId
     const granularityOut = direction ? pool?.granularity1() : pool?.granularity0()
 
@@ -48,19 +49,19 @@ function simulateRouting(network: Network, route: MultiRoute) {
     expectCloseValues(expectedOut / granularityOut, l.assumedAmountOut / granularityOut, 1e-11)
 
     // Calc legInput
-    const inputTokenAmount = amounts.get(l.tokenFrom.tokenId as string)
+    const inputTokenAmount = amounts.get(l.tokenFrom.tokenId as string) as number
     expect(inputTokenAmount).toBeGreaterThan(0) // Very important check !!!! That we don't have idle legs
     const legInput = inputTokenAmount * l.swapPortion
     amounts.set(l.tokenFrom.tokenId as string, inputTokenAmount - legInput)
 
     // Check assumedAmountIn
-    const inputTokenDiff = diff.get(l.tokenFrom.tokenId as string)
+    const inputTokenDiff = diff.get(l.tokenFrom.tokenId as string) as number
     const legInputDiff = inputTokenDiff * l.swapPortion
     expect(Math.abs(legInput - l.assumedAmountIn) <= legInputDiff)
     diff.set(l.tokenFrom.tokenId as string, inputTokenDiff - legInputDiff)
 
     // check assumedAmountOut
-    const { out: legOutput, gasSpent } = pool?.calcOutByIn(legInput, direction)
+    const { out: legOutput, gasSpent } = pool.calcOutByIn(legInput, direction)
     const precision = legInputDiff / l.assumedAmountIn
     expectCloseValues(legOutput / granularityOut, l.assumedAmountOut / granularityOut, precision + 1e-11)
     gasSpentTotal += gasSpent
@@ -74,7 +75,7 @@ function simulateRouting(network: Network, route: MultiRoute) {
 
   amounts.forEach((amount, tokenId) => {
     if (tokenId == route.toToken.tokenId) {
-      const finalDiff = diff.get(tokenId)
+      const finalDiff = diff.get(tokenId) as number
       expect(finalDiff).toBeGreaterThanOrEqual(0)
       expect(Math.abs(amount - route.amountOut) <= finalDiff)
       expect(finalDiff / route.amountOut).toBeLessThan(1e-4)
@@ -90,82 +91,6 @@ function simulateRouting(network: Network, route: MultiRoute) {
   }
 }
 
-// Just for testing
-// @ts-ignore
-function exportNetwork(network: Network, from: RToken, to: RToken, route: MultiRoute) {
-  const allPools = new Map<string, RPool>()
-  network.pools.forEach((p) => allPools.set(p.address, p))
-  const usedPools = new Map<string, boolean>()
-  route.legs.forEach((l) => usedPools.set(l.poolAddress, l.tokenFrom === allPools.get(l.poolAddress)?.token0))
-
-  function edgeStyle(p: RPool) {
-    const u = usedPools.get(p.address)
-    if (u === undefined) return ''
-    if (u) return ', value: 2, arrows: "to"'
-    else return ', value: 2, arrows: "from"'
-  }
-
-  function nodeLabel(t: RToken) {
-    if (t === from) return `${t.name}: ${route.amountIn}`
-    if (t === to) return `${t.name}: ${route.amountOut}`
-    return t.name
-  }
-
-  const nodes = `var nodes = new vis.DataSet([
-    ${network.tokens.map((t) => `{ id: ${t.name}, label: "${nodeLabel(t)}"}`).join(',\n\t\t')}
-  ]);\n`
-  const edges = `var edges = new vis.DataSet([
-    ${network.pools.map((p) => `{ from: ${p.token0.name}, to: ${p.token1.name}${edgeStyle(p)}}`).join(',\n\t\t')}
-  ]);\n`
-  const data = `var data = {
-      nodes: nodes,
-      edges: edges,
-  };\n`
-
-  const fs = require('fs')
-  fs.writeFileSync('D:/Info/Notes/GraphVisualization/data.js', nodes + edges + data)
-}
-
-// Just for testing
-// @ts-ignore
-function exportPrices(network: Network, baseTokenIndex: number) {
-  const baseToken = network.tokens[baseTokenIndex]
-  const allPools = new Map<string, RPool>()
-  network.pools.forEach((p) => allPools.set(p.address, p))
-
-  const g = new Graph(network.pools, baseToken, baseToken, network.gasPrice)
-  const tokenPriceMap = new Map<string, number>()
-  g.vertices.forEach((v) => {
-    tokenPriceMap.set(v.token.name, v.price)
-  })
-
-  function edgeStyle(p: RPool) {
-    if (p instanceof ConstantProductRPool) return ', color: "black"'
-    if (p instanceof HybridRPool) return ', color: "blue"'
-    return ', color: "red"'
-  }
-
-  function nodeLabel(t: TToken) {
-    const info = `${t.name}:${(tokenPriceMap.get(t.name) / atomPrice(t)) * atomPrice(baseToken)}`
-    if (t == baseToken) return `*${info}`
-    return info
-  }
-
-  const nodes = `var nodes = new vis.DataSet([
-    ${network.tokens.map((t) => `{ id: ${t.name}, label: "${nodeLabel(t)}"}`).join(',\n\t\t')}
-  ]);\n`
-  const edges = `var edges = new vis.DataSet([
-    ${network.pools.map((p) => `{ from: ${p.token0.name}, to: ${p.token1.name}${edgeStyle(p)}}`).join(',\n\t\t')}
-  ]);\n`
-  const data = `var data = {
-      nodes: nodes,
-      edges: edges,
-  };\n`
-
-  const fs = require('fs')
-  fs.writeFileSync('D:/Info/Notes/GraphVisualization/data.js', nodes + edges + data)
-}
-
 function numberPrecision(n: number, precision = 2) {
   if (n == 0) return 0
   const sign = n < 0 ? -1 : 1
@@ -176,6 +101,7 @@ function numberPrecision(n: number, precision = 2) {
   return (sign * Math.round(n * shift)) / shift
 }
 
+// eslint-disable-next-line unused-imports/no-unused-vars, no-unused-vars
 function printRoute(route: MultiRoute, network: Network) {
   const liquidity = new Map<number, number>()
   function addLiquidity(token: any, amount: number) {
@@ -187,8 +113,8 @@ function printRoute(route: MultiRoute, network: Network) {
   addLiquidity(route.fromToken, route.amountIn)
   let info = ``
   route.legs.forEach((l, i) => {
-    const pool = network.pools.find((p) => p.address == l.poolAddress)
-    const inp = liquidity.get(parseInt(l.tokenFrom.name)) * l.absolutePortion
+    const pool = network.pools.find((p) => p.address == l.poolAddress) as RPool
+    const inp = (liquidity.get(parseInt(l.tokenFrom.name)) as number) * l.absolutePortion
     const { out } = pool.calcOutByIn(inp, pool.token0.tokenId == l.tokenFrom.tokenId)
     const price_in = atomPrice(l.tokenFrom) / atomPrice(route.fromToken)
     const price_out = atomPrice(l.tokenTo) / atomPrice(route.fromToken)
@@ -230,7 +156,7 @@ it('Token price calculation is correct', () => {
       expectCloseValues(v.price, 1, 1e-10)
     }
     if (v.price !== 0) {
-      expectCloseValues(v.price, atomPrice(v.token) / atomPrice(baseToken), 5 * (MAX_POOL_IMBALANCE - 1))
+      expectCloseValues(v.price, atomPrice(v.token as TToken) / atomPrice(baseToken), 5 * (MAX_POOL_IMBALANCE - 1))
     }
   })
 })
@@ -278,7 +204,7 @@ it(`Multirouter-100 for ${network.tokens.length} tokens and ${network.pools.leng
 it(`Multirouter path quantity check`, () => {
   const rndInternal: () => number = seedrandom('00')
   const steps = [1, 2, 4, 10, 20, 40, 100]
-  for (var i = 0; i < 5; ++i) {
+  for (let i = 0; i < 5; ++i) {
     const [t0, t1, tBase] = chooseRandomTokensForSwap(rndInternal, network)
     const amountIn = getRandom(rndInternal, 1e6, 1e24)
     const gasPrice = getBasePrice(network, tBase)

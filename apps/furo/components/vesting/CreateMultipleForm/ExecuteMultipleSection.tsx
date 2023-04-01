@@ -1,8 +1,6 @@
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
-import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, Dots } from '@sushiswap/ui'
@@ -15,18 +13,19 @@ import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../lib'
-import { useNotifications } from '../../../lib/state/storage'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
 import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount } from '../utils'
 import { CreateMultipleVestingFormSchemaType } from './schema'
+import { createToast } from '@sushiswap/ui/future/components/toast'
+import { FuroVestingRouterChainId } from '@sushiswap/furo'
+import { bentoBoxV1Address } from '@sushiswap/bentobox'
 
 export const ExecuteMultipleSection: FC<{
-  chainId: ChainId
+  chainId: FuroVestingRouterChainId
   isReview: boolean
 }> = ({ chainId, isReview }) => {
   const { address } = useAccount()
   const contract = useFuroVestingRouterContract(chainId)
-  const [, { createNotification }] = useNotifications(address)
   const [signature, setSignature] = useState<Signature>()
 
   const {
@@ -67,8 +66,8 @@ export const ExecuteMultipleSection: FC<{
       if (!data || !vestings) return
 
       const ts = new Date().getTime()
-
-      createNotification({
+      void createToast({
+        account: address,
         type: 'createVesting',
         chainId: chainId,
         txHash: data.hash,
@@ -82,7 +81,7 @@ export const ExecuteMultipleSection: FC<{
         groupTimestamp: ts,
       })
     },
-    [chainId, createNotification, vestings]
+    [chainId, address, vestings]
   )
 
   const prepare = useCallback(
@@ -169,7 +168,6 @@ export const ExecuteMultipleSection: FC<{
 
   return (
     <Approve
-      onSuccess={createNotification}
       className="!items-end"
       components={
         <Approve.Components>
@@ -185,7 +183,7 @@ export const ExecuteMultipleSection: FC<{
               enabled={!!amount}
               key={index}
               amount={amount}
-              address={BENTOBOX_ADDRESS[chainId]}
+              address={bentoBoxV1Address[chainId]}
             />
           ))}
         </Approve.Components>

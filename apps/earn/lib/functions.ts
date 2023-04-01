@@ -1,7 +1,7 @@
 import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { Incentive } from '@sushiswap/graph-client'
+import { Pool } from '@sushiswap/client'
 
 export const isConstantProductPool = (
   pool: Pair | ConstantProductPool | StablePool | null
@@ -17,7 +17,7 @@ export const isLegacyPool = (pool: Pair | ConstantProductPool | StablePool | nul
   return pool instanceof Pair
 }
 
-export const incentiveRewardToToken = (chainId: ChainId, incentive: Incentive): Token => {
+export const incentiveRewardToToken = (chainId: ChainId, incentive: Pool['incentives'][0]): Token => {
   return new Token({
     chainId,
     address: incentive.rewardToken.address,

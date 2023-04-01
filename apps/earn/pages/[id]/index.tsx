@@ -1,12 +1,11 @@
-import { chainShortName } from '@sushiswap/chain'
 import { formatPercent } from '@sushiswap/format'
-import { getBuiltGraphSDK, Pair } from '@sushiswap/graph-client'
 import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
+import { getPool, usePool, getPools, getPoolUrl, Pool } from '@sushiswap/client'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
-import useSWR, { SWRConfig } from 'swr'
+import { SWRConfig, useSWRConfig } from 'swr'
 
 import {
   Layout,
@@ -23,96 +22,88 @@ import {
   PoolRewards,
   PoolStats,
 } from '../../components'
-import { GET_POOL_TYPE_MAP } from '../../lib/constants'
+import { POOL_TYPE_MAP } from '../../lib/constants'
+import { ChainId } from '@sushiswap/chain'
+import { NextSeo } from 'next-seo'
 
-const LINKS = ({ pair }: { pair: Pair }): BreadcrumbLink[] => [
+const LINKS = (pool: Pool): BreadcrumbLink[] => [
   {
-    href: `/${pair.id}`,
-    label: `${pair.name} - ${GET_POOL_TYPE_MAP[pair.type as keyof typeof GET_POOL_TYPE_MAP]} - ${formatPercent(
-      pair.swapFee / 10000
-    )}`,
+    href: `/${pool.id}`,
+    label: `${pool.name} - ${POOL_TYPE_MAP[pool.type]} - ${formatPercent(pool.swapFee)}`,
   },
 ]
 
 const Pool: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (
-    <SWRConfig value={{ fallback }}>
-      <_Pool />
-    </SWRConfig>
+    <>
+      <SWRConfig value={{ fallback }}>
+        <_Pool />
+      </SWRConfig>
+    </>
   )
 }
 
 const _Pool = () => {
   const router = useRouter()
-  const { data } = useSWR<{ pair: Pair }>(`/earn/api/pool/${router.query.id}`, (url) =>
-    fetch(url).then((response) => response.json())
-  )
-  if (!data) return <></>
-  const { pair } = data
-  return (
-    <PoolPositionProvider pair={pair}>
-      <PoolPositionStakedProvider pair={pair}>
-        <PoolPositionRewardsProvider pair={pair}>
-          <Layout breadcrumbs={LINKS(data)}>
-            <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
-              <div className="flex flex-col order-1 gap-9">
-                <PoolHeader pair={pair} />
-                <hr className="my-3 border-t border-slate-200/5" />
-                <PoolChart pair={pair} />
-                <AppearOnMount>
-                  <PoolStats pair={pair} />
-                </AppearOnMount>
-                <PoolComposition pair={pair} />
-                <PoolRewards pair={pair} />
-              </div>
 
-              <div className="flex flex-col order-2 gap-4">
-                <AppearOnMount>
-                  <div className="flex flex-col gap-10">
-                    <PoolMyRewards pair={pair} />
-                    <PoolPosition pair={pair} />
+  const [chainId, address] = (router.query.id as string).split(':') as [ChainId, string]
+  const { data: pool } = usePool({
+    args: { chainId, address },
+    swrConfig: useSWRConfig(),
+    shouldFetch: Boolean(chainId && address),
+  })
+
+  if (!pool) return <></>
+
+  return (
+    <>
+      <NextSeo title={`${pool.name} - ${formatPercent(pool.swapFee)}`} />
+      <PoolPositionProvider pool={pool}>
+        <PoolPositionStakedProvider pool={pool}>
+          <PoolPositionRewardsProvider pool={pool}>
+            <Layout breadcrumbs={LINKS(pool)}>
+              <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
+                <div className="flex flex-col order-1 gap-9">
+                  <PoolHeader pool={pool} />
+                  <hr className="my-3 border-t border-slate-200/5" />
+                  <PoolChart pool={pool} />
+                  <PoolStats pool={pool} />
+                  <PoolComposition pool={pool} />
+                  <PoolRewards pool={pool} />
+                </div>
+
+                <div className="flex flex-col order-2 gap-4">
+                  <AppearOnMount>
+                    <div className="flex flex-col gap-10">
+                      <PoolMyRewards pool={pool} />
+                      <PoolPosition pool={pool} />
+                    </div>
+                  </AppearOnMount>
+                  <div className="hidden lg:flex">
+                    <PoolButtons pool={pool} />
                   </div>
-                </AppearOnMount>
-                <div className="hidden lg:flex">
-                  <PoolButtons pair={pair} />
                 </div>
               </div>
-            </div>
-          </Layout>
-          <PoolActionBar pair={pair} />
-        </PoolPositionRewardsProvider>
-      </PoolPositionStakedProvider>
-    </PoolPositionProvider>
+            </Layout>
+            <PoolActionBar pool={pool} />
+          </PoolPositionRewardsProvider>
+        </PoolPositionStakedProvider>
+      </PoolPositionProvider>
+    </>
   )
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  // When this is true (in preview environments) don't
-  // prerender any static pages
-  // (faster builds, but slower initial page load)
-  if (process.env.SKIP_BUILD_STATIC_GENERATION === 'true') {
-    return {
-      paths: [],
-      fallback: 'blocking',
-    }
-  }
-
-  const sdk = getBuiltGraphSDK()
-  const { pairs } = await sdk.PairsByChainIds({
-    first: 250,
-    orderBy: 'liquidityUSD',
-    orderDirection: 'desc',
-    chainIds: SUPPORTED_CHAIN_IDS,
-  })
+  const pools = await getPools({ take: 100, orderBy: 'liquidityUSD', orderDir: 'desc', chainIds: SUPPORTED_CHAIN_IDS })
 
   // Get the paths we want to pre-render based on pairs
-  const paths = pairs
+  const paths = pools
     .sort(({ liquidityUSD: a }, { liquidityUSD: b }) => {
       return Number(b) - Number(a)
     })
     .slice(0, 250)
-    .map((pair, i) => ({
-      params: { id: `${chainShortName[pair.chainId]}:${pair.address}` },
+    .map((pool) => ({
+      params: { id: pool.id },
     }))
 
   // We'll pre-render only these paths at build time.
@@ -122,21 +113,15 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const sdk = getBuiltGraphSDK()
-  const id = params?.id as string
-  const { pair } = await sdk.PairById({ id })
-
-  if (!pair) {
-    // If there is a server error, you might want to
-    // throw an error instead of returning so that the cache is not updated
-    // until the next successful request.
-    throw new Error(`Failed to fetch pair, received ${pair}`)
+  const [chainId, address] = (params?.id as string).split(':') as [ChainId, string]
+  const pool = await getPool({ chainId, address })
+  if (!pool) {
+    throw new Error(`Failed to fetch pool, received ${pool}`)
   }
-
   return {
     props: {
       fallback: {
-        [`/earn/api/pool/${id}`]: { pair },
+        [getPoolUrl({ chainId, address })]: pool,
       },
     },
     revalidate: 60,

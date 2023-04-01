@@ -1,167 +1,116 @@
-import { ChainId } from '@sushiswap/chain'
-import { Pair, PairType, QuerypairsArgs } from '@sushiswap/graph-client'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { GenericTable, Table } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import stringify from 'fast-json-stable-stringify'
-import useSWR from 'swr'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { PAGE_SIZE } from '../contants'
 import { APR_COLUMN, FEES_COLUMN, NAME_COLUMN, NETWORK_COLUMN, TVL_COLUMN, VOLUME_COLUMN } from './Cells/columns'
-import { PairQuickHoverTooltip } from './PairQuickHoverTooltip'
+import { PoolQuickHoverTooltip } from './PoolQuickHoverTooltip'
+import { Pool, GetPoolsArgs, usePoolsInfinite, usePoolCount, PoolType, PoolVersion } from '@sushiswap/client'
+import { useSWRConfig } from 'swr'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
+import { Loader } from '@sushiswap/ui/future/components/Loader'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, FEES_COLUMN, APR_COLUMN]
 
-const fetcher = ({
-  url,
-  args,
-}: {
-  url: string
-  args: {
-    sorting: SortingState
-    pagination: PaginationState
-    query: string
-    extraQuery: string
-    selectedNetworks: ChainId[]
-    selectedPoolTypes: string[]
-    farmsOnly: boolean
-  }
-}) => {
-  const _url = new URL(url, window.location.origin)
-
-  if (args.sorting[0]) {
-    _url.searchParams.set('orderBy', args.sorting[0].id)
-    _url.searchParams.set('orderDirection', args.sorting[0].desc ? 'desc' : 'asc')
-  }
-
-  if (args.pagination) {
-    _url.searchParams.set('pagination', stringify(args.pagination))
-  }
-
-  if (args.selectedNetworks) {
-    _url.searchParams.set('networks', stringify(args.selectedNetworks))
-  }
-
-  const where: QuerypairsArgs['where'] = {}
-  if (args.query) where['name_contains_nocase'] = args.query
-  if (args.selectedPoolTypes) where['type_in'] = args.selectedPoolTypes as PairType[]
-
-  if (Object.keys(where).length > 0) {
-    _url.searchParams.set('where', stringify(where))
-  }
-
-  if (args.farmsOnly) {
-    _url.searchParams.set('farmsOnly', 'true')
-  }
-
-  return fetch(_url.href)
-    .then((res) => res.json())
-    .catch((e) => console.log(stringify(e)))
-}
-
-export const PoolsTable: FC = () => {
-  const { query, extraQuery, selectedNetworks, selectedPoolTypes, farmsOnly, atLeastOneFilterSelected } =
-    usePoolFilters()
+export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady }) => {
+  const { chainIds, tokenSymbols, poolTypes, poolVersions, incentivizedOnly } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
+  const shouldLoad = isReady === undefined || !!isReady
+
   const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: PAGE_SIZE,
-  })
+  const [, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: PAGE_SIZE })
 
-  const args = useMemo(
+  const args = useMemo<GetPoolsArgs>(
     () => ({
-      sorting,
-      pagination,
-      selectedNetworks,
-      selectedPoolTypes,
-      farmsOnly,
-      query,
-      extraQuery,
+      chainIds: chainIds,
+      tokenSymbols,
+      isIncentivized: incentivizedOnly || undefined, // will filter farms out if set to false, undefined will be filtered out by the parser
+      isWhitelisted: true, // can be added to filters later, need to put it here so fallback works
+      orderBy: sorting[0]?.id,
+      orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
+      poolTypes: poolTypes as PoolType[],
+      poolVersions: poolVersions as PoolVersion[],
     }),
-    [sorting, pagination, selectedNetworks, selectedPoolTypes, farmsOnly, query, extraQuery]
+    [chainIds, tokenSymbols, incentivizedOnly, sorting, poolTypes, poolVersions]
   )
 
-  const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/earn/api/pools', args }, fetcher)
+  const {
+    data: pools,
+    isValidating,
+    setSize,
+  } = usePoolsInfinite({ args, shouldFetch: shouldLoad, swrConfig: useSWRConfig() })
+  const { data: poolCount } = usePoolCount({ args, shouldFetch: shouldLoad, swrConfig: useSWRConfig() })
+  const data = useMemo(() => pools?.flat() || [], [pools])
 
-  // console.log({ pools })
-
-  const { data: poolCount } = useSWR<number>(
-    `/earn/api/pools/count${selectedNetworks ? `?networks=${stringify(selectedNetworks)}` : ''}`,
-    (url) => fetch(url).then((response) => response.json())
-  )
-
-  const table = useReactTable<Pair>({
-    data: pools || [],
+  const table = useReactTable<Pool>({
+    data,
     columns: COLUMNS,
     state: {
       sorting,
       columnVisibility,
     },
-    pageCount: Math.ceil((poolCount || 0) / PAGE_SIZE),
+    pageCount: Math.ceil((poolCount?.count || 0) / PAGE_SIZE),
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     manualSorting: true,
     manualPagination: true,
+    sortDescFirst: true,
   })
 
   useEffect(() => {
     if (isSm && !isMd) {
       setColumnVisibility({
-        volume: false,
+        volume1d: false,
         network: false,
         rewards: false,
-        fees: false,
+        fees1d: false,
       })
     } else if (isSm) {
       setColumnVisibility({})
     } else {
       setColumnVisibility({
-        volume: false,
         network: false,
         rewards: false,
         liquidityUSD: false,
-        fees: false,
+        fees1d: false,
       })
     }
   }, [isMd, isSm])
 
-  const rowLink = useCallback((row: Pair) => {
+  const rowLink = useCallback((row: Pool) => {
     return `/${row.id}`
   }, [])
 
   return (
     <>
-      <GenericTable<Pair>
-        table={table}
-        loading={!pools && isValidating}
-        HoverElement={isMd ? PairQuickHoverTooltip : undefined}
-        placeholder="No pools found"
-        pageSize={PAGE_SIZE}
-        linkFormatter={rowLink}
-      />
-      <Table.Paginator
-        hasPrev={pagination.pageIndex > 0}
-        hasNext={
-          !atLeastOneFilterSelected ? pagination.pageIndex < table.getPageCount() : (pools?.length || 0) >= PAGE_SIZE
+      <InfiniteScroll
+        dataLength={data.length}
+        next={() => setSize((prev) => prev + 1)}
+        hasMore={data.length < (poolCount?.count || 0)}
+        loader={
+          <div className="flex justify-center w-full py-4">
+            <Loader size={24} />
+          </div>
         }
-        nextDisabled={!pools && isValidating}
-        onPrev={table.previousPage}
-        onNext={table.nextPage}
-        page={pagination.pageIndex}
-        onPage={table.setPageIndex}
-        pages={!atLeastOneFilterSelected ? table.getPageCount() : undefined}
-        pageSize={PAGE_SIZE}
-      />
+      >
+        <GenericTable<Pool>
+          table={table}
+          loading={(!pools && isValidating) || !shouldLoad}
+          HoverElement={isMd ? PoolQuickHoverTooltip : undefined}
+          placeholder="No pools found"
+          pageSize={PAGE_SIZE}
+          linkFormatter={rowLink}
+        />
+      </InfiniteScroll>
     </>
   )
 }

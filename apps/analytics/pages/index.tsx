@@ -2,40 +2,26 @@ import { SUPPORTED_CHAIN_IDS } from 'config'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
+import { unstable_serialize as unstable_serialize_infinite } from 'swr/infinite'
+import { getPools, getPoolCount, getPoolCountUrl, getPoolsUrl } from '@sushiswap/client'
 
 import { ChartSection, Layout, PoolsFiltersProvider, TableSection } from '../components'
-import { getBundles, getCharts, getPoolCount, getPools, getTokenCount, getTokens } from '../lib/api'
+import { getBundles, getCharts, getTokenCount, getTokens } from '../lib/api'
+import { defaultPoolsArgs } from 'lib/constants'
 
 export const getStaticProps: GetStaticProps = async () => {
-  const [pairs, tokens, charts, poolCount, tokenCount, bundles] = await Promise.all([
-    getPools(),
+  const [pools, tokens, charts, poolCount, tokenCount, bundles] = await Promise.all([
+    getPools(defaultPoolsArgs),
     getTokens(),
     getCharts(),
-    getPoolCount(),
+    getPoolCount(defaultPoolsArgs),
     getTokenCount(),
     getBundles(),
   ])
   return {
     props: {
       fallback: {
-        [unstable_serialize({
-          url: '/analytics/api/pools',
-          args: {
-            sorting: [
-              {
-                id: 'liquidityUSD',
-                desc: true,
-              },
-            ],
-            selectedNetworks: SUPPORTED_CHAIN_IDS,
-            pagination: {
-              pageIndex: 0,
-              pageSize: 20,
-            },
-            query: '',
-            extraQuery: '',
-          },
-        })]: pairs,
+        [unstable_serialize_infinite(() => getPoolsUrl(defaultPoolsArgs))]: pools,
         [unstable_serialize({
           url: '/analytics/api/tokens',
           args: {
@@ -61,11 +47,12 @@ export const getStaticProps: GetStaticProps = async () => {
             selectedNetworks: SUPPORTED_CHAIN_IDS,
           },
         })]: charts,
-        [`/analytics/api/pools/count`]: poolCount,
+        [getPoolCountUrl(defaultPoolsArgs)]: poolCount,
         [`/analytics/api/tokens/count`]: tokenCount,
         [`/analytics/api/bundles`]: bundles,
       },
     },
+    revalidate: 900,
   }
 }
 
@@ -77,7 +64,7 @@ const Index: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback })
   )
 }
 
-const _Index = () => {
+const _Index: FC = () => {
   return (
     <Layout>
       <div className="flex flex-col gap-10">

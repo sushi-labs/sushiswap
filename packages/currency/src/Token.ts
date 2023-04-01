@@ -1,35 +1,22 @@
 import { getAddress } from '@ethersproject/address'
-import { JSBI } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
 import { Currency } from './Currency'
 import { Type } from './Type'
+import { SerializedToken, tokenSchema } from './zod'
 
 /**
  * Represents an ERC20 token with a unique address and some metadata.
  */
 export class Token extends Currency {
+  public readonly id: string
   public readonly isNative = false as const
   public readonly isToken = true as const
-
-  // TODO:
-  // /**
-  //  * The concatination of chainId and contract address on the chain on which this token lives
-  //  */
-  // public readonly id: string
-
   /**
    * The contract address on the chain on which this token lives
    */
   public readonly address: string
 
-  /**
-   * The rebase
-   */
-  readonly rebase: {
-    base: JSBI
-    elastic: JSBI
-  }
   public constructor({
     // TODO:
     // id,
@@ -38,14 +25,12 @@ export class Token extends Currency {
     decimals,
     symbol,
     name,
-    rebase = { base: JSBI.BigInt(1), elastic: JSBI.BigInt(1) },
   }: {
     chainId: number | string
     address: string
     decimals: number
     symbol?: string
     name?: string
-    rebase?: { base: JSBI; elastic: JSBI }
   }) {
     super({
       chainId,
@@ -55,14 +40,9 @@ export class Token extends Currency {
     })
     try {
       this.address = getAddress(address)
+      this.id = `${chainId}:${address}`
     } catch {
       throw `${address} is not a valid address`
-    }
-    try {
-      // TODO: No rebase?
-      this.rebase = rebase
-    } catch {
-      throw `${rebase} is not a valid rebase`
     }
   }
 
@@ -91,5 +71,29 @@ export class Token extends Currency {
    */
   public get wrapped(): Token {
     return this
+  }
+
+  /**
+   * Serialize to JSON object
+   */
+  public serialize(): SerializedToken {
+    return tokenSchema.parse({
+      isNative: this.isNative,
+      name: this.name,
+      symbol: this.symbol,
+      decimals: this.decimals,
+      chainId: this.chainId,
+      address: this.address,
+    })
+  }
+
+  public static deserialize({ name, symbol, address, decimals, chainId }: SerializedToken): Token {
+    return new Token({
+      name,
+      symbol,
+      address,
+      decimals,
+      chainId,
+    })
   }
 }

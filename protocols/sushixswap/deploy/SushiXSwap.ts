@@ -6,7 +6,7 @@ import {
   STARGATE_USDC_ADDRESS,
   STARGATE_WIDGET_ADDRESS,
 } from '@sushiswap/stargate'
-import sushiSwapExports from '@sushiswap/sushiswap/exports'
+import sushiSwapExports from '@sushiswap/sushiswap'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/types'
 

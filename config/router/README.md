@@ -1,3 +1,3 @@
-# React Query Config
+# Smart Order Router Config
 
 ...

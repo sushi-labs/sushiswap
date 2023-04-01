@@ -12,10 +12,10 @@ import {
   MAKER_SUPPORTED_CHAIN_NAMES,
   MAKER_TYPE,
   SUBGRAPH_HOST,
-} from '../config'
+} from '../config.js'
 
 type Arguments = {
-  network?: typeof MAKER_SUPPORTED_CHAIN_NAMES[number]
+  network?: (typeof MAKER_SUPPORTED_CHAIN_NAMES)[number]
   verbose?: boolean
 }
 

@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Token, USDC_ADDRESS, WETH9, WETH9_ADDRESS } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import EXPORTS from '@sushiswap/trident/exports/all.json'
+import { stablePoolFactoryAddress } from '@sushiswap/trident'
 
 import { InsufficientInputAmountError } from '../errors'
 import { computeStablePoolAddress } from './computeStablePoolAddress'
@@ -30,7 +30,7 @@ describe('computePoolAddress', () => {
     const fee = 30
 
     const address = computeStablePoolAddress({
-      factoryAddress: (EXPORTS as any)[ChainId.OPTIMISM]?.[0].contracts.StablePoolFactory.address,
+      factoryAddress: stablePoolFactoryAddress[ChainId.OPTIMISM],
       tokenA,
       tokenB,
       fee,

@@ -1,6 +1,7 @@
 import { ConstantProductPool, Fee, Pair, StablePool } from '@sushiswap/amm'
-import { ChainId } from '@sushiswap/chain'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Type } from '@sushiswap/currency'
+import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 import { ReactElement } from 'react'
 
 import { ConstantProductPoolState, PairState, StablePoolState } from '../../hooks'
@@ -13,8 +14,7 @@ export type ComponentsWrapperProps<T> = {
     | undefined
 }
 
-export interface LegacyPoolFinderProps {
-  chainId: ChainId
+interface PoolFinderProps {
   token0: Type | undefined
   token1: Type | undefined
   index?: number
@@ -22,7 +22,17 @@ export interface LegacyPoolFinderProps {
   enabled: boolean
 }
 
-export interface TridentPoolFinderProps extends LegacyPoolFinderProps {
+export interface LegacyPoolFinderProps extends PoolFinderProps {
+  chainId: UniswapV2Router02ChainId
+  token0: Type | undefined
+  token1: Type | undefined
+  index?: number
+  dispatch?(payload: PoolExistenceStateAction): void
+  enabled: boolean
+}
+
+export interface TridentPoolFinderProps extends PoolFinderProps {
+  chainId: BentoBoxV1ChainId
   fee?: Fee
   twap?: boolean
 }

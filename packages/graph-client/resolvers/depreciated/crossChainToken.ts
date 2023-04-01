@@ -9,8 +9,8 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { QueryResolvers, Token } from '../../.graphclient'
-import { FarmAPI } from '../../lib/farms'
+import { QueryResolvers, Token } from '../../.graphclient/index.js'
+import { FarmAPI } from '../../lib/incentives.js'
 
 export const crossChainToken: QueryResolvers['crossChainToken'] = async (root, args, context, info): Promise<Token> => {
   const farms: FarmAPI = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
@@ -25,8 +25,8 @@ export const crossChainToken: QueryResolvers['crossChainToken'] = async (root, a
           chainId: args.chainId,
           chainName: chainName[args.chainId],
           chainShortName: chainShortName[args.chainId],
-          subgraphName: SUSHISWAP_SUBGRAPH_NAME[args.chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]],
-          subgraphHost: SUBGRAPH_HOST[args.chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]],
+          subgraphName: SUSHISWAP_SUBGRAPH_NAME[args.chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]],
+          subgraphHost: SUBGRAPH_HOST[args.chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]],
         },
         info,
       })
@@ -39,8 +39,8 @@ export const crossChainToken: QueryResolvers['crossChainToken'] = async (root, a
           chainId: args.chainId,
           chainName: chainName[args.chainId],
           chainShortName: chainShortName[args.chainId],
-          subgraphName: TRIDENT_SUBGRAPH_NAME[args.chainId as typeof TRIDENT_ENABLED_NETWORKS[number]],
-          subgraphHost: SUBGRAPH_HOST[args.chainId as typeof TRIDENT_ENABLED_NETWORKS[number]],
+          subgraphName: TRIDENT_SUBGRAPH_NAME[args.chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]],
+          subgraphHost: SUBGRAPH_HOST[args.chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]],
         },
         info,
       })

@@ -20,9 +20,9 @@
     "index.js"
   ],
   "devDependencies": {
-    "next": "13.1.1"
+    "next": "13.2.3"
   },
   "peerDependencies": {
-    "next": "13.1.1"
+    "next": "13.2.3"
   }
 }

@@ -1,5 +1,5 @@
-import { Resolvers } from '../../.graphclient'
-import { liquidityPositionsByChainIds } from './liquidityPositionsByChainIds'
+import { Resolvers } from '../../.graphclient/index.js'
+import { liquidityPositionsByChainIds } from './liquidityPositionsByChainIds.js'
 
 export const resolvers: Resolvers = {
   LiquidityPosition: {

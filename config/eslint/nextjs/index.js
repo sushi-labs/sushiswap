@@ -10,7 +10,7 @@ const eslintConfig = {
     'turbo',
     'prettier',
   ],
-  plugins: ['testing-library', 'prettier'],
+  plugins: ['testing-library', 'prettier', 'simple-import-sort', 'unused-imports'],
   // extends: ["@sushiswap/eslint-config", "turbo", "prettier", "next"],
   // plugins: ["testing-library", "simple-import-sort", "unused-imports"],
   // settings: {

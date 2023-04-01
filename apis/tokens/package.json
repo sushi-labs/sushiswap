@@ -8,6 +8,12 @@
     "tokens",
     "api"
   ],
+  "homepage": "https://www.sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "apis/tokens"
+  },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "type": "module",
@@ -18,17 +24,20 @@
   },
   "dependencies": {
     "@sushiswap/database": "workspace:*",
-    "@vercel/node": "2.8.2",
-    "zod": "3.20.2"
+    "@sushiswap/wagmi-config": "workspace:*",
+    "@vercel/node": "2.9.8",
+    "zod": "3.20.2",
+    "@wagmi/core": "0.8.1"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/wagmi-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "^18.0.0",
     "eslint": "8.29.0",
     "typescript": "4.9.4",
-    "vercel": "28.10.1"
+    "vercel": "28.16.7"
   }
 }

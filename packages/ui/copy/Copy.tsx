@@ -1,4 +1,4 @@
-import { CheckIcon, DocumentDuplicateIcon } from '@heroicons/react/outline'
+import { CheckIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline'
 import { useCopyClipboard } from '@sushiswap/hooks'
 import classNames from 'classnames'
 import React, { FC } from 'react'

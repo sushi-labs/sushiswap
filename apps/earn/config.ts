@@ -9,6 +9,9 @@ export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
   ChainId.BSC,
+  // ChainId.ETHEREUM,
+  // ChainId.FANTOM,
+  // ChainId.GNOSIS,
 ]
 
 export const AMM_ENABLED_NETWORKS: ChainId[] = [

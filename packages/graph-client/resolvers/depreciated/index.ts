@@ -1,5 +1,5 @@
-import { Resolvers } from '../../.graphclient'
-import { crossChainToken } from './crossChainToken'
+import { Resolvers } from '../../.graphclient/index.js'
+import { crossChainToken } from './crossChainToken.js'
 
 export const resolvers: Resolvers = {
   deprecated_Pair: {

@@ -2,11 +2,16 @@
 ::before,
 ::after {
   --font-sans: 'InterVariable', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
-    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  --background-color: #0f172a;
-  --color: #ffffff;
+  'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  color-scheme: light;
+  --background-color: #f4f5f6;
+  --color: #000;
 }
 
-/* :root {
-  color-scheme: dark;
-} */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --background-color: #0f172a;
+    --color: #ffffff;
+  }
+}

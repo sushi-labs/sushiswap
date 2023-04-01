@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
-import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, COMMON_BASES, CUSTOM_BASES } from '@sushiswap/router-config'
+import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES } from '@sushiswap/router-config'
 import flatMap from 'lodash.flatmap'
 
 export function getCurrencyCombinations(chainId: ChainId, currencyA: Type, currencyB: Type) {
@@ -47,5 +47,3 @@ export function getCurrencyCombinations(chainId: ChainId, currencyA: Type, curre
       return true
     })
 }
-
-export type Bases = typeof BASES_TO_CHECK_TRADES_AGAINST | typeof COMMON_BASES | typeof CUSTOM_BASES

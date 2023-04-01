@@ -1,31 +1,11 @@
-import { Bundle, getBuiltGraphSDK, Pagination, QuerypairsWithFarmsArgs } from '@sushiswap/graph-client'
-import { getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subYears } from 'date-fns'
-import stringify from 'fast-json-stable-stringify'
+import { chainShortName } from '@sushiswap/chain'
+import { Bundle, getBuiltGraphSDK } from '@sushiswap/graph-client'
+import { getUnixTime, startOfHour, startOfMinute, subYears } from 'date-fns'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
+import { GetUserArgs } from './hooks/api/useUserPositions'
 
 const sdk = getBuiltGraphSDK()
-
-export type GetPoolCountQuery = Partial<{
-  networks: string
-}>
-
-export const getPoolCount = async (query?: GetPoolCountQuery) => {
-  try {
-    const { factories } = await sdk.Factories({
-      chainIds: SUPPORTED_CHAIN_IDS,
-    })
-    const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
-    return factories.reduce((previousValue, currentValue) => {
-      if (chainIds.includes(currentValue.chainId)) {
-        previousValue = previousValue + Number(currentValue.pairCount)
-      }
-      return previousValue
-    }, 0)
-  } catch (error: any) {
-    throw new Error(error)
-  }
-}
 
 export const getBundles = async () => {
   try {
@@ -41,69 +21,37 @@ export const getBundles = async () => {
   }
 }
 
-export type GetPoolsQuery = Omit<QuerypairsWithFarmsArgs, 'where' | 'pagination'> & {
-  networks: string
-  where?: string
-  pagination: string
-  farmsOnly?: string
-}
-
-export const getPools = async (query?: GetPoolsQuery) => {
-  try {
-    // console.log('get pools')
-    const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 1))))
-    const start = getUnixTime(date)
-
-    const pagination: Pagination = query?.pagination
-      ? JSON.parse(query.pagination)
-      : {
-          pageIndex: 0,
-          pageSize: 20,
-        }
-    const first = pagination?.pageIndex && pagination?.pageSize ? (pagination.pageIndex + 1) * pagination.pageSize : 20
-    const skip = 0 // query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
-    // const first = 1000
-    // const skip = 0
-    const where = query?.where ? { ...JSON.parse(query.where) } : {}
-    const orderBy = query?.orderBy || 'liquidityUSD'
-    const orderDirection = query?.orderDirection || 'desc'
-    const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
-    const farmsOnly = query?.farmsOnly === 'true'
-
-    // console.log('before pairs', {
-    //   first,
-    //   skip,
-    //   pagination,
-    //   where,
-    //   orderBy,
-    //   orderDirection,
-    //   chainIds,
-    //   farmsOnly,
-    // })
-    const { pairs } = await sdk.PairsWithFarms({
-      first,
-      skip,
-      pagination,
-      where,
-      orderBy,
-      orderDirection,
-      chainIds,
-      farmsOnly,
-    })
-    // console.log('after pairs', pairs)
-    return pairs
-  } catch (error: any) {
-    // console.log('here', error)
-    throw new Error(error)
-  }
-}
-
-export const getPool = async (id: string) => {
+export const getGraphPool = async (id: string) => {
   if (!id.includes(':')) throw Error('Invalid pair id')
+  // Migrating to new format, graph-client uses the deprecated one
+  const split = id.split(':')
   const { pair } = await sdk.PairById({
-    id,
+    id: `${chainShortName[split[0]]}:${split[1]}`,
   })
   return pair
+}
+
+export const getGraphPools = async (ids: string[]) => {
+  if (!ids.every((id) => id.includes(':'))) throw Error('Invalid pair ids')
+
+  // Migrating to new format, graph-client uses the deprecated one
+  const addresses = ids.map((id) => id.split(':')[1])
+
+  // PairsByIds would be better, not implemented though...
+  // Need to hack around
+  const { pairs } = await sdk.PairsByChainIds({
+    chainIds: Array.from(new Set(ids.map((id) => Number(id.split(':')[0])))),
+    where: {
+      id_in: addresses,
+    },
+  })
+
+  return (
+    pairs
+      .map((pair) => ({ ...pair, id: `${pair.chainId}:${pair.address}` }))
+      // To prevent possible (although unlikely) collisions
+      .filter((pair) => ids.includes(pair.id))
+  )
 }
 
 export const getOneYearBlock = async () => {
@@ -125,16 +73,12 @@ export const getSushiBar = async () => {
   }
 }
 
-export type GetUserQuery = {
-  id: string
-  networks: string
-}
+export const getUser = async (args: GetUserArgs) => {
+  if (!args.id) return []
 
-export const getUser = async (query: GetUserQuery) => {
-  const networks = JSON.parse(query?.networks || stringify(SUPPORTED_CHAIN_IDS))
-  const { crossChainUserWithFarms: user } = await sdk.CrossChainUserWithFarms({
-    chainIds: networks,
-    id: query.id.toLowerCase(),
+  const { crossChainUserPositions: user } = await sdk.CrossChainUserPositions({
+    chainIds: args.chainIds || SUPPORTED_CHAIN_IDS,
+    id: args.id.toLowerCase(),
   })
   return user
 }

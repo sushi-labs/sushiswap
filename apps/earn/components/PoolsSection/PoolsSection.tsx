@@ -1,52 +1,46 @@
 import { Tab } from '@headlessui/react'
-import { UserWithFarm } from '@sushiswap/graph-client'
-import { Chip, classNames } from '@sushiswap/ui'
-import { FC, useState } from 'react'
-import useSWR from 'swr'
+import React, { FC, Fragment, useState } from 'react'
 import { useAccount } from 'wagmi'
+import { useUserPositions } from '../../lib/hooks'
 
 import { PoolsTable, PositionsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'
+import { Button } from '@sushiswap/ui/future/components/button'
 
-export const PoolsSection: FC = () => {
+export const PoolsSection: FC<{ isReady?: boolean }> = ({ isReady }) => {
   const { address } = useAccount()
   const [tab, setTab] = useState<number>(0)
-  const { data: userWithFarms } = useSWR<UserWithFarm[]>(address ? [`/earn/api/user/${address}`] : null, (url) =>
-    fetch(url).then((response) => response.json())
-  )
+  const { data: userPositions } = useUserPositions({ id: address as string }, !!address)
 
   return (
     <section className="flex flex-col">
       <Tab.Group selectedIndex={tab} onChange={setTab}>
-        <div className="flex items-center gap-6 mb-6">
-          <Tab
-            className={({ selected }) =>
-              classNames(
-                selected ? 'text-slate-200' : 'text-slate-500',
-                'hover:text-slate-50 focus:text-slate-50 font-medium !outline-none'
-              )
-            }
-          >
-            All Yields
+        <div className="flex items-center gap-2 mb-4">
+          <Tab as={Fragment}>
+            {({ selected }) => (
+              <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
+                Pools
+              </Button>
+            )}
           </Tab>
 
           {address && (
-            <Tab
-              className={({ selected }) =>
-                classNames(
-                  selected ? 'text-slate-200' : 'text-slate-500',
-                  'hover:text-slate-50 focus:text-slate-50 flex items-center gap-2 font-medium !outline-none'
-                )
-              }
-            >
-              My Positions <Chip label={userWithFarms?.length || '0'} size="sm" color="blue" />
+            <Tab as={Fragment}>
+              {({ selected }) => (
+                <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
+                  My Positions{' '}
+                  <div className="bg-blue/10 rounded-full w-5 h-5 flex items-center justify-center text-blue font-semibold text-xs">
+                    {userPositions?.length ?? ''}
+                  </div>
+                </Button>
+              )}
             </Tab>
           )}
         </div>
         <TableFilters showAllFilters={tab === 0} />
         <Tab.Panels>
           <Tab.Panel unmount={false}>
-            <PoolsTable />
+            <PoolsTable isReady={isReady} />
           </Tab.Panel>
           <Tab.Panel unmount={!address}>
             <PositionsTable />

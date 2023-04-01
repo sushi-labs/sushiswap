@@ -1,11 +1,19 @@
-import stringify from 'fast-json-stable-stringify'
+import { getPools, PoolsApiSchema } from '@sushiswap/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-import { getPools, GetPoolsQuery } from '../../../lib/api'
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
-  const query = req.query as unknown
-  const pairs = await getPools(query as GetPoolsQuery)
-  res.status(200).send(stringify(pairs))
+  try {
+    res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
+
+    const result = PoolsApiSchema.safeParse(req.query)
+    if (!result.success) {
+      return res.status(400).json(result.error.format())
+    }
+
+    const pools = await getPools(req.query)
+    res.status(200).json(pools)
+  } catch (error) {
+    console.log({ error })
+    res.status(500).send('')
+  }
 }

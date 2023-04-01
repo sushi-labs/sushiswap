@@ -1,21 +1,19 @@
 import { chainShortName } from '@sushiswap/chain'
 
-import { Pair } from '../.graphclient'
-import { Farm } from '../lib/farms'
-import { transformFarm } from './transformFarm'
+import type { Pair } from '../.graphclient/index.js'
+import type { Incentive } from '../lib/incentives.js'
 
 export function transformPair({
   pair,
   pair1d,
   pair2d,
   pair1w,
-  farm,
 }: {
   pair: Pair
   pair1d?: Pair
   pair2d?: Pair
   pair1w?: Pair
-  farm?: Farm
+  incentives?: Incentive[]
 }) {
   const liquidity1dChange = pair1d ? pair.liquidityUSD / pair1d.liquidityUSD - 1 : 0
   const liquidity1wChange = pair1w ? pair.liquidityUSD / pair1w.liquidityUSD - 1 : 0
@@ -40,9 +38,6 @@ export function transformPair({
   const utilisation1dChange = (utilisation1d / utilisation2d) * 100 - 100
 
   const feeApr = pair?.apr
-  const incentiveApr =
-    farm?.incentives?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.apr), 0) ?? 0
-  const apr = Number(feeApr) + Number(incentiveApr)
 
   return {
     ...pair,
@@ -63,9 +58,6 @@ export function transformPair({
     utilisation1d,
     utilisation2d,
     utilisation1dChange,
-    apr,
     feeApr,
-    incentiveApr,
-    farm: transformFarm(farm),
   }
 }

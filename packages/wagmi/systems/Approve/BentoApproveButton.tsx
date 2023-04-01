@@ -1,6 +1,7 @@
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { Transition } from '@headlessui/react'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Badge, BentoboxIcon, Button, classNames, IconButton, Tooltip, Typography } from '@sushiswap/ui'
 import { FC, memo, useEffect } from 'react'
 import { Address, useNetwork } from 'wagmi'
@@ -19,6 +20,7 @@ export interface BentoApproveButton extends ApproveButton<RenderPropPayload> {
   address?: Address
 }
 
+// eslint-disable-next-line react/display-name
 export const BentoApproveButton: FC<BentoApproveButton> = memo(
   ({
     id,
@@ -32,17 +34,15 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     allApproved,
     initialized,
     hideIcon,
-    onSuccess,
     enabled = true,
     ...props
   }) => {
     const { chain } = useNetwork()
     const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({
-      chainId: chain?.id,
+      chainId: chain?.id as BentoBoxV1ChainId,
       watch,
       masterContract,
       onSignature,
-      onSuccess,
       enabled,
     })
 

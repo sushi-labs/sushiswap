@@ -3,7 +3,7 @@ import { ErrorCode } from '@ethersproject/logger'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Currency } from '@sushiswap/currency'
 import { calculateGasMargin } from '@sushiswap/gas'
-import { createErrorToast, NotificationData } from '@sushiswap/ui'
+import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
 import { BigNumber } from 'ethers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
@@ -15,6 +15,7 @@ import {
   UserRejectedRequestError,
   useSendTransaction,
   useSigner,
+  useWaitForTransaction,
 } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
@@ -31,24 +32,25 @@ export enum ApprovalState {
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useERC20ApproveCallback(
   watch: boolean,
-  amountToApprove?: Amount<Currency>,
-  spender?: string,
-  onSuccess?: (data: NotificationData) => void
+  amountToApprove: Amount<Currency> | undefined,
+  spender: string | undefined
 ): [ApprovalState, () => void] {
   const { address } = useAccount()
   const { data: signer } = useSigner()
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined, e: Error | null) => {
-      // TODO: ignore until wagmi workaround on ethers error
+      // Property code does exist on object
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      if (e?.code === ErrorCode.ACTION_REJECTED) {
-        createErrorToast(e?.message, true)
+      if (e && e.code !== ErrorCode.ACTION_REJECTED) {
+        createErrorToast(e.message, true)
       }
 
-      if (data && onSuccess && amountToApprove) {
+      if (data && amountToApprove) {
         const ts = new Date().getTime()
-        onSuccess({
+        void createToast({
+          account: address,
           type: 'approval',
           chainId: amountToApprove.currency.chainId,
           txHash: data.hash,
@@ -63,7 +65,7 @@ export function useERC20ApproveCallback(
         })
       }
     },
-    [amountToApprove, onSuccess]
+    [address, amountToApprove]
   )
 
   const [request, setRequest] = useState<TransactionRequest & { to: string }>()
@@ -72,12 +74,23 @@ export function useERC20ApproveCallback(
     request,
   })
 
-  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+  const {
+    sendTransaction,
+    data,
+    isLoading: isWritePending,
+  } = useSendTransaction({
     ...config,
     onSettled,
   })
 
-  const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
+  const { isLoading: isWaitPending } = useWaitForTransaction({
+    hash: data?.hash,
+  })
+
+  const token = useMemo(
+    () => (amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined),
+    [amountToApprove?.currency]
+  )
   const { data: currentAllowance, isLoading } = useERC20Allowance(watch, token, address ?? undefined, spender)
 
   // check the current approval status
@@ -85,14 +98,14 @@ export function useERC20ApproveCallback(
     if (isLoading) return ApprovalState.LOADING
     if (!amountToApprove || !spender) return ApprovalState.UNKNOWN
     if (amountToApprove.currency.isNative) return ApprovalState.APPROVED
-    if (isWritePending) return ApprovalState.PENDING
+    if (isWritePending || isWaitPending) return ApprovalState.PENDING
 
     // We might not have enough data to know whether we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN
 
     // amountToApprove will be defined if currentAllowance is
     return currentAllowance.lessThan(amountToApprove) ? ApprovalState.NOT_APPROVED : ApprovalState.APPROVED
-  }, [amountToApprove, currentAllowance, isLoading, isWritePending, spender])
+  }, [amountToApprove, currentAllowance, isLoading, isWaitPending, isWritePending, spender])
 
   const tokenContract = useContract({
     address: token?.address ?? AddressZero,

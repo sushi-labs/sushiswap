@@ -1,6 +1,7 @@
 export * from './BridgeBento'
 export * from './BridgeBidirectionalUnlimited'
 export * from './CLPool'
+export * from './CurvePool'
 export * from './deprecated/MultiRouterMath'
 export * from './deprecated/MultiRouterTypes'
 export * from './Graph'

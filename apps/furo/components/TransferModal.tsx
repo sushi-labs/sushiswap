@@ -10,7 +10,7 @@ import { useAccount, useContract, useEnsAddress } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { Stream, Vesting } from '../lib'
-import { useNotifications } from '../lib/state/storage'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 
 interface TransferModalProps {
   stream?: Stream | Vesting
@@ -30,7 +30,6 @@ export const TransferModal: FC<TransferModalProps> = ({
   const { address } = useAccount()
   const [open, setOpen] = useState(false)
   const [recipient, setRecipient] = useState<string>()
-  const [, { createNotification }] = useNotifications(address)
 
   const contract = useContract({
     address: contractAddress,
@@ -56,10 +55,11 @@ export const TransferModal: FC<TransferModalProps> = ({
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
-      if (!data || !resolvedAddress) return
+      if (!data || !resolvedAddress || !address) return
 
       const ts = new Date().getTime()
-      createNotification({
+      void createToast({
+        account: address,
         type: 'transferStream',
         txHash: data.hash,
         chainId,
@@ -73,7 +73,7 @@ export const TransferModal: FC<TransferModalProps> = ({
         },
       })
     },
-    [chainId, createNotification, resolvedAddress]
+    [address, chainId, resolvedAddress]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
