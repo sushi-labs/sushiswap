@@ -5,7 +5,7 @@ import { classNames } from '@sushiswap/ui'
 import Container from '@sushiswap/ui/future/components/Container'
 import React, { useReducer } from 'react'
 
-import { Hero } from './components'
+import { CardNavigation, Hero } from './components'
 
 const DATE_FILTERS = ['Last Month', 'Last Quarter', 'Last Year'] as const
 type DateFilter = (typeof DATE_FILTERS)[number]
@@ -21,12 +21,14 @@ const INITIAL_FILTERS = {
   govStatus: 'Snapshot Vote',
 }
 
-function reducer(state, { type, payload }: DateDispatch | GovStatusDispatch) {
+function reducer(state: { date: string; govStatus: string }, { type, payload }: DateDispatch | GovStatusDispatch) {
   return {
     ...state,
     [type]: payload,
   }
 }
+
+const items = ['1', '2', '3', '4', '5']
 
 export default function GovernanceDashboard() {
   const [filters, dispatch] = useReducer(reducer, INITIAL_FILTERS)
@@ -85,13 +87,8 @@ export default function GovernanceDashboard() {
                     </div>
                   ))}
                 </div>
-                <div className="relative p-1">
-                  <div className="flex gap-6 h-full">
-                    <div className="ring-1 rounded-lg h-full w-1/2"> card 1</div>
-                    <div className="ring-1 rounded-lg h-full w-1/2"> card 2</div>
-                  </div>
-                  <div className="bg-gradient-to-r to-[#101728] w-1/2 from-transparent h-full top-0 absolute right-0" />
-                </div>
+
+                <CardNavigation items={items} />
               </div>
             </section>
           </Tab.Panel>

@@ -7,16 +7,17 @@ import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
 import { MotionConfig } from 'framer-motion'
-import type { AppProps } from 'next/app'
+import { DefaultSeo } from 'next-seo'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
-import { DefaultSeo } from 'next-seo'
 import React, { FC, useEffect } from 'react'
 import { WagmiConfig } from 'wagmi'
 
 import { Header } from '../components'
 import SEO from '../next-seo.config.mjs'
+
+import type { AppProps } from 'next/app'
 
 declare global {
   interface Window {
