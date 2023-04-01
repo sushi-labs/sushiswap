@@ -26,7 +26,6 @@
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/sushi-data": "1.0.26",
-    "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/validate": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
