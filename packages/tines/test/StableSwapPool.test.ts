@@ -1,15 +1,18 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
-import { getBigNumber, StableSwapRPool, closeValues } from '../src'
+
+import { closeValues, getBigNumber, StableSwapRPool } from '../src'
 
 const token0 = {
   name: 'Token0',
   address: '0xb7a4F3E9097C08dA09517b5aB877F7a917224ede',
   symbol: 'Token1Symbol',
+  decimals: 18,
 }
 const token1 = {
   name: 'Token1',
   address: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
   symbol: 'Token1Symbol',
+  decimals: 18,
 }
 const v = BigNumber.from('0x76329851304572304587') // random number  ~ 2^80
 
@@ -145,13 +148,13 @@ function checkPoolPriceCalculation(pool: StableSwapRPool) {
   expect(Math.abs(price1 / expected_price - 1)).toBeLessThan(1e-7)
 }
 
-function numberPrecision(n: number, precision = 2) {
-  if (n == 0) return 0
-  const digits = Math.ceil(Math.log10(n))
-  if (digits >= precision) return Math.round(n)
-  const shift = Math.pow(10, precision - digits)
-  return Math.round(n * shift) / shift
-}
+// function numberPrecision(n: number, precision = 2) {
+//   if (n == 0) return 0
+//   const digits = Math.ceil(Math.log10(n))
+//   if (digits >= precision) return Math.round(n)
+//   const shift = Math.pow(10, precision - digits)
+//   return Math.round(n * shift) / shift
+// }
 
 describe('StableSwap test', () => {
   describe('calcOutByIn & calcInByOut', () => {
@@ -173,7 +176,9 @@ describe('StableSwap test', () => {
 
           expectCloseValues(out1, out2, 1e-10)
           expect(out1).toBeLessThanOrEqual(amountIn * 0.9970000001)
-        } catch (e) {} // CalcOutByIn could throw exception
+        } catch (e) {
+          // CalcOutByIn could throw exception
+        }
       }
     })
     it('total is 0', () => {
@@ -191,7 +196,9 @@ describe('StableSwap test', () => {
 
             expect(out1).toEqual(out2)
             expect(out1).toBeLessThanOrEqual(amountIn * 0.997)
-          } catch (e) {} // CalcOutByIn could throw exception
+          } catch (e) {
+            // CalcOutByIn could throw exception
+          }
         }
       }
     })
@@ -212,7 +219,9 @@ describe('StableSwap test', () => {
           const out2 = checkSwap(pool, amountIn * 1e12, false)
 
           expect(out1).toBeLessThanOrEqual(out2)
-        } catch (e) {} // CalcOutByIn could throw exception
+        } catch (e) {
+          // CalcOutByIn could throw exception
+        }
       }
     })
     it('Big disbalance, regular values', () => {
@@ -224,7 +233,9 @@ describe('StableSwap test', () => {
           const out2 = checkSwap(pool, amountIn, false)
 
           expect(out1).toBeLessThanOrEqual(out2)
-        } catch (e) {} // CalcOutByIn could throw exception
+        } catch (e) {
+          // CalcOutByIn could throw exception
+        }
       }
     })
     it('Ideal balance, huge swap values', () => {
@@ -239,7 +250,9 @@ describe('StableSwap test', () => {
 
           expectCloseValues(out1, out2, 1e-10)
           expect(out1).toBeLessThanOrEqual(maxReserve)
-        } catch (e) {} // CalcOutByIn could throw exception
+        } catch (e) {
+          // CalcOutByIn could throw exception
+        }
       }
     })
   })

@@ -16,8 +16,10 @@ export const usePrice = ({ chainId, address }: UsePrice) => {
     queryKey: ['NoPersist', `https://token-price.sushi.com/v1/${chainId}/${address}`],
     queryFn: async () =>
       fetch(`https://token-price.sushi.com/v1/${chainId}/${address}`).then((response) => response.json()),
-    staleTime: 60000,
     enabled: Boolean(chainId && address),
     select: hydrate,
+    staleTime: 900000, // 15 mins
+    cacheTime: 3600000, // 1hr
+    refetchOnWindowFocus: false,
   })
 }

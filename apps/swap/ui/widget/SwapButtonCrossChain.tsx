@@ -8,6 +8,7 @@ import { useTrade } from '../../lib/useTrade'
 import { warningSeverity } from '../../lib/warningSeverity'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { sushiXSwapAddress, SushiXSwapChainId } from '@sushiswap/sushixswap'
+import { ZERO } from '@sushiswap/math'
 
 export const SwapButtonCrossChain: FC = () => {
   const { amount, network0, network1, value } = useSwapState()
@@ -44,19 +45,27 @@ export const SwapButtonCrossChain: FC = () => {
                   amount={amount}
                   contract={bentoBoxV1Address[network0 as BentoBoxV1ChainId]}
                 >
-                  <Button
-                    disabled={
-                      Boolean(isLoading && +value > 0) ||
-                      isFetching ||
-                      (!checked && warningSeverity(trade?.priceImpact) > 3)
-                    }
-                    color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
-                    fullWidth
-                    size="xl"
-                    onClick={() => setReview(true)}
-                  >
-                    {!checked && warningSeverity(trade?.priceImpact) >= 3 ? 'Price impact too high' : 'Swap'}
-                  </Button>
+                  <Checker.Success tag="xswap">
+                    <Button
+                      disabled={
+                        !trade?.amountOut?.greaterThan(ZERO) ||
+                        trade?.route?.status === 'NoWay' ||
+                        Boolean(isLoading && +value > 0) ||
+                        isFetching ||
+                        (!checked && warningSeverity(trade?.priceImpact) > 3)
+                      }
+                      color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+                      fullWidth
+                      size="xl"
+                      onClick={() => setReview(true)}
+                    >
+                      {!checked && warningSeverity(trade?.priceImpact) >= 3
+                        ? 'Price impact too high'
+                        : trade?.route?.status === 'NoWay'
+                        ? 'No trade found'
+                        : 'Swap'}
+                    </Button>
+                  </Checker.Success>
                 </Checker.ApproveERC20>
               </Checker.ApproveBentobox>
             </Checker.Amounts>

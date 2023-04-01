@@ -1,4 +1,5 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
+
 import {
   closeValues,
   ConstantProductRPool,
@@ -46,12 +47,12 @@ export function createNetwork(
   garantedStableTokens = 1
 ): Network {
   const tokens = []
-  for (var i = 0; i < tokenNumber; ++i) {
+  for (let i = 0; i < tokenNumber; ++i) {
     tokens.push(createRandomToken(rnd, '' + i, i < garantedStableTokens))
   }
 
   const pools: RPool[] = []
-  for (i = 0; i < tokenNumber; ++i) {
+  for (let i = 0; i < tokenNumber; ++i) {
     for (let j = i + 1; j < tokenNumber; ++j) {
       const r = rnd()
       if (r < density) {
@@ -130,7 +131,7 @@ interface Variants {
 
 function choice(rnd: () => number, obj: Variants) {
   let total = 0
-  Object.entries(obj).forEach(([_, p]) => (total += p))
+  Object.entries(obj).forEach(([, p]) => (total += p))
   if (total <= 0) throw new Error('Error 62')
   const val = rnd() * total
   let past = 0
@@ -161,7 +162,7 @@ function getCPPool(rnd: () => number, t0: TToken, t1: TToken) {
     t0 = t1
     t1 = t
   }
-  let price = t0.price / t1.price
+  const price = t0.price / t1.price
 
   const fee = getPoolFee(rnd)
   const imbalance = getPoolImbalance(rnd)
@@ -244,7 +245,7 @@ function getPoolA(rnd: () => number) {
 }
 
 // price is always 1
-function getHybridPool(rnd: () => number, t0: RToken, t1: RToken) {
+export function getHybridPool(rnd: () => number, t0: RToken, t1: RToken) {
   const fee = getPoolFee(rnd)
   const imbalance = getPoolImbalance(rnd)
   const A = getPoolA(rnd)
@@ -480,14 +481,14 @@ export function expectCloseValues(
         `\n precision = ${Math.abs(a / b - 1)}, expected < ${precision}` +
         `${additionalInfo == '' ? '' : '\n' + additionalInfo}`
     )
-    debugger
+    //debugger
   }
   expect(res).toBeTruthy()
   return res
 }
 
-export function atomPrice(token: TToken) {
-  return token.price / Math.pow(10, token.decimals)
+export function atomPrice(token: TToken | RToken) {
+  return (token as TToken).price / Math.pow(10, token.decimals)
 }
 
 export function checkRoute(
@@ -518,7 +519,7 @@ export function checkRoute(
 
   // amountOut checks
   if (route.status !== RouteStatus.NoWay) expect(route.amountOut).toBeGreaterThan(0)
-  const outPriceToIn = atomPrice(to) / atomPrice(from)
+  // const outPriceToIn = atomPrice(to) / atomPrice(from)
   // Slippage can be arbitrary
   // Slippage is always not-negative
   // const maxGrow = Math.pow(MAX_POOL_IMBALANCE, route.legs.length)

@@ -10,8 +10,7 @@ import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { useVestingBalance, Vesting } from '../../lib'
-import { useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroVestingChainId } from '@sushiswap/furo'
 
 interface WithdrawModalProps {
@@ -25,14 +24,14 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
   const { address } = useAccount()
   const balance = useVestingBalance(chainId, vesting?.id, vesting?.token)
   const contract = useFuroVestingContract(chainId)
-  const { mutate: storeNotification } = useCreateNotification({ account: address })
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
       if (!data || !balance) return
 
       const ts = new Date().getTime()
-      const notificationData: NotificationData = {
+      void createToast({
+        account: address,
         type: 'withdrawVesting',
         txHash: data.hash,
         chainId,
@@ -48,7 +47,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
 
       storeNotification(createToast(notificationData))
     },
-    [balance, chainId, storeNotification]
+    [balance, chainId, address]
   )
 
   const prepare = useCallback(

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import React, { FC, useCallback } from 'react'
 import Switch from '@sushiswap/ui/future/components/Switch'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { AppType } from '@sushiswap/ui/types'
@@ -11,26 +11,15 @@ import { STARGATE_SUPPORTED_CHAIN_IDS } from '@sushiswap/stargate'
 
 export const CrossChainBanner: FC = () => {
   const { appType, network0 } = useSwapState()
-  const [open, setOpen] = useState(appType !== AppType.Swap)
   const { setAppType } = useSwapActions()
 
   const handleChange = useCallback(
     (checked: boolean) => {
-      if (checked) {
-        setOpen(true)
-        setAppType(AppType.xSwap)
-      } else {
-        setOpen(false)
-        setAppType(AppType.Swap)
-      }
+      if (checked) setAppType(AppType.xSwap)
+      else setAppType(AppType.Swap)
     },
     [setAppType]
   )
-
-  useEffect(() => {
-    if (appType === AppType.xSwap) setOpen(true)
-    if (appType === AppType.Swap) setOpen(false)
-  }, [appType])
 
   return (
     <div
@@ -71,10 +60,10 @@ export const CrossChainBanner: FC = () => {
             </span>
           </div>
           <div className="flex justify-end flex-grow">
-            <Switch checked={open} onChange={handleChange} />
+            <Switch checked={appType === AppType.xSwap} onChange={handleChange} />
           </div>
         </div>
-        <ChainSelectors open={open} />
+        <ChainSelectors open={appType === AppType.xSwap} />
       </div>
     </div>
   )

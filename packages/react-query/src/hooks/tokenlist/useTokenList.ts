@@ -8,13 +8,15 @@ import { tokenListValidator } from './validator'
 
 export const useTokenListQuery = (select: UseTokenListQuerySelect) =>
   useQuery({
-    queryKey: ['https://tokens.sushi.com/v0/'],
+    queryKey: ['https://tokens.sushi.com/v0'],
     queryFn: async () => {
       const res = await (await fetch(`https://tokens.sushi.com/v0`)).json()
       return tokenListValidator.parse(res)
     },
     select,
     keepPreviousData: true,
+    staleTime: 900, // 15 mins
+    cacheTime: 86400 // 24hs
   })
 
 export const useTokenList = (filter?: 'showNone' | string[]) => {

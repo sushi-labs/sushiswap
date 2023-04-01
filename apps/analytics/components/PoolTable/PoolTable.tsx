@@ -1,11 +1,11 @@
 import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { GenericTable, Loader } from '@sushiswap/ui'
+import { Loader } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useSWRConfig } from 'swr'
-
+import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import {
   APR_COLUMN,
@@ -52,6 +52,7 @@ export const PoolTable: FC = () => {
       tokenSymbols,
       orderBy: sorting[0]?.id,
       orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
+      isWhitelisted: true,
     }),
     [chainIds, sorting, tokenSymbols]
   )
@@ -103,7 +104,7 @@ export const PoolTable: FC = () => {
   }, [isLg, isMd, isSm])
 
   const rowLink = useCallback((row: Pool) => {
-    return `/earn/${row.id}`
+    return `https://sushi.com/earn/${row.id}`
   }, [])
 
   return (

@@ -1,12 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": [
-    "CI",
-    "NODE_ENV",
-    "ALCHEMY_ID",
-    "GITHUB_TOKEN",
-    "NEXT_PUBLIC_ALCHEMY_ID"
-  ],
+  "globalEnv": ["CI", "NODE_ENV", "ALCHEMY_ID", "GITHUB_TOKEN", "NEXT_PUBLIC_ALCHEMY_ID"],
   "globalDependencies": [
     ".eslintignore",
     ".eslint.js",
@@ -19,22 +13,13 @@
   "pipeline": {
     "anvil": {
       "cache": false,
-      "env": [
-        "ANVIL_BLOCK_NUMBER", 
-        "ANVIL_FORK_URL"
-      ],
+      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL"],
       "persistent": true
     },
     "blog#build": {
       "dependsOn": ["^build", "generate"],
-      "env": [
-        "STRAPI_PREVIEW_SECRET"
-      ],
-      "outputs": [
-        ".mesh/**/*", 
-        ".next/**/*", 
-        "public/**/*"
-      ]
+      "env": ["STRAPI_PREVIEW_SECRET"],
+      "outputs": [".mesh/**/*", ".next/**/*", "public/**/*"]
     },
     "build": {
       "outputs": [
@@ -47,40 +32,32 @@
         "storybook-static/**/*",
         "lib/**/*",
         "resolvers/**/*",
-        "transformers/**/*"
+        "transformers/**/*",
+        ".graphclient/**/*",
+        ".mesh/**/*"
       ],
-      "dependsOn": [
-        "^db:generate", 
-        "^build", 
-        "db:generate", 
-        "generate",
-        "export"
-      ],
+      "dependsOn": ["^db:generate", "^build", "db:generate", "generate", "export"],
       "env": [
+        "DATABASE_URL",
+        "REDIS_URL",
         "ROOT_URL",
         "ACADEMY_URL",
         "ANALYTICS_URL",
         "BLOG_URL",
-        "BRIDGE_URL",
         "EARN_URL",
         "FURO_URL",
-        "INTERNAL_URL",
-        "KASHI_URL",
-        "PARTNER_URL",
         "SWAP_URL",
-        "XSWAP_URL",
-        "DATABASE_URL",
-        "EARN_DATABASE_URL",
-        "REDIS_URL"
+        "SWAP_API_V0_BASE_URL",
+        "AGGREGATOR_API_V0_BASE_URL",
+        "POOLS_API_V0_BASE_URL",
+        "TOKENS_API_V0_BASE_URL"
       ]
     },
     "clean": {
       "cache": false
     },
     "check": {
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "cache": false
     },
     "db:init": {
@@ -111,13 +88,8 @@
       "cache": true
     },
     "generate": {
-      "outputs": [
-        ".graphclient/**/*", 
-        ".mesh/**/*", 
-        "typechain/**/*",
-        "artifacts/**/*"
-      ],
-      "cache": true
+      "outputs": [".graphclient/**/*", ".mesh/**/*", "typechain/**/*", "artifacts/**/*"],
+      "cache": false
     },
     "lint": {
       "dependsOn": ["^build"],
@@ -136,16 +108,19 @@
       "persistent": true,
       "dependsOn": ["build"]
     },
+
     "start": {
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["^db:generate", "^build", "db:generate", "generate", "export"],
       "env": [
         "PRODUCTION_DATABASE_URL",
         "PREVIEW_DATABASE_URL",
         "REDIS_URL",
         "DATABASE_URL",
-        "ALCHEMY_ID"
+        "ALCHEMY_ID",
+        "SWAP_API_V0_BASE_URL",
+        "AGGREGATOR_API_V0_BASE_URL",
+        "POOLS_API_V0_BASE_URL",
+        "TOKENS_API_V0_BASE_URL"
       ],
       "cache": false,
       "persistent": true

@@ -24,7 +24,7 @@ const querySchema = z.object({
 const tokensSchema = z.array(z.coerce.string())
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
-  response.setHeader('Cache-Control', 'max-age=5, s-maxage=5')
+  response.setHeader('Cache-Control', 'max-age=1, stale-while-revalidate=59')
   const { chainId, address } = querySchema.parse(request.query)
 
   const res = await fetch(`https://tokens.sushi.com/v0/${chainId}/addresses`)

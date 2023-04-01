@@ -13,8 +13,6 @@ import { ClipboardController } from '@sushiswap/ui/future/components/ClipboardCo
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { JazzIcon } from '@sushiswap/ui/future/components/icons/JazzIcon'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import { getOnrampURL, OnRampProvider } from '@sushiswap/ui/future/lib/getOnrampURL'
-import Image from 'next/legacy/image'
 import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import { useBalance, useDisconnect, useEnsAvatar } from 'wagmi'
 import { ProfileView } from './index'
@@ -56,7 +54,7 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
           <div className="text-sm font-semibold flex items-center gap-1.5 text-gray-700 dark:text-slate-200">
             {avatar ? (
               <div className="w-4 h-4">
-                <Image alt="ens-avatar" src={avatar} width={16} height={16} className="rounded-full" />
+                <img alt="ens-avatar" src={avatar} width={16} height={16} className="rounded-full" />
               </div>
             ) : (
               <JazzIcon diameter={16} address={address} />
@@ -112,7 +110,7 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
         </div>
       </div>
       <List>
-        <List.Control className="bg-gray-100 dark:!bg-slate-700">
+        <List.Control className="bg-gray-100">
           <List.MenuItem
             icon={InboxArrowDownIcon}
             title="Transactions"

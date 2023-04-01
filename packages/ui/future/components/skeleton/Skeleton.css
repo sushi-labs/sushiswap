@@ -1,7 +1,3 @@
 .shimmer {
-  @apply relative after:absolute after:inset-0 after:translate-x-[-100%] after:animate-wave after:content-[''] after:bg-shimmer-gradient-dark dark:after:bg-shimmer-gradient;
-}
-
-.shimmer-fast {
-  @apply relative after:absolute after:inset-0 after:translate-x-[-100%] after:animate-wave-fast after:content-[''] after:bg-shimmer-gradient-dark dark:after:bg-shimmer-gradient;
+  @apply animate-skeleton bg-gradient-to-r from-gray-50 via-gray-200 via-gray-200 to-gray-50 dark:from-slate-800 dark:via-slate-700 dark:via-slate-700 dark:to-slate-800 bg-[length:400%_100%];
 }

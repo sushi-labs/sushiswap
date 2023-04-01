@@ -24,6 +24,7 @@ function TokenToRToken(t: Type): RToken {
     name: t.name,
     symbol: t.symbol,
     chainId: t.chainId,
+    decimals: 18,
   }
   return nativeRToken
 }
@@ -41,6 +42,21 @@ export interface RPParams {
 export type PoolFilter = (list: RPool) => boolean
 
 export class Router {
+  static findSushiRoute(
+    poolCodesMap: Map<string, PoolCode>,
+    chainId: ChainId,
+    fromToken: Type,
+    amountIn: BigNumber,
+    toToken: Type,
+    gasPrice: number
+  ) {
+    return Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice, [
+      LiquidityProviders.NativeWrap,
+      LiquidityProviders.SushiSwap,
+      LiquidityProviders.Trident,
+    ])
+  }
+
   static findSpecialRoute(
     poolCodesMap: Map<string, PoolCode>,
     chainId: ChainId,

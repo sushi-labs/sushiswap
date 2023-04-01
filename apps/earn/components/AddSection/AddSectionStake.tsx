@@ -9,7 +9,6 @@ import { FC, Fragment, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useGraphPool } from '../../lib/hooks'
-import { useNotifications } from '../../lib/state/storage'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 import { useSWRConfig } from 'swr'
@@ -53,9 +52,11 @@ export const AddSectionStake: FC<{ poolId: string; title?: string }> = ({ poolId
 const _AddSectionStake: FC<AddSectionStakeProps> = ({ pool, chefType, title, farmId }) => {
   const [hover, setHover] = useState(false)
   const { address } = useAccount()
-  const [, { createNotification }] = useNotifications(address)
+
   const [value, setValue] = useState('')
-  const { reserve1, reserve0, liquidityToken } = useGraphPool(pool)
+  const {
+    data: { reserve1, reserve0, liquidityToken },
+  } = useGraphPool(pool)
   const { balance } = usePoolPosition()
 
   const amount = useMemo(() => {
@@ -67,7 +68,6 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pool, chefType, title, far
     chainId: liquidityToken.chainId,
     chef: chefType,
     pid: farmId,
-    onSuccess: createNotification,
   })
 
   return (
@@ -102,7 +102,6 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pool, chefType, title, far
             <Checker.Network size="md" chainId={pool.chainId}>
               <Checker.Amounts size="md" chainId={pool.chainId} amounts={[amount]} fundSource={FundSource.WALLET}>
                 <Approve
-                  onSuccess={createNotification}
                   className="flex-grow !justify-end"
                   components={
                     <Approve.Components>

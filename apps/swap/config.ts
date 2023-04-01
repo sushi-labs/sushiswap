@@ -1,5 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 
+export const SWAP_API_ENABLED_NETWORKS = []
+
 export const STABLE_POOL_FACTORY_ADDRESS = {
   [ChainId.METIS]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066',
   [ChainId.KAVA]: '0x9B3fF703FA9C8B467F5886d7b61E61ba07a9b51c',
@@ -46,9 +48,9 @@ export const AMM_ENABLED_NETWORKS = [
   ChainId.FUSE,
   ChainId.CELO,
   ChainId.MOONBEAM,
-  ChainId.HECO,
-  ChainId.PALM,
-  ChainId.OKEX,
+  // ChainId.HECO,
+  // ChainId.PALM,
+  // ChainId.OKEX,
   ChainId.BOBA,
   ChainId.BOBA_AVAX,
   ChainId.BOBA_BNB,

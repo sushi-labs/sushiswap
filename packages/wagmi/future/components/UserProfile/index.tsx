@@ -10,6 +10,7 @@ import { useBreakpoint } from '@sushiswap/ui/future/lib/useBreakpoint'
 import Image from 'next/legacy/image'
 import React, { FC, useState } from 'react'
 import { useAccount, useEnsAvatar, useNetwork } from 'wagmi'
+import { cloudinaryFetchLoader } from '../../../cloudinaryFetchLoader'
 
 import { ConnectView } from './ConnectView'
 import { DefaultView } from './DefaultView'
@@ -47,7 +48,7 @@ export const UserProfile: FC<ProfileProps> = () => {
                 <>
                   <div className="hidden md:flex">
                     {avatar ? (
-                      <Image alt="ens-avatar" src={avatar} width={20} height={20} className="rounded-full" />
+                      <img alt="ens-avatar" src={avatar} width={20} height={20} className="rounded-full" />
                     ) : (
                       <JazzIcon diameter={20} address={address} />
                     )}
@@ -106,7 +107,7 @@ export const UserProfile: FC<ProfileProps> = () => {
               <>
                 <div className="hidden md:flex">
                   {avatar ? (
-                    <Image alt="ens-avatar" src={avatar} width={20} height={20} className="rounded-full" />
+                    <img alt="ens-avatar" src={avatar} width={20} height={20} className="rounded-full" />
                   ) : (
                     <JazzIcon diameter={20} address={address} />
                   )}

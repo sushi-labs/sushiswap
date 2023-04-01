@@ -22,7 +22,13 @@ export const Widget: FC = () => {
       <WidgetTitleV2 />
       <div className="flex justify-between items-center">
         <SwitchAppType />
-        <SettingsOverlay modules={[SettingsModule.SlippageTolerance, SettingsModule.CarbonOffset]} />
+        <SettingsOverlay
+          modules={[
+            SettingsModule.SlippageTolerance,
+            SettingsModule.CarbonOffset,
+            // SettingsModule.RoutingApi
+          ]}
+        />
       </div>
       <UIWidget.Content>
         <CrossChainBanner />

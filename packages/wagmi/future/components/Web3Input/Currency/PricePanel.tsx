@@ -37,13 +37,11 @@ export const PricePanel: FC<PricePanel> = ({ loading, price, currency, value, us
           $ {big}.<span className="text-sm font-semibold">{portion}</span>
         </>
       )}
-      {!(!loading && price?.equalTo(ZERO)) && usdPctChange && (
+      {!(!loading && price?.equalTo(ZERO)) && usdPctChange && usdPctChange !== 0 && (
         <span
           className={classNames(
             'text-sm pl-1',
-            usdPctChange === 0
-              ? ''
-              : usdPctChange > 0
+            usdPctChange > 0
               ? 'text-green'
               : usdPctChange < -5
               ? 'text-red'
@@ -53,9 +51,9 @@ export const PricePanel: FC<PricePanel> = ({ loading, price, currency, value, us
           )}
         >
           {' '}
-          {`${usdPctChange === 0 ? '' : usdPctChange > 0 ? '(+' : '('}${
-            usdPctChange === 0 ? '0.00' : usdPctChange?.toFixed(2)
-          }%)`}
+          {`${usdPctChange?.toFixed(2) === '0.00' ? '' : usdPctChange > 0 ? '(+' : '('}${
+            usdPctChange?.toFixed(2) === '0.00' ? '' : `${usdPctChange?.toFixed(2)}%)`
+          }`}
         </span>
       )}
     </p>

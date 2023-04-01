@@ -15,8 +15,7 @@ import { SendTransactionResult } from 'wagmi/actions'
 import { approveBentoBoxAction, batchAction, streamCreationAction, useDeepCompareMemoize } from '../../../lib'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
 import { CreateMultipleStreamFormSchemaType } from './schema'
-import { useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { bentoBoxV1Address } from '@sushiswap/bentobox'
 
@@ -26,7 +25,6 @@ export const ExecuteMultipleSection: FC<{
 }> = ({ chainId, isReview }) => {
   const { address } = useAccount()
   const contract = useFuroStreamRouterContract(chainId)
-  const { mutate: storeNotification } = useCreateNotification({ account: address })
   const [signature, setSignature] = useState<Signature>()
 
   const {
@@ -67,8 +65,8 @@ export const ExecuteMultipleSection: FC<{
       if (!data || !streams) return
 
       const ts = new Date().getTime()
-
-      const notificationData: NotificationData = {
+      void createToast({
+        account: address,
         type: 'createStream',
         chainId: chainId,
         txHash: data.hash,
@@ -84,7 +82,7 @@ export const ExecuteMultipleSection: FC<{
 
       storeNotification(createToast(notificationData))
     },
-    [chainId, storeNotification, streams]
+    [address, chainId, streams]
   )
 
   const prepare = useCallback(
@@ -151,7 +149,6 @@ export const ExecuteMultipleSection: FC<{
 
   return (
     <Approve
-      onSuccess={(data) => storeNotification(createToast(data))}
       className="!items-end"
       components={
         <Approve.Components>

@@ -16,8 +16,7 @@ import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../../lib/zod
 import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount } from '../../utils'
 import { CreateVestingFormSchemaType } from '../schema'
 import CreateFormReviewModalBase from './CreateFormReviewModalBase'
-import { useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { bentoBoxV1Address } from '@sushiswap/bentobox'
 
@@ -62,7 +61,6 @@ interface CreateFormReviewModal {
 
 const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children }) => {
   const { address } = useAccount()
-  const { mutate: storeNotification } = useCreateNotification({ account: address })
   const contract = useFuroVestingRouterContract(chainId)
   const {
     watch,
@@ -94,8 +92,8 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
       if (!data || !_totalAmount) return
 
       const ts = new Date().getTime()
-
-      const notificationData: NotificationData = {
+      createToast({
+        account: address,
         type: 'createVesting',
         chainId: chainId,
         txHash: data.hash,
@@ -111,7 +109,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
 
       storeNotification(createToast(notificationData))
     },
-    [_totalAmount, chainId, storeNotification]
+    [_totalAmount, chainId, address]
   )
 
   const prepare = useCallback(
@@ -216,7 +214,6 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
         {children({ setOpen, isWritePending })}
         <CreateFormReviewModalBase chainId={chainId} open={open} setOpen={setOpen}>
           <Approve
-            onSuccess={(data) => storeNotification(createToast(data))}
             components={
               <Approve.Components>
                 <Approve.Bentobox
@@ -253,18 +250,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
         </CreateFormReviewModalBase>
       </>
     ),
-    [
-      _totalAmount,
-      chainId,
-      children,
-      contract,
-      isValid,
-      isValidating,
-      isWritePending,
-      open,
-      sendTransaction,
-      storeNotification,
-    ]
+    [_totalAmount, chainId, children, contract, isValid, isValidating, isWritePending, open, sendTransaction]
   )
 }
 

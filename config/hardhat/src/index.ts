@@ -7,6 +7,8 @@ import '@tenderly/hardhat-tenderly'
 import '@typechain/hardhat'
 import 'hardhat-deploy'
 import 'hardhat-deploy-ethers'
+import '@matterlabs/hardhat-zksync-deploy'
+import '@matterlabs/hardhat-zksync-solc'
 
 import { copyFileSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { HardhatUserConfig, task } from 'hardhat/config'
@@ -227,6 +229,11 @@ export const defaultConfig: HardhatUserConfig = {
     // tsNocheck: boolean;
     // externalArtifacts?: string[];
   },
+  zksolc: {
+    version: '1.3.1',
+    compilerSource: 'binary',
+    settings: {},
+  },
   networks: {
     localhost: {
       live: false,
@@ -243,11 +250,37 @@ export const defaultConfig: HardhatUserConfig = {
       hardfork: process.env.CODE_COVERAGE ? 'berlin' : 'london',
       forking: {
         enabled: process.env.FORKING === 'true',
-        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
       },
     },
+    'zksync-testnet': {
+      url: 'https://zksync2-testnet.zksync.dev', // URL of the zkSync network RPC
+      ethNetwork: 'goerli', // Can also be the RPC URL of the Ethereum network (e.g. `https://goerli.infura.io/v3/<API_KEY>`)
+      zksync: true,
+    },
+    'scroll-alpha-testnet': {
+      url: `https://alpha-rpc.scroll.io/l2`,
+      accounts,
+      chainId: 534353,
+      live: true,
+      saveDeployments: true,
+    },
+    consensyszkevmgoerli: {
+      url: `https://consensys-zkevm-goerli-prealpha.infura.io/v3/53fca4c2b95a43cca82a11e8b573256b`,
+      accounts,
+      chainId: 59140,
+      live: true,
+      saveDeployments: true,
+    },
+    basegoerli: {
+      url: 'https://goerli.base.org',
+      accounts,
+      chainId: 84531,
+      live: true,
+      saveDeployments: true,
+    },
     ethereum: {
-      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
       accounts,
       chainId: 1,
       live: true,
@@ -264,7 +297,7 @@ export const defaultConfig: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     rinkeby: {
-      url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
       accounts,
       chainId: 4,
       live: true,
@@ -274,7 +307,7 @@ export const defaultConfig: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     goerli: {
-      url: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
       accounts,
       chainId: 5,
       live: true,
@@ -283,7 +316,7 @@ export const defaultConfig: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     kovan: {
-      url: `https://eth-kovan.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://eth-kovan.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
       accounts,
       chainId: 42,
       live: true,

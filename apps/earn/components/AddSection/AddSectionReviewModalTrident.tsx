@@ -22,8 +22,9 @@ import { useAccount, useNetwork } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from '../../lib/actions'
-import { useNotifications, useSettings } from '../../lib/state/storage'
+import { useSettings } from '../../lib/state/storage'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 
 interface AddSectionReviewModalTridentProps {
   poolAddress: string
@@ -64,7 +65,6 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     })
   }, [chainId, poolAddress])
 
-  const [, { createNotification }] = useNotifications(address)
   const totalSupply = useTotalSupply(liquidityToken)
   const tokens = useMemo(() => [token0, token1], [token0, token1])
   const rebases = useBentoBoxTotals(chainId, tokens)
@@ -132,7 +132,8 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     (data: SendTransactionResult | undefined) => {
       if (!data || !chain?.id || !token0 || !token1) return
       const ts = new Date().getTime()
-      createNotification({
+      createToast({
+        account: address,
         type: 'mint',
         chainId: chain.id,
         txHash: data.hash,
@@ -146,7 +147,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         groupTimestamp: ts,
       })
     },
-    [chain?.id, createNotification, token0, token1]
+    [address, chain?.id, token0, token1]
   )
 
   const prepare = useCallback(
@@ -251,7 +252,6 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         {children({ isWritePending, setOpen })}
         <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} setOpen={setOpen}>
           <Approve
-            onSuccess={createNotification}
             className="flex-grow !justify-end"
             components={
               <Approve.Components>
@@ -295,6 +295,6 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         </AddSectionReviewModal>
       </>
     ),
-    [chain, chainId, children, createNotification, input0, input1, isWritePending, open, sendTransaction]
+    [chain, chainId, children, input0, input1, isWritePending, open, sendTransaction]
   )
 }

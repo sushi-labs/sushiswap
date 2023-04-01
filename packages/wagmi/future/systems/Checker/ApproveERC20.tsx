@@ -5,13 +5,12 @@ import { Amount, Type } from '@sushiswap/currency'
 import { ApprovalState } from '../../../hooks'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/24/solid'
-import { NotificationData } from '@sushiswap/ui/future/components/toast'
 
 export interface ApproveERC20Props extends ButtonProps<'button'> {
   id: string
   amount: Amount<Type> | undefined
-  contract: string
-  onSuccess?: (data: NotificationData) => void
+  contract: string | undefined
+  enabled?: boolean
 }
 
 export const ApproveERC20: FC<ApproveERC20Props> = ({
@@ -24,20 +23,21 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
   fullWidth,
   as,
   size,
-  onSuccess,
+  enabled = true,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
 
   return (
-    <ApproveTokenController amount={amount} contract={contract} onSuccess={onSuccess}>
+    <ApproveTokenController amount={amount} contract={contract}>
       {({ approvalState, onApprove }) => {
-        if (approvalState === ApprovalState.APPROVED) {
+        if (approvalState === ApprovalState.APPROVED || !enabled || !contract) {
           return <>{children}</>
         }
 
         return (
           <Button
             as={as}
+            disabled={approvalState !== ApprovalState.NOT_APPROVED}
             loading={[ApprovalState.LOADING, ApprovalState.PENDING].includes(approvalState)}
             testdata-id={id}
             variant={variant}
@@ -53,7 +53,7 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
             >
-              <Menu.Button className="text-center text-xs text-blue cursor-pointer">
+              <Menu.Button as="div" role="button" className="text-center text-xs text-blue cursor-pointer">
                 <InformationCircleIcon width={18} height={18} className="text-white" />
               </Menu.Button>
               <Transition

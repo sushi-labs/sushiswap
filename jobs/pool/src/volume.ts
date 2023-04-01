@@ -2,6 +2,8 @@ import { ChainId } from '@sushiswap/chain'
 import { createClient } from '@sushiswap/database'
 import {
   SUBGRAPH_HOST,
+  SUSHISWAP_ENABLED_NETWORKS,
+  SUSHISWAP_SUBGRAPH_NAME,
   SWAP_ENABLED_NETWORKS,
   TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_NAME,
@@ -9,7 +11,6 @@ import {
 import { performance } from 'perf_hooks'
 
 import { Block, getBuiltGraphSDK, Pair } from '../.graphclient/index.js'
-import { EXCHANGE_SUBGRAPH_NAME, SUSHISWAP_CHAINS, TRIDENT_CHAINS } from './config.js'
 import { PoolMinimal, updatePoolsWithVolumeAndFee } from './etl/pool/index.js'
 
 export async function execute() {
@@ -61,13 +62,13 @@ async function extract() {
 }
 
 async function extractPairs(blocks?: Pick<Block, 'number' | 'id' | 'timestamp' | 'chainId'>[]) {
-  const legacyRequests = SUSHISWAP_CHAINS.map((chainId) => {
+  const legacyRequests = SUSHISWAP_ENABLED_NETWORKS.map((chainId) => {
     const blockNumber = blocks ? Number(blocks.find((block) => block.chainId === chainId)?.number) : undefined
     const host = SUBGRAPH_HOST[Number(chainId) as keyof typeof SUBGRAPH_HOST]
-    const requests = createQuery(chainId, host, EXCHANGE_SUBGRAPH_NAME[chainId], blockNumber)
+    const requests = createQuery(chainId, host, SUSHISWAP_SUBGRAPH_NAME[chainId], blockNumber)
     return { chainId, requests }
   })
-  const tridentRequests = TRIDENT_CHAINS.map((chainId) => {
+  const tridentRequests = TRIDENT_ENABLED_NETWORKS.map((chainId) => {
     const _chainId = chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
     const host = SUBGRAPH_HOST[Number(chainId) as keyof typeof SUBGRAPH_HOST]
     const blockNumber = blocks ? Number(blocks.find((block) => block.chainId === chainId)?.number) : undefined

@@ -10,9 +10,10 @@ import { Search } from './search/SearchProvider'
 import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
 import { useAutoConnect } from '@sushiswap/wagmi'
 import { useRouter } from 'next/router'
-import { queryParamsSchema, useSwapActions } from './trade/TradeProvider'
+import { useSwapActions } from './trade/TradeProvider'
 import { Onramper } from '@sushiswap/wagmi/future/components'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { queryParamsSchema } from '../lib/queryParamsSchema'
 
 export const Header: FC = () => {
   const { isAutoConnecting } = useAutoConnect()

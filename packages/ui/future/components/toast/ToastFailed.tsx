@@ -1,19 +1,18 @@
 import { Chain } from '@sushiswap/chain'
 import { FC } from 'react'
 
-import { NotificationData } from './index'
-import { ToastButtons } from './ToastButtons'
 import { ToastContent } from './ToastContent'
+import { ResolvedNotification } from '@sushiswap/dexie'
 
-interface ToastFailed extends Omit<NotificationData, 'promise'> {
+interface ToastFailed extends ResolvedNotification {
   onDismiss(): void
 }
 
 export const ToastFailed: FC<ToastFailed> = ({ href, type, chainId, txHash, onDismiss, summary }) => {
-  const txUrl = href ? href : Chain.from(chainId)?.getTxUrl(txHash) ?? ''
+  const txUrl = href ? href : txHash ? Chain.from(chainId)?.getTxUrl(txHash) : ''
   return (
     <>
-      <ToastContent href={txUrl} summary={summary.failed} />
+      <ToastContent href={txUrl} summary={summary} />
     </>
   )
 }

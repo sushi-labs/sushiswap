@@ -17,8 +17,7 @@ import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../../lib'
 import { ZFundSourceToFundSource, ZTokenToToken } from '../../../lib/zod'
 import { CreateStreamFormSchemaType } from './schema'
-import { useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 import { bentoBoxV1Address } from '@sushiswap/bentobox'
 
 export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
@@ -52,7 +51,8 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = ({ chain
 
       const ts = new Date().getTime()
 
-      const notificationData: NotificationData = {
+      createToast({
+        account: address,
         type: 'createStream',
         chainId: chainId,
         txHash: data.hash,
@@ -68,7 +68,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = ({ chain
 
       storeNotification(createToast(notificationData))
     },
-    [_amount, chainId, storeNotification]
+    [_amount, chainId, address]
   )
 
   const prepare = useCallback(
@@ -150,7 +150,6 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = ({ chain
   return (
     <Form.Buttons className="flex flex-col items-end gap-3">
       <Approve
-        onSuccess={(data) => storeNotification(createToast(data))}
         className="!items-end"
         components={
           <Approve.Components>

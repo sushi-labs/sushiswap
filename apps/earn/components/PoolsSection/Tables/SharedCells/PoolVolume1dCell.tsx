@@ -2,9 +2,9 @@ import { formatUSD } from '@sushiswap/format'
 import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { Row } from './types'
+import { CellProps } from './types'
 
-export const PoolVolume1dCell: FC<Row<{ volume1d: string | number }>> = ({ row }) => {
+export const PairVolume24hCell: FC<CellProps> = ({ row }) => {
   const volume = formatUSD(row.volume1d)
 
   return (

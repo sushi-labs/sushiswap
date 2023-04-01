@@ -8,6 +8,7 @@ export default [
       'wss://mainnet.infura.io/ws/v3/${INFURA_API_KEY}',
       'https://api.mycryptoapi.com/eth',
       'https://cloudflare-eth.com',
+      'https://ethereum.publicnode.com',
     ],
     features: [
       {
@@ -218,6 +219,7 @@ export default [
       'https://bsc-dataseed2.ninicoin.io',
       'https://bsc-dataseed3.ninicoin.io',
       'https://bsc-dataseed4.ninicoin.io',
+      'https://bsc.publicnode.com',
       'wss://bsc-ws-node.nariox.org',
     ],
     faucets: ['https://free-online-app.com/faucet-for-eth-evm-chains/'],
@@ -343,7 +345,6 @@ export default [
       {
         name: 'gnosisscan',
         url: 'https://gnosisscan.io',
-        icon: 'gnosisscan',
         standard: 'EIP3091',
       },
       {
@@ -449,7 +450,7 @@ export default [
   {
     name: 'Fantom Opera',
     chain: 'FTM',
-    rpc: ['https://rpc.ftm.tools'],
+    rpc: ['https://rpc.ftm.tools', 'https://fantom.publicnode.com'],
     faucets: ['https://free-online-app.com/faucet-for-eth-evm-chains/'],
     nativeCurrency: {
       name: 'Fantom',
@@ -770,7 +771,7 @@ export default [
     name: 'Avalanche C-Chain',
     chain: 'AVAX',
     icon: 'avax',
-    rpc: ['https://api.avax.network/ext/bc/C/rpc'],
+    rpc: ['https://api.avax.network/ext/bc/C/rpc', 'https://avalanche-c-chain.publicnode.com'],
     features: [
       {
         name: 'EIP1559',
@@ -876,6 +877,61 @@ export default [
         standard: 'EIP3091',
       },
     ],
+  },
+  {
+    name: 'Base Goerli Testnet',
+    chain: 'ETH',
+    rpc: ['https://goerli.base.org'],
+    faucets: ['https://www.coinbase.com/faucets/base-ethereum-goerli-faucet'],
+    nativeCurrency: {
+      name: 'Goerli Ether',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    infoURL: 'https://base.org',
+    shortName: 'basegor',
+    chainId: 84531,
+    networkId: 84531,
+    explorers: [
+      {
+        name: 'basescan',
+        url: 'https://goerli.basescan.org',
+        standard: 'none',
+      },
+      {
+        name: 'basescout',
+        url: 'https://base-goerli.blockscout.com',
+        standard: 'none',
+      },
+    ],
+  },
+  {
+    name: 'Scroll Alpha Testnet',
+    chain: 'ETH',
+    status: 'incubating',
+    rpc: ['https://alpha-rpc.scroll.io/l2'],
+    faucets: [],
+    nativeCurrency: {
+      name: 'Ether',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    infoURL: 'https://scroll.io',
+    shortName: 'scr-alpha',
+    chainId: 534353,
+    networkId: 534353,
+    explorers: [
+      {
+        name: 'Scroll Alpha Testnet Block Explorer',
+        url: 'https://blockscout.scroll.io',
+        standard: 'EIP3091',
+      },
+    ],
+    parent: {
+      type: 'L2',
+      chain: 'eip155-5',
+      bridges: [],
+    },
   },
   {
     name: 'Harmony Mainnet Shard 0',

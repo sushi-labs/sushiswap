@@ -16,16 +16,12 @@ import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { useSlippageTolerance } from '../../lib/useSlippageTolerance'
 import { Collapsible, NetworkIcon } from '@sushiswap/ui'
-import { ApproveBentoboxController } from '@sushiswap/wagmi/future/components'
-import { ApprovalState } from '@sushiswap/wagmi'
 import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain/ConfirmationDialogCrossChain'
 import { warningSeverity } from '../../lib/warningSeverity'
 import { ZERO } from '@sushiswap/math'
-import { sushiXSwapAddress, SushiXSwapChainId } from '@sushiswap/sushixswap'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 export const TradeReviewDialogCrossChain: FC = () => {
-  const { review, token0, token1, recipient, network0, network1, amount, value, bentoboxSignature } = useSwapState()
+  const { review, token0, token1, recipient, network0, network1, amount, value } = useSwapState()
   const { setReview } = useSwapActions()
   const [slippageTolerance] = useSlippageTolerance()
   const { data: trade, isFetching } = useTrade({ crossChain: true })
@@ -131,51 +127,37 @@ export const TradeReviewDialogCrossChain: FC = () => {
           )}
         </div>
         <div className="pt-4">
-          <ApproveBentoboxController
-            chainId={network0 as BentoBoxV1ChainId}
-            contract={sushiXSwapAddress[network0 as SushiXSwapChainId]}
-          >
-            {({ approvalState }) => {
-              return (
-                <ConfirmationDialogCrossChain
-                  enabled={Boolean(
-                    approvalState === ApprovalState.APPROVED ||
-                      (approvalState === ApprovalState.PENDING && bentoboxSignature)
-                  )}
+          <ConfirmationDialogCrossChain>
+            {({ onClick, isWritePending, isLoading, isError, error, isConfirming }) => (
+              <div className="space-y-4">
+                <Button
+                  fullWidth
+                  size="xl"
+                  loading={isLoading && !isError}
+                  onClick={onClick}
+                  disabled={isWritePending || Boolean(isLoading && +value > 0) || isError}
+                  color={isError ? 'red' : warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
                 >
-                  {({ onClick, isWritePending, isLoading, isError, error, isConfirming }) => (
-                    <div className="space-y-4">
-                      <Button
-                        fullWidth
-                        size="xl"
-                        loading={isLoading && !isError}
-                        onClick={onClick}
-                        disabled={isWritePending || Boolean(isLoading && +value > 0) || isError}
-                        color={isError ? 'red' : warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
-                      >
-                        {isError ? (
-                          'Shoot! Something went wrong :('
-                        ) : isConfirming ? (
-                          <Dots>Confirming transaction</Dots>
-                        ) : isWritePending ? (
-                          <Dots>Confirm Swap</Dots>
-                        ) : (
-                          `Swap ${token0?.symbol} for ${token1?.symbol}`
-                        )}
-                      </Button>
-                      <Collapsible open={!!error}>
-                        <div className="scroll bg-red/20 text-red-700 dark:bg-black/20 p-2 px-3 rounded-lg border border-slate-200/10 text-[10px] break-all max-h-[80px] overflow-y-auto">
-                          {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-                          {/* @ts-ignore */}
-                          <code>{error ? ('data' in error ? error?.data?.message : error.message) : ''}</code>
-                        </div>
-                      </Collapsible>
-                    </div>
+                  {isError ? (
+                    'Shoot! Something went wrong :('
+                  ) : isConfirming ? (
+                    <Dots>Confirming transaction</Dots>
+                  ) : isWritePending ? (
+                    <Dots>Confirm Swap</Dots>
+                  ) : (
+                    `Swap ${token0?.symbol} for ${token1?.symbol}`
                   )}
-                </ConfirmationDialogCrossChain>
-              )
-            }}
-          </ApproveBentoboxController>
+                </Button>
+                <Collapsible open={!!error}>
+                  <div className="scroll bg-red/20 text-red-700 dark:bg-black/20 p-2 px-3 rounded-lg border border-slate-200/10 text-[10px] break-all max-h-[80px] overflow-y-auto">
+                    {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                    {/* @ts-ignore */}
+                    <code>{error ? ('data' in error ? error?.data?.message : error.message) : ''}</code>
+                  </div>
+                </Collapsible>
+              </div>
+            )}
+          </ConfirmationDialogCrossChain>
         </div>
       </div>
     </Dialog>

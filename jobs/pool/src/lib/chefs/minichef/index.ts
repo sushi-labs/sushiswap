@@ -75,7 +75,7 @@ export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): P
 
         const incentives: Farm['incentives'] = []
 
-        if (sushiRewardPerDay && sushiRewardPerDay > 0) {
+        if (!isNaN(sushiRewardPerDay)) {
           incentives.push({
             apr: sushiRewardPerYearUSD / stakedLiquidityUSD,
             rewardPerDay: sushiRewardPerDay,

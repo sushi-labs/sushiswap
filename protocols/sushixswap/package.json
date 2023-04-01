@@ -30,7 +30,7 @@
     "build": "TS_NODE_TRANSPILE_ONLY=1 hardhat compile",
     "clean": "rm -rf .turbo node_modules artifacts cache exports typechain",
     "compile": "hardhat compile",
-    "export": "hardhat export --export-all exports.json && cd exports && (ls tsconfig.json || tsc --init) && tsc --declaration",
+    "export": "hardhat export --export-all exports.json && tsc -p tsconfig.exports.json --declaration",
     "node": "hardhat node",
     "test": "hardhat test"
   },

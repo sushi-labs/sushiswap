@@ -53,7 +53,8 @@ body {
 }
 
 *.scroll {
-  overflow-y: overlay;
+  overflow-y: overlay !important;
+  overflow-y: scroll;
 }
 
 *.scroll::-webkit-scrollbar {

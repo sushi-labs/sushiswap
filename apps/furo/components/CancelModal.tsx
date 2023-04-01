@@ -11,8 +11,7 @@ import { useAccount, useContract } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { Stream, Vesting } from '../lib'
-import { useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 
 interface CancelModalProps {
   title: string
@@ -27,7 +26,6 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
   const [open, setOpen] = useState(false)
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
   const { address } = useAccount()
-  const { mutate: storeNotification } = useCreateNotification({ account: address })
 
   const contract = useContract({
     address: contractAddress,
@@ -52,7 +50,8 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
       if (!data) return
 
       const ts = new Date().getTime()
-      const notificationData: NotificationData = {
+      createToast({
+        account: address,
         type: 'cancelStream',
         txHash: data.hash,
         chainId,
@@ -68,7 +67,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
 
       storeNotification(createToast(notificationData))
     },
-    [chainId, storeNotification]
+    [chainId, address]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({

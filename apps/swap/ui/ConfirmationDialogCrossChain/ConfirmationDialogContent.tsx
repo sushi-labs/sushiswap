@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import { Chain } from '@sushiswap/chain'
 import { Dots } from '@sushiswap/ui/future/components/Dots'
 import { classNames, Currency, NetworkIcon } from '@sushiswap/ui'
@@ -7,7 +7,6 @@ import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_TOKEN } from '@
 import { useTrade } from '../../lib/useTrade'
 import { StepState } from './StepStates'
 import { shortenAddress } from '@sushiswap/format'
-import { useLayerZeroScanLink } from '../../lib/useLayerZeroScanLink'
 import { ArrowLongRightIcon } from '@heroicons/react/20/solid'
 
 interface ConfirmationDialogContent {
@@ -112,13 +111,23 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
         <div className="flex flex-col justify-center gap-3">
           <span className="flex flex-wrap whitespace-nowrap justify-center gap-1 font-medium text-lg items-center">
             You sold
-            <span className="text-red px-0.5 font-semibold">
+            <a
+              target="_blank"
+              href={txHash ? Chain.from(network0).getTxUrl(txHash) : ''}
+              className="text-red px-0.5 font-semibold"
+              rel="noreferrer"
+            >
               {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
-            </span>{' '}
+            </a>{' '}
             for
-            <span className="text-blue px-0.5 font-semibold">
+            <a
+              target="_blank"
+              href={dstTxHash ? Chain.from(network1).getTxUrl(dstTxHash) : ''}
+              className="text-blue px-0.5 font-semibold"
+              rel="noreferrer"
+            >
               {trade?.amountOut?.toSignificant(6)} {token1?.symbol}.
-            </span>
+            </a>
           </span>
           <span className="text-lg text-center justify-center flex items-center gap-3">
             <NetworkIcon chainId={network0} width={24} height={24} />{' '}
@@ -133,7 +142,7 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({ txHas
           Sent
           <a
             target="_blank"
-            href={dstTxHash ? Chain.from(network1).getAccountUrl(dstTxHash) : ''}
+            href={dstTxHash ? Chain.from(network1).getTxUrl(dstTxHash) : ''}
             className="text-blue hover:underline cursor-pointer"
             rel="noreferrer"
           >

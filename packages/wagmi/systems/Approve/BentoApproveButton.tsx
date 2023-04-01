@@ -34,7 +34,6 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     allApproved,
     initialized,
     hideIcon,
-    onSuccess,
     enabled = true,
     ...props
   }) => {
@@ -44,7 +43,6 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
       watch,
       masterContract,
       onSignature,
-      onSuccess,
       enabled,
     })
 

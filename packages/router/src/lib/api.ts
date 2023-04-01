@@ -1,119 +1,159 @@
 import { Token } from '@sushiswap/currency'
-import fetch from 'node-fetch'
+import { PrismaClient } from '@sushiswap/database'
 
-export interface PoolResponse {
-  address: string
+import { getAllPools as getAllPoolsFromDb, getNewPools } from './database'
+
+export interface PoolResponse2 {
   type: string
-  swapFee: number
+  address: string
   twapEnabled: boolean
-  token0: Token
-  token1: Token
+  swapFee: number
+  liquidityUSD: string
+  isWhitelisted: true
+  token0: {
+    symbol: string
+    address: string
+    status: string
+    id: string
+    name: string
+    decimals: number
+    isFeeOnTransfer: boolean
+    isCommon: boolean
+  }
+  token1: {
+    symbol: string
+    address: string
+    status: string
+    id: string
+    name: string
+    decimals: number
+    isFeeOnTransfer: boolean
+    isCommon: boolean
+  }
 }
 
-export async function getPoolsByTokenIds(
+export async function getAllPools(
+  client: PrismaClient,
+  chainId: number,
+  protocol: string,
+  version: string,
+  poolTypes: ('CONSTANT_PRODUCT_POOL' | 'CONCENTRATED_LIQUIDITY_POOL' | 'STABLE_POOL')[]
+) {
+  const pools = await getAllPoolsFromDb(client, { chainId, protocol, version, poolTypes })
+  const poolMap = new Map(pools.map((pool) => [pool.address, pool as PoolResponse2]))
+  return poolMap
+}
+
+export async function discoverNewPools(
+  client: PrismaClient,
   chainId: number,
   protocol: string,
   version: string,
   poolTypes: ('CONSTANT_PRODUCT_POOL' | 'CONCENTRATED_LIQUIDITY_POOL' | 'STABLE_POOL')[],
+  date: Date
+) {
+  const pools = await getNewPools(client, { chainId, protocol, version, poolTypes, date })
+  const poolMap = new Map(pools.map((pool) => [pool.address, pool as PoolResponse2]))
+  return poolMap
+}
+
+export function filterOnDemandPools(
+  pools: PoolResponse2[],
   token0Address: string,
   token1Address: string,
-  excludeTopPoolsSize: number,
-  topPoolMinLiquidity: number,
+  topPoolAddresses: string[],
   size: number
 ) {
-  try {
-    const pools = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_AGGREGATOR_API_V0_BASE_URL || 'https://aggregator-git-feature-swap.sushi.com/v0'
-      }/${chainId}/pools/${protocol}/${version}?poolTypes=${poolTypes.join(
-        ','
-      )}&token0=${token0Address}&token1=${token1Address}&take=${size}&excludeTopPoolsSize=${excludeTopPoolsSize}&topPoolMinLiquidity=${topPoolMinLiquidity}`
-    )
-      .then((data) => data.json())
-      .catch((e: any) => {
-        console.log(e.message)
-        return new Map<string, PoolResponse>()
-      })
+  let token0PoolSize = 0
+  let token1PoolSize = 0
+  const token0Pools = pools.filter(
+    (p) =>
+      (p.token0.address === token0Address.toLowerCase() &&
+        !p.token1.isFeeOnTransfer &&
+        p.token1.status === 'APPROVED') ||
+      (p.token1.address === token0Address.toLowerCase() && !p.token0.isFeeOnTransfer && p.token0.status === 'APPROVED')
+  )
+  const token1Pools = pools.filter(
+    (p) =>
+      (p.token0.address === token1Address.toLowerCase() &&
+        !p.token1.isFeeOnTransfer &&
+        p.token1.status === 'APPROVED') ||
+      (p.token1.address === token1Address.toLowerCase() && !p.token0.isFeeOnTransfer && p.token0.status === 'APPROVED')
+  )
+  // console.log(`Flattened pools, recieved: t0: ${token0Pools.length}, t1: ${token1Pools.length}`)
 
-    const poolMap: Map<string, PoolResponse> = new Map()
-    for (const pool of pools) {
-      const token0 = new Token({
-        chainId,
-        address: pool.token0.address,
-        decimals: pool.token0.decimals,
-        symbol: pool.token0.symbol,
-        name: pool.token0.name,
-      })
-      const token1 = new Token({
-        chainId,
-        address: pool.token1.address,
-        decimals: pool.token1.decimals,
-        symbol: pool.token1.symbol,
-        name: pool.token1.name,
-      })
-      poolMap.set(pool.address, {
-        address: pool.address,
-        swapFee: pool.swapFee,
-        twapEnabled: pool.twapEnabled,
-        type: pool.type,
-        token0,
-        token1,
-      })
-    }
+  // const topPoolIds = result[2].map((p) => p.id)
+  const filteredToken0Pools = token0Pools.filter((p) => !topPoolAddresses.includes(p.address))
+  const filteredToken1Pools = token1Pools.filter((p) => !topPoolAddresses.includes(p.address))
+  // console.log(`After excluding top pools: t0: ${filteredToken0Pools.length}, t1: ${filteredToken1Pools.length}`)
 
-    return poolMap
-  } catch (error: any) {
-    console.error(error.message)
-    return new Map<string, PoolResponse>()
+  if (filteredToken0Pools.length >= size / 2 && filteredToken1Pools.length >= size / 2) {
+    token0PoolSize = size / 2
+    token1PoolSize = size / 2
+  } else if (filteredToken0Pools.length >= size / 2 && filteredToken1Pools.length < size / 2) {
+    token1PoolSize = filteredToken1Pools.length
+    token0PoolSize = size - filteredToken1Pools.length
+  } else if (filteredToken1Pools.length >= size / 2 && filteredToken0Pools.length < size / 2) {
+    token0PoolSize = filteredToken0Pools.length
+    token1PoolSize = size - filteredToken0Pools.length
+  } else {
+    token0PoolSize = filteredToken0Pools.length
+    token1PoolSize = filteredToken1Pools.length
   }
+
+  const pools0 = filteredToken0Pools
+    .sort((a, b) => Number(b.liquidityUSD) - Number(a.liquidityUSD))
+    .slice(0, token0PoolSize)
+  const pools1 = filteredToken1Pools
+    .sort((a, b) => Number(b.liquidityUSD) - Number(a.liquidityUSD))
+    .slice(0, token1PoolSize)
+
+  return Array.from(new Set([...pools0, ...pools1].flat()))
 }
 
-export async function getTopPools(
-  chainId: number,
-  protocol: string,
-  version: string,
-  poolTypes: ('CONSTANT_PRODUCT_POOL' | 'CONCENTRATED_LIQUIDITY_POOL' | 'STABLE_POOL')[],
-  size: number,
-  minLiquidity: number
-) {
-  try {
-    const pools = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_AGGREGATOR_API_V0_BASE_URL || 'https://aggregator-git-feature-swap.sushi.com/v0'
-      }/${chainId}/top-pools/${protocol}/${version}?poolTypes=${poolTypes.join(
-        ','
-      )}&take=${size}&minLiquidity=${minLiquidity}`
-    ).then((data) => data.json())
-    const poolMap: Map<string, PoolResponse> = new Map()
-
-    for (const pool of pools) {
-      const token0 = new Token({
-        chainId,
-        address: pool.token0.address,
-        decimals: pool.token0.decimals,
-        symbol: pool.token0.symbol,
-        name: pool.token0.name,
-      })
-      const token1 = new Token({
-        chainId,
-        address: pool.token1.address,
-        decimals: pool.token1.decimals,
-        symbol: pool.token1.symbol,
-        name: pool.token1.name,
-      })
-      poolMap.set(pool.address, {
-        address: pool.address,
-        swapFee: pool.swapFee,
-        twapEnabled: pool.twapEnabled,
-        type: pool.type,
-        token0,
-        token1,
-      })
-    }
-
-    return poolMap
-  } catch (error: any) {
-    console.error(error.message)
-    return new Map<string, PoolResponse>()
+export function filterTopPools(pools: PoolResponse2[], size: number) {
+  const safePools = pools.filter(
+    (p) =>
+      p.token0.status === 'APPROVED' &&
+      !p.token0.isFeeOnTransfer &&
+      p.token1.status === 'APPROVED' &&
+      !p.token1.isFeeOnTransfer
+  )
+  if (safePools.map((p) => p.address).includes('0x46a05503abc6f029e19564595adfa02e651f279f')) {
+    console.log('0x46a05503abc6f029e19564595adfa02e651f279f POOL IS SAFE')
   }
+
+  const commonPools = safePools.filter((p) => p.token0.isCommon && p.token1.isCommon)
+  if (commonPools.map((p) => p.address).includes('0x46a05503abc6f029e19564595adfa02e651f279f')) {
+    console.log('0x46a05503abc6f029e19564595adfa02e651f279f POOL IS COMMON')
+  }
+  const topPools = safePools
+    .sort((a, b) => Number(b.liquidityUSD) - Number(a.liquidityUSD))
+    .slice(0, safePools.length <= size ? size : size - commonPools.length)
+  console.log('commonPools' + commonPools.length, 'topPools' + topPools.length)
+
+  return [...topPools, ...commonPools]
+}
+
+export function mapToken(
+  chainId: number,
+  {
+    address,
+    decimals,
+    symbol,
+    name,
+  }: {
+    address: string
+    decimals: number
+    symbol: string
+    name: string
+  }
+): Token {
+  return new Token({
+    chainId,
+    address,
+    decimals,
+    symbol,
+    name,
+  })
 }

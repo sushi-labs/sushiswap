@@ -1,16 +1,19 @@
 import { useTrade as _useTrade } from '@sushiswap/react-query'
 import { useFeeData } from 'wagmi'
-import { useSwapState } from '../ui/trade/TradeProvider'
+import { useSwapActions, useSwapState } from '../ui/trade/TradeProvider'
 import { useSlippageTolerance } from './useSlippageTolerance'
 import { useCarbonOffset } from './useCarbonOffset'
 import { useCrossChainTrade } from './useCrossChainTrade/useCrossChainTrade'
 import { useMemo } from 'react'
 import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap'
+import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
 
 type ObjectType<T> = T extends true ? ReturnType<typeof useCrossChainTrade> : ReturnType<typeof _useTrade>
 
 export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): ObjectType<T> {
-  const { token0, token1, network0, network1, amount, recipient, bentoboxSignature, tradeId } = useSwapState()
+  const { token0, token1, network0, network1, amount, recipient, bentoboxSignature, tradeId, isFallback } =
+    useSwapState()
+  const { setFallback } = useSwapActions()
   const [slippageTolerance] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
 
@@ -23,7 +26,20 @@ export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): 
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     gasPrice: feeData?.gasPrice?.toNumber(),
     recipient,
-    enabled: !crossChain && network0 === network1,
+    enabled: !crossChain && network0 === network1 && !isFallback,
+    carbonOffset,
+    onError: () => setFallback(true),
+  })
+
+  const sameChainTradeFallback = useClientTrade({
+    chainId: network0,
+    fromToken: token0,
+    toToken: token1,
+    amount: amount,
+    slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
+    gasPrice: feeData?.gasPrice?.toNumber(),
+    recipient,
+    enabled: isFallback,
     carbonOffset,
   })
 
@@ -42,6 +58,6 @@ export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): 
 
   return useMemo(() => {
     if (network0 !== network1) return crossChainTrade
-    return sameChainTrade
-  }, [crossChainTrade, network0, network1, sameChainTrade]) as ObjectType<T>
+    return isFallback ? sameChainTradeFallback : sameChainTrade
+  }, [crossChainTrade, isFallback, network0, network1, sameChainTrade, sameChainTradeFallback]) as ObjectType<T>
 }

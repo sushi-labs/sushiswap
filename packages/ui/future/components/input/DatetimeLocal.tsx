@@ -18,6 +18,10 @@ export const DatetimeLocal: FC<DatetimeLocalProps> = forwardRef<HTMLInputElement
         <input
           ref={ref}
           type="datetime-local"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
+          autoComplete="new-password"
           className={
             variant === 'default'
               ? classNames(DEFAULT_INPUT_CLASSNAME, error ? ERROR_INPUT_CLASSNAME : '', className)

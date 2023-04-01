@@ -1,5 +1,5 @@
 import { PlusIcon } from '@heroicons/react/solid'
-import { Button, Link, OnsenIcon, Typography } from '@sushiswap/ui'
+import { Button, Link, OnsenIcon } from '@sushiswap/ui'
 import { FC } from 'react'
 import { useNetwork } from 'wagmi'
 import { Layout, PoolFilters, PoolsFiltersProvider, PoolsSection } from '../components'
@@ -10,11 +10,9 @@ export const Pools: FC<{ filters?: Partial<PoolFilters>; isReady?: boolean }> = 
     <Layout>
       <div className="flex flex-col gap-10 md:gap-16">
         <section className="flex flex-col gap-6 lg:flex-row">
-          <div className="max-w-md space-y-4">
-            <Typography variant="hero" weight={600} className="text-slate-50">
-              Earn
-            </Typography>
-            <p className="text-slate-300">Earn fees by providing liquidity.</p>
+          <div className="max-w-md flex flex-col gap-2">
+            <h1 className="text-7xl font-semibold text-gray-900 dark:text-slate-50">Earn.</h1>
+            <span className="text-2xl text-gray-600 dark:text-slate-300">Provide liquidity and earn fees.</span>
           </div>
           <div className="flex justify-end flex-grow not-prose">
             <div className="flex flex-col gap-3 w-full lg:w-[200px]">

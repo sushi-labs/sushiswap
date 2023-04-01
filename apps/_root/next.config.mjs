@@ -1,17 +1,8 @@
 import defaultNextConfig from '@sushiswap/nextjs-config'
 
-const {
-  ROOT_URL,
-  ANALYTICS_URL,
-  BLOG_URL,
-  BRIDGE_URL,
-  EARN_URL,
-  FURO_URL,
-  KASHI_URL,
-  SWAP_URL,
-  XSWAP_URL,
-  ACADEMY_URL,
-} = process.env
+const { ANALYTICS_URL, BLOG_URL, EARN_URL, FURO_URL, SWAP_URL, ACADEMY_URL } = process.env
+
+import { withAxiom } from 'next-axiom'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -88,10 +79,6 @@ const nextConfig = {
         destination: `${FURO_URL}/furo/:path*`,
       },
       {
-        source: '/swap',
-        destination: `${SWAP_URL}/swap`,
-      },
-      {
         source: '/academy',
         destination: `${ACADEMY_URL}/academy`,
       },
@@ -100,16 +87,20 @@ const nextConfig = {
         destination: `${ACADEMY_URL}/academy/:path*`,
       },
       {
+        source: '/swap',
+        destination: `${SWAP_URL}/swap`,
+      },
+      {
         source: '/swap/:path*',
         destination: `${SWAP_URL}/swap/:path*`,
       },
       {
         source: '/xswap',
-        destination: `${XSWAP_URL}/xswap`,
+        destination: `${SWAP_URL}/swap`,
       },
       {
         source: '/xswap/:path*',
-        destination: `${XSWAP_URL}/xswap/:path*`,
+        destination: `${SWAP_URL}/swap/:path*`,
       },
       {
         source: '/earn',
@@ -123,4 +114,4 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+export default withAxiom(nextConfig)

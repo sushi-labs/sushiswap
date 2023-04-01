@@ -4,7 +4,7 @@ export const HEADER_HEIGHT = 56
 
 export const APP_TYPE_LINKS = {
   [AppType.Root]: '/',
-  [AppType.Legacy]: '/',
+  [AppType.Legacy]: 'https://app.sushi.com',
   [AppType.Blog]: '/blog',
   [AppType.Bridge]: '/bridge',
   [AppType.Swap]: '/swap',

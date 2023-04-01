@@ -4,8 +4,6 @@ import React, { FC } from 'react'
 
 import { Header } from '../ui/Header'
 import { WagmiProvider } from '../ui/WagmiProvider'
-// import { PersistQueryClientProvider } from '../ui/PersistQueryClientProvider'
-import { QueryClientProvider } from '../ui/QueryClientProvider'
 import Head from 'next/head'
 import { AppProps } from 'next/app'
 import { ToastContainer } from '@sushiswap/ui/future/components/toast'
@@ -13,6 +11,9 @@ import { SwapProvider } from 'ui/trade/TradeProvider'
 import { Onramper } from '@sushiswap/wagmi/future/components'
 import { SplashController } from '../ui/SplashController'
 import { NetworkCheck } from '../ui/NetworkCheck'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { queryClient } from '@sushiswap/react-query'
+import { TokenProvider } from '../ui/TokenProvider'
 
 export { reportWebVitals } from 'next-axiom'
 
@@ -27,16 +28,18 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="mask-icon" href="/swap/safari-pinned-tab.svg?v=1" color="#fa52a0" />
       </Head>
       <WagmiProvider>
-        <QueryClientProvider>
-          <SwapProvider>
-            {/*<SplashController>*/}
-            <Onramper.Provider>
-              <NetworkCheck />
-              <Header />
-              <Component {...pageProps} />
-            </Onramper.Provider>
-            {/*</SplashController>*/}
-          </SwapProvider>
+        <QueryClientProvider client={queryClient}>
+          <TokenProvider>
+            <SplashController>
+              <SwapProvider>
+                <Onramper.Provider>
+                  <NetworkCheck />
+                  <Header />
+                  <Component {...pageProps} />
+                </Onramper.Provider>
+              </SwapProvider>
+            </SplashController>
+          </TokenProvider>
           <ToastContainer />
         </QueryClientProvider>
       </WagmiProvider>

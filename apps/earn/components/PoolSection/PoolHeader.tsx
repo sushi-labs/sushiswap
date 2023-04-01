@@ -1,6 +1,5 @@
 import { ExternalLinkIcon } from '@heroicons/react/solid'
 import chains from '@sushiswap/chain'
-import { Price } from '@sushiswap/currency'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
 import { AppearOnMount, Currency, Link, NetworkIcon, Typography } from '@sushiswap/ui'
@@ -17,7 +16,9 @@ interface PoolHeader {
 export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
   const { data: prices } = usePrices({ chainId: pool.chainId })
 
-  const { token0, token1, liquidityToken } = useGraphPool(pool)
+  const {
+    data: { token0, token1, liquidityToken },
+  } = useGraphPool(pool)
 
   return (
     <div className="flex flex-col gap-5">
