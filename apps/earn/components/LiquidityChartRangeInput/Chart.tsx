@@ -1,5 +1,5 @@
 import { max, scaleLinear, ZoomTransform } from 'd3'
-import { FC, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Bound } from '../../lib/constants'
 import { Area } from './Area'
@@ -64,7 +64,7 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
   }, [brushDomain, onBrushDomainChange, xScale])
 
   return (
-    <>
+    <div className="relative flex flex-col">
       <Zoom
         svg={zoomRef.current}
         xScale={xScale}
@@ -123,6 +123,30 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
 
             <Line value={current} xScale={xScale} innerHeight={innerHeight} />
 
+            <line
+              opacity={0.7}
+              strokeWidth={1}
+              stroke="currentColor"
+              fill="none"
+              className="text-gray-900 dark:text-slate-500"
+              x1={0}
+              y1={innerHeight}
+              x2={innerWidth}
+              y2={innerHeight}
+            />
+
+            <line
+              opacity={1}
+              strokeWidth={1}
+              stroke="currentColor"
+              fill="none"
+              className="text-gray-900 dark:text-slate-500"
+              x1={0}
+              y1={0}
+              x2={innerWidth}
+              y2={0}
+            />
+
             <AxisBottom xScale={xScale} innerHeight={innerHeight} />
           </g>
 
@@ -148,6 +172,6 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
           />
         </g>
       </svg>
-    </>
+    </div>
   )
 }

@@ -13,7 +13,7 @@ const Axis: FC<AxisProps> = ({ axisGenerator }) => {
         .call((g) => g.select('.domain').remove())
   }
 
-  return <g ref={axisRef} />
+  return <g ref={axisRef} className="text-slate-600 dark:text-slate-400" />
 }
 
 interface AxisBottomProps {
@@ -26,7 +26,7 @@ export const AxisBottom: FC<AxisBottomProps> = ({ xScale, innerHeight, offset = 
   useMemo(
     () => (
       <g
-        className="[>_line]:hidden [>_text]:text-slate-300 [>_text]:translate-y-[5px]"
+        className="[>_line]:hidden [>_text]:text-slate-400 [>_text]:translate-y-[5px]"
         transform={`translate(0, ${innerHeight + offset})`}
       >
         <Axis axisGenerator={axisBottom(xScale).ticks(6)} />

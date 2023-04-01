@@ -196,14 +196,22 @@ export const Brush: FC<BrushProps> = ({
                   opacity={showLabels || hovering ? 1 : 0}
                   transform={`translate(50,0), scale(${flipWestHandle ? '1' : '-1'}, 1)`}
                 >
-                  <rect fill="currentColor" className="text-slate-700" y="0" x="-30" height="30" width="60" rx="8" />
+                  <rect
+                    fill="currentColor"
+                    className="text-gray-100 dark:text-slate-900"
+                    y="1"
+                    x="-30"
+                    height="30"
+                    width="60"
+                    rx="8"
+                  />
                   <text
                     textAnchor="middle"
                     fontSize={13}
                     fill="currentColor"
-                    className="text-slate-200"
+                    className="text-gray-600 dark:text-slate-400 font-medium"
                     transform="scale(-1, 1)"
-                    y="15"
+                    y="16"
                     dominantBaseline="middle"
                   >
                     {brushLabelValue('w', localBrushExtent[0])}
@@ -241,13 +249,21 @@ export const Brush: FC<BrushProps> = ({
                   opacity={showLabels || hovering ? 1 : 0}
                   transform={`translate(50,0), scale(${flipEastHandle ? '-1' : '1'}, 1)`}
                 >
-                  <rect fill="currentColor" className="text-slate-700" y="0" x="-30" height="30" width="60" rx="8" />
+                  <rect
+                    fill="currentColor"
+                    className="text-gray-100 dark:text-slate-900"
+                    y="1"
+                    x="-30"
+                    height="30"
+                    width="60"
+                    rx="8"
+                  />
                   <text
                     textAnchor="middle"
                     fontSize={13}
                     fill="currentColor"
-                    className="text-slate-200"
-                    y="15"
+                    className="text-gray-600 dark:text-slate-400 font-medium"
+                    y="16"
                     dominantBaseline="middle"
                   >
                     {brushLabelValue('e', localBrushExtent[1])}

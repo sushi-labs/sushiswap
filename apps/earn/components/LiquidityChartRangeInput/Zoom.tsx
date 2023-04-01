@@ -1,5 +1,5 @@
 import { RefreshIcon, ZoomInIcon, ZoomOutIcon } from '@heroicons/react/solid'
-import { classNames } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { ScaleLinear, select, zoom, ZoomBehavior, zoomIdentity, ZoomTransform } from 'd3'
 import React, { FC, useEffect, useMemo, useRef } from 'react'
 
@@ -79,30 +79,25 @@ export const Zoom: FC<ZoomProps> = ({
   }, [zoomInitial, zoomLevels])
 
   return (
-    <div
-      className={classNames(
-        showResetButton ? 'grid-cols-3' : 'grid-cols-2',
-        'grid gap-1.5 absolute top-[-75px] right-0'
-      )}
-    >
+    <div className="flex justify-end gap-2">
       {showResetButton && (
-        <button
-          className="bg-white/[0.04] hover:bg-white/[0.08] p-1 rounded-full"
+        <Button
+          size="xs"
           onClick={() => {
             resetBrush()
             zoomReset()
           }}
           disabled={false}
         >
-          <RefreshIcon width={16} />
-        </button>
+          <RefreshIcon width={24} height={24} />
+        </Button>
       )}
-      <button className="bg-white/[0.04] hover:bg-white/[0.08] p-1 rounded-full" onClick={zoomIn} disabled={false}>
-        <ZoomInIcon width={16} />
-      </button>
-      <button className="bg-white/[0.04] hover:bg-white/[0.08] p-1 rounded-full" onClick={zoomOut} disabled={false}>
-        <ZoomOutIcon width={16} />
-      </button>
+      <Button size="xs" variant="outlined" onClick={zoomIn} disabled={false}>
+        <ZoomInIcon width={20} height={20} />
+      </Button>
+      <Button size="xs" variant="outlined" onClick={zoomOut} disabled={false}>
+        <ZoomOutIcon width={20} height={20} />
+      </Button>
     </div>
   )
 }

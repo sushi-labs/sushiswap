@@ -101,7 +101,11 @@ const _Add: FC = () => {
     token1,
   })
 
-  const { data: pool, isLoading } = useConcentratedLiquidityPool({ chainId, token0, token1, feeAmount })
+  const {
+    data: pool,
+    isLoading,
+    isInitialLoading,
+  } = useConcentratedLiquidityPool({ chainId, token0, token1, feeAmount })
 
   const fiatAmounts = useMemo(() => [tryParseAmount('1', token0), tryParseAmount('1', token1)], [token0, token1])
   const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId, amounts: fiatAmounts })
@@ -171,7 +175,9 @@ const _Add: FC = () => {
           </div>
           <div className="col-span-2 flex flex-col gap-2">
             <List.Label className="!px-0">Current Price</List.Label>
-            {isLoading || !pool || !token0 || !token1 ? (
+            {!isLoading && !pool ? (
+              <span className="">N/A</span>
+            ) : isInitialLoading || !pool || !token0 || !token1 ? (
               <Skeleton.Text />
             ) : (
               <div
