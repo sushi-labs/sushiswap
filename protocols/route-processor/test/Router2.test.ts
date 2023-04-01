@@ -87,6 +87,7 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
           blockCreated: 25770160,
         },
       },
+        pollingInterval: 1_000, 
     },
     transport: custom(network.provider),
   })
@@ -100,7 +101,7 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   dataFetcher.startDataFetching()
 
   console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
-  const RouteProcessor = await ethers.getContractFactory('RouteProcessor')
+  const RouteProcessor = await ethers.getContractFactory('RouteProcessor2')
   const routeProcessor = await RouteProcessor.deploy(bentoBoxV1Address[chainId as BentoBoxV1ChainId])
   await routeProcessor.deployed()
   //console.log('    Block Number:', provider.blockNumber)
@@ -129,64 +130,55 @@ async function makeSwap(
   poolFilter?: PoolFilter,
   makeSankeyDiagram = false
 ): Promise<[BigNumber, number] | undefined> {
-  //console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
+    //console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
-  if (fromToken instanceof Token) {
-    //console.log(`Approve user's ${fromToken.symbol} to the route processor ...`)
-    const WrappedBaseTokenContract = await new ethers.Contract(fromToken.address, erc20Abi, env.user)
-    await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
-  }
+    if (fromToken instanceof Token) {
+      //console.log(`Approve user's ${fromToken.symbol} to the route processor ...`)
+      const WrappedBaseTokenContract = new ethers.Contract(fromToken.address, erc20Abi, env.user)
+      await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
+    }
+  
+    //console.log('Create Route ...')
+    await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  
+    const pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
 
-  //console.log('Create Route ...')
-  env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
-  const waiter = new Waiter()
-  const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
-  router.startRouting(() => {
-    //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
-    const printed = makeSankeyDiagram
-      ? getRoutingAnyChartSankeyData(router.getBestRoute() as MultiRoute)
-      : router.getCurrentRouteHumanString()
-    console.log(printed)
-    waiter.resolve()
-  })
-  await waiter.wait()
-  router.stopRouting()
-
-  //console.log('Create route processor code ...')
-  const rpParams = router.getCurrentRouteRP2Params(env.user.address, env.rp.address)
-  if (rpParams === undefined) return
-
-  //console.log('Call route processor (may take long time for the first launch)...')
-  const route = router.getBestRoute() as MultiRoute
-  let balanceOutBNBefore: BigNumber
-  let toTokenContract: Contract | undefined = undefined
-  if (toToken instanceof Token) {
-    toTokenContract = await new ethers.Contract(toToken.address, weth9Abi, env.user)
-    balanceOutBNBefore = await toTokenContract.connect(env.user).balanceOf(env.user.address)
-  } else {
-    balanceOutBNBefore = await env.user.getBalance()
-  }
-  let tx
-  if (rpParams.value)
-    tx = await env.rp.processRoute(
-      rpParams.tokenIn,
-      rpParams.amountIn,
-      rpParams.tokenOut,
-      rpParams.amountOutMin,
-      rpParams.to,
-      rpParams.routeCode,
-      { value: rpParams.value }
-    )
-  else
-    tx = await env.rp.processRoute(
-      rpParams.tokenIn,
-      rpParams.amountIn,
-      rpParams.tokenOut,
-      rpParams.amountOutMin,
-      rpParams.to,
-      rpParams.routeCode
-    )
-  const receipt = await tx.wait()
+    const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
+    // console.log("ROUTE:", route.legs.map(l => l.tokenFrom.symbol + " -> " + l.tokenTo.symbol))
+    const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
+    if (rpParams === undefined) return
+  
+    //console.log('Call route processor (may take long time for the first launch)...')
+  
+    let balanceOutBNBefore: BigNumber
+    let toTokenContract: Contract | undefined = undefined
+    if (toToken instanceof Token) {
+      toTokenContract = await new ethers.Contract(toToken.address, weth9Abi, env.user)
+      balanceOutBNBefore = await toTokenContract.connect(env.user).balanceOf(env.user.address)
+    } else {
+      balanceOutBNBefore = await env.user.getBalance()
+    }
+    let tx
+    if (rpParams.value)
+      tx = await env.rp.processRoute(
+        rpParams.tokenIn,
+        rpParams.amountIn,
+        rpParams.tokenOut,
+        rpParams.amountOutMin,
+        rpParams.to,
+        rpParams.routeCode,
+        { value: rpParams.value }
+      )
+    else
+      tx = await env.rp.processRoute(
+        rpParams.tokenIn,
+        rpParams.amountIn,
+        rpParams.tokenOut,
+        rpParams.amountOutMin,
+        rpParams.to,
+        rpParams.routeCode
+      )
+    const receipt = await tx.wait()
 
   // const trace = await network.provider.send('debug_traceTransaction', [receipt.transactionHash])
   // printGasUsage(trace)
@@ -207,7 +199,8 @@ async function makeSwap(
     console.log(`slippage: ${slippage / 100}%`)
   }
   console.log(`gas use: ${receipt.gasUsed.toString()}`)
-  expect(slippage).greaterThanOrEqual(0) // positive slippage could be if we 'gather' some liquidity on the route
+  // expect(slippage).greaterThanOrEqual(0) // positive slippage could be if we 'gather' some liquidity on the route
+    expect(slippage).equal(0) // TODO: can't do this, isn't it a tiny bit of rounding when converting stable reserves?
 
   return [balanceOutBN, receipt.blockNumber]
 }
@@ -215,7 +208,7 @@ async function makeSwap(
 async function dataUpdated(env: TestEnvironment, minBlockNumber: number) {
   for (;;) {
     if (env.dataFetcher.getLastUpdateBlock() >= minBlockNumber) return
-    await delay(500)
+    await delay(5500)
   }
 }
 
@@ -231,7 +224,6 @@ async function updMakeSwap(
   const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
   if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
 
-  console.log('')
   //console.log('Wait data update for min block', waitBlock)
   await dataUpdated(env, waitBlock)
 
@@ -256,18 +248,11 @@ async function checkTransferAndRoute(
     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
   }
 
-  env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
-  const waiter = new Waiter()
-  const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9)
-  router.startRouting(() => {
-    // const printed = router.getCurrentRouteHumanString()
-    // console.log(printed)
-    waiter.resolve()
-  })
-  await waiter.wait()
-  router.stopRouting()
+  await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
 
-  const rpParams = router.getCurrentRouteRP2Params(env.user.address, env.rp.address) as RPParams
+  const pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
+  const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9)
+  const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
   const transferValue = getBigNumber(0.02 * Math.pow(10, Native.onChain(env.chainId).decimals))
   rpParams.value = (rpParams.value || BigNumber.from(0)).add(transferValue)
 
@@ -370,6 +355,7 @@ describe('End-to-end Router2 test', async function () {
 
   it('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async function () {
     const filter = (pool: RPool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
+
     if (chainId == ChainId.POLYGON) {
       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], intermidiateResult)
@@ -411,8 +397,18 @@ describe('End-to-end Router2 test', async function () {
   })
 
   it('Special Router', async function () {
-    env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI_LOCAL)
-    const route = findSpecialRoute(env.dataFetcher, Native.onChain(chainId), getBigNumber(1 * 1e18), SUSHI_LOCAL, 30e9)
+    await env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI_LOCAL)
+
+    const pcMap = env.dataFetcher.getCurrentPoolCodeMap(Native.onChain(chainId), SUSHI_LOCAL)
+
+    const route = Router.findSpecialRoute(
+      pcMap,
+      chainId,
+      Native.onChain(chainId),
+      getBigNumber(1 * 1e18),
+      SUSHI_LOCAL,
+      30e9
+    )
     expect(route).not.undefined
   })
 
