@@ -3,9 +3,10 @@
 import 'swiper/swiper.css'
 import 'swiper/css/navigation'
 
+import { ChevronRightIcon } from '@heroicons/react/outline'
+import { IconButton } from '@sushiswap/ui'
 import React, { ReactNode } from 'react'
 import { Swiper, SwiperSlide, useSwiper } from 'swiper/react'
-import { ChevronRightIcon } from '@heroicons/react/outline'
 
 interface CardNavigationProps {
   items: ReactNode[]
@@ -24,15 +25,9 @@ function SlideNextButton() {
   const swiper = useSwiper()
 
   return (
-    <IconButton
-      icon={ChevronRightIcon}
-      iconProps={{
-        width: 20,
-        height: 20,
-        className: 'text-gray-500 dark:text-slate-500',
-      }}
-      onClick={() => swiper.slideNext()}
-    />
+    <IconButton onClick={() => swiper.slideNext()} className="bg-slate-600">
+      <ChevronRightIcon className="text-slate-400 h-4 w-4" />
+    </IconButton>
   )
 }
 
