@@ -8,6 +8,7 @@ import computeSurroundingTicks from '../functions'
 import useSWR from 'swr'
 import { getAllV3Ticks } from '../api'
 import { useQuery } from '@tanstack/react-query'
+import { useTicks } from './useTicks'
 
 const PRICE_FIXED_DIGITS = 8
 
@@ -32,25 +33,29 @@ const useAllV3Ticks = ({
   token1: Type | undefined
   feeAmount: FeeAmount | undefined
 }) => {
-  return useQuery({
-    queryKey: ['getAllV3Ticks', { chainId, token0, token1, feeAmount }],
-    queryFn: async () => {
-      if (token0 && token1 && feeAmount) {
-        const address = computePoolAddress({
-          // TODO harcdoded chainId
-          factoryAddress: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
-          tokenA: token0.wrapped,
-          tokenB: token1.wrapped,
-          fee: feeAmount,
-        })
+  // TODO: Add subgraph support
 
-        return await getAllV3Ticks(`${chainId}:${address.toLowerCase()}`)
-      }
+  return useTicks({ token0, token1, feeAmount, chainId })
 
-      return null
-    },
-    enabled: Boolean(token0 && token1 && feeAmount),
-  })
+  // return useQuery({
+  //   queryKey: ['getAllV3Ticks', { chainId, token0, token1, feeAmount }],
+  //   queryFn: async () => {
+  //     if (token0 && token1 && feeAmount) {
+  //       const address = computePoolAddress({
+  //         // TODO harcdoded chainId
+  //         factoryAddress: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
+  //         tokenA: token0.wrapped,
+  //         tokenB: token1.wrapped,
+  //         fee: feeAmount,
+  //       })
+
+  //       return await getAllV3Ticks(`${chainId}:${address.toLowerCase()}`)
+  //     }
+
+  //     return null
+  //   },
+  //   enabled: Boolean(token0 && token1 && feeAmount),
+  // })
 }
 
 export const useConcentratedActiveLiquidity = ({

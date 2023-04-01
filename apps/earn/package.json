@@ -34,6 +34,7 @@
     "@sushiswap/format": "workspace:*",
     "@sushiswap/gas": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
+    "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/react-query": "workspace:*",

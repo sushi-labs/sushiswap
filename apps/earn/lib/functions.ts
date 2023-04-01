@@ -27,7 +27,7 @@ import {
 } from '@sushiswap/v3-sdk'
 import { JSBI } from '@sushiswap/math'
 import { TickProcessed } from './hooks/useConcentratedActiveLiquidity'
-import { getAllV3Ticks } from './api'
+import { useTicks } from './hooks'
 
 export const isConstantProductPool = (
   pool: Pair | ConstantProductPool | StablePool | null
@@ -186,7 +186,7 @@ export default function computeSurroundingTicks(
   token0: Token,
   token1: Token,
   activeTickProcessed: TickProcessed,
-  sortedTickData: Awaited<ReturnType<typeof getAllV3Ticks>>,
+  sortedTickData: NonNullable<ReturnType<typeof useTicks>['data']>,
   pivot: number,
   ascending: boolean
 ): TickProcessed[] {
