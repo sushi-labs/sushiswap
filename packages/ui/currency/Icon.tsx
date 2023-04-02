@@ -1,7 +1,7 @@
 import { QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
 import chains, { ChainId } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/currency'
-import { WrappedTokenInfo } from '@sushiswap/token-lists/dist/src'
+import { WrappedTokenInfo } from '@sushiswap/token-lists'
 import Image, { ImageProps } from 'next/legacy/image'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { cloudinaryImageLoader } from '../cloudinary'

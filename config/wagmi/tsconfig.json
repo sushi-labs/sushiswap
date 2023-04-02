@@ -1,5 +1,5 @@
 {
-  "extends": "@sushiswap/typescript-config/node18.json",
+  "extends": "@sushiswap/typescript-config/esm.json",
   "include": ["src"],
   "compilerOptions": {
     "outDir": "./dist",
@@ -7,6 +7,7 @@
     "skipLibCheck": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "moduleResolution": "node"
   }
 }

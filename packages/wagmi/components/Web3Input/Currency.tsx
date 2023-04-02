@@ -5,7 +5,7 @@ import { classNames, Currency as UICurrency, DEFAULT_INPUT_UNSTYLED, Input, Skel
 import { FC, useCallback, useMemo, useRef, useState } from 'react'
 import { useAccount } from 'wagmi'
 
-import { useBalance, usePrices } from '../../hooks'
+import { _useBalance as useBalance, usePrices } from '../../hooks'
 import { TokenSelector, TokenSelectorProps } from '../TokenSelector'
 
 export interface CurrencyInputProps

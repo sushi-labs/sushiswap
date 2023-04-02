@@ -18,13 +18,13 @@ import {
   PoolFinderType,
   useBentoBoxTotals,
   useConstantProductPoolFactoryContract,
-  useSendTransaction,
+  _useSendTransaction as useSendTransaction,
   useStablePoolFactoryContract,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork } from '@sushiswap/wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import {
   approveMasterContractAction,

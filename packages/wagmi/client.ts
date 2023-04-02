@@ -1,5 +1,5 @@
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
-import { Chain, configureChains, createClient as _createClient, CreateClientConfig } from 'wagmi'
+import { Chain, configureChains, createClient, CreateClientConfig } from 'wagmi'
 import { foundry } from 'wagmi/chains'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
@@ -13,8 +13,6 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { getSigners } from './test/utils'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { SafeConnector } from 'wagmi/connectors/safe'
-
-export type Client = ReturnType<typeof _createClient>
 
 const isTest = process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_PLAYWRIGHT_ENABLED === 'true'
 
@@ -31,8 +29,8 @@ const { chains, provider }: CreateClientConfig & { chains: Chain[] } = isTest
     )
   : configureChains(allChains, allProviders, { pollingInterval: 8_000 })
 
-export const createClient = (config?: CreateClientConfig) => {
-  return _createClient({
+export const _createClient = (config?: CreateClientConfig) => {
+  return createClient({
     provider,
     logger: {
       warn: process.env.NODE_ENV !== 'production' ? console.warn : null,
@@ -87,4 +85,4 @@ export const createClient = (config?: CreateClientConfig) => {
   })
 }
 
-// export const client: Client = createClient()
+export const client: ReturnType<typeof _createClient> = _createClient()

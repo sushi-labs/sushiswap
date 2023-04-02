@@ -14,14 +14,14 @@ import {
   StablePoolState,
   useBentoBoxTotals,
   useConstantProductPool,
-  useSendTransaction,
+  _useSendTransaction as useSendTransaction,
   useStablePool,
   useTotalSupply,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork } from '@sushiswap/wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 import {

@@ -15,14 +15,16 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "files": [
-    "dist"
+    ".graphclient"
   ],
-  "main": "dist/index.js",
-  "source": "src/index.ts",
-  "types": "dist/index.d.ts",
+  "main": ".graphclient/index.ts",
+  "types": ".graphclient/index.ts",
   "sideEffects": false,
   "exports": {
     ".": {
+      "types": "./.graphclient/index.ts",
+      "import": "./.graphclient/index.ts",
+      "module": "./.graphclient/index.ts",
       "default": "./.graphclient/index.ts"
     },
     "./package.json": "./package.json"

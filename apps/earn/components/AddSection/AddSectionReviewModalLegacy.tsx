@@ -8,13 +8,16 @@ import {
   Approve,
   getSushiSwapRouterContractConfig,
   PairState,
-  useSendTransaction,
+  _useSendTransaction as useSendTransaction,
   useSushiSwapRouterContract,
+  Address,
+  useAccount,
+  useNetwork,
 } from '@sushiswap/wagmi'
 import { BigNumber } from 'ethers'
 import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { Address, useAccount, useNetwork } from '@sushiswap/wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { useTransactionDeadline } from '../../lib/hooks'
 import { useSettings } from '../../lib/state/storage'

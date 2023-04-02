@@ -15,13 +15,14 @@ import { Button, Dots } from '@sushiswap/ui'
 import {
   useBentoBoxTotals,
   useConstantProductPoolFactoryContract,
-  useSendTransaction,
+  _useSendTransaction as useSendTransaction,
   useStablePoolFactoryContract,
   useTridentRouterContract,
+  useAccount,
+  useNetwork,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
-import { useAccount, useNetwork } from '@sushiswap/wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import {
   approveMasterContractAction,

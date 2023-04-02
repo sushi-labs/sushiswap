@@ -14,14 +14,18 @@
     "directory": "jobs/pools"
   },
   "license": "MIT",
-  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "source": "src/index.ts",
+  "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "generate": "graphclient build --fileType js",
+    "build": "graphclient build",
+    "generate": "graphclient build",
     "incentives": "ts-node --swc src/incentives.ts",
     "lint": "TIMING=1 eslint src --fix",
     "pools": "ts-node --swc src/pools.ts",

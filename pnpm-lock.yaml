@@ -1674,19 +1674,6 @@ importers:
     specifiers:
       '@graphprotocol/client-auto-pagination': 1.1.16
       '@graphprotocol/client-cli': 2.2.20
-      '@graphql-mesh/cache-localforage': latest
-      '@graphql-mesh/cache-redis': latest
-      '@graphql-mesh/cross-helpers': latest
-      '@graphql-mesh/graphql': latest
-      '@graphql-mesh/http': latest
-      '@graphql-mesh/json-schema': latest
-      '@graphql-mesh/merger-bare': latest
-      '@graphql-mesh/merger-stitching': latest
-      '@graphql-mesh/plugin-mock': latest
-      '@graphql-mesh/runtime': latest
-      '@graphql-mesh/store': latest
-      '@graphql-mesh/utils': latest
-      '@graphql-tools/merge': latest
       '@sushiswap/chain': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/graph-config': workspace:*
@@ -1696,34 +1683,18 @@ importers:
       '@swc/core': 1.3.26
       '@swc/helpers': 0.4.14
       '@types/express': 4.17.15
-      '@whatwg-node/fetch': latest
+      '@whatwg-node/fetch': 0.8.4
       date-fns: 2.29.3
       dotenv: 16.0.3
       eslint: 8.29.0
       express: 4.18.2
       fast-json-stable-stringify: 2.1.0
       graphql: 16.6.0
-      ioredis: 5.3.1
       jest: 29.3.1
       prettier: 2.8.1
       ts-node: 10.9.1
       typescript: 4.9.4
     dependencies:
-      '@graphprotocol/client-auto-pagination': 1.1.16_graphql@16.6.0
-      '@graphprotocol/client-cli': 2.2.20_6gqbvtbwyxgt3zdouycpjhuzii
-      '@graphql-mesh/cache-localforage': 0.7.20_vhb4ruu5jsydiktkhn74qsjzha
-      '@graphql-mesh/cache-redis': 0.11.21_xilygop4mxh5ufzc5it5gzcley
-      '@graphql-mesh/cross-helpers': 0.3.4_graphql@16.6.0
-      '@graphql-mesh/graphql': 0.34.13_le6zepm736xlbnz7sqotb5gp5y
-      '@graphql-mesh/http': 0.3.26_xilygop4mxh5ufzc5it5gzcley
-      '@graphql-mesh/json-schema': 0.37.24_le6zepm736xlbnz7sqotb5gp5y
-      '@graphql-mesh/merger-bare': 0.16.22_qj2yuahqsmga26sdzdphnntgsq
-      '@graphql-mesh/merger-stitching': 0.18.22_qj2yuahqsmga26sdzdphnntgsq
-      '@graphql-mesh/plugin-mock': 0.1.21_xilygop4mxh5ufzc5it5gzcley
-      '@graphql-mesh/runtime': 0.46.21_xilygop4mxh5ufzc5it5gzcley
-      '@graphql-mesh/store': 0.9.20_xilygop4mxh5ufzc5it5gzcley
-      '@graphql-mesh/utils': 0.43.20_t3olqkp4ofjt4bu4gjm5khtgce
-      '@graphql-tools/merge': 8.4.0_graphql@16.6.0
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/graph-config': link:../../config/graph
       '@whatwg-node/fetch': 0.8.4
@@ -1731,8 +1702,9 @@ importers:
       express: 4.18.2
       fast-json-stable-stringify: 2.1.0
       graphql: 16.6.0
-      ioredis: 5.3.1
     devDependencies:
+      '@graphprotocol/client-auto-pagination': 1.1.16_graphql@16.6.0
+      '@graphprotocol/client-cli': 2.2.20_erstqrng57z6woex75r4i3v24q
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/prettier-config': link:../../config/prettier
@@ -6765,26 +6737,6 @@ packages:
       - react-native-windows
     dev: true
 
-  /@graphql-mesh/cache-redis/0.11.21_xilygop4mxh5ufzc5it5gzcley:
-    resolution: {integrity: sha512-IexTftDkcpprvQpTZmjVCAL0LFwjOSQY/Vke7KWGFeEtHxsj7+uve4Y4ptrW6LMJQCcyD1a5XkkzY9yxxZpPhA==}
-    peerDependencies:
-      '@graphql-mesh/cross-helpers': ^0.3.4
-      '@graphql-mesh/types': ^0.91.12
-      '@graphql-mesh/utils': ^0.43.20
-      graphql: '*'
-      tslib: ^2.4.0
-    dependencies:
-      '@graphql-mesh/cross-helpers': 0.3.4_graphql@16.6.0
-      '@graphql-mesh/string-interpolation': 0.4.3_graphql@16.6.0
-      '@graphql-mesh/utils': 0.43.20_t3olqkp4ofjt4bu4gjm5khtgce
-      graphql: 16.6.0
-      ioredis: 5.3.1
-      ioredis-mock: 8.2.7_ioredis@5.3.1
-    transitivePeerDependencies:
-      - '@types/ioredis-mock'
-      - supports-color
-    dev: false
-
   /@graphql-mesh/cli/0.82.25_3q6avhgaaacez4ctqk4xik246q:
     resolution: {integrity: sha512-3aNfjTPaPw7WYR0WP4u1vOnhP31Pa7xckvrLzd2XE2CzuYta7av1Is1kkkXxB1Zm+ZuwCOUSZ7UZNoLuC6jHeQ==}
     hasBin: true
@@ -7232,6 +7184,7 @@ packages:
       graphql: 16.6.0
       graphql-compose: 9.0.10_graphql@16.6.0
       json-machete: 0.18.20_xilygop4mxh5ufzc5it5gzcley
+    dev: true
 
   /@graphql-mesh/merger-bare/0.16.17_graphql@16.6.0:
     resolution: {integrity: sha512-VX/mzQITGrKvCBNHQrjTpyMkUwdOupwTHVBEo8316DkxGNyyxpEKn7b5th3MfseWH9Q6R+BF+R1LLrWoYpcjsA==}
@@ -7264,6 +7217,7 @@ packages:
       graphql: 16.6.0
     transitivePeerDependencies:
       - '@graphql-mesh/store'
+    dev: true
 
   /@graphql-mesh/merger-bare/0.16.4_graphql@16.6.0:
     resolution: {integrity: sha512-OwjqHYxzFtrwxS0sa5j7+f/JG10U/amIWt+ev+H9fdeUmjnztlp2rqnDqYNHQ3/sXmlM/+CJOPoC5DdEmLRnvg==}
@@ -7357,6 +7311,7 @@ packages:
       faker: 5.5.3
       graphql: 16.6.0
       graphql-scalars: 1.21.3_graphql@16.6.0
+    dev: true
 
   /@graphql-mesh/runtime/0.46.16_graphql@16.6.0:
     resolution: {integrity: sha512-/TS+HC7cOuGI0rwW6gnRBlO8obtGGd4vQ2Uz4Y7WYZafC55uvGba3utezbMI6bpvaG9QZCVbqVWaN30laJnDCA==}
@@ -8364,6 +8319,7 @@ packages:
       fast-json-stable-stringify: 2.1.0
       graphql: 16.6.0
       tslib: 2.5.0
+    dev: true
 
   /@graphql-tools/optimize/1.3.1_graphql@16.6.0:
     resolution: {integrity: sha512-5j5CZSRGWVobt4bgRRg7zhjPiSimk+/zIuColih8E8DxuFOaJ+t0qu7eZS5KXWBkjcd4BPNuhUPpNlEmHPqVRQ==}
@@ -8861,10 +8817,6 @@ packages:
   /@humanwhocodes/object-schema/1.2.1:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
 
-  /@ioredis/as-callback/3.0.0:
-    resolution: {integrity: sha512-Kqv1rZ3WbgOrS+hgzJ5xG5WQuhvzzSTRYvNeyPMLOAM78MHSnuKI20JeJGbpuAt//LCuP0vsexZcorqW7kWhJg==}
-    dev: false
-
   /@ioredis/commands/1.2.0:
     resolution: {integrity: sha512-Sx1pU8EM64o2BrqNpEO1CNLtKQwyhuXuqyfH7oGKCk+1a33d2r5saW8zNwm3j6BTExtjrv2BxTgzzkMwts6vGg==}
 
@@ -9208,6 +9160,7 @@ packages:
 
   /@json-schema-tools/meta-schema/1.7.0:
     resolution: {integrity: sha512-3pDzVUssW3hVnf8gvSu1sKaVIpLyvmpbxgGfkUoaBiErFKRS2CZOufHD0pUFoa5e6Cd5oa72s402nJbnDz76CA==}
+    dev: true
 
   /@juggle/resize-observer/3.4.0:
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
@@ -10206,6 +10159,7 @@ packages:
       qs: 6.11.1
       to-json-schema: 0.2.5
       url-join: 4.0.1
+    dev: true
 
   /@openzeppelin/contracts/3.1.0:
     resolution: {integrity: sha512-dVXDnUKxrAKLzPdCRkz+N8qsVkK1XxJ6kk3zuI6zaQmcKxN7CkizoDP7lXxcs/Mi2I0mxceTRjJBqlzFffLJrQ==}
@@ -21445,6 +21399,7 @@ packages:
 
   /faker/5.5.3:
     resolution: {integrity: sha512-wLTv2a28wjUyWkbnX7u/ABZBkUkIF2fCd73V6P2oFqEGEktDfzWx4UxrSqtPRw0xPRAcjeAOIiJWqZm3pP4u3g==}
+    dev: true
 
   /fast-decode-uri-component/1.0.1:
     resolution: {integrity: sha512-WKgKWg5eUxvRZGwW8FvfbaH7AXSh2cL+3j5fMGzUMCxWBJ3dV3a7Wz8y2f/uQ0e3B6WmodD3oS54jTQ9HVTIIg==}
@@ -21578,22 +21533,6 @@ packages:
       ua-parser-js: 0.7.34
     transitivePeerDependencies:
       - encoding
-
-  /fengari-interop/0.1.3_fengari@0.1.4:
-    resolution: {integrity: sha512-EtZ+oTu3kEwVJnoymFPBVLIbQcCoy9uWCVnMA6h3M/RqHkUBsLYp29+RRHf9rKr6GwjubWREU1O7RretFIXjHw==}
-    peerDependencies:
-      fengari: ^0.1.0
-    dependencies:
-      fengari: 0.1.4
-    dev: false
-
-  /fengari/0.1.4:
-    resolution: {integrity: sha512-6ujqUuiIYmcgkGz8MGAdERU57EIluGGPSUgGPTsco657EHa+srq0S3/YUl/r9kx1+D+d4rGfYObd+m8K22gB1g==}
-    dependencies:
-      readline-sync: 1.4.10
-      sprintf-js: 1.1.2
-      tmp: 0.0.33
-    dev: false
 
   /fetch-blob/3.2.0:
     resolution: {integrity: sha512-7yAQpD2UMJzLi1Dqv7qFYnPbaPx7ZfFK6PiIxQ4PfkGPyNyl2Ugx+a/umUonmKqjhM4DnfbMvdX6otXq83soQQ==}
@@ -22581,6 +22520,7 @@ packages:
       graphql-type-json: 0.3.2_graphql@16.6.0
     transitivePeerDependencies:
       - graphql
+    dev: true
 
   /graphql-config/4.5.0_@types+node@18.15.11:
     resolution: {integrity: sha512-x6D0/cftpLUJ0Ch1e5sj1TZn6Wcxx4oMfmhaG9shM0DKajA9iR+j1z86GSTQ19fShbGvrSSvbIQsHku6aQ6BBw==}
@@ -22663,6 +22603,7 @@ packages:
       graphql: '>=0.8.0'
     dependencies:
       graphql: 16.6.0
+    dev: true
 
   /graphql-ws/5.11.2_graphql@16.6.0:
     resolution: {integrity: sha512-4EiZ3/UXYcjm+xFGP544/yW1+DVI8ZpKASFbzrV5EDTFWJp0ZvLl4Dy2fSZAzz9imKp5pZMIcjB0x/H69Pv/6w==}
@@ -23722,21 +23663,6 @@ packages:
     resolution: {integrity: sha512-b23PteSnYXSONJ6JQXRAlvJhuw8KOtkqa87W4wDtvMrud/DTJd5X+NpOOI+O/zZwVq6v0VLAaJ+1EDViKEuN9g==}
     dependencies:
       fp-ts: 1.19.3
-
-  /ioredis-mock/8.2.7_ioredis@5.3.1:
-    resolution: {integrity: sha512-Oj0mN+w39CTTg5UyBoSMPwYDfx96AUHB0iXYdmxn87atHfDLktNCZ66NuSfiM4fnQ2FNjnzrEL53a0By2sFD5Q==}
-    engines: {node: '>=12.22'}
-    peerDependencies:
-      '@types/ioredis-mock': ^8
-      ioredis: ^5
-    dependencies:
-      '@ioredis/as-callback': 3.0.0
-      '@ioredis/commands': 1.2.0
-      fengari: 0.1.4
-      fengari-interop: 0.1.3_fengari@0.1.4
-      ioredis: 5.3.1
-      semver: 7.3.8
-    dev: false
 
   /ioredis/5.3.1:
     resolution: {integrity: sha512-C+IBcMysM6v52pTLItYMeV4Hz7uriGtoJdz7SSBDX6u+zwSYGirLdQh3L7t/OItWITcw3gTFMjJReYUwS4zihg==}
@@ -25222,6 +25148,7 @@ packages:
       json-pointer: 0.6.2
       to-json-schema: 0.2.5
       url-join: 4.0.1
+    dev: true
 
   /json-parse-better-errors/1.0.2:
     resolution: {integrity: sha512-mrqyZKfX5EhL7hvqcV6WG1yYjnjeuYDzDhhcAAUrq8Po85NBQBJP+ZDUT75qZQ98IkUoBqdkExkukOU7Ts2wrw==}
@@ -25876,6 +25803,7 @@ packages:
 
   /lodash.keys/4.2.0:
     resolution: {integrity: sha512-J79MkJcp7Df5mizHiVNpjoHXLi4HLjh9VLS/M7lQSGoQ+0oQ+lWEigREkqKyizPB1IawvQLLKY8mzEcm1tkyxQ==}
+    dev: true
 
   /lodash.lowercase/4.3.0:
     resolution: {integrity: sha512-UcvP1IZYyDKyEL64mmrwoA1AbFu5ahojhTtkOUr1K9dbuxzS9ev8i4TxMMGCqRC9TE8uDaSoufNAXxRPNTseVA==}
@@ -25890,6 +25818,7 @@ packages:
 
   /lodash.omit/4.5.0:
     resolution: {integrity: sha512-XeqSp49hNGmlkj2EJlfrQFIzQ6lXdNro9sddtQzcJY8QaoC2GO0DT7xaIokHeyM+mIT0mPMlPvkYzg2xCuHdZg==}
+    dev: true
 
   /lodash.orderby/4.6.0:
     resolution: {integrity: sha512-T0rZxKmghOOf5YPnn8EY5iLYeWCpZq8G41FfqoVHH5QDTAFaghJRmAdLiadEDq+ztgM2q5PjA+Z1fOwGrLgmtg==}
@@ -25918,9 +25847,11 @@ packages:
 
   /lodash.without/4.4.0:
     resolution: {integrity: sha512-M3MefBwfDhgKgINVuBJCO1YR3+gf6s9HNJsIiZ/Ru77Ws6uTb9eBuvrkpzO+9iLoAaRodGuq7tyrPCx+74QYGQ==}
+    dev: true
 
   /lodash.xor/4.5.0:
     resolution: {integrity: sha512-sVN2zimthq7aZ5sPGXnSz32rZPuqcparVW50chJQe+mzTYV+IsxSsl/2gnkWWE2Of7K3myBQBqtLKOUEHJKRsQ==}
+    dev: true
 
   /lodash.zip/4.2.0:
     resolution: {integrity: sha512-C7IOaBBK/0gMORRBd8OETNx3kmOkgIWIPvyDpZSCTwUrpYmgZwJkjZeOD8ww4xbOUOs4/attY+pciKvadNfFbg==}
@@ -29688,11 +29619,6 @@ packages:
     dependencies:
       picomatch: 2.3.1
 
-  /readline-sync/1.4.10:
-    resolution: {integrity: sha512-gNva8/6UAe8QYepIQH/jQ2qn91Qj0B9sYjMBBs3QOB8F2CXcKgLxQaJRP76sWVRQt+QU+8fAkCbCvjjMFu7Ycw==}
-    engines: {node: '>= 0.8.0'}
-    dev: false
-
   /real-require/0.1.0:
     resolution: {integrity: sha512-r/H9MzAWtrv8aSVjPCMFpDMl5q66GqtmmRkRjpHTsp4zBAa+snZyiQNlMONiUmEJcsnaw0wCauJ2GWODr/aFkg==}
     engines: {node: '>= 12.13.0'}
@@ -31098,10 +31024,6 @@ packages:
   /sprintf-js/1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
 
-  /sprintf-js/1.1.2:
-    resolution: {integrity: sha512-VE0SOVEHCk7Qc8ulkWw3ntAzXuqf7S2lvwQaDLRnUeIEaKNQJzV6BwmLKhOqT61aGhfUMrXeaBk+oDGCzvhcug==}
-    dev: false
-
   /ssh2/1.11.0:
     resolution: {integrity: sha512-nfg0wZWGSsfUe/IBJkXVll3PEZ//YH2guww+mP88gTpuSU4FtZN7zu9JoeTGOyCNx2dTDtT9fOpWwlzyj4uOOw==}
     engines: {node: '>=10.16.0'}
@@ -31987,6 +31909,7 @@ packages:
       lodash.omit: 4.5.0
       lodash.without: 4.4.0
       lodash.xor: 4.5.0
+    dev: true
 
   /to-object-path/0.3.0:
     resolution: {integrity: sha512-9mWHdnGRuh3onocaHzukyvCZhzvr6tiflAy/JRFXcJX0TjgfWA9pk9t8CMbzmBE4Jfw58pXbkngtBtqYxzNEyg==}
@@ -33161,6 +33084,7 @@ packages:
 
   /url-join/4.0.1:
     resolution: {integrity: sha512-jk1+QP6ZJqyOiuEI9AEWQfju/nB2Pw466kbA0LEZljHwKeMgd9WrAEgEGxjPDD2+TNbbb37rTyhEfrCXfuKXnA==}
+    dev: true
 
   /url-parse-lax/3.0.0:
     resolution: {integrity: sha512-NjFKA0DidqPa5ciFcSrXnAltTtzz84ogy+NebPvfEgAck0+TNg4UJ4IN+fB7zRZfbgUf0syOo9MDxFkDSMuFaQ==}
