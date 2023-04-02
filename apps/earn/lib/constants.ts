@@ -24,6 +24,7 @@ export const POOL_TYPE_MAP: Record<PoolType, string> = {
 export const AVAILABLE_POOL_TYPE_MAP: Partial<typeof POOL_TYPE_MAP> = {
   CONSTANT_PRODUCT_POOL: 'Classic Pool',
   STABLE_POOL: 'Stable Pool',
+  CONCENTRATED_LIQUIDITY_POOL: 'Concentrated Pool',
 }
 
 // ! Has to be kept up to date with default filters
