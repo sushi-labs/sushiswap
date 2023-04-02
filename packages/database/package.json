@@ -14,14 +14,13 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "source": "src/index.ts",
-  "typings": "dist/index.d.ts",
   "files": [
-    "dist/**"
+    "dist"
   ],
+  "main": "dist/index.js",
+  "source": "src/index.ts",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",

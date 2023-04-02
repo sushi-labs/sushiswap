@@ -26,7 +26,7 @@ import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap
 
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
-import { useFeeData } from 'wagmi'
+import { useFeeData } from '@sushiswap/wagmi'
 import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
 

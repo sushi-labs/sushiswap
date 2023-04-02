@@ -9,10 +9,10 @@ import {
 } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 
-import { Query, QueryResolvers, QuerytokensByChainIdsArgs, Token } from '../../.graphclient/index.js'
-import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
-import { TridentTypes } from '../../.graphclient/sources/Trident/types.js'
-import { page } from '../../lib/page.js'
+import { Query, QueryResolvers, QuerytokensByChainIdsArgs, Token } from '../../.graphclient'
+import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
+import { TridentTypes } from '../../.graphclient/sources/Trident/types'
+import { page } from '../../lib/page'
 
 const BLACKLIST = {
   [ChainId.ARBITRUM]: ['0xeba61eb686b515fae79a96118f140924a634ab23'],

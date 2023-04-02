@@ -1,5 +1,5 @@
 import { useTrade as _useTrade } from '@sushiswap/react-query'
-import { useFeeData } from 'wagmi'
+import { useFeeData } from '@sushiswap/wagmi'
 import { useSwapActions, useSwapState } from '../ui/trade/TradeProvider'
 import { useCarbonOffset } from './useCarbonOffset'
 import { useCrossChainTrade } from './useCrossChainTrade/useCrossChainTrade'

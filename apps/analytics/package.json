@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "next build && next-sitemap --config next-sitemap.config.mjs",
+    "build": "next build",
+    "sitemap": "next-sitemap --config next-sitemap.config.mjs",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc",
     "dev": "next dev --port 3001",
@@ -40,7 +41,7 @@
     "react-dom": "18.2.0",
     "react-infinite-scroll-component": "^6.1.0",
     "react-redux": "8.0.5",
-    "wagmi": "0.9.1"
+    "wagmi": "0.12.8"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

@@ -1,3 +1,3 @@
-export { transformIncentives } from './transformIncentives.js'
-export { transformPair } from './transformPair.js'
-export { transformToken } from './transformToken.js'
+export { transformIncentives } from './transformIncentives'
+export { transformPair } from './transformPair'
+export { transformToken } from './transformToken'

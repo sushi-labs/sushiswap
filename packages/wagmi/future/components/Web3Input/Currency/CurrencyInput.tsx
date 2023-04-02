@@ -12,7 +12,7 @@ import { TokenSelector } from '../../TokenSelector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
 import { NativeAddress, usePrice } from '@sushiswap/react-query'
-import { useBalance, useBalances } from '../../../../hooks'
+import { _useBalance as useBalance, useBalances } from '../../../../hooks'
 import { FundSource } from '@sushiswap/hooks'
 
 export interface CurrencyInputProps {

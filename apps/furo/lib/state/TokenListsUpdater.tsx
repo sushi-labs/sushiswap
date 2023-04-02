@@ -1,5 +1,5 @@
 import { SupportedChainId } from 'config'
-import { useProvider } from 'wagmi'
+import { useProvider } from '@sushiswap/wagmi'
 
 import { tokenLists } from './token-lists'
 

@@ -8,7 +8,7 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { Bundle, Query, QueryResolvers } from '../../.graphclient/index.js'
+import { Bundle, Query, QueryResolvers } from '../../.graphclient'
 
 export const bundlesByChainIds: QueryResolvers['bundlesByChainIds'] = async (root, args, context, info) => {
   return Promise.all<Query['bundlesByChainIds']>([

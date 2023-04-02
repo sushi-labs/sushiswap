@@ -1,4 +1,4 @@
-import type { Incentive } from '../lib/incentives.js'
+import type { Incentive } from '../lib/incentives'
 
 export function transformIncentives(incentives: Incentive[]) {
   return incentives

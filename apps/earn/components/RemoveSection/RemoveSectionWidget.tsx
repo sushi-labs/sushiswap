@@ -16,7 +16,7 @@ import {
 } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui'
 import { FC, Fragment, ReactNode, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 
 import { usePoolPosition } from '../PoolPositionProvider'
 import { SettingsOverlay } from '../SettingsOverlay'

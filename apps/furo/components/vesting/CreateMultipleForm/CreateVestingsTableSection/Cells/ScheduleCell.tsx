@@ -17,7 +17,7 @@ import { DatePicker } from '@sushiswap/ui/input/DatePicker'
 import { format } from 'date-fns'
 import React, { FC, useCallback, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../../../lib/zod'
 import { CurrencyInput, CurrencyInputBase, HelperTextPanel } from '../../../../CurrencyInput'

@@ -106,7 +106,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
           tokenA: currencyA.wrapped,
           tokenB: currencyB.wrapped,
           fee,
-        }),
+        }) as Address,
         abi: uniswapV3PoolAbi,
         functionName: 'slot0',
       } as const)
@@ -143,7 +143,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
     ([, poolData]) =>
       ({
         chainId,
-        address: poolData.address,
+        address: poolData.address as Address,
         abi: uniswapV3PoolAbi,
         functionName: 'liquidity',
       } as const)
@@ -153,7 +153,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
     ([, poolData]) =>
       ({
         chainId,
-        address: poolData.token0.wrapped.address,
+        address: poolData.token0.wrapped.address as Address,
         args: [poolData.address as Address],
         abi: erc20Abi,
         functionName: 'balanceOf',
@@ -164,7 +164,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
     ([, poolData]) =>
       ({
         chainId,
-        address: poolData.token1.wrapped.address,
+        address: poolData.token1.wrapped.address as Address,
         args: [poolData.address as Address],
         abi: erc20Abi,
         functionName: 'balanceOf',

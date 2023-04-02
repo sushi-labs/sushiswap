@@ -6,6 +6,7 @@ import { bundleQuery, factoryQuery, tokenPricesQuery } from '../queries/exchange
 
 export async function getNativePrice(chainId: keyof typeof SUBGRAPH_HOST & keyof typeof EXCHANGE_SUBGRAPH_NAME) {
   try {
+    // @ts-ignore
     const { bundle } = await request(
       `https://${SUBGRAPH_HOST[chainId]}/${EXCHANGE_SUBGRAPH_NAME[chainId]}`,
       bundleQuery
@@ -38,6 +39,7 @@ export async function getTokenPrices(
 
 async function getFactory(chainId: keyof typeof SUBGRAPH_HOST & keyof typeof EXCHANGE_SUBGRAPH_NAME) {
   try {
+    // @ts-ignore
     const { factories } = await request(
       `https://${SUBGRAPH_HOST[chainId]}/${EXCHANGE_SUBGRAPH_NAME[chainId]}`,
       factoryQuery

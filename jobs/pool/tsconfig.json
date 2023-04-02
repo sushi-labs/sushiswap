@@ -1,19 +1,18 @@
 {
   "extends": "@sushiswap/typescript-config/esm.json",
   "include": ["src", "resolvers"],
-  "exclude": ["node_modules", "dist"],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
-    "outDir": "./dist",
     "rootDir": ".",
     "lib": ["ESNext"],
     "module": "ESNext",
     "moduleResolution": "nodenext",
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "downlevelIteration": true,
     "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true,
-    "downlevelIteration": true
+    "skipLibCheck": true
   },
   "ts-node": {
     "swc": true,

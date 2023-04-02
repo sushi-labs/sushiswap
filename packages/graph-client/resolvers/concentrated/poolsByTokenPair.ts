@@ -1,6 +1,6 @@
 import { CONCENTRATED_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 
-import { Query, QueryResolvers } from '../../.graphclient/index.js'
+import { Query, QueryResolvers } from '../../.graphclient'
 
 const MAX_FIRST = 1000
 

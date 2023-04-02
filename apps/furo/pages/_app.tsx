@@ -11,7 +11,7 @@ import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import { FC, useEffect } from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
-import { WagmiConfig } from 'wagmi'
+import { WagmiConfig } from '@sushiswap/wagmi'
 
 import { Header } from '../components'
 import { SUPPORTED_CHAINS } from '../config'

@@ -1,6 +1,6 @@
-import { Resolvers } from '../../.graphclient/index.js'
-import { factoriesByChainIds } from './factoriesByChainIds.js'
-import { factoryDaySnapshotsByChainIds } from './factoryDaySnapshotsByChainIds.js'
+import { Resolvers } from '../../.graphclient'
+import { factoriesByChainIds } from './factoriesByChainIds'
+import { factoryDaySnapshotsByChainIds } from './factoryDaySnapshotsByChainIds'
 export const resolvers: Resolvers = {
   Factory: {
     chainId: (root, args, context, info) => Number(root.chainId || context.chainId || 1),
