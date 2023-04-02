@@ -30,7 +30,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "graphclient build",
+    "build": "graphclient build && rm -f .graphclient/package.json",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo .graphclient node_modules",
     "dev": "graphclient serve-dev", 

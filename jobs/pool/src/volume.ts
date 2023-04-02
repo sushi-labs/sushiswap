@@ -10,8 +10,8 @@ import {
 } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
-import { Block, getBuiltGraphSDK, Pair } from '../.graphclient'
-import { PoolMinimal, updatePoolsWithVolumeAndFee } from './etl/pool'
+import { Block, getBuiltGraphSDK, Pair } from '../.graphclient/index.js'
+import { PoolMinimal, updatePoolsWithVolumeAndFee } from './etl/pool/index.js'
 
 export async function execute() {
   try {

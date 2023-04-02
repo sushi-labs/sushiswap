@@ -25,7 +25,7 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "lint": "TIMING=1 eslint src --fix",    
-    "build": "graphclient build",
+    "build": "graphclient build && rm -f .graphclient/package.json",
     "generate": "graphclient build",
     "server": "ts-node --swc src/server.ts",
     "start": "ts-node --swc src/server.ts",
