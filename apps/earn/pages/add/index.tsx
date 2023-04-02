@@ -64,22 +64,23 @@ export function Add() {
   return (
     <SWRConfig>
       <Layout breadcrumbs={LINKS}>
-        <div className="flex flex-col gap-3">
-          <Link className="flex gap-2 items-center" href="/" shallow={true}>
+        <div className="flex flex-col gap-2">
+          <Link className="group flex gap-4 items-center" href="/" shallow={true}>
             <IconButton
               icon={ArrowLeftIcon}
               iconProps={{
                 width: 24,
                 height: 24,
-                className: 'text-gray-700 dark:text-slate-400',
                 transparent: true,
               }}
             />
-            <span className="text-sm font-medium text-gray-600 dark:text-slate-400">Go back to pools list</span>
+            <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
+              Go back to pools list
+            </span>
           </Link>
           <h1 className="text-3xl font-medium mt-2">Add Liquidity</h1>
           <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
-            Create a new liquidity position
+            Create a new pool or new liquidity position on an existing pool.
           </h1>
         </div>
         <div className="h-0.5 w-full bg-gray-900/5 dark:bg-slate-200/5 my-10" />

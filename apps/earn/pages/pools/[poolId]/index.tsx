@@ -84,17 +84,18 @@ const Position: FC = () => {
     <SWRConfig>
       <Layout>
         <div className="flex flex-col gap-2">
-          <Link className="flex gap-2 items-center" href={query.prev ? (query.prev as string) : '/'} shallow={true}>
+          <Link className="group flex gap-4 items-center" href="/" shallow={true}>
             <IconButton
               icon={ArrowLeftIcon}
               iconProps={{
                 width: 24,
                 height: 24,
-                className: 'text-gray-700 dark:text-slate-400',
                 transparent: true,
               }}
             />
-            <span className="text-sm font-medium text-gray-600 dark:text-slate-400">Go back to pools list</span>
+            <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
+              Go back to pools list
+            </span>
           </Link>
           <PoolHeader isLoading={isLoading} chainId={chainId} pool={pool} />
           <RadioGroup value={tab} onChange={setTab} className="flex flex-wrap gap-2 mt-3">
