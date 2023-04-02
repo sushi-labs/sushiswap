@@ -1,4 +1,4 @@
-import { bentoBoxV1Exports, bentoBoxV1Address } from '@sushiswap/bentobox/exports/exports'
+import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/dist/types'
 
@@ -13,25 +13,26 @@ const func: DeployFunction = async function ({
 
   const chainId = await getChainId()
 
-  console.log({deployer, chainId})
-  if (!(chainId in bentoBoxV1Exports)) {
+  if (!isBentoBoxV1ChainId(chainId)) {
     throw Error(`No BENTOBOX_ADDRESS for chain #${chainId}!`)
   }
 
-  const args = [bentoBoxV1Address[chainId as keyof typeof bentoBoxV1Address]]
+  const args = [bentoBoxV1Address[chainId]]
 
   const { address } = await deploy('RouteProcessor2', {
     from: deployer,
     args,
+    waitConfirmations: 20,
   })
 
   await run('verify:verify', {
     address,
     constructorArguments: args,
-    waitConfirmations: 20,
   })
 
   console.log(`RouteProcessor2 deployed to ${address}`)
 }
+
+func.tags = ['RouteProcessor2']
 
 export default func

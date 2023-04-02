@@ -17,7 +17,6 @@ import {
   ConfirmationDialogState,
 } from '@sushiswap/ui/dialog/ConfirmationDialog'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { Chain } from '@sushiswap/chain'
 import { isRouteProcessor2ChainId, routeProcessor2Address, RouteProcessor2ChainId } from '@sushiswap/route-processor'
 import { routeProcessor2Abi } from '@sushiswap/abi'
 
