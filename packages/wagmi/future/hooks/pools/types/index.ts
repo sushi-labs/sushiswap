@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { ConstantProductPool, Pair, StablePool, TradeType } from '@sushiswap/amm'
-import { BridgeBento } from '@sushiswap/tines'
+import { BridgeBento, UniV3Pool } from '@sushiswap/tines'
 
 export enum PoolType {
   V2,
@@ -24,4 +24,5 @@ export type UsePoolsReturn = {
   constantProductPools: ConstantProductPool[] | undefined
   stablePools: StablePool[] | undefined
   bridgeBentoPools: BridgeBento[] | undefined
+  v3Pools: UniV3Pool[] | undefined
 }
