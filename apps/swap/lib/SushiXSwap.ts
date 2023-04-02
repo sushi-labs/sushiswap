@@ -18,7 +18,7 @@ import { formatBytes32String } from 'ethers/lib/utils'
 import { SushiXSwap as SushiXSwapContract } from '@sushiswap/wagmi'
 import { Address } from '@sushiswap/wagmi'
 import { HexString } from '@sushiswap/types'
-import { readContract } from 'wagmi/actions'
+import { readContract } from '@sushiswap/wagmi/actions'
 import { SushiXSwapChainId } from '@sushiswap/sushixswap'
 
 export type Complex = [
