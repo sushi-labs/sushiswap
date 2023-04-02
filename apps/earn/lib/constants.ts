@@ -12,6 +12,7 @@ export const POOL_VERSION_MAP: Record<PoolVersion, string> = {
 export const AVAILABLE_VERSION_MAP: Partial<typeof POOL_VERSION_MAP> = {
   LEGACY: 'Legacy',
   TRIDENT: 'Trident',
+  V3: 'V3',
 }
 
 export const POOL_TYPE_MAP: Record<PoolType, string> = {
