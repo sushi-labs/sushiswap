@@ -8,15 +8,19 @@ interface UseConcentratedLiquidityPositionsParams {
   enabled?: boolean
 }
 
-export const useConcentratedLiquidityPositions = (variables: UseConcentratedLiquidityPositionsParams) => {
+export const useConcentratedLiquidityPositions = ({
+  account,
+  chainIds,
+  enabled = true,
+}: UseConcentratedLiquidityPositionsParams) => {
   return useQuery({
-    queryKey: ['useConcentratedLiquidityPositions', { chainIds: variables.chainIds, account: variables.account }],
+    queryKey: ['useConcentratedLiquidityPositions', { chainIds, account }],
     queryFn: async () =>
       await getConcentratedLiquidityPositions({
-        account: variables.account as `0x${string}`,
-        chainIds: variables.chainIds,
+        account: account as `0x${string}`,
+        chainIds: chainIds,
       }),
     refetchInterval: 10000,
-    enabled: Boolean(variables.enabled || true),
+    enabled: Boolean(account && chainIds && enabled),
   })
 }

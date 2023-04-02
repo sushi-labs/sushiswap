@@ -345,7 +345,7 @@ const Position: FC = () => {
                     >
                       <div className={classNames(outOfRange ? 'bg-yellow' : 'bg-green', 'w-3 h-3 rounded-full')} />
                       {outOfRange ? (
-                        <span className="text-xs font-medium text-yellow-900 dark:text-yellow">Inactive</span>
+                        <span className="text-xs font-medium text-yellow-900 dark:text-yellow">Out of Range</span>
                       ) : (
                         <span className="text-xs font-medium text-green">In Range</span>
                       )}

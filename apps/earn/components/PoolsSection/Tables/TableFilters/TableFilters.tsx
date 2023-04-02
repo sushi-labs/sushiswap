@@ -141,6 +141,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
           </Button>
 
           <Button
+            className="flex gap-2.5"
             onClick={() =>
               setFilters({
                 poolVersions:
@@ -156,9 +157,11 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             variant={poolVersions.includes('TRIDENT') && poolTypes.includes('STABLE_POOL') ? 'outlined' : 'empty'}
             color={poolVersions.includes('TRIDENT') && poolTypes.includes('STABLE_POOL') ? 'blue' : 'default'}
           >
-            🔱 Stable
+            <span>🔱</span>
+            <span>Stable</span>
           </Button>
           <Button
+            className="flex gap-2.5"
             onClick={() =>
               setFilters({
                 poolVersions:
@@ -177,15 +180,17 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             }
             color={poolVersions.includes('TRIDENT') && poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'blue' : 'default'}
           >
-            🔱 Classic
+            <span>🔱</span>
+            <span>Classic</span>
           </Button>
           <Button
             onClick={() => setFilters({ incentivizedOnly: !incentivizedOnly })}
             size="sm"
             variant={incentivizedOnly ? 'outlined' : 'empty'}
             color={incentivizedOnly ? 'blue' : 'default'}
+            className="flex gap-2.5"
           >
-            🧑‍🌾 Farms
+            <span>🧑‍🌾</span> <span>Farms</span>
           </Button>
         </div>
       </div>
