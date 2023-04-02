@@ -1,10 +1,9 @@
 import { ArrowLeftIcon, SwitchHorizontalIcon } from '@heroicons/react/solid'
-import { Chain, ChainId } from '@sushiswap/chain'
+import { Chain } from '@sushiswap/chain'
 import { BreadcrumbLink, NetworkIcon } from '@sushiswap/ui'
 import { Layout, SelectNetworkWidget, SelectPricesWidget, SelectTokensWidget } from '../../components'
 import React, { FC, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
-import { GetStaticPaths, GetStaticProps } from 'next'
 import { ContentBlock } from '../../components/AddPage/ContentBlock'
 import Link from 'next/link'
 import { ConcentratedLiquidityProvider } from '../../components/ConcentratedLiquidityProvider'
@@ -225,7 +224,7 @@ const _Add: FC = () => {
             setToken1={setToken1}
             feeAmount={feeAmount}
             tokensLoading={tokensLoading}
-            existingPosition={position}
+            existingPosition={position ?? undefined}
             tokenId={tokenId}
           />
         </ContentBlock>
