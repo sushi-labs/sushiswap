@@ -163,7 +163,7 @@ const Position: FC = () => {
               iconProps={{
                 width: 24,
                 height: 24,
-                className: 'text-gray-900 dark:text-slate-50 !bg-gray-100',
+                className: 'text-gray-700 dark:text-slate-400',
                 transparent: true,
               }}
             />
