@@ -10,6 +10,7 @@ interface Props {
   iconProps: Omit<React.ComponentProps<'svg'>, 'width' | 'height'> & {
     width: number
     height: number
+    transparent?: boolean
   }
 }
 
@@ -35,7 +36,10 @@ export const IconButton: IconButtonComponent = React.forwardRef(
         )}
       >
         <span
-          className="absolute rounded-full bg-black/[0.08] dark:bg-white/[0.08] hover:bg-black/[0.12] hover:dark:bg-white/[0.12]"
+          className={classNames(
+            iconProps?.transparent ? '' : 'bg-black/[0.08] dark:bg-white/[0.08]',
+            'absolute rounded-full hover:bg-black/[0.12] hover:dark:bg-white/[0.12]'
+          )}
           style={{ width: iconProps.width, height: iconProps.height, padding }}
         >
           {description && (

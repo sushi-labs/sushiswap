@@ -32,6 +32,7 @@ import { ConcentratedLiquidityCollectButton } from '../../../components/Concentr
 import { Bound } from '../../../lib/constants'
 import { SettingsOverlay, SettingsModule } from '@sushiswap/ui/future/components/settings'
 import { CogIcon } from '@heroicons/react/outline'
+import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 
 const PositionPage = () => {
   return (
@@ -149,24 +150,63 @@ const Position: FC = () => {
   }, [_token0, _token1, positionDetails])
 
   const inverted = token1 ? base?.equals(token1) : undefined
-  const currencyQuote = inverted ? token0 : token1
-  const currencyBase = inverted ? token1 : token0
+  const currencyQuote = inverted ? token1 : token0
+  const currencyBase = inverted ? token0 : token1
 
   return (
     <SWRConfig>
       <Layout>
         <div className="flex flex-col gap-2">
           <Link href="/" shallow={true}>
-            <ArrowLeftIcon width={24} className="text-gray-900 dark:text-slate-50" />
+            <IconButton
+              icon={ArrowLeftIcon}
+              iconProps={{
+                width: 24,
+                height: 24,
+                className: 'text-gray-900 dark:text-slate-50 !bg-gray-100',
+                transparent: true,
+              }}
+            />
           </Link>
-          <h1 className="mt-2 text-3xl font-semibold text-gray-900 dark:text-slate-50">
-            {tab === SelectedTab.IncreaseLiq ? 'Increase Liquidity' : 'Decrease Liquidity'}
-          </h1>
-          <h1 className="text-xl font-medium text-gray-600 dark:dark:text-slate-400 text-slate-600">
-            {tab === SelectedTab.IncreaseLiq
-              ? "You're adding more liquidity to an existing position"
-              : "You're remove liquidity from an existing position"}
-          </h1>
+          <div className="flex gap-6 h-[52px] mt-3">
+            {pool ? (
+              <div className="flex min-w-[44px]">
+                <Badge
+                  className="border-2 border-slate-900 rounded-full z-[11] !bottom-0 right-[-15%]"
+                  position="bottom-right"
+                  badgeContent={<NetworkIcon chainId={chainId} width={24} height={24} />}
+                >
+                  <Currency.IconList iconWidth={48} iconHeight={48}>
+                    <Currency.Icon currency={pool?.token0} />
+                    <Currency.Icon currency={pool?.token1} />
+                  </Currency.IconList>
+                </Badge>
+              </div>
+            ) : (
+              <div className="inline-flex">
+                <Skeleton.Circle radius={48} />
+                <Skeleton.Circle radius={48} style={{ marginLeft: -48 / 3 }} />
+              </div>
+            )}
+
+            <div className="flex flex-col flex-grow">
+              {pool && _token0 && _token1 ? (
+                <>
+                  <h1 className="text-xl font-semibold text-gray-900 dark:text-slate-50">
+                    {_token0.symbol}/{_token1.symbol}
+                  </h1>
+                  <p className="font-medium text-gray-700 dark:dark:text-slate-400 text-slate-600">
+                    Concentrated • {pool.fee / 10000}%
+                  </p>
+                </>
+              ) : (
+                <>
+                  <Skeleton.Text fontSize="text-xl" className="w-full" />
+                  <Skeleton.Text fontSize="text-base" className="w-full" />
+                </>
+              )}
+            </div>
+          </div>
           <RadioGroup value={tab} onChange={setTab} className="flex flex-wrap gap-2 mt-3">
             {/*<RadioGroup.Option*/}
             {/*  value={SelectedTab.Analytics}*/}
@@ -216,46 +256,6 @@ const Position: FC = () => {
           </RadioGroup>
         </div>
         <div className="h-0.5 w-full bg-gray-900/5 dark:bg-slate-200/5 my-10" />
-        <div className="flex gap-6 h-[52px]">
-          {pool ? (
-            <div className="flex min-w-[44px]">
-              <Badge
-                className="border-2 border-slate-900 rounded-full z-[11] !bottom-0 right-[-15%]"
-                position="bottom-right"
-                badgeContent={<NetworkIcon chainId={chainId} width={24} height={24} />}
-              >
-                <Currency.IconList iconWidth={48} iconHeight={48}>
-                  <Currency.Icon currency={pool?.token0} />
-                  <Currency.Icon currency={pool?.token1} />
-                </Currency.IconList>
-              </Badge>
-            </div>
-          ) : (
-            <div className="inline-flex">
-              <Skeleton.Circle radius={48} />
-              <Skeleton.Circle radius={48} style={{ marginLeft: -48 / 3 }} />
-            </div>
-          )}
-
-          <div className="flex flex-col flex-grow">
-            {pool && _token0 && _token1 ? (
-              <>
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-slate-50">
-                  {_token0.symbol}/{_token1.symbol}
-                </h1>
-                <p className="font-medium text-gray-700 dark:dark:text-slate-400 text-slate-600">
-                  Concentrated • {pool.fee / 10000}%
-                </p>
-              </>
-            ) : (
-              <>
-                <Skeleton.Text fontSize="text-xl" className="w-full" />
-                <Skeleton.Text fontSize="text-base" className="w-full" />
-              </>
-            )}
-          </div>
-        </div>
-
         <div className="mt-10 grid md:grid-cols-[404px_auto] gap-10">
           <div className="flex flex-col gap-6">
             <List>
@@ -344,19 +344,19 @@ const Position: FC = () => {
                 {_token0 && _token1 && (
                   <RadioGroup value={invert} onChange={setInvert} className="flex">
                     <RadioGroup.Option
-                      value={true}
+                      value={false}
                       as={Button}
                       size="xs"
-                      color={invert ? 'blue' : 'default'}
+                      color={invert ? 'default' : 'blue'}
                       variant="empty"
                       className="!h-[24px] font-bold"
                     >
                       {_token0.symbol}
                     </RadioGroup.Option>
                     <RadioGroup.Option
-                      value={false}
+                      value={true}
                       as={Button}
-                      color={invert ? 'default' : 'blue'}
+                      color={invert ? 'blue' : 'default'}
                       size="xs"
                       variant="empty"
                       className="!h-[24px] font-bold"
@@ -418,9 +418,11 @@ const Position: FC = () => {
                         <Skeleton.Text />
                       )}
                     </div>
-                    <span className="text-xs text-slate-500">
-                      Your position will be 100% {currencyBase?.symbol} at this price.
-                    </span>
+                    {currencyBase && (
+                      <span className="text-xs text-slate-500">
+                        Your position will be 100% {unwrapToken(currencyBase).symbol} at this price.
+                      </span>
+                    )}
                   </div>
                   <div className="p-4 inline-flex flex-col gap-3 bg-gray-50 dark:bg-white/[0.02] rounded-xl">
                     <div className="flex">
@@ -444,9 +446,11 @@ const Position: FC = () => {
                         <Skeleton.Text />
                       )}
                     </div>
-                    <span className="text-xs text-slate-500">
-                      Your position will be 100% {currencyQuote?.symbol} at this price.
-                    </span>
+                    {currencyQuote && (
+                      <span className="text-xs text-slate-500">
+                        Your position will be 100% {unwrapToken(currencyQuote).symbol} at this price.
+                      </span>
+                    )}
                   </div>
                 </div>
               </List.Control>
