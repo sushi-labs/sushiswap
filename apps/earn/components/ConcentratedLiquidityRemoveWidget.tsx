@@ -198,7 +198,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
           {position?.amount0 ? (
             <List.KeyValue title={`${position?.amount0.currency.symbol}`}>
               <div className="flex items-center gap-2">
-                <Currency.Icon currency={position.amount0.currency} width={18} height={18} />
+                <Currency.Icon currency={unwrapToken(position.amount0.currency)} width={18} height={18} />
                 <span>
                   {position.amount0.multiply(value).divide(100).toSignificant(6)} {position.amount0.currency.symbol}
                 </span>
@@ -210,7 +210,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
           {position?.amount1 ? (
             <List.KeyValue title={`${position?.amount1.currency.symbol}`}>
               <div className="flex items-center gap-2">
-                <Currency.Icon currency={position.amount1.currency} width={18} height={18} />
+                <Currency.Icon currency={unwrapToken(position.amount1.currency)} width={18} height={18} />
                 <span>
                   {position.amount1.multiply(value).divide(100).toSignificant(6)} {position.amount1.currency.symbol}
                 </span>
@@ -229,7 +229,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
             {feeValue0 ? (
               <List.KeyValue title={`${feeValue0.currency.symbol}`}>
                 <div className="flex items-center gap-2">
-                  <Currency.Icon currency={feeValue0.currency} width={18} height={18} />
+                  <Currency.Icon currency={unwrapToken(feeValue0.currency)} width={18} height={18} />
                   <span>
                     {feeValue0.multiply(value).divide(100).toSignificant(6)} {feeValue0.currency.symbol}
                   </span>
@@ -241,7 +241,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
             {feeValue1 ? (
               <List.KeyValue title={`${feeValue1.currency.symbol}`}>
                 <div className="flex items-center gap-2">
-                  <Currency.Icon currency={feeValue1.currency} width={18} height={18} />
+                  <Currency.Icon currency={unwrapToken(feeValue1.currency)} width={18} height={18} />
                   <span>
                     {feeValue1.multiply(value).divide(100).toSignificant(6)} {feeValue1.currency.symbol}
                   </span>
