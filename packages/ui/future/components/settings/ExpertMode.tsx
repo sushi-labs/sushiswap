@@ -1,10 +1,10 @@
 'use client'
 
 import { LightBulbIcon } from '@heroicons/react/24/outline'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import Switch from '@sushiswap/ui/future/components/Switch'
 import React, { FC } from 'react'
 import { useLocalStorage } from '@sushiswap/hooks'
+import Switch from '../Switch'
+import { List } from '../list/List'
 
 export const ExpertMode: FC = () => {
   const [expertMode, setExpertMode] = useLocalStorage('expertMode', false)

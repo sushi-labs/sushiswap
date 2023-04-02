@@ -14,11 +14,11 @@ import { isRouteProcessorChainId, routeProcessorAddress, RouteProcessorChainId }
 import { swapErrorToUserReadableMessage } from '../lib/swapErrorToUserReadableMessage'
 import { log } from 'next-axiom'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { useSlippageTolerance } from '../lib/useSlippageTolerance'
 import {
   ConfirmationDialog as UIConfirmationDialog,
   ConfirmationDialogState,
 } from '@sushiswap/ui/dialog/ConfirmationDialog'
+import { useSlippageTolerance } from '@sushiswap/hooks'
 
 interface ConfirmationDialogProps {
   children({

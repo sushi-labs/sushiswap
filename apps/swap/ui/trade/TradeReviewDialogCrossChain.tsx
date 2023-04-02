@@ -14,11 +14,11 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { Dots } from '@sushiswap/ui/future/components/Dots'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { useSlippageTolerance } from '../../lib/useSlippageTolerance'
 import { Collapsible, NetworkIcon } from '@sushiswap/ui'
 import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain/ConfirmationDialogCrossChain'
 import { warningSeverity } from '../../lib/warningSeverity'
 import { ZERO } from '@sushiswap/math'
+import { useSlippageTolerance } from '@sushiswap/hooks'
 
 export const TradeReviewDialogCrossChain: FC = () => {
   const { review, token0, token1, recipient, network0, network1, amount, value } = useSwapState()

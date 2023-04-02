@@ -1,17 +1,22 @@
 import { RadioGroup } from '@headlessui/react'
-import React, { FC, Fragment, useCallback, useEffect, useState } from 'react'
-import Switch from '@sushiswap/ui/future/components/Switch'
-import { Collapsible } from '@sushiswap/ui/future/components/animation/Collapsible'
-import { classNames } from '@sushiswap/ui'
-import { Input } from '@sushiswap/ui/future/components/input'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
-import { Explainer } from '@sushiswap/ui/future/components/Explainer'
-import { useSlippageTolerance } from '../../lib/useSlippageTolerance'
+import React, { FC, Fragment, useCallback, useEffect, useState } from 'react'
+import { Explainer } from '../Explainer'
+import Switch from '../Switch'
+import classNames from 'classnames'
+import { Collapsible } from '../animation/Collapsible'
+import { Input } from '../input'
+import { useSlippageTolerance } from '@sushiswap/hooks'
 
 const TABS = ['0.1', '0.5', '1.0']
 
-export const SlippageTolerance: FC = () => {
-  const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance()
+export const SlippageTolerance: FC<{
+  options?: {
+    storageKey?: string
+    defaultValue?: string
+  }
+}> = ({ options }) => {
+  const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(options?.storageKey)
   const onChange = useCallback(
     (value: string) => {
       setCustomVal('')

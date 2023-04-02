@@ -1,15 +1,14 @@
 'use client'
 
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import React, { FC, useState } from 'react'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useState } from 'react'
 
 import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
 import { SlippageTolerance } from './SlippageTolerance'
-import * as module from 'module'
 import { RoutingApi } from './RoutingApi'
+import { Dialog } from '../dialog'
+import { List } from '../list/List'
 
 export enum SettingsModule {
   CarbonOffset = 'CarbonOffset',
@@ -20,27 +19,38 @@ export enum SettingsModule {
 }
 
 interface SettingsOverlayProps {
+  children?({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }): ReactNode
   modules: SettingsModule[]
+  options?: {
+    slippageTolerance?: {
+      storageKey?: string
+      defaultValue?: string
+    }
+  }
 }
 
-export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules }) => {
+export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules, children, options }) => {
   const [open, setOpen] = useState(false)
 
   return (
     <>
-      <Cog6ToothIcon
-        onClick={() => setOpen(true)}
-        width={26}
-        height={26}
-        className="cursor-pointer hover:animate-spin-slow hover:dark:text-slate-50 dark:text-slate-200 text-gray-700 hover:text-gray-900 mr-3"
-      />
+      {children ? (
+        children({ setOpen })
+      ) : (
+        <Cog6ToothIcon
+          onClick={() => setOpen(true)}
+          width={26}
+          height={26}
+          className="cursor-pointer hover:animate-spin-slow hover:dark:text-slate-50 dark:text-slate-200 text-gray-700 hover:text-gray-900 mr-3"
+        />
+      )}
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="!bg-gray-100 dark:!bg-slate-900 flex flex-col gap-3">
           <Dialog.Header title="Settings" onClose={() => setOpen(false)} />
           {modules.includes(SettingsModule.SlippageTolerance) && (
             <List className="!pt-0">
               <List.Control>
-                <SlippageTolerance />
+                <SlippageTolerance options={options?.slippageTolerance} />
               </List.Control>
             </List>
           )}

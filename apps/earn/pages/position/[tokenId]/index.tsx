@@ -30,6 +30,8 @@ import { ConcentratedLiquidityRemoveWidget } from '../../../components/Concentra
 import { JSBI } from '@sushiswap/math'
 import { ConcentratedLiquidityCollectButton } from '../../../components/ConcentratedLiquidityCollectButton'
 import { Bound } from '../../../lib/constants'
+import { SettingsOverlay, SettingsModule } from '@sushiswap/ui/future/components/settings'
+import { CogIcon } from '@heroicons/react/outline'
 
 const PositionPage = () => {
   return (
@@ -175,7 +177,7 @@ const Position: FC = () => {
               value={SelectedTab.IncreaseLiq}
               as={Button}
               startIcon={<PlusIcon width={18} height={18} />}
-              variant={tab === SelectedTab.IncreaseLiq ? 'outlined' : 'empty'}
+              variant="outlined"
               color={tab === SelectedTab.IncreaseLiq ? 'blue' : 'default'}
             >
               Increase Liquidity
@@ -184,11 +186,23 @@ const Position: FC = () => {
               value={SelectedTab.DecreaseLiq}
               as={Button}
               startIcon={<MinusIcon width={18} height={18} />}
-              variant={tab === SelectedTab.DecreaseLiq ? 'outlined' : 'empty'}
+              variant="outlined"
               color={tab === SelectedTab.DecreaseLiq ? 'blue' : 'default'}
             >
               Decrease Liquidity
             </RadioGroup.Option>
+            <div>
+              <SettingsOverlay
+                options={{ slippageTolerance: { storageKey: 'removeLiquidity', defaultValue: '0.5' } }}
+                modules={[SettingsModule.SlippageTolerance]}
+              >
+                {({ setOpen }) => (
+                  <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
+                    <CogIcon width={24} height={24} />
+                  </Button>
+                )}
+              </SettingsOverlay>
+            </div>
           </RadioGroup>
         </div>
         <div className="h-0.5 w-full bg-gray-900/5 dark:bg-slate-200/5 my-10" />

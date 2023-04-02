@@ -1,10 +1,10 @@
 'use client'
 
-import Switch from '@sushiswap/ui/future/components/Switch'
 import React, { FC } from 'react'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { ChainId } from '@sushiswap/chain'
 import { useLocalStorage } from '@sushiswap/hooks'
+import Switch from '../Switch'
+import { NetworkIcon } from '../icons'
 
 export const CarbonOffset: FC = () => {
   const [carbonOffset, setCarbonOffset] = useLocalStorage('carbonOffset', false)
