@@ -1,4 +1,4 @@
-import { useBlockNumber, useNetwork } from 'wagmi'
+import { useBlockNumber, useNetwork } from '@sushiswap/wagmi'
 
 import { multicall } from '../state/multicall'
 

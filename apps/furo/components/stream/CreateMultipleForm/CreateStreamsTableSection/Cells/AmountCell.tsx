@@ -5,7 +5,7 @@ import { classNames, Input } from '@sushiswap/ui'
 import { useBalance } from '@sushiswap/wagmi'
 import React, { FC, useEffect, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../../../lib/zod'
 import { CreateMultipleStreamBaseSchemaFormErrorsType, CreateMultipleStreamFormSchemaType } from '../../schema'

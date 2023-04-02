@@ -7,7 +7,7 @@ import {
   usePrepareContractWrite,
   UserRejectedRequestError,
   useTransaction,
-} from 'wagmi'
+} from '@sushiswap/wagmi'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 import { createErrorToast, createInfoToast, createToast } from '@sushiswap/ui/future/components/toast'

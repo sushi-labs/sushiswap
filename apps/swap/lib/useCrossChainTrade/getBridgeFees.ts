@@ -4,7 +4,7 @@ import { JSBI } from '@sushiswap/math'
 import { StargateChainId, STARGATE_CHAIN_ID, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID } from '@sushiswap/stargate'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { BigNumber } from 'ethers'
-import { Address, readContracts } from 'wagmi'
+import { Address, readContracts } from '@sushiswap/wagmi'
 import { getContract, readContract } from 'wagmi/actions'
 
 export const getBridgeFees = async ({

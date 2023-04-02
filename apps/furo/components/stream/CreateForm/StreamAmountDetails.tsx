@@ -5,7 +5,7 @@ import { Form, Select } from '@sushiswap/ui'
 import { TokenSelector, useBalance } from '@sushiswap/wagmi'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 
 import { useCustomTokens } from '../../../lib/state/storage'
 import { useTokens } from '../../../lib/state/token-lists'

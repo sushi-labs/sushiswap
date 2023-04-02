@@ -1,5 +1,5 @@
 // Export pre-configured client
-export { client } from './client'
+export { createClient } from './client'
 
 // Export actions
 export * from './actions'
@@ -10,11 +10,11 @@ export * from './components'
 // Export hooks
 export * from './hooks'
 
-// Export provider
-export * from './provider'
-
 // Export systems
 export * from './systems'
 
 // Re-export wagmi
+export * from 'wagmi'
+
+// Re-export @wagmi/core
 // export * from '@wagmi/core'

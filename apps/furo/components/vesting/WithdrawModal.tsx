@@ -6,7 +6,7 @@ import { Button, classNames, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '
 import { Checker, useFuroVestingContract } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { useVestingBalance, Vesting } from '../../lib'

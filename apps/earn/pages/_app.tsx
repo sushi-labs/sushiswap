@@ -2,7 +2,7 @@ import '@sushiswap/ui/index.css'
 import '../variables.css'
 
 import { App, ThemeProvider } from '@sushiswap/ui'
-import { client } from '@sushiswap/wagmi'
+import { createClient } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
 import { Header } from '../components'
 import { SUPPORTED_CHAIN_IDS } from '../config'
@@ -15,13 +15,15 @@ import { DefaultSeo } from 'next-seo'
 import { FC, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { store } from '../store'
-import { WagmiConfig } from 'wagmi'
+import { WagmiConfig } from '@sushiswap/wagmi'
 
 import SEO from '../next-seo.config.mjs'
 import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '@sushiswap/react-query'
 import { ToastContainer } from '@sushiswap/ui/future/components/toast'
+
+const client = createClient()
 
 declare global {
   interface Window {

@@ -6,7 +6,7 @@ import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { Button, classNames, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { Checker, useFuroStreamContract, useSendTransaction, Web3Input } from '@sushiswap/wagmi'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { BottomPanel, CurrencyInputBase } from '../../components'

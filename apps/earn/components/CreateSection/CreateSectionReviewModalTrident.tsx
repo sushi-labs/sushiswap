@@ -23,7 +23,7 @@ import {
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount, useNetwork } from '@sushiswap/wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import {

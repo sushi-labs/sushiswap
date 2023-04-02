@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import { useNetwork } from 'wagmi'
+import { useNetwork } from '@sushiswap/wagmi'
 
 import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '../../.graphclient'
 import {

@@ -10,7 +10,7 @@ import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Address } from '@wagmi/core'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
 

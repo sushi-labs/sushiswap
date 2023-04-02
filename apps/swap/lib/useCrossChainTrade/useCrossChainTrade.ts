@@ -8,7 +8,7 @@ import { getBridgeFees } from './getBridgeFees'
 import { SushiXSwap } from '../SushiXSwap'
 import { useCallback } from 'react'
 import { UseCrossChainSelect, UseCrossChainTradeParams, UseCrossChainTradeQuerySelect } from './types'
-import { useFeeData } from 'wagmi'
+import { useFeeData } from '@sushiswap/wagmi'
 import { usePrice } from '@sushiswap/react-query'
 import { getClientTrade, useBentoboxTotals, usePools } from '@sushiswap/wagmi/future/hooks'
 

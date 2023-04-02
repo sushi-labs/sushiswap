@@ -9,7 +9,7 @@ import { JSBI } from '@sushiswap/math'
 import { Button, classNames, DEFAULT_INPUT_CLASSNAME, Dialog, Dots, Input, Switch, Typography } from '@sushiswap/ui'
 import { Approve, Checker, useSendTransaction } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount, useContract } from 'wagmi'
+import { useAccount, useContract } from '@sushiswap/wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { CurrencyInput } from '../components'

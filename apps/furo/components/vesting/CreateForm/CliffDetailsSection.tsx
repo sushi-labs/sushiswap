@@ -4,7 +4,7 @@ import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form, Switc
 import { DatePicker } from '@sushiswap/ui/input/DatePicker'
 import React, { FC, useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { CurrencyInput } from '../../CurrencyInput'

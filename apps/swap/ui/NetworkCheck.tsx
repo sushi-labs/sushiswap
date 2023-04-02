@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import { useSwapState } from './trade/TradeProvider'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
+import { useNetwork, useSwitchNetwork } from '@sushiswap/wagmi'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Chain, chainName } from '@sushiswap/chain'

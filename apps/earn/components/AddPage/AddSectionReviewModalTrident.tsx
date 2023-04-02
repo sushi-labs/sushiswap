@@ -17,7 +17,7 @@ import {
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from '../../lib/actions'

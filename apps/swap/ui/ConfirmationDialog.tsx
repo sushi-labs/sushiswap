@@ -3,7 +3,7 @@
 import { FC, ReactNode, useCallback, useState } from 'react'
 
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
-import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
+import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from '@sushiswap/wagmi'
 import { useTrade } from '../lib/useTrade'
 import { SendTransactionResult } from 'wagmi/actions'
 import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'

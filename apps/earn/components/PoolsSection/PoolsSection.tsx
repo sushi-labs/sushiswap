@@ -1,6 +1,6 @@
 import { Tab } from '@headlessui/react'
 import React, { FC, Fragment, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 
 import { PoolsTable, PositionsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'

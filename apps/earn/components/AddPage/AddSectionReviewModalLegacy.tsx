@@ -7,7 +7,7 @@ import { Dots } from '@sushiswap/ui'
 import { PairState, useSendTransaction, useSushiSwapRouterContract } from '@sushiswap/wagmi'
 import { BigNumber } from 'ethers'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
-import { Address, useAccount, useNetwork } from 'wagmi'
+import { Address, useAccount, useNetwork } from '@sushiswap/wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { useTransactionDeadline } from '../../lib/hooks'

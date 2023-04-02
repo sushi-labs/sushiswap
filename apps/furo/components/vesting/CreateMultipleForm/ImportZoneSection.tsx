@@ -9,7 +9,7 @@ import { Button, Dropzone, NetworkIcon, Typography } from '@sushiswap/ui'
 import { Wallet } from '@sushiswap/wagmi'
 import { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
-import { Address, useAccount } from 'wagmi'
+import { Address, useAccount } from '@sushiswap/wagmi'
 import { fetchToken, FetchTokenResult } from 'wagmi/actions'
 
 import { CreateVestingFormSchemaType, stepConfigurations } from '../CreateForm'

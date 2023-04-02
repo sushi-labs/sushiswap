@@ -3,7 +3,7 @@ import { useBalance } from '@sushiswap/wagmi'
 import { format } from 'date-fns'
 import { useEffect, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 
 import { useDeepCompareMemoize } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'

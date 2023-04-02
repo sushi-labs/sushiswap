@@ -51,7 +51,9 @@
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/validate": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
-    "@tanstack/react-query": "4.28.0",
+    "@tanstack/query-sync-storage-persister": "^4.14.5",
+    "@tanstack/react-query": "^4.14.5",
+    "@tanstack/react-query-persist-client": "^4.14.5",
     "@uniswap/v2-core": "1.0.1",
     "@uniswap/v3-periphery": "1.4.1"
   },

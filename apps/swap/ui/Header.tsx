@@ -14,7 +14,7 @@ import { useSwapActions } from './trade/TradeProvider'
 import { Onramper } from '@sushiswap/wagmi/future/components'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { queryParamsSchema } from '../lib/queryParamsSchema'
-import { useConnect } from 'wagmi'
+import { useConnect } from '@sushiswap/wagmi'
 
 export const Header: FC = () => {
   // const { isAutoConnecting } = useAutoConnect()

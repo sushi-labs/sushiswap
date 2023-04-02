@@ -6,7 +6,7 @@ import { ZERO } from '@sushiswap/math'
 import { Button, classNames, DEFAULT_INPUT_CLASSNAME, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import { Checker, useSendTransaction, Web3Input } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
-import { useAccount, useContract, useEnsAddress } from 'wagmi'
+import { useAccount, useContract, useEnsAddress } from '@sushiswap/wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { Stream, Vesting } from '../lib'

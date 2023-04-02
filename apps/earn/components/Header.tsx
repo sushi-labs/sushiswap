@@ -7,7 +7,7 @@ import { GlobalNav, NavLink } from '@sushiswap/ui/future/components/GlobalNav'
 import { HeaderNetworkSelector } from '@sushiswap/wagmi/future/components/HeaderNetworkSelector'
 import { UserProfile } from '@sushiswap/wagmi/future/components/UserProfile'
 import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
-import { useConnect } from 'wagmi'
+import { useConnect } from '@sushiswap/wagmi'
 
 export const Header: FC = () => {
   // const { isAutoConnecting } = useAutoConnect()

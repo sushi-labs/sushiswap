@@ -8,7 +8,7 @@ import { PoolPositionStakedProvider, usePoolPositionStaked } from '../../../Pool
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { ArrowDownIcon, MinusIcon, PlusIcon } from '@heroicons/react/solid'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
+import { useNetwork, useSwitchNetwork } from '@sushiswap/wagmi'
 import { ZERO } from '@sushiswap/math'
 
 interface PositionQuickHoverTooltipProps {

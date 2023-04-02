@@ -4,7 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
 import { getProvider } from '@sushiswap/wagmi'
 import { Contract } from 'ethers'
-import { erc20ABI } from 'wagmi'
+import { erc20ABI } from '@sushiswap/wagmi'
 
 interface TokenKPI {
   priceUSD: number

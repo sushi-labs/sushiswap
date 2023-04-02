@@ -19,7 +19,7 @@ import {
   useTotalSupply,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { Address, useAccount, useNetwork } from 'wagmi'
+import { Address, useAccount, useNetwork } from '@sushiswap/wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { useTokensFromPool, useTransactionDeadline, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
