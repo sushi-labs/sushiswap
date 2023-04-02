@@ -36,7 +36,6 @@ export class DataFetcher {
   stateId = 0
   web3Client: PublicClient
   databaseClient: PrismaClient | undefined = undefined
-  
 
   constructor(chainId: ChainId, web3Client: PublicClient, databaseClient?: PrismaClient) {
     this.chainId = chainId
@@ -198,11 +197,11 @@ export class DataFetcher {
     //   }
     // }
 
-    console.log(
-      `${chainShortName[this.chainId]}/${this.chainId} - Included providers: ${this.providers
-        .map((p) => p.getType())
-        .join(', ')}`
-    )
+    // console.log(
+    //   `${chainShortName[this.chainId]}/${this.chainId} - Included providers: ${this.providers
+    //     .map((p) => p.getType())
+    //     .join(', ')}`
+    // )
     this.providers.forEach((p) => p.startFetchPoolsData())
   }
 

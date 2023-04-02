@@ -125,7 +125,6 @@ export function filterTopPools(pools: PoolResponse2[], size: number) {
   const topPools = safePools
     .sort((a, b) => Number(b.liquidityUSD) - Number(a.liquidityUSD))
     .slice(0, safePools.length <= size ? size : size - commonPools.length)
-    console.log('commonPools' + commonPools.length, 'topPools' + topPools.length)
 
   return [...topPools, ...commonPools]
 }

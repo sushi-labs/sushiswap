@@ -8698,7 +8698,7 @@ packages:
       '@graphql-tools/executor-http': 0.1.9_3q6avhgaaacez4ctqk4xik246q
       '@graphql-tools/executor-legacy-ws': 0.0.9_graphql@16.6.0
       '@graphql-tools/utils': 9.2.1_graphql@16.6.0
-      '@graphql-tools/wrap': 9.3.7_graphql@16.6.0
+      '@graphql-tools/wrap': 9.3.8_graphql@16.6.0
       '@types/ws': 8.5.4
       '@whatwg-node/fetch': 0.8.4
       graphql: 16.6.0
@@ -8723,7 +8723,7 @@ packages:
       '@graphql-tools/executor-http': 0.1.9_graphql@16.6.0
       '@graphql-tools/executor-legacy-ws': 0.0.9_graphql@16.6.0
       '@graphql-tools/utils': 9.2.1_graphql@16.6.0
-      '@graphql-tools/wrap': 9.3.7_graphql@16.6.0
+      '@graphql-tools/wrap': 9.3.8_graphql@16.6.0
       '@types/ws': 8.5.4
       '@whatwg-node/fetch': 0.8.4
       graphql: 16.6.0

@@ -73,8 +73,6 @@ interface TestEnvironment {
   dataFetcher: DataFetcher
 }
 
-
-
 async function getTestEnvironment(): Promise<TestEnvironment> {
   //console.log('Prepare Environment:')
 
@@ -87,7 +85,7 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
           blockCreated: 25770160,
         },
       },
-        pollingInterval: 1_000, 
+      pollingInterval: 1_000,
     },
     transport: custom(network.provider),
   })
@@ -96,7 +94,7 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   const chainId = network.config.chainId as ChainId
   const dataFetcher = new DataFetcher(chainId, client)
 
-  console.log({ chainId, url: ethers.provider.connection.url, otherurl: network.config.forking.url })
+  //console.log({ chainId, url: ethers.provider.connection.url, otherurl: network.config.forking.url })
 
   dataFetcher.startDataFetching()
 
@@ -130,55 +128,55 @@ async function makeSwap(
   poolFilter?: PoolFilter,
   makeSankeyDiagram = false
 ): Promise<[BigNumber, number] | undefined> {
-    //console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
+  //console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
-    if (fromToken instanceof Token) {
-      //console.log(`Approve user's ${fromToken.symbol} to the route processor ...`)
-      const WrappedBaseTokenContract = new ethers.Contract(fromToken.address, erc20Abi, env.user)
-      await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
-    }
-  
-    //console.log('Create Route ...')
-    await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
-  
-    const pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
+  if (fromToken instanceof Token) {
+    //console.log(`Approve user's ${fromToken.symbol} to the route processor ...`)
+    const WrappedBaseTokenContract = new ethers.Contract(fromToken.address, erc20Abi, env.user)
+    await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
+  }
 
-    const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
-    // console.log("ROUTE:", route.legs.map(l => l.tokenFrom.symbol + " -> " + l.tokenTo.symbol))
-    const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
-    if (rpParams === undefined) return
-  
-    //console.log('Call route processor (may take long time for the first launch)...')
-  
-    let balanceOutBNBefore: BigNumber
-    let toTokenContract: Contract | undefined = undefined
-    if (toToken instanceof Token) {
-      toTokenContract = await new ethers.Contract(toToken.address, weth9Abi, env.user)
-      balanceOutBNBefore = await toTokenContract.connect(env.user).balanceOf(env.user.address)
-    } else {
-      balanceOutBNBefore = await env.user.getBalance()
-    }
-    let tx
-    if (rpParams.value)
-      tx = await env.rp.processRoute(
-        rpParams.tokenIn,
-        rpParams.amountIn,
-        rpParams.tokenOut,
-        rpParams.amountOutMin,
-        rpParams.to,
-        rpParams.routeCode,
-        { value: rpParams.value }
-      )
-    else
-      tx = await env.rp.processRoute(
-        rpParams.tokenIn,
-        rpParams.amountIn,
-        rpParams.tokenOut,
-        rpParams.amountOutMin,
-        rpParams.to,
-        rpParams.routeCode
-      )
-    const receipt = await tx.wait()
+  //console.log('Create Route ...')
+  await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
+
+  const pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
+
+  const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
+  // console.log("ROUTE:", route.legs.map(l => l.tokenFrom.symbol + " -> " + l.tokenTo.symbol))
+  const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
+  if (rpParams === undefined) return
+
+  //console.log('Call route processor (may take long time for the first launch)...')
+
+  let balanceOutBNBefore: BigNumber
+  let toTokenContract: Contract | undefined = undefined
+  if (toToken instanceof Token) {
+    toTokenContract = await new ethers.Contract(toToken.address, weth9Abi, env.user)
+    balanceOutBNBefore = await toTokenContract.connect(env.user).balanceOf(env.user.address)
+  } else {
+    balanceOutBNBefore = await env.user.getBalance()
+  }
+  let tx
+  if (rpParams.value)
+    tx = await env.rp.processRoute(
+      rpParams.tokenIn,
+      rpParams.amountIn,
+      rpParams.tokenOut,
+      rpParams.amountOutMin,
+      rpParams.to,
+      rpParams.routeCode,
+      { value: rpParams.value }
+    )
+  else
+    tx = await env.rp.processRoute(
+      rpParams.tokenIn,
+      rpParams.amountIn,
+      rpParams.tokenOut,
+      rpParams.amountOutMin,
+      rpParams.to,
+      rpParams.routeCode
+    )
+  const receipt = await tx.wait()
 
   // const trace = await network.provider.send('debug_traceTransaction', [receipt.transactionHash])
   // printGasUsage(trace)
@@ -198,9 +196,9 @@ async function makeSwap(
     console.log(`real amountOut:     ${balanceOutBN.toString()}`)
     console.log(`slippage: ${slippage / 100}%`)
   }
-  console.log(`gas use: ${receipt.gasUsed.toString()}`)
+  //console.log(`gas use: ${receipt.gasUsed.toString()}`)
   // expect(slippage).greaterThanOrEqual(0) // positive slippage could be if we 'gather' some liquidity on the route
-    expect(slippage).equal(0) // TODO: can't do this, isn't it a tiny bit of rounding when converting stable reserves?
+  expect(slippage).equal(0) // TODO: can't do this, isn't it a tiny bit of rounding when converting stable reserves?
 
   return [balanceOutBN, receipt.blockNumber]
 }
