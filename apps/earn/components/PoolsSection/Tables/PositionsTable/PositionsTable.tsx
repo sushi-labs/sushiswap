@@ -63,7 +63,7 @@ export const PositionsTable: FC = () => {
     <Disclosure>
       {({ open }) => (
         <>
-          <Disclosure.Button className={classNames(open ? '' : '', 'w-full group')}>
+          <Disclosure.Button as="div" role="button" className={classNames(open ? '' : '', 'w-full group')}>
             <h1 className="flex gap-2 items-center justify-between font-semibold text-sm text-gray-700 group-hover:text-gray-900 dark:text-slate-200 dark:group-hover:text-slate-50 group-hover:text-slate-50 py-4 px-4">
               <span className="flex items-center gap-3">
                 <ClassicPoolIcon width={20} height={20} className="saturate-200" /> Legacy Positions{' '}

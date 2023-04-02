@@ -20,8 +20,8 @@ export const PoolNameCellV3: FC<Row<ConcentratedLiquidityPosition>> = ({ row }) 
   )
 
   return (
-    <div className="flex items-center gap-4">
-      <div className="flex min-w-[44px]">
+    <div className="flex items-center gap-0 sm:gap-4">
+      <div className="hidden sm:flex min-w-[44px]">
         {token0 && token1 && (
           <Badge
             className="border-2 border-slate-900 rounded-full z-[11]"
