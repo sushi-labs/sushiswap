@@ -52,6 +52,7 @@ export class Router {
     return Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice, [
       LiquidityProviders.NativeWrap,
       LiquidityProviders.SushiSwap,
+      LiquidityProviders.SushiSwapV3,
       LiquidityProviders.Trident,
     ])
   }
@@ -69,6 +70,7 @@ export class Router {
     const preferrableRoute = Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice, [
       LiquidityProviders.NativeWrap,
       LiquidityProviders.SushiSwap,
+      LiquidityProviders.SushiSwapV3,
       LiquidityProviders.Trident,
     ])
     // If the route is successful and the price impact is less than maxPriceImpact, then return the route
