@@ -19,7 +19,7 @@ export class NativeWrapProvider extends LiquidityProvider {
       name: native.name,
       symbol: native.symbol,
       chainId: chainId,
-      // decimals: 18,
+      decimals: 18,
     }
     const bridge = new BridgeUnlimited(WNATIVE_ADDRESS[chainId], nativeRToken, WNATIVE[chainId] as RToken, 0, 50_000)
     this.poolCodes = [new NativeWrapBridgePoolCode(bridge, LiquidityProviders.NativeWrap)]
