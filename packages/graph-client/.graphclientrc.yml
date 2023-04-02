@@ -525,7 +525,7 @@ additionalTypeDefs: |
   }
 
 additionalResolvers:
-  - ./resolvers/index.js
+  - ./resolvers/index.ts
 
 documents:
   - ./queries/*.graphql

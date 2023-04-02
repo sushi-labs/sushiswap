@@ -1,4 +1,3 @@
-
 {
   "extends": "@sushiswap/typescript-config/node18.json",
   "include": ["src"],

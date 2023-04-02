@@ -50,9 +50,9 @@
   },
   "devDependencies": {
     "@sushiswap/database": "workspace:*",
-    "@graphprotocol/client-add-source-name": "latest",
-    "@graphprotocol/client-auto-pagination": "latest",
-    "@graphprotocol/client-cli": "2.2.19",
+    "@graphprotocol/client-add-source-name": "1.0.18",
+    "@graphprotocol/client-auto-pagination": "1.1.16",
+    "@graphprotocol/client-cli": "2.2.20",
     "@graphql-mesh/cache-localforage": "latest",
     "@graphql-mesh/cross-helpers": "latest",
     "@graphql-mesh/graphql": "latest",

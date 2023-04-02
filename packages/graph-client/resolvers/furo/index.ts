@@ -1,5 +1,5 @@
-import { Resolvers } from '../../.graphclient/index.js'
-import { furoTokensByChainIds } from './tokensByChainIds.js'
+import { Resolvers } from '../../.graphclient'
+import { furoTokensByChainIds } from './tokensByChainIds'
 
 export const resolvers: Resolvers = {
   Query: {

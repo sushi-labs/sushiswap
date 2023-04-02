@@ -9,8 +9,8 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { QueryResolvers, Token } from '../../.graphclient/index.js'
-import { FarmAPI } from '../../lib/incentives.js'
+import { QueryResolvers, Token } from '../../.graphclient'
+import { FarmAPI } from '../../lib/incentives'
 
 export const crossChainToken: QueryResolvers['crossChainToken'] = async (root, args, context, info): Promise<Token> => {
   const farms: FarmAPI = await fetch('https://farm.sushi.com/v0').then((res) => res.json())

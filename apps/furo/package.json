@@ -83,9 +83,9 @@
     "zod": "3.20.2"
   },
   "devDependencies": {
-    "@graphprotocol/client-add-source-name": "latest",
-    "@graphprotocol/client-auto-pagination": "latest",
-    "@graphprotocol/client-cli": "2.2.19",
+    "@graphprotocol/client-add-source-name": "1.0.18",
+    "@graphprotocol/client-auto-pagination": "1.1.16",
+    "@graphprotocol/client-cli": "2.2.20",
     "@hookform/devtools": "4.3.0",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",

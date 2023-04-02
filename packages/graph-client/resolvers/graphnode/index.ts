@@ -1,5 +1,5 @@
-import { Resolvers } from '../../.graphclient/index.js'
-import { subgraphs } from './subgraphs.js'
+import { Resolvers } from '../../.graphclient'
+import { subgraphs } from './subgraphs'
 
 export const resolvers: Resolvers = {
   Query: {

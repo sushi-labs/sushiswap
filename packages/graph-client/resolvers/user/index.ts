@@ -1,5 +1,5 @@
-import { Resolvers } from '../../.graphclient/index.js'
-import { crossChainUserPositions } from './crossChainUserPositions.js'
+import { Resolvers } from '../../.graphclient'
+import { crossChainUserPositions } from './crossChainUserPositions'
 
 export const resolvers: Resolvers = {
   Query: {
