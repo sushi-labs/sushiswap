@@ -39,7 +39,7 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
 }
 
 query V3Pools($first: Int = 1000, $skip: Int = 0, $where: Pool_filter, $block: Block_height) {
-  pools {
+  pools(first: $first, skip: $skip, where: $where, block: $block) {
     id
     token0 {
       id

@@ -11,18 +11,25 @@ import {
 } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
-import { getBuiltGraphSDK, PairsQuery, V3PoolsQuery } from '../.graphclient/index.js'
+import {getBuiltGraphSDK, OneDayBlocksQuery, PairsQuery, V3PoolsQuery } from '../.graphclient/index.js'
 import { mergePools } from './etl/pool/index.js'
 import { filterPools } from './etl/pool/index.js'
 import { createTokens } from './etl/token/load.js'
-import { Sdk } from '../.graphclient/index.js'
-import { config } from 'process'
 
 interface SubgraphConfig {
   chainId: ChainId
   host: string
   name: string
   version: PoolVersion
+}
+
+type V2Data = {
+  currentPools: PairsQuery[]
+  poolsOneDayAgo: PairsQuery[]
+}
+type V3Data = {
+  currentPools: V3PoolsQuery[]
+  poolsOneDayAgo: V3PoolsQuery[]
 }
 
 const FIRST_TIME_SEED = process.env.FIRST_TIME_SEED === 'true'
@@ -45,16 +52,16 @@ export async function execute() {
     // LOAD
     const batchSize = 500
 
-    // for (let i = 0; i < tokens.length; i += batchSize) {
-    //   const batch = tokens.slice(i, i + batchSize)
-    //   await createTokens(batch)
-    // }
+    for (let i = 0; i < tokens.length; i += batchSize) {
+      const batch = tokens.slice(i, i + batchSize)
+      await createTokens(batch)
+    }
 
-    // for (let i = 0; i < pools.length; i += batchSize) {
-    //   const batch = pools.slice(i, i + batchSize)
-    //   const filteredPools = await filterPools(batch)
-    //   await mergePools(filteredPools, FIRST_TIME_SEED)
-    // }
+    for (let i = 0; i < pools.length; i += batchSize) {
+      const batch = pools.slice(i, i + batchSize)
+      const filteredPools = await filterPools(batch)
+      await mergePools(filteredPools, FIRST_TIME_SEED)
+    }
     const endTime = performance.now()
 
     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
@@ -67,25 +74,25 @@ export async function execute() {
 }
 
 async function extract() {
-  const result: { chainId: ChainId; data: PairsQuery[] | V3PoolsQuery[] }[] = []
+  const result: { chainId: ChainId; data: V2Data | V3Data }[] = []
   const subgraphs: SubgraphConfig[] = [
-    // TRIDENT_ENABLED_NETWORKS.map((chainId) => {
-    //   const _chainId = chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
-    //   return {
-    //     chainId,
-    //     host: SUBGRAPH_HOST[_chainId],
-    //     name: TRIDENT_SUBGRAPH_NAME[_chainId],
-    //     version: PoolVersion.TRIDENT,
-    //   }
-    // }),
-    // SUSHISWAP_ENABLED_NETWORKS.map((chainId) => {
-    //   return {
-    //     chainId,
-    //     host: SUBGRAPH_HOST[Number(chainId) as keyof typeof SUBGRAPH_HOST],
-    //     name: SUSHISWAP_SUBGRAPH_NAME[chainId],
-    //     version: PoolVersion.LEGACY,
-    //   }
-    // }),
+    TRIDENT_ENABLED_NETWORKS.map((chainId) => {
+      const _chainId = chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
+      return {
+        chainId,
+        host: SUBGRAPH_HOST[_chainId],
+        name: TRIDENT_SUBGRAPH_NAME[_chainId],
+        version: PoolVersion.TRIDENT,
+      }
+    }),
+    SUSHISWAP_ENABLED_NETWORKS.map((chainId) => {
+      return {
+        chainId,
+        host: SUBGRAPH_HOST[Number(chainId) as keyof typeof SUBGRAPH_HOST],
+        name: SUSHISWAP_SUBGRAPH_NAME[chainId],
+        version: PoolVersion.LEGACY,
+      }
+    }),
     SUSHISWAP_V3_ENABLED_NETWORKS.map((chainId) => ({
       chainId,
       host: SUBGRAPH_HOST[Number(chainId) as keyof typeof SUBGRAPH_HOST],
@@ -94,25 +101,34 @@ async function extract() {
     })),
   ].flat()
 
+  const sdk = getBuiltGraphSDK()
+  const oneDayBlocks = await sdk.OneDayBlocks({ chainIds: SUSHISWAP_V3_ENABLED_NETWORKS })
+
   const chains = Array.from(new Set(subgraphs.map((subgraph) => subgraph.chainId.toString())))
   console.log(`EXTRACT - Extracting from ${chains.length} different chains, ${chains.join(', ')}`)
 
-  let totalPairCount = 0
   for (const subgraph of subgraphs) {
-    const pairs = await fetchPairs(subgraph)
-    console.log(`${subgraph.name}, pair count: ${pairs.length}`)
-    totalPairCount += pairs.length
+    const pairs = await fetchPairs(subgraph, oneDayBlocks)
+    console.log(`${subgraph.name}, batches: ${pairs.currentPools.length}`)
     result.push({ chainId: subgraph.chainId, data: pairs })
   }
-  console.log(`Total pair count across all subgraphs: ${totalPairCount}`)
   return result
 }
 
-async function fetchPairs(config: SubgraphConfig) {
+async function fetchPairs(config: SubgraphConfig, blocks: OneDayBlocksQuery) {
   if (config.version === PoolVersion.LEGACY || config.version === PoolVersion.TRIDENT) {
-    return await fetchLegacyOrTridentPairs(config)
+    const currentPools = await fetchLegacyOrTridentPairs(config)
+    return { currentPools, poolsOneDayAgo: [] as PairsQuery[] }
   } else if (config.version === PoolVersion.V3) {
-    return await fetchV3Pools(config)
+    const blockNumber = blocks
+      ? Number(blocks.oneDayBlocks.find((block) => block.chainId === config.chainId)?.number)
+      : undefined
+
+    const [currentPools, poolsOneDayAgo] = await Promise.all([
+      fetchV3Pools(config),
+      blockNumber ? fetchV3Pools(config, blockNumber) : ([] as V3PoolsQuery[]),
+    ])
+    return { currentPools, poolsOneDayAgo }
   } else {
     console.warn('fetchPairs: config.version is not LEGACY or TRIDENT or V3, skipping')
   }
@@ -124,7 +140,7 @@ async function fetchLegacyOrTridentPairs(config: SubgraphConfig) {
   console.log(`Loading data from ${config.host} ${config.name}`)
   let cursor = ''
   const data: PairsQuery[] = []
-
+  let count = 0
   do {
     const where = cursor !== '' ? { id_gt: cursor } : {}
     const request = await sdk
@@ -132,50 +148,55 @@ async function fetchLegacyOrTridentPairs(config: SubgraphConfig) {
         first: 1000,
         where,
       })
-      .catch((e: string) => {
-        console.error({ e })
+      .catch((e: any) => {
+        console.error(e.message)
         return undefined
       })
-      .catch(() => undefined)
-    const newCursor = request.pairs.length === 1000 ? request?.pairs[request.pairs.length - 1]?.id : ''
+    const newCursor = request?.pairs.length === 1000 ? request?.pairs[request.pairs.length - 1]?.id : ''
     cursor = newCursor
+    count += request?.pairs.length || 0
     if (request) {
       data.push(request)
     }
   } while (cursor !== '')
+  console.log(`EXTRACT: ${config.host}/${config.name} - ${count} pairs found.`)
   return data
 }
 
-async function fetchV3Pools(config: SubgraphConfig) {
+async function fetchV3Pools(config: SubgraphConfig, blockNumber?: number) {
   const chainId = config.chainId
   const sdk = getBuiltGraphSDK({ chainId, host: config.host, name: config.name })
   console.log(`Loading data from ${config.host} ${config.name}`)
   let cursor = ''
   const data: V3PoolsQuery[] = []
+  let count = 0
 
   do {
-    const where = cursor !== '' ? { id_gt: cursor } : {}
+    const where = cursor !== '' ? { id_gt: cursor } : null
+    const block = blockNumber ? { number: blockNumber } : null
+
     const request = await sdk
       .V3Pools({
         first: 1000,
         where,
+        block,
       })
-      .catch((e: string) => {
-        console.error({ e })
+      .catch((e: any) => {
+        console.error(e.message)
         return undefined
       })
-    const newCursor = request.pools.length === 1000 ? request?.pools[request.pools.length - 1]?.id : ''
+    const newCursor = request?.pools.length === 1000 ? request?.pools[request.pools.length - 1]?.id : ''
     cursor = newCursor
-    console.log(`cursor: ${cursor}`)
+    count += request?.pools.length || 0
     if (request) {
       data.push(request)
     }
   } while (cursor !== '')
+  console.log(`EXTRACT: ${config.host}/${config.name} - ${count} pairs found.`)
   return data
 }
 
-function transform(queryResults: { chainId: ChainId; data: PairsQuery[] | V3PoolsQuery[] }[]) {
-
+function transform(queryResults: { chainId: ChainId; data: V2Data | V3Data }[]) {
   const tokens: Map<string, Prisma.TokenCreateManyInput> = new Map()
   const pools: Prisma.SushiPoolCreateManyInput[] = []
 
@@ -189,9 +210,8 @@ function transform(queryResults: { chainId: ChainId; data: PairsQuery[] | V3Pool
         const existing = tokens.get(token.id)
         if (!existing) {
           tokens.set(token.id, token)
-        } 
+        }
       })
-
     } else if (isV3Query(data)) {
       const { pools: v3Pools, tokens: v3Tokens } = transformV3({ chainId, data })
       pools.push(...v3Pools)
@@ -200,9 +220,8 @@ function transform(queryResults: { chainId: ChainId; data: PairsQuery[] | V3Pool
         const existing = tokens.get(token.id)
         if (!existing) {
           tokens.set(token.id, token)
-        } 
+        }
       })
-
     } else {
       console.warn('Unknown query type, skipping')
     }
@@ -213,17 +232,17 @@ function transform(queryResults: { chainId: ChainId; data: PairsQuery[] | V3Pool
   return { pools: pools, tokens: dedupedTokens }
 }
 
-export const isV2Query = (data: PairsQuery[] | V3PoolsQuery[]): data is PairsQuery[] =>
-data.some((d) => d?.pairs !== undefined)
+export const isV2Query = (data: V2Data | V3Data): data is V2Data =>
+  data.currentPools.some((d) => d?.pairs !== undefined)
 
-export const isV3Query = (data: PairsQuery[] | V3PoolsQuery[]): data is V3PoolsQuery[] =>
-  data.some((d) => d?.pools !== undefined)
+export const isV3Query = (data: V2Data | V3Data): data is V3Data =>
+  data.currentPools.some((d) => d?.pools !== undefined)
 
-function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: PairsQuery[] }) {
+function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data }) {
   const yesterday = new Date(Date.now() - 86400000)
   const unix24hAgo = Math.floor(yesterday.getTime() / 1000)
   const tokens: Prisma.TokenCreateManyInput[] = []
-  const poolsTransformed = queryResult.data
+  const poolsTransformed = queryResult.data.currentPools
     .map((batch) => {
       if (!batch?.pairs) return []
       return batch?.pairs.map((pair) => {
@@ -304,10 +323,17 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: PairsQu
   return { pools: poolsTransformed, tokens }
 }
 
-function transformV3(queryResult: { chainId: ChainId; data: V3PoolsQuery[] }) {
+function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
+  const aprParams: Map<string, number> = new Map()
 
+  for (const query of queryResult.data.poolsOneDayAgo) {
+    query?.pools.forEach((pair) => {
+      aprParams.set(pair.id, pair.feesUSD)
+    })
+  }
+  console.log(`V3, chainId: ${queryResult.chainId}: created apr data for ${aprParams.size} pools`)
   const tokens: Prisma.TokenCreateManyInput[] = []
-  const poolsTransformed = queryResult.data
+  const poolsTransformed = queryResult.data.currentPools
     .map((batch) => {
       if (!batch?.pools) return []
       return batch?.pools.map((pair) => {
@@ -337,9 +363,10 @@ function transformV3(queryResult: { chainId: ChainId; data: V3PoolsQuery[] }) {
           .slice(0, 15)
           .concat('-')
           .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
-
-          // TODO: pass in more data, historical, calculate apr..
-          const feeApr = 0
+        const swapFee = Number(pair.feeTier) / 10_000
+        const feeApr = aprParams.has(pair.id)
+          ? calculateFeeApr(aprParams.get(pair.id), pair.feesUSD, pair.totalValueLockedUSD)
+          : 0
         return Prisma.validator<Prisma.SushiPoolCreateManyInput>()({
           id: queryResult.chainId.toString().concat(':').concat(pair.id),
           address: pair.id,
@@ -347,7 +374,7 @@ function transformV3(queryResult: { chainId: ChainId; data: V3PoolsQuery[] }) {
           version: PoolVersion.V3,
           type: PoolType.CONCENTRATED_LIQUIDITY_POOL,
           chainId: queryResult.chainId,
-          swapFee: Number(pair.feeTier) / 10_000,
+          swapFee,
           twapEnabled: true,
           token0Id: queryResult.chainId.toString().concat(':').concat(pair.token0.id.toLowerCase()),
           token1Id: queryResult.chainId.toString().concat(':').concat(pair.token1.id.toLowerCase()),
@@ -370,3 +397,6 @@ function transformV3(queryResult: { chainId: ChainId; data: V3PoolsQuery[] }) {
 
   return { pools: poolsTransformed, tokens }
 }
+
+const calculateFeeApr = (historicalFee: number, currentFee: number, currentLiquidityUSD) =>
+  ((currentFee - historicalFee) * 365) / currentLiquidityUSD
