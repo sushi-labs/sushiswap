@@ -45,16 +45,16 @@ export async function execute() {
     // LOAD
     const batchSize = 500
 
-    for (let i = 0; i < tokens.length; i += batchSize) {
-      const batch = tokens.slice(i, i + batchSize)
-      await createTokens(batch)
-    }
+    // for (let i = 0; i < tokens.length; i += batchSize) {
+    //   const batch = tokens.slice(i, i + batchSize)
+    //   await createTokens(batch)
+    // }
 
-    for (let i = 0; i < pools.length; i += batchSize) {
-      const batch = pools.slice(i, i + batchSize)
-      const filteredPools = await filterPools(batch)
-      await mergePools(filteredPools, FIRST_TIME_SEED)
-    }
+    // for (let i = 0; i < pools.length; i += batchSize) {
+    //   const batch = pools.slice(i, i + batchSize)
+    //   const filteredPools = await filterPools(batch)
+    //   await mergePools(filteredPools, FIRST_TIME_SEED)
+    // }
     const endTime = performance.now()
 
     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
@@ -137,7 +137,7 @@ async function fetchLegacyOrTridentPairs(config: SubgraphConfig) {
         return undefined
       })
       .catch(() => undefined)
-    const newCursor = request?.pairs[request.pairs.length - 1]?.id ?? ''
+    const newCursor = request.pairs.length === 1000 ? request?.pairs[request.pairs.length - 1]?.id : ''
     cursor = newCursor
     if (request) {
       data.push(request)
@@ -164,8 +164,9 @@ async function fetchV3Pools(config: SubgraphConfig) {
         console.error({ e })
         return undefined
       })
-    const newCursor = request?.pools[request.pools.length - 1]?.id ?? ''
+    const newCursor = request.pools.length === 1000 ? request?.pools[request.pools.length - 1]?.id : ''
     cursor = newCursor
+    console.log(`cursor: ${cursor}`)
     if (request) {
       data.push(request)
     }
@@ -174,33 +175,49 @@ async function fetchV3Pools(config: SubgraphConfig) {
 }
 
 function transform(queryResults: { chainId: ChainId; data: PairsQuery[] | V3PoolsQuery[] }[]) {
-  // IF V2
-  const tokens: Prisma.TokenCreateManyInput[] = []
+
+  const tokens: Map<string, Prisma.TokenCreateManyInput> = new Map()
   const pools: Prisma.SushiPoolCreateManyInput[] = []
+
   for (const result of queryResults) {
     const { chainId, data } = result
     if (isV2Query(data)) {
       const { pools: v2Pools, tokens: v2Tokens } = transformLegacyOrTrident({ chainId, data })
       pools.push(...v2Pools)
-      tokens.push(...v2Tokens)
-    } else if (isV3Query(data)) {
 
+      v2Tokens.forEach((token) => {
+        const existing = tokens.get(token.id)
+        if (!existing) {
+          tokens.set(token.id, token)
+        } 
+      })
+
+    } else if (isV3Query(data)) {
       const { pools: v3Pools, tokens: v3Tokens } = transformV3({ chainId, data })
       pools.push(...v3Pools)
-      tokens.push(...v3Tokens)
+
+      v3Tokens.forEach((token) => {
+        const existing = tokens.get(token.id)
+        if (!existing) {
+          tokens.set(token.id, token)
+        } 
+      })
+
     } else {
       console.warn('Unknown query type, skipping')
     }
   }
 
-  return { pools: pools, tokens:  [...new Set(tokens)] }
+  const dedupedTokens = [...new Set(Array.from(tokens.values()))]
+  console.log(`${pools.length} pools, ${dedupedTokens.length} tokens`)
+  return { pools: pools, tokens: dedupedTokens }
 }
 
 export const isV2Query = (data: PairsQuery[] | V3PoolsQuery[]): data is PairsQuery[] =>
-  data.some((d) => d?.source !== undefined)
+data.some((d) => d?.pairs !== undefined)
 
 export const isV3Query = (data: PairsQuery[] | V3PoolsQuery[]): data is V3PoolsQuery[] =>
-  data.some((d) => d?.totalValueLockedETH !== undefined)
+  data.some((d) => d?.pools !== undefined)
 
 function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: PairsQuery[] }) {
   const yesterday = new Date(Date.now() - 86400000)
