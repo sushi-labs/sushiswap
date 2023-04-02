@@ -25,7 +25,6 @@
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
-    "@sushiswap/sushi-data": "1.0.26",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/validate": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
