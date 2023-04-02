@@ -113,16 +113,16 @@ const Position: FC = () => {
   const { [Bound.LOWER]: lowerPrice, [Bound.UPPER]: upperPrice } = pricesAtTicks
 
   const invalidRange = position && Boolean(position.tickLower >= position.tickUpper)
-  const price = pool && token1 ? pool.priceOf(token1) : undefined
+  const price = pool && token0 ? pool.priceOf(token0) : undefined
   const outOfRange = Boolean(
     !invalidRange && price && lowerPrice && upperPrice && (price.lessThan(lowerPrice) || price.greaterThan(upperPrice))
   )
 
   const [minPriceDiff, maxPriceDiff] = useMemo(() => {
-    if (!pool || !token0 || !token1 || !priceLower || !priceUpper || !base || !quote) return [0, 0]
-    const min = +priceLower?.toFixed(10)
-    const cur = +pool.priceOf(quote)?.toFixed(10)
-    const max = +priceUpper?.toFixed(10)
+    if (!pool || !token0 || !token1 || !lowerPrice || !upperPrice || !base || !quote) return [0, 0]
+    const min = +lowerPrice?.toFixed(10)
+    const cur = +pool.priceOf(token0)?.toFixed(10)
+    const max = +upperPrice?.toFixed(10)
 
     if (!invert) {
       return [-100 * ((max - cur) / max), -100 * ((min - cur) / min)]
@@ -145,8 +145,6 @@ const Position: FC = () => {
 
     return [undefined, undefined]
   }, [_token0, _token1, positionDetails])
-
-  console.log(token0, _token0)
 
   return (
     <SWRConfig>

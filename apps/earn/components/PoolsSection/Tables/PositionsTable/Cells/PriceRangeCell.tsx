@@ -41,7 +41,7 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPosition>> = ({ row }) 
 
   const { [Bound.LOWER]: lowerPrice, [Bound.UPPER]: upperPrice } = pricesAtTicks
 
-  const price = pool && token1 ? pool.priceOf(token1) : undefined
+  const price = pool && token0 ? pool.priceOf(token0) : undefined
   const outOfRange = Boolean(
     !invalidRange && price && lowerPrice && upperPrice && (price.lessThan(lowerPrice) || price.greaterThan(upperPrice))
   )
