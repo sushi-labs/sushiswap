@@ -107,7 +107,7 @@ export const ConcentratedPositionsTable: FC = () => {
               table={table}
               loading={isLoading}
               placeholder="No positions found"
-              pageSize={Math.max(positions?.length || 0, 5)}
+              pageSize={Math.max(_positions?.length || 0, 5)}
               linkFormatter={rowLink}
               loadingOverlay={false}
             />

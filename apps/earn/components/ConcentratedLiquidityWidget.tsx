@@ -45,8 +45,8 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
   existingPosition,
   onChange,
 }) => {
-  const { onFieldAInput, onFieldBInput, onStartPriceInput } = useConcentratedMintActionHandlers()
-  const { independentField, typedValue, startPriceTypedValue } = useConcentratedMintState()
+  const { onFieldAInput, onFieldBInput } = useConcentratedMintActionHandlers()
+  const { independentField, typedValue } = useConcentratedMintState()
   const { data: owner, isLoading: isOwnerLoading } = useConcentratedPositionOwner({ chainId, tokenId })
 
   const isOwner = owner === account

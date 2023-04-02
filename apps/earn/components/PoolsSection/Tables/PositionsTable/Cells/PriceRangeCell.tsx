@@ -7,7 +7,8 @@ import { Row } from '../../SharedCells/types'
 import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/react/solid'
 import { Position } from '@sushiswap/v3-sdk'
 import { JSBI } from '@sushiswap/math'
-import { getPriceOrderingFromPositionForUI } from '../../../../../lib/functions'
+import { getPriceOrderingFromPositionForUI, getTickToPrice } from '../../../../../lib/functions'
+import { Bound } from '../../../../../lib/constants'
 
 export const PriceRangeCell: FC<Row<ConcentratedLiquidityPosition>> = ({ row }) => {
   const { data: token0 } = useToken({ chainId: row.chainId, address: row.token0 })
@@ -30,14 +31,19 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPosition>> = ({ row }) 
   const closed = row.liquidity?.eq('0')
   const pricesFromPosition = getPriceOrderingFromPositionForUI(position)
   const invalidRange = Boolean(row.tickLower >= row.tickUpper)
+
+  const pricesAtTicks = useMemo(() => {
+    return {
+      [Bound.LOWER]: getTickToPrice(token0, token1, row.tickLower),
+      [Bound.UPPER]: getTickToPrice(token0, token1, row.tickUpper),
+    }
+  }, [token0, token1, row.tickLower, row.tickUpper])
+
+  const { [Bound.LOWER]: lowerPrice, [Bound.UPPER]: upperPrice } = pricesAtTicks
+
+  const price = pool && token1 ? pool.priceOf(token1) : undefined
   const outOfRange = Boolean(
-    !invalidRange &&
-      token1 &&
-      pool &&
-      pricesFromPosition.priceLower &&
-      pricesFromPosition.priceUpper &&
-      (pool.priceOf(token1).lessThan(pricesFromPosition.priceLower) ||
-        pool.priceOf(token1).greaterThan(pricesFromPosition.priceUpper))
+    !invalidRange && price && lowerPrice && upperPrice && (price.lessThan(lowerPrice) || price.greaterThan(upperPrice))
   )
 
   return (

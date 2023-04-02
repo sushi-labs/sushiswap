@@ -20,7 +20,7 @@ import { classNames, NetworkIcon } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Amount, tryParseAmount } from '@sushiswap/currency'
 import { usePriceInverter, useTokenAmountDollarValues } from '../../../lib/hooks'
-import { getPriceOrderingFromPositionForUI, unwrapToken } from '../../../lib/functions'
+import { getPriceOrderingFromPositionForUI, getTickToPrice, unwrapToken } from '../../../lib/functions'
 import { ConcentratedLiquidityWidget } from '../../../components/ConcentratedLiquidityWidget'
 import { useAccount } from 'wagmi'
 import { ConcentratedLiquidityProvider } from '../../../components/ConcentratedLiquidityProvider'
@@ -29,6 +29,7 @@ import { RadioGroup } from '@headlessui/react'
 import { ConcentratedLiquidityRemoveWidget } from '../../../components/ConcentratedLiquidityRemoveWidget'
 import { JSBI } from '@sushiswap/math'
 import { ConcentratedLiquidityCollectButton } from '../../../components/ConcentratedLiquidityCollectButton'
+import { Bound } from '../../../lib/constants'
 
 const PositionPage = () => {
   return (
@@ -91,22 +92,31 @@ const Position: FC = () => {
 
   const fiatAmounts = useMemo(() => [tryParseAmount('1', token0), tryParseAmount('1', token1)], [token0, token1])
   const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId, amounts: fiatAmounts })
-  const priceOrdering = getPriceOrderingFromPositionForUI(position)
+  const priceOrdering = position ? getPriceOrderingFromPositionForUI(position) : undefined
 
   const { priceLower, priceUpper, base, quote } = usePriceInverter({
-    priceLower: priceOrdering.priceLower,
-    priceUpper: priceOrdering.priceUpper,
+    priceLower: priceOrdering?.priceLower,
+    priceUpper: priceOrdering?.priceUpper,
     base: token0,
     quote: token1,
     invert,
   })
 
-  const outOfRange =
-    pool &&
-    quote &&
-    priceLower &&
-    priceUpper &&
-    (pool.priceOf(quote).lessThan(priceLower) || pool.priceOf(quote).greaterThan(priceUpper))
+  const pricesAtTicks = useMemo(() => {
+    if (!position) return { [Bound.LOWER]: undefined, [Bound.UPPER]: undefined }
+    return {
+      [Bound.LOWER]: getTickToPrice(token0, token1, position.tickLower),
+      [Bound.UPPER]: getTickToPrice(token0, token1, position.tickUpper),
+    }
+  }, [position, token0, token1])
+
+  const { [Bound.LOWER]: lowerPrice, [Bound.UPPER]: upperPrice } = pricesAtTicks
+
+  const invalidRange = position && Boolean(position.tickLower >= position.tickUpper)
+  const price = pool && token1 ? pool.priceOf(token1) : undefined
+  const outOfRange = Boolean(
+    !invalidRange && price && lowerPrice && upperPrice && (price.lessThan(lowerPrice) || price.greaterThan(upperPrice))
+  )
 
   const [minPriceDiff, maxPriceDiff] = useMemo(() => {
     if (!pool || !token0 || !token1 || !priceLower || !priceUpper || !base || !quote) return [0, 0]
@@ -259,7 +269,7 @@ const Position: FC = () => {
               <div className="flex items-center justify-between">
                 <List.Label>Unclaimed fees</List.Label>
                 <ConcentratedLiquidityCollectButton
-                  position={position}
+                  position={position ?? undefined}
                   positionDetails={positionDetails}
                   token0={token0}
                   token1={token1}
@@ -428,7 +438,7 @@ const Position: FC = () => {
                   token1={_token1}
                   feeAmount={positionDetails?.fee}
                   tokensLoading={token0Loading || token1Loading}
-                  existingPosition={position}
+                  existingPosition={position ?? undefined}
                   tokenId={tokenId}
                 />
               </div>
@@ -439,7 +449,7 @@ const Position: FC = () => {
                 token1={_token1}
                 account={address}
                 chainId={chainId}
-                position={position}
+                position={position ?? undefined}
                 positionDetails={positionDetails}
               />
             </div>
