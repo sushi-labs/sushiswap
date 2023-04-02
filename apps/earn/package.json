@@ -72,7 +72,7 @@
     "react-infinite-scroll-component": "^6.1.0",
     "react-redux": "8.0.5",
     "swr": "2.1.0",
-    "wagmi": "0.9.1",
+    "wagmi": "0.12.8",
     "zod": "3.20.2"
   },
   "devDependencies": {

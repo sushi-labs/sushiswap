@@ -30,9 +30,9 @@ async function getV2Pool({ chainId, address }: GetPoolArgs): Promise<Pool> {
   const [token0, token1, totalSupply] = await readContracts({
     allowFailure: false,
     contracts: [
-      { address: address, abi: uniswapV2PairAbi, functionName: 'token0', chainId },
-      { address: address, abi: uniswapV2PairAbi, functionName: 'token1', chainId },
-      { address: address, abi: uniswapV2PairAbi, functionName: 'totalSupply', chainId },
+      { address: address as Address, abi: uniswapV2PairAbi, functionName: 'token0', chainId },
+      { address: address as Address, abi: uniswapV2PairAbi, functionName: 'token1', chainId },
+      { address: address as Address, abi: uniswapV2PairAbi, functionName: 'totalSupply', chainId },
     ],
   })
 

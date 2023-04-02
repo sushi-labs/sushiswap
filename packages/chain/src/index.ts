@@ -1,4 +1,4 @@
-import raw from './chains'
+import raw from './generated'
 
 export interface Chain {
   name: string

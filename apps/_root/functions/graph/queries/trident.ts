@@ -5,6 +5,7 @@ import { tridentFactoryQuery } from '../fetchers/trident'
 
 async function getTridentFactory(chainId: TridentChainId) {
   try {
+    // @ts-ignore FIX TYPE
     const { factories } = await request(
       `https://${SUBGRAPH_HOST[chainId]}/${TRIDENT_SUBGRAPH_NAME[chainId]}`,
       tridentFactoryQuery

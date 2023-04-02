@@ -40,7 +40,7 @@
     "react-dom": "18.2.0",
     "react-infinite-scroll-component": "^6.1.0",
     "react-redux": "8.0.5",
-    "wagmi": "0.9.1"
+    "wagmi": "0.12.8"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
