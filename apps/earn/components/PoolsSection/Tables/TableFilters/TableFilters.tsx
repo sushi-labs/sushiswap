@@ -118,7 +118,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
               poolVersions.includes('V3') && poolTypes.includes('CONCENTRATED_LIQUIDITY_POOL') ? 'blue' : 'default'
             }
           >
-            SushiSwap <sup>v3</sup>
+            🍣 SushiSwap <sup>v3</sup>
           </Button>
           <Button
             className="gap-0"
@@ -139,7 +139,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             }
             color={poolVersions.includes('LEGACY') && poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'blue' : 'default'}
           >
-            SushiSwap <sup>v2</sup>
+            🍣 SushiSwap <sup>v2</sup>
           </Button>
 
           <Button
@@ -159,7 +159,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             variant={poolVersions.includes('TRIDENT') && poolTypes.includes('STABLE_POOL') ? 'outlined' : 'empty'}
             color={poolVersions.includes('TRIDENT') && poolTypes.includes('STABLE_POOL') ? 'blue' : 'default'}
           >
-            <span>🔱</span>
+            <span>🍱</span>
             <span>Stable</span>
           </Button>
           <Button
@@ -182,7 +182,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             }
             color={poolVersions.includes('TRIDENT') && poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'blue' : 'default'}
           >
-            <span>🔱</span>
+            <span>🍱</span>
             <span>Classic</span>
           </Button>
           <Button
