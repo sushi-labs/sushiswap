@@ -405,7 +405,7 @@ const Position: FC = () => {
                     <div className="flex flex-col">
                       {priceLower && pool && _token0 && _token1 ? (
                         <span className="font-medium">
-                          {priceLower?.toSignificant(4)} {base?.symbol}
+                          {priceLower?.toSignificant(4)} {quote?.symbol}
                         </span>
                       ) : (
                         <Skeleton.Text />
@@ -433,7 +433,7 @@ const Position: FC = () => {
                     <div className="flex flex-col">
                       {priceUpper && pool && _token1 && _token0 ? (
                         <span className="font-medium">
-                          {priceUpper?.toSignificant(4)} {base?.symbol}
+                          {priceUpper?.toSignificant(4)} {quote?.symbol}
                         </span>
                       ) : (
                         <Skeleton.Text />
