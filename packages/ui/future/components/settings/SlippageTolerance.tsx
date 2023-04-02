@@ -14,6 +14,7 @@ export const SlippageTolerance: FC<{
   options?: {
     storageKey?: string
     defaultValue?: string
+    title?: string
   }
 }> = ({ options }) => {
   const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(options?.storageKey)
@@ -53,7 +54,7 @@ export const SlippageTolerance: FC<{
       <div className="flex justify-between gap-[60px]">
         <div className="flex flex-col gap-1">
           <h1 className="text-sm font-semibold text-gray-900 dark:text-slate-50 flex gap-1">
-            Slippage{' '}
+            {options?.title || 'Slippage'}{' '}
             <Explainer iconSize={16} placement="right">
               <span className="text-gray-900 dark:text-slate-50 font-semibold">Slippage</span>
               <span className="text-gray-500 dark:text-slate-400 font-medium">

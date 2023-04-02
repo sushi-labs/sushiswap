@@ -25,6 +25,7 @@ interface SettingsOverlayProps {
     slippageTolerance?: {
       storageKey?: string
       defaultValue?: string
+      title?: string
     }
   }
 }

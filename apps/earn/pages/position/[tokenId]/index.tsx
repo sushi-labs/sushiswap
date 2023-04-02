@@ -131,7 +131,7 @@ const Position: FC = () => {
     }
 
     return [((min - cur) / cur) * 100, ((max - cur) / cur) * 100]
-  }, [base, invert, pool, priceLower, priceUpper, quote, token0, token1])
+  }, [base, invert, lowerPrice, pool, quote, token0, token1, upperPrice])
 
   const [_token0, _token1] = useMemo(
     () => [token0 ? unwrapToken(token0) : undefined, token1 ? unwrapToken(token1) : undefined],
@@ -147,6 +147,10 @@ const Position: FC = () => {
 
     return [undefined, undefined]
   }, [_token0, _token1, positionDetails])
+
+  const inverted = token1 ? base?.equals(token1) : undefined
+  const currencyQuote = inverted ? token0 : token1
+  const currencyBase = inverted ? token1 : token0
 
   return (
     <SWRConfig>
@@ -193,7 +197,13 @@ const Position: FC = () => {
             </RadioGroup.Option>
             <div>
               <SettingsOverlay
-                options={{ slippageTolerance: { storageKey: 'removeLiquidity', defaultValue: '0.5' } }}
+                options={{
+                  slippageTolerance: {
+                    storageKey: 'removeLiquidity',
+                    defaultValue: '0.5',
+                    title: 'Remove Liquidity Slippage',
+                  },
+                }}
                 modules={[SettingsModule.SlippageTolerance]}
               >
                 {({ setOpen }) => (
@@ -247,7 +257,7 @@ const Position: FC = () => {
         </div>
 
         <div className="mt-10 grid md:grid-cols-[404px_auto] gap-10">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-6">
             <List>
               <List.Label>Deposits</List.Label>
               <List.Control>
@@ -401,13 +411,16 @@ const Position: FC = () => {
                         <Skeleton.Text />
                       )}
                       {priceLower && pool && _token0 && _token1 ? (
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-600 dark:text-slate-400">
                           ${(fiatAmountsAsNumber[0] * (1 + minPriceDiff / 100)).toFixed(2)} ({minPriceDiff.toFixed(2)}%)
                         </span>
                       ) : (
                         <Skeleton.Text />
                       )}
                     </div>
+                    <span className="text-xs text-slate-500">
+                      Your position will be 100% {currencyBase?.symbol} at this price.
+                    </span>
                   </div>
                   <div className="p-4 inline-flex flex-col gap-3 bg-gray-50 dark:bg-white/[0.02] rounded-xl">
                     <div className="flex">
@@ -424,13 +437,16 @@ const Position: FC = () => {
                         <Skeleton.Text />
                       )}
                       {priceUpper && pool && _token1 && _token0 ? (
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-600 dark:text-slate-400">
                           ${(fiatAmountsAsNumber[0] * (1 + maxPriceDiff / 100)).toFixed(2)} ({maxPriceDiff.toFixed(2)}%)
                         </span>
                       ) : (
                         <Skeleton.Text />
                       )}
                     </div>
+                    <span className="text-xs text-slate-500">
+                      Your position will be 100% {currencyQuote?.symbol} at this price.
+                    </span>
                   </div>
                 </div>
               </List.Control>
