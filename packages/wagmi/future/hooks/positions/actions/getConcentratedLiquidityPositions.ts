@@ -5,10 +5,7 @@ import { getConcentratedLiquidityPositionsFromTokenIds } from './getConcentrated
 import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
 import { ConcentratedLiquidityPosition } from '../types'
 import { BigNumber } from 'ethers'
-import { POOL_INIT_CODE_HASH } from '@sushiswap/v3-sdk'
-import { getCreate2Address } from '@ethersproject/address'
-import { keccak256 } from '@ethersproject/solidity'
-import { defaultAbiCoder } from '@ethersproject/abi'
+import { computePoolAddress } from '@sushiswap/v3-sdk'
 
 export const getConcentratedLiquidityPositions = async ({
   account,
@@ -115,12 +112,13 @@ export const getConcentratedLiquidityPositions = async ({
 
   return positions.map((el, i) => ({
     ...el,
-    address: getCreate2Address(
-      // TODO make dynamic
-      '0x1af415a1EbA07a4986a52B6f2e7dE7003D82231e',
-      keccak256(['bytes'], [defaultAbiCoder.encode(['address', 'address', 'uint24'], [el.token0, el.token1, el.fee])]),
-      POOL_INIT_CODE_HASH
-    ),
+    address: computePoolAddress({
+      // TODO Make dynamic
+      factoryAddress: '0x1af415a1EbA07a4986a52B6f2e7dE7003D82231e',
+      tokenA: el.token0,
+      tokenB: el.token1,
+      fee: el.fee,
+    }),
     fees: fees ? fees[i] : undefined,
   })) as ConcentratedLiquidityPosition[]
 }

@@ -4,6 +4,7 @@ import { getV3NFTPositionManagerContract } from '../../../../hooks/useNFTPositio
 import { ChainId } from '@sushiswap/chain'
 import { ConcentratedLiquidityPosition } from '../types'
 import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
+import { computePoolAddress } from '@sushiswap/v3-sdk'
 
 export const getConcentratedLiquidityPositionsFromTokenIds = async ({
   tokenIds,
@@ -105,7 +106,13 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
     const result = call
     return {
       id: tokenId.toNumber().toString(),
-      address: tokenId.toNumber().toString(),
+      address: computePoolAddress({
+        // TODO Make dynamic
+        factoryAddress: '0x1af415a1EbA07a4986a52B6f2e7dE7003D82231e',
+        tokenA: result.token0,
+        tokenB: result.token1,
+        fee: result.fee,
+      }),
       chainId,
       tokenId,
       fee: result.fee,
