@@ -25,7 +25,7 @@
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "build": "graphclient build && rm -f .graphclient/package.json",
+    "build": "pnpm generate && rm -f .graphclient/package.json",
     "generate": "graphclient build --fileType js",
     "incentives": "ts-node --swc src/incentives.ts",
     "lint": "TIMING=1 eslint src --fix",
@@ -65,7 +65,7 @@
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/validate": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
-    "@wagmi/core": "0.10.1-cjs",
+    "@wagmi/core": "0.10.8",
     "@whatwg-node/fetch": "latest",
     "connect-timeout": "1.9.0",
     "date-fns": "2.29.3",

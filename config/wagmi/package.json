@@ -19,9 +19,11 @@
     "dist"
   ],
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
   "sideEffects": false,
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
@@ -30,6 +32,21 @@
     "lint": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build",
     "test": "jest --passWithNoTests"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./chains": {
+      "types": "./dist/chains.d.ts",
+      "default": "./dist/chains.js"
+    },
+    "./providers": {
+      "types": "./dist/providers.d.ts",
+      "default": "./dist/providers.js"
+    },
+    "./package.json": "./package.json"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"

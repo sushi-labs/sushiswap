@@ -1,4 +1,4 @@
-import { allChains } from '@sushiswap/wagmi-config'
+import { allChains } from '@sushiswap/wagmi-config/chains'
 import { configureChains, createClient } from '@wagmi/core'
 // import { alchemyProvider } from '@wagmi/core/providers/alchemy'
 import { publicProvider } from '@wagmi/core/providers/public'
