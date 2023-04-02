@@ -193,7 +193,13 @@ const Position: FC = () => {
             </RadioGroup.Option>
             <div>
               <SettingsOverlay
-                options={{ slippageTolerance: { storageKey: 'removeLiquidity', defaultValue: '0.5' } }}
+                options={{
+                  slippageTolerance: {
+                    storageKey: 'removeLiquidity',
+                    defaultValue: '0.5',
+                    title: 'Remove Liquidity Slippage',
+                  },
+                }}
                 modules={[SettingsModule.SlippageTolerance]}
               >
                 {({ setOpen }) => (
