@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "next build && next-sitemap --config next-sitemap.config.mjs",
-    "build-blog": "next build && next-sitemap --config next-sitemap.config.mjs",
+    "build": "next build",
+    "sitemap": "next build && next-sitemap --config next-sitemap.config.mjs",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient && rm -rf .mesh",
     "dev": "next dev --port 3002",

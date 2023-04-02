@@ -50,7 +50,7 @@ export interface Token {
 }
 
 export const getToken = async (id: string, chainId: ChainId): Promise<Token> => {
-  const token = new Contract(id, erc20ABI, getProvider(chainId))
+  const token = new Contract(id, erc20ABI, getProvider({ chainId }))
 
   const [symbol, name, decimals] = await Promise.all([token.symbol(), token.name(), token.decimals()])
 
