@@ -1,6 +1,6 @@
 import { Type as Currency } from '@sushiswap/currency'
 import { Address, readContracts } from 'wagmi'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxV1ChainId, bentoBoxV1Address } from '@sushiswap/bentobox'
 import { getBentoBoxContractConfig } from '../../../../hooks'
 import { bentoBoxV1TotalsAbi } from '@sushiswap/abi'
 
@@ -13,7 +13,7 @@ export const getBentoboxTotals = async (chainId: BentoBoxV1ChainId, currencies: 
     (address) =>
       ({
         chainId,
-        address: getBentoBoxContractConfig(chainId).address,
+        address: bentoBoxV1Address[chainId] as Address,
         abi: bentoBoxV1TotalsAbi,
         functionName: 'totals',
         args: [address as Address],

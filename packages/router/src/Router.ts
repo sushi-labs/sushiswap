@@ -126,6 +126,8 @@ export class Router {
       gasPrice
     )
 
+    console.log({ route })
+
     return {
       ...route,
       legs: route.legs.map((l) => ({
