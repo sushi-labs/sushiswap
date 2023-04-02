@@ -6500,7 +6500,7 @@ packages:
       json-rpc-engine: 6.1.0
       keccak: 3.0.3
       preact: 10.11.3
-      qs: 6.11.0
+      qs: 6.11.1
       rxjs: 6.6.7
       sha.js: 2.4.11
       stream-browserify: 3.0.0
@@ -6508,7 +6508,6 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - bufferutil
-      - encoding
       - supports-color
       - utf-8-validate
 
@@ -12145,12 +12144,11 @@ packages:
       buffer: 6.0.1
       fast-stable-stringify: 1.0.0
       jayson: 3.7.0
-      node-fetch: 2.6.7
+      node-fetch: 2.6.6
       rpc-websockets: 7.5.0
       superstruct: 0.14.2
     transitivePeerDependencies:
       - bufferutil
-      - encoding
       - supports-color
       - utf-8-validate
 
@@ -19818,8 +19816,6 @@ packages:
       eth-query: 2.1.2
       json-rpc-engine: 6.1.0
       pify: 5.0.0
-    transitivePeerDependencies:
-      - encoding
 
   /eth-json-rpc-infura@3.2.1:
     resolution: {integrity: sha512-W7zR4DZvyTn23Bxc0EWsq4XGDdD63+XPUCEhV2zQvQGavDVC4ZpFDK4k99qN7bd7/fjj37+rxmuBOBeIqCA5Mw==}
@@ -19862,11 +19858,9 @@ packages:
       ethereumjs-util: 5.2.1
       json-rpc-engine: 5.4.0
       json-stable-stringify: 1.0.2
-      node-fetch: 2.6.7
+      node-fetch: 2.6.6
       pify: 3.0.0
       safe-event-emitter: 1.0.1
-    transitivePeerDependencies:
-      - encoding
 
   /eth-lib@0.1.29:
     resolution: {integrity: sha512-bfttrr3/7gG4E02HoWTDUcDDslN003OlOoBxk9virpAZQ1ja/jDgwkWB8QfJF7ojuEowrqy+lzp9VcJG7/k5bQ==}
@@ -25216,7 +25210,7 @@ packages:
       '@babel/plugin-transform-classes': 7.20.7(@babel/core@7.20.7)
       '@babel/plugin-transform-computed-properties': 7.20.7(@babel/core@7.20.7)
       '@babel/plugin-transform-destructuring': 7.20.7(@babel/core@7.20.7)
-      '@babel/plugin-transform-flow-strip-types': 7.19.0(@babel/core@7.20.7)
+      '@babel/plugin-transform-flow-strip-types': 7.21.0(@babel/core@7.20.7)
       '@babel/plugin-transform-function-name': 7.18.9(@babel/core@7.20.7)
       '@babel/plugin-transform-literals': 7.18.9(@babel/core@7.20.7)
       '@babel/plugin-transform-modules-commonjs': 7.20.11(@babel/core@7.20.7)
@@ -27831,7 +27825,6 @@ packages:
     engines: {node: '>=0.6'}
     dependencies:
       side-channel: 1.0.4
-    dev: true
 
   /qs@6.5.3:
     resolution: {integrity: sha512-qxXIEh4pCGfHICj1mAJQ2/2XVZkjCDTcEgfoSQxc/fYivUZxTkk7L3bDBJSoNrEzXI17oUO5Dp07ktqE5KzczA==}
