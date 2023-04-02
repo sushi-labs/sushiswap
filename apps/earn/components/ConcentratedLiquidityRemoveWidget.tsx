@@ -77,6 +77,21 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
     [position, account, chainId]
   )
 
+  const [feeValue0, feeValue1] = useMemo(() => {
+    if (positionDetails && token0 && token1) {
+      const feeValue0 = positionDetails.fees
+        ? Amount.fromRawAmount(token0, JSBI.BigInt(positionDetails.fees[0]))
+        : undefined
+      const feeValue1 = positionDetails.fees
+        ? Amount.fromRawAmount(token1, JSBI.BigInt(positionDetails.fees[1]))
+        : undefined
+
+      return [feeValue0, feeValue1]
+    }
+
+    return [undefined, undefined]
+  }, [positionDetails, token0, token1])
+
   const prepare = useCallback(
     async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       const liquidityPercentage = new Percent(value, 100)
@@ -99,13 +114,6 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
         liquidityValue1 &&
         liquidityPercentage.greaterThan(ZERO)
       ) {
-        const feeValue0 = positionDetails.fees
-          ? Amount.fromRawAmount(token0, JSBI.BigInt(positionDetails.fees[0]))
-          : undefined
-        const feeValue1 = positionDetails.fees
-          ? Amount.fromRawAmount(token1, JSBI.BigInt(positionDetails.fees[1]))
-          : undefined
-
         const { calldata, value: _value } = NonfungiblePositionManager.removeCallParameters(position, {
           tokenId: positionDetails.tokenId.toString(),
           liquidityPercentage,
@@ -138,7 +146,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
         })
       }
     },
-    [account, deadline, position, positionDetails, slippagePercent, token0, token1, value]
+    [account, deadline, feeValue0, feeValue1, position, positionDetails, slippagePercent, token0, token1, value]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
@@ -185,7 +193,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
         </div>
       </div>
       <List>
-        <List.Label>{"You'll"} Receive</List.Label>
+        <List.Label>{"You'll"} receive liquidity</List.Label>
         <List.Control>
           {position?.amount0 ? (
             <List.KeyValue title={`${position?.amount0.currency.symbol}`}>
@@ -213,6 +221,38 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
           )}
         </List.Control>
       </List>
+
+      {(feeValue0?.greaterThan(0) || feeValue1?.greaterThan(0)) && (
+        <List>
+          <List.Label>{"You'll"} receive collected fees</List.Label>
+          <List.Control>
+            {feeValue0 ? (
+              <List.KeyValue title={`${feeValue0.currency.symbol}`}>
+                <div className="flex items-center gap-2">
+                  <Currency.Icon currency={feeValue0.currency} width={18} height={18} />
+                  <span>
+                    {feeValue0.multiply(value).divide(100).toSignificant(6)} {feeValue0.currency.symbol}
+                  </span>
+                </div>
+              </List.KeyValue>
+            ) : (
+              <List.KeyValue skeleton />
+            )}
+            {feeValue1 ? (
+              <List.KeyValue title={`${feeValue1.currency.symbol}`}>
+                <div className="flex items-center gap-2">
+                  <Currency.Icon currency={feeValue1.currency} width={18} height={18} />
+                  <span>
+                    {feeValue1.multiply(value).divide(100).toSignificant(6)} {feeValue1.currency.symbol}
+                  </span>
+                </div>
+              </List.KeyValue>
+            ) : (
+              <List.KeyValue skeleton />
+            )}
+          </List.Control>
+        </List>
+      )}
 
       <Checker.Connect fullWidth size="xl">
         <Checker.Network fullWidth size="xl" chainId={chainId}>
