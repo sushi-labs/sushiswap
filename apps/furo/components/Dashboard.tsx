@@ -9,7 +9,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 
 import { Rebase } from '../.graphclient'
 import { toToken, useStreamBalances } from '../lib'

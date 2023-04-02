@@ -9,12 +9,13 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "main": "./dist/index.js",
-  "source": "./index.ts",
-  "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
   ],
+  "main": "dist/index.js",
+  "source": "src/index.ts",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
@@ -43,8 +44,22 @@
   },
   "peerDependencies": {
     "@ethersproject/address": "5.7.0",
-    "@sushiswap/currency": "workspace:*",
-    "@sushiswap/math": "workspace:*",
-    "@uniswap/token-lists": "^1.0.0-beta.29"
+    "@sushiswap/currency": "*",
+    "@sushiswap/math": "*",
+    "@uniswap/token-lists": "*"
+  },
+  "peerDependenciesMeta": {
+    "@ethersproject/address": {
+      "optional": false
+    },
+    "@sushiswap/currency": {
+      "optional": false
+    },
+    "@sushiswap/math": {
+      "optional": false
+    },
+    "@uniswap/token-lists": {
+      "optional": false
+    }
   }
 }

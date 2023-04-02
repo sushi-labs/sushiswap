@@ -2,7 +2,7 @@ import { useBreakpoint } from '@sushiswap/hooks'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { NAME_COLUMN_V3, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL, PRICE_RANGE_COLUMN } from './Cells/columns'

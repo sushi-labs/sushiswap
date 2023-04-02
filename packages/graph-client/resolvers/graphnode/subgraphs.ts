@@ -1,4 +1,4 @@
-import { getBuiltGraphSDK, Resolvers, SubgraphStatus, SubgraphWithNode } from '../../.graphclient/index.js'
+import { getBuiltGraphSDK, Resolvers, SubgraphStatus, SubgraphWithNode } from '../../.graphclient'
 
 export const subgraphs: Resolvers['Query']['subgraphs'] = async (root, args) => {
   const fetch = async ({ subgraphName, nodeUrl }: SubgraphWithNode) => {

@@ -15,7 +15,10 @@ import {
 import React, { ReactNode } from 'react'
 import { useConnect } from 'wagmi'
 
-import { useAutoConnect, useWalletState } from '../../hooks'
+import {
+  // useAutoConnect,
+  useWalletState,
+} from '../../hooks'
 
 const Icons: Record<string, ReactNode> = {
   Injected: <ChevronDoubleDownIcon width={16} height={16} />,
@@ -46,7 +49,7 @@ export const Button = <C extends React.ElementType>({
 
   const { pendingConnection, reconnecting, isConnected, connecting } = useWalletState(!!pendingConnector)
 
-  useAutoConnect()
+  // useAutoConnect()
 
   if (connecting && appearOnMount) {
     return <></>

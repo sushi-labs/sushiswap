@@ -13,7 +13,7 @@ import { DefaultSeo } from 'next-seo'
 import { FC, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { store } from 'store'
-import { WagmiConfig } from 'wagmi'
+import { WagmiConfig } from '@sushiswap/wagmi'
 
 import SEO from '../next-seo.config.mjs'
 import { GlobalNav } from '@sushiswap/ui/future/components/GlobalNav'

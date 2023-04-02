@@ -6,7 +6,7 @@ import { ZERO } from '@sushiswap/math'
 import { Button, Dots, Typography } from '@sushiswap/ui'
 import { Approve, Checker, getMasterChefContractConfig, useMasterChefDeposit } from '@sushiswap/wagmi'
 import { FC, Fragment, useMemo, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 
 import { useGraphPool } from '../../lib/hooks'
 import { usePoolPosition } from '../PoolPositionProvider'

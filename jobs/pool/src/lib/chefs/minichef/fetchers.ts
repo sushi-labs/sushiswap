@@ -3,6 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { MINICHEF_SUBGRAPH_NAME, SUBGRAPH_HOST, SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
 import { Address, readContract, readContracts } from '@wagmi/core'
 import { BigNumber } from 'ethers'
+import zip from 'lodash.zip'
 
 import { MINICHEF_ADDRESS } from '../../../config.js'
 
@@ -167,7 +168,7 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
         const poolInfoCalls = poolIds.map(
           (_, i) =>
             ({
-              address: rewarder.id,
+              address: rewarder.id as Address,
               args: [BigNumber.from(i)],
               chainId: chainId,
               abi: complexRewarderTimeAbi,
@@ -179,13 +180,14 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
           allowFailure: true,
           contracts: poolInfoCalls,
         })
+        const zipped = zip(poolIds, poolInfos)
 
         return {
           id: rewarder.id,
-          pools: poolIds.map((_, i) => ({
+          pools: zipped.map(([id, { allocPoint }], i) => ({
             // Minichef pool ID
-            id: poolIds[i],
-            allocPoint: Number(poolInfos?.[i]?.allocPoint),
+            id,
+            allocPoint: allocPoint.toNumber(),
           })),
           totalAllocPoint: poolInfos.reduce((acc, cur) => (acc += cur.allocPoint.toNumber()), 0),
           rewardToken: rewarder.rewardToken,

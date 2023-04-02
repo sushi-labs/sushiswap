@@ -42,13 +42,14 @@ const config: HardhatUserConfig = {
   ...defaultConfig,
   // defaultNetwork: 'hardhat',
   networks: {
-      arbitrum: {
+    arbitrum: {
       url: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
       accounts,
       chainId: 42161,
     },
+    ...defaultConfig.networks,
     // localhost: {},
-  //   ...defaultConfig.networks,
+    //   ...defaultConfig.networks,
     // hardhat: {
     //   forking: {
     //     enabled: true,
@@ -60,33 +61,33 @@ const config: HardhatUserConfig = {
     //   },
     //   chainId: 1,
     // },
-  //   hardhat: {
-  //     // polygon
-  //     forking: {
-  //       enabled: true,
-  //       url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
-  //       blockNumber: 37180000,
-  //     },
-  //     accounts: {
-  //       accountsBalance: '10000000000000000000000000', //(10_000_000 MATIC).
-  //     },
-  //     chainId: 137,
-  //   },
-  //   // ethereum: {
-  //   //   url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
-  //   //   accounts,
-  //   //   chainId: 1,
-  //   //   hardfork: process.env.CODE_COVERAGE ? 'berlin' : 'london',
-  //   // },
-  //   // ropsten: {
-  //   //   url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
-  //   //   accounts,
-  //   //   chainId: 3,
-  //   // },
-  //   // goerli: {
-  //   //   url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
-  //   //   accounts,
-  //   // },
+    //   hardhat: {
+    //     // polygon
+    //     forking: {
+    //       enabled: true,
+    //       url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
+    //       blockNumber: 37180000,
+    //     },
+    //     accounts: {
+    //       accountsBalance: '10000000000000000000000000', //(10_000_000 MATIC).
+    //     },
+    //     chainId: 137,
+    //   },
+    //   // ethereum: {
+    //   //   url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
+    //   //   accounts,
+    //   //   chainId: 1,
+    //   //   hardfork: process.env.CODE_COVERAGE ? 'berlin' : 'london',
+    //   // },
+    //   // ropsten: {
+    //   //   url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
+    //   //   accounts,
+    //   //   chainId: 3,
+    //   // },
+    //   // goerli: {
+    //   //   url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
+    //   //   accounts,
+    //   // },
   },
   solidity: {
     compilers: [

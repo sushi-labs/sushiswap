@@ -2,7 +2,7 @@ import { PlusIcon } from '@heroicons/react/solid'
 import { Link, OnsenIcon } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { FC } from 'react'
-import { useNetwork } from 'wagmi'
+import { useNetwork } from '@sushiswap/wagmi'
 import { Layout, PoolFilters, PoolsFiltersProvider, PoolsSection } from '../components'
 
 export const Pools: FC<{ filters?: Partial<PoolFilters>; isReady?: boolean }> = ({ filters, isReady }) => {

@@ -13,7 +13,7 @@ import {
 } from '../../components/ConcentratedLiquidityURLStateProvider'
 import { SelectFeeConcentratedWidget } from '../../components/NewPositionSection/SelectFeeConcentratedWidget'
 import { ConcentratedLiquidityWidget } from '../../components/ConcentratedLiquidityWidget'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 import { useConcentratedLiquidityPool, useConcentratedPositionInfo } from '@sushiswap/wagmi/future/hooks'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { Currency } from '@sushiswap/ui/future/components/currency'

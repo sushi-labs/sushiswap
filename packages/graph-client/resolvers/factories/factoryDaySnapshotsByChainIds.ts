@@ -9,7 +9,7 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { FactoryDaySnapshot, Query, QueryResolvers } from '../../.graphclient/index.js'
+import { FactoryDaySnapshot, Query, QueryResolvers } from '../../.graphclient'
 
 export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsByChainIds'] = async (
   root,

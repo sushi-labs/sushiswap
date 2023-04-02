@@ -9,14 +9,9 @@ import {
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { GraphQLResolveInfo } from 'graphql'
 
-import {
-  Query,
-  QueryliquidityPositionsByChainIdsArgs,
-  QueryResolvers,
-  RequireFields,
-} from '../../.graphclient/index.js'
-import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
-import { TridentTypes } from '../../.graphclient/sources/Trident/types.js'
+import { Query, QueryliquidityPositionsByChainIdsArgs, QueryResolvers, RequireFields } from '../../.graphclient'
+import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
+import { TridentTypes } from '../../.graphclient/sources/Trident/types'
 
 export const _liquidityPositionsByChainIds = async (
   root = {},

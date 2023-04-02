@@ -3,8 +3,8 @@
 import { BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 
-import { Query } from '../../.graphclient/index.js'
-import { BentoBoxTypes } from '../../.graphclient/sources/BentoBox/types.js'
+import { Query } from '../../.graphclient'
+import { BentoBoxTypes } from '../../.graphclient/sources/BentoBox/types'
 
 export const rebasesByChainIds = async (root, args, context, info): Promise<Query['rebasesByChainIds']> => {
   return Promise.allSettled<Query['rebasesByChainIds'][]>(

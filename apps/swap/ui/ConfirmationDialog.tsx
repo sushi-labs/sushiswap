@@ -3,9 +3,9 @@
 import { FC, ReactNode, useCallback, useState } from 'react'
 
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
-import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
+import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from '@sushiswap/wagmi'
 import { useTrade } from '../lib/useTrade'
-import { SendTransactionResult } from 'wagmi/actions'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
@@ -17,7 +17,6 @@ import {
   ConfirmationDialogState,
 } from '@sushiswap/ui/dialog/ConfirmationDialog'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { Chain } from '@sushiswap/chain'
 import { isRouteProcessor2ChainId, routeProcessor2Address, RouteProcessor2ChainId } from '@sushiswap/route-processor'
 import { routeProcessor2Abi } from '@sushiswap/abi'
 

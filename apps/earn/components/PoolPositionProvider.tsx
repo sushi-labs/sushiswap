@@ -1,9 +1,9 @@
 import { Amount, Type } from '@sushiswap/currency'
 import { Pool } from '@sushiswap/client'
 import { FundSource } from '@sushiswap/hooks'
-import { useBalance } from '@sushiswap/wagmi'
+import { _useBalance as useBalance } from '@sushiswap/wagmi'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 
 import { useGraphPool, useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from '../lib/hooks'
 

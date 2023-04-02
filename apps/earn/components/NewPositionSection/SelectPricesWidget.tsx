@@ -14,7 +14,7 @@ import {
 } from '../ConcentratedLiquidityProvider'
 import { DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui/future/components/input'
 import { useConcentratedLiquidityURLState } from '../ConcentratedLiquidityURLStateProvider'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { useIsMounted } from '@sushiswap/hooks'

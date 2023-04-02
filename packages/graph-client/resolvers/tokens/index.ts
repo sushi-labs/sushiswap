@@ -1,7 +1,7 @@
-import { Resolvers } from '../../.graphclient/index.js'
+import { Resolvers } from '../../.graphclient'
 // import { tokenById } from './tokenById'
-import { tokensByChainId } from './tokensByChainId.js'
-import { tokensByChainIds } from './tokensByChainIds.js'
+import { tokensByChainId } from './tokensByChainId'
+import { tokensByChainIds } from './tokensByChainIds'
 // import { tokensByIds } from './tokensByIds'
 
 export const resolvers: Resolvers = {

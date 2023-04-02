@@ -1,13 +1,12 @@
 {
-  "extends": "@sushiswap/typescript-config/node16.json",
-  "include": ["."],
-  "exclude": ["node_modules", "dist"],
+  "extends": "@sushiswap/typescript-config/node18.json",
+  "include": ["src"],
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": ".",
-    "resolveJsonModule": true
-  },
-  "ts-node": {
-    "swc": true
+    "rootDir": "./src",
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
   }
 }

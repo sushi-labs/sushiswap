@@ -12,10 +12,13 @@ export async function pager(endpoint: string, query, variables: Variables = {}) 
     flag = false
     const req = await request(endpoint, query, variables)
 
+    // @ts-ignore TYPE NEEDS FIXING
     Object.keys(req).forEach((key) => {
+      // @ts-ignore TYPE NEEDS FIXING
       data[key] = data[key] ? [...data[key], ...req[key]] : req[key]
     })
 
+    // @ts-ignore TYPE NEEDS FIXING
     Object.values(req).forEach((entry: any) => {
       if (entry.length === 1000) flag = true
     })

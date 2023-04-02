@@ -3,7 +3,7 @@ import { Type } from '@sushiswap/currency'
 import { FeeAmount, TICK_SPACINGS, computePoolAddress, nearestUsableTick } from '@sushiswap/v3-sdk'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { useMemo } from 'react'
-import { Address, useContractReads } from 'wagmi'
+import { Address, useContractReads } from '@sushiswap/wagmi'
 import { tickLensAbi } from '@sushiswap/abi'
 import { Writeable } from 'zod'
 

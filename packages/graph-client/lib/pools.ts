@@ -1,5 +1,3 @@
-import fetch from 'node-fetch'
-
 enum PoolType {
   CONSTANT_PRODUCT_POOL = 'CONSTANT_PRODUCT_POOL',
   STABLE_POOL = 'STABLE_POOL',
@@ -91,15 +89,22 @@ export function parseArgs<T>(args?: Partial<T>) {
 }
 
 export const getPool = async (poolId: string): Promise<Pool> => {
-  return fetch(`https://pools.sushi.com/api/v0?ids=${poolId}`)
-    .then((data: any) => data.json())
-    .then((data: any) => data[0])
+  return import('node-fetch').then(({ default: fetch }) =>
+    fetch(`https://pools.sushi.com/api/v0?ids=${poolId}`)
+      .then((data: any) => data.json())
+      .then((data: any) => data[0])
+  )
 }
 
-export const getPools = async (args?: GetPoolsArgs): Promise<Pool[]> =>
-  fetch(`https://pools.sushi.com/api/v0${parseArgs(args)}`).then((data: any) => data.json())
+export const getPools = async (args?: GetPoolsArgs): Promise<Pool[]> => {
+  return import('node-fetch').then(({ default: fetch }) =>
+    fetch(`https://pools.sushi.com/api/v0${parseArgs(args)}`).then((data: any) => data.json())
+  )
+}
 
 export const getPoolCount = async (args?: GetPoolsArgs): Promise<number> =>
-  fetch(`https://pools.sushi.com/api/v0/count${parseArgs(args)}`)
-    .then((data: any) => data.json())
-    .then((data: any) => data.count)
+  import('node-fetch').then(({ default: fetch }) =>
+    fetch(`https://pools.sushi.com/api/v0/count${parseArgs(args)}`)
+      .then((data: any) => data.json())
+      .then((data: any) => data.count)
+  )

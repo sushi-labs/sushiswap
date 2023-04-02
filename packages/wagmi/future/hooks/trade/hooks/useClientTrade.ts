@@ -66,6 +66,20 @@ export const useClientTrade = (variables: UseTradeParams) => {
           overrides: undefined,
         }
 
+      const route = Router.findSushiRoute(
+        poolsCodeMap,
+        chainId,
+        fromToken,
+        BigNumber.from(amount.quotient.toString()),
+        toToken,
+        feeData.gasPrice.toNumber()
+      )
+
+      const logPools = Array.from(poolsCodeMap.values())
+        .map((pc) => `${pc.pool.token0.symbol}/${pc.pool.token1.symbol}-${pc.pool.fee}\n`)
+        .join('* ')
+      console.log(`Pools found ${poolsCodeMap.size}: ${logPools}`)
+
       // const route = Router.findSushiRoute(
       //   poolsCodeMap,
       //   chainId,
@@ -75,21 +89,6 @@ export const useClientTrade = (variables: UseTradeParams) => {
       //   feeData.gasPrice.toNumber()
       // )
 
-      const logPools = Array.from(poolsCodeMap.values())
-        .map((pc) => `${pc.pool.token0.symbol}/${pc.pool.token1.symbol}-${pc.pool.fee}\n`)
-        .join('* ')
-      console.log(`Pools found ${poolsCodeMap.size}: ${logPools}`)
-
-      const route = Router.findBestRoute(
-        poolsCodeMap,
-        chainId,
-        fromToken,
-        BigNumber.from(amount.quotient.toString()),
-        toToken,
-        feeData.gasPrice.toNumber(),
-        [LiquidityProviders.SushiSwapV3, LiquidityProviders.NativeWrap]
-      )
-
       let args = undefined
       if (recipient) {
         args = Router.routeProcessor2Params(
@@ -98,7 +97,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
           fromToken,
           toToken,
           recipient,
-          routeProcessor2Address[42161],
+          routeProcessor2Address[chainId],
           +slippagePercentage / 100
         )
       }

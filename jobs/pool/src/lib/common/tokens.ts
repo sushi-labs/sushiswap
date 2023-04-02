@@ -93,7 +93,7 @@ export async function getTokenBalancesOf(_tokens: string[], address: string, cha
   const balanceOfCalls = tokens.map(
     (token) =>
       ({
-        address: token,
+        address: token as Address,
         args: [address as Address],
         chainId: chainId,
         abi: erc20ABI,

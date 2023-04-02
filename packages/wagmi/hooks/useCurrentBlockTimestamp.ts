@@ -9,6 +9,5 @@ export const useCurrentBlockTimestamp = (chainId: number | undefined, enabled = 
     functionName: 'getCurrentBlockTimestamp',
     enabled,
     watch: true,
-    keepPreviousData: true,
   })
 }
