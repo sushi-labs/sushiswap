@@ -257,7 +257,7 @@ const Position: FC = () => {
         </div>
 
         <div className="mt-10 grid md:grid-cols-[404px_auto] gap-10">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-6">
             <List>
               <List.Label>Deposits</List.Label>
               <List.Control>
