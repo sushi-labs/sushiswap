@@ -10,7 +10,7 @@ import { Address } from '@wagmi/core'
 import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useAccount } from '@sushiswap/wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction, useDeepCompareMemoize } from '../../../lib'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'

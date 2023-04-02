@@ -7,7 +7,7 @@ import { Checker, useFuroVestingContract } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { useVestingBalance, Vesting } from '../../lib'
 import { createToast } from '@sushiswap/ui/future/components/toast'

@@ -1,21 +1,14 @@
 {
   "extends": ["//"],
   "pipeline": {
-    "generate": {
-      "outputs": [".mesh/**"],
-      "dependsOn": [],
-      "env": [],
-      "cache": true
-    },
-
     "build": {
       "outputs": [".next/**"],
-      "dependsOn": ["^build", "generate"],
+      "dependsOn": ["^build"],
       "env": ["ALCHEMY_ID", "STRAPI_API_URL", "STRAPI_PREVIEW_SECRET"],
       "cache": true
     },
     "check": {
-      "dependsOn": ["^build", "generate"],
+      "dependsOn": ["^build"],
       "cache": true
     },
     "sitemap": {

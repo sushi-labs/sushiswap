@@ -1,5 +1,5 @@
 import { Form, Input, Select, Typography } from '@sushiswap/ui'
-import { useBalance } from '@sushiswap/wagmi'
+import { _useBalance as useBalance } from '@sushiswap/wagmi'
 import { format } from 'date-fns'
 import { useEffect, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'

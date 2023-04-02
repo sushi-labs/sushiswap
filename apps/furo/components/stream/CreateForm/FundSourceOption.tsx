@@ -3,7 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_BG, Typography } from '@sushiswap/ui'
-import { useBalance } from '@sushiswap/wagmi'
+import { _useBalance as useBalance } from '@sushiswap/wagmi'
 import { FC } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
 

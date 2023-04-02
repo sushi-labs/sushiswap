@@ -8,7 +8,7 @@ import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Checker } from '@sushiswap/wagmi/systems'
 import { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
 import { useAccount, useContract } from '@sushiswap/wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { Stream, Vesting } from '../lib'
 import { createToast } from '@sushiswap/ui/future/components/toast'

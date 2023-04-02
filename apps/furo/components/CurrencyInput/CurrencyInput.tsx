@@ -1,7 +1,7 @@
 import { Amount, Currency, tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_PADDING } from '@sushiswap/ui'
-import { useBalance } from '@sushiswap/wagmi'
+import { _useBalance as useBalance } from '@sushiswap/wagmi'
 import React, { FC, useEffect, useMemo } from 'react'
 
 import { BottomPanel, CurrencyInputBase, HelperTextPanel } from '.'

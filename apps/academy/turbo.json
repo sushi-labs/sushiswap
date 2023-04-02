@@ -7,7 +7,6 @@
         "env": [],
         "cache": true
       },
-  
       "build": {
         "outputs": [".next/**"],
         "dependsOn": ["^build", "generate"],
@@ -15,7 +14,7 @@
         "cache": true
       },
       "check": {
-        "dependsOn": ["generate"],
+        "dependsOn": ["^build", "generate"],
         "cache": true
       },
       "sitemap": {

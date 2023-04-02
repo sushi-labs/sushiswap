@@ -6,6 +6,10 @@
     "rootDir": "./src",
     "module": "esnext",
     "target": "esnext",
-    "declaration": true
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "moduleResolution": "node"
   }
 }

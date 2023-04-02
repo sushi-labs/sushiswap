@@ -25,17 +25,6 @@
       ],
       "persistent": true
     },
-    "blog#build": {
-      "dependsOn": ["^build", "generate"],
-      "env": [
-        "STRAPI_PREVIEW_SECRET"
-      ],
-      "outputs": [
-        ".mesh/**/*", 
-        ".next/**/*", 
-        "public/**/*"
-      ]
-    },
     "build": {
       "outputs": [
         ".next/**/*",
@@ -79,7 +68,7 @@
     },
     "check": {
       "dependsOn": [
-        "build"
+        "^build"
       ],
       "cache": false
     },

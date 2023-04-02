@@ -10,7 +10,7 @@ import { Wallet } from '@sushiswap/wagmi'
 import { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Address, useAccount } from '@sushiswap/wagmi'
-import { fetchToken, FetchTokenResult } from 'wagmi/actions'
+import { fetchToken, FetchTokenResult } from '@sushiswap/wagmi'
 
 import { CreateVestingFormSchemaType, stepConfigurations } from '../CreateForm'
 import { useImportErrorContext } from './ImportErrorContext'

@@ -14,7 +14,7 @@
       ]
     },
     "check": {
-      "dependsOn": [],
+      "dependsOn": ["^build"],
       "cache": true
     }
   }

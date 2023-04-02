@@ -1,13 +1,6 @@
 {
   "extends": ["//"],
   "pipeline": {
-    "generate": {
-      "outputs": [".mesh/**"],
-      "dependsOn": [],
-      "env": [],
-      "cache": true
-    },
-
     "build": {
       "outputs": [".next/**"],
       "dependsOn": ["^build", "generate"],

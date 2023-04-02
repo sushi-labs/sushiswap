@@ -14,7 +14,9 @@
         "BLOG_URL",
         "EARN_URL",
         "FURO_URL",
-        "SWAP_URL"
+        "SWAP_URL",
+        "PARTNER_LIST_PR_WEBHOOK_UR",
+        "PARTNER_OCTOKIT_KEY"
       ]
     },
     "check": {
