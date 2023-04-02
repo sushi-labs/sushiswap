@@ -98,7 +98,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
           fromToken,
           toToken,
           recipient,
-          routeProcessor2Address[42161],
+          routeProcessor2Address[chainId],
           +slippagePercentage / 100
         )
       }
