@@ -18,6 +18,17 @@ sources:
           mode: wrap
           filters:
             - Type.!{Factory}
+  - name: SushiSwapV3
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:olastenberg/v3-arbitrum}
+    transforms:
+      - autoPagination:
+          validateSchema: true
+      # - filterSchema:
+      #     mode: wrap
+      #     filters:
+      #       - Type.!{Factory}
     retry: 3
   - name: MasterChef
     handler:

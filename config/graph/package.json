@@ -23,7 +23,7 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "jest": {

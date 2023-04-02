@@ -69,6 +69,13 @@ async function extract() {
         name: SUSHISWAP_SUBGRAPH_NAME[chainId],
       }
     }),
+    // SUSHISWAP_V3_ENABLED_NETWORKS.map((chainId) => {
+    //   return {
+    //     chainId,
+    //     host: SUBGRAPH_HOST[Number(chainId) as keyof typeof SUBGRAPH_HOST],
+    //     name: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
+    //   }
+    // }),
     // [{ chainId: ChainId.POLYGON, host: GRAPH_HOST[ChainId.POLYGON], name: 'sushi-0m/trident-polygon' }], // TODO: do we want the first trident deployment to be included?
   ].flat()
 
