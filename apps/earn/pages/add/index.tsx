@@ -89,7 +89,7 @@ export function Add() {
 
 const _Add: FC = () => {
   const { address } = useAccount()
-  const { chainId, token0, token1, setToken1, setToken0, setNetwork, feeAmount, tokensLoading, tokenId } =
+  const { chainId, token0, token1, setToken1, setToken0, setNetwork, feeAmount, tokensLoading, tokenId, switchTokens } =
     useConcentratedLiquidityURLState()
 
   const [invert, setInvert] = useState(false)
@@ -206,7 +206,14 @@ const _Add: FC = () => {
           setToken1={setToken1}
         />
         <SelectFeeConcentratedWidget />
-        <SelectPricesWidget />
+        <SelectPricesWidget
+          chainId={chainId}
+          token0={token0}
+          token1={token1}
+          tokenId={tokenId}
+          feeAmount={feeAmount}
+          switchTokens={switchTokens}
+        />
 
         <ContentBlock
           title={

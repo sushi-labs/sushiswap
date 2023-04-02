@@ -16,7 +16,6 @@ import { FeeAmount, Position } from '@sushiswap/v3-sdk'
 import { Type } from '@sushiswap/currency'
 import { useConcentratedPositionOwner } from '@sushiswap/wagmi/future/hooks/positions/hooks/useConcentratedPositionOwner'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { Input } from '@sushiswap/ui/future/components/input'
 
 interface ConcentratedLiquidityWidget {
   chainId: ChainId

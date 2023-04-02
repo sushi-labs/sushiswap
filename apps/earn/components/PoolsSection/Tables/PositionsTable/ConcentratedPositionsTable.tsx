@@ -1,24 +1,22 @@
 import { useBreakpoint } from '@sushiswap/hooks'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
-import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
+import { getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { NAME_COLUMN_V3, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL, PRICE_RANGE_COLUMN } from './Cells/columns'
-import { ClassicPoolIcon } from '@sushiswap/ui/future/components/icons'
 import { ConcentratedLiquidityPosition, useConcentratedLiquidityPositions } from '@sushiswap/wagmi/future/hooks'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Disclosure } from '@headlessui/react'
 import { classNames, Collapsible } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/future/components/button'
 import ConcentratedCurveIcon from '@sushiswap/ui/future/components/icons/ConcentratedCurveIcon'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const COLUMNS = [NAME_COLUMN_V3, PRICE_RANGE_COLUMN, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL]
 
-export const ConcentratedPositionsTable: FC = () => {
+export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal' }> = ({ variant = 'default' }) => {
   const [hide, setHide] = useState(false)
   const { chainIds } = usePoolFilters()
   const { address } = useAccount()
@@ -63,12 +61,25 @@ export const ConcentratedPositionsTable: FC = () => {
     return `/position/${row.chainId}:${row.tokenId}`
   }, [])
 
+  if (variant === 'minimal') {
+    return (
+      <GenericTable<ConcentratedLiquidityPosition>
+        table={table}
+        loading={isLoading}
+        placeholder="No positions found"
+        pageSize={!_positions ? 5 : _positions?.length}
+        linkFormatter={rowLink}
+        loadingOverlay={false}
+      />
+    )
+  }
+
   return (
     <Disclosure defaultOpen={true}>
       {({ open }) => (
         <>
           <Disclosure.Button as="div" role="button" className="flex justify-end gap-2">
-            <div className={classNames(open ? '' : 'border-b border-slate-200/5', 'w-full group')}>
+            <div className={classNames(open ? '' : '', 'w-full group')}>
               <h1 className="flex gap-2 items-center justify-between font-semibold text-sm text-gray-700 group-hover:text-gray-900 dark:text-slate-200 dark:group-hover:text-slate-50 py-4 px-4">
                 <span className="flex items-center gap-3">
                   <ConcentratedCurveIcon width={20} height={20} className="saturate-200" /> Concentrated Liquidity
@@ -107,7 +118,7 @@ export const ConcentratedPositionsTable: FC = () => {
               table={table}
               loading={isLoading}
               placeholder="No positions found"
-              pageSize={Math.max(_positions?.length || 0, 5)}
+              pageSize={!_positions ? 5 : _positions?.length}
               linkFormatter={rowLink}
               loadingOverlay={false}
             />

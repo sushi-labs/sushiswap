@@ -7,12 +7,7 @@ import { usePrice, UseTradeParams, UseTradeReturnWriteArgs } from '@sushiswap/re
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { BigNumber } from 'ethers'
 import { LiquidityProviders, Router } from '@sushiswap/router'
-import {
-  isRouteProcessor2ChainId,
-  isRouteProcessorChainId,
-  routeProcessor2Address,
-  routeProcessorAddress,
-} from '@sushiswap/route-processor'
+import { isRouteProcessor2ChainId, routeProcessor2Address } from '@sushiswap/route-processor'
 import { HexString } from '@sushiswap/types'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 

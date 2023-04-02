@@ -4,23 +4,24 @@ import { ChainId } from '@sushiswap/chain'
 import { BigNumber } from 'ethers'
 
 interface UseConcentratedLiquidityPositionsFromTokenIdsParams {
-  tokenIds: BigNumber[]
-  chainId: ChainId
+  keys: { tokenId: BigNumber; chainId: ChainId }[] | undefined
   enabled?: boolean
 }
 
 export const useConcentratedLiquidityPositionsFromTokenIds = ({
-  chainId,
-  tokenIds,
+  keys,
   enabled = true,
 }: UseConcentratedLiquidityPositionsFromTokenIdsParams) => {
   return useQuery({
-    queryKey: ['useConcentratedLiquidityPositionsFromTokenIds', { chainId, tokenIds }],
-    queryFn: async () =>
-      await getConcentratedLiquidityPositionsFromTokenIds({
-        tokenIds: tokenIds.map((el) => ({ tokenId: el, chainId })),
-      }),
+    queryKey: ['useConcentratedLiquidityPositionsFromTokenIds', { keys }],
+    queryFn: async () => {
+      if (!keys) return null
+
+      return await getConcentratedLiquidityPositionsFromTokenIds({
+        tokenIds: keys,
+      })
+    },
     refetchInterval: 10000,
-    enabled: Boolean(chainId && enabled),
+    enabled: Boolean(keys && keys.length > 0 && enabled),
   })
 }

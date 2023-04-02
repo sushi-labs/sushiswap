@@ -7,7 +7,7 @@ const Head: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableSectionElem
   ...props
 }) => {
   return (
-    <thead {...props} className={classNames(className, 'border-b border-t border-gray-200 dark:border-slate-200/5')}>
+    <thead {...props} className={classNames(className, 'border-b border-gray-200 dark:border-slate-200/5')}>
       {children}
     </thead>
   )

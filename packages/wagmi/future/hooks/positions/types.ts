@@ -3,6 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 
 export interface ConcentratedLiquidityPosition {
   id: string
+  address: string
   chainId: ChainId
   nonce: BigNumber
   tokenId: BigNumber

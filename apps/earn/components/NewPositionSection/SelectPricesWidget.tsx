@@ -23,6 +23,8 @@ import {
   useConcentratedLiquidityPositionsFromTokenId,
   useConcentratedPositionInfo,
 } from '@sushiswap/wagmi/future/hooks'
+import { ChainId } from '@sushiswap/chain'
+import { FeeAmount } from '@sushiswap/v3-sdk'
 
 enum ChartType {
   Liquidity = 'Liquidity',
@@ -37,10 +39,25 @@ enum Range {
   One = 'x ÷ 1.01',
 }
 
-export const SelectPricesWidget: FC = ({}) => {
+interface SelectPricesWidget {
+  chainId: ChainId
+  token0: Type | undefined
+  token1: Type | undefined
+  feeAmount: FeeAmount
+  switchTokens?(): void
+  tokenId: string | undefined
+}
+
+export const SelectPricesWidget: FC<SelectPricesWidget> = ({
+  chainId,
+  token0,
+  token1,
+  feeAmount,
+  switchTokens,
+  tokenId,
+}) => {
   const { address } = useAccount()
   const [invert, setInvert] = useState(false)
-  const { chainId, token0, token1, feeAmount, switchTokens, tokenId } = useConcentratedLiquidityURLState()
   const { price, invertPrice, pricesAtTicks, ticks, ticksAtLimit, pool, noLiquidity, isLoading } =
     useConcentratedDerivedMintInfo({
       chainId,
@@ -159,24 +176,28 @@ export const SelectPricesWidget: FC = ({}) => {
           {/*    })}*/}
           {/*</RadioGroup>*/}
           <div className="flex items-center justify-between gap-2">
-            <div className="flex gap-2 rounded-xl bg-white dark:bg-white/[0.02] p-1">
-              <Button
-                onClick={switchTokens}
-                variant={isSorted ? 'outlined' : 'empty'}
-                color={isSorted ? 'blue' : 'default'}
-                size="xs"
-              >
-                {isSorted ? token0?.symbol : token1?.symbol}
-              </Button>
-              <Button
-                onClick={switchTokens}
-                variant={isSorted ? 'empty' : 'outlined'}
-                color={isSorted ? 'default' : 'blue'}
-                size="xs"
-              >
-                {isSorted ? token1?.symbol : token0?.symbol}
-              </Button>
-            </div>
+            {switchTokens ? (
+              <div className="flex gap-2 rounded-xl bg-white dark:bg-white/[0.02] p-1">
+                <Button
+                  onClick={switchTokens}
+                  variant={isSorted ? 'outlined' : 'empty'}
+                  color={isSorted ? 'blue' : 'default'}
+                  size="xs"
+                >
+                  {isSorted ? token0?.symbol : token1?.symbol}
+                </Button>
+                <Button
+                  onClick={switchTokens}
+                  variant={isSorted ? 'empty' : 'outlined'}
+                  color={isSorted ? 'default' : 'blue'}
+                  size="xs"
+                >
+                  {isSorted ? token1?.symbol : token0?.symbol}
+                </Button>
+              </div>
+            ) : (
+              <div />
+            )}
             {!noLiquidity && (
               <Button size="xs" variant="empty" color="blue" onClick={getSetFullRange}>
                 Full Range

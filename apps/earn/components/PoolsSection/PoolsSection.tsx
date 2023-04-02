@@ -36,12 +36,13 @@ export const PoolsSection: FC<{ isReady?: boolean }> = ({ isReady }) => {
         <Tab.Panels>
           <Tab.Panel unmount={false}>
             <TableFilters showAllFilters={tab === 0} />
+            <div className="border-t border-gray-900/5 dark:border-slate-200/5" />
             <PoolsTable isReady={isReady} />
           </Tab.Panel>
           <Tab.Panel unmount={!address}>
-            <div className="border-t border-slate-200/5">
+            <div className="border-t border-gray-900/5 dark:border-slate-200/5">
               <ConcentratedPositionsTable />
-              <div className="h-px bg-slate-200/5 w-full" />
+              <div className="h-px bg-gray-900/5 dark:bg-slate-200/5 w-full" />
               <PositionsTable />
             </div>
           </Tab.Panel>
