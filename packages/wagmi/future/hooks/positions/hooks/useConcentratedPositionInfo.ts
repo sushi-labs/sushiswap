@@ -35,7 +35,7 @@ export const useConcentratedPositionInfo = ({
         feeAmount: positionDetails?.fee,
       })
 
-      let position = undefined
+      let position = null
       if (pool && positionDetails) {
         position = new Position({
           pool,

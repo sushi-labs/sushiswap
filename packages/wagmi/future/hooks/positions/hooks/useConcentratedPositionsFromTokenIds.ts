@@ -9,19 +9,18 @@ interface UseConcentratedLiquidityPositionsFromTokenIdsParams {
   enabled?: boolean
 }
 
-export const useConcentratedLiquidityPositionsFromTokenIds = (
-  variables: UseConcentratedLiquidityPositionsFromTokenIdsParams
-) => {
+export const useConcentratedLiquidityPositionsFromTokenIds = ({
+  chainId,
+  tokenIds,
+  enabled = true,
+}: UseConcentratedLiquidityPositionsFromTokenIdsParams) => {
   return useQuery({
-    queryKey: [
-      'useConcentratedLiquidityPositionsFromTokenIds',
-      { chainId: variables.chainId, tokenIds: variables.tokenIds },
-    ],
+    queryKey: ['useConcentratedLiquidityPositionsFromTokenIds', { chainId, tokenIds }],
     queryFn: async () =>
       await getConcentratedLiquidityPositionsFromTokenIds({
-        tokenIds: variables.tokenIds.map((el) => ({ tokenId: el, chainId: variables.chainId })),
+        tokenIds: tokenIds.map((el) => ({ tokenId: el, chainId })),
       }),
     refetchInterval: 10000,
-    enabled: Boolean(variables.enabled || true),
+    enabled: Boolean(chainId && enabled),
   })
 }

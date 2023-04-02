@@ -99,6 +99,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
           )}
         >
           <Button
+            className="gap-0"
             onClick={() =>
               setFilters({
                 poolVersions: poolVersions.includes('V3')
@@ -117,9 +118,10 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
               poolVersions.includes('V3') && poolTypes.includes('CONCENTRATED_LIQUIDITY_POOL') ? 'blue' : 'default'
             }
           >
-            SushiSwap V3
+            SushiSwap <sup>v3</sup>
           </Button>
           <Button
+            className="gap-0"
             onClick={() =>
               setFilters({
                 poolVersions: poolVersions.includes('LEGACY')
@@ -137,10 +139,11 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             }
             color={poolVersions.includes('LEGACY') && poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'blue' : 'default'}
           >
-            SushiSwap V2
+            SushiSwap <sup>v2</sup>
           </Button>
 
           <Button
+            className="flex gap-2.5"
             onClick={() =>
               setFilters({
                 poolVersions:
@@ -156,9 +159,11 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             variant={poolVersions.includes('TRIDENT') && poolTypes.includes('STABLE_POOL') ? 'outlined' : 'empty'}
             color={poolVersions.includes('TRIDENT') && poolTypes.includes('STABLE_POOL') ? 'blue' : 'default'}
           >
-            🔱 Stable
+            <span>🔱</span>
+            <span>Stable</span>
           </Button>
           <Button
+            className="flex gap-2.5"
             onClick={() =>
               setFilters({
                 poolVersions:
@@ -177,15 +182,17 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             }
             color={poolVersions.includes('TRIDENT') && poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'blue' : 'default'}
           >
-            🔱 Classic
+            <span>🔱</span>
+            <span>Classic</span>
           </Button>
           <Button
             onClick={() => setFilters({ incentivizedOnly: !incentivizedOnly })}
             size="sm"
             variant={incentivizedOnly ? 'outlined' : 'empty'}
             color={incentivizedOnly ? 'blue' : 'default'}
+            className="flex gap-2.5"
           >
-            🧑‍🌾 Farms
+            <span>🧑‍🌾</span> <span>Farms</span>
           </Button>
         </div>
       </div>

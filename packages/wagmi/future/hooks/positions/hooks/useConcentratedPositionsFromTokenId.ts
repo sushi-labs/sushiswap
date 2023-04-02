@@ -9,23 +9,22 @@ interface UseConcentratedLiquidityPositionsFromTokenIdParams {
   enabled?: boolean
 }
 
-export const useConcentratedLiquidityPositionsFromTokenId = (
-  variables: UseConcentratedLiquidityPositionsFromTokenIdParams
-) => {
+export const useConcentratedLiquidityPositionsFromTokenId = ({
+  tokenId,
+  chainId,
+  enabled = true,
+}: UseConcentratedLiquidityPositionsFromTokenIdParams) => {
   return useQuery({
-    queryKey: [
-      'useConcentratedLiquidityPositionsFromTokenIds',
-      { chainId: variables.chainId, tokenIds: variables.tokenId },
-    ],
+    queryKey: ['useConcentratedLiquidityPositionsFromTokenId', { chainId, tokenIds: tokenId }],
     queryFn: async () => {
       const positions = await getConcentratedLiquidityPositionsFromTokenIds({
-        tokenIds: [{ tokenId: BigNumber.from(variables.tokenId), chainId: variables.chainId }],
+        tokenIds: [{ tokenId: BigNumber.from(tokenId), chainId }],
       })
 
       return positions[0]
     },
     refetchInterval: 10000,
-    enabled: Boolean(variables.tokenId && variables.chainId) && Boolean(variables.enabled || true),
+    enabled: Boolean(tokenId && chainId && enabled),
     keepPreviousData: true,
   })
 }
