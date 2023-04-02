@@ -25,6 +25,7 @@
     "@ethersproject/constants": "5.7.0",
     "@ethersproject/logger": "5.7.0",
     "@ethersproject/providers": "5.7.2",
+    "@ethersproject/solidity": "5.7.0",
     "@headlessui/react": "1.7.7",
     "@heroicons/react": "2.0.13",
     "@sushiswap/abi": "workspace:*",

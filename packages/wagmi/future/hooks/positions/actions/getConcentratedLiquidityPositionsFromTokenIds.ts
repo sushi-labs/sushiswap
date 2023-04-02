@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers'
-import { readContracts } from 'wagmi'
+import { Address, readContracts } from 'wagmi'
 import { getV3NFTPositionManagerContract } from '../../../../hooks/useNFTPositionManagerContract'
 import { ChainId } from '@sushiswap/chain'
 import { ConcentratedLiquidityPosition } from '../types'
@@ -14,7 +14,7 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
     contracts: tokenIds.map(
       (el) =>
         ({
-          address: getV3NFTPositionManagerContract(el.chainId).address,
+          address: getV3NFTPositionManagerContract(el.chainId).address as Address,
           abi: [
             {
               inputs: [
@@ -90,7 +90,7 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
               stateMutability: 'view',
               type: 'function',
             },
-          ],
+          ] as const,
           chainId: el.chainId,
           functionName: 'positions',
           args: [el.tokenId],
@@ -101,11 +101,12 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
   const fees = await getConcentratedLiquidityPositionFees({ tokenIds })
 
   return results.map((call, i) => {
-    const tokenId = tokenIds[i].tokenId
+    const { tokenId, chainId } = tokenIds[i]
     const result = call
     return {
-      id: tokenId?.toNumber().toString(),
-      chainId: tokenIds[i].chainId,
+      id: tokenId.toNumber().toString(),
+      address: tokenId.toNumber().toString(),
+      chainId,
       tokenId,
       fee: result.fee,
       fees: fees[i],
