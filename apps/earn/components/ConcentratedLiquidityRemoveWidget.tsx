@@ -103,10 +103,22 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
           ? Amount.fromRawAmount(token0, JSBI.BigInt(positionDetails.fees[0]))
           : undefined
         const feeValue1 = positionDetails.fees
-          ? Amount.fromRawAmount(token0, JSBI.BigInt(positionDetails.fees[1]))
+          ? Amount.fromRawAmount(token1, JSBI.BigInt(positionDetails.fees[1]))
           : undefined
 
         const { calldata, value: _value } = NonfungiblePositionManager.removeCallParameters(position, {
+          tokenId: positionDetails.tokenId.toString(),
+          liquidityPercentage,
+          slippageTolerance: slippagePercent,
+          deadline: deadline.toString(),
+          collectOptions: {
+            expectedCurrencyOwed0: feeValue0 ?? Amount.fromRawAmount(liquidityValue0.currency, 0),
+            expectedCurrencyOwed1: feeValue1 ?? Amount.fromRawAmount(liquidityValue1.currency, 0),
+            recipient: account,
+          },
+        })
+
+        console.log({
           tokenId: positionDetails.tokenId.toString(),
           liquidityPercentage,
           slippageTolerance: slippagePercent,

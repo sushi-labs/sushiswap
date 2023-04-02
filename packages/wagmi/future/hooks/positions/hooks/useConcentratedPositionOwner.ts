@@ -13,7 +13,7 @@ export const useConcentratedPositionOwner = ({
   return useContractRead({
     chainId,
     // TODO: Dynamic position manager address
-    address: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
+    address: '0xF0cBce1942A68BEB3d1b73F0dd86C8DCc363eF49',
     abi: [
       {
         inputs: [
