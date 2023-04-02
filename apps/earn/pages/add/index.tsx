@@ -21,6 +21,7 @@ import { List } from '@sushiswap/ui/future/components/list/List'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { tryParseAmount } from '@sushiswap/currency'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
+import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 
 const LINKS: BreadcrumbLink[] = [
   {
@@ -64,8 +65,17 @@ export function Add() {
     <SWRConfig>
       <Layout breadcrumbs={LINKS}>
         <div className="flex flex-col gap-3">
-          <Link href="/">
-            <ArrowLeftIcon width={24} className="text-slate-50" />
+          <Link className="flex gap-2 items-center" href="/" shallow={true}>
+            <IconButton
+              icon={ArrowLeftIcon}
+              iconProps={{
+                width: 24,
+                height: 24,
+                className: 'text-gray-700 dark:text-slate-400',
+                transparent: true,
+              }}
+            />
+            <span className="text-sm font-medium text-gray-600 dark:text-slate-400">Go back to pools list</span>
           </Link>
           <h1 className="text-3xl font-medium mt-2">Add Liquidity</h1>
           <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
