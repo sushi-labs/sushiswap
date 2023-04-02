@@ -21,11 +21,12 @@
   "files": [
     "dist"
   ],
+  "type": "module",
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "build": "graphclient build && rm -f .graphclient/package.json",
-    "generate": "graphclient build",
+    "generate": "graphclient build --fileType js",
     "incentives": "ts-node --swc src/incentives.ts",
     "lint": "TIMING=1 eslint src --fix",
     "pools": "ts-node --swc src/pools.ts",
