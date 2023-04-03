@@ -11,7 +11,7 @@ import {
   useConcentratedLiquidityPositionsFromTokenId,
   useConcentratedPositionInfo,
 } from '@sushiswap/wagmi/future/hooks'
-import { useToken } from '@sushiswap/react-query'
+import { useConcentratedLiquidityPoolStats, useToken } from '@sushiswap/react-query'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { classNames } from '@sushiswap/ui'
@@ -152,11 +152,16 @@ const Position: FC = () => {
   const currencyQuote = inverted ? token1 : token0
   const currencyBase = inverted ? token0 : token1
 
+  const { data: poolStats } = useConcentratedLiquidityPoolStats({ poolAddress: positionDetails?.address })
+
   return (
     <Layout>
       <div className="flex flex-col gap-2">
-        {/*// TODO*/}
-        <Link className="group flex gap-4 items-center mb-2" href={`/pools/${chainId}:TODO`} shallow={true}>
+        <Link
+          className="group flex gap-4 items-center mb-2"
+          href={`/pools/${chainId}:${positionDetails?.address}`}
+          shallow={true}
+        >
           <IconButton
             icon={ArrowLeftIcon}
             iconProps={{
@@ -172,7 +177,7 @@ const Position: FC = () => {
           isLoading={isLoading}
           chainId={chainId}
           pool={pool}
-          apy={{ rewards: 12.54, fees: 10.27 }}
+          apy={{ rewards: poolStats?.incentiveApr, fees: poolStats?.feeApr }}
           {...(priceLower && {
             priceRange: `${priceLower?.toSignificant(4)} ${quote?.symbol} ⇔ ${priceUpper?.toSignificant(4)} ${
               quote?.symbol

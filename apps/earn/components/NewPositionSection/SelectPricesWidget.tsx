@@ -43,7 +43,7 @@ interface SelectPricesWidget {
   chainId: ChainId
   token0: Type | undefined
   token1: Type | undefined
-  feeAmount: FeeAmount
+  feeAmount: FeeAmount | undefined
   switchTokens?(): void
   tokenId: string | undefined
 }

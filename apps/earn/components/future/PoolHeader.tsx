@@ -7,6 +7,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/v3-sdk'
 import { unwrapToken } from '../../lib/functions'
 import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
+import { formatNumber } from '@sushiswap/format'
 
 type PoolHeader = {
   title?: string
@@ -14,7 +15,7 @@ type PoolHeader = {
   pool: Pool | null | undefined
   chainId: ChainId
   apy?: {
-    fees: number
+    fees: number | undefined
     rewards: number | undefined
   }
   priceRange?: string
@@ -62,28 +63,34 @@ export const PoolHeader: FC<PoolHeader> = ({ title, isLoading, pool, chainId, ap
             {unwrapToken(pool.token0).symbol}/{unwrapToken(pool.token1).symbol}
           </h1>
           <p className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-400">
-            {apy && (
+            {apy ? (
               <>
-                <Tooltip description={`${apy.fees}% fee APY + ${apy.rewards}% reward APY`}>
+                <Tooltip description={`${formatNumber(apy.fees)}% fee APY + ${formatNumber(apy.rewards)}% reward APY`}>
                   <span className="font-semibold text-gray-900 dark:text-slate-50 underline underline-offset-[6px] decoration-dotted decoration-slate-500">
-                    {apy.fees + (apy.rewards || 0)}% APY
+                    {formatNumber((apy.fees || 0) + (apy.rewards || 0))}% APY
                   </span>{' '}
                 </Tooltip>
 
                 <span className="text-[10px]">•</span>
               </>
+            ) : (
+              <></>
             )}{' '}
-            {priceRange && (
+            {priceRange ? (
               <>
                 {priceRange}
                 <span className="text-[10px]">•</span>
               </>
+            ) : (
+              <></>
             )}
             {pool.fee / 10000}% Fee{' '}
-            {apy && apy.rewards && (
+            {apy && apy.rewards ? (
               <>
                 <span className="text-[10px]">•</span> Farm rewards available ✨
               </>
+            ) : (
+              <></>
             )}
           </p>
         </div>

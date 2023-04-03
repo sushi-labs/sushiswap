@@ -13,7 +13,7 @@ export const useConcentratedLiquidityPoolReserves = ({
 }: UseConcentratedLiquidityPoolReserves) => {
   return useQuery({
     queryKey: [
-      'useConcentratedLiquidityPool',
+      'useConcentratedLiquidityPoolReserves',
       { chainId: pool?.chainId, token0: pool?.token0, token1: pool?.token1, feeAmount: pool?.fee },
     ],
     queryFn: async () => {
