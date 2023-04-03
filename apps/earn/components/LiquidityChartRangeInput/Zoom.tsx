@@ -83,13 +83,14 @@ export const Zoom: FC<ZoomProps> = ({
       {showResetButton && (
         <Button
           size="xs"
+          variant="outlined"
           onClick={() => {
             resetBrush()
             zoomReset()
           }}
           disabled={false}
         >
-          <RefreshIcon width={24} height={24} />
+          <RefreshIcon width={20} height={20} />
         </Button>
       )}
       <Button size="xs" variant="outlined" onClick={zoomIn} disabled={false}>
