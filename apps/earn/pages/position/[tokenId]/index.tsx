@@ -173,20 +173,13 @@ const Position: FC = () => {
           chainId={chainId}
           pool={pool}
           apy={{ rewards: 12.54, fees: 10.27 }}
-          priceRange={`${priceLower?.toSignificant(4)} ${quote?.symbol} ⇔ ${priceUpper?.toSignificant(4)} ${
-            quote?.symbol
-          }`}
+          {...(priceLower && {
+            priceRange: `${priceLower?.toSignificant(4)} ${quote?.symbol} ⇔ ${priceUpper?.toSignificant(4)} ${
+              quote?.symbol
+            }`,
+          })}
         />
         <RadioGroup value={tab} onChange={setTab} className="flex flex-wrap gap-2 mt-3">
-          {/*<RadioGroup.Option*/}
-          {/*  value={SelectedTab.Analytics}*/}
-          {/*  as={Button}*/}
-          {/*  startIcon={<ChartBarIcon width={18} height={18} />}*/}
-          {/*  variant={tab === SelectedTab.Analytics ? 'outlined' : 'empty'}*/}
-          {/*  color={tab === SelectedTab.Analytics ? 'blue' : 'default'}*/}
-          {/*>*/}
-          {/*  Analytics*/}
-          {/*</RadioGroup.Option>*/}
           <RadioGroup.Option
             value={SelectedTab.IncreaseLiq}
             as={Button}
