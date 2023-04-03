@@ -6,6 +6,7 @@ import { useMemo } from 'react'
 import { Address, useContractReads } from '@sushiswap/wagmi'
 import { tickLensAbi } from '@sushiswap/abi'
 import { Writeable } from 'zod'
+import { V3_FACTORY_ADDRESS, V3_TICK_LENS } from '../../config'
 
 interface useTicks {
   token0: Type | undefined
@@ -34,7 +35,7 @@ export function useTicks({ token0, token1, chainId, feeAmount, numSurroundingTic
       token0 && token1 && feeAmount && chainId
         ? computePoolAddress({
             // TODO harcdoded chainId
-            factoryAddress: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
+            factoryAddress: V3_FACTORY_ADDRESS[chainId as keyof typeof V3_FACTORY_ADDRESS],
             tokenA: token0.wrapped,
             tokenB: token1.wrapped,
             fee: feeAmount,
@@ -59,15 +60,12 @@ export function useTicks({ token0, token1, chainId, feeAmount, numSurroundingTic
     [tickSpacing, activeTick, numSurroundingTicks]
   )
 
-  // TODO: Fix, obviously 👍
-  const TICK_LENS_ADDRESS_ARBITRUM = '0xbfd8137f7d1516D3ea5cA83523914859ec47F573'
-
   const contractReads = useMemo(() => {
     const reads = []
     if (minIndex && maxIndex && poolAddress) {
       for (let i = minIndex; i <= maxIndex; i++) {
         reads.push({
-          address: TICK_LENS_ADDRESS_ARBITRUM,
+          address: V3_TICK_LENS[chainId as keyof typeof V3_TICK_LENS] as Address,
           abi: tickLensAbi,
           functionName: 'getPopulatedTicksInWord',
           args: [poolAddress as Address, i],
@@ -75,7 +73,7 @@ export function useTicks({ token0, token1, chainId, feeAmount, numSurroundingTic
       }
     }
     return reads
-  }, [maxIndex, minIndex, poolAddress])
+  }, [chainId, maxIndex, minIndex, poolAddress])
 
   const reads = useContractReads({ contracts: contractReads, enabled })
 
