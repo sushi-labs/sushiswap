@@ -12,7 +12,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters>; isReady?: boolean }> = 
       <div className="flex flex-col gap-10 md:gap-16">
         <section className="flex flex-col gap-6 lg:flex-row">
           <div className="max-w-md flex flex-col gap-2">
-            <h1 className="text-7xl font-semibold text-gray-900 dark:text-slate-50">Earn.</h1>
+            <h1 className="text-7xl font-semibold text-gray-900 dark:text-slate-50">Pools.</h1>
             <span className="text-2xl text-gray-600 dark:text-slate-300">Provide liquidity and earn fees.</span>
           </div>
           <div className="flex justify-end flex-grow not-prose">
