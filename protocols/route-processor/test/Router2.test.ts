@@ -206,7 +206,7 @@ async function makeSwap(
 async function dataUpdated(env: TestEnvironment, minBlockNumber: number) {
   for (;;) {
     if (env.dataFetcher.getLastUpdateBlock() >= minBlockNumber) return
-    await delay(5500)
+    await delay(500)
   }
 }
 
