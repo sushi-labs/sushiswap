@@ -40,6 +40,8 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
+    "@ethersproject/address": "5.7.0",
+    "@ethersproject/bignumber": "5.7.0",
     "@graphprotocol/client-add-source-name": "1.0.18",
     "@graphprotocol/client-auto-pagination": "1.1.16",
     "@graphprotocol/client-auto-type-merging": "1.0.23",
@@ -58,6 +60,8 @@
     "@graphql-mesh/transform-type-merging": "latest",
     "@graphql-mesh/utils":  "latest",
     "@graphql-tools/merge": "latest",
+    "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/tines": "workspace:*",
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",

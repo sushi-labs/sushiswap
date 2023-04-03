@@ -4,6 +4,7 @@ import express from 'express'
 import { execute as incentives } from './incentives.js'
 import { execute as pools } from './pools.js'
 import { execute as volume } from './volume.js'
+import { prices } from './price.js'
 
 const app = express()
 
@@ -24,6 +25,10 @@ app.get('/', async (req, res) => {
         await volume()
         res.sendStatus(200)
         break
+        case 'prices':
+          await prices()
+          res.sendStatus(200)
+          break
       default:
         res.sendStatus(400).send('Not a valid target')
         break;

@@ -1562,6 +1562,8 @@ importers:
 
   jobs/pool:
     specifiers:
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
       '@graphprotocol/client-add-source-name': 1.0.18
       '@graphprotocol/client-auto-pagination': 1.1.16
       '@graphprotocol/client-auto-type-merging': 1.0.23
@@ -1581,6 +1583,7 @@ importers:
       '@graphql-mesh/utils': latest
       '@graphql-tools/merge': latest
       '@sushiswap/abi': workspace:*
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
@@ -1588,6 +1591,7 @@ importers:
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/tines': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/validate': workspace:*
       '@sushiswap/wagmi-config': workspace:*
@@ -1611,6 +1615,8 @@ importers:
       ts-node: 10.9.1
       typescript: 4.9.4
     dependencies:
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
       '@graphprotocol/client-add-source-name': 1.0.18_graphql@16.6.0
       '@graphprotocol/client-auto-pagination': 1.1.16_graphql@16.6.0
       '@graphprotocol/client-auto-type-merging': 1.0.23_graphql@16.6.0
@@ -1630,10 +1636,12 @@ importers:
       '@graphql-mesh/utils': 0.43.20_t3olqkp4ofjt4bu4gjm5khtgce
       '@graphql-tools/merge': 8.4.0_graphql@16.6.0
       '@sushiswap/abi': link:../../packages/abi
+      '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/database': link:../../packages/database
       '@sushiswap/graph-config': link:../../config/graph
+      '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/validate': link:../../packages/validate
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@wagmi/core': 0.10.8_7exv3onak5pvwn53oxzq43mdkm
