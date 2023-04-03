@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react'
 import { SWRConfig } from 'swr'
 import { Layout, PoolsFiltersProvider, SelectPricesWidget } from '../../../components'
 import Link from 'next/link'
-import { ArrowLeftIcon, ChartBarIcon, PencilIcon, PlusIcon } from '@heroicons/react/solid'
+import { ArrowLeftIcon, ChartBarIcon, PencilIcon, PlusIcon, UserCircleIcon, UserIcon } from '@heroicons/react/solid'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
 import { ChainId } from '@sushiswap/chain'
@@ -91,9 +91,9 @@ const Pool: FC = () => {
 
   return (
     <SWRConfig>
-      <Layout maxWidth="7xl">
+      <Layout>
         <div className="flex flex-col gap-2">
-          <Link className="group flex gap-4 items-center" href="/" shallow={true}>
+          <Link className="group flex gap-4 items-center mb-2" href="/" shallow={true}>
             <IconButton
               icon={ArrowLeftIcon}
               iconProps={{
@@ -106,7 +106,13 @@ const Pool: FC = () => {
               Go back to pools list
             </span>
           </Link>
-          <PoolHeader isLoading={isLoading} chainId={chainId} pool={pool} />
+          <PoolHeader
+            title="Pool "
+            isLoading={isLoading}
+            chainId={chainId}
+            pool={pool}
+            apy={{ rewards: 12.54, fees: 10.27 }}
+          />
           <RadioGroup value={tab} onChange={setTab} className="flex flex-wrap gap-2 mt-3">
             <RadioGroup.Option
               value={SelectedTab.Analytics}
@@ -129,11 +135,11 @@ const Pool: FC = () => {
             <RadioGroup.Option
               value={SelectedTab.ManagePosition}
               as={Button}
-              startIcon={<PencilIcon width={18} height={18} />}
+              startIcon={<UserCircleIcon width={18} height={18} />}
               variant="outlined"
               color={tab === SelectedTab.ManagePosition ? 'blue' : 'default'}
             >
-              Manage Position
+              My Positions
             </RadioGroup.Option>
             <div>
               <SettingsOverlay
@@ -155,14 +161,14 @@ const Pool: FC = () => {
             </div>
           </RadioGroup>
         </div>
-        <div className="w-full mt-10 bg-gray-900/5 dark:bg-slate-200/5 my-10 h-0.5" />
+        <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
         <div className={tab === SelectedTab.Analytics ? 'block' : 'hidden'}>
           <div className="grid md:grid-cols-[auto_404px] gap-10">
             <div className="w-full h-full">
               <Skeleton.Box className="w-full h-full" />
             </div>
             <div className="flex flex-col gap-6">
-              <List>
+              <List className="pt-0">
                 <List.Control>
                   {pool ? (
                     <List.KeyValue flex title="Fees (1d)">

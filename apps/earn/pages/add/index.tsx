@@ -65,7 +65,7 @@ export function Add() {
     <SWRConfig>
       <Layout breadcrumbs={LINKS}>
         <div className="flex flex-col gap-2">
-          <Link className="group flex gap-4 items-center" href="/" shallow={true}>
+          <Link className="group flex gap-4 items-center mb-2" href="/" shallow={true}>
             <IconButton
               icon={ArrowLeftIcon}
               iconProps={{

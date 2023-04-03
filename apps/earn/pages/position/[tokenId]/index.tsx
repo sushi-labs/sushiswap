@@ -156,7 +156,7 @@ const Position: FC = () => {
     <Layout>
       <div className="flex flex-col gap-2">
         {/*// TODO*/}
-        <Link className="group flex gap-4 items-center" href={`/pools/${chainId}:TODO`} shallow={true}>
+        <Link className="group flex gap-4 items-center mb-2" href={`/pools/${chainId}:TODO`} shallow={true}>
           <IconButton
             icon={ArrowLeftIcon}
             iconProps={{
@@ -167,7 +167,16 @@ const Position: FC = () => {
           />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">Go back to pool</span>
         </Link>
-        <PoolHeader isLoading={isLoading} chainId={chainId} pool={pool} />
+        <PoolHeader
+          title="Position on "
+          isLoading={isLoading}
+          chainId={chainId}
+          pool={pool}
+          apy={{ rewards: 12.54, fees: 10.27 }}
+          priceRange={`${priceLower?.toSignificant(4)} ${quote?.symbol} ⇔ ${priceUpper?.toSignificant(4)} ${
+            quote?.symbol
+          }`}
+        />
         <RadioGroup value={tab} onChange={setTab} className="flex flex-wrap gap-2 mt-3">
           {/*<RadioGroup.Option*/}
           {/*  value={SelectedTab.Analytics}*/}
@@ -216,7 +225,7 @@ const Position: FC = () => {
           </div>
         </RadioGroup>
       </div>
-      <div className="h-0.5 w-full bg-gray-900/5 dark:bg-slate-200/5 my-10" />
+      <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
       <div className="mt-10 grid md:grid-cols-[404px_auto] gap-10">
         <div className="flex flex-col gap-6">
           <List>
