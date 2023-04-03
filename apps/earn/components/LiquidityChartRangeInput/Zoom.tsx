@@ -80,19 +80,17 @@ export const Zoom: FC<ZoomProps> = ({
 
   return (
     <div className="flex justify-end gap-2">
-      {showResetButton && (
-        <Button
-          size="xs"
-          variant="outlined"
-          onClick={() => {
-            resetBrush()
-            zoomReset()
-          }}
-          disabled={false}
-        >
-          <RefreshIcon width={20} height={20} />
-        </Button>
-      )}
+      <Button
+        size="xs"
+        variant="outlined"
+        disabled={!showResetButton}
+        onClick={() => {
+          resetBrush()
+          zoomReset()
+        }}
+      >
+        <RefreshIcon width={20} height={20} />
+      </Button>
       <Button size="xs" variant="outlined" onClick={zoomIn} disabled={false}>
         <ZoomInIcon width={20} height={20} />
       </Button>
