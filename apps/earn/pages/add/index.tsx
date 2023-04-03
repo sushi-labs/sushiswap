@@ -1,6 +1,6 @@
 import { ArrowLeftIcon, SwitchHorizontalIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
-import { BreadcrumbLink, NetworkIcon } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui'
 import { Layout, SelectNetworkWidget, SelectPricesWidget, SelectTokensWidget } from '../../components'
 import React, { FC, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
@@ -22,43 +22,6 @@ import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { tryParseAmount } from '@sushiswap/currency'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
-
-// const LINKS: BreadcrumbLink[] = [
-//   {
-//     href: `/add`,
-//     label: `Add`,
-//   },
-// ]
-
-// // This function gets called at build time on server-side.
-// // It may be called again, on a serverless function, if
-// // revalidation is enabled and a new request comes in
-// export const getStaticProps: GetStaticProps = async ({ params }) => {
-//   const chainId = params?.chainId ? (parseInt(params.chainId as string) as ChainId) : ChainId.ETHEREUM
-//   return {
-//     props: {
-//       chainId,
-//     },
-//   }
-// }
-
-// // This function gets called at build time on server-side.
-// // It may be called again, on a serverless function, if
-// // the path has not been generated.
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   // Get the paths we want to pre-render based on supported chain ids
-//   // TODO SUPPORTED_CHAIN_IDS
-//   const paths = [ChainId.ARBITRUM].map((chainId) => ({
-//     params: {
-//       chainId: chainId.toString(),
-//     },
-//   }))
-
-//   // We'll pre-render only these paths at build time.
-//   // { fallback: 'blocking' } will server-render pages
-//   // on-demand if the path doesn't exist.
-//   return { paths, fallback: false }
-// }
 
 export function Add() {
   return (

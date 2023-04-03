@@ -7,8 +7,7 @@ import { useRouter } from 'next/router'
 import { useToken } from '@sushiswap/react-query'
 import { isAddress } from 'ethers/lib/utils'
 import { z } from 'zod'
-import { ConstantProductPoolFactoryChainId, isConstantProductPoolFactoryChainId } from '@sushiswap/trident'
-import { FeeAmount } from '@sushiswap/v3-sdk'
+import { FeeAmount, isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 
 export const queryParamsSchema = z.object({
   chainId: z.coerce
@@ -17,8 +16,8 @@ export const queryParamsSchema = z.object({
     .gte(0)
     .lte(2 ** 256)
     .default(ChainId.ARBITRUM)
-    .transform((chainId) => chainId as ConstantProductPoolFactoryChainId)
-    .refine((chainId) => isConstantProductPoolFactoryChainId(chainId), {
+    .transform((chainId) => chainId as V3ChainId)
+    .refine((chainId) => isV3ChainId(chainId), {
       message: 'ChainId not supported.',
     }),
   fromCurrency: z.string().default('NATIVE'),
@@ -37,7 +36,7 @@ export const queryParamsSchema = z.object({
 
 type State = {
   tokenId: string | undefined
-  chainId: ConstantProductPoolFactoryChainId
+  chainId: V3ChainId
   token0: Type | undefined
   token1: Type | undefined
   tokensLoading: boolean

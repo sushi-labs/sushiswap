@@ -1,13 +1,9 @@
-import { Token, Type } from '@sushiswap/currency'
-import { computePoolAddress, FeeAmount, TICK_SPACINGS, tickToPrice, FACTORY_ADDRESS } from '@sushiswap/v3-sdk'
-import { useEffect, useMemo, useState } from 'react'
+import { Type } from '@sushiswap/currency'
+import { FeeAmount, TICK_SPACINGS, tickToPrice, V3ChainId } from '@sushiswap/v3-sdk'
+import { useMemo } from 'react'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
-import { ChainId } from '@sushiswap/chain'
 import { JSBI } from '@sushiswap/math'
 import computeSurroundingTicks from '../functions'
-import useSWR from 'swr'
-import { getAllV3Ticks } from '../api'
-import { useQuery } from '@tanstack/react-query'
 import { useTicks } from './useTicks'
 
 const PRICE_FIXED_DIGITS = 8
@@ -28,34 +24,13 @@ const useAllV3Ticks = ({
   feeAmount,
   chainId,
 }: {
-  chainId: ChainId
+  chainId: V3ChainId
   token0: Type | undefined
   token1: Type | undefined
   feeAmount: FeeAmount | undefined
 }) => {
   // TODO: Add subgraph support
-
   return useTicks({ token0, token1, feeAmount, chainId })
-
-  // return useQuery({
-  //   queryKey: ['getAllV3Ticks', { chainId, token0, token1, feeAmount }],
-  //   queryFn: async () => {
-  //     if (token0 && token1 && feeAmount) {
-  //       const address = computePoolAddress({
-  //         // TODO harcdoded chainId
-  //         factoryAddress: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
-  //         tokenA: token0.wrapped,
-  //         tokenB: token1.wrapped,
-  //         fee: feeAmount,
-  //       })
-
-  //       return await getAllV3Ticks(`${chainId}:${address.toLowerCase()}`)
-  //     }
-
-  //     return null
-  //   },
-  //   enabled: Boolean(token0 && token1 && feeAmount),
-  // })
 }
 
 export const useConcentratedActiveLiquidity = ({
@@ -65,7 +40,7 @@ export const useConcentratedActiveLiquidity = ({
   chainId,
   enabled = true,
 }: {
-  chainId: ChainId
+  chainId: V3ChainId
   token0: Type | undefined
   token1: Type | undefined
   feeAmount: FeeAmount | undefined

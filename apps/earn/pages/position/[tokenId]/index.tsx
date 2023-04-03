@@ -32,6 +32,7 @@ import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components
 import { CogIcon } from '@heroicons/react/outline'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { PoolHeader } from '../../../components/future/PoolHeader'
+import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 
 const PositionPage = () => {
   return (
@@ -51,7 +52,10 @@ const queryParamsSchema = z.object({
     })
     .transform((val) => {
       const [chainId, tokenId] = val.split(':')
-      return [+chainId, +tokenId] as [ChainId, number]
+      return [+chainId, +tokenId] as [V3ChainId, number]
+    })
+    .refine(([chainId]) => isV3ChainId(chainId), {
+      message: 'ChainId not supported.',
     }),
 })
 

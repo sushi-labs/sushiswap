@@ -13,34 +13,16 @@ import {
   useRangeHopCallbacks,
 } from '../ConcentratedLiquidityProvider'
 import { DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui/future/components/input'
-import { useConcentratedLiquidityURLState } from '../ConcentratedLiquidityURLStateProvider'
 import { useAccount } from '@sushiswap/wagmi'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
-import {
-  useConcentratedLiquidityPositionsFromTokenId,
-  useConcentratedPositionInfo,
-} from '@sushiswap/wagmi/future/hooks'
-import { ChainId } from '@sushiswap/chain'
-import { FeeAmount } from '@sushiswap/v3-sdk'
-
-enum ChartType {
-  Liquidity = 'Liquidity',
-  Price = 'Price',
-}
-
-enum Range {
-  Unset = 'Unset',
-  Full = 'Full Range',
-  Double = 'x ÷ 2',
-  Twenty = 'x ÷ 1.2',
-  One = 'x ÷ 1.01',
-}
+import { useConcentratedLiquidityPositionsFromTokenId } from '@sushiswap/wagmi/future/hooks'
+import { FeeAmount, V3ChainId } from '@sushiswap/v3-sdk'
 
 interface SelectPricesWidget {
-  chainId: ChainId
+  chainId: V3ChainId
   token0: Type | undefined
   token1: Type | undefined
   feeAmount: FeeAmount | undefined

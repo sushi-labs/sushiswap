@@ -6,10 +6,12 @@ import { PoolsTable, PositionsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { ConcentratedPositionsTable } from './Tables/PositionsTable/ConcentratedPositionsTable'
+import { useIsMounted } from '@sushiswap/hooks'
 
 export const PoolsSection: FC<{ isReady?: boolean }> = ({ isReady }) => {
   const { address } = useAccount()
   const [tab, setTab] = useState<number>(0)
+  const isMounted = useIsMounted()
 
   return (
     <section className="flex flex-col">
@@ -23,7 +25,7 @@ export const PoolsSection: FC<{ isReady?: boolean }> = ({ isReady }) => {
             )}
           </Tab>
 
-          {address && (
+          {address && isMounted && (
             <Tab as={Fragment}>
               {({ selected }) => (
                 <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
@@ -39,7 +41,7 @@ export const PoolsSection: FC<{ isReady?: boolean }> = ({ isReady }) => {
             <div className="border-t border-gray-900/5 dark:border-slate-200/5" />
             <PoolsTable isReady={isReady} />
           </Tab.Panel>
-          <Tab.Panel unmount={!address}>
+          <Tab.Panel>
             <div className="border-t border-gray-900/5 dark:border-slate-200/5">
               <ConcentratedPositionsTable />
               <div className="h-px bg-gray-900/5 dark:bg-slate-200/5 w-full" />

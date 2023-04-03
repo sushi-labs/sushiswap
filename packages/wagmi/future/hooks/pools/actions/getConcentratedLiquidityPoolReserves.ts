@@ -1,15 +1,13 @@
 import { Amount } from '@sushiswap/currency'
-import { computePoolAddress, Pool } from '@sushiswap/v3-sdk'
+import { computePoolAddress, Pool, V3ChainId } from '@sushiswap/v3-sdk'
 import { JSBI } from '@sushiswap/math'
 import { Address } from 'wagmi'
 import { fetchBalance } from '../../../..'
+import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
 
-// TODO: MAKE DYNAMIC
-const v3CoreFactoryAddress = '0x1af415a1EbA07a4986a52B6f2e7dE7003D82231e'
-
-export const getConcentratedLiquidityPoolReserves = async ({ pool }: { pool: Pool }) => {
+export const getConcentratedLiquidityPoolReserves = async ({ pool, chainId }: { pool: Pool; chainId: V3ChainId }) => {
   const address = computePoolAddress({
-    factoryAddress: v3CoreFactoryAddress,
+    factoryAddress: getV3FactoryContractConfig(chainId).address,
     tokenA: pool.token0,
     tokenB: pool.token1,
     fee: pool.fee,

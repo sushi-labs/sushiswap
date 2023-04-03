@@ -1,21 +1,21 @@
 import { BigNumber } from 'ethers'
 import { Address, readContracts } from 'wagmi'
-import { getV3NFTPositionManagerContract } from '../../../../hooks/useNFTPositionManagerContract'
-import { ChainId } from '@sushiswap/chain'
 import { ConcentratedLiquidityPosition } from '../types'
 import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
-import { computePoolAddress } from '@sushiswap/v3-sdk'
+import { computePoolAddress, V3ChainId } from '@sushiswap/v3-sdk'
+import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
+import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
 
 export const getConcentratedLiquidityPositionsFromTokenIds = async ({
   tokenIds,
 }: {
-  tokenIds: { chainId: ChainId; tokenId: BigNumber }[]
+  tokenIds: { chainId: V3ChainId; tokenId: BigNumber }[]
 }): Promise<ConcentratedLiquidityPosition[]> => {
   const results = await readContracts({
     contracts: tokenIds.map(
       (el) =>
         ({
-          address: getV3NFTPositionManagerContract(el.chainId).address as Address,
+          address: getV3NonFungiblePositionManagerConractConfig(el.chainId).address as Address,
           abi: [
             {
               inputs: [
@@ -107,8 +107,7 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
     return {
       id: tokenId.toNumber().toString(),
       address: computePoolAddress({
-        // TODO Make dynamic
-        factoryAddress: '0x1af415a1EbA07a4986a52B6f2e7dE7003D82231e',
+        factoryAddress: getV3FactoryContractConfig(chainId).address,
         tokenA: result.token0,
         tokenB: result.token1,
         fee: result.fee,

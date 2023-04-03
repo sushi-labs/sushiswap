@@ -1,21 +1,21 @@
 import { BigNumber } from 'ethers'
-import { getV3NFTPositionManagerContract } from '../../../../hooks/useNFTPositionManagerContract'
-import { ChainId } from '@sushiswap/chain'
 import { getContract } from 'wagmi/actions'
 import { getProvider } from '../../../../provider'
 import { getConcentratedPositionOwners } from '../../pools/actions/getConcentratedPositionOwner'
+import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
+import { V3ChainId } from '@sushiswap/v3-sdk'
 
 const MAX_UINT128 = BigNumber.from(2).pow(128).sub(1)
 
 export const getConcentratedLiquidityPositionFees = async ({
   tokenIds,
 }: {
-  tokenIds: { chainId: ChainId; tokenId: BigNumber }[]
+  tokenIds: { chainId: V3ChainId; tokenId: BigNumber }[]
 }) => {
   const owners = await getConcentratedPositionOwners({ tokenIds })
   const promises = tokenIds.map(async (el, i) => {
     const contract = getContract({
-      address: getV3NFTPositionManagerContract(el.chainId).address,
+      address: getV3NonFungiblePositionManagerConractConfig(el.chainId).address,
       abi: [
         {
           inputs: [

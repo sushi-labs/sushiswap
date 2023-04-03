@@ -1,18 +1,19 @@
 import { ChainId } from '@sushiswap/chain'
-import { getV3NFTPositionManagerContract } from '../../../../hooks/useNFTPositionManagerContract'
 import { readContracts } from 'wagmi'
 import { getConcentratedLiquidityPositionsFromTokenIds } from './getConcentratedLiquidityPositionsFromTokenIds'
 import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
 import { ConcentratedLiquidityPosition } from '../types'
 import { BigNumber } from 'ethers'
-import { computePoolAddress } from '@sushiswap/v3-sdk'
+import { computePoolAddress, V3ChainId } from '@sushiswap/v3-sdk'
+import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
+import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
 
 export const getConcentratedLiquidityPositions = async ({
   account,
   chainIds,
 }: {
   account: `0x${string}` | undefined
-  chainIds: ChainId[]
+  chainIds: V3ChainId[]
 }) => {
   if (!account) return undefined
 
@@ -20,7 +21,7 @@ export const getConcentratedLiquidityPositions = async ({
     contracts: chainIds.map(
       (el) =>
         ({
-          address: getV3NFTPositionManagerContract(el).address,
+          address: getV3NonFungiblePositionManagerConractConfig(el).address,
           abi: [
             {
               inputs: [
@@ -57,10 +58,10 @@ export const getConcentratedLiquidityPositions = async ({
     return acc
   }, {} as Record<ChainId, number>)
 
-  const tokenIdsArgs: [ChainId, `0x${string}`, number][] = []
+  const tokenIdsArgs: [V3ChainId, `0x${string}`, number][] = []
   Object.entries(accountBalances).forEach(([k, v]) => {
     for (let i = 0; i < v; i++) {
-      tokenIdsArgs.push([+k, account, i])
+      tokenIdsArgs.push([+k as V3ChainId, account, i])
     }
   })
 
@@ -69,7 +70,7 @@ export const getConcentratedLiquidityPositions = async ({
       ([_chainId, account, index]) =>
         ({
           chainId: _chainId,
-          address: getV3NFTPositionManagerContract(_chainId).address,
+          address: getV3NonFungiblePositionManagerConractConfig(_chainId).address,
           abi: [
             {
               inputs: [
@@ -113,8 +114,7 @@ export const getConcentratedLiquidityPositions = async ({
   return positions.map((el, i) => ({
     ...el,
     address: computePoolAddress({
-      // TODO Make dynamic
-      factoryAddress: '0x1af415a1EbA07a4986a52B6f2e7dE7003D82231e',
+      factoryAddress: getV3FactoryContractConfig(el.chainId).address,
       tokenA: el.token0,
       tokenB: el.token1,
       fee: el.fee,

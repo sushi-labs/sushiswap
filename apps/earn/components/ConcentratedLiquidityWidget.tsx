@@ -11,14 +11,14 @@ import {
   useConcentratedMintActionHandlers,
   useConcentratedMintState,
 } from './ConcentratedLiquidityProvider'
-import { ChainId } from '@sushiswap/chain'
-import { FeeAmount, Position } from '@sushiswap/v3-sdk'
+import { FeeAmount, Position, V3ChainId } from '@sushiswap/v3-sdk'
 import { Type } from '@sushiswap/currency'
 import { useConcentratedPositionOwner } from '@sushiswap/wagmi/future/hooks/positions/hooks/useConcentratedPositionOwner'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
 
 interface ConcentratedLiquidityWidget {
-  chainId: ChainId
+  chainId: V3ChainId
   account: string | undefined
   token0: Type | undefined
   token1: Type | undefined
@@ -238,8 +238,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                 fullWidth
                 id="approve-erc20-0"
                 amount={parsedAmounts[Field.CURRENCY_A]}
-                // TODO dynamic
-                contract="0xF0cBce1942A68BEB3d1b73F0dd86C8DCc363eF49"
+                contract={getV3NonFungiblePositionManagerConractConfig(chainId).address}
                 enabled={!depositADisabled}
               >
                 <Checker.ApproveERC20
@@ -247,8 +246,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                   fullWidth
                   id="approve-erc20-1"
                   amount={parsedAmounts[Field.CURRENCY_B]}
-                  // TODO dynamic
-                  contract="0xF0cBce1942A68BEB3d1b73F0dd86C8DCc363eF49"
+                  contract={getV3NonFungiblePositionManagerConractConfig(chainId).address}
                   enabled={!depositBDisabled}
                 >
                   <AddSectionReviewModalConcentrated

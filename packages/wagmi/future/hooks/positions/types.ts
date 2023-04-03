@@ -1,10 +1,11 @@
 import { BigNumber } from 'ethers'
 import { ChainId } from '@sushiswap/chain'
+import { V3ChainId } from '@sushiswap/v3-sdk'
 
 export interface ConcentratedLiquidityPosition {
   id: string
   address: string
-  chainId: ChainId
+  chainId: V3ChainId
   nonce: BigNumber
   tokenId: BigNumber
   operator: string

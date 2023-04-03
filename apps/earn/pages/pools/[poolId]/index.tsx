@@ -27,6 +27,8 @@ import { useTokenAmountDollarValues } from '../../../lib/hooks'
 import { formatUSD } from '@sushiswap/format'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
+import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
+import { isAddress } from 'ethers/lib/utils'
 
 enum Granularity {
   Day,
@@ -51,7 +53,13 @@ const queryParamsSchema = z.object({
     })
     .transform((val) => {
       const [chainId, poolId] = val.split(':')
-      return [+chainId, poolId] as [ChainId, string]
+      return [+chainId, poolId] as [V3ChainId, string]
+    })
+    .refine(([chainId]) => isV3ChainId(chainId), {
+      message: 'ChainId not supported.',
+    })
+    .refine(([, poolId]) => isAddress(poolId), {
+      message: 'PoolId not supported.',
     }),
   activeTab: z.string().optional(),
 })
@@ -110,7 +118,7 @@ const Pool: FC = () => {
     feeAmount,
   })
 
-  const { data: reserves, isLoading: isReservesLoading } = useConcentratedLiquidityPoolReserves({ pool })
+  const { data: reserves, isLoading: isReservesLoading } = useConcentratedLiquidityPoolReserves({ pool, chainId })
   const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
 
   return (

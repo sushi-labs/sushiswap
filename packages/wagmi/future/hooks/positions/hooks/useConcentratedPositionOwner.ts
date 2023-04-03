@@ -1,19 +1,18 @@
 import { useContractRead } from 'wagmi'
 import { BigNumber } from 'ethers'
-import { ChainId } from '@sushiswap/chain'
+import { V3ChainId } from '@sushiswap/v3-sdk'
+import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 
-// TODO Factory address
 export const useConcentratedPositionOwner = ({
   chainId,
   tokenId,
 }: {
-  chainId: ChainId | undefined
+  chainId: V3ChainId
   tokenId: number | string | undefined
 }) => {
   return useContractRead({
     chainId,
-    // TODO: Dynamic position manager address
-    address: '0xF0cBce1942A68BEB3d1b73F0dd86C8DCc363eF49',
+    address: getV3NonFungiblePositionManagerConractConfig(chainId).address,
     abi: [
       {
         inputs: [

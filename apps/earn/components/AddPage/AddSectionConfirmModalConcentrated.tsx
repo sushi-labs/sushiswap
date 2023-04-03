@@ -5,7 +5,7 @@ import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState
 import { useAccount, UserRejectedRequestError } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { createToast } from '@sushiswap/ui/future/components/toast'
-import { NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
+import { isV3ChainId, NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import {
@@ -15,6 +15,7 @@ import {
 import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
+import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
 
 interface AddSectionConfirmModalConcentratedProps
   extends Pick<ReturnType<typeof useConcentratedDerivedMintInfo>, 'noLiquidity' | 'position'> {
@@ -91,7 +92,7 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
 
   const prepare = useCallback(
     async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!chainId || !address || !token0 || !token1) return
+      if (!chainId || !address || !token0 || !token1 || !isV3ChainId(chainId)) return
 
       if (position && deadline) {
         const useNative = token0.isNative ? token0 : token1.isNative ? token1 : undefined
@@ -112,8 +113,7 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
               })
 
         setRequest({
-          // TODO make dynamic NonfungiblePositionManager address
-          to: '0xF0cBce1942A68BEB3d1b73F0dd86C8DCc363eF49',
+          to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
           data: calldata,
           value,
         })

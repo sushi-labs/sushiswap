@@ -1,16 +1,16 @@
-import { useBreakpoint, useEffectDebugger } from '@sushiswap/hooks'
+import { useBreakpoint } from '@sushiswap/hooks'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
 
-import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { NAME_COLUMN_V3, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL, PRICE_RANGE_COLUMN } from './Cells/columns'
 import { ConcentratedLiquidityPosition, useConcentratedLiquidityPositions } from '@sushiswap/wagmi/future/hooks'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Disclosure } from '@headlessui/react'
 import { classNames, Collapsible } from '@sushiswap/ui'
 import ConcentratedCurveIcon from '@sushiswap/ui/future/components/icons/ConcentratedCurveIcon'
+import { V3_SUPPORTED_CHAIN_IDS } from '../../../../config'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -18,7 +18,6 @@ const COLUMNS = [NAME_COLUMN_V3, PRICE_RANGE_COLUMN, POSITION_SIZE_CELL, POSITIO
 
 export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal' }> = ({ variant = 'default' }) => {
   const [hide, setHide] = useState(false)
-  const { chainIds } = usePoolFilters()
   const { address } = useAccount()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
@@ -30,7 +29,7 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal' }>
     data: positions,
     isLoading,
     isInitialLoading,
-  } = useConcentratedLiquidityPositions({ account: address, chainIds })
+  } = useConcentratedLiquidityPositions({ account: address, chainIds: V3_SUPPORTED_CHAIN_IDS })
 
   const _positions = useMemo(() => {
     return positions?.filter((el) => (hide ? !el.liquidity?.eq('0') : true))
