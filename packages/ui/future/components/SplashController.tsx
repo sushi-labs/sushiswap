@@ -13,6 +13,8 @@ export const SplashController: FC<{ children: ReactNode; show?: boolean }> = ({ 
           <Transition
             appear
             show={true}
+            unmount={false}
+            static
             enter="ease-in-out duration-[1000ms]"
             enterFrom="scale-1 saturate-0"
             enterTo="scale-[0.75] saturate-100"

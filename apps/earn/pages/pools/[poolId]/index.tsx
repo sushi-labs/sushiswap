@@ -99,7 +99,7 @@ const Pool: FC = () => {
         name: poolStats.token1.name,
         symbol: poolStats.token1.symbol,
       }),
-      poolStats.swapFee * 10000,
+      poolStats.swapFee * 1000000,
     ]
   }, [poolStats])
 

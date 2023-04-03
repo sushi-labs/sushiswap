@@ -1,4 +1,4 @@
-import { useBreakpoint } from '@sushiswap/hooks'
+import { useBreakpoint, useEffectDebugger } from '@sushiswap/hooks'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
@@ -26,7 +26,11 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal' }>
   // const [sorting, setSorting] = useState<SortingState>([{ id: 'value', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
 
-  const { data: positions, isLoading } = useConcentratedLiquidityPositions({ account: address, chainIds })
+  const {
+    data: positions,
+    isLoading,
+    isInitialLoading,
+  } = useConcentratedLiquidityPositions({ account: address, chainIds })
 
   const _positions = useMemo(() => {
     return positions?.filter((el) => (hide ? !el.liquidity?.eq('0') : true))
@@ -65,7 +69,7 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal' }>
     return (
       <GenericTable<ConcentratedLiquidityPosition>
         table={table}
-        loading={isLoading}
+        loading={isInitialLoading}
         placeholder="No positions found"
         pageSize={!_positions ? 5 : _positions?.length}
         linkFormatter={rowLink}
@@ -116,7 +120,7 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal' }>
           <Collapsible open={open}>
             <GenericTable<ConcentratedLiquidityPosition>
               table={table}
-              loading={isLoading}
+              loading={Boolean(isLoading && address)}
               placeholder="No positions found"
               pageSize={!_positions ? 5 : _positions?.length}
               linkFormatter={rowLink}

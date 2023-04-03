@@ -21,7 +21,15 @@ export type IconButtonComponent = <C extends React.ElementType = 'button'>(
 
 export const IconButton: IconButtonComponent = React.forwardRef(
   <Tag extends React.ElementType = 'button'>(
-    { as, icon: Icon, iconProps, className, padding = 16, description, ...rest }: IconButtonProps<Tag>,
+    {
+      as,
+      icon: Icon,
+      iconProps: { transparent, ...iconProps },
+      className,
+      padding = 16,
+      description,
+      ...rest
+    }: IconButtonProps<Tag>,
     ref?: PolymorphicRef<Tag>
   ) => {
     const Component = as || 'button'
@@ -37,7 +45,7 @@ export const IconButton: IconButtonComponent = React.forwardRef(
       >
         <span
           className={classNames(
-            iconProps?.transparent ? '' : 'bg-black/[0.08] dark:bg-white/[0.08]',
+            transparent ? '' : 'bg-black/[0.08] dark:bg-white/[0.08]',
             'absolute rounded-full hover:bg-black/[0.12] hover:dark:bg-white/[0.12]'
           )}
           style={{ width: iconProps.width, height: iconProps.height, padding }}
