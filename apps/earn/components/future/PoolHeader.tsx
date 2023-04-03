@@ -62,7 +62,7 @@ export const PoolHeader: FC<PoolHeader> = ({ title, isLoading, pool, chainId, ap
             {title && title}
             {unwrapToken(pool.token0).symbol}/{unwrapToken(pool.token1).symbol}
           </h1>
-          <p className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-400">
+          <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-400">
             {apy ? (
               <>
                 <Tooltip description={`${formatNumber(apy.fees)}% fee APY + ${formatNumber(apy.rewards)}% reward APY`}>
@@ -92,7 +92,7 @@ export const PoolHeader: FC<PoolHeader> = ({ title, isLoading, pool, chainId, ap
             ) : (
               <></>
             )}
-          </p>
+          </div>
         </div>
       </div>
     )
