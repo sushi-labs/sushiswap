@@ -723,7 +723,7 @@ export class TridentProvider extends LiquidityProvider {
 
     stablePoolCodesToCreate.forEach((poolCode, i) => {
       const pool = poolCode.pool as StableSwapRPool
-      const total0 = rebases.get(pool.token0.address)
+      const total0 = rebases.get(pool.token0.address.toLowerCase())
 
       if (total0) {
         const current = pool.getTotal0()
@@ -732,7 +732,7 @@ export class TridentProvider extends LiquidityProvider {
         }
       }
 
-      const total1 = rebases.get(pool.token1.address)
+      const total1 = rebases.get(pool.token1.address.toLowerCase())
       if (total1) {
         const current = pool.getTotal1()
         if (!total1.elastic.eq(current.elastic) || !total1.base.eq(current.base)) {
