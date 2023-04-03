@@ -6,7 +6,7 @@ import { useMemo } from 'react'
 
 interface Params {
   chainId: ChainId
-  amounts: (Amount<Type> | undefined)[]
+  amounts: (Amount<Type> | undefined)[] | null | undefined
 }
 
 type UseTokenAmountDollarValues = (params: Params) => number[]
@@ -15,6 +15,8 @@ export const useTokenAmountDollarValues: UseTokenAmountDollarValues = ({ chainId
   const { data: prices } = usePrices({ chainId })
 
   return useMemo(() => {
+    if (!amounts) return []
+
     return amounts.map((amount) => {
       if (!amount?.greaterThan(ZERO) || !prices?.[amount.currency.wrapped.address]) return 0
       const price = Number(Number(amount.toExact()) * Number(prices[amount.currency.wrapped.address].toFixed(10)))

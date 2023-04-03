@@ -69,7 +69,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
       existingPosition: undefined,
     })
 
-  const { onLeftRangeInput, onRightRangeInput, onStartPriceInput } = useConcentratedMintActionHandlers()
+  const { onLeftRangeInput, onRightRangeInput, onStartPriceInput, resetMintState } = useConcentratedMintActionHandlers()
   const { startPriceTypedValue } = useConcentratedMintState()
   const { data: existingPosition, isLoading: positionLoading } = useConcentratedLiquidityPositionsFromTokenId({
     chainId,
@@ -107,30 +107,21 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         </>
       }
     >
-      <div>
+      <div className="bg-white dark:bg-white/[0.02] rounded-xl p-4">
         <div className="flex flex-col gap-3">
-          <div className="flex lg:hidden justify-end">
-            {isLoading || !pool || !token0 || !token1 ? (
-              <Skeleton.Text fontSize="text-xs" />
-            ) : (
-              <div
-                onClick={() => setInvert((prev) => !prev)}
-                role="button"
-                className="text-xs flex items-center font-semibold gap-1.5 rounded-xl text-blue hover:text-blue-600"
-              >
-                <SwitchHorizontalIcon width={16} height={16} />
-                <div className="flex items-baseline gap-1.5">
-                  {invert ? token1.symbol : token0.symbol} ={' '}
-                  {pool.priceOf(invert ? token1.wrapped : token0.wrapped)?.toSignificant(4)}{' '}
-                  {invert ? token0.symbol : token1.symbol}
-                  <span className="text-xs font-normal">${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)}</span>
-                </div>
-              </div>
-            )}
+          <div className="absolute z-10 flex justify-center">
+            <button
+              className="text-sm font-medium text-blue hover:text-blue-600 h-[28px]"
+              color="blue"
+              onClick={resetMintState}
+            >
+              Clear all
+            </button>
           </div>
           {noLiquidity ? (
             <div className="pb-2">
               <Input.Text
+                className="!bg-gray-100"
                 label="Start price"
                 value={startPriceTypedValue}
                 onChange={onStartPriceInput}
@@ -176,8 +167,27 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
           {/*    })}*/}
           {/*</RadioGroup>*/}
           <div className="flex items-center justify-between gap-2">
+            <div className="flex lg:hidden justify-end">
+              {isLoading || !pool || !token0 || !token1 ? (
+                <Skeleton.Text fontSize="text-xs" />
+              ) : (
+                <div
+                  onClick={() => setInvert((prev) => !prev)}
+                  role="button"
+                  className="text-xs flex items-center font-semibold gap-1.5 rounded-xl text-blue hover:text-blue-600"
+                >
+                  <SwitchHorizontalIcon width={16} height={16} />
+                  <div className="flex items-baseline gap-1.5">
+                    {invert ? token1.symbol : token0.symbol} ={' '}
+                    {pool.priceOf(invert ? token1.wrapped : token0.wrapped)?.toSignificant(4)}{' '}
+                    {invert ? token0.symbol : token1.symbol}
+                    <span className="text-xs font-normal">${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)}</span>
+                  </div>
+                </div>
+              )}
+            </div>
             {switchTokens ? (
-              <div className="flex gap-2 rounded-xl bg-white dark:bg-white/[0.02] p-1">
+              <div className="flex gap-2 rounded-xl bg-gray-100 dark:bg-white/[0.02] p-1">
                 <Button
                   onClick={switchTokens}
                   variant={isSorted ? 'outlined' : 'empty'}
@@ -322,7 +332,7 @@ export const PriceBlock: FC<PriceBlockProps> = ({
       onFocus={handleOnFocus}
       className={classNames(
         active ? 'ring-2 ring-blue' : '',
-        'flex flex-col gap-2 w-full bg-white dark:bg-white/[0.04] rounded-lg p-3'
+        'flex flex-col gap-2 w-full bg-gray-100 dark:bg-white/[0.04] rounded-lg p-3'
       )}
     >
       <p className="font-medium text-sm text-gray-600 dark:text-slate-400 text-slate-600">{label}</p>

@@ -135,18 +135,6 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
               y2={innerHeight}
             />
 
-            <line
-              opacity={1}
-              strokeWidth={1}
-              stroke="currentColor"
-              fill="none"
-              className="text-gray-900 dark:text-slate-500"
-              x1={0}
-              y1={0}
-              x2={innerWidth}
-              y2={0}
-            />
-
             <AxisBottom xScale={xScale} innerHeight={innerHeight} />
           </g>
 
