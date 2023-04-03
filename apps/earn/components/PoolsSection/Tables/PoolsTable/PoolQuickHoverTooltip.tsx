@@ -26,7 +26,7 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
           </span>
         </span>
       </div>
-      <div className="flex">
+      <div className="flex gap-2">
         <Link.Internal
           href={row.type === 'CONCENTRATED_LIQUIDITY_POOL' ? `/pools/${row.id}?activeTab=new` : `/${row.id}/add`}
           passHref={true}
