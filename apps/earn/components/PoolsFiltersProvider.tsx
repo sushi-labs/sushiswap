@@ -1,8 +1,12 @@
 import { ChainId } from '@sushiswap/chain'
-import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, FC, ReactNode, useCallback, useContext, useMemo } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 import { AVAILABLE_POOL_TYPE_MAP, AVAILABLE_VERSION_MAP } from '../lib/constants'
+import { z } from 'zod'
+import { parseArgs, PoolType, PoolVersion } from '@sushiswap/client'
+import { useRouter } from 'next/router'
+import stringify from 'fast-json-stable-stringify'
 
 enum Filters {
   tokenSymbols = 'tokenSymbols',
@@ -40,22 +44,58 @@ const defaultFilters: PoolFilters = {
   [Filters.incentivizedOnly]: false,
 }
 
-export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children, passedFilters }) => {
-  const [filters, _setFilters] = useState<PoolFilters>({ ...defaultFilters, ...passedFilters })
+const schema = z.object({
+  tokenSymbols: z
+    .string()
+    .optional()
+    .transform((tokenSymbols) => {
+      if (tokenSymbols === '') return undefined
 
-  const setFilters = useCallback((filters: PoolFilters) => {
-    _setFilters((prevState) => ({
-      ...prevState,
-      ...filters,
-    }))
-  }, [])
+      return tokenSymbols?.split(',')
+    }),
+  chainIds: z
+    .string()
+    .optional()
+    .transform((chainIds) =>
+      chainIds ? chainIds.split(',').map((chainId) => Number(chainId)) : defaultFilters.chainIds
+    ),
+  poolTypes: z
+    .string()
+    .optional()
+    .transform((poolTypes) => poolTypes?.split(',') as PoolType[]),
+  poolVersions: z
+    .string()
+    .optional()
+    .transform((poolVersions) => poolVersions?.split(',') as PoolVersion[]),
+  incentivizedOnly: z
+    .string()
+    .optional()
+    .transform((e) => e === 'true'),
+})
 
-  useEffect(() => setFilters({ ...defaultFilters, ...passedFilters }), [passedFilters, setFilters])
+export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => {
+  const { query, push } = useRouter()
+
+  const parsed = useMemo(() => {
+    if (!query) return defaultFilters
+
+    return { ...defaultFilters, ...schema.parse(query) }
+  }, [query])
+
+  const setFilters = useCallback(
+    (filters: PoolFilters) => {
+      const newFilters = { ...parsed, ...filters }
+
+      push(parseArgs(newFilters), undefined, { shallow: true })
+    },
+    // eslint-disable-next-line
+    [stringify(parsed)]
+  )
 
   return (
     <FilterContext.Provider
       value={{
-        ...filters,
+        ...parsed,
         setFilters,
       }}
     >
