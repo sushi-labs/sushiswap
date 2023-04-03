@@ -85,6 +85,10 @@ export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady }) => {
   }, [isMd, isSm])
 
   const rowLink = useCallback((row: Pool) => {
+    if (row.type === 'CONCENTRATED_LIQUIDITY_POOL') {
+      return `/pools/${row.id}`
+    }
+
     return `/${row.id}`
   }, [])
 

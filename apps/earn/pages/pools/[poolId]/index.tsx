@@ -53,6 +53,7 @@ const queryParamsSchema = z.object({
       const [chainId, poolId] = val.split(':')
       return [+chainId, poolId] as [ChainId, string]
     }),
+  activeTab: z.string().optional(),
 })
 
 enum SelectedTab {
@@ -64,12 +65,21 @@ enum SelectedTab {
 const Pool: FC = () => {
   const { address } = useAccount()
   const { query } = useRouter()
-  const [tab, setTab] = useState<SelectedTab>(SelectedTab.Analytics)
-  const [granularity, setGranularity] = useState<Granularity>(Granularity.Day)
 
   const {
     poolId: [chainId, poolId],
+    activeTab,
   } = queryParamsSchema.parse(query)
+
+  const [tab, setTab] = useState<SelectedTab>(
+    activeTab === 'new'
+      ? SelectedTab.NewPosition
+      : activeTab === 'myPositions'
+      ? SelectedTab.ManagePosition
+      : SelectedTab.Analytics
+  )
+
+  const [granularity, setGranularity] = useState<Granularity>(Granularity.Day)
 
   const { data: poolStats } = useConcentratedLiquidityPoolStats({ poolAddress: poolId })
   const [token0, token1, feeAmount] = useMemo(() => {

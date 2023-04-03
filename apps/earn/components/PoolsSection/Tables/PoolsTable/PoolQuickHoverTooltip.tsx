@@ -6,7 +6,7 @@ import React, { FC } from 'react'
 import { incentiveRewardToToken } from '../../../../lib/functions'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import Button from '@sushiswap/ui/future/components/button/Button'
-import { PlusIcon } from '@heroicons/react/solid'
+import { PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
 
 interface PoolQuickHoverTooltipProps {
   row: Pool
@@ -27,11 +27,21 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
         </span>
       </div>
       <div className="flex">
-        <Link.Internal href={`/${row.id}/add`} passHref={true}>
+        <Link.Internal
+          href={row.type === 'CONCENTRATED_LIQUIDITY_POOL' ? `/pools/${row.id}?activeTab=new` : `/${row.id}/add`}
+          passHref={true}
+        >
           <Button as="a" size="xs" variant="outlined">
             <PlusIcon width={16} height={16} /> Deposit
           </Button>
         </Link.Internal>
+        {row.type === 'CONCENTRATED_LIQUIDITY_POOL' && (
+          <Link.Internal href={`/pools/${row.id}?activeTab=myPositions`} passHref={true}>
+            <Button as="a" size="xs" variant="outlined">
+              <UserCircleIcon width={16} height={16} /> My Positions
+            </Button>
+          </Link.Internal>
+        )}
       </div>
 
       {!!row?.incentives?.length && (
