@@ -23,12 +23,12 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 
-const LINKS: BreadcrumbLink[] = [
-  {
-    href: `/add`,
-    label: `Add`,
-  },
-]
+// const LINKS: BreadcrumbLink[] = [
+//   {
+//     href: `/add`,
+//     label: `Add`,
+//   },
+// ]
 
 // // This function gets called at build time on server-side.
 // // It may be called again, on a serverless function, if
@@ -63,7 +63,7 @@ const LINKS: BreadcrumbLink[] = [
 export function Add() {
   return (
     <SWRConfig>
-      <Layout breadcrumbs={LINKS}>
+      <Layout>
         <div className="flex flex-col gap-2">
           <Link className="group flex gap-4 items-center mb-2" href="/" shallow={true}>
             <IconButton
@@ -80,7 +80,7 @@ export function Add() {
           </Link>
           <h1 className="text-3xl font-medium mt-2">Add Liquidity</h1>
           <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
-            Create a new pool or new liquidity position on an existing pool.
+            Create a new pool or create a liquidity position on an existing pool.
           </h1>
         </div>
         <div className="h-0.5 w-full bg-gray-900/5 dark:bg-slate-200/5 my-10" />
