@@ -188,7 +188,7 @@ const _Add: FC = () => {
             {!isLoading && !pool ? (
               <span className="">N/A</span>
             ) : isInitialLoading || !pool || !token0 || !token1 ? (
-              <Skeleton.Text />
+              <Skeleton.Text className="w-[120px]" />
             ) : (
               <div
                 onClick={() => setInvert((prev) => !prev)}
