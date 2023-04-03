@@ -331,7 +331,7 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
       aprParams.set(pair.id, pair.feesUSD)
     })
   }
-  console.log(`V3, chainId: ${queryResult.chainId}: created apr data for ${aprParams.size} pools`)
+
   const tokens: Prisma.TokenCreateManyInput[] = []
   const poolsTransformed = queryResult.data.currentPools
     .map((batch) => {
@@ -363,7 +363,7 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
           .slice(0, 15)
           .concat('-')
           .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
-        const swapFee = Number(pair.feeTier) / 10_000
+        const swapFee = Number(pair.feeTier) / 1_000_000
         const feeApr = aprParams.has(pair.id)
           ? calculateFeeApr(aprParams.get(pair.id), pair.feesUSD, pair.totalValueLockedUSD)
           : 0
