@@ -112,19 +112,20 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               />
             </div>
           ) : (
-            <LiquidityChartRangeInput
-              chainId={chainId}
-              currencyA={token0}
-              currencyB={token1}
-              feeAmount={feeAmount}
-              ticksAtLimit={ticksAtLimit}
-              price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
-              priceLower={priceLower}
-              priceUpper={priceUpper}
-              onLeftRangeInput={onLeftRangeInput}
-              onRightRangeInput={onRightRangeInput}
-              interactive={!hasExistingPosition}
-            />
+            // <LiquidityChartRangeInput
+            //   chainId={chainId}
+            //   currencyA={token0}
+            //   currencyB={token1}
+            //   feeAmount={feeAmount}
+            //   ticksAtLimit={ticksAtLimit}
+            //   price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
+            //   priceLower={priceLower}
+            //   priceUpper={priceUpper}
+            //   onLeftRangeInput={onLeftRangeInput}
+            //   onRightRangeInput={onRightRangeInput}
+            //   interactive={!hasExistingPosition}
+            // />
+            <></>
           )}
         </div>
         <div className="flex flex-col gap-3 pt-4">
