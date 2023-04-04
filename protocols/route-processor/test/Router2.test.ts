@@ -1,3 +1,4 @@
+import { Provider } from '@ethersproject/providers'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
@@ -20,20 +21,13 @@ import {
   USDT_ADDRESS,
   WNATIVE,
 } from '@sushiswap/currency'
-import {
-  DataFetcher,
-  getRoutingAnyChartSankeyData,
-  LiquidityProviders,
-  PoolFilter,
-  Router,
-  RPParams,
-} from '@sushiswap/router'
-import { BridgeBento, getBigNumber, MultiRoute, RPool, StableSwapRPool } from '@sushiswap/tines'
+import { DataFetcher, LiquidityProviders, PoolFilter, Router } from '@sushiswap/router'
+import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
+import { BridgeBento, getBigNumber, RPool, StableSwapRPool, toShareBN } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
 import seedrandom from 'seedrandom'
-
 import { createPublicClient } from 'viem'
 import { custom } from 'viem'
 import { hardhat } from 'viem/chains'
@@ -49,17 +43,73 @@ function getRandomExp(rnd: () => number, min: number, max: number) {
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
-class Waiter {
-  resolved = false
+function closeValues(_a: number | BigNumber, _b: number | BigNumber, accuracy: number, absolute: number): boolean {
+  const a: number = typeof _a == 'number' ? _a : parseInt(_a.toString())
+  const b: number = typeof _b == 'number' ? _b : parseInt(_b.toString())
+  if (accuracy === 0) return a === b
+  if (Math.abs(a - b) < absolute) return true
+  // if (Math.abs(a) < 1 / accuracy) return Math.abs(a - b) <= 10
+  // if (Math.abs(b) < 1 / accuracy) return Math.abs(a - b) <= 10
+  return Math.abs(a / b - 1) < accuracy
+}
 
-  async wait() {
-    while (!this.resolved) {
-      await delay(500)
-    }
+function expectCloseValues(
+  _a: number | BigNumber,
+  _b: number | BigNumber,
+  accuracy: number,
+  absolute: number,
+  logInfoIfFalse = ''
+) {
+  const res = closeValues(_a, _b, accuracy, absolute)
+  if (!res) {
+    console.log(`Expected close: ${_a}, ${_b}, ${accuracy} ${logInfoIfFalse}`)
+    // debugger
+    expect(res).equal(true)
   }
+  return res
+}
 
-  resolve() {
-    this.resolved = true
+export async function checkPoolsState(pools: Map<string, PoolCode>, env: TestEnvironment) {
+  const bentoAddress = bentoBoxV1Address[env.chainId as BentoBoxV1ChainId]
+  const bentoContract = new Contract(
+    bentoAddress,
+    ['function totals(address) view returns (uint128, uint128)'],
+    env.user
+  )
+
+  const addresses = Array.from(pools.keys())
+  for (let i = 0; i < addresses.length; ++i) {
+    const pool = (pools.get(addresses[i]) as PoolCode).pool
+    if (pool instanceof StableSwapRPool) {
+      const addr = addresses[i]
+      const poolContract = new Contract(addr, ['function getReserves() view returns (uint256, uint256)'], env.user)
+
+      const totals0 = await bentoContract.totals(pool.token0.address)
+      const token0 = pool.token0.symbol
+      expectCloseValues(pool.getTotal0().elastic, totals0[0], 1e-10, 10, `StableSwapRPool ${addr} ${token0}.elastic`)
+      expectCloseValues(pool.getTotal0().base, totals0[1], 1e-10, 10, `StableSwapRPool ${addr} ${token0}.base`)
+
+      const totals1 = await bentoContract.totals(pool.token1.address)
+      const token1 = pool.token1.symbol
+      expectCloseValues(pool.getTotal1().elastic, totals1[0], 1e-10, 10, `StableSwapRPool ${addr} ${token1}.elastic`)
+      expectCloseValues(pool.getTotal1().base, totals1[1], 1e-10, 10, `StableSwapRPool ${addr} ${token1}.base`)
+
+      const reserves = await poolContract.getReserves()
+      expectCloseValues(
+        pool.getReserve0(),
+        toShareBN(reserves[0], pool.getTotal0()),
+        1e-10,
+        1e6,
+        `StableSwapRPool ${addr} reserve0`
+      )
+      expectCloseValues(
+        pool.getReserve1(),
+        toShareBN(reserves[1], pool.getTotal1()),
+        1e-10,
+        1e6,
+        `StableSwapRPool ${addr} reserve1`
+      )
+    }
   }
 }
 
@@ -141,8 +191,13 @@ async function makeSwap(
 
   const pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
 
+  await checkPoolsState(pcMap, env)
+
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
-  // console.log("ROUTE:", route.legs.map(l => l.tokenFrom.symbol + " -> " + l.tokenTo.symbol))
+  // console.log(
+  //   'ROUTE:',
+  //   route.legs.map((l) => l.tokenFrom.symbol + ' -> ' + l.tokenTo.symbol + '  ' + l.poolAddress)
+  // )
   const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
   if (rpParams === undefined) return
 
