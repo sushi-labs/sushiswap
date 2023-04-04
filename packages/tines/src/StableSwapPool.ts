@@ -109,6 +109,12 @@ export class StableSwapRPool extends RPool {
     this.reserve1 = realReservesToAdjusted(res1, this.total1.rebaseBN, this.decimals1)
   }
 
+  updateReservesAmounts(res0: BigNumber, res1: BigNumber) {
+    this.k = BigNumber.from(0)
+    this.reserve0 = res0.mul(1e12).div(getBigNumber(Math.pow(10, this.decimals0)))
+    this.reserve1 = res1.mul(1e12).div(getBigNumber(Math.pow(10, this.decimals1)))
+  }
+
   getTotal0() {
     return this.total0.rebaseBN
   }

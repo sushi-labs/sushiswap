@@ -748,7 +748,8 @@ export class TridentProvider extends LiquidityProvider {
       if (!res0 || !res1) {
         return
       }
-      pool.updateReserves(toShareBN(res0BN, pool.getTotal0()), toShareBN(res1BN, pool.getTotal1()))
+      //pool.updateReserves(toShareBN(res0BN, pool.getTotal0()), toShareBN(res1BN, pool.getTotal1()))
+      pool.updateReservesAmounts(res0BN, res1BN)
 
       this.onDemandStablePools.set(pool.address, { poolCode, validUntilTimestamp })
 
@@ -1066,13 +1067,10 @@ export class TridentProvider extends LiquidityProvider {
     poolCodes.forEach((pc, i) => {
       const pool = pc.pool as StableSwapRPool
       const total0 = rebases.get(pool.token0.address.toLowerCase())
-      let updatedTotal0 = false
-      let updatedTotal1 = false
       if (total0) {
         const current = pool.getTotal0()
         if (!total0.elastic.eq(current.elastic) || !total0.base.eq(current.base)) {
           pool.updateTotal0(total0)
-          updatedTotal0 = true
         }
       }
       const total1 = rebases.get(pool.token1.address.toLowerCase())
@@ -1080,7 +1078,6 @@ export class TridentProvider extends LiquidityProvider {
         const current = pool.getTotal1()
         if (!total1.elastic.eq(current.elastic) || !total1.base.eq(current.base)) {
           pool.updateTotal1(total1)
-          updatedTotal1 = true
         }
       }
       const res0 = reserves?.[i]?.result?.[0]
@@ -1092,9 +1089,7 @@ export class TridentProvider extends LiquidityProvider {
         return
       }
 
-      if (updatedTotal0 || updatedTotal1) {
-        pool.updateReserves(toShareBN(res0BN, pool.getTotal0()), toShareBN(res1BN, pool.getTotal1()))
-      }
+      pool.updateReservesAmounts(res0BN, res1BN)
       // Always updating because reserve0 and 1 is being converted to amount and adjusted to wei using realReservesToAdjusted()
       // but the res0 and res1 are not adjusted.
     })
