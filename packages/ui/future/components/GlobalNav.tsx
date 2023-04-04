@@ -10,6 +10,7 @@ import { SushiIcon } from './icons'
 import { MaxWidth } from '../../container'
 import Container from './Container'
 import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
+import { useRouter } from 'next/router'
 
 const ITEMS = [
   {
@@ -164,8 +165,11 @@ export const MenuItem: FC<{ subtitle: string; type: AppType }> = ({ subtitle, ty
 type NavLinkProps = { title: string; href: string }
 
 export const NavLink: FC<NavLinkProps> = ({ title, href }) => {
+  const { basePath } = useRouter()
+  const _href = href.split('/').pop() as string
+
   return (
-    <Button as="a" color="default" href={href} variant="empty" size="md">
+    <Button as="a" color="default" href={href} variant={basePath.includes(_href) ? 'outlined' : 'empty'} size="md">
       {title}
     </Button>
   )

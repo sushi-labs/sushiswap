@@ -27,6 +27,7 @@ interface AddSectionReviewModalConcentratedProps
   existingPosition: Position | undefined
   tokenId: number | string | undefined
   children({ open, setOpen }: { open: boolean; setOpen(open: boolean): void }): ReactNode
+  successLink?: string
 }
 
 export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentratedProps> = ({
@@ -44,6 +45,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
   pricesAtTicks,
   ticksAtLimit,
   tokenId,
+  successLink,
 }) => {
   const [open, setOpen] = useState(false)
 
@@ -191,6 +193,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
               token1={token1}
               chainId={chainId}
               tokenId={tokenId}
+              successLink={successLink}
             >
               {({ onClick, isWritePending, isLoading, isError, error, isConfirming }) => (
                 <div className="space-y-4">

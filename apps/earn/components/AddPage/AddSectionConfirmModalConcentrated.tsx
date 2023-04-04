@@ -36,6 +36,7 @@ interface AddSectionConfirmModalConcentratedProps
   chainId: ChainId
   tokenId: number | string | undefined
   existingPosition: Position | undefined
+  successLink?: string
 }
 
 export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcentratedProps> = ({
@@ -48,6 +49,7 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
   position,
   closeReview,
   existingPosition,
+  successLink,
 }) => {
   const [dialogState, setDialogState] = useState<ConfirmationDialogState>(ConfirmationDialogState.Undefined)
   const [open, setOpen] = useState(false)
@@ -197,7 +199,8 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
             You successfully added liquidity to the {token0?.symbol}/{token1?.symbol} pair
           </h1>
         }
-        buttonSuccessMessage="Close"
+        buttonSuccessMessage="View position"
+        buttonSuccessLink={successLink}
       />
     </>
   )

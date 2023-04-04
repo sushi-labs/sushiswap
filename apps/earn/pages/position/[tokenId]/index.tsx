@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { ArrowLeftIcon, MinusIcon, PlusIcon } from '@heroicons/react/solid'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
-import { ChainId } from '@sushiswap/chain'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
 import {
   useConcentratedLiquidityPool,

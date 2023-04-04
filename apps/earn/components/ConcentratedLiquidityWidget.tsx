@@ -29,6 +29,7 @@ interface ConcentratedLiquidityWidget {
   tokenId: number | string | undefined
   existingPosition: Position | undefined
   onChange?(val: string, input: 'a' | 'b'): void
+  successLink?: string
 }
 
 export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
@@ -43,6 +44,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
   tokenId,
   existingPosition,
   onChange,
+  successLink,
 }) => {
   const { onFieldAInput, onFieldBInput } = useConcentratedMintActionHandlers()
   const { independentField, typedValue } = useConcentratedMintState()
@@ -263,6 +265,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                     ticksAtLimit={ticksAtLimit}
                     tokenId={tokenId}
                     existingPosition={existingPosition}
+                    successLink={successLink}
                   >
                     {({ setOpen }) => (
                       <Button fullWidth onClick={() => setOpen(true)} size="xl">
