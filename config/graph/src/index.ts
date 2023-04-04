@@ -37,7 +37,7 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
 
 export type SushiSwapChainId = (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
 
-export const SUSHISWAP_V3_ENABLED_NETWORKS = [ChainId.ARBITRUM]
+export const SUSHISWAP_V3_ENABLED_NETWORKS = [ChainId.ARBITRUM, ]
 export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_ENABLED_NETWORKS)[number]
 
 export const SWAP_ENABLED_NETWORKS = Array.from(
@@ -196,7 +196,14 @@ export const SUSHISWAP_SUBGRAPH_NAME = {
 } as const
 
 export const SUSHISWAP_V3_SUBGRAPH_NAME = {
-  [ChainId.ARBITRUM]: 'olastenberg/v3-arbitrum',
+  // [ChainId.ARBITRUM_NOVA]: 'sushi-v3/v3-arbitrum-nova', // NOT DEPLOYED YET.
+  [ChainId.ARBITRUM]: 'sushi-v3/v3-arbitrum',
+  [ChainId.AVALANCHE]: 'sushi-v3/v3-avalanche',
+  [ChainId.BSC]: 'sushi-v3/v3-bsc',
+  [ChainId.FANTOM]: 'sushi-v3/v3-fantom',
+  [ChainId.FUSE]: 'sushi-v3/v3-fuse',
+  [ChainId.MOONRIVER]: 'sushi-v3/v3-moonriver',
+  [ChainId.POLYGON]: 'sushi-v3/v3-polygon',
 }
 
 export const TRIDENT_SUBGRAPH_NAME = {

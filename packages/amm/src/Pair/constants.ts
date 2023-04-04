@@ -67,13 +67,3 @@ export const FACTORY_ADDRESS: Record<string | number, string> = {
   [ChainId.BOBA_AVAX]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
   [ChainId.BOBA_BNB]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
 }
-
-/**
- * The default factory enabled fee amounts, denominated in hundredths of bips.
- */
-export enum FeeAmount {
-  LOWEST = 100,
-  LOW = 500,
-  MEDIUM = 3000,
-  HIGH = 10000,
-}
