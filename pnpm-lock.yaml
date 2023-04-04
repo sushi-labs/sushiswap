@@ -8508,6 +8508,15 @@ packages:
       tslib: 2.5.0
     dev: true
 
+  /@graphql-tools/merge/8.4.0:
+    resolution: {integrity: sha512-3XYCWe0d3I4F1azNj1CdShlbHfTIfiDgj00R9uvFH8tHKh7i1IWN3F7QQYovcHKhayaR6zPok3YYMESYQcBoaA==}
+    peerDependencies:
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+    dependencies:
+      '@graphql-tools/utils': 9.2.1
+      tslib: 2.5.0
+    dev: true
+
   /@graphql-tools/merge/8.4.0_graphql@16.6.0:
     resolution: {integrity: sha512-3XYCWe0d3I4F1azNj1CdShlbHfTIfiDgj00R9uvFH8tHKh7i1IWN3F7QQYovcHKhayaR6zPok3YYMESYQcBoaA==}
     peerDependencies:
@@ -8693,16 +8702,15 @@ packages:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
       '@ardatan/sync-fetch': 0.0.1
-      '@graphql-tools/delegate': 9.0.28_graphql@16.6.0
-      '@graphql-tools/executor-graphql-ws': 0.0.11_graphql@16.6.0
-      '@graphql-tools/executor-http': 0.1.9_3q6avhgaaacez4ctqk4xik246q
-      '@graphql-tools/executor-legacy-ws': 0.0.9_graphql@16.6.0
-      '@graphql-tools/utils': 9.2.1_graphql@16.6.0
-      '@graphql-tools/wrap': 9.3.8_graphql@16.6.0
-      '@types/ws': 8.5.4
+      '@graphql-tools/delegate': 9.0.28
+      '@graphql-tools/executor-graphql-ws': 0.0.11
+      '@graphql-tools/executor-http': 0.1.8_@types+node@18.11.18
+      '@graphql-tools/executor-legacy-ws': 0.0.9
+      '@graphql-tools/utils': 9.2.1
+      '@graphql-tools/wrap': 9.3.8
+      '@types/ws': 8.5.3
       '@whatwg-node/fetch': 0.8.4
-      graphql: 16.6.0
-      isomorphic-ws: 5.0.0_ws@8.13.0
+      isomorphic-ws: 5.0.0_ws@8.12.1
       tslib: 2.5.0
       value-or-promise: 1.0.12
       ws: 8.13.0
@@ -8724,7 +8732,7 @@ packages:
       '@graphql-tools/executor-legacy-ws': 0.0.9_graphql@16.6.0
       '@graphql-tools/utils': 9.2.1_graphql@16.6.0
       '@graphql-tools/wrap': 9.3.8_graphql@16.6.0
-      '@types/ws': 8.5.4
+      '@types/ws': 8.5.3
       '@whatwg-node/fetch': 0.8.4
       graphql: 16.6.0
       isomorphic-ws: 5.0.0_ws@8.13.0
@@ -8743,15 +8751,16 @@ packages:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
       '@ardatan/sync-fetch': 0.0.1
-      '@graphql-tools/delegate': 9.0.28
-      '@graphql-tools/executor-graphql-ws': 0.0.12
-      '@graphql-tools/executor-http': 0.1.9_@types+node@18.15.11
-      '@graphql-tools/executor-legacy-ws': 0.0.9
-      '@graphql-tools/utils': 9.2.1
-      '@graphql-tools/wrap': 9.3.8
-      '@types/ws': 8.5.4
+      '@graphql-tools/delegate': 9.0.28_graphql@16.6.0
+      '@graphql-tools/executor-graphql-ws': 0.0.11_graphql@16.6.0
+      '@graphql-tools/executor-http': 0.1.8_ykzowzmb7rcumunkscnbisnkom
+      '@graphql-tools/executor-legacy-ws': 0.0.9_graphql@16.6.0
+      '@graphql-tools/utils': 9.2.1_graphql@16.6.0
+      '@graphql-tools/wrap': 9.3.8_graphql@16.6.0
+      '@types/ws': 8.5.3
       '@whatwg-node/fetch': 0.8.4
-      isomorphic-ws: 5.0.0_ws@8.13.0
+      graphql: 16.6.0
+      isomorphic-ws: 5.0.0_ws@8.12.1
       tslib: 2.5.0
       value-or-promise: 1.0.12
       ws: 8.13.0
@@ -21268,12 +21277,12 @@ packages:
     dependencies:
       graphql: 16.6.0
 
-  /graphql-request/5.2.0:
-    resolution: {integrity: sha512-pLhKIvnMyBERL0dtFI3medKqWOz/RhHdcgbZ+hMMIb32mEPa5MJSzS4AuXxfI4sRAu6JVVk5tvXuGfCWl9JYWQ==}
+  /graphql-request/5.1.0:
+    resolution: {integrity: sha512-0OeRVYigVwIiXhNmqnPDt+JhMzsjinxHE7TVy3Lm6jUzav0guVcL0lfSbi6jVTRAxcbwgyr6yrZioSHxf9gHzw==}
     peerDependencies:
       graphql: 14 - 16
     dependencies:
-      '@graphql-typed-document-node/core': 3.2.0
+      '@graphql-typed-document-node/core': 3.1.1
       cross-fetch: 3.1.5
       extract-files: 9.0.0
       form-data: 3.0.1
@@ -30022,8 +30031,8 @@ packages:
     resolution: {integrity: sha512-GP6WDNWf+o403jrEp9c5jibKavrtLW+/qYGhFxFrG8maXhwTBI7gLLhiBb0o7uFccWN+EOS9aMO6cGHWAO07OA==}
     dev: true
 
-  /sucrase/3.31.0:
-    resolution: {integrity: sha512-6QsHnkqyVEzYcaiHsOKkzOtOgdJcb8i54x6AV2hDwyZcY9ZyykGZVw6L/YN98xC0evwTP6utsWWrKRaa8QlfEQ==}
+  /sucrase/3.29.0:
+    resolution: {integrity: sha512-bZPAuGA5SdFHuzqIhTAqt9fvNEo9rESqXIG3oiKdF8K4UmkQxC4KlNL3lVyAErXp+mPvUqZ5l13qx6TrDIGf3A==}
     engines: {node: '>=8'}
     hasBin: true
     dependencies:

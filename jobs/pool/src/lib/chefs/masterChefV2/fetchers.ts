@@ -96,12 +96,7 @@ export async function getRewarderInfos() {
   const { getBuiltGraphSDK } = await import('../../../../.graphclient/index.js')
   const sdk = getBuiltGraphSDK()
 
-  const { rewarders } = await sdk.MasterChefV2Rewarders({
-    where: {
-      id_not: '0x0000000000000000000000000000000000000000',
-      rewardToken_not: '0x0000000000000000000000000000000000000000',
-    },
-  })
+  const { rewarders } = await sdk.MasterChefV2Rewarders()
 
   return rewarders.map((rewarder) => ({
     id: rewarder.id,
