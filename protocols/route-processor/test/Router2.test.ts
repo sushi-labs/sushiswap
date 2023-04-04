@@ -23,7 +23,15 @@ import {
 } from '@sushiswap/currency'
 import { DataFetcher, LiquidityProviders, PoolFilter, Router } from '@sushiswap/router'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
-import { BridgeBento, getBigNumber, RPool, StableSwapRPool, toShareBN } from '@sushiswap/tines'
+import {
+  BridgeBento,
+  BridgeUnlimited,
+  ConstantProductRPool,
+  getBigNumber,
+  RPool,
+  StableSwapRPool,
+  toShareBN,
+} from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
@@ -79,9 +87,9 @@ export async function checkPoolsState(pools: Map<string, PoolCode>, env: TestEnv
 
   const addresses = Array.from(pools.keys())
   for (let i = 0; i < addresses.length; ++i) {
-    const pool = (pools.get(addresses[i]) as PoolCode).pool
+    const addr = addresses[i]
+    const pool = (pools.get(addr) as PoolCode).pool
     if (pool instanceof StableSwapRPool) {
-      const addr = addresses[i]
       const poolContract = new Contract(addr, ['function getReserves() view returns (uint256, uint256)'], env.user)
 
       const totals0 = await bentoContract.totals(pool.token0.address)
@@ -109,6 +117,19 @@ export async function checkPoolsState(pools: Map<string, PoolCode>, env: TestEnv
         1e6,
         `StableSwapRPool ${addr} reserve1`
       )
+    } else if (pool instanceof ConstantProductRPool) {
+      const poolContract = new Contract(addr, ['function getReserves() view returns (uint112, uint112)'], env.user)
+      const reserves = await poolContract.getReserves()
+      expectCloseValues(pool.getReserve0(), reserves[0], 1e-10, 10, `CP ${addr} reserve0`)
+      expectCloseValues(pool.getReserve1(), reserves[1], 1e-10, 10, `CP ${addr} reserve1`)
+    } else if (pool instanceof BridgeBento) {
+      const totals = await bentoContract.totals(pool.token1.address)
+      expectCloseValues(pool.elastic, totals[0], 1e-10, 10, `BentoBridge ${pool.token1.symbol} elastic`)
+      expectCloseValues(pool.base, totals[1], 1e-10, 10, `BentoBridge ${pool.token1.symbol} base`)
+    } else if (pool instanceof BridgeUnlimited) {
+      // native - skip
+    } else {
+      console.log('Unknown pool: ', pool)
     }
   }
 }
@@ -428,11 +449,10 @@ describe('End-to-end Router2 test', async function () {
   }
 
   it.skip('Random swap test', async function () {
-    const testSeed = '10' // Change it to change random generator values
-    const rnd: () => number = seedrandom(testSeed) // random [0, 1)
     let routeCounter = 0
     for (let i = 0; i < 100; ++i) {
       let currentToken = 0
+      const rnd: () => number = seedrandom('testSeed ' + i) // random [0, 1)
       intermidiateResult[0] = getBigNumber(getRandomExp(rnd, 1e15, 1e24))
       for (;;) {
         const nextToken = getNextToken(rnd, currentToken)
