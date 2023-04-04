@@ -1,9 +1,9 @@
 import { GraphQLResolveInfo } from 'graphql'
 
-import { Query, QueryResolvers, QuerytokensByChainIdArgs } from '../../.graphclient'
-import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
-import { TridentTypes } from '../../.graphclient/sources/Trident/types'
-import { _tokensByChainIds } from './tokensByChainIds'
+import { Query, QueryResolvers, QuerytokensByChainIdArgs } from '../../.graphclient/index.js'
+import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
+import { TridentTypes } from '../../.graphclient/sources/Trident/types.js'
+import { _tokensByChainIds } from './tokensByChainIds.js'
 
 export const _tokensByChainId = async (
   root = {},

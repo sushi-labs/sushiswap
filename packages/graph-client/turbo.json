@@ -3,7 +3,10 @@
   "pipeline": {
     "build": {
       "outputs": [
-        ".graphclient/**"
+        ".graphclient/**/*",
+        "lib/**/*",
+        "resolvers/**/*",
+        "transformers/**/*"
       ],
       "dependsOn": ["^build"],
       "env": []

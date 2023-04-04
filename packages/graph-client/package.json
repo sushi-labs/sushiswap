@@ -17,20 +17,19 @@
   "files": [
     ".graphclient"
   ],
-  "main": ".graphclient/index.ts",
-  "types": ".graphclient/index.ts",
+  "type": "module",
+  "main": ".graphclient/index.js",
+  "types": ".graphclient/index.d.ts",
   "sideEffects": false,
   "exports": {
     ".": {
-      "types": "./.graphclient/index.ts",
-      "import": "./.graphclient/index.ts",
-      "module": "./.graphclient/index.ts",
-      "default": "./.graphclient/index.ts"
+      "types": "./.graphclient/index.d.ts",
+      "default": "./.graphclient/index.js"
     },
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "graphclient build && rm -f .graphclient/package.json",
+    "build": "graphclient build --fileType js --throwOnInvalidConfig && rm -f .graphclient/package.json && tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo .graphclient node_modules",
     "dev": "graphclient serve-dev", 

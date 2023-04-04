@@ -1,6 +1,6 @@
-import { Resolvers } from '../../.graphclient'
-import { poolsByTokenPair } from './poolsByTokenPair'
-import { ticksById } from './ticksById'
+import { Resolvers } from '../../.graphclient/index.js'
+import { poolsByTokenPair } from './poolsByTokenPair.js'
+import { ticksById } from './ticksById.js'
 
 export const resolvers: Resolvers = {
   Query: {

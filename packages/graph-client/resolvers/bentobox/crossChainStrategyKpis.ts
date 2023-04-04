@@ -1,6 +1,6 @@
 import { BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 
-import { Resolvers, StrategyKpi } from '../../.graphclient'
+import { Resolvers, StrategyKpi } from '../../.graphclient/index.js'
 
 export const crossChainStrategyKpis: Resolvers['Query']['crossChainStrategyKpis'] = async (
   root,

@@ -8,7 +8,6 @@ import { publicProvider } from '@wagmi/core/providers/public'
 // if (!alchemyId) {
 //   throw Error('NO ALCHEMY ID SET')
 // }
-
 createClient(
   configureChains(allChains, [
     publicProvider(),

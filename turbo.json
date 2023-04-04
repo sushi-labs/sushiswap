@@ -34,29 +34,17 @@
         "artifacts/**/*",
         "public/**/*",
         "storybook-static/**/*",
-        "lib/**/*",
-        "resolvers/**/*",
-        "transformers/**/*",
         ".graphclient/**/*",
         ".mesh/**/*"
       ],
       "dependsOn": [
-        "^db:generate", 
         "^build", 
-        "db:generate", 
         "generate",
         "export"
       ],
       "env": [
         "DATABASE_URL",
         "REDIS_URL",
-        "ROOT_URL",
-        "ACADEMY_URL",
-        "ANALYTICS_URL",
-        "BLOG_URL",
-        "EARN_URL",
-        "FURO_URL",
-        "SWAP_URL",
         "SWAP_API_V0_BASE_URL",
         "AGGREGATOR_API_V0_BASE_URL",
         "POOLS_API_V0_BASE_URL",
@@ -70,23 +58,6 @@
       "dependsOn": [
         "^build"
       ],
-      "cache": false
-    },
-    "db:init": {
-      "outputs": ["prisma/**/*"],
-      "cache": false
-    },
-    "db:pull": {
-      "outputs": ["prisma/**/*"],
-      "dependsOn": ["db:init"],
-      "cache": false,
-      "env": ["DATABASE_URL"]
-    },
-    "db:generate": {
-      "dependsOn": [],
-      "cache": false
-    },
-    "db:push": {
       "cache": false
     },
     "dev": {
@@ -128,9 +99,7 @@
     
     "start": {
       "dependsOn": [        
-        "^db:generate", 
         "^build", 
-        "db:generate", 
         "generate",
         "export"
       ],

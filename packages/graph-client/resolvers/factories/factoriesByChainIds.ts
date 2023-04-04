@@ -9,7 +9,7 @@ import {
 } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 
-import { Factory, Query, QueryResolvers, Resolvers } from '../../.graphclient'
+import { Factory, Query, QueryResolvers, Resolvers } from '../../.graphclient/index.js'
 
 export const factoriesByChainIds: QueryResolvers['factoriesByChainIds'] = async (
   root,

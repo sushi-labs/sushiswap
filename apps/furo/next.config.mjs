@@ -5,7 +5,6 @@ const nextConfig = {
   ...defaultNextConfig,
   basePath: '/furo',
   transpilePackages: [
-    '@sushiswap/graph-client',
     '@sushiswap/redux-token-lists',
     '@sushiswap/redux-localstorage',
     '@sushiswap/wagmi',
