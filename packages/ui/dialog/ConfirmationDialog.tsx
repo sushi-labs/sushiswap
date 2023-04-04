@@ -7,6 +7,7 @@ import { FailedMarkIcon } from '../future/components/icons/FailedMarkIcon'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Dots } from '../future/components/Dots'
 import { Button } from '../future/components/button'
+import Link from 'next/link'
 
 export enum ConfirmationDialogState {
   Undefined,
@@ -26,6 +27,7 @@ interface ConfirmationDialog {
   isWritePending: boolean
   successMessage: ReactNode
   buttonSuccessMessage: string
+  buttonSuccessLink?: string
 }
 
 export const ConfirmationDialog: FC<ConfirmationDialog> = ({
@@ -38,6 +40,7 @@ export const ConfirmationDialog: FC<ConfirmationDialog> = ({
   onComplete,
   successMessage,
   buttonSuccessMessage,
+  buttonSuccessLink,
 }) => {
   return (
     <Dialog open={open} unmount={false} onClose={() => setOpen(false)}>
@@ -84,7 +87,13 @@ export const ConfirmationDialog: FC<ConfirmationDialog> = ({
               </h1>
             )}
           </div>
-          <Button fullWidth color="blue" variant="outlined" size="xl" onClick={() => setOpen(false)}>
+          <Button
+            {...(buttonSuccessLink ? { as: 'a', href: buttonSuccessLink } : { onClick: () => setOpen(false) })}
+            fullWidth
+            color="blue"
+            variant="outlined"
+            size="xl"
+          >
             {state === ConfirmationDialogState.Success
               ? buttonSuccessMessage
               : state === ConfirmationDialogState.Failed

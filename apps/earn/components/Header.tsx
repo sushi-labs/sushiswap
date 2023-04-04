@@ -27,6 +27,7 @@ export const Header: FC = () => {
       }
     >
       <NavLink title="Swap" href="https://sushi.com/swap" />
+      <NavLink title="Pools" href="https://sushi.com/earn" />
     </GlobalNav>
   )
 }

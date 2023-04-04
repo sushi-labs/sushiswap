@@ -14,7 +14,11 @@ import {
 import { SelectFeeConcentratedWidget } from '../../components/NewPositionSection/SelectFeeConcentratedWidget'
 import { ConcentratedLiquidityWidget } from '../../components/ConcentratedLiquidityWidget'
 import { useAccount } from '@sushiswap/wagmi'
-import { useConcentratedLiquidityPool, useConcentratedPositionInfo } from '@sushiswap/wagmi/future/hooks'
+import {
+  useConcentratedLiquidityPool,
+  useConcentratedLiquidityPositions,
+  useConcentratedPositionInfo,
+} from '@sushiswap/wagmi/future/hooks'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { List } from '@sushiswap/ui/future/components/list/List'
@@ -22,6 +26,8 @@ import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { tryParseAmount } from '@sushiswap/currency'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { computePoolAddress } from '@sushiswap/v3-sdk'
+import { getV3FactoryContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3FactoryContract'
 
 export function Add() {
   return (
@@ -73,6 +79,19 @@ const _Add: FC = () => {
     tokenId,
     token1,
   })
+
+  const poolAddress = useMemo(
+    () =>
+      token0 && token1 && feeAmount && chainId
+        ? computePoolAddress({
+            factoryAddress: getV3FactoryContractConfig(chainId).address,
+            tokenA: token0.wrapped,
+            tokenB: token1.wrapped,
+            fee: feeAmount,
+          })
+        : undefined,
+    [chainId, feeAmount, token0, token1]
+  )
 
   const {
     data: pool,
@@ -207,6 +226,7 @@ const _Add: FC = () => {
             tokensLoading={tokensLoading}
             existingPosition={position ?? undefined}
             tokenId={tokenId}
+            successLink={`/earn/pools/${chainId}:${poolAddress}?activeTab=myPositions`}
           />
         </ContentBlock>
       </div>
