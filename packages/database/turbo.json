@@ -26,6 +26,10 @@
       "generate": {
         "dependsOn": [],
         "cache": false
+      },
+      "check": {
+        "dependsOn": ["generate"],
+        "cache": false
       }
     }
   }
