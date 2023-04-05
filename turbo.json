@@ -33,8 +33,7 @@
       ],
       "dependsOn": [
         "^build", 
-        "generate",
-        "export"
+        "generate"
       ],
       "env": [
         "DATABASE_URL",
@@ -77,8 +76,7 @@
     "start": {
       "dependsOn": [        
         "^build", 
-        "generate",
-        "export"
+        "generate"
       ],
       "env": [
         "REDIS_URL",
