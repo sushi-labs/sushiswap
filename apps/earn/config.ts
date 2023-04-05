@@ -25,7 +25,7 @@ export const AMM_ENABLED_NETWORKS: ChainId[] = [
   ChainId.BSC,
   ChainId.CELO,
   ChainId.FUSE,
-  // ChainId.MOONBEAM,
+  ChainId.MOONBEAM,
   ChainId.ARBITRUM_NOVA,
   ChainId.HARMONY,
   ChainId.BOBA,
