@@ -630,10 +630,6 @@ export class Graph {
           bestPath.unshift(v.bestSource)
         }
         DEBUG(() => console.log(debug_info))
-        if (Number.isNaN(finish.bestTotal)) {
-          // eslint-disable-next-line no-debugger
-          debugger
-        }
         return {
           path: bestPath,
           output: finish.bestIncome,
@@ -888,9 +884,6 @@ export class Graph {
         totalOutput += p.totalOutput
         this.addPath(this.getVert(from), this.getVert(to), p.path)
         totalrouted += routeValues[step]
-        // if (step === 0) {
-        //   primaryPrice = this.getPrimaryPriceForPath(this.getVert(from) as Vertice, p.path)
-        // }
       }
     }
     if (step == 0 || output == 0)
@@ -911,12 +904,14 @@ export class Graph {
     if (step < routeValues.length) status = RouteStatus.Partial
     else status = RouteStatus.Success
 
+    const removedEdgesNumber = this.removeEdgesWithLowFlow(0.001)
+
     const fromVert = this.getVert(from) as Vertice
     const toVert = this.getVert(to) as Vertice
     const { legs, gasSpent, topologyWasChanged } = this.getRouteLegs(fromVert, toVert)
     console.assert(gasSpent <= gasSpentInit, 'Internal Error 491')
 
-    if (topologyWasChanged) {
+    if (topologyWasChanged || removedEdgesNumber > 0) {
       output = this.calcLegsAmountOut(legs, amountIn)
     }
 
@@ -1002,12 +997,14 @@ export class Graph {
     if (step < routeValues.length) status = RouteStatus.Partial
     else status = RouteStatus.Success
 
+    const removedEdgesNumber = this.removeEdgesWithLowFlow(0.001)
+
     const fromVert = this.getVert(from) as Vertice
     const toVert = this.getVert(to) as Vertice
     const { legs, gasSpent, topologyWasChanged } = this.getRouteLegs(fromVert, toVert)
     console.assert(gasSpent <= gasSpentInit, 'Internal Error 491')
 
-    if (topologyWasChanged) {
+    if (topologyWasChanged || removedEdgesNumber > 0) {
       input = this.calcLegsAmountIn(legs, amountOut) ///
     }
 
@@ -1110,6 +1107,30 @@ export class Graph {
     return e.direction ? { vert: e.vert0, amount: e.amountInPrevious } : { vert: e.vert1, amount: e.amountOutPrevious }
   }
 
+  // Removes all edges that have lesser than minFraction portion of vertex output liquidity
+  // Such edges can appear as an accumulation of forward and backward streams
+  // They spend more gas than provide slippage reduction
+  // They confuse users
+  // Also, route processor can fail trying to process them
+  removeEdgesWithLowFlow(minFraction: number): number {
+    const weakEdgeList: Edge[] = []
+    this.vertices.forEach((v) => {
+      const outEdges = v.getOutputEdges()
+      if (outEdges.length <= 1) return
+      const amounts = outEdges.map((e) => {
+        const data = this.edgeFrom(e)
+        if (data !== undefined) return data.amount
+        console.error('Tines: Internal Error 1123')
+      }) as number[]
+      const totalOut = amounts.reduce((a, b) => (a += b), 0)
+      outEdges.forEach((e, i) => {
+        if (amounts[i] / totalOut < minFraction) weakEdgeList.push(e)
+      })
+    })
+    weakEdgeList.forEach((e) => (e.canBeUsed = false))
+    return weakEdgeList.length
+  }
+
   // TODO: make full test coverage!
   calcLegsAmountOut(legs: RouteLeg[], amountIn: number) {
     const amounts = new Map<string, number>()
@@ -1175,7 +1196,8 @@ export class Graph {
     let result = this.topologySort(from, to)
     if (result.status !== 2) {
       topologyWasChanged = true
-      console.assert(result.status === 0, 'Internal Error 554')
+      // it can be 3, because we make this.removeEdgesWithLowFlow(0.005) before
+      // console.assert(result.status === 0, 'Internal Error 554')
       while (result.status === 0) {
         this.removeWeakestEdge(result.vertices)
         result = this.topologySort(from, to)
