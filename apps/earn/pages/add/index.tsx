@@ -92,11 +92,7 @@ const _Add: FC = () => {
     [chainId, feeAmount, token0, token1]
   )
 
-  const {
-    data: pool,
-    isLoading,
-    isInitialLoading,
-  } = useConcentratedLiquidityPool({ chainId, token0, token1, feeAmount })
+  const { data: pool, isInitialLoading } = useConcentratedLiquidityPool({ chainId, token0, token1, feeAmount })
 
   const fiatAmounts = useMemo(() => [tryParseAmount('1', token0), tryParseAmount('1', token1)], [token0, token1])
   const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId, amounts: fiatAmounts })
