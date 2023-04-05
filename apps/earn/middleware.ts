@@ -6,6 +6,13 @@ const shortNameIdRegexp = new RegExp(/(\w+):0x.*?(?=(?:\/|$))/)
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl
 
+  console.log(pathname === '/add', search === '')
+  if (pathname === '/add' && search === '') {
+    const url = req.nextUrl.clone()
+    url.search = '?fromCurrency=NATIVE'
+    return NextResponse.redirect(url)
+  }
+
   // Index handling
   if (pathname === '/' && search !== '') {
     const url = req.nextUrl.clone()
