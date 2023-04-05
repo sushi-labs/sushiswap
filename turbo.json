@@ -29,13 +29,7 @@
       "outputs": [
         ".next/**/*",
         ".vercel/**/*",
-        "dist/**/*",
-        "typechain/**/*",
-        "artifacts/**/*",
-        "public/**/*",
-        "storybook-static/**/*",
-        ".graphclient/**/*",
-        ".mesh/**/*"
+        "dist/**/*"
       ],
       "dependsOn": [
         "^build", 
@@ -45,10 +39,7 @@
       "env": [
         "DATABASE_URL",
         "REDIS_URL",
-        "SWAP_API_V0_BASE_URL",
-        "AGGREGATOR_API_V0_BASE_URL",
-        "POOLS_API_V0_BASE_URL",
-        "TOKENS_API_V0_BASE_URL"
+        "POOLS_API_V0_BASE_URL"
       ]
     },
     "clean": {
@@ -65,28 +56,15 @@
       "cache": false,
       "persistent": true
     },
-    "export": {
-      "dependsOn": ["^build"],
-      "outputs": ["exports/**/*"],
-      "cache": true
-    },
     "generate": {
       "outputs": [
-        ".graphclient/**/*", 
-        ".mesh/**/*", 
-        "typechain/**/*",
-        "artifacts/**/*"
+        ".graphclient/**/*"
       ],
       "cache": false
     },
     "lint": {
       "dependsOn": ["^build"],
       "outputs": []
-    },
-    "node": {
-      "dependsOn": ["build"],
-      "outputs": ["deployments/**/*"],
-      "persistent": true
     },
     "playwright": {
       "cache": false,
@@ -96,7 +74,6 @@
       "persistent": true,
       "dependsOn": ["build"]
     },
-    
     "start": {
       "dependsOn": [        
         "^build", 
@@ -107,10 +84,7 @@
         "REDIS_URL",
         "DATABASE_URL",
         "ALCHEMY_ID",
-        "SWAP_API_V0_BASE_URL",
-        "AGGREGATOR_API_V0_BASE_URL",
-        "POOLS_API_V0_BASE_URL",
-        "TOKENS_API_V0_BASE_URL"
+        "POOLS_API_V0_BASE_URL"
       ],
       "cache": false,
       "persistent": true

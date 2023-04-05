@@ -30,8 +30,7 @@
     "incentives": "ts-node --swc src/incentives.ts",
     "lint": "TIMING=1 eslint src --fix",
     "pools": "ts-node --swc src/pools.ts",
-    "server": "ts-node src/server.ts",
-    "start": "ts-node src/server.ts",
+    "start": "ts-node --swc src/server.ts",
     "test": "jest --passWithNoTests",
     "validate": "graphclient validate",
     "volume": "ts-node --swc src/volume.ts"
@@ -45,7 +44,7 @@
     "@graphprotocol/client-add-source-name": "1.0.18",
     "@graphprotocol/client-auto-pagination": "1.1.16",
     "@graphprotocol/client-auto-type-merging": "1.0.23",
-    "@graphprotocol/client-cli": "2.2.20",
+    "@graphprotocol/client-cli": "2.2.19",
     "@graphql-mesh/http": "0.3.27",
     "@graphql-mesh/transform-filter-schema": "0.15.24",
     "@graphql-mesh/transform-prefix": "0.12.22",

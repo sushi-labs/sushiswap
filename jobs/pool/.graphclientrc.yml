@@ -6,7 +6,6 @@ sources:
     transforms:
       - autoPagination:
           validateSchema: true
-    retry: 3
   - name: SushiSwapV2
     handler:
       graphql:
@@ -35,7 +34,6 @@ sources:
       #     mode: wrap
       #     filters:
       #       - Type.!{Factory}
-    retry: 3
   - name: MasterChef
     handler:
       graphql:
