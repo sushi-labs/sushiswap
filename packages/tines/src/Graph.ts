@@ -913,6 +913,7 @@ export class Graph {
 
     if (topologyWasChanged || removedEdgesNumber > 0) {
       output = this.calcLegsAmountOut(legs, amountIn)
+      totalOutput = output - toVert.gasPrice * gasSpent
     }
 
     let swapPrice, priceImpact
@@ -939,7 +940,7 @@ export class Graph {
       amountOutBN: getBigNumber(output),
       legs,
       gasSpent,
-      totalAmountOut: totalOutput, // TODO: should be recalculated if topologyWasChanged
+      totalAmountOut: totalOutput,
       totalAmountOutBN: getBigNumber(totalOutput),
     }
   }
@@ -1005,7 +1006,7 @@ export class Graph {
     console.assert(gasSpent <= gasSpentInit, 'Internal Error 491')
 
     if (topologyWasChanged || removedEdgesNumber > 0) {
-      input = this.calcLegsAmountIn(legs, amountOut) ///
+      input = this.calcLegsAmountIn(legs, amountOut)
     }
 
     let swapPrice, priceImpact
