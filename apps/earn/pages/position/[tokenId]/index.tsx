@@ -354,7 +354,7 @@ const Position: FC = () => {
                     {priceLower && pool && currencyQuote && currencyBase ? (
                       <span className="font-medium">
                         {formatTickPrice({
-                          price: priceUpper,
+                          price: invert ? priceUpper : priceLower,
                           atLimit: ticksAtLimit,
                           direction: Bound.UPPER,
                         })}{' '}
@@ -380,7 +380,7 @@ const Position: FC = () => {
                     {priceUpper && pool && currencyQuote && currencyBase ? (
                       <span className="font-medium">
                         {formatTickPrice({
-                          price: priceLower,
+                          price: invert ? priceLower : priceUpper,
                           atLimit: ticksAtLimit,
                           direction: Bound.UPPER,
                         })}{' '}
