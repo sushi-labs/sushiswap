@@ -21,7 +21,7 @@ export const queryParamsSchema = z.object({
       message: 'ChainId not supported.',
     }),
   fromCurrency: z.string().default('NATIVE'),
-  toCurrency: z.string().default('SUSHI'),
+  toCurrency: z.string().optional(),
   feeAmount: z.coerce
     .number()
     .int()
@@ -54,13 +54,20 @@ interface ConcentratedLiquidityURLStateProvider {
   children: ReactNode
 }
 
-const getTokenFromUrl = (chainId: ChainId, currencyId: string, token: Token | undefined, isLoading: boolean) => {
+const getTokenFromUrl = (
+  chainId: ChainId,
+  currencyId: string | undefined,
+  token: Token | undefined,
+  isLoading: boolean
+) => {
   if (isLoading) {
     return undefined
-  } else if (isShortCurrencyName(chainId, currencyId)) {
+  } else if (currencyId && isShortCurrencyName(chainId, currencyId)) {
     return currencyFromShortCurrencyName(chainId, currencyId)
-  } else if (isAddress(currencyId) && token) {
+  } else if (currencyId && isAddress(currencyId) && token) {
     return token
+  } else if (!currencyId) {
+    return undefined
   } else {
     return Native.onChain(chainId ? chainId : ChainId.ETHEREUM)
   }
@@ -83,14 +90,20 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
     const setNetwork = (chainId: ChainId) => {
       const fromCurrency =
         state.token0?.chainId === chainId ? (state.token0.isNative ? 'NATIVE' : state.token0.wrapped.address) : 'NATIVE'
+      const toCurrency =
+        state.token1?.chainId === chainId
+          ? state.token1.isNative
+            ? 'NATIVE'
+            : state.token1.wrapped.address
+          : undefined
 
       void push(
         {
           pathname,
           query: {
-            ...query,
             chainId: chainId,
             fromCurrency,
+            ...(toCurrency && { toCurrency }),
           },
         },
         undefined,
@@ -105,6 +118,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
           pathname,
           query: {
             ...query,
+            chainId: currency.chainId,
             fromCurrency: _fromCurrency,
             toCurrency: toCurrency === _fromCurrency ? fromCurrency : toCurrency,
           },
@@ -121,6 +135,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
           pathname,
           query: {
             ...query,
+            chainId: currency.chainId,
             fromCurrency: fromCurrency === _toCurrency ? toCurrency : fromCurrency,
             toCurrency: _toCurrency,
           },

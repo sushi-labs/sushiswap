@@ -194,6 +194,7 @@ export function useConcentratedDerivedMintInfo({
   invertPrice: boolean
   ticksAtLimit: { [bound in Bound]?: boolean | undefined }
   isLoading: boolean
+  isInitialLoading: boolean
 } {
   const { independentField, typedValue, leftRangeTypedValue, rightRangeTypedValue, startPriceTypedValue } =
     useConcentratedMintState()

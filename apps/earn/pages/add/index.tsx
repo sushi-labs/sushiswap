@@ -14,11 +14,7 @@ import {
 import { SelectFeeConcentratedWidget } from '../../components/NewPositionSection/SelectFeeConcentratedWidget'
 import { ConcentratedLiquidityWidget } from '../../components/ConcentratedLiquidityWidget'
 import { useAccount } from '@sushiswap/wagmi'
-import {
-  useConcentratedLiquidityPool,
-  useConcentratedLiquidityPositions,
-  useConcentratedPositionInfo,
-} from '@sushiswap/wagmi/future/hooks'
+import { useConcentratedLiquidityPool, useConcentratedPositionInfo } from '@sushiswap/wagmi/future/hooks'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { List } from '@sushiswap/ui/future/components/list/List'
@@ -28,42 +24,45 @@ import { useTokenAmountDollarValues } from '../../lib/hooks'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { computePoolAddress } from '@sushiswap/v3-sdk'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3FactoryContract'
+import { SplashController } from '@sushiswap/ui/future/components/SplashController'
 
-export function Add() {
+export function AddPage() {
   return (
-    <SWRConfig>
-      <Layout>
-        <div className="flex flex-col gap-2">
-          <Link className="group flex gap-4 items-center mb-2" href="/" shallow={true}>
-            <IconButton
-              icon={ArrowLeftIcon}
-              iconProps={{
-                width: 24,
-                height: 24,
-                transparent: true,
-              }}
-            />
-            <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
-              Go back to pools list
-            </span>
-          </Link>
-          <h1 className="text-3xl font-medium mt-2">Add Liquidity</h1>
-          <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
-            Create a new pool or create a liquidity position on an existing pool.
-          </h1>
-        </div>
-        <div className="h-0.5 w-full bg-gray-900/5 dark:bg-slate-200/5 my-10" />
-        <div className="flex justify-center">
-          <div className="flex lg:grid lg:grid-cols-[404px_auto] gap-20">
-            <ConcentratedLiquidityURLStateProvider>
-              <ConcentratedLiquidityProvider>
-                <_Add />
-              </ConcentratedLiquidityProvider>
-            </ConcentratedLiquidityURLStateProvider>
-          </div>
-        </div>
-      </Layout>
-    </SWRConfig>
+    <ConcentratedLiquidityURLStateProvider>
+      <SplashController>
+        <SWRConfig>
+          <Layout>
+            <div className="flex flex-col gap-2">
+              <Link className="group flex gap-4 items-center mb-2" href="/" shallow={true}>
+                <IconButton
+                  icon={ArrowLeftIcon}
+                  iconProps={{
+                    width: 24,
+                    height: 24,
+                    transparent: true,
+                  }}
+                />
+                <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
+                  Go back to pools list
+                </span>
+              </Link>
+              <h1 className="text-3xl font-medium mt-2">Add Liquidity</h1>
+              <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
+                Create a new pool or create a liquidity position on an existing pool.
+              </h1>
+            </div>
+            <div className="h-0.5 w-full bg-gray-900/5 dark:bg-slate-200/5 my-10" />
+            <div className="flex justify-center">
+              <div className="flex lg:grid lg:grid-cols-[404px_auto] gap-20">
+                <ConcentratedLiquidityProvider>
+                  <_Add />
+                </ConcentratedLiquidityProvider>
+              </div>
+            </div>
+          </Layout>
+        </SWRConfig>
+      </SplashController>
+    </ConcentratedLiquidityURLStateProvider>
   )
 }
 
@@ -120,12 +119,12 @@ const _Add: FC = () => {
                 }
               >
                 <Currency.IconList iconWidth={48} iconHeight={48}>
-                  {token0 ? (
+                  {token0 && !tokensLoading ? (
                     <Currency.Icon currency={token0} />
                   ) : (
                     <div className="w-[48px] h-[48px] rounded-full bg-gray-300 dark:bg-slate-800" />
                   )}
-                  {token1 ? (
+                  {token1 && !tokensLoading ? (
                     <Currency.Icon currency={token1} />
                   ) : (
                     <div className="w-[48px] h-[48px] rounded-full bg-gray-300 dark:bg-slate-800" />
@@ -143,11 +142,13 @@ const _Add: FC = () => {
                     Concentrated • {feeAmount / 10000}%
                   </p>
                 </>
-              ) : (
+              ) : tokensLoading ? (
                 <>
                   <Skeleton.Text fontSize="text-xl" className="w-full" />
                   <Skeleton.Text fontSize="text-base" className="w-full" />
                 </>
+              ) : (
+                <></>
               )}
             </div>
           </div>
@@ -167,11 +168,11 @@ const _Add: FC = () => {
           </div>
           <div className="col-span-2 flex flex-col gap-2">
             <List.Label className="!px-0">Current Price</List.Label>
-            {!isLoading && !pool ? (
+            {!isInitialLoading && !pool ? (
               <span className="">N/A</span>
-            ) : isInitialLoading || !pool || !token0 || !token1 ? (
+            ) : isInitialLoading ? (
               <Skeleton.Text className="w-[120px]" />
-            ) : (
+            ) : token0 && token1 && pool ? (
               <div
                 onClick={() => setInvert((prev) => !prev)}
                 role="button"
@@ -185,6 +186,8 @@ const _Add: FC = () => {
                   <span className="text-sm font-normal">${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)}</span>
                 </div>
               </div>
+            ) : (
+              <></>
             )}
           </div>
         </div>
@@ -209,6 +212,7 @@ const _Add: FC = () => {
         />
 
         <ContentBlock
+          disabled={!token0 || !token1}
           title={
             <>
               How much <span className="text-gray-900 dark:text-white">liquidity</span> do you want to provide?
@@ -234,4 +238,4 @@ const _Add: FC = () => {
   )
 }
 
-export default Add
+export default AddPage

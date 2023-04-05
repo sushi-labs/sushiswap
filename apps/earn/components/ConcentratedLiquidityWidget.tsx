@@ -66,7 +66,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
     depositBDisabled,
     invalidPool,
     position,
-    isLoading: isPoolLoading,
+    isInitialLoading: isPoolLoading,
   } = useConcentratedDerivedMintInfo({
     chainId,
     account,

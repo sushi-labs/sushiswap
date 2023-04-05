@@ -38,6 +38,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
   switchTokens,
   tokenId,
 }) => {
+  const isMounted = useIsMounted()
   const { address } = useAccount()
   const [invert, setInvert] = useState(false)
   const { price, invertPrice, pricesAtTicks, ticks, ticksAtLimit, pool, noLiquidity, isLoading } =
@@ -83,6 +84,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
 
   return (
     <ContentBlock
+      disabled={!token0 || !token1}
       title={
         <>
           Between which <span className="text-gray-900 dark:text-white">prices</span> do you want to provide liquidity?
@@ -97,66 +99,49 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         </div>
       )}
       <div className="bg-white dark:bg-white/[0.02] rounded-xl p-4">
-        <div className="flex flex-col gap-3">
-          {noLiquidity ? (
-            <div className="pb-2">
-              <Input.Text
-                className="!bg-gray-100 dark:!bg-slate-800"
-                label="Start price"
-                value={startPriceTypedValue}
-                onChange={onStartPriceInput}
-                id="start-price-input"
-                caption="Your pool needs a starting price somewhere between the min. and max. price"
-              />
-            </div>
-          ) : (
-            <>
-              <div className="absolute z-10 flex justify-center">
-                <button
-                  className="text-sm font-medium text-blue hover:text-blue-600 h-[28px]"
-                  color="blue"
-                  onClick={resetMintState}
-                >
-                  Clear all
-                </button>
+        {isMounted && (
+          <div className="flex flex-col gap-3">
+            {noLiquidity && (
+              <div className="pb-2">
+                <Input.Text
+                  className="!bg-gray-100 dark:!bg-slate-800"
+                  label="Start price"
+                  value={startPriceTypedValue}
+                  onChange={onStartPriceInput}
+                  id="start-price-input"
+                  caption="Your pool needs a starting price somewhere between the min. and max. price"
+                />
               </div>
-              <LiquidityChartRangeInput
-                chainId={chainId}
-                currencyA={token0}
-                currencyB={token1}
-                feeAmount={feeAmount}
-                ticksAtLimit={ticksAtLimit}
-                price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
-                priceLower={priceLower}
-                priceUpper={priceUpper}
-                onLeftRangeInput={onLeftRangeInput}
-                onRightRangeInput={onRightRangeInput}
-                interactive={!hasExistingPosition}
-              />
-            </>
-          )}
-        </div>
+            )}
+            {!noLiquidity && !isLoading && (
+              <>
+                <div className="absolute z-10 flex justify-center">
+                  <button
+                    className="text-sm font-medium text-blue hover:text-blue-600 h-[28px]"
+                    color="blue"
+                    onClick={resetMintState}
+                  >
+                    Clear all
+                  </button>
+                </div>
+                <LiquidityChartRangeInput
+                  chainId={chainId}
+                  currencyA={token0}
+                  currencyB={token1}
+                  feeAmount={feeAmount}
+                  ticksAtLimit={ticksAtLimit}
+                  price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
+                  priceLower={priceLower}
+                  priceUpper={priceUpper}
+                  onLeftRangeInput={onLeftRangeInput}
+                  onRightRangeInput={onRightRangeInput}
+                  interactive={!hasExistingPosition}
+                />
+              </>
+            )}
+          </div>
+        )}
         <div className="flex flex-col gap-3 pt-4">
-          {/*<RadioGroup value={range} onChange={setRange} className="flex gap-2">*/}
-          {/*  {Object.keys(Range)*/}
-          {/*    .slice(1)*/}
-          {/*    .map((val) => {*/}
-          {/*      return (*/}
-          {/*        <RadioGroup.Option*/}
-          {/*          key={val}*/}
-          {/*          className={({ checked }) =>*/}
-          {/*            classNames(*/}
-          {/*              checked ? 'ring-2 ring-blue bg-white dark:bg-white/[0.08]' : '',*/}
-          {/*              'cursor-pointer rounded-full px-3 bg-white dark:bg-white/[0.04] hover:bg-white/[0.08] text-xs py-1.5 font-semibold w-full whitespace-nowrap flex justify-center'*/}
-          {/*            )*/}
-          {/*          }*/}
-          {/*          value={val}*/}
-          {/*        >*/}
-          {/*          {Object.values(Range)[Object.keys(Range).indexOf(val)]}*/}
-          {/*        </RadioGroup.Option>*/}
-          {/*      )*/}
-          {/*    })}*/}
-          {/*</RadioGroup>*/}
           <div className="flex items-center justify-between gap-2">
             <div className="flex lg:hidden justify-end">
               {isLoading || !pool || !token0 || !token1 ? (
@@ -336,9 +321,9 @@ export const PriceBlock: FC<PriceBlockProps> = ({
             className={classNames(DEFAULT_INPUT_UNSTYLED, 'without-ring !text-3xl !px-0 !pt-1 !pb-2 shadow-none')}
             tabIndex={0}
           />
-          {!fullRange && isMounted && (
-            <p className="text-sm text-gray-500 dark:text-slate-500">
-              {token0?.symbol} = ${(priceFiat * (1 + priceDiff / 100)).toFixed(2)} ({priceDiff.toFixed(2)}%)
+          {isMounted && (
+            <p className="text-sm font-medium text-gray-500 dark:text-slate-500">
+              {token1?.symbol} per {token0?.symbol}
             </p>
           )}
         </div>
