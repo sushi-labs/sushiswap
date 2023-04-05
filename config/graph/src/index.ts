@@ -37,7 +37,16 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
 
 export type SushiSwapChainId = (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
 
-export const SUSHISWAP_V3_ENABLED_NETWORKS = [ChainId.ARBITRUM, ]
+export const SUSHISWAP_V3_ENABLED_NETWORKS = [
+  ChainId.ARBITRUM_NOVA,
+  ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
+  ChainId.BSC,
+  ChainId.FANTOM,
+  ChainId.FUSE,
+  ChainId.MOONRIVER,
+  ChainId.POLYGON
+]
 export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_ENABLED_NETWORKS)[number]
 
 export const SWAP_ENABLED_NETWORKS = Array.from(
@@ -196,7 +205,7 @@ export const SUSHISWAP_SUBGRAPH_NAME = {
 } as const
 
 export const SUSHISWAP_V3_SUBGRAPH_NAME = {
-  // [ChainId.ARBITRUM_NOVA]: 'sushi-v3/v3-arbitrum-nova', // NOT DEPLOYED YET.
+  [ChainId.ARBITRUM_NOVA]: 'sushi-v3/v3-arbitrum-nova',
   [ChainId.ARBITRUM]: 'sushi-v3/v3-arbitrum',
   [ChainId.AVALANCHE]: 'sushi-v3/v3-avalanche',
   [ChainId.BSC]: 'sushi-v3/v3-bsc',
