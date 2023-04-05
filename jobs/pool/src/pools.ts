@@ -11,7 +11,7 @@ import {
 } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
-import {getBuiltGraphSDK, OneDayBlocksQuery, PairsQuery, V3PoolsQuery } from '../.graphclient/index.js'
+import { getBuiltGraphSDK, OneDayBlocksQuery, PairsQuery, V3PoolsQuery } from '../.graphclient/index.js'
 import { mergePools } from './etl/pool/index.js'
 import { filterPools } from './etl/pool/index.js'
 import { createTokens } from './etl/token/load.js'
@@ -99,7 +99,9 @@ async function extract() {
       name: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
       version: PoolVersion.V3,
     })),
-  ].flat()
+  ]
+    .flat()
+    .filter((e) => e.chainId === ChainId.ARBITRUM && e.version === 'V3')
 
   const sdk = getBuiltGraphSDK()
   const oneDayBlocks = await sdk.OneDayBlocks({ chainIds: SUSHISWAP_V3_ENABLED_NETWORKS })
@@ -266,7 +268,7 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
             decimals: Number(pair.token1.decimals),
           })
         )
-        const isAprValid = Number(pair.aprUpdatedAtTimestamp) > unix24hAgo
+        const isAprValid = Number(pair.aprUpdatedAtTimestamp) > unix24hAgo && !isNaN(Number(pair.apr))
         const feeApr = isAprValid ? Number(pair.apr) : 0
         const regex = /([^\w ]|_|-)/g
         const name = pair.token0.symbol
@@ -398,5 +400,8 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
   return { pools: poolsTransformed, tokens }
 }
 
-const calculateFeeApr = (historicalFee: number, currentFee: number, currentLiquidityUSD) =>
-  ((currentFee - historicalFee) * 365) / currentLiquidityUSD
+const calculateFeeApr = (historicalFee: number, currentFee: number, currentLiquidityUSD) => {
+  if (Number(currentLiquidityUSD) === 0) return 0
+
+  return ((currentFee - historicalFee) * 365) / currentLiquidityUSD
+}
