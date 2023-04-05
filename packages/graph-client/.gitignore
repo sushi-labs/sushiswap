@@ -1,3 +1,4 @@
 *.js
+*.d.js.map
 *.d.ts
 *.d.ts.map
