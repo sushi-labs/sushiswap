@@ -3,7 +3,7 @@
   "pipeline": {
     "start": {
       "dependsOn": [        
-        "^build"
+        "build"
       ],
       "env": [
         "REDIS_URL"

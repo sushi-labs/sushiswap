@@ -20,7 +20,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "lint": "TIMING=1 eslint src --fix",    
     "build": "graphclient build --fileType js && rm -f .graphclient/package.json",
-    "start": "ts-node --swc src/server.ts",
+    "start": "ts-node src/server.ts",
     "setup": "ts-node src/setup-schedulers.ts",
     "test": "jest --passWithNoTests",
     "validate": "graphclient validate"

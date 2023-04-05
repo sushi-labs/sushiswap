@@ -69,10 +69,6 @@
       "cache": false,
       "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
     },
-    "server": {
-      "persistent": true,
-      "dependsOn": ["build"]
-    },
     "start": {
       "dependsOn": [        
         "^build", 

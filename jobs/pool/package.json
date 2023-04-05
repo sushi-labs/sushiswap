@@ -30,7 +30,7 @@
     "incentives": "ts-node --swc src/incentives.ts",
     "lint": "TIMING=1 eslint src --fix",
     "pools": "ts-node --swc src/pools.ts",
-    "start": "ts-node --swc src/server.ts",
+    "start": "ts-node src/server.ts",
     "test": "jest --passWithNoTests",
     "validate": "graphclient validate",
     "volume": "ts-node --swc src/volume.ts"
