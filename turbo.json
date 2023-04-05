@@ -57,7 +57,9 @@
     },
     "generate": {
       "outputs": [
-        ".graphclient/**/*"
+        ".graphclient/**/*",
+        "src/generated.ts",
+        "typechain"
       ],
       "cache": false
     },
