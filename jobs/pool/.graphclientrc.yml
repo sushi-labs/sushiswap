@@ -24,6 +24,12 @@ sources:
     transforms:
       - autoPagination:
           validateSchema: true
+      - prefix:
+          value: V3_
+          includeRootOperations: true
+          includeTypes: true
+          ignore:
+            - _SubgraphErrorPolicy_
       # - filterSchema:
       #     mode: wrap
       #     filters:

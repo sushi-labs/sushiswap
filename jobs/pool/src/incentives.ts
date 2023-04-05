@@ -7,6 +7,9 @@ import { MINICHEF_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
 import { filterIncentives } from './etl/incentive/index.js'
+import { mergeIncentives } from './etl/incentive/load.js'
+import { updatePoolsWithIncentivesTotalApr } from './etl/pool/index.js'
+import { createTokens } from './etl/token/load.js'
 import { getMasterChefV1, getMasterChefV2, getMinichef } from './lib/index.js'
 import { ChefReturn } from './lib/types.js'
 

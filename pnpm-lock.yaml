@@ -8613,6 +8613,7 @@ packages:
       '@graphql-tools/wrap': 9.3.8
       '@types/ws': 8.5.4
       '@whatwg-node/fetch': 0.8.4
+      graphql: 16.6.0
       isomorphic-ws: 5.0.0_ws@8.13.0
       tslib: 2.5.0
       value-or-promise: 1.0.12
