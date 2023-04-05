@@ -215,9 +215,21 @@ async function makeSwap(
   await checkPoolsState(pcMap, env)
 
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
+  // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
   // console.log(
   //   'ROUTE:',
-  //   route.legs.map((l) => l.tokenFrom.symbol + ' -> ' + l.tokenTo.symbol + '  ' + l.poolAddress)
+  //   route.legs.map(
+  //     (l) =>
+  //       l.tokenFrom.symbol +
+  //       ' -> ' +
+  //       l.tokenTo.symbol +
+  //       '  ' +
+  //       l.poolAddress +
+  //       '  ' +
+  //       l.assumedAmountIn +
+  //       ' ->' +
+  //       l.assumedAmountOut
+  //   )
   // )
   const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
   if (rpParams === undefined) return
