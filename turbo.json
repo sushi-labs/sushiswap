@@ -104,8 +104,6 @@
         "export"
       ],
       "env": [
-        "PRODUCTION_DATABASE_URL",
-        "PREVIEW_DATABASE_URL",
         "REDIS_URL",
         "DATABASE_URL",
         "ALCHEMY_ID",

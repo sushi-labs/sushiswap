@@ -6,11 +6,25 @@
         ".graphclient/**"
       ],
       "dependsOn": ["^build", "generate"],
-      "env": []
+      "env": [
+        "DATABASE_URL",
+        "ALCHEMY_ID"
+      ]
     },
     "check": {
       "dependsOn": ["build"],
-      "cache": true
+      "cache": false
+    },
+    "server": {
+      "persistent": true,
+      "dependsOn": ["build"],
+      "env": [
+        "DATABASE_URL",
+        "ALCHEMY_ID"
+      ]
+    },
+    "validate": {
+      "cache": false
     }
   }
 }
