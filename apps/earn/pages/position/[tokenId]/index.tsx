@@ -17,10 +17,13 @@ import { classNames } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Amount, tryParseAmount } from '@sushiswap/currency'
 import { usePriceInverter, useTokenAmountDollarValues } from '../../../lib/hooks'
-import { getPriceOrderingFromPositionForUI, getTickToPrice, unwrapToken } from '../../../lib/functions'
+import { formatTickPrice, getPriceOrderingFromPositionForUI, getTickToPrice, unwrapToken } from '../../../lib/functions'
 import { ConcentratedLiquidityWidget } from '../../../components/ConcentratedLiquidityWidget'
 import { useAccount } from '@sushiswap/wagmi'
-import { ConcentratedLiquidityProvider } from '../../../components/ConcentratedLiquidityProvider'
+import {
+  ConcentratedLiquidityProvider,
+  useConcentratedDerivedMintInfo,
+} from '../../../components/ConcentratedLiquidityProvider'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { RadioGroup } from '@headlessui/react'
 import { ConcentratedLiquidityRemoveWidget } from '../../../components/ConcentratedLiquidityRemoveWidget'
@@ -81,12 +84,6 @@ const Position: FC = () => {
 
   const { data: token0, isLoading: token0Loading } = useToken({ chainId, address: positionDetails?.token0 })
   const { data: token1, isLoading: token1Loading } = useToken({ chainId, address: positionDetails?.token1 })
-  const { data: pool, isLoading } = useConcentratedLiquidityPool({
-    chainId,
-    token0,
-    token1,
-    feeAmount: positionDetails?.fee,
-  })
 
   const { data: position } = useConcentratedPositionInfo({
     chainId,
@@ -107,34 +104,15 @@ const Position: FC = () => {
     invert,
   })
 
-  const pricesAtTicks = useMemo(() => {
-    if (!position) return { [Bound.LOWER]: undefined, [Bound.UPPER]: undefined }
-    return {
-      [Bound.LOWER]: getTickToPrice(token0, token1, position.tickLower),
-      [Bound.UPPER]: getTickToPrice(token0, token1, position.tickUpper),
-    }
-  }, [position, token0, token1])
-
-  const { [Bound.LOWER]: lowerPrice, [Bound.UPPER]: upperPrice } = pricesAtTicks
-
-  const invalidRange = position && Boolean(position.tickLower >= position.tickUpper)
-  const price = pool && token0 ? pool.priceOf(token0) : undefined
-  const outOfRange = Boolean(
-    !invalidRange && price && lowerPrice && upperPrice && (price.lessThan(lowerPrice) || price.greaterThan(upperPrice))
-  )
-
-  const [minPriceDiff, maxPriceDiff] = useMemo(() => {
-    if (!pool || !token0 || !token1 || !lowerPrice || !upperPrice || !base || !quote) return [0, 0]
-    const min = +lowerPrice?.toFixed(10)
-    const cur = +pool.priceOf(token0)?.toFixed(10)
-    const max = +upperPrice?.toFixed(10)
-
-    if (!invert) {
-      return [-100 * ((max - cur) / max), -100 * ((min - cur) / min)]
-    }
-
-    return [((min - cur) / cur) * 100, ((max - cur) / cur) * 100]
-  }, [base, invert, lowerPrice, pool, quote, token0, token1, upperPrice])
+  const { ticksAtLimit, pool, isLoading, outOfRange } = useConcentratedDerivedMintInfo({
+    chainId,
+    account: address,
+    token0,
+    token1,
+    baseToken: token0,
+    feeAmount: positionDetails?.fee,
+    existingPosition: position ?? undefined,
+  })
 
   const [_token0, _token1] = useMemo(
     () => [token0 ? unwrapToken(token0) : undefined, token1 ? unwrapToken(token1) : undefined],
@@ -151,9 +129,8 @@ const Position: FC = () => {
     return [undefined, undefined]
   }, [_token0, _token1, positionDetails])
 
-  const inverted = token1 ? base?.equals(token1) : undefined
-  const currencyQuote = inverted ? token1 : token0
-  const currencyBase = inverted ? token0 : token1
+  const currencyQuote = invert ? _token0 : _token1
+  const currencyBase = invert ? _token1 : _token0
 
   const { data: poolStats } = useConcentratedLiquidityPoolStats({ poolAddress: positionDetails?.address })
 
@@ -374,16 +351,14 @@ const Position: FC = () => {
                     </div>
                   </div>
                   <div className="flex flex-col">
-                    {priceLower && pool && _token0 && _token1 ? (
+                    {priceLower && pool && currencyQuote && currencyBase ? (
                       <span className="font-medium">
-                        {priceLower?.toSignificant(4)} {quote?.symbol}
-                      </span>
-                    ) : (
-                      <Skeleton.Text />
-                    )}
-                    {priceLower && pool && _token0 && _token1 ? (
-                      <span className="text-sm text-gray-600 dark:text-slate-400">
-                        ${(fiatAmountsAsNumber[0] * (1 + minPriceDiff / 100)).toFixed(2)} ({minPriceDiff.toFixed(2)}%)
+                        {formatTickPrice({
+                          price: priceUpper,
+                          atLimit: ticksAtLimit,
+                          direction: Bound.UPPER,
+                        })}{' '}
+                        {currencyQuote.symbol} per {currencyBase.symbol}
                       </span>
                     ) : (
                       <Skeleton.Text />
@@ -402,16 +377,14 @@ const Position: FC = () => {
                     </div>
                   </div>
                   <div className="flex flex-col">
-                    {priceUpper && pool && _token1 && _token0 ? (
+                    {priceUpper && pool && currencyQuote && currencyBase ? (
                       <span className="font-medium">
-                        {priceUpper?.toSignificant(4)} {quote?.symbol}
-                      </span>
-                    ) : (
-                      <Skeleton.Text />
-                    )}
-                    {priceUpper && pool && _token1 && _token0 ? (
-                      <span className="text-sm text-gray-600 dark:text-slate-400">
-                        ${(fiatAmountsAsNumber[0] * (1 + maxPriceDiff / 100)).toFixed(2)} ({maxPriceDiff.toFixed(2)}%)
+                        {formatTickPrice({
+                          price: priceLower,
+                          atLimit: ticksAtLimit,
+                          direction: Bound.UPPER,
+                        })}{' '}
+                        {currencyQuote.symbol} per {currencyBase.symbol}
                       </span>
                     ) : (
                       <Skeleton.Text />
