@@ -164,7 +164,7 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     USDC: USDC[ChainId.OPTIMISM],
     USDT: USDT[ChainId.OPTIMISM],
     OP: OP[ChainId.OPTIMISM],
-    // SUSHI: SUSHI[ChainId.OPTIMISM],
+    SUSHI: SUSHI[ChainId.OPTIMISM],
   },
   [ChainId.POLYGON]: {
     // NATIVE: Native.onChain(ChainId.POLYGON),
