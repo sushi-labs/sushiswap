@@ -89,21 +89,19 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         </>
       }
     >
+      {noLiquidity && (
+        <div className="bg-blue/10 text-blue rounded-xl p-6 font-medium">
+          This pool must be initialized before you can add liquidity. To initialize, select a starting price for the
+          pool. Then, enter your liquidity price range and deposit amount. Gas fees will be higher than usual due to the
+          initialization transaction.
+        </div>
+      )}
       <div className="bg-white dark:bg-white/[0.02] rounded-xl p-4">
         <div className="flex flex-col gap-3">
-          <div className="absolute z-10 flex justify-center">
-            <button
-              className="text-sm font-medium text-blue hover:text-blue-600 h-[28px]"
-              color="blue"
-              onClick={resetMintState}
-            >
-              Clear all
-            </button>
-          </div>
           {noLiquidity ? (
             <div className="pb-2">
               <Input.Text
-                className="!bg-gray-100"
+                className="!bg-gray-100 dark:!bg-slate-800"
                 label="Start price"
                 value={startPriceTypedValue}
                 onChange={onStartPriceInput}
@@ -112,20 +110,30 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               />
             </div>
           ) : (
-            // <LiquidityChartRangeInput
-            //   chainId={chainId}
-            //   currencyA={token0}
-            //   currencyB={token1}
-            //   feeAmount={feeAmount}
-            //   ticksAtLimit={ticksAtLimit}
-            //   price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
-            //   priceLower={priceLower}
-            //   priceUpper={priceUpper}
-            //   onLeftRangeInput={onLeftRangeInput}
-            //   onRightRangeInput={onRightRangeInput}
-            //   interactive={!hasExistingPosition}
-            // />
-            <></>
+            <>
+              <div className="absolute z-10 flex justify-center">
+                <button
+                  className="text-sm font-medium text-blue hover:text-blue-600 h-[28px]"
+                  color="blue"
+                  onClick={resetMintState}
+                >
+                  Clear all
+                </button>
+              </div>
+              <LiquidityChartRangeInput
+                chainId={chainId}
+                currencyA={token0}
+                currencyB={token1}
+                feeAmount={feeAmount}
+                ticksAtLimit={ticksAtLimit}
+                price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
+                priceLower={priceLower}
+                priceUpper={priceUpper}
+                onLeftRangeInput={onLeftRangeInput}
+                onRightRangeInput={onRightRangeInput}
+                interactive={!hasExistingPosition}
+              />
+            </>
           )}
         </div>
         <div className="flex flex-col gap-3 pt-4">
