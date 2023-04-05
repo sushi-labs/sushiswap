@@ -29,7 +29,6 @@ const getExchangeTokens = async (ids: string[], chainId: SushiSwapChainId): Prom
     name: subgraphName,
   })
 
-  // waiting for new subgraph to sync
   const { tokens, bundle } = await sdk.Tokens({
     where: { id_in: ids.map((id) => id.toLowerCase()) },
   })
