@@ -92,11 +92,11 @@ additionalTypeDefs: |
     ): [Block!]!
   }
 # Had to disable global transforms since we have a jsonSchema handler in here now...
-# transforms:
-#   - autoPagination:
-#       validateSchema: false
-#   - autoTypeMerging: true
-#   - addSourceName: true
+transforms:
+  - autoPagination:
+      validateSchema: false
+  - autoTypeMerging: true
+  - addSourceName: true
 
 additionalResolvers:
   - ./resolvers/index.ts

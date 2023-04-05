@@ -82,7 +82,7 @@ importers:
       '@types/node-fetch': 2.6.2
       '@vercel/node': 2.9.8
       '@wagmi/core': 0.10.8
-      '@whatwg-node/fetch': latest
+      '@whatwg-node/fetch': 0.8.4
       eslint: 8.29.0
       lodash.zip: 4.2.0
       typescript: 4.9.4
@@ -163,7 +163,7 @@ importers:
       '@sushiswap/viem-config': workspace:*
       '@swc/core': 1.3.26
       '@swc/helpers': 0.4.14
-      '@whatwg-node/fetch': latest
+      '@whatwg-node/fetch': 0.8.4
       dotenv: 16.0.3
       eslint: 8.29.0
       ethers: 5.7.2
@@ -1455,12 +1455,12 @@ importers:
       '@graphprotocol/client-auto-pagination': 1.1.16
       '@graphprotocol/client-auto-type-merging': 1.0.23
       '@graphprotocol/client-cli': 2.2.20
-      '@graphql-mesh/transform-filter-schema': latest
-      '@graphql-mesh/transform-prefix': latest
-      '@graphql-mesh/transform-prune': latest
-      '@graphql-mesh/transform-rename': latest
-      '@graphql-mesh/transform-type-merging': latest
-      '@graphql-tools/merge': latest
+      '@graphql-mesh/transform-filter-schema': 0.15.24
+      '@graphql-mesh/transform-prefix': 0.12.22
+      '@graphql-mesh/transform-prune': 0.1.20
+      '@graphql-mesh/transform-rename': 0.14.22
+      '@graphql-mesh/transform-type-merging': 0.5.20
+      '@graphql-tools/merge': 8.4.0
       '@sushiswap/abi': workspace:*
       '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
@@ -1542,20 +1542,18 @@ importers:
       '@graphprotocol/client-auto-pagination': 1.1.16
       '@graphprotocol/client-auto-type-merging': 1.0.23
       '@graphprotocol/client-cli': 2.2.20
-      '@graphql-mesh/cache-localforage': latest
-      '@graphql-mesh/cross-helpers': latest
-      '@graphql-mesh/graphql': latest
-      '@graphql-mesh/http': latest
-      '@graphql-mesh/merger-stitching': latest
-      '@graphql-mesh/runtime': latest
-      '@graphql-mesh/store': latest
-      '@graphql-mesh/transform-filter-schema': latest
-      '@graphql-mesh/transform-prefix': latest
-      '@graphql-mesh/transform-prune': latest
-      '@graphql-mesh/transform-rename': latest
-      '@graphql-mesh/transform-type-merging': latest
-      '@graphql-mesh/utils': latest
-      '@graphql-tools/merge': latest
+      '@graphql-mesh/cache-localforage': 0.7.20
+      '@graphql-mesh/cross-helpers': 0.3.4
+      '@graphql-mesh/graphql': 0.34.14
+      '@graphql-mesh/http': 0.3.27
+      '@graphql-mesh/merger-stitching': 0.18.23
+      '@graphql-mesh/runtime': 0.46.22
+      '@graphql-mesh/store': 0.9.20
+      '@graphql-mesh/transform-filter-schema': 0.15.24
+      '@graphql-mesh/transform-prefix': 0.12.22
+      '@graphql-mesh/transform-type-merging': 0.5.20
+      '@graphql-mesh/utils': 0.43.21
+      '@graphql-tools/merge': 8.4.0
       '@sushiswap/abi': workspace:*
       '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
@@ -1575,7 +1573,7 @@ importers:
       '@types/express': 4.17.15
       '@types/lodash.zip': 4.2.7
       '@wagmi/core': 0.10.8
-      '@whatwg-node/fetch': latest
+      '@whatwg-node/fetch': 0.8.4
       connect-timeout: 1.9.0
       date-fns: 2.29.3
       dotenv: 16.0.3
@@ -1604,8 +1602,6 @@ importers:
       '@graphql-mesh/store': 0.9.20_gjk6nlatyob5vwxyyubpcauwbm
       '@graphql-mesh/transform-filter-schema': 0.15.24_rzanqab3x3vsxkgfdbvzkd2dim
       '@graphql-mesh/transform-prefix': 0.12.22_rzanqab3x3vsxkgfdbvzkd2dim
-      '@graphql-mesh/transform-prune': 0.1.20_graphql@16.6.0
-      '@graphql-mesh/transform-rename': 0.14.22_rzanqab3x3vsxkgfdbvzkd2dim
       '@graphql-mesh/transform-type-merging': 0.5.20_rzanqab3x3vsxkgfdbvzkd2dim
       '@graphql-mesh/utils': 0.43.21_t3olqkp4ofjt4bu4gjm5khtgce
       '@graphql-tools/merge': 8.4.0_graphql@16.6.0
@@ -1850,7 +1846,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/node': ^18.0.0
-      '@whatwg-node/fetch': latest
+      '@whatwg-node/fetch': 0.8.4
       eslint: 8.29.0
       react: 18.2.0
       swr: 2.1.0
@@ -2071,12 +2067,12 @@ importers:
       '@graphprotocol/client-auto-pagination': 1.1.16
       '@graphprotocol/client-auto-type-merging': 1.0.23
       '@graphprotocol/client-cli': 2.2.20
-      '@graphql-mesh/transform-filter-schema': latest
-      '@graphql-mesh/transform-prefix': latest
-      '@graphql-mesh/transform-prune': latest
-      '@graphql-mesh/transform-rename': latest
-      '@graphql-mesh/transform-type-merging': latest
-      '@graphql-tools/merge': latest
+      '@graphql-mesh/transform-filter-schema': 0.15.24
+      '@graphql-mesh/transform-prefix': 0.12.22
+      '@graphql-mesh/transform-prune': 0.1.20
+      '@graphql-mesh/transform-rename': 0.14.22
+      '@graphql-mesh/transform-type-merging': 0.5.20
+      '@graphql-tools/merge': 8.4.0
       '@sushiswap/chain': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/graph-config': workspace:*
@@ -7494,6 +7490,7 @@ packages:
       tslib: ^2.4.0
     dependencies:
       graphql: 16.6.0
+    dev: true
 
   /@graphql-mesh/transform-prune/0.1.20_graphql@16.6.0+tslib@2.5.0:
     resolution: {integrity: sha512-xs5G+o3TJSGSwdt+iIEcHOGUNSCEOqfLt1Vi3G1y3lVrSz0HFbWvj3vTi4+YjDfB+bMBCQq2ZfNqmtKl4PXH5Q==}
@@ -7537,22 +7534,6 @@ packages:
       graphql-scalars: 1.21.3_graphql@16.6.0
       tslib: 2.5.0
     dev: true
-
-  /@graphql-mesh/transform-rename/0.14.22_rzanqab3x3vsxkgfdbvzkd2dim:
-    resolution: {integrity: sha512-Tc7KYzIt9M3vHs1kMi+AqeFmSOpO7yN0ST4zqEkJNcFbFh7UKyCrIxc4Rk5ayUS+vDM6L65c3J8VpjsXzwLkzw==}
-    peerDependencies:
-      '@graphql-mesh/types': ^0.91.12
-      '@graphql-mesh/utils': ^0.43.20
-      '@graphql-tools/utils': ^9.2.1
-      graphql: '*'
-      tslib: ^2.4.0
-    dependencies:
-      '@graphql-mesh/utils': 0.43.21_t3olqkp4ofjt4bu4gjm5khtgce
-      '@graphql-tools/delegate': 9.0.28_graphql@16.6.0
-      '@graphql-tools/wrap': 9.3.8_graphql@16.6.0
-      graphql: 16.6.0
-      graphql-scalars: 1.21.3_graphql@16.6.0
-    dev: false
 
   /@graphql-mesh/transform-type-merging/0.5.15_graphql@16.6.0:
     resolution: {integrity: sha512-TVaUQer4BoadwEO753uqMxwgx+11czD+R8vxAVb4KJ8RuYkmVekKw+bkF4fnpbdw9d5DKRGBNM7d1SnNFyfomg==}
