@@ -38,13 +38,16 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
 export type SushiSwapChainId = (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
 
 export const SUSHISWAP_V3_ENABLED_NETWORKS = [
+  ChainId.ETHEREUM,
   ChainId.ARBITRUM_NOVA,
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
   ChainId.BSC,
   ChainId.FANTOM,
   ChainId.FUSE,
+  ChainId.GNOSIS,
   ChainId.MOONRIVER,
+  ChainId.OPTIMISM,
   ChainId.POLYGON
 ]
 export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_ENABLED_NETWORKS)[number]
@@ -209,9 +212,12 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME = {
   [ChainId.ARBITRUM]: 'sushi-v3/v3-arbitrum',
   [ChainId.AVALANCHE]: 'sushi-v3/v3-avalanche',
   [ChainId.BSC]: 'sushi-v3/v3-bsc',
+  [ChainId.ETHEREUM]: 'sushi-v3/v3-ethereum',
   [ChainId.FANTOM]: 'sushi-v3/v3-fantom',
   [ChainId.FUSE]: 'sushi-v3/v3-fuse',
+  [ChainId.GNOSIS]: 'sushi-v3/v3-gnosis',
   [ChainId.MOONRIVER]: 'sushi-v3/v3-moonriver',
+  [ChainId.OPTIMISM]: 'sushi-v3/v3-optimism',
   [ChainId.POLYGON]: 'sushi-v3/v3-polygon',
 }
 

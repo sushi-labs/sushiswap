@@ -32,8 +32,11 @@ const { chains, provider }: CreateClientConfig & { chains: Chain[] } = isTest
 export const _createClient = (config?: CreateClientConfig) => {
   return createClient({
     provider,
+    // logger: {
+    //   warn: process.env.NODE_ENV !== 'production' ? console.warn : null,
+    // },
     logger: {
-      warn: process.env.NODE_ENV !== 'production' ? console.warn : null,
+      warn: null,
     },
     autoConnect: true,
     connectors: [

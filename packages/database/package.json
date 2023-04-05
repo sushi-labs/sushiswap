@@ -30,7 +30,7 @@
     "generate": "prisma generate --data-proxy",
     "pull": "prisma db pull",
     "push": "prisma db push --skip-generate",
-    "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
+    "dev": "tsc -w",
     "lint": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build",
     "studio": "prisma studio",

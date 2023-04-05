@@ -6,8 +6,7 @@ sources:
     transforms:
       - autoPagination:
           validateSchema: true
-    retry: 3
-  - name: Exchange
+  - name: SushiSwapV2
     handler:
       graphql:
         endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:sushi-v2/sushiswap-ethereum}
@@ -25,11 +24,16 @@ sources:
     transforms:
       - autoPagination:
           validateSchema: true
+      - prefix:
+          value: V3_
+          includeRootOperations: true
+          includeTypes: true
+          ignore:
+            - _SubgraphErrorPolicy_
       # - filterSchema:
       #     mode: wrap
       #     filters:
       #       - Type.!{Factory}
-    retry: 3
   - name: MasterChef
     handler:
       graphql:

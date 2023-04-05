@@ -1,6 +1,16 @@
 {
   "extends": ["//"],
   "pipeline": {
+    "start": {
+      "dependsOn": [        
+        "^build"
+      ],
+      "env": [
+        "REDIS_URL"
+      ],
+      "cache": false,
+      "persistent": true
+    },
     "build": {
       "outputs": [
         ".graphclient/**"
@@ -10,7 +20,7 @@
     },
     "check": {
       "dependsOn": ["build"],
-      "cache": true
+      "cache": false
     }
   }
 }
