@@ -23,9 +23,9 @@ export async function execute() {
     const { incentivesToCreate, incentivesToUpdate, tokens } = await transform(farms)
 
     // // LOAD
-    // await createTokens(tokens)
-    // await mergeIncentives(incentivesToCreate, incentivesToUpdate)
-    // await updatePoolsWithIncentivesTotalApr()
+    await createTokens(tokens)
+    await mergeIncentives(incentivesToCreate, incentivesToUpdate)
+    await updatePoolsWithIncentivesTotalApr()
 
     const endTime = performance.now()
     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)

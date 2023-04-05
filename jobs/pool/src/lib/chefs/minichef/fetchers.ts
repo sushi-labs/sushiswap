@@ -108,6 +108,8 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
     name: subgraphName,
   })
 
+  console.log(`Trying to retrieve rewarders for ${chainId}-${subgraphName}`)
+
   const { rewarders } = await sdk.MiniChefRewarders({
     where: {
       id_not: '0x0000000000000000000000000000000000000000',

@@ -9,7 +9,7 @@ RUN apk update
 WORKDIR /app
 RUN pnpm global add turbo ts-node
 COPY . .
-RUN turbo prune --scope=web --docker
+RUN turbo prune --scope=pool-api --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM node:alpine AS installer
