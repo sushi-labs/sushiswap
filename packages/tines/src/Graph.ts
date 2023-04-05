@@ -912,7 +912,7 @@ export class Graph {
     console.assert(gasSpent <= gasSpentInit, 'Internal Error 491')
 
     if (topologyWasChanged || removedEdgesNumber > 0) {
-      output = this.calcLegsAmountOut(legs, amountIn)
+      output = this.updateLegsInOut(legs, amountIn)
       totalOutput = output - toVert.gasPrice * gasSpent
     }
 
@@ -1132,8 +1132,8 @@ export class Graph {
     return weakEdgeList.length
   }
 
-  // TODO: make full test coverage!
-  calcLegsAmountOut(legs: RouteLeg[], amountIn: number) {
+  // returns route output
+  updateLegsInOut(legs: RouteLeg[], amountIn: number): number {
     const amounts = new Map<string, number>()
     amounts.set(legs[0].tokenFrom.tokenId as string, amountIn)
     legs.forEach((l) => {
@@ -1153,6 +1153,9 @@ export class Graph {
       const vertNext = (vert as Vertice).getNeibour(edge) as Vertice
       const prevAmount = amounts.get(vertNext.token.tokenId as string)
       amounts.set(vertNext.token.tokenId as string, (prevAmount || 0) + output)
+
+      l.assumedAmountIn = input
+      l.assumedAmountOut = output
     })
     return amounts.get(legs[legs.length - 1].tokenTo.tokenId as string) || 0
   }
