@@ -85,7 +85,12 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
 
   const state = useMemo(() => {
     const token0 = getTokenFromUrl(chainId, fromCurrency, tokenFrom, isTokenFromLoading)
-    const token1 = getTokenFromUrl(chainId, toCurrency, tokenTo, isTokenToLoading)
+    let token1 = getTokenFromUrl(chainId, toCurrency, tokenTo, isTokenToLoading)
+
+    // Cant have two of the same tokens
+    if (token1?.wrapped.address === token0?.wrapped.address) {
+      token1 = undefined
+    }
 
     const setNetwork = (chainId: ChainId) => {
       const fromCurrency =
