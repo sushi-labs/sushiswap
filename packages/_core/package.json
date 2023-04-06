@@ -30,6 +30,9 @@
     "lint": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build"
   },
+  "dependencies": {
+    "@sushiswap/math": "workspace:*"
+  },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
