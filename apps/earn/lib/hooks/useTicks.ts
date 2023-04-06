@@ -2,7 +2,7 @@ import { Type } from '@sushiswap/currency'
 import { FeeAmount, TICK_SPACINGS, computePoolAddress, nearestUsableTick, V3ChainId } from '@sushiswap/v3-sdk'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { useMemo } from 'react'
-import { Address, useContractReads } from '@sushiswap/wagmi'
+import { Address, useContractRead, useContractReads } from '@sushiswap/wagmi'
 import { Writeable } from 'zod'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3FactoryContract'
 import { getV3TickLensContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3TickLens'
@@ -61,6 +61,7 @@ export function useTicks({ token0, token1, chainId, feeAmount, numSurroundingTic
       for (let i = minIndex; i <= maxIndex; i++) {
         reads.push({
           ...getV3TickLensContractConfig(chainId),
+          chainId,
           functionName: 'getPopulatedTicksInWord',
           args: [poolAddress as Address, i],
         } as const)
@@ -69,7 +70,7 @@ export function useTicks({ token0, token1, chainId, feeAmount, numSurroundingTic
     return reads
   }, [chainId, maxIndex, minIndex, poolAddress])
 
-  const reads = useContractReads({ contracts: contractReads, enabled })
+  const reads = useContractReads({ contracts: contractReads, enabled: true })
 
   return useMemo(() => {
     const { data } = reads
