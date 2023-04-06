@@ -109,6 +109,9 @@ const Pool: FC = () => {
     [poolStats?.token0, poolStats?.token1]
   )
 
+  const change1d = 0
+  const change1w = 0
+
   return (
     <SWRConfig>
       <Layout>
@@ -218,7 +221,17 @@ const Pool: FC = () => {
                     <List.KeyValue flex title="Fees">
                       <span className="flex items-center gap-2">
                         {formatUSD(granularity === Granularity.Day ? poolStats.fees1d : poolStats.fees1w)}
-                        <span className="text-green">(+0.00%)</span>
+                        <span
+                          className={
+                            change1d === 0
+                              ? 'text-gray-600 dark:text-slate-400'
+                              : change1d > 0
+                              ? 'text-green'
+                              : 'text-red'
+                          }
+                        >
+                          (+0.00%)
+                        </span>
                       </span>
                     </List.KeyValue>
                   ) : (
@@ -228,7 +241,17 @@ const Pool: FC = () => {
                     <List.KeyValue flex title="Volume">
                       <span className="flex items-center gap-2">
                         {formatUSD(granularity === Granularity.Week ? poolStats.volume1d : poolStats.volume1w)}
-                        <span className="text-green">(+0.00%)</span>
+                        <span
+                          className={
+                            change1w === 0
+                              ? 'text-gray-600 dark:text-slate-400'
+                              : change1d > 0
+                              ? 'text-green'
+                              : 'text-red'
+                          }
+                        >
+                          (+0.00%)
+                        </span>
                       </span>
                     </List.KeyValue>
                   ) : (

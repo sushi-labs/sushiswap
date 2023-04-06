@@ -57,7 +57,7 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({ chainId, token0, to
             <Button
               size="xl"
               variant="outlined"
-              color={!token0 ? 'blue' : 'default'}
+              color={!token1 ? 'blue' : 'default'}
               id={`token0-select-button`}
               onClick={() => setOpen(true)}
             >

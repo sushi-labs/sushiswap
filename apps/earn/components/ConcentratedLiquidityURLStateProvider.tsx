@@ -4,10 +4,10 @@ import { ChainId } from '@sushiswap/chain'
 import { currencyFromShortCurrencyName, isShortCurrencyName, Native, Token, Type } from '@sushiswap/currency'
 import React, { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 import { useRouter } from 'next/router'
-import { useToken } from '@sushiswap/react-query'
 import { isAddress } from 'ethers/lib/utils'
 import { z } from 'zod'
 import { FeeAmount, isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
+import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 
 export const queryParamsSchema = z.object({
   chainId: z.coerce
@@ -76,12 +76,12 @@ const getTokenFromUrl = (
 export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLStateProvider> = ({ children }) => {
   const { query, push, pathname } = useRouter()
   const { chainId, fromCurrency, toCurrency, feeAmount, tokenId } = queryParamsSchema.parse(query)
-  const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useToken({
+  const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useTokenWithCache({
     chainId,
     address: fromCurrency,
   })
 
-  const { data: tokenTo, isInitialLoading: isTokenToLoading } = useToken({ chainId, address: toCurrency })
+  const { data: tokenTo, isInitialLoading: isTokenToLoading } = useTokenWithCache({ chainId, address: toCurrency })
 
   const state = useMemo(() => {
     const token0 = getTokenFromUrl(chainId, fromCurrency, tokenFrom, isTokenFromLoading)
@@ -112,7 +112,9 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
     }
 
     const setToken0 = (currency: Type) => {
+      const same = currency.wrapped.address === token1?.wrapped.address
       const _fromCurrency = currency.isNative ? 'NATIVE' : currency.wrapped.address
+
       void push(
         {
           pathname,
@@ -120,7 +122,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
             ...query,
             chainId: currency.chainId,
             fromCurrency: _fromCurrency,
-            toCurrency: toCurrency === _fromCurrency ? fromCurrency : toCurrency,
+            toCurrency: toCurrency === _fromCurrency || same ? fromCurrency : toCurrency,
           },
         },
         undefined,
@@ -128,6 +130,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
       )
     }
     const setToken1 = (currency: Type) => {
+      const same = currency.wrapped.address === token0?.wrapped.address
       const _toCurrency = currency.isNative ? 'NATIVE' : currency.wrapped.address
 
       void push(
@@ -136,7 +139,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
           query: {
             ...query,
             chainId: currency.chainId,
-            fromCurrency: fromCurrency === _toCurrency ? toCurrency : fromCurrency,
+            fromCurrency: fromCurrency === _toCurrency || same ? toCurrency : fromCurrency,
             toCurrency: _toCurrency,
           },
         },
