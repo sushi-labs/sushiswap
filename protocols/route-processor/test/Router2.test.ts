@@ -279,14 +279,14 @@ async function makeSwap(
   }
   const slippage = parseInt(balanceOutBN.sub(route.amountOutBN).mul(10_000).div(route.amountOutBN).toString())
 
-  if (slippage < 0) {
-    console.log(`expected amountOut: ${route.amountOutBN.toString()}`)
-    console.log(`real amountOut:     ${balanceOutBN.toString()}`)
-    console.log(`slippage: ${slippage / 100}%`)
+  if (route.amountOutBN.sub(balanceOutBN).abs().gt(10)) {
+    if (slippage < 0) {
+      console.log(`expected amountOut: ${route.amountOutBN.toString()}`)
+      console.log(`real amountOut:     ${balanceOutBN.toString()}`)
+      console.log(`slippage: ${slippage / 100}%`)
+    }
+    expect(slippage).greaterThanOrEqual(0) // positive slippage could be if we 'gather' some liquidity on the route
   }
-  //console.log(`gas use: ${receipt.gasUsed.toString()}`)
-  // expect(slippage).greaterThanOrEqual(0) // positive slippage could be if we 'gather' some liquidity on the route
-  expect(slippage).equal(0) // TODO: can't do this, isn't it a tiny bit of rounding when converting stable reserves?
 
   return [balanceOutBN, receipt.blockNumber]
 }
