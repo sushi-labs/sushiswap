@@ -21,6 +21,7 @@
     "lint": "TIMING=1 eslint src --fix",    
     "build": "graphclient build --fileType js && rm -f .graphclient/package.json",
     "start": "ts-node src/server.ts",
+    "server": "ts-node --swc src/server.ts",
     "setup": "ts-node src/setup-schedulers.ts",
     "test": "jest --passWithNoTests",
     "validate": "graphclient validate"

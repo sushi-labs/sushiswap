@@ -96,6 +96,16 @@
     },
     "validate": {
       "cache": false
+    },
+    "server": {
+      "dependsOn": [        
+        "build"
+      ],
+      "env": [
+        "REDIS_URL"
+      ],
+      "cache": false,
+      "persistent": true
     }
   }
 }
