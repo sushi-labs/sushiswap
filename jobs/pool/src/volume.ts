@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId, chainShortName } from '@sushiswap/chain'
 import { createClient, PoolVersion } from '@sushiswap/database'
 import {
   SUBGRAPH_HOST,
@@ -103,7 +103,7 @@ async function extract() {
     const [current, oneDay, oneWeek] = await Promise.all([
       fetchVolume(subgraph),
       fetchVolume(subgraph, oneDayBlocks),
-      fetchVolume(subgraph, oneWeekBlocks),
+      fetchVolume(subgraph, oneWeekBlocks)
     ])
     results.push({ chainId: subgraph.chainId, current, oneDay, oneWeek })
   }
@@ -138,8 +138,10 @@ async function fetchLegacyOrTridentPairs(config: SubgraphConfig, blockNumber?: n
         where,
         block,
       })
-      .catch((e: any) => {
-        console.error(e.message)
+      .catch((e: unknown) => {
+        if (e instanceof Error) {
+          console.error(e.message)
+        }
         return undefined
       })) as PairsVolumeFeeQuery | undefined
 
@@ -177,8 +179,10 @@ async function fetchV3Pools(config: SubgraphConfig, blockNumber?: number) {
         where,
         block,
       })
-      .catch((e: any) => {
-        console.error(e.message)
+      .catch((e: unknown) => {
+        if (e instanceof Error) {
+          console.error(e.message)
+        }
         return undefined
       })) as V3PoolsVolumeFeeQuery | undefined
 
