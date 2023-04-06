@@ -32,4 +32,4 @@ RUN pnpm exec turbo run build --filter="./$SCRIPT_PATH"
 RUN rm -rf $(pnpm store path)
 
 EXPOSE 8080/tcp
-CMD pnpm exec turbo run server --only --filter="./$SCRIPT_PATH"
+CMD pnpm exec turbo run start --only --filter="./$SCRIPT_PATH"
