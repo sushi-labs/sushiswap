@@ -88,7 +88,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
     let token1 = getTokenFromUrl(chainId, toCurrency, tokenTo, isTokenToLoading)
 
     // Cant have two of the same tokens
-    if (token1?.wrapped.address === token0?.wrapped.address) {
+    if (token1?.wrapped.address === token0?.wrapped.address || token0?.chainId !== token1?.chainId) {
       token1 = undefined
     }
 
