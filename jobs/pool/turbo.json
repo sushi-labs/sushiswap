@@ -16,7 +16,7 @@
       "outputs": [
         ".graphclient/**"
       ],
-      "dependsOn": ["^build", "generate"]
+      "dependsOn": ["^build"]
     },
     "check": {
       "dependsOn": ["build"],

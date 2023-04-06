@@ -34237,13 +34237,13 @@ packages:
     dev: true
 
   github.com/boringcrypto/BoringSolidity/8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc:
-    resolution: {commit: 8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc, repo: git+ssh://git@github.com/boringcrypto/BoringSolidity.git, type: git}
+    resolution: {tarball: https://codeload.github.com/boringcrypto/BoringSolidity/tar.gz/8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc}
     name: '@boringcrypto/boring-solidity'
     version: 1.2.0
     dev: true
 
   github.com/boringcrypto/BoringSolidity/e06e943:
-    resolution: {commit: e06e943, repo: git+ssh://git@github.com/boringcrypto/BoringSolidity.git, type: git}
+    resolution: {tarball: https://codeload.github.com/boringcrypto/BoringSolidity/tar.gz/e06e943}
     name: '@boringcrypto/boring-solidity'
     version: 1.0.4
     dev: true
