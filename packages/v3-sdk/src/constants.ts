@@ -39,7 +39,7 @@ export const V3_FACTORY_ADDRESS = {
   [ChainId.GNOSIS]: '0xf78031CBCA409F2FB6876BDFDBc1b2df24cF9bEf',
   // [ChainId.KAVA]: '',
   // [ChainId.METIS]: '',
-  [ChainId.MOONBEAM]: '0x2ecd58F51819E8F8BA08A650BEA04Fc0DEa1d523',
+  // [ChainId.MOONBEAM]: '0x2ecd58F51819E8F8BA08A650BEA04Fc0DEa1d523',
   [ChainId.MOONRIVER]: '0x2F255d3f3C0A3726c6c99E74566c4b18E36E3ce6',
   [ChainId.OPTIMISM]: '0x9c6522117e2ed1fE5bdb72bb0eD5E3f2bdE7DBe0',
   [ChainId.POLYGON]: '0x917933899c6a5F8E37F31E19f92CdBFF7e8FF0e2',
@@ -58,7 +58,7 @@ export const V3_POSTIION_MANAGER = {
   [ChainId.GNOSIS]: '0xaB235da7f52d35fb4551AfBa11BFB56e18774A65',
   // [ChainId.KAVA]: '',
   // [ChainId.METIS]: '',
-  [ChainId.MOONBEAM]: '0x8f54301F315C56c112D492D9443047D4745dbe9e',
+  // [ChainId.MOONBEAM]: '0x8f54301F315C56c112D492D9443047D4745dbe9e',
   [ChainId.MOONRIVER]: '0xD045d27c1f7e7f770a807B0a85d8e3F852e0F2BE',
   [ChainId.OPTIMISM]: '0x1af415a1EbA07a4986a52B6f2e7dE7003D82231e',
   [ChainId.POLYGON]: '0xb7402ee99F0A008e461098AC3A27F4957Df89a40',
@@ -77,11 +77,27 @@ export const V3_TICK_LENS = {
   [ChainId.GNOSIS]: '0xaa26771d497814E81D305c511Efbb3ceD90BF5bd',
   // [ChainId.KAVA]: '',
   // [ChainId.METIS]: '',
-  [ChainId.MOONBEAM]: '0x53b08DbD70327b7Ba3B7886Fc9987BC985d27262',
+  // [ChainId.MOONBEAM]: '0x53b08DbD70327b7Ba3B7886Fc9987BC985d27262',
   [ChainId.MOONRIVER]: '0x6E9Aed2C4cF5ed7E8AB851435225fE1601a1Bc56',
   [ChainId.OPTIMISM]: '0x0367a647A68f304f2A6e453c25033a4249d7F2C6',
   [ChainId.POLYGON]: '0x9fdeA1412e50D78B25aCE4f96d35801647Fdf7dA',
 } as const
 
-export type V3ChainId = keyof typeof V3_TICK_LENS
-export const isV3ChainId = (chainId: number): chainId is V3ChainId => chainId in V3_TICK_LENS
+export const V3_SUPPORTED_CHAIN_IDS = [
+  ChainId.ARBITRUM_NOVA,
+  ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
+  ChainId.BSC,
+  ChainId.ETHEREUM,
+  ChainId.FANTOM,
+  ChainId.FUSE,
+  ChainId.GNOSIS,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
+  ChainId.OPTIMISM,
+  ChainId.POLYGON,
+] as const
+
+export type V3ChainId = (typeof V3_SUPPORTED_CHAIN_IDS)[number]
+
+export const isV3ChainId = (chainId: ChainId): chainId is V3ChainId => chainId in V3_SUPPORTED_CHAIN_IDS

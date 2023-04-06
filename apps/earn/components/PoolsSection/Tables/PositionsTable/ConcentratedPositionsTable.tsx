@@ -10,7 +10,7 @@ import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Disclosure } from '@headlessui/react'
 import { classNames, Collapsible } from '@sushiswap/ui'
 import ConcentratedCurveIcon from '@sushiswap/ui/future/components/icons/ConcentratedCurveIcon'
-import { V3_SUPPORTED_CHAIN_IDS } from '../../../../config'
+import { V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

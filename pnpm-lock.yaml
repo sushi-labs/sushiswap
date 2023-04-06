@@ -2275,7 +2275,9 @@ importers:
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
       '@sushiswap/chain': workspace:*
+      '@sushiswap/client': workspace:*
       '@sushiswap/currency': workspace:*
+      '@sushiswap/database': workspace:*
       '@sushiswap/dexie': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -2307,7 +2309,9 @@ importers:
       '@sushiswap/abi': link:../abi
       '@sushiswap/amm': link:../amm
       '@sushiswap/chain': link:../chain
+      '@sushiswap/client': link:../client
       '@sushiswap/currency': link:../currency
+      '@sushiswap/database': link:../database
       '@sushiswap/dexie': link:../dexie
       '@sushiswap/math': link:../math
       '@sushiswap/route-processor': link:../../protocols/route-processor
