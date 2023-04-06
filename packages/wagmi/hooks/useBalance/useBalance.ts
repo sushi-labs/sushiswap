@@ -29,6 +29,9 @@ type UseBalances = (params: UseBalancesParams) => (
   data: BalanceMap
 }
 
+/**
+ * @deprecated  use @sushiswap/wagmi/future/hooks/balances/useBalances
+ */
 export const useBalances: UseBalances = ({
   watch = true,
   enabled = true,
