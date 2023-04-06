@@ -1,6 +1,5 @@
 import { BigNumber } from 'ethers'
-import { getContract } from 'wagmi/actions'
-import { getProvider } from '../../../../provider'
+import { getContract, getProvider } from 'wagmi/actions'
 import { getConcentratedPositionOwners } from '../../pools/actions/getConcentratedPositionOwner'
 import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 import { V3ChainId } from '@sushiswap/v3-sdk'
@@ -64,7 +63,7 @@ export const getConcentratedLiquidityPositionFees = async ({
           type: 'function',
         },
       ],
-      signerOrProvider: getProvider(el.chainId),
+      signerOrProvider: getProvider({ chainId: el.chainId }),
     })
 
     const result = await contract.callStatic.collect(
