@@ -51,7 +51,11 @@
       "cache": false
     },
     "dev": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build", 
+        "generate",
+        "export"
+      ],
       "cache": false,
       "persistent": true
     },
@@ -74,7 +78,8 @@
     "start": {
       "dependsOn": [        
         "^build", 
-        "generate"
+        "generate",
+        "export"
       ],
       "env": [
         "REDIS_URL",
@@ -96,16 +101,6 @@
     },
     "validate": {
       "cache": false
-    },
-    "server": {
-      "dependsOn": [        
-        "build"
-      ],
-      "env": [
-        "REDIS_URL"
-      ],
-      "cache": false,
-      "persistent": true
     }
   }
 }

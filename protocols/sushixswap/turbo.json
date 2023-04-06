@@ -7,9 +7,10 @@
           "artifacts/**/*"
         ],
         "dependsOn": [
-          "^build"
+          "^build",
+          "export"
         ],
-        "env": []
+        "cache": true
       },
       "check": {
         "dependsOn": [
