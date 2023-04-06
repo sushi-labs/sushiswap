@@ -13,7 +13,7 @@ interface UseConcentratedLiquidityPoolStats {
 
 export const useConcentratedLiquidityPoolStats = ({ poolAddress, enabled = true }: UseConcentratedLiquidityPoolStats) => {
     return useQuery({
-        queryKey: [`useConcentratedLiquidityPoolStats`],
+        queryKey: ['useConcentratedLiquidityPoolStats'],
         queryFn: async () => {
             const data = await getPools({take: 1000, poolTypes: [PoolType.CONCENTRATED_LIQUIDITY_POOL], poolVersions: [PoolVersion.V3]})
             

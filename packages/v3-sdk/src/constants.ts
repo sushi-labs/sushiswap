@@ -44,6 +44,7 @@ export const V3_FACTORY_ADDRESS = {
   [ChainId.OPTIMISM]: '0x9c6522117e2ed1fE5bdb72bb0eD5E3f2bdE7DBe0',
   [ChainId.POLYGON]: '0x917933899c6a5F8E37F31E19f92CdBFF7e8FF0e2',
   [ChainId.BOBA]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904',
+  [ChainId.POLYGON_ZKEVM]: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
 } as const
 
 export const V3_POSTIION_MANAGER = {
@@ -64,6 +65,7 @@ export const V3_POSTIION_MANAGER = {
   [ChainId.OPTIMISM]: '0x1af415a1EbA07a4986a52B6f2e7dE7003D82231e',
   [ChainId.POLYGON]: '0xb7402ee99F0A008e461098AC3A27F4957Df89a40',
   [ChainId.BOBA]: '0x1b9d177CcdeA3c79B6c8F40761fc8Dc9d0500EAa',
+  [ChainId.POLYGON_ZKEVM]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3',
 } as const
 
 export const V3_TICK_LENS = {
@@ -84,6 +86,7 @@ export const V3_TICK_LENS = {
   [ChainId.OPTIMISM]: '0x0367a647A68f304f2A6e453c25033a4249d7F2C6',
   [ChainId.POLYGON]: '0x9fdeA1412e50D78B25aCE4f96d35801647Fdf7dA',
   [ChainId.BOBA]: '0x9B3fF703FA9C8B467F5886d7b61E61ba07a9b51c',
+  [ChainId.POLYGON_ZKEVM]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904',
 } as const
 
 export const V3_SUPPORTED_CHAIN_IDS = [
@@ -100,8 +103,10 @@ export const V3_SUPPORTED_CHAIN_IDS = [
   ChainId.OPTIMISM,
   ChainId.POLYGON,
   ChainId.BOBA,
+  ChainId.POLYGON_ZKEVM,
 ] as const
 
 export type V3ChainId = (typeof V3_SUPPORTED_CHAIN_IDS)[number]
 
-export const isV3ChainId = (chainId: ChainId): chainId is V3ChainId => chainId in V3_SUPPORTED_CHAIN_IDS
+export const isV3ChainId = (chainId: ChainId): chainId is V3ChainId =>
+  V3_SUPPORTED_CHAIN_IDS.includes(chainId as V3ChainId)
