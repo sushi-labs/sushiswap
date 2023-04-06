@@ -181,7 +181,7 @@ export class StableSwapRPool extends RPool {
   }
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
-    amountOut = direction ? this.total0.toAmount(amountOut) : this.total1.toAmount(amountOut)
+    amountOut = direction ? this.total1.toAmount(amountOut) : this.total0.toAmount(amountOut)
     amountOut *= direction ? this.decimalsCompensation1 : this.decimalsCompensation0
     const x = direction ? this.reserve0 : this.reserve1
     const y = direction ? this.reserve1 : this.reserve0
@@ -193,7 +193,7 @@ export class StableSwapRPool extends RPool {
 
     const xNew = this.computeY(yNew, x)
     const inp0 = parseInt(xNew.sub(x).toString()) / (1 - this.fee)
-    const inp1 = direction ? this.total1.toShare(inp0) : this.total0.toShare(inp0)
+    const inp1 = direction ? this.total0.toShare(inp0) : this.total1.toShare(inp0)
     const inp2 = inp1 / (direction ? this.decimalsCompensation0 : this.decimalsCompensation1)
     const inp = Math.max(inp2, 1)
     return { inp, gasSpent: this.swapGasCost }
