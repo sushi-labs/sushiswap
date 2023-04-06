@@ -98,7 +98,6 @@ export const V3_SUPPORTED_CHAIN_IDS = [
   ChainId.FANTOM,
   ChainId.FUSE,
   ChainId.GNOSIS,
-  ChainId.MOONBEAM,
   ChainId.MOONRIVER,
   ChainId.OPTIMISM,
   ChainId.POLYGON,

@@ -15,6 +15,8 @@ ARG TURBO_TEAM
 WORKDIR /workdir/repo
 COPY . .
 
+RUN ls
+
 # Prune unneeded packages
 # Need to pull the package name from the path
 RUN turbo prune --out-dir=../pruned --scope=$(pnpm list --depth -1 --parseable --long --filter "./$SCRIPT_PATH" | grep -oP '(?<=\:)(.*(?=@))') 
@@ -30,4 +32,4 @@ RUN pnpm exec turbo run build --filter="./$SCRIPT_PATH"
 RUN rm -rf $(pnpm store path)
 
 EXPOSE 8080/tcp
-CMD pnpm exec turbo run server --only --filter="./$SCRIPT_PATH"
+CMD pnpm exec turbo run start --only --filter="./$SCRIPT_PATH"
