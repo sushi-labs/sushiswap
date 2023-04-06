@@ -101,6 +101,7 @@
     },
     "validate": {
       "cache": false
-    }
+    },
+    "export": {}
   }
 }
