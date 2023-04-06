@@ -6,18 +6,18 @@ import { z } from 'zod'
 import { useRouter } from 'next/router'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
 import {
-  useConcentratedLiquidityPool,
   useConcentratedLiquidityPositionsFromTokenId,
   useConcentratedPositionInfo,
+  useTokenWithCache,
 } from '@sushiswap/wagmi/future/hooks'
-import { useConcentratedLiquidityPoolStats, useToken } from '@sushiswap/react-query'
+import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { classNames } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Amount, tryParseAmount } from '@sushiswap/currency'
 import { usePriceInverter, useTokenAmountDollarValues } from '../../../lib/hooks'
-import { formatTickPrice, getPriceOrderingFromPositionForUI, getTickToPrice, unwrapToken } from '../../../lib/functions'
+import { formatTickPrice, getPriceOrderingFromPositionForUI, unwrapToken } from '../../../lib/functions'
 import { ConcentratedLiquidityWidget } from '../../../components/ConcentratedLiquidityWidget'
 import { useAccount } from '@sushiswap/wagmi'
 import {
@@ -82,8 +82,8 @@ const Position: FC = () => {
     tokenId,
   })
 
-  const { data: token0, isLoading: token0Loading } = useToken({ chainId, address: positionDetails?.token0 })
-  const { data: token1, isLoading: token1Loading } = useToken({ chainId, address: positionDetails?.token1 })
+  const { data: token0, isLoading: token0Loading } = useTokenWithCache({ chainId, address: positionDetails?.token0 })
+  const { data: token1, isLoading: token1Loading } = useTokenWithCache({ chainId, address: positionDetails?.token1 })
 
   const { data: position } = useConcentratedPositionInfo({
     chainId,
