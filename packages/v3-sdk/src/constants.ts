@@ -83,7 +83,7 @@ export const V3_TICK_LENS = {
   [ChainId.POLYGON]: '0x9fdeA1412e50D78B25aCE4f96d35801647Fdf7dA',
 } as const
 
-const V3_SUPPORTED_CHAIN_IDS = [
+export const V3_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM_NOVA,
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
