@@ -7,7 +7,7 @@ steps:
       - '-t'
       - 'gcr.io/$PROJECT_ID/$TRIGGER_NAME:latest'
       - '-f'
-      - './jobs/pool'
+      - './jobs/pool/Dockerfile'
       - .
     dir: /workspace
     id: Build Docker Image
