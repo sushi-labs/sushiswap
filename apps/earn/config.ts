@@ -37,5 +37,3 @@ export const AMM_ENABLED_NETWORKS: ChainId[] = [
 export const SUPPORTED_CHAIN_IDS: ChainId[] = Array.from(
   new Set([...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS])
 )
-
-export const V3_SUPPORTED_CHAIN_IDS = Object.keys(V3_FACTORY_ADDRESS).map((el) => +el as V3ChainId)
