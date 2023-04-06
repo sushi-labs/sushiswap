@@ -15,6 +15,8 @@ ARG TURBO_TEAM
 WORKDIR /workdir/repo
 COPY . .
 
+RUN ls
+
 # Prune unneeded packages
 # Need to pull the package name from the path
 RUN turbo prune --out-dir=../pruned --scope=$(pnpm list --depth -1 --parseable --long --filter "./$SCRIPT_PATH" | grep -oP '(?<=\:)(.*(?=@))') 
