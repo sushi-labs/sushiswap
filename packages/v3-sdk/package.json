@@ -4,8 +4,9 @@
   "private": true,
   "description": "Sushi V3 SDK",
   "keywords": [
-    "sushi",
-    "v3"
+    "sushiswap",
+    "v3",
+    "sdk"
   ],
   "repository": {
     "type": "git",

@@ -1,4 +1,3 @@
-import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/dist/types'
 
@@ -18,6 +17,8 @@ const func: DeployFunction = async function ({
   }
 
   const args = [bentoBoxV1Address[chainId]]
+
+  // const args = ['0x0000000000000000000000000000000000000000']
 
   const { address } = await deploy('RouteProcessor2', {
     from: deployer,

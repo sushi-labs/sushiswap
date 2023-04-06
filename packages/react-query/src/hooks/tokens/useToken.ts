@@ -56,6 +56,13 @@ export const useToken = <T extends boolean = false>({ chainId, address, withStat
     return useQuery({
         queryKey: ['token', { chainId, address }],
         queryFn: async () => {
+
+            // const customTokens = localStorage.getItem('sushi.customTokens')
+            // if (customTokens?.includes(`${chainId}:${address}`)) {
+            //     return JSON.parse(customTokens)[`${chainId}:${address}`] as Data
+            // }
+
+
             // Try fetching from cache
             const token = await getToken({ chainId, address })
             if (token) {

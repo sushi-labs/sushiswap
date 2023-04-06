@@ -38,18 +38,18 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
 export type SushiSwapChainId = (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
 
 export const SUSHISWAP_V3_ENABLED_NETWORKS = [
-  // ChainId.ETHEREUM,
-  // ChainId.ARBITRUM_NOVA,
-  // ChainId.ARBITRUM,
-  // ChainId.AVALANCHE,
-  // ChainId.BSC,
-  // ChainId.BOBA,
-  // ChainId.FANTOM,
-  // ChainId.FUSE,
-  // ChainId.GNOSIS,
-  // ChainId.MOONRIVER,
-  // ChainId.OPTIMISM,
-  // ChainId.POLYGON
+  ChainId.ETHEREUM,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
+  ChainId.BSC,
+  ChainId.BOBA,
+  ChainId.FANTOM,
+  ChainId.FUSE,
+  ChainId.GNOSIS,
+  ChainId.MOONRIVER,
+  ChainId.OPTIMISM,
+  ChainId.POLYGON,
   ChainId.POLYGON_ZKEVM
 ]
 export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_ENABLED_NETWORKS)[number]

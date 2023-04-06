@@ -1,15 +1,17 @@
 {
-  "name": "@sushiswap/amm",
-  "version": "0.1.1",
-  "description": "Sushi AMM",
+  "name": "@sushiswap/v2-sdk",
+  "version": "0.0.0",
+  "private": true,
+  "description": "SushiSwap V2 SDK",
   "keywords": [
-    "sushi",
-    "amm"
+    "sushiswap",
+    "v2",
+    "sdk"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
-    "directory": "packages/amm"
+    "directory": "packages/v2-sdk"
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
