@@ -574,6 +574,7 @@ export const COMMON_BASES = {
   [ChainId.SCROLL_ALPHA_TESTNET]: [Native.onChain(ChainId.SCROLL_ALPHA_TESTNET), WNATIVE[ChainId.SCROLL_ALPHA_TESTNET]],
   [ChainId.BASE_TESTNET]: [Native.onChain(ChainId.BASE_TESTNET), WNATIVE[ChainId.BASE_TESTNET]],
   [ChainId.POLYGON_ZKEVM]: [
+    Native.onChain(ChainId.POLYGON_ZKEVM),
     WNATIVE[ChainId.POLYGON_ZKEVM],
     MATIC[ChainId.POLYGON_ZKEVM],
     USDC[ChainId.POLYGON_ZKEVM],
