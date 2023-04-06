@@ -1,5 +1,4 @@
 import { ChainId } from '@sushiswap/chain'
-import { V3_FACTORY_ADDRESS, V3ChainId } from '@sushiswap/v3-sdk'
 
 export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [
   ChainId.OPTIMISM,
