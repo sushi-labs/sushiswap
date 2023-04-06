@@ -1,7 +1,7 @@
 steps:
   - name: gcr.io/cloud-builders/docker
     env:
-      - '_SCRIPT_PATH=/jobs/pool'
+      - '_SCRIPT_PATH="/jobs/pool"'
     args:
       - build
       - '--build-arg'
