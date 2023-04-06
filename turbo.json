@@ -102,6 +102,8 @@
     "validate": {
       "cache": false
     },
-    "export": {}
+    "export": {
+      "cache": true
+    }
   }
 }
