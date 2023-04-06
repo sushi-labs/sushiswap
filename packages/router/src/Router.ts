@@ -51,9 +51,9 @@ export class Router {
   ) {
     return Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice, [
       LiquidityProviders.NativeWrap,
-      // LiquidityProviders.SushiSwap,
+      LiquidityProviders.SushiSwap,
       LiquidityProviders.SushiSwapV3,
-      // LiquidityProviders.Trident,
+      LiquidityProviders.Trident,
     ])
   }
 

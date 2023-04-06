@@ -33,8 +33,7 @@
       ],
       "dependsOn": [
         "^build", 
-        "generate",
-        "export"
+        "generate"
       ],
       "env": [
         "DATABASE_URL",
@@ -52,13 +51,19 @@
       "cache": false
     },
     "dev": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build", 
+        "generate",
+        "export"
+      ],
       "cache": false,
       "persistent": true
     },
     "generate": {
       "outputs": [
-        ".graphclient/**/*"
+        ".graphclient/**/*",
+        "src/generated.ts",
+        "typechain"
       ],
       "cache": false
     },
@@ -69,10 +74,6 @@
     "playwright": {
       "cache": false,
       "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
-    },
-    "server": {
-      "persistent": true,
-      "dependsOn": ["build"]
     },
     "start": {
       "dependsOn": [        
@@ -100,6 +101,7 @@
     },
     "validate": {
       "cache": false
-    }
+    },
+    "export": {}
   }
 }

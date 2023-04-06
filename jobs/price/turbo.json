@@ -3,7 +3,7 @@
   "pipeline": {
     "start": {
       "dependsOn": [        
-        "^build"
+        "build"
       ],
       "env": [
         "REDIS_URL"
@@ -15,8 +15,7 @@
       "outputs": [
         ".graphclient/**"
       ],
-      "dependsOn": ["^build", "generate"],
-      "env": []
+      "dependsOn": ["^build"]
     },
     "check": {
       "dependsOn": ["build"],

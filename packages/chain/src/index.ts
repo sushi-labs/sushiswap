@@ -147,6 +147,7 @@ export enum ChainId {
   CONSENSUS_ZKEVM_TESTNET = 59140,
   SCROLL_ALPHA_TESTNET = 534353,
   BASE_TESTNET = 84531,
+  POLYGON_ZKEVM = 1101,
 }
 
 export enum ChainKey {
@@ -191,6 +192,7 @@ export enum ChainKey {
   CONSENSUS_ZKEVM_TESTNET = 'consensus-zkevm-testnet',
   SCROLL_ALPHA_TESTNET = 'scroll-alpha-testnet',
   BASE_TESTNET = 'base-testnet',
+  POYGON_ZKEVM = 'polygon-zkevm',
   // SEPOLIA = 'sepolia',
 }
 

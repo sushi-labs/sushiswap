@@ -3,7 +3,7 @@
   "pipeline": {
     "start": {
       "dependsOn": [        
-        "^build"
+        "build"
       ],
       "env": [
         "ALCHEMY_ID",
@@ -16,8 +16,7 @@
       "outputs": [
         ".graphclient/**"
       ],
-      "dependsOn": ["^build", "generate"],
-      "env": []
+      "dependsOn": ["^build"]
     },
     "check": {
       "dependsOn": ["build"],

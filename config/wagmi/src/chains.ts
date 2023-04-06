@@ -12,6 +12,7 @@ import {
   mainnet,
   optimism,
   polygon,
+  polygonZkEvm,
 } from '@wagmi/core/chains'
 
 export const defaultChains: Chain[] = [
@@ -607,6 +608,16 @@ export const otherChains: Chain[] = [
       multicall3: {
         address: '0x67dA5f2FfaDDfF067AB9d5F025F8810634d84287',
         blockCreated: 13014184,
+      },
+    },
+  },
+  {
+    ...polygonZkEvm,
+    id: ChainId.POLYGON_ZKEVM,
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 57746,
       },
     },
   },

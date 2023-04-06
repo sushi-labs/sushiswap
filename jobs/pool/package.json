@@ -25,12 +25,12 @@
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "build": "pnpm generate",
-    "generate": "graphclient build --fileType js && rm -f .graphclient/package.json",
+    "build": "graphclient build --fileType js && rm -f .graphclient/package.json",
     "incentives": "ts-node --swc src/incentives.ts",
     "lint": "TIMING=1 eslint src --fix",
     "pools": "ts-node --swc src/pools.ts",
-    "start": "ts-node --swc src/server.ts",
+    "start": "ts-node src/server.ts",
+    "server": "ts-node src/server.ts",
     "test": "jest --passWithNoTests",
     "validate": "graphclient validate",
     "volume": "ts-node --swc src/volume.ts"
