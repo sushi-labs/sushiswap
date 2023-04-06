@@ -1,11 +1,9 @@
 steps:
   - name: gcr.io/cloud-builders/docker
-    env:
-      - '_SCRIPT_PATH="/jobs/pool"'
     args:
       - build
       - '--build-arg'
-      - 'SCRIPT_PATH=${_SCRIPT_PATH}'
+      - 'SCRIPT_PATH=./jobs/pool'
       - '-t'
       - 'gcr.io/$PROJECT_ID/$TRIGGER_NAME:latest'
       - './jobs/pool'
