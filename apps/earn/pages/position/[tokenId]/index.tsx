@@ -96,7 +96,7 @@ const Position: FC = () => {
   const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId, amounts: fiatAmounts })
   const priceOrdering = position ? getPriceOrderingFromPositionForUI(position) : undefined
 
-  const { priceLower, priceUpper, base, quote } = usePriceInverter({
+  const { priceLower, priceUpper, quote } = usePriceInverter({
     priceLower: priceOrdering?.priceLower,
     priceUpper: priceOrdering?.priceUpper,
     base: token0,
@@ -113,6 +113,8 @@ const Position: FC = () => {
     feeAmount: positionDetails?.fee,
     existingPosition: position ?? undefined,
   })
+
+  const isFullRange = Boolean(ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER])
 
   const [_token0, _token1] = useMemo(
     () => [token0 ? unwrapToken(token0) : undefined, token1 ? unwrapToken(token1) : undefined],
@@ -159,9 +161,9 @@ const Position: FC = () => {
           pool={pool}
           apy={{ rewards: poolStats?.incentiveApr, fees: poolStats?.feeApr }}
           {...(priceLower && {
-            priceRange: `${priceLower?.toSignificant(4)} ${quote?.symbol} ⇔ ${priceUpper?.toSignificant(4)} ${
-              quote?.symbol
-            }`,
+            priceRange: isFullRange
+              ? 'Full range (0 ⇔ ∞)'
+              : `${priceLower?.toSignificant(4)} ${quote?.symbol} ⇔ ${priceUpper?.toSignificant(4)} ${quote?.symbol}`,
           })}
         />
         <RadioGroup value={tab} onChange={setTab} className="flex flex-wrap gap-2 mt-3">
@@ -210,7 +212,7 @@ const Position: FC = () => {
             <List.Label>Deposits</List.Label>
             <List.Control>
               {position?.amount0 && _token0 ? (
-                <List.KeyValue title={`${_token0.symbol}`}>
+                <List.KeyValue flex title={`${_token0.symbol}`}>
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
                       <Currency.Icon currency={_token0} width={18} height={18} />
@@ -222,7 +224,7 @@ const Position: FC = () => {
                 <List.KeyValue skeleton />
               )}
               {position?.amount1 && _token1 ? (
-                <List.KeyValue title={`${_token1.symbol}`}>
+                <List.KeyValue flex title={`${_token1.symbol}`}>
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
                       <Currency.Icon currency={_token1} width={18} height={18} />
@@ -261,7 +263,7 @@ const Position: FC = () => {
             </div>
             <List.Control>
               {amounts[0] ? (
-                <List.KeyValue title={`${amounts[0].currency.symbol}`}>
+                <List.KeyValue flex title={`${amounts[0].currency.symbol}`}>
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
                       <Currency.Icon currency={amounts[0].currency} width={18} height={18} />
@@ -273,7 +275,7 @@ const Position: FC = () => {
                 <List.KeyValue skeleton />
               )}
               {amounts[1] ? (
-                <List.KeyValue title={`${amounts[1].currency.symbol}`}>
+                <List.KeyValue flex title={`${amounts[1].currency.symbol}`}>
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
                       <Currency.Icon currency={amounts[1].currency} width={18} height={18} />

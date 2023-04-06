@@ -107,13 +107,16 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
           <div className="flex flex-col gap-3">
             <List>
               <List.Control>
-                <List.KeyValue title="Network">{Chain.from(chainId).name}</List.KeyValue>
+                <List.KeyValue flex title="Network">
+                  {Chain.from(chainId).name}
+                </List.KeyValue>
                 {feeAmount && <List.KeyValue title="Fee Tier">{`${+feeAmount / 10000}%`}</List.KeyValue>}
               </List.Control>
             </List>
             <List>
               <List.Control>
                 <List.KeyValue
+                  flex
                   title={`Minimum Price`}
                   subtitle={`Your position will be 100% composed of ${input0?.currency.symbol} at this price`}
                 >
@@ -130,6 +133,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                   </div>
                 </List.KeyValue>
                 <List.KeyValue
+                  flex
                   title={noLiquidity ? 'Starting Price' : 'Market Price'}
                   subtitle={
                     noLiquidity
@@ -145,6 +149,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                   </div>
                 </List.KeyValue>
                 <List.KeyValue
+                  flex
                   title={`Maximum Price`}
                   subtitle={`Your position will be 100% composed of ${token1?.symbol} at this price`}
                 >
@@ -165,7 +170,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
             <List>
               <List.Control>
                 {input0 && (
-                  <List.KeyValue title={`${input0?.currency.symbol}`}>
+                  <List.KeyValue flex title={`${input0?.currency.symbol}`}>
                     <div className="flex items-center gap-2">
                       <Currency.Icon currency={input0.currency} width={18} height={18} />
                       {input0?.toSignificant(6)} {input0?.currency.symbol}
@@ -173,7 +178,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                   </List.KeyValue>
                 )}
                 {input1 && (
-                  <List.KeyValue title={`${input1?.currency.symbol}`}>
+                  <List.KeyValue flex title={`${input1?.currency.symbol}`}>
                     <div className="flex items-center gap-2">
                       <Currency.Icon currency={input1.currency} width={18} height={18} />
                       {input1?.toSignificant(6)} {input1?.currency.symbol}

@@ -28,8 +28,6 @@ export const TradeRoute: FC<{
     setOpen(false)
   }, [setOpen])
 
-  console.log('trade?.route?.legs', trade?.route?.legs)
-
   return (
     <Dialog open={open} onClose={onClose}>
       <Dialog.Content className="max-h-[320px] sm:max-h-[560px] overflow-y-scroll scroll dark:!bg-slate-800 bg-white">

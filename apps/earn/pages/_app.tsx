@@ -21,6 +21,7 @@ import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '@sushiswap/react-query'
 import { ToastContainer } from '@sushiswap/ui/future/components/toast'
+import { ConcentratedLiquidityURLStateProvider } from '../components/ConcentratedLiquidityURLStateProvider'
 
 declare global {
   interface Window {
@@ -65,7 +66,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
                   <Header />
                   <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
                   <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
-                  <ToastContainer className="mt-[50px]" />
+                  <ToastContainer />
                 </App.Shell>
               </Onramper.Provider>
             </ThemeProvider>

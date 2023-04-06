@@ -1,4 +1,3 @@
-// import { useAutoConnect } from '@sushiswap/wagmi'
 import React, { FC } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
@@ -10,7 +9,6 @@ import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
 import { useConnect } from '@sushiswap/wagmi'
 
 export const Header: FC = () => {
-  // const { isAutoConnecting } = useAutoConnect()
   const { isLoading } = useConnect()
 
   return (

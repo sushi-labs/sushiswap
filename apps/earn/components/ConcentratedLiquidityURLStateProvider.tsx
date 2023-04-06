@@ -2,12 +2,13 @@
 
 import { ChainId } from '@sushiswap/chain'
 import { currencyFromShortCurrencyName, isShortCurrencyName, Native, Token, Type } from '@sushiswap/currency'
-import React, { createContext, FC, ReactNode, useContext, useMemo } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import { isAddress } from 'ethers/lib/utils'
 import { z } from 'zod'
 import { FeeAmount, isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
+import { useNetwork } from '@sushiswap/wagmi'
 
 export const queryParamsSchema = z.object({
   chainId: z.coerce
@@ -15,11 +16,8 @@ export const queryParamsSchema = z.object({
     .int()
     .gte(0)
     .lte(2 ** 256)
-    .default(ChainId.ARBITRUM)
-    .transform((chainId) => chainId as V3ChainId)
-    .refine((chainId) => isV3ChainId(chainId), {
-      message: 'ChainId not supported.',
-    }),
+    .optional()
+    .transform((chainId) => chainId as V3ChainId | undefined),
   fromCurrency: z.string().default('NATIVE'),
   toCurrency: z.string().optional(),
   feeAmount: z.coerce
@@ -41,17 +39,17 @@ type State = {
   token1: Type | undefined
   tokensLoading: boolean
   feeAmount: FeeAmount
-  setNetwork(chainId: ChainId): void
+  setNetwork(chainId: V3ChainId): void
   setToken0(currency: Type): void
   setToken1(currency: Type): void
   setFeeAmount(feeAmount: FeeAmount): void
   switchTokens(): void
 }
 
-export const TokenStateContext = createContext<State>({} as State)
+export const ConcentratedLiquidityUrlStateContext = createContext<State>({} as State)
 
 interface ConcentratedLiquidityURLStateProvider {
-  children: ReactNode
+  children: ReactNode | ((state: State) => ReactNode)
 }
 
 const getTokenFromUrl = (
@@ -73,9 +71,22 @@ const getTokenFromUrl = (
   }
 }
 
+const getChainIdFromUrl = (urlChainId: ChainId | undefined, connectedChainId: ChainId | undefined): V3ChainId => {
+  let chainId: V3ChainId = ChainId.ETHEREUM
+  if (urlChainId && isV3ChainId(urlChainId)) {
+    chainId = urlChainId
+  } else if (connectedChainId && isV3ChainId(connectedChainId)) {
+    chainId = connectedChainId
+  }
+  return chainId
+}
+
 export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLStateProvider> = ({ children }) => {
   const { query, push, pathname } = useRouter()
-  const { chainId, fromCurrency, toCurrency, feeAmount, tokenId } = queryParamsSchema.parse(query)
+  const { chainId: chainIdFromUrl, fromCurrency, toCurrency, feeAmount, tokenId } = queryParamsSchema.parse(query)
+  const { chain } = useNetwork()
+  const [chainId] = useState(chain?.id)
+
   const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useTokenWithCache({
     chainId,
     address: fromCurrency,
@@ -84,15 +95,16 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
   const { data: tokenTo, isInitialLoading: isTokenToLoading } = useTokenWithCache({ chainId, address: toCurrency })
 
   const state = useMemo(() => {
-    const token0 = getTokenFromUrl(chainId, fromCurrency, tokenFrom, isTokenFromLoading)
-    let token1 = getTokenFromUrl(chainId, toCurrency, tokenTo, isTokenToLoading)
+    const _chainId = getChainIdFromUrl(chainIdFromUrl, chainId)
+    const token0 = getTokenFromUrl(_chainId, fromCurrency, tokenFrom, isTokenFromLoading)
+    let token1 = getTokenFromUrl(_chainId, toCurrency, tokenTo, isTokenToLoading)
 
     // Cant have two of the same tokens
     if (token1?.wrapped.address === token0?.wrapped.address || token0?.chainId !== token1?.chainId) {
       token1 = undefined
     }
 
-    const setNetwork = (chainId: ChainId) => {
+    const setNetwork = (chainId: V3ChainId) => {
       const fromCurrency =
         state.token0?.chainId === chainId ? (state.token0.isNative ? 'NATIVE' : state.token0.wrapped.address) : 'NATIVE'
       const toCurrency =
@@ -185,7 +197,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
       feeAmount,
       token0,
       token1,
-      chainId,
+      chainId: _chainId,
       tokensLoading: isTokenFromLoading || isTokenToLoading,
       setToken0,
       setToken1,
@@ -194,6 +206,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
       switchTokens,
     }
   }, [
+    chainIdFromUrl,
     chainId,
     fromCurrency,
     tokenFrom,
@@ -208,11 +221,15 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
     query,
   ])
 
-  return <TokenStateContext.Provider value={state}>{children}</TokenStateContext.Provider>
+  return (
+    <ConcentratedLiquidityUrlStateContext.Provider value={state}>
+      {typeof children === 'function' ? children(state) : children}
+    </ConcentratedLiquidityUrlStateContext.Provider>
+  )
 }
 
 export const useConcentratedLiquidityURLState = () => {
-  const context = useContext(TokenStateContext)
+  const context = useContext(ConcentratedLiquidityUrlStateContext)
   if (!context) {
     throw new Error('Hook can only be used inside Token State Context')
   }
