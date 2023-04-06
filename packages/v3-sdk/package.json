@@ -4,8 +4,9 @@
   "private": true,
   "description": "Sushi V3 SDK",
   "keywords": [
-    "sushi",
-    "v3"
+    "sushiswap",
+    "v3",
+    "sdk"
   ],
   "repository": {
     "type": "git",
@@ -15,11 +16,7 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "dist/index.js",
-  "source": "src/index.ts",
-  "typings": "dist/index.d.ts",
-  "files": [
-    "dist/**"
-  ],
+git
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",

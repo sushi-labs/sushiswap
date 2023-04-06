@@ -1727,7 +1727,6 @@ importers:
       eslint: 8.29.0
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
-      tsup: 6.5.0
       typescript: 4.9.4
       zod: 3.20.2
     dependencies:
@@ -1750,7 +1749,6 @@ importers:
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 18.15.11
       eslint: 8.29.0
-      tsup: 6.5.0_typescript@4.9.4
       typescript: 4.9.4
 
   packages/chain:
@@ -2468,7 +2466,6 @@ importers:
       node-fetch: 2.6.6
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
-      tsup: 6.5.0
       typescript: 4.9.4
       viem: 0.0.1-alpha.38
       zod: 3.20.2
@@ -2505,7 +2502,6 @@ importers:
       '@types/node': 18.15.11
       '@types/node-fetch': 2.6.2
       eslint: 8.29.0
-      tsup: 6.5.0_typescript@4.9.4
       typescript: 4.9.4
 
   packages/stargate:
@@ -2719,6 +2715,49 @@ importers:
       tsup: 6.5.0_k22f457wtryv7dv7ltdlwpdpdm
       typescript: 4.9.4
       wagmi: 0.12.8_o4scbtliisanygemawej7x2d6i
+
+  packages/v2-sdk:
+    specifiers:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/solidity': 5.7.0
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/trident': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/node': ^18.0.0
+      eslint: 8.29.0
+      tiny-invariant: 1.3.1
+      tiny-warning: 1.0.3
+      typescript: 4.9.4
+      zod: 3.20.2
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/solidity': 5.7.0
+      '@sushiswap/chain': link:../chain
+      '@sushiswap/currency': link:../currency
+      '@sushiswap/math': link:../math
+      '@sushiswap/tines': link:../tines
+      '@sushiswap/trident': link:../../protocols/trident
+      tiny-invariant: 1.3.1
+      tiny-warning: 1.0.3
+      zod: 3.20.2
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/typescript-config': link:../../config/typescript
+      '@types/node': 18.15.11
+      eslint: 8.29.0
+      typescript: 4.9.4
 
   packages/v3-sdk:
     specifiers:
