@@ -115,15 +115,6 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             )}
             {!noLiquidity && !isLoading && (
               <>
-                <div className="absolute z-10 flex justify-center">
-                  <button
-                    className="text-sm font-medium text-blue hover:text-blue-600 h-[28px]"
-                    color="blue"
-                    onClick={resetMintState}
-                  >
-                    Clear all
-                  </button>
-                </div>
                 <LiquidityChartRangeInput
                   chainId={chainId}
                   currencyA={token0}
