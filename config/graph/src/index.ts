@@ -152,6 +152,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ETHEREUM]: 'blocklytics/ethereum-blocks',
   [ChainId.GNOSIS]: 'matthewlilley/xdai-blocks',
   [ChainId.POLYGON]: 'matthewlilley/polygon-blocks',
+  [ChainId.POLYGON_ZKEVM]: 'blocks-polygon-zkevm/v0.0.2',
   [ChainId.FANTOM]: 'matthewlilley/fantom-blocks',
   [ChainId.BSC]: 'matthewlilley/bsc-blocks',
   [ChainId.HARMONY]: 'sushiswap/harmony-blocks',
