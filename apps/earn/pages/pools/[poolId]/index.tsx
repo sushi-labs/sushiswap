@@ -8,7 +8,6 @@ import { useRouter } from 'next/router'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
 import { useConcentratedLiquidityPool, useConcentratedLiquidityPoolReserves } from '@sushiswap/wagmi/future/hooks'
 import { classNames } from '@sushiswap/ui'
-import { Token } from '@sushiswap/currency'
 import { ConcentratedLiquidityWidget } from '../../../components/ConcentratedLiquidityWidget'
 import { ConcentratedLiquidityProvider } from '../../../components/ConcentratedLiquidityProvider'
 import { Button } from '@sushiswap/ui/future/components/button'
@@ -359,7 +358,7 @@ const Pool: FC = () => {
         </div>
         <div className={classNames('', tab === SelectedTab.ManagePosition ? 'block' : 'hidden')}>
           <PoolsFiltersProvider>
-            <ConcentratedPositionsTable variant="minimal" />
+            <ConcentratedPositionsTable variant="minimal" poolId={poolId} />
           </PoolsFiltersProvider>
         </div>
       </Layout>

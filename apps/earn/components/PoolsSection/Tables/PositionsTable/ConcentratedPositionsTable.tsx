@@ -17,7 +17,10 @@ import { Writeable } from 'zod'
 // @ts-ignore
 const COLUMNS = [NAME_COLUMN_V3, PRICE_RANGE_COLUMN, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL]
 
-export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal' }> = ({ variant = 'default' }) => {
+export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; poolId?: string }> = ({
+  variant = 'default',
+  poolId,
+}) => {
   const [hide, setHide] = useState(false)
   const { address } = useAccount()
   const { isSm } = useBreakpoint('sm')
@@ -36,8 +39,12 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal' }>
   })
 
   const _positions = useMemo(() => {
-    return positions?.filter((el) => (hide ? !el.liquidity?.eq('0') : true))
-  }, [hide, positions])
+    return positions?.filter((el) => {
+      return (
+        (hide ? !el.liquidity?.eq('0') : true) && (poolId ? el.address.toLowerCase() === poolId.toLowerCase() : true)
+      )
+    })
+  }, [hide, poolId, positions])
 
   const table = useReactTable<ConcentratedLiquidityPosition>({
     data: _positions || [],
