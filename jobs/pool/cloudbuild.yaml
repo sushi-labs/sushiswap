@@ -6,7 +6,9 @@ steps:
       - 'SCRIPT_PATH=./jobs/pool'
       - '-t'
       - 'gcr.io/$PROJECT_ID/$TRIGGER_NAME:latest'
+      - '-f'
       - './jobs/pool'
+      - .
     dir: /workspace
     id: Build Docker Image
   - name: gcr.io/cloud-builders/docker
