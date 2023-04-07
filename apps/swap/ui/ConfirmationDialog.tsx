@@ -57,7 +57,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     chainId: network0,
     address: isRouteProcessor2ChainId(network0)
       ? routeProcessor2Address[network0]
-      : isRouteProcessor2ChainId(network0)
+      : isRouteProcessorChainId(network0)
       ? routeProcessorAddress[network0]
       : undefined,
     abi: routeProcessor2Abi,
@@ -66,7 +66,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     enabled:
       Boolean(trade?.writeArgs) &&
       appType === AppType.Swap &&
-      (isRouteProcessorChainId(network0) || isRouteProcessor2ChainId(network0)) &&
+      (isRouteProcessor2ChainId(network0) || isRouteProcessorChainId(network0)) &&
       approved &&
       trade?.route?.status !== 'NoWay',
     overrides: trade?.overrides,
