@@ -165,11 +165,8 @@ export const MenuItem: FC<{ subtitle: string; type: AppType }> = ({ subtitle, ty
 type NavLinkProps = { title: string; href: string }
 
 export const NavLink: FC<NavLinkProps> = ({ title, href }) => {
-  const { basePath } = useRouter()
-  const _href = href.split('/').pop() as string
-
   return (
-    <Button as="a" color="default" href={href} variant={basePath.includes(_href) ? 'outlined' : 'empty'} size="md">
+    <Button as="a" color="default" href={href} variant="empty" size="md">
       {title}
     </Button>
   )
