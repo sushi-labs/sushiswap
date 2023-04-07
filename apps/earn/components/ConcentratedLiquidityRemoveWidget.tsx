@@ -218,7 +218,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
             <List.KeyValue skeleton />
           )}
           {position?.amount1 ? (
-            <List.KeyValue title={`${position?.amount1.currency.symbol}`}>
+            <List.KeyValue flex title={`${position?.amount1.currency.symbol}`}>
               <div className="flex items-center gap-2">
                 <Currency.Icon currency={unwrapToken(position.amount1.currency)} width={18} height={18} />
                 <span>
@@ -237,7 +237,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
           <List.Label>{"You'll"} receive collected fees</List.Label>
           <List.Control>
             {feeValue0 ? (
-              <List.KeyValue title={`${feeValue0.currency.symbol}`}>
+              <List.KeyValue flex title={`${feeValue0.currency.symbol}`}>
                 <div className="flex items-center gap-2">
                   <Currency.Icon currency={unwrapToken(feeValue0.currency)} width={18} height={18} />
                   <span>

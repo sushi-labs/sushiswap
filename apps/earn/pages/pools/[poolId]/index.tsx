@@ -8,7 +8,6 @@ import { useRouter } from 'next/router'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
 import { useConcentratedLiquidityPool, useConcentratedLiquidityPoolReserves } from '@sushiswap/wagmi/future/hooks'
 import { classNames } from '@sushiswap/ui'
-import { Token } from '@sushiswap/currency'
 import { ConcentratedLiquidityWidget } from '../../../components/ConcentratedLiquidityWidget'
 import { ConcentratedLiquidityProvider } from '../../../components/ConcentratedLiquidityProvider'
 import { Button } from '@sushiswap/ui/future/components/button'
@@ -108,6 +107,9 @@ const Pool: FC = () => {
     ],
     [poolStats?.token0, poolStats?.token1]
   )
+
+  const change1d = 0
+  const change1w = 0
 
   return (
     <SWRConfig>
@@ -218,7 +220,17 @@ const Pool: FC = () => {
                     <List.KeyValue flex title="Fees">
                       <span className="flex items-center gap-2">
                         {formatUSD(granularity === Granularity.Day ? poolStats.fees1d : poolStats.fees1w)}
-                        <span className="text-green">(+0.00%)</span>
+                        <span
+                          className={
+                            change1d === 0
+                              ? 'text-gray-600 dark:text-slate-400'
+                              : change1d > 0
+                              ? 'text-green'
+                              : 'text-red'
+                          }
+                        >
+                          (+0.00%)
+                        </span>
                       </span>
                     </List.KeyValue>
                   ) : (
@@ -228,7 +240,17 @@ const Pool: FC = () => {
                     <List.KeyValue flex title="Volume">
                       <span className="flex items-center gap-2">
                         {formatUSD(granularity === Granularity.Week ? poolStats.volume1d : poolStats.volume1w)}
-                        <span className="text-green">(+0.00%)</span>
+                        <span
+                          className={
+                            change1w === 0
+                              ? 'text-gray-600 dark:text-slate-400'
+                              : change1d > 0
+                              ? 'text-green'
+                              : 'text-red'
+                          }
+                        >
+                          (+0.00%)
+                        </span>
                       </span>
                     </List.KeyValue>
                   ) : (
@@ -336,7 +358,7 @@ const Pool: FC = () => {
         </div>
         <div className={classNames('', tab === SelectedTab.ManagePosition ? 'block' : 'hidden')}>
           <PoolsFiltersProvider>
-            <ConcentratedPositionsTable variant="minimal" />
+            <ConcentratedPositionsTable variant="minimal" poolId={poolId} />
           </PoolsFiltersProvider>
         </div>
       </Layout>

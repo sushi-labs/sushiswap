@@ -5,14 +5,13 @@ import { FC, useMemo } from 'react'
 
 import { ICON_SIZE } from '../contants'
 import { Row } from './types'
-import { ConcentratedLiquidityPosition } from '@sushiswap/wagmi/future/hooks'
-import { useToken } from '@sushiswap/react-query'
+import { ConcentratedLiquidityPosition, useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { unwrapToken } from '../../../../lib/functions'
 
 export const PoolNameCellV3: FC<Row<ConcentratedLiquidityPosition>> = ({ row }) => {
-  const { data: token0 } = useToken({ chainId: row.chainId, address: row.token0 })
-  const { data: token1 } = useToken({ chainId: row.chainId, address: row.token1 })
+  const { data: token0 } = useTokenWithCache({ chainId: row.chainId, address: row.token0 })
+  const { data: token1 } = useTokenWithCache({ chainId: row.chainId, address: row.token1 })
 
   const [_token0, _token1] = useMemo(
     () => [token0 ? unwrapToken(token0) : undefined, token1 ? unwrapToken(token1) : undefined],

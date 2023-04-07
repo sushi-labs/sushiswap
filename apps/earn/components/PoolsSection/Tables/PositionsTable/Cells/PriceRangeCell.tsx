@@ -1,8 +1,11 @@
 import { classNames } from '@sushiswap/ui'
 import { FC, useMemo } from 'react'
 
-import { ConcentratedLiquidityPosition, useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
-import { useToken } from '@sushiswap/react-query'
+import {
+  ConcentratedLiquidityPosition,
+  useConcentratedLiquidityPool,
+  useTokenWithCache,
+} from '@sushiswap/wagmi/future/hooks'
 import { Row } from '../../SharedCells/types'
 import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/react/solid'
 import { Position } from '@sushiswap/v3-sdk'
@@ -11,8 +14,8 @@ import { getPriceOrderingFromPositionForUI, getTickToPrice } from '../../../../.
 import { Bound } from '../../../../../lib/constants'
 
 export const PriceRangeCell: FC<Row<ConcentratedLiquidityPosition>> = ({ row }) => {
-  const { data: token0 } = useToken({ chainId: row.chainId, address: row.token0 })
-  const { data: token1 } = useToken({ chainId: row.chainId, address: row.token1 })
+  const { data: token0 } = useTokenWithCache({ chainId: row.chainId, address: row.token0 })
+  const { data: token1 } = useTokenWithCache({ chainId: row.chainId, address: row.token1 })
   const { data: pool } = useConcentratedLiquidityPool({ chainId: row.chainId, token0, token1, feeAmount: row.fee })
 
   const position = useMemo(() => {

@@ -29,39 +29,41 @@ import { SplashController } from '@sushiswap/ui/future/components/SplashControll
 export function AddPage() {
   return (
     <ConcentratedLiquidityURLStateProvider>
-      <SplashController>
-        <SWRConfig>
-          <Layout>
-            <div className="flex flex-col gap-2">
-              <Link className="group flex gap-4 items-center mb-2" href="/" shallow={true}>
-                <IconButton
-                  icon={ArrowLeftIcon}
-                  iconProps={{
-                    width: 24,
-                    height: 24,
-                    transparent: true,
-                  }}
-                />
-                <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
-                  Go back to pools list
-                </span>
-              </Link>
-              <h1 className="text-3xl font-medium mt-2">Add Liquidity</h1>
-              <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
-                Create a new pool or create a liquidity position on an existing pool.
-              </h1>
-            </div>
-            <div className="h-0.5 w-full bg-gray-900/5 dark:bg-slate-200/5 my-10" />
-            <div className="flex justify-center">
-              <div className="flex lg:grid lg:grid-cols-[404px_auto] gap-20">
-                <ConcentratedLiquidityProvider>
-                  <_Add />
-                </ConcentratedLiquidityProvider>
+      {({ token0, chainId }) => (
+        <SplashController show={Boolean(!token0 || !chainId)}>
+          <SWRConfig>
+            <Layout>
+              <div className="flex flex-col gap-2">
+                <Link className="group flex gap-4 items-center mb-2" href="/" shallow={true}>
+                  <IconButton
+                    icon={ArrowLeftIcon}
+                    iconProps={{
+                      width: 24,
+                      height: 24,
+                      transparent: true,
+                    }}
+                  />
+                  <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
+                    Go back to pools list
+                  </span>
+                </Link>
+                <h1 className="text-3xl font-medium mt-2">Add Liquidity</h1>
+                <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
+                  Create a new pool or create a liquidity position on an existing pool.
+                </h1>
               </div>
-            </div>
-          </Layout>
-        </SWRConfig>
-      </SplashController>
+              <div className="h-0.5 w-full bg-gray-900/5 dark:bg-slate-200/5 my-10" />
+              <div className="flex justify-center">
+                <div className="flex lg:grid lg:grid-cols-[404px_auto] gap-20">
+                  <ConcentratedLiquidityProvider>
+                    <_Add />
+                  </ConcentratedLiquidityProvider>
+                </div>
+              </div>
+            </Layout>
+          </SWRConfig>
+        </SplashController>
+      )}
     </ConcentratedLiquidityURLStateProvider>
   )
 }
