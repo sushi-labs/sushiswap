@@ -7,7 +7,12 @@ import { usePrice, UseTradeParams, UseTradeReturnWriteArgs } from '@sushiswap/re
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { BigNumber } from 'ethers'
 import { LiquidityProviders, Router } from '@sushiswap/router'
-import { isRouteProcessor2ChainId, routeProcessor2Address } from '@sushiswap/route-processor'
+import {
+  isRouteProcessor2ChainId,
+  isRouteProcessorChainId,
+  routeProcessor2Address,
+  routeProcessorAddress,
+} from '@sushiswap/route-processor'
 import { HexString } from '@sushiswap/types'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 
@@ -40,7 +45,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
     queryFn: async () => {
       if (
         !poolsCodeMap ||
-        !isRouteProcessor2ChainId(chainId) ||
+        (!isRouteProcessorChainId(chainId) && !isRouteProcessor2ChainId(chainId)) ||
         !fromToken ||
         !amount ||
         !toToken ||
@@ -86,15 +91,27 @@ export const useClientTrade = (variables: UseTradeParams) => {
 
       let args = undefined
       if (recipient) {
-        args = Router.routeProcessor2Params(
-          poolsCodeMap,
-          route,
-          fromToken,
-          toToken,
-          recipient,
-          routeProcessor2Address[chainId],
-          +slippagePercentage / 100
-        )
+        if (isRouteProcessorChainId(chainId)) {
+          args = Router.routeProcessorParams(
+            poolsCodeMap,
+            route,
+            fromToken,
+            toToken,
+            recipient,
+            routeProcessorAddress[chainId],
+            +slippagePercentage / 100
+          )
+        } else if (isRouteProcessor2ChainId(chainId)) {
+          args = Router.routeProcessor2Params(
+            poolsCodeMap,
+            route,
+            fromToken,
+            toToken,
+            recipient,
+            routeProcessor2Address[chainId],
+            +slippagePercentage / 100
+          )
+        }
       }
 
       if (route) {
