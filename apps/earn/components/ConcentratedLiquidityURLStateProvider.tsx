@@ -87,20 +87,27 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
   const { chain } = useNetwork()
   const [chainId] = useState(chain?.id)
 
+  const _chainId = getChainIdFromUrl(chainIdFromUrl, chainId)
+
   const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useTokenWithCache({
-    chainId,
+    chainId: _chainId,
     address: fromCurrency,
   })
 
-  const { data: tokenTo, isInitialLoading: isTokenToLoading } = useTokenWithCache({ chainId, address: toCurrency })
+  const { data: tokenTo, isInitialLoading: isTokenToLoading } = useTokenWithCache({
+    chainId: _chainId,
+    address: toCurrency,
+  })
 
   const state = useMemo(() => {
-    const _chainId = getChainIdFromUrl(chainIdFromUrl, chainId)
     const token0 = getTokenFromUrl(_chainId, fromCurrency, tokenFrom, isTokenFromLoading)
     let token1 = getTokenFromUrl(_chainId, toCurrency, tokenTo, isTokenToLoading)
 
     // Cant have two of the same tokens
-    if (token1?.wrapped.address === token0?.wrapped.address || token0?.chainId !== token1?.chainId) {
+    if (
+      token1?.wrapped.address === token0?.wrapped.address ||
+      (token0 && token1 && token0.chainId !== token1.chainId)
+    ) {
       token1 = undefined
     }
 
