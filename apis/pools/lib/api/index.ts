@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
 
-import { DecimalToString, createClient, Prisma } from '@sushiswap/database'
+import { DecimalToString, createClient, Prisma, PoolType, PoolVersion } from '@sushiswap/database'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { deepmergeInto } from 'deepmerge-ts'
 import type { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './../schemas/index.js'
@@ -25,16 +25,47 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
     })
   }
 
-  if ('poolTypes' in args && args.poolTypes !== undefined) {
-    addFilter({
-      type: { in: args.poolTypes },
-    })
-  }
-
-  if ('poolVersions' in args && args.poolVersions !== undefined) {
-    addFilter({
-      version: { in: args.poolVersions },
-    })
+  if ('filter' in args && args.filter !== undefined) {
+    if (args.filter.includes('SushiSwapV3')) {
+      addFilter({
+        OR: [
+          {
+            version: PoolVersion.V3,
+            type: PoolType.CONCENTRATED_LIQUIDITY_POOL,
+          },
+        ],
+      })
+    }
+      if (args.filter.includes('SushiSwapV2')) {
+      addFilter({
+        OR: [
+          {
+            version: PoolVersion.LEGACY,
+            type: PoolType.CONSTANT_PRODUCT_POOL,
+          },
+        ],
+      })
+    }
+      if (args.filter.includes('BentoBoxStable')) {
+      addFilter({
+        OR: [
+          {
+            version: PoolVersion.TRIDENT,
+            type: PoolType.STABLE_POOL,
+          },
+        ],
+      })
+    }
+      if (args.filter.includes('BentoBoxClassic')) {
+      addFilter({
+        OR: [
+          {
+            version: PoolVersion.TRIDENT,
+            type: PoolType.CONSTANT_PRODUCT_POOL,
+          },
+        ],
+      })
+    }
   }
 
   if ('isIncentivized' in args && args.isIncentivized !== undefined) {
@@ -83,7 +114,7 @@ export async function getEarnPool(args: typeof PoolApiSchema._output) {
   const id = `${args.chainId}:${args.address.toLowerCase()}`
 
   // Need to specify take, orderBy and orderDir to make TS happy
-  const [pool] = await getEarnPools({ ids: [id], take: 1, orderBy: 'liquidityUSD', orderDir: 'desc' })
+  const [pool] = await getEarnPools({ ids: [id], take: 1, orderBy: 'liquidityUSD', orderDir: 'desc', filter: ['SushiSwapV3', 'SushiSwapV2', 'BentoBoxStable', 'BentoBoxClassic']})
 
   if (!pool) throw new Error('Pool not found.')
 
