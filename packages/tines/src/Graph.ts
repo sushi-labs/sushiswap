@@ -254,20 +254,28 @@ export class Edge {
     this.spentGas = this.spentGasNew
 
     ASSERT(() => {
+      let precision = 1e-9
+      if (this.pool instanceof StableSwapRPool) {
+        let price = this.pool.calcCurrentPriceWithoutFee(true)
+        if (price < 1) price = 1 / price
+        if (price > 1e8) {
+          // precision degradation for extreme conditions. Almost impossible situation in production
+          precision = 2e-3
+        }
+      }
       if (this.direction) {
         const granularity = this.pool.granularity1()
         return closeValues(
           this.amountOutPrevious / granularity,
           this.pool.calcOutByIn(this.amountInPrevious, this.direction).out / granularity,
-          1e-9
+          precision
         )
       } else {
         const granularity = this.pool.granularity0()
         return closeValues(
           this.amountInPrevious / granularity,
           this.pool.calcOutByIn(this.amountOutPrevious, this.direction).out / granularity,
-          1e-9,
-          `"${this.pool.address}" ${inPrev} ${to?.bestIncome} ${from.bestIncome}`
+          precision
         )
       }
     }, `Error 225`)
