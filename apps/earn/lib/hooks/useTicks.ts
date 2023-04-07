@@ -21,7 +21,7 @@ const bitmapIndex = (tick: number, tickSpacing: number) => {
 }
 
 export function useTicks({ token0, token1, chainId, feeAmount, numSurroundingTicks, enabled }: useTicks) {
-  numSurroundingTicks = numSurroundingTicks ?? 125
+  numSurroundingTicks = numSurroundingTicks ?? 1250
 
   const { data: pool } = useConcentratedLiquidityPool({ token0, token1, chainId, feeAmount, enabled })
 
