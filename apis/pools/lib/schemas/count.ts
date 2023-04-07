@@ -1,5 +1,6 @@
-import type { PoolType, PoolVersion } from '@sushiswap/database'
+// import type { PoolType, PoolVersion } from '@sushiswap/database'
 import { z } from 'zod'
+import { poolFilterTypes } from './pools.js'
 
 export const PoolCountApiSchema = z.object({
   chainIds: z
@@ -35,12 +36,18 @@ export const PoolCountApiSchema = z.object({
     .transform((tokenSymbols) => tokenSymbols?.split(','))
     .refine((tokenSymbols) => tokenSymbols.length <= 3, { message: 'Can only use up to 3 tokenSymbols.' })
     .optional(),
-  poolTypes: z
-    .string()
-    .optional()
-    .transform((poolTypes) => poolTypes?.split(',') as PoolType[]),
-  poolVersions: z
-    .string()
-    .transform((poolVersions) => poolVersions?.split(',') as PoolVersion[])
-    .optional(),
+    
+  filter: z
+  .string()
+  .transform((filter) => {
+    if (!filter) return []
+    const filters = filter?.split(',')
+    return filters?.map((f) => {
+      if (!poolFilterTypes.includes(f)) {
+        throw new Error('Invalid filter')
+      }
+      return f
+    })
+  })
+  .default(''),
 })
