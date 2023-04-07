@@ -49,7 +49,7 @@ export const SwapButton: FC = () => {
                 amount={amount}
                 contract={
                   isRouteProcessor2ChainId(network0)
-                    ? routeProcessor2Address[network0 as RouteProcessor2ChainId]
+                    ? routeProcessor2Address[network0]
                     : isRouteProcessorChainId(network0)
                     ? routeProcessorAddress[network0]
                     : undefined
