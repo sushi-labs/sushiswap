@@ -17,7 +17,13 @@ import {
   ConfirmationDialogState,
 } from '@sushiswap/ui/dialog/ConfirmationDialog'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { isRouteProcessor2ChainId, routeProcessor2Address, RouteProcessor2ChainId } from '@sushiswap/route-processor'
+import {
+  isRouteProcessor2ChainId,
+  isRouteProcessorChainId,
+  routeProcessor2Address,
+  RouteProcessor2ChainId,
+  routeProcessorAddress,
+} from '@sushiswap/route-processor'
 import { routeProcessor2Abi } from '@sushiswap/abi'
 
 interface ConfirmationDialogProps {
@@ -49,14 +55,18 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
 
   const { config, isError, error } = usePrepareContractWrite({
     chainId: network0,
-    address: routeProcessor2Address[network0 as RouteProcessor2ChainId],
+    address: isRouteProcessor2ChainId(network0)
+      ? routeProcessor2Address[network0]
+      : isRouteProcessor2ChainId(network0)
+      ? routeProcessorAddress[network0]
+      : undefined,
     abi: routeProcessor2Abi,
     functionName: trade?.functionName,
     args: trade?.writeArgs,
     enabled:
       Boolean(trade?.writeArgs) &&
       appType === AppType.Swap &&
-      isRouteProcessor2ChainId(network0) &&
+      (isRouteProcessorChainId(network0) || isRouteProcessor2ChainId(network0)) &&
       approved &&
       trade?.route?.status !== 'NoWay',
     overrides: trade?.overrides,
