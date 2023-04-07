@@ -229,7 +229,7 @@ const Pool: FC = () => {
                               : 'text-red'
                           }
                         >
-                          (+0.00%)
+                          (0.00%)
                         </span>
                       </span>
                     </List.KeyValue>
@@ -249,7 +249,7 @@ const Pool: FC = () => {
                               : 'text-red'
                           }
                         >
-                          (+0.00%)
+                          (0.00%)
                         </span>
                       </span>
                     </List.KeyValue>

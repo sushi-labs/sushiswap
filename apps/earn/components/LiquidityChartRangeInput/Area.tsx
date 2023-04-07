@@ -16,7 +16,7 @@ export const Area: FC<AreaProps> = ({ series, xScale, yScale, xValue, yValue, fi
   useMemo(
     () => (
       <path
-        opacity={0.2}
+        opacity={0.5}
         stroke={fill}
         fill={fill}
         d={

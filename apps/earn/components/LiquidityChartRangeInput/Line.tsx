@@ -11,11 +11,11 @@ export const Line: FC<LineProps> = ({ value, xScale, innerHeight }) =>
   useMemo(
     () => (
       <line
-        opacity={0.7}
-        strokeWidth={2}
+        opacity={1}
+        strokeWidth={1}
         stroke="currentColor"
         fill="none"
-        className="text-gray-900 dark:text-slate-200"
+        className="text-gray-900 dark:text-slate-300"
         x1={xScale(value)}
         y1="0"
         x2={xScale(value)}
