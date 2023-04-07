@@ -39,7 +39,7 @@ export const TableFiltersPoolType = () => {
       {({ open }) => (
         <div className="relative z-[100]">
           <Listbox.Button as={Button} variant="outlined" size="md" color="default">
-            Versions{' '}
+            Types{' '}
             <ChevronDownIcon
               width={16}
               height={16}
