@@ -26,7 +26,7 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
   }
 
   if ('filter' in args && args.filter !== undefined) {
-    if (args.filter.includes('SushiSwapV3')) {
+    if (args.protocols.includes('SUSHISWAP_V3')) {
       addFilter({
         OR: [
           {
@@ -36,7 +36,7 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
         ],
       })
     }
-      if (args.filter.includes('SushiSwapV2')) {
+    if (args.protocols.includes('SUSHISWAP_V2')) {
       addFilter({
         OR: [
           {
@@ -46,7 +46,7 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
         ],
       })
     }
-      if (args.filter.includes('BentoBoxStable')) {
+    if (args.protocols.includes('BENTOBOX_STABLE_POOL')) {
       addFilter({
         OR: [
           {
@@ -56,7 +56,7 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
         ],
       })
     }
-      if (args.filter.includes('BentoBoxClassic')) {
+    if (args.protocols.includes('BENTOBOX_CLASSIC')) {
       addFilter({
         OR: [
           {
@@ -114,7 +114,13 @@ export async function getEarnPool(args: typeof PoolApiSchema._output) {
   const id = `${args.chainId}:${args.address.toLowerCase()}`
 
   // Need to specify take, orderBy and orderDir to make TS happy
-  const [pool] = await getEarnPools({ ids: [id], take: 1, orderBy: 'liquidityUSD', orderDir: 'desc', filter: ['SushiSwapV3', 'SushiSwapV2', 'BentoBoxStable', 'BentoBoxClassic']})
+  const [pool] = await getEarnPools({
+    ids: [id],
+    take: 1,
+    orderBy: 'liquidityUSD',
+    orderDir: 'desc',
+    filter: ['SushiSwapV3', 'SushiSwapV2', 'BentoBoxStable', 'BentoBoxClassic'],
+  })
 
   if (!pool) throw new Error('Pool not found.')
 

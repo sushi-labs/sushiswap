@@ -36,18 +36,18 @@ export const PoolCountApiSchema = z.object({
     .transform((tokenSymbols) => tokenSymbols?.split(','))
     .refine((tokenSymbols) => tokenSymbols.length <= 3, { message: 'Can only use up to 3 tokenSymbols.' })
     .optional(),
-    
-  filter: z
-  .string()
-  .transform((filter) => {
-    if (!filter) return []
-    const filters = filter?.split(',')
-    return filters?.map((f) => {
-      if (!poolFilterTypes.includes(f)) {
-        throw new Error('Invalid filter')
-      }
-      return f
+
+  protocols: z
+    .string()
+    .transform((filter) => {
+      if (!filter) return []
+      const filters = filter?.split(',')
+      return filters?.map((f) => {
+        if (!poolFilterTypes.includes(f)) {
+          throw new Error('Invalid filter')
+        }
+        return f
+      })
     })
-  })
-  .default(''),
+    .default(''),
 })

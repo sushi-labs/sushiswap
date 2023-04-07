@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
-import { AVAILABLE_POOL_TYPE_MAP, AVAILABLE_VERSION_MAP } from '../lib/constants'
+import { AVAILABLE_PROTOCOL_MAP } from '../lib/constants'
 
 enum Filters {
   tokenSymbols = 'tokenSymbols',
@@ -10,13 +10,15 @@ enum Filters {
   poolTypes = 'poolTypes',
   poolVersions = 'poolVersions',
   incentivizedOnly = 'incentivizedOnly',
+  protocols = 'protocols',
 }
 
 interface FilterContext {
   [Filters.tokenSymbols]: undefined | string[]
   [Filters.chainIds]: ChainId[]
-  [Filters.poolTypes]: (keyof typeof AVAILABLE_POOL_TYPE_MAP)[]
-  [Filters.poolVersions]: (keyof typeof AVAILABLE_VERSION_MAP)[]
+  // [Filters.poolTypes]: (keyof typeof AVAILABLE_POOL_TYPE_MAP)[]
+  // [Filters.poolVersions]: (keyof typeof AVAILABLE_VERSION_MAP)[]
+  [Filters.protocols]: (keyof typeof AVAILABLE_PROTOCOL_MAP)[]
   [Filters.incentivizedOnly]: boolean
   setFilters(filters: Partial<Omit<FilterContext, 'setFilters'>>): void
 }
@@ -35,9 +37,10 @@ interface PoolsFiltersProvider {
 const defaultFilters: PoolFilters = {
   [Filters.tokenSymbols]: undefined,
   [Filters.chainIds]: SUPPORTED_CHAIN_IDS,
-  [Filters.poolTypes]: Object.keys(AVAILABLE_POOL_TYPE_MAP) as (keyof typeof AVAILABLE_POOL_TYPE_MAP)[],
-  [Filters.poolVersions]: Object.keys(AVAILABLE_VERSION_MAP) as (keyof typeof AVAILABLE_VERSION_MAP)[],
+  // [Filters.poolTypes]: Object.keys(AVAILABLE_POOL_TYPE_MAP) as (keyof typeof AVAILABLE_POOL_TYPE_MAP)[],
+  // [Filters.poolVersions]: Object.keys(AVAILABLE_VERSION_MAP) as (keyof typeof AVAILABLE_VERSION_MAP)[],
   [Filters.incentivizedOnly]: false,
+  [Filters.protocols]: Object.keys(AVAILABLE_PROTOCOL_MAP) as (keyof typeof AVAILABLE_PROTOCOL_MAP)[],
 }
 
 export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children, passedFilters }) => {
