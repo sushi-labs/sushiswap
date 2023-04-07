@@ -46,7 +46,7 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
         ],
       })
     }
-    if (args.protocols.includes('BENTOBOX_STABLE_POOL')) {
+    if (args.protocols.includes('BENTOBOX_STABLE')) {
       addFilter({
         OR: [
           {

@@ -65,14 +65,14 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             className="flex items-center gap-2.5"
             onClick={() =>
               setFilters({
-                protocols: protocols.includes('BENTOBOX_STABLE_POOL')
-                  ? protocols.filter((el) => el !== 'BENTOBOX_STABLE_POOL')
-                  : [...protocols, 'BENTOBOX_STABLE_POOL'],
+                protocols: protocols.includes('BENTOBOX_STABLE')
+                  ? protocols.filter((el) => el !== 'BENTOBOX_STABLE')
+                  : [...protocols, 'BENTOBOX_STABLE'],
               })
             }
             size="sm"
-            variant={protocols.includes('BENTOBOX_STABLE_POOL') ? 'outlined' : 'empty'}
-            color={protocols.includes('BENTOBOX_STABLE_POOL') ? 'blue' : 'default'}
+            variant={protocols.includes('BENTOBOX_STABLE') ? 'outlined' : 'empty'}
+            color={protocols.includes('BENTOBOX_STABLE') ? 'blue' : 'default'}
           >
             <span className="mt-1">🍱</span>
             <span>Stable</span>

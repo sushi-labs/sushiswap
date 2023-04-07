@@ -30,7 +30,7 @@ export const AVAILABLE_POOL_TYPE_MAP: Partial<typeof POOL_TYPE_MAP> = {
 export const AVAILABLE_PROTOCOL_MAP = {
   SUSHISWAP_V3: 'SushiSwap V3',
   SUSHISWAP_V2: 'SushiSwap V2',
-  BENTOBOX_STABLE_POOL: 'BentoBox Stable',
+  BENTOBOX_STABLE: 'BentoBox Stable',
   BENTOBOX_CLASSIC: 'BentoBox Classic',
 } as const
 
@@ -40,7 +40,7 @@ export const defaultPoolsArgs: GetPoolsArgs = {
   chainIds: SUPPORTED_CHAIN_IDS,
   orderBy: 'liquidityUSD',
   orderDir: 'desc',
-  filter: Object.keys(AVAILABLE_PROTOCOL_MAP),
+  protocols: Object.keys(AVAILABLE_PROTOCOL_MAP),
   // poolTypes: Object.keys(AVAILABLE_POOL_TYPE_MAP) as PoolType[],
   // poolVersions: Object.keys(AVAILABLE_VERSION_MAP) as PoolVersion[],
   isWhitelisted: true,
