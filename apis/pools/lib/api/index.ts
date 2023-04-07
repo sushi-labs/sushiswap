@@ -25,7 +25,7 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
     })
   }
 
-  if ('filter' in args && args.filter !== undefined) {
+  if ('protocols' in args && args.protocols !== undefined) {
     if (args.protocols.includes('SUSHISWAP_V3')) {
       addFilter({
         OR: [

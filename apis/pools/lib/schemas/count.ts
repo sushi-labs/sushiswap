@@ -1,6 +1,6 @@
 // import type { PoolType, PoolVersion } from '@sushiswap/database'
 import { z } from 'zod'
-import { poolFilterTypes } from './pools.js'
+import { protocolFilterTypes } from './pools.js'
 
 export const PoolCountApiSchema = z.object({
   chainIds: z
@@ -43,7 +43,7 @@ export const PoolCountApiSchema = z.object({
       if (!filter) return []
       const filters = filter?.split(',')
       return filters?.map((f) => {
-        if (!poolFilterTypes.includes(f)) {
+        if (!protocolFilterTypes.includes(f)) {
           throw new Error('Invalid filter')
         }
         return f

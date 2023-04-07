@@ -1,7 +1,7 @@
 // import type { PoolType, PoolVersion } from '@sushiswap/database'
 import { z } from 'zod'
 
-export const poolFilterTypes = ['SushiSwapV3', 'SushiSwapV2', 'BentoBoxStable', 'BentoBoxClassic']
+export const protocolFilterTypes = ['SUSHISWAP_V3', 'SUSHISWAP_V2', 'BENTOBOX_STABLE', 'BENTOBOX_CLASSIC']
 
 export const PoolsApiSchema = z.object({
   take: z.coerce.number().int().lte(1000).default(20),
@@ -48,7 +48,7 @@ export const PoolsApiSchema = z.object({
       if (!filter) return []
       const filters = filter?.split(',')
       return filters?.map((f) => {
-        if (!poolFilterTypes.includes(f)) {
+        if (!protocolFilterTypes.includes(f)) {
           throw new Error('Invalid filter')
         }
         return f
