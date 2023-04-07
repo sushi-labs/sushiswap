@@ -17,7 +17,7 @@ import { Loader } from '@sushiswap/ui/future/components/Loader'
 const COLUMNS = [NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, FEES_COLUMN, APR_COLUMN]
 
 export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady }) => {
-  const { chainIds, tokenSymbols, poolTypes, poolVersions, incentivizedOnly } = usePoolFilters()
+  const { chainIds, tokenSymbols, protocols, incentivizedOnly } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
@@ -35,10 +35,9 @@ export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady }) => {
       isWhitelisted: true, // can be added to filters later, need to put it here so fallback works
       orderBy: sorting[0]?.id,
       orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
-      poolTypes: poolTypes as PoolType[],
-      poolVersions: poolVersions as PoolVersion[],
+      protocols,
     }),
-    [chainIds, tokenSymbols, incentivizedOnly, sorting, poolTypes, poolVersions]
+    [chainIds, tokenSymbols, incentivizedOnly, sorting, protocols]
   )
 
   const {

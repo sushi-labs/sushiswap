@@ -119,7 +119,7 @@ export async function getEarnPool(args: typeof PoolApiSchema._output) {
     take: 1,
     orderBy: 'liquidityUSD',
     orderDir: 'desc',
-    filter: ['SushiSwapV3', 'SushiSwapV2', 'BentoBoxStable', 'BentoBoxClassic'],
+    protocols: ['SUSHISWAP_V3', 'SUSHISWAP_V2', 'BENTOBOX_STABLE', 'BENTOBOX_CLASSIC'],
   })
 
   if (!pool) throw new Error('Pool not found.')

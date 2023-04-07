@@ -1,6 +1,6 @@
 // eslint-disable-line camelcase
 import {parseUnits} from "@ethersproject/units";
-import {getPools,PoolType, PoolVersion} from '@sushiswap/client'
+import {getPools} from '@sushiswap/client'
 import {Amount, Token} from "@sushiswap/currency";
 import type {} from '@sushiswap/database'
 import {JSBI} from "@sushiswap/math";
@@ -15,7 +15,7 @@ export const useConcentratedLiquidityPoolStats = ({ poolAddress, enabled = true 
     return useQuery({
         queryKey: ['useConcentratedLiquidityPoolStats'],
         queryFn: async () => {
-            const data = await getPools({take: 1000, poolTypes: [PoolType.CONCENTRATED_LIQUIDITY_POOL], poolVersions: [PoolVersion.V3]})
+            const data = await getPools({take: 1000, protocols: ['SUSHISWAP_V3']})
             
             if (data) {
                 return data.map(el => ({
