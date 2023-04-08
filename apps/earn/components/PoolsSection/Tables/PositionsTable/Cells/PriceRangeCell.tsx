@@ -8,7 +8,7 @@ import {
 } from '@sushiswap/wagmi/future/hooks'
 import { Row } from '../../SharedCells/types'
 import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/react/solid'
-import { Position } from '@sushiswap/v3-sdk'
+import { FeeAmount, nearestUsableTick, Position, TICK_SPACINGS, TickMath } from '@sushiswap/v3-sdk'
 import { JSBI } from '@sushiswap/math'
 import { getPriceOrderingFromPositionForUI, getTickToPrice } from '../../../../../lib/functions'
 import { Bound } from '../../../../../lib/constants'
@@ -44,6 +44,23 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPosition>> = ({ row }) 
 
   const { [Bound.LOWER]: lowerPrice, [Bound.UPPER]: upperPrice } = pricesAtTicks
 
+  const tickSpaceLimits = useMemo(
+    () => ({
+      [Bound.LOWER]: row.fee ? nearestUsableTick(TickMath.MIN_TICK, TICK_SPACINGS[row.fee as FeeAmount]) : undefined,
+      [Bound.UPPER]: row.fee ? nearestUsableTick(TickMath.MAX_TICK, TICK_SPACINGS[row.fee as FeeAmount]) : undefined,
+    }),
+    [row.fee]
+  )
+
+  const ticksAtLimit = useMemo(
+    () => ({
+      [Bound.LOWER]: row.fee && row.tickLower === tickSpaceLimits.LOWER,
+      [Bound.UPPER]: row.fee && row.tickUpper === tickSpaceLimits.UPPER,
+    }),
+    [row.fee, row.tickLower, row.tickUpper, tickSpaceLimits.LOWER, tickSpaceLimits.UPPER]
+  )
+
+  const fullRange = Boolean(ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER])
   const price = pool && token0 ? pool.priceOf(token0) : undefined
   const outOfRange = Boolean(
     !invalidRange && price && lowerPrice && upperPrice && (price.lessThan(lowerPrice) || price.greaterThan(upperPrice))
@@ -59,12 +76,12 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPosition>> = ({ row }) 
           )}
         />
         <span className="text-sm flex items-center gap-1 text-gray-900 dark:text-slate-50">
-          {pricesFromPosition.priceLower?.toSignificant(6)}{' '}
+          {fullRange ? '0' : pricesFromPosition.priceLower?.toSignificant(6)}{' '}
           <div className="flex items-center">
             <ArrowSmLeftIcon width={16} height={16} className="text-slate-500" />
             <ArrowSmRightIcon width={16} height={16} className="text-slate-500 ml-[-7px]" />
           </div>
-          {pricesFromPosition.priceUpper?.toSignificant(6)}
+          {fullRange ? '∞' : pricesFromPosition.priceUpper?.toSignificant(6)}
         </span>
       </div>
       <span className="text-xs flex items-center gap-1 text-gray-900 dark:text-slate-500">
