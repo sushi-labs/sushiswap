@@ -14,13 +14,13 @@ import {
   getSushiSwapRouterContractConfig,
   PairState,
   usePair,
-  useSendTransaction,
+  _useSendTransaction as useSendTransaction,
   useSushiSwapRouterContract,
   useTotalSupply,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { Address, useAccount, useNetwork } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { Address, useAccount, useNetwork } from '@sushiswap/wagmi'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { useTokensFromPool, useTransactionDeadline, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
 import { useSettings } from '../../lib/state/storage'

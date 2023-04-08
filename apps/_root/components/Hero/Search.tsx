@@ -6,7 +6,7 @@ import { classNames, Currency, DEFAULT_INPUT_UNSTYLED, NetworkIcon, Skeleton, Ty
 import type { TokenList } from '@uniswap/token-lists'
 import { isAddress } from 'ethers/lib/utils'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
-import { useQuery, useToken } from 'wagmi'
+import { useQuery, useToken } from '@sushiswap/wagmi'
 
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 

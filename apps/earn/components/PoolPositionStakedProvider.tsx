@@ -4,7 +4,7 @@ import { useMasterChef } from '@sushiswap/wagmi'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
 import { useGraphPool, useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from '../lib/hooks'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 
 interface PoolPositionStakedContext {
   balance: Amount<Token> | undefined

@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { Breadcrumb, BreadcrumbLink } from '@sushiswap/ui'
 import { NextSeo } from 'next-seo'
-import { useNetwork } from 'wagmi'
+import { useNetwork } from '@sushiswap/wagmi'
 
 import { Layout } from '../../../components'
 import { CreateMultipleForm } from '../../../components/stream/CreateMultipleForm'

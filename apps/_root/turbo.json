@@ -1,0 +1,27 @@
+{
+  "extends": ["//"],
+  "pipeline": {
+    "build": {
+      "outputs": [
+        ".next/**"
+      ],
+      "dependsOn": ["^build"],
+      "env": [
+        "ALCHEMY_ID",
+        "ROOT_URL",
+        "ACADEMY_URL",
+        "ANALYTICS_URL",
+        "BLOG_URL",
+        "EARN_URL",
+        "FURO_URL",
+        "SWAP_URL",
+        "PARTNER_LIST_PR_WEBHOOK_URL",
+        "PARTNER_OCTOKIT_KEY"
+      ]
+    },
+    "check": {
+      "dependsOn": ["^build"],
+      "cache": false
+    }
+  }
+}

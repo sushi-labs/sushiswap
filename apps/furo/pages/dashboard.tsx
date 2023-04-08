@@ -4,7 +4,7 @@ import { useWalletState } from '@sushiswap/wagmi'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import { useAccount, useConnect, useNetwork } from 'wagmi'
+import { useAccount, useConnect, useNetwork } from '@sushiswap/wagmi'
 
 import { BackgroundVector, Dashboard, Layout } from '../components'
 import { FuroStreamChainId } from '@sushiswap/furo'

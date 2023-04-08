@@ -92,6 +92,7 @@ const LOGO: Record<number, string> = {
   [ChainId.BOBA_AVAX]: BobaLogo,
   [ChainId.BOBA_BNB]: BobaLogo,
   [ChainId.BTTC]: BttcLogo,
+  [ChainId.POLYGON_ZKEVM]: EthereumLogo,
 }
 
 function djb2(str: string) {

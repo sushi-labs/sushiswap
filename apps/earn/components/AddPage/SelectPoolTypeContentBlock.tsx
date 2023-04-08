@@ -30,7 +30,8 @@ export const SelectPoolTypeContentBlock = () => {
           >
             <div className="flex flex-col">
               <span className="text-gray-900 dark:text-slate-50 font-medium flex gap-4">
-                Classic Pool. <span className="text-gray-500 dark:text-slate-400">Suited for most pairs.</span>
+                Classic Pool.{' '}
+                <span className="text-gray-500 dark:text-slate-400 text-slate-600">Suited for most pairs.</span>
               </span>
             </div>
           </RadioGroup.Option>
@@ -45,7 +46,8 @@ export const SelectPoolTypeContentBlock = () => {
           >
             <div className="flex flex-col">
               <span className="text-gray-900 dark:text-slate-50 font-medium flex gap-4">
-                Stable Pool. <span className="text-gray-500 dark:text-slate-400">Best suited for stable pairs.</span>
+                Stable Pool.{' '}
+                <span className="text-gray-500 dark:text-slate-400 text-slate-600">Best suited for stable pairs.</span>
               </span>
             </div>
           </RadioGroup.Option>

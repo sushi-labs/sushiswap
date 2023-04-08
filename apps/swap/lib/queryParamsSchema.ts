@@ -10,34 +10,25 @@ export const queryParamsSchema = z.object({
     .int()
     .gte(0)
     .lte(2 ** 256)
-    .default(ChainId.ETHEREUM)
-    .transform((chainId) => chainId as SwapChainId)
-    .refine(
-      (chainId) =>
-        isUniswapV2FactoryChainId(chainId) ||
-        isConstantProductPoolFactoryChainId(chainId) ||
-        isStablePoolFactoryChainId(chainId),
-      {
-        message: 'ChainId not supported.',
-      }
-    ),
+    .optional()
+    .transform((chainId) => chainId as SwapChainId | undefined),
+  // .refine(
+  //   (chainId) =>
+  //     isUniswapV2FactoryChainId(chainId) ||
+  //     isConstantProductPoolFactoryChainId(chainId) ||
+  //     isStablePoolFactoryChainId(chainId),
+  //   {
+  //     message: 'ChainId not supported.',
+  //   }
+  // ),
   fromCurrency: z.string().default('NATIVE'),
   toChainId: z.coerce
     .number()
     .int()
     .gte(0)
     .lte(2 ** 256)
-    .default(ChainId.ETHEREUM)
-    .transform((chainId) => chainId as SwapChainId)
-    .refine(
-      (chainId) =>
-        isUniswapV2FactoryChainId(chainId) ||
-        isConstantProductPoolFactoryChainId(chainId) ||
-        isStablePoolFactoryChainId(chainId),
-      {
-        message: 'ChainId not supported.',
-      }
-    ),
+    .optional()
+    .transform((chainId) => chainId as SwapChainId | undefined),
   toCurrency: z.string().default('SUSHI'),
   amount: z.string().default(''),
   recipient: z.optional(z.coerce.string()),

@@ -5,7 +5,7 @@ import { classNames, Currency as UICurrency, DEFAULT_INPUT_UNSTYLED, Input, Skel
 import { FC, useCallback, useMemo, useRef, useState } from 'react'
 import { useAccount } from 'wagmi'
 
-import { useBalance, usePrices } from '../../hooks'
+import { _useBalance as useBalance, usePrices } from '../../hooks'
 import { TokenSelector, TokenSelectorProps } from '../TokenSelector'
 
 export interface CurrencyInputProps
@@ -74,7 +74,10 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
               variant="unstyled"
               disabled={disabled}
               onUserInput={onChange}
-              className={classNames(DEFAULT_INPUT_UNSTYLED, '!text-3xl py-1 text-slate-200 hover:text-slate-100')}
+              className={classNames(
+                DEFAULT_INPUT_UNSTYLED,
+                '!text-3xl py-1 text-gray-900 dark:text-slate-200 hover:dark:text-slate-100'
+              )}
               value={value}
               readOnly={disabled}
             />
@@ -91,7 +94,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
               onSelect ? 'shadow-md hover:ring-2' : 'cursor-default text-2xl',
               (currency || loading) && onSelect ? 'bg-white bg-opacity-[0.12]' : '',
               currency || loading ? 'ring-slate-500' : 'bg-blue ring-blue-700',
-              'h-[36px] text-slate-200 hover:text-slate-100 transition-all flex flex-row items-center gap-1 text-xl font-semibold rounded-full px-2 py-1'
+              'h-[36px] text-gray-900 hover:text-gray-900 dark:text-slate-200 hover:text-slate-100 transition-all flex flex-row items-center gap-1 text-xl font-semibold rounded-full px-2 py-1'
             )}
           >
             {loading && !currency ? (
@@ -223,7 +226,7 @@ const BalancePanel: FC<BalancePanel> = ({
       data-testid={`${id}-balance-button`}
       type="button"
       onClick={() => onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')}
-      className="py-1 text-xs text-slate-400 hover:text-slate-300"
+      className="py-1 text-xs text-gray-700 hover:text-gray-800 dark:text-slate-400 hover:dark:text-slate-300"
       disabled={disableMaxButton}
     >
       {isMounted && balance ? `Balance: ${balance?.[fundSource]?.toSignificant(6)}` : 'Balance: 0'}
@@ -246,7 +249,7 @@ const PricePanel: FC<PricePanel> = ({ currency, value, usdPctChange }) => {
     )
 
   return (
-    <Typography variant="xs" weight={400} className="py-1 select-none text-slate-400">
+    <Typography variant="xs" weight={400} className="py-1 select-none text-gray-700 dark:text-slate-400">
       {parsedValue && price && isMounted ? `$${parsedValue.multiply(price.asFraction).toFixed(2)}` : '$0.00'}
       {usdPctChange && (
         <span

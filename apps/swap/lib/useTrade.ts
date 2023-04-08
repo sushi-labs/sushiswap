@@ -1,12 +1,12 @@
 import { useTrade as _useTrade } from '@sushiswap/react-query'
-import { useFeeData } from 'wagmi'
+import { useFeeData } from '@sushiswap/wagmi'
 import { useSwapActions, useSwapState } from '../ui/trade/TradeProvider'
-import { useSlippageTolerance } from './useSlippageTolerance'
 import { useCarbonOffset } from './useCarbonOffset'
 import { useCrossChainTrade } from './useCrossChainTrade/useCrossChainTrade'
 import { useMemo } from 'react'
 import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap'
 import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
+import { useSlippageTolerance } from '@sushiswap/hooks'
 
 type ObjectType<T> = T extends true ? ReturnType<typeof useCrossChainTrade> : ReturnType<typeof _useTrade>
 

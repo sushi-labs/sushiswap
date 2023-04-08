@@ -1,5 +1,5 @@
 import { Amount, Token, Type, Type as Currency } from '@sushiswap/currency'
-import { readContracts } from 'wagmi'
+import { Address, readContracts } from 'wagmi'
 import { computePairAddress, FACTORY_ADDRESS, Pair } from '@sushiswap/amm'
 import { uniswapV2FactoryAddress, UniswapV2FactoryChainId, UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 import { uniswapV2PairAbi } from '@sushiswap/abi'
@@ -42,7 +42,7 @@ export const getPairs = async (
       factoryAddress: uniswapV2FactoryAddress[currencyA.chainId as UniswapV2FactoryChainId],
       tokenA: currencyA.wrapped,
       tokenB: currencyB.wrapped,
-    }),
+    }) as Address,
     abi: uniswapV2PairAbi,
     functionName: 'getReserves' as const,
   }))

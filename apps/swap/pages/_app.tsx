@@ -14,6 +14,7 @@ import { NetworkCheck } from '../ui/NetworkCheck'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '@sushiswap/react-query'
 import { TokenProvider } from '../ui/TokenProvider'
+import { ThemeProvider } from '@sushiswap/ui'
 
 export { reportWebVitals } from 'next-axiom'
 
@@ -29,18 +30,19 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       </Head>
       <WagmiProvider>
         <QueryClientProvider client={queryClient}>
-          <TokenProvider>
-            <SplashController>
-              <SwapProvider>
-                <Onramper.Provider>
-                  <NetworkCheck />
-                  <Header />
-                  <Component {...pageProps} />
-                </Onramper.Provider>
-              </SwapProvider>
-            </SplashController>
-          </TokenProvider>
-          <ToastContainer />
+          <ThemeProvider>
+            <TokenProvider>
+              <SplashController>
+                <SwapProvider>
+                  <Onramper.Provider>
+                    <NetworkCheck />
+                    <Header />
+                    <Component {...pageProps} />
+                  </Onramper.Provider>
+                </SwapProvider>
+              </SplashController>
+            </TokenProvider>
+          </ThemeProvider>
         </QueryClientProvider>
       </WagmiProvider>
     </>

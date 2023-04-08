@@ -1,3 +1,4 @@
+import { getAddress, isAddress } from '@ethersproject/address'
 import { Token } from '@sushiswap/currency'
 import { useCallback, useMemo } from 'react'
 
@@ -67,7 +68,12 @@ export const useCustomTokens = () => {
           throw new Error('Address provided instead of id')
         }
 
-        return !!value[currency]
+        const [_chainId, _currency] = currency.split(':')
+        if (!isAddress(_currency)) {
+          throw new Error('Address provided not a valid ERC20 address')
+        }
+
+        return !!value[`${_chainId}:${getAddress(_currency)}`]
       }
       return !!value[`${currency.chainId}:${currency.address}`]
     },

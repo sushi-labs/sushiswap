@@ -9,10 +9,9 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "source": "./src/index.ts",
-  "types": "./dist/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
   "bin": {
     "scli": "./dist/index.js"
   },
@@ -20,10 +19,10 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsup index.ts --format esm,cjs --watch --dts",
+    "dev": "tsc -w",
     "lint": "TIMING=1 eslint ./src --fix",
     "start": "ts-node --transpileOnly ./src/index.ts",
     "test": "jest --passWithNoTests"

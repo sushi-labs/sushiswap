@@ -4,7 +4,7 @@ import { JSBI } from '@sushiswap/math'
 import { getFuroVestingContractConfig, getBentoBoxContractConfig } from '@sushiswap/wagmi'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
-import { Address, useContractRead } from 'wagmi'
+import { Address, useContractRead } from '@sushiswap/wagmi'
 
 export function useVestingBalance(
   chainId?: FuroVestingChainId,

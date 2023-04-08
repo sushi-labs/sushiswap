@@ -29,6 +29,9 @@ type UseBalances = (params: UseBalancesParams) => (
   data: BalanceMap
 }
 
+/**
+ * @deprecated  use @sushiswap/wagmi/future/hooks/balances/useBalances
+ */
 export const useBalances: UseBalances = ({
   watch = true,
   enabled = true,
@@ -68,7 +71,7 @@ export const useBalances: UseBalances = ({
     const input = validatedTokenAddresses.map((token) => {
       return {
         chainId,
-        address: token[0],
+        address: token[0] as Address,
         abi: erc20ABI,
         functionName: 'balanceOf',
         args: [account],

@@ -5,15 +5,14 @@ import { classNames } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui/future/components/input'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useAccount } from 'wagmi'
 
 import { TokenSelector } from '../../TokenSelector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
-import { NativeAddress, usePrice } from '@sushiswap/react-query'
-import { useBalance, useBalances } from '../../../../hooks'
-import { FundSource } from '@sushiswap/hooks'
+import { usePrice } from '@sushiswap/react-query'
+import { useBalanceWeb3 } from '../../../hooks'
 
 export interface CurrencyInputProps {
   id?: string
@@ -57,12 +56,10 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
     inputRef.current?.focus()
   }, [disabled])
 
-  const { data: _balance, isLoading: isBalanceLoading } = useBalance({
+  const { data: balance, isLoading: isBalanceLoading } = useBalanceWeb3({
     chainId,
     account: address,
     currency,
-    loadBentobox: false,
-    watch: true,
   })
 
   const { data: price, isInitialLoading: isPriceLoading } = usePrice({
@@ -71,7 +68,6 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   })
 
   const _value = useMemo(() => tryParseAmount(value, currency), [value, currency])
-  const balance = _balance?.[FundSource.WALLET]
   const insufficientBalance = address && type === 'INPUT' && balance && _value && balance.lessThan(_value)
 
   // If currency changes, trim input to decimals

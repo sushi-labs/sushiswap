@@ -1,6 +1,6 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid'
 import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
-import React, { ReactNode, useState } from 'react'
+import React, { MouseEventHandler, ReactNode, useCallback, useState } from 'react'
 import { Table } from '.'
 import { Link } from '../../../link'
 import { LoadingOverlay } from '../../../loader'
@@ -16,6 +16,7 @@ interface GenericTableProps<C> {
   placeholder: ReactNode
   pageSize: number
   linkFormatter?(row: C): string
+  loadingOverlay?: boolean
 }
 
 declare module '@tanstack/react-table' {
@@ -32,14 +33,22 @@ export const GenericTable = <T extends { id: string }>({
   placeholder,
   pageSize,
   linkFormatter,
+  loadingOverlay = true,
 }: GenericTableProps<T>) => {
-  const [showOverlay, setShowOverlay] = useState(false)
-  const [popupInvisible, setPopupInvisible] = useState(false)
   const isMounted = useIsMounted()
+  const [showOverlay, setShowOverlay] = useState(false)
+  const [, setPopupInvisible] = useState(false)
+
+  const onClick = useCallback((e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
+    if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
+      setPopupInvisible(true)
+      setTimeout(() => setShowOverlay(true), 250)
+    }
+  }, [])
 
   return (
     <>
-      <LoadingOverlay show={showOverlay} />
+      {loadingOverlay && <LoadingOverlay show={showOverlay} />}
       <Table.container>
         <Table.table style={{ minHeight: (pageSize + 1) * 52 }}>
           <Table.thead>
@@ -106,15 +115,7 @@ export const GenericTable = <T extends { id: string }>({
                       }}
                     >
                       <Popover.Button>
-                        <Table.tr
-                          onClick={(e) => {
-                            if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
-                              setPopupInvisible(true)
-                              setTimeout(() => setShowOverlay(true), 250)
-                            }
-                          }}
-                          className="cursor-pointer"
-                        >
+                        <Table.tr onClick={onClick} className="cursor-pointer">
                           {row.getVisibleCells().map((cell, i) => {
                             return (
                               <Table.td
@@ -133,7 +134,7 @@ export const GenericTable = <T extends { id: string }>({
                                 key={cell.id}
                               >
                                 {linkFormatter ? (
-                                  <Link.Internal href={linkFormatter(row.original)} passHref={true}>
+                                  <Link.Internal href={linkFormatter(row.original)} passHref={true} shallow={true}>
                                     <a
                                       className={classNames(
                                         'absolute inset-0 flex items-center px-3 sm:px-4',
@@ -165,16 +166,7 @@ export const GenericTable = <T extends { id: string }>({
                   )
                 } else {
                   return (
-                    <Table.tr
-                      key={row.id}
-                      onClick={(e) => {
-                        if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
-                          setPopupInvisible(true)
-                          setTimeout(() => setShowOverlay(true), 250)
-                        }
-                      }}
-                      className="cursor-pointer"
-                    >
+                    <Table.tr onClick={onClick} key={row.id} className="cursor-pointer">
                       {row.getVisibleCells().map((cell, i) => {
                         return (
                           <Table.td
@@ -262,8 +254,8 @@ export const GenericTable = <T extends { id: string }>({
               ))}
             {!loading && table.getRowModel().rows.length === 0 && (
               <Table.tr className="!h-[260px]">
-                <Table.td colSpan={table.getAllColumns().length} className="!h-[260px]">
-                  <Typography variant="xs" className="text-slate-400 italic w-full text-center">
+                <Table.td colSpan={table.getAllColumns().length} className="!h-[260px] pointer-events-none">
+                  <Typography variant="xs" className="w-full text-center text-slate-400">
                     {placeholder}
                   </Typography>
                 </Table.td>

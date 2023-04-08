@@ -1,9 +1,17 @@
 import { UsePoolsParams } from '../types'
 import { getAllPools } from './getAllPools'
 import { ConstantProductPoolCode } from '@sushiswap/router/dist/pools/ConstantProductPool'
-import { BridgeBento, BridgeUnlimited, ConstantProductRPool, RToken, StableSwapRPool } from '@sushiswap/tines'
+import {
+  BridgeBento,
+  BridgeUnlimited,
+  CLRPool,
+  ConstantProductRPool,
+  RToken,
+  StableSwapRPool,
+  UniV3Pool,
+} from '@sushiswap/tines'
 import { BentoPoolCode } from '@sushiswap/router/dist/pools/BentoPool'
-import { LiquidityProviders } from '@sushiswap/router'
+import { LiquidityProviders, UniV3PoolCode } from '@sushiswap/router'
 import { BentoBridgePoolCode } from '@sushiswap/router/dist/pools/BentoBridge'
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
@@ -13,13 +21,14 @@ import { Native } from '@sushiswap/currency'
 import { NativeWrapBridgePoolCode } from '@sushiswap/router/dist/pools/NativeWrapBridge'
 
 export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enabled'>) => {
-  const { pairs, stablePools, constantProductPools, bridgeBentoPools } = await getAllPools(variables)
+  const { pairs, stablePools, constantProductPools, bridgeBentoPools, v3Pools } = await getAllPools(variables)
 
   const rPools = [
     ...(pairs || []),
     ...(stablePools || []),
     ...(constantProductPools || []),
     ...(bridgeBentoPools || []),
+    ...(v3Pools || []),
   ]
 
   const poolCodeMap = new Map<string, PoolCode>()
@@ -80,6 +89,8 @@ export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enable
           'Trident'
         )
       )
+    } else if (pool instanceof UniV3Pool) {
+      poolCodeMap.set(pool.address, new UniV3PoolCode(pool, LiquidityProviders.SushiSwapV3, 'SushiSwapV3'))
     }
   }
 

@@ -1,3 +1,3 @@
 export * from './account'
 
-// export * from 'wagmi/actions'
+export * from 'wagmi/actions'

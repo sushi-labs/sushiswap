@@ -27,7 +27,7 @@ export const AddPositionPageWidget = () => {
             />
             <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
               <button type="button" className="p-2 bg-gray-100 dark:bg-slate-900 rounded-full z-10">
-                <PlusIcon strokeWidth={3} className="w-4 h-4 text-gray-500 dark:text-slate-400" />
+                <PlusIcon strokeWidth={3} className="w-4 h-4 text-gray-500 dark:text-slate-400 text-slate-600" />
               </button>
             </div>
             <Web3Input.Currency

@@ -10,11 +10,11 @@ export interface IconListProps {
 export const IconList: FC<IconListProps> = ({ children, iconWidth, iconHeight }) => {
   return (
     <div className="flex items-center">
-      <div className={classNames('inline-flex space-x-[-17.5%]')}>
-        {Children.map(children, (child) => {
+      <div className={classNames('inline-flex')}>
+        {Children.map(children, (child, index) => {
           if (isValidElement(child)) {
             return (
-              <div className="rounded-full inline-flex shadow-sm shadow-black ring-1 ring-black/10 z-10">
+              <div className="rounded-full inline-flex z-10" style={{ marginLeft: index > 0 ? -iconWidth / 3 : 0 }}>
                 {cloneElement(child, {
                   ...child.props,
                   width: iconWidth || child.props.width,

@@ -2,8 +2,7 @@ import { createClient } from '@sushiswap/database'
 
 import { Address, configureChains, createClient as createWagmiClient, fetchToken } from '@wagmi/core'
 
-import { allChains } from '@sushiswap/wagmi-config/chains'
-import { allProviders } from '@sushiswap/wagmi-config/providers'
+import { allChains, allProviders } from '@sushiswap/wagmi-config'
 
 const { provider } = configureChains(allChains, allProviders)
 createWagmiClient({
