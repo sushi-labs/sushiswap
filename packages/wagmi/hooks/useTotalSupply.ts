@@ -1,7 +1,7 @@
 import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
-import { erc20ABI, useContractReads } from 'wagmi'
+import { Address, erc20ABI, useContractReads } from 'wagmi'
 
 function bigNumToCurrencyAmount(totalSupply?: BigNumber, token?: Token) {
   return token?.isToken && totalSupply ? Amount.fromRawAmount(token, totalSupply.toString()) : undefined
@@ -12,7 +12,7 @@ export const useMultipleTotalSupply = (tokens?: Token[]): Record<string, Amount<
     return (
       tokens?.map((token) => {
         return {
-          address: token.wrapped.address,
+          address: token.wrapped.address as Address,
           chainId: token.chainId,
           abi: erc20ABI,
           functionName: 'totalSupply' as const,

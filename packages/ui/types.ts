@@ -11,7 +11,7 @@ export enum AppType {
   Internal = 'Internal',
   Kashi = 'Lend & Borrow',
   Analytics = 'Analytics',
-  Earn = 'Earn',
+  Earn = 'Pools',
   Partner = 'Partner',
   Widget = 'Widget',
   Academy = 'Academy',

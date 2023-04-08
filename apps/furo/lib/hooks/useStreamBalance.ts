@@ -10,7 +10,7 @@ import {
 import { ListenerOptions } from '@uniswap/redux-multicall/dist/types'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
-import { Address, useBlockNumber, useContractRead } from 'wagmi'
+import { Address, useBlockNumber, useContractRead } from '@sushiswap/wagmi'
 
 import { useSingleContractMultipleData } from '../../lib/state/multicall'
 import { ErrorState, LoadingState, SuccessState } from './types'

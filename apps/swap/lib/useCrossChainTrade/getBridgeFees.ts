@@ -4,8 +4,8 @@ import { JSBI } from '@sushiswap/math'
 import { StargateChainId, STARGATE_CHAIN_ID, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID } from '@sushiswap/stargate'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { BigNumber } from 'ethers'
-import { Address, readContracts } from 'wagmi'
-import { getContract, readContract } from 'wagmi/actions'
+import { Address, readContracts } from '@sushiswap/wagmi'
+import { getContract, readContract } from '@sushiswap/wagmi/actions'
 
 export const getBridgeFees = async ({
   amount,
@@ -27,20 +27,20 @@ export const getBridgeFees = async ({
   const stargatePoolResults = await readContracts({
     contracts: [
       {
-        address: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
+        address: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address] as Address,
         functionName: 'getChainPath',
         args: [STARGATE_CHAIN_ID[dstChainId], BigNumber.from(STARGATE_POOL_ID[dstChainId][dstBridgeToken.address])],
         abi: stargatePoolAbi,
         chainId: srcChainId,
       },
       {
-        address: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
+        address: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address] as Address,
         functionName: 'feeLibrary',
         abi: stargatePoolAbi,
         chainId: srcChainId,
       },
       {
-        address: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
+        address: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address] as Address,
         functionName: 'sharedDecimals',
         abi: stargatePoolAbi,
         chainId: srcChainId,
@@ -59,7 +59,7 @@ export const getBridgeFees = async ({
   })()
 
   const getFeesResults = await readContract({
-    address: String(stargatePoolResults?.[1]),
+    address: stargatePoolResults?.[1] as Address,
     functionName: 'getFees',
     args: [
       BigNumber.from(STARGATE_POOL_ID[srcChainId][srcBridgeToken.address]),

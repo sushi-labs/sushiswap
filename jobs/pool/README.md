@@ -21,3 +21,7 @@ pnpm ts-node --esm --swc ./src/incentives.ts
 ```bash
 pnpm ts-node --esm --swc ./src/volume.ts 
 ```
+
+```
+http://localhost:8080/?target=incentives
+```

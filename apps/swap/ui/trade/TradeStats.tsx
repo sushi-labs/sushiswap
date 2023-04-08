@@ -14,7 +14,7 @@ import { Chain } from '@sushiswap/chain'
 import { UseTradeReturn } from '@sushiswap/react-query'
 import { shortenAddress } from '@sushiswap/format'
 import { isAddress } from 'ethers/lib/utils'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 import { Explainer } from '@sushiswap/ui/future/components/Explainer'
 import { AddressToEnsResolver } from '@sushiswap/wagmi/components/Account/AddressToEnsResolver'
 

@@ -13,7 +13,7 @@ import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import React, { FC, useEffect } from 'react'
-import { WagmiConfig } from 'wagmi'
+import { WagmiConfig } from '@sushiswap/wagmi'
 
 import { Header } from '../components'
 import SEO from '../next-seo.config.mjs'

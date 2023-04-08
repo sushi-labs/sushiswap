@@ -22,6 +22,7 @@ import {
   LINK_ADDRESS,
   LUSD_ADDRESS,
   MAI_ADDRESS,
+  MATIC_ADDRESS,
   MIM_ADDRESS,
   NFTX_ADDRESS,
   OHM_ADDRESS,
@@ -43,6 +44,15 @@ import {
   WNATIVE_ADDRESS,
   XSUSHI_ADDRESS,
 } from './token-addresses'
+
+export const MATIC = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'MATIC',
+    name: 'Matic Token',
+  },
+  MATIC_ADDRESS
+) as Record<keyof typeof MATIC_ADDRESS, Token>
 
 export const GNO = addressMapToTokenMap(
   {
@@ -466,6 +476,7 @@ export const WNATIVE = {
   [ChainId.CONSENSUS_ZKEVM_TESTNET]: WETH9[ChainId.CONSENSUS_ZKEVM_TESTNET],
   [ChainId.SCROLL_ALPHA_TESTNET]: WETH9[ChainId.SCROLL_ALPHA_TESTNET],
   [ChainId.BASE_TESTNET]: WETH9[ChainId.BASE_TESTNET],
+  [ChainId.POLYGON_ZKEVM]: WETH9[ChainId.POLYGON_ZKEVM],
 } as const
 
 export const SUSHI = addressMapToTokenMap(

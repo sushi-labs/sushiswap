@@ -98,7 +98,7 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
               icon={ArrowLeftOnRectangleIcon}
               iconProps={{ width: 18, height: 18 }}
               onClick={() => disconnect()}
-              description="Disconnect Wallet"
+              description="Disconnect"
             />
           </div>
         </div>
