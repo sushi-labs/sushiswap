@@ -2,9 +2,9 @@
 /** @type {import('next-seo').DefaultSeoProps} */
 const config = {
   titleTemplate: '%s | Sushi',
-  title: 'Earn',
-  defaultTitle: 'Earn',
-  description: 'Earn fees by providing liquidity.',
+  title: 'Pools',
+  defaultTitle: 'Pools',
+  description: 'Provide liquidity and earn fees.',
   //   canonical: 'https://www.sushi.com/pool',
   //   mobileAlternate: {
   //     media: '',
@@ -19,14 +19,14 @@ const config = {
   openGraph: {
     url: 'https://www.sushi.com/earn',
     type: 'website',
-    title: 'Earn',
-    description: 'Earn fees by providing liquidity.',
+    title: 'Pools',
+    description: 'Provide liquidity and earn fees.',
     images: [
       {
         url: 'https://www.sushi.com/earn/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Earn',
+        alt: 'Pools',
       },
     ],
     // videos: [],
