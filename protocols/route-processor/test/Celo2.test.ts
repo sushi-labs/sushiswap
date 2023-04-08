@@ -5,6 +5,9 @@ import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Signer } from 'ethers'
 import { ethers } from 'hardhat'
+import { createPublicClient } from 'viem'
+import { http } from 'viem'
+import { celo } from 'viem/chains'
 
 //const RouteProcessorAddr = '0x9B3fF703FA9C8B467F5886d7b61E61ba07a9b51c'
 const RouteProcessorAddr = '0xf267704dd1393c26b39a6d41f49bea233b34f722' // new Route Processor
@@ -28,18 +31,18 @@ async function makeSwap(
   to: string,
   amountIn: BigNumber
 ): Promise<number | undefined> {
-  let route
-  for (let i = 0; i < 10; ++i) {
+  let route, pcMap
+  for (let i = 0; i < 100; ++i) {
+    pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
     // try to find a route
-    route = Router.findBestRoute(dataFetcher, fromToken, amountIn, toToken, 50 * 1e9)
+    route = Router.findBestRoute(pcMap, ChainId.CELO, fromToken, amountIn, toToken, 50e9)
     if (route.status == RouteStatus.Success) break
     await delay(1000)
   }
   expect(route?.status).equal(RouteStatus.Success)
 
-  if (route) {
-    const rpParams = Router.routeProcessor2Params(dataFetcher, route, fromToken, toToken, to, RouteProcessorAddr)
-
+  if (route && pcMap) {
+    const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, to, RouteProcessorAddr)
     const RouteProcessorFactory = await ethers.getContractFactory('RouteProcessor2', signer)
     const RouteProcessor = RouteProcessorFactory.attach(RouteProcessorAddr)
     const res = await RouteProcessor.callStatic.processRoute(
@@ -65,7 +68,23 @@ if (process.env.INFURA_API_KEY) {
       42220
     )
 
-    const dataFetcher = new DataFetcher(provider, chainId)
+    const client = createPublicClient({
+      // chain: {
+      //   ...hardhat,
+      //   contracts: {
+      //     multicall3: {
+      //       address: '0xca11bde05977b3631167028862be2a173976ca11',
+      //       blockCreated: 25770160,
+      //     },
+      //   },
+      //   pollingInterval: 1_000,
+      // },
+      //transport: custom(network.provider),
+      chain: celo,
+      transport: http(`https://celo-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`),
+    })
+
+    const dataFetcher = new DataFetcher(chainId, client)
     dataFetcher.startDataFetching()
 
     it('CELO => USDC', async () => {

@@ -179,14 +179,14 @@ export class DataFetcher {
     //   }
     // }
 
-    // if (this._providerIsIncluded(LiquidityProviders.UbeSwap, providers)) {
-    //   try {
-    //     const provider = new UbeSwapProvider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.UbeSwap, providers)) {
+      try {
+        const provider = new UbeSwapProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
     if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
       try {
