@@ -38,7 +38,8 @@ export const Header: FC = () => {
           )
         }
       >
-        <NavLink title="Earn" href="https://sushi.com/earn" />
+        <NavLink title="Swap" href="https://sushi.com/swap" />
+        <NavLink title="Pools" href="https://sushi.com/earn" />
         <Onramper.Button>
           <Button as="span" color="default" variant="empty" size="md">
             Buy Crypto
