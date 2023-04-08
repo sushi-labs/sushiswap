@@ -82,7 +82,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currency])
 
-  const isLoading = loading || currencyLoading || isBalanceLoading
+  const isLoading = loading || currencyLoading || (address && isBalanceLoading)
 
   return (
     <div
