@@ -39,7 +39,7 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; p
   })
 
   const _positions = useMemo(() => {
-    return positions?.filter((el) => {
+    return (positions || [])?.filter((el) => {
       return (
         (hide ? !el.liquidity?.eq('0') : true) && (poolId ? el.address.toLowerCase() === poolId.toLowerCase() : true)
       )
@@ -47,7 +47,7 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; p
   }, [hide, poolId, positions])
 
   const table = useReactTable<ConcentratedLiquidityPosition>({
-    data: _positions || [],
+    data: _positions,
     state: {
       // sorting,
       columnVisibility,

@@ -27,6 +27,7 @@ import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 import { isAddress } from 'ethers/lib/utils'
 import { unwrapToken } from '../../../lib/functions'
+import { useEffectDebugger } from '@sushiswap/hooks'
 
 enum Granularity {
   Day,
@@ -111,6 +112,8 @@ const Pool: FC = () => {
   const change1d = 0
   const change1w = 0
 
+  console.log('hi')
+  useEffectDebugger(() => {}, [])
   return (
     <SWRConfig>
       <Layout>

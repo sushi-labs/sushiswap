@@ -1,6 +1,6 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid'
 import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
-import React, { ReactNode, useState } from 'react'
+import React, { MouseEventHandler, ReactNode, useCallback, useState } from 'react'
 import { Table } from '.'
 import { Link } from '../../../link'
 import { LoadingOverlay } from '../../../loader'
@@ -35,9 +35,16 @@ export const GenericTable = <T extends { id: string }>({
   linkFormatter,
   loadingOverlay = true,
 }: GenericTableProps<T>) => {
-  const [showOverlay, setShowOverlay] = useState(false)
-  const [popupInvisible, setPopupInvisible] = useState(false)
   const isMounted = useIsMounted()
+  const [showOverlay, setShowOverlay] = useState(false)
+  const [, setPopupInvisible] = useState(false)
+
+  const onClick = useCallback((e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
+    if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
+      setPopupInvisible(true)
+      setTimeout(() => setShowOverlay(true), 250)
+    }
+  }, [])
 
   return (
     <>
@@ -108,17 +115,7 @@ export const GenericTable = <T extends { id: string }>({
                       }}
                     >
                       <Popover.Button>
-                        <Table.tr
-                          onClick={(e) => {
-                            if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
-                              setPopupInvisible(true)
-                              if (loadingOverlay) {
-                                setTimeout(() => setShowOverlay(true), 250)
-                              }
-                            }
-                          }}
-                          className="cursor-pointer"
-                        >
+                        <Table.tr onClick={onClick} className="cursor-pointer">
                           {row.getVisibleCells().map((cell, i) => {
                             return (
                               <Table.td
@@ -169,16 +166,7 @@ export const GenericTable = <T extends { id: string }>({
                   )
                 } else {
                   return (
-                    <Table.tr
-                      key={row.id}
-                      onClick={(e) => {
-                        if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
-                          setPopupInvisible(true)
-                          setTimeout(() => setShowOverlay(true), 250)
-                        }
-                      }}
-                      className="cursor-pointer"
-                    >
+                    <Table.tr onClick={onClick} key={row.id} className="cursor-pointer">
                       {row.getVisibleCells().map((cell, i) => {
                         return (
                           <Table.td
