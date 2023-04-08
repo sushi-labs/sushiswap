@@ -2,7 +2,7 @@ import { ButtonColor, ButtonSize, ButtonVariant } from './Button'
 
 export const BUTTON_CLASSES: Record<string, string> = {
   btn: 'font-medium flex items-center justify-center gap-2 cursor-pointer transition-all',
-  'btn-disabled': 'pointer-events-none before:absolute relative before:inset-0 before:bg-black/[0.4] overflow-hidden',
+  'btn-disabled': 'pointer-events-none relative opacity-[0.4] overflow-hidden',
   'btn-filled': '',
   'btn-empty': '',
   'btn-outlined': '',

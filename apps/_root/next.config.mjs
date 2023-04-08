@@ -110,6 +110,14 @@ const nextConfig = {
         source: '/earn/:path*',
         destination: `${EARN_URL}/earn/:path*`,
       },
+      {
+        source: '/pools',
+        destination: `${EARN_URL}/pools`,
+      },
+      {
+        source: '/pools/:path*',
+        destination: `${EARN_URL}/pools/:path*`,
+      },
     ]
   },
 }

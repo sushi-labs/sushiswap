@@ -2,7 +2,6 @@
 
 import { Widget as UIWidget } from '@sushiswap/ui/future/components/widget'
 import React, { FC } from 'react'
-import { SettingsModule, SettingsOverlay } from 'ui/settings'
 import { SwitchAppType } from './SwitchAppType'
 import { SwitchTokensButton } from './SwitchTokensButton'
 import { SwapCurrencyInput } from './SwapCurrencyInput'
@@ -13,6 +12,7 @@ import { SwapButton } from './SwapButton'
 import { useSwapState } from '../trade/TradeProvider'
 import { AppType } from '@sushiswap/ui'
 import { SwapButtonCrossChain } from './SwapButtonCrossChain'
+import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
 
 export const Widget: FC = () => {
   const { appType } = useSwapState()

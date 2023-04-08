@@ -6,7 +6,7 @@ import '../variables.css'
 import { App, ThemeProvider } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
 import Head from 'next/head'
-import { WagmiConfig } from 'wagmi'
+import { WagmiConfig } from '@sushiswap/wagmi'
 
 import React from 'react'
 import { ToastContainer } from '@sushiswap/ui/future/components/toast'

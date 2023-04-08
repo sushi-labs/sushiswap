@@ -9,7 +9,7 @@ import { WalletIcon } from '@sushiswap/ui/future/components/icons'
 type BalancePanel = Pick<CurrencyInputProps, 'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'loading'> & {
   id?: string
   account: string | undefined
-  balance: Amount<Type> | undefined
+  balance: Amount<Type> | null | undefined
 }
 
 const MIN_NATIVE_CURRENCY_FOR_GAS: JSBI = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16)) // .01 ETH

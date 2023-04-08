@@ -48,7 +48,7 @@ export const Tooltip: FC<TooltipProps> = ({ children, description, transitionDel
           {...attributes.popper}
           className={classNames('', open ? '' : 'hidden', className)}
         >
-          <span className="bg-gray-600 text-white px-2 py-1 rounded-xl whitespace-nowrap text-[10px] leading-normal">
+          <span className="bg-gray-600 font-medium text-white px-2 py-1 rounded-xl whitespace-nowrap text-xs leading-normal">
             {description}
           </span>
         </div>,

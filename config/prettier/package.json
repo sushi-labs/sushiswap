@@ -17,15 +17,13 @@
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "sideEffects": false,
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts",
-    "build2": "tsup src/index.ts --format esm,cjs --dts --external prettier,prettier-plugin-solidity,prettier-plugin-tailwindcss",
+    "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "postinstall": "pnpm build",
@@ -41,11 +39,23 @@
     "prettier": "2.8.1",
     "prettier-plugin-solidity": "1.0.0",
     "prettier-plugin-tailwindcss": "0.2.1",
-    "tsup": "6.5.0",
     "typescript": "4.9.4"
   },
   "peerDependencies": {
-    "prettier": "*"
+    "prettier": "*",
+    "prettier-plugin-solidity": "*",
+    "prettier-plugin-tailwindcss": "*"
+  },
+  "peerDependenciesMeta": {
+    "prettier": {
+      "optional": false
+    },
+    "prettier-plugin-solidity": {
+      "optional": false
+    },
+    "prettier-plugin-tailwindcss": {
+      "optional": false
+    }
   },
   "optionalDependencies": {
     "prettier-plugin-solidity": "*",

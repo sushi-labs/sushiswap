@@ -1,5 +1,7 @@
-import type { PoolType, PoolVersion } from '@sushiswap/database'
+// import type { PoolType, PoolVersion } from '@sushiswap/database'
 import { z } from 'zod'
+
+export const protocolFilterTypes = ['SUSHISWAP_V3', 'SUSHISWAP_V2', 'BENTOBOX_STABLE', 'BENTOBOX_CLASSIC']
 
 export const PoolsApiSchema = z.object({
   take: z.coerce.number().int().lte(1000).default(20),
@@ -40,14 +42,19 @@ export const PoolsApiSchema = z.object({
     .transform((tokenSymbols) => tokenSymbols?.split(','))
     .refine((tokenSymbols) => tokenSymbols.length <= 3, { message: 'Can only use up to 3 tokenSymbols.' })
     .optional(),
-  poolTypes: z
+  protocols: z
     .string()
-    .transform((poolTypes) => poolTypes?.split(',') as PoolType[])
-    .optional(),
-  poolVersions: z
-    .string()
-    .transform((poolVersions) => poolVersions?.split(',') as PoolVersion[])
-    .optional(),
+    .transform((filter) => {
+      if (!filter) return []
+      const filters = filter?.split(',')
+      return filters?.map((f) => {
+        if (!protocolFilterTypes.includes(f)) {
+          throw new Error('Invalid filter')
+        }
+        return f
+      })
+    })
+    .default(''),
   cursor: z.string().optional(),
   orderBy: z.string().default('liquidityUSD'),
   orderDir: z.enum(['asc', 'desc']).default('desc'),

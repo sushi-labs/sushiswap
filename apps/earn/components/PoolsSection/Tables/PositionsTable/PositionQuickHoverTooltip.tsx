@@ -8,7 +8,7 @@ import { PoolPositionStakedProvider, usePoolPositionStaked } from '../../../Pool
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { ArrowDownIcon, MinusIcon, PlusIcon } from '@heroicons/react/solid'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
+import { useNetwork, useSwitchNetwork } from '@sushiswap/wagmi'
 import { ZERO } from '@sushiswap/math'
 
 interface PositionQuickHoverTooltipProps {
@@ -95,7 +95,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
                     title={
                       <div className="flex gap-2 items-baseline">
                         {reward?.toSignificant(6) || '0.00'} {rewardTokens[index]?.symbol}
-                        <span className="text-[10px] text-gray-600 dark:text-slate-400">
+                        <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
                           {' '}
                           {formatUSD(values[index])}
                         </span>
@@ -125,7 +125,9 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
               title={
                 <div className="flex gap-2 items-baseline">
                   {underlying0?.toSignificant(6)} {underlying0?.currency.symbol}
-                  <span className="text-[10px] text-gray-600 dark:text-slate-400">{formatUSD(value0)}</span>
+                  <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
+                    {formatUSD(value0)}
+                  </span>
                 </div>
               }
             />
@@ -140,7 +142,9 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
               title={
                 <div className="flex gap-2 items-baseline">
                   {underlying1?.toSignificant(6)} {underlying1?.currency.symbol}
-                  <span className="text-[10px] text-gray-600 dark:text-slate-400">{formatUSD(value1)}</span>
+                  <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
+                    {formatUSD(value1)}
+                  </span>
                 </div>
               }
             />
@@ -164,7 +168,9 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
                 title={
                   <div className="flex gap-2 items-baseline">
                     {stakedUnderlying0?.toSignificant(6)} {stakedUnderlying0?.currency.symbol}
-                    <span className="text-[10px] text-gray-600 dark:text-slate-400">{formatUSD(stakedValue1)}</span>
+                    <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
+                      {formatUSD(stakedValue1)}
+                    </span>
                   </div>
                 }
               />
@@ -178,7 +184,9 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
                 title={
                   <div className="flex gap-2 items-baseline">
                     {stakedUnderlying1?.toSignificant(6) || '0.00'} {stakedUnderlying1?.currency.symbol}
-                    <span className="text-[10px] text-gray-600 dark:text-slate-400">{formatUSD(stakedValue1)}</span>
+                    <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
+                      {formatUSD(stakedValue1)}
+                    </span>
                   </div>
                 }
               />

@@ -4,7 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 import { useRouter } from 'next/router'
 import { Signature } from '@ethersproject/bytes'
 import { nanoid } from 'nanoid'
@@ -38,7 +38,7 @@ type SwapApi = {
   setRecipient(recipient: string): void
   setNetworks(chainId: SwapChainId): void
   setNetwork0(chainId: SwapChainId): void
-  setNetwork1(chainId: ChainId): void
+  setNetwork1(chainId: SwapChainId): void
   setToken0(currency: Type): void
   setToken1(currency: Type): void
   setValue(value: string): void
@@ -92,8 +92,8 @@ interface SwapProviderProps {
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { address } = useAccount()
   const { query, push, pathname } = useRouter()
-  const { fromChainId, toChainId, fromCurrency, toCurrency, amount, recipient, review } = queryParamsSchema.parse(query)
-  const { token0, token1 } = useTokenState()
+  const { fromCurrency, toCurrency, amount, recipient, review } = queryParamsSchema.parse(query)
+  const { token0, token1, fromChainId, toChainId } = useTokenState()
 
   const [internalState, dispatch] = useReducer(reducer, {
     isFallback: true,
@@ -117,14 +117,14 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   }, [fromChainId, internalState, toChainId, token0, token1])
 
   const api = useMemo(() => {
-    const setNetworks = (chainId: keyof typeof defaultQuoteCurrency) => {
+    const setNetworks = (chainId: SwapChainId) => {
       const token0 = state.token0?.chainId === chainId ? state.token0 : Native.onChain(chainId)
       const token1 =
         state.token1?.chainId === chainId
           ? state.token1.isNative
             ? 'NATIVE'
             : state.token1.wrapped.address
-          : defaultQuoteCurrency[chainId].address
+          : defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].address
 
       void push(
         {
@@ -142,7 +142,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       )
     }
 
-    const setNetwork0 = (chainId: ChainId) => {
+    const setNetwork0 = (chainId: SwapChainId) => {
       const fromCurrency =
         state.token0?.chainId === chainId ? (state.token0.isNative ? 'NATIVE' : state.token0.wrapped.address) : 'NATIVE'
 
@@ -159,13 +159,13 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         { shallow: true }
       )
     }
-    const setNetwork1 = (chainId: keyof typeof defaultQuoteCurrency) => {
+    const setNetwork1 = (chainId: SwapChainId) => {
       const toCurrency =
         state.token1?.chainId === chainId
           ? state.token1.isNative
             ? 'NATIVE'
             : state.token1.wrapped.address
-          : defaultQuoteCurrency[chainId].address
+          : defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].address
 
       void push(
         {

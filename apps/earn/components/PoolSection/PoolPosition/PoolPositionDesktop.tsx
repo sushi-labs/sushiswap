@@ -38,10 +38,10 @@ export const PoolPositionDesktop: FC<PoolPositionProps> = ({ pool }) => {
       <div className="flex flex-col gap-3 px-5 py-4">
         {pool.incentives && (
           <div className="flex items-center justify-between mb-1">
-            <Typography variant="sm" weight={600} className="text-slate-100">
+            <Typography variant="sm" weight={600} className="dark:text-slate-100 text-gray-900">
               Unstaked Position
             </Typography>
-            <Typography variant="xs" weight={500} className="text-slate-100">
+            <Typography variant="xs" weight={500} className="dark:text-slate-100 text-gray-900">
               {formatUSD(value0 + value1)}
             </Typography>
           </div>
@@ -49,22 +49,22 @@ export const PoolPositionDesktop: FC<PoolPositionProps> = ({ pool }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Currency.Icon currency={token0} width={20} height={20} />
-            <Typography variant="sm" weight={600} className="text-slate-300">
+            <Typography variant="sm" weight={600} className="dark:text-slate-300 text-gray-700">
               {underlying0?.toSignificant(6)} {token0.symbol}
             </Typography>
           </div>
-          <Typography variant="xs" weight={500} className="text-slate-400">
+          <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600 text-gray-600">
             {formatUSD(value0)}
           </Typography>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Currency.Icon currency={token1} width={20} height={20} />
-            <Typography variant="sm" weight={600} className="text-slate-300">
+            <Typography variant="sm" weight={600} className="dark:text-slate-300 text-gray-700">
               {underlying1?.toSignificant(6)} {token1.symbol}
             </Typography>
           </div>
-          <Typography variant="xs" weight={500} className="text-slate-400">
+          <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600 text-gray-600">
             {formatUSD(value1)}
           </Typography>
         </div>

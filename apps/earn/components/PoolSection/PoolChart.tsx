@@ -9,6 +9,8 @@ import resolveConfig from 'tailwindcss/resolveConfig'
 import { useGraphPool } from '../../lib/hooks/api/useGraphPool'
 
 import tailwindConfig from '../../tailwind.config.js'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { useMediaQuery } from '@sushiswap/hooks'
 
 const tailwind = resolveConfig(tailwindConfig)
 
@@ -41,7 +43,7 @@ const chartTimespans: Record<PoolChartPeriod, number> = {
 
 export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
   const { data: graphPair, isLoading } = useGraphPool(pool)
-
+  const isDark = useMediaQuery({ query: '(prefers-color-scheme: dark)' })
   const [chartType, setChartType] = useState<PoolChartType>(PoolChartType.Volume)
   const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Month)
 
@@ -104,7 +106,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
         extraCssText: 'z-index: 1000',
         responsive: true,
         // @ts-ignore
-        backgroundColor: tailwind.theme.colors.slate['700'],
+        backgroundColor: !isDark ? tailwind.theme.colors.white : tailwind.theme.colors.slate['700'],
         textStyle: {
           // @ts-ignore
           color: tailwind.theme.colors.slate['50'],
@@ -116,10 +118,10 @@ export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
 
           const date = new Date(Number(params[0].name * 1000))
           return `<div class="flex flex-col gap-0.5">
-            <span class="text-sm text-slate-50 font-semibold">${
+            <span class="text-sm dark:text-slate-50 text-gray-900 font-semibold">${
               chartType === PoolChartType.APR ? formatPercent(params[0].value) : formatUSD(params[0].value)
             }</span>
-            <span class="text-xs text-slate-400 font-medium">${
+            <span class="text-xs text-gray-500 dark:text-slate-400 text-slate-600 font-medium">${
               date instanceof Date && !isNaN(date?.getTime())
                 ? format(
                     date,
@@ -189,107 +191,98 @@ export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
         },
       ],
     }),
-    [xData, chartType, yData, onMouseOver, chartPeriod]
+    [isDark, xData, chartType, yData, onMouseOver, chartPeriod]
   )
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col justify-between gap-5 md:flex-row">
-        <div className="flex gap-6">
-          <button
+      <div className="flex flex-col justify-between items-center gap-5 md:flex-row">
+        <div className="flex items-center gap-1">
+          <Button
+            size="xs"
+            variant={chartType === PoolChartType.Volume ? 'outlined' : 'empty'}
+            color={chartType === PoolChartType.Volume ? 'blue' : 'default'}
             onClick={() => setChartType(PoolChartType.Volume)}
-            className={classNames(
-              'border-b-[3px] pb-2 font-semibold text-sm',
-              chartType === PoolChartType.Volume ? 'text-slate-50 border-blue' : 'text-slate-500 border-transparent'
-            )}
           >
             Volume
-          </button>
-          <button
+          </Button>
+          <Button
+            size="xs"
+            variant={chartType === PoolChartType.TVL ? 'outlined' : 'empty'}
+            color={chartType === PoolChartType.TVL ? 'blue' : 'default'}
             onClick={() => setChartType(PoolChartType.TVL)}
-            className={classNames(
-              'border-b-[3px] pb-2 font-semibold text-sm',
-              chartType === PoolChartType.TVL ? 'text-slate-50 border-blue' : 'text-slate-500 border-transparent'
-            )}
           >
             TVL
-          </button>
-          <button
+          </Button>
+          <Button
+            size="xs"
+            variant={chartType === PoolChartType.Fees ? 'outlined' : 'empty'}
+            color={chartType === PoolChartType.Fees ? 'blue' : 'default'}
             onClick={() => setChartType(PoolChartType.Fees)}
-            className={classNames(
-              'border-b-[3px] pb-2 font-semibold text-sm',
-              chartType === PoolChartType.Fees ? 'text-slate-50 border-blue' : 'text-slate-500 border-transparent'
-            )}
           >
             Fees
-          </button>
-          <button
+          </Button>
+          <Button
+            size="xs"
+            variant={chartType === PoolChartType.APR ? 'outlined' : 'empty'}
+            color={chartType === PoolChartType.APR ? 'blue' : 'default'}
             onClick={() => setChartType(PoolChartType.APR)}
-            className={classNames(
-              'border-b-[3px] pb-2 font-semibold text-sm',
-              chartType === PoolChartType.APR ? 'text-slate-50 border-blue' : 'text-slate-500 border-transparent'
-            )}
           >
             APR
-          </button>
+          </Button>
         </div>
-        <div className="flex gap-4">
-          <button
+        <div className="flex gap-1">
+          <Button
+            size="xs"
+            variant={chartPeriod === PoolChartPeriod.Day ? 'outlined' : 'empty'}
+            color={chartPeriod === PoolChartPeriod.Day ? 'blue' : 'default'}
             onClick={() => setChartPeriod(PoolChartPeriod.Day)}
-            className={classNames(
-              'font-semibold text-sm',
-              chartPeriod === PoolChartPeriod.Day ? 'text-blue' : 'text-slate-500'
-            )}
           >
             1D
-          </button>
-          <button
+          </Button>
+          <Button
+            size="xs"
+            variant={chartPeriod === PoolChartPeriod.Week ? 'outlined' : 'empty'}
+            color={chartPeriod === PoolChartPeriod.Week ? 'blue' : 'default'}
             onClick={() => setChartPeriod(PoolChartPeriod.Week)}
-            className={classNames(
-              'font-semibold text-sm',
-              chartPeriod === PoolChartPeriod.Week ? 'text-blue' : 'text-slate-500'
-            )}
           >
             1W
-          </button>
-          <button
+          </Button>
+          <Button
+            size="xs"
+            variant={chartPeriod === PoolChartPeriod.Month ? 'outlined' : 'empty'}
+            color={chartPeriod === PoolChartPeriod.Month ? 'blue' : 'default'}
             onClick={() => setChartPeriod(PoolChartPeriod.Month)}
-            className={classNames(
-              'font-semibold text-sm',
-              chartPeriod === PoolChartPeriod.Month ? 'text-blue' : 'text-slate-500'
-            )}
           >
             1M
-          </button>
-          <button
+          </Button>
+          <Button
+            size="xs"
+            variant={chartPeriod === PoolChartPeriod.Year ? 'outlined' : 'empty'}
+            color={chartPeriod === PoolChartPeriod.Year ? 'blue' : 'default'}
             onClick={() => setChartPeriod(PoolChartPeriod.Year)}
-            className={classNames(
-              'font-semibold text-sm',
-              chartPeriod === PoolChartPeriod.Year ? 'text-blue' : 'text-slate-500'
-            )}
           >
             1Y
-          </button>
-          <button
+          </Button>
+          <Button
+            size="xs"
+            variant={chartPeriod === PoolChartPeriod.All ? 'outlined' : 'empty'}
+            color={chartPeriod === PoolChartPeriod.All ? 'blue' : 'default'}
             onClick={() => setChartPeriod(PoolChartPeriod.All)}
-            className={classNames(
-              'font-semibold text-sm',
-              chartPeriod === PoolChartPeriod.All ? 'text-blue' : 'text-slate-500'
-            )}
           >
-            ALL
-          </button>
+            All
+          </Button>
         </div>
       </div>
       <div className="flex flex-col">
-        <Typography variant="xl" weight={500} className="text-slate-50">
+        <Typography variant="xl" weight={500} className="dark:text-slate-50 text-gray-900">
           <span className="hoveredItemValue">
             {chartType === PoolChartType.APR
               ? formatPercent(yData[yData.length - 1])
               : formatUSD(yData[yData.length - 1])}
           </span>{' '}
           {chartType === PoolChartType.Volume && (
-            <span className="text-sm font-medium text-slate-300">
+            <span className="text-sm font-medium  text-gray-600 dark:text-slate-300">
               <span className="text-xs top-[-2px] relative">•</span>{' '}
               <span className="hoveredItemValue">
                 {formatUSD(Number(yData[yData.length - 1]) * Number(pool.swapFee))}
@@ -299,7 +292,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pool }) => {
           )}
         </Typography>
         {xData.length && (
-          <Typography variant="sm" className="text-slate-500 hoveredItemName">
+          <Typography variant="sm" className="dark:text-slate-500 text-gray-500 hoveredItemName">
             <AppearOnMount>{format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}</AppearOnMount>
           </Typography>
         )}

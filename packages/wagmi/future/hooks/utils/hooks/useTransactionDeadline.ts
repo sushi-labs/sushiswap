@@ -11,10 +11,10 @@ interface UseTransactionDeadline {
 }
 
 export const useTransactionDeadline = ({ chainId, enabled }: UseTransactionDeadline) => {
-  const currentBlockTimestampQuery = useCurrentBlockTimestamp(chainId, enabled)
+  const { data: currentBlockTimestampQuery, isLoading, isError } = useCurrentBlockTimestamp(chainId, enabled)
 
   return useMemo(() => {
-    const blockTimestamp = currentBlockTimestampQuery?.data
+    const blockTimestamp = currentBlockTimestampQuery
     let data = undefined
     if (blockTimestamp && chainId && Object.keys(chainsL2).includes(chainId.toString())) {
       data = blockTimestamp.add(L2_DEADLINE_FROM_NOW)
@@ -25,8 +25,9 @@ export const useTransactionDeadline = ({ chainId, enabled }: UseTransactionDeadl
     }
 
     return {
-      ...currentBlockTimestampQuery,
       data,
+      isLoading,
+      isError,
     }
-  }, [chainId, currentBlockTimestampQuery])
+  }, [chainId, currentBlockTimestampQuery, isError, isLoading])
 }

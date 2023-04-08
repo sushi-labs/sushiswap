@@ -16,111 +16,67 @@
       "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL"],
       "persistent": true
     },
-    "blog#build": {
-      "dependsOn": ["^build", "generate"],
-      "env": ["STRAPI_PREVIEW_SECRET"],
-      "outputs": [".mesh/**/*", ".next/**/*", "public/**/*"]
-    },
     "build": {
       "outputs": [
         ".next/**/*",
         ".vercel/**/*",
-        "dist/**/*",
-        "typechain/**/*",
-        "artifacts/**/*",
-        "public/**/*",
-        "storybook-static/**/*",
-        "lib/**/*",
-        "resolvers/**/*",
-        "transformers/**/*",
-        ".graphclient/**/*",
-        ".mesh/**/*"
+        "dist/**/*"
       ],
-      "dependsOn": ["^db:generate", "^build", "db:generate", "generate", "export"],
+      "dependsOn": [
+        "^build", 
+        "generate"
+      ],
       "env": [
         "DATABASE_URL",
         "REDIS_URL",
-        "ROOT_URL",
-        "ACADEMY_URL",
-        "ANALYTICS_URL",
-        "BLOG_URL",
-        "EARN_URL",
-        "FURO_URL",
-        "SWAP_URL",
-        "SWAP_API_V0_BASE_URL",
-        "AGGREGATOR_API_V0_BASE_URL",
-        "POOLS_API_V0_BASE_URL",
-        "TOKENS_API_V0_BASE_URL"
+        "POOLS_API_V0_BASE_URL"
       ]
     },
     "clean": {
       "cache": false
     },
     "check": {
-      "dependsOn": ["build"],
-      "cache": false
-    },
-    "db:init": {
-      "outputs": ["prisma/**/*"],
-      "cache": false
-    },
-    "db:pull": {
-      "outputs": ["prisma/**/*"],
-      "dependsOn": ["db:init"],
-      "cache": false,
-      "env": ["DATABASE_URL"]
-    },
-    "db:generate": {
-      "dependsOn": [],
-      "cache": false
-    },
-    "db:push": {
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false
     },
     "dev": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build", 
+        "generate",
+        "export"
+      ],
       "cache": false,
       "persistent": true
     },
-    "export": {
-      "dependsOn": ["^build"],
-      "outputs": ["exports/**/*"],
-      "cache": true
-    },
     "generate": {
-      "outputs": [".graphclient/**/*", ".mesh/**/*", "typechain/**/*", "artifacts/**/*"],
+      "outputs": [
+        ".graphclient/**/*",
+        "src/generated.ts",
+        "typechain"
+      ],
       "cache": false
     },
     "lint": {
       "dependsOn": ["^build"],
       "outputs": []
     },
-    "node": {
-      "dependsOn": ["build"],
-      "outputs": ["deployments/**/*"],
-      "persistent": true
-    },
     "playwright": {
       "cache": false,
       "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
     },
-    "server": {
-      "persistent": true,
-      "dependsOn": ["build"]
-    },
-
     "start": {
-      "dependsOn": ["^db:generate", "^build", "db:generate", "generate", "export"],
+      "dependsOn": [        
+        "^build", 
+        "generate",
+        "export"
+      ],
       "env": [
-        "PRODUCTION_DATABASE_URL",
-        "PREVIEW_DATABASE_URL",
         "REDIS_URL",
         "DATABASE_URL",
         "ALCHEMY_ID",
-        "SWAP_API_V0_BASE_URL",
-        "AGGREGATOR_API_V0_BASE_URL",
-        "POOLS_API_V0_BASE_URL",
-        "TOKENS_API_V0_BASE_URL"
+        "POOLS_API_V0_BASE_URL"
       ],
       "cache": false,
       "persistent": true
@@ -136,6 +92,9 @@
     },
     "validate": {
       "cache": false
+    },
+    "export": {
+      "cache": true
     }
   }
 }

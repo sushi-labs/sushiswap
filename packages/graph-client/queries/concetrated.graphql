@@ -1,0 +1,53 @@
+query TicksById($id: ID!) {
+  ticks: ticksById(id: $id) {
+    id
+    poolAddress
+    tickIdx
+    liquidityGross
+    liquidityNet
+    price0
+    price1
+    volumeToken0
+    volumeToken1
+    volumeUSD
+    untrackedVolumeUSD
+    feesUSD
+    collectedFeesToken0
+    collectedFeesToken1
+    collectedFeesUSD
+    createdAtTimestamp
+    createdAtBlockNumber
+    liquidityProviderCount
+    feeGrowthOutside0X128
+    feeGrowthOutside1X128
+  }
+}
+
+query PoolsByTokenPair($tokenId0: String!, $tokenId1: String!) {
+  pools: poolsByTokenPair(tokenId0: $tokenId0, tokenId1: $tokenId1) {
+    id
+    feeTier
+    liquidity
+    sqrtPrice
+    feeGrowthGlobal0X128
+    feeGrowthGlobal1X128
+    token0Price
+    token1Price
+    tick
+    observationIndex
+    volumeToken0
+    volumeToken1
+    volumeUSD
+    untrackedVolumeUSD
+    feesUSD
+    collectedFeesToken0
+    collectedFeesToken1
+    collectedFeesUSD
+    totalValueLockedToken0
+    totalValueLockedToken1
+    totalValueLockedETH
+    totalValueLockedUSD
+    totalValueLockedUSDUntracked
+    liquidityProviderCount
+  }
+}

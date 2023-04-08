@@ -13,13 +13,15 @@ import {
   getTridentRouterContractConfig,
   StablePoolState,
   useBentoBoxTotals,
-  useSendTransaction,
+  _useSendTransaction as useSendTransaction,
   useTotalSupply,
   useTridentRouterContract,
+  useAccount,
+  useNetwork,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from '../../lib/actions'
 import { useSettings } from '../../lib/state/storage'

@@ -22,7 +22,7 @@ export const HeaderNetworkSelector: FC<{
   const onSwitchNetwork = useCallback<NetworkSelectorOnSelectCallback>(
     async (el, close) => {
       try {
-        if (switchNetworkAsync) {
+        if (switchNetworkAsync && chain?.id !== el) {
           await switchNetworkAsync(el)
         }
 
@@ -38,7 +38,7 @@ export const HeaderNetworkSelector: FC<{
         }
       }
     },
-    [onChange, selectedNetwork, switchNetworkAsync]
+    [chain?.id, onChange, selectedNetwork, switchNetworkAsync]
   )
 
   const selected = selectedNetwork || chain?.id || ChainId.ETHEREUM

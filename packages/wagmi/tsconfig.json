@@ -5,5 +5,5 @@
   "compilerOptions": {
     "declaration": false,
     "declarationMap": false
-    }
+   }
 }
