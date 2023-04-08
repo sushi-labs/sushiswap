@@ -56,7 +56,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
     inputRef.current?.focus()
   }, [disabled])
 
-  const { data: balance, isLoading: isBalanceLoading } = useBalanceWeb3({
+  const { data: balance, isInitialLoading: isBalanceLoading } = useBalanceWeb3({
     chainId,
     account: address,
     currency,
