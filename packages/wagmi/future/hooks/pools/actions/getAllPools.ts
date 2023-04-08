@@ -14,6 +14,7 @@ import { BridgeBentoState, getBridgeBentoPools } from './getBridgeBentoPools'
 import { Type } from '@sushiswap/currency'
 import { getV3Pools, V3PoolState } from './getV3Pools'
 import { isSushiSwapV3Chain } from '@sushiswap/validate'
+import { isV3ChainId } from '@sushiswap/v3-sdk'
 
 const queryFn = async ({
   currencyA,
@@ -50,7 +51,7 @@ const queryFn = async ({
     isBentoBoxV1ChainId(chainId) && withBentoPools && totalsMap
       ? getBridgeBentoPools(chainId, _tokensUnique, totalsMap)
       : Promise.resolve([]),
-    isSushiSwapV3Chain(chainId) ? getV3Pools(chainId, currencyCombinations) : Promise.resolve([]),
+    isV3ChainId(chainId) ? getV3Pools(chainId, currencyCombinations) : Promise.resolve([]),
   ])
   // const filteredCurrencyCombinations = currencyCombinations.filter(([a, b]) =>  a === currencyA || b === currencyA || a === currencyB || b === currencyB)
   // const v3Pools = await getV3Pools(chainId, v3CurrencyCombinations)
