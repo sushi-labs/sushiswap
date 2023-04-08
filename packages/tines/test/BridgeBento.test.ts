@@ -1,17 +1,8 @@
-import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
+import { BigNumberish } from '@ethersproject/bignumber'
 import seedrandom from 'seedrandom'
-import { _1e12 } from '../../math/dist'
+
 import { RToken } from '../src'
 import { BridgeBento, getBigNumber } from '../src'
-
-function closeValues(a: number, b: number, accuracy: number, logInfoIfFalse = ''): boolean {
-  if (a === b) return true
-  if (accuracy === 0) return a === b
-  if (a == 0) return b < accuracy
-  if (b == 0) return a < accuracy
-  const res = Math.abs(a / b - 1) < accuracy
-  return res
-}
 
 function calcPrecision(a: number, b: number): number {
   if (a === b) return 0
@@ -98,11 +89,13 @@ function getRandomBridge(rnd: () => number) {
     name: 'token1',
     symbol: 'token1',
     address: 'token1',
+    decimals: 18,
   }
   const token2: RToken = {
     name: 'token2',
     symbol: 'token2',
     address: 'token2',
+    decimals: 18,
   }
   const elastic = Math.floor(getRandomExp(rnd, 1, 1e20))
   const base = Math.floor(getRandomExp(rnd, 1, 1e20))
@@ -115,11 +108,13 @@ function getBridge(elastic: number, base: number) {
     name: 'token1',
     symbol: 'token1',
     address: 'token1',
+    decimals: 18,
   }
   const token2: RToken = {
     name: 'token2',
     symbol: 'token2',
     address: 'token2',
+    decimals: 18,
   }
   return new BridgeBento('aaa', token1, token2, getBigNumber(elastic), getBigNumber(base))
 }

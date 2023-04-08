@@ -113,8 +113,9 @@ export async function createUniV3Pool(
     name: 'Token0',
     symbol: 'Token0',
     address: token0Contract.address,
+    decimals: 18,
   }
-  const token1: RToken = { chainId, name: 'Token1', symbol: 'Token1', address: token1Contract.address }
+  const token1: RToken = { chainId, name: 'Token1', symbol: 'Token1', address: token1Contract.address, decimals: 18 }
 
   await token0Contract.approve(env.testRouter.address, tokenSupply)
   await token1Contract.approve(env.testRouter.address, tokenSupply)
