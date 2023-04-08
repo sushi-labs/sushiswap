@@ -96,11 +96,11 @@ const Position: FC = () => {
   const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId, amounts: fiatAmounts })
   const priceOrdering = position ? getPriceOrderingFromPositionForUI(position) : undefined
 
-  const { priceLower, priceUpper, quote } = usePriceInverter({
+  const { priceLower, priceUpper, quote, base } = usePriceInverter({
     priceLower: priceOrdering?.priceLower,
     priceUpper: priceOrdering?.priceUpper,
-    base: token0,
-    quote: token1,
+    base: priceOrdering?.base,
+    quote: priceOrdering?.quote,
     invert,
   })
 
@@ -131,8 +131,9 @@ const Position: FC = () => {
     return [undefined, undefined]
   }, [_token0, _token1, positionDetails])
 
-  const currencyQuote = invert ? _token0 : _token1
-  const currencyBase = invert ? _token1 : _token0
+  const inverted = token1 ? base?.equals(token1) : undefined
+  const currencyQuote = inverted ? _token0 : _token1
+  const currencyBase = inverted ? _token1 : _token0
 
   const { data: poolStats } = useConcentratedLiquidityPoolStats({ poolAddress: positionDetails?.address })
 
@@ -358,7 +359,7 @@ const Position: FC = () => {
                         {formatTickPrice({
                           price: invert ? priceUpper : priceLower,
                           atLimit: ticksAtLimit,
-                          direction: Bound.UPPER,
+                          direction: Bound.LOWER,
                         })}{' '}
                         {currencyQuote.symbol} per {currencyBase.symbol}
                       </span>
