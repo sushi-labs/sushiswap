@@ -4,8 +4,8 @@ import { foundry } from 'wagmi/chains'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MockConnector } from 'wagmi/connectors/mock'
-// import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
-import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+// import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
 // import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
@@ -55,12 +55,25 @@ export const _createClient = (config?: CreateClientConfig) => {
       }),
       // TODO: Migrate to the WalletConnect v2 Connector before June 28
       // and flesh out wallet connect options.
-      new WalletConnectLegacyConnector({
+      // new WalletConnectLegacyConnector({
+      //   chains,
+      //   options: {
+      //     qrcode: true,
+      //   },
+      // }),
+      new WalletConnectConnector({
         chains,
         options: {
-          qrcode: true,
+          projectId: '187b0394dbf3b20ce7762592560eafd2',
+          metadata: {
+            name: 'sushi',
+            description: 'sushi app',
+            url: 'https://sushi.com',
+            icons: ['https://sushi.com/icon.png'],
+          },
         },
       }),
+      
       // new WalletConnectLegacyConnector({
       //   chains,
       //   // TODO: Flesh out wallet connect options?
