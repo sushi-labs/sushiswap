@@ -131,7 +131,7 @@ export async function checkPoolsState(pools: Map<string, PoolCode>, env: TestEnv
     } else if (pool instanceof BridgeUnlimited) {
       // native - skip
     } else {
-      console.log('Unknown pool: ', pool)
+      console.log('Unknown pool: ', pool.address)
     }
   }
 }
@@ -169,7 +169,7 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
 
   //console.log({ chainId, url: ethers.provider.connection.url, otherurl: network.config.forking.url })
 
-  dataFetcher.startDataFetching()
+  dataFetcher.startDataFetching([LiquidityProviders.SushiSwap, LiquidityProviders.Trident])
 
   console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
   const RouteProcessor = await ethers.getContractFactory('RouteProcessor2')
@@ -211,7 +211,6 @@ async function makeSwap(
 
   //console.log('Create Route ...')
   await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
-
   const pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
 
   await checkPoolsState(pcMap, env)
@@ -296,7 +295,7 @@ async function makeSwap(
 async function dataUpdated(env: TestEnvironment, minBlockNumber: number) {
   for (;;) {
     if (env.dataFetcher.getLastUpdateBlock() >= minBlockNumber) return
-    await delay(POLLING_INTERVAL)
+    await delay(500)
   }
 }
 
@@ -452,6 +451,25 @@ describe('End-to-end Router2 test', async function () {
       intermidiateResult = await updMakeSwap(env, DAI[chainId], USDC[chainId], intermidiateResult, undefined, filter)
     }
   })
+
+  if (process.env.ALCHEMY_ID) {
+    it('V3,  Native => USDC => NATIVE', async function () {
+      if (chainId === ChainId.POLYGON) {
+        env.dataFetcher.startDataFetching([LiquidityProviders.UniswapV3])
+        let amountAndBlock: [BigNumber | undefined, number] = [undefined, 1]
+        amountAndBlock[0] = getBigNumber(10_000 * 1e18)
+        amountAndBlock = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], amountAndBlock, [
+          LiquidityProviders.UniswapV3,
+        ])
+        amountAndBlock = await updMakeSwap(env, USDC[chainId], Native.onChain(chainId), amountAndBlock, [
+          LiquidityProviders.UniswapV3,
+        ])
+
+        env.dataFetcher.startDataFetching([LiquidityProviders.SushiSwap, LiquidityProviders.Trident])
+      }
+    })
+
+  }
 
   function getNextToken(rnd: () => number, previousTokenIndex: number): number {
     for (;;) {

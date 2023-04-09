@@ -23,6 +23,7 @@ import { TridentProvider } from './liquidity-providers/Trident'
 import { UbeSwapProvider } from './liquidity-providers/UbeSwap'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import type { PoolCode } from './pools/PoolCode'
+import { UniswapV3Provider } from './liquidity-providers/UniswapV3'
 
 // import { create } from 'viem'
 
@@ -196,6 +197,17 @@ export class DataFetcher {
         // console.warn(e.message)
       }
     }
+
+    
+    if (this._providerIsIncluded(LiquidityProviders.UniswapV3, providers)) {
+      try {
+        const provider = new UniswapV3Provider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+
 
     // console.log(
     //   `${chainShortName[this.chainId]}/${this.chainId} - Included providers: ${this.providers
