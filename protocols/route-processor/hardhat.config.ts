@@ -53,18 +53,19 @@ const config: HardhatUserConfig = {
     //   },
     //   chainId: 1,
     // },
-    // hardhat: {
-    //   // polygon
-    //   forking: {
-    //     enabled: true,
-    //     url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
-    //     blockNumber: 37180000,
-    //   },
-    //   accounts: {
-    //     accountsBalance: '10000000000000000000000000', //(10_000_000 MATIC).
-    //   },
-    //   chainId: 137,
-    // },
+    hardhat: {
+      // polygon
+      forking: {
+        enabled: true,
+        // url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
+        url: 'https://polygon.llamarpc.com',
+        blockNumber: 37180000,
+      },
+      accounts: {
+        accountsBalance: '10000000000000000000000000', //(10_000_000 MATIC).
+      },
+      chainId: 137,
+    },
     // ethereum: {
     //   url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     //   accounts,

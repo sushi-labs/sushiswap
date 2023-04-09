@@ -4,10 +4,11 @@ import { DataFetcher, Router } from '@sushiswap/router'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Signer } from 'ethers'
-import { ethers } from 'hardhat'
 import { createPublicClient } from 'viem'
-import { http } from 'viem'
+import { http, custom } from 'viem'
 import { celo } from 'viem/chains'
+import { hardhat } from 'viem/chains'
+import { ethers, network } from 'hardhat'
 
 //const RouteProcessorAddr = '0x9B3fF703FA9C8B467F5886d7b61E61ba07a9b51c'
 const RouteProcessorAddr = '0xf267704dd1393c26b39a6d41f49bea233b34f722' // new Route Processor
@@ -31,12 +32,13 @@ async function makeSwap(
   to: string,
   amountIn: BigNumber
 ): Promise<number | undefined> {
-  let route, pcMap
+  let route
+  let pcMap
   for (let i = 0; i < 100; ++i) {
     pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
     // try to find a route
     route = Router.findBestRoute(pcMap, ChainId.CELO, fromToken, amountIn, toToken, 50e9)
-    if (route.status == RouteStatus.Success) break
+    if (route.status === RouteStatus.Success) break
     await delay(1000)
   }
   expect(route?.status).equal(RouteStatus.Success)
@@ -59,51 +61,52 @@ async function makeSwap(
   }
 }
 
-if (process.env.INFURA_API_KEY) {
-  describe('Celo', async () => {
-    const chainId = ChainId.CELO
-
-    const provider = new ethers.providers.JsonRpcProvider(
-      `https://celo-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      42220
-    )
-
-    const client = createPublicClient({
-      // chain: {
-      //   ...hardhat,
-      //   contracts: {
-      //     multicall3: {
-      //       address: '0xca11bde05977b3631167028862be2a173976ca11',
-      //       blockCreated: 25770160,
-      //     },
-      //   },
-      //   pollingInterval: 1_000,
-      // },
-      //transport: custom(network.provider),
-      chain: celo,
-      transport: http(`https://celo-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`),
-    })
-
-    const dataFetcher = new DataFetcher(chainId, client)
-    dataFetcher.startDataFetching()
-
-    it('CELO => USDC', async () => {
-      const signer = await provider.getUncheckedSigner(WNATIVE[chainId].address)
-      await makeSwap(
-        dataFetcher,
-        signer,
-        Native.onChain(chainId),
-        USDC[chainId],
-        WNATIVE[chainId].address,
-        WNATIVE[chainId].address,
-        getBigNumber(10 * 1e18)
-      )
-    })
-
-    it('cUSDC => CELO', async () => {
-      const user = '0xed30404098da5948d8B3cBD7958ceB641F2C352c' // has cUSDC and approved 800000 to the RP
-      const signer = await provider.getUncheckedSigner(user)
-      await makeSwap(dataFetcher, signer, cUSDC, Native.onChain(chainId), user, user, getBigNumber(800000))
-    })
+describe('Celo RP2', async () => {
+  const chainId = ChainId.CELO
+  const provider = new ethers.providers.JsonRpcProvider(
+    'https://forno.celo.org',
+    42220
+  )
+  const client = createPublicClient({
+    chain: {
+      ...hardhat,
+      contracts: {
+        multicall3: {
+          address: '0xca11bde05977b3631167028862be2a173976ca11',
+          blockCreated: 13112599,
+        },
+      },
+      pollingInterval: 1_000,
+    },
+    transport: http('https://forno.celo.org'),
   })
-}
+
+  const dataFetcher = new DataFetcher(chainId, client)
+  dataFetcher.startDataFetching()
+
+  it('CELO => USDC', async () => {
+    const fromToken = Native.onChain(chainId)
+    const toToken = USDC[chainId]
+    const signer = await provider.getUncheckedSigner(WNATIVE[chainId].address)
+
+    await dataFetcher.fetchPoolsForToken(fromToken, toToken)
+    await makeSwap(
+      dataFetcher,
+      signer,
+      fromToken,
+      toToken,
+      WNATIVE[chainId].address,
+      WNATIVE[chainId].address,
+      getBigNumber(10 * 1e18)
+    )
+  })
+
+  it('cUSDC => CELO', async () => {
+    const fromToken = cUSDC
+    const toToken = Native.onChain(chainId)
+    const user = '0xed30404098da5948d8B3cBD7958ceB641F2C352c' // has cUSDC and approved 800000 to the RP
+    const signer = await provider.getUncheckedSigner(user)
+    await dataFetcher.fetchPoolsForToken(fromToken, toToken)
+    await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, getBigNumber(800000))
+  })
+})
