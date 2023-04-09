@@ -311,13 +311,18 @@ contract RouteProcessor2 {
     bool zeroForOne = stream.readUint8() > 0;
     address recipient = stream.readAddress();
 
+    if (from != address(this)) {
+      require(from == msg.sender, 'swapUniV3: unexpected from address');
+      IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), uint256(amountIn));
+    }
+
     lastCalledPool = pool;
     IUniswapV3Pool(pool).swap(
       recipient,
       zeroForOne,
       int256(amountIn),
       zeroForOne ? MIN_SQRT_RATIO + 1 : MAX_SQRT_RATIO - 1,
-      abi.encode(tokenIn, from)
+      abi.encode(tokenIn)
     );
     require(lastCalledPool == IMPOSSIBLE_POOL_ADDRESS, 'RouteProcessor.swapUniV3: unexpected'); // Just to be sure
   }
@@ -338,12 +343,11 @@ contract RouteProcessor2 {
   ) external {
     require(msg.sender == lastCalledPool, 'RouteProcessor.uniswapV3SwapCallback: call from unknown source');
     lastCalledPool = IMPOSSIBLE_POOL_ADDRESS;
-    (address tokenIn, address from) = abi.decode(data, (address, address));
+    (address tokenIn) = abi.decode(data, (address));
     int256 amount = amount0Delta > 0 ? amount0Delta : amount1Delta;
     require(amount > 0, 'RouteProcessor.uniswapV3SwapCallback: not positive amount');
 
-    if (from == address(this)) IERC20(tokenIn).safeTransfer(msg.sender, uint256(amount));
-     else IERC20(tokenIn).safeTransferFrom(from, msg.sender, uint256(amount));
+    IERC20(tokenIn).safeTransfer(msg.sender, uint256(amount));
   }
 
 }
