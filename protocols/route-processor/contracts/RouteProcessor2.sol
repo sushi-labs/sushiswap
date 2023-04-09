@@ -10,6 +10,7 @@ import '../interfaces/IPool.sol';
 import '../interfaces/IWETH.sol';
 import './InputStream.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 address constant NATIVE_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 address constant IMPOSSIBLE_POOL_ADDRESS = 0x0000000000000000000000000000000000000001;
@@ -21,7 +22,7 @@ uint160 constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970
 
 /// @title A route processor for the Sushi Aggregator
 /// @author Ilya Lyalin
-contract RouteProcessor2 {
+contract RouteProcessor2 is Ownable {
   using SafeERC20 for IERC20;
   using InputStream for uint256;
 
@@ -39,6 +40,14 @@ contract RouteProcessor2 {
   constructor(address _bentoBox) {
     bentoBox = IBentoBoxMinimal(_bentoBox);
     lastCalledPool = IMPOSSIBLE_POOL_ADDRESS;
+  }
+
+  function pause() external onlyOwner {
+    unlocked = 2;
+  }
+
+  function resume() external onlyOwner {
+    unlocked = 1;
   }
 
   /// @notice For native unwrapping
