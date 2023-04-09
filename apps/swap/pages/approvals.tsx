@@ -67,7 +67,7 @@ const Approvals: FC = () => {
         }
       }
     },
-    [address]
+    [address, refetch]
   )
 
   return (
