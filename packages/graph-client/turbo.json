@@ -1,0 +1,19 @@
+{
+  "extends": ["//"],
+  "pipeline": {
+    "build": {
+      "outputs": [
+        ".graphclient/**/*",
+        "lib/**/*",
+        "resolvers/**/*",
+        "transformers/**/*"
+      ],
+      "dependsOn": ["^build"],
+      "env": []
+    },
+    "check": {
+      "dependsOn": ["build"],
+      "cache": true
+    }
+  }
+}

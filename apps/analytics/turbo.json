@@ -1,0 +1,20 @@
+{
+  "extends": ["//"],
+  "pipeline": {
+    "build": {
+      "outputs": [".next/**"],
+      "dependsOn": ["^build"],
+      "env": ["ALCHEMY_ID", "INFURA_ID", "REDIS_URL"],
+      "cache": true
+    },
+    "check": {
+      "dependsOn": ["^build", "generate"],
+      "cache": true
+    },
+    "sitemap": {
+      "outputs": ["public/sitemap.xml", "public/sitemap-*.xml", "public/robots.txt"],
+      "dependsOn": ["build"],
+      "cache": true
+    }
+  }
+}

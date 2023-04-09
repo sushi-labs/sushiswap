@@ -1,58 +1,12 @@
 import '../lib/wagmi.js'
 
+import { constantProductPoolAbi, stablePoolAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { createClient, Prisma, PrismaClient } from '@sushiswap/database'
-import { readContracts } from '@wagmi/core'
+import { Address, readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
 import { PoolType, ProtocolName, ProtocolVersion } from '../config.js'
-
-const CPP_RESERVES_ABI = [
-  {
-    inputs: [],
-    name: 'getReserves',
-    outputs: [
-      {
-        internalType: 'uint112',
-        name: '_reserve0',
-        type: 'uint112',
-      },
-      {
-        internalType: 'uint112',
-        name: '_reserve1',
-        type: 'uint112',
-      },
-      {
-        internalType: 'uint32',
-        name: '_blockTimestampLast',
-        type: 'uint32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-]
-
-const STABLE_RESERVES_ABI = [
-  {
-    inputs: [],
-    name: 'getReserves',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '_reserve0',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '_reserve1',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-]
 
 const SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 const SUPPORTED_TYPES = [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL]
@@ -143,7 +97,7 @@ async function getPoolsPagination(
             in: SUPPORTED_TYPES,
           },
           isWhitelisted: true,
-        }, 
+        },
         {
           chainId,
           protocol: ProtocolName.SUSHISWAP,
@@ -151,9 +105,8 @@ async function getPoolsPagination(
           version: {
             in: SUPPORTED_VERSIONS,
           },
-        }
-      ]
-    
+        },
+      ],
     },
   })
 }
@@ -170,15 +123,18 @@ async function getReserves(chainId: ChainId, pools: Map<string, PoolResult>) {
 
     const batch = Array.from(pools.values())
       .slice(i, max)
-      .map((pool) => ({
-        address: pool.address,
-        chainId,
-        abi: pool.type === PoolType.CONSTANT_PRODUCT_POOL ? CPP_RESERVES_ABI : STABLE_RESERVES_ABI,
-        functionName: 'getReserves',
-        allowFailure: true,
-      }))
+      .map(
+        (pool) =>
+          ({
+            address: pool.address as Address,
+            chainId,
+            abi: pool.type === PoolType.CONSTANT_PRODUCT_POOL ? constantProductPoolAbi : stablePoolAbi,
+            functionName: 'getReserves',
+            allowFailure: true,
+          } as const)
+      )
     const batchStartTime = performance.now()
-    const reserves: any = await readContracts({
+    const reserves = await readContracts({
       contracts: batch,
     })
 

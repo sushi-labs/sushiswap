@@ -22,7 +22,7 @@ import {
   isStablePoolFactoryChainId,
   StablePoolFactoryChainId,
 } from '@sushiswap/trident'
-import { PoolType, usePoolsAsMap } from '@sushiswap/wagmi/future/hooks'
+import { PoolType, usePoolsAsMap, useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { ConstantProductPool, Fee, Pair, StablePool } from '@sushiswap/amm'
 import { Signature } from '@ethersproject/bytes'
 import { UseQueryResult } from '@tanstack/react-query'
@@ -146,8 +146,11 @@ export const AddPositionProvider: FC<AddPositionProviderProps> = ({ children }) 
   })
 
   const { chainId, fromCurrency, toCurrency } = queryParamsSchema.parse(query)
-  const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useToken({ chainId, address: fromCurrency })
-  const { data: tokenTo, isInitialLoading: isTokenToLoading } = useToken({ chainId, address: toCurrency })
+  const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useTokenWithCache({
+    chainId,
+    address: fromCurrency,
+  })
+  const { data: tokenTo, isInitialLoading: isTokenToLoading } = useTokenWithCache({ chainId, address: toCurrency })
 
   const token0 = useMemo(
     () => getTokenFromUrl(chainId, fromCurrency, tokenFrom, isTokenFromLoading),
@@ -180,7 +183,6 @@ export const AddPositionProvider: FC<AddPositionProviderProps> = ({ children }) 
     }
   }, [chainId, internalState, isTokenFromLoading, isTokenToLoading, poolQuery, token0, token1])
 
-  console.log(poolQuery)
   const api = useMemo(() => {
     const setChainId = (chainId: ChainId) => {
       void push(

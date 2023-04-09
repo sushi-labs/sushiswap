@@ -1,11 +1,12 @@
 import { formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { Button, Currency, Typography } from '@sushiswap/ui'
+import { Currency, Typography } from '@sushiswap/ui'
 import { Checker } from '@sushiswap/wagmi'
 import { FC } from 'react'
 
 import { usePoolPositionRewards } from '../PoolPositionRewardsProvider'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 interface PoolMyRewardsProps {
   pool: Pool
@@ -19,13 +20,13 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pool }) => {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-col shadow-md bg-slate-800 rounded-2xl shadow-black/30">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200/5">
-          <Typography weight={600} className="text-slate-50">
+      <div className="flex flex-col bg-white dark:bg-slate-800 rounded-2xl">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-900/5 dark:border-slate-200/5">
+          <Typography weight={600} className="dark:text-slate-50 text-gray-900">
             My Rewards
           </Typography>
           <div className="flex flex-col">
-            <Typography variant="sm" weight={600} className="text-right text-slate-50">
+            <Typography variant="sm" weight={600} className="text-right dark:text-slate-50 text-gray-900">
               {formatUSD(values.reduce((sum, value) => sum + value, 0))}
             </Typography>
           </div>
@@ -44,11 +45,11 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pool }) => {
               <div className="flex items-center justify-between" key={index}>
                 <div className="flex items-center gap-2">
                   <Currency.Icon currency={rewardTokens[index]} width={20} height={20} />
-                  <Typography variant="sm" weight={600} className="text-slate-300">
+                  <Typography variant="sm" weight={600} className="dark:text-slate-300 text-gray-700">
                     {reward?.toSignificant(6)} {rewardTokens[index].symbol}
                   </Typography>
                 </div>
-                <Typography variant="xs" weight={500} className="text-slate-400">
+                <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600 text-gray-600">
                   {formatUSD(values[index])}
                 </Typography>
               </div>

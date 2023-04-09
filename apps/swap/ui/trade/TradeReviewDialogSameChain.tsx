@@ -21,7 +21,7 @@ import { classNames, Collapsible } from '@sushiswap/ui'
 import { warningSeverity, warningSeverityClassName } from '../../lib/warningSeverity'
 import { TradeRoute } from './TradeRoute'
 import { ZERO } from '@sushiswap/math'
-import { useSlippageTolerance } from '../../lib/useSlippageTolerance'
+import { useSlippageTolerance } from '@sushiswap/hooks'
 
 export const TradeReviewDialogSameChain: FC = () => {
   const [open, setOpen] = useState(false)

@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { useProvider } from 'wagmi'
+import { useProvider } from '@sushiswap/wagmi'
 
 import { tokenLists } from './token-lists'
 

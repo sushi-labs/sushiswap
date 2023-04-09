@@ -7,17 +7,18 @@ import React, { FC } from 'react'
 
 import { SUPPORTED_CHAINS } from '../config'
 import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
-import { useAutoConnect } from '@sushiswap/wagmi'
+// import { useAutoConnect } from '@sushiswap/wagmi'
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { Link, Menu } from '@sushiswap/ui'
+import { useConnect } from '@sushiswap/wagmi'
 
 export const Header: FC = () => {
-  const { isAutoConnecting } = useAutoConnect()
-
+  // const { isAutoConnecting } = useAutoConnect()
+  const { isLoading } = useConnect()
   return (
     <GlobalNav
       rightElement={
-        isAutoConnecting ? (
+        isLoading ? (
           <></>
         ) : (
           <AppearOnMount className="flex gap-2">

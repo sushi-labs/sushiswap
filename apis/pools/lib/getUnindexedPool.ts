@@ -1,7 +1,6 @@
 import { constantProductPoolAbi, uniswapV2PairAbi } from '@sushiswap/abi'
 import { PoolType, PoolVersion } from '@sushiswap/database'
-import { allChains } from '@sushiswap/wagmi-config/chains'
-import { allProviders } from '@sushiswap/wagmi-config/providers'
+import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import { Address, configureChains, createClient, fetchToken, FetchTokenResult, readContracts } from '@wagmi/core'
 
 import type { getEarnPool } from './api/index.js'
@@ -30,9 +29,9 @@ async function getV2Pool({ chainId, address }: GetPoolArgs): Promise<Pool> {
   const [token0, token1, totalSupply] = await readContracts({
     allowFailure: false,
     contracts: [
-      { address: address, abi: uniswapV2PairAbi, functionName: 'token0', chainId },
-      { address: address, abi: uniswapV2PairAbi, functionName: 'token1', chainId },
-      { address: address, abi: uniswapV2PairAbi, functionName: 'totalSupply', chainId },
+      { address: address as Address, abi: uniswapV2PairAbi, functionName: 'token0', chainId },
+      { address: address as Address, abi: uniswapV2PairAbi, functionName: 'token1', chainId },
+      { address: address as Address, abi: uniswapV2PairAbi, functionName: 'totalSupply', chainId },
     ],
   })
 
@@ -50,10 +49,10 @@ async function getTridentPool({ chainId, address }: GetPoolArgs): Promise<Pool> 
   const [token0, token1, totalSupply, swapFee] = await readContracts({
     allowFailure: false,
     contracts: [
-      { address: address, abi: constantProductPoolAbi, functionName: 'token0', chainId },
-      { address: address, abi: constantProductPoolAbi, functionName: 'token1', chainId },
-      { address: address, abi: constantProductPoolAbi, functionName: 'totalSupply', chainId },
-      { address: address, abi: constantProductPoolAbi, functionName: 'swapFee', chainId },
+      { address: address as Address, abi: constantProductPoolAbi, functionName: 'token0', chainId },
+      { address: address as Address, abi: constantProductPoolAbi, functionName: 'token1', chainId },
+      { address: address as Address, abi: constantProductPoolAbi, functionName: 'totalSupply', chainId },
+      { address: address as Address, abi: constantProductPoolAbi, functionName: 'swapFee', chainId },
     ],
   })
 

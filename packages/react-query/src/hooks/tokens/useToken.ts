@@ -9,6 +9,7 @@ interface UseTokenParams<T extends boolean> {
     chainId: ChainId | undefined
     address: string | undefined
     withStatus?: T
+    enabled?: boolean
 }
 
 type UseTokenReturn<T> = T extends true ? { token: Token, status: 'UNKNOWN' | 'APPROVED' | 'DISAPPROVED' } : Token
@@ -46,12 +47,22 @@ const hydrate = <T extends boolean>(chainId: ChainId | undefined, data: Data, wi
     return undefined
 }
 
-export const useToken = <T extends boolean = false>({ chainId, address, withStatus }: UseTokenParams<T>) => {
+/**
+ * @deprecated use @sushiswap/wagmi/future/hooks/useTokenWithCache
+ */
+export const useToken = <T extends boolean = false>({ chainId, address, withStatus, enabled = true }: UseTokenParams<T>) => {
     const select = useCallback((data: Data) => hydrate<T>(chainId, data, withStatus), [chainId, withStatus])
 
     return useQuery({
         queryKey: ['token', { chainId, address }],
         queryFn: async () => {
+
+            // const customTokens = localStorage.getItem('sushi.customTokens')
+            // if (customTokens?.includes(`${chainId}:${address}`)) {
+            //     return JSON.parse(customTokens)[`${chainId}:${address}`] as Data
+            // }
+
+
             // Try fetching from cache
             const token = await getToken({ chainId, address })
             if (token) {
@@ -72,7 +83,7 @@ export const useToken = <T extends boolean = false>({ chainId, address, withStat
             }
 
         },
-        enabled: Boolean(chainId && address && isAddress(address)),
+        enabled: Boolean(enabled && chainId && address && isAddress(address)),
         select,
         keepPreviousData: true,
         refetchOnWindowFocus: false,

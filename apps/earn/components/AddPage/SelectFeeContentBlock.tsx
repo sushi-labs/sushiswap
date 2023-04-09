@@ -31,7 +31,7 @@ export const SelectFeeContentBlock = () => {
             <div className="flex flex-col">
               <span className="text-gray-900 dark:text-slate-50 font-medium flex gap-4">
                 {Fee.LOW / 100}% Fees.{' '}
-                <span className="text-gray-500 dark:text-slate-400">Best for very stable pairs.</span>
+                <span className="text-gray-500 dark:text-slate-400 text-slate-600">Best for very stable pairs.</span>
               </span>
             </div>
           </RadioGroup.Option>
@@ -47,7 +47,7 @@ export const SelectFeeContentBlock = () => {
             <div className="flex flex-col">
               <span className="text-gray-900 dark:text-slate-50 font-medium flex gap-4">
                 {Fee.MEDIUM / 100}% Fees.{' '}
-                <span className="text-gray-500 dark:text-slate-400"> Best for less volatile pairs.</span>
+                <span className="text-gray-500 dark:text-slate-400 text-slate-600"> Best for less volatile pairs.</span>
               </span>
             </div>
           </RadioGroup.Option>{' '}
@@ -63,7 +63,7 @@ export const SelectFeeContentBlock = () => {
             <div className="flex flex-col">
               <span className="text-gray-900 dark:text-slate-50 font-medium flex gap-4">
                 {Fee.DEFAULT / 100}0% Fees.{' '}
-                <span className="text-gray-500 dark:text-slate-400">Best for most pairs.</span>
+                <span className="text-gray-500 dark:text-slate-400 text-slate-600">Best for most pairs.</span>
               </span>
             </div>
           </RadioGroup.Option>{' '}
@@ -79,7 +79,7 @@ export const SelectFeeContentBlock = () => {
             <div className="flex flex-col">
               <span className="text-gray-900 dark:text-slate-50 font-medium flex gap-4">
                 {Fee.HIGH / 100}.00% Fees.{' '}
-                <span className="text-gray-500 dark:text-slate-400">Best for volatile pairs.</span>
+                <span className="text-gray-500 dark:text-slate-400 text-slate-600">Best for volatile pairs.</span>
               </span>
             </div>
           </RadioGroup.Option>

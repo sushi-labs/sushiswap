@@ -2,7 +2,8 @@ import { getAddress } from '@ethersproject/address'
 import { Pool } from '@sushiswap/client'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { Button, Link } from '@sushiswap/ui'
+import { Link } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { FC } from 'react'
 
 import { usePoolPosition } from '../PoolPositionProvider'
@@ -22,8 +23,8 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pool }) => {
           <a className="w-full">
             <Button
               disabled={Boolean(balance?.[FundSource.WALLET]?.equalTo(ZERO) && stakedBalance?.equalTo(ZERO))}
-              size="md"
-              color="gray"
+              size="lg"
+              color="default"
               fullWidth
             >
               Withdraw
@@ -31,14 +32,14 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pool }) => {
           </a>
         </Link.Internal>
         <Link.Internal href={`/${pool.id}/add`} passHref={true}>
-          <Button as="a" size="md" fullWidth>
+          <Button as="a" size="lg" fullWidth>
             Deposit
           </Button>
         </Link.Internal>
       </div>
       <Button
         className="col-span-2"
-        size="md"
+        size="lg"
         variant="outlined"
         as="a"
         href={`https://www.sushi.com/swap?token0=${getAddress(pool.token0.address)}&token1=${getAddress(

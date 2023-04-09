@@ -25,7 +25,7 @@ interface PoolData {
 export const getStablePools = async (
   chainId: BentoBoxV1ChainId,
   currencies: [Currency | undefined, Currency | undefined][],
-  totals: Map<string,{ base: BigNumber; elastic: BigNumber }>
+  totals: Map<string, { base: BigNumber; elastic: BigNumber }>
 ) => {
   const contract = getContract({
     ...getStablePoolFactoryContract(chainId),
@@ -90,7 +90,7 @@ export const getStablePools = async (
   const reserves = await readContracts({
     contracts: poolsAddresses.map((address) => ({
       chainId,
-      address,
+      address: address as Address,
       abi: stablePoolAbi,
       functionName: 'getReserves',
     })),
@@ -99,7 +99,7 @@ export const getStablePools = async (
   const fees = await readContracts({
     contracts: poolsAddresses.map((address) => ({
       chainId,
-      address,
+      address: address as Address,
       abi: stablePoolAbi,
       functionName: 'swapFee',
     })),
@@ -108,7 +108,7 @@ export const getStablePools = async (
   return pools.map((p, i) => {
     const total0 = totals.get(p.token0.address)
     const total1 = totals.get(p.token1.address)
-    if (!reserves?.[i] || !fees?.[i] || !total0 || !total1 ) return [StablePoolState.LOADING, null]
+    if (!reserves?.[i] || !fees?.[i] || !total0 || !total1) return [StablePoolState.LOADING, null]
     return [
       StablePoolState.EXISTS,
       new StablePool(

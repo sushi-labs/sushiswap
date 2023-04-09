@@ -1,7 +1,7 @@
 import { useIsMounted } from '@sushiswap/hooks'
 import { Container, Skeleton, Typography } from '@sushiswap/ui'
 import React, { FC } from 'react'
-import { useQuery } from 'wagmi'
+import { useQuery } from '@sushiswap/wagmi'
 
 export const Stats: FC = () => {
   const isMounted = useIsMounted()
