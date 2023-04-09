@@ -49,6 +49,8 @@ function getRandomExp(rnd: () => number, min: number, max: number) {
   return res
 }
 
+const POLLING_INTERVAL = 4_000
+
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 function closeValues(_a: number | BigNumber, _b: number | BigNumber, accuracy: number, absolute: number): boolean {
@@ -156,7 +158,7 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
           blockCreated: 25770160,
         },
       },
-      pollingInterval: 1_000,
+      pollingInterval: POLLING_INTERVAL,
     },
     transport: custom(network.provider),
   })
@@ -294,7 +296,7 @@ async function makeSwap(
 async function dataUpdated(env: TestEnvironment, minBlockNumber: number) {
   for (;;) {
     if (env.dataFetcher.getLastUpdateBlock() >= minBlockNumber) return
-    await delay(500)
+    await delay(POLLING_INTERVAL)
   }
 }
 
@@ -428,7 +430,7 @@ describe('End-to-end Router2 test', async function () {
   })
 
   it('Trident Native => SUSHI => Native (Polygon only)', async function () {
-    if (chainId == ChainId.POLYGON) {
+    if (chainId === ChainId.POLYGON) {
       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI[chainId], intermidiateResult, [
         LiquidityProviders.Trident,
@@ -442,7 +444,7 @@ describe('End-to-end Router2 test', async function () {
   it('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async function () {
     const filter = (pool: RPool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
 
-    if (chainId == ChainId.POLYGON) {
+    if (chainId === ChainId.POLYGON) {
       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], intermidiateResult)
       intermidiateResult = await updMakeSwap(env, USDC[chainId], USDT[chainId], intermidiateResult, undefined, filter)
@@ -454,7 +456,7 @@ describe('End-to-end Router2 test', async function () {
   function getNextToken(rnd: () => number, previousTokenIndex: number): number {
     for (;;) {
       const next = Math.floor(rnd() * testTokensSet.length)
-      if (next == previousTokenIndex) continue
+      if (next === previousTokenIndex) continue
       if (testTokensSet[next] === undefined) continue
       return next
     }
@@ -464,7 +466,7 @@ describe('End-to-end Router2 test', async function () {
     let routeCounter = 0
     for (let i = 0; i < 100; ++i) {
       let currentToken = 0
-      const rnd: () => number = seedrandom('testSeed ' + i) // random [0, 1)
+      const rnd: () => number = seedrandom(`testSeed ${i}`) // random [0, 1)
       intermidiateResult[0] = getBigNumber(getRandomExp(rnd, 1e15, 1e24))
       for (;;) {
         const nextToken = getNextToken(rnd, currentToken)
@@ -476,7 +478,7 @@ describe('End-to-end Router2 test', async function () {
           intermidiateResult
         )
         currentToken = nextToken
-        if (currentToken == 0) break
+        if (currentToken === 0) break
       }
     }
   })
@@ -497,7 +499,7 @@ describe('End-to-end Router2 test', async function () {
     expect(route).not.undefined
   })
 
-  if (network.config.chainId == ChainId.POLYGON) {
+  if (network.config.chainId === ChainId.POLYGON) {
     it('Transfer value and route 1', async function () {
       intermidiateResult[0] = getBigNumber(1e18)
       intermidiateResult = await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
