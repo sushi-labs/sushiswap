@@ -18,7 +18,11 @@ import { Dots } from '@sushiswap/ui/future/components/Dots'
 
 const Approvals: FC = () => {
   const { address } = useAccount()
-  const { data: tokens, isInitialLoading: isLoading } = useRP2ExploitCheck({
+  const {
+    data: tokens,
+    isInitialLoading: isLoading,
+    refetch,
+  } = useRP2ExploitCheck({
     account: address,
   })
 
@@ -50,6 +54,10 @@ const Approvals: FC = () => {
             },
             timestamp: ts,
             groupTimestamp: ts,
+          })
+
+          tx.wait().then(() => {
+            refetch()
           })
         } catch (e: unknown) {
           if (e instanceof UserRejectedRequestError) {
