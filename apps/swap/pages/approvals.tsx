@@ -68,9 +68,9 @@ const Approvals: FC = () => {
         <div className="flex flex-col gap-6 w-full">
           <h1 className="">
             {isLoading ? (
-              <Dots>Finding any approvals on the RouteProcessor1</Dots>
+              <Dots>Finding any approvals on the RouteProcessor2</Dots>
             ) : (
-              'We searched across all our networks and we found the following tokens which are approved on the RouteProcessor1'
+              'We searched across all our networks and we found the following tokens which are approved on the RouteProcessor2'
             )}
           </h1>
           <List>
