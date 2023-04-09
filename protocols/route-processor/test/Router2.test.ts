@@ -49,7 +49,7 @@ function getRandomExp(rnd: () => number, min: number, max: number) {
   return res
 }
 
-const POLLING_INTERVAL = 10_000
+const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -296,7 +296,7 @@ async function makeSwap(
 async function dataUpdated(env: TestEnvironment, minBlockNumber: number) {
   for (;;) {
     if (env.dataFetcher.getLastUpdateBlock() >= minBlockNumber) return
-    await delay(500)
+    await delay(POLLING_INTERVAL)
   }
 }
 
