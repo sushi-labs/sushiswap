@@ -63,7 +63,9 @@ function createPool(
 }
 
 function checkCurveInvariant(pool: StableSwapRPool, amountIn: number, amountOut: number, direction: boolean) {
+  amountIn = direction ? pool.total0.toAmount(amountIn) : pool.total1.toAmount(amountIn)
   amountIn *= direction ? pool.decimalsCompensation0 : pool.decimalsCompensation1
+  amountOut = direction ? pool.total1.toAmount(amountOut) : pool.total0.toAmount(amountOut)
   amountOut *= direction ? pool.decimalsCompensation1 : pool.decimalsCompensation0
   const prev_y = parseFloat((direction ? pool.reserve1 : pool.reserve0).toString())
   if (prev_y < amountOut * (1 + 1e-12)) return true // precision doens't allow to make the check -- too big swap
@@ -156,6 +158,15 @@ function checkPoolPriceCalculation(pool: StableSwapRPool) {
 //   return Math.round(n * shift) / shift
 // }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function ignorePollSwapException(e: any) {
+  if (e instanceof Error && e.message == 'StableSwap OutOfLiquidity') {
+    // eat it
+  } else {
+    throw e // rethrow it
+  }
+}
+
 describe('StableSwap test', () => {
   describe('calcOutByIn & calcInByOut', () => {
     it('Ideal balance, regular values', () => {
@@ -177,7 +188,7 @@ describe('StableSwap test', () => {
           expectCloseValues(out1, out2, 1e-10)
           expect(out1).toBeLessThanOrEqual(amountIn * 0.9970000001)
         } catch (e) {
-          // CalcOutByIn could throw exception
+          ignorePollSwapException(e)
         }
       }
     })
@@ -197,7 +208,7 @@ describe('StableSwap test', () => {
             expect(out1).toEqual(out2)
             expect(out1).toBeLessThanOrEqual(amountIn * 0.997)
           } catch (e) {
-            // CalcOutByIn could throw exception
+            ignorePollSwapException(e)
           }
         }
       }
@@ -210,7 +221,7 @@ describe('StableSwap test', () => {
         6,
         18,
         { elastic: getBigNumber(0.8 * 1e18), base: getBigNumber(0.95 * 1e18) },
-        { elastic: getBigNumber(0.8 * 1e18), base: getBigNumber(0.95 * 1e18) }
+        { elastic: getBigNumber(0.95 * 1e18), base: getBigNumber(0.8 * 1e18) }
       )
       for (let i = 0; i < 100; ++i) {
         try {
@@ -220,7 +231,7 @@ describe('StableSwap test', () => {
 
           expect(out1).toBeLessThanOrEqual(out2)
         } catch (e) {
-          // CalcOutByIn could throw exception
+          ignorePollSwapException(e)
         }
       }
     })
@@ -234,7 +245,7 @@ describe('StableSwap test', () => {
 
           expect(out1).toBeLessThanOrEqual(out2)
         } catch (e) {
-          // CalcOutByIn could throw exception
+          ignorePollSwapException(e)
         }
       }
     })
@@ -251,7 +262,7 @@ describe('StableSwap test', () => {
           expectCloseValues(out1, out2, 1e-10)
           expect(out1).toBeLessThanOrEqual(maxReserve)
         } catch (e) {
-          // CalcOutByIn could throw exception
+          ignorePollSwapException(e)
         }
       }
     })

@@ -119,18 +119,12 @@ export function filterTopPools(pools: PoolResponse2[], size: number) {
       p.token1.status === 'APPROVED' &&
       !p.token1.isFeeOnTransfer
   )
-  if (safePools.map(p => p.address).includes('0x46a05503abc6f029e19564595adfa02e651f279f')) {
-    console.log("0x46a05503abc6f029e19564595adfa02e651f279f POOL IS SAFE")
-  }
 
   const commonPools = safePools.filter((p) => p.token0.isCommon && p.token1.isCommon)
-  if (commonPools.map(p => p.address).includes('0x46a05503abc6f029e19564595adfa02e651f279f')) {
-    console.log("0x46a05503abc6f029e19564595adfa02e651f279f POOL IS COMMON")
-  }
+
   const topPools = safePools
     .sort((a, b) => Number(b.liquidityUSD) - Number(a.liquidityUSD))
     .slice(0, safePools.length <= size ? size : size - commonPools.length)
-    console.log('commonPools' + commonPools.length, 'topPools' + topPools.length)
 
   return [...topPools, ...commonPools]
 }

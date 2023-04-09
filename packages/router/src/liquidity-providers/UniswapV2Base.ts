@@ -4,12 +4,13 @@ import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
-import { add, getDate, getUnixTime } from 'date-fns'
+import { ConstantProductRPool, RToken } from '@sushiswap/tines'
+import { add, getUnixTime } from 'date-fns'
 import { BigNumber } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 import { Address, PublicClient } from 'viem'
 
+import { getCurrencyCombinations } from '../getCurrencyCombinations'
 import { discoverNewPools, filterOnDemandPools, filterTopPools, getAllPools, mapToken, PoolResponse2 } from '../lib/api'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
@@ -17,6 +18,13 @@ import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 interface PoolInfo {
   poolCode: PoolCode
   validUntilTimestamp: number
+}
+
+interface StaticPool {
+  address: string
+  token0: Token
+  token1: Token
+  fee: number
 }
 
 export abstract class UniswapV2BaseProvider extends LiquidityProvider {
@@ -29,6 +37,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   poolsByTrade: Map<string, string[]> = new Map()
   onDemandPools: Map<string, PoolInfo> = new Map()
   availablePools: Map<string, PoolResponse2> = new Map()
+  staticPools: Map<string, PoolResponse2> = new Map()
 
   blockListener?: () => void
   unwatchBlockNumber?: () => void
@@ -40,14 +49,14 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   latestPoolCreatedAtTimestamp = new Date()
   discoverNewPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
   refreshAvailablePoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.FETCH_AVAILABLE_POOLS_AFTER_SECONDS }))
-  databaseClient: PrismaClient
+  databaseClient: PrismaClient | undefined
 
   constructor(
     chainId: ChainId,
     web3Client: PublicClient,
-    databaseClient: PrismaClient,
     factory: { [chainId: number]: Address },
-    initCodeHash: { [chainId: number]: string }
+    initCodeHash: { [chainId: number]: string },
+    databaseClient?: PrismaClient
   ) {
     super(chainId, web3Client)
     this.factory = factory
@@ -62,16 +71,16 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     // TODO: retry logic, every X seconds? dont flag as true until the end of the function ideally. add isInitalizing? to avoid it being called twice before completed.
     this.isInitialized = true
     const availablePools = await this.getInitialPools()
-    console.debug(`${this.getLogPrefix()} - TOTAL POOLS: ${availablePools.size}`)
+    //console.debug(`${this.getLogPrefix()} - TOTAL POOLS: ${availablePools.size}`)
 
     this.availablePools = availablePools
 
     const topPools = filterTopPools(Array.from(availablePools.values()), this.TOP_POOL_SIZE)
 
     if (topPools.length > 0) {
-      console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${topPools.length}`)
+      //console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${topPools.length}`)
     } else {
-      console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
+      //console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
       return []
     }
 
@@ -116,32 +125,38 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       }
     })
 
-    console.debug(`${this.getLogPrefix()} - INIT, WATCHING ${this.topPools.size} POOLS`)
+    //console.debug(`${this.getLogPrefix()} - INIT, WATCHING ${this.topPools.size} POOLS`)
   }
 
   private async getInitialPools(): Promise<Map<string, PoolResponse2>> {
-    const pools = await getAllPools(
-      this.databaseClient,
-      this.chainId,
-      this.getType() === LiquidityProviders.UniswapV2 ? 'Uniswap' : this.getType(),
-      this.getType() === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
-      ['CONSTANT_PRODUCT_POOL']
-    )
-    return pools
+    if (this.databaseClient) {
+      const pools = await getAllPools(
+        this.databaseClient,
+        this.chainId,
+        this.getType() === LiquidityProviders.UniswapV2 ? 'Uniswap' : this.getType(),
+        this.getType() === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
+        ['CONSTANT_PRODUCT_POOL']
+      )
+      return pools
+    }
+    return new Map()
   }
 
   async getOnDemandPools(t0: Token, t1: Token): Promise<void> {
     const topPoolAddresses = Array.from(this.topPools.keys())
-    const pools = filterOnDemandPools(
-      Array.from(this.availablePools.values()),
-      t0.address,
-      t1.address,
-      topPoolAddresses,
-      this.ON_DEMAND_POOL_SIZE
-    )
+    const pools =
+      topPoolAddresses.length > 0
+        ? filterOnDemandPools(
+            Array.from(this.availablePools.values()),
+            t0.address,
+            t1.address,
+            topPoolAddresses,
+            this.ON_DEMAND_POOL_SIZE
+          )
+        : this.getStaticPools(t0, t1)
 
     if (pools.length === 0) {
-      console.info(`${this.getLogPrefix()} - No on demand pools found for ${t0.symbol}/${t1.symbol}`)
+      //console.info(`${this.getLogPrefix()} - No on demand pools found for ${t0.symbol}/${t1.symbol}`)
       return
     }
 
@@ -157,8 +172,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     pools.forEach((pool) => {
       const existingPool = this.onDemandPools.get(pool.address)
       if (existingPool === undefined) {
-        const token0 = mapToken(this.chainId, pool.token0) as RToken
-        const token1 = mapToken(this.chainId, pool.token1) as RToken
+        const token0 = pool.token0 as RToken
+        const token1 = pool.token1 as RToken
 
         const rPool = new ConstantProductRPool(
           pool.address,
@@ -203,19 +218,19 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       if (res0 !== undefined && res1 !== undefined) {
         pool.updateReserves(BigNumber.from(res0), BigNumber.from(res1))
         this.onDemandPools.set(pool.address, { poolCode, validUntilTimestamp })
-        console.debug(
-          `${this.getLogPrefix()} - ON DEMAND CREATION: ${pool.address} (${pool.token0.symbol}/${pool.token1.symbol})`
-        )
+        // console.debug(
+        //   `${this.getLogPrefix()} - ON DEMAND CREATION: ${pool.address} (${pool.token0.symbol}/${pool.token1.symbol})`
+        // )
         ++created
       } else {
-        console.error(`${this.getLogPrefix()} - ERROR FETCHING RESERVES, initialize on demand pool: ${pool.address}`)
-        // TODO: some pools seem to be initialized with 0 in reserves, they should just be ignored, shouldn't log error
+        // Pool doesn't exist?
+        // console.error(`${this.getLogPrefix()} - ERROR FETCHING RESERVES, initialize on demand pool: ${pool.address}`)
       }
     })
 
-    console.debug(
-      `${this.getLogPrefix()} - ON DEMAND: Created and fetched reserves for ${created} pools, extended 'lifetime' for ${updated} pools`
-    )
+    // console.debug(
+    //   `${this.getLogPrefix()} - ON DEMAND: Created and fetched reserves for ${created} pools, extended 'lifetime' for ${updated} pools`
+    // )
   }
 
   async updatePools() {
@@ -277,6 +292,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   }
 
   private async discoverNewPools() {
+    if (!this.databaseClient) return
     if (this.discoverNewPoolsTimestamp > getUnixTime(Date.now())) {
       return
     }
@@ -307,9 +323,9 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       }
     }
 
-    console.debug(
-      `* MEM ${this.getLogPrefix()} INIT COUNT: ${this.topPools.size} ON DEMAND COUNT: ${this.onDemandPools.size}`
-    )
+    // console.debug(
+    //   `* MEM ${this.getLogPrefix()} INIT COUNT: ${this.topPools.size} ON DEMAND COUNT: ${this.onDemandPools.size}`
+    // )
   }
 
   private async updateAvailablePools() {
@@ -340,7 +356,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
     poolsToRemove.forEach((address) => {
       this.topPools.delete(address)
-      console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Removed ${address} from top pools`)
+      //console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Removed ${address} from top pools`)
     })
 
     poolsToAdd.forEach((address) => {
@@ -359,7 +375,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         const pc = new ConstantProductPoolCode(rPool, this.getType(), this.getPoolProviderName())
         this.topPools.set(poolsToCreate.address, pc)
 
-        console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Added ${address} to top pools`)
+        //console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Added ${address} to top pools`)
       } else {
         console.warn(`${this.getLogPrefix()} - PRIORITIZE POOLS: Could not find pool, unexpected state.`)
       }
@@ -387,11 +403,11 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         const res1BN = BigNumber.from(res1)
         if (!pool.reserve0.eq(res0BN) || !pool.reserve1.eq(res1BN)) {
           pool.updateReserves(res0BN, res1BN)
-          console.info(
-            `${this.getLogPrefix()} - SYNC, ${type}: ${pool.address} ${pool.token0.symbol}/${
-              pool.token1.symbol
-            } ${res0BN.toString()} ${res1BN.toString()}`
-          )
+          // console.info(
+          //   `${this.getLogPrefix()} - SYNC, ${type}: ${pool.address} ${pool.token0.symbol}/${
+          //     pool.token1.symbol
+          //   } ${res0BN.toString()} ${res1BN.toString()}`
+          // )
         }
       } else {
         console.error(
@@ -423,6 +439,17 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     return Array.from(set)
   }
 
+  getStaticPools(t1: Token, t2: Token): StaticPool[] {
+    const currencyCombination = getCurrencyCombinations(this.chainId, t1, t2)
+    return currencyCombination.map((combination) => ({
+      address: this._getPoolAddress(combination[0], combination[1]),
+      token0: combination[0],
+      token1: combination[1],
+      fee: this.fee,
+    }))
+    // return pools
+  }
+
   startFetchPoolsData() {
     this.stopFetchPoolsData()
     this.topPools = new Map()
@@ -451,7 +478,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       }
     }
     if (removed > 0) {
-      console.log(`${this.getLogPrefix()} STALE: Removed ${removed} stale pools`)
+      //console.log(`${this.getLogPrefix()} STALE: Removed ${removed} stale pools`)
     }
   }
 

@@ -188,10 +188,10 @@ async function testTrident() {
     for (let i = 6; i < 15; ++i) {
       const amount = getBigNumber(Math.pow(10, i)).toString()
       const res = await test(env, from, to, amount, gasPrice, providers)
-      console.log(
-        Math.pow(10, i) / divisor,
-        res.map((e) => e / divisor)
-      )
+      // console.log(
+      //   Math.pow(10, i) / divisor,
+      //   res.map((e) => e / divisor)
+      // )
     }
     env.dataFetcher.stopDataFetching()
   } catch (e) {

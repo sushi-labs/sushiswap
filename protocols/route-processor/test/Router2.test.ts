@@ -1,6 +1,7 @@
+import { Provider } from '@ethersproject/providers'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId, chainName } from '@sushiswap/chain'
 import {
   DAI,
@@ -20,20 +21,24 @@ import {
   USDT_ADDRESS,
   WNATIVE,
 } from '@sushiswap/currency'
+import { DataFetcher, LiquidityProviders, PoolFilter, Router } from '@sushiswap/router'
+import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
 import {
-  DataFetcher,
-  findSpecialRoute,
-  getRoutingAnyChartSankeyData,
-  LiquidityProviders,
-  PoolFilter,
-  Router,
-  RPParams,
-} from '@sushiswap/router'
-import { BridgeBento, getBigNumber, MultiRoute, RPool, StableSwapRPool } from '@sushiswap/tines'
+  BridgeBento,
+  BridgeUnlimited,
+  ConstantProductRPool,
+  getBigNumber,
+  RPool,
+  StableSwapRPool,
+  toShareBN,
+} from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
 import seedrandom from 'seedrandom'
+import { createPublicClient } from 'viem'
+import { custom } from 'viem'
+import { hardhat } from 'viem/chains'
 
 function getRandomExp(rnd: () => number, min: number, max: number) {
   const minL = Math.log(min)
@@ -46,17 +51,86 @@ function getRandomExp(rnd: () => number, min: number, max: number) {
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
-class Waiter {
-  resolved = false
+function closeValues(_a: number | BigNumber, _b: number | BigNumber, accuracy: number, absolute: number): boolean {
+  const a: number = typeof _a == 'number' ? _a : parseInt(_a.toString())
+  const b: number = typeof _b == 'number' ? _b : parseInt(_b.toString())
+  if (accuracy === 0) return a === b
+  if (Math.abs(a - b) < absolute) return true
+  // if (Math.abs(a) < 1 / accuracy) return Math.abs(a - b) <= 10
+  // if (Math.abs(b) < 1 / accuracy) return Math.abs(a - b) <= 10
+  return Math.abs(a / b - 1) < accuracy
+}
 
-  async wait() {
-    while (!this.resolved) {
-      await delay(500)
-    }
+function expectCloseValues(
+  _a: number | BigNumber,
+  _b: number | BigNumber,
+  accuracy: number,
+  absolute: number,
+  logInfoIfFalse = ''
+) {
+  const res = closeValues(_a, _b, accuracy, absolute)
+  if (!res) {
+    console.log(`Expected close: ${_a}, ${_b}, ${accuracy} ${logInfoIfFalse}`)
+    // debugger
+    expect(res).equal(true)
   }
+  return res
+}
 
-  resolve() {
-    this.resolved = true
+export async function checkPoolsState(pools: Map<string, PoolCode>, env: TestEnvironment) {
+  const bentoAddress = bentoBoxV1Address[env.chainId as BentoBoxV1ChainId]
+  const bentoContract = new Contract(
+    bentoAddress,
+    ['function totals(address) view returns (uint128, uint128)'],
+    env.user
+  )
+
+  const addresses = Array.from(pools.keys())
+  for (let i = 0; i < addresses.length; ++i) {
+    const addr = addresses[i]
+    const pool = (pools.get(addr) as PoolCode).pool
+    if (pool instanceof StableSwapRPool) {
+      const poolContract = new Contract(addr, ['function getReserves() view returns (uint256, uint256)'], env.user)
+
+      const totals0 = await bentoContract.totals(pool.token0.address)
+      const token0 = pool.token0.symbol
+      expectCloseValues(pool.getTotal0().elastic, totals0[0], 1e-10, 10, `StableSwapRPool ${addr} ${token0}.elastic`)
+      expectCloseValues(pool.getTotal0().base, totals0[1], 1e-10, 10, `StableSwapRPool ${addr} ${token0}.base`)
+
+      const totals1 = await bentoContract.totals(pool.token1.address)
+      const token1 = pool.token1.symbol
+      expectCloseValues(pool.getTotal1().elastic, totals1[0], 1e-10, 10, `StableSwapRPool ${addr} ${token1}.elastic`)
+      expectCloseValues(pool.getTotal1().base, totals1[1], 1e-10, 10, `StableSwapRPool ${addr} ${token1}.base`)
+
+      const reserves = await poolContract.getReserves()
+      expectCloseValues(
+        pool.getReserve0(),
+        toShareBN(reserves[0], pool.getTotal0()),
+        1e-10,
+        1e6,
+        `StableSwapRPool ${addr} reserve0`
+      )
+      expectCloseValues(
+        pool.getReserve1(),
+        toShareBN(reserves[1], pool.getTotal1()),
+        1e-10,
+        1e6,
+        `StableSwapRPool ${addr} reserve1`
+      )
+    } else if (pool instanceof ConstantProductRPool) {
+      const poolContract = new Contract(addr, ['function getReserves() view returns (uint112, uint112)'], env.user)
+      const reserves = await poolContract.getReserves()
+      expectCloseValues(pool.getReserve0(), reserves[0], 1e-10, 10, `CP ${addr} reserve0`)
+      expectCloseValues(pool.getReserve1(), reserves[1], 1e-10, 10, `CP ${addr} reserve1`)
+    } else if (pool instanceof BridgeBento) {
+      const totals = await bentoContract.totals(pool.token1.address)
+      expectCloseValues(pool.elastic, totals[0], 1e-10, 10, `BentoBridge ${pool.token1.symbol} elastic`)
+      expectCloseValues(pool.base, totals[1], 1e-10, 10, `BentoBridge ${pool.token1.symbol} base`)
+    } else if (pool instanceof BridgeUnlimited) {
+      // native - skip
+    } else {
+      console.log('Unknown pool: ', pool)
+    }
   }
 }
 
@@ -73,15 +147,31 @@ interface TestEnvironment {
 async function getTestEnvironment(): Promise<TestEnvironment> {
   //console.log('Prepare Environment:')
 
+  const client = createPublicClient({
+    chain: {
+      ...hardhat,
+      contracts: {
+        multicall3: {
+          address: '0xca11bde05977b3631167028862be2a173976ca11',
+          blockCreated: 25770160,
+        },
+      },
+      pollingInterval: 1_000,
+    },
+    transport: custom(network.provider),
+  })
   //console.log('    Create DataFetcher ...')
   const provider = ethers.provider
   const chainId = network.config.chainId as ChainId
-  const dataFetcher = new DataFetcher(provider, chainId)
+  const dataFetcher = new DataFetcher(chainId, client)
+
+  //console.log({ chainId, url: ethers.provider.connection.url, otherurl: network.config.forking.url })
+
   dataFetcher.startDataFetching()
 
-  //console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
+  console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
   const RouteProcessor = await ethers.getContractFactory('RouteProcessor2')
-  const routeProcessor = await RouteProcessor.deploy(BENTOBOX_ADDRESS[chainId])
+  const routeProcessor = await RouteProcessor.deploy(bentoBoxV1Address[chainId as BentoBoxV1ChainId])
   await routeProcessor.deployed()
   //console.log('    Block Number:', provider.blockNumber)
 
@@ -113,31 +203,39 @@ async function makeSwap(
 
   if (fromToken instanceof Token) {
     //console.log(`Approve user's ${fromToken.symbol} to the route processor ...`)
-    const WrappedBaseTokenContract = await new ethers.Contract(fromToken.address, erc20Abi, env.user)
+    const WrappedBaseTokenContract = new ethers.Contract(fromToken.address, erc20Abi, env.user)
     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
   }
 
   //console.log('Create Route ...')
-  env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
-  const waiter = new Waiter()
-  const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
-  router.startRouting(() => {
-    //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
-    const printed = makeSankeyDiagram
-      ? getRoutingAnyChartSankeyData(router.getBestRoute() as MultiRoute)
-      : router.getCurrentRouteHumanString()
-    console.log(printed)
-    waiter.resolve()
-  })
-  await waiter.wait()
-  router.stopRouting()
+  await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
 
-  //console.log('Create route processor code ...')
-  const rpParams = router.getCurrentRouteRP2Params(env.user.address, env.rp.address)
+  const pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
+
+  await checkPoolsState(pcMap, env)
+
+  const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
+  // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
+  // console.log(
+  //   'ROUTE:',
+  //   route.legs.map(
+  //     (l) =>
+  //       l.tokenFrom.symbol +
+  //       ' -> ' +
+  //       l.tokenTo.symbol +
+  //       '  ' +
+  //       l.poolAddress +
+  //       '  ' +
+  //       l.assumedAmountIn +
+  //       ' ->' +
+  //       l.assumedAmountOut
+  //   )
+  // )
+  const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
   if (rpParams === undefined) return
 
   //console.log('Call route processor (may take long time for the first launch)...')
-  const route = router.getBestRoute() as MultiRoute
+
   let balanceOutBNBefore: BigNumber
   let toTokenContract: Contract | undefined = undefined
   if (toToken instanceof Token) {
@@ -181,13 +279,14 @@ async function makeSwap(
   }
   const slippage = parseInt(balanceOutBN.sub(route.amountOutBN).mul(10_000).div(route.amountOutBN).toString())
 
-  if (slippage < 0) {
-    console.log(`expected amountOut: ${route.amountOutBN.toString()}`)
-    console.log(`real amountOut:     ${balanceOutBN.toString()}`)
-    console.log(`slippage: ${slippage / 100}%`)
+  if (route.amountOutBN.sub(balanceOutBN).abs().gt(10)) {
+    if (slippage < 0) {
+      console.log(`expected amountOut: ${route.amountOutBN.toString()}`)
+      console.log(`real amountOut:     ${balanceOutBN.toString()}`)
+      console.log(`slippage: ${slippage / 100}%`)
+    }
+    expect(slippage).greaterThanOrEqual(0) // positive slippage could be if we 'gather' some liquidity on the route
   }
-  console.log(`gas use: ${receipt.gasUsed.toString()}`)
-  expect(slippage).greaterThanOrEqual(0) // positive slippage could be if we 'gather' some liquidity on the route
 
   return [balanceOutBN, receipt.blockNumber]
 }
@@ -211,7 +310,6 @@ async function updMakeSwap(
   const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
   if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
 
-  console.log('')
   //console.log('Wait data update for min block', waitBlock)
   await dataUpdated(env, waitBlock)
 
@@ -236,18 +334,11 @@ async function checkTransferAndRoute(
     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
   }
 
-  env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
-  const waiter = new Waiter()
-  const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9)
-  router.startRouting(() => {
-    // const printed = router.getCurrentRouteHumanString()
-    // console.log(printed)
-    waiter.resolve()
-  })
-  await waiter.wait()
-  router.stopRouting()
+  await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
 
-  const rpParams = router.getCurrentRouteRP2Params(env.user.address, env.rp.address) as RPParams
+  const pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
+  const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9)
+  const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
   const transferValue = getBigNumber(0.02 * Math.pow(10, Native.onChain(env.chainId).decimals))
   rpParams.value = (rpParams.value || BigNumber.from(0)).add(transferValue)
 
@@ -350,6 +441,7 @@ describe('End-to-end Router2 test', async function () {
 
   it('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async function () {
     const filter = (pool: RPool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
+
     if (chainId == ChainId.POLYGON) {
       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], intermidiateResult)
@@ -369,11 +461,10 @@ describe('End-to-end Router2 test', async function () {
   }
 
   it.skip('Random swap test', async function () {
-    const testSeed = '10' // Change it to change random generator values
-    const rnd: () => number = seedrandom(testSeed) // random [0, 1)
     let routeCounter = 0
     for (let i = 0; i < 100; ++i) {
       let currentToken = 0
+      const rnd: () => number = seedrandom('testSeed ' + i) // random [0, 1)
       intermidiateResult[0] = getBigNumber(getRandomExp(rnd, 1e15, 1e24))
       for (;;) {
         const nextToken = getNextToken(rnd, currentToken)
@@ -391,8 +482,18 @@ describe('End-to-end Router2 test', async function () {
   })
 
   it('Special Router', async function () {
-    env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI_LOCAL)
-    const route = findSpecialRoute(env.dataFetcher, Native.onChain(chainId), getBigNumber(1 * 1e18), SUSHI_LOCAL, 30e9)
+    await env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI_LOCAL)
+
+    const pcMap = env.dataFetcher.getCurrentPoolCodeMap(Native.onChain(chainId), SUSHI_LOCAL)
+
+    const route = Router.findSpecialRoute(
+      pcMap,
+      chainId,
+      Native.onChain(chainId),
+      getBigNumber(1 * 1e18),
+      SUSHI_LOCAL,
+      30e9
+    )
     expect(route).not.undefined
   })
 
