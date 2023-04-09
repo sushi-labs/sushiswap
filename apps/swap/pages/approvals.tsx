@@ -70,7 +70,7 @@ const Approvals: FC = () => {
             {isLoading ? (
               <Dots>Finding any approvals on the RouteProcessor2</Dots>
             ) : (
-              'We searched across all our networks and we found the following tokens which are approved on the RouteProcessor2'
+              'We searched across all our networks and we found the following tokens where you have balance and which are approved on the RouteProcessor2'
             )}
           </h1>
           <List>
