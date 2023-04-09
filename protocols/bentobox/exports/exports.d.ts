@@ -25231,7 +25231,7 @@ export declare const bentoBoxV1Exports: {
 };
 export type BentoBoxV1Exports = typeof bentoBoxV1Exports;
 export type BentoBoxV1ChainId = NumberStringToNumber<keyof BentoBoxV1Exports>;
-export declare const isBentoBoxV1ChainId: (chainId: number) => chainId is NumberStringToNumber<"1" | "4" | "5" | "10" | "56" | "97" | "100" | "122" | "128" | "137" | "199" | "250" | "288" | "1088" | "1284" | "1285" | "2222" | "42161" | "42170" | "42220" | "43114" | "43288" | "56288" | "59140" | "80001" | "84531" | "534353" | "1666600000">;
+export declare const isBentoBoxV1ChainId: (chainId: number) => chainId is BentoBoxV1ChainId;
 export declare const bentoBoxV1Address: {
     readonly 1: "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
     readonly 4: "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
@@ -50408,4 +50408,4 @@ export declare const bentoBoxV1Abi: {
         readonly type: "receive";
     }];
 };
-export declare const bentoBoxV1ChainIds: NumberStringToNumber<"1" | "4" | "5" | "10" | "56" | "97" | "100" | "122" | "128" | "137" | "199" | "250" | "288" | "1088" | "1284" | "1285" | "2222" | "42161" | "42170" | "42220" | "43114" | "43288" | "56288" | "59140" | "80001" | "84531" | "534353" | "1666600000">[];
+export declare const bentoBoxV1ChainIds: BentoBoxV1ChainId[];

@@ -345,6 +345,7 @@ importers:
       react-image-file-resizer: ^0.4.8
       react-redux: 8.0.5
       react-slider: ^2.0.4
+      swiper: ^9.2.0
       swr: ^1.3.0
       tailwindcss: 3.2.4
       typescript: 4.9.4
@@ -392,6 +393,7 @@ importers:
       react-image-file-resizer: 0.4.8
       react-redux: 8.0.5_b35jy3hutuejwfesa6qcd2f7t4
       react-slider: 2.0.4_react@18.2.0
+      swiper: 9.2.0
       swr: 1.3.0_react@18.2.0
       wagmi: 0.12.10_qm5oygv6gsango6rcgldyz5xze
       yup: 0.32.11
@@ -14224,7 +14226,7 @@ packages:
       '@walletconnect/types': 2.6.2_od3vuficnfbr74q5a3bmsrnj6y
       '@walletconnect/universal-provider': 2.6.2_od3vuficnfbr74q5a3bmsrnj6y
       '@walletconnect/utils': 2.6.2_od3vuficnfbr74q5a3bmsrnj6y
-      '@web3modal/standalone': 2.2.2
+      '@web3modal/standalone': 2.2.2_react@18.2.0
       events: 3.3.0
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
@@ -30657,6 +30659,10 @@ packages:
       safer-buffer: 2.1.2
       tweetnacl: 0.14.5
 
+  /ssr-window/4.0.2:
+    resolution: {integrity: sha512-ISv/Ch+ig7SOtw7G2+qkwfVASzazUnvlDTwypdLoPoySv+6MqlOV10VwPSE6EWkGjhW50lUmghPmpYZXMu/+AQ==}
+    dev: false
+
   /ssri/8.0.1:
     resolution: {integrity: sha512-97qShzy1AiyxvPNIkLWoGua7xoQzzPjQ0HAH4B0rWKo7SZ6USuPcrUiAFrws0UH8RrbWmgq3LMTObhPIHbbBeQ==}
     engines: {node: '>= 8'}
@@ -31050,6 +31056,13 @@ packages:
     dev: false
     optional: true
 
+  /swiper/9.2.0:
+    resolution: {integrity: sha512-lWK9toYumUQss+YuTL+Mt0+8twiMJEyzioER4bbS4rrGHlkeLrDM8uhtAmnpdijELrNscuNUujDgKoMQZfQGlQ==}
+    engines: {node: '>= 4.7.0'}
+    dependencies:
+      ssr-window: 4.0.2
+    dev: false
+
   /swr/1.3.0_react@18.2.0:
     resolution: {integrity: sha512-dkghQrOl2ORX9HYrMDtPa7LTVHJjCTeZoB1dqTbnnEDlSvN8JEKpYIYurDfvbQFUUS8Cg8PceFVZNkW0KNNYPw==}
     peerDependencies:
@@ -31162,6 +31175,8 @@ packages:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
+    peerDependencies:
+      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -31177,6 +31192,7 @@ packages:
       normalize-path: 3.0.0
       object-hash: 3.0.0
       picocolors: 1.0.0
+      postcss: 8.4.21
       postcss-import: 14.1.0_postcss@8.4.21
       postcss-js: 4.0.1_postcss@8.4.21
       postcss-load-config: 3.1.4_postcss@8.4.21
@@ -31186,7 +31202,6 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
-      - postcss
       - ts-node
     dev: true
 

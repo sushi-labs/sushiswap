@@ -5013,7 +5013,7 @@ export declare const uniswapV2FactoryExports: {
 };
 export type UniswapV2FactoryExports = typeof uniswapV2FactoryExports;
 export type UniswapV2FactoryChainId = NumberStringToNumber<keyof UniswapV2FactoryExports>;
-export declare const isUniswapV2FactoryChainId: (chainId: number) => chainId is NumberStringToNumber<"1" | "3" | "4" | "5" | "40" | "42" | "56" | "65" | "66" | "97" | "100" | "122" | "128" | "137" | "250" | "256" | "288" | "1284" | "1285" | "42161" | "42170" | "42220" | "43113" | "43114" | "43288" | "56288" | "80001" | "1666600000" | "1666700000" | "11297108109">;
+export declare const isUniswapV2FactoryChainId: (chainId: number) => chainId is UniswapV2FactoryChainId;
 export declare const uniswapV2FactoryAddress: {
     readonly 1: "0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac";
     readonly 3: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
@@ -9968,7 +9968,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly type: "function";
     }];
 };
-export declare const uniswapV2FactoryChainIds: NumberStringToNumber<"1" | "3" | "4" | "5" | "40" | "42" | "56" | "65" | "66" | "97" | "100" | "122" | "128" | "137" | "250" | "256" | "288" | "1284" | "1285" | "42161" | "42170" | "42220" | "43113" | "43114" | "43288" | "56288" | "80001" | "1666600000" | "1666700000" | "11297108109">[];
+export declare const uniswapV2FactoryChainIds: UniswapV2FactoryChainId[];
 export declare const uniswapV2Router02Exports: {
     readonly "1": {
         readonly address: "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F";
@@ -32623,7 +32623,7 @@ export declare const uniswapV2Router02Exports: {
 };
 export type UniswapV2Router02Exports = typeof uniswapV2Router02Exports;
 export type UniswapV2Router02ChainId = NumberStringToNumber<keyof UniswapV2Router02Exports>;
-export declare const isUniswapV2Router02ChainId: (chainId: number) => chainId is NumberStringToNumber<"1" | "3" | "4" | "5" | "40" | "42" | "56" | "65" | "66" | "97" | "100" | "122" | "128" | "137" | "250" | "256" | "288" | "1284" | "1285" | "42161" | "42170" | "42220" | "43113" | "43114" | "43288" | "56288" | "80001" | "1666600000" | "1666700000" | "11297108109">;
+export declare const isUniswapV2Router02ChainId: (chainId: number) => chainId is UniswapV2Router02ChainId;
 export declare const uniswapV2Router02Address: {
     readonly 1: "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F";
     readonly 3: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
@@ -55218,7 +55218,7 @@ export declare const uniswapV2Router02Abi: {
         readonly type: "receive";
     }];
 };
-export declare const uniswapV2Router02ChainIds: NumberStringToNumber<"1" | "3" | "4" | "5" | "40" | "42" | "56" | "65" | "66" | "97" | "100" | "122" | "128" | "137" | "250" | "256" | "288" | "1284" | "1285" | "42161" | "42170" | "42220" | "43113" | "43114" | "43288" | "56288" | "80001" | "1666600000" | "1666700000" | "11297108109">[];
+export declare const uniswapV2Router02ChainIds: UniswapV2Router02ChainId[];
 export declare const multicall2Exports: {
     readonly "11297108109": {
         readonly address: "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F";
@@ -55462,7 +55462,7 @@ export declare const multicall2Exports: {
 };
 export type Multicall2Exports = typeof multicall2Exports;
 export type Multicall2ChainId = NumberStringToNumber<keyof Multicall2Exports>;
-export declare const isMulticall2ChainId: (chainId: number) => chainId is NumberStringToNumber<"11297108109">;
+export declare const isMulticall2ChainId: (chainId: number) => chainId is 11297108109;
 export declare const multicall2Address: {
     readonly 11297108109: "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F";
 };
@@ -55704,4 +55704,4 @@ export declare const multicall2Abi: {
         readonly type: "function";
     }];
 };
-export declare const multicall2ChainIds: NumberStringToNumber<"11297108109">[];
+export declare const multicall2ChainIds: 11297108109[];
