@@ -215,9 +215,21 @@ async function makeSwap(
   await checkPoolsState(pcMap, env)
 
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
+  // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
   // console.log(
   //   'ROUTE:',
-  //   route.legs.map((l) => l.tokenFrom.symbol + ' -> ' + l.tokenTo.symbol + '  ' + l.poolAddress)
+  //   route.legs.map(
+  //     (l) =>
+  //       l.tokenFrom.symbol +
+  //       ' -> ' +
+  //       l.tokenTo.symbol +
+  //       '  ' +
+  //       l.poolAddress +
+  //       '  ' +
+  //       l.assumedAmountIn +
+  //       ' ->' +
+  //       l.assumedAmountOut
+  //   )
   // )
   const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
   if (rpParams === undefined) return
@@ -267,14 +279,14 @@ async function makeSwap(
   }
   const slippage = parseInt(balanceOutBN.sub(route.amountOutBN).mul(10_000).div(route.amountOutBN).toString())
 
-  if (slippage < 0) {
-    console.log(`expected amountOut: ${route.amountOutBN.toString()}`)
-    console.log(`real amountOut:     ${balanceOutBN.toString()}`)
-    console.log(`slippage: ${slippage / 100}%`)
+  if (route.amountOutBN.sub(balanceOutBN).abs().gt(10)) {
+    if (slippage < 0) {
+      console.log(`expected amountOut: ${route.amountOutBN.toString()}`)
+      console.log(`real amountOut:     ${balanceOutBN.toString()}`)
+      console.log(`slippage: ${slippage / 100}%`)
+    }
+    expect(slippage).greaterThanOrEqual(0) // positive slippage could be if we 'gather' some liquidity on the route
   }
-  //console.log(`gas use: ${receipt.gasUsed.toString()}`)
-  // expect(slippage).greaterThanOrEqual(0) // positive slippage could be if we 'gather' some liquidity on the route
-  expect(slippage).equal(0) // TODO: can't do this, isn't it a tiny bit of rounding when converting stable reserves?
 
   return [balanceOutBN, receipt.blockNumber]
 }

@@ -152,14 +152,14 @@ export class DataFetcher {
     //   }
     // }
 
-    // if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers)) {
-    //   try {
-    //     const provider = new QuickSwapProvider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers)) {
+      try {
+        const provider = new QuickSwapProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
     // if (this._providerIsIncluded(LiquidityProviders.SpookySwap, providers)) {
     //   try {
@@ -179,23 +179,23 @@ export class DataFetcher {
     //   }
     // }
 
-    // if (this._providerIsIncluded(LiquidityProviders.UbeSwap, providers)) {
-    //   try {
-    //     const provider = new UbeSwapProvider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.UbeSwap, providers)) {
+      try {
+        const provider = new UbeSwapProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
-    // if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
-    //   try {
-    //     const provider = new UniswapV2Provider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
+      try {
+        const provider = new UniswapV2Provider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
     // console.log(
     //   `${chainShortName[this.chainId]}/${this.chainId} - Included providers: ${this.providers
