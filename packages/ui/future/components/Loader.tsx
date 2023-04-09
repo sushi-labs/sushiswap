@@ -36,7 +36,7 @@ export const Loader: FC<LoaderProps> = ({ size = 16, strokeWidth = 2, circleClas
         stroke="currentColor"
         strokeWidth={strokeWidth}
         strokeLinecap="round"
-        className={classNames(className, 'text-gray-700 dark:text-slate-500')}
+        className={classNames(className, 'text-gray-700 dark:text-white')}
       />
     </svg>
   )

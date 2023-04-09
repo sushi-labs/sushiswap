@@ -6,6 +6,7 @@ import { DatePicker } from './DatePicker'
 import { DatetimeLocal } from './DatetimeLocal'
 import { Input as Numeric } from './Numeric'
 import { Input as Percent } from './Percent'
+import { Text } from './Text'
 
 // Base classes
 export const DEFAULT_INPUT_FONT = 'text-gray-900 dark:text-slate-50 text-left text-base font-medium'
@@ -49,4 +50,5 @@ export const Input = {
   Counter,
   Numeric,
   Percent,
+  Text,
 }

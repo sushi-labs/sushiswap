@@ -1,11 +1,15 @@
 {
-  "extends": "@sushiswap/typescript-config/node16-strictest-esm.combined.json",
+  "extends": "@sushiswap/typescript-config/esm.json",
   "include": ["src"],
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
     "module": "esnext",
     "target": "esnext",
-    "declaration": true
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "moduleResolution": "nodenext"
   }
 }

@@ -15,7 +15,7 @@ import { ChefReturn } from './lib/types.js'
 
 export async function execute() {
   try {
-    console.log(`Preparing to load farms/incentives`)
+    console.log('Preparing to load farms/incentives')
     const startTime = performance.now()
 
     // EXTRACT
@@ -83,12 +83,12 @@ async function transform(data: ChefReturn[]): Promise<{
 }> {
   const tokens: Prisma.TokenCreateManyInput[] = []
   const incentives = data
-    .map((farm) => {
+    .flatMap((farm) => {
       const chainId = farm.chainId
       return Object.entries(farm.farms ?? [])
-        .map(([poolAddress, farm]) => {
+        .flatMap(([poolAddress, farm]) => {
           return farm.incentives
-            .map((incentive) => {
+            .flatMap((incentive) => {
               tokens.push(
                 Prisma.validator<Prisma.TokenCreateManyInput>()({
                   id: chainId.toString().concat(':').concat(incentive.rewardToken.address.toLowerCase()),
@@ -112,11 +112,8 @@ async function transform(data: ChefReturn[]): Promise<{
                 rewarderType: incentive.rewarder.type,
               })
             })
-            .flat()
         })
-        .flat()
     })
-    .flat()
 
   const { incentivesToCreate, incentivesToUpdate } = await filterIncentives(incentives)
 

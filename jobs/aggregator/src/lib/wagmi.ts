@@ -1,6 +1,4 @@
-// import {allChains, allProviders } from '@sushiswap/wagmi-config'
-import { allChains } from '@sushiswap/wagmi-config/chains'
-import { allProviders } from '@sushiswap/wagmi-config/providers'
+import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import { configureChains, createClient } from '@wagmi/core'
 
 const alchemyId = process.env['ALCHEMY_ID']

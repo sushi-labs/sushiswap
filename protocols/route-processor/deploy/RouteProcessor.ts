@@ -23,6 +23,7 @@ const func: DeployFunction = async function ({
   const { address } = await deploy('RouteProcessor', {
     from: deployer,
     args,
+    waitConfirmations: 20,
   })
 
   // await run('verify:verify', {
@@ -33,5 +34,7 @@ const func: DeployFunction = async function ({
 
   console.log(`RouteProcessor deployed to ${address}`)
 }
+
+func.tags = ['RouteProcessor']
 
 export default func

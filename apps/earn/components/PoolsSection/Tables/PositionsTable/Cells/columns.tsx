@@ -6,6 +6,11 @@ import { PoolAPRCell, PoolChainCell, PoolNameCell, PoolVolume1dCell } from '../.
 import { PairValueCell } from './PoolValueCell'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { ICON_SIZE } from '../../PoolsTable/Cells/columns'
+import { PoolNameCellV3 } from '../../SharedCells/PoolNameCellV3'
+import { ConcentratedLiquidityPosition } from '@sushiswap/wagmi/future/hooks'
+import { PriceRangeCell } from './PriceRangeCell'
+import { PositionSizeCell } from './PositionSizeCell'
+import { UnclaimedCell } from './UnclaimedCell'
 
 type TData = PositionWithPool
 
@@ -68,6 +73,61 @@ export const VOLUME_COLUMN: ColumnDef<TData, unknown> = {
   header: 'Volume (24h)',
   cell: (props) => <PoolVolume1dCell row={props.row.original.pool} />,
   size: 100,
+  meta: {
+    className: 'justify-end',
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
+  },
+}
+
+export const NAME_COLUMN_V3: ColumnDef<ConcentratedLiquidityPosition, unknown> = {
+  id: 'name',
+  header: 'Name',
+  cell: (props) => <PoolNameCellV3 row={props.row.original} />,
+  size: 160,
+  meta: {
+    skeleton: (
+      <div className="flex items-center w-full gap-2">
+        <div className="flex items-center">
+          <Skeleton.Circle radius={ICON_SIZE} />
+          <Skeleton.Circle radius={ICON_SIZE} className="-ml-[12px]" />
+        </div>
+        <div className="flex flex-col w-full">
+          <Skeleton.Text fontSize="text-lg" />
+        </div>
+      </div>
+    ),
+  },
+}
+
+export const PRICE_RANGE_COLUMN: ColumnDef<ConcentratedLiquidityPosition, unknown> = {
+  id: 'priceRange',
+  header: 'Price Range',
+  cell: (props) => <PriceRangeCell row={props.row.original} />,
+  size: 160,
+  maxSize: 160,
+  meta: {
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
+  },
+}
+
+export const POSITION_SIZE_CELL: ColumnDef<ConcentratedLiquidityPosition, unknown> = {
+  id: 'positionSize',
+  header: 'Position Size',
+  cell: (props) => <PositionSizeCell row={props.row.original} />,
+  size: 60,
+  maxSize: 60,
+  meta: {
+    className: 'justify-end',
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
+  },
+}
+
+export const POSITION_UNCLAIMED_CELL: ColumnDef<ConcentratedLiquidityPosition, unknown> = {
+  id: 'unclaimed',
+  header: 'Unclaimed',
+  cell: (props) => <UnclaimedCell row={props.row.original} />,
+  size: 60,
+  maxSize: 60,
   meta: {
     className: 'justify-end',
     skeleton: <Skeleton.Text fontSize="text-lg" />,

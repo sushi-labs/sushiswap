@@ -7,7 +7,7 @@ import { Account, Wallet } from '@sushiswap/wagmi'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { useAccount, useConnect, useNetwork } from 'wagmi'
+import { useAccount, useConnect, useNetwork } from '@sushiswap/wagmi'
 
 import { BackgroundVector, Layout } from '../components'
 import { BalanceChart } from '../components/stream'

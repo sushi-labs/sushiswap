@@ -4,7 +4,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { PAGE_SIZE } from '../contants'
-import { APR_COLUMN, FEES_COLUMN, NAME_COLUMN, NETWORK_COLUMN, TVL_COLUMN, VOLUME_COLUMN } from './Cells/columns'
+import { APR_COLUMN, FEES_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN } from './Cells/columns'
 import { PoolQuickHoverTooltip } from './PoolQuickHoverTooltip'
 import { Pool, GetPoolsArgs, usePoolsInfinite, usePoolCount, PoolType, PoolVersion } from '@sushiswap/client'
 import { useSWRConfig } from 'swr'
@@ -14,10 +14,10 @@ import { Loader } from '@sushiswap/ui/future/components/Loader'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, FEES_COLUMN, APR_COLUMN]
+const COLUMNS = [NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, FEES_COLUMN, APR_COLUMN]
 
 export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady }) => {
-  const { chainIds, tokenSymbols, poolTypes, poolVersions, incentivizedOnly } = usePoolFilters()
+  const { chainIds, tokenSymbols, protocols, incentivizedOnly } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
@@ -35,10 +35,9 @@ export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady }) => {
       isWhitelisted: true, // can be added to filters later, need to put it here so fallback works
       orderBy: sorting[0]?.id,
       orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
-      poolTypes: poolTypes as PoolType[],
-      poolVersions: poolVersions as PoolVersion[],
+      protocols,
     }),
-    [chainIds, tokenSymbols, incentivizedOnly, sorting, poolTypes, poolVersions]
+    [chainIds, tokenSymbols, incentivizedOnly, sorting, protocols]
   )
 
   const {
@@ -70,7 +69,6 @@ export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady }) => {
     if (isSm && !isMd) {
       setColumnVisibility({
         volume1d: false,
-        network: false,
         rewards: false,
         fees1d: false,
       })
@@ -78,7 +76,6 @@ export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady }) => {
       setColumnVisibility({})
     } else {
       setColumnVisibility({
-        network: false,
         rewards: false,
         liquidityUSD: false,
         fees1d: false,
@@ -87,6 +84,10 @@ export const PoolsTable: FC<{ isReady?: boolean }> = ({ isReady }) => {
   }, [isMd, isSm])
 
   const rowLink = useCallback((row: Pool) => {
+    if (row.type === 'CONCENTRATED_LIQUIDITY_POOL') {
+      return `/pools/${row.id}`
+    }
+
     return `/${row.id}`
   }, [])
 

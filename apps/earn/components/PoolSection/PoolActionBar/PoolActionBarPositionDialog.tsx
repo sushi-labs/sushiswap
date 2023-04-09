@@ -70,7 +70,7 @@ export const PoolActionBarPositionDialog: FC<PoolActionBarPositionDialogProps> =
                   {underlying0?.toSignificant(6)} {token0.symbol}
                 </Typography>
               </div>
-              <Typography variant="xs" weight={500} className="text-slate-400">
+              <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
                 {formatUSD(value0)}
               </Typography>
             </div>
@@ -81,7 +81,7 @@ export const PoolActionBarPositionDialog: FC<PoolActionBarPositionDialogProps> =
                   {underlying1?.toSignificant(6)} {token1.symbol}
                 </Typography>
               </div>
-              <Typography variant="xs" weight={500} className="text-slate-400">
+              <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
                 {formatUSD(value1)}
               </Typography>
             </div>
@@ -120,7 +120,7 @@ export const PoolActionBarPositionDialog: FC<PoolActionBarPositionDialogProps> =
                   {stakedUnderlying0?.toSignificant(6)} {token0.symbol}
                 </Typography>
               </div>
-              <Typography variant="xs" weight={500} className="text-slate-400">
+              <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
                 {formatUSD(stakedValue0)}
               </Typography>
             </div>
@@ -131,7 +131,7 @@ export const PoolActionBarPositionDialog: FC<PoolActionBarPositionDialogProps> =
                   {stakedUnderlying1?.toSignificant(6)} {token1.symbol}
                 </Typography>
               </div>
-              <Typography variant="xs" weight={500} className="text-slate-400">
+              <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
                 {formatUSD(stakedValue1)}
               </Typography>
             </div>

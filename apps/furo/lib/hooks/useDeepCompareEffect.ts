@@ -4,7 +4,7 @@
  */
 import cloneDeep from 'lodash.clonedeep'
 import React from 'react'
-import { deepEqual } from 'wagmi'
+import { deepEqual } from '@sushiswap/wagmi'
 
 export function useDeepCompareMemoize<T>(value: T) {
   const ref = React.useRef<T>(value)

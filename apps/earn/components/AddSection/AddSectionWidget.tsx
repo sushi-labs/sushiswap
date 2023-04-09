@@ -64,7 +64,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                           <ChevronDownIcon
                             width={24}
                             height={24}
-                            className="group-hover:text-slate-200 text-slate-300"
+                            className="text-gray-700 hover:text-gray-800 dark:group-hover:text-slate-200 dark:text-slate-300"
                           />
                         </div>
                       </div>
@@ -99,11 +99,11 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                     tokenMap={tokenMap}
                   />
                   <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
-                    <div className="group bg-slate-700 p-0.5 border-2 border-slate-800 transition-all rounded-full">
+                    <div className="group dark:bg-slate-700 p-0.5 dark:border-2 dark:border-slate-800 transition-all rounded-full">
                       <PlusIcon width={16} height={16} />
                     </div>
                   </div>
-                  <div className="bg-slate-800">
+                  <div className="dark:bg-slate-800 bg-white">
                     <Web3Input.Currency
                       className="p-3 !pb-1"
                       value={input1}

@@ -1,6 +1,6 @@
 import { providers, Wallet } from 'ethers'
-import { Chain } from 'wagmi'
-import { foundry, goerli, mainnet, optimism, polygon } from 'wagmi/chains'
+import { Chain } from '@sushiswap/wagmi'
+import { foundry, goerli, mainnet, optimism, polygon } from '@sushiswap/wagmi/chains'
 export function getNetwork(chain: Chain) {
   return {
     chainId: chain.id,

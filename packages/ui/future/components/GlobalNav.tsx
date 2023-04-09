@@ -10,6 +10,7 @@ import { SushiIcon } from './icons'
 import { MaxWidth } from '../../container'
 import Container from './Container'
 import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
+import { useRouter } from 'next/router'
 
 const ITEMS = [
   {

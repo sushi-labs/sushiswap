@@ -1,0 +1,25 @@
+{
+  "extends": ["//"],
+  "pipeline": {
+    "build": {
+      "outputs": [".next/**"],
+      "dependsOn": ["^build"],
+      "env": [
+        "ALCHEMY_ID",
+        "SWAP_API_V0_BASE_URL",
+        "POOLS_API_V0_BASE_URL",
+        "TOKENS_API_V0_BASE_URL"
+      ],
+      "cache": true
+    },
+    "check": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
+    "sitemap": {
+      "outputs": ["public/sitemap.xml", "public/sitemap-*.xml", "public/robots.txt"],
+      "dependsOn": ["build"],
+      "cache": true
+    }
+  }
+}

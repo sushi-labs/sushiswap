@@ -20,6 +20,7 @@ import {
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { useERC20Allowance } from './useERC20Allowance'
+import { ConfirmationDialogState } from '@sushiswap/ui/dialog/ConfirmationDialog'
 
 export enum ApprovalState {
   LOADING = 'LOADING',
@@ -37,6 +38,7 @@ export function useERC20ApproveCallback(
 ): [ApprovalState, () => void] {
   const { address } = useAccount()
   const { data: signer } = useSigner()
+  const [isPending, setIsPending] = useState(false)
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined, e: Error | null) => {
@@ -74,23 +76,26 @@ export function useERC20ApproveCallback(
     request,
   })
 
-  const {
-    sendTransaction,
-    data,
-    isLoading: isWritePending,
-  } = useSendTransaction({
+  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({
     ...config,
     onSettled,
+    onSuccess: (data) => {
+      data.wait().then(() => {
+        setIsPending(false)
+      })
+    },
   })
 
-  const { isLoading: isWaitPending } = useWaitForTransaction({
-    hash: data?.hash,
-  })
+  const execute = useCallback(() => {
+    const promise = sendTransactionAsync?.()
+    if (promise) promise.then(() => setIsPending(true))
+  }, [sendTransactionAsync])
 
   const token = useMemo(
     () => (amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined),
     [amountToApprove?.currency]
   )
+
   const { data: currentAllowance, isLoading } = useERC20Allowance(watch, token, address ?? undefined, spender)
 
   // check the current approval status
@@ -98,14 +103,14 @@ export function useERC20ApproveCallback(
     if (isLoading) return ApprovalState.LOADING
     if (!amountToApprove || !spender) return ApprovalState.UNKNOWN
     if (amountToApprove.currency.isNative) return ApprovalState.APPROVED
-    if (isWritePending || isWaitPending) return ApprovalState.PENDING
+    if (isWritePending || isPending) return ApprovalState.PENDING
 
     // We might not have enough data to know whether we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN
 
     // amountToApprove will be defined if currentAllowance is
     return currentAllowance.lessThan(amountToApprove) ? ApprovalState.NOT_APPROVED : ApprovalState.APPROVED
-  }, [amountToApprove, currentAllowance, isLoading, isWaitPending, isWritePending, spender])
+  }, [amountToApprove, currentAllowance, isLoading, isPending, isWritePending, spender])
 
   const tokenContract = useContract({
     address: token?.address ?? AddressZero,
@@ -156,5 +161,5 @@ export function useERC20ApproveCallback(
     void prepare()
   }, [prepare])
 
-  return useMemo(() => [approvalState, () => sendTransaction?.()], [approvalState, sendTransaction])
+  return useMemo(() => [approvalState, execute], [approvalState, execute])
 }
