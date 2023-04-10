@@ -29,9 +29,11 @@ contract RouteProcessor2 is Ownable {
   IBentoBoxMinimal public immutable bentoBox;
   address private lastCalledPool;
 
-  uint private unlocked = 1;
+  uint8 private unlocked = 1;
+  uint8 private paused = 1;
   modifier lock() {
       require(unlocked == 1, 'RouteProcessor is locked');
+      require(paused == 1, 'RouteProcessor is paused');
       unlocked = 2;
       _;
       unlocked = 1;
@@ -43,11 +45,11 @@ contract RouteProcessor2 is Ownable {
   }
 
   function pause() external onlyOwner {
-    unlocked = 2;
+    paused = 2;
   }
 
   function resume() external onlyOwner {
-    unlocked = 1;
+    paused = 1;
   }
 
   /// @notice For native unwrapping
