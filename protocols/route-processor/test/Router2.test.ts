@@ -1,4 +1,3 @@
-import { Provider } from '@ethersproject/providers'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
@@ -31,6 +30,7 @@ import {
   RPool,
   StableSwapRPool,
   toShareBN,
+  UniV3Pool,
 } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'
@@ -130,6 +130,8 @@ export async function checkPoolsState(pools: Map<string, PoolCode>, env: TestEnv
       expectCloseValues(pool.base, totals[1], 1e-10, 10, `BentoBridge ${pool.token1.symbol} base`)
     } else if (pool instanceof BridgeUnlimited) {
       // native - skip
+    } else if (pool instanceof UniV3Pool) {
+      // TODO: add pool check
     } else {
       console.log('Unknown pool: ', pool.address)
     }
@@ -468,7 +470,6 @@ describe('End-to-end Router2 test', async function () {
         env.dataFetcher.startDataFetching([LiquidityProviders.SushiSwap, LiquidityProviders.Trident])
       }
     })
-
   }
 
   function getNextToken(rnd: () => number, previousTokenIndex: number): number {
