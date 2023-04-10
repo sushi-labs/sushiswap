@@ -10,14 +10,12 @@ import { SushiIcon } from './icons'
 import { MaxWidth } from '../../container'
 import Container from './Container'
 import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
-import { useRouter } from 'next/router'
 
 const ITEMS = [
   {
     label: 'Core',
     items: [
       { type: AppType.Swap, subtitle: 'The easiest way to trade' },
-      // { type: AppType.xSwap, subtitle: 'Cross-chain swapping made easy' },
       { type: AppType.Earn, subtitle: 'Earn fees by providing liquidity' },
     ],
   },
