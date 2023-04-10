@@ -63,10 +63,7 @@ async function makeSwap(
 
 describe('Celo RP2', async () => {
   const chainId = ChainId.CELO
-  const provider = new ethers.providers.JsonRpcProvider(
-    'https://forno.celo.org',
-    42220
-  )
+  const provider = new ethers.providers.JsonRpcProvider('https://forno.celo.org', 42220)
   const client = createPublicClient({
     chain: {
       ...hardhat,
