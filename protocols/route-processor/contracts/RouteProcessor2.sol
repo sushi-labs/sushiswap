@@ -26,6 +26,15 @@ contract RouteProcessor2 is Ownable {
   using SafeERC20 for IERC20;
   using InputStream for uint256;
 
+  event Route(
+    address indexed from, 
+    address to, 
+    address indexed tokenIn, 
+    address indexed tokenOut, 
+    uint amountIn, 
+    uint amountOut
+  );
+
   IBentoBoxMinimal public immutable bentoBox;
   address private lastCalledPool;
 
@@ -130,6 +139,8 @@ contract RouteProcessor2 is Ownable {
     require(balanceOutFinal >= balanceOutInitial + amountOutMin, 'RouteProcessor: Minimal ouput balance violation');
 
     amountOut = balanceOutFinal - balanceOutInitial;
+
+    emit Route(msg.sender, to, tokenIn, tokenOut, amountIn, amountOut);
   }
 
   /// @notice Processes native coin: call swap for all pools that swap from native coin
