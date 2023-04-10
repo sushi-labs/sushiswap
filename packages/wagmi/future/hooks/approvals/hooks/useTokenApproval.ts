@@ -102,10 +102,12 @@ export const useTokenApproval = ({
 
   return useMemo(() => {
     let state = ApprovalState.UNKNOWN
+    if (amount?.currency.isNative) state = ApprovalState.APPROVED
     if (pending) state = ApprovalState.PENDING
     else if (isAllowanceLoading) state = ApprovalState.LOADING
     else if (allowance && amount && allowance.lessThan(amount)) state = ApprovalState.NOT_APPROVED
     else if (allowance && amount && allowance.greaterThan(amount)) state = ApprovalState.APPROVED
+    else if (allowance && amount && allowance.equalTo(amount)) state = ApprovalState.APPROVED
 
     return [state, execute]
   }, [allowance, amount, execute, isAllowanceLoading, pending])
