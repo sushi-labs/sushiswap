@@ -1,6 +1,6 @@
 import { Popover, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
-import { ChevronDoubleDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { ChevronDoubleDownIcon } from '@heroicons/react/24/outline'
 import { Button, ButtonProps } from '@sushiswap/ui/future/components/button'
 import {
   CoinbaseWalletIcon,
@@ -12,8 +12,9 @@ import {
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Loader } from '@sushiswap/ui/future/components/Loader'
 import React, { Fragment, useCallback, useMemo } from 'react'
-import { useConnect } from 'wagmi'
+import { useAccount, useConnect, useNetwork } from 'wagmi'
 import { classNames } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui/future/components/Dots'
 
 const Icons: Record<string, React.ElementType> = {
   Injected: ChevronDoubleDownIcon,
@@ -33,6 +34,7 @@ export type Props<C extends React.ElementType> = ButtonProps<C> & {
 
 export const ConnectButton = <C extends React.ElementType>({ hack, children, hideChevron, ...rest }: Props<C>) => {
   const { connectors, connect, pendingConnector } = useConnect()
+  const { isConnecting } = useAccount()
 
   const onSelect = useCallback(
     (connectorId: string) => {
@@ -56,10 +58,16 @@ export const ConnectButton = <C extends React.ElementType>({ hack, children, hid
 
   // Pending confirmation state
   // Awaiting wallet confirmation
-  if (pendingConnector) {
+  if (pendingConnector && isConnecting) {
     return (
-      <Button endIcon={<Loader />} variant="filled" color="blue" disabled {...rest}>
-        Authorize Wallet
+      <Button
+        disabled={true}
+        size={rest.size}
+        variant={rest.variant}
+        fullWidth={rest.fullWidth}
+        className={rest.className}
+      >
+        <Dots>Authorize Wallet</Dots>
       </Button>
     )
   }
