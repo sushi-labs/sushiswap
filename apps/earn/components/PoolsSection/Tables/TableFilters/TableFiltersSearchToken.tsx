@@ -5,7 +5,7 @@ import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { Search } from '@sushiswap/ui/future/components/input/Search'
 
 export const TableFiltersSearchToken: FC = () => {
-  const { setFilters } = usePoolFilters()
+  const { tokenSymbols, setFilters } = usePoolFilters()
 
   const [_query, setQuery] = useState<string>('')
   const [_extraQuery, setExtraQuery] = useState<string>('')
@@ -15,12 +15,12 @@ export const TableFiltersSearchToken: FC = () => {
   const debouncedExtraQuery = useDebounce(_extraQuery, 400)
 
   useEffect(() => {
-    if (!(debouncedExtraQuery || debouncedQuery)) {
+    if (!(debouncedExtraQuery || debouncedQuery) && tokenSymbols) {
       setFilters({ tokenSymbols: undefined })
     } else {
       setFilters({ tokenSymbols: [debouncedQuery, debouncedExtraQuery].filter((query) => query !== '') })
     }
-  }, [_extraQuery, _query, debouncedExtraQuery, debouncedQuery, setFilters])
+  }, [_extraQuery, _query, debouncedExtraQuery, debouncedQuery, setFilters, tokenSymbols])
 
   useEffect(() => {
     if (!extra) {
