@@ -14,7 +14,7 @@ const nextConfig = {
   eslint: {
     dirs: ['pages', 'components', 'lib', 'app', 'types', 'ui'],
   },
-  transpilePackages: ['@sushiswap/graph-client', '@sushiswap/ui', '@sushiswap/wagmi'],
+  transpilePackages: ['@sushiswap/ui', '@sushiswap/wagmi'],
   async redirects() {
     return [
       {

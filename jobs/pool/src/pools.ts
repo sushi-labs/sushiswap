@@ -11,7 +11,7 @@ import {
 } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
-import {getBuiltGraphSDK, OneDayBlocksQuery, PairsQuery, V3PoolsQuery } from '../.graphclient/index.js'
+import { getBuiltGraphSDK, OneDayBlocksQuery, PairsQuery, V3PoolsQuery } from '../.graphclient/index.js'
 import { mergePools } from './etl/pool/index.js'
 import { filterPools } from './etl/pool/index.js'
 import { createTokens } from './etl/token/load.js'
@@ -40,7 +40,7 @@ if (FIRST_TIME_SEED) {
 export async function execute() {
   try {
     const startTime = performance.now()
-    console.log(`Preparing to load pools/tokens`)
+    console.log('Preparing to load pools/tokens')
 
     // EXTRACT
     const exchanges = await extract()
@@ -99,7 +99,8 @@ async function extract() {
       name: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
       version: PoolVersion.V3,
     })),
-  ].flat()
+  ]
+    .flat()
 
   const sdk = getBuiltGraphSDK()
   const oneDayBlocks = await sdk.OneDayBlocks({ chainIds: SUSHISWAP_V3_ENABLED_NETWORKS })
@@ -148,8 +149,10 @@ async function fetchLegacyOrTridentPairs(config: SubgraphConfig) {
         first: 1000,
         where,
       })
-      .catch((e: any) => {
-        console.error(e.message)
+      .catch((e: unknown) => {
+        if (e instanceof Error) {
+          console.error(e.message)
+        }
         return undefined
       })
     const newCursor = request?.pairs.length === 1000 ? request?.pairs[request.pairs.length - 1]?.id : ''
@@ -181,8 +184,10 @@ async function fetchV3Pools(config: SubgraphConfig, blockNumber?: number) {
         where,
         block,
       })
-      .catch((e: any) => {
-        console.error(e.message)
+      .catch((e: unknown) => {
+        if (e instanceof Error) {
+          console.error(e.message)
+        }
         return undefined
       })
     const newCursor = request?.pools.length === 1000 ? request?.pools[request.pools.length - 1]?.id : ''
@@ -242,83 +247,81 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
   const yesterday = new Date(Date.now() - 86400000)
   const unix24hAgo = Math.floor(yesterday.getTime() / 1000)
   const tokens: Prisma.TokenCreateManyInput[] = []
-  const poolsTransformed = queryResult.data.currentPools
-    .map((batch) => {
-      if (!batch?.pairs) return []
-      return batch?.pairs.map((pair) => {
-        tokens.push(
-          Prisma.validator<Prisma.TokenCreateManyInput>()({
-            id: queryResult.chainId.toString().concat(':').concat(pair.token0.id),
-            address: pair.token0.id,
-            chainId: queryResult.chainId,
-            name: pair.token0.name,
-            symbol: pair.token0.symbol,
-            decimals: Number(pair.token0.decimals),
-          })
-        )
-        tokens.push(
-          Prisma.validator<Prisma.TokenCreateManyInput>()({
-            id: queryResult.chainId.toString().concat(':').concat(pair.token1.id),
-            address: pair.token1.id,
-            chainId: queryResult.chainId,
-            name: pair.token1.name,
-            symbol: pair.token1.symbol,
-            decimals: Number(pair.token1.decimals),
-          })
-        )
-        const isAprValid = Number(pair.aprUpdatedAtTimestamp) > unix24hAgo
-        const feeApr = isAprValid ? Number(pair.apr) : 0
-        const regex = /([^\w ]|_|-)/g
-        const name = pair.token0.symbol
-          .replace(regex, '')
-          .slice(0, 15)
-          .concat('-')
-          .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
-        let version: PoolVersion
-        if (pair.source == PoolVersion.LEGACY) {
-          version = PoolVersion.LEGACY
-        } else if (pair.source == PoolVersion.TRIDENT) {
-          version = PoolVersion.TRIDENT
-        } else {
-          throw new Error('Unknown pool version')
-        }
-        let type: PoolType
-
-        if (pair.type == PoolType.CONSTANT_PRODUCT_POOL) {
-          type = PoolType.CONSTANT_PRODUCT_POOL
-        } else if (pair.type == PoolType.STABLE_POOL) {
-          type = PoolType.STABLE_POOL
-        } else {
-          throw new Error('Unknown pool type')
-        }
-
-        return Prisma.validator<Prisma.SushiPoolCreateManyInput>()({
-          id: queryResult.chainId.toString().concat(':').concat(pair.id),
-          address: pair.id,
-          name: name,
-          version,
-          type,
+  const poolsTransformed = queryResult.data.currentPools.flatMap((batch) => {
+    if (!batch?.pairs) return []
+    return batch?.pairs.flatMap((pair) => {
+      tokens.push(
+        Prisma.validator<Prisma.TokenCreateManyInput>()({
+          id: queryResult.chainId.toString().concat(':').concat(pair.token0.id),
+          address: pair.token0.id,
           chainId: queryResult.chainId,
-          swapFee: Number(pair.swapFee) / 10_000,
-          twapEnabled: pair.twapEnabled,
-          token0Id: queryResult.chainId.toString().concat(':').concat(pair.token0.id.toLowerCase()),
-          token1Id: queryResult.chainId.toString().concat(':').concat(pair.token1.id.toLowerCase()),
-          reserve0: pair.reserve0,
-          reserve1: pair.reserve1,
-          totalSupply: pair.liquidity,
-          feeApr,
-          liquidityUSD: pair.liquidityUSD,
-          liquidityNative: pair.liquidityNative,
-          volumeUSD: pair.volumeUSD,
-          volumeNative: pair.volumeNative,
-          token0Price: pair.token0Price,
-          token1Price: pair.token1Price,
-          totalApr: feeApr,
-          createdAtBlockNumber: BigInt(pair.createdAtBlock),
+          name: pair.token0.name,
+          symbol: pair.token0.symbol,
+          decimals: Number(pair.token0.decimals),
         })
-      })
+      )
+      tokens.push(
+        Prisma.validator<Prisma.TokenCreateManyInput>()({
+          id: queryResult.chainId.toString().concat(':').concat(pair.token1.id),
+          address: pair.token1.id,
+          chainId: queryResult.chainId,
+          name: pair.token1.name,
+          symbol: pair.token1.symbol,
+          decimals: Number(pair.token1.decimals),
+        })
+      )
+      const isAprValid = Number(pair.aprUpdatedAtTimestamp) > unix24hAgo && !isNaN(Number(pair.apr))
+      const feeApr = isAprValid ? Number(pair.apr) : 0
+      const regex = /([^\w ]|_|-)/g
+      const name = pair.token0.symbol
+        .replace(regex, '')
+        .slice(0, 15)
+        .concat('-')
+        .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
+      let version: PoolVersion
+      if (pair.source === PoolVersion.LEGACY) {
+        version = PoolVersion.LEGACY
+      } else if (pair.source === PoolVersion.TRIDENT) {
+        version = PoolVersion.TRIDENT
+      } else {
+        throw new Error('Unknown pool version')
+      }
+      let type: PoolType
+
+      if (pair.type === PoolType.CONSTANT_PRODUCT_POOL) {
+        type = PoolType.CONSTANT_PRODUCT_POOL
+      } else if (pair.type === PoolType.STABLE_POOL) {
+        type = PoolType.STABLE_POOL
+      } else {
+        throw new Error('Unknown pool type')
+      }
+
+      return {
+        id: queryResult.chainId.toString().concat(':').concat(pair.id),
+        address: pair.id,
+        name: name,
+        version,
+        type,
+        chainId: queryResult.chainId,
+        swapFee: Number(pair.swapFee) / 10_000,
+        twapEnabled: pair.twapEnabled,
+        token0Id: queryResult.chainId.toString().concat(':').concat(pair.token0.id.toLowerCase()),
+        token1Id: queryResult.chainId.toString().concat(':').concat(pair.token1.id.toLowerCase()),
+        reserve0: pair.reserve0,
+        reserve1: pair.reserve1,
+        totalSupply: pair.liquidity,
+        feeApr,
+        liquidityUSD: pair.liquidityUSD,
+        liquidityNative: pair.liquidityNative,
+        volumeUSD: pair.volumeUSD,
+        volumeNative: pair.volumeNative,
+        token0Price: pair.token0Price,
+        token1Price: pair.token1Price,
+        totalApr: feeApr,
+        createdAtBlockNumber: BigInt(pair.createdAtBlock),
+      } satisfies Prisma.SushiPoolCreateManyInput
     })
-    .flat() as Prisma.SushiPoolCreateManyInput[]
+  })
 
   return { pools: poolsTransformed, tokens }
 }
@@ -333,70 +336,71 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
   }
 
   const tokens: Prisma.TokenCreateManyInput[] = []
-  const poolsTransformed = queryResult.data.currentPools
-    .map((batch) => {
-      if (!batch?.pools) return []
-      return batch?.pools.map((pair) => {
-        tokens.push(
-          Prisma.validator<Prisma.TokenCreateManyInput>()({
-            id: queryResult.chainId.toString().concat(':').concat(pair.token0.id),
-            address: pair.token0.id,
-            chainId: queryResult.chainId,
-            name: pair.token0.name,
-            symbol: pair.token0.symbol,
-            decimals: Number(pair.token0.decimals),
-          })
-        )
-        tokens.push(
-          Prisma.validator<Prisma.TokenCreateManyInput>()({
-            id: queryResult.chainId.toString().concat(':').concat(pair.token1.id),
-            address: pair.token1.id,
-            chainId: queryResult.chainId,
-            name: pair.token1.name,
-            symbol: pair.token1.symbol,
-            decimals: Number(pair.token1.decimals),
-          })
-        )
-        const regex = /([^\w ]|_|-)/g
-        const name = pair.token0.symbol
-          .replace(regex, '')
-          .slice(0, 15)
-          .concat('-')
-          .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
-        const swapFee = Number(pair.feeTier) / 1_000_000
-        const feeApr = aprParams.has(pair.id)
-          ? calculateFeeApr(aprParams.get(pair.id), pair.feesUSD, pair.totalValueLockedUSD)
-          : 0
-        return Prisma.validator<Prisma.SushiPoolCreateManyInput>()({
-          id: queryResult.chainId.toString().concat(':').concat(pair.id),
-          address: pair.id,
-          name: name,
-          version: PoolVersion.V3,
-          type: PoolType.CONCENTRATED_LIQUIDITY_POOL,
+  const poolsTransformed = queryResult.data.currentPools.flatMap((batch) => {
+    if (!batch?.pools) return []
+    return batch?.pools.flatMap((pair) => {
+      tokens.push(
+        Prisma.validator<Prisma.TokenCreateManyInput>()({
+          id: queryResult.chainId.toString().concat(':').concat(pair.token0.id),
+          address: pair.token0.id,
           chainId: queryResult.chainId,
-          swapFee,
-          twapEnabled: true,
-          token0Id: queryResult.chainId.toString().concat(':').concat(pair.token0.id.toLowerCase()),
-          token1Id: queryResult.chainId.toString().concat(':').concat(pair.token1.id.toLowerCase()),
-          reserve0: (pair.totalValueLockedToken0 ** pair.token0.decimals).toFixed(0).toString(),
-          reserve1: (pair.totalValueLockedToken1 ** pair.token1.decimals).toFixed(0).toString(),
-          totalSupply: pair.liquidity,
-          feeApr,
-          liquidityUSD: pair.totalValueLockedUSD,
-          liquidityNative: pair.totalValueLockedETH,
-          volumeUSD: pair.volumeUSD,
-          volumeNative: 0, // DOES NOT EXIST IN V3 subgraph
-          token0Price: pair.token0Price,
-          token1Price: pair.token1Price,
-          totalApr: feeApr,
-          createdAtBlockNumber: BigInt(pair.createdAtBlockNumber),
+          name: pair.token0.name,
+          symbol: pair.token0.symbol,
+          decimals: Number(pair.token0.decimals),
         })
-      })
+      )
+      tokens.push(
+        Prisma.validator<Prisma.TokenCreateManyInput>()({
+          id: queryResult.chainId.toString().concat(':').concat(pair.token1.id),
+          address: pair.token1.id,
+          chainId: queryResult.chainId,
+          name: pair.token1.name,
+          symbol: pair.token1.symbol,
+          decimals: Number(pair.token1.decimals),
+        })
+      )
+      const regex = /([^\w ]|_|-)/g
+      const name = pair.token0.symbol
+        .replace(regex, '')
+        .slice(0, 15)
+        .concat('-')
+        .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
+      const swapFee = Number(pair.feeTier) / 1_000_000
+      const feeApr = aprParams.has(pair.id)
+        ? calculateFeeApr(aprParams.get(pair.id), pair.feesUSD, pair.totalValueLockedUSD)
+        : 0
+      return {
+        id: queryResult.chainId.toString().concat(':').concat(pair.id),
+        address: pair.id,
+        name: name,
+        version: PoolVersion.V3,
+        type: PoolType.CONCENTRATED_LIQUIDITY_POOL,
+        chainId: queryResult.chainId,
+        swapFee,
+        twapEnabled: true,
+        token0Id: queryResult.chainId.toString().concat(':').concat(pair.token0.id.toLowerCase()),
+        token1Id: queryResult.chainId.toString().concat(':').concat(pair.token1.id.toLowerCase()),
+        reserve0: (pair.totalValueLockedToken0 ** pair.token0.decimals).toFixed(0).toString(),
+        reserve1: (pair.totalValueLockedToken1 ** pair.token1.decimals).toFixed(0).toString(),
+        totalSupply: pair.liquidity,
+        feeApr,
+        liquidityUSD: pair.totalValueLockedUSD,
+        liquidityNative: pair.totalValueLockedETH,
+        volumeUSD: pair.volumeUSD,
+        volumeNative: 0, // DOES NOT EXIST IN V3 subgraph
+        token0Price: pair.token0Price,
+        token1Price: pair.token1Price,
+        totalApr: feeApr,
+        createdAtBlockNumber: BigInt(pair.createdAtBlockNumber),
+      } satisfies Prisma.SushiPoolCreateManyInput
     })
-    .flat() as Prisma.SushiPoolCreateManyInput[]
+  })
 
   return { pools: poolsTransformed, tokens }
 }
 
-const calculateFeeApr = (historicalFee: number, currentFee: number, currentLiquidityUSD) =>
-  ((currentFee - historicalFee) * 365) / currentLiquidityUSD
+const calculateFeeApr = (historicalFee: number, currentFee: number, currentLiquidityUSD) => {
+  if (Number(currentLiquidityUSD) === 0) return 0
+
+  return ((currentFee - historicalFee) * 365) / currentLiquidityUSD
+}

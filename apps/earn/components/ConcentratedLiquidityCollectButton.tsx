@@ -4,11 +4,12 @@ import { createToast } from '@sushiswap/ui/future/components/toast'
 import { TransactionRequest } from '@ethersproject/providers'
 import { JSBI } from '@sushiswap/math'
 import { Amount, Type } from '@sushiswap/currency'
-import { NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
+import { isV3ChainId, NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
 import { _useSendTransaction as useSendTransaction } from '@sushiswap/wagmi'
 import { ChainId } from '@sushiswap/chain'
 import { ConcentratedLiquidityPosition } from '@sushiswap/wagmi/future/hooks'
 import { unwrapToken } from '../lib/functions'
+import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
 
 interface ConcentratedLiquidityCollectButton {
   positionDetails: ConcentratedLiquidityPosition | undefined
@@ -54,7 +55,7 @@ export const ConcentratedLiquidityCollectButton: FC<ConcentratedLiquidityCollect
 
   const prepare = useCallback(
     async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (token0 && token1 && position && account && positionDetails) {
+      if (token0 && token1 && position && account && positionDetails && isV3ChainId(chainId)) {
         const feeValue0 = positionDetails.fees
           ? Amount.fromRawAmount(token0, JSBI.BigInt(positionDetails.fees[0]))
           : undefined
@@ -70,8 +71,7 @@ export const ConcentratedLiquidityCollectButton: FC<ConcentratedLiquidityCollect
         })
 
         setRequest({
-          // TODO make dynamic NonfungiblePositionManager address
-          to: '0xF0cBce1942A68BEB3d1b73F0dd86C8DCc363eF49',
+          to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
           data: calldata,
           value,
         })

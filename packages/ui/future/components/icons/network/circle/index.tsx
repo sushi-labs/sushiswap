@@ -25,6 +25,7 @@ import { OptimismCircle } from './OptimismCircle'
 import { PalmCircle } from './PalmCircle'
 import { PolygonCircle } from './PolygonCircle'
 import { TelosCircle } from './TelosCircle'
+import { PolygonZKCircle } from './PolygonZKCircle'
 
 export * from './ArbitrumCircle'
 export * from './ArbitrumNovaCircle'
@@ -50,6 +51,7 @@ export * from './OptimismCircle'
 export * from './PalmCircle'
 export * from './PolygonCircle'
 export * from './TelosCircle'
+export * from './PolygonZKCircle'
 
 export const NETWORK_CIRCLE_ICON: Record<number, (props: React.ComponentProps<'svg'>) => JSX.Element> = {
   [ChainId.ETHEREUM]: EthereumCircle,
@@ -76,4 +78,5 @@ export const NETWORK_CIRCLE_ICON: Record<number, (props: React.ComponentProps<'s
   [ChainId.BOBA_AVAX]: BobaAvaxCircle,
   [ChainId.BOBA_BNB]: BobaBNBCircle,
   [ChainId.BTTC]: BttcCircle,
+  [ChainId.POLYGON_ZKEVM]: PolygonZKCircle,
 }

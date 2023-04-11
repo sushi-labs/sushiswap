@@ -1,7 +1,7 @@
 import { chainShortName } from '@sushiswap/chain'
 
-import type { Pair } from '../.graphclient'
-import type { Incentive } from '../lib/incentives'
+import type { Pair } from '../.graphclient/index.js'
+import type { Incentive } from '../lib/incentives.js'
 
 export function transformPair({
   pair,

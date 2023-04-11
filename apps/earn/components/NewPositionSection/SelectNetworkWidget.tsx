@@ -3,7 +3,7 @@ import { ChainId, chainName } from '@sushiswap/chain'
 import { classNames, NetworkIcon } from '@sushiswap/ui'
 import React, { FC, memo } from 'react'
 
-import { SUPPORTED_CHAIN_IDS } from '../../config'
+import { V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { NetworkSelector } from '@sushiswap/ui/future/components/networkselector'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { ChevronDownIcon } from '@heroicons/react/solid'
@@ -28,7 +28,7 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function S
     >
       <div className="flex relative z-[100]">
         <NetworkSelector
-          networks={SUPPORTED_CHAIN_IDS}
+          networks={V3_SUPPORTED_CHAIN_IDS}
           selected={selectedNetwork}
           onSelect={onSelect}
           variant="menu"
@@ -37,7 +37,7 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function S
           {({ open }) => (
             <Popover.Button as={Button} variant="outlined" color="default" size="xl" className="!font-medium">
               <NetworkIcon chainId={selectedNetwork} width={20} height={20} />
-              <div>{chainName?.[selectedNetwork]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}</div>
+              <div>{chainName?.[selectedNetwork]}</div>
               <ChevronDownIcon
                 width={24}
                 height={24}

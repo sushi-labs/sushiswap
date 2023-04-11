@@ -1,24 +1,14 @@
 import { Token, Type } from '@sushiswap/currency'
-import { computePoolAddress, FeeAmount, Pool } from '@sushiswap/v3-sdk'
+import { computePoolAddress, FeeAmount, Pool, V3ChainId } from '@sushiswap/v3-sdk'
 import { JSBI } from '@sushiswap/math'
 import { Address, readContracts } from 'wagmi'
-import { ChainId } from '@sushiswap/chain'
-
-// TODO: MAKE DYNAMIC
-const v3CoreFactoryAddress = '0x1af415a1EbA07a4986a52B6f2e7dE7003D82231e'
-
-export enum ConcentratedLiquidityPoolState {
-  LOADING,
-  NOT_EXISTS,
-  EXISTS,
-  INVALID,
-}
+import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
 
 export const getConcentratedLiquidityPools = async ({
   chainId,
   poolKeys,
 }: {
-  chainId: ChainId
+  chainId: V3ChainId
   poolKeys: [Type | undefined, Type | undefined, FeeAmount | undefined][]
 }): Promise<(Pool | null)[]> => {
   let poolTokens: ([Token, Token, FeeAmount] | undefined)[]
@@ -37,21 +27,16 @@ export const getConcentratedLiquidityPools = async ({
     })
   }
 
-  let poolAddresses: (string | undefined)[]
-  if (!v3CoreFactoryAddress) {
-    poolAddresses = new Array(poolTokens.length)
-  } else {
-    poolAddresses = poolTokens.map(
-      (value) =>
-        value &&
-        computePoolAddress({
-          factoryAddress: v3CoreFactoryAddress,
-          tokenA: value[0],
-          tokenB: value[1],
-          fee: value[2],
-        })
-    )
-  }
+  const poolAddresses = poolTokens.map(
+    (value) =>
+      value &&
+      computePoolAddress({
+        factoryAddress: getV3FactoryContractConfig(chainId).address,
+        tokenA: value[0],
+        tokenB: value[1],
+        fee: value[2],
+      })
+  )
 
   const slot0s = await readContracts({
     contracts: poolAddresses.map(
@@ -126,7 +111,7 @@ export const getConcentratedLiquidityPool = async ({
   token1,
   feeAmount,
 }: {
-  chainId: ChainId
+  chainId: V3ChainId
   token0: Type | undefined
   token1: Type | undefined
   feeAmount: FeeAmount | undefined

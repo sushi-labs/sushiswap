@@ -5,11 +5,9 @@ import Link from 'next/link'
 import { ArrowLeftIcon, ChartBarIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
-import { ChainId } from '@sushiswap/chain'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
 import { useConcentratedLiquidityPool, useConcentratedLiquidityPoolReserves } from '@sushiswap/wagmi/future/hooks'
 import { classNames } from '@sushiswap/ui'
-import { Token } from '@sushiswap/currency'
 import { ConcentratedLiquidityWidget } from '../../../components/ConcentratedLiquidityWidget'
 import { ConcentratedLiquidityProvider } from '../../../components/ConcentratedLiquidityProvider'
 import { Button } from '@sushiswap/ui/future/components/button'
@@ -25,8 +23,11 @@ import { Currency } from '@sushiswap/ui/future/components/currency'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { useTokenAmountDollarValues } from '../../../lib/hooks'
 import { formatUSD } from '@sushiswap/format'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
+import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
+import { isAddress } from 'ethers/lib/utils'
+import { unwrapToken } from '../../../lib/functions'
+import { usePreviousRoute } from '../../../components/HistoryProvider'
 
 enum Granularity {
   Day,
@@ -51,7 +52,13 @@ const queryParamsSchema = z.object({
     })
     .transform((val) => {
       const [chainId, poolId] = val.split(':')
-      return [+chainId, poolId] as [ChainId, string]
+      return [+chainId, poolId] as [V3ChainId, string]
+    })
+    .refine(([chainId]) => isV3ChainId(chainId), {
+      message: 'ChainId not supported.',
+    })
+    .refine(([, poolId]) => isAddress(poolId), {
+      message: 'PoolId not supported.',
     }),
   activeTab: z.string().optional(),
 })
@@ -65,6 +72,7 @@ enum SelectedTab {
 const Pool: FC = () => {
   const { address } = useAccount()
   const { query } = useRouter()
+  const { path, basePath } = usePreviousRoute()
 
   const {
     poolId: [chainId, poolId],
@@ -82,42 +90,41 @@ const Pool: FC = () => {
   const [granularity, setGranularity] = useState<Granularity>(Granularity.Day)
 
   const { data: poolStats } = useConcentratedLiquidityPoolStats({ poolAddress: poolId })
-  const [token0, token1, feeAmount] = useMemo(() => {
-    if (!poolStats) return [undefined, undefined, undefined]
-    return [
-      new Token({
-        chainId: poolStats.chainId,
-        address: poolStats.token0.address,
-        decimals: poolStats.token0.decimals,
-        name: poolStats.token0.name,
-        symbol: poolStats.token0.symbol,
-      }),
-      new Token({
-        chainId: poolStats.chainId,
-        address: poolStats.token1.address,
-        decimals: poolStats.token1.decimals,
-        name: poolStats.token1.name,
-        symbol: poolStats.token1.symbol,
-      }),
-      poolStats.swapFee * 1000000,
-    ]
-  }, [poolStats])
-
   const { data: pool, isLoading } = useConcentratedLiquidityPool({
     chainId,
-    token0,
-    token1,
-    feeAmount,
+    token0: poolStats?.token0,
+    token1: poolStats?.token1,
+    feeAmount: poolStats?.feeAmount,
   })
 
-  const { data: reserves, isLoading: isReservesLoading } = useConcentratedLiquidityPoolReserves({ pool })
+  const { data: reserves, isLoading: isReservesLoading } = useConcentratedLiquidityPoolReserves({ pool, chainId })
   const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
+  const incentiveAmounts = useMemo(() => poolStats?.incentives.map((el) => el.reward), [poolStats?.incentives])
+  const fiatValuesIncentives = useTokenAmountDollarValues({ chainId, amounts: incentiveAmounts })
+
+  const [_token0, _token1] = useMemo(
+    () => [
+      poolStats?.token0 ? unwrapToken(poolStats.token0) : undefined,
+      poolStats?.token1 ? unwrapToken(poolStats.token1) : undefined,
+    ],
+    [poolStats?.token0, poolStats?.token1]
+  )
+
+  const change1d = 0
+  const change1w = 0
 
   return (
     <SWRConfig>
       <Layout>
         <div className="flex flex-col gap-2">
-          <Link className="group flex gap-4 items-center mb-2" href="/" shallow={true}>
+          <Link
+            className="group flex gap-4 items-center mb-2"
+            href={{
+              pathname: '/',
+              ...(basePath === '/earn' && path?.includes('categories') && { query: path.replace('/?&', '') }),
+            }}
+            shallow={true}
+          >
             <IconButton
               icon={ArrowLeftIcon}
               iconProps={{
@@ -188,8 +195,8 @@ const Pool: FC = () => {
         <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
         <div className={tab === SelectedTab.Analytics ? 'block' : 'hidden'}>
           <div className="grid md:grid-cols-[auto_404px] gap-10">
-            <div className="w-full h-full">
-              <Skeleton.Box className="w-full h-full" />
+            <div className="w-full h-full flex items-center justify-center bg-gray-50 dark:bg-white/[0.02] rounded-xl">
+              <span className="text-gray-600 dark:text-slate-400">Chart is being worked on 👷🍣</span>
             </div>
             <div className="flex flex-col gap-6">
               <List className="pt-0 !gap-1">
@@ -222,7 +229,17 @@ const Pool: FC = () => {
                     <List.KeyValue flex title="Fees">
                       <span className="flex items-center gap-2">
                         {formatUSD(granularity === Granularity.Day ? poolStats.fees1d : poolStats.fees1w)}
-                        <span className="text-green">(+0.00%)</span>
+                        <span
+                          className={
+                            change1d === 0
+                              ? 'text-gray-600 dark:text-slate-400'
+                              : change1d > 0
+                              ? 'text-green'
+                              : 'text-red'
+                          }
+                        >
+                          (0.00%)
+                        </span>
                       </span>
                     </List.KeyValue>
                   ) : (
@@ -232,7 +249,17 @@ const Pool: FC = () => {
                     <List.KeyValue flex title="Volume">
                       <span className="flex items-center gap-2">
                         {formatUSD(granularity === Granularity.Week ? poolStats.volume1d : poolStats.volume1w)}
-                        <span className="text-green">(+0.00%)</span>
+                        <span
+                          className={
+                            change1w === 0
+                              ? 'text-gray-600 dark:text-slate-400'
+                              : change1d > 0
+                              ? 'text-green'
+                              : 'text-red'
+                          }
+                        >
+                          (0.00%)
+                        </span>
                       </span>
                     </List.KeyValue>
                   ) : (
@@ -280,16 +307,20 @@ const Pool: FC = () => {
                   <List.Label>per day</List.Label>
                 </div>
                 <List.Control>
-                  {reserves ? (
-                    <List.KeyValue flex title={`${reserves[1].currency.symbol}`}>
-                      <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                          <Currency.Icon currency={reserves[1].currency} width={18} height={18} />
-                          {reserves[1].toSignificant(4)} {reserves[1].currency.symbol}{' '}
-                          <span className="text-gray-600 dark:text-slate-400">({formatUSD(fiatValues[1])})</span>
+                  {poolStats && poolStats.incentives.length > 0 ? (
+                    poolStats.incentives.map((el, i) => (
+                      <List.KeyValue key={i} flex title={`${el.reward.currency.symbol}`}>
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center gap-2">
+                            <Currency.Icon currency={el.reward.currency} width={18} height={18} />
+                            {el.reward.toSignificant(4)} {el.reward.currency.symbol}{' '}
+                            <span className="text-gray-600 dark:text-slate-400">
+                              ({formatUSD(fiatValuesIncentives[1])})
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    </List.KeyValue>
+                      </List.KeyValue>
+                    ))
                   ) : (
                     <div className="p-6 flex font-normal justify-center items-center text-xs text-center text-gray-500 dark:text-slate-500">
                       This pool only emits fee rewards.
@@ -305,9 +336,9 @@ const Pool: FC = () => {
             <div className="flex">
               <SelectPricesWidget
                 chainId={chainId}
-                token0={token0}
-                token1={token1}
-                feeAmount={feeAmount}
+                token0={_token0}
+                token1={_token1}
+                feeAmount={poolStats?.feeAmount}
                 tokenId={undefined}
               />
             </div>
@@ -322,12 +353,13 @@ const Pool: FC = () => {
                 <ConcentratedLiquidityWidget
                   chainId={chainId}
                   account={address}
-                  token0={token0}
-                  token1={token1}
-                  feeAmount={feeAmount}
+                  token0={_token0}
+                  token1={_token1}
+                  feeAmount={poolStats?.feeAmount}
                   tokensLoading={false}
                   existingPosition={undefined}
                   tokenId={undefined}
+                  successLink={`/earn/pools/${chainId}:${poolId}?activeTab=myPositions`}
                 />
               </ContentBlock>
             </div>
@@ -335,7 +367,7 @@ const Pool: FC = () => {
         </div>
         <div className={classNames('', tab === SelectedTab.ManagePosition ? 'block' : 'hidden')}>
           <PoolsFiltersProvider>
-            <ConcentratedPositionsTable variant="minimal" />
+            <ConcentratedPositionsTable variant="minimal" poolId={poolId} />
           </PoolsFiltersProvider>
         </div>
       </Layout>

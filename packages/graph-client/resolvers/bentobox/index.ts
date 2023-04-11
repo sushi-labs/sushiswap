@@ -1,7 +1,7 @@
-import { Resolvers } from '../../.graphclient'
-import { crossChainBentoBoxKpis } from './crossChainBentoBoxKpis'
-import { crossChainStrategyKpis } from './crossChainStrategyKpis'
-import { rebasesByChainIds } from './rebasesByChainIds'
+import { Resolvers } from '../../.graphclient/index.js'
+import { crossChainBentoBoxKpis } from './crossChainBentoBoxKpis.js'
+import { crossChainStrategyKpis } from './crossChainStrategyKpis.js'
+import { rebasesByChainIds } from './rebasesByChainIds.js'
 
 export const resolvers: Resolvers = {
   BentoBoxKpi: {

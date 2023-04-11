@@ -11,11 +11,11 @@ import {
   TICK_SPACINGS,
   TickMath,
   tickToPrice,
+  V3ChainId,
 } from '@sushiswap/v3-sdk'
 
 import { JSBI, Rounding } from '@sushiswap/math'
 import { Amount, Currency, Price, Token, tryParseAmount, Type } from '@sushiswap/currency'
-import { ChainId } from '@sushiswap/chain'
 import { getTickToPrice, tryParseTick } from '../lib/functions'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 
@@ -167,7 +167,7 @@ export function useConcentratedDerivedMintInfo({
   token0: Type | undefined
   token1: Type | undefined
   baseToken: Type | undefined
-  chainId: ChainId
+  chainId: V3ChainId
   feeAmount: FeeAmount | undefined
   existingPosition?: Position
 }): {
@@ -194,6 +194,7 @@ export function useConcentratedDerivedMintInfo({
   invertPrice: boolean
   ticksAtLimit: { [bound in Bound]?: boolean | undefined }
   isLoading: boolean
+  isInitialLoading: boolean
 } {
   const { independentField, typedValue, leftRangeTypedValue, rightRangeTypedValue, startPriceTypedValue } =
     useConcentratedMintState()

@@ -254,20 +254,28 @@ export class Edge {
     this.spentGas = this.spentGasNew
 
     ASSERT(() => {
+      let precision = 1e-9
+      if (this.pool instanceof StableSwapRPool) {
+        let price = this.pool.calcCurrentPriceWithoutFee(true)
+        if (price < 1) price = 1 / price
+        if (price > 1e8) {
+          // precision degradation for extreme conditions. Almost impossible situation in production
+          precision = 2e-3
+        }
+      }
       if (this.direction) {
         const granularity = this.pool.granularity1()
         return closeValues(
           this.amountOutPrevious / granularity,
           this.pool.calcOutByIn(this.amountInPrevious, this.direction).out / granularity,
-          1e-9
+          precision
         )
       } else {
         const granularity = this.pool.granularity0()
         return closeValues(
           this.amountInPrevious / granularity,
           this.pool.calcOutByIn(this.amountOutPrevious, this.direction).out / granularity,
-          1e-9,
-          `"${this.pool.address}" ${inPrev} ${to?.bestIncome} ${from.bestIncome}`
+          precision
         )
       }
     }, `Error 225`)
@@ -630,10 +638,6 @@ export class Graph {
           bestPath.unshift(v.bestSource)
         }
         DEBUG(() => console.log(debug_info))
-        if (Number.isNaN(finish.bestTotal)) {
-          // eslint-disable-next-line no-debugger
-          debugger
-        }
         return {
           path: bestPath,
           output: finish.bestIncome,
@@ -888,9 +892,6 @@ export class Graph {
         totalOutput += p.totalOutput
         this.addPath(this.getVert(from), this.getVert(to), p.path)
         totalrouted += routeValues[step]
-        // if (step === 0) {
-        //   primaryPrice = this.getPrimaryPriceForPath(this.getVert(from) as Vertice, p.path)
-        // }
       }
     }
     if (step == 0 || output == 0)
@@ -911,13 +912,16 @@ export class Graph {
     if (step < routeValues.length) status = RouteStatus.Partial
     else status = RouteStatus.Success
 
+    const removedEdgesNumber = this.removeEdgesWithLowFlow(0.001)
+
     const fromVert = this.getVert(from) as Vertice
     const toVert = this.getVert(to) as Vertice
     const { legs, gasSpent, topologyWasChanged } = this.getRouteLegs(fromVert, toVert)
     console.assert(gasSpent <= gasSpentInit, 'Internal Error 491')
 
-    if (topologyWasChanged) {
-      output = this.calcLegsAmountOut(legs, amountIn)
+    if (topologyWasChanged || removedEdgesNumber > 0) {
+      output = this.updateLegsInOut(legs, amountIn)
+      totalOutput = output - toVert.gasPrice * gasSpent
     }
 
     let swapPrice, priceImpact
@@ -944,7 +948,7 @@ export class Graph {
       amountOutBN: getBigNumber(output),
       legs,
       gasSpent,
-      totalAmountOut: totalOutput, // TODO: should be recalculated if topologyWasChanged
+      totalAmountOut: totalOutput,
       totalAmountOutBN: getBigNumber(totalOutput),
     }
   }
@@ -1002,13 +1006,15 @@ export class Graph {
     if (step < routeValues.length) status = RouteStatus.Partial
     else status = RouteStatus.Success
 
+    const removedEdgesNumber = this.removeEdgesWithLowFlow(0.001)
+
     const fromVert = this.getVert(from) as Vertice
     const toVert = this.getVert(to) as Vertice
     const { legs, gasSpent, topologyWasChanged } = this.getRouteLegs(fromVert, toVert)
     console.assert(gasSpent <= gasSpentInit, 'Internal Error 491')
 
-    if (topologyWasChanged) {
-      input = this.calcLegsAmountIn(legs, amountOut) ///
+    if (topologyWasChanged || removedEdgesNumber > 0) {
+      input = this.calcLegsAmountIn(legs, amountOut)
     }
 
     let swapPrice, priceImpact
@@ -1110,8 +1116,32 @@ export class Graph {
     return e.direction ? { vert: e.vert0, amount: e.amountInPrevious } : { vert: e.vert1, amount: e.amountOutPrevious }
   }
 
-  // TODO: make full test coverage!
-  calcLegsAmountOut(legs: RouteLeg[], amountIn: number) {
+  // Removes all edges that have lesser than minFraction portion of vertex output liquidity
+  // Such edges can appear as an accumulation of forward and backward streams
+  // They spend more gas than provide slippage reduction
+  // They confuse users
+  // Also, route processor can fail trying to process them
+  removeEdgesWithLowFlow(minFraction: number): number {
+    const weakEdgeList: Edge[] = []
+    this.vertices.forEach((v) => {
+      const outEdges = v.getOutputEdges()
+      if (outEdges.length <= 1) return
+      const amounts = outEdges.map((e) => {
+        const data = this.edgeFrom(e)
+        if (data !== undefined) return data.amount
+        console.error('Tines: Internal Error 1123')
+      }) as number[]
+      const totalOut = amounts.reduce((a, b) => (a += b), 0)
+      outEdges.forEach((e, i) => {
+        if (amounts[i] / totalOut < minFraction) weakEdgeList.push(e)
+      })
+    })
+    weakEdgeList.forEach((e) => (e.canBeUsed = false))
+    return weakEdgeList.length
+  }
+
+  // returns route output
+  updateLegsInOut(legs: RouteLeg[], amountIn: number): number {
     const amounts = new Map<string, number>()
     amounts.set(legs[0].tokenFrom.tokenId as string, amountIn)
     legs.forEach((l) => {
@@ -1131,6 +1161,9 @@ export class Graph {
       const vertNext = (vert as Vertice).getNeibour(edge) as Vertice
       const prevAmount = amounts.get(vertNext.token.tokenId as string)
       amounts.set(vertNext.token.tokenId as string, (prevAmount || 0) + output)
+
+      l.assumedAmountIn = input
+      l.assumedAmountOut = output
     })
     return amounts.get(legs[legs.length - 1].tokenTo.tokenId as string) || 0
   }
@@ -1175,7 +1208,8 @@ export class Graph {
     let result = this.topologySort(from, to)
     if (result.status !== 2) {
       topologyWasChanged = true
-      console.assert(result.status === 0, 'Internal Error 554')
+      // it can be 3, because we make this.removeEdgesWithLowFlow(0.005) before
+      // console.assert(result.status === 0, 'Internal Error 554')
       while (result.status === 0) {
         this.removeWeakestEdge(result.vertices)
         result = this.topologySort(from, to)

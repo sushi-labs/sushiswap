@@ -12,7 +12,7 @@ import {
   TrustWalletIcon,
   WalletConnectIcon,
 } from '@sushiswap/ui'
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useMemo } from 'react'
 import { useConnect } from 'wagmi'
 
 import {
@@ -25,6 +25,7 @@ const Icons: Record<string, ReactNode> = {
   MetaMask: <MetamaskIcon width={16} height={16} />,
   'Trust Wallet': <TrustWalletIcon width={16} height={16} />,
   WalletConnect: <WalletConnectIcon width={16} height={16} />,
+  WalletConnectLegacy: <WalletConnectIcon width={16} height={16} />,
   'Coinbase Wallet': <CoinbaseWalletIcon width={16} height={16} />,
   Safe: <GnosisSafeIcon width={16} height={16} />,
 }
@@ -50,6 +51,17 @@ export const Button = <C extends React.ElementType>({
   const { pendingConnection, reconnecting, isConnected, connecting } = useWalletState(!!pendingConnector)
 
   // useAutoConnect()
+
+  const _connectors = useMemo(() => {
+    const conns = [...connectors]
+    const injected = conns.find((el) => el.id === 'injected')
+
+    if (injected) {
+      return [injected, ...conns.filter((el) => el.id !== 'injected' && el.name !== injected.name)]
+    }
+
+    return conns
+  }, [connectors])
 
   if (connecting && appearOnMount) {
     return <></>
@@ -83,7 +95,7 @@ export const Button = <C extends React.ElementType>({
               <Menu.Items className="z-[100]">
                 <div>
                   {isMounted &&
-                    connectors.map((connector) => (
+                    _connectors.map((connector) => (
                       <Menu.Item
                         key={connector.id}
                         onClick={() => connect({ connector })}

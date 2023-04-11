@@ -15,13 +15,13 @@
         "EARN_URL",
         "FURO_URL",
         "SWAP_URL",
-        "PARTNER_LIST_PR_WEBHOOK_UR",
+        "PARTNER_LIST_PR_WEBHOOK_URL",
         "PARTNER_OCTOKIT_KEY"
       ]
     },
     "check": {
-      "dependsOn": [],
-      "cache": true
+      "dependsOn": ["^build"],
+      "cache": false
     }
   }
 }

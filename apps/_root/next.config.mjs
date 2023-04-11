@@ -7,7 +7,7 @@ import { withAxiom } from 'next-axiom'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   ...defaultNextConfig,
-  transpilePackages: ['@sushiswap/graph-client', '@sushiswap/ui', '@sushiswap/wagmi'],
+  transpilePackages: ['@sushiswap/ui', '@sushiswap/wagmi'],
   experimental: {
     appDir: true,
   },
@@ -109,6 +109,14 @@ const nextConfig = {
       {
         source: '/earn/:path*',
         destination: `${EARN_URL}/earn/:path*`,
+      },
+      {
+        source: '/pools',
+        destination: `${EARN_URL}/pools`,
+      },
+      {
+        source: '/pools/:path*',
+        destination: `${EARN_URL}/pools/:path*`,
       },
     ]
   },

@@ -22,11 +22,13 @@ const token0 = {
   name: 'Token0',
   address: 'Token0Address',
   symbol: 'Token0Symbol',
+  decimals: 18,
 }
 const token1 = {
   name: 'Token1',
   address: 'Token1Address',
   symbol: 'Token0Symbol',
+  decimals: 18,
 }
 function getPool(reserve: number, price: number, fee: number) {
   return new ConstantProductRPool(

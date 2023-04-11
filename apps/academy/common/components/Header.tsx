@@ -42,7 +42,7 @@ export const Header: FC = () => {
         title: 'Products',
         links: sortedProducts.map(({ attributes }) => ({
           name: attributes?.longName as string,
-          href: `/products/${attributes?.slug}`,
+          href: `/academy/products/${attributes?.slug}`,
         })),
       },
       {
@@ -51,7 +51,7 @@ export const Header: FC = () => {
           const isTechnical = attributes?.slug === 'technical'
           return {
             name: attributes?.shortDescription as string,
-            href: isTechnical ? DOCS_URL : `/articles?difficulty=${attributes?.slug}`,
+            href: isTechnical ? DOCS_URL : `/academy/articles?difficulty=${attributes?.slug}`,
             isExternal: isTechnical,
           }
         }),

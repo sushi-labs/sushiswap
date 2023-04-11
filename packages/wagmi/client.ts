@@ -32,8 +32,11 @@ const { chains, provider }: CreateClientConfig & { chains: Chain[] } = isTest
 export const _createClient = (config?: CreateClientConfig) => {
   return createClient({
     provider,
+    // logger: {
+    //   warn: process.env.NODE_ENV !== 'production' ? console.warn : null,
+    // },
     logger: {
-      warn: process.env.NODE_ENV !== 'production' ? console.warn : null,
+      warn: null,
     },
     autoConnect: true,
     connectors: [
@@ -58,6 +61,19 @@ export const _createClient = (config?: CreateClientConfig) => {
           qrcode: true,
         },
       }),
+      // new WalletConnectConnector({
+      //   chains,
+      //   options: {
+      //     projectId: '187b0394dbf3b20ce7762592560eafd2',
+      //     metadata: {
+      //       name: 'sushi',
+      //       description: 'sushi app',
+      //       url: 'https://sushi.com',
+      //       icons: ['https://sushi.com/icon.png'],
+      //     },
+      //   },
+      // }),
+
       // new WalletConnectLegacyConnector({
       //   chains,
       //   // TODO: Flesh out wallet connect options?

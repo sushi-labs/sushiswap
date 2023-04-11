@@ -1,16 +1,26 @@
 {
   "extends": ["//"],
   "pipeline": {
+    "start": {
+      "dependsOn": [        
+        "build"
+      ],
+      "env": [
+        "ALCHEMY_ID",
+        "DATABASE_URL"
+      ],
+      "cache": false,
+      "persistent": true
+    },
     "build": {
       "outputs": [
         ".graphclient/**"
       ],
-      "dependsOn": ["^build", "generate"],
-      "env": []
+      "dependsOn": ["^build"]
     },
     "check": {
       "dependsOn": ["build"],
-      "cache": true
+      "cache": false
     }
   }
 }

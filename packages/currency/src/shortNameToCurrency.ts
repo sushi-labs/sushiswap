@@ -164,7 +164,7 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     USDC: USDC[ChainId.OPTIMISM],
     USDT: USDT[ChainId.OPTIMISM],
     OP: OP[ChainId.OPTIMISM],
-    // SUSHI: SUSHI[ChainId.OPTIMISM],
+    SUSHI: SUSHI[ChainId.OPTIMISM],
   },
   [ChainId.POLYGON]: {
     // NATIVE: Native.onChain(ChainId.POLYGON),
@@ -199,6 +199,12 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
   [ChainId.BASE_TESTNET]: {
     ETH: Native.onChain(ChainId.BASE_TESTNET),
     WETH: WNATIVE[ChainId.BASE_TESTNET],
+  },
+  [ChainId.POLYGON_ZKEVM]: {
+    NATIVE: Native.onChain(ChainId.POLYGON_ZKEVM),
+    WNATIVE: WNATIVE[ChainId.POLYGON_ZKEVM],
+    ETH: Native.onChain(ChainId.POLYGON_ZKEVM),
+    WETH: WNATIVE[ChainId.POLYGON_ZKEVM],
   },
 } as const
 

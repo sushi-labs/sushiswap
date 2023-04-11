@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 export type ListKeyValueProps =
   | {
-      title: string
+      title: ReactNode
       subtitle?: string
       children: ReactNode
       skeleton?: never

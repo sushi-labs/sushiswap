@@ -34,7 +34,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "viem": "0.0.1-alpha.38",
+    "viem": "0.1.2",
     "node-fetch": "2.6.6",
     "date-fns": "2.29.3",
     "@ethersproject/abi": "5.7.0",
@@ -50,7 +50,6 @@
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/trident": "workspace:*",
-    "@prisma/client": "4.8.1",
     "ethers": "5.7.2",
     "lodash.flatmap": "^4.5.0",
     "tiny-invariant": "1.3.1",
@@ -68,7 +67,6 @@
     "@types/node": "^18.0.0",
     "@types/node-fetch": "2.6.2",
     "eslint": "8.29.0",
-    "tsup": "6.5.0",
     "typescript": "4.9.4"
   },
   "peerDependencies": {

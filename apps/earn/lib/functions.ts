@@ -28,6 +28,7 @@ import {
 import { JSBI } from '@sushiswap/math'
 import { TickProcessed } from './hooks/useConcentratedActiveLiquidity'
 import { useTicks } from './hooks'
+import { Bound } from './constants'
 
 export const isConstantProductPool = (
   pool: Pair | ConstantProductPool | StablePool | null
@@ -231,4 +232,23 @@ export default function computeSurroundingTicks(
   }
 
   return processedTicks
+}
+
+interface FormatTickPriceArgs {
+  price: Price<Token, Token> | undefined
+  atLimit: { [bound in Bound]?: boolean | undefined }
+  direction: Bound
+  placeholder?: string
+}
+
+export function formatTickPrice({ price, atLimit, direction, placeholder }: FormatTickPriceArgs) {
+  if (atLimit[direction]) {
+    return direction === Bound.LOWER ? '0' : '∞'
+  }
+
+  if (!price && placeholder !== undefined) {
+    return placeholder
+  }
+
+  return price?.toSignificant(4)
 }

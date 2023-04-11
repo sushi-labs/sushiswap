@@ -1,11 +1,18 @@
 import { UsePoolsParams } from '../types'
 import { getAllPools } from './getAllPools'
 import { ConstantProductPoolCode } from '@sushiswap/router/dist/pools/ConstantProductPool'
-import { BridgeBento, BridgeUnlimited, CLRPool, ConstantProductRPool, RToken, StableSwapRPool, UniV3Pool } from '@sushiswap/tines'
+import {
+  BridgeBento,
+  BridgeUnlimited,
+  ConstantProductRPool,
+  RToken,
+  StableSwapRPool,
+  UniV3Pool,
+} from '@sushiswap/tines'
 import { BentoPoolCode } from '@sushiswap/router/dist/pools/BentoPool'
 import { LiquidityProviders, UniV3PoolCode } from '@sushiswap/router'
 import { BentoBridgePoolCode } from '@sushiswap/router/dist/pools/BentoBridge'
-import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
 import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
 import { convertPoolOrPairtoRPool } from '@sushiswap/amm/dist/Trade/convertPoolOrPairtoRPool'
@@ -82,17 +89,9 @@ export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enable
         )
       )
     }
-    else if (pool instanceof UniV3Pool) {
-      
-      poolCodeMap.set(
-        pool.address,
-        new UniV3PoolCode(
-          pool,
-          LiquidityProviders.SushiSwapV3,
-          'SushiSwapV3'
-        )
-      )
-    }
+    // else if (pool instanceof UniV3Pool) {
+    //   poolCodeMap.set(pool.address, new UniV3PoolCode(pool, LiquidityProviders.SushiSwapV3, 'SushiSwapV3'))
+    // }
   }
 
   return poolCodeMap

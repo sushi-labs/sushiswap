@@ -1,14 +1,15 @@
-import { checkRouteResult } from './snapshots/snapshot'
-import { RToken, ConstantProductRPool } from '../src/PrimaryPools'
+import { BigNumber } from '@ethersproject/bignumber'
+
 import {
-  getBigNumber,
-  RouteStatus,
+  closeValues,
   findMultiRouteExactIn,
   findMultiRouteExactOut,
-  closeValues,
+  getBigNumber,
   MultiRoute,
+  RouteStatus,
 } from '../src'
-import { BigNumber } from '@ethersproject/bignumber'
+import { ConstantProductRPool, RToken } from '../src/PrimaryPools'
+import { checkRouteResult } from './snapshots/snapshot'
 
 const gasPrice = 1 * 200 * 1e-9
 
@@ -16,11 +17,13 @@ const USDC: RToken = {
   name: 'USDC',
   address: 'USDC',
   symbol: 'USDC',
+  decimals: 18,
 }
 const WNATIVE: RToken = {
   name: 'WNATIVE',
   address: 'WNATIVE',
   symbol: 'WNATIVE',
+  decimals: 18,
 }
 
 // Bridge:
@@ -53,6 +56,7 @@ const tokens = price.map((_, i) => ({
   name: '' + (i + 1),
   address: 'token_addres ' + (i + 1),
   symbol: '' + (i + 1),
+  decimals: 18,
 }))
 
 const testPool0_1 = getPool(tokens, 0, 1, price, 1_500_0)
@@ -69,6 +73,7 @@ const tokens2 = price2.map((_, i) => ({
   name: '' + (i + 1),
   address: 'token_addres ' + (i + 1),
   symbol: '' + (i + 1),
+  decimals: 18,
 }))
 
 const testPool0_1_2 = getPool(tokens2, 0, 1, price2, 15_000)
@@ -88,13 +93,13 @@ function checkExactOut(routeIn: MultiRoute, routeOut: MultiRoute) {
   expect(closeValues(routeIn.swapPrice as number, routeOut.swapPrice as number, 5e-2)).toBeTruthy()
 }
 
-function numberPrecision(n: number, precision = 2) {
-  if (n == 0) return 0
-  const digits = Math.ceil(Math.log10(n))
-  if (digits >= precision) return Math.round(n)
-  const shift = Math.pow(10, precision - digits)
-  return Math.round(n * shift) / shift
-}
+// function numberPrecision(n: number, precision = 2) {
+//   if (n == 0) return 0
+//   const digits = Math.ceil(Math.log10(n))
+//   if (digits >= precision) return Math.round(n)
+//   const shift = Math.pow(10, precision - digits)
+//   return Math.round(n * shift) / shift
+// }
 
 describe('Multirouting for bridge topology', () => {
   it('works correct for equal prices', () => {
@@ -270,11 +275,13 @@ describe('Multirouting for bridge topology', () => {
       name: 'Token0',
       address: 'Token0Address',
       symbol: 'Token0Symbol',
+      decimals: 18,
     }
     const token1 = {
       name: 'Token1',
       address: 'Token1Address',
       symbol: 'Token1Symbol',
+      decimals: 18,
     }
     const pool = getPool([token0, token1], 0, 1, [1, 2], 1e18, 0.03, 0)
     const res = findMultiRouteExactIn(token0, token1, 100, [pool], token1, 200)

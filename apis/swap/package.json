@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "ethers": "5.7.2",
-    "viem": "0.0.1-alpha.38",
+    "viem": "0.1.2",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/router": "workspace:*",
@@ -48,7 +48,7 @@
     "@fastify/cors": "8.2.0",
     "@fastify/rate-limit": "8.0.0",
     "zod": "3.20.2",
-    "@whatwg-node/fetch": "latest"
+    "@whatwg-node/fetch": "0.8.4"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

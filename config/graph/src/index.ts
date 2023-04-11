@@ -37,7 +37,21 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
 
 export type SushiSwapChainId = (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
 
-export const SUSHISWAP_V3_ENABLED_NETWORKS = [ChainId.ARBITRUM]
+export const SUSHISWAP_V3_ENABLED_NETWORKS = [
+  ChainId.ETHEREUM,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
+  ChainId.BSC,
+  ChainId.BOBA,
+  ChainId.FANTOM,
+  ChainId.FUSE,
+  ChainId.GNOSIS,
+  ChainId.MOONRIVER,
+  ChainId.OPTIMISM,
+  ChainId.POLYGON,
+  ChainId.POLYGON_ZKEVM
+]
 export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_ENABLED_NETWORKS)[number]
 
 export const SWAP_ENABLED_NETWORKS = Array.from(
@@ -55,6 +69,9 @@ export const PENDING_KAVA_HOST = 'pvt.graph.kava.io/subgraphs/id'
 
 export const METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/name'
 export const PENDING_METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/id'
+
+export const POLYGON_ZKEVM_HOST = 'api.studio.thegraph.com/query/32073'
+
 
 export const CHAIN_NAME: Record<number, string> = {
   [ChainId.ARBITRUM]: 'Arbitrum',
@@ -102,6 +119,7 @@ export const SUBGRAPH_HOST = {
   [ChainId.MOONRIVER]: GRAPH_HOST,
   [ChainId.OPTIMISM]: 'api.thegraph.com/subgraphs/name',
   [ChainId.POLYGON]: GRAPH_HOST,
+  [ChainId.POLYGON_ZKEVM]: POLYGON_ZKEVM_HOST,
   [ChainId.BOBA]: GRAPH_HOST,
   [ChainId.BOBA_AVAX]: 'subgraphs.sushi.com/subgraphs/name',
   [ChainId.BOBA_BNB]: 'subgraphs.sushi.com/subgraphs/name',
@@ -134,6 +152,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ETHEREUM]: 'blocklytics/ethereum-blocks',
   [ChainId.GNOSIS]: 'matthewlilley/xdai-blocks',
   [ChainId.POLYGON]: 'matthewlilley/polygon-blocks',
+  [ChainId.POLYGON_ZKEVM]: 'blocks-polygon-zkevm/v0.0.2',
   [ChainId.FANTOM]: 'matthewlilley/fantom-blocks',
   [ChainId.BSC]: 'matthewlilley/bsc-blocks',
   [ChainId.HARMONY]: 'sushiswap/harmony-blocks',
@@ -196,7 +215,19 @@ export const SUSHISWAP_SUBGRAPH_NAME = {
 } as const
 
 export const SUSHISWAP_V3_SUBGRAPH_NAME = {
-  [ChainId.ARBITRUM]: 'olastenberg/v3-arbitrum',
+  [ChainId.ARBITRUM_NOVA]: 'sushi-v3/v3-arbitrum-nova',
+  [ChainId.ARBITRUM]: 'sushi-v3/v3-arbitrum',
+  [ChainId.AVALANCHE]: 'sushi-v3/v3-avalanche',
+  [ChainId.BSC]: 'sushi-v3/v3-bsc',
+  [ChainId.BOBA]: 'sushi-v3/v3-boba',
+  [ChainId.ETHEREUM]: 'sushi-v3/v3-ethereum',
+  [ChainId.FANTOM]: 'sushi-v3/v3-fantom',
+  [ChainId.FUSE]: 'sushi-v3/v3-fuse',
+  [ChainId.GNOSIS]: 'sushi-v3/v3-gnosis',
+  [ChainId.MOONRIVER]: 'sushi-v3/v3-moonriver',
+  [ChainId.OPTIMISM]: 'sushi-v3/v3-optimism',
+  [ChainId.POLYGON]: 'sushi-v3/v3-polygon',
+  [ChainId.POLYGON_ZKEVM]: 'v3-polygon-zkevm/v0.0.2',
 }
 
 export const TRIDENT_SUBGRAPH_NAME = {

@@ -1,24 +1,27 @@
-import { useBreakpoint, useEffectDebugger } from '@sushiswap/hooks'
+import { useBreakpoint } from '@sushiswap/hooks'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
 
-import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { NAME_COLUMN_V3, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL, PRICE_RANGE_COLUMN } from './Cells/columns'
 import { ConcentratedLiquidityPosition, useConcentratedLiquidityPositions } from '@sushiswap/wagmi/future/hooks'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Disclosure } from '@headlessui/react'
 import { classNames, Collapsible } from '@sushiswap/ui'
 import ConcentratedCurveIcon from '@sushiswap/ui/future/components/icons/ConcentratedCurveIcon'
+import { V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
+import { Writeable } from 'zod'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const COLUMNS = [NAME_COLUMN_V3, PRICE_RANGE_COLUMN, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL]
 
-export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal' }> = ({ variant = 'default' }) => {
+export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; poolId?: string }> = ({
+  variant = 'default',
+  poolId,
+}) => {
   const [hide, setHide] = useState(false)
-  const { chainIds } = usePoolFilters()
   const { address } = useAccount()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
@@ -30,14 +33,21 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal' }>
     data: positions,
     isLoading,
     isInitialLoading,
-  } = useConcentratedLiquidityPositions({ account: address, chainIds })
+  } = useConcentratedLiquidityPositions({
+    account: address,
+    chainIds: V3_SUPPORTED_CHAIN_IDS as Writeable<typeof V3_SUPPORTED_CHAIN_IDS>,
+  })
 
   const _positions = useMemo(() => {
-    return positions?.filter((el) => (hide ? !el.liquidity?.eq('0') : true))
-  }, [hide, positions])
+    return (positions || [])?.filter((el) => {
+      return (
+        (hide ? !el.liquidity?.eq('0') : true) && (poolId ? el.address.toLowerCase() === poolId.toLowerCase() : true)
+      )
+    })
+  }, [hide, poolId, positions])
 
   const table = useReactTable<ConcentratedLiquidityPosition>({
-    data: _positions || [],
+    data: _positions,
     state: {
       // sorting,
       columnVisibility,
@@ -84,7 +94,7 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal' }>
         <>
           <Disclosure.Button as="div" role="button" className="flex justify-end gap-2">
             <div className={classNames(open ? '' : '', 'w-full group')}>
-              <h1 className="flex gap-2 items-center justify-between font-semibold text-sm text-gray-700 group-hover:text-gray-900 dark:text-slate-200 dark:group-hover:text-slate-50 py-4 px-4">
+              <h1 className="flex items-center justify-between gap-2 px-4 py-4 text-sm font-semibold text-gray-700 group-hover:text-gray-900 dark:text-slate-200 dark:group-hover:text-slate-50">
                 <span className="flex items-center gap-3">
                   <ConcentratedCurveIcon width={20} height={20} className="saturate-200" /> Concentrated Liquidity
                   Positions {positions ? `(${positions.length})` : ''}
@@ -95,12 +105,12 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal' }>
                       e.stopPropagation()
                       setHide((prev) => !prev)
                     }}
-                    className="text-blue group-hover:text-blue-600 text-sm"
+                    className="text-sm text-blue group-hover:text-blue-600"
                   >
                     {hide ? 'Show closed positions' : 'Hide closed positions'}
                   </button>
                   <div className="flex items-center gap-1">
-                    <button className="text-blue group-hover:text-blue-600 text-sm">
+                    <button className="text-sm text-blue group-hover:text-blue-600">
                       {open ? 'Collapse' : 'Expand'}
                     </button>
                     <ChevronDownIcon

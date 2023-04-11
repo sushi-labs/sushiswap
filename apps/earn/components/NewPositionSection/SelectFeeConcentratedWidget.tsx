@@ -26,10 +26,11 @@ export const FEE_OPTIONS = [
 ]
 
 export const SelectFeeConcentratedWidget: FC = memo(function SelectFeeWidget({}) {
-  const { feeAmount, setFeeAmount } = useConcentratedLiquidityURLState()
+  const { feeAmount, setFeeAmount, token0, token1 } = useConcentratedLiquidityURLState()
 
   return (
     <ContentBlock
+      disabled={!token0 || !token1}
       title={
         <>
           What percentage for <span className="text-gray-900 dark:text-white">fees</span> do you prefer?

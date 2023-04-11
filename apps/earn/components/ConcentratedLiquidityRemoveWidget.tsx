@@ -1,27 +1,25 @@
 import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { classNames } from '@sushiswap/ui'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { ChainId } from '@sushiswap/chain'
 import { ConcentratedLiquidityPosition, useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Currency } from '@sushiswap/ui/future/components/currency'
-import { NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
+import { isV3ChainId, NonfungiblePositionManager, Position, V3ChainId } from '@sushiswap/v3-sdk'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { TransactionRequest } from '@ethersproject/providers'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { useSlippageTolerance } from '../lib/hooks/useSlippageTolerance'
-import { Amount, Native, Type } from '@sushiswap/currency'
+import { Amount, Type } from '@sushiswap/currency'
 import { _useSendTransaction as useSendTransaction } from '@sushiswap/wagmi'
-import { ConfirmationDialogState } from '@sushiswap/ui/dialog/ConfirmationDialog'
 import { unwrapToken } from '../lib/functions'
+import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
 
 interface ConcentratedLiquidityRemoveWidget {
   token0: Type | undefined
   token1: Type | undefined
   account: string | undefined
-  chainId: ChainId
+  chainId: V3ChainId
   positionDetails: ConcentratedLiquidityPosition | undefined
   position: Position | undefined
   onChange?(val: string): void
@@ -112,7 +110,8 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
         deadline &&
         liquidityValue0 &&
         liquidityValue1 &&
-        liquidityPercentage.greaterThan(ZERO)
+        liquidityPercentage.greaterThan(ZERO) &&
+        isV3ChainId(chainId)
       ) {
         const { calldata, value: _value } = NonfungiblePositionManager.removeCallParameters(position, {
           tokenId: positionDetails.tokenId.toString(),
@@ -139,14 +138,25 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
         })
 
         setRequest({
-          // TODO make dynamic NonfungiblePositionManager address
-          to: '0xF0cBce1942A68BEB3d1b73F0dd86C8DCc363eF49',
+          to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
           data: calldata,
           value: _value,
         })
       }
     },
-    [account, deadline, feeValue0, feeValue1, position, positionDetails, slippagePercent, token0, token1, value]
+    [
+      account,
+      chainId,
+      deadline,
+      feeValue0,
+      feeValue1,
+      position,
+      positionDetails,
+      slippagePercent,
+      token0,
+      token1,
+      value,
+    ]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
@@ -208,7 +218,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
             <List.KeyValue skeleton />
           )}
           {position?.amount1 ? (
-            <List.KeyValue title={`${position?.amount1.currency.symbol}`}>
+            <List.KeyValue flex title={`${position?.amount1.currency.symbol}`}>
               <div className="flex items-center gap-2">
                 <Currency.Icon currency={unwrapToken(position.amount1.currency)} width={18} height={18} />
                 <span>
@@ -227,7 +237,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
           <List.Label>{"You'll"} receive collected fees</List.Label>
           <List.Control>
             {feeValue0 ? (
-              <List.KeyValue title={`${feeValue0.currency.symbol}`}>
+              <List.KeyValue flex title={`${feeValue0.currency.symbol}`}>
                 <div className="flex items-center gap-2">
                   <Currency.Icon currency={unwrapToken(feeValue0.currency)} width={18} height={18} />
                   <span>

@@ -1,6 +1,5 @@
 import { ChartBarIcon, InboxIcon, StopIcon } from '@heroicons/react/solid'
 import { Price, Token, Type } from '@sushiswap/currency'
-import { Loader } from '@sushiswap/ui'
 import { format } from 'd3'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { batch } from 'react-redux'
@@ -10,8 +9,7 @@ import { Bound } from '../../lib/constants'
 import { Chart } from './Chart'
 import { useDensityChartData } from './hooks'
 import { ZoomLevels } from './types'
-import { FeeAmount } from '@sushiswap/v3-sdk'
-import { ChainId } from '@sushiswap/chain'
+import { FeeAmount, V3ChainId } from '@sushiswap/v3-sdk'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 
 const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
@@ -72,7 +70,7 @@ export default function LiquidityChartRangeInput({
   onRightRangeInput,
   interactive,
 }: {
-  chainId: ChainId
+  chainId: V3ChainId
   currencyA: Type | undefined
   currencyB: Type | undefined
   feeAmount?: FeeAmount
@@ -177,12 +175,12 @@ export default function LiquidityChartRangeInput({
             margins={{ top: 10, right: 2, bottom: 20, left: 0 }}
             styles={{
               area: {
-                selection: colors.blue['400'],
+                selection: colors.blue['500'],
               },
               brush: {
                 handle: {
-                  west: colors.red['400'],
-                  east: colors.blue['400'],
+                  west: colors.blue['600'],
+                  east: colors.blue['600'],
                 },
               },
             }}

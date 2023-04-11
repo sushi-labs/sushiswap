@@ -1,6 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { default as seedrandom } from 'seedrandom'
-import { CLRPool, CLTick, CL_MAX_TICK, CL_MIN_TICK, getBigNumber } from '../src'
+
+import { CL_MAX_TICK, CL_MIN_TICK, CLRPool, CLTick, getBigNumber } from '../src'
 
 const testSeed = '2' // Change it to change random generator values
 const rnd: () => number = seedrandom(testSeed) // random [0, 1)
@@ -75,8 +76,8 @@ function getRandomCLPool(rnd: () => number, rangeNumber: number, minLiquidity: n
   const tickSpacing = rnd() > 0.5 ? 5 : 60
   const pool = new CLRPool(
     'CLRPool',
-    { name: 'Token0', address: 'Token0', symbol: 'Token0Symbol' },
-    { name: 'Token1', address: 'Token1', symbol: 'Token0Symbol' },
+    { name: 'Token0', address: 'Token0', symbol: 'Token0Symbol', decimals: 18 },
+    { name: 'Token1', address: 'Token1', symbol: 'Token0Symbol', decimals: 18 },
     0.003,
     tickSpacing,
     BigNumber.from(0),
@@ -105,6 +106,7 @@ function getRandomCLPool(rnd: () => number, rangeNumber: number, minLiquidity: n
 function getMaxInputApprox(pool: CLRPool, direction: boolean): number {
   let prevOutput = -1
   let input = 10
+  // eslint-disable-next-line no-constant-condition
   while (1) {
     const output = pool.calcOutByIn(input, direction).out
     if (output === prevOutput) {

@@ -9,7 +9,7 @@
     },
     "check": {
       "dependsOn": ["^build", "generate"],
-      "cache": true
+      "cache": false
     },
     "sitemap": {
       "outputs": ["public/sitemap.xml", "public/sitemap-*.xml", "public/robots.txt"],

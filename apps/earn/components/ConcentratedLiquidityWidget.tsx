@@ -11,14 +11,14 @@ import {
   useConcentratedMintActionHandlers,
   useConcentratedMintState,
 } from './ConcentratedLiquidityProvider'
-import { ChainId } from '@sushiswap/chain'
-import { FeeAmount, Position } from '@sushiswap/v3-sdk'
+import { FeeAmount, Position, V3ChainId } from '@sushiswap/v3-sdk'
 import { Type } from '@sushiswap/currency'
 import { useConcentratedPositionOwner } from '@sushiswap/wagmi/future/hooks/positions/hooks/useConcentratedPositionOwner'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
 
 interface ConcentratedLiquidityWidget {
-  chainId: ChainId
+  chainId: V3ChainId
   account: string | undefined
   token0: Type | undefined
   token1: Type | undefined
@@ -29,6 +29,7 @@ interface ConcentratedLiquidityWidget {
   tokenId: number | string | undefined
   existingPosition: Position | undefined
   onChange?(val: string, input: 'a' | 'b'): void
+  successLink?: string
 }
 
 export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
@@ -43,6 +44,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
   tokenId,
   existingPosition,
   onChange,
+  successLink,
 }) => {
   const { onFieldAInput, onFieldBInput } = useConcentratedMintActionHandlers()
   const { independentField, typedValue } = useConcentratedMintState()
@@ -64,7 +66,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
     depositBDisabled,
     invalidPool,
     position,
-    isLoading: isPoolLoading,
+    isInitialLoading: isPoolLoading,
   } = useConcentratedDerivedMintInfo({
     chainId,
     account,
@@ -110,13 +112,6 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
 
   return (
     <div className={classNames('flex flex-col gap-4')}>
-      {noLiquidity && (
-        <div className="bg-blue/10 text-blue rounded-xl p-6 font-medium">
-          This pool must be initialized before you can add liquidity. To initialize, select a starting price for the
-          pool. Then, enter your liquidity price range and deposit amount. Gas fees will be higher than usual due to the
-          initialization transaction.
-        </div>
-      )}
       {!!existingPosition && !isOwner && !isOwnerLoading && (
         <div className="bg-red/10 text-red rounded-xl p-6 font-medium">
           You are not the owner of this LP position. You will not be able to withdraw the liquidity from this position
@@ -136,7 +131,9 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
       )}
       <div
         className={classNames(
-          tickLower === undefined || tickUpper === undefined || invalidPool || invalidRange
+          !isPoolLoading &&
+            !isOwnerLoading &&
+            (tickLower === undefined || tickUpper === undefined || invalidPool || invalidRange)
             ? 'opacity-40 pointer-events-none'
             : '',
           'flex flex-col gap-4'
@@ -238,8 +235,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                 fullWidth
                 id="approve-erc20-0"
                 amount={parsedAmounts[Field.CURRENCY_A]}
-                // TODO dynamic
-                contract="0xF0cBce1942A68BEB3d1b73F0dd86C8DCc363eF49"
+                contract={getV3NonFungiblePositionManagerConractConfig(chainId).address}
                 enabled={!depositADisabled}
               >
                 <Checker.ApproveERC20
@@ -247,8 +243,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                   fullWidth
                   id="approve-erc20-1"
                   amount={parsedAmounts[Field.CURRENCY_B]}
-                  // TODO dynamic
-                  contract="0xF0cBce1942A68BEB3d1b73F0dd86C8DCc363eF49"
+                  contract={getV3NonFungiblePositionManagerConractConfig(chainId).address}
                   enabled={!depositBDisabled}
                 >
                   <AddSectionReviewModalConcentrated
@@ -265,6 +260,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                     ticksAtLimit={ticksAtLimit}
                     tokenId={tokenId}
                     existingPosition={existingPosition}
+                    successLink={successLink}
                   >
                     {({ setOpen }) => (
                       <Button fullWidth onClick={() => setOpen(true)} size="xl">

@@ -17,20 +17,20 @@
   "files": [
     "dist"
   ],
-  "main": "dist/index.js",
-  "source": "src/index.ts",
-  "types": "dist/index.d.ts",
-  "sideEffects": false,
   "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "source": "src/index.ts",
+  "typings": "dist/index.d.ts",
+  "sideEffects": false,
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo node_modules dist",
-    "db:generate": "prisma generate --data-proxy",
-    "db:pull": "prisma db pull",
-    "db:push": "prisma db push --skip-generate",
-    "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
-    "generate": "pnpm db:generate",
+    "generate": "prisma generate --data-proxy",
+    "pull": "prisma db pull",
+    "push": "prisma db push --skip-generate",
+    "dev": "tsc -w",
     "lint": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build",
     "studio": "prisma studio",
@@ -40,7 +40,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@prisma/client": "4.8.1"
+    "@prisma/client": "4.12.0"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
@@ -52,7 +52,7 @@
     "dotenv": "16.0.3",
     "eslint": "8.29.0",
     "jest": "29.3.1",
-    "prisma": "4.8.1",
+    "prisma": "4.12.0",
     "tsup": "6.5.0",
     "typescript": "4.9.4"
   }

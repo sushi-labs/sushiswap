@@ -33,7 +33,7 @@
   "dependencies": {
     "@sushiswap/database": "workspace:*",
     "@sushiswap/chain": "workspace:*",
-    "@whatwg-node/fetch": "latest",
+    "@whatwg-node/fetch": "0.8.4",
     "tslib": "latest"
   },
   "devDependencies": {

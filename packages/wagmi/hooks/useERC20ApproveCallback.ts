@@ -15,12 +15,10 @@ import {
   UserRejectedRequestError,
   useSendTransaction,
   useSigner,
-  useWaitForTransaction,
 } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { useERC20Allowance } from './useERC20Allowance'
-import { ConfirmationDialogState } from '@sushiswap/ui/dialog/ConfirmationDialog'
 
 export enum ApprovalState {
   LOADING = 'LOADING',
@@ -30,7 +28,9 @@ export enum ApprovalState {
   APPROVED = 'APPROVED',
 }
 
-// returns a variable indicating the state of the approval and a function which approves if necessary or early returns
+/**
+ * @deprecated  use @sushiswap/wagmi/future/hooks/approvals/useTokenApproval
+ */
 export function useERC20ApproveCallback(
   watch: boolean,
   amountToApprove: Amount<Currency> | undefined,

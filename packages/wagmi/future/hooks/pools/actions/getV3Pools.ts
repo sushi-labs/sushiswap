@@ -1,11 +1,11 @@
 import { Currency, Token, Type } from '@sushiswap/currency'
-import { computeV3PoolAddress, FeeAmount } from '@sushiswap/amm'
 import { Address, readContracts } from 'wagmi'
 import { BigNumber } from 'ethers'
 import { erc20Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { uniswapV3PoolAbi } from '../../../../abis/uniswapV3PoolAbi'
 import { RToken, UniV3Pool } from '@sushiswap/tines'
+import { V3ChainId, V3_FACTORY_ADDRESS, computePoolAddress, FeeAmount, V3_TICK_LENS } from '@sushiswap/v3-sdk'
 
 export enum V3PoolState {
   LOADING,
@@ -101,8 +101,8 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
     ([currencyA, currencyB, fee]) =>
       ({
         chainId,
-        address: computeV3PoolAddress({
-          factoryAddress: '0x1af415a1EbA07a4986a52B6f2e7dE7003D82231e',
+        address: computePoolAddress({
+          factoryAddress: V3_FACTORY_ADDRESS[chainId as V3ChainId],
           tokenA: currencyA.wrapped,
           tokenB: currencyB.wrapped,
           fee,
@@ -188,7 +188,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
     ([, poolData], i) =>
       ({
         chainId,
-        address: '0x8516944E89f296eb6473d79aED1Ba12088016c9e' as Address,
+        address: V3_TICK_LENS[chainId as V3ChainId] as Address,
         args: [poolData.address as Address, minIndexes[i]],
         abi: tickLensAbi,
         functionName: 'getPopulatedTicksInWord',
@@ -199,7 +199,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
     ([, poolData], i) =>
       ({
         chainId,
-        address: '0x8516944E89f296eb6473d79aED1Ba12088016c9e' as Address,
+        address: V3_TICK_LENS[chainId as V3ChainId] as Address,
         args: [poolData.address as Address, maxIndexes[i]],
         abi: tickLensAbi,
         functionName: 'getPopulatedTicksInWord',

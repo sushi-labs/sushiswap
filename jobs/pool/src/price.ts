@@ -88,20 +88,20 @@ async function getPools(client: PrismaClient, chainId: ChainId) {
 
   const batchSize = 2500
   let cursor = null
-  const results = []
+  const results: Pool[] = []
   let totalCount = 0
   do {
     const requestStartTime = performance.now()
-    let result = []
+    let result: Pool[] = []
     if (!cursor) {
       result = await getPoolsByPagination(client, chainId, batchSize)
     } else {
       result = await getPoolsByPagination(client, chainId, batchSize, 1, { id: cursor })
     }
 
-    cursor = result.length == batchSize ? result[result.length - 1]?.id : null
+    cursor = result.length === batchSize ? result[result.length - 1]?.id : null
     totalCount += result.length
-    results.push(result)
+    results.push(...result)
     const requestEndTime = performance.now()
     console.log(
       `Fetched a batch of pools with ${result.length} (${((requestEndTime - requestStartTime) / 1000).toFixed(
@@ -110,10 +110,9 @@ async function getPools(client: PrismaClient, chainId: ChainId) {
     )
   } while (cursor != null)
   const endTime = performance.now()
-  const flatResult = results.flat()
 
-  console.log(`Fetched ${flatResult.length} pools (${((endTime - startTime) / 1000).toFixed(1)}s). `)
-  return flatResult
+  console.log(`Fetched ${results.length} pools (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  return results
 }
 
 async function getPoolsByPagination(

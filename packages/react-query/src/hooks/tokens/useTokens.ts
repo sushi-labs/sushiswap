@@ -16,7 +16,24 @@ type Data = {
     decimals: number
 }
 
-const hydrate = (data: Array<Data>, _chainId: ChainId) => {
+export const fetchTokensQueryFn = async () => {
+    const resp = await fetch(`https://tokens.sushi.com/v0`)
+    if (resp.status === 200) {
+        const data: Array<Data> = await resp.json()
+        await saveTokens({
+            tokens: data.map(({id, address, symbol, decimals, name}) => {
+                const [chainId] = id.split(':')
+                return ({id, address, symbol, decimals, name, status: 'APPROVED', chainId: +chainId})
+            })
+        })
+
+        return data
+    }
+
+    throw new Error('Could not fetch tokens')
+}
+
+export const hydrateFetchTokensQueryFn = (data: Array<Data>, _chainId: ChainId) => {
     return data.reduce<Record<string, Token>>((acc, {id, name, symbol, decimals}) => {
         const [chainId, address] = id.split(':')
         if (_chainId === +chainId) {
@@ -35,23 +52,8 @@ const hydrate = (data: Array<Data>, _chainId: ChainId) => {
 export const useTokens = ({chainId}: UseTokensParams) => {
     return useQuery({
         queryKey: ['https://tokens.sushi.com/v0'],
-        queryFn: async () => {
-            const resp = await fetch(`https://tokens.sushi.com/v0`)
-            if (resp.status === 200) {
-                const data: Array<Data> = await resp.json()
-                await saveTokens({
-                    tokens: data.map(({id, address, symbol, decimals, name}) => {
-                        const [chainId] = id.split(':')
-                        return ({id, address, symbol, decimals, name, status: 'APPROVED', chainId: +chainId})
-                    })
-                })
-
-              return data
-            }
-
-            throw new Error('Could not fetch tokens')
-        },
-        select: (data) => hydrate(data, chainId),
+        queryFn: fetchTokensQueryFn,
+        select: (data) => hydrateFetchTokensQueryFn(data, chainId),
         keepPreviousData: true,
         staleTime: 900, // 15 mins
         cacheTime: 86400 // 24hs

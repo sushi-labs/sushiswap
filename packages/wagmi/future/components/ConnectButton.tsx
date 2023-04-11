@@ -20,6 +20,7 @@ const Icons: Record<string, React.ElementType> = {
   MetaMask: MetamaskIcon,
   'Trust Wallet': TrustWalletIcon,
   WalletConnect: WalletConnectIcon,
+  WalletConnectLegacy: WalletConnectIcon,
   'Coinbase Wallet': CoinbaseWalletIcon,
   Safe: GnosisSafeIcon,
 }
@@ -101,9 +102,14 @@ export const ConnectButton = <C extends React.ElementType>({ hack, children, hid
                       <List.MenuItem
                         onClick={() => onSelect(connector.id)}
                         icon={Icons[connector.name]}
-                        title={connector.name == 'Safe' ? 'Gnosis Safe' : connector.name}
+                        title={
+                          connector.name == 'Safe'
+                            ? 'Gnosis Safe'
+                            : connector.name == 'WalletConnectLegacy'
+                            ? 'WalletConnect'
+                            : connector.name
+                        }
                         key={connector.id}
-                        hoverIcon={ChevronRightIcon}
                       />
                     )
                   })}
