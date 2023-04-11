@@ -9,7 +9,10 @@ import React, { ReactNode, useReducer } from 'react'
 import { Swiper, SwiperSlide, useSwiper } from 'swiper/react'
 
 interface CardNavigationProps {
-  items: ReactNode[]
+  children: ReactNode
+  slidesPerView: number
+  spaceBetween: number
+  containerStyle?: string
 }
 
 function SlideButtons({ show }: { show: { left: boolean; right: boolean } }) {
@@ -42,7 +45,7 @@ interface ButtonState {
 
 const INITIAL_BUTTON_STATE = { left: false, right: true }
 
-function reducer(state: ButtonState, position: 'start' | 'between' | 'end') {
+function reducer(_: ButtonState, position: 'start' | 'between' | 'end') {
   switch (position) {
     case 'between':
       return { left: true, right: true }
@@ -54,26 +57,22 @@ function reducer(state: ButtonState, position: 'start' | 'between' | 'end') {
   }
 }
 
-export function CardNavigation({ items }: CardNavigationProps) {
-  const [show, dispatch] = useReducer(reducer, INITIAL_BUTTON_STATE)
+export function CardNavigation({ containerStyle, children, slidesPerView, spaceBetween }: CardNavigationProps) {
+  const [buttonState, setButtonState] = useReducer(reducer, INITIAL_BUTTON_STATE)
 
   return (
-    <div className="relative flex overflow-hidden">
+    <div className={classNames('relative flex overflow-hidden', containerStyle)}>
       <Swiper
-        className="p-1"
-        slidesPerView={2}
-        spaceBetween={12}
+        slidesPerView={slidesPerView}
+        spaceBetween={spaceBetween}
         watchSlidesProgress
-        onReachBeginning={() => dispatch('start')}
-        onReachEnd={() => dispatch('end')}
-        onFromEdge={() => dispatch('between')}
+        onReachBeginning={() => setButtonState('start')}
+        onReachEnd={() => setButtonState('end')}
+        onFromEdge={() => setButtonState('between')}
       >
-        <SlideButtons show={show} />
-        {items.map((item, index) => (
-          <SwiperSlide key={index} className="ring rounded-lg h-full min-w-[50%] bg-white">
-            {item}
-          </SwiperSlide>
-        ))}
+        <SlideButtons show={buttonState} />
+
+        {children}
         {/** empty slot */}
         <SwiperSlide />
         <div className="bg-gradient-to-r to-[#101728] w-1/2 from-transparent h-full top-0 absolute right-0 z-10" />
