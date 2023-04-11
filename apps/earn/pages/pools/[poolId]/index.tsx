@@ -120,7 +120,7 @@ const Pool: FC = () => {
           <Link
             className="group flex gap-4 items-center mb-2"
             href={{
-              pathname: path?.includes('categories') ? '/csr' : '',
+              pathname: '/',
               ...(basePath === '/earn' && path?.includes('categories') && { query: path.replace('/?&', '') }),
             }}
             shallow={true}

@@ -13,11 +13,11 @@ export async function middleware(req: NextRequest) {
   }
 
   // Index handling
-  if (pathname === '/' && search !== '') {
-    const url = req.nextUrl.clone()
-    url.pathname = '/csr'
-    return NextResponse.rewrite(url)
-  }
+  // if (pathname === '/' && search !== '') {
+  //   const url = req.nextUrl.clone()
+  //   url.pathname = '/csr'
+  //   return NextResponse.rewrite(url)
+  // }
 
   // Matches paths that include /arb1:0x1234abcd/, starts and ends after '/'
   if (pathname.match(shortNameIdRegexp)) {
