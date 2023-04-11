@@ -20,7 +20,7 @@ import {
   USDT_ADDRESS,
   WNATIVE,
 } from '@sushiswap/currency'
-import { DataFetcher, LiquidityProviders, PoolFilter, Router } from '@sushiswap/router'
+import { DataFetcher, LiquidityProviders, PermitData, PoolFilter, Router } from '@sushiswap/router'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
 import {
   BridgeBento,
@@ -193,6 +193,11 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   }
 }
 
+// async function makePermit(env: TestEnvironment) {
+//   const userAddress = await env.user.getAddress()
+//   const result = await signERC2612Permit(user, fromToken.address, userAddress, env.rp.address, amountIn.toString())
+// }
+
 // all pool data assumed to be updated
 async function makeSwap(
   env: TestEnvironment,
@@ -201,11 +206,12 @@ async function makeSwap(
   toToken: Type,
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
+  permits: PermitData[] = [],
   makeSankeyDiagram = false
 ): Promise<[BigNumber, number] | undefined> {
   //console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
-  if (fromToken instanceof Token) {
+  if (fromToken instanceof Token && permits.length == 0) {
     //console.log(`Approve user's ${fromToken.symbol} to the route processor ...`)
     const WrappedBaseTokenContract = new ethers.Contract(fromToken.address, erc20Abi, env.user)
     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
@@ -308,6 +314,7 @@ async function updMakeSwap(
   lastCallResult: BigNumber | [BigNumber | undefined, number],
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
+  permits: PermitData[] = [],
   makeSankeyDiagram = false
 ): Promise<[BigNumber | undefined, number]> {
   const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
@@ -316,7 +323,7 @@ async function updMakeSwap(
   //console.log('Wait data update for min block', waitBlock)
   await dataUpdated(env, waitBlock)
 
-  const res = await makeSwap(env, fromToken, amountIn, toToken, providers, poolFilter, makeSankeyDiagram)
+  const res = await makeSwap(env, fromToken, amountIn, toToken, providers, poolFilter, permits, makeSankeyDiagram)
   expect(res).not.undefined
   if (res === undefined) return [undefined, waitBlock]
   else return res

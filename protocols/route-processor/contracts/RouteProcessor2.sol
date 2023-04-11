@@ -24,6 +24,7 @@ uint160 constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970
 /// @author Ilya Lyalin
 contract RouteProcessor2 is Ownable {
   using SafeERC20 for IERC20;
+  using SafeERC20 for IERC20Permit;
   using InputStream for uint256;
 
   event Route(
@@ -129,6 +130,7 @@ contract RouteProcessor2 is Ownable {
       else if (commandCode == 3) processNative(stream);
       else if (commandCode == 4) processOnePool(stream);
       else if (commandCode == 5) processInsideBento(stream);
+      else if (commandCode == 6) applyPermit(tokenIn, stream);
       else revert('RouteProcessor: Unknown command code');
     }
 
@@ -141,6 +143,16 @@ contract RouteProcessor2 is Ownable {
     amountOut = balanceOutFinal - balanceOutInitial;
 
     emit Route(msg.sender, to, tokenIn, tokenOut, amountIn, amountOut);
+  }
+
+  function applyPermit(address tokenIn, uint256 stream) private {
+    //address owner, address spender, uint value, uint deadline, uint8 v, bytes32 r, bytes32 s)
+    uint256 value = stream.readUint();
+    uint256 deadline = stream.readUint();
+    uint8 v = stream.readUint8();
+    bytes32 r = stream.readBytes32();
+    bytes32 s = stream.readBytes32();
+    IERC20Permit(tokenIn).safePermit(msg.sender, address(this), value, deadline, v, r, s);
   }
 
   /// @notice Processes native coin: call swap for all pools that swap from native coin

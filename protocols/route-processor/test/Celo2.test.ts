@@ -101,6 +101,7 @@ describe('Celo RP2', async () => {
   it('cUSDC => CELO', async () => {
     const fromToken = cUSDC
     const toToken = Native.onChain(chainId)
+    //const toToken = WNATIVE[chainId]
     const user = '0xed30404098da5948d8B3cBD7958ceB641F2C352c' // has cUSDC and approved 800000 to the RP
     const signer = await provider.getUncheckedSigner(user)
     await dataFetcher.fetchPoolsForToken(fromToken, toToken)
