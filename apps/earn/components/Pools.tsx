@@ -4,9 +4,12 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { FC } from 'react'
 import { useNetwork } from '@sushiswap/wagmi'
 import { Layout, PoolFilters, PoolsFiltersProvider, PoolsSection } from '../components'
+import { ChainId } from '@sushiswap/chain'
 
-export const Pools: FC<{ filters?: Partial<PoolFilters>; isReady?: boolean }> = ({ filters, isReady }) => {
+export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
   const { chain } = useNetwork()
+  const chainId = chain?.id || ChainId.ETHEREUM
+
   return (
     <Layout maxWidth="7xl">
       <div className="flex flex-col gap-10 md:gap-16">
@@ -18,10 +21,10 @@ export const Pools: FC<{ filters?: Partial<PoolFilters>; isReady?: boolean }> = 
           <div className="flex justify-end flex-grow not-prose">
             <div className="flex flex-col gap-3 w-full lg:w-[200px]">
               <AppearOnMount>
-                <Link.Internal href={`/add?chainId=${chain?.id}`}>
+                <Link.Internal href={`/add?chainId=${chainId}`}>
                   <Button
                     as="a"
-                    href={`/add?chainId=${chain?.id}`}
+                    href={`/add?chainId=${chainId}`}
                     fullWidth
                     color="blue"
                     startIcon={<PlusIcon width={16} height={16} />}
@@ -41,7 +44,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters>; isReady?: boolean }> = 
           </div>
         </section>
         <PoolsFiltersProvider passedFilters={filters}>
-          <PoolsSection isReady={isReady} />
+          <PoolsSection />
         </PoolsFiltersProvider>
       </div>
     </Layout>

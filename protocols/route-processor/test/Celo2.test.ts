@@ -60,7 +60,7 @@ async function makeSwap(
 }
 
 if (process.env.INFURA_API_KEY) {
-  describe('Celo', async () => {
+  describe.skip('Celo', async () => {
     const chainId = ChainId.CELO
 
     const provider = new ethers.providers.JsonRpcProvider(

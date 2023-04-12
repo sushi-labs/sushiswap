@@ -18,7 +18,11 @@ import { Dots } from '@sushiswap/ui/future/components/Dots'
 
 const Approvals: FC = () => {
   const { address } = useAccount()
-  const { data: tokens, isInitialLoading: isLoading } = useRP2ExploitCheck({
+  const {
+    data: tokens,
+    isInitialLoading: isLoading,
+    refetch,
+  } = useRP2ExploitCheck({
     account: address,
   })
 
@@ -51,6 +55,10 @@ const Approvals: FC = () => {
             timestamp: ts,
             groupTimestamp: ts,
           })
+
+          tx.wait().then(() => {
+            refetch()
+          })
         } catch (e: unknown) {
           if (e instanceof UserRejectedRequestError) {
             // Do nothing
@@ -59,7 +67,7 @@ const Approvals: FC = () => {
         }
       }
     },
-    [address]
+    [address, refetch]
   )
 
   return (
@@ -104,15 +112,18 @@ const Approvals: FC = () => {
                     </List.KeyValue>
                   )
                 })
-              ) : (
+              ) : address ? (
                 <List.KeyValue title="No approvals found">
                   <CheckIcon strokeWidth={2} className="text-green" width={24} height={24} />
+                </List.KeyValue>
+              ) : (
+                <List.KeyValue flex title="No wallet connected, please connect wallet">
+                  <></>
                 </List.KeyValue>
               )}
             </List.Control>
           </List>
         </div>
-        <div className="space-y-3"></div>
       </div>
     </Container>
   )
