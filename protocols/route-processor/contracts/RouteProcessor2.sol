@@ -396,6 +396,8 @@ contract RouteProcessor2 is Ownable {
     int256 amount = amount0Delta > 0 ? amount0Delta : amount1Delta;
     require(amount > 0, 'RouteProcessor.uniswapV3SwapCallback: not positive amount');
 
+    // Normally, RouteProcessor shouldn't have any liquidity on board
+    // If some liquidity exists, it is sweept by the next user that makes swap through these tokens
     IERC20(tokenIn).safeTransfer(msg.sender, uint256(amount));
   }
 
