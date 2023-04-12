@@ -4,7 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 
 interface UseTokenAllowance {
   token?: Token
-  chainId: ChainId
+  chainId: ChainId | undefined
   owner: Address | undefined
   spender: Address | undefined
   enabled?: boolean
@@ -18,7 +18,7 @@ export const useTokenAllowance = ({ chainId, token, owner, spender, enabled = tr
     functionName: 'allowance',
     args: [owner as Address, spender as Address],
     watch: true,
-    enabled: Boolean(token && owner && spender && enabled),
+    enabled: Boolean(token && owner && spender && enabled && chainId),
     select: (data) => {
       if (token) {
         return Amount.fromRawAmount(token, data.toString())
