@@ -9,7 +9,7 @@ import { ClaimItem } from '../components/ClaimItem'
 import { Header } from '../components/Header'
 import { ConnectButton } from '@sushiswap/wagmi/future/components'
 
-export const RP2ClaimPage = () => {
+const RP2ClaimPage = () => {
   const { address } = useAccount()
   const claims = useRP2ExploitClaimFinder({
     account: address,
