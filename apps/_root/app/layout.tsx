@@ -3,15 +3,14 @@
 import '@sushiswap/ui/index.css'
 import '../variables.css'
 
-import { App, ThemeProvider } from '@sushiswap/ui'
-import { client } from '@sushiswap/wagmi'
+import { ThemeProvider } from '@sushiswap/ui'
 import Head from 'next/head'
-import { WagmiConfig } from '@sushiswap/wagmi'
 
 import React from 'react'
-import { queryClient } from '@sushiswap/react-query'
-import { QueryClientProvider } from '@tanstack/react-query'
+
 import { Onramper } from '@sushiswap/wagmi/future/components'
+import { WagmiProvider } from '../components/WagmiProvider'
+import { QueryClientProvider } from 'components/QueryClientProvider'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -25,16 +24,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="shortcut icon" href="/favicon.ico?v=1" />
       </Head>
       <body className="h-screen">
-        <WagmiConfig client={client}>
-          <QueryClientProvider client={queryClient}>
+        <WagmiProvider>
+          <QueryClientProvider>
             <ThemeProvider>
-              <Onramper.Provider>
-                {children}
-                <App.Footer />
-              </Onramper.Provider>
+              <Onramper.Provider>{children}</Onramper.Provider>
             </ThemeProvider>
           </QueryClientProvider>
-        </WagmiConfig>
+        </WagmiProvider>
       </body>
     </html>
   )

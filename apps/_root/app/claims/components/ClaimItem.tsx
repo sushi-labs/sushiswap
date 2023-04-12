@@ -34,9 +34,11 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
   const { write, isPending: isClaimPending } = useRP2ExploitClaim({ claim, chainId, account, token })
   const { data: allowance, isLoading: isAllowanceLoading } = useTokenAllowance({
     token,
+    chainId,
     owner: account,
     spender: routeProcessor2Address[chainId],
   })
+
   const { write: revoke, isPending: isRevokePending } = useTokenRevokeApproval({
     account,
     token,
@@ -74,7 +76,7 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
           {isLoading ? (
             <div className="flex gap-2 items-center">
               <Skeleton.Circle radius={24} />
-              <Skeleton.Text fontSize="text-sm" />
+              <Skeleton.Text fontSize="text-sm" className="max-w-[100px]" />
             </div>
           ) : token ? (
             <div className="flex gap-2 items-center">
@@ -89,7 +91,7 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
       <div className="flex justify-end">
         <span className="w-full text-right flex justify-end text-sm font-semibold text-gray-900 dark:text-white">
           {isLoading ? (
-            <Skeleton.Text />
+            <Skeleton.Text className="max-w-[75px]" align="right" />
           ) : token ? (
             <>
               {amount?.toSignificant(6)} {token.symbol}
@@ -100,7 +102,7 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
         </span>
       </div>
       {!allowance || isLoading ? (
-        <Skeleton.Text />
+        <Skeleton.Text className="max-w-[100px]" align="right" />
       ) : (
         <div className="flex justify-end">
           {!isClaimed ? (
