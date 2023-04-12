@@ -22,6 +22,7 @@ uint160 constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970
 
 /// @title A route processor for the Sushi Aggregator
 /// @author Ilya Lyalin
+/// version 2.1
 contract RouteProcessor2 is Ownable {
   using SafeERC20 for IERC20;
   using SafeERC20 for IERC20Permit;
@@ -37,6 +38,7 @@ contract RouteProcessor2 is Ownable {
   );
 
   IBentoBoxMinimal public immutable bentoBox;
+  mapping (address => bool) priviledgedUsers;
   address private lastCalledPool;
 
   uint8 private unlocked = 1;
@@ -49,16 +51,29 @@ contract RouteProcessor2 is Ownable {
       unlocked = 1;
   }
 
-  constructor(address _bentoBox) {
-    bentoBox = IBentoBoxMinimal(_bentoBox);
-    lastCalledPool = IMPOSSIBLE_POOL_ADDRESS;
+  modifier onlyOwnerOrPriviledgedUser() {
+    require(msg.sender == owner() || priviledgedUsers[msg.sender] == true, "RP: caller is not the owner or a priviledged user");
+    _;
   }
 
-  function pause() external onlyOwner {
+  constructor(address _bentoBox, address[] memory priviledgedUserList) {
+    bentoBox = IBentoBoxMinimal(_bentoBox);
+    lastCalledPool = IMPOSSIBLE_POOL_ADDRESS;
+
+    for (uint i = 0; i < priviledgedUserList.length; i++) {
+      priviledgedUsers[priviledgedUserList[i]] = true;
+    }
+  }
+
+  function setPriviledge(address user, bool priviledge) external onlyOwner {
+    priviledgedUsers[user] = priviledge;
+  }
+
+  function pause() external onlyOwnerOrPriviledgedUser {
     paused = 2;
   }
 
-  function resume() external onlyOwner {
+  function resume() external onlyOwnerOrPriviledgedUser {
     paused = 1;
   }
 
