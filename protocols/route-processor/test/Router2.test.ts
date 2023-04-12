@@ -33,6 +33,7 @@ import {
   UniV3Pool,
 } from '@sushiswap/tines'
 import { expect } from 'chai'
+import { signERC2612Permit } from 'eth-permit'
 import { BigNumber, Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
 import seedrandom from 'seedrandom'
@@ -193,10 +194,17 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   }
 }
 
-// async function makePermit(env: TestEnvironment) {
-//   const userAddress = await env.user.getAddress()
-//   const result = await signERC2612Permit(user, fromToken.address, userAddress, env.rp.address, amountIn.toString())
-// }
+async function makePermit(env: TestEnvironment, token: Token, amount: BigNumber): PermitData {
+  const userAddress = await env.user.getAddress()
+  const result = await signERC2612Permit(env.user, token.address, userAddress, env.rp.address, amount.toHexString())
+  return {
+    value: BigNumber.from(result.value),
+    deadline: BigNumber.from(result.deadline),
+    v: result.v,
+    r: result.r,
+    s: result.s,
+  }
+}
 
 // all pool data assumed to be updated
 async function makeSwap(
@@ -240,7 +248,15 @@ async function makeSwap(
   //       l.assumedAmountOut
   //   )
   // )
-  const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
+  const rpParams = Router.routeProcessor2Params(
+    pcMap,
+    route,
+    fromToken,
+    toToken,
+    env.user.address,
+    env.rp.address,
+    permits
+  )
   if (rpParams === undefined) return
 
   //console.log('Call route processor (may take long time for the first launch)...')
@@ -423,6 +439,23 @@ describe('End-to-end Router2 test', async function () {
       FRAX[chainId as FRAX_CHAINS],
       FXS[chainId as FXS_CHAINS],
     ]
+  })
+
+  it('Permit: Native => FRAX => Native', async function () {
+    const token = FRAX[chainId as keyof typeof FRAX_ADDRESS]
+    const amountIn = getBigNumber(1000000 * 1e18)
+    intermidiateResult[0] = amountIn
+    intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), token, intermidiateResult)
+    const permit = await makePermit(env, token, intermidiateResult[0])
+    intermidiateResult = await updMakeSwap(
+      env,
+      token,
+      Native.onChain(chainId),
+      intermidiateResult,
+      undefined,
+      undefined,
+      [permit]
+    )
   })
 
   it('Native => SUSHI => Native', async function () {

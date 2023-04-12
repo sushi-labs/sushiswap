@@ -115,7 +115,8 @@ export class HEXer {
     if (data.length > 64) {
       throw new Error('Wrong bytes32 length: ' + data.length)
     }
-    this.hex += data.padStart(64, '0')
+
+    this.hex += data.padEnd(64, '0')
     return this
   }
 }

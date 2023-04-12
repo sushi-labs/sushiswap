@@ -12,7 +12,7 @@ enum TokenType {
 
 export interface PermitData {
   value: BigNumber
-  deadline: number
+  deadline: BigNumber
   v: number
   r: string
   s: string
@@ -69,7 +69,7 @@ class TinesToRouteProcessor2 {
     const hex = new HEXer()
     permits.forEach((p) => {
       hex
-        .uint(6) // applyPermit commandCode
+        .uint8(6) // applyPermit commandCode
         .uint(p.value)
         .uint(p.deadline)
         .uint8(p.v)
@@ -201,8 +201,9 @@ export function getRouteProcessor2Code(
   route: MultiRoute,
   routeProcessorAddress: string,
   toAddress: string,
-  pools: Map<string, PoolCode>
+  pools: Map<string, PoolCode>,
+  permits: PermitData[] = []
 ): string {
   const rpc = new TinesToRouteProcessor2(routeProcessorAddress, route.fromToken.chainId as ChainId, pools)
-  return rpc.getRouteProcessorCode(route, toAddress)
+  return rpc.getRouteProcessorCode(route, toAddress, permits)
 }

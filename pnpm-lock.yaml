@@ -3127,6 +3127,7 @@ importers:
       cross-env: ^7.0.0
       dotenv: 16.0.3
       eslint: 8.29.0
+      eth-permit: ^0.2.3
       ethers: 5.7.2
       hardhat: 2.12.4
       hardhat-contract-sizer: 2.6.1
@@ -3178,6 +3179,7 @@ importers:
       cross-env: 7.0.3
       dotenv: 16.0.3
       eslint: 8.29.0
+      eth-permit: 0.2.3
       ethers: 5.7.2
       hardhat: 2.12.4_z6wznmtyb6ovnulj6iujpct7um
       hardhat-contract-sizer: 2.6.1_hardhat@2.12.4
@@ -20673,6 +20675,12 @@ packages:
     dev: false
     optional: true
 
+  /eth-permit/0.2.3:
+    resolution: {integrity: sha512-d4tbiRQgbpdeJbdC9hdyT0SUJcJx28FIy3o2RxEAoeYI+zyYbNC0ZpdE6kxBK+7iY2payjHRE7rs7tr5EcOVLg==}
+    dependencies:
+      utf8: 3.0.0
+    dev: true
+
   /eth-query/2.1.2:
     resolution: {integrity: sha512-srES0ZcvwkR/wd5OQBRA1bIJMww1skfGS0s8wlwK3/oNP4+wnds60krvu5R1QbpRQjMmpG5OMIWro5s7gvDPsA==}
     dependencies:
@@ -32564,6 +32572,7 @@ packages:
     resolution: {integrity: sha512-T9q82TJI9e/C1TAxYvfb16xO120tMVFZrGA3f9/P4424DNu6ypK103y0GPFVa17yotwSyZW5iYXgjYHkGrJW/g==}
     engines: {node: '>=0.8.0'}
     hasBin: true
+    requiresBuild: true
 
   /uint8arrays/3.1.1:
     resolution: {integrity: sha512-+QJa8QRnbdXVpHYjLoTpJIdCTiw9Ir62nocClWuXIq2JIh4Uta0cQsTSpFL678p2CN8B+XSApwcU+pQEqVpKWg==}
