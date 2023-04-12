@@ -22,6 +22,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '@sushiswap/react-query'
 import { ToastContainer } from '@sushiswap/ui/future/components/toast'
 import { ConcentratedLiquidityURLStateProvider } from '../components/ConcentratedLiquidityURLStateProvider'
+import { HistoryProvider } from '../components/HistoryProvider'
 
 declare global {
   interface Window {
@@ -61,13 +62,15 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           <QueryClientProvider client={queryClient}>
             <ThemeProvider>
               <Onramper.Provider>
-                <App.Shell>
-                  <DefaultSeo {...SEO} />
-                  <Header />
-                  <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
-                  <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
-                  <ToastContainer />
-                </App.Shell>
+                <HistoryProvider>
+                  <App.Shell>
+                    <DefaultSeo {...SEO} />
+                    <Header />
+                    <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
+                    <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
+                    <ToastContainer />
+                  </App.Shell>
+                </HistoryProvider>
               </Onramper.Provider>
             </ThemeProvider>
           </QueryClientProvider>

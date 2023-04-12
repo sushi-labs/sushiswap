@@ -8,7 +8,7 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { ConcentratedPositionsTable } from './Tables/PositionsTable/ConcentratedPositionsTable'
 import { useIsMounted } from '@sushiswap/hooks'
 
-export const PoolsSection: FC<{ isReady?: boolean }> = ({ isReady }) => {
+export const PoolsSection: FC = () => {
   const { address } = useAccount()
   const [tab, setTab] = useState<number>(0)
   const isMounted = useIsMounted()
@@ -39,7 +39,7 @@ export const PoolsSection: FC<{ isReady?: boolean }> = ({ isReady }) => {
           <Tab.Panel unmount={false}>
             <TableFilters showAllFilters={tab === 0} />
             <div className="border-t border-gray-900/5 dark:border-slate-200/5" />
-            <PoolsTable isReady={isReady} />
+            <PoolsTable />
           </Tab.Panel>
           <Tab.Panel>
             <div className="border-t border-gray-900/5 dark:border-slate-200/5">

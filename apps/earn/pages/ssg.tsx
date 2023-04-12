@@ -6,6 +6,7 @@ import { Pools as _Pools } from '../components'
 import { getPoolCount, getPoolCountUrl, getPools, getPoolsUrl } from '@sushiswap/client'
 import { defaultPoolsArgs } from '../lib/constants'
 import { unstable_serialize } from 'swr/infinite'
+import { SplashController } from '@sushiswap/ui/future/components/SplashController'
 
 export const getStaticProps: GetStaticProps = async () => {
   const [pools, poolCount] = await Promise.all([getPools(defaultPoolsArgs), getPoolCount(defaultPoolsArgs)])
@@ -24,9 +25,11 @@ export const getStaticProps: GetStaticProps = async () => {
 
 export const Pools: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (
-    <SWRConfig value={{ fallback }}>
-      <_Pools />
-    </SWRConfig>
+    <SplashController>
+      <SWRConfig value={{ fallback }}>
+        <_Pools />
+      </SWRConfig>
+    </SplashController>
   )
 }
 
