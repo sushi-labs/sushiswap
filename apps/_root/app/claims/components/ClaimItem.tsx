@@ -52,23 +52,6 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
 
   const isLoading = isAllowanceLoading || checkIsClaimedLoading || tokenLoading
 
-  const button = (
-    <Button
-      onClick={() => write?.()}
-      size="xs"
-      disabled={isClaimPending}
-      loading={isClaimPending}
-      variant={isClaimed ? 'outlined' : 'filled'}
-      color={isClaimed ? 'green' : 'blue'}
-      className={isClaimed ? 'pointer-events-none' : ''}
-    >
-      <div className="flex gap-1 items-center">
-        {isClaimed && <CheckIcon strokeWidth={2} width={16} height={16} className="text-green" />}
-        {!isClaimed ? 'Claim' : 'Claimed'}
-      </div>
-    </Button>
-  )
-
   return (
     <div className={classNames('grid grid-cols-3 items-center', 'gap-2 py-3 px-4 h-[52px]')}>
       <div className="flex flex-col gap-0.5">
@@ -119,12 +102,26 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
                     Revoke Approval
                   </Button>
                 ) : (
-                  button
+                  <Button
+                    onClick={() => write?.()}
+                    size="xs"
+                    disabled={isClaimPending}
+                    loading={isClaimPending}
+                    variant="filled"
+                    color="blue"
+                  >
+                    <div className="flex gap-1 items-center">Claim</div>
+                  </Button>
                 )}
               </Checker.Network>
             </Checker.Connect>
           ) : (
-            button
+            <Button size="xs" variant="outlined" color="green" className="pointer-events-none">
+              <div className="flex gap-1 items-center">
+                <CheckIcon strokeWidth={2} width={16} height={16} className="text-green" />
+                Claimed
+              </div>
+            </Button>
           )}
         </div>
       )}
