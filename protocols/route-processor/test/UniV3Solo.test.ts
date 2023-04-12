@@ -38,7 +38,7 @@ interface TestEnvironment {
 
 async function getTestEnvironment(): Promise<TestEnvironment> {
   const chainId = network.config.chainId as ChainId
-  const RouteProcessor = await ethers.getContractFactory('RouteProcessor2')
+  const RouteProcessor = await ethers.getContractFactory('RouteProcessor3')
   const routeProcessor = await RouteProcessor.deploy(bentoBoxV1Address[chainId as BentoBoxV1ChainId], [])
   await routeProcessor.deployed()
   const [user] = await ethers.getSigners()
