@@ -9,7 +9,9 @@ import Head from 'next/head'
 import { WagmiConfig } from '@sushiswap/wagmi'
 
 import React from 'react'
-import { ToastContainer } from '@sushiswap/ui/future/components/toast'
+import { queryClient } from '@sushiswap/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { Onramper } from '@sushiswap/wagmi/future/components'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -24,14 +26,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </Head>
       <body className="h-screen">
         <WagmiConfig client={client}>
-          <ThemeProvider>
-            <App.Shell>
-              {children}
-              <App.Footer />
-              <ToastContainer className="mt-[50px]" />
-            </App.Shell>
-            <div className="z-[-1] fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
-          </ThemeProvider>
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider>
+              <Onramper.Provider>
+                {children}
+                <App.Footer />
+              </Onramper.Provider>
+            </ThemeProvider>
+          </QueryClientProvider>
         </WagmiConfig>
       </body>
     </html>

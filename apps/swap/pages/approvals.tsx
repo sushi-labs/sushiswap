@@ -7,8 +7,7 @@ import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Token } from '@sushiswap/currency'
 import { Address, erc20ABI } from '@wagmi/core'
-import { routeProcessorAddress } from '@sushiswap/route-processor/exports/exports'
-import { isRouteProcessorChainId } from '@sushiswap/route-processor'
+import { routeProcessor2Address, isRouteProcessor2ChainId } from '@sushiswap/route-processor/exports/exports'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { BigNumber } from 'ethers'
 import { List } from '@sushiswap/ui/future/components/list/List'
@@ -28,13 +27,13 @@ const Approvals: FC = () => {
 
   const revoke = useCallback(
     async (el: Token) => {
-      if (isRouteProcessorChainId(el.chainId)) {
+      if (isRouteProcessor2ChainId(el.chainId)) {
         const config = await prepareWriteContract({
           address: el.wrapped.address as Address,
           abi: erc20ABI,
           chainId: el.chainId,
           functionName: 'approve',
-          args: [routeProcessorAddress[el.chainId], BigNumber.from(0)],
+          args: [routeProcessor2Address[el.chainId], BigNumber.from(0)],
         })
 
         try {
