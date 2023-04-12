@@ -26,18 +26,27 @@ export const RP2ClaimPage = () => {
             {"haven't"} interacted with Sushi in the past ten days, as the exploited contract is less than ten days old.
             But check approvals with the link above as a good security practice.
           </p>
+          <p>
+            If you do not see your claim here, your funds have been blackhacked. The Sushi team will establish a claim
+            process, which the user can opt-in to, and {"we'll"} manage claims on a case-by-case basis. More details
+            surrounding this process will come shortly.
+          </p>
         </div>
 
         <List className="pt-6 relative">
           <List.Label>Claims found on every network</List.Label>
           <List.Control>
-            {address ? (
+            {!address ? (
+              <List.KeyValue flex title="No user connected">
+                <ConnectButton size="xs" color="blue" hideChevron />
+              </List.KeyValue>
+            ) : claims.length > 0 ? (
               claims.map(([chainId, claim]) => (
                 <ClaimItem account={address} key={claim.index} claim={claim} chainId={chainId} />
               ))
             ) : (
-              <List.KeyValue flex title="No user connected">
-                <ConnectButton size="xs" color="blue" hideChevron />
+              <List.KeyValue flex title="No claims found">
+                <span className="h-[28px]" />
               </List.KeyValue>
             )}
           </List.Control>
