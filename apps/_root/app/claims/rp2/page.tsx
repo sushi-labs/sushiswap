@@ -1,8 +1,7 @@
 'use client'
 
 import { useRP2ExploitClaimFinder } from '@sushiswap/wagmi/future/hooks'
-import { useNetwork } from '@sushiswap/wagmi'
-import { ChainId } from '@sushiswap/chain'
+import { useAccount } from '@sushiswap/wagmi'
 import { Container } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import React from 'react'
@@ -11,9 +10,7 @@ import { Header } from '../components/Header'
 import { ConnectButton } from '@sushiswap/wagmi/future/components'
 
 export const RP2ClaimPage = () => {
-  // const { address } = useAccount()
-  const address = '0x00c75c19a4cd3586280f980bafe09236235324d2'
-
+  const { address } = useAccount()
   const claims = useRP2ExploitClaimFinder({
     account: address,
   })
