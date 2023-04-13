@@ -12,6 +12,12 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  if (pathname === '/add/v2') {
+    const url = req.nextUrl.clone()
+    url.pathname = '/add/v2/1'
+    return NextResponse.redirect(url)
+  }
+
   // Index handling
   // if (pathname === '/' && search !== '') {
   //   const url = req.nextUrl.clone()
