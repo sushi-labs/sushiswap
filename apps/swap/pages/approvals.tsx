@@ -43,7 +43,7 @@ const Approvals: FC = () => {
         </Link>
         <h1 className="text-3xl font-medium mt-2">RP2 Approvals</h1>
         <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
-          {"We'll"} search every network to find any approvals on the RouteProcessor2 based on all the logs.
+          {"We'll"} search every network to find any approvals on the RouteProcessor2.
         </h1>
       </div>
       <div className="flex justify-center">
