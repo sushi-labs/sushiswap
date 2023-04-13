@@ -1,6 +1,6 @@
 'use client'
 
-import { classNames, Currency } from '@sushiswap/ui'
+import { classNames, Currency, NetworkIcon } from '@sushiswap/ui'
 import React, { FC, useMemo } from 'react'
 import { RP2MerkleTreeClaimSchema } from '@sushiswap/wagmi/future/hooks/exploits/constants'
 import { z } from 'zod'
@@ -21,6 +21,7 @@ import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { Address } from 'wagmi'
 import { routeProcessor2Address } from '@sushiswap/route-processor/exports/exports'
 import { ZERO } from '@sushiswap/core-sdk'
+import { Badge } from '@sushiswap/ui/future/components/Badge'
 
 interface ClaimItem {
   account: Address
@@ -57,13 +58,18 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
       <div className="flex flex-col gap-0.5">
         <span className="text-sm font-medium text-gray-600 dark:text-white">
           {isLoading ? (
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-3 items-center">
               <Skeleton.Circle radius={24} />
               <Skeleton.Text fontSize="text-sm" className="max-w-[100px]" />
             </div>
           ) : token ? (
-            <div className="flex gap-2 items-center">
-              <Currency.Icon currency={token} width={24} height={24} />
+            <div className="flex gap-3 items-center">
+              <Badge
+                position="bottom-right"
+                badgeContent={<NetworkIcon chainId={token.chainId} width={16} height={16} />}
+              >
+                <Currency.Icon currency={token} width={24} height={24} />
+              </Badge>
               {token.name} ({token.symbol})
             </div>
           ) : (
