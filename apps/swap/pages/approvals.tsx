@@ -54,7 +54,6 @@ const Approvals: FC = () => {
               {isLoading ? (
                 <>
                   <List.KeyValue skeleton />
-                  <List.KeyValue skeleton />
                 </>
               ) : tokens && tokens?.length > 0 && address ? (
                 tokens?.map((el, i) => {
