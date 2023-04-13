@@ -62,7 +62,7 @@ const Approvals: FC = () => {
                 })
               ) : address ? (
                 <List.KeyValue flex title="No approvals found, you're good 👍">
-                  <CheckIcon strokeWidth={2} className="text-green" width={24} height={24} />
+                  <CheckIcon strokeWidth={2} className="text-green" width={20} height={20} />
                 </List.KeyValue>
               ) : (
                 <List.KeyValue flex title="No wallet connected, please connect wallet">
