@@ -26,46 +26,34 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
   }
 
   if ('protocols' in args && args.protocols !== undefined) {
+    const OR: Prisma.SushiPoolWhereInput['OR'] = []
+
     if (args.protocols.includes('SUSHISWAP_V3')) {
-      addFilter({
-        OR: [
-          {
-            version: PoolVersion.V3,
-            type: PoolType.CONCENTRATED_LIQUIDITY_POOL,
-          },
-        ],
+      OR.push({
+        version: PoolVersion.V3,
+        type: PoolType.CONCENTRATED_LIQUIDITY_POOL,
       })
     }
     if (args.protocols.includes('SUSHISWAP_V2')) {
-      addFilter({
-        OR: [
-          {
-            version: PoolVersion.LEGACY,
-            type: PoolType.CONSTANT_PRODUCT_POOL,
-          },
-        ],
+      OR.push({
+        version: PoolVersion.LEGACY,
+        type: PoolType.CONSTANT_PRODUCT_POOL,
       })
     }
     if (args.protocols.includes('BENTOBOX_STABLE')) {
-      addFilter({
-        OR: [
-          {
-            version: PoolVersion.TRIDENT,
-            type: PoolType.STABLE_POOL,
-          },
-        ],
+      OR.push({
+        version: PoolVersion.TRIDENT,
+        type: PoolType.STABLE_POOL,
       })
     }
     if (args.protocols.includes('BENTOBOX_CLASSIC')) {
-      addFilter({
-        OR: [
-          {
-            version: PoolVersion.TRIDENT,
-            type: PoolType.CONSTANT_PRODUCT_POOL,
-          },
-        ],
+      OR.push({
+        version: PoolVersion.TRIDENT,
+        type: PoolType.CONSTANT_PRODUCT_POOL,
       })
     }
+
+    addFilter({ AND: [{ OR }] })
   }
 
   if ('isIncentivized' in args && args.isIncentivized !== undefined) {
@@ -99,10 +87,14 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
         arr.slice(i + 1).map((token1) => [token0, token1] as const)
       )
       addFilter({
-        OR: sets.flatMap((set) => [
-          { token0: { symbol: { contains: set[0] } }, token1: { symbol: { contains: set[1] } } },
-          { token0: { symbol: { contains: set[1] } }, token1: { symbol: { contains: set[0] } } },
-        ]),
+        AND: [
+          {
+            OR: sets.flatMap((set) => [
+              { token0: { symbol: { contains: set[0] } }, token1: { symbol: { contains: set[1] } } },
+              { token0: { symbol: { contains: set[1] } }, token1: { symbol: { contains: set[0] } } },
+            ]),
+          },
+        ],
       })
     }
   }
