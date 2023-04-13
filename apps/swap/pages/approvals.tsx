@@ -19,11 +19,7 @@ import { ArrowLeftIcon } from '@heroicons/react/20/solid'
 
 const Approvals: FC = () => {
   const { address } = useAccount()
-  const {
-    data: tokens,
-    isInitialLoading: isLoading,
-    refetch,
-  } = useRP2ExploitCheck({
+  const { data: tokens, isInitialLoading: isLoading } = useRP2ExploitCheck({
     account: address,
   })
 
@@ -57,7 +53,7 @@ const Approvals: FC = () => {
                 </>
               ) : tokens && tokens?.length > 0 && address ? (
                 tokens?.map((el, i) => {
-                  return <Item key={i} token={el} account={address} refetch={refetch} />
+                  return <Item key={i} token={el} account={address} />
                 })
               ) : address ? (
                 <List.KeyValue flex title="No approvals found, you're good 👍">
@@ -76,7 +72,7 @@ const Approvals: FC = () => {
   )
 }
 
-const Item: FC<{ token: Token; account: Address; refetch(): void }> = ({ account, token, refetch }) => {
+const Item: FC<{ token: Token; account: Address }> = ({ account, token }) => {
   const { data: allowance, isLoading } = useTokenAllowance({
     token,
     owner: account,
@@ -88,12 +84,6 @@ const Item: FC<{ token: Token; account: Address; refetch(): void }> = ({ account
     token,
     spender: routeProcessor2Address[token.chainId as RouteProcessor2ChainId],
   })
-
-  useEffect(() => {
-    if (!isPending) {
-      refetch()
-    }
-  }, [isPending, refetch])
 
   if (isLoading) return <List.KeyValue skeleton />
 
