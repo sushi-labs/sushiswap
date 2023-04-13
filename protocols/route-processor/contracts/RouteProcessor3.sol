@@ -34,6 +34,7 @@ contract RouteProcessor3 is Ownable {
     address indexed tokenIn, 
     address indexed tokenOut, 
     uint amountIn, 
+    uint amountOutMin,
     uint amountOut
   );
 
@@ -157,7 +158,7 @@ contract RouteProcessor3 is Ownable {
 
     amountOut = balanceOutFinal - balanceOutInitial;
 
-    emit Route(msg.sender, to, tokenIn, tokenOut, amountIn, amountOut);
+    emit Route(msg.sender, to, tokenIn, tokenOut, amountIn, amountOutMin, amountOut);
   }
 
   function applyPermit(address tokenIn, uint256 stream) private {
