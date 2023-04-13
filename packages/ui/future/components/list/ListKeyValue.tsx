@@ -28,7 +28,7 @@ export const ListKeyValue: FC<ListKeyValueProps> = ({ title, subtitle, children,
   }
 
   return (
-    <div className={classNames(flex ? 'flex justify-between' : 'grid grid-cols-2', 'gap-2 py-3 px-4')}>
+    <div className={classNames(flex ? 'flex justify-between items-center' : 'grid grid-cols-2', 'gap-2 py-3 px-4')}>
       <div className="flex flex-col gap-0.5">
         <span className="text-sm font-medium text-gray-600 dark:text-slate-400">{title}</span>
         {subtitle && <span className="text-xs text-gray-500 dark:text-slate-500">{subtitle}</span>}
