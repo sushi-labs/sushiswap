@@ -177,70 +177,52 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       bitmapIndex(pool.activeTick + 1000 * TICK_SPACINGS[pool.fee], TICK_SPACINGS[pool.fee])
     )
 
-    const lowerTicksContracts = this.client.multicall({
+    const wordList: any = []
+    existingPools.forEach((pool, i) => {
+      for (let j = minIndexes[i]; j <= maxIndexes[i]; ++j) {
+        wordList.push({
+          chainId: this.chainId,
+          address: this.tickLens[this.chainId as keyof typeof this.tickLens] as Address,
+          args: [pool.address, j],
+          abi: tickLensAbi,
+          functionName: 'getPopulatedTicksInWord',
+          index: i,
+        })
+      }
+    })
+    const ticksContracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
-      contracts: existingPools.map(
-        (pool, i) =>
-          ({
-            chainId: this.chainId,
-            address: this.tickLens[this.chainId as keyof typeof this.tickLens] as Address,
-            args: [pool.address, minIndexes[i]],
-            abi: tickLensAbi,
-            functionName: 'getPopulatedTicksInWord',
-          } as const)
-      ),
+      contracts: wordList,
     })
 
-    const upperTicksContracts = this.client.multicall({
-      multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
-      allowFailure: true,
-      contracts: existingPools.map(
-        (pool, i) =>
-          ({
-            chainId: this.chainId,
-            address: this.tickLens[this.chainId as keyof typeof this.tickLens] as Address,
-            args: [pool.address, maxIndexes[i]],
-            abi: tickLensAbi,
-            functionName: 'getPopulatedTicksInWord',
-          } as const)
-      ),
-    })
-
-    const [liquidityResults, token0Balances, token1Balances, lowerTickResults, upperTickResults] = await Promise.all([
+    const [liquidityResults, token0Balances, token1Balances, tickResults] = await Promise.all([
       liquidityContracts,
       token0Contracts,
       token1Contracts,
-      lowerTicksContracts,
-      upperTicksContracts,
+      ticksContracts,
     ])
+
+    const ticks: any = []
+    tickResults.forEach((t, i) => {
+      const index = wordList[i].index
+      if (ticks[index] === undefined) ticks[index] = []
+      ticks[index] = ticks[index].concat(t.result || [])
+    })
 
     const transformedV3Pools: PoolCode[] = []
     existingPools.forEach((pool, i) => {
-      if (
-        !liquidityResults?.[i] ||
-        !token0Balances?.[i].result ||
-        !token1Balances?.[i].result ||
-        !lowerTickResults?.[i] ||
-        !upperTickResults?.[i]
-      )
-        return
+      if (!liquidityResults?.[i] || !token0Balances?.[i].result || !token1Balances?.[i].result) return
       const balance0 = token0Balances[i].result
       const balance1 = token1Balances[i].result
       const liquidity = liquidityResults[i].result
       if (balance0 === undefined || balance1 === undefined || liquidity === undefined) return
-
-      const lowerTicks =
-        lowerTickResults[i].result?.map((tick) => ({
+      const poolTicks = ticks[i]
+        .map((tick: any) => ({
           index: tick.tick,
           DLiquidity: BigNumber.from(tick.liquidityGross),
-        })) ?? []
-      const upperTicks =
-        upperTickResults[i].result?.map((tick) => ({
-          index: tick.tick,
-          DLiquidity: BigNumber.from(tick.liquidityGross),
-        })) ?? []
-      const ticks = [...lowerTicks, ...upperTicks].sort((a, b) => a.index - b.index)
+        }))
+        .sort((a: any, b: any) => a.index - b.index)
       const v3Pool = new UniV3Pool(
         pool.address,
         pool.token0 as RToken,
@@ -251,13 +233,11 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
         pool.activeTick,
         BigNumber.from(liquidity),
         BigNumber.from(pool.sqrtPriceX96),
-        ticks
+        poolTicks
       )
-      
+
       const pc = new UniV3PoolCode(v3Pool, this.getType(), this.getPoolProviderName())
-      transformedV3Pools.push(
-        pc
-      )
+      transformedV3Pools.push(pc)
       this.pools.set(pool.address.toLowerCase(), pc)
     })
 
@@ -265,7 +245,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       this.getTradeId(t0, t1),
       transformedV3Pools.map((pc) => pc.pool.address.toLowerCase())
     )
-
   }
 
   getStaticPools(t1: Token, t2: Token): StaticPool[] {
@@ -307,8 +286,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       fee,
     }))
   }
-
-
 
   startFetchPoolsData() {
     this.stopFetchPoolsData()

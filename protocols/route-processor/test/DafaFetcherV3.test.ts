@@ -1,8 +1,13 @@
 import { ChainId } from '@sushiswap/chain'
+import { Token } from '@sushiswap/currency'
+import { DataFetcher, LiquidityProviders } from '@sushiswap/router'
 import { getBigNumber } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { Contract, Signer } from 'ethers'
-import { ethers } from 'hardhat'
+import { ethers, network } from 'hardhat'
+import { createPublicClient } from 'viem'
+import { custom } from 'viem'
+import { hardhat } from 'viem/chains'
 
 import ERC20Mock from '../artifacts/contracts/ERC20Mock.sol/ERC20Mock.json'
 
@@ -186,6 +191,8 @@ async function createUniV3Pool(
   // await factory.createPool(token0Contract.address, token1Contract.address, fee)
   const positionManager = new Contract(PositionManager[chainId], PositionManagerABI, user)
   const sqrtPriceX96 = getBigNumber(Math.sqrt(price) * Math.pow(2, 96))
+  console.log('sqrtPriceX96', sqrtPriceX96)
+
   await positionManager.createAndInitializePoolIfNecessary(
     token0Contract.address,
     token1Contract.address,
@@ -248,7 +255,48 @@ async function uniV3PoolMint(env: UniV3Environment, position: UniV3Position) {
   console.log(liquidity)
 }
 
+const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
+async function getDataFetcherData(env: UniV3Environment) {
+  const client = createPublicClient({
+    chain: {
+      ...hardhat,
+      contracts: {
+        multicall3: {
+          address: '0xca11bde05977b3631167028862be2a173976ca11',
+          blockCreated: 25770160,
+        },
+      },
+      pollingInterval: POLLING_INTERVAL,
+    },
+    transport: custom(network.provider),
+  })
+  const chainId = network.config.chainId as ChainId
+
+  const token0 = new Token({
+    chainId,
+    address: env.token0Contract.address,
+    decimals: 18,
+    symbol: 'Token0',
+    name: 'Token0',
+  })
+  const token1 = new Token({
+    chainId,
+    address: env.token1Contract.address,
+    decimals: 18,
+    symbol: 'Token1',
+    name: 'Token1',
+  })
+
+  const dataFetcher = new DataFetcher(chainId, client)
+  dataFetcher.startDataFetching([LiquidityProviders.UniswapV3])
+  await dataFetcher.fetchPoolsForToken(token0, token1)
+  const pcMap = dataFetcher.getCurrentPoolCodeMap(token0, token1)
+  console.log(pcMap.get('0xB89cE525385c9a8a405ba6ddBc172ACEB6feeD11').pool)
+  console.log(pcMap.get('0xB89cE525385c9a8a405ba6ddBc172ACEB6feeD11').pool.ticks)
+}
+
 it('DataFetcher test', async () => {
   const [user] = await ethers.getSigners()
-  const poolEnv = await createUniV3Pool(user, 500, 5, [{ from: -120000, to: -10000, val: 1e18 }])
+  const poolEnv = await createUniV3Pool(user, 500, 5, [{ from: -24000, to: +24000, val: 1e18 }])
+  await getDataFetcherData(poolEnv as UniV3Environment)
 })

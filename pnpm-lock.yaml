@@ -3137,6 +3137,7 @@ importers:
       hardhat-preprocessor: 0.1.5
       hardhat-spdx-license-identifier: 2.1.0
       hardhat-watcher: 2.5.0
+      mocha: ^10.2.0
       prettier: 2.8.1
       prettier-plugin-solidity: 1.1.0
       solidity-coverage: 0.8.2
@@ -3189,6 +3190,7 @@ importers:
       hardhat-preprocessor: 0.1.5_hardhat@2.12.4
       hardhat-spdx-license-identifier: 2.1.0_hardhat@2.12.4
       hardhat-watcher: 2.5.0_hardhat@2.12.4
+      mocha: 10.2.0
       prettier: 2.8.1
       prettier-plugin-solidity: 1.1.0_prettier@2.8.1
       solidity-coverage: 0.8.2_hardhat@2.12.4
@@ -18424,7 +18426,7 @@ packages:
       supports-color:
         optional: true
     dependencies:
-      ms: 2.1.1
+      ms: 2.1.3
       supports-color: 6.0.0
     dev: true
 
@@ -30534,7 +30536,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.2
+      follow-redirects: 1.15.2_debug@4.3.4
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1

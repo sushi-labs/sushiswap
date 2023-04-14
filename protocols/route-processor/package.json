@@ -74,6 +74,7 @@
     "hardhat-preprocessor": "0.1.5",
     "hardhat-spdx-license-identifier": "2.1.0",
     "hardhat-watcher": "2.5.0",
+    "mocha": "^10.2.0",
     "prettier": "2.8.1",
     "prettier-plugin-solidity": "1.1.0",
     "solidity-coverage": "0.8.2",
