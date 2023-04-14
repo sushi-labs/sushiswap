@@ -4,7 +4,7 @@ import { BigNumber, BigNumberish, Contract } from 'ethers'
 import { ethers } from 'hardhat'
 import seedrandom from 'seedrandom'
 
-import { createRandomUniV3Pool, createUniV3Env, createUniV3Pool, UniV3Environment } from '../dist'
+import { createRandomUniV3Pool, createUniV3EnvZero, createUniV3Pool, UniV3Environment } from '../dist'
 
 // Map of fee to tickSpacing
 const feeAmountTickSpacing: number[] = []
@@ -140,7 +140,7 @@ async function checkSwap(
   const inBalanceBefore = await inToken.balanceOf(env.user.getAddress())
   const outBalanceBefore = await outToken.balanceOf(env.user.getAddress())
   const tickBefore = slotBefore[1]
-  await env.testRouter.swap(pool.contract.address, direction, amountBN)
+  await env.swapper.swap(pool.contract.address, direction, amountBN)
   const slotAfter = await pool.contract.slot0()
   const tickAfter = slotAfter[1]
   const inBalanceAfter = await inToken.balanceOf(env.user.getAddress())
@@ -210,7 +210,7 @@ describe('Uni V3', () => {
   let env: UniV3Environment
 
   before(async () => {
-    env = await createUniV3Env(ethers)
+    env = await createUniV3EnvZero(ethers)
   })
 
   it('Empty pool', async () => {

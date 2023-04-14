@@ -25,12 +25,14 @@ export interface UniV3Environment {
   tokenFactory: ContractFactory
   UniV3Factory: Contract
   positionManager: Contract
-  testRouter: Contract
+  swapper: Contract
+  minter: Contract
+  mint: (pool: UniV3PoolInfo, from: number, to: number, liquidity: BigNumber) => Promise<BigNumber>
 }
 
 type HardHatEthersType = typeof ethers & HardhatEthersHelpers
 
-export async function createUniV3Env(
+export async function createUniV3EnvZero(
   ethers: HardHatEthersType,
   userDeployContracts?: Signer
 ): Promise<UniV3Environment> {
@@ -58,8 +60,8 @@ export async function createUniV3Env(
   const positionManager = await NonfungiblePositionManagerContract.deployed()
 
   const TestRouterFactory = await ethers.getContractFactory(TestRouter.abi, TestRouter.bytecode)
-  const testRouter = await TestRouterFactory.deploy()
-  await testRouter.deployed()
+  const minter = await TestRouterFactory.deploy()
+  await minter.deployed()
 
   return {
     ethers,
@@ -67,7 +69,12 @@ export async function createUniV3Env(
     tokenFactory,
     UniV3Factory,
     positionManager,
-    testRouter,
+    swapper: minter,
+    minter,
+    mint: async (pool: UniV3PoolInfo, from: number, to: number, liquidity: BigNumber) => {
+      await pool.env.minter.mint(pool.contract.address, from, to, liquidity)
+      return liquidity
+    },
   }
 }
 
@@ -78,7 +85,9 @@ export interface UniV3Position {
 }
 
 export interface UniV3PoolInfo {
+  env: UniV3Environment
   contract: Contract
+  fee: number
   tinesPool: UniV3Pool
   token0Contract: Contract
   token1Contract: Contract
@@ -117,8 +126,8 @@ export async function createUniV3Pool(
   }
   const token1: RToken = { chainId, name: 'Token1', symbol: 'Token1', address: token1Contract.address, decimals: 18 }
 
-  await token0Contract.approve(env.testRouter.address, tokenSupply)
-  await token1Contract.approve(env.testRouter.address, tokenSupply)
+  await token0Contract.approve(env.minter.address, tokenSupply)
+  await token1Contract.approve(env.minter.address, tokenSupply)
 
   await env.positionManager.createAndInitializePoolIfNecessary(
     token0Contract.address,
@@ -131,6 +140,15 @@ export async function createUniV3Pool(
   const poolF = await env.ethers.getContractFactory(UniswapV3Pool.abi, UniswapV3Pool.bytecode)
   const pool = poolF.attach(poolAddress)
 
+  const poolInfo = {
+    env,
+    contract: pool,
+    fee,
+    tinesPool: undefined as unknown as UniV3Pool,
+    token0Contract,
+    token1Contract,
+  }
+
   const tickMap = new Map<number, BigNumber>()
   for (let i = 0; i < positions.length; ++i) {
     const position = positions[i]
@@ -138,7 +156,7 @@ export async function createUniV3Pool(
     expect(position.to % tickSpacing).to.equal(0)
 
     const liquidity = getBigNumber(position.val)
-    await env.testRouter.mint(poolAddress, position.from, position.to, liquidity)
+    await env.mint(poolInfo, position.from, position.to, liquidity)
 
     let tickLiquidity = tickMap.get(position.from)
     tickLiquidity = tickLiquidity === undefined ? liquidity : tickLiquidity.add(liquidity)
@@ -154,7 +172,7 @@ export async function createUniV3Pool(
     .sort((a, b) => a[0] - b[0])
     .map(([index, DLiquidity]) => ({ index, DLiquidity }))
 
-  const tinesPool = new UniV3Pool(
+  poolInfo.tinesPool = new UniV3Pool(
     pool.address,
     token0,
     token1,
@@ -167,12 +185,7 @@ export async function createUniV3Pool(
     ticks
   )
 
-  return {
-    contract: pool,
-    tinesPool,
-    token0Contract,
-    token1Contract,
-  }
+  return poolInfo
 }
 
 function getRndLin(rnd: () => number, min: number, max: number) {

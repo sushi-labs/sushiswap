@@ -2,10 +2,10 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { DataFetcher, LiquidityProviders, Router, UniV3PoolCode } from '@sushiswap/router'
+import { LiquidityProviders, Router, UniV3PoolCode } from '@sushiswap/router'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
-import { findMultiRouteExactIn, getBigNumber, UniV3Pool } from '@sushiswap/tines'
-import { createRandomUniV3Pool, createUniV3Env } from '@sushiswap/tines-sandbox'
+import { getBigNumber } from '@sushiswap/tines'
+import { createRandomUniV3Pool, createUniV3EnvZero } from '@sushiswap/tines-sandbox'
 import { BigNumber, Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
 
@@ -53,7 +53,7 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
 
 it('UniV3 Solo', async () => {
   const testEnv = await getTestEnvironment()
-  const env = await createUniV3Env(ethers)
+  const env = await createUniV3EnvZero(ethers)
   const pool = await createRandomUniV3Pool(env, 'test', 100)
 
   const fromToken = new Token({
