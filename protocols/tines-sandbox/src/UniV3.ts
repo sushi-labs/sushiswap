@@ -1,4 +1,5 @@
 import { HardhatEthersHelpers } from '@nomiclabs/hardhat-ethers/types'
+import { ChainId } from '@sushiswap/chain'
 import { CL_MAX_TICK, CL_MIN_TICK, CLTick, getBigNumber, RToken, UniV3Pool } from '@sushiswap/tines'
 import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
@@ -12,6 +13,14 @@ import UniswapV3Factory from '../artifacts/contracts/UniswapV3FactoryFlat.sol/Un
 import UniswapV3Pool from '../artifacts/contracts/UniswapV3FactoryFlat.sol/UniswapV3Pool.json'
 
 const ZERO = getBigNumber(0)
+
+const UniswapV3FactoryAddress: Record<number, string> = {
+  [ChainId.POLYGON]: '0x1f98431c8ad98523631ae4a59f267346ea31f984',
+}
+
+const PositionManagerAddress: Record<number, string> = {
+  [ChainId.POLYGON]: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
+}
 
 // Map of fee to tickSpacing
 const feeAmountTickSpacing: number[] = []
@@ -32,6 +41,7 @@ export interface UniV3Environment {
 
 type HardHatEthersType = typeof ethers & HardhatEthersHelpers
 
+// Makes artificial environment, deploys factory, smallpositionmanager for mint and swap
 export async function createUniV3EnvZero(
   ethers: HardHatEthersType,
   userDeployContracts?: Signer
@@ -74,6 +84,61 @@ export async function createUniV3EnvZero(
     mint: async (pool: UniV3PoolInfo, from: number, to: number, liquidity: BigNumber) => {
       await pool.env.minter.mint(pool.contract.address, from, to, liquidity)
       return liquidity
+    },
+  }
+}
+
+// Uses real environment
+export async function createUniV3EnvReal(
+  ethers: HardHatEthersType,
+  user: Signer
+): Promise<UniV3Environment | undefined> {
+  const provider = user.provider
+  if (provider === undefined) return
+  const chainId = (await provider.getNetwork()).chainId
+  if (UniswapV3FactoryAddress[chainId] === undefined || PositionManagerAddress[chainId] === undefined) return
+  const tokenFactory = await ethers.getContractFactory(ERC20Mock.abi, ERC20Mock.bytecode, user)
+  const UniV3FactoryFactory = await ethers.getContractFactory(UniswapV3Factory.abi, UniswapV3Factory.bytecode)
+  const UniV3Factory = UniV3FactoryFactory.attach(UniswapV3FactoryAddress[chainId])
+  const pmFactory = await ethers.getContractFactory(NonfungiblePositionManager.abi, NonfungiblePositionManager.bytecode)
+  const positionManager = pmFactory.attach(PositionManagerAddress[chainId])
+
+  const TestRouterFactory = await ethers.getContractFactory(TestRouter.abi, TestRouter.bytecode)
+  const minter = await TestRouterFactory.deploy()
+  await minter.deployed()
+
+  return {
+    ethers,
+    user,
+    tokenFactory,
+    UniV3Factory,
+    positionManager,
+    swapper: minter,
+    minter,
+    mint: async (pool: UniV3PoolInfo, from: number, to: number, liquidity: BigNumber) => {
+      const MintParams = {
+        token0: pool.token0Contract.address,
+        token1: pool.token1Contract.address,
+        fee: pool.fee,
+        tickLower: from,
+        tickUpper: to,
+        amount0Desired: liquidity,
+        amount1Desired: liquidity,
+        amount0Min: 0,
+        amount1Min: 0,
+        recipient: user.getAddress(),
+        deadline: 1e12,
+      }
+      const res = await positionManager.mint(MintParams)
+      const receipt = await res.wait()
+
+      // event IncreaseLiquidity(uint256 indexed tokenId, uint128 liquidity, uint256 amount0, uint256 amount1);
+      const increaseLiquidityEvent = receipt.events.find(
+        (ev: { topics: string[] }) =>
+          ev.topics[0] == '0x3067048beee31b25b2f1681f88dac838c8bba36af25bfb2b7cf7473a5847e35f'
+      )
+      const liquidityReal = BigNumber.from(increaseLiquidityEvent.data.substring(0, 66))
+      return liquidityReal
     },
   }
 }
@@ -155,8 +220,8 @@ export async function createUniV3Pool(
     expect(position.from % tickSpacing).to.equal(0)
     expect(position.to % tickSpacing).to.equal(0)
 
-    const liquidity = getBigNumber(position.val)
-    await env.mint(poolInfo, position.from, position.to, liquidity)
+    const liquidityExpected = getBigNumber(position.val)
+    const liquidity = await env.mint(poolInfo, position.from, position.to, liquidityExpected)
 
     let tickLiquidity = tickMap.get(position.from)
     tickLiquidity = tickLiquidity === undefined ? liquidity : tickLiquidity.add(liquidity)
