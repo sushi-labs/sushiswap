@@ -1,12 +1,12 @@
 import { HardhatEthersHelpers } from '@nomiclabs/hardhat-ethers/types'
 import { ChainId } from '@sushiswap/chain'
-import { CL_MAX_TICK, CL_MIN_TICK, CLTick, getBigNumber, RToken, UniV3Pool } from '@sushiswap/tines'
+import { Token } from '@sushiswap/currency'
+import { CL_MAX_TICK, CL_MIN_TICK, CLTick, getBigNumber, UniV3Pool } from '@sushiswap/tines'
 import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
 import { expect } from 'chai'
 import { BigNumber, Contract, ContractFactory, ethers, Signer } from 'ethers'
 import seedrandom from 'seedrandom'
-import { Token } from '@sushiswap/currency'
 
 import ERC20Mock from '../artifacts/contracts/ERC20Mock.sol/ERC20Mock.json'
 import TestRouter from '../artifacts/contracts/TestRouter.sol/TestRouter.json'
@@ -130,7 +130,7 @@ export async function createUniV3EnvReal(
         amount1Desired: liquidity,
         amount0Min: 0,
         amount1Min: 0,
-        recipient: user.getAddress(),
+        recipient: await pool.env.user.getAddress(),
         deadline: 1e12,
       }
       const res = await positionManager.mint(MintParams)
@@ -205,6 +205,8 @@ export async function createUniV3Pool(
 
   await token0Contract.approve(env.minter.address, tokenSupply)
   await token1Contract.approve(env.minter.address, tokenSupply)
+  await token0Contract.approve(env.positionManager.address, tokenSupply)
+  await token1Contract.approve(env.positionManager.address, tokenSupply)
 
   await env.positionManager.createAndInitializePoolIfNecessary(
     token0Contract.address,

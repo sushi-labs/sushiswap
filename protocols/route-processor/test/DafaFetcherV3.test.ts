@@ -1,262 +1,15 @@
 import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
-import { DataFetcher, LiquidityProviders } from '@sushiswap/router'
-import { getBigNumber } from '@sushiswap/tines'
+import { DataFetcher, LiquidityProviders, UniV3PoolCode } from '@sushiswap/router'
+import { UniV3Pool } from '@sushiswap/tines'
+import { createUniV3EnvReal, createUniV3Pool, UniV3Environment, UniV3PoolInfo } from '@sushiswap/tines-sandbox'
 import { expect } from 'chai'
-import { Contract, Signer } from 'ethers'
 import { ethers, network } from 'hardhat'
 import { createPublicClient } from 'viem'
 import { custom } from 'viem'
 import { hardhat } from 'viem/chains'
 
-import ERC20Mock from '../artifacts/contracts/ERC20Mock.sol/ERC20Mock.json'
-
-const UniswapV3Factory: Record<number, string> = {
-  [ChainId.POLYGON]: '0x1f98431c8ad98523631ae4a59f267346ea31f984',
-}
-
-const PositionManager: Record<number, string> = {
-  [ChainId.POLYGON]: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
-}
-
-// Map of fee to tickSpacing
-const feeAmountTickSpacing: number[] = []
-feeAmountTickSpacing[500] = 10 // 0.05%
-feeAmountTickSpacing[3000] = 60 // 0.3%
-feeAmountTickSpacing[10000] = 200 // 1%
-
-const PositionManagerABI = [
-  {
-    inputs: [
-      {
-        components: [
-          {
-            internalType: 'address',
-            name: 'token0',
-            type: 'address',
-          },
-          {
-            internalType: 'address',
-            name: 'token1',
-            type: 'address',
-          },
-          {
-            internalType: 'uint24',
-            name: 'fee',
-            type: 'uint24',
-          },
-          {
-            internalType: 'int24',
-            name: 'tickLower',
-            type: 'int24',
-          },
-          {
-            internalType: 'int24',
-            name: 'tickUpper',
-            type: 'int24',
-          },
-          {
-            internalType: 'uint256',
-            name: 'amount0Desired',
-            type: 'uint256',
-          },
-          {
-            internalType: 'uint256',
-            name: 'amount1Desired',
-            type: 'uint256',
-          },
-          {
-            internalType: 'uint256',
-            name: 'amount0Min',
-            type: 'uint256',
-          },
-          {
-            internalType: 'uint256',
-            name: 'amount1Min',
-            type: 'uint256',
-          },
-          {
-            internalType: 'address',
-            name: 'recipient',
-            type: 'address',
-          },
-          {
-            internalType: 'uint256',
-            name: 'deadline',
-            type: 'uint256',
-          },
-        ],
-        internalType: 'struct INonfungiblePositionManager.MintParams',
-        name: 'params',
-        type: 'tuple',
-      },
-    ],
-    name: 'mint',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint128',
-        name: 'liquidity',
-        type: 'uint128',
-      },
-      {
-        internalType: 'uint256',
-        name: 'amount0',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'amount1',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'token0',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'token1',
-        type: 'address',
-      },
-      {
-        internalType: 'uint24',
-        name: 'fee',
-        type: 'uint24',
-      },
-      {
-        internalType: 'uint160',
-        name: 'sqrtPriceX96',
-        type: 'uint160',
-      },
-    ],
-    name: 'createAndInitializePoolIfNecessary',
-    outputs: [
-      {
-        internalType: 'address',
-        name: 'pool',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-]
-
-interface UniV3Environment {
-  user: Signer
-  fee: number
-  token0Contract: Contract
-  token1Contract: Contract
-  positionManager: Contract
-}
-
-interface UniV3Position {
-  from: number
-  to: number
-  val: number
-}
-
-const tokenLiquidity = getBigNumber(1e50)
-async function createUniV3Pool(
-  user: Signer,
-  fee: number,
-  price: number,
-  positions: UniV3Position[]
-): Promise<UniV3Environment | undefined> {
-  const provider = user.provider
-  if (provider === undefined) return
-  const chainId = (await provider.getNetwork()).chainId
-  if (UniswapV3Factory[chainId] === undefined || PositionManager[chainId] === undefined) return
-  const tokenFactory = await ethers.getContractFactory(ERC20Mock.abi, ERC20Mock.bytecode, user)
-  const token0Contract = await tokenFactory.deploy('Token0', 'Token0', tokenLiquidity)
-  const token1Contract = await tokenFactory.deploy('Token1', 'Token1', tokenLiquidity)
-  await token0Contract.approve(PositionManager[chainId], tokenLiquidity)
-  await token1Contract.approve(PositionManager[chainId], tokenLiquidity)
-  // const factory = new Contract(
-  //   UniswapV3Factory[chainId],
-  //   ['function createPool(address, address, uint24) external returns (address)'],
-  //   user
-  // )
-  // await factory.createPool(token0Contract.address, token1Contract.address, fee)
-  const positionManager = new Contract(PositionManager[chainId], PositionManagerABI, user)
-  const sqrtPriceX96 = getBigNumber(Math.sqrt(price) * Math.pow(2, 96))
-  console.log('sqrtPriceX96', sqrtPriceX96)
-
-  await positionManager.createAndInitializePoolIfNecessary(
-    token0Contract.address,
-    token1Contract.address,
-    fee,
-    sqrtPriceX96
-  )
-
-  const env = {
-    user,
-    fee,
-    token0Contract,
-    token1Contract,
-    positionManager,
-  }
-
-  const tickSpacing = feeAmountTickSpacing[fee]
-  expect(tickSpacing).not.undefined
-  for (let i = 0; i < positions.length; ++i) {
-    const position = positions[i]
-    expect(position.from % tickSpacing).to.equal(0)
-    expect(position.to % tickSpacing).to.equal(0)
-
-    await uniV3PoolMint(env, position)
-
-    // let tickLiquidity = tickMap.get(position.from)
-    // tickLiquidity = tickLiquidity === undefined ? liquidity : tickLiquidity.add(liquidity)
-    // tickMap.set(position.from, tickLiquidity)
-
-    // tickLiquidity = tickMap.get(position.to) || ZERO
-    // tickLiquidity = tickLiquidity.sub(liquidity)
-    // tickMap.set(position.to, tickLiquidity)
-  }
-
-  return env
-}
-
-async function uniV3PoolMint(env: UniV3Environment, position: UniV3Position) {
-  const inpLiquidity = getBigNumber(position.val)
-  const MintParams = {
-    token0: env.token0Contract.address,
-    token1: env.token1Contract.address,
-    fee: env.fee,
-    tickLower: position.from,
-    tickUpper: position.to,
-    amount0Desired: inpLiquidity,
-    amount1Desired: inpLiquidity,
-    amount0Min: 0,
-    amount1Min: 0,
-    recipient: env.user.getAddress(),
-    deadline: 1e12,
-  }
-  const res = await env.positionManager.mint(MintParams)
-  const receipt = await res.wait()
-
-  // event IncreaseLiquidity(uint256 indexed tokenId, uint128 liquidity, uint256 amount0, uint256 amount1);
-  const increaseLiquidityEvent = receipt.events.find(
-    (ev: { topics: string[] }) => ev.topics[0] == '0x3067048beee31b25b2f1681f88dac838c8bba36af25bfb2b7cf7473a5847e35f'
-  )
-  const liquidity = parseInt(increaseLiquidityEvent.data.substring(0, 66), 16)
-  console.log(liquidity)
-}
-
 const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
-async function getDataFetcherData(env: UniV3Environment) {
+async function getDataFetcherData(pool: UniV3PoolInfo): Promise<UniV3Pool> {
   const client = createPublicClient({
     chain: {
       ...hardhat,
@@ -272,31 +25,45 @@ async function getDataFetcherData(env: UniV3Environment) {
   })
   const chainId = network.config.chainId as ChainId
 
-  const token0 = new Token({
-    chainId,
-    address: env.token0Contract.address,
-    decimals: 18,
-    symbol: 'Token0',
-    name: 'Token0',
-  })
-  const token1 = new Token({
-    chainId,
-    address: env.token1Contract.address,
-    decimals: 18,
-    symbol: 'Token1',
-    name: 'Token1',
-  })
-
   const dataFetcher = new DataFetcher(chainId, client)
   dataFetcher.startDataFetching([LiquidityProviders.UniswapV3])
-  await dataFetcher.fetchPoolsForToken(token0, token1)
-  const pcMap = dataFetcher.getCurrentPoolCodeMap(token0, token1)
-  console.log(pcMap.get('0xB89cE525385c9a8a405ba6ddBc172ACEB6feeD11').pool)
-  console.log(pcMap.get('0xB89cE525385c9a8a405ba6ddBc172ACEB6feeD11').pool.ticks)
+  await dataFetcher.fetchPoolsForToken(pool.token0, pool.token1)
+  const pcMap = dataFetcher.getCurrentPoolCodeMap(pool.token0, pool.token1)
+  const uniPoolCodes = Array.from(pcMap.values()).filter((p) => p instanceof UniV3PoolCode)
+  expect(uniPoolCodes.length).equal(1)
+  const tinesPool = uniPoolCodes[0].pool as UniV3Pool
+  return tinesPool
 }
 
-it('DataFetcher test', async () => {
-  const [user] = await ethers.getSigners()
-  const poolEnv = await createUniV3Pool(user, 500, 5, [{ from: -24000, to: +24000, val: 1e18 }])
-  await getDataFetcherData(poolEnv as UniV3Environment)
+function checkPoolsHaveTheSameState(pool1: UniV3Pool, pool2: UniV3Pool) {
+  expect(pool1.address).equal(pool2.address)
+  expect(pool1.token0.address).equal(pool2.token0.address)
+  expect(pool1.token1.address).equal(pool2.token1.address)
+  expect(pool1.fee).equal(pool2.fee)
+  expect(pool1.reserve0.eq(pool2.reserve0)).equal(true)
+  expect(pool1.reserve1.eq(pool2.reserve1)).equal(true)
+  expect(pool1.liquidity.eq(pool2.liquidity)).equal(true)
+  expect(pool1.sqrtPriceX96.eq(pool2.sqrtPriceX96)).equal(true)
+  expect(pool1.nearestTick).equal(pool2.nearestTick)
+  expect(pool1.ticks.length).equal(pool2.ticks.length)
+  pool1.ticks.forEach((t1, i) => {
+    const t2 = pool2.ticks[i]
+    expect(t1.index).equal(t2.index)
+    expect(t1.DLiquidity.eq(t2.DLiquidity)).equal(true)
+  })
+}
+
+describe('DataFetcher Uni V3', () => {
+  let env: UniV3Environment
+
+  before(async () => {
+    env = await createUniV3EnvReal(ethers)
+  })
+
+  it('test 1', async () => {
+    // 5 is tick# 16090. So, only ticks from 6090 to 26090 are fetched
+    const poolInfo = await createUniV3Pool(env, 500, 5, [{ from: 12000, to: +24000, val: 1e18 }])
+    const poolTines2 = await getDataFetcherData(poolInfo)
+    checkPoolsHaveTheSameState(poolInfo.tinesPool, poolTines2)
+  })
 })
