@@ -1,7 +1,16 @@
 import { ChainId } from '@sushiswap/chain'
 import { DataFetcher, LiquidityProviders, UniV3PoolCode } from '@sushiswap/router'
+import { CL_MAX_TICK } from '@sushiswap/tines'
+import { CL_MIN_TICK } from '@sushiswap/tines'
 import { UniV3Pool } from '@sushiswap/tines'
-import { createUniV3EnvReal, createUniV3Pool, UniV3Environment, UniV3PoolInfo } from '@sushiswap/tines-sandbox'
+import {
+  createRandomUniV3Pool,
+  createUniV3EnvReal,
+  createUniV3Pool,
+  feeAmountTickSpacing,
+  UniV3Environment,
+  UniV3PoolInfo,
+} from '@sushiswap/tines-sandbox'
 import { expect } from 'chai'
 import { ethers, network } from 'hardhat'
 import { createPublicClient } from 'viem'
@@ -35,7 +44,10 @@ async function getDataFetcherData(pool: UniV3PoolInfo): Promise<UniV3Pool> {
   return tinesPool
 }
 
-function checkPoolsHaveTheSameState(pool1: UniV3Pool, pool2: UniV3Pool) {
+// maxTickDiff - how much is min and max ticks from current price index
+// pool1 - reference pool
+// pool2 - should be the same, maybe lesser quantity of ticks
+function checkPoolsHaveTheSameState(pool1: UniV3Pool, pool2: UniV3Pool, maxTickDiff = 0) {
   expect(pool1.address).equal(pool2.address)
   expect(pool1.token0.address).equal(pool2.token0.address)
   expect(pool1.token1.address).equal(pool2.token1.address)
@@ -44,20 +56,64 @@ function checkPoolsHaveTheSameState(pool1: UniV3Pool, pool2: UniV3Pool) {
   expect(pool1.reserve1.eq(pool2.reserve1)).equal(true)
   expect(pool1.liquidity.eq(pool2.liquidity)).equal(true)
   expect(pool1.sqrtPriceX96.eq(pool2.sqrtPriceX96)).equal(true)
-  expect(pool1.nearestTick).equal(pool2.nearestTick)
-  expect(pool1.ticks.length).equal(pool2.ticks.length)
-  pool1.ticks.forEach((t1, i) => {
-    const t2 = pool2.ticks[i]
-    expect(t1.index).equal(t2.index)
-    expect(t1.DLiquidity.eq(t2.DLiquidity)).equal(
-      true,
-      `${i}, ${t1.index} ${t1.DLiquidity.toString()} != ${t2.DLiquidity.toString()}`
-    )
-  })
+  expect(pool1.ticks[pool1.nearestTick].index).equal(pool2.ticks[pool2.nearestTick].index)
+  expect(pool1.ticks.length).greaterThanOrEqual(pool2.ticks.length)
+
+  if (maxTickDiff !== 0) {
+    // Check ticks, taking into account that pool2 ticks can be a subset of pool1 ticks
+    const priceTickIndex = Math.round(Math.log(pool1.calcCurrentPriceWithoutFee(true)) / Math.log(1.0001))
+    const minTickIndexCommon = priceTickIndex - maxTickDiff
+    const maxTickIndexCommon = priceTickIndex + maxTickDiff
+    for (let i1 = 0, i2 = 0, state = 0; i1 < pool1.ticks.length; ) {
+      const t1 = pool1.ticks[i1]
+      const t2 = pool2.ticks[i2]
+      if (i1 == 0) {
+        expect(t1.index).equal(CL_MIN_TICK)
+        expect(t2.index).equal(CL_MIN_TICK)
+        ++i1
+        ++i2
+      } else if (i1 == pool1.ticks.length - 1) {
+        expect(t1.index).equal(CL_MAX_TICK)
+        expect(t2.index).equal(CL_MAX_TICK)
+        ++i1
+      } else if (state == 0) {
+        if (t1.index >= minTickIndexCommon || t1.index == t2.index) state = 1 // start to check equal
+        else ++i1
+      } else if (state == 1) {
+        if (t1.index == t2.index) {
+          expect(t1.DLiquidity.eq(t2.DLiquidity)).equal(
+            true,
+            `${t1.index} ${t1.DLiquidity.toString()} != ${t2.DLiquidity.toString()}`
+          )
+          ++i1
+          ++i2
+        } else if (t1.index > maxTickIndexCommon) {
+          expect(t2.index).equal(CL_MAX_TICK)
+          break
+        } else expect(t1.index).equal(t2.index, `${t1.index} ${t2.index} ${maxTickIndexCommon}`)
+      }
+    }
+  } else {
+    pool1.ticks.forEach((t1, i) => {
+      const t2 = pool2.ticks[i]
+      expect(t1.index).equal(t2.index)
+      expect(t1.DLiquidity.eq(t2.DLiquidity)).equal(
+        true,
+        `${i}, ${t1.index} ${t1.DLiquidity.toString()} != ${t2.DLiquidity.toString()}`
+      )
+    })
+  }
+}
+
+function getPoolInfoTicksForCurrentDataFetcher(poolInfo: UniV3PoolInfo): number {
+  const spacing = feeAmountTickSpacing[poolInfo.fee]
+  expect(spacing).not.undefined
+  return 1000 * spacing
 }
 
 describe('DataFetcher Uni V3', () => {
   let env: UniV3Environment
+  const randomPools = 1
 
   before(async () => {
     env = await createUniV3EnvReal(ethers)
@@ -65,8 +121,19 @@ describe('DataFetcher Uni V3', () => {
 
   it('test 1', async () => {
     // 5 is tick# 16090. So, only ticks from 6090 to 26090 are fetched
-    const poolInfo = await createUniV3Pool(env, 500, 5, [{ from: 12000, to: +24000, val: 1e18 }])
+    const poolInfo = await createUniV3Pool(env, 500, 5, [
+      { from: 0, to: +24000, val: 1e18 },
+      { from: 12000, to: +24000, val: 1e18 },
+    ])
     const poolTines2 = await getDataFetcherData(poolInfo)
-    checkPoolsHaveTheSameState(poolInfo.tinesPool, poolTines2)
+    checkPoolsHaveTheSameState(poolInfo.tinesPool, poolTines2, getPoolInfoTicksForCurrentDataFetcher(poolInfo))
   })
+
+  // it.only(`${randomPools} random pool test`, async () => {
+  //   for (let i = 0; i < randomPools; ++i) {
+  //     const poolInfo = await createRandomUniV3Pool(env, 'pool' + i, 100)
+  //     const poolTines2 = await getDataFetcherData(poolInfo)
+  //     checkPoolsHaveTheSameState(poolInfo.tinesPool, poolTines2, getPoolInfoTicksForCurrentDataFetcher(poolInfo))
+  //   }
+  // })
 })

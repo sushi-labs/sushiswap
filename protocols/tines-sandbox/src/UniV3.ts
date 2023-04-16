@@ -26,7 +26,7 @@ const PositionManagerAddress: Record<number, string> = {
 }
 
 // Map of fee to tickSpacing
-const feeAmountTickSpacing: number[] = []
+export const feeAmountTickSpacing: number[] = []
 feeAmountTickSpacing[500] = 10 // 0.05%
 feeAmountTickSpacing[3000] = 60 // 0.3%
 feeAmountTickSpacing[10000] = 200 // 1%
