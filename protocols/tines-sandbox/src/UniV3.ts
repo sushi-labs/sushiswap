@@ -6,6 +6,7 @@ import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
 import { expect } from 'chai'
 import { BigNumber, Contract, ContractFactory, ethers, Signer } from 'ethers'
 import seedrandom from 'seedrandom'
+import { Token } from '@sushiswap/currency'
 
 import ERC20Mock from '../artifacts/contracts/ERC20Mock.sol/ERC20Mock.json'
 import TestRouter from '../artifacts/contracts/TestRouter.sol/TestRouter.json'
@@ -15,10 +16,12 @@ import UniswapV3Pool from '../artifacts/contracts/UniswapV3FactoryFlat.sol/Unisw
 const ZERO = getBigNumber(0)
 
 const UniswapV3FactoryAddress: Record<number, string> = {
+  [ChainId.ETHEREUM]: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
   [ChainId.POLYGON]: '0x1f98431c8ad98523631ae4a59f267346ea31f984',
 }
 
 const PositionManagerAddress: Record<number, string> = {
+  [ChainId.ETHEREUM]: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
   [ChainId.POLYGON]: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
 }
 
@@ -91,8 +94,9 @@ export async function createUniV3EnvZero(
 // Uses real environment
 export async function createUniV3EnvReal(
   ethers: HardHatEthersType,
-  user: Signer
+  userDeployContracts?: Signer
 ): Promise<UniV3Environment | undefined> {
+  const user = userDeployContracts || (await ethers.getSigners())[0]
   const provider = user.provider
   if (provider === undefined) return
   const chainId = (await provider.getNetwork()).chainId
@@ -156,6 +160,8 @@ export interface UniV3PoolInfo {
   tinesPool: UniV3Pool
   token0Contract: Contract
   token1Contract: Contract
+  token0: Token
+  token1: Token
 }
 
 function isLess(a: Contract, b: Contract): boolean {
@@ -182,14 +188,20 @@ export async function createUniV3Pool(
     : [_token1Contract, _token0Contract]
 
   const chainId = env.ethers.provider.network.chainId
-  const token0: RToken = {
+  const token0 = new Token({
     chainId,
-    name: 'Token0',
-    symbol: 'Token0',
     address: token0Contract.address,
+    symbol: 'Token0',
+    name: 'Token0',
     decimals: 18,
-  }
-  const token1: RToken = { chainId, name: 'Token1', symbol: 'Token1', address: token1Contract.address, decimals: 18 }
+  })
+  const token1 = new Token({
+    chainId,
+    address: token1Contract.address,
+    symbol: 'Token1',
+    name: 'Token1',
+    decimals: 18,
+  })
 
   await token0Contract.approve(env.minter.address, tokenSupply)
   await token1Contract.approve(env.minter.address, tokenSupply)
@@ -212,6 +224,8 @@ export async function createUniV3Pool(
     tinesPool: undefined as unknown as UniV3Pool,
     token0Contract,
     token1Contract,
+    token0,
+    token1,
   }
 
   const tickMap = new Map<number, BigNumber>()

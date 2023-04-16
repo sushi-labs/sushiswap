@@ -42,6 +42,8 @@
     "@nomiclabs/hardhat-solhint": "2.0.1",
     "@openzeppelin/contracts": "4.8.0",
     "@sushiswap/abi": "workspace:*",
+    "@sushiswap/chain": "workspace:*",    
+    "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/hardhat-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",

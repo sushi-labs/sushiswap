@@ -4,7 +4,7 @@ import { BigNumber, BigNumberish, Contract } from 'ethers'
 import { ethers } from 'hardhat'
 import seedrandom from 'seedrandom'
 
-import { createRandomUniV3Pool, createUniV3EnvZero, createUniV3Pool, UniV3Environment } from '../dist'
+import { createRandomUniV3Pool, createUniV3EnvZero, createUniV3Pool, UniV3Environment } from '../src'
 
 // Map of fee to tickSpacing
 const feeAmountTickSpacing: number[] = []
