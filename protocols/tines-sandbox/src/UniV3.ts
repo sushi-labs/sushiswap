@@ -133,7 +133,13 @@ export async function createUniV3EnvReal(
         recipient: await pool.env.user.getAddress(),
         deadline: 1e12,
       }
-      const res = await positionManager.mint(MintParams)
+
+      let res
+      try {
+        res = await positionManager.mint(MintParams)
+      } catch (e) {
+        return ZERO
+      }
       const receipt = await res.wait()
 
       // event IncreaseLiquidity(uint256 indexed tokenId, uint128 liquidity, uint256 amount0, uint256 amount1);

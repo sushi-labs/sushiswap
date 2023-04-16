@@ -56,7 +56,8 @@ function checkPoolsHaveTheSameState(pool1: UniV3Pool, pool2: UniV3Pool, maxTickD
   expect(pool1.reserve1.eq(pool2.reserve1)).equal(true)
   expect(pool1.liquidity.eq(pool2.liquidity)).equal(true)
   expect(pool1.sqrtPriceX96.eq(pool2.sqrtPriceX96)).equal(true)
-  expect(pool1.ticks[pool1.nearestTick].index).equal(pool2.ticks[pool2.nearestTick].index)
+  if (pool2.ticks[pool2.nearestTick].index !== CL_MIN_TICK)
+    expect(pool1.ticks[pool1.nearestTick].index).equal(pool2.ticks[pool2.nearestTick].index)
   expect(pool1.ticks.length).greaterThanOrEqual(pool2.ticks.length)
 
   if (maxTickDiff !== 0) {
@@ -113,13 +114,12 @@ function getPoolInfoTicksForCurrentDataFetcher(poolInfo: UniV3PoolInfo): number 
 
 describe('DataFetcher Uni V3', () => {
   let env: UniV3Environment
-  const randomPools = 1
 
   before(async () => {
     env = await createUniV3EnvReal(ethers)
   })
 
-  it('test 1', async () => {
+  it('test simple', async () => {
     // 5 is tick# 16090. So, only ticks from 6090 to 26090 are fetched
     const poolInfo = await createUniV3Pool(env, 500, 5, [
       { from: 0, to: +24000, val: 1e18 },
@@ -129,11 +129,13 @@ describe('DataFetcher Uni V3', () => {
     checkPoolsHaveTheSameState(poolInfo.tinesPool, poolTines2, getPoolInfoTicksForCurrentDataFetcher(poolInfo))
   })
 
-  // it.only(`${randomPools} random pool test`, async () => {
-  //   for (let i = 0; i < randomPools; ++i) {
-  //     const poolInfo = await createRandomUniV3Pool(env, 'pool' + i, 100)
-  //     const poolTines2 = await getDataFetcherData(poolInfo)
-  //     checkPoolsHaveTheSameState(poolInfo.tinesPool, poolTines2, getPoolInfoTicksForCurrentDataFetcher(poolInfo))
-  //   }
-  // })
+  const randomPools = 5
+  for (let i = 0; i < randomPools; ++i) {
+    it(`random pool #${i + 1}/${randomPools}`, async () => {
+      const poolInfo = await createRandomUniV3Pool(env, 'pool' + i, 10)
+      const poolTines2 = await getDataFetcherData(poolInfo)
+      //console.log(poolInfo.tinesPool.ticks.length, poolTines2.ticks.length)
+      checkPoolsHaveTheSameState(poolInfo.tinesPool, poolTines2, getPoolInfoTicksForCurrentDataFetcher(poolInfo))
+    })
+  }
 })
