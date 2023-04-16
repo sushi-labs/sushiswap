@@ -220,7 +220,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       const poolTicks = ticks[i]
         .map((tick: any) => ({
           index: tick.tick,
-          DLiquidity: BigNumber.from(tick.liquidityGross),
+          DLiquidity: BigNumber.from(tick.liquidityNet),
         }))
         .sort((a: any, b: any) => a.index - b.index)
       const v3Pool = new UniV3Pool(

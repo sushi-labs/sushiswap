@@ -49,7 +49,10 @@ function checkPoolsHaveTheSameState(pool1: UniV3Pool, pool2: UniV3Pool) {
   pool1.ticks.forEach((t1, i) => {
     const t2 = pool2.ticks[i]
     expect(t1.index).equal(t2.index)
-    expect(t1.DLiquidity.eq(t2.DLiquidity)).equal(true)
+    expect(t1.DLiquidity.eq(t2.DLiquidity)).equal(
+      true,
+      `${i}, ${t1.index} ${t1.DLiquidity.toString()} != ${t2.DLiquidity.toString()}`
+    )
   })
 }
 
