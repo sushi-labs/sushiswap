@@ -175,10 +175,7 @@ model Incentive {
   id              String @id // poolAddress_rewarderAddress
   chainId         Int
   chefType        ChefType
-  apr1h           Float
-  apr1d           Float
-  apr1w           Float
-  apr1m           Float
+  apr             Float
   rewardPerDay    Float
   rewardToken     Token  @relation(fields: [rewardTokenId], references: [id])
   rewardTokenId   String

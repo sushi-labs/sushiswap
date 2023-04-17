@@ -132,7 +132,6 @@ async function extract(protocol: Protocol) {
     sdk.OneWeekBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
     sdk.OneMonthBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
   ])
-  // const oneDayBlocks = await sdk.OneDayBlocks({ chainIds: SUSHISWAP_V3_ENABLED_NETWORKS })
 
   const chains = Array.from(new Set(subgraphs.map((subgraph) => subgraph.chainId.toString())))
   console.log(`EXTRACT - Extracting from ${chains.length} different chains, ${chains.join(', ')}`)
@@ -436,7 +435,6 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
         volume1m: oneMonthData.has(pair.id)
           ? Number(pair.volumeUSD) - oneMonthData.get(pair.id).volumeUSD
           : pair.volumeUSD,
-        // TODO: should it really default to 0? if 1m is 0 and 1w has data, shouldn't 1m be set to 1w's value?
         feeApr1h,
         feeApr1d,
         feeApr1w,
@@ -582,7 +580,6 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
         volume1m: oneMonthData.has(pair.id)
           ? Number(pair.volumeUSD) - oneMonthData.get(pair.id).volumeUSD
           : pair.volumeUSD,
-        // TODO: should it really default to 0? if 1m is 0 and 1w has data, shouldn't 1m be set to 1w's value?
         feeApr1h,
         feeApr1d,
         feeApr1w,
@@ -614,7 +611,7 @@ const calculateFeeApr = (
   if (Number(currentLiquidityUSD) === 0) return 0
 
   if (timeRange === AprTimeRange.ONE_HOUR) {
-    return ((currentFee - historicalFee) * 365 * 24) / currentLiquidityUSD
+    return ((currentFee - historicalFee) * 24 * 365) / currentLiquidityUSD
   } else if (timeRange === AprTimeRange.ONE_DAY) {
     return ((currentFee - historicalFee) * 365) / currentLiquidityUSD
   } else if (timeRange === AprTimeRange.ONE_WEEK) {
