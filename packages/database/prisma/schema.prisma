@@ -15,16 +15,11 @@ enum TokenStatus {
   DISAPPROVED
 }
 
-enum PoolVersion {
-  LEGACY
-  TRIDENT
-  V3
-}
-
-enum PoolType {
-  CONCENTRATED_LIQUIDITY_POOL
-  STABLE_POOL
-  CONSTANT_PRODUCT_POOL
+enum Protocol {
+  SUSHISWAP_V2
+  SUSHISWAP_V3
+  BENTOBOX_STABLE
+  BENTOBOX_CLASSIC
 }
 
 enum ChefType {
@@ -112,8 +107,7 @@ model SushiPool {
   address              String
   name                 String
   chainId              Int
-  version              PoolVersion
-  type                 PoolType
+  protocol             Protocol
   token0               Token       @relation("token0", fields: [token0Id], references: [id])
   token0Id             String
   token1               Token       @relation("token1", fields: [token1Id], references: [id])
@@ -129,16 +123,35 @@ model SushiPool {
   volumeNative         Decimal
   token0Price          String
   token1Price          String
-  feeApr               Float       @default(0)
-  incentiveApr         Float       @default(0)
-  totalApr             Float       @default(0)
+
+  
+  volume1h             Decimal     @default(0)
+  volume1d             Decimal     @default(0)
+  volume1w             Decimal     @default(0)
+  volume1m             Decimal     @default(0)
+
+  fees1h               Decimal     @default(0)
+  fees1d               Decimal     @default(0)
+  fees1w               Decimal     @default(0)
+  fees1m               Decimal     @default(0)
+
+  feeApr1h             Float       @default(0)
+  feeApr1d             Float       @default(0)
+  feeApr1w             Float       @default(0)
+  feeApr1m             Float       @default(0)
+  incentiveApr1h       Float       @default(0)
+  incentiveApr1d       Float       @default(0)
+  incentiveApr1w       Float       @default(0)
+  incentiveApr1m       Float       @default(0)
+  totalApr1h           Float       @default(0)
+  totalApr1d           Float       @default(0)
+  totalApr1w           Float       @default(0)
+  totalApr1m           Float       @default(0)
+
   isIncentivized       Boolean     @default(false)
   wasIncentivized      Boolean     @default(false)
   incentives           Incentive[]
-  volume1d             Decimal     @default(0)
-  fees1d               Decimal     @default(0)
-  volume1w             Decimal     @default(0)
-  fees1w               Decimal     @default(0)
+
   createdAtBlockNumber BigInt      @db.UnsignedBigInt
   isBlacklisted        Boolean     @default(false)
   generatedAt          DateTime    @default(now())
@@ -147,9 +160,11 @@ model SushiPool {
   @@index(fields: [id])
   @@index(fields: [chainId])
   @@index(fields: [address])
-  @@index(fields: [chainId, version, type])
+  @@index(fields: [chainId, protocol])
   @@index(fields: [liquidityUSD, chainId])
-  @@index(fields: [totalApr, chainId])
+  @@index(fields: [totalApr1d, chainId])
+  @@index(fields: [totalApr1w, chainId])
+  @@index(fields: [totalApr1m, chainId])
   @@index(fields: [token0Id])
   @@index(fields: [token1Id])
 }
@@ -158,7 +173,10 @@ model Incentive {
   id              String @id // poolAddress_rewarderAddress
   chainId         Int
   chefType        ChefType
-  apr             Float
+  apr1h           Float
+  apr1d           Float
+  apr1w           Float
+  apr1m           Float
   rewardPerDay    Float
   rewardToken     Token  @relation(fields: [rewardTokenId], references: [id])
   rewardTokenId   String
