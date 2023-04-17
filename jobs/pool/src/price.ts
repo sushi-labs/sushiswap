@@ -5,7 +5,7 @@ import { totalsAbi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
 import { USDC_ADDRESS } from '@sushiswap/currency'
-import { PoolType, Prisma, PrismaClient, Token } from '@sushiswap/database'
+import { Prisma, PrismaClient, Protocol, Token } from '@sushiswap/database'
 import { SWAP_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 import {
   calcTokenPrices,
@@ -133,27 +133,23 @@ async function getPoolsByPagination(
       token0: true,
       token1: true,
       swapFee: true,
-      type: true,
-      version: true,
+      protocol: true,
     },
     where: {
       chainId,
-      type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL, PoolType.CONCENTRATED_LIQUIDITY_POOL] },
-      version: {
-        in: ['LEGACY', 'TRIDENT', 'V3'],
-      },
+      protocol: { in: [Protocol.SUSHISWAP_V2, Protocol.SUSHISWAP_V3, Protocol.BENTOBOX_CLASSIC, Protocol.BENTOBOX_STABLE] },
     },
   })
 }
 
 async function transform(chainId: ChainId, pools: Pool[]) {
   const tokens: Map<string, Token> = new Map()
-  const stablePools = pools.filter((pool) => pool.type === PoolType.STABLE_POOL)
+  const stablePools = pools.filter((pool) => pool.protocol === Protocol.BENTOBOX_STABLE)
   const rebases = isBentoBoxV1ChainId(chainId) ? await fetchRebases(stablePools, chainId) : undefined
 
-  const constantProductPoolIds = pools.filter((p) => p.type === PoolType.CONSTANT_PRODUCT_POOL).map((p) => p.id)
-  const stablePoolIds = pools.filter((p) => p.type === PoolType.STABLE_POOL).map((p) => p.id)
-  const concentratedLiquidityPools = pools.filter((p) => p.type === PoolType.CONCENTRATED_LIQUIDITY_POOL)
+  const constantProductPoolIds = pools.filter((p) => p.protocol === Protocol.BENTOBOX_CLASSIC || p.protocol === Protocol.SUSHISWAP_V2).map((p) => p.id)
+  const stablePoolIds = stablePools.map((p) => p.id)
+  const concentratedLiquidityPools = pools.filter((p) => p.protocol === Protocol.SUSHISWAP_V3)
 
   const [constantProductReserves, stableReserves, concentratedLiquidityReserves, v3Info] = await Promise.all([
     getConstantProductPoolReserves(constantProductPoolIds),
@@ -173,20 +169,22 @@ async function transform(chainId: ChainId, pools: Pool[]) {
       address: pool.token0.address,
       name: pool.token0.name,
       symbol: pool.token0.symbol,
+      decimals: pool.token0.decimals,
     }
     const token1 = {
       address: pool.token1.address,
       name: pool.token1.name,
       symbol: pool.token1.symbol,
+      decimals: pool.token1.decimals,
     }
     if (!tokens.has(token0.address)) tokens.set(token0.address, pool.token0)
     if (!tokens.has(token1.address)) tokens.set(token1.address, pool.token1)
-    if (pool.type === PoolType.CONSTANT_PRODUCT_POOL) {
+    if (pool.protocol === Protocol.BENTOBOX_CLASSIC || pool.protocol === Protocol.SUSHISWAP_V2) {
       rPools.push(
         new ConstantProductRPool(pool.address, token0, token1, pool.swapFee, reserves.reserve0, reserves.reserve1)
       )
       classicCount++
-    } else if (pool.type === PoolType.STABLE_POOL) {
+    } else if (pool.protocol === Protocol.BENTOBOX_STABLE) {
       const total0 = rebases?.get(token0.address)
       const total1 = rebases?.get(token1.address)
       if (total0 && total1) {
@@ -206,7 +204,7 @@ async function transform(chainId: ChainId, pools: Pool[]) {
         )
         stableCount++
       }
-    } else if (pool.type === PoolType.CONCENTRATED_LIQUIDITY_POOL) {
+    } else if (pool.protocol === Protocol.SUSHISWAP_V3) {
       const v3 = v3Info.get(pool.address)
       if (v3) {
         rPools.push(
@@ -406,11 +404,10 @@ interface Pool {
   id: string
   address: string
   chainId: number
-  type: string
   token0: Token
   token1: Token
   swapFee: number
-  version: string
+  protocol: Protocol
 }
 
 interface V3PoolInfo {

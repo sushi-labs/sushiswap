@@ -1,4 +1,4 @@
-import { addSeconds, getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays } from 'date-fns'
+import { addSeconds, getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subHours, subMonths } from 'date-fns'
 
 import type { Block, Resolvers, ResolverTypeWrapper } from '../../.graphclient/index.js'
 import { _blocksByChainIds, blocksByChainIds } from './blocksByChainIds.js'
@@ -9,6 +9,21 @@ export const resolvers: Resolvers = {
   },
   Query: {
     blocksByChainIds,
+    oneHourBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
+      const date = startOfSecond(startOfMinute(startOfHour(subHours(Date.now(), 1))))
+      const start = getUnixTime(date)
+      const end = getUnixTime(addSeconds(date, 600))
+      return _blocksByChainIds(
+        root,
+        {
+          ...args,
+          first: 1,
+          where: { timestamp_gt: start, timestamp_lt: end },
+        },
+        context,
+        info
+      )
+    },
     oneDayBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
       const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 1))))
       const start = getUnixTime(date)
@@ -41,6 +56,21 @@ export const resolvers: Resolvers = {
     },
     oneWeekBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
       const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 7))))
+      const start = getUnixTime(date)
+      const end = getUnixTime(addSeconds(date, 600))
+      return _blocksByChainIds(
+        root,
+        {
+          ...args,
+          first: 1,
+          where: { timestamp_gt: start, timestamp_lt: end },
+        },
+        context,
+        info
+      )
+    },
+    oneMonthBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
+      const date = startOfSecond(startOfMinute(startOfHour(subMonths(Date.now(), 1))))
       const start = getUnixTime(date)
       const end = getUnixTime(addSeconds(date, 600))
       return _blocksByChainIds(

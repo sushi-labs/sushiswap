@@ -1586,6 +1586,7 @@ importers:
       prettier: 2.8.1
       ts-node: 10.9.1
       typescript: 4.9.4
+      zod: 3.20.2
     dependencies:
       '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0
@@ -1614,7 +1615,7 @@ importers:
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/validate': link:../../packages/validate
       '@sushiswap/wagmi-config': link:../../config/wagmi
-      '@wagmi/core': 0.10.9_7exv3onak5pvwn53oxzq43mdkm
+      '@wagmi/core': 0.10.9_7lylawshtxbv5yw4txlh6jmzfa
       '@whatwg-node/fetch': 0.8.4
       connect-timeout: 1.9.0
       date-fns: 2.29.3
@@ -1622,6 +1623,7 @@ importers:
       express: 4.18.2
       graphql: 16.6.0
       lodash.zip: 4.2.0
+      zod: 3.20.2
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -13490,6 +13492,46 @@ packages:
       - zod
     dev: false
 
+  /@wagmi/connectors/0.3.12_f7pkpcrbcqyuy7exlojs77c6oy:
+    resolution: {integrity: sha512-Ui8wyAMI3V8pnDlmTVSug7S53sTSNkgFuGrxFoKxQrTQJIC+AvD7CbeiYKcbFxrIrv9c/sTK5ySL4IBe+KjFUQ==}
+    peerDependencies:
+      '@wagmi/core': '>=0.9.x'
+      ethers: '>=5.5.1 <6'
+      typescript: '>=4.9.4'
+    peerDependenciesMeta:
+      '@wagmi/core':
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
+      '@coinbase/wallet-sdk': 3.6.5
+      '@ledgerhq/connect-kit-loader': 1.0.2
+      '@safe-global/safe-apps-provider': 0.15.2
+      '@safe-global/safe-apps-sdk': 7.10.1
+      '@wagmi/core': 0.10.9_7lylawshtxbv5yw4txlh6jmzfa
+      '@walletconnect/ethereum-provider': 2.6.2_l667bo3w6tpcekj7nyvxvfmfjq
+      '@walletconnect/legacy-provider': 2.0.0
+      '@web3modal/standalone': 2.2.2
+      abitype: 0.3.0_4umapwpw55xijlh2mknjgcn4rq
+      ethers: 5.7.2
+      eventemitter3: 4.0.7
+      typescript: 4.9.4
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@react-native-async-storage/async-storage'
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - bufferutil
+      - debug
+      - encoding
+      - lokijs
+      - react
+      - supports-color
+      - utf-8-validate
+      - zod
+    dev: false
+
   /@wagmi/connectors/0.3.12_fk5mh66kaxh63hdvppdukqxxnq:
     resolution: {integrity: sha512-Ui8wyAMI3V8pnDlmTVSug7S53sTSNkgFuGrxFoKxQrTQJIC+AvD7CbeiYKcbFxrIrv9c/sTK5ySL4IBe+KjFUQ==}
     peerDependencies:
@@ -13551,46 +13593,6 @@ packages:
       '@walletconnect/legacy-provider': 2.0.0
       '@web3modal/standalone': 2.2.2
       abitype: 0.3.0_4umapwpw55xijlh2mknjgcn4rq
-      eventemitter3: 4.0.7
-      typescript: 4.9.4
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@react-native-async-storage/async-storage'
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - bufferutil
-      - debug
-      - encoding
-      - lokijs
-      - react
-      - supports-color
-      - utf-8-validate
-      - zod
-    dev: false
-
-  /@wagmi/connectors/0.3.12_nxnun6uvgeufxzhd2fxh55wp6u:
-    resolution: {integrity: sha512-Ui8wyAMI3V8pnDlmTVSug7S53sTSNkgFuGrxFoKxQrTQJIC+AvD7CbeiYKcbFxrIrv9c/sTK5ySL4IBe+KjFUQ==}
-    peerDependencies:
-      '@wagmi/core': '>=0.9.x'
-      ethers: '>=5.5.1 <6'
-      typescript: '>=4.9.4'
-    peerDependenciesMeta:
-      '@wagmi/core':
-        optional: true
-      typescript:
-        optional: true
-    dependencies:
-      '@coinbase/wallet-sdk': 3.6.5
-      '@ledgerhq/connect-kit-loader': 1.0.2
-      '@safe-global/safe-apps-provider': 0.15.2
-      '@safe-global/safe-apps-sdk': 7.10.1
-      '@wagmi/core': 0.10.9_7exv3onak5pvwn53oxzq43mdkm
-      '@walletconnect/ethereum-provider': 2.6.2_l667bo3w6tpcekj7nyvxvfmfjq
-      '@walletconnect/legacy-provider': 2.0.0
-      '@web3modal/standalone': 2.2.2
-      abitype: 0.3.0_typescript@4.9.4
-      ethers: 5.7.2
       eventemitter3: 4.0.7
       typescript: 4.9.4
     transitivePeerDependencies:
@@ -13760,7 +13762,7 @@ packages:
       - zod
     dev: true
 
-  /@wagmi/core/0.10.9_7exv3onak5pvwn53oxzq43mdkm:
+  /@wagmi/core/0.10.9_7lylawshtxbv5yw4txlh6jmzfa:
     resolution: {integrity: sha512-/t7gcF6BvWiIBYdZ6RFiq/5cdMj+ljCTFlMgOEojl1BCe0OsbhrTKzbgTrJ6ol82vJI5uwcOAqEPD5ObN09oVg==}
     peerDependencies:
       ethers: '>=5.5.1 <6'
@@ -13770,8 +13772,8 @@ packages:
         optional: true
     dependencies:
       '@wagmi/chains': 0.2.17_typescript@4.9.4
-      '@wagmi/connectors': 0.3.12_nxnun6uvgeufxzhd2fxh55wp6u
-      abitype: 0.3.0_typescript@4.9.4
+      '@wagmi/connectors': 0.3.12_f7pkpcrbcqyuy7exlojs77c6oy
+      abitype: 0.3.0_4umapwpw55xijlh2mknjgcn4rq
       ethers: 5.7.2
       eventemitter3: 4.0.7
       typescript: 4.9.4
