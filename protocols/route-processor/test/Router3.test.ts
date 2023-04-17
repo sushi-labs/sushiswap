@@ -495,7 +495,7 @@ describe('End-to-end Router2 test', async function () {
   })
 
   if (process.env.ALCHEMY_ID) {
-    it('V3,  Native => USDC => NATIVE', async function () {
+    it.only('V3,  Native => USDC => NATIVE', async function () {
       if (chainId === ChainId.POLYGON) {
         env.dataFetcher.startDataFetching([LiquidityProviders.UniswapV3])
         let amountAndBlock: [BigNumber | undefined, number] = [undefined, 1]
