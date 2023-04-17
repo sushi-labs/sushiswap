@@ -28,6 +28,7 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
     apr
     aprUpdatedAtTimestamp
     volumeUSD
+    feesUSD
     volumeNative
     createdAtTimestamp
     createdAtBlock

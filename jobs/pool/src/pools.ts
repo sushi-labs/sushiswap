@@ -164,7 +164,6 @@ async function fetchPairs(config: SubgraphConfig, blocks: Blocks) {
       blocks.oneWeek ? fetchLegacyOrTridentPairs(config, blocks.oneWeek) : ([] as PairsQuery[]),
       blocks.oneMonth ? fetchLegacyOrTridentPairs(config, blocks.oneMonth) : ([] as PairsQuery[]),
     ])
-
     return { currentPools, pools1h, pools1d, pools1w, pools1m }
   } else if (config.protocol === Protocol.SUSHISWAP_V3) {
     const [currentPools, pools1h, pools1d, pools1w, pools1m] = await Promise.all([
@@ -189,10 +188,12 @@ async function fetchLegacyOrTridentPairs(config: SubgraphConfig, blockNumber?: n
   let count = 0
   do {
     const where = cursor !== '' ? { id_gt: cursor } : {}
+    const block = blockNumber ? { number: blockNumber } : null
     const request = await sdk
       .Pairs({
         first: 1000,
         where,
+        block
       })
       .catch((e: unknown) => {
         if (e instanceof Error) {
@@ -289,8 +290,52 @@ export const isV3Query = (data: V2Data | V3Data): data is V3Data =>
   data.currentPools.some((d) => d?.pools !== undefined)
 
 function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data }) {
-  const yesterday = new Date(Date.now() - 86400000)
-  const unix24hAgo = Math.floor(yesterday.getTime() / 1000)
+
+  const oneHourData = new Map(
+    queryResult.data.pools1h
+      .flatMap((page) => page.pairs)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+        },
+      ])
+  )
+  const oneDayData = new Map(
+    queryResult.data.pools1d
+      .flatMap((page) => page.pairs)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+        },
+      ])
+  )
+  const oneWeekData = new Map(
+    queryResult.data.pools1w
+      .flatMap((page) => page.pairs)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+        },
+      ])
+  )
+  const oneMonthData = new Map(
+    queryResult.data.pools1m
+      .flatMap((page) => page.pairs)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+        },
+      ])
+  )
+
   const tokens: Prisma.TokenCreateManyInput[] = []
   const poolsTransformed = queryResult.data.currentPools.flatMap((batch) => {
     if (!batch?.pairs) return []
@@ -315,8 +360,7 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
           decimals: Number(pair.token1.decimals),
         })
       )
-      // const isAprValid = Number(pair.aprUpdatedAtTimestamp) > unix24hAgo && !isNaN(Number(pair.apr))
-      // const feeApr = isAprValid ? Number(pair.apr) : 0
+
       const regex = /([^\w ]|_|-)/g
       const name = pair.token0.symbol
         .replace(regex, '')
@@ -334,7 +378,30 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
         throw new Error('Unknown pool type')
       }
 
-      // TODO: apr?
+      const feeApr1h = calculateFeeApr(
+        AprTimeRange.ONE_HOUR,
+        oneHourData.get(pair.id)?.feesUSD ?? 0,
+        pair.feesUSD,
+        pair.liquidityUSD
+      )
+      const feeApr1d = calculateFeeApr(
+        AprTimeRange.ONE_DAY,
+        oneDayData.get(pair.id)?.feesUSD ?? 0,
+        pair.feesUSD,
+        pair.liquidityUSD
+      )
+      const feeApr1w = calculateFeeApr(
+        AprTimeRange.ONE_WEEK,
+        oneWeekData.get(pair.id)?.feesUSD ?? 0,
+        pair.feesUSD,
+        pair.liquidityUSD
+      )
+      const feeApr1m = calculateFeeApr(
+        AprTimeRange.ONE_MONTH,
+        oneMonthData.get(pair.id)?.feesUSD ?? 0,
+        pair.feesUSD,
+        pair.liquidityUSD
+      )
 
       return {
         id: queryResult.chainId.toString().concat(':').concat(pair.id),
@@ -349,14 +416,35 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
         reserve0: pair.reserve0,
         reserve1: pair.reserve1,
         totalSupply: pair.liquidity,
-        // feeApr,
         liquidityUSD: pair.liquidityUSD,
         liquidityNative: pair.liquidityNative,
         volumeUSD: pair.volumeUSD,
         volumeNative: pair.volumeNative,
         token0Price: pair.token0Price,
         token1Price: pair.token1Price,
-        // totalApr: feeApr,
+        fees1h: oneHourData.has(pair.id) ? Number(pair.feesUSD) - oneHourData.get(pair.id).feesUSD : pair.feesUSD,
+        fees1d: oneDayData.has(pair.id) ? Number(pair.feesUSD) - oneDayData.get(pair.id).feesUSD : pair.feesUSD,
+        fees1w: oneWeekData.has(pair.id) ? Number(pair.feesUSD) - oneWeekData.get(pair.id).feesUSD : pair.feesUSD,
+        fees1m: oneMonthData.has(pair.id) ? Number(pair.feesUSD) - oneMonthData.get(pair.id).feesUSD : pair.feesUSD,
+        volume1h: oneHourData.has(pair.id)
+          ? Number(pair.volumeUSD) - oneHourData.get(pair.id).volumeUSD
+          : pair.volumeUSD,
+        volume1d: oneDayData.has(pair.id) ? Number(pair.volumeUSD) - oneDayData.get(pair.id).volumeUSD : pair.volumeUSD,
+        volume1w: oneWeekData.has(pair.id)
+          ? Number(pair.volumeUSD) - oneWeekData.get(pair.id).volumeUSD
+          : pair.volumeUSD,
+        volume1m: oneMonthData.has(pair.id)
+          ? Number(pair.volumeUSD) - oneMonthData.get(pair.id).volumeUSD
+          : pair.volumeUSD,
+        // TODO: should it really default to 0? if 1m is 0 and 1w has data, shouldn't 1m be set to 1w's value?
+        feeApr1h,
+        feeApr1d,
+        feeApr1w,
+        feeApr1m,
+        totalApr1h: feeApr1h,
+        totalApr1d: feeApr1d,
+        totalApr1w: feeApr1w,
+        totalApr1m: feeApr1m,
         createdAtBlockNumber: BigInt(pair.createdAtBlock),
       } satisfies Prisma.SushiPoolCreateManyInput
     })
@@ -366,13 +454,6 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
 }
 
 function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
-  // const aprParams: Map<string, number> = new Map()
-  // for (const query of queryResult.data.pools1d) {
-  //   query?.pools.forEach((pair) => {
-  //     aprParams.set(pair.id, pair.feesUSD)
-  //   })
-  // }
-
   const oneHourData = new Map(
     queryResult.data.pools1h
       .flatMap((page) => page.pools)
@@ -417,12 +498,6 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
         },
       ])
   )
-
-  // const fee1h = new Map(queryResult.data.pools1h.flatMap((page) => page.pools).map((pool) => [pool.id, Number(pool.feesUSD)]))
-  // const fee1d = new Map(queryResult.data.pools1d.flatMap((page) => page.pools).map((pool) => [pool.id, Number(pool.feesUSD)]))
-  // const fee1w = new Map(queryResult.data.pools1d.flatMap((page) => page.pools).map((pool) => [pool.id, Number(pool.feesUSD)]))
-  // const fee1m = new Map(queryResult.data.pools1d.flatMap((page) => page.pools).map((pool) => [pool.id, Number(pool.feesUSD)]))
-
   const tokens: Prisma.TokenCreateManyInput[] = []
   const poolsTransformed = queryResult.data.currentPools.flatMap((batch) => {
     if (!batch?.pools) return []
@@ -454,48 +529,36 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
         .concat('-')
         .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
       const swapFee = Number(pair.feeTier) / 1_000_000
-      // const feeApr = aprParams.has(pair.id)
-      //   ? calculateFeeApr(aprParams.get(pair.id), pair.feesUSD, pair.totalValueLockedUSD)
-      //   : 0
 
       const feeApr1h = calculateFeeApr(
         AprTimeRange.ONE_HOUR,
-        oneHourData.get(pair.id).feesUSD ?? 0,
+        oneHourData.get(pair.id)?.feesUSD ?? 0,
         pair.feesUSD,
         pair.totalValueLockedUSD
       )
       const feeApr1d = calculateFeeApr(
         AprTimeRange.ONE_DAY,
-        oneDayData.get(pair.id).feesUSD ?? 0,
+        oneDayData.get(pair.id)?.feesUSD ?? 0,
         pair.feesUSD,
         pair.totalValueLockedUSD
       )
       const feeApr1w = calculateFeeApr(
         AprTimeRange.ONE_WEEK,
-        oneWeekData.get(pair.id).feesUSD ?? 0,
+        oneWeekData.get(pair.id)?.feesUSD ?? 0,
         pair.feesUSD,
         pair.totalValueLockedUSD
       )
       const feeApr1m = calculateFeeApr(
         AprTimeRange.ONE_MONTH,
-        oneMonthData.get(pair.id).feesUSD ?? 0,
+        oneMonthData.get(pair.id)?.feesUSD ?? 0,
         pair.feesUSD,
         pair.totalValueLockedUSD
       )
-
-      // const volume1h =
-
-      // const volume1d = pair1d ? Number(pair.volumeUSD) - Number(pair1d.volumeUSD) : Number(pair.volumeUSD)
-      // const volume1w = pair1w ? Number(pair.volumeUSD) - Number(pair1w.volumeUSD) : Number(pair.volumeUSD)
-      // const fees1d = pair1d ? Number(pair.feesUSD) - Number(pair1d.feesUSD) : Number(pair.feesUSD)
-      // const fees1w = pair1w ? Number(pair.feesUSD) - Number(pair1w.feesUSD) : Number(pair.feesUSD)
 
       return {
         id: queryResult.chainId.toString().concat(':').concat(pair.id),
         address: pair.id,
         name: name,
-        // version: PoolVersion.V3,
-        // type: PoolType.CONCENTRATED_LIQUIDITY_POOL,
         protocol: Protocol.SUSHISWAP_V3,
         chainId: queryResult.chainId,
         swapFee,
@@ -524,10 +587,10 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
         feeApr1d,
         feeApr1w,
         feeApr1m,
+        totalApr1h: feeApr1h,
         totalApr1d: feeApr1d,
         totalApr1w: feeApr1w,
         totalApr1m: feeApr1m,
-        totalApr1h: feeApr1h,
         liquidityUSD: pair.totalValueLockedUSD,
         liquidityNative: pair.totalValueLockedETH,
         volumeUSD: pair.volumeUSD,

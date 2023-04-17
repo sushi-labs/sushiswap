@@ -14,7 +14,7 @@ const protocolSchema = z.object({
 })
 
 app.get(
-  '/protocols',
+  '/pools',
   async (req, res) => {
     req.setTimeout(600000)
 
