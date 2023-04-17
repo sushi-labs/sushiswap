@@ -61,10 +61,12 @@ model Token {
   @@index(fields: [id])
   @@index(fields: [address])
   @@index(fields: [chainId])
+  @@index(fields: [symbol])
   @@index(fields: [address, chainId])
   @@index(fields: [chainId, status])
   @@index(fields: [chainId, status, derivedUSD])
   @@index(fields: [chainId, status, derivedNative])
+  @@index(fields: [chainId, status, symbol])
 }
 
 model Pool {
