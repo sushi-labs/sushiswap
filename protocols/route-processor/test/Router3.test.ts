@@ -172,7 +172,7 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
 
   //console.log({ chainId, url: ethers.provider.connection.url, otherurl: network.config.forking.url })
 
-  dataFetcher.startDataFetching([LiquidityProviders.SushiSwap, LiquidityProviders.Trident])
+  dataFetcher.startDataFetching()
 
   console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
   const RouteProcessor = await ethers.getContractFactory('RouteProcessor3')
@@ -497,7 +497,6 @@ describe('End-to-end RouteProcessor3 test', async function () {
   if (process.env.ALCHEMY_ID) {
     it('V3,  Native => USDC => NATIVE', async function () {
       if (chainId === ChainId.POLYGON) {
-        env.dataFetcher.startDataFetching([LiquidityProviders.UniswapV3])
         let amountAndBlock: [BigNumber | undefined, number] = [undefined, 1]
         amountAndBlock[0] = getBigNumber(10_000 * 1e18)
         amountAndBlock = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], amountAndBlock, [
