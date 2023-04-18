@@ -13,9 +13,8 @@ import {
 import { performance } from 'perf_hooks'
 
 import { getBuiltGraphSDK, PairsQuery, V3PoolsQuery } from '../.graphclient/index.js'
-// import { upsertPools } from './etl/pool/index.js'
-// import { filterPools } from './etl/pool/index.js'
-// import { createTokens } from './etl/token/load.js'
+import { upsertPools } from './etl/pool/index.js'
+import { createTokens } from './etl/token/load.js'
 
 interface SubgraphConfig {
   chainId: ChainId
@@ -68,16 +67,16 @@ export async function execute(protocol: Protocol) {
     // LOAD
     const batchSize = 500
 
-    // for (let i = 0; i < tokens.length; i += batchSize) {
-    //   const batch = tokens.slice(i, i + batchSize)
-    //   await createTokens(batch)
-    // }
+    for (let i = 0; i < tokens.length; i += batchSize) {
+      const batch = tokens.slice(i, i + batchSize)
+      await createTokens(batch)
+    }
 
-    // for (let i = 0; i < pools.length; i += batchSize) {
-    //   const batch = pools.slice(i, i + batchSize)
-    //   const filteredPools = await filterPools(batch)
-    //   await upsertPools(filteredPools)
-    // }
+    for (let i = 0; i < pools.length; i += batchSize) {
+      const batch = pools.slice(i, i + batchSize)
+      // const filteredPools = await filterPools(batch)
+      await upsertPools(batch)
+    }
     const endTime = performance.now()
 
     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
