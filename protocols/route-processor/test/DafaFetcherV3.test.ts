@@ -132,7 +132,7 @@ describe('DataFetcher Uni V3', () => {
   const randomPools = 5
   for (let i = 0; i < randomPools; ++i) {
     it(`random pool #${i + 1}/${randomPools}`, async () => {
-      const poolInfo = await createRandomUniV3Pool(env, 'pool' + i, 10)
+      const poolInfo = await createRandomUniV3Pool(env, 'pool' + i, 10, undefined, 500) // TODO: test all possible fee, not 500 only!
       const poolTines2 = await getDataFetcherData(poolInfo)
       //console.log(poolInfo.tinesPool.ticks.length, poolTines2.ticks.length)
       checkPoolsHaveTheSameState(poolInfo.tinesPool, poolTines2, getPoolInfoTicksForCurrentDataFetcher(poolInfo))

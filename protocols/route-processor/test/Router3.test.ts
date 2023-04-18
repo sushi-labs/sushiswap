@@ -409,7 +409,7 @@ async function checkTransferAndRoute(
 }
 
 // skipped because took too long time. Unskip to check the RP
-describe('End-to-end Router2 test', async function () {
+describe('End-to-end RouteProcessor3 test', async function () {
   let env: TestEnvironment
   let chainId: ChainId
   let intermidiateResult: [BigNumber | undefined, number] = [undefined, 1]
@@ -495,7 +495,7 @@ describe('End-to-end Router2 test', async function () {
   })
 
   if (process.env.ALCHEMY_ID) {
-    it.only('V3,  Native => USDC => NATIVE', async function () {
+    it('V3,  Native => USDC => NATIVE', async function () {
       if (chainId === ChainId.POLYGON) {
         env.dataFetcher.startDataFetching([LiquidityProviders.UniswapV3])
         let amountAndBlock: [BigNumber | undefined, number] = [undefined, 1]
@@ -506,8 +506,6 @@ describe('End-to-end Router2 test', async function () {
         amountAndBlock = await updMakeSwap(env, USDC[chainId], Native.onChain(chainId), amountAndBlock, [
           LiquidityProviders.UniswapV3,
         ])
-
-        env.dataFetcher.startDataFetching([LiquidityProviders.SushiSwap, LiquidityProviders.Trident])
       }
     })
   }

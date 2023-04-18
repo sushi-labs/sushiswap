@@ -256,10 +256,11 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     >((list, [tokenA, tokenB]) => {
       if (tokenA !== undefined && tokenB !== undefined) {
         return list.concat([
-          [tokenA, tokenB, FeeAmount.LOWEST],
+          // only one possible fee because of issue with viem-hardhat fork multicall
+          //[tokenA, tokenB, FeeAmount.LOWEST],
           [tokenA, tokenB, FeeAmount.LOW],
-          [tokenA, tokenB, FeeAmount.MEDIUM],
-          [tokenA, tokenB, FeeAmount.HIGH],
+          // [tokenA, tokenB, FeeAmount.MEDIUM],
+          // [tokenA, tokenB, FeeAmount.HIGH],
         ])
       }
       return []

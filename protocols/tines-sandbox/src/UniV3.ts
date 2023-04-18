@@ -286,11 +286,12 @@ export async function createRandomUniV3Pool(
   env: UniV3Environment,
   seed: string,
   positionNumber: number,
-  price?: number
+  price?: number,
+  _fee?: number
 ): Promise<UniV3PoolInfo> {
   const rnd: () => number = seedrandom(seed) // random [0, 1)
 
-  const fee = [500, 3000, 10000][getRndLinInt(rnd, 0, 3)]
+  const fee = _fee || [500, 3000, 10000][getRndLinInt(rnd, 0, 3)]
   const tickSpacing = feeAmountTickSpacing[fee]
   const RANGE = Math.floor((CL_MAX_TICK - CL_MIN_TICK) / tickSpacing)
   const SHIFT = -Math.floor(-CL_MIN_TICK / tickSpacing) * tickSpacing
