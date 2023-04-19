@@ -10,6 +10,7 @@ import '../interfaces/IPool.sol';
 import '../interfaces/IWETH.sol';
 import './InputStream.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 address constant NATIVE_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 address constant IMPOSSIBLE_POOL_ADDRESS = 0x0000000000000000000000000000000000000001;
@@ -21,16 +22,18 @@ uint160 constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970
 
 /// @title A route processor for the Sushi Aggregator
 /// @author Ilya Lyalin
-contract RouteProcessor2 {
+contract RouteProcessor2 is Ownable {
   using SafeERC20 for IERC20;
   using InputStream for uint256;
 
   IBentoBoxMinimal public immutable bentoBox;
   address private lastCalledPool;
 
-  uint private unlocked = 1;
+  uint8 private unlocked = 1;
+  uint8 private paused = 1;
   modifier lock() {
       require(unlocked == 1, 'RouteProcessor is locked');
+      require(paused == 1, 'RouteProcessor is paused');
       unlocked = 2;
       _;
       unlocked = 1;
@@ -39,6 +42,14 @@ contract RouteProcessor2 {
   constructor(address _bentoBox) {
     bentoBox = IBentoBoxMinimal(_bentoBox);
     lastCalledPool = IMPOSSIBLE_POOL_ADDRESS;
+  }
+
+  function pause() external onlyOwner {
+    paused = 2;
+  }
+
+  function resume() external onlyOwner {
+    paused = 1;
   }
 
   /// @notice For native unwrapping
@@ -311,13 +322,18 @@ contract RouteProcessor2 {
     bool zeroForOne = stream.readUint8() > 0;
     address recipient = stream.readAddress();
 
+    if (from != address(this)) {
+      require(from == msg.sender, 'swapUniV3: unexpected from address');
+      IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), uint256(amountIn));
+    }
+
     lastCalledPool = pool;
     IUniswapV3Pool(pool).swap(
       recipient,
       zeroForOne,
       int256(amountIn),
       zeroForOne ? MIN_SQRT_RATIO + 1 : MAX_SQRT_RATIO - 1,
-      abi.encode(tokenIn, from)
+      abi.encode(tokenIn)
     );
     require(lastCalledPool == IMPOSSIBLE_POOL_ADDRESS, 'RouteProcessor.swapUniV3: unexpected'); // Just to be sure
   }
@@ -338,12 +354,11 @@ contract RouteProcessor2 {
   ) external {
     require(msg.sender == lastCalledPool, 'RouteProcessor.uniswapV3SwapCallback: call from unknown source');
     lastCalledPool = IMPOSSIBLE_POOL_ADDRESS;
-    (address tokenIn, address from) = abi.decode(data, (address, address));
+    (address tokenIn) = abi.decode(data, (address));
     int256 amount = amount0Delta > 0 ? amount0Delta : amount1Delta;
     require(amount > 0, 'RouteProcessor.uniswapV3SwapCallback: not positive amount');
 
-    if (from == address(this)) IERC20(tokenIn).safeTransfer(msg.sender, uint256(amount));
-     else IERC20(tokenIn).safeTransferFrom(from, msg.sender, uint256(amount));
+    IERC20(tokenIn).safeTransfer(msg.sender, uint256(amount));
   }
 
 }

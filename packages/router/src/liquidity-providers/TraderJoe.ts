@@ -13,7 +13,7 @@ export class TraderJoeProvider extends UniswapV2BaseProvider {
     const initCodeHash = {
       [ChainId.AVALANCHE]: '0x0bbca9af0511ad1a1da383135cf3a8d2ac620e549ef9f6ae3a4c33c2fed0af91',
     } as const
-    super(chainId, web3Client, databaseClient, factory, initCodeHash)
+    super(chainId, web3Client, factory, initCodeHash, databaseClient)
   }
   getType(): LiquidityProviders {
     return LiquidityProviders.TraderJoe

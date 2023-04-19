@@ -27,7 +27,7 @@ import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 import { isAddress } from 'ethers/lib/utils'
 import { unwrapToken } from '../../../lib/functions'
-import { useEffectDebugger } from '@sushiswap/hooks'
+import { usePreviousRoute } from '../../../components/HistoryProvider'
 
 enum Granularity {
   Day,
@@ -72,6 +72,7 @@ enum SelectedTab {
 const Pool: FC = () => {
   const { address } = useAccount()
   const { query } = useRouter()
+  const { path, basePath } = usePreviousRoute()
 
   const {
     poolId: [chainId, poolId],
@@ -112,13 +113,18 @@ const Pool: FC = () => {
   const change1d = 0
   const change1w = 0
 
-  console.log('hi')
-  useEffectDebugger(() => {}, [])
   return (
     <SWRConfig>
       <Layout>
         <div className="flex flex-col gap-2">
-          <Link className="group flex gap-4 items-center mb-2" href="/" shallow={true}>
+          <Link
+            className="group flex gap-4 items-center mb-2"
+            href={{
+              pathname: '/',
+              ...(basePath === '/earn' && path?.includes('categories') && { query: path.replace('/?&', '') }),
+            }}
+            shallow={true}
+          >
             <IconButton
               icon={ArrowLeftIcon}
               iconProps={{

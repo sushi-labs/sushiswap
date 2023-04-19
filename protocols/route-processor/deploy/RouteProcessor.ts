@@ -26,10 +26,11 @@ const func: DeployFunction = async function ({
     waitConfirmations: 20,
   })
 
-  await run('verify:verify', {
-    address,
-    constructorArguments: args,
-  })
+  // await run('verify:verify', {
+  //   address,
+  //   constructorArguments: args,
+  //   waitConfirmations: 20,
+  // })
 
   console.log(`RouteProcessor deployed to ${address}`)
 }
