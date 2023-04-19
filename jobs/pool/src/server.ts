@@ -16,7 +16,7 @@ const protocolSchema = z.object({
 app.get(
   '/pools',
   async (req, res) => {
-    req.setTimeout(600000)
+    req.setTimeout(120_0000)
 
     const result = protocolSchema.safeParse(req.query)
     if (result.success === false) {
