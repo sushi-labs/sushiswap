@@ -45,7 +45,11 @@ export const poolFiltersSchema = z.object({
   categories: z
     .string()
     .optional()
-    .default(Object.values(FilterTag).join(','))
+    .default(
+      Object.values(FilterTag)
+        .filter((tag) => tag != FilterTag.FARMS_ONLY)
+        .join(',')
+    )
     .transform((tags) => tags.split(',') as FilterTag[]),
 })
 
