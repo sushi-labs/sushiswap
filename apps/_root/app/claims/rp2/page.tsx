@@ -44,9 +44,13 @@ const RP2ClaimPage = () => {
             </List.Control>
           </List>
           <p>
-            If your funds do not reside in the whitehat address, you must submit an email to{' '}
-            <a href="mailto:security@sushi.com">security@sushi.com</a> or #open-a-ticket and include the transaction
-            ID(s) and blockchain(s) data for the lost funds.
+            If you do not see any available claims but you did get your funds hacked, fill in the following form{' '}
+            <a
+              className="text-blue"
+              href="https://docs.google.com/forms/d/e/1FAIpQLSd-3YitwkNyrfrgsvtNAidLry8CaMhqlfH0OKwS9rg5XNDrDQ/viewform"
+            >
+              Google Form
+            </a>
           </p>
           <p>
             Blackhat funds will take longer to process, as the team will verify the legitimacy against on-chain data
@@ -61,9 +65,13 @@ const RP2ClaimPage = () => {
         <ol>
           <li>If your funds rest in the whitehat contract, they will be claimable from this page.</li>
           <li>
-            If your funds do not reside in the whitehat address, you must submit an email to{' '}
-            <a href="mailto:security@sushi.com">security@sushi.com</a> or #open-a-ticket and include the transaction
-            ID(s) and blockchain(s) data for the lost funds.
+            If you do not see any available claims but you did get your funds hacked, fill in the following form{' '}
+            <a
+              className="text-blue"
+              href="https://docs.google.com/forms/d/e/1FAIpQLSd-3YitwkNyrfrgsvtNAidLry8CaMhqlfH0OKwS9rg5XNDrDQ/viewform"
+            >
+              Google Form
+            </a>
           </li>
         </ol>
         <hr />
