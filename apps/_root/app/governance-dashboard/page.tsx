@@ -4,7 +4,7 @@ import { Tab } from '@headlessui/react'
 import Container from '@sushiswap/ui/future/components/Container'
 import React from 'react'
 
-import { Hero, Overview } from './components'
+import { Finance, Hero, Overview } from './components'
 
 export default function GovernanceDashboard() {
   return (
@@ -12,10 +12,13 @@ export default function GovernanceDashboard() {
       <Hero />
       <Container maxWidth="6xl" className="py-14 mx-auto px-4">
         <Tab.Panels>
+          {/** TODO: order */}
           <Tab.Panel>
             <Overview />
           </Tab.Panel>
-          <Tab.Panel>2</Tab.Panel>
+          <Tab.Panel>
+            <Finance />
+          </Tab.Panel>
           <Tab.Panel>3</Tab.Panel>
           <Tab.Panel>4</Tab.Panel>
         </Tab.Panels>

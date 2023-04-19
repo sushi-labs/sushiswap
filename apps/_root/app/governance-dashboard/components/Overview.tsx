@@ -135,7 +135,7 @@ export function Overview() {
     <div className="space-y-20">
       <section className="space-y-8">
         <div className="flex justify-between items-center">
-          <h2 className="font-bold text-2xl">Latest @ Sushi</h2>
+          <h2 className="text-slate-200 font-bold text-2xl">Latest @ Sushi</h2>
           <div className="flex gap-2">
             {DATE_FILTERS.map((filter) => (
               <button
@@ -186,14 +186,14 @@ export function Overview() {
         </div>
       </section>
       <section className="space-y-8">
-        <h2 className="font-bold text-2xl">Holder Snapshot</h2>
+        <h2 className="font-bold text-2xl text-slate-200">Holder Snapshot</h2>
         <div className="grid gap-4 grid-cols-3">
           {/** TODO: mobile */}
           {kpis.map(KpiCard)}
         </div>
       </section>
       <section className="space-y-8">
-        <h2 className="flex justify-center font-bold text-2xl">Upcoming Events</h2>
+        <h2 className="flex justify-center font-bold text-2xl text-slate-200">Upcoming Events</h2>
         <CardNavigation slidesPerView={3} spaceBetween={24} itemCount={events.length}>
           {events.map((event, index) => (
             <SwiperSlide key={index}>
