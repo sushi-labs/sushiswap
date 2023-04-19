@@ -6,6 +6,8 @@ import { Pools as _Pools } from '../components'
 import { getPoolCount, getPoolCountUrl, getPools, getPoolsUrl } from '@sushiswap/client'
 import { defaultPoolsArgs } from '../lib/constants'
 import { unstable_serialize } from 'swr/infinite'
+import { SplashController } from '@sushiswap/ui/future/components/SplashController'
+import { useIsMounted } from '@sushiswap/hooks'
 
 export const getStaticProps: GetStaticProps = async () => {
   const [pools, poolCount] = await Promise.all([getPools(defaultPoolsArgs), getPoolCount(defaultPoolsArgs)])
@@ -23,10 +25,13 @@ export const getStaticProps: GetStaticProps = async () => {
 }
 
 export const Pools: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
+  const isMounted = useIsMounted()
   return (
-    <SWRConfig value={{ fallback }}>
-      <_Pools />
-    </SWRConfig>
+    <SplashController show={!isMounted}>
+      <SWRConfig value={{ fallback }}>
+        <_Pools />
+      </SWRConfig>
+    </SplashController>
   )
 }
 

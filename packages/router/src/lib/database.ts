@@ -86,15 +86,13 @@ export async function getAllPools(client: PrismaClient, args: typeof AllPools._o
       totalCount += result.length
 
       results.push(result)
-      console.debug(
-        `${args.chainId}-${args.protocol}-${args.version} Fetched a batch of pools with ${result.length} 
-         cursor: ${cursor}, total: ${totalCount}.`
-      )
+      // console.debug(
+      //   `${args.chainId}-${args.protocol}-${args.version} Fetched a batch of pools with ${result.length}
+      //    cursor: ${cursor}, total: ${totalCount}.`
+      // )
     } while (cursor != null)
     const flatResult = results.flat()
-    console.debug(`${args.chainId}-${args.protocol}-${args.version} Fetched ${flatResult.length}`)
-
-  
+    //console.debug(`${args.chainId}-${args.protocol}-${args.version} Fetched ${flatResult.length}`)
 
     await client.$disconnect()
     return flatResult as unknown as DecimalToString<typeof flatResult>

@@ -24,7 +24,7 @@ function TokenToRToken(t: Type): RToken {
     name: t.name,
     symbol: t.symbol,
     chainId: t.chainId,
-    decimals: 18,
+    decimals: 18
   }
   return nativeRToken
 }
@@ -111,13 +111,14 @@ export class Router {
 
     let poolCodes = Array.from(poolCodesMap.values())
     if (providers) {
-      poolCodes = poolCodes.filter((pc) => providers.includes(pc.liquidityProvider))
+      poolCodes = poolCodes.filter((pc) => [...providers, LiquidityProviders.NativeWrap].includes(pc.liquidityProvider))
     }
-
     let pools = Array.from(poolCodes).map((pc) => pc.pool)
 
+    // console.log('before', pools.length)
     if (poolFilter) pools = pools.filter(poolFilter)
-
+    // console.log('after', pools.length)
+    // console.log({pools})
     const route = findMultiRouteExactIn(
       TokenToRToken(fromToken),
       TokenToRToken(toToken),

@@ -9,6 +9,7 @@ import { FC } from 'react'
 export const Page: FC = () => {
   return (
     <>
+      <ExploitApprovalAlert />
       <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
         <Drawer.Root>
           <Widget />

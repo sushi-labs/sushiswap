@@ -35,9 +35,9 @@ export class DataFetcher {
   poolCodes: Map<LiquidityProviders, Map<string, PoolCode>> = new Map()
   stateId = 0
   web3Client: PublicClient
-  databaseClient: PrismaClient
+  databaseClient: PrismaClient | undefined = undefined
 
-  constructor(chainId: ChainId, web3Client: PublicClient, databaseClient: PrismaClient) {
+  constructor(chainId: ChainId, web3Client: PublicClient, databaseClient?: PrismaClient) {
     this.chainId = chainId
     this.web3Client = web3Client
     this.databaseClient = databaseClient
@@ -152,14 +152,14 @@ export class DataFetcher {
     //   }
     // }
 
-    // if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers)) {
-    //   try {
-    //     const provider = new QuickSwapProvider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers)) {
+      try {
+        const provider = new QuickSwapProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
     // if (this._providerIsIncluded(LiquidityProviders.SpookySwap, providers)) {
     //   try {
@@ -179,29 +179,29 @@ export class DataFetcher {
     //   }
     // }
 
-    // if (this._providerIsIncluded(LiquidityProviders.UbeSwap, providers)) {
-    //   try {
-    //     const provider = new UbeSwapProvider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.UbeSwap, providers)) {
+      try {
+        const provider = new UbeSwapProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
-    // if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
-    //   try {
-    //     const provider = new UniswapV2Provider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
+      try {
+        const provider = new UniswapV2Provider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
-    console.log(
-      `${chainShortName[this.chainId]}/${this.chainId} - Included providers: ${this.providers
-        .map((p) => p.getType())
-        .join(', ')}`
-    )
+    // console.log(
+    //   `${chainShortName[this.chainId]}/${this.chainId} - Included providers: ${this.providers
+    //     .map((p) => p.getType())
+    //     .join(', ')}`
+    // )
     this.providers.forEach((p) => p.startFetchPoolsData())
   }
 

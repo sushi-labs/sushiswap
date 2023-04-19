@@ -6,7 +6,7 @@ import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushi
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
-import { Button, Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
 import {
   Approve,
   ConstantProductPoolState,
@@ -27,6 +27,7 @@ import { approveMasterContractAction, batchAction, getAsEncodedAction, Liquidity
 import { useSettings } from '../../lib/state/storage'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 import { createToast } from '@sushiswap/ui/future/components/toast'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 interface AddSectionReviewModalTridentProps {
   poolAddress: string
@@ -288,7 +289,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
             }
             render={({ approved }) => {
               return (
-                <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
+                <Button size="xl" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
                 </Button>
               )

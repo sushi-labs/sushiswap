@@ -44,7 +44,7 @@ export const queryFnUseBalances = async ({ chainId, currencies, account }: Omit<
   })
 
   const _data = data.reduce<Record<string, Amount<Type>>>((acc, cur, i) => {
-    acc[validatedTokens[i].address] = Amount.fromRawAmount(validatedTokens[i], JSBI.BigInt(data))
+    acc[validatedTokens[i].address] = Amount.fromRawAmount(validatedTokens[i], JSBI.BigInt(data[i]))
     return acc
   }, {})
 

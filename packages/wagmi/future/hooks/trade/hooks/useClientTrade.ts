@@ -91,17 +91,18 @@ export const useClientTrade = (variables: UseTradeParams) => {
 
       let args = undefined
       if (recipient) {
-        if (isRouteProcessor2ChainId(chainId)) {
-          args = Router.routeProcessor2Params(
-            poolsCodeMap,
-            route,
-            fromToken,
-            toToken,
-            recipient,
-            routeProcessor2Address[chainId],
-            +slippagePercentage / 100
-          )
-        } else if (isRouteProcessorChainId(chainId)) {
+        // if (isRouteProcessor2ChainId(chainId)) {
+        //   args = Router.routeProcessor2Params(
+        //     poolsCodeMap,
+        //     route,
+        //     fromToken,
+        //     toToken,
+        //     recipient,
+        //     routeProcessor2Address[chainId],
+        //     +slippagePercentage / 100
+        //   )
+        // } else
+        if (isRouteProcessorChainId(chainId)) {
           args = Router.routeProcessorParams(
             poolsCodeMap,
             route,

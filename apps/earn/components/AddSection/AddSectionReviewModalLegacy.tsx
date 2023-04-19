@@ -3,7 +3,7 @@ import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount, Type } from '@sushiswap/currency'
 import { calculateGasMargin } from '@sushiswap/gas'
 import { Percent } from '@sushiswap/math'
-import { Button, Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
 import {
   Approve,
   getSushiSwapRouterContractConfig,
@@ -25,6 +25,7 @@ import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 import { createToast } from '@sushiswap/ui/future/components/toast'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 interface AddSectionReviewModalLegacyProps {
   poolState: PairState
@@ -196,7 +197,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
             render={({ approved }) => {
               // console.log({ approved, isWritePending })
               return (
-                <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
+                <Button size="xl" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
                 </Button>
               )
