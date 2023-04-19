@@ -16,7 +16,7 @@ const protocolSchema = z.object({
 app.get(
   '/pools',
   async (req, res) => {
-    req.setTimeout(120_0000)
+    req.setTimeout(1200_000)
 
     const result = protocolSchema.safeParse(req.query)
     if (result.success === false) {
@@ -31,13 +31,13 @@ app.get(
       res.status(500).send(err)
     }
   },
-  timeout('600s')
+  timeout('1200s')
 )
 
 app.get(
   '/incentives',
   async (req, res) => {
-    req.setTimeout(600000)
+    req.setTimeout(600_000)
     try {
       await incentives()
       res.sendStatus(200)
@@ -51,7 +51,7 @@ app.get(
 app.get(
   '/prices',
   async (req, res) => {
-    req.setTimeout(600000)
+    req.setTimeout(600_000)
     try {
       await prices()
       res.sendStatus(200)
