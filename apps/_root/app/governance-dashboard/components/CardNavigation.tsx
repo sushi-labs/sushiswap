@@ -13,6 +13,7 @@ interface CardNavigationProps {
   slidesPerView: number
   spaceBetween: number
   containerStyle?: string
+  itemCount: number
 }
 
 function SlideButtons({ show }: { show: { left: boolean; right: boolean } }) {
@@ -24,7 +25,7 @@ function SlideButtons({ show }: { show: { left: boolean; right: boolean } }) {
   const STALE = 'bg-slate-700 text-slate-400 hover:bg-slate-800'
 
   return (
-    <div className="absolute w-[calc(100%-16px)] flex justify-between items-center z-20 inset-y-0">
+    <div className="absolute w-[calc(100%-16px)] flex justify-between items-center z-20 inset-y-0 mx-0.5">
       <button onClick={() => swiper.slidePrev()} className={classNames(BASE, ACTIVE, !show.left && 'invisible')}>
         <ChevronLeftIcon className="h-6 w-6" />
       </button>
@@ -57,7 +58,13 @@ function reducer(_: ButtonState, position: 'start' | 'between' | 'end') {
   }
 }
 
-export function CardNavigation({ containerStyle, children, slidesPerView, spaceBetween }: CardNavigationProps) {
+export function CardNavigation({
+  containerStyle,
+  children,
+  slidesPerView,
+  spaceBetween,
+  itemCount,
+}: CardNavigationProps) {
   const [buttonState, setButtonState] = useReducer(reducer, INITIAL_BUTTON_STATE)
 
   return (
@@ -67,11 +74,10 @@ export function CardNavigation({ containerStyle, children, slidesPerView, spaceB
         spaceBetween={spaceBetween}
         watchSlidesProgress
         onReachBeginning={() => setButtonState('start')}
-        onReachEnd={() => setButtonState('end')}
-        onFromEdge={() => setButtonState('between')}
+        onFromEdge={() => itemCount - slidesPerView > 0 && setButtonState('between')}
+        onReachEnd={() => itemCount - slidesPerView >= 0 && setButtonState('end')}
       >
-        <SlideButtons show={buttonState} />
-
+        {itemCount - slidesPerView >= 0 && <SlideButtons show={buttonState} />}
         {children}
         {/** empty slot */}
         <SwiperSlide />

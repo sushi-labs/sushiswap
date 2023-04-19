@@ -1,2 +1,6 @@
 export * from './hero'
 export * from './CardNavigation'
+export * from './EventItem'
+export * from './GovernanceItemCard'
+export * from './KpiCard'
+export * from './Overview'

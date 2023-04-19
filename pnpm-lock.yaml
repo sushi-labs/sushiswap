@@ -1054,6 +1054,7 @@ importers:
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
+      '@sushiswap/validate': workspace:*
       '@sushiswap/wagmi': workspace:*
       '@sushiswap/wagmi-config': workspace:*
       '@tanstack/query-sync-storage-persister': 4.27.1
@@ -1114,6 +1115,7 @@ importers:
       '@sushiswap/trident': link:../../protocols/trident
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/ui': link:../../packages/ui
+      '@sushiswap/validate': link:../../packages/validate
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@tanstack/query-sync-storage-persister': 4.27.1
@@ -14218,7 +14220,7 @@ packages:
       '@walletconnect/types': 2.6.2_od3vuficnfbr74q5a3bmsrnj6y
       '@walletconnect/universal-provider': 2.6.2_od3vuficnfbr74q5a3bmsrnj6y
       '@walletconnect/utils': 2.6.2_od3vuficnfbr74q5a3bmsrnj6y
-      '@web3modal/standalone': 2.2.2_react@18.2.0
+      '@web3modal/standalone': 2.2.2
       events: 3.3.0
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
@@ -31163,8 +31165,6 @@ packages:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -31190,6 +31190,7 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
+      - postcss
       - ts-node
     dev: true
 
