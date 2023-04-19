@@ -11,6 +11,7 @@ import { SwapChainId } from '../../types'
 
 export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
   const { network0, network1 } = useSwapState()
+
   const { setNetwork0, setNetwork1, switchTokens } = useSwapActions()
 
   const handleSelect0 = useCallback<NetworkSelectorOnSelectCallback<(typeof STARGATE_SUPPORTED_CHAIN_IDS)[number]>>(
