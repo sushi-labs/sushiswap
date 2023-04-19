@@ -498,7 +498,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
     it('V3,  Native => USDC => NATIVE', async function () {
       if (chainId === ChainId.POLYGON) {
         let amountAndBlock: [BigNumber | undefined, number] = [undefined, 1]
-        amountAndBlock[0] = getBigNumber(10_000 * 1e18)
+        amountAndBlock[0] = getBigNumber(10_000_000 * 1e18) // should be partial
         amountAndBlock = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], amountAndBlock, [
           LiquidityProviders.UniswapV3,
         ])
