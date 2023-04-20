@@ -1,17 +1,11 @@
-import { createClient, configureChains, mainnet } from '@wagmi/core'
-import { publicProvider } from '@wagmi/core/providers/public'
 import { getV3Pools } from '../future/hooks/pools/actions/getV3Pools'
 import { USDC, WETH9 } from '@sushiswap/currency'
 import { ChainId } from '@sushiswap/chain'
-
-const { chains, provider, webSocketProvider } = configureChains([mainnet], [publicProvider()])
-
-const client = createClient({
-  autoConnect: true,
-  provider,
-  webSocketProvider,
-})
+import { describe, expect, it } from 'vitest'
+import '../client'
 
 it('test', async () => {
-  await getV3Pools(chains, [[WETH9[ChainId.ETHEREUM], USDC[ChainId.ETHEREUM]]])
+  const pools = await getV3Pools(ChainId.ETHEREUM, [[WETH9[ChainId.ETHEREUM], USDC[ChainId.ETHEREUM]]])
+  console.log({ pools })
+  expect(true).toBe(true)
 })
