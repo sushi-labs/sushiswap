@@ -116,6 +116,8 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
     contracts: slot0Contracts,
   })
 
+  console.log({ slot0 })
+
   if (slot0Contracts.length === 0) return [[V3PoolState.INVALID, null]]
   if (!slot0) return slot0Contracts.map(() => [V3PoolState.LOADING, null])
 
