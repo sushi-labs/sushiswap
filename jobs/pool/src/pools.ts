@@ -71,11 +71,19 @@ export async function execute(protocol: Protocol) {
       const batch = tokens.slice(i, i + batchSize)
       await createTokens(batch)
     }
-
-    for (let i = 0; i < pools.length; i += batchSize) {
-      const batch = pools.slice(i, i + batchSize)
-      // const filteredPools = await filterPools(batch)
-      await upsertPools(batch)
+    const concurrentBatches = 10
+    for (let i = 0; i < pools.length; i += batchSize * concurrentBatches) {
+      const batches = []
+      for (let j = i; j < i + concurrentBatches * batchSize; j += batchSize) {
+        if (j > pools.length) {
+          break
+        }
+        batches.push(upsertPools(pools.slice(j, j + batchSize)))
+      }
+      const batchStartTime = performance.now()
+      await Promise.all(batches)
+      const batchEndTime = performance.now()
+      console.log(`Batch completed in ${((batchEndTime - batchStartTime) / 1000).toFixed(1)} seconds. `)
     }
     const endTime = performance.now()
 
@@ -191,7 +199,7 @@ async function fetchLegacyOrTridentPairs(config: SubgraphConfig, blockNumber?: n
       .Pairs({
         first: 1000,
         where,
-        block
+        block,
       })
       .catch((e: unknown) => {
         if (e instanceof Error) {
@@ -288,7 +296,6 @@ export const isV3Query = (data: V2Data | V3Data): data is V3Data =>
   data.currentPools.some((d) => d?.pools !== undefined)
 
 function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data }) {
-
   const oneHourData = new Map(
     queryResult.data.pools1h
       .flatMap((page) => page.pairs)
