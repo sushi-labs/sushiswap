@@ -1,29 +1,19 @@
 import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { ChainId, chainShortName } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
 import { PublicClient } from 'viem'
 
-import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
-import { BiswapProvider } from './liquidity-providers/Biswap'
-import { DfynProvider } from './liquidity-providers/Dfyn'
-import { ElkProvider } from './liquidity-providers/Elk'
-import { HoneySwapProvider } from './liquidity-providers/HoneySwap'
-import { JetSwapProvider } from './liquidity-providers/JetSwap'
 import { LiquidityProvider, LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
-import { NetSwapProvider } from './liquidity-providers/NetSwap'
-import { PancakeSwapProvider } from './liquidity-providers/PancakeSwap'
 import { QuickSwapProvider } from './liquidity-providers/QuickSwap'
-import { SpookySwapProvider } from './liquidity-providers/SpookySwap'
 import { SushiProvider } from './liquidity-providers/Sushi'
-import { TraderJoeProvider } from './liquidity-providers/TraderJoe'
 import { TridentProvider } from './liquidity-providers/Trident'
 import { UbeSwapProvider } from './liquidity-providers/UbeSwap'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
-import type { PoolCode } from './pools/PoolCode'
 import { UniswapV3Provider } from './liquidity-providers/UniswapV3'
+import type { PoolCode } from './pools/PoolCode'
 
 // import { create } from 'viem'
 
@@ -198,7 +188,6 @@ export class DataFetcher {
       }
     }
 
-    
     if (this._providerIsIncluded(LiquidityProviders.UniswapV3, providers)) {
       try {
         const provider = new UniswapV3Provider(this.chainId, this.web3Client, this.databaseClient)
@@ -207,7 +196,6 @@ export class DataFetcher {
         // console.warn(e.message)
       }
     }
-
 
     // console.log(
     //   `${chainShortName[this.chainId]}/${this.chainId} - Included providers: ${this.providers
