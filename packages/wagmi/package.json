@@ -53,11 +53,13 @@
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/validate": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
+    "@sushiswap/viem-config": "workspace:*",
     "@tanstack/query-sync-storage-persister": "^4.14.5",
     "@tanstack/react-query": "^4.14.5",
     "@tanstack/react-query-persist-client": "^4.14.5",
     "@uniswap/v2-core": "1.0.1",
-    "@uniswap/v3-periphery": "1.4.1"
+    "@uniswap/v3-periphery": "1.4.1",
+    "viem": "jxom-multicall-chunk-size"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

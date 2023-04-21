@@ -197,6 +197,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     const ticksContracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
+      batchSize: 1024,
       contracts: wordList,
     })
 

@@ -2876,6 +2876,7 @@ importers:
       '@sushiswap/ui': workspace:*
       '@sushiswap/v3-sdk': workspace:*
       '@sushiswap/validate': workspace:*
+      '@sushiswap/viem-config': workspace:*
       '@sushiswap/wagmi-config': workspace:*
       '@tanstack/query-sync-storage-persister': ^4.14.5
       '@tanstack/react-query': ^4.14.5
@@ -2893,6 +2894,7 @@ importers:
       tsup: 6.5.0
       typechain: ^8.0.0
       typescript: 4.9.4
+      viem: jxom-multicall-chunk-size
       wagmi: 0.12.10
     dependencies:
       '@ethersproject/abi': 5.7.0
@@ -2928,12 +2930,14 @@ importers:
       '@sushiswap/ui': link:../ui
       '@sushiswap/v3-sdk': link:../v3-sdk
       '@sushiswap/validate': link:../validate
+      '@sushiswap/viem-config': link:../../config/viem
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@tanstack/query-sync-storage-persister': 4.27.1
       '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-persist-client': 4.28.0_qfusmmwykmcbgdy37sd3cqxiry
       '@uniswap/v2-core': 1.0.1
       '@uniswap/v3-periphery': 1.4.1
+      viem: 0.4.0-jxom-multicall-chunk-size.20230420T212142_typescript@4.9.4
     optionalDependencies:
       next: 13.2.3_biqbaboplfbrettd7655fr4n2y
     devDependencies:
@@ -33244,7 +33248,6 @@ packages:
       - typescript
       - utf-8-validate
       - zod
-    dev: true
 
   /vite-node/0.28.5:
     resolution: {integrity: sha512-LmXb9saMGlrMZbXTvOveJKwMTBTNUH66c8rJnQ0ZPNX+myPEol64+szRzXtV5ORb0Hb/91yq+/D3oERoyAt6LA==}
