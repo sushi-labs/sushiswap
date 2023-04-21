@@ -98,7 +98,7 @@ const kpis = [
     title: 'Community Participants',
     value: '20.12k',
     additional: (
-      <dd className="text-green-400 text-sm">
+      <dd className="text-sm text-green-400">
         {/** TODO: dynamic text color */}
         +33.42% from last quarter
       </dd>
@@ -108,7 +108,7 @@ const kpis = [
     title: 'Community Participants',
     value: '20.12k',
     additional: (
-      <dd className="text-green-400 text-sm">
+      <dd className="text-sm text-green-400">
         {/** TODO: dynamic text color */}
         +33.42% from last quarter
       </dd>
@@ -118,7 +118,7 @@ const kpis = [
     title: 'Community Participants',
     value: '20.12k',
     additional: (
-      <dd className="text-green-400 text-sm">
+      <dd className="text-sm text-green-400">
         {/** TODO: dynamic text color */}
         +33.42% from last quarter
       </dd>
@@ -134,13 +134,13 @@ export function Overview() {
   return (
     <div className="space-y-20">
       <section className="space-y-8">
-        <div className="flex justify-between items-center">
-          <h2 className="text-slate-200 font-bold text-2xl">Latest @ Sushi</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-slate-200">Latest @ Sushi</h2>
           <div className="flex gap-2">
             {DATE_FILTERS.map((filter) => (
               <button
                 className={classNames(
-                  'rounded-full h-10 px-4 ring-1 ring-slate-700/40',
+                  'h-10 rounded-full px-4 ring-1 ring-slate-700/40',
                   filters.date === filter ? 'bg-slate-700/40' : 'hover:bg-slate-700/20'
                 )}
                 key={filter}
@@ -156,22 +156,22 @@ export function Overview() {
             {Object.entries(GOV_STATUS).map(([key, status], i) => (
               <div
                 className={classNames(
-                  'hover:cursor-pointer rounded-t-2xl relative',
+                  'relative rounded-t-2xl hover:cursor-pointer',
                   filters.govStatus === key
-                    ? 'bg-gradient-to-r from-[#0993EC] to-[#F338C3] pt-0.5 px-0.5'
-                    : 'hover:-translate-y-1 transition-transform eae-in-out',
+                    ? 'bg-gradient-to-r from-[#0993EC] to-[#F338C3] px-0.5 pt-0.5'
+                    : 'eae-in-out transition-transform hover:-translate-y-1',
                   i && '-mt-4'
                 )}
                 key={key}
                 onClick={() => dispatch({ type: 'govStatus', payload: key as GovernanceStatus })}
                 style={{ zIndex: i + 1 }}
               >
-                <div className="flex justify-between items-center px-5 py-5 pb-10 bg-gradient-to-b from-[#212939] to-[#101728] rounded-t-2xl gap-10">
+                <div className="flex items-center justify-between gap-10 rounded-t-2xl bg-gradient-to-b from-[#212939] to-[#101728] px-5 py-5 pb-10">
                   <div className="flex items-center gap-2">
-                    <div className={classNames('rounded-sm w-3 h-3', status.color)} />
+                    <div className={classNames('h-3 w-3 rounded-sm', status.color)} />
                     <span className="font-medium">{status.title}</span>
                   </div>
-                  <div className="h-6 w-10 flex items-center justify-center bg-slate-500/60 rounded-lg">2</div>
+                  <div className="flex h-6 w-10 items-center justify-center rounded-lg bg-slate-500/60">2</div>
                 </div>
               </div>
             ))}
@@ -186,14 +186,14 @@ export function Overview() {
         </div>
       </section>
       <section className="space-y-8">
-        <h2 className="font-bold text-2xl text-slate-200">Holder Snapshot</h2>
-        <div className="grid gap-4 grid-cols-3">
+        <h2 className="text-2xl font-bold text-slate-200">Holder Snapshot</h2>
+        <div className="grid grid-cols-3 gap-4">
           {/** TODO: mobile */}
           {kpis.map(KpiCard)}
         </div>
       </section>
       <section className="space-y-8">
-        <h2 className="flex justify-center font-bold text-2xl text-slate-200">Upcoming Events</h2>
+        <h2 className="flex justify-center text-2xl font-bold text-slate-200">Upcoming Events</h2>
         <CardNavigation slidesPerView={3} spaceBetween={24} itemCount={events.length}>
           {events.map((event, index) => (
             <SwiperSlide key={index}>

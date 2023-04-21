@@ -25,7 +25,7 @@ function SlideButtons({ show }: { show: { left: boolean; right: boolean } }) {
   const STALE = 'bg-slate-700 text-slate-400 hover:bg-slate-800'
 
   return (
-    <div className="absolute w-[calc(100%-16px)] flex justify-between items-center z-20 inset-y-0 mx-0.5">
+    <div className="absolute inset-y-0 z-20 mx-0.5 flex w-[calc(100%-16px)] items-center justify-between">
       <button onClick={() => swiper.slidePrev()} className={classNames(BASE, ACTIVE, !show.left && 'invisible')}>
         <ChevronLeftIcon className="h-6 w-6" />
       </button>
@@ -81,7 +81,7 @@ export function CardNavigation({
         {children}
         {/** empty slot */}
         <SwiperSlide />
-        <div className="bg-gradient-to-r to-[#101728] w-1/2 from-transparent h-full top-0 absolute right-0 z-10" />
+        <div className="absolute top-0 right-0 z-10 h-full w-1/2 bg-gradient-to-r from-transparent to-[#101728]" />
       </Swiper>
     </div>
   )

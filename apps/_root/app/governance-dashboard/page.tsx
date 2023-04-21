@@ -10,7 +10,7 @@ export default function GovernanceDashboard() {
   return (
     <Tab.Group>
       <Hero />
-      <Container maxWidth="6xl" className="py-14 mx-auto px-4">
+      <Container maxWidth="6xl" className="mx-auto py-14 px-4">
         <Tab.Panels>
           {/** TODO: order */}
           <Tab.Panel>

@@ -10,9 +10,9 @@ interface Kpi {
 export function KpiCard(props: Kpi) {
   const { title, value, additional, index } = props
   return (
-    <dl className="bg-[#1A2031] rounded-lg p-5" key={index}>
-      <dt className="text-slate-400 text-sm">{title}</dt>
-      <dd className="text-xl font-semibold mt-2">{value}</dd>
+    <dl className="rounded-lg bg-[#1A2031] p-5" key={index}>
+      <dt className="text-sm text-slate-400">{title}</dt>
+      <dd className="mt-2 text-xl font-semibold">{value}</dd>
       {additional}
     </dl>
   )

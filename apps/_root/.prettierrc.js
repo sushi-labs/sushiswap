@@ -1,3 +1,6 @@
-const { default: config } = require('@sushiswap/prettier-config')
+const { default: config } = require("@sushiswap/prettier-config");
 
-module.exports = config
+module.exports = {
+  ...config,
+  plugins: [require("prettier-plugin-tailwindcss")],
+};
