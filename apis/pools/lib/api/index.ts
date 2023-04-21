@@ -1,13 +1,13 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
 
-import { DecimalToString, createClient, Prisma, PoolType, PoolVersion } from '@sushiswap/database'
+import { DecimalToString, createClient, Prisma, Protocol } from '@sushiswap/database'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { deepmergeInto } from 'deepmerge-ts'
 import type { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './../schemas/index.js'
 
 function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSchema._output) {
-  let where: NonNullable<Prisma.SushiPoolWhereInput> = {}
+  const where: NonNullable<Prisma.SushiPoolWhereInput> = {}
 
   const addFilter = (filter: typeof where) => deepmergeInto(where, filter)
 
@@ -26,34 +26,7 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
   }
 
   if ('protocols' in args && args.protocols !== undefined) {
-    const OR: Prisma.SushiPoolWhereInput['OR'] = []
-
-    if (args.protocols.includes('SUSHISWAP_V3')) {
-      OR.push({
-        version: PoolVersion.V3,
-        type: PoolType.CONCENTRATED_LIQUIDITY_POOL,
-      })
-    }
-    if (args.protocols.includes('SUSHISWAP_V2')) {
-      OR.push({
-        version: PoolVersion.LEGACY,
-        type: PoolType.CONSTANT_PRODUCT_POOL,
-      })
-    }
-    if (args.protocols.includes('BENTOBOX_STABLE')) {
-      OR.push({
-        version: PoolVersion.TRIDENT,
-        type: PoolType.STABLE_POOL,
-      })
-    }
-    if (args.protocols.includes('BENTOBOX_CLASSIC')) {
-      OR.push({
-        version: PoolVersion.TRIDENT,
-        type: PoolType.CONSTANT_PRODUCT_POOL,
-      })
-    }
-
-    addFilter({ AND: [{ OR }] })
+    addFilter({ protocol: { in: args.protocols } })
   }
 
   if ('isIncentivized' in args && args.isIncentivized !== undefined) {
@@ -111,7 +84,7 @@ export async function getEarnPool(args: typeof PoolApiSchema._output) {
     take: 1,
     orderBy: 'liquidityUSD',
     orderDir: 'desc',
-    protocols: ['SUSHISWAP_V3', 'SUSHISWAP_V2', 'BENTOBOX_STABLE', 'BENTOBOX_CLASSIC'],
+    protocols: [Protocol.BENTOBOX_CLASSIC, Protocol.BENTOBOX_STABLE, Protocol.SUSHISWAP_V2, Protocol.SUSHISWAP_V3],
   })
 
   if (!pool) throw new Error('Pool not found.')
@@ -144,22 +117,31 @@ export async function getEarnPools(args: typeof PoolsApiSchema._output) {
       address: true,
       name: true,
       chainId: true,
-      version: true,
-      type: true,
+      protocol: true,
       swapFee: true,
       twapEnabled: true,
       totalSupply: true,
       liquidityUSD: true,
       volumeUSD: true,
-      feeApr: true,
+      feeApr1h: true,
+      feeApr1d: true,
+      feeApr1w: true,
+      feeApr1m: true,
+      totalApr1h: true,
+      totalApr1d: true,
+      totalApr1w: true,
+      totalApr1m: true,
       incentiveApr: true,
-      totalApr: true,
       isIncentivized: true,
       wasIncentivized: true,
+      fees1h: true,
       fees1d: true,
       fees1w: true,
+      fees1m: true,
+      volume1h: true,
       volume1d: true,
       volume1w: true,
+      volume1m: true,
       isBlacklisted: true,
       token0: {
         select: {

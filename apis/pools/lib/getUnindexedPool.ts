@@ -1,5 +1,5 @@
 import { constantProductPoolAbi, uniswapV2PairAbi } from '@sushiswap/abi'
-import { PoolType, PoolVersion } from '@sushiswap/database'
+import { Protocol } from '@sushiswap/database'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import { Address, configureChains, createClient, fetchToken, FetchTokenResult, readContracts } from '@wagmi/core'
 
@@ -15,6 +15,7 @@ createClient({
 interface GetPoolArgs {
   chainId: number
   address: string
+  protocol?: Protocol
 }
 
 interface Pool {
@@ -22,7 +23,7 @@ interface Pool {
   totalSupply: string
   swapFee: number
   twapEnabled: boolean
-  version: PoolVersion
+  protocol: Protocol
 }
 
 async function getV2Pool({ chainId, address }: GetPoolArgs): Promise<Pool> {
@@ -40,11 +41,12 @@ async function getV2Pool({ chainId, address }: GetPoolArgs): Promise<Pool> {
     totalSupply: totalSupply.toString(),
     swapFee: 0.003,
     twapEnabled: true,
-    version: PoolVersion.LEGACY,
+    protocol: Protocol.BENTOBOX_CLASSIC,
   }
 }
 
-async function getTridentPool({ chainId, address }: GetPoolArgs): Promise<Pool> {
+async function getTridentPool({ chainId, address, protocol }: GetPoolArgs): Promise<Pool> {
+  if (!protocol) throw new Error('Protocol is required for Trident pools.')
   // These methods should be identical for all pool types
   const [token0, token1, totalSupply, swapFee] = await readContracts({
     allowFailure: false,
@@ -62,7 +64,7 @@ async function getTridentPool({ chainId, address }: GetPoolArgs): Promise<Pool> 
     // 30 => 0.003%
     swapFee: swapFee.toNumber() / 10000,
     twapEnabled: true,
-    version: PoolVersion.TRIDENT,
+    protocol
   }
 }
 
@@ -73,31 +75,27 @@ export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnTy
 
   const { name: lpTokenName } = await fetchToken({ address: address as Address, chainId })
 
-  let poolFetcher, poolType
+  let protocol: Protocol
+  let pool: Pool
   switch (lpTokenName) {
     case 'Sushi Stable LP Token':
-      poolType = PoolType.STABLE_POOL
-      poolFetcher = getTridentPool
+      protocol = Protocol.BENTOBOX_STABLE
+      pool = await getTridentPool({ chainId, address, protocol })
       break
     case 'Sushi Constant Product LP Token':
-      poolType = PoolType.CONSTANT_PRODUCT_POOL
-      poolFetcher = getTridentPool
-      break
+      protocol = Protocol.BENTOBOX_CLASSIC
+      pool = await getTridentPool({ chainId, address, protocol })
+      break;
     case 'SushiSwap LP Token':
-      poolType = PoolType.CONSTANT_PRODUCT_POOL
-      poolFetcher = getV2Pool
+      protocol = Protocol.SUSHISWAP_V2
+      pool = await getV2Pool({ chainId, address })
       break
     default:
       throw new Error('Pool type not found.')
   }
 
-  const pool = await poolFetcher({ chainId, address })
-
   const tokens = await Promise.all(pool.tokens.map((token) => fetchToken({ address: token, chainId })))
-
   const poolName = tokens.map(({ symbol }) => symbol).join('-')
-
-  // TODO: Convert to support token array when the db supports it
   const [token0, token1] = tokens as [FetchTokenResult, FetchTokenResult]
 
   return {
@@ -121,18 +119,27 @@ export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnTy
     },
     liquidityUSD: '0',
     volumeUSD: '0',
-    volume1d: '0',
-    volume1w: '0',
-    fees1d: '0',
-    fees1w: '0',
-    feeApr: 0,
+    feeApr1h: 0,
+    feeApr1d: 0,
+    feeApr1w: 0,
+    feeApr1m: 0,
+    totalApr1h: 0,
+    totalApr1d: 0,
+    totalApr1w: 0,
+    totalApr1m: 0,
     incentiveApr: 0,
-    totalApr: 0,
     isIncentivized: false,
     wasIncentivized: false,
+    volume1h: '0',
+    volume1d: '0',
+    volume1w: '0',
+    volume1m: '0',
+    fees1h: '0',
+    fees1d: '0',
+    fees1w: '0',
+    fees1m: '0',
     isBlacklisted: false,
     incentives: [],
-    type: poolType,
     ...pool,
   } as Awaited<ReturnType<typeof getEarnPool>>
 }
