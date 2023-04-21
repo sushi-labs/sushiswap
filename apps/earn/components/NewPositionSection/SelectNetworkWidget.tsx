@@ -10,6 +10,7 @@ import { ChevronDownIcon } from '@heroicons/react/solid'
 import { ContentBlock } from '../AddPage/ContentBlock'
 
 interface SelectNetworkWidgetProps {
+  networks?: ChainId[]
   selectedNetwork: ChainId
   onSelect(chainId: ChainId): void
 }
@@ -17,6 +18,7 @@ interface SelectNetworkWidgetProps {
 export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function SelectNetworkWidget({
   selectedNetwork,
   onSelect,
+  networks,
 }) {
   return (
     <ContentBlock
@@ -28,7 +30,7 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function S
     >
       <div className="flex relative z-[100]">
         <NetworkSelector
-          networks={V3_SUPPORTED_CHAIN_IDS}
+          networks={networks ?? V3_SUPPORTED_CHAIN_IDS}
           selected={selectedNetwork}
           onSelect={onSelect}
           variant="menu"

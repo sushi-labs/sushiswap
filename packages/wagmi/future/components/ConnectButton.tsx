@@ -110,7 +110,6 @@ export const ConnectButton = <C extends React.ElementType>({ hack, children, hid
                             : connector.name
                         }
                         key={connector.id}
-                        hoverIcon={ChevronRightIcon}
                       />
                     )
                   })}

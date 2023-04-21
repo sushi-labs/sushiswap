@@ -36,6 +36,7 @@ import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from 
 import { ContentBlock } from '../../../../components/AddPage/ContentBlock'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import Link from 'next/link'
+import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 
 const LINKS: BreadcrumbLink[] = [
   {
@@ -101,14 +102,25 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
 
   return (
     <SWRConfig>
-      <Layout breadcrumbs={LINKS}>
-        <div className="flex flex-col gap-3">
-          <Link href="/">
-            <ArrowLeftIcon width={24} className="text-slate-50" />
+      <Layout>
+        <div className="flex flex-col gap-2">
+          <Link className="group flex gap-4 items-center mb-2" href="/" shallow={true}>
+            <IconButton
+              icon={ArrowLeftIcon}
+              iconProps={{
+                width: 24,
+                height: 24,
+                transparent: true,
+              }}
+            />
+            <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
+              Go back to pools list
+            </span>
           </Link>
           <h1 className="text-3xl font-medium mt-2">Add Liquidity</h1>
-          <h1 className="text-lg dark:text-slate-400 text-slate-600">Create a new liquidity position</h1>
-          <div className="h-0.5 w-full bg-slate-200/5" />
+          <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
+            Create a new pool or create a liquidity position on an existing pool.
+          </h1>
         </div>
         <div className="grid grid-cols-1 sm:w-[340px] md:w-[572px] gap-10">
           <div className="hidden md:block" />
@@ -130,7 +142,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
                     poolType === PoolFinderType.Classic &&
                     TRIDENT_ENABLED_NETWORKS.includes(chainId)
                   }
-                  fee={FEE_MAP[fee]}
+                  fee={fee}
                   twap={false}
                 />
                 <PoolFinder.StablePool
@@ -142,7 +154,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
                     poolType === PoolFinderType.Stable &&
                     TRIDENT_ENABLED_NETWORKS.includes(chainId)
                   }
-                  fee={FEE_MAP[fee]}
+                  fee={fee}
                   twap={false}
                 />
               </PoolFinder.Components>
@@ -168,7 +180,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
                 <_Add
                   chainId={chainId}
                   setChainId={(chainId) => {
-                    router.push(`/add/${chainId}`, `/add/${chainId}`, { shallow: true })
+                    router.push(`/add/v2/${chainId}`, `/add/v2/${chainId}`, { shallow: true })
                     setChainId(chainId)
                   }}
                   fee={fee}
@@ -289,7 +301,7 @@ const _Add: FC<AddProps> = ({
 
   return (
     <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">
-      <SelectNetworkWidget selectedNetwork={chainId} onSelect={setChainId} />
+      <SelectNetworkWidget networks={SUPPORTED_CHAIN_IDS} selectedNetwork={chainId} onSelect={setChainId} />
       <SelectTokensWidget
         chainId={chainId}
         token0={token0}
@@ -300,6 +312,7 @@ const _Add: FC<AddProps> = ({
       {TRIDENT_ENABLED_NETWORKS.includes(chainId) && (
         <>
           <SelectPoolTypeWidget
+            includeConcentrated={false}
             poolType={poolType}
             setPoolType={(type) => {
               setPoolType(type)

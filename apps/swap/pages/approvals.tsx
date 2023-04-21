@@ -1,120 +1,63 @@
-import { FC, useCallback } from 'react'
-import { useRP2ExploitCheck } from '@sushiswap/wagmi/future/hooks'
+import React, { FC, useEffect } from 'react'
+import { useRP2ExploitCheck, useTokenAllowance, useTokenRevokeApproval } from '@sushiswap/wagmi/future/hooks'
 import Button from '@sushiswap/ui/future/components/button/Button'
-import { useAccount, writeContract, prepareWriteContract, UserRejectedRequestError } from '@sushiswap/wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 import { CheckIcon } from '@heroicons/react/24/outline'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Token } from '@sushiswap/currency'
-import { Address, erc20ABI } from '@wagmi/core'
-import { routeProcessorAddress } from '@sushiswap/route-processor/exports/exports'
-import { isRouteProcessorChainId } from '@sushiswap/route-processor'
-import { createToast } from '@sushiswap/ui/future/components/toast'
-import { BigNumber } from 'ethers'
+import { Address } from '@wagmi/core'
+import { routeProcessor2Address, RouteProcessor2ChainId } from '@sushiswap/route-processor/exports/exports'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import Container from '@sushiswap/ui/future/components/Container'
-import { Chain } from '@sushiswap/chain'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
+import { ZERO } from '@sushiswap/math'
+import { Badge } from '@sushiswap/ui/future/components/Badge'
+import { NetworkIcon } from '@sushiswap/ui'
+import Link from 'next/link'
+import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { ArrowLeftIcon } from '@heroicons/react/20/solid'
 
 const Approvals: FC = () => {
   const { address } = useAccount()
-  const {
-    data: tokens,
-    isInitialLoading: isLoading,
-    refetch,
-  } = useRP2ExploitCheck({
+  const { data: tokens, isInitialLoading: isLoading } = useRP2ExploitCheck({
     account: address,
   })
 
-  const revoke = useCallback(
-    async (el: Token) => {
-      if (isRouteProcessorChainId(el.chainId)) {
-        const config = await prepareWriteContract({
-          address: el.wrapped.address as Address,
-          abi: erc20ABI,
-          chainId: el.chainId,
-          functionName: 'approve',
-          args: [routeProcessorAddress[el.chainId], BigNumber.from(0)],
-        })
-
-        try {
-          const tx = await writeContract(config)
-          const ts = new Date().getTime()
-
-          void createToast({
-            account: address,
-            type: 'swap',
-            chainId: el.chainId,
-            txHash: tx.hash,
-            promise: tx.wait(),
-            summary: {
-              pending: `Revoking approval for ${el.symbol}`,
-              completed: `Successfully revoked approval for ${el.symbol}`,
-              failed: `Failed to revoke approval for ${el.symbol}`,
-            },
-            timestamp: ts,
-            groupTimestamp: ts,
-          })
-
-          tx.wait().then(() => {
-            refetch()
-          })
-        } catch (e: unknown) {
-          if (e instanceof UserRejectedRequestError) {
-            // Do nothing
-          }
-          console.error(e)
-        }
-      }
-    },
-    [address, refetch]
-  )
-
   return (
-    <Container maxWidth="lg" className="mx-auto my-[160px] w-full">
+    <Container maxWidth="lg" className="mx-auto my-[80px] w-full">
+      <div className="flex flex-col gap-2 mb-10">
+        <Link className="group flex gap-4 items-center mb-2" href="/" shallow={true}>
+          <IconButton
+            icon={ArrowLeftIcon}
+            iconProps={{
+              width: 24,
+              height: 24,
+              transparent: true,
+            }}
+          />
+          <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">Go back to swap</span>
+        </Link>
+        <h1 className="text-3xl font-medium mt-2">RP2 Approvals</h1>
+        <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
+          {"We'll"} search every network to find any approvals on the RouteProcessor2.
+        </h1>
+      </div>
       <div className="flex justify-center">
         <div className="flex flex-col gap-6 w-full">
-          <h1 className="">
-            {isLoading ? (
-              <Dots>Finding any approvals on the RouteProcessor2</Dots>
-            ) : (
-              'We searched across all our networks and we found the following tokens where you have balance and which are approved on the RouteProcessor2'
-            )}
-          </h1>
           <List>
             <List.Label>Tokens</List.Label>
             <List.Control>
               {isLoading ? (
                 <>
                   <List.KeyValue skeleton />
-                  <List.KeyValue skeleton />
                 </>
-              ) : tokens && tokens?.length > 0 ? (
+              ) : tokens && tokens?.length > 0 && address ? (
                 tokens?.map((el, i) => {
-                  return (
-                    <List.KeyValue
-                      key={i}
-                      subtitle={Chain.from(el.chainId).name}
-                      title={
-                        <div className="flex items-center gap-1">
-                          <Currency.Icon currency={el} width={20} height={20} />
-                          {el.name} ({el.symbol})
-                        </div>
-                      }
-                    >
-                      <Checker.Connect size="xs" color="blue">
-                        <Checker.Network size="xs" color="blue" chainId={el.chainId}>
-                          <Button size="xs" color="blue" onClick={() => revoke(el)}>
-                            Revoke
-                          </Button>
-                        </Checker.Network>
-                      </Checker.Connect>
-                    </List.KeyValue>
-                  )
+                  return <Item key={i} token={el} account={address} />
                 })
               ) : address ? (
-                <List.KeyValue title="No approvals found">
-                  <CheckIcon strokeWidth={2} className="text-green" width={24} height={24} />
+                <List.KeyValue flex title="No approvals found, you're good 👍">
+                  <CheckIcon strokeWidth={2} className="text-green" width={20} height={20} />
                 </List.KeyValue>
               ) : (
                 <List.KeyValue flex title="No wallet connected, please connect wallet">
@@ -126,6 +69,70 @@ const Approvals: FC = () => {
         </div>
       </div>
     </Container>
+  )
+}
+
+const Item: FC<{ token: Token; account: Address }> = ({ account, token }) => {
+  const { data: allowance, isLoading } = useTokenAllowance({
+    token,
+    owner: account,
+    spender: routeProcessor2Address[token.chainId as RouteProcessor2ChainId],
+  })
+
+  const { write, isPending } = useTokenRevokeApproval({
+    account,
+    token,
+    spender: routeProcessor2Address[token.chainId as RouteProcessor2ChainId],
+  })
+
+  if (isLoading) return <List.KeyValue skeleton />
+
+  if (allowance?.greaterThan(ZERO)) {
+    return (
+      <List.KeyValue
+        flex
+        title={
+          <div className="flex items-center gap-3">
+            <Badge
+              position="bottom-right"
+              badgeContent={<NetworkIcon chainId={token.chainId} width={16} height={16} />}
+            >
+              <Currency.Icon currency={token} width={24} height={24} />
+            </Badge>
+            {token.name} ({token.symbol})
+          </div>
+        }
+      >
+        <Checker.Connect size="xs" color="blue">
+          <Checker.Network size="xs" color="blue" chainId={token.chainId}>
+            <Button size="xs" color="blue" disabled={isPending} loading={isPending} onClick={() => write?.()}>
+              Revoke
+            </Button>
+          </Checker.Network>
+        </Checker.Connect>
+      </List.KeyValue>
+    )
+  }
+
+  return (
+    <List.KeyValue
+      flex
+      title={
+        <div className="flex items-center gap-3">
+          <Badge position="bottom-right" badgeContent={<NetworkIcon chainId={token.chainId} width={16} height={16} />}>
+            <Currency.Icon currency={token} width={24} height={24} />
+          </Badge>
+          {token.name} ({token.symbol})
+        </div>
+      }
+    >
+      <Button size="xs" variant="outlined" color="green" className="pointer-events-none">
+        <div className="flex gap-1 items-center">
+          <CheckIcon strokeWidth={2} width={16} height={16} className="text-green" />
+          Already Revoked
+        </div>
+      </Button>
+    </List.KeyValue>
   )
 }
 

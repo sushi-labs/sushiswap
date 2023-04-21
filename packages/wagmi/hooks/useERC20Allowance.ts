@@ -6,6 +6,9 @@ interface UseERC20AllowanceReturn extends Omit<ReturnType<typeof useContractRead
   data: Amount<Token> | undefined
 }
 
+/**
+ * @deprecated  use @sushiswap/wagmi/future/hooks/approvals/useTokenAllowance
+ */
 export function useERC20Allowance(
   watch: boolean,
   token?: Token,
