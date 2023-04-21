@@ -56,10 +56,10 @@ const config: HardhatUserConfig = {
     hardhat: {
       // polygon
       forking: {
-        enabled: true,
-        url: process.env.ALCHEMY_ID ? 
-        `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`:
-        'https://polygon-mainnet.g.alchemy.com/v2/demo',
+        enabled: !process.env.VERCEL,
+        url: process.env.ALCHEMY_ID
+          ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`
+          : 'https://polygon-mainnet.g.alchemy.com/v2/demo',
         blockNumber: 37180000,
       },
       accounts: {

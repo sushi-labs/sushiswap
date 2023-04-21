@@ -2,7 +2,6 @@ import { UsePoolsParams } from '../types'
 import { DataFetcher, LiquidityProviders } from '@sushiswap/router'
 import { ChainId } from '@sushiswap/chain'
 import { createPublicClient, http, fallback } from 'viem'
-// import { polygon } from 'viem/chains'
 
 import {
   arbitrum,
