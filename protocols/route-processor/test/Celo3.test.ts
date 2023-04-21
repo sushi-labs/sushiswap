@@ -4,11 +4,10 @@ import { DataFetcher, Router } from '@sushiswap/router'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Signer } from 'ethers'
+import { ethers } from 'hardhat'
 import { createPublicClient } from 'viem'
-import { http, custom } from 'viem'
-import { celo } from 'viem/chains'
+import { http } from 'viem'
 import { hardhat } from 'viem/chains'
-import { ethers, network } from 'hardhat'
 
 //const RouteProcessorAddr = '0x9B3fF703FA9C8B467F5886d7b61E61ba07a9b51c'
 const RouteProcessorAddr = '0xf267704dd1393c26b39a6d41f49bea233b34f722' // new Route Processor
