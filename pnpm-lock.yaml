@@ -3123,6 +3123,7 @@ importers:
       '@sushiswap/tines-sandbox': workspace:*
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/viem-config': workspace:*
       '@typechain/ethers-v5': ^10.0.0
       '@typechain/hardhat': ^6.1.0
       '@types/chai': ^4.3.0
@@ -3176,6 +3177,7 @@ importers:
       '@sushiswap/tines-sandbox': link:../tines-sandbox
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/typescript-config': link:../../config/typescript
+      '@sushiswap/viem-config': link:../../config/viem
       '@typechain/ethers-v5': 10.2.0_k6bdrczrdxrxopgjlr5kov2hw4
       '@typechain/hardhat': 6.1.5_w5qvcidahwqdkdc2rzrbmling4
       '@types/chai': 4.3.4
