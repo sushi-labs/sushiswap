@@ -6,7 +6,7 @@ import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class TraderJoeProvider extends UniswapV2BaseProvider {
-  constructor(chainId: ChainId, web3Client: PublicClient, databaseClient: PrismaClient) {
+  constructor(chainId: ChainId, web3Client: PublicClient, databaseClient?: PrismaClient) {
     const factory = {
       [ChainId.AVALANCHE]: '0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10',
     } as const
