@@ -278,7 +278,7 @@ async function runTest() {
   const dataFetcherMap = await getDataFetcherMap()
   describe('DataFetcher Pools/Time check', async () => {
     dataFetcherMap.forEach((dataFetcher, chainId) => {
-      //if (chainId !== ChainId.POLYGON) return
+      //if (chainId !== ChainId.OPTIMISM) return
       const chName = chainName[chainId]
       it(`${chName}(${chainId})`, async () => {
         dataFetcher.startDataFetching()
