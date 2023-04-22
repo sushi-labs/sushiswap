@@ -1,5 +1,5 @@
 import { ChainId, chainName } from '@sushiswap/chain'
-import { USDC, WETH9, WNATIVE } from '@sushiswap/currency'
+import { FRAX, SUSHI, Token, Type, USDC, USDT, WNATIVE } from '@sushiswap/currency'
 import { DataFetcher } from '@sushiswap/router'
 import {
   arbitrum,
@@ -254,41 +254,55 @@ async function getDataFetcherMap(): Promise<Map<ChainId, DataFetcher>> {
   return dataFetcherMap
 }
 
+async function testDF(
+  chainName: string,
+  dataFetcher: DataFetcher,
+  t0: Type | undefined,
+  t1: Type | undefined,
+  name0: string,
+  name1: string
+) {
+  if (!t0 || !t1) return
+  const start = performance.now()
+  dataFetcher.startDataFetching()
+  await dataFetcher.fetchPoolsForToken(t0, t1)
+  dataFetcher.stopDataFetching()
+  const pools = dataFetcher.getCurrentPoolCodeMap(t0, t1)
+  const time = Math.round(performance.now() - start)
+  console.log(`     found pools(${name0}-${name1}): ${pools.size} time=${time}ms`)
+  dataFetcher.providers.forEach((p) => {
+    const poolCodes = p.getCurrentPoolList(t0 as Token, t1 as Token)
+    if (poolCodes.length) console.log(`          ${p.getPoolProviderName()} pools: ${poolCodes.length}`)
+  })
+}
+
 async function runTest() {
   const dataFetcherMap = await getDataFetcherMap()
   describe('DataFetcher Pools/Time check', async () => {
     dataFetcherMap.forEach((dataFetcher, chainId) => {
       const chName = chainName[chainId]
       it(`${chName}(${chainId})`, async () => {
-        //const start = performance.now()
-        dataFetcher.startDataFetching()
-        await dataFetcher.fetchPoolsForToken(WNATIVE[chainId], USDC[chainId as keyof typeof USDC])
-        dataFetcher.stopDataFetching()
-        const pools = dataFetcher.getCurrentPoolCodeMap(WNATIVE[chainId], USDC[chainId as keyof typeof USDC])
-        //const time = Math.round(performance.now() - start)
-        console.log(`${chName}(${chainId}) found pools(WNATIVE-USDC): ${pools.size}`)
+        console.log(chName)
+        await testDF(chName, dataFetcher, WNATIVE[chainId], USDC[chainId as keyof typeof USDC], 'WNATIVE', 'USDC')
+        await testDF(
+          chName,
+          dataFetcher,
+          SUSHI[chainId as keyof typeof SUSHI],
+          FRAX[chainId as keyof typeof FRAX],
+          'SUSHI',
+          'FRAX'
+        )
+        await testDF(
+          chName,
+          dataFetcher,
+          SUSHI[chainId as keyof typeof SUSHI],
+          USDT[chainId as keyof typeof USDT],
+          'SUSHI',
+          'USDT'
+        )
       })
     })
   })
-  // it('ethereum', async () => {
-  //   const dataFetcher = new DataFetcher(
-  //     ChainId.ETHEREUM,
-  //     createPublicClient({
-  //       chain: mainnet,
-  //       transport: fallback([
-  //         http(`${mainnet.rpcUrls.alchemy.http}/${process.env.ALCHEMY_ID}`),
-  //         http('https://eth.llamarpc.com'),
-  //       ]),
-  //     })
-  //   )
-  //   const start = performance.now()
-  //   dataFetcher.startDataFetching()
-  //   await dataFetcher.fetchPoolsForToken(WETH9[ChainId.ETHEREUM], USDC[ChainId.ETHEREUM])
-  //   dataFetcher.stopDataFetching()
-  //   const pools = dataFetcher.getCurrentPoolCodeMap(WETH9[ChainId.ETHEREUM], USDC[ChainId.ETHEREUM])
-  //   const time = Math.round(performance.now() - start)
-  //   console.log(`Found pools: ${pools.size}, time: ${time}ms`)
-  // })
 }
 
 runTest()
