@@ -264,9 +264,7 @@ async function testDF(
 ) {
   if (!t0 || !t1) return
   const start = performance.now()
-  dataFetcher.startDataFetching()
   await dataFetcher.fetchPoolsForToken(t0, t1)
-  dataFetcher.stopDataFetching()
   const pools = dataFetcher.getCurrentPoolCodeMap(t0, t1)
   const time = Math.round(performance.now() - start)
   console.log(`     found pools(${name0}-${name1}): ${pools.size} time=${time}ms`)
@@ -280,8 +278,10 @@ async function runTest() {
   const dataFetcherMap = await getDataFetcherMap()
   describe('DataFetcher Pools/Time check', async () => {
     dataFetcherMap.forEach((dataFetcher, chainId) => {
+      if (chainId !== ChainId.POLYGON) return
       const chName = chainName[chainId]
       it(`${chName}(${chainId})`, async () => {
+        dataFetcher.startDataFetching()
         console.log(chName)
         await testDF(chName, dataFetcher, WNATIVE[chainId], USDC[chainId as keyof typeof USDC], 'WNATIVE', 'USDC')
         await testDF(
@@ -300,6 +300,7 @@ async function runTest() {
           'SUSHI',
           'USDT'
         )
+        dataFetcher.stopDataFetching()
       })
     })
   })

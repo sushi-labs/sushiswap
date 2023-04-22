@@ -7,6 +7,7 @@ import { computePoolAddress, FeeAmount, TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { BigNumber } from 'ethers'
 import { Address, PublicClient } from 'viem'
 
+import { getV3CurrencyCombinations } from '../getCurrencyCombinations'
 import type { PoolCode } from '../pools/PoolCode'
 import { UniV3PoolCode } from '../pools/UniV3Pool'
 import { LiquidityProvider } from './LiquidityProvider'
@@ -26,6 +27,8 @@ interface V3Pool {
   sqrtPriceX96: bigint
   activeTick: number
 }
+
+export const NUMBER_OF_SURROUNDING_TICKS = 1000 // 10% price impact
 
 const getActiveTick = (tickCurrent: number, feeAmount: FeeAmount) =>
   tickCurrent && feeAmount ? Math.floor(tickCurrent / TICK_SPACINGS[feeAmount]) * TICK_SPACINGS[feeAmount] : undefined
@@ -175,10 +178,10 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     })
 
     const minIndexes = existingPools.map((pool) =>
-      bitmapIndex(pool.activeTick - 1000 * TICK_SPACINGS[pool.fee], TICK_SPACINGS[pool.fee])
+      bitmapIndex(pool.activeTick - NUMBER_OF_SURROUNDING_TICKS, TICK_SPACINGS[pool.fee])
     )
     const maxIndexes = existingPools.map((pool) =>
-      bitmapIndex(pool.activeTick + 1000 * TICK_SPACINGS[pool.fee], TICK_SPACINGS[pool.fee])
+      bitmapIndex(pool.activeTick + NUMBER_OF_SURROUNDING_TICKS, TICK_SPACINGS[pool.fee])
     )
 
     const wordList: any = []
@@ -253,19 +256,17 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   }
 
   getStaticPools(t1: Token, t2: Token): StaticPool[] {
-    // const currencyCombinations = getCurrencyCombinations(this.chainId, t1, t2)
-    const currencyCombinations = [[t1, t2]]
+    const currencyCombinations = getV3CurrencyCombinations(this.chainId, t1, t2)
 
     const allCurrencyCombinationsWithAllFees: [Type, Type, FeeAmount][] = currencyCombinations.reduce<
       [Currency, Currency, FeeAmount][]
     >((list, [tokenA, tokenB]) => {
       if (tokenA !== undefined && tokenB !== undefined) {
         return list.concat([
-          // only one possible fee because of issue with viem-hardhat fork multicall
-          //[tokenA, tokenB, FeeAmount.LOWEST],
+          [tokenA, tokenB, FeeAmount.LOWEST],
           [tokenA, tokenB, FeeAmount.LOW],
-          // [tokenA, tokenB, FeeAmount.MEDIUM],
-          // [tokenA, tokenB, FeeAmount.HIGH],
+          [tokenA, tokenB, FeeAmount.MEDIUM],
+          [tokenA, tokenB, FeeAmount.HIGH],
         ])
       }
       return []
@@ -311,14 +312,15 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     })
   }
 
-  getCurrentPoolList(t0: Token, t1: Token): PoolCode[] {
-    const tradeId = this.getTradeId(t0, t1)
-    const poolsByTrade = this.poolsByTrade.get(tradeId) ?? []
-    return poolsByTrade
-      ? Array.from(this.pools)
-          .filter(([poolAddress]) => poolsByTrade.includes(poolAddress))
-          .map(([, p]) => p)
-      : []
+  getCurrentPoolList(): PoolCode[] {
+    // const tradeId = this.getTradeId(t0, t1)
+    // const poolsByTrade = this.poolsByTrade.get(tradeId) ?? []
+    // return poolsByTrade
+    //   ? Array.from(this.pools)
+    //       .filter(([poolAddress]) => poolsByTrade.includes(poolAddress))
+    //       .map(([, p]) => p)
+    //   : []
+    return Array.from(this.pools.values())
   }
 
   stopFetchPoolsData() {
