@@ -20,8 +20,6 @@ const cUSDC = new Token({
   name: 'Celo Dollar',
 })
 
-const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
-
 async function makeSwap(
   dataFetcher: DataFetcher,
   signer: Signer,
@@ -31,15 +29,9 @@ async function makeSwap(
   to: string,
   amountIn: BigNumber
 ): Promise<number | undefined> {
-  let route
-  let pcMap
-  for (let i = 0; i < 100; ++i) {
-    pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
-    // try to find a route
-    route = Router.findBestRoute(pcMap, ChainId.CELO, fromToken, amountIn, toToken, 50e9)
-    if (route.status === RouteStatus.Success) break
-    await delay(1000)
-  }
+  await dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  const pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
+  const route = Router.findBestRoute(pcMap, ChainId.CELO, fromToken, amountIn, toToken, 50e9)
   expect(route?.status).equal(RouteStatus.Success)
 
   if (route && pcMap) {
@@ -60,7 +52,7 @@ async function makeSwap(
   }
 }
 
-describe('Celo RP2', async () => {
+describe('Celo RP3', async () => {
   const chainId = ChainId.CELO
   const provider = new ethers.providers.JsonRpcProvider('https://forno.celo.org', 42220)
   const client = createPublicClient({
@@ -85,7 +77,7 @@ describe('Celo RP2', async () => {
     const toToken = USDC[chainId]
     const signer = await provider.getUncheckedSigner(WNATIVE[chainId].address)
 
-    await dataFetcher.fetchPoolsForToken(fromToken, toToken)
+    //await dataFetcher.fetchPoolsForToken(fromToken, toToken)
     await makeSwap(
       dataFetcher,
       signer,
@@ -103,7 +95,7 @@ describe('Celo RP2', async () => {
     //const toToken = WNATIVE[chainId]
     const user = '0xed30404098da5948d8B3cBD7958ceB641F2C352c' // has cUSDC and approved 800000 to the RP
     const signer = await provider.getUncheckedSigner(user)
-    await dataFetcher.fetchPoolsForToken(fromToken, toToken)
+    //await dataFetcher.fetchPoolsForToken(fromToken, toToken)
     await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, getBigNumber(800000))
   })
 })
