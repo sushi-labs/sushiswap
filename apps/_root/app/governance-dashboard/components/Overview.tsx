@@ -4,13 +4,14 @@ import { SwiperSlide } from 'swiper/react'
 
 import { CardNavigation } from './CardNavigation'
 import { EventItemCard } from './EventItem'
+import { FilterButton } from './FilterButton'
 import { GovernanceItemCard } from './GovernanceItemCard'
 import { KpiCard } from './KpiCard'
 
-const DATE_FILTERS = ['Last Month', 'Last Quarter', 'Last Year'] as const
+const DATE_FILTERS = ['Last Month', 'Last Quarter', 'Last Year'] as const // TODO: probably query filters and use as params
 type DateFilter = (typeof DATE_FILTERS)[number]
 
-const GOV_STATUS = {
+export const GOV_STATUS = {
   IMPLEMENTATION: {
     id: 'IMPLEMENTATION',
     title: 'Implementation Vote',
@@ -28,7 +29,7 @@ const GOV_STATUS = {
   },
 }
 
-type GovernanceStatus = keyof typeof GOV_STATUS
+export type GovernanceStatus = keyof typeof GOV_STATUS
 
 type DateDispatch = { type: 'date'; payload: DateFilter }
 type GovStatusDispatch = { type: 'govStatus'; payload: GovernanceStatus }
@@ -45,7 +46,7 @@ function reducer(state: { date: string; govStatus: string }, { type, payload }: 
   }
 }
 
-const governanceItems = [
+export const governanceItems = [
   {
     type: GOV_STATUS.IMPLEMENTATION,
     title: 'Sushi Vesting Merkle Tree Clawback',
@@ -64,6 +65,22 @@ const governanceItems = [
   },
   {
     type: GOV_STATUS.DISCUSSION,
+    title: 'Sushi Vesting Merkle Tree Clawback',
+    description:
+      "This proposal’s expectation is to produce a community signal. Full details and discussions thus far can be found at: https://forum.sushi.com/t/sushi-vesting-merkle-tree-clawback-temp-check/10008 Synopsis: During the first 6 months of Sushi's liquidity mining a vest was put in place for 2/3rds of accrued Sushi rewards to be locked up and",
+    isActive: true,
+    date: 123123123,
+  },
+  {
+    type: GOV_STATUS.DISCUSSION,
+    title: 'Sushi Vesting Merkle Tree Clawback',
+    description:
+      "This proposal’s expectation is to produce a community signal. Full details and discussions thus far can be found at: https://forum.sushi.com/t/sushi-vesting-merkle-tree-clawback-temp-check/10008 Synopsis: During the first 6 months of Sushi's liquidity mining a vest was put in place for 2/3rds of accrued Sushi rewards to be locked up and",
+    isActive: true,
+    date: 123123123,
+  },
+  {
+    type: GOV_STATUS.PROPOSAL,
     title: 'Sushi Vesting Merkle Tree Clawback',
     description:
       "This proposal’s expectation is to produce a community signal. Full details and discussions thus far can be found at: https://forum.sushi.com/t/sushi-vesting-merkle-tree-clawback-temp-check/10008 Synopsis: During the first 6 months of Sushi's liquidity mining a vest was put in place for 2/3rds of accrued Sushi rewards to be locked up and",
@@ -138,16 +155,13 @@ export function Overview() {
           <h2 className="text-2xl font-bold text-slate-200">Latest @ Sushi</h2>
           <div className="flex gap-2">
             {DATE_FILTERS.map((filter) => (
-              <button
-                className={classNames(
-                  'h-10 rounded-full px-4 ring-1 ring-slate-700/40',
-                  filters.date === filter ? 'bg-slate-700/40' : 'hover:bg-slate-700/20'
-                )}
+              <FilterButton
+                isActive={filters.date === filter}
                 key={filter}
                 onClick={() => dispatch({ type: 'date', payload: filter })}
               >
                 {filter}
-              </button>
+              </FilterButton>
             ))}
           </div>
         </div>
