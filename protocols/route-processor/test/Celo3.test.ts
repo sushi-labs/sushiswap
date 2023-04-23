@@ -77,7 +77,6 @@ describe('Celo RP3', async () => {
     const toToken = USDC[chainId]
     const signer = await provider.getUncheckedSigner(WNATIVE[chainId].address)
 
-    //await dataFetcher.fetchPoolsForToken(fromToken, toToken)
     await makeSwap(
       dataFetcher,
       signer,
@@ -89,13 +88,19 @@ describe('Celo RP3', async () => {
     )
   })
 
-  it('cUSDC => CELO', async () => {
+  it('cUSDC => WRAPPED CELO', async () => {
     const fromToken = cUSDC
-    const toToken = Native.onChain(chainId)
-    //const toToken = WNATIVE[chainId]
+    const toToken = WNATIVE[chainId]
     const user = '0xed30404098da5948d8B3cBD7958ceB641F2C352c' // has cUSDC and approved 800000 to the RP
     const signer = await provider.getUncheckedSigner(user)
-    //await dataFetcher.fetchPoolsForToken(fromToken, toToken)
+    await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, getBigNumber(800000))
+  })
+
+  it('cUSDC => Native CELO', async () => {
+    const fromToken = cUSDC
+    const toToken = Native.onChain(chainId)
+    const user = '0xed30404098da5948d8B3cBD7958ceB641F2C352c' // has cUSDC and approved 800000 to the RP
+    const signer = await provider.getUncheckedSigner(user)
     await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, getBigNumber(800000))
   })
 })

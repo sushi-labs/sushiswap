@@ -96,17 +96,16 @@ describe('Celo', async () => {
     )
   })
 
-  it('cUSDC => CELO', async () => {
+  it('cUSDC => WRAPPED CELO', async () => {
     const user = '0xed30404098da5948d8B3cBD7958ceB641F2C352c' // has cUSDC and approved 800000 to the RP
     const signer = await provider.getUncheckedSigner(user)
-    await makeSwap(
-      dataFetcher,
-      signer,
-      cUSDC,
-      WNATIVE[chainId], //Native.onChain(chainId),
-      user,
-      user,
-      getBigNumber(800000)
-    )
+    await makeSwap(dataFetcher, signer, cUSDC, WNATIVE[chainId], user, user, getBigNumber(800000))
+  })
+
+  // Swap to native token not supported - use wrapped token instead (that is similar)
+  it.skip('cUSDC => Native CELO: not supported', async () => {
+    const user = '0xed30404098da5948d8B3cBD7958ceB641F2C352c' // has cUSDC and approved 800000 to the RP
+    const signer = await provider.getUncheckedSigner(user)
+    await makeSwap(dataFetcher, signer, cUSDC, Native.onChain(chainId), user, user, getBigNumber(800000))
   })
 })
