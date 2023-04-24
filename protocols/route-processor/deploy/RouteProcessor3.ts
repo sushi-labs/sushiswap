@@ -17,7 +17,7 @@ const func: DeployFunction = async function ({
     throw Error(`No BENTOBOX_ADDRESS for chain #${chainId}!`)
   }
 
-  const args = [bentoBoxV1Address[chainId]]
+  const args = [bentoBoxV1Address[chainId], []]
 
   // const args = ['0x0000000000000000000000000000000000000000']
 
