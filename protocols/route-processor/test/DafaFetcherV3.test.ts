@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { DataFetcher, LiquidityProviders, UniV3PoolCode } from '@sushiswap/router'
+import { DataFetcher, LiquidityProviders, NUMBER_OF_SURROUNDING_TICKS, UniV3PoolCode } from '@sushiswap/router'
 import { CL_MAX_TICK } from '@sushiswap/tines'
 import { CL_MIN_TICK } from '@sushiswap/tines'
 import { UniV3Pool } from '@sushiswap/tines'
@@ -7,7 +7,7 @@ import {
   createRandomUniV3Pool,
   createUniV3EnvReal,
   createUniV3Pool,
-  feeAmountTickSpacing,
+  possibleFee,
   UniV3Environment,
   UniV3PoolInfo,
 } from '@sushiswap/tines-sandbox'
@@ -22,6 +22,7 @@ async function getDataFetcherData(pool: UniV3PoolInfo): Promise<UniV3Pool> {
   const client = createPublicClient({
     chain: {
       ...hardhat,
+      batchSize: 1024,
       contracts: {
         multicall3: {
           address: '0xca11bde05977b3631167028862be2a173976ca11',
@@ -56,44 +57,27 @@ function checkPoolsHaveTheSameState(pool1: UniV3Pool, pool2: UniV3Pool, maxTickD
   expect(pool1.reserve1.eq(pool2.reserve1)).equal(true)
   expect(pool1.liquidity.eq(pool2.liquidity)).equal(true)
   expect(pool1.sqrtPriceX96.eq(pool2.sqrtPriceX96)).equal(true)
-  if (pool2.ticks[pool2.nearestTick].index !== CL_MIN_TICK)
-    expect(pool1.ticks[pool1.nearestTick].index).equal(pool2.ticks[pool2.nearestTick].index)
-  expect(pool1.ticks.length).greaterThanOrEqual(pool2.ticks.length)
+  if (pool2.nearestTick > 1) expect(pool1.ticks[pool1.nearestTick].index).equal(pool2.ticks[pool2.nearestTick].index)
 
   if (maxTickDiff !== 0) {
     // Check ticks, taking into account that pool2 ticks can be a subset of pool1 ticks
     const priceTickIndex = Math.round(Math.log(pool1.calcCurrentPriceWithoutFee(true)) / Math.log(1.0001))
-    const minTickIndexCommon = priceTickIndex - maxTickDiff
-    const maxTickIndexCommon = priceTickIndex + maxTickDiff
-    for (let i1 = 0, i2 = 0, state = 0; i1 < pool1.ticks.length; ) {
-      const t1 = pool1.ticks[i1]
-      const t2 = pool2.ticks[i2]
-      if (i1 == 0) {
-        expect(t1.index).equal(CL_MIN_TICK)
-        expect(t2.index).equal(CL_MIN_TICK)
-        ++i1
-        ++i2
-      } else if (i1 == pool1.ticks.length - 1) {
-        expect(t1.index).equal(CL_MAX_TICK)
-        expect(t2.index).equal(CL_MAX_TICK)
-        ++i1
-      } else if (state == 0) {
-        if (t1.index >= minTickIndexCommon || t1.index == t2.index) state = 1 // start to check equal
-        else ++i1
-      } else if (state == 1) {
-        if (t1.index == t2.index) {
-          expect(t1.DLiquidity.eq(t2.DLiquidity)).equal(
-            true,
-            `${t1.index} ${t1.DLiquidity.toString()} != ${t2.DLiquidity.toString()}`
-          )
-          ++i1
-          ++i2
-        } else if (t1.index > maxTickIndexCommon) {
-          expect(t2.index).equal(CL_MAX_TICK)
-          break
-        } else expect(t1.index).equal(t2.index, `${t1.index} ${t2.index} ${maxTickIndexCommon}`)
-      }
-    }
+    expect(pool2.ticks.length).gte(4)
+    expect(pool2.ticks[0].index).equal(CL_MIN_TICK)
+    const minTick = pool2.ticks[1].index
+    expect(minTick).lt(priceTickIndex)
+    const maxTick = pool2.ticks[pool2.ticks.length - 2].index
+    expect(maxTick).gt(priceTickIndex)
+    expect(pool2.ticks[pool2.ticks.length - 1].index).equal(CL_MAX_TICK)
+    const mustBeTicks = pool1.ticks.filter(({ index }) => minTick < index && index < maxTick)
+    mustBeTicks.forEach((t, i) => {
+      const t2 = pool2.ticks[i + 2]
+      expect(t.index).equal(t2.index)
+      expect(t.DLiquidity.eq(t2.DLiquidity)).equal(
+        true,
+        `${i}, ${t.index} ${t.DLiquidity.toString()} != ${t2.DLiquidity.toString()}`
+      )
+    })
   } else {
     pool1.ticks.forEach((t1, i) => {
       const t2 = pool2.ticks[i]
@@ -106,10 +90,8 @@ function checkPoolsHaveTheSameState(pool1: UniV3Pool, pool2: UniV3Pool, maxTickD
   }
 }
 
-function getPoolInfoTicksForCurrentDataFetcher(poolInfo: UniV3PoolInfo): number {
-  const spacing = feeAmountTickSpacing[poolInfo.fee]
-  expect(spacing).not.undefined
-  return 1000 * spacing
+function getPoolInfoTicksForCurrentDataFetcher(): number {
+  return NUMBER_OF_SURROUNDING_TICKS
 }
 
 describe('DataFetcher Uni V3', () => {
@@ -122,20 +104,27 @@ describe('DataFetcher Uni V3', () => {
   it('test simple', async () => {
     // 5 is tick# 16090. So, only ticks from 6090 to 26090 are fetched
     const poolInfo = await createUniV3Pool(env, 500, 5, [
-      { from: 0, to: +24000, val: 1e18 },
-      { from: 12000, to: +24000, val: 1e18 },
+      { from: 0, to: +16700, val: 1e18 },
+      { from: 15500, to: +16500, val: 1e18 },
     ])
     const poolTines2 = await getDataFetcherData(poolInfo)
-    checkPoolsHaveTheSameState(poolInfo.tinesPool, poolTines2, getPoolInfoTicksForCurrentDataFetcher(poolInfo))
+    checkPoolsHaveTheSameState(poolInfo.tinesPool, poolTines2, getPoolInfoTicksForCurrentDataFetcher())
   })
 
-  const randomPools = 5
+  const randomPools = 4
   for (let i = 0; i < randomPools; ++i) {
     it(`random pool #${i + 1}/${randomPools}`, async () => {
-      const poolInfo = await createRandomUniV3Pool(env, 'pool' + i, 10, undefined, 500) // TODO: test all possible fee, not 500 only!
+      const fee = possibleFee[i % possibleFee.length]
+      const fromTo = [
+        [-4500, 0], // 100x1
+        [-7500, 2500], // 500x10
+        [-24000, 3000], // 3000x60
+        [-80000, 20000], // 10000x200
+      ][i % possibleFee.length]
+      const poolInfo = await createRandomUniV3Pool(env, 'pool' + i, 10, 0.8, fee, fromTo[0], fromTo[1])
       const poolTines2 = await getDataFetcherData(poolInfo)
       //console.log(poolInfo.tinesPool.ticks.length, poolTines2.ticks.length)
-      checkPoolsHaveTheSameState(poolInfo.tinesPool, poolTines2, getPoolInfoTicksForCurrentDataFetcher(poolInfo))
+      checkPoolsHaveTheSameState(poolInfo.tinesPool, poolTines2, getPoolInfoTicksForCurrentDataFetcher())
     })
   }
 })
