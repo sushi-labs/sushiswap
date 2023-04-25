@@ -1,7 +1,7 @@
 import { HardhatEthersHelpers } from '@nomiclabs/hardhat-ethers/types'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { CL_MAX_TICK, CL_MIN_TICK, CLTick, getBigNumber, UniV3Pool } from '@sushiswap/tines'
+import { CL_MAX_TICK, CL_MIN_TICK, CLTick, getBigNumber, RToken, UniV3Pool } from '@sushiswap/tines'
 import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
 import { expect } from 'chai'
@@ -25,8 +25,11 @@ const PositionManagerAddress: Record<number, string> = {
   [ChainId.POLYGON]: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
 }
 
+export const possibleFee: number[] = [100, 500, 3000, 10000]
+
 // Map of fee to tickSpacing
 export const feeAmountTickSpacing: number[] = []
+feeAmountTickSpacing[100] = 1 // 0.01%
 feeAmountTickSpacing[500] = 10 // 0.05%
 feeAmountTickSpacing[3000] = 60 // 0.3%
 feeAmountTickSpacing[10000] = 200 // 1%
@@ -261,8 +264,8 @@ export async function createUniV3Pool(
 
   poolInfo.tinesPool = new UniV3Pool(
     pool.address,
-    token0,
-    token1,
+    token0 as RToken,
+    token1 as RToken,
     fee / 1e6,
     await token0Contract.balanceOf(pool.address),
     await token1Contract.balanceOf(pool.address),
@@ -278,7 +281,7 @@ export async function createUniV3Pool(
 function getRndLin(rnd: () => number, min: number, max: number) {
   return rnd() * (max - min) + min
 }
-function getRndLinInt(rnd: () => number, min: number, max: number) {
+export function getRndLinInt(rnd: () => number, min: number, max: number) {
   return Math.floor(getRndLin(rnd, min, max))
 }
 
@@ -287,14 +290,16 @@ export async function createRandomUniV3Pool(
   seed: string,
   positionNumber: number,
   price?: number,
-  _fee?: number
+  _fee?: number,
+  minTick = CL_MIN_TICK,
+  maxTick = CL_MAX_TICK
 ): Promise<UniV3PoolInfo> {
   const rnd: () => number = seedrandom(seed) // random [0, 1)
 
-  const fee = _fee || [500, 3000, 10000][getRndLinInt(rnd, 0, 3)]
+  const fee = _fee || possibleFee[getRndLinInt(rnd, 0, possibleFee.length)]
   const tickSpacing = feeAmountTickSpacing[fee]
-  const RANGE = Math.floor((CL_MAX_TICK - CL_MIN_TICK) / tickSpacing)
-  const SHIFT = -Math.floor(-CL_MIN_TICK / tickSpacing) * tickSpacing
+  const RANGE = Math.floor((maxTick - minTick) / tickSpacing)
+  const SHIFT = -Math.floor(-minTick / tickSpacing) * tickSpacing
 
   const positions: UniV3Position[] = []
   for (let i = 0; i < positionNumber; ++i) {
@@ -302,7 +307,7 @@ export async function createRandomUniV3Pool(
     const pos2 = (pos1 + getRndLinInt(rnd, 1, RANGE - 1)) % RANGE
     const from = Math.min(pos1, pos2) * tickSpacing + SHIFT
     const to = Math.max(pos1, pos2) * tickSpacing + SHIFT
-    console.assert(CL_MIN_TICK <= from && from < to && to <= CL_MAX_TICK, `Wrong from-to range ${from} - ${to}`)
+    console.assert(minTick <= from && from < to && to <= maxTick, `Wrong from-to range ${from} - ${to}`)
     positions.push({ from, to, val: getRndLin(rnd, 0.01, 30) * 1e18 })
   }
   price = price === undefined ? getRndLin(rnd, 0.01, 100) : price

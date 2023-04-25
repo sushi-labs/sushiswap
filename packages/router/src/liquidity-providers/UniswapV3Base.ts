@@ -74,7 +74,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
+        batchSize: 512,
         contracts: staticPools.map(
           (pool) =>
             ({
@@ -125,7 +125,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     const liquidityContracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
-      batchSize: 1024,
+      batchSize: 512,
       contracts: existingPools.map(
         (pool) =>
           ({
@@ -148,7 +148,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     const token0Contracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
-      batchSize: 1024,
+      batchSize: 512,
       contracts: existingPools.map(
         (pool) =>
           ({
@@ -164,7 +164,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     const token1Contracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
-      batchSize: 1024,
+      batchSize: 512,
       contracts: existingPools.map(
         (pool) =>
           ({
@@ -200,7 +200,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     const ticksContracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
-      batchSize: 1024,
+      batchSize: 512,
       contracts: wordList,
     })
 
@@ -225,12 +225,31 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       const balance1 = token1Balances[i].result
       const liquidity = liquidityResults[i].result
       if (balance0 === undefined || balance1 === undefined || liquidity === undefined) return
+
       const poolTicks = ticks[i]
         .map((tick: any) => ({
           index: tick.tick,
           DLiquidity: BigNumber.from(tick.liquidityNet),
         }))
         .sort((a: any, b: any) => a.index - b.index)
+
+      const lowerUnknownTick = minIndexes[i] * TICK_SPACINGS[pool.fee] * 256 - TICK_SPACINGS[pool.fee]
+      console.assert(
+        poolTicks.length == 0 || lowerUnknownTick < poolTicks[0].index,
+        'Error 236: unexpected min tick index'
+      )
+      poolTicks.unshift({
+        index: lowerUnknownTick,
+        DLiquidity: BigNumber.from(0),
+      })
+      const upperUnknownTick = (maxIndexes[i] + 1) * TICK_SPACINGS[pool.fee] * 256
+      console.assert(poolTicks[poolTicks.length - 1].index < upperUnknownTick, 'Error 244: unexpected max tick index')
+      poolTicks.push({
+        index: upperUnknownTick,
+        DLiquidity: BigNumber.from(0),
+      })
+      //console.log(pool.fee, TICK_SPACINGS[pool.fee], pool.activeTick, minIndexes[i], maxIndexes[i], poolTicks)
+
       const v3Pool = new UniV3Pool(
         pool.address,
         pool.token0 as RToken,
