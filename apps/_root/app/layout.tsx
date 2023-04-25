@@ -3,13 +3,14 @@
 import '@sushiswap/ui/index.css'
 import '../variables.css'
 
-import { App, ThemeProvider } from '@sushiswap/ui'
-import { client } from '@sushiswap/wagmi'
+import { ThemeProvider } from '@sushiswap/ui'
 import Head from 'next/head'
-import { WagmiConfig } from '@sushiswap/wagmi'
 
 import React from 'react'
-import { ToastContainer } from '@sushiswap/ui/future/components/toast'
+
+import { Onramper } from '@sushiswap/wagmi/future/components'
+import { WagmiProvider } from '../components/WagmiProvider'
+import { QueryClientProvider } from 'components/QueryClientProvider'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -23,16 +24,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="shortcut icon" href="/favicon.ico?v=1" />
       </Head>
       <body className="h-screen">
-        <WagmiConfig client={client}>
-          <ThemeProvider>
-            <App.Shell>
-              {children}
-              <App.Footer />
-              <ToastContainer className="mt-[50px]" />
-            </App.Shell>
-            <div className="z-[-1] fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
-          </ThemeProvider>
-        </WagmiConfig>
+        <WagmiProvider>
+          <QueryClientProvider>
+            <ThemeProvider>
+              <Onramper.Provider>{children}</Onramper.Provider>
+            </ThemeProvider>
+          </QueryClientProvider>
+        </WagmiProvider>
       </body>
     </html>
   )
