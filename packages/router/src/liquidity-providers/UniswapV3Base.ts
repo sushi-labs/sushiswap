@@ -74,7 +74,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
+        batchSize: 512,
         contracts: staticPools.map(
           (pool) =>
             ({
@@ -125,7 +125,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     const liquidityContracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
-      batchSize: 1024,
+      batchSize: 512,
       contracts: existingPools.map(
         (pool) =>
           ({
@@ -148,7 +148,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     const token0Contracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
-      batchSize: 1024,
+      batchSize: 512,
       contracts: existingPools.map(
         (pool) =>
           ({
@@ -164,7 +164,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     const token1Contracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
-      batchSize: 1024,
+      batchSize: 512,
       contracts: existingPools.map(
         (pool) =>
           ({
@@ -200,7 +200,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     const ticksContracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
-      batchSize: 1024,
+      batchSize: 512,
       contracts: wordList,
     })
 

@@ -155,7 +155,7 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   const client = createPublicClient({
     chain: {
       ...hardhat,
-      batchSize: 1024,
+      batchSize: 512,
       contracts: {
         multicall3: {
           address: '0xca11bde05977b3631167028862be2a173976ca11',
