@@ -26,6 +26,7 @@ import {
   polygon,
 } from '@sushiswap/viem-config'
 import { Chain } from 'wagmi'
+import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
 
 const dataFetchers = new Map<ChainId, DataFetcher>()
 
@@ -256,11 +257,11 @@ dataFetchers.set(
 
 export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enabled'>) => {
   const dataFetcher = dataFetchers.get(variables.chainId) as DataFetcher
-  dataFetcher.startDataFetching([
-    LiquidityProviders.SushiSwap,
-    LiquidityProviders.SushiSwapV3,
-    LiquidityProviders.Trident,
-  ])
+  const liquidityProviders = [LiquidityProviders.SushiSwap, LiquidityProviders.Trident]
+  if (isRouteProcessor3ChainId(variables.chainId)) {
+    liquidityProviders.push(LiquidityProviders.SushiSwapV3)
+  }
+  dataFetcher.startDataFetching(liquidityProviders)
   await dataFetcher.fetchPoolsForToken(variables.currencyA!, variables.currencyB!)
   dataFetcher.stopDataFetching()
   return dataFetcher.getCurrentPoolCodeMap(variables.currencyA!, variables.currencyB!)
