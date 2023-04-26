@@ -263,6 +263,7 @@ importers:
   apis/tokens:
     specifiers:
       '@sushiswap/database': workspace:*
+      '@sushiswap/default-token-list': 41.4.0
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -277,6 +278,7 @@ importers:
       zod: 3.20.2
     dependencies:
       '@sushiswap/database': link:../../packages/database
+      '@sushiswap/default-token-list': 41.4.0
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@vercel/node': 2.9.8
       '@wagmi/core': 0.10.9_rc2b4b7mjmcbjfrypa47zb6tte
