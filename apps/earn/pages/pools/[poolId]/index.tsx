@@ -248,7 +248,7 @@ const Pool: FC = () => {
                   {poolStats ? (
                     <List.KeyValue flex title="Volume">
                       <span className="flex items-center gap-2">
-                        {formatUSD(granularity === Granularity.Week ? poolStats.volume1d : poolStats.volume1w)}
+                        {formatUSD(granularity === Granularity.Week ? poolStats.volume1w : poolStats.volume1d)}
                         <span
                           className={
                             change1w === 0
