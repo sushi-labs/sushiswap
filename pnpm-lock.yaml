@@ -310,11 +310,14 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/react-query': workspace:*
       '@sushiswap/redux-token-lists': workspace:*
+      '@sushiswap/route-processor': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/validate': workspace:*
       '@sushiswap/wagmi': workspace:*
+      '@tanstack/react-query': 4.28.0
       '@tanstack/react-table': 8.5.0
       '@types/cors': ^2.8.13
       '@types/node': ^18.0.0
@@ -366,10 +369,13 @@ importers:
       '@sushiswap/graph-client': link:../../packages/graph-client
       '@sushiswap/graph-config': link:../../config/graph
       '@sushiswap/hooks': link:../../packages/hooks
+      '@sushiswap/react-query': link:../../packages/react-query
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
+      '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/validate': link:../../packages/validate
       '@sushiswap/wagmi': link:../../packages/wagmi
+      '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
       '@uniswap/token-lists': 1.0.0-beta.30
       '@vercel/analytics': 0.1.5_react@18.2.0
@@ -694,6 +700,7 @@ importers:
       '@sushiswap/react-query': workspace:*
       '@sushiswap/redux-localstorage': workspace:*
       '@sushiswap/redux-token-lists': workspace:*
+      '@sushiswap/route-processor': workspace:*
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/tailwindcss-config': workspace:*
       '@sushiswap/token-lists': workspace:*
@@ -774,6 +781,7 @@ importers:
       '@sushiswap/react-query': link:../../packages/react-query
       '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
+      '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/token-lists': link:../../packages/token-lists
       '@sushiswap/trident': link:../../protocols/trident
@@ -2453,6 +2461,7 @@ importers:
       '@sushiswap/tines': workspace:*
       '@sushiswap/trident': workspace:*
       '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/v3-sdk': workspace:*
       '@types/lodash.flatmap': ^4.5.7
       '@types/node': ^18.0.0
       '@types/node-fetch': 2.6.2
@@ -2464,7 +2473,7 @@ importers:
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
       typescript: 4.9.4
-      viem: 0.1.2
+      viem: jxom-multicall-chunk-size
       zod: 3.20.2
     dependencies:
       '@ethersproject/abi': 5.7.0
@@ -2480,13 +2489,14 @@ importers:
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/tines': link:../tines
       '@sushiswap/trident': link:../../protocols/trident
+      '@sushiswap/v3-sdk': link:../v3-sdk
       date-fns: 2.29.3
       ethers: 5.7.2
       lodash.flatmap: 4.5.0
       node-fetch: 2.6.6
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
-      viem: 0.1.2_4umapwpw55xijlh2mknjgcn4rq
+      viem: 0.4.0-jxom-multicall-chunk-size.20230420T212142_4umapwpw55xijlh2mknjgcn4rq
       zod: 3.20.2
     devDependencies:
       '@sushiswap/database': link:../database
@@ -2874,6 +2884,7 @@ importers:
       '@sushiswap/ui': workspace:*
       '@sushiswap/v3-sdk': workspace:*
       '@sushiswap/validate': workspace:*
+      '@sushiswap/viem-config': workspace:*
       '@sushiswap/wagmi-config': workspace:*
       '@tanstack/query-sync-storage-persister': ^4.14.5
       '@tanstack/react-query': ^4.14.5
@@ -2891,6 +2902,7 @@ importers:
       tsup: 6.5.0
       typechain: ^8.0.0
       typescript: 4.9.4
+      viem: jxom-multicall-chunk-size
       wagmi: 0.12.10
       zod: 3.20.2
     dependencies:
@@ -2927,12 +2939,14 @@ importers:
       '@sushiswap/ui': link:../ui
       '@sushiswap/v3-sdk': link:../v3-sdk
       '@sushiswap/validate': link:../validate
+      '@sushiswap/viem-config': link:../../config/viem
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@tanstack/query-sync-storage-persister': 4.27.1
       '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-persist-client': 4.28.0_qfusmmwykmcbgdy37sd3cqxiry
       '@uniswap/v2-core': 1.0.1
       '@uniswap/v3-periphery': 1.4.1
+      viem: 0.4.0-jxom-multicall-chunk-size.20230420T212142_4umapwpw55xijlh2mknjgcn4rq
       zod: 3.20.2
     optionalDependencies:
       next: 13.2.3_biqbaboplfbrettd7655fr4n2y
@@ -3117,6 +3131,7 @@ importers:
       '@sushiswap/tines-sandbox': workspace:*
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/viem-config': workspace:*
       '@typechain/ethers-v5': ^10.0.0
       '@typechain/hardhat': ^6.1.0
       '@types/chai': ^4.3.0
@@ -3127,6 +3142,7 @@ importers:
       cross-env: ^7.0.0
       dotenv: 16.0.3
       eslint: 8.29.0
+      eth-permit: ^0.2.3
       ethers: 5.7.2
       hardhat: 2.12.4
       hardhat-contract-sizer: 2.6.1
@@ -3136,6 +3152,7 @@ importers:
       hardhat-preprocessor: 0.1.5
       hardhat-spdx-license-identifier: 2.1.0
       hardhat-watcher: 2.5.0
+      mocha: ^10.2.0
       prettier: 2.8.1
       prettier-plugin-solidity: 1.1.0
       solidity-coverage: 0.8.2
@@ -3143,7 +3160,7 @@ importers:
       ts-node: 10.9.1
       typechain: 8.1.1
       typescript: 4.9.4
-      viem: 0.1.2
+      viem: jxom-multicall-chunk-size
     devDependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2
@@ -3168,6 +3185,7 @@ importers:
       '@sushiswap/tines-sandbox': link:../tines-sandbox
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/typescript-config': link:../../config/typescript
+      '@sushiswap/viem-config': link:../../config/viem
       '@typechain/ethers-v5': 10.2.0_k6bdrczrdxrxopgjlr5kov2hw4
       '@typechain/hardhat': 6.1.5_w5qvcidahwqdkdc2rzrbmling4
       '@types/chai': 4.3.4
@@ -3178,6 +3196,7 @@ importers:
       cross-env: 7.0.3
       dotenv: 16.0.3
       eslint: 8.29.0
+      eth-permit: 0.2.3
       ethers: 5.7.2
       hardhat: 2.12.4_z6wznmtyb6ovnulj6iujpct7um
       hardhat-contract-sizer: 2.6.1_hardhat@2.12.4
@@ -3187,6 +3206,7 @@ importers:
       hardhat-preprocessor: 0.1.5_hardhat@2.12.4
       hardhat-spdx-license-identifier: 2.1.0_hardhat@2.12.4
       hardhat-watcher: 2.5.0_hardhat@2.12.4
+      mocha: 10.2.0
       prettier: 2.8.1
       prettier-plugin-solidity: 1.1.0_prettier@2.8.1
       solidity-coverage: 0.8.2_hardhat@2.12.4
@@ -3194,7 +3214,7 @@ importers:
       ts-node: 10.9.1_od3vuficnfbr74q5a3bmsrnj6y
       typechain: 8.1.1_typescript@4.9.4
       typescript: 4.9.4
-      viem: 0.1.2_typescript@4.9.4
+      viem: 0.4.0-jxom-multicall-chunk-size.20230420T212142_typescript@4.9.4
 
   protocols/sushiswap:
     specifiers:
@@ -3312,6 +3332,8 @@ importers:
       '@nomiclabs/hardhat-solhint': 2.0.1
       '@openzeppelin/contracts': 4.8.0
       '@sushiswap/abi': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hardhat-config': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -3361,6 +3383,8 @@ importers:
       '@nomiclabs/hardhat-solhint': 2.0.1_hardhat@2.12.7
       '@openzeppelin/contracts': 4.8.0
       '@sushiswap/abi': link:../../packages/abi
+      '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/hardhat-config': link:../../config/hardhat
       '@sushiswap/jest-config': link:../../config/jest
@@ -3447,6 +3471,9 @@ packages:
   /@adobe/css-tools/4.2.0:
     resolution: {integrity: sha512-E09FiIft46CmH5Qnjb0wsW54/YQd69LsxeKUOWawmws1XWvyFGURnAChH0mlr7YPFR1ofwvUQfcL0J3lMxXqPA==}
     dev: true
+
+  /@adraffy/ens-normalize/1.9.0:
+    resolution: {integrity: sha512-iowxq3U30sghZotgl4s/oJRci6WPBfNO5YYgk2cIOMCHr3LeGPcsZjCEr+33Q4N+oV3OABDAtA+pyvWjbvBifQ==}
 
   /@ampproject/remapping/2.2.0:
     resolution: {integrity: sha512-qRmjj8nj9qmLTQXXmaR1cck3UXSRMPrbsLJAasZpF+t3riI71BXed5ebIOYwQntykeZuhjsdweEc9BxH5Jc26w==}
@@ -9597,6 +9624,16 @@ packages:
     requiresBuild: true
     optional: true
 
+  /@noble/curves/0.8.3:
+    resolution: {integrity: sha512-OqaOf4RWDaCRuBKJLDURrgVxjLmneGsiCXGuzYB5y95YithZMA6w4uk34DHSm0rKMrrYiaeZj48/81EvaAScLQ==}
+    dependencies:
+      '@noble/hashes': 1.3.0
+
+  /@noble/curves/0.9.0:
+    resolution: {integrity: sha512-OAdtHMXBp7Chl2lcTn/i7vnFX/q+hhTwDnek5NfYfZsY4LyaUuHCcoq2JlLY3BTFTLT+ZhYZalhF6ejlV7KnJQ==}
+    dependencies:
+      '@noble/hashes': 1.3.0
+
   /@noble/ed25519/1.7.3:
     resolution: {integrity: sha512-iR8GBkDt0Q3GyaVcIu7mSsVIqnFbkbRzGLWlvhwunacoLwt4J3swfKhfaM6rN6WY+TBGoYT1GtT1mIh2/jGbRQ==}
 
@@ -10858,10 +10895,23 @@ packages:
       '@noble/secp256k1': 1.7.1
       '@scure/base': 1.1.1
 
+  /@scure/bip32/1.2.0:
+    resolution: {integrity: sha512-O+vT/hBVk+ag2i6j2CDemwd1E1MtGt+7O1KzrPNsaNvSsiEK55MyPIxJIMI2PS8Ijj464B2VbQlpRoQXxw1uHg==}
+    dependencies:
+      '@noble/curves': 0.8.3
+      '@noble/hashes': 1.3.0
+      '@scure/base': 1.1.1
+
   /@scure/bip39/1.1.1:
     resolution: {integrity: sha512-t+wDck2rVkh65Hmv280fYdVdY25J9YeEUIgn2LG1WM6gxFkGzcksoDiUkWVpVp3Oex9xGC68JU2dSbUfwZ2jPg==}
     dependencies:
       '@noble/hashes': 1.2.0
+      '@scure/base': 1.1.1
+
+  /@scure/bip39/1.2.0:
+    resolution: {integrity: sha512-SX/uKq52cuxm4YFXWFaVByaSHJh2w3BnokVSeUJVCv6K7WulT9u2BuNRBhuFl8vAuYnzx9bEu9WgpcNYTrYieg==}
+    dependencies:
+      '@noble/hashes': 1.3.0
       '@scure/base': 1.1.1
 
   /@sentry/core/5.30.0:
@@ -13361,6 +13411,16 @@ packages:
     dependencies:
       typescript: 4.9.4
     dev: true
+
+  /@wagmi/chains/0.2.16_typescript@4.9.4:
+    resolution: {integrity: sha512-rkWaI2PxCnbD8G07ZZff5QXftnSkYL0h5f4DkHCG3fGYYr/ZDvmCL4bMae7j7A9sAif1csPPBmbCzHp3R5ogCQ==}
+    peerDependencies:
+      typescript: '>=4.9.4'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      typescript: 4.9.4
 
   /@wagmi/chains/0.2.17_typescript@4.9.4:
     resolution: {integrity: sha512-Boh60XnwsI6dOZ5ACo2aHig7JNpNoU9M5KrMgwzNKonce9LKs/H3/GmCJNP5L9JNfnLih6u76OWN/aJWURlB2w==}
@@ -18408,7 +18468,7 @@ packages:
       supports-color:
         optional: true
     dependencies:
-      ms: 2.1.1
+      ms: 2.1.3
     dev: false
 
   /debug/3.2.6_supports-color@6.0.0:
@@ -18420,7 +18480,7 @@ packages:
       supports-color:
         optional: true
     dependencies:
-      ms: 2.1.1
+      ms: 2.1.3
       supports-color: 6.0.0
     dev: true
 
@@ -20670,6 +20730,12 @@ packages:
       xhr-request-promise: 0.1.3
     dev: false
     optional: true
+
+  /eth-permit/0.2.3:
+    resolution: {integrity: sha512-d4tbiRQgbpdeJbdC9hdyT0SUJcJx28FIy3o2RxEAoeYI+zyYbNC0ZpdE6kxBK+7iY2payjHRE7rs7tr5EcOVLg==}
+    dependencies:
+      utf8: 3.0.0
+    dev: true
 
   /eth-query/2.1.2:
     resolution: {integrity: sha512-srES0ZcvwkR/wd5OQBRA1bIJMww1skfGS0s8wlwK3/oNP4+wnds60krvu5R1QbpRQjMmpG5OMIWro5s7gvDPsA==}
@@ -24010,6 +24076,13 @@ packages:
       ws: 8.11.0
     dev: true
 
+  /isomorphic-ws/5.0.0_ws@8.12.0:
+    resolution: {integrity: sha512-muId7Zzn9ywDsyXgTIafTry2sV3nySZeUDe6YedVd1Hvuuep5AsIlqK+XefWpYTyJG5e503F2xIuT2lcU6rCSw==}
+    peerDependencies:
+      ws: '*'
+    dependencies:
+      ws: 8.12.0
+
   /isomorphic-ws/5.0.0_ws@8.12.1:
     resolution: {integrity: sha512-muId7Zzn9ywDsyXgTIafTry2sV3nySZeUDe6YedVd1Hvuuep5AsIlqK+XefWpYTyJG5e503F2xIuT2lcU6rCSw==}
     peerDependencies:
@@ -26796,6 +26869,7 @@ packages:
 
   /ms/2.1.1:
     resolution: {integrity: sha512-tgp+dl5cGk28utYktBsrFqA7HKgrhgPsg6Z/EfhWI4gl1Hwq8B/GmY/0oXZ6nF8hDVesS/FpnYaD/kOWhYQvyg==}
+    dev: true
 
   /ms/2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
@@ -27016,6 +27090,7 @@ packages:
     resolution: {integrity: sha512-nKFJC6upCPN7DWRx4+0S/1PIOT7vNlCT157w9AzbXEgKy6zkiPKEt5YyRUsRZkmpEqBVrGgOqNfwecTociyg+w==}
     engines: {node: '>=14.6.0'}
     hasBin: true
+    requiresBuild: true
     peerDependencies:
       '@opentelemetry/api': ^1.4.0
       fibers: '>= 3.1.0'
@@ -27061,6 +27136,7 @@ packages:
     resolution: {integrity: sha512-nKFJC6upCPN7DWRx4+0S/1PIOT7vNlCT157w9AzbXEgKy6zkiPKEt5YyRUsRZkmpEqBVrGgOqNfwecTociyg+w==}
     engines: {node: '>=14.6.0'}
     hasBin: true
+    requiresBuild: true
     peerDependencies:
       '@opentelemetry/api': ^1.4.0
       fibers: '>= 3.1.0'
@@ -32562,6 +32638,7 @@ packages:
     resolution: {integrity: sha512-T9q82TJI9e/C1TAxYvfb16xO120tMVFZrGA3f9/P4424DNu6ypK103y0GPFVa17yotwSyZW5iYXgjYHkGrJW/g==}
     engines: {node: '>=0.8.0'}
     hasBin: true
+    requiresBuild: true
 
   /uint8arrays/3.1.1:
     resolution: {integrity: sha512-+QJa8QRnbdXVpHYjLoTpJIdCTiw9Ir62nocClWuXIq2JIh4Uta0cQsTSpFL678p2CN8B+XSApwcU+pQEqVpKWg==}
@@ -33140,6 +33217,44 @@ packages:
       idna-uts46-hx: 4.1.2
       isomorphic-ws: 5.0.0_ws@8.13.0
       ws: 8.13.0
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+    dev: true
+
+  /viem/0.4.0-jxom-multicall-chunk-size.20230420T212142_4umapwpw55xijlh2mknjgcn4rq:
+    resolution: {integrity: sha512-E1R7NBsRhJJb/0hiAyuuF5MB/wjiYR6C6fXF35CUg8gEeEuZqCI1KSQL2mXw+ZXlbvB0Q3U7fkFgvcg88DIqhw==}
+    dependencies:
+      '@adraffy/ens-normalize': 1.9.0
+      '@noble/curves': 0.9.0
+      '@noble/hashes': 1.3.0
+      '@scure/bip32': 1.2.0
+      '@scure/bip39': 1.2.0
+      '@wagmi/chains': 0.2.16_typescript@4.9.4
+      abitype: 0.7.1_4umapwpw55xijlh2mknjgcn4rq
+      isomorphic-ws: 5.0.0_ws@8.12.0
+      ws: 8.12.0
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+    dev: false
+
+  /viem/0.4.0-jxom-multicall-chunk-size.20230420T212142_typescript@4.9.4:
+    resolution: {integrity: sha512-E1R7NBsRhJJb/0hiAyuuF5MB/wjiYR6C6fXF35CUg8gEeEuZqCI1KSQL2mXw+ZXlbvB0Q3U7fkFgvcg88DIqhw==}
+    dependencies:
+      '@adraffy/ens-normalize': 1.9.0
+      '@noble/curves': 0.9.0
+      '@noble/hashes': 1.3.0
+      '@scure/bip32': 1.2.0
+      '@scure/bip39': 1.2.0
+      '@wagmi/chains': 0.2.16_typescript@4.9.4
+      abitype: 0.7.1_typescript@4.9.4
+      isomorphic-ws: 5.0.0_ws@8.12.0
+      ws: 8.12.0
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -34080,6 +34195,18 @@ packages:
       utf-8-validate:
         optional: true
     dev: true
+
+  /ws/8.12.0:
+    resolution: {integrity: sha512-kU62emKIdKVeEIOIKVegvqpXMSTAMLJozpHZaJNDYqBjzlSYXQGviYwN1osDLJ9av68qHd4a2oSjd7yD4pacig==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
 
   /ws/8.12.1:
     resolution: {integrity: sha512-1qo+M9Ba+xNhPB+YTWUlK6M17brTut5EXbcBaMRN5pH5dFrXz7lzz1ChFSUq3bOUl8yEvSenhHmYUNJxFzdJew==}

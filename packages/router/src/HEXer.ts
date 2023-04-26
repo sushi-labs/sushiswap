@@ -109,4 +109,14 @@ export class HEXer {
 
     return this
   }
+
+  bytes32(data: string): HEXer {
+    if (data.startsWith('0x')) data = data.slice(2)
+    if (data.length > 64) {
+      throw new Error('Wrong bytes32 length: ' + data.length)
+    }
+
+    this.hex += data.padEnd(64, '0')
+    return this
+  }
 }

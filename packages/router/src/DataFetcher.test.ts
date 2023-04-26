@@ -7,7 +7,6 @@
 // import { createClient } from '@sushiswap/database'
 // import { createPublicClient, http } from 'viem'
 // import { arbitrum, mainnet, polygon } from 'viem/chains'
-// import { T } from 'viem/dist/parseGwei-a8c67c77'
 
 // import { DataFetcher } from './DataFetcher'
 // import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
@@ -59,7 +58,7 @@
 //     expect(totalPoolCount).toBeGreaterThan(initialPoolCount)
 //   })
 
-//   it.skip(`should clear pools on demand pools`, async () => {
+//   it.skip("should clear pools on demand pools", async () => {
 //     const poolCount = DATA_FETCHER.getCurrentPoolCodeMap(token0, token1).size
 //     global.Date.now = jest.fn(() => new Date().getTime() + 1000 * 75)
 //     await new Promise((r) => setTimeout(r, 6000)) // wait for unused on-demand pools to be cleared
@@ -76,7 +75,7 @@
 //   })
 // })
 
-// describe.skip(`fetch pools for specific LPs`, () => {
+// describe.skip("fetch pools for specific LPs", () => {
 //   it.each([LiquidityProviders.Trident, 
 //     LiquidityProviders.SushiSwap
 // ])('should have pools %s', async (lp) => {
@@ -100,5 +99,29 @@
 //     fetcher.stopDataFetching()
 //   })
 // })
+
+
+// describe.only('V3', () => {
+//     it('should have pools', async () => {
+//       const chainId = ChainId.POLYGON
+//       const token0 = Native.onChain(chainId)
+//       const token1 = USDC[chainId]
+  
+//       const fetcher = new DataFetcher(
+//         chainId,
+//         createPublicClient({
+//           chain: polygon,
+//           transport: http(`${polygon.rpcUrls.alchemy.http}/${process.env.ALCHEMY_ID}`),
+//         })
+//       )
+//       fetcher.startDataFetching([LiquidityProviders.UniswapV3])
+  
+//       await fetcher.fetchPoolsForToken(token0, token1)
+//       // await new Promise((r) => setTimeout(r, 4000)) // wait for on-demand pools to be fetched
+//       const totalPoolCount = fetcher.getCurrentPoolCodeMap(token0, token1).size
+//       expect(totalPoolCount).toBeGreaterThan(5)
+//       fetcher.stopDataFetching()
+//     })
+//   })
 
 export {}

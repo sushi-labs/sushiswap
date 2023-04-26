@@ -8,7 +8,12 @@ import { useTrade } from '../../lib/useTrade'
 import { Native } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
 import { warningSeverity } from '../../lib/warningSeverity'
-import { isRouteProcessorChainId, routeProcessorAddress } from '@sushiswap/route-processor'
+import {
+  isRouteProcessor3ChainId,
+  isRouteProcessorChainId,
+  routeProcessor3Address,
+  routeProcessorAddress,
+} from '@sushiswap/route-processor'
 import { ZERO } from '@sushiswap/math'
 
 export const SwapButton: FC = () => {
@@ -41,9 +46,11 @@ export const SwapButton: FC = () => {
                 size="xl"
                 amount={amount}
                 contract={
-                  // isRouteProcessor2ChainId(network0)
-                  //   ? routeProcessor2Address[network0]
-                  isRouteProcessorChainId(network0) ? routeProcessorAddress[network0] : undefined
+                  isRouteProcessor3ChainId(network0)
+                    ? routeProcessor3Address[network0]
+                    : isRouteProcessorChainId(network0)
+                    ? routeProcessorAddress[network0]
+                    : undefined
                 }
               >
                 <Checker.Success tag="swap">

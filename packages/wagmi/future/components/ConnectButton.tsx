@@ -58,7 +58,7 @@ export const ConnectButton = <C extends React.ElementType>({ hack, children, hid
   // Awaiting wallet confirmation
   if (pendingConnector) {
     return (
-      <Button endIcon={<Loader />} variant="filled" color="blue" disabled {...rest}>
+      <Button endIcon={<Loader />} variant="filled" color="blue" size={rest.size} disabled {...rest}>
         Authorize Wallet
       </Button>
     )

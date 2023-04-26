@@ -1,5 +1,5 @@
 import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { ChainId, chainShortName } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
@@ -18,10 +18,12 @@ import { PancakeSwapProvider } from './liquidity-providers/PancakeSwap'
 import { QuickSwapProvider } from './liquidity-providers/QuickSwap'
 import { SpookySwapProvider } from './liquidity-providers/SpookySwap'
 import { SushiProvider } from './liquidity-providers/Sushi'
+import { SushiSwapV3Provider } from './liquidity-providers/SushiSwapV3'
 import { TraderJoeProvider } from './liquidity-providers/TraderJoe'
 import { TridentProvider } from './liquidity-providers/Trident'
 import { UbeSwapProvider } from './liquidity-providers/UbeSwap'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
+import { UniswapV3Provider } from './liquidity-providers/UniswapV3'
 import type { PoolCode } from './pools/PoolCode'
 
 // import { create } from 'viem'
@@ -67,6 +69,15 @@ export class DataFetcher {
       }
     }
 
+    if (this._providerIsIncluded(LiquidityProviders.SushiSwapV3, providers)) {
+      try {
+        const provider = new SushiSwapV3Provider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+
     if (
       this._providerIsIncluded(LiquidityProviders.Trident, providers) &&
       isBentoBoxV1ChainId(this.chainId) &&
@@ -80,77 +91,77 @@ export class DataFetcher {
       }
     }
 
-    // if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers)) {
-    //   try {
-    //     const provider = new ApeSwapProvider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers)) {
+      try {
+        const provider = new ApeSwapProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
-    // if (this._providerIsIncluded(LiquidityProviders.Biswap, providers)) {
-    //   try {
-    //     const provider = new BiswapProvider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.Biswap, providers)) {
+      try {
+        const provider = new BiswapProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
-    // if (this._providerIsIncluded(LiquidityProviders.Dfyn, providers)) {
-    //   try {
-    //     const provider = new DfynProvider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.Dfyn, providers)) {
+      try {
+        const provider = new DfynProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
-    // if (this._providerIsIncluded(LiquidityProviders.Elk, providers)) {
-    //   try {
-    //     const provider = new ElkProvider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.Elk, providers)) {
+      try {
+        const provider = new ElkProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
-    // if (this._providerIsIncluded(LiquidityProviders.HoneySwap, providers)) {
-    //   try {
-    //     const provider = new HoneySwapProvider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.HoneySwap, providers)) {
+      try {
+        const provider = new HoneySwapProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
-    // if (this._providerIsIncluded(LiquidityProviders.JetSwap, providers)) {
-    //   try {
-    //     const provider = new JetSwapProvider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.JetSwap, providers)) {
+      try {
+        const provider = new JetSwapProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
-    // if (this._providerIsIncluded(LiquidityProviders.NetSwap, providers)) {
-    //   try {
-    //     const provider = new NetSwapProvider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.NetSwap, providers)) {
+      try {
+        const provider = new NetSwapProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
-    // if (this._providerIsIncluded(LiquidityProviders.PancakeSwap, providers)) {
-    //   try {
-    //     const provider = new PancakeSwapProvider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.PancakeSwap, providers)) {
+      try {
+        const provider = new PancakeSwapProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
     if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers)) {
       try {
@@ -161,23 +172,23 @@ export class DataFetcher {
       }
     }
 
-    // if (this._providerIsIncluded(LiquidityProviders.SpookySwap, providers)) {
-    //   try {
-    //     const provider = new SpookySwapProvider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.SpookySwap, providers)) {
+      try {
+        const provider = new SpookySwapProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
-    // if (this._providerIsIncluded(LiquidityProviders.TraderJoe, providers)) {
-    //   try {
-    //     const provider = new TraderJoeProvider(this.chainId, this.web3Client, this.databaseClient)
-    //     this.providers.push(provider)
-    //   } catch (e: any) {
-    //     // console.warn(e.message)
-    //   }
-    // }
+    if (this._providerIsIncluded(LiquidityProviders.TraderJoe, providers)) {
+      try {
+        const provider = new TraderJoeProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
 
     if (this._providerIsIncluded(LiquidityProviders.UbeSwap, providers)) {
       try {
@@ -191,6 +202,15 @@ export class DataFetcher {
     if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
       try {
         const provider = new UniswapV2Provider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+
+    if (this._providerIsIncluded(LiquidityProviders.UniswapV3, providers)) {
+      try {
+        const provider = new UniswapV3Provider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)

@@ -43,6 +43,7 @@
     "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",
+    "@sushiswap/route-processor": "workspace:*",
     "@sushiswap/trident": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
