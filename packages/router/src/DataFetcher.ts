@@ -18,6 +18,7 @@ import { PancakeSwapProvider } from './liquidity-providers/PancakeSwap'
 import { QuickSwapProvider } from './liquidity-providers/QuickSwap'
 import { SpookySwapProvider } from './liquidity-providers/SpookySwap'
 import { SushiProvider } from './liquidity-providers/Sushi'
+import { SushiSwapV3Provider } from './liquidity-providers/SushiSwapV3'
 import { TraderJoeProvider } from './liquidity-providers/TraderJoe'
 import { TridentProvider } from './liquidity-providers/Trident'
 import { UbeSwapProvider } from './liquidity-providers/UbeSwap'
@@ -62,6 +63,15 @@ export class DataFetcher {
     if (this._providerIsIncluded(LiquidityProviders.SushiSwap, providers)) {
       try {
         const provider = new SushiProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+
+    if (this._providerIsIncluded(LiquidityProviders.SushiSwapV3, providers)) {
+      try {
+        const provider = new SushiSwapV3Provider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)

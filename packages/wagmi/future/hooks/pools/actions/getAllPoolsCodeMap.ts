@@ -261,6 +261,7 @@ export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enable
   if (isRouteProcessor3ChainId(variables.chainId)) {
     liquidityProviders.push(LiquidityProviders.SushiSwapV3)
   }
+  // console.log({ liquidityProviders })
   dataFetcher.startDataFetching(liquidityProviders)
   await dataFetcher.fetchPoolsForToken(variables.currencyA!, variables.currencyB!)
   dataFetcher.stopDataFetching()
