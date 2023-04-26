@@ -2,7 +2,7 @@ import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount, Native } from '@sushiswap/currency'
-import { Pool } from '@sushiswap/client'
+import { Pool, Protocol } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
@@ -82,11 +82,11 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pool: _poo
   )
 
   const [poolState, pool] = useMemo(() => {
-    if (_pool.type === 'STABLE_POOL') return [stablePoolState, stablePool]
-    if (_pool.type === 'CONSTANT_PRODUCT_POOL') return [constantProductPoolState, constantProductPool]
+    if (_pool.protocol === Protocol.BENTOBOX_STABLE) return [stablePoolState, stablePool]
+    if (_pool.protocol === Protocol.BENTOBOX_CLASSIC) return [constantProductPoolState, constantProductPool]
 
     return [undefined, undefined]
-  }, [_pool.type, constantProductPool, constantProductPoolState, stablePool, stablePoolState])
+  }, [_pool.protocol, constantProductPool, constantProductPoolState, stablePool, stablePoolState])
 
   const totalSupply = useTotalSupply(liquidityToken)
 

@@ -142,7 +142,7 @@ const Pool: FC = () => {
             isLoading={isLoading}
             chainId={chainId}
             pool={pool}
-            apy={{ rewards: poolStats?.incentiveApr, fees: poolStats?.feeApr }}
+            apy={{ rewards: poolStats?.incentiveApr, fees: poolStats?.feeApr1d }}
           />
           <RadioGroup value={tab} onChange={setTab} className="flex flex-wrap gap-2 mt-3">
             <RadioGroup.Option

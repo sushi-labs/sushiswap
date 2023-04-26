@@ -1,5 +1,5 @@
 import { formatNumber, formatPercent } from '@sushiswap/format'
-import { Pool } from '@sushiswap/client'
+import { Pool, Protocol } from '@sushiswap/client'
 import { Currency, Link } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
@@ -14,28 +14,28 @@ interface PoolQuickHoverTooltipProps {
 
 export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) => {
   return (
-    <div className="flex flex-col p-2 gap-3">
+    <div className="flex flex-col gap-3 p-2">
       <div className="flex flex-col gap-1">
         <span className="text-[10px] text-gray-500 dark:text-slate-500">
           <span className="font-semibold text-gray-900 dark:text-slate-50">Total APR</span> • Rewards + Fees
         </span>
         <span className="text-3xl font-medium text-gray-900 dark:text-slate-50">
-          {formatPercent(row.totalApr)}{' '}
+          {formatPercent(row.totalApr1d)}{' '}
           <span className="text-[10px] text-gray-500 dark:text-slate-500">
-            {formatPercent(row.incentiveApr)} + {formatPercent(row.feeApr)}
+            {formatPercent(row.incentiveApr)} + {formatPercent(row.feeApr1d)}
           </span>
         </span>
       </div>
       <div className="flex gap-2">
         <Link.Internal
-          href={row.type === 'CONCENTRATED_LIQUIDITY_POOL' ? `/pools/${row.id}?activeTab=new` : `/${row.id}/add`}
+          href={row.protocol === Protocol.SUSHISWAP_V3 ? `/pools/${row.id}?activeTab=new` : `/${row.id}/add`}
           passHref={true}
         >
           <Button as="a" size="xs" variant="outlined">
             <PlusIcon width={16} height={16} /> Deposit
           </Button>
         </Link.Internal>
-        {row.type === 'CONCENTRATED_LIQUIDITY_POOL' && (
+        {row.protocol === Protocol.SUSHISWAP_V3 && (
           <Link.Internal href={`/pools/${row.id}?activeTab=myPositions`} passHref={true}>
             <Button as="a" size="xs" variant="outlined">
               <UserCircleIcon width={16} height={16} /> My Positions

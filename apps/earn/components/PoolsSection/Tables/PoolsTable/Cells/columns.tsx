@@ -55,7 +55,7 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
 export const APR_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'totalApr',
   header: 'APR',
-  accessorFn: (row) => row.totalApr,
+  accessorFn: (row) => row.totalApr1d,
   cell: (props) => <PoolAPRCell row={props.row.original} />,
   size: 100,
   meta: {

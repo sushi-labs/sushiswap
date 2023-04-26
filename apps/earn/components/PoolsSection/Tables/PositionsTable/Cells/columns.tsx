@@ -47,7 +47,7 @@ export const NAME_COLUMN: ColumnDef<TData, unknown> = {
 export const APR_COLUMN: ColumnDef<TData, unknown> = {
   id: 'apr',
   header: 'APR',
-  accessorFn: (row) => row.pool.totalApr,
+  accessorFn: (row) => row.pool.totalApr1d,
   cell: (props) => <PoolAPRCell row={props.row.original.pool} />,
   size: 150,
   meta: {

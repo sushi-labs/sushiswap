@@ -141,7 +141,7 @@ const Position: FC = () => {
     <Layout>
       <div className="flex flex-col gap-2">
         <Link
-          className="group flex gap-4 items-center mb-2"
+          className="flex items-center gap-4 mb-2 group"
           href={`/pools/${chainId}:${positionDetails?.address}`}
           shallow={true}
         >
@@ -160,7 +160,7 @@ const Position: FC = () => {
           isLoading={isLoading}
           chainId={chainId}
           pool={pool}
-          apy={{ rewards: poolStats?.incentiveApr, fees: poolStats?.feeApr }}
+          apy={{ rewards: poolStats?.incentiveApr, fees: poolStats?.feeApr1d }}
           {...(priceLower && {
             priceRange: isFullRange
               ? 'Full range (0 ⇔ ∞)'

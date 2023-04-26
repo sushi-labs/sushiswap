@@ -2,7 +2,7 @@ import { createContext, FC, ReactNode, useCallback, useContext, useMemo } from '
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 import { z } from 'zod'
-import { parseArgs } from '@sushiswap/client'
+import { parseArgs, Protocol } from '@sushiswap/client'
 import { useRouter } from 'next/router'
 import stringify from 'fast-json-stable-stringify'
 
@@ -17,14 +17,6 @@ export type PoolFilters = Omit<FilterContext, 'setFilters'>
 interface PoolsFiltersProvider {
   children?: ReactNode
   passedFilters?: Partial<PoolFilters>
-}
-
-export enum FilterTag {
-  SUSHISWAP_V3 = 'SUSHISWAP_V3',
-  SUSHISWAP_V2 = 'SUSHISWAP_V2',
-  BENTOBOX_STABLE = 'BENTOBOX_STABLE',
-  BENTOBOX_CLASSIC = 'BENTOBOX_CLASSIC',
-  FARMS_ONLY = 'FARMS_ONLY',
 }
 
 export const poolFiltersSchema = z.object({
@@ -42,15 +34,12 @@ export const poolFiltersSchema = z.object({
     .optional()
     .default(SUPPORTED_CHAIN_IDS.join(','))
     .transform((chainIds) => chainIds.split(',').map((chainId) => Number(chainId))),
-  categories: z
+  protocols: z
     .string()
     .optional()
-    .default(
-      Object.values(FilterTag)
-        .filter((tag) => tag != FilterTag.FARMS_ONLY)
-        .join(',')
-    )
-    .transform((tags) => tags.split(',') as FilterTag[]),
+    .default(Object.values(Protocol).join(','))
+    .transform((protocols) => protocols.split(',') as Protocol[]),
+  farmsOnly: z.coerce.boolean().optional().default(false),
 })
 
 export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => {
@@ -60,7 +49,7 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => 
 
     return {
       ...parsed,
-      categories: parsed.categories.filter((el) => (el as string) !== ''),
+      protocols: parsed.protocols.filter((el) => (el as string) !== ''),
     }
   }, [query])
 

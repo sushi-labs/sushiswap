@@ -16,16 +16,17 @@ import {
   RemoveSectionTrident,
   RemoveSectionUnstake,
 } from '../../components'
-import { POOL_TYPE_MAP } from '../../lib/constants'
+import { PROTOCOL_MAP } from '../../lib/constants'
 import { getPool, getPools, usePool, Pool, getPoolUrl } from '@sushiswap/client'
 import { ChainId } from '@sushiswap/chain'
 import { useSWRConfig } from 'swr/_internal'
 import { NextSeo } from 'next-seo'
+import { isTridentPoolProtocol } from '../../lib/functions'
 
 const LINKS = (pool: Pool): BreadcrumbLink[] => [
   {
     href: `/${pool.id}`,
-    label: `${pool.name} - ${POOL_TYPE_MAP[pool.type]} - ${formatPercent(pool.swapFee)}`,
+    label: `${pool.name} - ${PROTOCOL_MAP[pool.protocol]} - ${formatPercent(pool.swapFee)}`,
   },
   {
     href: `/${pool.id}/remove`,
@@ -63,7 +64,7 @@ const _Remove = () => {
               <div className="hidden md:block" />
               <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
                 <RemoveSectionUnstake poolId={pool.id} />
-                {pool.version === 'TRIDENT' ? (
+                {isTridentPoolProtocol(pool.protocol) ? (
                   <RemoveSectionTrident pool={pool} />
                 ) : (
                   <RemoveSectionLegacy pool={pool} />
@@ -76,10 +77,10 @@ const _Remove = () => {
                     <Typography
                       variant="xs"
                       weight={500}
-                      className="flex items-center gap-1 dark:text-slate-500 text-gray-600"
+                      className="flex items-center gap-1 text-gray-600 dark:text-slate-500"
                     >
                       Learn more about liquidity and yield farming
-                      <ExternalLinkIcon width={16} height={16} className="dark:text-slate-500 text-gray-600" />
+                      <ExternalLinkIcon width={16} height={16} className="text-gray-600 dark:text-slate-500" />
                     </Typography>
                   </Link.External>
                 </Container>

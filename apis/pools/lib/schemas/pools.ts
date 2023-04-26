@@ -42,8 +42,8 @@ export const PoolsApiSchema = z.object({
     .optional(),
   protocols: z
     .string()
-    .optional()
-    .transform((protocols) => protocols?.split(',') as Protocol[]),
+    .transform((protocols) => protocols?.split(',') as Protocol[])
+    .optional(),
   cursor: z.string().optional(),
   orderBy: z.string().default('liquidityUSD'),
   orderDir: z.enum(['asc', 'desc']).default('desc'),

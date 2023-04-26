@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
 
-import { DecimalToString, createClient, Prisma, Protocol } from '@sushiswap/database'
+import { DecimalToString, createClient, Prisma } from '@sushiswap/database'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { deepmergeInto } from 'deepmerge-ts'
 import type { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './../schemas/index.js'
@@ -84,7 +84,6 @@ export async function getEarnPool(args: typeof PoolApiSchema._output) {
     take: 1,
     orderBy: 'liquidityUSD',
     orderDir: 'desc',
-    protocols: [Protocol.BENTOBOX_CLASSIC, Protocol.BENTOBOX_STABLE, Protocol.SUSHISWAP_V2, Protocol.SUSHISWAP_V3],
   })
 
   if (!pool) throw new Error('Pool not found.')

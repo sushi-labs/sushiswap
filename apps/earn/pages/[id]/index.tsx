@@ -22,14 +22,14 @@ import {
   PoolRewards,
   PoolStats,
 } from '../../components'
-import { POOL_TYPE_MAP } from '../../lib/constants'
+import { PROTOCOL_MAP } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
 import { NextSeo } from 'next-seo'
 
 const LINKS = (pool: Pool): BreadcrumbLink[] => [
   {
     href: `/${pool.id}`,
-    label: `${pool.name} - ${POOL_TYPE_MAP[pool.type]} - ${formatPercent(pool.swapFee)}`,
+    label: `${pool.name} - ${PROTOCOL_MAP[pool.protocol]} - ${formatPercent(pool.swapFee)}`,
   },
 ]
 

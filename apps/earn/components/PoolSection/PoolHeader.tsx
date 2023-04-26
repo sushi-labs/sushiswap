@@ -65,7 +65,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
               className="text-gray-500 dark:text-slate-400 text-slate-600 sm:text-right"
             >
               APR:{' '}
-              <span className="font-semibold text-gray-900 dark:text-slate-50">{formatPercent(pool.totalApr)}</span>
+              <span className="font-semibold text-gray-900 dark:text-slate-50">{formatPercent(pool.totalApr1d)}</span>
               {pool.incentiveApr > 0 ? <FarmRewardsAvailableTooltip /> : ''}
             </Typography>
             <div className="flex gap-2">
@@ -85,14 +85,14 @@ export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
                 as="span"
                 className="text-gray-600 dark:text-slate-400 text-slate-600"
               >
-                Fees: {formatPercent(pool.feeApr)}
+                Fees: {formatPercent(pool.feeApr1d)}
               </Typography>
             </div>
           </div>
         </div>
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="flex gap-3 p-3 rounded-lg bg-white dark:bg-slate-800">
+        <div className="flex gap-3 p-3 bg-white rounded-lg dark:bg-slate-800">
           <Currency.Icon currency={token0} width={20} height={20} />
           <Typography variant="sm" weight={600} className="text-gray-600 dark:text-slate-300">
             <AppearOnMount>
@@ -103,7 +103,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
             </AppearOnMount>
           </Typography>
         </div>
-        <div className="flex gap-3 p-3 rounded-lg bg-white dark:bg-slate-800">
+        <div className="flex gap-3 p-3 bg-white rounded-lg dark:bg-slate-800">
           <Currency.Icon currency={token1} width={20} height={20} />
           <Typography variant="sm" weight={600} className="text-gray-600 dark:text-slate-300">
             <AppearOnMount>

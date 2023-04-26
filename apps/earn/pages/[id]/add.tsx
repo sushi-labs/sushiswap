@@ -16,15 +16,16 @@ import {
   PoolPositionProvider,
   PoolPositionStakedProvider,
 } from '../../components'
-import { POOL_TYPE_MAP } from '../../lib/constants'
+import { PROTOCOL_MAP } from '../../lib/constants'
 import { getPool, getPools, getPoolUrl, Pool, usePool } from '@sushiswap/client'
 import { ChainId } from '@sushiswap/chain'
 import { NextSeo } from 'next-seo'
+import { isTridentPoolProtocol } from '../../lib/functions'
 
 const LINKS = (pool: Pool): BreadcrumbLink[] => [
   {
     href: `/${pool.id}`,
-    label: `${pool.name} - ${POOL_TYPE_MAP[pool.type]} - ${formatPercent(pool.swapFee)}`,
+    label: `${pool.name} - ${[PROTOCOL_MAP[pool.protocol]]} - ${formatPercent(pool.swapFee)}`,
   },
   {
     href: `/${pool.id}/add`,
@@ -73,7 +74,11 @@ const _Add = () => {
             <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
               <div className="hidden md:block" />
               <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
-                {pool.version === 'TRIDENT' ? <AddSectionTrident pool={pool} /> : <AddSectionLegacy pool={pool} />}
+                {isTridentPoolProtocol(pool.protocol) ? (
+                  <AddSectionTrident pool={pool} />
+                ) : (
+                  <AddSectionLegacy pool={pool} />
+                )}
                 <AddSectionStake poolId={pool.id} />
                 <Container className="flex justify-center">
                   <Link.External
@@ -83,10 +88,10 @@ const _Add = () => {
                     <Typography
                       variant="xs"
                       weight={500}
-                      className="flex items-center gap-1 dark:text-slate-500 text-gray-600"
+                      className="flex items-center gap-1 text-gray-600 dark:text-slate-500"
                     >
                       Learn more about liquidity and yield farming
-                      <ExternalLinkIcon width={16} height={16} className="dark:text-slate-500 text-gray-600" />
+                      <ExternalLinkIcon width={16} height={16} className="text-gray-600 dark:text-slate-500" />
                     </Typography>
                   </Link.External>
                 </Container>
