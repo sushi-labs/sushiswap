@@ -180,6 +180,7 @@ export class UniV3Pool extends RPool {
           input -= maxDx
           currentLiquidityBN = currentLiquidityBN.sub(this.ticks[nextTickToCross].DLiquidity)
           nextTickToCross--
+          if (nextTickToCross == 0) currentLiquidityBN = ZERO // Protection if we know not all ticks
         }
       } else {
         const maxDy = currentLiquidity * -priceDiff
@@ -194,6 +195,7 @@ export class UniV3Pool extends RPool {
           input -= maxDy
           currentLiquidityBN = currentLiquidityBN.add(this.ticks[nextTickToCross].DLiquidity)
           nextTickToCross++
+          if (nextTickToCross == this.ticks.length - 1) currentLiquidityBN = ZERO // Protection if we know not all ticks
         }
       }
 
@@ -249,6 +251,7 @@ export class UniV3Pool extends RPool {
           outBeforeFee -= maxDy
           currentLiquidityBN = currentLiquidityBN.sub(this.ticks[nextTickToCross].DLiquidity)
           nextTickToCross--
+          if (nextTickToCross == 0) currentLiquidityBN = ZERO // Protection if we know not all ticks
         }
       } else {
         const maxDx = (currentLiquidity * -priceDiff) / currentPrice / nextTickPrice
@@ -264,6 +267,7 @@ export class UniV3Pool extends RPool {
           outBeforeFee -= maxDx
           currentLiquidityBN = currentLiquidityBN.add(this.ticks[nextTickToCross].DLiquidity)
           nextTickToCross++
+          if (nextTickToCross == this.ticks.length - 1) currentLiquidityBN = ZERO // Protection if we know not all ticks
         }
       }
     }

@@ -17,9 +17,9 @@ import { isSushiSwapV3Chain } from '@sushiswap/validate'
 import { isV3ChainId } from '@sushiswap/v3-sdk'
 
 const queryFn = async ({
+  chainId,
   currencyA,
   currencyB,
-  chainId,
   tradeType = TradeType.EXACT_INPUT,
   withBentoPools = false,
   withCombinations = true,

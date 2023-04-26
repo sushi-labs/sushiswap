@@ -88,6 +88,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
+        batchSize: 1024,
         contracts: topPools.map(
           (pool) =>
             ({
@@ -195,6 +196,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
+        batchSize: 1024,
         contracts: poolCodesToCreate.map(
           (poolCode) =>
             ({
@@ -252,6 +254,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
           .multicall({
             multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
             allowFailure: true,
+            batchSize: 1024,
             contracts: initialPools.map(
               (poolCode) =>
                 ({
@@ -270,6 +273,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
           .multicall({
             multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
             allowFailure: true,
+            batchSize: 1024,
             contracts: onDemandPools.map(
               (poolCode) =>
                 ({

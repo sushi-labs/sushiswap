@@ -12,6 +12,7 @@
     },
     "export": {
       "dependsOn": ["^build"],
+      "inputs": ["deployments/**/*"],
       "outputs": ["exports/**/*"],
       "cache": true
     },

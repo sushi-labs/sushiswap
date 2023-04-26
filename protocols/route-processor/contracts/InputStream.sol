@@ -59,6 +59,15 @@ library InputStream {
     }
   }
 
+  function readBytes32(uint256 stream) internal pure returns (bytes32 res) {
+    assembly {
+      let pos := mload(stream)
+      pos := add(pos, 32)
+      res := mload(pos)
+      mstore(stream, pos)
+    }
+  }
+
   function readAddress(uint256 stream) internal pure returns (address res) {
     assembly {
       let pos := mload(stream)

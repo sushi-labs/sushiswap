@@ -1,4 +1,3 @@
-import { Provider } from '@ethersproject/providers'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
@@ -21,7 +20,7 @@ import {
   USDT_ADDRESS,
   WNATIVE,
 } from '@sushiswap/currency'
-import { DataFetcher, LiquidityProviders, PoolFilter, Router } from '@sushiswap/router'
+import { DataFetcher, LiquidityProviders, PermitData, PoolFilter, Router } from '@sushiswap/router'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
 import {
   BridgeBento,
@@ -31,8 +30,10 @@ import {
   RPool,
   StableSwapRPool,
   toShareBN,
+  UniV3Pool,
 } from '@sushiswap/tines'
 import { expect } from 'chai'
+import { signERC2612Permit } from 'eth-permit'
 import { BigNumber, Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
 import seedrandom from 'seedrandom'
@@ -48,6 +49,8 @@ function getRandomExp(rnd: () => number, min: number, max: number) {
   console.assert(res <= max && res >= min, 'Random value is out of the range')
   return res
 }
+
+const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -128,8 +131,10 @@ export async function checkPoolsState(pools: Map<string, PoolCode>, env: TestEnv
       expectCloseValues(pool.base, totals[1], 1e-10, 10, `BentoBridge ${pool.token1.symbol} base`)
     } else if (pool instanceof BridgeUnlimited) {
       // native - skip
+    } else if (pool instanceof UniV3Pool) {
+      // TODO: add pool check
     } else {
-      console.log('Unknown pool: ', pool)
+      console.log('Unknown pool: ', pool.address)
     }
   }
 }
@@ -150,13 +155,14 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   const client = createPublicClient({
     chain: {
       ...hardhat,
+      batchSize: 512,
       contracts: {
         multicall3: {
           address: '0xca11bde05977b3631167028862be2a173976ca11',
           blockCreated: 25770160,
         },
       },
-      pollingInterval: 1_000,
+      pollingInterval: POLLING_INTERVAL,
     },
     transport: custom(network.provider),
   })
@@ -170,8 +176,8 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   dataFetcher.startDataFetching()
 
   console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
-  const RouteProcessor = await ethers.getContractFactory('RouteProcessor2')
-  const routeProcessor = await RouteProcessor.deploy(bentoBoxV1Address[chainId as BentoBoxV1ChainId])
+  const RouteProcessor = await ethers.getContractFactory('RouteProcessor3')
+  const routeProcessor = await RouteProcessor.deploy(bentoBoxV1Address[chainId as BentoBoxV1ChainId], [])
   await routeProcessor.deployed()
   //console.log('    Block Number:', provider.blockNumber)
 
@@ -189,6 +195,18 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   }
 }
 
+async function makePermit(env: TestEnvironment, token: Token, amount: BigNumber): PermitData {
+  const userAddress = await env.user.getAddress()
+  const result = await signERC2612Permit(env.user, token.address, userAddress, env.rp.address, amount.toHexString())
+  return {
+    value: BigNumber.from(result.value),
+    deadline: BigNumber.from(result.deadline),
+    v: result.v,
+    r: result.r,
+    s: result.s,
+  }
+}
+
 // all pool data assumed to be updated
 async function makeSwap(
   env: TestEnvironment,
@@ -197,11 +215,12 @@ async function makeSwap(
   toToken: Type,
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
+  permits: PermitData[] = [],
   makeSankeyDiagram = false
 ): Promise<[BigNumber, number] | undefined> {
   //console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
-  if (fromToken instanceof Token) {
+  if (fromToken instanceof Token && permits.length == 0) {
     //console.log(`Approve user's ${fromToken.symbol} to the route processor ...`)
     const WrappedBaseTokenContract = new ethers.Contract(fromToken.address, erc20Abi, env.user)
     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
@@ -209,7 +228,6 @@ async function makeSwap(
 
   //console.log('Create Route ...')
   await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
-
   const pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
 
   await checkPoolsState(pcMap, env)
@@ -231,7 +249,15 @@ async function makeSwap(
   //       l.assumedAmountOut
   //   )
   // )
-  const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
+  const rpParams = Router.routeProcessor2Params(
+    pcMap,
+    route,
+    fromToken,
+    toToken,
+    env.user.address,
+    env.rp.address,
+    permits
+  )
   if (rpParams === undefined) return
 
   //console.log('Call route processor (may take long time for the first launch)...')
@@ -305,6 +331,7 @@ async function updMakeSwap(
   lastCallResult: BigNumber | [BigNumber | undefined, number],
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
+  permits: PermitData[] = [],
   makeSankeyDiagram = false
 ): Promise<[BigNumber | undefined, number]> {
   const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
@@ -313,7 +340,7 @@ async function updMakeSwap(
   //console.log('Wait data update for min block', waitBlock)
   await dataUpdated(env, waitBlock)
 
-  const res = await makeSwap(env, fromToken, amountIn, toToken, providers, poolFilter, makeSankeyDiagram)
+  const res = await makeSwap(env, fromToken, amountIn, toToken, providers, poolFilter, permits, makeSankeyDiagram)
   expect(res).not.undefined
   if (res === undefined) return [undefined, waitBlock]
   else return res
@@ -383,7 +410,7 @@ async function checkTransferAndRoute(
 }
 
 // skipped because took too long time. Unskip to check the RP
-describe('End-to-end Router2 test', async function () {
+describe('End-to-end RouteProcessor3 test', async function () {
   let env: TestEnvironment
   let chainId: ChainId
   let intermidiateResult: [BigNumber | undefined, number] = [undefined, 1]
@@ -415,6 +442,23 @@ describe('End-to-end Router2 test', async function () {
     ]
   })
 
+  it('Permit: Native => FRAX => Native', async function () {
+    const token = FRAX[chainId as keyof typeof FRAX_ADDRESS]
+    const amountIn = getBigNumber(1000000 * 1e18)
+    intermidiateResult[0] = amountIn
+    intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), token, intermidiateResult)
+    const permit = await makePermit(env, token, intermidiateResult[0])
+    intermidiateResult = await updMakeSwap(
+      env,
+      token,
+      Native.onChain(chainId),
+      intermidiateResult,
+      undefined,
+      undefined,
+      [permit]
+    )
+  })
+
   it('Native => SUSHI => Native', async function () {
     intermidiateResult[0] = getBigNumber(1000000 * 1e18)
     intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
@@ -428,7 +472,7 @@ describe('End-to-end Router2 test', async function () {
   })
 
   it('Trident Native => SUSHI => Native (Polygon only)', async function () {
-    if (chainId == ChainId.POLYGON) {
+    if (chainId === ChainId.POLYGON) {
       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI[chainId], intermidiateResult, [
         LiquidityProviders.Trident,
@@ -442,7 +486,7 @@ describe('End-to-end Router2 test', async function () {
   it('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async function () {
     const filter = (pool: RPool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
 
-    if (chainId == ChainId.POLYGON) {
+    if (chainId === ChainId.POLYGON) {
       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], intermidiateResult)
       intermidiateResult = await updMakeSwap(env, USDC[chainId], USDT[chainId], intermidiateResult, undefined, filter)
@@ -451,10 +495,25 @@ describe('End-to-end Router2 test', async function () {
     }
   })
 
+  if (process.env.ALCHEMY_ID) {
+    it('V3,  Native => USDC => NATIVE', async function () {
+      if (chainId === ChainId.POLYGON) {
+        let amountAndBlock: [BigNumber | undefined, number] = [undefined, 1]
+        amountAndBlock[0] = getBigNumber(10_000_000 * 1e18) // should be partial
+        amountAndBlock = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], amountAndBlock, [
+          LiquidityProviders.UniswapV3,
+        ])
+        amountAndBlock = await updMakeSwap(env, USDC[chainId], Native.onChain(chainId), amountAndBlock, [
+          LiquidityProviders.UniswapV3,
+        ])
+      }
+    })
+  }
+
   function getNextToken(rnd: () => number, previousTokenIndex: number): number {
     for (;;) {
       const next = Math.floor(rnd() * testTokensSet.length)
-      if (next == previousTokenIndex) continue
+      if (next === previousTokenIndex) continue
       if (testTokensSet[next] === undefined) continue
       return next
     }
@@ -464,7 +523,7 @@ describe('End-to-end Router2 test', async function () {
     let routeCounter = 0
     for (let i = 0; i < 100; ++i) {
       let currentToken = 0
-      const rnd: () => number = seedrandom('testSeed ' + i) // random [0, 1)
+      const rnd: () => number = seedrandom(`testSeed ${i}`) // random [0, 1)
       intermidiateResult[0] = getBigNumber(getRandomExp(rnd, 1e15, 1e24))
       for (;;) {
         const nextToken = getNextToken(rnd, currentToken)
@@ -476,7 +535,7 @@ describe('End-to-end Router2 test', async function () {
           intermidiateResult
         )
         currentToken = nextToken
-        if (currentToken == 0) break
+        if (currentToken === 0) break
       }
     }
   })
@@ -497,7 +556,7 @@ describe('End-to-end Router2 test', async function () {
     expect(route).not.undefined
   })
 
-  if (network.config.chainId == ChainId.POLYGON) {
+  if (network.config.chainId === ChainId.POLYGON) {
     it('Transfer value and route 1', async function () {
       intermidiateResult[0] = getBigNumber(1e18)
       intermidiateResult = await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
