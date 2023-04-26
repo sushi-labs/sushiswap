@@ -24,6 +24,7 @@ import {
   routeProcessorAddress,
 } from '@sushiswap/route-processor'
 import { routeProcessor2Abi } from '@sushiswap/abi'
+import { BigNumber } from 'ethers'
 
 interface ConfirmationDialogProps {
   children({

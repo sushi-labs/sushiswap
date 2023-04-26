@@ -9,6 +9,8 @@ import { createPublicClient } from 'viem'
 import { http } from 'viem'
 import { hardhat } from 'viem/chains'
 
+import { RouteProcessor3__factory } from '../typechain'
+
 const RouteProcessorAddr = '0xBBDe1d67297329148Fe1ED5e6B00114842728e65' // new Route Processor
 
 const DAI = new Token({
@@ -34,7 +36,7 @@ async function makeSwap(
   expect(route?.status).equal(RouteStatus.Success)
   if (route && pcMap) {
     const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, to, RouteProcessorAddr)
-    const RouteProcessorFactory = await ethers.getContractFactory('RouteProcessor3', signer)
+    const RouteProcessorFactory = await ethers.getContractFactory<RouteProcessor3__factory>('RouteProcessor3', signer)
     const RouteProcessor = RouteProcessorFactory.attach(RouteProcessorAddr)
     const res = await RouteProcessor.callStatic.processRoute(
       rpParams.tokenIn,
@@ -44,6 +46,7 @@ async function makeSwap(
       rpParams.to,
       rpParams.routeCode,
       { value: rpParams.value?.toString() }
+      // { value: rpParams.value?.toString(), gasLimit: 21e6, gasPrice: 1000e9 } // this fixes the issue...
     )
     return parseInt(res.toString())
   }
@@ -72,7 +75,7 @@ describe('Celo RP3', async () => {
   it('ONE => DAI', async () => {
     const fromToken = Native.onChain(chainId)
     const toToken = DAI
-    const user = '0x8f54C8c2df62c94772ac14CcFc85603742976312' // has DAI and approved 1e18 to the RP
+    const user = '0x8f54C8c2df62c94772ac14CcFc85603742976312'
     const signer = await provider.getUncheckedSigner(user)
     await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, getBigNumber(1 * 1e18))
   })
