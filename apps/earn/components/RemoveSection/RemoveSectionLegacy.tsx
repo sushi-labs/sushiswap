@@ -39,7 +39,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pool: _pool 
   const { address } = useAccount()
   const deadline = useTransactionDeadline(_pool.chainId)
   const contract = useSushiSwapRouterContract(_pool.chainId as UniswapV2Router02ChainId)
-  const [slippageTolerance] = useSlippageTolerance()
+  const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
   const slippagePercent = useMemo(() => {
     return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
   }, [slippageTolerance])

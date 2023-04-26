@@ -1,11 +1,10 @@
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { tryParseAmount } from '@sushiswap/currency'
 import { Pool } from '@sushiswap/client'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Button, Dots } from '@sushiswap/ui'
+import { useIsMounted } from '@sushiswap/hooks'
 import {
-  Checker,
   ConstantProductPoolState,
+  getTridentRouterContractConfig,
   StablePoolState,
   useConstantProductPool,
   useStablePool,
@@ -16,9 +15,15 @@ import { useTokensFromPool } from '../../lib/hooks'
 import { AddSectionReviewModalTrident } from './AddSectionReviewModalTrident'
 import { AddSectionWidget } from './AddSectionWidget'
 import { ZERO } from '@sushiswap/math'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { Signature } from '@ethersproject/bytes'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
+  const [open, setOpen] = useState(false)
+  const chainId = _pool.chainId as BentoBoxV1ChainId
   const isMounted = useIsMounted()
+  const [permit, setPermit] = useState<Signature>()
   const { token0, token1 } = useTokensFromPool(_pool)
   const [{ input0, input1 }, setTypedAmounts] = useState<{
     input0: string
@@ -95,8 +100,79 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
     [pool, poolState, token1]
   )
 
-  return useMemo(
-    () => (
+  const close = useCallback(() => setOpen(false), [])
+
+  return (
+    <>
+      <AddSectionWidget
+        isFarm={!!_pool.incentives && _pool.incentives.length > 0}
+        chainId={_pool.chainId}
+        input0={input0}
+        input1={input1}
+        token0={token0}
+        token1={token1}
+        onInput0={onChangeToken0TypedAmount}
+        onInput1={onChangeToken1TypedAmount}
+      >
+        <Checker.Connect fullWidth size="md">
+          <Checker.Custom
+            showGuardIfTrue={
+              isMounted &&
+              !!poolState &&
+              [
+                ConstantProductPoolState.NOT_EXISTS,
+                ConstantProductPoolState.INVALID,
+                StablePoolState.NOT_EXISTS,
+                StablePoolState.INVALID,
+              ].includes(poolState)
+            }
+            guard={
+              <Button size="md" fullWidth disabled={true}>
+                Pool Not Found
+              </Button>
+            }
+          >
+            <Checker.Network fullWidth size="xl" chainId={_pool.chainId}>
+              <Checker.Amounts fullWidth size="xl" chainId={_pool.chainId} amounts={[parsedInput0, parsedInput1]}>
+                <Checker.ApproveBentobox
+                  chainId={chainId}
+                  id="add-liquidity-trident-approve-bentobox"
+                  size="xl"
+                  className="whitespace-nowrap"
+                  fullWidth
+                  contract={getTridentRouterContractConfig(chainId).address}
+                  onSignature={setPermit}
+                  enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
+                >
+                  <Checker.ApproveERC20
+                    id="add-liquidity-trident-approve-token0"
+                    size="xl"
+                    className="whitespace-nowrap"
+                    fullWidth
+                    amount={parsedInput0}
+                    contract={bentoBoxV1Address[chainId]}
+                    enabled={isBentoBoxV1ChainId(chainId)}
+                  >
+                    <Checker.ApproveERC20
+                      id="add-liquidity-trident-approve-token1"
+                      size="xl"
+                      className="whitespace-nowrap"
+                      fullWidth
+                      amount={parsedInput1}
+                      contract={bentoBoxV1Address[chainId]}
+                      enabled={isBentoBoxV1ChainId(chainId)}
+                    >
+                      <Button fullWidth onClick={() => setOpen(true)} size="xl">
+                        Add Liquidity
+                      </Button>
+                    </Checker.ApproveERC20>
+                  </Checker.ApproveERC20>
+                </Checker.ApproveBentobox>
+              </Checker.Amounts>
+            </Checker.Network>
+          </Checker.Custom>
+        </Checker.Connect>
+      </AddSectionWidget>
       <AddSectionReviewModalTrident
         poolAddress={_pool.id}
         poolState={poolState}
@@ -106,70 +182,11 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
         token1={token1}
         input0={parsedInput0}
         input1={parsedInput1}
-      >
-        {({ isWritePending, setOpen }) => (
-          <AddSectionWidget
-            isFarm={!!_pool.incentives && _pool.incentives.length > 0}
-            chainId={_pool.chainId}
-            input0={input0}
-            input1={input1}
-            token0={token0}
-            token1={token1}
-            onInput0={onChangeToken0TypedAmount}
-            onInput1={onChangeToken1TypedAmount}
-          >
-            <Checker.Connected fullWidth size="md">
-              <Checker.Custom
-                showGuardIfTrue={
-                  isMounted &&
-                  !!poolState &&
-                  [
-                    ConstantProductPoolState.NOT_EXISTS,
-                    ConstantProductPoolState.INVALID,
-                    StablePoolState.NOT_EXISTS,
-                    StablePoolState.INVALID,
-                  ].includes(poolState)
-                }
-                guard={
-                  <Button size="md" fullWidth disabled={true}>
-                    Pool Not Found
-                  </Button>
-                }
-              >
-                <Checker.Network fullWidth size="md" chainId={_pool.chainId}>
-                  <Checker.Amounts
-                    fullWidth
-                    size="md"
-                    chainId={_pool.chainId}
-                    fundSource={FundSource.WALLET}
-                    amounts={[parsedInput0, parsedInput1]}
-                  >
-                    <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                      {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add Liquidity'}
-                    </Button>
-                  </Checker.Amounts>
-                </Checker.Network>
-              </Checker.Custom>
-            </Checker.Connected>
-          </AddSectionWidget>
-        )}
-      </AddSectionReviewModalTrident>
-    ),
-    [
-      _pool.chainId,
-      _pool.id,
-      _pool.incentives,
-      input0,
-      input1,
-      isMounted,
-      onChangeToken0TypedAmount,
-      onChangeToken1TypedAmount,
-      parsedInput0,
-      parsedInput1,
-      pool,
-      poolState,
-      token0,
-      token1,
-    ]
+        permit={permit}
+        open={open}
+        close={close}
+        setPermit={setPermit}
+      />
+    </>
   )
 }

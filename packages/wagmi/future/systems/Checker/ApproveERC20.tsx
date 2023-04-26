@@ -37,7 +37,7 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
     approveMax: max,
   })
 
-  const onMenuItemClick = useCallback((e: MouseEvent<HTMLButtonElement>, isMax: boolean, cb: () => void) => {
+  const onMenuItemClick = useCallback((e: MouseEvent<HTMLDivElement>, isMax: boolean, cb: () => void) => {
     e.stopPropagation()
 
     if (isMax) {
@@ -143,16 +143,18 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
                     <div className="p-2 flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white dark:bg-slate-800">
                       <Popover.Panel>
                         <List.MenuItem
-                          as="button"
-                          onClick={(e: MouseEvent<HTMLButtonElement>) => onMenuItemClick(e, false, close)}
+                          as="div"
+                          role="button"
+                          onClick={(e: MouseEvent<HTMLDivElement>) => onMenuItemClick(e, false, close)}
                           title="Approve one-time only"
                           subtitle={`You'll give your approval to spend ${amount?.toSignificant(6)} ${
                             amount?.currency?.symbol
                           } on your behalf`}
                         />
                         <List.MenuItem
-                          onClick={(e: MouseEvent<HTMLButtonElement>) => onMenuItemClick(e, true, close)}
-                          as="button"
+                          as="div"
+                          role="button"
+                          onClick={(e: MouseEvent<HTMLDivElement>) => onMenuItemClick(e, true, close)}
                           title="Approve unlimited amount"
                           subtitle={`You won't need to approve again next time you want to spend ${amount?.currency?.symbol}.`}
                         />

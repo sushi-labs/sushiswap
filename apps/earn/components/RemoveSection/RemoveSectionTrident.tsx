@@ -49,7 +49,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pool: _poo
   const isMounted = useIsMounted()
   const contract = useTridentRouterContract(_pool.chainId)
   const [permit, setPermit] = useState<Signature>()
-  const [slippageTolerance] = useSlippageTolerance()
+  const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
   const slippagePercent = useMemo(() => {
     return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
   }, [slippageTolerance])
