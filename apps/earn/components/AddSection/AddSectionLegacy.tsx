@@ -1,8 +1,7 @@
 import { tryParseAmount } from '@sushiswap/currency'
 import { Pool } from '@sushiswap/client'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
+import { useIsMounted } from '@sushiswap/hooks'
 import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
-import { Button, Dots } from '@sushiswap/ui'
 import { Address, getSushiSwapRouterContractConfig, PairState, usePair } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
 
@@ -10,6 +9,7 @@ import { useTokensFromPool } from '../../lib/hooks'
 import { AddSectionReviewModalLegacy } from './AddSectionReviewModalLegacy'
 import { AddSectionWidget } from './AddSectionWidget'
 import { Checker } from '@sushiswap/wagmi/future/systems'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const chainId = _pool.chainId as UniswapV2Router02ChainId
@@ -78,17 +78,17 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
         onInput0={onChangeToken0TypedAmount}
         onInput1={onChangeToken1TypedAmount}
       >
-        <Checker.Connect fullWidth size="md">
+        <Checker.Connect fullWidth size="xl">
           <Checker.Custom
             showGuardIfTrue={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
             guard={
-              <Button size="md" fullWidth disabled={true}>
+              <Button size="xl" fullWidth disabled={true}>
                 Pool Not Found
               </Button>
             }
           >
-            <Checker.Network fullWidth size="md" chainId={_pool.chainId}>
-              <Checker.Amounts fullWidth size="md" chainId={_pool.chainId} amounts={[parsedInput0, parsedInput1]}>
+            <Checker.Network fullWidth size="xl" chainId={_pool.chainId}>
+              <Checker.Amounts fullWidth size="xl" chainId={_pool.chainId} amounts={[parsedInput0, parsedInput1]}>
                 <Checker.ApproveERC20
                   id="approve-token-0"
                   size="xl"
@@ -105,7 +105,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                     amount={parsedInput1}
                     contract={getSushiSwapRouterContractConfig(chainId).address as Address}
                   >
-                    <Button fullWidth onClick={() => setOpen(true)} size="md">
+                    <Button fullWidth onClick={() => setOpen(true)} size="xl">
                       Add Liquidity
                     </Button>
                   </Checker.ApproveERC20>

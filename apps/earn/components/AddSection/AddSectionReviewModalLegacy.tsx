@@ -44,6 +44,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   input0,
   input1,
   open,
+  close,
 }) => {
   const deadline = useTransactionDeadline(chainId)
   const { address } = useAccount()

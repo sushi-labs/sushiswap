@@ -11,7 +11,7 @@ import {
 } from '@sushiswap/amm'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Type } from '@sushiswap/currency'
-import { Button, Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
 import {
   _useSendTransaction as useSendTransaction,
   PoolFinderType,
@@ -34,6 +34,7 @@ import {
 } from '../../lib/actions'
 import { AddSectionReviewModal } from '../AddSection'
 import { createToast } from '@sushiswap/ui/future/components/toast'
+import Button from '@sushiswap/ui/future/components/button/Button'
 
 interface CreateSectionReviewModalTridentProps {
   chainId: BentoBoxV1ChainId
@@ -271,7 +272,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
 
   return (
     <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} close={close}>
-      <Button size="md" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
+      <Button size="xl" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
         {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
       </Button>
     </AddSectionReviewModal>

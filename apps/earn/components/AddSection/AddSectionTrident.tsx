@@ -114,7 +114,7 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
         onInput0={onChangeToken0TypedAmount}
         onInput1={onChangeToken1TypedAmount}
       >
-        <Checker.Connect fullWidth size="md">
+        <Checker.Connect fullWidth size="xl">
           <Checker.Custom
             showGuardIfTrue={
               isMounted &&
@@ -127,7 +127,7 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
               ].includes(poolState)
             }
             guard={
-              <Button size="md" fullWidth disabled={true}>
+              <Button size="xl" fullWidth disabled={true}>
                 Pool Not Found
               </Button>
             }
