@@ -6,6 +6,7 @@ import { useNetwork } from '@sushiswap/wagmi'
 import { Layout, PoolFilters, PoolsFiltersProvider, PoolsSection } from '../components'
 import { ChainId } from '@sushiswap/chain'
 import { ExploitInfo } from './ExploitInfo'
+import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
 
 export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
   const { chain } = useNetwork()
@@ -23,8 +24,10 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
           <div className="flex justify-end flex-grow not-prose">
             <div className="flex flex-col gap-3 w-full lg:w-[200px]">
               <AppearOnMount>
-                <Link.Internal passHref={true} href={`/add/v2/${chainId}`}>
-                  {/*<Link.Internal href={`/add?chainId=${chainId}`}>*/}
+                {/* <Link.Internal passHref={true} href={`/add/v2/${chainId}`}> */}
+                <Link.Internal
+                  href={isRouteProcessor3ChainId(chainId) ? `/add?chainId=${chainId}` : `/add/v2/${chainId}`}
+                >
                   <Button as="a" fullWidth color="blue" startIcon={<PlusIcon width={16} height={16} />} size="lg">
                     New Position
                   </Button>
