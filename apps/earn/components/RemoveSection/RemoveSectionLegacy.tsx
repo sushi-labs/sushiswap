@@ -23,16 +23,14 @@ import { Address, useAccount, useNetwork } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { useTokensFromPool, useTransactionDeadline, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
-import { useSettings } from '../../lib/state/storage'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 import { createToast } from '@sushiswap/ui/future/components/toast'
+import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 
 interface RemoveSectionLegacyProps {
   pool: Pool
 }
-
-const DEFAULT_REMOVE_LIQUIDITY_SLIPPAGE_TOLERANCE = new Percent(5, 100)
 
 export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pool: _pool }) => {
   const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
@@ -41,13 +39,10 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pool: _pool 
   const { address } = useAccount()
   const deadline = useTransactionDeadline(_pool.chainId)
   const contract = useSushiSwapRouterContract(_pool.chainId as UniswapV2Router02ChainId)
-  const [{ slippageTolerance }] = useSettings()
-
-  const slippagePercent = useMemo(
-    () =>
-      slippageTolerance ? new Percent(slippageTolerance * 100, 10_000) : DEFAULT_REMOVE_LIQUIDITY_SLIPPAGE_TOLERANCE,
-    [slippageTolerance]
-  )
+  const [slippageTolerance] = useSlippageTolerance()
+  const slippagePercent = useMemo(() => {
+    return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
+  }, [slippageTolerance])
 
   const [percentage, setPercentage] = useState<string>('')
   const percentToRemove = useMemo(() => new Percent(percentage, 100), [percentage])

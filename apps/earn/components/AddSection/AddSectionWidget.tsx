@@ -1,17 +1,14 @@
 import { Disclosure, Transition } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/outline'
+import { ChevronDownIcon, CogIcon } from '@heroicons/react/outline'
 import { PlusIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
-import { classNames } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui'
-import { Web3Input } from '@sushiswap/wagmi'
-import { FC, ReactNode } from 'react'
-
-import { useCustomTokens } from '../../lib/state/storage'
-import { useTokens } from '../../lib/state/token-lists'
-import { SettingsOverlay } from '../SettingsOverlay'
+import { classNames, Widget } from '@sushiswap/ui'
+import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
+import React, { FC, ReactNode } from 'react'
+import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 interface AddSectionWidgetProps {
   isFarm: boolean
@@ -41,8 +38,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
   children,
 }) => {
   const isMounted = useIsMounted()
-  const tokenMap = useTokens(chainId)
-  const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
+
   return (
     <Widget id="addLiquidity" maxWidth={400}>
       <Widget.Content>
@@ -52,7 +48,22 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
               {isFarm && isMounted ? (
                 <Widget.Header title="1. Add Liquidity" className="!pb-3 ">
                   <div className="flex gap-3">
-                    <SettingsOverlay variant="dialog" />
+                    <SettingsOverlay
+                      options={{
+                        slippageTolerance: {
+                          storageKey: 'addLiquidity',
+                          defaultValue: '0.5',
+                          title: 'Add Liquidity Slippage',
+                        },
+                      }}
+                      modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
+                    >
+                      {({ setOpen }) => (
+                        <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
+                          <CogIcon width={24} height={24} />
+                        </Button>
+                      )}
+                    </SettingsOverlay>
                     <Disclosure.Button className="w-full pr-0.5">
                       <div className="flex items-center justify-between">
                         <div
@@ -86,17 +97,14 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
               >
                 <Disclosure.Panel unmount={false}>
                   <Web3Input.Currency
+                    type="INPUT"
                     className="p-3"
                     loading={false}
                     value={input0}
                     onChange={onInput0}
                     onSelect={onSelectToken0}
                     currency={token0}
-                    customTokenMap={customTokensMap}
-                    onAddToken={addCustomToken}
-                    onRemoveToken={removeCustomToken}
                     chainId={chainId}
-                    tokenMap={tokenMap}
                   />
                   <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
                     <div className="group dark:bg-slate-700 p-0.5 dark:border-2 dark:border-slate-800 transition-all rounded-full">
@@ -105,16 +113,13 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                   </div>
                   <div className="dark:bg-slate-800 bg-white">
                     <Web3Input.Currency
+                      type="INPUT"
                       className="p-3 !pb-1"
                       value={input1}
                       onChange={onInput1}
                       currency={token1}
                       onSelect={onSelectToken1}
-                      customTokenMap={customTokensMap}
-                      onAddToken={addCustomToken}
-                      onRemoveToken={removeCustomToken}
                       chainId={chainId}
-                      tokenMap={tokenMap}
                     />
                     <div className="p-3">{children}</div>
                   </div>

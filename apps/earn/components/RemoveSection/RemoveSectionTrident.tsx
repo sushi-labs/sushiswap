@@ -33,10 +33,10 @@ import {
   unwrapWETHAction,
 } from '../../lib/actions'
 import { useTokensFromPool, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
-import { useSettings } from '../../lib/state/storage'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 import { createToast } from '@sushiswap/ui/future/components/toast'
+import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 
 interface RemoveSectionTridentProps {
   pool: Pool
@@ -48,10 +48,10 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pool: _poo
   const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
   const isMounted = useIsMounted()
   const contract = useTridentRouterContract(_pool.chainId)
-  const [{ slippageTolerance }] = useSettings()
   const [permit, setPermit] = useState<Signature>()
+  const [slippageTolerance] = useSlippageTolerance()
   const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(slippageTolerance * 100), 10_000)
+    return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
   }, [slippageTolerance])
 
   const [percentage, setPercentage] = useState<string>('')

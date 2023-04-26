@@ -1,5 +1,5 @@
 import { Disclosure, Transition } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/outline'
+import { ChevronDownIcon, CogIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
@@ -7,7 +7,6 @@ import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import {
   AppearOnMount,
-  Button,
   classNames,
   Currency as UICurrency,
   DEFAULT_INPUT_UNSTYLED,
@@ -15,11 +14,12 @@ import {
   Typography,
 } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui'
-import { FC, Fragment, ReactNode, useState } from 'react'
+import React, { FC, Fragment, ReactNode, useState } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
 
 import { usePoolPosition } from '../PoolPositionProvider'
-import { SettingsOverlay } from '../SettingsOverlay'
+import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 interface RemoveSectionWidgetProps {
   isFarm: boolean
@@ -75,7 +75,22 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                 {isFarm && isMounted ? (
                   <Widget.Header title="Remove Liquidity" className="!pb-3 ">
                     <div className="flex gap-3">
-                      <SettingsOverlay variant="dialog" />
+                      <SettingsOverlay
+                        options={{
+                          slippageTolerance: {
+                            storageKey: 'removeLiquidity',
+                            defaultValue: '0.5',
+                            title: 'Remove Liquidity Slippage',
+                          },
+                        }}
+                        modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
+                      >
+                        {({ setOpen }) => (
+                          <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
+                            <CogIcon width={24} height={24} />
+                          </Button>
+                        )}
+                      </SettingsOverlay>
                       <Disclosure.Button className="w-full pr-0.5">
                         <div className="flex items-center justify-between">
                           <div
