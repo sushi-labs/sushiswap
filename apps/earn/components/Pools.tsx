@@ -13,7 +13,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
 
   return (
     <Layout maxWidth="7xl">
-      <ExploitInfo />
+      {/* <ExploitInfo /> */}
       <div className="flex flex-col gap-10 md:gap-16">
         <section className="flex flex-col gap-6 lg:flex-row">
           <div className="flex flex-col max-w-md gap-2">
