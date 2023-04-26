@@ -10,7 +10,7 @@ import { NativeAddress, useBalances } from '@sushiswap/react-query'
 
 interface TokenSelectorCurrencyListProps {
   id: string
-  currencies: Type[]
+  currencies: Type[] | undefined
   chainId: ChainId
   onSelect(currency: Type): void
   selected: Type | undefined

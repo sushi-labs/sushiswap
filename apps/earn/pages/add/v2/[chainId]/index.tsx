@@ -4,14 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { BreadcrumbLink, Button, Dots, Loader } from '@sushiswap/ui'
-import {
-  Checker,
-  ConstantProductPoolState,
-  PairState,
-  PoolFinder,
-  PoolFinderType,
-  StablePoolState,
-} from '@sushiswap/wagmi'
+import { ConstantProductPoolState, PairState, PoolFinder, PoolFinderType, StablePoolState } from '@sushiswap/wagmi'
 import {
   AddSectionReviewModalLegacy,
   AddSectionReviewModalTrident,
@@ -37,6 +30,7 @@ import { ContentBlock } from '../../../../components/AddPage/ContentBlock'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import Link from 'next/link'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { Checker } from '@sushiswap/wagmi/future/systems'
 
 const LINKS: BreadcrumbLink[] = [
   {
@@ -354,15 +348,9 @@ const _Add: FC<AddProps> = ({
               poolState === StablePoolState.LOADING
             }
           />
-          <Checker.Connected fullWidth size="md">
-            <Checker.Network fullWidth size="md" chainId={chainId}>
-              <Checker.Amounts
-                fullWidth
-                size="md"
-                chainId={chainId}
-                fundSource={FundSource.WALLET}
-                amounts={[parsedInput0, parsedInput1]}
-              >
+          <Checker.Connect fullWidth size="xl">
+            <Checker.Network fullWidth size="xl" chainId={chainId}>
+              <Checker.Amounts fullWidth size="xl" chainId={chainId} amounts={[parsedInput0, parsedInput1]}>
                 {pool && (isConstantProductPool(pool) || isStablePool(pool)) && isBentoBoxV1ChainId(chainId) && (
                   <AddSectionReviewModalTrident
                     poolAddress={pool.liquidityToken.address}
@@ -418,7 +406,7 @@ const _Add: FC<AddProps> = ({
                 )}
               </Checker.Amounts>
             </Checker.Network>
-          </Checker.Connected>
+          </Checker.Connect>
         </div>
       </ContentBlock>
     </div>
