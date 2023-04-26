@@ -1,3 +1,5 @@
+'use client'
+
 import { Button, Link } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { GlobalNav, NavLink, SubNav, SubNavLink } from '@sushiswap/ui/future/components/GlobalNav'

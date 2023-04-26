@@ -41,6 +41,7 @@ export const useTokenApproval = ({
     token: amount?.currency?.wrapped,
     owner: address,
     spender,
+    chainId: amount?.currency.chainId,
     enabled: Boolean(amount?.currency?.isToken && enabled),
   })
 
