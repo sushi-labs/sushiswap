@@ -15,6 +15,16 @@ interface Params {
   includeNative?: boolean
 }
 
+const hash = (string: string) => {
+  let hash = 0
+  for (let i = 0; i < string.length; i++) {
+    const code = string.charCodeAt(i)
+    hash = (hash << 5) - hash + code
+    hash = hash & hash // Convert to 32bit integer
+  }
+  return hash
+}
+
 export const useSortedTokenList = ({
   query,
   chainId,
@@ -27,7 +37,10 @@ export const useSortedTokenList = ({
   const debouncedQuery = useDebounce(query, 250)
 
   return useQuery({
-    queryKey: ['sortedTokenList', { debouncedQuery }],
+    queryKey: [
+      'sortedTokenList',
+      { debouncedQuery, hash: hash(JSON.stringify({ tokenMap, customTokenMap, balancesMap, pricesMap })) },
+    ],
     queryFn: async () => {
       const tokenMapValues = tokenMap ? Object.values(tokenMap) : []
       const customTokenMapValues = customTokenMap
