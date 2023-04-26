@@ -256,6 +256,9 @@ dataFetchers.set(
 )
 
 export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enabled'>) => {
+  // if (!variables.currencyA || !variables.currencyB) {
+  //   return new Map()
+  // }
   const dataFetcher = dataFetchers.get(variables.chainId) as DataFetcher
   const liquidityProviders = [LiquidityProviders.SushiSwap, LiquidityProviders.Trident]
   if (isRouteProcessor3ChainId(variables.chainId)) {
