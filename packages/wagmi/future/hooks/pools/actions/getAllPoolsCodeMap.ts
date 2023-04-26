@@ -256,7 +256,11 @@ dataFetchers.set(
 
 export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enabled'>) => {
   const dataFetcher = dataFetchers.get(variables.chainId) as DataFetcher
-  dataFetcher.startDataFetching()
+  dataFetcher.startDataFetching([
+    LiquidityProviders.SushiSwap,
+    LiquidityProviders.SushiSwapV3,
+    LiquidityProviders.Trident,
+  ])
   await dataFetcher.fetchPoolsForToken(variables.currencyA!, variables.currencyB!)
   dataFetcher.stopDataFetching()
   return dataFetcher.getCurrentPoolCodeMap(variables.currencyA!, variables.currencyB!)
