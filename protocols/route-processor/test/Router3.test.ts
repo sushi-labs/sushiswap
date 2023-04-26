@@ -153,9 +153,14 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   //console.log('Prepare Environment:')
 
   const client = createPublicClient({
+    // batch: {
+    //   multicall: {
+    //     batchSize: 1024,
+    //     // wait: 0,
+    //   },
+    // },
     chain: {
       ...hardhat,
-      batchSize: 512,
       contracts: {
         multicall3: {
           address: '0xca11bde05977b3631167028862be2a173976ca11',
@@ -218,7 +223,7 @@ async function makeSwap(
   permits: PermitData[] = [],
   makeSankeyDiagram = false
 ): Promise<[BigNumber, number] | undefined> {
-  //console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
+  console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
   if (fromToken instanceof Token && permits.length == 0) {
     //console.log(`Approve user's ${fromToken.symbol} to the route processor ...`)
@@ -226,8 +231,9 @@ async function makeSwap(
     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
   }
 
-  //console.log('Create Route ...')
+  console.log('Create Route ...')
   await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  console.log('After fetch pools for token ...')
   const pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
 
   await checkPoolsState(pcMap, env)
@@ -260,7 +266,7 @@ async function makeSwap(
   )
   if (rpParams === undefined) return
 
-  //console.log('Call route processor (may take long time for the first launch)...')
+  console.log('Call route processor (may take long time for the first launch)...')
 
   let balanceOutBNBefore: BigNumber
   let toTokenContract: Contract | undefined = undefined
@@ -295,7 +301,7 @@ async function makeSwap(
   // const trace = await network.provider.send('debug_traceTransaction', [receipt.transactionHash])
   // printGasUsage(trace)
 
-  //console.log("Fetching user's output balance ...")
+  console.log("Fetching user's output balance ...")
   let balanceOutBN: BigNumber
   if (toTokenContract) {
     balanceOutBN = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)

@@ -88,7 +88,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
         contracts: topPools.map(
           (pool) =>
             ({
@@ -196,7 +195,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
         contracts: poolCodesToCreate.map(
           (poolCode) =>
             ({
@@ -254,7 +252,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
           .multicall({
             multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
             allowFailure: true,
-            batchSize: 1024,
             contracts: initialPools.map(
               (poolCode) =>
                 ({
@@ -273,7 +270,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
           .multicall({
             multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
             allowFailure: true,
-            batchSize: 1024,
             contracts: onDemandPools.map(
               (poolCode) =>
                 ({
@@ -390,8 +386,16 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     pools: PoolCode[],
     reserves:
       | (
-          | { error: Error; result?: undefined; status: 'error' }
-          | { error?: undefined; result: readonly [bigint, bigint, number]; status: 'success' }
+          | {
+              error: Error
+              result?: undefined
+              status: 'failure'
+            }
+          | {
+              error?: undefined
+              result: readonly [bigint, bigint, number]
+              status: 'success'
+            }
         )[]
       | undefined,
     type: 'INITIAL' | 'ON_DEMAND'

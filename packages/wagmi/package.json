@@ -59,7 +59,7 @@
     "@tanstack/react-query-persist-client": "^4.14.5",
     "@uniswap/v2-core": "1.0.1",
     "@uniswap/v3-periphery": "1.4.1",
-    "viem": "jxom-multicall-chunk-size",
+    "viem": "0.3.12",
     "zod": "3.20.2"
   },
   "devDependencies": {
