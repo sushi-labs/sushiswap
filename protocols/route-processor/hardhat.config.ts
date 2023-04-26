@@ -56,7 +56,7 @@ const config: HardhatUserConfig = {
     hardhat: {
       // polygon
       forking: {
-        enabled: !process.env.VERCEL,
+        enabled: process.env.FORKING === 'true',
         url: process.env.ALCHEMY_ID
           ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`
           : 'https://polygon-mainnet.g.alchemy.com/v2/demo',
