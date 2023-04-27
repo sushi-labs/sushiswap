@@ -295,10 +295,10 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
         onClose={() => (failedState(stepStates) || finishedState(stepStates) ? setOpen(false) : {})}
       >
         <Dialog.Content>
-          <div className="flex flex-col gap-5 items-center justify-center">
+          <div className="flex flex-col items-center justify-center gap-5">
             <div className="h-1" />
             <div className="py-5">
-              <div className="flex gap-3 relative">
+              <div className="relative flex gap-3">
                 <GetStateComponent index={1} state={stepStates.source} />
                 <Divider />
                 <GetStateComponent index={2} state={stepStates.bridge} />
@@ -314,7 +314,13 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
                 dstTxHash={lzData?.dstTxHash}
               />
             </div>
-            <Button fullWidth color="blue" variant="outlined" size="xl" onClick={() => setOpen(false)}>
+            <Button
+              fullWidth
+              color="blue"
+              variant="outlined"
+              size="xl"
+              onClick={() => setOpen(false)}
+            >
               {failedState(stepStates) ? 'Try again' : finishedState(stepStates) ? 'Make another swap' : 'Close'}
             </Button>
           </div>

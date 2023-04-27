@@ -217,10 +217,6 @@ export const useBalance: UseBalance = ({
     const bentoBalance = currency
       ? data?.[currency.isNative ? AddressZero : currency.wrapped.address]?.[FundSource.BENTOBOX]
       : undefined
-      if (currency?.symbol === 'SUSHI') {
-
-        console.log("BALANCE HOOK RAN FOR " + currency?.symbol, walletBalance?.toExact(), data)
-      }
     return {
       isError: isError,
       isLoading: isLoading,

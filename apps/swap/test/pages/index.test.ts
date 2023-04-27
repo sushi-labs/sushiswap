@@ -61,7 +61,7 @@ test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   await swap(trade2, page, true)
 })
 
-test(`Wrap and unwrap`, async ({ page }) => {
+test('Wrap and unwrap', async ({ page }) => {
   test.slow()
   const nativeToWrapped = {
     input: nativeToken,
@@ -81,16 +81,30 @@ async function wrap(trade: Trade, page: Page, useBalance?: boolean) {
   await handleToken(trade.input, page, InputType.INPUT, trade.amount, useBalance)
   await handleToken(trade.output, page, InputType.OUTPUT)
 
-  const unwrapButton = page.locator('[testdata-id=open-wrap-review-modal-button]')
+  await page
+    .locator('[testdata-id=approve-erc20]')
+    .click({ timeout: 3000 })
+    .then(async () => {
+      console.log(`Approved ${trade.input.symbol}`)
+    })
+    .catch(() => console.log(`${trade.input.symbol} already approved or not needed`))
+    await timeout(2500) // wait for approval
+  const unwrapButton = page.locator('[testdata-id=swap-button]')
+
   await expect(unwrapButton).toBeEnabled()
   await unwrapButton.click()
 
-  const confirmUnwrap = page.locator('[testdata-id=swap-wrap-review-modal-confirm-button]')
+  const confirmUnwrap = page.locator('[testdata-id=confirm-swap-button]')
   await expect(confirmUnwrap).toBeEnabled()
   await confirmUnwrap.click()
 
-  const expectedRegex = /Successfully wrapped|unwrapped /
-  await expect(page.locator('div', { hasText: expectedRegex }).last()).toContainText(expectedRegex)
+  // const expectedRegex =
+  // await expect(page.locator('div', { hasText: expectedRegex }).last()).toContainText(expectedRegex)
+  
+  const expectedText = new RegExp(`(Wrap|Unwrap .* ${trade.input.symbol} to .* ${trade.output.symbol})`)
+  await expect(page.locator('span', { hasText: expectedText }).last()).toContainText(expectedText)
+  
+  await page.locator('[testdata-id=make-another-swap-button]').click()
 }
 
 async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
@@ -102,12 +116,11 @@ async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
 
   await timeout(1500) // wait for rpc calls to figure out if approvals are needed
 
-  // TODO: move these? they are happening before review now.
   await page
     .locator('[testdata-id=approve-bentobox]')
     .click({ timeout: 3000 })
     .then(async () => {
-      console.log(`BentoBox Approved`)
+      console.log('BentoBox Approved')
     })
     .catch(() => console.log('BentoBox already approved or not needed'))
 
@@ -126,12 +139,13 @@ async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
   await swapButton.click({ timeout: 15000 })
 
 
+  await timeout(1000)
   const confirmSwap = page.locator('[testdata-id=confirm-swap-button]')
   await confirmSwap.click()
   const expectedText = new RegExp(`(Swap .* ${trade.input.symbol} for .* ${trade.output.symbol})`)
   await expect(page.locator('span', { hasText: expectedText }).last()).toContainText(expectedText)
   
-  await page.locator(`[testdata-id=make-another-swap-button]`).click()
+  await page.locator('[testdata-id=make-another-swap-button]').click()
 }
 
 async function handleToken(token: Token, page: Page, type: InputType, amount?: string, useMax?: boolean) {
@@ -163,8 +177,8 @@ function timeout(ms: number) {
 }
 
 enum InputType {
-  INPUT,
-  OUTPUT,
+  INPUT = 'INPUT',
+  OUTPUT = 'OUTPUT',
 }
 
 interface Token {

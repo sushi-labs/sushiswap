@@ -28,6 +28,7 @@ interface ConfirmationDialog {
   successMessage: ReactNode
   buttonSuccessMessage: string
   buttonSuccessLink?: string
+  testId?: string
 }
 
 export const ConfirmationDialog: FC<ConfirmationDialog> = ({
@@ -41,6 +42,7 @@ export const ConfirmationDialog: FC<ConfirmationDialog> = ({
   successMessage,
   buttonSuccessMessage,
   buttonSuccessLink,
+  testId
 }) => {
   return (
     <Dialog open={open} unmount={false} onClose={() => setOpen(false)}>
@@ -93,6 +95,7 @@ export const ConfirmationDialog: FC<ConfirmationDialog> = ({
             color="blue"
             variant="outlined"
             size="xl"
+            testId={testId}
           >
             {state === ConfirmationDialogState.Success
               ? buttonSuccessMessage
