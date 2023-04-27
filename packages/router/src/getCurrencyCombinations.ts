@@ -47,3 +47,24 @@ export function getCurrencyCombinations(chainId: ChainId, currencyA: Type, curre
       return true
     })
 }
+
+export function getV3CurrencyCombinations(chainId: ChainId, currencyA: Type, currencyB: Type) {
+  const [tokenA, tokenB] = chainId ? [currencyA?.wrapped, currencyB?.wrapped] : [undefined, undefined]
+
+  const common = chainId in BASES_TO_CHECK_TRADES_AGAINST ? BASES_TO_CHECK_TRADES_AGAINST[chainId] : []
+
+  if (!tokenA || !tokenB) {
+    return []
+  }
+
+  return [
+    // the direct pair
+    [tokenA, tokenB],
+    // token A against all bases
+    ...common.map((common): [Token, Token] => [tokenA, common]),
+    // token B against all bases
+    ...common.map((common): [Token, Token] => [tokenB, common]),
+  ]
+    .filter((tokens): tokens is [Token, Token] => Boolean(tokens[0] && tokens[1]))
+    .filter(([t0, t1]) => t0.address !== t1.address)
+}

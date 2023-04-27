@@ -48,7 +48,7 @@ export class DataFetcher {
   _providerIsIncluded(lp: LiquidityProviders, liquidity?: LiquidityProviders[]) {
     if (!liquidity) return true
     if (lp === LiquidityProviders.NativeWrap) return true
-    return liquidity.some((l) => l == lp)
+    return liquidity.some((l) => l === lp)
   }
 
   // Starts pool data fetching
@@ -69,6 +69,19 @@ export class DataFetcher {
       }
     }
 
+    if (
+      this._providerIsIncluded(LiquidityProviders.Trident, providers) &&
+      isBentoBoxV1ChainId(this.chainId) &&
+      (isConstantProductPoolFactoryChainId(this.chainId) || isStablePoolFactoryChainId(this.chainId))
+    ) {
+      try {
+        const provider = new TridentProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+
     if (this._providerIsIncluded(LiquidityProviders.SushiSwapV3, providers)) {
       try {
         const provider = new SushiSwapV3Provider(this.chainId, this.web3Client, this.databaseClient)
@@ -78,13 +91,9 @@ export class DataFetcher {
       }
     }
 
-    if (
-      this._providerIsIncluded(LiquidityProviders.Trident, providers) &&
-      isBentoBoxV1ChainId(this.chainId) &&
-      (isConstantProductPoolFactoryChainId(this.chainId) || isStablePoolFactoryChainId(this.chainId))
-    ) {
+    if (this._providerIsIncluded(LiquidityProviders.UniswapV3, providers)) {
       try {
-        const provider = new TridentProvider(this.chainId, this.web3Client, this.databaseClient)
+        const provider = new UniswapV3Provider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -202,15 +211,6 @@ export class DataFetcher {
     if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
       try {
         const provider = new UniswapV2Provider(this.chainId, this.web3Client, this.databaseClient)
-        this.providers.push(provider)
-      } catch (e: any) {
-        // console.warn(e.message)
-      }
-    }
-
-    if (this._providerIsIncluded(LiquidityProviders.UniswapV3, providers)) {
-      try {
-        const provider = new UniswapV3Provider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)

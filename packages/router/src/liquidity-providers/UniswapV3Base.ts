@@ -7,7 +7,7 @@ import { computePoolAddress, FeeAmount, TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { BigNumber } from 'ethers'
 import { Address, PublicClient } from 'viem'
 
-import { getCurrencyCombinations } from '../getCurrencyCombinations'
+import { getV3CurrencyCombinations } from '../getCurrencyCombinations'
 import type { PoolCode } from '../pools/PoolCode'
 import { UniV3PoolCode } from '../pools/UniV3Pool'
 import { LiquidityProvider } from './LiquidityProvider'
@@ -74,7 +74,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 512,
         contracts: staticPools.map(
           (pool) =>
             ({
@@ -125,7 +124,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     const liquidityContracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
-      batchSize: 512,
       contracts: existingPools.map(
         (pool) =>
           ({
@@ -148,7 +146,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     const token0Contracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
-      batchSize: 512,
       contracts: existingPools.map(
         (pool) =>
           ({
@@ -164,7 +161,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     const token1Contracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
-      batchSize: 512,
       contracts: existingPools.map(
         (pool) =>
           ({
@@ -197,10 +193,10 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
         })
       }
     })
+
     const ticksContracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
-      batchSize: 512,
       contracts: wordList,
     })
 
@@ -275,7 +271,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   }
 
   getStaticPools(t1: Token, t2: Token): StaticPool[] {
-    const currencyCombinations = getCurrencyCombinations(this.chainId, t1, t2)
+    const currencyCombinations = getV3CurrencyCombinations(this.chainId, t1, t2)
 
     const allCurrencyCombinationsWithAllFees: [Type, Type, FeeAmount][] = currencyCombinations.reduce<
       [Currency, Currency, FeeAmount][]
