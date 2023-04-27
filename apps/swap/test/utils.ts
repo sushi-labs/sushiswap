@@ -1,5 +1,5 @@
 import { providers, Wallet } from 'ethers'
-import { Chain } from 'wagmi'
+import { Address, Chain } from 'wagmi'
 import { foundry, goerli, mainnet, optimism, polygon } from 'wagmi/chains'
 export function getNetwork(chain: Chain) {
   return {
@@ -10,8 +10,10 @@ export function getNetwork(chain: Chain) {
 }
 
 const foundryMainnet: Chain = {
+  // ...foundry
   ...mainnet,
   rpcUrls: foundry.rpcUrls,
+  // found
 }
 
 export const testChains = [foundryMainnet, mainnet, goerli, optimism, polygon]

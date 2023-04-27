@@ -107,7 +107,6 @@ export const useBalances: UseBalances = ({
     enabled,
     watch: !(typeof enabled !== undefined && !enabled) && watch,
   })
-
   const tokens: BalanceMap = useMemo(() => {
     const result: BalanceMap = {}
 
@@ -215,9 +214,10 @@ export const useBalance: UseBalance = ({
     const bentoBalance = currency
       ? data?.[currency.isNative ? AddressZero : currency.wrapped.address]?.[FundSource.BENTOBOX]
       : undefined
+      if (currency?.symbol === 'SUSHI') {
 
-      console.log("BALANCE HOOK RAN FOR " + currency?.symbol, walletBalance?.toExact())
-      console.log({data})
+        console.log("BALANCE HOOK RAN FOR " + currency?.symbol, walletBalance?.toExact(), data)
+      }
     return {
       isError: isError,
       isLoading: isLoading,
