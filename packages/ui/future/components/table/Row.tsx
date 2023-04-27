@@ -17,7 +17,7 @@ const Row = forwardRef<HTMLTableRowElement, RowProps>(function Row(
       className={classNames(
         className,
         size === 'default' ? 'h-[62px]' : 'h-[72px]',
-        'w-full hover:bg-gray-50 dark:hover:bg-gray-700/20 font-medium border-b border-gray-200 dark:!border-slate-200/5'
+        'w-full hover:bg-gray-50 dark:hover:bg-gray-700/20 font-medium border-t border-gray-200 dark:!border-slate-200/5'
       )}
     >
       {children}

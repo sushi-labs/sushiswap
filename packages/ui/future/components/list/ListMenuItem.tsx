@@ -3,11 +3,11 @@ import { ArrowLongRightIcon } from '@heroicons/react/24/solid'
 import classNames from 'classnames'
 import React, { Fragment, ReactNode, SVGProps, useState } from 'react'
 import { ExtractProps, PolymorphicComponentProps } from '../../../types'
+import { ArrowSmallRightIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 
 interface Props {
   title: string
   subtitle?: ReactNode
-  onClick?(): void
   hoverIcon?: (props: SVGProps<SVGSVGElement>) => JSX.Element | null
   hoverIconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'> & {
     width: number
@@ -49,7 +49,7 @@ export const ListMenuItem: ListMenuItemComponent = ({
       className={classNames(
         className,
         subtitle ? 'items-start' : 'items-center',
-        'hover:bg-black/[0.02] active:bg-black/[0.03] hover:dark:bg-white/[0.02] active:dark:bg-white/[0.03] relative flex gap-4 px-4 py-3 w-full cursor-pointer'
+        'hover:bg-black/[0.04] active:bg-black/[0.06] hover:dark:bg-white/[0.02] active:dark:bg-white/[0.03] relative flex gap-4 px-4 py-3 w-full cursor-pointer rounded-xl'
       )}
       testdata-id={`${title}-list-menu-item`}
     >
@@ -67,17 +67,19 @@ export const ListMenuItem: ListMenuItemComponent = ({
         </div>
       )}
       <div className="flex flex-col gap-0.5 items-start">
-        <span className="text-sm font-medium dark:text-slate-200">{title}</span>
-        {subtitle && <span className="text-[10px] text-gray-700 dark:text-slate-400 text-left">{subtitle}</span>}
+        <span className="text-sm font-medium text-gray-900 dark:text-slate-200">{title}</span>
+        {subtitle && (
+          <span className="text-sm font-normal text-gray-600 dark:text-slate-400 text-left">{subtitle}</span>
+        )}
       </div>
       <Transition
         as={Fragment}
         show={hover}
         enter="ease-in-out duration-300"
         enterFrom="translate-x-[10px] opacity-0"
-        enterTo="translate-x-[-16px] opacity-100"
+        enterTo="translate-x-[-8px] opacity-100"
         leave="ease-in-out duration-300"
-        leaveFrom="translate-x-[-16px] opacity-100"
+        leaveFrom="translate-x-[-8px] opacity-100"
         leaveTo="translate-x-[10px] opacity-0"
         unmount={false}
       >
@@ -85,10 +87,13 @@ export const ListMenuItem: ListMenuItemComponent = ({
           {HoverIcon ? (
             <HoverIcon {...hoverIconProps} width={hoverIconProps?.width ?? 20} height={hoverIconProps?.height ?? 20} />
           ) : (
-            <ArrowLongRightIcon
+            <ArrowSmallRightIcon
               {...hoverIconProps}
-              width={hoverIconProps?.width ?? 20}
-              height={hoverIconProps?.height ?? 20}
+              width={hoverIconProps?.width ?? 24}
+              height={hoverIconProps?.height ?? 24}
+              strokeWidth={hoverIconProps?.strokeWidth ?? 5}
+              fill="currentColor"
+              className={classNames(hoverIconProps?.className, '!text-blue')}
             />
           )}
         </div>

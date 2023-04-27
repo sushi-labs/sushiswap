@@ -2,8 +2,9 @@ import { createClient } from '@sushiswap/database'
 
 import { Address, configureChains, createClient as createWagmiClient, fetchToken } from '@wagmi/core'
 
-import { allChains } from '@sushiswap/wagmi-config/chains'
-import { allProviders } from '@sushiswap/wagmi-config/providers'
+import { allChains, allProviders } from '@sushiswap/wagmi-config'
+
+// import * as defaultTokenList from '@sushiswap/default-token-list' assert { type: 'json' }
 
 const { provider } = configureChains(allChains, allProviders)
 createWagmiClient({
@@ -12,6 +13,19 @@ createWagmiClient({
 })
 
 export async function getToken(chainId: number, address: string) {
+  // TODO: example to include default list token
+  // const tokenFromList = defaultTokenList.tokens.find((token) => token.chainId === chainId && token.address === address)
+  // if (tokenFromList) {
+  //   return {
+  //     id: `${chainId}:${tokenFromList.address}`,
+  //     address: tokenFromList.address,
+  //     name: tokenFromList.name,
+  //     symbol: tokenFromList.symbol,
+  //     decimals: tokenFromList.decimals,
+  //     isCommon: false,
+  //   }
+  // }
+
   const client = await createClient()
   try {
     const token = await client.token.findFirstOrThrow({

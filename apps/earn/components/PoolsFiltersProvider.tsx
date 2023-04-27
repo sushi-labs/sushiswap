@@ -1,23 +1,12 @@
-import { ChainId } from '@sushiswap/chain'
-import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, FC, ReactNode, useCallback, useContext, useMemo } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
-import { AVAILABLE_POOL_TYPE_MAP, AVAILABLE_VERSION_MAP } from '../lib/constants'
+import { z } from 'zod'
+import { parseArgs } from '@sushiswap/client'
+import { useRouter } from 'next/router'
+import stringify from 'fast-json-stable-stringify'
 
-enum Filters {
-  tokenSymbols = 'tokenSymbols',
-  chainIds = 'chainIds',
-  poolTypes = 'poolTypes',
-  poolVersions = 'poolVersions',
-  incentivizedOnly = 'incentivizedOnly',
-}
-
-interface FilterContext {
-  [Filters.tokenSymbols]: undefined | string[]
-  [Filters.chainIds]: ChainId[]
-  [Filters.poolTypes]: (keyof typeof AVAILABLE_POOL_TYPE_MAP)[]
-  [Filters.poolVersions]: (keyof typeof AVAILABLE_VERSION_MAP)[]
-  [Filters.incentivizedOnly]: boolean
+interface FilterContext extends z.TypeOf<typeof poolFiltersSchema> {
   setFilters(filters: Partial<Omit<FilterContext, 'setFilters'>>): void
 }
 
@@ -30,32 +19,65 @@ interface PoolsFiltersProvider {
   passedFilters?: Partial<PoolFilters>
 }
 
-// ! Has to be kept up to date with defaultPoolsArgs
-// Else prefetching won't work
-const defaultFilters: PoolFilters = {
-  [Filters.tokenSymbols]: undefined,
-  [Filters.chainIds]: SUPPORTED_CHAIN_IDS,
-  [Filters.poolTypes]: Object.keys(AVAILABLE_POOL_TYPE_MAP) as (keyof typeof AVAILABLE_POOL_TYPE_MAP)[],
-  [Filters.poolVersions]: Object.keys(AVAILABLE_VERSION_MAP) as (keyof typeof AVAILABLE_VERSION_MAP)[],
-  [Filters.incentivizedOnly]: false,
+export enum FilterTag {
+  SUSHISWAP_V3 = 'SUSHISWAP_V3',
+  SUSHISWAP_V2 = 'SUSHISWAP_V2',
+  BENTOBOX_STABLE = 'BENTOBOX_STABLE',
+  BENTOBOX_CLASSIC = 'BENTOBOX_CLASSIC',
+  FARMS_ONLY = 'FARMS_ONLY',
 }
 
-export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children, passedFilters }) => {
-  const [filters, _setFilters] = useState<PoolFilters>({ ...defaultFilters, ...passedFilters })
+export const poolFiltersSchema = z.object({
+  tokenSymbols: z
+    .string()
+    .optional()
+    .default('')
+    .transform((tokenSymbols) => {
+      if (tokenSymbols === '') return undefined
 
-  const setFilters = useCallback((filters: PoolFilters) => {
-    _setFilters((prevState) => ({
-      ...prevState,
-      ...filters,
-    }))
-  }, [])
+      return tokenSymbols?.split(',')
+    }),
+  chainIds: z
+    .string()
+    .optional()
+    .default(SUPPORTED_CHAIN_IDS.join(','))
+    .transform((chainIds) => chainIds.split(',').map((chainId) => Number(chainId))),
+  categories: z
+    .string()
+    .optional()
+    .default(
+      Object.values(FilterTag)
+        .filter((tag) => tag != FilterTag.FARMS_ONLY)
+        .join(',')
+    )
+    .transform((tags) => tags.split(',') as FilterTag[]),
+})
 
-  useEffect(() => setFilters({ ...defaultFilters, ...passedFilters }), [passedFilters, setFilters])
+export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => {
+  const { query, push } = useRouter()
+  const parsed = useMemo(() => {
+    const parsed = poolFiltersSchema.parse(query)
+
+    return {
+      ...parsed,
+      categories: parsed.categories.filter((el) => (el as string) !== ''),
+    }
+  }, [query])
+
+  const setFilters = useCallback(
+    (filters: PoolFilters) => {
+      const newFilters = { ...parsed, ...filters }
+      // console.log(newFilters)
+      void push(parseArgs(newFilters), undefined, { shallow: true })
+    },
+    // eslint-disable-next-line
+    [stringify(parsed)]
+  )
 
   return (
     <FilterContext.Provider
       value={{
-        ...filters,
+        ...parsed,
         setFilters,
       }}
     >

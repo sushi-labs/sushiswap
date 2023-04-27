@@ -6,12 +6,24 @@ const shortNameIdRegexp = new RegExp(/(\w+):0x.*?(?=(?:\/|$))/)
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl
 
-  // Index handling
-  if (pathname === '/' && search !== '') {
+  if (pathname === '/add' && search === '') {
     const url = req.nextUrl.clone()
-    url.pathname = '/csr'
-    return NextResponse.rewrite(url)
+    url.search = '?fromCurrency=NATIVE'
+    return NextResponse.redirect(url)
   }
+
+  if (pathname === '/add/v2') {
+    const url = req.nextUrl.clone()
+    url.pathname = '/add/v2/1'
+    return NextResponse.redirect(url)
+  }
+
+  // Index handling
+  // if (pathname === '/' && search !== '') {
+  //   const url = req.nextUrl.clone()
+  //   url.pathname = '/csr'
+  //   return NextResponse.rewrite(url)
+  // }
 
   // Matches paths that include /arb1:0x1234abcd/, starts and ends after '/'
   if (pathname.match(shortNameIdRegexp)) {

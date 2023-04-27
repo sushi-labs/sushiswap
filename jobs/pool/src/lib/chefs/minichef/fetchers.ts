@@ -3,6 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { MINICHEF_SUBGRAPH_NAME, SUBGRAPH_HOST, SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
 import { Address, readContract, readContracts } from '@wagmi/core'
 import { BigNumber } from 'ethers'
+import zip from 'lodash.zip'
 
 import { MINICHEF_ADDRESS } from '../../../config.js'
 
@@ -107,12 +108,7 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
     name: subgraphName,
   })
 
-  const { rewarders } = await sdk.MiniChefRewarders({
-    where: {
-      id_not: '0x0000000000000000000000000000000000000000',
-      rewardToken_not: '0x0000000000000000000000000000000000000000',
-    },
-  })
+  const { rewarders } = await sdk.MiniChefRewarders()
   console.log(`Retrieved ${rewarders.length} rewarders from ${subgraphName}`)
 
   return Promise.all(
@@ -142,17 +138,22 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
             '0xccc3760a0a315937877687bc99df4edb0f7315b4',
             '0x294eadcc534084c1333dc99e1afcf3e92c5c1297',
             '0xb873813f710093cbc17836297a6fefcfc6989faf',
+            '0xa15a0789112d9aa7e40e76bfaa39ae36cc0aad3c',
           ],
-          [ChainId.GNOSIS]: ['0xb291149e478dbdd2cd2528ad4088ee5c8376df1e'],
+          [ChainId.GNOSIS]: [
+            '0xb291149e478dbdd2cd2528ad4088ee5c8376df1e',
+            '0xc375411c6597f692add6a7a3ad5b3c38626b0f26',
+          ],
           [ChainId.ARBITRUM_NOVA]: [
             '0x3f505b5cff05d04f468db65e27e72ec45a12645f',
             '0x840ecabcad4d6b8d25a9bb853ae32eac467e017b',
             '0x16ac10499ad2712a847641996e0aab97e90305fa',
             '0x948bfbb7bdb7e74ec8ed0859c79502408bee4de1',
+            '0x3f505b5cff05d04f468db65e27e72ec45a12645f',
           ],
         }
 
-        if (blacklist[chainId]?.includes(rewarder.id)) {
+        if (blacklist[chainId]?.includes(rewarder.id) || rewarder.id === '0x0000000000000000000000000000000000000000') {
           return {
             id: rewarder.id,
             rewardToken: rewarder.rewardToken,
@@ -167,7 +168,7 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
         const poolInfoCalls = poolIds.map(
           (_, i) =>
             ({
-              address: rewarder.id,
+              address: rewarder.id as Address,
               args: [BigNumber.from(i)],
               chainId: chainId,
               abi: complexRewarderTimeAbi,
@@ -179,13 +180,14 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
           allowFailure: true,
           contracts: poolInfoCalls,
         })
+        const zipped = zip(poolIds, poolInfos)
 
         return {
           id: rewarder.id,
-          pools: poolIds.map((_, i) => ({
+          pools: zipped.map(([id, { allocPoint }], i) => ({
             // Minichef pool ID
-            id: poolIds[i],
-            allocPoint: Number(poolInfos?.[i]?.allocPoint),
+            id,
+            allocPoint: allocPoint.toNumber(),
           })),
           totalAllocPoint: poolInfos.reduce((acc, cur) => (acc += cur.allocPoint.toNumber()), 0),
           rewardToken: rewarder.rewardToken,

@@ -9,31 +9,31 @@ import { AddSectionMyPositionUnstaked } from './AddSectionMyPositionUnstaked'
 
 export const AddSectionMyPosition: FC<{ pool: Pool }> = ({ pool }) => {
   return (
-    <div className="flex flex-col bg-white bg-opacity-[0.04] rounded-2xl">
+    <div className="flex flex-col bg-white dark:bg-opacity-[0.04] rounded-2xl">
       <div className="flex flex-col gap-4 p-5">
         <div className="grid items-center grid-cols-2 gap-2">
-          <Typography variant="xs" weight={500} className="text-slate-300">
+          <Typography variant="xs" weight={500} className="dark:text-slate-300 text-gray-700">
             Total APR:
           </Typography>
-          <Typography variant="xs" weight={500} className="text-right text-slate-300">
+          <Typography variant="xs" weight={500} className="text-right dark:text-slate-300 text-gray-700">
             {formatPercent(pool.feeApr + pool.incentiveApr)}
           </Typography>
           {pool.incentives && (
             <>
-              <Typography variant="xs" weight={500} className="text-slate-300">
+              <Typography variant="xs" weight={500} className="dark:text-slate-300 text-gray-700">
                 Fee APR:
               </Typography>
-              <Typography variant="xs" weight={500} className="text-right text-slate-300">
+              <Typography variant="xs" weight={500} className="text-right dark:text-slate-300 text-gray-700">
                 {formatPercent(pool.feeApr)}
               </Typography>
-              <Typography variant="xs" weight={500} className="text-slate-300">
+              <Typography variant="xs" weight={500} className="dark:text-slate-300 text-gray-700">
                 Reward APR:
               </Typography>
-              <Typography variant="xs" weight={500} className="text-right text-slate-300">
+              <Typography variant="xs" weight={500} className="text-right dark:text-slate-300 text-gray-700">
                 {/* Reward APR */}
                 {formatPercent(pool.incentiveApr)}
               </Typography>
-              <Typography variant="xs" weight={500} className="text-slate-300">
+              <Typography variant="xs" weight={500} className="dark:text-slate-300 text-gray-700">
                 Farming Rewards:
               </Typography>
               <div className={classNames(pool.incentives?.length === 2 ? '-mr-2' : '', 'flex justify-end ')}>
@@ -48,7 +48,7 @@ export const AddSectionMyPosition: FC<{ pool: Pool }> = ({ pool }) => {
         </div>
       </div>
       <div className="px-5">
-        <hr className="h-px border-t border-slate-200/5" />
+        <hr className="h-px border-t dark:border-slate-200/5 border-gray-900/5" />
       </div>
       <div className="p-5 space-y-5">
         <AddSectionMyPositionUnstaked />

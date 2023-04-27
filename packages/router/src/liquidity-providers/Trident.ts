@@ -17,6 +17,7 @@ import { discoverNewPools, filterOnDemandPools, filterTopPools, getAllPools, map
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
 import { BentoPoolCode } from '../pools/BentoPool'
 import type { PoolCode } from '../pools/PoolCode'
+import { TridentStaticPool, TridentStaticPoolFetcher } from '../static-pool-fetcher/Trident'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
 export function convertToNumbers(arr: BigNumber[]): (number | undefined)[] {
@@ -73,12 +74,12 @@ export class TridentProvider extends LiquidityProvider {
   blockListener?: () => void
   unwatchBlockNumber?: () => void
 
-  databaseClient: PrismaClient
+  databaseClient: PrismaClient | undefined
 
   constructor(
     chainId: BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId,
     web3Client: PublicClient,
-    databaseClient: PrismaClient
+    databaseClient?: PrismaClient
   ) {
     super(chainId, web3Client)
     this.chainId = chainId
@@ -104,7 +105,7 @@ export class TridentProvider extends LiquidityProvider {
     // TODO: retry logic, every X seconds? dont flag as true until the end of the function ideally. add isInitalizing? to avoid it being called twice before completed.
     this.isInitialized = true
     const availablePools = await this.getInitialPools()
-    console.debug(`${this.getLogPrefix()} - TOTAL POOLS: ${availablePools.size}`)
+    //console.debug(`${this.getLogPrefix()} - TOTAL POOLS: ${availablePools.size}`)
 
     this.availablePools = availablePools
 
@@ -113,27 +114,30 @@ export class TridentProvider extends LiquidityProvider {
     const topPools = filterTopPools(Array.from(availablePools.values()), this.TOP_POOL_SIZE)
 
     if (topPools.length > 0) {
-      console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${topPools.length}`)
+      //console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${topPools.length}`)
     } else {
-      console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
+      //console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
       return []
     }
 
     await this.initPools(topPools)
 
-    console.debug(
-      `${this.getLogPrefix()} - INIT, WATCHING ${this.topClassicPools.size} CLASSIC AND ${
-        this.topStablePools.size
-      } STABLE POOLS`
-    )
+    // console.debug(
+    //   `${this.getLogPrefix()} - INIT, WATCHING ${this.topClassicPools.size} CLASSIC AND ${
+    //     this.topStablePools.size
+    //   } STABLE POOLS`
+    // )
   }
 
   private async getInitialPools(): Promise<Map<string, PoolResponse2>> {
-    const pools = await getAllPools(this.databaseClient, this.chainId, 'SushiSwap', 'TRIDENT', [
-      'CONSTANT_PRODUCT_POOL',
-      'STABLE_POOL',
-    ])
-    return pools
+    if (this.databaseClient) {
+      const pools = await getAllPools(this.databaseClient, this.chainId, 'SushiSwap', 'TRIDENT', [
+        'CONSTANT_PRODUCT_POOL',
+        'STABLE_POOL',
+      ])
+      return pools
+    }
+    return new Map()
   }
 
   async initPools(pools: PoolResponse2[]): Promise<void> {
@@ -291,17 +295,14 @@ export class TridentProvider extends LiquidityProvider {
         totals0,
         totals1
       )
-      this.topStablePools.set(
-        pool.address,
-        new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName())
-      )
+      this.topStablePools.set(pool.address, new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName()))
     })
   }
 
   async updatePools(): Promise<void> {
     this.removeStalePools()
 
-      // The two calls below are Async functions, but we do not want them to block. If they find any pools they will be updated next interval
+    // The two calls below are Async functions, but we do not want them to block. If they find any pools they will be updated next interval
     this.discoverNewPools()
     this.updateAvailablePools()
 
@@ -469,21 +470,21 @@ export class TridentProvider extends LiquidityProvider {
       })
       if (!bridge.reserve0.eq(elasticBN) || !bridge.reserve1.eq(baseBN)) {
         bridge.updateReserves(elasticBN, baseBN)
-        console.debug(
-          `${this.getLogPrefix()} - BRIDGE REBASE UPDATE: ${bridge.token0.symbol} ${bridge.reserve0} ${bridge.reserve1}`
-        )
+        // console.debug(
+        //   `${this.getLogPrefix()} - BRIDGE REBASE UPDATE: ${bridge.token0.symbol} ${bridge.reserve0} ${bridge.reserve1}`
+        // )
       }
 
       if (bridge.freeLiquidity !== Number(balance)) {
         bridge.freeLiquidity = Number(balance)
-        console.debug(`${this.getLogPrefix()} - BRIDGE BALANCE UPDATE: ${bridge.token0.symbol} ${bridge.freeLiquidity}`)
+        //console.debug(`${this.getLogPrefix()} - BRIDGE BALANCE UPDATE: ${bridge.token0.symbol} ${bridge.freeLiquidity}`)
       }
     })
 
     this.updateStablePools(initialStablePools, rebases, initStableReserves)
     this.updateStablePools(onDemandStablePools, rebases, onDemandStableReserves)
 
-    console.debug(`${this.getLogPrefix()} - UPDATED POOLS`)
+    //console.debug(`${this.getLogPrefix()} - UPDATED POOLS`)
   }
 
   async getOnDemandPools(t0: Token, t1: Token): Promise<void> {
@@ -496,23 +497,32 @@ export class TridentProvider extends LiquidityProvider {
       this.ON_DEMAND_POOL_SIZE
     )
 
-    if (pools.length === 0) {
-      return
-    }
+    // if (pools.length === 0) {
+    //   // pools =
+    //   // return
+    // }
+
+    const [onDemandClassicPools, onDemandStablePools] =
+      pools.length > 0
+        ? [
+            pools.filter((p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.topClassicPools.has(p.address)),
+            pools.filter((p) => p.type === 'STABLE_POOL' && !this.topStablePools.has(p.address)),
+          ]
+        : await TridentStaticPoolFetcher.getStaticPools(this.client, this.chainId, t0, t1)
 
     this.poolsByTrade.set(
       this.getTradeId(t0, t1),
-      pools.map((pool) => pool.address)
+      [onDemandClassicPools, onDemandStablePools].flat().map((pool) => pool.address)
     )
 
-    const onDemandClassicPools = pools.filter(
-      (p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.topClassicPools.has(p.address)
-    )
+    // const onDemandClassicPools = pools.filter(
+    //   (p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.topClassicPools.has(p.address)
+    // )
 
-    const onDemandStablePools = pools.filter((p) => p.type === 'STABLE_POOL' && this.topStablePools.has(p.address))
+    // const onDemandStablePools = pools.filter((p) => p.type === 'STABLE_POOL' && this.topStablePools.has(p.address))
     const validUntilTimestamp = getUnixTime(add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME_IN_SECONDS }))
 
-    const sortedTokens = this.poolResponseToSortedTokens(pools)
+    const sortedTokens = this.poolResponseToSortedTokens([...onDemandClassicPools, ...onDemandStablePools].flat())
     let newBridges = 0
     let updated = 0
     let created = 0
@@ -540,14 +550,11 @@ export class TridentProvider extends LiquidityProvider {
     onDemandClassicPools.forEach((pr) => {
       const existingPool = this.onDemandClassicPools.get(pr.address)
       if (existingPool === undefined) {
-        const tokens = [
-          convertTokenToBento(mapToken(this.chainId, pr.token0)),
-          convertTokenToBento(mapToken(this.chainId, pr.token1)),
-        ]
+        if (!pr.swapFee) return
         const rPool = new ConstantProductRPool(
           pr.address,
-          tokens[0],
-          tokens[1],
+          convertTokenToBento(pr.token0 as Token),
+          convertTokenToBento(pr.token1 as Token),
           pr.swapFee,
           BigNumber.from(0),
           BigNumber.from(0)
@@ -564,14 +571,11 @@ export class TridentProvider extends LiquidityProvider {
     onDemandStablePools.forEach((pr) => {
       const existingPool = this.onDemandStablePools.get(pr.address)
       if (existingPool === undefined) {
-        const tokens = [
-          convertTokenToBento(mapToken(this.chainId, pr.token0)),
-          convertTokenToBento(mapToken(this.chainId, pr.token1)),
-        ]
+        if (!pr.swapFee) return
         const stablePool = new StableSwapRPool(
           pr.address,
-          tokens[0],
-          tokens[1],
+          convertTokenToBento(pr.token0 as Token),
+          convertTokenToBento(pr.token1 as Token),
           pr.swapFee,
           BigNumber.from(0),
           BigNumber.from(0),
@@ -584,7 +588,6 @@ export class TridentProvider extends LiquidityProvider {
         const pc = new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName())
 
         stablePoolCodesToCreate.push(pc)
-
       } else {
         existingPool.validUntilTimestamp = validUntilTimestamp
         ++updated
@@ -685,13 +688,13 @@ export class TridentProvider extends LiquidityProvider {
         pool.updateReserves(BigNumber.from(res0), BigNumber.from(res1))
         this.onDemandClassicPools.set(pool.address, { poolCode, validUntilTimestamp })
         ++created
-        console.debug(
-          `${this.getLogPrefix()} - ON DEMAND CREATION: ${pool.address} classic (${pool.token0.symbol}/${
-            pool.token1.symbol
-          })`
-        )
+        // console.debug(
+        //   `${this.getLogPrefix()} - ON DEMAND CREATION: ${pool.address} classic (${pool.token0.symbol}/${
+        //     pool.token1.symbol
+        //   })`
+        // )
       } else {
-        console.error(`${this.getLogPrefix()} - ERROR FETCHING RESERVES, initialize on demand pool: ${pool.address}`)
+        console.error(`${this.getLogPrefix()} - ERROR FETCHING RESERVES: ${pool.address}, pool does not exist?`)
         // TODO: some pools seem to be initialized with 0 in reserves, they should just be ignored, shouldn't log error
       }
     })
@@ -720,47 +723,55 @@ export class TridentProvider extends LiquidityProvider {
 
     stablePoolCodesToCreate.forEach((poolCode, i) => {
       const pool = poolCode.pool as StableSwapRPool
-      const total0 = rebases.get(pool.token0.address)
+      const total0 = rebases.get(pool.token0.address.toLowerCase())
+
       if (total0) {
         const current = pool.getTotal0()
         if (!total0.elastic.eq(current.elastic) || !total0.base.eq(current.base)) {
           pool.updateTotal0(total0)
         }
       }
-      const total1 = rebases.get(pool.token1.address)
+
+      const total1 = rebases.get(pool.token1.address.toLowerCase())
       if (total1) {
         const current = pool.getTotal1()
         if (!total1.elastic.eq(current.elastic) || !total1.base.eq(current.base)) {
           pool.updateTotal1(total1)
         }
       }
+
       const res0 = stableReserves?.[i]?.result?.[0]
       const res1 = stableReserves?.[i]?.result?.[1]
 
       const res0BN = BigNumber.from(res0)
       const res1BN = BigNumber.from(res1)
-      if (!res0 || !res1 || !pool.reserve0.eq(res0BN) || !pool.reserve1.eq(res1BN)) {
+      if (!res0 || !res1) {
         return
       }
-      pool.updateReserves(toShareBN(res0BN, pool.getTotal0()), toShareBN(res1BN, pool.getTotal1()))
+      //pool.updateReserves(toShareBN(res0BN, pool.getTotal0()), toShareBN(res1BN, pool.getTotal1()))
+      pool.updateReservesAmounts(res0BN, res1BN)
 
       this.onDemandStablePools.set(pool.address, { poolCode, validUntilTimestamp })
 
-      console.debug(
-        `${this.getLogPrefix()} - ON DEMAND CREATION: ${pool.address} stable (${pool.token0.symbol}/${
-          pool.token1.symbol
-        })`
-      )
+      // console.debug(
+      //   `${this.getLogPrefix()} - ON DEMAND CREATION: ${pool.address} stable (${pool.token0.symbol}/${
+      //     pool.token1.symbol
+      //   })`
+      // )
       ++created
     })
 
-    console.debug(
-      `${this.getLogPrefix()} - ON DEMAND: Created and fetched reserves for ${created} pools, extended 'lifetime' for ${updated} pools and added ${newBridges} bridges`
-    )
+    // console.debug(
+    //   `${this.getLogPrefix()} - ON DEMAND: Created and fetched reserves for ${created} pools, extended 'lifetime' for ${updated} pools and added ${newBridges} bridges`
+    // )
   }
 
   private async discoverNewPools() {
     if (this.discoverNewPoolsTimestamp > getUnixTime(Date.now())) {
+      return
+    }
+
+    if (!this.databaseClient) {
       return
     }
 
@@ -789,14 +800,14 @@ export class TridentProvider extends LiquidityProvider {
       }
     }
 
-    console.debug(
-      `****** MEM - ${this.getLogPrefix()} 
-      init classic pools: ${this.topClassicPools.size} 
-      on demand classic pools: ${this.onDemandClassicPools.size} 
-      init stable pools: ${this.topStablePools.size} 
-      on demand stable pools: ${this.onDemandStablePools.size} 
-      bridges: ${this.bridges.size}`
-    )
+    // console.debug(
+    //   `****** MEM - ${this.getLogPrefix()}
+    //   init classic pools: ${this.topClassicPools.size}
+    //   on demand classic pools: ${this.onDemandClassicPools.size}
+    //   init stable pools: ${this.topStablePools.size}
+    //   on demand stable pools: ${this.onDemandStablePools.size}
+    //   bridges: ${this.bridges.size}`
+    // )
   }
 
   private async updateAvailablePools() {
@@ -830,7 +841,7 @@ export class TridentProvider extends LiquidityProvider {
 
     classicPoolsToRemove.forEach((address) => {
       this.topClassicPools.delete(address)
-      console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Removed ${address} from classic top pools`)
+      //console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Removed ${address} from classic top pools`)
     })
 
     classicPoolsToAdd.forEach((address) => {
@@ -852,7 +863,7 @@ export class TridentProvider extends LiquidityProvider {
           poolsToCreate.address,
           new BentoPoolCode(rPool, this.getType(), this.getPoolProviderName())
         )
-        console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Added ${address} to classic top pools`)
+        //console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Added ${address} to classic top pools`)
       } else {
         console.warn(`${this.getLogPrefix()} - PRIORITIZE POOLS: Could not find classic pool, unexpected state.`)
       }
@@ -867,7 +878,7 @@ export class TridentProvider extends LiquidityProvider {
 
     stablePoolsToRemove.forEach((address) => {
       this.topStablePools.delete(address)
-      console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Removed ${address} from stable top pools`)
+      //console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Removed ${address} from stable top pools`)
     })
 
     stablePoolsToAdd.forEach((address) => {
@@ -893,7 +904,7 @@ export class TridentProvider extends LiquidityProvider {
           poolsToCreate.address,
           new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName())
         )
-        console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Added ${address} to stable top pools`)
+        //console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Added ${address} to stable top pools`)
       } else {
         console.warn(`${this.getLogPrefix()} - PRIORITIZE POOLS: Could not find stable pool, unexpected state.`)
       }
@@ -918,11 +929,10 @@ export class TridentProvider extends LiquidityProvider {
           t.address.toLowerCase(),
           new BentoBridgePoolCode(bridge, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
         )
-        console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Added bridge ${bridge.address}`)
+        //console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Added bridge ${bridge.address}`)
       }
     })
   }
-
 
   startFetchPoolsData() {
     this.stopFetchPoolsData()
@@ -963,7 +973,7 @@ export class TridentProvider extends LiquidityProvider {
     }
 
     if (removed > 0) {
-      console.log(`${this.getLogPrefix()} -Removed ${removed} stale pools`)
+      //console.log(`${this.getLogPrefix()} -Removed ${removed} stale pools`)
     }
   }
 
@@ -1001,7 +1011,7 @@ export class TridentProvider extends LiquidityProvider {
           | {
               error: Error
               result?: undefined
-              status: 'error'
+              status: 'failure'
             }
           | {
               error?: undefined
@@ -1027,11 +1037,11 @@ export class TridentProvider extends LiquidityProvider {
       }
 
       pool.updateReserves(res0BN, res1BN)
-      console.info(
-        `${this.getLogPrefix()} - SYNC, classic pool: ${pool.address} ${pool.token0.symbol}/${
-          pool.token1.symbol
-        } ${res0BN.toString()} ${res1BN.toString()}`
-      )
+      // console.info(
+      //   `${this.getLogPrefix()} - SYNC, classic pool: ${pool.address} ${pool.token0.symbol}/${
+      //     pool.token1.symbol
+      //   } ${res0BN.toString()} ${res1BN.toString()}`
+      // )
     })
   }
 
@@ -1043,7 +1053,7 @@ export class TridentProvider extends LiquidityProvider {
           | {
               error: Error
               result?: undefined
-              status: 'error'
+              status: 'failure'
             }
           | {
               error?: undefined
@@ -1056,14 +1066,14 @@ export class TridentProvider extends LiquidityProvider {
     if (!reserves) return
     poolCodes.forEach((pc, i) => {
       const pool = pc.pool as StableSwapRPool
-      const total0 = rebases.get(pool.token0.address)
+      const total0 = rebases.get(pool.token0.address.toLowerCase())
       if (total0) {
         const current = pool.getTotal0()
         if (!total0.elastic.eq(current.elastic) || !total0.base.eq(current.base)) {
           pool.updateTotal0(total0)
         }
       }
-      const total1 = rebases.get(pool.token1.address)
+      const total1 = rebases.get(pool.token1.address.toLowerCase())
       if (total1) {
         const current = pool.getTotal1()
         if (!total1.elastic.eq(current.elastic) || !total1.base.eq(current.base)) {
@@ -1075,20 +1085,21 @@ export class TridentProvider extends LiquidityProvider {
 
       const res0BN = BigNumber.from(res0)
       const res1BN = BigNumber.from(res1)
-      if (!res0 || !res1 || !pool.reserve0.eq(res0BN) || !pool.reserve1.eq(res1BN)) {
+      if (!res0 || !res1) {
         return
       }
+
+      pool.updateReservesAmounts(res0BN, res1BN)
       // Always updating because reserve0 and 1 is being converted to amount and adjusted to wei using realReservesToAdjusted()
       // but the res0 and res1 are not adjusted.
-      pool.updateReserves(toShareBN(res0BN, pool.getTotal0()), toShareBN(res1BN, pool.getTotal1()))
     })
   }
 
-  private poolResponseToSortedTokens(poolResults: PoolResponse2[]) {
+  private poolResponseToSortedTokens(poolResults: (PoolResponse2 | TridentStaticPool)[]) {
     const tokenMap = new Map<string, Token>()
     poolResults.forEach((pool) => {
-      tokenMap.set(pool.token0.address, mapToken(this.chainId, pool.token0))
-      tokenMap.set(pool.token1.address, mapToken(this.chainId, pool.token1))
+      tokenMap.set(pool.token0.address, pool.token0 as Token)
+      tokenMap.set(pool.token1.address, pool.token1 as Token)
     })
     const tokensDedup = Array.from(tokenMap.values())
     // tokens sorting

@@ -6,6 +6,9 @@ interface UseERC20AllowanceReturn extends Omit<ReturnType<typeof useContractRead
   data: Amount<Token> | undefined
 }
 
+/**
+ * @deprecated  use @sushiswap/wagmi/future/hooks/approvals/useTokenAllowance
+ */
 export function useERC20Allowance(
   watch: boolean,
   token?: Token,
@@ -14,7 +17,7 @@ export function useERC20Allowance(
 ): UseERC20AllowanceReturn {
   const args = useMemo(() => [owner, spender] as [Address, Address], [owner, spender])
   const data = useContractRead({
-    address: token?.address,
+    address: token ? (token.address as Address) : undefined,
     abi: erc20ABI,
     functionName: 'allowance',
     args,

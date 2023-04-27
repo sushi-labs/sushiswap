@@ -69,7 +69,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
           </Typography>
         </div>
       </Transition>
-      <Widget id="stakeLiquidity" maxWidth={400} className="bg-slate-800">
+      <Widget id="stakeLiquidity" maxWidth={400} className="dark:bg-slate-800 bg-white">
         <Widget.Content>
           <Disclosure defaultOpen={balance?.greaterThan(ZERO)}>
             {({ open }) => (
@@ -83,7 +83,11 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                         'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
                       )}
                     >
-                      <ChevronDownIcon width={24} height={24} className="group-hover:text-slate-200 text-slate-300" />
+                      <ChevronDownIcon
+                        width={24}
+                        height={24}
+                        className="text-gray-700 hover:text-gray-800 dark:group-hover:text-slate-200 dark:text-slate-300"
+                      />
                     </div>
                   </div>
                 </Disclosure.Button>
@@ -98,7 +102,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                   leaveTo="transform max-h-0"
                 >
                   <Disclosure.Panel unmount={false}>
-                    <Typography variant="sm" className="px-3 pb-5 text-slate-400">
+                    <Typography variant="sm" className="px-3 pb-5 dark:text-slate-400 text-slate-600">
                       Unstake your liquidity tokens first if you mean to remove your liquidity position
                     </Typography>
                     <div className="flex flex-col gap-3 p-3">

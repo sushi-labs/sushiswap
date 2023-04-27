@@ -12,21 +12,6 @@ const config: Record<
   Services: {
     Swap: { href: 'https://www.sushi.com/swap' },
     Earn: { href: 'https://www.sushi.com/earn' },
-    'Lending & Borrowing': {
-      href: 'https://app.sushi.com/kashi',
-      target: '_blank',
-      rel: 'noopener noreferrer',
-    },
-    'Miso Launchpad': {
-      href: 'https://app.sushi.com/miso',
-      target: '_blank',
-      rel: 'noopener noreferrer',
-    },
-    'Shoyu NFT': {
-      href: 'https://shoyunft.com',
-      target: '_blank',
-      rel: 'noopener noreferrer',
-    },
     Payments: { href: 'https://www.sushi.com/furo' },
     Analytics: { href: 'https://www.sushi.com/analytics' },
   },

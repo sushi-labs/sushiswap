@@ -1,6 +1,7 @@
-import { Edge, Graph, Vertice } from '../src'
 import { BigNumber } from '@ethersproject/bignumber'
 import seedrandom from 'seedrandom'
+
+import { Edge, Graph, Vertice } from '../src'
 import { ConstantProductRPool, RToken } from '../src/PrimaryPools'
 
 type Topology = [number, number[][]]
@@ -8,7 +9,7 @@ type Topology = [number, number[][]]
 function createTopology(t: Topology): [Graph, Vertice, Vertice] {
   const tokens: RToken[] = []
   for (let i = 0; i < t[0]; ++i) {
-    tokens.push({ name: '' + i, address: '' + i, symbol: '' + i })
+    tokens.push({ name: '' + i, address: '' + i, symbol: '' + i, decimals: 18 })
   }
   const bn = BigNumber.from(1e6)
   const pools = t[1].map((e, i) => {
@@ -31,7 +32,7 @@ function createTopology(t: Topology): [Graph, Vertice, Vertice] {
 function createCorrectTopology(t: Topology, paths: number): [Graph, Vertice, Vertice] {
   const tokens: RToken[] = []
   for (let i = 0; i < t[0]; ++i) {
-    tokens.push({ name: '' + i, address: '' + i, symbol: '' + i })
+    tokens.push({ name: '' + i, address: '' + i, symbol: '' + i, decimals: 18 })
   }
   const bn = BigNumber.from(1e6)
   const pools = t[1].map((e, i) => {

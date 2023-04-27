@@ -78,11 +78,15 @@ const _Add = () => {
                 <Container className="flex justify-center">
                   <Link.External
                     href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"
-                    className="flex justify-center px-6 py-4 decoration-slate-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
+                    className="flex justify-center px-6 py-4 dark:decoration-slate-500 decoration-gray-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
                   >
-                    <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-500">
+                    <Typography
+                      variant="xs"
+                      weight={500}
+                      className="flex items-center gap-1 dark:text-slate-500 text-gray-600"
+                    >
                       Learn more about liquidity and yield farming
-                      <ExternalLinkIcon width={16} height={16} className="text-slate-500" />
+                      <ExternalLinkIcon width={16} height={16} className="dark:text-slate-500 text-gray-600" />
                     </Typography>
                   </Link.External>
                 </Container>
@@ -93,7 +97,6 @@ const _Add = () => {
                 </AppearOnMount>
               </div>
             </div>
-            <div className="z-[-1] bg-gradient-radial fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
           </Layout>
         </PoolPositionStakedProvider>
       </PoolPositionProvider>

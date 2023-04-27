@@ -1,101 +1,31 @@
-import { CheckIcon } from '@heroicons/react/solid'
 import { classNames } from '@sushiswap/ui'
-import { useRouter } from 'next/router'
-import React, { FC, Fragment } from 'react'
+import React, { FC, useCallback } from 'react'
 
-import { SUPPORTED_CHAIN_IDS } from '../../../../config'
-import { AVAILABLE_POOL_TYPE_MAP, AVAILABLE_VERSION_MAP } from '../../../../lib/constants'
-import { usePoolFilters } from '../../../PoolsFiltersProvider'
+import { FilterTag, usePoolFilters } from '../../../PoolsFiltersProvider'
 import { TableFiltersSearchToken } from './TableFiltersSearchToken'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { Listbox, Transition } from '@headlessui/react'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
-import { Chain } from '@sushiswap/chain'
-import { ChevronDownIcon } from '@heroicons/react/outline'
+import { TableFiltersNetwork } from './TableFiltersNetwork'
 
 export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters = false }) => {
-  const router = useRouter()
-  const { chainIds, poolTypes, poolVersions, incentivizedOnly, setFilters } = usePoolFilters()
-  const poolTypesValue = Object.keys(AVAILABLE_POOL_TYPE_MAP).length === poolTypes.length ? [] : poolTypes
-  const poolVersionsValue = Object.keys(AVAILABLE_VERSION_MAP).length === poolVersions.length ? [] : poolVersions
-  const values = SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds
+  const { categories, setFilters } = usePoolFilters()
+
+  const handler = useCallback(
+    (item: FilterTag) => {
+      setFilters({
+        categories: categories.includes(item) ? categories.filter((el) => el !== item) : [...categories, item],
+      })
+    },
+    [categories, setFilters]
+  )
 
   return (
     <div className="flex flex-col gap-4 mb-4">
-      <div className="h-px bg-gray-200 dark:bg-slate-200/5 w-full" />
+      <div className="w-full h-px bg-gray-200 dark:bg-slate-200/5" />
       <div className="flex gap-4">
         <TableFiltersSearchToken />
-        <Listbox
-          as={Fragment}
-          value={values}
-          onChange={(chainIds) => setFilters({ chainIds: chainIds.length === 0 ? SUPPORTED_CHAIN_IDS : chainIds })}
-          multiple
-        >
-          {({ open }) => (
-            <div className="relative z-[100]">
-              <Listbox.Button as={Button} variant="outlined" size="lg" color="default">
-                Networks{' '}
-                <ChevronDownIcon
-                  width={24}
-                  height={24}
-                  className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
-                />
-              </Listbox.Button>
-              <Transition
-                enter="transition duration-300 ease-out"
-                enterFrom="transform translate-y-[-16px] opacity-0"
-                enterTo="transform translate-y-0 opacity-100"
-                leave="transition duration-300 ease-out"
-                leaveFrom="transform translate-y-0 opacity-100"
-                leaveTo="transform translate-y-[-16px] opacity-0"
-              >
-                <div className="absolute pt-2 -top-[-1] right-0 sm:w-[320px]">
-                  <div className="relative z-[100] p-2 flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white dark:bg-slate-800">
-                    <div className="max-h-[300px] scroll">
-                      <Listbox.Options className="space-y-1">
-                        {SUPPORTED_CHAIN_IDS.map((chainId) => (
-                          <Listbox.Option
-                            key={chainId}
-                            value={chainId}
-                            className={({ selected }) =>
-                              classNames(
-                                'w-full group hover:bg-gray-100 hover:dark:bg-slate-700 px-2.5 flex rounded-lg justify-between gap-2 items-center cursor-pointer transform-all h-[40px]'
-                              )
-                            }
-                          >
-                            {({ selected }) => (
-                              <>
-                                <div className="flex items-center gap-2.5">
-                                  <NetworkIcon
-                                    chainId={chainId}
-                                    width={20}
-                                    height={20}
-                                    className="text-gray-600 group-hover:text-gray-900 dark:text-slate-50"
-                                  />
-                                  <p
-                                    className={classNames(
-                                      selected ? 'font-semibold text-gray-900' : 'font-medium text-gray-500',
-                                      'text-sm group-hover:text-gray-900 dark:text-slate-300 dark:group-hover:text-slate-50'
-                                    )}
-                                  >
-                                    {Chain.from(chainId).name}
-                                  </p>
-                                </div>
-                                {selected && <CheckIcon width={16} height={16} className="text-blue" />}
-                              </>
-                            )}
-                          </Listbox.Option>
-                        ))}
-                      </Listbox.Options>
-                    </div>
-                  </div>
-                </div>
-              </Transition>
-            </div>
-          )}
-        </Listbox>
+        <TableFiltersNetwork />
       </div>
-      <div className="h-px bg-gray-200 dark:bg-slate-200/5 w-full" />
+      <div className="w-full h-px bg-gray-200 dark:bg-slate-200/5" />
       <div className="flex flex-wrap items-center gap-3">
         <div
           className={classNames(
@@ -104,68 +34,58 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
           )}
         >
           <Button
-            onClick={() =>
-              setFilters({
-                poolVersions: poolVersions.includes('LEGACY')
-                  ? poolVersions.filter((el) => el !== 'LEGACY')
-                  : [...poolVersions, 'LEGACY'],
-              })
-            }
+            className="items-center gap-2.5"
+            onClick={() => handler(FilterTag.SUSHISWAP_V3)}
             size="sm"
-            variant={poolVersions.includes('LEGACY') ? 'outlined' : 'empty'}
-            color={poolVersions.includes('LEGACY') ? 'blue' : 'default'}
+            variant={categories.includes(FilterTag.SUSHISWAP_V3) ? 'outlined' : 'empty'}
+            color={categories.includes(FilterTag.SUSHISWAP_V3) ? 'blue' : 'default'}
           >
-            V1
+            <span>🍣</span>{' '}
+            <span>
+              SushiSwap <sup>v3</sup>
+            </span>
           </Button>
           <Button
-            onClick={() =>
-              setFilters({
-                poolVersions: poolVersions.includes('TRIDENT')
-                  ? poolVersions.filter((el) => el !== 'TRIDENT')
-                  : [...poolVersions, 'TRIDENT'],
-              })
-            }
+            className="gap-2.5"
+            onClick={() => handler(FilterTag.SUSHISWAP_V2)}
             size="sm"
-            variant={poolVersions.includes('TRIDENT') ? 'outlined' : 'empty'}
-            color={poolVersions.includes('TRIDENT') ? 'blue' : 'default'}
+            variant={categories.includes(FilterTag.SUSHISWAP_V2) ? 'outlined' : 'empty'}
+            color={categories.includes(FilterTag.SUSHISWAP_V2) ? 'blue' : 'default'}
           >
-            V2
+            <span>🍣</span>{' '}
+            <span>
+              SushiSwap <sup>v2</sup>
+            </span>
+          </Button>
+
+          <Button
+            className="flex items-center gap-2.5"
+            onClick={() => handler(FilterTag.BENTOBOX_STABLE)}
+            size="sm"
+            variant={categories.includes(FilterTag.BENTOBOX_STABLE) ? 'outlined' : 'empty'}
+            color={categories.includes(FilterTag.BENTOBOX_STABLE) ? 'blue' : 'default'}
+          >
+            <span className="mt-1">🍱</span>
+            <span>Stable</span>
           </Button>
           <Button
-            onClick={() =>
-              setFilters({
-                poolTypes: poolTypes.includes('STABLE_POOL')
-                  ? poolTypes.filter((el) => el !== 'STABLE_POOL')
-                  : [...poolTypes, 'STABLE_POOL'],
-              })
-            }
+            className="flex items-center gap-2.5"
+            onClick={() => handler(FilterTag.BENTOBOX_CLASSIC)}
             size="sm"
-            variant={poolTypes.includes('STABLE_POOL') ? 'outlined' : 'empty'}
-            color={poolTypes.includes('STABLE_POOL') ? 'blue' : 'default'}
+            variant={categories.includes(FilterTag.BENTOBOX_CLASSIC) ? 'outlined' : 'empty'}
+            color={categories.includes(FilterTag.BENTOBOX_CLASSIC) ? 'blue' : 'default'}
           >
-            Stable
+            <span className="mt-1">🍱</span>
+            <span>Classic</span>
           </Button>
           <Button
-            onClick={() =>
-              setFilters({
-                poolTypes: poolTypes.includes('CONSTANT_PRODUCT_POOL')
-                  ? poolTypes.filter((el) => el !== 'CONSTANT_PRODUCT_POOL')
-                  : [...poolTypes, 'CONSTANT_PRODUCT_POOL'],
-              })
-            }
+            onClick={() => handler(FilterTag.FARMS_ONLY)}
             size="sm"
-            variant={poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'outlined' : 'empty'}
-            color={poolTypes.includes('CONSTANT_PRODUCT_POOL') ? 'blue' : 'default'}
+            variant={categories.includes(FilterTag.FARMS_ONLY) ? 'outlined' : 'empty'}
+            color={categories.includes(FilterTag.FARMS_ONLY) ? 'blue' : 'default'}
+            className="flex gap-2.5"
           >
-            Classic
-          </Button>
-          <Button
-            onClick={() => setFilters({ incentivizedOnly: !incentivizedOnly })}
-            size="sm"
-            variant={incentivizedOnly ? 'outlined' : 'empty'}
-            color={incentivizedOnly ? 'blue' : 'default'}
-          >
-            Farms Only
+            <span>🧑‍🌾</span> <span>Farms</span>
           </Button>
         </div>
       </div>

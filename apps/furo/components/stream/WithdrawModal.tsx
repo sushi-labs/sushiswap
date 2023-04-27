@@ -1,20 +1,18 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
 import { CheckCircleIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { Button, classNames, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
-import { Checker, useFuroStreamContract, useSendTransaction, Web3Input } from '@sushiswap/wagmi'
+import { Checker, useFuroStreamContract, _useSendTransaction as useSendTransaction, Web3Input } from '@sushiswap/wagmi'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { useAccount } from '@sushiswap/wagmi'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { BottomPanel, CurrencyInputBase } from '../../components'
 import { Stream } from '../../lib'
 import { useStreamBalance } from '../../lib'
-import { useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroStreamChainId } from '@sushiswap/furo'
 
 interface WithdrawModalProps {
@@ -27,7 +25,6 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
   const balance = useStreamBalance(chainId, stream?.id, stream?.token)
   const contract = useFuroStreamContract(chainId)
-  const { mutate: storeNotification } = useCreateNotification({ account: address })
 
   const [open, setOpen] = useState(false)
   const [input, setInput] = useState<string>('')
@@ -43,8 +40,8 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
       if (!data || !amount) return
 
       const ts = new Date().getTime()
-
-      const notificationData: NotificationData = {
+      void createToast({
+        account: address,
         type: 'withdrawStream',
         txHash: data.hash,
         chainId: chainId,
@@ -56,11 +53,9 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
           completed: `Successfully withdrawn ${amount.toSignificant(6)} ${amount.currency.symbol}`,
           failed: 'Something went wrong withdrawing from stream',
         },
-      }
-
-      storeNotification(createToast(notificationData))
+      })
     },
-    [amount, chainId, storeNotification]
+    [amount, chainId, address]
   )
 
   const prepare = useCallback(

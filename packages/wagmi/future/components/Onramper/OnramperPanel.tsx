@@ -6,17 +6,16 @@ import { useOnramperContext } from './OnramperProvider'
 export const OnramperPanel: FC = () => {
   const { address } = useAccount()
   const { open, setOpen } = useOnramperContext()
-
   const onClose = useCallback(() => setOpen(false), [setOpen])
 
-  let src = 'https://buy.onramper.com?apiKey=pk_prod_01GTYEN8CHRVPKES7HK2S9JXDJ&defaultCrypto=ETH'
+  let src = 'https://buy.onramper.com?themeName=sushi&apiKey=pk_prod_01GTYEN8CHRVPKES7HK2S9JXDJ&defaultCrypto=ETH'
   if (address) {
     src += `&wallets=ETH:${address}`
   }
 
   return (
-    <Dialog open={open} unmount={false} onClose={onClose}>
-      <div className="flex items-center justify-center w-full h-[75vh] sm:w-[482px] sm:h-[660px] rounded-t-2xl sm:rounded-2xl overflow-hidden">
+    <Dialog open={open} onClose={onClose}>
+      <div className="flex items-center justify-center w-full h-[75vh] sm:w-[482px] sm:h-[560px] rounded-t-2xl sm:rounded-2xl overflow-hidden">
         <iframe
           src={src}
           height="100%"

@@ -2,6 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import {
   APE,
   APE_ADDRESS,
+  ARB,
   BCT,
   BCT_ADDRESS,
   DAI,
@@ -11,6 +12,7 @@ import {
   FRAX_ADDRESS,
   FXS,
   FXS_ADDRESS,
+  GNO,
   KLIMA,
   KLIMA_ADDRESS,
   KP3R,
@@ -19,6 +21,7 @@ import {
   LDO_ADDRESS,
   LINK,
   LUSD,
+  MATIC,
   MIM,
   Native,
   NFTX,
@@ -60,6 +63,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     OHM[ChainId.ETHEREUM],
     NFTX[ChainId.ETHEREUM],
     LINK[ChainId.ETHEREUM],
+    SUSHI[ChainId.ETHEREUM],
   ],
 
   [ChainId.RINKEBY]: [WNATIVE[ChainId.RINKEBY], USDC[ChainId.RINKEBY]],
@@ -109,22 +113,22 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDC[ChainId.ARBITRUM],
     USDT[ChainId.ARBITRUM],
     DAI[ChainId.ARBITRUM],
-    MIM[ChainId.ARBITRUM],
-    FRAX[ChainId.ARBITRUM],
-    new Token({
-      chainId: ChainId.ARBITRUM,
-      address: '0x539bdE0d7Dbd336b79148AA742883198BBF60342',
-      decimals: 18,
-      symbol: 'MAGIC',
-      name: 'MAGIC',
-    }),
-    new Token({
-      chainId: ChainId.ARBITRUM,
-      address: '0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1',
-      decimals: 18,
-      symbol: 'gOHM',
-      name: 'Governance OHM',
-    }),
+    // MIM[ChainId.ARBITRUM],
+    // FRAX[ChainId.ARBITRUM],
+    // new Token({
+    //   chainId: ChainId.ARBITRUM,
+    //   address: '0x539bdE0d7Dbd336b79148AA742883198BBF60342',
+    //   decimals: 18,
+    //   symbol: 'MAGIC',
+    //   name: 'MAGIC',
+    // }),
+    // new Token({
+    //   chainId: ChainId.ARBITRUM,
+    //   address: '0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1',
+    //   decimals: 18,
+    //   symbol: 'gOHM',
+    //   name: 'Governance OHM',
+    // }),
   ],
   [ChainId.ARBITRUM_NOVA]: [
     WNATIVE[ChainId.ARBITRUM_NOVA],
@@ -277,6 +281,14 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDC[ChainId.BOBA_BNB],
   ],
   [ChainId.BTTC]: [WNATIVE[ChainId.BTTC], USDC[ChainId.BTTC], USDT[ChainId.BTTC]],
+  [ChainId.POLYGON_ZKEVM]: [
+    WNATIVE[ChainId.POLYGON_ZKEVM],
+    MATIC[ChainId.POLYGON_ZKEVM],
+    USDC[ChainId.POLYGON_ZKEVM],
+    USDT[ChainId.POLYGON_ZKEVM],
+    DAI[ChainId.POLYGON_ZKEVM],
+    WBTC[ChainId.POLYGON_ZKEVM],
+  ],
 }
 
 export const ADDITIONAL_BASES: {
@@ -350,6 +362,7 @@ export const COMMON_BASES = {
   [ChainId.ETHEREUM]: [
     Native.onChain(ChainId.ETHEREUM),
     WNATIVE[ChainId.ETHEREUM],
+    SUSHI[ChainId.ETHEREUM],
     WBTC[ChainId.ETHEREUM],
     USDC[ChainId.ETHEREUM],
     USDT[ChainId.ETHEREUM],
@@ -362,6 +375,7 @@ export const COMMON_BASES = {
   [ChainId.GNOSIS]: [
     Native.onChain(ChainId.GNOSIS),
     WNATIVE[ChainId.GNOSIS],
+    GNO[ChainId.GNOSIS],
     WETH9[ChainId.GNOSIS],
     USDC[ChainId.GNOSIS],
     USDT[ChainId.GNOSIS],
@@ -401,6 +415,7 @@ export const COMMON_BASES = {
   [ChainId.ARBITRUM_NOVA]: [
     Native.onChain(ChainId.ARBITRUM_NOVA),
     WNATIVE[ChainId.ARBITRUM_NOVA],
+    ARB[ChainId.ARBITRUM_NOVA],
     WBTC[ChainId.ARBITRUM_NOVA],
     USDC[ChainId.ARBITRUM_NOVA],
     USDT[ChainId.ARBITRUM_NOVA],
@@ -429,6 +444,7 @@ export const COMMON_BASES = {
   [ChainId.ARBITRUM]: [
     Native.onChain(ChainId.ARBITRUM),
     WNATIVE[ChainId.ARBITRUM],
+    ARB[ChainId.ARBITRUM],
     WBTC[ChainId.ARBITRUM],
     USDC[ChainId.ARBITRUM],
     USDT[ChainId.ARBITRUM],
@@ -557,5 +573,14 @@ export const COMMON_BASES = {
   ],
   [ChainId.SCROLL_ALPHA_TESTNET]: [Native.onChain(ChainId.SCROLL_ALPHA_TESTNET), WNATIVE[ChainId.SCROLL_ALPHA_TESTNET]],
   [ChainId.BASE_TESTNET]: [Native.onChain(ChainId.BASE_TESTNET), WNATIVE[ChainId.BASE_TESTNET]],
+  [ChainId.POLYGON_ZKEVM]: [
+    Native.onChain(ChainId.POLYGON_ZKEVM),
+    WNATIVE[ChainId.POLYGON_ZKEVM],
+    MATIC[ChainId.POLYGON_ZKEVM],
+    USDC[ChainId.POLYGON_ZKEVM],
+    USDT[ChainId.POLYGON_ZKEVM],
+    DAI[ChainId.POLYGON_ZKEVM],
+    WBTC[ChainId.POLYGON_ZKEVM],
+  ],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const

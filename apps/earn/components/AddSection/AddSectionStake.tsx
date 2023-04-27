@@ -6,10 +6,9 @@ import { ZERO } from '@sushiswap/math'
 import { Button, Dots, Typography } from '@sushiswap/ui'
 import { Approve, Checker, getMasterChefContractConfig, useMasterChefDeposit } from '@sushiswap/wagmi'
 import { FC, Fragment, useMemo, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 
 import { useGraphPool } from '../../lib/hooks'
-import { useNotifications } from '../../lib/state/storage'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 import { useSWRConfig } from 'swr'
@@ -53,7 +52,7 @@ export const AddSectionStake: FC<{ poolId: string; title?: string }> = ({ poolId
 const _AddSectionStake: FC<AddSectionStakeProps> = ({ pool, chefType, title, farmId }) => {
   const [hover, setHover] = useState(false)
   const { address } = useAccount()
-  const [, { createNotification }] = useNotifications(address)
+
   const [value, setValue] = useState('')
   const {
     data: { reserve1, reserve0, liquidityToken },
@@ -69,7 +68,6 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pool, chefType, title, far
     chainId: liquidityToken.chainId,
     chef: chefType,
     pid: farmId,
-    onSuccess: createNotification,
   })
 
   return (
@@ -84,7 +82,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pool, chefType, title, far
         leaveFrom="transform opacity-100"
         leaveTo="transform opacity-0"
       >
-        <div className="border border-slate-200/5 flex justify-center items-center z-[100] absolute inset-0 backdrop-blur bg-black bg-opacity-[0.24] rounded-2xl">
+        <div className="border dark:border-slate-200/5 border-gray-900/5 flex justify-center items-center z-[100] absolute inset-0 backdrop-blur bg-black bg-opacity-[0.24] rounded-2xl">
           <Typography variant="xs" weight={600} className="bg-white bg-opacity-[0.12] rounded-full p-2 px-3">
             No liquidity tokens found, did you add liquidity first?
           </Typography>
@@ -104,7 +102,6 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pool, chefType, title, far
             <Checker.Network size="md" chainId={pool.chainId}>
               <Checker.Amounts size="md" chainId={pool.chainId} amounts={[amount]} fundSource={FundSource.WALLET}>
                 <Approve
-                  onSuccess={createNotification}
                   className="flex-grow !justify-end"
                   components={
                     <Approve.Components>

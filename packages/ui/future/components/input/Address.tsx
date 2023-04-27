@@ -44,9 +44,9 @@ export const Address = forwardRef<HTMLInputElement, AddressProps>(
           }
           onChange={(event) => onChange && onChange(event.target.value.replace(matchSpaces, ''))}
           inputMode="search"
-          autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
+          autoComplete="new-password"
           spellCheck="false"
           pattern="^(0x[a-fA-F0-9]{40})$"
           {...rest}

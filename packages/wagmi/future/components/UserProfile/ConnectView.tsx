@@ -15,6 +15,7 @@ const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element | nu
   MetaMask: MetamaskIcon,
   'Trust Wallet': TrustWalletIcon,
   WalletConnect: WalletConnectIcon,
+  WalletConnectLegacy: WalletConnectIcon,
   'Coinbase Wallet': CoinbaseWalletIcon,
   Safe: GnosisSafeIcon,
 }
@@ -55,7 +56,13 @@ export const ConnectView: FC<{ onSelect(): void }> = ({ onSelect }) => {
           <List.MenuItem
             onClick={() => _onSelect(connector.id)}
             icon={Icons[connector.name]}
-            title={connector.name == 'Safe' ? 'Gnosis Safe' : connector.name}
+            title={
+              connector.name == 'Safe'
+                ? 'Gnosis Safe'
+                : connector.name == 'WalletConnectLegacy'
+                ? 'WalletConnect'
+                : connector.name
+            }
             key={connector.id}
             hoverIcon={ChevronRightIcon}
           />

@@ -3,24 +3,29 @@ import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount, Type } from '@sushiswap/currency'
 import { calculateGasMargin } from '@sushiswap/gas'
 import { Percent } from '@sushiswap/math'
-import { Button, Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
 import {
   Approve,
   getSushiSwapRouterContractConfig,
   PairState,
-  useSendTransaction,
+  _useSendTransaction as useSendTransaction,
   useSushiSwapRouterContract,
+  Address,
+  useAccount,
+  useNetwork,
 } from '@sushiswap/wagmi'
 import { BigNumber } from 'ethers'
 import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { Address, useAccount, useNetwork } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { useTransactionDeadline } from '../../lib/hooks'
-import { useNotifications, useSettings } from '../../lib/state/storage'
+import { useSettings } from '../../lib/state/storage'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
+import { createToast } from '@sushiswap/ui/future/components/toast'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 interface AddSectionReviewModalLegacyProps {
   poolState: PairState
@@ -46,7 +51,6 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   const { address } = useAccount()
   const { chain } = useNetwork()
 
-  const [, { createNotification }] = useNotifications(address)
   const contract = useSushiSwapRouterContract(chainId)
   const [{ slippageTolerance }] = useSettings()
 
@@ -55,7 +59,8 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
       if (!data || !token0 || !token1) return
 
       const ts = new Date().getTime()
-      createNotification({
+      void createToast({
+        account: address,
         type: 'mint',
         chainId,
         txHash: data.hash,
@@ -69,7 +74,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
         groupTimestamp: ts,
       })
     },
-    [chainId, createNotification, token0, token1]
+    [chainId, token0, token1, address]
   )
 
   const slippagePercent = useMemo(() => {
@@ -170,7 +175,6 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
         {children({ isWritePending, setOpen })}
         <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} setOpen={setOpen}>
           <Approve
-            onSuccess={createNotification}
             className="flex-grow !justify-end"
             components={
               <Approve.Components>
@@ -193,7 +197,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
             render={({ approved }) => {
               // console.log({ approved, isWritePending })
               return (
-                <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
+                <Button size="xl" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
                 </Button>
               )
@@ -202,6 +206,6 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
         </AddSectionReviewModal>
       </>
     ),
-    [chainId, children, createNotification, input0, input1, isWritePending, open, sendTransaction]
+    [chainId, children, input0, input1, isWritePending, open, sendTransaction]
   )
 }

@@ -1,0 +1,25 @@
+{
+  "extends": ["//"],
+  "pipeline": {
+    "build": {
+      "outputs": ["typechain/**/*", "artifacts/**/*"],
+      "dependsOn": ["^build", "export"],
+      "cache": true
+    },
+    "check": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
+    "export": {
+      "dependsOn": ["^build"],
+      "inputs": ["deployments/**/*"],
+      "outputs": ["exports/**/*"],
+      "cache": true
+    },
+    "node": {
+      "dependsOn": ["build"],
+      "outputs": ["deployments/**/*"],
+      "persistent": true
+    }
+  }
+}

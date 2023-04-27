@@ -6,7 +6,9 @@ import type { PoolCode } from '../pools/PoolCode'
 
 export enum LiquidityProviders {
   SushiSwap = 'SushiSwap',
+  SushiSwapV3 = 'SushiSwapV3',
   UniswapV2 = 'UniswapV2',
+  UniswapV3 = 'UniswapV3',
   Trident = 'Trident',
   QuickSwap = 'QuickSwap',
   ApeSwap = 'ApeSwap',
@@ -28,7 +30,7 @@ export abstract class LiquidityProvider {
   client: PublicClient
   lastUpdateBlock = 0
   readonly ON_DEMAND_POOLS_LIFETIME_IN_SECONDS = 60
-  readonly FETCH_AVAILABLE_POOLS_AFTER_SECONDS = 900 
+  readonly FETCH_AVAILABLE_POOLS_AFTER_SECONDS = 900
 
   constructor(chainId: ChainId, client: PublicClient) {
     this.chainId = chainId

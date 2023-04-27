@@ -2,7 +2,6 @@ import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount, Native } from '@sushiswap/currency'
-import { Pair } from '@sushiswap/graph-client'
 import { Pool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
@@ -15,14 +14,14 @@ import {
   StablePoolState,
   useBentoBoxTotals,
   useConstantProductPool,
-  useSendTransaction,
+  _useSendTransaction as useSendTransaction,
   useStablePool,
   useTotalSupply,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { useAccount, useNetwork } from '@sushiswap/wagmi'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 import {
@@ -34,9 +33,10 @@ import {
   unwrapWETHAction,
 } from '../../lib/actions'
 import { useTokensFromPool, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
-import { useNotifications, useSettings } from '../../lib/state/storage'
+import { useSettings } from '../../lib/state/storage'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 
 interface RemoveSectionTridentProps {
   pool: Pool
@@ -90,8 +90,6 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pool: _poo
 
   const totalSupply = useTotalSupply(liquidityToken)
 
-  const [, { createNotification }] = useNotifications(address)
-
   const underlying = useUnderlyingTokenBalanceFromPool({
     reserve0: pool?.reserve0,
     reserve1: pool?.reserve1,
@@ -135,7 +133,8 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pool: _poo
       if (!data || !chain?.id) return
 
       const ts = new Date().getTime()
-      createNotification({
+      void createToast({
+        account: address,
         type: 'burn',
         chainId: chain.id,
         txHash: data.hash,
@@ -149,7 +148,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pool: _poo
         groupTimestamp: ts,
       })
     },
-    [chain?.id, createNotification, token0.symbol, token1.symbol]
+    [address, chain?.id, token0.symbol, token1.symbol]
   )
 
   const prepare = useCallback(
@@ -291,7 +290,6 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pool: _poo
                 }
               >
                 <Approve
-                  onSuccess={createNotification}
                   className="flex-grow !justify-end"
                   components={
                     <Approve.Components>

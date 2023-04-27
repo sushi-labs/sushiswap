@@ -1,29 +1,30 @@
 'use client'
 
-import { BarLoader } from '@sushiswap/ui/future/components/BarLoader'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
-import { CheckMarkIcon } from '@sushiswap/ui/future/components/icons/CheckmarkIcon'
-import { FailedMarkIcon } from '@sushiswap/ui/future/components/icons/FailedMarkIcon'
-import { Loader } from '@sushiswap/ui/future/components/Loader'
 import { FC, ReactNode, useCallback, useState } from 'react'
 
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
-import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
-import { routeProcessorAbi } from '@sushiswap/abi'
+import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from '@sushiswap/wagmi'
 import { useTrade } from '../lib/useTrade'
-import { SendTransactionResult } from 'wagmi/actions'
-import { useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
+import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
-import { Chain } from '@sushiswap/chain'
-import { isRouteProcessorChainId, routeProcessorAddress, RouteProcessorChainId } from '@sushiswap/route-processor'
-import { createErrorToast } from '@sushiswap/ui'
 import { swapErrorToUserReadableMessage } from '../lib/swapErrorToUserReadableMessage'
 import { log } from 'next-axiom'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import {
+  ConfirmationDialog as UIConfirmationDialog,
+  ConfirmationDialogState,
+} from '@sushiswap/ui/dialog/ConfirmationDialog'
+import { useSlippageTolerance } from '@sushiswap/hooks'
+import {
+  isRouteProcessor3ChainId,
+  isRouteProcessorChainId,
+  routeProcessor3Address,
+  routeProcessorAddress,
+} from '@sushiswap/route-processor'
+import { routeProcessor2Abi } from '@sushiswap/abi'
+import { BigNumber } from 'ethers'
 
 interface ConfirmationDialogProps {
   children({
@@ -39,21 +40,14 @@ interface ConfirmationDialogProps {
   }): ReactNode
 }
 
-enum ConfirmationDialogState {
-  Undefined,
-  Pending,
-  Success,
-  Failed,
-  Sign,
-}
-
 export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) => {
   const { address } = useAccount()
   const { setReview } = useSwapActions()
   const { appType, network0, token0, token1, review } = useSwapState()
   const { approved } = useApproved('swap')
   const { data: trade } = useTrade({ crossChain: false })
-  const { mutate: storeNotification } = useCreateNotification({ account: address })
+  const [slippageTolerance] = useSlippageTolerance()
+
   // const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
 
   const [open, setOpen] = useState(false)
@@ -61,8 +55,12 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
 
   const { config, isError, error } = usePrepareContractWrite({
     chainId: network0,
-    address: routeProcessorAddress[network0 as RouteProcessorChainId],
-    abi: routeProcessorAbi,
+    address: isRouteProcessor3ChainId(network0)
+      ? routeProcessor3Address[network0]
+      : isRouteProcessorChainId(network0)
+      ? routeProcessorAddress[network0]
+      : undefined,
+    abi: routeProcessor2Abi,
     functionName: trade?.functionName,
     args: trade?.writeArgs,
     enabled:
@@ -73,9 +71,14 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       trade?.route?.status !== 'NoWay',
     overrides: trade?.overrides,
     onError: (error) => {
-      if (error.message.startsWith('user rejected transaction')) return
-      log.error('Swap prepare failed', {
+      const message = error.message.toLowerCase()
+      if (message.includes('user rejected') || message.includes('user cancelled')) {
+        return
+      }
+
+      log.error('Swap prepare error', {
         trade,
+        slippageTolerance,
         error,
       })
     },
@@ -91,7 +94,8 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       if (!trade || !network0 || !data) return
 
       const ts = new Date().getTime()
-      const notificationData: NotificationData = {
+      createToast({
+        account: address,
         type: 'swap',
         chainId: network0,
         txHash: data.hash,
@@ -113,11 +117,9 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         },
         timestamp: ts,
         groupTimestamp: ts,
-      }
-
-      storeNotification(createToast(notificationData))
+      })
     },
-    [trade, network0, isWrap, isUnwrap, storeNotification]
+    [trade, network0, address, isWrap, isUnwrap]
   )
 
   const {
@@ -126,66 +128,122 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     data,
   } = useContractWrite({
     ...config,
-    request: {
-      ...config.request,
-      gasLimit: config.request?.gasLimit.mul(120).div(100),
-    },
+    ...(config.request && { request: { ...config.request, gasLimit: config.request.gasLimit.mul(120).div(100) } }),
     onSuccess: (data) => {
       setReview(false)
 
-      // Log swap success internal, mixed, or external
-      if (
-        trade?.route?.legs?.every(
-          (leg) =>
-            leg.poolName.startsWith('Wrap') ||
-            leg.poolName.startsWith('SushiSwap') ||
-            leg.poolName.startsWith('Trident') ||
-            leg.poolName.startsWith('BentoBridge')
-        )
-      ) {
-        log.info('Swap success (internal)', {
-          trade,
-        })
-      } else if (
-        !trade?.route?.legs?.every(
-          (leg) =>
-            leg.poolName.startsWith('Wrap') ||
-            leg.poolName.startsWith('SushiSwap') ||
-            leg.poolName.startsWith('Trident') ||
-            leg.poolName.startsWith('BentoBridge')
-        )
-      ) {
-        log.info('Swap success (mix)', {
-          trade,
-        })
-      } else if (
-        trade?.route?.legs?.every(
-          (leg) =>
-            !leg.poolName.startsWith('Wrap') &&
-            !leg.poolName.startsWith('SushiSwap') &&
-            !leg.poolName.startsWith('Trident') &&
-            !leg.poolName.startsWith('BentoBridge')
-        )
-      ) {
-        log.info('Swap success (external)', {
-          trade,
-        })
-      } else {
-        log.info('Swap success (unknown)', {
-          trade,
-        })
-      }
+      data.wait().then((receipt) => {
+        if (receipt.status === 1) {
+          setDialogState(ConfirmationDialogState.Success)
 
-      data
-        .wait()
-        .then(() => setDialogState(ConfirmationDialogState.Success))
-        .catch(() => setDialogState(ConfirmationDialogState.Failed))
-      // .finally(() => refetchNetwork0Balances())
+          if (
+            trade?.route?.legs?.every(
+              (leg) =>
+                leg.poolName.startsWith('Wrap') ||
+                leg.poolName.startsWith('SushiSwap') ||
+                leg.poolName.startsWith('Trident') ||
+                leg.poolName.startsWith('BentoBridge')
+            )
+          ) {
+            log.info('Swap success (internal)', {
+              trade,
+              data,
+              receipt,
+            })
+          } else if (
+            !trade?.route?.legs?.every(
+              (leg) =>
+                leg.poolName.startsWith('Wrap') ||
+                leg.poolName.startsWith('SushiSwap') ||
+                leg.poolName.startsWith('Trident') ||
+                leg.poolName.startsWith('BentoBridge')
+            )
+          ) {
+            log.info('Swap success (mix)', {
+              trade,
+              data,
+              receipt,
+            })
+          } else if (
+            trade?.route?.legs?.every(
+              (leg) =>
+                !leg.poolName.startsWith('Wrap') &&
+                !leg.poolName.startsWith('SushiSwap') &&
+                !leg.poolName.startsWith('Trident') &&
+                !leg.poolName.startsWith('BentoBridge')
+            )
+          ) {
+            log.info('Swap success (external)', {
+              trade,
+              data,
+              receipt,
+            })
+          } else {
+            log.info('Swap success (unknown)', {
+              trade,
+              data,
+              receipt,
+            })
+          }
+        } else {
+          setDialogState(ConfirmationDialogState.Failed)
+          // Log swap success internal, mixed, or external
+          if (
+            trade?.route?.legs?.every(
+              (leg) =>
+                leg.poolName.startsWith('Wrap') ||
+                leg.poolName.startsWith('SushiSwap') ||
+                leg.poolName.startsWith('Trident') ||
+                leg.poolName.startsWith('BentoBridge')
+            )
+          ) {
+            log.info('Swap failed (internal)', {
+              trade,
+              data,
+              receipt,
+            })
+          } else if (
+            !trade?.route?.legs?.every(
+              (leg) =>
+                leg.poolName.startsWith('Wrap') ||
+                leg.poolName.startsWith('SushiSwap') ||
+                leg.poolName.startsWith('Trident') ||
+                leg.poolName.startsWith('BentoBridge')
+            )
+          ) {
+            log.info('Swap failed (mix)', {
+              trade,
+              data,
+              receipt,
+            })
+          } else if (
+            trade?.route?.legs?.every(
+              (leg) =>
+                !leg.poolName.startsWith('Wrap') &&
+                !leg.poolName.startsWith('SushiSwap') &&
+                !leg.poolName.startsWith('Trident') &&
+                !leg.poolName.startsWith('BentoBridge')
+            )
+          ) {
+            log.info('Swap failed (external)', {
+              trade,
+              data,
+              receipt,
+            })
+          } else {
+            log.info('Swap failed (unknown)', {
+              trade,
+              data,
+              receipt,
+            })
+          }
+        }
+      })
     },
     onSettled,
     onError: (error) => {
       if (error.message.startsWith('user rejected transaction')) return
-      log.error('Swap failed', {
+      log.error('Swap error', {
         trade,
         error,
       })
@@ -233,69 +291,28 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         isError,
         isConfirming: dialogState === ConfirmationDialogState.Pending,
       })}
-      <Dialog open={open} unmount={false} onClose={() => setOpen(false)}>
-        <Dialog.Content>
-          <div className="flex flex-col items-center justify-center gap-5">
-            {[ConfirmationDialogState.Failed, ConfirmationDialogState.Success].includes(dialogState) ? (
-              <BarLoader transitionDuration={4000} onComplete={onComplete} />
-            ) : (
-              <div className="h-1" />
-            )}
-            <div className="py-5">
-              {dialogState === ConfirmationDialogState.Pending || isWritePending ? (
-                <Loader size={100} strokeWidth={1} className="!text-blue" />
-              ) : dialogState === ConfirmationDialogState.Success ? (
-                <CheckMarkIcon width={100} height={100} />
-              ) : (
-                <FailedMarkIcon width={100} height={100} />
-              )}
-            </div>
-            <div className="flex flex-col items-center">
-              {dialogState === ConfirmationDialogState.Sign ? (
-                <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-medium leading-normal">
-                  Please sign order with your wallet.
-                </h1>
-              ) : dialogState === ConfirmationDialogState.Pending ? (
-                <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-medium leading-normal">
-                  Waiting for your{' '}
-                  <a
-                    target="_blank"
-                    href={data?.hash ? Chain.from(network0).getTxUrl(data.hash) : ''}
-                    className="cursor-pointer text-blue hover:underline"
-                    rel="noreferrer"
-                  >
-                    <Dots>transaction</Dots>
-                  </a>{' '}
-                  to be confirmed on the blockchain.
-                </h1>
-              ) : dialogState === ConfirmationDialogState.Success ? (
-                <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-semibold">
-                  You {isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'}
-                  <span className="text-red px-0.5">
-                    {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
-                  </span>{' '}
-                  {isWrap ? 'to' : isUnwrap ? 'to' : 'for'}{' '}
-                  <span className="text-blue px-0.5">
-                    {trade?.amountOut?.toSignificant(6)} {token1?.symbol}.
-                  </span>
-                </h1>
-              ) : (
-                <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-semibold">
-                  <span className="text-red">Oops!</span> Your{' '}
-                  <span className="cursor-pointer text-blue hover:underline">transaction</span> failed
-                </h1>
-              )}
-            </div>
-            <Button fullWidth color="blue" variant="outlined" size="xl" onClick={() => setOpen(false)} testId="make-another-swap">
-              {dialogState === ConfirmationDialogState.Success
-                ? 'Make another swap'
-                : dialogState === ConfirmationDialogState.Failed
-                ? 'Try again'
-                : 'Close'}
-            </Button>
-          </div>
-        </Dialog.Content>
-      </Dialog>
+      <UIConfirmationDialog
+        chainId={network0}
+        txHash={data?.hash}
+        open={open}
+        setOpen={() => setOpen(false)}
+        state={dialogState}
+        isWritePending={isWritePending}
+        onComplete={onComplete}
+        successMessage={
+          <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-semibold">
+            You {isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'}
+            <span className="text-red px-0.5">
+              {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
+            </span>{' '}
+            {isWrap ? 'to' : isUnwrap ? 'to' : 'for'}{' '}
+            <span className="text-blue px-0.5">
+              {trade?.amountOut?.toSignificant(6)} {token1?.symbol}.
+            </span>
+          </h1>
+        }
+        buttonSuccessMessage="Make another swap"
+      />
     </>
   )
 }

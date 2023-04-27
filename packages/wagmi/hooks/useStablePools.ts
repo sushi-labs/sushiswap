@@ -9,7 +9,7 @@ import { Address, useContractReads } from 'wagmi'
 
 import { stablePoolAbi, stablePoolFactoryAbi } from '../abis'
 import { useBentoBoxTotals } from './useBentoBoxTotals'
-import { getStablePoolFactoryContract, useStablePoolFactoryContract } from './useStablePoolFactoryContract'
+import { useStablePoolFactoryContract } from './useStablePoolFactoryContract'
 
 export enum StablePoolState {
   LOADING,
@@ -150,7 +150,7 @@ export function useGetStablePools(
   } = useContractReads({
     contracts: poolsAddresses.map((address) => ({
       chainId,
-      address,
+      address: address as Address,
       abi: stablePoolAbi,
       functionName: 'getReserves',
     })),
@@ -165,7 +165,7 @@ export function useGetStablePools(
   } = useContractReads({
     contracts: poolsAddresses.map((address) => ({
       chainId,
-      address,
+      address: address as Address,
       abi: stablePoolAbi,
       functionName: 'swapFee',
     })),
@@ -268,7 +268,7 @@ export function useStablePools(chainId: number, pools: PoolInput[]): [StablePool
   const { data } = useContractReads({
     contracts: poolsAddresses.map((address) => ({
       chainId,
-      address,
+      address: address as Address,
       abi: stablePoolAbi,
       functionName: 'getReserves',
     })),

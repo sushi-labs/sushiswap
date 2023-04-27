@@ -38,15 +38,72 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
   }
 }
 
+query V3Pools($first: Int = 1000, $skip: Int = 0, $where: V3_Pool_filter, $block: V3_Block_height) {
+  pools: V3_pools(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    token0 {
+      id
+      name
+      symbol
+      decimals
+    }
+    token1 {
+      id
+      name
+      symbol
+      decimals
+    }
+    # volumeToken0
+    # volumeToken1
+    liquidity
+    volumeUSD
+    untrackedVolumeUSD
+    feesUSD
+    feeTier
+    token0Price
+    token1Price
+    # txCount
+    collectedFeesToken0
+    collectedFeesToken1
+    collectedFeesUSD
+    totalValueLockedToken0
+    totalValueLockedToken1
+    totalValueLockedETH
+    totalValueLockedUSD
+    totalValueLockedUSDUntracked
+    liquidityProviderCount
+    createdAtBlockNumber
+  }
+}
+
 query PairsVolumeFee(
   $first: Int = 1000
   $skip: Int = 0
   $where: Pair_filter
   $block: Block_height
-  $orderBy: Pair_orderBy = volumeUSD
-  $orderDirection: OrderDirection = desc
+  # $orderBy: Pair_orderBy = volumeUSD
+  # $orderDirection: OrderDirection = desc
 ) {
-  pairs(first: $first, skip: $skip, where: $where, block: $block, orderBy: $orderBy, orderDirection: $orderDirection) {
+  pairs(first: $first, skip: $skip, where: $where, block: $block,
+  #  orderBy: $orderBy, orderDirection: $orderDirection
+   ) {
+    id
+    volumeUSD
+    feesUSD
+  }
+}
+
+query V3PoolsVolumeFee(
+  $first: Int = 1000
+  $skip: Int = 0
+  $where: V3_Pool_filter
+  $block: V3_Block_height
+  # $orderBy: Pool_orderBy = volumeUSD
+  # $orderDirection: OrderDirection = desc
+) {
+  pools: V3_pools(first: $first, skip: $skip, where: $where, block: $block,
+  #  orderBy: $orderBy, orderDirection: $orderDirection
+   ) {
     id
     volumeUSD
     feesUSD

@@ -18,13 +18,13 @@ import {
   PoolFinderType,
   useBentoBoxTotals,
   useConstantProductPoolFactoryContract,
-  useSendTransaction,
+  _useSendTransaction as useSendTransaction,
   useStablePoolFactoryContract,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { useAccount, useNetwork } from '@sushiswap/wagmi'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import {
   approveMasterContractAction,
@@ -33,8 +33,8 @@ import {
   getAsEncodedAction,
   LiquidityInput,
 } from '../../lib/actions'
-import { useNotifications } from '../../lib/state/storage'
 import { AddSectionReviewModal } from '../AddSection'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 
 interface CreateSectionReviewModalTridentProps {
   chainId: BentoBoxV1ChainId
@@ -64,7 +64,6 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const contract = useTridentRouterContract(chainId)
   const constantProductPoolFactory = useConstantProductPoolFactoryContract(chainId)
   const stablePoolFactory = useStablePoolFactoryContract(chainId)
-  const [, { createNotification }] = useNotifications(address)
 
   // const [{ slippageTolerance }] = useSettings()
 
@@ -137,7 +136,8 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     (data: SendTransactionResult | undefined) => {
       if (!data || !chain?.id || !token0 || !token1) return
       const ts = new Date().getTime()
-      createNotification({
+      createToast({
+        account: address,
         type: 'mint',
         chainId: chain.id,
         txHash: data.hash,
@@ -151,7 +151,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         groupTimestamp: ts,
       })
     },
-    [chain?.id, createNotification, token0, token1]
+    [chain?.id, token0, token1, address]
   )
 
   const prepare = useCallback(
@@ -273,7 +273,6 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
       {children({ isWritePending, setOpen })}
       <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} setOpen={setOpen}>
         <Approve
-          onSuccess={createNotification}
           className="flex-grow !justify-end"
           components={
             <Approve.Components>

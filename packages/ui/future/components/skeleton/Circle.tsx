@@ -10,6 +10,7 @@ export const Circle: FC<CircleProps> = (props) => {
     <div
       {...props}
       style={{
+        ...props.style,
         minWidth: props.radius,
         minHeight: props.radius,
         width: props.radius,

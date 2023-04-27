@@ -25,7 +25,7 @@ interface PoolData {
 export const getStablePools = async (
   chainId: BentoBoxV1ChainId,
   currencies: [Currency | undefined, Currency | undefined][],
-  totals: { base: BigNumber; elastic: BigNumber }[] | null
+  totals: Map<string, { base: BigNumber; elastic: BigNumber }>
 ) => {
   const contract = getContract({
     ...getStablePoolFactoryContract(chainId),
@@ -33,7 +33,7 @@ export const getStablePools = async (
 
   const _pairsUnique = pairsUnique(currencies)
   const _pairsUniqueAddr = _pairsUnique.map(([t0, t1]) => [t0.address, t1.address])
-  const _tokensUnique = tokensUnique(_pairsUnique)
+  // const _tokensUnique = tokensUnique(_pairsUnique)
 
   const callStatePoolsCount = await readContracts({
     contracts: _pairsUniqueAddr.map((el) => ({
@@ -90,7 +90,7 @@ export const getStablePools = async (
   const reserves = await readContracts({
     contracts: poolsAddresses.map((address) => ({
       chainId,
-      address,
+      address: address as Address,
       abi: stablePoolAbi,
       functionName: 'getReserves',
     })),
@@ -99,22 +99,24 @@ export const getStablePools = async (
   const fees = await readContracts({
     contracts: poolsAddresses.map((address) => ({
       chainId,
-      address,
+      address: address as Address,
       abi: stablePoolAbi,
       functionName: 'swapFee',
     })),
   })
 
   return pools.map((p, i) => {
-    if (!reserves?.[i] || !fees?.[i] || !totals || !totals?.[0] || !totals?.[1]) return [StablePoolState.LOADING, null]
+    const total0 = totals.get(p.token0.address)
+    const total1 = totals.get(p.token1.address)
+    if (!reserves?.[i] || !fees?.[i] || !total0 || !total1) return [StablePoolState.LOADING, null]
     return [
       StablePoolState.EXISTS,
       new StablePool(
         Amount.fromRawAmount(p.token0, reserves[i]._reserve0.toString()),
         Amount.fromRawAmount(p.token1, reserves[i]._reserve1.toString()),
         parseInt(fees[i].toString()),
-        { base: JSBI.BigInt(totals[0].base), elastic: JSBI.BigInt(totals[0].elastic) },
-        { base: JSBI.BigInt(totals[1].base), elastic: JSBI.BigInt(totals[1].elastic) }
+        { base: JSBI.BigInt(total0.base), elastic: JSBI.BigInt(total0.elastic) },
+        { base: JSBI.BigInt(total1.base), elastic: JSBI.BigInt(total1.elastic) }
       ),
     ]
   })

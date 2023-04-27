@@ -1,14 +1,15 @@
 import React, { useCallback } from 'react'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { queryParamsSchema, useSwapActions, useSwapState } from './trade/TradeProvider'
+import { useSwapActions, useSwapState } from './trade/TradeProvider'
 import { useRouter } from 'next/router'
 import { defaultQuoteCurrency, Native, Token } from '@sushiswap/currency'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
-import { useToken } from '@sushiswap/react-query'
 import { useCustomTokens } from '@sushiswap/hooks'
+import { queryParamsSchema } from '../lib/queryParamsSchema'
+import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 
 export const TokenNotFoundDialog = () => {
   const { query } = useRouter()
@@ -17,13 +18,13 @@ export const TokenNotFoundDialog = () => {
   const { setToken0, setToken1, setTokens } = useSwapActions()
   const { mutate: customTokensMutate, hasToken } = useCustomTokens()
 
-  const { data: tokenFrom, isInitialLoading: tokenFromLoading } = useToken({
+  const { data: tokenFrom, isInitialLoading: tokenFromLoading } = useTokenWithCache({
     chainId: fromChainId,
     address: fromCurrency,
     withStatus: true,
   })
 
-  const { data: tokenTo, isInitialLoading: tokenToLoading } = useToken({
+  const { data: tokenTo, isInitialLoading: tokenToLoading } = useTokenWithCache({
     chainId: toChainId,
     address: toCurrency,
     withStatus: true,

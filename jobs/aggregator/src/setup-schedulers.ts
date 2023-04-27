@@ -1,7 +1,7 @@
 import 'dotenv/config'
 
 import run from '@google-cloud/run'
-import scheduler from '@google-cloud/scheduler'
+import * as scheduler from '@google-cloud/scheduler'
 import { ChainId, chainShortName } from '@sushiswap/chain'
 import { USDC_ADDRESS } from '@sushiswap/currency'
 

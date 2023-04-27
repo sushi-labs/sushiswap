@@ -111,11 +111,9 @@ server.get('/v0', async (request) => {
   const dataFetcherStartTime = performance.now()
   await dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const dataFetcherEndTime = performance.now()
-    console.log(
-      `dataFetcher.fetchPoolsForToken(fromToken, toToken) (${(dataFetcherEndTime - dataFetcherStartTime).toFixed(
-        0
-      )} ms) `
-    )
+  console.log(
+    `dataFetcher.fetchPoolsForToken(fromToken, toToken) (${(dataFetcherEndTime - dataFetcherStartTime).toFixed(0)} ms) `
+  )
 
   // console.log('ROUTE:')
   // for (const leg of bestRoute.legs) {

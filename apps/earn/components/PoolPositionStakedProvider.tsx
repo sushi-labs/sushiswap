@@ -3,12 +3,8 @@ import { ChefType, Pool } from '@sushiswap/client'
 import { useMasterChef } from '@sushiswap/wagmi'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
-import {
-  useCreateNotification,
-  useGraphPool,
-  useTokenAmountDollarValues,
-  useUnderlyingTokenBalanceFromPool,
-} from '../lib/hooks'
+import { useGraphPool, useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from '../lib/hooks'
+import { useAccount } from '@sushiswap/wagmi'
 
 interface PoolPositionStakedContext {
   balance: Amount<Token> | undefined
@@ -77,7 +73,6 @@ const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({
   chefType,
   children,
 }) => {
-  const createNotification = useCreateNotification()
   const {
     data: { reserve0, reserve1, totalSupply, liquidityToken },
   } = useGraphPool(pool)
@@ -86,7 +81,6 @@ const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({
     chef: chefType,
     pid: farmId,
     token: liquidityToken,
-    onSuccess: createNotification,
     watch,
   })
 

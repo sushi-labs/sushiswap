@@ -1,7 +1,7 @@
 import '@sushiswap/ui/index.css'
 import '../variables.css'
 
-import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
+import { App, ThemeProvider } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
 import { SUPPORTED_CHAIN_IDS } from 'config'
@@ -13,10 +13,11 @@ import { DefaultSeo } from 'next-seo'
 import { FC, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { store } from 'store'
-import { WagmiConfig } from 'wagmi'
+import { WagmiConfig } from '@sushiswap/wagmi'
 
 import SEO from '../next-seo.config.mjs'
 import { GlobalNav } from '@sushiswap/ui/future/components/GlobalNav'
+import { ToastContainer } from '@sushiswap/ui/future/components/toast'
 
 declare global {
   interface Window {

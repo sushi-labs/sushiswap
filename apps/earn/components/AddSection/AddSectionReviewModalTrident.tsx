@@ -6,24 +6,28 @@ import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushi
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
-import { Button, Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
 import {
   Approve,
   ConstantProductPoolState,
   getTridentRouterContractConfig,
   StablePoolState,
   useBentoBoxTotals,
-  useSendTransaction,
+  _useSendTransaction as useSendTransaction,
   useTotalSupply,
   useTridentRouterContract,
+  useAccount,
+  useNetwork,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from '../../lib/actions'
-import { useNotifications, useSettings } from '../../lib/state/storage'
+import { useSettings } from '../../lib/state/storage'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
+import { createToast } from '@sushiswap/ui/future/components/toast'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 interface AddSectionReviewModalTridentProps {
   poolAddress: string
@@ -64,7 +68,6 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     })
   }, [chainId, poolAddress])
 
-  const [, { createNotification }] = useNotifications(address)
   const totalSupply = useTotalSupply(liquidityToken)
   const tokens = useMemo(() => [token0, token1], [token0, token1])
   const rebases = useBentoBoxTotals(chainId, tokens)
@@ -132,7 +135,8 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     (data: SendTransactionResult | undefined) => {
       if (!data || !chain?.id || !token0 || !token1) return
       const ts = new Date().getTime()
-      createNotification({
+      createToast({
+        account: address,
         type: 'mint',
         chainId: chain.id,
         txHash: data.hash,
@@ -146,7 +150,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         groupTimestamp: ts,
       })
     },
-    [chain?.id, createNotification, token0, token1]
+    [address, chain?.id, token0, token1]
   )
 
   const prepare = useCallback(
@@ -251,7 +255,6 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         {children({ isWritePending, setOpen })}
         <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} setOpen={setOpen}>
           <Approve
-            onSuccess={createNotification}
             className="flex-grow !justify-end"
             components={
               <Approve.Components>
@@ -286,7 +289,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
             }
             render={({ approved }) => {
               return (
-                <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
+                <Button size="xl" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
                 </Button>
               )
@@ -295,6 +298,6 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         </AddSectionReviewModal>
       </>
     ),
-    [chain, chainId, children, createNotification, input0, input1, isWritePending, open, sendTransaction]
+    [chain, chainId, children, input0, input1, isWritePending, open, sendTransaction]
   )
 }

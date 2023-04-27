@@ -9,6 +9,7 @@ export interface RToken {
   name: string
   symbol: string
   address: string
+  decimals: number
   chainId?: number | string
   tokenId?: string // if tokens' ids are equal then tokens are the same
 }

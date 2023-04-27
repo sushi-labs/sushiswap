@@ -82,3 +82,31 @@ export const getUser = async (args: GetUserArgs) => {
   })
   return user
 }
+
+export const getAllV3Ticks = async (id: string) => {
+  const [chainId, poolAddress] = id.split(':')
+  if (!chainId || !poolAddress) throw Error('Invalid pool id')
+
+  const { ticks } = await sdk.TicksById({
+    id,
+  })
+
+  return ticks
+}
+
+export const getCollectsByTokenPair = async (tokenId0: string, tokenId1: string) => {
+  const [chainId0, tokenAddress0] = tokenId0.split(':')
+  if (!chainId0 || !tokenAddress0) throw Error('Invalid token0 id')
+
+  const [chainId1, tokenAddress1] = tokenId1.split(':')
+  if (!chainId1 || !tokenAddress1) throw Error('Invalid token1 id')
+
+  if (chainId0 !== chainId1) throw Error('Tokens must be on the same chain')
+
+  const { pools } = await sdk.PoolsByTokenPair({
+    tokenId0,
+    tokenId1,
+  })
+
+  return pools
+}

@@ -29,7 +29,6 @@ const getExchangeTokens = async (ids: string[], chainId: SushiSwapChainId): Prom
     name: subgraphName,
   })
 
-  // waiting for new subgraph to sync
   const { tokens, bundle } = await sdk.Tokens({
     where: { id_in: ids.map((id) => id.toLowerCase()) },
   })
@@ -93,7 +92,7 @@ export async function getTokenBalancesOf(_tokens: string[], address: string, cha
   const balanceOfCalls = tokens.map(
     (token) =>
       ({
-        address: token,
+        address: token as Address,
         args: [address as Address],
         chainId: chainId,
         abi: erc20ABI,

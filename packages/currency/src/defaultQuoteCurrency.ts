@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { OP, SUSHI, USDC, WETH9 } from './constants'
+import { ARB, BUSD, GNO, OP, SUSHI, USDC, WETH9 } from './constants'
+import { Token } from './Token'
 
 export const defaultQuoteCurrency = {
   [ChainId.ETHEREUM]: SUSHI[ChainId.ETHEREUM],
@@ -12,11 +13,11 @@ export const defaultQuoteCurrency = {
   // [ChainId.POLYGON_TESTNET]: SUSHI[ChainId.POLYGON_TESTNET],
   [ChainId.FANTOM]: SUSHI[ChainId.FANTOM],
   // [ChainId.FANTOM_TESTNET]: SUSHI[ChainId.FANTOM_TESTNET],
-  [ChainId.GNOSIS]: SUSHI[ChainId.GNOSIS],
-  [ChainId.BSC]: SUSHI[ChainId.BSC],
+  [ChainId.GNOSIS]: GNO[ChainId.GNOSIS],
+  [ChainId.BSC]: BUSD[ChainId.BSC],
   // [ChainId.BSC_TESTNET]: SUSHI[ChainId.BSC_TESTNET],
-  [ChainId.ARBITRUM]: SUSHI[ChainId.ARBITRUM],
-  [ChainId.ARBITRUM_NOVA]: SUSHI[ChainId.ARBITRUM_NOVA],
+  [ChainId.ARBITRUM]: ARB[ChainId.ARBITRUM],
+  [ChainId.ARBITRUM_NOVA]: ARB[ChainId.ARBITRUM_NOVA],
   // [ChainId.ARBITRUM_TESTNET]: 'SUSHI',
   [ChainId.AVALANCHE]: SUSHI[ChainId.AVALANCHE],
   // [ChainId.AVALANCHE_TESTNET]: 'SUSHI',
@@ -36,11 +37,24 @@ export const defaultQuoteCurrency = {
   [ChainId.KAVA]: SUSHI[ChainId.KAVA],
   [ChainId.METIS]: SUSHI[ChainId.METIS],
   [ChainId.BOBA]: USDC[ChainId.BOBA],
-  [ChainId.BOBA_AVAX]: USDC[ChainId.BOBA_AVAX],
-  [ChainId.BOBA_BNB]: USDC[ChainId.BOBA_BNB],
+  [ChainId.BOBA_AVAX]: new Token({
+    chainId: ChainId.BOBA_AVAX,
+    address: '0x4200000000000000000000000000000000000023',
+    decimals: 18,
+    symbol: 'AVAX',
+    name: 'Avalanche',
+  }),
+  [ChainId.BOBA_BNB]: new Token({
+    chainId: ChainId.BOBA_BNB,
+    address: '0x4200000000000000000000000000000000000023',
+    decimals: 18,
+    symbol: 'BNB',
+    name: 'Binance Coin',
+  }),
   [ChainId.BTTC]: SUSHI[ChainId.BTTC],
   // [ChainId.SEPOLIA]: USDT[ChainId.SEPOLIA],
   [ChainId.CONSENSUS_ZKEVM_TESTNET]: WETH9[ChainId.CONSENSUS_ZKEVM_TESTNET],
   [ChainId.SCROLL_ALPHA_TESTNET]: WETH9[ChainId.SCROLL_ALPHA_TESTNET],
   [ChainId.BASE_TESTNET]: WETH9[ChainId.BASE_TESTNET],
+  [ChainId.POLYGON_ZKEVM]: USDC[ChainId.POLYGON_ZKEVM],
 } as const

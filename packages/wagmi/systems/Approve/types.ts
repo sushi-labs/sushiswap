@@ -1,8 +1,9 @@
-import { ButtonProps, NotificationData } from '@sushiswap/ui'
+import { ButtonProps } from '@sushiswap/ui'
 import { ReactElement } from 'react'
 
 import { ApprovalState } from '../../hooks'
 import { ApprovalAction } from './Approve'
+import { PromiseNotification } from '@sushiswap/dexie'
 
 export type ApprovalButtonRenderProp = {
   onApprove(): void
@@ -17,6 +18,6 @@ export interface ApproveButton<T> extends Omit<ButtonProps<'button'>, 'onClick'>
   initialized?: boolean
   allApproved?: boolean
   hideIcon?: boolean
-  onSuccess?(data: NotificationData): void
+  onSuccess?(data: PromiseNotification): void
   enabled?: boolean
 }

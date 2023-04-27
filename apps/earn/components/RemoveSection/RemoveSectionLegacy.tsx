@@ -14,18 +14,19 @@ import {
   getSushiSwapRouterContractConfig,
   PairState,
   usePair,
-  useSendTransaction,
+  _useSendTransaction as useSendTransaction,
   useSushiSwapRouterContract,
   useTotalSupply,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { Address, useAccount, useNetwork } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { Address, useAccount, useNetwork } from '@sushiswap/wagmi'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { useTokensFromPool, useTransactionDeadline, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
-import { useNotifications, useSettings } from '../../lib/state/storage'
+import { useSettings } from '../../lib/state/storage'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 
 interface RemoveSectionLegacyProps {
   pool: Pool
@@ -41,7 +42,6 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pool: _pool 
   const deadline = useTransactionDeadline(_pool.chainId)
   const contract = useSushiSwapRouterContract(_pool.chainId as UniswapV2Router02ChainId)
   const [{ slippageTolerance }] = useSettings()
-  const [, { createNotification }] = useNotifications(address)
 
   const slippagePercent = useMemo(
     () =>
@@ -117,7 +117,8 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pool: _pool 
     (data: SendTransactionResult | undefined) => {
       if (!data || !chain?.id) return
       const ts = new Date().getTime()
-      createNotification({
+      void createToast({
+        account: address,
         type: 'burn',
         chainId: chain.id,
         txHash: data.hash,
@@ -131,7 +132,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pool: _pool 
         groupTimestamp: ts,
       })
     },
-    [chain?.id, createNotification, token0.symbol, token1.symbol]
+    [chain?.id, token0.symbol, token1.symbol, address]
   )
 
   const prepare = useCallback(
@@ -267,7 +268,6 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pool: _pool 
                 }
               >
                 <Approve
-                  onSuccess={createNotification}
                   className="flex-grow !justify-end"
                   components={
                     <Approve.Components>

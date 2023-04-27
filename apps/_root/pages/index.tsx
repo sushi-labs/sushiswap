@@ -1,4 +1,4 @@
-import { Stats } from 'components/Stats/Stats'
+import { Stats } from '../components/Stats/Stats'
 import React from 'react'
 
 import { BuildFuture } from '../components/BuildFuture/BuildFuture'

@@ -1,6 +1,5 @@
 import { ExternalLinkIcon } from '@heroicons/react/solid'
 import chains from '@sushiswap/chain'
-import { Price } from '@sushiswap/currency'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
 import { AppearOnMount, Currency, Link, NetworkIcon, Typography } from '@sushiswap/ui'
@@ -26,7 +25,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
       <div className="flex flex-col gap-3">
         <div className="flex gap-1">
           <NetworkIcon type="naked" chainId={pool.chainId} width={16} height={16} />
-          <Typography variant="xs" className="text-slate-500">
+          <Typography variant="xs" className="text-gray-600 dark:text-slate-500">
             {chains[pool.chainId].name}
           </Typography>
         </div>
@@ -43,30 +42,49 @@ export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
               <div className="flex items-center gap-2">
                 <Typography
                   variant="lg"
-                  className="flex items-center gap-1 text-slate-50 group-hover:text-blue-400"
+                  className="flex items-center gap-1 text-gray-900 dark:text-slate-50 group-hover:text-blue-400"
                   weight={600}
                 >
                   {token0.symbol}/{token1.symbol}
-                  <ExternalLinkIcon width={20} height={20} className="text-slate-400 group-hover:text-blue-400" />
+                  <ExternalLinkIcon
+                    width={20}
+                    height={20}
+                    className="dark:text-slate-400 text-slate-600 group-hover:text-blue-400"
+                  />
                 </Typography>
               </div>
-              <Typography variant="xs" className="text-slate-300">
+              <Typography variant="xs" className="text-gray-600 dark:text-slate-300">
                 Fee: {formatPercent(pool.swapFee)}
               </Typography>
             </Link.External>
           </div>
           <div className="flex flex-col gap-1">
-            <Typography weight={400} as="span" className="text-slate-400 sm:text-right">
-              APR: <span className="font-semibold text-slate-50">{formatPercent(pool.totalApr)}</span>
+            <Typography
+              weight={400}
+              as="span"
+              className="text-gray-500 dark:text-slate-400 text-slate-600 sm:text-right"
+            >
+              APR:{' '}
+              <span className="font-semibold text-gray-900 dark:text-slate-50">{formatPercent(pool.totalApr)}</span>
               {pool.incentiveApr > 0 ? <FarmRewardsAvailableTooltip /> : ''}
             </Typography>
             <div className="flex gap-2">
               {pool.incentiveApr > 0 && (
-                <Typography variant="sm" weight={400} as="span" className="text-slate-400">
+                <Typography
+                  variant="sm"
+                  weight={400}
+                  as="span"
+                  className="text-gray-600 dark:text-slate-400 text-slate-600"
+                >
                   Rewards: {formatPercent(pool.incentiveApr)}
                 </Typography>
               )}
-              <Typography variant="sm" weight={400} as="span" className="text-slate-400">
+              <Typography
+                variant="sm"
+                weight={400}
+                as="span"
+                className="text-gray-600 dark:text-slate-400 text-slate-600"
+              >
                 Fees: {formatPercent(pool.feeApr)}
               </Typography>
             </div>
@@ -74,9 +92,9 @@ export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
         </div>
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="flex gap-3 p-3 rounded-lg shadow-md bg-slate-800 shadow-black/10">
+        <div className="flex gap-3 p-3 rounded-lg bg-white dark:bg-slate-800">
           <Currency.Icon currency={token0} width={20} height={20} />
-          <Typography variant="sm" weight={600} className="text-slate-300">
+          <Typography variant="sm" weight={600} className="text-gray-600 dark:text-slate-300">
             <AppearOnMount>
               {token0.symbol} ={' '}
               {prices?.[token0.wrapped.address]
@@ -85,9 +103,9 @@ export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
             </AppearOnMount>
           </Typography>
         </div>
-        <div className="flex gap-3 p-3 rounded-lg shadow-md bg-slate-800 shadow-black/10">
+        <div className="flex gap-3 p-3 rounded-lg bg-white dark:bg-slate-800">
           <Currency.Icon currency={token1} width={20} height={20} />
-          <Typography variant="sm" weight={600} className="text-slate-300">
+          <Typography variant="sm" weight={600} className="text-gray-600 dark:text-slate-300">
             <AppearOnMount>
               {token1.symbol} ={' '}
               {prices?.[token1.wrapped.address]

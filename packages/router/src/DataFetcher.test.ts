@@ -6,24 +6,25 @@
 // import { Native, USDC } from '@sushiswap/currency'
 // import { createClient } from '@sushiswap/database'
 // import { createPublicClient, http } from 'viem'
-// import { mainnet } from 'viem/chains'
+// import { arbitrum, mainnet, polygon } from 'viem/chains'
 
 // import { DataFetcher } from './DataFetcher'
 // import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 // import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
 // import { SushiProvider } from './liquidity-providers/Sushi'
+// import { TridentProvider } from './liquidity-providers/Trident'
 // jest.setTimeout(10000)
 
-// const databaseClient = await createClient()
+// // const databaseClient = await createClient()
 // const DATA_FETCHER = new DataFetcher(
 //   ChainId.ETHEREUM,
 //   createPublicClient({
 //     chain: mainnet,
 //     transport: http(`${mainnet.rpcUrls.alchemy.http}/${process.env.ALCHEMY_ID}`),
-//   }),
-//   databaseClient
+//   })
+//   //   databaseClient
 // )
-// const DEFAULT_PROVIDERS = [LiquidityProviders.SushiSwap]
+// const DEFAULT_PROVIDERS = [LiquidityProviders.SushiSwap, LiquidityProviders.Trident]
 // beforeAll(async () => {
 //   expect(DATA_FETCHER).toBeInstanceOf(DataFetcher)
 //   DATA_FETCHER.startDataFetching(DEFAULT_PROVIDERS)
@@ -40,9 +41,10 @@
 
 //   it('should have providers', async () => {
 //     const providers = DATA_FETCHER.providers
-//     expect(providers.length).toBe(2)
+//     expect(providers.length).toBe(3)
 //     expect(providers[0]).toBeInstanceOf(NativeWrapProvider)
 //     expect(providers[1]).toBeInstanceOf(SushiProvider)
+//     expect(providers[2]).toBeInstanceOf(TridentProvider)
 //   })
 
 //   it.skip(`should fetch pools for ${token0.symbol} and ${token1.symbol}`, async () => {
@@ -56,7 +58,7 @@
 //     expect(totalPoolCount).toBeGreaterThan(initialPoolCount)
 //   })
 
-//   it.skip(`should clear pools on demand pools`, async () => {
+//   it.skip("should clear pools on demand pools", async () => {
 //     const poolCount = DATA_FETCHER.getCurrentPoolCodeMap(token0, token1).size
 //     global.Date.now = jest.fn(() => new Date().getTime() + 1000 * 75)
 //     await new Promise((r) => setTimeout(r, 6000)) // wait for unused on-demand pools to be cleared
@@ -72,5 +74,54 @@
 //     expect(blockNumber).not.toBeUndefined
 //   })
 // })
+
+// describe.skip("fetch pools for specific LPs", () => {
+//   it.each([LiquidityProviders.Trident, 
+//     LiquidityProviders.SushiSwap
+// ])('should have pools %s', async (lp) => {
+//     const chainId = ChainId.POLYGON
+//     const token0 = Native.onChain(chainId)
+//     const token1 = USDC[chainId]
+
+//     const fetcher = new DataFetcher(
+//       chainId,
+//       createPublicClient({
+//         chain: polygon,
+//         transport: http(`${polygon.rpcUrls.alchemy.http}/${process.env.ALCHEMY_ID}`),
+//       })
+//     )
+//     fetcher.startDataFetching([lp])
+
+//     await fetcher.fetchPoolsForToken(token0, token1)
+//     // await new Promise((r) => setTimeout(r, 4000)) // wait for on-demand pools to be fetched
+//     const totalPoolCount = fetcher.getCurrentPoolCodeMap(token0, token1).size
+//     expect(totalPoolCount).toBeGreaterThan(5)
+//     fetcher.stopDataFetching()
+//   })
+// })
+
+
+// describe.only('V3', () => {
+//     it('should have pools', async () => {
+//       const chainId = ChainId.POLYGON
+//       const token0 = Native.onChain(chainId)
+//       const token1 = USDC[chainId]
+  
+//       const fetcher = new DataFetcher(
+//         chainId,
+//         createPublicClient({
+//           chain: polygon,
+//           transport: http(`${polygon.rpcUrls.alchemy.http}/${process.env.ALCHEMY_ID}`),
+//         })
+//       )
+//       fetcher.startDataFetching([LiquidityProviders.UniswapV3])
+  
+//       await fetcher.fetchPoolsForToken(token0, token1)
+//       // await new Promise((r) => setTimeout(r, 4000)) // wait for on-demand pools to be fetched
+//       const totalPoolCount = fetcher.getCurrentPoolCodeMap(token0, token1).size
+//       expect(totalPoolCount).toBeGreaterThan(5)
+//       fetcher.stopDataFetching()
+//     })
+//   })
 
 export {}

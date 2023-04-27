@@ -1,9 +1,9 @@
 import { render, RenderOptions } from '@testing-library/react'
 import { default as userEvent } from '@testing-library/user-event'
 import * as React from 'react'
-import { createClient, CreateClientConfig, WagmiConfig, WagmiConfigProps } from 'wagmi'
-import { arbitrum, mainnet, optimism, polygon } from 'wagmi/chains'
-import { MockConnector } from 'wagmi/connectors/mock'
+import { createClient, CreateClientConfig, WagmiConfig, WagmiConfigProps } from '@sushiswap/wagmi'
+import { arbitrum, mainnet, optimism, polygon } from '@sushiswap/wagmi/chains'
+import { MockConnector } from '@sushiswap/wagmi/connectors/mock'
 
 import { getProvider, getSigners, testChains, WalletSigner } from './utils'
 
@@ -20,14 +20,14 @@ type ProvidersProps = {
   children: React.ReactNode
   client?: WagmiConfigProps['client']
 }
-export function Providers({ children, client = setupClient() }: ProvidersProps) {
-  return <WagmiConfig client={client}>{children}</WagmiConfig>
-}
+// export function Providers({ children, client = setupClient() }: ProvidersProps) {
+//   return <WagmiConfig client={client}>{children}</WagmiConfig>
+// }
 
-const customRender = (ui: React.ReactElement, options?: RenderOptions) => render(ui, { wrapper: Providers, ...options })
+// const customRender = (ui: React.ReactElement, options?: RenderOptions) => render(ui, { wrapper: Providers, ...options })
 
 export * from '@testing-library/react'
-export { customRender as render }
+// export { customRender as render }
 
 export type UserEvent = ReturnType<typeof userEvent.setup>
 export {

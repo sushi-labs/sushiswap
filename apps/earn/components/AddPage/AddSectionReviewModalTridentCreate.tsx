@@ -13,16 +13,16 @@ import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Type } from '@sushiswap/currency'
 import { Button, Dots } from '@sushiswap/ui'
 import {
-  PoolFinderType,
   useBentoBoxTotals,
   useConstantProductPoolFactoryContract,
-  useSendTransaction,
+  _useSendTransaction as useSendTransaction,
   useStablePoolFactoryContract,
   useTridentRouterContract,
+  useAccount,
+  useNetwork,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import {
   approveMasterContractAction,
@@ -31,9 +31,9 @@ import {
   getAsEncodedAction,
   LiquidityInput,
 } from '../../lib/actions'
-import { useNotifications } from '../../lib/state/storage'
 import { AddSectionReviewModal } from '../AddSection'
 import { PoolType } from '@sushiswap/wagmi/future/hooks'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 
 interface CreateSectionReviewModalTridentProps {
   chainId: BentoBoxV1ChainId
@@ -65,7 +65,6 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const contract = useTridentRouterContract(chainId)
   const constantProductPoolFactory = useConstantProductPoolFactoryContract(chainId)
   const stablePoolFactory = useStablePoolFactoryContract(chainId)
-  const [, { createNotification }] = useNotifications(address)
 
   const totals = useBentoBoxTotals(
     chainId,
@@ -131,7 +130,8 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     (data: SendTransactionResult | undefined) => {
       if (!data || !chain?.id || !token0 || !token1) return
       const ts = new Date().getTime()
-      createNotification({
+      createToast({
+        account: address,
         type: 'mint',
         chainId: chain.id,
         txHash: data.hash,
@@ -145,7 +145,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         groupTimestamp: ts,
       })
     },
-    [chain?.id, createNotification, token0, token1]
+    [chain?.id, address, token0, token1]
   )
 
   const prepare = useCallback(

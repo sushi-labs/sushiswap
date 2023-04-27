@@ -1,15 +1,18 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
-import { getBigNumber, StableSwapRPool, closeValues } from '../src'
+
+import { closeValues, getBigNumber, StableSwapRPool } from '../src'
 
 const token0 = {
   name: 'Token0',
   address: '0xb7a4F3E9097C08dA09517b5aB877F7a917224ede',
   symbol: 'Token1Symbol',
+  decimals: 18,
 }
 const token1 = {
   name: 'Token1',
   address: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
   symbol: 'Token1Symbol',
+  decimals: 18,
 }
 const v = BigNumber.from('0x76329851304572304587') // random number  ~ 2^80
 
@@ -60,7 +63,9 @@ function createPool(
 }
 
 function checkCurveInvariant(pool: StableSwapRPool, amountIn: number, amountOut: number, direction: boolean) {
+  amountIn = direction ? pool.total0.toAmount(amountIn) : pool.total1.toAmount(amountIn)
   amountIn *= direction ? pool.decimalsCompensation0 : pool.decimalsCompensation1
+  amountOut = direction ? pool.total1.toAmount(amountOut) : pool.total0.toAmount(amountOut)
   amountOut *= direction ? pool.decimalsCompensation1 : pool.decimalsCompensation0
   const prev_y = parseFloat((direction ? pool.reserve1 : pool.reserve0).toString())
   if (prev_y < amountOut * (1 + 1e-12)) return true // precision doens't allow to make the check -- too big swap
@@ -145,12 +150,21 @@ function checkPoolPriceCalculation(pool: StableSwapRPool) {
   expect(Math.abs(price1 / expected_price - 1)).toBeLessThan(1e-7)
 }
 
-function numberPrecision(n: number, precision = 2) {
-  if (n == 0) return 0
-  const digits = Math.ceil(Math.log10(n))
-  if (digits >= precision) return Math.round(n)
-  const shift = Math.pow(10, precision - digits)
-  return Math.round(n * shift) / shift
+// function numberPrecision(n: number, precision = 2) {
+//   if (n == 0) return 0
+//   const digits = Math.ceil(Math.log10(n))
+//   if (digits >= precision) return Math.round(n)
+//   const shift = Math.pow(10, precision - digits)
+//   return Math.round(n * shift) / shift
+// }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function ignorePollSwapException(e: any) {
+  if (e instanceof Error && e.message == 'StableSwap OutOfLiquidity') {
+    // eat it
+  } else {
+    throw e // rethrow it
+  }
 }
 
 describe('StableSwap test', () => {
@@ -173,7 +187,9 @@ describe('StableSwap test', () => {
 
           expectCloseValues(out1, out2, 1e-10)
           expect(out1).toBeLessThanOrEqual(amountIn * 0.9970000001)
-        } catch (e) {} // CalcOutByIn could throw exception
+        } catch (e) {
+          ignorePollSwapException(e)
+        }
       }
     })
     it('total is 0', () => {
@@ -191,7 +207,9 @@ describe('StableSwap test', () => {
 
             expect(out1).toEqual(out2)
             expect(out1).toBeLessThanOrEqual(amountIn * 0.997)
-          } catch (e) {} // CalcOutByIn could throw exception
+          } catch (e) {
+            ignorePollSwapException(e)
+          }
         }
       }
     })
@@ -203,7 +221,7 @@ describe('StableSwap test', () => {
         6,
         18,
         { elastic: getBigNumber(0.8 * 1e18), base: getBigNumber(0.95 * 1e18) },
-        { elastic: getBigNumber(0.8 * 1e18), base: getBigNumber(0.95 * 1e18) }
+        { elastic: getBigNumber(0.95 * 1e18), base: getBigNumber(0.8 * 1e18) }
       )
       for (let i = 0; i < 100; ++i) {
         try {
@@ -212,7 +230,9 @@ describe('StableSwap test', () => {
           const out2 = checkSwap(pool, amountIn * 1e12, false)
 
           expect(out1).toBeLessThanOrEqual(out2)
-        } catch (e) {} // CalcOutByIn could throw exception
+        } catch (e) {
+          ignorePollSwapException(e)
+        }
       }
     })
     it('Big disbalance, regular values', () => {
@@ -224,7 +244,9 @@ describe('StableSwap test', () => {
           const out2 = checkSwap(pool, amountIn, false)
 
           expect(out1).toBeLessThanOrEqual(out2)
-        } catch (e) {} // CalcOutByIn could throw exception
+        } catch (e) {
+          ignorePollSwapException(e)
+        }
       }
     })
     it('Ideal balance, huge swap values', () => {
@@ -239,7 +261,9 @@ describe('StableSwap test', () => {
 
           expectCloseValues(out1, out2, 1e-10)
           expect(out1).toBeLessThanOrEqual(maxReserve)
-        } catch (e) {} // CalcOutByIn could throw exception
+        } catch (e) {
+          ignorePollSwapException(e)
+        }
       }
     })
   })

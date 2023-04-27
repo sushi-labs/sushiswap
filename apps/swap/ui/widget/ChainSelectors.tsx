@@ -7,9 +7,11 @@ import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { ArrowRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { STARGATE_SUPPORTED_CHAIN_IDS } from '@sushiswap/stargate'
 import { classNames } from '@sushiswap/ui'
+import { SwapChainId } from '../../types'
 
 export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
   const { network0, network1 } = useSwapState()
+
   const { setNetwork0, setNetwork1, switchTokens } = useSwapActions()
 
   const handleSelect0 = useCallback<NetworkSelectorOnSelectCallback<(typeof STARGATE_SUPPORTED_CHAIN_IDS)[number]>>(
@@ -20,7 +22,7 @@ export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
     [setNetwork0]
   )
 
-  const handleSelect1 = useCallback<NetworkSelectorOnSelectCallback>(
+  const handleSelect1 = useCallback<NetworkSelectorOnSelectCallback<(typeof STARGATE_SUPPORTED_CHAIN_IDS)[number]>>(
     (el, close) => {
       setNetwork1(el)
       close()

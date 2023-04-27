@@ -15,7 +15,7 @@ import { convertTokenToBento, getBentoChainId } from './lib/convert'
 import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { PoolCode } from './pools/PoolCode'
 import { getRouteProcessorCode } from './TinesToRouteProcessor'
-import { getRouteProcessor2Code } from './TinesToRouteProcessor2'
+import { getRouteProcessor2Code, PermitData } from './TinesToRouteProcessor2'
 
 function TokenToRToken(t: Type): RToken {
   if (t instanceof Token) return t as RToken
@@ -24,6 +24,7 @@ function TokenToRToken(t: Type): RToken {
     name: t.name,
     symbol: t.symbol,
     chainId: t.chainId,
+    decimals: 18,
   }
   return nativeRToken
 }
@@ -52,6 +53,7 @@ export class Router {
     return Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice, [
       LiquidityProviders.NativeWrap,
       LiquidityProviders.SushiSwap,
+      LiquidityProviders.SushiSwapV3,
       LiquidityProviders.Trident,
     ])
   }
@@ -69,6 +71,7 @@ export class Router {
     const preferrableRoute = Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice, [
       LiquidityProviders.NativeWrap,
       LiquidityProviders.SushiSwap,
+      LiquidityProviders.SushiSwapV3,
       LiquidityProviders.Trident,
     ])
     // If the route is successful and the price impact is less than maxPriceImpact, then return the route
@@ -108,13 +111,14 @@ export class Router {
 
     let poolCodes = Array.from(poolCodesMap.values())
     if (providers) {
-      poolCodes = poolCodes.filter((pc) => providers.includes(pc.liquidityProvider))
+      poolCodes = poolCodes.filter((pc) => [...providers, LiquidityProviders.NativeWrap].includes(pc.liquidityProvider))
     }
-
     let pools = Array.from(poolCodes).map((pc) => pc.pool)
 
+    // console.log('before', pools.length)
     if (poolFilter) pools = pools.filter(poolFilter)
-
+    // console.log('after', pools.length)
+    // console.log({pools})
     const route = findMultiRouteExactIn(
       TokenToRToken(fromToken),
       TokenToRToken(toToken),
@@ -169,6 +173,7 @@ export class Router {
     toToken: Type,
     to: string,
     RPAddr: string,
+    permits: PermitData[] = [],
     maxPriceImpact = 0.005
   ): RPParams {
     const tokenIn = fromToken instanceof Token ? fromToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
@@ -181,7 +186,7 @@ export class Router {
       tokenOut,
       amountOutMin,
       to,
-      routeCode: getRouteProcessor2Code(route, RPAddr, to, poolCodesMap),
+      routeCode: getRouteProcessor2Code(route, RPAddr, to, poolCodesMap, permits),
       value: fromToken instanceof Token ? undefined : route.amountInBN,
     }
   }

@@ -9,15 +9,14 @@ import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Address } from '@wagmi/core'
 import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useAccount } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { useAccount } from '@sushiswap/wagmi'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../lib'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
 import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount } from '../utils'
 import { CreateMultipleVestingFormSchemaType } from './schema'
-import { useCreateNotification } from '@sushiswap/react-query'
-import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { bentoBoxV1Address } from '@sushiswap/bentobox'
 
@@ -27,7 +26,6 @@ export const ExecuteMultipleSection: FC<{
 }> = ({ chainId, isReview }) => {
   const { address } = useAccount()
   const contract = useFuroVestingRouterContract(chainId)
-  const { mutate: storeNotification } = useCreateNotification({ account: address })
   const [signature, setSignature] = useState<Signature>()
 
   const {
@@ -68,8 +66,8 @@ export const ExecuteMultipleSection: FC<{
       if (!data || !vestings) return
 
       const ts = new Date().getTime()
-
-      const notificationData: NotificationData = {
+      void createToast({
+        account: address,
         type: 'createVesting',
         chainId: chainId,
         txHash: data.hash,
@@ -81,11 +79,9 @@ export const ExecuteMultipleSection: FC<{
         },
         timestamp: ts,
         groupTimestamp: ts,
-      }
-
-      storeNotification(createToast(notificationData))
+      })
     },
-    [chainId, storeNotification, vestings]
+    [chainId, address, vestings]
   )
 
   const prepare = useCallback(
@@ -172,7 +168,6 @@ export const ExecuteMultipleSection: FC<{
 
   return (
     <Approve
-      onSuccess={(data) => storeNotification(createToast(data))}
       className="!items-end"
       components={
         <Approve.Components>

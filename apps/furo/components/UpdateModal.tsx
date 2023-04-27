@@ -2,21 +2,19 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
-import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { JSBI } from '@sushiswap/math'
 import { Button, classNames, DEFAULT_INPUT_CLASSNAME, Dialog, Dots, Input, Switch, Typography } from '@sushiswap/ui'
-import { Approve, Checker, useSendTransaction } from '@sushiswap/wagmi'
+import { Approve, Checker, _useSendTransaction as useSendTransaction } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount, useContract } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { useAccount, useContract } from '@sushiswap/wagmi'
+import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { CurrencyInput } from '../components'
 import { Stream } from '../lib'
-import { createToast, NotificationData } from '@sushiswap/ui/future/components/toast'
-import { useCreateNotification } from '@sushiswap/react-query'
+import { createToast } from '@sushiswap/ui/future/components/toast'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 interface UpdateModalProps {
@@ -33,7 +31,6 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
   const [changeEndDate, setChangeEndDate] = useState(false)
   const [amount, setAmount] = useState<string>('')
   const [endDate, setEndDate] = useState<Date | null>(null)
-  const { mutate: storeNotification } = useCreateNotification({ account: address })
 
   const contract = useContract({
     address: contractAddress,
@@ -58,7 +55,8 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
       if (!data || !amount) return
 
       const ts = new Date().getTime()
-      const notificationData: NotificationData = {
+      void createToast({
+        account: address,
         type: 'updateStream',
         txHash: data.hash,
         chainId,
@@ -70,11 +68,9 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
           completed: `Successfully updated stream`,
           failed: 'Something went wrong updating the stream',
         },
-      }
-
-      storeNotification(createToast(notificationData))
+      })
     },
-    [amount, chainId, storeNotification]
+    [amount, chainId, address]
   )
 
   const prepare = useCallback(
@@ -238,7 +234,6 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
           </div>
           <div>
             <Approve
-              onSuccess={(data) => storeNotification(createToast(data))}
               components={
                 <Approve.Components>
                   <Approve.Token

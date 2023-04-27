@@ -6,6 +6,7 @@ import {
   AAVE_ADDRESS,
   ANKR_ADDRESS,
   APE_ADDRESS,
+  ARB_ADDRESS,
   BCT_ADDRESS,
   BUSD_ADDRESS,
   COMP_ADDRESS,
@@ -13,6 +14,7 @@ import {
   FEI_ADDRESS,
   FRAX_ADDRESS,
   FXS_ADDRESS,
+  GNO_ADDRESS,
   JPY_ADDRESS,
   KLIMA_ADDRESS,
   KP3R_ADDRESS,
@@ -20,6 +22,7 @@ import {
   LINK_ADDRESS,
   LUSD_ADDRESS,
   MAI_ADDRESS,
+  MATIC_ADDRESS,
   MIM_ADDRESS,
   NFTX_ADDRESS,
   OHM_ADDRESS,
@@ -41,6 +44,33 @@ import {
   WNATIVE_ADDRESS,
   XSUSHI_ADDRESS,
 } from './token-addresses'
+
+export const MATIC = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'MATIC',
+    name: 'Matic Token',
+  },
+  MATIC_ADDRESS
+) as Record<keyof typeof MATIC_ADDRESS, Token>
+
+export const GNO = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'GNO',
+    name: 'Gnosis Token',
+  },
+  GNO_ADDRESS
+) as Record<keyof typeof GNO_ADDRESS, Token>
+
+export const ARB = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'ARB',
+    name: 'Arbitrum',
+  },
+  ARB_ADDRESS
+) as Record<keyof typeof ARB_ADDRESS, Token>
 
 export const KP3R = addressMapToTokenMap(
   {
@@ -446,6 +476,7 @@ export const WNATIVE = {
   [ChainId.CONSENSUS_ZKEVM_TESTNET]: WETH9[ChainId.CONSENSUS_ZKEVM_TESTNET],
   [ChainId.SCROLL_ALPHA_TESTNET]: WETH9[ChainId.SCROLL_ALPHA_TESTNET],
   [ChainId.BASE_TESTNET]: WETH9[ChainId.BASE_TESTNET],
+  [ChainId.POLYGON_ZKEVM]: WETH9[ChainId.POLYGON_ZKEVM],
 } as const
 
 export const SUSHI = addressMapToTokenMap(

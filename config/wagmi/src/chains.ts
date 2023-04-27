@@ -12,6 +12,7 @@ import {
   mainnet,
   optimism,
   polygon,
+  polygonZkEvm,
 } from '@wagmi/core/chains'
 
 export const defaultChains: Chain[] = [
@@ -45,6 +46,9 @@ export const otherChains: Chain[] = [
       default: {
         http: ['https://api.avax.network/ext/bc/C/rpc'],
       },
+      public: {
+        http: ['https://api.avax.network/ext/bc/C/rpc'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -76,6 +80,9 @@ export const otherChains: Chain[] = [
       default: {
         http: ['https://bsc-dataseed1.binance.org'],
       },
+      public: {
+        http: ['https://bsc-dataseed1.binance.org'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -101,6 +108,9 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Fantom', symbol: 'FTM', decimals: 18 },
     rpcUrls: {
       default: {
+        http: ['https://rpcapi.fantom.network'],
+      },
+      public: {
         http: ['https://rpcapi.fantom.network'],
       },
     },
@@ -130,6 +140,9 @@ export const otherChains: Chain[] = [
       default: {
         http: ['https://xdai-rpc.gateway.pokt.network', 'https://rpc.gnosischain.com'],
       },
+      public: {
+        http: ['https://xdai-rpc.gateway.pokt.network', 'https://rpc.gnosischain.com'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -155,6 +168,9 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'ONE', symbol: 'ONE', decimals: 18 },
     rpcUrls: {
       default: {
+        http: ['https://api.harmony.one'],
+      },
+      public: {
         http: ['https://api.harmony.one'],
       },
     },
@@ -184,6 +200,9 @@ export const otherChains: Chain[] = [
       default: {
         http: ['https://rpc.api.moonbeam.network'],
       },
+      public: {
+        http: ['https://rpc.api.moonbeam.network'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -209,6 +228,9 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Moonriver', symbol: 'MOVR', decimals: 18 },
     rpcUrls: {
       default: {
+        http: ['https://rpc.api.moonriver.moonbeam.network'],
+      },
+      public: {
         http: ['https://rpc.api.moonriver.moonbeam.network'],
       },
     },
@@ -238,6 +260,9 @@ export const otherChains: Chain[] = [
       default: {
         http: ['https://evm.kava.io', 'https://evm2.kava.io'],
       },
+      public: {
+        http: ['https://evm.kava.io', 'https://evm2.kava.io'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -263,6 +288,9 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Metis', symbol: 'METIS', decimals: 18 },
     rpcUrls: {
       default: {
+        http: ['https://andromeda.metis.io/?owner=1088'],
+      },
+      public: {
         http: ['https://andromeda.metis.io/?owner=1088'],
       },
     },
@@ -292,6 +320,9 @@ export const otherChains: Chain[] = [
       default: {
         http: ['https://rpc.ankr.com/celo'],
       },
+      public: {
+        http: ['https://rpc.ankr.com/celo'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -317,6 +348,9 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Fuse', symbol: 'FUSE', decimals: 18 },
     rpcUrls: {
       default: {
+        http: ['https://rpc.fuse.io'],
+      },
+      public: {
         http: ['https://rpc.fuse.io'],
       },
     },
@@ -346,6 +380,9 @@ export const otherChains: Chain[] = [
       default: {
         http: ['https://nova.arbitrum.io/rpc'],
       },
+      public: {
+        http: ['https://nova.arbitrum.io/rpc'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -371,6 +408,9 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'OKC Token', symbol: 'OKT', decimals: 18 },
     rpcUrls: {
       default: {
+        http: ['https://exchainrpc.okex.org'],
+      },
+      public: {
         http: ['https://exchainrpc.okex.org'],
       },
     },
@@ -400,6 +440,9 @@ export const otherChains: Chain[] = [
       default: {
         http: ['https://http-mainnet.hecochain.com'],
       },
+      public: {
+        http: ['https://http-mainnet.hecochain.com'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -425,6 +468,9 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Palm', symbol: 'PALM', decimals: 18 },
     rpcUrls: {
       default: {
+        http: ['https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b'],
+      },
+      public: {
         http: ['https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b'],
       },
     },
@@ -454,6 +500,9 @@ export const otherChains: Chain[] = [
       default: {
         http: ['https://mainnet.boba.network'],
       },
+      public: {
+        http: ['https://mainnet.boba.network'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -479,6 +528,9 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Boba', symbol: 'BOBA', decimals: 18 },
     rpcUrls: {
       default: {
+        http: ['https://avax.boba.network'],
+      },
+      public: {
         http: ['https://avax.boba.network'],
       },
     },
@@ -508,6 +560,9 @@ export const otherChains: Chain[] = [
       default: {
         http: ['https://bnb.boba.network'],
       },
+      public: {
+        http: ['https://bnb.boba.network'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -535,6 +590,9 @@ export const otherChains: Chain[] = [
       default: {
         http: ['https://rpc.bittorrentchain.io'],
       },
+      public: {
+        http: ['https://rpc.bittorrentchain.io'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -550,6 +608,16 @@ export const otherChains: Chain[] = [
       multicall3: {
         address: '0x67dA5f2FfaDDfF067AB9d5F025F8810634d84287',
         blockCreated: 13014184,
+      },
+    },
+  },
+  {
+    ...polygonZkEvm,
+    id: ChainId.POLYGON_ZKEVM,
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 57746,
       },
     },
   },

@@ -21,13 +21,13 @@ export const PoolPosition: FC<PoolPositionProps> = ({ pool }) => {
   if (!isLg) return <></>
 
   return (
-    <div className="flex flex-col shadow-md bg-slate-800 rounded-2xl shadow-black/30">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200/5">
-        <Typography weight={600} className="text-slate-50">
+    <div className="flex flex-col dark:bg-slate-800 rounded-2xl bg-white">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-900/5 dark:border-slate-200/5">
+        <Typography weight={600} className="text-gray-900 dark:text-slate-50">
           My Position
         </Typography>
         <div className="flex flex-col">
-          <Typography variant="sm" weight={600} className="text-right text-slate-50">
+          <Typography variant="sm" weight={600} className="text-right dark:text-slate-50 text-gray-900">
             {formatUSD(value0 + value1 + stakedValue0 + stakedValue1)}
           </Typography>
         </div>

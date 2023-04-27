@@ -63,9 +63,10 @@ export const Input = forwardRef<HTMLInputElement, NumericProps>(
         // universal input options
         inputMode={inputMode}
         title={title}
-        autoComplete="off"
         autoCorrect="off"
-        spellCheck={false}
+        autoCapitalize="off"
+        spellCheck="false"
+        autoComplete="new-password"
         // text-specific options
         type={type}
         pattern={pattern}

@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "next build && next-sitemap --config next-sitemap.config.mjs",
-    "build-blog": "next build && next-sitemap --config next-sitemap.config.mjs",
+    "build": "next build",
+    "sitemap": "next build && next-sitemap --config next-sitemap.config.mjs",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient && rm -rf .mesh",
     "dev": "next dev --port 3002",
@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "@cloudinary/url-gen": "^1.8.0",
+    "@heroicons/react": "^1.0.0",
+    "@sushiswap/chain": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@tailwindcss/typography": "^0.5.2",
@@ -22,7 +24,7 @@
     "date-fns": "2.29.3",
     "fast-json-stable-stringify": "2.1.0",
     "graphql": "16.6.0",
-    "next": "13.2.3",
+    "next": "13.3.1",
     "next-seo": "5.15.0",
     "next-sitemap": "3.1.43",
     "qs": "^6.10.3",
@@ -34,7 +36,6 @@
   "devDependencies": {
     "@graphql-mesh/cli": "0.82.3",
     "@graphql-mesh/graphql": "0.33.3",
-    "@heroicons/react": "^1.0.0",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",

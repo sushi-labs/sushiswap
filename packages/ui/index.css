@@ -53,7 +53,8 @@ body {
 }
 
 *.scroll {
-  overflow-y: overlay;
+  overflow-y: overlay !important;
+  overflow-y: scroll;
 }
 
 *.scroll::-webkit-scrollbar {
@@ -95,6 +96,7 @@ body {
   filter: invert(1);
 }
 
+
 @layer utilities {
   input[type='number']::-webkit-inner-spin-button,
   input[type='number']::-webkit-outer-spin-button {
@@ -124,6 +126,10 @@ body {
   a:focus-visible,
   img:focus-visible {
     @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    @apply appearance-none w-6 h-6 bg-blue rounded-full
   }
 }
 

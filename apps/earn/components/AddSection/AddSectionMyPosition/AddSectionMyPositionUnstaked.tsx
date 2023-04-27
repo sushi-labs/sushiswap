@@ -11,7 +11,7 @@ export const AddSectionMyPositionUnstaked: FC = () => {
     return (
       <div className="flex flex-col gap-2">
         <div className="flex gap-1 justify-between items-center">
-          <Typography variant="sm" weight={600} className="text-slate-50">
+          <Typography variant="sm" weight={600} className="dark:text-slate-50 text-gray-900">
             My Liquidity Position
           </Typography>
           <div className="h-[16px] w-[40px] animate-pulse bg-slate-600 rounded-full" />
@@ -33,10 +33,10 @@ export const AddSectionMyPositionUnstaked: FC = () => {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex gap-1 justify-between items-center">
-        <Typography variant="sm" weight={600} className="text-slate-50">
+        <Typography variant="sm" weight={600} className="dark:text-slate-50 text-gray-900">
           My Liquidity Position
         </Typography>
-        <Typography variant="xs" weight={500} className="text-slate-400">
+        <Typography variant="xs" weight={500} className="dark:text-slate-400 text-gray-600">
           {formatUSD(value0 + value1)}
         </Typography>
       </div>
@@ -45,7 +45,7 @@ export const AddSectionMyPositionUnstaked: FC = () => {
           <div className="w-4 h-4">
             {underlying0 && <Currency.Icon currency={underlying0.currency} width={16} height={16} />}
           </div>
-          <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-400">
+          <Typography variant="xs" weight={500} className="flex items-center gap-1 dark:text-slate-400 text-gray-600">
             {balance && underlying0?.toSignificant(3)} {underlying0?.currency.symbol}
           </Typography>
         </div>
@@ -53,7 +53,7 @@ export const AddSectionMyPositionUnstaked: FC = () => {
           <div className="w-4 h-4">
             {underlying1 && <Currency.Icon currency={underlying1.currency} width={16} height={16} />}
           </div>
-          <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-400">
+          <Typography variant="xs" weight={500} className="flex items-center gap-1 dark:text-slate-400 text-gray-600">
             {balance && underlying1?.toSignificant(3)} {underlying1?.currency.symbol}
           </Typography>
         </div>

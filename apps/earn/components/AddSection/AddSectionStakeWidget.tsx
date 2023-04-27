@@ -54,7 +54,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
 
   return useMemo(
     () => (
-      <Widget id="stakeLiquidity" maxWidth={400} className="bg-slate-800">
+      <Widget id="stakeLiquidity" maxWidth={400} className="dark:bg-slate-800 bg-white">
         <Widget.Content>
           <Disclosure>
             {({ open }) => (
@@ -68,7 +68,11 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                         'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
                       )}
                     >
-                      <ChevronDownIcon width={24} height={24} className="group-hover:text-slate-200 text-slate-300" />
+                      <ChevronDownIcon
+                        width={24}
+                        height={24}
+                        className="text-gray-700 hover:text-gray-800 dark:group-hover:text-slate-200 dark:text-slate-300"
+                      />
                     </div>
                   </div>
                 </Disclosure.Button>
@@ -83,7 +87,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                   leaveTo="transform max-h-0"
                 >
                   <Disclosure.Panel unmount={false}>
-                    <Typography variant="sm" className="px-3 pb-5 text-slate-400">
+                    <Typography variant="sm" className="px-3 pb-5 dark:text-slate-400 text-gray-600">
                       Stake your liquidity tokens to receive incentive rewards on top of your pool fee rewards
                     </Typography>
                     <div className="flex flex-col gap-3 p-3">
@@ -133,7 +137,11 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                           leaveFrom="transform opacity-100"
                           leaveTo="transform opacity-0"
                         >
-                          <Typography variant="sm" weight={500} className="text-slate-300 hover:text-slate-20">
+                          <Typography
+                            variant="sm"
+                            weight={500}
+                            className="dark:text-slate-300 text-gray-700 hover:text-slate-20"
+                          >
                             {formatUSD(value0 + value1)}
                           </Typography>
                         </Transition>
@@ -153,7 +161,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                             as="button"
                             variant="sm"
                             weight={500}
-                            className="flex justify-end col-span-2 truncate text-slate-300 hover:text-slate-200"
+                            className="flex justify-end col-span-2 truncate dark:text-slate-300 text-gray-700 hover:dark:text-slate-200 text-gray-800"
                           >
                             Balance: {balance?.[FundSource.WALLET].toSignificant(6)}
                           </Typography>
