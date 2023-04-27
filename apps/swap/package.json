@@ -48,7 +48,7 @@
     "@tanstack/react-query-devtools": "4.28.0",
     "@tanstack/react-query-persist-client": "4.28.0",
     "@vercel/analytics": "0.1.5",
-    "@wagmi/core": "0.10.9",
+    "@wagmi/core": "0.10.10",
     "date-fns": "2.29.3",
     "ethers": "5.7.2",
     "nanoid": "4.0.0",
@@ -58,7 +58,7 @@
     "numeral": "2.0.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "wagmi": "0.12.10",
+    "wagmi": "0.12.12",
     "zod": "3.20.2"
   },
   "devDependencies": {
