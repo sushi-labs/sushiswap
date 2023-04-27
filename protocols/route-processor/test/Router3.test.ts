@@ -155,7 +155,7 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   const client = createPublicClient({
     batch: {
       multicall: {
-        batchSize: 1024,
+        batchSize: 2048,
         wait: 16,
       },
     },
@@ -265,7 +265,7 @@ async function makeSwap(
   )
   if (rpParams === undefined) return
 
-  console.log('Call route processor (may take long time for the first launch)...')
+  // console.log('Call route processor (may take long time for the first launch)...')
 
   let balanceOutBNBefore: BigNumber
   let toTokenContract: Contract | undefined = undefined
