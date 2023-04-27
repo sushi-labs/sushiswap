@@ -74,7 +74,7 @@
     "eslint": "8.29.0",
     "ethers": "5.7.2",
     "vitest": "0.30.1",
-    "next": "13.2.3",
+    "next": "13.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tsup": "6.5.0",
@@ -107,6 +107,6 @@
     }
   },
   "optionalDependencies": {
-    "next": "13.2.3"
+    "next": "13.3.1"
   }
 }
