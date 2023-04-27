@@ -22,11 +22,24 @@ uint160 constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970
 
 /// @title A route processor for the Sushi Aggregator
 /// @author Ilya Lyalin
-contract RouteProcessor2 is Ownable {
+/// version 2.1
+contract RouteProcessor3 is Ownable {
   using SafeERC20 for IERC20;
+  using SafeERC20 for IERC20Permit;
   using InputStream for uint256;
 
+  event Route(
+    address indexed from, 
+    address to, 
+    address indexed tokenIn, 
+    address indexed tokenOut, 
+    uint amountIn, 
+    uint amountOutMin,
+    uint amountOut
+  );
+
   IBentoBoxMinimal public immutable bentoBox;
+  mapping (address => bool) priviledgedUsers;
   address private lastCalledPool;
 
   uint8 private unlocked = 1;
@@ -39,16 +52,29 @@ contract RouteProcessor2 is Ownable {
       unlocked = 1;
   }
 
-  constructor(address _bentoBox) {
-    bentoBox = IBentoBoxMinimal(_bentoBox);
-    lastCalledPool = IMPOSSIBLE_POOL_ADDRESS;
+  modifier onlyOwnerOrPriviledgedUser() {
+    require(msg.sender == owner() || priviledgedUsers[msg.sender] == true, "RP: caller is not the owner or a priviledged user");
+    _;
   }
 
-  function pause() external onlyOwner {
+  constructor(address _bentoBox, address[] memory priviledgedUserList) {
+    bentoBox = IBentoBoxMinimal(_bentoBox);
+    lastCalledPool = IMPOSSIBLE_POOL_ADDRESS;
+
+    for (uint i = 0; i < priviledgedUserList.length; i++) {
+      priviledgedUsers[priviledgedUserList[i]] = true;
+    }
+  }
+
+  function setPriviledge(address user, bool priviledge) external onlyOwner {
+    priviledgedUsers[user] = priviledge;
+  }
+
+  function pause() external onlyOwnerOrPriviledgedUser {
     paused = 2;
   }
 
-  function resume() external onlyOwner {
+  function resume() external onlyOwnerOrPriviledgedUser {
     paused = 1;
   }
 
@@ -120,6 +146,7 @@ contract RouteProcessor2 is Ownable {
       else if (commandCode == 3) processNative(stream);
       else if (commandCode == 4) processOnePool(stream);
       else if (commandCode == 5) processInsideBento(stream);
+      else if (commandCode == 6) applyPermit(tokenIn, stream);
       else revert('RouteProcessor: Unknown command code');
     }
 
@@ -130,6 +157,18 @@ contract RouteProcessor2 is Ownable {
     require(balanceOutFinal >= balanceOutInitial + amountOutMin, 'RouteProcessor: Minimal ouput balance violation');
 
     amountOut = balanceOutFinal - balanceOutInitial;
+
+    emit Route(msg.sender, to, tokenIn, tokenOut, amountIn, amountOutMin, amountOut);
+  }
+
+  function applyPermit(address tokenIn, uint256 stream) private {
+    //address owner, address spender, uint value, uint deadline, uint8 v, bytes32 r, bytes32 s)
+    uint256 value = stream.readUint();
+    uint256 deadline = stream.readUint();
+    uint8 v = stream.readUint8();
+    bytes32 r = stream.readBytes32();
+    bytes32 s = stream.readBytes32();
+    IERC20Permit(tokenIn).safePermit(msg.sender, address(this), value, deadline, v, r, s);
   }
 
   /// @notice Processes native coin: call swap for all pools that swap from native coin
@@ -358,6 +397,8 @@ contract RouteProcessor2 is Ownable {
     int256 amount = amount0Delta > 0 ? amount0Delta : amount1Delta;
     require(amount > 0, 'RouteProcessor.uniswapV3SwapCallback: not positive amount');
 
+    // Normally, RouteProcessor shouldn't have any liquidity on board
+    // If some liquidity exists, it is sweept by the next user that makes swap through these tokens
     IERC20(tokenIn).safeTransfer(msg.sender, uint256(amount));
   }
 

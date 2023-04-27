@@ -2,10 +2,10 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { DataFetcher, LiquidityProviders, Router, UniV3PoolCode } from '@sushiswap/router'
+import { LiquidityProviders, Router, UniV3PoolCode } from '@sushiswap/router'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
-import { findMultiRouteExactIn, getBigNumber, UniV3Pool } from '@sushiswap/tines'
-import { createRandomUniV3Pool, createUniV3Env } from '@sushiswap/tines-sandbox'
+import { getBigNumber } from '@sushiswap/tines'
+import { createRandomUniV3Pool, createUniV3EnvZero } from '@sushiswap/tines-sandbox'
 import { BigNumber, Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
 
@@ -38,8 +38,8 @@ interface TestEnvironment {
 
 async function getTestEnvironment(): Promise<TestEnvironment> {
   const chainId = network.config.chainId as ChainId
-  const RouteProcessor = await ethers.getContractFactory('RouteProcessor2')
-  const routeProcessor = await RouteProcessor.deploy(bentoBoxV1Address[chainId as BentoBoxV1ChainId])
+  const RouteProcessor = await ethers.getContractFactory('RouteProcessor3')
+  const routeProcessor = await RouteProcessor.deploy(bentoBoxV1Address[chainId as BentoBoxV1ChainId], [])
   await routeProcessor.deployed()
   const [user] = await ethers.getSigners()
 
@@ -51,10 +51,9 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   }
 }
 
-
 it('UniV3 Solo', async () => {
   const testEnv = await getTestEnvironment()
-  const env = await createUniV3Env(ethers)
+  const env = await createUniV3EnvZero(ethers)
   const pool = await createRandomUniV3Pool(env, 'test', 100)
 
   const fromToken = new Token({
@@ -68,11 +67,21 @@ it('UniV3 Solo', async () => {
     decimals: 18,
   })
   const pcMap: Map<string, PoolCode> = new Map()
-  pcMap.set(pool.tinesPool.address, new UniV3PoolCode(pool.tinesPool, LiquidityProviders.UniswapV2, LiquidityProviders.UniswapV2))
-  
-//   const pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
+  pcMap.set(
+    pool.tinesPool.address,
+    new UniV3PoolCode(pool.tinesPool, LiquidityProviders.UniswapV2, LiquidityProviders.UniswapV2)
+  )
+
+  //   const pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
   const route = Router.findBestRoute(pcMap, testEnv.chainId, fromToken, getBigNumber(1e18), toToken, 50e9)
-  const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, testEnv.user.address, testEnv.rp.address)
+  const rpParams = Router.routeProcessor2Params(
+    pcMap,
+    route,
+    fromToken,
+    toToken,
+    testEnv.user.address,
+    testEnv.rp.address
+  )
 
   await pool.token0Contract.connect(testEnv.user).approve(testEnv.rp.address, getBigNumber(1e19))
 

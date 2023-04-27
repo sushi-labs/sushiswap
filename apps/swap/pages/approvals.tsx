@@ -74,6 +74,7 @@ const Approvals: FC = () => {
 
 const Item: FC<{ token: Token; account: Address }> = ({ account, token }) => {
   const { data: allowance, isLoading } = useTokenAllowance({
+    chainId: token.chainId,
     token,
     owner: account,
     spender: routeProcessor2Address[token.chainId as RouteProcessor2ChainId],

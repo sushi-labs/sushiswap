@@ -4,7 +4,7 @@ import '../variables.css'
 
 import { useIsSmScreen } from '@sushiswap/hooks'
 import { App, ThemeProvider } from '@sushiswap/ui'
-import { client } from '@sushiswap/wagmi'
+import { client } from '@sushiswap/wagmi/client'
 import { Analytics } from '@vercel/analytics/react'
 import { MotionConfig } from 'framer-motion'
 import type { AppProps } from 'next/app'

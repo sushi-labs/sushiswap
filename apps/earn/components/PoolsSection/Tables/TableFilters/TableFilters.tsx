@@ -40,18 +40,18 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             'transition-opacity ease-in duration-150 flex gap-3 flex-wrap items-center'
           )}
         >
-          {/*<Button*/}
-          {/*  className="items-center gap-2.5"*/}
-          {/*  onClick={() => protocolHandler(Protocol.SUSHISWAP_V3)}*/}
-          {/*  size="sm"*/}
-          {/*  variant={protocols.includes(Protocol.SUSHISWAP_V3) ? 'outlined' : 'empty'}*/}
-          {/*  color={protocols.includes(Protocol.SUSHISWAP_V3) ? 'blue' : 'default'}*/}
-          {/*>*/}
-          {/*  <span>🍣</span>{' '}*/}
-          {/*  <span>*/}
-          {/*    SushiSwap <sup>v3</sup>*/}
-          {/*  </span>*/}
-          {/*</Button>*/}
+          <Button
+            className="items-center gap-2.5"
+            onClick={() => protocolHandler(Protocol.SUSHISWAP_V3)}
+            size="sm"
+            variant={protocols.includes(Protocol.SUSHISWAP_V3) ? 'outlined' : 'empty'}
+            color={protocols.includes(Protocol.SUSHISWAP_V3) ? 'blue' : 'default'}
+          >
+            <span>🍣</span>{' '}
+            <span>
+              SushiSwap <sup>v3</sup>
+            </span>
+          </Button>
           <Button
             className="gap-2.5"
             onClick={() => protocolHandler(Protocol.SUSHISWAP_V2)}
