@@ -55,6 +55,10 @@ const config: HardhatUserConfig = {
     // },
     hardhat: {
       // polygon
+      // mining: {
+      //   auto: false,
+      //   interval: 0
+      // },
       forking: {
         enabled: process.env.FORKING === 'true',
         url: process.env.ALCHEMY_ID
