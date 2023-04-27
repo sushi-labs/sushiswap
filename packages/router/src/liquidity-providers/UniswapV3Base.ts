@@ -70,7 +70,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
 
   async fetchPoolsForToken(t0: Token, t1: Token): Promise<void> {
     const staticPools = this.getStaticPools(t0, t1)
-    console.log({ staticPoolsLength: staticPools.length })
     const slot0 = await this.client
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
@@ -106,8 +105,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
         return undefined
       })
 
-    console.log('here', { slot0: slot0?.filter((s) => s.status === 'success') })
-
     const existingPools: V3Pool[] = []
 
     staticPools.forEach((pool, i) => {
@@ -127,7 +124,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     const liquidityContracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
-      batchSize: 512,
       contracts: existingPools.map(
         (pool) =>
           ({
@@ -147,12 +143,9 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       ),
     })
 
-    console.log('here2')
-
     const token0Contracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
-      batchSize: 512,
       contracts: existingPools.map(
         (pool) =>
           ({
@@ -165,12 +158,9 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       ),
     })
 
-    console.log('here3')
-
     const token1Contracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
       allowFailure: true,
-      batchSize: 512,
       contracts: existingPools.map(
         (pool) =>
           ({
@@ -182,8 +172,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
           } as const)
       ),
     })
-
-    console.log('here4')
 
     const minIndexes = existingPools.map((pool) =>
       bitmapIndex(pool.activeTick - NUMBER_OF_SURROUNDING_TICKS, TICK_SPACINGS[pool.fee])
@@ -206,16 +194,11 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       }
     })
 
-    console.log('existingPools length', existingPools.length)
-
     const ticksContracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
-      batchSize: 512,
       allowFailure: true,
       contracts: wordList,
     })
-
-    console.log('here5')
 
     const [liquidityResults, token0Balances, token1Balances, tickResults] = await Promise.all([
       liquidityContracts,
@@ -223,8 +206,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       token1Contracts,
       ticksContracts,
     ])
-
-    console.log('here6')
 
     const ticks: any = []
     tickResults.forEach((t, i) => {
@@ -287,8 +268,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       this.getTradeId(t0, t1),
       transformedV3Pools.map((pc) => pc.pool.address.toLowerCase())
     )
-
-    console.log('here 7')
   }
 
   getStaticPools(t1: Token, t2: Token): StaticPool[] {
