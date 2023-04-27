@@ -1,8 +1,7 @@
 import { chainShortName } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { UseQueryOptions } from '@tanstack/react-query'
+import { UseQueryOptions, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { useQuery } from 'wagmi'
 
 export interface FarmMap<T> {
   chainId: number
