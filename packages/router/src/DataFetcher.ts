@@ -1,6 +1,6 @@
 import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
-import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
+import { Type } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
 import { PublicClient } from 'viem'
@@ -237,9 +237,10 @@ export class DataFetcher {
     await Promise.all(this.providers.map((p) => p.fetchPoolsForToken(token0, token1)))
   }
 
-  getCurrentPoolCodeMap(t0: Type, t1: Type): Map<string, PoolCode> {
-    const token0 = this.transformToken(t0)
-    const token1 = this.transformToken(t1)
+  getCurrentPoolCodeMap(currency0: Type, currency1: Type): Map<string, PoolCode> {
+    const [token0, token1] = currency0.wrapped.sortsBefore(currency1.wrapped)
+      ? [currency0.wrapped, currency1.wrapped]
+      : [currency1.wrapped, currency0.wrapped]
     const result: Map<string, PoolCode> = new Map()
     this.providers.forEach((p) => {
       const poolCodes = p.getCurrentPoolList(token0, token1)
@@ -249,9 +250,10 @@ export class DataFetcher {
     return result
   }
 
-  getCurrentPoolCodeList(t0: Type, t1: Type): PoolCode[] {
-    const token0 = this.transformToken(t0)
-    const token1 = this.transformToken(t1)
+  getCurrentPoolCodeList(currency0: Type, currency1: Type): PoolCode[] {
+    const [token0, token1] = currency0.wrapped.sortsBefore(currency1.wrapped)
+      ? [currency0.wrapped, currency1.wrapped]
+      : [currency1.wrapped, currency0.wrapped]
     const pcMap = this.getCurrentPoolCodeMap(token0, token1)
     return Array.from(pcMap.values())
   }
@@ -268,9 +270,5 @@ export class DataFetcher {
       }
     })
     return lastUpdateBlock === undefined ? 0 : lastUpdateBlock
-  }
-
-  transformToken(t: Type) {
-    return t instanceof Native ? WNATIVE[t.chainId] : (t as Token)
   }
 }
