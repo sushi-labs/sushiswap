@@ -42,6 +42,9 @@ import { createPublicClient } from 'viem'
 import { custom } from 'viem'
 import { hardhat } from 'viem/chains'
 
+// Updating  pools' state allows to test DF updating ability, but makes tests very-very slow (
+const UPDATE_POOL_STATES = false
+
 function getRandomExp(rnd: () => number, min: number, max: number) {
   const minL = Math.log(min)
   const maxL = Math.log(max)
@@ -148,6 +151,7 @@ interface TestEnvironment {
   user: SignerWithAddress
   user2: SignerWithAddress
   dataFetcher: DataFetcher
+  poolCodes: Map<string, PoolCode>
 }
 
 async function switchMulticallToEthers(client: any) {
@@ -212,6 +216,43 @@ async function switchMulticallToEthers(client: any) {
   }
 }
 
+async function getAllPoolCodes(dataFetcher: DataFetcher, chainId: ChainId): Promise<PoolCode[]> {
+  const fetchedTokens: Token[] = [
+    WNATIVE[chainId],
+    SUSHI[chainId as keyof typeof SUSHI_ADDRESS],
+    USDC[chainId as keyof typeof USDC_ADDRESS],
+    USDT[chainId as keyof typeof USDT_ADDRESS],
+    DAI[chainId as keyof typeof DAI_ADDRESS],
+    FRAX[chainId as keyof typeof FRAX_ADDRESS],
+    FXS[chainId as keyof typeof FXS_ADDRESS],
+  ]
+  const foundPools: Set<string> = new Set()
+  const poolCodes: PoolCode[] = []
+
+  console.log('  Fetching pools data ...')
+  for (let i = 0; i < fetchedTokens.length; ++i) {
+    for (let j = i + 1; j < fetchedTokens.length; ++j) {
+      console.log(`    ${fetchedTokens[i].symbol} - ${fetchedTokens[j].symbol}`)
+      for (let p = 0; p < dataFetcher.providers.length; ++p) {
+        const provider = dataFetcher.providers[p]
+        await provider.fetchPoolsForToken(fetchedTokens[i], fetchedTokens[j], foundPools)
+        const pc = provider.getCurrentPoolList(fetchedTokens[i], fetchedTokens[j])
+        let newPools = 0
+        pc.forEach((p) => {
+          if (!foundPools.has(p.pool.address)) {
+            poolCodes.push(p)
+            foundPools.add(p.pool.address)
+            ++newPools
+          }
+        })
+        if (newPools) console.log(`      ${provider.getPoolProviderName()} pools: ${newPools}`)
+      }
+    }
+  }
+
+  return poolCodes
+}
+
 async function getTestEnvironment(): Promise<TestEnvironment> {
   //console.log('Prepare Environment:')
 
@@ -243,14 +284,18 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   //console.log({ chainId, url: ethers.provider.connection.url, otherurl: network.config.forking.url })
 
   dataFetcher.startDataFetching()
+  const poolCodes = new Map<string, PoolCode>()
+  if (!UPDATE_POOL_STATES) {
+    const pc = await getAllPoolCodes(dataFetcher, chainId)
+    pc.forEach((p) => poolCodes.set(p.pool.address, p))
+  }
 
-  console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
   const RouteProcessor = await ethers.getContractFactory('RouteProcessor3')
   const routeProcessor = await RouteProcessor.deploy(bentoBoxV1Address[chainId as BentoBoxV1ChainId], [])
   await routeProcessor.deployed()
   //console.log('    Block Number:', provider.blockNumber)
 
-  console.log(`Network: ${chainName[chainId]}, Forked Block: ${provider.blockNumber}`)
+  console.log(`  Network: ${chainName[chainId]}, Forked Block: ${provider.blockNumber}`)
   //console.log('    User creation ...')
   const [Alice, Bob] = await ethers.getSigners()
 
@@ -261,6 +306,7 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
     user: Alice,
     user2: Bob,
     dataFetcher,
+    poolCodes,
   }
 }
 
@@ -295,11 +341,14 @@ async function makeSwap(
     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
   }
 
-  // console.log('Create Route ...')
-  await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
-  const pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
-
-  await checkPoolsState(pcMap, env)
+  let pcMap
+  if (UPDATE_POOL_STATES) {
+    await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
+    pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
+  } else {
+    pcMap = env.poolCodes
+  }
+  //await checkPoolsState(pcMap, env)
 
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
   // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
@@ -387,10 +436,11 @@ async function makeSwap(
 }
 
 async function dataUpdated(env: TestEnvironment, minBlockNumber: number) {
-  for (;;) {
-    if (env.dataFetcher.getLastUpdateBlock() >= minBlockNumber) return
-    await delay(500)
-  }
+  if (UPDATE_POOL_STATES)
+    for (;;) {
+      if (env.dataFetcher.getLastUpdateBlock() >= minBlockNumber) return
+      await delay(500)
+    }
 }
 
 async function updMakeSwap(
@@ -430,9 +480,12 @@ async function checkTransferAndRoute(
     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
   }
 
-  await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  let pcMap
+  if (UPDATE_POOL_STATES) {
+    await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
+    pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
+  } else pcMap = env.poolCodes
 
-  const pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9)
   const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
   const transferValue = getBigNumber(0.02 * Math.pow(10, Native.onChain(env.chainId).decimals))
@@ -610,9 +663,11 @@ describe('End-to-end RouteProcessor3 test', async function () {
   })
 
   it('Special Router', async function () {
-    await env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI_LOCAL)
-
-    const pcMap = env.dataFetcher.getCurrentPoolCodeMap(Native.onChain(chainId), SUSHI_LOCAL)
+    let pcMap
+    if (UPDATE_POOL_STATES) {
+      await env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI_LOCAL)
+      pcMap = env.dataFetcher.getCurrentPoolCodeMap(Native.onChain(chainId), SUSHI_LOCAL)
+    } else pcMap = env.poolCodes
 
     const route = Router.findSpecialRoute(
       pcMap,
