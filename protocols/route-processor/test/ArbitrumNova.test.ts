@@ -75,6 +75,6 @@ describe('Arbitrum Nova RP3', async () => {
     const toToken = Native.onChain(ChainId.ARBITRUM_NOVA)
     const user = '0x8f54C8c2df62c94772ac14CcFc85603742976312' // has SUSHI and approved 1e18 to the RP
     const signer = await provider.getUncheckedSigner(user)
-    await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, getBigNumber(1e18))
+    await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, getBigNumber(1e17))
   })
 })
