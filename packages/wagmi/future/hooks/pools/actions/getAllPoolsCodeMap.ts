@@ -28,8 +28,8 @@ import {
 import { Chain } from 'wagmi'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
 
-// const isTest = process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_PLAYWRIGHT_ENABLED === 'true'
-const isTest = true
+const isTest = process.env['NODE_ENV'] === 'test' || process.env['NEXT_PUBLIC_PLAYWRIGHT_ENABLED'] === 'true'
+
 const dataFetchers = new Map<ChainId, DataFetcher>()
 
 dataFetchers.set(

@@ -1,8 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
-import { chromium, expect, Page, test } from '@playwright/test'
+import { expect, Page, test } from '@playwright/test'
 import { chainName } from '@sushiswap/chain'
 import { Native, SUSHI_ADDRESS, USDC_ADDRESS } from '@sushiswap/currency'
-import { client } from '@sushiswap/wagmi'
 
 if (!process.env.CHAIN_ID) throw new Error('CHAIN_ID env var not set')
 if (!process.env.PLAYWRIGHT_URL) throw new Error('PLAYWRIGHT_URL env var not set')
@@ -33,11 +32,6 @@ test.beforeEach(async ({ page }) => {
   })
 
   await page.goto(PLAYWRIGHT_URL)
-  
-  // client.
-  // const connectWallet = page.locator('[testdata-id=connect-wallet-button]')
-  // await connectWallet.click()
-
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
@@ -97,9 +91,6 @@ async function wrap(trade: Trade, page: Page, useBalance?: boolean) {
   const confirmUnwrap = page.locator('[testdata-id=confirm-swap-button]')
   await expect(confirmUnwrap).toBeEnabled()
   await confirmUnwrap.click()
-
-  // const expectedRegex =
-  // await expect(page.locator('div', { hasText: expectedRegex }).last()).toContainText(expectedRegex)
   
   const expectedText = new RegExp(`(Wrap|Unwrap .* ${trade.input.symbol} to .* ${trade.output.symbol})`)
   await expect(page.locator('span', { hasText: expectedText }).last()).toContainText(expectedText)
