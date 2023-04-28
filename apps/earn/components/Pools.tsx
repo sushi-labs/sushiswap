@@ -92,8 +92,8 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                                       <List.MenuItem
                                         as="a"
                                         href={`/add/v2/${chainId}`}
-                                        title="V2 Position (Legacy)"
-                                        subtitle={`If you prefer creating a legacy liquidity position.`}
+                                        title="V2 Position"
+                                        subtitle={`If you prefer creating a classic liquidity position.`}
                                       />
                                     </Popover.Panel>
                                   </div>
