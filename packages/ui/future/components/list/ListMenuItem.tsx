@@ -6,7 +6,7 @@ import { ExtractProps, PolymorphicComponentProps } from '../../../types'
 import { ArrowSmallRightIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 
 interface Props {
-  title: string
+  title: ReactNode
   subtitle?: ReactNode
   hoverIcon?: (props: SVGProps<SVGSVGElement>) => JSX.Element | null
   hoverIconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'> & {
