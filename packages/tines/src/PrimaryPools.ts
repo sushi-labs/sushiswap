@@ -22,8 +22,8 @@ export function setTokenId(...tokens: RToken[]) {
 
 export abstract class RPool {
   readonly address: string
-  readonly token0: RToken
-  readonly token1: RToken
+  token0: RToken
+  token1: RToken
   readonly fee: number
   reserve0: BigNumber
   reserve1: BigNumber
@@ -43,7 +43,10 @@ export abstract class RPool {
     this.address = address
     this.token0 = token0
     this.token1 = token1
-    setTokenId(this.token0, this.token1)
+    if (token0 && token1) {
+      // exception just for serialization - tokenId should be set after
+      setTokenId(this.token0, this.token1)
+    }
     this.fee = fee
     this.minLiquidity = minLiquidity
     this.swapGasCost = swapGasCost
@@ -87,8 +90,8 @@ export class ConstantProductRPool extends RPool {
 
   constructor(address: string, token0: RToken, token1: RToken, fee: number, reserve0: BigNumber, reserve1: BigNumber) {
     super(address, token0, token1, fee, reserve0, reserve1)
-    this.reserve0Number = parseInt(reserve0.toString())
-    this.reserve1Number = parseInt(reserve1.toString())
+    this.reserve0Number = parseInt(reserve0?.toString() || '0')
+    this.reserve1Number = parseInt(reserve1?.toString() || '0')
   }
 
   updateReserves(res0: BigNumber, res1: BigNumber) {

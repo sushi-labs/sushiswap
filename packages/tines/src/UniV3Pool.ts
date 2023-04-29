@@ -94,16 +94,24 @@ export class UniV3Pool extends RPool {
   ) {
     super(address, token0, token1, fee, reserve0, reserve1, TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST)
     this.ticks = ticks
-    if (this.ticks.length === 0) {
-      this.ticks.push({ index: CL_MIN_TICK, DLiquidity: ZERO })
-      this.ticks.push({ index: CL_MAX_TICK, DLiquidity: ZERO })
-    }
-    if (this.ticks[0].index > CL_MIN_TICK) this.ticks.unshift({ index: CL_MIN_TICK, DLiquidity: ZERO })
-    if (this.ticks[this.ticks.length - 1].index < CL_MAX_TICK) this.ticks.push({ index: CL_MAX_TICK, DLiquidity: ZERO })
+    if (address !== undefined) {
+      if (this.ticks.length === 0) {
+        this.ticks.push({ index: CL_MIN_TICK, DLiquidity: ZERO })
+        this.ticks.push({ index: CL_MAX_TICK, DLiquidity: ZERO })
+      }
+      if (this.ticks[0].index > CL_MIN_TICK) this.ticks.unshift({ index: CL_MIN_TICK, DLiquidity: ZERO })
+      if (this.ticks[this.ticks.length - 1].index < CL_MAX_TICK)
+        this.ticks.push({ index: CL_MAX_TICK, DLiquidity: ZERO })
 
-    this.liquidity = liquidity
-    this.sqrtPriceX96 = sqrtPriceX96
-    this.nearestTick = this._findTickForPrice(tick)
+      this.liquidity = liquidity
+      this.sqrtPriceX96 = sqrtPriceX96
+      this.nearestTick = this._findTickForPrice(tick)
+    } else {
+      // for deserialization
+      this.liquidity = undefined as unknown as BigNumber
+      this.sqrtPriceX96 = undefined as unknown as BigNumber
+      this.nearestTick = 0
+    }
   }
 
   updateState(reserve0: BigNumber, reserve1: BigNumber, tick: number, liquidity: BigNumber, sqrtPriceX96: BigNumber) {
