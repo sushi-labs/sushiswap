@@ -36,6 +36,7 @@ import {
   BridgeUnlimited,
   ConstantProductRPool,
   getBigNumber,
+  RouteStatus,
   RPool,
   StableSwapRPool,
   toShareBN,
@@ -381,6 +382,8 @@ async function makeSwap(
   //       l.assumedAmountOut
   //   )
   // )
+  if (route.status == RouteStatus.NoWay) return
+
   const rpParams = Router.routeProcessor2Params(
     pcMap,
     route,
@@ -493,7 +496,6 @@ async function updMakeSwap(
     permits,
     makeSankeyDiagram
   )
-  expect(res).not.undefined
   if (res === undefined) return [undefined, waitBlock]
   else return res
 }
