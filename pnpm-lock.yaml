@@ -3134,6 +3134,7 @@ importers:
       mocha: ^10.2.0
       prettier: 2.8.1
       prettier-plugin-solidity: 1.1.0
+      serialijse: ^0.3.0
       solidity-coverage: 0.8.2
       ts-generator: 0.1.1
       ts-node: 10.9.1
@@ -3189,6 +3190,7 @@ importers:
       mocha: 10.2.0
       prettier: 2.8.1
       prettier-plugin-solidity: 1.1.0_prettier@2.8.1
+      serialijse: 0.3.0
       solidity-coverage: 0.8.2_hardhat@2.12.4
       ts-generator: 0.1.1
       ts-node: 10.9.1_od3vuficnfbr74q5a3bmsrnj6y
@@ -29693,6 +29695,15 @@ packages:
       tslib: 2.5.0
       upper-case-first: 2.0.2
 
+  /serialijse/0.3.0:
+    resolution: {integrity: sha512-7Aimo0Ci/o9o5J6b7FnSpIvA5boskWfpfJVnfAspXqJmfsPelIRh8e3AbZ6Vo1gbrd+B+1/GdZ7MZJLVoiABbA==}
+    engines: {node: '>=4.0'}
+    optionalDependencies:
+      buffer: 6.0.3
+      object-assign: 4.1.1
+      zlib: 1.0.5
+    dev: true
+
   /serialize-javascript/6.0.0:
     resolution: {integrity: sha512-Qr3TosvguFt8ePWqsvRfrKyQXIiW+nGbYpy8XK24NQHE83caxWt+mIymTT19DGFbNWNLfEwsrkSmN64lVWB9ag==}
     dependencies:
@@ -30035,7 +30046,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.2
+      follow-redirects: 1.15.2_debug@4.3.4
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
@@ -33989,6 +34000,13 @@ packages:
       ethers: ~5.7.0
     dependencies:
       ethers: 5.7.2
+
+  /zlib/1.0.5:
+    resolution: {integrity: sha512-40fpE2II+Cd3k8HWTWONfeKE2jL+P42iWJ1zzps5W51qcTsOUKM5Q5m2PFb0CLxlmFAaUuUdJGc3OfZy947v0w==}
+    engines: {node: '>=0.2.0'}
+    requiresBuild: true
+    dev: true
+    optional: true
 
   /zod/3.20.2:
     resolution: {integrity: sha512-1MzNQdAvO+54H+EaK5YpyEy0T+Ejo/7YLHS93G3RnYWh5gaotGHwGeN/ZO687qEDU2y4CdStQYXVHIgrUl5UVQ==}
