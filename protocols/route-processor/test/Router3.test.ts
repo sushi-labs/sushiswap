@@ -51,6 +51,8 @@ import { createPublicClient } from 'viem'
 import { custom } from 'viem'
 import { hardhat } from 'viem/chains'
 
+import { loadPoolSnapshot, savePoolSnapshot } from './utils/poolSerializer'
+
 // Updating  pools' state allows to test DF updating ability, but makes tests very-very slow (
 const UPDATE_POOL_STATES = false
 
@@ -226,46 +228,52 @@ async function switchMulticallToEthers(client: any) {
   }
 }
 
-async function getAllPoolCodes(dataFetcher: DataFetcher, chainId: ChainId): Promise<PoolCode[]> {
-  const fetchedTokens: Token[] = [
-    WNATIVE[chainId],
-    SUSHI[chainId as keyof typeof SUSHI_ADDRESS],
-    USDC[chainId as keyof typeof USDC_ADDRESS],
-    USDT[chainId as keyof typeof USDT_ADDRESS],
-    DAI[chainId as keyof typeof DAI_ADDRESS],
-    FRAX[chainId as keyof typeof FRAX_ADDRESS],
-    FXS[chainId as keyof typeof FXS_ADDRESS],
-  ]
-  const foundPools: Set<string> = new Set()
-  const poolCodes: PoolCode[] = []
+async function getAllPoolCodes(
+  dataFetcher: DataFetcher,
+  chainId: ChainId,
+  blockNumber: number | undefined
+): Promise<PoolCode[]> {
+  let poolCodes = loadPoolSnapshot(chainId, blockNumber)
+  if (poolCodes === undefined) {
+    const fetchedTokens: Token[] = [
+      WNATIVE[chainId],
+      SUSHI[chainId as keyof typeof SUSHI_ADDRESS],
+      USDC[chainId as keyof typeof USDC_ADDRESS],
+      USDT[chainId as keyof typeof USDT_ADDRESS],
+      DAI[chainId as keyof typeof DAI_ADDRESS],
+      FRAX[chainId as keyof typeof FRAX_ADDRESS],
+      FXS[chainId as keyof typeof FXS_ADDRESS],
+    ]
+    const foundPools: Set<string> = new Set()
+    poolCodes = []
 
-  console.log('  Fetching pools data ...')
-  for (let i = 0; i < fetchedTokens.length; ++i) {
-    for (let j = i + 1; j < fetchedTokens.length; ++j) {
-      console.log(`    ${fetchedTokens[i].symbol} - ${fetchedTokens[j].symbol}`)
-      for (let p = 0; p < dataFetcher.providers.length; ++p) {
-        const provider = dataFetcher.providers[p]
-        await provider.fetchPoolsForToken(fetchedTokens[i], fetchedTokens[j], foundPools)
-        const pc = provider.getCurrentPoolList(fetchedTokens[i], fetchedTokens[j])
-        let newPools = 0
-        pc.forEach((p) => {
-          if (!foundPools.has(p.pool.address)) {
-            poolCodes.push(p)
-            foundPools.add(p.pool.address)
-            ++newPools
-          }
-        })
-        if (newPools) console.log(`      ${provider.getPoolProviderName()} pools: ${newPools}`)
+    console.log('  Fetching pools data ...')
+    for (let i = 0; i < fetchedTokens.length; ++i) {
+      for (let j = i + 1; j < fetchedTokens.length; ++j) {
+        console.log(`    ${fetchedTokens[i].symbol} - ${fetchedTokens[j].symbol}`)
+        for (let p = 0; p < dataFetcher.providers.length; ++p) {
+          const provider = dataFetcher.providers[p]
+          await provider.fetchPoolsForToken(fetchedTokens[i], fetchedTokens[j], foundPools)
+          const pc = provider.getCurrentPoolList(fetchedTokens[i], fetchedTokens[j])
+          let newPools = 0
+          pc.forEach((p) => {
+            if (!foundPools.has(p.pool.address)) {
+              ;(poolCodes as PoolCode[]).push(p)
+              foundPools.add(p.pool.address)
+              ++newPools
+            }
+          })
+          if (newPools) console.log(`      ${provider.getPoolProviderName()} pools: ${newPools}`)
+        }
       }
     }
+    savePoolSnapshot(poolCodes, chainId, blockNumber)
   }
 
-  return poolCodes
+  return poolCodes as PoolCode[]
 }
 
 async function getTestEnvironment(): Promise<TestEnvironment> {
-  //console.log('Prepare Environment:')
-
   const client = createPublicClient({
     batch: {
       multicall: {
@@ -285,18 +293,16 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
     },
     transport: custom(network.provider),
   })
-  await switchMulticallToEthers(client)
-  //console.log('    Create DataFetcher ...')
+  //await switchMulticallToEthers(client)
+
   const provider = ethers.provider
   const chainId = network.config.chainId as ChainId
   const dataFetcher = new DataFetcher(chainId, client)
 
-  //console.log({ chainId, url: ethers.provider.connection.url, otherurl: network.config.forking.url })
-
   dataFetcher.startDataFetching()
   const poolCodes = new Map<string, PoolCode>()
   if (!UPDATE_POOL_STATES) {
-    const pc = await getAllPoolCodes(dataFetcher, chainId)
+    const pc = await getAllPoolCodes(dataFetcher, chainId, network.config.forking?.blockNumber)
     pc.forEach((p) => poolCodes.set(p.pool.address, p))
   }
 
