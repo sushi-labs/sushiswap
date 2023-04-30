@@ -379,20 +379,12 @@ async function makeSwap(
   //await checkPoolsState(pcMap, env)
 
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
-  // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
+  //console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
   // console.log(
   //   'ROUTE:',
   //   route.legs.map(
   //     (l) =>
-  //       l.tokenFrom.symbol +
-  //       ' -> ' +
-  //       l.tokenTo.symbol +
-  //       '  ' +
-  //       l.poolAddress +
-  //       '  ' +
-  //       l.assumedAmountIn +
-  //       ' ->' +
-  //       l.assumedAmountOut
+  //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
   //   )
   // )
   if (route.status == RouteStatus.NoWay) return
@@ -462,7 +454,7 @@ async function makeSwap(
   const slippage = parseInt(balanceOutBN.sub(route.amountOutBN).mul(10_000).div(route.amountOutBN).toString())
 
   if (route.amountOutBN.sub(balanceOutBN).abs().gt(10)) {
-    if (slippage < 0) {
+    if (slippage != 0) {
       console.log(`expected amountOut: ${route.amountOutBN.toString()}`)
       console.log(`real amountOut:     ${balanceOutBN.toString()}`)
       console.log(`slippage: ${slippage / 100}%`)
@@ -764,9 +756,11 @@ describe('End-to-end RouteProcessor3 test', async function () {
     }
   }
 
-  it.skip('Random swap test', async function () {
+  it('Random swap test', async function () {
     let routeCounter = 0
     for (let i = 0; i < 100; ++i) {
+      await env.snapshot.restore()
+      const usedPools = new Set<string>()
       let currentToken = 0
       const rnd: () => number = seedrandom(`testSeed ${i}`) // random [0, 1)
       intermidiateResult[0] = getBigNumber(getRandomExp(rnd, 1e15, 1e24))
@@ -777,10 +771,11 @@ describe('End-to-end RouteProcessor3 test', async function () {
           env,
           testTokensSet[currentToken] as Type,
           testTokensSet[nextToken] as Type,
-          intermidiateResult
+          intermidiateResult,
+          usedPools
         )
         currentToken = nextToken
-        if (currentToken === 0) break
+        if (currentToken === 0 || intermidiateResult[0] == undefined) break
       }
     }
   })
