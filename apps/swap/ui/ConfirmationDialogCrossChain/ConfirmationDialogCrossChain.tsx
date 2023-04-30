@@ -25,6 +25,7 @@ import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { Chain } from '@sushiswap/chain'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
 import { log } from 'next-axiom'
+import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 
 interface ConfirmationDialogCrossChainProps {
   children({
@@ -49,6 +50,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
   const { data: trade } = useTrade({ crossChain: true })
   const { approved } = useApproved('xswap')
   const groupTs = useRef<number>()
+  const refetchBalances = useBalanceWeb3Refetch()
 
   const [stepStates, setStepStates] = useState<{ source: StepState; bridge: StepState; dest: StepState }>({
     source: StepState.Success,
@@ -66,8 +68,6 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
   const srcCurrencyB = crossChainSwap || swapTransfer ? srcBridgeToken : token1
   const dstCurrencyA = crossChainSwap || transferSwap ? dstBridgeToken : undefined
 
-  // const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
-  // const { refetch: refetchNetwork1Balances } = useBalances({ account: address, chainId: network0 })
   const { config, isError, error } = usePrepareContractWrite({
     ...getSushiXSwapContractConfig(network0 as SushiXSwapChainId),
     functionName: trade?.functionName,
@@ -122,8 +122,9 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     data,
   } = useContractWrite({
     ...config,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       setReview(false)
+      await refetchBalances()
 
       data
         .wait()
