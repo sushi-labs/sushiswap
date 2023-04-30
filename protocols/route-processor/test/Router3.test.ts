@@ -269,6 +269,13 @@ async function getAllPoolCodes(
     }
     savePoolSnapshot(poolCodes, chainId, blockNumber)
   }
+  const providers = new Map<LiquidityProviders, number>()
+  poolCodes.forEach((p) => {
+    const count = providers.get(p.liquidityProvider) || 0
+    providers.set(p.liquidityProvider, count + 1)
+  })
+  Array.from(providers.entries()).forEach(([provider, count]) => console.log(`    ${provider} pools: ${count}`))
+  console.log('    All providers pools:', poolCodes.length)
 
   return poolCodes as PoolCode[]
 }
