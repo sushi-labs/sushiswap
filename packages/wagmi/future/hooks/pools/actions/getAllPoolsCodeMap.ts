@@ -113,10 +113,12 @@ dataFetchers.set(
     ChainId.ETHEREUM,
     createPublicClient({
       chain: mainnet,
-      transport: isTest ? http('http://localhost:8545') : fallback([
-        http(`${mainnet.rpcUrls.alchemy.http}/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`),
-        http('https://eth.llamarpc.com'),
-      ]),
+      transport: isTest
+        ? http('http://localhost:8545')
+        : fallback([
+            http(`${mainnet.rpcUrls.alchemy.http}/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`),
+            http('https://eth.llamarpc.com'),
+          ]),
     })
   )
 )
@@ -258,9 +260,6 @@ dataFetchers.set(
 )
 
 export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enabled'>) => {
-  // if (!variables.currencyA || !variables.currencyB) {
-  //   return new Map()
-  // }
   const dataFetcher = dataFetchers.get(variables.chainId) as DataFetcher
   const liquidityProviders = [LiquidityProviders.SushiSwap, LiquidityProviders.Trident]
   if (isRouteProcessor3ChainId(variables.chainId)) {

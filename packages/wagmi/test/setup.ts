@@ -11,17 +11,19 @@ const foundryMainnet: Chain = {
 
 export const testChains = [foundryMainnet]
 
-const { provider }: CreateClientConfig & { chains: Chain[] } = configureChains(testChains, 
+const { provider }: CreateClientConfig & { chains: Chain[] } = configureChains(
+  testChains,
   [
     jsonRpcProvider({
       rpc: (chain_) => ({
         http: chain_.rpcUrls.default.http[0],
       }),
     }),
-  ]
-  , {
-  pollingInterval: 8_000,
-})
+  ],
+  {
+    pollingInterval: 8_000,
+  }
+)
 
 export function getNetwork(chain: Chain) {
   return {
@@ -30,7 +32,6 @@ export function getNetwork(chain: Chain) {
     name: chain.name,
   }
 }
-
 
 class EthersProviderWrapper extends providers.StaticJsonRpcProvider {
   toJSON() {
@@ -142,8 +143,9 @@ export function getProvider({ chains = testChains, chainId }: { chains?: Chain[]
   return Object.assign(provider, { chains })
 }
 
-export const _createTestClient = (config?: CreateClientConfig) => createClient({
-  provider,
-  autoConnect: true,
-  connectors: [new MockConnector({ options: { signer: getSigners()[0] } })],
-})
+export const _createTestClient = (config?: CreateClientConfig) =>
+  createClient({
+    provider,
+    autoConnect: true,
+    connectors: [new MockConnector({ options: { signer: getSigners()[0] } })],
+  })
