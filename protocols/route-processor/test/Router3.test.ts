@@ -379,7 +379,7 @@ async function makeSwap(
   //await checkPoolsState(pcMap, env)
 
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
-  //console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
+  // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
   // console.log(
   //   'ROUTE:',
   //   route.legs.map(
@@ -737,7 +737,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
   })
 
   if (process.env.ALCHEMY_ID) {
-    it('V3,  Native => USDC => NATIVE', async function () {
+    it.only('V3,  Native => USDC => NATIVE', async function () {
       if (chainId === ChainId.POLYGON) {
         await env.snapshot.restore()
         const usedPools = new Set<string>()
@@ -745,9 +745,11 @@ describe('End-to-end RouteProcessor3 test', async function () {
         amountAndBlock[0] = getBigNumber(10_000_000 * 1e18) // should be partial
         amountAndBlock = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], amountAndBlock, usedPools, [
           LiquidityProviders.UniswapV3,
+          LiquidityProviders.SushiSwapV3,
         ])
         amountAndBlock = await updMakeSwap(env, USDC[chainId], Native.onChain(chainId), amountAndBlock, usedPools, [
           LiquidityProviders.UniswapV3,
+          LiquidityProviders.SushiSwapV3,
         ])
       }
     })
