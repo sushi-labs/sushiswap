@@ -27,7 +27,7 @@ import {
 } from '@sushiswap/viem-config'
 import { Chain } from 'wagmi'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
-import { foundry } from 'wagmi/dist/chains'
+import { foundry } from 'wagmi/chains'
 
 const isTest = process.env['NODE_ENV'] === 'test' || process.env['NEXT_PUBLIC_PLAYWRIGHT_ENABLED'] === 'true'
 
