@@ -454,7 +454,7 @@ async function makeSwap(
   const slippage = parseInt(balanceOutBN.sub(route.amountOutBN).mul(10_000).div(route.amountOutBN).toString())
 
   if (route.amountOutBN.sub(balanceOutBN).abs().gt(10)) {
-    if (slippage != 0) {
+    if (slippage < 0) {
       console.log(`expected amountOut: ${route.amountOutBN.toString()}`)
       console.log(`real amountOut:     ${balanceOutBN.toString()}`)
       console.log(`slippage: ${slippage / 100}%`)
