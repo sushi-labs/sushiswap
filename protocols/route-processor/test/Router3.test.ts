@@ -737,7 +737,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
   })
 
   if (process.env.ALCHEMY_ID) {
-    it.only('V3,  Native => USDC => NATIVE', async function () {
+    it('V3,  Native => USDC => NATIVE', async function () {
       if (chainId === ChainId.POLYGON) {
         await env.snapshot.restore()
         const usedPools = new Set<string>()
