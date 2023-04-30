@@ -10,7 +10,7 @@
     "dev": "next dev -p 3009",
     "lint": "next lint",
     "start": "next start",
-    "test": "npx playwright test"
+    "test": "NODE_ENV=test npx playwright test"
   },
   "dependencies": {
     "@ethersproject/abi": "5.7.0",
