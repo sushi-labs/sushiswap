@@ -27,6 +27,7 @@ import {
 } from '@sushiswap/viem-config'
 import { Chain } from 'wagmi'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
+import { foundry } from 'wagmi/dist/chains'
 
 const isTest = process.env['NODE_ENV'] === 'test' || process.env['NEXT_PUBLIC_PLAYWRIGHT_ENABLED'] === 'true'
 
@@ -114,7 +115,7 @@ dataFetchers.set(
     createPublicClient({
       chain: mainnet,
       transport: isTest
-        ? http('http://localhost:8545')
+        ? http(foundry.rpcUrls.default.http[0])
         : fallback([
             http(`${mainnet.rpcUrls.alchemy.http}/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`),
             http('https://eth.llamarpc.com'),
