@@ -6,6 +6,8 @@ export const usePoolGraphData = (poolId: string) => {
   const swrResponse = useSWR<Pair>(`/earn/api/graphPool/${poolId}`, async (url) =>
     fetch(url).then((data) => data.json())
   )
+
+  console.log(swrResponse)
   return useMemo(() => {
     return {
       ...swrResponse,

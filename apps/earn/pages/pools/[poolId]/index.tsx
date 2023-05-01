@@ -1,5 +1,5 @@
 import React, { FC, useMemo, useState } from 'react'
-import { SWRConfig, useSWRConfig } from 'swr'
+import { SWRConfig } from 'swr'
 import { Layout, PoolsFiltersProvider, SelectPricesWidget } from '../../../components'
 import Link from 'next/link'
 import { ArrowLeftIcon, ChartBarIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
@@ -21,25 +21,22 @@ import { ContentBlock } from '../../../components/AddPage/ContentBlock'
 import { useAccount } from '@sushiswap/wagmi'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import { useTokenAmountDollarValues } from '../../../lib/hooks'
+import { usePoolGraphData, useTokenAmountDollarValues } from '../../../lib/hooks'
 import { formatUSD } from '@sushiswap/format'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 import { isAddress } from 'ethers/lib/utils'
 import { unwrapToken } from '../../../lib/functions'
 import { usePreviousRoute } from '../../../components/HistoryProvider'
-import { usePool } from '@sushiswap/client'
-import { InferGetStaticPropsType } from 'next'
-import { getStaticProps } from '../../[id]'
 
 enum Granularity {
   Day,
   Week,
 }
 
-const PoolPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
+const PoolPage = () => {
   return (
-    <SWRConfig value={{ fallback }}>
+    <SWRConfig>
       <SplashController>
         <ConcentratedLiquidityProvider>
           <Pool />
@@ -84,13 +81,9 @@ const Pool: FC = () => {
     activeTab,
   } = queryParamsSchema.parse(query)
 
-  const { data: subgraphPool } = usePool({
-    args: { chainId, address: poolId },
-    swrConfig: useSWRConfig(),
-    shouldFetch: Boolean(chainId && poolId),
-  })
+  const { data: graphData } = usePoolGraphData(`${chainId}:${poolId}`)
+  console.log(graphData)
 
-  console.log(subgraphPool)
   const [tab, setTab] = useState<SelectedTab>(
     activeTab === 'new'
       ? SelectedTab.NewPosition
