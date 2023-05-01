@@ -7,19 +7,19 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { JazzIcon } from '@sushiswap/ui/future/components/icons/JazzIcon'
 import { useBreakpoint } from '@sushiswap/ui/future/lib/useBreakpoint'
-import Image from 'next/legacy/image'
 import React, { FC, useState } from 'react'
 import { useAccount, useEnsAvatar, useNetwork } from 'wagmi'
-import { cloudinaryFetchLoader } from '../../../cloudinaryFetchLoader'
 
 import { ConnectView } from './ConnectView'
 import { DefaultView } from './DefaultView'
 import { TransactionsView } from './TransactionsView'
+import { SettingsView } from './SettingsView'
 
 export enum ProfileView {
   Disconnected,
   Default,
   Transactions,
+  Settings,
 }
 
 interface ProfileProps {
@@ -81,12 +81,13 @@ export const UserProfile: FC<ProfileProps> = () => {
               leaveFrom="transform translate-y-0 opacity-100"
               leaveTo="transform translate-y-[-16px] opacity-0"
             >
-              <div className="absolute pt-2 -top-[-1] right-0 sm:w-[320px]">
+              <div className="absolute pt-2 -top-[-1] right-0 sm:w-[340px]">
                 <Popover.Panel className="p-2 flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white dark:bg-slate-800">
                   {!address && <ConnectView onSelect={close} />}
                   {view === ProfileView.Default && address && (
                     <DefaultView chainId={chainId} address={address} setView={setView} />
                   )}
+                  {view === ProfileView.Settings && <SettingsView setView={setView} />}
                   {view === ProfileView.Transactions && address && (
                     <TransactionsView setView={setView} address={address} />
                   )}
@@ -138,6 +139,7 @@ export const UserProfile: FC<ProfileProps> = () => {
                 {view === ProfileView.Default && address && (
                   <DefaultView chainId={chainId} address={address} setView={setView} />
                 )}
+                {view === ProfileView.Settings && <SettingsView setView={setView} />}
                 {view === ProfileView.Transactions && address && (
                   <TransactionsView setView={setView} address={address} />
                 )}

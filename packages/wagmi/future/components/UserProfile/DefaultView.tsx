@@ -1,10 +1,10 @@
 import {
   ArrowLeftOnRectangleIcon,
-  ChevronRightIcon,
   CreditCardIcon,
   DocumentDuplicateIcon,
   InboxArrowDownIcon,
   LinkIcon,
+  Cog6ToothIcon,
 } from '@heroicons/react/24/outline'
 import chains, { ChainId } from '@sushiswap/chain'
 import { Amount, Native } from '@sushiswap/currency'
@@ -68,14 +68,12 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
             </ClipboardController>
           </div>
           <div className="flex gap-5">
-            <Onramper.Button>
-              <IconButton
-                as="div"
-                icon={CreditCardIcon}
-                iconProps={{ width: 18, height: 18 }}
-                description="Buy Crypto"
-              />
-            </Onramper.Button>
+            <IconButton
+              icon={Cog6ToothIcon}
+              iconProps={{ width: 18, height: 18 }}
+              onClick={() => setView(ProfileView.Settings)}
+              description="View on Explorer"
+            />
             <ClipboardController hideTooltip>
               {({ setCopied, isCopied }) => (
                 <IconButton

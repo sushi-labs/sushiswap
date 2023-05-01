@@ -12,7 +12,7 @@ export const Explainer: FC<{
   iconSize: number
   placement: Placement
   className?: string
-  hover: boolean
+  hover?: boolean
 }> = ({ children, iconSize, placement, className, hover = false }) => {
   const [open, setOpen] = useState(false)
   const isMounted = useIsMounted()
