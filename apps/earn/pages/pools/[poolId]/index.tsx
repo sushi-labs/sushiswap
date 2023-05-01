@@ -1,5 +1,5 @@
 import React, { FC, useMemo, useState } from 'react'
-import { SWRConfig } from 'swr'
+import { SWRConfig, useSWRConfig } from 'swr'
 import { Layout, PoolsFiltersProvider, SelectPricesWidget } from '../../../components'
 import Link from 'next/link'
 import { ArrowLeftIcon, ChartBarIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
@@ -28,19 +28,24 @@ import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 import { isAddress } from 'ethers/lib/utils'
 import { unwrapToken } from '../../../lib/functions'
 import { usePreviousRoute } from '../../../components/HistoryProvider'
+import { usePool } from '@sushiswap/client'
+import { InferGetStaticPropsType } from 'next'
+import { getStaticProps } from '../../[id]'
 
 enum Granularity {
   Day,
   Week,
 }
 
-const PoolPage = () => {
+const PoolPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (
-    <SplashController>
-      <ConcentratedLiquidityProvider>
-        <Pool />
-      </ConcentratedLiquidityProvider>
-    </SplashController>
+    <SWRConfig value={{ fallback }}>
+      <SplashController>
+        <ConcentratedLiquidityProvider>
+          <Pool />
+        </ConcentratedLiquidityProvider>
+      </SplashController>
+    </SWRConfig>
   )
 }
 
@@ -79,6 +84,13 @@ const Pool: FC = () => {
     activeTab,
   } = queryParamsSchema.parse(query)
 
+  const { data: subgraphPool } = usePool({
+    args: { chainId, address: poolId },
+    swrConfig: useSWRConfig(),
+    shouldFetch: Boolean(chainId && poolId),
+  })
+
+  console.log(subgraphPool)
   const [tab, setTab] = useState<SelectedTab>(
     activeTab === 'new'
       ? SelectedTab.NewPosition
