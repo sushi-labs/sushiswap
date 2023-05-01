@@ -30,8 +30,10 @@ export const CheckerProvider: FC<ProviderProps> = ({ children }) => {
   )
 }
 
+export const useCheckerContext = () => useContext(CheckerContext)
+
 export const useApproved = (tag: string) => {
-  const context = useContext(CheckerContext)
+  const context = useCheckerContext()
   if (!context) {
     throw new Error('Hook can only be used inside Checker Context')
   }

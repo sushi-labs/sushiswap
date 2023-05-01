@@ -34,7 +34,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "viem": "jxom-multicall-chunk-size",
+    "viem": "0.3.12",
     "node-fetch": "2.6.6",
     "date-fns": "2.29.3",
     "@ethersproject/abi": "5.7.0",

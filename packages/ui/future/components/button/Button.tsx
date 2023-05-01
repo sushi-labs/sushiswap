@@ -19,6 +19,7 @@ interface Props {
   fullWidth?: boolean
   loading?: boolean
   href?: string
+  testId?: string
 }
 
 export type ButtonProps<C extends React.ElementType> = PolymorphicComponentPropsWithRef<C, Props>
@@ -26,6 +27,7 @@ export type ButtonComponent = <C extends React.ElementType = 'button'>(
   props: ButtonProps<C>
 ) => React.ReactElement | null
 
+// eslint-disable-next-line react/display-name
 export const Button: ButtonComponent = React.forwardRef(
   <Tag extends React.ElementType = 'button'>(
     {
@@ -40,6 +42,7 @@ export const Button: ButtonComponent = React.forwardRef(
       fullWidth = false,
       loading,
       disabled,
+      testId,
       ...rest
     }: ButtonProps<Tag>,
     ref?: PolymorphicRef<Tag>
@@ -60,6 +63,7 @@ export const Button: ButtonComponent = React.forwardRef(
           className,
           disabled || loading ? BUTTON_CLASSES['btn-disabled'] : ''
         )}
+        testdata-id={`${testId}-button`}
         {...rest}
       >
         {loading ? (

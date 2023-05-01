@@ -1,6 +1,6 @@
 import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
-import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
+import { Type } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
 import { PublicClient } from 'viem'
@@ -48,7 +48,7 @@ export class DataFetcher {
   _providerIsIncluded(lp: LiquidityProviders, liquidity?: LiquidityProviders[]) {
     if (!liquidity) return true
     if (lp === LiquidityProviders.NativeWrap) return true
-    return liquidity.some((l) => l == lp)
+    return liquidity.some((l) => l === lp)
   }
 
   // Starts pool data fetching
@@ -69,6 +69,19 @@ export class DataFetcher {
       }
     }
 
+    if (
+      this._providerIsIncluded(LiquidityProviders.Trident, providers) &&
+      isBentoBoxV1ChainId(this.chainId) &&
+      (isConstantProductPoolFactoryChainId(this.chainId) || isStablePoolFactoryChainId(this.chainId))
+    ) {
+      try {
+        const provider = new TridentProvider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: any) {
+        // console.warn(e.message)
+      }
+    }
+
     if (this._providerIsIncluded(LiquidityProviders.SushiSwapV3, providers)) {
       try {
         const provider = new SushiSwapV3Provider(this.chainId, this.web3Client, this.databaseClient)
@@ -78,13 +91,9 @@ export class DataFetcher {
       }
     }
 
-    if (
-      this._providerIsIncluded(LiquidityProviders.Trident, providers) &&
-      isBentoBoxV1ChainId(this.chainId) &&
-      (isConstantProductPoolFactoryChainId(this.chainId) || isStablePoolFactoryChainId(this.chainId))
-    ) {
+    if (this._providerIsIncluded(LiquidityProviders.UniswapV3, providers)) {
       try {
-        const provider = new TridentProvider(this.chainId, this.web3Client, this.databaseClient)
+        const provider = new UniswapV3Provider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: any) {
         // console.warn(e.message)
@@ -208,15 +217,6 @@ export class DataFetcher {
       }
     }
 
-    if (this._providerIsIncluded(LiquidityProviders.UniswapV3, providers)) {
-      try {
-        const provider = new UniswapV3Provider(this.chainId, this.web3Client, this.databaseClient)
-        this.providers.push(provider)
-      } catch (e: any) {
-        // console.warn(e.message)
-      }
-    }
-
     // console.log(
     //   `${chainShortName[this.chainId]}/${this.chainId} - Included providers: ${this.providers
     //     .map((p) => p.getType())
@@ -230,28 +230,26 @@ export class DataFetcher {
     this.providers.forEach((p) => p.stopFetchPoolsData())
   }
 
-  async fetchPoolsForToken(t0: Type, t1: Type): Promise<void> {
-    const token0 = this.transformToken(t0)
-    const token1 = this.transformToken(t1)
+  async fetchPoolsForToken(currency0: Type, currency1: Type): Promise<void> {
+    const [token0, token1] =
+      currency0.wrapped.equals(currency1.wrapped) || currency0.wrapped.sortsBefore(currency1.wrapped)
+        ? [currency0.wrapped, currency1.wrapped]
+        : [currency1.wrapped, currency0.wrapped]
     await Promise.all(this.providers.map((p) => p.fetchPoolsForToken(token0, token1)))
   }
 
-  getCurrentPoolCodeMap(t0: Type, t1: Type): Map<string, PoolCode> {
-    const token0 = this.transformToken(t0)
-    const token1 = this.transformToken(t1)
+  getCurrentPoolCodeMap(currency0: Type, currency1: Type): Map<string, PoolCode> {
     const result: Map<string, PoolCode> = new Map()
     this.providers.forEach((p) => {
-      const poolCodes = p.getCurrentPoolList(token0, token1)
+      const poolCodes = p.getCurrentPoolList(currency0.wrapped, currency1.wrapped)
       poolCodes.forEach((pc) => result.set(pc.pool.address, pc))
     })
 
     return result
   }
 
-  getCurrentPoolCodeList(t0: Type, t1: Type): PoolCode[] {
-    const token0 = this.transformToken(t0)
-    const token1 = this.transformToken(t1)
-    const pcMap = this.getCurrentPoolCodeMap(token0, token1)
+  getCurrentPoolCodeList(currency0: Type, currency1: Type): PoolCode[] {
+    const pcMap = this.getCurrentPoolCodeMap(currency0.wrapped, currency1.wrapped)
     return Array.from(pcMap.values())
   }
 
@@ -267,9 +265,5 @@ export class DataFetcher {
       }
     })
     return lastUpdateBlock === undefined ? 0 : lastUpdateBlock
-  }
-
-  transformToken(t: Type) {
-    return t instanceof Native ? WNATIVE[t.chainId] : (t as Token)
   }
 }

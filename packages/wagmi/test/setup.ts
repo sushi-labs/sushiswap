@@ -1,6 +1,30 @@
-import { providers, Wallet } from 'ethers'
-import { Chain } from '@sushiswap/wagmi'
-import { foundry, goerli, mainnet, optimism, polygon } from '@sushiswap/wagmi/chains'
+import { Chain, CreateClientConfig, configureChains, createClient, mainnet } from 'wagmi'
+import { foundry } from '../chains'
+import { Wallet, providers } from 'ethers'
+import { MockConnector } from '../connectors/mock'
+import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
+
+const foundryMainnet: Chain = {
+  ...mainnet,
+  rpcUrls: foundry.rpcUrls,
+}
+
+export const testChains = [foundryMainnet]
+
+const { provider }: CreateClientConfig & { chains: Chain[] } = configureChains(
+  testChains,
+  [
+    jsonRpcProvider({
+      rpc: (chain_) => ({
+        http: chain_.rpcUrls.default.http[0],
+      }),
+    }),
+  ],
+  {
+    pollingInterval: 8_000,
+  }
+)
+
 export function getNetwork(chain: Chain) {
   return {
     chainId: chain.id,
@@ -9,45 +33,11 @@ export function getNetwork(chain: Chain) {
   }
 }
 
-const foundryMainnet: Chain = {
-  ...mainnet,
-  rpcUrls: foundry.rpcUrls,
-}
-
-export const testChains = [foundryMainnet, mainnet, goerli, optimism, polygon]
-
 class EthersProviderWrapper extends providers.StaticJsonRpcProvider {
   toJSON() {
     return `<Provider network={${this.network.chainId}} />`
   }
 }
-
-export function getProvider({ chains = testChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
-  const chain = testChains.find((x) => x.id === chainId) ?? foundryMainnet
-  console.log('CHAIN', { chain })
-  const url = foundryMainnet.rpcUrls.default.http[0]
-  const provider = new EthersProviderWrapper(url, getNetwork(chain))
-  provider.pollingInterval = 1_000
-  return Object.assign(provider, { chains })
-}
-
-// class EthersWebSocketProviderWrapper extends providers.WebSocketProvider {
-//   toJSON() {
-//     return `<WebSocketProvider network={${this.network.chainId}} />`
-//   }
-// }
-
-// export function getWebSocketProvider({ chains = testChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
-//   const chain = testChains.find((x) => x.id === chainId) ?? foundryMainnet
-//   const url = foundryMainnet.rpcUrls.default.http[0]!.replace('http', 'ws')
-//   const webSocketProvider = Object.assign(new EthersWebSocketProviderWrapper(url, getNetwork(chain)), { chains })
-//   // Clean up WebSocketProvider immediately
-//   // so handle doesn't stay open in test environment
-//   webSocketProvider?.destroy().catch(() => {
-//     return
-//   })
-//   return webSocketProvider
-// }
 
 // Default accounts from Anvil
 export const accounts = [
@@ -145,4 +135,17 @@ export function getSigners() {
   return accounts.map((x) => new WalletSigner(x.privateKey, provider))
 }
 
-export const addressRegex = /^0x[a-fA-F0-9]{40}/
+export function getProvider({ chains = testChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
+  const chain = testChains.find((x) => x.id === chainId) ?? foundryMainnet
+  const url = foundryMainnet.rpcUrls.default.http[0]
+  const provider = new EthersProviderWrapper(url, getNetwork(chain))
+  provider.pollingInterval = 1_000
+  return Object.assign(provider, { chains })
+}
+
+export const _createTestClient = (config?: CreateClientConfig) =>
+  createClient({
+    provider,
+    autoConnect: true,
+    connectors: [new MockConnector({ options: { signer: getSigners()[0] } })],
+  })

@@ -37,7 +37,11 @@ export const useTokenApproval = ({
 }: UseTokenApprovalParams): [ApprovalState, ReturnType<typeof useContractWrite>] => {
   const { address } = useAccount()
   const [pending, setPending] = useState(false)
-  const { data: allowance, isLoading: isAllowanceLoading } = useTokenAllowance({
+  const {
+    data: allowance,
+    isLoading: isAllowanceLoading,
+    refetch,
+  } = useTokenAllowance({
     token: amount?.currency?.wrapped,
     owner: address,
     spender,
@@ -54,7 +58,7 @@ export const useTokenApproval = ({
       spender as Address,
       approveMax ? MaxUint256 : amount ? BigNumber.from(amount.quotient.toString()) : BigNumber.from(0),
     ],
-    enabled: Boolean(amount && spender && address && allowance && enabled),
+    enabled: Boolean(amount && spender && address && allowance && enabled && !isAllowanceLoading),
   })
 
   const onSettled = useCallback(
@@ -95,7 +99,9 @@ export const useTokenApproval = ({
       data
         .wait()
         .then(() => {
-          setPending(false)
+          refetch().then(() => {
+            setPending(false)
+          })
         })
         .catch(() => setPending(false))
     },
