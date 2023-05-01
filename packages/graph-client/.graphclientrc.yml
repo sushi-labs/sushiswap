@@ -141,7 +141,7 @@ sources:
   - name: Concentrated
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:uniswap/uniswap-v3}
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushi-v3/v3-ethereum}
         retry: 3
     transforms:
       - prefix:
