@@ -19,7 +19,7 @@ const func: DeployFunction = async function ({
 
   const args = [bentoBoxV1Address[chainId], []]
 
-  // const args = ['0x0000000000000000000000000000000000000000']
+  // const args = ['0x0000000000000000000000000000000000000000', []]
 
   const { address } = await deploy('RouteProcessor3', {
     from: deployer,
