@@ -1,4 +1,3 @@
-import { Interface } from '@ethersproject/abi'
 import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
@@ -31,17 +30,7 @@ import {
   Router,
 } from '@sushiswap/router'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
-import {
-  BridgeBento,
-  BridgeUnlimited,
-  ConstantProductRPool,
-  getBigNumber,
-  RouteStatus,
-  RPool,
-  StableSwapRPool,
-  toShareBN,
-  UniV3Pool,
-} from '@sushiswap/tines'
+import { BridgeBento, getBigNumber, RouteStatus, RPool, StableSwapRPool } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { signERC2612Permit } from 'eth-permit'
 import { BigNumber, Contract } from 'ethers'
@@ -51,10 +40,12 @@ import { createPublicClient } from 'viem'
 import { custom } from 'viem'
 import { hardhat } from 'viem/chains'
 
-import { loadPoolSnapshot, savePoolSnapshot } from './utils/poolSerializer'
+import { getAllPoolCodes } from './utils/getAllPoolCodes'
 
 // Updating  pools' state allows to test DF updating ability, but makes tests very-very slow (
 const UPDATE_POOL_STATES = false
+const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
+const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 function getRandomExp(rnd: () => number, min: number, max: number) {
   const minL = Math.log(min)
@@ -63,95 +54,6 @@ function getRandomExp(rnd: () => number, min: number, max: number) {
   const res = Math.exp(v)
   console.assert(res <= max && res >= min, 'Random value is out of the range')
   return res
-}
-
-const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
-
-const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
-
-function closeValues(_a: number | BigNumber, _b: number | BigNumber, accuracy: number, absolute: number): boolean {
-  const a: number = typeof _a == 'number' ? _a : parseInt(_a.toString())
-  const b: number = typeof _b == 'number' ? _b : parseInt(_b.toString())
-  if (accuracy === 0) return a === b
-  if (Math.abs(a - b) < absolute) return true
-  // if (Math.abs(a) < 1 / accuracy) return Math.abs(a - b) <= 10
-  // if (Math.abs(b) < 1 / accuracy) return Math.abs(a - b) <= 10
-  return Math.abs(a / b - 1) < accuracy
-}
-
-function expectCloseValues(
-  _a: number | BigNumber,
-  _b: number | BigNumber,
-  accuracy: number,
-  absolute: number,
-  logInfoIfFalse = ''
-) {
-  const res = closeValues(_a, _b, accuracy, absolute)
-  if (!res) {
-    console.log(`Expected close: ${_a}, ${_b}, ${accuracy} ${logInfoIfFalse}`)
-    // debugger
-    expect(res).equal(true)
-  }
-  return res
-}
-
-export async function checkPoolsState(pools: Map<string, PoolCode>, env: TestEnvironment) {
-  const bentoAddress = bentoBoxV1Address[env.chainId as BentoBoxV1ChainId]
-  const bentoContract = new Contract(
-    bentoAddress,
-    ['function totals(address) view returns (uint128, uint128)'],
-    env.user
-  )
-
-  const addresses = Array.from(pools.keys())
-  for (let i = 0; i < addresses.length; ++i) {
-    const addr = addresses[i]
-    const pool = (pools.get(addr) as PoolCode).pool
-    if (pool instanceof StableSwapRPool) {
-      const poolContract = new Contract(addr, ['function getReserves() view returns (uint256, uint256)'], env.user)
-
-      const totals0 = await bentoContract.totals(pool.token0.address)
-      const token0 = pool.token0.symbol
-      expectCloseValues(pool.getTotal0().elastic, totals0[0], 1e-10, 10, `StableSwapRPool ${addr} ${token0}.elastic`)
-      expectCloseValues(pool.getTotal0().base, totals0[1], 1e-10, 10, `StableSwapRPool ${addr} ${token0}.base`)
-
-      const totals1 = await bentoContract.totals(pool.token1.address)
-      const token1 = pool.token1.symbol
-      expectCloseValues(pool.getTotal1().elastic, totals1[0], 1e-10, 10, `StableSwapRPool ${addr} ${token1}.elastic`)
-      expectCloseValues(pool.getTotal1().base, totals1[1], 1e-10, 10, `StableSwapRPool ${addr} ${token1}.base`)
-
-      const reserves = await poolContract.getReserves()
-      expectCloseValues(
-        pool.getReserve0(),
-        toShareBN(reserves[0], pool.getTotal0()),
-        1e-10,
-        1e6,
-        `StableSwapRPool ${addr} reserve0`
-      )
-      expectCloseValues(
-        pool.getReserve1(),
-        toShareBN(reserves[1], pool.getTotal1()),
-        1e-10,
-        1e6,
-        `StableSwapRPool ${addr} reserve1`
-      )
-    } else if (pool instanceof ConstantProductRPool) {
-      const poolContract = new Contract(addr, ['function getReserves() view returns (uint112, uint112)'], env.user)
-      const reserves = await poolContract.getReserves()
-      expectCloseValues(pool.getReserve0(), reserves[0], 1e-10, 10, `CP ${addr} reserve0`)
-      expectCloseValues(pool.getReserve1(), reserves[1], 1e-10, 10, `CP ${addr} reserve1`)
-    } else if (pool instanceof BridgeBento) {
-      const totals = await bentoContract.totals(pool.token1.address)
-      expectCloseValues(pool.elastic, totals[0], 1e-10, 10, `BentoBridge ${pool.token1.symbol} elastic`)
-      expectCloseValues(pool.base, totals[1], 1e-10, 10, `BentoBridge ${pool.token1.symbol} base`)
-    } else if (pool instanceof BridgeUnlimited) {
-      // native - skip
-    } else if (pool instanceof UniV3Pool) {
-      // TODO: add pool check
-    } else {
-      console.log('Unknown pool: ', pool.address)
-    }
-  }
 }
 
 interface TestEnvironment {
@@ -164,120 +66,6 @@ interface TestEnvironment {
   dataFetcher: DataFetcher
   poolCodes: Map<string, PoolCode>
   snapshot: SnapshotRestorer
-}
-
-async function switchMulticallToEthers(client: any) {
-  //const oldFunction = client.multicall
-  const [user] = await ethers.getSigners()
-  const multicallContract = new Contract(
-    '0xca11bde05977b3631167028862be2a173976ca11',
-    [
-      'function aggregate3(tuple(address target, bool allowFailure, bytes callData)[] calls) payable returns (tuple(bool success, bytes returnData)[] returnData)',
-    ],
-    user
-  )
-  client.multicall = async (arg: any) => {
-    const ifaces: Interface[] = []
-    const calls = arg.contracts.map((call: any, i: number) => {
-      const iface = new ethers.utils.Interface(call.abi)
-      ifaces[i] = iface
-      const callData = iface.encodeFunctionData(call.functionName, call.args)
-      return {
-        target: call.address,
-        allowFailure: arg.allowFailure,
-        callData,
-      }
-    })
-
-    const result0 = await multicallContract.callStatic.aggregate3(calls, { gasLimit: 1_000_000_000 })
-    const result = result0.map((res: any, i: number) => {
-      try {
-        const result0 = ifaces[i].decodeFunctionResult(arg.contracts[i].functionName, res.returnData)
-        let result = []
-        for (let i = 0; i < result0.length; ++i) {
-          if (result0[i] === undefined) continue
-          result[i] = result0[i] instanceof BigNumber ? result0[i].toBigInt() : result0[i]
-        }
-        if (result.length == 1) result = result[0]
-        return {
-          result,
-          status: res.success ? 'success' : 'failure',
-        }
-      } catch (e) {
-        return {
-          result: undefined,
-          status: 'failure',
-        }
-      }
-    })
-
-    // correctness check
-    // const etalon = await oldFunction(arg)
-    // if (etalon.length !== result.length) console.error('Length wrong')
-    // etalon.forEach((e: any, j: number) => {
-    //   const r = result[j]
-    //   if (e.status !== r.status) console.error('Status wrong', j, e, r)
-    //   if (e.result instanceof Array) {
-    //     e.result.forEach((a, i) => {
-    //       if (a !== r.result[i]) console.error('Result wrong 1', j, i, e, r)
-    //     })
-    //   } else if (e.result !== r.result) console.error('Result wrong 0', j, e, r)
-    // })
-
-    return result
-  }
-}
-
-async function getAllPoolCodes(
-  dataFetcher: DataFetcher,
-  chainId: ChainId,
-  blockNumber: number | undefined
-): Promise<PoolCode[]> {
-  let poolCodes = loadPoolSnapshot(chainId, blockNumber)
-  if (poolCodes === undefined) {
-    const fetchedTokens: Token[] = [
-      WNATIVE[chainId],
-      SUSHI[chainId as keyof typeof SUSHI_ADDRESS],
-      USDC[chainId as keyof typeof USDC_ADDRESS],
-      USDT[chainId as keyof typeof USDT_ADDRESS],
-      DAI[chainId as keyof typeof DAI_ADDRESS],
-      FRAX[chainId as keyof typeof FRAX_ADDRESS],
-      FXS[chainId as keyof typeof FXS_ADDRESS],
-    ]
-    const foundPools: Set<string> = new Set()
-    poolCodes = []
-
-    console.log('  Fetching pools data ...')
-    for (let i = 0; i < fetchedTokens.length; ++i) {
-      for (let j = i + 1; j < fetchedTokens.length; ++j) {
-        console.log(`    ${fetchedTokens[i].symbol} - ${fetchedTokens[j].symbol}`)
-        for (let p = 0; p < dataFetcher.providers.length; ++p) {
-          const provider = dataFetcher.providers[p]
-          await provider.fetchPoolsForToken(fetchedTokens[i], fetchedTokens[j], foundPools)
-          const pc = provider.getCurrentPoolList(fetchedTokens[i], fetchedTokens[j])
-          let newPools = 0
-          pc.forEach((p) => {
-            if (!foundPools.has(p.pool.address)) {
-              ;(poolCodes as PoolCode[]).push(p)
-              foundPools.add(p.pool.address)
-              ++newPools
-            }
-          })
-          if (newPools) console.log(`      ${provider.getPoolProviderName()} pools: ${newPools}`)
-        }
-      }
-    }
-    savePoolSnapshot(poolCodes, chainId, blockNumber)
-  }
-  const providers = new Map<LiquidityProviders, number>()
-  poolCodes.forEach((p) => {
-    const count = providers.get(p.liquidityProvider) || 0
-    providers.set(p.liquidityProvider, count + 1)
-  })
-  Array.from(providers.entries()).forEach(([provider, count]) => console.log(`    ${provider} pools: ${count}`))
-  console.log('    All providers pools:', poolCodes.length)
-
-  return poolCodes as PoolCode[]
 }
 
 async function getTestEnvironment(): Promise<TestEnvironment> {
@@ -309,7 +97,11 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   dataFetcher.startDataFetching()
   const poolCodes = new Map<string, PoolCode>()
   if (!UPDATE_POOL_STATES) {
-    const pc = await getAllPoolCodes(dataFetcher, chainId, network.config.forking?.blockNumber)
+    const pc = await getAllPoolCodes(
+      dataFetcher,
+      chainId,
+      (network.config as { forking: { blockNumber?: number } }).forking?.blockNumber
+    )
     pc.forEach((p) => poolCodes.set(p.pool.address, p))
   }
 
@@ -376,7 +168,7 @@ async function makeSwap(
       if (!usedPools.has(e[0])) pcMap.set(e[0], e[1])
     })
   }
-  //await checkPoolsState(pcMap, env)
+  //await checkPoolsState(pcMap, env.user, env.chainId)
 
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
   //console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
