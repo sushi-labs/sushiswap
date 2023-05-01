@@ -156,10 +156,14 @@ export async function getEarnPools(args: typeof PoolsApiSchema._output) {
       totalApr: true,
       isIncentivized: true,
       wasIncentivized: true,
+      fees1h: true,
       fees1d: true,
       fees1w: true,
+      fees1m: true,
+      volume1h: true,
       volume1d: true,
       volume1w: true,
+      volume1m: true,
       isBlacklisted: true,
       token0: {
         select: {

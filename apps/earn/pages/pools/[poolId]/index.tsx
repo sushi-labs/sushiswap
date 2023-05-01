@@ -1,6 +1,6 @@
 import React, { FC, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
-import { Layout, PoolsFiltersProvider, SelectPricesWidget } from '../../../components'
+import { Layout, PoolChart, PoolsFiltersProvider, SelectPricesWidget } from '../../../components'
 import Link from 'next/link'
 import { ArrowLeftIcon, ChartBarIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
 import { z } from 'zod'
@@ -28,10 +28,13 @@ import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 import { isAddress } from 'ethers/lib/utils'
 import { unwrapToken } from '../../../lib/functions'
 import { usePreviousRoute } from '../../../components/HistoryProvider'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 
 enum Granularity {
+  Hour,
   Day,
   Week,
+  Month,
 }
 
 const PoolPage = () => {
@@ -71,6 +74,20 @@ enum SelectedTab {
   ManagePosition,
 }
 
+const feeGranularityMap = {
+  [Granularity.Hour]: 'fees1h',
+  [Granularity.Day]: 'fees1d',
+  [Granularity.Week]: 'fees1w',
+  [Granularity.Month]: 'fees1m',
+}
+
+const volumeGranularityMap = {
+  [Granularity.Hour]: 'volume1h',
+  [Granularity.Day]: 'volume1d',
+  [Granularity.Week]: 'volume1w',
+  [Granularity.Month]: 'volume1m',
+}
+
 const Pool: FC = () => {
   const { address } = useAccount()
   const { query } = useRouter()
@@ -81,8 +98,7 @@ const Pool: FC = () => {
     activeTab,
   } = queryParamsSchema.parse(query)
 
-  const { data: graphData } = usePoolGraphData(`${chainId}:${poolId}`)
-  console.log(graphData)
+  const { data: graphData, isLoading: isGraphDataLoading } = usePoolGraphData(`${chainId}:${poolId}`)
 
   const [tab, setTab] = useState<SelectedTab>(
     activeTab === 'new'
@@ -94,7 +110,7 @@ const Pool: FC = () => {
 
   const [granularity, setGranularity] = useState<Granularity>(Granularity.Day)
 
-  const { data: poolStats } = useConcentratedLiquidityPoolStats({ poolAddress: poolId })
+  const { data: poolStats, isLoading: isPoolStatsLoading } = useConcentratedLiquidityPoolStats({ poolAddress: poolId })
   const { data: pool, isLoading } = useConcentratedLiquidityPool({
     chainId,
     token0: poolStats?.token0,
@@ -200,13 +216,27 @@ const Pool: FC = () => {
         <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
         <div className={tab === SelectedTab.Analytics ? 'block' : 'hidden'}>
           <div className="grid md:grid-cols-[auto_404px] gap-10">
-            <div className="w-full h-full flex items-center justify-center bg-gray-50 dark:bg-white/[0.02] rounded-xl">
-              <span className="text-gray-600 dark:text-slate-400">Chart is being worked on 👷🍣</span>
-            </div>
+            {isPoolStatsLoading || isGraphDataLoading ? (
+              <Skeleton.Box className="w-full h-full" />
+            ) : poolStats ? (
+              <PoolChart data={graphData} isLoading={isGraphDataLoading} swapFee={poolStats.swapFee} />
+            ) : (
+              <></>
+            )}
             <div className="flex flex-col gap-6">
               <List className="pt-0 !gap-1">
                 <List.Label className="flex justify-end">
                   <RadioGroup value={granularity} onChange={setGranularity} className="flex">
+                    <RadioGroup.Option
+                      value={Granularity.Hour}
+                      as={Button}
+                      color={granularity === Granularity.Hour ? 'blue' : 'default'}
+                      size="xs"
+                      variant="empty"
+                      className="!h-[24px] font-bold"
+                    >
+                      1H
+                    </RadioGroup.Option>
                     <RadioGroup.Option
                       value={Granularity.Day}
                       as={Button}
@@ -227,13 +257,23 @@ const Pool: FC = () => {
                     >
                       1W
                     </RadioGroup.Option>
+                    <RadioGroup.Option
+                      value={Granularity.Month}
+                      as={Button}
+                      color={granularity === Granularity.Month ? 'blue' : 'default'}
+                      size="xs"
+                      variant="empty"
+                      className="!h-[24px] font-bold"
+                    >
+                      1M
+                    </RadioGroup.Option>
                   </RadioGroup>
                 </List.Label>
                 <List.Control>
                   {poolStats ? (
                     <List.KeyValue flex title="Fees">
                       <span className="flex items-center gap-2">
-                        {formatUSD(granularity === Granularity.Day ? poolStats.fees1d : poolStats.fees1w)}
+                        {formatUSD(poolStats[feeGranularityMap[granularity]])}
                         <span
                           className={
                             change1d === 0
@@ -253,7 +293,7 @@ const Pool: FC = () => {
                   {poolStats ? (
                     <List.KeyValue flex title="Volume">
                       <span className="flex items-center gap-2">
-                        {formatUSD(granularity === Granularity.Week ? poolStats.volume1w : poolStats.volume1d)}
+                        {formatUSD(poolStats[volumeGranularityMap[granularity]])}
                         <span
                           className={
                             change1w === 0
