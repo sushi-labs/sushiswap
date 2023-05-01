@@ -216,13 +216,11 @@ const Pool: FC = () => {
         <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
         <div className={tab === SelectedTab.Analytics ? 'block' : 'hidden'}>
           <div className="grid md:grid-cols-[auto_404px] gap-10">
-            {isPoolStatsLoading || isGraphDataLoading ? (
-              <Skeleton.Box className="w-full h-full" />
-            ) : poolStats ? (
-              <PoolChart data={graphData} isLoading={isGraphDataLoading} swapFee={poolStats.swapFee} />
-            ) : (
-              <></>
-            )}
+            <PoolChart
+              data={graphData}
+              isLoading={isPoolStatsLoading || isGraphDataLoading}
+              swapFee={poolStats?.swapFee}
+            />
             <div className="flex flex-col gap-6">
               <List className="pt-0 !gap-1">
                 <List.Label className="flex justify-end">

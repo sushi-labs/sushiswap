@@ -17,7 +17,7 @@ const tailwind = resolveConfig(tailwindConfig)
 interface PoolChartProps {
   data: ReturnType<typeof usePoolGraphData>['data']
   isLoading: boolean
-  swapFee: number
+  swapFee: number | undefined
 }
 
 enum PoolChartType {
@@ -48,7 +48,6 @@ export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoad
   const [chartType, setChartType] = useState<PoolChartType>(PoolChartType.Volume)
   const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Month)
 
-  const _isLoading = false
   const [xData, yData] = useMemo(() => {
     const data =
       (chartTimespans[chartPeriod] < chartTimespans[PoolChartPeriod.Week]
@@ -61,7 +60,7 @@ export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoad
         if (cur.date * 1000 >= currentDate - chartTimespans[chartPeriod]) {
           acc[0].push(cur.date)
           if (chartType === PoolChartType.Fees) {
-            acc[1].push(Number(cur.volumeUSD * (swapFee * 100)))
+            acc[1].push(Number(cur.volumeUSD * (Number(swapFee) * 100)))
           } else if (chartType === PoolChartType.Volume) {
             acc[1].push(Number(cur.volumeUSD))
           } else if (chartType === PoolChartType.TVL) {
@@ -91,7 +90,7 @@ export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoad
       }
 
       if (chartType === PoolChartType.Volume) {
-        valueNodes[1].innerHTML = formatUSD(value * swapFee)
+        valueNodes[1].innerHTML = formatUSD(value * Number(swapFee))
       }
       nameNodes[0].innerHTML = format(
         new Date(name * 1000),
