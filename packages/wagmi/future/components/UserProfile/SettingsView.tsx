@@ -8,6 +8,7 @@ import { RadioGroup } from '@headlessui/react'
 import { classNames } from '@sushiswap/ui'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
 import { useLocalStorage } from '@sushiswap/hooks'
+import Switch from '@sushiswap/ui/future/components/Switch'
 
 interface SettingsViewProps {
   setView: Dispatch<SetStateAction<ProfileView>>
@@ -27,6 +28,7 @@ const map = {
 
 export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
   const [theme, setTheme] = useLocalStorage('themePreference', ThemeState.Auto)
+  const [showTestnets, setShowTestnets] = useLocalStorage('showTestnets', false)
 
   return (
     <div className="p-2">
@@ -48,7 +50,7 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
       </div>
       <List>
         <List.Label>Preferences</List.Label>
-        <List.Control>
+        <List.Control className="bg-gray-100 dark:bg-slate-800">
           <List.KeyValue flex title="Theme">
             <RadioGroup value={theme} onChange={setTheme}>
               <div className="items-center relative bg-black/[0.04] dark:bg-white/[0.02] ring-4 ring-black/[0.04] dark:ring-white/[0.02] rounded-lg overflow-hidden flex gap-1">
@@ -70,6 +72,9 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
                 ))}
               </div>
             </RadioGroup>
+          </List.KeyValue>
+          <List.KeyValue flex title="Show testnets">
+            <Switch checked={showTestnets} onChange={setShowTestnets} />
           </List.KeyValue>
         </List.Control>
       </List>
