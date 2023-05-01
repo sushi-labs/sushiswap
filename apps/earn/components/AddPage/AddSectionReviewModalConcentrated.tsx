@@ -1,5 +1,5 @@
 import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
-import { Collapsible, Dots } from '@sushiswap/ui'
+import { classNames, Collapsible, Dots, NetworkIcon } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
@@ -12,6 +12,7 @@ import { Bound } from '../../lib/constants'
 import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
 import { FeeAmount, Position } from '@sushiswap/v3-sdk'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
+import { Badge } from '@sushiswap/ui/future/components/Badge'
 
 interface AddSectionReviewModalConcentratedProps
   extends Pick<
@@ -70,6 +71,12 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
 
   const fiatAmounts = useMemo(() => [tryParseAmount('1', token0), tryParseAmount('1', token1)], [token0, token1])
   const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId, amounts: fiatAmounts })
+  const inRange =
+    leftPrice && midPrice && rightPrice && leftPrice.lessThan(midPrice) && rightPrice.greaterThan(midPrice)
+
+  const fiatToken0 = fiatAmountsAsNumber[0] * input0?.toExact()
+  const fiatToken1 = fiatAmountsAsNumber[1] * input1?.toExact()
+  const totalFiat = fiatToken0 + fiatToken1
 
   return (
     <>
@@ -79,21 +86,33 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
           <button onClick={close} className="pl-0 p-3">
             <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
           </button>
-          <div className="flex justify-between gap-4 items-start py-2">
+          <div className="flex justify-between gap-6 items-start py-2">
             <div className="flex flex-col flex-grow gap-1">
               <h1 className="text-3xl font-semibold text-gray-900 dark:text-slate-50">
-                {token0?.symbol}/{token1?.symbol}
+                {noLiquidity ? 'Create liquidity pool' : 'Add liquidity'}
               </h1>
               <h1 className="text-lg font-medium text-gray-600 dark:text-slate-300">
-                {noLiquidity ? 'Create liquidity pool' : 'Add liquidity'}
+                {token0?.symbol}/{token1?.symbol}
               </h1>
             </div>
             <div>
               {token0 && token1 && (
-                <Currency.IconList iconWidth={56} iconHeight={56}>
-                  <Currency.Icon currency={token0} width={56} height={56} />
-                  <Currency.Icon currency={token1} width={56} height={56} />
-                </Currency.IconList>
+                <Badge
+                  className="border-2 border-slate-900 rounded-full z-[11] !bottom-0 left-[-15%]"
+                  position="bottom-left"
+                  badgeContent={
+                    chainId ? (
+                      <NetworkIcon chainId={chainId} width={24} height={24} />
+                    ) : (
+                      <div className="w-6 h-6 rounded-full bg-gray-300" />
+                    )
+                  }
+                >
+                  <Currency.IconList iconWidth={56} iconHeight={56}>
+                    <Currency.Icon currency={token0} />
+                    <Currency.Icon currency={token1} />
+                  </Currency.IconList>
+                </Badge>
               )}
             </div>
           </div>
@@ -104,7 +123,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
           {/*    </span>*/}
           {/*  </div>*/}
           {/*)}*/}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-5">
             <List>
               <List.Control>
                 <List.KeyValue flex title="Network">
@@ -114,10 +133,25 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
               </List.Control>
             </List>
             <List>
+              <List.Label className="items-center flex justify-between gap-1 mb-[-4px]">
+                Position
+                <div
+                  className={classNames(
+                    !inRange ? 'bg-yellow/10' : 'bg-green/10',
+                    'px-2 py-0.5 flex items-center gap-1 rounded-full'
+                  )}
+                >
+                  <div className={classNames(!inRange ? 'bg-yellow' : 'bg-green', 'w-2 h-2 rounded-full')} />
+                  {!inRange ? (
+                    <span className="text-[10px] font-medium text-yellow-900 dark:text-yellow">Out of Range</span>
+                  ) : (
+                    <span className="text-[10px] font-medium text-green">In Range</span>
+                  )}
+                </div>
+              </List.Label>
               <List.Control>
                 <List.KeyValue
-                  flex
-                  title={`Minimum Price`}
+                  title={`Min. Price`}
                   subtitle={`Your position will be 100% composed of ${input0?.currency.symbol} at this price`}
                 >
                   <div className="flex flex-col gap-1">
@@ -133,24 +167,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                   </div>
                 </List.KeyValue>
                 <List.KeyValue
-                  flex
-                  title={noLiquidity ? 'Starting Price' : 'Market Price'}
-                  subtitle={
-                    noLiquidity
-                      ? `Starting price as determined by you`
-                      : `Current price as determined by the ratio of the pool`
-                  }
-                >
-                  <div className="flex flex-col gap-1">
-                    {midPrice?.toSignificant(6)} {token1?.symbol}
-                    <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
-                      ${fiatAmountsAsNumber[0].toFixed(2)}
-                    </span>
-                  </div>
-                </List.KeyValue>
-                <List.KeyValue
-                  flex
-                  title={`Maximum Price`}
+                  title={`Max. Price`}
                   subtitle={`Your position will be 100% composed of ${token1?.symbol} at this price`}
                 >
                   <div className="flex flex-col gap-1">
@@ -165,30 +182,55 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                     )}{' '}
                   </div>
                 </List.KeyValue>{' '}
+                <List.KeyValue
+                  title={noLiquidity ? 'Starting Price' : 'Market Price'}
+                  subtitle={
+                    noLiquidity
+                      ? `Starting price as determined by you`
+                      : `Current price as determined by the ratio of the pool`
+                  }
+                >
+                  <div className="flex flex-col gap-1">
+                    {midPrice?.toSignificant(6)} {token1?.symbol}
+                    <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
+                      ${fiatAmountsAsNumber[0].toFixed(2)}
+                    </span>
+                  </div>
+                </List.KeyValue>
               </List.Control>
             </List>
             <List>
+              <List.Label className="flex justify-between">
+                Total Deposits
+                <span className="font-semibold">${totalFiat?.toFixed(2)}</span>
+              </List.Label>
               <List.Control>
                 {input0 && (
-                  <List.KeyValue flex title={`${input0?.currency.symbol}`}>
-                    <div className="flex items-center gap-2">
-                      <Currency.Icon currency={input0.currency} width={18} height={18} />
-                      {input0?.toSignificant(6)} {input0?.currency.symbol}
+                  <List.KeyValue flex title={`${input0?.currency.symbol}`} className="!items-start">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <Currency.Icon currency={input0.currency} width={18} height={18} />
+                        {input0?.toSignificant(6)} {input0?.currency.symbol}
+                      </div>
+                      <span className="text-xs dark:text-slate-400 text-slate-600">${fiatToken0.toFixed(2)}</span>
                     </div>
                   </List.KeyValue>
                 )}
                 {input1 && (
-                  <List.KeyValue flex title={`${input1?.currency.symbol}`}>
-                    <div className="flex items-center gap-2">
-                      <Currency.Icon currency={input1.currency} width={18} height={18} />
-                      {input1?.toSignificant(6)} {input1?.currency.symbol}
+                  <List.KeyValue flex title={`${input1?.currency.symbol}`} className="!items-start">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <Currency.Icon currency={input1.currency} width={18} height={18} />
+                        {input1?.toSignificant(6)} {input1?.currency.symbol}
+                      </div>
+                      <span className="text-xs dark:text-slate-400 text-slate-600">${fiatToken1.toFixed(2)}</span>
                     </div>
                   </List.KeyValue>
                 )}
               </List.Control>
             </List>
           </div>
-          <div className="pt-4">
+          <div className="pt-6">
             <AddSectionConfirmModalConcentrated
               position={position}
               existingPosition={existingPosition}
