@@ -299,6 +299,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         state={dialogState}
         isWritePending={isWritePending}
         onComplete={onComplete}
+        testId="make-another-swap"
         successMessage={
           <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-semibold">
             You {isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'}

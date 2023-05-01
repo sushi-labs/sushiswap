@@ -231,19 +231,17 @@ export class DataFetcher {
   }
 
   async fetchPoolsForToken(currency0: Type, currency1: Type): Promise<void> {
-    const [token0, token1] = currency0.wrapped.sortsBefore(currency1.wrapped)
-      ? [currency0.wrapped, currency1.wrapped]
-      : [currency1.wrapped, currency0.wrapped]
+    const [token0, token1] =
+      currency0.wrapped.equals(currency1.wrapped) || currency0.wrapped.sortsBefore(currency1.wrapped)
+        ? [currency0.wrapped, currency1.wrapped]
+        : [currency1.wrapped, currency0.wrapped]
     await Promise.all(this.providers.map((p) => p.fetchPoolsForToken(token0, token1)))
   }
 
   getCurrentPoolCodeMap(currency0: Type, currency1: Type): Map<string, PoolCode> {
-    const [token0, token1] = currency0.wrapped.sortsBefore(currency1.wrapped)
-      ? [currency0.wrapped, currency1.wrapped]
-      : [currency1.wrapped, currency0.wrapped]
     const result: Map<string, PoolCode> = new Map()
     this.providers.forEach((p) => {
-      const poolCodes = p.getCurrentPoolList(token0, token1)
+      const poolCodes = p.getCurrentPoolList(currency0.wrapped, currency1.wrapped)
       poolCodes.forEach((pc) => result.set(pc.pool.address, pc))
     })
 
@@ -251,10 +249,7 @@ export class DataFetcher {
   }
 
   getCurrentPoolCodeList(currency0: Type, currency1: Type): PoolCode[] {
-    const [token0, token1] = currency0.wrapped.sortsBefore(currency1.wrapped)
-      ? [currency0.wrapped, currency1.wrapped]
-      : [currency1.wrapped, currency0.wrapped]
-    const pcMap = this.getCurrentPoolCodeMap(token0, token1)
+    const pcMap = this.getCurrentPoolCodeMap(currency0.wrapped, currency1.wrapped)
     return Array.from(pcMap.values())
   }
 

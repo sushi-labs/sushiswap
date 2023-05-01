@@ -27,6 +27,9 @@ import {
 } from '@sushiswap/viem-config'
 import { Chain } from 'wagmi'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
+import { foundry } from 'wagmi/chains'
+
+const isTest = process.env['NODE_ENV'] === 'test' || process.env['NEXT_PUBLIC_PLAYWRIGHT_ENABLED'] === 'true'
 
 const dataFetchers = new Map<ChainId, DataFetcher>()
 
@@ -111,10 +114,12 @@ dataFetchers.set(
     ChainId.ETHEREUM,
     createPublicClient({
       chain: mainnet,
-      transport: fallback([
-        http(`${mainnet.rpcUrls.alchemy.http}/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`),
-        http('https://eth.llamarpc.com'),
-      ]),
+      transport: isTest
+        ? http(foundry.rpcUrls.default.http[0])
+        : fallback([
+            http(`${mainnet.rpcUrls.alchemy.http}/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`),
+            http('https://eth.llamarpc.com'),
+          ]),
     })
   )
 )
@@ -256,9 +261,6 @@ dataFetchers.set(
 )
 
 export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enabled'>) => {
-  // if (!variables.currencyA || !variables.currencyB) {
-  //   return new Map()
-  // }
   const dataFetcher = dataFetchers.get(variables.chainId) as DataFetcher
   const liquidityProviders = [LiquidityProviders.SushiSwap, LiquidityProviders.Trident]
   if (isRouteProcessor3ChainId(variables.chainId)) {
