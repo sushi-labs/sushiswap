@@ -130,115 +130,118 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     ...(config.request && { request: { ...config.request, gasLimit: config.request.gasLimit.mul(120).div(100) } }),
     onSuccess: async (data) => {
       setReview(false)
-      await refetchBalances()
+      data
+        .wait()
+        .then((receipt) => {
+          if (receipt.status === 1) {
+            setDialogState(ConfirmationDialogState.Success)
 
-      data.wait().then((receipt) => {
-        if (receipt.status === 1) {
-          setDialogState(ConfirmationDialogState.Success)
-
-          if (
-            trade?.route?.legs?.every(
-              (leg) =>
-                leg.poolName.startsWith('Wrap') ||
-                leg.poolName.startsWith('SushiSwap') ||
-                leg.poolName.startsWith('Trident') ||
-                leg.poolName.startsWith('BentoBridge')
-            )
-          ) {
-            log.info('Swap success (internal)', {
-              trade,
-              data,
-              receipt,
-            })
-          } else if (
-            !trade?.route?.legs?.every(
-              (leg) =>
-                leg.poolName.startsWith('Wrap') ||
-                leg.poolName.startsWith('SushiSwap') ||
-                leg.poolName.startsWith('Trident') ||
-                leg.poolName.startsWith('BentoBridge')
-            )
-          ) {
-            log.info('Swap success (mix)', {
-              trade,
-              data,
-              receipt,
-            })
-          } else if (
-            trade?.route?.legs?.every(
-              (leg) =>
-                !leg.poolName.startsWith('Wrap') &&
-                !leg.poolName.startsWith('SushiSwap') &&
-                !leg.poolName.startsWith('Trident') &&
-                !leg.poolName.startsWith('BentoBridge')
-            )
-          ) {
-            log.info('Swap success (external)', {
-              trade,
-              data,
-              receipt,
-            })
+            if (
+              trade?.route?.legs?.every(
+                (leg) =>
+                  leg.poolName.startsWith('Wrap') ||
+                  leg.poolName.startsWith('SushiSwap') ||
+                  leg.poolName.startsWith('Trident') ||
+                  leg.poolName.startsWith('BentoBridge')
+              )
+            ) {
+              log.info('Swap success (internal)', {
+                trade,
+                data,
+                receipt,
+              })
+            } else if (
+              !trade?.route?.legs?.every(
+                (leg) =>
+                  leg.poolName.startsWith('Wrap') ||
+                  leg.poolName.startsWith('SushiSwap') ||
+                  leg.poolName.startsWith('Trident') ||
+                  leg.poolName.startsWith('BentoBridge')
+              )
+            ) {
+              log.info('Swap success (mix)', {
+                trade,
+                data,
+                receipt,
+              })
+            } else if (
+              trade?.route?.legs?.every(
+                (leg) =>
+                  !leg.poolName.startsWith('Wrap') &&
+                  !leg.poolName.startsWith('SushiSwap') &&
+                  !leg.poolName.startsWith('Trident') &&
+                  !leg.poolName.startsWith('BentoBridge')
+              )
+            ) {
+              log.info('Swap success (external)', {
+                trade,
+                data,
+                receipt,
+              })
+            } else {
+              log.info('Swap success (unknown)', {
+                trade,
+                data,
+                receipt,
+              })
+            }
           } else {
-            log.info('Swap success (unknown)', {
-              trade,
-              data,
-              receipt,
-            })
+            setDialogState(ConfirmationDialogState.Failed)
+            // Log swap success internal, mixed, or external
+            if (
+              trade?.route?.legs?.every(
+                (leg) =>
+                  leg.poolName.startsWith('Wrap') ||
+                  leg.poolName.startsWith('SushiSwap') ||
+                  leg.poolName.startsWith('Trident') ||
+                  leg.poolName.startsWith('BentoBridge')
+              )
+            ) {
+              log.info('Swap failed (internal)', {
+                trade,
+                data,
+                receipt,
+              })
+            } else if (
+              !trade?.route?.legs?.every(
+                (leg) =>
+                  leg.poolName.startsWith('Wrap') ||
+                  leg.poolName.startsWith('SushiSwap') ||
+                  leg.poolName.startsWith('Trident') ||
+                  leg.poolName.startsWith('BentoBridge')
+              )
+            ) {
+              log.info('Swap failed (mix)', {
+                trade,
+                data,
+                receipt,
+              })
+            } else if (
+              trade?.route?.legs?.every(
+                (leg) =>
+                  !leg.poolName.startsWith('Wrap') &&
+                  !leg.poolName.startsWith('SushiSwap') &&
+                  !leg.poolName.startsWith('Trident') &&
+                  !leg.poolName.startsWith('BentoBridge')
+              )
+            ) {
+              log.info('Swap failed (external)', {
+                trade,
+                data,
+                receipt,
+              })
+            } else {
+              log.info('Swap failed (unknown)', {
+                trade,
+                data,
+                receipt,
+              })
+            }
           }
-        } else {
-          setDialogState(ConfirmationDialogState.Failed)
-          // Log swap success internal, mixed, or external
-          if (
-            trade?.route?.legs?.every(
-              (leg) =>
-                leg.poolName.startsWith('Wrap') ||
-                leg.poolName.startsWith('SushiSwap') ||
-                leg.poolName.startsWith('Trident') ||
-                leg.poolName.startsWith('BentoBridge')
-            )
-          ) {
-            log.info('Swap failed (internal)', {
-              trade,
-              data,
-              receipt,
-            })
-          } else if (
-            !trade?.route?.legs?.every(
-              (leg) =>
-                leg.poolName.startsWith('Wrap') ||
-                leg.poolName.startsWith('SushiSwap') ||
-                leg.poolName.startsWith('Trident') ||
-                leg.poolName.startsWith('BentoBridge')
-            )
-          ) {
-            log.info('Swap failed (mix)', {
-              trade,
-              data,
-              receipt,
-            })
-          } else if (
-            trade?.route?.legs?.every(
-              (leg) =>
-                !leg.poolName.startsWith('Wrap') &&
-                !leg.poolName.startsWith('SushiSwap') &&
-                !leg.poolName.startsWith('Trident') &&
-                !leg.poolName.startsWith('BentoBridge')
-            )
-          ) {
-            log.info('Swap failed (external)', {
-              trade,
-              data,
-              receipt,
-            })
-          } else {
-            log.info('Swap failed (unknown)', {
-              trade,
-              data,
-              receipt,
-            })
-          }
-        }
-      })
+        })
+        .finally(async () => {
+          await refetchBalances()
+        })
     },
     onSettled,
     onError: (error) => {

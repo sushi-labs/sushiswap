@@ -124,7 +124,6 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     ...config,
     onSuccess: async (data) => {
       setReview(false)
-      await refetchBalances()
 
       data
         .wait()
@@ -148,8 +147,8 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
             dest: StepState.NotStarted,
           })
         })
-        .finally(() => {
-          // void Promise.all([refetchNetwork0Balances(), refetchNetwork1Balances()])
+        .finally(async () => {
+          await refetchBalances()
           setBentoboxSignature(undefined)
           setTradeId(nanoid())
         })
