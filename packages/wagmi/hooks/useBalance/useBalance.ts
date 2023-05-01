@@ -110,7 +110,6 @@ export const useBalances: UseBalances = ({
     enabled,
     watch: !(typeof enabled !== undefined && !enabled) && watch,
   })
-
   const tokens: BalanceMap = useMemo(() => {
     const result: BalanceMap = {}
 
@@ -211,7 +210,6 @@ export const useBalance: UseBalance = ({
     enabled,
     loadBentobox,
   })
-
   return useMemo(() => {
     const walletBalance = currency
       ? data?.[currency.isNative ? AddressZero : currency.wrapped.address]?.[FundSource.WALLET]
@@ -219,7 +217,6 @@ export const useBalance: UseBalance = ({
     const bentoBalance = currency
       ? data?.[currency.isNative ? AddressZero : currency.wrapped.address]?.[FundSource.BENTOBOX]
       : undefined
-
     return {
       isError: isError,
       isLoading: isLoading,

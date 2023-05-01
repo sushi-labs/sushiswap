@@ -16,8 +16,9 @@ export const SwapCurrencyOutput: FC = () => {
 
   return (
     <Web3Input.Currency
+      id="swap-to"
       type="OUTPUT"
-      className="p-3 dark:bg-slate-800 bg-white rounded-xl"
+      className="p-3 bg-white dark:bg-slate-800 rounded-xl"
       disabled
       chainId={network1}
       onSelect={setToken1}

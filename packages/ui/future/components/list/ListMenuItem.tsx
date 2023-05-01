@@ -6,7 +6,7 @@ import { ExtractProps, PolymorphicComponentProps } from '../../../types'
 import { ArrowSmallRightIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 
 interface Props {
-  title: string
+  title: ReactNode
   subtitle?: ReactNode
   hoverIcon?: (props: SVGProps<SVGSVGElement>) => JSX.Element | null
   hoverIconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'> & {
@@ -51,6 +51,7 @@ export const ListMenuItem: ListMenuItemComponent = ({
         subtitle ? 'items-start' : 'items-center',
         'hover:bg-black/[0.04] active:bg-black/[0.06] hover:dark:bg-white/[0.02] active:dark:bg-white/[0.03] relative flex gap-4 px-4 py-3 w-full cursor-pointer rounded-xl'
       )}
+      testdata-id={`${title}-list-menu-item`}
     >
       {Icon && (
         <div
@@ -82,7 +83,7 @@ export const ListMenuItem: ListMenuItemComponent = ({
         leaveTo="translate-x-[10px] opacity-0"
         unmount={false}
       >
-        <div className="absolute right-0 top-0 bottom-0 flex justify-center items-center">
+        <div className="absolute top-0 bottom-0 right-0 flex items-center justify-center">
           {HoverIcon ? (
             <HoverIcon {...hoverIconProps} width={hoverIconProps?.width ?? 20} height={hoverIconProps?.height ?? 20} />
           ) : (

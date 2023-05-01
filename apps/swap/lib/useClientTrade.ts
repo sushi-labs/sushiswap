@@ -115,8 +115,7 @@ export function useTrade(
 
   return useMemo(() => {
     if (
-      data &&
-      data.gasPrice &&
+      data?.gasPrice &&
       currencyIn &&
       currencyInRebase &&
       currencyOut &&
