@@ -149,7 +149,6 @@ export class TridentProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
         contracts: pools.map(
           (pool) =>
             ({
@@ -168,7 +167,6 @@ export class TridentProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
         contracts: stablePools.map(
           (p) =>
             ({
@@ -187,7 +185,6 @@ export class TridentProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
         contracts: sortedTokens.map(
           (t) =>
             ({
@@ -207,7 +204,6 @@ export class TridentProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
         contracts: sortedTokens.map(
           (t) =>
             ({
@@ -331,7 +327,6 @@ export class TridentProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
         contracts: initialClassicPools.map(
           (pc) =>
             ({
@@ -350,7 +345,6 @@ export class TridentProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
         contracts: onDemandClassicPools.map(
           (pc) =>
             ({
@@ -370,7 +364,6 @@ export class TridentProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
         contracts: initialStablePools.map(
           (pc) =>
             ({
@@ -390,7 +383,6 @@ export class TridentProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
         contracts: onDemandStablePools.map(
           (pc) =>
             ({
@@ -410,7 +402,6 @@ export class TridentProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
         contracts: bridges.map(
           (b) =>
             ({
@@ -431,7 +422,6 @@ export class TridentProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
         contracts: bridges.map(
           (b) =>
             ({
@@ -608,7 +598,6 @@ export class TridentProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
         contracts: classicPoolCodesToCreate.map(
           (pc) =>
             ({
@@ -628,7 +617,6 @@ export class TridentProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
         contracts: stablePoolCodesToCreate.map(
           (pc) =>
             ({
@@ -648,7 +636,6 @@ export class TridentProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
         contracts: bridgesToCreate.map(
           (b) =>
             ({
@@ -669,7 +656,6 @@ export class TridentProvider extends LiquidityProvider {
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
         allowFailure: true,
-        batchSize: 1024,
         contracts: bridgesToCreate.map(
           (b) =>
             ({
@@ -1025,7 +1011,7 @@ export class TridentProvider extends LiquidityProvider {
           | {
               error: Error
               result?: undefined
-              status: 'error'
+              status: 'failure'
             }
           | {
               error?: undefined
@@ -1067,7 +1053,7 @@ export class TridentProvider extends LiquidityProvider {
           | {
               error: Error
               result?: undefined
-              status: 'error'
+              status: 'failure'
             }
           | {
               error?: undefined

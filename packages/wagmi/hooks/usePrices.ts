@@ -1,9 +1,8 @@
 import { getAddress, isAddress } from '@ethersproject/address'
 import { Fraction } from '@sushiswap/math'
-import { UseQueryOptions } from '@tanstack/react-query'
+import { UseQueryOptions, useQuery } from '@tanstack/react-query'
 import { parseUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
-import { useQuery } from 'wagmi'
 
 // type UsePrices = ({
 //   chainId,
