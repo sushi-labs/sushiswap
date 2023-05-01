@@ -59,6 +59,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
       pricesMap,
       balancesMap,
       chainId,
+      includeNative: true
     })
 
     const _onSelect = useCallback(
@@ -111,7 +112,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
               <List.Control className="relative flex flex-col flex-grow gap-3 p-1">
                 {isQueryTokenLoading ? (
                   <div className="py-0.5 h-[64px] -mb-3">
-                    <div className="flex items-center w-full h-full rounded-lg px-3">
+                    <div className="flex items-center w-full h-full px-3 rounded-lg">
                       <div className="flex items-center justify-between flex-grow gap-2 rounded">
                         <div className="flex flex-row items-center flex-grow gap-4">
                           <Skeleton.Circle radius={40} />
