@@ -21,7 +21,6 @@ import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '@sushiswap/react-query'
 import { ToastContainer } from '@sushiswap/ui/future/components/toast'
-import { ConcentratedLiquidityURLStateProvider } from '../components/ConcentratedLiquidityURLStateProvider'
 import { HistoryProvider } from '../components/HistoryProvider'
 
 declare global {

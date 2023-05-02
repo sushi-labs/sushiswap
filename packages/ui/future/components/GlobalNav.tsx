@@ -85,14 +85,14 @@ export const GlobalNav: FC<HeaderProps> = ({
               <Transition
                 show={open}
                 enter="transition duration-300 ease-out"
-                enterFrom="transform translate-y-[-16px] opacity-0"
-                enterTo="transform translate-y-0 opacity-100"
+                enterFrom="transform translate-y-[-16px]"
+                enterTo="transform translate-y-0"
                 leave="transition duration-300 ease-out"
                 leaveFrom="transform translate-y-0 opacity-100"
                 leaveTo="transform translate-y-[-16px] opacity-0"
               >
                 <div className="absolute pt-2 w-[max-content]">
-                  <Menu.Items className="rounded-2xl p-3 w-[max-content] bg-white shadow-md dark:bg-slate-700 !max-h-[unset]">
+                  <Menu.Items className="rounded-2xl p-3 w-[max-content] bg-white/50 shadow-md dark:bg-slate-800/50 paper !max-h-[unset]">
                     <a
                       href="https://sushi.com"
                       className="cursor-pointer p-2 text-lg font-semibold flex gap-2 items-center hover:text-blue"
