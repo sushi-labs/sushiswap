@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import type { Address } from 'viem'
+import { Address, fallback, http, PublicClientConfig } from 'viem'
 import {
   arbitrum,
   // arbitrumGoerli,
@@ -18,6 +18,7 @@ import {
   // evmos,
   //  evmosTestnet,
   fantom,
+  foundry,
   // fantomTestnet,
   // filecoin,
   // filecoinTestnet,
@@ -506,5 +507,103 @@ export const bttc = {
       address: '0x67dA5f2FfaDDfF067AB9d5F025F8810634d84287' as Address,
       blockCreated: 13014184,
     },
+  },
+} as const
+
+const alchemyId = process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
+
+const isTest = process.env['NODE_ENV'] === 'test' || process.env['NEXT_PUBLIC_PLAYWRIGHT_ENABLED'] === 'true'
+
+export const config: Record<number, PublicClientConfig> = {
+  [ChainId.ARBITRUM_NOVA]: {
+    chain: arbitrumNova,
+    transport: http(arbitrumNova.rpcUrls.default.http[0]),
+  },
+  [ChainId.ARBITRUM]: {
+    chain: arbitrum,
+    transport: fallback([http(`${arbitrum.rpcUrls.alchemy.http}/${alchemyId}`), http('https://rpc.ankr.com/arbitrum')]),
+  },
+  [ChainId.AVALANCHE]: {
+    chain: avalanche,
+    transport: fallback([http(avalanche.rpcUrls.default.http[0]), http('https://rpc.ankr.com/avalanche')]),
+  },
+  [ChainId.BOBA]: {
+    chain: boba,
+    transport: fallback([http(boba.rpcUrls.default.http[0]), http('https://lightning-replica.boba.network')]),
+  },
+  [ChainId.BOBA_AVAX]: {
+    chain: bobaAvax,
+    transport: fallback([http(bobaAvax.rpcUrls.default.http[0]), http('https://replica.avax.boba.network')]),
+  },
+  [ChainId.BOBA_BNB]: {
+    chain: bobaBnb,
+    transport: fallback([http(bobaBnb.rpcUrls.default.http[0]), http('https://replica.bnb.boba.network')]),
+  },
+  [ChainId.BSC]: {
+    chain: bsc,
+    transport: fallback([
+      http(bsc.rpcUrls.default.http[0]),
+      http('https://bsc-dataseed.binance.org'),
+      http('https://bsc-dataseed1.binance.org'),
+      http('https://bsc-dataseed2.binance.org'),
+    ]),
+  },
+  [ChainId.BTTC]: {
+    chain: bttc,
+    transport: http(bttc.rpcUrls.default.http[0]),
+  },
+  [ChainId.CELO]: {
+    chain: celo,
+    transport: http(celo.rpcUrls.default.http[0]),
+  },
+  [ChainId.ETHEREUM]: {
+    chain: mainnet,
+    transport: isTest
+      ? http(foundry.rpcUrls.default.http[0])
+      : fallback([http(`${mainnet.rpcUrls.alchemy.http}/${alchemyId}`), http('https://eth.llamarpc.com')]),
+  },
+  [ChainId.FANTOM]: {
+    chain: fantom,
+    transport: fallback([
+      http(fantom.rpcUrls.default.http[0]),
+      http('https://rpc.fantom.network'),
+      http('https://rpc2.fantom.network'),
+    ]),
+  },
+  [ChainId.FUSE]: {
+    chain: fuse,
+    transport: http(fuse.rpcUrls.default.http[0]),
+  },
+  [ChainId.GNOSIS]: {
+    chain: gnosis,
+    transport: fallback([http(gnosis.rpcUrls.default.http[0]), http('https://rpc.ankr.com/gnosis')]),
+  },
+  [ChainId.HARMONY]: {
+    chain: harmony,
+    transport: fallback([http(harmony.rpcUrls.default.http[0]), http('https://rpc.ankr.com/harmony')]),
+  },
+  [ChainId.KAVA]: {
+    chain: kava,
+    transport: fallback([http(kava.rpcUrls.default.http[0]), http(kava.rpcUrls.default.http[1])]),
+  },
+  [ChainId.METIS]: {
+    chain: metis,
+    transport: http(metis.rpcUrls.default.http[0]),
+  },
+  [ChainId.MOONBEAM]: {
+    chain: moonbeam,
+    transport: fallback([http(moonbeam.rpcUrls.default.http[0]), http('https://rpc.ankr.com/moonbeam')]),
+  },
+  [ChainId.MOONRIVER]: {
+    chain: moonriver,
+    transport: http(moonriver.rpcUrls.default.http[0]),
+  },
+  [ChainId.OPTIMISM]: {
+    chain: optimism,
+    transport: fallback([http(`${optimism.rpcUrls.alchemy.http}/${alchemyId}`), http('https://rpc.ankr.com/optimism')]),
+  },
+  [ChainId.POLYGON]: {
+    chain: polygon,
+    transport: fallback([http(`${polygon.rpcUrls.alchemy.http}/${alchemyId}`), http('https://polygon.llamarpc.com')]),
   },
 } as const
