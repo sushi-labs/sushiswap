@@ -1011,7 +1011,7 @@ export class TridentProvider extends LiquidityProvider {
           | {
               error: Error
               result?: undefined
-              status: 'error'
+              status: 'failure'
             }
           | {
               error?: undefined
@@ -1053,7 +1053,7 @@ export class TridentProvider extends LiquidityProvider {
           | {
               error: Error
               result?: undefined
-              status: 'error'
+              status: 'failure'
             }
           | {
               error?: undefined

@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { MultiRoute, RouteLeg, RouteStatus, RToken } from '@sushiswap/tines'
+import { BigNumber } from 'ethers'
 
 import { HEXer } from './HEXer'
 import { PoolCode } from './pools/PoolCode'
@@ -7,6 +8,14 @@ import { PoolCode } from './pools/PoolCode'
 enum TokenType {
   ERC20 = 'ERC20',
   'BENTO' = 'BENTO',
+}
+
+export interface PermitData {
+  value: BigNumber
+  deadline: BigNumber
+  v: number
+  r: string
+  s: string
 }
 
 function getTokenType(token: RToken): TokenType {
@@ -26,13 +35,15 @@ class TinesToRouteProcessor2 {
     this.pools = pools
   }
 
-  getRouteProcessorCode(route: MultiRoute, toAddress: string): string {
+  getRouteProcessorCode(route: MultiRoute, toAddress: string, permits: PermitData[] = []): string {
     // 0. Check for no route
     if (route.status == RouteStatus.NoWay || route.legs.length == 0) return ''
 
     //this.presendedLegs = new Set()
     this.calcTokenOutputLegs(route)
     let res = '0x'
+
+    res += this.processPermits(permits)
 
     const processedTokens = new Set<string | undefined>()
     route.legs.forEach((l, i) => {
@@ -52,6 +63,20 @@ class TinesToRouteProcessor2 {
     })
 
     return res
+  }
+
+  processPermits(permits: PermitData[]): string {
+    const hex = new HEXer()
+    permits.forEach((p) => {
+      hex
+        .uint8(6) // applyPermit commandCode
+        .uint(p.value)
+        .uint(p.deadline)
+        .uint8(p.v)
+        .bytes32(p.r)
+        .bytes32(p.s)
+    })
+    return hex.toString()
   }
 
   processNativeCode(token: RToken, route: MultiRoute, toAddress: string): string {
@@ -176,8 +201,9 @@ export function getRouteProcessor2Code(
   route: MultiRoute,
   routeProcessorAddress: string,
   toAddress: string,
-  pools: Map<string, PoolCode>
+  pools: Map<string, PoolCode>,
+  permits: PermitData[] = []
 ): string {
   const rpc = new TinesToRouteProcessor2(routeProcessorAddress, route.fromToken.chainId as ChainId, pools)
-  return rpc.getRouteProcessorCode(route, toAddress)
+  return rpc.getRouteProcessorCode(route, toAddress, permits)
 }

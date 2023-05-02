@@ -4,7 +4,7 @@ import '../variables.css'
 
 import { useIsSmScreen } from '@sushiswap/hooks'
 import { App, ThemeProvider } from '@sushiswap/ui'
-import { client } from '@sushiswap/wagmi'
+import { client } from '@sushiswap/wagmi/client'
 import { Analytics } from '@vercel/analytics/react'
 import { MotionConfig } from 'framer-motion'
 import type { AppProps } from 'next/app'
@@ -18,6 +18,7 @@ import { WagmiConfig } from '@sushiswap/wagmi'
 import { Header } from '../components'
 import SEO from '../next-seo.config.mjs'
 import { ToastContainer } from '@sushiswap/ui/future/components/toast'
+import { QueryClientProvider } from 'components/QueryClientProvider'
 
 declare global {
   interface Window {
@@ -72,17 +73,19 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         }}
       />
       <WagmiConfig client={client}>
-        <ThemeProvider>
-          <App.Shell>
-            <DefaultSeo {...SEO} />
-            <Header />
-            <MotionConfig reducedMotion={isSmallScreen ? 'always' : 'user'}>
-              <Component {...pageProps} />
-            </MotionConfig>
-            <App.Footer />
-            <ToastContainer className="mt-[50px]" />
-          </App.Shell>
-        </ThemeProvider>
+        <QueryClientProvider>
+          <ThemeProvider>
+            <App.Shell>
+              <DefaultSeo {...SEO} />
+              <Header />
+              <MotionConfig reducedMotion={isSmallScreen ? 'always' : 'user'}>
+                <Component {...pageProps} />
+              </MotionConfig>
+              <App.Footer />
+              <ToastContainer className="mt-[50px]" />
+            </App.Shell>
+          </ThemeProvider>
+        </QueryClientProvider>
       </WagmiConfig>
       <Analytics />
     </>

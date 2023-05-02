@@ -103,6 +103,8 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     bentoboxSignature: undefined,
   })
 
+  // console.log({ token0, token1 })
+
   const state = useMemo(() => {
     return {
       ...internalState,
