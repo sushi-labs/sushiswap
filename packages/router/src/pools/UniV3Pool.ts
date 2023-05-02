@@ -6,7 +6,7 @@ import { PoolCode } from './PoolCode'
 
 export class UniV3PoolCode extends PoolCode {
   constructor(pool: UniV3Pool, liquidityProvider: LiquidityProviders, providerName: string) {
-    super(pool, liquidityProvider, `${providerName} ${(pool?.fee || 0) * 100}%`)
+    super(pool, liquidityProvider, `${providerName} ${pool.fee * 100}%`)
   }
 
   override getStartPoint(): string {

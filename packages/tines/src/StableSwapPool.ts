@@ -18,19 +18,14 @@ export function toShareBN(elastic: BigNumber, total: Rebase) {
   return elastic.mul(total.base).div(total.elastic)
 }
 
-export class RebaseInternal {
+class RebaseInternal {
   elastic2Base: number
   rebaseBN: Rebase
 
   constructor(rebase: Rebase) {
     this.rebaseBN = rebase
-    if (rebase !== undefined) {
-      if (rebase.base.isZero() || rebase.elastic.isZero()) this.elastic2Base = 1
-      else this.elastic2Base = parseInt(rebase.elastic.toString()) / parseInt(rebase.base.toString())
-    } else {
-      // for deserialization
-      this.elastic2Base = 1
-    }
+    if (rebase.base.isZero() || rebase.elastic.isZero()) this.elastic2Base = 1
+    else this.elastic2Base = parseInt(rebase.elastic.toString()) / parseInt(rebase.base.toString())
   }
 
   toAmount(share: number) {
@@ -83,28 +78,16 @@ export class StableSwapRPool extends RPool {
       token0,
       token1,
       fee,
-      reserve0 === undefined
-        ? (undefined as unknown as BigNumber) // for deserialization
-        : realReservesToAdjusted(reserve0, total0, decimals0),
-      reserve1 === undefined
-        ? (undefined as unknown as BigNumber) // for deserialization
-        : realReservesToAdjusted(reserve1, total1, decimals1)
+      realReservesToAdjusted(reserve0, total0, decimals0),
+      realReservesToAdjusted(reserve1, total1, decimals1)
     )
     this.k = BigNumber.from(0)
     this.decimals0 = decimals0
     this.decimals1 = decimals1
-    if (address) {
-      this.decimalsCompensation0 = Math.pow(10, 12 - decimals0)
-      this.decimalsCompensation1 = Math.pow(10, 12 - decimals1)
-      this.total0 = new RebaseInternal(total0)
-      this.total1 = new RebaseInternal(total1)
-    } else {
-      // for deserialization
-      this.decimalsCompensation0 = 0
-      this.decimalsCompensation1 = 0
-      this.total0 = undefined as unknown as RebaseInternal
-      this.total1 = undefined as unknown as RebaseInternal
-    }
+    this.decimalsCompensation0 = Math.pow(10, 12 - decimals0)
+    this.decimalsCompensation1 = Math.pow(10, 12 - decimals1)
+    this.total0 = new RebaseInternal(total0)
+    this.total1 = new RebaseInternal(total1)
   }
 
   getReserve0() {

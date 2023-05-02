@@ -1,4 +1,3 @@
-import { SnapshotRestorer, takeSnapshot } from '@nomicfoundation/hardhat-network-helpers'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
@@ -21,16 +20,18 @@ import {
   USDT_ADDRESS,
   WNATIVE,
 } from '@sushiswap/currency'
-import {
-  DataFetcher,
-  LiquidityProviders,
-  NativeWrapBridgePoolCode,
-  PermitData,
-  PoolFilter,
-  Router,
-} from '@sushiswap/router'
+import { DataFetcher, LiquidityProviders, PermitData, PoolFilter, Router } from '@sushiswap/router'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
-import { BridgeBento, getBigNumber, RouteStatus, RPool, StableSwapRPool } from '@sushiswap/tines'
+import {
+  BridgeBento,
+  BridgeUnlimited,
+  ConstantProductRPool,
+  getBigNumber,
+  RPool,
+  StableSwapRPool,
+  toShareBN,
+  UniV3Pool,
+} from '@sushiswap/tines'
 import { expect } from 'chai'
 import { signERC2612Permit } from 'eth-permit'
 import { BigNumber, Contract } from 'ethers'
@@ -39,13 +40,6 @@ import seedrandom from 'seedrandom'
 import { createPublicClient } from 'viem'
 import { custom } from 'viem'
 import { hardhat } from 'viem/chains'
-
-import { getAllPoolCodes } from './utils/getAllPoolCodes'
-
-// Updating  pools' state allows to test DF updating ability, but makes tests very-very slow (
-const UPDATE_POOL_STATES = false
-const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
-const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 function getRandomExp(rnd: () => number, min: number, max: number) {
   const minL = Math.log(min)
@@ -56,6 +50,95 @@ function getRandomExp(rnd: () => number, min: number, max: number) {
   return res
 }
 
+const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
+
+const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
+
+function closeValues(_a: number | BigNumber, _b: number | BigNumber, accuracy: number, absolute: number): boolean {
+  const a: number = typeof _a == 'number' ? _a : parseInt(_a.toString())
+  const b: number = typeof _b == 'number' ? _b : parseInt(_b.toString())
+  if (accuracy === 0) return a === b
+  if (Math.abs(a - b) < absolute) return true
+  // if (Math.abs(a) < 1 / accuracy) return Math.abs(a - b) <= 10
+  // if (Math.abs(b) < 1 / accuracy) return Math.abs(a - b) <= 10
+  return Math.abs(a / b - 1) < accuracy
+}
+
+function expectCloseValues(
+  _a: number | BigNumber,
+  _b: number | BigNumber,
+  accuracy: number,
+  absolute: number,
+  logInfoIfFalse = ''
+) {
+  const res = closeValues(_a, _b, accuracy, absolute)
+  if (!res) {
+    console.log(`Expected close: ${_a}, ${_b}, ${accuracy} ${logInfoIfFalse}`)
+    // debugger
+    expect(res).equal(true)
+  }
+  return res
+}
+
+export async function checkPoolsState(pools: Map<string, PoolCode>, env: TestEnvironment) {
+  const bentoAddress = bentoBoxV1Address[env.chainId as BentoBoxV1ChainId]
+  const bentoContract = new Contract(
+    bentoAddress,
+    ['function totals(address) view returns (uint128, uint128)'],
+    env.user
+  )
+
+  const addresses = Array.from(pools.keys())
+  for (let i = 0; i < addresses.length; ++i) {
+    const addr = addresses[i]
+    const pool = (pools.get(addr) as PoolCode).pool
+    if (pool instanceof StableSwapRPool) {
+      const poolContract = new Contract(addr, ['function getReserves() view returns (uint256, uint256)'], env.user)
+
+      const totals0 = await bentoContract.totals(pool.token0.address)
+      const token0 = pool.token0.symbol
+      expectCloseValues(pool.getTotal0().elastic, totals0[0], 1e-10, 10, `StableSwapRPool ${addr} ${token0}.elastic`)
+      expectCloseValues(pool.getTotal0().base, totals0[1], 1e-10, 10, `StableSwapRPool ${addr} ${token0}.base`)
+
+      const totals1 = await bentoContract.totals(pool.token1.address)
+      const token1 = pool.token1.symbol
+      expectCloseValues(pool.getTotal1().elastic, totals1[0], 1e-10, 10, `StableSwapRPool ${addr} ${token1}.elastic`)
+      expectCloseValues(pool.getTotal1().base, totals1[1], 1e-10, 10, `StableSwapRPool ${addr} ${token1}.base`)
+
+      const reserves = await poolContract.getReserves()
+      expectCloseValues(
+        pool.getReserve0(),
+        toShareBN(reserves[0], pool.getTotal0()),
+        1e-10,
+        1e6,
+        `StableSwapRPool ${addr} reserve0`
+      )
+      expectCloseValues(
+        pool.getReserve1(),
+        toShareBN(reserves[1], pool.getTotal1()),
+        1e-10,
+        1e6,
+        `StableSwapRPool ${addr} reserve1`
+      )
+    } else if (pool instanceof ConstantProductRPool) {
+      const poolContract = new Contract(addr, ['function getReserves() view returns (uint112, uint112)'], env.user)
+      const reserves = await poolContract.getReserves()
+      expectCloseValues(pool.getReserve0(), reserves[0], 1e-10, 10, `CP ${addr} reserve0`)
+      expectCloseValues(pool.getReserve1(), reserves[1], 1e-10, 10, `CP ${addr} reserve1`)
+    } else if (pool instanceof BridgeBento) {
+      const totals = await bentoContract.totals(pool.token1.address)
+      expectCloseValues(pool.elastic, totals[0], 1e-10, 10, `BentoBridge ${pool.token1.symbol} elastic`)
+      expectCloseValues(pool.base, totals[1], 1e-10, 10, `BentoBridge ${pool.token1.symbol} base`)
+    } else if (pool instanceof BridgeUnlimited) {
+      // native - skip
+    } else if (pool instanceof UniV3Pool) {
+      // TODO: add pool check
+    } else {
+      console.log('Unknown pool: ', pool.address)
+    }
+  }
+}
+
 interface TestEnvironment {
   chainId: ChainId
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,11 +147,11 @@ interface TestEnvironment {
   user: SignerWithAddress
   user2: SignerWithAddress
   dataFetcher: DataFetcher
-  poolCodes: Map<string, PoolCode>
-  snapshot: SnapshotRestorer
 }
 
 async function getTestEnvironment(): Promise<TestEnvironment> {
+  //console.log('Prepare Environment:')
+
   const client = createPublicClient({
     batch: {
       multicall: {
@@ -88,29 +171,22 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
     },
     transport: custom(network.provider),
   })
-  //await switchMulticallToEthers(client)
-
+  //console.log('    Create DataFetcher ...')
   const provider = ethers.provider
   const chainId = network.config.chainId as ChainId
   const dataFetcher = new DataFetcher(chainId, client)
 
-  dataFetcher.startDataFetching()
-  const poolCodes = new Map<string, PoolCode>()
-  if (!UPDATE_POOL_STATES) {
-    const pc = await getAllPoolCodes(
-      dataFetcher,
-      chainId,
-      (network.config as { forking: { blockNumber?: number } }).forking?.blockNumber
-    )
-    pc.forEach((p) => poolCodes.set(p.pool.address, p))
-  }
+  //console.log({ chainId, url: ethers.provider.connection.url, otherurl: network.config.forking.url })
 
+  dataFetcher.startDataFetching()
+
+  console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
   const RouteProcessor = await ethers.getContractFactory('RouteProcessor3')
   const routeProcessor = await RouteProcessor.deploy(bentoBoxV1Address[chainId as BentoBoxV1ChainId], [])
   await routeProcessor.deployed()
   //console.log('    Block Number:', provider.blockNumber)
 
-  console.log(`  Network: ${chainName[chainId]}, Forked Block: ${provider.blockNumber}`)
+  console.log(`Network: ${chainName[chainId]}, Forked Block: ${provider.blockNumber}`)
   //console.log('    User creation ...')
   const [Alice, Bob] = await ethers.getSigners()
 
@@ -121,12 +197,10 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
     user: Alice,
     user2: Bob,
     dataFetcher,
-    poolCodes,
-    snapshot: await takeSnapshot(),
   }
 }
 
-async function makePermit(env: TestEnvironment, token: Token, amount: BigNumber): Promise<PermitData> {
+async function makePermit(env: TestEnvironment, token: Token, amount: BigNumber): PermitData {
   const userAddress = await env.user.getAddress()
   const result = await signERC2612Permit(env.user, token.address, userAddress, env.rp.address, amount.toHexString())
   return {
@@ -144,7 +218,6 @@ async function makeSwap(
   fromToken: Type,
   amountIn: BigNumber,
   toToken: Type,
-  usedPools: Set<string>,
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
@@ -158,29 +231,29 @@ async function makeSwap(
     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
   }
 
-  let pcMap: Map<string, PoolCode>
-  if (UPDATE_POOL_STATES) {
-    await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
-    pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
-  } else {
-    pcMap = new Map()
-    Array.from(env.poolCodes.entries()).forEach((e) => {
-      if (!usedPools.has(e[0])) pcMap.set(e[0], e[1])
-    })
-  }
-  //await checkPoolsState(pcMap, env.user, env.chainId)
+  // console.log('Create Route ...')
+  await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  const pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
+
+  await checkPoolsState(pcMap, env)
 
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
-  //console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
+  // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
   // console.log(
   //   'ROUTE:',
   //   route.legs.map(
   //     (l) =>
-  //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
+  //       l.tokenFrom.symbol +
+  //       ' -> ' +
+  //       l.tokenTo.symbol +
+  //       '  ' +
+  //       l.poolAddress +
+  //       '  ' +
+  //       l.assumedAmountIn +
+  //       ' ->' +
+  //       l.assumedAmountOut
   //   )
   // )
-  if (route.status == RouteStatus.NoWay) return
-
   const rpParams = Router.routeProcessor2Params(
     pcMap,
     route,
@@ -224,14 +297,6 @@ async function makeSwap(
     )
   const receipt = await tx.wait()
 
-  if (!UPDATE_POOL_STATES) {
-    route.legs.forEach((l) => {
-      if (!(pcMap.get(l.poolAddress) instanceof NativeWrapBridgePoolCode)) {
-        usedPools.add(l.poolAddress)
-      }
-    })
-  }
-
   // const trace = await network.provider.send('debug_traceTransaction', [receipt.transactionHash])
   // printGasUsage(trace)
 
@@ -258,11 +323,10 @@ async function makeSwap(
 }
 
 async function dataUpdated(env: TestEnvironment, minBlockNumber: number) {
-  if (UPDATE_POOL_STATES)
-    for (;;) {
-      if (env.dataFetcher.getLastUpdateBlock() >= minBlockNumber) return
-      await delay(500)
-    }
+  for (;;) {
+    if (env.dataFetcher.getLastUpdateBlock() >= minBlockNumber) return
+    await delay(500)
+  }
 }
 
 async function updMakeSwap(
@@ -270,7 +334,6 @@ async function updMakeSwap(
   fromToken: Type,
   toToken: Type,
   lastCallResult: BigNumber | [BigNumber | undefined, number],
-  usedPools: Set<string> = new Set(),
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
@@ -282,17 +345,8 @@ async function updMakeSwap(
   //console.log('Wait data update for min block', waitBlock)
   await dataUpdated(env, waitBlock)
 
-  const res = await makeSwap(
-    env,
-    fromToken,
-    amountIn,
-    toToken,
-    usedPools,
-    providers,
-    poolFilter,
-    permits,
-    makeSankeyDiagram
-  )
+  const res = await makeSwap(env, fromToken, amountIn, toToken, providers, poolFilter, permits, makeSankeyDiagram)
+  expect(res).not.undefined
   if (res === undefined) return [undefined, waitBlock]
   else return res
 }
@@ -301,8 +355,7 @@ async function checkTransferAndRoute(
   env: TestEnvironment,
   fromToken: Type,
   toToken: Type,
-  lastCallResult: BigNumber | [BigNumber | undefined, number],
-  usedPools: Set<string>
+  lastCallResult: BigNumber | [BigNumber | undefined, number]
 ): Promise<[BigNumber | undefined, number]> {
   const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
   if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
@@ -313,17 +366,9 @@ async function checkTransferAndRoute(
     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
   }
 
-  let pcMap: Map<string, PoolCode>
-  if (UPDATE_POOL_STATES) {
-    await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
-    pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
-  } else {
-    pcMap = new Map()
-    Array.from(env.poolCodes.entries()).forEach((e) => {
-      if (!usedPools.has(e[0])) pcMap.set(e[0], e[1])
-    })
-  }
+  await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
 
+  const pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9)
   const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, env.user.address, env.rp.address)
   const transferValue = getBigNumber(0.02 * Math.pow(10, Native.onChain(env.chainId).decimals))
@@ -351,14 +396,6 @@ async function checkTransferAndRoute(
     { value: rpParams.value }
   )
   const receipt = await tx.wait()
-
-  if (!UPDATE_POOL_STATES) {
-    route.legs.forEach((l) => {
-      if (!(pcMap.get(l.poolAddress) instanceof NativeWrapBridgePoolCode)) {
-        usedPools.add(l.poolAddress)
-      }
-    })
-  }
 
   let balanceOutBN: BigNumber
   if (toTokenContract) {
@@ -411,19 +448,16 @@ describe('End-to-end RouteProcessor3 test', async function () {
   })
 
   it('Permit: Native => FRAX => Native', async function () {
-    await env.snapshot.restore()
-    const usedPools = new Set<string>()
     const token = FRAX[chainId as keyof typeof FRAX_ADDRESS]
     const amountIn = getBigNumber(1000000 * 1e18)
     intermidiateResult[0] = amountIn
-    intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), token, intermidiateResult, usedPools)
-    const permit = await makePermit(env, token, intermidiateResult[0] as BigNumber)
+    intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), token, intermidiateResult)
+    const permit = await makePermit(env, token, intermidiateResult[0])
     intermidiateResult = await updMakeSwap(
       env,
       token,
       Native.onChain(chainId),
       intermidiateResult,
-      usedPools,
       undefined,
       undefined,
       [permit]
@@ -431,54 +465,26 @@ describe('End-to-end RouteProcessor3 test', async function () {
   })
 
   it('Native => SUSHI => Native', async function () {
-    await env.snapshot.restore()
-    const usedPools = new Set<string>()
     intermidiateResult[0] = getBigNumber(1000000 * 1e18)
-    intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult, usedPools)
-    intermidiateResult = await updMakeSwap(env, SUSHI_LOCAL, Native.onChain(chainId), intermidiateResult, usedPools)
+    intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
+    intermidiateResult = await updMakeSwap(env, SUSHI_LOCAL, Native.onChain(chainId), intermidiateResult)
   })
 
   it('Native => WrappedNative => Native', async function () {
-    await env.snapshot.restore()
-    const usedPools = new Set<string>()
     intermidiateResult[0] = getBigNumber(1 * 1e18)
-    intermidiateResult = await updMakeSwap(
-      env,
-      Native.onChain(chainId),
-      WNATIVE[chainId],
-      intermidiateResult,
-      usedPools
-    )
-    intermidiateResult = await updMakeSwap(
-      env,
-      WNATIVE[chainId],
-      Native.onChain(chainId),
-      intermidiateResult,
-      usedPools
-    )
+    intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), WNATIVE[chainId], intermidiateResult)
+    intermidiateResult = await updMakeSwap(env, WNATIVE[chainId], Native.onChain(chainId), intermidiateResult)
   })
 
   it('Trident Native => SUSHI => Native (Polygon only)', async function () {
     if (chainId === ChainId.POLYGON) {
-      await env.snapshot.restore()
-      const usedPools = new Set<string>()
       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
-      intermidiateResult = await updMakeSwap(
-        env,
-        Native.onChain(chainId),
-        SUSHI[chainId],
-        intermidiateResult,
-        usedPools,
-        [LiquidityProviders.Trident]
-      )
-      intermidiateResult = await updMakeSwap(
-        env,
-        SUSHI[chainId],
-        Native.onChain(chainId),
-        intermidiateResult,
-        usedPools,
-        [LiquidityProviders.Trident]
-      )
+      intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI[chainId], intermidiateResult, [
+        LiquidityProviders.Trident,
+      ])
+      intermidiateResult = await updMakeSwap(env, SUSHI[chainId], Native.onChain(chainId), intermidiateResult, [
+        LiquidityProviders.Trident,
+      ])
     }
   })
 
@@ -486,54 +492,24 @@ describe('End-to-end RouteProcessor3 test', async function () {
     const filter = (pool: RPool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
 
     if (chainId === ChainId.POLYGON) {
-      await env.snapshot.restore()
-      const usedPools = new Set<string>()
       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
-      intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], intermidiateResult, usedPools)
-      intermidiateResult = await updMakeSwap(
-        env,
-        USDC[chainId],
-        USDT[chainId],
-        intermidiateResult,
-        usedPools,
-        undefined,
-        filter
-      )
-      intermidiateResult = await updMakeSwap(
-        env,
-        USDT[chainId],
-        DAI[chainId],
-        intermidiateResult,
-        usedPools,
-        undefined,
-        filter
-      )
-      intermidiateResult = await updMakeSwap(
-        env,
-        DAI[chainId],
-        USDC[chainId],
-        intermidiateResult,
-        usedPools,
-        undefined,
-        filter
-      )
+      intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], intermidiateResult)
+      intermidiateResult = await updMakeSwap(env, USDC[chainId], USDT[chainId], intermidiateResult, undefined, filter)
+      intermidiateResult = await updMakeSwap(env, USDT[chainId], DAI[chainId], intermidiateResult, undefined, filter)
+      intermidiateResult = await updMakeSwap(env, DAI[chainId], USDC[chainId], intermidiateResult, undefined, filter)
     }
   })
 
   if (process.env.ALCHEMY_ID) {
     it('V3,  Native => USDC => NATIVE', async function () {
       if (chainId === ChainId.POLYGON) {
-        await env.snapshot.restore()
-        const usedPools = new Set<string>()
         let amountAndBlock: [BigNumber | undefined, number] = [undefined, 1]
         amountAndBlock[0] = getBigNumber(10_000_000 * 1e18) // should be partial
-        amountAndBlock = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], amountAndBlock, usedPools, [
+        amountAndBlock = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], amountAndBlock, [
           LiquidityProviders.UniswapV3,
-          LiquidityProviders.SushiSwapV3,
         ])
-        amountAndBlock = await updMakeSwap(env, USDC[chainId], Native.onChain(chainId), amountAndBlock, usedPools, [
+        amountAndBlock = await updMakeSwap(env, USDC[chainId], Native.onChain(chainId), amountAndBlock, [
           LiquidityProviders.UniswapV3,
-          LiquidityProviders.SushiSwapV3,
         ])
       }
     })
@@ -551,8 +527,6 @@ describe('End-to-end RouteProcessor3 test', async function () {
   it.skip('Random swap test', async function () {
     let routeCounter = 0
     for (let i = 0; i < 100; ++i) {
-      await env.snapshot.restore()
-      const usedPools = new Set<string>()
       let currentToken = 0
       const rnd: () => number = seedrandom(`testSeed ${i}`) // random [0, 1)
       intermidiateResult[0] = getBigNumber(getRandomExp(rnd, 1e15, 1e24))
@@ -563,23 +537,18 @@ describe('End-to-end RouteProcessor3 test', async function () {
           env,
           testTokensSet[currentToken] as Type,
           testTokensSet[nextToken] as Type,
-          intermidiateResult,
-          usedPools
+          intermidiateResult
         )
         currentToken = nextToken
-        if (currentToken === 0 || intermidiateResult[0] == undefined) break
+        if (currentToken === 0) break
       }
     }
   })
 
   it('Special Router', async function () {
-    await env.snapshot.restore()
+    await env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI_LOCAL)
 
-    let pcMap
-    if (UPDATE_POOL_STATES) {
-      await env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI_LOCAL)
-      pcMap = env.dataFetcher.getCurrentPoolCodeMap(Native.onChain(chainId), SUSHI_LOCAL)
-    } else pcMap = env.poolCodes
+    const pcMap = env.dataFetcher.getCurrentPoolCodeMap(Native.onChain(chainId), SUSHI_LOCAL)
 
     const route = Router.findSpecialRoute(
       pcMap,
@@ -594,90 +563,44 @@ describe('End-to-end RouteProcessor3 test', async function () {
 
   if (network.config.chainId === ChainId.POLYGON) {
     it('Transfer value and route 1', async function () {
-      await env.snapshot.restore()
-      const usedPools = new Set<string>()
       intermidiateResult[0] = getBigNumber(1e18)
-      intermidiateResult = await checkTransferAndRoute(
-        env,
-        Native.onChain(chainId),
-        SUSHI_LOCAL,
-        intermidiateResult,
-        usedPools
-      )
-      intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, USDC_LOCAL, intermidiateResult, usedPools)
-      intermidiateResult = await checkTransferAndRoute(
-        env,
-        USDC_LOCAL,
-        Native.onChain(chainId),
-        intermidiateResult,
-        usedPools
-      )
+      intermidiateResult = await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
+      intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, USDC_LOCAL, intermidiateResult)
+      intermidiateResult = await checkTransferAndRoute(env, USDC_LOCAL, Native.onChain(chainId), intermidiateResult)
     })
 
     it('Transfer value and route 2', async function () {
-      await env.snapshot.restore()
-      const usedPools = new Set<string>()
       intermidiateResult[0] = getBigNumber(1e18)
       intermidiateResult = await checkTransferAndRoute(
         env,
         Native.onChain(chainId),
         WNATIVE[chainId],
-        intermidiateResult,
-        usedPools
+        intermidiateResult
       )
-      intermidiateResult = await checkTransferAndRoute(
-        env,
-        WNATIVE[chainId],
-        SUSHI_LOCAL,
-        intermidiateResult,
-        usedPools
-      )
-      intermidiateResult = await checkTransferAndRoute(
-        env,
-        SUSHI_LOCAL,
-        WNATIVE[chainId],
-        intermidiateResult,
-        usedPools
-      )
+      intermidiateResult = await checkTransferAndRoute(env, WNATIVE[chainId], SUSHI_LOCAL, intermidiateResult)
+      intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, WNATIVE[chainId], intermidiateResult)
       intermidiateResult = await checkTransferAndRoute(
         env,
         WNATIVE[chainId],
         Native.onChain(chainId),
-        intermidiateResult,
-        usedPools
+        intermidiateResult
       )
     })
 
     it('Transfer value and route 3 - check EOA', async function () {
-      await env.snapshot.restore()
-      const usedPools = new Set<string>()
       intermidiateResult[0] = getBigNumber(1e18)
       env.user2 = await ethers.getSigner('0x0000000000000000000000000000000000000001')
-      intermidiateResult = await checkTransferAndRoute(
-        env,
-        Native.onChain(chainId),
-        SUSHI_LOCAL,
-        intermidiateResult,
-        usedPools
-      )
-      intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, USDC_LOCAL, intermidiateResult, usedPools)
-      intermidiateResult = await checkTransferAndRoute(
-        env,
-        USDC_LOCAL,
-        Native.onChain(chainId),
-        intermidiateResult,
-        usedPools
-      )
+      intermidiateResult = await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
+      intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, USDC_LOCAL, intermidiateResult)
+      intermidiateResult = await checkTransferAndRoute(env, USDC_LOCAL, Native.onChain(chainId), intermidiateResult)
     })
 
     it('Transfer value and route 4 - not payable address', async function () {
-      await env.snapshot.restore()
-      const usedPools = new Set<string>()
       intermidiateResult[0] = getBigNumber(1e18)
       env.user2 = await ethers.getSigner('0x597A9bc3b24C2A578CCb3aa2c2C62C39427c6a49')
       let throwed = false
       try {
-        await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult, usedPools)
+        await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
       } catch (e) {
         throwed = true
       }

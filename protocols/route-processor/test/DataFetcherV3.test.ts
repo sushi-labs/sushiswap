@@ -17,10 +17,8 @@ import { createPublicClient } from 'viem'
 import { custom } from 'viem'
 import { hardhat } from 'viem/chains'
 
-import { loadPoolSnapshot } from './utils/poolSerializer'
-
 const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
-async function getDataFetcherData(pool: UniV3PoolInfo, existedPools: Set<string>): Promise<UniV3Pool> {
+async function getDataFetcherData(pool: UniV3PoolInfo): Promise<UniV3Pool> {
   const client = createPublicClient({
     chain: {
       ...hardhat,
@@ -39,7 +37,7 @@ async function getDataFetcherData(pool: UniV3PoolInfo, existedPools: Set<string>
 
   const dataFetcher = new DataFetcher(chainId, client)
   dataFetcher.startDataFetching([LiquidityProviders.UniswapV3])
-  await dataFetcher.fetchPoolsForToken(pool.token0, pool.token1, existedPools)
+  await dataFetcher.fetchPoolsForToken(pool.token0, pool.token1)
   const pcMap = dataFetcher.getCurrentPoolCodeMap(pool.token0, pool.token1)
   const uniPoolCodes = Array.from(pcMap.values()).filter((p) => p instanceof UniV3PoolCode)
   expect(uniPoolCodes.length).equal(1)
@@ -98,15 +96,9 @@ function getPoolInfoTicksForCurrentDataFetcher(): number {
 
 describe('DataFetcher Uni V3', () => {
   let env: UniV3Environment
-  let existedPools = new Set<string>()
 
   before(async () => {
     env = await createUniV3EnvReal(ethers)
-    const poolCodes = loadPoolSnapshot(
-      network.config.chainId as ChainId,
-      (network.config as { forking: { blockNumber?: number } }).forking?.blockNumber
-    )
-    if (poolCodes !== undefined) existedPools = new Set(Array.from(poolCodes.map((pc) => pc.pool.address)))
   })
 
   it('test simple', async () => {
@@ -115,7 +107,7 @@ describe('DataFetcher Uni V3', () => {
       { from: 0, to: +16700, val: 1e18 },
       { from: 15500, to: +16500, val: 1e18 },
     ])
-    const poolTines2 = await getDataFetcherData(poolInfo, existedPools)
+    const poolTines2 = await getDataFetcherData(poolInfo)
     checkPoolsHaveTheSameState(poolInfo.tinesPool, poolTines2, getPoolInfoTicksForCurrentDataFetcher())
   })
 
@@ -130,7 +122,7 @@ describe('DataFetcher Uni V3', () => {
         [-80000, 20000], // 10000x200
       ][i % possibleFee.length]
       const poolInfo = await createRandomUniV3Pool(env, 'pool' + i, 10, 0.8, fee, fromTo[0], fromTo[1])
-      const poolTines2 = await getDataFetcherData(poolInfo, existedPools)
+      const poolTines2 = await getDataFetcherData(poolInfo)
       //console.log(poolInfo.tinesPool.ticks.length, poolTines2.ticks.length)
       checkPoolsHaveTheSameState(poolInfo.tinesPool, poolTines2, getPoolInfoTicksForCurrentDataFetcher())
     })

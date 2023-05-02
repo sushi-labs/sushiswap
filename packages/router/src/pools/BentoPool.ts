@@ -13,7 +13,7 @@ function getPoolTypeTicker(pool: RPool): string {
 
 export class BentoPoolCode extends PoolCode {
   constructor(pool: RPool, liquidityProvider: LiquidityProviders, providerName: string) {
-    super(pool, liquidityProvider, `${providerName} ${getPoolTypeTicker(pool)} ${(pool?.fee || 0) * 100}%`)
+    super(pool, liquidityProvider, `${providerName} ${getPoolTypeTicker(pool)} ${pool.fee * 100}%`)
   }
 
   getSwapCodeForRouteProcessor(leg: RouteLeg, _route: MultiRoute, to: string): string {

@@ -5,7 +5,7 @@ interface Badge {
   badgeContent: ReactElement
   children: ReactElement
   className?: string
-  position?: 'top-left' | 'bottom-right' | 'top-right'
+  position?: 'top-left' | 'bottom-right' | 'top-right' | 'bottom-left'
 }
 
 export const Badge: FC<Badge> = ({ badgeContent, position = 'top-left', children, className }) => {
@@ -21,6 +21,8 @@ export const Badge: FC<Badge> = ({ badgeContent, position = 'top-left', children
             ? '-right-[25%] -bottom-[15%]'
             : position === 'top-right'
             ? '-right-[25%] -top-[15%]'
+            : position === 'bottom-left'
+            ? '-left-[25%] -bottom-[15%]'
             : ''
         )}
       >

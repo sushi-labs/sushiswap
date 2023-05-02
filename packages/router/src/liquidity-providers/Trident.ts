@@ -487,28 +487,28 @@ export class TridentProvider extends LiquidityProvider {
     //console.debug(`${this.getLogPrefix()} - UPDATED POOLS`)
   }
 
-  async getOnDemandPools(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void> {
+  async getOnDemandPools(t0: Token, t1: Token): Promise<void> {
     const topPoolAddresses = [...Array.from(this.topClassicPools.keys()), ...Array.from(this.topStablePools.keys())]
-    let pools = filterOnDemandPools(
+    const pools = filterOnDemandPools(
       Array.from(this.availablePools.values()),
       t0.address,
       t1.address,
       topPoolAddresses,
       this.ON_DEMAND_POOL_SIZE
     )
-    if (excludePools) pools = pools.filter((p) => !excludePools.has(p.address))
 
-    let [onDemandClassicPools, onDemandStablePools] =
+    // if (pools.length === 0) {
+    //   // pools =
+    //   // return
+    // }
+
+    const [onDemandClassicPools, onDemandStablePools] =
       pools.length > 0
         ? [
             pools.filter((p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.topClassicPools.has(p.address)),
             pools.filter((p) => p.type === 'STABLE_POOL' && !this.topStablePools.has(p.address)),
           ]
         : await TridentStaticPoolFetcher.getStaticPools(this.client, this.chainId, t0, t1)
-    if (excludePools)
-      onDemandClassicPools = (onDemandClassicPools as PoolResponse2[]).filter((p) => !excludePools.has(p.address))
-    if (excludePools)
-      onDemandStablePools = (onDemandStablePools as PoolResponse2[]).filter((p) => !excludePools.has(p.address))
 
     this.poolsByTrade.set(
       this.getTradeId(t0, t1),
@@ -531,11 +531,9 @@ export class TridentProvider extends LiquidityProvider {
     const bridgesToCreate: BentoBridgePoolCode[] = []
 
     sortedTokens.forEach((t, i) => {
-      const fakeBridgeAddress = `Bento bridge for ${t.symbol}`
-      if (excludePools && excludePools.has(fakeBridgeAddress)) return
       if (!this.bridges.has(t.address)) {
         const pool = new BridgeBento(
-          fakeBridgeAddress,
+          `Bento bridge for ${t.symbol}`,
           t as RToken,
           convertTokenToBento(t),
           BigNumber.from(0),
@@ -979,8 +977,8 @@ export class TridentProvider extends LiquidityProvider {
     }
   }
 
-  async fetchPoolsForToken(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void> {
-    await this.getOnDemandPools(t0, t1, excludePools)
+  async fetchPoolsForToken(t0: Token, t1: Token): Promise<void> {
+    await this.getOnDemandPools(t0, t1)
   }
 
   getCurrentPoolList(t0: Token, t1: Token): PoolCode[] {

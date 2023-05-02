@@ -3,8 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
-import { config } from '@sushiswap/viem-config'
-import { createPublicClient, PublicClient } from 'viem'
+import { PublicClient } from 'viem'
 
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { BiswapProvider } from './liquidity-providers/Biswap'
@@ -40,25 +39,9 @@ export class DataFetcher {
   web3Client: PublicClient
   databaseClient: PrismaClient | undefined = undefined
 
-  // TODO: maybe use an actual map
-  // private static cache = new Map<number, DataFetcher>()
-
-  private static cache: Record<number, DataFetcher> = {}
-
-  static onChain(chainId: ChainId): DataFetcher {
-    if (chainId in this.cache) {
-      return this.cache[chainId]
-    }
-
-    return (this.cache[chainId] = new DataFetcher(chainId))
-  }
-
-  constructor(chainId: number, web3Client?: PublicClient, databaseClient?: PrismaClient) {
+  constructor(chainId: ChainId, web3Client: PublicClient, databaseClient?: PrismaClient) {
     this.chainId = chainId
-    if (!web3Client && !config[chainId]) {
-      throw new Error(`No viem config for chainId ${chainId}`)
-    }
-    this.web3Client = web3Client || createPublicClient(config[chainId])
+    this.web3Client = web3Client
     this.databaseClient = databaseClient
   }
 
@@ -247,12 +230,12 @@ export class DataFetcher {
     this.providers.forEach((p) => p.stopFetchPoolsData())
   }
 
-  async fetchPoolsForToken(currency0: Type, currency1: Type, excludePools?: Set<string>): Promise<void> {
+  async fetchPoolsForToken(currency0: Type, currency1: Type): Promise<void> {
     const [token0, token1] =
       currency0.wrapped.equals(currency1.wrapped) || currency0.wrapped.sortsBefore(currency1.wrapped)
         ? [currency0.wrapped, currency1.wrapped]
         : [currency1.wrapped, currency0.wrapped]
-    await Promise.all(this.providers.map((p) => p.fetchPoolsForToken(token0, token1, excludePools)))
+    await Promise.all(this.providers.map((p) => p.fetchPoolsForToken(token0, token1)))
   }
 
   getCurrentPoolCodeMap(currency0: Type, currency1: Type): Map<string, PoolCode> {

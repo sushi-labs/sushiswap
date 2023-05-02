@@ -45,14 +45,14 @@ async function makeSwap(
       rpParams.amountOutMin,
       rpParams.to,
       rpParams.routeCode,
-      //{ value: rpParams.value?.toString() }
-      { value: rpParams.value?.toString(), gasPrice: 1000e9 } // this fixes the issue...
+      { value: rpParams.value?.toString() }
+      // { value: rpParams.value?.toString(), gasLimit: 21e6, gasPrice: 1000e9 } // this fixes the issue...
     )
     return parseInt(res.toString())
   }
 }
 
-describe('Harmony', async () => {
+describe('Celo RP3', async () => {
   const chainId = ChainId.HARMONY
   const provider = new ethers.providers.JsonRpcProvider('https://api.harmony.one', 1666600000)
   const client = createPublicClient({

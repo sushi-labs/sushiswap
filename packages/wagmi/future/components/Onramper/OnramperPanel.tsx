@@ -14,7 +14,7 @@ export const OnramperPanel: FC = () => {
   }
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} unmount={true} onClose={onClose}>
       <div className="flex items-center justify-center w-full h-[75vh] sm:w-[482px] sm:h-[560px] rounded-t-2xl sm:rounded-2xl overflow-hidden">
         <iframe
           src={src}

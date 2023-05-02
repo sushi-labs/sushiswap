@@ -20,15 +20,9 @@ export class BridgeBento extends RPool {
     freeLiquidity?: BigNumber
   ) {
     super(address, tokenEthereum, tokenBento, 0, elastic, base, BENTO_MINIMUM_SHARE_BALANCE, BRIDGING_GAS_COST)
-    if (address !== undefined) {
-      this.elastic = parseInt(elastic.toString())
-      this.base = parseInt(base.toString())
-      this.freeLiquidity = freeLiquidity === undefined ? undefined : parseInt(freeLiquidity.toString())
-    } else {
-      // for deserialization
-      this.elastic = 0
-      this.base = 0
-    }
+    this.elastic = parseInt(elastic.toString())
+    this.base = parseInt(base.toString())
+    this.freeLiquidity = freeLiquidity === undefined ? undefined : parseInt(freeLiquidity.toString())
   }
 
   updateReserves(elastic: BigNumber, base: BigNumber) {

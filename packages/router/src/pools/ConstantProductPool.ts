@@ -5,8 +5,8 @@ import { LiquidityProviders } from '../liquidity-providers'
 import { PoolCode } from './PoolCode'
 
 export class ConstantProductPoolCode extends PoolCode {
-  constructor(pool: ConstantProductRPool, liquidityProvider: LiquidityProviders, providerName: string) {
-    super(pool, liquidityProvider, `${providerName} ${(pool?.fee || 0) * 100}%`)
+  constructor(pool: ConstantProductRPool,liquidityProvider: LiquidityProviders, providerName: string) {
+    super(pool, liquidityProvider, `${providerName} ${pool.fee * 100}%`)
   }
 
   getSwapCodeForRouteProcessor(leg: RouteLeg, _route: MultiRoute, to: string): string {

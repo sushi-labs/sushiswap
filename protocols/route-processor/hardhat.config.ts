@@ -64,7 +64,7 @@ const config: HardhatUserConfig = {
         url: process.env.ALCHEMY_ID
           ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`
           : 'https://polygon-mainnet.g.alchemy.com/v2/demo',
-        blockNumber: 42053000,
+        blockNumber: 37180000,
       },
       accounts: {
         accountsBalance: '10000000000000000000000000', //(10_000_000 MATIC).
