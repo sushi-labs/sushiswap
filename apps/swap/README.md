@@ -34,10 +34,10 @@ ANVIL_FORK_URL=<URL> pnpm exec turbo run anvil --filter=swap --force
 In a new terminal, run
 
 ```
-NODE_ENV=test pnpm exec turbo run build --filter=swap --force
+NODE_ENV=test NEXT_PUBLIC_PLAYWRIGHT_ENABLED=true  pnpm exec turbo run build --filter=swap --force
 ```
 
-follwed by:
+followed by:
 
 ```
 NODE_ENV=test NEXT_PUBLIC_PLAYWRIGHT_ENABLED=true pnpm exec turbo run start --filter=swap --force

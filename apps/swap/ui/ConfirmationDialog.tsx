@@ -17,8 +17,14 @@ import {
   ConfirmationDialogState,
 } from '@sushiswap/ui/dialog/ConfirmationDialog'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { isRouteProcessorChainId, routeProcessorAddress } from '@sushiswap/route-processor'
+import {
+  isRouteProcessor3ChainId,
+  isRouteProcessorChainId,
+  routeProcessor3Address,
+  routeProcessorAddress,
+} from '@sushiswap/route-processor'
 import { routeProcessor2Abi } from '@sushiswap/abi'
+import { BigNumber } from 'ethers'
 
 interface ConfirmationDialogProps {
   children({
@@ -49,11 +55,11 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
 
   const { config, isError, error } = usePrepareContractWrite({
     chainId: network0,
-    address:
-      //   isRouteProcessor2ChainId(network0)
-      // ? routeProcessor2Address[network0]
-      // :
-      isRouteProcessorChainId(network0) ? routeProcessorAddress[network0] : undefined,
+    address: isRouteProcessor3ChainId(network0)
+      ? routeProcessor3Address[network0]
+      : isRouteProcessorChainId(network0)
+      ? routeProcessorAddress[network0]
+      : undefined,
     abi: routeProcessor2Abi,
     functionName: trade?.functionName,
     args: trade?.writeArgs,
@@ -293,6 +299,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         state={dialogState}
         isWritePending={isWritePending}
         onComplete={onComplete}
+        testId="make-another-swap"
         successMessage={
           <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-semibold">
             You {isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'}

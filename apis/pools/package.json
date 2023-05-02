@@ -28,7 +28,7 @@
     "@sushiswap/validate": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
     "@vercel/node": "2.9.8",
-    "@wagmi/core": "0.10.9",
+    "@wagmi/core": "0.10.10",
     "deepmerge-ts": "^4.3.0",
     "zod": "3.20.2"
   },

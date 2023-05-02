@@ -54,6 +54,7 @@
     "@sushiswap/tines-sandbox": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/types": "workspace:*",
+    "@sushiswap/viem-config": "workspace:*",
     "@typechain/ethers-v5": "^10.0.0",
     "@typechain/hardhat": "^6.1.0",
     "@types/chai": "^4.3.0",
@@ -64,6 +65,7 @@
     "cross-env": "^7.0.0",
     "dotenv": "16.0.3",
     "eslint": "8.29.0",
+    "eth-permit": "^0.2.3",
     "ethers": "5.7.2",
     "hardhat": "2.12.4",
     "hardhat-contract-sizer": "2.6.1",
@@ -73,6 +75,7 @@
     "hardhat-preprocessor": "0.1.5",
     "hardhat-spdx-license-identifier": "2.1.0",
     "hardhat-watcher": "2.5.0",
+    "mocha": "^10.2.0",
     "prettier": "2.8.1",
     "prettier-plugin-solidity": "1.1.0",
     "solidity-coverage": "0.8.2",
@@ -80,6 +83,6 @@
     "ts-node": "10.9.1",
     "typechain": "8.1.1",
     "typescript": "4.9.4",
-    "viem": "0.1.2"
+    "viem": "0.3.12"
   }
 }

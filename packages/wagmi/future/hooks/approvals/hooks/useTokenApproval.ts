@@ -37,10 +37,15 @@ export const useTokenApproval = ({
 }: UseTokenApprovalParams): [ApprovalState, ReturnType<typeof useContractWrite>] => {
   const { address } = useAccount()
   const [pending, setPending] = useState(false)
-  const { data: allowance, isLoading: isAllowanceLoading } = useTokenAllowance({
+  const {
+    data: allowance,
+    isLoading: isAllowanceLoading,
+    refetch,
+  } = useTokenAllowance({
     token: amount?.currency?.wrapped,
     owner: address,
     spender,
+    chainId: amount?.currency.chainId,
     enabled: Boolean(amount?.currency?.isToken && enabled),
   })
 
@@ -53,7 +58,7 @@ export const useTokenApproval = ({
       spender as Address,
       approveMax ? MaxUint256 : amount ? BigNumber.from(amount.quotient.toString()) : BigNumber.from(0),
     ],
-    enabled: Boolean(amount && spender && address && allowance && enabled),
+    enabled: Boolean(amount && spender && address && allowance && enabled && !isAllowanceLoading),
   })
 
   const onSettled = useCallback(
@@ -94,7 +99,9 @@ export const useTokenApproval = ({
       data
         .wait()
         .then(() => {
-          setPending(false)
+          refetch().then(() => {
+            setPending(false)
+          })
         })
         .catch(() => setPending(false))
     },
@@ -103,11 +110,11 @@ export const useTokenApproval = ({
   return useMemo(() => {
     let state = ApprovalState.UNKNOWN
     if (amount?.currency.isNative) state = ApprovalState.APPROVED
-    if (pending) state = ApprovalState.PENDING
-    else if (isAllowanceLoading) state = ApprovalState.LOADING
-    else if (allowance && amount && allowance.lessThan(amount)) state = ApprovalState.NOT_APPROVED
     else if (allowance && amount && allowance.greaterThan(amount)) state = ApprovalState.APPROVED
     else if (allowance && amount && allowance.equalTo(amount)) state = ApprovalState.APPROVED
+    else if (pending) state = ApprovalState.PENDING
+    else if (isAllowanceLoading) state = ApprovalState.LOADING
+    else if (allowance && amount && allowance.lessThan(amount)) state = ApprovalState.NOT_APPROVED
 
     return [state, execute]
   }, [allowance, amount, execute, isAllowanceLoading, pending])

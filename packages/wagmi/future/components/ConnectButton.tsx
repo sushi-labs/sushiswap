@@ -58,7 +58,7 @@ export const ConnectButton = <C extends React.ElementType>({ hack, children, hid
   // Awaiting wallet confirmation
   if (pendingConnector) {
     return (
-      <Button endIcon={<Loader />} variant="filled" color="blue" disabled {...rest}>
+      <Button endIcon={<Loader />} variant="filled" color="blue" size={rest.size} disabled {...rest}>
         Authorize Wallet
       </Button>
     )
@@ -68,7 +68,7 @@ export const ConnectButton = <C extends React.ElementType>({ hack, children, hid
     <Popover className={rest.fullWidth ? 'relative w-full' : ''}>
       {({ open }) => (
         <>
-          <Popover.Button as={Button} {...rest}>
+          <Popover.Button as={Button} {...rest} testId="connect-wallet-button">
             <span className="hidden md:block">{children || 'Connect Wallet'}</span>
             <span className="block md:hidden">{children || 'Connect'}</span>
             {!hideChevron && (

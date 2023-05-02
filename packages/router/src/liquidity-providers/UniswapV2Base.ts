@@ -386,8 +386,16 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     pools: PoolCode[],
     reserves:
       | (
-          | { error: Error; result?: undefined; status: 'error' }
-          | { error?: undefined; result: readonly [bigint, bigint, number]; status: 'success' }
+          | {
+              error: Error
+              result?: undefined
+              status: 'failure'
+            }
+          | {
+              error?: undefined
+              result: readonly [bigint, bigint, number]
+              status: 'success'
+            }
         )[]
       | undefined,
     type: 'INITIAL' | 'ON_DEMAND'
