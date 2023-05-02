@@ -681,6 +681,7 @@ importers:
       '@ethersproject/solidity': 5.7.0
       '@headlessui/react': 1.7.7
       '@heroicons/react': ^1.0.0
+      '@playwright/test': 1.32.1
       '@reduxjs/toolkit': 1.9.1
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
@@ -819,6 +820,7 @@ importers:
       wagmi: 0.12.12_fsys2wp3iip6k7fwrrc3ndeyc4
       zod: 3.20.2
     devDependencies:
+      '@playwright/test': 1.32.1
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/nextjs-config': link:../../config/nextjs

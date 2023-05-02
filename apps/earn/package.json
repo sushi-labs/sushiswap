@@ -3,13 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "anvil": "anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER",
     "build": "next build",
     "sitemap": "next-sitemap --config next-sitemap.config.mjs",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
     "dev": "next dev --port 3004",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "test": "NODE_ENV=test npx playwright test"
   },
   "dependencies": {
     "@ethersproject/abi": "5.7.0",
@@ -78,6 +80,7 @@
     "zod": "3.20.2"
   },
   "devDependencies": {
+    "@playwright/test": "1.32.1",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
