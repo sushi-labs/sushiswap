@@ -40,7 +40,7 @@ export class BridgeBento extends RPool {
 
   // direction == true -> deposit: calcs output shares by input amounts
   // direction == false -> withdraw: calcs output amounts by input shares
-  calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
+  calcOutByIn(amountIn: number, direction: boolean, throwIfOutOfLiquidity = true): { out: number; gasSpent: number } {
     let out
     if (direction == true) {
       if (this.elastic == 0) {
@@ -54,9 +54,14 @@ export class BridgeBento extends RPool {
       } else {
         out = (amountIn * this.elastic) / this.base
       }
-      if (this.freeLiquidity !== undefined && out > this.freeLiquidity) throw new Error('OutOfLiquidity BridgeBento')
+      if (throwIfOutOfLiquidity && this.freeLiquidity !== undefined && out > this.freeLiquidity)
+        throw new Error('OutOfLiquidity BridgeBento')
     }
     return { out, gasSpent: this.swapGasCost }
+  }
+
+  calcOutByInReal(amountIn: number, direction: boolean): number {
+    return Math.floor(this.calcOutByIn(amountIn, direction, false).out)
   }
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {

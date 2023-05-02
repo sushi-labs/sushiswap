@@ -919,10 +919,14 @@ export class Graph {
     const { legs, gasSpent, topologyWasChanged } = this.getRouteLegs(fromVert, toVert)
     console.assert(gasSpent <= gasSpentInit, 'Internal Error 491')
 
-    if (topologyWasChanged || removedEdgesNumber > 0) {
-      output = this.updateLegsAmountOut(legs, amountIn)
-      totalOutput = output - toVert.gasPrice * gasSpent
+    //if (topologyWasChanged || removedEdgesNumber > 0) {
+    output = this.updateLegsAmountOut(legs, amountIn)
+    totalOutput = output - toVert.gasPrice * gasSpent
+    if (output == 0) {
+      status = RouteStatus.NoWay
+      totalOutput = 0
     }
+    //}
 
     let swapPrice, priceImpact
     try {

@@ -179,7 +179,7 @@ export class StableSwapRPool extends RPool {
     return y
   }
 
-  calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
+  calcOutByIn(amountIn: number, direction: boolean, throwIfOutOfLiquidity = true): { out: number; gasSpent: number } {
     amountIn = direction ? this.total0.toAmount(amountIn) : this.total1.toAmount(amountIn)
     amountIn *= direction ? this.decimalsCompensation0 : this.decimalsCompensation1
     const x = direction ? this.reserve0 : this.reserve1
@@ -192,9 +192,14 @@ export class StableSwapRPool extends RPool {
     const out = outC / (direction ? this.decimalsCompensation1 : this.decimalsCompensation0)
 
     const initialReserve = direction ? this.getReserve1() : this.getReserve0()
-    if (initialReserve.sub(getBigNumber(out)).lt(this.minLiquidity)) throw new Error('StableSwap OutOfLiquidity')
+    if (throwIfOutOfLiquidity && initialReserve.sub(getBigNumber(out)).lt(this.minLiquidity))
+      throw new Error('StableSwap OutOfLiquidity')
 
     return { out, gasSpent: this.swapGasCost }
+  }
+
+  calcOutByInReal(amountIn: number, direction: boolean): number {
+    return Math.floor(this.calcOutByIn(amountIn, direction, false).out)
   }
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
