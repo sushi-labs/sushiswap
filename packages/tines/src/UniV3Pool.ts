@@ -146,7 +146,7 @@ export class UniV3Pool extends RPool {
     let startFlag = true
     while (input > 0) {
       if (nextTickToCross < 0 || nextTickToCross >= this.ticks.length) {
-        throw 'UniV3 OutOfLiquidity'
+        throw new Error('UniV3 OutOfLiquidity ' + this.address)
         //return { out: outAmount, gasSpent: this.swapGasCost }
       }
 
