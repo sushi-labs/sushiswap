@@ -247,12 +247,12 @@ export class DataFetcher {
     this.providers.forEach((p) => p.stopFetchPoolsData())
   }
 
-  async fetchPoolsForToken(currency0: Type, currency1: Type): Promise<void> {
+  async fetchPoolsForToken(currency0: Type, currency1: Type, excludePools?: Set<string>): Promise<void> {
     const [token0, token1] =
       currency0.wrapped.equals(currency1.wrapped) || currency0.wrapped.sortsBefore(currency1.wrapped)
         ? [currency0.wrapped, currency1.wrapped]
         : [currency1.wrapped, currency0.wrapped]
-    await Promise.all(this.providers.map((p) => p.fetchPoolsForToken(token0, token1)))
+    await Promise.all(this.providers.map((p) => p.fetchPoolsForToken(token0, token1, excludePools)))
   }
 
   getCurrentPoolCodeMap(currency0: Type, currency1: Type): Map<string, PoolCode> {
