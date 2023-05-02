@@ -66,7 +66,7 @@ export const SwapButton: FC = () => {
                     fullWidth
                     size="xl"
                     onClick={() => setReview(true)}
-                    testId="swap"
+                    testId="swap-button"
                   >
                     {!checked && warningSeverity(trade?.priceImpact) >= 3
                       ? 'Price impact too high'
