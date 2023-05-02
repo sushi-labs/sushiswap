@@ -81,7 +81,7 @@ export const UserProfile: FC<ProfileProps> = () => {
               leaveFrom="transform scale-[1] opacity-1"
               leaveTo="transform scale-[0.95] opacity-0"
             >
-              <div className="absolute pt-2 -top-[-1] right-0 sm:w-[340px]">
+              <div className="absolute pt-2 -top-[-4px] right-0 sm:w-[340px]">
                 <Popover.Panel className="p-1 flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white/50 paper dark:bg-slate-800/50">
                   {!address && <ConnectView onSelect={close} />}
                   {view === ProfileView.Default && address && (
