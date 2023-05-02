@@ -71,6 +71,11 @@ export abstract class RPool {
   abstract calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number }
   abstract calcCurrentPriceWithoutFee(direction: boolean): number
 
+  // Should return real output, as close to the pool as possible. With rounding. No exceptions
+  calcOutByInReal(amountIn: number, direction: boolean): number {
+    return this.calcOutByIn(amountIn, direction).out
+  }
+
   // precision of calcOutByIn
   granularity0() {
     return 1
@@ -107,6 +112,14 @@ export class ConstantProductRPool extends RPool {
     const out = (y * amountIn) / (x / (1 - this.fee) + amountIn)
     if (y - out < this.minLiquidity) throw 'CP OutOfLiquidity'
     return { out, gasSpent: this.swapGasCost }
+  }
+
+  calcOutByInReal(amountIn: number, direction: boolean): number {
+    const x = direction ? this.reserve0Number : this.reserve1Number
+    const y = direction ? this.reserve1Number : this.reserve0Number
+    const amountInWithoutFee = Math.floor(amountIn * (1 - this.fee)) // rounding of amount without fee
+    const out = (y * amountInWithoutFee) / (x + amountInWithoutFee)
+    return Math.floor(out) // rounding of output
   }
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
