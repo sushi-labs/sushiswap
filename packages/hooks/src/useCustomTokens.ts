@@ -28,7 +28,6 @@ export const useCustomTokens = () => {
 
   const addCustomToken = useCallback(
     (currencies: Token[]) => {
-      console.log(currencies)
       const data: Data[] = currencies.map((currency) => ({
         chainId: currency.chainId,
         id: currency.id,
@@ -37,8 +36,6 @@ export const useCustomTokens = () => {
         symbol: currency.symbol,
         decimals: currency.decimals,
       }))
-
-      console.log(data)
 
       setValue((prev) => {
         return data.reduce(
