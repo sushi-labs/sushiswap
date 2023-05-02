@@ -45,6 +45,7 @@ interface RemoveSectionTridentProps {
 const APPROVE_TAG = 'approve-remove-trident'
 
 export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRoot(({ pool: _pool }) => {
+  const chainId = _pool.chainId as BentoBoxV1ChainId
   const { address } = useAccount()
   const { chain } = useNetwork()
   const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
@@ -295,7 +296,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
                 <Checker.ApproveBentobox
                   fullWidth
                   size="xl"
-                  chainId={_pool.chainId}
+                  chainId={chainId}
                   id="remove-liquidity-trident-approve-bentobox"
                   onSignature={setPermit}
                   contract={getTridentRouterContractConfig(_pool.chainId).address}

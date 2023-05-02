@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, FC, ReactElement, ReactNode, useCallback, useContext, useMemo, useState } from 'react'
+import React, { createContext, FC, ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 
 type CheckerContext = {
   state: Record<string, boolean>
@@ -49,10 +49,11 @@ export const useApproved = (tag: string) => {
 
 // HOC component
 // useful for when the useApproved hook and the Checker.Success component are in the same component
-export const withCheckerRoot = (WrappedComponent: React.ComponentType) => {
-  return (
-    <CheckerProvider>
-      <WrappedComponent />
-    </CheckerProvider>
-  )
-}
+export const withCheckerRoot = <P extends object>(Component: React.FunctionComponent<P>): FC<P> =>
+  function WithCheckerRootComponent(props: P) {
+    return (
+      <CheckerProvider>
+        <Component {...props} />
+      </CheckerProvider>
+    )
+  }
