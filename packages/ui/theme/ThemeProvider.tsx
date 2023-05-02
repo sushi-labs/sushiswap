@@ -20,10 +20,13 @@ export const ThemeProvider: FC<ThemeProvider> = ({ children }) => {
   const isDarkSet = theme === ThemeState.Dark
 
   useEffect(() => {
-    if (isDarkSet || (isDarkPreferred && theme === ThemeState.Auto)) {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
+    const url = window.location.href
+    if (url.includes('/earn') || url.includes('/swap')) {
+      if (isDarkSet || (isDarkPreferred && theme === ThemeState.Auto)) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
     }
   }, [isDarkPreferred, isDarkSet, theme])
 
