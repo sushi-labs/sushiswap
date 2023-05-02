@@ -71,9 +71,11 @@ export const Explainer: FC<{
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
-          className="z-[2000] w-[240px] bg-white dark:bg-slate-900 rounded-xl shadow-hover-card shadow-black/10 text-xs mt-0.5"
+          className="z-[2000] w-[240px] rounded-xl shadow-md shadow-black/20 text-xs mt-0.5"
         >
-          <div className="flex flex-col gap-3 rounded-md px-4 py-3 bg-white dark:bg-slate-800">{children}</div>
+          <div className="flex flex-col gap-3 rounded-md px-4 py-3 bg-white/50 paper dark:bg-slate-800/50">
+            {children}
+          </div>
         </Menu.Items>,
         document.body
       )}

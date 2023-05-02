@@ -74,15 +74,15 @@ export const UserProfile: FC<ProfileProps> = () => {
             </Popover.Button>
             <Transition
               show={open}
-              enter="transition duration-300 ease-out"
-              enterFrom="transform translate-y-[-16px] opacity-0"
-              enterTo="transform translate-y-0 opacity-100"
-              leave="transition duration-300 ease-out"
-              leaveFrom="transform translate-y-0 opacity-100"
-              leaveTo="transform translate-y-[-16px] opacity-0"
+              enter="transition duration-200 ease-out"
+              enterFrom="transform scale-[0.95]"
+              enterTo="transform scale-[1]"
+              leave="transition duration-200 ease-out"
+              leaveFrom="transform scale-[1] opacity-1"
+              leaveTo="transform scale-[0.95] opacity-0"
             >
               <div className="absolute pt-2 -top-[-1] right-0 sm:w-[340px]">
-                <Popover.Panel className="p-2 flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white dark:bg-slate-800">
+                <Popover.Panel className="p-1 flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white/50 paper dark:bg-slate-800/50">
                   {!address && <ConnectView onSelect={close} />}
                   {view === ProfileView.Default && address && (
                     <DefaultView chainId={chainId} address={address} setView={setView} />
