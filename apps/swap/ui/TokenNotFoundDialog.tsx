@@ -17,7 +17,6 @@ export const TokenNotFoundDialog = () => {
   const { network0, network1 } = useSwapState()
   const { setToken0, setToken1, setTokens } = useSwapActions()
   const { mutate: customTokensMutate, hasToken } = useCustomTokens()
-
   const { data: tokenFrom, isInitialLoading: tokenFromLoading } = useTokenWithCache({
     chainId: fromChainId,
     address: fromCurrency,
@@ -35,15 +34,10 @@ export const TokenNotFoundDialog = () => {
 
   const onImport = useCallback(
     ([token0, token1]: (Token | undefined)[]) => {
-      if (token0) {
-        customTokensMutate('add', token0)
-        setToken0(token0)
-      }
+      customTokensMutate('add', [token0, token1].filter((el) => el instanceof Token) as Token[])
 
-      if (token1) {
-        customTokensMutate('add', token1)
-        setToken1(token1)
-      }
+      if (token0) setToken0(token0)
+      if (token1) setToken1(token1)
     },
     [customTokensMutate, setToken0, setToken1]
   )
@@ -65,25 +59,6 @@ export const TokenNotFoundDialog = () => {
             Anyone can create a token, including creating fake versions of existing tokens that claim to represent
             projects. If you purchase this token, you may not be able to sell it back.
           </p>
-          {token0NotInList && (
-            <List>
-              <List.Label>Token {tokenFrom?.token && tokenTo?.token ? '1' : ''}</List.Label>
-              <List.Control>
-                <p className="p-3 text-sm text-gray-900 dark:text-slate-50">
-                  Could not retrieve token info for{' '}
-                  <a
-                    target="_blank"
-                    href={Chain.from(network0).getTokenUrl(fromCurrency)}
-                    className="text-blue font-medium"
-                    rel="noreferrer"
-                  >
-                    {shortenAddress(fromCurrency)}
-                  </a>{' '}
-                  are you sure this token is on {Chain.from(network0).name}?
-                </p>
-              </List.Control>
-            </List>
-          )}
           {token1NotInList && !tokenTo?.token && (
             <List>
               <List.Label>Token {tokenFrom?.token && tokenTo?.token ? '2' : ''}</List.Label>

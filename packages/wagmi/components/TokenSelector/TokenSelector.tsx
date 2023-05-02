@@ -24,6 +24,9 @@ export type TokenSelectorProps = {
   includeNative?: boolean
 }
 
+/**
+ * @deprecated use future/components/TokenSelector
+ */
 export const TokenSelector: FC<TokenSelectorProps> = memo(
   ({
     id,

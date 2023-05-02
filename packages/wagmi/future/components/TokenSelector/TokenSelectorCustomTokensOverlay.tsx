@@ -46,7 +46,7 @@ export const TokenSelectorCustomTokensOverlay: FC = () => {
                     key={token.address}
                     title={token.symbol || ''}
                     subtitle={chains[token.chainId].name}
-                    onClick={() => mutate('remove', token.wrapped)}
+                    onClick={() => mutate('remove', [token.wrapped])}
                     hoverIcon={TrashIcon}
                   />
                 ))
