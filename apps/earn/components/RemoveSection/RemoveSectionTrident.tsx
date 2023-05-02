@@ -5,10 +5,8 @@ import { Amount, Native } from '@sushiswap/currency'
 import { Pool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
-import { Button, Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
 import {
-  Approve,
-  Checker,
   ConstantProductPoolState,
   getTridentRouterContractConfig,
   StablePoolState,
@@ -23,7 +21,7 @@ import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 're
 import { useAccount, useNetwork } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
-
+import { Checker } from '@sushiswap/wagmi/future/systems'
 import {
   approveMasterContractAction,
   batchAction,
@@ -37,16 +35,21 @@ import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
+import Button from '@sushiswap/ui/future/components/button/Button'
+import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
 interface RemoveSectionTridentProps {
   pool: Pool
 }
 
-export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pool: _pool }) => {
+const APPROVE_TAG = 'approve-remove-trident'
+
+export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRoot(({ pool: _pool }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
   const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
   const isMounted = useIsMounted()
+  const { approved } = useApproved(APPROVE_TAG)
   const contract = useTridentRouterContract(_pool.chainId)
   const [permit, setPermit] = useState<Signature>()
   const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
@@ -262,7 +265,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pool: _poo
         token1Minimum={minAmount1}
         setPercentage={setPercentage}
       >
-        <Checker.Connected>
+        <Checker.Connect fullWidth size="xl">
           <Checker.Custom
             showGuardIfTrue={
               isMounted &&
@@ -275,61 +278,53 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pool: _poo
               ].includes(poolState)
             }
             guard={
-              <Button size="md" fullWidth disabled={true}>
+              <Button size="xl" fullWidth disabled={true}>
                 Pool Not Found
               </Button>
             }
           >
-            <Checker.Network size="md" chainId={_pool.chainId}>
+            <Checker.Network fullWidth size="xl" chainId={_pool.chainId}>
               <Checker.Custom
                 showGuardIfTrue={+percentage <= 0}
                 guard={
-                  <Button size="md" fullWidth disabled={true}>
+                  <Button size="xl" fullWidth disabled={true}>
                     Enter Amount
                   </Button>
                 }
               >
-                <Approve
-                  className="flex-grow !justify-end"
-                  components={
-                    <Approve.Components>
-                      <Approve.Bentobox
-                        id="remove-liquidity-trident-approve-bentobox"
-                        size="md"
-                        className="whitespace-nowrap"
-                        fullWidth
-                        address={getTridentRouterContractConfig(_pool.chainId).address}
-                        onSignature={setPermit}
-                      />
-                      <Approve.Token
-                        id="remove-liquidity-trident-approve-token"
-                        size="md"
-                        className="whitespace-nowrap"
-                        fullWidth
-                        amount={slpAmountToRemove}
-                        address={getTridentRouterContractConfig(_pool.chainId).address}
-                      />
-                    </Approve.Components>
-                  }
-                  render={({ approved }) => {
-                    return (
+                <Checker.ApproveBentobox
+                  fullWidth
+                  size="xl"
+                  chainId={_pool.chainId}
+                  id="remove-liquidity-trident-approve-bentobox"
+                  onSignature={setPermit}
+                  contract={getTridentRouterContractConfig(_pool.chainId).address}
+                >
+                  <Checker.ApproveERC20
+                    fullWidth
+                    size="xl"
+                    id="remove-liquidity-trident-approve-token"
+                    amount={slpAmountToRemove}
+                    contract={getTridentRouterContractConfig(_pool.chainId).address}
+                  >
+                    <Checker.Success tag={APPROVE_TAG}>
                       <Button
                         onClick={() => sendTransaction?.()}
                         fullWidth
-                        size="md"
+                        size="xl"
                         variant="filled"
                         disabled={!approved || isWritePending}
                       >
                         {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
                       </Button>
-                    )
-                  }}
-                />
+                    </Checker.Success>
+                  </Checker.ApproveERC20>
+                </Checker.ApproveBentobox>
               </Checker.Custom>
             </Checker.Network>
           </Checker.Custom>
-        </Checker.Connected>
+        </Checker.Connect>
       </RemoveSectionWidget>
     </div>
   )
-}
+})

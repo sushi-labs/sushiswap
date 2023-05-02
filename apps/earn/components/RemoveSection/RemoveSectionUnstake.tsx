@@ -1,20 +1,25 @@
 import { tryParseAmount } from '@sushiswap/currency'
 import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
-import { AppearOnMount, Button, Dots } from '@sushiswap/ui'
-import { Approve, Checker, getMasterChefContractConfig, useMasterChefWithdraw } from '@sushiswap/wagmi'
+import { AppearOnMount, Dots } from '@sushiswap/ui'
+import { getMasterChefContractConfig, useMasterChefWithdraw } from '@sushiswap/wagmi'
 import { FC, useMemo, useState } from 'react'
 
 import { useGraphPool } from '../../lib/hooks'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
 import { useSWRConfig } from 'swr'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import Button from '@sushiswap/ui/future/components/button/Button'
+import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
 interface AddSectionStakeProps {
   pool: Pool
   chefType: ChefType
   farmId: number
 }
+
+const APPROVE_TAG = 'approve-unstake'
 
 export const RemoveSectionUnstake: FC<{ poolId: string }> = ({ poolId }) => {
   const isMounted = useIsMounted()
@@ -35,13 +40,13 @@ export const RemoveSectionUnstake: FC<{ poolId: string }> = ({ poolId }) => {
   )
 }
 
-export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pool, chefType, farmId }) => {
+export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot(({ pool, chefType, farmId }) => {
   const [value, setValue] = useState('')
   const {
     data: { reserve0, reserve1, liquidityToken },
   } = useGraphPool(pool)
   const { balance } = usePoolPositionStaked()
-
+  const { approved } = useApproved(APPROVE_TAG)
   const amount = useMemo(() => {
     return tryParseAmount(value, liquidityToken)
   }, [liquidityToken, value])
@@ -51,6 +56,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pool, chefType
     amount,
     pid: farmId,
     chef: chefType,
+    enabled: approved,
   })
 
   return (
@@ -62,43 +68,39 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pool, chefType
       reserve1={reserve1}
       liquidityToken={liquidityToken}
     >
-      <Checker.Connected size="md">
-        <Checker.Network size="md" chainId={pool.chainId}>
+      <Checker.Connect size="xl" fullWidth>
+        <Checker.Network size="xl" fullWidth chainId={pool.chainId}>
           <Checker.Custom
             showGuardIfTrue={Boolean(amount && balance && amount.greaterThan(balance))}
-            guard={<Button size="md">Insufficient Balance</Button>}
+            guard={
+              <Button size="xl" fullWidth>
+                Insufficient Balance
+              </Button>
+            }
           >
-            <Approve
-              className="flex-grow !justify-end"
-              components={
-                <Approve.Components>
-                  <Approve.Token
-                    size="md"
-                    className="whitespace-nowrap"
-                    fullWidth
-                    amount={amount}
-                    address={getMasterChefContractConfig(pool.chainId, chefType)?.address}
-                    enabled={Boolean(getMasterChefContractConfig(pool.chainId, chefType)?.address)}
-                  />
-                </Approve.Components>
-              }
-              render={({ approved }) => {
-                return (
-                  <Button
-                    onClick={() => sendTransaction?.()}
-                    fullWidth
-                    size="md"
-                    variant="filled"
-                    disabled={!approved || isWritePending}
-                  >
-                    {isWritePending ? <Dots>Confirm transaction</Dots> : 'Unstake Liquidity'}
-                  </Button>
-                )
-              }}
-            />
+            <Checker.ApproveERC20
+              size="xl"
+              fullWidth
+              id="approve-token0"
+              amount={amount}
+              contract={getMasterChefContractConfig(pool.chainId, chefType)?.address}
+              enabled={Boolean(getMasterChefContractConfig(pool.chainId, chefType)?.address)}
+            >
+              <Checker.Success tag={APPROVE_TAG}>
+                <Button
+                  onClick={() => sendTransaction?.()}
+                  fullWidth
+                  size="xl"
+                  variant="filled"
+                  disabled={!approved || isWritePending}
+                >
+                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Unstake Liquidity'}
+                </Button>
+              </Checker.Success>
+            </Checker.ApproveERC20>
           </Checker.Custom>
         </Checker.Network>
-      </Checker.Connected>
+      </Checker.Connect>
     </RemoveSectionUnstakeWidget>
   )
-}
+})

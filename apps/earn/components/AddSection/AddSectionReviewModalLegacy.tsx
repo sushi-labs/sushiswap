@@ -24,6 +24,8 @@ import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
+import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { APPROVE_TAG_LEGACY } from './AddSectionLegacy'
 
 interface AddSectionReviewModalLegacyProps {
   poolState: PairState
@@ -47,10 +49,10 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   close,
 }) => {
   const deadline = useTransactionDeadline(chainId)
+  const contract = useSushiSwapRouterContract(chainId)
   const { address } = useAccount()
   const { chain } = useNetwork()
-
-  const contract = useSushiSwapRouterContract(chainId)
+  const { approved } = useApproved(APPROVE_TAG_LEGACY)
   const [slippageTolerance] = useSlippageTolerance('addLiquidity')
   const slippagePercent = useMemo(() => {
     return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
@@ -165,6 +167,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     prepare,
     onSettled,
     onSuccess: close,
+    enabled: approved,
   })
 
   return (

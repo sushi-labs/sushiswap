@@ -19,6 +19,8 @@ import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Signature } from '@ethersproject/bytes'
 import { Button } from '@sushiswap/ui/future/components/button'
 
+export const APPROVE_TAG_TRIDENT = 'approve-tag-trident'
+
 export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const [open, setOpen] = useState(false)
   const chainId = _pool.chainId as BentoBoxV1ChainId
@@ -103,7 +105,7 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const close = useCallback(() => setOpen(false), [])
 
   return (
-    <>
+    <Checker.Root>
       <AddSectionWidget
         isFarm={!!_pool.incentives && _pool.incentives.length > 0}
         chainId={_pool.chainId}
@@ -162,9 +164,11 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                       contract={bentoBoxV1Address[chainId]}
                       enabled={isBentoBoxV1ChainId(chainId)}
                     >
-                      <Button fullWidth onClick={() => setOpen(true)} size="xl">
-                        Add Liquidity
-                      </Button>
+                      <Checker.Success tag={APPROVE_TAG_TRIDENT}>
+                        <Button fullWidth onClick={() => setOpen(true)} size="xl">
+                          Add Liquidity
+                        </Button>
+                      </Checker.Success>
                     </Checker.ApproveERC20>
                   </Checker.ApproveERC20>
                 </Checker.ApproveBentobox>
@@ -187,6 +191,6 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
         close={close}
         setPermit={setPermit}
       />
-    </>
+    </Checker.Root>
   )
 }

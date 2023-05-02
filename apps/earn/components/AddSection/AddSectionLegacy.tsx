@@ -11,6 +11,8 @@ import { AddSectionWidget } from './AddSectionWidget'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
 
+export const APPROVE_TAG_LEGACY = 'approve-tag-legacy'
+
 export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const chainId = _pool.chainId as UniswapV2Router02ChainId
   const [open, setOpen] = useState(false)
@@ -67,7 +69,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const close = useCallback(() => setOpen(false), [])
 
   return (
-    <>
+    <Checker.Root>
       <AddSectionWidget
         isFarm={!!_pool.incentives && _pool.incentives.length > 0}
         chainId={_pool.chainId}
@@ -105,9 +107,11 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                     amount={parsedInput1}
                     contract={getSushiSwapRouterContractConfig(chainId).address as Address}
                   >
-                    <Button fullWidth onClick={() => setOpen(true)} size="xl">
-                      Add Liquidity
-                    </Button>
+                    <Checker.Success tag={APPROVE_TAG_LEGACY}>
+                      <Button fullWidth onClick={() => setOpen(true)} size="xl">
+                        Add Liquidity
+                      </Button>
+                    </Checker.Success>
                   </Checker.ApproveERC20>
                 </Checker.ApproveERC20>
               </Checker.Amounts>
@@ -125,6 +129,6 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
         open={open}
         close={close}
       />
-    </>
+    </Checker.Root>
   )
 }
