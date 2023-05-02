@@ -3,7 +3,8 @@ import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
-import { PublicClient } from 'viem'
+import { config } from '@sushiswap/viem-config'
+import { createPublicClient, PublicClient } from 'viem'
 
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { BiswapProvider } from './liquidity-providers/Biswap'
@@ -39,9 +40,25 @@ export class DataFetcher {
   web3Client: PublicClient
   databaseClient: PrismaClient | undefined = undefined
 
-  constructor(chainId: ChainId, web3Client: PublicClient, databaseClient?: PrismaClient) {
+  // TODO: maybe use an actual map
+  // private static cache = new Map<number, DataFetcher>()
+
+  private static cache: Record<number, DataFetcher> = {}
+
+  static onChain(chainId: ChainId): DataFetcher {
+    if (chainId in this.cache) {
+      return this.cache[chainId]
+    }
+
+    return (this.cache[chainId] = new DataFetcher(chainId))
+  }
+
+  constructor(chainId: number, web3Client?: PublicClient, databaseClient?: PrismaClient) {
     this.chainId = chainId
-    this.web3Client = web3Client
+    if (!web3Client && !config[chainId]) {
+      throw new Error(`No viem config for chainId ${chainId}`)
+    }
+    this.web3Client = web3Client || createPublicClient(config[chainId])
     this.databaseClient = databaseClient
   }
 
