@@ -41,7 +41,7 @@ export const PoolsSection: FC = () => {
             <div className="border-t border-gray-900/5 dark:border-slate-200/5" />
             <PoolsTable />
           </Tab.Panel>
-          <Tab.Panel>
+          <Tab.Panel unmount={false}>
             <div className="border-t border-gray-900/5 dark:border-slate-200/5">
               <ConcentratedPositionsTable />
               <div className="h-px bg-gray-900/5 dark:bg-slate-200/5 w-full" />
