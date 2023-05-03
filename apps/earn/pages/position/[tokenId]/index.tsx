@@ -199,9 +199,9 @@ const Position: FC = () => {
             <SettingsOverlay
               options={{
                 slippageTolerance: {
-                  storageKey: 'removeLiquidity',
+                  storageKey: tab === SelectedTab.DecreaseLiq ? 'removeLiquidity' : 'addLiquidity',
                   defaultValue: '0.5',
-                  title: 'Remove Liquidity Slippage',
+                  title: tab === SelectedTab.DecreaseLiq ? 'Remove Liquidity Slippage' : 'Add Liquidity Slippage',
                 },
               }}
               modules={[SettingsModule.SlippageTolerance]}

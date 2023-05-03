@@ -176,9 +176,9 @@ const Pool: FC = () => {
               <SettingsOverlay
                 options={{
                   slippageTolerance: {
-                    storageKey: 'removeLiquidity',
+                    storageKey: 'addLiquidity',
                     defaultValue: '0.5',
-                    title: 'Remove Liquidity Slippage',
+                    title: 'Add Liquidity Slippage',
                   },
                 }}
                 modules={[SettingsModule.SlippageTolerance]}
