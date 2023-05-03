@@ -123,7 +123,7 @@ const Pool: FC = () => {
             className="group flex gap-4 items-center mb-2"
             href={{
               pathname: '/',
-              ...(basePath === '/earn' && path?.includes('categories') && { query: path.replace('/?&', '') }),
+              ...(basePath === '/pools' && path?.includes('categories') && { query: path.replace('/?&', '') }),
             }}
             shallow={true}
           >
@@ -361,7 +361,7 @@ const Pool: FC = () => {
                   tokensLoading={false}
                   existingPosition={undefined}
                   tokenId={undefined}
-                  successLink={`/earn/${chainId}:${poolId}?activeTab=myPositions`}
+                  successLink={`/pools/${chainId}:${poolId}?activeTab=myPositions`}
                 />
               </ContentBlock>
             </div>

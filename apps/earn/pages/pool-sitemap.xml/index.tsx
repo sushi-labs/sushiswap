@@ -8,7 +8,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const ids = pools.map((pool) => pool.id)
 
   const fields = ids.map<ISitemapField>((id) => ({
-    loc: `https://www.sushi.com/earn/${id}`,
+    loc: `https://www.sushi.com/pools/${id}`,
     changefreq: 'never',
   }))
 

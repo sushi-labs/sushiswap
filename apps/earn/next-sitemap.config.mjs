@@ -1,11 +1,11 @@
 // @ts-check
 /** @type {import('next-sitemap').IConfig} */
 const config = {
-  siteUrl: `https://www.sushi.com/earn`,
+  siteUrl: 'https://www.sushi.com/pools',
   changefreq: 'daily',
   generateRobotsTxt: true,
   robotsTxtOptions: {
-    additionalSitemaps: [`https://www.sushi.com/earn/pool-sitemap.xml`],
+    additionalSitemaps: ['https://www.sushi.com/pools/pool-sitemap.xml'],
   },
   transform: (config, path) => {
     // Use default transformation for all other cases
