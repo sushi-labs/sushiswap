@@ -41,7 +41,6 @@ export const NetworkSelectorMenu = <T extends number>({
                     value={query}
                     loading={false}
                     onChange={setQuery}
-                    size="sm"
                   />
                   <div className="h-px bg-gray-100 dark:bg-slate-200/5 mt-1 -ml-1 -mr-1" />
                   <div className="pt-1 max-h-[300px] scroll">
@@ -52,14 +51,16 @@ export const NetworkSelectorMenu = <T extends number>({
                           onClick={() => onSelect(el, close)}
                           key={el}
                           className={classNames(
-                            'text-sm w-full group hover:bg-black/[0.04] hover:dark:bg-white/[0.06] px-2 flex rounded-lg justify-between gap-2 items-center cursor-pointer h-[32px]'
+                            'w-full group hover:bg-black/[0.04] hover:dark:bg-white/[0.06] px-2 flex rounded-lg justify-between gap-2 items-center cursor-pointer h-[36px]'
                           )}
                         >
                           <div className="flex items-center gap-2.5">
-                            <NetworkIcon chainId={el} width={16} height={16} />
+                            <NetworkIcon chainId={el} width={20} height={20} />
                             <p
                               className={classNames(
-                                selected === el ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-slate-400'
+                                selected === el
+                                  ? 'text-gray-900 dark:text-white font-medium'
+                                  : 'text-gray-600 dark:text-slate-400'
                               )}
                             >
                               {chains[el].name}
