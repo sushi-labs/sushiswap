@@ -91,14 +91,15 @@ const config: PlaywrightTestConfig = {
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
   webServer: {
     command: 'npm run start',
-    url: baseURL,
+    // url: baseURL,
+    // url: 'http://127.0.0.1:3000',
+    port: 3000,
     timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,
+    env: {
+      NEXT_PUBLIC_TEST: 'true',
+    },
   },
-  // webServer: {
-  //   command: 'npm run start',
-  //   port: 3000,
-  // },
 }
 
 export default config

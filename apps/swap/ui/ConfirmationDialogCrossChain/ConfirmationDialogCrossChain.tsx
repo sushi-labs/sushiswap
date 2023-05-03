@@ -25,6 +25,7 @@ import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { Chain } from '@sushiswap/chain'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
 import { log } from 'next-axiom'
+import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 
 interface ConfirmationDialogCrossChainProps {
   children({
@@ -49,6 +50,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
   const { data: trade } = useTrade({ crossChain: true })
   const { approved } = useApproved('xswap')
   const groupTs = useRef<number>()
+  const refetchBalances = useBalanceWeb3Refetch()
 
   const [stepStates, setStepStates] = useState<{ source: StepState; bridge: StepState; dest: StepState }>({
     source: StepState.Success,
@@ -66,8 +68,6 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
   const srcCurrencyB = crossChainSwap || swapTransfer ? srcBridgeToken : token1
   const dstCurrencyA = crossChainSwap || transferSwap ? dstBridgeToken : undefined
 
-  // const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
-  // const { refetch: refetchNetwork1Balances } = useBalances({ account: address, chainId: network0 })
   const { config, isError, error } = usePrepareContractWrite({
     ...getSushiXSwapContractConfig(network0 as SushiXSwapChainId),
     functionName: trade?.functionName,
@@ -122,7 +122,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
     data,
   } = useContractWrite({
     ...config,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       setReview(false)
 
       data
@@ -147,8 +147,8 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
             dest: StepState.NotStarted,
           })
         })
-        .finally(() => {
-          // void Promise.all([refetchNetwork0Balances(), refetchNetwork1Balances()])
+        .finally(async () => {
+          await refetchBalances()
           setBentoboxSignature(undefined)
           setTradeId(nanoid())
         })
@@ -295,10 +295,10 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
         onClose={() => (failedState(stepStates) || finishedState(stepStates) ? setOpen(false) : {})}
       >
         <Dialog.Content>
-          <div className="flex flex-col gap-5 items-center justify-center">
+          <div className="flex flex-col items-center justify-center gap-5">
             <div className="h-1" />
             <div className="py-5">
-              <div className="flex gap-3 relative">
+              <div className="relative flex gap-3">
                 <GetStateComponent index={1} state={stepStates.source} />
                 <Divider />
                 <GetStateComponent index={2} state={stepStates.bridge} />
@@ -314,7 +314,13 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
                 dstTxHash={lzData?.dstTxHash}
               />
             </div>
-            <Button fullWidth color="blue" variant="outlined" size="xl" onClick={() => setOpen(false)}>
+            <Button
+              fullWidth
+              color="blue"
+              variant="outlined"
+              size="xl"
+              onClick={() => setOpen(false)}
+            >
               {failedState(stepStates) ? 'Try again' : finishedState(stepStates) ? 'Make another swap' : 'Close'}
             </Button>
           </div>

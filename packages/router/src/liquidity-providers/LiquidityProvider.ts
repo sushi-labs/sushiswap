@@ -54,7 +54,7 @@ export abstract class LiquidityProvider {
    * @param t0 Token
    * @param t1 Token
    */
-  abstract fetchPoolsForToken(t0: Token, t1: Token): Promise<void>
+  abstract fetchPoolsForToken(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void>
 
   /**
    * Returns a list of PoolCode
@@ -85,5 +85,5 @@ export abstract class LiquidityProvider {
   }
 
   getTradeId = (t0: Token, t1: Token) =>
-    [t0.address, t1.address].sort((first, second) => (first > second ? -1 : 1)).join(':')
+    [t0.address.toLowerCase(), t1.address.toLowerCase()].sort((first, second) => (first > second ? -1 : 1)).join(':')
 }

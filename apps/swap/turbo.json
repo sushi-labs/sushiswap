@@ -7,14 +7,21 @@
       ],
       "dependsOn": ["^build"],
       "env": [
-        "ALCHEMY_ID",
         "SWAP_API_V0_BASE_URL",
         "POOLS_API_V0_BASE_URL",
         "TOKENS_API_V0_BASE_URL"
       ]
     },
-    "check": {
+    "test": {
+      "outputs": [],
       "dependsOn": ["build"],
+      "env": [
+        "ALCHEMY_ID",
+        "TEST"
+      ]
+    },
+    "check": {
+      "dependsOn": ["^build"],
       "cache": false
     }
   }

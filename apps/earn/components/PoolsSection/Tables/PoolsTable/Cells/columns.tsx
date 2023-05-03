@@ -6,6 +6,7 @@ import { PoolFees1dCell } from './PoolFees1dCell'
 import { PoolNameCell, PoolChainCell, PoolAPRCell, PoolVolume1dCell } from '../../SharedCells'
 import { PoolTVLCell } from './PoolTVLCell'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { Explainer } from '@sushiswap/ui/future/components/Explainer'
 
 export const ICON_SIZE = 26
 export const PAGE_SIZE = 20
@@ -54,7 +55,14 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
 
 export const APR_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'totalApr',
-  header: 'APR',
+  header: () => (
+    <div className="flex items-center gap-1">
+      APR
+      <Explainer hover iconSize={16} placement="bottom">
+        The APRs displayed for the liquidity pools are algorithmic and subject to change.
+      </Explainer>
+    </div>
+  ),
   accessorFn: (row) => row.totalApr1d,
   cell: (props) => <PoolAPRCell row={props.row.original} />,
   size: 100,

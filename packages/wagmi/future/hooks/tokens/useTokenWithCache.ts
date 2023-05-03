@@ -13,6 +13,7 @@ interface UseTokenParams<T extends boolean> {
   address: string | undefined
   withStatus?: T
   enabled?: boolean
+  keepPreviousData?: boolean
 }
 
 type UseTokenReturn<T> = T extends true ? { token: Token; status: 'UNKNOWN' | 'APPROVED' | 'DISAPPROVED' } : Token
@@ -26,7 +27,7 @@ type Data = {
   status: 'UNKNOWN' | 'APPROVED' | 'DISAPPROVED'
 }
 
-const hydrate = <T extends boolean>(
+export const getTokenWithQueryCacheHydrate = <T extends boolean>(
   chainId: ChainId | undefined,
   data: Data,
   withStatus: T | undefined
@@ -54,82 +55,100 @@ const hydrate = <T extends boolean>(
   return undefined
 }
 
-export const useTokenWithCache = <T extends boolean = false>({
+interface GetTokenWithQueryCacheFn {
+  chainId: ChainId | undefined
+  address: string | undefined
+  customTokens: Record<string, Token>
+  hasToken: (cur: string | Token) => boolean
+}
+
+export const getTokenWithCacheQueryFn = async ({
   chainId,
   address,
-  withStatus,
-  enabled = true,
-}: UseTokenParams<T>) => {
-  const { data: customTokens, hasToken } = useCustomTokens()
-  const select = useCallback((data: Data) => hydrate<T>(chainId, data, withStatus), [chainId, withStatus])
+  customTokens,
+  hasToken,
+}: GetTokenWithQueryCacheFn) => {
+  // Try fetching from localStorage
+  if (chainId && hasToken(`${chainId}:${address}`)) {
+    const { address: tokenAddress, name, symbol, decimals, id } = customTokens[`${chainId}:${address}`]
+    return {
+      address: tokenAddress,
+      name,
+      symbol,
+      decimals,
+      status: 'UNKNOWN',
+      id,
+    } as Data
+  }
 
-  return useQuery({
-    queryKey: ['token', { chainId, address }],
-    queryFn: async () => {
-      // Try fetching from localStorage
-      if (chainId && hasToken(`${chainId}:${address}`)) {
-        const { address: tokenAddress, name, symbol, decimals, id } = customTokens[`${chainId}:${address}`]
-        return {
+  // Try fetching from dexie
+  const token = await getToken({ chainId, address })
+  if (token) {
+    return token as Data
+  }
+
+  // Try fetching from API
+  const resp = await fetch(`https://tokens.sushi.com/v0/${chainId}/${address}`)
+  if (resp.status === 200) {
+    const { address, name, symbol, decimals, status, id }: Data = await resp.json()
+    const [chainId] = id.split(':')
+
+    await saveTokens({
+      tokens: [{ address: address.toLowerCase(), chainId: +chainId, name, symbol, decimals, status, id }],
+    })
+    return { address, name, symbol, decimals, status, id }
+
+    // Try fetching from wagmi
+  } else if (chainId) {
+    const resp = await fetchToken({ address: address as Address, chainId })
+    const { decimals, address: tokenAddress, symbol, name } = resp
+
+    await saveTokens({
+      tokens: [
+        {
           address: tokenAddress,
-          name,
-          symbol,
-          decimals,
-          status: 'UNKNOWN',
-          id,
-        } as Data
-      }
-
-      // Try fetching from dexie
-      const token = await getToken({ chainId, address })
-      if (token) {
-        return token as Data
-      }
-
-      // Try fetching from API
-      const resp = await fetch(`https://tokens.sushi.com/v0/${chainId}/${address}`)
-      if (resp.status === 200) {
-        const { address, name, symbol, decimals, status, id }: Data = await resp.json()
-        const [chainId] = id.split(':')
-
-        await saveTokens({
-          tokens: [{ address: address.toLowerCase(), chainId: +chainId, name, symbol, decimals, status, id }],
-        })
-        return { address, name, symbol, decimals, status, id }
-
-        // Try fetching from wagmi
-      } else if (chainId) {
-        const resp = await fetchToken({ address: address as Address, chainId })
-        const { decimals, address: tokenAddress, symbol, name } = resp
-
-        await saveTokens({
-          tokens: [
-            {
-              address: tokenAddress,
-              chainId: +chainId,
-              name,
-              symbol,
-              decimals,
-              status: 'UNKNOWN',
-              id: `${chainId}:${tokenAddress}`,
-            },
-          ],
-        })
-
-        return {
-          address: tokenAddress,
+          chainId: +chainId,
           name,
           symbol,
           decimals,
           status: 'UNKNOWN',
           id: `${chainId}:${tokenAddress}`,
-        } as Data
-      } else {
-        throw Error(`Could not fetch token`)
-      }
-    },
+        },
+      ],
+    })
+
+    return {
+      address: tokenAddress,
+      name,
+      symbol,
+      decimals,
+      status: 'UNKNOWN',
+      id: `${chainId}:${tokenAddress}`,
+    } as Data
+  } else {
+    throw Error(`Could not fetch token`)
+  }
+}
+
+export const useTokenWithCache = <T extends boolean = false>({
+  chainId,
+  address,
+  withStatus,
+  enabled = true,
+  keepPreviousData = true,
+}: UseTokenParams<T>) => {
+  const { data: customTokens, hasToken } = useCustomTokens()
+  const select = useCallback(
+    (data: Data) => getTokenWithQueryCacheHydrate<T>(chainId, data, withStatus),
+    [chainId, withStatus]
+  )
+
+  return useQuery({
+    queryKey: ['token', { chainId, address }],
+    queryFn: async () => getTokenWithCacheQueryFn({ chainId, address, customTokens, hasToken }),
     enabled: Boolean(enabled && chainId && address && isAddress(address)),
     select,
-    keepPreviousData: true,
+    keepPreviousData,
     refetchOnWindowFocus: false,
     retry: false,
     staleTime: 900, // 15 mins

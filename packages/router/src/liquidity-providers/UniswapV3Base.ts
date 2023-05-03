@@ -68,8 +68,9 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     this.databaseClient = databaseClient
   }
 
-  async fetchPoolsForToken(t0: Token, t1: Token): Promise<void> {
-    const staticPools = this.getStaticPools(t0, t1)
+  async fetchPoolsForToken(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void> {
+    let staticPools = this.getStaticPools(t0, t1)
+    if (excludePools) staticPools = staticPools.filter((p) => !excludePools.has(p.address))
     const slot0 = await this.client
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
@@ -120,6 +121,8 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
         activeTick,
       })
     })
+
+    if (existingPools.length == 0) return
 
     const liquidityContracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,

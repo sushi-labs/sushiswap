@@ -5,7 +5,7 @@ import { totalsAbi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import type { ChainId } from '@sushiswap/chain'
 import { Prisma, PrismaClient, Token } from '@sushiswap/database'
-import { calcTokenPrices, ConstantProductRPool, Rebase, RPool, StableSwapRPool } from '@sushiswap/tines'
+import { calcTokenPrices, ConstantProductRPool, Rebase, RPool, RToken, StableSwapRPool } from '@sushiswap/tines'
 import { Address, readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
@@ -164,8 +164,8 @@ async function transform(chainId: ChainId, pools: Pool[]) {
       rPools.push(
         new ConstantProductRPool(
           pool.address,
-          token0,
-          token1,
+          token0 as RToken,
+          token1 as RToken,
           pool.swapFee,
           BigNumber.from(pool.reserve0),
           BigNumber.from(pool.reserve1)
@@ -178,8 +178,8 @@ async function transform(chainId: ChainId, pools: Pool[]) {
         rPools.push(
           new StableSwapRPool(
             pool.address,
-            token0,
-            token1,
+            token0 as RToken,
+            token1 as RToken,
             pool.swapFee,
             BigNumber.from(pool.reserve0),
             BigNumber.from(pool.reserve1),

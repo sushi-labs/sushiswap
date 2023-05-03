@@ -26,6 +26,9 @@ export interface CurrencyInputProps
   includeNative?: boolean
 }
 
+/**
+ * @deprecated use future/components/Web3Input
+ */
 export const CurrencyInput: FC<CurrencyInputProps> = ({
   id,
   disabled,

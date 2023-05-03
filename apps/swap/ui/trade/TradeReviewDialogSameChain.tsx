@@ -41,10 +41,10 @@ export const TradeReviewDialogSameChain: FC = () => {
   return (
     <Dialog open={review} unmount={false} onClose={onClose} variant="opaque">
       <div className="max-w-[504px] mx-auto">
-        <button onClick={onClose} className="pl-0 p-3">
+        <button onClick={onClose} className="p-3 pl-0">
           <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
         </button>
-        <div className="flex justify-between gap-4 items-start py-2">
+        <div className="flex items-start justify-between gap-4 py-2">
           <div className="flex flex-col flex-grow gap-1">
             {isFetching ? (
               <Skeleton.Text fontSize="text-3xl" className="w-2/3" />
@@ -62,7 +62,7 @@ export const TradeReviewDialogSameChain: FC = () => {
               <Badge
                 position="bottom-right"
                 badgeContent={
-                  <div className="bg-gray-100 rounded-full border-2 border-gray-100">
+                  <div className="bg-gray-100 border-2 border-gray-100 rounded-full">
                     <PlusIcon
                       strokeWidth={2}
                       width={24}
@@ -75,15 +75,15 @@ export const TradeReviewDialogSameChain: FC = () => {
                 {token1 ? (
                   <Currency.Icon currency={token1} width={56} height={56} />
                 ) : (
-                  <Skeleton.Circle radius={56} className="dark:bg-slate-800 bg-gray-100" />
+                  <Skeleton.Circle radius={56} className="bg-gray-100 dark:bg-slate-800" />
                 )}
               </Badge>
             </div>
           </div>
         </div>
         {warningSeverity(trade?.priceImpact) >= 3 && (
-          <div className="rounded-xl px-4 py-3 bg-red/20 mt-4">
-            <span className="text-red-600 font-medium text-sm">
+          <div className="px-4 py-3 mt-4 rounded-xl bg-red/20">
+            <span className="text-sm font-medium text-red-600">
               High price impact. You will lose a significant portion of your funds in this trade due to price impact.
             </span>
           </div>
@@ -137,7 +137,7 @@ export const TradeReviewDialogSameChain: FC = () => {
                   {isFetching ? (
                     <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" />
                   ) : (
-                    <button onClick={() => setOpen(true)} className="text-sm text-blue font-semibold">
+                    <button onClick={() => setOpen(true)} className="text-sm font-semibold text-blue">
                       View
                     </button>
                   )}
@@ -153,7 +153,7 @@ export const TradeReviewDialogSameChain: FC = () => {
                   <a
                     target="_blank"
                     href={Chain.fromChainId(network0)?.getAccountUrl(recipient) ?? '#'}
-                    className="flex gap-2 items-center text-blue cursor-pointer"
+                    className="flex items-center gap-2 cursor-pointer text-blue"
                     rel="noreferrer"
                   >
                     {shortenAddress(recipient)}
@@ -174,6 +174,7 @@ export const TradeReviewDialogSameChain: FC = () => {
                   onClick={onClick}
                   disabled={isWritePending || Boolean(isLoading && +value > 0) || isError}
                   color={isError ? 'red' : warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
+                  testId="confirm-swap"
                 >
                   {isError ? (
                     'Shoot! Something went wrong :('

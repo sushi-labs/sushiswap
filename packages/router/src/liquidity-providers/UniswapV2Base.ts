@@ -142,9 +142,9 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     return new Map()
   }
 
-  async getOnDemandPools(t0: Token, t1: Token): Promise<void> {
+  async getOnDemandPools(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void> {
     const topPoolAddresses = Array.from(this.topPools.keys())
-    const pools =
+    let pools =
       topPoolAddresses.length > 0
         ? filterOnDemandPools(
             Array.from(this.availablePools.values()),
@@ -154,7 +154,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
             this.ON_DEMAND_POOL_SIZE
           )
         : this.getStaticPools(t0, t1)
-
+    if (excludePools) pools = (pools as StaticPool[]).filter((p) => !excludePools.has(p.address))
     if (pools.length === 0) {
       //console.info(`${this.getLogPrefix()} - No on demand pools found for ${t0.symbol}/${t1.symbol}`)
       return
@@ -490,8 +490,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     }
   }
 
-  async fetchPoolsForToken(t0: Token, t1: Token): Promise<void> {
-    await this.getOnDemandPools(t0, t1)
+  async fetchPoolsForToken(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void> {
+    await this.getOnDemandPools(t0, t1, excludePools)
   }
 
   /**
