@@ -26,13 +26,13 @@ test.beforeEach(async ({ page }) => {
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
-  console.log('Swapping', native.symbol, 'to', usdc.symbol, 'on', chainName[CHAIN_ID], 'chain')
+  // console.log('Swapping', native.symbol, 'to', usdc.symbol, 'on', chainName[CHAIN_ID], 'chain')
   await swap(page, native, usdc, '1')
-  console.log('Swapped', native.symbol, 'to', usdc.symbol, 'on', chainName[CHAIN_ID], 'chain')
+  // console.log('Swapped', native.symbol, 'to', usdc.symbol, 'on', chainName[CHAIN_ID], 'chain')
 
-  console.log('Swapping', usdc.symbol, 'to', native.symbol, 'on', chainName[CHAIN_ID], 'chain')
+  // console.log('Swapping', usdc.symbol, 'to', native.symbol, 'on', chainName[CHAIN_ID], 'chain')
   await swap(page, usdc, native, '1', true)
-  console.log('Swapped', usdc.symbol, 'to', native.symbol, 'on', chainName[CHAIN_ID], 'chain')
+  // console.log('Swapped', usdc.symbol, 'to', native.symbol, 'on', chainName[CHAIN_ID], 'chain')
 })
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
@@ -51,14 +51,16 @@ async function wrap(page: Page, inputCurrency: Type, outputCurrency: Type, amoun
   await handleToken(page, outputCurrency, InputType.OUTPUT)
 
   if (!inputCurrency.isNative) {
-    console.log('Approving WNATIVE')
+    // console.log('Approving WNATIVE')
     await page
       .locator('[testdata-id=approve-erc20]')
       .click({ timeout: 3000 })
       .then(() => {
-        console.log(`Approved ${inputCurrency.symbol}`)
+        // console.log(`Approved ${inputCurrency.symbol}`)
       })
-      .catch(() => console.log(`${inputCurrency.symbol} already approved or not needed`))
+      .catch(() => {
+        // console.log(`${inputCurrency.symbol} already approved or not needed`)
+      })
 
     // TODO: Should check for first notification (Approving...)
     // TODO: Should check for second notification (Approved...)

@@ -6,6 +6,10 @@ on:
     paths:
       - ".github/workflows/apps-swap-e2e.yml"
       - "apps/swap/**"
+      - "config/viem-config/**"
+      - "config/wagmi-config/**"
+      - "config/router-config/**"
+      - "packages/**"
 
 defaults:
   run:
@@ -18,32 +22,13 @@ env:
   CI: true
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-  ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
-  ANVIL_BLOCK_NUMBER: 17159818
-  NEXT_PUBLIC_PLAYWRIGHT_ENABLED: true
-  PLAYWRIGHT_URL: http://localhost:3000/swap
-  CHAIN_ID: 1
   NODE_ENV: test
 
 jobs:
   ci:
       name: Continuous integration
-      timeout-minutes: 15
+      timeout-minutes: 30
       runs-on: ubuntu-latest
-      env:
-        # TURBO
-        TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-        TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-        # RPC
-        NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
-        ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
-        ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
-        ANVIL_BLOCK_NUMBER: 17159818
-        NEXT_PUBLIC_PLAYWRIGHT_ENABLED: true
-        PLAYWRIGHT_URL: http://localhost:3000/swap
-        CHAIN_ID: 1
-        NODE_ENV: test
-
       steps:
         - name: Check out
           uses: actions/checkout@v3
@@ -91,10 +76,16 @@ jobs:
           run: anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER &
           env:
             ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
-            ANVIL_BLOCK_NUMBER: 17159818
+            ANVIL_BLOCK_NUMBER: 17180155
 
         - name: Test swap app
           run: pnpm test-swap-app
+          env:
+            NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+            ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+            NEXT_PUBLIC_TEST: true
+            PLAYWRIGHT_URL: http://localhost:3000/swap
+            CHAIN_ID: 1
           working-directory: .
 
         - name: Upload test results

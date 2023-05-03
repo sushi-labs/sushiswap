@@ -55,11 +55,11 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                             <Transition
                               show={open}
                               enter="sm:transition duration-300 ease-out"
-                              enterFrom="sm:transform sm:translate-y-[-16px] opacity-0"
-                              enterTo="sm:transform sm:translate-y-0 opacity-100"
+                              enterFrom="sm:transform sm:translate-y-[-16px] scale-[0.95] opacity-0"
+                              enterTo="sm:transform sm:translate-y-0 scale-[1] opacity-100"
                               leave="sm:transition duration-300 ease-out"
-                              leaveFrom="sm:transform sm:translate-y-0 opacity-100"
-                              leaveTo="sm:transform sm:translate-y-[-16px] opacity-0"
+                              leaveFrom="sm:transform sm:translate-y-0 opacity-100 scale-[1]"
+                              leaveTo="sm:transform sm:translate-y-[-16px] opacity-0 scale-[0.95]"
                             >
                               <Transition.Child
                                 as={Fragment}
@@ -76,7 +76,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                                 />
                               </Transition.Child>
                               <div className={classNames('right-[-8px] absolute pt-3 top-1 sm:w-[320px]')}>
-                                <div className="p-2 flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white dark:bg-slate-800">
+                                <div className="p-2 flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white/50 paper dark:bg-slate-800/50">
                                   <Popover.Panel>
                                     <List.MenuItem
                                       disabled={!isRouteProcessor3ChainId(chainId)}

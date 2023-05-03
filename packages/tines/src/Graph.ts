@@ -920,7 +920,7 @@ export class Graph {
     console.assert(gasSpent <= gasSpentInit, 'Internal Error 491')
 
     if (topologyWasChanged || removedEdgesNumber > 0) {
-      output = this.updateLegsInOut(legs, amountIn)
+      output = this.updateLegsAmountOut(legs, amountIn)
       totalOutput = output - toVert.gasPrice * gasSpent
     }
 
@@ -1141,7 +1141,7 @@ export class Graph {
   }
 
   // returns route output
-  updateLegsInOut(legs: RouteLeg[], amountIn: number): number {
+  updateLegsAmountOut(legs: RouteLeg[], amountIn: number): number {
     const amounts = new Map<string, number>()
     amounts.set(legs[0].tokenFrom.tokenId as string, amountIn)
     legs.forEach((l) => {
@@ -1156,7 +1156,7 @@ export class Graph {
       console.assert(inputTotal !== undefined, 'Internal Error 564')
       const input = (inputTotal as number) * l.swapPortion
       amounts.set(l.tokenFrom.tokenId as string, (inputTotal as number) - input)
-      const output = pool.calcOutByIn(input, direction).out
+      const output = pool.calcOutByInReal(input, direction)
 
       const vertNext = (vert as Vertice).getNeibour(edge) as Vertice
       const prevAmount = amounts.get(vertNext.token.tokenId as string)
