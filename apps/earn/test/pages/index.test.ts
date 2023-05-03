@@ -1,7 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Page, test, expect } from '@playwright/test'
-import { ChainId } from '@sushiswap/chain'
-import { DAI_ADDRESS, Native, Token, Type } from '@sushiswap/currency'
+import { USDC_ADDRESS, Native, Token, Type } from '@sushiswap/currency'
 
 export async function approveToken(page: Page, locator: string) {
   await page
@@ -29,28 +28,31 @@ if (!process.env.CHAIN_ID) {
 
 const CHAIN_ID = parseInt(process.env.CHAIN_ID)
 const NATIVE_TOKEN = Native.onChain(CHAIN_ID)
-const DAI = new Token({
-  chainId: ChainId.ETHEREUM,
-  address: DAI_ADDRESS[ChainId.ETHEREUM],
+const USDC = new Token({
+  chainId: CHAIN_ID,
+  address: USDC_ADDRESS[CHAIN_ID as keyof typeof USDC_ADDRESS],
   decimals: 18,
-  symbol: 'DAI',
-  name: 'Dai Stablecoin',
+  symbol: 'USDC',
+  name: 'USDC Stablecoin',
 })
 
+// Tests will only work for polygon atm
 test.describe('Create/Add', () => {
   test.beforeEach(async ({ page }) => {
     const url = (process.env.PLAYWRIGHT_URL as string).concat('/add').concat(`?chainId=${CHAIN_ID}`)
     await page.goto(url)
+    await switchNetwork(page, CHAIN_ID)
+    
   })
 
   test('Create V3 pool', async ({ page }) => {
     await createOrAddLiquidityToPool(page, {
       token0: NATIVE_TOKEN,
-      token1: DAI,
-      startPrice: '1800',
-      minPrice: '1750',
-      maxPrice: '1850',
-      amount: '0.1',
+      token1: USDC,
+      startPrice: '0.5',
+      minPrice: '0.1',
+      maxPrice: '0.9',
+      amount: '0.001',
       amountBelongsToToken0: false,
     })
   })
@@ -58,10 +60,10 @@ test.describe('Create/Add', () => {
   test('Add liquidity to V3, both sides', async ({ page }) => {
     await createOrAddLiquidityToPool(page, {
       token0: NATIVE_TOKEN,
-      token1: DAI,
-      minPrice: '1700',
-      maxPrice: '1900',
-      amount: '0.01',
+      token1: USDC,
+      minPrice: '0.3',
+      maxPrice: '0.7',
+      amount: '0.0001',
       amountBelongsToToken0: false,
     })
   })
@@ -69,9 +71,9 @@ test.describe('Create/Add', () => {
   test('Add liquidity to V3, only one side(ETH)', async ({ page }) => {
     await createOrAddLiquidityToPool(page, {
       token0: NATIVE_TOKEN,
-      token1: DAI,
-      minPrice: '1900',
-      maxPrice: '2000',
+      token1: USDC,
+      minPrice: '0.7',
+      maxPrice: '0.9',
       amount: '1',
       amountBelongsToToken0: true,
     })
@@ -80,10 +82,10 @@ test.describe('Create/Add', () => {
   test('Add liquidity to V3, only one side(DAI)', async ({ page }) => {
     await createOrAddLiquidityToPool(page, {
       token0: NATIVE_TOKEN,
-      token1: DAI,
-      minPrice: '1700',
-      maxPrice: '1750',
-      amount: '0.001',
+      token1: USDC,
+      minPrice: '0.2',
+      maxPrice: '0.4',
+      amount: '0.0001',
       amountBelongsToToken0: false,
     })
   })
@@ -94,6 +96,7 @@ test.describe('Create/Add', () => {
   test('Remove V3 liquidity', async ({ page }) => {
     const url = (process.env.PLAYWRIGHT_URL as string)
     await page.goto(url)
+    await switchNetwork(page, CHAIN_ID)
     await removeLiquidity(page)
   })
 
@@ -102,6 +105,8 @@ async function createOrAddLiquidityToPool(page: Page, args: AddLiquidityArgs) {
   await handleToken(page, args.token1, 'SECOND')
   await timeout(3000) // wait for token to be selected.. Find a better way to do this
 
+  await page.locator('[testdata-id=fee-option-10000]').click()
+  await timeout(1500) // wait for start price to be available.. Find a better way to do this
   const isPoolCreated = !(await page.locator('[testdata-id=start-price-input]').isVisible())
   if (!isPoolCreated) {
     if (!args.startPrice) {
@@ -139,7 +144,7 @@ async function removeLiquidity(page: Page) {
   
   await timeout(2000) // wait for positions to load in..
   
-  await page.getByRole('link', { name: '1753.95 1851.26 Current: 0.000555509 WETH per DAI' }).click()
+  await page.getByRole('link', { name: '1.11359 10.0491 Current: 0.499992 USDC per WMATIC' }).click()
   
   await page.locator('[testdata-id=decrease-liquidity-button]').click()
   await page.locator('[testdata-id=liquidity-max-button]').click()
@@ -165,6 +170,12 @@ async function handleToken(page: Page, currency: Type, order: 'FIRST' | 'SECOND'
       }]`
     )
     .click()
+    await timeout(500)
+}
+
+async function switchNetwork(page: Page, chainId: number) {
+  await page.getByRole('button', { name: 'Ethereum' }).click()
+  await page.locator(`[testdata-id=network-selector-${chainId}]`).click()
 }
 
 function timeout(ms: number) {

@@ -1,15 +1,15 @@
-import { Chain, CreateClientConfig, configureChains, createClient, mainnet } from 'wagmi'
-import { foundry } from '../chains'
+import { Chain, CreateClientConfig, configureChains, createClient} from 'wagmi'
+import { foundry, polygon } from '../chains'
 import { Wallet, providers } from 'ethers'
 import { MockConnector } from '../connectors/mock'
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 
-const foundryMainnet: Chain = {
-  ...mainnet,
+const foundryPolygon: Chain = {
+  ...polygon,
   rpcUrls: foundry.rpcUrls,
 }
 
-export const testChains = [foundryMainnet]
+export const testChains = [foundryPolygon]
 
 const { provider }: CreateClientConfig & { chains: Chain[] } = configureChains(
   testChains,
@@ -136,8 +136,8 @@ export function getSigners() {
 }
 
 export function getProvider({ chains = testChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
-  const chain = testChains.find((x) => x.id === chainId) ?? foundryMainnet
-  const url = foundryMainnet.rpcUrls.default.http[0]
+  const chain = testChains.find((x) => x.id === chainId) ?? foundryPolygon
+  const url = foundryPolygon.rpcUrls.default.http[0]
   const provider = new EthersProviderWrapper(url, getNetwork(chain))
   provider.pollingInterval = 1_000
   return Object.assign(provider, { chains })

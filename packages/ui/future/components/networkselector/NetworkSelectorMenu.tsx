@@ -42,7 +42,7 @@ export const NetworkSelectorMenu = <T extends number>({
                     loading={false}
                     onChange={setQuery}
                   />
-                  <div className="h-px w-full bg-gray-100 dark:bg-slate-200/5 mt-2" />
+                  <div className="w-full h-px mt-2 bg-gray-100 dark:bg-slate-200/5" />
                   <div className="pt-2 max-h-[300px] scroll">
                     {networks
                       .filter((el) => (query ? chains[el].name.toLowerCase().includes(query.toLowerCase()) : Boolean))
@@ -50,6 +50,7 @@ export const NetworkSelectorMenu = <T extends number>({
                         <button
                           onClick={() => onSelect(el, close)}
                           key={el}
+                          testdata-id={`network-selector-${el}`}
                           className={classNames(
                             'w-full group hover:bg-gray-100 hover:dark:bg-slate-700 px-2.5 flex rounded-lg justify-between gap-2 items-center cursor-pointer transform-all h-[40px]'
                           )}
