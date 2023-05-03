@@ -3,11 +3,6 @@ import { foundry } from '../chains'
 import { Wallet, providers } from 'ethers'
 import { MockConnector } from '../connectors/mock'
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
-import { ChainId, chainName } from '@sushiswap/chain'
-import { Contract, ContractFactory } from 'ethers'
-
-import fakeToken from './fakeToken.json'
-import { JsonRpcProvider } from '@ethersproject/providers'
 
 const foundryMainnet: Chain = {
   ...mainnet,
@@ -147,14 +142,6 @@ export function getProvider({ chains = testChains, chainId }: { chains?: Chain[]
   provider.pollingInterval = 1_000
   return Object.assign(provider, { chains })
 }
-
-export async function deployFakeToken(chainId: ChainId): Promise<Contract> {
-  const provider = new JsonRpcProvider('http://127.0.0.1:8545', chainId)
-  const signer = new Wallet(accounts[0].privateKey, provider)
-  const factory = new ContractFactory(fakeToken.abi, fakeToken.bytecode, signer)
-  return await factory.deploy()
-}
-
 
 export const _createTestClient = (config?: CreateClientConfig) =>
   createClient({

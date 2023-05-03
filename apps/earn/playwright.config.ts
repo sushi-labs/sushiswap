@@ -1,5 +1,6 @@
 import type { PlaywrightTestConfig } from '@playwright/test'
 import { devices } from '@playwright/test'
+import path from 'path'
 
 /**
  * Read environment variables from file.
@@ -11,7 +12,7 @@ import { devices } from '@playwright/test'
  * See https://playwright.dev/docs/test-configuration.
  */
 const config: PlaywrightTestConfig = {
-  testDir: './test',
+  testDir: path.join(__dirname, 'test'),
   /* Maximum time one test can run for. */
   timeout: 30 * 1_000,
   expect: {
