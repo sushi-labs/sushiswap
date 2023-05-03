@@ -1,7 +1,7 @@
 import { formatPercent } from '@sushiswap/format'
 import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
-import { getPool, usePool, getPools, getPoolUrl, Pool } from '@sushiswap/client'
+import { getPool, usePool, getPools, getPoolUrl, Pool, Protocol } from '@sushiswap/client'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -56,7 +56,7 @@ const _Pool = () => {
   })
 
   if (!pool) return <></>
-  if (pool.type === 'CONCENTRATED_LIQUIDITY_POOL') {
+  if (pool.protocol === Protocol.SUSHISWAP_V3) {
     return <PoolPageV3 />
   }
 
