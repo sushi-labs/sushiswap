@@ -141,7 +141,7 @@ const Position: FC = () => {
     <Layout>
       <div className="flex flex-col gap-2">
         <Link
-          className="group flex gap-4 items-center mb-2"
+          className="flex items-center gap-4 mb-2 group"
           href={`/pools/${chainId}:${positionDetails?.address}`}
           shallow={true}
         >
@@ -183,6 +183,7 @@ const Position: FC = () => {
             startIcon={<MinusIcon width={18} height={18} />}
             variant="outlined"
             color={tab === SelectedTab.DecreaseLiq ? 'blue' : 'default'}
+            testdata-id='decrease-liquidity-button'
           >
             Decrease Liquidity
           </RadioGroup.Option>

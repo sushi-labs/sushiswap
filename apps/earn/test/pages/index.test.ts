@@ -89,10 +89,18 @@ test.describe('Create/Add', () => {
   })
 })
 
+
+
+  test('Remove V3 liquidity', async ({ page }) => {
+    const url = (process.env.PLAYWRIGHT_URL as string)
+    await page.goto(url)
+    await removeLiquidity(page)
+  })
+
 async function createOrAddLiquidityToPool(page: Page, args: AddLiquidityArgs) {
   await handleToken(page, args.token0, 'FIRST')
   await handleToken(page, args.token1, 'SECOND')
-  await timeout(2000) // wait for token to be selected.. Find a better way to do this
+  await timeout(3000) // wait for token to be selected.. Find a better way to do this
 
   const isPoolCreated = !(await page.locator('[testdata-id=start-price-input]').isVisible())
   if (!isPoolCreated) {
@@ -120,6 +128,25 @@ async function createOrAddLiquidityToPool(page: Page, args: AddLiquidityArgs) {
     ? `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`
     : `(Created the ${args.token0.symbol}/${args.token1.symbol} liquidity pool)`
   const regex = new RegExp(expectedText)
+  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+}
+
+
+
+async function removeLiquidity(page: Page) {
+
+  await page.locator('[testdata-id=my-positions-button]').click()
+  
+  await timeout(2000) // wait for positions to load in..
+  
+  await page.getByRole('link', { name: '1753.95 1851.26 Current: 0.000555509 WETH per DAI' }).click()
+  
+  await page.locator('[testdata-id=decrease-liquidity-button]').click()
+  await page.locator('[testdata-id=liquidity-max-button]').click()
+  await page.locator('[testdata-id=remove-or-add-liquidity-button]').click()
+  
+
+  const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
 
