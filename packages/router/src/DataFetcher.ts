@@ -67,6 +67,7 @@ export class DataFetcher {
       this.web3Client = createPublicClient({
         ...config[chainId],
         transport: isTest ? http(foundry.rpcUrls.default.http[0]) : config[chainId].transport,
+        pollingInterval: 8_000,
       })
     }
 
