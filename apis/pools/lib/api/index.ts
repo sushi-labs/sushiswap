@@ -5,6 +5,7 @@ import { DecimalToString, createClient, Prisma } from '@sushiswap/database'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { deepmergeInto } from 'deepmerge-ts'
 import type { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './../schemas/index.js'
+import { getUnindexedPool } from '../getUnindexedPool.js'
 
 function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSchema._output) {
   const where: NonNullable<Prisma.SushiPoolWhereInput> = {}
@@ -79,12 +80,16 @@ export async function getEarnPool(args: typeof PoolApiSchema._output) {
   const id = `${args.chainId}:${args.address.toLowerCase()}`
 
   // Need to specify take, orderBy and orderDir to make TS happy
-  const [pool] = await getEarnPools({
+  let [pool]: Awaited<ReturnType<typeof getEarnPools>> = await getEarnPools({
     ids: [id],
     take: 1,
     orderBy: 'liquidityUSD',
     orderDir: 'desc',
   })
+
+  if (!pool) {
+    pool = (await getUnindexedPool(id)) as any
+  }
 
   if (!pool) throw new Error('Pool not found.')
 
