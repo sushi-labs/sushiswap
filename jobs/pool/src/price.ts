@@ -13,6 +13,7 @@ import {
   ConstantProductRPool,
   Rebase,
   RPool,
+  RToken,
   StableSwapRPool,
   toShareBN,
 } from '@sushiswap/tines'
@@ -183,7 +184,14 @@ async function transform(chainId: ChainId, pools: Pool[]) {
     if (!tokens.has(token1.address)) tokens.set(token1.address, pool.token1)
     if (pool.type === PoolType.CONSTANT_PRODUCT_POOL) {
       rPools.push(
-        new ConstantProductRPool(pool.address, token0, token1, pool.swapFee, reserves.reserve0, reserves.reserve1)
+        new ConstantProductRPool(
+          pool.address,
+          token0 as RToken,
+          token1 as RToken,
+          pool.swapFee,
+          reserves.reserve0,
+          reserves.reserve1
+        )
       )
       classicCount++
     } else if (pool.type === PoolType.STABLE_POOL) {
@@ -193,8 +201,8 @@ async function transform(chainId: ChainId, pools: Pool[]) {
         rPools.push(
           new StableSwapRPool(
             pool.address,
-            token0,
-            token1,
+            token0 as RToken,
+            token1 as RToken,
             pool.swapFee,
             toShareBN(reserves.reserve0, total0),
             toShareBN(reserves.reserve1, total1),
@@ -212,8 +220,8 @@ async function transform(chainId: ChainId, pools: Pool[]) {
         rPools.push(
           new CLRPool(
             pool.address,
-            token0,
-            token1,
+            token0 as RToken,
+            token1 as RToken,
             pool.swapFee,
             12,
             reserves.reserve0,
