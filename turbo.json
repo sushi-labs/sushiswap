@@ -36,6 +36,7 @@
         "generate"
       ],
       "env": [
+        "ALCHEMY_ID",
         "DATABASE_URL",
         "REDIS_URL",
         "POOLS_API_V0_BASE_URL"
@@ -82,6 +83,7 @@
         "export"
       ],
       "env": [
+        "TEST",
         "REDIS_URL",
         "DATABASE_URL",
         "ALCHEMY_ID",
@@ -93,11 +95,11 @@
     "test": {
       "dependsOn": ["build"],
       "outputs": ["coverage/**/*"],
-      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
+      "env": ["TEST", "ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "CHAIN_ID"]
     },
     "test-e2e-playwright": {
       "cache": false,
-      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
+      "env": ["TEST", "ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "CHAIN_ID"]
     },
     "validate": {
       "cache": false

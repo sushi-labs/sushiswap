@@ -18,7 +18,6 @@ import {
   // evmos,
   //  evmosTestnet,
   fantom,
-  foundry,
   // fantomTestnet,
   // filecoin,
   // filecoinTestnet,
@@ -512,8 +511,6 @@ export const bttc = {
 
 const alchemyId = process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
 
-const isTest = process.env['NODE_ENV'] === 'test' || process.env['NEXT_PUBLIC_PLAYWRIGHT_ENABLED'] === 'true'
-
 export const config: Record<number, PublicClientConfig> = {
   [ChainId.ARBITRUM_NOVA]: {
     chain: arbitrumNova,
@@ -558,9 +555,7 @@ export const config: Record<number, PublicClientConfig> = {
   },
   [ChainId.ETHEREUM]: {
     chain: mainnet,
-    transport: isTest
-      ? http(foundry.rpcUrls.default.http[0])
-      : fallback([http(`${mainnet.rpcUrls.alchemy.http}/${alchemyId}`), http('https://eth.llamarpc.com')]),
+    transport: fallback([http(`${mainnet.rpcUrls.alchemy.http}/${alchemyId}`), http('https://eth.llamarpc.com')]),
   },
   [ChainId.FANTOM]: {
     chain: fantom,

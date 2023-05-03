@@ -4,7 +4,8 @@ import { Type } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
 import { config } from '@sushiswap/viem-config'
-import { createPublicClient, PublicClient } from 'viem'
+import { createPublicClient, http, PublicClient } from 'viem'
+import { foundry } from 'viem/chains'
 
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { BiswapProvider } from './liquidity-providers/Biswap'
@@ -28,6 +29,7 @@ import { UniswapV3Provider } from './liquidity-providers/UniswapV3'
 import type { PoolCode } from './pools/PoolCode'
 
 // import { create } from 'viem'
+const isTest = process.env['NODE_ENV'] === 'test' || process.env['NEXT_PUBLIC_TEST'] === 'true'
 
 // Gathers pools info, creates routing in 'incremental' mode
 // This means that new routing recalculates each time new pool fetching data comes
@@ -56,9 +58,18 @@ export class DataFetcher {
   constructor(chainId: number, web3Client?: PublicClient, databaseClient?: PrismaClient) {
     this.chainId = chainId
     if (!web3Client && !config[chainId]) {
-      throw new Error(`No viem config for chainId ${chainId}`)
+      throw new Error(`No viem client or config for chainId ${chainId}`)
     }
-    this.web3Client = web3Client || createPublicClient(config[chainId])
+
+    if (web3Client) {
+      this.web3Client = web3Client
+    } else {
+      this.web3Client = createPublicClient({
+        ...config[chainId],
+        transport: isTest ? http(foundry.rpcUrls.default.http[0]) : config[chainId].transport,
+      })
+    }
+
     this.databaseClient = databaseClient
   }
 
