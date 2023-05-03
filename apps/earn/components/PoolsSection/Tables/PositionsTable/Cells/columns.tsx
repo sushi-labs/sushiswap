@@ -82,7 +82,7 @@ export const VOLUME_COLUMN: ColumnDef<TData, unknown> = {
 export const NAME_COLUMN_V3: ColumnDef<ConcentratedLiquidityPosition, unknown> = {
   id: 'name',
   header: 'Name',
-  cell: (props) => <PoolNameCellV3 row={props.row.original} />,
+  cell: (props) => <PoolNameCellV3 row={props.row.original} ctx={props} />,
   size: 160,
   meta: {
     skeleton: (
@@ -102,7 +102,7 @@ export const NAME_COLUMN_V3: ColumnDef<ConcentratedLiquidityPosition, unknown> =
 export const PRICE_RANGE_COLUMN: ColumnDef<ConcentratedLiquidityPosition, unknown> = {
   id: 'priceRange',
   header: 'Price Range',
-  cell: (props) => <PriceRangeCell row={props.row.original} />,
+  cell: (props) => <PriceRangeCell row={props.row.original} ctx={props} />,
   size: 160,
   maxSize: 160,
   meta: {
@@ -113,7 +113,7 @@ export const PRICE_RANGE_COLUMN: ColumnDef<ConcentratedLiquidityPosition, unknow
 export const POSITION_SIZE_CELL: ColumnDef<ConcentratedLiquidityPosition, unknown> = {
   id: 'positionSize',
   header: 'Position Size',
-  cell: (props) => <PositionSizeCell row={props.row.original} />,
+  cell: (props) => <PositionSizeCell row={props.row.original} ctx={props} />,
   size: 60,
   maxSize: 60,
   meta: {
@@ -125,7 +125,7 @@ export const POSITION_SIZE_CELL: ColumnDef<ConcentratedLiquidityPosition, unknow
 export const POSITION_UNCLAIMED_CELL: ColumnDef<ConcentratedLiquidityPosition, unknown> = {
   id: 'unclaimed',
   header: 'Unclaimed',
-  cell: (props) => <UnclaimedCell row={props.row.original} />,
+  cell: (props) => <UnclaimedCell row={props.row.original} ctx={props} />,
   size: 60,
   maxSize: 60,
   meta: {
