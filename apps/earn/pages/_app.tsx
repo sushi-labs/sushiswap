@@ -49,12 +49,12 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <>
       <Head>
-        <link rel="apple-touch-icon" sizes="180x180" href="/earn/apple-touch-icon.png?v=1" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/earn/favicon-32x32.png?v=1" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/earn/favicon-16x16.png?v=1" />
-        <link rel="manifest" href="/earn/manifest.json?v=1" />
-        <link rel="mask-icon" href="/earn/safari-pinned-tab.svg?v=1" color="#fa52a0" />
-        <link rel="shortcut icon" href="/earn/favicon.ico?v=1" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/pools/apple-touch-icon.png?v=1" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/pools/favicon-32x32.png?v=1" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/pools/favicon-16x16.png?v=1" />
+        <link rel="manifest" href="/pools/manifest.json?v=1" />
+        <link rel="mask-icon" href="/pools/safari-pinned-tab.svg?v=1" color="#fa52a0" />
+        <link rel="shortcut icon" href="/pools/favicon.ico?v=1" />
       </Head>
 
       <WagmiConfig client={client}>

@@ -94,7 +94,7 @@ export const GlobalNav: FC<HeaderProps> = ({
                 <div className="absolute pt-2 w-[max-content]">
                   <Menu.Items className="rounded-2xl p-3 w-[max-content] bg-white shadow-md dark:bg-slate-800 !max-h-[unset]">
                     <a
-                      href="https://sushi.com"
+                      href="https://www.sushi.com"
                       className="cursor-pointer p-2 text-lg font-semibold flex gap-2 items-center hover:text-blue"
                     >
                       Discover Sushi <ArrowSmallRightIcon width={24} height={24} strokeWidth={5} />

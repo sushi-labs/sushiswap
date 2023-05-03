@@ -29,7 +29,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                   <Button
                     as="a"
                     href={
-                      isRouteProcessor3ChainId(chainId) ? `/earn/add?chainId=${chainId}` : `/earn/add/v2/${chainId}`
+                      isRouteProcessor3ChainId(chainId) ? `/pools/add?chainId=${chainId}` : `/pools/add/v2/${chainId}`
                     }
                     variant="filled"
                     size="xl"
@@ -81,7 +81,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                                     <List.MenuItem
                                       disabled={!isRouteProcessor3ChainId(chainId)}
                                       as="a"
-                                      href={`/earn/add?chainId=${chainId}`}
+                                      href={`/pools/add?chainId=${chainId}`}
                                       title={
                                         <div className="flex gap-2">
                                           V3 Position{' '}
@@ -100,7 +100,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                                     />
                                     <List.MenuItem
                                       as="a"
-                                      href={`/earn/add/v2/${chainId}`}
+                                      href={`/pools/add/v2/${chainId}`}
                                       title="V2 Position"
                                       subtitle={`If you prefer creating a classic liquidity position.`}
                                     />

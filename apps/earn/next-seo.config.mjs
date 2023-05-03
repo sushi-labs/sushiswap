@@ -17,13 +17,13 @@ const config = {
     cardType: 'summary_large_image',
   },
   openGraph: {
-    url: 'https://www.sushi.com/earn',
+    url: 'https://www.sushi.com/pools',
     type: 'website',
     title: 'Pools',
     description: 'Provide liquidity and earn fees.',
     images: [
       {
-        url: 'https://www.sushi.com/earn/og-image.jpg',
+        url: 'https://www.sushi.com/pools/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'Pools',

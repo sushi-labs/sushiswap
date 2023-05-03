@@ -126,7 +126,7 @@ export const Hero: FC = () => {
                           delay: 3,
                         }}
                       >
-                        <Button as="a" href="https://sushi.com/swap" size="md" fullWidth className="relative z-10">
+                        <Button as="a" href="https://www.sushi.com/swap" size="md" fullWidth className="relative z-10">
                           Trade Now
                         </Button>
                       </motion.div>

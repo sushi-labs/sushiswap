@@ -6,7 +6,7 @@ import useSWR from 'swr'
 import { useTokensFromPool } from '../useTokensFromPool'
 
 export function getGraphPoolUrl(poolId: string) {
-  return `/earn/api/graphPool/${poolId}`
+  return `/pools/api/graphPool/${poolId}`
 }
 
 export const useGraphPool = (pool: Pool) => {

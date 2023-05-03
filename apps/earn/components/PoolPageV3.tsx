@@ -1,6 +1,5 @@
 import React, { FC, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
-import { Layout, PoolsFiltersProvider, SelectPricesWidget } from '../../../components'
 import Link from 'next/link'
 import { ArrowLeftIcon, ChartBarIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
 import { z } from 'zod'
@@ -8,26 +7,29 @@ import { useRouter } from 'next/router'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
 import { useConcentratedLiquidityPool, useConcentratedLiquidityPoolReserves } from '@sushiswap/wagmi/future/hooks'
 import { classNames } from '@sushiswap/ui'
-import { ConcentratedLiquidityWidget } from '../../../components/ConcentratedLiquidityWidget'
-import { ConcentratedLiquidityProvider } from '../../../components/ConcentratedLiquidityProvider'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { RadioGroup } from '@headlessui/react'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
 import { CogIcon } from '@heroicons/react/outline'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
-import { PoolHeader } from '../../../components/future/PoolHeader'
-import { ConcentratedPositionsTable } from '../../../components/PoolsSection/Tables/PositionsTable/ConcentratedPositionsTable'
-import { ContentBlock } from '../../../components/AddPage/ContentBlock'
 import { useAccount } from '@sushiswap/wagmi'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import { useTokenAmountDollarValues } from '../../../lib/hooks'
 import { formatUSD } from '@sushiswap/format'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 import { isAddress } from 'ethers/lib/utils'
-import { unwrapToken } from '../../../lib/functions'
-import { usePreviousRoute } from '../../../components/HistoryProvider'
+import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
+import { useTokenAmountDollarValues } from '../lib/hooks'
+import { usePreviousRoute } from './HistoryProvider'
+import { unwrapToken } from '../lib/functions'
+import { Layout } from './Layout'
+import { PoolHeader } from './future/PoolHeader'
+import { SelectPricesWidget } from './NewPositionSection'
+import { ContentBlock } from './AddPage/ContentBlock'
+import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
+import { PoolsFiltersProvider } from './PoolsFiltersProvider'
+import { ConcentratedPositionsTable } from './PoolsSection/Tables/PositionsTable/ConcentratedPositionsTable'
 
 enum Granularity {
   Day,
@@ -45,7 +47,7 @@ const PoolPage = () => {
 }
 
 const queryParamsSchema = z.object({
-  poolId: z
+  id: z
     .string()
     .refine((val) => val.includes(':'), {
       message: 'TokenId not in the right format',
@@ -75,7 +77,7 @@ const Pool: FC = () => {
   const { path, basePath } = usePreviousRoute()
 
   const {
-    poolId: [chainId, poolId],
+    id: [chainId, poolId],
     activeTab,
   } = queryParamsSchema.parse(query)
 
@@ -121,7 +123,7 @@ const Pool: FC = () => {
             className="group flex gap-4 items-center mb-2"
             href={{
               pathname: '/',
-              ...(basePath === '/earn' && path?.includes('categories') && { query: path.replace('/?&', '') }),
+              ...(basePath === '/pools' && path?.includes('categories') && { query: path.replace('/?&', '') }),
             }}
             shallow={true}
           >
@@ -359,7 +361,7 @@ const Pool: FC = () => {
                   tokensLoading={false}
                   existingPosition={undefined}
                   tokenId={undefined}
-                  successLink={`/earn/pools/${chainId}:${poolId}?activeTab=myPositions`}
+                  successLink={`/pools/${chainId}:${poolId}?activeTab=myPositions`}
                 />
               </ContentBlock>
             </div>
