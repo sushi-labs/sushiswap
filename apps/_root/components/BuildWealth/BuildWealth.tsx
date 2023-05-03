@@ -57,7 +57,7 @@ export const BuildWealth: FC = () => {
                       </p>
                     </>
                   }
-                  link="https://sushi.com/earn"
+                  link="https://www.sushi.com/pools"
                   linkText="Visit Earn"
                 />
                 <ExpandableCard
@@ -83,7 +83,7 @@ export const BuildWealth: FC = () => {
                       </p>
                     </>
                   }
-                  link="https://sushi.com/earn"
+                  link="https://www.sushi.com/pools"
                   linkText="Visit Earn"
                 />
                 <ExpandableCard
@@ -110,7 +110,7 @@ export const BuildWealth: FC = () => {
                       </p>
                     </>
                   }
-                  link="https://sushi.com/earn"
+                  link="https://www.sushi.com/pools"
                   linkText="Visit Earn"
                 />
               </div>

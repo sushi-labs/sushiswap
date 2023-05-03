@@ -58,7 +58,7 @@ export const Header: FC = () => {
       },
       {
         title: 'Blog',
-        href: 'https://sushi.com/blog',
+        href: 'https://www.sushi.com/blog',
         isExternal: true,
       },
       {

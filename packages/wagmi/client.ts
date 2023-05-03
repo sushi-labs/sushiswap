@@ -60,8 +60,8 @@ export const _createClient = (config?: CreateClientConfig) => {
           //     metadata: {
           //       name: 'sushi',
           //       description: 'sushi app',
-          //       url: 'https://sushi.com',
-          //       icons: ['https://sushi.com/icon.png'],
+          //       url: 'https://www.sushi.com',
+          //       icons: ['https://www.sushi.com/icon.png'],
           //     },
           //   },
           // }),
