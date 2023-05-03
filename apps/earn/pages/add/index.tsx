@@ -228,7 +228,7 @@ const _Add: FC = () => {
             tokensLoading={tokensLoading}
             existingPosition={position ?? undefined}
             tokenId={tokenId}
-            successLink={`/earn/pools/${chainId}:${poolAddress}?activeTab=myPositions`}
+            successLink={`/earn/${chainId}:${poolAddress}?activeTab=myPositions`}
           />
         </ContentBlock>
       </div>

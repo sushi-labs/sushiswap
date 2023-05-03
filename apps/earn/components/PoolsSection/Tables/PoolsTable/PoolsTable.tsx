@@ -81,10 +81,6 @@ export const PoolsTable: FC = () => {
   }, [isMd, isSm])
 
   const rowLink = useCallback((row: Pool) => {
-    if (row.protocol === Protocol.SUSHISWAP_V3) {
-      return `/pools/${row.id}`
-    }
-
     return `/${row.id}`
   }, [])
 

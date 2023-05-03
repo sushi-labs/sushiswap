@@ -28,7 +28,7 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
       </div>
       <div className="flex gap-2">
         <Link.Internal
-          href={row.protocol === Protocol.SUSHISWAP_V3 ? `/pools/${row.id}?activeTab=new` : `/${row.id}/add`}
+          href={row.protocol === Protocol.SUSHISWAP_V3 ? `/${row.id}?activeTab=new` : `/${row.id}/add`}
           passHref={true}
         >
           <Button as="a" size="xs" variant="outlined">
@@ -36,7 +36,7 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
           </Button>
         </Link.Internal>
         {row.protocol === Protocol.SUSHISWAP_V3 && (
-          <Link.Internal href={`/pools/${row.id}?activeTab=myPositions`} passHref={true}>
+          <Link.Internal href={`/${row.id}?activeTab=myPositions`} passHref={true}>
             <Button as="a" size="xs" variant="outlined">
               <UserCircleIcon width={16} height={16} /> My Positions
             </Button>

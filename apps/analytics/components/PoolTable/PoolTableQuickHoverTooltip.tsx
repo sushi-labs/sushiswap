@@ -38,13 +38,13 @@ export const PoolQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
         </div>
         <div className="flex flex-col gap-1">
           <Typography variant="sm" weight={600} className="flex gap-3 text-slate-50">
-            <span className="text-slate-400">APR:</span> {formatPercent(row.totalApr)}
+            <span className="text-slate-400">APR:</span> {formatPercent(row.totalApr1d)}
           </Typography>
           <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-slate-50">
             <span className="text-slate-400">Rewards:</span> {formatPercent(row.incentiveApr)}
           </Typography>
           <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-slate-50">
-            <span className="text-slate-400">Fees:</span> {formatPercent(row.feeApr)}
+            <span className="text-slate-400">Fees:</span> {formatPercent(row.feeApr1d)}
           </Typography>
         </div>
       </div>
