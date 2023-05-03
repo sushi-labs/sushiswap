@@ -47,7 +47,7 @@ const PoolPage = () => {
 }
 
 const queryParamsSchema = z.object({
-  poolId: z
+  id: z
     .string()
     .refine((val) => val.includes(':'), {
       message: 'TokenId not in the right format',
@@ -77,7 +77,7 @@ const Pool: FC = () => {
   const { path, basePath } = usePreviousRoute()
 
   const {
-    poolId: [chainId, poolId],
+    id: [chainId, poolId],
     activeTab,
   } = queryParamsSchema.parse(query)
 
