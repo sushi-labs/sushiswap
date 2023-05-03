@@ -95,7 +95,11 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                     </div>
                   </Widget.Header>
                 ) : (
-                  <Widget.Header title="Remove Liquidity" className="!pb-3" />
+                  <Widget.Header title="Remove Liquidity" className="!pb-3 ">
+                    <div className="flex gap-3">
+                      <SettingsOverlay variant="dialog" />
+                    </div>
+                  </Widget.Header>
                 )}
                 <Transition
                   unmount={false}
