@@ -56,7 +56,7 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
   const { address } = useAccount()
 
   const { data: deadline } = useTransactionDeadline({ chainId })
-  const [slippageTolerance] = useSlippageTolerance()
+  const [slippageTolerance] = useSlippageTolerance('addLiquidity')
   const hasExistingPosition = !!existingPosition
 
   const slippagePercent = useMemo(() => {

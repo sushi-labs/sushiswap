@@ -72,7 +72,7 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
               icon={Cog6ToothIcon}
               iconProps={{ width: 18, height: 18 }}
               onClick={() => setView(ProfileView.Settings)}
-              description="View on Explorer"
+              description="Settings"
             />
             <ClipboardController hideTooltip>
               {({ setCopied, isCopied }) => (

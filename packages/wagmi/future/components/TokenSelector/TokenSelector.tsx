@@ -59,7 +59,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
       pricesMap,
       balancesMap,
       chainId,
-      includeNative: true
+      includeNative: true,
     })
 
     const _onSelect = useCallback(
