@@ -25,7 +25,7 @@ export const PopoverPanel: FC<PopoverPanelInterface> = ({ children }) => {
     setTimeout(() => setHovers((prevState) => ({ ...prevState, button: false })), 200)
   }, [setHovers])
 
-  if (typeof window === 'undefined' || !isMounted) return <></>
+  if (typeof window === 'undefined' || !isMounted || !open) return <></>
 
   return ReactDOM.createPortal(
     <div
@@ -37,7 +37,8 @@ export const PopoverPanel: FC<PopoverPanelInterface> = ({ children }) => {
       {...attributes.popper}
     >
       <Transition
-        show={open}
+        show={true}
+        appear
         enter="transition duration-300 ease-out"
         enterFrom="transform translate-y-[-16px]"
         enterTo="transform translate-y-0"

@@ -1,6 +1,6 @@
 import { ArrowLeftIcon } from '@heroicons/react/20/solid'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import React, { Dispatch, FC, Fragment, SetStateAction } from 'react'
+import React, { Dispatch, FC, Fragment, SetStateAction, useEffect } from 'react'
 
 import { ProfileView } from './index'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'

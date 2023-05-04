@@ -21,7 +21,7 @@ export const ThemeProvider: FC<ThemeProvider> = ({ children }) => {
 
   useEffect(() => {
     const url = window.location.href
-    if (url.includes('/earn') || url.includes('/swap')) {
+    if (url.includes('/pools') || url.includes('/swap')) {
       if (isDarkSet || (isDarkPreferred && theme === ThemeState.Auto)) {
         document.documentElement.classList.add('dark')
       } else {

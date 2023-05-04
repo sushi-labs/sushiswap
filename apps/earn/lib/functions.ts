@@ -135,7 +135,6 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
     USDC[chainId as keyof typeof USDC_ADDRESS],
     USDT[chainId as keyof typeof USDT_ADDRESS],
   ]
-  console.log(stables.some((stable) => stable.equals(token0)))
   if (stables.some((stable) => stable.equals(token0))) {
     return {
       priceLower: position.token0PriceUpper.invert(),
