@@ -40,7 +40,7 @@ export const useTokenSearch = ({address, enabled = true}: UseTokensParams) => {
             fetch(`https://tokens.sushi.com/v0/search/${address}`).then((response) => response.json()),
         select: hydrate,
         enabled: enabled && !!address && isAddress(address),
-        staleTime: 900, // 15 mins
-        cacheTime: 86400 // 24hs
+        staleTime: 900000, // 15 mins
+        cacheTime: 86400000 // 24hs
     })
 }

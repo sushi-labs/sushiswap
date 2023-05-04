@@ -151,7 +151,7 @@ export const useTokenWithCache = <T extends boolean = false>({
     keepPreviousData,
     refetchOnWindowFocus: false,
     retry: false,
-    staleTime: 900, // 15 mins
-    cacheTime: 86400, // 24hs
+    staleTime: 900000, // 15 mins
+    cacheTime: 86400000, // 24hs
   })
 }
