@@ -20,8 +20,6 @@ import SEO from '../next-seo.config.mjs'
 import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '@sushiswap/react-query'
-import { ToastContainer } from '@sushiswap/ui/future/components/toast'
-import { ConcentratedLiquidityURLStateProvider } from '../components/ConcentratedLiquidityURLStateProvider'
 import { HistoryProvider } from '../components/HistoryProvider'
 
 declare global {
@@ -68,7 +66,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
                     <Header />
                     <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
                     <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
-                    <ToastContainer />
                   </App.Shell>
                 </HistoryProvider>
               </Onramper.Provider>

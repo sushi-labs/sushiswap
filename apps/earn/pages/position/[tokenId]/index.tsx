@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import { Layout } from '../../../components'
 import Link from 'next/link'
 import { ArrowLeftIcon, MinusIcon, PlusIcon } from '@heroicons/react/solid'
@@ -36,6 +36,8 @@ import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { PoolHeader } from '../../../components/future/PoolHeader'
 import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 import useIsTickAtLimit from '../../../lib/hooks/useIsTickAtLimit'
+import { createSuccessToast, createToast } from '@sushiswap/ui/future/components/toast'
+import { ChainId } from '@sushiswap/chain'
 
 const PositionPage = () => {
   return (
@@ -107,7 +109,10 @@ const Position: FC = () => {
     existingPosition: position ?? undefined,
   })
 
-  const { data: poolStats } = useConcentratedLiquidityPoolStats({ poolAddress: positionDetails?.address })
+  const { data: poolStats } = useConcentratedLiquidityPoolStats({
+    chainId: positionDetails?.chainId,
+    address: positionDetails?.address,
+  })
 
   const [_token0, _token1] = useMemo(
     () => [token0 ? unwrapToken(token0) : undefined, token1 ? unwrapToken(token1) : undefined],
