@@ -39,7 +39,11 @@ export const poolFiltersSchema = z.object({
     .optional()
     .default(Object.values(Protocol).join(','))
     .transform((protocols) => protocols.split(',') as Protocol[]),
-  farmsOnly: z.coerce.boolean().optional().default(false),
+  farmsOnly: z
+    .string()
+    .optional()
+    .default('false')
+    .transform((bool) => bool === 'true'),
 })
 
 export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => {
@@ -56,7 +60,6 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => 
   const setFilters = useCallback(
     (filters: PoolFilters) => {
       const newFilters = { ...parsed, ...filters }
-      // console.log(newFilters)
       void push(parseArgs(newFilters), undefined, { shallow: true })
     },
     // eslint-disable-next-line
