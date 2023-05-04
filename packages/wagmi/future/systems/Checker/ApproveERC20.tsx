@@ -103,7 +103,7 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
         </Transition>
       </Menu>
       <div className="absolute right-1 top-1 bottom-1 w-[52px]">
-        <div className="relative z-[100] w-full h-full">
+        <div className="relative z-[1000] w-full h-full">
           <Popover as={Fragment}>
             {({ open, close }) => (
               <>
@@ -118,29 +118,15 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
                 </Popover.Button>
                 <Transition
                   show={open}
-                  enter="transition duration-200 ease-out"
-                  enterFrom="transform scale-[0.95]"
-                  enterTo="transform scale-[1]"
-                  leave="transition duration-200 ease-out"
-                  leaveFrom="transform scale-[1] opacity-1"
-                  leaveTo="transform scale-[0.95] opacity-0"
+                  enter="transition duration-300 ease-out"
+                  enterFrom="transform translate-y-[-16px] scale-[0.95] opacity-0"
+                  enterTo="transform translate-y-0 scale-[1] opacity-100"
+                  leave="transition duration-300 ease-out"
+                  leaveFrom="transform translate-y-0 opacity-100 scale-[1]"
+                  leaveTo="transform translate-y-[-16px] opacity-0 scale-[0.95]"
                 >
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <div
-                      onClick={(e) => e.stopPropagation()}
-                      className="fixed inset-0 bg-black/50 backdrop-blur transform-gpu"
-                    />
-                  </Transition.Child>
-                  <div className={classNames('right-0 absolute pt-3 -top-[-1] sm:w-[320px]')}>
-                    <div className="p-2 flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white/50 paper dark:bg-slate-800/50">
+                  <div className={classNames('right-[-8px] absolute pt-3 top-1 w-[320px]')}>
+                    <div className="p-2 flex flex-col w-full right-0 absolute rounded-2xl shadow-md bg-white/50 paper dark:bg-slate-800/50">
                       <Popover.Panel>
                         <List.MenuItem
                           as="div"
