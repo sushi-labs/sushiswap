@@ -4,11 +4,10 @@ interface Kpi {
   title: string
   value: ReactNode
   additional: ReactNode
-  index?: number
 }
 
-export function KpiCard(props: Kpi) {
-  const { title, value, additional, index } = props
+export function KpiCard(props: Kpi, index: number) {
+  const { title, value, additional } = props
   return (
     <dl className="rounded-lg bg-[#1A2031] p-5" key={index}>
       <dt className="text-sm text-slate-400">{title}</dt>

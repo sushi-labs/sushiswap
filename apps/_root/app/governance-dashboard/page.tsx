@@ -14,13 +14,13 @@ export default function GovernanceDashboard() {
         <Tab.Panels>
           {/** TODO: order */}
           <Tab.Panel>
-            <Governance />
-          </Tab.Panel>
-          <Tab.Panel>
             <Overview />
           </Tab.Panel>
           <Tab.Panel>
             <Finance />
+          </Tab.Panel>
+          <Tab.Panel>
+            <Governance />
           </Tab.Panel>
           <Tab.Panel>
             <TokenHolders />
