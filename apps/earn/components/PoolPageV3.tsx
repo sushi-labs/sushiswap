@@ -117,19 +117,6 @@ const Pool: FC = () => {
   const change1d = 0
   const change1w = 0
 
-  useEffect(() => {
-    const ts = new Date().getTime()
-    void createSuccessToast({
-      account: address,
-      type: 'burn',
-      chainId: ChainId.ETHEREUM,
-      txHash: '0x78e561e7a780d76f2d0ebc4735dd131984f3a90ff47c60010fc6559c60e9549c',
-      summary: `Successfully removed liquidity from the`,
-      timestamp: ts,
-      groupTimestamp: ts,
-    })
-  }, [])
-
   return (
     <Layout>
       <div className="flex flex-col gap-2">
