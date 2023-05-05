@@ -46,3 +46,14 @@ export const useApproved = (tag: string) => {
     [context, tag]
   )
 }
+
+// HOC component
+// useful for when the useApproved hook and the Checker.Success component are in the same component
+export const withCheckerRoot = <P extends object>(Component: React.FunctionComponent<P>): FC<P> =>
+  function WithCheckerRootComponent(props: P) {
+    return (
+      <CheckerProvider>
+        <Component {...props} />
+      </CheckerProvider>
+    )
+  }
