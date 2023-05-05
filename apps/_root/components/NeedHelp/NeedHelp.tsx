@@ -71,7 +71,7 @@ export const NeedHelp: FC = () => {
                 <div className="flex justify-start mt-4">
                   <Button
                     as="a"
-                    href="https://sushi.com/academy"
+                    href="https://www.sushi.com/academy"
                     className="!p-0 mt-3"
                     variant="empty"
                     endIcon={<ExternalLinkIcon width={16} height={16} />}

@@ -83,7 +83,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
                   <Component {...pageProps} />
                   <App.Footer />
                 </App.Shell>
-                <ToastContainer className="mt-[50px]" />
               </Onramper.Provider>
             </ThemeProvider>
           </ReduxProvider>

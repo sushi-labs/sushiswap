@@ -2,8 +2,9 @@ import { FC, ReactNode } from 'react'
 import { useRouter } from 'next/router'
 import { Transition } from '@headlessui/react'
 import { SushiIcon } from './icons'
+import dynamic from 'next/dynamic'
 
-export const SplashController: FC<{ children: ReactNode; show?: boolean }> = ({ children, show = false }) => {
+const Component: FC<{ children: ReactNode; show?: boolean }> = ({ children, show = false }) => {
   const { isReady } = useRouter()
 
   return (
@@ -31,3 +32,7 @@ export const SplashController: FC<{ children: ReactNode; show?: boolean }> = ({ 
     </>
   )
 }
+
+export const SplashController = dynamic(() => Promise.resolve(Component), {
+  ssr: false,
+})

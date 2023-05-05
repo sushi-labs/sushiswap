@@ -48,7 +48,7 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
           })
 
         // ! Won't reflect dev changes
-        const result = await fetch('https://sushi.com/api/partner/submitToken', {
+        const result = await fetch('https://www.sushi.com/api/partner/submitToken', {
           headers: {
             Accept: '*/*',
             'Content-Type': 'application/json',

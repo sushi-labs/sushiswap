@@ -2436,6 +2436,7 @@ importers:
       '@sushiswap/trident': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/v3-sdk': workspace:*
+      '@sushiswap/viem-config': workspace:*
       '@types/lodash.flatmap': ^4.5.7
       '@types/node': ^18.0.0
       '@types/node-fetch': 2.6.2
@@ -2464,6 +2465,7 @@ importers:
       '@sushiswap/tines': link:../tines
       '@sushiswap/trident': link:../../protocols/trident
       '@sushiswap/v3-sdk': link:../v3-sdk
+      '@sushiswap/viem-config': link:../../config/viem
       date-fns: 2.29.3
       ethers: 5.7.2
       lodash.flatmap: 4.5.0

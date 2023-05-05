@@ -4,7 +4,7 @@ import useSWR from 'swr'
 import { getGraphPools } from '../../api'
 
 export function getGraphPoolsUrl(poolIds: string[]) {
-  return `/earn/api/graphPools${parseArgs({ ids: poolIds })}`
+  return `/pools/api/graphPools${parseArgs({ ids: poolIds })}`
 }
 
 // Returns the Pools type, to make everyone's life easier

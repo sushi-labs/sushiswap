@@ -75,7 +75,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
               <GlobalNav />
               <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
               <App.Footer />
-              <ToastContainer className="mt-[50px]" />
             </App.Shell>
           </ThemeProvider>
         </Provider>

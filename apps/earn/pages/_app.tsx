@@ -20,8 +20,6 @@ import SEO from '../next-seo.config.mjs'
 import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '@sushiswap/react-query'
-import { ToastContainer } from '@sushiswap/ui/future/components/toast'
-import { ConcentratedLiquidityURLStateProvider } from '../components/ConcentratedLiquidityURLStateProvider'
 import { HistoryProvider } from '../components/HistoryProvider'
 
 declare global {
@@ -49,12 +47,12 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <>
       <Head>
-        <link rel="apple-touch-icon" sizes="180x180" href="/earn/apple-touch-icon.png?v=1" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/earn/favicon-32x32.png?v=1" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/earn/favicon-16x16.png?v=1" />
-        <link rel="manifest" href="/earn/manifest.json?v=1" />
-        <link rel="mask-icon" href="/earn/safari-pinned-tab.svg?v=1" color="#fa52a0" />
-        <link rel="shortcut icon" href="/earn/favicon.ico?v=1" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/pools/apple-touch-icon.png?v=1" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/pools/favicon-32x32.png?v=1" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/pools/favicon-16x16.png?v=1" />
+        <link rel="manifest" href="/pools/manifest.json?v=1" />
+        <link rel="mask-icon" href="/pools/safari-pinned-tab.svg?v=1" color="#fa52a0" />
+        <link rel="shortcut icon" href="/pools/favicon.ico?v=1" />
       </Head>
 
       <WagmiConfig client={client}>
@@ -68,7 +66,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
                     <Header />
                     <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
                     <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
-                    <ToastContainer />
                   </App.Shell>
                 </HistoryProvider>
               </Onramper.Provider>

@@ -44,7 +44,7 @@ const nextConfig = {
     return [
       {
         source: '/:path*',
-        destination: `/:path*`,
+        destination: '/:path*',
       },
       {
         source: '/academy',
@@ -104,11 +104,11 @@ const nextConfig = {
       },
       {
         source: '/earn',
-        destination: `${EARN_URL}/earn`,
+        destination: `${EARN_URL}/pools`,
       },
       {
         source: '/earn/:path*',
-        destination: `${EARN_URL}/earn/:path*`,
+        destination: `${EARN_URL}/pools/:path*`,
       },
       {
         source: '/pools',

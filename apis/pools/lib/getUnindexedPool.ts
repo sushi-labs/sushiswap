@@ -1,4 +1,4 @@
-import { constantProductPoolAbi, uniswapV2PairAbi } from '@sushiswap/abi'
+import { constantProductPoolAbi, uniswapV2PairAbi, v3baseAbi } from '@sushiswap/abi'
 import { PoolType, PoolVersion } from '@sushiswap/database'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import { Address, configureChains, createClient, fetchToken, FetchTokenResult, readContracts } from '@wagmi/core'
@@ -66,14 +66,42 @@ async function getTridentPool({ chainId, address }: GetPoolArgs): Promise<Pool> 
   }
 }
 
+async function getV3Pool({ chainId, address }: GetPoolArgs): Promise<Pool> {
+  const [token0, token1, liquidity, fee] = await readContracts({
+    allowFailure: false,
+    contracts: [
+      { address: address as Address, abi: v3baseAbi, functionName: 'token0', chainId },
+      { address: address as Address, abi: v3baseAbi, functionName: 'token1', chainId },
+      { address: address as Address, abi: v3baseAbi, functionName: 'liquidity', chainId },
+      { address: address as Address, abi: v3baseAbi, functionName: 'fee', chainId },
+    ],
+  })
+
+  return {
+    tokens: [token0, token1],
+    totalSupply: liquidity.toString(),
+    // 500 is 0.05%. divide it by 1M to get the 0.0005 format
+    swapFee: fee / 1_000_000,
+    twapEnabled: true,
+    version: PoolVersion.V3,
+  }
+}
+
 // Thought ReturnType would be enough, needed to wrap it to make TS happy
 export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnType<typeof getEarnPool>>> {
+
   const [chainId, address] = [Number(poolId.split(':')[0]), poolId.split(':')[1]]
   if (!chainId || !address) throw new Error('Invalid pool id.')
 
-  const { name: lpTokenName } = await fetchToken({ address: address as Address, chainId })
+  let lpTokenName
+  try {
+    lpTokenName = (await fetchToken({ address: address as Address, chainId })).name
+  } catch (e) {
+    lpTokenName = 'V3'
+  }
 
-  let poolFetcher, poolType
+  let poolFetcher
+  let poolType
   switch (lpTokenName) {
     case 'Sushi Stable LP Token':
       poolType = PoolType.STABLE_POOL
@@ -88,7 +116,8 @@ export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnTy
       poolFetcher = getV2Pool
       break
     default:
-      throw new Error('Pool type not found.')
+      poolType = PoolType.CONCENTRATED_LIQUIDITY_POOL
+      poolFetcher = getV3Pool
   }
 
   const pool = await poolFetcher({ chainId, address })

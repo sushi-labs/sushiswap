@@ -37,7 +37,7 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
     approveMax: max,
   })
 
-  const onMenuItemClick = useCallback((e: MouseEvent<HTMLButtonElement>, isMax: boolean, cb: () => void) => {
+  const onMenuItemClick = useCallback((e: MouseEvent<HTMLDivElement>, isMax: boolean, cb: () => void) => {
     e.stopPropagation()
 
     if (isMax) {
@@ -79,14 +79,14 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
           as={Fragment}
           show={showTooltip}
           enter="transition ease-out duration-200"
-          enterFrom="opacity-0 translate-y-1"
-          enterTo="opacity-100 translate-y-0"
+          enterFrom="translate-y-1 scale-[0.95]"
+          enterTo="translate-y-0 scale-[1]"
           leave="transition ease-in duration-150"
-          leaveFrom="opacity-100 translate-y-0"
-          leaveTo="opacity-0 translate-y-1"
+          leaveFrom="opacity-100 translate-y-0 scale-[0.95]"
+          leaveTo="opacity-0 translate-y-1 scale-[1]"
         >
           <div className="z-10 absolute pb-2 w-[max-content] bottom-4">
-            <Menu.Items className="text-left w-[240px] text-gray-700  border-gray-300 dark:border-slate-700 dark:text-slate-200 flex flex-col gap-3 bg-white dark:bg-slate-800 rounded-lg shadow-hover-card shadow-black/30 px-4 py-3 text-xs mt-0.5">
+            <Menu.Items className="text-left w-[240px] text-gray-700 flex flex-col gap-3 paper bg-white/50 dark:bg-slate-800/50 rounded-lg shadow-md shadow-black/20 px-4 py-3 text-xs mt-0.5">
               <span className="text-gray-500 dark:text-slate-400">Token Approval</span>
               We need your approval to execute this transaction on your behalf. You will only have to approve the{' '}
               {amount?.currency.symbol} contract once.
@@ -103,7 +103,7 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
         </Transition>
       </Menu>
       <div className="absolute right-1 top-1 bottom-1 w-[52px]">
-        <div className="relative z-[100] w-full h-full">
+        <div className="relative z-[1000] w-full h-full">
           <Popover as={Fragment}>
             {({ open, close }) => (
               <>
@@ -118,41 +118,29 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
                 </Popover.Button>
                 <Transition
                   show={open}
-                  enter="sm:transition duration-300 ease-out"
-                  enterFrom="sm:transform sm:translate-y-[-16px] opacity-0"
-                  enterTo="sm:transform sm:translate-y-0 opacity-100"
-                  leave="sm:transition duration-300 ease-out"
-                  leaveFrom="sm:transform sm:translate-y-0 opacity-100"
-                  leaveTo="sm:transform sm:translate-y-[-16px] opacity-0"
+                  enter="transition duration-300 ease-out"
+                  enterFrom="transform translate-y-[-16px] scale-[0.95] opacity-0"
+                  enterTo="transform translate-y-0 scale-[1] opacity-100"
+                  leave="transition duration-300 ease-out"
+                  leaveFrom="transform translate-y-0 opacity-100 scale-[1]"
+                  leaveTo="transform translate-y-[-16px] opacity-0 scale-[0.95]"
                 >
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <div
-                      onClick={(e) => e.stopPropagation()}
-                      className="fixed inset-0 bg-black/50 backdrop-blur transform-gpu"
-                    />
-                  </Transition.Child>
-                  <div className={classNames('right-0 absolute pt-3 -top-[-1] sm:w-[320px]')}>
-                    <div className="p-2 flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white dark:bg-slate-800">
+                  <div className={classNames('right-[-8px] absolute pt-3 top-1 w-[320px]')}>
+                    <div className="p-2 flex flex-col w-full right-0 absolute rounded-2xl shadow-md bg-white/50 paper dark:bg-slate-800/50">
                       <Popover.Panel>
                         <List.MenuItem
-                          as="button"
-                          onClick={(e: MouseEvent<HTMLButtonElement>) => onMenuItemClick(e, false, close)}
+                          as="div"
+                          role="button"
+                          onClick={(e: MouseEvent<HTMLDivElement>) => onMenuItemClick(e, false, close)}
                           title="Approve one-time only"
                           subtitle={`You'll give your approval to spend ${amount?.toSignificant(6)} ${
                             amount?.currency?.symbol
                           } on your behalf`}
                         />
                         <List.MenuItem
-                          onClick={(e: MouseEvent<HTMLButtonElement>) => onMenuItemClick(e, true, close)}
-                          as="button"
+                          as="div"
+                          role="button"
+                          onClick={(e: MouseEvent<HTMLDivElement>) => onMenuItemClick(e, true, close)}
                           title="Approve unlimited amount"
                           subtitle={`You won't need to approve again next time you want to spend ${amount?.currency?.symbol}.`}
                         />

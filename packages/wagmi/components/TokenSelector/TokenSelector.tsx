@@ -4,9 +4,10 @@ import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { FC, memo, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
-import { useBalances, usePrices } from '../../hooks'
+import { useBalances } from '../../hooks'
 import { TokenSelectorDialog } from './TokenSelectorDialog'
 import { TokenSelectorOverlay } from './TokenSelectorOverlay'
+import { usePrices } from '@sushiswap/react-query'
 
 export type TokenSelectorProps = {
   id?: string
@@ -24,6 +25,9 @@ export type TokenSelectorProps = {
   includeNative?: boolean
 }
 
+/**
+ * @deprecated use future/components/TokenSelector
+ */
 export const TokenSelector: FC<TokenSelectorProps> = memo(
   ({
     id,

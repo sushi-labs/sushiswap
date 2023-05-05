@@ -35,7 +35,7 @@ export const TokenSelectorCustomTokensOverlay: FC = () => {
         Manage
       </Button>
       <SlideIn.FromRight show={open} onClose={() => setOpen(false)} className="!mt-0">
-        <Overlay.Content>
+        <Overlay.Content className="!bg-slate-800">
           <Overlay.Header onBack={() => setOpen(false)} title="Custom Tokens" />
           <List>
             <List.Label>Tokens</List.Label>
@@ -46,7 +46,7 @@ export const TokenSelectorCustomTokensOverlay: FC = () => {
                     key={token.address}
                     title={token.symbol || ''}
                     subtitle={chains[token.chainId].name}
-                    onClick={() => mutate('remove', token.wrapped)}
+                    onClick={() => mutate('remove', [token.wrapped])}
                     hoverIcon={TrashIcon}
                   />
                 ))

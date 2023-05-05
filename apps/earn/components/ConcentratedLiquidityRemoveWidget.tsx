@@ -35,7 +35,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
   positionDetails,
 }) => {
   const [value, setValue] = useState<string>('0')
-  const [slippageTolerance] = useSlippageTolerance()
+  const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
   const { data: deadline } = useTransactionDeadline({ chainId })
 
   const slippagePercent = useMemo(() => {

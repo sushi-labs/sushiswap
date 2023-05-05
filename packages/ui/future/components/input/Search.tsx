@@ -13,20 +13,27 @@ interface Search {
   value: string
   loading: boolean
   onChange(val: string): void
+  size?: 'sm' | 'default'
 }
 
 export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function Search(
-  { className, id, loading, input: Input, value, onChange },
+  { className, id, loading, input: Input, value, onChange, size = 'default' },
   ref
 ) {
   return (
     <div
       className={classNames(
         className,
-        '!focus-within:bg-gray-200 relative pr-10 rounded-xl flex gap-2.5 flex-grow items-center bg-gray-200 dark:bg-slate-800 px-3 py-2.5 h-[44px]'
+        size === 'sm' ? 'h-[38px] text-sm px-[8px]' : '',
+        '!focus-within:bg-gray-200 relative pr-10 rounded-xl flex gap-2.5 flex-grow items-center bg-black/[0.04] dark:bg-white/[0.04] px-3 py-2.5 h-[44px]'
       )}
     >
-      <MagnifyingGlassIcon strokeWidth={2} width={24} height={24} className="text-gray-500 dark:text-slate-500" />
+      <MagnifyingGlassIcon
+        strokeWidth={2}
+        width={size === 'sm' ? 18 : 24}
+        height={size === 'sm' ? 18 : 24}
+        className="text-gray-500 dark:text-slate-500"
+      />
       {Input ? (
         <Input
           ref={ref}

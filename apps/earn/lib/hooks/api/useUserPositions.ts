@@ -12,7 +12,7 @@ export interface GetUserArgs {
 }
 
 export function getUserPositionsUrl(args: GetUserArgs) {
-  return `/earn/api/user/${parseArgs(args)}`
+  return `/pools/api/user/${parseArgs(args)}`
 }
 
 const transformPositions = (positions?: UserPosition[], pools?: Pools) =>
