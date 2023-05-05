@@ -68,8 +68,8 @@ interface UsePoolsAsMapParams extends UsePoolsParams {
   poolType: PoolType
   fee: Fee
 }
-export const usePoolsAsMap = (variables: UsePoolsAsMapParams) => {
-  const { chainId, currencyA, currencyB, enabled } = variables
+export const usePoolsAsMap = ({ enabled = true, ...variables }: UsePoolsAsMapParams) => {
+  const { chainId, currencyA, currencyB } = variables
 
   return useQuery({
     queryKey: ['usePoolsAsMap', { chainId, currencyA, currencyB }],
