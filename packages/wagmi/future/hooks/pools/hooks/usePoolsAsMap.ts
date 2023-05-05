@@ -69,11 +69,10 @@ interface UsePoolsAsMapParams extends UsePoolsParams {
   fee: Fee
 }
 export const usePoolsAsMap = (variables: UsePoolsAsMapParams) => {
+  const { chainId, currencyA, currencyB, enabled } = variables
+
   return useQuery({
-    queryKey: [
-      'usePoolsAsMap',
-      { chainId: variables.chainId, currencyA: variables.currencyA, currencyB: variables.currencyB },
-    ],
+    queryKey: ['usePoolsAsMap', { chainId, currencyA, currencyB }],
     queryFn: async () => {
       const data = await getAllPools({ ...variables, asMap: true, withCombinations: false, withBentoPools: false })
       const pools = [...(data.pairs || []), ...(data.stablePools || []), ...(data.constantProductPools || [])]
@@ -101,6 +100,6 @@ export const usePoolsAsMap = (variables: UsePoolsAsMapParams) => {
       }
     },
     refetchInterval: 10000,
-    enabled: Boolean(variables.enabled || true),
+    enabled,
   })
 }
