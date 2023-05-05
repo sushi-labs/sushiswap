@@ -37,10 +37,7 @@ export const useSortedTokenList = ({
   const debouncedQuery = useDebounce(query, 250)
 
   return useQuery({
-    queryKey: [
-      'sortedTokenList',
-      { debouncedQuery, hash: hash(JSON.stringify({ tokenMap, customTokenMap, balancesMap, pricesMap })) },
-    ],
+    queryKey: ['sortedTokenList', { tokenMap, customTokenMap, balancesMap, pricesMap }],
     queryFn: async () => {
       const tokenMapValues = tokenMap ? Object.values(tokenMap) : []
       const customTokenMapValues = customTokenMap

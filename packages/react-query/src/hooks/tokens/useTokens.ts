@@ -55,7 +55,7 @@ export const useTokens = ({chainId}: UseTokensParams) => {
         queryFn: fetchTokensQueryFn,
         select: (data) => hydrateFetchTokensQueryFn(data, chainId),
         keepPreviousData: true,
-        staleTime: 900, // 15 mins
-        cacheTime: 86400 // 24hs
+        staleTime: 900000, // 15 mins
+        cacheTime: 86400000 // 24hs
     })
 }

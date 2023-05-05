@@ -3,7 +3,7 @@ import chains from '@sushiswap/chain'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
 import { AppearOnMount, Currency, Link, NetworkIcon, Typography } from '@sushiswap/ui'
-import { usePrices } from '@sushiswap/wagmi'
+import { usePrices } from '@sushiswap/react-query'
 import { FC } from 'react'
 
 import { useGraphPool } from '../../lib/hooks'
