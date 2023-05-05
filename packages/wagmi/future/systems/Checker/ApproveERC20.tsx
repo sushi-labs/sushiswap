@@ -27,6 +27,7 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
   as,
   size,
   enabled = true,
+  type,
 }) => {
   const [max, setMax] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
@@ -61,9 +62,10 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
       testdata-id={id}
       variant={variant}
       size={size}
-      className={classNames(className, 'group relative')}
+      className={classNames(className, 'group relative pr-16')}
       fullWidth={fullWidth}
       onClick={() => write?.()}
+      type={type}
     >
       Approve {amount?.currency.symbol} {max ? 'Permanently' : ''}
       <Menu
@@ -86,10 +88,8 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
           leaveTo="opacity-0 translate-y-1 scale-[1]"
         >
           <div className="z-10 absolute pb-2 w-[max-content] bottom-4">
-            <Menu.Items className="text-left w-[240px] text-gray-700 flex flex-col gap-3 paper bg-white/50 dark:bg-slate-800/50 rounded-lg shadow-md shadow-black/20 px-4 py-3 text-xs mt-0.5">
-              <span className="text-gray-500 dark:text-slate-400">Token Approval</span>
-              We need your approval to execute this transaction on your behalf. You will only have to approve the{' '}
-              {amount?.currency.symbol} contract once.
+            <Menu.Items className="text-left w-[240px] text-gray-700 dark:text-slate-400 flex flex-col gap-3 paper bg-white/50 dark:bg-slate-800/50 rounded-lg shadow-md shadow-black/20 px-4 py-3 text-xs mt-0.5">
+              We need your approval to execute this transaction on your behalf.
               <a
                 target="_blank"
                 className="text-blue dark:text-blue dark:font-semibold flex gap-1 items-center hover:text-blue-700"

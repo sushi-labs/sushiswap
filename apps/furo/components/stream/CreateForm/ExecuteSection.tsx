@@ -151,16 +151,19 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = withChec
 
   return (
     <Form.Buttons className="flex flex-col items-end gap-3">
-      <Checker.Connect>
-        <Checker.Network chainId={chainId}>
-          <Checker.Amounts chainId={chainId} amounts={[_amount]}>
+      <Checker.Connect type="button" size="xl">
+        <Checker.Network type="button" size="xl" chainId={chainId}>
+          <Checker.Amounts type="button" size="xl" chainId={chainId} amounts={[_amount]}>
             <Checker.ApproveBentobox
+              type="button"
               id="furo-create-single-stream-approve-bentobox"
               size="xl"
               chainId={chainId as BentoBoxV1ChainId}
               contract={getFuroStreamRouterContractConfig(chainId).address}
+              onSignature={setSignature}
             >
               <Checker.ApproveERC20
+                type="button"
                 contract={bentoBoxV1Address[chainId]}
                 id="furo-create-single-stream-approve-token"
                 size="xl"
@@ -168,6 +171,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = withChec
               >
                 <Checker.Success tag={APPROVE_TAG}>
                   <Button
+                    size="xl"
                     name="execute"
                     type="button"
                     variant="filled"

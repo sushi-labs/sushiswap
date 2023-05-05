@@ -14,7 +14,17 @@ export interface AmountsProps extends CheckerButton {
   amounts: (Amount<Type> | undefined)[]
 }
 
-export const Amounts: FC<AmountsProps> = ({ amounts, chainId, children, className, variant, fullWidth, as, size }) => {
+export const Amounts: FC<AmountsProps> = ({
+  type,
+  amounts,
+  chainId,
+  children,
+  className,
+  variant,
+  fullWidth,
+  as,
+  size,
+}) => {
   const { address } = useAccount()
   const amountsAreDefined = useMemo(() => amounts.every((el) => el?.greaterThan(ZERO)), [amounts])
   const currencies = useMemo(() => amounts.map((amount) => amount?.currency), [amounts])
@@ -46,6 +56,7 @@ export const Amounts: FC<AmountsProps> = ({ amounts, chainId, children, classNam
           as={as}
           fullWidth={fullWidth}
           size={size}
+          type={type}
         >
           Enter Amount
         </Button>
@@ -53,7 +64,7 @@ export const Amounts: FC<AmountsProps> = ({ amounts, chainId, children, classNam
 
     if (!sufficientBalance)
       return (
-        <Button disabled className={className} variant={variant} as={as} fullWidth={fullWidth} size={size}>
+        <Button type={type} disabled className={className} variant={variant} as={as} fullWidth={fullWidth} size={size}>
           Insufficient Balance
         </Button>
       )
