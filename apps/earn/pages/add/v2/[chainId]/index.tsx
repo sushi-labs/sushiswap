@@ -104,7 +104,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
     <SWRConfig>
       <Layout>
         <div className="flex flex-col gap-2">
-          <Link className="group flex gap-4 items-center mb-2" href="/" shallow={true}>
+          <Link className="flex items-center gap-4 mb-2 group" href="/" shallow={true}>
             <IconButton
               icon={ArrowLeftIcon}
               iconProps={{
@@ -117,7 +117,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
               Go back to pools list
             </span>
           </Link>
-          <h1 className="text-3xl font-medium mt-2">Add Liquidity</h1>
+          <h1 className="mt-2 text-3xl font-medium">Add Liquidity</h1>
           <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
             Create a new pool or create a liquidity position on an existing pool.
           </h1>
@@ -325,8 +325,9 @@ const _Add: FC<AddProps> = ({
       <ContentBlock title={<span className="text-gray-900 dark:text-white">Deposit.</span>}>
         <div className="flex flex-col gap-4">
           <Web3Input.Currency
+            id='add-liquidity-token0'
             type="INPUT"
-            className="p-3 dark:bg-slate-800 bg-white rounded-xl"
+            className="p-3 bg-white dark:bg-slate-800 rounded-xl"
             chainId={chainId}
             value={input0}
             onChange={onChangeToken0TypedAmount}
@@ -335,13 +336,14 @@ const _Add: FC<AddProps> = ({
             disabled={!token0}
           />
           <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
-            <button type="button" className="p-2 bg-gray-100 dark:bg-slate-900 rounded-full z-10">
+            <button type="button" className="z-10 p-2 bg-gray-100 rounded-full dark:bg-slate-900">
               <PlusIcon strokeWidth={3} className="w-4 h-4 text-gray-500 dark:dark:text-slate-400 text-slate-600" />
             </button>
           </div>
           <Web3Input.Currency
+            id='add-liquidity-token1'
             type="INPUT"
-            className="p-3 dark:bg-slate-800 bg-white rounded-xl"
+            className="p-3 bg-white dark:bg-slate-800 rounded-xl"
             chainId={chainId}
             value={input1}
             onChange={onChangeToken1TypedAmount}
@@ -376,7 +378,7 @@ const _Add: FC<AddProps> = ({
                     input1={parsedInput1}
                   >
                     {({ isWritePending, setOpen }) => (
-                      <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                      <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md" testdata-id="add-liquidity-button">
                         {isWritePending ? <Dots>Confirm transaction</Dots> : title}
                       </Button>
                     )}
@@ -393,7 +395,7 @@ const _Add: FC<AddProps> = ({
                       input1={parsedInput1}
                     >
                       {({ isWritePending, setOpen }) => (
-                        <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                        <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md" testdata-id="add-liquidity-button">
                           {isWritePending ? <Dots>Confirm transaction</Dots> : title}
                         </Button>
                       )}
@@ -410,7 +412,7 @@ const _Add: FC<AddProps> = ({
                     poolType={poolType}
                   >
                     {({ isWritePending, setOpen }) => (
-                      <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                      <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md" testdata-id="create-pool-button">
                         {isWritePending ? <Dots>Confirm transaction</Dots> : title}
                       </Button>
                     )}

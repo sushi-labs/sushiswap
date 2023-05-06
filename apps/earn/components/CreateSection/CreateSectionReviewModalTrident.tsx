@@ -307,7 +307,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
           }
           render={({ approved }) => {
             return (
-              <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
+              <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()} testdata-id='confirm-add-liquidity-button'>
                 {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
               </Button>
             )

@@ -43,6 +43,7 @@ export const SelectFeeWidget: FC<SelectFeeWidgetProps> = memo(function SelectFee
       <RadioGroup value={fee} onChange={setFee} className="grid grid-cols-2 gap-4">
         {FEE_OPTIONS.map((option) => (
           <RadioGroup.Option
+            testdata-id={`fee-option-${option.value}`}
             key={option.value}
             value={option.value}
             className={({ checked }) =>
