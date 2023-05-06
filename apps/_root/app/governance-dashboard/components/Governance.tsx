@@ -6,7 +6,7 @@ import { classNames } from '@sushiswap/ui'
 import React, { useReducer } from 'react'
 
 import { GovernanceItemCard } from './GovernanceItemCard'
-import { GOV_STATUS, governanceItems, GovernanceStatus } from './Overview'
+import { GOV_STATUS, governanceItems, GovernanceStatus } from './overview/Overview'
 
 const DATE_FILTERS = ['Last 30 Days', 'Last 60 Days', 'Last 90 Days', 'All Time']
 const TYPE_FILTERS = ['General', 'Proposal', 'Discussions', 'Temp Check', 'Signal', 'Implementation']

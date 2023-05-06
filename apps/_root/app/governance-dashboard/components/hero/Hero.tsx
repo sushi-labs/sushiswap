@@ -4,7 +4,7 @@ import { Socials } from './Socials'
 import { Stats } from './Stats'
 import { TabList } from './TabList'
 import { KpiReportButton } from './KpiReportButton'
-import { Container } from '../Container'
+import { Container } from '../'
 
 export function Hero() {
   return (

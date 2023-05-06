@@ -5,12 +5,12 @@ import { useQueries } from '@tanstack/react-query'
 import React, { useReducer } from 'react'
 import { SwiperSlide } from 'swiper/react'
 
-import { getLatestsForumPosts } from '../lib/api'
-import { CardNavigation } from './CardNavigation'
-import { EventItemCard } from './EventItem'
-import { FilterButton } from './FilterButton'
-import { GovernanceItemCard } from './GovernanceItemCard'
-import { KpiCard } from './KpiCard'
+import { CardNavigation } from '../CardNavigation'
+import { getLatestsForumPosts } from '../../lib/api'
+import { EventItemCard } from '../EventItemCard'
+import { FilterButton } from '../FilterButton'
+import { GovernanceItemCard } from '../GovernanceItemCard'
+import { KpiCard } from '../KpiCard'
 
 const DATE_FILTERS = ['Last Month', 'Last Quarter', 'Last Year'] as const // TODO: probably query filters and use as params
 type DateFilter = (typeof DATE_FILTERS)[number]
