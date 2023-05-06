@@ -1,3 +1,5 @@
+'use client'
+
 import { LocationMarkerIcon } from '@heroicons/react/solid'
 import { CalendarIcon } from '@sushiswap/ui'
 import React from 'react'

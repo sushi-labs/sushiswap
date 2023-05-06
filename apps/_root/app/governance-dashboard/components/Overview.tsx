@@ -1,7 +1,11 @@
+'use client'
+
 import { classNames } from '@sushiswap/ui'
+import { useQueries } from '@tanstack/react-query'
 import React, { useReducer } from 'react'
 import { SwiperSlide } from 'swiper/react'
 
+import { getLatestsForumPosts } from '../lib/api'
 import { CardNavigation } from './CardNavigation'
 import { EventItemCard } from './EventItem'
 import { FilterButton } from './FilterButton'
@@ -147,6 +151,16 @@ export function Overview() {
   const [filters, dispatch] = useReducer(reducer, INITIAL_FILTERS)
   // TODO: filter on date
   const items = governanceItems.filter((item) => item.type.id === filters.govStatus)
+  // const [{ data: latestPosts, isLoading: isLoadingLatestPosts }] = useQueries({
+  //   queries: [
+  //     {
+  //       queryKey: ['forum', 'latestPosts'],
+  //       queryFn: getLatestsForumPosts,
+  //     },
+  //   ],
+  // })
+
+  // console.log('latestPosts', latestPosts)
 
   return (
     <div className="space-y-20">

@@ -1,3 +1,5 @@
+'use client'
+
 import { classNames } from '@sushiswap/ui'
 import React from 'react'
 

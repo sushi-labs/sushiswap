@@ -1,3 +1,5 @@
+'use client'
+
 import { ChevronLeftIcon, ChevronRightIcon, ExternalLinkIcon } from '@heroicons/react/outline'
 import { CircleIcon } from '@sushiswap/ui'
 import React from 'react'

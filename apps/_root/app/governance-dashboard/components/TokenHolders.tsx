@@ -1,11 +1,12 @@
+'use client'
+
 import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { GenericTable, Link } from '@sushiswap/ui'
 import { useQueries } from '@tanstack/react-query'
 import { createColumnHelper, getCoreRowModel, SortDirection, useReactTable } from '@tanstack/react-table'
-import { gql, request } from 'graphql-request'
 import React, { useMemo, useReducer, useState } from 'react'
 
-import { formatNumber, getSushiPriceUSD } from '../lib/api'
+import { formatNumber, getSushiPriceUSD, getTokenHolders } from '../lib'
 import { FilterButton } from './FilterButton'
 import { KpiCard } from './KpiCard'
 
@@ -16,11 +17,6 @@ type TokenHolder = {
   quantity: number
   ownership: number
   value: number
-}
-
-interface UserGraphRes {
-  balance: string
-  id: string
 }
 
 interface TokenHoldersFilters {
@@ -41,28 +37,6 @@ interface SortAction {
 const columnHelper = createColumnHelper<TokenHolder>()
 
 const TOKEN_HOLDER_FILTERS = [1, 1_000, 10_000, 100_000]
-
-const query = gql`
-  query TokenHolders($where: User_filter, $orderDirection: OrderDirection) {
-    sushi(id: "Sushi") {
-      userCount
-      totalSupply
-    }
-    users(first: 10, orderBy: "balance", where: $where, orderDirection: $orderDirection) {
-      balance
-      id
-    }
-  }
-`
-
-async function getTokenHolders({ balanceFilter, orderDirection }) {
-  return request('https://api.thegraph.com/subgraphs/name/olastenberg/sushi', query, {
-    orderDirection,
-    where: {
-      balance_gt: balanceFilter,
-    },
-  })
-}
 
 function reducer(state: TokenHoldersFilters, action: BalanceFilterAction | SortAction) {
   switch (action.type) {
@@ -95,12 +69,12 @@ export function TokenHolders() {
     ],
   })
   const sushiData = tokenHoldersData?.sushi
-  const userCount: string = sushiData?.userCount ?? '0'
-  const totalSupply: number = Math.trunc(+sushiData?.totalSupply ?? 0) / 1e18
+  const userCount = sushiData?.userCount ?? '0'
+  const totalSupply = sushiData ? Math.trunc(+sushiData.totalSupply ?? 0) / 1e18 : 0
 
   const users = useMemo(
     () =>
-      tokenHoldersData?.users.map((user: UserGraphRes, i: number) => {
+      tokenHoldersData?.users.map((user, i: number) => {
         const balance = Math.trunc(+user.balance) / 1e18
 
         return {
