@@ -59,6 +59,25 @@ export const TokenNotFoundDialog = () => {
             Anyone can create a token, including creating fake versions of existing tokens that claim to represent
             projects. If you purchase this token, you may not be able to sell it back.
           </p>
+          {token0NotInList && !tokenTo?.token && (
+            <List>
+              <List.Label>Token {tokenFrom?.token && tokenTo?.token ? '1' : ''}</List.Label>
+              <List.Control>
+                <p className="p-3 text-sm text-gray-900 dark:text-slate-50">
+                  Could not retrieve token info for{' '}
+                  <a
+                    target="_blank"
+                    href={Chain.from(network0).getTokenUrl(fromCurrency)}
+                    className="text-blue font-medium"
+                    rel="noreferrer"
+                  >
+                    {shortenAddress(fromCurrency)}
+                  </a>{' '}
+                  are you sure this token is on {Chain.from(network0).name}?
+                </p>
+              </List.Control>
+            </List>
+          )}
           {token1NotInList && !tokenTo?.token && (
             <List>
               <List.Label>Token {tokenFrom?.token && tokenTo?.token ? '2' : ''}</List.Label>
@@ -78,7 +97,7 @@ export const TokenNotFoundDialog = () => {
               </List.Control>
             </List>
           )}
-          {tokenFrom?.token && (
+          {token0NotInList && tokenFrom && (
             <List>
               <List.Label>Token {tokenFrom.token && tokenTo?.token ? '1' : ''}</List.Label>
               <List.Control>
@@ -97,7 +116,7 @@ export const TokenNotFoundDialog = () => {
               </List.Control>
             </List>
           )}
-          {tokenTo?.token && (
+          {token1NotInList && tokenTo?.token && (
             <List>
               <List.Label>Token {tokenFrom?.token && tokenTo?.token ? '2' : ''}</List.Label>
               <List.Control>
