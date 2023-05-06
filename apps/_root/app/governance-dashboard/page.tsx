@@ -1,13 +1,37 @@
-import { Tab } from '@headlessui/react'
-import Container from '@sushiswap/ui/future/components/Container'
 import React from 'react'
 
-import { Main, Governance, Hero, Overview, TokenHolders } from './components'
+import {
+  Container,
+  Finance,
+  Governance,
+  Hero,
+  Overview,
+  TabGroup,
+  TabPanel,
+  TabPanels,
+  TokenHolders,
+} from './components'
 
 export default function GovernanceDashboard() {
   return (
-    <Main>
+    <TabGroup>
       <Hero />
-    </Main>
+      <Container maxWidth="6xl" className="mx-auto py-14 px-4">
+        <TabPanels>
+          <TabPanel>
+            <Overview />
+          </TabPanel>
+          <TabPanel>
+            <Finance />
+          </TabPanel>
+          <TabPanel>
+            <Governance />
+          </TabPanel>
+          <TabPanel>
+            <TokenHolders />
+          </TabPanel>
+        </TabPanels>
+      </Container>
+    </TabGroup>
   )
 }

@@ -4,13 +4,14 @@ import { Socials } from './Socials'
 import { Stats } from './Stats'
 import { TabList } from './TabList'
 import { KpiReportButton } from './KpiReportButton'
+import { Container } from '../Container'
 
 export function Hero() {
   return (
     <>
       <div className="h-px bg-gradient-to-r from-[#0993EC]/20 to-[#F338C3]/20" />
       <div className="bg-gradient-to-r from-[#0993EC]/10 to-[#F338C3]/[5%] pt-14">
-        <section className="mx-auto flex max-w-6xl justify-between gap-4 px-4">
+        <Container className="mx-auto flex justify-between gap-4 px-4">
           <div>
             <p className="text-sm font-medium text-slate-400">Last Update: Jan 11, 2023</p> {/** TODO: */}
             <h1 className="mt-3 text-5xl font-bold">
@@ -31,7 +32,7 @@ export function Hero() {
           </div>
 
           <Stats />
-        </section>
+        </Container>
       </div>
     </>
   )
