@@ -34,12 +34,16 @@ export const TokenNotFoundDialog = () => {
 
   const onImport = useCallback(
     ([token0, token1]: (Token | undefined)[]) => {
-      customTokensMutate('add', [token0, token1].filter((el) => el instanceof Token) as Token[])
+      const _tokens = []
+      if (tokenFrom?.status !== 'APPROVED' && token0) _tokens.push(token0)
+      if (tokenTo?.status !== 'APPROVED' && token1) _tokens.push(token1)
+
+      customTokensMutate('add', _tokens)
 
       if (token0) setToken0(token0)
       if (token1) setToken1(token1)
     },
-    [customTokensMutate, setToken0, setToken1]
+    [customTokensMutate, setToken0, setToken1, tokenFrom?.status, tokenTo?.status]
   )
 
   const reset = useCallback(() => {
