@@ -19,6 +19,7 @@ export default function GovernanceDashboard() {
       <Container maxWidth="6xl" className="mx-auto py-14 px-4">
         <TabPanels>
           <TabPanel>
+            {/* @ts-expect-error Async Server Component */}
             <Overview />
           </TabPanel>
           <TabPanel>

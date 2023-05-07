@@ -5,8 +5,53 @@ import { ChevronDownIcon } from '@heroicons/react/solid'
 import { classNames } from '@sushiswap/ui'
 import React, { useReducer } from 'react'
 
+import { GovernanceItem } from '../lib'
+import { GOV_STATUS } from '../lib/constants'
 import { GovernanceItemCard } from './GovernanceItemCard'
-import { GOV_STATUS, governanceItems, GovernanceStatus } from './overview/Overview'
+
+type GovernanceStatus = keyof typeof GOV_STATUS
+const governanceItems = [
+  {
+    type: GOV_STATUS.IMPLEMENTATION,
+    title: 'Sushi Vesting Merkle Tree Clawback',
+    description:
+      "This proposal’s expectation is to produce a community signal. Full details and discussions thus far can be found at: https://forum.sushi.com/t/sushi-vesting-merkle-tree-clawback-temp-check/10008 Synopsis: During the first 6 months of Sushi's liquidity mining a vest was put in place for 2/3rds of accrued Sushi rewards to be locked up and",
+    isActive: true,
+    date: 123123123,
+  },
+  {
+    type: GOV_STATUS.IMPLEMENTATION,
+    title: 'Sushi Vesting Merkle Tree Clawback',
+    description:
+      "This proposal’s expectation is to produce a community signal. Full details and discussions thus far can be found at: https://forum.sushi.com/t/sushi-vesting-merkle-tree-clawback-temp-check/10008 Synopsis: During the first 6 months of Sushi's liquidity mining a vest was put in place for 2/3rds of accrued Sushi rewards to be locked up and",
+    isActive: true,
+    date: 123123123,
+  },
+  {
+    type: GOV_STATUS.DISCUSSION,
+    title: 'Sushi Vesting Merkle Tree Clawback',
+    description:
+      "This proposal’s expectation is to produce a community signal. Full details and discussions thus far can be found at: https://forum.sushi.com/t/sushi-vesting-merkle-tree-clawback-temp-check/10008 Synopsis: During the first 6 months of Sushi's liquidity mining a vest was put in place for 2/3rds of accrued Sushi rewards to be locked up and",
+    isActive: true,
+    date: 123123123,
+  },
+  {
+    type: GOV_STATUS.DISCUSSION,
+    title: 'Sushi Vesting Merkle Tree Clawback',
+    description:
+      "This proposal’s expectation is to produce a community signal. Full details and discussions thus far can be found at: https://forum.sushi.com/t/sushi-vesting-merkle-tree-clawback-temp-check/10008 Synopsis: During the first 6 months of Sushi's liquidity mining a vest was put in place for 2/3rds of accrued Sushi rewards to be locked up and",
+    isActive: true,
+    date: 123123123,
+  },
+  {
+    type: GOV_STATUS.PROPOSAL,
+    title: 'Sushi Vesting Merkle Tree Clawback',
+    description:
+      "This proposal’s expectation is to produce a community signal. Full details and discussions thus far can be found at: https://forum.sushi.com/t/sushi-vesting-merkle-tree-clawback-temp-check/10008 Synopsis: During the first 6 months of Sushi's liquidity mining a vest was put in place for 2/3rds of accrued Sushi rewards to be locked up and",
+    isActive: true,
+    date: 123123123,
+  },
+]
 
 const DATE_FILTERS = ['Last 30 Days', 'Last 60 Days', 'Last 90 Days', 'All Time']
 const TYPE_FILTERS = ['General', 'Proposal', 'Discussions', 'Temp Check', 'Signal', 'Implementation']
@@ -32,23 +77,7 @@ export function Governance() {
   const [filters, dispatch] = useReducer(reducer, INITIAL_FILTERS)
 
   const governanceItemsMapping = governanceItems.reduce(
-    (
-      acc: Record<
-        GovernanceStatus,
-        {
-          type: {
-            id: string
-            title: string
-            color: string
-          }
-          title: string
-          description: string
-          isActive: boolean
-          date: number
-        }[]
-      >,
-      curr
-    ) => {
+    (acc: Record<GovernanceStatus, GovernanceItem[]>, curr) => {
       acc[curr.type.id].push(curr)
       return acc
     },

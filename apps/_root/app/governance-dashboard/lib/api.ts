@@ -2,9 +2,25 @@ import { ChainId } from '@sushiswap/chain'
 import { SUSHI_ADDRESS } from '@sushiswap/currency'
 import { gql, request } from 'graphql-request'
 import type { Address } from 'wagmi'
+import { GOV_STATUS } from './constants'
+
+export interface GovernanceItem {
+  type: {
+    id: string
+    title: string
+    color: string
+  }
+  title: string
+  isActive: boolean
+  // date: string
+  url: string
+}
+type GovernanceStatus = keyof typeof GOV_STATUS
 
 const DISCOURSE_API_KEY = '86fb0ca272612c10eabca94eec66f2d350bd11a10da2eff0744809a0e3cb6eb9' // TODO: env var
 const DISCOURSE_BASE_URL = 'https://forum.sushi.com/'
+const DISCOURSE_PROPOSAL_ID = 8
+const DISCOURSE_DISCUSSION_ID = 10
 
 async function fetchUrl<T>(urlPath: string, options?: RequestInit) {
   const url = new URL(urlPath)
@@ -35,8 +51,78 @@ async function fetchDiscourse<T>(path: string) {
   return data
 }
 
-export async function getLatestsForumPosts() {
-  return fetchDiscourse('posts.json')
+const SNAPSHOT_PROPOSALS_QUERY = gql`
+  query Proposals {
+    proposals(where: { space: "sushigov.eth" }, orderBy: "created", orderDirection: desc) {
+      id
+      title
+      body
+      state
+      author
+      # start
+    }
+  }
+`
+const SNAPSHOT_URL = 'https://hub.snapshot.org/graphql'
+
+export async function getLatestGovernanceItems() {
+  const [forumRes, snapshotRes] = await Promise.all([
+    fetchDiscourse<{
+      topic_list: {
+        topics: {
+          title: string
+          created_at: string
+          category_id: number
+          slug: string
+        }[]
+      }
+    }>('latest.json'),
+    request<{
+      proposals: {
+        id: string
+        title: string
+        body: string
+        state: 'open' | 'closed'
+        author: string
+        // start: number
+      }[]
+    }>(SNAPSHOT_URL, SNAPSHOT_PROPOSALS_QUERY),
+  ])
+
+  const snapshotProposals = snapshotRes.proposals.map((proposal) => ({
+    type: GOV_STATUS.IMPLEMENTATION,
+    title: proposal.title,
+    isActive: proposal.state === 'open',
+    // date: new Date(proposal.start).toString(), // TODO:
+    url: 'https://snapshot.org/#/sushigov.eth/proposal/' + proposal.id,
+  }))
+
+  const forumTopics = forumRes?.topic_list.topics
+    .map((topic) => {
+      if ([DISCOURSE_PROPOSAL_ID, DISCOURSE_DISCUSSION_ID].includes(topic.category_id))
+        return {
+          type: topic.category_id === DISCOURSE_DISCUSSION_ID ? GOV_STATUS.DISCUSSION : GOV_STATUS.PROPOSAL,
+          title: topic.title,
+          isActive: false,
+          // date: topic.created_at,
+          url: 'https://forum.sushi.com/t/' + topic.slug,
+        }
+    })
+    .filter(Boolean) as GovernanceItem[]
+
+  const res = [...snapshotProposals, ...forumTopics].reduce(
+    (acc: Record<GovernanceStatus, GovernanceItem[]>, curr) => {
+      acc[curr.type.id].push(curr)
+      return acc
+    },
+    {
+      IMPLEMENTATION: [],
+      PROPOSAL: [],
+      DISCUSSION: [],
+    }
+  )
+
+  return res
 }
 
 export async function getForumStats() {
