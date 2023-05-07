@@ -6,7 +6,6 @@ import { UpcomingEvents } from './UpcomingEvents'
 import { getLatestGovernanceItems } from '../../lib'
 
 export async function Overview() {
-  // TODO: combine into array or make object
   const latestPosts = (await getLatestGovernanceItems()) ?? []
 
   return (

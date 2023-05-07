@@ -1,9 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI_ADDRESS } from '@sushiswap/currency'
 import { gql, request } from 'graphql-request'
-import type { Address } from 'wagmi'
+
 import { GOV_STATUS } from './constants'
 
+import type { Address } from 'wagmi'
 export interface GovernanceItem {
   type: {
     id: string
@@ -35,9 +36,9 @@ async function fetchUrl<T>(urlPath: string, options?: RequestInit) {
 }
 
 export async function getSushiPriceUSD() {
-  const prices = fetchUrl<{ [key: string]: number }>('https://token-price.sushi.com/v0/1')
+  const prices = await fetchUrl<{ [key: string]: number }>('https://token-price.sushi.com/v0/1')
 
-  return prices[SUSHI_ADDRESS[ChainId.ETHEREUM].toLowerCase()]
+  return prices?.[SUSHI_ADDRESS[ChainId.ETHEREUM].toLowerCase()] ?? 0
 }
 
 async function fetchDiscourse<T>(path: string) {
@@ -100,6 +101,7 @@ export async function getLatestGovernanceItems() {
   const forumTopics = forumRes?.topic_list.topics
     .map((topic) => {
       if ([DISCOURSE_PROPOSAL_ID, DISCOURSE_DISCUSSION_ID].includes(topic.category_id))
+        // TODO: include rest
         return {
           type: topic.category_id === DISCOURSE_DISCUSSION_ID ? GOV_STATUS.DISCUSSION : GOV_STATUS.PROPOSAL,
           title: topic.title,
@@ -141,7 +143,7 @@ export async function getTokenHolders(filters?: { balanceFilter: number; orderDi
         userCount
         totalSupply
       }
-      users(first: 10, orderBy: "balance", where: $where, orderDirection: $orderDirection) {
+      users(first: 10, orderBy: balance, where: $where, orderDirection: $orderDirection) {
         balance
         id
       }
@@ -151,7 +153,7 @@ export async function getTokenHolders(filters?: { balanceFilter: number; orderDi
   return request('https://api.thegraph.com/subgraphs/name/olastenberg/sushi', query, {
     orderDirection: filters?.orderDirection ?? 'desc',
     where: {
-      balance_gt: filters?.balanceFilter ?? 0,
+      balance_gt: filters?.balanceFilter ? (BigInt(1e18) * BigInt(+filters.balanceFilter)).toString() : 0,
     },
   })
 }
