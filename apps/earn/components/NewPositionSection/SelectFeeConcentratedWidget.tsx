@@ -40,6 +40,7 @@ export const SelectFeeConcentratedWidget: FC = memo(function SelectFeeWidget({})
       <RadioGroup value={feeAmount} onChange={setFeeAmount} className="grid grid-cols-2 gap-4">
         {FEE_OPTIONS.map((option) => (
           <RadioGroup.Option
+            testdata-id={`fee-option-${option.value}`}
             key={option.value}
             value={option.value}
             className={({ checked }) =>
@@ -50,10 +51,10 @@ export const SelectFeeConcentratedWidget: FC = memo(function SelectFeeWidget({})
             }
           >
             <div className="flex flex-col">
-              <span className="text-gray-900 dark:text-slate-50 font-medium flex gap-4">
+              <span className="flex gap-4 font-medium text-gray-900 dark:text-slate-50">
                 {option.value / 10000}% Fees{' '}
               </span>
-              <span className="text-gray-500 dark:text-slate-400 text-slate-600 text-sm">{option.subtitle}</span>
+              <span className="text-sm text-gray-500 dark:text-slate-400 text-slate-600">{option.subtitle}</span>
             </div>
           </RadioGroup.Option>
         ))}
