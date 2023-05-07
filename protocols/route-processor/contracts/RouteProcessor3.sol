@@ -11,7 +11,6 @@ import '../interfaces/IWETH.sol';
 import './InputStream.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import "@openzeppelin/contracts/access/Ownable.sol";
-import 'hardhat/console.sol';
 
 address constant NATIVE_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 address constant IMPOSSIBLE_POOL_ADDRESS = 0x0000000000000000000000000000000000000001;
@@ -333,7 +332,6 @@ contract RouteProcessor3 is Ownable {
     uint256 amountInWithFee = amountIn * 997;
     uint256 amountOut = (amountInWithFee * reserveOut) / (reserveIn * 1000 + amountInWithFee);
     (uint256 amount0Out, uint256 amount1Out) = direction == 1 ? (uint256(0), amountOut) : (amountOut, uint256(0));
-    console.log(pool, amountIn, amountOut);
     IUniswapV2Pair(pool).swap(amount0Out, amount1Out, to, new bytes(0));
   }
 
