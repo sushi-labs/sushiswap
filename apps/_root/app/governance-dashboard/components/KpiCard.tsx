@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react'
 interface Kpi {
   title: string
   value: ReactNode
-  additional: ReactNode
+  additional?: ReactNode
 }
 
 export function KpiCard(props: Kpi, index: number) {

@@ -1,33 +1,33 @@
 import React from 'react'
 
-import { formatNumber, getTokenHolders } from '../lib'
+import { formatNumber, getForumStats, getTokenHolders } from '../lib'
 import { KpiCard } from './KpiCard'
 
 export async function HolderSnapshot() {
-  const tokenHolders = await getTokenHolders()
+  const [tokenHolders, forumStats] = await Promise.all([getTokenHolders(), getForumStats()])
   const userCount = tokenHolders?.sushi.userCount ?? '0'
 
   const holderSnapshot = [
     {
       title: 'Community Participants',
-      value: '20.12k',
-      additional: (
-        // TODO: dynamic
-        <dd className="text-sm text-green-400">+33.42% from last quarter</dd>
-      ),
+      value: formatNumber(forumStats?.user_count),
+      // additional: (
+      //   // TODO: dynamic
+      //   <dd className="text-sm text-green-400">+33.42% from last quarter</dd>
+      // ),
     },
     {
       title: 'Token Concentration',
       value: '20.12%',
-      additional: <dd className="text-sm text-green-400">+33.42% from last quarter</dd>,
+      // additional: <dd className="text-sm text-green-400">+33.42% from last quarter</dd>,
     },
     {
       title: 'Token Holders',
       value: formatNumber(+userCount),
-      additional: (
-        // TODO: dynamic
-        <dd className="text-sm text-red-400">-3.42% from last quarter</dd>
-      ),
+      // additional: (
+      //   // TODO: dynamic
+      //   <dd className="text-sm text-red-400">-3.42% from last quarter</dd>
+      // ),
     },
   ]
 

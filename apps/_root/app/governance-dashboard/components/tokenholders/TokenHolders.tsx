@@ -6,9 +6,9 @@ import { useQueries } from '@tanstack/react-query'
 import { createColumnHelper, getCoreRowModel, SortDirection, useReactTable } from '@tanstack/react-table'
 import React, { useMemo, useReducer, useState } from 'react'
 
-import { getSushiPriceUSD, getTokenHolders } from '../lib'
-import { FilterButton } from './FilterButton'
-import { HolderSnapshot } from './HolderSnapshot'
+import { getSushiPriceUSD, getTokenHolders } from '../../lib'
+import { FilterButton } from '../FilterButton'
+import { HolderSnapshot } from '../HolderSnapshot'
 
 type TokenHolder = {
   id: string
@@ -149,6 +149,7 @@ export function TokenHolders() {
 
   return (
     <section className="space-y-14">
+      {/* @ts-expect-error Async Server Component */}
       <HolderSnapshot />
 
       <div className="space-y-8">
