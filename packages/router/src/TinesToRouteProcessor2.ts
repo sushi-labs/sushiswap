@@ -22,7 +22,7 @@ function getTokenType(token: RToken): TokenType {
   return typeof token.chainId == 'string' && token.chainId.startsWith('Bento') ? TokenType.BENTO : TokenType.ERC20
 }
 
-class TinesToRouteProcessor2 {
+export class TinesToRouteProcessor2 {
   routeProcessorAddress: string
   chainId: ChainId
   pools: Map<string, PoolCode>

@@ -42,35 +42,35 @@ const config: HardhatUserConfig = {
   ...defaultConfig,
   networks: {
     ...defaultConfig.networks,
-    // hardhat: {
-    //   forking: {
-    //     enabled: true,
-    //     url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
-    //     blockNumber: 17195000,
-    //   },
-    //   accounts: {
-    //     accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
-    //   },
-    //   chainId: 1,
-    // },
     hardhat: {
-      // polygon
-      // mining: {
-      //   auto: false,
-      //   interval: 0
-      // },
       forking: {
-        enabled: process.env.FORKING === 'true',
-        url: process.env.ALCHEMY_ID
-          ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`
-          : 'https://polygon-mainnet.g.alchemy.com/v2/demo',
-        blockNumber: 42053000,
+        enabled: true,
+        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
+        blockNumber: 17195000,
       },
       accounts: {
-        accountsBalance: '10000000000000000000000000', //(10_000_000 MATIC).
+        accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
       },
-      chainId: 137,
+      chainId: 1,
     },
+    // hardhat: {
+    //   // polygon
+    //   // mining: {
+    //   //   auto: false,
+    //   //   interval: 0
+    //   // },
+    //   forking: {
+    //     enabled: process.env.FORKING === 'true',
+    //     url: process.env.ALCHEMY_ID
+    //       ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`
+    //       : 'https://polygon-mainnet.g.alchemy.com/v2/demo',
+    //     blockNumber: 42053000,
+    //   },
+    //   accounts: {
+    //     accountsBalance: '10000000000000000000000000', //(10_000_000 MATIC).
+    //   },
+    //   chainId: 137,
+    // },
     // ethereum: {
     //   url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     //   accounts,

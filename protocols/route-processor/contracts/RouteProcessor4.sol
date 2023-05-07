@@ -320,6 +320,7 @@ contract RouteProcessor3 is Ownable {
     address pool = stream.readAddress();
     uint8 direction = stream.readUint8();
     address to = stream.readAddress();
+    uint24 fee = stream.readUint24();   // pool fee in 1/1_000_000
 
     (uint256 r0, uint256 r1, ) = IUniswapV2Pair(pool).getReserves();
     require(r0 > 0 && r1 > 0, 'Wrong pool reserves');
@@ -330,8 +331,8 @@ contract RouteProcessor3 is Ownable {
       else IERC20(tokenIn).safeTransferFrom(from, pool, amountIn);
     } else amountIn = IERC20(tokenIn).balanceOf(pool) - reserveIn;  // tokens already were transferred
 
-    uint256 amountInWithFee = amountIn * 997;
-    uint256 amountOut = (amountInWithFee * reserveOut) / (reserveIn * 1000 + amountInWithFee);
+    uint256 amountInWithFee = amountIn * (1_000_000 - fee);
+    uint256 amountOut = (amountInWithFee * reserveOut) / (reserveIn * 1_000_000 + amountInWithFee);
     (uint256 amount0Out, uint256 amount1Out) = direction == 1 ? (uint256(0), amountOut) : (amountOut, uint256(0));
     console.log(pool, amountIn, amountOut);
     IUniswapV2Pair(pool).swap(amount0Out, amount1Out, to, new bytes(0));

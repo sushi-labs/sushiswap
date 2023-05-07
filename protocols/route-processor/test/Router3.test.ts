@@ -189,14 +189,14 @@ async function makeSwap(
   //await checkPoolsState(pcMap, env.user, env.chainId)
 
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
-  // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
-  // console.log(
-  //   'ROUTE:',
-  //   route.legs.map(
-  //     (l) =>
-  //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
-  //   )
-  // )
+  console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
+  console.log(
+    'ROUTE:',
+    route.legs.map(
+      (l) =>
+        `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
+    )
+  )
   if (route.status == RouteStatus.NoWay) return
 
   const rpParams = Router.routeProcessor2Params(
@@ -448,7 +448,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
     )
   })
 
-  it('Native => SUSHI => Native', async function () {
+  it.only('Native => SUSHI => Native', async function () {
     await env.snapshot.restore()
     const usedPools = new Set<string>()
     intermidiateResult[0] = getBigNumber(1000000 * 1e18)
