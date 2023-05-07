@@ -24,7 +24,7 @@ uint160 constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970
 /// @title A route processor for the Sushi Aggregator
 /// @author Ilya Lyalin
 /// version 2.1
-contract RouteProcessor3 is Ownable {
+contract RouteProcessor4 is Ownable {
   using SafeERC20 for IERC20;
   using SafeERC20 for IERC20Permit;
   using InputStream for uint256;
