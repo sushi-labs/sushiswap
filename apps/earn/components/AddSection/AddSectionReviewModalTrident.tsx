@@ -179,7 +179,6 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         let value
         const liquidityInput: LiquidityInput[] = []
         const encoded = defaultAbiCoder.encode(['address'], [address])
-
         if (input0) {
           if (input0.currency.isNative) {
             value = input0.quotient.toString()

@@ -185,6 +185,7 @@ async function createV2Pool(page: Page, args: CreateV2PoolArgs) {
 
   await page.locator('[testdata-id=add-liquidity-token0-input]').fill(args.amount0)
   await page.locator('[testdata-id=add-liquidity-token1-input]').fill(args.amount1)
+  await timeout(1500) // wait for approvals to finish..
 
   approve(page, 'create-trident-approve-bentobox')
   approve(page, `create-trident-approve-token${args.token0.isNative ? 1 : 0}`)
