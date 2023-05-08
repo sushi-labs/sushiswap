@@ -1,5 +1,4 @@
 import '@sushiswap/ui/index.css'
-import '../variables.css'
 
 import { App, ThemeProvider } from '@sushiswap/ui'
 import { Analytics } from '@vercel/analytics/react'
