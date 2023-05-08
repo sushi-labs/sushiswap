@@ -8,13 +8,23 @@ import { useAccount } from 'wagmi'
 
 import { useBalances } from '../../../hooks'
 import { CheckerButton } from './types'
+import dynamic from 'next/dynamic'
 
 export interface AmountsProps extends CheckerButton {
   chainId: number | undefined
   amounts: (Amount<Type> | undefined)[]
 }
 
-export const Amounts: FC<AmountsProps> = ({ amounts, chainId, children, className, variant, fullWidth, as, size }) => {
+export const Component: FC<AmountsProps> = ({
+  amounts,
+  chainId,
+  children,
+  className,
+  variant,
+  fullWidth,
+  as,
+  size,
+}) => {
   const { address } = useAccount()
   const amountsAreDefined = useMemo(() => amounts.every((el) => el?.greaterThan(ZERO)), [amounts])
   const currencies = useMemo(() => amounts.map((amount) => amount?.currency), [amounts])
@@ -61,3 +71,7 @@ export const Amounts: FC<AmountsProps> = ({ amounts, chainId, children, classNam
     return <>{children}</>
   }, [amountsAreDefined, as, children, className, fullWidth, size, sufficientBalance, variant])
 }
+
+export const Amounts = dynamic(() => Promise.resolve(Component), {
+  ssr: false,
+})

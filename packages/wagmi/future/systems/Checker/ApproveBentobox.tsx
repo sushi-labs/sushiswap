@@ -7,6 +7,7 @@ import { ApproveBentoboxController } from '../../components'
 import { Address } from 'wagmi'
 import { Signature } from '@ethersproject/bytes'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import dynamic from 'next/dynamic'
 
 export interface ApproveBentoboxProps extends ButtonProps<'button'> {
   chainId: BentoBoxV1ChainId
@@ -16,7 +17,7 @@ export interface ApproveBentoboxProps extends ButtonProps<'button'> {
   onSignature?: (data: Signature) => void
 }
 
-export const ApproveBentobox: FC<ApproveBentoboxProps> = ({
+export const Component: FC<ApproveBentoboxProps> = ({
   chainId,
   id,
   contract,
@@ -92,3 +93,7 @@ export const ApproveBentobox: FC<ApproveBentoboxProps> = ({
     </ApproveBentoboxController>
   )
 }
+
+export const ApproveBentobox = dynamic(() => Promise.resolve(Component), {
+  ssr: false,
+})

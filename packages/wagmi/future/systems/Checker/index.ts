@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { ComponentType, FC } from 'react'
 
 import { Amounts, AmountsProps } from './Amounts'
 import { Custom, CustomProps } from './Custom'
@@ -11,12 +11,12 @@ import { CheckerProvider as Root, ProviderProps } from './Provider'
 import { ApproveERC20, ApproveERC20Props } from './ApproveERC20'
 
 export type CheckerProps = {
-  Amounts: FC<AmountsProps>
-  Network: FC<NetworkProps>
+  Amounts: ComponentType<AmountsProps>
+  Network: ComponentType<NetworkProps>
   Custom: FC<CustomProps>
-  ApproveERC20: FC<ApproveERC20Props>
-  Connect: FC<ButtonProps<'button'>>
-  ApproveBentobox: FC<ApproveBentoboxProps>
+  ApproveERC20: ComponentType<ApproveERC20Props>
+  Connect: ComponentType<ButtonProps<'button'>>
+  ApproveBentobox: ComponentType<ApproveBentoboxProps>
   Success: FC<SuccessProps>
   Root: FC<ProviderProps>
 }

@@ -8,6 +8,7 @@ import { Address } from 'wagmi'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { classNames } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui/future/components/list/List'
+import dynamic from 'next/dynamic'
 
 export interface ApproveERC20Props extends ButtonProps<'button'> {
   id: string
@@ -16,7 +17,7 @@ export interface ApproveERC20Props extends ButtonProps<'button'> {
   enabled?: boolean
 }
 
-export const ApproveERC20: FC<ApproveERC20Props> = ({
+export const Component: FC<ApproveERC20Props> = ({
   id,
   amount,
   contract,
@@ -170,3 +171,7 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
     </Button>
   )
 }
+
+export const ApproveERC20 = dynamic(() => Promise.resolve(Component), {
+  ssr: false,
+})
