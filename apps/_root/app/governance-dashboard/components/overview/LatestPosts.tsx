@@ -1,22 +1,14 @@
 'use client'
 
 import { classNames } from '@sushiswap/ui'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { useState } from 'react'
 import { SwiperSlide } from 'swiper/react'
 
-import { GOV_STATUS, GovernanceItem } from '../../lib'
+import { DATE_FILTERS, GOV_STATUS, GovernanceItem, GovernanceStatus } from '../../lib'
 import { CardNavigation } from '../CardNavigation'
 import { FilterButton } from '../FilterButton'
 import { GovernanceItemCard } from '../GovernanceItemCard'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-
-const DATE_FILTERS = [
-  { title: 'Last Month', seconds: 60 * 60 * 24 * 30 },
-  { title: 'Last Quarter', seconds: (60 * 60 * 24 * 365) / 4 },
-  { title: 'Last Year', seconds: 60 * 60 * 24 * 365 },
-]
-
-type GovernanceStatus = keyof typeof GOV_STATUS
 
 export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, GovernanceItem[]> }) {
   const [selectedGovType, setSelectedGovType] = useState<GovernanceStatus>('IMPLEMENTATION')
@@ -25,8 +17,8 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
   const searchParams = useSearchParams()
   const params = new URLSearchParams(searchParams)
 
-  function filterDate(filterSeconds: number) {
-    params.set('dateFilter', filterSeconds.toString())
+  function filterDate(filterKey: string) {
+    params.set(DATE_FILTERS.key, filterKey)
     replace(`${pathname}?${params.toString()}`)
   }
 
@@ -35,11 +27,11 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-slate-200">Latest @ Sushi</h2>
         <div className="flex gap-2">
-          {DATE_FILTERS.map((filter) => (
+          {DATE_FILTERS.options.map((filter) => (
             <FilterButton
-              isActive={params.get('dateFilter') === filter.seconds.toString()}
-              key={filter.seconds}
-              onClick={() => filterDate(filter.seconds)}
+              isActive={(params.get(DATE_FILTERS.key) ?? 'all') === filter.key}
+              key={filter.key}
+              onClick={() => filterDate(filter.key)}
             >
               {filter.title}
             </FilterButton>
@@ -75,7 +67,8 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
         </div>
         {Object.keys(posts).map(
           (key) =>
-            key === selectedGovType && (
+            key === selectedGovType &&
+            (posts[key].length ? (
               <CardNavigation
                 key={key}
                 slidesPerView={2}
@@ -89,7 +82,9 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
                   </SwiperSlide>
                 ))}
               </CardNavigation>
-            )
+            ) : (
+              <i className="font-medium text-slate-300">No posts found with the current filters</i>
+            ))
         )}
       </div>
     </section>

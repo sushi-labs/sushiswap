@@ -44,6 +44,7 @@ export function TokenHoldersTable({ users }) {
     })
   }
 
+  // TODO: remove sortable here and add asc/desc sorting buttons
   const [columns] = useState([
     columnHelper.accessor('rank', {
       header: 'Rank',

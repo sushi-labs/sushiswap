@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { SUSHI_ADDRESS } from '@sushiswap/currency'
 import { gql, request } from 'graphql-request'
 
-import { GOV_STATUS } from './constants'
+import { DATE_FILTERS, GOV_STATUS } from './constants'
 
 import type { Address } from 'wagmi'
 export interface GovernanceItem {
@@ -16,7 +16,7 @@ export interface GovernanceItem {
   url: string
   category: string
 }
-type GovernanceStatus = keyof typeof GOV_STATUS
+export type GovernanceStatus = keyof typeof GOV_STATUS
 
 const DISCOURSE_API_KEY = '86fb0ca272612c10eabca94eec66f2d350bd11a10da2eff0744809a0e3cb6eb9' // TODO: env var
 const DISCOURSE_BASE_URL = 'https://forum.sushi.com/'
@@ -53,7 +53,17 @@ async function fetchDiscourse<T>(path: string) {
 
 const SNAPSHOT_URL = 'https://hub.snapshot.org/graphql'
 
-export async function getLatestGovernanceItems(filters?: { dateFilter: string }) {
+export async function getLatestGovernanceItems(filters?: {
+  dateFilter: 'month' | 'quarter' | 'year' | 'all'
+  sortForumPosts?: 'created' | 'activity' | 'default'
+}) {
+  const filterSeconds = filters
+    ? DATE_FILTERS.options.find((option) => option.key === filters.dateFilter)?.seconds
+    : null
+
+  const forumParams = filters?.sortForumPosts ? new URLSearchParams({ order: filters.sortForumPosts }) : ''
+  const forumUrl = `latest.json?${forumParams.toString()}`
+
   const query = gql`
     query Proposals($after: Int) {
       proposals(where: { space: "sushigov.eth", created_gte: $after }, orderBy: "created", orderDirection: desc) {
@@ -76,7 +86,7 @@ export async function getLatestGovernanceItems(filters?: { dateFilter: string })
           slug: string
         }[]
       }
-    }>('latest.json'),
+    }>(forumUrl),
     fetchDiscourse<{
       category_list: {
         categories: {
@@ -93,7 +103,7 @@ export async function getLatestGovernanceItems(filters?: { dateFilter: string })
         state: 'open' | 'closed'
         author: string
       }[]
-    }>(SNAPSHOT_URL, query, { after: filters ? Math.floor(new Date().getTime() / 1000) - +filters.dateFilter : null }),
+    }>(SNAPSHOT_URL, query, { after: filterSeconds ? Math.floor(new Date().getTime() / 1000) - filterSeconds : null }),
   ])
 
   const snapshotProposals = snapshotRes.proposals.map((proposal) => ({
@@ -107,10 +117,10 @@ export async function getLatestGovernanceItems(filters?: { dateFilter: string })
   const forumTopics =
     forumTopicsRes?.topic_list.topics
       .filter((t) => {
-        if (filters?.dateFilter) {
+        if (filterSeconds) {
           const topicCreationDateSeconds = Math.floor(new Date(t.created_at).getTime() / 1000)
           const nowSeconds = Math.floor(new Date().getTime() / 1000)
-          const filterFrom = nowSeconds - +filters.dateFilter
+          const filterFrom = nowSeconds - filterSeconds
 
           if (topicCreationDateSeconds < filterFrom) return false
         }
@@ -146,7 +156,11 @@ export async function getLatestGovernanceItems(filters?: { dateFilter: string })
 }
 
 export async function getForumStats() {
-  const data = await fetchDiscourse<{ about: { stats: { user_count: number; topic_count: number } } }>('about.json')
+  const data = await fetchDiscourse<{
+    about: {
+      stats: { user_count: number; active_users_7_days: number; active_users_30_days: number; topic_count: number }
+    }
+  }>('about.json')
 
   return data?.about.stats
 }

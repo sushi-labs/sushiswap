@@ -5,8 +5,8 @@ import { getLatestGovernanceItems } from '../lib'
 import { GOV_STATUS } from '../lib/constants'
 import { GovernanceFilters } from './GovernanceFilters'
 
-export default async function Governance() {
-  const governanceItemsMapping = (await getLatestGovernanceItems()) ?? []
+export default async function Governance({ searchParams }) {
+  const governanceItemsMapping = (await getLatestGovernanceItems(searchParams)) ?? []
 
   return (
     <section className="space-y-10">

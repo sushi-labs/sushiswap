@@ -2,106 +2,78 @@
 
 import { Listbox } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import React from 'react'
 
-import React, { useReducer } from 'react'
+import { DATE_FILTERS } from '../lib'
 
-const DATE_FILTERS = ['Last 30 Days', 'Last 60 Days', 'Last 90 Days', 'All Time']
-const TYPE_FILTERS = ['General', 'Proposal', 'Discussions', 'Temp Check', 'Signal', 'Implementation']
-const SORT_OPTIONS = ['Recent Activity', 'Published Lately', 'Hottest Topics']
-
-const INITIAL_FILTERS = {
-  dateFilter: 'Last 30 Days',
-  typeFilter: ['General'],
-  sortBy: 'Recent Activity',
-}
-
-function reducer(
-  state: { dateFilter: string; typeFilter: string[]; sortBy: string },
-  { type, payload }: { type: string; payload: string | string[] }
-) {
-  return {
-    ...state,
-    [type]: payload,
-  }
+const SORT_OPTIONS = {
+  key: 'sortForumPosts',
+  options: [
+    { title: 'Recent Activity', key: 'activity' },
+    { title: 'Published Lately', key: 'created' },
+    { title: 'Hottest Topics', key: 'default' },
+  ],
 }
 
 export function GovernanceFilters() {
-  const [filters, dispatch] = useReducer(reducer, INITIAL_FILTERS)
+  const { replace } = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const params = new URLSearchParams(searchParams)
 
-  // TODO: put filters in url
+  const selectedDateFilter =
+    DATE_FILTERS.options.find((o) => o.key === params.get(DATE_FILTERS.key)) ?? DATE_FILTERS.options[3]
+
+  function filterDate(filterKey: string) {
+    filterKey === 'all' ? params.delete(DATE_FILTERS.key) : params.set(DATE_FILTERS.key, filterKey)
+    replace(`${pathname}?${params.toString()}`)
+  }
+
+  const selectedSortOption =
+    SORT_OPTIONS.options.find((o) => o.key === params.get(SORT_OPTIONS.key)) ?? SORT_OPTIONS.options[0]
+
+  function sortForumPosts(sortKey: string) {
+    params.set(SORT_OPTIONS.key, sortKey)
+    replace(`${pathname}?${params.toString()}`)
+  }
 
   return (
     <div className="flex gap-2">
-      <Listbox value={filters.sortBy} onChange={(sortBy) => dispatch({ type: 'sortBy', payload: sortBy })}>
+      <Listbox value={selectedSortOption} onChange={(sortBy) => sortForumPosts(sortBy.key)}>
         <div className="relative mt-1 text-sm font-medium text-slate-300">
           <Listbox.Button className="relative flex h-[42px] w-full items-center gap-2 rounded-lg bg-slate-800 px-3 text-left">
-            <span className="block truncate">Sort By: {filters.sortBy}</span>
+            <span className="block truncate">Sort By: {selectedSortOption.title}</span>
             <ChevronDownIcon className="h-5 w-5 text-slate-400" aria-hidden="true" />
           </Listbox.Button>
           <Listbox.Options className="absolute mt-2 w-full rounded-lg bg-slate-800 py-1">
-            {SORT_OPTIONS.map((option) => (
+            {SORT_OPTIONS.options.map((option) => (
               <Listbox.Option
-                key={option}
+                key={option.key}
                 value={option}
                 className="flex h-9 items-center rounded-lg px-3 hover:cursor-default hover:bg-slate-700"
               >
-                {option}
+                {option.title}
               </Listbox.Option>
             ))}
           </Listbox.Options>
         </div>
       </Listbox>
-      <Listbox
-        value={filters.typeFilter}
-        onChange={(typeFilter) => dispatch({ type: 'typeFilter', payload: typeFilter })}
-        multiple
-      >
-        <div className="relative mt-1 text-sm font-medium text-slate-300">
-          <Listbox.Button className="relative flex h-[42px] w-full items-center gap-2 rounded-lg bg-slate-800 px-3 text-left">
-            <span className="block truncate">Filter By: Type</span>
-            <ChevronDownIcon className="h-5 w-5 text-slate-400" aria-hidden="true" />
-          </Listbox.Button>
-          <Listbox.Options className="absolute mt-2 w-full rounded-lg bg-slate-800 py-1">
-            {TYPE_FILTERS.map((option) => (
-              <Listbox.Option
-                key={option}
-                value={option}
-                className="flex h-9 items-center gap-2 rounded-lg px-3 hover:cursor-default hover:bg-slate-700"
-              >
-                {({ selected }) => (
-                  <>
-                    <input
-                      type="checkbox"
-                      checked={selected}
-                      className="h-3 w-3 rounded-sm border bg-transparent focus:border"
-                      onChange={() => null}
-                    />
 
-                    {option}
-                  </>
-                )}
-              </Listbox.Option>
-            ))}
-          </Listbox.Options>
-        </div>
-      </Listbox>
-      <Listbox
-        value={filters.dateFilter}
-        onChange={(dateFilter) => dispatch({ type: 'dateFilter', payload: dateFilter })}
-      >
+      <Listbox value={selectedDateFilter} onChange={(dateFilter) => filterDate(dateFilter.key)}>
         <div className="relative mt-1 text-sm font-medium text-slate-300">
           <Listbox.Button className="relative flex h-[42px] w-full items-center gap-2 rounded-lg bg-slate-800 px-3 text-left">
-            <span className="block truncate">Filter By: {filters.dateFilter}</span>
+            <span className="block truncate">Filter By: {selectedDateFilter.title}</span>
             <ChevronDownIcon className="h-5 w-5 text-slate-400" aria-hidden="true" />
           </Listbox.Button>
           <Listbox.Options className="absolute mt-2 w-full rounded-lg bg-slate-800 py-1">
-            {DATE_FILTERS.map((option) => (
+            {DATE_FILTERS.options.map((option) => (
               <Listbox.Option
-                key={option}
+                key={option.title}
                 value={option}
                 className="flex h-9 items-center rounded-lg px-3 hover:cursor-default hover:bg-slate-700"
               >
-                {option}
+                {option.title}
               </Listbox.Option>
             ))}
           </Listbox.Options>
