@@ -4,7 +4,7 @@ import { ChevronLeftIcon, ChevronRightIcon, ExternalLinkIcon } from '@heroicons/
 import { CircleIcon } from '@sushiswap/ui'
 import React from 'react'
 
-import { KpiCard } from './KpiCard'
+import { KpiCard } from '../components'
 
 const treasuryKpis = [
   {
@@ -63,7 +63,7 @@ const quarterlyKpis = [
   },
 ]
 
-export function Finance() {
+export default function Finance() {
   return (
     <div className="space-y-20">
       <section className="space-y-14">

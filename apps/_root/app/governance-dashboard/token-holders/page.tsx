@@ -2,7 +2,7 @@ import React from 'react'
 
 import { HolderSnapshot } from '../components/HolderSnapshot'
 import { getSushiPriceUSD, getTokenHolders } from '../lib'
-import { TokenHoldersTable } from './components/TokenHoldersTable'
+import { TokenHoldersTable } from './TokenHoldersTable'
 
 export default async function TokenHolders({ searchParams }) {
   const [tokenHoldersData, sushiPrice] = await Promise.all([getTokenHolders(searchParams), getSushiPriceUSD()])

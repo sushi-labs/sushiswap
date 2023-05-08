@@ -3,7 +3,7 @@ import React from 'react'
 import { GovernanceItemCard } from '../components'
 import { getLatestGovernanceItems } from '../lib'
 import { GOV_STATUS } from '../lib/constants'
-import { GovernanceFilters } from './components/GovernanceFilters'
+import { GovernanceFilters } from './GovernanceFilters'
 
 export default async function Governance() {
   const governanceItemsMapping = (await getLatestGovernanceItems()) ?? []

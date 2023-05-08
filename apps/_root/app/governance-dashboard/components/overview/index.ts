@@ -1,1 +1,2 @@
-export * from './Overview'
+export * from './LatestPosts'
+export * from './UpcomingEvents'

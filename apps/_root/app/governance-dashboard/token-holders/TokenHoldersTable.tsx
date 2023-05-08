@@ -6,8 +6,8 @@ import { createColumnHelper, getCoreRowModel, SortDirection, useReactTable } fro
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { useState, useTransition } from 'react'
 
-import { FilterButton } from '../../components/FilterButton'
-import { formatNumber } from '../../lib'
+import { FilterButton } from '../components/FilterButton'
+import { formatNumber } from '../lib'
 
 type TokenHolder = {
   id: string
