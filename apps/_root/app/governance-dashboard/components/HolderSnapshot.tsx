@@ -10,11 +10,20 @@ export async function HolderSnapshot() {
   const holderSnapshot = [
     {
       title: 'Community Participants',
-      value: formatNumber(forumStats?.user_count),
-      // additional: (
-      //   // TODO: dynamic
-      //   <dd className="text-sm text-green-400">+33.42% from last quarter</dd>
-      // ),
+      value: (
+        <div className="grid grid-cols-3">
+          <span>{formatNumber(forumStats?.user_count)}</span>
+          <span>{formatNumber(forumStats?.active_users_7_days)}</span>
+          <span>{formatNumber(forumStats?.active_users_30_days)}</span>
+        </div>
+      ),
+      additional: (
+        <div className="grid grid-cols-3 text-xs text-slate-500">
+          <span>Total</span>
+          <span>Last 7 days</span>
+          <span>Last 30 days</span>
+        </div>
+      ),
     },
     {
       title: 'Token Concentration',
