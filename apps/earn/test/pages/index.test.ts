@@ -12,8 +12,6 @@ export async function approve(page: Page, locator: string) {
     .catch(() => console.log('already approved or not needed'))
 }
 
-
-
 enum PoolType {
   V2 = 'V2',
   V3 = 'V3',
@@ -54,80 +52,74 @@ const USDC = new Token({
 })
 
 // Tests will only work for polygon atm
-// test.describe('Create/Add V3', () => {
-//   test.beforeEach(async ({ page }) => {
-//     const url = (process.env.PLAYWRIGHT_URL as string).concat('/add').concat(`?chainId=${CHAIN_ID}`)
-//     await page.goto(url)
-//     await switchNetwork(page, CHAIN_ID)
-    
-//   })
+test.describe('Create/Add V3', () => {
+  test.beforeEach(async ({ page }) => {
+    const url = (process.env.PLAYWRIGHT_URL as string).concat('/add').concat(`?chainId=${CHAIN_ID}`)
+    await page.goto(url)
+    await switchNetwork(page, CHAIN_ID)
+  })
 
-//   test('Create V3 pool', async ({ page }) => {
-//     await createOrAddLiquidityV3(page, {
-//       token0: NATIVE_TOKEN,
-//       token1: USDC,
-//       startPrice: '0.5',
-//       minPrice: '0.1',
-//       maxPrice: '0.9',
-//       amount: '0.001',
-//       amountBelongsToToken0: false,
-//     })
-//   })
+  test('Create V3 pool', async ({ page }) => {
+    await createOrAddLiquidityV3(page, {
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      startPrice: '0.5',
+      minPrice: '0.1',
+      maxPrice: '0.9',
+      amount: '0.001',
+      amountBelongsToToken0: false,
+    })
+  })
 
-//   test('Add liquidity to V3, both sides', async ({ page }) => {
-//     await createOrAddLiquidityV3(page, {
-//       token0: NATIVE_TOKEN,
-//       token1: USDC,
-//       minPrice: '0.3',
-//       maxPrice: '0.7',
-//       amount: '0.0001',
-//       amountBelongsToToken0: false,
-//     })
-//   })
+  test('Add liquidity to V3, both sides', async ({ page }) => {
+    await createOrAddLiquidityV3(page, {
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      minPrice: '0.3',
+      maxPrice: '0.7',
+      amount: '0.0001',
+      amountBelongsToToken0: false,
+    })
+  })
 
-//   test('Add liquidity to V3, only one side(ETH)', async ({ page }) => {
-//     await createOrAddLiquidityV3(page, {
-//       token0: NATIVE_TOKEN,
-//       token1: USDC,
-//       minPrice: '0.7',
-//       maxPrice: '0.9',
-//       amount: '1',
-//       amountBelongsToToken0: true,
-//     })
-//   })
+  test('Add liquidity to V3, only one side(ETH)', async ({ page }) => {
+    await createOrAddLiquidityV3(page, {
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      minPrice: '0.7',
+      maxPrice: '0.9',
+      amount: '1',
+      amountBelongsToToken0: true,
+    })
+  })
 
-//   test('Add liquidity to V3, only one side(DAI)', async ({ page }) => {
-//     await createOrAddLiquidityV3(page, {
-//       token0: NATIVE_TOKEN,
-//       token1: USDC,
-//       minPrice: '0.2',
-//       maxPrice: '0.4',
-//       amount: '0.0001',
-//       amountBelongsToToken0: false,
-//     })
-//   })
+  test('Add liquidity to V3, only one side(USDC)', async ({ page }) => {
+    await createOrAddLiquidityV3(page, {
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      minPrice: '0.2',
+      maxPrice: '0.4',
+      amount: '0.0001',
+      amountBelongsToToken0: false,
+    })
+  })
 
-//   test('Remove V3 liquidity', async ({ page }) => {
-//     // const url = (process.env.PLAYWRIGHT_URL as string)
-//     // await page.goto(url)
-//     // await switchNetwork(page, CHAIN_ID)
-//     await removeLiquidityV3(page)
-//   })
-
-// })
-
+  test('Remove V3 liquidity', async ({ page }) => {
+    await removeLiquidityV3(page)
+  })
+})
 
 // Tests will only work for polygon atm
 test.describe('Create/Add V2', () => {
   test.beforeEach(async ({ page }) => {
-
     const url = (process.env.PLAYWRIGHT_URL as string).concat(`/add/v2/${CHAIN_ID}`)
     await page.goto(url)
     await switchNetwork(page, CHAIN_ID)
   })
-  
+
   test('Create', async ({ page }) => {
-    await createOrAddV2Pool(page, { // 0.01% fee is not created at block 42259027
+    await createOrAddV2Pool(page, {
+      // 0.01% fee is not created at block 42259027
       token0: NATIVE_TOKEN,
       token1: USDC,
       amount0: '0.0001',
@@ -137,9 +129,9 @@ test.describe('Create/Add V2', () => {
     })
   })
 
-  
   test('Add liquidity', async ({ page }) => {
-    await createOrAddV2Pool(page, { // 0.01% fee is not created at block 42259027
+    await createOrAddV2Pool(page, {
+      // 0.01% fee is not created at block 42259027
       token0: NATIVE_TOKEN,
       token1: USDC,
       amount0: '0.0001',
@@ -148,7 +140,6 @@ test.describe('Create/Add V2', () => {
       type: 'ADD',
     })
   })
-  
 })
 
 async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
@@ -187,9 +178,6 @@ async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
 
-
-
-
 async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
   await handleToken(page, args.token0, 'FIRST')
   await handleToken(page, args.token1, 'SECOND')
@@ -203,17 +191,20 @@ async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
   await page.locator('[testdata-id=add-liquidity-token1-input]').fill(args.amount1)
   await timeout(1500) // wait for approvals to finish..
 
-  const approveBentoId = args.type === 'CREATE' ? 'create-trident-approve-bentobox' : 'add-liquidity-trident-approve-bentobox'
+  const approveBentoId =
+    args.type === 'CREATE' ? 'create-trident-approve-bentobox' : 'add-liquidity-trident-approve-bentobox'
   approve(page, approveBentoId)
-  const approveTokenId = args.type === 'CREATE' ? `create-trident-approve-token${args.token0.isNative ? 1 : 0}` : `add-liquidity-trident-approve-token${args.token0.isNative ? 1 : 0}`
+  const approveTokenId =
+    args.type === 'CREATE'
+      ? `create-trident-approve-token${args.token0.isNative ? 1 : 0}`
+      : `add-liquidity-trident-approve-token${args.token0.isNative ? 1 : 0}`
   approve(page, approveTokenId)
 
-  const reviewSelector = args.type === 'CREATE' ? '[testdata-id=create-pool-button]' : '[testdata-id=add-liquidity-button]'
+  const reviewSelector =
+    args.type === 'CREATE' ? '[testdata-id=create-pool-button]' : '[testdata-id=add-liquidity-button]'
   const reviewButton = page.locator(reviewSelector)
   expect(reviewButton).toBeVisible()
   await reviewButton.click()
-  
-
 
   const confirmButton = page.locator('[testdata-id=confirm-add-liquidity-button]')
   expect(confirmButton).toBeVisible()
@@ -224,21 +215,20 @@ async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
 
-
-
-
 async function removeLiquidityV3(page: Page) {
-
+  const url = (process.env.PLAYWRIGHT_URL as string)
+  await page.goto(url)
+  await switchNetwork(page, CHAIN_ID)
   await page.locator('[testdata-id=my-positions-button]').click()
-  
+
   await timeout(2000) // wait for positions to load in..
-  
-  await page.getByRole('link', { name: '1.11359 10.0491 Current: 0.499992 USDC per WMATIC' }).click()
-  
+
+  await page.locator('div:nth-child(2) > div > table > tbody > tr > td > a').first().click()
+  await timeout(4500) // wait for positions page to load
+
   await page.locator('[testdata-id=decrease-liquidity-button]').click()
   await page.locator('[testdata-id=liquidity-max-button]').click()
   await page.locator('[testdata-id=remove-or-add-liquidity-button]').click()
-  
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
@@ -259,7 +249,7 @@ async function handleToken(page: Page, currency: Type, order: 'FIRST' | 'SECOND'
       }]`
     )
     .click()
-    await timeout(500)
+  await timeout(500)
 }
 
 async function switchNetwork(page: Page, chainId: number) {
