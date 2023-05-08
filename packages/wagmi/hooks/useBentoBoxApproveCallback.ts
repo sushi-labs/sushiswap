@@ -1,5 +1,5 @@
 import { Signature, splitSignature } from '@ethersproject/bytes'
-import { AddressZero } from '@ethersproject/constants'
+import { AddressZero, HashZero } from '@ethersproject/constants'
 import { getBentoBoxContractConfig } from './useBentoBoxContract'
 import { useCallback, useMemo, useState } from 'react'
 import {
@@ -40,9 +40,7 @@ export function useBentoBoxApproveCallback({
     chainId,
     functionName: 'setMasterContractApproval',
     args:
-      !!masterContract && !!address && signature
-        ? [address, masterContract, true, signature.v, signature.r as Address, signature.s as Address]
-        : undefined,
+      !!masterContract && !!address && signature ? [address, masterContract, true, 0, HashZero, HashZero] : undefined,
     enabled: Boolean(enabled && !!masterContract && !!address && signature && chainId),
   })
 
