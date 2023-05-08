@@ -39,9 +39,8 @@ export function useBentoBoxApproveCallback({
     ...(chainId ? getBentoBoxContractConfig(chainId) : {}),
     chainId,
     functionName: 'setMasterContractApproval',
-    args:
-      !!masterContract && !!address && signature ? [address, masterContract, true, 0, HashZero, HashZero] : undefined,
-    enabled: Boolean(enabled && !!masterContract && !!address && signature && chainId),
+    args: !!masterContract && !!address ? [address, masterContract, true, 0, HashZero, HashZero] : undefined,
+    enabled: Boolean(enabled && !!masterContract && !!address && chainId),
   })
 
   const { writeAsync, data, isLoading: isWritePending } = useContractWrite(config)
