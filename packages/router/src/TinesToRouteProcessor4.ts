@@ -9,7 +9,7 @@ class TinesToRouteProcessor4 extends TinesToRouteProcessor2 {
     super(routeProcessorAddress, chainId, pools)
   }
 
-  swapCode(leg: RouteLeg, route: MultiRoute, toAddress: string): string {
+  override swapCode(leg: RouteLeg, route: MultiRoute, toAddress: string): string {
     const pc = this.getPoolCode(leg)
     const to = this.getPoolOutputAddress(leg, route, toAddress)
     return pc.getSwapCodeForRouteProcessor4(leg, route, to)

@@ -16,6 +16,7 @@ import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { PoolCode } from './pools/PoolCode'
 import { getRouteProcessorCode } from './TinesToRouteProcessor'
 import { getRouteProcessor2Code, PermitData } from './TinesToRouteProcessor2'
+import { getRouteProcessor4Code } from './TinesToRouteProcessor4'
 
 function TokenToRToken(t: Type): RToken {
   if (t instanceof Token) return t as RToken
@@ -187,6 +188,31 @@ export class Router {
       amountOutMin,
       to,
       routeCode: getRouteProcessor2Code(route, RPAddr, to, poolCodesMap, permits),
+      value: fromToken instanceof Token ? undefined : route.amountInBN,
+    }
+  }
+
+  static routeProcessor4Params(
+    poolCodesMap: Map<string, PoolCode>,
+    route: MultiRoute,
+    fromToken: Type,
+    toToken: Type,
+    to: string,
+    RPAddr: string,
+    permits: PermitData[] = [],
+    maxPriceImpact = 0.005
+  ): RPParams {
+    const tokenIn = fromToken instanceof Token ? fromToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const tokenOut = toToken instanceof Token ? toToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const amountOutMin = route.amountOutBN.mul(getBigNumber((1 - maxPriceImpact) * 1_000_000)).div(1_000_000)
+
+    return {
+      tokenIn,
+      amountIn: route.amountInBN,
+      tokenOut,
+      amountOutMin,
+      to,
+      routeCode: getRouteProcessor4Code(route, RPAddr, to, poolCodesMap, permits),
       value: fromToken instanceof Token ? undefined : route.amountInBN,
     }
   }
