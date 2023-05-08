@@ -13,15 +13,14 @@ export interface GovernanceItem {
   }
   title: string
   isActive: boolean
-  // date: string
   url: string
+  category: string
 }
 type GovernanceStatus = keyof typeof GOV_STATUS
 
 const DISCOURSE_API_KEY = '86fb0ca272612c10eabca94eec66f2d350bd11a10da2eff0744809a0e3cb6eb9' // TODO: env var
 const DISCOURSE_BASE_URL = 'https://forum.sushi.com/'
 const DISCOURSE_PROPOSAL_ID = 8
-const DISCOURSE_DISCUSSION_ID = 10
 
 async function fetchUrl<T>(urlPath: string, options?: RequestInit) {
   const url = new URL(urlPath)
@@ -52,22 +51,22 @@ async function fetchDiscourse<T>(path: string) {
   return data
 }
 
-const SNAPSHOT_PROPOSALS_QUERY = gql`
-  query Proposals {
-    proposals(where: { space: "sushigov.eth" }, orderBy: "created", orderDirection: desc) {
-      id
-      title
-      body
-      state
-      author
-      # start
-    }
-  }
-`
 const SNAPSHOT_URL = 'https://hub.snapshot.org/graphql'
 
-export async function getLatestGovernanceItems() {
-  const [forumRes, snapshotRes] = await Promise.all([
+export async function getLatestGovernanceItems(filters?: { dateFilter: string }) {
+  const query = gql`
+    query Proposals($after: Int) {
+      proposals(where: { space: "sushigov.eth", created_gte: $after }, orderBy: "created", orderDirection: desc) {
+        id
+        title
+        body
+        state
+        author
+      }
+    }
+  `
+
+  const [forumTopicsRes, forumCategoriesRes, snapshotRes] = await Promise.all([
     fetchDiscourse<{
       topic_list: {
         topics: {
@@ -78,6 +77,14 @@ export async function getLatestGovernanceItems() {
         }[]
       }
     }>('latest.json'),
+    fetchDiscourse<{
+      category_list: {
+        categories: {
+          id: number
+          name: string
+        }[]
+      }
+    }>('categories.json'),
     request<{
       proposals: {
         id: string
@@ -85,32 +92,43 @@ export async function getLatestGovernanceItems() {
         body: string
         state: 'open' | 'closed'
         author: string
-        // start: number
       }[]
-    }>(SNAPSHOT_URL, SNAPSHOT_PROPOSALS_QUERY),
+    }>(SNAPSHOT_URL, query, { after: filters ? Math.floor(new Date().getTime() / 1000) - +filters.dateFilter : null }),
   ])
 
   const snapshotProposals = snapshotRes.proposals.map((proposal) => ({
     type: GOV_STATUS.IMPLEMENTATION,
     title: proposal.title,
     isActive: proposal.state === 'open',
-    // date: new Date(proposal.start).toString(), // TODO:
     url: 'https://snapshot.org/#/sushigov.eth/proposal/' + proposal.id,
+    category: GOV_STATUS.IMPLEMENTATION.title,
   }))
 
-  const forumTopics = forumRes?.topic_list.topics
-    .map((topic) => {
-      if ([DISCOURSE_PROPOSAL_ID, DISCOURSE_DISCUSSION_ID].includes(topic.category_id))
-        // TODO: include rest
+  const forumTopics =
+    forumTopicsRes?.topic_list.topics
+      .filter((t) => {
+        if (filters?.dateFilter) {
+          const topicCreationDateSeconds = Math.floor(new Date(t.created_at).getTime() / 1000)
+          const nowSeconds = Math.floor(new Date().getTime() / 1000)
+          const filterFrom = nowSeconds - +filters.dateFilter
+
+          if (topicCreationDateSeconds < filterFrom) return false
+        }
+        return true
+      })
+      .map((topic) => {
+        const topicType = topic.category_id === DISCOURSE_PROPOSAL_ID ? GOV_STATUS.PROPOSAL : GOV_STATUS.DISCUSSION
+
         return {
-          type: topic.category_id === DISCOURSE_DISCUSSION_ID ? GOV_STATUS.DISCUSSION : GOV_STATUS.PROPOSAL,
+          type: topicType,
           title: topic.title,
           isActive: false,
-          // date: topic.created_at,
           url: 'https://forum.sushi.com/t/' + topic.slug,
+          category:
+            forumCategoriesRes?.category_list.categories.find((category) => category.id === topic.category_id)?.name ??
+            topicType.title,
         }
-    })
-    .filter(Boolean) as GovernanceItem[]
+      }) ?? []
 
   const res = [...snapshotProposals, ...forumTopics].reduce(
     (acc: Record<GovernanceStatus, GovernanceItem[]>, curr) => {

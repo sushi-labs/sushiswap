@@ -1,34 +1,34 @@
 'use client'
 
 import { classNames } from '@sushiswap/ui'
-import React, { useReducer } from 'react'
+import React, { useState } from 'react'
 import { SwiperSlide } from 'swiper/react'
 
 import { GOV_STATUS, GovernanceItem } from '../../lib'
 import { CardNavigation } from '../CardNavigation'
 import { FilterButton } from '../FilterButton'
 import { GovernanceItemCard } from '../GovernanceItemCard'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
-const DATE_FILTERS = ['Last Month', 'Last Quarter', 'Last Year'] as const // TODO: probably query filters and use as params
-type DateFilter = (typeof DATE_FILTERS)[number]
+const DATE_FILTERS = [
+  { title: 'Last Month', seconds: 60 * 60 * 24 * 30 },
+  { title: 'Last Quarter', seconds: (60 * 60 * 24 * 365) / 4 },
+  { title: 'Last Year', seconds: 60 * 60 * 24 * 365 },
+]
+
 type GovernanceStatus = keyof typeof GOV_STATUS
-type DateDispatch = { type: 'date'; payload: DateFilter }
-type GovStatusDispatch = { type: 'govStatus'; payload: GovernanceStatus }
-
-const INITIAL_FILTERS = {
-  date: 'Last Month',
-  govStatus: 'IMPLEMENTATION',
-}
-
-function reducer(state: { date: string; govStatus: string }, { type, payload }: DateDispatch | GovStatusDispatch) {
-  return {
-    ...state,
-    [type]: payload,
-  }
-}
 
 export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, GovernanceItem[]> }) {
-  const [filters, dispatch] = useReducer(reducer, INITIAL_FILTERS)
+  const [selectedGovType, setSelectedGovType] = useState<GovernanceStatus>('IMPLEMENTATION')
+  const { replace } = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const params = new URLSearchParams(searchParams)
+
+  function filterDate(filterSeconds: number) {
+    params.set('dateFilter', filterSeconds.toString())
+    replace(`${pathname}?${params.toString()}`)
+  }
 
   return (
     <section className="space-y-8">
@@ -37,11 +37,11 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
         <div className="flex gap-2">
           {DATE_FILTERS.map((filter) => (
             <FilterButton
-              isActive={filters.date === filter}
-              key={filter}
-              onClick={() => dispatch({ type: 'date', payload: filter })}
+              isActive={params.get('dateFilter') === filter.seconds.toString()}
+              key={filter.seconds}
+              onClick={() => filterDate(filter.seconds)}
             >
-              {filter}
+              {filter.title}
             </FilterButton>
           ))}
         </div>
@@ -52,13 +52,13 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
             <div
               className={classNames(
                 'relative rounded-t-2xl hover:cursor-pointer',
-                filters.govStatus === key
+                selectedGovType === key
                   ? 'bg-gradient-to-r from-[#0993EC] to-[#F338C3] px-0.5 pt-0.5'
                   : 'eae-in-out transition-transform hover:-translate-y-1',
                 i && '-mt-4'
               )}
               key={key}
-              onClick={() => dispatch({ type: 'govStatus', payload: key as GovernanceStatus })}
+              onClick={() => setSelectedGovType(key as GovernanceStatus)}
               style={{ zIndex: i + 1 }}
             >
               <div className="flex items-center justify-between gap-10 rounded-t-2xl bg-gradient-to-b from-[#212939] to-[#101728] px-5 py-5 pb-10">
@@ -75,7 +75,7 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
         </div>
         {Object.keys(posts).map(
           (key) =>
-            key === filters.govStatus && (
+            key === selectedGovType && (
               <CardNavigation
                 key={key}
                 slidesPerView={2}

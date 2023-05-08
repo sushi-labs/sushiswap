@@ -3,8 +3,8 @@ import React from 'react'
 import { HolderSnapshot, LatestPosts, UpcomingEvents } from './components'
 import { getLatestGovernanceItems } from './lib'
 
-export async function Overview() {
-  const latestPosts = (await getLatestGovernanceItems()) ?? []
+export default async function Overview({ searchParams }) {
+  const latestPosts = (await getLatestGovernanceItems(searchParams)) ?? []
 
   return (
     <div className="space-y-20">
