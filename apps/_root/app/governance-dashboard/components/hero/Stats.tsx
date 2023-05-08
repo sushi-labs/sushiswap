@@ -41,7 +41,7 @@ export async function Stats() {
                 <span className="text-2xl font-bold">{formatNumber(+userCount)}</span>
               </div>
               <div className="flex flex-col gap-1 text-right">
-                <label className="text-sm text-slate-400">Total Proposal</label>
+                <label className="text-sm text-slate-400">Total Proposals</label>
                 <span className="text-2xl font-bold">{formatNumber(forumStats?.topic_count)}</span>
               </div>
             </div>
