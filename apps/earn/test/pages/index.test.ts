@@ -20,14 +20,16 @@ enum PoolType {
   STABLE = 'STABLE',
 }
 
-interface CreateV2PoolArgs {
+interface V2PoolArgs {
   token0: Type
   token1: Type
   amount0: string
   amount1: string
+  fee: string
+  type: 'CREATE' | 'ADD'
 }
 
-interface V3Args {
+interface V3PoolArgs {
   token0: Type
   token1: Type
   startPrice?: string
@@ -124,18 +126,32 @@ test.describe('Create/Add V2', () => {
     await switchNetwork(page, CHAIN_ID)
   })
   
-  test('Create V2', async ({ page }) => {
-    await createV2Pool(page, {
+  test('Create', async ({ page }) => {
+    await createOrAddV2Pool(page, { // 0.01% fee is not created at block 42259027
       token0: NATIVE_TOKEN,
       token1: USDC,
       amount0: '0.0001',
       amount1: '0.0001',
+      fee: '1',
+      type: 'CREATE',
+    })
+  })
+
+  
+  test('Add liquidity', async ({ page }) => {
+    await createOrAddV2Pool(page, { // 0.01% fee is not created at block 42259027
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      amount0: '0.0001',
+      amount1: '0.0001',
+      fee: '5',
+      type: 'ADD',
     })
   })
   
 })
 
-async function createOrAddLiquidityV3(page: Page, args: V3Args) {
+async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
   await handleToken(page, args.token0, 'FIRST')
   await handleToken(page, args.token1, 'SECOND')
   await timeout(3000) // wait for token to be selected.. Find a better way to do this
@@ -174,33 +190,36 @@ async function createOrAddLiquidityV3(page: Page, args: V3Args) {
 
 
 
-async function createV2Pool(page: Page, args: CreateV2PoolArgs) {
+async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
   await handleToken(page, args.token0, 'FIRST')
   await handleToken(page, args.token1, 'SECOND')
   await timeout(3000) // wait for token to be selected.. Find a better way to do this
 
   await page.locator('[testdata-id=pool-type-classic-pool]').click()
-  await page.locator('[testdata-id=fee-option-1]').click()
+  await page.locator(`[testdata-id=fee-option-${args.fee}]`).click()
   await timeout(2500) // wait for start price to be available.. Find a better way to do this
 
   await page.locator('[testdata-id=add-liquidity-token0-input]').fill(args.amount0)
   await page.locator('[testdata-id=add-liquidity-token1-input]').fill(args.amount1)
   await timeout(1500) // wait for approvals to finish..
 
-  approve(page, 'create-trident-approve-bentobox')
-  approve(page, `create-trident-approve-token${args.token0.isNative ? 1 : 0}`)
+  const approveBentoId = args.type === 'CREATE' ? 'create-trident-approve-bentobox' : 'add-liquidity-trident-approve-bentobox'
+  approve(page, approveBentoId)
+  const approveTokenId = args.type === 'CREATE' ? `create-trident-approve-token${args.token0.isNative ? 1 : 0}` : `add-liquidity-trident-approve-token${args.token0.isNative ? 1 : 0}`
+  approve(page, approveTokenId)
 
-  const reviewButton = page.locator('[testdata-id=create-pool-button]')
+  const reviewSelector = args.type === 'CREATE' ? '[testdata-id=create-pool-button]' : '[testdata-id=add-liquidity-button]'
+  const reviewButton = page.locator(reviewSelector)
   expect(reviewButton).toBeVisible()
   await reviewButton.click()
+  
 
 
   const confirmButton = page.locator('[testdata-id=confirm-add-liquidity-button]')
   expect(confirmButton).toBeVisible()
   await confirmButton.click()
-  await timeout(1500) // wait
 
-  const expectedText = `(Created the ${args.token0.symbol}/${args.token1.symbol} liquidity pool)`
+  const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`
   const regex = new RegExp(expectedText)
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }

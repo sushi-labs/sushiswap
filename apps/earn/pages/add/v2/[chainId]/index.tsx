@@ -403,7 +403,7 @@ const _Add: FC<AddProps> = ({
                                 fullWidth
                                 onClick={() => setOpen(true)}
                                 size="xl"
-                                testdata-id="confirm-add-liquidity-button"
+                                testdata-id="add-liquidity-button"
                               >
                                 {title}
                               </Button>
@@ -452,7 +452,7 @@ const _Add: FC<AddProps> = ({
                                 fullWidth
                                 onClick={() => setOpen(true)}
                                 size="md"
-                                testdata-id="confirm-add-liquidity-button"
+                                testdata-id="add-liquidity-button"
                               >
                                 {title}
                               </Button>
@@ -506,7 +506,7 @@ const _Add: FC<AddProps> = ({
                                 fullWidth
                                 onClick={() => setOpen(true)}
                                 size="md"
-                                testdata-id="confirm-add-liquidity-button"
+                                testdata-id="create-pool-button"
                               >
                                 {title}
                               </Button>
