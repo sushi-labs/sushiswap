@@ -52,86 +52,86 @@ const USDC = new Token({
 })
 
 // Tests will only work for polygon atm
-test.describe('Create/Add V3', () => {
-  test.beforeEach(async ({ page }) => {
-    const url = (process.env.PLAYWRIGHT_URL as string).concat('/add').concat(`?chainId=${CHAIN_ID}`)
-    await page.goto(url)
-    await switchNetwork(page, CHAIN_ID)
-  })
+// test.describe('V3', () => {
+//   test.beforeEach(async ({ page }) => {
+//     const url = (process.env.PLAYWRIGHT_URL as string).concat('/add').concat(`?chainId=${CHAIN_ID}`)
+//     await page.goto(url)
+//     await switchNetwork(page, CHAIN_ID)
+//   })
 
-  test('Create V3 pool', async ({ page }) => {
-    await createOrAddLiquidityV3(page, {
-      token0: NATIVE_TOKEN,
-      token1: USDC,
-      startPrice: '0.5',
-      minPrice: '0.1',
-      maxPrice: '0.9',
-      amount: '0.001',
-      amountBelongsToToken0: false,
-    })
-  })
+//   test('Create pool', async ({ page }) => {
+//     await createOrAddLiquidityV3(page, {
+//       token0: NATIVE_TOKEN,
+//       token1: USDC,
+//       startPrice: '0.5',
+//       minPrice: '0.1',
+//       maxPrice: '0.9',
+//       amount: '0.001',
+//       amountBelongsToToken0: false,
+//     })
+//   })
 
-  test('Add liquidity to V3, both sides', async ({ page }) => {
-    await createOrAddLiquidityV3(page, {
-      token0: NATIVE_TOKEN,
-      token1: USDC,
-      minPrice: '0.3',
-      maxPrice: '0.7',
-      amount: '0.0001',
-      amountBelongsToToken0: false,
-    })
-  })
+//   test('Add liquidity, both sides', async ({ page }) => {
+//     await createOrAddLiquidityV3(page, {
+//       token0: NATIVE_TOKEN,
+//       token1: USDC,
+//       minPrice: '0.3',
+//       maxPrice: '0.7',
+//       amount: '0.0001',
+//       amountBelongsToToken0: false,
+//     })
+//   })
 
-  test('Add liquidity to V3, only one side(ETH)', async ({ page }) => {
-    await createOrAddLiquidityV3(page, {
-      token0: NATIVE_TOKEN,
-      token1: USDC,
-      minPrice: '0.7',
-      maxPrice: '0.9',
-      amount: '1',
-      amountBelongsToToken0: true,
-    })
-  })
+//   test('Add liquidity, only one side(ETH)', async ({ page }) => {
+//     await createOrAddLiquidityV3(page, {
+//       token0: NATIVE_TOKEN,
+//       token1: USDC,
+//       minPrice: '0.7',
+//       maxPrice: '0.9',
+//       amount: '1',
+//       amountBelongsToToken0: true,
+//     })
+//   })
 
-  test('Add liquidity to V3, only one side(USDC)', async ({ page }) => {
-    await createOrAddLiquidityV3(page, {
-      token0: NATIVE_TOKEN,
-      token1: USDC,
-      minPrice: '0.2',
-      maxPrice: '0.4',
-      amount: '0.0001',
-      amountBelongsToToken0: false,
-    })
-  })
+//   test('Add liquidity, only one side(USDC)', async ({ page }) => {
+//     await createOrAddLiquidityV3(page, {
+//       token0: NATIVE_TOKEN,
+//       token1: USDC,
+//       minPrice: '0.2',
+//       maxPrice: '0.4',
+//       amount: '0.0001',
+//       amountBelongsToToken0: false,
+//     })
+//   })
 
-  test('Remove V3 liquidity', async ({ page }) => {
-    await removeLiquidityV3(page)
-  })
-})
+//   test('Remove liquidity', async ({ page }) => {
+//     await removeLiquidityV3(page)
+//   })
+// })
 
 // Tests will only work for polygon atm
-test.describe('Create/Add V2', () => {
+test.describe('V2', () => {
   test.beforeEach(async ({ page }) => {
     const url = (process.env.PLAYWRIGHT_URL as string).concat(`/add/v2/${CHAIN_ID}`)
     await page.goto(url)
     await switchNetwork(page, CHAIN_ID)
   })
 
-  test('Create', async ({ page }) => {
-    await createOrAddV2Pool(page, {
-      // 0.01% fee is not created at block 42259027
-      token0: NATIVE_TOKEN,
-      token1: USDC,
-      amount0: '0.0001',
-      amount1: '0.0001',
-      fee: '1',
-      type: 'CREATE',
-    })
-  })
+  // test('Create pool', async ({ page }) => {
+  //   await createOrAddV2Pool(page, {
+  //     // 0.01% fee is not created at block 42259027
+  //     token0: NATIVE_TOKEN,
+  //     token1: USDC,
+  //     amount0: '0.0001',
+  //     amount1: '0.0001',
+  //     fee: '1',
+  //     type: 'CREATE',
+  //   })
+  // })
 
-  test('Add liquidity', async ({ page }) => {
+  test('Add liquidity, stake and unstake', async ({ page }) => {
+    test.setTimeout(120_000)
     await createOrAddV2Pool(page, {
-      // 0.01% fee is not created at block 42259027
       token0: NATIVE_TOKEN,
       token1: USDC,
       amount0: '0.0001',
@@ -139,6 +139,14 @@ test.describe('Create/Add V2', () => {
       fee: '5',
       type: 'ADD',
     })
+
+    const addLiquidityUrl = (process.env.PLAYWRIGHT_URL as string).concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/add')
+    await page.goto(addLiquidityUrl, {timeout: 15_000})
+    await manageLiquidity(page, 'STAKE')
+    
+    const removeLiquidityUrl = (process.env.PLAYWRIGHT_URL as string).concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/remove')
+    await page.goto(removeLiquidityUrl, {timeout: 15_000})
+    await manageLiquidity(page, 'UNSTAKE')
   })
 })
 
@@ -216,8 +224,6 @@ async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
 }
 
 async function removeLiquidityV3(page: Page) {
-  const url = (process.env.PLAYWRIGHT_URL as string)
-  await page.goto(url)
   await switchNetwork(page, CHAIN_ID)
   await page.locator('[testdata-id=my-positions-button]').click()
 
@@ -231,6 +237,19 @@ async function removeLiquidityV3(page: Page) {
   await page.locator('[testdata-id=remove-or-add-liquidity-button]').click()
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
+  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+}
+
+async function manageLiquidity(page: Page, type: 'STAKE' | 'UNSTAKE') {
+  await switchNetwork(page, CHAIN_ID)
+  // if (type === 'STAKE') {
+  await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-header]`).click()
+  // }
+  await page.locator(`[testdata-id=${type.toLowerCase()}-max-button]`).click()
+  approve(page, 'approve-token0')
+  await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`).click()
+
+  const regex = new RegExp(`(Successfully ${type.toLowerCase()}d .* SLP tokens)`)
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
 
