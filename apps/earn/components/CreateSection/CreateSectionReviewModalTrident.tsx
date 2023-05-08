@@ -35,6 +35,8 @@ import {
 import { AddSectionReviewModal } from '../AddSection'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import Button from '@sushiswap/ui/future/components/button/Button'
+import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { APPROVE_TAG_CREATE_TRIDENT } from '../../lib/constants'
 
 interface CreateSectionReviewModalTridentProps {
   chainId: BentoBoxV1ChainId
@@ -65,6 +67,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
 }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
+  const { approved } = useApproved(APPROVE_TAG_CREATE_TRIDENT)
   const contract = useTridentRouterContract(chainId)
   const constantProductPoolFactory = useConstantProductPoolFactoryContract(chainId)
   const stablePoolFactory = useStablePoolFactoryContract(chainId)
@@ -267,12 +270,18 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
       setPermit(undefined)
       close()
     },
-    enabled: open,
+    enabled: approved,
   })
 
   return (
     <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} close={close}>
-      <Button size="xl" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()} testdata-id='confirm-add-liquidity-button'>
+      <Button
+        size="xl"
+        disabled={isWritePending}
+        fullWidth
+        onClick={() => sendTransaction?.()}
+        testdata-id="confirm-add-liquidity-button"
+      >
         {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
       </Button>
     </AddSectionReviewModal>

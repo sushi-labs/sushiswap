@@ -27,7 +27,7 @@ import { createToast } from '@sushiswap/ui/future/components/toast'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { APPROVE_TAG_TRIDENT } from './AddSectionTrident'
+import { APPROVE_TAG_ADD_TRIDENT } from '../../lib/constants'
 
 interface AddSectionReviewModalTridentProps {
   poolAddress: string
@@ -62,7 +62,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
 }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
-  const { approved } = useApproved(APPROVE_TAG_TRIDENT)
+  const { approved } = useApproved(APPROVE_TAG_ADD_TRIDENT)
   const liquidityToken = useMemo(() => {
     return new Token({
       address: poolAddress.includes(':') ? poolAddress.split(':')[1] : poolAddress,

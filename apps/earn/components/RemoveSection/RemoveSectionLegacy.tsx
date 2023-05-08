@@ -28,17 +28,16 @@ import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { APPROVE_TAG_ADD_LEGACY, APPROVE_TAG_REMOVE_LEGACY } from '../../lib/constants'
 
 interface RemoveSectionLegacyProps {
   pool: Pool
 }
 
-const APPROVE_TAG = 'approve-remove-legacy'
-
 export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot(({ pool: _pool }) => {
   const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
   const { chain } = useNetwork()
-  const { approved } = useApproved(APPROVE_TAG)
+  const { approved } = useApproved(APPROVE_TAG_REMOVE_LEGACY)
   const isMounted = useIsMounted()
   const { address } = useAccount()
   const deadline = useTransactionDeadline(_pool.chainId)
@@ -234,6 +233,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
     chainId: _pool.chainId,
     prepare,
     onSettled,
+    enabled: approved,
   })
 
   return (
@@ -275,7 +275,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
                     getSushiSwapRouterContractConfig(_pool.chainId as UniswapV2Router02ChainId).address as Address
                   }
                 >
-                  <Checker.Success tag={APPROVE_TAG}>
+                  <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
                     <Button
                       onClick={() => sendTransaction?.()}
                       fullWidth

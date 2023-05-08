@@ -18,8 +18,7 @@ import { ZERO } from '@sushiswap/math'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Signature } from '@ethersproject/bytes'
 import { Button } from '@sushiswap/ui/future/components/button'
-
-export const APPROVE_TAG_TRIDENT = 'approve-tag-trident'
+import { APPROVE_TAG_ADD_TRIDENT } from '../../lib/constants'
 
 export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const [open, setOpen] = useState(false)
@@ -164,7 +163,7 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                       contract={bentoBoxV1Address[chainId]}
                       enabled={isBentoBoxV1ChainId(chainId)}
                     >
-                      <Checker.Success tag={APPROVE_TAG_TRIDENT}>
+                      <Checker.Success tag={APPROVE_TAG_ADD_TRIDENT}>
                         <Button fullWidth onClick={() => setOpen(true)} size="xl">
                           Add Liquidity
                         </Button>

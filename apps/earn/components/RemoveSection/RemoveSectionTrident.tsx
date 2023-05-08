@@ -37,12 +37,11 @@ import { createToast } from '@sushiswap/ui/future/components/toast'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 import Button from '@sushiswap/ui/future/components/button/Button'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { APPROVE_TAG_REMOVE_TRIDENT } from '../../lib/constants'
 
 interface RemoveSectionTridentProps {
   pool: Pool
 }
-
-const APPROVE_TAG = 'approve-remove-trident'
 
 export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRoot(({ pool: _pool }) => {
   const chainId = _pool.chainId as BentoBoxV1ChainId
@@ -50,7 +49,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
   const { chain } = useNetwork()
   const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
   const isMounted = useIsMounted()
-  const { approved } = useApproved(APPROVE_TAG)
+  const { approved } = useApproved(APPROVE_TAG_REMOVE_TRIDENT)
   const contract = useTridentRouterContract(_pool.chainId)
   const [permit, setPermit] = useState<Signature>()
   const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
@@ -252,6 +251,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
     chainId: _pool.chainId,
     prepare,
     onSettled,
+    enabled: approved,
   })
 
   return (
@@ -308,7 +308,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
                     amount={slpAmountToRemove}
                     contract={getTridentRouterContractConfig(_pool.chainId).address}
                   >
-                    <Checker.Success tag={APPROVE_TAG}>
+                    <Checker.Success tag={APPROVE_TAG_REMOVE_TRIDENT}>
                       <Button
                         onClick={() => sendTransaction?.()}
                         fullWidth

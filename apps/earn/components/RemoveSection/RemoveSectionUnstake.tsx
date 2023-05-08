@@ -12,14 +12,13 @@ import { useSWRConfig } from 'swr'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import Button from '@sushiswap/ui/future/components/button/Button'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { APPROVE_TAG_UNSTAKE } from '../../lib/constants'
 
 interface AddSectionStakeProps {
   pool: Pool
   chefType: ChefType
   farmId: number
 }
-
-const APPROVE_TAG = 'approve-unstake'
 
 export const RemoveSectionUnstake: FC<{ poolId: string }> = ({ poolId }) => {
   const isMounted = useIsMounted()
@@ -46,7 +45,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot((
     data: { reserve0, reserve1, liquidityToken },
   } = useGraphPool(pool)
   const { balance } = usePoolPositionStaked()
-  const { approved } = useApproved(APPROVE_TAG)
+  const { approved } = useApproved(APPROVE_TAG_UNSTAKE)
   const amount = useMemo(() => {
     return tryParseAmount(value, liquidityToken)
   }, [liquidityToken, value])
@@ -86,7 +85,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot((
               contract={getMasterChefContractConfig(pool.chainId, chefType)?.address}
               enabled={Boolean(getMasterChefContractConfig(pool.chainId, chefType)?.address)}
             >
-              <Checker.Success tag={APPROVE_TAG}>
+              <Checker.Success tag={APPROVE_TAG_UNSTAKE}>
                 <Button
                   onClick={() => sendTransaction?.()}
                   fullWidth

@@ -10,8 +10,7 @@ import { AddSectionReviewModalLegacy } from './AddSectionReviewModalLegacy'
 import { AddSectionWidget } from './AddSectionWidget'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
-
-export const APPROVE_TAG_LEGACY = 'approve-tag-legacy'
+import { APPROVE_TAG_ADD_LEGACY } from '../../lib/constants'
 
 export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const chainId = _pool.chainId as UniswapV2Router02ChainId
@@ -107,7 +106,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                     amount={parsedInput1}
                     contract={getSushiSwapRouterContractConfig(chainId).address as Address}
                   >
-                    <Checker.Success tag={APPROVE_TAG_LEGACY}>
+                    <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
                       <Button fullWidth onClick={() => setOpen(true)} size="xl">
                         Add Liquidity
                       </Button>
