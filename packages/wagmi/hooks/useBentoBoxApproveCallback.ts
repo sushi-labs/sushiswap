@@ -77,18 +77,6 @@ export function useBentoBoxApproveCallback({
   }, [isLoading, isBentoBoxApproved, signature, isWritePending, isWaitPending])
 
   const legacyApproval = useCallback(async () => {
-    console.log(
-      !address,
-      !(chainId && isBentoBoxV1ChainId(chainId)),
-      !masterContract,
-      approvalState !== ApprovalState.NOT_APPROVED,
-      !writeAsync,
-      !address ||
-        !(chainId && isBentoBoxV1ChainId(chainId)) ||
-        !masterContract ||
-        approvalState !== ApprovalState.NOT_APPROVED ||
-        !writeAsync
-    )
     if (
       !address ||
       !(chainId && isBentoBoxV1ChainId(chainId)) ||
@@ -138,7 +126,6 @@ export function useBentoBoxApproveCallback({
     }
 
     // Use regular approvals for safe apps
-    console.log(connector)
     if (connector && connector.id === 'safe') {
       return await legacyApproval()
     }
