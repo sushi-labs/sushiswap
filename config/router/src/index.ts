@@ -327,6 +327,7 @@ export const ADDITIONAL_BASES: {
   [ChainId.FANTOM]: {
     [FRAX_ADDRESS[ChainId.FANTOM]]: [FXS[ChainId.FANTOM]],
     [FXS_ADDRESS[ChainId.FANTOM]]: [FRAX[ChainId.FANTOM]],
+    [FOUR_ADDRESS[ChainId.POLYGON]]: [DAI, WFTM, WBTC, LINK, SNX, CRV, WBTC, YFI, XSUSHI, WETH[ChainId.FANTOM]],
   },
   [ChainId.BSC]: {
     [FRAX_ADDRESS[ChainId.BSC]]: [FXS[ChainId.BSC]],
