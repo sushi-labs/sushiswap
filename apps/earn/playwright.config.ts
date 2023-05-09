@@ -2,6 +2,12 @@ import type { PlaywrightTestConfig } from '@playwright/test'
 import { devices } from '@playwright/test'
 import path from 'path'
 
+// Use process.env.PORT by default and fallback to port 3000
+const PORT = process.env.PORT || 3000
+
+// Set webServer.url and use.baseURL with the location of the WebServer respecting the correct set port
+const baseURL = `http://localhost:${PORT}`
+
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -73,17 +79,22 @@ const config: PlaywrightTestConfig = {
     //     ...devices['iPhone 12'],
     //   },
     // },
-
   ],
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */
   outputDir: 'test/results/',
 
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   port: 3000,
-  // },
+  // Run your local dev server before starting the tests:
+  // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
+  webServer: {
+    command: 'npm run start',
+    port: 3000,
+    timeout: 120 * 1000,
+    reuseExistingServer: !process.env.CI,
+    env: {
+      NEXT_PUBLIC_TEST: 'true',
+    },
+  },
 }
 
 export default config

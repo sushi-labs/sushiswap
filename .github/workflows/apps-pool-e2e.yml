@@ -1,11 +1,12 @@
-name: Sushi - apps / swap / e2e
+name: Sushi - apps / pool / e2e
 
 on:
   pull_request:
     types: [opened, synchronize]
     paths:
-      - ".github/workflows/apps-swap-e2e.yml"
-      - "apps/swap/**"
+      - ".github/workflows/apps-pool-e2e.yml"
+      - "apps/earn/**"
+      - "config/graph/**"
       - "config/nextjs/**"
       - "config/react-query/**"
       - "config/router/**"
@@ -18,7 +19,7 @@ on:
 defaults:
   run:
     # change this if your nextjs app does not live at the root of the repo
-    working-directory: ./apps/swap
+    working-directory: ./apps/earn
 
 # https://playwright.dev/docs/ci#sharding
 
@@ -88,7 +89,7 @@ jobs:
             NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
             ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
             NEXT_PUBLIC_TEST: true
-            PLAYWRIGHT_URL: http://localhost:3000/swap
+            PLAYWRIGHT_URL: http://localhost:3000/pools
             CHAIN_ID: 137
           working-directory: .
 

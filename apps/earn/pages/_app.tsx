@@ -50,7 +50,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="mask-icon" href="/pools/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/pools/favicon.ico?v=1" />
       </Head>
-
       <WagmiConfig client={client}>
         <QueryClientProvider client={queryClient}>
           <ThemeProvider>
@@ -60,13 +59,13 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
                   <DefaultSeo {...SEO} />
                   <Header />
                   <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
-                  </App.Shell>
+                </App.Shell>
               </HistoryProvider>
             </Onramper.Provider>
           </ThemeProvider>
         </QueryClientProvider>
       </WagmiConfig>
-      <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
+      <Script strategy="afterInteractive" src={'https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF'} />
       <Script
         id="gtag-init"
         strategy="afterInteractive"

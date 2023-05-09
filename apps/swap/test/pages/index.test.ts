@@ -15,6 +15,11 @@ const wnative = native.wrapped
 const usdc = USDC[CHAIN_ID as keyof typeof USDC]
 const sushi = SUSHI[CHAIN_ID as keyof typeof SUSHI]
 
+async function switchNetwork(page: Page, chainId: number) {
+  await page.getByRole('button', { name: 'Ethereum' }).click()
+  await page.locator(`[testdata-id=network-selector-${chainId}]`).click()
+}
+
 test.slow()
 
 test.beforeEach(async ({ page }) => {
@@ -23,16 +28,12 @@ test.beforeEach(async ({ page }) => {
   })
 
   await page.goto(PLAYWRIGHT_URL)
+  await switchNetwork(page, CHAIN_ID)
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
-  // console.log('Swapping', native.symbol, 'to', usdc.symbol, 'on', chainName[CHAIN_ID], 'chain')
   await swap(page, native, usdc, '1')
-  // console.log('Swapped', native.symbol, 'to', usdc.symbol, 'on', chainName[CHAIN_ID], 'chain')
-
-  // console.log('Swapping', usdc.symbol, 'to', native.symbol, 'on', chainName[CHAIN_ID], 'chain')
   await swap(page, usdc, native, '1', true)
-  // console.log('Swapped', usdc.symbol, 'to', native.symbol, 'on', chainName[CHAIN_ID], 'chain')
 })
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
