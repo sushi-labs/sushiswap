@@ -92,6 +92,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot((
                   size="xl"
                   variant="filled"
                   disabled={!approved || isWritePending}
+                  testId="unstake-liquidity"
                 >
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Unstake Liquidity'}
                 </Button>

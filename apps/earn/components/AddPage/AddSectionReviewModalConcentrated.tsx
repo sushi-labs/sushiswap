@@ -76,10 +76,10 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
       {children({ open, setOpen })}
       <Dialog open={open} unmount={false} onClose={close} variant="opaque">
         <div className="max-w-[504px] mx-auto">
-          <button onClick={close} className="pl-0 p-3">
+          <button onClick={close} className="p-3 pl-0">
             <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
           </button>
-          <div className="flex justify-between gap-4 items-start py-2">
+          <div className="flex items-start justify-between gap-4 py-2">
             <div className="flex flex-col flex-grow gap-1">
               <h1 className="text-3xl font-semibold text-gray-900 dark:text-slate-50">
                 {token0?.symbol}/{token1?.symbol}
@@ -98,8 +98,8 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
             </div>
           </div>
           {/*{warningSeverity(trade?.priceImpact) >= 3 && (*/}
-          {/*  <div className="rounded-xl px-4 py-3 bg-red/20 mt-4">*/}
-          {/*    <span className="text-red-600 font-medium text-sm">*/}
+          {/*  <div className="px-4 py-3 mt-4 rounded-xl bg-red/20">*/}
+          {/*    <span className="text-sm font-medium text-red-600">*/}
           {/*      High price impact. You will lose a significant portion of your funds in this trade due to price impact.*/}
           {/*    </span>*/}
           {/*  </div>*/}
@@ -210,6 +210,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                     disabled={isWritePending || Boolean(isLoading) || isError}
                     color={isError ? 'red' : 'blue'}
                     testId='confirm-add-liquidity'
+                    type='button'
                   >
                     {isError ? (
                       'Shoot! Something went wrong :('

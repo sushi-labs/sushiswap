@@ -37,7 +37,7 @@ export const SelectFeeConcentratedWidget: FC = memo(function SelectFeeWidget({})
         </>
       }
     >
-      <RadioGroup value={feeAmount} onChange={setFeeAmount} className="grid grid-cols-2 gap-4">
+      <RadioGroup value={feeAmount} onChange={setFeeAmount} className="grid grid-cols-2 gap-4" disabled={!token0 || !token1}>
         {FEE_OPTIONS.map((option) => (
           <RadioGroup.Option
             testdata-id={`fee-option-${option.value}`}

@@ -315,6 +315,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
                         size="xl"
                         variant="filled"
                         disabled={!approved || isWritePending}
+                        testId='remove-liquidity-trident'
                       >
                         {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
                       </Button>

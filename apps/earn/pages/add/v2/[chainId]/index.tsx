@@ -326,7 +326,7 @@ const _Add: FC<AddProps> = ({
               setPoolType(type)
             }}
           />
-          <SelectFeeWidget fee={fee} setFee={setFee} />
+          <SelectFeeWidget fee={fee} setFee={setFee}/>
         </>
       )}
 
