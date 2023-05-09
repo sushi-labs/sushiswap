@@ -117,8 +117,8 @@ export class ConstantProductRPool extends RPool {
   calcOutByInReal(amountIn: number, direction: boolean): number {
     const x = direction ? this.reserve0Number : this.reserve1Number
     const y = direction ? this.reserve1Number : this.reserve0Number
-    const amountInWithoutFee = Math.floor(amountIn * (1 - this.fee)) // rounding of amount without fee
-    const out = (y * amountInWithoutFee) / (x + amountInWithoutFee)
+    const amountInWithoutFee = Math.floor(amountIn * (1 - this.fee) * 1000) // rounding of amount without fee
+    const out = (y * amountInWithoutFee) / (x * 1000 + amountInWithoutFee)
     return Math.floor(out) // rounding of output
   }
 

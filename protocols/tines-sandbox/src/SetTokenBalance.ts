@@ -1,4 +1,5 @@
-import { setStorageAt } from '@nomicfoundation/hardhat-network-helpers'
+import { getStorageAt, setStorageAt } from '@nomicfoundation/hardhat-network-helpers'
+import { NumberLike } from '@nomicfoundation/hardhat-network-helpers/dist/src/types'
 import { erc20Abi } from '@sushiswap/abi'
 import { BigNumber, Contract } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
@@ -17,15 +18,18 @@ const TokenProxyMap: Record<string, string> = {
 const cache: Record<string, number> = {}
 
 export async function setTokenBalance(token: string, user: string, balance: bigint): Promise<boolean> {
-  const setStorage = async (slotNumber: number) => {
+  const setStorage = async (slotNumber: number, value0: NumberLike, value1: NumberLike) => {
     // Solidity mapping
     const slotData = '0x' + user.padStart(64, '0') + Number(slotNumber).toString(16).padStart(64, '0')
     const slot = keccak256(slotData)
-    await setStorageAt(token, slot, balance)
+    const previousValue0 = await getStorageAt(token, slot)
+    await setStorageAt(token, slot, value0)
     // Vyper mapping
     const slotData2 = '0x' + Number(slotNumber).toString(16).padStart(64, '0') + user.padStart(64, '0')
     const slot2 = keccak256(slotData2)
-    await setStorageAt(token, slot2, balance)
+    const previousValue1 = await getStorageAt(token, slot)
+    await setStorageAt(token, slot2, value1)
+    return [previousValue0, previousValue1]
   }
 
   if (user.startsWith('0x')) user = user.substring(2)
@@ -34,7 +38,7 @@ export async function setTokenBalance(token: string, user: string, balance: bigi
 
   const cashedSlot = cache[token.toLowerCase()]
   if (cashedSlot !== undefined) {
-    await setStorage(cashedSlot)
+    await setStorage(cashedSlot, balance, balance)
     return true
   }
 
@@ -43,7 +47,7 @@ export async function setTokenBalance(token: string, user: string, balance: bigi
   const balancePrimary = (await tokenContract.balanceOf(user)) as BigNumber
 
   for (let i = 0; i < 200; ++i) {
-    await setStorage(i)
+    const [previousValue0, previousValue1] = await setStorage(i, balance, balance)
     const resBalance = (await tokenContract.balanceOf(user)) as BigNumber
     //console.log(i, '0x' + user.padStart(64, '0') + Number(i).toString(16).padStart(64, '0'), resBalance.toString())
 
@@ -53,6 +57,7 @@ export async function setTokenBalance(token: string, user: string, balance: bigi
         return true
       }
     }
+    await setStorage(i, previousValue0, previousValue1) // revert previous values back
   }
   return false
 }
