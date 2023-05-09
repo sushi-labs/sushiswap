@@ -45,12 +45,13 @@ function simulateRouting(network: Network, route: MultiRoute) {
     // Calc legInput
     const inputTokenAmount = amounts.get(l.tokenFrom.tokenId as string) as number
     expect(inputTokenAmount).toBeGreaterThan(0) // Very important check !!!! That we don't have idle legs
-    const legInput = inputTokenAmount * l.swapPortion
+    const routerPortion = Math.round(l.swapPortion * 65535) / 65535
+    const legInput = Math.floor(inputTokenAmount * routerPortion)
     amounts.set(l.tokenFrom.tokenId as string, inputTokenAmount - legInput)
 
     // Check assumedAmountIn
     const inputTokenDiff = diff.get(l.tokenFrom.tokenId as string) as number
-    const legInputDiff = inputTokenDiff * l.swapPortion
+    const legInputDiff = Math.floor(inputTokenDiff * routerPortion)
     expect(Math.abs(legInput - l.assumedAmountIn) <= legInputDiff)
     diff.set(l.tokenFrom.tokenId as string, inputTokenDiff - legInputDiff)
 
@@ -76,7 +77,7 @@ function simulateRouting(network: Network, route: MultiRoute) {
       if (route.amountOut == 0) expect(finalDiff).toEqual(0)
       else expect(finalDiff / route.amountOut).toBeLessThan(1e-4)
     } else {
-      expect(amount).toEqual(0)
+      expect(amount).toBeLessThan(1) // rounding dust
     }
   })
   expect(route.gasSpent).toEqual(gasSpentTotal)
