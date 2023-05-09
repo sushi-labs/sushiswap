@@ -130,7 +130,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
                 </div>
               ) : (
                 <>
-                  {queryToken && (
+                  {queryToken && !customTokenMap[`${queryToken.chainId}:${queryToken.wrapped.address}`] && (
                     <TokenSelectorImportRow
                       currencies={[queryToken]}
                       onImport={() => queryToken && handleImport(queryToken)}

@@ -28,7 +28,7 @@ import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { APPROVE_TAG_ADD_LEGACY, APPROVE_TAG_REMOVE_LEGACY } from '../../lib/constants'
+import { APPROVE_TAG_REMOVE_LEGACY } from '../../lib/constants'
 
 interface RemoveSectionLegacyProps {
   pool: Pool

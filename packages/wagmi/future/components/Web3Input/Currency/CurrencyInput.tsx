@@ -186,6 +186,7 @@ export const Component: FC<CurrencyInputProps> = ({
           currency={currency}
           disableMaxButton={disableMaxButton}
           balance={balance}
+          type={type}
         />
       </div>
     </div>

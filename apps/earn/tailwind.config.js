@@ -1,5 +1,6 @@
+// @ts-check
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+const tailwindConfig = {
   darkMode: 'class',
   presets: [require('@sushiswap/ui/tailwind')],
   content: [
@@ -12,3 +13,5 @@ module.exports = {
     extend: {},
   },
 }
+
+module.exports = tailwindConfig
