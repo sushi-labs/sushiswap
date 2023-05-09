@@ -13,7 +13,7 @@ export const Connect: FC<ButtonProps<'button'>> = ({
   size,
   name,
   onBlur,
-  as,
+  type,
 }) => {
   const isMounted = useIsMounted()
   const { address } = useAccount()
@@ -29,6 +29,7 @@ export const Connect: FC<ButtonProps<'button'>> = ({
         name={name}
         as={Button}
         onBlur={onBlur}
+        type={type}
       >
         Connect Wallet
       </ConnectButton>
