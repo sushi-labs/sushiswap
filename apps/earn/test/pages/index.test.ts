@@ -171,8 +171,8 @@ async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
   // if ((args.amountBelongsToToken0 && !args.token0.isNative) || (!args.amountBelongsToToken0 && !args.token1.isNative)) {
   await approve(page, `approve-erc20-${tokenOrderNumber}`)
   // }
-  await page.locator('[testdata-id=add-liquidity-preview-button]').click({ timeout: 2_000 })
-  await page.locator('[testdata-id=confirm-add-liquidity-button]').click({ timeout: 2_000 })
+  await page.locator('[testdata-id=add-liquidity-preview-button]').click()
+  await page.locator('[testdata-id=confirm-add-liquidity-button]').click()
 
   const expectedText =
     args.type === 'ADD'
@@ -211,7 +211,7 @@ async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
     args.type === 'CREATE' ? '[testdata-id=create-pool-button]' : '[testdata-id=add-liquidity-button]'
   const reviewButton = page.locator(reviewSelector)
   await expect(reviewButton).toBeVisible()
-  await reviewButton.click({ timeout: 2_000 })
+  await reviewButton.click()
 
   const confirmButton = page.locator('[testdata-id=confirm-add-liquidity-button]')
   await expect(confirmButton).toBeVisible()
@@ -254,7 +254,7 @@ async function manageLiquidity(page: Page, type: 'STAKE' | 'UNSTAKE') {
 
   await maxButtonSelector.click()
   await approve(page, 'approve-token0')
-  await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`).click({ timeout: 2_000 })
+  await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`).click()
 
   const regex = new RegExp(`(Successfully ${type.toLowerCase()}d .* SLP tokens)`)
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
@@ -265,7 +265,7 @@ async function removeLiquidityV2(page: Page) {
   await page.locator('[testdata-id=remove-liquidity-max-button]').click()
 
   await approve(page, 'remove-liquidity-trident-approve-token')
-  await page.locator('[testdata-id=remove-liquidity-trident-button]').click({ timeout: 2_000 })
+  await page.locator('[testdata-id=remove-liquidity-trident-button]').click()
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
