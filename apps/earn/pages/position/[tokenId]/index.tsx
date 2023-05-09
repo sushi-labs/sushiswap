@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import { Layout } from '../../../components'
 import Link from 'next/link'
 import { ArrowLeftIcon, MinusIcon, PlusIcon } from '@heroicons/react/solid'
@@ -107,7 +107,10 @@ const Position: FC = () => {
     existingPosition: position ?? undefined,
   })
 
-  const { data: poolStats } = useConcentratedLiquidityPoolStats({ poolAddress: positionDetails?.address })
+  const { data: poolStats } = useConcentratedLiquidityPoolStats({
+    chainId: positionDetails?.chainId,
+    address: positionDetails?.address,
+  })
 
   const [_token0, _token1] = useMemo(
     () => [token0 ? unwrapToken(token0) : undefined, token1 ? unwrapToken(token1) : undefined],
@@ -147,7 +150,7 @@ const Position: FC = () => {
       <div className="flex flex-col gap-2">
         <Link
           className="flex items-center gap-4 mb-2 group"
-          href={`/pools/${chainId}:${positionDetails?.address}`}
+          href={`/${chainId}:${positionDetails?.address}`}
           shallow={true}
         >
           <IconButton

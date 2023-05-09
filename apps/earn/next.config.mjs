@@ -3,7 +3,7 @@ import defaultNextConfig from '@sushiswap/nextjs-config'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   ...defaultNextConfig,
-  basePath: '/earn',
+  basePath: '/pools',
   transpilePackages: [
     '@sushiswap/redux-token-lists',
     '@sushiswap/redux-localstorage',
@@ -14,7 +14,7 @@ const nextConfig = {
     return [
       {
         source: '/',
-        destination: '/earn',
+        destination: '/pools',
         permanent: true,
         basePath: false,
       },

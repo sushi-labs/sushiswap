@@ -26,6 +26,7 @@ export const Component: FC<NetworkProps> = ({ chainId, children, ...rest }): Rea
   return <>{children}</>
 }
 
+// Temp solution until app dir
 export const Network = dynamic(() => Promise.resolve(Component), {
   ssr: false,
 })

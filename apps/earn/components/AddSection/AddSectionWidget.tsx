@@ -83,7 +83,26 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                   </div>
                 </Widget.Header>
               ) : (
-                <Widget.Header title="Add Liquidity" className="!pb-3" />
+                <Widget.Header title="Add Liquidity" className="!pb-3">
+                  <div className="flex gap-3">
+                    <SettingsOverlay
+                      options={{
+                        slippageTolerance: {
+                          storageKey: 'addLiquidity',
+                          defaultValue: '0.5',
+                          title: 'Add Liquidity Slippage',
+                        },
+                      }}
+                      modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
+                    >
+                      {({ setOpen }) => (
+                        <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
+                          <CogIcon width={24} height={24} />
+                        </Button>
+                      )}
+                    </SettingsOverlay>
+                  </div>
+                </Widget.Header>
               )}
               <Transition
                 unmount={false}

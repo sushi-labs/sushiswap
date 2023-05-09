@@ -17,7 +17,7 @@ const config: Record<
   },
   Help: {
     Academy: {
-      href: 'https://sushi.com/academy',
+      href: 'https://www.sushi.com/academy',
       target: '_blank',
       rel: 'noopener noreferrer',
     },

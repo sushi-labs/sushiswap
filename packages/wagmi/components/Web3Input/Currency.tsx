@@ -5,8 +5,9 @@ import { classNames, Currency as UICurrency, DEFAULT_INPUT_UNSTYLED, Input, Skel
 import { FC, useCallback, useMemo, useRef, useState } from 'react'
 import { useAccount } from 'wagmi'
 
-import { _useBalance as useBalance, usePrices } from '../../hooks'
+import { _useBalance as useBalance } from '../../hooks'
 import { TokenSelector, TokenSelectorProps } from '../TokenSelector'
+import { usePrices } from '@sushiswap/react-query'
 
 export interface CurrencyInputProps
   extends Pick<

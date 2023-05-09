@@ -16,7 +16,7 @@ export interface AmountsProps extends CheckerButton {
 }
 
 export const Component: FC<AmountsProps> = ({
-  amounts,
+ type, amounts,
   chainId,
   children,
   className,
@@ -56,6 +56,7 @@ export const Component: FC<AmountsProps> = ({
           as={as}
           fullWidth={fullWidth}
           size={size}
+          type={type}
         >
           Enter Amount
         </Button>
@@ -63,13 +64,13 @@ export const Component: FC<AmountsProps> = ({
 
     if (!sufficientBalance)
       return (
-        <Button disabled className={className} variant={variant} as={as} fullWidth={fullWidth} size={size}>
+        <Button type={type} disabled className={className} variant={variant} as={as} fullWidth={fullWidth} size={size}>
           Insufficient Balance
         </Button>
       )
 
     return <>{children}</>
-  }, [amountsAreDefined, as, children, className, fullWidth, size, sufficientBalance, variant])
+  }, [type, amountsAreDefined, as, children, className, fullWidth, size, sufficientBalance, variant])
 }
 
 export const Amounts = dynamic(() => Promise.resolve(Component), {

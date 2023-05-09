@@ -82,7 +82,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
                 <Component {...pageProps} />
               </MotionConfig>
               <App.Footer />
-              <ToastContainer className="mt-[50px]" />
             </App.Shell>
           </ThemeProvider>
         </QueryClientProvider>

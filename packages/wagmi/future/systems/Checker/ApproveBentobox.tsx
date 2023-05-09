@@ -29,6 +29,7 @@ export const Component: FC<ApproveBentoboxProps> = ({
   size,
   enabled = true,
   onSignature,
+  type,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
 
@@ -49,6 +50,7 @@ export const Component: FC<ApproveBentoboxProps> = ({
             className={className}
             fullWidth={fullWidth}
             onClick={onApprove}
+            type={type}
           >
             Approve Bentobox
             <Menu
