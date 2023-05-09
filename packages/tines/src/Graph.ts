@@ -912,21 +912,25 @@ export class Graph {
     if (step < routeValues.length) status = RouteStatus.Partial
     else status = RouteStatus.Success
 
-    const removedEdgesNumber = this.removeEdgesWithLowFlow(0.001)
+    this.removeEdgesWithLowFlow(0.001)
 
     const fromVert = this.getVert(from) as Vertice
     const toVert = this.getVert(to) as Vertice
-    const { legs, gasSpent, topologyWasChanged } = this.getRouteLegs(fromVert, toVert)
+    const { legs, gasSpent } = this.getRouteLegs(fromVert, toVert)
     console.assert(gasSpent <= gasSpentInit, 'Internal Error 491')
 
-    if (topologyWasChanged || removedEdgesNumber > 0) {
-      output = this.updateLegsAmountOut(legs, amountIn)
-      totalOutput = output - toVert.gasPrice * gasSpent
+    //if (topologyWasChanged || removedEdgesNumber > 0) {
+    output = this.updateLegsAmountOut(legs, amountIn * totalrouted)
+    totalOutput = output - toVert.gasPrice * gasSpent
+    if (output == 0) {
+      status = RouteStatus.NoWay
+      totalOutput = 0
     }
+    //}
 
     let swapPrice, priceImpact
     try {
-      swapPrice = output / amountIn
+      swapPrice = output / amountIn / totalrouted
       const priceTo = this.getVert(to)?.price
       const priceFrom = this.getVert(from)?.price
       primaryPrice = priceTo && priceFrom ? priceFrom / priceTo : undefined
