@@ -6,10 +6,8 @@ export async function approve(page: Page, locator: string) {
   await page
     .locator(`[testdata-id=${locator}]`)
     .click({ timeout: 1000 })
-    .then(async () => {
-      console.log('Approved')
-    })
-    .catch(() => console.log('already approved or not needed'))
+    .then(() => console.log('Approved'))
+    .catch(() => console.log('Already approved or not needed'))
 }
 
 interface V2PoolArgs {

@@ -46,7 +46,7 @@ jobs:
         - name: Setup Node.js
           uses: actions/setup-node@v3
           with:
-            node-version: 16
+            node-version: 18
             cache: 'pnpm'
 
         - name: Install dependencies
@@ -94,7 +94,8 @@ jobs:
 
         - name: Upload test results
           if: always()
-          uses: actions/upload-artifact@v2
+          uses: actions/upload-artifact@v3
           with:
             name: playwright-report
-            path: playwright-report
+            path: playwright-report/
+            working-directory: ./apps/swap
