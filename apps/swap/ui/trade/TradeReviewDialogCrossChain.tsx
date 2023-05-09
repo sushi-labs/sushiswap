@@ -19,6 +19,7 @@ import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain/Co
 import { warningSeverity } from '../../lib/warningSeverity'
 import { ZERO } from '@sushiswap/math'
 import { useSlippageTolerance } from '@sushiswap/hooks'
+import { swapErrorToUserReadableMessage } from '../../lib/swapErrorToUserReadableMessage'
 
 export const TradeReviewDialogCrossChain: FC = () => {
   const { review, token0, token1, recipient, network0, network1, amount, value } = useSwapState()
