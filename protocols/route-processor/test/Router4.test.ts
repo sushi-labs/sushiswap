@@ -428,25 +428,28 @@ describe('End-to-end RouteProcessor4 test', async function () {
     ]
   })
 
-  it('Permit: Native => FRAX => Native', async function () {
-    await env.snapshot.restore()
-    const usedPools = new Set<string>()
-    const token = FRAX[chainId as keyof typeof FRAX_ADDRESS]
-    const amountIn = getBigNumber(1000000 * 1e18)
-    intermidiateResult[0] = amountIn
-    intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), token, intermidiateResult, usedPools)
-    const permit = await makePermit(env, token, intermidiateResult[0] as BigNumber)
-    intermidiateResult = await updMakeSwap(
-      env,
-      token,
-      Native.onChain(chainId),
-      intermidiateResult,
-      usedPools,
-      undefined,
-      undefined,
-      [permit]
-    )
-  })
+  if (network.config.chainId == 137) {
+    // permit in FRAX is implemented only for POLUGON
+    it('Permit: Native => FRAX => Native', async function () {
+      await env.snapshot.restore()
+      const usedPools = new Set<string>()
+      const token = FRAX[chainId as keyof typeof FRAX_ADDRESS]
+      const amountIn = getBigNumber(1000000 * 1e18)
+      intermidiateResult[0] = amountIn
+      intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), token, intermidiateResult, usedPools)
+      const permit = await makePermit(env, token, intermidiateResult[0] as BigNumber)
+      intermidiateResult = await updMakeSwap(
+        env,
+        token,
+        Native.onChain(chainId),
+        intermidiateResult,
+        usedPools,
+        undefined,
+        undefined,
+        [permit]
+      )
+    })
+  }
 
   it('Native => SUSHI => Native', async function () {
     await env.snapshot.restore()
