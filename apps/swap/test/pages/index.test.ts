@@ -31,19 +31,30 @@ test.beforeEach(async ({ page }) => {
   await switchNetwork(page, CHAIN_ID)
 })
 
+test('Wrap and unwrap', async ({ page }) => {
+  const wrapFromBalance = page.getByTestId('swap-from-balance-button')
+  await expect(wrapFromBalance).toContainText('1000')
+  await wrap(page, native, wnative, '10')
+  const wrapToBalance = page.getByTestId('swap-to-balance-button')
+  await expect(wrapFromBalance).toContainText('9989.98')
+  await expect(wrapToBalance).toContainText('10')
+  await wrap(page, wnative, native, '10')
+  await expect(wrapFromBalance).toContainText('0')
+  await expect(wrapToBalance).toContainText('9999.96')
+})
+
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
   await swap(page, native, usdc, '1')
+  // TODO: await balance update
   await swap(page, usdc, native, '1', true)
+  // TODO: await balance update
 })
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   await swap(page, native, sushi, '1')
+  // TODO: await balance update
   await swap(page, sushi, native, '1', true)
-})
-
-test('Wrap and unwrap', async ({ page }) => {
-  await wrap(page, native, wnative, '10')
-  await wrap(page, wnative, native, '10')
+  // TODO: await balance update
 })
 
 async function wrap(page: Page, inputCurrency: Type, outputCurrency: Type, amount?: string, useBalance?: boolean) {
