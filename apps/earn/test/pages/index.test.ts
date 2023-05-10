@@ -3,13 +3,11 @@ import { Page, test, expect } from '@playwright/test'
 import { USDC_ADDRESS, Native, Token, Type } from '@sushiswap/currency'
 
 export async function approve(page: Page, locator: string) {
-  await page
-    .locator(`[testdata-id=${locator}]`)
-    .click({ timeout: 1000 })
-    .then(async () => {
-      console.log('Approved')
-    })
-    .catch(() => console.log('already approved or not needed'))
+  const pageLocator = page.locator(`[testdata-id=${locator}]`)
+  await expect(pageLocator).toBeEnabled({ timeout: 1500 }).then(async () => {
+    await pageLocator.click({ timeout: 2500 })
+  })
+  .catch(() => console.log('already approved or not needed'))
 }
 
 interface V2PoolArgs {
