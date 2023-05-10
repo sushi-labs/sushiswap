@@ -99,10 +99,10 @@ test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
   })
 
   // Ensure balances at least change...
-  const swapFromBalanceAfter = await swapFromBalance.textContent()
-  expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
-  const swapToBalanceAfter = await swapToBalance.textContent()
-  expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
+  const swapFromBalanceAfterFirst = await swapFromBalance.textContent()
+  expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfterFirst)
+  const swapToBalanceAfterFirst = await swapToBalance.textContent()
+  await expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfterFirst)
 
   await swap({
     page,
@@ -110,7 +110,12 @@ test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
     outputCurrency: native,
     useBalance: true,
   })
-  // TODO: await balance update
+
+  // Ensure balances at least change...
+  const swapFromBalanceAfterSecond = await swapFromBalance.textContent()
+  expect(swapFromBalanceAfterFirst).not.toEqual(swapFromBalanceAfterSecond)
+  const swapToBalanceAfterSecond = await swapToBalance.textContent()
+  await expect(swapToBalanceAfterFirst).not.toEqual(swapToBalanceAfterSecond)
 })
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
@@ -130,10 +135,10 @@ test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   })
 
   // Ensure balances at least change...
-  const swapFromBalanceAfter = await swapFromBalance.textContent()
-  expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
-  const swapToBalanceAfter = await swapToBalance.textContent()
-  await expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
+  const swapFromBalanceAfterFirst = await swapFromBalance.textContent()
+  expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfterFirst)
+  const swapToBalanceAfterFirst = await swapToBalance.textContent()
+  await expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfterFirst)
 
   await swap({
     page,
@@ -141,7 +146,12 @@ test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
     outputCurrency: native,
     useBalance: true,
   })
-  // TODO: await balance update
+
+  // Ensure balances at least change...
+  const swapFromBalanceAfterSecond = await swapFromBalance.textContent()
+  expect(swapFromBalanceAfterFirst).not.toEqual(swapFromBalanceAfterSecond)
+  const swapToBalanceAfterSecond = await swapToBalance.textContent()
+  await expect(swapToBalanceAfterFirst).not.toEqual(swapToBalanceAfterSecond)
 })
 
 async function wrap({
@@ -218,6 +228,12 @@ async function swap({
       .click()
       .then(() => console.log(`Approved ${inputCurrency.symbol}`))
       .catch(() => console.log(`${inputCurrency.symbol} already approved or not needed`))
+
+    const expectedApprovingText = `Approving ${inputCurrency.symbol}`
+    await expect(page.getByText(expectedApprovingText)).toContainText(expectedApprovingText)
+
+    const expectedApproveText = `Successfully approved ${inputCurrency.symbol}`
+    await expect(page.getByText(expectedApproveText)).toContainText(expectedApproveText)
   }
 
   const swapButton = page.locator('[testdata-id=swap-button]')
@@ -230,6 +246,13 @@ async function swap({
   await expect(confirmSwap).toBeVisible()
   await expect(confirmSwap).toBeEnabled()
   await confirmSwap.click()
+
+  // const expectedModalText = page.locator('h1', {
+  //   hasText: new RegExp(`(You sold .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol}.)`),
+  // })
+  // await expect(expectedModalText).toBeVisible()
+
+  // This one kinda did notifications I think?
   const expectedText = new RegExp(`(Swap .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol})`)
   await expect(page.locator('span', { hasText: expectedText }).last()).toContainText(expectedText)
 
