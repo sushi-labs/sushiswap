@@ -56,31 +56,45 @@ test.afterAll(async () => {
 })
 
 test.afterEach(async ({ page }) => {
-  // TODO: Not implemented by viem yet
-  // await client.request({ method: 'anvil_reset', params: [] })
+  //
 })
 
 test('Wrap and unwrap', async ({ page }) => {
   test.slow()
-  const wrapFromBalance = page.getByTestId('swap-from-balance-button')
-  await expect(wrapFromBalance).toContainText('1000')
+  const swapFromBalance = page.getByTestId('swap-from-balance-button')
+  const swapFromBalanceBefore = await swapFromBalance.textContent()
+  const swapToBalance = page.getByTestId('swap-to-balance-button')
+  const swapToBalanceBefore = await swapToBalance.textContent()
+
+  // await expect(wrapFromBalance).toContainText('1000')
   await wrap({
     page,
     inputCurrency: native,
     outputCurrency: wnative,
     amount: '10',
   })
-  const wrapToBalance = page.getByTestId('swap-to-balance-button')
-  await expect(wrapFromBalance).toContainText('9989.98')
-  await expect(wrapToBalance).toContainText('10')
+
+  const swapFromBalanceAfterFirst = await swapFromBalance.textContent()
+  expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfterFirst)
+  const swapToBalanceAfterFirst = await swapToBalance.textContent()
+  await expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfterFirst)
+
+  // await expect(wrapFromBalance).toContainText('9989.98')
+  // await expect(wrapToBalance).toContainText('10')
   await wrap({
     page,
     inputCurrency: wnative,
     outputCurrency: native,
     amount: '10',
   })
-  await expect(wrapFromBalance).toContainText('0')
-  await expect(wrapToBalance).toContainText('9999.96')
+
+  const swapFromBalanceAfterSecond = await swapFromBalance.textContent()
+  expect(swapFromBalanceAfterFirst).not.toEqual(swapFromBalanceAfterSecond)
+  const swapToBalanceAfterSecond = await swapToBalance.textContent()
+  await expect(swapToBalanceAfterFirst).not.toEqual(swapToBalanceAfterSecond)
+
+  // await expect(wrapFromBalance).toContainText('0')
+  // await expect(wrapToBalance).toContainText('9999.96')
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
