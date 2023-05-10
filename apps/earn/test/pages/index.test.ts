@@ -223,9 +223,11 @@ async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
     args.type === 'CREATE' ? '[testdata-id=create-pool-button]' : '[testdata-id=add-liquidity-button]'
   const reviewButton = page.locator(reviewSelector)
   await expect(reviewButton).toBeVisible()
+  await expect(reviewButton).toBeEnabled()
   await reviewButton.click({ timeout: 2_000 })
 
   const confirmButton = page.locator('[testdata-id=confirm-add-liquidity-button]')
+  await expect(confirmButton).toBeVisible()
   await expect(confirmButton).toBeEnabled()
   await confirmButton.click()
 
