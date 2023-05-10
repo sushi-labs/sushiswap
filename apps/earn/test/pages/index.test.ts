@@ -3,6 +3,7 @@ import { Page, test, expect } from '@playwright/test'
 import { USDC_ADDRESS, Native, Token, Type } from '@sushiswap/currency'
 
 export async function approve(page: Page, locator: string) {
+  await timeout(500) // give the approve button time to load contracts, unrealistically fast when running test
   const pageLocator = page.locator(`[testdata-id=${locator}]`)
   await expect(pageLocator).toBeEnabled({ timeout: 1500 }).then(async () => {
     await pageLocator.click({ timeout: 2500 })
@@ -134,7 +135,6 @@ test.describe('V2', () => {
 
   test('Add, stake, unstake and remove', async ({ page }) => {
     test.slow()
-    // test.setTimeout(120_000)
     await createOrAddV2Pool(page, {
       token0: NATIVE_TOKEN,
       token1: USDC,
@@ -234,14 +234,13 @@ async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
 }
 
 async function removeLiquidityV3(page: Page) {
-  test.setTimeout(60_000)
   const url = process.env.PLAYWRIGHT_URL as string
   await page.goto(url)
   await page.locator('[testdata-id=my-positions-button]').click()
 
   const firstPositionSelector = page.locator('div:nth-child(2) > div > table > tbody > tr > td > a').first()
   await expect(firstPositionSelector).toBeVisible({ timeout: 7_000 })
-  await timeout(2_500) // wait for the animation to finish, otherwise the click will not work. TODO: figure out a better way to do this
+  await timeout(5_000) // wait for the animation to finish, otherwise the click will not work. TODO: figure out a better way to do this
   await firstPositionSelector.click()
 
   const decreaseLiquiditySelector = page.locator('[testdata-id=decrease-liquidity-button]')
