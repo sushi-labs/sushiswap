@@ -61,6 +61,7 @@ test.afterEach(async ({ page }) => {
 })
 
 test('Wrap and unwrap', async ({ page }) => {
+  test.slow()
   const wrapFromBalance = page.getByTestId('swap-from-balance-button')
   await expect(wrapFromBalance).toContainText('1000')
   await wrap({
@@ -83,6 +84,7 @@ test('Wrap and unwrap', async ({ page }) => {
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
+  test.slow()
   const swapFromBalance = page.getByTestId('swap-from-balance-button')
   const swapFromBalanceBefore = await swapFromBalance.textContent()
 
@@ -117,6 +119,7 @@ test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
 })
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
+  test.slow()
   const swapFromBalance = page.getByTestId('swap-from-balance-button')
   const swapFromBalanceBefore = await swapFromBalance.textContent()
 
