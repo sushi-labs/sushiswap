@@ -304,5 +304,5 @@ async function switchNetwork(page: Page, chainId: number) {
   await networkToSelect.click()
 
   const fromToken = page.locator('[testdata-id=swap-from-button]')
-  await expect(await fromToken.textContent()).toContain(native.symbol)
+  await expect(fromToken).toHaveText(native.symbol)
 }
