@@ -12,6 +12,8 @@ import { foundry } from 'viem/chains'
 // });
 // const env = envSchema.parse(process.env);
 
+type InputType = 'INPUT' | 'OUTPUT'
+
 if (!process.env.CHAIN_ID) throw new Error('CHAIN_ID env var not set')
 if (!process.env.PLAYWRIGHT_URL) throw new Error('PLAYWRIGHT_URL env var not set')
 // if (!process.env.ANVIL_FORK_BLOCK) throw new Error('ANVIL_FORK_BLOCK env var not set')
@@ -26,9 +28,7 @@ const wnative = native.wrapped
 const usdc = USDC[CHAIN_ID as keyof typeof USDC]
 const sushi = SUSHI[CHAIN_ID as keyof typeof SUSHI]
 
-test.slow()
-
-const client = createTestClient({ mode: 'anvil', chain: foundry, transport: http() })
+// const client = createTestClient({ mode: 'anvil', chain: foundry, transport: http() })
 
 test.beforeAll(async () => {
   //
@@ -84,11 +84,9 @@ test('Wrap and unwrap', async ({ page }) => {
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
   const swapFromBalance = page.getByTestId('swap-from-balance-button')
-  // await expect(swapFromBalance).toContainText('1000')
   const swapFromBalanceBefore = await swapFromBalance.textContent()
 
   const swapToBalance = page.getByTestId('swap-to-balance-button')
-  // await expect(swapFromBalance).toContainText('0')
   const swapToBalanceBefore = await swapToBalance.textContent()
 
   await swap({
@@ -120,11 +118,9 @@ test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   const swapFromBalance = page.getByTestId('swap-from-balance-button')
-  // await expect(swapFromBalance).toContainText('1000')
   const swapFromBalanceBefore = await swapFromBalance.textContent()
 
   const swapToBalance = page.getByTestId('swap-to-balance-button')
-  // await expect(swapFromBalance).toContainText('0')
   const swapToBalanceBefore = await swapToBalance.textContent()
 
   await swap({
@@ -247,14 +243,11 @@ async function swap({
   await expect(confirmSwap).toBeEnabled()
   await confirmSwap.click()
 
-  // const expectedModalText = page.locator('h1', {
-  //   hasText: new RegExp(`(You sold .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol}.)`),
-  // })
-  // await expect(expectedModalText).toBeVisible()
+  const expectedSwappingText = new RegExp(`(Swapping .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol}.)`)
+  await expect(page.getByText(expectedSwappingText)).toContainText(expectedSwappingText)
 
-  // This one kinda did notifications I think?
-  const expectedText = new RegExp(`(Swap .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol})`)
-  await expect(page.locator('span', { hasText: expectedText }).last()).toContainText(expectedText)
+  const expectedSwapText = new RegExp(`(Swap .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol}.)`)
+  await expect(page.getByText(expectedSwapText)).toContainText(expectedSwapText)
 
   const makeAnotherSwap = page.locator('[testdata-id=make-another-swap-button]')
   await expect(makeAnotherSwap).toBeVisible()
@@ -309,6 +302,7 @@ async function switchNetwork(page: Page, chainId: number) {
   await expect(networkToSelect).toBeVisible()
   await expect(networkToSelect).toBeEnabled()
   await networkToSelect.click()
-}
 
-type InputType = 'INPUT' | 'OUTPUT'
+  const fromToken = page.locator('[testdata-id=swap-from-button]')
+  await expect(await fromToken.textContent()).toContain(native.symbol)
+}

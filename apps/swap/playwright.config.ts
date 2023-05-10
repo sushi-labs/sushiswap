@@ -21,14 +21,14 @@ const config: PlaywrightTestConfig = {
   // Test directory
   testDir: path.join(__dirname, 'test'),
   /* Maximum time one test can run for. */
-  // timeout: 30 * 1_000,
-  // expect: {
-  //   /**
-  //    * Maximum time expect() should wait for the condition to be met.
-  //    * For example in `await expect(locator).toHaveText();`
-  //    */
-  //   timeout: 15_000,
-  // },
+  timeout: 30 * 1_000,
+  expect: {
+    /**
+     * Maximum time expect() should wait for the condition to be met.
+     * For example in `await expect(locator).toHaveText();`
+     */
+    timeout: 15_000,
+  },
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
