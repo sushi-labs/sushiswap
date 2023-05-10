@@ -168,8 +168,17 @@ export async function getForumStats() {
 export async function getTokenHolders(filters?: { balanceFilter: number; orderDirection: 'asc' | 'desc' }): Promise<{
   sushi: { userCount: string; totalSupply: string }
   users: { balance: string; id: string }[]
+  tokenConcentration: number
 }> {
-  const query = gql`
+  const GRAPH_URL = 'https://api.thegraph.com/subgraphs/name/olastenberg/sushi'
+  const balancesQuery = gql`
+    query TokenHolders {
+      users(first: 10, orderBy: balance, orderDirection: desc) {
+        balance
+      }
+    }
+  `
+  const filteredQuery = gql`
     query TokenHolders($where: User_filter, $orderDirection: OrderDirection) {
       sushi(id: "Sushi") {
         userCount
@@ -182,12 +191,58 @@ export async function getTokenHolders(filters?: { balanceFilter: number; orderDi
     }
   `
 
-  return request('https://api.thegraph.com/subgraphs/name/olastenberg/sushi', query, {
-    orderDirection: filters?.orderDirection ?? 'desc',
-    where: {
-      balance_gt: filters?.balanceFilter ? (BigInt(1e18) * BigInt(+filters.balanceFilter)).toString() : 0,
-    },
-  })
+  const [tokenHoldersRes, usersRes] = await Promise.all([
+    request(GRAPH_URL, filteredQuery, {
+      orderDirection: filters?.orderDirection ?? 'desc',
+      where: {
+        balance_gt: filters?.balanceFilter ? (BigInt(1e18) * BigInt(+filters.balanceFilter)).toString() : 0,
+      },
+    }),
+    request(GRAPH_URL, balancesQuery),
+  ])
+
+  const topTenBalances: bigint = usersRes.users.reduce(
+    (acc: bigint, curr: { balance: string }) => acc + BigInt(curr.balance),
+    0n
+  )
+  const tokenConcentration = Number((topTenBalances * 100n) / BigInt(tokenHoldersRes.sushi.totalSupply))
+
+  return { ...tokenHoldersRes, tokenConcentration }
+}
+
+export async function getTreasuryHistoricalTvl() {
+  const allBalances = await fetchUrl<{
+    chainTvls: {
+      [group: string]: {
+        tvl: {
+          date: number
+          totalLiquidityUSD: number
+        }[]
+      }
+    }
+  }>('https://api.llama.fi/treasury/sushi')
+
+  if (!allBalances) return []
+
+  const combinedData = {}
+
+  for (const group in allBalances.chainTvls) {
+    // defillama: skip sum of keys like ethereum-staking, arbitrum-vesting
+    if (group.includes('-') || group.toLowerCase() === 'offers') continue
+
+    allBalances.chainTvls[group].tvl.forEach(({ date, totalLiquidityUSD }) => {
+      if (!combinedData[date]) {
+        combinedData[date] = 0
+      }
+      combinedData[date] += totalLiquidityUSD
+    })
+  }
+
+  const result = Object.entries(combinedData).map(([date, totalLiquidityUSD]) => ({
+    [date]: totalLiquidityUSD as number,
+  }))
+
+  return result
 }
 
 export async function getTreasurySnapshot() {

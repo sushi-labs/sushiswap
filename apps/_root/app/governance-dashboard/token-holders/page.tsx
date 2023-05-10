@@ -18,7 +18,7 @@ export default async function TokenHolders({ searchParams }) {
       rank: i + 1,
       name: user.id,
       quantity: balance,
-      ownership: balance / totalSupply,
+      ownership: (balance / totalSupply) * 100,
       value: balance * sushiPrice,
     }
   })

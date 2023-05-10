@@ -27,7 +27,7 @@ export async function HolderSnapshot() {
     },
     {
       title: 'Token Concentration',
-      value: '20.12%',
+      value: tokenHolders.tokenConcentration.toFixed(2) + '%',
       // additional: <dd className="text-sm text-green-400">+33.42% from last quarter</dd>,
     },
     {
