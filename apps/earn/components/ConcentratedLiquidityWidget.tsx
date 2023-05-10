@@ -238,7 +238,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                 id="approve-erc20-0"
                 amount={parsedAmounts[Field.CURRENCY_A]}
                 contract={getV3NonFungiblePositionManagerConractConfig(chainId).address}
-                enabled={!depositADisabled}
+                enabled={!depositADisabled && parsedAmounts[Field.CURRENCY_A]?.greaterThan(0)}
               >
                 <Checker.ApproveERC20
                   size="xl"
@@ -246,7 +246,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                   id="approve-erc20-1"
                   amount={parsedAmounts[Field.CURRENCY_B]}
                   contract={getV3NonFungiblePositionManagerConractConfig(chainId).address}
-                  enabled={!depositBDisabled}
+                  enabled={!depositBDisabled && parsedAmounts[Field.CURRENCY_B]?.greaterThan(0)}
                 >
                   <AddSectionReviewModalConcentrated
                     chainId={chainId}

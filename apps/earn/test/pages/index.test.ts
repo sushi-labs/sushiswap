@@ -226,8 +226,6 @@ async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
 
   const confirmButton = page.locator('[testdata-id=confirm-add-liquidity-button]')
   await expect(confirmButton).toBeEnabled()
-  await timeout(1_000) // Wait a second for the inputs to update all components? TODO: refactor, if this works it means that some validation is missing and the 
-  // button below should not be enabled.
   await confirmButton.click()
 
   const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`
@@ -252,9 +250,9 @@ async function removeLiquidityV3(page: Page) {
   await switchNetwork(page, CHAIN_ID)
 
   await page.locator('[testdata-id=liquidity-max-button]').click()
-  await timeout(1_000) // Wait a second for the inputs to update all components? TODO: refactor, if this works it means that some validation is missing and the 
-  // button below should not be enabled.
-  await page.locator('[testdata-id=remove-or-add-liquidity-button]').click()
+  const handleLiquidityLocator = page.locator('[testdata-id=remove-or-add-liquidity-button]')
+  await expect(handleLiquidityLocator).toBeEnabled()
+  await handleLiquidityLocator.click()
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)

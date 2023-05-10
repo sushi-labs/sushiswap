@@ -133,6 +133,23 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     }
   }, [factory, fee, token0, token1, poolType])
 
+  const isValid = useMemo(() => 
+    (
+      chain?.id &&
+      factory &&
+      token0 &&
+      token1 &&
+      poolAddress &&
+      input0 &&
+      input1 &&
+      totalSupply &&
+      pool &&
+      contract &&
+      totals?.[token0.wrapped.address] &&
+      totals?.[token1.wrapped.address]
+    ) 
+  , [chain?.id, contract, factory, input0, input1, pool, poolAddress, token0, token1, totalSupply, totals])
+  
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
       if (!data || !chain?.id || !token0 || !token1) return
@@ -277,7 +294,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} close={close}>
       <Button
         size="xl"
-        disabled={isWritePending}
+        disabled={isWritePending || !isValid}
         fullWidth
         onClick={() => sendTransaction?.()}
         testdata-id="confirm-add-liquidity-button"
