@@ -113,9 +113,9 @@ test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
 })
 
 async function wrap(page: Page, inputCurrency: Type, outputCurrency: Type, amount?: string, useBalance?: boolean) {
-  await handleToken(page, inputCurrency, InputType.INPUT)
+  await handleToken(page, inputCurrency, 'INPUT')
   await inputAmount(page, amount, useBalance)
-  await handleToken(page, outputCurrency, InputType.OUTPUT)
+  await handleToken(page, outputCurrency, 'OUTPUT')
 
   if (!inputCurrency.isNative) {
     const approveButton = page.locator('[testdata-id=approve-erc20]', { hasText: `Approve ${inputCurrency.symbol}` })
