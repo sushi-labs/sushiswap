@@ -172,7 +172,7 @@ importers:
       prettier: 2.8.1
       ts-node: 10.9.1
       typescript: 4.9.4
-      viem: 0.3.12
+      viem: 0.3.19
       zod: 3.20.2
     dependencies:
       '@fastify/cors': 8.2.0
@@ -186,7 +186,7 @@ importers:
       '@whatwg-node/fetch': 0.8.4
       ethers: 5.7.2
       fastify: 4.11.0
-      viem: 0.3.12_4umapwpw55xijlh2mknjgcn4rq
+      viem: 0.3.19_4umapwpw55xijlh2mknjgcn4rq
       zod: 3.20.2
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
@@ -1088,6 +1088,7 @@ importers:
       react-dom: 18.2.0
       tailwindcss: 3.2.4
       typescript: 4.9.4
+      viem: 0.3.19
       wagmi: 0.12.12
       zod: 3.20.2
     dependencies:
@@ -1136,6 +1137,7 @@ importers:
       numeral: 2.0.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      viem: 0.3.19_4umapwpw55xijlh2mknjgcn4rq
       wagmi: 0.12.12_fsys2wp3iip6k7fwrrc3ndeyc4
       zod: 3.20.2
     devDependencies:
@@ -1362,7 +1364,7 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       tsup: 6.5.0
       typescript: 4.9.4
-      viem: 0.3.12
+      viem: 0.3.19
     dependencies:
       '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/bentobox': link:../../protocols/bentobox
@@ -1374,7 +1376,7 @@ importers:
       '@sushiswap/typescript-config': link:../typescript
       tsup: 6.5.0_typescript@4.9.4
       typescript: 4.9.4
-      viem: 0.3.12_typescript@4.9.4
+      viem: 0.3.19_typescript@4.9.4
 
   config/wagmi:
     specifiers:
@@ -2440,7 +2442,7 @@ importers:
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
       typescript: 4.9.4
-      viem: 0.3.12
+      viem: 0.3.19
       zod: 3.20.2
     dependencies:
       '@ethersproject/abi': 5.7.0
@@ -2464,7 +2466,7 @@ importers:
       node-fetch: 2.6.6
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
-      viem: 0.3.12_4umapwpw55xijlh2mknjgcn4rq
+      viem: 0.3.19_4umapwpw55xijlh2mknjgcn4rq
       zod: 3.20.2
     devDependencies:
       '@sushiswap/database': link:../database
@@ -2871,7 +2873,7 @@ importers:
       tsup: 6.5.0
       typechain: ^8.0.0
       typescript: 4.9.4
-      viem: 0.3.12
+      viem: 0.3.19
       vitest: 0.30.1
       wagmi: 0.12.12
       zod: 3.20.2
@@ -2916,7 +2918,7 @@ importers:
       '@tanstack/react-query-persist-client': 4.28.0_qfusmmwykmcbgdy37sd3cqxiry
       '@uniswap/v2-core': 1.0.1
       '@uniswap/v3-periphery': 1.4.1
-      viem: 0.3.12_4umapwpw55xijlh2mknjgcn4rq
+      viem: 0.3.19_4umapwpw55xijlh2mknjgcn4rq
       zod: 3.20.2
     optionalDependencies:
       next: 13.3.1_biqbaboplfbrettd7655fr4n2y
@@ -3134,7 +3136,7 @@ importers:
       ts-node: 10.9.1
       typechain: 8.1.1
       typescript: 4.9.4
-      viem: 0.3.12
+      viem: 0.3.19
     devDependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2
@@ -3190,7 +3192,7 @@ importers:
       ts-node: 10.9.1_awa2wsr5thmg3i7jqycphctjfq
       typechain: 8.1.1_typescript@4.9.4
       typescript: 4.9.4
-      viem: 0.3.12_typescript@4.9.4
+      viem: 0.3.19_typescript@4.9.4
 
   protocols/sushiswap:
     specifiers:
@@ -9769,13 +9771,8 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@noble/curves/0.8.3:
-    resolution: {integrity: sha512-OqaOf4RWDaCRuBKJLDURrgVxjLmneGsiCXGuzYB5y95YithZMA6w4uk34DHSm0rKMrrYiaeZj48/81EvaAScLQ==}
-    dependencies:
-      '@noble/hashes': 1.3.0
-
-  /@noble/curves/0.9.0:
-    resolution: {integrity: sha512-OAdtHMXBp7Chl2lcTn/i7vnFX/q+hhTwDnek5NfYfZsY4LyaUuHCcoq2JlLY3BTFTLT+ZhYZalhF6ejlV7KnJQ==}
+  /@noble/curves/1.0.0:
+    resolution: {integrity: sha512-2upgEu0iLiDVDZkNLeFV2+ht0BAVgQnEmCk6JsOch9Rp8xfkMCbvbAZlA2pBHQc73dbl+vFOXfqkf4uemdn0bw==}
     dependencies:
       '@noble/hashes': 1.3.0
 
@@ -10968,10 +10965,10 @@ packages:
       '@noble/secp256k1': 1.6.3
       '@scure/base': 1.1.1
 
-  /@scure/bip32/1.2.0:
-    resolution: {integrity: sha512-O+vT/hBVk+ag2i6j2CDemwd1E1MtGt+7O1KzrPNsaNvSsiEK55MyPIxJIMI2PS8Ijj464B2VbQlpRoQXxw1uHg==}
+  /@scure/bip32/1.3.0:
+    resolution: {integrity: sha512-bcKpo1oj54hGholplGLpqPHRbIsnbixFtc06nwuNM5/dwSXOq/AAYoIBRsBmnZJSdfeNW5rnff7NTAz3ZCqR9Q==}
     dependencies:
-      '@noble/curves': 0.8.3
+      '@noble/curves': 1.0.0
       '@noble/hashes': 1.3.0
       '@scure/base': 1.1.1
 
@@ -14434,10 +14431,10 @@ packages:
     dependencies:
       typescript: 4.9.4
 
-  /abitype/0.7.1_4umapwpw55xijlh2mknjgcn4rq:
-    resolution: {integrity: sha512-VBkRHTDZf9Myaek/dO3yMmOzB/y2s3Zo6nVU7yaw1G+TvCHAjwaJzNGN9yo4K5D8bU/VZXKP1EJpRhFr862PlQ==}
+  /abitype/0.8.2_4umapwpw55xijlh2mknjgcn4rq:
+    resolution: {integrity: sha512-B1ViNMGpfx/qjVQi0RTc2HEFHuR9uoCoTEkwELT5Y7pBPtBbctYijz9BK6+Kd0hQ3S70FhYTO2dWWk0QNUEXMA==}
     peerDependencies:
-      typescript: '>=4.9.4'
+      typescript: '>=5.0.4'
       zod: ^3 >=3.19.1
     peerDependenciesMeta:
       zod:
@@ -14447,10 +14444,10 @@ packages:
       zod: 3.20.2
     dev: false
 
-  /abitype/0.7.1_typescript@4.9.4:
-    resolution: {integrity: sha512-VBkRHTDZf9Myaek/dO3yMmOzB/y2s3Zo6nVU7yaw1G+TvCHAjwaJzNGN9yo4K5D8bU/VZXKP1EJpRhFr862PlQ==}
+  /abitype/0.8.2_typescript@4.9.4:
+    resolution: {integrity: sha512-B1ViNMGpfx/qjVQi0RTc2HEFHuR9uoCoTEkwELT5Y7pBPtBbctYijz9BK6+Kd0hQ3S70FhYTO2dWWk0QNUEXMA==}
     peerDependencies:
-      typescript: '>=4.9.4'
+      typescript: '>=5.0.4'
       zod: ^3 >=3.19.1
     peerDependenciesMeta:
       zod:
@@ -32254,16 +32251,16 @@ packages:
       unist-util-stringify-position: 3.0.2
       vfile-message: 3.1.3
 
-  /viem/0.3.12_4umapwpw55xijlh2mknjgcn4rq:
-    resolution: {integrity: sha512-8w1XaU9ZKECmZ7/71reA3chgBG6eyrBoT24JdVl2CB9SVuJ+5Rpop2r0LjYyeMTmmWT8ZwLYvinKhASNfsaNiw==}
+  /viem/0.3.19_4umapwpw55xijlh2mknjgcn4rq:
+    resolution: {integrity: sha512-7OlSgiB7e+OFz9OqTOZ/Mpx8GAAVKCxsaPDJRuR8QtixlruUHPfHBHOemkX+O/Drn6B7l04iCUZjCvSB8OtVKg==}
     dependencies:
       '@adraffy/ens-normalize': 1.9.0
-      '@noble/curves': 0.9.0
+      '@noble/curves': 1.0.0
       '@noble/hashes': 1.3.0
-      '@scure/bip32': 1.2.0
+      '@scure/bip32': 1.3.0
       '@scure/bip39': 1.2.0
       '@wagmi/chains': 0.2.16_typescript@4.9.4
-      abitype: 0.7.1_4umapwpw55xijlh2mknjgcn4rq
+      abitype: 0.8.2_4umapwpw55xijlh2mknjgcn4rq
       isomorphic-ws: 5.0.0_ws@8.12.0
       ws: 8.12.0
     transitivePeerDependencies:
@@ -32273,16 +32270,16 @@ packages:
       - zod
     dev: false
 
-  /viem/0.3.12_typescript@4.9.4:
-    resolution: {integrity: sha512-8w1XaU9ZKECmZ7/71reA3chgBG6eyrBoT24JdVl2CB9SVuJ+5Rpop2r0LjYyeMTmmWT8ZwLYvinKhASNfsaNiw==}
+  /viem/0.3.19_typescript@4.9.4:
+    resolution: {integrity: sha512-7OlSgiB7e+OFz9OqTOZ/Mpx8GAAVKCxsaPDJRuR8QtixlruUHPfHBHOemkX+O/Drn6B7l04iCUZjCvSB8OtVKg==}
     dependencies:
       '@adraffy/ens-normalize': 1.9.0
-      '@noble/curves': 0.9.0
+      '@noble/curves': 1.0.0
       '@noble/hashes': 1.3.0
-      '@scure/bip32': 1.2.0
+      '@scure/bip32': 1.3.0
       '@scure/bip39': 1.2.0
       '@wagmi/chains': 0.2.16_typescript@4.9.4
-      abitype: 0.7.1_typescript@4.9.4
+      abitype: 0.8.2_typescript@4.9.4
       isomorphic-ws: 5.0.0_ws@8.12.0
       ws: 8.12.0
     transitivePeerDependencies:

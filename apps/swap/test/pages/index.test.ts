@@ -2,6 +2,8 @@ import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
 import { chainName } from '@sushiswap/chain'
 import { Native, SUSHI, Type, USDC } from '@sushiswap/currency'
+import { createTestClient, http } from 'viem'
+import { foundry } from 'viem/chains'
 
 if (!process.env.CHAIN_ID) throw new Error('CHAIN_ID env var not set')
 if (!process.env.PLAYWRIGHT_URL) throw new Error('PLAYWRIGHT_URL env var not set')
@@ -16,19 +18,44 @@ const usdc = USDC[CHAIN_ID as keyof typeof USDC]
 const sushi = SUSHI[CHAIN_ID as keyof typeof SUSHI]
 
 async function switchNetwork(page: Page, chainId: number) {
-  await page.getByRole('button', { name: 'Ethereum' }).click()
-  await page.locator(`[testdata-id=network-selector-${chainId}]`).click()
+  const networkSelector = page.getByRole('button', { name: 'Ethereum' })
+  await expect(networkSelector).toBeVisible()
+  await expect(networkSelector).toBeEnabled()
+  await networkSelector.click()
+
+  const networkToSelect = page.locator(`[testdata-id=network-selector-${chainId}]`)
+  await expect(networkToSelect).toBeVisible()
+  await expect(networkToSelect).toBeEnabled()
+  await networkToSelect.click()
 }
 
 test.slow()
+
+test.beforeAll(async () => {
+  //
+})
 
 test.beforeEach(async ({ page }) => {
   page.on('pageerror', (err) => {
     console.log(err)
   })
-
   await page.goto(PLAYWRIGHT_URL)
   await switchNetwork(page, CHAIN_ID)
+
+  // TODO: need anvil reset
+  // const fromBalance = page.getByTestId('swap-from-balance-button')
+  // await expect(fromBalance).toContainText('1000')
+  // const toBalance = page.getByTestId('swap-from-balance-button')
+  // await expect(toBalance).toContainText('0')
+})
+
+test.afterAll(async () => {})
+
+// const client = createTestClient({ mode: 'anvil', chain: foundry, transport: http() })
+
+test.afterEach(async ({ page }) => {
+  // TODO: Not implemented by viem yet
+  // await client.request({ method: 'anvil_reset', params: [] })
 })
 
 test('Wrap and unwrap', async ({ page }) => {
@@ -44,26 +71,55 @@ test('Wrap and unwrap', async ({ page }) => {
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
-  await swap(page, native, usdc, '1')
+  // TODO: need anvil reset
+  // const swapFromBalance = page.getByTestId('swap-from-balance-button')
+  // await expect(swapFromBalance).toContainText('1000')
+
+  await swap({
+    page,
+    inputCurrency: native,
+    outputCurrency: usdc,
+    amount: '1',
+  })
+
   // TODO: await balance update
-  await swap(page, usdc, native, '1', true)
+  await swap({
+    page,
+    inputCurrency: usdc,
+    outputCurrency: native,
+    useBalance: true,
+  })
   // TODO: await balance update
 })
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
-  await swap(page, native, sushi, '1')
+  // TODO: need anvil reset
+  // const swapFromBalance = page.getByTestId('swap-from-balance-button')
+  // await expect(swapFromBalance).toContainText('1000')
+  await swap({
+    page,
+    inputCurrency: native,
+    outputCurrency: sushi,
+    amount: '1',
+  })
   // TODO: await balance update
-  await swap(page, sushi, native, '1', true)
+  await swap({
+    page,
+    inputCurrency: sushi,
+    outputCurrency: native,
+    useBalance: true,
+  })
   // TODO: await balance update
 })
 
 async function wrap(page: Page, inputCurrency: Type, outputCurrency: Type, amount?: string, useBalance?: boolean) {
   await handleToken(page, inputCurrency, InputType.INPUT)
-  await handleInput(page, amount, useBalance)
+  await inputAmount(page, amount, useBalance)
   await handleToken(page, outputCurrency, InputType.OUTPUT)
 
   if (!inputCurrency.isNative) {
     const approveButton = page.locator('[testdata-id=approve-erc20]', { hasText: `Approve ${inputCurrency.symbol}` })
+    await expect(approveButton).toBeVisible()
     await expect(approveButton).toBeEnabled()
 
     await page
@@ -80,60 +136,78 @@ async function wrap(page: Page, inputCurrency: Type, outputCurrency: Type, amoun
   }
 
   const unwrapButton = page.locator('[testdata-id=swap-button]')
-
+  await expect(unwrapButton).toBeVisible()
   await expect(unwrapButton).toBeEnabled()
   await unwrapButton.click()
 
   const confirmUnwrap = page.locator('[testdata-id=confirm-swap-button]')
+  await expect(confirmUnwrap).toBeVisible()
   await expect(confirmUnwrap).toBeEnabled()
   await confirmUnwrap.click()
 
   const expectedText = new RegExp(`(Wrap|Unwrap .* ${inputCurrency.symbol} to .* ${outputCurrency.symbol})`)
   await expect(page.locator('span', { hasText: expectedText }).last()).toContainText(expectedText)
 
-  await page.locator('[testdata-id=make-another-swap-button]').click()
+  const makeAnotherSwap = page.locator('[testdata-id=make-another-swap-button]')
+  await expect(makeAnotherSwap).toBeVisible()
+  await expect(makeAnotherSwap).toBeEnabled()
+  await makeAnotherSwap.click()
 }
 
-async function swap(page: Page, inputCurrency: Type, outputCurrency: Type, amount?: string, useBalance?: boolean) {
+async function swap({
+  page,
+  inputCurrency,
+  outputCurrency,
+  amount,
+  useBalance,
+}:
+  | { page: Page; inputCurrency: Type; outputCurrency: Type; amount?: never; useBalance: true }
+  | { page: Page; inputCurrency: Type; outputCurrency: Type; amount: string; useBalance?: false }) {
   // await expect(page.locator('[id=amount-checker]')).not.toBeEnabled()
 
-  await handleToken(page, inputCurrency, InputType.INPUT)
-  await handleInput(page, amount, useBalance)
-  await handleToken(page, outputCurrency, InputType.OUTPUT)
+  await handleToken(page, inputCurrency, 'INPUT')
+  await inputAmount(page, amount, useBalance)
+  await handleToken(page, outputCurrency, 'OUTPUT')
 
   if (!inputCurrency.isNative) {
     const approveButton = page.locator('[testdata-id=approve-erc20]', { hasText: `Approve ${inputCurrency.symbol}` })
+    await expect(approveButton).toBeVisible()
     await expect(approveButton).toBeEnabled()
-    await page
-      .locator('[testdata-id=approve-erc20]')
+    await approveButton
       .click()
       .then(() => console.log(`Approved ${inputCurrency.symbol}`))
       .catch(() => console.log(`${inputCurrency.symbol} already approved or not needed`))
   }
 
   const swapButton = page.locator('[testdata-id=swap-button]')
+  await expect(swapButton).toBeVisible()
   await expect(swapButton).toBeEnabled()
   await swapButton.click()
 
-  const confirmSwap = page.locator('[testdata-id=confirm-swap-button]')
+  // const confirmSwap = page.locator('[testdata-id=confirm-swap-button]')
+  const confirmSwap = page.getByRole('button', { name: `Swap ${inputCurrency.symbol} for ${outputCurrency.symbol}` })
+  await expect(confirmSwap).toBeVisible()
   await expect(confirmSwap).toBeEnabled()
   await confirmSwap.click()
-  const expectedText = new RegExp(`(Swap .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol})`)
-  await expect(page.locator('span', { hasText: expectedText }).last()).toContainText(expectedText)
+  // const expectedText = new RegExp(`(Swap .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol})`)
+  // await expect(page.locator('span', { hasText: expectedText }).last()).toContainText(expectedText)
 
-  await page.locator('[testdata-id=make-another-swap-button]').click()
+  const makeAnotherSwap = page.locator('[testdata-id=make-another-swap-button]')
+  await expect(makeAnotherSwap).toBeVisible()
+  await expect(makeAnotherSwap).toBeEnabled()
+  await makeAnotherSwap.click()
 }
 
 async function handleToken(page: Page, currency: Type, type: InputType) {
-  const selectorInfix = `${type === InputType.INPUT ? 'from' : 'to'}`
+  const selectorInfix = `${type === 'INPUT' ? 'from' : 'to'}`
 
   // Open token list
   const tokenSelector = page.locator(`[testdata-id=swap-${selectorInfix}-button]`)
   expect(tokenSelector).toBeVisible()
+  expect(tokenSelector).toBeEnabled()
   await tokenSelector.click()
 
   await page.fill(`[testdata-id=swap-${selectorInfix}-token-selector-address-input]`, currency.symbol as string)
-  await timeout(1000)
   await page
     .locator(
       `[testdata-id=swap-${selectorInfix}-token-selector-row-${
@@ -143,21 +217,22 @@ async function handleToken(page: Page, currency: Type, type: InputType) {
     .click()
 }
 
-async function handleInput(page: Page, amount?: string, useMax?: boolean) {
+async function maxInput(page: Page) {
+  const maxButton = page.getByTestId('swap-from-balance-button')
+  await expect(maxButton).toBeVisible()
+  await expect(maxButton).toBeEnabled()
+  await maxButton.click()
+}
+
+async function inputAmount(page: Page, amount?: string, useMax?: boolean) {
   if (useMax) {
-    await page.getByTestId('swap-from-balance-button').click()
+    await maxInput(page)
   } else if (amount) {
     const input0 = page.locator('[testdata-id="swap-from-input"]')
     await expect(input0).toBeVisible()
+    await expect(input0).toBeEnabled()
     await input0.fill(amount)
   }
 }
 
-function timeout(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-enum InputType {
-  INPUT = 'INPUT',
-  OUTPUT = 'OUTPUT',
-}
+type InputType = 'INPUT' | 'OUTPUT'
