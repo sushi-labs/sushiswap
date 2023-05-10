@@ -182,6 +182,7 @@ async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
   // }
   const previewLocator = page.locator('[testdata-id=add-liquidity-preview-button]')
   await expect(previewLocator).toBeVisible({ timeout: 10_000 })
+  await expect(previewLocator).toBeEnabled()
   await previewLocator.click()
   await page.locator('[testdata-id=confirm-add-liquidity-button]').click({ timeout: 2_000 })
 
