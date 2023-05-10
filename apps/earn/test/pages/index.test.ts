@@ -240,7 +240,8 @@ async function removeLiquidityV3(page: Page) {
   await page.locator('[testdata-id=my-positions-button]').click()
 
   const firstPositionSelector = page.locator('div:nth-child(2) > div > table > tbody > tr > td > a').first()
-  await expect(firstPositionSelector).toBeVisible({ timeout: 7_000 }) // waiting for positions to load
+  await expect(firstPositionSelector).toBeVisible({ timeout: 7_000 })
+  await timeout(2_500) // wait for the animation to finish, otherwise the click will not work. TODO: figure out a better way to do this
   await firstPositionSelector.click()
 
   const decreaseLiquiditySelector = page.locator('[testdata-id=decrease-liquidity-button]')
