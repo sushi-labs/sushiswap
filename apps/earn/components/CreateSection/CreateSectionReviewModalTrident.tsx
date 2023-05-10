@@ -134,7 +134,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   }, [factory, fee, token0, token1, poolType])
 
   const isValid = useMemo(() => {
-    return (
+    return Boolean(
       chain?.id &&
       factory &&
       token0 &&
