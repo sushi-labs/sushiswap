@@ -180,7 +180,9 @@ async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
   // if ((args.amountBelongsToToken0 && !args.token0.isNative) || (!args.amountBelongsToToken0 && !args.token1.isNative)) {
   await approve(page, `approve-erc20-${tokenOrderNumber}`)
   // }
-  await page.locator('[testdata-id=add-liquidity-preview-button]').click({ timeout: 2_000 })
+  const previewLocator = page.locator('[testdata-id=add-liquidity-preview-button]')
+  await expect(previewLocator).toBeVisible({ timeout: 10_000 })
+  await previewLocator.click()
   await page.locator('[testdata-id=confirm-add-liquidity-button]').click({ timeout: 2_000 })
 
   const expectedText =
