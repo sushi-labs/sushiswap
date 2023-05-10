@@ -56,6 +56,11 @@ jobs:
         - name: Install playwright
           run: pnpm exec playwright install --with-deps chromium
 
+        - name: Cache Anvil
+          uses: 'actions/cache@v3'
+          with:
+            path: ~/.foundry/cache/rpc/**/${{ env.ANVIL_BLOCK_NUMBER }}
+            key: foundry-anvil-${{ env.ANVIL_BLOCK_NUMBER }}
         - name: Install rust
           uses: actions-rs/toolchain@v1
           with:
@@ -63,7 +68,6 @@ jobs:
             target: wasm32-unknown-unknown
             profile: minimal
             override: true
-
         - name: Install Anvil
           uses: foundry-rs/foundry-toolchain@v1
           with:
@@ -98,3 +102,7 @@ jobs:
           with:
             name: playwright-report
             path: ./apps/swap/test-results/
+
+        # Need to shutdown Anvil so cache gets created
+        - name: Shutdown Anvil
+          run: pkill -2 anvil
