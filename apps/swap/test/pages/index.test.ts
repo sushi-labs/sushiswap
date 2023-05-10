@@ -5,29 +5,26 @@ import { Native, SUSHI, Type, USDC } from '@sushiswap/currency'
 import { createTestClient, http } from 'viem'
 import { foundry } from 'viem/chains'
 
+// import { z } from 'zod'
+// let envSchema = z.object({
+//   CHAIN_ID: z.string(),
+//   PLAYWRIGHT_URL: z.string(),
+// });
+// const env = envSchema.parse(process.env);
+
 if (!process.env.CHAIN_ID) throw new Error('CHAIN_ID env var not set')
 if (!process.env.PLAYWRIGHT_URL) throw new Error('PLAYWRIGHT_URL env var not set')
+// if (!process.env.ANVIL_FORK_BLOCK) throw new Error('ANVIL_FORK_BLOCK env var not set')
 
 const CHAIN_ID = Number(process.env.CHAIN_ID)
 const PLAYWRIGHT_URL = String(process.env.PLAYWRIGHT_URL)
+// const ANVIL_FORK_BLOCK = Number(process.env.ANVIL_FORK_BLOCK)
 
 const native = Native.onChain(CHAIN_ID)
 const wnative = native.wrapped
 
 const usdc = USDC[CHAIN_ID as keyof typeof USDC]
 const sushi = SUSHI[CHAIN_ID as keyof typeof SUSHI]
-
-async function switchNetwork(page: Page, chainId: number) {
-  const networkSelector = page.getByRole('button', { name: 'Ethereum' })
-  await expect(networkSelector).toBeVisible()
-  await expect(networkSelector).toBeEnabled()
-  await networkSelector.click()
-
-  const networkToSelect = page.locator(`[testdata-id=network-selector-${chainId}]`)
-  await expect(networkToSelect).toBeVisible()
-  await expect(networkToSelect).toBeEnabled()
-  await networkToSelect.click()
-}
 
 test.slow()
 
@@ -42,30 +39,41 @@ test.beforeEach(async ({ page }) => {
   await page.goto(PLAYWRIGHT_URL)
   await switchNetwork(page, CHAIN_ID)
 
-  // TODO: need anvil reset
-  // const fromBalance = page.getByTestId('swap-from-balance-button')
-  // await expect(fromBalance).toContainText('1000')
-  // const toBalance = page.getByTestId('swap-from-balance-button')
-  // await expect(toBalance).toContainText('0')
+  const fromBalance = page.getByTestId('swap-from-balance-button')
+  await expect(fromBalance).toContainText('1000')
+  const toBalance = page.getByTestId('swap-from-balance-button')
+  await expect(toBalance).toContainText('0')
 })
 
 test.afterAll(async () => {})
 
-// const client = createTestClient({ mode: 'anvil', chain: foundry, transport: http() })
+const client = createTestClient({ mode: 'anvil', chain: foundry, transport: http() })
 
 test.afterEach(async ({ page }) => {
   // TODO: Not implemented by viem yet
+  // @ts-ignore
+  await client.reset({ blockNumber: 42259027n })
   // await client.request({ method: 'anvil_reset', params: [] })
 })
 
 test('Wrap and unwrap', async ({ page }) => {
   const wrapFromBalance = page.getByTestId('swap-from-balance-button')
   await expect(wrapFromBalance).toContainText('1000')
-  await wrap(page, native, wnative, '10')
+  await wrap({
+    page,
+    inputCurrency: native,
+    outputCurrency: wnative,
+    amount: '10',
+  })
   const wrapToBalance = page.getByTestId('swap-to-balance-button')
   await expect(wrapFromBalance).toContainText('9989.98')
   await expect(wrapToBalance).toContainText('10')
-  await wrap(page, wnative, native, '10')
+  await wrap({
+    page,
+    inputCurrency: wnative,
+    outputCurrency: native,
+    amount: '10',
+  })
   await expect(wrapFromBalance).toContainText('0')
   await expect(wrapToBalance).toContainText('9999.96')
 })
@@ -75,6 +83,12 @@ test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
   // const swapFromBalance = page.getByTestId('swap-from-balance-button')
   // await expect(swapFromBalance).toContainText('1000')
 
+  const swapFromBalance = page.getByTestId('swap-from-balance-button')
+  await expect(swapFromBalance).toContainText('1000')
+  const swapFromBalanceBefore = await swapFromBalance.textContent()
+  const swapToBalance = page.getByTestId('swap-to-balance-button')
+  const swapToBalanceBefore = await swapToBalance.textContent()
+
   await swap({
     page,
     inputCurrency: native,
@@ -82,7 +96,12 @@ test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
     amount: '1',
   })
 
-  // TODO: await balance update
+  // Ensure balances at least change...
+  const swapFromBalanceAfter = await swapFromBalance.textContent()
+  expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
+  const swapToBalanceAfter = await swapToBalance.textContent()
+  expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
+
   await swap({
     page,
     inputCurrency: usdc,
@@ -96,13 +115,26 @@ test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   // TODO: need anvil reset
   // const swapFromBalance = page.getByTestId('swap-from-balance-button')
   // await expect(swapFromBalance).toContainText('1000')
+
+  const swapFromBalance = page.getByTestId('swap-from-balance-button')
+  await expect(swapFromBalance).toContainText('1000')
+  const swapFromBalanceBefore = await swapFromBalance.textContent()
+  const swapToBalance = page.getByTestId('swap-to-balance-button')
+  const swapToBalanceBefore = await swapToBalance.textContent()
+
   await swap({
     page,
     inputCurrency: native,
     outputCurrency: sushi,
     amount: '1',
   })
-  // TODO: await balance update
+
+  // Ensure balances at least change...
+  const swapFromBalanceAfter = await swapFromBalance.textContent()
+  expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
+  const swapToBalanceAfter = await swapToBalance.textContent()
+  await expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
+
   await swap({
     page,
     inputCurrency: sushi,
@@ -112,7 +144,15 @@ test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   // TODO: await balance update
 })
 
-async function wrap(page: Page, inputCurrency: Type, outputCurrency: Type, amount?: string, useBalance?: boolean) {
+async function wrap({
+  page,
+  inputCurrency,
+  outputCurrency,
+  amount,
+  useBalance,
+}:
+  | { page: Page; inputCurrency: Type; outputCurrency: Type; amount?: never; useBalance: true }
+  | { page: Page; inputCurrency: Type; outputCurrency: Type; amount: string; useBalance?: never }) {
   await handleToken(page, inputCurrency, 'INPUT')
   await inputAmount(page, amount, useBalance)
   await handleToken(page, outputCurrency, 'OUTPUT')
@@ -136,6 +176,7 @@ async function wrap(page: Page, inputCurrency: Type, outputCurrency: Type, amoun
   }
 
   const unwrapButton = page.locator('[testdata-id=swap-button]')
+  // const unwrapButton = page.getByRole('button', { name: 'Wrap' })
   await expect(unwrapButton).toBeVisible()
   await expect(unwrapButton).toBeEnabled()
   await unwrapButton.click()
@@ -184,13 +225,13 @@ async function swap({
   await expect(swapButton).toBeEnabled()
   await swapButton.click()
 
-  // const confirmSwap = page.locator('[testdata-id=confirm-swap-button]')
-  const confirmSwap = page.getByRole('button', { name: `Swap ${inputCurrency.symbol} for ${outputCurrency.symbol}` })
+  const confirmSwap = page.locator('[testdata-id=confirm-swap-button]')
+  // const confirmSwap = page.getByRole('button', { name: `Swap ${inputCurrency.symbol} for ${outputCurrency.symbol}` })
   await expect(confirmSwap).toBeVisible()
   await expect(confirmSwap).toBeEnabled()
   await confirmSwap.click()
-  // const expectedText = new RegExp(`(Swap .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol})`)
-  // await expect(page.locator('span', { hasText: expectedText }).last()).toContainText(expectedText)
+  const expectedText = new RegExp(`(Swap .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol})`)
+  await expect(page.locator('span', { hasText: expectedText }).last()).toContainText(expectedText)
 
   const makeAnotherSwap = page.locator('[testdata-id=make-another-swap-button]')
   await expect(makeAnotherSwap).toBeVisible()
@@ -203,8 +244,8 @@ async function handleToken(page: Page, currency: Type, type: InputType) {
 
   // Open token list
   const tokenSelector = page.locator(`[testdata-id=swap-${selectorInfix}-button]`)
-  expect(tokenSelector).toBeVisible()
-  expect(tokenSelector).toBeEnabled()
+  await expect(tokenSelector).toBeVisible()
+  await expect(tokenSelector).toBeEnabled()
   await tokenSelector.click()
 
   await page.fill(`[testdata-id=swap-${selectorInfix}-token-selector-address-input]`, currency.symbol as string)
@@ -233,6 +274,18 @@ async function inputAmount(page: Page, amount?: string, useMax?: boolean) {
     await expect(input0).toBeEnabled()
     await input0.fill(amount)
   }
+}
+
+async function switchNetwork(page: Page, chainId: number) {
+  const networkSelector = page.getByRole('button', { name: 'Ethereum' })
+  await expect(networkSelector).toBeVisible()
+  await expect(networkSelector).toBeEnabled()
+  await networkSelector.click()
+
+  const networkToSelect = page.locator(`[testdata-id=network-selector-${chainId}]`)
+  await expect(networkToSelect).toBeVisible()
+  await expect(networkToSelect).toBeEnabled()
+  await networkToSelect.click()
 }
 
 type InputType = 'INPUT' | 'OUTPUT'
