@@ -27,6 +27,8 @@ env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
   NODE_ENV: test
+  ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+  ANVIL_BLOCK_NUMBER: 42259027
 
 jobs:
   ci:
@@ -82,9 +84,6 @@ jobs:
         # TODO: Cache Anvil RPC calls between runs to speed up tests
         - name: Launch Anvil
           run: anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER &
-          env:
-            ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
-            ANVIL_BLOCK_NUMBER: 42259027
 
         - name: Test swap app
           run: pnpm test-swap-app
