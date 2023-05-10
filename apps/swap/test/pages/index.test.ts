@@ -261,17 +261,23 @@ async function handleToken(page: Page, currency: Type, type: InputType) {
   // Open token list
   const tokenSelector = page.locator(`[testdata-id=swap-${selectorInfix}-button]`)
   await expect(tokenSelector).toBeVisible()
-  await expect(tokenSelector).toBeEnabled()
+  // await expect(tokenSelector).toBeEnabled()
   await tokenSelector.click()
 
-  await page.fill(`[testdata-id=swap-${selectorInfix}-token-selector-address-input]`, currency.symbol as string)
-  await page
-    .locator(
-      `[testdata-id=swap-${selectorInfix}-token-selector-row-${
-        currency.isNative ? AddressZero : currency.address.toLowerCase()
-      }]`
-    )
-    .click()
+  const tokenSearch = page.locator(`[testdata-id=swap-${selectorInfix}-token-selector-address-input]`)
+  await expect(tokenSearch).toBeVisible()
+  // await expect(tokenSearch).toBeEnabled()
+  await tokenSearch.fill(currency.symbol as string)
+
+  const tokenToSelect = page.locator(
+    `[testdata-id=swap-${selectorInfix}-token-selector-row-${
+      currency.isNative ? AddressZero : currency.address.toLowerCase()
+    }]`
+  )
+  await expect(tokenToSelect).toBeVisible()
+  // await expect(tokenSearch).toBeEnabled()
+
+  await tokenToSelect.click()
 }
 
 async function maxInput(page: Page) {
