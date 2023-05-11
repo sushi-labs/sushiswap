@@ -65,14 +65,15 @@ jobs:
         - name: Install playwright
           run: pnpm exec playwright install --with-deps chromium
 
-        - name: Cache Anvil
-          uses: 'actions/cache@v3'
-          env:
-            ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
-            ANVIL_BLOCK_NUMBER: 42259027
-          with:
-            path: ~/.foundry/cache/rpc/**/${{ env.ANVIL_BLOCK_NUMBER }}
-            key: foundry-anvil-${{ env.ANVIL_BLOCK_NUMBER }}
+        # - name: Cache Anvil
+        #   uses: 'actions/cache@v3'
+        #   env:
+        #     ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+        #     ANVIL_BLOCK_NUMBER: 42259027
+        #   with:
+        #     path: ~/.foundry/cache/rpc/**/${{ env.ANVIL_BLOCK_NUMBER }}
+        #     key: foundry-anvil-${{ env.ANVIL_BLOCK_NUMBER }}
+
         - name: Install rust
           uses: actions-rs/toolchain@v1
           with:
@@ -107,6 +108,6 @@ jobs:
             name: playwright-report
             path: ./apps/swap/test-results/
 
-        # Need to shutdown Anvil so cache gets created
-        - name: Shutdown Anvil
-          run: pkill -2 anvil
+        # # Need to shutdown Anvil so cache gets created
+        # - name: Shutdown Anvil
+        #   run: pkill -2 anvil

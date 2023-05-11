@@ -169,11 +169,9 @@ async function wrap({
     await expect(approveButton).toBeVisible()
     await expect(approveButton).toBeEnabled()
 
-    await page
-      .locator('[testdata-id=approve-erc20]', { hasText: `Approve ${inputCurrency.symbol}` })
-      .click()
-      .then(() => console.log(`Approved ${inputCurrency.symbol}`))
-      .catch(() => console.log(`${inputCurrency.symbol} already approved or not needed`))
+    await page.locator('[testdata-id=approve-erc20]', { hasText: `Approve ${inputCurrency.symbol}` }).click()
+    // .then(() => console.log(`Approved ${inputCurrency.symbol}`))
+    // .catch(() => console.log(`${inputCurrency.symbol} already approved or not needed`))
 
     const expectedApprovingText = `Approving ${inputCurrency.symbol}`
     await expect(page.getByText(expectedApprovingText)).toContainText(expectedApprovingText)
@@ -221,10 +219,9 @@ async function swap({
     const approveButton = page.locator('[testdata-id=approve-erc20]', { hasText: `Approve ${inputCurrency.symbol}` })
     await expect(approveButton).toBeVisible()
     await expect(approveButton).toBeEnabled()
-    await approveButton
-      .click()
-      .then(() => console.log(`Approved ${inputCurrency.symbol}`))
-      .catch(() => console.log(`${inputCurrency.symbol} already approved or not needed`))
+    await approveButton.click()
+    // .then(() => console.log(`Approved ${inputCurrency.symbol}`))
+    // .catch(() => console.log(`${inputCurrency.symbol} already approved or not needed`))
 
     const expectedApprovingText = `Approving ${inputCurrency.symbol}`
     await expect(page.getByText(expectedApprovingText)).toContainText(expectedApprovingText)
