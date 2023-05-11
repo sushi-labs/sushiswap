@@ -71,8 +71,8 @@ test('Wrap and unwrap', async ({ page }) => {
     amount: '10',
   })
 
-  await expect(inputBalance).toContainText('9989.98')
-  await expect(outputBalance).toContainText('10')
+  await expect(await inputBalance.textContent()).toBe('9989.98')
+  await expect(await outputBalance.textContent()).toBe('10.00')
   await wrap({
     page,
     inputCurrency: wnative,
@@ -80,8 +80,8 @@ test('Wrap and unwrap', async ({ page }) => {
     amount: '10',
   })
 
-  await expect(inputBalance).toContainText('0')
-  await expect(outputBalance).toContainText('9999.96')
+  await expect(await inputBalance.textContent()).toBe('0.00')
+  await expect(await outputBalance.textContent()).toBe('9999.96')
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
