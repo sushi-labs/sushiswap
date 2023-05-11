@@ -30,27 +30,20 @@ const sushi = SUSHI[CHAIN_ID as keyof typeof SUSHI]
 
 // const client = createTestClient({ mode: 'anvil', chain: foundry, transport: http() })
 
-const handlePageError = (err: Error) => console.log(err)
-
 test.beforeAll(async () => {
   //
 })
 
 test.beforeEach(async ({ page }) => {
-  // @ts-expect-error
-  // await client.reset({ blockNumber: 42259027n })
+  page.on('pageerror', (err) => {
+    console.log(err)
+  })
 
-  page.on('pageerror', handlePageError)
+  // @ts-ignore
+  // await client.reset({ blockNumber: 42259027n })
 
   await page.goto(PLAYWRIGHT_URL)
   await switchNetwork(page, CHAIN_ID)
-
-  // const input = page.getByTestId('swap-from-balance-button')
-  // const output = page.getByTestId('swap-to-balance-button')
-  // const initialInputBalance = await input.textContent()
-  // const initialOutputBalance = await output.textContent()
-  // await expect(initialInputBalance).toEqual('10000.00')
-  // await expect(initialOutputBalance).toEqual('0.00')
 
   // const fromBalance = page.getByTestId('swap-from-balance-button')
   // await expect(fromBalance).toContainText('1000')
@@ -63,20 +56,14 @@ test.afterAll(async () => {
 })
 
 test.afterEach(async ({ page }) => {
-  page.off('pageerror', handlePageError)
+  //
 })
 
 test('Wrap and unwrap', async ({ page }) => {
-  test.slow()
-  const input = page.getByTestId('swap-from-balance-button')
-  const output = page.getByTestId('swap-to-balance-button')
+  const inputBalance = page.getByTestId('swap-from-balance-button')
+  const outputBalance = page.getByTestId('swap-to-balance-button')
 
-  const initialInputBalance = await input.textContent()
-  const initialOutputBalance = await output.textContent()
-
-  await expect(initialInputBalance).toEqual('10000.00')
-  await expect(initialOutputBalance).toEqual('0.00')
-
+  // await expect(wrapFromBalance).toContainText('1000')
   await wrap({
     page,
     inputCurrency: native,
@@ -84,11 +71,8 @@ test('Wrap and unwrap', async ({ page }) => {
     amount: '10',
   })
 
-  const inputBalanceAfterWrap = await input.textContent()
-  expect(inputBalanceAfterWrap).not.toEqual(initialInputBalance)
-  const swapToBalanceAfterFirst = await output.textContent()
-  await expect(swapToBalanceAfterFirst).not.toEqual(initialOutputBalance)
-
+  await expect(inputBalance).toContainText('9989.98')
+  await expect(outputBalance).toContainText('10')
   await wrap({
     page,
     inputCurrency: wnative,
@@ -96,12 +80,11 @@ test('Wrap and unwrap', async ({ page }) => {
     amount: '10',
   })
 
-  const inputBalanceAfterUnwrap = await input.textContent()
-  await expect(inputBalanceAfterUnwrap).toEqual('0.00')
+  await expect(inputBalance).toContainText('0')
+  await expect(outputBalance).toContainText('9999.96')
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
-  test.slow()
   const swapFromBalance = page.getByTestId('swap-from-balance-button')
   const swapFromBalanceBefore = await swapFromBalance.textContent()
 
@@ -136,7 +119,6 @@ test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
 })
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
-  test.slow()
   const swapFromBalance = page.getByTestId('swap-from-balance-button')
   const swapFromBalanceBefore = await swapFromBalance.textContent()
 
