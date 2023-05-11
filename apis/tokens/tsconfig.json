@@ -4,6 +4,7 @@
   "exclude": ["node_modules", ".vercel"],
   "compilerOptions": {
     "resolveJsonModule": true,
-    "moduleResolution": "nodenext"
+    "module": "ESNext",
+    "moduleResolution": "nodenext",
   }
 }
