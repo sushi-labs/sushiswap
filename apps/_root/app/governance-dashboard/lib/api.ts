@@ -239,10 +239,34 @@ export async function getTreasuryHistoricalTvl() {
   }
 
   const result = Object.entries(combinedData).map(([date, totalLiquidityUSD]) => ({
-    [date]: totalLiquidityUSD as number,
+    date,
+    value: totalLiquidityUSD as number,
   }))
 
   return result
+}
+
+interface SafeBalance {
+  tokenAddress: Address | null
+  token: {
+    name: string
+    symbol: string
+    decimals: number
+    logoUri: string
+  } | null
+  balance: string
+  ethValue: string
+  fiatBalance: string
+  fiatConversion: string
+  fiatCode: string
+  timestamp: string
+}
+
+export interface TreasurySnapshot {
+  totalValueUsd: number
+  balancesValueUsd: number
+  vestingValueUsd: number
+  balances: SafeBalance[] | undefined
 }
 
 export async function getTreasurySnapshot() {
@@ -251,23 +275,7 @@ export async function getTreasurySnapshot() {
   const TOKENSETS_URL = 'https://api.tokensets.com/v2/funds/sushihouse'
 
   const [balances, vestingValueUsd] = await Promise.all([
-    fetchUrl<
-      {
-        tokenAddress: Address | null
-        token: {
-          name: string
-          symbol: string
-          decimals: number
-          logoUri: string
-        } | null
-        balance: string
-        ethValue: string
-        fiatBalance: string
-        fiatConversion: string
-        fiatCode: string
-        timestamp: string
-      }[]
-    >(SAFE_URL),
+    fetchUrl<SafeBalance[]>(SAFE_URL),
     fetchUrl<{ fund: { market_cap: `$${string}` } }>(TOKENSETS_URL).then(
       (res) => Number(res?.fund.market_cap.replace(/[^0-9.]/g, '')) // remove $ and commas
     ),
