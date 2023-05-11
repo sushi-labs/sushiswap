@@ -9,7 +9,7 @@ import {
   Version as TradeVersion,
 } from '@sushiswap/amm'
 import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId, chainName } from '@sushiswap/chain'
 import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
 import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 import { RouteStatus } from '@sushiswap/tines'
@@ -65,11 +65,11 @@ export const useTrade: UseTrade = ({
   ammEnabled = true,
 }) => {
   if (ammEnabled && !isUniswapV2Router02ChainId(chainId))
-    throw new Error(`ChainId Error: Legacy is not available on ${ChainId[chainId]} and ammEnabled is enabled.`)
+    throw new Error(`ChainId Error: Legacy is not available on ${chainName[chainId]} and ammEnabled is enabled.`)
 
   // TODO: Use trident chainId instead of Bento
   if (tridentEnabled && !isBentoBoxV1ChainId(chainId))
-    throw new Error(`ChainId Error: BentoBox is not available on ${ChainId[chainId]} and tridentEnabled is enabled.`)
+    throw new Error(`ChainId Error: BentoBox is not available on ${chainName[chainId]} and tridentEnabled is enabled.`)
 
   const { data } = useFeeData({
     chainId,
@@ -126,8 +126,7 @@ export const useTrade: UseTrade = ({
 
   return useMemo(() => {
     if (
-      data &&
-      data.gasPrice &&
+      data?.gasPrice &&
       currencyIn &&
       currencyInRebase &&
       currencyOut &&

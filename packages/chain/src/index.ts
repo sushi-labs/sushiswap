@@ -197,9 +197,9 @@ export enum ChainKey {
   BOBA_AVAX = 'boba-avax',
   BOBA_BNB = 'boba-bnb',
   BTTC = 'bttc',
-  CONSENSUS_ZKEVM_TESTNET = 'consensus-zkevm-testnet',
-  SCROLL_ALPHA_TESTNET = 'scroll-alpha-testnet',
-  BASE_TESTNET = 'base-testnet',
+  // CONSENSUS_ZKEVM_TESTNET = 'consensus-zkevm-testnet',
+  // SCROLL_ALPHA_TESTNET = 'scroll-alpha-testnet',
+  // BASE_TESTNET = 'base-testnet',
   POYGON_ZKEVM = 'polygon-zkevm',
   // SEPOLIA = 'sepolia',
 }

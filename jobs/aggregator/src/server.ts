@@ -163,7 +163,7 @@ app.get(
           res.sendStatus(400).send('Not a valid version')
         }
       } else {
-        res.status(400).send('Could not find protocol. valid protocols are: ' + Object.values(ProtocolName).join(','))
+        res.status(400).send(`Could not find protocol. valid protocols are: ${Object.values(ProtocolName).join(',')}`)
       }
     } catch (err) {
       res.status(500).send(err)

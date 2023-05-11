@@ -7,6 +7,8 @@ import { Search } from '@sushiswap/ui/future/components/input/Search'
 export const TableFiltersSearchToken: FC = () => {
   const { tokenSymbols, setFilters } = usePoolFilters()
 
+  // console.log({ tokenSymbols })
+
   const [_query, setQuery] = useState<string>('')
   const [_extraQuery, setExtraQuery] = useState<string>('')
   const [extra] = useState(false)

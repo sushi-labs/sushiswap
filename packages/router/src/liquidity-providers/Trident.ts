@@ -37,7 +37,7 @@ export function convertTokenToBento(token: Token): RToken {
   t.chainId = getBentoChainId(token.chainId)
   t.name = getBentoChainId(token.name)
   t.symbol = getBentoChainId(token.symbol)
-  t.tokenId = undefined
+  delete t.tokenId
   return t
 }
 

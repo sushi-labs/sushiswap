@@ -1,6 +1,5 @@
 import '../lib/wagmi.js'
 
-import { ChainId } from '@sushiswap/chain'
 import { createClient, Prisma, PrismaClient, Token as PrismaToken } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
@@ -9,7 +8,7 @@ import { PoolType, ProtocolVersion } from '../config.js'
 const SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 const SUPPORTED_TYPES = [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL]
 
-export async function liquidity(chainId: ChainId) {
+export async function liquidity(chainId: number) {
   const client = await createClient()
   try {
     const startTime = performance.now()
@@ -29,7 +28,7 @@ export async function liquidity(chainId: ChainId) {
   }
 }
 
-async function getPools(client: PrismaClient, chainId: ChainId) {
+async function getPools(client: PrismaClient, chainId: number) {
   const startTime = performance.now()
   const batchSize = 2500
   let cursor = null
@@ -43,7 +42,7 @@ async function getPools(client: PrismaClient, chainId: ChainId) {
     } else {
       result = await getPoolsByPagination(client, chainId, batchSize, 1, { id: cursor })
     }
-    cursor = result.length == batchSize ? result[result.length - 1].id : null
+    cursor = result.length === batchSize ? result[result.length - 1].id : null
     totalCount += result.length
     results.push(...result)
     const requestEndTime = performance.now()
@@ -62,7 +61,7 @@ async function getPools(client: PrismaClient, chainId: ChainId) {
 
 async function getPoolsByPagination(
   client: PrismaClient,
-  chainId: ChainId,
+  chainId: number,
   take?: number,
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
@@ -129,11 +128,11 @@ function transform(pools: Pool[]) {
       const amount1 = (Number(pool.reserve1) / 10 ** t1.decimals) * Number(t1.derivedUSD)
       const liquidityUSD = amount0 + amount1
       poolsToUpdate.push({ id: pool.id, liquidityUSD: liquidityUSD.toString() })
-    } else if (t0.derivedUSD !== null && t0.derivedUSD.gt(0) && t0.status === 'APPROVED') {
+    } else if (t0?.derivedUSD?.gt(0) && t0.status === 'APPROVED') {
       const amount0 = (Number(pool.reserve0) / 10 ** t0.decimals) * Number(t0.derivedUSD)
       const liquidityUSD = amount0 * 2
       poolsToUpdate.push({ id: pool.id, liquidityUSD: liquidityUSD.toString() })
-    } else if (t1.derivedUSD !== null && t1.derivedUSD.gt(0) && t1.status === 'APPROVED') {
+    } else if (t1?.derivedUSD?.gt(0) && t1.status === 'APPROVED') {
       const amount1 = (Number(pool.reserve1) / 10 ** t1.decimals) * Number(t1.derivedUSD)
       const liquidityUSD = amount1 * 2
       poolsToUpdate.push({ id: pool.id, liquidityUSD: liquidityUSD.toString() })

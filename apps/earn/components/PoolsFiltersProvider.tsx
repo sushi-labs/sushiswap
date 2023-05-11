@@ -67,8 +67,6 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => 
     }
   }, [query])
 
-
-
   const setFilters = useCallback(
     (filters: PoolFilters) => {
       const newFilters = { ...parsed, ...filters }

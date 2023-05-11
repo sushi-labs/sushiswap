@@ -7,7 +7,7 @@ import { SUPPORTED_CHAINS } from './config.js'
 const handler = async (request: VercelRequest, response: VercelResponse) => {
   const chainId = request.query['chainId'] as string
 
-  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+  if (!(chainId in SUPPORTED_CHAINS)) {
     response.status(422).json({
       message: 'Unsupported network. Supported chain ids: '.concat(SUPPORTED_CHAINS.join(', ')),
     })

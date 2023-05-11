@@ -1,11 +1,9 @@
 {
-  "extends": "@sushiswap/typescript-config/node18-vercel.json",
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node18/tsconfig", "@tsconfig/esm/tsconfig"],
   "include": ["."],
   "exclude": ["node_modules", ".vercel"],
-  // Need to specify even though it's in the base config file, don't know why
   "compilerOptions": {
-    "module": "esnext",
-    "baseUrl": ".",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "moduleResolution": "nodenext"
   }
 }

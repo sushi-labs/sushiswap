@@ -41,7 +41,9 @@ export async function execute() {
 }
 
 async function extract() {
-  const minichefsP = Object.keys(MINICHEF_SUBGRAPH_NAME).map((chainId) => getMinichef(Number(chainId)))
+  const minichefsP = Object.keys(MINICHEF_SUBGRAPH_NAME).map((chainId) =>
+    getMinichef(Number(chainId) as keyof typeof MINICHEF_SUBGRAPH_NAME)
+  )
   const masterChefV1P = getMasterChefV1()
   const masterChefV2P = getMasterChefV2()
 
@@ -82,38 +84,35 @@ async function transform(data: ChefReturn[]): Promise<{
   tokens: Prisma.TokenCreateManyInput[]
 }> {
   const tokens: Prisma.TokenCreateManyInput[] = []
-  const incentives = data
-    .flatMap((farm) => {
-      const chainId = farm.chainId
-      return Object.entries(farm.farms ?? [])
-        .flatMap(([poolAddress, farm]) => {
-          return farm.incentives
-            .flatMap((incentive) => {
-              tokens.push(
-                Prisma.validator<Prisma.TokenCreateManyInput>()({
-                  id: chainId.toString().concat(':').concat(incentive.rewardToken.address.toLowerCase()),
-                  address: incentive.rewardToken.address.toLowerCase(),
-                  chainId: chainId,
-                  name: incentive.rewardToken.name,
-                  symbol: incentive.rewardToken.symbol,
-                  decimals: incentive.rewardToken.decimals,
-                })
-              )
-              return Prisma.validator<Prisma.IncentiveCreateManyInput>()({
-                id: poolAddress.concat(':').concat(incentive.rewarder.address),
-                chainId: chainId,
-                chefType: farm.chefType,
-                apr: isNaN(incentive.apr) || incentive.apr === Infinity ? 0 : incentive.apr,
-                rewardTokenId: chainId.toString().concat(':').concat(incentive.rewardToken.address.toLowerCase()),
-                rewardPerDay: incentive.rewardPerDay,
-                poolId: chainId.toString().concat(':').concat(poolAddress.toLowerCase()),
-                pid: farm.id,
-                rewarderAddress: incentive.rewarder.address.toLowerCase(),
-                rewarderType: incentive.rewarder.type,
-              })
-            })
+  const incentives = data.flatMap((farm) => {
+    const chainId = farm.chainId
+    return Object.entries(farm.farms ?? []).flatMap(([poolAddress, farm]) => {
+      return farm.incentives.flatMap((incentive) => {
+        tokens.push(
+          Prisma.validator<Prisma.TokenCreateManyInput>()({
+            id: chainId.toString().concat(':').concat(incentive.rewardToken.address.toLowerCase()),
+            address: incentive.rewardToken.address.toLowerCase(),
+            chainId: chainId,
+            name: incentive.rewardToken.name,
+            symbol: incentive.rewardToken.symbol,
+            decimals: incentive.rewardToken.decimals,
+          })
+        )
+        return Prisma.validator<Prisma.IncentiveCreateManyInput>()({
+          id: poolAddress.concat(':').concat(incentive.rewarder.address),
+          chainId: chainId,
+          chefType: farm.chefType,
+          apr: isNaN(incentive.apr) || incentive.apr === Infinity ? 0 : incentive.apr,
+          rewardTokenId: chainId.toString().concat(':').concat(incentive.rewardToken.address.toLowerCase()),
+          rewardPerDay: incentive.rewardPerDay,
+          poolId: chainId.toString().concat(':').concat(poolAddress.toLowerCase()),
+          pid: farm.id,
+          rewarderAddress: incentive.rewarder.address.toLowerCase(),
+          rewarderType: incentive.rewarder.type,
         })
+      })
     })
+  })
 
   const { incentivesToCreate, incentivesToUpdate } = await filterIncentives(incentives)
 
