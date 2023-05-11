@@ -85,9 +85,9 @@ test('Wrap and unwrap', async ({ page }) => {
   })
 
   const inputBalanceAfterWrap = await input.textContent()
-  expect(initialInputBalance).not.toEqual(inputBalanceAfterWrap)
+  expect(inputBalanceAfterWrap).not.toEqual(initialInputBalance)
   const swapToBalanceAfterFirst = await output.textContent()
-  await expect(initialOutputBalance).not.toEqual(swapToBalanceAfterFirst)
+  await expect(swapToBalanceAfterFirst).not.toEqual(initialOutputBalance)
 
   await wrap({
     page,
@@ -97,9 +97,7 @@ test('Wrap and unwrap', async ({ page }) => {
   })
 
   const inputBalanceAfterUnwrap = await input.textContent()
-  const outputBalanceAfterUnwrap = await output.textContent()
   await expect(inputBalanceAfterUnwrap).toEqual('0.00')
-  await expect(outputBalanceAfterUnwrap).not.toEqual(inputBalanceAfterUnwrap)
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {

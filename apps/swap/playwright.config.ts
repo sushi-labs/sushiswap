@@ -43,6 +43,12 @@ const config: PlaywrightTestConfig = {
   use: {
     baseURL,
 
+    headless: !process.env.CI ? false : true,
+    viewport: { width: 1280, height: 720 },
+    ignoreHTTPSErrors: true,
+    // video: 'on',
+    colorScheme: 'dark',
+
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
     // actionTimeout: 0,
 
