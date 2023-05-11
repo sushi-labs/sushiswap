@@ -27,7 +27,6 @@ env:
   CI: true
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-  NODE_ENV: test
 
 jobs:
   ci:

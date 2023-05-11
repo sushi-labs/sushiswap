@@ -51,12 +51,28 @@ jobs:
             node-version: 18
             cache: 'pnpm'
 
+        - name: Cache pnpm
+          uses: actions/cache@v3
+          with:
+            path: ~/.pnpm-store
+            key: pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: pnpm-
+
         - name: Install dependencies
           run: pnpm install
           working-directory: .
 
         - name: Install playwright
           run: pnpm exec playwright install --with-deps chromium
+
+        # - name: Cache Anvil
+        #   uses: 'actions/cache@v3'
+        #   env:
+        #     ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+        #     ANVIL_BLOCK_NUMBER: 42259027
+        #   with:
+        #     path: ~/.foundry/cache/rpc/**/${{ env.ANVIL_BLOCK_NUMBER }}
+        #     key: foundry-anvil-${{ env.ANVIL_BLOCK_NUMBER }}
 
         - name: Install rust
           uses: actions-rs/toolchain@v1
@@ -65,12 +81,10 @@ jobs:
             target: wasm32-unknown-unknown
             profile: minimal
             override: true
-
         - name: Install Anvil
           uses: foundry-rs/foundry-toolchain@v1
           with:
             version: nightly
-
         - name: Launch Anvil
           run: anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER &
           env:
@@ -93,3 +107,7 @@ jobs:
           with:
             name: playwright-report
             path: ./apps/swap/test-results/
+
+        # # Need to shutdown Anvil so cache gets created
+        # - name: Shutdown Anvil
+        #   run: pkill -2 anvil
