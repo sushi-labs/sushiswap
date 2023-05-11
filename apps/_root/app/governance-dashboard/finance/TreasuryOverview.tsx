@@ -66,10 +66,7 @@ export function TreasuryOverview(props: {
                 <AreaChart
                   data={treasuryHistoricalTvl}
                   margin={{
-                    top: 10,
-                    right: 30,
-                    left: 0,
-                    bottom: 0,
+                    right: 20,
                   }}
                 >
                   <defs>
@@ -89,8 +86,14 @@ export function TreasuryOverview(props: {
                     interval={30}
                     axisLine={false}
                     tickLine={false}
+                    scale="band"
                   />
-                  <YAxis tickFormatter={(tick) => '$' + formatNumber(tick)} axisLine={false} tickLine={false} />
+                  <YAxis
+                    tickFormatter={(tick) => '$' + formatNumber(tick)}
+                    axisLine={false}
+                    tickLine={false}
+                    padding={{ bottom: 8 }}
+                  />
                   <Tooltip
                     content={(props) => {
                       const { active, payload, label } = props

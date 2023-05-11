@@ -4,11 +4,12 @@ import { Link, classNames } from '@sushiswap/ui'
 import React from 'react'
 import { usePathname } from 'next/navigation'
 
+const BASE_PATH = '/governance-dashboard'
 const TABS = [
-  { title: 'Overview', path: '/governance-dashboard' },
-  { title: 'Finance', path: '/governance-dashboard/finance' },
-  { title: 'Governance', path: '/governance-dashboard/governance' },
-  { title: 'Token Holders', path: '/governance-dashboard/token-holders' },
+  { title: 'Overview', path: BASE_PATH },
+  { title: 'Finance', path: `${BASE_PATH}/finance` },
+  { title: 'Governance', path: `${BASE_PATH}/governance` },
+  { title: 'Token Holders', path: `${BASE_PATH}/token-holders` },
 ]
 
 export function TabList() {
