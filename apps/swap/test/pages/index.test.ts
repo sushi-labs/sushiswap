@@ -58,7 +58,7 @@ test.afterEach(async ({ page }) => {
   //
 })
 
-test.only('Wrap and unwrap', async ({ page }) => {
+test('Wrap and unwrap', async ({ page }) => {
   test.slow()
   const input = page.getByTestId('swap-from-balance-button')
   const output = page.getByTestId('swap-to-balance-button')
