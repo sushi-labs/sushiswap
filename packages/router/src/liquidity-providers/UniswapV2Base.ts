@@ -428,9 +428,10 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   }
 
   _getPoolAddress(t1: Token, t2: Token): string {
+    const [addr1, addr2] = t1.sortsBefore(t2) ? [t1.address, t2.address] : [t2.address, t1.address]
     return getCreate2Address(
       this.factory[this.chainId as keyof typeof this.factory],
-      keccak256(['bytes'], [pack(['address', 'address'], [t1.address, t2.address])]),
+      keccak256(['bytes'], [pack(['address', 'address'], [addr1, addr2])]),
       this.initCodeHash[this.chainId as keyof typeof this.initCodeHash]
     )
   }
