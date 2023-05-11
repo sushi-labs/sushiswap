@@ -175,7 +175,6 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const prepare = useCallback(
     async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       try {
-        console.log("Preparing")
         if (
           !chain?.id ||
           !factory ||
@@ -190,7 +189,6 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
           !totals?.[token0.wrapped.address] ||
           !totals?.[token1.wrapped.address]
         ) {
-          console.log("Not valid, returning", {pool, contract, totalSupply, poolAddress})
           return
         }
 
@@ -261,7 +259,6 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         })
       } catch (e: unknown) {
         //
-        console.log("Error", e)
       }
     },
     [

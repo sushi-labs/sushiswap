@@ -230,6 +230,7 @@ async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
   const confirmButton = page.locator('[testdata-id=confirm-add-liquidity-button]')
   await expect(confirmButton).toBeVisible()
   await expect(confirmButton).toBeEnabled()
+  timeout(2_500) // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
   await confirmButton.click()
 
   const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`
@@ -255,6 +256,7 @@ async function removeLiquidityV3(page: Page) {
 
   await page.locator('[testdata-id=liquidity-max-button]').click()
   const handleLiquidityLocator = page.locator('[testdata-id=remove-or-add-liquidity-button]')
+  await expect(handleLiquidityLocator).toBeVisible()
   await expect(handleLiquidityLocator).toBeEnabled()
   await handleLiquidityLocator.click()
 
