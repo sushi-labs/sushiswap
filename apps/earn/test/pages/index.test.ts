@@ -258,6 +258,7 @@ async function removeLiquidityV3(page: Page) {
   const handleLiquidityLocator = page.locator('[testdata-id=remove-or-add-liquidity-button]')
   await expect(handleLiquidityLocator).toBeVisible()
   await expect(handleLiquidityLocator).toBeEnabled()
+  timeout(2_500) // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
   await handleLiquidityLocator.click()
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
