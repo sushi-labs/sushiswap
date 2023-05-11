@@ -2,6 +2,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
 import { chainName } from '@sushiswap/chain'
 import { Native, SUSHI, Type, USDC } from '@sushiswap/currency'
+import { getSigners } from '@sushiswap/wagmi/test/setup'
 import { createTestClient, http } from 'viem'
 import { foundry } from 'viem/chains'
 
@@ -21,6 +22,8 @@ if (!process.env.PLAYWRIGHT_URL) throw new Error('PLAYWRIGHT_URL env var not set
 const CHAIN_ID = Number(process.env.CHAIN_ID)
 const PLAYWRIGHT_URL = String(process.env.PLAYWRIGHT_URL)
 // const ANVIL_FORK_BLOCK = Number(process.env.ANVIL_FORK_BLOCK)
+
+const signers = getSigners()
 
 const native = Native.onChain(CHAIN_ID)
 const wnative = native.wrapped
@@ -62,7 +65,6 @@ test.afterEach(async ({ page }) => {
 test('Wrap and unwrap', async ({ page }) => {
   const inputBalance = page.getByTestId('swap-from-balance-button')
   const outputBalance = page.getByTestId('swap-to-balance-button')
-
   await expect(await inputBalance.textContent()).toBe('10000.00')
   await wrap({
     page,
@@ -70,19 +72,14 @@ test('Wrap and unwrap', async ({ page }) => {
     outputCurrency: wnative,
     amount: '10',
   })
-
-  // await expect(inputBalance).toHaveText('9989.98')
   await expect(outputBalance).toHaveText('10.00')
-
   await wrap({
     page,
     inputCurrency: wnative,
     outputCurrency: native,
     amount: '10',
   })
-
   await expect(inputBalance).toHaveText('0.00')
-  // await expect(outputBalance).toHaveText('9999.96')
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
