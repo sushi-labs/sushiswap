@@ -4,6 +4,8 @@ import { erc20Abi, weth9Abi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId, chainName } from '@sushiswap/chain'
 import {
+  AAVE,
+  AAVE_ADDRESS,
   DAI,
   DAI_ADDRESS,
   FRAX,
@@ -45,7 +47,7 @@ import { hardhat } from 'viem/chains'
 import { getAllPoolCodes } from './utils/getAllPoolCodes'
 
 // Updating  pools' state allows to test DF updating ability, but makes tests very-very slow (
-const UPDATE_POOL_STATES = false
+const UPDATE_POOL_STATES = true //false
 const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -454,6 +456,17 @@ describe('End-to-end RouteProcessor3 test', async function () {
     intermidiateResult[0] = getBigNumber(1000000 * 1e18)
     intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult, usedPools)
     intermidiateResult = await updMakeSwap(env, SUSHI_LOCAL, Native.onChain(chainId), intermidiateResult, usedPools)
+  })
+
+  // EGN-251 issue
+  it.only('Native => Aave => Dai', async function () {
+    await env.snapshot.restore()
+    const usedPools = new Set<string>()
+    intermidiateResult[0] = getBigNumber(100 * 1e18)
+    const aave = AAVE[chainId as keyof typeof AAVE_ADDRESS]
+    const dai = DAI[chainId as keyof typeof DAI_ADDRESS]
+    intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), aave, intermidiateResult, usedPools)
+    intermidiateResult = await updMakeSwap(env, aave, dai, intermidiateResult, usedPools)
   })
 
   it('Native => WrappedNative => Native', async function () {
