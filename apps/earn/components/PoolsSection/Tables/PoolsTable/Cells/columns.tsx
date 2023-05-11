@@ -7,6 +7,7 @@ import { PoolNameCell, PoolChainCell, PoolAPRCell, PoolVolume1dCell } from '../.
 import { PoolTVLCell } from './PoolTVLCell'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { Explainer } from '@sushiswap/ui/future/components/Explainer'
+import { ChainId } from '@sushiswap/chain'
 
 export const ICON_SIZE = 26
 export const PAGE_SIZE = 20
@@ -14,7 +15,7 @@ export const PAGE_SIZE = 20
 export const NETWORK_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'network',
   header: 'Network',
-  cell: (props) => <PoolChainCell row={props.row.original} />,
+  cell: (props) => <PoolChainCell row={props.row.original as typeof props.row.original & { chainId: ChainId }} />,
   size: 50,
   meta: {
     skeleton: <Skeleton.Circle radius={ICON_SIZE} />,

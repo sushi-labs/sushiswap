@@ -42,8 +42,8 @@ export abstract class Currency {
    * @param rebase of the currency
    */
   protected constructor({
-    chainId,
-    decimals,
+    chainId: _chainId,
+    decimals: _decimals,
     symbol,
     name,
   }: {
@@ -52,11 +52,13 @@ export abstract class Currency {
     symbol?: string
     name?: string
   }) {
-    invariant(Number.isSafeInteger(Number(chainId)), 'CHAIN_ID')
-    invariant(decimals >= 0 && decimals < 255 && Number.isInteger(Number(decimals)), 'DECIMALS')
+    const chainId = Number(_chainId) as ChainId
+    const decimals = Number(_decimals)
+    invariant(Number.isSafeInteger(chainId), 'CHAIN_ID')
+    invariant(decimals >= 0 && decimals < 255 && Number.isInteger(decimals), 'DECIMALS')
 
-    this.chainId = Number(chainId)
-    this.decimals = Number(decimals)
+    this.chainId = chainId
+    this.decimals = decimals
     this.symbol = symbol
     this.name = name
   }

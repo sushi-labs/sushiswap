@@ -26,6 +26,7 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_ADD_LEGACY } from '../../lib/constants'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 interface AddSectionReviewModalLegacyProps {
   poolState: PairState
@@ -171,7 +172,13 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   })
 
   return (
-    <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} close={close}>
+    <AddSectionReviewModal
+      chainId={chainId as BentoBoxV1ChainId}
+      input0={input0}
+      input1={input1}
+      open={open}
+      close={close}
+    >
       <Button size="xl" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
         {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
       </Button>

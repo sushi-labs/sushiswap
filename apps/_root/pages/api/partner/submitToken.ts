@@ -118,9 +118,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     sha: latestIconsSha,
   })
 
-  const imagePath = `logos/token-logos/network/${ChainKey[
-    ChainId[chainId] as keyof typeof ChainKey
-  ].toLowerCase()}/${checksummedAddress}.jpg`
+  const imagePath = `logos/token-logos/network/${ChainKey[chainId].toLowerCase()}/${checksummedAddress}.jpg`
 
   try {
     // Figure out if image already exists, overwrite if it does
@@ -154,9 +152,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return
   }
 
-  const listPath = `lists/token-lists/${listType}/tokens/${ChainKey[
-    ChainId[chainId] as keyof typeof ChainKey
-  ].toLowerCase()}.json`
+  const listPath = `lists/token-lists/${listType}/tokens/${ChainKey[chainId].toLowerCase()}.json`
 
   // Get current token list to append to
   let currentListData: { sha: string; content: any } | undefined
@@ -199,11 +195,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     branch: branch,
     path: listPath,
     content: Buffer.from(JSON.stringify(newList, null, 2)).toString('base64'),
-    message: `Add ${displayName} on ${ChainId[chainId].toLowerCase()}`,
+    message: `Add ${displayName} on ${CHAIN_NAME[chainId].toLowerCase()}`,
     sha: currentListData?.sha,
   })
 
-  const exchangeData = await getTokenKPI(tokenAddress, chainId as SushiSwapChainId | TridentChainId)
+  const exchangeData = await getTokenKPI(tokenAddress, chainId as Extract<ChainId, SushiSwapChainId & TridentChainId>)
 
   // Open List PR
   const {
@@ -237,7 +233,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           description: 'New pull request',
           color: 5814783,
           author: {
-            name: `${tokenData.name} - ${ChainId[chainId]}`,
+            name: `${tokenData.name} - ${CHAIN_NAME[chainId]}`,
             url: listPr,
             icon_url: `https://raw.githubusercontent.com/${owner}/list/${branch}/${imagePath}`,
           },
@@ -256,7 +252,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 export default handler
 
 async function getCoinGecko(chainId: ChainId, address: string) {
-  return await fetch(`https://api.coingecko.com/api/v3/coins/${ChainId[chainId].toLowerCase()}/contract/${address}`)
+  return await fetch(`https://api.coingecko.com/api/v3/coins/${CHAIN_NAME[chainId].toLowerCase()}/contract/${address}`)
     .then((data) => data.json())
     .then((data) => (data.id ? `https://www.coingecko.com/en/coins/${data.id}` : 'Not Found'))
 }

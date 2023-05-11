@@ -7,9 +7,10 @@ import { FC, ReactNode, useMemo } from 'react'
 
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 import { Rate } from '../Rate'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 interface AddSectionReviewModal {
-  chainId: ChainId
+  chainId: BentoBoxV1ChainId
   input0: Amount<Type> | undefined
   input1: Amount<Type> | undefined
   open: boolean

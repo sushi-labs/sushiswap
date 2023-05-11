@@ -5,7 +5,7 @@ import { usePrices } from '@sushiswap/react-query'
 import { useMemo } from 'react'
 
 interface Params {
-  chainId: ChainId
+  chainId: number
   amounts: (Amount<Type> | undefined)[] | null | undefined
 }
 

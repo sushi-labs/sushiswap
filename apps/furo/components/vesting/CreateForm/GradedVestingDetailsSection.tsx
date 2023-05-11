@@ -10,6 +10,7 @@ import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { CurrencyInputBase, HelperTextPanel } from '../../CurrencyInput'
 import { CreateVestingFormSchemaType, FormErrors, StepConfig, stepConfigurations } from '../../vesting'
 import { calculateEndDate, calculateTotalAmount } from '../utils'
+import { Chain, ChainId } from '@sushiswap/chain'
 
 export const GradedVestingDetailsSection = () => {
   const { address } = useAccount()
@@ -34,7 +35,7 @@ export const GradedVestingDetailsSection = () => {
   )
   const { data: balance } = useBalance({
     account: address,
-    chainId: currency?.chainId,
+    chainId: currency?.chainId as ChainId | undefined,
     currency: _currency,
     loadBentobox: true,
   })

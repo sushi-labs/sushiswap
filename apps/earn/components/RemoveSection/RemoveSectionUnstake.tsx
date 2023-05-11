@@ -13,6 +13,7 @@ import { Checker } from '@sushiswap/wagmi/future/systems'
 import Button from '@sushiswap/ui/future/components/button/Button'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_UNSTAKE } from '../../lib/constants'
+import { ChainId } from '@sushiswap/chain'
 
 interface AddSectionStakeProps {
   pool: Pool
@@ -60,7 +61,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot((
 
   return (
     <RemoveSectionUnstakeWidget
-      chainId={pool.chainId}
+      chainId={pool.chainId as ChainId}
       value={value}
       setValue={setValue}
       reserve0={reserve0}

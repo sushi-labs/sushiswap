@@ -1,12 +1,12 @@
 import type {} from '@sushiswap/database'
 import type { getEarnPools as getEarnPoolsOriginal } from '@sushiswap/pools-api/lib/api'
 import { PoolsApiSchema } from '@sushiswap/pools-api/lib/schemas'
-import { parseArgs } from 'src/functions'
-import type { GetApiInputFromOutput, InfiniteSWRHookConfig, SWRHookConfig } from 'src/types'
 import useSWR from 'swr'
 import useSWRInfinite from 'swr/infinite'
 
-import { POOL_API } from '.'
+import { POOL_API } from '../../constants.js'
+import { parseArgs } from '../../functions.js'
+import type { GetApiInputFromOutput, InfiniteSWRHookConfig, SWRHookConfig } from '../../types.js'
 
 export { PoolsApiSchema }
 export type Pools = Awaited<ReturnType<typeof getEarnPoolsOriginal>>

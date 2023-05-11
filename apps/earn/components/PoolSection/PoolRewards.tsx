@@ -4,6 +4,7 @@ import { Currency, Table, Typography } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
 import { incentiveRewardToToken } from '../../lib/functions'
+import { ChainId } from '@sushiswap/chain'
 
 export const PoolRewards: FC<{ pool: Pool }> = ({ pool }) => {
   if (!pool?.incentives?.length) return <></>
@@ -36,12 +37,12 @@ export const PoolRewards: FC<{ pool: Pool }> = ({ pool }) => {
             </Table.thead>
             <Table.tbody>
               {pool.incentives ? (
-                pool.incentives.map((incentive, idx) => (
-                  <Table.tr key={idx}>
+                pool.incentives.map((incentive) => (
+                  <Table.tr key={incentive.id}>
                     <Table.td>
                       <div className="flex items-center gap-3">
                         <Currency.Icon
-                          currency={incentiveRewardToToken(pool.chainId, incentive)}
+                          currency={incentiveRewardToToken(pool.chainId as ChainId, incentive)}
                           width={24}
                           height={24}
                         />

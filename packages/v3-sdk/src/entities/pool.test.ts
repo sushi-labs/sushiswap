@@ -41,7 +41,7 @@ describe('Pool', () => {
 
     it('fee cannot be more than 1e6', () => {
       expect(() => {
-        new Pool(USDC, WETH9[1], 1e6, encodeSqrtRatioX96(1, 1), 0, 0, [])
+        new Pool(USDC, WETH9[1], 1e6 as FeeAmount, encodeSqrtRatioX96(1, 1), 0, 0, [])
       }).toThrow('FEE')
     })
 
