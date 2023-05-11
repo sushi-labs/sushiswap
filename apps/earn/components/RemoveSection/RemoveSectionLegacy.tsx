@@ -7,10 +7,8 @@ import { Pool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
 import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
-import { Button, Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
 import {
-  Approve,
-  Checker,
   getSushiSwapRouterContractConfig,
   PairState,
   usePair,
@@ -23,31 +21,31 @@ import { Address, useAccount, useNetwork } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { useTokensFromPool, useTransactionDeadline, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
-import { useSettings } from '../../lib/state/storage'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 import { createToast } from '@sushiswap/ui/future/components/toast'
+import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { APPROVE_TAG_REMOVE_LEGACY } from '../../lib/constants'
 
 interface RemoveSectionLegacyProps {
   pool: Pool
 }
 
-const DEFAULT_REMOVE_LIQUIDITY_SLIPPAGE_TOLERANCE = new Percent(5, 100)
-
-export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pool: _pool }) => {
+export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot(({ pool: _pool }) => {
   const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
   const { chain } = useNetwork()
+  const { approved } = useApproved(APPROVE_TAG_REMOVE_LEGACY)
   const isMounted = useIsMounted()
   const { address } = useAccount()
   const deadline = useTransactionDeadline(_pool.chainId)
   const contract = useSushiSwapRouterContract(_pool.chainId as UniswapV2Router02ChainId)
-  const [{ slippageTolerance }] = useSettings()
-
-  const slippagePercent = useMemo(
-    () =>
-      slippageTolerance ? new Percent(slippageTolerance * 100, 10_000) : DEFAULT_REMOVE_LIQUIDITY_SLIPPAGE_TOLERANCE,
-    [slippageTolerance]
-  )
+  const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
+  const slippagePercent = useMemo(() => {
+    return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
+  }, [slippageTolerance])
 
   const [percentage, setPercentage] = useState<string>('')
   const percentToRemove = useMemo(() => new Percent(percentage, 100), [percentage])
@@ -235,6 +233,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pool: _pool 
     chainId: _pool.chainId,
     prepare,
     onSettled,
+    enabled: approved,
   })
 
   return (
@@ -249,58 +248,50 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pool: _pool 
         token1Minimum={minAmount1}
         setPercentage={setPercentage}
       >
-        <Checker.Connected fullWidth size="md">
+        <Checker.Connect fullWidth size="xl">
           <Checker.Custom
             showGuardIfTrue={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
             guard={
-              <Button size="md" fullWidth disabled={true}>
+              <Button size="xl" fullWidth disabled={true}>
                 Pool Not Found
               </Button>
             }
           >
-            <Checker.Network fullWidth size="md" chainId={_pool.chainId}>
+            <Checker.Network fullWidth size="xl" chainId={_pool.chainId}>
               <Checker.Custom
                 showGuardIfTrue={+percentage <= 0}
                 guard={
-                  <Button size="md" fullWidth disabled={true}>
+                  <Button size="xl" fullWidth disabled={true}>
                     Enter Amount
                   </Button>
                 }
               >
-                <Approve
-                  className="flex-grow !justify-end"
-                  components={
-                    <Approve.Components>
-                      <Approve.Token
-                        size="md"
-                        className="whitespace-nowrap"
-                        fullWidth
-                        amount={amountToRemove}
-                        address={
-                          getSushiSwapRouterContractConfig(_pool.chainId as UniswapV2Router02ChainId).address as Address
-                        }
-                      />
-                    </Approve.Components>
+                <Checker.ApproveERC20
+                  fullWidth
+                  size="xl"
+                  id="approve-token0"
+                  amount={amountToRemove}
+                  contract={
+                    getSushiSwapRouterContractConfig(_pool.chainId as UniswapV2Router02ChainId).address as Address
                   }
-                  render={({ approved }) => {
-                    return (
-                      <Button
-                        onClick={() => sendTransaction?.()}
-                        fullWidth
-                        size="md"
-                        variant="filled"
-                        disabled={!approved || isWritePending}
-                      >
-                        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
-                      </Button>
-                    )
-                  }}
-                />
+                >
+                  <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
+                    <Button
+                      onClick={() => sendTransaction?.()}
+                      fullWidth
+                      size="xl"
+                      variant="filled"
+                      disabled={!approved || isWritePending}
+                    >
+                      {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
+                    </Button>
+                  </Checker.Success>
+                </Checker.ApproveERC20>
               </Checker.Custom>
             </Checker.Network>
           </Checker.Custom>
-        </Checker.Connected>
+        </Checker.Connect>
       </RemoveSectionWidget>
     </div>
   )
-}
+})

@@ -12,7 +12,7 @@ interface AddSectionReviewModal {
   input0: Amount<Type> | undefined
   input1: Amount<Type> | undefined
   open: boolean
-  setOpen(open: boolean): void
+  close(): void
   children: ReactNode
 }
 
@@ -21,7 +21,7 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
   input0,
   input1,
   open,
-  setOpen,
+  close,
   children,
 }) => {
   const [value0, value1] = useTokenAmountDollarValues({
@@ -35,9 +35,9 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
   }, [input0, input1])
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
+    <Dialog open={open} onClose={close}>
       <Dialog.Content className="max-w-sm !pb-4">
-        <Dialog.Header border={false} title="Add Liquidity" onClose={() => setOpen(false)} />
+        <Dialog.Header border={false} title="Add Liquidity" onClose={close} />
         <div className="!my-0 grid grid-cols-12 items-center">
           <div className="relative flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
             <div className="flex items-center gap-2">

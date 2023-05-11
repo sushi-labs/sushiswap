@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "anvil": "anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER",
     "build": "next build",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next",
@@ -59,6 +58,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "wagmi": "0.12.12",
+    "viem": "0.3.19",
     "zod": "3.20.2"
   },
   "devDependencies": {
@@ -68,15 +68,12 @@
     "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@testing-library/jest-dom": "5.16.5",
-    "@testing-library/react": "14.0.0",
-    "@testing-library/user-event": "14.4.3",
+    "@sushiswap/tailwindcss-config": "workspace:*",
     "@types/node": "^18.0.0",
     "@types/numeral": "2.0.2",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "autoprefixer": "10.4.13",
-    "concurrently": "7.6.0",
     "eslint": "8.29.0",
     "postcss": "8.4.21",
     "tailwindcss": "3.2.4",

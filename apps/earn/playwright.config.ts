@@ -18,7 +18,6 @@ const baseURL = `http://localhost:${PORT}`
  * See https://playwright.dev/docs/test-configuration.
  */
 const config: PlaywrightTestConfig = {
-  // Test directory
   testDir: path.join(__dirname, 'test'),
   /* Maximum time one test can run for. */
   timeout: 120 * 1_000,
@@ -30,7 +29,7 @@ const config: PlaywrightTestConfig = {
     timeout: !process.env.CI ? 15_000 : 90_000,
   },
   /* Run tests in files in parallel */
-  fullyParallel: false,
+  fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   // Retry on CI only.
@@ -57,6 +56,7 @@ const config: PlaywrightTestConfig = {
     // baseURL: 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    // trace: 'retain-on-failure',
     trace: 'on',
   },
 
@@ -89,6 +89,10 @@ const config: PlaywrightTestConfig = {
     //   },
     // },
   ],
+
+  /* Folder for test artifacts such as screenshots, videos, traces, etc. */
+  // outputDir: './playwright-report',
+
   // Run your local dev server before starting the tests:
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
   webServer: [

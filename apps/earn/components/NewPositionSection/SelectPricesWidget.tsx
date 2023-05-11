@@ -92,7 +92,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
       }
     >
       {noLiquidity && (
-        <div className="bg-blue/10 text-blue rounded-xl p-6 font-medium">
+        <div className="p-6 font-medium bg-blue/10 text-blue rounded-xl">
           This pool must be initialized before you can add liquidity. To initialize, select a starting price for the
           pool. Then, enter your liquidity price range and deposit amount. Gas fees will be higher than usual due to the
           initialization transaction.
@@ -134,7 +134,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         )}
         <div className="flex flex-col gap-3 pt-4">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex lg:hidden justify-end">
+            <div className="flex justify-end lg:hidden">
               {isLoading || !pool || !token0 || !token1 ? (
                 <Skeleton.Text fontSize="text-xs" />
               ) : (
@@ -183,6 +183,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
           </div>
           <div className="flex gap-2">
             <PriceBlock
+              id={'min-price'}
               token0={token0}
               token1={token1}
               label="Min Price"
@@ -197,6 +198,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               fullRange={Boolean(ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER])}
             />
             <PriceBlock
+              id={'max-price'}
               token0={token0}
               token1={token1}
               label="Max Price"
@@ -218,6 +220,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
 }
 
 interface PriceBlockProps {
+  id?: string
   token0: Type | undefined
   token1: Type | undefined
   label: string
@@ -234,6 +237,7 @@ interface PriceBlockProps {
 }
 
 export const PriceBlock: FC<PriceBlockProps> = ({
+  id,
   locked,
   onUserInput,
   decrement,
@@ -302,10 +306,11 @@ export const PriceBlock: FC<PriceBlockProps> = ({
         'flex flex-col gap-2 w-full bg-gray-100 dark:bg-white/[0.04] rounded-lg p-3'
       )}
     >
-      <p className="font-medium text-sm text-gray-600 dark:text-slate-400 text-slate-600">{label}</p>
+      <p className="text-sm font-medium text-gray-600 dark:text-slate-400 text-slate-600">{label}</p>
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <Input.Numeric
+            testdata-id={`${id}-input`}
             value={localValue}
             onUserInput={setLocalValue}
             disabled={locked}

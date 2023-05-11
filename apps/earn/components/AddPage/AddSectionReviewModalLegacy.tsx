@@ -11,12 +11,12 @@ import { Address, useAccount, useNetwork } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { useTransactionDeadline } from '../../lib/hooks'
-import { useSettings } from '../../lib/state/storage'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { createToast } from '@sushiswap/ui/future/components/toast'
+import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 
 interface AddSectionReviewModalLegacyProps {
   poolState: PairState
@@ -44,7 +44,10 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   const { chain } = useNetwork()
 
   const contract = useSushiSwapRouterContract(chainId)
-  const [{ slippageTolerance }] = useSettings()
+  const [slippageTolerance] = useSlippageTolerance('addLiquidity')
+  const slippagePercent = useMemo(() => {
+    return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
+  }, [slippageTolerance])
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
@@ -68,10 +71,6 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     },
     [chainId, token0, token1, address]
   )
-
-  const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(slippageTolerance * 100), 10_000)
-  }, [slippageTolerance])
 
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
@@ -163,7 +162,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
 
   return (
     <>
-      <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} setOpen={close}>
+      <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} close={close}>
         <Button size="xl" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
           {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
         </Button>
