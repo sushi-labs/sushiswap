@@ -26,7 +26,7 @@ const config: PlaywrightTestConfig = {
      * Maximum time expect() should wait for the condition to be met.
      * For example in `await expect(locator).toHaveText();`
      */
-    timeout: 15_000,
+    timeout: !process.env.CI ? 15_000 : 90_000,
   },
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -41,6 +41,13 @@ const config: PlaywrightTestConfig = {
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL,
+
+    headless: !process.env.CI ? false : true,
+    viewport: { width: 1280, height: 720 },
+    ignoreHTTPSErrors: true,
+    // video: 'on',
+    colorScheme: 'dark',
+
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
     // actionTimeout: 0,
 
