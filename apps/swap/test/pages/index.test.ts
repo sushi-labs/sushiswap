@@ -63,22 +63,22 @@ test('Wrap and unwrap', async ({ page }) => {
   const inputBalance = page.getByTestId('swap-from-balance-button')
   const outputBalance = page.getByTestId('swap-to-balance-button')
 
-  await expect(await inputBalance.textContent()).toBe('10000.00')
+  await expect(inputBalance).toHaveText('10000.00')
   await wrap({
     page,
     inputCurrency: native,
     outputCurrency: wnative,
-    amount: '10',
+    amount: '1',
   })
 
   // await expect(inputBalance).toHaveText('9989.98')
-  await expect(outputBalance).toHaveText('10.00')
+  await expect(outputBalance).toHaveText('1.00')
 
   await wrap({
     page,
     inputCurrency: wnative,
     outputCurrency: native,
-    amount: '10',
+    amount: '1',
   })
 
   await expect(inputBalance).toHaveText('0.00')
