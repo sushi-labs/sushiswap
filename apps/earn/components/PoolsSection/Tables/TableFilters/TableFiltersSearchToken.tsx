@@ -6,31 +6,16 @@ import { Search } from '@sushiswap/ui/future/components/input/Search'
 
 export const TableFiltersSearchToken: FC = () => {
   const { tokenSymbols, setFilters } = usePoolFilters()
-
-  // console.log({ tokenSymbols })
-
-  const [_query, setQuery] = useState<string>('')
-  const [_extraQuery, setExtraQuery] = useState<string>('')
-  const [extra] = useState(false)
-
+  const [_query, setQuery] = useState<string>(tokenSymbols ? tokenSymbols.join(' ') : '')
   const debouncedQuery = useDebounce(_query, 400)
-  const debouncedExtraQuery = useDebounce(_extraQuery, 400)
 
   useEffect(() => {
-    if (!(debouncedExtraQuery || debouncedQuery) && tokenSymbols) {
-      setFilters({ tokenSymbols: undefined })
-    } else {
-      setFilters({ tokenSymbols: [debouncedQuery, debouncedExtraQuery].filter((query) => query !== '') })
+    if (tokenSymbols?.join(' ') !== debouncedQuery) {
+      setFilters({ tokenSymbols: debouncedQuery.split(' ') })
     }
-  }, [_extraQuery, _query, debouncedExtraQuery, debouncedQuery, setFilters, tokenSymbols])
+  }, [_query, debouncedQuery, setFilters, tokenSymbols])
 
-  useEffect(() => {
-    if (!extra) {
-      setTimeout(() => {
-        setExtraQuery('')
-      }, 750)
-    }
-  }, [extra, setFilters])
-
-  return <Search id="search" value={_query} loading={false} onChange={setQuery} className="max-w-[300px]" />
+  return (
+    <Search id="search" value={_query} loading={false} onChange={setQuery} className="max-w-[500px]" delimiter=" " />
+  )
 }
