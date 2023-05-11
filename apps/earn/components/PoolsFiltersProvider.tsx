@@ -34,8 +34,7 @@ export const poolFiltersSchema = z.object({
     .default('')
     .transform((tokenSymbols) => {
       if (tokenSymbols === '') return undefined
-
-      return tokenSymbols?.split(',')
+      return tokenSymbols.split(',')
     }),
   chainIds: z
     .string()
@@ -56,23 +55,17 @@ export const poolFiltersSchema = z.object({
 export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => {
   const { query, push } = useRouter()
 
-  console.log({ query })
-
   const parsed = useMemo(() => {
     const parsed = poolFiltersSchema.parse(query)
-
     return {
       ...parsed,
       categories: parsed.categories.filter((el) => (el as string) !== ''),
     }
   }, [query])
 
-
-
   const setFilters = useCallback(
     (filters: PoolFilters) => {
       const newFilters = { ...parsed, ...filters }
-      // console.log(newFilters)
       void push(parseArgs(newFilters), undefined, { shallow: true })
     },
     // eslint-disable-next-line
