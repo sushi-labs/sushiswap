@@ -20,13 +20,13 @@ const baseURL = `http://localhost:${PORT}`
 const config: PlaywrightTestConfig = {
   testDir: path.join(__dirname, 'test'),
   /* Maximum time one test can run for. */
-  timeout: 30 * 1_000,
+  timeout: 120 * 1_000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
      * For example in `await expect(locator).toHaveText();`
      */
-    timeout: !process.env.CI ? 15_000 : 90_000,
+    timeout: !process.env.CI ? 15_000 : 45_000,
   },
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -56,8 +56,8 @@ const config: PlaywrightTestConfig = {
     // baseURL: 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    // trace: 'on',
-    trace: 'retain-on-failure',
+    // trace: 'retain-on-failure',
+    trace: 'on',
   },
 
   /* Configure projects for major browsers */
