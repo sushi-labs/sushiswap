@@ -261,7 +261,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         })
       } catch (e: unknown) {
         //
-        console.log("Error", e.message)
+        console.log("Error", e)
       }
     },
     [
