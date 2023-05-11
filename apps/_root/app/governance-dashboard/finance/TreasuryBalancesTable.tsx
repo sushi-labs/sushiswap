@@ -48,7 +48,7 @@ const columns = [
   columnHelper.accessor('balance', {
     header: () => <div className="w-full text-right">Amount</div>,
     enableSorting: false,
-    cell: (info) => <div className="w-full text-right">{formatNumber(+info.getValue())}</div>,
+    cell: (info) => <div className="w-full text-right">{formatNumber(info.getValue())}</div>,
   }),
   columnHelper.accessor('fiatConversion', {
     header: () => <div className="w-full text-right">Price</div>,

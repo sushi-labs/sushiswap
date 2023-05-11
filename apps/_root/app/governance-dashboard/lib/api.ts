@@ -260,8 +260,9 @@ interface SafeBalance {
   fiatConversion: string
 }
 
-export interface TreasuryBalance extends Omit<SafeBalance, 'token'> {
+export interface TreasuryBalance extends Omit<SafeBalance, 'token' | 'balance'> {
   portfolioShare: number
+  balance: number
   token:
     | (SafeBalance['token'] & {
         address: Address
@@ -296,7 +297,7 @@ export async function getTreasurySnapshot() {
     .filter((i) => +i.fiatBalance > 1_000)
     .map((info) => {
       const decimals = info.token?.decimals ?? 18
-      const balance = String(BigInt(info.balance) / BigInt(10 ** decimals))
+      const balance = Number((BigInt(info.balance) * 100n) / BigInt(10 ** decimals)) / 100
       const token = info.token && info.tokenAddress ? { ...info.token, address: info.tokenAddress } : null
       const portfolioShare = +info.fiatBalance / balancesValueUsd
 
