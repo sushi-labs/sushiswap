@@ -30,19 +30,27 @@ const sushi = SUSHI[CHAIN_ID as keyof typeof SUSHI]
 
 // const client = createTestClient({ mode: 'anvil', chain: foundry, transport: http() })
 
+const handlePageError = (err: Error) => console.log(err)
+
 test.beforeAll(async () => {
   //
 })
 
 test.beforeEach(async ({ page }) => {
-  page.on('pageerror', (err) => {
-    console.log(err)
-  })
-
+  // @ts-expect-error
   // await client.reset({ blockNumber: 42259027n })
+
+  page.on('pageerror', handlePageError)
 
   await page.goto(PLAYWRIGHT_URL)
   await switchNetwork(page, CHAIN_ID)
+
+  // const input = page.getByTestId('swap-from-balance-button')
+  // const output = page.getByTestId('swap-to-balance-button')
+  // const initialInputBalance = await input.textContent()
+  // const initialOutputBalance = await output.textContent()
+  // await expect(initialInputBalance).toEqual('10000.00')
+  // await expect(initialOutputBalance).toEqual('0.00')
 
   // const fromBalance = page.getByTestId('swap-from-balance-button')
   // await expect(fromBalance).toContainText('1000')
@@ -55,7 +63,7 @@ test.afterAll(async () => {
 })
 
 test.afterEach(async ({ page }) => {
-  //
+  page.off('pageerror', handlePageError)
 })
 
 test('Wrap and unwrap', async ({ page }) => {
@@ -88,10 +96,10 @@ test('Wrap and unwrap', async ({ page }) => {
     amount: '10',
   })
 
-  const inputBalanceAfterUnrap = await input.textContent()
+  const inputBalanceAfterUnwrap = await input.textContent()
   const outputBalanceAfterUnwrap = await output.textContent()
-  await expect(inputBalanceAfterUnrap).toEqual('0.00')
-  await expect(outputBalanceAfterUnwrap).not.toEqual(inputBalanceAfterUnrap)
+  await expect(inputBalanceAfterUnwrap).toEqual('0.00')
+  await expect(outputBalanceAfterUnwrap).not.toEqual(inputBalanceAfterUnwrap)
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
