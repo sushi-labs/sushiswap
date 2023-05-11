@@ -26,6 +26,16 @@ export const PoolsTable: FC = () => {
   const [, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: PAGE_SIZE })
 
   const args = useMemo<GetPoolsArgs>(() => {
+    let _categories = categories
+    if (categories[0] === FilterTag.DEFAULT && categories.length === 1) {
+      _categories = [
+        FilterTag.SUSHISWAP_V3,
+        FilterTag.SUSHISWAP_V2,
+        FilterTag.BENTOBOX_CLASSIC,
+        FilterTag.BENTOBOX_STABLE,
+      ]
+    }
+
     return {
       chainIds: chainIds,
       tokenSymbols,
@@ -33,7 +43,7 @@ export const PoolsTable: FC = () => {
       isWhitelisted: true, // can be added to filters later, need to put it here so fallback works
       orderBy: sorting[0]?.id,
       orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
-      protocols: categories.filter((el) => el !== FilterTag.FARMS_ONLY),
+      protocols: _categories.filter((el) => el !== FilterTag.FARMS_ONLY && el !== FilterTag.DEFAULT),
     }
   }, [chainIds, tokenSymbols, categories, sorting])
 
