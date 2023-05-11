@@ -7,7 +7,7 @@ import { Search } from '@sushiswap/ui/future/components/input/Search'
 export const TableFiltersSearchToken: FC = () => {
   const { tokenSymbols, setFilters } = usePoolFilters()
 
-  const [_query, setQuery] = useState<string>('')
+  const [_query, setQuery] = useState<string>(tokenSymbols?.[0] ?? '')
   const [_extraQuery, setExtraQuery] = useState<string>('')
   const [extra] = useState(false)
 
@@ -20,7 +20,7 @@ export const TableFiltersSearchToken: FC = () => {
     } else {
       setFilters({ tokenSymbols: [debouncedQuery, debouncedExtraQuery].filter((query) => query !== '') })
     }
-  }, [_extraQuery, _query, debouncedExtraQuery, debouncedQuery, setFilters, tokenSymbols])
+  }, [debouncedExtraQuery, debouncedQuery, setFilters])
 
   useEffect(() => {
     if (!extra) {
