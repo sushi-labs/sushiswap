@@ -1,9 +1,5 @@
-import { Backdrop, Breadcrumb, BreadcrumbLink, classNames, Container, MaxWidth } from '@sushiswap/ui'
+import { Breadcrumb, BreadcrumbLink, classNames, Container, MaxWidth } from '@sushiswap/ui'
 import React from 'react'
-import Button from '@sushiswap/ui/future/components/button/Button'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
-import { XIcon } from '@heroicons/react/solid'
-import { ExploitInfo } from '../ExploitInfo'
 
 type Props = {
   children?: React.ReactNode

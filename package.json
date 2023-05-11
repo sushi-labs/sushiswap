@@ -40,6 +40,7 @@
     "test-packages": "dotenv -- turbo run test --filter={./packages/*}[HEAD^1]...",
     "test-protocols": "dotenv -- turbo run test --filter={./protocols/*}[HEAD^1]...",
     "test-swap-app": "dotenv -- turbo run test --filter=swap",
+    "test-earn-app": "dotenv -- turbo run test --filter=earn",
     "version-config": "dotenv -- turbo run build --filter=./config/* && changeset version",
     "version-packages": "dotenv -- turbo run build --filter=./packages/* && changeset version"
   },

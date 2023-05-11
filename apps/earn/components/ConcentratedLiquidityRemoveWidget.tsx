@@ -170,34 +170,34 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-3">
         <List.Label>Amount</List.Label>
-        <div className="rounded-xl bg-white dark:bg-slate-800 pb-2 p-3 overflow-hidden space-y-2">
+        <div className="p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-slate-800">
           <div className="flex justify-between gap-4">
             <div>
-              <h1 className="text-3xl dark:text-slate-50 text-gray-900 py-1">{value}%</h1>
+              <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">{value}%</h1>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outlined" color="blue" size="sm" onClick={() => _onChange('25')}>
+              <Button variant="outlined" color="blue" size="sm" onClick={() => _onChange('25')} testId='liquidity-25'>
                 25%
               </Button>
-              <Button variant="outlined" size="sm" onClick={() => _onChange('50')}>
+              <Button variant="outlined" size="sm" onClick={() => _onChange('50')} testId='liquidity-50'>
                 50%
               </Button>
-              <Button variant="outlined" size="sm" onClick={() => _onChange('75')}>
+              <Button variant="outlined" size="sm" onClick={() => _onChange('75')} testId='liquidity-75'>
                 75%
               </Button>
-              <Button variant="outlined" size="sm" onClick={() => _onChange('100')}>
+              <Button variant="outlined" size="sm" onClick={() => _onChange('100')} testId='liquidity-max'>
                 Max
               </Button>
             </div>
           </div>
-          <div className="pb-3 pt-2 px-1">
+          <div className="px-1 pt-2 pb-3">
             <input
               value={value}
               onChange={(e) => _onChange(e.target.value)}
               type="range"
               min="1"
               max="100"
-              className="w-full h-1 bg-gray-200 rounded-lg range-lg appearance-none cursor-pointer dark:bg-gray-700"
+              className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg dark:bg-gray-700"
             />
           </div>
         </div>
@@ -272,6 +272,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
             fullWidth
             onClick={() => sendTransaction?.()}
             size="xl"
+            testId='remove-or-add-liquidity'
           >
             {+value === 0 ? 'Enter Amount' : 'Remove'}
           </Button>
