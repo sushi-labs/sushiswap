@@ -26,9 +26,6 @@ env:
   CI: true
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-  NODE_ENV: test
-  ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
-  ANVIL_BLOCK_NUMBER: 42259027
 
 jobs:
   ci:
@@ -65,15 +62,6 @@ jobs:
         - name: Install playwright
           run: pnpm exec playwright install --with-deps chromium
 
-        # - name: Cache Anvil
-        #   uses: 'actions/cache@v3'
-        #   env:
-        #     ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
-        #     ANVIL_BLOCK_NUMBER: 42259027
-        #   with:
-        #     path: ~/.foundry/cache/rpc/**/${{ env.ANVIL_BLOCK_NUMBER }}
-        #     key: foundry-anvil-${{ env.ANVIL_BLOCK_NUMBER }}
-
         - name: Install rust
           uses: actions-rs/toolchain@v1
           with:
@@ -86,22 +74,16 @@ jobs:
           with:
             version: nightly
 
-        # - name: Launch Anvil
-        #   run: anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER &
-        #   env:
-        #     ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
-        #     ANVIL_BLOCK_NUMBER: 42259027
-
         - name: Test swap app
           run: pnpm test-swap-app
           env:
             NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
             NEXT_PUBLIC_TEST: true
-            ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
-            ANVIL_BLOCK_NUMBER: 42259027
             ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
             PLAYWRIGHT_URL: http://localhost:3000/swap
             CHAIN_ID: 137
+            ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+            ANVIL_BLOCK_NUMBER: 42259027
           working-directory: .
 
         - name: Upload test results

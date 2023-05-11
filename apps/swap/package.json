@@ -3,15 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "anvil": "anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER",
     "build": "next build",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next",
     "dev": "next dev -p 3009",
     "lint": "next lint",
     "start": "next start",
-    "test": "concurrently --kill-others --success first \"anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER\" \"npx playwright test\"",
-    "test2": "npx playwright test"
+    "test": "npx playwright test"
   },
   "dependencies": {
     "@ethersproject/abi": "5.7.0",
@@ -76,7 +74,6 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "autoprefixer": "10.4.13",
-    "concurrently": "8.0.1",
     "eslint": "8.29.0",
     "postcss": "8.4.21",
     "tailwindcss": "3.2.4",

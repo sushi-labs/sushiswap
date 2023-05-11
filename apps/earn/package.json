@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "anvil": "anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER",
     "build": "next build",
     "sitemap": "next-sitemap --config next-sitemap.config.mjs",
     "check": "tsc --pretty --noEmit",

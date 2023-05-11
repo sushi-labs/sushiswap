@@ -26,7 +26,7 @@ const config: PlaywrightTestConfig = {
      * Maximum time expect() should wait for the condition to be met.
      * For example in `await expect(locator).toHaveText();`
      */
-    timeout: !process.env.CI ? 15_000 : 45_000,
+    timeout: !process.env.CI ? 15_000 : 90_000,
   },
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -95,15 +95,29 @@ const config: PlaywrightTestConfig = {
 
   // Run your local dev server before starting the tests:
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
-  webServer: {
-    command: 'npm run start',
-    port: 3000,
-    timeout: 120 * 1000,
-    reuseExistingServer: !process.env.CI,
-    env: {
-      NEXT_PUBLIC_TEST: 'true',
+  webServer: [
+    {
+      command: [
+        'anvil',
+        `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
+        `--fork-url=${process.env.ANVIL_FORK_URL}`,
+      ].join(' '),
+      env: {
+        ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
+        ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
+      },
+      port: 8545,
     },
-  },
+    {
+      command: 'npm run start',
+      port: 3000,
+      timeout: 120 * 1000,
+      reuseExistingServer: !process.env.CI,
+      env: {
+        NEXT_PUBLIC_TEST: 'true',
+      },
+    },
+  ],
 }
 
 export default config

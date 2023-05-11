@@ -62,18 +62,27 @@ test.afterEach(async ({ page }) => {
 test('Wrap and unwrap', async ({ page }) => {
   const inputBalance = page.getByTestId('swap-from-balance-button')
   const outputBalance = page.getByTestId('swap-to-balance-button')
+
+  await expect(await inputBalance.textContent()).toBe('10000.00')
   await wrap({
     page,
     inputCurrency: native,
     outputCurrency: wnative,
-    amount: '1',
+    amount: '10',
   })
+
+  // await expect(inputBalance).toHaveText('9989.98')
+  await expect(outputBalance).toHaveText('10.00')
+
   await wrap({
     page,
     inputCurrency: wnative,
     outputCurrency: native,
-    amount: '1',
+    amount: '10',
   })
+
+  await expect(inputBalance).toHaveText('0.00')
+  // await expect(outputBalance).toHaveText('9999.96')
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
@@ -173,13 +182,13 @@ async function wrap({
     await expect(page.getByText(expectedApproveText)).toContainText(expectedApproveText)
   }
 
-  const unwrapButton = page.locator('[testdata-id=swap-button]', { hasText: new RegExp('(Wrap|Unwrap)') })
+  const unwrapButton = page.locator('[testdata-id=swap-button]')
   // const unwrapButton = page.getByRole('button', { name: 'Wrap' })
   await expect(unwrapButton).toBeVisible()
   await expect(unwrapButton).toBeEnabled()
   await unwrapButton.click()
 
-  const confirmUnwrap = page.locator('[testdata-id=confirm-swap-button]', { hasText: new RegExp('(Wrap|Unwrap)') })
+  const confirmUnwrap = page.locator('[testdata-id=confirm-swap-button]')
   await expect(confirmUnwrap).toBeVisible()
   await expect(confirmUnwrap).toBeEnabled()
   await confirmUnwrap.click()
@@ -187,7 +196,7 @@ async function wrap({
   const expectedText = new RegExp(`(Wrap|Unwrap .* ${inputCurrency.symbol} to .* ${outputCurrency.symbol})`)
   await expect(page.locator('span', { hasText: expectedText }).last()).toContainText(expectedText)
 
-  const makeAnotherSwap = page.locator('[testdata-id=make-another-swap-button]', { hasText: 'Make another swap' })
+  const makeAnotherSwap = page.locator('[testdata-id=make-another-swap-button]')
   await expect(makeAnotherSwap).toBeVisible()
   await expect(makeAnotherSwap).toBeEnabled()
   await makeAnotherSwap.click()

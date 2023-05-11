@@ -45,8 +45,7 @@ const config: PlaywrightTestConfig = {
     baseURL,
 
     headless: !process.env.CI ? false : true,
-    viewport: null,
-    // viewport: { width: 1920, height: 1080 },
+    viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
     // video: 'on',
     colorScheme: 'dark',
@@ -58,9 +57,7 @@ const config: PlaywrightTestConfig = {
     // baseURL: 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    // trace: 'retain-on-failure',
     trace: 'on',
-    // trace: 'retry-with-trace',
   },
 
   /* Configure projects for major browsers */
@@ -92,21 +89,31 @@ const config: PlaywrightTestConfig = {
     //   },
     // },
   ],
-
-  /* Folder for test artifacts such as screenshots, videos, traces, etc. */
-  // outputDir: './playwright-report',
-
   // Run your local dev server before starting the tests:
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
-  webServer: {
-    command: 'npm run start',
-    port: 3000,
-    timeout: 120 * 1000,
-    reuseExistingServer: !process.env.CI,
-    env: {
-      NEXT_PUBLIC_TEST: 'true',
+  webServer: [
+    {
+      command: [
+        'anvil',
+        `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
+        `--fork-url=${process.env.ANVIL_FORK_URL}`,
+      ].join(' '),
+      env: {
+        ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
+        ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
+      },
+      port: 8545,
     },
-  },
+    {
+      command: 'npm run start',
+      port: 3000,
+      timeout: 120 * 1000,
+      reuseExistingServer: !process.env.CI,
+      env: {
+        NEXT_PUBLIC_TEST: 'true',
+      },
+    },
+  ],
 }
 
 export default config
