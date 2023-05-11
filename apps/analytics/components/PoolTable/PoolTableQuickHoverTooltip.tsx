@@ -33,7 +33,7 @@ export const PoolQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
             </div>
           </div>
           <Typography variant="xs" weight={600} className="flex gap-1.5 mt-1 items-center text-slate-400">
-            <Chip color="gray" label={`Fee ${Number(row.swapFee) / 100}%`} />
+            <Chip color="gray" label={`Fee ${formatPercent(row.swapFee)}`} />
           </Typography>
         </div>
         <div className="flex flex-col gap-1">
@@ -70,7 +70,7 @@ export const PoolQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
         </>
       )}
       <div className="flex justify-end gap-2 mt-4 mb-2">
-        <Button as="a" size="sm" fullWidth href={`/earn/${row.id}/add`}>
+        <Button as="a" size="sm" fullWidth href={`/pools/${row.id}/add`}>
           Earn
         </Button>
       </div>
