@@ -47,7 +47,7 @@ export const poolFiltersSchema = z.object({
     .optional()
     .default(
       Object.values(FilterTag)
-        .filter((tag) => tag != FilterTag.FARMS_ONLY)
+        .filter((tag) => tag !== FilterTag.FARMS_ONLY)
         .join(',')
     )
     .transform((tags) => tags.split(',') as FilterTag[]),
@@ -55,6 +55,9 @@ export const poolFiltersSchema = z.object({
 
 export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => {
   const { query, push } = useRouter()
+
+  console.log({ query })
+
   const parsed = useMemo(() => {
     const parsed = poolFiltersSchema.parse(query)
 
@@ -63,6 +66,8 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => 
       categories: parsed.categories.filter((el) => (el as string) !== ''),
     }
   }, [query])
+
+
 
   const setFilters = useCallback(
     (filters: PoolFilters) => {

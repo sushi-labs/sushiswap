@@ -1,5 +1,6 @@
 import { balanceOfAbi, getReservesAbi, getStableReservesAbi, totalsAbi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import type { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
 import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
@@ -36,7 +37,7 @@ export function convertTokenToBento(token: Token): RToken {
   t.chainId = getBentoChainId(token.chainId)
   t.name = getBentoChainId(token.name)
   t.symbol = getBentoChainId(token.symbol)
-  delete t.tokenId
+  t.tokenId = undefined
   return t
 }
 
@@ -47,7 +48,7 @@ interface PoolInfo {
 
 export class TridentProvider extends LiquidityProvider {
   // Need to override for type narrowing
-  chainId: BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId
+  chainId: Extract<ChainId, BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId>
 
   readonly TOP_POOL_SIZE = 155
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 1000
@@ -77,12 +78,13 @@ export class TridentProvider extends LiquidityProvider {
   databaseClient: PrismaClient | undefined
 
   constructor(
-    chainId: BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId,
+    chainId: Extract<ChainId, BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId>,
     web3Client: PublicClient,
     databaseClient?: PrismaClient
   ) {
     super(chainId, web3Client)
     this.chainId = chainId
+
     this.databaseClient = databaseClient
     if (
       !(chainId in this.bentoBox) ||
@@ -532,7 +534,7 @@ export class TridentProvider extends LiquidityProvider {
 
     sortedTokens.forEach((t, i) => {
       const fakeBridgeAddress = `Bento bridge for ${t.symbol}`
-      if (excludePools && excludePools.has(fakeBridgeAddress)) return
+      if (excludePools?.has(fakeBridgeAddress)) return
       if (!this.bridges.has(t.address)) {
         const pool = new BridgeBento(
           fakeBridgeAddress,

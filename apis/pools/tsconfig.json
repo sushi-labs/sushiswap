@@ -5,6 +5,7 @@
   // Need to specify even though it's in the base config file, don't know why
   "compilerOptions": {
     "module": "esnext",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "resolveJsonModule": true
   }
 }

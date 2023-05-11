@@ -8,7 +8,6 @@ import { ChainId } from '@sushiswap/chain'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
 import { Popover, Transition } from '@headlessui/react'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import { useBreakpoint } from '@sushiswap/ui/future'
 
 export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
   const { chain } = useNetwork()
@@ -83,13 +82,13 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                                           )}
                                         </div>
                                       }
-                                      subtitle={`Most efficient way of providing liquidity.`}
+                                      subtitle={'Most efficient way of providing liquidity.'}
                                     />
                                     <List.MenuItem
                                       as="a"
                                       href={`/pools/add/v2/${chainId}`}
                                       title="V2 Position"
-                                      subtitle={`If you prefer creating a classic liquidity position.`}
+                                      subtitle={'If you prefer creating a classic liquidity position.'}
                                     />
                                   </Popover.Panel>
                                 </div>

@@ -3,10 +3,10 @@ import type {} from '@sushiswap/database'
 import type { getEarnPool as getEarnPoolOriginal } from '@sushiswap/pools-api/lib/api'
 import { PoolApiSchema } from '@sushiswap/pools-api/lib/schemas'
 import { fetch } from '@whatwg-node/fetch'
-import type { GetApiInputFromOutput, SWRHookConfig } from 'src/types'
 import useSWR from 'swr'
 
-import { POOL_API } from '.'
+import { POOL_API } from '../../constants.js'
+import type { GetApiInputFromOutput, SWRHookConfig } from '../../types.js'
 
 export { PoolApiSchema }
 export type Pool = Awaited<ReturnType<typeof getEarnPoolOriginal>>
@@ -16,7 +16,8 @@ export type GetPoolArgs =
   | string
 
 export const getPoolUrl = (args: GetPoolArgs) => {
-  let chainId, address
+  let chainId
+  let address
   if (typeof args === 'string') {
     ;[chainId, address] = args.split(':') as [ChainId, string]
   } else {

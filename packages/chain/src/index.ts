@@ -30,10 +30,11 @@ export interface Explorer {
   icon?: string
 }
 
-export enum Standard {
-  Eip3091 = 'EIP3091',
-  None = 'none',
-}
+export const Standard = {
+  Eip3091: 'EIP3091',
+  None: 'none',
+} as const
+export type Standard = (typeof Standard)[keyof typeof Standard]
 
 export interface NativeCurrency {
   name: string
@@ -41,11 +42,12 @@ export interface NativeCurrency {
   decimals: number
 }
 
-export enum Network {
-  Iorachain = 'iorachain',
-  Mainnet = 'mainnet',
-  Testnet = 'testnet',
-}
+export const Network = {
+  Iorachain: 'iorachain',
+  Mainnet: 'mainnet',
+  Testnet: 'testnet',
+} as const
+export type Network = (typeof Network)[keyof typeof Network]
 
 export interface Parent {
   type: Type
@@ -57,98 +59,104 @@ export interface Bridge {
   url: string
 }
 
-export enum Type {
-  L2 = 'L2',
-  Shard = 'shard',
-}
+export const Type = {
+  L2: 'L2',
+  Shard: 'shard',
+} as const
+export type Type = (typeof Type)[keyof typeof Type]
 
-// ????
-// export const ChainId = {
-//   ETHEREUM: 1,
-//   ROPSTEN: 3,
-//   RINKEBY: 4,
-//   GÖRLI: 5,
-//   KOVAN: 42,
-//   POLYGON: 137,
-//   POLYGON_TESTNET: 80001,
-//   FANTOM: 250,
-//   FANTOM_TESTNET: 4002,
-//   GNOSIS: 100,
-//   BSC: 56,
-//   BSC_TESTNET: 97,
-//   ARBITRUM: 42161,
-//   ARBITRUM_NOVA: 42170,
-//   ARBITRUM_TESTNET: 79377087078960,
-//   AVALANCHE: 43114,
-//   AVALANCHE_TESTNET: 43113,
-//   HECO: 128,
-//   HECO_TESTNET: 256,
-//   HARMONY: 1666600000,
-//   HARMONY_TESTNET: 1666700000,
-//   OKEX: 66,
-//   OKEX_TESTNET: 65,
-//   CELO: 42220,
-//   PALM: 11297108109,
-//   MOONRIVER: 1285,
-//   FUSE: 122,
-//   TELOS: 40,
-//   MOONBEAM: 1284,
-//   OPTIMISM: 10,
-//   KAVA: 2222,
-//   METIS: 1088,
-//   BOBA: 288,
-//   BOBA_AVAX: 43288,
-//   BOBA_BNB: 56288,
-//   BTTC: 199,
-// } as const
+export const ChainId = {
+  ETHEREUM: 1,
+  ROPSTEN: 3,
+  RINKEBY: 4,
+  GÖRLI: 5,
+  KOVAN: 42,
+  POLYGON: 137,
+  POLYGON_TESTNET: 80001,
+  FANTOM: 250,
+  FANTOM_TESTNET: 4002,
+  GNOSIS: 100,
+  BSC: 56,
+  BSC_TESTNET: 97,
+  ARBITRUM: 42161,
+  ARBITRUM_NOVA: 42170,
+  ARBITRUM_TESTNET: 79377087078960,
+  AVALANCHE: 43114,
+  AVALANCHE_TESTNET: 43113,
+  HECO: 128,
+  HECO_TESTNET: 256,
+  HARMONY: 1666600000,
+  HARMONY_TESTNET: 1666700000,
+  OKEX: 66,
+  OKEX_TESTNET: 65,
+  CELO: 42220,
+  PALM: 11297108109,
+  MOONRIVER: 1285,
+  FUSE: 122,
+  TELOS: 40,
+  MOONBEAM: 1284,
+  OPTIMISM: 10,
+  KAVA: 2222,
+  METIS: 1088,
+  BOBA: 288,
+  BOBA_AVAX: 43288,
+  BOBA_BNB: 56288,
+  BTTC: 199,
+  // SEPOLIA: 11155111,
+  // CONSENSUS_ZKEVM_TESTNET: 59140,
+  // SCROLL_ALPHA_TESTNET: 534353,
+  // BASE_TESTNET: 84531,
+  POLYGON_ZKEVM: 1101,
+} as const
+export type ChainId = (typeof ChainId)[keyof typeof ChainId]
 
 // export type ChainId = (typeof ChainId)[keyof typeof ChainId]
 
 // export const isChainId = (chainId: number): chainId is ChainId => Object.values(ChainId).includes(chainId as ChainId)
 
-export enum ChainId {
-  ETHEREUM = 1,
-  ROPSTEN = 3,
-  RINKEBY = 4,
-  GÖRLI = 5,
-  KOVAN = 42,
-  POLYGON = 137,
-  POLYGON_TESTNET = 80001,
-  FANTOM = 250,
-  FANTOM_TESTNET = 4002,
-  GNOSIS = 100,
-  BSC = 56,
-  BSC_TESTNET = 97,
-  ARBITRUM = 42161,
-  ARBITRUM_NOVA = 42170,
-  ARBITRUM_TESTNET = 79377087078960,
-  AVALANCHE = 43114,
-  AVALANCHE_TESTNET = 43113,
-  HECO = 128,
-  HECO_TESTNET = 256,
-  HARMONY = 1666600000,
-  HARMONY_TESTNET = 1666700000,
-  OKEX = 66,
-  OKEX_TESTNET = 65,
-  CELO = 42220,
-  PALM = 11297108109,
-  MOONRIVER = 1285,
-  FUSE = 122,
-  TELOS = 40,
-  MOONBEAM = 1284,
-  OPTIMISM = 10,
-  KAVA = 2222,
-  METIS = 1088,
-  BOBA = 288,
-  BOBA_AVAX = 43288,
-  BOBA_BNB = 56288,
-  BTTC = 199,
-  // SEPOLIA = 11155111,
-  CONSENSUS_ZKEVM_TESTNET = 59140,
-  SCROLL_ALPHA_TESTNET = 534353,
-  BASE_TESTNET = 84531,
-  POLYGON_ZKEVM = 1101,
-}
+// export enum ChainId {
+//   ETHEREUM = 1,
+//   ROPSTEN = 3,
+//   RINKEBY = 4,
+//   GÖRLI = 5,
+//   KOVAN = 42,
+//   POLYGON = 137,
+//   POLYGON_TESTNET = 80001,
+//   FANTOM = 250,
+//   FANTOM_TESTNET = 4002,
+//   GNOSIS = 100,
+//   BSC = 56,
+//   BSC_TESTNET = 97,
+//   ARBITRUM = 42161,
+//   ARBITRUM_NOVA = 42170,
+//   ARBITRUM_TESTNET = 79377087078960,
+//   AVALANCHE = 43114,
+//   AVALANCHE_TESTNET = 43113,
+//   HECO = 128,
+//   HECO_TESTNET = 256,
+//   HARMONY = 1666600000,
+//   HARMONY_TESTNET = 1666700000,
+//   OKEX = 66,
+//   OKEX_TESTNET = 65,
+//   CELO = 42220,
+//   PALM = 11297108109,
+//   MOONRIVER = 1285,
+//   FUSE = 122,
+//   TELOS = 40,
+//   MOONBEAM = 1284,
+//   OPTIMISM = 10,
+//   KAVA = 2222,
+//   METIS = 1088,
+//   BOBA = 288,
+//   BOBA_AVAX = 43288,
+//   BOBA_BNB = 56288,
+//   BTTC = 199,
+//   // SEPOLIA = 11155111,
+//   CONSENSUS_ZKEVM_TESTNET = 59140,
+//   SCROLL_ALPHA_TESTNET = 534353,
+//   BASE_TESTNET = 84531,
+//   POLYGON_ZKEVM = 1101,
+// }
 
 export enum ChainKey {
   ARBITRUM = 'arbitrum',
@@ -245,78 +253,78 @@ export enum ChainKey {
 // ] as const
 
 const additional = [
-  {
-    name: 'Scroll Alpha Testnet',
-    chain: 'Scroll',
-    rpc: ['https://alpha-rpc.scroll.io/l2'],
-    faucets: [],
-    features: [],
-    nativeCurrency: {
-      name: 'Ethereum',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    infoURL: 'https://scroll.io',
-    shortName: 'scrollalpha',
-    chainId: 534353,
-    networkId: 534353,
-    explorers: [
-      {
-        name: 'Scroll Alpha Explorer',
-        url: 'https://blockscout.scroll.io',
-        standard: Standard.None,
-      },
-    ],
-  },
-  {
-    name: 'ConsenSys zkEVM Goreli',
-    chain: 'ConsenSys zkEVM',
-    rpc: ['https://consensys-zkevm-goerli-prealpha.infura.io/v3/53fca4c2b95a43cca82a11e8b573256b'],
-    faucets: [],
-    nativeCurrency: {
-      name: 'Ethereum',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    infoURL: 'https://docs.zkevm.consensys.net',
-    shortName: 'consensuszkevmgoerli',
-    chainId: 59140,
-    networkId: 59140,
-    explorers: [
-      {
-        name: 'ConsenSys zkEVM Goreli Explorer',
-        url: 'https://explorer.goerli.zkevm.consensys.net',
-        standard: Standard.None,
-      },
-    ],
-  },
-  {
-    name: 'Base Goreli',
-    chain: 'Base',
-    rpc: ['https://goerli.base.org'],
-    faucets: [],
-    nativeCurrency: {
-      name: 'Ethereum',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    infoURL: 'https://docs.base.org',
-    shortName: 'basegoerli',
-    chainId: 84531,
-    networkId: 84531,
-    explorers: [
-      {
-        name: 'Base Goreli Explorer',
-        url: 'https://goerli.basescan.org',
-        standard: Standard.Eip3091,
-      },
-    ],
-  },
+  // {
+  //   name: 'Scroll Alpha Testnet',
+  //   chain: 'Scroll',
+  //   rpc: ['https://alpha-rpc.scroll.io/l2'],
+  //   faucets: [],
+  //   features: [],
+  //   nativeCurrency: {
+  //     name: 'Ethereum',
+  //     symbol: 'ETH',
+  //     decimals: 18,
+  //   },
+  //   infoURL: 'https://scroll.io',
+  //   shortName: 'scrollalpha',
+  //   chainId: 534353,
+  //   networkId: 534353,
+  //   explorers: [
+  //     {
+  //       name: 'Scroll Alpha Explorer',
+  //       url: 'https://blockscout.scroll.io',
+  //       standard: Standard.None,
+  //     },
+  //   ],
+  // },
+  // {
+  //   name: 'ConsenSys zkEVM Goreli',
+  //   chain: 'ConsenSys zkEVM',
+  //   rpc: ['https://consensys-zkevm-goerli-prealpha.infura.io/v3/53fca4c2b95a43cca82a11e8b573256b'],
+  //   faucets: [],
+  //   nativeCurrency: {
+  //     name: 'Ethereum',
+  //     symbol: 'ETH',
+  //     decimals: 18,
+  //   },
+  //   infoURL: 'https://docs.zkevm.consensys.net',
+  //   shortName: 'consensuszkevmgoerli',
+  //   chainId: 59140,
+  //   networkId: 59140,
+  //   explorers: [
+  //     {
+  //       name: 'ConsenSys zkEVM Goreli Explorer',
+  //       url: 'https://explorer.goerli.zkevm.consensys.net',
+  //       standard: Standard.None,
+  //     },
+  //   ],
+  // },
+  // {
+  //   name: 'Base Goreli',
+  //   chain: 'Base',
+  //   rpc: ['https://goerli.base.org'],
+  //   faucets: [],
+  //   nativeCurrency: {
+  //     name: 'Ethereum',
+  //     symbol: 'ETH',
+  //     decimals: 18,
+  //   },
+  //   infoURL: 'https://docs.base.org',
+  //   shortName: 'basegoerli',
+  //   chainId: 84531,
+  //   networkId: 84531,
+  //   explorers: [
+  //     {
+  //       name: 'Base Goreli Explorer',
+  //       url: 'https://goerli.basescan.org',
+  //       standard: Standard.Eip3091,
+  //     },
+  //   ],
+  // },
 ] as const
 
 const RAW = [...raw, ...additional] as const
 
-const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA]
+const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA] as number[]
 
 type Data = (typeof RAW)[number]
 
