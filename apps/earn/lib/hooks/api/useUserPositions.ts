@@ -39,7 +39,7 @@ export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
     () => ({
       data: !isValidating
         ? transformPositions(positions, pools)?.filter((position) =>
-            !!args.chainIds ? args.chainIds?.includes(position.chainId) : true
+            Array.isArray(args.chainIds) ? args.chainIds?.includes(position.chainId as ChainId) : true
           )
         : undefined,
       isValidating,

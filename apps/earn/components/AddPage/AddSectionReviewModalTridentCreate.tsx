@@ -34,6 +34,7 @@ import {
 import { AddSectionReviewModal } from '../AddSection'
 import { PoolType } from '@sushiswap/wagmi/future/hooks'
 import { createToast } from '@sushiswap/ui/future/components/toast'
+import { ChainId } from '@sushiswap/chain'
 
 interface CreateSectionReviewModalTridentProps {
   chainId: BentoBoxV1ChainId
@@ -263,7 +264,13 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   })
 
   return (
-    <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} close={close}>
+    <AddSectionReviewModal
+      chainId={chainId as BentoBoxV1ChainId}
+      input0={input0}
+      input1={input1}
+      open={open}
+      close={close}
+    >
       <Button size="md" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
         {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
       </Button>

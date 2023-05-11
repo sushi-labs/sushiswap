@@ -6,6 +6,7 @@ import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
 
 import { useGraphPool, useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from '../lib/hooks'
+import { ChainId } from '@sushiswap/chain'
 
 interface PoolPositionContext {
   balance: Record<FundSource, Amount<Type>> | undefined
@@ -35,7 +36,7 @@ export const PoolPositionProvider: FC<{
     isLoading,
     isError,
   } = useBalance({
-    chainId: pool.chainId,
+    chainId: pool.chainId as ChainId,
     currency: liquidityToken,
     account,
     watch,

@@ -29,6 +29,7 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_REMOVE_LEGACY } from '../../lib/constants'
+import { ChainId } from '@sushiswap/chain'
 
 interface RemoveSectionLegacyProps {
   pool: Pool
@@ -72,7 +73,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
   const currencyAToRemove = useMemo(
     () =>
       token0
-        ? percentToRemove && percentToRemove.greaterThan('0') && underlying0
+        ? percentToRemove?.greaterThan('0') && underlying0
           ? Amount.fromRawAmount(token0, percentToRemove.multiply(underlying0.quotient).quotient || '0')
           : Amount.fromRawAmount(token0, '0')
         : undefined,
@@ -82,7 +83,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
   const currencyBToRemove = useMemo(
     () =>
       token1
-        ? percentToRemove && percentToRemove.greaterThan('0') && underlying1
+        ? percentToRemove?.greaterThan('0') && underlying1
           ? Amount.fromRawAmount(token1, percentToRemove.multiply(underlying1.quotient).quotient || '0')
           : Amount.fromRawAmount(token1, '0')
         : undefined,
@@ -240,7 +241,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
     <div>
       <RemoveSectionWidget
         isFarm={!!_pool.incentives && _pool.incentives.length > 0}
-        chainId={_pool.chainId}
+        chainId={_pool.chainId as ChainId}
         percentage={percentage}
         token0={token0}
         token1={token1}

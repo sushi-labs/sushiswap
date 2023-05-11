@@ -11,13 +11,14 @@ import { ConcentratedLiquidityPosition } from '@sushiswap/wagmi/future/hooks'
 import { PriceRangeCell } from './PriceRangeCell'
 import { PositionSizeCell } from './PositionSizeCell'
 import { UnclaimedCell } from './UnclaimedCell'
+import { ChainId } from '@sushiswap/chain'
 
 type TData = PositionWithPool
 
 export const NETWORK_COLUMN: ColumnDef<TData, unknown> = {
   id: 'network',
   header: 'Network',
-  cell: (props) => <PoolChainCell row={props.row.original} />,
+  cell: (props) => <PoolChainCell row={props.row.original as typeof props.row.original & { chainId: ChainId }} />,
   size: 50,
   meta: {
     skeleton: <Skeleton.Circle radius={ICON_SIZE} />,

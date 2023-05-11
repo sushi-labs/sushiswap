@@ -37,6 +37,7 @@ import { createToast } from '@sushiswap/ui/future/components/toast'
 import Button from '@sushiswap/ui/future/components/button/Button'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_CREATE_TRIDENT } from '../../lib/constants'
+import { ChainId } from '@sushiswap/chain'
 
 interface CreateSectionReviewModalTridentProps {
   chainId: BentoBoxV1ChainId
@@ -136,17 +137,17 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const isValid = useMemo(() => {
     return Boolean(
       chain?.id &&
-      factory &&
-      token0 &&
-      token1 &&
-      poolAddress &&
-      input0 &&
-      input1 &&
-      totalSupply &&
-      pool &&
-      contract &&
-      totals?.[token0.wrapped.address] &&
-      totals?.[token1.wrapped.address]
+        factory &&
+        token0 &&
+        token1 &&
+        poolAddress &&
+        input0 &&
+        input1 &&
+        totalSupply &&
+        pool &&
+        contract &&
+        totals?.[token0.wrapped.address] &&
+        totals?.[token1.wrapped.address]
     )
   }, [chain?.id, contract, factory, input0, input1, pool, poolAddress, token0, token1, totalSupply, totals])
 
@@ -291,7 +292,13 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   })
 
   return (
-    <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} close={close}>
+    <AddSectionReviewModal
+      chainId={chainId as BentoBoxV1ChainId}
+      input0={input0}
+      input1={input1}
+      open={open}
+      close={close}
+    >
       <Button
         size="xl"
         disabled={!isValid || isWritePending}
