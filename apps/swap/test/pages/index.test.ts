@@ -51,22 +51,20 @@ async function wrap(page: Page, inputCurrency: Type, outputCurrency: Type, amoun
   await handleToken(page, outputCurrency, InputType.OUTPUT)
 
   if (!inputCurrency.isNative) {
-    // console.log('Approving WNATIVE')
+    const approveButton = page.locator('[testdata-id=approve-erc20]', { hasText: `Approve ${inputCurrency.symbol}` })
+    await expect(approveButton).toBeEnabled()
+
     await page
-      .locator('[testdata-id=approve-erc20]')
-      .click({ timeout: 3000 })
-      .then(() => {
-        // console.log(`Approved ${inputCurrency.symbol}`)
-      })
-      .catch(() => {
-        // console.log(`${inputCurrency.symbol} already approved or not needed`)
-      })
+      .locator('[testdata-id=approve-erc20]', { hasText: `Approve ${inputCurrency.symbol}` })
+      .click()
+      .then(() => console.log(`Approved ${inputCurrency.symbol}`))
+      .catch(() => console.log(`${inputCurrency.symbol} already approved or not needed`))
 
-    // TODO: Should check for first notification (Approving...)
-    // TODO: Should check for second notification (Approved...)
+    const expectedApprovingText = `Approving ${inputCurrency.symbol}`
+    await expect(page.getByText(expectedApprovingText)).toContainText(expectedApprovingText)
 
-    // so we can then remove this arbitrary timeout
-    await timeout(2500) // wait for approval
+    const expectedApproveText = `Successfully approved ${inputCurrency.symbol}`
+    await expect(page.getByText(expectedApproveText)).toContainText(expectedApproveText)
   }
 
   const unwrapButton = page.locator('[testdata-id=swap-button]')
@@ -91,35 +89,22 @@ async function swap(page: Page, inputCurrency: Type, outputCurrency: Type, amoun
   await handleInput(page, amount, useBalance)
   await handleToken(page, outputCurrency, InputType.OUTPUT)
 
-  await timeout(1500) // wait for rpc calls to figure out if approvals are needed
-
   if (!inputCurrency.isNative) {
-    // Not used for regular swap anymore...
-    // await page
-    // .locator('[testdata-id=approve-bentobox]')
-    // .click({ timeout: 3000 })
-    // .then(async () => {
-    //   console.log('BentoBox Approved')
-    // })
-    // .catch(() => console.log('BentoBox already approved or not needed'))
-
+    const approveButton = page.locator('[testdata-id=approve-erc20]', { hasText: `Approve ${inputCurrency.symbol}` })
+    await expect(approveButton).toBeEnabled()
     await page
       .locator('[testdata-id=approve-erc20]')
-      .click({ timeout: 3000 })
-      .then(async () => {
-        console.log(`Approved ${inputCurrency.symbol}`)
-      })
+      .click()
+      .then(() => console.log(`Approved ${inputCurrency.symbol}`))
       .catch(() => console.log(`${inputCurrency.symbol} already approved or not needed`))
   }
 
-  await timeout(4500) // wait for balance
-
   const swapButton = page.locator('[testdata-id=swap-button]')
   await expect(swapButton).toBeEnabled()
-  await swapButton.click({ timeout: 15000 })
+  await swapButton.click()
 
-  await timeout(1000)
   const confirmSwap = page.locator('[testdata-id=confirm-swap-button]')
+  await expect(confirmSwap).toBeEnabled()
   await confirmSwap.click()
   const expectedText = new RegExp(`(Swap .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol})`)
   await expect(page.locator('span', { hasText: expectedText }).last()).toContainText(expectedText)

@@ -37,7 +37,7 @@ export const useSortedTokenList = ({
   const debouncedQuery = useDebounce(query, 250)
 
   return useQuery({
-    queryKey: ['sortedTokenList', { tokenMap, customTokenMap, balancesMap, pricesMap }],
+    queryKey: ['sortedTokenList', { debouncedQuery, tokenMap, customTokenMap, balancesMap, pricesMap }],
     queryFn: async () => {
       const tokenMapValues = tokenMap ? Object.values(tokenMap) : []
       const customTokenMapValues = customTokenMap
@@ -50,7 +50,10 @@ export const useSortedTokenList = ({
         (!debouncedQuery || debouncedQuery.toLowerCase().includes(Native.onChain(chainId).symbol.toLowerCase()))
 
       const filteredTokens: Token[] = filterTokens(tokenMapValues, debouncedQuery)
-      const sortedTokens: Token[] = [...filteredTokens].sort(tokenComparator(balancesMap, pricesMap))
+      const filteredCustomTokens: Token[] = filterTokens(customTokenMapValues, debouncedQuery)
+      const sortedTokens: Token[] = [...filteredTokens, ...filteredCustomTokens].sort(
+        tokenComparator(balancesMap, pricesMap)
+      )
 
       const filteredSortedTokens = getSortedTokensByQuery(sortedTokens, debouncedQuery)
       if (_includeNative) return [Native.onChain(chainId), ...customTokenMapValues, ...filteredSortedTokens]

@@ -1,5 +1,5 @@
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/solid'
-import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
+import { ConstantProductPool, Fee, Pair, StablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
@@ -15,7 +15,6 @@ import {
 import {
   AddSectionReviewModalLegacy,
   AddSectionReviewModalTrident,
-  FEE_MAP,
   Layout,
   SelectFeeWidget,
   SelectNetworkWidget,
@@ -77,7 +76,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter()
   const [chainId, setChainId] = useState(props.chainId)
-  const [fee, setFee] = useState(2)
+  const [fee, setFee] = useState(Fee.DEFAULT)
   const [poolType, setPoolType] = useState(PoolFinderType.Classic)
 
   const [token0, setToken0] = useState<Type | undefined>(Native.onChain(chainId))
@@ -93,7 +92,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
   // Reset default fee if switching networks and not on a trident enabled network
   useEffect(() => {
     if (!TRIDENT_ENABLED_NETWORKS.includes(chainId)) {
-      setFee(2)
+      setFee(Fee.DEFAULT)
       setPoolType(PoolFinderType.Classic)
     }
   }, [chainId])
@@ -406,7 +405,7 @@ const _Add: FC<AddProps> = ({
                     token1={token1}
                     input0={parsedInput0}
                     input1={parsedInput1}
-                    fee={FEE_MAP[fee]}
+                    fee={fee}
                     poolType={poolType}
                   >
                     {({ isWritePending, setOpen }) => (
