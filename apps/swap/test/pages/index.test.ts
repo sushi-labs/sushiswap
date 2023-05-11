@@ -173,13 +173,13 @@ async function wrap({
     await expect(page.getByText(expectedApproveText)).toContainText(expectedApproveText)
   }
 
-  const unwrapButton = page.locator('[testdata-id=swap-button]')
+  const unwrapButton = page.locator('[testdata-id=swap-button]', { hasText: new RegExp('(Wrap|Unwrap)') })
   // const unwrapButton = page.getByRole('button', { name: 'Wrap' })
   await expect(unwrapButton).toBeVisible()
   await expect(unwrapButton).toBeEnabled()
   await unwrapButton.click()
 
-  const confirmUnwrap = page.locator('[testdata-id=confirm-swap-button]')
+  const confirmUnwrap = page.locator('[testdata-id=confirm-swap-button]', { hasText: new RegExp('(Wrap|Unwrap)') })
   await expect(confirmUnwrap).toBeVisible()
   await expect(confirmUnwrap).toBeEnabled()
   await confirmUnwrap.click()
@@ -187,7 +187,7 @@ async function wrap({
   const expectedText = new RegExp(`(Wrap|Unwrap .* ${inputCurrency.symbol} to .* ${outputCurrency.symbol})`)
   await expect(page.locator('span', { hasText: expectedText }).last()).toContainText(expectedText)
 
-  const makeAnotherSwap = page.locator('[testdata-id=make-another-swap-button]')
+  const makeAnotherSwap = page.locator('[testdata-id=make-another-swap-button]', { hasText: 'Make another swap' })
   await expect(makeAnotherSwap).toBeVisible()
   await expect(makeAnotherSwap).toBeEnabled()
   await makeAnotherSwap.click()
