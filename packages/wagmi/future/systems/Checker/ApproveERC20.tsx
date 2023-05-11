@@ -8,6 +8,7 @@ import { Address } from 'wagmi'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { classNames } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui/future/components/list/List'
+import dynamic from 'next/dynamic'
 
 export interface ApproveERC20Props extends ButtonProps<'button'> {
   id: string
@@ -16,7 +17,7 @@ export interface ApproveERC20Props extends ButtonProps<'button'> {
   enabled?: boolean
 }
 
-export const ApproveERC20: FC<ApproveERC20Props> = ({
+export const Component: FC<ApproveERC20Props> = ({
   id,
   amount,
   contract,
@@ -58,7 +59,7 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
     <Button
       as={as}
       disabled={state !== ApprovalState.NOT_APPROVED}
-      loading={[ApprovalState.LOADING, ApprovalState.PENDING].includes(state)}
+      loading={[ApprovalState.UNKNOWN, ApprovalState.LOADING, ApprovalState.PENDING].includes(state)}
       testdata-id={id}
       variant={variant}
       size={size}
@@ -74,7 +75,7 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
       >
-        <Menu.Button as="div" role="button" className="text-center text-xs text-blue cursor-pointer">
+        <Menu.Button as="div" role="button" className="text-xs text-center cursor-pointer text-blue">
           <InformationCircleIcon width={18} height={18} className="text-white" />
         </Menu.Button>
         <Transition
@@ -92,7 +93,7 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
               We need your approval to execute this transaction on your behalf.
               <a
                 target="_blank"
-                className="text-blue dark:text-blue dark:font-semibold flex gap-1 items-center hover:text-blue-700"
+                className="flex items-center gap-1 text-blue dark:text-blue dark:font-semibold hover:text-blue-700"
                 href="https://www.sushi.com/academy/articles/what-is-token-approval"
                 rel="noreferrer"
               >
@@ -170,3 +171,7 @@ export const ApproveERC20: FC<ApproveERC20Props> = ({
     </Button>
   )
 }
+
+export const ApproveERC20 = dynamic(() => Promise.resolve(Component), {
+  ssr: false,
+})

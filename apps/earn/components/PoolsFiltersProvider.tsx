@@ -20,6 +20,7 @@ interface PoolsFiltersProvider {
 }
 
 export enum FilterTag {
+  DEFAULT = 'DEFAULT',
   SUSHISWAP_V3 = 'SUSHISWAP_V3',
   SUSHISWAP_V2 = 'SUSHISWAP_V2',
   BENTOBOX_STABLE = 'BENTOBOX_STABLE',
@@ -45,11 +46,7 @@ export const poolFiltersSchema = z.object({
   categories: z
     .string()
     .optional()
-    .default(
-      Object.values(FilterTag)
-        .filter((tag) => tag != FilterTag.FARMS_ONLY)
-        .join(',')
-    )
+    .default(FilterTag.DEFAULT)
     .transform((tags) => tags.split(',') as FilterTag[]),
 })
 
@@ -67,7 +64,6 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => 
   const setFilters = useCallback(
     (filters: PoolFilters) => {
       const newFilters = { ...parsed, ...filters }
-      // console.log(newFilters)
       void push(parseArgs(newFilters), undefined, { shallow: true })
     },
     // eslint-disable-next-line

@@ -1,9 +1,9 @@
-import { FC } from 'react'
+import { ComponentType } from 'react'
 
 import { CurrencyInput, CurrencyInputProps } from './Currency'
 
 interface Web3Input {
-  Currency: FC<CurrencyInputProps>
+  Currency: ComponentType<CurrencyInputProps>
 }
 
 export const Web3Input: Web3Input = {

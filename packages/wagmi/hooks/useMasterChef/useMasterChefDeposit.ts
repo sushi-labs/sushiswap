@@ -14,11 +14,12 @@ interface UseMasterChefDepositParams {
   chef: ChefType
   pid: number
   amount?: Amount<Token>
+  enabled?: boolean
 }
 
 type UseMasterChefDeposit = (params: UseMasterChefDepositParams) => ReturnType<typeof useSendTransaction>
 
-export const useMasterChefDeposit: UseMasterChefDeposit = ({ chainId, amount, chef, pid }) => {
+export const useMasterChefDeposit: UseMasterChefDeposit = ({ chainId, amount, chef, pid, enabled = true }) => {
   const { address } = useAccount()
   const contract = useMasterChefContract(chainId, chef)
 
@@ -67,5 +68,6 @@ export const useMasterChefDeposit: UseMasterChefDeposit = ({ chainId, amount, ch
     chainId,
     onSettled,
     prepare,
+    enabled,
   })
 }

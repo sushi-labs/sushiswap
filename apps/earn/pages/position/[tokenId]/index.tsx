@@ -36,8 +36,6 @@ import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { PoolHeader } from '../../../components/future/PoolHeader'
 import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 import useIsTickAtLimit from '../../../lib/hooks/useIsTickAtLimit'
-import { createSuccessToast, createToast } from '@sushiswap/ui/future/components/toast'
-import { ChainId } from '@sushiswap/chain'
 
 const PositionPage = () => {
   return (
@@ -151,7 +149,7 @@ const Position: FC = () => {
     <Layout>
       <div className="flex flex-col gap-2">
         <Link
-          className="group flex gap-4 items-center mb-2"
+          className="flex items-center gap-4 mb-2 group"
           href={`/${chainId}:${positionDetails?.address}`}
           shallow={true}
         >
@@ -197,6 +195,7 @@ const Position: FC = () => {
             startIcon={<MinusIcon width={18} height={18} />}
             variant="outlined"
             color={tab === SelectedTab.DecreaseLiq ? 'blue' : 'default'}
+            testdata-id='decrease-liquidity-button'
           >
             Decrease Liquidity
           </RadioGroup.Option>

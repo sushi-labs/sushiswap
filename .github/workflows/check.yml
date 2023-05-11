@@ -1,4 +1,4 @@
-name: Check Types
+name: Sushi - type checking
 on:
   pull_request:
     types: [opened, synchronize]

@@ -35,7 +35,7 @@ export const TokenSelectorCustomTokensOverlay: FC = () => {
         Manage
       </Button>
       <SlideIn.FromRight show={open} onClose={() => setOpen(false)} className="!mt-0">
-        <Overlay.Content className="!bg-slate-800">
+        <Overlay.Content>
           <Overlay.Header onBack={() => setOpen(false)} title="Custom Tokens" />
           <List>
             <List.Label>Tokens</List.Label>

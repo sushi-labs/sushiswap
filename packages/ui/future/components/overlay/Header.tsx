@@ -1,9 +1,10 @@
 import { ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/react/24/solid'
-import { ArrowLeftIcon } from '@heroicons/react/24/solid'
 import classNames from 'classnames'
-import { FC } from 'react'
+import React, { FC } from 'react'
 
 import { Button } from '../button'
+import { IconButton } from '../IconButton'
+import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon } from '@heroicons/react/20/solid'
 
 export interface Header {
   title: string
@@ -15,30 +16,26 @@ export interface Header {
 
 export const Header: FC<Header> = ({ className, title, onBack, onClose, arrowDirection = 'left' }) => {
   return (
-    <div className={classNames(className, 'grid grid-cols-[40px_auto_40px] mb-3')}>
-      {onBack ? (
-        <Button
-          variant="outlined"
-          color="default"
-          size="md"
-          className="!px-0 !w-[38px] flex items-center justify-center gap-2 cursor-pointer"
+    <div className={classNames(className, 'grid grid-cols-[40px_auto_40px] pb-2')}>
+      {onBack && (
+        <IconButton
+          icon={
+            arrowDirection === 'left'
+              ? ArrowLeftIcon
+              : arrowDirection === 'right'
+              ? ArrowRightIcon
+              : arrowDirection === 'top'
+              ? ArrowUpIcon
+              : ArrowDownIcon
+          }
+          iconProps={{
+            width: 24,
+            height: 24,
+            className: 'hover:text-slate-50 dark:text-slate-100 text-gray-400 hover:text-gray-900',
+          }}
+          className="flex items-center justify-center w-6 h-6 gap-2 cursor-pointer"
           onClick={onBack}
-        >
-          {arrowDirection === 'left' && (
-            <ArrowLeftIcon strokeWidth={3} width={20} height={20} className={classNames('cursor-pointer ')} />
-          )}
-          {arrowDirection === 'bottom' && (
-            <ChevronDownIcon strokeWidth={3} width={24} height={24} className={classNames('cursor-pointer ')} />
-          )}
-          {arrowDirection === 'top' && (
-            <ChevronUpIcon strokeWidth={3} width={24} height={24} className={classNames('cursor-pointer ')} />
-          )}
-          {arrowDirection === 'right' && (
-            <ChevronRightIcon strokeWidth={3} width={24} height={24} className={classNames('cursor-pointer ')} />
-          )}
-        </Button>
-      ) : (
-        <div />
+        />
       )}
       <h3
         className={classNames(
@@ -47,20 +44,17 @@ export const Header: FC<Header> = ({ className, title, onBack, onClose, arrowDir
       >
         {title}
       </h3>
-      {onClose ? (
-        <div className="flex justify-end">
-          <Button
-            variant="outlined"
-            color="default"
-            size="md"
-            className="!px-0 !w-[38px] flex items-center justify-center gap-2 cursor-pointer"
-            onClick={onBack}
-          >
-            <XMarkIcon width={24} height={24} />
-          </Button>
-        </div>
-      ) : (
-        <div />
+      {onClose && (
+        <IconButton
+          icon={XMarkIcon}
+          iconProps={{
+            width: 24,
+            height: 24,
+            className: 'hover:text-slate-50 dark:text-slate-100 text-gray-400 hover:text-gray-900',
+          }}
+          className="cursor-pointer"
+          onClick={onClose}
+        />
       )}
     </div>
   )
