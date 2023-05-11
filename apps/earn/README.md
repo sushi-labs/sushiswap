@@ -45,7 +45,7 @@ NEXT_PUBLIC_TEST=true pnpm exec turbo run start --filter=earn --force
 
 Open a third terminal, run:
 ```
-NEXT_PUBLIC_TEST=true CHAIN_ID=137 PLAYWRIGHT_URL=http://localhost:3000/earn pnpm test-earn-app
+ANVIL_FORK_URL=<URL> ANVIL_BLOCK_NUMBER=<BLOCK_NUMBER> NEXT_PUBLIC_TEST=true CHAIN_ID=137 PLAYWRIGHT_URL=http://localhost:3000/earn pnpm test-earn-app
 ```
 
 

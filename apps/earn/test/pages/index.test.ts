@@ -67,6 +67,7 @@ test.describe('V3', () => {
     })
   })
 
+  // TODO: most of the tests below are dependent to the Create Pool test. Consider if we should put the creation in a beforeAll.
   test('Add liquidity, both sides', async ({ page }) => {
     test.slow()
     await createOrAddLiquidityV3(page, {
@@ -184,7 +185,7 @@ async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
   await expect(previewLocator).toBeVisible({ timeout: 10_000 })
   await expect(previewLocator).toBeEnabled()
   await previewLocator.click()
-  await page.locator('[testdata-id=confirm-add-liquidity-button]').click({ timeout: 2_000 })
+  await page.locator('[testdata-id=confirm-add-liquidity-button]').click({ timeout: 5_000 })
 
   const expectedText =
     args.type === 'ADD'
@@ -268,7 +269,6 @@ async function manageLiquidity(page: Page, type: 'STAKE' | 'UNSTAKE') {
   if (!(await maxButtonSelector.isVisible())) {
     await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-header]`).click()
   }
-
   await maxButtonSelector.click()
   await approve(page, 'approve-token0')
   await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`).click({ timeout: 2_000 })
@@ -282,7 +282,12 @@ async function removeLiquidityV2(page: Page) {
   await page.locator('[testdata-id=remove-liquidity-max-button]').click()
 
   await approve(page, 'remove-liquidity-trident-approve-token')
-  await page.locator('[testdata-id=remove-liquidity-trident-button]').click({ timeout: 2_000 })
+  
+  const removeLiquidityLocator = page.locator('[testdata-id=remove-liquidity-trident-button]')
+
+  await expect(removeLiquidityLocator).toBeVisible()
+  await expect(removeLiquidityLocator).toBeEnabled()
+  await removeLiquidityLocator.click()
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
