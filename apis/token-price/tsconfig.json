@@ -1,9 +1,11 @@
 {
-  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node18/tsconfig", "@tsconfig/esm/tsconfig"],
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/esm/tsconfig"],
   "include": ["."],
   "exclude": ["node_modules", ".vercel"],
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "moduleResolution": "nodenext"
+    "module": "ESNext",
+    "moduleResolution": "nodenext",
   }
 }

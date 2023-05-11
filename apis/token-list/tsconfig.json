@@ -3,7 +3,9 @@
   "include": ["."],
   "exclude": ["node_modules", ".vercel"],
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "moduleResolution": "nodenext"
+    "module": "ESNext",
+    "moduleResolution": "nodenext",
   }
 }
