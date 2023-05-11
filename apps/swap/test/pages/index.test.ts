@@ -39,7 +39,6 @@ test.beforeEach(async ({ page }) => {
     console.log(err)
   })
 
-  // @ts-ignore
   // await client.reset({ blockNumber: 42259027n })
 
   await page.goto(PLAYWRIGHT_URL)
@@ -59,14 +58,17 @@ test.afterEach(async ({ page }) => {
   //
 })
 
-test('Wrap and unwrap', async ({ page }) => {
+test.only('Wrap and unwrap', async ({ page }) => {
   test.slow()
-  const swapFromBalance = page.getByTestId('swap-from-balance-button')
-  const swapFromBalanceBefore = await swapFromBalance.textContent()
-  const swapToBalance = page.getByTestId('swap-to-balance-button')
-  const swapToBalanceBefore = await swapToBalance.textContent()
+  const input = page.getByTestId('swap-from-balance-button')
+  const output = page.getByTestId('swap-to-balance-button')
 
-  // await expect(wrapFromBalance).toContainText('1000')
+  const initialInputBalance = await input.textContent()
+  const initialOutputBalance = await output.textContent()
+
+  await expect(initialInputBalance).toEqual('10000.00')
+  await expect(initialOutputBalance).toEqual('0.00')
+
   await wrap({
     page,
     inputCurrency: native,
@@ -74,13 +76,11 @@ test('Wrap and unwrap', async ({ page }) => {
     amount: '10',
   })
 
-  const swapFromBalanceAfterFirst = await swapFromBalance.textContent()
-  expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfterFirst)
-  const swapToBalanceAfterFirst = await swapToBalance.textContent()
-  await expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfterFirst)
+  const inputBalanceAfterWrap = await input.textContent()
+  expect(initialInputBalance).not.toEqual(inputBalanceAfterWrap)
+  const swapToBalanceAfterFirst = await output.textContent()
+  await expect(initialOutputBalance).not.toEqual(swapToBalanceAfterFirst)
 
-  // await expect(wrapFromBalance).toContainText('9989.98')
-  // await expect(wrapToBalance).toContainText('10')
   await wrap({
     page,
     inputCurrency: wnative,
@@ -88,13 +88,10 @@ test('Wrap and unwrap', async ({ page }) => {
     amount: '10',
   })
 
-  const swapFromBalanceAfterSecond = await swapFromBalance.textContent()
-  expect(swapFromBalanceAfterFirst).not.toEqual(swapFromBalanceAfterSecond)
-  const swapToBalanceAfterSecond = await swapToBalance.textContent()
-  await expect(swapToBalanceAfterFirst).not.toEqual(swapToBalanceAfterSecond)
-
-  // await expect(wrapFromBalance).toContainText('0')
-  // await expect(wrapToBalance).toContainText('9999.96')
+  const inputBalanceAfterUnrap = await input.textContent()
+  const outputBalanceAfterUnwrap = await output.textContent()
+  await expect(inputBalanceAfterUnrap).toEqual('0.00')
+  await expect(outputBalanceAfterUnwrap).not.toEqual(inputBalanceAfterUnrap)
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
