@@ -1,6 +1,7 @@
 'use client'
 
 import { ExternalLinkIcon } from '@heroicons/react/outline'
+import { shortenAddress } from '@sushiswap/format'
 import { GenericTable, Link } from '@sushiswap/ui'
 import { createColumnHelper, getCoreRowModel, SortDirection, useReactTable } from '@tanstack/react-table'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -21,7 +22,7 @@ type TokenHolder = {
 const columnHelper = createColumnHelper<TokenHolder>()
 const TOKEN_HOLDER_FILTERS = [1, 1_000, 10_000, 100_000]
 
-export function TokenHoldersTable({ users }) {
+export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
   const { replace } = useRouter()
   const pathname = usePathname()
   const [isPending, startTransition] = useTransition()
@@ -60,7 +61,7 @@ export function TokenHoldersTable({ users }) {
           endIcon={<ExternalLinkIcon className="h-5 w-5" />}
           className="gap-2 font-bold"
         >
-          {`${info.getValue().slice(0, 4)}...${info.getValue().slice(info.getValue().length - 3)}`}
+          {shortenAddress(info.getValue())}
         </Link.External>
       ),
       minSize: 200,
@@ -82,8 +83,8 @@ export function TokenHoldersTable({ users }) {
         <span className="text-slate-300">
           {info.getValue().toLocaleString('EN', {
             maximumFractionDigits: 2,
+            style: 'percent',
           })}
-          %
         </span>
       ),
     }),

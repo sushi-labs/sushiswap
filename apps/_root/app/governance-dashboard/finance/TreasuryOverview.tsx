@@ -1,12 +1,12 @@
 'use client'
 
-import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { CircleIcon } from '@sushiswap/ui'
 import React from 'react'
-import { Tooltip, ResponsiveContainer, AreaChart, XAxis, YAxis, Area } from 'recharts'
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 import { KpiCard } from '../components'
 import { formatNumber, TreasurySnapshot } from '../lib'
+import { TreasuryBalancesTable } from './TreasuryBalancesTable'
 
 export function TreasuryOverview(props: {
   treasurySnapshot: TreasurySnapshot
@@ -74,8 +74,8 @@ export function TreasuryOverview(props: {
                 >
                   <defs>
                     <linearGradient id="area-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="13.14%" stop-color="#2C6DE2" />
-                      <stop offset="100.2%" stop-color="#101728" />
+                      <stop offset="13.14%" stopColor="#2C6DE2" />
+                      <stop offset="100.2%" stopColor="#101728" />
                     </linearGradient>
                   </defs>
                   <XAxis
@@ -160,16 +160,7 @@ export function TreasuryOverview(props: {
           <div className="mt-10 w-full bg-slate-700">chart</div>
         </div>
       </div>
-      <div className="rounded-lg bg-[#1A2031]">
-        <div className="h-full w-full border-b border-slate-800 px-5 pt-5 pb-7">
-          <h3 className="mt-3 text-xl font-semibold">Treasury Snapshot</h3>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-slate-400">Wallet Address: 0xe94B...F4f3</span>
-            <ExternalLinkIcon className="h-4 w-4 text-slate-400" />
-          </div>
-        </div>
-        <div>table</div>
-      </div>
+      <TreasuryBalancesTable balances={treasurySnapshot.balances} />
     </section>
   )
 }

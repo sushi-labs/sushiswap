@@ -205,7 +205,7 @@ export async function getTokenHolders(filters?: { balanceFilter: number; orderDi
     (acc: bigint, curr: { balance: string }) => acc + BigInt(curr.balance),
     0n
   )
-  const tokenConcentration = Number((topTenBalances * 100n) / BigInt(tokenHoldersRes.sushi.totalSupply))
+  const tokenConcentration = Number((topTenBalances * 100n) / BigInt(tokenHoldersRes.sushi.totalSupply)) / 100
 
   return { ...tokenHoldersRes, tokenConcentration }
 }
@@ -247,6 +247,7 @@ export async function getTreasuryHistoricalTvl() {
 }
 
 interface SafeBalance {
+  id: string
   tokenAddress: Address | null
   token: {
     name: string
@@ -255,34 +256,52 @@ interface SafeBalance {
     logoUri: string
   } | null
   balance: string
-  ethValue: string
   fiatBalance: string
   fiatConversion: string
-  fiatCode: string
-  timestamp: string
+}
+
+export interface TreasuryBalance extends Omit<SafeBalance, 'token'> {
+  portfolioShare: number
+  token:
+    | (SafeBalance['token'] & {
+        address: Address
+      })
+    | null
 }
 
 export interface TreasurySnapshot {
   totalValueUsd: number
   balancesValueUsd: number
   vestingValueUsd: number
-  balances: SafeBalance[] | undefined
+  balances: TreasuryBalance[]
 }
 
+export const TREASURY_ADDRESS = '0xe94B5EEC1fA96CEecbD33EF5Baa8d00E4493F4f3'
+
 export async function getTreasurySnapshot() {
-  const SAFE_URL =
-    'https://safe-transaction-mainnet.safe.global/api/v1/safes/0xe94B5EEC1fA96CEecbD33EF5Baa8d00E4493F4f3/balances/usd/?trusted=true&exclude_spam=true'
+  const SAFE_URL = `https://safe-transaction-mainnet.safe.global/api/v1/safes/${TREASURY_ADDRESS}/balances/usd/?trusted=true&exclude_spam=true`
   const TOKENSETS_URL = 'https://api.tokensets.com/v2/funds/sushihouse'
 
-  const [balances, vestingValueUsd] = await Promise.all([
+  const [balancesRes = [], vestingValueUsd] = await Promise.all([
     fetchUrl<SafeBalance[]>(SAFE_URL),
     fetchUrl<{ fund: { market_cap: `$${string}` } }>(TOKENSETS_URL).then(
       (res) => Number(res?.fund.market_cap.replace(/[^0-9.]/g, '')) // remove $ and commas
     ),
   ])
 
-  const balancesValueUsd = balances?.reduce((acc, curr) => acc + Number(curr.fiatBalance), 0) ?? 0
+  const balancesValueUsd = balancesRes?.reduce((acc, curr) => acc + Number(curr.fiatBalance), 0) ?? 0
   const totalValueUsd = balancesValueUsd + vestingValueUsd
+
+  const balances: TreasuryBalance[] = balancesRes
+    .filter((i) => +i.fiatBalance > 1_000)
+    .map((info) => {
+      const decimals = info.token?.decimals ?? 18
+      const balance = String(BigInt(info.balance) / BigInt(10 ** decimals))
+      const token = info.token && info.tokenAddress ? { ...info.token, address: info.tokenAddress } : null
+      const portfolioShare = +info.fiatBalance / balancesValueUsd
+
+      return { ...info, balance, id: info.tokenAddress ?? 'ETH', token, portfolioShare }
+    })
 
   return {
     totalValueUsd,

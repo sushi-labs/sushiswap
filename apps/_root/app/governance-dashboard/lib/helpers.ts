@@ -1,7 +1,7 @@
-export function formatNumber(num?: number) {
+export function formatNumber(num?: number, decimals = 2) {
   if (!num) return 0
   if (Math.abs(num) < 1_000) {
-    return num // Return the number itself if it's less than 1,000
+    return num.toLocaleString('EN', { maximumFractionDigits: decimals }) // Return the number itself if it's less than 1,000
   }
 
   const units = ['k', 'M', 'G', 'T', 'P']
