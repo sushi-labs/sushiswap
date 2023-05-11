@@ -1,8 +1,8 @@
 import { constantProductPoolAbi, uniswapV2PairAbi, v3baseAbi } from '@sushiswap/abi'
 import { PoolType, PoolVersion } from '@sushiswap/database'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
-import { Address, configureChains, createClient, fetchToken, FetchTokenResult, readContracts } from '@wagmi/core'
-
+import { configureChains, createClient, fetchToken, readContracts } from '@wagmi/core'
+import type { Address, FetchTokenResult } from '@wagmi/core'
 import type { getEarnPool } from './api/index.js'
 
 const { provider } = configureChains(allChains, allProviders)
@@ -89,7 +89,6 @@ async function getV3Pool({ chainId, address }: GetPoolArgs): Promise<Pool> {
 
 // Thought ReturnType would be enough, needed to wrap it to make TS happy
 export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnType<typeof getEarnPool>>> {
-
   const [chainId, address] = [Number(poolId.split(':')[0]), poolId.split(':')[1]]
   if (!chainId || !address) throw new Error('Invalid pool id.')
 

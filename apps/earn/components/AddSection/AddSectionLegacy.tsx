@@ -11,6 +11,7 @@ import { AddSectionWidget } from './AddSectionWidget'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { APPROVE_TAG_ADD_LEGACY } from '../../lib/constants'
+import { ChainId } from '@sushiswap/chain'
 
 export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const chainId = _pool.chainId as UniswapV2Router02ChainId
@@ -71,7 +72,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
     <Checker.Root>
       <AddSectionWidget
         isFarm={!!_pool.incentives && _pool.incentives.length > 0}
-        chainId={_pool.chainId}
+        chainId={_pool.chainId as ChainId}
         input0={input0}
         input1={input1}
         token0={token0}

@@ -29,6 +29,9 @@ import { useMemo } from 'react'
 import { useFeeData } from '@sushiswap/wagmi'
 import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
+import { StablePoolFactoryChainId, TridentRouterChainId } from '@sushiswap/trident'
+import { RouteProcessor3ChainId } from '@sushiswap/route-processor'
+import { ConstantProductPoolFactoryChainId } from '@sushiswap/trident'
 
 export type UseTradeOutput =
   | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
@@ -43,7 +46,11 @@ export type UseTradeOutput =
  * @param otherCurrency the desired output/payment currency
  */
 export function useTrade(
-  chainId: UniswapV2Router02ChainId | BentoBoxV1ChainId,
+  chainId:
+    | UniswapV2Router02ChainId
+    | StablePoolFactoryChainId
+    | ConstantProductPoolFactoryChainId
+    | RouteProcessor3ChainId,
   tradeType: TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT,
   amountSpecified?: Amount<Currency>,
   mainCurrency?: Currency,

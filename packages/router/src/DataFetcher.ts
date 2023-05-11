@@ -55,7 +55,7 @@ export class DataFetcher {
     return (this.cache[chainId] = new DataFetcher(chainId))
   }
 
-  constructor(chainId: number, web3Client?: PublicClient, databaseClient?: PrismaClient) {
+  constructor(chainId: ChainId, web3Client?: PublicClient, databaseClient?: PrismaClient) {
     this.chainId = chainId
     if (!web3Client && !config[chainId]) {
       throw new Error(`No viem client or config for chainId ${chainId}`)

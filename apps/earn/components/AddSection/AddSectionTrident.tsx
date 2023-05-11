@@ -19,6 +19,7 @@ import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Signature } from '@ethersproject/bytes'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { APPROVE_TAG_ADD_TRIDENT } from '../../lib/constants'
+import { ChainId } from '@sushiswap/chain'
 
 export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const [open, setOpen] = useState(false)
@@ -107,7 +108,7 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
     <Checker.Root>
       <AddSectionWidget
         isFarm={!!_pool.incentives && _pool.incentives.length > 0}
-        chainId={_pool.chainId}
+        chainId={_pool.chainId as ChainId}
         input0={input0}
         input1={input1}
         token0={token0}

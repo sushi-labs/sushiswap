@@ -14,7 +14,7 @@ import { usePoolPosition } from '../PoolPositionProvider'
 
 interface AddSectionStakeWidgetProps {
   title?: string
-  chainId: ChainId
+  chainId: number
   value: string
   setValue(value: string): void
   reserve0: Amount<Type> | null

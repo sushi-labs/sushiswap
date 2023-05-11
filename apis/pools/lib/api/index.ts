@@ -1,13 +1,14 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
 
-import { DecimalToString, createClient, Prisma, PoolType, PoolVersion } from '@sushiswap/database'
+import type { DecimalToString } from '@sushiswap/database'
+import { createClient, Prisma, PoolType, PoolVersion } from '@sushiswap/database'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { deepmergeInto } from 'deepmerge-ts'
 import type { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './../schemas/index.js'
 
 function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSchema._output) {
-  let where: NonNullable<Prisma.SushiPoolWhereInput> = {}
+  const where: NonNullable<Prisma.SushiPoolWhereInput> = {}
 
   const addFilter = (filter: typeof where) => deepmergeInto(where, filter)
 
@@ -73,12 +74,12 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
     })
   }
 
-  if ('tokenSymbols' in args && args.tokenSymbols !== undefined) {
+  if ('tokenSymbols' in args && Array.isArray(args.tokenSymbols)) {
     if (args.tokenSymbols.length === 1) {
       addFilter({
         OR: [
-          { token0: { symbol: { contains: args.tokenSymbols[0]! } } },
-          { token1: { symbol: { contains: args.tokenSymbols[0]! } } },
+          { token0: { symbol: { contains: args.tokenSymbols[0] as string } } },
+          { token1: { symbol: { contains: args.tokenSymbols[0] as string } } },
         ],
       })
     } else {

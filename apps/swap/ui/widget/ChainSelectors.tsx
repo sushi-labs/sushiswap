@@ -50,7 +50,7 @@ export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
             <NetworkSelector<(typeof STARGATE_SUPPORTED_CHAIN_IDS)[number]>
               networks={STARGATE_SUPPORTED_CHAIN_IDS}
               variant="dialog"
-              selected={network0}
+              selected={network0 as (typeof STARGATE_SUPPORTED_CHAIN_IDS)[number]}
               onSelect={handleSelect0}
             >
               <Popover.Button
@@ -76,7 +76,7 @@ export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
             <NetworkSelector
               networks={STARGATE_SUPPORTED_CHAIN_IDS}
               variant="dialog"
-              selected={network1}
+              selected={network1 as (typeof STARGATE_SUPPORTED_CHAIN_IDS)[number]}
               onSelect={handleSelect1}
             >
               <Popover.Button

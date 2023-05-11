@@ -9,6 +9,7 @@ import { ICON_SIZE } from '../contants'
 import { Row } from './types'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
+import { ChainId } from '@sushiswap/chain'
 
 export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
   const { token0, token1 } = useTokensFromPool(row)
@@ -20,7 +21,7 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
           <Badge
             className="border-2 border-slate-900 rounded-full z-[11]"
             position="bottom-right"
-            badgeContent={<NetworkIcon chainId={row.chainId} width={14} height={14} />}
+            badgeContent={<NetworkIcon chainId={row.chainId as ChainId} width={14} height={14} />}
           >
             <Currency.IconList iconWidth={ICON_SIZE} iconHeight={ICON_SIZE}>
               <Currency.Icon disableLink currency={token0} />

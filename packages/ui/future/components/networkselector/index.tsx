@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import type { ChainId } from '@sushiswap/chain'
 import { FC, ReactNode } from 'react'
 
 import { NetworkSelectorDialog } from './NetworkSelectorDialog'
