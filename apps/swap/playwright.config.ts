@@ -38,13 +38,14 @@ const config: PlaywrightTestConfig = {
   /* Opt out of parallel tests on CI. */
   workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: process.env.CI ? 'github' : 'html',
+  reporter: process.env.CI ? 'dot' : 'list',
+  // reporter: process.env.CI ? 'github' : 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL,
 
     headless: !process.env.CI ? false : true,
-    // viewport: { width: 1280, height: 720 },
+    viewport: { width: 1920, height: 1080 },
     ignoreHTTPSErrors: true,
     // video: 'on',
     colorScheme: 'dark',
