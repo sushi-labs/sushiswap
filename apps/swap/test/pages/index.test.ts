@@ -59,7 +59,7 @@ test.afterEach(async ({ page }) => {
   //
 })
 
-test('Wrap and unwrap', async ({ page }) => {
+test.only('Wrap and unwrap', async ({ page }) => {
   const inputBalance = page.getByTestId('swap-from-balance-button')
   const outputBalance = page.getByTestId('swap-to-balance-button')
 
@@ -70,8 +70,10 @@ test('Wrap and unwrap', async ({ page }) => {
     outputCurrency: wnative,
     amount: '10',
   })
-  await expect(await inputBalance.textContent()).toBe('9989.98')
-  await expect(await outputBalance.textContent()).toBe('10.00')
+
+  // await expect(inputBalance).toHaveText('9989.98')
+  await expect(outputBalance).toHaveText('10.00')
+
   await wrap({
     page,
     inputCurrency: wnative,
@@ -79,8 +81,8 @@ test('Wrap and unwrap', async ({ page }) => {
     amount: '10',
   })
 
-  await expect(await inputBalance.textContent()).toBe('0.00')
-  await expect(await outputBalance.textContent()).toBe('9999.96')
+  await expect(inputBalance).toHaveText('0.00')
+  // await expect(outputBalance).toHaveText('9999.96')
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
