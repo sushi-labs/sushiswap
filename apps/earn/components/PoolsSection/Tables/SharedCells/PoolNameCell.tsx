@@ -12,7 +12,6 @@ import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
 
 export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
   const { token0, token1 } = useTokensFromPool(row)
-  // console.log(row.type, row.)
 
   return (
     <div className="flex items-center gap-5">
@@ -50,7 +49,7 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
           <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
             {formatNumber(row.swapFee * 100)}%
           </div>
-          {row.incentives && (
+          {row.incentives && row.incentives.length > 0 && (
             <Tooltip description="Farm rewards available">
               <div className="bg-green/20 text-green text-[10px] px-2 rounded-full">
                 🧑‍🌾 {row.incentives.length > 1 ? `x ${row.incentives.length}` : ''}{' '}
