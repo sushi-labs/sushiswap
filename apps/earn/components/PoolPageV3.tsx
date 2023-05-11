@@ -232,7 +232,7 @@ const Pool: FC = () => {
                   <List.KeyValue flex title="Fees">
                     <span className="flex items-center gap-2">
                       {formatUSD(granularity === Granularity.Day ? poolStats.fees1d : poolStats.fees1w)}
-                      <span
+                      {/* <span
                         className={
                           change1d === 0
                             ? 'text-gray-600 dark:text-slate-400'
@@ -242,7 +242,7 @@ const Pool: FC = () => {
                         }
                       >
                         (0.00%)
-                      </span>
+                      </span> */}
                     </span>
                   </List.KeyValue>
                 ) : (
@@ -252,7 +252,7 @@ const Pool: FC = () => {
                   <List.KeyValue flex title="Volume">
                     <span className="flex items-center gap-2">
                       {formatUSD(granularity === Granularity.Week ? poolStats.volume1w : poolStats.volume1d)}
-                      <span
+                      {/* <span
                         className={
                           change1w === 0
                             ? 'text-gray-600 dark:text-slate-400'
@@ -262,7 +262,7 @@ const Pool: FC = () => {
                         }
                       >
                         (0.00%)
-                      </span>
+                      </span> */}
                     </span>
                   </List.KeyValue>
                 ) : (

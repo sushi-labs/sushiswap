@@ -1,10 +1,11 @@
 import { formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
-import { Button, Currency, Dialog, Typography } from '@sushiswap/ui'
-import { Checker } from '@sushiswap/wagmi'
+import { Currency, Dialog, Typography } from '@sushiswap/ui'
+import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { FC, useCallback } from 'react'
 
 import { usePoolPositionRewards } from '../../PoolPositionRewardsProvider'
+import Button from '@sushiswap/ui/future/components/button/Button'
 
 interface PoolActionBarPositionRewardsProps {
   pool: Pool
@@ -58,13 +59,13 @@ export const PoolActionBarPositionRewards: FC<PoolActionBarPositionRewardsProps>
           })}
         </div>
         <div className="px-2 mt-3">
-          <Checker.Connected fullWidth size="md">
-            <Checker.Network fullWidth size="md" chainId={pool.chainId}>
-              <Button size="md" fullWidth onClick={harvest}>
+          <Checker.Connect fullWidth size="xl">
+            <Checker.Network fullWidth size="xl" chainId={pool.chainId}>
+              <Button size="xl" fullWidth onClick={harvest}>
                 Claim
               </Button>
             </Checker.Network>
-          </Checker.Connected>
+          </Checker.Connect>
         </div>
       </Dialog.Content>
     </Dialog>

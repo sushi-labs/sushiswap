@@ -3,6 +3,7 @@ import {
   CoinbaseWalletIcon,
   GnosisSafeIcon,
   MetamaskIcon,
+  RabbyIcon,
   TrustWalletIcon,
   WalletConnectIcon,
 } from '@sushiswap/ui/future/components/icons'
@@ -18,6 +19,7 @@ const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element | nu
   WalletConnectLegacy: WalletConnectIcon,
   'Coinbase Wallet': CoinbaseWalletIcon,
   Safe: GnosisSafeIcon,
+  Rabby: RabbyIcon,
 }
 
 export const ConnectView: FC<{ onSelect(): void }> = ({ onSelect }) => {

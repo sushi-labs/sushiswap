@@ -14,11 +14,12 @@ interface UseMasterChefWithdrawParams {
   chef: ChefType
   pid: number
   amount?: Amount<Token>
+  enabled?: boolean
 }
 
 type UseMasterChefWithdraw = (params: UseMasterChefWithdrawParams) => ReturnType<typeof useSendTransaction>
 
-export const useMasterChefWithdraw: UseMasterChefWithdraw = ({ chainId, amount, chef, pid }) => {
+export const useMasterChefWithdraw: UseMasterChefWithdraw = ({ chainId, amount, chef, pid, enabled = true }) => {
   const { address } = useAccount()
   const contract = useMasterChefContract(chainId, chef)
 
@@ -67,5 +68,6 @@ export const useMasterChefWithdraw: UseMasterChefWithdraw = ({ chainId, amount, 
     chainId,
     onSettled,
     prepare,
+    enabled,
   })
 }

@@ -25,13 +25,14 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({ chainId, token0, to
       }
     >
       <div className="flex gap-3">
-        <TokenSelector id={`token0-token-selector`} selected={token0} chainId={chainId} onSelect={setToken0}>
+        <TokenSelector id={'token0-token-selector'} selected={token0} chainId={chainId} onSelect={setToken0}>
           {({ open, setOpen }) => (
             <Button
               size="xl"
               variant="outlined"
               color={!token0 ? 'blue' : 'default'}
-              id={`token0-select-button`}
+              id={'token0-select-button'}
+              testId={'token0-select'}
               onClick={() => setOpen(true)}
             >
               {token0 ? (
@@ -52,13 +53,14 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({ chainId, token0, to
             </Button>
           )}
         </TokenSelector>
-        <TokenSelector id={`token0-token-selector`} selected={token1} chainId={chainId} onSelect={setToken1}>
+        <TokenSelector id={'token1-token-selector'} selected={token1} chainId={chainId} onSelect={setToken1}>
           {({ open, setOpen }) => (
             <Button
               size="xl"
               variant="outlined"
               color={!token1 ? 'blue' : 'default'}
-              id={`token0-select-button`}
+              id={'token1-select-button'}
+              testId={'token1-select'}
               onClick={() => setOpen(true)}
             >
               {token1 ? (
