@@ -22,12 +22,12 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function 
   ref
 ) {
   const [values, setValues] = useState({
-    all: value.split(' '),
+    all: value.split(delimiter || ' '),
     typed: '',
   })
 
   const _onChange = useCallback((val: string) => {
-    if (val.slice(-1) === ' ') {
+    if (val.slice(-1) === (delimiter || ' ')) {
       setValues((prev) => ({
         typed: '',
         all: [...prev.all, prev.typed],
@@ -57,7 +57,7 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function 
   }, [])
 
   useEffect(() => {
-    onChange(values.all.join(' '))
+    onChange(values.all.filter((el) => el !== ' ' && el !== '').join(' '))
   }, [onChange, values])
 
   if (delimiter) {
@@ -79,18 +79,20 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function 
         </div>
 
         <div className="flex gap-1">
-          {values.all.map((el, i) => (
-            <div
-              onClick={() => remove(el)}
-              key={i}
-              className="font-semibold text-gray-600 dark:text-slate-300 flex items-center text-sm rounded-full p-1 pl-2.5 bg-black/[0.08] dark:bg-white/[0.16] gap-1"
-            >
-              {el}
-              <div className="cursor-pointer hover:bg-black/[0.16] dark:hover:bg-white/[0.24] rounded-full p-0.5">
-                <XMarkIcon strokeWidth={3} width={14} height={14} className="text-gray-600 dark:text-slate-300" />
+          {values.all
+            .filter((el) => el !== ' ' && el !== '')
+            .map((el, i) => (
+              <div
+                onClick={() => remove(el)}
+                key={i}
+                className="font-semibold text-gray-600 dark:text-slate-300 flex items-center text-sm rounded-full p-1 pl-2.5 bg-black/[0.08] dark:bg-white/[0.16] gap-1"
+              >
+                {el}
+                <div className="cursor-pointer hover:bg-black/[0.16] dark:hover:bg-white/[0.24] rounded-full p-0.5">
+                  <XMarkIcon strokeWidth={3} width={14} height={14} className="text-gray-600 dark:text-slate-300" />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
 
         <input
