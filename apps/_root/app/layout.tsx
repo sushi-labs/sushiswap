@@ -1,3 +1,5 @@
+'use client'
+
 import '@sushiswap/ui/index.css'
 import '../variables.css'
 
