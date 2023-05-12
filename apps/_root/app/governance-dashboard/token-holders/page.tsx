@@ -16,7 +16,7 @@ export default async function TokenHolders({ searchParams }) {
     return {
       id: user.id,
       rank: i + 1,
-      name: user.id,
+      address: user.id,
       quantity: balance,
       ownership: balance / totalSupply,
       value: balance * sushiPrice,

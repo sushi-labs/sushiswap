@@ -18,11 +18,12 @@ import React, { useState, useTransition } from 'react'
 
 import { FilterButton } from '../components/FilterButton'
 import { formatNumber } from '../lib'
+import { tokenHolderNames } from './tokenHolderNames'
 
 type TokenHolder = {
   id: string
   rank: number
-  name: string
+  address: string
   quantity: number
   ownership: number
   value: number
@@ -67,18 +68,21 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
       enableSorting: false,
       meta: { skeleton: <Skeleton.Text /> },
     }),
-    columnHelper.accessor('name', {
+    columnHelper.accessor('address', {
       header: 'Name',
-      cell: (info) => (
-        <ExternalLink
-          href={`https://etherscan.io/address/${info.getValue()}`}
-          endIcon={<ExternalLinkIcon className="h-5 w-5" />}
-          className="gap-2 font-bold"
-        >
-          {shortenAddress(info.getValue())}
-        </ExternalLink>
-      ),
-      minSize: 200,
+      cell: (info) => {
+        const address = info.getValue()
+        return (
+          <ExternalLink
+            href={`https://etherscan.io/address/${address}`}
+            endIcon={<ExternalLinkIcon className="h-5 w-5" />}
+            className="gap-2 font-bold"
+          >
+            {tokenHolderNames[address] ?? shortenAddress(address)}
+          </ExternalLink>
+        )
+      },
+      minSize: 240,
       enableSorting: false,
       meta: { skeleton: <Skeleton.Text /> },
     }),
