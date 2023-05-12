@@ -7,6 +7,7 @@ import { useAccount } from '@sushiswap/wagmi'
 
 import { incentiveRewardToToken } from '../lib/functions'
 import { useTokenAmountDollarValues, useTokensFromPool } from '../lib/hooks'
+import { ChainId } from '@sushiswap/chain'
 
 interface PoolPositionRewardsContext {
   pendingRewards: (Amount<Token> | undefined)[]
@@ -74,7 +75,7 @@ export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> 
   const [rewardTokens, rewarderAddresses, types] = useMemo(() => {
     return incentives.reduce<[Token[], string[], RewarderType[]]>(
       (acc, incentive) => {
-        acc[0].push(incentiveRewardToToken(pool.chainId, incentive))
+        acc[0].push(incentiveRewardToToken(pool.chainId as ChainId, incentive))
         acc[1].push(incentive.id.split(':')[1])
         acc[2].push(incentive.rewarderType === 'Primary' ? RewarderType.Primary : RewarderType.Secondary)
         return acc

@@ -9,21 +9,20 @@ import {
   Fee,
   StablePool,
 } from '@sushiswap/amm'
-import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Type } from '@sushiswap/currency'
-import { Button, Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
 import {
-  Approve,
-  getTridentRouterContractConfig,
+  _useSendTransaction as useSendTransaction,
   PoolFinderType,
+  useAccount,
   useBentoBoxTotals,
   useConstantProductPoolFactoryContract,
-  _useSendTransaction as useSendTransaction,
+  useNetwork,
   useStablePoolFactoryContract,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
-import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount, useNetwork } from '@sushiswap/wagmi'
+import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import {
@@ -35,6 +34,10 @@ import {
 } from '../../lib/actions'
 import { AddSectionReviewModal } from '../AddSection'
 import { createToast } from '@sushiswap/ui/future/components/toast'
+import Button from '@sushiswap/ui/future/components/button/Button'
+import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { APPROVE_TAG_CREATE_TRIDENT } from '../../lib/constants'
+import { ChainId } from '@sushiswap/chain'
 
 interface CreateSectionReviewModalTridentProps {
   chainId: BentoBoxV1ChainId
@@ -44,7 +47,10 @@ interface CreateSectionReviewModalTridentProps {
   input1: Amount<Type> | undefined
   fee: Fee
   poolType: PoolFinderType
-  children({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }): ReactNode
+  open: boolean
+  close(): void
+  permit: Signature | undefined
+  setPermit: Dispatch<SetStateAction<Signature | undefined>>
 }
 
 export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTridentProps> = ({
@@ -55,21 +61,17 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   fee,
   poolType,
   chainId,
-  children,
+  open,
+  close,
+  permit,
+  setPermit,
 }) => {
   const { address } = useAccount()
-  const [open, setOpen] = useState(false)
-  const [permit, setPermit] = useState<Signature>()
   const { chain } = useNetwork()
+  const { approved } = useApproved(APPROVE_TAG_CREATE_TRIDENT)
   const contract = useTridentRouterContract(chainId)
   const constantProductPoolFactory = useConstantProductPoolFactoryContract(chainId)
   const stablePoolFactory = useStablePoolFactoryContract(chainId)
-
-  // const [{ slippageTolerance }] = useSettings()
-
-  // const slippagePercent = useMemo(() => {
-  //   return new Percent(Math.floor(slippageTolerance * 100), 10_000)
-  // }, [slippageTolerance])
 
   const totals = useBentoBoxTotals(
     chainId,
@@ -131,6 +133,23 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
       })
     }
   }, [factory, fee, token0, token1, poolType])
+
+  const isValid = useMemo(() => {
+    return Boolean(
+      chain?.id &&
+        factory &&
+        token0 &&
+        token1 &&
+        poolAddress &&
+        input0 &&
+        input1 &&
+        totalSupply &&
+        pool &&
+        contract &&
+        totals?.[token0.wrapped.address] &&
+        totals?.[token1.wrapped.address]
+    )
+  }, [chain?.id, contract, factory, input0, input1, pool, poolAddress, token0, token1, totalSupply, totals])
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
@@ -265,55 +284,30 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     chainId,
     prepare,
     onSettled,
-    onSuccess: () => setOpen(false),
+    onSuccess: () => {
+      setPermit(undefined)
+      close()
+    },
+    enabled: approved,
   })
 
   return (
-    <>
-      {children({ isWritePending, setOpen })}
-      <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} setOpen={setOpen}>
-        <Approve
-          className="flex-grow !justify-end"
-          components={
-            <Approve.Components>
-              <Approve.Bentobox
-                id="create-trident-approve-bentobox"
-                size="md"
-                className="whitespace-nowrap"
-                fullWidth
-                address={getTridentRouterContractConfig(chainId).address}
-                onSignature={setPermit}
-                enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
-              />
-              <Approve.Token
-                id="create-trident-approve-token0"
-                size="md"
-                className="whitespace-nowrap"
-                fullWidth
-                amount={input0}
-                address={chain ? bentoBoxV1Address[chain.id as BentoBoxV1ChainId] : undefined}
-                enabled={Boolean(chain && isBentoBoxV1ChainId(chain.id))}
-              />
-              <Approve.Token
-                id="create-trident-approve-token1"
-                size="md"
-                className="whitespace-nowrap"
-                fullWidth
-                amount={input1}
-                address={chain ? bentoBoxV1Address[chain.id as BentoBoxV1ChainId] : undefined}
-                enabled={Boolean(chain && isBentoBoxV1ChainId(chain.id))}
-              />
-            </Approve.Components>
-          }
-          render={({ approved }) => {
-            return (
-              <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
-                {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
-              </Button>
-            )
-          }}
-        />
-      </AddSectionReviewModal>
-    </>
+    <AddSectionReviewModal
+      chainId={chainId as BentoBoxV1ChainId}
+      input0={input0}
+      input1={input1}
+      open={open}
+      close={close}
+    >
+      <Button
+        size="xl"
+        disabled={!isValid || isWritePending}
+        fullWidth
+        onClick={() => sendTransaction?.()}
+        testdata-id="confirm-add-liquidity-button"
+      >
+        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
+      </Button>
+    </AddSectionReviewModal>
   )
 }

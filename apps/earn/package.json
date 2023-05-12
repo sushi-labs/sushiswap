@@ -9,7 +9,8 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
     "dev": "next dev --port 3004",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "test": "npx playwright test"
   },
   "dependencies": {
     "@ethersproject/abi": "5.7.0",
@@ -39,12 +40,11 @@
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
-    "@sushiswap/redux-localstorage": "workspace:*",
-    "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",
     "@sushiswap/route-processor": "workspace:*",
     "@sushiswap/trident": "workspace:*",
+    "@sushiswap/types": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
@@ -72,18 +72,18 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-infinite-scroll-component": "^6.1.0",
-    "react-redux": "8.0.5",
     "swr": "2.1.0",
     "wagmi": "0.12.12",
     "zod": "3.20.2"
   },
   "devDependencies": {
+    "@playwright/test": "1.32.1",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
-    "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
+    "@sushiswap/tailwindcss-config": "workspace:*",
     "@types/d3": "^7.4.0",
     "@types/lodash.orderby": "4.6.7",
     "@types/lodash.sortby": "4.7.7",
@@ -97,11 +97,6 @@
     "graphql": "16.6.0",
     "postcss": "8.4.21",
     "tailwindcss": "3.2.4",
-    "typescript": "4.9.4"
-  },
-  "nextBundleAnalysis": {
-    "budget": 460800,
-    "budgetPercentIncreaseRed": 20,
-    "showDetails": true
+    "typescript": "5.0.4"
   }
 }

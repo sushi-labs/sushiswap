@@ -11,7 +11,7 @@ interface ArticleLinks {
 
 export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
   const shareText = getShareText(article?.attributes?.title)
-  const url = `https://sushi.com/academy/articles/${article?.attributes?.slug}`
+  const url = `https://www.sushi.com/academy/articles/${article?.attributes?.slug}`
 
   const [showTooltip, setShowTooltip] = useState(false)
   const handleTooltipTimer = () => {
@@ -27,7 +27,7 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
         <a
           target="_blank"
           title="Share on Twitter"
-          href={`http://twitter.com/share?text=${shareText}&url=https://sushi.com/academy/articles/${article?.attributes?.slug}`}
+          href={`http://twitter.com/share?text=${shareText}&url=https://www.sushi.com/academy/articles/${article?.attributes?.slug}`}
           rel="noreferrer"
         >
           <TwitterIcon width={20} height={20} className="cursor-pointer text-blue hover:text-blue-400" />

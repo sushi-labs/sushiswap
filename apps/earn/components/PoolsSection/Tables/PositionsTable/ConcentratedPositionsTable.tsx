@@ -6,9 +6,7 @@ import { useAccount } from '@sushiswap/wagmi'
 
 import { NAME_COLUMN_V3, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL, PRICE_RANGE_COLUMN } from './Cells/columns'
 import { ConcentratedLiquidityPosition, useConcentratedLiquidityPositions } from '@sushiswap/wagmi/future/hooks'
-import { ChevronDownIcon } from '@heroicons/react/solid'
-import { Disclosure } from '@headlessui/react'
-import { classNames, Collapsible } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import ConcentratedCurveIcon from '@sushiswap/ui/future/components/icons/ConcentratedCurveIcon'
 import { V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { Writeable } from 'zod'
@@ -89,56 +87,34 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; p
   }
 
   return (
-    <Disclosure defaultOpen={true}>
-      {({ open }) => (
-        <>
-          <Disclosure.Button as="div" role="button" className="flex justify-end gap-2">
-            <div className={classNames(open ? '' : '', 'w-full group')}>
-              <h1 className="flex items-center justify-between gap-2 px-4 py-4 text-sm font-semibold text-gray-700 group-hover:text-gray-900 dark:text-slate-200 dark:group-hover:text-slate-50">
-                <span className="flex items-center gap-3">
-                  <ConcentratedCurveIcon width={20} height={20} className="saturate-200" /> Concentrated Liquidity
-                  Positions {positions ? `(${positions.length})` : ''}
-                </span>
-                <div className="flex gap-6">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setHide((prev) => !prev)
-                    }}
-                    className="text-sm text-blue group-hover:text-blue-600"
-                  >
-                    {hide ? 'Show closed positions' : 'Hide closed positions'}
-                  </button>
-                  <div className="flex items-center gap-1">
-                    <button className="text-sm text-blue group-hover:text-blue-600">
-                      {open ? 'Collapse' : 'Expand'}
-                    </button>
-                    <ChevronDownIcon
-                      width={24}
-                      height={24}
-                      className={classNames(
-                        'transition-all',
-                        open ? 'rotate-180' : 'rotate-0',
-                        'text-blue group-hover:text-blue-600'
-                      )}
-                    />
-                  </div>
-                </div>
-              </h1>
-            </div>
-          </Disclosure.Button>
-          <Collapsible open={open}>
-            <GenericTable<ConcentratedLiquidityPosition>
-              table={table}
-              loading={Boolean(isLoading && address)}
-              placeholder="No positions found"
-              pageSize={!_positions ? 5 : _positions?.length}
-              linkFormatter={rowLink}
-              loadingOverlay={false}
-            />
-          </Collapsible>
-        </>
-      )}
-    </Disclosure>
+    <>
+      <div className={classNames('w-full group')}>
+        <h1 className="flex items-center justify-between gap-2 px-4 py-4 text-sm font-semibold text-gray-700 group-hover:text-gray-900 dark:text-slate-200 dark:group-hover:text-slate-50">
+          <span className="flex items-center gap-3">
+            <ConcentratedCurveIcon width={20} height={20} className="saturate-200" /> Concentrated Liquidity Positions{' '}
+            {positions ? `(${positions.length})` : ''}
+          </span>
+          <div className="flex gap-6">
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setHide((prev) => !prev)
+              }}
+              className="text-sm text-blue group-hover:text-blue-600"
+            >
+              {hide ? 'Show closed positions' : 'Hide closed positions'}
+            </button>
+          </div>
+        </h1>
+      </div>
+      <GenericTable<ConcentratedLiquidityPosition>
+        table={table}
+        loading={Boolean(isLoading && address)}
+        placeholder="No positions found"
+        pageSize={_positions?.length ? _positions.length : 1}
+        linkFormatter={rowLink}
+        loadingOverlay={false}
+      />
+    </>
   )
 }

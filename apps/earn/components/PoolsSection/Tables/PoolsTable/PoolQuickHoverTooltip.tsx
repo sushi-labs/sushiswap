@@ -7,6 +7,7 @@ import { incentiveRewardToToken } from '../../../../lib/functions'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import Button from '@sushiswap/ui/future/components/button/Button'
 import { PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
+import { ChainId } from '@sushiswap/chain'
 
 interface PoolQuickHoverTooltipProps {
   row: Pool
@@ -52,12 +53,12 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
               <List.Label>per day</List.Label>
             </div>
             <List.Control className="bg-gray-100 dark:bg-slate-700">
-              {row.incentives.map((incentive, index) => (
+              {row.incentives.map((incentive) => (
                 <List.Item
-                  key={index}
+                  key={incentive.id}
                   icon={Currency.Icon}
                   iconProps={{
-                    currency: incentiveRewardToToken(row.chainId, incentive),
+                    currency: incentiveRewardToToken(row.chainId as ChainId, incentive),
                     width: 18,
                     height: 18,
                   }}

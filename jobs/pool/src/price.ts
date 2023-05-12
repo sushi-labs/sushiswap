@@ -113,7 +113,7 @@ async function getPools(client: PrismaClient, chainId: ChainId) {
   const endTime = performance.now()
 
   console.log(`Fetched ${results.length} pools (${((endTime - startTime) / 1000).toFixed(1)}s). `)
-  return results
+  return results.filter(pool => pool.token1.isCommon || pool.token0.isCommon)
 }
 
 async function getPoolsByPagination(

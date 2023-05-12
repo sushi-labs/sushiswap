@@ -19,6 +19,7 @@ import {
   USDC_ADDRESS,
   USDT,
   USDT_ADDRESS,
+  WBTC_ADDRESS,
   WNATIVE,
 } from '@sushiswap/currency'
 import {
@@ -31,6 +32,7 @@ import {
 } from '@sushiswap/router'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
 import { BridgeBento, getBigNumber, RouteStatus, RPool, StableSwapRPool } from '@sushiswap/tines'
+import { setTokenBalance } from '@sushiswap/tines-sandbox'
 import { expect } from 'chai'
 import { signERC2612Permit } from 'eth-permit'
 import { BigNumber, Contract } from 'ethers'
@@ -54,6 +56,12 @@ function getRandomExp(rnd: () => number, min: number, max: number) {
   const res = Math.exp(v)
   console.assert(res <= max && res >= min, 'Random value is out of the range')
   return res
+}
+
+async function setRouterPrimaryBalance(router: string, token?: string): Promise<void> {
+  if (token) {
+    await setTokenBalance(token, router, 1n)
+  }
 }
 
 interface TestEnvironment {
@@ -109,6 +117,16 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   const routeProcessor = await RouteProcessor.deploy(bentoBoxV1Address[chainId as BentoBoxV1ChainId], [])
   await routeProcessor.deployed()
   //console.log('    Block Number:', provider.blockNumber)
+
+  // saturate router balance with wei of tokens
+  await setRouterPrimaryBalance(routeProcessor.address, WNATIVE[chainId].address)
+  await setRouterPrimaryBalance(routeProcessor.address, SUSHI_ADDRESS[chainId as keyof typeof SUSHI_ADDRESS])
+  await setRouterPrimaryBalance(routeProcessor.address, USDC_ADDRESS[chainId as keyof typeof USDC_ADDRESS])
+  await setRouterPrimaryBalance(routeProcessor.address, USDT_ADDRESS[chainId as keyof typeof USDT_ADDRESS])
+  await setRouterPrimaryBalance(routeProcessor.address, DAI_ADDRESS[chainId as keyof typeof DAI_ADDRESS])
+  await setRouterPrimaryBalance(routeProcessor.address, FRAX_ADDRESS[chainId as keyof typeof FRAX_ADDRESS])
+  await setRouterPrimaryBalance(routeProcessor.address, FXS_ADDRESS[chainId as keyof typeof FXS_ADDRESS])
+  await setRouterPrimaryBalance(routeProcessor.address, WBTC_ADDRESS[chainId as keyof typeof WBTC_ADDRESS])
 
   console.log(`  Network: ${chainName[chainId]}, Forked Block: ${provider.blockNumber}`)
   //console.log('    User creation ...')
@@ -171,7 +189,7 @@ async function makeSwap(
   //await checkPoolsState(pcMap, env.user, env.chainId)
 
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
-  //console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
+  // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
   // console.log(
   //   'ROUTE:',
   //   route.legs.map(
@@ -550,7 +568,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
 
   it.skip('Random swap test', async function () {
     let routeCounter = 0
-    for (let i = 0; i < 100; ++i) {
+    for (let i = 0; i < 1000; ++i) {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       let currentToken = 0
@@ -567,7 +585,7 @@ describe('End-to-end RouteProcessor3 test', async function () {
           usedPools
         )
         currentToken = nextToken
-        if (currentToken === 0 || intermidiateResult[0] == undefined) break
+        if (currentToken === 0 || intermidiateResult[0] == undefined || intermidiateResult[0].lte(1000)) break
       }
     }
   })

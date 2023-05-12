@@ -18,7 +18,7 @@ export const Header: FC = () => {
         </Link.Internal>
       }
     >
-      <NavLink title="Blog" href="https://sushi.com/blog" />
+      <NavLink title="Blog" href="https://www.sushi.com/blog" />
       <SubNav title="Governance">
         <SubNavLink href="https://forum.sushi.com" title="Forum & Proposals" />
         <SubNavLink href="https://snapshot.org/#/sushigov.eth" title="Vote" />

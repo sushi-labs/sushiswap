@@ -57,7 +57,7 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
               leaveTo="opacity-0"
               unmount={unmount}
             >
-              <div className="fixed inset-0 bg-black/50 backdrop-blur transform-gpu" />
+              <div className="fixed inset-0 bg-black/10 paper dark:bg-black/40 transform-gpu" />
             </Transition.Child>
 
             <div className="fixed inset-0 z-10 overflow-y-auto">

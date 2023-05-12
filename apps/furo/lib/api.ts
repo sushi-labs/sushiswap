@@ -2,13 +2,13 @@ import { AddressZero } from '@ethersproject/constants'
 import { WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 
-import { SUPPORTED_CHAINS } from '../config'
+import { SUPPORTED_CHAINS, SupportedChainId } from '../config'
 import { getBuiltGraphSDK } from './../.graphclient'
 
 const GRAPH_HOST = 'api.thegraph.com'
 
 export const getRebase = async (chainId: string, id: string) => {
-  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+  if (!SUPPORTED_CHAINS.includes(Number(chainId) as SupportedChainId)) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
   const sdk = await getBuiltGraphSDK({
@@ -26,7 +26,7 @@ export const getRebase = async (chainId: string, id: string) => {
 }
 
 export const getRebases = async (chainId: string, tokens: string[]) => {
-  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+  if (!SUPPORTED_CHAINS.includes(Number(chainId) as SupportedChainId)) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
   const sdk = await getBuiltGraphSDK({
@@ -50,7 +50,7 @@ export const getRebases = async (chainId: string, tokens: string[]) => {
 }
 
 export const getUserStreams = async (chainId: string, id: string) => {
-  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+  if (!SUPPORTED_CHAINS.includes(Number(chainId) as SupportedChainId)) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
   const sdk = await getBuiltGraphSDK({
@@ -63,7 +63,7 @@ export const getUserStreams = async (chainId: string, id: string) => {
 }
 
 export const getUserVestings = async (chainId: string, id: string) => {
-  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+  if (!SUPPORTED_CHAINS.includes(Number(chainId) as SupportedChainId)) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
   const sdk = await getBuiltGraphSDK({
@@ -75,7 +75,7 @@ export const getUserVestings = async (chainId: string, id: string) => {
 }
 
 export const getStreamIds = async (chainId: string) => {
-  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+  if (!SUPPORTED_CHAINS.includes(Number(chainId) as SupportedChainId)) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
   const sdk = await getBuiltGraphSDK({
@@ -87,7 +87,7 @@ export const getStreamIds = async (chainId: string) => {
 }
 
 export const getStream = async (chainId: string, id: string) => {
-  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+  if (!SUPPORTED_CHAINS.includes(Number(chainId) as SupportedChainId)) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
   const sdk = await getBuiltGraphSDK({
@@ -99,7 +99,7 @@ export const getStream = async (chainId: string, id: string) => {
 }
 
 export const getStreamTransactions = async (chainId: string, id: string) => {
-  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+  if (!SUPPORTED_CHAINS.includes(Number(chainId) as SupportedChainId)) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
   const sdk = await getBuiltGraphSDK({
@@ -111,7 +111,7 @@ export const getStreamTransactions = async (chainId: string, id: string) => {
 }
 
 export const getVestingIds = async (chainId: string) => {
-  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+  if (!SUPPORTED_CHAINS.includes(Number(chainId) as SupportedChainId)) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
   const sdk = getBuiltGraphSDK({
@@ -123,7 +123,7 @@ export const getVestingIds = async (chainId: string) => {
 }
 
 export const getVesting = async (chainId: string, id: string) => {
-  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+  if (!SUPPORTED_CHAINS.includes(Number(chainId) as SupportedChainId)) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
   const sdk = await getBuiltGraphSDK({
@@ -135,7 +135,7 @@ export const getVesting = async (chainId: string, id: string) => {
 }
 
 export const getVestingTransactions = async (chainId: string, id: string) => {
-  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+  if (!SUPPORTED_CHAINS.includes(Number(chainId) as SupportedChainId)) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
   const sdk = await getBuiltGraphSDK({

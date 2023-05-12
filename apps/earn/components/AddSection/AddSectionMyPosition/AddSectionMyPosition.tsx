@@ -6,6 +6,7 @@ import React, { FC } from 'react'
 import { incentiveRewardToToken } from '../../../lib/functions'
 import { AddSectionMyPositionStaked } from './AddSectionMyPositionStaked'
 import { AddSectionMyPositionUnstaked } from './AddSectionMyPositionUnstaked'
+import { ChainId } from '@sushiswap/chain'
 
 export const AddSectionMyPosition: FC<{ pool: Pool }> = ({ pool }) => {
   return (
@@ -38,8 +39,11 @@ export const AddSectionMyPosition: FC<{ pool: Pool }> = ({ pool }) => {
               </Typography>
               <div className={classNames(pool.incentives?.length === 2 ? '-mr-2' : '', 'flex justify-end ')}>
                 <UICurrency.IconList iconWidth={16} iconHeight={16}>
-                  {pool.incentives?.map((incentive, index) => (
-                    <UICurrency.Icon key={index} currency={incentiveRewardToToken(pool.chainId, incentive)} />
+                  {pool.incentives?.map((incentive) => (
+                    <UICurrency.Icon
+                      key={incentive.id}
+                      currency={incentiveRewardToToken(pool.chainId as ChainId, incentive)}
+                    />
                   ))}
                 </UICurrency.IconList>
               </div>

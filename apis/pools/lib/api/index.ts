@@ -47,12 +47,12 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
     })
   }
 
-  if ('tokenSymbols' in args && args.tokenSymbols !== undefined) {
+  if ('tokenSymbols' in args && Array.isArray(args.tokenSymbols)) {
     if (args.tokenSymbols.length === 1) {
       addFilter({
         OR: [
-          { token0: { symbol: { contains: args.tokenSymbols[0]! } } },
-          { token1: { symbol: { contains: args.tokenSymbols[0]! } } },
+          { token0: { symbol: { contains: args.tokenSymbols[0] as string } } },
+          { token1: { symbol: { contains: args.tokenSymbols[0] as string } } },
         ],
       })
     } else {

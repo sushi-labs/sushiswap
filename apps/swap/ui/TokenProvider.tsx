@@ -77,8 +77,8 @@ export const TokenProvider: FC<TokenProvider> = ({ children }) => {
   })
 
   const state = useMemo(() => {
-    const fromChainId = getChainIdFromUrl(_fromChainId, chainId)
-    const toChainId = getChainIdFromUrl(_toChainId, chainId)
+    const fromChainId = getChainIdFromUrl(_fromChainId, chainId as ChainId)
+    const toChainId = getChainIdFromUrl(_toChainId, chainId as ChainId)
     const token0 = getTokenFromUrl(fromChainId, fromCurrency, tokenFrom, isTokenFromLoading)
     const token1 = getTokenFromUrl(toChainId, toCurrency, tokenTo, isTokenToLoading)
 

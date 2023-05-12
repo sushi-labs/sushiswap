@@ -19,6 +19,7 @@ import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain/Co
 import { warningSeverity } from '../../lib/warningSeverity'
 import { ZERO } from '@sushiswap/math'
 import { useSlippageTolerance } from '@sushiswap/hooks'
+import { swapErrorToUserReadableMessage } from '../../lib/swapErrorToUserReadableMessage'
 
 export const TradeReviewDialogCrossChain: FC = () => {
   const { review, token0, token1, recipient, network0, network1, amount, value } = useSwapState()
@@ -152,7 +153,8 @@ export const TradeReviewDialogCrossChain: FC = () => {
                   <div className="scroll bg-red/20 text-red-700 dark:bg-black/20 p-2 px-3 rounded-lg border border-slate-200/10 text-[10px] break-all max-h-[80px] overflow-y-auto">
                     {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
                     {/* @ts-ignore */}
-                    <code>{error ? ('data' in error ? error?.data?.message : error.message) : ''}</code>
+                    {swapErrorToUserReadableMessage(error)}
+                    {/* <code>{error ? ('data' in error ? error?.data?.message : error.message) : ''}</code> */}
                   </div>
                 </Collapsible>
               </div>

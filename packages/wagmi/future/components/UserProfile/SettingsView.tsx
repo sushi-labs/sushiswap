@@ -9,25 +9,20 @@ import { classNames } from '@sushiswap/ui'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
 import { useLocalStorage } from '@sushiswap/hooks'
 import Switch from '@sushiswap/ui/future/components/Switch'
+import { useTheme } from 'next-themes'
 
 interface SettingsViewProps {
   setView: Dispatch<SetStateAction<ProfileView>>
 }
 
-enum ThemeState {
-  Auto = 'Auto',
-  Light = 'Light',
-  Dark = 'Dark',
-}
-
 const map = {
-  [ThemeState.Auto]: <span className="text-xs font-semibold">Auto</span>,
-  [ThemeState.Light]: <SunIcon width={24} height={24} />,
-  [ThemeState.Dark]: <MoonIcon width={20} height={20} />,
+  system: <span className="text-xs font-semibold">Auto</span>,
+  light: <SunIcon width={24} height={24} />,
+  dark: <MoonIcon width={20} height={20} />,
 }
 
 export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
-  const [theme, setTheme] = useLocalStorage('themePreference', ThemeState.Auto)
+  const { theme, setTheme } = useTheme()
   const [showTestnets, setShowTestnets] = useLocalStorage('showTestnets', false)
 
   return (
@@ -54,8 +49,8 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
           <List.KeyValue flex title="Theme">
             <RadioGroup value={theme} onChange={setTheme}>
               <div className="items-center relative bg-black/[0.04] dark:bg-white/[0.02] ring-4 ring-black/[0.04] dark:ring-white/[0.02] rounded-lg overflow-hidden flex gap-1">
-                {Object.values(ThemeState).map((tab, i) => (
-                  <RadioGroup.Option as={Fragment} key={i} value={tab}>
+                {Object.entries(map).map(([k, v], i) => (
+                  <RadioGroup.Option as={Fragment} key={i} value={k}>
                     {({ checked }) => (
                       <button
                         className={classNames(
@@ -65,7 +60,7 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
                           'min-w-[60px] z-[1] relative rounded-lg text-sm h-8 font-medium flex flex-grow items-center justify-center'
                         )}
                       >
-                        {map[tab]}
+                        {v}
                       </button>
                     )}
                   </RadioGroup.Option>

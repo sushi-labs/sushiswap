@@ -1,41 +1,46 @@
-// eslint-disable-line camelcase
 import {parseUnits} from "@ethersproject/units";
-import {getPools} from '@sushiswap/client'
+import {ChainId} from "@sushiswap/chain";
+import {getPool} from '@sushiswap/client'
 import {Amount, Token} from "@sushiswap/currency";
-import type {} from '@sushiswap/database'
 import {JSBI} from "@sushiswap/math";
 import {useQuery} from "@tanstack/react-query";
 
 interface UseConcentratedLiquidityPoolStats {
-    poolAddress: string | undefined
+    chainId: ChainId | undefined
+    address: string | undefined
     enabled?: boolean
 }
 
-export const useConcentratedLiquidityPoolStats = ({ poolAddress, enabled = true }: UseConcentratedLiquidityPoolStats) => {
+export const useConcentratedLiquidityPoolStats = ({
+                                                      chainId,
+                                                      address,
+                                                      enabled = true
+                                                  }: UseConcentratedLiquidityPoolStats) => {
     return useQuery({
         queryKey: ['useConcentratedLiquidityPoolStats'],
         queryFn: async () => {
-            const data = await getPools({take: 1000, protocols: ['SUSHISWAP_V3']})
-            
+            if (!chainId || !address) return undefined
+
+            const data = await getPool({chainId, address})
             if (data) {
-                return data.map(el => ({
-                    ...el,
+                return {
+                    ...data,
                     token0: new Token({
-                        chainId: el.chainId,
-                        address: el.token0.address,
-                        decimals: el.token0.decimals,
-                        name: el.token0.name,
-                        symbol: el.token0.symbol,
+                        chainId: data.chainId,
+                        address: data.token0.address,
+                        decimals: data.token0.decimals,
+                        name: data.token0.name,
+                        symbol: data.token0.symbol,
                     }),
                     token1: new Token({
-                        chainId: el.chainId,
-                        address: el.token1.address,
-                        decimals: el.token1.decimals,
-                        name: el.token1.name,
-                        symbol: el.token1.symbol,
+                        chainId: data.chainId,
+                        address: data.token1.address,
+                        decimals: data.token1.decimals,
+                        name: data.token1.name,
+                        symbol: data.token1.symbol,
                     }),
-                    feeAmount: el.swapFee * 1000000,
-                    incentives: el.incentives.map(incentive => {
+                    feeAmount: data.swapFee * 1000000,
+                    incentives: data.incentives.map(incentive => {
                         const rewardToken = new Token({
                             chainId: incentive.chainId,
                             address: incentive.rewardToken.address,
@@ -45,20 +50,16 @@ export const useConcentratedLiquidityPoolStats = ({ poolAddress, enabled = true 
                         })
 
                         return {
-                        ...incentive,
-                        reward: Amount.fromRawAmount(rewardToken, JSBI.BigInt(parseUnits(incentive.rewardPerDay.toString(), incentive.rewardToken.decimals).toString())),
-                    }})
-                }))
+                            ...incentive,
+                            reward: Amount.fromRawAmount(rewardToken, JSBI.BigInt(parseUnits(incentive.rewardPerDay.toString(), incentive.rewardToken.decimals).toString())),
+                        }
+                    })
+                }
             }
 
-            return []
+            return null
         },
-        select: (data) => {
-            return data.find(el => el.address.toLowerCase() === poolAddress?.toLowerCase())
-        },
-        enabled: Boolean(enabled && poolAddress),
-        staleTime: 900000, // 15 mins
-        cacheTime: 3600000, // 1hr
-        refetchOnWindowFocus: false,
+        refetchInterval: 10000,
+        enabled: Boolean(enabled && address),
     })
 }

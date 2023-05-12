@@ -37,6 +37,7 @@ export const PoolsTable: FC = () => {
     }
   }, [chainIds, tokenSymbols, protocols, farmsOnly, sorting])
 
+
   const {
     data: pools,
     isValidating,

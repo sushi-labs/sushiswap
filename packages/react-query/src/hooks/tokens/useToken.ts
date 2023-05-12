@@ -88,7 +88,7 @@ export const useToken = <T extends boolean = false>({ chainId, address, withStat
         keepPreviousData: true,
         refetchOnWindowFocus: false,
         retry: false,
-        staleTime: 900, // 15 mins
-        cacheTime: 86400 // 24hs
+        staleTime: 900000, // 15 mins
+        cacheTime: 86400000 // 24hs
     })
 }

@@ -12,7 +12,7 @@ export interface GetUserArgs {
 }
 
 export function getUserPositionsUrl(args: GetUserArgs) {
-  return `/earn/api/user/${parseArgs(args)}`
+  return `/pools/api/user/${parseArgs(args)}`
 }
 
 const transformPositions = (positions?: UserPosition[], pools?: Pools) =>
@@ -39,7 +39,7 @@ export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
     () => ({
       data: !isValidating
         ? transformPositions(positions, pools)?.filter((position) =>
-            !!args.chainIds ? args.chainIds?.includes(position.chainId) : true
+            Array.isArray(args.chainIds) ? args.chainIds?.includes(position.chainId as ChainId) : true
           )
         : undefined,
       isValidating,

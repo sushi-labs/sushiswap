@@ -1,6 +1,6 @@
 import { Price, Type } from '@sushiswap/currency'
 import { classNames, Typography } from '@sushiswap/ui'
-import { usePrices } from '@sushiswap/wagmi'
+import { usePrices } from '@sushiswap/react-query'
 import { FC, ReactElement, ReactNode, useCallback, useState } from 'react'
 
 interface RenderPayload {

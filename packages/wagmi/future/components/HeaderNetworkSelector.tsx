@@ -41,7 +41,7 @@ export const HeaderNetworkSelector: FC<{
     [chain?.id, onChange, selectedNetwork, switchNetworkAsync]
   )
 
-  const selected = selectedNetwork || chain?.id || ChainId.ETHEREUM
+  const selected = selectedNetwork || (chain?.id as ChainId) || ChainId.ETHEREUM
 
   return (
     <NetworkSelector

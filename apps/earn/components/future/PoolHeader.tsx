@@ -7,7 +7,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/v3-sdk'
 import { unwrapToken } from '../../lib/functions'
 import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
-import { formatNumber } from '@sushiswap/format'
+import { formatNumber, formatPercent } from '@sushiswap/format'
 
 type PoolHeader = {
   title?: string
@@ -65,9 +65,9 @@ export const PoolHeader: FC<PoolHeader> = ({ title, isLoading, pool, chainId, ap
           <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-400">
             {apy ? (
               <>
-                <Tooltip description={`${formatNumber(apy.fees)}% fee APY + ${formatNumber(apy.rewards)}% reward APY`}>
+                <Tooltip description={`${formatPercent(apy.fees)} fee APR + ${formatPercent(apy.rewards)} reward APR`}>
                   <span className="font-semibold text-gray-900 dark:text-slate-50 underline underline-offset-[6px] decoration-dotted decoration-slate-500">
-                    {formatNumber((apy.fees || 0) + (apy.rewards || 0))}% APY
+                    {formatPercent((apy.fees || 0) + (apy.rewards || 0))} APR
                   </span>{' '}
                 </Tooltip>
 

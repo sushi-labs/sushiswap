@@ -26,8 +26,7 @@ export const poolFiltersSchema = z.object({
     .default('')
     .transform((tokenSymbols) => {
       if (tokenSymbols === '') return undefined
-
-      return tokenSymbols?.split(',')
+      return tokenSymbols.split(',')
     }),
   chainIds: z
     .string()
@@ -48,9 +47,9 @@ export const poolFiltersSchema = z.object({
 
 export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => {
   const { query, push } = useRouter()
+
   const parsed = useMemo(() => {
     const parsed = poolFiltersSchema.parse(query)
-
     return {
       ...parsed,
       protocols: parsed.protocols.filter((el) => (el as string) !== ''),

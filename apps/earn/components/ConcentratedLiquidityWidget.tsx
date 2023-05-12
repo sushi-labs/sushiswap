@@ -113,19 +113,19 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
   return (
     <div className={classNames('flex flex-col gap-4')}>
       {!!existingPosition && !isOwner && !isOwnerLoading && (
-        <div className="bg-red/10 text-red rounded-xl p-6 font-medium">
+        <div className="p-6 font-medium bg-red/10 text-red rounded-xl">
           You are not the owner of this LP position. You will not be able to withdraw the liquidity from this position
           unless you own the following address: {owner}
         </div>
       )}
       {outOfRange && (
-        <div className="bg-yellow/10 text-yellow rounded-xl p-6 font-medium">
+        <div className="p-6 font-medium bg-yellow/10 text-yellow rounded-xl">
           Your position will not earn fees or be used in trades until the market price moves into your range.
         </div>
       )}
 
       {invalidRange && (
-        <div className="bg-yellow/10 text-yellow rounded-xl p-6 font-medium">
+        <div className="p-6 font-medium bg-yellow/10 text-yellow rounded-xl">
           Invalid range selected. The minimum price must be lower than the maximum price.
         </div>
       )}
@@ -151,13 +151,13 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             leaveTo="transform opacity-0"
           >
             <div className="bg-gray-200 dark:bg-slate-800 absolute inset-0 z-[1] rounded-xl flex items-center justify-center">
-              <div className="flex-col gap-2 absolute inset-0 flex items-center justify-center text-center text-sm font-medium px-10">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-10 text-sm font-medium text-center">
                 <LockClosedIcon width={24} height={24} className="text-gray-400 dark:text-slate-400 text-slate-600" />
                 <span className="dark:text-slate-400 text-slate-600">
                   The market price is outside your specified price range. Single-asset deposit only.{' '}
                   <a
                     // TODO
-                    href="https://sushi.com/academy"
+                    href="https://www.sushi.com/academy"
                     target="_blank"
                     rel="noreferrer"
                     className="text-blue hover:text-blue-600"
@@ -169,8 +169,9 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             </div>
           </Transition>
           <Web3Input.Currency
+            id='add-liquidity-token0'
             type="INPUT"
-            className="p-3 dark:bg-slate-800 bg-white rounded-xl"
+            className="p-3 bg-white dark:bg-slate-800 rounded-xl"
             chainId={chainId}
             value={formattedAmounts[Field.CURRENCY_A]}
             onChange={_onFieldAInput}
@@ -181,7 +182,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
           />
         </div>
         <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
-          <button type="button" className="p-2 bg-gray-100 dark:bg-slate-900 rounded-full z-10">
+          <button type="button" className="z-10 p-2 bg-gray-100 rounded-full dark:bg-slate-900">
             <PlusIcon strokeWidth={3} className="w-4 h-4 text-gray-500 dark:text-slate-400 text-slate-600" />
           </button>
         </div>
@@ -197,13 +198,13 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             leaveTo="transform opacity-0"
           >
             <div className="bg-gray-200 dark:bg-slate-800 absolute inset-0 z-[1] rounded-xl flex items-center justify-center">
-              <div className="flex-col gap-2 absolute inset-0 flex items-center justify-center text-center text-sm font-medium px-10">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-10 text-sm font-medium text-center">
                 <LockClosedIcon width={24} height={24} className="text-gray-400 dark:text-slate-400 text-slate-600" />
                 <span className="dark:text-slate-400 text-slate-600">
                   The market price is outside your specified price range. Single-asset deposit only.{' '}
                   <a
                     // TODO
-                    href="https://sushi.com/academy"
+                    href="https://www.sushi.com/academy"
                     target="_blank"
                     rel="noreferrer"
                     className="text-blue hover:text-blue-600"
@@ -215,8 +216,9 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             </div>
           </Transition>
           <Web3Input.Currency
+            id='add-liquidity-token1'
             type="INPUT"
-            className="p-3 dark:bg-slate-800 bg-white rounded-xl"
+            className="p-3 bg-white dark:bg-slate-800 rounded-xl"
             chainId={chainId}
             value={formattedAmounts[Field.CURRENCY_B]}
             onChange={_onFieldBInput}
@@ -263,7 +265,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                     successLink={successLink}
                   >
                     {({ setOpen }) => (
-                      <Button fullWidth onClick={() => setOpen(true)} size="xl">
+                      <Button fullWidth onClick={() => setOpen(true)} size="xl" testId='add-liquidity-preview'>
                         Preview
                       </Button>
                     )}

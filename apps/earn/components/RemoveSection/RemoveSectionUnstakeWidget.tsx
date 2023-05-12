@@ -69,12 +69,12 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
           </Typography>
         </div>
       </Transition>
-      <Widget id="stakeLiquidity" maxWidth={400} className="dark:bg-slate-800 bg-white">
+      <Widget id="stakeLiquidity" maxWidth={400} className="bg-white dark:bg-slate-800">
         <Widget.Content>
           <Disclosure defaultOpen={balance?.greaterThan(ZERO)}>
             {({ open }) => (
               <>
-                <Disclosure.Button className="w-full pr-4">
+                <Disclosure.Button className="w-full pr-4" testdata-id='unstake-liquidity-header'>
                   <div className="flex items-center justify-between">
                     <Widget.Header title="Unstake Liquidity" className="!pb-3" />
                     <div
@@ -117,13 +117,13 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                           />
                         </div>
                         <div className="flex gap-2">
-                          <Button size="xs" onClick={() => setValue(balance?.divide(4)?.toExact() || '')}>
+                          <Button size="xs" onClick={() => setValue(balance?.divide(4)?.toExact() || '')} testdata-id='unstake-25-button'>
                             25%
                           </Button>
-                          <Button size="xs" onClick={() => setValue(balance?.divide(2)?.toExact() || '')}>
+                          <Button size="xs" onClick={() => setValue(balance?.divide(2)?.toExact() || '')} testdata-id='unstake-50-button'>
                             50%
                           </Button>
-                          <Button size="xs" onClick={() => setValue(balance?.toExact() || '')}>
+                          <Button size="xs" onClick={() => setValue(balance?.toExact() || '')} testdata-id='unstake-max-button'>
                             MAX
                           </Button>
                         </div>

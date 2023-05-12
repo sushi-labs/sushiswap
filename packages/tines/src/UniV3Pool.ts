@@ -216,7 +216,8 @@ export class UniV3Pool extends RPool {
   }
 
   calcOutByInReal(amountIn: number, direction: boolean): number {
-    return Math.floor(this.calcOutByIn(amountIn, direction, false).out)
+    const amountInRounded = Math.floor(amountIn * (1 - this.fee)) / (1 - this.fee)
+    return Math.floor(this.calcOutByIn(amountInRounded, direction, false).out)
   }
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {

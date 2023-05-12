@@ -28,7 +28,7 @@ export const PoolsSection: FC = () => {
           {address && isMounted && (
             <Tab as={Fragment}>
               {({ selected }) => (
-                <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
+                <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default" testId='my-positions'>
                   My Positions
                 </Button>
               )}
@@ -41,10 +41,10 @@ export const PoolsSection: FC = () => {
             <div className="border-t border-gray-900/5 dark:border-slate-200/5" />
             <PoolsTable />
           </Tab.Panel>
-          <Tab.Panel>
+          <Tab.Panel unmount={false}>
             <div className="border-t border-gray-900/5 dark:border-slate-200/5">
               <ConcentratedPositionsTable />
-              <div className="h-px bg-gray-900/5 dark:bg-slate-200/5 w-full" />
+              <div className="w-full h-px bg-gray-900/5 dark:bg-slate-200/5" />
               <PositionsTable />
             </div>
           </Tab.Panel>

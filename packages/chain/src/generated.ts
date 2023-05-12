@@ -970,45 +970,6 @@ export default [
     ]
   },
   {
-    "name": "Linea Testnet",
-    "title": "Linea Testnet",
-    "chain": "ETH",
-    "rpc": [
-      "https://rpc.goerli.linea.build"
-    ],
-    "faucets": [
-      "https://faucetlink.to/goerli"
-    ],
-    "nativeCurrency": {
-      "name": "Goerli Ether",
-      "symbol": "ETH",
-      "decimals": 18
-    },
-    "infoURL": "https://linea.build",
-    "shortName": "linea-testnet",
-    "chainId": 59140,
-    "networkId": 59140,
-    "icon": "linea",
-    "parent": {
-      "type": "L2",
-      "chain": "eip155-5",
-      "bridges": [
-        {
-          "url": "https://goerli.hop.exchange/#/send?token=ETH&sourceNetwork=ethereum&destNetwork=linea"
-        }
-      ]
-    },
-    "explorers": [
-      {
-        "name": "Linea Testnet Explorer",
-        "url": "https://explorer.goerli.linea.build",
-        "standard": "EIP3091",
-        "icon": "linea"
-      }
-    ],
-    "status": "active"
-  },
-  {
     "name": "Mumbai",
     "title": "Polygon Testnet Mumbai",
     "chain": "Polygon",
@@ -1037,67 +998,6 @@ export default [
         "standard": "EIP3091"
       }
     ]
-  },
-  {
-    "name": "Base Goerli Testnet",
-    "chain": "ETH",
-    "rpc": [
-      "https://goerli.base.org"
-    ],
-    "faucets": [
-      "https://www.coinbase.com/faucets/base-ethereum-goerli-faucet"
-    ],
-    "nativeCurrency": {
-      "name": "Goerli Ether",
-      "symbol": "ETH",
-      "decimals": 18
-    },
-    "infoURL": "https://base.org",
-    "shortName": "basegor",
-    "chainId": 84531,
-    "networkId": 84531,
-    "explorers": [
-      {
-        "name": "basescan",
-        "url": "https://goerli.basescan.org",
-        "standard": "none"
-      },
-      {
-        "name": "basescout",
-        "url": "https://base-goerli.blockscout.com",
-        "standard": "none"
-      }
-    ]
-  },
-  {
-    "name": "Scroll Alpha Testnet",
-    "chain": "ETH",
-    "status": "incubating",
-    "rpc": [
-      "https://alpha-rpc.scroll.io/l2"
-    ],
-    "faucets": [],
-    "nativeCurrency": {
-      "name": "Ether",
-      "symbol": "ETH",
-      "decimals": 18
-    },
-    "infoURL": "https://scroll.io",
-    "shortName": "scr-alpha",
-    "chainId": 534353,
-    "networkId": 534353,
-    "explorers": [
-      {
-        "name": "Scroll Alpha Testnet Block Explorer",
-        "url": "https://blockscout.scroll.io",
-        "standard": "EIP3091"
-      }
-    ],
-    "parent": {
-      "type": "L2",
-      "chain": "eip155-5",
-      "bridges": []
-    }
   },
   {
     "name": "Harmony Mainnet Shard 0",
@@ -1155,6 +1055,7 @@ export default [
   {
     "name": "Palm",
     "chain": "Palm",
+    "icon": "palm",
     "rpc": [
       "https://palm-mainnet.infura.io/v3/${INFURA_API_KEY}"
     ],

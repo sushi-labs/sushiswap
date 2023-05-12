@@ -27,7 +27,7 @@ const DATA: ExpendableCardData = {
       </p>
     </>
   ),
-  link: 'https://sushi.com/swap',
+  link: 'https://www.sushi.com/swap',
   linkText: 'Visit Swap',
 }
 

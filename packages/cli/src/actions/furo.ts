@@ -14,10 +14,10 @@ export async function furo(args: Arguments) {
 
   if (args.network) {
     if (!ChainId[args.network.toUpperCase() as any]) {
-      console.log(chalk.red('Please provide a valid network: ' + REVENUES_SUPPORTED_CHAIN_NAMES.join(', ') + '.'))
+      console.log(chalk.red(`Please provide a valid network: ${REVENUES_SUPPORTED_CHAIN_NAMES.join(', ')}.`))
       return
     } else {
-      console.log(chalk.green('Querying Furo TVL for ' + args.network + '...'))
+      console.log(chalk.green(`Querying Furo TVL for ${args.network}...`))
     }
   } else {
     console.log(chalk.green('Querying FURO TVL for all networks...'))
@@ -53,13 +53,13 @@ export async function furo(args: Arguments) {
   })
 
   const tokensDefillamaPriceQuery = tokens.map((token) => {
-    if (ChainId[token.chainId].toLowerCase() == ChainKey.AVALANCHE) {
-      return 'avax:' + token.id
+    if (ChainId[token.chainId].toLowerCase() === ChainKey[ChainId.AVALANCHE]) {
+      return `avax:${token.id}`
     }
-    return ChainId[token.chainId].toLowerCase() + ':' + token.id
+    return `${ChainId[token.chainId].toLowerCase()}:${token.id}`
   })
   const symbolToPrice: { [symbol: string]: number } = {}
-  await fetch('https://coins.llama.fi/prices/current/' + tokensDefillamaPriceQuery.join(',')).then((data: any) =>
+  await fetch(`https://coins.llama.fi/prices/current/${tokensDefillamaPriceQuery.join(',')}`).then((data: any) =>
     data.json().then((data) => {
       Object.values(data.coins).map((token: any) => {
         symbolToPrice[token.symbol] = token.price
@@ -93,10 +93,10 @@ export async function furo(args: Arguments) {
   table.push([
     chalk.green('TOTAL'),
     chalk.green('-'),
-    chalk.green(totalTvl.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $'),
+    chalk.green(`${totalTvl.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')} $`),
   ])
   for (const token of tokensTVL) {
-    table.push([token.chain, token.symbol, token.tvl.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $'])
+    table.push([token.chain, token.symbol, `${token.tvl.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')} $`])
   }
 
   console.log(table.toString())

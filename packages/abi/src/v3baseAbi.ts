@@ -20,4 +20,11 @@ export const v3baseAbi = [
     stateMutability: 'view',
     type: 'function',
   },
+  {
+    inputs: [],
+    name: 'fee',
+    outputs: [{ internalType: 'uint24', name: '', type: 'uint24' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
 ] as const

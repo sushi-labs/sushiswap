@@ -5,27 +5,28 @@ import { calculateGasMargin } from '@sushiswap/gas'
 import { Percent } from '@sushiswap/math'
 import { Dots } from '@sushiswap/ui'
 import {
-  Approve,
-  getSushiSwapRouterContractConfig,
-  PairState,
   _useSendTransaction as useSendTransaction,
-  useSushiSwapRouterContract,
   Address,
+  PairState,
   useAccount,
   useNetwork,
+  useSushiSwapRouterContract,
 } from '@sushiswap/wagmi'
 import { BigNumber } from 'ethers'
-import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { useTransactionDeadline } from '../../lib/hooks'
-import { useSettings } from '../../lib/state/storage'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
+import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { APPROVE_TAG_ADD_LEGACY } from '../../lib/constants'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 interface AddSectionReviewModalLegacyProps {
   poolState: PairState
@@ -34,7 +35,8 @@ interface AddSectionReviewModalLegacyProps {
   token1: Type | undefined
   input0: Amount<Type> | undefined
   input1: Amount<Type> | undefined
-  children({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }): ReactNode
+  open: boolean
+  close(): void
 }
 
 export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> = ({
@@ -44,15 +46,18 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   token1,
   input0,
   input1,
-  children,
+  open,
+  close,
 }) => {
   const deadline = useTransactionDeadline(chainId)
-  const [open, setOpen] = useState(false)
+  const contract = useSushiSwapRouterContract(chainId)
   const { address } = useAccount()
   const { chain } = useNetwork()
-
-  const contract = useSushiSwapRouterContract(chainId)
-  const [{ slippageTolerance }] = useSettings()
+  const { approved } = useApproved(APPROVE_TAG_ADD_LEGACY)
+  const [slippageTolerance] = useSlippageTolerance('addLiquidity')
+  const slippagePercent = useMemo(() => {
+    return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
+  }, [slippageTolerance])
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
@@ -76,10 +81,6 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     },
     [chainId, token0, token1, address]
   )
-
-  const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(slippageTolerance * 100), 10_000)
-  }, [slippageTolerance])
 
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
@@ -166,46 +167,21 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     chainId,
     prepare,
     onSettled,
-    onSuccess: () => setOpen(false),
+    onSuccess: close,
+    enabled: approved,
   })
 
-  return useMemo(
-    () => (
-      <>
-        {children({ isWritePending, setOpen })}
-        <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} setOpen={setOpen}>
-          <Approve
-            className="flex-grow !justify-end"
-            components={
-              <Approve.Components>
-                <Approve.Token
-                  size="md"
-                  className="whitespace-nowrap"
-                  fullWidth
-                  amount={input0}
-                  address={getSushiSwapRouterContractConfig(chainId).address as Address}
-                />
-                <Approve.Token
-                  size="md"
-                  className="whitespace-nowrap"
-                  fullWidth
-                  amount={input1}
-                  address={getSushiSwapRouterContractConfig(chainId).address as Address}
-                />
-              </Approve.Components>
-            }
-            render={({ approved }) => {
-              // console.log({ approved, isWritePending })
-              return (
-                <Button size="xl" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
-                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
-                </Button>
-              )
-            }}
-          />
-        </AddSectionReviewModal>
-      </>
-    ),
-    [chainId, children, input0, input1, isWritePending, open, sendTransaction]
+  return (
+    <AddSectionReviewModal
+      chainId={chainId as BentoBoxV1ChainId}
+      input0={input0}
+      input1={input1}
+      open={open}
+      close={close}
+    >
+      <Button size="xl" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
+        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
+      </Button>
+    </AddSectionReviewModal>
   )
 }
