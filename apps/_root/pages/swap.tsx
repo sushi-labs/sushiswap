@@ -6,29 +6,33 @@ import { TokenNotFoundDialog } from '../ui/swap/TokenNotFoundDialog'
 import { TradeReviewDialog } from '../ui/swap/trade/TradeReviewDialog'
 import React, { FC } from 'react'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { ExploitApprovalAlert } from '../ui/swap/ExploitApprovalAlert'
 import { SwapProvider } from '../ui/swap/trade/TradeProvider'
 import { SplashController } from '../ui/swap/SplashController'
 import { TokenProvider } from '../ui/swap/TokenProvider'
+import { Header } from '../ui/swap/Header'
+import { Onramper } from '@sushiswap/wagmi/future/components'
+
 export const Page: FC = () => {
   return (
     <TokenProvider>
       <SplashController>
         <SwapProvider>
-          <ExploitApprovalAlert />
-          <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
-            <Drawer.Root>
-              <Checker.Root>
-                <Widget />
-                <TradeStats />
-                <TradeReviewDialog />
-                <TokenNotFoundDialog />
-              </Checker.Root>
-            </Drawer.Root>
+          <Onramper.Provider>
+            <Header />
+            <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
+              <Drawer.Root>
+                <Checker.Root>
+                  <Widget />
+                  <TradeStats />
+                  <TradeReviewDialog />
+                  <TokenNotFoundDialog />
+                </Checker.Root>
+              </Drawer.Root>
 
-            {/*spacer for fixed positioned swap button */}
-            <div className="h-[68px] w-full" />
-          </Container>
+              {/*spacer for fixed positioned swap button */}
+              <div className="h-[68px] w-full" />
+            </Container>
+          </Onramper.Provider>
         </SwapProvider>
       </SplashController>
     </TokenProvider>
