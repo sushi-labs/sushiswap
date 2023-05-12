@@ -274,7 +274,10 @@ async function manageLiquidity(page: Page, type: 'STAKE' | 'UNSTAKE') {
   }
   await maxButtonSelector.click()
   await approve(page, 'approve-token0')
-  await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`).click({ timeout: 2_000 })
+  const actionSelector = page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`)
+  await expect(actionSelector).toBeVisible()
+  await expect(actionSelector).toBeEnabled()
+  await actionSelector.click({ timeout: 2_000 })
 
   const regex = new RegExp(`(Successfully ${type.toLowerCase()}d .* SLP tokens)`)
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
