@@ -1,17 +1,22 @@
 import { ChainId } from '@sushiswap/chain'
 import {
+  AAVE,
   APE,
   APE_ADDRESS,
   ARB,
   BCT,
   BCT_ADDRESS,
+  COMP,
+  CRV,
   DAI,
+  ENJ,
   FEI,
   FEI_ADDRESS,
   FRAX,
   FRAX_ADDRESS,
   FXS,
   FXS_ADDRESS,
+  GALA,
   GNO,
   KLIMA,
   KLIMA_ADDRESS,
@@ -21,8 +26,10 @@ import {
   LDO_ADDRESS,
   LINK,
   LUSD,
+  MANA,
   MATIC,
   MIM,
+  MKR,
   Native,
   NFTX,
   OHM,
@@ -33,6 +40,7 @@ import {
   renBTC_ADDRESS,
   rETH2_ADDRESS,
   sETH2,
+  SNX,
   SUSHI,
   SUSHI_ADDRESS,
   SWISE_ADDRESS,
@@ -47,6 +55,7 @@ import {
   WNATIVE,
   XSUSHI,
   XSUSHI_ADDRESS,
+  YFI,
 } from '@sushiswap/currency'
 
 export const BASES_TO_CHECK_TRADES_AGAINST: {
@@ -309,16 +318,39 @@ export const ADDITIONAL_BASES: {
     [XSUSHI_ADDRESS[ChainId.ETHEREUM]]: [SUSHI[ChainId.ETHEREUM]],
     [KP3R_ADDRESS[ChainId.ETHEREUM]]: [LDO[ChainId.ETHEREUM]],
     [LDO_ADDRESS[ChainId.ETHEREUM]]: [KP3R[ChainId.ETHEREUM]],
-    [TWO_ADDRESS[ChainId.ETHEREUM]]: [DAI, AAVE, LINK, MKR, SNX, CRV, WBTC, YFI, ENJ, SUSHI, WETH, COMP, GALA, XSUSHI[ChainId.ETHEREUM]],
+    ['0x1e0275806C3CD0bDb5C99916A064d36b5e8eAE8d']: [
+      // TWO
+      DAI[ChainId.ETHEREUM],
+      AAVE[ChainId.ETHEREUM],
+      LINK[ChainId.ETHEREUM],
+      MKR[ChainId.ETHEREUM],
+      SNX[ChainId.ETHEREUM],
+      CRV[ChainId.ETHEREUM],
+      WBTC[ChainId.ETHEREUM],
+      YFI[ChainId.ETHEREUM],
+      ENJ[ChainId.ETHEREUM],
+      SUSHI[ChainId.ETHEREUM],
+      COMP[ChainId.ETHEREUM],
+      GALA[ChainId.ETHEREUM],
+      XSUSHI[ChainId.ETHEREUM],
+    ],
   },
   [ChainId.POLYGON]: {
     [FRAX_ADDRESS[ChainId.POLYGON]]: [FXS[ChainId.POLYGON]],
     [FXS_ADDRESS[ChainId.POLYGON]]: [FRAX[ChainId.POLYGON]],
     [BCT_ADDRESS[ChainId.POLYGON]]: [KLIMA[ChainId.POLYGON]],
     [KLIMA_ADDRESS[ChainId.POLYGON]]: [BCT[ChainId.POLYGON]],
-    [THREE_ADDRESS[ChainId.POLYGON]]: [DAI, WMATIC, AAVE, LINK, MANA, SNX, CRV, WBTC, YFI, ENJ, XSUSHI, WETH[ChainId.POLYGON]],
-    [AAVE_ADDRESS[ChainId.POLYGON]]: [WETH[ChainId.POLYGON]],
-    [MANA_ADDRESS[ChainId.POLYGON]]: [WETH[ChainId.POLYGON]],
+    // THREE
+    ['0x9B034262e0095210ab9ddec60199741a8a1FbFe7']: [
+      AAVE[ChainId.POLYGON],
+      LINK[ChainId.POLYGON],
+      MANA[ChainId.POLYGON],
+      SNX[ChainId.POLYGON],
+      CRV[ChainId.POLYGON],
+      WBTC[ChainId.POLYGON],
+      YFI[ChainId.POLYGON],
+      // ENJ[ChainId.POLYGON], // could not find on polygon
+    ],
   },
   [ChainId.ARBITRUM]: {
     [FRAX_ADDRESS[ChainId.ARBITRUM]]: [FXS[ChainId.ARBITRUM]],
@@ -327,7 +359,13 @@ export const ADDITIONAL_BASES: {
   [ChainId.FANTOM]: {
     [FRAX_ADDRESS[ChainId.FANTOM]]: [FXS[ChainId.FANTOM]],
     [FXS_ADDRESS[ChainId.FANTOM]]: [FRAX[ChainId.FANTOM]],
-    [FOUR_ADDRESS[ChainId.FANTOM]]: [DAI, WFTM, WBTC, LINK, SNX, CRV, WBTC, YFI, XSUSHI, WETH[ChainId.FANTOM]],
+    ['0x9E8862e39496BD336565Dd15cE2C0B90bc7dc121']: [
+      LINK[ChainId.FANTOM],
+      SNX[ChainId.FANTOM],
+      CRV[ChainId.FANTOM],
+      WBTC[ChainId.FANTOM],
+      YFI[ChainId.FANTOM],
+    ],
   },
   [ChainId.BSC]: {
     [FRAX_ADDRESS[ChainId.BSC]]: [FXS[ChainId.BSC]],

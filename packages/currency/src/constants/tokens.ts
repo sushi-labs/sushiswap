@@ -10,10 +10,13 @@ import {
   BCT_ADDRESS,
   BUSD_ADDRESS,
   COMP_ADDRESS,
+  CRV_ADDRESS,
   DAI_ADDRESS,
+  ENJ_ADDRESS,
   FEI_ADDRESS,
   FRAX_ADDRESS,
   FXS_ADDRESS,
+  GALA_ADDRESS,
   GNO_ADDRESS,
   JPY_ADDRESS,
   KLIMA_ADDRESS,
@@ -22,8 +25,10 @@ import {
   LINK_ADDRESS,
   LUSD_ADDRESS,
   MAI_ADDRESS,
+  MANA_ADDRESS,
   MATIC_ADDRESS,
   MIM_ADDRESS,
+  MKR_ADDRESS,
   NFTX_ADDRESS,
   OHM_ADDRESS,
   OP_ADDRESS,
@@ -32,6 +37,7 @@ import {
   renBTC_ADDRESS,
   rETH2_ADDRESS,
   sETH2_ADDRESS,
+  SNX_ADDRESS,
   SUSHI_ADDRESS,
   SWISE_ADDRESS,
   TRIBE_ADDRESS,
@@ -43,7 +49,71 @@ import {
   WETH9_ADDRESS,
   WNATIVE_ADDRESS,
   XSUSHI_ADDRESS,
+  YFI_ADDRESS,
 } from './token-addresses'
+
+export const MANA = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'MKR',
+    name: 'Decentraland',
+  },
+  MANA_ADDRESS
+) as Record<keyof typeof MANA_ADDRESS, Token>
+
+export const MKR = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'MKR',
+    name: 'Maker',
+  },
+  MKR_ADDRESS
+) as Record<keyof typeof MKR_ADDRESS, Token>
+
+export const YFI = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'YFI',
+    name: 'yearn.finance',
+  },
+  YFI_ADDRESS
+) as Record<keyof typeof YFI_ADDRESS, Token>
+
+export const ENJ = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'ENJ',
+    name: 'Enjin Coin',
+  },
+  ENJ_ADDRESS
+) as Record<keyof typeof ENJ_ADDRESS, Token>
+
+export const CRV = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'CRV',
+    name: 'Curve DAO Token',
+  },
+  CRV_ADDRESS
+) as Record<keyof typeof CRV_ADDRESS, Token>
+
+export const SNX = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'SNX',
+    name: 'Synthetix Network Token',
+  },
+  SNX_ADDRESS
+) as Record<keyof typeof SNX_ADDRESS, Token>
+
+export const GALA = addressMapToTokenMap(
+  {
+    decimals: 8,
+    symbol: 'GALA',
+    name: 'Gala',
+  },
+  GALA_ADDRESS
+) as Record<keyof typeof GALA_ADDRESS, Token>
 
 export const MATIC = addressMapToTokenMap(
   {

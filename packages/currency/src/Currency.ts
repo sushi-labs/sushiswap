@@ -52,11 +52,14 @@ export abstract class Currency {
     symbol?: string
     name?: string
   }) {
-    invariant(Number.isSafeInteger(Number(chainId)), 'CHAIN_ID')
-    invariant(decimals >= 0 && decimals < 255 && Number.isInteger(Number(decimals)), 'DECIMALS')
+    const _chainId = Number(chainId)
+    const _decimals = Number(decimals)
 
-    this.chainId = Number(chainId)
-    this.decimals = Number(decimals)
+    invariant(Number.isSafeInteger(_chainId), 'CHAIN_ID')
+    invariant(_decimals >= 0 && _decimals < 255 && Number.isInteger(_decimals), 'DECIMALS')
+
+    this.chainId = _chainId
+    this.decimals = _decimals
     this.symbol = symbol
     this.name = name
   }
