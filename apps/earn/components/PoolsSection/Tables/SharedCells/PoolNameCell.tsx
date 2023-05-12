@@ -1,6 +1,6 @@
 import { formatNumber } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
-import { Chip, classNames, NetworkIcon } from '@sushiswap/ui'
+import { classNames, NetworkIcon } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { FC } from 'react'
 

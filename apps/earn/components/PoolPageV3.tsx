@@ -1,5 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
-import { SWRConfig } from 'swr'
+import React, { FC, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeftIcon, ChartBarIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
 import { z } from 'zod'
@@ -31,7 +30,6 @@ import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
 import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { ConcentratedPositionsTable } from './PoolsSection/Tables/PositionsTable/ConcentratedPositionsTable'
 import { createSuccessToast } from '@sushiswap/ui/future/components/toast'
-import { ChainId } from '@sushiswap/chain'
 
 enum Granularity {
   Day,
@@ -113,9 +111,6 @@ const Pool: FC = () => {
     ],
     [poolStats?.token0, poolStats?.token1]
   )
-
-  const change1d = 0
-  const change1w = 0
 
   return (
     <Layout>
