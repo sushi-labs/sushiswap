@@ -135,26 +135,6 @@ const Pool: FC = () => {
               height: 24,
               transparent: true,
             }}
-            shallow={true}
-          >
-            <IconButton
-              icon={ArrowLeftIcon}
-              iconProps={{
-                width: 24,
-                height: 24,
-                transparent: true,
-              }}
-            />
-            <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
-              Go back to pools list
-            </span>
-          </Link>
-          <PoolHeader
-            title="Pool "
-            isLoading={isLoading}
-            chainId={chainId}
-            pool={pool}
-            apy={{ rewards: poolStats?.incentiveApr, fees: poolStats?.feeApr1d }}
           />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
             Go back to pools list
