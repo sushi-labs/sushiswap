@@ -93,8 +93,6 @@ const Position: FC = () => {
     token1,
   })
 
-  const fiatAmounts = useMemo(() => [tryParseAmount('1', token0), tryParseAmount('1', token1)], [token0, token1])
-  const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId, amounts: fiatAmounts })
   const pricesFromPosition = position ? getPriceOrderingFromPositionForUI(position) : undefined
 
   const { pool, isLoading, outOfRange } = useConcentratedDerivedMintInfo({
@@ -195,7 +193,7 @@ const Position: FC = () => {
             startIcon={<MinusIcon width={18} height={18} />}
             variant="outlined"
             color={tab === SelectedTab.DecreaseLiq ? 'blue' : 'default'}
-            testdata-id='decrease-liquidity-button'
+            testdata-id="decrease-liquidity-button"
           >
             Decrease Liquidity
           </RadioGroup.Option>
