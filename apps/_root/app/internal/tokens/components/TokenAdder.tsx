@@ -1,4 +1,4 @@
-import { XIcon } from '@heroicons/react/solid'
+import { XIcon } from '@heroicons/react-v1/solid'
 import { Token as TokenEntity } from '@sushiswap/currency'
 import { CheckIcon, Currency, Loader, Menu, Typography } from '@sushiswap/ui'
 import stringify from 'fast-json-stable-stringify'

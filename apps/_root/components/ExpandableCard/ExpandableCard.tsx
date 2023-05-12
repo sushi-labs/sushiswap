@@ -1,4 +1,4 @@
-import { ChevronRightIcon, ExternalLinkIcon } from '@heroicons/react/solid'
+import { ChevronRightIcon, ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import { Button, Link, Typography } from '@sushiswap/ui'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
 import { nanoid } from 'nanoid'

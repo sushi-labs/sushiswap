@@ -57,6 +57,20 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/favicon.ico?v=1" />
       </Head>
+      <WagmiConfig client={client}>
+        <QueryClientProvider>
+          <ThemeProvider>
+            <App.Shell>
+              <DefaultSeo {...SEO} />
+              <Header />
+              <MotionConfig reducedMotion={isSmallScreen ? 'always' : 'user'}>
+                <Component {...pageProps} />
+              </MotionConfig>
+              <App.Footer />
+            </App.Shell>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </WagmiConfig>
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
       <Script
         id="gtag-init"
@@ -72,20 +86,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         `,
         }}
       />
-      <WagmiConfig client={client}>
-        <QueryClientProvider>
-          <ThemeProvider>
-            <App.Shell>
-              <DefaultSeo {...SEO} />
-              <Header />
-              <MotionConfig reducedMotion={isSmallScreen ? 'always' : 'user'}>
-                <Component {...pageProps} />
-              </MotionConfig>
-              <App.Footer />
-            </App.Shell>
-          </ThemeProvider>
-        </QueryClientProvider>
-      </WagmiConfig>
       <Analytics />
     </>
   )
