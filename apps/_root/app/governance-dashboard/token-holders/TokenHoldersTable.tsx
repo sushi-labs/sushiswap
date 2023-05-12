@@ -2,8 +2,17 @@
 
 import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { shortenAddress } from '@sushiswap/format'
-import { GenericTable, Link } from '@sushiswap/ui'
-import { createColumnHelper, getCoreRowModel, SortDirection, useReactTable } from '@tanstack/react-table'
+import { ExternalLink } from '@sushiswap/ui/future/components/ExternalLink'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  getSortedRowModel,
+  SortDirection,
+  SortingState,
+  useReactTable,
+} from '@tanstack/react-table'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { useState, useTransition } from 'react'
 
@@ -20,7 +29,12 @@ type TokenHolder = {
 }
 
 const columnHelper = createColumnHelper<TokenHolder>()
-const TOKEN_HOLDER_FILTERS = [1, 1_000, 10_000, 100_000]
+
+const BALANCE_FILTER = {
+  key: 'balanceFilter',
+  options: [1, 1_000, 10_000, 100_000],
+}
+const ORDER_DIRECTION_KEY = 'orderDirection'
 
 export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
   const { replace } = useRouter()
@@ -30,7 +44,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
   const params = new URLSearchParams(searchParams)
 
   function sortColumn(direction: false | SortDirection) {
-    params.set('orderDirection', direction === 'desc' ? 'asc' : 'desc')
+    params.set(ORDER_DIRECTION_KEY, direction === 'desc' ? 'asc' : 'desc')
 
     startTransition(() => {
       replace(`${pathname}?${params.toString()}`)
@@ -38,34 +52,35 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
   }
 
   function filterBalance(balance: number) {
-    params.set('balanceFilter', balance.toString())
+    params.set(BALANCE_FILTER.key, balance.toString())
 
     startTransition(() => {
       replace(`${pathname}?${params.toString()}`)
     })
   }
 
-  // TODO: remove sortable here and add asc/desc sorting buttons
   const [columns] = useState([
     columnHelper.accessor('rank', {
       header: 'Rank',
       cell: (info) => <span className="text-slate-300">{info.getValue()}</span>,
       size: 50,
       enableSorting: false,
+      meta: { skeleton: <Skeleton.Text /> },
     }),
     columnHelper.accessor('name', {
       header: 'Name',
       cell: (info) => (
-        <Link.External
+        <ExternalLink
           href={`https://etherscan.io/address/${info.getValue()}`}
           endIcon={<ExternalLinkIcon className="h-5 w-5" />}
           className="gap-2 font-bold"
         >
           {shortenAddress(info.getValue())}
-        </Link.External>
+        </ExternalLink>
       ),
       minSize: 200,
       enableSorting: false,
+      meta: { skeleton: <Skeleton.Text /> },
     }),
     columnHelper.accessor('quantity', {
       header: (h) => <div onClick={() => sortColumn(h.column.getIsSorted())}>Quantity</div>,
@@ -76,6 +91,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
           })}
         </span>
       ),
+      meta: { skeleton: <Skeleton.Text /> },
     }),
     columnHelper.accessor('ownership', {
       header: (h) => <div onClick={() => sortColumn(h.column.getIsSorted())}>Ownership</div>,
@@ -87,6 +103,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
           })}
         </span>
       ),
+      meta: { skeleton: <Skeleton.Text /> },
     }),
     columnHelper.accessor('value', {
       header: (h) => <div onClick={() => sortColumn(h.column.getIsSorted())}>Value</div>,
@@ -96,13 +113,25 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
           style: 'currency',
           currency: 'USD',
         }),
+      meta: { skeleton: <Skeleton.Text /> },
     }),
+  ])
+
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'quantity', desc: params.get(ORDER_DIRECTION_KEY) !== 'asc' },
   ])
 
   const table = useReactTable({
     data: users,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    manualSorting: true,
+    sortDescFirst: true,
   })
 
   return (
@@ -110,21 +139,22 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
       <h2 className="pl-1 text-2xl font-bold text-slate-200">All Holders</h2>
       <div className="space-y-6">
         <div className="flex gap-2">
-          {TOKEN_HOLDER_FILTERS.map((filter) => (
+          {BALANCE_FILTER.options.map((filter) => (
             <FilterButton
               onClick={() => filterBalance(filter)}
-              isActive={Number(params.get('balanceFilter')) === filter}
+              isActive={Number(params.get(BALANCE_FILTER.key)) === filter}
               key={filter}
             >{`>=${formatNumber(filter)} $SUSHI`}</FilterButton>
           ))}
         </div>
-
-        <GenericTable<TokenHolder>
-          loading={isPending}
-          table={table}
-          placeholder=""
-          pageSize={Math.max(users.length, 5)}
-        />
+        <div className="rounded-lg bg-[#1A2031]">
+          <GenericTable<TokenHolder>
+            loading={isPending}
+            table={table}
+            placeholder=""
+            pageSize={Math.max(users.length, 5)}
+          />
+        </div>
       </div>
     </div>
   )
