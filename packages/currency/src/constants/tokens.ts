@@ -55,7 +55,7 @@ import {
 export const MANA = addressMapToTokenMap(
   {
     decimals: 18,
-    symbol: 'MKR',
+    symbol: 'MANA',
     name: 'Decentraland',
   },
   MANA_ADDRESS
