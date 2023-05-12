@@ -1,27 +1,21 @@
 import '@sushiswap/ui/index.css'
-import '../variables.css'
 
 import { App, ThemeProvider } from '@sushiswap/ui'
 import { Analytics } from '@vercel/analytics/react'
 import { Header } from '../components'
 import { SUPPORTED_CHAIN_IDS } from '../config'
-import { Updaters as TokenListsUpdaters } from '../lib/state/TokenListsUpdaters'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import { FC, useEffect } from 'react'
-import { Provider } from 'react-redux'
-import { store } from '../store'
 import { WagmiConfig, client } from '@sushiswap/wagmi'
 
 import SEO from '../next-seo.config.mjs'
 import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '@sushiswap/react-query'
-import { ToastContainer } from '@sushiswap/ui/future/components/toast'
-import { ConcentratedLiquidityURLStateProvider } from '../components/ConcentratedLiquidityURLStateProvider'
 import { HistoryProvider } from '../components/HistoryProvider'
 
 declare global {
@@ -56,27 +50,22 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="mask-icon" href="/pools/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/pools/favicon.ico?v=1" />
       </Head>
-
       <WagmiConfig client={client}>
-        <Provider store={store}>
-          <QueryClientProvider client={queryClient}>
-            <ThemeProvider>
-              <Onramper.Provider>
-                <HistoryProvider>
-                  <App.Shell>
-                    <DefaultSeo {...SEO} />
-                    <Header />
-                    <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
-                    <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
-                    <ToastContainer />
-                  </App.Shell>
-                </HistoryProvider>
-              </Onramper.Provider>
-            </ThemeProvider>
-          </QueryClientProvider>
-        </Provider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <Onramper.Provider>
+              <HistoryProvider>
+                <App.Shell>
+                  <DefaultSeo {...SEO} />
+                  <Header />
+                  <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
+                </App.Shell>
+              </HistoryProvider>
+            </Onramper.Provider>
+          </ThemeProvider>
+        </QueryClientProvider>
       </WagmiConfig>
-      <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
+      <Script strategy="afterInteractive" src={'https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF'} />
       <Script
         id="gtag-init"
         strategy="afterInteractive"

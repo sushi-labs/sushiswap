@@ -49,6 +49,7 @@ export const SelectPoolTypeWidget: FC<SelectPoolTypeWidgetProps> = memo(function
           <RadioGroup.Option
             key={option.value}
             value={option.value}
+            testdata-id={`pool-type-${option.title.replace(' ', '-').toLowerCase()}`}
             className={({ checked }) =>
               classNames(
                 checked ? 'ring ring-blue' : '',
@@ -58,13 +59,13 @@ export const SelectPoolTypeWidget: FC<SelectPoolTypeWidgetProps> = memo(function
           >
             {({ checked }) => (
               <div className="flex flex-col gap-1">
-                <span className="text-gray-900 dark:text-slate-50 font-medium flex items-center gap-2">
+                <span className="flex items-center gap-2 font-medium text-gray-900 dark:text-slate-50">
                   {option.title}
                   {option.value === PoolFinderType.ConcentratedLiquidity && (
                     <StarIcon width={12} height={12} className="text-yellow" />
                   )}
                 </span>
-                <span className="text-gray-500 dark:text-slate-400 text-slate-600 text-sm">
+                <span className="text-sm text-gray-500 dark:text-slate-400 text-slate-600">
                   {checked && (
                     <div className="absolute right-3 bg-blue text-white rounded-full p-0.5">
                       <CheckIcon width={12} height={12} />

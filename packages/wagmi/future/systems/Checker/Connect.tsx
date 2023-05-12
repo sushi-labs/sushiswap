@@ -4,8 +4,9 @@ import { useAccount } from 'wagmi'
 
 import { ConnectButton } from '../../components'
 import { Button, ButtonProps } from '@sushiswap/ui/future/components/button'
+import dynamic from 'next/dynamic'
 
-export const Connect: FC<ButtonProps<'button'>> = ({
+export const Component: FC<ButtonProps<'button'>> = ({
   children,
   className,
   variant,
@@ -13,7 +14,7 @@ export const Connect: FC<ButtonProps<'button'>> = ({
   size,
   name,
   onBlur,
-  as,
+  type,
 }) => {
   const isMounted = useIsMounted()
   const { address } = useAccount()
@@ -29,6 +30,7 @@ export const Connect: FC<ButtonProps<'button'>> = ({
         name={name}
         as={Button}
         onBlur={onBlur}
+        type={type}
       >
         Connect Wallet
       </ConnectButton>
@@ -36,3 +38,7 @@ export const Connect: FC<ButtonProps<'button'>> = ({
 
   return <>{children}</>
 }
+
+export const Connect = dynamic(() => Promise.resolve(Component), {
+  ssr: false,
+})

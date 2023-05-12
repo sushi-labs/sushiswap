@@ -3,8 +3,8 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { Button, Dots, Typography } from '@sushiswap/ui'
-import { Approve, Checker, getMasterChefContractConfig, useMasterChefDeposit } from '@sushiswap/wagmi'
+import { Dots, Typography } from '@sushiswap/ui'
+import { getMasterChefContractConfig, useMasterChefDeposit } from '@sushiswap/wagmi'
 import { FC, Fragment, useMemo, useState } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
 
@@ -12,6 +12,10 @@ import { useGraphPool } from '../../lib/hooks'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 import { useSWRConfig } from 'swr'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import Button from '@sushiswap/ui/future/components/button/Button'
+import { APPROVE_TAG_STAKE } from '../../lib/constants'
 
 interface AddSectionStakeProps {
   pool: Pool
@@ -49,10 +53,10 @@ export const AddSectionStake: FC<{ poolId: string; title?: string }> = ({ poolId
   )
 }
 
-const _AddSectionStake: FC<AddSectionStakeProps> = ({ pool, chefType, title, farmId }) => {
+const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(({ pool, chefType, title, farmId }) => {
   const [hover, setHover] = useState(false)
   const { address } = useAccount()
-
+  const { approved } = useApproved(APPROVE_TAG_STAKE)
   const [value, setValue] = useState('')
   const {
     data: { reserve1, reserve0, liquidityToken },
@@ -68,6 +72,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pool, chefType, title, far
     chainId: liquidityToken.chainId,
     chef: chefType,
     pid: farmId,
+    enabled: approved,
   })
 
   return (
@@ -98,42 +103,35 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pool, chefType, title, far
           reserve1={reserve1}
           liquidityToken={liquidityToken}
         >
-          <Checker.Connected size="md">
-            <Checker.Network size="md" chainId={pool.chainId}>
-              <Checker.Amounts size="md" chainId={pool.chainId} amounts={[amount]} fundSource={FundSource.WALLET}>
-                <Approve
-                  className="flex-grow !justify-end"
-                  components={
-                    <Approve.Components>
-                      <Approve.Token
-                        size="md"
-                        className="whitespace-nowrap"
-                        fullWidth
-                        amount={amount}
-                        address={getMasterChefContractConfig(pool.chainId, chefType)?.address}
-                        enabled={Boolean(getMasterChefContractConfig(pool.chainId, chefType)?.address)}
-                      />
-                    </Approve.Components>
-                  }
-                  render={({ approved }) => {
-                    return (
-                      <Button
-                        onClick={() => sendTransaction?.()}
-                        fullWidth
-                        size="md"
-                        variant="filled"
-                        disabled={!approved || isWritePending}
-                      >
-                        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Stake Liquidity'}
-                      </Button>
-                    )
-                  }}
-                />
+          <Checker.Connect size="xl" fullWidth>
+            <Checker.Network size="xl" fullWidth chainId={pool.chainId}>
+              <Checker.Amounts size="xl" fullWidth chainId={pool.chainId} amounts={[amount]}>
+                <Checker.ApproveERC20
+                  size="xl"
+                  fullWidth
+                  id="approve-token0"
+                  amount={amount}
+                  contract={getMasterChefContractConfig(pool.chainId, chefType)?.address}
+                  enabled={Boolean(getMasterChefContractConfig(pool.chainId, chefType)?.address)}
+                >
+                  <Checker.Success tag={APPROVE_TAG_STAKE}>
+                    <Button
+                      onClick={() => sendTransaction?.()}
+                      fullWidth
+                      size="xl"
+                      variant="filled"
+                      disabled={!approved || isWritePending}
+                      testId='stake-liquidity'
+                    >
+                      {isWritePending ? <Dots>Confirm transaction</Dots> : 'Stake Liquidity'}
+                    </Button>
+                  </Checker.Success>
+                </Checker.ApproveERC20>
               </Checker.Amounts>
             </Checker.Network>
-          </Checker.Connected>
+          </Checker.Connect>
         </AddSectionStakeWidget>
       </div>
     </div>
   )
-}
+})

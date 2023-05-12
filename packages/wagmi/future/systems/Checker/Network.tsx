@@ -4,12 +4,13 @@ import React, { FC, ReactElement } from 'react'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 import { CheckerButton } from './types'
+import dynamic from 'next/dynamic'
 
 export interface NetworkProps extends CheckerButton {
   chainId: number | undefined
 }
 
-export const Network: FC<NetworkProps> = ({ chainId, children, ...rest }): ReactElement<any, any> | null => {
+export const Component: FC<NetworkProps> = ({ chainId, children, ...rest }): ReactElement<any, any> | null => {
   const { chain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
 
@@ -24,3 +25,8 @@ export const Network: FC<NetworkProps> = ({ chainId, children, ...rest }): React
 
   return <>{children}</>
 }
+
+// Temp solution until app dir
+export const Network = dynamic(() => Promise.resolve(Component), {
+  ssr: false,
+})

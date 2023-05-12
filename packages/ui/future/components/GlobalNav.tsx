@@ -10,6 +10,7 @@ import { SushiIcon } from './icons'
 import { MaxWidth } from '../../container'
 import Container from './Container'
 import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
+import { PepeIcon } from '../../icons/PepeIcon'
 
 const ITEMS = [
   {
@@ -74,8 +75,8 @@ export const GlobalNav: FC<HeaderProps> = ({
         <div className="grid grid-cols-2 items-center w-full mx-auto z-[101] px-4">
           <div className="flex items-center sm:gap-2">
             <a className="flex flex-row items-center sm:pl-2 sm:pr-6" href="/">
-              <div className="w-7 h-7 sm:w-8 sm:h-8">
-                <SushiIcon width="100%" height="100%" className="sm:mr-2" />
+              <div className="w-8 h-8 sm:w-9 sm:h-9">
+                <PepeIcon width="100%" height="100%" className="sm:mr-2" />
               </div>
             </a>
             <Menu as="div" className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>

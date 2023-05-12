@@ -1,11 +1,10 @@
-import { ChainId } from '@sushiswap/chain'
 import React, { FC, useMemo } from 'react'
 
 import { NETWORK_CIRCLE_ICON, NETWORK_NAKED_ICON } from './network'
 
 interface Props extends React.ComponentProps<'svg'> {
   type?: 'naked' | 'circle'
-  chainId: ChainId
+  chainId: number
 }
 
 export const NetworkIcon: FC<Props> = ({ type = 'circle', chainId, ...props }) => {

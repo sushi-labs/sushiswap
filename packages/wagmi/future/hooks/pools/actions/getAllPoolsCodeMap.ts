@@ -1,15 +1,20 @@
 import { UsePoolsParams } from '../types'
-import { DataFetcher, LiquidityProviders } from '@sushiswap/router'
+import { DataFetcher, LiquidityProviders, PoolCode } from '@sushiswap/router'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
 
-export const getAllPoolsCodeMap = async (variables: Omit<UsePoolsParams, 'enabled'>) => {
-  const dataFetcher = DataFetcher.onChain(variables.chainId)
+const nullPoolCodeMap = new Map<string, PoolCode>()
+
+export const getAllPoolsCodeMap = async ({ currencyA, currencyB, chainId }: Omit<UsePoolsParams, 'enabled'>) => {
+  if (!currencyA || !currencyB || !chainId) {
+    return nullPoolCodeMap
+  }
+  const dataFetcher = DataFetcher.onChain(chainId)
   const liquidityProviders = [LiquidityProviders.SushiSwap, LiquidityProviders.Trident]
-  if (isRouteProcessor3ChainId(variables.chainId)) {
+  if (isRouteProcessor3ChainId(chainId)) {
     liquidityProviders.push(LiquidityProviders.SushiSwapV3)
   }
   dataFetcher.startDataFetching(liquidityProviders)
-  await dataFetcher.fetchPoolsForToken(variables.currencyA!, variables.currencyB!)
+  await dataFetcher.fetchPoolsForToken(currencyA, currencyB)
   dataFetcher.stopDataFetching()
-  return dataFetcher.getCurrentPoolCodeMap(variables.currencyA!, variables.currencyB!)
+  return dataFetcher.getCurrentPoolCodeMap(currencyA, currencyB)
 }

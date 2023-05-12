@@ -10,11 +10,11 @@ export const CarbonOffset: FC = () => {
   const [carbonOffset, setCarbonOffset] = useLocalStorage('carbonOffset', false)
 
   return (
-    <div className="p-4 rounded-lg bg-white dark:bg-slate-800">
+    <div className="p-4 rounded-lg">
       <div className="flex justify-between items-center gap-4">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           <h1 className="text-sm font-semibold text-gray-900 dark:text-slate-50">Carbon Offset</h1>
-          <span className="text-xs text-gray-600 dark:text-slate-500">
+          <span className="text-sm text-gray-600 dark:text-slate-500">
             Make transactions climate positive by offsetting them with Klima Infinity. The average cost to offset a
             transaction on Polygon is less than $0.01.
           </span>

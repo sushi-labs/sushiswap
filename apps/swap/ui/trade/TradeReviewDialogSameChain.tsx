@@ -22,6 +22,7 @@ import { warningSeverity, warningSeverityClassName } from '../../lib/warningSeve
 import { TradeRoute } from './TradeRoute'
 import { ZERO } from '@sushiswap/math'
 import { useSlippageTolerance } from '@sushiswap/hooks'
+import { swapErrorToUserReadableMessage } from 'lib/swapErrorToUserReadableMessage'
 
 export const TradeReviewDialogSameChain: FC = () => {
   const [open, setOpen] = useState(false)
@@ -194,7 +195,8 @@ export const TradeReviewDialogSameChain: FC = () => {
                   <div className="scroll bg-red/20 text-red-700 dark:bg-black/20 p-2 px-3 rounded-lg border border-slate-200/10 text-[10px] break-all max-h-[80px] overflow-y-auto">
                     {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
                     {/* @ts-ignore */}
-                    <code>{error ? ('data' in error ? error?.data?.message : error.message) : ''}</code>
+                    {swapErrorToUserReadableMessage(error)}
+                    {/* <code>{error ? ('data' in error ? error?.data?.message : error.message) : ''}</code> */}
                   </div>
                 </Collapsible>
               </div>

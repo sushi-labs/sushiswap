@@ -13,6 +13,7 @@ import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
 import { usePrice } from '@sushiswap/react-query'
 import { useBalanceWeb3 } from '../../../hooks'
+import dynamic from 'next/dynamic'
 
 export interface CurrencyInputProps {
   id?: string
@@ -32,7 +33,7 @@ export interface CurrencyInputProps {
   currencies?: Record<string, Token>
 }
 
-export const CurrencyInput: FC<CurrencyInputProps> = ({
+export const Component: FC<CurrencyInputProps> = ({
   id,
   disabled,
   value,
@@ -185,8 +186,13 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           currency={currency}
           disableMaxButton={disableMaxButton}
           balance={balance}
+          type={type}
         />
       </div>
     </div>
   )
 }
+
+export const CurrencyInput = dynamic(() => Promise.resolve(Component), {
+  ssr: false,
+})

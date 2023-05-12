@@ -8,13 +8,23 @@ import { useAccount } from 'wagmi'
 
 import { useBalances } from '../../../hooks'
 import { CheckerButton } from './types'
+import dynamic from 'next/dynamic'
 
 export interface AmountsProps extends CheckerButton {
   chainId: number | undefined
   amounts: (Amount<Type> | undefined)[]
 }
 
-export const Amounts: FC<AmountsProps> = ({ amounts, chainId, children, className, variant, fullWidth, as, size }) => {
+export const Component: FC<AmountsProps> = ({
+ type, amounts,
+  chainId,
+  children,
+  className,
+  variant,
+  fullWidth,
+  as,
+  size,
+}) => {
   const { address } = useAccount()
   const amountsAreDefined = useMemo(() => amounts.every((el) => el?.greaterThan(ZERO)), [amounts])
   const currencies = useMemo(() => amounts.map((amount) => amount?.currency), [amounts])
@@ -46,6 +56,7 @@ export const Amounts: FC<AmountsProps> = ({ amounts, chainId, children, classNam
           as={as}
           fullWidth={fullWidth}
           size={size}
+          type={type}
         >
           Enter Amount
         </Button>
@@ -53,11 +64,15 @@ export const Amounts: FC<AmountsProps> = ({ amounts, chainId, children, classNam
 
     if (!sufficientBalance)
       return (
-        <Button disabled className={className} variant={variant} as={as} fullWidth={fullWidth} size={size}>
+        <Button type={type} disabled className={className} variant={variant} as={as} fullWidth={fullWidth} size={size}>
           Insufficient Balance
         </Button>
       )
 
     return <>{children}</>
-  }, [amountsAreDefined, as, children, className, fullWidth, size, sufficientBalance, variant])
+  }, [type, amountsAreDefined, as, children, className, fullWidth, size, sufficientBalance, variant])
 }
+
+export const Amounts = dynamic(() => Promise.resolve(Component), {
+  ssr: false,
+})

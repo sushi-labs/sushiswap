@@ -1,6 +1,7 @@
-name: Check Types
+name: Sushi - type checking
 on:
-  push:
+  pull_request:
+    types: [opened, synchronize]
 jobs:
   build:
     runs-on: ubuntu-20.04

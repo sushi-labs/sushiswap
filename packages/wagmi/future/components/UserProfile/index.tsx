@@ -36,7 +36,7 @@ export const UserProfile: FC<ProfileProps> = () => {
     chainId: ChainId.ETHEREUM,
   })
 
-  const chainId = chain?.id || ChainId.ETHEREUM
+  const chainId = (chain?.id as ChainId) || ChainId.ETHEREUM
 
   if (isSm)
     return (

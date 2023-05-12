@@ -3,11 +3,9 @@ import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
-import { Button, Dots, Form } from '@sushiswap/ui'
-import { Approve, useBentoBoxTotal, useFuroStreamRouterContract } from '@sushiswap/wagmi'
+import { Dots, Form } from '@sushiswap/ui'
+import { getFuroStreamRouterContractConfig, useBentoBoxTotal, useFuroStreamRouterContract } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { Address } from '@wagmi/core'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useAccount } from '@sushiswap/wagmi'
@@ -18,10 +16,16 @@ import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../
 import { ZFundSourceToFundSource, ZTokenToToken } from '../../../lib/zod'
 import { CreateStreamFormSchemaType } from './schema'
 import { createToast } from '@sushiswap/ui/future/components/toast'
-import { bentoBoxV1Address } from '@sushiswap/bentobox'
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
-export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
+const APPROVE_TAG = 'createStreamSingle'
+
+export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = withCheckerRoot(({ chainId }) => {
   const { address } = useAccount()
+  const { approved } = useApproved(APPROVE_TAG)
   const contract = useFuroStreamRouterContract(chainId)
   const [signature, setSignature] = useState<Signature>()
 
@@ -50,7 +54,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = ({ chain
 
       const ts = new Date().getTime()
 
-      createToast({
+      void createToast({
         account: address,
         type: 'createStream',
         chainId: chainId,
@@ -138,7 +142,8 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = ({ chain
         dates?.startDate &&
         dates?.endDate &&
         recipient &&
-        isAddress(recipient)
+        isAddress(recipient) &&
+        approved
     ),
   })
 
@@ -146,38 +151,41 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = ({ chain
 
   return (
     <Form.Buttons className="flex flex-col items-end gap-3">
-      <Approve
-        className="!items-end"
-        components={
-          <Approve.Components>
-            <Approve.Bentobox
-              id="furo-create-single-stream-approve-bentobox"
-              enabled={formValid}
-              address={contract ? (contract.address as Address) : undefined}
-              onSignature={setSignature}
-            />
-            <Approve.Token
-              id="furo-create-single-stream-approve-token"
-              enabled={formValid && _amount?.greaterThan(ZERO)}
-              amount={_amount}
-              address={bentoBoxV1Address[chainId]}
-            />
-          </Approve.Components>
-        }
-        render={({ approved }) => {
-          return (
-            <Button
-              name="execute"
+      <Checker.Connect type="button" size="xl">
+        <Checker.Network type="button" size="xl" chainId={chainId}>
+          <Checker.Amounts type="button" size="xl" chainId={chainId} amounts={[_amount]}>
+            <Checker.ApproveBentobox
               type="button"
-              variant="filled"
-              disabled={isWritePending || !approved || !formValid}
-              onClick={() => sendTransaction?.()}
+              id="furo-create-single-stream-approve-bentobox"
+              size="xl"
+              chainId={chainId as BentoBoxV1ChainId}
+              contract={getFuroStreamRouterContractConfig(chainId).address}
+              onSignature={setSignature}
             >
-              {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Stream'}
-            </Button>
-          )
-        }}
-      />
+              <Checker.ApproveERC20
+                type="button"
+                contract={bentoBoxV1Address[chainId]}
+                id="furo-create-single-stream-approve-token"
+                size="xl"
+                amount={_amount}
+              >
+                <Checker.Success tag={APPROVE_TAG}>
+                  <Button
+                    size="xl"
+                    name="execute"
+                    type="button"
+                    variant="filled"
+                    disabled={isWritePending || !formValid}
+                    onClick={() => sendTransaction?.()}
+                  >
+                    {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Stream'}
+                  </Button>
+                </Checker.Success>
+              </Checker.ApproveERC20>
+            </Checker.ApproveBentobox>
+          </Checker.Amounts>
+        </Checker.Network>
+      </Checker.Connect>
     </Form.Buttons>
   )
-}
+})

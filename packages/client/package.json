@@ -24,7 +24,8 @@
     "build": "tsup src/index.ts --format esm --dts",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsup --watch ./src/**/*",
+    "dev": "tsup src/index.ts --format esm --watch --dts",
+    "prepublishOnly": "pnpm build",
     "lint": "TIMING=1 eslint . --fix"
   },
   "jest": {
@@ -46,10 +47,18 @@
     "eslint": "8.29.0",
     "swr": "2.1.0",
     "tsup": "6.5.0",
-    "typescript": "4.9.4",
-    "react": "18.2.0"
+    "typescript": "5.0.4"
   },
   "peerDependencies": {
-    "swr": "^2"
+    "swr": "2.1.0",
+    "react": "18.2.0"
+  },
+  "peerDependenciesMeta": {
+    "swr": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
   }
 }

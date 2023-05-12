@@ -25,7 +25,7 @@ export const NetworkSelectorDialog = <T extends number>({
           <Dialog open={open} onClose={() => close()}>
             <Dialog.Content className="flex flex-col gap-2 scroll sm:overflow-hidden !pb-0 !h-[75vh] sm:!h-[640px]">
               <Popover.Panel className="overflow-hidden">
-                <Search id="" value={query} loading={false} onChange={setQuery} />
+                <Search id="network-selector" value={query} loading={false} onChange={setQuery} />
                 <div className="h-[calc(100%-44px)] scroll overflow-auto py-3">
                   {networks
                     .filter((el) => (query ? chains[el].name.toLowerCase().includes(query.toLowerCase()) : Boolean))

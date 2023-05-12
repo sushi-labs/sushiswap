@@ -2,13 +2,14 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
 
 import { getUser } from '../../../lib/api'
+import { ChainId } from '@sushiswap/chain'
 
 const schema = z.object({
   id: z.string(),
   chainIds: z
     .string()
     .optional()
-    .transform((chainIds) => chainIds?.split(',').map((chainId) => Number(chainId))),
+    .transform((chainIds) => chainIds?.split(',').map((chainId) => Number(chainId) as ChainId)),
 })
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
