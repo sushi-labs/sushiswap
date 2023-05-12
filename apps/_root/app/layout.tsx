@@ -9,7 +9,7 @@ import Head from 'next/head'
 import React from 'react'
 
 import { Onramper } from '@sushiswap/wagmi/future/components'
-import { WagmiProvider } from '../components/WagmiProvider'
+import { WagmiConfig } from '../components/WagmiConfig'
 import { QueryClientProvider } from '../components/QueryClientProvider'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -24,13 +24,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="shortcut icon" href="/favicon.ico?v=1" />
       </Head>
       <body className="h-screen">
-        <WagmiProvider>
+        <WagmiConfig>
           <QueryClientProvider>
             <ThemeProvider>
               <Onramper.Provider>{children}</Onramper.Provider>
             </ThemeProvider>
           </QueryClientProvider>
-        </WagmiProvider>
+        </WagmiConfig>
       </body>
     </html>
   )
