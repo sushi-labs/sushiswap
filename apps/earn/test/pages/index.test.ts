@@ -149,13 +149,13 @@ test.describe('V2', () => {
       '/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/add'
     )
     await page.goto(addLiquidityUrl, { timeout: 25_000 })
-    await manageLiquidity(page, 'STAKE')
+    await manageStaking(page, 'STAKE')
 
     const removeLiquidityUrl = (process.env.PLAYWRIGHT_URL as string).concat(
       '/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/remove'
     )
     await page.goto(removeLiquidityUrl, { timeout: 25_000 })
-    await manageLiquidity(page, 'UNSTAKE')
+    await manageStaking(page, 'UNSTAKE')
     await page.reload({ timeout: 25_000 })
     await removeLiquidityV2(page)
   })
@@ -265,15 +265,24 @@ async function removeLiquidityV3(page: Page) {
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
 
-async function manageLiquidity(page: Page, type: 'STAKE' | 'UNSTAKE') {
+async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   await switchNetwork(page, CHAIN_ID)
   // check if the max button is visible, otherwise expand the section. For some reason the default state seem to be inconsistent, closed/open.
+  // TODO: fix this in the UI, the default state should be consistent
   const maxButtonSelector = page.locator(`[testdata-id=${type.toLowerCase()}-max-button]`)
   if (!(await maxButtonSelector.isVisible())) {
+  await expect(maxButtonSelector).toBeEnabled()
     await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-header]`).click()
   }
+  await expect(maxButtonSelector).toBeVisible()
+  await expect(maxButtonSelector).toBeEnabled()
   await maxButtonSelector.click()
-  await approve(page, 'approve-token0')
+
+  const approveLocator = page.locator('[testdata-id=approve-token0]')
+  await expect(approveLocator).toBeVisible()
+  await expect(approveLocator).toBeEnabled()
+  await approveLocator.click()
+
   const actionSelector = page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`)
   await expect(actionSelector).toBeVisible()
   await expect(actionSelector).toBeEnabled()
