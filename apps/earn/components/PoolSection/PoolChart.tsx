@@ -47,8 +47,8 @@ export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoad
   const isDark = useMediaQuery({ query: '(prefers-color-scheme: dark)' })
   const [chartType, setChartType] = useState<PoolChartType>(PoolChartType.Volume)
   const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Month)
-  console.log(graphPair)
-  const [xData, yData] = useMemo(() => {
+
+  const [xData, yData]: [number[], number[]] = useMemo(() => {
     const data =
       (chartTimespans[chartPeriod] < chartTimespans[PoolChartPeriod.Week]
         ? graphPair?.hourSnapshots
@@ -83,19 +83,26 @@ export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoad
       const valueNodes = document.getElementsByClassName('hoveredItemValue')
       const nameNodes = document.getElementsByClassName('hoveredItemName')
 
-      if (chartType === PoolChartType.APR) {
-        valueNodes[0].innerHTML = formatPercent(value)
-      } else {
-        valueNodes[0].innerHTML = formatUSD(value)
+      if (valueNodes[0]) {
+        if (chartType === PoolChartType.APR) {
+          valueNodes[0].innerHTML = formatPercent(value)
+        } else {
+          valueNodes[0].innerHTML = formatUSD(value)
+        }
       }
 
-      if (chartType === PoolChartType.Volume) {
-        valueNodes[1].innerHTML = formatUSD(value * Number(swapFee))
+      if (valueNodes[1]) {
+        if (chartType === PoolChartType.Volume) {
+          valueNodes[1].innerHTML = formatUSD(value * Number(swapFee))
+        }
       }
-      nameNodes[0].innerHTML = format(
-        new Date(name * 1000),
-        `dd MMM yyyy${chartTimespans[chartPeriod] < chartTimespans[PoolChartPeriod.Week] ? ' p' : ''}`
-      )
+
+      if (nameNodes[0]) {
+        nameNodes[0].innerHTML = format(
+          new Date(name * 1000),
+          `dd MMM yyyy${chartTimespans[chartPeriod] < chartTimespans[PoolChartPeriod.Week] ? ' p' : ''}`
+        )
+      }
     },
     [chartPeriod, chartType, swapFee]
   )

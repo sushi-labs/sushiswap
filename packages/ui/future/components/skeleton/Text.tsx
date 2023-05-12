@@ -22,7 +22,7 @@ export interface TextProps extends Omit<HTMLProps<HTMLDivElement>, 'size'> {
 const STYLES = {
   'text-xs': 'h-[18px]',
   'text-sm': 'h-5',
-  'text-base': 'h-[22px]',
+  'text-base': 'h-[24px]',
   'text-lg': 'h-[28px]',
   'text-xl': 'h-[28px]',
   'text-2xl': 'h-[44px]',

@@ -55,7 +55,7 @@ const _Pool = () => {
     shouldFetch: Boolean(chainId && address),
   })
 
-  const { data: graphData, isLoading: isGraphDataLoading } = usePoolGraphData(`${chainId}:${address}`)
+  const { data: graphData, isLoading: isGraphDataLoading } = usePoolGraphData({ poolId: address, chainId })
 
   if (!pool) return <></>
   if (pool.type === 'CONCENTRATED_LIQUIDITY_POOL') {

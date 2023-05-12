@@ -94,7 +94,7 @@ const Pool: FC = () => {
 
   const [granularity, setGranularity] = useState<Granularity>(Granularity.Day)
 
-  const { data: graphData, isLoading: isGraphDataLoading } = usePoolGraphData({ poolId, chainId })
+  const { data: graphData, isLoading: isGraphDataLoading } = usePoolGraphData({ poolId, chainId, type: 'V3' })
 
   const { data: poolStats } = useConcentratedLiquidityPoolStats({ chainId, address: poolId })
   const { data: pool, isLoading } = useConcentratedLiquidityPool({
