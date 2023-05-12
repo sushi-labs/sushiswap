@@ -11,7 +11,8 @@ import { DefaultSeo } from 'next-seo'
 import React, { FC, useEffect } from 'react'
 import { WagmiConfig } from '@sushiswap/wagmi'
 import SEO from '../next-seo.config.mjs'
-import { QueryClientProvider } from 'components/QueryClientProvider'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { queryClient } from '@sushiswap/react-query'
 
 declare global {
   interface Window {
@@ -50,7 +51,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="shortcut icon" href="/favicon.ico?v=1" />
       </Head>
       <WagmiConfig client={client}>
-        <QueryClientProvider>
+        <QueryClientProvider client={queryClient}>
           <ThemeProvider>
             <App.Shell>
               <DefaultSeo {...SEO} />

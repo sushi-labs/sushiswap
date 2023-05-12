@@ -1,5 +1,4 @@
 import { Head, Html, Main, NextScript } from 'next/document'
-import { useRouter } from 'next/router'
 
 const MyDocument = () => {
   return (
