@@ -8,7 +8,7 @@ import { Header } from '../ui/Header'
 import { WagmiProvider } from '../ui/WagmiProvider'
 import Head from 'next/head'
 import { AppProps } from 'next/app'
-import { SwapProvider } from 'ui/trade/TradeProvider'
+import { SwapProvider } from '../ui/trade/TradeProvider'
 import { Onramper } from '@sushiswap/wagmi/future/components'
 import { SplashController } from '../ui/SplashController'
 import { NetworkCheck } from '../ui/NetworkCheck'
@@ -17,8 +17,6 @@ import { queryClient } from '@sushiswap/react-query'
 import { TokenProvider } from '../ui/TokenProvider'
 import Script from 'next/script'
 import { useRouter } from 'next/router'
-
-export { reportWebVitals } from 'next-axiom'
 
 declare global {
   interface Window {
@@ -90,5 +88,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
     </>
   )
 }
+
+export { reportWebVitals } from 'next-axiom'
 
 export default MyApp

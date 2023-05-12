@@ -10,11 +10,20 @@ import React from 'react'
 
 import { Onramper } from '@sushiswap/wagmi/future/components'
 import { WagmiProvider } from '../components/WagmiProvider'
-import { QueryClientProvider } from 'components/QueryClientProvider'
+
+import { QueryClientProvider } from '@tanstack/react-query'
+import { queryClient } from '@sushiswap/react-query'
+
+import { Inter } from 'next/font/google'
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+})
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html className="dark">
+    <html lang="en" className={`${inter.className} dark`}>
       <Head>
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=1" />
@@ -25,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </Head>
       <body className="h-screen">
         <WagmiProvider>
-          <QueryClientProvider>
+          <QueryClientProvider client={queryClient}>
             <ThemeProvider>
               <Onramper.Provider>{children}</Onramper.Provider>
             </ThemeProvider>

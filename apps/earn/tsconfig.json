@@ -1,5 +1,5 @@
 {
-  "extends": "@sushiswap/typescript-config/nextjs.json",
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/next/tsconfig.json"],
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {

@@ -7,9 +7,9 @@ import { NetworkIcon } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import Button from '@sushiswap/ui/future/components/button/Button'
-import { ZERO } from '@sushiswap/core-sdk'
+import { ZERO } from '@sushiswap/math'
 import { routeProcessor2Address, RouteProcessor2ChainId } from '@sushiswap/route-processor/exports/exports'
-import { CheckIcon } from '@heroicons/react/solid'
+import { CheckIcon } from '@heroicons/react-v1/solid'
 import { Address } from 'wagmi'
 
 export const RevokeItem: FC<{ token: Token; account: Address }> = ({ account, token }) => {
