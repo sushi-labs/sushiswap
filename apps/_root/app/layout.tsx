@@ -1,5 +1,3 @@
-'use client'
-
 import '@sushiswap/ui/index.css'
 import '../variables.css'
 
@@ -10,9 +8,7 @@ import React from 'react'
 
 import { Onramper } from '@sushiswap/wagmi/future/components'
 import { WagmiProvider } from '../components/WagmiProvider'
-
-import { QueryClientProvider } from '@tanstack/react-query'
-import { queryClient } from '@sushiswap/react-query'
+import { QueryClientProvider } from '../components/QueryClientProvider'
 
 import { Inter } from 'next/font/google'
 
@@ -34,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </Head>
       <body className="h-screen">
         <WagmiProvider>
-          <QueryClientProvider client={queryClient}>
+          <QueryClientProvider>
             <ThemeProvider>
               <Onramper.Provider>{children}</Onramper.Provider>
             </ThemeProvider>
