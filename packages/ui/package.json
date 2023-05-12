@@ -41,6 +41,7 @@
     "classnames": "2.3.2",
     "date-fns": "2.29.3",
     "nanoid": "4.0.0",
+    "next-themes": "^0.2.1",
     "rc-tooltip": "^5.2.2",
     "react-datepicker": "^4.8.0",
     "react-dropzone": "^14.2.2",
@@ -74,11 +75,11 @@
     "wagmi": "0.12.12"
   },
   "peerDependencies": {
+    "next": "*",
     "react": "*",
     "react-dom": "*",
     "tailwindcss": "*",
-    "wagmi": "*",
-    "next": "*"
+    "wagmi": "*"
   },
   "peerDependenciesMeta": {
     "react": {
