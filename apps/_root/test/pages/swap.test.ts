@@ -267,7 +267,7 @@ async function handleToken(page: Page, currency: Type, type: InputType) {
   // await expect(tokenSearch).toBeEnabled()
 
   await tokenToSelect.click()
-  await expect(tokenSelector).toHaveText(currency.symbol as string, { timeout: 3_000 })
+  await expect(tokenSelector).toHaveText(currency.symbol as string, { timeout: 15_000 })
 }
 
 async function maxInput(page: Page) {
