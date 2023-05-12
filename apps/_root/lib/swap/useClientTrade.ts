@@ -21,7 +21,7 @@ import {
   usePairs,
   PairState,
 } from '@sushiswap/wagmi'
-import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from 'config'
+import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from '../../config'
 import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 
 import { BigNumber } from 'ethers'

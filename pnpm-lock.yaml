@@ -326,6 +326,7 @@ importers:
       '@heroicons/react': 2.0.13
       '@heroicons/react-v1': npm:@heroicons/react@v1
       '@hookform/resolvers': 2.9.10
+      '@layerzerolabs/scan-client': 0.0.0-beta.6
       '@octokit/auth-app': ^4.0.4
       '@playwright/test': 1.32.1
       '@sushiswap/abi': workspace:*
@@ -416,6 +417,7 @@ importers:
       '@heroicons/react': 2.0.13_react@18.2.0
       '@heroicons/react-v1': /@heroicons/react/1.0.6_react@18.2.0
       '@hookform/resolvers': 2.9.10_react-hook-form@7.41.2
+      '@layerzerolabs/scan-client': 0.0.0-beta.6
       '@octokit/auth-app': 4.0.7
       '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/amm': link:../../packages/amm
