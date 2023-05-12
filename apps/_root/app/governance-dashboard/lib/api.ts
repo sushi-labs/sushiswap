@@ -156,13 +156,25 @@ export async function getLatestGovernanceItems(filters?: {
 }
 
 export async function getForumStats() {
-  const data = await fetchDiscourse<{
-    about: {
-      stats: { user_count: number; active_users_7_days: number; active_users_30_days: number; topic_count: number }
+  const query = gql`
+    query Space {
+      space(id: "sushigov.eth") {
+        proposalsCount
+      }
     }
-  }>('about.json')
+  `
+  const [forumStats, proposalCountRes] = await Promise.all([
+    fetchDiscourse<{
+      about: {
+        stats: { user_count: number; active_users_7_days: number; active_users_30_days: number }
+      }
+    }>('about.json'),
+    request<{ space: { proposalsCount: number } }>(SNAPSHOT_URL, query),
+  ])
 
-  return data?.about.stats
+  const data = { ...forumStats?.about.stats, proposalsCount: proposalCountRes.space.proposalsCount }
+
+  return data
 }
 
 export async function getTokenHolders(filters?: { balanceFilter: number; orderDirection: 'asc' | 'desc' }): Promise<{

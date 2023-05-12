@@ -42,7 +42,7 @@ export async function Stats() {
               </div>
               <div className="flex flex-col gap-1 text-right">
                 <label className="text-sm text-slate-400">Total Proposals</label>
-                <span className="text-2xl font-bold">{formatNumber(forumStats?.topic_count)}</span>
+                <span className="text-2xl font-bold">{formatNumber(forumStats?.proposalsCount)}</span>
               </div>
             </div>
             <div className="flex justify-between">
