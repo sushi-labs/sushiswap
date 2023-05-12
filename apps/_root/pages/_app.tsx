@@ -11,8 +11,7 @@ import { DefaultSeo } from 'next-seo'
 import React, { FC, useEffect } from 'react'
 import { WagmiConfig } from '@sushiswap/wagmi'
 import SEO from '../next-seo.config.mjs'
-import { QueryClientProvider } from '@tanstack/react-query'
-import { queryClient } from '@sushiswap/react-query'
+import { QueryClientProvider } from '../components/QueryClientProvider'
 
 declare global {
   interface Window {
@@ -50,17 +49,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/favicon.ico?v=1" />
       </Head>
-      <WagmiConfig client={client}>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider>
-            <App.Shell>
-              <DefaultSeo {...SEO} />
-              <Component {...pageProps} />
-            </App.Shell>
-          </ThemeProvider>
-        </QueryClientProvider>
-      </WagmiConfig>
-      <Analytics />
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
       <Script
         id="gtag-init"
@@ -76,6 +64,18 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         `,
         }}
       />
+      <WagmiConfig client={client}>
+        <QueryClientProvider>
+          <ThemeProvider>
+            <App.Shell>
+              <DefaultSeo {...SEO} />
+              <Component {...pageProps} />
+              <App.Footer />
+            </App.Shell>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </WagmiConfig>
+      <Analytics />
     </>
   )
 }

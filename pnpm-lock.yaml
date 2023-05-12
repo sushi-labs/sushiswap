@@ -367,6 +367,7 @@ importers:
       '@tanstack/react-query-devtools': 4.28.0
       '@tanstack/react-query-persist-client': 4.28.0
       '@tanstack/react-table': 8.5.0
+      '@tsconfig/next': 1.0.5
       '@types/cors': ^2.8.13
       '@types/node': ^18.0.0
       '@types/numeral': 2.0.2
@@ -487,6 +488,7 @@ importers:
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
       '@sushiswap/typescript-config': link:../../config/typescript
+      '@tsconfig/next': 1.0.5
       '@types/cors': 2.8.13
       '@types/node': 18.11.18
       '@types/numeral': 2.0.2
@@ -11730,6 +11732,10 @@ packages:
 
   /@tsconfig/esm/1.0.3:
     resolution: {integrity: sha512-Gp56rIc3R8ab032nXMUitmc7YIb4nAi8DQ6Qt47tuL0Ssn9LIOm+o2FQmqPu3jX4z0TsqgzWwkmVygxcq+yHYg==}
+    dev: true
+
+  /@tsconfig/next/1.0.5:
+    resolution: {integrity: sha512-ZpAlWqSGE3ZWFqKmI3FiQEu8WcBF3uii1z1ovedMcALflsRoJnExp3YzWQ/fU7lzGmYtfX1CWFpf1Gl8aEC6GQ==}
     dev: true
 
   /@tsconfig/node10/1.0.9:
