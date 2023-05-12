@@ -2,17 +2,12 @@ import React from 'react'
 
 import { QuarterlyBudget } from './QuarterlyBudget'
 import { TreasuryOverview } from './TreasuryOverview'
-import { getTreasuryHistoricalTvl, getTreasurySnapshot } from '../lib'
 
-export default async function Finance() {
-  const [treasurySnapshot, treasuryHistoricalTvl] = await Promise.all([
-    getTreasurySnapshot(),
-    getTreasuryHistoricalTvl(),
-  ])
-
+export default function Finance() {
   return (
     <div className="space-y-20">
-      <TreasuryOverview treasurySnapshot={treasurySnapshot} treasuryHistoricalTvl={treasuryHistoricalTvl} />
+      {/* @ts-expect-error Async Server Component */}
+      <TreasuryOverview />
       <QuarterlyBudget />
     </div>
   )
