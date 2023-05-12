@@ -277,12 +277,8 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   await expect(maxButtonSelector).toBeVisible()
   await expect(maxButtonSelector).toBeEnabled()
   await maxButtonSelector.click()
-
-  const approveLocator = page.locator('[testdata-id=approve-token0]')
-  await expect(approveLocator).toBeVisible()
-  await expect(approveLocator).toBeEnabled()
-  await approveLocator.click()
-
+  await approve(page, 'approve-token0')
+  
   const actionSelector = page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`)
   await expect(actionSelector).toBeVisible()
   await expect(actionSelector).toBeEnabled()
@@ -296,7 +292,10 @@ async function removeLiquidityV2(page: Page) {
   await switchNetwork(page, CHAIN_ID)
   await page.locator('[testdata-id=remove-liquidity-max-button]').click()
 
-  await approve(page, 'remove-liquidity-trident-approve-token')
+  const approveLocator = page.locator('[testdata-id=remove-liquidity-trident-approve-token]')
+  await expect(approveLocator).toBeVisible()
+  await expect(approveLocator).toBeEnabled()
+  await approveLocator.click()
   
   const removeLiquidityLocator = page.locator('[testdata-id=remove-liquidity-trident-button]')
 
