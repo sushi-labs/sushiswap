@@ -5,7 +5,7 @@ import { HeaderNetworkSelector } from '@sushiswap/wagmi/future/components/Header
 import { UserProfile } from '@sushiswap/wagmi/future/components/UserProfile'
 import React, { FC } from 'react'
 
-import { SUPPORTED_CHAIN_IDS } from '../config'
+import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { Search } from './search/SearchProvider'
 import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
 import { useSwapActions } from './trade/TradeProvider'

@@ -9,17 +9,17 @@ import { List } from '@sushiswap/ui/future/components/list/List'
 import React, { FC, useCallback } from 'react'
 
 import { useSwapActions, useSwapState } from './TradeProvider'
-import { useTrade } from '../../lib/swap/useTrade'
+import { useTrade } from '../../../lib/swap/useTrade'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Dots } from '@sushiswap/ui/future/components/Dots'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { Collapsible, NetworkIcon } from '@sushiswap/ui'
 import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain/ConfirmationDialogCrossChain'
-import { warningSeverity } from '../../lib/swap/warningSeverity'
+import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import { ZERO } from '@sushiswap/math'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { swapErrorToUserReadableMessage } from '../../lib/swap/swapErrorToUserReadableMessage'
+import { swapErrorToUserReadableMessage } from '../../../lib/swap/swapErrorToUserReadableMessage'
 
 export const TradeReviewDialogCrossChain: FC = () => {
   const { review, token0, token1, recipient, network0, network1, amount, value } = useSwapState()

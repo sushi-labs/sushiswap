@@ -26,7 +26,6 @@
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
-    "@sushiswap/core-sdk": "^1.0.0-canary.65",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/database": "workspace:*",
     "@sushiswap/dexie": "workspace:*",

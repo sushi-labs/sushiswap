@@ -5,10 +5,10 @@ import { currencyFromShortCurrencyName, isShortCurrencyName, Native, Token, Type
 import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import { isAddress } from 'ethers/lib/utils'
-import { queryParamsSchema } from '../lib/swap/queryParamsSchema'
+import { queryParamsSchema } from '../../lib/swap/queryParamsSchema'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { useNetwork } from '@sushiswap/wagmi'
-import { SwapChainId } from '../types'
+import { SwapChainId } from '../../types'
 import { isUniswapV2FactoryChainId } from '@sushiswap/sushiswap/exports/exports'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident/exports/exports'
 

@@ -8,7 +8,7 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { useCustomTokens } from '@sushiswap/hooks'
-import { queryParamsSchema } from '../lib/swap/queryParamsSchema'
+import { queryParamsSchema } from '../../lib/swap/queryParamsSchema'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 
 export const TokenNotFoundDialog = () => {

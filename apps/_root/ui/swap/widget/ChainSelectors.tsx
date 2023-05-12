@@ -1,6 +1,6 @@
 import React, { FC, useCallback } from 'react'
 import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui/future/components/networkselector'
-import { Chain, chainName } from '@sushiswap/chain'
+import { Chain } from '@sushiswap/chain'
 import { Popover } from '@headlessui/react'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
@@ -63,7 +63,7 @@ export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-1 overflow-hidden">
                     <NetworkIcon type="naked" chainId={network0} width={32} height={32} />
-                    <span className="w-full text-left truncate">{chainName[network0]}</span>
+                    <span className="w-full text-left truncate">{Chain.from(network0).name}</span>
                   </div>
                   <div className="min-w-4 min-h-4">
                     <ChevronDownIcon width={16} height={16} strokeWidth={3} />
@@ -89,7 +89,7 @@ export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center justify-start gap-1 overflow-hidden">
                     <NetworkIcon type="naked" chainId={network1} width={32} height={32} />
-                    <span className="w-full text-left truncate">{chainName[network1]}</span>
+                    <span className="w-full text-left truncate">{Chain.from(network1).name}</span>
                   </div>
                   <div className="min-w-4 min-h-4">
                     <ChevronDownIcon width={16} height={16} strokeWidth={3} />

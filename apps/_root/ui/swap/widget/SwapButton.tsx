@@ -4,10 +4,10 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import React, { FC, useEffect, useState } from 'react'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { useTrade } from '../../lib/swap/useTrade'
+import { useTrade } from '../../../lib/swap/useTrade'
 import { Native } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
-import { warningSeverity } from '../../lib/swap/warningSeverity'
+import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import {
   isRouteProcessor3ChainId,
   isRouteProcessorChainId,

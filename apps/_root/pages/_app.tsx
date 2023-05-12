@@ -1,5 +1,5 @@
 import '@sushiswap/ui/index.css'
-import 'styles/index.css'
+import '../styles/index.css'
 import '../variables.css'
 
 import { useIsSmScreen } from '@sushiswap/hooks'
@@ -17,7 +17,6 @@ import { WagmiConfig } from '@sushiswap/wagmi'
 
 import { Header } from '../components'
 import SEO from '../next-seo.config.mjs'
-import { ToastContainer } from '@sushiswap/ui/future/components/toast'
 import { QueryClientProvider } from 'components/QueryClientProvider'
 
 declare global {
@@ -71,6 +70,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           </ThemeProvider>
         </QueryClientProvider>
       </WagmiConfig>
+      <Analytics />
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
       <Script
         id="gtag-init"
@@ -86,7 +86,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         `,
         }}
       />
-      <Analytics />
     </>
   )
 }

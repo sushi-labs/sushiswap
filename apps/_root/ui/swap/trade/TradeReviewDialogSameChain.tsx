@@ -9,7 +9,7 @@ import { List } from '@sushiswap/ui/future/components/list/List'
 import React, { FC, useCallback, useState } from 'react'
 
 import { useSwapActions, useSwapState } from './TradeProvider'
-import { useTrade } from '../../lib/swap/useTrade'
+import { useTrade } from '../../../lib/swap/useTrade'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import { Dots } from '@sushiswap/ui/future/components/Dots'
@@ -18,11 +18,11 @@ import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
 import { classNames, Collapsible } from '@sushiswap/ui'
-import { warningSeverity, warningSeverityClassName } from '../../lib/swap/warningSeverity'
+import { warningSeverity, warningSeverityClassName } from '../../../lib/swap/warningSeverity'
 import { TradeRoute } from './TradeRoute'
 import { ZERO } from '@sushiswap/math'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { swapErrorToUserReadableMessage } from '../../lib/swap/swapErrorToUserReadableMessage'
+import { swapErrorToUserReadableMessage } from '../../../lib/swap/swapErrorToUserReadableMessage'
 
 export const TradeReviewDialogSameChain: FC = () => {
   const [open, setOpen] = useState(false)

@@ -3,8 +3,8 @@
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import React, { FC } from 'react'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
-import { usePctChange } from '../../lib/swap/usePctChange'
-import { useTrade } from '../../lib/swap/useTrade'
+import { usePctChange } from '../../../lib/swap/usePctChange'
+import { useTrade } from '../../../lib/swap/useTrade'
 import { useTokenState } from '../TokenProvider'
 
 export const SwapCurrencyOutput: FC = () => {

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { ZERO } from '@sushiswap/math'
-import { useSwapState } from '../../ui/trade/TradeProvider'
+import { useSwapState } from '../../ui/swap/trade/TradeProvider'
 import { usePrice } from '@sushiswap/react-query'
 import { useTrade } from './useTrade'
 

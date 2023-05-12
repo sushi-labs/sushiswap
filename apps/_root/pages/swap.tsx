@@ -1,15 +1,15 @@
 import Container from '@sushiswap/ui/future/components/Container'
-import { TradeStats } from '../ui/trade/TradeStats'
-import { Widget } from '../ui/widget/Widget'
+import { TradeStats } from '../ui/swap/trade/TradeStats'
+import { Widget } from '../ui/swap/widget/Widget'
 import { Drawer } from '@sushiswap/ui/future/components/drawer'
-import { TokenNotFoundDialog } from '../ui/TokenNotFoundDialog'
-import { TradeReviewDialog } from '../ui/trade/TradeReviewDialog'
+import { TokenNotFoundDialog } from '../ui/swap/TokenNotFoundDialog'
+import { TradeReviewDialog } from '../ui/swap/trade/TradeReviewDialog'
 import React, { FC } from 'react'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { ExploitApprovalAlert } from '../ui/ExploitApprovalAlert'
-import { SwapProvider } from '../ui/trade/TradeProvider'
-import { SplashController } from '../ui/SplashController'
-import { TokenProvider } from '../ui/TokenProvider'
+import { ExploitApprovalAlert } from '../ui/swap/ExploitApprovalAlert'
+import { SwapProvider } from '../ui/swap/trade/TradeProvider'
+import { SplashController } from '../ui/swap/SplashController'
+import { TokenProvider } from '../ui/swap/TokenProvider'
 export const Page: FC = () => {
   return (
     <TokenProvider>

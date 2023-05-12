@@ -9,7 +9,7 @@ import { useRouter } from 'next/router'
 import { Signature } from '@ethersproject/bytes'
 import { nanoid } from 'nanoid'
 import { SwapChainId } from 'types'
-import { queryParamsSchema } from '../../lib/swap/queryParamsSchema'
+import { queryParamsSchema } from '../../../lib/swap/queryParamsSchema'
 import { useTokenState } from '../TokenProvider'
 
 interface InternalSwapState {
