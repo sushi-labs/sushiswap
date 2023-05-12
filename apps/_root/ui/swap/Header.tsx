@@ -1,5 +1,3 @@
-'use client'
-
 import { GlobalNav, NavLink } from '@sushiswap/ui/future/components/GlobalNav'
 import { HeaderNetworkSelector } from '@sushiswap/wagmi/future/components/HeaderNetworkSelector'
 import { UserProfile } from '@sushiswap/wagmi/future/components/UserProfile'
