@@ -1,8 +1,7 @@
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { tryParseAmount } from '@sushiswap/currency'
 import { Pool, Protocol } from '@sushiswap/client'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Button, Dots } from '@sushiswap/ui'
+import { useIsMounted } from '@sushiswap/hooks'
 import {
   ConstantProductPoolState,
   getTridentRouterContractConfig,
