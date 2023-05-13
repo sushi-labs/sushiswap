@@ -1,11 +1,10 @@
+import { GlobalNav, NavLink, SubNav, SubNavLink } from '@sushiswap/ui/future/components/GlobalNav'
 import { DOCS_URL } from 'common/helpers'
 import { getDifficulties, getProducts } from 'lib/api'
-import { useRouter } from 'next/router'
 import React, { FC, useMemo } from 'react'
 import useSWR from 'swr'
 
-import { MobileMenu } from '.'
-import { GlobalNav, NavLink, SubNav, SubNavLink } from '@sushiswap/ui/future/components/GlobalNav'
+import { MobileMenu } from './'
 
 interface HeaderLink {
   name: string
@@ -21,11 +20,11 @@ export interface HeaderSection {
 }
 
 const PRODUCTS_ORDER = ['trident', 'furo', 'sushixswap', 'onsen', 'kashi', 'miso', 'bentobox']
+const BASE_URL = '/academy'
 
 export const Header: FC = () => {
   const { data: productsData } = useSWR('/products', async () => (await getProducts())?.products)
   const { data: difficultiesData } = useSWR('/difficulties', async () => (await getDifficulties())?.difficulties)
-  const { pathname } = useRouter()
 
   const products = useMemo(() => productsData?.data ?? [], [productsData?.data])
   const difficulties = useMemo(() => difficultiesData?.data ?? [], [difficultiesData?.data])
@@ -38,11 +37,12 @@ export const Header: FC = () => {
 
   const navData: HeaderSection[] = useMemo(
     () => [
+      { title: 'Academy', href: BASE_URL },
       {
         title: 'Products',
         links: sortedProducts.map(({ attributes }) => ({
           name: attributes?.longName as string,
-          href: `/academy/products/${attributes?.slug}`,
+          href: `${BASE_URL}/products/${attributes?.slug}`,
         })),
       },
       {
@@ -51,20 +51,13 @@ export const Header: FC = () => {
           const isTechnical = attributes?.slug === 'technical'
           return {
             name: attributes?.shortDescription as string,
-            href: isTechnical ? DOCS_URL : `/academy/articles?difficulty=${attributes?.slug}`,
+            href: isTechnical ? DOCS_URL : `${BASE_URL}/articles?difficulty=${attributes?.slug}`,
             isExternal: isTechnical,
           }
         }),
       },
-      {
-        title: 'Blog',
-        href: 'https://www.sushi.com/blog',
-        isExternal: true,
-      },
-      {
-        title: 'About',
-        href: '/about',
-      },
+      { title: 'Blog', href: 'https://www.sushi.com/blog', isExternal: true },
+      { title: 'About', href: `${BASE_URL}/about` },
     ],
     [difficulties, sortedProducts]
   )
