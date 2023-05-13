@@ -10,6 +10,7 @@ import { SushiIcon } from './icons'
 import { MaxWidth } from '../../container'
 import Container from './Container'
 import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
+import { PepeIcon } from '../../icons/PepeIcon'
 
 const ITEMS = [
   {
@@ -63,7 +64,7 @@ export const GlobalNav: FC<HeaderProps> = ({
       style={{ height: HEADER_HEIGHT }}
       className={classNames(
         showBackground
-          ? 'lg:bg-gray-200/70 lg:dark:bg-slate-900 lg:dark:border-slate-200/5 lg:border-gray-300/70 lg:backdrop-blur-md lg:backdrop-saturate-[3] lg:border-b'
+          ? 'bg-gray-100 dark:bg-slate-900 lg:dark:border-slate-200/5 lg:border-gray-300/70 lg:border-b'
           : 'lg:border-transparent',
         transparent ? '' : 'bg-gray-100 dark:bg-slate-900 border-gray-300/70 dark:border-slate-200/5 border-b',
         'sticky flex items-center top-0 z-[1070] transition-all',
@@ -74,8 +75,8 @@ export const GlobalNav: FC<HeaderProps> = ({
         <div className="grid grid-cols-2 items-center w-full mx-auto z-[101] px-4">
           <div className="flex items-center sm:gap-2">
             <a className="flex flex-row items-center sm:pl-2 sm:pr-6" href="/">
-              <div className="w-7 h-7 sm:w-8 sm:h-8">
-                <SushiIcon width="100%" height="100%" className="sm:mr-2" />
+              <div className="w-8 h-8 sm:w-9 sm:h-9">
+                <PepeIcon width="100%" height="100%" className="sm:mr-2" />
               </div>
             </a>
             <Menu as="div" className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
@@ -85,16 +86,16 @@ export const GlobalNav: FC<HeaderProps> = ({
               <Transition
                 show={open}
                 enter="transition duration-300 ease-out"
-                enterFrom="transform translate-y-[-16px] opacity-0"
-                enterTo="transform translate-y-0 opacity-100"
+                enterFrom="transform translate-y-[-16px]"
+                enterTo="transform translate-y-0"
                 leave="transition duration-300 ease-out"
                 leaveFrom="transform translate-y-0 opacity-100"
                 leaveTo="transform translate-y-[-16px] opacity-0"
               >
                 <div className="absolute pt-2 w-[max-content]">
-                  <Menu.Items className="rounded-2xl p-3 w-[max-content] bg-white shadow-md dark:bg-slate-700 !max-h-[unset]">
+                  <Menu.Items className="rounded-2xl p-3 w-[max-content] bg-white shadow-md dark:bg-slate-800 !max-h-[unset]">
                     <a
-                      href="https://sushi.com"
+                      href="https://www.sushi.com"
                       className="cursor-pointer p-2 text-lg font-semibold flex gap-2 items-center hover:text-blue"
                     >
                       Discover Sushi <ArrowSmallRightIcon width={24} height={24} strokeWidth={5} />

@@ -130,7 +130,7 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
 
   const placeholder = useMemo(() => {
     if (!rest.width || !rest.height) return 'empty'
-    if (rest.width < 40 || rest.height < 40) return 'empty'
+    if ((rest.width as number) < 40 || (rest.height as number) < 40) return 'empty'
     return 'blur'
   }, [rest?.width, rest?.height])
 

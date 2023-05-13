@@ -13,4 +13,7 @@ export type CheckerProps = {
   Custom: FC<CustomProps>
 }
 
+/**
+ * @deprecated use future/systems/Checker
+ */
 export const Checker: CheckerProps = { Amounts, Connected, Network, Custom }

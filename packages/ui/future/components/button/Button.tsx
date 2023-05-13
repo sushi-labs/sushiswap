@@ -10,7 +10,7 @@ export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 export type ButtonVariant = 'outlined' | 'filled' | 'empty'
 
 interface Props {
-  children?: ReactNode
+  children?: ReactNode | Array<ReactNode>
   startIcon?: ReactNode
   endIcon?: ReactNode
   color?: ButtonColor

@@ -1,8 +1,8 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
 
-import { DecimalToString, Prisma, PrismaClient } from '@sushiswap/database'
-import type { PoolType } from '@sushiswap/database'
+import { Prisma, PrismaClient } from '@sushiswap/database'
+import type { DecimalToString, PoolType } from '@sushiswap/database'
 import { z } from 'zod'
 
 const AllPools = z.object({

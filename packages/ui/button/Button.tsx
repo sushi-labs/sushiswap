@@ -26,6 +26,9 @@ export type ButtonComponent = <C extends React.ElementType = 'button'>(
   props: ButtonProps<C>
 ) => React.ReactElement | null
 
+/**
+ * @deprecated use ui/future/button
+ */
 export const Button: ButtonComponent = React.forwardRef(
   <Tag extends React.ElementType = 'button'>(
     {

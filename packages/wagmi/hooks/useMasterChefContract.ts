@@ -58,10 +58,7 @@ export const getMiniChefContractConfig = (chainId: keyof typeof MINICHEF_ADDRESS
   } as const
 }
 
-export const getMasterChefContractConfig = (
-  chainId: keyof typeof MASTERCHEF_ADDRESS | keyof typeof MASTERCHEF_V2_ADDRESS | keyof typeof MINICHEF_ADDRESS,
-  chef: ChefType
-) => {
+export const getMasterChefContractConfig = (chainId: number, chef: ChefType) => {
   if (chef === ChefType.MasterChefV1) return _getMasterChefContractConfig(chainId as keyof typeof MASTERCHEF_ADDRESS)
   if (chef === ChefType.MasterChefV2)
     return getMasterChefContractV2Config(chainId as keyof typeof MASTERCHEF_V2_ADDRESS)

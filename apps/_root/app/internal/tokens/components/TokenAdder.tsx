@@ -1,4 +1,4 @@
-import { XIcon } from '@heroicons/react/solid'
+import { XIcon } from '@heroicons/react-v1/solid'
 import { Token as TokenEntity } from '@sushiswap/currency'
 import { CheckIcon, Currency, Loader, Menu, Typography } from '@sushiswap/ui'
 import stringify from 'fast-json-stable-stringify'
@@ -48,7 +48,7 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
           })
 
         // ! Won't reflect dev changes
-        const result = await fetch('https://sushi.com/api/partner/submitToken', {
+        const result = await fetch('https://www.sushi.com/api/partner/submitToken', {
           headers: {
             Accept: '*/*',
             'Content-Type': 'application/json',

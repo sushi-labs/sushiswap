@@ -1,11 +1,10 @@
 import {getAddress} from '@ethersproject/address'
-import {ChainId} from '@sushiswap/chain'
 import {Token} from '@sushiswap/currency'
 import {saveTokens} from "@sushiswap/dexie";
 import {useQuery} from '@tanstack/react-query'
 
 interface UseTokensParams {
-    chainId: ChainId
+    chainId: number
 }
 
 type Data = {
@@ -17,7 +16,7 @@ type Data = {
 }
 
 export const fetchTokensQueryFn = async () => {
-    const resp = await fetch(`https://tokens.sushi.com/v0`)
+    const resp = await fetch("https://tokens.sushi.com/v0")
     if (resp.status === 200) {
         const data: Array<Data> = await resp.json()
         await saveTokens({
@@ -33,7 +32,7 @@ export const fetchTokensQueryFn = async () => {
     throw new Error('Could not fetch tokens')
 }
 
-export const hydrateFetchTokensQueryFn = (data: Array<Data>, _chainId: ChainId) => {
+export const hydrateFetchTokensQueryFn = (data: Array<Data>, _chainId: number) => {
     return data.reduce<Record<string, Token>>((acc, {id, name, symbol, decimals}) => {
         const [chainId, address] = id.split(':')
         if (_chainId === +chainId) {
@@ -55,7 +54,7 @@ export const useTokens = ({chainId}: UseTokensParams) => {
         queryFn: fetchTokensQueryFn,
         select: (data) => hydrateFetchTokensQueryFn(data, chainId),
         keepPreviousData: true,
-        staleTime: 900, // 15 mins
-        cacheTime: 86400 // 24hs
+        staleTime: 900000, // 15 mins
+        cacheTime: 86400000 // 24hs
     })
 }

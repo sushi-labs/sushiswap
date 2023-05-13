@@ -1,4 +1,4 @@
-import { ChainId, chainName } from '@sushiswap/chain'
+import { chainName } from '@sushiswap/chain'
 import { createClient, Prisma, PrismaClient } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
@@ -106,7 +106,7 @@ async function start(client: PrismaClient) {
 }
 
 function transform(
-  chainId: ChainId,
+  chainId: number,
   data: V2PairsQuery
 ): {
   pools: Prisma.PoolCreateManyInput[]
@@ -134,7 +134,7 @@ function transform(
         Prisma.validator<Prisma.TokenCreateManyInput>()({
           id: chainId.toString().concat(':').concat(pair.token1.id),
           address: pair.token1.id,
-          chainId: chainId,
+          chainId,
           name: pair.token1.name,
           symbol: pair.token1.symbol,
           decimals: Number(pair.token1.decimals),

@@ -7,7 +7,7 @@ import { computePoolAddress, FeeAmount, TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { BigNumber } from 'ethers'
 import { Address, PublicClient } from 'viem'
 
-import { getV3CurrencyCombinations } from '../getCurrencyCombinations'
+import { getCurrencyCombinations } from '../getCurrencyCombinations'
 import type { PoolCode } from '../pools/PoolCode'
 import { UniV3PoolCode } from '../pools/UniV3Pool'
 import { LiquidityProvider } from './LiquidityProvider'
@@ -68,8 +68,9 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     this.databaseClient = databaseClient
   }
 
-  async fetchPoolsForToken(t0: Token, t1: Token): Promise<void> {
-    const staticPools = this.getStaticPools(t0, t1)
+  async fetchPoolsForToken(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void> {
+    let staticPools = this.getStaticPools(t0, t1)
+    if (excludePools) staticPools = staticPools.filter((p) => !excludePools.has(p.address))
     const slot0 = await this.client
       .multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
@@ -120,6 +121,8 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
         activeTick,
       })
     })
+
+    if (existingPools.length == 0) return
 
     const liquidityContracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
@@ -271,7 +274,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   }
 
   getStaticPools(t1: Token, t2: Token): StaticPool[] {
-    const currencyCombinations = getV3CurrencyCombinations(this.chainId, t1, t2)
+    const currencyCombinations = getCurrencyCombinations(this.chainId, t1, t2)
 
     const allCurrencyCombinationsWithAllFees: [Type, Type, FeeAmount][] = currencyCombinations.reduce<
       [Currency, Currency, FeeAmount][]

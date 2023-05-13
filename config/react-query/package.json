@@ -43,7 +43,7 @@
     "@tanstack/react-query": "4.28.0",
     "@tanstack/react-query-devtools": "4.28.0",
     "tsup": "6.5.0",
-    "typescript": "4.9.4"
+    "typescript": "5.0.4"
   },
   "peerDependencies": {
     "@tanstack/react-query": "4.28.0",

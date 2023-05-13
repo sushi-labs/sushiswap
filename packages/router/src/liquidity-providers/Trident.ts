@@ -1,5 +1,6 @@
 import { balanceOfAbi, getReservesAbi, getStableReservesAbi, totalsAbi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import type { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
 import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
@@ -47,7 +48,7 @@ interface PoolInfo {
 
 export class TridentProvider extends LiquidityProvider {
   // Need to override for type narrowing
-  chainId: BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId
+  chainId: Extract<ChainId, BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId>
 
   readonly TOP_POOL_SIZE = 155
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 1000
@@ -77,12 +78,13 @@ export class TridentProvider extends LiquidityProvider {
   databaseClient: PrismaClient | undefined
 
   constructor(
-    chainId: BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId,
+    chainId: Extract<ChainId, BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId>,
     web3Client: PublicClient,
     databaseClient?: PrismaClient
   ) {
     super(chainId, web3Client)
     this.chainId = chainId
+
     this.databaseClient = databaseClient
     if (
       !(chainId in this.bentoBox) ||
@@ -487,28 +489,28 @@ export class TridentProvider extends LiquidityProvider {
     //console.debug(`${this.getLogPrefix()} - UPDATED POOLS`)
   }
 
-  async getOnDemandPools(t0: Token, t1: Token): Promise<void> {
+  async getOnDemandPools(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void> {
     const topPoolAddresses = [...Array.from(this.topClassicPools.keys()), ...Array.from(this.topStablePools.keys())]
-    const pools = filterOnDemandPools(
+    let pools = filterOnDemandPools(
       Array.from(this.availablePools.values()),
       t0.address,
       t1.address,
       topPoolAddresses,
       this.ON_DEMAND_POOL_SIZE
     )
+    if (excludePools) pools = pools.filter((p) => !excludePools.has(p.address))
 
-    // if (pools.length === 0) {
-    //   // pools =
-    //   // return
-    // }
-
-    const [onDemandClassicPools, onDemandStablePools] =
+    let [onDemandClassicPools, onDemandStablePools] =
       pools.length > 0
         ? [
             pools.filter((p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.topClassicPools.has(p.address)),
             pools.filter((p) => p.type === 'STABLE_POOL' && !this.topStablePools.has(p.address)),
           ]
         : await TridentStaticPoolFetcher.getStaticPools(this.client, this.chainId, t0, t1)
+    if (excludePools)
+      onDemandClassicPools = (onDemandClassicPools as PoolResponse2[]).filter((p) => !excludePools.has(p.address))
+    if (excludePools)
+      onDemandStablePools = (onDemandStablePools as PoolResponse2[]).filter((p) => !excludePools.has(p.address))
 
     this.poolsByTrade.set(
       this.getTradeId(t0, t1),
@@ -531,9 +533,11 @@ export class TridentProvider extends LiquidityProvider {
     const bridgesToCreate: BentoBridgePoolCode[] = []
 
     sortedTokens.forEach((t, i) => {
+      const fakeBridgeAddress = `Bento bridge for ${t.symbol}`
+      if (excludePools?.has(fakeBridgeAddress)) return
       if (!this.bridges.has(t.address)) {
         const pool = new BridgeBento(
-          `Bento bridge for ${t.symbol}`,
+          fakeBridgeAddress,
           t as RToken,
           convertTokenToBento(t),
           BigNumber.from(0),
@@ -977,8 +981,8 @@ export class TridentProvider extends LiquidityProvider {
     }
   }
 
-  async fetchPoolsForToken(t0: Token, t1: Token): Promise<void> {
-    await this.getOnDemandPools(t0, t1)
+  async fetchPoolsForToken(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void> {
+    await this.getOnDemandPools(t0, t1, excludePools)
   }
 
   getCurrentPoolList(t0: Token, t1: Token): PoolCode[] {

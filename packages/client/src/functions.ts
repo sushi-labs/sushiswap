@@ -6,6 +6,6 @@ export function parseArgs<T>(args?: Partial<T>) {
     .reduce((acc, [key, value]) => {
       if (value === undefined) return acc
 
-      return `${acc}&${key}=` + (Array.isArray(value) ? value.join(',') : value)
+      return `${acc}&${key}=${Array.isArray(value) ? value.join(',') : value}`
     }, '?')
 }

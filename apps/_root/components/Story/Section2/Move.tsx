@@ -1,4 +1,4 @@
-import { ExternalLinkIcon } from '@heroicons/react/solid'
+import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import { Button, Container, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
@@ -21,7 +21,7 @@ export const Move: FC = () => {
                 <Button
                   as="a"
                   target="_blank"
-                  href="https://sushi.com/xswap"
+                  href="https://www.sushi.com/xswap"
                   className="!p-0 mt-3"
                   variant="empty"
                   endIcon={<ExternalLinkIcon width={16} height={16} />}

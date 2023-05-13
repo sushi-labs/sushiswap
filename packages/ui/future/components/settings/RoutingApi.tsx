@@ -8,11 +8,11 @@ export const RoutingApi: FC = () => {
   const [routingApi, setRoutingApi] = useLocalStorage('routingApi', false)
 
   return (
-    <div className="p-4 rounded-lg bg-white dark:bg-slate-800">
+    <div className="p-4 rounded-lg">
       <div className="flex justify-between items-center gap-4">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           <h1 className="text-sm font-semibold text-gray-900 dark:text-slate-50">Routing API</h1>
-          <span className="text-xs text-gray-600 dark:text-slate-500">...</span>
+          <span className="text-sm text-gray-600 dark:text-slate-500">...</span>
         </div>
         <Switch checked={routingApi} onChange={(checked) => setRoutingApi(checked)} />
       </div>

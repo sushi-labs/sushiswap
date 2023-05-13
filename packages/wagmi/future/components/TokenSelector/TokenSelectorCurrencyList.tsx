@@ -4,13 +4,12 @@ import { Currency } from '@sushiswap/ui/future/components/currency'
 import React, { FC, memo, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
-import { usePrices } from '../../../hooks'
 import { TokenSelectorRow } from './TokenSelectorRow'
-import { NativeAddress, useBalances } from '@sushiswap/react-query'
+import { NativeAddress, useBalances, usePrices } from '@sushiswap/react-query'
 
 interface TokenSelectorCurrencyListProps {
   id: string
-  currencies: Type[]
+  currencies: Type[] | undefined
   chainId: ChainId
   onSelect(currency: Type): void
   selected: Type | undefined

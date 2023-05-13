@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from '@heroicons/react/solid'
+import { ChevronDownIcon } from '@heroicons/react-v1/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI } from '@sushiswap/currency'
 import { useInterval } from '@sushiswap/hooks'
@@ -126,7 +126,7 @@ export const Hero: FC = () => {
                           delay: 3,
                         }}
                       >
-                        <Button as="a" href="https://sushi.com/swap" size="md" fullWidth className="relative z-10">
+                        <Button as="a" href="https://www.sushi.com/swap" size="md" fullWidth className="relative z-10">
                           Trade Now
                         </Button>
                       </motion.div>

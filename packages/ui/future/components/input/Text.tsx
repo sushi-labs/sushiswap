@@ -36,6 +36,7 @@ export function Text<T extends string | number>({ label, value, onChange, id, ca
           autoCapitalize="off"
           spellCheck="false"
           autoComplete="off"
+          testdata-id={id}
         />
         <label
           htmlFor={id}
@@ -44,7 +45,7 @@ export function Text<T extends string | number>({ label, value, onChange, id, ca
           {label}
         </label>
         {value !== '' && (
-          <div className="absolute flex items-center justify-center right-4 top-0 bottom-0">
+          <div className="absolute top-0 bottom-0 flex items-center justify-center right-4">
             <button
               onClick={() => onChange('' as T)}
               className="bg-black/[0.05] dark:bg-white/[0.08] hover:dark:bg-white/[0.16] hover:bg-gray-300 rounded-full p-0.5"
@@ -54,7 +55,7 @@ export function Text<T extends string | number>({ label, value, onChange, id, ca
           </div>
         )}
       </div>
-      {caption && <span className="text-xs text-gray-500 px-4 inline-block">{caption}</span>}
+      {caption && <span className="inline-block px-4 text-xs text-gray-500">{caption}</span>}
     </div>
   )
 }

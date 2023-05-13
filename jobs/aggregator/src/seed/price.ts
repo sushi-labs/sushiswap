@@ -3,9 +3,8 @@ import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import { totalsAbi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
-import type { ChainId } from '@sushiswap/chain'
 import { Prisma, PrismaClient, Token } from '@sushiswap/database'
-import { calcTokenPrices, ConstantProductRPool, Rebase, RPool, StableSwapRPool } from '@sushiswap/tines'
+import { calcTokenPrices, ConstantProductRPool, Rebase, RPool, RToken, StableSwapRPool } from '@sushiswap/tines'
 import { Address, readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
@@ -13,7 +12,7 @@ import { PoolType, Price, ProtocolName, ProtocolVersion } from '../config.js'
 
 const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 
-export async function prices(chainId: ChainId, base: string, price: Price, minimumLiquidity = 500000000) {
+export async function prices(chainId: number, base: string, price: Price, minimumLiquidity = 500000000) {
   const client = new PrismaClient()
   try {
     if (!Object.values(Price).includes(price)) {
@@ -44,7 +43,7 @@ export async function prices(chainId: ChainId, base: string, price: Price, minim
   }
 }
 
-async function getBaseToken(client: PrismaClient, chainId: ChainId, address: string) {
+async function getBaseToken(client: PrismaClient, chainId: number, address: string) {
   const baseToken = await client.token.findFirst({
     select: {
       address: true,
@@ -62,7 +61,7 @@ async function getBaseToken(client: PrismaClient, chainId: ChainId, address: str
   return baseToken
 }
 
-async function getPools(client: PrismaClient, chainId: ChainId) {
+async function getPools(client: PrismaClient, chainId: number) {
   const startTime = performance.now()
 
   const batchSize = 2500
@@ -78,7 +77,7 @@ async function getPools(client: PrismaClient, chainId: ChainId) {
       result = await getPoolsByPagination(client, chainId, batchSize, 1, { id: cursor })
     }
 
-    cursor = result.length == batchSize ? result[result.length - 1]?.id : null
+    cursor = result.length === batchSize ? result[result.length - 1]?.id : null
     totalCount += result.length
     results.push(result)
     const requestEndTime = performance.now()
@@ -97,7 +96,7 @@ async function getPools(client: PrismaClient, chainId: ChainId) {
 
 async function getPoolsByPagination(
   client: PrismaClient,
-  chainId: ChainId,
+  chainId: number,
   take: number,
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
@@ -139,7 +138,7 @@ async function getPoolsByPagination(
   })
 }
 
-async function transform(chainId: ChainId, pools: Pool[]) {
+async function transform(chainId: number, pools: Pool[]) {
   const tokens: Map<string, Token> = new Map()
   const stablePools = pools.filter((pool) => pool.type === PoolType.STABLE_POOL)
   const rebases = isBentoBoxV1ChainId(chainId) ? await fetchRebases(stablePools, chainId) : undefined
@@ -162,8 +161,8 @@ async function transform(chainId: ChainId, pools: Pool[]) {
       rPools.push(
         new ConstantProductRPool(
           pool.address,
-          token0,
-          token1,
+          token0 as RToken,
+          token1 as RToken,
           pool.swapFee,
           BigNumber.from(pool.reserve0),
           BigNumber.from(pool.reserve1)
@@ -176,8 +175,8 @@ async function transform(chainId: ChainId, pools: Pool[]) {
         rPools.push(
           new StableSwapRPool(
             pool.address,
-            token0,
-            token1,
+            token0 as RToken,
+            token1 as RToken,
             pool.swapFee,
             BigNumber.from(pool.reserve0),
             BigNumber.from(pool.reserve1),
@@ -213,7 +212,7 @@ async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId) {
         ({
           args: [t.address as Address],
           address: bentoBoxV1Address[chainId],
-          chainId: chainId,
+          chainId,
           abi: totalsAbi,
           functionName: 'totals',
         } as const)

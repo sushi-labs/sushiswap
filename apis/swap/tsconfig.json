@@ -1,14 +1,10 @@
 {
-  "extends": "@sushiswap/typescript-config/node18-strictest-esm.combined.json",
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node18/tsconfig"],
   "include": [".graphclient", "src/**/*.ts"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "./dist",
-    "rootDir": ".",
-    "moduleResolution": "nodenext",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "resolveJsonModule": true,
+    "moduleResolution": "nodenext"
   },
   "ts-node": {
     "esm": true,

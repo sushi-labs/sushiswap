@@ -1,4 +1,4 @@
-import { ChevronDownIcon, SearchIcon, StarIcon } from '@heroicons/react/solid'
+import { ChevronDownIcon, SearchIcon, StarIcon } from '@heroicons/react-v1/solid'
 import chains, { ChainId, chainShortName } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { useDebounce, useOnClickOutside } from '@sushiswap/hooks'
@@ -246,7 +246,7 @@ const Row: FC<{ currency: Type; onClick?(): void; isNetwork?: boolean }> = ({
 
   return (
     <a
-      href={`https://sushi.com/swap?token1=${currency.wrapped.address}&token0=0x0000000000000000000000000000000000000000&chainId=${currency.chainId}`}
+      href={`https://www.sushi.com/swap?token1=${currency.wrapped.address}&token0=0x0000000000000000000000000000000000000000&chainId=${currency.chainId}`}
     >
       {content}
     </a>

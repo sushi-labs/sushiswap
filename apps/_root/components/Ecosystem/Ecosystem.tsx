@@ -1,4 +1,4 @@
-import { ChevronRightIcon } from '@heroicons/react/solid'
+import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { Button, Container, Tab, Typography } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
 import Image from 'next/legacy/image'
@@ -35,7 +35,7 @@ const TABS: TabsExpendableCardData[] = [
         </p>
       </>
     ),
-    link: 'https://sushi.com/furo',
+    link: 'https://www.sushi.com/furo',
     linkText: 'Pay Someone',
     caption: 'For Retail Users',
   },
@@ -62,7 +62,7 @@ const TABS: TabsExpendableCardData[] = [
   //       <p>A variable interest rate ensures that lenders make the most yield possible, efficiently.</p>
   //     </>
   //   ),
-  //   link: 'https://sushi.com/kashi',
+  //   link: 'https://www.sushi.com/kashi',
   //   linkText: 'Visit Kashi',
   //   caption: 'For Retail Users',
   // },
@@ -100,7 +100,7 @@ const TABS: TabsExpendableCardData[] = [
   //       </p>
   //     </>
   //   ),
-  //   link: 'https://sushi.com/miso',
+  //   link: 'https://www.sushi.com/miso',
   //   linkText: 'Visit Launchpad',
   //   caption: 'For Retail Users',
   // },

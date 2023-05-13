@@ -1,7 +1,7 @@
 import { Popover, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
-import { ChevronDoubleDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
-import { Button, ButtonProps } from '@sushiswap/ui/future/components/button'
+import { ChevronDoubleDownIcon } from '@heroicons/react/24/outline'
+import { Button, ButtonComponent } from '@sushiswap/ui/future/components/button'
 import {
   CoinbaseWalletIcon,
   GnosisSafeIcon,
@@ -11,9 +11,9 @@ import {
 } from '@sushiswap/ui/future/components/icons'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Loader } from '@sushiswap/ui/future/components/Loader'
-import React, { Fragment, useCallback, useMemo } from 'react'
+import React, { FC, Fragment, useCallback, useMemo } from 'react'
 import { useConnect } from 'wagmi'
-import { classNames } from '@sushiswap/ui'
+import { classNames, ExtractProps } from '@sushiswap/ui'
 
 const Icons: Record<string, React.ElementType> = {
   Injected: ChevronDoubleDownIcon,
@@ -25,13 +25,11 @@ const Icons: Record<string, React.ElementType> = {
   Safe: GnosisSafeIcon,
 }
 
-export type Props<C extends React.ElementType> = ButtonProps<C> & {
-  // TODO ramin: remove param when wagmi adds onConnecting callback to useAccount
-  hack?: ReturnType<typeof useConnect>
+interface Props extends ExtractProps<ButtonComponent> {
   hideChevron?: boolean
 }
 
-export const ConnectButton = <C extends React.ElementType>({ hack, children, hideChevron, ...rest }: Props<C>) => {
+export const ConnectButton: FC<Props> = ({ children, hideChevron, ...rest }) => {
   const { connectors, connect, pendingConnector } = useConnect()
 
   const onSelect = useCallback(
@@ -58,7 +56,7 @@ export const ConnectButton = <C extends React.ElementType>({ hack, children, hid
   // Awaiting wallet confirmation
   if (pendingConnector) {
     return (
-      <Button endIcon={<Loader />} variant="filled" color="blue" size={rest.size} disabled {...rest}>
+      <Button endIcon={<Loader />} variant="filled" color="blue" size={rest.size} disabled type={rest.type} {...rest}>
         Authorize Wallet
       </Button>
     )

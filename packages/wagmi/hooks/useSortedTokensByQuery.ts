@@ -77,40 +77,42 @@ export const tokenComparator = (
   }
 }
 
+export function getSortedTokensByQuery(tokens: Token[] | undefined, searchQuery: string): Token[] {
+  if (!tokens) {
+    return []
+  }
+
+  if (searchQuery === '') {
+    return tokens
+  }
+
+  const symbolMatch = searchQuery
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((s) => s.length > 0)
+
+  if (symbolMatch.length > 1) {
+    return tokens
+  }
+
+  const exactMatches: Token[] = []
+  const symbolSubstrings: Token[] = []
+  const rest: Token[] = []
+
+  // sort tokens by exact match -> subtring on symbol match -> rest
+  tokens.map((token) => {
+    if (token.symbol?.toLowerCase() === symbolMatch[0]) {
+      return exactMatches.push(token)
+    } else if (token.symbol?.toLowerCase().startsWith(searchQuery.toLowerCase().trim())) {
+      return symbolSubstrings.push(token)
+    } else {
+      return rest.push(token)
+    }
+  })
+
+  return [...exactMatches, ...symbolSubstrings, ...rest]
+}
+
 export function useSortedTokensByQuery(tokens: Token[] | undefined, searchQuery: string): Token[] {
-  return useMemo(() => {
-    if (!tokens) {
-      return []
-    }
-
-    if (searchQuery === '') {
-      return tokens
-    }
-
-    const symbolMatch = searchQuery
-      .toLowerCase()
-      .split(/\s+/)
-      .filter((s) => s.length > 0)
-
-    if (symbolMatch.length > 1) {
-      return tokens
-    }
-
-    const exactMatches: Token[] = []
-    const symbolSubstrings: Token[] = []
-    const rest: Token[] = []
-
-    // sort tokens by exact match -> subtring on symbol match -> rest
-    tokens.map((token) => {
-      if (token.symbol?.toLowerCase() === symbolMatch[0]) {
-        return exactMatches.push(token)
-      } else if (token.symbol?.toLowerCase().startsWith(searchQuery.toLowerCase().trim())) {
-        return symbolSubstrings.push(token)
-      } else {
-        return rest.push(token)
-      }
-    })
-
-    return [...exactMatches, ...symbolSubstrings, ...rest]
-  }, [tokens, searchQuery])
+  return useMemo(() => getSortedTokensByQuery(tokens, searchQuery), [tokens, searchQuery])
 }

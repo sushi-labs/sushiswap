@@ -17,6 +17,8 @@ interface GenericTableProps<C> {
   pageSize: number
   linkFormatter?(row: C): string
   loadingOverlay?: boolean
+  headRowHeight?: number
+  rowHeight?: number
 }
 
 declare module '@tanstack/react-table' {
@@ -34,6 +36,8 @@ export const GenericTable = <T extends { id: string }>({
   pageSize,
   linkFormatter,
   loadingOverlay = true,
+  headRowHeight = 48,
+  rowHeight = 78,
 }: GenericTableProps<T>) => {
   const isMounted = useIsMounted()
   const [showOverlay, setShowOverlay] = useState(false)
@@ -53,9 +57,10 @@ export const GenericTable = <T extends { id: string }>({
         <Table.table style={{ minHeight: (pageSize + 1) * 52 }}>
           <Table.thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <Table.thr key={headerGroup.id}>
+              <Table.thr key={headerGroup.id} headRowHeight={headRowHeight}>
                 {headerGroup.headers.map((header) => (
                   <Table.th
+                    headRowHeight={headRowHeight}
                     key={header.id}
                     colSpan={header.colSpan}
                     style={{
@@ -115,7 +120,7 @@ export const GenericTable = <T extends { id: string }>({
                       }}
                     >
                       <Popover.Button>
-                        <Table.tr onClick={onClick} className="cursor-pointer">
+                        <Table.tr onClick={onClick} className="cursor-pointer" rowHeight={rowHeight}>
                           {row.getVisibleCells().map((cell, i) => {
                             return (
                               <Table.td
@@ -166,7 +171,7 @@ export const GenericTable = <T extends { id: string }>({
                   )
                 } else {
                   return (
-                    <Table.tr onClick={onClick} key={row.id} className="cursor-pointer">
+                    <Table.tr onClick={onClick} key={row.id} className="cursor-pointer" rowHeight={rowHeight}>
                       {row.getVisibleCells().map((cell, i) => {
                         return (
                           <Table.td
@@ -215,7 +220,7 @@ export const GenericTable = <T extends { id: string }>({
             {!loading &&
               table.getRowModel().rows.length !== 0 &&
               Array.from(Array(Math.max(pageSize - table.getRowModel().rows.length, 0))).map((el, index) => (
-                <Table.tr key={index}>
+                <Table.tr key={index} rowHeight={rowHeight}>
                   {table.getVisibleFlatColumns().map((column) => (
                     <Table.td
                       key={column.id}
@@ -236,7 +241,7 @@ export const GenericTable = <T extends { id: string }>({
               ))}
             {loading &&
               Array.from(Array(pageSize)).map((el, index) => (
-                <Table.tr key={index}>
+                <Table.tr key={index} rowHeight={rowHeight}>
                   {table.getVisibleFlatColumns().map((column) => {
                     return (
                       <Table.td

@@ -1,7 +1,6 @@
 import '../lib/wagmi.js'
 
 import { constantProductPoolAbi, stablePoolAbi } from '@sushiswap/abi'
-import { ChainId } from '@sushiswap/chain'
 import { createClient, Prisma, PrismaClient } from '@sushiswap/database'
 import { Address, readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
@@ -11,7 +10,7 @@ import { PoolType, ProtocolName, ProtocolVersion } from '../config.js'
 const SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 const SUPPORTED_TYPES = [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL]
 
-export async function reserves(chainId: ChainId) {
+export async function reserves(chainId: number) {
   const client = await createClient()
   try {
     const startTime = performance.now()
@@ -30,7 +29,7 @@ export async function reserves(chainId: ChainId) {
   }
 }
 
-async function getPools(client: PrismaClient, chainId: ChainId) {
+async function getPools(client: PrismaClient, chainId: number) {
   const startTime = performance.now()
 
   const batchSize = 2500
@@ -45,7 +44,7 @@ async function getPools(client: PrismaClient, chainId: ChainId) {
     } else {
       result = await getPoolsPagination(client, chainId, batchSize, 1, { id: cursor })
     }
-    cursor = result.length == batchSize ? result[result.length - 1].id : null
+    cursor = result.length === batchSize ? result[result.length - 1].id : null
     totalCount += result.length
     results.push(result)
     const requestEndTime = performance.now()
@@ -70,7 +69,7 @@ async function getPools(client: PrismaClient, chainId: ChainId) {
 
 async function getPoolsPagination(
   client: PrismaClient,
-  chainId: ChainId,
+  chainId: number,
   take?: number,
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
@@ -111,7 +110,7 @@ async function getPoolsPagination(
   })
 }
 
-async function getReserves(chainId: ChainId, pools: Map<string, PoolResult>) {
+async function getReserves(chainId: number, pools: Map<string, PoolResult>) {
   const startTime = performance.now()
   const poolsWithReserve: PoolWithReserve[] = []
   const batchSize = pools.size > 250 ? 250 : pools.size
@@ -197,7 +196,7 @@ async function getReserves(chainId: ChainId, pools: Map<string, PoolResult>) {
   return poolsToUpdate
 }
 
-async function updatePoolsWithReserve(client: PrismaClient, chainId: ChainId, pools: PoolWithReserve[]) {
+async function updatePoolsWithReserve(client: PrismaClient, chainId: number, pools: PoolWithReserve[]) {
   const startTime = performance.now()
   const batchSize = 250
   let updatedCount = 0

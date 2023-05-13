@@ -1,4 +1,4 @@
-import { ChevronRightIcon } from '@heroicons/react/solid'
+import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { Button, Container, Typography } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
 import { FC } from 'react'
@@ -27,7 +27,7 @@ const DATA: ExpendableCardData = {
       </p>
     </>
   ),
-  link: 'https://sushi.com/swap',
+  link: 'https://www.sushi.com/swap',
   linkText: 'Visit Swap',
 }
 

@@ -25,6 +25,8 @@ import {
 import { POOL_TYPE_MAP } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
 import { NextSeo } from 'next-seo'
+import PoolPageV3 from '../../components/PoolPageV3'
+import { useIsMounted } from '@sushiswap/hooks'
 
 const LINKS = (pool: Pool): BreadcrumbLink[] => [
   {
@@ -54,6 +56,9 @@ const _Pool = () => {
   })
 
   if (!pool) return <></>
+  if (pool.type === 'CONCENTRATED_LIQUIDITY_POOL') {
+    return <PoolPageV3 />
+  }
 
   return (
     <>

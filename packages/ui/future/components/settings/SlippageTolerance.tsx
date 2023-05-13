@@ -37,11 +37,11 @@ export const SlippageTolerance: FC<{
   }, [slippageTolerance])
 
   return (
-    <div className="p-4 rounded-lg bg-white dark:bg-slate-800">
+    <div className="p-4 rounded-lg">
       <div className="flex justify-between items-center gap-4">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           <h1 className="text-sm font-semibold text-gray-900 dark:text-slate-50">Automatic Slippage Tolerance</h1>
-          <span className="text-xs text-gray-600 dark:text-slate-500">
+          <span className="text-sm text-gray-600 dark:text-slate-500">
             Turn off automatic slippage tolerance <br /> to adjust the value.
           </span>
         </div>
@@ -50,9 +50,9 @@ export const SlippageTolerance: FC<{
           onChange={(checked) => setSlippageTolerance(checked ? 'AUTO' : '0.5')}
         />
       </div>
-      <div className="my-4 h-0.5 w-full dark:bg-slate-200/5 bg-gray-900/5" />
+      <div className="my-4 h-px w-full dark:bg-slate-200/5 bg-gray-900/5" />
       <div className="flex justify-between gap-[60px]">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           <h1 className="text-sm font-semibold text-gray-900 dark:text-slate-50 flex gap-1">
             {options?.title || 'Slippage'}{' '}
             <Explainer iconSize={16} placement="right">
@@ -73,7 +73,7 @@ export const SlippageTolerance: FC<{
               </a>
             </Explainer>
           </h1>
-          <span className="text-xs text-red">
+          <span className="text-sm text-red">
             {+slippageTolerance <= 0.1 && +slippageTolerance > 0
               ? 'Your transaction may be reverted due to low slippage tolerance'
               : isDangerous
@@ -93,7 +93,7 @@ export const SlippageTolerance: FC<{
       <Collapsible open={slippageTolerance !== 'AUTO'}>
         <div className="p-1 pt-5">
           <RadioGroup value={slippageTolerance} onChange={onChange}>
-            <div className="items-center relative bg-black/[0.08] dark:bg-white/[0.04] ring-4 ring-black/[0.08] dark:ring-white/[0.04] rounded-lg overflow-hidden flex gap-1">
+            <div className="items-center relative bg-gray-200 dark:bg-slate-800 dark:border-slate-800 paper border-4 border-gray-200 rounded-lg overflow-hidden flex gap-1">
               <>
                 {TABS.map((tab, i) => (
                   <RadioGroup.Option as={Fragment} key={i} value={tab}>

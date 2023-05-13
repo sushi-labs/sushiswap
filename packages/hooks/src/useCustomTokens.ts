@@ -27,20 +27,25 @@ export const useCustomTokens = () => {
   }, [])
 
   const addCustomToken = useCallback(
-    (currency: Token) => {
-      const data: Data = {
+    (currencies: Token[]) => {
+      const data: Data[] = currencies.map((currency) => ({
         chainId: currency.chainId,
         id: currency.id,
         address: currency.address,
         name: currency.name,
         symbol: currency.symbol,
         decimals: currency.decimals,
-      }
-
-      setValue((prev) => ({
-        ...prev,
-        [`${currency.chainId}:${currency.address}`]: data,
       }))
+
+      setValue((prev) => {
+        return data.reduce(
+          (acc, cur) => {
+            acc[`${cur.chainId}:${cur.address}`] = cur
+            return acc
+          },
+          { ...prev }
+        )
+      })
     },
     [setValue]
   )
@@ -81,9 +86,9 @@ export const useCustomTokens = () => {
   )
 
   const mutate = useCallback(
-    (type: 'add' | 'remove', currency: Token) => {
+    (type: 'add' | 'remove', currency: Token[]) => {
       if (type === 'add') addCustomToken(currency)
-      if (type === 'remove') removeCustomToken(currency)
+      if (type === 'remove') removeCustomToken(currency[0])
     },
     [addCustomToken, removeCustomToken]
   )

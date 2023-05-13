@@ -10,10 +10,13 @@ import {
   BCT_ADDRESS,
   BUSD_ADDRESS,
   COMP_ADDRESS,
+  CRV_ADDRESS,
   DAI_ADDRESS,
+  ENJ_ADDRESS,
   FEI_ADDRESS,
   FRAX_ADDRESS,
   FXS_ADDRESS,
+  GALA_ADDRESS,
   GNO_ADDRESS,
   JPY_ADDRESS,
   KLIMA_ADDRESS,
@@ -22,8 +25,10 @@ import {
   LINK_ADDRESS,
   LUSD_ADDRESS,
   MAI_ADDRESS,
+  MANA_ADDRESS,
   MATIC_ADDRESS,
   MIM_ADDRESS,
+  MKR_ADDRESS,
   NFTX_ADDRESS,
   OHM_ADDRESS,
   OP_ADDRESS,
@@ -32,6 +37,7 @@ import {
   renBTC_ADDRESS,
   rETH2_ADDRESS,
   sETH2_ADDRESS,
+  SNX_ADDRESS,
   SUSHI_ADDRESS,
   SWISE_ADDRESS,
   TRIBE_ADDRESS,
@@ -43,7 +49,71 @@ import {
   WETH9_ADDRESS,
   WNATIVE_ADDRESS,
   XSUSHI_ADDRESS,
+  YFI_ADDRESS,
 } from './token-addresses'
+
+export const MANA = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'MANA',
+    name: 'Decentraland',
+  },
+  MANA_ADDRESS
+) as Record<keyof typeof MANA_ADDRESS, Token>
+
+export const MKR = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'MKR',
+    name: 'Maker',
+  },
+  MKR_ADDRESS
+) as Record<keyof typeof MKR_ADDRESS, Token>
+
+export const YFI = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'YFI',
+    name: 'yearn.finance',
+  },
+  YFI_ADDRESS
+) as Record<keyof typeof YFI_ADDRESS, Token>
+
+export const ENJ = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'ENJ',
+    name: 'Enjin Coin',
+  },
+  ENJ_ADDRESS
+) as Record<keyof typeof ENJ_ADDRESS, Token>
+
+export const CRV = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'CRV',
+    name: 'Curve DAO Token',
+  },
+  CRV_ADDRESS
+) as Record<keyof typeof CRV_ADDRESS, Token>
+
+export const SNX = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'SNX',
+    name: 'Synthetix Network Token',
+  },
+  SNX_ADDRESS
+) as Record<keyof typeof SNX_ADDRESS, Token>
+
+export const GALA = addressMapToTokenMap(
+  {
+    decimals: 8,
+    symbol: 'GALA',
+    name: 'Gala',
+  },
+  GALA_ADDRESS
+) as Record<keyof typeof GALA_ADDRESS, Token>
 
 export const MATIC = addressMapToTokenMap(
   {
@@ -473,9 +543,9 @@ export const WNATIVE = {
     name: 'Wrapped BitTorrent Token',
   }),
   // [ChainId.SEPOLIA]: WETH9[ChainId.SEPOLIA],
-  [ChainId.CONSENSUS_ZKEVM_TESTNET]: WETH9[ChainId.CONSENSUS_ZKEVM_TESTNET],
-  [ChainId.SCROLL_ALPHA_TESTNET]: WETH9[ChainId.SCROLL_ALPHA_TESTNET],
-  [ChainId.BASE_TESTNET]: WETH9[ChainId.BASE_TESTNET],
+  // [ChainId.CONSENSUS_ZKEVM_TESTNET]: WETH9[ChainId.CONSENSUS_ZKEVM_TESTNET],
+  // [ChainId.SCROLL_ALPHA_TESTNET]: WETH9[ChainId.SCROLL_ALPHA_TESTNET],
+  // [ChainId.BASE_TESTNET]: WETH9[ChainId.BASE_TESTNET],
   [ChainId.POLYGON_ZKEVM]: WETH9[ChainId.POLYGON_ZKEVM],
 } as const
 
@@ -505,7 +575,7 @@ export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
       name: 'USD Coin',
     },
     USDC_ADDRESS
-  ) as Omit<Record<keyof typeof USDC_ADDRESS, Token>, ChainId.BSC & ChainId.BSC_TESTNET>),
+  ) as Omit<Record<keyof typeof USDC_ADDRESS, Token>, typeof ChainId.BSC & typeof ChainId.BSC_TESTNET>),
   [ChainId.BSC]: new Token({
     chainId: ChainId.BSC,
     address: USDC_ADDRESS[ChainId.BSC],
@@ -530,7 +600,7 @@ export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
       name: 'Tether USD',
     },
     USDT_ADDRESS
-  ) as Omit<Record<keyof typeof USDT_ADDRESS, Token>, ChainId.BSC & ChainId.BSC_TESTNET>),
+  ) as Omit<Record<keyof typeof USDT_ADDRESS, Token>, typeof ChainId.BSC & typeof ChainId.BSC_TESTNET>),
   [ChainId.BSC]: new Token({
     chainId: ChainId.BSC,
     address: USDT_ADDRESS[ChainId.BSC],

@@ -104,7 +104,7 @@ export const PoolTable: FC = () => {
   }, [isLg, isMd, isSm])
 
   const rowLink = useCallback((row: Pool) => {
-    return `https://sushi.com/earn/${row.id}`
+    return `https://www.sushi.com/pools/${row.id}`
   }, [])
 
   return (
