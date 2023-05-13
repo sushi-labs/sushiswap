@@ -1,6 +1,6 @@
 'use client'
 
-import { CircleIcon } from '@sushiswap/ui'
+import { CircleIcon, classNames } from '@sushiswap/ui'
 import React from 'react'
 
 import { KpiCard } from '../components'
@@ -8,20 +8,38 @@ import { formatNumber } from '../lib'
 
 export function TreasuryKpis({
   treasurySnapshot,
+  budgetData,
 }: {
   treasurySnapshot: { totalValueUsd: number; balancesValueUsd: number; vestingValueUsd: number }
+  budgetData: any | undefined // TODO:
 }) {
+  const currentQuarter = budgetData[budgetData.length - 1]
+  const previousQuarter = budgetData[budgetData.length - 2]
+  const budgetDiff = (currentQuarter.budget - previousQuarter.budget) / previousQuarter.budget
+  const runwayQuarters = treasurySnapshot.balancesValueUsd / currentQuarter.expenses
+  const runwayMonths = Math.floor(runwayQuarters * 3)
+
   const treasuryKpis = [
     {
       title: 'Treasury Runway',
-      value: '13 months',
-      additional: (
-        // TODO: dynamic
-        <div className="flex items-center gap-1 text-sm text-green-400">
-          <CircleIcon width={8} className="fill-green-400 text-green-400" />
-          Positive
-        </div>
-      ),
+      value: `${runwayMonths} months`,
+      additional:
+        runwayMonths > 11 ? (
+          <div className="flex items-center gap-1 text-sm text-green-400">
+            <CircleIcon width={8} className="fill-green-400 text-green-400" />
+            Positive
+          </div>
+        ) : runwayMonths > 5 ? (
+          <div className="flex items-center gap-1 text-sm text-green-400">
+            <CircleIcon width={8} className="fill-yellow-400 text-yellow-400" />
+            Moderate
+          </div>
+        ) : (
+          <div className="flex items-center gap-1 text-sm text-green-400">
+            <CircleIcon width={8} className="fill-red-400 text-red-400" />
+            Negative
+          </div>
+        ),
     },
     {
       title: 'Treasury Balance',
@@ -42,10 +60,11 @@ export function TreasuryKpis({
     },
     {
       title: 'Quarterly Budget / Burn Rate',
-      value: '1M',
+      value: formatNumber(currentQuarter.budget), // TODO:
       additional: (
-        // TODO: dynamic
-        <dd className="text-sm text-red-400">-3.42% from last quarter</dd>
+        <dd className={classNames('text-sm', budgetDiff < 0 ? 'text-red-400' : 'text-green-400')}>
+          {budgetDiff.toLocaleString('EN', { style: 'percent', maximumFractionDigits: 2 })} from last quarter
+        </dd>
       ),
     },
   ]

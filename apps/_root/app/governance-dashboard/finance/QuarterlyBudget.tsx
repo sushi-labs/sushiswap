@@ -1,41 +1,87 @@
 'use client'
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline'
-import React from 'react'
+import React, { useMemo, useState } from 'react'
+import { Cell, Pie, PieChart, Tooltip } from 'recharts'
 
 import { KpiCard } from '../components'
+import { formatNumber } from '../lib'
+import { classNames } from '@sushiswap/ui'
 
-const quarterlyKpis = [
-  {
-    title: 'Budget Left',
-    value: <span className="text-green-400">0.1M</span>,
-    additional: <dd className="text-sm text-slate-400">90% Used</dd>,
-  },
-  {
-    title: 'Quarterly Budget',
-    value: '$1M',
-    additional: <dd className="text-sm text-slate-400">-3.42% from last quarter</dd>,
-  },
-  {
-    title: 'Quarterly Budget / Burn Rate',
-    value: '1M',
-    additional: <dd className="text-sm text-slate-400">-3.42% from last quarter</dd>,
-  },
-]
+const CHART_COLORS = {
+  engineering: '#5A89DD',
+  bd: '#BF60EE',
+  marketing: '#EEC660',
+  design: '#EE7A60',
+  others: '#8560EE',
+  available: 'transparent',
+}
+// TODO: type
+export function QuarterlyBudget({ budgetData }) {
+  const [selectedQuarterIndex, setSelectedQuarterIndex] = useState(budgetData.length - 1)
+  const selectedQuarter = budgetData[selectedQuarterIndex]
 
-export function QuarterlyBudget() {
+  const previousQuarter = budgetData[selectedQuarterIndex - 1] ?? selectedQuarter
+  const budgetDiff = (selectedQuarter.budget - previousQuarter.budget) / previousQuarter.budget
+  const expensesDiff = (selectedQuarter.expenses - previousQuarter.expenses) / previousQuarter.expenses
+
+  const quarterlyKpis = useMemo(
+    () => [
+      {
+        title: 'Budget Left',
+        value: <span className="text-green-400">{formatNumber(selectedQuarter.left)}</span>,
+        additional: (
+          <dd className="text-sm text-slate-400">
+            {(selectedQuarter.left / selectedQuarter.budget).toLocaleString('EN', {
+              style: 'percent',
+              maximumFractionDigits: 2,
+            })}{' '}
+            Used
+          </dd>
+        ),
+      },
+      {
+        title: 'Quarterly Budget',
+        value: '$' + formatNumber(selectedQuarter.budget),
+        additional: (
+          <dd className="text-sm text-slate-400">
+            {budgetDiff.toLocaleString('EN', { style: 'percent', maximumFractionDigits: 2 })} from last quarter
+          </dd>
+        ),
+      },
+      {
+        title: 'Actual',
+        value: '$' + formatNumber(selectedQuarter.expenses),
+        additional: (
+          <dd className="text-sm text-slate-400">
+            {expensesDiff.toLocaleString('EN', { style: 'percent', maximumFractionDigits: 2 })} from last quarter
+          </dd>
+        ),
+      },
+    ],
+    [selectedQuarter.left, selectedQuarter.budget, selectedQuarter.expenses, budgetDiff, expensesDiff]
+  )
+
   return (
     <section className="mt-[120px] space-y-8">
       <header className="flex items-center justify-between">
         <h2 className="ml-1 text-2xl font-bold text-slate-200">Quarterly Budget vs. Actuals</h2>
         <div className="flex h-[42px] items-center gap-2 rounded-lg bg-slate-700 px-2">
           {/** TODO: add disabled and onclick */}
-          <button className="rounded p-1 transition-colors ease-in-out enabled:hover:bg-black/[0.12] disabled:text-slate-500 enabled:hover:dark:bg-white/[0.12]">
+          <button
+            className="rounded p-1 transition-colors ease-in-out enabled:hover:bg-black/[0.12] disabled:text-slate-500 enabled:hover:dark:bg-white/[0.12]"
+            onClick={() => setSelectedQuarterIndex(selectedQuarterIndex - 1)}
+            disabled={selectedQuarterIndex === 0}
+          >
             <ChevronLeftIcon className="h-3 w-3" strokeWidth={3} />
           </button>
-          2022 Q3
+          {selectedQuarter.quarter}
           {/** TODO: add disabled and onclick */}
-          <button className="rounded p-1 transition-colors ease-in-out enabled:hover:bg-black/[0.12] disabled:text-slate-500 enabled:hover:dark:bg-white/[0.12]">
+          <button
+            className="rounded p-1 transition-colors ease-in-out enabled:hover:bg-black/[0.12] disabled:text-slate-500 enabled:hover:dark:bg-white/[0.12]"
+            onClick={() => setSelectedQuarterIndex(selectedQuarterIndex + 1)}
+            disabled={selectedQuarterIndex === budgetData.length - 1}
+          >
             <ChevronRightIcon className="h-3 w-3" strokeWidth={3} />
           </button>
         </div>
@@ -43,9 +89,60 @@ export function QuarterlyBudget() {
       <div className="grid grid-cols-[3fr,7fr] gap-4">
         <div className="grid gap-4">{quarterlyKpis.map(KpiCard)}</div>
         <div className="h-full w-full rounded-lg bg-[#1A2031] p-5">
-          <h3 className="text-sm text-slate-400">Treasury over time</h3>
-          <p className="mt-3 text-xl font-semibold">$20.1M</p>
-          <div className="mt-10 w-full bg-slate-700">chart</div>
+          <h3 className="text-xl font-semibold">Actuals Breakdown</h3>
+          <div className="mt-10 flex w-full justify-between pr-16">
+            <div className="flex items-center justify-center">
+              <PieChart width={240} height={240}>
+                <Pie
+                  stroke="none"
+                  data={selectedQuarter.expensesBreakdown}
+                  innerRadius={96}
+                  outerRadius={110}
+                  paddingAngle={5}
+                  dataKey="expense"
+                >
+                  {selectedQuarter.expensesBreakdown.map(({ teamKey }) => (
+                    <Cell key={`cell-${teamKey}`} fill={CHART_COLORS[teamKey] ?? '#5689E6'} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+              <dl className="absolute flex flex-col items-center justify-center gap-1">
+                <dd className="text-[28px] font-bold">
+                  {selectedQuarter.expenses.toLocaleString('EN', {
+                    maximumFractionDigits: 0,
+                    style: 'currency',
+                    currency: 'USD',
+                  })}
+                </dd>
+                <dt className="text-sm text-slate-400">Total Expense</dt>
+              </dl>
+            </div>
+
+            <div className="h-full space-y-5 text-sm">
+              {selectedQuarter.expensesBreakdown.map(({ teamKey, teamName, expense }) => (
+                <dl key={teamKey} className="flex items-center justify-between gap-[110px]">
+                  <dt className="flex items-center gap-2">
+                    <div
+                      className={classNames(
+                        'h-[14px] w-[14px] rounded-sm',
+                        teamKey === 'available' && 'border border-slate-400'
+                      )}
+                      style={{ backgroundColor: CHART_COLORS[teamKey] ?? '#5689E6' }}
+                    />
+                    {teamName}
+                  </dt>
+                  <dd className="font-semibold">
+                    {expense.toLocaleString('EN', {
+                      maximumFractionDigits: 2,
+                      style: 'currency',
+                      currency: 'USD',
+                    })}
+                  </dd>
+                </dl>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

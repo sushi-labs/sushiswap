@@ -4,40 +4,8 @@ import React from 'react'
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { formatNumber } from '../lib'
 
-const data = [
-  {
-    quarter: 'Jan 22',
-    expenses: 1,
-    revenue: 2.2,
-  },
-  {
-    quarter: 'Apr 22',
-    expenses: 2,
-    revenue: 3,
-  },
-  {
-    quarter: 'Jul 22',
-    expenses: 1,
-    revenue: 2.5,
-  },
-  {
-    quarter: 'Oct 22',
-    expenses: 1.8,
-    revenue: 2,
-  },
-  {
-    quarter: 'Jan 23',
-    expenses: 2,
-    revenue: 3,
-  },
-  {
-    quarter: 'Apr 23',
-    expenses: 1.2,
-    revenue: 2,
-  },
-]
-
-export function QuarterlyExpenses() {
+export function QuarterlyExpenses({ budgetData }) {
+  // TODO: type
   return (
     <div className="h-full w-full rounded-lg bg-[#1A2031] p-5">
       <div className="flex items-center gap-[14px]">
@@ -54,7 +22,7 @@ export function QuarterlyExpenses() {
       <h3 className="mt-3 text-xl font-semibold">Quarterly Expenses vs. Revenue</h3>
       <div className="mt-10 w-full text-xs">
         <ResponsiveContainer minWidth="100%" minHeight={240}>
-          <BarChart data={data}>
+          <BarChart data={budgetData}>
             <defs>
               <linearGradient id="expenses" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#C662F5" />
