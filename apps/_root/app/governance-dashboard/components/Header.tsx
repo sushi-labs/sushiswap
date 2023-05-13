@@ -35,7 +35,7 @@ export function Header() {
   return (
     <>
       <DefaultSeo {...SEO} />
-      <GlobalNav />
+      <GlobalNav transparent />
     </>
   )
 }

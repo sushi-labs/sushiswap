@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import React, { useMemo, useState } from 'react'
 import { Cell, Pie, PieChart, Tooltip } from 'recharts'
 

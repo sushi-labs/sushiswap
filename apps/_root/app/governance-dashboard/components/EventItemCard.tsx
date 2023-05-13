@@ -1,6 +1,6 @@
 'use client'
 
-import { LocationMarkerIcon } from '@heroicons/react/solid'
+import { MapPinIcon } from '@heroicons/react/24/solid'
 import { CalendarIcon } from '@sushiswap/ui'
 import React from 'react'
 
@@ -24,7 +24,7 @@ export function EventItemCard(props: Event) {
             {date}
           </div>
           <div className="flex items-center gap-1">
-            <LocationMarkerIcon width={14} height={14} />
+            <MapPinIcon width={14} height={14} />
             {location}
           </div>
         </footer>

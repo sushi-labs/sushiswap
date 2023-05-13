@@ -5015,39 +5015,39 @@ export type UniswapV2FactoryExports = typeof uniswapV2FactoryExports;
 export type UniswapV2FactoryChainId = NumberStringToNumber<keyof UniswapV2FactoryExports>;
 export declare const isUniswapV2FactoryChainId: (chainId: number) => chainId is UniswapV2FactoryChainId;
 export declare const uniswapV2FactoryAddress: {
-    readonly 1: "0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac";
-    readonly 3: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 4: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 5: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 40: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 42: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 56: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 65: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 66: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 97: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 100: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 122: "0x43eA90e2b786728520e4f930d2A71a477BF2737C";
-    readonly 128: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 137: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 250: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 256: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 288: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 1284: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 1285: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 42161: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 42170: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 42220: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 43113: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 43114: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 43288: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 56288: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 80001: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 1666600000: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 1666700000: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 11297108109: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "1": "0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac";
+    readonly "3": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "4": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "5": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "40": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "42": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "56": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "65": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "66": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "97": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "100": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "122": "0x43eA90e2b786728520e4f930d2A71a477BF2737C";
+    readonly "128": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "137": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "250": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "256": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "288": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "1284": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "1285": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "42161": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "42170": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "42220": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "43113": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "43114": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "43288": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "56288": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "80001": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "1666600000": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "1666700000": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "11297108109": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
 };
 export declare const uniswapV2FactoryAbi: {
-    readonly 1: readonly [{
+    readonly "1": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -5211,7 +5211,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 3: readonly [{
+    readonly "3": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -5375,7 +5375,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 4: readonly [{
+    readonly "4": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -5539,7 +5539,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 5: readonly [{
+    readonly "5": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -5703,7 +5703,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 40: readonly [{
+    readonly "40": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -5867,7 +5867,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 42: readonly [{
+    readonly "42": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -6031,7 +6031,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 56: readonly [{
+    readonly "56": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -6195,7 +6195,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 65: readonly [{
+    readonly "65": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -6359,7 +6359,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 66: readonly [{
+    readonly "66": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -6523,7 +6523,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 97: readonly [{
+    readonly "97": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -6687,7 +6687,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 100: readonly [{
+    readonly "100": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -6851,7 +6851,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 122: readonly [{
+    readonly "122": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -7015,7 +7015,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 128: readonly [{
+    readonly "128": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -7179,7 +7179,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 137: readonly [{
+    readonly "137": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -7343,7 +7343,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 250: readonly [{
+    readonly "250": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -7507,7 +7507,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 256: readonly [{
+    readonly "256": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -7671,7 +7671,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 288: readonly [{
+    readonly "288": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -7835,7 +7835,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 1284: readonly [{
+    readonly "1284": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -7999,7 +7999,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 1285: readonly [{
+    readonly "1285": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -8163,7 +8163,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 42161: readonly [{
+    readonly "42161": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -8327,7 +8327,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 42170: readonly [{
+    readonly "42170": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -8491,7 +8491,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 42220: readonly [{
+    readonly "42220": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -8655,7 +8655,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 43113: readonly [{
+    readonly "43113": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -8819,7 +8819,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 43114: readonly [{
+    readonly "43114": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -8983,7 +8983,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 43288: readonly [{
+    readonly "43288": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -9147,7 +9147,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 56288: readonly [{
+    readonly "56288": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -9311,7 +9311,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 80001: readonly [{
+    readonly "80001": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -9475,7 +9475,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 1666600000: readonly [{
+    readonly "1666600000": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -9639,7 +9639,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 1666700000: readonly [{
+    readonly "1666700000": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -9803,7 +9803,7 @@ export declare const uniswapV2FactoryAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 11297108109: readonly [{
+    readonly "11297108109": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_feeToSetter";
@@ -32625,39 +32625,39 @@ export type UniswapV2Router02Exports = typeof uniswapV2Router02Exports;
 export type UniswapV2Router02ChainId = NumberStringToNumber<keyof UniswapV2Router02Exports>;
 export declare const isUniswapV2Router02ChainId: (chainId: number) => chainId is UniswapV2Router02ChainId;
 export declare const uniswapV2Router02Address: {
-    readonly 1: "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F";
-    readonly 3: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 4: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 5: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 40: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 42: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 56: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 65: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 66: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 97: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 100: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 122: "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3";
-    readonly 128: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 137: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 250: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 256: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 288: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 1284: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 1285: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 42161: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 42170: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 42220: "0x1421bDe4B10e8dd459b3BCb598810B1337D56842";
-    readonly 43113: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 43114: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 43288: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 56288: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 80001: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 1666600000: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 1666700000: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
-    readonly 11297108109: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "1": "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F";
+    readonly "3": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "4": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "5": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "40": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "42": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "56": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "65": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "66": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "97": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "100": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "122": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3";
+    readonly "128": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "137": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "250": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "256": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "288": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "1284": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "1285": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "42161": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "42170": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "42220": "0x1421bDe4B10e8dd459b3BCb598810B1337D56842";
+    readonly "43113": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "43114": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "43288": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "56288": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "80001": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "1666600000": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "1666700000": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+    readonly "11297108109": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
 };
 export declare const uniswapV2Router02Abi: {
-    readonly 1: readonly [{
+    readonly "1": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -33409,7 +33409,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 3: readonly [{
+    readonly "3": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -34161,7 +34161,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 4: readonly [{
+    readonly "4": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -34913,7 +34913,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 5: readonly [{
+    readonly "5": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -35665,7 +35665,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 40: readonly [{
+    readonly "40": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -36417,7 +36417,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 42: readonly [{
+    readonly "42": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -37169,7 +37169,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 56: readonly [{
+    readonly "56": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -37921,7 +37921,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 65: readonly [{
+    readonly "65": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -38673,7 +38673,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 66: readonly [{
+    readonly "66": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -39425,7 +39425,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 97: readonly [{
+    readonly "97": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -40177,7 +40177,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 100: readonly [{
+    readonly "100": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -40929,7 +40929,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 122: readonly [{
+    readonly "122": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -41681,7 +41681,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 128: readonly [{
+    readonly "128": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -42433,7 +42433,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 137: readonly [{
+    readonly "137": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -43185,7 +43185,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 250: readonly [{
+    readonly "250": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -43937,7 +43937,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 256: readonly [{
+    readonly "256": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -44689,7 +44689,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 288: readonly [{
+    readonly "288": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -45441,7 +45441,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 1284: readonly [{
+    readonly "1284": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -46193,7 +46193,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 1285: readonly [{
+    readonly "1285": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -46945,7 +46945,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 42161: readonly [{
+    readonly "42161": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -47697,7 +47697,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 42170: readonly [{
+    readonly "42170": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -48449,7 +48449,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 42220: readonly [{
+    readonly "42220": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -49201,7 +49201,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 43113: readonly [{
+    readonly "43113": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -49953,7 +49953,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 43114: readonly [{
+    readonly "43114": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -50705,7 +50705,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 43288: readonly [{
+    readonly "43288": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -51457,7 +51457,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 56288: readonly [{
+    readonly "56288": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -52209,7 +52209,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 80001: readonly [{
+    readonly "80001": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -52961,7 +52961,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 1666600000: readonly [{
+    readonly "1666600000": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -53713,7 +53713,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 1666700000: readonly [{
+    readonly "1666700000": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -54465,7 +54465,7 @@ export declare const uniswapV2Router02Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 11297108109: readonly [{
+    readonly "11297108109": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_factory";
@@ -55464,10 +55464,10 @@ export type Multicall2Exports = typeof multicall2Exports;
 export type Multicall2ChainId = NumberStringToNumber<keyof Multicall2Exports>;
 export declare const isMulticall2ChainId: (chainId: number) => chainId is 11297108109;
 export declare const multicall2Address: {
-    readonly 11297108109: "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F";
+    readonly "11297108109": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F";
 };
 export declare const multicall2Abi: {
-    readonly 11297108109: readonly [{
+    readonly "11297108109": readonly [{
         readonly inputs: readonly [{
             readonly components: readonly [{
                 readonly internalType: "address";

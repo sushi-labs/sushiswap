@@ -10379,22 +10379,22 @@ export type FuroStreamExports = typeof furoStreamExports;
 export type FuroStreamChainId = NumberStringToNumber<keyof FuroStreamExports>;
 export declare const isFuroStreamChainId: (chainId: number) => chainId is FuroStreamChainId;
 export declare const furoStreamAddress: {
-    readonly 1: "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
-    readonly 5: "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
-    readonly 10: "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
-    readonly 56: "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
-    readonly 100: "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
-    readonly 137: "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
-    readonly 199: "0x3DB923FBaB372ab8c796Fef9bb8341CdB37cB9eC";
-    readonly 250: "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
-    readonly 1284: "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
-    readonly 1285: "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
-    readonly 42161: "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
-    readonly 43114: "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
-    readonly 1666600000: "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
+    readonly "1": "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
+    readonly "5": "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
+    readonly "10": "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
+    readonly "56": "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
+    readonly "100": "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
+    readonly "137": "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
+    readonly "199": "0x3DB923FBaB372ab8c796Fef9bb8341CdB37cB9eC";
+    readonly "250": "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
+    readonly "1284": "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
+    readonly "1285": "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
+    readonly "42161": "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
+    readonly "43114": "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
+    readonly "1666600000": "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE";
 };
 export declare const furoStreamAbi: {
-    readonly 1: readonly [{
+    readonly "1": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -11189,7 +11189,7 @@ export declare const furoStreamAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 5: readonly [{
+    readonly "5": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -11984,7 +11984,7 @@ export declare const furoStreamAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 10: readonly [{
+    readonly "10": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -12779,7 +12779,7 @@ export declare const furoStreamAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 56: readonly [{
+    readonly "56": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -13574,7 +13574,7 @@ export declare const furoStreamAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 100: readonly [{
+    readonly "100": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -14369,7 +14369,7 @@ export declare const furoStreamAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 137: readonly [{
+    readonly "137": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -15164,7 +15164,7 @@ export declare const furoStreamAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 199: readonly [{
+    readonly "199": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -15959,7 +15959,7 @@ export declare const furoStreamAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 250: readonly [{
+    readonly "250": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -16754,7 +16754,7 @@ export declare const furoStreamAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 1284: readonly [{
+    readonly "1284": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -17549,7 +17549,7 @@ export declare const furoStreamAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 1285: readonly [{
+    readonly "1285": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -18344,7 +18344,7 @@ export declare const furoStreamAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 42161: readonly [{
+    readonly "42161": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -19139,7 +19139,7 @@ export declare const furoStreamAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 43114: readonly [{
+    readonly "43114": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -19934,7 +19934,7 @@ export declare const furoStreamAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 1666600000: readonly [{
+    readonly "1666600000": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -22369,21 +22369,21 @@ export type FuroStreamRouterExports = typeof furoStreamRouterExports;
 export type FuroStreamRouterChainId = NumberStringToNumber<keyof FuroStreamRouterExports>;
 export declare const isFuroStreamRouterChainId: (chainId: number) => chainId is FuroStreamRouterChainId;
 export declare const furoStreamRouterAddress: {
-    readonly 1: "0x95bd909A9cB3002992E2993846b035545F15ff37";
-    readonly 5: "0x4947754676098B1D06dE1C602D0086e406154e89";
-    readonly 10: "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8";
-    readonly 56: "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8";
-    readonly 100: "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8";
-    readonly 137: "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8";
-    readonly 199: "0xc5017BE80b4446988e8686168396289a9A62668E";
-    readonly 250: "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8";
-    readonly 1284: "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8";
-    readonly 1285: "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8";
-    readonly 42161: "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8";
-    readonly 43114: "0x4947754676098B1D06dE1C602D0086e406154e89";
+    readonly "1": "0x95bd909A9cB3002992E2993846b035545F15ff37";
+    readonly "5": "0x4947754676098B1D06dE1C602D0086e406154e89";
+    readonly "10": "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8";
+    readonly "56": "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8";
+    readonly "100": "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8";
+    readonly "137": "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8";
+    readonly "199": "0xc5017BE80b4446988e8686168396289a9A62668E";
+    readonly "250": "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8";
+    readonly "1284": "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8";
+    readonly "1285": "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8";
+    readonly "42161": "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8";
+    readonly "43114": "0x4947754676098B1D06dE1C602D0086e406154e89";
 };
 export declare const furoStreamRouterAbi: {
-    readonly 1: readonly [{
+    readonly "1": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -22516,7 +22516,7 @@ export declare const furoStreamRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 5: readonly [{
+    readonly "5": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -22649,7 +22649,7 @@ export declare const furoStreamRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 10: readonly [{
+    readonly "10": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -22782,7 +22782,7 @@ export declare const furoStreamRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 56: readonly [{
+    readonly "56": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -22915,7 +22915,7 @@ export declare const furoStreamRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 100: readonly [{
+    readonly "100": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -23048,7 +23048,7 @@ export declare const furoStreamRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 137: readonly [{
+    readonly "137": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -23181,7 +23181,7 @@ export declare const furoStreamRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 199: readonly [{
+    readonly "199": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -23314,7 +23314,7 @@ export declare const furoStreamRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 250: readonly [{
+    readonly "250": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -23447,7 +23447,7 @@ export declare const furoStreamRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 1284: readonly [{
+    readonly "1284": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -23580,7 +23580,7 @@ export declare const furoStreamRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 1285: readonly [{
+    readonly "1285": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -23713,7 +23713,7 @@ export declare const furoStreamRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 42161: readonly [{
+    readonly "42161": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -23846,7 +23846,7 @@ export declare const furoStreamRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 43114: readonly [{
+    readonly "43114": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -33659,22 +33659,22 @@ export type FuroVestingExports = typeof furoVestingExports;
 export type FuroVestingChainId = NumberStringToNumber<keyof FuroVestingExports>;
 export declare const isFuroVestingChainId: (chainId: number) => chainId is FuroVestingChainId;
 export declare const furoVestingAddress: {
-    readonly 1: "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
-    readonly 5: "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
-    readonly 10: "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
-    readonly 56: "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
-    readonly 100: "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
-    readonly 137: "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
-    readonly 199: "0x5629CE74DdCAD7Cc72b3Ea30444dA7172AD851D9";
-    readonly 250: "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
-    readonly 1284: "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
-    readonly 1285: "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
-    readonly 42161: "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
-    readonly 43114: "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
-    readonly 1666600000: "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
+    readonly "1": "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
+    readonly "5": "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
+    readonly "10": "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
+    readonly "56": "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
+    readonly "100": "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
+    readonly "137": "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
+    readonly "199": "0x5629CE74DdCAD7Cc72b3Ea30444dA7172AD851D9";
+    readonly "250": "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
+    readonly "1284": "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
+    readonly "1285": "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
+    readonly "42161": "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
+    readonly "43114": "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
+    readonly "1666600000": "0x0689640d190b10765f09310fCfE9C670eDe4E25B";
 };
 export declare const furoVestingAbi: {
-    readonly 1: readonly [{
+    readonly "1": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -34415,7 +34415,7 @@ export declare const furoVestingAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 5: readonly [{
+    readonly "5": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -35156,7 +35156,7 @@ export declare const furoVestingAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 10: readonly [{
+    readonly "10": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -35897,7 +35897,7 @@ export declare const furoVestingAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 56: readonly [{
+    readonly "56": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -36638,7 +36638,7 @@ export declare const furoVestingAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 100: readonly [{
+    readonly "100": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -37379,7 +37379,7 @@ export declare const furoVestingAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 137: readonly [{
+    readonly "137": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -38120,7 +38120,7 @@ export declare const furoVestingAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 199: readonly [{
+    readonly "199": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -38861,7 +38861,7 @@ export declare const furoVestingAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 250: readonly [{
+    readonly "250": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -39602,7 +39602,7 @@ export declare const furoVestingAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 1284: readonly [{
+    readonly "1284": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -40343,7 +40343,7 @@ export declare const furoVestingAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 1285: readonly [{
+    readonly "1285": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -41084,7 +41084,7 @@ export declare const furoVestingAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 42161: readonly [{
+    readonly "42161": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -41825,7 +41825,7 @@ export declare const furoVestingAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 43114: readonly [{
+    readonly "43114": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -42566,7 +42566,7 @@ export declare const furoVestingAbi: {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    readonly 1666600000: readonly [{
+    readonly "1666600000": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -45247,21 +45247,21 @@ export type FuroVestingRouterExports = typeof furoVestingRouterExports;
 export type FuroVestingRouterChainId = NumberStringToNumber<keyof FuroVestingRouterExports>;
 export declare const isFuroVestingRouterChainId: (chainId: number) => chainId is FuroVestingRouterChainId;
 export declare const furoVestingRouterAddress: {
-    readonly 1: "0x8E190A2173334c67734119791CF63299A7570877";
-    readonly 5: "0x134C28E1aA0b5F339e498951bAEA9165c4Dbea90";
-    readonly 10: "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64";
-    readonly 56: "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64";
-    readonly 100: "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64";
-    readonly 137: "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64";
-    readonly 199: "0xBD87Bef520f8CEC45d73B0413B6cBb8b061736d9";
-    readonly 250: "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64";
-    readonly 1284: "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64";
-    readonly 1285: "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64";
-    readonly 42161: "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64";
-    readonly 43114: "0x134C28E1aA0b5F339e498951bAEA9165c4Dbea90";
+    readonly "1": "0x8E190A2173334c67734119791CF63299A7570877";
+    readonly "5": "0x134C28E1aA0b5F339e498951bAEA9165c4Dbea90";
+    readonly "10": "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64";
+    readonly "56": "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64";
+    readonly "100": "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64";
+    readonly "137": "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64";
+    readonly "199": "0xBD87Bef520f8CEC45d73B0413B6cBb8b061736d9";
+    readonly "250": "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64";
+    readonly "1284": "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64";
+    readonly "1285": "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64";
+    readonly "42161": "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64";
+    readonly "43114": "0x134C28E1aA0b5F339e498951bAEA9165c4Dbea90";
 };
 export declare const furoVestingRouterAbi: {
-    readonly 1: readonly [{
+    readonly "1": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -45419,7 +45419,7 @@ export declare const furoVestingRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 5: readonly [{
+    readonly "5": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -45577,7 +45577,7 @@ export declare const furoVestingRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 10: readonly [{
+    readonly "10": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -45735,7 +45735,7 @@ export declare const furoVestingRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 56: readonly [{
+    readonly "56": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -45893,7 +45893,7 @@ export declare const furoVestingRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 100: readonly [{
+    readonly "100": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -46051,7 +46051,7 @@ export declare const furoVestingRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 137: readonly [{
+    readonly "137": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -46209,7 +46209,7 @@ export declare const furoVestingRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 199: readonly [{
+    readonly "199": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -46367,7 +46367,7 @@ export declare const furoVestingRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 250: readonly [{
+    readonly "250": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -46525,7 +46525,7 @@ export declare const furoVestingRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 1284: readonly [{
+    readonly "1284": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -46683,7 +46683,7 @@ export declare const furoVestingRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 1285: readonly [{
+    readonly "1285": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -46841,7 +46841,7 @@ export declare const furoVestingRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 42161: readonly [{
+    readonly "42161": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -46999,7 +46999,7 @@ export declare const furoVestingRouterAbi: {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    readonly 43114: readonly [{
+    readonly "43114": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";

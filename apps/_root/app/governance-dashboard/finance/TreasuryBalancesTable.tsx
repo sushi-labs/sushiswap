@@ -1,6 +1,6 @@
 'use client'
 
-import { ExternalLinkIcon } from '@heroicons/react/outline'
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 import { Native, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { Currency, ProgressBar, ProgressColor } from '@sushiswap/ui'
@@ -84,7 +84,7 @@ export function TreasuryBalancesTable({ balances }: { balances: TreasuryBalance[
           href={`https://etherscan.io/address/${TREASURY_ADDRESS}`}
           className="group inline-flex text-sm text-slate-400"
           endIcon={
-            <ExternalLinkIcon className="h-4 w-4 text-slate-400 group-hover:text-white group-focus:text-white group-active:text-white" />
+            <ArrowTopRightOnSquareIcon className="h-4 w-4 text-slate-400 group-hover:text-white group-focus:text-white group-active:text-white" />
           }
         >
           <span>Wallet Address: {shortenAddress(TREASURY_ADDRESS)}</span>

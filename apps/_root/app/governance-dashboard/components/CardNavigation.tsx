@@ -3,7 +3,8 @@
 import 'swiper/swiper.css'
 import 'swiper/css/navigation'
 
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+
 import { classNames } from '@sushiswap/ui'
 import React, { ReactNode, useReducer } from 'react'
 import { Swiper, SwiperSlide, useSwiper } from 'swiper/react'

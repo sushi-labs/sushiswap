@@ -25233,37 +25233,37 @@ export type BentoBoxV1Exports = typeof bentoBoxV1Exports;
 export type BentoBoxV1ChainId = NumberStringToNumber<keyof BentoBoxV1Exports>;
 export declare const isBentoBoxV1ChainId: (chainId: number) => chainId is BentoBoxV1ChainId;
 export declare const bentoBoxV1Address: {
-    readonly 1: "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
-    readonly 4: "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
-    readonly 5: "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
-    readonly 10: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 56: "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
-    readonly 97: "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
-    readonly 100: "0xE2d7F5dd869Fc7c126D21b13a9080e75a4bDb324";
-    readonly 122: "0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904";
-    readonly 128: "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
-    readonly 137: "0x0319000133d3AdA02600f0875d2cf03D442C3367";
-    readonly 199: "0x8dacffa7F69Ce572992132697252E16254225D38";
-    readonly 250: "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
-    readonly 288: "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F";
-    readonly 1088: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 1284: "0x80C7DD17B01855a6D2347444a0FCC36136a314de";
-    readonly 1285: "0x145d82bCa93cCa2AE057D1c6f26245d1b9522E6F";
-    readonly 2222: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 42161: "0x74c764D41B77DBbb4fe771daB1939B00b146894A";
-    readonly 42170: "0xbE811A0D44E2553d25d11CB8DC0d3F0D0E6430E6";
-    readonly 42220: "0x0711B6026068f736bae6B213031fCE978D48E026";
-    readonly 43114: "0x0711B6026068f736bae6B213031fCE978D48E026";
-    readonly 43288: "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F";
-    readonly 56288: "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F";
-    readonly 59140: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 80001: "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
-    readonly 84531: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 534353: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
-    readonly 1666600000: "0x6b2A3FF504798886862Ca5ce501e080947A506A2";
+    readonly "1": "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
+    readonly "4": "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
+    readonly "5": "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
+    readonly "10": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "56": "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
+    readonly "97": "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
+    readonly "100": "0xE2d7F5dd869Fc7c126D21b13a9080e75a4bDb324";
+    readonly "122": "0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904";
+    readonly "128": "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
+    readonly "137": "0x0319000133d3AdA02600f0875d2cf03D442C3367";
+    readonly "199": "0x8dacffa7F69Ce572992132697252E16254225D38";
+    readonly "250": "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
+    readonly "288": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F";
+    readonly "1088": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "1284": "0x80C7DD17B01855a6D2347444a0FCC36136a314de";
+    readonly "1285": "0x145d82bCa93cCa2AE057D1c6f26245d1b9522E6F";
+    readonly "2222": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "42161": "0x74c764D41B77DBbb4fe771daB1939B00b146894A";
+    readonly "42170": "0xbE811A0D44E2553d25d11CB8DC0d3F0D0E6430E6";
+    readonly "42220": "0x0711B6026068f736bae6B213031fCE978D48E026";
+    readonly "43114": "0x0711B6026068f736bae6B213031fCE978D48E026";
+    readonly "43288": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F";
+    readonly "56288": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F";
+    readonly "59140": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "80001": "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
+    readonly "84531": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "534353": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
+    readonly "1666600000": "0x6b2A3FF504798886862Ca5ce501e080947A506A2";
 };
 export declare const bentoBoxV1Abi: {
-    readonly 1: readonly [{
+    readonly "1": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -26161,7 +26161,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 4: readonly [{
+    readonly "4": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -27059,7 +27059,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 5: readonly [{
+    readonly "5": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -27957,7 +27957,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 10: readonly [{
+    readonly "10": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -28855,7 +28855,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 56: readonly [{
+    readonly "56": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -29753,7 +29753,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 97: readonly [{
+    readonly "97": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -30651,7 +30651,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 100: readonly [{
+    readonly "100": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -31549,7 +31549,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 122: readonly [{
+    readonly "122": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -32447,7 +32447,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 128: readonly [{
+    readonly "128": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -33345,7 +33345,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 137: readonly [{
+    readonly "137": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -34243,7 +34243,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 199: readonly [{
+    readonly "199": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -35141,7 +35141,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 250: readonly [{
+    readonly "250": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -36039,7 +36039,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 288: readonly [{
+    readonly "288": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -36937,7 +36937,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 1088: readonly [{
+    readonly "1088": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -37835,7 +37835,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 1284: readonly [{
+    readonly "1284": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -38733,7 +38733,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 1285: readonly [{
+    readonly "1285": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -39631,7 +39631,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 2222: readonly [{
+    readonly "2222": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -40529,7 +40529,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 42161: readonly [{
+    readonly "42161": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -41427,7 +41427,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 42170: readonly [{
+    readonly "42170": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -42325,7 +42325,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 42220: readonly [{
+    readonly "42220": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -43223,7 +43223,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 43114: readonly [{
+    readonly "43114": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -44121,7 +44121,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 43288: readonly [{
+    readonly "43288": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -45019,7 +45019,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 56288: readonly [{
+    readonly "56288": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -45917,7 +45917,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 59140: readonly [{
+    readonly "59140": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -46815,7 +46815,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 80001: readonly [{
+    readonly "80001": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -47713,7 +47713,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 84531: readonly [{
+    readonly "84531": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -48611,7 +48611,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 534353: readonly [{
+    readonly "534353": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";
@@ -49509,7 +49509,7 @@ export declare const bentoBoxV1Abi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 1666600000: readonly [{
+    readonly "1666600000": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IERC20";
             readonly name: "wethToken_";

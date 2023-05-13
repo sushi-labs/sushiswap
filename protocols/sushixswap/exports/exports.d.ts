@@ -1475,16 +1475,16 @@ export type SushiXSwapExports = typeof sushiXSwapExports;
 export type SushiXSwapChainId = NumberStringToNumber<keyof SushiXSwapExports>;
 export declare const isSushiXSwapChainId: (chainId: number) => chainId is SushiXSwapChainId;
 export declare const sushiXSwapAddress: {
-    readonly 1: "0x011E52E4E40CF9498c79273329E8827b21E2e581";
-    readonly 10: "0x8B396ddF906D552b2F98a8E7d743DD58Cd0d920f";
-    readonly 56: "0x7A4af156379f512DE147ed3b96393047226d923F";
-    readonly 137: "0xd08b5f3e89F1e2d6b067e0A0cbdb094e6e41E77c";
-    readonly 250: "0xD045d27c1f7e7f770a807B0a85d8e3F852e0F2BE";
-    readonly 42161: "0x53b08DbD70327b7Ba3B7886Fc9987BC985d27262";
-    readonly 43114: "0x2c8C987C4777AB740d20Cb581f5d381BE95A4A4a";
+    readonly "1": "0x011E52E4E40CF9498c79273329E8827b21E2e581";
+    readonly "10": "0x8B396ddF906D552b2F98a8E7d743DD58Cd0d920f";
+    readonly "56": "0x7A4af156379f512DE147ed3b96393047226d923F";
+    readonly "137": "0xd08b5f3e89F1e2d6b067e0A0cbdb094e6e41E77c";
+    readonly "250": "0xD045d27c1f7e7f770a807B0a85d8e3F852e0F2BE";
+    readonly "42161": "0x53b08DbD70327b7Ba3B7886Fc9987BC985d27262";
+    readonly "43114": "0x2c8C987C4777AB740d20Cb581f5d381BE95A4A4a";
 };
 export declare const sushiXSwapAbi: {
-    readonly 1: readonly [{
+    readonly "1": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -1691,7 +1691,7 @@ export declare const sushiXSwapAbi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 10: readonly [{
+    readonly "10": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -1898,7 +1898,7 @@ export declare const sushiXSwapAbi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 56: readonly [{
+    readonly "56": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -2105,7 +2105,7 @@ export declare const sushiXSwapAbi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 137: readonly [{
+    readonly "137": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -2312,7 +2312,7 @@ export declare const sushiXSwapAbi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 250: readonly [{
+    readonly "250": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -2519,7 +2519,7 @@ export declare const sushiXSwapAbi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 42161: readonly [{
+    readonly "42161": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";
@@ -2726,7 +2726,7 @@ export declare const sushiXSwapAbi: {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    readonly 43114: readonly [{
+    readonly "43114": readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract IBentoBoxMinimal";
             readonly name: "_bentoBox";

@@ -1,6 +1,6 @@
 'use client'
 
-import { ExternalLinkIcon } from '@heroicons/react/outline'
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 import { shortenAddress } from '@sushiswap/format'
 import { ExternalLink } from '@sushiswap/ui/future/components/ExternalLink'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
@@ -75,7 +75,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
         return (
           <ExternalLink
             href={`https://etherscan.io/address/${address}`}
-            endIcon={<ExternalLinkIcon className="h-5 w-5" />}
+            endIcon={<ArrowTopRightOnSquareIcon className="h-5 w-5" />}
             className="gap-2 font-bold"
           >
             {tokenHolderNames[address] ?? shortenAddress(address)}
