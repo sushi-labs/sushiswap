@@ -619,7 +619,7 @@ importers:
       react-dom: 18.2.0
       react-infinite-scroll-component: ^6.1.0
       react-redux: 8.0.5
-      swr: 2.1.0
+      swr: 2.1.5
       tailwindcss: 3.2.4
       typescript: 5.0.4
       wagmi: 0.12.12
@@ -666,7 +666,7 @@ importers:
       autoprefixer: 10.4.13_postcss@8.4.21
       eslint: 8.29.0
       postcss: 8.4.21
-      swr: 2.1.0_react@18.2.0
+      swr: 2.1.5_react@18.2.0
       tailwindcss: 3.2.4_postcss@8.4.21
       typescript: 5.0.4
 
@@ -827,7 +827,7 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0
       react-infinite-scroll-component: ^6.1.0
-      swr: 2.1.0
+      swr: 2.1.5
       tailwindcss: 3.2.4
       typescript: 5.0.4
       wagmi: 0.12.12
@@ -892,7 +892,7 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-infinite-scroll-component: 6.1.0_react@18.2.0
-      swr: 2.1.0_react@18.2.0
+      swr: 2.1.5_react@18.2.0
       wagmi: 0.12.12_tqgigql3ylhtuwp7wqflnkncbq
       zod: 3.20.2
     devDependencies:
@@ -1103,139 +1103,6 @@ importers:
       tailwindcss: 3.2.4_postcss@8.4.21
       ts-jest: 29.0.3_agn56dcmrvrjxyb3wli3ryy5gy
       typechain: 8.1.1_typescript@5.0.4
-      typescript: 5.0.4
-
-  apps/swap:
-    specifiers:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/constants': 5.7.0
-      '@headlessui/react': 1.7.7
-      '@heroicons/react': 2.0.13
-      '@layerzerolabs/scan-client': 0.0.0-beta.6
-      '@playwright/test': 1.32.1
-      '@sushiswap/abi': workspace:*
-      '@sushiswap/amm': workspace:*
-      '@sushiswap/bentobox': workspace:*
-      '@sushiswap/chain': workspace:*
-      '@sushiswap/currency': workspace:*
-      '@sushiswap/dexie': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/format': workspace:*
-      '@sushiswap/hooks': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/math': workspace:*
-      '@sushiswap/nextjs-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/react-query': workspace:*
-      '@sushiswap/route-processor': workspace:*
-      '@sushiswap/router': workspace:*
-      '@sushiswap/router-config': workspace:*
-      '@sushiswap/stargate': workspace:*
-      '@sushiswap/sushiswap': workspace:*
-      '@sushiswap/sushixswap': workspace:*
-      '@sushiswap/tailwindcss-config': workspace:*
-      '@sushiswap/tines': workspace:*
-      '@sushiswap/trident': workspace:*
-      '@sushiswap/types': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/ui': workspace:*
-      '@sushiswap/validate': workspace:*
-      '@sushiswap/wagmi': workspace:*
-      '@sushiswap/wagmi-config': workspace:*
-      '@tanstack/query-sync-storage-persister': 4.27.1
-      '@tanstack/react-query': 4.28.0
-      '@tanstack/react-query-devtools': 4.28.0
-      '@tanstack/react-query-persist-client': 4.28.0
-      '@types/node': ^18.0.0
-      '@types/numeral': 2.0.2
-      '@types/react': ^18.0.0
-      '@types/react-dom': ^18.0.0
-      '@vercel/analytics': 0.1.5
-      '@wagmi/core': 0.10.10
-      autoprefixer: 10.4.13
-      date-fns: 2.29.3
-      eslint: 8.29.0
-      ethers: 5.7.2
-      nanoid: 4.0.0
-      next: 13.3.1
-      next-axiom: 0.17.0
-      next-seo: 5.15.0
-      numeral: 2.0.6
-      postcss: 8.4.21
-      react: 18.2.0
-      react-dom: 18.2.0
-      tailwindcss: 3.2.4
-      typescript: 5.0.4
-      viem: 0.3.19
-      wagmi: 0.12.12
-      zod: 3.20.2
-    dependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/constants': 5.7.0
-      '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
-      '@heroicons/react': 2.0.13_react@18.2.0
-      '@layerzerolabs/scan-client': 0.0.0-beta.6
-      '@sushiswap/abi': link:../../packages/abi
-      '@sushiswap/amm': link:../../packages/amm
-      '@sushiswap/bentobox': link:../../protocols/bentobox
-      '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/dexie': link:../../packages/dexie
-      '@sushiswap/format': link:../../packages/format
-      '@sushiswap/hooks': link:../../packages/hooks
-      '@sushiswap/math': link:../../packages/math
-      '@sushiswap/react-query': link:../../packages/react-query
-      '@sushiswap/route-processor': link:../../protocols/route-processor
-      '@sushiswap/router': link:../../packages/router
-      '@sushiswap/router-config': link:../../config/router
-      '@sushiswap/stargate': link:../../packages/stargate
-      '@sushiswap/sushiswap': link:../../protocols/sushiswap
-      '@sushiswap/sushixswap': link:../../protocols/sushixswap
-      '@sushiswap/tines': link:../../packages/tines
-      '@sushiswap/trident': link:../../protocols/trident
-      '@sushiswap/types': link:../../packages/types
-      '@sushiswap/ui': link:../../packages/ui
-      '@sushiswap/validate': link:../../packages/validate
-      '@sushiswap/wagmi': link:../../packages/wagmi
-      '@sushiswap/wagmi-config': link:../../config/wagmi
-      '@tanstack/query-sync-storage-persister': 4.27.1
-      '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 4.28.0_q4teel2yjbizrm4naiaqcdpjum
-      '@tanstack/react-query-persist-client': 4.28.0_qfusmmwykmcbgdy37sd3cqxiry
-      '@vercel/analytics': 0.1.5_react@18.2.0
-      '@wagmi/core': 0.10.10_nnaosxrdtrdd5tvfvvco5wlzp4
-      date-fns: 2.29.3
-      ethers: 5.7.2
-      nanoid: 4.0.0
-      next: 13.3.1_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.17.0_next@13.3.1
-      next-seo: 5.15.0_ivamjty3az7dj3hhadhjniqtwe
-      numeral: 2.0.6
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      viem: 0.3.19_phjbrgmd4bydmj33olj2sis5hu
-      wagmi: 0.12.12_tqgigql3ylhtuwp7wqflnkncbq
-      zod: 3.20.2
-    devDependencies:
-      '@playwright/test': 1.32.1
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/nextjs-config': link:../../config/nextjs
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
-      '@sushiswap/typescript-config': link:../../config/typescript
-      '@types/node': 18.11.18
-      '@types/numeral': 2.0.2
-      '@types/react': 18.0.26
-      '@types/react-dom': 18.0.10
-      autoprefixer: 10.4.13_postcss@8.4.21
-      eslint: 8.29.0
-      postcss: 8.4.21
-      tailwindcss: 3.2.4_postcss@8.4.21
       typescript: 5.0.4
 
   config/eslint:
@@ -1949,7 +1816,7 @@ importers:
       '@types/node': ^18.0.0
       '@whatwg-node/fetch': 0.8.4
       eslint: 8.29.0
-      swr: 2.1.0
+      swr: 2.1.5
       tslib: latest
       tsup: 6.5.0
       typescript: 5.0.4
@@ -1966,7 +1833,7 @@ importers:
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 18.11.18
       eslint: 8.29.0
-      swr: 2.1.0
+      swr: 2.1.5
       tsup: 6.5.0_typescript@5.0.4
       typescript: 5.0.4
 
@@ -26505,7 +26372,6 @@ packages:
     resolution: {integrity: sha512-eByWRxPzKHs2oQz1yE41LX35umhz86ZSZ+mYyXBqn2IBi2hyUqxBA88avywdr4uyH+hCJczegGsDGWbzQA5Rqw==}
     engines: {node: '>=14.18.0'}
     hasBin: true
-    requiresBuild: true
     peerDependencies:
       '@opentelemetry/api': ^1.1.0
       fibers: '>= 3.1.0'
@@ -30695,18 +30561,16 @@ packages:
       react: 18.2.0
     dev: false
 
-  /swr/2.1.0:
-    resolution: {integrity: sha512-4hYl5p3/KalQ1MORealM79g/DtLohmud6yyfXw5l4wjtFksYUnocRFudvyaoUtgj3FrVNK9lS25Av9dsZYvz0g==}
-    engines: {pnpm: '7'}
+  /swr/2.1.5:
+    resolution: {integrity: sha512-/OhfZMcEpuz77KavXST5q6XE9nrOBOVcBLWjMT+oAE/kQHyE3PASrevXCtQDZ8aamntOfFkbVJp7Il9tNBQWrw==}
     peerDependencies:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0
     dependencies:
       use-sync-external-store: 1.2.0
     dev: true
 
-  /swr/2.1.0_react@18.2.0:
-    resolution: {integrity: sha512-4hYl5p3/KalQ1MORealM79g/DtLohmud6yyfXw5l4wjtFksYUnocRFudvyaoUtgj3FrVNK9lS25Av9dsZYvz0g==}
-    engines: {pnpm: '7'}
+  /swr/2.1.5_react@18.2.0:
+    resolution: {integrity: sha512-/OhfZMcEpuz77KavXST5q6XE9nrOBOVcBLWjMT+oAE/kQHyE3PASrevXCtQDZ8aamntOfFkbVJp7Il9tNBQWrw==}
     peerDependencies:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0
     dependencies:
