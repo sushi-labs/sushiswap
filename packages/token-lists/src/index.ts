@@ -1,6 +1,6 @@
 import { getAddress, isAddress } from '@ethersproject/address'
+import type { ChainId } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
 import type { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
 
 type TagDetails = Tags[keyof Tags]
@@ -19,8 +19,6 @@ export class WrappedTokenInfo implements Token {
 
   public readonly tokenInfo: TokenInfo
 
-  readonly rebase = { base: JSBI.BigInt(1), elastic: JSBI.BigInt(1) }
-
   constructor(tokenInfo: TokenInfo, list?: TokenList) {
     this.id = `${tokenInfo.chainId}:${tokenInfo.address}`
     this.tokenInfo = tokenInfo
@@ -36,8 +34,8 @@ export class WrappedTokenInfo implements Token {
     return (this._checksummedAddress = checksummedAddress)
   }
 
-  public get chainId(): number {
-    return this.tokenInfo.chainId
+  public get chainId(): ChainId {
+    return this.tokenInfo.chainId as ChainId
   }
 
   public get decimals(): number {

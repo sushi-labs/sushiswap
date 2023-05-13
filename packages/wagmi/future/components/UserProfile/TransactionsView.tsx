@@ -1,4 +1,4 @@
-import { ArrowLeftIcon } from '@heroicons/react/24/solid'
+import { ArrowLeftIcon } from '@heroicons/react/20/solid'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import React, { Dispatch, FC, SetStateAction } from 'react'
@@ -6,6 +6,7 @@ import React, { Dispatch, FC, SetStateAction } from 'react'
 import { ProfileView } from './index'
 import { NotificationGroup } from './NotificationGroup'
 import { useClearNotifications, useNotifications } from '@sushiswap/dexie'
+import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 
 interface TransactionsProps {
   address: `0x${string}`
@@ -19,12 +20,15 @@ export const TransactionsView: FC<TransactionsProps> = ({ setView, address }) =>
   return (
     <div className="p-2">
       <div className="flex justify-between items-center mb-3">
-        <ArrowLeftIcon
+        <IconButton
           onClick={() => setView(ProfileView.Default)}
-          strokeWidth={3}
-          width={20}
-          height={20}
-          className="cursor-pointer"
+          icon={ArrowLeftIcon}
+          iconProps={{
+            strokeWidth: 4,
+            width: 20,
+            height: 20,
+            transparent: true,
+          }}
         />
         <Button onClick={() => clearNotifications()} variant="empty" size="sm" className="!px-2">
           Clear all

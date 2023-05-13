@@ -1,23 +1,16 @@
 import '@sushiswap/ui/index.css'
-import 'styles/index.css'
-import '../variables.css'
 
-import { useIsSmScreen } from '@sushiswap/hooks'
 import { App, ThemeProvider } from '@sushiswap/ui'
-import { client } from '@sushiswap/wagmi/client'
 import { Analytics } from '@vercel/analytics/react'
-import { MotionConfig } from 'framer-motion'
 import { DefaultSeo } from 'next-seo'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
 import React, { FC, useEffect } from 'react'
-import { WagmiConfig } from '@sushiswap/wagmi'
 
-import { Header } from '../components'
+import { QueryClientProvider } from '../components/QueryClientProvider'
+import { WagmiConfig } from '../components/WagmiConfig'
 import SEO from '../next-seo.config.mjs'
-import { ToastContainer } from '@sushiswap/ui/future/components/toast'
-import { QueryClientProvider } from 'components/QueryClientProvider'
 
 import type { AppProps } from 'next/app'
 
@@ -30,7 +23,6 @@ declare global {
 export { reportWebVitals } from 'next-axiom'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
-  const isSmallScreen = useIsSmScreen()
   const router = useRouter()
 
   useEffect(() => {
@@ -73,17 +65,12 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         `,
         }}
       />
-      <WagmiConfig client={client}>
+      <WagmiConfig>
         <QueryClientProvider>
           <ThemeProvider>
             <App.Shell>
               <DefaultSeo {...SEO} />
-              <Header />
-              <MotionConfig reducedMotion={isSmallScreen ? 'always' : 'user'}>
-                <Component {...pageProps} />
-              </MotionConfig>
-              <App.Footer />
-              <ToastContainer className="mt-[50px]" />
+              <Component {...pageProps} />
             </App.Shell>
           </ThemeProvider>
         </QueryClientProvider>

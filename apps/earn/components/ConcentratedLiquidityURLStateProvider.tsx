@@ -87,7 +87,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
   const { chain } = useNetwork()
   const [chainId] = useState(chain?.id)
 
-  const _chainId = getChainIdFromUrl(chainIdFromUrl, chainId)
+  const _chainId = getChainIdFromUrl(chainIdFromUrl, chainId as ChainId)
 
   const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useTokenWithCache({
     chainId: _chainId,

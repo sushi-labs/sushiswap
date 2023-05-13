@@ -1,0 +1,91 @@
+name: Sushi - apps / pool / e2e
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - ".github/workflows/apps-pool-e2e.yml"
+      - "apps/earn/**"
+      - "config/graph/**"
+      - "config/nextjs/**"
+      - "config/react-query/**"
+      - "config/router/**"
+      - "config/tailwindcss/**"
+      - "config/typescript/**"
+      - "config/viem/**"
+      - "config/wagmi/**"
+      - "packages/**"
+
+defaults:
+  run:
+    # change this if your nextjs app does not live at the root of the repo
+    working-directory: ./apps/earn
+
+# https://playwright.dev/docs/ci#sharding
+
+env:
+  CI: true
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  ci:
+      name: Continuous integration
+      timeout-minutes: 30
+      runs-on: ubuntu-latest
+      steps:
+        - name: Check out
+          uses: actions/checkout@v3
+          with:
+            fetch-depth: 2
+
+        - uses: pnpm/action-setup@v2
+          with:
+            version: 7.9.5
+
+        - name: Setup Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: 18
+            cache: 'pnpm'
+
+        - name: Install dependencies
+          run: pnpm install
+          working-directory: .
+
+        - name: Install playwright
+          run: pnpm exec playwright install --with-deps chromium
+
+        - name: Install rust
+          uses: actions-rs/toolchain@v1
+          with:
+            toolchain: stable
+            target: wasm32-unknown-unknown
+            profile: minimal
+            override: true
+
+        - name: Install Anvil
+          uses: foundry-rs/foundry-toolchain@v1
+          with:
+            version: nightly
+
+        - name: Test pools app
+          run: pnpm test-earn-app
+          env:
+            NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+            NEXT_PUBLIC_TEST: true
+            ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+            PLAYWRIGHT_URL: http://localhost:3000/pools
+            CHAIN_ID: 137
+            ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+            ANVIL_BLOCK_NUMBER: 42259027
+          working-directory: .
+
+        - name: Upload test results
+          if: always()
+          uses: actions/upload-artifact@v3
+          with:
+            name: playwright-report
+            path: ./apps/earn/test-results/

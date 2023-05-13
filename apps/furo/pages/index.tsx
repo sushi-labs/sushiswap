@@ -11,7 +11,7 @@ import { useAccount, useConnect, useNetwork } from '@sushiswap/wagmi'
 
 import { BackgroundVector, Layout } from '../components'
 import { BalanceChart } from '../components/stream'
-import { SUPPORTED_CHAINS } from '../config'
+import { SUPPORTED_CHAINS, SupportedChainId } from '../config'
 import { FuroStatus, FuroType, Stream } from '../lib'
 import { ChartHover } from '../types'
 
@@ -67,7 +67,7 @@ export default function Index() {
 
   const paySomeone = useConnect({
     onSuccess: ({ chain }) => {
-      if (SUPPORTED_CHAINS.includes(chain.id)) {
+      if (SUPPORTED_CHAINS.includes(chain.id as SupportedChainId)) {
         void router.push('/stream/create')
       }
     },
@@ -75,7 +75,7 @@ export default function Index() {
 
   const viewEarnings = useConnect({
     onSuccess: ({ chain }) => {
-      if (SUPPORTED_CHAINS.includes(chain.id)) {
+      if (SUPPORTED_CHAINS.includes(chain.id as SupportedChainId)) {
         void router.push('/dashboard')
       }
     },

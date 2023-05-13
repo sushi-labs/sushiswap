@@ -14,7 +14,7 @@ import { usePoolPosition } from '../PoolPositionProvider'
 
 interface AddSectionStakeWidgetProps {
   title?: string
-  chainId: ChainId
+  chainId: number
   value: string
   setValue(value: string): void
   reserve0: Amount<Type> | null
@@ -54,12 +54,12 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
 
   return useMemo(
     () => (
-      <Widget id="stakeLiquidity" maxWidth={400} className="dark:bg-slate-800 bg-white">
+      <Widget id="stakeLiquidity" maxWidth={400} className="bg-white dark:bg-slate-800">
         <Widget.Content>
           <Disclosure>
             {({ open }) => (
               <>
-                <Disclosure.Button className="w-full pr-4">
+                <Disclosure.Button className="w-full pr-4" testdata-id='stake-liquidity-header'>
                   <div className="flex items-center justify-between">
                     <Widget.Header title={title || '2. Stake Liquidity'} className="!pb-3 " />
                     <div
@@ -87,7 +87,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                   leaveTo="transform max-h-0"
                 >
                   <Disclosure.Panel unmount={false}>
-                    <Typography variant="sm" className="px-3 pb-5 dark:text-slate-400 text-gray-600">
+                    <Typography variant="sm" className="px-3 pb-5 text-gray-600 dark:text-slate-400">
                       Stake your liquidity tokens to receive incentive rewards on top of your pool fee rewards
                     </Typography>
                     <div className="flex flex-col gap-3 p-3">
@@ -105,16 +105,18 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                           <Button
                             size="xs"
                             onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(4)?.toExact() || '')}
+                            testdata-id='stake-25-button'
                           >
                             25%
                           </Button>
                           <Button
                             size="xs"
                             onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(2)?.toExact() || '')}
+                            testdata-id='stake-50-button'
                           >
                             50%
                           </Button>
-                          <Button size="xs" onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}>
+                          <Button size="xs" onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')} testdata-id='stake-max-button'>
                             MAX
                           </Button>
                         </div>
@@ -140,7 +142,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                           <Typography
                             variant="sm"
                             weight={500}
-                            className="dark:text-slate-300 text-gray-700 hover:text-slate-20"
+                            className="text-gray-700 dark:text-slate-300 hover:text-slate-20"
                           >
                             {formatUSD(value0 + value1)}
                           </Typography>
@@ -161,7 +163,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                             as="button"
                             variant="sm"
                             weight={500}
-                            className="flex justify-end col-span-2 truncate dark:text-slate-300 text-gray-700 hover:dark:text-slate-200 text-gray-800"
+                            className="flex justify-end col-span-2 text-gray-700 text-gray-800 truncate dark:text-slate-300 hover:dark:text-slate-200"
                           >
                             Balance: {balance?.[FundSource.WALLET].toSignificant(6)}
                           </Typography>

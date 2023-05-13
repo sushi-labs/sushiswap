@@ -22,8 +22,8 @@ export function setTokenId(...tokens: RToken[]) {
 
 export abstract class RPool {
   readonly address: string
-  readonly token0: RToken
-  readonly token1: RToken
+  token0: RToken
+  token1: RToken
   readonly fee: number
   reserve0: BigNumber
   reserve1: BigNumber
@@ -43,7 +43,10 @@ export abstract class RPool {
     this.address = address
     this.token0 = token0
     this.token1 = token1
-    setTokenId(this.token0, this.token1)
+    if (token0 && token1) {
+      // exception just for serialization - tokenId should be set after
+      setTokenId(this.token0, this.token1)
+    }
     this.fee = fee
     this.minLiquidity = minLiquidity
     this.swapGasCost = swapGasCost
@@ -68,6 +71,11 @@ export abstract class RPool {
   abstract calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number }
   abstract calcCurrentPriceWithoutFee(direction: boolean): number
 
+  // Should return real output, as close to the pool as possible. With rounding. No exceptions
+  calcOutByInReal(amountIn: number, direction: boolean): number {
+    return this.calcOutByIn(amountIn, direction).out
+  }
+
   // precision of calcOutByIn
   granularity0() {
     return 1
@@ -87,8 +95,8 @@ export class ConstantProductRPool extends RPool {
 
   constructor(address: string, token0: RToken, token1: RToken, fee: number, reserve0: BigNumber, reserve1: BigNumber) {
     super(address, token0, token1, fee, reserve0, reserve1)
-    this.reserve0Number = parseInt(reserve0.toString())
-    this.reserve1Number = parseInt(reserve1.toString())
+    this.reserve0Number = parseInt(reserve0?.toString() || '0')
+    this.reserve1Number = parseInt(reserve1?.toString() || '0')
   }
 
   updateReserves(res0: BigNumber, res1: BigNumber) {
@@ -104,6 +112,14 @@ export class ConstantProductRPool extends RPool {
     const out = (y * amountIn) / (x / (1 - this.fee) + amountIn)
     if (y - out < this.minLiquidity) throw 'CP OutOfLiquidity'
     return { out, gasSpent: this.swapGasCost }
+  }
+
+  calcOutByInReal(amountIn: number, direction: boolean): number {
+    const x = direction ? this.reserve0Number : this.reserve1Number
+    const y = direction ? this.reserve1Number : this.reserve0Number
+    const amountInWithoutFee = Math.floor(amountIn * (1 - this.fee) * 1000) // rounding of amount without fee
+    const out = (y * amountInWithoutFee) / (x * 1000 + amountInWithoutFee)
+    return Math.floor(out) // rounding of output
   }
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {

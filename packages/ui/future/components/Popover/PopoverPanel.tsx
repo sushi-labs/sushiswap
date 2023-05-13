@@ -25,7 +25,7 @@ export const PopoverPanel: FC<PopoverPanelInterface> = ({ children }) => {
     setTimeout(() => setHovers((prevState) => ({ ...prevState, button: false })), 200)
   }, [setHovers])
 
-  if (typeof window === 'undefined' || !isMounted) return <></>
+  if (typeof window === 'undefined' || !isMounted || !open) return <></>
 
   return ReactDOM.createPortal(
     <div
@@ -37,16 +37,17 @@ export const PopoverPanel: FC<PopoverPanelInterface> = ({ children }) => {
       {...attributes.popper}
     >
       <Transition
-        show={open}
+        show={true}
+        appear
         enter="transition duration-300 ease-out"
-        enterFrom="transform translate-y-[-16px] opacity-0"
-        enterTo="transform translate-y-0 opacity-100"
+        enterFrom="transform translate-y-[-16px]"
+        enterTo="transform translate-y-0"
         leave="transition duration-300 ease-out"
         leaveFrom="transform translate-y-0 opacity-100"
         leaveTo="transform translate-y-[-16px] opacity-0"
       >
         <div className="py-2">
-          <div className="relative p-2 flex flex-col w-full rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white dark:bg-slate-800">
+          <div className="relative p-2 flex flex-col w-full rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white/50 dark:bg-slate-800/50 paper">
             {children}
           </div>
         </div>

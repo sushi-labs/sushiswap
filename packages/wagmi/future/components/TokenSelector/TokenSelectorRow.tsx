@@ -40,8 +40,8 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
         onClick={onClick}
         className={classNames(
           className,
-          selected ? 'bg-blue/[0.12]' : '',
-          `group flex items-center w-full hover:bg-blue/[0.12] h-full rounded-lg px-3 token-${currency?.symbol}`
+          selected ? 'bg-black/[0.06] dark:bg-white/[0.06]' : '',
+          `group flex items-center w-full active:bg-black/[0.06] dark:active:bg-white/[0.06] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] h-full rounded-lg px-3 token-${currency?.symbol}`
         )}
       >
         <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
@@ -65,7 +65,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
               </div>
             )}
             <div className="flex flex-col items-start">
-              <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
+              <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 dark:group-hover:text-white">
                 {currency.symbol}
               </span>
               <span className="text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">

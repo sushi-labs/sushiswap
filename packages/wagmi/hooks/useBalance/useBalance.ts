@@ -2,7 +2,7 @@ import { isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { bentoBoxV1Abi } from '@sushiswap/abi'
 import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId, chainName } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { JSBI, ZERO } from '@sushiswap/math'
@@ -16,7 +16,7 @@ import { BalanceMap } from './types'
 type UseBalancesParams = {
   account: string | undefined
   currencies: (Type | undefined)[]
-  chainId?: ChainId
+  chainId?: number
   enabled?: boolean
   loadBentobox?: boolean
   watch?: boolean
@@ -48,7 +48,7 @@ export const useBalances: UseBalances = ({
     address: account as Address,
     chainId,
     enabled,
-    watch: !(typeof enabled !== undefined && !enabled) && watch,
+    watch: !(typeof enabled !== 'undefined' && !enabled) && watch,
   })
 
   const [validatedTokens, validatedTokenAddresses] = useMemo(
@@ -80,7 +80,9 @@ export const useBalances: UseBalances = ({
 
     if (loadBentobox && chainId) {
       if (!isBentoBoxV1ChainId(chainId)) {
-        throw new Error(`ChainId Error: BentoBox is not available on ${ChainId[chainId]} and loadBentobox is enabled.`)
+        throw new Error(
+          `ChainId Error: BentoBox is not available on ${chainName[chainId]} and loadBentobox is enabled.`
+        )
       }
 
       const totals = validatedTokenAddresses.map((token) => ({
@@ -108,7 +110,7 @@ export const useBalances: UseBalances = ({
   const { data, isError, isLoading } = useContractReads({
     contracts,
     enabled,
-    watch: !(typeof enabled !== undefined && !enabled) && watch,
+    watch: !(typeof enabled !== 'undefined' && !enabled) && watch,
   })
   const tokens: BalanceMap = useMemo(() => {
     const result: BalanceMap = {}

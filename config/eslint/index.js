@@ -8,7 +8,13 @@ module.exports = {
     es6: true,
   },
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'testing-library', 'simple-import-sort', 'unused-imports', 'prettier'],
+  plugins: [
+    '@typescript-eslint',
+    // 'testing-library',
+    'simple-import-sort',
+    'unused-imports',
+    'prettier',
+  ],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
@@ -40,7 +46,7 @@ module.exports = {
     'unused-imports/no-unused-imports': 'warn',
     'unused-imports/no-unused-vars': 'warn',
     'no-unused-vars': 'warn',
-    'testing-library/prefer-screen-queries': 'warn',
+    // 'testing-library/prefer-screen-queries': 'warn',
     'turbo/no-undeclared-env-vars': 'warn',
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-unused-vars': 'warn',
@@ -51,12 +57,12 @@ module.exports = {
   },
   overrides: [
     // Only uses Testing Library lint rules in test files
-    {
-      files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
-      extends: ['plugin:testing-library/react'],
-      rules: {
-        'testing-library/prefer-screen-queries': 'warn',
-      },
-    },
+    // {
+    //   files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+    //   extends: ['plugin:testing-library/react'],
+    //   rules: {
+    //     'testing-library/prefer-screen-queries': 'warn',
+    //   },
+    // },
   ],
 }

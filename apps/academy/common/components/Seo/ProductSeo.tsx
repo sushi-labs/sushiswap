@@ -43,7 +43,7 @@ export const ProductSeo: FC<ProductSeo> = ({ product }) => {
       />
       <ArticleJsonLd
         type="Article"
-        url={`https://sushi.com/academy/products/${product.slug}`}
+        url={`https://www.sushi.com/academy/products/${product.slug}`}
         title={product.name ?? ''}
         description={product.description ?? ''}
         authorName="Sushi"

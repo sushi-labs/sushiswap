@@ -115,6 +115,9 @@ const Controller: FC<Props> = ({ className, components, render }) => {
   )
 }
 
+/**
+ * @deprecated use future/systems/Checker
+ */
 export const Approve: typeof Controller & {
   Components: typeof ComponentsWrapper
   Bentobox: typeof BentoApproveButton

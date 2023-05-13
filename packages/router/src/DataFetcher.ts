@@ -3,7 +3,9 @@ import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
-import { PublicClient } from 'viem'
+import { config } from '@sushiswap/viem-config'
+import { createPublicClient, http, PublicClient } from 'viem'
+import { foundry } from 'viem/chains'
 
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { BiswapProvider } from './liquidity-providers/Biswap'
@@ -27,6 +29,7 @@ import { UniswapV3Provider } from './liquidity-providers/UniswapV3'
 import type { PoolCode } from './pools/PoolCode'
 
 // import { create } from 'viem'
+const isTest = process.env['NODE_ENV'] === 'test' || process.env['NEXT_PUBLIC_TEST'] === 'true'
 
 // Gathers pools info, creates routing in 'incremental' mode
 // This means that new routing recalculates each time new pool fetching data comes
@@ -39,9 +42,35 @@ export class DataFetcher {
   web3Client: PublicClient
   databaseClient: PrismaClient | undefined = undefined
 
-  constructor(chainId: ChainId, web3Client: PublicClient, databaseClient?: PrismaClient) {
+  // TODO: maybe use an actual map
+  // private static cache = new Map<number, DataFetcher>()
+
+  private static cache: Record<number, DataFetcher> = {}
+
+  static onChain(chainId: ChainId): DataFetcher {
+    if (chainId in this.cache) {
+      return this.cache[chainId]
+    }
+
+    return (this.cache[chainId] = new DataFetcher(chainId))
+  }
+
+  constructor(chainId: ChainId, web3Client?: PublicClient, databaseClient?: PrismaClient) {
     this.chainId = chainId
-    this.web3Client = web3Client
+    if (!web3Client && !config[chainId]) {
+      throw new Error(`No viem client or config for chainId ${chainId}`)
+    }
+
+    if (web3Client) {
+      this.web3Client = web3Client
+    } else {
+      this.web3Client = createPublicClient({
+        ...config[chainId],
+        transport: isTest ? http(foundry.rpcUrls.default.http[0]) : config[chainId].transport,
+        pollingInterval: 8_000,
+      })
+    }
+
     this.databaseClient = databaseClient
   }
 
@@ -230,12 +259,12 @@ export class DataFetcher {
     this.providers.forEach((p) => p.stopFetchPoolsData())
   }
 
-  async fetchPoolsForToken(currency0: Type, currency1: Type): Promise<void> {
+  async fetchPoolsForToken(currency0: Type, currency1: Type, excludePools?: Set<string>): Promise<void> {
     const [token0, token1] =
       currency0.wrapped.equals(currency1.wrapped) || currency0.wrapped.sortsBefore(currency1.wrapped)
         ? [currency0.wrapped, currency1.wrapped]
         : [currency1.wrapped, currency0.wrapped]
-    await Promise.all(this.providers.map((p) => p.fetchPoolsForToken(token0, token1)))
+    await Promise.all(this.providers.map((p) => p.fetchPoolsForToken(token0, token1, excludePools)))
   }
 
   getCurrentPoolCodeMap(currency0: Type, currency1: Type): Map<string, PoolCode> {

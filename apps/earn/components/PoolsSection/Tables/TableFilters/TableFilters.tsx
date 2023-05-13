@@ -18,6 +18,8 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
     [categories, setFilters]
   )
 
+  const isAll = categories[0] !== FilterTag.DEFAULT && categories.length === 1
+
   return (
     <div className="flex flex-col gap-4 mb-4">
       <div className="w-full h-px bg-gray-200 dark:bg-slate-200/5" />
@@ -37,8 +39,8 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             className="items-center gap-2.5"
             onClick={() => handler(FilterTag.SUSHISWAP_V3)}
             size="sm"
-            variant={categories.includes(FilterTag.SUSHISWAP_V3) ? 'outlined' : 'empty'}
-            color={categories.includes(FilterTag.SUSHISWAP_V3) ? 'blue' : 'default'}
+            variant={categories.includes(FilterTag.SUSHISWAP_V3) && !isAll ? 'outlined' : 'empty'}
+            color={categories.includes(FilterTag.SUSHISWAP_V3) && !isAll ? 'blue' : 'default'}
           >
             <span>🍣</span>{' '}
             <span>
@@ -49,8 +51,8 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             className="gap-2.5"
             onClick={() => handler(FilterTag.SUSHISWAP_V2)}
             size="sm"
-            variant={categories.includes(FilterTag.SUSHISWAP_V2) ? 'outlined' : 'empty'}
-            color={categories.includes(FilterTag.SUSHISWAP_V2) ? 'blue' : 'default'}
+            variant={categories.includes(FilterTag.SUSHISWAP_V2) && !isAll ? 'outlined' : 'empty'}
+            color={categories.includes(FilterTag.SUSHISWAP_V2) && !isAll ? 'blue' : 'default'}
           >
             <span>🍣</span>{' '}
             <span>
@@ -62,8 +64,8 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             className="flex items-center gap-2.5"
             onClick={() => handler(FilterTag.BENTOBOX_STABLE)}
             size="sm"
-            variant={categories.includes(FilterTag.BENTOBOX_STABLE) ? 'outlined' : 'empty'}
-            color={categories.includes(FilterTag.BENTOBOX_STABLE) ? 'blue' : 'default'}
+            variant={categories.includes(FilterTag.BENTOBOX_STABLE) && !isAll ? 'outlined' : 'empty'}
+            color={categories.includes(FilterTag.BENTOBOX_STABLE) && !isAll ? 'blue' : 'default'}
           >
             <span className="mt-1">🍱</span>
             <span>Stable</span>
@@ -72,8 +74,8 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             className="flex items-center gap-2.5"
             onClick={() => handler(FilterTag.BENTOBOX_CLASSIC)}
             size="sm"
-            variant={categories.includes(FilterTag.BENTOBOX_CLASSIC) ? 'outlined' : 'empty'}
-            color={categories.includes(FilterTag.BENTOBOX_CLASSIC) ? 'blue' : 'default'}
+            variant={categories.includes(FilterTag.BENTOBOX_CLASSIC) && !isAll ? 'outlined' : 'empty'}
+            color={categories.includes(FilterTag.BENTOBOX_CLASSIC) && !isAll ? 'blue' : 'default'}
           >
             <span className="mt-1">🍱</span>
             <span>Classic</span>
@@ -81,8 +83,8 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
           <Button
             onClick={() => handler(FilterTag.FARMS_ONLY)}
             size="sm"
-            variant={categories.includes(FilterTag.FARMS_ONLY) ? 'outlined' : 'empty'}
-            color={categories.includes(FilterTag.FARMS_ONLY) ? 'blue' : 'default'}
+            variant={categories.includes(FilterTag.FARMS_ONLY) && !isAll ? 'outlined' : 'empty'}
+            color={categories.includes(FilterTag.FARMS_ONLY) && !isAll ? 'blue' : 'default'}
             className="flex gap-2.5"
           >
             <span>🧑‍🌾</span> <span>Farms</span>

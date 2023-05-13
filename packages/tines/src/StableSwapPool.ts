@@ -18,14 +18,19 @@ export function toShareBN(elastic: BigNumber, total: Rebase) {
   return elastic.mul(total.base).div(total.elastic)
 }
 
-class RebaseInternal {
+export class RebaseInternal {
   elastic2Base: number
   rebaseBN: Rebase
 
   constructor(rebase: Rebase) {
     this.rebaseBN = rebase
-    if (rebase.base.isZero() || rebase.elastic.isZero()) this.elastic2Base = 1
-    else this.elastic2Base = parseInt(rebase.elastic.toString()) / parseInt(rebase.base.toString())
+    if (rebase !== undefined) {
+      if (rebase.base.isZero() || rebase.elastic.isZero()) this.elastic2Base = 1
+      else this.elastic2Base = parseInt(rebase.elastic.toString()) / parseInt(rebase.base.toString())
+    } else {
+      // for deserialization
+      this.elastic2Base = 1
+    }
   }
 
   toAmount(share: number) {
@@ -78,16 +83,28 @@ export class StableSwapRPool extends RPool {
       token0,
       token1,
       fee,
-      realReservesToAdjusted(reserve0, total0, decimals0),
-      realReservesToAdjusted(reserve1, total1, decimals1)
+      reserve0 === undefined
+        ? (undefined as unknown as BigNumber) // for deserialization
+        : realReservesToAdjusted(reserve0, total0, decimals0),
+      reserve1 === undefined
+        ? (undefined as unknown as BigNumber) // for deserialization
+        : realReservesToAdjusted(reserve1, total1, decimals1)
     )
     this.k = BigNumber.from(0)
     this.decimals0 = decimals0
     this.decimals1 = decimals1
-    this.decimalsCompensation0 = Math.pow(10, 12 - decimals0)
-    this.decimalsCompensation1 = Math.pow(10, 12 - decimals1)
-    this.total0 = new RebaseInternal(total0)
-    this.total1 = new RebaseInternal(total1)
+    if (address) {
+      this.decimalsCompensation0 = Math.pow(10, 12 - decimals0)
+      this.decimalsCompensation1 = Math.pow(10, 12 - decimals1)
+      this.total0 = new RebaseInternal(total0)
+      this.total1 = new RebaseInternal(total1)
+    } else {
+      // for deserialization
+      this.decimalsCompensation0 = 0
+      this.decimalsCompensation1 = 0
+      this.total0 = undefined as unknown as RebaseInternal
+      this.total1 = undefined as unknown as RebaseInternal
+    }
   }
 
   getReserve0() {
@@ -162,7 +179,7 @@ export class StableSwapRPool extends RPool {
     return y
   }
 
-  calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
+  calcOutByIn(amountIn: number, direction: boolean, throwIfOutOfLiquidity = true): { out: number; gasSpent: number } {
     amountIn = direction ? this.total0.toAmount(amountIn) : this.total1.toAmount(amountIn)
     amountIn *= direction ? this.decimalsCompensation0 : this.decimalsCompensation1
     const x = direction ? this.reserve0 : this.reserve1
@@ -175,9 +192,14 @@ export class StableSwapRPool extends RPool {
     const out = outC / (direction ? this.decimalsCompensation1 : this.decimalsCompensation0)
 
     const initialReserve = direction ? this.getReserve1() : this.getReserve0()
-    if (initialReserve.sub(getBigNumber(out)).lt(this.minLiquidity)) throw new Error('StableSwap OutOfLiquidity')
+    if (throwIfOutOfLiquidity && initialReserve.sub(getBigNumber(out)).lt(this.minLiquidity))
+      throw new Error('StableSwap OutOfLiquidity')
 
     return { out, gasSpent: this.swapGasCost }
+  }
+
+  calcOutByInReal(amountIn: number, direction: boolean): number {
+    return Math.floor(this.calcOutByIn(amountIn, direction, false).out)
   }
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {

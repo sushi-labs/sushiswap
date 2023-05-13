@@ -94,16 +94,24 @@ export class UniV3Pool extends RPool {
   ) {
     super(address, token0, token1, fee, reserve0, reserve1, TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST)
     this.ticks = ticks
-    if (this.ticks.length === 0) {
-      this.ticks.push({ index: CL_MIN_TICK, DLiquidity: ZERO })
-      this.ticks.push({ index: CL_MAX_TICK, DLiquidity: ZERO })
-    }
-    if (this.ticks[0].index > CL_MIN_TICK) this.ticks.unshift({ index: CL_MIN_TICK, DLiquidity: ZERO })
-    if (this.ticks[this.ticks.length - 1].index < CL_MAX_TICK) this.ticks.push({ index: CL_MAX_TICK, DLiquidity: ZERO })
+    if (address !== undefined) {
+      if (this.ticks.length === 0) {
+        this.ticks.push({ index: CL_MIN_TICK, DLiquidity: ZERO })
+        this.ticks.push({ index: CL_MAX_TICK, DLiquidity: ZERO })
+      }
+      if (this.ticks[0].index > CL_MIN_TICK) this.ticks.unshift({ index: CL_MIN_TICK, DLiquidity: ZERO })
+      if (this.ticks[this.ticks.length - 1].index < CL_MAX_TICK)
+        this.ticks.push({ index: CL_MAX_TICK, DLiquidity: ZERO })
 
-    this.liquidity = liquidity
-    this.sqrtPriceX96 = sqrtPriceX96
-    this.nearestTick = this._findTickForPrice(tick)
+      this.liquidity = liquidity
+      this.sqrtPriceX96 = sqrtPriceX96
+      this.nearestTick = this._findTickForPrice(tick)
+    } else {
+      // for deserialization
+      this.liquidity = undefined as unknown as BigNumber
+      this.sqrtPriceX96 = undefined as unknown as BigNumber
+      this.nearestTick = 0
+    }
   }
 
   updateState(reserve0: BigNumber, reserve1: BigNumber, tick: number, liquidity: BigNumber, sqrtPriceX96: BigNumber) {
@@ -126,7 +134,7 @@ export class UniV3Pool extends RPool {
     return a
   }
 
-  calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
+  calcOutByIn(amountIn: number, direction: boolean, throwIfOutOfLiquidity = true): { out: number; gasSpent: number } {
     let nextTickToCross = direction ? this.nearestTick : this.nearestTick + 1
     const currentPriceBN = this.sqrtPriceX96
     let currentPrice = parseInt(currentPriceBN.toString()) / two96
@@ -138,8 +146,8 @@ export class UniV3Pool extends RPool {
     let startFlag = true
     while (input > 0) {
       if (nextTickToCross < 0 || nextTickToCross >= this.ticks.length) {
-        throw 'UniV3 OutOfLiquidity'
-        //return { out: outAmount, gasSpent: this.swapGasCost }
+        if (throwIfOutOfLiquidity) throw new Error('UniV3 OutOfLiquidity ' + this.address)
+        else return { out: outAmount, gasSpent: this.swapGasCost }
       }
 
       let nextTickPrice, priceDiff
@@ -205,6 +213,11 @@ export class UniV3Pool extends RPool {
     }
 
     return { out: outAmount, gasSpent: BASE_GAS_CONSUMPTION + STEP_GAS_CONSUMPTION * stepCounter } // TODO: more accurate gas prediction
+  }
+
+  calcOutByInReal(amountIn: number, direction: boolean): number {
+    const amountInRounded = Math.floor(amountIn * (1 - this.fee)) / (1 - this.fee)
+    return Math.floor(this.calcOutByIn(amountInRounded, direction, false).out)
   }
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {

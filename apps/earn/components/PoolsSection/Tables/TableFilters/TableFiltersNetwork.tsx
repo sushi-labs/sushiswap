@@ -33,14 +33,14 @@ export const TableFiltersNetwork: FC = () => {
           </Listbox.Button>
           <Transition
             enter="transition duration-300 ease-out"
-            enterFrom="transform translate-y-[-16px] opacity-0"
-            enterTo="transform translate-y-0 opacity-100"
+            enterFrom="transform translate-y-[-16px] scale-[0.95]"
+            enterTo="transform translate-y-0 scale-[1]"
             leave="transition duration-300 ease-out"
-            leaveFrom="transform translate-y-0 opacity-100"
-            leaveTo="transform translate-y-[-16px] opacity-0"
+            leaveFrom="transform translate-y-0 opacity-100 scale-[1]"
+            leaveTo="transform translate-y-[-16px] opacity-0 scale-[0.95]"
           >
-            <div className="absolute pt-2 -top-[-1] right-0 sm:w-[320px]">
-              <div className="relative z-[100] p-2 flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white dark:bg-slate-800">
+            <div className="absolute pt-2 -top-[-1] right-0 sm:w-[260px]">
+              <div className="relative z-[100] p-2 flex flex-col w-full bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white/50 paper dark:bg-slate-800/50">
                 <div className="max-h-[300px] scroll">
                   <Listbox.Options className="space-y-1">
                     {SUPPORTED_CHAIN_IDS.map((chainId) => (
@@ -49,7 +49,7 @@ export const TableFiltersNetwork: FC = () => {
                         value={chainId}
                         className={({ selected }) =>
                           classNames(
-                            'w-full group hover:bg-gray-100 hover:dark:bg-slate-700 px-2.5 flex rounded-lg justify-between gap-2 items-center cursor-pointer transform-all h-[40px]'
+                            'w-full group hover:bg-black/[0.04] hover:dark:bg-white/[0.04] px-2.5 flex rounded-lg justify-between gap-2 items-center cursor-pointer transform-all h-[40px]'
                           )
                         }
                       >
