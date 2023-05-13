@@ -1,5 +1,9 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
+export const config = {
+  matcher: ['/swap/:path*'],
+}
+
 export async function middleware(req: NextRequest) {
   const { pathname, searchParams, search } = req.nextUrl
   if (pathname === '/swap' && search !== '') {
