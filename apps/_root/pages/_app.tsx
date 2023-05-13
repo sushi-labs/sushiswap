@@ -70,7 +70,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             <App.Shell>
               <DefaultSeo {...SEO} />
               <Component {...pageProps} />
-              <App.Footer />
             </App.Shell>
           </ThemeProvider>
         </QueryClientProvider>
