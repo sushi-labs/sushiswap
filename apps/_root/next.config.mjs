@@ -55,10 +55,6 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/:path*',
-        destination: '/:path*',
-      },
-      {
         source: '/academy',
         destination: `${ACADEMY_URL}/academy`,
       },
@@ -106,14 +102,14 @@ const nextConfig = {
       //   source: '/swap/:path*',
       //   destination: `${SWAP_URL}/swap/:path*`,
       // },
-      {
-        source: '/xswap',
-        destination: '/swap',
-      },
-      {
-        source: '/xswap/:path*',
-        destination: '/swap/:path*',
-      },
+      // {
+      //   source: '/xswap',
+      //   destination: '/swap',
+      // },
+      // {
+      //   source: '/xswap/:path*',
+      //   destination: '/swap/:path*',
+      // },
       {
         source: '/earn',
         destination: `${EARN_URL}/pools`,

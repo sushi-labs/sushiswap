@@ -17,7 +17,7 @@ const { chains, provider }: CreateClientConfig & { chains: Chain[] } = configure
   pollingInterval: 8_000,
 })
 
-console.log({ isTest, NODE_ENV: process.env.NODE_ENV })
+// console.log({ isTest, NODE_ENV: process.env.NODE_ENV })
 
 export const _createClient = (config?: CreateClientConfig) => {
   return isTest
