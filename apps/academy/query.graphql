@@ -255,6 +255,7 @@ query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg, $so
         description
         slug
         publishedAt
+        articleType
         products {
           data {
             id
@@ -372,6 +373,7 @@ query GetLatestAndRelevantArticles($filters: ArticleFiltersInput, $filters_ne: A
         description
         slug
         publishedAt
+        articleType
         products {
           data {
             id
@@ -426,6 +428,7 @@ query GetLatestAndRelevantArticles($filters: ArticleFiltersInput, $filters_ne: A
         description
         slug
         publishedAt
+        articleType
         products {
           data {
             id
