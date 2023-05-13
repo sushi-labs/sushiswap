@@ -1,12 +1,12 @@
-import { ChainId } from '@sushiswap/core-sdk'
+import { ChainId } from '@sushiswap/chain'
 
 const THE_GRAPH = 'https://api.thegraph.com'
 const HYPER_GRAPH = 'https://q.hg.network'
 
 export const GRAPH_HOST = {
   [ChainId.ETHEREUM]: THE_GRAPH,
-  [ChainId.XDAI]: THE_GRAPH,
-  [ChainId.MATIC]: THE_GRAPH,
+  [ChainId.GNOSIS]: THE_GRAPH,
+  [ChainId.POLYGON]: THE_GRAPH,
   [ChainId.FANTOM]: THE_GRAPH,
   [ChainId.BSC]: THE_GRAPH,
   [ChainId.AVALANCHE]: THE_GRAPH,
@@ -22,5 +22,5 @@ export const GRAPH_HOST = {
 }
 
 export const TRIDENT = {
-  [ChainId.MATIC]: 'matthewlilley/trident-polygon',
+  [ChainId.POLYGON]: 'matthewlilley/trident-polygon',
 }

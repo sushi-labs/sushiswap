@@ -7,10 +7,22 @@ import { withAxiom } from 'next-axiom'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   ...defaultNextConfig,
-  transpilePackages: ['@sushiswap/ui', '@sushiswap/wagmi'],
+  eslint: {
+    dirs: [
+      // ...
+      'app',
+      'components',
+      'functions',
+      'lib',
+      'pages',
+      'types',
+      'ui',
+    ],
+  },
   experimental: {
     appDir: true,
   },
+  transpilePackages: ['@sushiswap/ui', '@sushiswap/wagmi'],
   async redirects() {
     return [
       {
@@ -86,21 +98,21 @@ const nextConfig = {
         source: '/academy/:path*',
         destination: `${ACADEMY_URL}/academy/:path*`,
       },
-      {
-        source: '/swap',
-        destination: `${SWAP_URL}/swap`,
-      },
-      {
-        source: '/swap/:path*',
-        destination: `${SWAP_URL}/swap/:path*`,
-      },
+      // {
+      //   source: '/swap',
+      //   destination: `${SWAP_URL}/swap`,
+      // },
+      // {
+      //   source: '/swap/:path*',
+      //   destination: `${SWAP_URL}/swap/:path*`,
+      // },
       {
         source: '/xswap',
-        destination: `${SWAP_URL}/swap`,
+        destination: '/swap',
       },
       {
         source: '/xswap/:path*',
-        destination: `${SWAP_URL}/swap/:path*`,
+        destination: '/swap/:path*',
       },
       {
         source: '/earn',

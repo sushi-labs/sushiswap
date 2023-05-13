@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize]
     paths:
       - ".github/workflows/apps-swap-e2e.yml"
-      - "apps/swap/**"
+      - "apps/_root/**"
       - "config/nextjs/**"
       - "config/react-query/**"
       - "config/router/**"
@@ -18,7 +18,7 @@ on:
 defaults:
   run:
     # change this if your nextjs app does not live at the root of the repo
-    working-directory: ./apps/swap
+    working-directory: ./apps/_root
 
 # https://playwright.dev/docs/ci#sharding
 
@@ -93,7 +93,7 @@ jobs:
           uses: actions/upload-artifact@v3
           with:
             name: playwright-report
-            path: ./apps/swap/test-results/
+            path: ./apps/_root/test-results/
 
         # # Need to shutdown Anvil so cache gets created
         # - name: Shutdown Anvil

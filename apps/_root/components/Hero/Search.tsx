@@ -1,4 +1,4 @@
-import { ChevronDownIcon, SearchIcon, StarIcon } from '@heroicons/react/solid'
+import { ChevronDownIcon, SearchIcon, StarIcon } from '@heroicons/react-v1/solid'
 import chains, { ChainId, chainShortName } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { useDebounce, useOnClickOutside } from '@sushiswap/hooks'

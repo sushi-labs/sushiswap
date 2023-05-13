@@ -16,11 +16,11 @@ import { Amount } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { RP2ClaimChainId } from '@sushiswap/wagmi/future/hooks/exploits/types'
-import { CheckIcon } from '@heroicons/react/solid'
+import { CheckIcon } from '@heroicons/react-v1/solid'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { Address } from 'wagmi'
 import { routeProcessor2Address } from '@sushiswap/route-processor/exports/exports'
-import { ZERO } from '@sushiswap/core-sdk'
+import { ZERO } from '@sushiswap/math'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 
 interface ClaimItem {
