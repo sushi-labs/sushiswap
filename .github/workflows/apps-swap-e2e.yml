@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize]
     paths:
       - ".github/workflows/apps-swap-e2e.yml"
-      - "apps/swap/**"
+      - "apps/_root/**"
       - "config/nextjs/**"
       - "config/react-query/**"
       - "config/router/**"
