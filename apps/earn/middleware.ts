@@ -18,17 +18,9 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Index handling
-  // if (pathname === '/' && search !== '') {
-  //   const url = req.nextUrl.clone()
-  //   url.pathname = '/csr'
-  //   return NextResponse.rewrite(url)
-  // }
-
   // Matches paths that include /arb1:0x1234abcd/, starts and ends after '/'
   if (pathname.match(shortNameIdRegexp)) {
-    // eslint-disable-next-line
-    const pairId = pathname.match(shortNameIdRegexp)![0]
+    const pairId = pathname.match(shortNameIdRegexp)?.[0] as string
     const [chainShortName, address] = pairId.split(':')
     const chainId = String(chainShortNameToChainId[chainShortName])
 
