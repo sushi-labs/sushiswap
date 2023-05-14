@@ -4,6 +4,7 @@ import React from 'react'
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 import { formatNumber } from '../lib'
+import { ChartTooltip } from '../components/ChartTooltip'
 
 export function HistoricalTreasuryChart({
   treasuryHistoricalTvl,
@@ -49,16 +50,18 @@ export function HistoricalTreasuryChart({
           <Tooltip
             content={({ active, payload, label }) =>
               active && payload?.length ? (
-                <dl className="rounded bg-slate-700 p-3 shadow-md shadow-slate-800">
-                  <dd className="text-base font-semibold text-slate-50">${formatNumber(payload[0].payload.value)}</dd>
-                  <dt>
-                    {new Date(label * 1000).toLocaleString('en-US', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                    })}
-                  </dt>
-                </dl>
+                <ChartTooltip>
+                  <dl>
+                    <dd className="text-base font-semibold">${formatNumber(payload[0].payload.value)}</dd>
+                    <dt>
+                      {new Date(label * 1000).toLocaleString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                    </dt>
+                  </dl>
+                </ChartTooltip>
               ) : null
             }
           />

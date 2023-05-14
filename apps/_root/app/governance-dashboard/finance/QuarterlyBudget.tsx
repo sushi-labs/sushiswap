@@ -4,7 +4,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import React, { useMemo, useState } from 'react'
 import { Cell, Pie, PieChart, Tooltip } from 'recharts'
 
-import { KpiCard } from '../components'
+import { ChartTooltip, KpiCard } from '../components'
 import { formatNumber } from '../lib'
 import { classNames } from '@sushiswap/ui'
 
@@ -67,7 +67,6 @@ export function QuarterlyBudget({ budgetData }) {
       <header className="flex items-center justify-between">
         <h2 className="ml-1 text-2xl font-bold text-slate-200">Quarterly Budget vs. Actuals</h2>
         <div className="flex h-[42px] items-center gap-2 rounded-lg bg-slate-700 px-2">
-          {/** TODO: add disabled and onclick */}
           <button
             className="rounded p-1 transition-colors ease-in-out enabled:hover:bg-black/[0.12] disabled:text-slate-500 enabled:hover:dark:bg-white/[0.12]"
             onClick={() => setSelectedQuarterIndex(selectedQuarterIndex - 1)}
@@ -76,7 +75,6 @@ export function QuarterlyBudget({ budgetData }) {
             <ChevronLeftIcon className="h-3 w-3" strokeWidth={3} />
           </button>
           {selectedQuarter.quarter}
-          {/** TODO: add disabled and onclick */}
           <button
             className="rounded p-1 transition-colors ease-in-out enabled:hover:bg-black/[0.12] disabled:text-slate-500 enabled:hover:dark:bg-white/[0.12]"
             onClick={() => setSelectedQuarterIndex(selectedQuarterIndex + 1)}
@@ -92,7 +90,7 @@ export function QuarterlyBudget({ budgetData }) {
           <h3 className="text-xl font-semibold">Actuals Breakdown</h3>
           <div className="mt-10 flex w-full justify-between pr-16">
             <div className="flex items-center justify-center">
-              <PieChart width={240} height={240}>
+              <PieChart width={240} height={240} className="z-10">
                 <Pie
                   stroke="none"
                   data={selectedQuarter.expensesBreakdown}
@@ -105,7 +103,18 @@ export function QuarterlyBudget({ budgetData }) {
                     <Cell key={`cell-${teamKey}`} fill={CHART_COLORS[teamKey] ?? '#5689E6'} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip
+                  content={({ active, payload }) =>
+                    active && payload?.length ? (
+                      <ChartTooltip>
+                        <dl>
+                          <dd className="font-semibold">${formatNumber(payload[0].payload.expense)}</dd>
+                          <dt className="text-xs">{payload[0].payload.teamName}</dt>
+                        </dl>
+                      </ChartTooltip>
+                    ) : null
+                  }
+                />
               </PieChart>
               <dl className="absolute flex flex-col items-center justify-center gap-1">
                 <dd className="text-[28px] font-bold">

@@ -3,6 +3,7 @@
 import React from 'react'
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { formatNumber } from '../lib'
+import { ChartTooltip } from '../components'
 
 export function QuarterlyExpenses({ budgetData }) {
   // TODO: type
@@ -37,7 +38,7 @@ export function QuarterlyExpenses({ budgetData }) {
               cursor={{ fill: 'transparent' }}
               content={({ active, payload, label }) =>
                 active && payload?.length ? (
-                  <div className="rounded bg-slate-700 p-3 shadow-md shadow-slate-800">
+                  <ChartTooltip>
                     <dl className="flex items-center gap-2">
                       <div className="h-3 w-3 rounded-sm bg-[#BF60EE]" />
                       <dd className="text-base font-semibold text-slate-50">
@@ -51,7 +52,7 @@ export function QuarterlyExpenses({ budgetData }) {
                       </dd>
                     </dl>
                     <p className="mt-1">{label}</p>
-                  </div>
+                  </ChartTooltip>
                 ) : null
               }
             />

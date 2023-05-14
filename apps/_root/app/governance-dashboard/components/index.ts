@@ -1,3 +1,4 @@
+export * from './ChartTooltip'
 export * from './Container'
 export * from './GovernanceItemCard'
 export * from './Header'
