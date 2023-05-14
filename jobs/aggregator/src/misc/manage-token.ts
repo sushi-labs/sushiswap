@@ -7,13 +7,13 @@ import { Address, fetchToken } from '@wagmi/core'
 
 class Token {
   id: string
-  chainId: ChainId
+  chainId: number
   address: string
   status: 'APPROVED' | 'DISAPPROVED' | 'UNKNOWN' | undefined
   isFeeOnTransfer: boolean | undefined
   isCommon: boolean | undefined
   constructor(
-    chainId: ChainId,
+    chainId: number,
     address: string,
     status: 'APPROVED' | 'DISAPPROVED' | 'UNKNOWN' = undefined,
     isFeeOnTransfer: boolean = undefined,

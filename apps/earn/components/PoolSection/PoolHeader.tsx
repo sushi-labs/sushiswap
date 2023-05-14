@@ -1,5 +1,5 @@
 import { ExternalLinkIcon } from '@heroicons/react/solid'
-import chains from '@sushiswap/chain'
+import chains, { ChainId } from '@sushiswap/chain'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
 import { AppearOnMount, Currency, Link, NetworkIcon, Typography } from '@sushiswap/ui'
@@ -24,7 +24,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-3">
         <div className="flex gap-1">
-          <NetworkIcon type="naked" chainId={pool.chainId} width={16} height={16} />
+          <NetworkIcon type="naked" chainId={pool.chainId as ChainId} width={16} height={16} />
           <Typography variant="xs" className="text-gray-600 dark:text-slate-500">
             {chains[pool.chainId].name}
           </Typography>
@@ -99,7 +99,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pool }) => {
               {token0.symbol} ={' '}
               {prices?.[token0.wrapped.address]
                 ? formatUSD(Number(prices[token0.wrapped.address].toSignificant(6)))
-                : `$0.00`}
+                : '$0.00'}
             </AppearOnMount>
           </Typography>
         </div>

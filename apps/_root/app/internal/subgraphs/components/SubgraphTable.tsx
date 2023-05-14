@@ -1,7 +1,7 @@
 'use client'
 
-import { RefreshIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
+import { RefreshIcon } from '@heroicons/react-v1/solid'
+import { ChainId, chainName } from '@sushiswap/chain'
 import { formatNumber, formatPercent } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { CheckIcon, NetworkIcon, Tooltip } from '@sushiswap/ui'
@@ -29,7 +29,7 @@ const columns = [
       return (
         <div className="flex space-x-2">
           <NetworkIcon type="circle" chainId={chainId as ChainId} width={20} height={20} />
-          <div>{CHAIN_NAME[chainId as ChainId] ?? ChainId[chainId as ChainId]}</div>
+          <div>{CHAIN_NAME[chainId as ChainId] ?? chainName[chainId as ChainId]}</div>
         </div>
       )
     },

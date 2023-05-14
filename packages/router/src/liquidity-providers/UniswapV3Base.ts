@@ -7,7 +7,7 @@ import { computePoolAddress, FeeAmount, TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { BigNumber } from 'ethers'
 import { Address, PublicClient } from 'viem'
 
-import { getV3CurrencyCombinations } from '../getCurrencyCombinations'
+import { getCurrencyCombinations } from '../getCurrencyCombinations'
 import type { PoolCode } from '../pools/PoolCode'
 import { UniV3PoolCode } from '../pools/UniV3Pool'
 import { LiquidityProvider } from './LiquidityProvider'
@@ -274,7 +274,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   }
 
   getStaticPools(t1: Token, t2: Token): StaticPool[] {
-    const currencyCombinations = getV3CurrencyCombinations(this.chainId, t1, t2)
+    const currencyCombinations = getCurrencyCombinations(this.chainId, t1, t2)
 
     const allCurrencyCombinationsWithAllFees: [Type, Type, FeeAmount][] = currencyCombinations.reduce<
       [Currency, Currency, FeeAmount][]

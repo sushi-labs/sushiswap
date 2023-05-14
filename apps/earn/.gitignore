@@ -1,0 +1,7 @@
+# screenshots
+screenshots/
+playwright-report/
+test-results/
+results/
+# Sentry
+.sentryclirc

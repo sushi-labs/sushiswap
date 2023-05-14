@@ -8,15 +8,15 @@ import { useAccount } from 'wagmi'
 
 import { useBalances } from '../../../hooks'
 import { CheckerButton } from './types'
+import dynamic from 'next/dynamic'
 
 export interface AmountsProps extends CheckerButton {
   chainId: number | undefined
   amounts: (Amount<Type> | undefined)[]
 }
 
-export const Amounts: FC<AmountsProps> = ({
-  type,
-  amounts,
+export const Component: FC<AmountsProps> = ({
+ type, amounts,
   chainId,
   children,
   className,
@@ -70,5 +70,9 @@ export const Amounts: FC<AmountsProps> = ({
       )
 
     return <>{children}</>
-  }, [amountsAreDefined, as, children, className, fullWidth, size, sufficientBalance, variant])
+  }, [type, amountsAreDefined, as, children, className, fullWidth, size, sufficientBalance, variant])
 }
+
+export const Amounts = dynamic(() => Promise.resolve(Component), {
+  ssr: false,
+})

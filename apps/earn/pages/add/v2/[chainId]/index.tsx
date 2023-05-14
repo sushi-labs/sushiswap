@@ -2,11 +2,12 @@ import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/solid'
 import { ConstantProductPool, Fee, Pair, StablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
-import { FundSource } from '@sushiswap/hooks'
-import { BreadcrumbLink, Button, Dots, Loader } from '@sushiswap/ui'
+import { BreadcrumbLink, Dots, Loader } from '@sushiswap/ui'
 import {
-  Checker,
+  Address,
   ConstantProductPoolState,
+  getSushiSwapRouterContractConfig,
+  getTridentRouterContractConfig,
   PairState,
   PoolFinder,
   PoolFinderType,
@@ -28,7 +29,7 @@ import { isUniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 import { CreateSectionReviewModalTrident } from '../../../../components/CreateSection'
 import { SUPPORTED_CHAIN_IDS, TRIDENT_ENABLED_NETWORKS } from '../../../../config'
 import { isConstantProductPool, isLegacyPool, isStablePool } from '../../../../lib/functions'
-import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
@@ -36,6 +37,10 @@ import { ContentBlock } from '../../../../components/AddPage/ContentBlock'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import Link from 'next/link'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { Signature } from '@ethersproject/bytes'
+import { APPROVE_TAG_ADD_TRIDENT, APPROVE_TAG_CREATE_TRIDENT } from '../../../../lib/constants'
 
 const LINKS: BreadcrumbLink[] = [
   {
@@ -103,7 +108,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
     <SWRConfig>
       <Layout>
         <div className="flex flex-col gap-2">
-          <Link className="group flex gap-4 items-center mb-2" href="/" shallow={true}>
+          <Link className="flex items-center gap-4 mb-2 group" href="/" shallow={true}>
             <IconButton
               icon={ArrowLeftIcon}
               iconProps={{
@@ -116,7 +121,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
               Go back to pools list
             </span>
           </Link>
-          <h1 className="text-3xl font-medium mt-2">Add Liquidity</h1>
+          <h1 className="mt-2 text-3xl font-medium">Add Liquidity</h1>
           <h1 className="text-lg text-gray-600 dark:dark:text-slate-400 text-slate-600">
             Create a new pool or create a liquidity position on an existing pool.
           </h1>
@@ -237,6 +242,10 @@ const _Add: FC<AddProps> = ({
   poolType,
   setPoolType,
 }) => {
+  const [open, setOpen] = useState(false)
+  const close = useCallback(() => setOpen(false), [])
+  const [permit, setPermit] = useState<Signature>()
+
   const [{ input0, input1 }, setTypedAmounts] = useState<{
     input0: string
     input1: string
@@ -317,15 +326,16 @@ const _Add: FC<AddProps> = ({
               setPoolType(type)
             }}
           />
-          <SelectFeeWidget fee={fee} setFee={setFee} />
+          <SelectFeeWidget fee={fee} setFee={setFee}/>
         </>
       )}
 
       <ContentBlock title={<span className="text-gray-900 dark:text-white">Deposit.</span>}>
         <div className="flex flex-col gap-4">
           <Web3Input.Currency
+            id="add-liquidity-token0"
             type="INPUT"
-            className="p-3 dark:bg-slate-800 bg-white rounded-xl"
+            className="p-3 bg-white dark:bg-slate-800 rounded-xl"
             chainId={chainId}
             value={input0}
             onChange={onChangeToken0TypedAmount}
@@ -334,13 +344,14 @@ const _Add: FC<AddProps> = ({
             disabled={!token0}
           />
           <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
-            <button type="button" className="p-2 bg-gray-100 dark:bg-slate-900 rounded-full z-10">
-              <PlusIcon strokeWidth={3} className="w-4 h-4 text-gray-500 dark:dark:text-slate-400 text-slate-600" />
+            <button type="button" className="z-10 p-2 bg-gray-100 rounded-full dark:bg-slate-900">
+              <PlusIcon strokeWidth={3} className="w-4 h-4 dark:text-slate-400 text-slate-600" />
             </button>
           </div>
           <Web3Input.Currency
+            id="add-liquidity-token1"
             type="INPUT"
-            className="p-3 dark:bg-slate-800 bg-white rounded-xl"
+            className="p-3 bg-white dark:bg-slate-800 rounded-xl"
             chainId={chainId}
             value={input1}
             onChange={onChangeToken1TypedAmount}
@@ -353,71 +364,175 @@ const _Add: FC<AddProps> = ({
               poolState === StablePoolState.LOADING
             }
           />
-          <Checker.Connected fullWidth size="md">
-            <Checker.Network fullWidth size="md" chainId={chainId}>
-              <Checker.Amounts
-                fullWidth
-                size="md"
-                chainId={chainId}
-                fundSource={FundSource.WALLET}
-                amounts={[parsedInput0, parsedInput1]}
-              >
-                {pool && (isConstantProductPool(pool) || isStablePool(pool)) && isBentoBoxV1ChainId(chainId) && (
-                  <AddSectionReviewModalTrident
-                    poolAddress={pool.liquidityToken.address}
-                    // TODO: Shouldnt need to cast if this is done right
-                    poolState={poolState as ConstantProductPoolState | StablePoolState}
-                    pool={pool as ConstantProductPool | StablePool}
-                    chainId={chainId}
-                    token0={token0}
-                    token1={token1}
-                    input0={parsedInput0}
-                    input1={parsedInput1}
-                  >
-                    {({ isWritePending, setOpen }) => (
-                      <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                        {isWritePending ? <Dots>Confirm transaction</Dots> : title}
-                      </Button>
-                    )}
-                  </AddSectionReviewModalTrident>
-                )}
-                {((pool && isLegacyPool(pool)) || (!pool && !tridentPoolIfCreate)) &&
-                  isUniswapV2Router02ChainId(chainId) && (
-                    <AddSectionReviewModalLegacy
-                      poolState={poolState as PairState}
-                      chainId={chainId}
-                      token0={token0}
-                      token1={token1}
-                      input0={parsedInput0}
-                      input1={parsedInput1}
-                    >
-                      {({ isWritePending, setOpen }) => (
-                        <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                          {isWritePending ? <Dots>Confirm transaction</Dots> : title}
-                        </Button>
-                      )}
-                    </AddSectionReviewModalLegacy>
+          <Checker.Root>
+            <Checker.Connect fullWidth size="xl">
+              <Checker.Network fullWidth size="xl" chainId={chainId}>
+                <Checker.Amounts fullWidth size="xl" chainId={chainId} amounts={[parsedInput0, parsedInput1]}>
+                  {pool && (isConstantProductPool(pool) || isStablePool(pool)) && isBentoBoxV1ChainId(chainId) && (
+                    <>
+                      <Checker.ApproveBentobox
+                        chainId={chainId}
+                        id="add-liquidity-trident-approve-bentobox"
+                        size="xl"
+                        className="whitespace-nowrap"
+                        fullWidth
+                        contract={getTridentRouterContractConfig(chainId).address}
+                        onSignature={setPermit}
+                        enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
+                      >
+                        <Checker.ApproveERC20
+                          id="add-liquidity-trident-approve-token0"
+                          size="xl"
+                          className="whitespace-nowrap"
+                          fullWidth
+                          amount={parsedInput0}
+                          contract={bentoBoxV1Address[chainId]}
+                          enabled={isBentoBoxV1ChainId(chainId)}
+                        >
+                          <Checker.ApproveERC20
+                            id="add-liquidity-trident-approve-token1"
+                            size="xl"
+                            className="whitespace-nowrap"
+                            fullWidth
+                            amount={parsedInput1}
+                            contract={bentoBoxV1Address[chainId]}
+                            enabled={isBentoBoxV1ChainId(chainId)}
+                          >
+                            <Checker.Success tag={APPROVE_TAG_ADD_TRIDENT}>
+                              <Button
+                                fullWidth
+                                onClick={() => setOpen(true)}
+                                size="xl"
+                                testdata-id="add-liquidity-button"
+                              >
+                                {title}
+                              </Button>
+                            </Checker.Success>
+                          </Checker.ApproveERC20>
+                        </Checker.ApproveERC20>
+                      </Checker.ApproveBentobox>
+                      <AddSectionReviewModalTrident
+                        poolAddress={pool.liquidityToken.address}
+                        // TODO: Shouldnt need to cast if this is done right
+                        poolState={poolState as ConstantProductPoolState | StablePoolState}
+                        pool={pool as ConstantProductPool | StablePool}
+                        chainId={chainId}
+                        token0={token0}
+                        token1={token1}
+                        input0={parsedInput0}
+                        input1={parsedInput1}
+                        open={open}
+                        close={close}
+                        permit={permit}
+                        setPermit={setPermit}
+                      />
+                    </>
                   )}
-                {!pool && tridentPoolIfCreate && isBentoBoxV1ChainId(chainId) && (
-                  <CreateSectionReviewModalTrident
-                    chainId={chainId}
-                    token0={token0}
-                    token1={token1}
-                    input0={parsedInput0}
-                    input1={parsedInput1}
-                    fee={fee}
-                    poolType={poolType}
-                  >
-                    {({ isWritePending, setOpen }) => (
-                      <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                        {isWritePending ? <Dots>Confirm transaction</Dots> : title}
-                      </Button>
+                  {((pool && isLegacyPool(pool)) || (!pool && !tridentPoolIfCreate)) &&
+                    isUniswapV2Router02ChainId(chainId) && (
+                      <>
+                        <Checker.ApproveERC20
+                          id="approve-token-0"
+                          size="xl"
+                          className="whitespace-nowrap"
+                          fullWidth
+                          amount={parsedInput0}
+                          contract={getSushiSwapRouterContractConfig(chainId).address as Address}
+                        >
+                          <Checker.ApproveERC20
+                            id="approve-token-1"
+                            size="xl"
+                            className="whitespace-nowrap"
+                            fullWidth
+                            amount={parsedInput1}
+                            contract={getSushiSwapRouterContractConfig(chainId).address as Address}
+                          >
+                            <Checker.Success tag={APPROVE_TAG_ADD_TRIDENT}>
+                              <Button
+                                fullWidth
+                                onClick={() => setOpen(true)}
+                                size="md"
+                                testdata-id="add-liquidity-button"
+                              >
+                                {title}
+                              </Button>
+                            </Checker.Success>
+                          </Checker.ApproveERC20>
+                        </Checker.ApproveERC20>
+                        <AddSectionReviewModalLegacy
+                          poolState={poolState as PairState}
+                          chainId={chainId}
+                          token0={token0}
+                          token1={token1}
+                          input0={parsedInput0}
+                          input1={parsedInput1}
+                          open={open}
+                          close={close}
+                        />
+                      </>
                     )}
-                  </CreateSectionReviewModalTrident>
-                )}
-              </Checker.Amounts>
-            </Checker.Network>
-          </Checker.Connected>
+                  {!pool && tridentPoolIfCreate && isBentoBoxV1ChainId(chainId) && (
+                    <>
+                      <Checker.ApproveBentobox
+                        chainId={chainId}
+                        id="create-trident-approve-bentobox"
+                        size="xl"
+                        className="whitespace-nowrap"
+                        fullWidth
+                        contract={getTridentRouterContractConfig(chainId).address}
+                        onSignature={setPermit}
+                        enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
+                      >
+                        <Checker.ApproveERC20
+                          id="create-trident-approve-token0"
+                          size="xl"
+                          className="whitespace-nowrap"
+                          fullWidth
+                          amount={parsedInput0}
+                          contract={bentoBoxV1Address[chainId]}
+                          enabled={isBentoBoxV1ChainId(chainId)}
+                        >
+                          <Checker.ApproveERC20
+                            id="create-trident-approve-token1"
+                            size="xl"
+                            className="whitespace-nowrap"
+                            fullWidth
+                            amount={parsedInput1}
+                            contract={bentoBoxV1Address[chainId]}
+                            enabled={isBentoBoxV1ChainId(chainId)}
+                          >
+                            <Checker.Success tag={APPROVE_TAG_CREATE_TRIDENT}>
+                              <Button
+                                fullWidth
+                                onClick={() => setOpen(true)}
+                                size="md"
+                                testdata-id="create-pool-button"
+                              >
+                                {title}
+                              </Button>
+                            </Checker.Success>
+                          </Checker.ApproveERC20>
+                        </Checker.ApproveERC20>
+                      </Checker.ApproveBentobox>
+                      <CreateSectionReviewModalTrident
+                        chainId={chainId}
+                        token0={token0}
+                        token1={token1}
+                        input0={parsedInput0}
+                        input1={parsedInput1}
+                        fee={fee}
+                        poolType={poolType}
+                        open={open}
+                        close={close}
+                        permit={permit}
+                        setPermit={setPermit}
+                      />
+                    </>
+                  )}
+                </Checker.Amounts>
+              </Checker.Network>
+            </Checker.Connect>
+          </Checker.Root>
         </div>
       </ContentBlock>
     </div>

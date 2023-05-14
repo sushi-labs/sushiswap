@@ -21,9 +21,10 @@ import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from '../../lib/actions'
-import { useSettings } from '../../lib/state/storage'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 import { createToast } from '@sushiswap/ui/future/components/toast'
+import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
+import { ChainId } from '@sushiswap/chain'
 
 interface AddSectionReviewModalTridentProps {
   poolAddress: string
@@ -70,10 +71,9 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   const tokens = useMemo(() => [token0, token1], [token0, token1])
   const rebases = useBentoBoxTotals(chainId, tokens)
   const contract = useTridentRouterContract(chainId)
-  const [{ slippageTolerance }] = useSettings()
-
+  const [slippageTolerance] = useSlippageTolerance('addLiquidity')
   const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(slippageTolerance * 100), 10_000)
+    return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
   }, [slippageTolerance])
 
   const [minAmount0, minAmount1] = useMemo(() => {
@@ -234,7 +234,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   })
 
   return (
-    <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} setOpen={close}>
+    <AddSectionReviewModal chainId={chainId as ChainId} input0={input0} input1={input1} open={open} close={close}>
       <Button size="xl" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
         {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
       </Button>

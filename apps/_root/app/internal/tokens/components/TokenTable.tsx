@@ -6,9 +6,9 @@ import { FC } from 'react'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { CheckIcon, Loader, NetworkIcon } from '@sushiswap/ui'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId, chainName } from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
-import { XIcon } from '@heroicons/react/outline'
+import { XIcon } from '@heroicons/react-v1/outline'
 import { TokenAdder } from './TokenAdder'
 
 interface TokenTable {
@@ -21,11 +21,11 @@ function useColumns() {
     columnHelper.accessor('chainId', {
       header: 'Chain',
       cell: (info) => {
-        const chainId = info.getValue()
+        const chainId = info.getValue() as ChainId
         return (
           <div className="flex space-x-2">
             <NetworkIcon type="circle" chainId={chainId} width={20} height={20} />
-            <div>{CHAIN_NAME[chainId] ?? ChainId[chainId]}</div>
+            <div>{CHAIN_NAME[chainId] ?? chainName[chainId]}</div>
           </div>
         )
       },

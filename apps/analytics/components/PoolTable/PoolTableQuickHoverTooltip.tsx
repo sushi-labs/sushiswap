@@ -6,6 +6,7 @@ import { FC } from 'react'
 import { incentiveRewardToToken } from '../../lib/functions'
 import { useTokensFromPool } from '../../lib/hooks'
 import { ICON_SIZE } from '../Table'
+import { ChainId } from '@sushiswap/chain'
 
 interface PairQuickHoverTooltipProps {
   row: Pool
@@ -55,9 +56,13 @@ export const PoolQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
             <Typography variant="xs" className="mb-1 text-slate-500">
               Reward Emission
             </Typography>
-            {row.incentives.map((incentive, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <Currency.Icon currency={incentiveRewardToToken(row.chainId, incentive)} width={18} height={18} />
+            {row.incentives.map((incentive) => (
+              <div key={incentive.id} className="flex items-center gap-2">
+                <Currency.Icon
+                  currency={incentiveRewardToToken(row.chainId as ChainId, incentive)}
+                  width={18}
+                  height={18}
+                />
                 <Typography variant="sm" weight={600} className="text-slate-50">
                   <span>
                     {formatNumber(incentive.rewardPerDay)} {incentive.rewardToken.symbol}

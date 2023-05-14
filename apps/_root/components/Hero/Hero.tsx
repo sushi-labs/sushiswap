@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from '@heroicons/react/solid'
+import { ChevronDownIcon } from '@heroicons/react-v1/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI } from '@sushiswap/currency'
 import { useInterval } from '@sushiswap/hooks'

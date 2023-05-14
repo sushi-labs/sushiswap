@@ -34,7 +34,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "viem": "0.3.12",
+    "viem": "0.3.19",
     "node-fetch": "2.6.6",
     "date-fns": "2.29.3",
     "@ethersproject/abi": "5.7.0",
@@ -69,7 +69,7 @@
     "@types/node": "^18.0.0",
     "@types/node-fetch": "2.6.2",
     "eslint": "8.29.0",
-    "typescript": "4.9.4"
+    "typescript": "5.0.4"
   },
   "peerDependencies": {
     "@sushiswap/database": "*"

@@ -7,13 +7,14 @@ import { FC, ReactNode, useMemo } from 'react'
 
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 import { Rate } from '../Rate'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 interface AddSectionReviewModal {
-  chainId: ChainId
+  chainId: BentoBoxV1ChainId
   input0: Amount<Type> | undefined
   input1: Amount<Type> | undefined
   open: boolean
-  setOpen(open: boolean): void
+  close(): void
   children: ReactNode
 }
 
@@ -22,7 +23,7 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
   input0,
   input1,
   open,
-  setOpen,
+  close,
   children,
 }) => {
   const [value0, value1] = useTokenAmountDollarValues({
@@ -36,9 +37,9 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
   }, [input0, input1])
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
+    <Dialog open={open} onClose={() => close()}>
       <Dialog.Content className="max-w-sm !pb-4">
-        <Dialog.Header title="Add Liquidity" onClose={() => setOpen(false)} />
+        <Dialog.Header title="Add Liquidity" onClose={() => close()} />
         <div className="grid grid-cols-12 items-center pt-3">
           <div className="relative flex flex-col col-span-12 gap-1 p-2 dark:border sm:p-4 rounded-2xl bg-white dark:bg-slate-700/40 dark:border-slate-200/5 border-gray-900/5">
             <div className="flex items-center gap-2">
@@ -58,7 +59,7 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
                 </div>
               </div>
             </div>
-            <Typography variant="sm" weight={500} className="dark:text-slate-500 text-gray-500 text-gray-500">
+            <Typography variant="sm" weight={500} className="dark:text-slate-500 text-gray-500">
               {value0 ? `$${value0.toFixed(2)}` : '-'}
             </Typography>
           </div>

@@ -1,10 +1,12 @@
 import React, { FC } from 'react'
 
-const HeadRow: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableRowElement>, HTMLTableRowElement>> = ({
-  children,
-  ...props
-}) => (
-  <tr {...props} className="w-full h-[48px]">
+export interface HeadRowProps
+  extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableRowElement>, HTMLTableRowElement> {
+  headRowHeight?: number
+}
+
+const HeadRow: FC<HeadRowProps> = ({ children, headRowHeight = 48, ...props }) => (
+  <tr {...props} className="w-full" style={{ height: headRowHeight }}>
     {children}
   </tr>
 )

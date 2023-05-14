@@ -10,7 +10,12 @@ const eslintConfig = {
     'turbo',
     'prettier',
   ],
-  plugins: ['testing-library', 'prettier', 'simple-import-sort', 'unused-imports'],
+  plugins: [
+    // 'testing-library',
+    'prettier',
+    'simple-import-sort',
+    'unused-imports',
+  ],
   // extends: ["@sushiswap/eslint-config", "turbo", "prettier", "next"],
   // plugins: ["testing-library", "simple-import-sort", "unused-imports"],
   // settings: {
@@ -40,7 +45,7 @@ const eslintConfig = {
     '@typescript-eslint/ban-ts-comment': 'warn',
     '@typescript-eslint/no-empty-function': 'warn',
     'react/display-name': 'warn',
-    'testing-library/prefer-screen-queries': 'warn',
+    // 'testing-library/prefer-screen-queries': 'warn',
     'turbo/no-undeclared-env-vars': 'warn',
   },
   // overrides: [

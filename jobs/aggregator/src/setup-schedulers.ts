@@ -2,7 +2,7 @@ import 'dotenv/config'
 
 import run from '@google-cloud/run'
 import * as scheduler from '@google-cloud/scheduler'
-import { ChainId, chainShortName } from '@sushiswap/chain'
+import { chainShortName } from '@sushiswap/chain'
 import { USDC_ADDRESS } from '@sushiswap/currency'
 
 import { PoolType, Price, PROTOCOL_JOBS, ProtocolName, ProtocolVersion, TRACKED_CHAIN_IDS } from './config.js'
@@ -43,13 +43,13 @@ async function main() {
     createProtocolJobRequest(job.protocol, job.version, job.poolType, baseUrl)
   )
 
-  const chainRequests = TRACKED_CHAIN_IDS.map((chainId) => {
+  const chainRequests = TRACKED_CHAIN_IDS.flatMap((chainId) => {
     return [
       createReserveJobRequest(chainId, baseUrl),
       createPriceJobRequest(chainId, baseUrl),
       createLiquidityJobRequest(chainId, baseUrl),
     ]
-  }).flat()
+  })
 
   const whitelistPoolRequest = createWhitelistPoolsRequest(baseUrl)
 
@@ -106,17 +106,17 @@ function createProtocolJobRequest(
   return createJobRequest(jobName, baseUrl, urlPath, '* * * * *')
 }
 
-function createReserveJobRequest(chainId: ChainId, baseUrl: string) {
+function createReserveJobRequest(chainId: number, baseUrl: string) {
   const urlPath = `/reserves?chainId=${chainId}`
   return createJobRequest(`RESERVES-${chainShortName[chainId]}-${chainId}`, baseUrl, urlPath, '10,25,40,55 * * * *')
 }
 
-function createLiquidityJobRequest(chainId: ChainId, baseUrl: string) {
+function createLiquidityJobRequest(chainId: number, baseUrl: string) {
   const urlPath = `/liquidity?chainId=${chainId}`
   return createJobRequest(`LIQUIDITY-${chainShortName[chainId]}-${chainId}`, baseUrl, urlPath, '32,02 * * * *')
 }
 
-function createPriceJobRequest(chainId: ChainId, baseUrl: string) {
+function createPriceJobRequest(chainId: number, baseUrl: string) {
   const usdcAddress = USDC_ADDRESS[chainId as keyof typeof USDC_ADDRESS]
 
   const urlPath = `/price?chainId=${chainId}&base=${usdcAddress}&price=${Price.USD}`
@@ -124,14 +124,14 @@ function createPriceJobRequest(chainId: ChainId, baseUrl: string) {
 }
 
 function createWhitelistPoolsRequest(baseUrl: string) {
-  const urlPath = `/whitelist-pools`
-  return createJobRequest(`WHITELIST-POOLS`, baseUrl, urlPath, '18,48 * * * *')
+  const urlPath = '/whitelist-pools'
+  return createJobRequest('WHITELIST-POOLS', baseUrl, urlPath, '18,48 * * * *')
 }
 
 function createJobRequest(name: string, url: string, additionalUrl: string, schedule: string) {
   const schedulerPath = `projects/${GC_PROJECT_ID}/locations/${LOCATION_ID}`
   const job: scheduler.protos.google.cloud.scheduler.v1.IJob = {
-    name: schedulerPath + '/jobs/' + name,
+    name: `${schedulerPath}/jobs/${name}`,
     httpTarget: {
       uri: url + additionalUrl,
       httpMethod: 'GET',

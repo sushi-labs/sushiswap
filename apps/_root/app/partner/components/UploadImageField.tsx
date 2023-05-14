@@ -1,4 +1,4 @@
-import { DocumentAddIcon, DocumentDownloadIcon, ExclamationIcon } from '@heroicons/react/outline'
+import { DocumentAddIcon, DocumentDownloadIcon, ExclamationIcon } from '@heroicons/react-v1/outline'
 import { classNames, Typography } from '@sushiswap/ui'
 import { FormType } from '../page'
 import React, { FC, useCallback } from 'react'

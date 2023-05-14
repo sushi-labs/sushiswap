@@ -6,6 +6,7 @@ import { FC } from 'react'
 import { useTokensFromPool } from '../../../lib/hooks'
 import { ICON_SIZE } from '../columns'
 import { Row } from '../types'
+import { ChainId } from '@sushiswap/chain'
 
 export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
   const { token0, token1 } = useTokensFromPool(row)
@@ -13,7 +14,7 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
   return (
     <div className="flex items-center gap-3 sm:gap-0">
       <div className="flex sm:hidden">
-        <NetworkIcon chainId={row.chainId} width={ICON_SIZE} height={ICON_SIZE} />
+        <NetworkIcon chainId={row.chainId as ChainId} width={ICON_SIZE} height={ICON_SIZE} />
       </div>
       <div className="flex flex-col">
         <Typography variant="sm" weight={500} className="flex items-center gap-1 text-slate-50">
