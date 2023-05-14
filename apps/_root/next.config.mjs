@@ -86,14 +86,6 @@ const nextConfig = {
         source: '/furo/:path*',
         destination: `${FURO_URL}/furo/:path*`,
       },
-      {
-        source: '/academy',
-        destination: `${ACADEMY_URL}/academy`,
-      },
-      {
-        source: '/academy/:path*',
-        destination: `${ACADEMY_URL}/academy/:path*`,
-      },
       // {
       //   source: '/swap',
       //   destination: `${SWAP_URL}/swap`,
