@@ -75,7 +75,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
         return (
           <ExternalLink
             href={`https://etherscan.io/address/${address}`}
-            endIcon={<ArrowTopRightOnSquareIcon className="h-5 w-5" />}
+            endIcon={<ArrowTopRightOnSquareIcon className="mb-0.5 h-4 w-4" strokeWidth={2.5} />}
             className="gap-2 font-bold"
           >
             {tokenHolderNames[address] ?? shortenAddress(address)}

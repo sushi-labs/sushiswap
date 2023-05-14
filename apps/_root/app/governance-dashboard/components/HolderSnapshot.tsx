@@ -28,7 +28,7 @@ export async function HolderSnapshot() {
     {
       title: 'Token Concentration',
       value: tokenHolders.tokenConcentration.toLocaleString('EN', { style: 'percent', maximumFractionDigits: 2 }),
-      // additional: <dd className="text-sm text-green-400">+33.42% from last quarter</dd>,
+      additional: <dd className="text-xs text-slate-500">Percentage of $SUSHI held by top 10 addresses</dd>,
     },
     {
       title: 'Token Holders',

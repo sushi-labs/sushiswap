@@ -17,6 +17,7 @@ const columns = [
   columnHelper.accessor('token', {
     header: 'Token',
     enableSorting: false,
+    meta: { className: 'pl-1' },
     cell: (info) => {
       const token = info.getValue()
       const currency = token
@@ -27,7 +28,7 @@ const columns = [
         : Native.onChain(1)
 
       return (
-        <div className="flex items-center gap-2 font-medium">
+        <div className="flex items-center gap-2 pl-0.5 font-medium">
           <Currency.Icon currency={currency} width={24} height={24} />
           {/* <Image src={token.logoUri} width={24} height={24} alt={`${token.symbol}-logo`} /> */}
           {currency.symbol}
@@ -53,8 +54,9 @@ const columns = [
   columnHelper.accessor('fiatConversion', {
     header: () => <div className="w-full text-right">Price</div>,
     enableSorting: false,
+    meta: { className: 'pr-3' },
     cell: (info) => (
-      <div className="w-full text-right">
+      <div className="w-full pr-3 text-right">
         {(+info.getValue()).toLocaleString('EN', {
           maximumFractionDigits: 2,
           style: 'currency',
