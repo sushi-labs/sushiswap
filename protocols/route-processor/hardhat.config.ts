@@ -77,6 +77,12 @@ const config: HardhatUserConfig = {
     //   },
     //   chainId: 42161,
     // },
+    anvil_fork: {
+      // install: https://github.com/foundry-rs/foundry/tree/master/anvil
+      // start: anvil --fork-url https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID} --fork-block-number 42053000 --timeout 1000000000
+      url: 'http://127.0.0.1:8545',
+      chainId: 137,
+    },
     // ethereum: {
     //   url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     //   accounts,
