@@ -63,7 +63,7 @@ export const Header: FC = () => {
   )
 
   return (
-    <GlobalNav transparent maxWidth="6xl">
+    <GlobalNav maxWidth="6xl">
       <>
         {navData.map(({ title, href, links, isExternal }, i, a) => {
           if (href && !links) {
