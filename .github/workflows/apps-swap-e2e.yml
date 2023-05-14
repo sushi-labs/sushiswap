@@ -77,7 +77,7 @@ jobs:
             version: nightly
 
         - name: Test swap app
-          run: pnpm test-swap-app
+          run: pnpm test-root-app
           env:
             NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
             NEXT_PUBLIC_TEST: true
