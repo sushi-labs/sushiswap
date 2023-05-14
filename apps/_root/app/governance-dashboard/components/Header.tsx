@@ -35,7 +35,9 @@ export function Header() {
   return (
     <>
       <DefaultSeo {...SEO} />
-      <GlobalNav transparent />
+      <div className="dark">
+        <GlobalNav />
+      </div>
     </>
   )
 }
