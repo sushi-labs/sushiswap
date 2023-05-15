@@ -1,21 +1,13 @@
 
-query PoolDayDatas(
+query SushiSwapV3PoolDayData(
+    $id: ID!
     $block: Block_height,
-    $first: Int = 100,
-    $orderBy: PoolDayData_orderBy,
-    $orderDirection: OrderDirection,
-    $skip: Int = 0,
-    $subgraphError: _SubgraphErrorPolicy_! = deny,
-    $where: PoolDayData_filter
+    $subgraphError: _SubgraphErrorPolicy_! = deny
 ) {
-  poolDayDatas(
+  poolDayData(
+    id: $id,
     block: $block, 
-    first: $first, 
-    orderBy: $orderBy, 
-    orderDirection: $orderDirection, 
-    skip: $skip, 
-    subgraphError: $subgraphError, 
-    where: $where
+    subgraphError: $subgraphError
 ) {
     id
     date
@@ -42,23 +34,15 @@ query PoolDayDatas(
   }
 }
 
-query PoolHourDatas(
+query SushiSwapV3PoolHourData(
+    $id: ID!
     $block: Block_height,
-    $first: Int = 100,
-    $orderBy: PoolHourData_orderBy,
-    $orderDirection: OrderDirection,
-    $skip: Int = 0,
-    $subgraphError: _SubgraphErrorPolicy_! = deny,
-    $where: PoolHourData_filter
+    $subgraphError: _SubgraphErrorPolicy_! = deny
 ) {
-  poolHourDatas(
+  poolHourData(
+    id: $id,
     block: $block, 
-    first: $first, 
-    orderBy: $orderBy, 
-    orderDirection: $orderDirection, 
-    skip: $skip, 
-    subgraphError: $subgraphError, 
-    where: $where
+    subgraphError: $subgraphError
   ) {
     id
     periodStartUnix
