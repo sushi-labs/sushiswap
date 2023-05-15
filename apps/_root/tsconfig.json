@@ -1,7 +1,5 @@
 {
-  "extends": [
-    "@tsconfig/next/tsconfig"
-  ],
+  "extends": "@tsconfig/next/tsconfig",
   "include": [
     "next-env.d.ts",
     "**/*.ts",

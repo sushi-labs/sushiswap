@@ -67,7 +67,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       />
       <WagmiConfig>
         <QueryClientProvider>
-          <ThemeProvider>
+          <ThemeProvider forcedTheme="dark">
             <App.Shell>
               <DefaultSeo {...SEO} />
               <Component {...pageProps} />

@@ -77,8 +77,13 @@ jobs:
             version: nightly
 
         - name: Test swap app
-          run: pnpm test-swap-app
+          run: pnpm test-root-app
           env:
+            ACADEMY_URL: 'https://academy.sushi.com'
+            ANALYTICS_URL: 'https://analytics.sushi.com'
+            BLOG_URL: 'https://blog.sushi.com'
+            EARN_URL: https://earn.sushi.com'
+            FURO_URL: 'https://furo.sushi.com'
             NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
             NEXT_PUBLIC_TEST: true
             ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}

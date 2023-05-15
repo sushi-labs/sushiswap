@@ -60,9 +60,11 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
       <ThemeProvider>
         <App.Shell>
           <DefaultSeo seo={seo} />
-          <Header />
-          <Component {...pageProps} seo={seo} />
-          <App.Footer />
+          <div className="dark">
+            <Header />
+            <Component {...pageProps} seo={seo} />
+            <App.Footer />
+          </div>
         </App.Shell>
       </ThemeProvider>
     </>
