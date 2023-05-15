@@ -2,7 +2,7 @@ import React, { FC, ReactNode } from 'react'
 import { useRouter } from 'next/router'
 import { Transition } from '@headlessui/react'
 import dynamic from 'next/dynamic'
-import { PepeIcon } from '../../icons/PepeIcon'
+import { SushiIcon } from './icons'
 
 const Component: FC<{ children: ReactNode; show?: boolean }> = ({ children, show = false }) => {
   const { isReady } = useRouter()
@@ -23,7 +23,7 @@ const Component: FC<{ children: ReactNode; show?: boolean }> = ({ children, show
             leaveFrom="scale-[0.75]"
             leaveTo="scale-1"
           >
-            <PepeIcon width={256} height={256} className="sm:mr-2" />
+            <SushiIcon width={112} height={112} />
           </Transition>
         </div>
       ) : (

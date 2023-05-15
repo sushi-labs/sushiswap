@@ -6,11 +6,12 @@ import { ThemeProvider as NextThemeProvider } from 'next-themes'
 
 interface ThemeProvider {
   children: ReactNode | Array<ReactNode>
+  forcedTheme?: string
 }
 
-export const ThemeProvider: FC<ThemeProvider> = ({ children }) => {
+export const ThemeProvider: FC<ThemeProvider> = ({ children, forcedTheme }) => {
   return (
-    <NextThemeProvider attribute="class" disableTransitionOnChange>
+    <NextThemeProvider attribute="class" disableTransitionOnChange forcedTheme={forcedTheme}>
       <div id="network-check-portal" />
       {children}
       <div id="popover-portal" />
