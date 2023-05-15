@@ -202,7 +202,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
 
   const [v3FiatValue0, v3FiatValue1, refund0FiatValue, refund1FiatValue] = useTokenAmountDollarValues({
     chainId: pool.chainId as V3ChainId,
-    amounts: [token0Value, token1Value, refund0, refund1],
+    amounts: [position?.amount0, position?.amount1, refund0, refund1],
   })
 
   return (
@@ -360,22 +360,22 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                 <List.KeyValue flex title={<span className="font-semibold">Migration</span>}>
                   {formatUSD(v3FiatValue0 + v3FiatValue1)}
                 </List.KeyValue>
-                {token0Value && (
-                  <List.KeyValue flex title={`${token0Value.currency.symbol}`}>
+                {position?.amount0 && (
+                  <List.KeyValue flex title={`${position.amount0.currency.symbol}`}>
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-2">
-                        <Currency.Icon currency={unwrapToken(token0Value.currency)} width={18} height={18} />
-                        {token0Value?.toSignificant(6)} {unwrapToken(token0Value.currency).symbol}
+                        <Currency.Icon currency={unwrapToken(position.amount0.currency)} width={18} height={18} />
+                        {position.amount0?.toSignificant(6)} {unwrapToken(position.amount0.currency).symbol}
                       </div>
                     </div>
                   </List.KeyValue>
                 )}
-                {token1Value && (
-                  <List.KeyValue flex title={`${token1Value.currency.symbol}`}>
+                {position?.amount1 && (
+                  <List.KeyValue flex title={`${position.amount1.currency.symbol}`}>
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-2">
-                        <Currency.Icon currency={unwrapToken(token1Value.currency)} width={18} height={18} />
-                        {token1Value?.toSignificant(6)} {unwrapToken(token1Value.currency).symbol}
+                        <Currency.Icon currency={unwrapToken(position.amount1.currency)} width={18} height={18} />
+                        {position.amount1?.toSignificant(6)} {unwrapToken(position.amount1.currency).symbol}
                       </div>
                     </div>
                   </List.KeyValue>
