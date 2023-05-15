@@ -2,6 +2,7 @@ import React from 'react'
 
 import { formatNumber, getForumStats, getPercentageDiff, getTokenHolders } from '../lib'
 import { KpiCard } from './KpiCard'
+import { InfoIconTooltip } from './InfoIconTooltip'
 
 export async function HolderSnapshot() {
   const [tokenHolders, forumStats] = await Promise.all([getTokenHolders(), getForumStats()])
@@ -30,7 +31,12 @@ export async function HolderSnapshot() {
       ),
     },
     {
-      title: 'Token Concentration',
+      title: (
+        <div className="flex items-center gap-1">
+          <span>Token Concentration</span>
+          <InfoIconTooltip description="Percentage of $SUSHI held by top 10 addresses" />
+        </div>
+      ),
       value: tokenHolders.tokenConcentration.toLocaleString('EN', { style: 'percent', maximumFractionDigits: 2 }),
       // additional: <dd className="text-xs text-slate-500">Percentage of $SUSHI held by top 10 addresses</dd>,
       additional: (

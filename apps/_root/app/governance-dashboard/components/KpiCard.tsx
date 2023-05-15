@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 
 interface Kpi {
-  title: string
+  title: ReactNode
   value: ReactNode
   additional?: ReactNode
 }
