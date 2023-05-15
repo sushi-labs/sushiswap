@@ -1,0 +1,86 @@
+
+query PoolDayDatas(
+    $block: Block_height,
+    $first: Int = 100,
+    $orderBy: PoolDayData_orderBy,
+    $orderDirection: OrderDirection,
+    $skip: Int = 0,
+    $subgraphError: _SubgraphErrorPolicy_! = deny,
+    $where: PoolDayData_filter
+) {
+  poolDayDatas(
+    block: $block, 
+    first: $first, 
+    orderBy: $orderBy, 
+    orderDirection: $orderDirection, 
+    skip: $skip, 
+    subgraphError: $subgraphError, 
+    where: $where
+) {
+    id
+    date
+    pool {
+        id
+    }
+    liquidity
+    sqrtPrice
+    token0Price
+    token1Price
+    tick
+    feeGrowthGlobal0X128
+    feeGrowthGlobal1X128
+    tvlUSD
+    volumeToken0
+    volumeToken1
+    volumeUSD
+    feesUSD
+    txCount
+    open
+    high
+    low
+    close
+  }
+}
+
+query PoolHourDatas(
+    $block: Block_height,
+    $first: Int = 100,
+    $orderBy: PoolHourData_orderBy,
+    $orderDirection: OrderDirection,
+    $skip: Int = 0,
+    $subgraphError: _SubgraphErrorPolicy_! = deny,
+    $where: PoolHourData_filter
+) {
+  poolHourDatas(
+    block: $block, 
+    first: $first, 
+    orderBy: $orderBy, 
+    orderDirection: $orderDirection, 
+    skip: $skip, 
+    subgraphError: $subgraphError, 
+    where: $where
+  ) {
+    id
+    periodStartUnix
+    pool {
+        id
+    }
+    liquidity
+    sqrtPrice
+    token0Price
+    token1Price
+    tick
+    feeGrowthGlobal0X128
+    feeGrowthGlobal1X128
+    tvlUSD
+    volumeToken0
+    volumeToken1
+    volumeUSD
+    feesUSD
+    txCount
+    open
+    high
+    low
+    close
+  }
+}
