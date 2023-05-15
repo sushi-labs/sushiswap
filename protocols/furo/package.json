@@ -40,7 +40,6 @@
     "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/core": "^1.4.2",
-    "@sushiswap/core-sdk": "1.0.0-canary.110",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
     "@sushiswap/sushiswap": "workspace:*"
