@@ -1,4 +1,4 @@
-import { ChevronRightIcon } from '@heroicons/react/solid'
+import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { Button, Container, Tab, Typography } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
 import Image from 'next/legacy/image'

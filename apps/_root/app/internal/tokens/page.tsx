@@ -1,6 +1,6 @@
 'use client'
 
-import { SearchIcon } from '@heroicons/react/solid'
+import { SearchIcon } from '@heroicons/react-v1/solid'
 import { ChainId } from '@sushiswap/chain'
 import { useDebounce } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_UNSTYLED, Network } from '@sushiswap/ui'

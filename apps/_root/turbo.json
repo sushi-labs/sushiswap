@@ -16,7 +16,8 @@
         "FURO_URL",
         "SWAP_URL",
         "PARTNER_LIST_PR_WEBHOOK_URL",
-        "PARTNER_OCTOKIT_KEY"
+        "PARTNER_OCTOKIT_KEY",
+        "SWAP_API_V0_BASE_URL"
       ]
     },
     "check": {

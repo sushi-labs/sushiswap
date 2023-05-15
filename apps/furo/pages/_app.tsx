@@ -73,7 +73,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       <WagmiConfig client={client}>
         <PersistQueryClientProvider>
           <ReduxProvider store={store}>
-            <ThemeProvider>
+            <ThemeProvider forcedTheme="dark">
               <Onramper.Provider>
                 <App.Shell>
                   <DefaultSeo {...SEO} />
