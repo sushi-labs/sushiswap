@@ -10,8 +10,6 @@ export async function Stats() {
     getTreasurySnapshot(),
   ])
 
-  const userCount = tokenHolders?.sushi.userCount ?? '0'
-
   return (
     <div className="h-fit w-[350px] rounded-lg bg-gradient-to-b from-white/[4%] to-transparent p-px">
       <div className="relative overflow-hidden rounded-lg">
@@ -38,7 +36,7 @@ export async function Stats() {
             <div className="flex justify-between">
               <div className="flex flex-col gap-1">
                 <label className="text-sm text-slate-400">Token Holders</label>
-                <span className="text-2xl font-bold">{formatNumber(+userCount)}</span>
+                <span className="text-2xl font-bold">{formatNumber(+tokenHolders.userCount)}</span>
               </div>
               <div className="flex flex-col gap-1 text-right">
                 <label className="text-sm text-slate-400">Total Proposals</label>

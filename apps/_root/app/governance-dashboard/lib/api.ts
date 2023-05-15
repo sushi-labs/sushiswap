@@ -5,22 +5,7 @@ import { gql, request } from 'graphql-request'
 import { DATE_FILTERS, GOV_STATUS } from './constants'
 
 import type { Address } from 'wagmi'
-export interface GovernanceItem {
-  type: {
-    id: string
-    title: string
-    color: string
-  }
-  title: string
-  isActive: boolean
-  url: string
-  category: string
-}
-export type GovernanceStatus = keyof typeof GOV_STATUS
-
-const DISCOURSE_API_KEY = '86fb0ca272612c10eabca94eec66f2d350bd11a10da2eff0744809a0e3cb6eb9' // TODO: env var
-const DISCOURSE_BASE_URL = 'https://forum.sushi.com/'
-const DISCOURSE_PROPOSAL_ID = 8
+import { endOfPreviousQuarter } from './helpers'
 
 async function fetchUrl<T>(urlPath: string, options?: RequestInit) {
   const url = new URL(urlPath)
@@ -40,6 +25,39 @@ export async function getSushiPriceUSD() {
   return prices?.[SUSHI_ADDRESS[ChainId.ETHEREUM].toLowerCase()] ?? 0
 }
 
+async function getBlockNumberFromTimestamp(timestamp: number) {
+  const ETH_BLOCKS_GRAPH_URL = 'https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks'
+  const query = gql`
+    query Blocks($timestamp: BigInt) {
+      blocks(where: { timestamp_gte: $timestamp }, first: 1, orderBy: timestamp, orderDirection: asc) {
+        number
+      }
+    }
+  `
+
+  const res = await request<{ blocks: { number: string }[] }>(ETH_BLOCKS_GRAPH_URL, query, { timestamp })
+  return +res.blocks[0].number
+}
+
+/* ===== Discourse (forum) & Snapshot ===== */
+export interface GovernanceItem {
+  type: {
+    id: string
+    title: string
+    color: string
+  }
+  title: string
+  isActive: boolean
+  url: string
+  category: string
+}
+export type GovernanceStatus = keyof typeof GOV_STATUS
+
+const DISCOURSE_API_KEY = '86fb0ca272612c10eabca94eec66f2d350bd11a10da2eff0744809a0e3cb6eb9' // TODO: env var
+const DISCOURSE_BASE_URL = 'https://forum.sushi.com/'
+const DISCOURSE_PROPOSAL_ID = 8
+const SNAPSHOT_URL = 'https://hub.snapshot.org/graphql'
+
 async function fetchDiscourse<T>(path: string) {
   const data = await fetchUrl<T>(DISCOURSE_BASE_URL + path, {
     headers: {
@@ -50,8 +68,6 @@ async function fetchDiscourse<T>(path: string) {
 
   return data
 }
-
-const SNAPSHOT_URL = 'https://hub.snapshot.org/graphql'
 
 export async function getLatestGovernanceItems(filters?: {
   dateFilter: 'month' | 'quarter' | 'year' | 'all'
@@ -177,50 +193,86 @@ export async function getForumStats() {
   return data
 }
 
-export async function getTokenHolders(filters?: { balanceFilter: number; orderDirection: 'asc' | 'desc' }): Promise<{
-  sushi: { userCount: string; totalSupply: string }
-  users: { balance: string; id: string }[]
-  tokenConcentration: number
-}> {
-  const GRAPH_URL = 'https://api.thegraph.com/subgraphs/name/olastenberg/sushi'
-  const balancesQuery = gql`
-    query TokenHolders {
-      users(first: 10, orderBy: balance, orderDirection: desc) {
-        balance
-      }
-    }
-  `
-  const filteredQuery = gql`
-    query TokenHolders($where: User_filter, $orderDirection: OrderDirection) {
+/* ===== $SUSHI subgraph ===== */
+
+const GRAPH_URL = 'https://api.thegraph.com/subgraphs/name/olastenberg/sushi'
+
+function getTokenConcentration(topTenUsers: { balance: string }[], totalSupply: string) {
+  const topTenBalances: bigint = topTenUsers.reduce(
+    (acc: bigint, curr: { balance: string }) => acc + BigInt(curr.balance),
+    0n
+  )
+  const tokenConcentration = Number((topTenBalances * 100n) / BigInt(totalSupply)) / 100
+
+  return tokenConcentration
+}
+
+export async function getTokenHolders(filters?: { balanceFilter: number; orderDirection: 'asc' | 'desc' }) {
+  const query = gql`
+    query TokenHolders(
+      $usersFilter: User_filter
+      $usersOrderDirection: OrderDirection
+      $previousQuarterBlockNumber: Int
+    ) {
       sushi(id: "Sushi") {
         userCount
         totalSupply
       }
-      users(first: 10, orderBy: balance, where: $where, orderDirection: $orderDirection) {
+      users(first: 10, orderBy: balance, where: $usersFilter, orderDirection: $usersOrderDirection) {
         balance
         id
+      }
+      topTenUsers: users(first: 10, orderBy: balance, orderDirection: desc) {
+        balance
+      }
+      previousQuarterTopTenUsers: users(
+        first: 10
+        orderBy: balance
+        orderDirection: desc
+        block: { number: $previousQuarterBlockNumber }
+      ) {
+        balance
+      }
+      previousQuarterSushiStats: sushi(id: "Sushi", block: { number: $previousQuarterBlockNumber }) {
+        userCount
+        totalSupply
       }
     }
   `
 
-  const [tokenHoldersRes, usersRes] = await Promise.all([
-    request(GRAPH_URL, filteredQuery, {
-      orderDirection: filters?.orderDirection ?? 'desc',
-      where: {
-        balance_gt: filters?.balanceFilter ? (BigInt(1e18) * BigInt(+filters.balanceFilter)).toString() : 0,
-      },
-    }),
-    request(GRAPH_URL, balancesQuery),
-  ])
+  const previousQuarterTimestamp = Math.floor(endOfPreviousQuarter(Date.now()) / 1000)
+  const previousQuarterBlockNumber = await getBlockNumberFromTimestamp(previousQuarterTimestamp)
 
-  const topTenBalances: bigint = usersRes.users.reduce(
-    (acc: bigint, curr: { balance: string }) => acc + BigInt(curr.balance),
-    0n
+  const tokenHoldersRes = await request(GRAPH_URL, query, {
+    usersOrderDirection: filters?.orderDirection ?? 'desc',
+    usersFilter: {
+      balance_gt: filters?.balanceFilter ? (BigInt(1e18) * BigInt(+filters.balanceFilter)).toString() : 0,
+    },
+    previousQuarterBlockNumber,
+  })
+
+  const tokenConcentration = getTokenConcentration(tokenHoldersRes.topTenUsers, tokenHoldersRes.sushi.totalSupply)
+  const previousQuarterTokenConcentration = getTokenConcentration(
+    tokenHoldersRes.previousQuarterTopTenUsers,
+    tokenHoldersRes.previousQuarterSushiStats.totalSupply
   )
-  const tokenConcentration = Number((topTenBalances * 100n) / BigInt(tokenHoldersRes.sushi.totalSupply)) / 100
 
-  return { ...tokenHoldersRes, tokenConcentration }
+  const res = {
+    userCount: tokenHoldersRes.sushi.userCount,
+    totalSupply: tokenHoldersRes.sushi.totalSupply,
+    users: tokenHoldersRes.users,
+    tokenConcentration,
+    previousQuarter: {
+      userCount: tokenHoldersRes.previousQuarterSushiStats.userCount,
+      totalSupply: tokenHoldersRes.previousQuarterSushiStats.totalSupply,
+      tokenConcentration: previousQuarterTokenConcentration,
+    },
+  }
+
+  return res
 }
+
+/* ===== Defillama ===== */
 
 export async function getTreasuryHistoricalTvl() {
   const allBalances = await fetchUrl<{
@@ -257,6 +309,8 @@ export async function getTreasuryHistoricalTvl() {
 
   return result
 }
+
+/* ===== Safe ===== */
 
 interface SafeBalance {
   id: string

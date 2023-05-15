@@ -5,12 +5,11 @@ import { getSushiPriceUSD, getTokenHolders } from '../lib'
 import { TokenHoldersTable } from './TokenHoldersTable'
 
 export default async function TokenHolders({ searchParams }) {
-  const [tokenHoldersData, sushiPrice] = await Promise.all([getTokenHolders(searchParams), getSushiPriceUSD()])
+  const [tokenHolders, sushiPrice] = await Promise.all([getTokenHolders(searchParams), getSushiPriceUSD()])
 
-  const sushiData = tokenHoldersData?.sushi
-  const totalSupply = sushiData ? Math.trunc(+sushiData.totalSupply ?? 0) / 1e18 : 0
+  const totalSupply = Math.trunc(+tokenHolders.totalSupply ?? 0) / 1e18
 
-  const users = tokenHoldersData?.users.map((user, i: number) => {
+  const users = tokenHolders.users.map((user, i: number) => {
     const balance = Math.trunc(+user.balance) / 1e18
 
     return {

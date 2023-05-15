@@ -4,7 +4,7 @@ import { CircleIcon, classNames } from '@sushiswap/ui'
 import React from 'react'
 
 import { KpiCard } from '../components'
-import { formatNumber } from '../lib'
+import { formatNumber, getPercentageDiff } from '../lib'
 
 export function TreasuryKpis({
   treasurySnapshot,
@@ -15,7 +15,7 @@ export function TreasuryKpis({
 }) {
   const currentQuarter = budgetData[budgetData.length - 1]
   const previousQuarter = budgetData[budgetData.length - 2]
-  const budgetDiff = (currentQuarter.budget - previousQuarter.budget) / previousQuarter.budget
+  const budgetDiff = getPercentageDiff(currentQuarter.budget, previousQuarter.budget)
   const runwayQuarters = treasurySnapshot.balancesValueUsd / currentQuarter.expenses
   const runwayMonths = Math.floor(runwayQuarters * 3)
 

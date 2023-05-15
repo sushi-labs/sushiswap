@@ -1,11 +1,15 @@
 import React from 'react'
 
-import { formatNumber, getForumStats, getTokenHolders } from '../lib'
+import { formatNumber, getForumStats, getPercentageDiff, getTokenHolders } from '../lib'
 import { KpiCard } from './KpiCard'
 
 export async function HolderSnapshot() {
   const [tokenHolders, forumStats] = await Promise.all([getTokenHolders(), getForumStats()])
-  const userCount = tokenHolders?.sushi.userCount ?? '0'
+  const tokenConcentrationDiff = getPercentageDiff(
+    tokenHolders.tokenConcentration,
+    tokenHolders.previousQuarter.tokenConcentration
+  )
+  const userCountDiff = getPercentageDiff(tokenHolders.userCount, tokenHolders.previousQuarter.userCount)
 
   const holderSnapshot = [
     {
@@ -18,7 +22,7 @@ export async function HolderSnapshot() {
         </div>
       ),
       additional: (
-        <div className="grid grid-cols-3 text-xs text-slate-500">
+        <div className="grid grid-cols-3 text-sm text-slate-500">
           <span>Total</span>
           <span>Last 7 days</span>
           <span>Last 30 days</span>
@@ -28,15 +32,22 @@ export async function HolderSnapshot() {
     {
       title: 'Token Concentration',
       value: tokenHolders.tokenConcentration.toLocaleString('EN', { style: 'percent', maximumFractionDigits: 2 }),
-      additional: <dd className="text-xs text-slate-500">Percentage of $SUSHI held by top 10 addresses</dd>,
+      // additional: <dd className="text-xs text-slate-500">Percentage of $SUSHI held by top 10 addresses</dd>,
+      additional: (
+        <dd className={`text-sm ${tokenConcentrationDiff < 0 ? 'text-red-400' : 'text-green-400'}`}>
+          {tokenConcentrationDiff.toLocaleString('EN', { style: 'percent', maximumFractionDigits: 2 })} from last
+          quarter
+        </dd>
+      ),
     },
     {
       title: 'Token Holders',
-      value: formatNumber(+userCount),
-      // additional: (
-      //   // TODO: dynamic
-      //   <dd className="text-sm text-red-400">-3.42% from last quarter</dd>
-      // ),
+      value: formatNumber(+tokenHolders.userCount),
+      additional: (
+        <dd className={`text-sm ${userCountDiff < 0 ? 'text-red-400' : 'text-green-400'}`}>
+          {userCountDiff.toLocaleString('EN', { style: 'percent', maximumFractionDigits: 2 })} from last quarter
+        </dd>
+      ),
     },
   ]
 

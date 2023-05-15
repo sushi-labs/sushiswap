@@ -1,12 +1,12 @@
 'use client'
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { classNames } from '@sushiswap/ui'
 import React, { useMemo, useState } from 'react'
 import { Cell, Pie, PieChart, Tooltip } from 'recharts'
 
 import { ChartTooltip, KpiCard } from '../components'
-import { formatNumber } from '../lib'
-import { classNames } from '@sushiswap/ui'
+import { formatNumber, getPercentageDiff } from '../lib'
 
 const CHART_COLORS = {
   engineering: '#5A89DD',
@@ -22,8 +22,8 @@ export function QuarterlyBudget({ budgetData }) {
   const selectedQuarter = budgetData[selectedQuarterIndex]
 
   const previousQuarter = budgetData[selectedQuarterIndex - 1] ?? selectedQuarter
-  const budgetDiff = (selectedQuarter.budget - previousQuarter.budget) / previousQuarter.budget
-  const expensesDiff = (selectedQuarter.expenses - previousQuarter.expenses) / previousQuarter.expenses
+  const budgetDiff = getPercentageDiff(selectedQuarter.budget, previousQuarter.budget)
+  const expensesDiff = getPercentageDiff(selectedQuarter.expenses, previousQuarter.expenses)
 
   const quarterlyKpis = useMemo(
     () => [
