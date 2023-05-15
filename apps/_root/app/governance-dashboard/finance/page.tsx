@@ -1,11 +1,12 @@
 import React from 'react'
 
 import { getTreasurySnapshot } from '../lib'
+import { HistoricalTreasury } from './HistoricalTreasury'
 import { QuarterlyBudget } from './QuarterlyBudget'
 import { QuarterlyExpenses } from './QuarterlyExpenses'
+import { TokenNetflow } from './TokenNetflow'
 import { TreasuryBalancesTable } from './TreasuryBalancesTable'
 import { TreasuryKpis } from './TreasuryKpis'
-import { HistoricalTreasury } from './HistoricalTreasury'
 
 async function getBudgetData() {
   const budgetData = [
@@ -264,21 +265,8 @@ export default async function Finance() {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <QuarterlyExpenses budgetData={budgetData} />
-          <div className="h-full w-full rounded-lg bg-[#1A2031] p-5">
-            <div className="flex items-center gap-[14px]">
-              <div className="flex items-center gap-3">
-                <div className="h-3 w-3 rounded-sm bg-[#BF60EE]" />
-                <label className="text-sm text-slate-400">Outflow</label>
-              </div>
-              <div className="h-4 rounded-full border border-gray-50/20 bg-gray-50/20" />
-              <div className="flex items-center gap-3">
-                <div className="h-3 w-3 rounded-sm bg-blue" />
-                <label className="text-sm text-slate-400">Inflow</label>
-              </div>
-            </div>
-            <h3 className="mt-3 text-xl font-semibold">Token Netflow</h3>
-            <div className="mt-10 w-full bg-slate-700">chart</div>
-          </div>
+          {/* @ts-expect-error Async Server Component */}
+          <TokenNetflow />
         </div>
         <TreasuryBalancesTable balances={treasurySnapshot.balances} />
       </section>
