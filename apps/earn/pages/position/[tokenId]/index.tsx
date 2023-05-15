@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import { Layout } from '../../../components'
 import Link from 'next/link'
 import { ArrowLeftIcon, MinusIcon, PlusIcon } from '@heroicons/react/solid'
@@ -195,7 +195,7 @@ const Position: FC = () => {
             startIcon={<MinusIcon width={18} height={18} />}
             variant="outlined"
             color={tab === SelectedTab.DecreaseLiq ? 'blue' : 'default'}
-            testdata-id='decrease-liquidity-button'
+            testdata-id="decrease-liquidity-button"
           >
             Decrease Liquidity
           </RadioGroup.Option>
