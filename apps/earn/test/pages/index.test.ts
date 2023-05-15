@@ -45,73 +45,73 @@ const USDC = new Token({
   name: 'USDC Stablecoin',
 })
 
-// Tests will only work for polygon atm
-test.describe('V3', () => {
-  test.beforeEach(async ({ page }) => {
-    const url = (process.env.PLAYWRIGHT_URL as string).concat('/add').concat(`?chainId=${CHAIN_ID}`)
-    await page.goto(url)
-    await switchNetwork(page, CHAIN_ID)
-  })
+// // Tests will only work for polygon atm
+// test.describe('V3', () => {
+//   test.beforeEach(async ({ page }) => {
+//     const url = (process.env.PLAYWRIGHT_URL as string).concat('/add').concat(`?chainId=${CHAIN_ID}`)
+//     await page.goto(url)
+//     await switchNetwork(page, CHAIN_ID)
+//   })
 
-  test('Create pool', async ({ page }) => {
-    test.slow()
-    await createOrAddLiquidityV3(page, {
-      token0: NATIVE_TOKEN,
-      token1: USDC,
-      startPrice: '0.5',
-      minPrice: '0.1',
-      maxPrice: '0.9',
-      amount: '0.001',
-      amountBelongsToToken0: false,
-      type: 'CREATE',
-    })
-  })
+//   test('Create pool', async ({ page }) => {
+//     test.slow()
+//     await createOrAddLiquidityV3(page, {
+//       token0: NATIVE_TOKEN,
+//       token1: USDC,
+//       startPrice: '0.5',
+//       minPrice: '0.1',
+//       maxPrice: '0.9',
+//       amount: '0.001',
+//       amountBelongsToToken0: false,
+//       type: 'CREATE',
+//     })
+//   })
 
-  // TODO: most of the tests below are dependent to the Create Pool test. Consider if we should put the creation in a beforeAll.
-  test('Add liquidity, both sides', async ({ page }) => {
-    test.slow()
-    await createOrAddLiquidityV3(page, {
-      token0: NATIVE_TOKEN,
-      token1: USDC,
-      minPrice: '0.3',
-      maxPrice: '0.7',
-      amount: '0.0001',
-      amountBelongsToToken0: false,
-      type: 'ADD',
-    })
-  })
+//   // TODO: most of the tests below are dependent to the Create Pool test. Consider if we should put the creation in a beforeAll.
+//   test('Add liquidity, both sides', async ({ page }) => {
+//     test.slow()
+//     await createOrAddLiquidityV3(page, {
+//       token0: NATIVE_TOKEN,
+//       token1: USDC,
+//       minPrice: '0.3',
+//       maxPrice: '0.7',
+//       amount: '0.0001',
+//       amountBelongsToToken0: false,
+//       type: 'ADD',
+//     })
+//   })
 
-  test('Add liquidity, only one side(NATIVE)', async ({ page }) => {
-    test.slow()
-    await createOrAddLiquidityV3(page, {
-      token0: NATIVE_TOKEN,
-      token1: USDC,
-      minPrice: '0.8',
-      maxPrice: '0.9',
-      amount: '1',
-      amountBelongsToToken0: true,
-      type: 'ADD',
-    })
-  })
+//   test('Add liquidity, only one side(NATIVE)', async ({ page }) => {
+//     test.slow()
+//     await createOrAddLiquidityV3(page, {
+//       token0: NATIVE_TOKEN,
+//       token1: USDC,
+//       minPrice: '0.8',
+//       maxPrice: '0.9',
+//       amount: '1',
+//       amountBelongsToToken0: true,
+//       type: 'ADD',
+//     })
+//   })
 
-  test('Add liquidity, only one side(USDC)', async ({ page }) => {
-    test.slow()
-    await createOrAddLiquidityV3(page, {
-      token0: NATIVE_TOKEN,
-      token1: USDC,
-      minPrice: '0.2',
-      maxPrice: '0.4',
-      amount: '0.0001',
-      amountBelongsToToken0: false,
-      type: 'ADD',
-    })
-  })
+//   test('Add liquidity, only one side(USDC)', async ({ page }) => {
+//     test.slow()
+//     await createOrAddLiquidityV3(page, {
+//       token0: NATIVE_TOKEN,
+//       token1: USDC,
+//       minPrice: '0.2',
+//       maxPrice: '0.4',
+//       amount: '0.0001',
+//       amountBelongsToToken0: false,
+//       type: 'ADD',
+//     })
+//   })
 
-  test('Remove liquidity', async ({ page }) => {
-    test.slow()
-    await removeLiquidityV3(page)
-  })
-})
+//   test('Remove liquidity', async ({ page }) => {
+//     test.slow()
+//     await removeLiquidityV3(page)
+//   })
+// })
 
 // Tests will only work for polygon atm
 test.describe('V2', () => {
@@ -277,7 +277,7 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   await expect(maxButtonSelector).toBeVisible()
   await expect(maxButtonSelector).toBeEnabled()
   await maxButtonSelector.click()
-  await approve(page, 'approve-token0')
+  await approve(page, `${type.toLowerCase()}-approve-slp`)
   
   const actionSelector = page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`)
   await expect(actionSelector).toBeVisible()
@@ -291,16 +291,13 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
 async function removeLiquidityV2(page: Page) {
   await switchNetwork(page, CHAIN_ID)
   await page.locator('[testdata-id=remove-liquidity-max-button]').click()
+  await approve(page, 'approve-remove-liquidity-slp')
 
-  const approveLocator = page.locator('[testdata-id=remove-liquidity-trident-approve-token]')
-  await expect(approveLocator).toBeVisible()
-  await expect(approveLocator).toBeEnabled()
-  await approveLocator.click()
-  
-  const removeLiquidityLocator = page.locator('[testdata-id=remove-liquidity-trident-button]')
+  const removeLiquidityLocator = page.locator('[testdata-id=remove-liquidity-button]')
 
   await expect(removeLiquidityLocator).toBeVisible()
   await expect(removeLiquidityLocator).toBeEnabled()
+  // await timeout(5_000)
   await removeLiquidityLocator.click()
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')

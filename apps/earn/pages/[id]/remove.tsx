@@ -53,6 +53,7 @@ const _Remove = () => {
   })
 
   if (!pool) return <></>
+  console.log(pool.protocol)
 
   return (
     <>
