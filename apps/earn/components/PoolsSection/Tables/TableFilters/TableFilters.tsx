@@ -22,12 +22,12 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
 
   return (
     <div className="flex flex-col gap-4 mb-4">
-      <div className="w-full h-px bg-gray-200 dark:bg-slate-200/5" />
+      {/*<div className="w-full h-px bg-gray-200 dark:bg-slate-200/5" />*/}
       <div className="flex gap-4">
         <TableFiltersSearchToken />
         <TableFiltersNetwork />
       </div>
-      <div className="w-full h-px bg-gray-200 dark:bg-slate-200/5" />
+      {/*<div className="w-full h-px bg-gray-200 dark:bg-slate-200/5" />*/}
       <div className="flex flex-wrap items-center gap-3">
         <div
           className={classNames(

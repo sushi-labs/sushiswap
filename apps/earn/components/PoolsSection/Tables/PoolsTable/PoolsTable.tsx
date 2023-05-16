@@ -95,26 +95,28 @@ export const PoolsTable: FC = () => {
   }, [])
 
   return (
-    <>
-      <InfiniteScroll
-        dataLength={data.length}
-        next={() => setSize((prev) => prev + 1)}
-        hasMore={data.length < (poolCount?.count || 0)}
-        loader={
-          <div className="flex justify-center w-full py-4">
-            <Loader size={24} />
-          </div>
-        }
-      >
-        <GenericTable<Pool>
-          table={table}
-          loading={!pools && isValidating}
-          HoverElement={isMd ? PoolQuickHoverTooltip : undefined}
-          placeholder="No pools found"
-          pageSize={PAGE_SIZE}
-          linkFormatter={rowLink}
-        />
-      </InfiniteScroll>
-    </>
+    <div className="rounded-2xl mb-10 overflow-hidden border">
+      <div className="max-h-[1200px] overflow-y-scroll scrollbar">
+        <InfiniteScroll
+          dataLength={data.length}
+          next={() => setSize((prev) => prev + 1)}
+          hasMore={data.length < (poolCount?.count || 0)}
+          loader={
+            <div className="flex justify-center w-full py-4">
+              <Loader size={24} />
+            </div>
+          }
+        >
+          <GenericTable<Pool>
+            table={table}
+            loading={!pools && isValidating}
+            HoverElement={isMd ? PoolQuickHoverTooltip : undefined}
+            placeholder="No pools found"
+            pageSize={PAGE_SIZE}
+            linkFormatter={rowLink}
+          />
+        </InfiniteScroll>
+      </div>
+    </div>
   )
 }

@@ -67,14 +67,16 @@ export const PositionsTable: FC = () => {
           </span>
         </h1>
       </div>
-      <GenericTable<PositionWithPool>
-        table={table}
-        HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
-        loading={isValidating}
-        placeholder="No positions found"
-        pageSize={Math.max(userPositions?.length || 0, 5)}
-        linkFormatter={rowLink}
-      />
+      <div className="rounded-2xl mb-10 overflow-hidden border">
+        <GenericTable<PositionWithPool>
+          table={table}
+          HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
+          loading={isValidating}
+          placeholder="No positions found"
+          pageSize={Math.max(userPositions?.length || 0, 5)}
+          linkFormatter={rowLink}
+        />
+      </div>
     </>
   )
 }

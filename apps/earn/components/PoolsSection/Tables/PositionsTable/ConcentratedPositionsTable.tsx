@@ -19,7 +19,7 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; p
   variant = 'default',
   poolId,
 }) => {
-  const [hide, setHide] = useState(false)
+  const [hide, setHide] = useState(true)
   const { address } = useAccount()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
@@ -107,14 +107,16 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; p
           </div>
         </h1>
       </div>
-      <GenericTable<ConcentratedLiquidityPosition>
-        table={table}
-        loading={Boolean(isLoading && address)}
-        placeholder="No positions found"
-        pageSize={_positions?.length ? _positions.length : 1}
-        linkFormatter={rowLink}
-        loadingOverlay={false}
-      />
+      <div className="rounded-2xl mb-4 overflow-hidden border">
+        <GenericTable<ConcentratedLiquidityPosition>
+          table={table}
+          loading={Boolean(isLoading && address)}
+          placeholder="No positions found"
+          pageSize={_positions?.length ? _positions.length : 1}
+          linkFormatter={rowLink}
+          loadingOverlay={false}
+        />
+      </div>
     </>
   )
 }

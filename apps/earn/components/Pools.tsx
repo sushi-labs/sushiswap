@@ -31,9 +31,9 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
           <div className="flex flex-col flex-grow gap-6 items-center lg:items-start">
             <div className="flex flex-col gap-2">
               <span className="text-center lg:text-left font-semibold text-5xl text-gray-800 dark:text-slate-300 leading-[1.2]">
-                Pools.{' '}
+                Provide Liquidity
                 <span className="font-medium text-gray-500 dark:text-slate-300">
-                  Provide liquidity <br /> and earn fees.
+                  <br /> and receive fees & rewards<sup className="text-sm top-[-24px]">1</sup>
                 </span>
               </span>
             </div>
