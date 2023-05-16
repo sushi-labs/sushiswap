@@ -46,74 +46,73 @@ const USDC = new Token({
 })
 
 // // Tests will only work for polygon atm
-// test.describe('V3', () => {
-//   test.beforeEach(async ({ page }) => {
-//     const url = (process.env.PLAYWRIGHT_URL as string).concat('/add').concat(`?chainId=${CHAIN_ID}`)
-//     await page.goto(url)
-//     await switchNetwork(page, CHAIN_ID)
-//   })
+test.describe('V3', () => {
+  test.beforeEach(async ({ page }) => {
+    const url = (process.env.PLAYWRIGHT_URL as string).concat('/add').concat(`?chainId=${CHAIN_ID}`)
+    await page.goto(url)
+    await switchNetwork(page, CHAIN_ID)
+  })
 
-//   test('Create pool', async ({ page }) => {
-//     test.slow()
-//     await createOrAddLiquidityV3(page, {
-//       token0: NATIVE_TOKEN,
-//       token1: USDC,
-//       startPrice: '0.5',
-//       minPrice: '0.1',
-//       maxPrice: '0.9',
-//       amount: '0.001',
-//       amountBelongsToToken0: false,
-//       type: 'CREATE',
-//     })
-//   })
+  test('Create pool', async ({ page }) => {
+    test.slow()
+    await createOrAddLiquidityV3(page, {
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      startPrice: '0.5',
+      minPrice: '0.1',
+      maxPrice: '0.9',
+      amount: '0.001',
+      amountBelongsToToken0: false,
+      type: 'CREATE',
+    })
+  })
 
-//   // TODO: most of the tests below are dependent to the Create Pool test. Consider if we should put the creation in a beforeAll.
-//   test('Add liquidity, both sides', async ({ page }) => {
-//     test.slow()
-//     await createOrAddLiquidityV3(page, {
-//       token0: NATIVE_TOKEN,
-//       token1: USDC,
-//       minPrice: '0.3',
-//       maxPrice: '0.7',
-//       amount: '0.0001',
-//       amountBelongsToToken0: false,
-//       type: 'ADD',
-//     })
-//   })
+  // TODO: most of the tests below are dependent to the Create Pool test. Consider if we should put the creation in a beforeAll.
+  test('Add liquidity, both sides', async ({ page }) => {
+    test.slow()
+    await createOrAddLiquidityV3(page, {
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      minPrice: '0.3',
+      maxPrice: '0.7',
+      amount: '0.0001',
+      amountBelongsToToken0: false,
+      type: 'ADD',
+    })
+  })
 
-//   test('Add liquidity, only one side(NATIVE)', async ({ page }) => {
-//     test.slow()
-//     await createOrAddLiquidityV3(page, {
-//       token0: NATIVE_TOKEN,
-//       token1: USDC,
-//       minPrice: '0.8',
-//       maxPrice: '0.9',
-//       amount: '1',
-//       amountBelongsToToken0: true,
-//       type: 'ADD',
-//     })
-//   })
+  test('Add liquidity, only one side(NATIVE)', async ({ page }) => {
+    test.slow()
+    await createOrAddLiquidityV3(page, {
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      minPrice: '0.8',
+      maxPrice: '0.9',
+      amount: '1',
+      amountBelongsToToken0: true,
+      type: 'ADD',
+    })
+  })
 
-//   test('Add liquidity, only one side(USDC)', async ({ page }) => {
-//     test.slow()
-//     await createOrAddLiquidityV3(page, {
-//       token0: NATIVE_TOKEN,
-//       token1: USDC,
-//       minPrice: '0.2',
-//       maxPrice: '0.4',
-//       amount: '0.0001',
-//       amountBelongsToToken0: false,
-//       type: 'ADD',
-//     })
-//   })
+  test('Add liquidity, only one side(USDC)', async ({ page }) => {
+    test.slow()
+    await createOrAddLiquidityV3(page, {
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      minPrice: '0.2',
+      maxPrice: '0.4',
+      amount: '0.0001',
+      amountBelongsToToken0: false,
+      type: 'ADD',
+    })
+  })
 
-//   test('Remove liquidity', async ({ page }) => {
-//     test.slow()
-//     await removeLiquidityV3(page)
-//   })
-// })
+  test('Remove liquidity', async ({ page }) => {
+    test.slow()
+    await removeLiquidityV3(page)
+  })
+})
 
-// Tests will only work for polygon atm
 test.describe('V2', () => {
   test.beforeEach(async ({ page }) => {
     const url = (process.env.PLAYWRIGHT_URL as string).concat(`/add/v2/${CHAIN_ID}`)
