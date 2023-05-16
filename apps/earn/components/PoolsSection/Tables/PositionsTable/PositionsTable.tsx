@@ -67,7 +67,7 @@ export const PositionsTable: FC = () => {
           </span>
         </h1>
       </div>
-      <div className="rounded-2xl mb-10 overflow-hidden border">
+      <div className="rounded-2xl mb-10 overflow-hidden border dark:border-slate-200/5">
         <GenericTable<PositionWithPool>
           table={table}
           HoverElement={isMd ? PositionQuickHoverTooltip : undefined}

@@ -30,9 +30,9 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
         <section className="flex flex-col gap-12 lg:flex-row justify-between lg:items-center">
           <div className="flex flex-col flex-grow gap-6 items-center lg:items-start">
             <div className="flex flex-col gap-2">
-              <span className="text-center lg:text-left font-semibold text-5xl text-gray-800 dark:text-slate-300 leading-[1.2]">
+              <span className="text-center lg:text-left font-semibold text-5xl text-gray-800 dark:text-slate-200 leading-[1.2]">
                 Provide Liquidity
-                <span className="font-medium text-gray-500 dark:text-slate-300">
+                <span className="font-medium text-gray-500 dark:text-slate-500">
                   <br /> and receive fees & rewards<sup className="text-sm top-[-24px]">1</sup>
                 </span>
               </span>
@@ -134,8 +134,8 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
       </Container>
       <section className="flex flex-col gap-3 py-10 lg:py-[54px]">
         <Container maxWidth="7xl" className="mx-auto px-4">
-          <h1 className="text-3xl font-semibold text-gray-800 text-center lg:text-start">
-            Migrate <span className="text-gray-500">for increased efficiency.</span>
+          <h1 className="text-3xl font-semibold text-gray-800 dark:text-slate-200 text-center lg:text-start">
+            Migrate <span className="text-gray-500 dark:text-slate-500">for increased efficiency.</span>
           </h1>
         </Container>
         <div className="pl-4 xl:pl-0">

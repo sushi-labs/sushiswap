@@ -95,7 +95,7 @@ export const PoolsTable: FC = () => {
   }, [])
 
   return (
-    <div className="rounded-2xl mb-10 overflow-hidden border">
+    <div className="rounded-2xl mb-10 overflow-hidden border dark:border-slate-200/5">
       <div className="max-h-[1200px] overflow-y-scroll scrollbar">
         <InfiniteScroll
           dataLength={data.length}

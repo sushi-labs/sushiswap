@@ -107,7 +107,7 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; p
           </div>
         </h1>
       </div>
-      <div className="rounded-2xl mb-4 overflow-hidden border">
+      <div className="rounded-2xl mb-4 overflow-hidden border dark:border-slate-200/5">
         <GenericTable<ConcentratedLiquidityPosition>
           table={table}
           loading={Boolean(isLoading && address)}
