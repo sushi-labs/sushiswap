@@ -5,7 +5,7 @@ import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MockConnector } from 'wagmi/connectors/mock'
 import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
-// import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { SafeConnector } from 'wagmi/connectors/safe'
@@ -47,24 +47,24 @@ export const _createClient = (config?: CreateClientConfig) => {
           }),
           // TODO: Migrate to the WalletConnect v2 Connector before June 28
           // and flesh out wallet connect options.
-          new WalletConnectLegacyConnector({
-            chains,
-            options: {
-              qrcode: true,
-            },
-          }),
-          // new WalletConnectConnector({
+          // new WalletConnectLegacyConnector({
           //   chains,
           //   options: {
-          //     projectId: '187b0394dbf3b20ce7762592560eafd2',
-          //     metadata: {
-          //       name: 'sushi',
-          //       description: 'sushi app',
-          //       url: 'https://www.sushi.com',
-          //       icons: ['https://www.sushi.com/icon.png'],
-          //     },
+          //     qrcode: true,
           //   },
           // }),
+          new WalletConnectConnector({
+            chains,
+            options: {
+              projectId: '187b0394dbf3b20ce7762592560eafd2',
+              metadata: {
+                name: 'Sushi',
+                description: 'Sushi',
+                url: 'https://www.sushi.com',
+                icons: ['https://www.sushi.com/icon.png'],
+              },
+            },
+          }),
 
           // new WalletConnectLegacyConnector({
           //   chains,
@@ -85,7 +85,15 @@ export const _createClient = (config?: CreateClientConfig) => {
             chains,
             options: {
               // TODO: Other self-hosted safes for some networks?
-              allowedDomains: [/gnosis-safe.io$/, /app.safe.global$/],
+              allowedDomains: [
+                /gnosis-safe.io$/,
+                /app.safe.global$/,
+                /safe.fuse.io$/,
+                /multisig.moonbeam.network$/,
+                /safe.fantom.network$/,
+                /ui.celo-safe.io$/,
+                /multisig.harmony.one$/,
+              ],
               debug: false,
             },
           }),
