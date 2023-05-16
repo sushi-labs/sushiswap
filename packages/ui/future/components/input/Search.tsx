@@ -58,7 +58,6 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function 
       }))
     }
 
-    console.log(event.key === 'Enter')
     if (event.key === 'Enter') {
       setValues((prev) => ({
         typed: '',
@@ -68,8 +67,10 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function 
   }, [])
 
   useEffect(() => {
-    onChange(`${values.typed} ${values.all.filter((el) => el !== ' ' && el !== '').join(' ')}`)
-  }, [onChange, values])
+    if (delimiter) {
+      onChange(`${values.typed} ${values.all.filter((el) => el !== ' ' && el !== '').join(' ')}`)
+    }
+  }, [delimiter, onChange, values])
 
   if (delimiter) {
     return (
