@@ -35,6 +35,8 @@ jobs:
       name: Continuous integration
       timeout-minutes: 30
       runs-on: ubuntu-latest
+      env:
+        ANVIL_BLOCK_NUMBER: 42259027
       steps:
         - name: Check out
           uses: actions/checkout@v3
@@ -58,6 +60,12 @@ jobs:
         - name: Install playwright
           run: pnpm exec playwright install --with-deps chromium
 
+        - name: Cache Anvil
+          uses: 'actions/cache@v3'
+          with:
+            path: ~/.foundry/cache/rpc/**/${{ env.ANVIL_BLOCK_NUMBER }}
+            key: foundry-anvil-${{ env.ANVIL_BLOCK_NUMBER }}
+
         - name: Install rust
           uses: actions-rs/toolchain@v1
           with:
@@ -80,7 +88,6 @@ jobs:
             PLAYWRIGHT_URL: http://localhost:3000/pools
             CHAIN_ID: 137
             ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
-            ANVIL_BLOCK_NUMBER: 42259027
           working-directory: .
 
         - name: Upload test results
