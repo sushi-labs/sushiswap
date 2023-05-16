@@ -9,26 +9,20 @@ import React, { useMemo } from 'react'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { NetworkIcon } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/future/components/currency'
-import { useTokensFromPool } from '../../../lib/hooks'
 import { formatPercent } from '@sushiswap/format'
-import {
-  Layout,
-  PoolPositionProvider,
-  PoolPositionRewardsProvider,
-  PoolPositionStakedProvider,
-} from '../../../components'
+import { Layout, PoolPositionProvider, PoolPositionRewardsProvider, PoolPositionStakedProvider } from '../../components'
 import Link from 'next/link'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { ArrowLeftIcon } from '@heroicons/react/solid'
-import { unwrapToken } from '../../../lib/functions'
+import { unwrapToken } from '../../lib/functions'
 import { ChainId } from '@sushiswap/chain'
-import { MigrateTab } from '../../../components/PoolPage/MigrateTab'
+import { MigrateTab } from '../../components/PoolPage/MigrateTab'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
-import { ConcentratedLiquidityProvider } from '../../../components/ConcentratedLiquidityProvider'
+import { ConcentratedLiquidityProvider } from '../../components/ConcentratedLiquidityProvider'
 import { Token } from '@sushiswap/currency'
 
 const queryParamsSchema = z.object({
-  poolId: z
+  id: z
     .string()
     .refine((val) => val.includes(':'), {
       message: 'PoolId not in the right format',
@@ -55,7 +49,7 @@ export const Migrate = () => {
   const { query } = useRouter()
 
   const {
-    poolId: [chainId, poolId],
+    id: [chainId, poolId],
   } = queryParamsSchema.parse(query)
 
   const { data: pool, isLoading } = usePool({
@@ -89,7 +83,7 @@ export const Migrate = () => {
   return (
     <Layout>
       <div className="flex flex-col gap-2">
-        <Link className="flex items-center gap-4 mb-2 group" href={`/migrate`} shallow={true}>
+        <Link className="flex items-center gap-4 mb-2 group" href={`/`} shallow={true}>
           <IconButton
             icon={ArrowLeftIcon}
             iconProps={{
@@ -99,7 +93,7 @@ export const Migrate = () => {
             }}
           />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
-            Go back to migrate list
+            Go back to pool list
           </span>
         </Link>
 
