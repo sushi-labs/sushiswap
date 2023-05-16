@@ -5,7 +5,7 @@ import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MockConnector } from 'wagmi/connectors/mock'
 import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
-// import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { SafeConnector } from 'wagmi/connectors/safe'
@@ -58,19 +58,11 @@ export const _createClient = (config?: CreateClientConfig) => {
           //   options: {
           //     projectId: '187b0394dbf3b20ce7762592560eafd2',
           //     metadata: {
-          //       name: 'sushi',
-          //       description: 'sushi app',
+          //       name: 'Sushi',
+          //       description: 'Sushi',
           //       url: 'https://www.sushi.com',
           //       icons: ['https://www.sushi.com/icon.png'],
           //     },
-          //   },
-          // }),
-
-          // new WalletConnectLegacyConnector({
-          //   chains,
-          //   // TODO: Flesh out wallet connect options?
-          //   options: {
-          //     qrcode: true,
           //   },
           // }),
           new CoinbaseWalletConnector({
@@ -85,7 +77,15 @@ export const _createClient = (config?: CreateClientConfig) => {
             chains,
             options: {
               // TODO: Other self-hosted safes for some networks?
-              allowedDomains: [/gnosis-safe.io$/, /app.safe.global$/],
+              allowedDomains: [
+                /gnosis-safe.io$/,
+                /app.safe.global$/,
+                /safe.fuse.io$/,
+                /multisig.moonbeam.network$/,
+                /safe.fantom.network$/,
+                /ui.celo-safe.io$/,
+                /multisig.harmony.one$/,
+              ],
               debug: false,
             },
           }),
