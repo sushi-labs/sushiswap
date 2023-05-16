@@ -1,3 +1,5 @@
+'use client'
+
 import { FC, useCallback } from 'react'
 import { Dialog } from '@sushiswap/ui'
 import { useAccount } from 'wagmi'
