@@ -274,7 +274,7 @@ contract RouteProcessor4 is Ownable {
       if (to != address(this)) IERC20(wrapToken).safeTransfer(to, amountIn);
     } else { // unwrap native
       if (directionAndFake & 2 == 0) {
-        if (from != address(this)) IERC20(tokenIn).safeTransferFrom(from, address(this), amountIn);
+        if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
         IWETH(tokenIn).withdraw(amountIn);
       }
       payable(to).transfer(address(this).balance);
@@ -294,7 +294,7 @@ contract RouteProcessor4 is Ownable {
       // deposit to arbitrary recipient is possible only from address(bentoBox)
       if (amountIn != 0) {
         if (from == address(this)) IERC20(tokenIn).safeTransfer(address(bentoBox), amountIn);
-        else IERC20(tokenIn).safeTransferFrom(from, address(bentoBox), amountIn);
+        else IERC20(tokenIn).safeTransferFrom(msg.sender, address(bentoBox), amountIn);
       } else {
         // tokens already are at address(bentoBox)
         amountIn = IERC20(tokenIn).balanceOf(address(bentoBox)) +
@@ -327,7 +327,7 @@ contract RouteProcessor4 is Ownable {
 
     if (amountIn != 0) {
       if (from == address(this)) IERC20(tokenIn).safeTransfer(pool, amountIn);
-      else IERC20(tokenIn).safeTransferFrom(from, pool, amountIn);
+      else IERC20(tokenIn).safeTransferFrom(msg.sender, pool, amountIn);
     } else amountIn = IERC20(tokenIn).balanceOf(pool) - reserveIn;  // tokens already were transferred
 
     uint256 amountInWithFee = amountIn * (1_000_000 - fee);
@@ -362,10 +362,7 @@ contract RouteProcessor4 is Ownable {
     bool zeroForOne = stream.readUint8() > 0;
     address recipient = stream.readAddress();
 
-    if (from != address(this)) {
-      require(from == msg.sender, 'swapUniV3: unexpected from address');
-      IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), uint256(amountIn));
-    }
+    if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), uint256(amountIn));
 
     lastCalledPool = pool;
     IUniswapV3Pool(pool).swap(
