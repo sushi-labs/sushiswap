@@ -27,16 +27,22 @@ env:
   CI: true
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  NODE_OPTIONS: --max-old-space-size=8192
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 jobs:
-  ci:
+  e2e:
       name: Continuous integration
       timeout-minutes: 30
       runs-on: ubuntu-latest
       env:
         ANVIL_BLOCK_NUMBER: 42259027
+      strategy:
+        matrix:
+          chain-id: [137]
+          node-version: [18]
+          pnpm-version: [7.9.5]
       steps:
         - name: Check out
           uses: actions/checkout@v3
@@ -45,12 +51,12 @@ jobs:
 
         - uses: pnpm/action-setup@v2
           with:
-            version: 7.9.5
+            version: ${{ matrix.pnpm-version }}
 
         - name: Setup Node.js
           uses: actions/setup-node@v3
           with:
-            node-version: 18
+            node-version: ${{ matrix.node-version }}
             cache: 'pnpm'
 
         - name: Install dependencies
@@ -74,6 +80,7 @@ jobs:
             profile: minimal
             override: true
 
+
         - name: Install Anvil
           uses: foundry-rs/foundry-toolchain@v1
           with:
@@ -86,7 +93,7 @@ jobs:
             NEXT_PUBLIC_TEST: true
             ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
             PLAYWRIGHT_URL: http://localhost:3000/pools
-            CHAIN_ID: 137
+            CHAIN_ID: ${{ matrix.chain-id }}
             ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
           working-directory: .
 
