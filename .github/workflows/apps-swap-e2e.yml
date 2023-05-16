@@ -113,7 +113,3 @@ jobs:
           with:
             name: playwright-report
             path: ./apps/_root/test-results/
-
-        # Ensure anvil process is killed so the cache gets created
-        - name: Kill Anvil
-          run: pkill -2 anvil
