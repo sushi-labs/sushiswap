@@ -47,30 +47,22 @@ export const _createClient = (config?: CreateClientConfig) => {
           }),
           // TODO: Migrate to the WalletConnect v2 Connector before June 28
           // and flesh out wallet connect options.
-          // new WalletConnectLegacyConnector({
-          //   chains,
-          //   options: {
-          //     qrcode: true,
-          //   },
-          // }),
-          new WalletConnectConnector({
+          new WalletConnectLegacyConnector({
             chains,
             options: {
-              projectId: '187b0394dbf3b20ce7762592560eafd2',
-              metadata: {
-                name: 'Sushi',
-                description: 'Sushi',
-                url: 'https://www.sushi.com',
-                icons: ['https://www.sushi.com/icon.png'],
-              },
+              qrcode: true,
             },
           }),
-
-          // new WalletConnectLegacyConnector({
+          // new WalletConnectConnector({
           //   chains,
-          //   // TODO: Flesh out wallet connect options?
           //   options: {
-          //     qrcode: true,
+          //     projectId: '187b0394dbf3b20ce7762592560eafd2',
+          //     metadata: {
+          //       name: 'Sushi',
+          //       description: 'Sushi',
+          //       url: 'https://www.sushi.com',
+          //       icons: ['https://www.sushi.com/icon.png'],
+          //     },
           //   },
           // }),
           new CoinbaseWalletConnector({
