@@ -66,12 +66,6 @@ jobs:
         - name: Install playwright
           run: pnpm exec playwright install --with-deps chromium
 
-        - name: Cache Anvil
-          uses: 'actions/cache@v3'
-          with:
-            path: ~/.foundry/cache/rpc/**/${{ env.ANVIL_BLOCK_NUMBER }}
-            key: foundry-anvil-${{ env.ANVIL_BLOCK_NUMBER }}
-
         - name: Install rust
           uses: actions-rs/toolchain@v1
           with:
