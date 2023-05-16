@@ -45,12 +45,12 @@
     "@sushiswap/pools-api": "workspace:*",
     "@types/node": "^18.0.0",
     "eslint": "8.29.0",
-    "swr": "2.1.0",
+    "swr": "2.1.5",
     "tsup": "6.5.0",
     "typescript": "5.0.4"
   },
   "peerDependencies": {
-    "swr": "2.1.0",
+    "swr": "2.1.5",
     "react": "18.2.0"
   },
   "peerDependenciesMeta": {

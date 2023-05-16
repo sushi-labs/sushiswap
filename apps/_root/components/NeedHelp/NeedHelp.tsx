@@ -1,4 +1,4 @@
-import { ExternalLinkIcon } from '@heroicons/react/solid'
+import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import { Button, Container, DiscordIcon, GithubIcon, TwitterIcon, Typography, YoutubeIcon } from '@sushiswap/ui'
 import React, { FC } from 'react'
 

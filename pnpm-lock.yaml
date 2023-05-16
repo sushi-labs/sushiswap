@@ -317,41 +317,69 @@ importers:
 
   apps/_root:
     specifiers:
+      '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/constants': 5.7.0
       '@headlessui/react': 1.7.7
-      '@heroicons/react': ^1.0.0
+      '@heroicons/react': 2.0.13
+      '@heroicons/react-v1': npm:@heroicons/react@v1
       '@hookform/resolvers': 2.9.10
+      '@layerzerolabs/scan-client': 0.0.0-beta.6
       '@octokit/auth-app': ^4.0.4
+      '@playwright/test': 1.32.1
+      '@sushiswap/abi': workspace:*
+      '@sushiswap/amm': workspace:*
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
-      '@sushiswap/core-sdk': ^1.0.0-canary.65
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
+      '@sushiswap/dexie': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
       '@sushiswap/graph-client': workspace:*
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
       '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query': workspace:*
       '@sushiswap/redux-token-lists': workspace:*
       '@sushiswap/route-processor': workspace:*
+      '@sushiswap/router': workspace:*
+      '@sushiswap/router-config': workspace:*
+      '@sushiswap/stargate': workspace:*
+      '@sushiswap/sushiswap': workspace:*
+      '@sushiswap/sushixswap': workspace:*
+      '@sushiswap/tailwindcss-config': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/trident': workspace:*
+      '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/validate': workspace:*
       '@sushiswap/wagmi': workspace:*
+      '@sushiswap/wagmi-config': workspace:*
+      '@tanstack/query-sync-storage-persister': 4.27.1
       '@tanstack/react-query': 4.28.0
+      '@tanstack/react-query-devtools': 4.28.0
+      '@tanstack/react-query-persist-client': 4.28.0
       '@tanstack/react-table': 8.5.0
+      '@tsconfig/next': 1.0.5
       '@types/cors': ^2.8.13
       '@types/node': ^18.0.0
+      '@types/numeral': 2.0.2
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
       '@types/react-slider': ^1.3.1
       '@uniswap/token-lists': 1.0.0-beta.30
       '@vercel/analytics': 0.1.5
+      '@wagmi/core': 0.10.10
       autoprefixer: 10.4.13
-      cors: ^2.8.5
+      cors: 2.8.5
+      date-fns: 2.29.3
       eslint: 8.29.0
       ethers: 5.7.2
       fast-json-stable-stringify: 2.1.0
@@ -362,7 +390,7 @@ importers:
       next-axiom: 0.17.0
       next-seo: 5.15.0
       next-sitemap: 3.1.43
-      octokit: ^2.0.4
+      octokit: 2.0.14
       postcss: 8.4.21
       react: 18.2.0
       react-colorful: 5.6.1
@@ -376,34 +404,59 @@ importers:
       tailwindcss: 3.2.4
       typescript: 5.0.4
       unimported: ^1.23.0
+      viem: 0.3.19
       wagmi: 0.12.12
       yup: ^0.32.11
       zod: 3.20.2
     dependencies:
+      '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/constants': 5.7.0
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
-      '@heroicons/react': 1.0.6_react@18.2.0
+      '@heroicons/react': 2.0.13_react@18.2.0
+      '@heroicons/react-v1': /@heroicons/react/1.0.6_react@18.2.0
       '@hookform/resolvers': 2.9.10_react-hook-form@7.41.2
+      '@layerzerolabs/scan-client': 0.0.0-beta.6
       '@octokit/auth-app': 4.0.7
+      '@sushiswap/abi': link:../../packages/abi
+      '@sushiswap/amm': link:../../packages/amm
+      '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/core-sdk': 1.0.0-canary.138
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/database': link:../../packages/database
+      '@sushiswap/dexie': link:../../packages/dexie
       '@sushiswap/format': link:../../packages/format
       '@sushiswap/graph-client': link:../../packages/graph-client
       '@sushiswap/graph-config': link:../../config/graph
       '@sushiswap/hooks': link:../../packages/hooks
+      '@sushiswap/math': link:../../packages/math
       '@sushiswap/react-query': link:../../packages/react-query
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/route-processor': link:../../protocols/route-processor
+      '@sushiswap/router': link:../../packages/router
+      '@sushiswap/router-config': link:../../config/router
+      '@sushiswap/stargate': link:../../packages/stargate
+      '@sushiswap/sushiswap': link:../../protocols/sushiswap
+      '@sushiswap/sushixswap': link:../../protocols/sushixswap
+      '@sushiswap/tines': link:../../packages/tines
+      '@sushiswap/trident': link:../../protocols/trident
+      '@sushiswap/types': link:../../packages/types
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/validate': link:../../packages/validate
       '@sushiswap/wagmi': link:../../packages/wagmi
+      '@sushiswap/wagmi-config': link:../../config/wagmi
+      '@tanstack/query-sync-storage-persister': 4.27.1
       '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.28.0_q4teel2yjbizrm4naiaqcdpjum
+      '@tanstack/react-query-persist-client': 4.28.0_qfusmmwykmcbgdy37sd3cqxiry
       '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
       '@uniswap/token-lists': 1.0.0-beta.30
       '@vercel/analytics': 0.1.5_react@18.2.0
+      '@wagmi/core': 0.10.10_nnaosxrdtrdd5tvfvvco5wlzp4
       cors: 2.8.5
+      date-fns: 2.29.3
       ethers: 5.7.2
       fast-json-stable-stringify: 2.1.0
       framer-motion: 7.10.3_biqbaboplfbrettd7655fr4n2y
@@ -413,7 +466,7 @@ importers:
       next-axiom: 0.17.0_next@13.3.1
       next-seo: 5.15.0_ivamjty3az7dj3hhadhjniqtwe
       next-sitemap: 3.1.43_next@13.3.1
-      octokit: 2.0.10
+      octokit: 2.0.14
       react: 18.2.0
       react-colorful: 5.6.1_biqbaboplfbrettd7655fr4n2y
       react-dom: 18.2.0_react@18.2.0
@@ -423,17 +476,22 @@ importers:
       react-redux: 8.0.5_ie75ejlwqy5zh3tldgt7pftwcu
       react-slider: 2.0.4_react@18.2.0
       swr: 1.3.0_react@18.2.0
+      viem: 0.3.19_phjbrgmd4bydmj33olj2sis5hu
       wagmi: 0.12.12_tqgigql3ylhtuwp7wqflnkncbq
       yup: 0.32.11
       zod: 3.20.2
     devDependencies:
+      '@playwright/test': 1.32.1
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
       '@sushiswap/typescript-config': link:../../config/typescript
+      '@tsconfig/next': 1.0.5
       '@types/cors': 2.8.13
       '@types/node': 18.11.18
+      '@types/numeral': 2.0.2
       '@types/react': 18.0.26
       '@types/react-dom': 18.0.10
       '@types/react-slider': 1.3.1
@@ -561,7 +619,7 @@ importers:
       react-dom: 18.2.0
       react-infinite-scroll-component: ^6.1.0
       react-redux: 8.0.5
-      swr: 2.1.0
+      swr: 2.1.5
       tailwindcss: 3.2.4
       typescript: 5.0.4
       wagmi: 0.12.12
@@ -608,7 +666,7 @@ importers:
       autoprefixer: 10.4.13_postcss@8.4.21
       eslint: 8.29.0
       postcss: 8.4.21
-      swr: 2.1.0_react@18.2.0
+      swr: 2.1.5_react@18.2.0
       tailwindcss: 3.2.4_postcss@8.4.21
       typescript: 5.0.4
 
@@ -769,7 +827,7 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0
       react-infinite-scroll-component: ^6.1.0
-      swr: 2.1.0
+      swr: 2.1.5
       tailwindcss: 3.2.4
       typescript: 5.0.4
       wagmi: 0.12.12
@@ -834,7 +892,7 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-infinite-scroll-component: 6.1.0_react@18.2.0
-      swr: 2.1.0_react@18.2.0
+      swr: 2.1.5_react@18.2.0
       wagmi: 0.12.12_tqgigql3ylhtuwp7wqflnkncbq
       zod: 3.20.2
     devDependencies:
@@ -1045,139 +1103,6 @@ importers:
       tailwindcss: 3.2.4_postcss@8.4.21
       ts-jest: 29.0.3_agn56dcmrvrjxyb3wli3ryy5gy
       typechain: 8.1.1_typescript@5.0.4
-      typescript: 5.0.4
-
-  apps/swap:
-    specifiers:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/constants': 5.7.0
-      '@headlessui/react': 1.7.7
-      '@heroicons/react': 2.0.13
-      '@layerzerolabs/scan-client': 0.0.0-beta.6
-      '@playwright/test': 1.32.1
-      '@sushiswap/abi': workspace:*
-      '@sushiswap/amm': workspace:*
-      '@sushiswap/bentobox': workspace:*
-      '@sushiswap/chain': workspace:*
-      '@sushiswap/currency': workspace:*
-      '@sushiswap/dexie': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/format': workspace:*
-      '@sushiswap/hooks': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/math': workspace:*
-      '@sushiswap/nextjs-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/react-query': workspace:*
-      '@sushiswap/route-processor': workspace:*
-      '@sushiswap/router': workspace:*
-      '@sushiswap/router-config': workspace:*
-      '@sushiswap/stargate': workspace:*
-      '@sushiswap/sushiswap': workspace:*
-      '@sushiswap/sushixswap': workspace:*
-      '@sushiswap/tailwindcss-config': workspace:*
-      '@sushiswap/tines': workspace:*
-      '@sushiswap/trident': workspace:*
-      '@sushiswap/types': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/ui': workspace:*
-      '@sushiswap/validate': workspace:*
-      '@sushiswap/wagmi': workspace:*
-      '@sushiswap/wagmi-config': workspace:*
-      '@tanstack/query-sync-storage-persister': 4.27.1
-      '@tanstack/react-query': 4.28.0
-      '@tanstack/react-query-devtools': 4.28.0
-      '@tanstack/react-query-persist-client': 4.28.0
-      '@types/node': ^18.0.0
-      '@types/numeral': 2.0.2
-      '@types/react': ^18.0.0
-      '@types/react-dom': ^18.0.0
-      '@vercel/analytics': 0.1.5
-      '@wagmi/core': 0.10.10
-      autoprefixer: 10.4.13
-      date-fns: 2.29.3
-      eslint: 8.29.0
-      ethers: 5.7.2
-      nanoid: 4.0.0
-      next: 13.3.1
-      next-axiom: 0.17.0
-      next-seo: 5.15.0
-      numeral: 2.0.6
-      postcss: 8.4.21
-      react: 18.2.0
-      react-dom: 18.2.0
-      tailwindcss: 3.2.4
-      typescript: 5.0.4
-      viem: 0.3.19
-      wagmi: 0.12.12
-      zod: 3.20.2
-    dependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/constants': 5.7.0
-      '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
-      '@heroicons/react': 2.0.13_react@18.2.0
-      '@layerzerolabs/scan-client': 0.0.0-beta.6
-      '@sushiswap/abi': link:../../packages/abi
-      '@sushiswap/amm': link:../../packages/amm
-      '@sushiswap/bentobox': link:../../protocols/bentobox
-      '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/dexie': link:../../packages/dexie
-      '@sushiswap/format': link:../../packages/format
-      '@sushiswap/hooks': link:../../packages/hooks
-      '@sushiswap/math': link:../../packages/math
-      '@sushiswap/react-query': link:../../packages/react-query
-      '@sushiswap/route-processor': link:../../protocols/route-processor
-      '@sushiswap/router': link:../../packages/router
-      '@sushiswap/router-config': link:../../config/router
-      '@sushiswap/stargate': link:../../packages/stargate
-      '@sushiswap/sushiswap': link:../../protocols/sushiswap
-      '@sushiswap/sushixswap': link:../../protocols/sushixswap
-      '@sushiswap/tines': link:../../packages/tines
-      '@sushiswap/trident': link:../../protocols/trident
-      '@sushiswap/types': link:../../packages/types
-      '@sushiswap/ui': link:../../packages/ui
-      '@sushiswap/validate': link:../../packages/validate
-      '@sushiswap/wagmi': link:../../packages/wagmi
-      '@sushiswap/wagmi-config': link:../../config/wagmi
-      '@tanstack/query-sync-storage-persister': 4.27.1
-      '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 4.28.0_q4teel2yjbizrm4naiaqcdpjum
-      '@tanstack/react-query-persist-client': 4.28.0_qfusmmwykmcbgdy37sd3cqxiry
-      '@vercel/analytics': 0.1.5_react@18.2.0
-      '@wagmi/core': 0.10.10_nnaosxrdtrdd5tvfvvco5wlzp4
-      date-fns: 2.29.3
-      ethers: 5.7.2
-      nanoid: 4.0.0
-      next: 13.3.1_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.17.0_next@13.3.1
-      next-seo: 5.15.0_ivamjty3az7dj3hhadhjniqtwe
-      numeral: 2.0.6
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      viem: 0.3.19_phjbrgmd4bydmj33olj2sis5hu
-      wagmi: 0.12.12_tqgigql3ylhtuwp7wqflnkncbq
-      zod: 3.20.2
-    devDependencies:
-      '@playwright/test': 1.32.1
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/nextjs-config': link:../../config/nextjs
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
-      '@sushiswap/typescript-config': link:../../config/typescript
-      '@types/node': 18.11.18
-      '@types/numeral': 2.0.2
-      '@types/react': 18.0.26
-      '@types/react-dom': 18.0.10
-      autoprefixer: 10.4.13_postcss@8.4.21
-      eslint: 8.29.0
-      postcss: 8.4.21
-      tailwindcss: 3.2.4_postcss@8.4.21
       typescript: 5.0.4
 
   config/eslint:
@@ -1893,7 +1818,7 @@ importers:
       '@types/node': ^18.0.0
       '@whatwg-node/fetch': 0.8.4
       eslint: 8.29.0
-      swr: 2.1.0
+      swr: 2.1.5
       tslib: latest
       tsup: 6.5.0
       typescript: 5.0.4
@@ -1910,7 +1835,7 @@ importers:
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 18.11.18
       eslint: 8.29.0
-      swr: 2.1.0
+      swr: 2.1.5
       tsup: 6.5.0_typescript@5.0.4
       typescript: 5.0.4
 
@@ -3026,7 +2951,6 @@ importers:
       '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/core': ^1.4.2
-      '@sushiswap/core-sdk': 1.0.0-canary.110
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hardhat-config': workspace:*
@@ -3049,7 +2973,6 @@ importers:
       '@sushiswap/bentobox': link:../bentobox
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/core': 1.4.2
-      '@sushiswap/core-sdk': 1.0.0-canary.110
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/stargate': link:../../packages/stargate
       '@sushiswap/sushiswap': link:../sushiswap
@@ -3270,7 +3193,6 @@ importers:
       '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/core': ^1.4.2
-      '@sushiswap/core-sdk': 1.0.0-canary.110
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hardhat-config': workspace:*
@@ -3302,7 +3224,6 @@ importers:
       '@sushiswap/bentobox': link:../bentobox
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/core': 1.4.2
-      '@sushiswap/core-sdk': 1.0.0-canary.110
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/hardhat-config': link:../../config/hardhat
@@ -10206,17 +10127,35 @@ packages:
       json-parse-even-better-errors: 2.3.1
     dev: true
 
-  /@octokit/app/13.1.0:
-    resolution: {integrity: sha512-w0DCS/+bvrIL0iva89VSSa9YhIy1YHATSXMYrHQtgsBHpbuAnMn7QEknYhuMn/4h2dGg9cNjU+3XeAF5eyNmEA==}
+  /@octokit/app/13.1.3:
+    resolution: {integrity: sha512-qG3a3AddK/XLmtpQuB2eICbOUTwwdvqfdnyOzU6PlHhhhVapLfuutkbTOllHB/5OS/slUamIBD3zhOYpKsLFDQ==}
     engines: {node: '>= 14'}
     dependencies:
-      '@octokit/auth-app': 4.0.7
+      '@octokit/auth-app': 4.0.10
       '@octokit/auth-unauthenticated': 3.0.3
       '@octokit/core': 4.1.0
       '@octokit/oauth-app': 4.2.0
-      '@octokit/plugin-paginate-rest': 5.0.1_@octokit+core@4.1.0
-      '@octokit/types': 8.0.0
+      '@octokit/plugin-paginate-rest': 6.1.0_@octokit+core@4.1.0
+      '@octokit/types': 9.2.2
       '@octokit/webhooks': 10.4.0
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@octokit/auth-app/4.0.10:
+    resolution: {integrity: sha512-cLFDd7Z0TkBB0BLt3rWXNS5f2eTeAjzG9iQlFQ6ttNPaXNdYMtnQmr2NBDFq3WnZFSct9dpSdFaVuquRrCY67w==}
+    engines: {node: '>= 14'}
+    dependencies:
+      '@octokit/auth-oauth-app': 5.0.4
+      '@octokit/auth-oauth-user': 2.0.4
+      '@octokit/request': 6.2.2
+      '@octokit/request-error': 3.0.2
+      '@octokit/types': 9.2.2
+      '@types/lru-cache': 5.1.1
+      deprecation: 2.3.1
+      lru-cache: 6.0.0
+      universal-github-app-jwt: 1.1.1
+      universal-user-agent: 6.0.0
     transitivePeerDependencies:
       - encoding
     dev: false
@@ -10369,24 +10308,28 @@ packages:
     resolution: {integrity: sha512-HNWisMYlR8VCnNurDU6os2ikx0s0VyEjDYHNS/h4cgb8DeOxQ0n72HyinUtdDVxJhFy3FWLGl0DJhfEWk3P5Iw==}
     dev: false
 
-  /@octokit/plugin-paginate-rest/5.0.1_@octokit+core@4.1.0:
-    resolution: {integrity: sha512-7A+rEkS70pH36Z6JivSlR7Zqepz3KVucEFVDnSrgHXzG7WLAzYwcHZbKdfTXHwuTHbkT1vKvz7dHl1+HNf6Qyw==}
+  /@octokit/openapi-types/17.1.2:
+    resolution: {integrity: sha512-OaS7Ol4Y+U50PbejfzQflGWRMxO04nYWO5ZBv6JerqMKE2WS/tI9VoVDDPXHBlRMGG2fOdKwtVGlFfc7AVIstw==}
+    dev: false
+
+  /@octokit/plugin-paginate-rest/6.1.0_@octokit+core@4.1.0:
+    resolution: {integrity: sha512-5T4iXjJdYCVA1rdWS1C+uZV9AvtZY9QgTG74kFiSFVj94dZXowyi/YK8f4SGjZaL69jZthGlBaDKRdCMCF9log==}
     engines: {node: '>= 14'}
     peerDependencies:
       '@octokit/core': '>=4'
     dependencies:
       '@octokit/core': 4.1.0
-      '@octokit/types': 8.0.0
+      '@octokit/types': 9.2.2
     dev: false
 
-  /@octokit/plugin-rest-endpoint-methods/6.7.0_@octokit+core@4.1.0:
-    resolution: {integrity: sha512-orxQ0fAHA7IpYhG2flD2AygztPlGYNAdlzYz8yrD8NDgelPfOYoRPROfEyIe035PlxvbYrgkfUZIhSBKju/Cvw==}
+  /@octokit/plugin-rest-endpoint-methods/7.1.0_@octokit+core@4.1.0:
+    resolution: {integrity: sha512-SWwz/hc47GaKJR6BlJI4WIVRodbAFRvrR0QRPSoPMs7krb7anYPML3psg+ThEz/kcwOdSNh/oA8qThi/Wvs4Fw==}
     engines: {node: '>= 14'}
     peerDependencies:
       '@octokit/core': '>=3'
     dependencies:
       '@octokit/core': 4.1.0
-      '@octokit/types': 8.0.0
+      '@octokit/types': 9.2.2
       deprecation: 2.3.1
     dev: false
 
@@ -10401,14 +10344,14 @@ packages:
       bottleneck: 2.19.5
     dev: false
 
-  /@octokit/plugin-throttling/4.3.2_@octokit+core@4.1.0:
-    resolution: {integrity: sha512-ZaCK599h3tzcoy0Jtdab95jgmD7X9iAk59E2E7hYKCAmnURaI4WpzwL9vckImilybUGrjY1JOWJapDs2N2D3vw==}
+  /@octokit/plugin-throttling/5.2.0_@octokit+core@4.1.0:
+    resolution: {integrity: sha512-qWYvVIS1aRC3hN4a0ICWUp51IolHIn7E4iri2AKjbExJaovMDvRtae4nGoxG5pP6+WATk7JZ5epOJobFbGYV1w==}
     engines: {node: '>= 14'}
     peerDependencies:
       '@octokit/core': ^4.0.0
     dependencies:
       '@octokit/core': 4.1.0
-      '@octokit/types': 8.0.0
+      '@octokit/types': 9.2.2
       bottleneck: 2.19.5
     dev: false
 
@@ -10439,6 +10382,12 @@ packages:
     resolution: {integrity: sha512-65/TPpOJP1i3K4lBJMnWqPUJ6zuOtzhtagDvydAWbEXpbFYA0oMKKyLb95NFZZP0lSh/4b6K+DQlzvYQJQQePg==}
     dependencies:
       '@octokit/openapi-types': 14.0.0
+    dev: false
+
+  /@octokit/types/9.2.2:
+    resolution: {integrity: sha512-9BjDxjgQIvCjNWZsbqyH5QC2Yni16oaE6xL+8SUBMzcYPF4TGQBXGA97Cl3KceK9mwiNMb1mOYCz6FbCCLEL+g==}
+    dependencies:
+      '@octokit/openapi-types': 17.1.2
     dev: false
 
   /@octokit/webhooks-methods/3.0.1:
@@ -11294,41 +11243,6 @@ packages:
     resolution: {integrity: sha512-OQwr4BIYbF3FlMKYMslYhjGXXzdsduW+CfSTq86tUQZm9okJG4fKBmyA8ZYkZ+oW8dTDRuI5LGGidUYVQUFH7A==}
     dev: false
 
-  /@sushiswap/core-sdk/1.0.0-canary.110:
-    resolution: {integrity: sha512-i6xTV8Y5KU+AuRLtdU3AzofxfpOOfejmdqR4hT3TSCVLIpPSPkMqh4D2+6LQqTKqxH3vb+vnWzhcxlLBfe1KNg==}
-    dependencies:
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@ethersproject/solidity': 5.7.0
-      big.js: 6.2.1
-      decimal.js-light: 2.5.1
-      jsbi: 4.3.0
-      tiny-invariant: 1.3.1
-      tiny-warning: 1.0.3
-      toformat: 2.0.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
-  /@sushiswap/core-sdk/1.0.0-canary.138:
-    resolution: {integrity: sha512-AIhSCpQSdcdNYEAkl0bkr3951f7sYMxu1RsAC3XyqOGEwMdJ4q+rF4XJA8nSTM6TeNZ1NwnH0K40cdg5YYiqJQ==}
-    dependencies:
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@ethersproject/solidity': 5.7.0
-      big.js: 6.2.1
-      decimal.js-light: 2.5.1
-      jsbi: 4.3.0
-      tiny-invariant: 1.3.1
-      tiny-warning: 1.0.3
-      toformat: 2.0.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: false
-
   /@sushiswap/core/1.4.2:
     resolution: {integrity: sha512-Khd2i6Bob9uk7dCgVkhUioEoxRP28m6aj25MegAHvnJyxZPVzZDhxSkeL6wdv5MeAp2DwHkYqUq03KDfVTTP4Q==}
 
@@ -11666,6 +11580,10 @@ packages:
 
   /@tsconfig/esm/1.0.3:
     resolution: {integrity: sha512-Gp56rIc3R8ab032nXMUitmc7YIb4nAi8DQ6Qt47tuL0Ssn9LIOm+o2FQmqPu3jX4z0TsqgzWwkmVygxcq+yHYg==}
+    dev: true
+
+  /@tsconfig/next/1.0.5:
+    resolution: {integrity: sha512-ZpAlWqSGE3ZWFqKmI3FiQEu8WcBF3uii1z1ovedMcALflsRoJnExp3YzWQ/fU7lzGmYtfX1CWFpf1Gl8aEC6GQ==}
     dev: true
 
   /@tsconfig/node10/1.0.9:
@@ -12235,6 +12153,12 @@ packages:
 
   /@types/jsonwebtoken/8.5.9:
     resolution: {integrity: sha512-272FMnFGzAVMGtu9tkr29hRL6bZj4Zs1KZNeHLnKqAvp06tAIcarTMwOh8/8bz4FmKRcMxZhZNeUAQsNLoiPhg==}
+    dependencies:
+      '@types/node': 18.11.18
+    dev: false
+
+  /@types/jsonwebtoken/9.0.2:
+    resolution: {integrity: sha512-drE6uz7QBKq1fYqqoFKTDRdFCPHd5TCub75BM+D+cMx7NU9hUz7SESLfC2fSCXVFMO5Yj8sOWHuGqPgjc+fz0Q==}
     dependencies:
       '@types/node': 18.11.18
     dev: false
@@ -15962,6 +15886,7 @@ packages:
 
   /big.js/6.2.1:
     resolution: {integrity: sha512-bCtHMwL9LeDIozFn+oNhhFoq+yQ3BNdnsLSASUxLciOb1vgvpHsIO1dsENiGMgbb4SkP5TrzWzRiLddn8ahVOQ==}
+    dev: false
 
   /bigint-buffer/1.1.5:
     resolution: {integrity: sha512-trfYco6AoZ+rKhKnxA0hgX0HAbVP/s808/EuDSe2JDzUnCp/xAsli35Orvk67UrTEcwuxZqYZDmfA2RXJgxVvA==}
@@ -17847,6 +17772,7 @@ packages:
 
   /decimal.js-light/2.5.1:
     resolution: {integrity: sha512-qIMFpTMZmny+MMIitAB6D7iVPEorVw6YQRWkvarTkT4tBeSLLiHzcwj6q0MmYSFCiVpiqPJTJEYIrpcPzVEIvg==}
+    dev: false
 
   /decimal.js/10.4.3:
     resolution: {integrity: sha512-VBBaLc1MgL5XpzgIP7ny5Z6Nx3UrRkIViUkPUdtl9aya5amy3De1gsUUSB1g3+3sExYNjCAsAznmukyxCb1GRA==}
@@ -24179,6 +24105,7 @@ packages:
 
   /jsbi/4.3.0:
     resolution: {integrity: sha512-SnZNcinB4RIcnEyZqFPdGPVgrg2AcnykiBy0sHVJQKHYeaLUvi3Exj+iaPpLnFVkDPZIV4U0yvgC9/R4uEAZ9g==}
+    dev: false
 
   /jsbn/0.1.1:
     resolution: {integrity: sha512-UVU9dibq2JcFWxQPA6KCqj5O42VOmAY3zQUfEKxU0KpTGXwNoCjkX1e13eHNvw/xPynt6pU0rZ1htjWTNTSXsg==}
@@ -24430,6 +24357,16 @@ packages:
       lodash.once: 4.1.1
       ms: 2.1.3
       semver: 5.7.1
+    dev: false
+
+  /jsonwebtoken/9.0.0:
+    resolution: {integrity: sha512-tuGfYXxkQGDPnLJ7SibiQgVgeDgfbPq2k2ICcbgqW8WxWLBAxKQM/ZCu/IT8SOSwmaYl4dpTFCW5xZv7YbbWUw==}
+    engines: {node: '>=12', npm: '>=6'}
+    dependencies:
+      jws: 3.2.2
+      lodash: 4.17.21
+      ms: 2.1.3
+      semver: 7.3.8
     dev: false
 
   /jsprim/1.4.2:
@@ -26312,7 +26249,6 @@ packages:
     resolution: {integrity: sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
-    dev: true
 
   /nanoid/4.0.0:
     resolution: {integrity: sha512-IgBP8piMxe/gf73RTQx7hmnhwz0aaEXYakvqZyE302IXW3HyVNhdNGC+O2MwMAVhLEnvXlvKtGbtJf6wvHihCg==}
@@ -26464,7 +26400,6 @@ packages:
     resolution: {integrity: sha512-eByWRxPzKHs2oQz1yE41LX35umhz86ZSZ+mYyXBqn2IBi2hyUqxBA88avywdr4uyH+hCJczegGsDGWbzQA5Rqw==}
     engines: {node: '>=14.18.0'}
     hasBin: true
-    requiresBuild: true
     peerDependencies:
       '@opentelemetry/api': ^1.1.0
       fibers: '>= 3.1.0'
@@ -26818,18 +26753,18 @@ packages:
     dev: false
     optional: true
 
-  /octokit/2.0.10:
-    resolution: {integrity: sha512-sI15RZVaV9iyqLLEky4i++tMM48Fo9a80zrpOXMdAtbomznBLDi/moi9mAjJg7Ii+EaSEyaWOVIh3M/Vk/a5mw==}
+  /octokit/2.0.14:
+    resolution: {integrity: sha512-z6cgZBFxirpFEQ1La8Lg83GCs5hOV2EPpkYYdjsGNbfQMv8qUGjq294MiRBCbZqLufviakGsPUxaNKe3JrPmsA==}
     engines: {node: '>= 14'}
     dependencies:
-      '@octokit/app': 13.1.0
+      '@octokit/app': 13.1.3
       '@octokit/core': 4.1.0
       '@octokit/oauth-app': 4.2.0
-      '@octokit/plugin-paginate-rest': 5.0.1_@octokit+core@4.1.0
-      '@octokit/plugin-rest-endpoint-methods': 6.7.0_@octokit+core@4.1.0
+      '@octokit/plugin-paginate-rest': 6.1.0_@octokit+core@4.1.0
+      '@octokit/plugin-rest-endpoint-methods': 7.1.0_@octokit+core@4.1.0
       '@octokit/plugin-retry': 4.0.3_@octokit+core@4.1.0
-      '@octokit/plugin-throttling': 4.3.2_@octokit+core@4.1.0
-      '@octokit/types': 8.0.0
+      '@octokit/plugin-throttling': 5.2.0_@octokit+core@4.1.0
+      '@octokit/types': 9.2.2
     transitivePeerDependencies:
       - encoding
     dev: false
@@ -27665,7 +27600,7 @@ packages:
     resolution: {integrity: sha512-E398TUmfAYFPBSdzgeieK2Y1+1cpdxJx8yXbK/m57nRhKSmk1GB2tO4lbLBtlkfPQTDKfe4Xqv1ASWPpayPEig==}
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
-      nanoid: 3.3.4
+      nanoid: 3.3.6
       picocolors: 1.0.0
       source-map-js: 1.0.2
 
@@ -30612,18 +30547,16 @@ packages:
       react: 18.2.0
     dev: false
 
-  /swr/2.1.0:
-    resolution: {integrity: sha512-4hYl5p3/KalQ1MORealM79g/DtLohmud6yyfXw5l4wjtFksYUnocRFudvyaoUtgj3FrVNK9lS25Av9dsZYvz0g==}
-    engines: {pnpm: '7'}
+  /swr/2.1.5:
+    resolution: {integrity: sha512-/OhfZMcEpuz77KavXST5q6XE9nrOBOVcBLWjMT+oAE/kQHyE3PASrevXCtQDZ8aamntOfFkbVJp7Il9tNBQWrw==}
     peerDependencies:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0
     dependencies:
       use-sync-external-store: 1.2.0
     dev: true
 
-  /swr/2.1.0_react@18.2.0:
-    resolution: {integrity: sha512-4hYl5p3/KalQ1MORealM79g/DtLohmud6yyfXw5l4wjtFksYUnocRFudvyaoUtgj3FrVNK9lS25Av9dsZYvz0g==}
-    engines: {pnpm: '7'}
+  /swr/2.1.5_react@18.2.0:
+    resolution: {integrity: sha512-/OhfZMcEpuz77KavXST5q6XE9nrOBOVcBLWjMT+oAE/kQHyE3PASrevXCtQDZ8aamntOfFkbVJp7Il9tNBQWrw==}
     peerDependencies:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0
     dependencies:
@@ -31036,6 +30969,7 @@ packages:
 
   /tiny-warning/1.0.3:
     resolution: {integrity: sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==}
+    dev: false
 
   /tinybench/2.4.0:
     resolution: {integrity: sha512-iyziEiyFxX4kyxSp+MtY1oCH/lvjH3PxFN8PGCDeqcZWAJ/i+9y+nL85w99PxVzrIvew/GSkSbDYtiGVa85Afg==}
@@ -31132,6 +31066,7 @@ packages:
 
   /toformat/2.0.0:
     resolution: {integrity: sha512-03SWBVop6nU8bpyZCx7SodpYznbZF5R4ljwNLBcTQzKOD9xuihRo/psX58llS1BMFhhAI08H3luot5GoXJz2pQ==}
+    dev: false
 
   /toggle-selection/1.0.6:
     resolution: {integrity: sha512-BiZS+C1OS8g/q2RRbJmy59xpyghNBqrr6k5L/uKBGRsTfxmu3ffiRnd8mlGPUVayg8pvfi5urfnu8TU7DVOkLQ==}
@@ -32034,6 +31969,13 @@ packages:
     dependencies:
       '@types/jsonwebtoken': 8.5.9
       jsonwebtoken: 8.5.1
+    dev: false
+
+  /universal-github-app-jwt/1.1.1:
+    resolution: {integrity: sha512-G33RTLrIBMFmlDV4u4CBF7dh71eWwykck4XgaxaIVeZKOYZRAAxvcGMRFTUclVY6xoUPQvO4Ne5wKGxYm/Yy9w==}
+    dependencies:
+      '@types/jsonwebtoken': 9.0.2
+      jsonwebtoken: 9.0.0
     dev: false
 
   /universal-user-agent/6.0.0:

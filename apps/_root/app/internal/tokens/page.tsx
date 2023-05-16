@@ -1,6 +1,6 @@
 'use client'
 
-import { SearchIcon } from '@heroicons/react/solid'
+import { SearchIcon } from '@heroicons/react-v1/solid'
 import { ChainId } from '@sushiswap/chain'
 import { useDebounce } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_UNSTYLED, Network } from '@sushiswap/ui'
@@ -20,7 +20,7 @@ const TokensPage: FC = () => {
     getTokens({ chainIds, filter: debouncedFilter })
   )
 
-  console.log(tokens)
+  // console.log(tokens)
 
   return (
     <div className="flex flex-col gap-10 md:gap-16">

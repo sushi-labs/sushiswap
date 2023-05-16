@@ -1,20 +1,13 @@
-'use client'
-
 import '@sushiswap/ui/index.css'
 import '../variables.css'
 
-import { ThemeProvider } from '@sushiswap/ui'
 import Head from 'next/head'
-
 import React from 'react'
-
-import { Onramper } from '@sushiswap/wagmi/future/components'
-import { WagmiProvider } from '../components/WagmiProvider'
-import { QueryClientProvider } from 'components/QueryClientProvider'
+import { Providers } from './providers'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html className="dark">
+    <html className="dark" lang="en">
       <Head>
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=1" />
@@ -24,13 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="shortcut icon" href="/favicon.ico?v=1" />
       </Head>
       <body className="h-screen">
-        <WagmiProvider>
-          <QueryClientProvider>
-            <ThemeProvider>
-              <Onramper.Provider>{children}</Onramper.Provider>
-            </ThemeProvider>
-          </QueryClientProvider>
-        </WagmiProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
