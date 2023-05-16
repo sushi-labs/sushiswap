@@ -73,7 +73,7 @@
     "react-dom": "18.2.0",
     "react-infinite-scroll-component": "^6.1.0",
     "swr": "2.1.5",
-    "wagmi": "0.12.12",
+    "wagmi": "0.12.13",
     "zod": "3.20.2"
   },
   "devDependencies": {
