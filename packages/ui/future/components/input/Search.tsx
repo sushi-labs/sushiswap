@@ -26,19 +26,22 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function 
     typed: '',
   })
 
-  const _onChange = useCallback((val: string) => {
-    if (val.slice(-1) === (delimiter || ' ')) {
-      setValues((prev) => ({
-        typed: '',
-        all: [...prev.all, prev.typed],
-      }))
-    } else {
-      setValues((prev) => ({
-        typed: val,
-        all: prev.all,
-      }))
-    }
-  }, [])
+  const _onChange = useCallback(
+    (val: string) => {
+      if (val.slice(-1) === (delimiter || ' ')) {
+        setValues((prev) => ({
+          typed: '',
+          all: [...prev.all, prev.typed],
+        }))
+      } else {
+        setValues((prev) => ({
+          typed: val,
+          all: prev.all,
+        }))
+      }
+    },
+    [delimiter]
+  )
 
   const remove = useCallback((val: string) => {
     setValues((prev) => ({
@@ -54,10 +57,18 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function 
         all: prev.all.slice(0, -1),
       }))
     }
+
+    console.log(event.key === 'Enter')
+    if (event.key === 'Enter') {
+      setValues((prev) => ({
+        typed: '',
+        all: [...prev.all, prev.typed],
+      }))
+    }
   }, [])
 
   useEffect(() => {
-    onChange(values.all.filter((el) => el !== ' ' && el !== '').join(' '))
+    onChange(`${values.typed} ${values.all.filter((el) => el !== ' ' && el !== '').join(' ')}`)
   }, [onChange, values])
 
   if (delimiter) {
@@ -118,7 +129,14 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function 
                 <Loader size={16} className="text-gray-700 dark:text-slate-500" />
               </div>
             ) : value ? (
-              <div onClick={() => onChange('')}>
+              <div
+                onClick={() =>
+                  setValues({
+                    all: [],
+                    typed: '',
+                  })
+                }
+              >
                 <XMarkIcon width={24} height={24} className="cursor-pointer text-slate-500 hover:text-slate-300" />
               </div>
             ) : (
