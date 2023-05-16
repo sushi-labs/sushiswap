@@ -20,7 +20,7 @@ const TokensPage: FC = () => {
     getTokens({ chainIds, filter: debouncedFilter })
   )
 
-  console.log(tokens)
+  // console.log(tokens)
 
   return (
     <div className="flex flex-col gap-10 md:gap-16">
