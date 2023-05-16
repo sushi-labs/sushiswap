@@ -27,12 +27,14 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
   return (
     <>
       <Container maxWidth="7xl" className="mx-auto px-4 pt-[80px] lg:pb-[54px]">
-        <section className="flex flex-col gap-12 lg:flex-row justify-between items-start">
-          <div className="flex flex-col flex-grow gap-6">
+        <section className="flex flex-col gap-12 lg:flex-row justify-between lg:items-center">
+          <div className="flex flex-col flex-grow gap-6 items-center lg:items-start">
             <div className="flex flex-col gap-2">
-              <span className="font-semibold text-5xl text-gray-800 dark:text-slate-300">Pools.</span>
-              <span className="font-medium text-2xl text-gray-500 dark:text-slate-300">
-                Provide liquidity and earn fees
+              <span className="text-center lg:text-left font-semibold text-5xl text-gray-800 dark:text-slate-300 leading-[1.2]">
+                Pools.{' '}
+                <span className="font-medium text-gray-500 dark:text-slate-300">
+                  Provide liquidity <br /> and earn fees.
+                </span>
               </span>
             </div>
             <div className="group relative z-10">
@@ -108,8 +110,8 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1 items-start lg:items-end">
+          <div className="flex flex-col gap-4 items-center lg:items-end">
+            <div className="flex flex-col gap-1 items-center lg:items-end">
               <span className="lg:text-sm font-semibold">Looking for a partnership with Sushi?</span>
               <Link.External
                 href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe"
@@ -118,7 +120,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                 Join Onsen <ChevronRightIcon width={16} height={16} />
               </Link.External>
             </div>
-            <div className="flex flex-col gap-1 items-start lg:items-end">
+            <div className="flex flex-col gap-1 items-center lg:items-end">
               <span className="lg:text-sm font-semibold">Need Help?</span>
               <Link.External
                 href="https://discord.gg/NVPXN4e"
@@ -132,7 +134,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
       </Container>
       <section className="flex flex-col gap-3 py-10 lg:py-[54px]">
         <Container maxWidth="7xl" className="mx-auto px-4">
-          <h1 className="text-3xl font-semibold text-gray-800">
+          <h1 className="text-3xl font-semibold text-gray-800 text-center lg:text-start">
             Migrate <span className="text-gray-500">for increased efficiency.</span>
           </h1>
         </Container>
