@@ -141,6 +141,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 (leg) =>
                   leg.poolName.startsWith('Wrap') ||
                   leg.poolName.startsWith('SushiSwap') ||
+                  leg.poolName.startsWith('SushiSwapV3') ||
                   leg.poolName.startsWith('Trident') ||
                   leg.poolName.startsWith('BentoBridge')
               )
@@ -151,12 +152,21 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 receipt,
               })
             } else if (
-              !trade?.route?.legs?.every(
+              trade?.route?.legs?.some(
                 (leg) =>
-                  leg.poolName.startsWith('Wrap') ||
-                  leg.poolName.startsWith('SushiSwap') ||
-                  leg.poolName.startsWith('Trident') ||
-                  leg.poolName.startsWith('BentoBridge')
+                  !leg.poolName.startsWith('Wrap') &&
+                  (leg.poolName.startsWith('SushiSwap') ||
+                    leg.poolName.startsWith('SushiSwapV3') ||
+                    leg.poolName.startsWith('Trident') ||
+                    leg.poolName.startsWith('BentoBridge'))
+              ) &&
+              trade?.route?.legs?.some(
+                (leg) =>
+                  !leg.poolName.startsWith('Wrap') &&
+                  (!leg.poolName.startsWith('SushiSwap') ||
+                    !leg.poolName.startsWith('SushiSwapV3') ||
+                    !leg.poolName.startsWith('Trident') ||
+                    !leg.poolName.startsWith('BentoBridge'))
               )
             ) {
               log.info('Swap success (mix)', {
@@ -169,6 +179,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 (leg) =>
                   !leg.poolName.startsWith('Wrap') &&
                   !leg.poolName.startsWith('SushiSwap') &&
+                  !leg.poolName.startsWith('SushiSwapV3') &&
                   !leg.poolName.startsWith('Trident') &&
                   !leg.poolName.startsWith('BentoBridge')
               )
@@ -193,6 +204,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 (leg) =>
                   leg.poolName.startsWith('Wrap') ||
                   leg.poolName.startsWith('SushiSwap') ||
+                  leg.poolName.startsWith('SushiSwapV3') ||
                   leg.poolName.startsWith('Trident') ||
                   leg.poolName.startsWith('BentoBridge')
               )
@@ -203,12 +215,21 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 receipt,
               })
             } else if (
-              !trade?.route?.legs?.every(
+              trade?.route?.legs?.some(
                 (leg) =>
-                  leg.poolName.startsWith('Wrap') ||
-                  leg.poolName.startsWith('SushiSwap') ||
-                  leg.poolName.startsWith('Trident') ||
-                  leg.poolName.startsWith('BentoBridge')
+                  !leg.poolName.startsWith('Wrap') &&
+                  (leg.poolName.startsWith('SushiSwap') ||
+                    leg.poolName.startsWith('SushiSwapV3') ||
+                    leg.poolName.startsWith('Trident') ||
+                    leg.poolName.startsWith('BentoBridge'))
+              ) &&
+              trade?.route?.legs?.some(
+                (leg) =>
+                  !leg.poolName.startsWith('Wrap') &&
+                  (!leg.poolName.startsWith('SushiSwap') ||
+                    !leg.poolName.startsWith('SushiSwapV3') ||
+                    !leg.poolName.startsWith('Trident') ||
+                    !leg.poolName.startsWith('BentoBridge'))
               )
             ) {
               log.info('Swap failed (mix)', {
@@ -221,6 +242,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 (leg) =>
                   !leg.poolName.startsWith('Wrap') &&
                   !leg.poolName.startsWith('SushiSwap') &&
+                  !leg.poolName.startsWith('SushiSwapV3') &&
                   !leg.poolName.startsWith('Trident') &&
                   !leg.poolName.startsWith('BentoBridge')
               )

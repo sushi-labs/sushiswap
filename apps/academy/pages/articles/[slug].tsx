@@ -105,12 +105,14 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
         )}
 
         <div className="pb-20 mx-auto sm:pb-36">
-          <ArticleHeaderSelector
-            selectedHeader={selectedHeader}
-            setSelectedHeader={setSelectedHeader}
-            tableOfContents={tableOfContentsFiltered}
-            scrollToHeader={scrollToHeader}
-          />
+          {tableOfContentsFiltered && (
+            <ArticleHeaderSelector
+              selectedHeader={selectedHeader}
+              setSelectedHeader={setSelectedHeader}
+              tableOfContents={tableOfContentsFiltered}
+              scrollToHeader={scrollToHeader}
+            />
+          )}
 
           <div
             className={classNames(

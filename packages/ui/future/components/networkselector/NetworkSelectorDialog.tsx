@@ -1,5 +1,4 @@
 import { Popover } from '@headlessui/react'
-import { CheckIcon } from '@heroicons/react/24/outline'
 import chains from '@sushiswap/chain'
 import classNames from 'classnames'
 import React, { FC, useState } from 'react'
@@ -34,27 +33,22 @@ export const NetworkSelectorDialog = <T extends number>({
                         onClick={() => onSelect(el, close)}
                         key={el}
                         className={classNames(
-                          'w-full group hover:bg-white hover:dark:bg-slate-800 px-2.5 flex rounded-lg justify-between gap-2 items-center cursor-pointer transform-all h-[40px]'
+                          'w-full group hover:bg-black/[0.04] hover:dark:bg-white/[0.06] px-2.5 flex rounded-lg justify-between gap-2 items-center cursor-pointer transform-all h-[40px]'
                         )}
                       >
                         <div className="flex items-center gap-2">
-                          <NetworkIcon
-                            type="naked"
-                            chainId={el}
-                            width={24}
-                            height={24}
-                            className="text-gray-600 group-hover:text-gray-900 dark:text-slate-50"
-                          />
+                          <NetworkIcon chainId={el} width={24} height={24} />
                           <p
                             className={classNames(
-                              selected === el ? 'font-semibold text-gray-900' : 'font-medium text-gray-500',
-                              'text-sm group-hover:text-gray-900 dark:text-slate-300 group-hover:dark:text-slate-50'
+                              selected === el
+                                ? 'text-gray-900 dark:text-white font-medium'
+                                : 'text-gray-600 dark:text-slate-400'
                             )}
                           >
                             {chains[el].name}
                           </p>
                         </div>
-                        {selected === el && <CheckIcon width={20} height={20} strokeWidth={2} className="text-blue" />}
+                        {selected === el && <div className="w-2 h-2 mr-1 rounded-full bg-green" />}
                       </button>
                     ))}
                 </div>

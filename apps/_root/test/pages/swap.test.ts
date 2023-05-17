@@ -35,8 +35,8 @@ test.beforeAll(async () => {
 })
 
 test.beforeEach(async ({ page }) => {
-  page.on('pageerror', (err) => {
-    console.log(err)
+  page.on('pageerror', (error) => {
+    console.error(error)
   })
 
   // @ts-ignore
