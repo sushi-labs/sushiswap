@@ -359,6 +359,7 @@ importers:
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
+      '@sushiswap/v3-sdk': workspace:*
       '@sushiswap/validate': workspace:*
       '@sushiswap/wagmi': workspace:*
       '@sushiswap/wagmi-config': workspace:*
@@ -444,6 +445,7 @@ importers:
       '@sushiswap/trident': link:../../protocols/trident
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/ui': link:../../packages/ui
+      '@sushiswap/v3-sdk': link:../../packages/v3-sdk
       '@sushiswap/validate': link:../../packages/validate
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@sushiswap/wagmi-config': link:../../config/wagmi

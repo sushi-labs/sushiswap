@@ -111,7 +111,8 @@ export default [
     "rpc": [
       "https://goerli.infura.io/v3/${INFURA_API_KEY}",
       "wss://goerli.infura.io/v3/${INFURA_API_KEY}",
-      "https://rpc.goerli.mudit.blog/"
+      "https://rpc.goerli.mudit.blog/",
+      "https://ethereum-goerli.publicnode.com"
     ],
     "faucets": [
       "http://fauceth.komputing.org?chain=5&address=${ADDRESS}",
@@ -321,7 +322,8 @@ export default [
       "https://data-seed-prebsc-1-s2.binance.org:8545",
       "https://data-seed-prebsc-2-s2.binance.org:8545",
       "https://data-seed-prebsc-1-s3.binance.org:8545",
-      "https://data-seed-prebsc-2-s3.binance.org:8545"
+      "https://data-seed-prebsc-2-s3.binance.org:8545",
+      "https://bsc-testnet.publicnode.com"
     ],
     "faucets": [
       "https://testnet.binance.org/faucet-smart"
@@ -724,7 +726,8 @@ export default [
     "name": "Fantom Testnet",
     "chain": "FTM",
     "rpc": [
-      "https://rpc.testnet.fantom.network"
+      "https://rpc.testnet.fantom.network",
+      "https://fantom-testnet.publicnode.com"
     ],
     "faucets": [
       "https://faucet.fantom.network"
@@ -859,7 +862,8 @@ export default [
     "chain": "AVAX",
     "icon": "avax",
     "rpc": [
-      "https://api.avax-test.network/ext/bc/C/rpc"
+      "https://api.avax-test.network/ext/bc/C/rpc",
+      "https://avalanche-fuji-c-chain.publicnode.com"
     ],
     "faucets": [
       "https://faucet.avax-test.network/"
@@ -977,7 +981,8 @@ export default [
     "rpc": [
       "https://matic-mumbai.chainstacklabs.com",
       "https://rpc-mumbai.maticvigil.com",
-      "https://matic-testnet-archive-rpc.bwarelabs.com"
+      "https://matic-testnet-archive-rpc.bwarelabs.com",
+      "https://polygon-mumbai-bor.publicnode.com"
     ],
     "faucets": [
       "https://faucet.polygon.technology/"
