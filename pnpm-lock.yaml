@@ -527,6 +527,7 @@ importers:
       '@types/qs': ^6.9.7
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
+      '@vercel/analytics': 0.1.5
       and: 0.0.3
       autoprefixer: 10.4.13
       classnames: 2.3.2
@@ -551,6 +552,7 @@ importers:
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/ui': link:../../packages/ui
       '@tailwindcss/typography': 0.5.8_tailwindcss@3.2.4
+      '@vercel/analytics': 0.1.5_react@18.2.0
       classnames: 2.3.2
       date-fns: 2.29.3
       graphql: 16.6.0
