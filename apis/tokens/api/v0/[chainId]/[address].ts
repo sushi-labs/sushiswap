@@ -3,7 +3,6 @@ import { z } from 'zod'
 
 import { getToken } from '../../../lib/api.js'
 
-
 const schema = z.object({
   chainId: z.coerce
     .number()

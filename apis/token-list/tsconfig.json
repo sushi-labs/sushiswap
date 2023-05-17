@@ -3,7 +3,6 @@
   "include": ["."],
   "exclude": ["node_modules", ".vercel"],
   "compilerOptions": {
-    "module": "esnext",
     "resolveJsonModule": true
   }
 }

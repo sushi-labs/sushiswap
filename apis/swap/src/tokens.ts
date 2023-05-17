@@ -67,9 +67,7 @@ async function fetcher(chainId: ChainId, tokenId: string) {
   if (cachedToken) return cachedToken
 
   const token = tokenSchema.parse(
-    await fetch(`https://tokens-git-feature-swap.sushi.com/v0/${chainId}/${getAddress(tokenId)}`).then((data) =>
-      data.json()
-    )
+    await fetch(`https://tokens-git-feature-swap.sushi.com/v0/${chainId}/${getAddress(tokenId)}`).then((data) => data.json())
   )
 
   setCache(chainId, tokenId, token)
