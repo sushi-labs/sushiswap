@@ -5,10 +5,10 @@ import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { classNames, Widget } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import React, { FC, ReactNode } from 'react'
+import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 interface AddSectionWidgetProps {
   isFarm: boolean
