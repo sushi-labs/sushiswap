@@ -1,4 +1,3 @@
-import { PositionCard } from './PositionCard'
 import React, { FC, ReactNode } from 'react'
 import { useUserPositions } from '../../lib/hooks'
 import { SUPPORTED_CHAIN_IDS } from '../../config'

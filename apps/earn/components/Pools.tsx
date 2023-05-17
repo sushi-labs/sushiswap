@@ -19,8 +19,10 @@ import Container from '@sushiswap/ui/future/components/Container'
 import { PositionCard, PositionCardSkeleton } from './MigratePage/PositionCard'
 import { Carousel } from '@sushiswap/ui/future/components/Carousel'
 import { DiscordIcon, OnsenIcon } from '@sushiswap/ui/future/components/icons'
+import { useAccount } from 'wagmi'
 
 export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
+  const { address } = useAccount()
   const { chain } = useNetwork()
   const chainId = chain?.id || ChainId.ETHEREUM
 
@@ -132,24 +134,30 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
           </div>
         </section>
       </Container>
-      <section className="flex flex-col gap-3 py-10 lg:py-[54px]">
-        <Container maxWidth="7xl" className="mx-auto px-4">
-          <h1 className="text-3xl font-semibold text-gray-800 dark:text-slate-200 text-center lg:text-start">
-            Migrate <span className="text-gray-500 dark:text-slate-500">for increased efficiency.</span>
-          </h1>
-        </Container>
-        <div className="pl-4 xl:pl-0">
-          <PositionCardList>
-            {({ positions, isLoading }) => (
-              <Carousel
-                slideWidth={320}
-                slides={positions}
-                render={(position) => (isLoading ? <PositionCardSkeleton /> : <PositionCard position={position} />)}
-              />
-            )}
-          </PositionCardList>
-        </div>
-      </section>
+      {address && (
+        <PositionCardList>
+          {({ positions, isLoading }) =>
+            !isLoading && positions?.[0] ? (
+              <section className="flex flex-col gap-3 py-10 lg:py-[54px]">
+                <Container maxWidth="7xl" className="mx-auto px-4">
+                  <h1 className="text-3xl font-semibold text-gray-800 dark:text-slate-200 text-center lg:text-start">
+                    Migrate <span className="text-gray-500 dark:text-slate-500">for increased efficiency.</span>
+                  </h1>
+                </Container>
+                <div className="pl-4 xl:pl-0">
+                  <Carousel
+                    slideWidth={320}
+                    slides={positions}
+                    render={(position) => (isLoading ? <PositionCardSkeleton /> : <PositionCard position={position} />)}
+                  />
+                </div>
+              </section>
+            ) : (
+              <></>
+            )
+          }
+        </PositionCardList>
+      )}
       <Container maxWidth="7xl" className="mx-auto px-4">
         <PoolsFiltersProvider passedFilters={filters}>
           <PoolsSection />
