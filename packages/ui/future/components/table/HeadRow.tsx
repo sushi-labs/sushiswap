@@ -6,7 +6,7 @@ export interface HeadRowProps
 }
 
 const HeadRow: FC<HeadRowProps> = ({ children, headRowHeight = 48, ...props }) => (
-  <tr {...props} className="w-full" style={{ height: headRowHeight }}>
+  <tr {...props} className="w-fulls" style={{ height: headRowHeight }}>
     {children}
   </tr>
 )

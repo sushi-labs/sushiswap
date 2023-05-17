@@ -34,7 +34,9 @@ export const PositionCardSkeleton = () => {
 
 export const PositionCard: FC<PositionCard> = ({ position }) => {
   const { token0, token1 } = useTokensFromPool(position.pool)
-  const valueUSD = (Number(position.balance) / Number(position.pool.totalSupply)) * Number(position.pool.liquidityUSD)
+  const valueUSD =
+    (Number(position.balance + position.stakedBalance) / Number(position.pool.totalSupply)) *
+    Number(position.pool.liquidityUSD)
 
   return (
     <div className="relative bg-white dark:bg-slate-800 hover:shadow-md transition-all rounded-2xl p-7 overflow-hidden w-[320px]">
@@ -67,7 +69,7 @@ export const PositionCard: FC<PositionCard> = ({ position }) => {
         )}
       </div>
       <div className="absolute bottom-7 right-7">
-        <Button size="sm" as="a" href={`/pools/migrate/${position.pool.id}`} className="!rounded-full">
+        <Button size="sm" as="a" href={`/pools/${position.pool.id}/migrate`} className="!rounded-full">
           Migrate
         </Button>
       </div>
