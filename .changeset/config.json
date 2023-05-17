@@ -34,7 +34,6 @@
     "@sushiswap/wagmi",
     "@sushiswap/aggregator-job",
     "@sushiswap/pool-job",
-    "@sushiswap/furo",
     "@sushiswap/route-processor"
   ]
 }

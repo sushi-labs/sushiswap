@@ -18,7 +18,7 @@
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "lint": "TIMING=1 eslint src --fix",    
+    "lint": "TIMING=1 eslint src --fix",
     "build": "graphclient build --fileType js && rm -f .graphclient/package.json",
     "start": "ts-node src/server.ts",
     "server": "ts-node src/server.ts",
@@ -35,7 +35,7 @@
     "@google-cloud/run": "0.4.1",
     "@google-cloud/scheduler": "3.3.0",
     "@sushiswap/abi": "workspace:*",
-    "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/bentobox": "1.0.0",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/database": "workspace:*",
