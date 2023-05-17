@@ -109,7 +109,7 @@ export const Component: FC<ApproveERC20Props> = ({
             {({ open, close }) => (
               <>
                 <Popover.Button
-                  as="button"
+                  as="div"
                   className={classNames(
                     open ? 'bg-black/[0.12]' : '',
                     'hover:bg-black/[0.12] h-full w-full flex items-center justify-center rounded-lg'

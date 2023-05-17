@@ -1,4 +1,6 @@
-import { Dispatch, FC, ReactNode, SetStateAction } from 'react'
+'use client'
+
+import { FC, ReactNode } from 'react'
 import { Dialog } from '../future/components/dialog'
 import { BarLoader } from '../future/components/BarLoader'
 import { Loader } from '../future/components/Loader'
@@ -7,7 +9,6 @@ import { FailedMarkIcon } from '../future/components/icons/FailedMarkIcon'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Dots } from '../future/components/Dots'
 import { Button } from '../future/components/button'
-import Link from 'next/link'
 
 export enum ConfirmationDialogState {
   Undefined,
@@ -42,7 +43,7 @@ export const ConfirmationDialog: FC<ConfirmationDialog> = ({
   successMessage,
   buttonSuccessMessage,
   buttonSuccessLink,
-  testId
+  testId,
 }) => {
   return (
     <Dialog open={open} unmount={false} onClose={() => setOpen(false)}>
