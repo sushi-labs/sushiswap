@@ -28,7 +28,6 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = withChec
   const { approved } = useApproved(APPROVE_TAG)
   const contract = useFuroStreamRouterContract(chainId)
   const [signature, setSignature] = useState<Signature>()
-  const { mutate: storeNotification } = useCreateNotification({ account: address })
 
   const {
     watch,
@@ -68,9 +67,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = withChec
         },
         timestamp: ts,
         groupTimestamp: ts,
-      }
-
-      storeNotification(createToast(notificationData))
+      })
     },
     [_amount, chainId, address]
   )

@@ -79,9 +79,7 @@ export const ExecuteMultipleSection: FC<{
         },
         timestamp: ts,
         groupTimestamp: ts,
-      }
-
-      storeNotification(createToast(notificationData))
+      })
     },
     [chainId, address, vestings]
   )

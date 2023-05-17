@@ -63,9 +63,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
           completed: `Successfully cancelled stream`,
           failed: 'Something went wrong cancelling the stream',
         },
-      }
-
-      storeNotification(createToast(notificationData))
+      })
     },
     [chainId, address]
   )

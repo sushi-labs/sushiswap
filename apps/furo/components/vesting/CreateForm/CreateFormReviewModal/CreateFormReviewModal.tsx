@@ -105,9 +105,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
         },
         timestamp: ts,
         groupTimestamp: ts,
-      }
-
-      storeNotification(createToast(notificationData))
+      })
     },
     [_totalAmount, chainId, address]
   )

@@ -71,9 +71,7 @@ export const TransferModal: FC<TransferModalProps> = ({
           completed: `Successfully transferred stream to ${shortenAddress(resolvedAddress)}`,
           failed: 'Something went wrong transferring the stream',
         },
-      }
-
-      storeNotification(createToast(notificationData))
+      })
     },
     [address, chainId, resolvedAddress]
   )

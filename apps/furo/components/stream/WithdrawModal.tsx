@@ -53,9 +53,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
           completed: `Successfully withdrawn ${amount.toSignificant(6)} ${amount.currency.symbol}`,
           failed: 'Something went wrong withdrawing from stream',
         },
-      }
-
-      storeNotification(createToast(notificationData))
+      })
     },
     [amount, chainId, address]
   )

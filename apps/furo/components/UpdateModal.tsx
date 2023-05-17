@@ -68,9 +68,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
           completed: `Successfully updated stream`,
           failed: 'Something went wrong updating the stream',
         },
-      }
-
-      storeNotification(createToast(notificationData))
+      })
     },
     [amount, chainId, address]
   )

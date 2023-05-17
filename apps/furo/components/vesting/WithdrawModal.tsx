@@ -43,9 +43,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
           completed: `Successfully withdrawn ${balance.toSignificant(6)} ${balance.currency.symbol}`,
           failed: 'Something went wrong withdrawing from vesting schedule',
         },
-      }
-
-      storeNotification(createToast(notificationData))
+      })
     },
     [balance, chainId, address]
   )
