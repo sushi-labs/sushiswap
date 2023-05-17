@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/sushiswap",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "SushiSwap",
   "keywords": [
     "sushi",
@@ -24,6 +24,7 @@
     "contracts",
     "deploy",
     "deployments",
+    "exports",
     "typechain"
   ],
   "scripts": {

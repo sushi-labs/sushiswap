@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "dotenv -- turbo run build --filter=!bridge --filter=!academy --filter=!blog",
+    "build": "dotenv -- turbo run build",
     "build-config": "dotenv -- turbo run build --filter={./config/*}",
     "build-config-head": "dotenv -- turbo run build --filter={./config/*}[HEAD^1]...",
     "build-packages": "dotenv -- turbo run build --filter={./packages/*}...",

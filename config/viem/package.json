@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/viem-config",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "private": true,
   "description": "Sushi Viem Config",
   "keywords": [
@@ -30,8 +30,6 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@sushiswap/abi": "workspace:*",
-    "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*"
   },
   "devDependencies": {
