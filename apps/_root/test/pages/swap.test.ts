@@ -85,7 +85,7 @@ test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
     page,
     inputCurrency: native,
     outputCurrency: usdc,
-    amount: '1',
+    amount: '100',
   })
 
   // Ensure balances at least change...
@@ -119,7 +119,7 @@ test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
     page,
     inputCurrency: native,
     outputCurrency: sushi,
-    amount: '1',
+    amount: '100',
   })
 
   // Ensure balances at least change...
