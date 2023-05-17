@@ -12,6 +12,7 @@ export const DifficultyLabel: FC<DifficultyLabel> = ({ article, isCard }) => {
   const difficulty = article.attributes?.difficulty?.data?.attributes
 
   const slug = difficulty?.slug as keyof typeof DIFFICULTY_ELEMENTS
+  if (!slug) return <></>
 
   const { color } = DIFFICULTY_ELEMENTS[slug]
 
