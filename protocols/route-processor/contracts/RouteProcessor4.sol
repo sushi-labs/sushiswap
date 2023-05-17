@@ -8,6 +8,7 @@ import '../interfaces/ITridentCLPool.sol';
 import '../interfaces/IBentoBoxMinimal.sol';
 import '../interfaces/IPool.sol';
 import '../interfaces/IWETH.sol';
+import '../interfaces/ICurve.sol';
 import './InputStream.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -256,6 +257,7 @@ contract RouteProcessor4 is Ownable {
     else if (poolType == 2) wrapNative(stream, from, tokenIn, amountIn);
     else if (poolType == 3) bentoBridge(stream, from, tokenIn, amountIn);
     else if (poolType == 4) swapTrident(stream, from, tokenIn, amountIn);
+    else if (poolType == 5) swapCurve(stream, from, tokenIn, amountIn);
     else revert('RouteProcessor: Unknown pool type');
   }
 
@@ -400,4 +402,20 @@ contract RouteProcessor4 is Ownable {
     IERC20(tokenIn).safeTransfer(msg.sender, uint256(amount));
   }
 
+  /// @notice Curve pool swap
+  /// @param stream [pool, swapData]
+  /// @param from Where to take liquidity for swap
+  /// @param tokenIn Input token
+  /// @param amountIn Amount of tokenIn to take for swap
+  function swapCurve(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
+    address pool = stream.readAddress();
+    int128 fromIndex = int8(stream.readUint8());
+    int128 toIndex = int8(stream.readUint8());
+    address to = stream.readAddress();
+
+    if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
+    IERC20(tokenIn).approve(pool, amountIn);    
+    uint256 amountOut = ICurve(pool).exchange(fromIndex, toIndex, amountIn, 0);
+    IERC20(tokenIn).safeTransfer(to, amountOut);
+  }
 }
