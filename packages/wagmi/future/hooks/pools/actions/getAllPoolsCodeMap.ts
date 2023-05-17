@@ -9,7 +9,13 @@ export const getAllPoolsCodeMap = async ({ currencyA, currencyB, chainId }: Omit
     return nullPoolCodeMap
   }
   const dataFetcher = DataFetcher.onChain(chainId)
-  const liquidityProviders = [LiquidityProviders.SushiSwap, LiquidityProviders.Trident]
+  const liquidityProviders = [
+    LiquidityProviders.SushiSwap,
+    LiquidityProviders.Trident,
+    LiquidityProviders.UniswapV2,
+    LiquidityProviders.QuickSwap,
+    LiquidityProviders.ApeSwap,
+  ]
   if (isRouteProcessor3ChainId(chainId)) {
     liquidityProviders.push(LiquidityProviders.SushiSwapV3)
   }
