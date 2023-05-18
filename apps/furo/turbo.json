@@ -4,7 +4,13 @@
     "build": {
       "outputs": [".next/**", "!.next/cache/**"],
       "dependsOn": ["^build", "generate"],
-      "env": ["ALCHEMY_ID", "STRAPI_API_URL", "STRAPI_PREVIEW_SECRET"],
+      "env": [
+        "ALCHEMY_ID", 
+        "STRAPI_API_URL", 
+        "STRAPI_PREVIEW_SECRET",
+        "TOKENS_API_V0_BASE_URL",
+        "NEXT_TELEMETRY_DISABLED"
+      ],
       "cache": true
     },
     "check": {

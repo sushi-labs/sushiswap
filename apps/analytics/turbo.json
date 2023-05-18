@@ -4,7 +4,12 @@
     "build": {
       "outputs": [".next/**", "!.next/cache/**"],
       "dependsOn": ["^build"],
-      "env": ["ALCHEMY_ID", "INFURA_ID", "REDIS_URL"],
+      "env": [
+        "ALCHEMY_ID",
+        "REDIS_URL",
+        "NEXT_TELEMETRY_DISABLED",
+        "POOLS_API_V0_BASE_URL"
+      ],
       "cache": true
     },
     "check": {
