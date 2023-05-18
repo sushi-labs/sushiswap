@@ -52,7 +52,7 @@ export class Router {
   ) {
     return Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice, [
       LiquidityProviders.NativeWrap,
-      LiquidityProviders.SushiSwap,
+      LiquidityProviders.SushiSwapV2,
       LiquidityProviders.SushiSwapV3,
       LiquidityProviders.Trident,
     ])
@@ -70,7 +70,7 @@ export class Router {
     // Find preferrable route
     const preferrableRoute = Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice, [
       LiquidityProviders.NativeWrap,
-      LiquidityProviders.SushiSwap,
+      LiquidityProviders.SushiSwapV2,
       LiquidityProviders.SushiSwapV3,
       LiquidityProviders.Trident,
     ])
@@ -149,7 +149,7 @@ export class Router {
     const tokenIn =
       fromToken instanceof Token
         ? fromToken.address
-        : fromToken.chainId == ChainId.CELO
+        : fromToken.chainId === ChainId.CELO
         ? WNATIVE_ADDRESS[ChainId.CELO] /*CELO native coin has ERC20 interface*/
         : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
     const tokenOut = toToken instanceof Token ? toToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
@@ -201,17 +201,16 @@ export class Router {
     shiftSub = '    '
   ): string {
     let res = ''
-    res += shiftPrimary + 'Route Status: ' + route.status + '\n'
-    res += shiftPrimary + `Input: ${route.amountIn / Math.pow(10, fromToken.decimals)} ${fromToken.symbol}\n`
+    res += `${shiftPrimary}Route Status: ${route.status}\n`
+    res += `${shiftPrimary}Input: ${route.amountIn / Math.pow(10, fromToken.decimals)} ${fromToken.symbol}\n`
     route.legs.forEach((l, i) => {
-      res +=
-        shiftSub +
-        `${i + 1}. ${l.tokenFrom.symbol} ${Math.round(l.absolutePortion * 100)}%` +
-        ` -> [${poolCodesMap.get(l.poolAddress)?.poolName}] -> ${l.tokenTo.symbol}\n`
+      res += `${shiftSub}${i + 1}. ${l.tokenFrom.symbol} ${Math.round(l.absolutePortion * 100)}% -> [${
+        poolCodesMap.get(l.poolAddress)?.poolName
+      }] -> ${l.tokenTo.symbol}\n`
       //console.log(l.poolAddress, l.assumedAmountIn, l.assumedAmountOut)
     })
     const output = parseInt(route.amountOutBN.toString()) / Math.pow(10, toToken.decimals)
-    res += shiftPrimary + `Output: ${output} ${route.toToken.symbol}`
+    res += `${shiftPrimary}Output: ${output} ${route.toToken.symbol}`
 
     return res
   }

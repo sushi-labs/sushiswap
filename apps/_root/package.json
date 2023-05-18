@@ -50,6 +50,7 @@
     "@sushiswap/validate": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
+    "@sushiswap/viem-config": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@uniswap/token-lists": "1.0.0-beta.30",
     "@tanstack/query-sync-storage-persister": "4.27.1",

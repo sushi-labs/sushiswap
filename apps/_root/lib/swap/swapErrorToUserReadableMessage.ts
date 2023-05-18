@@ -1,7 +1,7 @@
 function getReason(error: any): string | undefined {
   let reason: string | undefined
   while (error) {
-    reason = error.reason ?? error.data.message ?? reason
+    reason = error.reason ?? error.message ?? reason
     error = error.error ?? error.data?.originalError
   }
   return reason

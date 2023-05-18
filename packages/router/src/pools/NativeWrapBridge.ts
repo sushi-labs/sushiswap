@@ -7,7 +7,7 @@ import { PoolCode } from './PoolCode'
 
 export class NativeWrapBridgePoolCode extends PoolCode {
   constructor(pool: BridgeUnlimited, liquidityProvider: LiquidityProviders) {
-    super(pool, liquidityProvider, 'Wrap/Unwrap')
+    super(pool, liquidityProvider, 'Wrap Native')
   }
 
   override getStartPoint(): string {
@@ -15,7 +15,7 @@ export class NativeWrapBridgePoolCode extends PoolCode {
   }
 
   getSwapCodeForRouteProcessor(leg: RouteLeg): string {
-    if (leg.tokenFrom.tokenId == this.pool.token0.tokenId) {
+    if (leg.tokenFrom.tokenId === this.pool.token0.tokenId) {
       // wrap - deposit. not used normally
       const code = new HEXer().uint8(5).address(this.pool.address).uint8(0).toString() // wrapAndDistributeERC20Amounts;
       return code
@@ -27,8 +27,8 @@ export class NativeWrapBridgePoolCode extends PoolCode {
   }
 
   getSwapCodeForRouteProcessor2(leg: RouteLeg, _route: MultiRoute, to: string): string {
-    const fake = leg.tokenFrom.chainId == ChainId.CELO ? 2 : 0 // no real wrap at celo - fake wrap code is generated
-    if (leg.tokenFrom.tokenId == this.pool.token0.tokenId) {
+    const fake = leg.tokenFrom.chainId === ChainId.CELO ? 2 : 0 // no real wrap at celo - fake wrap code is generated
+    if (leg.tokenFrom.tokenId === this.pool.token0.tokenId) {
       // wrap - deposit
       const code = new HEXer()
         .uint8(2) // wrapNative pool type

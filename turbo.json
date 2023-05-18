@@ -82,6 +82,7 @@
         "export"
       ],
       "env": [
+        "CHAIN_ID",
         "TEST",
         "ALCHEMY_ID",
         "DATABASE_URL",

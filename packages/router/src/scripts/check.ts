@@ -17,7 +17,7 @@ async function getAPIObject(url: string, data: Record<string, string | number | 
     .map((k) => (data[k] !== undefined ? `${k}=${data[k]}` : undefined))
     .filter((k) => k !== undefined)
     .join('&')
-  const urlWithParams = url + '?' + params
+  const urlWithParams = `${url}?${params}`
 
   return new Promise((result, reject) => {
     https
@@ -133,17 +133,17 @@ function getProtocol(lp: LiquidityProviders, chainId: ChainId) {
       prefix = 'POLYGON_'
       break
     default:
-      throw new Error('Unsupported network: ' + chainId)
+      throw new Error(`Unsupported network: ${chainId}`)
   }
   switch (lp) {
-    case LiquidityProviders.SushiSwap:
-      return prefix + 'SUSHISWAP'
+    case LiquidityProviders.SushiSwapV2:
+      return `${prefix}SUSHISWAP`
     case LiquidityProviders.QuickSwap:
-      return prefix + 'QUICKSWAP'
+      return `${prefix}QUICKSWAP`
     case LiquidityProviders.Trident:
-      return prefix + 'TRIDENT'
+      return `${prefix}TRIDENT`
     case LiquidityProviders.UniswapV2:
-      return prefix + 'UNISWAP_V2'
+      return `${prefix}UNISWAP_V2`
   }
 }
 

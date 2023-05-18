@@ -10,7 +10,7 @@ export const getAllPoolsCodeMap = async ({ currencyA, currencyB, chainId }: Omit
   }
   const dataFetcher = DataFetcher.onChain(chainId)
   const liquidityProviders = [
-    LiquidityProviders.SushiSwap,
+    LiquidityProviders.SushiSwapV2,
     LiquidityProviders.Trident,
     LiquidityProviders.UniswapV2,
     LiquidityProviders.QuickSwap,
@@ -23,7 +23,7 @@ export const getAllPoolsCodeMap = async ({ currencyA, currencyB, chainId }: Omit
     LiquidityProviders.SpookySwap,
     LiquidityProviders.NetSwap,
     LiquidityProviders.HoneySwap,
-    LiquidityProviders.UbeSwap,  
+    LiquidityProviders.UbeSwap,
     LiquidityProviders.Biswap,
   ]
   if (isRouteProcessor3ChainId(chainId)) {

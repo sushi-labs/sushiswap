@@ -24,7 +24,7 @@
 //   })
 //   //   databaseClient
 // )
-// const DEFAULT_PROVIDERS = [LiquidityProviders.SushiSwap, LiquidityProviders.Trident]
+// const DEFAULT_PROVIDERS = [LiquidityProviders.SushiSwapV2, LiquidityProviders.Trident]
 // beforeAll(async () => {
 //   expect(DATA_FETCHER).toBeInstanceOf(DataFetcher)
 //   DATA_FETCHER.startDataFetching(DEFAULT_PROVIDERS)
@@ -76,8 +76,8 @@
 // })
 
 // describe.skip("fetch pools for specific LPs", () => {
-//   it.each([LiquidityProviders.Trident, 
-//     LiquidityProviders.SushiSwap
+//   it.each([LiquidityProviders.Trident,
+//     LiquidityProviders.SushiSwapV2
 // ])('should have pools %s', async (lp) => {
 //     const chainId = ChainId.POLYGON
 //     const token0 = Native.onChain(chainId)
@@ -100,13 +100,12 @@
 //   })
 // })
 
-
 // describe.only('V3', () => {
 //     it('should have pools', async () => {
 //       const chainId = ChainId.POLYGON
 //       const token0 = Native.onChain(chainId)
 //       const token1 = USDC[chainId]
-  
+
 //       const fetcher = new DataFetcher(
 //         chainId,
 //         createPublicClient({
@@ -115,7 +114,7 @@
 //         })
 //       )
 //       fetcher.startDataFetching([LiquidityProviders.UniswapV3])
-  
+
 //       await fetcher.fetchPoolsForToken(token0, token1)
 //       // await new Promise((r) => setTimeout(r, 4000)) // wait for on-demand pools to be fetched
 //       const totalPoolCount = fetcher.getCurrentPoolCodeMap(token0, token1).size

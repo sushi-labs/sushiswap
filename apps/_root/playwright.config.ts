@@ -1,7 +1,7 @@
 import type { PlaywrightTestConfig } from '@playwright/test'
 import { devices } from '@playwright/test'
 import path from 'path'
-
+import { config as viemConfig } from '@sushiswap/viem-config'
 // Use process.env.PORT by default and fallback to port 3000
 const PORT = process.env.PORT || 3000
 
@@ -27,7 +27,7 @@ const config: PlaywrightTestConfig = {
      * Maximum time expect() should wait for the condition to be met.
      * For example in `await expect(locator).toHaveText();`
      */
-    timeout: !process.env.CI ? 15_000 : 90_000,
+    timeout: !process.env.CI ? 45_000 : 90_000,
   },
   /* Run tests in files in parallel */
   fullyParallel: false,
@@ -96,11 +96,15 @@ const config: PlaywrightTestConfig = {
       command: [
         'anvil',
         `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
-        `--fork-url=${process.env.ANVIL_FORK_URL}`,
+        `--fork-url=${viemConfig[Number(process.env.CHAIN_ID)]?.chain?.rpcUrls?.['alchemy']?.http[0]}/${
+          process.env.ALCHEMY_ID
+        }`,
       ].join(' '),
       env: {
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
-        ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
+        ANVIL_FORK_URL: `${viemConfig[Number(process.env.CHAIN_ID)]?.chain?.rpcUrls?.['alchemy']}/${
+          process.env.ALCHEMY_ID
+        }`,
       },
       port: 8545,
     },
@@ -109,9 +113,6 @@ const config: PlaywrightTestConfig = {
       port: 3000,
       timeout: 120 * 1000,
       reuseExistingServer: !process.env.CI,
-      env: {
-        NEXT_PUBLIC_TEST: 'true',
-      },
     },
   ],
 }

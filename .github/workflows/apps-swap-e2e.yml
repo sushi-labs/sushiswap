@@ -35,13 +35,18 @@ jobs:
       name: Swap E2E Tests
       timeout-minutes: 30
       runs-on: ubuntu-latest
-      env:
-        ANVIL_BLOCK_NUMBER: 42259027
+      # env:
       strategy:
         matrix:
-          chain-id: [137]
           node-version: [18]
           pnpm-version: [7.9.5]
+          include:
+            - chain-id: 1
+              block-number: 17284226
+              playwright-url: http://localhost:3000/swap
+            - chain-id: 137
+              block-number: 42259027
+              playwright-url: http://localhost:3000/swap
       steps:
         - name: Check out
           uses: actions/checkout@v3
@@ -86,12 +91,12 @@ jobs:
             BLOG_URL: 'https://blog.sushi.com'
             EARN_URL: https://earn.sushi.com'
             FURO_URL: 'https://furo.sushi.com'
-            ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+            ALCHEMY_ID: ${{ secrets.ALCHEMY_ID }}
             PLAYWRIGHT_URL: http://localhost:3000/swap
-            CHAIN_ID: ${{ matrix.chain-id }}
-            ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
             NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
             NEXT_PUBLIC_TEST: true
+            CHAIN_ID: ${{ matrix.chain-id }}
+            ANVIL_BLOCK_NUMBER: ${{ matrix.block-number }}
           working-directory: .
 
         - name: Upload test results

@@ -60,7 +60,7 @@ describe('Arbitrum Nova RP3', async () => {
   })
 
   const dataFetcher = new DataFetcher(chainId, client)
-  dataFetcher.startDataFetching([LiquidityProviders.SushiSwap])
+  dataFetcher.startDataFetching([LiquidityProviders.SushiSwapV2, LiquidityProviders.SushiSwapV3])
 
   it('ETH => SUSHI', async () => {
     const fromToken = Native.onChain(ChainId.ARBITRUM_NOVA)

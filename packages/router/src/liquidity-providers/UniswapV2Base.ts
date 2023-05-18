@@ -44,8 +44,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
   fee = 0.003
   isInitialized = false
-  factory: { [chainId: number]: Address } = {}
-  initCodeHash: { [chainId: number]: string } = {}
+  factory: Record<number, string> = {}
+  initCodeHash: Record<number, string> = {}
   latestPoolCreatedAtTimestamp = new Date()
   discoverNewPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
   refreshAvailablePoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.FETCH_AVAILABLE_POOLS_AFTER_SECONDS }))
@@ -54,8 +54,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   constructor(
     chainId: ChainId,
     web3Client: PublicClient,
-    factory: { [chainId: number]: Address },
-    initCodeHash: { [chainId: number]: string },
+    factory: Record<number, Address>,
+    initCodeHash: Record<number, string>,
     databaseClient?: PrismaClient
   ) {
     super(chainId, web3Client)
@@ -134,7 +134,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         this.databaseClient,
         this.chainId,
         this.getType() === LiquidityProviders.UniswapV2 ? 'Uniswap' : this.getType(),
-        this.getType() === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
+        this.getType() === LiquidityProviders.SushiSwapV2 ? 'LEGACY' : 'V2',
         ['CONSTANT_PRODUCT_POOL']
       )
       return pools
@@ -304,7 +304,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       this.databaseClient,
       this.chainId,
       this.getType() === LiquidityProviders.UniswapV2 ? 'Uniswap' : this.getType(),
-      this.getType() === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
+      this.getType() === LiquidityProviders.SushiSwapV2 ? 'LEGACY' : 'V2',
       ['CONSTANT_PRODUCT_POOL'],
       this.latestPoolCreatedAtTimestamp
     )

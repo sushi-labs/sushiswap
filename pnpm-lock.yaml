@@ -360,6 +360,7 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/validate': workspace:*
+      '@sushiswap/viem-config': workspace:*
       '@sushiswap/wagmi': workspace:*
       '@sushiswap/wagmi-config': workspace:*
       '@tanstack/query-sync-storage-persister': 4.27.1
@@ -445,6 +446,7 @@ importers:
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/validate': link:../../packages/validate
+      '@sushiswap/viem-config': link:../../config/viem
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@tanstack/query-sync-storage-persister': 4.27.1
@@ -792,6 +794,7 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/v3-sdk': workspace:*
+      '@sushiswap/viem-config': workspace:*
       '@sushiswap/wagmi': workspace:*
       '@sushiswap/wagmi-config': workspace:*
       '@tanstack/query-sync-storage-persister': 4.27.1
@@ -869,6 +872,7 @@ importers:
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/v3-sdk': link:../../packages/v3-sdk
+      '@sushiswap/viem-config': link:../../config/viem
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@tanstack/query-sync-storage-persister': 4.27.1
