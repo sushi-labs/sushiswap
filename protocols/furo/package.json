@@ -36,11 +36,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.6.0",
     "@rari-capital/solmate": "6.2.0",
-<<<<<<< HEAD
-    "@sushiswap/bentobox": "1.0.0",
-=======
     "@sushiswap/bentobox": "1.0.1",
->>>>>>> origin/master
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/core": "^1.4.2",
     "@sushiswap/currency": "workspace:*",
