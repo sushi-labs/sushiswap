@@ -1,7 +1,11 @@
+'use client'
+
 import { ReactNode, useCallback } from 'react'
 
 import { Container, DiscordIcon, GithubIcon, InstagramIcon, Link, SushiWithTextIcon, TwitterIcon, Typography } from '..'
 import { MaxWidth } from '../future/components/Container'
+import ReactDOM from 'react-dom'
+import dynamic from 'next/dynamic'
 
 export type FooterProps = React.HTMLProps<HTMLDivElement> & {
   children?: ReactNode
@@ -107,7 +111,7 @@ const config: Record<
   },
 }
 
-export function Footer({ children, maxWidth = '5xl', ...props }: FooterProps): JSX.Element {
+const Component = ({ children, maxWidth = '5xl', ...props }: FooterProps) => {
   const leafNode = useCallback(
     (title: string, items: Record<string, { href: string; rel?: string; target?: string }>) => {
       return (
@@ -211,4 +215,6 @@ export function Footer({ children, maxWidth = '5xl', ...props }: FooterProps): J
   )
 }
 
-export default Footer
+export const Footer = dynamic(() => Promise.resolve(Component), {
+  ssr: false,
+})

@@ -139,7 +139,25 @@ export const Migrate = () => {
       <div className="mt-10 grid md:grid-cols-[404px_auto] gap-10">
         {isLoading ? (
           <>
-            <Skeleton.Box />
+            <div>
+              <Skeleton.Box className="h-[164px]" />
+            </div>
+            <div className="flex flex-col gap-[64px]">
+              <div className="flex flex-col gap-6">
+                <Skeleton.Text fontSize="text-xl" className="w-[240px]" />
+                <div className="grid grid-cols-2 gap-4">
+                  <Skeleton.Box className="h-[76px]" />
+                  <Skeleton.Box className="h-[76px]" />
+                  <Skeleton.Box className="h-[76px]" />
+                  <Skeleton.Box className="h-[76px]" />
+                </div>
+              </div>
+              <div className="flex flex-col gap-6">
+                <Skeleton.Text fontSize="text-xl" className="w-[240px]" />
+                <Skeleton.Box className="h-[266px]" />
+                <Skeleton.Box className="h-[52px]" />
+              </div>
+            </div>
           </>
         ) : pool ? (
           <PoolPositionProvider pool={pool}>

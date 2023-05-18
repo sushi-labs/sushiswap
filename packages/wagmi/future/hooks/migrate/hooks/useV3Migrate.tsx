@@ -37,7 +37,6 @@ export const V3MigrateContractConfig = (chainId: V3MigrateChainId) => ({
 })
 
 export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Migrate) => {
-  const [isPending, setIsPending] = useState(false)
   const { config } = usePrepareContractWrite({
     ...V3MigrateContractConfig(chainId),
     chainId,
@@ -102,25 +101,13 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
           timestamp: ts,
           groupTimestamp: ts,
         })
-
-        data.wait().finally(() => {
-          setIsPending(false)
-        })
       }
     },
     [account, chainId]
   )
 
-  const write = useContractWrite({
+  return useContractWrite({
     ...config,
     onSettled,
-    onSuccess: () => setIsPending(true),
   })
-
-  return useMemo(() => {
-    return {
-      ...write,
-      isPending,
-    }
-  }, [isPending, write])
 }

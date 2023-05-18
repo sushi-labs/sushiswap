@@ -1,6 +1,6 @@
 import { MinusIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/react/solid'
 import { tryParseAmount, Type } from '@sushiswap/currency'
-import { classNames } from '@sushiswap/ui'
+import { classNames, Collapsible } from '@sushiswap/ui'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Bound } from '../../lib/constants'
@@ -91,13 +91,13 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         </>
       }
     >
-      {noLiquidity && (
+      <Collapsible open={Boolean(noLiquidity)}>
         <div className="p-6 font-medium bg-blue/10 text-blue rounded-xl">
           This pool must be initialized before you can add liquidity. To initialize, select a starting price for the
           pool. Then, enter your liquidity price range and deposit amount. Gas fees will be higher than usual due to the
           initialization transaction.
         </div>
-      )}
+      </Collapsible>
       <div className="bg-white dark:bg-white/[0.02] rounded-xl p-4">
         {isMounted && (
           <div className="flex flex-col gap-3">

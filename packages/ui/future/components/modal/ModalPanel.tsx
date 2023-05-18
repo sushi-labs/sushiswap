@@ -1,30 +1,39 @@
-import { Dialog as HeadlessDialog, Transition } from '@headlessui/react'
+import { ModalType, useModal } from './ModalProvider'
+import React, { FC, Fragment, useEffect } from 'react'
 import { useBreakpoint } from '@sushiswap/hooks'
-import React, { FC, Fragment, FunctionComponent, useEffect } from 'react'
-
-import DialogActions, { DialogActionProps } from './DialogActions'
-import DialogContent, { DialogContentProps } from './DialogContent'
-import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
-import DialogHeader, { DialogHeaderProps } from './DialogHeader'
 import { syncScrollLockSafeArea } from '../../lib'
+import { Dialog as HeadlessDialog, Transition } from '@headlessui/react'
 import { ExtractProps } from '../../../types'
+import classNames from 'classnames'
 
-export type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
+export type ModalPanelProps = Omit<ExtractProps<typeof HeadlessDialog>, 'open' | 'onClose'> & {
+  tag: string
+  modalType: ModalType
   afterLeave?(): void
-  children?: React.ReactNode
+  children?: React.ReactNode | (({ close }: { close: () => void }) => React.ReactNode)
   variant?: 'transparent' | 'opaque'
 }
 
-const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, variant = 'transparent', ...rest }) => {
+export const ModalPanel: FC<ModalPanelProps> = ({ tag, variant, modalType, children, afterLeave, ...rest }) => {
+  const { isOpen, close, register, unregister } = useModal(tag, modalType)
   const { unmount } = rest
   const { isMd } = useBreakpoint('md')
+
+  useEffect(() => {
+    register()
+    return () => {
+      unregister()
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // iOS body lock fix
   // This gets the current scroll position and sets it as negative top margin before setting position fixed on body
   // This is necessary because adding position fixed to body scrolls the page to the top
   useEffect(() => {
     if (!isMd) {
-      if (open) {
+      if (isOpen) {
         document.body.style.top = `-${window.scrollY}px`
         document.body.style.position = 'fixed'
         document.body.style.left = '0'
@@ -38,13 +47,13 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
         window.scrollTo(0, parseInt(scrollY || '0') * -1)
       }
     }
-  }, [isMd, open])
+  }, [isMd, isOpen])
 
-  useEffect(syncScrollLockSafeArea, [open])
+  useEffect(syncScrollLockSafeArea, [isOpen])
 
   return (
-    <Transition show={open} as={Fragment} afterLeave={afterLeave} unmount={unmount}>
-      <HeadlessDialog className="relative z-[1080]" onClose={onClose} {...rest}>
+    <Transition show={isOpen} as={Fragment} afterLeave={afterLeave} unmount={unmount}>
+      <HeadlessDialog className="relative z-[1080]" onClose={close} {...rest}>
         {variant === 'transparent' && (
           <>
             <Transition.Child
@@ -72,7 +81,11 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
                   leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                   unmount={unmount}
                 >
-                  <HeadlessDialog.Panel className="w-full h-full max-w-md px-1">{children}</HeadlessDialog.Panel>
+                  <HeadlessDialog.Panel className="w-full h-full max-w-md px-1">
+                    <div className="p-4 overflow-hidden text-left max-w-md inline-block w-full h-full bg-gray-50/80 paper dark:bg-slate-800/80 shadow-xl align-middle transition-all transform rounded-t-2xl rounded-b-none sm:rounded-2xl relative'">
+                      {typeof children === 'function' ? children({ close }) : children}
+                    </div>
+                  </HeadlessDialog.Panel>
                 </Transition.Child>
               </div>
             </div>
@@ -104,7 +117,9 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
                 leaveTo="opacity-0"
                 unmount={unmount}
               >
-                <HeadlessDialog.Panel className="w-full h-full max-w-xl px-1">{children}</HeadlessDialog.Panel>
+                <HeadlessDialog.Panel className="w-full h-full max-w-xl px-1">
+                  {typeof children === 'function' ? children({ close }) : children}
+                </HeadlessDialog.Panel>
               </Transition.Child>
             </div>
           </>
@@ -113,18 +128,3 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
     </Transition>
   )
 }
-
-/**
- * @deprecated use @sushiswap/ui/future/components/modal/Modal
- */
-export const Dialog: FunctionComponent<DialogRootProps> & {
-  Description: FunctionComponent<DialogDescriptionProps>
-  Header: FunctionComponent<DialogHeaderProps>
-  Actions: FunctionComponent<DialogActionProps>
-  Content: FunctionComponent<DialogContentProps>
-} = Object.assign(DialogRoot, {
-  Content: DialogContent,
-  Header: DialogHeader,
-  Description: DialogDescription,
-  Actions: DialogActions,
-})
