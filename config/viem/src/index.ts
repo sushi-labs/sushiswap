@@ -35,6 +35,7 @@ import {
   optimism,
   //  optimismGoerli,
   polygon,
+  polygonZkEvm,
   // polygonMumbai,
   // sepolia,
   //  taraxa,
@@ -648,6 +649,19 @@ export const config: Record<number, PublicClientConfig> = {
         http('https://rpc-mainnet.matic.quiknode.pro'),
         http('https://rpc-mainnet.maticvigil.com'),
         // ...polygon.rpcUrls.default.http.map((url) => http(url)),
+      ],
+      { rank: true }
+    ),
+    // transport: fallback([http(`${polygon.rpcUrls.alchemy.http}/${alchemyId}`), http('https://polygon.llamarpc.com')]),
+  },
+  [ChainId.POLYGON_ZKEVM]: {
+    chain: polygonZkEvm,
+    transport: fallback(
+      [
+        http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/${alchemyId}`),
+        http('https://zkevm-rpc.com'),
+        http('https://rpc.ankr.com/polygon_zkevm'),
+        http('https://rpc.polygon-zkevm.gateway.fm'),
       ],
       { rank: true }
     ),
