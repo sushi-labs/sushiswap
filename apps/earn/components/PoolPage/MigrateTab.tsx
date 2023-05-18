@@ -24,7 +24,7 @@ import { Address, useAccount } from 'wagmi'
 import { Amount, Price, tryParseAmount } from '@sushiswap/currency'
 import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
-import { ArrowDownIcon, ArrowLeftIcon } from '@heroicons/react/solid'
+import { ArrowDownIcon, ArrowLeftIcon, PlusIcon } from '@heroicons/react/solid'
 import { FundSource } from '@sushiswap/hooks'
 import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import { Chain, ChainId } from '@sushiswap/chain'
@@ -256,7 +256,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       <div className="flex flex-col gap-6">
         <List>
           <div className="flex justify-between">
-            <List.Label>Position Value</List.Label>
+            <List.Label>Position value</List.Label>
             {stakedBalance?.greaterThan(ZERO) ? (
               <List.Label>
                 <RadioGroup value={positionView} onChange={setPositionView} className="flex gap-3">
@@ -403,14 +403,17 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
 
         {(token0Value?.greaterThan(ZERO) || token1Value?.greaterThan(ZERO)) && position && (
           <div className="flex flex-col gap-2">
-            <div className="w-full flex justify-center">
-              <ArrowDownIcon width={20} height={20} />
+            <div className="w-full flex justify-center mb-[-8px]">
+              <div className="dark:bg-white/[0.04] bg-black/[0.06] p-1.5 rounded-full text-gray-500 dark:text-slate-400">
+                <ArrowDownIcon width={20} height={20} />
+              </div>
             </div>
             <List>
+              <div className="flex justify-between">
+                <List.Label>Position value after migration</List.Label>
+                <List.Label>{formatUSD(v3FiatValue0 + v3FiatValue1)}</List.Label>
+              </div>
               <List.Control>
-                <List.KeyValue flex title={<span className="font-semibold">Migration</span>}>
-                  {formatUSD(v3FiatValue0 + v3FiatValue1)}
-                </List.KeyValue>
                 {position?.amount0 && (
                   <List.KeyValue flex title={`${position.amount0.currency.symbol}`} className="!items-start">
                     <div className="flex flex-col gap-0.5">
@@ -437,12 +440,19 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                     </div>
                   </List.KeyValue>
                 )}
-                <div className="px-4">
-                  <div className="my-4 h-px bg-slate-900/5 dark:bg-slate-200/5 w-full" />
-                </div>
-                <List.KeyValue flex title={<span className="font-semibold">Refund</span>}>
-                  {formatUSD(refund0FiatValue + refund1FiatValue)}
-                </List.KeyValue>
+              </List.Control>
+            </List>
+            <div className="w-full flex justify-center mt-4 mb-[-8px]">
+              <div className="dark:bg-white/[0.04] bg-black/[0.06] p-1.5 rounded-full text-gray-500 dark:text-slate-400">
+                <PlusIcon width={20} height={20} />
+              </div>
+            </div>
+            <List>
+              <div className="flex justify-between">
+                <List.Label>Refund after migration</List.Label>
+                <List.Label> {formatUSD(refund0FiatValue + refund1FiatValue)}</List.Label>
+              </div>
+              <List.Control>
                 {token0Value && (
                   <List.KeyValue flex title={`${token0Value.currency.symbol}`} className="!items-start">
                     <div className="flex flex-col gap-0.5">

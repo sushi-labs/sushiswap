@@ -136,7 +136,7 @@ export const Migrate = () => {
         )}
       </div>
       <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
-      <div className="mt-10 grid md:grid-cols-[404px_auto] gap-10">
+      <div className="mt-10 grid md:grid-cols-[auto_404px] gap-10">
         {isLoading ? (
           <>
             <div>
