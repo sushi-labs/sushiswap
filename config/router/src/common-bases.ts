@@ -21,6 +21,7 @@ export const COMMON_BASES = {
     Native.onChain(ChainId.ETHEREUM),
     WNATIVE[ChainId.ETHEREUM],
     SUSHI[ChainId.ETHEREUM],
+    XSUSHI[ChainId.ETHEREUM],
     WBTC[ChainId.ETHEREUM],
     USDC[ChainId.ETHEREUM],
     USDT[ChainId.ETHEREUM],
@@ -56,6 +57,8 @@ export const COMMON_BASES = {
     USDC[ChainId.POLYGON],
     USDT[ChainId.POLYGON],
     DAI[ChainId.POLYGON],
+    SUSHI[ChainId.POLYGON],
+    XSUSHI[ChainId.POLYGON],
   ],
   [ChainId.POLYGON_TESTNET]: [],
   [ChainId.AVALANCHE]: [
@@ -97,6 +100,8 @@ export const COMMON_BASES = {
     USDT[ChainId.FANTOM],
     DAI[ChainId.FANTOM],
     MIM[ChainId.FANTOM],
+    SUSHI[ChainId.FANTOM],
+    XSUSHI[ChainId.FANTOM],
   ],
   [ChainId.FANTOM_TESTNET]: [],
   [ChainId.ARBITRUM]: [
@@ -186,6 +191,9 @@ export const COMMON_BASES = {
     USDC[ChainId.OPTIMISM],
     USDT[ChainId.OPTIMISM],
     DAI[ChainId.OPTIMISM],
+    WETH9[ChainId.OPTIMISM],
+    SUSHI[ChainId.OPTIMISM],
+    XSUSHI[ChainId.OPTIMISM],
   ],
   [ChainId.KAVA]: [
     Native.onChain(ChainId.KAVA),
