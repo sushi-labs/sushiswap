@@ -121,6 +121,7 @@ model SushiPool {
   liquidityUSD    Decimal
   liquidityNative Decimal
   volumeUSD       Decimal
+  feesUSD         Decimal @default(0)
   volumeNative    Decimal
   token0Price     String
   token1Price     String
