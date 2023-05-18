@@ -20,6 +20,9 @@ import { MigrateTab } from '../../components/PoolPage/MigrateTab'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { ConcentratedLiquidityProvider } from '../../components/ConcentratedLiquidityProvider'
 import { Token } from '@sushiswap/currency'
+import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { CogIcon } from '@heroicons/react/outline'
 
 const queryParamsSchema = z.object({
   id: z
@@ -134,6 +137,25 @@ export const Migrate = () => {
         ) : (
           <></>
         )}
+
+        <div className="flex flex-wrap gap-2 mt-3">
+          <SettingsOverlay
+            options={{
+              slippageTolerance: {
+                storageKey: 'migrateLiquidity',
+                defaultValue: '0.5',
+                title: 'Migrate Liquidity Slippage',
+              },
+            }}
+            modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
+          >
+            {({ setOpen }) => (
+              <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
+                <CogIcon width={24} height={24} />
+              </Button>
+            )}
+          </SettingsOverlay>
+        </div>
       </div>
       <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
       <div className="mt-10 grid md:grid-cols-[auto_404px] gap-10">

@@ -1,7 +1,7 @@
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Fraction, JSBI, Percent, ZERO } from '@sushiswap/math'
 import { RadioGroup } from '@headlessui/react'
-import { classNames, Dots } from '@sushiswap/ui'
+import { classNames, Collapsible, Dots } from '@sushiswap/ui'
 import { formatUSD } from '@sushiswap/format'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { unwrapToken } from '../../lib/functions'
@@ -24,13 +24,14 @@ import { Address, useAccount } from 'wagmi'
 import { Amount, Price, tryParseAmount } from '@sushiswap/currency'
 import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
-import { ArrowDownIcon, ArrowLeftIcon, PlusIcon } from '@heroicons/react/solid'
+import { ArrowDownIcon, ArrowLeftIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/react/solid'
 import { FundSource } from '@sushiswap/hooks'
 import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
 import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap/exports/exports'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 
 export const MODAL_MIGRATE_ID = 'migrate-modal'
 
@@ -116,6 +117,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
     ticksAtLimit,
     price,
     noLiquidity,
+    outOfRange,
   } = useConcentratedDerivedMintInfo({
     chainId: pool.chainId as V3ChainId,
     account: address,
@@ -140,6 +142,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   if (priceDifferenceFraction?.lessThan(ZERO)) {
     priceDifferenceFraction = priceDifferenceFraction.multiply(-1)
   }
+
+  const largePriceDifference = priceDifferenceFraction && !priceDifferenceFraction?.lessThan(JSBI.BigInt(2))
 
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
 
@@ -253,11 +257,56 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
 
   return (
     <>
-      <div className="flex flex-col gap-6">
-        <List>
-          <div className="flex justify-between">
-            <List.Label>Position value</List.Label>
-            {stakedBalance?.greaterThan(ZERO) ? (
+      <div className="flex gap-6 col-span-2">
+        {v2SpotPrice && (
+          <div className="col-span-2 flex flex-col gap-2">
+            <List.Label className="!px-0">V2 Price</List.Label>
+            {token0 && token1 && pool ? (
+              <div
+                onClick={() => setInvertPrice((prev) => !prev)}
+                role="button"
+                className="flex items-center font-semibold gap-1.5 rounded-xl text-blue hover:text-blue-600"
+              >
+                <SwitchHorizontalIcon width={16} height={16} />
+                <div className="flex items-baseline gap-1.5">
+                  1 {invertPrice ? token1.symbol : token0.symbol} ={' '}
+                  {invertPrice
+                    ? `${v2SpotPrice?.invert()?.toSignificant(6)} ${token0.symbol}`
+                    : `${v2SpotPrice?.toSignificant(6)} ${token1.symbol}`}
+                </div>
+              </div>
+            ) : (
+              <></>
+            )}
+          </div>
+        )}
+        {v3SpotPrice && (
+          <div className="col-span-2 flex flex-col gap-2">
+            <List.Label className="!px-0">V3 Price</List.Label>
+            {token0 && token1 && pool ? (
+              <div
+                onClick={() => setInvertPrice((prev) => !prev)}
+                role="button"
+                className="flex items-center font-semibold gap-1.5 rounded-xl text-blue hover:text-blue-600"
+              >
+                <SwitchHorizontalIcon width={16} height={16} />
+                <div className="flex items-baseline gap-1.5">
+                  1 {invertPrice ? token1.symbol : token0.symbol} ={' '}
+                  {invertPrice
+                    ? `${v3SpotPrice?.invert()?.toSignificant(6)} ${token0.symbol}`
+                    : `${v3SpotPrice?.toSignificant(6)} ${token1.symbol}`}
+                </div>
+              </div>
+            ) : (
+              <></>
+            )}
+          </div>
+        )}
+      </div>
+      <div className="flex flex-col gap-6 sm:order-2">
+        <List className="!pt-10">
+          <div className="flex justify-end">
+            {stakedBalance?.greaterThan(ZERO) && (
               <List.Label>
                 <RadioGroup value={positionView} onChange={setPositionView} className="flex gap-3">
                   <RadioGroup.Option value={PositionView.staked}>
@@ -276,17 +325,18 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                   </RadioGroup.Option>
                 </RadioGroup>
               </List.Label>
-            ) : (
-              <List.Label>
+            )}
+          </div>
+          <List.Control>
+            <List.KeyValue flex title={<span className="font-semibold text-base">Position Value</span>}>
+              <span className="font-semibold text-base">
                 {formatUSD(
                   positionView === PositionView.staked && stakedBalance?.greaterThan(ZERO)
                     ? stakedValue0 + stakedValue1
                     : value0 + value1
                 )}
-              </List.Label>
-            )}
-          </div>
-          <List.Control>
+              </span>
+            </List.KeyValue>
             {isLoading || isStakedLoading ? (
               <List.KeyValue skeleton />
             ) : token0 ? (
@@ -403,17 +453,14 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
 
         {(token0Value?.greaterThan(ZERO) || token1Value?.greaterThan(ZERO)) && position && (
           <div className="flex flex-col gap-2">
-            <div className="w-full flex justify-center mb-[-8px]">
-              <div className="dark:bg-white/[0.04] bg-black/[0.06] p-1.5 rounded-full text-gray-500 dark:text-slate-400">
-                <ArrowDownIcon width={20} height={20} />
-              </div>
+            <div className="w-full flex justify-center">
+              <ArrowDownIcon width={20} height={20} />
             </div>
             <List>
-              <div className="flex justify-between">
-                <List.Label>Position value after migration</List.Label>
-                <List.Label>{formatUSD(v3FiatValue0 + v3FiatValue1)}</List.Label>
-              </div>
               <List.Control>
+                <List.KeyValue flex title={<span className="font-semibold text-base">Migration</span>}>
+                  <span className="font-semibold text-base">{formatUSD(v3FiatValue0 + v3FiatValue1)}</span>
+                </List.KeyValue>
                 {position?.amount0 && (
                   <List.KeyValue flex title={`${position.amount0.currency.symbol}`} className="!items-start">
                     <div className="flex flex-col gap-0.5">
@@ -440,19 +487,12 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                     </div>
                   </List.KeyValue>
                 )}
-              </List.Control>
-            </List>
-            <div className="w-full flex justify-center mt-4 mb-[-8px]">
-              <div className="dark:bg-white/[0.04] bg-black/[0.06] p-1.5 rounded-full text-gray-500 dark:text-slate-400">
-                <PlusIcon width={20} height={20} />
-              </div>
-            </div>
-            <List>
-              <div className="flex justify-between">
-                <List.Label>Refund after migration</List.Label>
-                <List.Label> {formatUSD(refund0FiatValue + refund1FiatValue)}</List.Label>
-              </div>
-              <List.Control>
+                <div className="p-4">
+                  <div className="h-0.5 w-full bg-gray-100 dark:bg-slate-200/5" />
+                </div>
+                <List.KeyValue flex title={<span className="font-semibold text-base">Refund</span>}>
+                  <span className="font-semibold text-base">{formatUSD(refund0FiatValue + refund1FiatValue)}</span>
+                </List.KeyValue>
                 {token0Value && (
                   <List.KeyValue flex title={`${token0Value.currency.symbol}`} className="!items-start">
                     <div className="flex flex-col gap-0.5">
@@ -487,17 +527,9 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       <div
         className={classNames(
           stakedBalance?.greaterThan(ZERO) ? 'opacity-40 pointer-events-none' : '',
-          'flex flex-col order-3 gap-[64px] pb-40 sm:order-2'
+          'flex flex-col order-3 gap-[64px] pb-40 sm:order-1'
         )}
       >
-        {v2SpotPrice && (
-          <div onClick={() => setInvertPrice((prev) => !prev)}>
-            1 {invertPrice ? token1.symbol : token0.symbol} ={' '}
-            {invertPrice
-              ? `${v2SpotPrice?.invert()?.toSignificant(6)} ${token0.symbol}`
-              : `${v2SpotPrice?.toSignificant(6)} ${token1.symbol}`}
-          </div>
-        )}
         <SelectFeeConcentratedWidget
           setFeeAmount={setFeeAmount}
           feeAmount={feeAmount}
@@ -511,7 +543,26 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
             token1={token1}
             feeAmount={FeeAmount.HIGH}
             tokenId={undefined}
-          />
+            showStartPrice={false}
+          >
+            {outOfRange && (
+              <div className="p-6 font-medium bg-yellow/10 text-yellow rounded-xl">
+                Your position will not earn fees or be used in trades until the market price moves into your range.
+              </div>
+            )}
+            {invalidRange && (
+              <div className="p-6 font-medium bg-yellow/10 text-yellow rounded-xl">
+                Invalid range selected. The minimum price must be lower than the maximum price.
+              </div>
+            )}
+            {largePriceDifference && (
+              <div className="p-6 font-medium bg-yellow/10 text-yellow rounded-xl">
+                You should only deposit liquidity into SushiSwap V3 at a price you believe is correct. <br />
+                If the price seems incorrect, you can either make a swap to move the price or wait for someone else to
+                do so.
+              </div>
+            )}
+          </SelectPricesWidget>
           <Checker.Connect size="xl" fullWidth>
             <Checker.Network size="xl" fullWidth chainId={pool.chainId}>
               <Checker.Custom
@@ -522,24 +573,33 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                   </Button>
                 }
               >
-                <Checker.ApproveERC20
-                  size="xl"
-                  fullWidth
-                  id="approve-token0"
-                  amount={balance?.[FundSource.WALLET] ?? undefined}
-                  contract={V3MigrateContractConfig(pool.chainId as V3ChainId).address}
-                  enabled={Boolean(V3MigrateContractConfig(pool.chainId as V3ChainId).address)}
+                <Checker.Custom
+                  showGuardIfTrue={Boolean(position?.amount0.equalTo(ZERO) || position?.amount1.equalTo(ZERO))}
+                  guard={
+                    <Button size="xl" fullWidth>
+                      Enter valid range
+                    </Button>
+                  }
                 >
-                  <Checker.Success tag={APPROVE_TAG_MIGRATE}>
-                    <Modal.Trigger tag={MODAL_MIGRATE_ID}>
-                      {({ open }) => (
-                        <Button onClick={open} fullWidth size="xl" variant="filled" testId="unstake-liquidity">
-                          Migrate
-                        </Button>
-                      )}
-                    </Modal.Trigger>
-                  </Checker.Success>
-                </Checker.ApproveERC20>
+                  <Checker.ApproveERC20
+                    size="xl"
+                    fullWidth
+                    id="approve-token0"
+                    amount={balance?.[FundSource.WALLET] ?? undefined}
+                    contract={V3MigrateContractConfig(pool.chainId as V3ChainId).address}
+                    enabled={Boolean(V3MigrateContractConfig(pool.chainId as V3ChainId).address)}
+                  >
+                    <Checker.Success tag={APPROVE_TAG_MIGRATE}>
+                      <Modal.Trigger tag={MODAL_MIGRATE_ID}>
+                        {({ open }) => (
+                          <Button onClick={open} fullWidth size="xl" variant="filled" testId="unstake-liquidity">
+                            Migrate
+                          </Button>
+                        )}
+                      </Modal.Trigger>
+                    </Checker.Success>
+                  </Checker.ApproveERC20>
+                </Checker.Custom>
               </Checker.Custom>
             </Checker.Network>
           </Checker.Connect>
@@ -632,19 +692,68 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
               </List>
               <List>
                 <List.Control>
-                  {input0 && (
-                    <List.KeyValue flex title={`${input0?.currency.symbol}`}>
-                      <div className="flex items-center gap-2">
-                        <Currency.Icon currency={input0.currency} width={18} height={18} />
-                        {input0?.toSignificant(6)} {input0?.currency.symbol}
+                  {position?.amount0 && (
+                    <List.KeyValue
+                      flex
+                      title={`Migration`}
+                      subtitle="The value of your position after migration"
+                      className="!items-start"
+                    >
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex items-center gap-2">
+                          <Currency.Icon currency={unwrapToken(position.amount0.currency)} width={18} height={18} />
+                          {position.amount0?.toSignificant(6)} {unwrapToken(position.amount0.currency).symbol}
+                        </div>
+                        <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                          {formatUSD(v3FiatValue0)}
+                        </span>
                       </div>
                     </List.KeyValue>
                   )}
-                  {input1 && (
-                    <List.KeyValue flex title={`${input1?.currency.symbol}`}>
-                      <div className="flex items-center gap-2">
-                        <Currency.Icon currency={input1.currency} width={18} height={18} />
-                        {input1?.toSignificant(6)} {input1?.currency.symbol}
+                  {position?.amount1 && (
+                    <List.KeyValue flex title={``} className="!items-start">
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex items-center gap-2">
+                          <Currency.Icon currency={unwrapToken(position.amount1.currency)} width={18} height={18} />
+                          {position.amount1?.toSignificant(6)} {unwrapToken(position.amount1.currency).symbol}
+                        </div>
+                        <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                          {formatUSD(v3FiatValue1)}
+                        </span>
+                      </div>
+                    </List.KeyValue>
+                  )}
+                  <div className="p-4">
+                    <div className="h-0.5 w-full bg-gray-100 dark:bg-slate-200/5" />
+                  </div>
+                  {token0Value && (
+                    <List.KeyValue
+                      flex
+                      title={`Refund`}
+                      subtitle="The refund you receive after migration"
+                      className="!items-start"
+                    >
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex items-center gap-2">
+                          <Currency.Icon currency={unwrapToken(token0Value.currency)} width={18} height={18} />
+                          {refund0?.toSignificant(6) ?? '0.00'} {unwrapToken(token0Value.currency).symbol}
+                        </div>
+                        <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                          {formatUSD(refund0FiatValue)}
+                        </span>
+                      </div>
+                    </List.KeyValue>
+                  )}
+                  {token1Value && (
+                    <List.KeyValue flex title={``} className="!items-start">
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex items-center gap-2">
+                          <Currency.Icon currency={unwrapToken(token1Value.currency)} width={18} height={18} />
+                          {refund1?.toSignificant(6) ?? '0.00'} {unwrapToken(token1Value.currency).symbol}
+                        </div>
+                        <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
+                          {formatUSD(refund1FiatValue)}
+                        </span>
                       </div>
                     </List.KeyValue>
                   )}

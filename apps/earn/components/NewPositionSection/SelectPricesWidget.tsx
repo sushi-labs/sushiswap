@@ -1,7 +1,7 @@
 import { MinusIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/react/solid'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { classNames, Collapsible } from '@sushiswap/ui'
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Bound } from '../../lib/constants'
 import { ContentBlock } from '../AddPage/ContentBlock'
@@ -28,6 +28,8 @@ interface SelectPricesWidget {
   feeAmount: FeeAmount | undefined
   switchTokens?(): void
   tokenId: string | undefined
+  children?: ReactNode
+  showStartPrice?: boolean
 }
 
 export const SelectPricesWidget: FC<SelectPricesWidget> = ({
@@ -37,6 +39,8 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
   feeAmount,
   switchTokens,
   tokenId,
+  children,
+  showStartPrice = true,
 }) => {
   const isMounted = useIsMounted()
   const { address } = useAccount()
@@ -52,7 +56,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
       existingPosition: undefined,
     })
 
-  const { onLeftRangeInput, onRightRangeInput, onStartPriceInput, resetMintState } = useConcentratedMintActionHandlers()
+  const { onLeftRangeInput, onRightRangeInput, onStartPriceInput } = useConcentratedMintActionHandlers()
   const { startPriceTypedValue } = useConcentratedMintState()
   const { data: existingPosition, isLoading: positionLoading } = useConcentratedLiquidityPositionsFromTokenId({
     chainId,
@@ -70,15 +74,6 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
   const leftPrice = useMemo(() => (isSorted ? priceLower : priceUpper?.invert()), [isSorted, priceLower, priceUpper])
   const rightPrice = useMemo(() => (isSorted ? priceUpper : priceLower?.invert()), [isSorted, priceLower, priceUpper])
 
-  const [minPriceDiff, maxPriceDiff] = useMemo(() => {
-    if (!pool || !token0 || !token1 || !pool.priceOf(token0.wrapped) || !leftPrice || !rightPrice) return [0, 0]
-    const min = +leftPrice?.toFixed(4)
-    const cur = +pool.priceOf(token0.wrapped)?.toFixed(4)
-    const max = +rightPrice?.toFixed(4)
-
-    return [((min - cur) / cur) * 100, ((max - cur) / cur) * 100]
-  }, [leftPrice, pool, rightPrice, token0, token1])
-
   const fiatAmounts = useMemo(() => [tryParseAmount('1', token0), tryParseAmount('1', token1)], [token0, token1])
   const fiatAmountsAsNumber = useTokenAmountDollarValues({ chainId, amounts: fiatAmounts })
 
@@ -93,13 +88,16 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     >
       <Collapsible open={Boolean(noLiquidity)}>
         <div className="p-6 font-medium bg-blue/10 text-blue rounded-xl">
-          This pool must be initialized before you can add liquidity. To initialize, select a starting price for the
-          pool. Then, enter your liquidity price range and deposit amount. Gas fees will be higher than usual due to the
-          initialization transaction.
+          This pool must be initialized before you can add liquidity.{' '}
+          {showStartPrice
+            ? 'To initialize, select a starting price for the pool. Then, enter your liquidity price range and deposit amount. '
+            : ''}
+          Gas fees will be higher than usual due to the initialization transaction.
         </div>
       </Collapsible>
-      <div className="bg-white dark:bg-white/[0.02] rounded-xl p-4">
-        {isMounted && (
+      {children && children}
+      <div className="bg-white dark:bg-white/[0.02] rounded-xl flex flex-col gap-4 p-4">
+        {isMounted && showStartPrice && (
           <div className="flex flex-col gap-3">
             {noLiquidity && (
               <div className="relative flex gap-3 w-full items-center pb-2">
@@ -138,7 +136,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             )}
           </div>
         )}
-        <div className="flex flex-col gap-3 pt-4">
+        <div className="flex flex-col">
           <div className="flex items-center justify-between gap-2">
             <div className="flex justify-end lg:hidden">
               {isLoading || !pool || !token0 || !token1 ? (
@@ -199,9 +197,6 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               increment={isSorted ? getIncrementLower : getDecrementUpper}
               decrementDisabled={ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]}
               incrementDisabled={ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]}
-              priceDiff={minPriceDiff}
-              priceFiat={fiatAmountsAsNumber[0]}
-              fullRange={Boolean(ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER])}
             />
             <PriceBlock
               id={'max-price'}
@@ -214,9 +209,6 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               increment={isSorted ? getIncrementUpper : getDecrementLower}
               incrementDisabled={ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]}
               decrementDisabled={ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]}
-              priceDiff={maxPriceDiff}
-              priceFiat={fiatAmountsAsNumber[0]}
-              fullRange={Boolean(ticksAtLimit[Bound.LOWER] && ticksAtLimit[Bound.UPPER])}
             />
           </div>
         </div>
@@ -237,9 +229,6 @@ interface PriceBlockProps {
   decrementDisabled?: boolean
   incrementDisabled?: boolean
   locked?: boolean
-  priceDiff: number
-  priceFiat: number
-  fullRange: boolean
 }
 
 export const PriceBlock: FC<PriceBlockProps> = ({
@@ -254,9 +243,6 @@ export const PriceBlock: FC<PriceBlockProps> = ({
   token1,
   label,
   value,
-  priceDiff,
-  priceFiat,
-  fullRange,
 }) => {
   const isMounted = useIsMounted()
   //  for focus state, styled components doesnt let you select input parent container
@@ -265,9 +251,6 @@ export const PriceBlock: FC<PriceBlockProps> = ({
   // let user type value and only update parent value on blur
   const [localValue, setLocalValue] = useState('')
   const [useLocalValue, setUseLocalValue] = useState(false)
-
-  // animation if parent value updates local value
-  const [pulsing, setPulsing] = useState<boolean>(false)
 
   const handleOnFocus = () => {
     setUseLocalValue(true)
@@ -295,10 +278,6 @@ export const PriceBlock: FC<PriceBlockProps> = ({
     if (localValue !== value && !useLocalValue) {
       setTimeout(() => {
         setLocalValue(value) // reset local value to match parent
-        setPulsing(true) // trigger animation
-        setTimeout(function () {
-          setPulsing(false)
-        }, 1800)
       }, 0)
     }
   }, [localValue, useLocalValue, value])

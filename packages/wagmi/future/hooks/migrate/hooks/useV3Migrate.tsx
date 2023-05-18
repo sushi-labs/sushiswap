@@ -1,7 +1,7 @@
-import { Address, useContract, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { Address, useContract, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
 import { useCallback, useMemo, useState } from 'react'
 import { getContract, SendTransactionResult } from '@wagmi/core'
-import { createToast } from '@sushiswap/ui/future/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
 import { V3MigrateChainId } from '../types'
 import { V3MigrateAddress } from '../constants'
 import { V3Migrator } from '../abis/V3Migrator'
@@ -148,7 +148,13 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
   )
 
   const onSettled = useCallback(
-    (data: SendTransactionResult | undefined) => {
+    (data: SendTransactionResult | undefined, e: Error | null) => {
+      if (e instanceof Error) {
+        if (!(e instanceof UserRejectedRequestError)) {
+          createErrorToast(e.message, true)
+        }
+      }
+
       if (account && data) {
         const ts = new Date().getTime()
         void createToast({
