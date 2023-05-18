@@ -2,7 +2,11 @@
   "extends": ["//"],
   "pipeline": {
     "build": {
-      "outputs": ["typechain/**/*", "artifacts/**/*"],
+      "outputs": [
+        "typechain/**/*", 
+        "artifacts/**/*",
+        "!artifacts/build-info/*"
+      ],
       "dependsOn": ["^build", "export"],
       "cache": true
     },

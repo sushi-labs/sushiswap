@@ -2,7 +2,7 @@
   "extends": ["//"],
   "pipeline": {
     "build": {
-      "outputs": [".next/**"],
+      "outputs": [".next/**", "!.next/cache/**"],
       "dependsOn": ["^build"],
       "env": ["ALCHEMY_ID", "INFURA_ID", "REDIS_URL"],
       "cache": true

@@ -28,6 +28,7 @@
     "build": {
       "outputs": [
         ".next/**/*",
+        "!.next/cache/**",
         ".vercel/**/*",
         "dist/**/*"
       ],

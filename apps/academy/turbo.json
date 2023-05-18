@@ -8,7 +8,7 @@
         "cache": true
       },
       "build": {
-        "outputs": [".next/**"],
+        "outputs": [".next/**", "!.next/cache/**"],
         "dependsOn": ["^build", "generate"],
         "env": ["ALCHEMY_ID", "STRAPI_API_URL", "STRAPI_PREVIEW_SECRET"],
         "cache": true
