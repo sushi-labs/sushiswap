@@ -72,18 +72,8 @@ jobs:
         - name: Install playwright
           run: pnpm exec playwright install --with-deps chromium
 
-        - name: Install rust
-          uses: actions-rs/toolchain@v1
-          with:
-            toolchain: stable
-            target: wasm32-unknown-unknown
-            profile: minimal
-            override: true
-
-        - name: Install Anvil
+        - name: Install Foundry
           uses: foundry-rs/foundry-toolchain@v1
-          with:
-            version: nightly
 
         - name: Test swap app
           run: pnpm test-root-app
