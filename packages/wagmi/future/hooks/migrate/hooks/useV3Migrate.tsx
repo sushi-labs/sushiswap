@@ -48,8 +48,8 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
           chainId,
           functionName: 'multicall',
           args:
-            args.tickUpper &&
-            args.tickLower &&
+            typeof args.tickLower === 'number' &&
+            typeof args.tickUpper === 'number' &&
             args.liquidityToMigrate &&
             args.amount0Min &&
             args.amount1Min &&
@@ -94,8 +94,8 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
               args.amount0Min &&
               args.token0 &&
               args.token1 &&
-              args.tickLower &&
-              args.tickUpper &&
+              typeof args.tickLower === 'number' &&
+              typeof args.tickUpper === 'number' &&
               args.deadline
           ),
         }
@@ -104,8 +104,8 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
           chainId,
           functionName: 'migrate',
           args:
-            args.tickUpper &&
-            args.tickLower &&
+            typeof args.tickLower === 'number' &&
+            typeof args.tickUpper === 'number' &&
             args.liquidityToMigrate &&
             args.amount0Min &&
             args.amount1Min &&
@@ -140,8 +140,8 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
               args.amount0Min &&
               args.token0 &&
               args.token1 &&
-              args.tickLower &&
-              args.tickUpper &&
+              typeof args.tickLower === 'number' &&
+              typeof args.tickUpper === 'number' &&
               args.deadline
           ),
         }
