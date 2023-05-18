@@ -73,6 +73,7 @@ export const ADDITIONAL_BASES: {
       COMP[ChainId.ETHEREUM],
       GALA[ChainId.ETHEREUM],
       XSUSHI[ChainId.ETHEREUM],
+      LINK[ChainId.ETHEREUM],
     ],
   },
   [ChainId.POLYGON]: {
@@ -88,6 +89,8 @@ export const ADDITIONAL_BASES: {
       SNX[ChainId.POLYGON],
       CRV[ChainId.POLYGON],
       YFI[ChainId.POLYGON],
+      XSUSHI[ChainId.POLYGON],
+      SUSHI[ChainId.POLYGON],
       // ENJ[ChainId.POLYGON], // could not find on polygon
     ],
   },
@@ -104,6 +107,8 @@ export const ADDITIONAL_BASES: {
       SNX[ChainId.FANTOM],
       CRV[ChainId.FANTOM],
       YFI[ChainId.FANTOM],
+      SUSHI[ChainId.POLYGON],
+      XSUSHI[ChainId.POLYGON],
     ],
   },
   [ChainId.BSC]: {
