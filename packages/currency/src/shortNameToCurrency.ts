@@ -200,6 +200,10 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
   //   ETH: Native.onChain(ChainId.BASE_TESTNET),
   //   WETH: WNATIVE[ChainId.BASE_TESTNET],
   // },
+  [ChainId.THUNDERCORE]: {
+    NATIVE: Native.onChain(ChainId.THUNDERCORE),
+    WNATIVE: WNATIVE[ChainId.THUNDERCORE],
+  },
   [ChainId.POLYGON_ZKEVM]: {
     NATIVE: Native.onChain(ChainId.POLYGON_ZKEVM),
     WNATIVE: WNATIVE[ChainId.POLYGON_ZKEVM],

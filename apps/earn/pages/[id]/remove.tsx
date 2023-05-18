@@ -15,6 +15,7 @@ import {
   RemoveSectionLegacy,
   RemoveSectionTrident,
   RemoveSectionUnstake,
+  UnknownTokenAlert,
 } from '../../components'
 import { PROTOCOL_MAP } from '../../lib/constants'
 import { getPool, getPools, usePool, Pool, getPoolUrl } from '@sushiswap/client'

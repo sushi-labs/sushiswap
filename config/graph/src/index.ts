@@ -50,7 +50,7 @@ export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.MOONRIVER,
   ChainId.OPTIMISM,
   ChainId.POLYGON,
-  ChainId.POLYGON_ZKEVM
+  ChainId.POLYGON_ZKEVM,
 ]
 export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_ENABLED_NETWORKS)[number]
 
@@ -71,7 +71,6 @@ export const METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/name'
 export const PENDING_METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/id'
 
 export const POLYGON_ZKEVM_HOST = 'api.studio.thegraph.com/query/32073'
-
 
 export const CHAIN_NAME: Record<number, string> = {
   [ChainId.ARBITRUM]: 'Arbitrum',

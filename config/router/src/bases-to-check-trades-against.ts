@@ -34,7 +34,6 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     LINK[ChainId.ETHEREUM],
     SUSHI[ChainId.ETHEREUM],
   ],
-
   [ChainId.RINKEBY]: [WNATIVE[ChainId.RINKEBY], USDC[ChainId.RINKEBY]],
   [ChainId.KOVAN]: [WNATIVE[ChainId.KOVAN], USDC[ChainId.KOVAN]],
   [ChainId.POLYGON]: [
@@ -249,7 +248,12 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDT[ChainId.BOBA_BNB],
     USDC[ChainId.BOBA_BNB],
   ],
-  [ChainId.BTTC]: [WNATIVE[ChainId.BTTC], USDC[ChainId.BTTC], USDT[ChainId.BTTC]],
+  [ChainId.BTTC]: [
+    WNATIVE[ChainId.BTTC],
+    WETH9[ChainId.BTTC], 
+    USDC[ChainId.BTTC], 
+    USDT[ChainId.BTTC]
+  ],
   [ChainId.POLYGON_ZKEVM]: [
     WNATIVE[ChainId.POLYGON_ZKEVM],
     MATIC[ChainId.POLYGON_ZKEVM],
@@ -257,5 +261,12 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDT[ChainId.POLYGON_ZKEVM],
     DAI[ChainId.POLYGON_ZKEVM],
     WBTC[ChainId.POLYGON_ZKEVM],
+  ],
+  [ChainId.THUNDERCORE]: [
+    WNATIVE[ChainId.THUNDERCORE],
+    WETH9[ChainId.THUNDERCORE],
+    WBTC[ChainId.THUNDERCORE],
+    USDC[ChainId.THUNDERCORE],
+    USDT[ChainId.THUNDERCORE],
   ],
 }
