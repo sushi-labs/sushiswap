@@ -3,9 +3,9 @@
   "pipeline": {
     "build": {
       "outputs": [
-        "typechain/**/*", 
-        "artifacts/**/*",
-        "!artifacts/build-info/*"
+        "typechain/**", 
+        "artifacts/**",
+        "!artifacts/build-info/**"
       ],
       "dependsOn": ["^build", "export"],
       "cache": true
@@ -16,13 +16,13 @@
     },
     "export": {
       "dependsOn": ["^build"],
-      "inputs": ["deployments/**/*"],
-      "outputs": ["exports/**/*"],
+      "inputs": ["deployments/**"],
+      "outputs": ["exports/**"],
       "cache": true
     },
     "node": {
       "dependsOn": ["build"],
-      "outputs": ["deployments/**/*"],
+      "outputs": ["deployments/**"],
       "persistent": true
     }
   }
