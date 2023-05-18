@@ -85,6 +85,6 @@
     "ts-node": "10.9.1",
     "typechain": "8.1.1",
     "typescript": "5.0.4",
-    "viem": "0.3.19"
+    "viem": "0.3.29"
   }
 }
