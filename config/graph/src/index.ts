@@ -231,6 +231,7 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME = {
   [ChainId.OPTIMISM]: 'sushi-v3/v3-optimism',
   [ChainId.POLYGON]: 'sushi-v3/v3-polygon',
   [ChainId.POLYGON_ZKEVM]: 'v3-polygon-zkevm/v0.0.2',
+  [ChainId.THUNDERCORE]: 'sushi-v3/v3-thundercore',
 }
 
 export const TRIDENT_SUBGRAPH_NAME = {
