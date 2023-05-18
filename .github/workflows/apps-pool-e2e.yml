@@ -81,12 +81,12 @@ jobs:
         - name: Test pools app
           run: pnpm test-earn-app
           env:
-            NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
-            NEXT_PUBLIC_TEST: true
             ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
             PLAYWRIGHT_URL: http://localhost:3000/pools
             CHAIN_ID: ${{ matrix.chain-id }}
             ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+            NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+            NEXT_PUBLIC_TEST: true
           working-directory: .
 
         - name: Upload test results
