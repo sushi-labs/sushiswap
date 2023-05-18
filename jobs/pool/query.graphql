@@ -217,6 +217,15 @@ query OneHourBlocks($chainIds: [Int!]!) {
   }
 }
 
+query TwoHourBlocks($chainIds: [Int!]!) {
+  twoHourBlocks(chainIds: $chainIds) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
 query OneDayBlocks($chainIds: [Int!]!) {
   oneDayBlocks(chainIds: $chainIds) {
     id
@@ -244,8 +253,26 @@ query OneWeekBlocks($chainIds: [Int!]!) {
   }
 }
 
+query TwoWeekBlocks($chainIds: [Int!]!) {
+  twoWeekBlocks(chainIds: $chainIds) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
 query OneMonthBlocks($chainIds: [Int!]!) {
   oneMonthBlocks(chainIds: $chainIds) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query TwoMonthBlocks($chainIds: [Int!]!) {
+  twoMonthBlocks(chainIds: $chainIds) {
     id
     chainId
     number

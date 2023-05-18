@@ -24,6 +24,21 @@ export const resolvers: Resolvers = {
         info
       )
     },
+    twoHourBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
+      const date = startOfSecond(startOfMinute(startOfHour(subHours(Date.now(), 2))))
+      const start = getUnixTime(date)
+      const end = getUnixTime(addSeconds(date, 600))
+      return _blocksByChainIds(
+        root,
+        {
+          ...args,
+          first: 1,
+          where: { timestamp_gt: start, timestamp_lt: end },
+        },
+        context,
+        info
+      )
+    },
     oneDayBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
       const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 1))))
       const start = getUnixTime(date)
@@ -69,8 +84,38 @@ export const resolvers: Resolvers = {
         info
       )
     },
+    twoWeekBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
+      const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 14))))
+      const start = getUnixTime(date)
+      const end = getUnixTime(addSeconds(date, 600))
+      return _blocksByChainIds(
+        root,
+        {
+          ...args,
+          first: 1,
+          where: { timestamp_gt: start, timestamp_lt: end },
+        },
+        context,
+        info
+      )
+    },
     oneMonthBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
       const date = startOfSecond(startOfMinute(startOfHour(subMonths(Date.now(), 1))))
+      const start = getUnixTime(date)
+      const end = getUnixTime(addSeconds(date, 600))
+      return _blocksByChainIds(
+        root,
+        {
+          ...args,
+          first: 1,
+          where: { timestamp_gt: start, timestamp_lt: end },
+        },
+        context,
+        info
+      )
+    },
+    twoMonthBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
+      const date = startOfSecond(startOfMinute(startOfHour(subMonths(Date.now(), 2))))
       const start = getUnixTime(date)
       const end = getUnixTime(addSeconds(date, 600))
       return _blocksByChainIds(

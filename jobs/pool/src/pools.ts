@@ -25,24 +25,49 @@ interface SubgraphConfig {
 
 interface Blocks {
   oneHour: number | undefined
+  twoHour: number | undefined
   oneDay: number | undefined
+  twoDay: number | undefined
   oneWeek: number | undefined
+  twoWeek: number | undefined
   oneMonth: number | undefined
+  twoMonth: number | undefined
 }
 
 type V2Data = {
   currentPools: PairsQuery[]
   pools1h: PairsQuery[]
+  pools2h: PairsQuery[]
   pools1d: PairsQuery[]
+  pools2d: PairsQuery[]
   pools1w: PairsQuery[]
+  pools2w: PairsQuery[]
   pools1m: PairsQuery[]
+  pools2m: PairsQuery[]
 }
 type V3Data = {
   currentPools: V3PoolsQuery[]
   pools1h: V3PoolsQuery[]
+  pools2h: V3PoolsQuery[]
   pools1d: V3PoolsQuery[]
+  pools2d: V3PoolsQuery[]
   pools1w: V3PoolsQuery[]
+  pools2w: V3PoolsQuery[]
   pools1m: V3PoolsQuery[]
+  pools2m: V3PoolsQuery[]
+}
+
+interface PercentageChange {
+  oneHour: number
+  oneDay: number
+  oneWeek: number
+  oneMonth: number
+}
+
+interface PoolMetrics {
+  volume: PercentageChange
+  fees: PercentageChange
+  apr: PercentageChange
 }
 
 enum AprTimeRange {
@@ -133,11 +158,24 @@ async function extract(protocol: Protocol) {
   const subgraphs = createSubgraphConfig(protocol)
 
   const sdk = getBuiltGraphSDK()
-  const [oneHourBlocks, oneDayBlocks, oneWeekBlocks, oneMonthBlocks] = await Promise.all([
+  const [
+    oneHourBlocks,
+    twoHourBlocks,
+    oneDayBlocks,
+    twoDayBlocks,
+    oneWeekBlocks,
+    twoWeekBlocks,
+    oneMonthBlocks,
+    twoMonthBlocks,
+  ] = await Promise.all([
     sdk.OneHourBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.TwoHourBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
     sdk.OneDayBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.TwoDayBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
     sdk.OneWeekBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.TwoWeekBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
     sdk.OneMonthBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.TwoMonthBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
   ])
 
   const chains = Array.from(new Set(subgraphs.map((subgraph) => subgraph.chainId.toString())))
@@ -147,12 +185,20 @@ async function extract(protocol: Protocol) {
     const blocks: Blocks = {
       oneHour:
         Number(oneHourBlocks.oneHourBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      twoHour:
+        Number(twoHourBlocks.twoHourBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
       oneDay:
         Number(oneDayBlocks.oneDayBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      twoDay:
+        Number(twoDayBlocks.twoDayBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
       oneWeek:
         Number(oneWeekBlocks.oneWeekBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      twoWeek:
+        Number(twoWeekBlocks.twoWeekBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
       oneMonth:
         Number(oneMonthBlocks.oneMonthBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      twoMonth:
+        Number(twoMonthBlocks.twoMonthBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
     }
     const pairs = await fetchPairs(subgraph, blocks)
     console.log(`${subgraph.name}, batches: ${pairs.currentPools.length}`)
@@ -163,23 +209,31 @@ async function extract(protocol: Protocol) {
 
 async function fetchPairs(config: SubgraphConfig, blocks: Blocks) {
   if (config.protocol === Protocol.SUSHISWAP_V2 || config.protocol === Protocol.BENTOBOX_CLASSIC) {
-    const [currentPools, pools1h, pools1d, pools1w, pools1m] = await Promise.all([
+    const [currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m] = await Promise.all([
       fetchLegacyOrTridentPairs(config),
       blocks.oneHour ? fetchLegacyOrTridentPairs(config, blocks.oneHour) : ([] as PairsQuery[]),
+      blocks.twoHour ? fetchLegacyOrTridentPairs(config, blocks.twoHour) : ([] as PairsQuery[]),
       blocks.oneDay ? fetchLegacyOrTridentPairs(config, blocks.oneDay) : ([] as PairsQuery[]),
+      blocks.twoDay ? fetchLegacyOrTridentPairs(config, blocks.twoDay) : ([] as PairsQuery[]),
       blocks.oneWeek ? fetchLegacyOrTridentPairs(config, blocks.oneWeek) : ([] as PairsQuery[]),
+      blocks.twoWeek ? fetchLegacyOrTridentPairs(config, blocks.twoWeek) : ([] as PairsQuery[]),
       blocks.oneMonth ? fetchLegacyOrTridentPairs(config, blocks.oneMonth) : ([] as PairsQuery[]),
+      blocks.twoMonth ? fetchLegacyOrTridentPairs(config, blocks.twoMonth) : ([] as PairsQuery[]),
     ])
-    return { currentPools, pools1h, pools1d, pools1w, pools1m }
+    return { currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m }
   } else if (config.protocol === Protocol.SUSHISWAP_V3) {
-    const [currentPools, pools1h, pools1d, pools1w, pools1m] = await Promise.all([
+    const [currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m] = await Promise.all([
       fetchV3Pools(config),
       blocks.oneHour ? fetchV3Pools(config, blocks.oneHour) : ([] as V3PoolsQuery[]),
+      blocks.twoHour ? fetchV3Pools(config, blocks.twoHour) : ([] as V3PoolsQuery[]),
       blocks.oneDay ? fetchV3Pools(config, blocks.oneDay) : ([] as V3PoolsQuery[]),
+      blocks.twoDay ? fetchV3Pools(config, blocks.twoDay) : ([] as V3PoolsQuery[]),
       blocks.oneWeek ? fetchV3Pools(config, blocks.oneWeek) : ([] as V3PoolsQuery[]),
+      blocks.twoWeek ? fetchV3Pools(config, blocks.twoWeek) : ([] as V3PoolsQuery[]),
       blocks.oneMonth ? fetchV3Pools(config, blocks.oneMonth) : ([] as V3PoolsQuery[]),
+      blocks.twoMonth ? fetchV3Pools(config, blocks.twoMonth) : ([] as V3PoolsQuery[]),
     ])
-    return { currentPools, pools1h, pools1d, pools1w, pools1m }
+    return { currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m }
   } else {
     console.warn('fetchPairs: config.version is not LEGACY or TRIDENT or V3, skipping')
   }
@@ -307,8 +361,30 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
         },
       ])
   )
+  const twoHourData = new Map(
+    queryResult.data.pools2h
+      .flatMap((page) => page.pairs)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+        },
+      ])
+  )
   const oneDayData = new Map(
     queryResult.data.pools1d
+      .flatMap((page) => page.pairs)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+        },
+      ])
+  )
+  const twoDayData = new Map(
+    queryResult.data.pools2d
       .flatMap((page) => page.pairs)
       .map((pool) => [
         pool.id,
@@ -329,8 +405,30 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
         },
       ])
   )
+  const twoWeekData = new Map(
+    queryResult.data.pools2w
+      .flatMap((page) => page.pairs)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+        },
+      ])
+  )
   const oneMonthData = new Map(
     queryResult.data.pools1m
+      .flatMap((page) => page.pairs)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+        },
+      ])
+  )
+  const twoMonthData = new Map(
+    queryResult.data.pools2m
       .flatMap((page) => page.pairs)
       .map((pool) => [
         pool.id,
@@ -431,6 +529,26 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
         fees1d: oneDayData.has(pair.id) ? Number(pair.feesUSD) - oneDayData.get(pair.id).feesUSD : pair.feesUSD,
         fees1w: oneWeekData.has(pair.id) ? Number(pair.feesUSD) - oneWeekData.get(pair.id).feesUSD : pair.feesUSD,
         fees1m: oneMonthData.has(pair.id) ? Number(pair.feesUSD) - oneMonthData.get(pair.id).feesUSD : pair.feesUSD,
+        feesChange1h: calculatePercentageChange(
+          pair.feesUSD,
+          oneHourData.get(pair.id)?.feesUSD ?? 0,
+          twoHourData.get(pair.id)?.feesUSD ?? 0
+        ),
+        feesChange1d: calculatePercentageChange(
+          pair.feesUSD,
+          oneDayData.get(pair.id)?.feesUSD ?? 0,
+          twoDayData.get(pair.id)?.feesUSD ?? 0
+        ),
+        feesChange1w: calculatePercentageChange(
+          pair.feesUSD,
+          oneWeekData.get(pair.id)?.feesUSD ?? 0,
+          twoWeekData.get(pair.id)?.feesUSD ?? 0
+        ),
+        feesChange1m: calculatePercentageChange(
+          pair.feesUSD,
+          oneMonthData.get(pair.id)?.feesUSD ?? 0,
+          twoMonthData.get(pair.id)?.feesUSD ?? 0
+        ),
         volume1h: oneHourData.has(pair.id)
           ? Number(pair.volumeUSD) - oneHourData.get(pair.id).volumeUSD
           : pair.volumeUSD,
@@ -441,6 +559,26 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
         volume1m: oneMonthData.has(pair.id)
           ? Number(pair.volumeUSD) - oneMonthData.get(pair.id).volumeUSD
           : pair.volumeUSD,
+        volumeChange1h: calculatePercentageChange(
+          pair.volumeUSD,
+          oneHourData.get(pair.id)?.volumeUSD ?? 0,
+          twoHourData.get(pair.id)?.volumeUSD ?? 0
+        ),
+        volumeChange1d: calculatePercentageChange(
+          pair.volumeUSD,
+          oneDayData.get(pair.id)?.volumeUSD ?? 0,
+          twoDayData.get(pair.id)?.volumeUSD ?? 0
+        ),
+        volumeChange1w: calculatePercentageChange(
+          pair.volumeUSD,
+          oneWeekData.get(pair.id)?.volumeUSD ?? 0,
+          twoWeekData.get(pair.id)?.volumeUSD ?? 0
+        ),
+        volumeChange1m: calculatePercentageChange(
+          pair.volumeUSD,
+          oneMonthData.get(pair.id)?.volumeUSD ?? 0,
+          twoMonthData.get(pair.id)?.volumeUSD ?? 0
+        ),
         feeApr1h,
         feeApr1d,
         feeApr1w,
@@ -469,8 +607,30 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
         },
       ])
   )
+  const twoHourData = new Map(
+    queryResult.data.pools2h
+      .flatMap((page) => page.pools)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+        },
+      ])
+  )
   const oneDayData = new Map(
     queryResult.data.pools1d
+      .flatMap((page) => page.pools)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+        },
+      ])
+  )
+  const twoDayData = new Map(
+    queryResult.data.pools2d
       .flatMap((page) => page.pools)
       .map((pool) => [
         pool.id,
@@ -491,8 +651,30 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
         },
       ])
   )
+  const twoWeekData = new Map(
+    queryResult.data.pools2w
+      .flatMap((page) => page.pools)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+        },
+      ])
+  )
   const oneMonthData = new Map(
     queryResult.data.pools1m
+      .flatMap((page) => page.pools)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+        },
+      ])
+  )
+  const twoMonthData = new Map(
+    queryResult.data.pools2m
       .flatMap((page) => page.pools)
       .map((pool) => [
         pool.id,
@@ -576,6 +758,26 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
         fees1d: oneDayData.has(pair.id) ? Number(pair.feesUSD) - oneDayData.get(pair.id).feesUSD : pair.feesUSD,
         fees1w: oneWeekData.has(pair.id) ? Number(pair.feesUSD) - oneWeekData.get(pair.id).feesUSD : pair.feesUSD,
         fees1m: oneMonthData.has(pair.id) ? Number(pair.feesUSD) - oneMonthData.get(pair.id).feesUSD : pair.feesUSD,
+        feesChange1h: calculatePercentageChange(
+          pair.feesUSD,
+          oneHourData.get(pair.id)?.feesUSD ?? 0,
+          twoHourData.get(pair.id)?.feesUSD ?? 0
+        ),
+        feesChange1d: calculatePercentageChange(
+          pair.feesUSD,
+          oneDayData.get(pair.id)?.feesUSD ?? 0,
+          twoDayData.get(pair.id)?.feesUSD ?? 0
+        ),
+        feesChange1w: calculatePercentageChange(
+          pair.feesUSD,
+          oneWeekData.get(pair.id)?.feesUSD ?? 0,
+          twoWeekData.get(pair.id)?.feesUSD ?? 0
+        ),
+        feesChange1m: calculatePercentageChange(
+          pair.feesUSD,
+          oneMonthData.get(pair.id)?.feesUSD ?? 0,
+          twoMonthData.get(pair.id)?.feesUSD ?? 0
+        ),
         volume1h: oneHourData.has(pair.id)
           ? Number(pair.volumeUSD) - oneHourData.get(pair.id).volumeUSD
           : pair.volumeUSD,
@@ -586,6 +788,26 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
         volume1m: oneMonthData.has(pair.id)
           ? Number(pair.volumeUSD) - oneMonthData.get(pair.id).volumeUSD
           : pair.volumeUSD,
+          volumeChange1h: calculatePercentageChange(
+            pair.volumeUSD,
+            oneHourData.get(pair.id)?.volumeUSD ?? 0,
+            twoHourData.get(pair.id)?.volumeUSD ?? 0
+          ),
+          volumeChange1d: calculatePercentageChange(
+            pair.volumeUSD,
+            oneDayData.get(pair.id)?.volumeUSD ?? 0,
+            twoDayData.get(pair.id)?.volumeUSD ?? 0
+          ),
+          volumeChange1w: calculatePercentageChange(
+            pair.volumeUSD,
+            oneWeekData.get(pair.id)?.volumeUSD ?? 0,
+            twoWeekData.get(pair.id)?.volumeUSD ?? 0
+          ),
+          volumeChange1m: calculatePercentageChange(
+            pair.volumeUSD,
+            oneMonthData.get(pair.id)?.volumeUSD ?? 0,
+            twoMonthData.get(pair.id)?.volumeUSD ?? 0
+          ),
         feeApr1h,
         feeApr1d,
         feeApr1w,
@@ -626,4 +848,11 @@ const calculateFeeApr = (
     return ((currentFee - historicalFee) * 12) / currentLiquidityUSD
   }
   return 0
+}
+
+const calculatePercentageChange = (current: number, previous: number, previous2: number) => {
+  if (current === 0) return 0
+  const change1 = previous !== 0 ? current - previous : 0
+  const change2 = previous !== 0 && previous2 !== 0 ? previous - previous2 : 0
+  return previous !== 0 && previous2 !== 0 ? change1 / change2 - 1 : 0
 }
