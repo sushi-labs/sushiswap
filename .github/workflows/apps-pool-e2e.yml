@@ -28,6 +28,7 @@ env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
   NODE_OPTIONS: --max-old-space-size=8192
+  NEXT_TELEMETRY_DISABLED: 1
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
@@ -48,6 +49,7 @@ jobs:
           uses: actions/checkout@v3
           with:
             fetch-depth: 2
+            submodules: true
 
         - uses: pnpm/action-setup@v2
           with:
@@ -59,6 +61,13 @@ jobs:
             node-version: ${{ matrix.node-version }}
             cache: 'pnpm'
 
+        - name: Cache pnpm
+          uses: actions/cache@v3
+          with:
+            path: ~/.pnpm-store
+            key: pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: pnpm-
+
         - name: Install dependencies
           run: pnpm install
           working-directory: .
@@ -66,19 +75,8 @@ jobs:
         - name: Install playwright
           run: pnpm exec playwright install --with-deps chromium
 
-        - name: Install rust
-          uses: actions-rs/toolchain@v1
-          with:
-            toolchain: stable
-            target: wasm32-unknown-unknown
-            profile: minimal
-            override: true
-
-
-        - name: Install Anvil
+        - name: Install Foundry
           uses: foundry-rs/foundry-toolchain@v1
-          with:
-            version: nightly
 
         - name: Test pools app
           run: pnpm test-earn-app
