@@ -37,13 +37,16 @@ jobs:
       name: Continuous integration
       timeout-minutes: 30
       runs-on: ubuntu-latest
-      env:
-        ANVIL_BLOCK_NUMBER: 42259027
+      # env:
       strategy:
         matrix:
           chain-id: [137]
           node-version: [18]
           pnpm-version: [7.9.5]
+          include:
+            - playwright-url: http://localhost:3000/pools
+            - chain-id: 137
+              block-number: 42259027
       steps:
         - name: Check out
           uses: actions/checkout@v3
@@ -81,12 +84,12 @@ jobs:
         - name: Test pools app
           run: pnpm test-earn-app
           env:
-            ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
-            PLAYWRIGHT_URL: http://localhost:3000/pools
-            CHAIN_ID: ${{ matrix.chain-id }}
-            ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+            ALCHEMY_ID: ${{ secrets.ALCHEMY_ID }}
             NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
             NEXT_PUBLIC_TEST: true
+            CHAIN_ID: ${{ matrix.chain-id }}
+            PLAYWRIGHT_URL: ${{ matrix.playwright-url }}
+            ANVIL_BLOCK_NUMBER: ${{ matrix.block-number }}
           working-directory: .
 
         - name: Upload test results

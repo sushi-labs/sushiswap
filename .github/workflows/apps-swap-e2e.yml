@@ -37,7 +37,6 @@ jobs:
       runs-on: ubuntu-latest
       # env:
       strategy:
-        max-parallel: 2
         matrix:
           chain-id: [1, 137, 42161]
           node-version: [18]
@@ -95,10 +94,10 @@ jobs:
             EARN_URL: https://earn.sushi.com'
             FURO_URL: 'https://furo.sushi.com'
             ALCHEMY_ID: ${{ secrets.ALCHEMY_ID }}
-            PLAYWRIGHT_URL: http://localhost:3000/swap
             NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
             NEXT_PUBLIC_TEST: true
             CHAIN_ID: ${{ matrix.chain-id }}
+            PLAYWRIGHT_URL: ${{ matrix.playwright-url }}
             ANVIL_BLOCK_NUMBER: ${{ matrix.block-number }}
           working-directory: .
 
