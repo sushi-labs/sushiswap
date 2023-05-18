@@ -37,16 +37,17 @@ jobs:
       runs-on: ubuntu-latest
       # env:
       strategy:
+        max-parallel: 2
         matrix:
+          chain-id: [1, 137]
           node-version: [18]
           pnpm-version: [7.9.5]
           include:
+            - playwright-url: http://localhost:3000/swap
             - chain-id: 1
               block-number: 17284226
-              playwright-url: http://localhost:3000/swap
             - chain-id: 137
               block-number: 42259027
-              playwright-url: http://localhost:3000/swap
       steps:
         - name: Check out
           uses: actions/checkout@v3
