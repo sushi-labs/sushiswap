@@ -95,7 +95,7 @@ type UseModal<T> = T extends ModalType.Review
       unregister(): void
     }
 
-export const useModal = <T extends ModalType>(tag: string, type: T): UseModal<T> => {
+export const useModal = <T extends ModalType>(tag: string, type?: T): UseModal<T> => {
   const context = useContext(ModalContext)
   if (!context) {
     throw new Error('Hook can only be used inside Modal Context')
