@@ -163,54 +163,6 @@ export const ChainKey = {
 } as const
 export type ChainKey = (typeof ChainKey)[keyof typeof ChainKey]
 
-// const CHAINS = [
-//   ...raw,
-//   {
-//     name: 'Boba Avax',
-//     chain: 'Boba Avax',
-//     rpc: ['https://avax.boba.network', 'wss://wss.avax.boba.network', 'https://replica.avax.boba.network'],
-//     faucets: [],
-//     nativeCurrency: {
-//       name: 'Boba Token',
-//       symbol: 'BOBA',
-//       decimals: 18,
-//     },
-//     infoURL: 'https://boba.network',
-//     shortName: 'bobaavax',
-//     chainId: 43288,
-//     networkId: 43288,
-//     explorers: [
-//       {
-//         name: 'Boba Avax Explorer',
-//         url: 'https://blockexplorer.avax.boba.network',
-//         standard: Standard.None,
-//       },
-//     ],
-//   },
-//   {
-//     name: 'Boba BNB',
-//     chain: 'Boba BNB',
-//     rpc: ['https://bnb.boba.network', 'wss://wss.bnb.boba.network', 'https://replica.bnb.boba.network'],
-//     faucets: [],
-//     nativeCurrency: {
-//       name: 'Boba Token',
-//       symbol: 'BOBA',
-//       decimals: 18,
-//     },
-//     infoURL: 'https://boba.network',
-//     shortName: 'bobabnb',
-//     chainId: 56288,
-//     networkId: 56288,
-//     explorers: [
-//       {
-//         name: 'Boba BNB Explorer',
-//         url: 'https://blockexplorer.bnb.boba.network',
-//         standard: Standard.None,
-//       },
-//     ],
-//   },
-// ] as const
-
 const additional = [
   // {
   //   name: 'Scroll Alpha Testnet',
