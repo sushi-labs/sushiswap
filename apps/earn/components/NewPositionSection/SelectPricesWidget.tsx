@@ -102,15 +102,21 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         {isMounted && (
           <div className="flex flex-col gap-3">
             {noLiquidity && (
-              <div className="pb-2">
+              <div className="relative flex gap-3 w-full items-center pb-2">
                 <Input.Text
-                  className="!bg-gray-100 dark:!bg-slate-800"
+                  hideCloseButton={true}
+                  className="!bg-gray-100 dark:!bg-slate-800 !w-full pr-[120px]"
                   label="Start price"
                   value={startPriceTypedValue}
                   onChange={onStartPriceInput}
                   id="start-price-input"
                   caption="Your pool needs a starting price somewhere between the min. and max. price"
                 />
+                <div className="absolute right-4 top-0 bottom-7 flex items-center">
+                  <div className="text-xs font-medium whitespace-nowrap text-gray-500 dark:text-slate-400">
+                    {token1?.symbol} per {token0?.symbol}
+                  </div>
+                </div>
               </div>
             )}
             {!noLiquidity && !isLoading && (

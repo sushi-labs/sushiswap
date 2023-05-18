@@ -6,7 +6,7 @@ import { formatUSD } from '@sushiswap/format'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { unwrapToken } from '../../lib/functions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { getMasterChefContractConfig, useMasterChefWithdraw } from '@sushiswap/wagmi'
+import { getMasterChefContractConfig, useMasterChefWithdraw, usePair, useTotalSupply } from '@sushiswap/wagmi'
 import { APPROVE_TAG_MIGRATE, APPROVE_TAG_UNSTAKE, Bound, Field } from '../../lib/constants'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { SelectFeeConcentratedWidget } from '../NewPositionSection/SelectFeeConcentratedWidget'
@@ -30,6 +30,7 @@ import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
+import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap/exports/exports'
 
 export const MODAL_MIGRATE_ID = 'migrate-modal'
 
@@ -43,16 +44,18 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   const [positionView, setPositionView] = useState(PositionView.staked)
   const [feeAmount, setFeeAmount] = useState<FeeAmount>(FeeAmount.LOWEST)
   const { approved } = useApproved(APPROVE_TAG_UNSTAKE)
-
+  const [invertPrice, setInvertPrice] = useState(false)
   const [slippageTolerance] = useSlippageTolerance('addLiquidity')
   const slippagePercent = useMemo(() => {
     return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
   }, [slippageTolerance])
 
   const {
-    data: { token0, token1, reserve0, reserve1, totalSupply },
+    data: { token0, token1, liquidityToken },
   } = useGraphPool(pool)
 
+  const { data: pair } = usePair(pool.chainId as UniswapV2Router02ChainId, token0, token1)
+  const totalSupply = useTotalSupply(liquidityToken)
   const { value0, value1, underlying0, underlying1, isLoading, balance } = usePoolPosition()
 
   // Harvest & Withdraw
@@ -78,24 +81,30 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   // this is just getLiquidityValue with the fee off, but for the passed pair
   const token0Value = useMemo(
     () =>
-      token0 && reserve0 && totalSupply && balance
+      token0 && pair?.[1]?.reserve0 && totalSupply && balance
         ? Amount.fromRawAmount(
             token0?.wrapped,
-            JSBI.divide(JSBI.multiply(balance[FundSource.WALLET].quotient, reserve0.quotient), totalSupply.quotient)
+            JSBI.divide(
+              JSBI.multiply(balance[FundSource.WALLET].quotient, pair[1].reserve0.quotient),
+              totalSupply.quotient
+            )
           )
         : undefined,
-    [token0, reserve0, totalSupply, balance]
+    [token0, pair, totalSupply, balance]
   )
 
   const token1Value = useMemo(
     () =>
-      token1 && reserve1 && totalSupply && balance
+      token1 && pair?.[1]?.reserve1 && totalSupply && balance
         ? Amount.fromRawAmount(
             token1?.wrapped,
-            JSBI.divide(JSBI.multiply(balance[FundSource.WALLET].quotient, reserve1.quotient), totalSupply.quotient)
+            JSBI.divide(
+              JSBI.multiply(balance[FundSource.WALLET].quotient, pair[1].reserve1.quotient),
+              totalSupply.quotient
+            )
           )
         : undefined,
-    [token1, reserve1, totalSupply, balance]
+    [token1, pair, totalSupply, balance]
   )
 
   const {
@@ -120,10 +129,10 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   const v3SpotPrice = useMemo(() => (v3Pool ? v3Pool?.token0Price : undefined), [v3Pool])
   const v2SpotPrice = useMemo(
     () =>
-      token0 && token1 && reserve0 && reserve1
-        ? new Price(token0.wrapped, token1.wrapped, reserve0.quotient, reserve1.quotient)
+      token0 && token1 && pair?.[1]?.reserve0 && pair?.[1]?.reserve1
+        ? new Price(token0.wrapped, token1.wrapped, pair[1].reserve0.quotient, pair[1].reserve1.quotient)
         : undefined,
-    [token0, token1, reserve0, reserve1]
+    [token0, token1, pair]
   )
 
   let priceDifferenceFraction: Fraction | undefined =
@@ -235,6 +244,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       recipient: address,
       deadline,
       refundAsETH: true,
+      sqrtPrice,
+      noLiquidity,
     },
     chainId: pool.chainId as V3ChainId,
     enabled: approvedMigrate,
@@ -469,6 +480,14 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
           'flex flex-col order-3 gap-[64px] pb-40 sm:order-2'
         )}
       >
+        {v2SpotPrice && (
+          <div onClick={() => setInvertPrice((prev) => !prev)}>
+            1 {invertPrice ? token1.symbol : token0.symbol} ={' '}
+            {invertPrice
+              ? `${v2SpotPrice?.invert()?.toSignificant(6)} ${token0.symbol}`
+              : `${v2SpotPrice?.toSignificant(6)} ${token1.symbol}`}
+          </div>
+        )}
         <SelectFeeConcentratedWidget
           setFeeAmount={setFeeAmount}
           feeAmount={feeAmount}
