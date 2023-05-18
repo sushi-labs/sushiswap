@@ -229,34 +229,6 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
               )}
               ELSE volume1m
             END,
-            liquidityUSD1h = CASE 
-              ${Prisma.join(
-                poolsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.liquidityUSD1h}`),
-                ' '
-              )}
-              ELSE liquidityUSD1h
-            END,
-            liquidityUSD1d = CASE 
-              ${Prisma.join(
-                poolsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.liquidityUSD1d}`),
-                ' '
-              )}
-              ELSE liquidityUSD1d
-            END,
-            liquidityUSD1w = CASE 
-              ${Prisma.join(
-                poolsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.liquidityUSD1w}`),
-                ' '
-              )}
-              ELSE liquidityUSD1w
-            END,
-            liquidityUSD1m = CASE 
-              ${Prisma.join(
-                poolsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.liquidityUSD1m}`),
-                ' '
-              )}
-              ELSE liquidityUSD1m
-            END,
             liquidityUSDChange1h = CASE 
               ${Prisma.join(
                 poolsToUpdate.map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.liquidityUSDChange1h}`),

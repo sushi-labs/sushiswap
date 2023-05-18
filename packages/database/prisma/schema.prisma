@@ -126,10 +126,6 @@ model SushiPool {
   token0Price     String
   token1Price     String
 
-  liquidityUSD1h       Decimal @default(0)
-  liquidityUSD1d       Decimal @default(0)
-  liquidityUSD1w       Decimal @default(0)
-  liquidityUSD1m       Decimal @default(0)
   liquidityUSDChange1h Float @default(0)
   liquidityUSDChange1d Float @default(0)
   liquidityUSDChange1w Float @default(0)
