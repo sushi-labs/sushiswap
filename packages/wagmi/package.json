@@ -60,7 +60,7 @@
     "@uniswap/v2-core": "1.0.1",
     "@uniswap/v3-periphery": "1.4.1",
     "next-themes": "^0.2.1",
-    "viem": "0.3.19",
+    "viem": "0.3.29",
     "zod": "3.20.2"
   },
   "devDependencies": {

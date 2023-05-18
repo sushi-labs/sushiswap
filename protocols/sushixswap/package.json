@@ -41,11 +41,7 @@
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
     "@openzeppelin/contracts": "^4.6.0",
     "@sushiswap/amm": "workspace:*",
-<<<<<<< HEAD
-    "@sushiswap/bentobox": "1.0.0",
-=======
     "@sushiswap/bentobox": "1.0.1",
->>>>>>> origin/master
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/core": "^1.4.2",
     "@sushiswap/currency": "workspace:*",

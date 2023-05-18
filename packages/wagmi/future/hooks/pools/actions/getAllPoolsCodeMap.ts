@@ -15,9 +15,16 @@ export const getAllPoolsCodeMap = async ({ currencyA, currencyB, chainId }: Omit
     LiquidityProviders.UniswapV2,
     LiquidityProviders.QuickSwap,
     LiquidityProviders.ApeSwap,
-    LiquidityProviders.SpookySwap,
-    LiquidityProviders.TraderJoe,
     LiquidityProviders.PancakeSwap,
+    LiquidityProviders.TraderJoe,
+    LiquidityProviders.Dfyn,
+    LiquidityProviders.Elk,
+    LiquidityProviders.JetSwap,
+    LiquidityProviders.SpookySwap,
+    LiquidityProviders.NetSwap,
+    LiquidityProviders.HoneySwap,
+    LiquidityProviders.UbeSwap,  
+    LiquidityProviders.Biswap,
   ]
   if (isRouteProcessor3ChainId(chainId)) {
     liquidityProviders.push(LiquidityProviders.SushiSwapV3)

@@ -185,7 +185,7 @@ importers:
       prettier: 2.8.1
       ts-node: 10.9.1
       typescript: 5.0.4
-      viem: 0.3.19
+      viem: 0.3.29
       zod: 3.20.2
     dependencies:
       '@fastify/cors': 8.2.0
@@ -199,7 +199,7 @@ importers:
       '@whatwg-node/fetch': 0.8.4
       ethers: 5.7.2
       fastify: 4.11.0
-      viem: 0.3.19_phjbrgmd4bydmj33olj2sis5hu
+      viem: 0.3.29_phjbrgmd4bydmj33olj2sis5hu
       zod: 3.20.2
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
@@ -331,11 +331,7 @@ importers:
       '@playwright/test': 1.32.1
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
-<<<<<<< HEAD
-      '@sushiswap/bentobox': 1.0.0
-=======
       '@sushiswap/bentobox': 1.0.1
->>>>>>> origin/master
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
@@ -356,17 +352,10 @@ importers:
       '@sushiswap/router-config': workspace:*
       '@sushiswap/stargate': workspace:*
       '@sushiswap/sushiswap': workspace:*
-<<<<<<< HEAD
-      '@sushiswap/sushixswap': 1.0.0
-      '@sushiswap/tailwindcss-config': workspace:*
-      '@sushiswap/tines': workspace:*
-      '@sushiswap/trident': 1.0.0
-=======
       '@sushiswap/sushixswap': 1.0.1
       '@sushiswap/tailwindcss-config': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/trident': 1.0.1
->>>>>>> origin/master
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -415,7 +404,7 @@ importers:
       tailwindcss: 3.2.4
       typescript: 5.0.4
       unimported: ^1.23.0
-      viem: 0.3.19
+      viem: 0.3.29
       wagmi: 0.12.12
       yup: ^0.32.11
       zod: 3.20.2
@@ -487,7 +476,7 @@ importers:
       react-redux: 8.0.5_ie75ejlwqy5zh3tldgt7pftwcu
       react-slider: 2.0.4_react@18.2.0
       swr: 1.3.0_react@18.2.0
-      viem: 0.3.19_phjbrgmd4bydmj33olj2sis5hu
+      viem: 0.3.29_phjbrgmd4bydmj33olj2sis5hu
       wagmi: 0.12.12_tqgigql3ylhtuwp7wqflnkncbq
       yup: 0.32.11
       zod: 3.20.2
@@ -778,11 +767,7 @@ importers:
       '@reduxjs/toolkit': 1.9.1
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
-<<<<<<< HEAD
-      '@sushiswap/bentobox': 1.0.0
-=======
       '@sushiswap/bentobox': 1.0.1
->>>>>>> origin/master
       '@sushiswap/chain': workspace:*
       '@sushiswap/client': workspace:*
       '@sushiswap/currency': workspace:*
@@ -802,11 +787,7 @@ importers:
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/tailwindcss-config': workspace:*
       '@sushiswap/token-lists': workspace:*
-<<<<<<< HEAD
-      '@sushiswap/trident': 1.0.0
-=======
       '@sushiswap/trident': 1.0.1
->>>>>>> origin/master
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -962,21 +943,13 @@ importers:
       '@hookform/resolvers': 2.9.10
       '@reduxjs/toolkit': 1.9.1
       '@sushiswap/abi': workspace:*
-<<<<<<< HEAD
-      '@sushiswap/bentobox': 1.0.0
-=======
       '@sushiswap/bentobox': 1.0.1
->>>>>>> origin/master
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/dexie': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
-<<<<<<< HEAD
-      '@sushiswap/furo': 1.0.0
-=======
       '@sushiswap/furo': 1.0.1
->>>>>>> origin/master
       '@sushiswap/graph-client': workspace:*
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/hooks': workspace:*
@@ -1331,10 +1304,6 @@ importers:
 
   config/viem:
     specifiers:
-<<<<<<< HEAD
-      '@sushiswap/abi': workspace:*
-=======
->>>>>>> origin/master
       '@sushiswap/chain': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -1342,12 +1311,8 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       tsup: 6.5.0
       typescript: 5.0.4
-      viem: 0.3.19
+      viem: 0.3.29
     dependencies:
-<<<<<<< HEAD
-      '@sushiswap/abi': link:../../packages/abi
-=======
->>>>>>> origin/master
       '@sushiswap/chain': link:../../packages/chain
     devDependencies:
       '@sushiswap/eslint-config': link:../eslint
@@ -1356,7 +1321,7 @@ importers:
       '@sushiswap/typescript-config': link:../typescript
       tsup: 6.5.0_typescript@5.0.4
       typescript: 5.0.4
-      viem: 0.3.19_typescript@5.0.4
+      viem: 0.3.29_typescript@5.0.4
 
   config/wagmi:
     specifiers:
@@ -1446,11 +1411,7 @@ importers:
       '@graphql-mesh/transform-type-merging': 0.5.20
       '@graphql-tools/merge': 8.4.0
       '@sushiswap/abi': workspace:*
-<<<<<<< HEAD
-      '@sushiswap/bentobox': 1.0.0
-=======
       '@sushiswap/bentobox': 1.0.1
->>>>>>> origin/master
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
@@ -1543,11 +1504,7 @@ importers:
       '@graphql-mesh/utils': 0.43.21
       '@graphql-tools/merge': 8.4.0
       '@sushiswap/abi': workspace:*
-<<<<<<< HEAD
-      '@sushiswap/bentobox': 1.0.0
-=======
       '@sushiswap/bentobox': 1.0.1
->>>>>>> origin/master
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
@@ -1732,11 +1689,7 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/tines': workspace:*
-<<<<<<< HEAD
-      '@sushiswap/trident': 1.0.0
-=======
       '@sushiswap/trident': 1.0.1
->>>>>>> origin/master
       '@sushiswap/typescript-config': workspace:*
       '@types/node': ^18.0.0
       eslint: 8.29.0
@@ -2398,11 +2351,7 @@ importers:
       '@ethersproject/solidity': 5.7.0
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
-<<<<<<< HEAD
-      '@sushiswap/bentobox': 1.0.0
-=======
       '@sushiswap/bentobox': 1.0.1
->>>>>>> origin/master
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
@@ -2413,11 +2362,7 @@ importers:
       '@sushiswap/router-config': workspace:*
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/tines': workspace:*
-<<<<<<< HEAD
-      '@sushiswap/trident': 1.0.0
-=======
       '@sushiswap/trident': 1.0.1
->>>>>>> origin/master
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/v3-sdk': workspace:*
       '@sushiswap/viem-config': workspace:*
@@ -2432,7 +2377,7 @@ importers:
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
       typescript: 5.0.4
-      viem: 0.3.19
+      viem: 0.3.29
       zod: 3.20.2
     dependencies:
       '@ethersproject/abi': 5.7.0
@@ -2456,7 +2401,7 @@ importers:
       node-fetch: 2.6.6
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
-      viem: 0.3.19_phjbrgmd4bydmj33olj2sis5hu
+      viem: 0.3.29_phjbrgmd4bydmj33olj2sis5hu
       zod: 3.20.2
     devDependencies:
       '@sushiswap/database': link:../database
@@ -2823,22 +2768,14 @@ importers:
       '@heroicons/react': 2.0.13
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
-<<<<<<< HEAD
-      '@sushiswap/bentobox': 1.0.0
-=======
       '@sushiswap/bentobox': 1.0.1
->>>>>>> origin/master
       '@sushiswap/chain': workspace:*
       '@sushiswap/client': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/dexie': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
-<<<<<<< HEAD
-      '@sushiswap/furo': 1.0.0
-=======
       '@sushiswap/furo': 1.0.1
->>>>>>> origin/master
       '@sushiswap/gas': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -2849,15 +2786,9 @@ importers:
       '@sushiswap/router': workspace:*
       '@sushiswap/router-config': workspace:*
       '@sushiswap/sushiswap': workspace:*
-<<<<<<< HEAD
-      '@sushiswap/sushixswap': 1.0.0
-      '@sushiswap/tines': workspace:*
-      '@sushiswap/trident': 1.0.0
-=======
       '@sushiswap/sushixswap': 1.0.1
       '@sushiswap/tines': workspace:*
       '@sushiswap/trident': 1.0.1
->>>>>>> origin/master
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -2883,7 +2814,7 @@ importers:
       tsup: 6.5.0
       typechain: ^8.0.0
       typescript: 5.0.4
-      viem: 0.3.19
+      viem: 0.3.29
       vitest: 0.30.1
       wagmi: 0.12.12
       zod: 3.20.2
@@ -2929,7 +2860,7 @@ importers:
       '@uniswap/v2-core': 1.0.1
       '@uniswap/v3-periphery': 1.4.1
       next-themes: 0.2.1_ivamjty3az7dj3hhadhjniqtwe
-      viem: 0.3.19_phjbrgmd4bydmj33olj2sis5hu
+      viem: 0.3.29_phjbrgmd4bydmj33olj2sis5hu
       zod: 3.20.2
     optionalDependencies:
       next: 13.3.1_biqbaboplfbrettd7655fr4n2y
@@ -3006,11 +2937,7 @@ importers:
       '@nomiclabs/hardhat-etherscan': ^3.1.0
       '@openzeppelin/contracts': ^4.6.0
       '@rari-capital/solmate': 6.2.0
-<<<<<<< HEAD
-      '@sushiswap/bentobox': 1.0.0
-=======
       '@sushiswap/bentobox': 1.0.1
->>>>>>> origin/master
       '@sushiswap/chain': workspace:*
       '@sushiswap/core': ^1.4.2
       '@sushiswap/currency': workspace:*
@@ -3106,11 +3033,7 @@ importers:
       '@openzeppelin/contracts': 4.8.0
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
-<<<<<<< HEAD
-      '@sushiswap/bentobox': 1.0.0
-=======
       '@sushiswap/bentobox': 1.0.1
->>>>>>> origin/master
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -3153,7 +3076,7 @@ importers:
       ts-node: 10.9.1
       typechain: 8.1.1
       typescript: 5.0.4
-      viem: 0.3.19
+      viem: 0.3.29
     devDependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2
@@ -3209,7 +3132,7 @@ importers:
       ts-node: 10.9.1_fgooozxjrvntjfxsxdw2hhv6my
       typechain: 8.1.1_typescript@5.0.4
       typescript: 5.0.4
-      viem: 0.3.19_typescript@5.0.4
+      viem: 0.3.29_typescript@5.0.4
 
   protocols/sushiswap:
     specifiers:
@@ -3256,11 +3179,7 @@ importers:
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@openzeppelin/contracts': ^4.6.0
       '@sushiswap/amm': workspace:*
-<<<<<<< HEAD
-      '@sushiswap/bentobox': 1.0.0
-=======
       '@sushiswap/bentobox': 1.0.1
->>>>>>> origin/master
       '@sushiswap/chain': workspace:*
       '@sushiswap/core': ^1.4.2
       '@sushiswap/currency': workspace:*
@@ -3426,11 +3345,7 @@ importers:
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@openzeppelin/contracts': 4.7.3
       '@rari-capital/solmate': 6.2.0
-<<<<<<< HEAD
-      '@sushiswap/bentobox': 1.0.0
-=======
       '@sushiswap/bentobox': 1.0.1
->>>>>>> origin/master
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hardhat-config': workspace:*
@@ -32425,8 +32340,8 @@ packages:
       unist-util-stringify-position: 3.0.2
       vfile-message: 3.1.3
 
-  /viem/0.3.19_phjbrgmd4bydmj33olj2sis5hu:
-    resolution: {integrity: sha512-7OlSgiB7e+OFz9OqTOZ/Mpx8GAAVKCxsaPDJRuR8QtixlruUHPfHBHOemkX+O/Drn6B7l04iCUZjCvSB8OtVKg==}
+  /viem/0.3.29_phjbrgmd4bydmj33olj2sis5hu:
+    resolution: {integrity: sha512-uFoEnUn4bEKneG2R2Ot2Jgk5LkMScPCanSZp0z5elqK5jFfgBKl7V5bJNL+EaPYKyxSa2A14rSE1IBVQHPYxlw==}
     dependencies:
       '@adraffy/ens-normalize': 1.9.0
       '@noble/curves': 1.0.0
@@ -32444,8 +32359,8 @@ packages:
       - zod
     dev: false
 
-  /viem/0.3.19_typescript@5.0.4:
-    resolution: {integrity: sha512-7OlSgiB7e+OFz9OqTOZ/Mpx8GAAVKCxsaPDJRuR8QtixlruUHPfHBHOemkX+O/Drn6B7l04iCUZjCvSB8OtVKg==}
+  /viem/0.3.29_typescript@5.0.4:
+    resolution: {integrity: sha512-uFoEnUn4bEKneG2R2Ot2Jgk5LkMScPCanSZp0z5elqK5jFfgBKl7V5bJNL+EaPYKyxSa2A14rSE1IBVQHPYxlw==}
     dependencies:
       '@adraffy/ens-normalize': 1.9.0
       '@noble/curves': 1.0.0
