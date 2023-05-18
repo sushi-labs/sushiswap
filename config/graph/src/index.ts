@@ -72,6 +72,7 @@ export const METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/name'
 export const PENDING_METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/id'
 
 export const POLYGON_ZKEVM_HOST = 'api.studio.thegraph.com/query/32073'
+export const THUNDERCORE_HOST = 'graph-node.thundercore.com/subgraphs/name'
 
 export const CHAIN_NAME: Record<number, string> = {
   [ChainId.ARBITRUM]: 'Arbitrum',
@@ -127,6 +128,7 @@ export const SUBGRAPH_HOST = {
   [ChainId.OKEX]: '',
   [ChainId.HECO]: '',
   [ChainId.KOVAN]: '',
+  [ChainId.THUNDERCORE]: THUNDERCORE_HOST,
 } as const
 
 export const BENTOBOX_SUBGRAPH_NAME = {
@@ -173,6 +175,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.BOBA_AVAX]: 'sushiswap/blocks-boba-avax',
   [ChainId.BOBA_BNB]: 'sushiswap/blocks-boba-bnb',
   [ChainId.BTTC]: 'sushiswap/blocks-bttc',
+  [ChainId.THUNDERCORE]: 'sushiswap/blocks-thundercore',
 } as const
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
