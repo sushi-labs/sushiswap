@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
   engineType = "dataproxy"
 }
 
@@ -23,7 +23,7 @@ enum Protocol {
 }
 
 enum ChefType {
-  MasterChefV1 
+  MasterChefV1
   MasterChefV2
   MiniChef
 }
@@ -41,9 +41,9 @@ model Token {
   symbol   String
   decimals Int
   status   TokenStatus @default(UNKNOWN)
-  
+
   isFeeOnTransfer Boolean @default(false)
-  isCommon Boolean @default(false)
+  isCommon        Boolean @default(false)
 
   derivedUSD    Decimal?
   derivedNative Decimal?
@@ -51,8 +51,8 @@ model Token {
   generatedAt DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  pools0 Pool[] @relation("token0")
-  pools1 Pool[] @relation("token1")
+  pools0      Pool[]      @relation("token0")
+  pools1      Pool[]      @relation("token1")
   sushiPools0 SushiPool[] @relation("token0")
   sushiPools1 SushiPool[] @relation("token1")
   incentives  Incentive[]
@@ -103,75 +103,75 @@ model Pool {
   @@index(fields: [generatedAt])
 }
 
-
 model SushiPool {
-  id                   String      @id // chainId_address
-  address              String
-  name                 String
-  chainId              Int
-  protocol             Protocol
-  token0               Token       @relation("token0", fields: [token0Id], references: [id])
-  token0Id             String
-  token1               Token       @relation("token1", fields: [token1Id], references: [id])
-  token1Id             String
-  swapFee              Float
-  twapEnabled          Boolean
-  reserve0             String 
-  reserve1             String 
-  totalSupply          String 
-  liquidityUSD         Decimal
-  liquidityNative      Decimal
-  volumeUSD            Decimal
-  volumeNative         Decimal
-  token0Price          String
-  token1Price          String
+  id              String   @id // chainId_address
+  address         String
+  name            String
+  chainId         Int
+  protocol        Protocol
+  token0          Token    @relation("token0", fields: [token0Id], references: [id])
+  token0Id        String
+  token1          Token    @relation("token1", fields: [token1Id], references: [id])
+  token1Id        String
+  swapFee         Float
+  twapEnabled     Boolean
+  reserve0        String
+  reserve1        String
+  totalSupply     String
+  liquidityUSD    Decimal
+  liquidityNative Decimal
+  volumeUSD       Decimal
+  volumeNative    Decimal
+  token0Price     String
+  token1Price     String
 
-  
-  volume1h             Decimal     @default(0)
-  volume1d             Decimal     @default(0)
-  volume1w             Decimal     @default(0)
-  volume1m             Decimal     @default(0)
-  volumeChange1h       Decimal     @default(0)
-  volumeChange1d       Decimal     @default(0)
-  volumeChange1w       Decimal     @default(0)
-  volumeChange1m       Decimal     @default(0)
+  liquidityUSD1h       Decimal @default(0)
+  liquidityUSD1d       Decimal @default(0)
+  liquidityUSD1w       Decimal @default(0)
+  liquidityUSD1m       Decimal @default(0)
+  liquidityUSDChange1h Float @default(0)
+  liquidityUSDChange1d Float @default(0)
+  liquidityUSDChange1w Float @default(0)
+  liquidityUSDChange1m Float @default(0)
 
-  fees1h               Decimal     @default(0)
-  fees1d               Decimal     @default(0)
-  fees1w               Decimal     @default(0)
-  fees1m               Decimal     @default(0)
-  feesChange1h         Decimal     @default(0)
-  feesChange1d         Decimal     @default(0)
-  feesChange1w         Decimal     @default(0)
-  feesChange1m         Decimal     @default(0)
+  volume1h       Decimal @default(0)
+  volume1d       Decimal @default(0)
+  volume1w       Decimal @default(0)
+  volume1m       Decimal @default(0)
+  volumeChange1h Float @default(0)
+  volumeChange1d Float @default(0)
+  volumeChange1w Float @default(0)
+  volumeChange1m Float @default(0)
 
-  feeApr1h             Float       @default(0)
-  feeApr1d             Float       @default(0)
-  feeApr1w             Float       @default(0)
-  feeApr1m             Float       @default(0)
-  feeAprChange1h       Float       @default(0)
-  feeAprChange1d       Float       @default(0)
-  feeAprChange1w       Float       @default(0)
-  feeAprChange1m       Float       @default(0)
+  fees1h       Decimal @default(0)
+  fees1d       Decimal @default(0)
+  fees1w       Decimal @default(0)
+  fees1m       Decimal @default(0)
+  feesChange1h Float @default(0)
+  feesChange1d Float @default(0)
+  feesChange1w Float @default(0)
+  feesChange1m Float @default(0)
 
-  totalApr1h           Float       @default(0)
-  totalApr1d           Float       @default(0)
-  totalApr1w           Float       @default(0)
-  totalApr1m           Float       @default(0)
-  totalAprChange1h     Float       @default(0)
-  totalAprChange1d     Float       @default(0)
-  totalAprChange1w     Float       @default(0)
-  totalAprChange1m     Float       @default(0)
-  incentiveApr         Float       @default(0)
+  feeApr1h Float @default(0)
+  feeApr1d Float @default(0)
+  feeApr1w Float @default(0)
+  feeApr1m Float @default(0)
 
-  isIncentivized       Boolean     @default(false)
-  wasIncentivized      Boolean     @default(false)
-  incentives           Incentive[]
+  totalApr1h Float @default(0)
+  totalApr1d Float @default(0)
+  totalApr1w Float @default(0)
+  totalApr1m Float @default(0)
 
-  createdAtBlockNumber BigInt      @db.UnsignedBigInt
-  isBlacklisted        Boolean     @default(false)
-  generatedAt          DateTime    @default(now())
-  updatedAt            DateTime    @updatedAt
+  incentiveApr Float @default(0)
+
+  isIncentivized  Boolean     @default(false)
+  wasIncentivized Boolean     @default(false)
+  incentives      Incentive[]
+
+  createdAtBlockNumber BigInt   @db.UnsignedBigInt
+  isBlacklisted        Boolean  @default(false)
+  generatedAt          DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   @@index(fields: [id])
   @@index(fields: [chainId])
@@ -186,14 +186,14 @@ model SushiPool {
 }
 
 model Incentive {
-  id              String @id // poolAddress_rewarderAddress
+  id              String       @id // poolAddress_rewarderAddress
   chainId         Int
   chefType        ChefType
   apr             Float
   rewardPerDay    Float
-  rewardToken     Token  @relation(fields: [rewardTokenId], references: [id])
+  rewardToken     Token        @relation(fields: [rewardTokenId], references: [id])
   rewardTokenId   String
-  pool            SushiPool   @relation(fields: [poolId], references: [id])
+  pool            SushiPool    @relation(fields: [poolId], references: [id])
   poolId          String
   pid             Int
   rewarderAddress String
