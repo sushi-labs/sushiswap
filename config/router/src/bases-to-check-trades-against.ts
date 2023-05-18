@@ -47,6 +47,8 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     MIM[ChainId.POLYGON],
     FRAX[ChainId.POLYGON],
     QUICK[ChainId.POLYGON],
+    SUSHI[ChainId.POLYGON],
+    XSUSHI[ChainId.POLYGON],
     new Token({
       chainId: ChainId.POLYGON,
       address: '0x2F800Db0fdb5223b3C3f354886d907A671414A7F',
@@ -65,6 +67,8 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     DAI[ChainId.FANTOM],
     MIM[ChainId.FANTOM],
     FRAX[ChainId.FANTOM],
+    SUSHI[ChainId.FANTOM],
+    XSUSHI[ChainId.FANTOM],
   ],
   [ChainId.GNOSIS]: [WNATIVE[ChainId.GNOSIS], USDC[ChainId.GNOSIS], USDT[ChainId.GNOSIS], DAI[ChainId.GNOSIS]],
   [ChainId.BSC]: [
