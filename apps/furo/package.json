@@ -31,12 +31,12 @@
     "@hookform/resolvers": "2.9.10",
     "@reduxjs/toolkit": "1.9.1",
     "@sushiswap/abi": "workspace:*",
-    "@sushiswap/bentobox": "1.0.0",
+    "@sushiswap/bentobox": "1.0.1",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/format": "workspace:*",
-    "@sushiswap/furo": "1.0.0",
+    "@sushiswap/furo": "1.0.1",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/log": "workspace:*",
@@ -107,10 +107,5 @@
     "ts-jest": "^29.0.0",
     "typechain": "^8.0.0",
     "typescript": "5.0.4"
-  },
-  "nextBundleAnalysis": {
-    "budget": 460800,
-    "budgetPercentIncreaseRed": 20,
-    "showDetails": true
   }
 }

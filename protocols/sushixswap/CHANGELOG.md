@@ -1,5 +1,14 @@
 # @sushiswap/sushixswap
 
+<<<<<<< HEAD
+=======
+## 1.0.1
+
+### Patch Changes
+
+- 074ec9ebc: initial publish chunk
+
+>>>>>>> origin/master
 ## 1.0.0
 
 ### Major Changes

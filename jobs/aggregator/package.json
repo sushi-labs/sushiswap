@@ -35,7 +35,7 @@
     "@google-cloud/run": "0.4.1",
     "@google-cloud/scheduler": "3.3.0",
     "@sushiswap/abi": "workspace:*",
-    "@sushiswap/bentobox": "1.0.0",
+    "@sushiswap/bentobox": "1.0.1",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/database": "workspace:*",
