@@ -574,7 +574,9 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                 }
               >
                 <Checker.Custom
-                  showGuardIfTrue={Boolean(position?.amount0.equalTo(ZERO) || position?.amount1.equalTo(ZERO))}
+                  showGuardIfTrue={Boolean(
+                    !position || position.amount0.equalTo(ZERO) || position.amount1.equalTo(ZERO)
+                  )}
                   guard={
                     <Button size="xl" fullWidth>
                       Enter valid range

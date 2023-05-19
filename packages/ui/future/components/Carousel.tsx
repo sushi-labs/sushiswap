@@ -78,14 +78,22 @@ export const Carousel = <T extends object>({
       </div>
       {buttons.hasPrev && (
         <div className="scale-[0.8] group-hover:scale-[1] opacity-0 group-hover:opacity-100 flex absolute top-0 left-4 bottom-0 items-center transition-all">
-          <div onClick={() => prev()} className="rounded-full bg-gray-200/80 dark:bg-slate-700/80 p-3 cursor-pointer">
+          <div
+            role="button"
+            onClick={() => prev()}
+            className="rounded-full bg-gray-200/80 dark:bg-slate-700/80 p-3 cursor-pointer"
+          >
             <ChevronLeftIcon width={32} height={32} />
           </div>
         </div>
       )}
       {buttons.hasNext && (
         <div className="scale-[0.8] group-hover:scale-[1] opacity-0 group-hover:opacity-100 flex absolute top-0 right-4 bottom-0 items-center transition-all">
-          <div onClick={() => next()} className="rounded-full bg-gray-200/80 dark:bg-slate-700/80 p-3 cursor-pointer">
+          <div
+            role="button"
+            onClick={() => next()}
+            className="rounded-full bg-gray-200/80 dark:bg-slate-700/80 p-3 cursor-pointer"
+          >
             <ChevronRightIcon width={32} height={32} />
           </div>
         </div>

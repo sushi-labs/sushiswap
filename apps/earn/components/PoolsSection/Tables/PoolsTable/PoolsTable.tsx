@@ -95,31 +95,26 @@ export const PoolsTable: FC = () => {
   }, [])
 
   return (
-    <div className="mb-10">
-      <div className="overflow-hidden border-t border-b dark:border-slate-200/5">
-        <div className="max-h-[1200px] overflow-y-scroll scroll">
-          <InfiniteScroll
-            dataLength={data.length}
-            next={() => setSize((prev) => prev + 1)}
-            hasMore={data.length < (poolCount?.count || 0)}
-            loader={
-              <div className="flex justify-center w-full py-4">
-                <Loader size={24} />
-              </div>
-            }
-          >
-            <GenericTable<Pool>
-              table={table}
-              loading={!pools && isValidating}
-              HoverElement={isMd ? PoolQuickHoverTooltip : undefined}
-              placeholder="No pools found"
-              pageSize={PAGE_SIZE}
-              linkFormatter={rowLink}
-            />
-          </InfiniteScroll>
-        </div>
-      </div>
-      <div className="py-4 text-xs text-gray-600 dark:text-slate-400">Showing {data.length} pools</div>
-    </div>
+    <>
+      <InfiniteScroll
+        dataLength={data.length}
+        next={() => setSize((prev) => prev + 1)}
+        hasMore={data.length < (poolCount?.count || 0)}
+        loader={
+          <div className="flex justify-center w-full py-4">
+            <Loader size={24} />
+          </div>
+        }
+      >
+        <GenericTable<Pool>
+          table={table}
+          loading={!pools && isValidating}
+          HoverElement={isMd ? PoolQuickHoverTooltip : undefined}
+          placeholder="No pools found"
+          pageSize={PAGE_SIZE}
+          linkFormatter={rowLink}
+        />
+      </InfiniteScroll>
+    </>
   )
 }

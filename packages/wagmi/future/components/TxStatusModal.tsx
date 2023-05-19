@@ -81,7 +81,13 @@ export const TxStatusModalContent: FC<TxStatusModalContentProps> = ({
         size="xl"
         testId={testId}
       >
-        {status === 'success' ? buttonSuccessText : status === 'error' ? 'Try again' : 'Close'}
+        {status === 'success'
+          ? buttonSuccessText
+            ? buttonSuccessText
+            : 'Close'
+          : status === 'error'
+          ? 'Try again'
+          : 'Close'}
       </Button>
     </div>
   )
