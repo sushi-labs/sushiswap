@@ -26,6 +26,7 @@ enum ChefType {
   MasterChefV1
   MasterChefV2
   MiniChef
+  Merkl
 }
 
 enum RewarderType {
