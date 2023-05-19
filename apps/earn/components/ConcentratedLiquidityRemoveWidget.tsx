@@ -14,6 +14,7 @@ import { Amount, Type } from '@sushiswap/currency'
 import { _useSendTransaction as useSendTransaction } from '@sushiswap/wagmi'
 import { unwrapToken } from '../lib/functions'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
+import { useNetwork } from 'wagmi'
 
 interface ConcentratedLiquidityRemoveWidget {
   token0: Type | undefined
@@ -34,6 +35,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
   position,
   positionDetails,
 }) => {
+  const { chain } = useNetwork()
   const [value, setValue] = useState<string>('0')
   const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
   const { data: deadline } = useTransactionDeadline({ chainId })
@@ -163,7 +165,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
     chainId,
     prepare,
     onSettled,
-    enabled: +value > 0,
+    enabled: +value > 0 && chainId === chain?.id,
   })
 
   return (
