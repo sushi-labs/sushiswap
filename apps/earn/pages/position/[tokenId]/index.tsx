@@ -40,6 +40,7 @@ import { useAngleRewards } from '@sushiswap/react-query'
 import { ConcentratedLiquidityHarvestButton } from '../../../components/ConcentratedLiquidityHarvestButton'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { ChainId } from '@sushiswap/chain'
+import { Explainer } from '@sushiswap/ui/future/components/Explainer'
 
 const PositionPage = () => {
   return (
@@ -263,7 +264,43 @@ const Position: FC = () => {
             <List className="!gap-1">
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
-                  <List.Label>Unclaimed rewards</List.Label>
+                  <List.Label className="flex gap-1">
+                    Unclaimed rewards{' '}
+                    <Explainer hover iconSize={16} placement="bottom" width={320}>
+                      <List className="!pt-0 ">
+                        <List.Label>Accumulated rewards since inception</List.Label>
+                        <List.Control>
+                          {rewardsLoading ? (
+                            <List.KeyValue skeleton />
+                          ) : rewardsData &&
+                            positionDetails &&
+                            rewardsData.pools[positionDetails.address]?.rewardsPerToken ? (
+                            Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el, i) => (
+                              <List.KeyValue key={i} flex title={`${el.accumulatedSinceInception.currency.symbol}`}>
+                                <div className="flex flex-col gap-2">
+                                  <div className="flex items-center gap-2">
+                                    <Currency.Icon currency={el.unclaimed.currency} width={18} height={18} />
+                                    {el.accumulatedSinceInception.toSignificant(4)} {el.unclaimed.currency.symbol}
+                                  </div>
+                                </div>
+                              </List.KeyValue>
+                            ))
+                          ) : (
+                            <List.KeyValue
+                              flex
+                              title={
+                                <span className="text-xs italic font-normal text-center text-gray-500 dark:text-slate-400">
+                                  No rewards found
+                                </span>
+                              }
+                            >
+                              {' '}
+                            </List.KeyValue>
+                          )}
+                        </List.Control>
+                      </List>
+                    </Explainer>
+                  </List.Label>
                 </div>
                 <ConcentratedLiquidityHarvestButton
                   account={address}
