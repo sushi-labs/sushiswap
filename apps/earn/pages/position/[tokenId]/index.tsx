@@ -315,7 +315,7 @@ const Position: FC = () => {
                 )}
               </List.Control>
               <List.Label className="pt-1.5 font-normal text-gray-500 dark:text-slate-400">
-                This will harvest your rewards for every pool that you have rewards available for on this network
+                Harvest all available pool rewards on the current network.
               </List.Label>
             </List>
           )}
