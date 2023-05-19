@@ -25,6 +25,7 @@ import { OptimismNaked } from './OptimismNaked'
 import { PalmNaked } from './PalmNaked'
 import { PolygonNaked } from './PolygonNaked'
 import { TelosNaked } from './TelosNaked'
+import { ThunderCoreNaked } from './ThunderCoreNaked'
 
 export * from './ArbitrumNaked'
 export * from './ArbitrumNovaNaked'
@@ -50,6 +51,7 @@ export * from './OptimismNaked'
 export * from './PalmNaked'
 export * from './PolygonNaked'
 export * from './TelosNaked'
+export * from './ThunderCoreNaked'
 
 export const NETWORK_NAKED_ICON: Record<number, (props: React.ComponentProps<'svg'>) => JSX.Element> = {
   [ChainId.ETHEREUM]: EthereumNaked,
@@ -76,4 +78,5 @@ export const NETWORK_NAKED_ICON: Record<number, (props: React.ComponentProps<'sv
   [ChainId.BOBA_AVAX]: BobaAvaxNaked,
   [ChainId.BOBA_BNB]: BobaBNBNaked,
   [ChainId.BTTC]: BttcNaked,
+  [ChainId.THUNDERCORE]: ThunderCoreNaked,
 }
