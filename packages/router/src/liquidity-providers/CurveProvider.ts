@@ -6,9 +6,12 @@ import { WBTC } from '@sushiswap/currency'
 import { Native } from '@sushiswap/currency'
 import { LINK } from '@sushiswap/currency'
 import { renBTC } from '@sushiswap/currency'
+import { CurvePool, RToken } from '@sushiswap/tines'
+import { BigNumber } from 'ethers'
 import { getContract, parseAbi, PublicClient } from 'viem'
 
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
+import { CurvePoolCode } from '../pools/CurvePool'
 import { PoolCode } from '../pools/PoolCode'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
@@ -198,24 +201,36 @@ export async function getAllSupportedCurvePools(publicClient: PublicClient): Pro
   return result
 }
 
-/*async function getCurvePoolCode(publicClient: PublicClient, poolAddress: string, poolType: CurvePoolType): Promise<PoolCode> {
-  const poolContract = new Contract(
-    poolAddress,
-    [
-      poolType !== CurvePoolType.LegacyV2 && poolType !== CurvePoolType.LegacyV3
-        ? 'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns (uint256)'
-        : 'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns ()',
-      'function A() pure returns (uint256)',
-      'function fee() pure returns (uint256)',
-      poolType !== CurvePoolType.LegacyV2
-        ? 'function coins(uint256) pure returns (address)'
-        : 'function coins(int128) pure returns (address)',
-      poolType !== CurvePoolType.LegacyV2
-        ? 'function balances(uint256) pure returns (uint256)'
-        : 'function balances(int128) pure returns (uint256)',
-    ],
-    user
-  )
+const curvePoolABI = {
+  [CurvePoolType.Legacy]: parseAbi([
+    'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns (uint256)',
+    'function A() pure returns (uint256)',
+    'function fee() pure returns (uint256)',
+    'function coins(uint256) pure returns (address)',
+    'function balances(uint256) pure returns (uint256)',
+  ]),
+  [CurvePoolType.LegacyV2]: parseAbi([
+    'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns ()',
+    'function A() pure returns (uint256)',
+    'function fee() pure returns (uint256)',
+    'function coins(int128) pure returns (address)',
+    'function balances(int128) pure returns (uint256)',
+  ]),
+  [CurvePoolType.LegacyV3]: parseAbi([
+    'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns ()',
+    'function A() pure returns (uint256)',
+    'function fee() pure returns (uint256)',
+    'function coins(uint256) pure returns (address)',
+    'function balances(uint256) pure returns (uint256)',
+  ]),
+}
+/*
+async function getCurvePoolCode(publicClient: PublicClient, poolAddress: string, poolType: CurvePoolType, token0: Type, token1: Type): Promise<PoolCode> {
+  const poolContract = getContract({
+    address: poolAddress as '0x${string}',
+    abi: curvePoolABI[poolType],
+    publicClient,
+  })
 
   const userAddress = await user.getAddress()
   const tokenContracts = []
@@ -263,7 +278,7 @@ export class CurveProvider extends LiquidityProvider {
    * The name of liquidity provider to be used for pool naming. For example, 'SushiSwap'
    */
   override getPoolProviderName(): string {
-    return 'CurveSwap'
+    return 'Curve'
   }
 
   /**
@@ -312,6 +327,123 @@ export class CurveProvider extends LiquidityProvider {
     })
 
     return pools
+  }
+
+  async getPoolRatio(pools: [string, [CurvePoolType, Type, Type]][]): Promise<(number | undefined)[]> {
+    if (this.chainId == ChainId.ETHEREUM) {
+      const ratios = await this.client.multicall({
+        multicallAddress: this.client.chain?.contracts?.multicall3?.address as '0x${string}',
+        allowFailure: true,
+        contracts: [
+          {
+            address: '0xE95A203B1a91a908F9B9CE46459d101078c2c3cb', // ankr
+            //chainId: this.chainId,
+            abi: parseAbi(['function ratio() pure returns (uint256)']),
+            functionName: 'ratio',
+          },
+          {
+            address: '0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593', // rETH
+            //chainId: this.chainId,
+            abi: parseAbi(['function getExchangeRate() pure returns (uint256)']),
+            functionName: 'getExchangeRate',
+          },
+          {
+            address: '0x39aa39c021dfbae8fac545936693ac917d5e7563', // cUSDC
+            //chainId: this.chainId,
+            abi: parseAbi(['function exchangeRateCurrent() pure returns (uint256)']),
+            functionName: 'exchangeRateCurrent',
+          },
+          {
+            address: '0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643', // cDAI
+            //chainId: this.chainId,
+            abi: parseAbi(['function exchangeRateCurrent() pure returns (uint256)']),
+            functionName: 'exchangeRateCurrent',
+          },
+        ],
+      })
+      return pools.map(([poolAddress]) => {
+        // collection of freaks
+        switch (poolAddress.toLowerCase()) {
+          case '0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2': {
+            //ankrETH pool
+            const _ratio = ratios[0].result
+            return _ratio !== undefined ? 1e18 / Number(_ratio) : undefined
+          }
+          case '0xf9440930043eb3997fc70e1339dbb11f341de7a8': {
+            // rETH pool
+            const _ratio = ratios[1].result
+            return _ratio !== undefined ? Number(_ratio) / 1e18 : undefined
+          }
+          case '0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56': {
+            // compound pool cUSDC-cDAI
+            const _ratio0 = ratios[2].result
+            const _ratio1 = ratios[3].result
+            return _ratio0 !== undefined && _ratio1 !== undefined
+              ? (Number(_ratio0) * 1e12) / Number(_ratio1)
+              : undefined
+          }
+          default:
+            return 1
+        }
+      })
+    } else return pools.map(() => 1)
+  }
+
+  async getCurvePoolCode(pools: Map<string, [CurvePoolType, Type, Type]>): Promise<PoolCode[]> {
+    const poolArray = Array.from(pools.entries())
+    const poolsMulticall = (functionName: string, args?: any) => {
+      return this.client.multicall({
+        multicallAddress: this.client.chain?.contracts?.multicall3?.address as '0x${string}',
+        allowFailure: true,
+        contracts: poolArray.map(([address, [poolType]]) => ({
+          address: address as '0x${string}',
+          //chainId: this.chainId,
+          abi: curvePoolABI[poolType],
+          functionName,
+          args,
+        })),
+      })
+    }
+    // const poolContract = getContract({
+    //   address: poolAddress as '0x${string}',
+    //   abi: curvePoolABI[poolType],
+    //   publicClient: this.client,
+    // })
+
+    const A = await poolsMulticall('A')
+    const fee = await poolsMulticall('fee')
+    const balance0 = await poolsMulticall('balances', [0])
+    const balance1 = await poolsMulticall('balances', [1])
+    const ratio = await this.getPoolRatio(poolArray)
+
+    const poolCodes = poolArray.map(([poolAddress, [, token0, token1]], i) => {
+      const _fee = fee[i].result
+      const _A = A[i].result
+      const _balance0 = balance0[i].result
+      const _balance1 = balance1[i].result
+      const _ratio = ratio[i]
+      if (
+        _fee === undefined ||
+        _A === undefined ||
+        _balance0 === undefined ||
+        _balance1 === undefined ||
+        _ratio == undefined
+      )
+        return
+      const poolTines = new CurvePool(
+        poolAddress,
+        token0 as RToken,
+        token1 as RToken,
+        Number(_fee[0] as bigint) / 1e10,
+        Number(_A[0] as bigint),
+        BigNumber.from((_balance0[0] as bigint).toString()),
+        BigNumber.from((_balance1[0] as bigint).toString()),
+        _ratio
+      )
+      return new CurvePoolCode(poolTines, this.getType(), this.getPoolProviderName())
+    })
+
+    return poolCodes.filter((p) => p !== undefined) as PoolCode[]
   }
 
   /**
