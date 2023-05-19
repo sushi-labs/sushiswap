@@ -66,6 +66,8 @@ export const useAngleRewards = ({ chainId, account }: UseAngleRewardsParams) => 
                     return acc
                 }, {}),
             }
-        }
+        },
+        staleTime: 15000, // 15 seconds
+        cacheTime: 60000 // 1min
     })
 }
