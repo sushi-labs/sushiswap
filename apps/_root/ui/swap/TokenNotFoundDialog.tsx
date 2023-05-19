@@ -53,13 +53,16 @@ export const TokenNotFoundDialog = () => {
     setTokens(Native.onChain(network0), defaultQuoteCurrency[network1])
   }, [network0, network1, setTokens])
 
-  const { honeypots, isChainIdSupported: isTokenSecuritySupported } = useTokenSecurity(
-    useMemo(
-      () => [...(token0NotInList ? [tokenFrom?.token] : []), ...(token1NotInList ? [tokenTo?.token] : [])],
+  const { data: tokenSecurity } = useTokenSecurity({
+    currencies: useMemo(
+      () => [
+        ...(token0NotInList && tokenFrom?.token ? [tokenFrom.token] : []),
+        ...(token1NotInList && tokenTo?.token ? [tokenTo.token] : []),
+      ],
       [token0NotInList, token1NotInList, tokenFrom?.token, tokenTo?.token]
     ),
-    { enabled: Boolean(!tokenFromLoading && !tokenToLoading && (token0NotInList || token1NotInList)) }
-  )
+    enabled: Boolean(!tokenFromLoading && !tokenToLoading && (token0NotInList || token1NotInList)),
+  })
 
   return (
     <Dialog
@@ -67,7 +70,7 @@ export const TokenNotFoundDialog = () => {
       onClose={() => {}}
     >
       <Dialog.Content className="flex flex-col gap-4">
-        {honeypots.length === 0 ? (
+        {!tokenSecurity?.honeypots || tokenSecurity.honeypots.length === 0 ? (
           <>
             <Dialog.Header title={`Unknown Token${tokenFrom?.token && tokenTo?.token ? 's' : ''}`} />
             <p className="text-gray-700 dark:text-slate-400">
@@ -151,7 +154,7 @@ export const TokenNotFoundDialog = () => {
               </List>
             )}
             <div className="flex flex-col gap-1">
-              {isTokenSecuritySupported && (
+              {tokenSecurity?.isSupported && (
                 <div className="flex items-center gap-0.5 justify-center">
                   <span className="text-xs text-gray-700 dark:text-slate-400">
                     Honeypot detection powered by GoPlus
@@ -176,7 +179,7 @@ export const TokenNotFoundDialog = () => {
               title={
                 <div className="flex gap-2 items-center">
                   <DangerousIcon width={18} height={18} className="text-red" />
-                  <span>Honeypot Token{honeypots.length > 1 ? 's' : ''}</span>
+                  <span>Honeypot Token{tokenSecurity.honeypots.length > 1 ? 's' : ''}</span>
                 </div>
               }
             />
@@ -186,13 +189,15 @@ export const TokenNotFoundDialog = () => {
               <a href="https://coinbrain.com/dictionary/honeypot-scam">What is a honeypot token?</a>
             </span>
             <p className="text-gray-700 dark:text-slate-400">
-              {honeypots.length > 1
+              {tokenSecurity.honeypots.length > 1
                 ? 'These tokens have been identified as potential honeypot scams and are not supported. Do not interact with these tokens to safeguard your assets.'
                 : 'This token has been identified as a potential honeypot scam and is not supported. Do not interact with this token to safeguard your assets.'}
             </p>
-            {tokenFrom?.token && honeypots.includes(tokenFrom.token.address) && (
+            {tokenFrom?.token && tokenSecurity.honeypots.includes(tokenFrom.token.address) && (
               <List>
-                <List.Label>Token {tokenTo?.token && honeypots.includes(tokenTo.token.address) ? '1' : ''}</List.Label>
+                <List.Label>
+                  Token {tokenTo?.token && tokenSecurity.honeypots.includes(tokenTo.token.address) ? '1' : ''}
+                </List.Label>
                 <List.Control>
                   <List.KeyValue title="Name">{tokenFrom.token.name}</List.KeyValue>
                   <List.KeyValue title="Symbol">{tokenFrom.token.symbol}</List.KeyValue>
@@ -209,10 +214,10 @@ export const TokenNotFoundDialog = () => {
                 </List.Control>
               </List>
             )}
-            {tokenTo?.token && honeypots.includes(tokenTo.token.address) && (
+            {tokenTo?.token && tokenSecurity.honeypots.includes(tokenTo.token.address) && (
               <List>
                 <List.Label>
-                  Token {tokenFrom?.token && honeypots.includes(tokenFrom.token.address) ? '2' : ''}
+                  Token {tokenFrom?.token && tokenSecurity.honeypots.includes(tokenFrom.token.address) ? '2' : ''}
                 </List.Label>
                 <List.Control>
                   <List.KeyValue title="Name">
@@ -235,7 +240,7 @@ export const TokenNotFoundDialog = () => {
               </List>
             )}
             <div className="flex flex-col gap-1">
-              {isTokenSecuritySupported && (
+              {tokenSecurity.isSupported && (
                 <div className="flex items-center gap-0.5 justify-center">
                   <span className="text-xs text-gray-700 dark:text-slate-400">
                     Honeypot detection powered by GoPlus

@@ -1,7 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { useQueries, UseQueryOptions } from '@tanstack/react-query'
-import { useMemo } from 'react'
+import { UseQueryOptions, useQuery } from '@tanstack/react-query'
 
 const SUPPORTED_CHAINS: ChainId[] = [
   ChainId.AVALANCHE,
@@ -26,43 +25,46 @@ interface TokenSecurity {
   is_whitelisted: string
 }
 
-const fetchTokenSecurity = async (currency: Token | undefined): Promise<TokenSecurity | undefined> =>
-  currency &&
-  (await fetch(
-    `https://api.gopluslabs.io/api/v1/token_security/${currency.chainId}?contract_addresses=${currency.address}`
-  )
-    .then((data) => data.json() as Promise<{ result?: Record<string, TokenSecurity> }>)
-    .then((data) => data?.result?.[currency.address.toLowerCase()]))
+const fetchTokenSecurityQueryFn = async (currencies: (Token | undefined)[]) => {
+  const supportedCurrencies = currencies.filter(
+    (currency) => currency && SUPPORTED_CHAINS.includes(currency.chainId)
+  ) as Token[]
 
-export const useTokenSecurity = (
-  currencies: (Token | undefined)[],
-  options: UseQueryOptions<TokenSecurity | undefined>
-) => {
-  const isChainIdSupported = useMemo(
-    () => currencies.some(currency => currency && SUPPORTED_CHAINS.includes(currency.chainId)),
-    [currencies]
+  const tokenSecurity = await Promise.all(
+    supportedCurrencies.map((currency) =>
+      fetch(
+        `https://api.gopluslabs.io/api/v1/token_security/${currency.chainId}?contract_addresses=${currency.address}`
+      )
+        .then((response) => response.json() as Promise<{ result?: Record<string, TokenSecurity> }>)
+        .then((data) => data?.result?.[currency.address.toLowerCase()])
+    )
   )
 
-  const query = useQueries({
-    queries: useMemo(() => currencies?.map((currency) => ({
-      queryKey: ['useTokenSecurity', currency?.id],
-      queryFn: () => fetchTokenSecurity(currency),
-      options: {
-        ...options,
-        enabled: (options?.enabled === undefined || true)
-          && currency && SUPPORTED_CHAINS.includes(currency.chainId)
-      }
-    })), [currencies, options])
+  const honeypots = tokenSecurity.reduce(
+    (acc, cur, i) => (cur?.is_honeypot === '1' ? [...acc, supportedCurrencies[i].address] : acc),
+    [] as string[]
+  )
+
+  return {
+    tokenSecurity,
+    honeypots,
+    isSupported: supportedCurrencies.length > 0,
+  }
+}
+
+export const useTokenSecurity = ({
+  currencies,
+  enabled = true,
+}: {
+  currencies: (Token | undefined)[]
+  enabled?: boolean
+}) => {
+  return useQuery({
+    queryKey: ['useTokenSecurity', currencies?.map((currency) => currency?.id)],
+    queryFn: () => fetchTokenSecurityQueryFn(currencies),
+    enabled,
+    keepPreviousData: true,
+    staleTime: 900000, // 15 mins
+    cacheTime: 86400000, // 24hs
   })
-
-  const honeypots: string[] = useMemo(
-    () =>
-      query.reduce(
-        (acc, cur, i) => (cur.data?.is_honeypot === '1' ? [...acc, (currencies[i] as Token).address] : acc),
-        [] as string[]
-      ),
-    [query]
-  )
-
-  return { isChainIdSupported, query, honeypots }
 }

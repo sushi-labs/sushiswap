@@ -28,11 +28,11 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
     }, 250)
   }, [onImport])
 
-  const { honeypots, isChainIdSupported: isTokenSecuritySupported } = useTokenSecurity(currencies, { enabled: open })
+  const { data: tokenSecurity } = useTokenSecurity({ currencies, enabled: open })
 
   const content = useMemo(
     () =>
-      honeypots.length === 0 ? (
+      !tokenSecurity?.honeypots || tokenSecurity.honeypots.length === 0 ? (
         <div className="space-y-3 my-3">
           <div className="rounded-2xl p-3 flex flex-col gap-2 items-center">
             <ExclamationTriangleIcon width={26} height={26} className="text-red" />
@@ -87,7 +87,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
             </List.Control>
           </List>
           <div className="absolute bottom-3 left-3 right-3 flex flex-col gap-1">
-            {isTokenSecuritySupported && (
+            {tokenSecurity?.isSupported && (
               <div className="flex items-center gap-0.5 justify-center">
                 <span className="text-xs text-gray-700 dark:text-slate-400">Honeypot detection powered by GoPlus</span>
                 <GoPlusLabsIcon width={22} height={20} />
@@ -108,14 +108,14 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
               <a href="https://coinbrain.com/dictionary/honeypot-scam">What is a honeypot token?</a>
             </span>
             <span className="text-sm text-gray-600 dark:text-slate-400 text-center">
-              {honeypots.length > 1
+              {tokenSecurity.honeypots.length > 1
                 ? 'These tokens have been identified as potential honeypot scams and are not supported. Do not interact with these tokens to safeguard your assets.'
                 : 'This token has been identified as a potential honeypot scam and is not supported. Do not interact with this token to safeguard your assets.'}
             </span>
           </div>
           <List>
             <List.Control>
-              {honeypots.reduce<ReactNode[]>((acc, cur) => {
+              {tokenSecurity.honeypots.reduce<ReactNode[]>((acc, cur) => {
                 const currency = currencies.find((currency) => currency?.address === cur)
                 if (currency) {
                   acc.push(
@@ -158,7 +158,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
             </List.Control>
           </List>
           <div className="absolute bottom-3 left-3 right-3 flex flex-col gap-1">
-            {isTokenSecuritySupported && (
+            {tokenSecurity.isSupported && (
               <div className="flex items-center gap-0.5 justify-center">
                 <span className="text-xs text-gray-700 dark:text-slate-400">Honeypot detection powered by GoPlus</span>
                 <GoPlusLabsIcon width={22} height={20} />
@@ -170,7 +170,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
           </div>
         </div>
       ),
-    [currencies, onImport, honeypots]
+    [currencies, onImport, tokenSecurity]
   )
 
   return (
