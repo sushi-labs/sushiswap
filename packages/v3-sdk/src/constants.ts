@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 
-export const FACTORY_ADDRESS = '0x1af415a1EbA07a4986a52B6f2e7dE7003D82231e'
+// export const FACTORY_ADDRESS = '0x1af415a1EbA07a4986a52B6f2e7dE7003D82231e'
 
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
 
