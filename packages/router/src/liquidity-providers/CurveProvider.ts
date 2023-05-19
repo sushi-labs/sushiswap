@@ -4,13 +4,13 @@ import { FRAX } from '@sushiswap/currency'
 import { USDC } from '@sushiswap/currency'
 import { WBTC } from '@sushiswap/currency'
 import { Native } from '@sushiswap/currency'
+import { LINK } from '@sushiswap/currency'
+import { renBTC } from '@sushiswap/currency'
 import { getContract, parseAbi, PublicClient } from 'viem'
 
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
 import { PoolCode } from '../pools/PoolCode'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
-import { LINK } from '@sushiswap/currency'
-import { renBTC } from '@sushiswap/currency'
 
 const stETH = new Token({
   chainId: 1,
