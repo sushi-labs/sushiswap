@@ -134,7 +134,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         this.databaseClient,
         this.chainId,
         this.getType() === LiquidityProviders.UniswapV2 ? 'Uniswap' : this.getType(),
-        this.getType() === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
+        this.getType() === LiquidityProviders.SushiSwapV2 ? 'LEGACY' : 'V2',
         ['CONSTANT_PRODUCT_POOL']
       )
       return pools
@@ -304,7 +304,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       this.databaseClient,
       this.chainId,
       this.getType() === LiquidityProviders.UniswapV2 ? 'Uniswap' : this.getType(),
-      this.getType() === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
+      this.getType() === LiquidityProviders.SushiSwapV2 ? 'LEGACY' : 'V2',
       ['CONSTANT_PRODUCT_POOL'],
       this.latestPoolCreatedAtTimestamp
     )
