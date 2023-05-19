@@ -25,7 +25,7 @@ import {
 } from '@sushiswap/route-processor'
 import { routeProcessor2Abi } from '@sushiswap/abi'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
-import { Bridge } from '@sushiswap/router'
+import { Bridge, LiquidityProvider, LiquidityProviders } from '@sushiswap/router'
 import { Chain } from '@sushiswap/chain'
 
 interface ConfirmationDialogProps {
@@ -142,9 +142,9 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               trade?.route?.legs?.every(
                 (leg) =>
                   leg.poolName.startsWith('Wrap') ||
-                  leg.poolName.startsWith('SushiSwap') ||
-                  leg.poolName.startsWith('SushiSwapV3') ||
-                  leg.poolName.startsWith('Trident') ||
+                  leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+                  leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+                  leg.poolName.startsWith(LiquidityProviders.Trident) ||
                   leg.poolName.startsWith(Bridge.BentBox)
               )
             ) {
@@ -158,17 +158,17 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               trade?.route?.legs?.some(
                 (leg) =>
                   !leg.poolName.startsWith('Wrap') &&
-                  (leg.poolName.startsWith('SushiSwap') ||
-                    leg.poolName.startsWith('SushiSwapV3') ||
-                    leg.poolName.startsWith('Trident') ||
+                  (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+                    leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+                    leg.poolName.startsWith(LiquidityProviders.Trident) ||
                     leg.poolName.startsWith(Bridge.BentBox))
               ) &&
               trade?.route?.legs?.some(
                 (leg) =>
                   !leg.poolName.startsWith('Wrap') &&
-                  (!leg.poolName.startsWith('SushiSwap') ||
-                    !leg.poolName.startsWith('SushiSwapV3') ||
-                    !leg.poolName.startsWith('Trident') ||
+                  (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+                    !leg.poolName.startsWith(LiquidityProviders.Trident) ||
                     !leg.poolName.startsWith(Bridge.BentBox))
               )
             ) {
@@ -182,9 +182,9 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               trade?.route?.legs?.every(
                 (leg) =>
                   !leg.poolName.startsWith('Wrap') &&
-                  !leg.poolName.startsWith('SushiSwap') &&
-                  !leg.poolName.startsWith('SushiSwapV3') &&
-                  !leg.poolName.startsWith('Trident') &&
+                  !leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
+                  !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
+                  !leg.poolName.startsWith(LiquidityProviders.Trident) &&
                   !leg.poolName.startsWith(Bridge.BentBox)
               )
             ) {
@@ -209,9 +209,9 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               trade?.route?.legs?.every(
                 (leg) =>
                   leg.poolName.startsWith('Wrap') ||
-                  leg.poolName.startsWith('SushiSwap') ||
-                  leg.poolName.startsWith('SushiSwapV3') ||
-                  leg.poolName.startsWith('Trident') ||
+                  leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+                  leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+                  leg.poolName.startsWith(LiquidityProviders.Trident) ||
                   leg.poolName.startsWith(Bridge.BentBox)
               )
             ) {
@@ -227,17 +227,17 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               trade?.route?.legs?.some(
                 (leg) =>
                   !leg.poolName.startsWith('Wrap') &&
-                  (leg.poolName.startsWith('SushiSwap') ||
-                    leg.poolName.startsWith('SushiSwapV3') ||
-                    leg.poolName.startsWith('Trident') ||
+                  (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+                    leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+                    leg.poolName.startsWith(LiquidityProviders.Trident) ||
                     leg.poolName.startsWith(Bridge.BentBox))
               ) &&
               trade?.route?.legs?.some(
                 (leg) =>
                   !leg.poolName.startsWith('Wrap') &&
-                  (!leg.poolName.startsWith('SushiSwap') ||
-                    !leg.poolName.startsWith('SushiSwapV3') ||
-                    !leg.poolName.startsWith('Trident') ||
+                  (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+                    !leg.poolName.startsWith(LiquidityProviders.Trident) ||
                     !leg.poolName.startsWith(Bridge.BentBox))
               )
             ) {
@@ -253,9 +253,9 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               trade?.route?.legs?.every(
                 (leg) =>
                   !leg.poolName.startsWith('Wrap') &&
-                  !leg.poolName.startsWith('SushiSwap') &&
-                  !leg.poolName.startsWith('SushiSwapV3') &&
-                  !leg.poolName.startsWith('Trident') &&
+                  !leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
+                  !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
+                  !leg.poolName.startsWith(LiquidityProviders.Trident) &&
                   !leg.poolName.startsWith(Bridge.BentBox)
               )
             ) {

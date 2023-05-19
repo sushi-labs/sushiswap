@@ -19,7 +19,7 @@ import { NetSwapProvider } from './liquidity-providers/NetSwap'
 import { PancakeSwapProvider } from './liquidity-providers/PancakeSwap'
 import { QuickSwapProvider } from './liquidity-providers/QuickSwap'
 import { SpookySwapProvider } from './liquidity-providers/SpookySwap'
-import { SushiProvider } from './liquidity-providers/Sushi'
+import { SushiSwapV2Provider } from './liquidity-providers/SushiSwapV2'
 import { SushiSwapV3Provider } from './liquidity-providers/SushiSwapV3'
 import { TraderJoeProvider } from './liquidity-providers/TraderJoe'
 import { TridentProvider } from './liquidity-providers/Trident'
@@ -96,9 +96,9 @@ export class DataFetcher {
 
     this.providers = [new NativeWrapProvider(this.chainId, this.web3Client)]
 
-    if (this._providerIsIncluded(LiquidityProviders.SushiSwap, providers)) {
+    if (this._providerIsIncluded(LiquidityProviders.SushiSwapV2, providers)) {
       try {
-        const provider = new SushiProvider(this.chainId, this.web3Client, this.databaseClient)
+        const provider = new SushiSwapV2Provider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
       } catch (e: unknown) {
         // console.warn(e.message)
