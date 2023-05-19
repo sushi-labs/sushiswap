@@ -10,6 +10,7 @@ import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { shortenAddress } from '@sushiswap/format'
 import { useTokenSecurity } from '@sushiswap/react-query'
 import { DangerousIcon, GoPlusLabsIcon } from '@sushiswap/ui/icons'
+import { Link } from '@sushiswap/ui'
 
 interface TokenSelectorImportRow {
   currencies: (Token | undefined)[]
@@ -103,10 +104,13 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
           <div className="rounded-2xl p-3 flex flex-col gap-2 items-center">
             <DangerousIcon width={26} height={26} className="text-red" />
             <span className="font-medium text-lg text-gray-900 dark:text-slate-200">Honeypot Token Not Supported!</span>
-            <span className="text-blue underline text-sm">
-              {/* TODO: link to academy article */}
-              <a href="https://coinbrain.com/dictionary/honeypot-scam">What is a honeypot token?</a>
-            </span>
+            {/* TODO: link to academy article */}
+            <Link.External
+              href="https://coinbrain.com/dictionary/honeypot-scam"
+              className="text-blue underline text-sm"
+            >
+              What is a honeypot token?
+            </Link.External>
             <span className="text-sm text-gray-600 dark:text-slate-400 text-center">
               {tokenSecurity.honeypots.length > 1
                 ? 'These tokens have been identified as potential honeypot scams and are not supported. Do not interact with these tokens to safeguard your assets.'

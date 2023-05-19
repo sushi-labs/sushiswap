@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { UseQueryOptions, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 
 const SUPPORTED_CHAINS: ChainId[] = [
   ChainId.AVALANCHE,

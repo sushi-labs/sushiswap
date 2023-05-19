@@ -12,6 +12,7 @@ import { queryParamsSchema } from '../../lib/swap/queryParamsSchema'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { useTokenSecurity } from '@sushiswap/react-query'
 import { DangerousIcon, GoPlusLabsIcon } from '@sushiswap/ui/icons'
+import { Link } from '@sushiswap/ui'
 
 export const TokenNotFoundDialog = () => {
   const { query } = useRouter()
@@ -183,11 +184,13 @@ export const TokenNotFoundDialog = () => {
                 </div>
               }
             />
-
-            <span className="text-blue underline text-sm">
-              {/* TODO: link to academy article */}
-              <a href="https://coinbrain.com/dictionary/honeypot-scam">What is a honeypot token?</a>
-            </span>
+            {/* TODO: link to academy article */}
+            <Link.External
+              href="https://coinbrain.com/dictionary/honeypot-scam"
+              className="text-blue underline text-sm"
+            >
+              What is a honeypot token?
+            </Link.External>
             <p className="text-gray-700 dark:text-slate-400">
               {tokenSecurity.honeypots.length > 1
                 ? 'These tokens have been identified as potential honeypot scams and are not supported. Do not interact with these tokens to safeguard your assets.'
