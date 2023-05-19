@@ -9,6 +9,7 @@ import { foundry } from 'viem/chains'
 
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { BiswapProvider } from './liquidity-providers/Biswap'
+import { CurveProvider } from './liquidity-providers/CurveProvider'
 import { DfynProvider } from './liquidity-providers/Dfyn'
 import { ElkProvider } from './liquidity-providers/Elk'
 import { HoneySwapProvider } from './liquidity-providers/HoneySwap'
@@ -93,7 +94,7 @@ export class DataFetcher {
       try {
         const provider = new SushiProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
-      } catch (e: any) {
+      } catch (e) {
         // console.warn(e.message)
       }
     }
@@ -106,7 +107,7 @@ export class DataFetcher {
       try {
         const provider = new TridentProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
-      } catch (e: any) {
+      } catch (e) {
         // console.warn(e.message)
       }
     }
@@ -115,7 +116,7 @@ export class DataFetcher {
       try {
         const provider = new SushiSwapV3Provider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
-      } catch (e: any) {
+      } catch (e) {
         // console.warn(e.message)
       }
     }
@@ -124,7 +125,7 @@ export class DataFetcher {
       try {
         const provider = new UniswapV3Provider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
-      } catch (e: any) {
+      } catch (e) {
         // console.warn(e.message)
       }
     }
@@ -133,7 +134,7 @@ export class DataFetcher {
       try {
         const provider = new ApeSwapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
-      } catch (e: any) {
+      } catch (e) {
         // console.warn(e.message)
       }
     }
@@ -142,7 +143,7 @@ export class DataFetcher {
       try {
         const provider = new BiswapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
-      } catch (e: any) {
+      } catch (e) {
         // console.warn(e.message)
       }
     }
@@ -151,7 +152,7 @@ export class DataFetcher {
       try {
         const provider = new DfynProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
-      } catch (e: any) {
+      } catch (e) {
         // console.warn(e.message)
       }
     }
@@ -160,7 +161,7 @@ export class DataFetcher {
       try {
         const provider = new ElkProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
-      } catch (e: any) {
+      } catch (e) {
         // console.warn(e.message)
       }
     }
@@ -169,7 +170,7 @@ export class DataFetcher {
       try {
         const provider = new HoneySwapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
-      } catch (e: any) {
+      } catch (e) {
         // console.warn(e.message)
       }
     }
@@ -178,7 +179,7 @@ export class DataFetcher {
       try {
         const provider = new JetSwapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
-      } catch (e: any) {
+      } catch (e) {
         // console.warn(e.message)
       }
     }
@@ -187,7 +188,7 @@ export class DataFetcher {
       try {
         const provider = new NetSwapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
-      } catch (e: any) {
+      } catch (e) {
         // console.warn(e.message)
       }
     }
@@ -196,7 +197,7 @@ export class DataFetcher {
       try {
         const provider = new PancakeSwapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
-      } catch (e: any) {
+      } catch (e) {
         // console.warn(e.message)
       }
     }
@@ -205,7 +206,7 @@ export class DataFetcher {
       try {
         const provider = new QuickSwapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
-      } catch (e: any) {
+      } catch (e) {
         // console.warn(e.message)
       }
     }
@@ -214,7 +215,7 @@ export class DataFetcher {
       try {
         const provider = new SpookySwapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
-      } catch (e: any) {
+      } catch (e) {
         // console.warn(e.message)
       }
     }
@@ -223,7 +224,7 @@ export class DataFetcher {
       try {
         const provider = new TraderJoeProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
-      } catch (e: any) {
+      } catch (e) {
         // console.warn(e.message)
       }
     }
@@ -232,7 +233,7 @@ export class DataFetcher {
       try {
         const provider = new UbeSwapProvider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
-      } catch (e: any) {
+      } catch (e) {
         // console.warn(e.message)
       }
     }
@@ -241,7 +242,16 @@ export class DataFetcher {
       try {
         const provider = new UniswapV2Provider(this.chainId, this.web3Client, this.databaseClient)
         this.providers.push(provider)
-      } catch (e: any) {
+      } catch (e) {
+        // console.warn(e.message)
+      }
+    }
+
+    if (this._providerIsIncluded(LiquidityProviders.CurveSwap, providers)) {
+      try {
+        const provider = new CurveProvider(this.chainId, this.web3Client)
+        this.providers.push(provider)
+      } catch (e) {
         // console.warn(e.message)
       }
     }

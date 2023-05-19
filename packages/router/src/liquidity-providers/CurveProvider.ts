@@ -1,10 +1,120 @@
 import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
+import { Token, Type, USDT } from '@sushiswap/currency'
+import { FRAX } from '@sushiswap/currency'
+import { USDC } from '@sushiswap/currency'
+import { WBTC } from '@sushiswap/currency'
+import { Native } from '@sushiswap/currency'
 import { getContract, parseAbi, PublicClient } from 'viem'
 
+import { getCurrencyCombinations } from '../getCurrencyCombinations'
 import { PoolCode } from '../pools/PoolCode'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
-import { string } from 'zod'
+import { LINK } from '@sushiswap/currency'
+import { renBTC } from '@sushiswap/currency'
+
+const stETH = new Token({
+  chainId: 1,
+  address: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
+  decimals: 18,
+  symbol: 'stETH',
+  name: 'Liquid staked Ether 2.0',
+})
+
+const sBTC = new Token({
+  chainId: 1,
+  address: '0xfe18be6b3bd88a2d2a7f928d00292e7a9963cfc6',
+  decimals: 18,
+  symbol: 'sBTC',
+  name: 'Synth sBTC',
+})
+
+const sETH = new Token({
+  chainId: 1,
+  address: '0x5e74c9036fb86bd7ecdcb084a0673efc32ea31cb',
+  decimals: 18,
+  symbol: 'sETH',
+  name: 'Synth sETH',
+})
+
+const rETH = new Token({
+  chainId: 1,
+  address: '0x9559Aaa82d9649C7A7b220E7c461d2E74c9a3593',
+  decimals: 18,
+  symbol: 'rETH',
+  name: 'StaFi',
+})
+
+const ankrETH = new Token({
+  chainId: 1,
+  address: '0xE95A203B1a91a908F9B9CE46459d101078c2c3cb',
+  decimals: 18,
+  symbol: 'ankrETH',
+  name: 'Ankr Staked ETH',
+})
+
+const sEUR = new Token({
+  chainId: 1,
+  address: '0xd71ecff9342a5ced620049e616c5035f1db98620',
+  decimals: 18,
+  symbol: 'sEUR',
+  name: 'Synth sEUR',
+})
+
+const EURS = new Token({
+  chainId: 1,
+  address: '0xdb25f211ab05b1c97d595516f45794528a807ad8',
+  decimals: 2,
+  symbol: 'EURS',
+  name: 'STASIS EURS',
+})
+
+const aDAI = new Token({
+  chainId: 1,
+  address: '0x028171bCA77440897B824Ca71D1c56caC55b68A3',
+  decimals: 18,
+  symbol: 'aDAI',
+  name: 'Aave interest bearing DAI',
+})
+
+const aSUSD = new Token({
+  chainId: 1,
+  address: '0x6C5024Cd4F8A59110119C56f8933403A539555EB',
+  decimals: 18,
+  symbol: 'aSUSD',
+  name: 'Aave interest bearing SUSD',
+})
+
+const cUSDC = new Token({
+  chainId: 1,
+  address: '0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56',
+  decimals: 8,
+  symbol: 'cUSDC',
+  name: 'Compound USD Coin',
+})
+
+const cDAI = new Token({
+  chainId: 1,
+  address: '0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643',
+  decimals: 8,
+  symbol: 'cDAI',
+  name: 'Compound Dai',
+})
+
+const sLINK = new Token({
+  chainId: 1,
+  address: '0xbBC455cb4F1B9e4bFC4B73970d360c8f032EfEE6',
+  decimals: 18,
+  symbol: 'sLINK',
+  name: 'Synth sLINK',
+})
+
+const HBTC = new Token({
+  chainId: 1,
+  address: '0x0316EB71485b0Ab14103307bf65a021042c6d380',
+  decimals: 18,
+  symbol: 'HBTS',
+  name: 'Huobi BTC',
+})
 
 export enum CurvePoolType {
   Legacy = 'Legacy', // 'exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) -> uint256'
@@ -13,41 +123,59 @@ export enum CurvePoolType {
   Factory = 'Factory',
 }
 
-export const CURVE_NON_FACTORY_POOLS: Record<number, [string, CurvePoolType][]> = {
+export const CURVE_NON_FACTORY_POOLS: Record<number, [string, CurvePoolType, Type, Type][]> = {
   [ChainId.ETHEREUM]: [
-    ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', CurvePoolType.Legacy],
-    ['0xdcef968d416a41cdac0ed8702fac8128a64241a2', CurvePoolType.Legacy],
-    ['0xf253f83aca21aabd2a20553ae0bf7f65c755a07f', CurvePoolType.Legacy],
-    ['0xc5424b857f758e906013f3555dad202e4bdb4567', CurvePoolType.Legacy],
-    ['0xa1f8a6807c402e4a15ef4eba36528a3fed24e577', CurvePoolType.Legacy],
-    ['0x0ce6a5ff5217e38315f87032cf90686c96627caa', CurvePoolType.Legacy],
-    ['0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2', CurvePoolType.Legacy],
-    ['0xeb16ae0052ed37f479f7fe63849198df1765a733', CurvePoolType.Legacy],
-    ['0xf9440930043eb3997fc70e1339dbb11f341de7a8', CurvePoolType.Legacy],
-    ['0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56', CurvePoolType.LegacyV2],
-    ['0xfd5db7463a3ab53fd211b4af195c5bccc1a03890', CurvePoolType.Legacy],
-    ['0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0', CurvePoolType.Legacy],
-    ['0x4ca9b3063ec5866a4b82e437059d2c43d1be596f', CurvePoolType.LegacyV3],
-    ['0x93054188d876f558f4a66b2ef1d97d16edf0895b', CurvePoolType.LegacyV2],
+    ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', CurvePoolType.Legacy, stETH, USDT[ChainId.ETHEREUM]],
+    [
+      '0xdcef968d416a41cdac0ed8702fac8128a64241a2',
+      CurvePoolType.Legacy,
+      FRAX[ChainId.ETHEREUM],
+      USDC[ChainId.ETHEREUM],
+    ],
+    ['0xf253f83aca21aabd2a20553ae0bf7f65c755a07f', CurvePoolType.Legacy, WBTC[ChainId.ETHEREUM], sBTC],
+    ['0xc5424b857f758e906013f3555dad202e4bdb4567', CurvePoolType.Legacy, Native.onChain(ChainId.ETHEREUM), sETH],
+    [
+      '0xa1f8a6807c402e4a15ef4eba36528a3fed24e577',
+      CurvePoolType.Legacy,
+      Native.onChain(ChainId.ETHEREUM),
+      FRAX[ChainId.ETHEREUM],
+    ],
+    ['0x0ce6a5ff5217e38315f87032cf90686c96627caa', CurvePoolType.Legacy, EURS, sEUR],
+    ['0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2', CurvePoolType.Legacy, Native.onChain(ChainId.ETHEREUM), ankrETH],
+    ['0xeb16ae0052ed37f479f7fe63849198df1765a733', CurvePoolType.Legacy, aDAI, aSUSD],
+    ['0xf9440930043eb3997fc70e1339dbb11f341de7a8', CurvePoolType.Legacy, Native.onChain(ChainId.ETHEREUM), rETH],
+    ['0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56', CurvePoolType.LegacyV2, cUSDC, cDAI],
+    ['0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0', CurvePoolType.Legacy, LINK[ChainId.ETHEREUM], sLINK],
+    ['0x4ca9b3063ec5866a4b82e437059d2c43d1be596f', CurvePoolType.LegacyV3, HBTC, WBTC[ChainId.ETHEREUM]],
+    [
+      '0x93054188d876f558f4a66b2ef1d97d16edf0895b',
+      CurvePoolType.LegacyV2,
+      WBTC[ChainId.ETHEREUM],
+      renBTC[ChainId.ETHEREUM],
+    ],
+    // Low liquidity ['0xfd5db7463a3ab53fd211b4af195c5bccc1a03890', CurvePoolType.Legacy],
   ],
 }
 
 export const CURVE_FACTORY_ADDRESSES = {
   [ChainId.ETHEREUM]: [
-    '0x0959158b6040d32d04c301a72cbfd6b39e21c9ae',
-    '0xb9fc157394af804a3578134a6585c0dc9cc990d4',
+    // '0x0959158b6040d32d04c301a72cbfd6b39e21c9ae',  // Metapools only - uncomment when we support them
+    // '0xb9fc157394af804a3578134a6585c0dc9cc990d4',  // Metapools only - uncomment when we support them
     //'0xf18056bbd320e96a48e3fbf8bc061322531aac99', for crypto2 pools only
   ],
 }
 
-async function getAllSupportedCurvePools(publicClient: PublicClient): Promise<Map<string, CurvePoolType>> {
+const factoryABI = parseAbi([
+  'function pool_count() pure returns (uint256)',
+  'function pool_list(uint256) pure returns (address)',
+  'function find_pool_for_coins(address, address, uint256) view returns (address)',
+  //'function get_n_coins(address) pure returns (uint256)',
+])
+
+export async function getAllSupportedCurvePools(publicClient: PublicClient): Promise<Map<string, CurvePoolType>> {
   const result: Map<string, CurvePoolType> = new Map()
   const chainId = await publicClient.getChainId()
-  const factoryABI = parseAbi([
-    'function pool_count() pure returns (uint256)',
-    'function pool_list(uint256) pure returns (address)',
-    //'function get_n_coins(address) pure returns (uint256)',
-  ])
+
   const promises = CURVE_FACTORY_ADDRESSES[chainId as keyof typeof CURVE_FACTORY_ADDRESSES].map(async (factory) => {
     const factoryContract = getContract({
       address: factory as '0x${string}',
@@ -145,12 +273,55 @@ export class CurveProvider extends LiquidityProvider {
     // simple implementation - no prefetching
   }
 
+  async getPoolsForTokens(
+    t0: Token,
+    t1: Token,
+    excludePools?: Set<string>
+  ): Promise<Map<string, [CurvePoolType, Type, Type]>> {
+    const pools: Map<string, [CurvePoolType, Type, Type]> = new Map()
+    let currencyCombinations = getCurrencyCombinations(this.chainId, t0, t1)
+    for (let i = 0; currencyCombinations.length > 0; ++i) {
+      const calls: any[] = []
+      CURVE_FACTORY_ADDRESSES[this.chainId as keyof typeof CURVE_FACTORY_ADDRESSES].forEach((factory) => {
+        currencyCombinations.forEach(([t0, t1]) => {
+          calls.push({
+            address: factory,
+            chainId: this.chainId,
+            abi: factoryABI,
+            functionName: 'find_pool_for_coins',
+            args: [t0, t1, i],
+          } as const)
+        })
+      })
+      const newFoundPools = await this.client.multicall({
+        multicallAddress: this.client.chain?.contracts?.multicall3?.address as '0x${string}',
+        allowFailure: true,
+        contracts: calls,
+      })
+      newFoundPools.forEach((pool, i) => {
+        if (pool.status == 'success' && excludePools?.has(pool.result as string) !== true)
+          pools.set(pool.result as string, [CurvePoolType.Factory, ...currencyCombinations[i]])
+      })
+      currencyCombinations = newFoundPools
+        .map((pool, i) => (pool.status == 'success' ? currencyCombinations[i] : undefined))
+        .filter((c) => c !== undefined) as [Token, Token][]
+    }
+
+    CURVE_NON_FACTORY_POOLS[this.chainId as keyof typeof CURVE_NON_FACTORY_POOLS].forEach((pool) => {
+      if (excludePools?.has(pool[0]) !== true) pools.set(pool[0], [pool[1], pool[2], pool[3]])
+    })
+
+    return pools
+  }
+
   /**
    * Fetches relevant pools for the given tokens
    * @param t0 Token
    * @param t1 Token
    */
-  override fetchPoolsForToken(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void> {}
+  override async fetchPoolsForToken(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void> {
+    const pools = await this.getPoolsForTokens(t0, t1, excludePools)
+  }
 
   /**
    * Returns a list of PoolCode
