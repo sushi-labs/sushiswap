@@ -1,12 +1,13 @@
 import React, { FC } from 'react'
+import { WithTestDataId } from './types'
 
 export interface HeadRowProps
-  extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableRowElement>, HTMLTableRowElement> {
+  extends WithTestDataId<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableRowElement>, HTMLTableRowElement>> {
   headRowHeight?: number
 }
 
-const HeadRow: FC<HeadRowProps> = ({ children, headRowHeight = 48, ...props }) => (
-  <tr {...props} className="w-fulls" style={{ height: headRowHeight }}>
+const HeadRow: FC<HeadRowProps> = ({ children, testId, headRowHeight = 48, ...props }) => (
+  <tr {...props} testdata-id={testId} className="w-fulls" style={{ height: headRowHeight }}>
     {children}
   </tr>
 )

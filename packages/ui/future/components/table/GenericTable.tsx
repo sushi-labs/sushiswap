@@ -1,6 +1,6 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid'
 import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
-import React, { MouseEventHandler, ReactNode, useCallback, useState } from 'react'
+import React, { ReactNode, useCallback, useState } from 'react'
 import { Table } from '.'
 import { Link } from '../../../link'
 import { LoadingOverlay } from '../../../loader'
@@ -19,6 +19,7 @@ interface GenericTableProps<C> {
   loadingOverlay?: boolean
   headRowHeight?: number
   rowHeight?: number
+  testId?: string
 }
 
 declare module '@tanstack/react-table' {
@@ -38,6 +39,7 @@ export const GenericTable = <T extends { id: string }>({
   loadingOverlay = true,
   headRowHeight = 48,
   rowHeight = 78,
+  testId,
 }: GenericTableProps<T>) => {
   const isMounted = useIsMounted()
   const [showOverlay, setShowOverlay] = useState(false)
@@ -53,13 +55,14 @@ export const GenericTable = <T extends { id: string }>({
   return (
     <>
       {loadingOverlay && <LoadingOverlay show={showOverlay} />}
-      <Table.container>
-        <Table.table style={{ minHeight: (pageSize + 1) * 52 }}>
-          <Table.thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <Table.thr key={headerGroup.id} headRowHeight={headRowHeight}>
-                {headerGroup.headers.map((header) => (
+      <Table.container testId={testId}>
+        <Table.table testId={testId} style={{ minHeight: (pageSize + 1) * 52 }}>
+          <Table.thead testId={testId}>
+            {table.getHeaderGroups().map((headerGroup, i) => (
+              <Table.thr testId={`${testId}-${i}`} key={headerGroup.id} headRowHeight={headRowHeight}>
+                {headerGroup.headers.map((header, j) => (
                   <Table.th
+                    testId={`${testId}-${i}-${j}`}
                     headRowHeight={headRowHeight}
                     key={header.id}
                     colSpan={header.colSpan}
@@ -96,9 +99,9 @@ export const GenericTable = <T extends { id: string }>({
               </Table.thr>
             ))}
           </Table.thead>
-          <Table.tbody>
+          <Table.tbody testId={testId}>
             {!loading &&
-              table.getRowModel().rows.map((row) => {
+              table.getRowModel().rows.map((row, r) => {
                 if (HoverElement && isMounted) {
                   return (
                     <Popover
@@ -120,7 +123,12 @@ export const GenericTable = <T extends { id: string }>({
                       }}
                     >
                       <Popover.Button>
-                        <Table.tr onClick={onClick} className="cursor-pointer" rowHeight={rowHeight}>
+                        <Table.tr
+                          testId={`testId-${r}`}
+                          onClick={onClick}
+                          className="cursor-pointer"
+                          rowHeight={rowHeight}
+                        >
                           {row.getVisibleCells().map((cell, i) => {
                             return (
                               <Table.td
@@ -171,10 +179,17 @@ export const GenericTable = <T extends { id: string }>({
                   )
                 } else {
                   return (
-                    <Table.tr onClick={onClick} key={row.id} className="cursor-pointer" rowHeight={rowHeight}>
+                    <Table.tr
+                      testId={`testId-${r}`}
+                      onClick={onClick}
+                      key={row.id}
+                      className="cursor-pointer"
+                      rowHeight={rowHeight}
+                    >
                       {row.getVisibleCells().map((cell, i) => {
                         return (
                           <Table.td
+                            testId={`${testId}-${r}-${i}`}
                             className="!px-0 relative"
                             style={{
                               ...(cell.column.columnDef.maxSize && {
@@ -220,9 +235,10 @@ export const GenericTable = <T extends { id: string }>({
             {!loading &&
               table.getRowModel().rows.length !== 0 &&
               Array.from(Array(Math.max(pageSize - table.getRowModel().rows.length, 0))).map((el, index) => (
-                <Table.tr key={index} rowHeight={rowHeight}>
+                <Table.tr testId={`${testId}-filler-${index}`} key={index} rowHeight={rowHeight}>
                   {table.getVisibleFlatColumns().map((column) => (
                     <Table.td
+                      testId={`${testId}-filler-${index}`}
                       key={column.id}
                       style={{
                         ...(column.columnDef.maxSize && {
@@ -241,7 +257,7 @@ export const GenericTable = <T extends { id: string }>({
               ))}
             {loading &&
               Array.from(Array(pageSize)).map((el, index) => (
-                <Table.tr key={index} rowHeight={rowHeight}>
+                <Table.tr testId={`${testId}-loading-${index}`} key={index} rowHeight={rowHeight}>
                   {table.getVisibleFlatColumns().map((column) => {
                     return (
                       <Table.td
@@ -258,8 +274,12 @@ export const GenericTable = <T extends { id: string }>({
                 </Table.tr>
               ))}
             {!loading && table.getRowModel().rows.length === 0 && (
-              <Table.tr className="!h-[260px]">
-                <Table.td colSpan={table.getAllColumns().length} className="!h-[260px] pointer-events-none">
+              <Table.tr testId={`${testId}-placeholder`} className="!h-[260px]">
+                <Table.td
+                  testId={`${testId}-placeholder`}
+                  colSpan={table.getAllColumns().length}
+                  className="!h-[260px] pointer-events-none"
+                >
                   <Typography variant="xs" className="w-full text-center text-slate-400">
                     {placeholder}
                   </Typography>
