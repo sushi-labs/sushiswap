@@ -48,6 +48,63 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const { appType, network0, token0, token1, review } = useSwapState()
   const { approved } = useApproved('swap')
   const { data: trade } = useTrade({ crossChain: false })
+  console.log({ route: trade?.route })
+
+  // if (trade?.route && trade?.route?.status !== 'NoWay') {
+  //   if (
+  //     trade?.route?.legs?.every(
+  //       (leg) =>
+  //         leg.poolName.startsWith('Wrap') ||
+  //         leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+  //         leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+  //         leg.poolName.startsWith(LiquidityProviders.Trident) ||
+  //         leg.poolName.startsWith(Bridge.BentoBox)
+  //     )
+  //   ) {
+  //     console.log('Swap success (internal)', {
+  //       route: trade?.route,
+  //     })
+  //   } else if (
+  //     trade?.route?.legs?.some(
+  //       (leg) =>
+  //         !leg.poolName.startsWith('Wrap') &&
+  //         (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+  //           leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+  //           leg.poolName.startsWith(LiquidityProviders.Trident) ||
+  //           leg.poolName.startsWith(Bridge.BentoBox))
+  //     ) &&
+  //     trade?.route?.legs?.some(
+  //       (leg) =>
+  //         !leg.poolName.startsWith('Wrap') &&
+  //         (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+  //           !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+  //           !leg.poolName.startsWith(LiquidityProviders.Trident) ||
+  //           !leg.poolName.startsWith(Bridge.BentoBox))
+  //     )
+  //   ) {
+  //     console.log('Swap success (mix)', {
+  //       route: trade?.route,
+  //     })
+  //   } else if (
+  //     trade?.route?.legs?.every(
+  //       (leg) =>
+  //         leg.poolName.startsWith('Wrap') ||
+  //         (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
+  //           !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
+  //           !leg.poolName.startsWith(LiquidityProviders.Trident) &&
+  //           !leg.poolName.startsWith(Bridge.BentoBox))
+  //     )
+  //   ) {
+  //     console.log('Swap success (external)', {
+  //       route: trade?.route,
+  //     })
+  //   } else {
+  //     console.log('Swap success (unknown)', {
+  //       route: trade?.route,
+  //     })
+  //   }
+  // }
+
   const [slippageTolerance] = useSlippageTolerance()
   const refetchBalances = useBalanceWeb3Refetch()
 
@@ -145,7 +202,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                   leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                   leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
                   leg.poolName.startsWith(LiquidityProviders.Trident) ||
-                  leg.poolName.startsWith(Bridge.BentBox)
+                  leg.poolName.startsWith(Bridge.BentoBox)
               )
             ) {
               log.info('Swap success (internal)', {
@@ -161,7 +218,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                   (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                     leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
                     leg.poolName.startsWith(LiquidityProviders.Trident) ||
-                    leg.poolName.startsWith(Bridge.BentBox))
+                    leg.poolName.startsWith(Bridge.BentoBox))
               ) &&
               trade?.route?.legs?.some(
                 (leg) =>
@@ -169,7 +226,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                   (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                     !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
                     !leg.poolName.startsWith(LiquidityProviders.Trident) ||
-                    !leg.poolName.startsWith(Bridge.BentBox))
+                    !leg.poolName.startsWith(Bridge.BentoBox))
               )
             ) {
               log.info('Swap success (mix)', {
@@ -181,11 +238,11 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
             } else if (
               trade?.route?.legs?.every(
                 (leg) =>
-                  !leg.poolName.startsWith('Wrap') &&
-                  !leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
-                  !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
-                  !leg.poolName.startsWith(LiquidityProviders.Trident) &&
-                  !leg.poolName.startsWith(Bridge.BentBox)
+                  leg.poolName.startsWith('Wrap') ||
+                  (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
+                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
+                    !leg.poolName.startsWith(LiquidityProviders.Trident) &&
+                    !leg.poolName.startsWith(Bridge.BentoBox))
               )
             ) {
               log.info('Swap success (external)', {
@@ -212,7 +269,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                   leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                   leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
                   leg.poolName.startsWith(LiquidityProviders.Trident) ||
-                  leg.poolName.startsWith(Bridge.BentBox)
+                  leg.poolName.startsWith(Bridge.BentoBox)
               )
             ) {
               log.info('Swap failed (internal)', {
@@ -230,7 +287,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                   (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                     leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
                     leg.poolName.startsWith(LiquidityProviders.Trident) ||
-                    leg.poolName.startsWith(Bridge.BentBox))
+                    leg.poolName.startsWith(Bridge.BentoBox))
               ) &&
               trade?.route?.legs?.some(
                 (leg) =>
@@ -238,7 +295,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                   (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
                     !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
                     !leg.poolName.startsWith(LiquidityProviders.Trident) ||
-                    !leg.poolName.startsWith(Bridge.BentBox))
+                    !leg.poolName.startsWith(Bridge.BentoBox))
               )
             ) {
               log.info('Swap failed (mix)', {
@@ -252,11 +309,11 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
             } else if (
               trade?.route?.legs?.every(
                 (leg) =>
-                  !leg.poolName.startsWith('Wrap') &&
-                  !leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
-                  !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
-                  !leg.poolName.startsWith(LiquidityProviders.Trident) &&
-                  !leg.poolName.startsWith(Bridge.BentBox)
+                  leg.poolName.startsWith('Wrap') ||
+                  (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
+                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
+                    !leg.poolName.startsWith(LiquidityProviders.Trident) &&
+                    !leg.poolName.startsWith(Bridge.BentoBox))
               )
             ) {
               log.info('Swap failed (external)', {
