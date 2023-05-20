@@ -12,7 +12,7 @@ async function fetchUrl<T>(urlPath: string, options?: RequestInit) {
 
   return fetch(url, options).then((res) => {
     if (!res.ok) {
-      console.error('Error while fetching ' + url.hostname)
+      console.error(res.status, res.statusText, url.href)
       return
     }
     return res.json() as T
@@ -310,30 +310,124 @@ export async function getTreasuryHistoricalTvl() {
   return result
 }
 
-/* ===== Safe ===== */
+export const TREASURY_ADDRESS = '0xe94B5EEC1fA96CEecbD33EF5Baa8d00E4493F4f3'
 
-interface SafeBalance {
-  id: string
-  tokenAddress: Address | null
-  token: {
-    name: string
-    symbol: string
-    decimals: number
-    logoUri: string
-  } | null
-  balance: string
-  fiatBalance: string
-  fiatConversion: string
+// export async function getTreasurySnapshot() {
+//   const SAFE_URL = `https://safe-transaction-mainnet.safe.global/api/v1/safes/${TREASURY_ADDRESS}/balances/usd/?trusted=true&exclude_spam=true`
+//   const TOKENSETS_URL = 'https://api.tokensets.com/v2/funds/sushihouse'
+
+//   const [balancesRes = [], vestingValueUsd] = await Promise.all([
+//     fetchUrl<SafeBalance[]>(SAFE_URL),
+//     fetchUrl<{ fund: { market_cap: `$${string}` } }>(TOKENSETS_URL).then(
+//       (res) => Number(res?.fund.market_cap.replace(/[^0-9.]/g, '')) // remove $ and commas
+//     ),
+//   ])
+
+//   const balancesValueUsd = balancesRes?.reduce((acc, curr) => acc + Number(curr.fiatBalance), 0) ?? 0
+//   const totalValueUsd = balancesValueUsd + vestingValueUsd
+
+//   const balances: TreasuryBalance[] = balancesRes
+//     .filter((i) => +i.fiatBalance > 1_000)
+//     .map((info) => {
+//       const decimals = info.token?.decimals ?? 18
+//       const balance = Number((BigInt(info.balance) * 100n) / BigInt(10 ** decimals)) / 100
+//       const token = info.token && info.tokenAddress ? { ...info.token, address: info.tokenAddress } : null
+//       const portfolioShare = +info.fiatBalance / balancesValueUsd
+
+//       return { ...info, balance, id: info.tokenAddress ?? 'ETH', token, portfolioShare }
+//     })
+
+//   return {
+//     totalValueUsd,
+//     balancesValueUsd,
+//     vestingValueUsd,
+//     balances,
+//   }
+// }
+
+/* ===== Zapper ===== */
+const ZAPPER_API_KEY = '8f751c9d-0cbd-4038-a6b5-689e818de73e' // TODO: env var
+const ZAPPER_BASE_URL = 'https://api.zapper.xyz/v2/'
+
+const SUSHI_WALLETS = [
+  '0x19B3Eb3Af5D93b77a5619b047De0EED7115A19e7',
+  '0x850a57630a2012b2494779fbc86bbc24f2a7baef',
+  '0xe94b5eec1fa96ceecbd33ef5baa8d00e4493f4f3',
+  '0x1219bfa3a499548507b4917e33f17439b67a2177',
+  '0x978982772b8e4055b921bf9295c0d74eb36bc54e',
+  '0xf9e7d4c6d36ca311566f46c81e572102a2dc9f52',
+  '0x5ad6211cd3fde39a9cecb5df6f380b8263d1e277',
+  '0xa19b3b22f29e23e4c04678c94cfc3e8f202137d8',
+  '0x1026cbed7b7E851426b959BC69dcC1bf5876512d', // merkle distributor
+  '0xcbe6b83e77cdc011cc18f6f0df8444e5783ed982', // merkle distributor
+]
+
+const SUSHI_NETWORKS = ['ethereum', 'polygon', 'optimism', 'arbitrum', 'fantom']
+
+async function fetchZapper<T>(path: string) {
+  const encodedKey = Buffer.from(ZAPPER_API_KEY + ':').toString('base64')
+
+  const data = await fetchUrl<T>(ZAPPER_BASE_URL + path, {
+    method: 'GET',
+    headers: {
+      Authorization: 'Basic ' + encodedKey,
+    },
+  })
+
+  return data
 }
 
-export interface TreasuryBalance extends Omit<SafeBalance, 'token' | 'balance'> {
-  portfolioShare: number
+function getZapperParams() {
+  const params = new URLSearchParams()
+
+  for (const sushiAddress of SUSHI_WALLETS) {
+    params.append('addresses[]', sushiAddress)
+  }
+  for (const network of SUSHI_NETWORKS) {
+    params.append('networks[]', network)
+  }
+
+  return params
+}
+
+export async function getTreasuryVestingValue() {
+  const params = getZapperParams()
+
+  const appBalances = await fetchZapper<{ balanceUSD: number }[]>(`balances/apps?${params.toString()}`)
+  const totalVestingValue = appBalances?.reduce((acc, curr) => acc + curr.balanceUSD, 0)
+  return totalVestingValue
+}
+
+interface ZapperToken {
+  id: string
+  address: Address
+  name: string
+  symbol: string
+  price: number
   balance: number
-  token:
-    | (SafeBalance['token'] & {
-        address: Address
-      })
-    | null
+  balanceUSD: number
+  decimals: number
+}
+interface ZapperBalance {
+  address: Address
+  network: string
+  token: ZapperToken
+}
+
+export interface TreasuryBalance {
+  id: string
+  token: {
+    address: Address
+    name: string
+    symbol: string
+    chainId: number
+    decimals: number
+    isNative: boolean
+  }
+  price: number
+  balance: number
+  balanceUSD: number
+  portfolioShare: number
 }
 
 export interface TreasurySnapshot {
@@ -343,37 +437,69 @@ export interface TreasurySnapshot {
   balances: TreasuryBalance[]
 }
 
-export const TREASURY_ADDRESS = '0xe94B5EEC1fA96CEecbD33EF5Baa8d00E4493F4f3'
-
 export async function getTreasurySnapshot() {
-  const SAFE_URL = `https://safe-transaction-mainnet.safe.global/api/v1/safes/${TREASURY_ADDRESS}/balances/usd/?trusted=true&exclude_spam=true`
-  const TOKENSETS_URL = 'https://api.tokensets.com/v2/funds/sushihouse'
+  const params = getZapperParams()
 
-  const [balancesRes = [], vestingValueUsd] = await Promise.all([
-    fetchUrl<SafeBalance[]>(SAFE_URL),
-    fetchUrl<{ fund: { market_cap: `$${string}` } }>(TOKENSETS_URL).then(
-      (res) => Number(res?.fund.market_cap.replace(/[^0-9.]/g, '')) // remove $ and commas
-    ),
+  const [tokenBalances, appBalances] = await Promise.all([
+    fetchZapper<{ [key: string]: ZapperBalance[] }>(`balances/tokens?${params.toString()}`),
+    fetchZapper<{ balanceUSD: number }[]>(`balances/apps?${params.toString()}`),
   ])
 
-  const balancesValueUsd = balancesRes?.reduce((acc, curr) => acc + Number(curr.fiatBalance), 0) ?? 0
+  const flattened = tokenBalances
+    ? Object.values(tokenBalances)
+        .flat()
+        .map((b) => ({ ...b.token, network: b.network }))
+        .filter((i) => i.balanceUSD > 10_000)
+    : []
+
+  const combined = flattened.reduce((acc: (ZapperToken & { network: string })[], curr) => {
+    const existingToken = acc.find(({ symbol }) => symbol === curr.symbol)
+    if (existingToken) {
+      existingToken.price += curr.price
+      existingToken.balance += curr.balance
+      existingToken.balanceUSD += curr.balanceUSD
+    } else {
+      acc.push({ ...curr })
+    }
+    return acc
+  }, [])
+
+  const balancesValueUsd = combined.reduce((acc, curr) => acc + Number(curr.balanceUSD), 0)
+  const vestingValueUsd = appBalances?.reduce((acc, curr) => acc + curr.balanceUSD, 0) ?? 0
   const totalValueUsd = balancesValueUsd + vestingValueUsd
 
-  const balances: TreasuryBalance[] = balancesRes
-    .filter((i) => +i.fiatBalance > 1_000)
-    .map((info) => {
-      const decimals = info.token?.decimals ?? 18
-      const balance = Number((BigInt(info.balance) * 100n) / BigInt(10 ** decimals)) / 100
-      const token = info.token && info.tokenAddress ? { ...info.token, address: info.tokenAddress } : null
-      const portfolioShare = +info.fiatBalance / balancesValueUsd
+  const NETWORK_TO_ID = {
+    ethereum: 1,
+    polygon: 137,
+    optimism: 10,
+    arbitrum: 42161,
+    fantom: 250,
+  }
 
-      return { ...info, balance, id: info.tokenAddress ?? 'ETH', token, portfolioShare }
-    })
+  const balances: TreasuryBalance[] = combined.map((info) => {
+    const portfolioShare = info.balanceUSD / balancesValueUsd
+    const token = {
+      address: info.address,
+      name: info.name,
+      symbol: info.symbol,
+      chainId: NETWORK_TO_ID[info.network],
+      decimals: info.decimals,
+      isNative: info.address === '0x0000000000000000000000000000000000000000',
+    }
+    return {
+      id: info.id,
+      token,
+      portfolioShare,
+      price: info.price,
+      balance: info.balance,
+      balanceUSD: info.balanceUSD,
+    }
+  })
 
   return {
-    totalValueUsd,
     balancesValueUsd,
-    vestingValueUsd,
     balances,
+    vestingValueUsd,
+    totalValueUsd,
   }
 }

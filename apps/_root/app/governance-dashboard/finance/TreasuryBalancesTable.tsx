@@ -1,15 +1,12 @@
 'use client'
 
-import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 import { Native, Token } from '@sushiswap/currency'
-import { shortenAddress } from '@sushiswap/format'
 import { Currency, ProgressBar, ProgressColor } from '@sushiswap/ui'
-import { ExternalLink } from '@sushiswap/ui/future/components/ExternalLink'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { createColumnHelper, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 import React from 'react'
 
-import { formatNumber, TREASURY_ADDRESS, TreasuryBalance } from '../lib'
+import { formatNumber, TreasuryBalance } from '../lib'
 
 const columnHelper = createColumnHelper<TreasuryBalance>()
 
@@ -20,17 +17,11 @@ const columns = [
     meta: { className: 'pl-1' },
     cell: (info) => {
       const token = info.getValue()
-      const currency = token
-        ? new Token({
-            ...token,
-            chainId: 1,
-          })
-        : Native.onChain(1)
+      const currency = token.isNative ? Native.onChain(token.chainId) : new Token(token)
 
       return (
         <div className="flex items-center gap-2 pl-0.5 font-medium">
           <Currency.Icon currency={currency} width={24} height={24} />
-          {/* <Image src={token.logoUri} width={24} height={24} alt={`${token.symbol}-logo`} /> */}
           {currency.symbol}
         </div>
       )
@@ -41,17 +32,17 @@ const columns = [
 
     cell: (info) => <ProgressBar progress={info.getValue()} color={ProgressColor.BLUE} className="w-[100px]" />,
   }),
-  columnHelper.accessor('fiatBalance', {
+  columnHelper.accessor('balanceUSD', {
     header: () => <div className="w-full text-right">Value</div>,
     enableSorting: false,
-    cell: (info) => <div className="w-full text-right">${formatNumber(+info.getValue())}</div>,
+    cell: (info) => <div className="w-full text-right">${formatNumber(info.getValue())}</div>,
   }),
   columnHelper.accessor('balance', {
     header: () => <div className="w-full text-right">Amount</div>,
     enableSorting: false,
     cell: (info) => <div className="w-full text-right">{formatNumber(info.getValue())}</div>,
   }),
-  columnHelper.accessor('fiatConversion', {
+  columnHelper.accessor('price', {
     header: () => <div className="w-full text-right">Price</div>,
     enableSorting: false,
     meta: { className: 'pr-3' },
@@ -82,7 +73,7 @@ export function TreasuryBalancesTable({ balances }: { balances: TreasuryBalance[
     <div className="rounded-lg bg-[#1A2031]">
       <div className="h-full w-full border-b border-slate-800 px-5 pt-5 pb-7">
         <h3 className="mt-3 text-xl font-semibold">Treasury Snapshot</h3>
-        <ExternalLink
+        {/* <ExternalLink
           href={`https://etherscan.io/address/${TREASURY_ADDRESS}`}
           className="group inline-flex text-sm text-slate-400"
           endIcon={
@@ -90,7 +81,7 @@ export function TreasuryBalancesTable({ balances }: { balances: TreasuryBalance[
           }
         >
           <span>Wallet Address: {shortenAddress(TREASURY_ADDRESS)}</span>
-        </ExternalLink>
+        </ExternalLink> */}
       </div>
       <GenericTable<TreasuryBalance>
         loading={false}
