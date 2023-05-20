@@ -48,62 +48,61 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const { appType, network0, token0, token1, review } = useSwapState()
   const { approved } = useApproved('swap')
   const { data: trade } = useTrade({ crossChain: false })
-  console.log({ route: trade?.route })
 
-  // if (trade?.route && trade?.route?.status !== 'NoWay') {
-  //   if (
-  //     trade?.route?.legs?.every(
-  //       (leg) =>
-  //         leg.poolName.startsWith('Wrap') ||
-  //         leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-  //         leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
-  //         leg.poolName.startsWith(LiquidityProviders.Trident) ||
-  //         leg.poolName.startsWith(Bridge.BentoBox)
-  //     )
-  //   ) {
-  //     console.log('Swap success (internal)', {
-  //       route: trade?.route,
-  //     })
-  //   } else if (
-  //     trade?.route?.legs?.some(
-  //       (leg) =>
-  //         !leg.poolName.startsWith('Wrap') &&
-  //         (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-  //           leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
-  //           leg.poolName.startsWith(LiquidityProviders.Trident) ||
-  //           leg.poolName.startsWith(Bridge.BentoBox))
-  //     ) &&
-  //     trade?.route?.legs?.some(
-  //       (leg) =>
-  //         !leg.poolName.startsWith('Wrap') &&
-  //         (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-  //           !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
-  //           !leg.poolName.startsWith(LiquidityProviders.Trident) ||
-  //           !leg.poolName.startsWith(Bridge.BentoBox))
-  //     )
-  //   ) {
-  //     console.log('Swap success (mix)', {
-  //       route: trade?.route,
-  //     })
-  //   } else if (
-  //     trade?.route?.legs?.every(
-  //       (leg) =>
-  //         leg.poolName.startsWith('Wrap') ||
-  //         (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
-  //           !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
-  //           !leg.poolName.startsWith(LiquidityProviders.Trident) &&
-  //           !leg.poolName.startsWith(Bridge.BentoBox))
-  //     )
-  //   ) {
-  //     console.log('Swap success (external)', {
-  //       route: trade?.route,
-  //     })
-  //   } else {
-  //     console.log('Swap success (unknown)', {
-  //       route: trade?.route,
-  //     })
-  //   }
-  // }
+  if (trade?.route && trade?.route?.status !== 'NoWay') {
+    if (
+      trade?.route?.legs?.every(
+        (leg) =>
+          leg.poolName.startsWith('Wrap') ||
+          leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+          leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+          leg.poolName.startsWith(LiquidityProviders.Trident) ||
+          leg.poolName.startsWith(Bridge.BentoBox)
+      )
+    ) {
+      console.log('Swap success (internal)', {
+        route: trade?.route,
+      })
+    } else if (
+      trade?.route?.legs?.some(
+        (leg) =>
+          !leg.poolName.startsWith('Wrap') &&
+          (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+            leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+            leg.poolName.startsWith(LiquidityProviders.Trident) ||
+            leg.poolName.startsWith(Bridge.BentoBox))
+      ) &&
+      trade?.route?.legs?.some(
+        (leg) =>
+          !leg.poolName.startsWith('Wrap') &&
+          (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
+            !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) ||
+            !leg.poolName.startsWith(LiquidityProviders.Trident) ||
+            !leg.poolName.startsWith(Bridge.BentoBox))
+      )
+    ) {
+      console.log('Swap success (mix)', {
+        route: trade?.route,
+      })
+    } else if (
+      trade?.route?.legs?.every(
+        (leg) =>
+          leg.poolName.startsWith('Wrap') ||
+          (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
+            !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3) &&
+            !leg.poolName.startsWith(LiquidityProviders.Trident) &&
+            !leg.poolName.startsWith(Bridge.BentoBox))
+      )
+    ) {
+      console.log('Swap success (external)', {
+        route: trade?.route,
+      })
+    } else {
+      console.log('Swap success (unknown)', {
+        route: trade?.route,
+      })
+    }
+  }
 
   const [slippageTolerance] = useSlippageTolerance()
   const refetchBalances = useBalanceWeb3Refetch()
@@ -193,8 +192,6 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         .wait()
         .then((receipt) => {
           if (receipt.status === 1) {
-            setDialogState(ConfirmationDialogState.Success)
-
             if (
               trade?.route?.legs?.every(
                 (leg) =>
@@ -208,7 +205,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               log.info('Swap success (internal)', {
                 chainId: network0,
                 txHash: data.hash,
-                exporerLink: Chain.txUrl(network0, data.hash),
+                // exporerLink: Chain.txUrl(network0, data.hash),
                 route: trade?.route,
               })
             } else if (
@@ -232,7 +229,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               log.info('Swap success (mix)', {
                 chainId: network0,
                 txHash: data.hash,
-                exporerLink: Chain.txUrl(network0, data.hash),
+                // exporerLink: Chain.txUrl(network0, data.hash),
                 route: trade?.route,
               })
             } else if (
@@ -248,20 +245,19 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               log.info('Swap success (external)', {
                 chainId: network0,
                 txHash: data.hash,
-                exporerLink: Chain.txUrl(network0, data.hash),
+                // exporerLink: Chain.txUrl(network0, data.hash),
                 route: trade?.route,
               })
             } else {
               log.info('Swap success (unknown)', {
                 chainId: network0,
                 txHash: data.hash,
-                exporerLink: Chain.txUrl(network0, data.hash),
+                // exporerLink: Chain.txUrl(network0, data.hash),
                 route: trade?.route,
               })
             }
+            setDialogState(ConfirmationDialogState.Success)
           } else {
-            setDialogState(ConfirmationDialogState.Failed)
-            // Log swap success internal, mixed, or external
             if (
               trade?.route?.legs?.every(
                 (leg) =>
@@ -275,10 +271,10 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               log.info('Swap failed (internal)', {
                 chainId: network0,
                 txHash: data.hash,
-                exporerLink: Chain.txUrl(network0, data.hash),
+                // exporerLink: Chain.txUrl(network0, data.hash),
                 route: trade?.route,
-                data,
-                receipt,
+                // data,
+                // receipt,
               })
             } else if (
               trade?.route?.legs?.some(
@@ -301,10 +297,10 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               log.info('Swap failed (mix)', {
                 chainId: network0,
                 txHash: data.hash,
-                exporerLink: Chain.txUrl(network0, data.hash),
+                // exporerLink: Chain.txUrl(network0, data.hash),
                 route: trade?.route,
-                data,
-                receipt,
+                // data,
+                // receipt,
               })
             } else if (
               trade?.route?.legs?.every(
@@ -319,21 +315,22 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
               log.info('Swap failed (external)', {
                 chainId: network0,
                 txHash: data.hash,
-                exporerLink: Chain.txUrl(network0, data.hash),
+                // exporerLink: Chain.txUrl(network0, data.hash),
                 route: trade?.route,
-                data,
-                receipt,
+                // data,
+                // receipt,
               })
             } else {
               log.info('Swap failed (unknown)', {
                 chainId: network0,
                 txHash: data.hash,
-                exporerLink: Chain.txUrl(network0, data.hash),
+                // exporerLink: Chain.txUrl(network0, data.hash),
                 route: trade?.route,
-                data,
-                receipt,
+                // data,
+                // receipt,
               })
             }
+            setDialogState(ConfirmationDialogState.Failed)
           }
         })
         .finally(async () => {
