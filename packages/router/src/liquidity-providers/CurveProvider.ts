@@ -31,7 +31,7 @@ const sBTC = new Token({
   name: 'Synth sBTC',
 })
 
-const sETH = new Token({
+export const sETH = new Token({
   chainId: 1,
   address: '0x5e74c9036fb86bd7ecdcb084a0673efc32ea31cb',
   decimals: 18,
@@ -202,6 +202,13 @@ export async function getAllSupportedCurvePools(publicClient: PublicClient): Pro
 }
 
 const curvePoolABI = {
+  [CurvePoolType.Factory]: parseAbi([
+    'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns (uint256)',
+    'function A() pure returns (uint256)',
+    'function fee() pure returns (uint256)',
+    'function coins(uint256) pure returns (address)',
+    'function balances(uint256) pure returns (uint256)',
+  ]),
   [CurvePoolType.Legacy]: parseAbi([
     'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns (uint256)',
     'function A() pure returns (uint256)',
@@ -264,7 +271,7 @@ async function getCurvePoolCode(publicClient: PublicClient, poolAddress: string,
 }*/
 
 export class CurveProvider extends LiquidityProvider {
-  foundPools: Map<string, PoolCode> = new Map()
+  foundPools: PoolCode[] = []
 
   constructor(chainId: ChainId, web3Client: PublicClient) {
     super(chainId, web3Client)
@@ -389,7 +396,7 @@ export class CurveProvider extends LiquidityProvider {
     } else return pools.map(() => 1)
   }
 
-  async getCurvePoolCode(pools: Map<string, [CurvePoolType, Type, Type]>): Promise<PoolCode[]> {
+  async getCurvePoolCodes(pools: Map<string, [CurvePoolType, Type, Type]>): Promise<PoolCode[]> {
     const poolArray = Array.from(pools.entries())
     const poolsMulticall = (functionName: string, args?: any) => {
       return this.client.multicall({
@@ -434,10 +441,10 @@ export class CurveProvider extends LiquidityProvider {
         poolAddress,
         token0 as RToken,
         token1 as RToken,
-        Number(_fee[0] as bigint) / 1e10,
-        Number(_A[0] as bigint),
-        BigNumber.from((_balance0[0] as bigint).toString()),
-        BigNumber.from((_balance1[0] as bigint).toString()),
+        Number(_fee as bigint) / 1e10,
+        Number(_A as bigint),
+        BigNumber.from((_balance0 as bigint).toString()),
+        BigNumber.from((_balance1 as bigint).toString()),
         _ratio
       )
       return new CurvePoolCode(poolTines, this.getType(), this.getPoolProviderName())
@@ -453,6 +460,8 @@ export class CurveProvider extends LiquidityProvider {
    */
   override async fetchPoolsForToken(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void> {
     const pools = await this.getPoolsForTokens(t0, t1, excludePools)
+    this.foundPools = await this.getCurvePoolCodes(pools)
+    //console.log(JSON.stringify(this.foundPools, undefined, '   '))
   }
 
   /**
@@ -460,7 +469,7 @@ export class CurveProvider extends LiquidityProvider {
    * @returns PoolCode[]
    */
   override getCurrentPoolList(): PoolCode[] {
-    return Array.from(this.foundPools.values())
+    return this.foundPools
   }
 
   override stopFetchPoolsData(): void {

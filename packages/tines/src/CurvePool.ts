@@ -27,13 +27,23 @@ export class CurvePool extends RPool {
     super(address, token0, token1, fee, reserve0, reserve1, undefined, 90_000)
     this.A = A
     this.D = BigNumber.from(0)
-    const decimalsMin = Math.min(this.token0.decimals, this.token1.decimals)
-    this.rate0 = Math.pow(10, this.token1.decimals - decimalsMin)
-    this.rate1 = Math.pow(10, this.token0.decimals - decimalsMin) * ratio
-    this.rate0BN = getBigNumber(this.rate0)
-    this.rate1BN18 = getBigNumber(this.rate1 * 1e18) // 18 digits for precision
-    this.reserve0Rated = this.reserve0.mul(this.rate0BN)
-    this.reserve1Rated = this.reserve1.mul(this.rate1BN18).div(getBigNumber(1e18))
+    if (address) {
+      const decimalsMin = Math.min(this.token0.decimals, this.token1.decimals)
+      this.rate0 = Math.pow(10, this.token1.decimals - decimalsMin)
+      this.rate1 = Math.pow(10, this.token0.decimals - decimalsMin) * ratio
+      this.rate0BN = getBigNumber(this.rate0)
+      this.rate1BN18 = getBigNumber(this.rate1 * 1e18) // 18 digits for precision
+      this.reserve0Rated = this.reserve0.mul(this.rate0BN)
+      this.reserve1Rated = this.reserve1.mul(this.rate1BN18).div(getBigNumber(1e18))
+    } else {
+      // for deserialization
+      this.rate0 = 0
+      this.rate1 = 0
+      this.rate0BN = undefined as unknown as BigNumber
+      this.rate1BN18 = undefined as unknown as BigNumber
+      this.reserve0Rated = undefined as unknown as BigNumber
+      this.reserve1Rated = undefined as unknown as BigNumber
+    }
   }
 
   updateReserves(res0: BigNumber, res1: BigNumber) {

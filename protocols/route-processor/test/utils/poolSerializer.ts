@@ -3,6 +3,7 @@ import {
   BentoBridgePoolCode,
   BentoPoolCode,
   ConstantProductPoolCode,
+  CurvePoolCode,
   NativeWrapBridgePoolCode,
   PoolCode,
   UniV3PoolCode,
@@ -11,6 +12,7 @@ import {
   BridgeBento,
   BridgeUnlimited,
   ConstantProductRPool,
+  CurvePool,
   RebaseInternal,
   RToken,
   StableSwapRPool,
@@ -33,6 +35,8 @@ serializer.declarePersistable(BentoBridgePoolCode)
 serializer.declarePersistable(BridgeBento)
 serializer.declarePersistable(UniV3PoolCode)
 serializer.declarePersistable(UniV3Pool)
+serializer.declarePersistable(CurvePoolCode)
+serializer.declarePersistable(CurvePool)
 
 // default dir for pools snapshots
 const snapshotDirDefault = path.resolve(__dirname, '../pool-snapshots/')
@@ -53,6 +57,12 @@ function makeSerializable(poolCodes: PoolCode[]) {
       pool.liquidity = pool.liquidity.toString() as unknown as BigNumber
       pool.sqrtPriceX96 = pool.sqrtPriceX96.toString() as unknown as BigNumber
       pool.ticks.forEach((t) => (t.DLiquidity = t.DLiquidity.toString() as unknown as BigNumber))
+    } else if (pool instanceof CurvePool) {
+      pool.D = pool.D.toString() as unknown as BigNumber
+      pool.rate0BN = pool.rate0BN.toString() as unknown as BigNumber
+      pool.rate1BN18 = pool.rate1BN18.toString() as unknown as BigNumber
+      pool.reserve0Rated = pool.reserve0Rated.toString() as unknown as BigNumber
+      pool.reserve1Rated = pool.reserve1Rated.toString() as unknown as BigNumber
     }
   })
 }
@@ -71,6 +81,12 @@ function restoreAfterSerialization(poolCodes: PoolCode[]) {
       pool.liquidity = BigNumber.from(pool.liquidity)
       pool.sqrtPriceX96 = BigNumber.from(pool.sqrtPriceX96)
       pool.ticks.forEach((t) => (t.DLiquidity = BigNumber.from(t.DLiquidity)))
+    } else if (pool instanceof CurvePool) {
+      pool.D = BigNumber.from(pool.D)
+      pool.rate0BN = BigNumber.from(pool.rate0BN)
+      pool.rate1BN18 = BigNumber.from(pool.rate1BN18)
+      pool.reserve0Rated = BigNumber.from(pool.reserve0Rated)
+      pool.reserve1Rated = BigNumber.from(pool.reserve1Rated)
     }
   })
 }
