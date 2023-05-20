@@ -51,7 +51,6 @@ export const GenericTable = <T extends { id: string }>({
       setTimeout(() => setShowOverlay(true), 250)
     }
   }, [])
-
   return (
     <>
       {loadingOverlay && <LoadingOverlay show={showOverlay} />}
@@ -124,7 +123,7 @@ export const GenericTable = <T extends { id: string }>({
                     >
                       <Popover.Button>
                         <Table.tr
-                          testId={`testId-${r}`}
+                          testId={`${testId}-${r}`}
                           onClick={onClick}
                           className="cursor-pointer"
                           rowHeight={rowHeight}
@@ -180,7 +179,7 @@ export const GenericTable = <T extends { id: string }>({
                 } else {
                   return (
                     <Table.tr
-                      testId={`testId-${r}`}
+                      testId={`${testId}-${r}`}
                       onClick={onClick}
                       key={row.id}
                       className="cursor-pointer"

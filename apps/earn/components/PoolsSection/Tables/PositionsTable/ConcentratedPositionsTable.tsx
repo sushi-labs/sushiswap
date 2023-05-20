@@ -107,7 +107,7 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; p
           </div>
         </h1>
       </div>
-      <div className="rounded-2xl mb-4 overflow-hidden border border-gray-200 dark:border-slate-200/5">
+      <div className="mb-4 overflow-hidden border border-gray-200 rounded-2xl dark:border-slate-200/5">
         <GenericTable<ConcentratedLiquidityPosition>
           table={table}
           loading={Boolean(isLoading && address)}
@@ -115,6 +115,7 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; p
           pageSize={_positions?.length ? _positions.length : 1}
           linkFormatter={rowLink}
           loadingOverlay={false}
+          testId={'concentrated-positions'}
         />
       </div>
     </>
