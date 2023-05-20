@@ -21,7 +21,7 @@ import { getRouteProcessor4Code } from './TinesToRouteProcessor4'
 function TokenToRToken(t: Type): RToken {
   if (t instanceof Token) return t as RToken
   const nativeRToken: RToken = {
-    address: '',
+    address: undefined as unknown as string,
     name: t.name,
     symbol: t.symbol,
     chainId: t.chainId,

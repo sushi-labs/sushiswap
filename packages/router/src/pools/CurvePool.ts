@@ -30,7 +30,9 @@ export class CurvePoolCode extends PoolCode {
       .uint8(fromIndex)
       .uint8(toIndex)
       .address(to)
+      .address(leg.tokenTo.address || '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
       .toString()
+
     return code
   }
 }

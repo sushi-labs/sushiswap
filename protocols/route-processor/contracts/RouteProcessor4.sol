@@ -412,10 +412,23 @@ contract RouteProcessor4 is Ownable {
     int128 fromIndex = int8(stream.readUint8());
     int128 toIndex = int8(stream.readUint8());
     address to = stream.readAddress();
+    address tokenTo = stream.readAddress();
 
-    if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
-    IERC20(tokenIn).approve(pool, amountIn);    
-    uint256 amountOut = ICurve(pool).exchange(fromIndex, toIndex, amountIn, 0);
-    IERC20(tokenIn).safeTransfer(to, amountOut);
+    uint256 amountOut;
+    if (tokenIn == NATIVE_ADDRESS) {
+      amountOut = ICurve(pool).exchange{value: amountIn}(fromIndex, toIndex, amountIn, 0);
+    } else {
+      if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
+      IERC20(tokenIn).approve(pool, amountIn);    
+      amountOut = ICurve(pool).exchange(fromIndex, toIndex, amountIn, 0);
+    }
+
+    if (to != address(this)) {      
+      if(tokenTo == NATIVE_ADDRESS) {
+        payable(to).transfer(amountOut);
+      } else {
+        IERC20(tokenTo).safeTransfer(to, amountOut);
+      }
+    }
   }
 }

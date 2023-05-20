@@ -44,7 +44,7 @@ export abstract class RPool {
     this.token0 = token0
     this.token1 = token1
     if (token0 && token1) {
-      // exception just for serialization - tokenId should be set after
+      // exception just for deserialization - tokenId should be set after
       setTokenId(this.token0, this.token1)
     }
     this.fee = fee
