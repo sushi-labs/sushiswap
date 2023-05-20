@@ -15,7 +15,7 @@ export class BentoBridgePoolCode extends PoolCode {
     _providerName: string,
     bentoBoxAddress: `0x${string}`
   ) {
-    super(pool, liquidityProvider, Bridge.BentBox)
+    super(pool, liquidityProvider, Bridge.BentoBox)
     this.bentoBoxAddress = bentoBoxAddress
   }
 
