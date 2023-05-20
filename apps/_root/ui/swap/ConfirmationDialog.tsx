@@ -188,9 +188,13 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     ...(config.request && { request: { ...config.request, gasLimit: config.request.gasLimit.mul(120).div(100) } }),
     onSuccess: async (data) => {
       setReview(false)
+
       data
         .wait()
         .then((receipt) => {
+          log.info('swap recipt', {
+            receipt,
+          })
           if (receipt.status === 1) {
             if (
               trade?.route?.legs?.every(
@@ -202,11 +206,11 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                   leg.poolName.startsWith(Bridge.BentoBox)
               )
             ) {
-              log.info('Swap success (internal)', {
+              log.info('internal route', {
                 chainId: network0,
                 txHash: data.hash,
-                // exporerLink: Chain.txUrl(network0, data.hash),
-                route: trade?.route,
+                exporerLink: Chain.txUrl(network0, data.hash),
+                trade,
               })
             } else if (
               trade?.route?.legs?.some(
@@ -226,11 +230,11 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                     !leg.poolName.startsWith(Bridge.BentoBox))
               )
             ) {
-              log.info('Swap success (mix)', {
+              log.info('mix route', {
                 chainId: network0,
                 txHash: data.hash,
-                // exporerLink: Chain.txUrl(network0, data.hash),
-                route: trade?.route,
+                exporerLink: Chain.txUrl(network0, data.hash),
+                trade,
               })
             } else if (
               trade?.route?.legs?.every(
@@ -242,18 +246,18 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                     !leg.poolName.startsWith(Bridge.BentoBox))
               )
             ) {
-              log.info('Swap success (external)', {
+              log.info('external route', {
                 chainId: network0,
                 txHash: data.hash,
-                // exporerLink: Chain.txUrl(network0, data.hash),
-                route: trade?.route,
+                exporerLink: Chain.txUrl(network0, data.hash),
+                trade,
               })
             } else {
               log.info('Swap success (unknown)', {
                 chainId: network0,
                 txHash: data.hash,
-                // exporerLink: Chain.txUrl(network0, data.hash),
-                route: trade?.route,
+                exporerLink: Chain.txUrl(network0, data.hash),
+                trade,
               })
             }
             setDialogState(ConfirmationDialogState.Success)
@@ -268,7 +272,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                   leg.poolName.startsWith(Bridge.BentoBox)
               )
             ) {
-              log.info('Swap failed (internal)', {
+              log.error('internal route', {
                 chainId: network0,
                 txHash: data.hash,
                 // exporerLink: Chain.txUrl(network0, data.hash),
@@ -294,7 +298,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                     !leg.poolName.startsWith(Bridge.BentoBox))
               )
             ) {
-              log.info('Swap failed (mix)', {
+              log.error('mix route', {
                 chainId: network0,
                 txHash: data.hash,
                 // exporerLink: Chain.txUrl(network0, data.hash),
@@ -312,7 +316,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                     !leg.poolName.startsWith(Bridge.BentoBox))
               )
             ) {
-              log.info('Swap failed (external)', {
+              log.error('external route', {
                 chainId: network0,
                 txHash: data.hash,
                 // exporerLink: Chain.txUrl(network0, data.hash),
@@ -321,7 +325,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 // receipt,
               })
             } else {
-              log.info('Swap failed (unknown)', {
+              log.error('Swap failed (unknown)', {
                 chainId: network0,
                 txHash: data.hash,
                 // exporerLink: Chain.txUrl(network0, data.hash),
