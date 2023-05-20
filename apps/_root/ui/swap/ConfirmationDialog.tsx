@@ -192,7 +192,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
       data
         .wait()
         .then((receipt) => {
-          log.info('swap recipt', {
+          log.info('swap receipt', {
             receipt,
           })
           if (receipt.status === 1) {
