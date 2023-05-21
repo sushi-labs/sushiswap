@@ -649,17 +649,16 @@ export async function getNotionBudget() {
   const notionBudget = await fetchNotionDatabase<NotionBudget[]>(BUDGET_DB_ID)
 
   const propertyNames = [
-    'Design',
-    'Revenue',
-    'BizDev',
-    'Engineering',
-    'Marketing',
-    'Expenses',
     'Quarter',
-    'Left',
-    'Others',
+    'Revenue',
     'Budget',
-    'Month',
+    'Expenses',
+    'Engineering',
+    'BizDev',
+    'Marketing',
+    'Design',
+    'Others',
+    'Left',
   ]
 
   const sushiBudgets =
@@ -667,16 +666,16 @@ export async function getNotionBudget() {
       ?.filter((b) => b.properties.Expenses.formula.number)
       .map((budgetRow) => {
         const [
-          designExpense,
-          revenue,
-          bdExpense,
-          engineeringExpense,
-          marketingExpense,
-          expenses,
           quarter,
-          left,
-          othersExpense,
+          revenue,
           budget,
+          expenses,
+          engineeringExpense,
+          bdExpense,
+          marketingExpense,
+          designExpense,
+          othersExpense,
+          left,
         ] = propertyNames.map((name) => getNotionFieldValue(budgetRow, name))
         const expensesBreakdown = [
           { teamName: 'Design', expense: designExpense },
