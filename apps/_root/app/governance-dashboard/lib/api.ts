@@ -3,10 +3,9 @@ import { SUSHI_ADDRESS } from '@sushiswap/currency'
 import { gql, request } from 'graphql-request'
 
 import { DATE_FILTERS, GOV_STATUS } from './constants'
-
-import type { Address } from 'wagmi'
 import { endOfPreviousQuarter } from './helpers'
 
+import type { Address } from 'wagmi'
 async function fetchUrl<T>(urlPath: string, options?: RequestInit) {
   const url = new URL(urlPath)
 
@@ -312,40 +311,8 @@ export async function getTreasuryHistoricalTvl() {
 
 export const TREASURY_ADDRESS = '0xe94B5EEC1fA96CEecbD33EF5Baa8d00E4493F4f3'
 
-// export async function getTreasurySnapshot() {
-//   const SAFE_URL = `https://safe-transaction-mainnet.safe.global/api/v1/safes/${TREASURY_ADDRESS}/balances/usd/?trusted=true&exclude_spam=true`
-//   const TOKENSETS_URL = 'https://api.tokensets.com/v2/funds/sushihouse'
-
-//   const [balancesRes = [], vestingValueUsd] = await Promise.all([
-//     fetchUrl<SafeBalance[]>(SAFE_URL),
-//     fetchUrl<{ fund: { market_cap: `$${string}` } }>(TOKENSETS_URL).then(
-//       (res) => Number(res?.fund.market_cap.replace(/[^0-9.]/g, '')) // remove $ and commas
-//     ),
-//   ])
-
-//   const balancesValueUsd = balancesRes?.reduce((acc, curr) => acc + Number(curr.fiatBalance), 0) ?? 0
-//   const totalValueUsd = balancesValueUsd + vestingValueUsd
-
-//   const balances: TreasuryBalance[] = balancesRes
-//     .filter((i) => +i.fiatBalance > 1_000)
-//     .map((info) => {
-//       const decimals = info.token?.decimals ?? 18
-//       const balance = Number((BigInt(info.balance) * 100n) / BigInt(10 ** decimals)) / 100
-//       const token = info.token && info.tokenAddress ? { ...info.token, address: info.tokenAddress } : null
-//       const portfolioShare = +info.fiatBalance / balancesValueUsd
-
-//       return { ...info, balance, id: info.tokenAddress ?? 'ETH', token, portfolioShare }
-//     })
-
-//   return {
-//     totalValueUsd,
-//     balancesValueUsd,
-//     vestingValueUsd,
-//     balances,
-//   }
-// }
-
 /* ===== Zapper ===== */
+
 const ZAPPER_API_KEY = '8f751c9d-0cbd-4038-a6b5-689e818de73e' // TODO: env var
 const ZAPPER_BASE_URL = 'https://api.zapper.xyz/v2/'
 
@@ -502,4 +469,67 @@ export async function getTreasurySnapshot() {
     vestingValueUsd,
     totalValueUsd,
   }
+}
+
+/* ===== Notion ===== */
+
+interface NotionEvent {
+  // id: 'f1f5caf7-3cd0-44cb-b59e-e2f553239019'
+  properties: {
+    Date: { date: { start: string } }
+    'Location (City, Country)': { rich_text: [{ plain_text: string }] }
+    'Event URL': { url: string }
+    'Event Name': { title: [{ plain_text: string }] }
+    Image: { url: string }
+  }
+}
+
+export interface SushiEvent {
+  imgUrl: string
+  title: string
+  date: string
+  location: string
+  eventUrl: string
+}
+
+const NOTION_API_KEY = 'secret_ju72Hrhy650UPp8g2ZgK3ptjiGC6XwONF1veM9QqQ4I' // TODO: env var
+const NOTION_BASE_URL = 'https://api.notion.com/v1/'
+const NOTION_VERSION = '2022-06-28'
+
+async function fetchNotionDatabase<T>(databaseId: string) {
+  const data = await fetchUrl<{ results: T }>(`https://api.notion.com/v1/databases/${databaseId}/query`, {
+    headers: {
+      Authorization: `Bearer ${NOTION_API_KEY}`,
+      'Notion-Version': NOTION_VERSION,
+    },
+    method: 'POST',
+  })
+
+  return data?.results
+}
+
+export async function getNotionEvents() {
+  const EVENTS_DB_ID = 'f2ab0048afd842c38ab4a21e2ceb121f'
+  const notionEvents = await fetchNotionDatabase<NotionEvent[]>(EVENTS_DB_ID)
+
+  const events: SushiEvent[] =
+    notionEvents
+      ?.filter((e) => e.properties['Event Name'].title.length)
+      .map((event) => {
+        const date = event.properties.Date.date.start
+        const location = event.properties['Location (City, Country)'].rich_text[0].plain_text
+        const title = event.properties['Event Name'].title[0].plain_text
+        const imgUrl = event.properties.Image.url
+        const eventUrl = event.properties['Event URL'].url
+        return { date, location, title, imgUrl, eventUrl }
+      }) ?? []
+
+  return events
+}
+
+export async function getNotionBudget() {
+  const BUDGET_DB_ID = 'bd11844610cf4203a92c4058bdefdd08'
+  const notionBudget = await fetchNotionDatabase<NotionEvent[]>(BUDGET_DB_ID)
+
+  console.log('notionBudget', JSON.stringify(notionBudget, null, 2))
 }
