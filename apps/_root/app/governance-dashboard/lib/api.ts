@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI_ADDRESS } from '@sushiswap/currency'
 import { gql, request } from 'graphql-request'
+import { z } from 'zod'
 
 import { DATE_FILTERS, GOV_STATUS } from './constants'
 import { endOfPreviousQuarter } from './helpers'
@@ -473,27 +474,145 @@ export async function getTreasurySnapshot() {
 
 /* ===== Notion ===== */
 
+interface NotionDateField {
+  type: 'date'
+  date: { start: string }
+}
+
+interface NotionTextField {
+  type: 'rich_text'
+  rich_text: [{ plain_text: string }]
+}
+
+interface NotionTitleField {
+  type: 'title'
+  title: [{ plain_text: string }]
+}
+
+interface NotionUrlField {
+  type: 'url'
+  url: string
+}
+
+interface NotionNumberField {
+  type: 'number'
+  number: number
+}
+
+interface NotionFormulaField {
+  type: 'formula'
+  formula: NotionNumberField
+}
+
+interface NotionSelectField {
+  type: 'select'
+  select: { name: string }
+}
 interface NotionEvent {
-  // id: 'f1f5caf7-3cd0-44cb-b59e-e2f553239019'
   properties: {
-    Date: { date: { start: string } }
-    'Location (City, Country)': { rich_text: [{ plain_text: string }] }
-    'Event URL': { url: string }
-    'Event Name': { title: [{ plain_text: string }] }
-    Image: { url: string }
+    Date: NotionDateField
+    'Location (City, Country)': NotionTextField
+    'Event URL': NotionUrlField
+    'Event Name': NotionTitleField
+    Image: NotionUrlField
   }
 }
 
-export interface SushiEvent {
-  imgUrl: string
-  title: string
-  date: string
-  location: string
-  eventUrl: string
+interface NotionBudget {
+  properties: {
+    Design: NotionNumberField
+    Revenue: NotionNumberField
+    BizDev: NotionNumberField
+    Engineering: NotionNumberField
+    Marketing: NotionNumberField
+    Expenses: NotionFormulaField
+    Quarter: NotionSelectField
+    Left: NotionFormulaField
+    Others: NotionNumberField
+    Budget: NotionNumberField
+    Month: NotionTitleField
+  }
 }
 
+interface NotionNetflow {
+  properties: {
+    Month: NotionTitleField
+    Inflow: NotionNumberField
+    Outflow: NotionNumberField
+  }
+}
+
+function getNotionFieldValue(
+  row: {
+    properties: {
+      [key: string]:
+        | NotionDateField
+        | NotionTextField
+        | NotionTitleField
+        | NotionUrlField
+        | NotionNumberField
+        | NotionFormulaField
+        | NotionSelectField
+    }
+  },
+  fieldName: string
+) {
+  const field = row.properties[fieldName]
+  switch (field.type) {
+    case 'date':
+      return field.date.start
+    case 'rich_text':
+      return field.rich_text[0].plain_text
+    case 'title':
+      return field.title[0].plain_text
+    case 'url':
+      return field.url
+    case 'number':
+      return field.number
+    case 'formula':
+      return field.formula.number
+    case 'select':
+      return field.select.name
+    default:
+      console.error(`Unknown field type for ${fieldName}: ${JSON.stringify(field)}`)
+  }
+}
+
+const SushiEvent = z.object({
+  imgUrl: z.string(),
+  title: z.string(),
+  date: z.string(),
+  location: z.string(),
+  eventUrl: z.string(),
+})
+
+export type SushiEvent = z.infer<typeof SushiEvent>
+
+const SushiBudget = z.object({
+  quarter: z.string(),
+  expenses: z.number(),
+  revenue: z.number(),
+  budget: z.number(),
+  left: z.number(),
+  expensesBreakdown: z
+    .object({
+      teamName: z.string(),
+      expense: z.number(),
+    })
+    .array(),
+})
+
+export type SushiBudget = z.infer<typeof SushiBudget>
+
+const SushiTokenNetflow = z.object({
+  month: z.string(),
+  inflow: z.number(),
+  outflow: z.number(),
+})
+
+export type SushiTokenNetflow = z.infer<typeof SushiTokenNetflow>
+
 const NOTION_API_KEY = 'secret_ju72Hrhy650UPp8g2ZgK3ptjiGC6XwONF1veM9QqQ4I' // TODO: env var
-const NOTION_BASE_URL = 'https://api.notion.com/v1/'
 const NOTION_VERSION = '2022-06-28'
 
 async function fetchNotionDatabase<T>(databaseId: string) {
@@ -512,24 +631,88 @@ export async function getNotionEvents() {
   const EVENTS_DB_ID = 'f2ab0048afd842c38ab4a21e2ceb121f'
   const notionEvents = await fetchNotionDatabase<NotionEvent[]>(EVENTS_DB_ID)
 
+  const propertyNames = ['Date', 'Location (City, Country)', 'Event Name', 'Image', 'Event URL']
   const events: SushiEvent[] =
     notionEvents
       ?.filter((e) => e.properties['Event Name'].title.length)
       .map((event) => {
-        const date = event.properties.Date.date.start
-        const location = event.properties['Location (City, Country)'].rich_text[0].plain_text
-        const title = event.properties['Event Name'].title[0].plain_text
-        const imgUrl = event.properties.Image.url
-        const eventUrl = event.properties['Event URL'].url
-        return { date, location, title, imgUrl, eventUrl }
+        const [date, location, title, imgUrl, eventUrl] = propertyNames.map((name) => getNotionFieldValue(event, name))
+        const sushiEvent = SushiEvent.parse({ date, location, title, imgUrl, eventUrl })
+        return sushiEvent
       }) ?? []
 
   return events
 }
 
+/** TODO:
+ * change quarter notation to just string instead of select
+ */
+
 export async function getNotionBudget() {
   const BUDGET_DB_ID = 'bd11844610cf4203a92c4058bdefdd08'
-  const notionBudget = await fetchNotionDatabase<NotionEvent[]>(BUDGET_DB_ID)
+  const notionBudget = await fetchNotionDatabase<NotionBudget[]>(BUDGET_DB_ID)
 
-  console.log('notionBudget', JSON.stringify(notionBudget, null, 2))
+  const propertyNames = [
+    'Design',
+    'Revenue',
+    'BizDev',
+    'Engineering',
+    'Marketing',
+    'Expenses',
+    'Quarter',
+    'Left',
+    'Others',
+    'Budget',
+    'Month',
+  ]
+
+  const sushiBudgets =
+    notionBudget
+      ?.filter((b) => b.properties.Expenses.formula.number)
+      .map((budgetRow) => {
+        const [
+          designExpense,
+          revenue,
+          bdExpense,
+          engineeringExpense,
+          marketingExpense,
+          expenses,
+          quarter,
+          left,
+          othersExpense,
+          budget,
+        ] = propertyNames.map((name) => getNotionFieldValue(budgetRow, name))
+        const expensesBreakdown = [
+          { teamName: 'Design', expense: designExpense },
+          { teamName: 'BizDev', expense: bdExpense },
+          { teamName: 'Engineering', expense: engineeringExpense },
+          { teamName: 'Marketing', expense: marketingExpense },
+          { teamName: 'Others', expense: othersExpense },
+          { teamName: 'Available Budget', expense: left },
+        ]
+
+        const sushiBudget = SushiBudget.parse({ quarter, expenses, revenue, budget, expensesBreakdown, left })
+        return sushiBudget
+      }) ?? []
+
+  return sushiBudgets
+}
+
+export async function getNotionTokenNetflow() {
+  const NETFLOW_DB_ID = '4ac4261888374ba6a1863792f2bd2fc0'
+  const notionNetflow = await fetchNotionDatabase<NotionNetflow[]>(NETFLOW_DB_ID)
+
+  const propertyNames = ['Month', 'Inflow', 'Outflow']
+
+  const sushiNetflows =
+    notionNetflow
+      ?.filter((b) => b.properties.Month.title.length)
+      .map((budgetRow) => {
+        const [month, inflow, outflow] = propertyNames.map((name) => getNotionFieldValue(budgetRow, name))
+
+        const sushiNetflow = SushiTokenNetflow.parse({ month, inflow, outflow })
+        return sushiNetflow
+      }) ?? []
+
+  return sushiNetflows
 }

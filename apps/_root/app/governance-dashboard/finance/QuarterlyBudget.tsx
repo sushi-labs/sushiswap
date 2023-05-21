@@ -6,18 +6,18 @@ import React, { useMemo, useState } from 'react'
 import { Cell, Pie, PieChart, Tooltip } from 'recharts'
 
 import { ChartTooltip, KpiCard } from '../components'
-import { formatNumber, getPercentageDiff } from '../lib'
+import { SushiBudget, formatNumber, getPercentageDiff } from '../lib'
 
 const CHART_COLORS = {
-  engineering: '#5A89DD',
-  bd: '#BF60EE',
-  marketing: '#EEC660',
-  design: '#EE7A60',
-  others: '#8560EE',
-  available: 'transparent',
+  Engineering: '#5A89DD',
+  BizDev: '#BF60EE',
+  Marketing: '#EEC660',
+  Design: '#EE7A60',
+  Others: '#8560EE',
+  'Available Budget': 'transparent',
 }
-// TODO: type
-export function QuarterlyBudget({ budgetData }) {
+
+export function QuarterlyBudget({ budgetData }: { budgetData: SushiBudget[] }) {
   const [selectedQuarterIndex, setSelectedQuarterIndex] = useState(budgetData.length - 1)
   const selectedQuarter = budgetData[selectedQuarterIndex]
 
@@ -99,8 +99,8 @@ export function QuarterlyBudget({ budgetData }) {
                   paddingAngle={5}
                   dataKey="expense"
                 >
-                  {selectedQuarter.expensesBreakdown.map(({ teamKey }) => (
-                    <Cell key={`cell-${teamKey}`} fill={CHART_COLORS[teamKey] ?? '#5689E6'} />
+                  {selectedQuarter.expensesBreakdown.map(({ teamName }) => (
+                    <Cell key={`cell-${teamName}`} fill={CHART_COLORS[teamName] ?? '#5689E6'} />
                   ))}
                 </Pie>
                 <Tooltip
@@ -129,15 +129,15 @@ export function QuarterlyBudget({ budgetData }) {
             </div>
 
             <div className="h-full space-y-5 text-sm">
-              {selectedQuarter.expensesBreakdown.map(({ teamKey, teamName, expense }) => (
-                <dl key={teamKey} className="flex items-center justify-between gap-[110px]">
+              {selectedQuarter.expensesBreakdown.map(({ teamName, expense }) => (
+                <dl key={teamName} className="flex items-center justify-between gap-[110px]">
                   <dt className="flex items-center gap-2">
                     <div
                       className={classNames(
                         'h-[14px] w-[14px] rounded-sm',
-                        teamKey === 'available' && 'border border-slate-400'
+                        teamName === 'Available Budget' && 'border border-slate-400'
                       )}
-                      style={{ backgroundColor: CHART_COLORS[teamKey] ?? '#5689E6' }}
+                      style={{ backgroundColor: CHART_COLORS[teamName] ?? '#5689E6' }}
                     />
                     {teamName}
                   </dt>

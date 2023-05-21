@@ -1,45 +1,10 @@
 import React from 'react'
 
 import { TokenNetflowChart } from './TokenNetflowChart'
-
-async function getTokenNetflowData() {
-  const tokenNetflow = [
-    {
-      date: 'Aug 22',
-      inflow: 1,
-      outflow: 2,
-    },
-    {
-      date: 'Sep 22',
-      inflow: 1,
-      outflow: 2,
-    },
-    {
-      date: 'Oct 22',
-      inflow: 1,
-      outflow: 2,
-    },
-    {
-      date: 'Nov 22',
-      inflow: 2,
-      outflow: 1,
-    },
-    {
-      date: 'Dec 22',
-      inflow: 1.2,
-      outflow: 2.5,
-    },
-    {
-      date: 'Jan 23',
-      inflow: 2,
-      outflow: 3,
-    },
-  ]
-  return tokenNetflow
-}
+import { getNotionTokenNetflow } from '../lib'
 
 export async function TokenNetflow() {
-  const tokenNetflowData = await getTokenNetflowData()
+  const tokenNetflowData = await getNotionTokenNetflow()
 
   return (
     <div className="h-full w-full rounded-lg bg-[#1A2031] p-5">

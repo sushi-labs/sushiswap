@@ -4,10 +4,9 @@ import React from 'react'
 import { Bar, BarChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 import { ChartTooltip } from '../components'
-import { formatNumber } from '../lib'
+import { formatNumber, SushiTokenNetflow } from '../lib'
 
-// TODO: type
-export function TokenNetflowChart(props) {
+export function TokenNetflowChart(props: { tokenNetflowData: SushiTokenNetflow[] }) {
   const tokenNetflowData = props.tokenNetflowData.map((month) => ({ ...month, outflow: -month.outflow }))
 
   return (
@@ -23,7 +22,7 @@ export function TokenNetflowChart(props) {
             <stop offset="100.2%" stopColor="#C662F5" />
           </linearGradient>
         </defs>
-        <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#97A3B7' }} />
+        <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#97A3B7' }} />
         <YAxis axisLine={false} tickLine={false} padding={{ bottom: 8 }} tick={{ fill: '#97A3B7' }} />
         <Tooltip
           cursor={{ fill: 'transparent' }}
