@@ -644,10 +644,6 @@ export async function getNotionEvents() {
   return events
 }
 
-/** TODO:
- * change quarter notation to just string instead of select
- */
-
 export async function getNotionBudget() {
   const BUDGET_DB_ID = 'bd11844610cf4203a92c4058bdefdd08'
   const notionBudget = await fetchNotionDatabase<NotionBudget[]>(BUDGET_DB_ID)

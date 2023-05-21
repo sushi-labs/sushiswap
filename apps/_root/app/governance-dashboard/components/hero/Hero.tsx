@@ -13,7 +13,7 @@ export function Hero() {
       <div className="bg-gradient-to-r from-[#0993EC]/10 to-[#F338C3]/[5%] pt-14">
         <Container className="mx-auto flex justify-between gap-4 px-4">
           <div>
-            <p className="text-sm font-medium text-slate-400">Last Update: Jan 11, 2023</p> {/** TODO: */}
+            <p className="text-sm font-medium text-slate-400">Last Update: MAy 21, 2023</p>
             <h1 className="mt-3 text-5xl font-bold">
               <p>Welcome to Sushi</p>
               <p className="bg-gradient-to-r from-[#0993EC] to-[#F338C3] bg-clip-text text-transparent">

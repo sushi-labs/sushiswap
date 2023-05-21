@@ -4,14 +4,14 @@ import { CircleIcon, classNames } from '@sushiswap/ui'
 import React from 'react'
 
 import { KpiCard } from '../components'
-import { formatNumber, getPercentageDiff } from '../lib'
+import { formatNumber, getPercentageDiff, SushiBudget, TreasurySnapshot } from '../lib'
 
 export function TreasuryKpis({
   treasurySnapshot,
   budgetData,
 }: {
-  treasurySnapshot: { totalValueUsd: number; balancesValueUsd: number; vestingValueUsd: number }
-  budgetData: any | undefined // TODO:
+  treasurySnapshot: TreasurySnapshot
+  budgetData: SushiBudget[]
 }) {
   const currentQuarter = budgetData[budgetData.length - 1]
   const previousQuarter = budgetData[budgetData.length - 2]
@@ -60,7 +60,7 @@ export function TreasuryKpis({
     },
     {
       title: 'Quarterly Budget / Burn Rate',
-      value: formatNumber(currentQuarter.budget), // TODO:
+      value: formatNumber(currentQuarter.budget),
       additional: (
         <dd className={classNames('text-sm', budgetDiff < 0 ? 'text-red-400' : 'text-green-400')}>
           {budgetDiff.toLocaleString('EN', { style: 'percent', maximumFractionDigits: 2 })} from last quarter
