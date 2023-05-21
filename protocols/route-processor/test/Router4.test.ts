@@ -59,9 +59,9 @@ function getRandomExp(rnd: () => number, min: number, max: number) {
   return res
 }
 
-async function setRouterPrimaryBalance(router: string, token?: string): Promise<void> {
+async function setRouterPrimaryBalance(router: string, token?: string, amount = 1n): Promise<void> {
   if (token) {
-    await setTokenBalance(token, router, 1n)
+    await setTokenBalance(token, router, amount)
   }
 }
 
@@ -708,11 +708,31 @@ describe('End-to-end RouteProcessor4 test', async function () {
   }
 
   if (network.config.chainId == 1) {
-    it.only('Curve pool 0xc5424b857f758e906013f3555dad202e4bdb4567: Native => sETH', async function () {
+    it('Curve pool 0xc5424b857f758e906013f3555dad202e4bdb4567: Native => sETH', async function () {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       intermidiateResult[0] = getBigNumber(1000 * 1e18)
       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), sETH, intermidiateResult, usedPools, [
+        LiquidityProviders.CurveSwap,
+      ])
+    })
+
+    it.skip('Curve pool 0xc5424b857f758e906013f3555dad202e4bdb4567: sETH => Native', async function () {
+      await env.snapshot.restore()
+      const amoutIn = BigInt(1e18)
+      await setRouterPrimaryBalance(env.rp.address, sETH.address, amoutIn * 2n)
+      intermidiateResult[0] = BigNumber.from(amoutIn.toString())
+      intermidiateResult = await updMakeSwap(env, sETH, Native.onChain(chainId), intermidiateResult, undefined, [
+        LiquidityProviders.CurveSwap,
+      ])
+    })
+
+    it.skip('Curve Native inside: sETH => Native => WETH', async function () {
+      await env.snapshot.restore()
+      const amoutIn = BigInt(1e18)
+      await setRouterPrimaryBalance(env.rp.address, sETH.address, amoutIn * 2n)
+      intermidiateResult[0] = BigNumber.from(amoutIn.toString())
+      intermidiateResult = await updMakeSwap(env, sETH, WNATIVE[chainId], intermidiateResult, undefined, [
         LiquidityProviders.CurveSwap,
       ])
     })
