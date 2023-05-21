@@ -20,12 +20,16 @@
     "@sushiswap/client": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/format": "workspace:*",
+    "@sushiswap/react-query": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
+    "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
+    "@sushiswap/math": "workspace:*",
     "@sushiswap/redux-localstorage": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
-    "@tanstack/react-table": "8.5.0",
+    "@tanstack/react-table": "8.9.1",
+    "@tanstack/react-query": "4.28.0",
     "@vercel/analytics": "0.1.5",
     "@vercel/og": "0.0.20",
     "date-fns": "2.29.3",
@@ -41,7 +45,8 @@
     "react-dom": "18.2.0",
     "react-infinite-scroll-component": "^6.1.0",
     "react-redux": "8.0.5",
-    "wagmi": "0.12.12"
+    "wagmi": "0.12.13",
+    "zod": "3.21.4"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

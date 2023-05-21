@@ -275,6 +275,21 @@ export const MINICHEF_SUBGRAPH_NAME = {
 export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging' as const
 export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2' as const
 
+export const FURO_ENABLED_NETWORKS = [
+  ChainId.ETHEREUM,
+  ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
+  ChainId.BSC,
+  ChainId.FANTOM,
+  ChainId.GNOSIS,
+  ChainId.HARMONY,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
+  ChainId.OPTIMISM,
+  ChainId.POLYGON,
+] as const
+
+// TODO: Make typesafe
 export const FURO_SUBGRAPH_NAME: Record<string, string> = {
   [ChainId.ETHEREUM]: 'sushi-subgraphs/furo-ethereum',
   [ChainId.GÖRLI]: 'sushi-subgraphs/furo-goerli',

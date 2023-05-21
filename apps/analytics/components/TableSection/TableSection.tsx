@@ -1,27 +1,15 @@
 import { Tab } from '@headlessui/react'
-import React, { FC, Fragment, useCallback } from 'react'
+import React, { FC, Fragment } from 'react'
 
-import { PoolTable } from '../PoolTable'
-import { SelectedTable, usePoolFilters } from '../PoolsFiltersProvider'
-import { TableFilters } from '../Table/TableFilters'
-import { TokenTable } from '../TokenTable'
+import { PoolTable } from './Pools'
 import { Button } from '@sushiswap/ui/future/components/button'
+// import { TokenTable } from './Tokens'
+import { FuroTokenTable } from './FuroTokens'
 
 export const TableSection: FC = () => {
-  const { setFilters, selectedTable } = usePoolFilters()
-
-  const onChange = useCallback(
-    (val: number) => {
-      setFilters({
-        selectedTable: val === 0 ? SelectedTable.Markets : SelectedTable.Tokens,
-      })
-    },
-    [setFilters]
-  )
-
   return (
     <section className="flex flex-col">
-      <Tab.Group onChange={onChange}>
+      <Tab.Group>
         <div className="flex items-center gap-2 mb-4">
           <Tab as={Fragment}>
             {({ selected }) => (
@@ -38,8 +26,14 @@ export const TableSection: FC = () => {
               </Button>
             )}
           </Tab> */}
+          <Tab as={Fragment}>
+            {({ selected }) => (
+              <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
+                Furo Tokens
+              </Button>
+            )}
+          </Tab>
         </div>
-        <TableFilters />
         <Tab.Panels>
           <Tab.Panel unmount={false}>
             <PoolTable />
@@ -47,6 +41,9 @@ export const TableSection: FC = () => {
           {/* <Tab.Panel unmount={false}>
             <TokenTable />
           </Tab.Panel> */}
+          <Tab.Panel unmount={false}>
+            <FuroTokenTable />
+          </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
     </section>

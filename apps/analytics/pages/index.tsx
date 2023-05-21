@@ -5,42 +5,27 @@ import { SWRConfig, unstable_serialize } from 'swr'
 import { unstable_serialize as unstable_serialize_infinite } from 'swr/infinite'
 import { getPools, getPoolCount, getPoolCountUrl, getPoolsUrl } from '@sushiswap/client'
 
-import { ChartSection, Layout, PoolsFiltersProvider, TableSection } from '../components'
-import { getBundles, getCharts, getTokenCount, getTokens } from '../lib/api'
+import { ChartSection, Layout, TableSection } from '../components'
+import { getBundles, getCharts, getFuroTokens, getTokenCount, getTokens } from '../lib/api'
 import { defaultPoolsArgs } from 'lib/constants'
+import { FilterProvider } from 'components/Filters'
+import { getFuroTokensUrl } from 'components/TableSection/FuroTokens/useFuroTokens'
 
 export const getStaticProps: GetStaticProps = async () => {
-  const [pools, tokens, charts, poolCount, tokenCount, bundles] = await Promise.all([
+  const [pools, charts, poolCount, bundles, furoTokens /*tokens, tokenCount*/] = await Promise.all([
     getPools(defaultPoolsArgs),
-    getTokens(),
     getCharts(),
     getPoolCount(defaultPoolsArgs),
-    getTokenCount(),
     getBundles(),
+    getFuroTokens({ chainIds: SUPPORTED_CHAIN_IDS }),
+    // getTokens(),
+    // getTokenCount(),
   ])
+
   return {
     props: {
       fallback: {
         [unstable_serialize_infinite(() => getPoolsUrl(defaultPoolsArgs))]: pools,
-        [unstable_serialize({
-          url: '/analytics/api/tokens',
-          args: {
-            sorting: [
-              {
-                id: 'liquidityUSD',
-                desc: true,
-              },
-            ],
-            selectedNetworks: SUPPORTED_CHAIN_IDS,
-            pagination: {
-              pageIndex: 0,
-              pageSize: 20,
-            },
-            query: '',
-            extraQuery: '',
-          },
-        })]: tokens,
-
         [unstable_serialize({
           url: '/analytics/api/charts',
           args: {
@@ -48,8 +33,27 @@ export const getStaticProps: GetStaticProps = async () => {
           },
         })]: charts,
         [getPoolCountUrl(defaultPoolsArgs)]: poolCount,
-        [`/analytics/api/tokens/count`]: tokenCount,
         [`/analytics/api/bundles`]: bundles,
+        [getFuroTokensUrl({ chainIds: SUPPORTED_CHAIN_IDS })]: furoTokens,
+        // [unstable_serialize({
+        //   url: '/analytics/api/tokens',
+        //   args: {
+        //     sorting: [
+        //       {
+        //         id: 'liquidityUSD',
+        //         desc: true,
+        //       },
+        //     ],
+        //     selectedNetworks: SUPPORTED_CHAIN_IDS,
+        //     pagination: {
+        //       pageIndex: 0,
+        //       pageSize: 20,
+        //     },
+        //     query: '',
+        //     extraQuery: '',
+        //   },
+        // })]: tokens,
+        // [`/analytics/api/tokens/count`]: tokenCount,
       },
     },
     revalidate: 900,
@@ -76,10 +80,10 @@ const _Index: FC = () => {
             </p>
           </div>
         </section>
-        <PoolsFiltersProvider>
+        <FilterProvider>
           <ChartSection />
           <TableSection />
-        </PoolsFiltersProvider>
+        </FilterProvider>
       </div>
     </Layout>
   )

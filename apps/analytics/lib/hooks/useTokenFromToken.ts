@@ -1,6 +1,7 @@
 import { Native, Token } from '@sushiswap/currency'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { useMemo } from 'react'
+
 export const useTokenFromToken = (token: GraphToken) => {
   return useMemo(() => {
     const id = token.id.includes(':') ? token.id.split(':')[1] : token.id
