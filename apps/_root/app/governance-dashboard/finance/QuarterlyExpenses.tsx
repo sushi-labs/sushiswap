@@ -2,11 +2,10 @@
 
 import React from 'react'
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { formatNumber } from '../lib'
+import { SushiBudget, formatNumber } from '../lib'
 import { ChartTooltip } from '../components'
 
-export function QuarterlyExpenses({ budgetData }) {
-  // TODO: type
+export function QuarterlyExpenses({ budgetData }: { budgetData: SushiBudget[] }) {
   return (
     <div className="h-full w-full rounded-lg bg-[#1A2031] p-5">
       <div className="flex items-center gap-[14px]">
@@ -57,7 +56,13 @@ export function QuarterlyExpenses({ budgetData }) {
               }
             />
             <XAxis dataKey="quarter" axisLine={false} tickLine={false} tick={{ fill: '#97A3B7' }} />
-            <YAxis axisLine={false} tickLine={false} padding={{ bottom: 8 }} tick={{ fill: '#97A3B7' }} />
+            <YAxis
+              axisLine={false}
+              tickLine={false}
+              padding={{ bottom: 8 }}
+              tick={{ fill: '#97A3B7' }}
+              tickFormatter={(value) => String(formatNumber(+value))}
+            />
             <Bar dataKey="expenses" fill="url(#expenses)" radius={20} barSize={12} />
             <Bar dataKey="revenue" fill="url(#revenue)" radius={20} barSize={12} />
           </BarChart>

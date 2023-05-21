@@ -23,7 +23,13 @@ export function TokenNetflowChart(props: { tokenNetflowData: SushiTokenNetflow[]
           </linearGradient>
         </defs>
         <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#97A3B7' }} />
-        <YAxis axisLine={false} tickLine={false} padding={{ bottom: 8 }} tick={{ fill: '#97A3B7' }} />
+        <YAxis
+          axisLine={false}
+          tickLine={false}
+          padding={{ bottom: 8 }}
+          tick={{ fill: '#97A3B7' }}
+          tickFormatter={(value) => String(formatNumber(+value))}
+        />
         <Tooltip
           cursor={{ fill: 'transparent' }}
           content={({ active, payload, label }) =>
