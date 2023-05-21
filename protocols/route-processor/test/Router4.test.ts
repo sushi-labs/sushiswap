@@ -29,6 +29,7 @@ import {
   PermitData,
   PoolFilter,
   Router,
+  sETH,
 } from '@sushiswap/router'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
 import { BridgeBento, getBigNumber, RouteStatus, RPool, StableSwapRPool } from '@sushiswap/tines'
@@ -703,6 +704,17 @@ describe('End-to-end RouteProcessor4 test', async function () {
         throwed = true
       }
       expect(throwed, 'Transfer value to not payable address should fail').equal(true)
+    })
+  }
+
+  if (network.config.chainId == 1) {
+    it.only('Curve pool 0xc5424b857f758e906013f3555dad202e4bdb4567: Native => sETH', async function () {
+      await env.snapshot.restore()
+      const usedPools = new Set<string>()
+      intermidiateResult[0] = getBigNumber(1000 * 1e18)
+      intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), sETH, intermidiateResult, usedPools, [
+        LiquidityProviders.CurveSwap,
+      ])
     })
   }
 })

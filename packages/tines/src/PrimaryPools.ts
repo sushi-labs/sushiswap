@@ -40,7 +40,7 @@ export abstract class RPool {
     minLiquidity = TYPICAL_MINIMAL_LIQUIDITY,
     swapGasCost = TYPICAL_SWAP_GAS_COST
   ) {
-    this.address = address
+    this.address = address || ''
     this.token0 = token0
     this.token1 = token1
     if (token0 && token1) {
