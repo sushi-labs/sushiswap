@@ -134,11 +134,11 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
 
   // if token0 is a dollar-stable asset, set it as the quote token
   const stables = [
-    DAI[chainId as keyof typeof DAI_ADDRESS],
-    USDC[chainId as keyof typeof USDC_ADDRESS],
-    USDT[chainId as keyof typeof USDT_ADDRESS],
+    DAI[chainId as keyof typeof DAI],
+    USDC[chainId as keyof typeof USDC],
+    USDT[chainId as keyof typeof USDT],
   ]
-  if (stables.some((stable) => stable.equals(token0))) {
+  if (stables.some((stable) => stable?.equals(token0))) {
     return {
       priceLower: position.token0PriceUpper.invert(),
       priceUpper: position.token0PriceLower.invert(),
@@ -148,8 +148,8 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
   }
 
   // if token1 is an ETH-/BTC-stable asset, set it as the base token
-  const bases = [Native.onChain(chainId).wrapped, WBTC[chainId as keyof typeof WBTC_ADDRESS]]
-  if (bases.some((base) => base && base.equals(token1))) {
+  const bases = [Native.onChain(chainId).wrapped, WBTC[chainId as keyof typeof WBTC]]
+  if (bases.some((base) => base?.equals(token1))) {
     return {
       priceLower: position.token0PriceUpper.invert(),
       priceUpper: position.token0PriceLower.invert(),

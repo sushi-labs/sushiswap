@@ -130,7 +130,7 @@ export const Component: FC<CurrencyInputProps> = ({
                   e.stopPropagation()
                 }}
                 className={classNames(
-                  'flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12]'
+                  'flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap'
                 )}
               >
                 {currency ? (
