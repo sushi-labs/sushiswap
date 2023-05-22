@@ -45,7 +45,7 @@ export const TokenSelectorCustomTokensOverlay: FC = () => {
                   <List.MenuItem
                     key={token.address}
                     title={token.symbol || ''}
-                    subtitle={chains[token.chainId].name}
+                    subtitle={chains[token.chainId]?.name}
                     onClick={() => mutate('remove', [token.wrapped])}
                     hoverIcon={TrashIcon}
                   />
