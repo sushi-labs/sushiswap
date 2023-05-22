@@ -746,11 +746,17 @@ describe('End-to-end RouteProcessor4 test', async function () {
       ])
     })
 
-    it.skip('Curve Native inside: sETH => Native => WETH', async function () {
+    it('Curve Native inside: sETH - Native - WETH', async function () {
       await env.snapshot.restore()
+
       const amoutIn = BigInt(1e18)
-      await setRouterPrimaryBalance(env.rp.address, sETH.address, amoutIn * 2n)
-      intermidiateResult[0] = BigNumber.from(amoutIn.toString())
+      const amountInBN = BigNumber.from(amoutIn.toString())
+
+      await setRouterPrimaryBalance(env.user.address, sETH.address, amoutIn * 2n)
+      const WrappedBaseTokenContract = await new ethers.Contract(sETH.address, erc20Abi, env.user)
+      await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountInBN)
+
+      intermidiateResult[0] = amountInBN
       intermidiateResult = await updMakeSwap(env, sETH, WNATIVE[chainId], intermidiateResult, undefined, [
         LiquidityProviders.CurveSwap,
       ])
