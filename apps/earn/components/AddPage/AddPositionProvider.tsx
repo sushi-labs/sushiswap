@@ -14,7 +14,6 @@ import { ChainId } from '@sushiswap/chain'
 import { z } from 'zod'
 import { isUniswapV2FactoryChainId, UniswapV2FactoryChainId } from '@sushiswap/sushiswap'
 import { isAddress } from 'ethers/lib/utils'
-import { useToken } from '@sushiswap/react-query'
 import { useRouter } from 'next/router'
 import {
   ConstantProductPoolFactoryChainId,

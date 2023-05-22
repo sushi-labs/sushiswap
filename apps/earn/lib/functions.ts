@@ -14,7 +14,7 @@ import {
   WBTC,
   WBTC_ADDRESS,
 } from '@sushiswap/currency'
-import { Pool } from '@sushiswap/client'
+import { Pool, Protocol } from '@sushiswap/client'
 import {
   tickToPrice,
   encodeSqrtRatioX96,
@@ -43,6 +43,9 @@ export const isStablePool = (pool: Pair | StablePool | null): pool is StablePool
 export const isLegacyPool = (pool: Pair | ConstantProductPool | StablePool | null): pool is Pair => {
   return pool instanceof Pair
 }
+
+export const isTridentPoolProtocol = (protocol: Protocol) =>
+  ([Protocol.BENTOBOX_CLASSIC, Protocol.BENTOBOX_STABLE] as Protocol[]).includes(protocol)
 
 export const incentiveRewardToToken = (chainId: ChainId, incentive: Pool['incentives'][0]): Token => {
   return new Token({

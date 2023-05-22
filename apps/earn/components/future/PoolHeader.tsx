@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useMemo } from 'react'
+import React, { FC, useMemo } from 'react'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { NetworkIcon } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/future/components/currency'
@@ -7,7 +7,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/v3-sdk'
 import { unwrapToken } from '../../lib/functions'
 import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
-import { formatNumber, formatPercent } from '@sushiswap/format'
+import { formatPercent } from '@sushiswap/format'
 
 type PoolHeader = {
   title?: string
