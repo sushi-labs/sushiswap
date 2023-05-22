@@ -1,0 +1,70 @@
+
+query SushiSwapV3PoolDayData(
+    $id: ID!
+    $block: Block_height,
+    $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  poolDayData(
+    id: $id,
+    block: $block, 
+    subgraphError: $subgraphError
+) {
+    id
+    date
+    pool {
+        id
+    }
+    liquidity
+    sqrtPrice
+    token0Price
+    token1Price
+    tick
+    feeGrowthGlobal0X128
+    feeGrowthGlobal1X128
+    tvlUSD
+    volumeToken0
+    volumeToken1
+    volumeUSD
+    feesUSD
+    txCount
+    open
+    high
+    low
+    close
+  }
+}
+
+query SushiSwapV3PoolHourData(
+    $id: ID!
+    $block: Block_height,
+    $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  poolHourData(
+    id: $id,
+    block: $block, 
+    subgraphError: $subgraphError
+  ) {
+    id
+    periodStartUnix
+    pool {
+        id
+    }
+    liquidity
+    sqrtPrice
+    token0Price
+    token1Price
+    tick
+    feeGrowthGlobal0X128
+    feeGrowthGlobal1X128
+    tvlUSD
+    volumeToken0
+    volumeToken1
+    volumeUSD
+    feesUSD
+    txCount
+    open
+    high
+    low
+    close
+  }
+}

@@ -74,7 +74,8 @@ export const TradeStats: FC = () => {
           </span>
         </div>
 
-        {(appType === AppType.Swap || (appType === AppType.xSwap && recipient)) && (
+        {/*{(appType === AppType.Swap || (appType === AppType.xSwap && recipient)) && (*/}
+        {appType === AppType.Swap && (
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-700 dark:text-slate-400">Network fee</span>
             <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">

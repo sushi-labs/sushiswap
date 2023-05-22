@@ -1,7 +1,6 @@
 import '@sushiswap/ui/index.css'
 
 import { App, ThemeProvider } from '@sushiswap/ui'
-import { client } from '@sushiswap/wagmi/client'
 import { Analytics } from '@vercel/analytics/react'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
@@ -9,9 +8,10 @@ import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import React, { FC, useEffect } from 'react'
-import { WagmiConfig } from '@sushiswap/wagmi'
+
 import SEO from '../next-seo.config.mjs'
-import { QueryClientProvider } from 'components/QueryClientProvider'
+import { QueryClientProvider } from '../components/QueryClientProvider'
+import { WagmiConfig } from '../components/WagmiConfig'
 
 declare global {
   interface Window {
@@ -49,17 +49,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/favicon.ico?v=1" />
       </Head>
-      <WagmiConfig client={client}>
-        <QueryClientProvider>
-          <ThemeProvider>
-            <App.Shell>
-              <DefaultSeo {...SEO} />
-              <Component {...pageProps} />
-            </App.Shell>
-          </ThemeProvider>
-        </QueryClientProvider>
-      </WagmiConfig>
-      <Analytics />
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
       <Script
         id="gtag-init"
@@ -75,6 +64,17 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         `,
         }}
       />
+      <WagmiConfig>
+        <QueryClientProvider>
+          <ThemeProvider forcedTheme="dark">
+            <App.Shell>
+              <DefaultSeo {...SEO} />
+              <Component {...pageProps} />
+            </App.Shell>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </WagmiConfig>
+      <Analytics />
     </>
   )
 }

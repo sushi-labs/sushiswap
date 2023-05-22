@@ -127,10 +127,17 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
 
       data
         .wait()
-        .then(() => {
-          log.info('Cross Chain Swap success (source)', {
-            trade,
-          })
+        .then((receipt) => {
+          if (receipt.status === 1) {
+            log.info('cross chain swap success (source)', {
+              trade,
+            })
+          } else {
+            log.info('cross chain swap failed (source)', {
+              trade,
+            })
+          }
+
           setStepStates({
             source: StepState.Success,
             bridge: StepState.Pending,
@@ -138,7 +145,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
           })
         })
         .catch(() => {
-          log.info('Cross Chain Swap failed (source)', {
+          log.info('cross chain swap error (source)', {
             trade,
           })
           setStepStates({

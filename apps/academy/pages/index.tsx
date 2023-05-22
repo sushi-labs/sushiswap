@@ -140,7 +140,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   }
 
   return (
-    <>
+    <div className="relative">
       <AcademySeo seo={seo} />
       <HomeBackground />
       <Container maxWidth="6xl" className="flex flex-col pb-16 mx-auto sm:pb-24">
@@ -333,7 +333,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
           />
         )}
       </AdditionalArticles>
-    </>
+    </div>
   )
 }
 
