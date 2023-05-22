@@ -1,18 +1,15 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
-import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
+import { PencilIcon } from '@heroicons/react/outline'
 import { Amount, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
-import { FundSource } from '@sushiswap/hooks'
 import { JSBI } from '@sushiswap/math'
-import { classNames, DEFAULT_INPUT_CLASSNAME, Dots, Typography } from '@sushiswap/ui'
-import { _useSendTransaction as useSendTransaction } from '@sushiswap/wagmi'
+import { classNames, Dots } from '@sushiswap/ui'
+import { _useSendTransaction as useSendTransaction, useAccount, useContract } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount, useContract } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { Button } from '@sushiswap/ui/future/components/button/Button'
-import { CurrencyInput } from '../components'
 import { Stream } from '../lib'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
@@ -21,10 +18,9 @@ import { Dialog } from '@sushiswap/ui/future/components/dialog/Dialog'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { Switch } from '@sushiswap/ui/future/components/Switch'
-import { BalancePanel } from '@sushiswap/wagmi/future/components/Web3Input/Currency/BalancePanel'
 
 interface UpdateModalProps {
-  stream?: Stream
+  stream: Stream
   abi: NonNullable<Parameters<typeof useContract>['0']>['abi']
   address: string
   chainId: BentoBoxV1ChainId
@@ -170,7 +166,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
               <Switch checked={topUp} onChange={() => setTopUp((prevState) => !prevState)} size="sm" />
             </div>
             <div className={classNames(topUp ? '' : 'opacity-40 pointer-events-none', 'flex flex-col gap-2')}>
-              <Input.Text label="Amount" id={'furo-stream-top-up'} value={amount} onChange={setAmount} />
+              <Input.Text<string> label="Amount" id={'furo-stream-top-up'} value={amount} onChange={setAmount} />
             </div>
           </div>
           <div className="flex flex-col">

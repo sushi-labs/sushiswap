@@ -44,13 +44,7 @@ const UserDashboard: FC<InferGetServerSidePropsType<typeof getServerSideProps>> 
   return (
     <SWRConfig value={{ fallback }}>
       <NextSeo title="User" />
-      <Layout
-        backdrop={
-          <div className="fixed inset-0 right-0 z-0 pointer-events-none opacity-20">
-            <BackgroundVector width="100%" preserveAspectRatio="none" />
-          </div>
-        }
-      >
+      <Layout>
         <Dashboard chainId={chainId} address={address} showOutgoing={show === 'outgoing'} />
       </Layout>
     </SWRConfig>

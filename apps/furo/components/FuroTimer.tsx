@@ -1,6 +1,5 @@
 import { useInterval } from '@sushiswap/hooks'
-import { Typography } from '@sushiswap/ui'
-import { FC, ReactNode, useState } from 'react'
+import { FC, ReactElement, useState } from 'react'
 
 import { FuroStatus, Stream, Vesting } from '../lib'
 
@@ -13,7 +12,7 @@ interface FuroTimerState {
 
 interface FuroTimerProps {
   furo?: Stream | Vesting
-  children?(params: FuroTimerState): ReactNode
+  children(params: FuroTimerState): ReactElement
 }
 
 export const FuroTimer: FC<FuroTimerProps> = ({ furo, children }) => {
@@ -36,95 +35,5 @@ export const FuroTimer: FC<FuroTimerProps> = ({ furo, children }) => {
     }
   }, 1000)
 
-  if (typeof children === 'function') {
-    return children(remaining)
-  }
-
-  // Render normally
-  if (remaining) {
-    return (
-      <div className="flex flex-col gap-2">
-        <div className="flex justify-center gap-6 text-slate-200">
-          <div className="flex flex-col text-center">
-            <Typography variant="lg" weight={500} className="text-slate-200">
-              {remaining.days}
-            </Typography>
-            <Typography variant="sm" className="text-slate-500">
-              days
-            </Typography>
-          </div>
-          <div className="flex flex-col text-center">
-            <Typography variant="lg" weight={500} className="text-slate-200">
-              {remaining.hours}
-            </Typography>
-            <Typography variant="sm" className="text-slate-500">
-              hours
-            </Typography>
-          </div>
-          <div className="flex flex-col text-center">
-            <Typography variant="lg" weight={500} className="text-slate-200">
-              {remaining.minutes}
-            </Typography>
-            <Typography variant="sm" className="text-slate-500">
-              min
-            </Typography>
-          </div>
-          <div className="flex flex-col text-center">
-            <Typography variant="lg" weight={500} className="text-slate-200">
-              {remaining.seconds}
-            </Typography>
-            <Typography variant="sm" className="text-slate-500">
-              sec
-            </Typography>
-          </div>
-        </div>
-        <Typography variant="xs" weight={400} className="tracking-[0.4em] text-slate-200 text-center">
-          {furo?.isStarted ? `REMAINING` : `TILL STREAM STARTS`}
-        </Typography>
-      </div>
-    )
-  }
-
-  // No data available
-  return (
-    <div className="flex flex-col gap-2">
-      <div className="flex justify-center gap-6 text-slate-200">
-        <div className="flex flex-col text-center">
-          <Typography variant="lg" weight={500} className="text-slate-200">
-            00
-          </Typography>
-          <Typography variant="sm" className="text-slate-500">
-            days
-          </Typography>
-        </div>
-        <div className="flex flex-col text-center">
-          <Typography variant="lg" weight={500} className="text-slate-200">
-            00
-          </Typography>
-          <Typography variant="sm" className="text-slate-500">
-            hours
-          </Typography>
-        </div>
-        <div className="flex flex-col text-center">
-          <Typography variant="lg" weight={500} className="text-slate-200">
-            00
-          </Typography>
-          <Typography variant="sm" className="text-slate-500">
-            min
-          </Typography>
-        </div>
-        <div className="flex flex-col text-center">
-          <Typography variant="lg" weight={500} className="text-slate-200">
-            00
-          </Typography>
-          <Typography variant="sm" className="text-slate-500">
-            sec
-          </Typography>
-        </div>
-      </div>
-      <Typography variant="xs" weight={400} className="tracking-[0.4em] text-slate-200 text-center">
-        {furo?.status === FuroStatus.CANCELLED ? `CANCELLED` : 'COMPLETED'}
-      </Typography>
-    </div>
-  )
+  return <>{children(remaining)}</>
 }

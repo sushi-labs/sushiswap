@@ -3,7 +3,7 @@ import { PolymorphicComponentPropsWithRef, PolymorphicRef } from '../../types'
 import classNames from 'classnames'
 
 interface Props {
-  dep: string
+  dep: string | undefined
   timeout?: number
   className?: string
   children: ReactNode | ((isBlinking: boolean) => ReactNode)

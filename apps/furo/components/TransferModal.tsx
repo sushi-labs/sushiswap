@@ -34,7 +34,7 @@ export const TransferModal: FC<TransferModalProps> = ({
 }) => {
   const { address } = useAccount()
   const [open, setOpen] = useState(false)
-  const [recipient, setRecipient] = useState<string>()
+  const [recipient, setRecipient] = useState<string>('')
 
   const contract = useContract({
     address: contractAddress,
@@ -110,7 +110,7 @@ export const TransferModal: FC<TransferModalProps> = ({
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-4 !pb-3 !bg-white dark:bg-slate-800">
           <Dialog.Header title="Transfer Stream" onClose={() => setOpen(false)} />
-          <Typography variant="sm" weight={400} className="text-gray-700 dark:text-slate-400">
+          <div className="text-gray-700 dark:text-slate-400">
             This will transfer a stream consisting of{' '}
             <span className="font-medium text-gray-900 dark:text-slate-200">
               {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
@@ -120,8 +120,8 @@ export const TransferModal: FC<TransferModalProps> = ({
               Please note that this will transfer ownership of the entire stream to the recipient. You will not be able
               to withdraw from this stream after transferring
             </p>
-          </Typography>
-          <Text label="Address" value={recipient} onChange={setRecipient} id="ens-input" />
+          </div>
+          <Text<string> label="Address" value={recipient} onChange={setRecipient} id="ens-input" />
           <Checker.Connect size="xl" fullWidth>
             <Checker.Network size="xl" fullWidth chainId={chainId}>
               <Button

@@ -108,7 +108,7 @@ const _Streams: FC = () => {
   )
 
   const [streamedAmount, streamedPercentage] = useMemo(() => {
-    if (!stream) return [undefined, undefined]
+    if (!stream || !balance) return [undefined, undefined]
     return [
       stream.withdrawnAmount.add(balance),
       new Percent(stream.withdrawnAmount.add(balance).quotient, stream.totalAmount.quotient),
@@ -116,7 +116,7 @@ const _Streams: FC = () => {
   }, [balance, stream])
 
   const [withdrawnAmount, withdrawnPercentage] = useMemo(() => {
-    if (!stream) return [undefined, undefined]
+    if (!stream || !balance) return [undefined, undefined]
     return [
       stream.totalAmount.subtract(balance),
       new Percent(stream.totalAmount.subtract(balance).quotient, stream.totalAmount.quotient),
@@ -376,10 +376,10 @@ const _Streams: FC = () => {
                     </List.KeyValue>
                     <List.KeyValue title="Withdrawn" subtitle="amount">
                       <div className="flex flex-col items-end">
-                        <Blink dep={withdrawnPercentage.toSignificant(3)} as="span" timeout={1500}>
+                        <Blink dep={withdrawnPercentage?.toSignificant(3)} as="span" timeout={1500}>
                           {(isBlinking) => (
                             <span className="flex items-center gap-1">
-                              {withdrawnPercentage.toSignificant(3)}%
+                              {withdrawnPercentage?.toSignificant(3)}%
                               {isBlinking && (
                                 <ArrowUpIcon className="rotate-45" strokeWidth={3} width={14} height={14} />
                               )}
@@ -387,7 +387,7 @@ const _Streams: FC = () => {
                           )}
                         </Blink>
                         <span className="text-[10px] font-medium text-slate-500">
-                          {withdrawnAmount.toSignificant(6)} {withdrawnAmount.currency.symbol}
+                          {withdrawnAmount?.toSignificant(6)} {withdrawnAmount?.currency.symbol}
                         </span>
                       </div>
                     </List.KeyValue>

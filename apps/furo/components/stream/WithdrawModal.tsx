@@ -1,17 +1,11 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
-import { CheckCircleIcon } from '@heroicons/react/solid'
 import { tryParseAmount } from '@sushiswap/currency'
-import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
-import { classNames, DEFAULT_INPUT_BG, Dots, Typography } from '@sushiswap/ui'
-import { useFuroStreamContract, _useSendTransaction as useSendTransaction, Web3Input } from '@sushiswap/wagmi'
+import { Dots } from '@sushiswap/ui'
+import { _useSendTransaction as useSendTransaction, useAccount, useFuroStreamContract } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-
-import { BottomPanel, CurrencyInputBase } from '../../components'
-import { Stream } from '../../lib'
-import { useStreamBalance } from '../../lib'
+import { Stream, useStreamBalance } from '../../lib'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroStreamChainId } from '@sushiswap/furo'
 import { Button } from '@sushiswap/ui/future/components/button/Button'
@@ -114,9 +108,9 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-4 !pb-3 !bg-white dark:bg-slate-800">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
-          <Typography variant="sm" weight={400} className="text-gray-700 dark:text-slate-400">
+          <div className="text-gray-700 dark:text-slate-400">
             You have{' '}
-            <span onClick={() => setInput(balance?.toExact())} role="button" className="font-semibold text-blue">
+            <span onClick={() => setInput(balance?.toExact() ?? '')} role="button" className="font-semibold text-blue">
               {balance?.toSignificant(6)} {balance?.currency.symbol}
             </span>{' '}
             available for withdrawal. <br />
@@ -124,8 +118,8 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
             <a className="text-blue font-semibold" href={Chain.from(stream.chainId).getAccountUrl(stream.recipient.id)}>
               {shortenAddress(stream.recipient.id)}
             </a>
-          </Typography>
-          <Text label="Amount" value={input} onChange={setInput} id="withdraw-modal-input" />
+          </div>
+          <Text<string> label="Amount" value={input} onChange={setInput} id="withdraw-modal-input" />
           <div className="col-span-2 pt-2">
             <Checker.Connect size="xl" fullWidth>
               <Checker.Network size="xl" fullWidth chainId={chainId}>

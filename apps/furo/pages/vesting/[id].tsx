@@ -116,13 +116,7 @@ const _VestingPage: FC = () => {
   return (
     <>
       <NextSeo title={`Vesting #${id}`} />
-      <Layout
-        backdrop={
-          <div className="fixed inset-0 right-0 z-0 pointer-events-none opacity-20">
-            <BackgroundVector width="100%" preserveAspectRatio="none" />
-          </div>
-        }
-      >
+      <Layout>
         <Breadcrumb home="/dashboard" links={LINKS(router.query.id as string)} />
         <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-8 pt-6 md:pt-24">
           <div className="flex justify-center">
