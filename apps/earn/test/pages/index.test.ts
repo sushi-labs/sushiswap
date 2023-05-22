@@ -45,7 +45,7 @@ const USDC = new Token({
   name: 'USDC Stablecoin',
 })
 
-// Tests will only work for polygon atm
+// // Tests will only work for polygon atm
 test.describe('V3', () => {
   test.beforeEach(async ({ page }) => {
     const url = (process.env.PLAYWRIGHT_URL as string).concat('/add').concat(`?chainId=${CHAIN_ID}`)
@@ -113,7 +113,6 @@ test.describe('V3', () => {
   })
 })
 
-// Tests will only work for polygon atm
 test.describe('V2', () => {
   test.beforeEach(async ({ page }) => {
     const url = (process.env.PLAYWRIGHT_URL as string).concat(`/add/v2/${CHAIN_ID}`)
@@ -149,13 +148,13 @@ test.describe('V2', () => {
       '/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/add'
     )
     await page.goto(addLiquidityUrl, { timeout: 25_000 })
-    await manageLiquidity(page, 'STAKE')
+    await manageStaking(page, 'STAKE')
 
     const removeLiquidityUrl = (process.env.PLAYWRIGHT_URL as string).concat(
       '/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/remove'
     )
     await page.goto(removeLiquidityUrl, { timeout: 25_000 })
-    await manageLiquidity(page, 'UNSTAKE')
+    await manageStaking(page, 'UNSTAKE')
     await page.reload({ timeout: 25_000 })
     await removeLiquidityV2(page)
   })
@@ -265,16 +264,24 @@ async function removeLiquidityV3(page: Page) {
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
 
-async function manageLiquidity(page: Page, type: 'STAKE' | 'UNSTAKE') {
+async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   await switchNetwork(page, CHAIN_ID)
   // check if the max button is visible, otherwise expand the section. For some reason the default state seem to be inconsistent, closed/open.
+  // TODO: fix this in the UI, the default state should be consistent
   const maxButtonSelector = page.locator(`[testdata-id=${type.toLowerCase()}-max-button]`)
   if (!(await maxButtonSelector.isVisible())) {
+  await expect(maxButtonSelector).toBeEnabled()
     await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-header]`).click()
   }
+  await expect(maxButtonSelector).toBeVisible()
+  await expect(maxButtonSelector).toBeEnabled()
   await maxButtonSelector.click()
-  await approve(page, 'approve-token0')
-  await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`).click({ timeout: 2_000 })
+  await approve(page, `${type.toLowerCase()}-approve-slp`)
+  
+  const actionSelector = page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`)
+  await expect(actionSelector).toBeVisible()
+  await expect(actionSelector).toBeEnabled()
+  await actionSelector.click({ timeout: 2_000 })
 
   const regex = new RegExp(`(Successfully ${type.toLowerCase()}d .* SLP tokens)`)
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
@@ -283,13 +290,13 @@ async function manageLiquidity(page: Page, type: 'STAKE' | 'UNSTAKE') {
 async function removeLiquidityV2(page: Page) {
   await switchNetwork(page, CHAIN_ID)
   await page.locator('[testdata-id=remove-liquidity-max-button]').click()
+  await approve(page, 'approve-remove-liquidity-slp')
 
-  await approve(page, 'remove-liquidity-trident-approve-token')
-  
-  const removeLiquidityLocator = page.locator('[testdata-id=remove-liquidity-trident-button]')
+  const removeLiquidityLocator = page.locator('[testdata-id=remove-liquidity-button]')
 
   await expect(removeLiquidityLocator).toBeVisible()
   await expect(removeLiquidityLocator).toBeEnabled()
+  // await timeout(5_000)
   await removeLiquidityLocator.click()
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')

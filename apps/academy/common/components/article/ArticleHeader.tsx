@@ -33,7 +33,7 @@ export const ArticleHeader: FC<ArticleHeader> = ({ article }) => {
         </div>
         <DifficultyLabel article={article} />
       </div>
-      <h1 className="mt-6 text-center text-2xl font-bold sm:mt-5 sm:font-medium sm:text-[42px] text-slate-50">
+      <h1 className="mt-6 text-center text-2xl font-bold sm:mt-5 sm:font-medium sm:text-5xl text-slate-50">
         {article.attributes?.title}
       </h1>
       <h3 className="mt-3 text-sm text-center sm:mt-5 sm:text-lg text-slate-400">{article.attributes?.description}</h3>

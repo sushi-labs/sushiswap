@@ -101,13 +101,13 @@ export const TradeReviewDialogCrossChain: FC = () => {
                   `${trade?.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
                 )}
               </List.KeyValue>
-              <List.KeyValue title="Network fee">
-                {isFetching ? (
-                  <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" />
-                ) : (
-                  `~$${trade?.gasSpent ?? '0.00'}`
-                )}
-              </List.KeyValue>
+              {/*<List.KeyValue title="Network fee">*/}
+              {/*  {isFetching ? (*/}
+              {/*    <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" />*/}
+              {/*  ) : (*/}
+              {/*    `~$${trade?.gasSpent ?? '0.00'}`*/}
+              {/*  )}*/}
+              {/*</List.KeyValue>*/}
             </List.Control>
           </List>
           {recipient && (

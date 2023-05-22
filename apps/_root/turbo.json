@@ -2,9 +2,7 @@
   "extends": ["//"],
   "pipeline": {
     "build": {
-      "outputs": [
-        ".next/**"
-      ],
+      "outputs": [".next/**", "!.next/cache/**"],
       "dependsOn": ["^build"],
       "env": [
         "ACADEMY_URL",
@@ -13,9 +11,12 @@
         "BLOG_URL",
         "EARN_URL",
         "FURO_URL",
-        "PARTNER_LIST_PR_WEBHOOK_URL",
-        "PARTNER_OCTOKIT_KEY",
-        "SWAP_API_V0_BASE_URL"
+        "TOKEN_LIST_PR_WEBHOOK_URL",
+        "OCTOKIT_KEY",
+        "SWAP_API_V0_BASE_URL",
+        "POOLS_API_V0_BASE_URL",
+        "TOKENS_API_V0_BASE_URL",
+        "NEXT_TELEMETRY_DISABLED"
       ]
     },
     "test": {

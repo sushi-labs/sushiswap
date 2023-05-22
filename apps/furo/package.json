@@ -31,12 +31,12 @@
     "@hookform/resolvers": "2.9.10",
     "@reduxjs/toolkit": "1.9.1",
     "@sushiswap/abi": "workspace:*",
-    "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/bentobox": "1.0.1",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/format": "workspace:*",
-    "@sushiswap/furo": "workspace:*",
+    "@sushiswap/furo": "1.0.1",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/log": "workspace:*",
@@ -69,7 +69,7 @@
     "ethers": "5.7.2",
     "graphql": "16.6.0",
     "lodash.clonedeep": "^4.5.0",
-    "next": "13.3.1",
+    "next": "13.3.4",
     "next-seo": "5.15.0",
     "next-sitemap": "3.1.43",
     "react": "18.2.0",
@@ -107,10 +107,5 @@
     "ts-jest": "^29.0.0",
     "typechain": "^8.0.0",
     "typescript": "5.0.4"
-  },
-  "nextBundleAnalysis": {
-    "budget": 460800,
-    "budgetPercentIncreaseRed": 20,
-    "showDetails": true
   }
 }

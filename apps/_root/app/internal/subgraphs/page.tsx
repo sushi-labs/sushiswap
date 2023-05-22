@@ -19,7 +19,7 @@ const SubgraphsPage = () => {
     getSubgraphs({ filter: debouncedFilterBy })
   )
 
-  console.log(data, error)
+  // console.log(data, error)
 
   const subgraphs = useMemo(() => data || [], [data])
 

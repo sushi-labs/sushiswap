@@ -42,7 +42,7 @@
     "@openzeppelin/contracts": "4.8.0",
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/amm": "workspace:*",
-    "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/bentobox": "1.0.1",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
@@ -85,6 +85,6 @@
     "ts-node": "10.9.1",
     "typechain": "8.1.1",
     "typescript": "5.0.4",
-    "viem": "0.3.19"
+    "viem": "0.3.29"
   }
 }

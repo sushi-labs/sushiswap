@@ -2,9 +2,9 @@ import { Amount, Price, Token } from '@sushiswap/currency'
 import { _997, _1000, BigintIsh, FIVE, JSBI, ONE, sqrt, ZERO } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
+import { computePairAddress } from './computePairAddress'
 import { FACTORY_ADDRESS } from './constants'
 import { InsufficientInputAmountError, InsufficientReservesError } from './errors'
-import { computePairAddress } from './computePairAddress'
 import { pairSchema, SerializedPair } from './zod'
 
 export class Pair {

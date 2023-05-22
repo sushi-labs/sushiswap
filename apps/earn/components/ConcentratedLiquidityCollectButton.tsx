@@ -10,6 +10,7 @@ import { ChainId } from '@sushiswap/chain'
 import { ConcentratedLiquidityPosition } from '@sushiswap/wagmi/future/hooks'
 import { unwrapToken } from '../lib/functions'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
+import { useNetwork } from 'wagmi'
 
 interface ConcentratedLiquidityCollectButton {
   positionDetails: ConcentratedLiquidityPosition | undefined
@@ -30,6 +31,7 @@ export const ConcentratedLiquidityCollectButton: FC<ConcentratedLiquidityCollect
   token0,
   token1,
 }) => {
+  const { chain } = useNetwork()
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
       if (!data || !position) return
@@ -84,7 +86,7 @@ export const ConcentratedLiquidityCollectButton: FC<ConcentratedLiquidityCollect
     chainId,
     prepare,
     onSettled,
-    enabled: Boolean(token0 && token1 && account && position && positionDetails),
+    enabled: Boolean(token0 && token1 && account && position && positionDetails && chainId === chain?.id),
   })
 
   return children(data)

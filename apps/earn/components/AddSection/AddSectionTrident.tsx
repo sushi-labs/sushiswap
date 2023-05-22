@@ -1,6 +1,6 @@
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { tryParseAmount } from '@sushiswap/currency'
-import { Pool } from '@sushiswap/client'
+import { Pool, Protocol } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
   ConstantProductPoolState,
@@ -49,10 +49,10 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   )
 
   const [poolState, pool] = useMemo(() => {
-    if (_pool.type === 'STABLE_POOL') return [stablePoolState, stablePool]
-    if (_pool.type === 'CONSTANT_PRODUCT_POOL') return [constantProductPoolState, constantProductPool]
+    if (_pool.protocol === Protocol.BENTOBOX_STABLE) return [stablePoolState, stablePool]
+    if (_pool.protocol === Protocol.BENTOBOX_CLASSIC) return [constantProductPoolState, constantProductPool]
     return [undefined, undefined]
-  }, [constantProductPool, constantProductPoolState, _pool.type, stablePool, stablePoolState])
+  }, [_pool.protocol, stablePoolState, stablePool, constantProductPoolState, constantProductPool])
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]

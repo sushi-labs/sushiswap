@@ -5,7 +5,7 @@ import { PublicClient } from 'viem'
 import type { PoolCode } from '../pools/PoolCode'
 
 export enum LiquidityProviders {
-  SushiSwap = 'SushiSwap',
+  SushiSwapV2 = 'SushiSwapV2',
   SushiSwapV3 = 'SushiSwapV3',
   UniswapV2 = 'UniswapV2',
   UniswapV3 = 'UniswapV3',
