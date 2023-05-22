@@ -194,7 +194,7 @@ export async function getForumStats() {
 
 /* ===== $SUSHI subgraph ===== */
 
-const GRAPH_URL = 'https://api.thegraph.com/subgraphs/name/olastenberg/sushi'
+const GRAPH_URL = 'https://api.thegraph.com/subgraphs/name/hhk-eth/sushi-ethereum'
 
 function getTokenConcentration(topTenUsers: { balance: string }[], totalSupply: string) {
   const topTenBalances: bigint = topTenUsers.reduce(
@@ -214,7 +214,7 @@ export async function getTokenHolders(filters?: { balanceFilter: number; orderDi
       $previousQuarterBlockNumber: Int
     ) {
       sushi(id: "Sushi") {
-        userCount
+        holderCount
         totalSupply
       }
       users(first: 10, orderBy: balance, where: $usersFilter, orderDirection: $usersOrderDirection) {
@@ -233,7 +233,7 @@ export async function getTokenHolders(filters?: { balanceFilter: number; orderDi
         balance
       }
       previousQuarterSushiStats: sushi(id: "Sushi", block: { number: $previousQuarterBlockNumber }) {
-        userCount
+        holderCount
         totalSupply
       }
     }
@@ -242,6 +242,7 @@ export async function getTokenHolders(filters?: { balanceFilter: number; orderDi
   const previousQuarterTimestamp = Math.floor(endOfPreviousQuarter(Date.now()) / 1000)
   const previousQuarterBlockNumber = await getBlockNumberFromTimestamp(previousQuarterTimestamp)
 
+  // TODO: type
   const tokenHoldersRes = await request(GRAPH_URL, query, {
     usersOrderDirection: filters?.orderDirection ?? 'desc',
     usersFilter: {
@@ -257,12 +258,12 @@ export async function getTokenHolders(filters?: { balanceFilter: number; orderDi
   )
 
   const res = {
-    userCount: tokenHoldersRes.sushi.userCount,
+    userCount: tokenHoldersRes.sushi.holderCount,
     totalSupply: tokenHoldersRes.sushi.totalSupply,
     users: tokenHoldersRes.users,
     tokenConcentration,
     previousQuarter: {
-      userCount: tokenHoldersRes.previousQuarterSushiStats.userCount,
+      userCount: tokenHoldersRes.previousQuarterSushiStats.holderCount,
       totalSupply: tokenHoldersRes.previousQuarterSushiStats.totalSupply,
       tokenConcentration: previousQuarterTokenConcentration,
     },

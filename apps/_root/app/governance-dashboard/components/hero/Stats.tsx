@@ -1,13 +1,14 @@
 import React from 'react'
 
-import { formatNumber, getForumStats, getTokenHolders, getTreasurySnapshot } from '../../lib'
+import { formatNumber, getForumStats, getNotionEvents, getTokenHolders, getTreasurySnapshot } from '../../lib'
 import { StatsBackground } from './StatsBackground'
 
 export async function Stats() {
-  const [tokenHolders, forumStats, treasurySnapshot] = await Promise.all([
+  const [tokenHolders, forumStats, treasurySnapshot, events] = await Promise.all([
     getTokenHolders(),
     getForumStats(),
     getTreasurySnapshot(),
+    getNotionEvents(),
   ])
 
   return (
@@ -50,7 +51,7 @@ export async function Stats() {
               </div>
               <div className="flex flex-col gap-1 text-right">
                 <label className="text-sm text-slate-400">Events</label>
-                <span className="text-2xl font-bold">24</span>
+                <span className="text-2xl font-bold">{events.length}</span>
               </div>
             </div>
           </section>
