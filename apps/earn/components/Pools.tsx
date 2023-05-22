@@ -55,8 +55,8 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                             <Transition
                               show={open}
                               enter="transition duration-300 ease-out"
-                              enterFrom="transform translate-y-[-16px] scale-[0.95] opacity-0"
-                              enterTo="transform translate-y-0 scale-[1] opacity-100"
+                              enterFrom="transform translate-y-[-16px] scale-[0.95]"
+                              enterTo="transform translate-y-0 scale-[1]"
                               leave="transition duration-300 ease-out"
                               leaveFrom="transform translate-y-0 opacity-100 scale-[1]"
                               leaveTo="transform translate-y-[-16px] opacity-0 scale-[0.95]"
