@@ -53,7 +53,6 @@ export interface GovernanceItem {
 }
 export type GovernanceStatus = keyof typeof GOV_STATUS
 
-const DISCOURSE_API_KEY = '86fb0ca272612c10eabca94eec66f2d350bd11a10da2eff0744809a0e3cb6eb9' // TODO: env var
 const DISCOURSE_BASE_URL = 'https://forum.sushi.com/'
 const DISCOURSE_PROPOSAL_ID = 8
 const SNAPSHOT_URL = 'https://hub.snapshot.org/graphql'
@@ -61,7 +60,7 @@ const SNAPSHOT_URL = 'https://hub.snapshot.org/graphql'
 async function fetchDiscourse<T>(path: string) {
   const data = await fetchUrl<T>(DISCOURSE_BASE_URL + path, {
     headers: {
-      'Api-Key': DISCOURSE_API_KEY,
+      'Api-Key': process.env.DISCOURSE_API_KEY,
       'Api-Username': 'sushi',
     },
   })
@@ -314,7 +313,6 @@ export const TREASURY_ADDRESS = '0xe94B5EEC1fA96CEecbD33EF5Baa8d00E4493F4f3'
 
 /* ===== Zapper ===== */
 
-const ZAPPER_API_KEY = '8f751c9d-0cbd-4038-a6b5-689e818de73e' // TODO: env var
 const ZAPPER_BASE_URL = 'https://api.zapper.xyz/v2/'
 
 const SUSHI_WALLETS = [
@@ -333,7 +331,7 @@ const SUSHI_WALLETS = [
 const SUSHI_NETWORKS = ['ethereum', 'polygon', 'optimism', 'arbitrum', 'fantom']
 
 async function fetchZapper<T>(path: string) {
-  const encodedKey = Buffer.from(ZAPPER_API_KEY + ':').toString('base64')
+  const encodedKey = Buffer.from(process.env.ZAPPER_API_KEY + ':').toString('base64')
 
   const data = await fetchUrl<T>(ZAPPER_BASE_URL + path, {
     method: 'GET',
@@ -612,13 +610,12 @@ const SushiTokenNetflow = z.object({
 
 export type SushiTokenNetflow = z.infer<typeof SushiTokenNetflow>
 
-const NOTION_API_KEY = 'secret_ju72Hrhy650UPp8g2ZgK3ptjiGC6XwONF1veM9QqQ4I' // TODO: env var
 const NOTION_VERSION = '2022-06-28'
 
 async function fetchNotionDatabase<T>(databaseId: string) {
   const data = await fetchUrl<{ results: T }>(`https://api.notion.com/v1/databases/${databaseId}/query`, {
     headers: {
-      Authorization: `Bearer ${NOTION_API_KEY}`,
+      Authorization: `Bearer ${process.env.NOTION_API_KEY}`,
       'Notion-Version': NOTION_VERSION,
     },
     method: 'POST',
