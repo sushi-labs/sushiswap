@@ -1,7 +1,7 @@
 import { formatPercent } from '@sushiswap/format'
 import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
-import { getPool, usePool, getPools, getPoolUrl, Pool } from '@sushiswap/client'
+import { getPool, usePool, getPools, getPoolUrl, Pool, Protocol } from '@sushiswap/client'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -23,16 +23,15 @@ import {
   PoolStats,
   UnknownTokenAlert
 } from '../../components'
-import { POOL_TYPE_MAP } from '../../lib/constants'
+import { PROTOCOL_MAP } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
 import { NextSeo } from 'next-seo'
 import PoolPageV3 from '../../components/PoolPageV3'
-import { useIsMounted } from '@sushiswap/hooks'
 
 const LINKS = (pool: Pool): BreadcrumbLink[] => [
   {
     href: `/${pool.id}`,
-    label: `${pool.name} - ${POOL_TYPE_MAP[pool.type]} - ${formatPercent(pool.swapFee)}`,
+    label: `${pool.name} - ${PROTOCOL_MAP[pool.protocol]} - ${formatPercent(pool.swapFee)}`,
   },
 ]
 
@@ -57,7 +56,7 @@ const _Pool = () => {
   })
 
   if (!pool) return <></>
-  if (pool.type === 'CONCENTRATED_LIQUIDITY_POOL') {
+  if (pool.protocol === Protocol.SUSHISWAP_V3) {
     return <PoolPageV3 />
   }
 

@@ -2,7 +2,7 @@ import { useBreakpoint } from '@sushiswap/hooks'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
-import { FilterTag, usePoolFilters } from '../../../PoolsFiltersProvider'
+import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { PAGE_SIZE } from '../contants'
 import { APR_COLUMN, FEES_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN } from './Cells/columns'
 import { PoolQuickHoverTooltip } from './PoolQuickHoverTooltip'
@@ -17,7 +17,7 @@ import { Loader } from '@sushiswap/ui/future/components/Loader'
 const COLUMNS = [NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, FEES_COLUMN, APR_COLUMN]
 
 export const PoolsTable: FC = () => {
-  const { chainIds, tokenSymbols, categories } = usePoolFilters()
+  const { chainIds, tokenSymbols, protocols, farmsOnly } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
@@ -26,26 +26,17 @@ export const PoolsTable: FC = () => {
   const [, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: PAGE_SIZE })
 
   const args = useMemo<GetPoolsArgs>(() => {
-    let _categories = categories
-    if (categories[0] === FilterTag.DEFAULT && categories.length === 1) {
-      _categories = [
-        FilterTag.SUSHISWAP_V3,
-        FilterTag.SUSHISWAP_V2,
-        FilterTag.BENTOBOX_CLASSIC,
-        FilterTag.BENTOBOX_STABLE,
-      ]
-    }
-
     return {
       chainIds: chainIds,
       tokenSymbols,
-      isIncentivized: categories.includes(FilterTag.FARMS_ONLY) || undefined, // will filter farms out if set to false, undefined will be filtered out by the parser
+      isIncentivized: farmsOnly || undefined, // will filter farms out if set to false, undefined will be filtered out by the parser
       isWhitelisted: true, // can be added to filters later, need to put it here so fallback works
       orderBy: sorting[0]?.id,
       orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
-      protocols: _categories.filter((el) => el !== FilterTag.FARMS_ONLY && el !== FilterTag.DEFAULT),
+      protocols,
     }
-  }, [chainIds, tokenSymbols, categories, sorting])
+  }, [chainIds, tokenSymbols, protocols, farmsOnly, sorting])
+
 
   const {
     data: pools,

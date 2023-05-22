@@ -1,7 +1,5 @@
-// import type { PoolType, PoolVersion } from '@sushiswap/database'
+import type { Protocol } from '@sushiswap/database' // Unused as a regular import, but type is being used for casting
 import { z } from 'zod'
-
-export const protocolFilterTypes = ['SUSHISWAP_V3', 'SUSHISWAP_V2', 'BENTOBOX_STABLE', 'BENTOBOX_CLASSIC']
 
 export const PoolsApiSchema = z.object({
   take: z.coerce.number().int().lte(1000).default(20),
@@ -44,17 +42,8 @@ export const PoolsApiSchema = z.object({
     .optional(),
   protocols: z
     .string()
-    .transform((filter) => {
-      if (!filter) return []
-      const filters = filter?.split(',')
-      return filters?.map((f) => {
-        if (!protocolFilterTypes.includes(f)) {
-          throw new Error('Invalid filter')
-        }
-        return f
-      })
-    })
-    .default(''),
+    .transform((protocols) => protocols?.split(',') as Protocol[])
+    .optional(),
   cursor: z.string().optional(),
   orderBy: z.string().default('liquidityUSD'),
   orderDir: z.enum(['asc', 'desc']).default('desc'),

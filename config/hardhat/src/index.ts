@@ -574,6 +574,13 @@ export const defaultConfig: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
     },
+    thundercore: {
+      url: 'https://mainnet-rpc.thundertoken.net',
+      accounts,
+      chainId: 108,
+      live: true,
+      saveDeployments: true,
+    },
   },
   namedAccounts: {
     // e.g. ledger://0x18dd4e0Eb8699eA4fee238dE41ecF115e32272F8

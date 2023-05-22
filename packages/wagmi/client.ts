@@ -1,12 +1,8 @@
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
-import { Address, Chain, configureChains, createClient, CreateClientConfig, mainnet } from 'wagmi'
-import { foundry } from 'wagmi/chains'
+import { Chain, configureChains, createClient, CreateClientConfig, mainnet } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
-import { MockConnector } from 'wagmi/connectors/mock'
 import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { SafeConnector } from 'wagmi/connectors/safe'
 import { _createTestClient } from './test/setup'
@@ -24,12 +20,12 @@ export const _createClient = (config?: CreateClientConfig) => {
     ? _createTestClient()
     : createClient({
         provider,
-        // logger: {
-        //   warn: process.env.NODE_ENV !== 'production' ? console.warn : null,
-        // },
         logger: {
-          warn: null,
+          warn: process.env.NODE_ENV !== 'production' ? console.warn : null,
         },
+        // logger: {
+        //   warn: null,
+        // },
         autoConnect: true,
         connectors: [
           new InjectedConnector({
