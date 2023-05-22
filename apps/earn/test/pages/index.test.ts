@@ -47,10 +47,12 @@ const USDC = new Token({
   name: 'USDC Stablecoin',
 })
 
+const BASE_URL = process.env.PLAYWRIGHT_URL || 'http://localhost:3000/pools'
+
 // // Tests will only work for polygon atm
 test.describe('V3', () => {
   test.beforeEach(async ({ page }) => {
-    const url = (process.env.PLAYWRIGHT_URL as string).concat('/add').concat(`?chainId=${CHAIN_ID}`)
+    const url = BASE_URL.concat('/add').concat(`?chainId=${CHAIN_ID}`)
     await page.goto(url)
     await switchNetwork(page, CHAIN_ID)
   })
@@ -117,7 +119,7 @@ test.describe('V3', () => {
 
 test.describe('V2', () => {
   test.beforeEach(async ({ page }) => {
-    const url = (process.env.PLAYWRIGHT_URL as string).concat(`/add/v2/${CHAIN_ID}`)
+    const url = BASE_URL.concat(`/add/v2/${CHAIN_ID}`)
     await page.goto(url)
     await switchNetwork(page, CHAIN_ID)
   })
@@ -135,7 +137,7 @@ test.describe('V2', () => {
     })
   })
 
-  test('Add, stake, unstake and remove', async ({ page }) => {
+  test.only('Add, stake, unstake and remove', async ({ page }) => {
     test.slow()
     await createOrAddV2Pool(page, {
       token0: NATIVE_TOKEN,
@@ -146,15 +148,11 @@ test.describe('V2', () => {
       type: 'ADD',
     })
 
-    const addLiquidityUrl = (process.env.PLAYWRIGHT_URL as string).concat(
-      '/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/add'
-    )
+    const addLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/add')
     await page.goto(addLiquidityUrl, { timeout: 25_000 })
     await manageStaking(page, 'STAKE')
 
-    const removeLiquidityUrl = (process.env.PLAYWRIGHT_URL as string).concat(
-      '/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/remove'
-    )
+    const removeLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/remove')
     await page.goto(removeLiquidityUrl, { timeout: 25_000 })
     await manageStaking(page, 'UNSTAKE')
     await page.reload({ timeout: 25_000 })
@@ -244,8 +242,11 @@ async function removeLiquidityV3(page: Page) {
   await page.goto(url)
   await page.locator('[testdata-id=my-positions-button]').click()
 
-  const firstPositionSelector = page.locator('concentrated-positions-0')
-  await expect(firstPositionSelector).toBeVisible()
+  // const concentratedPositionTableSelector = page.locator('[testdata-id=concentrated-positions]')
+  // await expect(concentratedPositionTableSelector).toBeVisible()
+
+  const firstPositionSelector = page.locator('[testdata-id=concentrated-positions-0-0-td]')
+  await expect(firstPositionSelector).toBeVisible({ timeout: 7_000 })
   await timeout(5_000) // wait for the animation to finish, otherwise the click will not work. TODO: figure out a better way to do this
   await firstPositionSelector.click()
 
@@ -298,7 +299,7 @@ async function removeLiquidityV2(page: Page) {
 
   await expect(removeLiquidityLocator).toBeVisible()
   await expect(removeLiquidityLocator).toBeEnabled()
-  // await timeout(5_000)
+  await timeout(5_000)
   await removeLiquidityLocator.click()
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')

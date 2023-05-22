@@ -58,10 +58,10 @@ export const GenericTable = <T extends { id: string }>({
         <Table.table testId={testId} style={{ minHeight: (pageSize + 1) * 52 }}>
           <Table.thead testId={testId}>
             {table.getHeaderGroups().map((headerGroup, i) => (
-              <Table.thr testId={`${testId}-${i}`} key={headerGroup.id} headRowHeight={headRowHeight}>
+              <Table.thr testId={`${testId}-${i}-thr`} key={headerGroup.id} headRowHeight={headRowHeight}>
                 {headerGroup.headers.map((header, j) => (
                   <Table.th
-                    testId={`${testId}-${i}-${j}`}
+                    testId={`${testId}-${i}-${j}-th`}
                     headRowHeight={headRowHeight}
                     key={header.id}
                     colSpan={header.colSpan}
@@ -113,7 +113,7 @@ export const GenericTable = <T extends { id: string }>({
                             name: 'sameWidth',
                             enabled: true,
                             fn: ({ state }) => {
-                              state.styles.popper.width = `320px`
+                              state.styles.popper.width = '320px'
                             },
                             phase: 'beforeWrite',
                             requires: ['computeStyles'],
@@ -123,7 +123,7 @@ export const GenericTable = <T extends { id: string }>({
                     >
                       <Popover.Button>
                         <Table.tr
-                          testId={`${testId}-${r}`}
+                          testId={`${testId}-${r}-tr`}
                           onClick={onClick}
                           className="cursor-pointer"
                           rowHeight={rowHeight}
@@ -131,6 +131,7 @@ export const GenericTable = <T extends { id: string }>({
                           {row.getVisibleCells().map((cell, i) => {
                             return (
                               <Table.td
+                                testId={`${testId}-${r}-${i}-td`}
                                 className="!px-0 relative"
                                 style={{
                                   ...(cell.column.columnDef.maxSize && {
@@ -179,7 +180,7 @@ export const GenericTable = <T extends { id: string }>({
                 } else {
                   return (
                     <Table.tr
-                      testId={`${testId}-${r}`}
+                      testId={`${testId}-${r}-tr`}
                       onClick={onClick}
                       key={row.id}
                       className="cursor-pointer"
@@ -188,7 +189,7 @@ export const GenericTable = <T extends { id: string }>({
                       {row.getVisibleCells().map((cell, i) => {
                         return (
                           <Table.td
-                            testId={`${testId}-${r}-${i}`}
+                            testId={`${testId}-${r}-${i}-td`}
                             className="!px-0 relative"
                             style={{
                               ...(cell.column.columnDef.maxSize && {
