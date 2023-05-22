@@ -137,7 +137,7 @@ test.describe('V2', () => {
     })
   })
 
-  test.only('Add, stake, unstake and remove', async ({ page }) => {
+  test('Add, stake, unstake and remove', async ({ page }) => {
     test.slow()
     await createOrAddV2Pool(page, {
       token0: NATIVE_TOKEN,
