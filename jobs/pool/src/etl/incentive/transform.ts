@@ -68,7 +68,7 @@ export async function filterIncentives(incentives: Prisma.IncentiveCreateManyInp
     if (!incentiveExists) {
       return false
     }
-    if (incentive.apr != incentiveExists.apr || incentive.rewardPerDay != incentiveExists.rewardPerDay) {
+    if (incentive.apr !== incentiveExists.apr || incentive.rewardPerDay !== incentiveExists.rewardPerDay) {
       return true
     } else {
       incentivesAlreadyUpToDate++

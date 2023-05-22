@@ -15,8 +15,8 @@ import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { classNames } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import { Amount, tryParseAmount } from '@sushiswap/currency'
-import { usePriceInverter, useTokenAmountDollarValues } from '../../../lib/hooks'
+import { Amount } from '@sushiswap/currency'
+import { usePriceInverter } from '../../../lib/hooks'
 import { formatTickPrice, getPriceOrderingFromPositionForUI, unwrapToken } from '../../../lib/functions'
 import { ConcentratedLiquidityWidget } from '../../../components/ConcentratedLiquidityWidget'
 import { useAccount } from '@sushiswap/wagmi'
@@ -177,7 +177,7 @@ const Position: FC = () => {
           isLoading={isLoading}
           chainId={chainId}
           pool={pool}
-          apy={{ rewards: poolStats?.incentiveApr, fees: poolStats?.feeApr }}
+          apy={{ rewards: poolStats?.incentiveApr, fees: poolStats?.feeApr1d }}
           {...(priceLower && {
             priceRange: fullRange
               ? 'Full range (0 ⇔ ∞)'

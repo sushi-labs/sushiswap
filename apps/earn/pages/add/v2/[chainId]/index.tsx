@@ -2,7 +2,7 @@ import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/solid'
 import { ConstantProductPool, Fee, Pair, StablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
-import { BreadcrumbLink, Dots, Loader } from '@sushiswap/ui'
+import { Loader } from '@sushiswap/ui'
 import {
   Address,
   ConstantProductPoolState,
@@ -41,13 +41,6 @@ import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Signature } from '@ethersproject/bytes'
 import { APPROVE_TAG_ADD_TRIDENT, APPROVE_TAG_CREATE_TRIDENT } from '../../../../lib/constants'
-
-const LINKS: BreadcrumbLink[] = [
-  {
-    href: `/add`,
-    label: `Add`,
-  },
-]
 
 // This function gets called at build time on server-side.
 // It may be called again, on a serverless function, if

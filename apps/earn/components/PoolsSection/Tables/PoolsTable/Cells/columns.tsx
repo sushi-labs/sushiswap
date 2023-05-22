@@ -64,7 +64,7 @@ export const APR_COLUMN: ColumnDef<Pool, unknown> = {
       </Explainer>
     </div>
   ),
-  accessorFn: (row) => row.totalApr,
+  accessorFn: (row) => row.totalApr1d,
   cell: (props) => <PoolAPRCell row={props.row.original} />,
   size: 100,
   meta: {

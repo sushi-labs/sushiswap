@@ -37,7 +37,6 @@ import { createToast } from '@sushiswap/ui/future/components/toast'
 import Button from '@sushiswap/ui/future/components/button/Button'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_CREATE_TRIDENT } from '../../lib/constants'
-import { ChainId } from '@sushiswap/chain'
 
 interface CreateSectionReviewModalTridentProps {
   chainId: BentoBoxV1ChainId
