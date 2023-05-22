@@ -2,7 +2,7 @@ import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/solid'
 import { ConstantProductPool, Fee, Pair, StablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
-import { BreadcrumbLink, Dots, Loader } from '@sushiswap/ui'
+import { BreadcrumbLink, Loader } from '@sushiswap/ui'
 import {
   Address,
   ConstantProductPoolState,
@@ -244,7 +244,6 @@ const _Add: FC<AddProps> = ({
 }) => {
   const [open, setOpen] = useState(false)
   const close = useCallback(() => setOpen(false), [])
-  const [permit, setPermit] = useState<Signature>()
 
   const [{ input0, input1 }, setTypedAmounts] = useState<{
     input0: string
@@ -326,7 +325,7 @@ const _Add: FC<AddProps> = ({
               setPoolType(type)
             }}
           />
-          <SelectFeeWidget fee={fee} setFee={setFee}/>
+          <SelectFeeWidget fee={fee} setFee={setFee} />
         </>
       )}
 
@@ -371,13 +370,13 @@ const _Add: FC<AddProps> = ({
                   {pool && (isConstantProductPool(pool) || isStablePool(pool)) && isBentoBoxV1ChainId(chainId) && (
                     <>
                       <Checker.ApproveBentobox
+                        tag={APPROVE_TAG_ADD_TRIDENT}
                         chainId={chainId}
                         id="add-liquidity-trident-approve-bentobox"
                         size="xl"
                         className="whitespace-nowrap"
                         fullWidth
-                        contract={getTridentRouterContractConfig(chainId).address}
-                        onSignature={setPermit}
+                        masterContract={getTridentRouterContractConfig(chainId).address}
                         enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
                       >
                         <Checker.ApproveERC20
@@ -423,8 +422,6 @@ const _Add: FC<AddProps> = ({
                         input1={parsedInput1}
                         open={open}
                         close={close}
-                        permit={permit}
-                        setPermit={setPermit}
                       />
                     </>
                   )}
@@ -474,13 +471,13 @@ const _Add: FC<AddProps> = ({
                   {!pool && tridentPoolIfCreate && isBentoBoxV1ChainId(chainId) && (
                     <>
                       <Checker.ApproveBentobox
+                        tag={APPROVE_TAG_CREATE_TRIDENT}
                         chainId={chainId}
                         id="create-trident-approve-bentobox"
                         size="xl"
                         className="whitespace-nowrap"
                         fullWidth
-                        contract={getTridentRouterContractConfig(chainId).address}
-                        onSignature={setPermit}
+                        masterContract={getTridentRouterContractConfig(chainId).address}
                         enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
                       >
                         <Checker.ApproveERC20
@@ -524,8 +521,6 @@ const _Add: FC<AddProps> = ({
                         poolType={poolType}
                         open={open}
                         close={close}
-                        permit={permit}
-                        setPermit={setPermit}
                       />
                     </>
                   )}

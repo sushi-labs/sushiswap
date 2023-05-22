@@ -26,6 +26,7 @@ import { Chain } from '@sushiswap/chain'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
 import { log } from 'next-axiom'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
+import { APPROVE_XSWAP_TAG } from '../widget/SwapButtonCrossChain'
 
 interface ConfirmationDialogCrossChainProps {
   children({
@@ -48,8 +49,8 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
   const { setReview, setTradeId } = useSwapActions()
   const [open, setOpen] = useState(false)
   const { data: trade } = useTrade({ crossChain: true })
-  const { setSignature } = useSignature('xswap')
-  const { approved } = useApproved('xswap')
+  const { setSignature } = useSignature(APPROVE_XSWAP_TAG)
+  const { approved } = useApproved(APPROVE_XSWAP_TAG)
   const groupTs = useRef<number>()
   const refetchBalances = useBalanceWeb3Refetch()
 

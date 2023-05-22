@@ -19,15 +19,15 @@ import { createToast } from '@sushiswap/ui/future/components/toast'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useApproved, useSignature, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
 const APPROVE_TAG = 'createStreamSingle'
 
 export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = withCheckerRoot(({ chainId }) => {
   const { address } = useAccount()
   const { approved } = useApproved(APPROVE_TAG)
+  const { signature, setSignature } = useSignature(APPROVE_TAG)
   const contract = useFuroStreamRouterContract(chainId)
-  const [signature, setSignature] = useState<Signature>()
 
   const {
     watch,
@@ -155,12 +155,12 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = withChec
         <Checker.Network type="button" size="xl" chainId={chainId}>
           <Checker.Amounts type="button" size="xl" chainId={chainId} amounts={[_amount]}>
             <Checker.ApproveBentobox
+              tag={APPROVE_TAG}
               type="button"
               id="furo-create-single-stream-approve-bentobox"
               size="xl"
               chainId={chainId as BentoBoxV1ChainId}
-              contract={getFuroStreamRouterContractConfig(chainId).address}
-              onSignature={setSignature}
+              masterContract={getFuroStreamRouterContractConfig(chainId).address}
             >
               <Checker.ApproveERC20
                 type="button"

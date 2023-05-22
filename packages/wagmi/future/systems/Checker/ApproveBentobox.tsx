@@ -5,7 +5,7 @@ import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/24/sol
 import { Address } from 'wagmi'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import dynamic from 'next/dynamic'
-import { ApprovalState, useBentoboxApproval } from '../../hooks/approvals/hooks/useBentoboxApproval'
+import { ApprovalState, useBentoboxApproval } from '../../hooks'
 
 export interface ApproveBentoboxProps extends ButtonProps<'button'> {
   chainId: BentoBoxV1ChainId
