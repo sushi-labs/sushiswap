@@ -40,7 +40,7 @@ export const useSortedTokenList = ({
     queryKey: ['sortedTokenList', { debouncedQuery, tokenMap, customTokenMap, balancesMap, pricesMap }],
     queryFn: async () => {
       const tokenMapValues = tokenMap ? Object.values(tokenMap) : []
-      const tokenMapIds = tokenMapValues ? tokenMapValues.map((el) => el.address) : []
+      const tokenMapIds: string[] = tokenMapValues ? tokenMapValues.map((el) => el.address) : []
       const customTokenMapValues = customTokenMap
         ? Object.values(customTokenMap).filter((el) => el.chainId === chainId && !tokenMapIds.includes(el.address))
         : []
