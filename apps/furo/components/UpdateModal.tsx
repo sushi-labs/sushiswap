@@ -6,25 +6,32 @@ import { Amount, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { JSBI } from '@sushiswap/math'
-import { Button, classNames, DEFAULT_INPUT_CLASSNAME, Dialog, Dots, Input, Switch, Typography } from '@sushiswap/ui'
-import { Approve, Checker, _useSendTransaction as useSendTransaction } from '@sushiswap/wagmi'
-import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { classNames, DEFAULT_INPUT_CLASSNAME, Dots, Typography } from '@sushiswap/ui'
+import { _useSendTransaction as useSendTransaction } from '@sushiswap/wagmi'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useAccount, useContract } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-
+import { Button } from '@sushiswap/ui/future/components/button/Button'
 import { CurrencyInput } from '../components'
 import { Stream } from '../lib'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
+import { Dialog } from '@sushiswap/ui/future/components/dialog/Dialog'
+import { List } from '@sushiswap/ui/future/components/list/List'
+import { Input } from '@sushiswap/ui/future/components/input'
+import { Switch } from '@sushiswap/ui/future/components/Switch'
+import { BalancePanel } from '@sushiswap/wagmi/future/components/Web3Input/Currency/BalancePanel'
 
 interface UpdateModalProps {
   stream?: Stream
   abi: NonNullable<Parameters<typeof useContract>['0']>['abi']
   address: string
   chainId: BentoBoxV1ChainId
+  children?({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }): ReactNode
 }
 
-export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contractAddress, chainId }) => {
+export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contractAddress, chainId, children }) => {
   const { address } = useAccount()
   const [open, setOpen] = useState(false)
   const [topUp, setTopUp] = useState(false)
@@ -127,98 +134,52 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
     ),
   })
 
-  if (!stream || !address || !stream?.canUpdate(address)) return null
+  // TODO ramin uncomment
+  // if (!stream || !address || !stream?.canUpdate(address)) return <></>
 
   return (
     <>
-      <Checker.Connected>
-        <Checker.Network chainId={chainId}>
-          <Button
-            color="gray"
-            fullWidth
-            startIcon={<PencilIcon width={18} height={18} />}
-            onClick={() => setOpen(true)}
-            disabled={!stream?.canUpdate(address)}
-          >
-            Update
-          </Button>
-        </Checker.Network>
-      </Checker.Connected>
+      {typeof children === 'function' ? (
+        children({ setOpen })
+      ) : (
+        <Button
+          fullWidth
+          startIcon={<PencilIcon width={18} height={18} />}
+          onClick={() => setOpen(true)}
+          disabled={!stream?.canUpdate(address)}
+        >
+          Update
+        </Button>
+      )}
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="!space-y-4 !max-w-sm !pb-4">
+        <Dialog.Content className="space-y-4 !pb-3 !bg-gray-100 dark:!bg-slate-800">
           <Dialog.Header title="Update Stream" onClose={() => setOpen(false)} />
-          <div className="grid grid-cols-2 gap-2">
-            <Typography variant="sm" weight={500} className="text-slate-400">
-              Recipient
-            </Typography>
-            <Typography variant="sm" weight={500} className="text-right text-slate-50">
-              {shortenAddress(stream.recipient.id)}
-            </Typography>
-            <Typography variant="sm" weight={500} className="text-slate-400">
-              Stream Amount
-            </Typography>
-            <Typography variant="sm" weight={500} className="text-right text-slate-50">
-              {stream.remainingAmount.toSignificant(6)}{' '}
-              <span className="font-medium text-slate-500">{stream.token.symbol}</span>
-            </Typography>
-            <Typography variant="sm" weight={500} className="text-slate-400">
-              Start date
-            </Typography>
-            <Typography variant="sm" weight={500} className="text-right text-slate-50">
-              {stream.startTime.toLocaleString()}
-            </Typography>
-            <Typography variant="sm" weight={500} className="text-slate-400">
-              End date
-            </Typography>
-            <Typography variant="sm" weight={500} className="text-right text-slate-50">
-              {stream.endTime.toLocaleString()}
-            </Typography>
-          </div>
-          <div className="h-px my-2 bg-slate-800" />
+          <List>
+            <List.Control>
+              <List.KeyValue title="Recipient">{shortenAddress(stream.recipient.id)}</List.KeyValue>
+              <List.KeyValue title="Amount">
+                {stream.remainingAmount.toSignificant(6)} {stream.token.symbol}
+              </List.KeyValue>
+              <List.KeyValue title="Start date">{stream.startTime.toLocaleString()}</List.KeyValue>
+              <List.KeyValue title="End date">{stream.endTime.toLocaleString()}</List.KeyValue>
+            </List.Control>
+          </List>
           <div className="flex flex-col">
             <div className="flex items-center justify-between gap-3 pb-2">
-              <Typography variant="sm" weight={500} className="text-slate-50">
-                Top up amount
-              </Typography>
-              <Switch
-                checked={topUp}
-                onChange={() => setTopUp((prevState) => !prevState)}
-                size="sm"
-                uncheckedIcon={<XIcon />}
-                checkedIcon={<CheckIcon />}
-              />
+              <List.Label className="text-gray-500 dark:text-slate-50">Top up amount</List.Label>
+              <Switch checked={topUp} onChange={() => setTopUp((prevState) => !prevState)} size="sm" />
             </div>
-            <div className="flex flex-col gap-2">
-              <CurrencyInput
-                id={'furo-stream-top-up'}
-                fundSource={FundSource.WALLET}
-                className={classNames(topUp ? '' : 'opacity-40 pointer-events-none', 'ring-offset-slate-800')}
-                onChange={setAmount}
-                currency={stream.token}
-                value={amount}
-                account={address}
-              />
+            <div className={classNames(topUp ? '' : 'opacity-40 pointer-events-none', 'flex flex-col gap-2')}>
+              <Input.Text label="Amount" id={'furo-stream-top-up'} value={amount} onChange={setAmount} />
             </div>
           </div>
           <div className="flex flex-col">
             <div className="flex items-center justify-between gap-3 py-2">
-              <Typography variant="sm" weight={500} className="text-slate-50">
-                Change end date
-              </Typography>
-              <Switch
-                checked={changeEndDate}
-                onChange={() => setChangeEndDate((prevState) => !prevState)}
-                size="sm"
-                uncheckedIcon={<XIcon />}
-                checkedIcon={<CheckIcon />}
-              />
+              <List.Label className="text-gray-500 dark:text-slate-50">Change end date</List.Label>
+              <Switch checked={changeEndDate} onChange={() => setChangeEndDate((prevState) => !prevState)} size="sm" />
             </div>
             <Input.DatePicker
-              className={classNames(
-                DEFAULT_INPUT_CLASSNAME,
-                '!ring-offset-slate-900',
-                !changeEndDate ? 'opacity-40 pointer-events-none' : ''
-              )}
+              className={classNames('h-[54px] rounded-xl')}
               onChange={(date) => setEndDate(date)}
               selected={endDate}
               portalId="root-portal"
@@ -233,33 +194,28 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
             />
           </div>
           <div>
-            <Approve
-              components={
-                <Approve.Components>
-                  <Approve.Token
-                    enabled={amountAsEntity?.greaterThan(0)}
-                    amount={amountAsEntity}
-                    address={bentoBoxV1Address[chainId]}
-                    fullWidth
-                    size="md"
-                  />
-                </Approve.Components>
-              }
-              render={({ approved }) => {
-                return (
+            <Checker.Connect type="button" size="xl" fullWidth>
+              <Checker.Network type="button" size="xl" fullWidth chainId={chainId}>
+                <Checker.ApproveERC20
+                  id="approve-erc20-update-stream"
+                  type="button"
+                  size="xl"
+                  fullWidth
+                  amount={amountAsEntity}
+                  contract={bentoBoxV1Address[chainId]}
+                >
                   <Button
                     type="button"
-                    size="md"
-                    variant="filled"
+                    size="xl"
                     fullWidth
-                    disabled={isWritePending || !approved}
+                    disabled={isWritePending}
                     onClick={() => sendTransaction?.()}
                   >
                     {isWritePending ? <Dots>Confirm Update</Dots> : 'Update'}
                   </Button>
-                )
-              }}
-            />
+                </Checker.ApproveERC20>
+              </Checker.Network>
+            </Checker.Connect>
           </div>
         </Dialog.Content>
       </Dialog>

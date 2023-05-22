@@ -37,16 +37,12 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
       viewBox={`0 0 ${width} ${width}`}
       style={{ WebkitTapHighlightColor: 'transparent' }}
     >
-      <LinearGradient id="unfilled" to="#2022314D" from="#2022314D" vertical={false} />
-      <LinearGradient id="gblue" to={'#1398ED'} from={'#5CB0E4'} vertical={false} />
-      <LinearGradient id="gpink" to={'#FFA6E7'} from={'#f43fc5'} vertical={false} />
+      <LinearGradient id="gblue" to={'#3b82f6'} from={'#3b82f6'} vertical={false} />
+      <LinearGradient id="gpink" to={'#ec4899'} from={'#ec4899'} vertical={false} />
 
       <g
         stroke="currentColor"
-        className={classNames(
-          hover === ChartHover.STREAMED ? 'text-slate-600 drop-shadow-[0px_0px_2px_rgba(39,_176,_230,_0.6)]' : '',
-          'text-slate-700 cursor-pointer'
-        )}
+        className={classNames(hover === ChartHover.STREAMED ? 'text-slate-600' : '', 'text-slate-700 cursor-pointer')}
         onMouseEnter={() => setHover && setHover(ChartHover.STREAMED)}
         onMouseLeave={() => setHover && setHover(ChartHover.NONE)}
       >
@@ -84,37 +80,17 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
             }) / 1.5
           }
           transform="translate(0 420) rotate(-90)"
-          className="drop-shadow-[0px_0px_6px_rgba(39,_176,_230,_0.37)] animate-[dash_1s_ease-in-out_forwards]"
+          className="animate-[dash_1s_ease-in-out_forwards]"
         >
           <circle cx={width / 2} cy={width / 2} r={outerRadius} stroke="url('#gblue')" />
         </g>
       </g>
       <g
         stroke="currentColor"
-        className={classNames(
-          hover === ChartHover.WITHDRAW ? 'text-slate-600 drop-shadow-[0px_0px_2px_rgba(250,_82,_160,_0.6)]' : '',
-          'text-slate-700 cursor-pointer'
-        )}
+        className={classNames(hover === ChartHover.WITHDRAW ? 'text-slate-600' : '', 'text-slate-700 cursor-pointer')}
         onMouseEnter={() => setHover && setHover(ChartHover.WITHDRAW)}
         onMouseLeave={() => setHover && setHover(ChartHover.NONE)}
       >
-        <circle cx={width / 2} cy={width / 2} r={innerRadius} stroke="url('#unfilled')" fill="none" strokeWidth={16} />
-        <circle
-          cx={width / 2}
-          cy={width / 2}
-          r={innerRadius + strokeWidth / 2}
-          stroke="currentColor"
-          fill="none"
-          strokeWidth={1}
-        />
-        <circle
-          cx={width / 2}
-          cy={width / 2}
-          r={innerRadius - strokeWidth / 2}
-          stroke="currentColor"
-          fill="none"
-          strokeWidth={1}
-        />
         <g
           onMouseEnter={() => setHover && setHover(ChartHover.WITHDRAW)}
           onMouseLeave={() => setHover && setHover(ChartHover.NONE)}
@@ -134,7 +110,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
           strokeWidth={16}
           strokeLinecap="round"
           transform="translate(0 420) rotate(-90)"
-          className="drop-shadow-[0px_0px_8px_rgba(250,_82,_160,_0.6)] animate-[dash_1s_ease-in-out_forwards]"
+          className="animate-[dash_1s_ease-in-out_forwards]"
         >
           <circle cx={width / 2} cy={width / 2} r={innerRadius} stroke="url('#gpink')" />
         </g>

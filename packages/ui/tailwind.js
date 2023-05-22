@@ -53,8 +53,13 @@ module.exports = {
         dash: 'dash 1.5s 2s ease-out infinite',
         'dash-check': 'dash-check 1.5s 2s ease-out infinite',
         skeleton: 'skeleton 8s ease-in-out infinite',
+        blink: 'blink 1s ease-in-out infinite',
       },
       keyframes: {
+        blink: {
+          '0%': { color: '#22c55e' },
+          '100%': { color: '#22c55e' },
+        },
         shimmer: {
           '100%': { transform: 'translateX(100%)' },
         },

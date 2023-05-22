@@ -1,5 +1,4 @@
 import '@sushiswap/ui/index.css'
-import '../variables.css'
 
 import { App, ThemeProvider } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
@@ -21,7 +20,6 @@ import SEO from '../next-seo.config.mjs'
 import store from '../store'
 import { PersistQueryClientProvider } from '../components/PersistQueryClientProvider'
 import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
-import { ToastContainer } from '@sushiswap/ui/future/components/toast'
 
 declare global {
   interface Window {
@@ -73,7 +71,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       <WagmiConfig client={client}>
         <PersistQueryClientProvider>
           <ReduxProvider store={store}>
-            <ThemeProvider forcedTheme="dark">
+            <ThemeProvider>
               <Onramper.Provider>
                 <App.Shell>
                   <DefaultSeo {...SEO} />

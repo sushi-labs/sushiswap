@@ -1,6 +1,6 @@
 import { useInterval } from '@sushiswap/hooks'
 import { Typography } from '@sushiswap/ui'
-import { FC, useState } from 'react'
+import { FC, ReactNode, useState } from 'react'
 
 import { FuroStatus, Stream, Vesting } from '../lib'
 
@@ -13,10 +13,11 @@ interface FuroTimerState {
 
 interface FuroTimerProps {
   furo?: Stream | Vesting
+  children?(params: FuroTimerState): ReactNode
 }
 
-export const FuroTimer: FC<FuroTimerProps> = ({ furo }) => {
-  const [remaining, setRemaining] = useState<FuroTimerState>()
+export const FuroTimer: FC<FuroTimerProps> = ({ furo, children }) => {
+  const [remaining, setRemaining] = useState<FuroTimerState>({ days: '0', hours: '', minutes: '', seconds: '' })
 
   useInterval(() => {
     if (!furo || furo.status === FuroStatus.CANCELLED || furo.status === FuroStatus.COMPLETED) return
@@ -27,13 +28,17 @@ export const FuroTimer: FC<FuroTimerProps> = ({ furo }) => {
     if (times) {
       const { days, hours, minutes, seconds } = times
       setRemaining({
-        days: String(Math.max(days, 0)).padStart(2, '0'),
-        hours: String(Math.max(hours, 0)).padStart(2, '0'),
+        days: String(Math.max(days, 0)),
+        hours: String(Math.max(hours, 0)),
         minutes: String(Math.max(minutes, 0)).padStart(2, '0'),
         seconds: String(Math.max(seconds, 0)).padStart(2, '0'),
       })
     }
   }, 1000)
+
+  if (typeof children === 'function') {
+    return children(remaining)
+  }
 
   // Render normally
   if (remaining) {

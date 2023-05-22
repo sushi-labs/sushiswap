@@ -1,4 +1,4 @@
-import { Skeleton } from '@sushiswap/ui'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
@@ -17,7 +17,7 @@ export const STREAMED_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   cell: (props) => <StreamedCell row={props.row.original} />,
   size: 170,
   meta: {
-    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }
 
@@ -26,7 +26,7 @@ export const AMOUNT_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   header: 'Amount',
   cell: (props) => <AmountCell row={props.row.original} />,
   meta: {
-    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
     className: 'justify-end',
   },
 }
@@ -36,7 +36,7 @@ export const FROM_COLUMN = (tableType: FuroTableType): ColumnDef<Stream | Vestin
   header: 'From',
   cell: (props) => <FromCell row={props.row.original} tableType={tableType} />,
   meta: {
-    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
     className: 'justify-end',
   },
 })
@@ -46,7 +46,7 @@ export const START_DATE_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   header: 'Start Date',
   cell: (props) => <StartDateCell row={props.row.original} />,
   meta: {
-    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
     className: 'justify-end',
   },
 }
@@ -56,7 +56,7 @@ export const STATUS_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   header: 'Status',
   cell: (props) => <StatusCell row={props.row.original} />,
   meta: {
-    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }
 
@@ -65,6 +65,6 @@ export const TYPE_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   header: 'Type',
   cell: (props) => <TypeCell row={props.row.original} />,
   meta: {
-    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }

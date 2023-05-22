@@ -3,7 +3,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Amount, Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { GenericTable } from '@sushiswap/ui'
+import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { Dispatch, FC, ReactNode, SetStateAction, useEffect, useMemo, useState } from 'react'
 

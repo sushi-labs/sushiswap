@@ -21,16 +21,16 @@ export const ProgressBar: FC<ProgressBarProps> = ({ progress, color, showLabel =
   let fromColor
   let toColor
   if (color === ProgressColor.BLUE) {
-    fromColor = 'from-blue-200'
+    fromColor = 'from-blue'
     toColor = 'to-blue'
   } else if (color === ProgressColor.PINK) {
-    fromColor = 'from-pink-200'
+    fromColor = 'from-pink'
     toColor = 'to-pink'
   } else if (color === ProgressColor.GRADIENT) {
     fromColor = 'from-blue'
     toColor = 'to-pink'
   } else if (color === ProgressColor.GREEN) {
-    fromColor = 'from-green-200'
+    fromColor = 'from-green'
     toColor = 'to-green'
   }
 
@@ -39,7 +39,7 @@ export const ProgressBar: FC<ProgressBarProps> = ({ progress, color, showLabel =
       <div className="flex items-center gap-2">
         <div
           className={classNames(
-            'flex flex-grow h-[10px] rounded-full bg-gradient-to-r overflow-hidden bg-[rgba(255,255,255,0.12)]',
+            'flex flex-grow h-6 rounded-full bg-gradient-to-r overflow-hidden bg-[rgba(255,255,255,0.12)]',
             className
           )}
         >
