@@ -190,7 +190,7 @@ async function makeSwap(
   //await checkPoolsState(pcMap, env.user, env.chainId)
 
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
-  // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
+  console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
   // console.log(
   //   'ROUTE:',
   //   route.legs.map(
@@ -480,42 +480,47 @@ describe('End-to-end RouteProcessor4 test', async function () {
     )
   })
 
-  it('Trident Native => SUSHI => Native (Polygon only)', async function () {
-    if (chainId === ChainId.POLYGON) {
+  if (network.config.chainId == 137) {
+    it('Trident Native => SUSHI => Native (Polygon only)', async function () {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
       intermidiateResult = await updMakeSwap(
         env,
         Native.onChain(chainId),
-        SUSHI[chainId],
+        SUSHI[chainId as keyof typeof SUSHI_ADDRESS],
         intermidiateResult,
         usedPools,
         [LiquidityProviders.Trident]
       )
       intermidiateResult = await updMakeSwap(
         env,
-        SUSHI[chainId],
+        SUSHI[chainId as keyof typeof SUSHI_ADDRESS],
         Native.onChain(chainId),
         intermidiateResult,
         usedPools,
         [LiquidityProviders.Trident]
       )
-    }
-  })
+    })
+  }
 
-  it('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async function () {
-    const filter = (pool: RPool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
-
-    if (chainId === ChainId.POLYGON) {
+  if (network.config.chainId == 137) {
+    it('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async function () {
+      const filter = (pool: RPool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
-      intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], intermidiateResult, usedPools)
       intermidiateResult = await updMakeSwap(
         env,
-        USDC[chainId],
-        USDT[chainId],
+        Native.onChain(chainId),
+        USDC[chainId as keyof typeof USDC_ADDRESS],
+        intermidiateResult,
+        usedPools
+      )
+      intermidiateResult = await updMakeSwap(
+        env,
+        USDC[chainId as keyof typeof USDC_ADDRESS],
+        USDT[chainId as keyof typeof USDT_ADDRESS],
         intermidiateResult,
         usedPools,
         undefined,
@@ -523,8 +528,8 @@ describe('End-to-end RouteProcessor4 test', async function () {
       )
       intermidiateResult = await updMakeSwap(
         env,
-        USDT[chainId],
-        DAI[chainId],
+        USDT[chainId as keyof typeof USDT_ADDRESS],
+        DAI[chainId as keyof typeof DAI_ADDRESS],
         intermidiateResult,
         usedPools,
         undefined,
@@ -532,32 +537,39 @@ describe('End-to-end RouteProcessor4 test', async function () {
       )
       intermidiateResult = await updMakeSwap(
         env,
-        DAI[chainId],
-        USDC[chainId],
+        DAI[chainId as keyof typeof DAI_ADDRESS],
+        USDC[chainId as keyof typeof USDC_ADDRESS],
         intermidiateResult,
         usedPools,
         undefined,
         filter
       )
-    }
-  })
+    })
+  }
 
   if (process.env.ALCHEMY_ID) {
     it('V3,  Native => USDC => NATIVE', async function () {
-      if (chainId === ChainId.POLYGON) {
-        await env.snapshot.restore()
-        const usedPools = new Set<string>()
-        let amountAndBlock: [BigNumber | undefined, number] = [undefined, 1]
-        amountAndBlock[0] = getBigNumber(10_000_000 * 1e18) // should be partial
-        amountAndBlock = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], amountAndBlock, usedPools, [
-          LiquidityProviders.UniswapV3,
-          LiquidityProviders.SushiSwapV3,
-        ])
-        amountAndBlock = await updMakeSwap(env, USDC[chainId], Native.onChain(chainId), amountAndBlock, usedPools, [
-          LiquidityProviders.UniswapV3,
-          LiquidityProviders.SushiSwapV3,
-        ])
-      }
+      await env.snapshot.restore()
+      const usedPools = new Set<string>()
+      let amountAndBlock: [BigNumber | undefined, number] = [undefined, 1]
+      const amountIn = chainId == ChainId.ETHEREUM ? 100 * 1e18 : 10_000_000 * 1e18
+      amountAndBlock[0] = getBigNumber(amountIn) // should be partial
+      amountAndBlock = await updMakeSwap(
+        env,
+        Native.onChain(chainId),
+        USDC[chainId as keyof typeof USDC_ADDRESS],
+        amountAndBlock,
+        usedPools,
+        [LiquidityProviders.UniswapV3, LiquidityProviders.SushiSwapV3]
+      )
+      amountAndBlock = await updMakeSwap(
+        env,
+        USDC[chainId as keyof typeof USDC_ADDRESS],
+        Native.onChain(chainId),
+        amountAndBlock,
+        usedPools,
+        [LiquidityProviders.UniswapV3, LiquidityProviders.SushiSwapV3]
+      )
     })
   }
 
