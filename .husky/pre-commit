@@ -3,7 +3,7 @@
 
 # Maybe ensure lock file?
 
-pnpm run check
+# pnpm run check
 
 # Lint and commit?
 

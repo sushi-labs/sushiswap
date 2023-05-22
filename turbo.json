@@ -17,10 +17,7 @@
   "pipeline": {
     "anvil": {
       "cache": false,
-      "env": [
-        "ANVIL_BLOCK_NUMBER", 
-        "ANVIL_FORK_URL"
-      ],
+      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL"],
       "persistent": true
     },
     "build": {
