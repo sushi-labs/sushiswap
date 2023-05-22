@@ -1,4 +1,4 @@
-import type { ConstantProductRPool, CurvePool, MultiRoute, RouteLeg } from '@sushiswap/tines'
+import type { CurvePool, MultiRoute, RouteLeg } from '@sushiswap/tines'
 
 import { HEXer } from '../HEXer'
 import { LiquidityProviders } from '../liquidity-providers'
@@ -23,7 +23,7 @@ export class CurvePoolCode extends PoolCode {
 
   getSwapCodeForRouteProcessor4(leg: RouteLeg, _route: MultiRoute, to: string): string {
     // supports only 2-token pools currently
-    const [fromIndex, toIndex] = leg.tokenFrom.address == this.pool.token0.address ? [0, 1] : [1, 0]
+    const [fromIndex, toIndex] = leg.tokenFrom.tokenId == this.pool.token0.tokenId ? [0, 1] : [1, 0]
     const code = new HEXer()
       .uint8(5) // Curve pool
       .address(this.pool.address)
