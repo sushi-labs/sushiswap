@@ -16,14 +16,7 @@ import { getBentoBoxContractConfig } from '../../../../hooks'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { splitSignature } from '@ethersproject/bytes'
 import { useSignature } from '../../../systems/Checker/Provider'
-
-export enum ApprovalState {
-  LOADING = 'LOADING',
-  UNKNOWN = 'UNKNOWN',
-  NOT_APPROVED = 'NOT_APPROVED',
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-}
+import { ApprovalState } from '../../approvals'
 
 interface UseBentoboxApprovalParams {
   enabled?: boolean
