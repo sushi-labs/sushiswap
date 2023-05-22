@@ -4,6 +4,7 @@ import { ChevronDoubleDownIcon } from '@heroicons/react/24/outline'
 import { Button, ButtonComponent } from '@sushiswap/ui/future/components/button'
 import {
   CoinbaseWalletIcon,
+  FrameIcon,
   GnosisSafeIcon,
   MetamaskIcon,
   RabbyIcon,
@@ -25,6 +26,7 @@ const Icons: Record<string, React.ElementType> = {
   'Coinbase Wallet': CoinbaseWalletIcon,
   Safe: GnosisSafeIcon,
   Rabby: RabbyIcon,
+  Frame: FrameIcon,
 }
 
 interface Props extends ExtractProps<ButtonComponent> {
