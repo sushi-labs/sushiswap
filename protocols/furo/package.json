@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/furo",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.1",
   "description": "SushiXSwap",
   "keywords": [
     "sushixswap",
@@ -37,7 +36,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.6.0",
     "@rari-capital/solmate": "6.2.0",
-    "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/bentobox": "1.0.1",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/core": "^1.4.2",
     "@sushiswap/currency": "workspace:*",

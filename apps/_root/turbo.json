@@ -2,7 +2,7 @@
   "extends": ["//"],
   "pipeline": {
     "build": {
-      "outputs": [".next/**"],
+      "outputs": [".next/**", "!.next/cache/**"],
       "dependsOn": ["^build"],
       "env": [
         "ACADEMY_URL",
@@ -14,6 +14,10 @@
         "PARTNER_LIST_PR_WEBHOOK_URL",
         "PARTNER_OCTOKIT_KEY",
         "SWAP_API_V0_BASE_URL",
+        "POOLS_API_V0_BASE_URL",
+        "OCTOKIT_KEY",
+        "TOKENS_API_V0_BASE_URL",
+        "NEXT_TELEMETRY_DISABLED",
         "DISCOURSE_API_KEY",
         "ZAPPER_API_KEY",
         "NOTION_API_KEY"

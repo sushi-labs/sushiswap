@@ -6,15 +6,15 @@ import { PublicClient } from 'viem'
 import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
-export class SushiProvider extends UniswapV2BaseProvider {
+export class SushiSwapV2Provider extends UniswapV2BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient, databaseClient?: PrismaClient) {
     const factory = FACTORY_ADDRESS as { [chainId: number]: `0x${string}` }
     super(chainId, web3Client, factory, INIT_CODE_HASH, databaseClient)
   }
   getType(): LiquidityProviders {
-    return LiquidityProviders.SushiSwap
+    return LiquidityProviders.SushiSwapV2
   }
   getPoolProviderName(): string {
-    return 'SushiSwap'
+    return 'SushiSwapV2'
   }
 }

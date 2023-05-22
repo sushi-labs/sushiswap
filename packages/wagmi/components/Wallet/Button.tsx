@@ -19,6 +19,7 @@ import {
   // useAutoConnect,
   useWalletState,
 } from '../../hooks'
+import { RabbyIcon } from '@sushiswap/ui/future/components/icons'
 
 const Icons: Record<string, ReactNode> = {
   Injected: <ChevronDoubleDownIcon width={16} height={16} />,
@@ -28,6 +29,7 @@ const Icons: Record<string, ReactNode> = {
   WalletConnectLegacy: <WalletConnectIcon width={16} height={16} />,
   'Coinbase Wallet': <CoinbaseWalletIcon width={16} height={16} />,
   Safe: <GnosisSafeIcon width={16} height={16} />,
+  Rabby: <RabbyIcon width={16} height={16} />,
 }
 
 export type Props<C extends React.ElementType> = ButtonProps<C> & {

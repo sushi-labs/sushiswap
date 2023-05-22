@@ -1,6 +1,10 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": ["CI", "NODE_ENV", "ALCHEMY_ID", "GITHUB_TOKEN", "NEXT_PUBLIC_ALCHEMY_ID"],
+  "globalEnv": [
+    "CI",
+    "NODE_ENV",
+    "GITHUB_TOKEN"
+  ],
   "globalDependencies": [
     ".eslintignore",
     ".eslint.js",
@@ -19,6 +23,7 @@
     "build": {
       "outputs": [
         ".next/**/*",
+        "!.next/cache/**",
         ".vercel/**/*",
         "dist/**/*"
       ],
@@ -31,8 +36,10 @@
         "DATABASE_URL",
         "REDIS_URL",
         "POOLS_API_V0_BASE_URL",
-        "PARTNER_LIST_PR_WEBHOOK_URL",
-        "PARTNER_OCTOKIT_KEY"
+        "TOKENS_API_V0_BASE_URL",
+        "SWAP_API_V0_BASE_URL",
+        "TOKEN_LIST_PR_WEBHOOK_URL",
+        "OCTOKIT_KEY"
       ]
     },
     "clean": {
@@ -65,10 +72,6 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
-    "playwright": {
-      "cache": false,
-      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
-    },
     "start": {
       "dependsOn": [        
         "^build", 
@@ -77,10 +80,12 @@
       ],
       "env": [
         "TEST",
-        "REDIS_URL",
-        "DATABASE_URL",
         "ALCHEMY_ID",
-        "POOLS_API_V0_BASE_URL"
+        "DATABASE_URL",
+        "REDIS_URL",
+        "POOLS_API_V0_BASE_URL",
+        "TOKENS_API_V0_BASE_URL",
+        "SWAP_API_V0_BASE_URL"
       ],
       "cache": false,
       "persistent": true
@@ -88,14 +93,10 @@
     "test": {
       "dependsOn": ["build"],
       "outputs": ["coverage/**/*"],
-      "env": ["TEST", "ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "CHAIN_ID"]
-    },
-    "test-e2e-playwright": {
-      "cache": false,
-      "env": ["TEST", "ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "CHAIN_ID"]
+      "env": []
     },
     "validate": {
-      "cache": false
+      "cache": true
     },
     "export": {
       "cache": true

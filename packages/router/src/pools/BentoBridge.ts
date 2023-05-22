@@ -3,6 +3,7 @@ import type { BigNumber } from 'ethers'
 
 import { HEXer } from '../HEXer'
 import { LiquidityProviders } from '../liquidity-providers'
+import { Bridge } from './Bridge'
 import { PoolCode } from './PoolCode'
 
 export class BentoBridgePoolCode extends PoolCode {
@@ -14,7 +15,7 @@ export class BentoBridgePoolCode extends PoolCode {
     _providerName: string,
     bentoBoxAddress: `0x${string}`
   ) {
-    super(pool, liquidityProvider, 'BentoBridge')
+    super(pool, liquidityProvider, Bridge.BentoBox)
     this.bentoBoxAddress = bentoBoxAddress
   }
 
