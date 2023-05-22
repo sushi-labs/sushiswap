@@ -59,10 +59,11 @@ function getRandomExp(rnd: () => number, min: number, max: number) {
   return res
 }
 
-async function setRouterPrimaryBalance(router: string, token?: string, amount = 1n): Promise<void> {
+async function setRouterPrimaryBalance(router: string, token?: string, amount = 1n): Promise<boolean> {
   if (token) {
-    await setTokenBalance(token, router, amount)
+    return await setTokenBalance(token, router, amount)
   }
+  return false
 }
 
 interface TestEnvironment {
@@ -190,7 +191,7 @@ async function makeSwap(
   //await checkPoolsState(pcMap, env.user, env.chainId)
 
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
-  console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
+  // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
   // console.log(
   //   'ROUTE:',
   //   route.legs.map(
@@ -729,11 +730,17 @@ describe('End-to-end RouteProcessor4 test', async function () {
       ])
     })
 
-    it.skip('Curve pool 0xc5424b857f758e906013f3555dad202e4bdb4567: sETH => Native', async function () {
+    it('Curve pool 0xc5424b857f758e906013f3555dad202e4bdb4567: sETH => Native', async function () {
       await env.snapshot.restore()
+
       const amoutIn = BigInt(1e18)
-      await setRouterPrimaryBalance(env.rp.address, sETH.address, amoutIn * 2n)
-      intermidiateResult[0] = BigNumber.from(amoutIn.toString())
+      const amountInBN = BigNumber.from(amoutIn.toString())
+
+      await setRouterPrimaryBalance(env.user.address, sETH.address, amoutIn * 2n)
+      const WrappedBaseTokenContract = await new ethers.Contract(sETH.address, erc20Abi, env.user)
+      await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountInBN)
+
+      intermidiateResult[0] = amountInBN
       intermidiateResult = await updMakeSwap(env, sETH, Native.onChain(chainId), intermidiateResult, undefined, [
         LiquidityProviders.CurveSwap,
       ])
