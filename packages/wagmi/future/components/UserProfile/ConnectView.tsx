@@ -1,6 +1,7 @@
 import { ChevronDoubleDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import {
   CoinbaseWalletIcon,
+  FrameIcon,
   GnosisSafeIcon,
   MetamaskIcon,
   RabbyIcon,
@@ -20,6 +21,7 @@ const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element | nu
   'Coinbase Wallet': CoinbaseWalletIcon,
   Safe: GnosisSafeIcon,
   Rabby: RabbyIcon,
+  Frame: FrameIcon,
 }
 
 export const ConnectView: FC<{ onSelect(): void }> = ({ onSelect }) => {
