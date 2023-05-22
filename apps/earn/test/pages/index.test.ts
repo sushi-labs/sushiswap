@@ -5,10 +5,12 @@ import { USDC_ADDRESS, Native, Token, Type } from '@sushiswap/currency'
 export async function approve(page: Page, locator: string) {
   await timeout(500) // give the approve button time to load contracts, unrealistically fast when running test
   const pageLocator = page.locator(`[testdata-id=${locator}]`)
-  await expect(pageLocator).toBeEnabled({ timeout: 1500 }).then(async () => {
-    await pageLocator.click({ timeout: 2500 })
-  })
-  .catch(() => console.log('already approved or not needed'))
+  await expect(pageLocator)
+    .toBeEnabled({ timeout: 1500 })
+    .then(async () => {
+      await pageLocator.click({ timeout: 2500 })
+    })
+    .catch(() => console.log('already approved or not needed'))
 }
 
 interface V2PoolArgs {
@@ -243,7 +245,7 @@ async function removeLiquidityV3(page: Page) {
   await page.locator('[testdata-id=my-positions-button]').click()
 
   const firstPositionSelector = page.locator('concentrated-positions-0')
-  await expect(firstPositionSelector).toBeVisible({ timeout: 7_000 })
+  await expect(firstPositionSelector).toBeVisible()
   await timeout(5_000) // wait for the animation to finish, otherwise the click will not work. TODO: figure out a better way to do this
   await firstPositionSelector.click()
 
@@ -270,14 +272,14 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   // TODO: fix this in the UI, the default state should be consistent
   const maxButtonSelector = page.locator(`[testdata-id=${type.toLowerCase()}-max-button]`)
   if (!(await maxButtonSelector.isVisible())) {
-  await expect(maxButtonSelector).toBeEnabled()
+    await expect(maxButtonSelector).toBeEnabled()
     await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-header]`).click()
   }
   await expect(maxButtonSelector).toBeVisible()
   await expect(maxButtonSelector).toBeEnabled()
   await maxButtonSelector.click()
   await approve(page, `${type.toLowerCase()}-approve-slp`)
-  
+
   const actionSelector = page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`)
   await expect(actionSelector).toBeVisible()
   await expect(actionSelector).toBeEnabled()
