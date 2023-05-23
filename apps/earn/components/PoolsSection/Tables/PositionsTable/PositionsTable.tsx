@@ -25,6 +25,7 @@ export const PositionsTable: FC = () => {
   const [columnVisibility, setColumnVisibility] = useState({})
 
   const { data: userPositions, isValidating } = useUserPositions({ id: address, chainIds: SUPPORTED_CHAIN_IDS })
+
   const _positions = useMemo(() => userPositions || [], [userPositions])
 
   const table = useReactTable<PositionWithPool>({

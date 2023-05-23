@@ -17,24 +17,24 @@ export const useGraphPools = (poolIds: string[]): Pools => {
 
   const { data: pools } = usePools({ args: { ids: poolIds } })
 
-  return useMemo(
-    () =>
-      graphPools && pools
-        ? pools.map((pool) => {
-            const graphPool = graphPools.find((graphPool) => graphPool.id === pool.id)
+  console.log('useGraphPools', { graphPools, pools })
 
-            if (!graphPool) return pool
+  return useMemo(() => {
+    return graphPools && pools
+      ? pools.map((pool) => {
+          const graphPool = graphPools.find((graphPool) => graphPool.id === pool.id)
 
-            return {
-              ...pool,
-              totalSupply: String(graphPool.liquidity),
-              liquidityUSD: String(graphPool.liquidityUSD),
-              volumeUSD: String(graphPool.volumeUSD),
-              feeApr: Number(graphPool.apr),
-              totalApr: Number(graphPool.apr) + pool.incentiveApr,
-            }
-          })
-        : [],
-    [graphPools, pools]
-  )
+          if (!graphPool) return pool
+
+          return {
+            ...pool,
+            totalSupply: String(graphPool.liquidity),
+            liquidityUSD: String(graphPool.liquidityUSD),
+            volumeUSD: String(graphPool.volumeUSD),
+            feeApr: Number(graphPool.apr),
+            totalApr: Number(graphPool.apr) + pool.incentiveApr,
+          }
+        })
+      : []
+  }, [graphPools, pools])
 }

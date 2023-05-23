@@ -38,10 +38,10 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
         </span>
         <div className="flex gap-1">
           {row.protocol === Protocol.BENTOBOX_STABLE && (
-            <div className="bg-pink/20 text-pink text-[10px] px-2 rounded-full">BentoBox Stable</div>
+            <div className="bg-pink/20 text-pink text-[10px] px-2 rounded-full">Trident Stable</div>
           )}
           {row.protocol === Protocol.BENTOBOX_CLASSIC && (
-            <div className="bg-pink/20 text-pink text-[10px] px-2 rounded-full">BentoBox Classic</div>
+            <div className="bg-pink/20 text-pink text-[10px] px-2 rounded-full">Trident Classic</div>
           )}
           {row.protocol === 'SUSHISWAP_V2' && (
             <div className="bg-pink/20 text-pink text-[10px] px-2 rounded-full">

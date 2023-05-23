@@ -72,7 +72,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             variant={protocols.includes(Protocol.BENTOBOX_STABLE) ? 'outlined' : 'empty'}
             color={protocols.includes(Protocol.BENTOBOX_STABLE) ? 'blue' : 'default'}
           >
-            <span className="mt-1">🍱</span>
+            <span className="mt-1">🍱 Trident</span>
             <span>Stable</span>
           </Button>
           <Button
@@ -82,7 +82,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
             variant={protocols.includes(Protocol.BENTOBOX_CLASSIC) ? 'outlined' : 'empty'}
             color={protocols.includes(Protocol.BENTOBOX_CLASSIC) ? 'blue' : 'default'}
           >
-            <span className="mt-1">🍱</span>
+            <span className="mt-1">🍱 Trident</span>
             <span>Classic</span>
           </Button>
           <Button

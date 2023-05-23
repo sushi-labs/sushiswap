@@ -103,11 +103,10 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                                   as="a"
                                   href={`/pools/add/v2/${chainId}`}
                                   title="V2 Position"
-                                  subtitle={'If you prefer creating a classic liquidity position.'}
+                                  subtitle={'If you prefer creating a v2 liquidity position.'}
                                 />
                               ) : null}
-                              {!isUniswapV2FactoryChainId(chainId) &&
-                              (isConstantProductPoolFactoryChainId(chainId) || isStablePoolFactoryChainId(chainId)) ? (
+                              {isConstantProductPoolFactoryChainId(chainId) || isStablePoolFactoryChainId(chainId) ? (
                                 <List.MenuItem
                                   as="a"
                                   href={`/pools/add/trident/${chainId}`}
