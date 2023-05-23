@@ -10,7 +10,7 @@
 @import './tooltip/Tooltip.css';
 @import './input/Input.css';
 @import './skeleton/Skeleton.css';
-@import './input/DatePicker.css';
+@import './future/components/input/DatePicker.css';
 @import "./future/components/skeleton/Skeleton.css";
 @import "./future/components/networkselector/styles.css";
 

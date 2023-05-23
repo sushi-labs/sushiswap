@@ -4,10 +4,10 @@ import { parseUnits } from '@ethersproject/units'
 import { PencilIcon } from '@heroicons/react/outline'
 import { Amount, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
-import { JSBI } from '@sushiswap/math'
+import { JSBI, ZERO } from '@sushiswap/math'
 import { classNames, Dots } from '@sushiswap/ui'
 import { _useSendTransaction as useSendTransaction, useAccount, useContract } from '@sushiswap/wagmi'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useRef, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { Button } from '@sushiswap/ui/future/components/button/Button'
 import { Stream } from '../lib'
@@ -18,6 +18,7 @@ import { Dialog } from '@sushiswap/ui/future/components/dialog/Dialog'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { Switch } from '@sushiswap/ui/future/components/Switch'
+import { Simulate } from 'react-dom/test-utils'
 
 interface UpdateModalProps {
   stream: Stream
@@ -34,7 +35,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
   const [changeEndDate, setChangeEndDate] = useState(false)
   const [amount, setAmount] = useState<string>('')
   const [endDate, setEndDate] = useState<Date | null>(null)
-
+  const customInputRef = useRef<HTMLInputElement | null>(null)
   const contract = useContract({
     address: contractAddress,
     abi: abi,
@@ -130,8 +131,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
     ),
   })
 
-  // TODO ramin uncomment
-  // if (!stream || !address || !stream?.canUpdate(address)) return <></>
+  if (!stream || !address || !stream?.canUpdate(address)) return <></>
 
   return (
     <>
@@ -151,6 +151,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
         <Dialog.Content className="space-y-4 !pb-3 !bg-gray-100 dark:!bg-slate-800">
           <Dialog.Header title="Update Stream" onClose={() => setOpen(false)} />
           <List>
+            <List.Label>Stream details</List.Label>
             <List.Control>
               <List.KeyValue title="Recipient">{shortenAddress(stream.recipient.id)}</List.KeyValue>
               <List.KeyValue title="Amount">
@@ -166,7 +167,12 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
               <Switch checked={topUp} onChange={() => setTopUp((prevState) => !prevState)} size="sm" />
             </div>
             <div className={classNames(topUp ? '' : 'opacity-40 pointer-events-none', 'flex flex-col gap-2')}>
-              <Input.Text<string> label="Amount" id={'furo-stream-top-up'} value={amount} onChange={setAmount} />
+              <Input.Text<string>
+                label={`Amount (${stream.token.symbol})`}
+                id={'furo-stream-top-up'}
+                value={amount}
+                onChange={setAmount}
+              />
             </div>
           </div>
           <div className="flex flex-col">
@@ -174,42 +180,63 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
               <List.Label className="text-gray-500 dark:text-slate-50">Change end date</List.Label>
               <Switch checked={changeEndDate} onChange={() => setChangeEndDate((prevState) => !prevState)} size="sm" />
             </div>
-            <Input.DatePicker
-              className={classNames('h-[54px] rounded-xl')}
-              onChange={(date) => setEndDate(date)}
-              selected={endDate}
-              portalId="root-portal"
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              timeCaption="time"
-              minDate={stream.endTime}
-              dateFormat="MMM d, yyyy HH:mm"
-              placeholderText="Select date"
-              autoComplete="off"
-            />
+            <div className={classNames(changeEndDate ? '' : 'opacity-40 pointer-events-none', 'flex flex-col gap-2')}>
+              <Input.DatePicker
+                customInput={<Input.DatePickerCustomInput id="stream-update-end-date" label="End date" />}
+                onChange={(date) => setEndDate(date)}
+                selected={endDate}
+                portalId="root-portal"
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                timeCaption="time"
+                minDate={stream.endTime}
+                dateFormat="MMM d, yyyy HH:mm"
+                autoComplete="off"
+                isClearable={false}
+              />
+            </div>
           </div>
           <div>
             <Checker.Connect type="button" size="xl" fullWidth>
               <Checker.Network type="button" size="xl" fullWidth chainId={chainId}>
-                <Checker.ApproveERC20
-                  id="approve-erc20-update-stream"
-                  type="button"
-                  size="xl"
-                  fullWidth
-                  amount={amountAsEntity}
-                  contract={bentoBoxV1Address[chainId]}
+                <Checker.Custom
+                  showGuardIfTrue={topUp && !amountAsEntity?.greaterThan(ZERO)}
+                  guard={
+                    <Button type="button" size="xl" fullWidth>
+                      Enter amount
+                    </Button>
+                  }
                 >
-                  <Button
-                    type="button"
-                    size="xl"
-                    fullWidth
-                    disabled={isWritePending}
-                    onClick={() => sendTransaction?.()}
+                  <Checker.Custom
+                    showGuardIfTrue={changeEndDate && !endDate}
+                    guard={
+                      <Button type="button" size="xl" fullWidth>
+                        Enter date
+                      </Button>
+                    }
                   >
-                    {isWritePending ? <Dots>Confirm Update</Dots> : 'Update'}
-                  </Button>
-                </Checker.ApproveERC20>
+                    <Checker.ApproveERC20
+                      id="approve-erc20-update-stream"
+                      type="button"
+                      size="xl"
+                      fullWidth
+                      amount={amountAsEntity}
+                      contract={bentoBoxV1Address[chainId]}
+                      enabled={topUp}
+                    >
+                      <Button
+                        type="button"
+                        size="xl"
+                        fullWidth
+                        disabled={isWritePending || (!topUp && !changeEndDate)}
+                        onClick={() => sendTransaction?.()}
+                      >
+                        {isWritePending ? <Dots>Confirm Update</Dots> : 'Update'}
+                      </Button>
+                    </Checker.ApproveERC20>
+                  </Checker.Custom>
+                </Checker.Custom>
               </Checker.Network>
             </Checker.Connect>
           </div>
