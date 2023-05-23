@@ -86,7 +86,7 @@ export const Migrate = () => {
   return (
     <Layout>
       <div className="flex flex-col gap-2">
-        <Link className="flex items-center gap-4 mb-2 group" href={`/`} shallow={true}>
+        <Link className="flex items-center gap-4 mb-2 group" href={'/'} shallow={true}>
           <IconButton
             icon={ArrowLeftIcon}
             iconProps={{
@@ -130,7 +130,7 @@ export const Migrate = () => {
                 Migrate {unwrapToken(token0).symbol}/{unwrapToken(token1).symbol}
               </h1>
               <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-400">
-                Legacy <span className="text-[10px]">•</span> {formatPercent(pool.swapFee)}
+                SushiSwap V2 <span className="text-[10px]">•</span> {formatPercent(pool.swapFee)}
               </div>
             </div>
           </div>

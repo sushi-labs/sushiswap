@@ -620,7 +620,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
               <div className="flex flex-col flex-grow gap-1">
                 <h1 className="text-3xl font-semibold text-gray-900 dark:text-slate-50">Migrate Liquidity</h1>
                 <h1 className="text-lg font-medium text-gray-600 dark:text-slate-300">
-                  {token0?.symbol}/{token1?.symbol} • Concentrated • {feeAmount / 10000}%
+                  {token0?.symbol}/{token1?.symbol} • SushiSwap V3 • {feeAmount / 10000}%
                 </h1>
               </div>
               <div>

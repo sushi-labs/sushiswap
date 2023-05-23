@@ -148,7 +148,7 @@ const _Add: FC = () => {
                     {token0.symbol}/{token1.symbol}
                   </h1>
                   <p className="font-medium text-gray-700 dark:dark:text-slate-400 text-slate-600">
-                    Concentrated • {feeAmount / 10000}%
+                    SushiSwap V3 • {feeAmount / 10000}%
                   </p>
                 </>
               ) : tokensLoading ? (

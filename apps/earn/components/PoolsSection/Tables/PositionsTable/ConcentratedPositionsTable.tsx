@@ -91,7 +91,7 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; p
       <div className={classNames('w-full group')}>
         <h1 className="flex items-center justify-between gap-2 px-4 py-4 text-sm font-semibold text-gray-700 group-hover:text-gray-900 dark:text-slate-200 dark:group-hover:text-slate-50">
           <span className="flex items-center gap-3">
-            <ConcentratedCurveIcon width={20} height={20} className="saturate-200" /> Concentrated Liquidity Positions{' '}
+            <ConcentratedCurveIcon width={20} height={20} className="saturate-200" /> SushiSwap V3 Positions{' '}
             {positions ? `(${positions.length})` : ''}
           </span>
           <div className="flex gap-6">
