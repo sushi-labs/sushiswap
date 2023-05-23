@@ -1,10 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { getConcentratedLiquidityPositions } from '../actions'
-import { ConcentratedLiquidityPosition, ConcentratedLiquidityPositionWithV3Pool } from '../types'
 import { V3ChainId } from '@sushiswap/v3-sdk'
 import { Address } from 'wagmi'
 import { getConcentratedLiquidityPool } from '../../pools'
-import { getToken } from '@sushiswap/dexie'
 import { getTokenWithCacheQueryFn, getTokenWithQueryCacheHydrate } from '../../tokens'
 import { useCustomTokens } from '@sushiswap/hooks'
 
@@ -12,23 +10,18 @@ interface UseConcentratedLiquidityPositionsParams {
   account: Address | undefined
   chainIds: V3ChainId[]
   enabled?: boolean
-  select?(
-    data: ConcentratedLiquidityPositionWithV3Pool[] | undefined
-  ): ConcentratedLiquidityPositionWithV3Pool[] | undefined
 }
 
 export const useConcentratedLiquidityPositions = ({
   account,
   chainIds,
   enabled = true,
-  select,
 }: UseConcentratedLiquidityPositionsParams) => {
   const { data: customTokens, hasToken } = useCustomTokens()
 
   return useQuery({
     queryKey: ['useConcentratedLiquidityPositions', { chainIds, account }],
     queryFn: async () => {
-      console.log('running')
       const data = await getConcentratedLiquidityPositions({
         account: account,
         chainIds,
@@ -65,6 +58,5 @@ export const useConcentratedLiquidityPositions = ({
     enabled: Boolean(account && chainIds && enabled),
     staleTime: 15000,
     cacheTime: 60000,
-    ...(select && { select }),
   })
 }
