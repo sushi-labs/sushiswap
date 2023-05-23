@@ -166,7 +166,6 @@ export class TinesToRouteProcessor2 {
   }
 
   isOnePoolOptimization(token: RToken, route: MultiRoute) {
-    if (getTokenType(token) == TokenType.NATIVE) return false
     const outputDistribution = this.tokenOutputLegs.get(token.tokenId as string) || []
     if (outputDistribution.length != 1) return false
 

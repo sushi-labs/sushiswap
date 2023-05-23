@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { MultiRoute, RouteLeg, RouteStatus } from '@sushiswap/tines'
+import { MultiRoute, RouteLeg, RouteStatus, RToken } from '@sushiswap/tines'
 
 import { PoolCode } from './pools/PoolCode'
 import { getTokenType, PermitData, TinesToRouteProcessor2, TokenType } from './TinesToRouteProcessor2'
@@ -44,6 +44,16 @@ class TinesToRouteProcessor4 extends TinesToRouteProcessor2 {
     })
 
     return res
+  }
+
+  override isOnePoolOptimization(token: RToken, route: MultiRoute) {
+    if (getTokenType(token) == TokenType.NATIVE) return false
+    const outputDistribution = this.tokenOutputLegs.get(token.tokenId as string) || []
+    if (outputDistribution.length != 1) return false
+    if (token.tokenId == route.fromToken.tokenId) return false
+
+    const startPoint = this.getPoolCode(outputDistribution[0]).getStartPoint(outputDistribution[0], route)
+    return startPoint == outputDistribution[0].poolAddress
   }
 
   override swapCode(leg: RouteLeg, route: MultiRoute, toAddress: string): string {
