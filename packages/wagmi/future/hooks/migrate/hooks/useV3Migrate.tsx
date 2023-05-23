@@ -1,5 +1,5 @@
-import { Address, useContract, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
-import { useCallback, useMemo, useState } from 'react'
+import { Address, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
+import { useCallback, useMemo } from 'react'
 import { getContract, SendTransactionResult } from '@wagmi/core'
 import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
 import { V3MigrateChainId } from '../types'
@@ -39,7 +39,6 @@ export const V3MigrateContractConfig = (chainId: V3MigrateChainId) => ({
 })
 
 export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Migrate) => {
-  console.log({ chainId })
   const contract = useMemo(() => getContract(V3MigrateContractConfig(chainId)), [chainId])
 
   const { config } = usePrepareContractWrite(
