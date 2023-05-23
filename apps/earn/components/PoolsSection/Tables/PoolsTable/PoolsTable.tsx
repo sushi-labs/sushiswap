@@ -20,9 +20,15 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { Loader } from '@sushiswap/ui/future/components/Loader'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const COLUMNS = [NAME_COLUMN, TVL_COLUMN, VOLUME_1H_COLUMN, VOLUME_1D_COLUMN, VOLUME_7D_COLUMN, FEES_COLUMN, APR_COLUMN]
+const COLUMNS = [
+  NAME_COLUMN,
+  TVL_COLUMN,
+  VOLUME_1H_COLUMN,
+  VOLUME_1D_COLUMN,
+  VOLUME_7D_COLUMN,
+  FEES_COLUMN,
+  APR_COLUMN,
+] as any
 
 export const PoolsTable: FC = () => {
   const { chainIds, tokenSymbols, protocols, farmsOnly } = usePoolFilters()

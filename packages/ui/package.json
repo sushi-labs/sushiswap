@@ -23,7 +23,7 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
-    "@fontsource/inter": "5.0.1",
+    "@fontsource-variable/inter": "5.0.1",
     "@headlessui/react": "1.7.7",
     "@heroicons/react": "2.0.13",
     "@popperjs/core": "2.11.7",
@@ -37,7 +37,7 @@
     "@tailwindcss/forms": "0.5.3",
     "@tailwindcss/line-clamp": "0.4.4",
     "@tailwindcss/typography": "0.5.9",
-    "@tanstack/react-table": "8.5.0",
+    "@tanstack/react-table": "8.5.30",
     "classnames": "2.3.2",
     "date-fns": "2.29.3",
     "nanoid": "4.0.0",

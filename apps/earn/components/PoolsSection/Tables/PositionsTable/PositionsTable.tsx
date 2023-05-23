@@ -12,9 +12,7 @@ import { ClassicPoolIcon } from '@sushiswap/ui/future/components/icons'
 import { classNames } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from '../../../../config'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const COLUMNS = [NAME_COLUMN, VALUE_COLUMN, APR_COLUMN]
+const COLUMNS = [NAME_COLUMN, VALUE_COLUMN, APR_COLUMN] as any
 
 export const PositionsTable: FC = () => {
   const { address } = useAccount()

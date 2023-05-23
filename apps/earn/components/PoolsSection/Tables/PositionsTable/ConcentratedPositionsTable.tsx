@@ -11,9 +11,7 @@ import ConcentratedCurveIcon from '@sushiswap/ui/future/components/icons/Concent
 import { V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { Writeable } from 'zod'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const COLUMNS = [NAME_COLUMN_V3, PRICE_RANGE_COLUMN, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL]
+const COLUMNS = [NAME_COLUMN_V3, PRICE_RANGE_COLUMN, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL] as any
 
 export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; poolId?: string }> = ({
   variant = 'default',

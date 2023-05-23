@@ -9,9 +9,7 @@ import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable
 import { APR_COLUMN, NAME_COLUMN, VALUE_COLUMN } from '../PoolsSection/Tables/PositionsTable/Cells/columns'
 import { Protocol } from '@sushiswap/client'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const COLUMNS = [NAME_COLUMN, VALUE_COLUMN, APR_COLUMN]
+const COLUMNS = [NAME_COLUMN, VALUE_COLUMN, APR_COLUMN] as any
 
 export const PositionTable = () => {
   const { address } = useAccount()
