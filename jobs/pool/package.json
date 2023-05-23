@@ -87,7 +87,7 @@
     "@types/express": "4.17.15",
     "@types/lodash.zip": "4.2.7",
     "dotenv": "16.0.3",
-    "eslint": "8.29.0",
+    "eslint": "8.41.0",
     "jest": "29.3.1",
     "prettier": "2.8.1",
     "ts-node": "10.9.1",

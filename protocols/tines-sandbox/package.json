@@ -63,7 +63,7 @@
     "chai": "^4.3.0",
     "cross-env": "^7.0.0",
     "dotenv": "16.0.3",
-    "eslint": "8.29.0",
+    "eslint": "8.41.0",
     "ethers": "5.7.2",
     "hardhat": "2.12.7",
     "hardhat-contract-sizer": "2.6.1",

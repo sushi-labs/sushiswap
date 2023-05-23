@@ -39,7 +39,7 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@tsconfig/node18": "2.0.0",
     "@types/node": "18.11.18",
-    "eslint": "8.29.0",
+    "eslint": "8.41.0",
     "typescript": "5.0.4"
   },
   "engines": {

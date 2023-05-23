@@ -3,7 +3,7 @@
 const tailwindConfig = {
   darkMode: 'class',
   // @ts-ignore
-  presets: [require('@sushiswap/ui/tailwind')],
+  // presets: [require('@sushiswap/ui/tailwind')],
   content: [
     './app/**/*.{js,ts,jsx,tsx}',
     './pages/**/*.{js,ts,jsx,tsx}',

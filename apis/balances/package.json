@@ -41,7 +41,7 @@
     "@types/lodash.zip": "4.2.7",
     "@types/node": "18.11.18",
     "@types/node-fetch": "2.6.2",
-    "eslint": "8.29.0",
+    "eslint": "8.41.0",
     "typescript": "5.0.4",
     "vercel": "29.4.0"
   }

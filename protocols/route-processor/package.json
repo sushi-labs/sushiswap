@@ -65,7 +65,7 @@
     "chai": "^4.3.0",
     "cross-env": "^7.0.0",
     "dotenv": "16.0.3",
-    "eslint": "8.29.0",
+    "eslint": "8.41.0",
     "eth-permit": "^0.2.3",
     "ethers": "5.7.2",
     "hardhat": "2.12.4",
