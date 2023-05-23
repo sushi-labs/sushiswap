@@ -166,7 +166,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                 <div className="pl-4 xl:pl-0">
                   <Carousel
                     slideWidth={320}
-                    slides={positions}
+                    slides={positions.filter((position) => position?.chainId !== ChainId.CELO)}
                     render={(position) => (isLoading ? <PositionCardSkeleton /> : <PositionCard position={position} />)}
                   />
                 </div>

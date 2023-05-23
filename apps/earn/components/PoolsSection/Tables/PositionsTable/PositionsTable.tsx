@@ -65,7 +65,7 @@ export const PositionsTable: FC = () => {
       <div className={classNames('w-full group')}>
         <h1 className="flex items-center justify-between gap-2 px-4 py-4 text-sm font-semibold text-gray-700 group-hover:text-gray-900 dark:text-slate-200 dark:group-hover:text-slate-50 group-hover:dark:text-slate-50">
           <span className="flex items-center gap-3">
-            <ClassicPoolIcon width={20} height={20} className="saturate-200" /> Legacy Positions{' '}
+            <ClassicPoolIcon width={20} height={20} className="saturate-200" /> V2/Trident Positions{' '}
             {userPositions ? `(${userPositions.length})` : ''}
           </span>
         </h1>
