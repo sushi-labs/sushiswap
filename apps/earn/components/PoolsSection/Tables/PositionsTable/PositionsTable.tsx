@@ -1,4 +1,4 @@
-import { useBreakpoint } from '@sushiswap/hooks'
+import { useBreakpoint, useEffectDebugger } from '@sushiswap/hooks'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'

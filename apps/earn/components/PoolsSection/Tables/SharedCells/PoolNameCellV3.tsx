@@ -5,34 +5,14 @@ import { FC, useMemo } from 'react'
 
 import { ICON_SIZE } from '../contants'
 import { Row } from './types'
-import {
-  ConcentratedLiquidityPosition,
-  useConcentratedLiquidityPool,
-  useTokenWithCache,
-} from '@sushiswap/wagmi/future/hooks'
+import { ConcentratedLiquidityPosition } from '@sushiswap/wagmi/future/hooks'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { unwrapToken } from '../../../../lib/functions'
 import { ChainId } from '@sushiswap/chain'
-import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
+import { Type } from '@sushiswap/currency'
 
-export const PoolNameCellV3: FC<Row<ConcentratedLiquidityPosition>> = ({ row, ctx }) => {
-  const { data: token0, isLoading: isToken0Loading } = useTokenWithCache({ chainId: row.chainId, address: row.token0 })
-  const { data: token1, isLoading: isToken1Loading } = useTokenWithCache({ chainId: row.chainId, address: row.token1 })
-  const { isLoading: isPoolLoading } = useConcentratedLiquidityPool({
-    chainId: row.chainId,
-    token0,
-    token1,
-    feeAmount: row.fee,
-  })
-
-  const [_token0, _token1] = useMemo(
-    () => [token0 ? unwrapToken(token0) : undefined, token1 ? unwrapToken(token1) : undefined],
-    [token0, token1]
-  )
-
-  const isLoading = isToken0Loading || isToken1Loading || isPoolLoading
-
-  if (isLoading && ctx) return <>{ctx.column.columnDef.meta?.skeleton}</>
+export const PoolNameCellV3: FC<Row<ConcentratedLiquidityPosition>> = ({ row }) => {
+  const [_token0, _token1]: Type[] = useMemo(() => [unwrapToken(row.pool.token0), unwrapToken(row.pool.token1)], [row])
 
   return (
     <div className="flex items-center gap-5">

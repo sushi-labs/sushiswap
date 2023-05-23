@@ -32,10 +32,8 @@ export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
     async (url) => fetch(url).then((data) => data.json())
   )
 
-  const pools = useGraphPools(positions?.map((position) => position.pool) || [])
-
-  console.log('useUserPositions', { positions, pools })
-
+  const _positions = useMemo(() => positions?.map((position) => position.pool) || [], [positions])
+  const pools = useGraphPools(_positions)
   const isValidating = !positions || !pools || (positions.length > 0 && pools.length === 0)
 
   return useMemo(

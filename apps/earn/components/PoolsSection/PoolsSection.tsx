@@ -13,6 +13,7 @@ export const PoolsSection: FC = () => {
   const [tab, setTab] = useState<number>(0)
   const isMounted = useIsMounted()
 
+  console.log('hi')
   return (
     <section className="flex flex-col">
       <Tab.Group selectedIndex={tab} onChange={setTab}>
@@ -24,23 +25,6 @@ export const PoolsSection: FC = () => {
               </Button>
             )}
           </Tab>
-
-          {/* <Tab as={Fragment}>
-            {({ selected }) => (
-              <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
-                V3
-              </Button>
-            )}
-          </Tab>
-
-          <Tab as={Fragment}>
-            {({ selected }) => (
-              <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
-                V2
-              </Button>
-            )}
-          </Tab> */}
-
           {address && isMounted && (
             <Tab as={Fragment}>
               {({ selected }) => (
