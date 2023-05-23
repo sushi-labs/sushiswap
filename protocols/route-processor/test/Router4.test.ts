@@ -773,7 +773,7 @@ describe('End-to-end RouteProcessor4 test', async function () {
     })
 
     const pools = CURVE_NON_FACTORY_POOLS[ChainId.ETHEREUM]
-    for (let i = 1; i < pools.length; ++i) {
+    for (let i = 0; i < pools.length; ++i) {
       const [address, type, from, to] = pools[i]
       it.only(`Curve pool ${address} ${type} ${from.symbol}->${to.symbol}`, async function () {
         await env.snapshot.restore()
