@@ -3,7 +3,7 @@ import { JSBI } from '@sushiswap/math'
 import { BigintIsh } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
-import { FACTORY_ADDRESS, FeeAmount, TICK_SPACINGS } from '../constants'
+import { FeeAmount, TICK_SPACINGS, V3_FACTORY_ADDRESS } from '../constants'
 import { NEGATIVE_ONE, ONE, Q192, ZERO } from '../internalConstants'
 import { computePoolAddress } from '../utils/computePoolAddress'
 import { LiquidityMath } from '../utils/liquidityMath'
@@ -51,7 +51,7 @@ export class Pool {
     factoryAddressOverride?: string
   ): string {
     return computePoolAddress({
-      factoryAddress: factoryAddressOverride ?? FACTORY_ADDRESS,
+      factoryAddress: factoryAddressOverride ?? V3_FACTORY_ADDRESS[tokenA.chainId as keyof typeof V3_FACTORY_ADDRESS],
       fee,
       tokenA,
       tokenB,

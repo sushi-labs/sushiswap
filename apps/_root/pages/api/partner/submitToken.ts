@@ -47,8 +47,8 @@ function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: any) {
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   await runMiddleware(req, res, cors)
 
-  if (!process.env.PARTNER_LIST_PR_WEBHOOK_URL) throw new Error('PARTNER_LIST_PR_WEBHOOK_URL undefined')
-  if (!process.env.PARTNER_OCTOKIT_KEY) throw new Error('PARTNER_OCTOKIT_KEY undefined')
+  if (!process.env.TOKEN_LIST_PR_WEBHOOK_URL) throw new Error('TOKEN_LIST_PR_WEBHOOK_URL undefined')
+  if (!process.env.OCTOKIT_KEY) throw new Error('OCTOKIT_KEY undefined')
 
   const { tokenAddress, tokenData, tokenIcon, chainId, listType } = req.body as Body
 
@@ -66,7 +66,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const checksummedAddress = ethers.utils.getAddress(tokenAddress)
 
-  const octokit = getOctokit(process.env.PARTNER_OCTOKIT_KEY)
+  const octokit = getOctokit(process.env.OCTOKIT_KEY)
 
   // Get latest commit for the new branch
   const {
@@ -224,7 +224,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   })
 
   // Send Discord notification using webhook
-  await fetch(process.env.PARTNER_LIST_PR_WEBHOOK_URL, {
+  await fetch(process.env.TOKEN_LIST_PR_WEBHOOK_URL, {
     method: 'POST',
     body: stringify({
       content: null,

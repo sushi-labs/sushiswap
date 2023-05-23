@@ -20,10 +20,26 @@ export const PoolsSection: FC = () => {
           <Tab as={Fragment}>
             {({ selected }) => (
               <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
-                Pools
+                All
               </Button>
             )}
           </Tab>
+
+          {/* <Tab as={Fragment}>
+            {({ selected }) => (
+              <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
+                V3
+              </Button>
+            )}
+          </Tab>
+
+          <Tab as={Fragment}>
+            {({ selected }) => (
+              <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
+                V2
+              </Button>
+            )}
+          </Tab> */}
 
           {address && isMounted && (
             <Tab as={Fragment}>

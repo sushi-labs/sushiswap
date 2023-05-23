@@ -1,12 +1,8 @@
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
-import { Address, Chain, configureChains, createClient, CreateClientConfig, mainnet } from 'wagmi'
-import { foundry } from 'wagmi/chains'
+import { Chain, configureChains, createClient, CreateClientConfig, mainnet } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
-import { MockConnector } from 'wagmi/connectors/mock'
 import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
-// import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { SafeConnector } from 'wagmi/connectors/safe'
 import { _createTestClient } from './test/setup'
@@ -24,12 +20,12 @@ export const _createClient = (config?: CreateClientConfig) => {
     ? _createTestClient()
     : createClient({
         provider,
-        // logger: {
-        //   warn: process.env.NODE_ENV !== 'production' ? console.warn : null,
-        // },
         logger: {
-          warn: null,
+          warn: process.env.NODE_ENV !== 'production' ? console.warn : null,
         },
+        // logger: {
+        //   warn: null,
+        // },
         autoConnect: true,
         connectors: [
           new InjectedConnector({
@@ -58,19 +54,11 @@ export const _createClient = (config?: CreateClientConfig) => {
           //   options: {
           //     projectId: '187b0394dbf3b20ce7762592560eafd2',
           //     metadata: {
-          //       name: 'sushi',
-          //       description: 'sushi app',
+          //       name: 'Sushi',
+          //       description: 'Sushi',
           //       url: 'https://www.sushi.com',
           //       icons: ['https://www.sushi.com/icon.png'],
           //     },
-          //   },
-          // }),
-
-          // new WalletConnectLegacyConnector({
-          //   chains,
-          //   // TODO: Flesh out wallet connect options?
-          //   options: {
-          //     qrcode: true,
           //   },
           // }),
           new CoinbaseWalletConnector({
@@ -85,7 +73,15 @@ export const _createClient = (config?: CreateClientConfig) => {
             chains,
             options: {
               // TODO: Other self-hosted safes for some networks?
-              allowedDomains: [/gnosis-safe.io$/, /app.safe.global$/],
+              allowedDomains: [
+                /gnosis-safe.io$/,
+                /app.safe.global$/,
+                /safe.fuse.io$/,
+                /multisig.moonbeam.network$/,
+                /safe.fantom.network$/,
+                /ui.celo-safe.io$/,
+                /multisig.harmony.one$/,
+              ],
               debug: false,
             },
           }),

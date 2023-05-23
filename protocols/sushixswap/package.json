@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/sushixswap",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "description": "SushiXSwap",
   "keywords": [
     "sushixswap",
@@ -24,6 +24,7 @@
     "contracts",
     "deploy",
     "deployments",
+    "exports",
     "typechain"
   ],
   "scripts": {
@@ -40,10 +41,9 @@
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
     "@openzeppelin/contracts": "^4.6.0",
     "@sushiswap/amm": "workspace:*",
-    "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/bentobox": "1.0.1",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/core": "^1.4.2",
-    "@sushiswap/core-sdk": "1.0.0-canary.110",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/hardhat-config": "workspace:*",

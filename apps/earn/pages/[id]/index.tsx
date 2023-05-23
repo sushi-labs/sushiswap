@@ -1,7 +1,7 @@
 import { formatPercent } from '@sushiswap/format'
 import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
-import { getPool, usePool, getPools, getPoolUrl, Pool } from '@sushiswap/client'
+import { getPool, usePool, getPools, getPoolUrl, Pool, Protocol } from '@sushiswap/client'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -21,8 +21,9 @@ import {
   PoolPositionStakedProvider,
   PoolRewards,
   PoolStats,
+  UnknownTokenAlert,
 } from '../../components'
-import { POOL_TYPE_MAP } from '../../lib/constants'
+import { PROTOCOL_MAP } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
 import { NextSeo } from 'next-seo'
 import PoolPageV3 from '../../components/PoolPageV3'
@@ -30,7 +31,7 @@ import PoolPageV3 from '../../components/PoolPageV3'
 const LINKS = (pool: Pool): BreadcrumbLink[] => [
   {
     href: `/${pool.id}`,
-    label: `${pool.name} - ${POOL_TYPE_MAP[pool.type]} - ${formatPercent(pool.swapFee)}`,
+    label: `${pool.name} - ${PROTOCOL_MAP[pool.protocol]} - ${formatPercent(pool.swapFee)}`,
   },
 ]
 
@@ -55,7 +56,7 @@ const _Pool = () => {
   })
 
   if (!pool) return <></>
-  if (pool.type === 'CONCENTRATED_LIQUIDITY_POOL') {
+  if (pool.protocol === Protocol.SUSHISWAP_V3) {
     return <PoolPageV3 />
   }
 
@@ -66,25 +67,28 @@ const _Pool = () => {
         <PoolPositionStakedProvider pool={pool}>
           <PoolPositionRewardsProvider pool={pool}>
             <Layout breadcrumbs={LINKS(pool)}>
-              <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
-                <div className="flex flex-col order-1 gap-9">
-                  <PoolHeader pool={pool} />
-                  <hr className="my-3 border-t border-gray-900/5 dark:border-slate-200/5" />
-                  <PoolChart pool={pool} />
-                  <PoolStats pool={pool} />
-                  <PoolComposition pool={pool} />
-                  <PoolRewards pool={pool} />
-                </div>
+              <div className="flex flex-col gap-9">
+                <UnknownTokenAlert pool={pool} />
+                <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
+                  <div className="flex flex-col order-1 gap-9">
+                    <PoolHeader pool={pool} />
+                    <hr className="my-3 border-t border-gray-900/5 dark:border-slate-200/5" />
+                    <PoolChart pool={pool} />
+                    <PoolStats pool={pool} />
+                    <PoolComposition pool={pool} />
+                    <PoolRewards pool={pool} />
+                  </div>
 
-                <div className="flex flex-col order-2 gap-4">
-                  <AppearOnMount>
-                    <div className="flex flex-col gap-10">
-                      <PoolMyRewards pool={pool} />
-                      <PoolPosition pool={pool} />
+                  <div className="flex flex-col order-2 gap-4">
+                    <AppearOnMount>
+                      <div className="flex flex-col gap-10">
+                        <PoolMyRewards pool={pool} />
+                        <PoolPosition pool={pool} />
+                      </div>
+                    </AppearOnMount>
+                    <div className="hidden lg:flex">
+                      <PoolButtons pool={pool} />
                     </div>
-                  </AppearOnMount>
-                  <div className="hidden lg:flex">
-                    <PoolButtons pool={pool} />
                   </div>
                 </div>
               </div>

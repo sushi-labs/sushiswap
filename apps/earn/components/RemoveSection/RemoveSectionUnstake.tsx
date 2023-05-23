@@ -81,7 +81,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot((
             <Checker.ApproveERC20
               size="xl"
               fullWidth
-              id="approve-token0"
+              id="unstake-approve-slp"
               amount={amount}
               contract={getMasterChefContractConfig(pool.chainId, chefType)?.address}
               enabled={Boolean(getMasterChefContractConfig(pool.chainId, chefType)?.address)}

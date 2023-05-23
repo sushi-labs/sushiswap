@@ -7,6 +7,7 @@ import { PositionWithPool } from '../../types'
 import { useBreakpoint } from '@sushiswap/hooks'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { APR_COLUMN, NAME_COLUMN, VALUE_COLUMN } from '../PoolsSection/Tables/PositionsTable/Cells/columns'
+import { Protocol } from '@sushiswap/client'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -19,7 +20,10 @@ export const PositionTable = () => {
   const { data: userPositions, isValidating } = useUserPositions({ id: address, chainIds: SUPPORTED_CHAIN_IDS })
   const [columnVisibility, setColumnVisibility] = useState({})
 
-  const _positions = useMemo(() => userPositions?.filter((el) => el.pool.version === 'LEGACY') || [], [userPositions])
+  const _positions = useMemo(
+    () => userPositions?.filter((el) => el.pool.protocol === Protocol.SUSHISWAP_V2) || [],
+    [userPositions]
+  )
 
   useEffect(() => {
     if (isSm && !isMd) {

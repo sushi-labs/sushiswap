@@ -14,7 +14,6 @@
     "blog",
     "earn",
     "furo",
-    "swap",
     "next-13-example",
     "node-18-example",
     "@sushiswap/balances-api",
@@ -25,17 +24,13 @@
     "@sushiswap/token-price-api",
     "@sushiswap/cli",
     "@sushiswap/client",
-    "@sushiswap/database",
     "@sushiswap/react-query",
     "@sushiswap/redux-token-lists",
     "@sushiswap/redux-localstorage",
-    "@sushiswap/router",
-    "@sushiswap/token-lists",
     "@sushiswap/ui",
     "@sushiswap/wagmi",
     "@sushiswap/aggregator-job",
     "@sushiswap/pool-job",
-    "@sushiswap/furo",
     "@sushiswap/route-processor"
   ]
 }

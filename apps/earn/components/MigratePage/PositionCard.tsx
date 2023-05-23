@@ -34,10 +34,7 @@ export const PositionCardSkeleton = () => {
 
 export const PositionCard: FC<PositionCard> = ({ position }) => {
   const { token0, token1 } = useTokensFromPool(position.pool)
-  const valueUSD =
-    (Number(position.balance + position.stakedBalance) / Number(position.pool.totalSupply)) *
-    Number(position.pool.liquidityUSD)
-
+  const valueUSD = (Number(position.balance) / Number(position.pool.totalSupply)) * Number(position.pool.liquidityUSD)
   return (
     <div className="relative bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-all rounded-2xl p-7 overflow-hidden w-[320px]">
       <span className="uppercase text-xs font-semibold dark:text-slate-400 text-gray-600">

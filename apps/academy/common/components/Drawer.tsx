@@ -1,8 +1,7 @@
 import { Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useIsMounted } from '@sushiswap/hooks'
-import { IconButton } from '@sushiswap/ui'
-import classNames from 'classnames'
+import { classNames, IconButton } from '@sushiswap/ui'
 import React, { FC, Fragment, ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 

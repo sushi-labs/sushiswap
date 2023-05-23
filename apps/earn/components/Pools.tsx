@@ -20,6 +20,8 @@ import { PositionCard, PositionCardSkeleton } from './MigratePage/PositionCard'
 import { Carousel } from '@sushiswap/ui/future/components/Carousel'
 import { DiscordIcon, OnsenIcon } from '@sushiswap/ui/future/components/icons'
 import { useAccount } from 'wagmi'
+import { isUniswapV2FactoryChainId } from '@sushiswap/sushiswap'
+import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
 
 export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
   const { address } = useAccount()
@@ -96,12 +98,29 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                                 }
                                 subtitle={'Most efficient way of providing liquidity.'}
                               />
-                              <List.MenuItem
-                                as="a"
-                                href={`/pools/add/v2/${chainId}`}
-                                title="V2 Position"
-                                subtitle={'If you prefer creating a classic liquidity position.'}
-                              />
+                              {isUniswapV2FactoryChainId(chainId) ? (
+                                <List.MenuItem
+                                  as="a"
+                                  href={`/pools/add/v2/${chainId}`}
+                                  title="V2 Position"
+                                  subtitle={'If you prefer creating a v2 liquidity position.'}
+                                />
+                              ) : null}
+                              {isConstantProductPoolFactoryChainId(chainId) || isStablePoolFactoryChainId(chainId) ? (
+                                <List.MenuItem
+                                  as="a"
+                                  href={`/pools/add/trident/${chainId}`}
+                                  title={
+                                    <div className="flex gap-2">
+                                      Trident Position{' '}
+                                      <div className="rounded-xl bg-slate-900 text-white text-[10px] px-2">
+                                        Deprecating 💀
+                                      </div>
+                                    </div>
+                                  }
+                                  subtitle={'If you prefer creating a trident liquidity position.'}
+                                />
+                              ) : null}
                             </Popover.Panel>
                           </div>
                         </div>

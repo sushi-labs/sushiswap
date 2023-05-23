@@ -39,6 +39,7 @@ export const V3MigrateContractConfig = (chainId: V3MigrateChainId) => ({
 })
 
 export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Migrate) => {
+  console.log({ chainId })
   const contract = useMemo(() => getContract(V3MigrateContractConfig(chainId)), [chainId])
 
   const { config } = usePrepareContractWrite(
@@ -164,9 +165,9 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
           txHash: data.hash,
           promise: data.wait(),
           summary: {
-            pending: `Migrating your liquidity`,
-            completed: `Successfully migrated your liquidity`,
-            failed: `Failed to migrate liquidity`,
+            pending: 'Migrating your liquidity',
+            completed: 'Successfully migrated your liquidity',
+            failed: 'Failed to migrate liquidity',
           },
           timestamp: ts,
           groupTimestamp: ts,

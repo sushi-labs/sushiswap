@@ -16,6 +16,7 @@ export const V3MigrateAddress = {
   [ChainId.OPTIMISM]: '0xFB7eF66a7e61224DD6FcD0D7d9C3be5C8B049b9f',
   [ChainId.POLYGON]: '0xFB7eF66a7e61224DD6FcD0D7d9C3be5C8B049b9f',
   [ChainId.POLYGON_ZKEVM]: '0xFB7eF66a7e61224DD6FcD0D7d9C3be5C8B049b9f',
+  [ChainId.THUNDERCORE]: '0x1be211D8DA40BC0ae8719c6663307Bfc987b1d6c',
 }
 
 export const V3MigrateChainIds = Object.keys(V3MigrateAddress).map(

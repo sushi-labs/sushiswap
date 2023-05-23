@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "ethers": "5.7.2",
-    "viem": "0.3.19",
+    "viem": "0.3.29",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/router": "workspace:*",
