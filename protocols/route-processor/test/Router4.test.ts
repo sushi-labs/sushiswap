@@ -742,15 +742,9 @@ describe('End-to-end RouteProcessor4 test', async function () {
 
     it('Curve pool 0xc5424b857f758e906013f3555dad202e4bdb4567: sETH => Native', async function () {
       await env.snapshot.restore()
-
       const amoutIn = BigInt(1e18)
-      const amountInBN = BigNumber.from(amoutIn.toString())
-
       await setRouterPrimaryBalance(env.user.address, sETH.address, amoutIn * 2n)
-      const WrappedBaseTokenContract = await new ethers.Contract(sETH.address, erc20Abi, env.user)
-      await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountInBN)
-
-      intermidiateResult[0] = amountInBN
+      intermidiateResult[0] = BigNumber.from(amoutIn.toString())
       intermidiateResult = await updMakeSwap(env, sETH, Native.onChain(chainId), intermidiateResult, undefined, [
         LiquidityProviders.CurveSwap,
       ])
@@ -758,15 +752,9 @@ describe('End-to-end RouteProcessor4 test', async function () {
 
     it('Curve Native inside: sETH - Native - WETH', async function () {
       await env.snapshot.restore()
-
       const amoutIn = BigInt(1e18)
-      const amountInBN = BigNumber.from(amoutIn.toString())
-
       await setRouterPrimaryBalance(env.user.address, sETH.address, amoutIn * 2n)
-      const WrappedBaseTokenContract = await new ethers.Contract(sETH.address, erc20Abi, env.user)
-      await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountInBN)
-
-      intermidiateResult[0] = amountInBN
+      intermidiateResult[0] = BigNumber.from(amoutIn.toString())
       intermidiateResult = await updMakeSwap(env, sETH, WNATIVE[chainId], intermidiateResult, undefined, [
         LiquidityProviders.CurveSwap,
       ])
@@ -775,7 +763,7 @@ describe('End-to-end RouteProcessor4 test', async function () {
     const pools = CURVE_NON_FACTORY_POOLS[ChainId.ETHEREUM]
     for (let i = 0; i < pools.length; ++i) {
       const [address, type, from, to] = pools[i]
-      it.only(`Curve pool ${address} ${type} ${from.symbol}->${to.symbol}`, async function () {
+      it(`Curve pool ${address} ${type} ${from.symbol}->${to.symbol}`, async function () {
         await env.snapshot.restore()
         const amoutIn = BigInt(1e12)
         const amountInBN = BigNumber.from(amoutIn.toString())
