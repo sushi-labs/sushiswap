@@ -1,7 +1,7 @@
 import { classNames } from '@sushiswap/ui'
 import { FC, useMemo, useState } from 'react'
 
-import { ConcentratedLiquidityPosition } from '@sushiswap/wagmi/future/hooks'
+import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
 import { Row } from '../../SharedCells/types'
 import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/react/solid'
 import { Position } from '@sushiswap/v3-sdk'
@@ -11,7 +11,7 @@ import { Bound } from '../../../../../lib/constants'
 import { usePriceInverter } from '../../../../../lib/hooks'
 import useIsTickAtLimit from '../../../../../lib/hooks/useIsTickAtLimit'
 
-export const PriceRangeCell: FC<Row<ConcentratedLiquidityPosition>> = ({ row }) => {
+export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> = ({ row }) => {
   const [manuallyInverted, setManuallyInverted] = useState(false)
   const position = useMemo(() => {
     if (row.liquidity) {

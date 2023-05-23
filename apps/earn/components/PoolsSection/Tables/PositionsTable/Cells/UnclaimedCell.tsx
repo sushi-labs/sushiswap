@@ -1,14 +1,14 @@
 import { formatUSD } from '@sushiswap/format'
 import { FC, useMemo } from 'react'
 
-import { ConcentratedLiquidityPosition } from '@sushiswap/wagmi/future/hooks'
+import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
 import { Row } from '../../SharedCells/types'
 import { JSBI } from '@sushiswap/math'
 import { useTokenAmountDollarValues } from '../../../../../lib/hooks'
 import { Amount } from '@sushiswap/currency'
 import { unwrapToken } from '../../../../../lib/functions'
 
-export const UnclaimedCell: FC<Row<ConcentratedLiquidityPosition>> = ({ row }) => {
+export const UnclaimedCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> = ({ row }) => {
   const amounts = useMemo(() => {
     if (row.fees && row.pool.token0 && row.pool.token1)
       return [

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { getConcentratedLiquidityPositions } from '../actions'
-import { ConcentratedLiquidityPosition } from '../types'
+import { ConcentratedLiquidityPosition, ConcentratedLiquidityPositionWithV3Pool } from '../types'
 import { V3ChainId } from '@sushiswap/v3-sdk'
 import { Address } from 'wagmi'
 import { getConcentratedLiquidityPool } from '../../pools'
@@ -12,7 +12,9 @@ interface UseConcentratedLiquidityPositionsParams {
   account: Address | undefined
   chainIds: V3ChainId[]
   enabled?: boolean
-  select?(data: ConcentratedLiquidityPosition[] | undefined): ConcentratedLiquidityPosition[] | undefined
+  select?(
+    data: ConcentratedLiquidityPositionWithV3Pool[] | undefined
+  ): ConcentratedLiquidityPositionWithV3Pool[] | undefined
 }
 
 export const useConcentratedLiquidityPositions = ({

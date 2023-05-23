@@ -5,13 +5,13 @@ import { FC, useMemo } from 'react'
 
 import { ICON_SIZE } from '../contants'
 import { Row } from './types'
-import { ConcentratedLiquidityPosition } from '@sushiswap/wagmi/future/hooks'
+import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { unwrapToken } from '../../../../lib/functions'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 
-export const PoolNameCellV3: FC<Row<ConcentratedLiquidityPosition>> = ({ row }) => {
+export const PoolNameCellV3: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> = ({ row }) => {
   const [_token0, _token1]: Type[] = useMemo(() => [unwrapToken(row.pool.token0), unwrapToken(row.pool.token1)], [row])
 
   return (
