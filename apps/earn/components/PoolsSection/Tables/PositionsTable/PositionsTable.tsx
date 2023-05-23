@@ -28,6 +28,8 @@ export const PositionsTable: FC = () => {
 
   const _positions = useMemo(() => userPositions || [], [userPositions])
 
+  console.log('RENDER POSITIONS TABLE')
+
   const table = useReactTable<PositionWithPool>({
     data: _positions,
     state: {
