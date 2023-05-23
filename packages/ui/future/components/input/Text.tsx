@@ -29,7 +29,7 @@ export function Text<T extends string | number>({ label, value, onChange, id, ca
           onChange={(e) => _onChange(e.target.value as T)}
           className={classNames(
             className,
-            'truncate font-medium block rounded-xl px-4 pb-2 pt-[22px] pr-14 w-full text-gray-900 bg-gray-200 dark:bg-slate-800 border-0 appearance-none dark:text-slate-50 focus:outline-none focus:ring-0 peer'
+            'truncate font-medium block rounded-xl px-4 pb-2 pt-[22px] pr-14 w-full text-gray-900 bg-gray-200 dark:bg-slate-200/[0.04] border-0 appearance-none dark:text-slate-50 focus:outline-none focus:ring-0 peer'
           )}
           placeholder=" "
           autoCorrect="off"

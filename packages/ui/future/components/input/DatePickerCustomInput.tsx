@@ -1,6 +1,5 @@
 import React from 'react'
 import { classNames } from '../../../index'
-import XMarkIcon from '@heroicons/react/20/solid/XMarkIcon'
 
 interface DatePickerWrapper<T> {
   id: string
@@ -23,7 +22,7 @@ export const DatePickerCustomInput = <T extends string | number>({
           type="text"
           id="stream-update-end-date"
           className={classNames(
-            'truncate font-medium block rounded-xl px-4 pb-2 pt-[22px] pr-14 w-full text-gray-900 bg-gray-200 dark:bg-slate-800 border-0 appearance-none dark:text-slate-50 focus:outline-none focus:ring-0 peer'
+            'truncate font-medium block rounded-xl px-4 pb-2 pt-[22px] pr-14 w-full text-gray-900 bg-gray-200 dark:bg-slate-200/[0.04] border-0 appearance-none dark:text-slate-50 focus:outline-none focus:ring-0 peer'
           )}
           placeholder=" "
           autoCorrect="off"

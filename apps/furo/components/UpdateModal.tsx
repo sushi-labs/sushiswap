@@ -131,7 +131,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
     ),
   })
 
-  if (!stream || !address || !stream?.canUpdate(address)) return <></>
+  // if (!stream || !address || !stream?.canUpdate(address)) return <></>
 
   return (
     <>
