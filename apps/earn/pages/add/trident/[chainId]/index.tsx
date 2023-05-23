@@ -40,7 +40,7 @@ import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Signature } from '@ethersproject/bytes'
-import { APPROVE_TAG_ADD_TRIDENT, APPROVE_TAG_CREATE_TRIDENT } from '../../../../lib/constants'
+import { APPROVE_TAG_ADD_LEGACY, APPROVE_TAG_ADD_TRIDENT, APPROVE_TAG_CREATE_TRIDENT } from '../../../../lib/constants'
 
 // This function gets called at build time on server-side.
 // It may be called again, on a serverless function, if
@@ -440,7 +440,7 @@ const _Add: FC<AddProps> = ({
                             amount={parsedInput1}
                             contract={getSushiSwapRouterContractConfig(chainId).address as Address}
                           >
-                            <Checker.Success tag={APPROVE_TAG_ADD_TRIDENT}>
+                            <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
                               <Button
                                 fullWidth
                                 onClick={() => setOpen(true)}

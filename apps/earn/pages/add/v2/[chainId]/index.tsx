@@ -40,7 +40,7 @@ import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Signature } from '@ethersproject/bytes'
-import { APPROVE_TAG_ADD_TRIDENT, APPROVE_TAG_CREATE_TRIDENT } from '../../../../lib/constants'
+import { APPROVE_TAG_ADD_LEGACY, APPROVE_TAG_ADD_TRIDENT, APPROVE_TAG_CREATE_TRIDENT } from '../../../../lib/constants'
 import { uniswapV2FactoryChainIds } from '@sushiswap/sushiswap'
 
 // This function gets called at build time on server-side.
@@ -90,7 +90,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
 
   // Reset default fee if switching networks and not on a trident enabled network
   useEffect(() => {
-    if (!TRIDENT_ENABLED_NETWORKS.includes(chainId)) {
+    if (AMM_ENABLED_NETWORKS.includes(chainId)) {
       setFee(Fee.DEFAULT)
       setPoolType(PoolFinderType.Classic)
     }
@@ -443,11 +443,11 @@ const _Add: FC<AddProps> = ({
                             amount={parsedInput1}
                             contract={getSushiSwapRouterContractConfig(chainId).address as Address}
                           >
-                            <Checker.Success tag={APPROVE_TAG_ADD_TRIDENT}>
+                            <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
                               <Button
                                 fullWidth
                                 onClick={() => setOpen(true)}
-                                size="md"
+                                size="xl"
                                 testdata-id="add-liquidity-button"
                               >
                                 {title}
