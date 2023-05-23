@@ -10,7 +10,7 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
   tokenIds,
 }: {
   tokenIds: { chainId: V3ChainId; tokenId: BigNumber }[]
-}): Promise<ConcentratedLiquidityPosition[]> => {
+}): Promise<Omit<ConcentratedLiquidityPosition, 'pool'>[]> => {
   const results = await readContracts({
     contracts: tokenIds.map(
       (el) =>
