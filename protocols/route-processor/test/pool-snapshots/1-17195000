@@ -49860,13 +49860,13 @@
       "d": {
         "chainId": 1,
         "decimals": 18,
-        "symbol": "FRAX",
-        "name": "Frax",
-        "id": "1:0x853d955aCEf822Db058eb8505911ED77F175b99e",
+        "symbol": "frxETH",
+        "name": "Frax Ether",
+        "id": "1:0x5e8422345238f34275888049021821e8e08caa1f",
         "isNative": false,
         "isToken": true,
-        "address": "0x853d955aCEf822Db058eb8505911ED77F175b99e",
-        "tokenId": "0x853d955aCEf822Db058eb8505911ED77F175b99e_1"
+        "address": "0x5E8422345238F34275888049021821E8E08CAa1f",
+        "tokenId": "0x5E8422345238F34275888049021821E8E08CAa1f_1"
       }
     },
     {

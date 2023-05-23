@@ -55,6 +55,14 @@ const ankrETH = new Token({
   name: 'Ankr Staked ETH',
 })
 
+const frxETH = new Token({
+  chainId: 1,
+  address: '0x5e8422345238f34275888049021821e8e08caa1f',
+  decimals: 18,
+  symbol: 'frxETH',
+  name: 'Frax Ether',
+})
+
 const sEUR = new Token({
   chainId: 1,
   address: '0xd71ecff9342a5ced620049e616c5035f1db98620',
@@ -137,12 +145,7 @@ export const CURVE_NON_FACTORY_POOLS: Record<number, [string, CurvePoolType, Typ
     ],
     ['0xf253f83aca21aabd2a20553ae0bf7f65c755a07f', CurvePoolType.Legacy, WBTC[ChainId.ETHEREUM], sBTC],
     ['0xc5424b857f758e906013f3555dad202e4bdb4567', CurvePoolType.Legacy, Native.onChain(ChainId.ETHEREUM), sETH],
-    [
-      '0xa1f8a6807c402e4a15ef4eba36528a3fed24e577',
-      CurvePoolType.Legacy,
-      Native.onChain(ChainId.ETHEREUM),
-      FRAX[ChainId.ETHEREUM],
-    ],
+    ['0xa1f8a6807c402e4a15ef4eba36528a3fed24e577', CurvePoolType.Legacy, Native.onChain(ChainId.ETHEREUM), frxETH],
     ['0x0ce6a5ff5217e38315f87032cf90686c96627caa', CurvePoolType.Legacy, EURS, sEUR],
     ['0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2', CurvePoolType.Legacy, Native.onChain(ChainId.ETHEREUM), ankrETH],
     ['0xeb16ae0052ed37f479f7fe63849198df1765a733', CurvePoolType.Legacy, aDAI, aSUSD],
