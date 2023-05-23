@@ -27,7 +27,7 @@ import { SWRConfig } from 'swr'
 import { isUniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 
 import { CreateSectionReviewModalTrident } from '../../../../components/CreateSection'
-import { AMM_ENABLED_NETWORKS, SUPPORTED_CHAIN_IDS, TRIDENT_ENABLED_NETWORKS } from '../../../../config'
+import { SUPPORTED_CHAIN_IDS, TRIDENT_ENABLED_NETWORKS } from '../../../../config'
 import { isConstantProductPool, isLegacyPool, isStablePool } from '../../../../lib/functions'
 import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
@@ -41,7 +41,6 @@ import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Signature } from '@ethersproject/bytes'
 import { APPROVE_TAG_ADD_TRIDENT, APPROVE_TAG_CREATE_TRIDENT } from '../../../../lib/constants'
-import { uniswapV2FactoryChainIds } from '@sushiswap/sushiswap'
 
 // This function gets called at build time on server-side.
 // It may be called again, on a serverless function, if
@@ -60,7 +59,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 // the path has not been generated.
 export const getStaticPaths: GetStaticPaths = async () => {
   // Get the paths we want to pre-render based on supported chain ids
-  const paths = uniswapV2FactoryChainIds.map((chainId) => ({
+  const paths = TRIDENT_ENABLED_NETWORKS.map((chainId) => ({
     params: {
       chainId: chainId.toString(),
     },
@@ -96,7 +95,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
     }
   }, [chainId])
 
-  const tridentPoolIfCreate = !AMM_ENABLED_NETWORKS && TRIDENT_ENABLED_NETWORKS.includes(chainId)
+  const tridentPoolIfCreate = TRIDENT_ENABLED_NETWORKS.includes(chainId)
 
   return (
     <SWRConfig>
@@ -138,7 +137,6 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
                   enabled={
                     isConstantProductPoolFactoryChainId(chainId) &&
                     poolType === PoolFinderType.Classic &&
-                    !AMM_ENABLED_NETWORKS &&
                     TRIDENT_ENABLED_NETWORKS.includes(chainId)
                   }
                   fee={fee}
@@ -151,7 +149,6 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
                   enabled={
                     isStablePoolFactoryChainId(chainId) &&
                     poolType === PoolFinderType.Stable &&
-                    !AMM_ENABLED_NETWORKS &&
                     TRIDENT_ENABLED_NETWORKS.includes(chainId)
                   }
                   fee={fee}
@@ -313,7 +310,7 @@ const _Add: FC<AddProps> = ({
         setToken0={setToken0}
         setToken1={setToken1}
       />
-      {!AMM_ENABLED_NETWORKS && TRIDENT_ENABLED_NETWORKS.includes(chainId) && (
+      {TRIDENT_ENABLED_NETWORKS.includes(chainId) && (
         <>
           <SelectPoolTypeWidget
             includeConcentrated={false}

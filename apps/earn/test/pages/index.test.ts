@@ -117,9 +117,9 @@ test.describe('V3', () => {
   })
 })
 
-test.describe('V2', () => {
+test.describe('Trident', () => {
   test.beforeEach(async ({ page }) => {
-    const url = BASE_URL.concat(`/add/v2/${CHAIN_ID}`)
+    const url = BASE_URL.concat(`/add/trident/${CHAIN_ID}`)
     await page.goto(url)
     await switchNetwork(page, CHAIN_ID)
   })
