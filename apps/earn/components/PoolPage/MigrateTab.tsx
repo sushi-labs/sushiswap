@@ -645,19 +645,11 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                 <List.Control>
                   <List.KeyValue
                     flex
-                    title={`Minimum Price`}
+                    title={'Minimum Price'}
                     subtitle={`Your position will be 100% composed of ${input0?.currency.symbol} at this price`}
                   >
                     <div className="flex flex-col gap-1">
                       {isFullRange ? '0' : leftPrice?.toSignificant(6)} {token1?.symbol}
-                      {isFullRange ? (
-                        ''
-                      ) : (
-                        <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
-                          ${(fiatAmountsAsNumber[0] * (1 + +(minPriceDiff || 0) / 100)).toFixed(2)} (
-                          {minPriceDiff.toFixed(2)}%)
-                        </span>
-                      )}
                     </div>
                   </List.KeyValue>
                   <List.KeyValue
@@ -665,8 +657,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                     title={noLiquidity ? 'Starting Price' : 'Market Price'}
                     subtitle={
                       noLiquidity
-                        ? `Starting price as determined by you`
-                        : `Current price as determined by the ratio of the pool`
+                        ? 'Starting price as determined by you'
+                        : 'Current price as determined by the ratio of the pool'
                     }
                   >
                     <div className="flex flex-col gap-1">
@@ -678,19 +670,11 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                   </List.KeyValue>
                   <List.KeyValue
                     flex
-                    title={`Maximum Price`}
+                    title="Maximum Price"
                     subtitle={`Your position will be 100% composed of ${token1?.symbol} at this price`}
                   >
                     <div className="flex flex-col gap-1">
                       {isFullRange ? '∞' : rightPrice?.toSignificant(6)} {token1?.symbol}
-                      {isFullRange ? (
-                        ''
-                      ) : (
-                        <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
-                          ${(fiatAmountsAsNumber[0] * (1 + +(maxPriceDiff || 0) / 100)).toFixed(2)} (
-                          {maxPriceDiff.toFixed(2)}%)
-                        </span>
-                      )}{' '}
                     </div>
                   </List.KeyValue>{' '}
                 </List.Control>
