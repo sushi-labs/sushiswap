@@ -49584,11 +49584,24 @@
         "A": 30,
         "D": "0",
         "rate0BN": "1",
-        "rate1BN18": "1000000000000000019884624838656",
+        "rate1BN18": "1000000000000000000",
         "rate0": 1,
-        "rate1": 1000000000000,
+        "rate1": 1,
         "reserve0Rated": "341503974526550567643273",
-        "reserve1Rated": "345633554322574151552769559355615713"
+        "reserve1Rated": "345633554322574144679976"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "ETH",
+        "name": "Ether",
+        "id": "1:NATIVE",
+        "isNative": true,
+        "isToken": false,
+        "tokenId": "_1"
       }
     },
     {
@@ -49603,20 +49616,6 @@
         "isToken": true,
         "address": "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84",
         "tokenId": "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84_1"
-      }
-    },
-    {
-      "c": "Object",
-      "d": {
-        "chainId": 1,
-        "decimals": 6,
-        "symbol": "USDT",
-        "name": "Tether USD",
-        "id": "1:0xdAC17F958D2ee523a2206206994597C13D831ec7",
-        "isNative": false,
-        "isToken": true,
-        "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-        "tokenId": "0xdAC17F958D2ee523a2206206994597C13D831ec7_1"
       }
     },
     {

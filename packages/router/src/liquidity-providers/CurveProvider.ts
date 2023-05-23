@@ -134,9 +134,10 @@ export enum CurvePoolType {
   Factory = 'Factory',
 }
 
+const ETH = Native.onChain(ChainId.ETHEREUM)
 export const CURVE_NON_FACTORY_POOLS: Record<number, [string, CurvePoolType, Type, Type][]> = {
   [ChainId.ETHEREUM]: [
-    ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', CurvePoolType.Legacy, stETH, USDT[ChainId.ETHEREUM]],
+    ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', CurvePoolType.Legacy, ETH, stETH],
     [
       '0xdcef968d416a41cdac0ed8702fac8128a64241a2',
       CurvePoolType.Legacy,
@@ -144,12 +145,12 @@ export const CURVE_NON_FACTORY_POOLS: Record<number, [string, CurvePoolType, Typ
       USDC[ChainId.ETHEREUM],
     ],
     ['0xf253f83aca21aabd2a20553ae0bf7f65c755a07f', CurvePoolType.Legacy, WBTC[ChainId.ETHEREUM], sBTC],
-    ['0xc5424b857f758e906013f3555dad202e4bdb4567', CurvePoolType.Legacy, Native.onChain(ChainId.ETHEREUM), sETH],
-    ['0xa1f8a6807c402e4a15ef4eba36528a3fed24e577', CurvePoolType.Legacy, Native.onChain(ChainId.ETHEREUM), frxETH],
+    ['0xc5424b857f758e906013f3555dad202e4bdb4567', CurvePoolType.Legacy, ETH, sETH],
+    ['0xa1f8a6807c402e4a15ef4eba36528a3fed24e577', CurvePoolType.Legacy, ETH, frxETH],
     ['0x0ce6a5ff5217e38315f87032cf90686c96627caa', CurvePoolType.Legacy, EURS, sEUR],
-    ['0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2', CurvePoolType.Legacy, Native.onChain(ChainId.ETHEREUM), ankrETH],
+    ['0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2', CurvePoolType.Legacy, ETH, ankrETH],
     ['0xeb16ae0052ed37f479f7fe63849198df1765a733', CurvePoolType.Legacy, aDAI, aSUSD],
-    ['0xf9440930043eb3997fc70e1339dbb11f341de7a8', CurvePoolType.Legacy, Native.onChain(ChainId.ETHEREUM), rETH],
+    ['0xf9440930043eb3997fc70e1339dbb11f341de7a8', CurvePoolType.Legacy, ETH, rETH],
     ['0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56', CurvePoolType.LegacyV2, cUSDC, cDAI],
     ['0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0', CurvePoolType.Legacy, LINK[ChainId.ETHEREUM], sLINK],
     ['0x4ca9b3063ec5866a4b82e437059d2c43d1be596f', CurvePoolType.LegacyV3, HBTC, WBTC[ChainId.ETHEREUM]],
