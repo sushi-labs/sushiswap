@@ -1,5 +1,5 @@
-import { Address, useContract, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
-import { useCallback, useMemo, useState } from 'react'
+import { Address, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
+import { useCallback, useMemo } from 'react'
 import { getContract, SendTransactionResult } from '@wagmi/core'
 import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
 import { V3MigrateChainId } from '../types'

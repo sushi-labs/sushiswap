@@ -792,13 +792,15 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       <Modal.Confirm tag={MODAL_MIGRATE_ID} variant="transparent">
         {({ close }) => (
           <TxStatusModalContent
-            onComplete={() => push(`${pool.chainId}:${v3Address}`)}
+            onComplete={() => push(`/pools/${pool.chainId}:${v3Address}?activeTab=myPositions`)}
             testId="migrate-confirmation-modal"
             tag={MODAL_MIGRATE_ID}
             chainId={pool.chainId as ChainId}
             hash={data?.hash}
             successMessage={`Successfully migrated your ${token0.symbol}/${token1.symbol} position`}
             onClose={close}
+            buttonSuccessText="Go to pool"
+            buttonSuccessLink={`/pools/${pool.chainId}:${v3Address}?activeTab=myPositions`}
           />
         )}
       </Modal.Confirm>
