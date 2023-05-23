@@ -1,5 +1,12 @@
 # @sushiswap/router
 
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies [f083fd9ef]
+  - @sushiswap/v3-sdk@1.0.0
+
 ## 0.0.1
 
 ### Patch Changes
