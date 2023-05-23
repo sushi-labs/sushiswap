@@ -23,6 +23,7 @@ import {
   WNATIVE,
 } from '@sushiswap/currency'
 import {
+  CURVE_NON_FACTORY_POOLS,
   DataFetcher,
   LiquidityProviders,
   NativeWrapBridgePoolCode,
@@ -192,6 +193,15 @@ async function makeSwap(
 
   const route = Router.findBestRoute(pcMap, env.chainId, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
   // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
+  // const cc = route.legs
+  //   .map((l) => {
+  //     if (pcMap.get(l.poolAddress)?.liquidityProvider == LiquidityProviders.CurveSwap)
+  //       return `${pcMap.get(l.poolAddress)?.poolName}: ${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${
+  //         l.poolAddress
+  //       }  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
+  //   })
+  //   .filter((s) => s !== undefined)
+  // if (cc.length) console.log(cc.join('\n'))
   // console.log(
   //   'ROUTE:',
   //   route.legs.map(
@@ -761,5 +771,24 @@ describe('End-to-end RouteProcessor4 test', async function () {
         LiquidityProviders.CurveSwap,
       ])
     })
+
+    const pools = CURVE_NON_FACTORY_POOLS[ChainId.ETHEREUM]
+    for (let i = 1; i < pools.length; ++i) {
+      const [address, type, from, to] = pools[i]
+      it.only(`Curve pool ${address} ${type} ${from.symbol}->${to.symbol}`, async function () {
+        await env.snapshot.restore()
+        const amoutIn = BigInt(1e12)
+        const amountInBN = BigNumber.from(amoutIn.toString())
+
+        if (from instanceof Token) {
+          await setRouterPrimaryBalance(env.user.address, from.address, amoutIn * 2n)
+        }
+
+        intermidiateResult[0] = amountInBN
+        intermidiateResult = await updMakeSwap(env, from, to, intermidiateResult, undefined, [
+          LiquidityProviders.CurveSwap,
+        ])
+      })
+    }
   }
 })
