@@ -230,8 +230,8 @@ export function useConcentratedDerivedMintInfo({
     feeAmount,
   })
 
-  const { data: pool, isLoading, isError } = usePool
-  const noLiquidity = !isLoading && !isError && !pool
+  const { data: pool, isInitialLoading, isError } = usePool
+  const noLiquidity = !isInitialLoading && !isError && !pool
 
   // note to parse inputs in reverse
   const invertPrice = Boolean(baseToken && token0 && !baseToken.equals(token0))
