@@ -39,7 +39,6 @@ export const V3MigrateContractConfig = (chainId: V3MigrateChainId) => ({
 })
 
 export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Migrate) => {
-  console.log({ chainId })
   const contract = useMemo(() => getContract(V3MigrateContractConfig(chainId)), [chainId])
 
   const { config } = usePrepareContractWrite(

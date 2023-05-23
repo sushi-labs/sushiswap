@@ -1,7 +1,7 @@
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Fraction, JSBI, Percent, ZERO } from '@sushiswap/math'
 import { RadioGroup } from '@headlessui/react'
-import { classNames, Collapsible, Dots } from '@sushiswap/ui'
+import { classNames, Dots } from '@sushiswap/ui'
 import { formatUSD } from '@sushiswap/format'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { unwrapToken } from '../../lib/functions'
@@ -24,14 +24,14 @@ import { Address, useAccount } from 'wagmi'
 import { Amount, Price, tryParseAmount } from '@sushiswap/currency'
 import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
-import { ArrowDownIcon, ArrowLeftIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/react/solid'
+import { ArrowDownIcon, ArrowLeftIcon, SwitchHorizontalIcon } from '@heroicons/react/solid'
 import { FundSource } from '@sushiswap/hooks'
 import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
 import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap/exports/exports'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { useRouter } from 'next/router'
 
 export const MODAL_MIGRATE_ID = 'migrate-modal'
 
@@ -41,6 +41,7 @@ enum PositionView {
 }
 
 export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
+  const { push } = useRouter()
   const { address } = useAccount()
   const [positionView, setPositionView] = useState(PositionView.staked)
   const [feeAmount, setFeeAmount] = useState<FeeAmount>(FeeAmount.LOWEST)
@@ -128,6 +129,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
     existingPosition: undefined,
   })
 
+  const v3Address =
+    token0 && token1 && feeAmount ? V3Pool.getAddress(token0.wrapped, token1.wrapped, feeAmount) : undefined
   const v3SpotPrice = useMemo(() => (v3Pool ? v3Pool?.token0Price : undefined), [v3Pool])
   const v2SpotPrice = useMemo(
     () =>
@@ -789,6 +792,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       <Modal.Confirm tag={MODAL_MIGRATE_ID} variant="transparent">
         {({ close }) => (
           <TxStatusModalContent
+            onComplete={() => push(`${pool.chainId}:${v3Address}`)}
             testId="migrate-confirmation-modal"
             tag={MODAL_MIGRATE_ID}
             chainId={pool.chainId as ChainId}
