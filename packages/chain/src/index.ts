@@ -231,32 +231,32 @@ const additional = [
   //     },
   //   ],
   // },
-  {
-    name: 'ThunderCore',
-    chain: 'ThunderCore',
-    rpc: [
-      'https://mainnet-rpc.thundercore.io',
-      'https://mainnet-rpc.thundercore.com',
-      'https://mainnet-rpc.thundertoken.net',
-    ],
-    faucets: [],
-    nativeCurrency: {
-      name: 'Thunder Token',
-      symbol: 'TT',
-      decimals: 18,
-    },
-    infoURL: 'https://docs.developers.thundercore.com',
-    shortName: 'thundercore',
-    chainId: 108,
-    networkId: 108,
-    explorers: [
-      {
-        name: 'ThunderCore Explorer',
-        url: 'https://viewblock.io/thundercore',
-        standard: Standard.None,
-      },
-    ],
-  },
+  // {
+  //   name: 'ThunderCore',
+  //   chain: 'ThunderCore',
+  //   rpc: [
+  //     'https://mainnet-rpc.thundercore.io',
+  //     'https://mainnet-rpc.thundercore.com',
+  //     'https://mainnet-rpc.thundertoken.net',
+  //   ],
+  //   faucets: [],
+  //   nativeCurrency: {
+  //     name: 'Thunder Token',
+  //     symbol: 'TT',
+  //     decimals: 18,
+  //   },
+  //   infoURL: 'https://docs.developers.thundercore.com',
+  //   shortName: 'thundercore',
+  //   chainId: 108,
+  //   networkId: 108,
+  //   explorers: [
+  //     {
+  //       name: 'ThunderCore Explorer',
+  //       url: 'https://viewblock.io/thundercore',
+  //       standard: Standard.None,
+  //     },
+  //   ],
+  // },
 ] as const
 
 const RAW = [...raw, ...additional] as const
