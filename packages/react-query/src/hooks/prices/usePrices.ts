@@ -11,7 +11,7 @@ export const usePrices = ({ chainId }: UsePrices) => {
   return useQuery({
     queryKey: [`https://token-price.sushi.com/v1/${chainId}`],
     queryFn: async () => {
-      const data = await fetch(`https://token-price.sushi.com/v1/${chainId}`).then((response) => response.json())
+      const data: Record<string, number> = await fetch(`https://token-price.sushi.com/v1/${chainId}`).then((response) => response.json())
       return Object.entries(data).reduce<Record<string, Fraction>>((acc, [address, price]) => {
         if (isAddress(address)) {
           acc[getAddress(address)] = new Fraction(
