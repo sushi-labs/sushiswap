@@ -1,26 +1,26 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
-import { CheckCircleIcon } from '@heroicons/react/solid'
-import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
-import { Button, classNames, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
-import { Checker, useFuroVestingContract } from '@sushiswap/wagmi'
+import { Dialog, Dots } from '@sushiswap/ui'
+import { useFuroVestingContract } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-
+import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useVestingBalance, Vesting } from '../../lib'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroVestingChainId } from '@sushiswap/furo'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { ZERO } from '@sushiswap/math'
 
 interface WithdrawModalProps {
   vesting?: Vesting
   chainId: FuroVestingChainId
+  children?({ disabled, setOpen }: { disabled: boolean; setOpen: Dispatch<SetStateAction<boolean>> }): ReactNode
 }
 
-export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
+export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, children }) => {
   const [open, setOpen] = useState(false)
-  const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
   const { address } = useAccount()
   const balance = useVestingBalance(chainId, vesting?.id, vesting?.token)
   const contract = useFuroVestingContract(chainId)
@@ -55,14 +55,10 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
       setRequest({
         from: address,
         to: contract.address,
-        data: contract.interface.encodeFunctionData('withdraw', [
-          BigNumber.from(vesting.id),
-          '0x',
-          fundSource === FundSource.BENTOBOX,
-        ]),
+        data: contract.interface.encodeFunctionData('withdraw', [BigNumber.from(vesting.id), '0x', false]),
       })
     },
-    [vesting, balance, contract, address, fundSource]
+    [vesting, balance, contract, address]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
@@ -77,81 +73,59 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
 
   return (
     <>
-      <Checker.Connected size="md">
-        <Checker.Network size="md" chainId={chainId}>
-          <Button
-            size="md"
-            fullWidth
-            disabled={!address || !vesting?.canWithdraw(address) || !balance || !balance?.greaterThan(0)}
-            onClick={() => {
-              setOpen(true)
-            }}
-          >
-            Withdraw
-          </Button>
-        </Checker.Network>
-      </Checker.Connected>
+      {typeof children === 'function' ? (
+        children({ disabled: !vesting?.canWithdraw(address), setOpen })
+      ) : (
+        <Button
+          fullWidth
+          size="md"
+          variant="filled"
+          disabled={!address || !vesting?.canWithdraw(address) || !balance || !balance?.greaterThan(0)}
+          onClick={() => {
+            setOpen(true)
+          }}
+        >
+          Withdraw
+        </Button>
+      )}
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-4 !max-w-xs !pb-4">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
-          <div className="grid items-center grid-cols-2 gap-3">
-            <div
-              onClick={() => setFundSource(FundSource.WALLET)}
-              className={classNames(
-                fundSource === FundSource.WALLET ? 'ring-green/70' : 'ring-transparent',
-                DEFAULT_INPUT_BG,
-                'ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
-              )}
-            >
-              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
-                Wallet
-              </Typography>
-              <Typography variant="xs" className="text-slate-400">
-                Receive funds in your Wallet
-              </Typography>
-              {fundSource === FundSource.WALLET && (
-                <div className="absolute w-5 h-5 top-3 right-3">
-                  <CheckCircleIcon className="text-green/70" />
-                </div>
-              )}
-            </div>
-            <div
-              onClick={() => setFundSource(FundSource.BENTOBOX)}
-              className={classNames(
-                fundSource === FundSource.BENTOBOX ? 'ring-green/70' : 'ring-transparent',
-                DEFAULT_INPUT_BG,
-                'ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
-              )}
-            >
-              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
-                BentoBox
-              </Typography>
-              <Typography variant="xs" className="text-slate-400">
-                Receive funds in your BentoBox
-              </Typography>
-              {fundSource === FundSource.BENTOBOX && (
-                <div className="absolute w-5 h-5 top-3 right-3">
-                  <CheckCircleIcon className="text-green/70" />
-                </div>
-              )}
-            </div>
-          </div>
-          <Typography variant="xs" weight={400} className="py-2 text-center text-slate-300">
+          <div className="text-gray-700 dark:text-slate-400">
             There are currently{' '}
             <span className="font-semibold">
               {balance?.toSignificant(6)} {balance?.currency.symbol}
             </span>{' '}
             unlocked tokens available for withdrawal.
-          </Typography>
-          <Button
-            size="md"
-            variant="filled"
-            fullWidth
-            disabled={isWritePending || !balance || !balance?.greaterThan(0)}
-            onClick={() => sendTransaction?.()}
-          >
-            {!vesting?.token ? 'Invalid stream token' : isWritePending ? <Dots>Confirm Withdraw</Dots> : 'Withdraw'}
-          </Button>
+          </div>
+          <Checker.Connect size="xl" fullWidth>
+            <Checker.Network size="xl" fullWidth chainId={chainId}>
+              <Checker.Custom
+                showGuardIfTrue={Boolean(balance?.greaterThan(ZERO))}
+                guard={
+                  <Button size="xl" fullWidth>
+                    Not enough available
+                  </Button>
+                }
+              >
+                <Button
+                  size="md"
+                  variant="filled"
+                  fullWidth
+                  disabled={isWritePending}
+                  onClick={() => sendTransaction?.()}
+                >
+                  {!vesting?.token ? (
+                    'Invalid stream token'
+                  ) : isWritePending ? (
+                    <Dots>Confirm Withdraw</Dots>
+                  ) : (
+                    'Withdraw'
+                  )}
+                </Button>
+              </Checker.Custom>
+            </Checker.Network>
+          </Checker.Connect>
         </Dialog.Content>
       </Dialog>
     </>

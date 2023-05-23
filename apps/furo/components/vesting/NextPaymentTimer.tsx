@@ -1,8 +1,7 @@
 import { useInterval } from '@sushiswap/hooks'
-import { Typography } from '@sushiswap/ui'
-import { FC, useState } from 'react'
+import { FC, ReactNode, useMemo, useState } from 'react'
 
-import { FuroStatus, Vesting } from '../../lib'
+import { Schedule } from './createScheduleRepresentation'
 
 interface NextPaymentTimerState {
   days: string
@@ -12,73 +11,47 @@ interface NextPaymentTimerState {
 }
 
 interface NextPaymentTimerProps {
-  vesting?: Vesting
+  schedule: Schedule | undefined
+  children(state: NextPaymentTimerState): ReactNode
 }
 
-export const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ vesting }) => {
-  const [remaining, setRemaining] = useState<NextPaymentTimerState>()
+export const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ schedule, children }) => {
+  const [remaining, setRemaining] = useState<NextPaymentTimerState>({
+    days: '',
+    hours: '',
+    minutes: '',
+    seconds: '',
+  })
+
+  const nextPayment: Date | undefined = useMemo(() => {
+    if (!schedule) return undefined
+
+    const now = Date.now()
+    const filtered = schedule.filter((el) => el.date.getTime() > now)
+
+    if (filtered.length > 0) {
+      return filtered[0].date
+    }
+
+    return undefined
+  }, [schedule])
 
   useInterval(() => {
-    if (!vesting || !vesting.nextPaymentTimeRemaining) return
+    if (!nextPayment) return
 
-    const { days, hours, minutes, seconds } = vesting.nextPaymentTimeRemaining
+    const total = nextPayment.getTime() - Date.now()
+    const seconds = Math.floor((total / 1000) % 60)
+    const minutes = Math.floor((total / 1000 / 60) % 60)
+    const hours = Math.floor((total / (1000 * 60 * 60)) % 24)
+    const days = Math.floor(total / (1000 * 60 * 60 * 24))
 
     setRemaining({
-      days: String(Math.max(days, 0)).padStart(2, '0'),
+      days: String(Math.max(days, 0)).padStart(1, '0'),
       hours: String(Math.max(hours, 0)).padStart(2, '0'),
       minutes: String(Math.max(minutes, 0)).padStart(2, '0'),
       seconds: String(Math.max(seconds, 0)).padStart(2, '0'),
     })
   }, 1000)
 
-  if (remaining) {
-    return (
-      <div className="flex flex-col gap-2">
-        <div className="flex justify-center gap-6 text-slate-200">
-          <div className="flex flex-col text-center">
-            <Typography variant="lg" weight={500} className="text-slate-200">
-              {remaining.days}
-            </Typography>
-            <Typography variant="sm" className="text-slate-500">
-              days
-            </Typography>
-          </div>
-          <div className="flex flex-col text-center">
-            <Typography variant="lg" weight={500} className="text-slate-200">
-              {remaining.hours}
-            </Typography>
-            <Typography variant="sm" className="text-slate-500">
-              hours
-            </Typography>
-          </div>
-          <div className="flex flex-col text-center">
-            <Typography variant="lg" weight={500} className="text-slate-200">
-              {remaining.minutes}
-            </Typography>
-            <Typography variant="sm" className="text-slate-500">
-              min
-            </Typography>
-          </div>
-          <div className="flex flex-col text-center">
-            <Typography variant="lg" weight={500} className="text-slate-200">
-              {remaining.seconds}
-            </Typography>
-            <Typography variant="sm" className="text-slate-500">
-              sec
-            </Typography>
-          </div>
-        </div>
-        <Typography variant="xs" weight={400} className="tracking-[0.4em] text-slate-200 text-center">
-          {vesting?.status === FuroStatus.CANCELLED
-            ? 'CANCELLED'
-            : vesting?.status === FuroStatus.COMPLETED
-            ? 'COMPLETED'
-            : 'NEXT PAYMENT IN'}
-        </Typography>
-      </div>
-    )
-  }
-
-  // No data available
-  return <></>
+  return <>{children(remaining)}</>
 }
