@@ -31,8 +31,8 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
   return (
     <>
       <Container maxWidth="7xl" className="mx-auto px-4 pt-[80px] lg:pb-[54px]">
-        <section className="flex flex-col gap-12 lg:flex-row justify-between lg:items-center">
-          <div className="flex flex-col flex-grow gap-6 items-center lg:items-start">
+        <section className="flex flex-col justify-between gap-12 lg:flex-row lg:items-center">
+          <div className="flex flex-col items-center flex-grow gap-6 lg:items-start">
             <div className="flex flex-col gap-2">
               <span className="text-center lg:text-left font-semibold text-5xl text-gray-800 dark:text-slate-200 leading-[1.2]">
                 Provide Liquidity
@@ -41,15 +41,15 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                 </span>
               </span>
             </div>
-            <div className="group relative z-10">
-              <div className="flex w-full items-center">
+            <div className="relative z-10 group">
+              <div className="flex items-center w-full">
                 <Button
                   as="a"
                   variant="filled"
                   href={
                     isRouteProcessor3ChainId(chainId) ? `/pools/add?chainId=${chainId}` : `/pools/add/v2/${chainId}`
                   }
-                  className="text-blue font-medium text-xl rounded-l-full"
+                  className="text-xl font-medium rounded-l-full text-blue"
                   size="lg"
                 >
                   Create Position
@@ -76,7 +76,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                         leaveTo="transform translate-y-[-16px] opacity-0 scale-[0.95]"
                       >
                         <div className={classNames('right-[-140px] absolute pt-3 top-4 w-[320px]')}>
-                          <div className="p-2 flex flex-col w-full right-0 absolute rounded-2xl shadow-md bg-white/50 paper dark:bg-slate-800/50">
+                          <div className="absolute right-0 flex flex-col w-full p-2 shadow-md rounded-2xl bg-white/50 paper dark:bg-slate-800/50">
                             <Popover.Panel>
                               <List.MenuItem
                                 disabled={!isRouteProcessor3ChainId(chainId)}
@@ -131,9 +131,9 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-4 items-center lg:items-end">
-            <div className="flex flex-col gap-1 items-center lg:items-end">
-              <span className="lg:text-sm font-semibold">Looking for a partnership with Sushi?</span>
+          <div className="flex flex-col items-center gap-4 lg:items-end">
+            <div className="flex flex-col items-center gap-1 lg:items-end">
+              <span className="font-semibold lg:text-sm">Looking for a partnership with Sushi?</span>
               <Link.External
                 href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe"
                 className="font-medium text-blue hover:!text-blue-600 lg:text-sm flex gap-1 items-center"
@@ -141,8 +141,8 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                 Join Onsen <ChevronRightIcon width={16} height={16} />
               </Link.External>
             </div>
-            <div className="flex flex-col gap-1 items-center lg:items-end">
-              <span className="lg:text-sm font-semibold">Need Help?</span>
+            <div className="flex flex-col items-center gap-1 lg:items-end">
+              <span className="font-semibold lg:text-sm">Need Help?</span>
               <Link.External
                 href="https://discord.gg/NVPXN4e"
                 className="font-medium text-blue hover:!text-blue-600 lg:text-sm flex gap-1 items-center"
@@ -158,8 +158,8 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
           {({ positions, isLoading }) =>
             !isLoading && positions?.[0] ? (
               <section className="flex flex-col gap-3 py-10 lg:py-[54px]">
-                <Container maxWidth="7xl" className="mx-auto px-4">
-                  <h1 className="text-3xl font-semibold text-gray-800 dark:text-slate-200 text-center lg:text-start">
+                <Container maxWidth="7xl" className="px-4 mx-auto">
+                  <h1 className="text-3xl font-semibold text-center text-gray-800 dark:text-slate-200 lg:text-start">
                     Migrate <span className="text-gray-500 dark:text-slate-500">for increased efficiency.</span>
                   </h1>
                 </Container>
@@ -177,7 +177,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
           }
         </PositionCardList>
       )}
-      <Container maxWidth="7xl" className="mx-auto px-4">
+      <Container maxWidth="7xl" className="px-4 mx-auto">
         <PoolsFiltersProvider passedFilters={filters}>
           <PoolsSection />
         </PoolsFiltersProvider>
