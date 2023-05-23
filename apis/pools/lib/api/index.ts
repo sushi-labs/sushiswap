@@ -101,7 +101,7 @@ export async function getEarnPools(args: typeof PoolsApiSchema._output) {
   const orderBy: Prisma.SushiPoolOrderByWithRelationInput = { [args.orderBy]: args.orderDir }
   const where: Prisma.SushiPoolWhereInput = parseWhere(args)
 
-  let skip: number = 0
+  let skip = 0
   let cursor: { cursor: Prisma.SushiPoolWhereUniqueInput } | object = {}
 
   if (args.cursor) {

@@ -1,46 +1,25 @@
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/solid'
-import { ConstantProductPool, Fee, Pair, StablePool } from '@sushiswap/amm'
+import { Pair } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { Loader } from '@sushiswap/ui'
-import {
-  Address,
-  ConstantProductPoolState,
-  getSushiSwapRouterContractConfig,
-  getTridentRouterContractConfig,
-  PairState,
-  PoolFinder,
-  PoolFinderType,
-  StablePoolState,
-} from '@sushiswap/wagmi'
-import {
-  AddSectionReviewModalLegacy,
-  AddSectionReviewModalTrident,
-  Layout,
-  SelectFeeWidget,
-  SelectNetworkWidget,
-  SelectPoolTypeWidget,
-  SelectTokensWidget,
-} from '../../../../components'
+import { Address, getSushiSwapRouterContractConfig, PairState, PoolFinder } from '@sushiswap/wagmi'
+import { AddSectionReviewModalLegacy, Layout, SelectNetworkWidget, SelectTokensWidget } from '../../../../components'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
 import { isUniswapV2Router02ChainId } from '@sushiswap/sushiswap'
 
-import { CreateSectionReviewModalTrident } from '../../../../components/CreateSection'
-import { AMM_ENABLED_NETWORKS, SUPPORTED_CHAIN_IDS, TRIDENT_ENABLED_NETWORKS } from '../../../../config'
-import { isConstantProductPool, isLegacyPool, isStablePool } from '../../../../lib/functions'
-import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { AMM_ENABLED_NETWORKS } from '../../../../config'
+import { isLegacyPool } from '../../../../lib/functions'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
 import { ContentBlock } from '../../../../components/AddPage/ContentBlock'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import Link from 'next/link'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { Signature } from '@ethersproject/bytes'
-import { APPROVE_TAG_ADD_LEGACY, APPROVE_TAG_ADD_TRIDENT, APPROVE_TAG_CREATE_TRIDENT } from '../../../../lib/constants'
+import { APPROVE_TAG_ADD_LEGACY } from '../../../../lib/constants'
 import { uniswapV2FactoryChainIds } from '@sushiswap/sushiswap'
 
 // This function gets called at build time on server-side.
@@ -174,7 +153,6 @@ interface AddProps {
 const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token0, token1, setToken0, setToken1 }) => {
   const [open, setOpen] = useState(false)
   const close = useCallback(() => setOpen(false), [])
-  const [permit, setPermit] = useState<Signature>()
 
   const [{ input0, input1 }, setTypedAmounts] = useState<{
     input0: string

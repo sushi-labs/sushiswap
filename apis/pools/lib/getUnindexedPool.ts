@@ -1,8 +1,9 @@
 import { constantProductPoolAbi, uniswapV2PairAbi, v3baseAbi } from '@sushiswap/abi'
 import { Protocol } from '@sushiswap/database'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
-import { configureChains, createClient, fetchToken, readContracts } from '@wagmi/core'
 import type { Address, FetchTokenResult } from '@wagmi/core'
+import { configureChains, createClient, fetchToken, readContracts } from '@wagmi/core'
+
 import type { getEarnPool } from './api/index.js'
 
 const { provider } = configureChains(allChains, allProviders)

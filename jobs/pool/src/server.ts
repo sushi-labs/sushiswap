@@ -3,8 +3,8 @@ import timeout from 'connect-timeout'
 import express from 'express'
 import { z } from 'zod'
 
-import { execute as merklIncentives } from './merkl-incentives.js'
 import { execute as incentives } from './incentives.js'
+import { execute as merklIncentives } from './merkl-incentives.js'
 import { execute as pools } from './pools.js'
 import { prices } from './price.js'
 

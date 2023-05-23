@@ -1,5 +1,5 @@
-import { z } from 'zod'
 import type { Protocol } from '@sushiswap/database' // Unused as a regular import, but type is being used for casting
+import { z } from 'zod'
 
 export const PoolCountApiSchema = z.object({
   chainIds: z

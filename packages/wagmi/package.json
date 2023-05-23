@@ -61,7 +61,7 @@
     "@uniswap/v3-periphery": "1.4.1",
     "next-themes": "^0.2.1",
     "viem": "0.3.29",
-    "zod": "3.20.2"
+    "zod": "3.21.4"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
@@ -69,8 +69,8 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "^29.5.1",
-    "@types/react": "18.0.26",
-    "@types/react-dom": "18.0.10",
+    "@types/react": "18.2.6",
+    "@types/react-dom": "18.2.4",
     "@wagmi/core": "0.10.10",
     "eslint": "8.29.0",
     "ethers": "5.7.2",

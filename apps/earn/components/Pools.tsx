@@ -1,15 +1,12 @@
 import {
   ChevronDownIcon,
-  ChevronLeftIcon,
   ChevronRightIcon,
-  DotsVerticalIcon,
-  ExternalLinkIcon,
 } from '@heroicons/react/solid'
 import { classNames, Link } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
-import React, { FC, Fragment, useCallback, useRef } from 'react'
+import React, { FC, Fragment } from 'react'
 import { useNetwork } from '@sushiswap/wagmi'
-import { Layout, PoolFilters, PoolsFiltersProvider, PoolsSection } from '../components'
+import { PoolFilters, PoolsFiltersProvider, PoolsSection } from '../components'
 import { ChainId } from '@sushiswap/chain'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
 import { isUniswapV2FactoryChainId } from '@sushiswap/sushiswap'
@@ -22,8 +19,6 @@ import { PositionCard, PositionCardSkeleton } from './MigratePage/PositionCard'
 import { Carousel } from '@sushiswap/ui/future/components/Carousel'
 import { DiscordIcon, OnsenIcon } from '@sushiswap/ui/future/components/icons'
 import { useAccount } from 'wagmi'
-import { isUniswapV2FactoryChainId } from '@sushiswap/sushiswap'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
 
 export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
   const { address } = useAccount()

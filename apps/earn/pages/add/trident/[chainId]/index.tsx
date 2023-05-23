@@ -1,12 +1,10 @@
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/solid'
-import { ConstantProductPool, Fee, Pair, StablePool } from '@sushiswap/amm'
+import { ConstantProductPool, Fee, StablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { Loader } from '@sushiswap/ui'
 import {
-  Address,
   ConstantProductPoolState,
-  getSushiSwapRouterContractConfig,
   getTridentRouterContractConfig,
   PairState,
   PoolFinder,
@@ -14,7 +12,6 @@ import {
   StablePoolState,
 } from '@sushiswap/wagmi'
 import {
-  AddSectionReviewModalLegacy,
   AddSectionReviewModalTrident,
   Layout,
   SelectFeeWidget,
@@ -24,8 +21,6 @@ import {
 } from '../../../../components'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
-import { isUniswapV2Router02ChainId } from '@sushiswap/sushiswap'
-
 import { CreateSectionReviewModalTrident } from '../../../../components/CreateSection'
 import { TRIDENT_ENABLED_NETWORKS } from '../../../../config'
 import { isConstantProductPool, isStablePool } from '../../../../lib/functions'
@@ -114,12 +109,6 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
           <PoolFinder
             components={
               <PoolFinder.Components>
-                <PoolFinder.LegacyPool
-                  chainId={chainId}
-                  token0={token0}
-                  token1={token1}
-                  enabled={isUniswapV2Router02ChainId(chainId)}
-                />
                 <PoolFinder.ConstantProductPool
                   chainId={chainId}
                   token0={token0}

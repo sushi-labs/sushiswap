@@ -1,4 +1,4 @@
-import { ChainId, chainName } from '@sushiswap/chain'
+import { chainName } from '@sushiswap/chain'
 import { createClient, Prisma, PrismaClient } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 

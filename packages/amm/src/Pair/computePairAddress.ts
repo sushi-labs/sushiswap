@@ -1,4 +1,3 @@
-import { defaultAbiCoder } from '@ethersproject/abi'
 import { getCreate2Address } from '@ethersproject/address'
 import { keccak256, pack } from '@ethersproject/solidity'
 import { Token } from '@sushiswap/currency'
