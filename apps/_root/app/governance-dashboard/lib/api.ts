@@ -629,7 +629,7 @@ export async function getNotionEvents() {
   const EVENTS_DB_ID = 'f2ab0048afd842c38ab4a21e2ceb121f'
   const notionEvents = await fetchNotionDatabase<NotionEvent[]>(EVENTS_DB_ID)
 
-  const propertyNames = ['Date', 'Location (City, Country)', 'Event Name', 'Image', 'Event URL']
+  const propertyNames = ['Date', 'Location (City, Country)', 'Event Name', 'Image URL', 'Event URL']
   const events: SushiEvent[] =
     notionEvents
       ?.filter((e) => e.properties['Event Name'].title.length)
