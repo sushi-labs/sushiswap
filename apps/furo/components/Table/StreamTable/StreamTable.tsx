@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { useBreakpoint } from '@sushiswap/hooks'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
@@ -28,9 +26,6 @@ interface FuroTableProps {
   loading: boolean
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-
 export const StreamTable: FC<FuroTableProps> = ({ streams, vestings, placeholder, activeOnly, loading, type }) => {
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
@@ -43,9 +38,15 @@ export const StreamTable: FC<FuroTableProps> = ({ streams, vestings, placeholder
 
   const data = useMemo(() => {
     return [
-      ...(streams ? streams.filter(Boolean).filter((el) => (activeOnly ? el.status === FuroStatus.ACTIVE : true)) : []),
+      ...(streams
+        ? streams
+            .filter((el): el is Stream => !!el)
+            .filter((el) => (activeOnly ? el.status === FuroStatus.ACTIVE : true))
+        : []),
       ...(vestings
-        ? vestings.filter(Boolean).filter((el) => (activeOnly ? el.status === FuroStatus.ACTIVE : true))
+        ? vestings
+            .filter((el): el is Vesting => !!el)
+            .filter((el) => (activeOnly ? el.status === FuroStatus.ACTIVE : true))
         : []),
     ]
   }, [activeOnly, streams, vestings])
@@ -79,8 +80,6 @@ export const StreamTable: FC<FuroTableProps> = ({ streams, vestings, placeholder
   }, [isMd, isSm])
 
   return (
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     <GenericTable<Stream | Vesting>
       loading={loading}
       table={table}
