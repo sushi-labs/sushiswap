@@ -1,7 +1,4 @@
-import {
-  ChevronDownIcon,
-  ChevronRightIcon,
-} from '@heroicons/react/solid'
+import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/solid'
 import { classNames, Link } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
 import React, { FC, Fragment } from 'react'
@@ -163,7 +160,12 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                 <div className="pl-4 xl:pl-0">
                   <Carousel
                     slideWidth={320}
-                    slides={positions.filter((position) => position?.chainId !== ChainId.CELO)}
+                    slides={positions.filter(
+                      (position) =>
+                        position?.chainId !== ChainId.CELO &&
+                        position?.chainId !== ChainId.BOBA_AVAX &&
+                        position?.chainId !== ChainId.BOBA_BNB
+                    )}
                     render={(position) => (isLoading ? <PositionCardSkeleton /> : <PositionCard position={position} />)}
                   />
                 </div>
