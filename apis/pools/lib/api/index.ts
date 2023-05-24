@@ -30,13 +30,13 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
     addFilter({ protocol: { in: args.protocols } })
   }
 
-  if ('isIncentivized' in args && args.isIncentivized !== undefined) {
+  if ('isIncentivized' in args && args.isIncentivized !== undefined && args.isIncentivized) {
     addFilter({
       isIncentivized: args.isIncentivized,
     })
   }
 
-  if ('isWhitelisted' in args && args.isWhitelisted !== undefined) {
+  if ('isWhitelisted' in args && args.isWhitelisted !== undefined && args.isWhitelisted) {
     addFilter({
       token0: {
         status: 'APPROVED',
@@ -44,6 +44,38 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
       token1: {
         status: 'APPROVED',
       },
+    })
+  }
+
+  if ('isWhitelisted' in args && args.isWhitelisted !== undefined && !args.isWhitelisted) {
+    addFilter({
+      OR: [
+        {
+          token0: {
+            status: 'UNKNOWN',
+          },
+          token1: {
+            status: 'UNKNOWN',
+          },
+        },
+
+        {
+          token0: {
+            status: 'UNKNOWN',
+          },
+          token1: {
+            status: 'APPROVED',
+          },
+        },
+        {
+          token0: {
+            status: 'APPROVED',
+          },
+          token1: {
+            status: 'UNKNOWN',
+          },
+        },
+      ],
     })
   }
 
