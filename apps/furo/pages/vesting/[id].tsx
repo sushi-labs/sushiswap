@@ -19,7 +19,6 @@ import { format } from 'date-fns'
 import { useEnsName } from 'wagmi'
 import { Address } from '@wagmi/core'
 import { ChainId } from '@sushiswap/chain'
-import { Percent } from '@sushiswap/math'
 import { getFuroVestingContractConfig } from '@sushiswap/wagmi'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { DownloadIcon, XIcon } from '@heroicons/react/outline'
@@ -67,20 +66,9 @@ const _VestingPage: FC = () => {
     chainId: ChainId.ETHEREUM,
   })
 
-  const [streamedAmount, streamedPercentage] = useMemo(() => {
-    if (!vesting || !balance) return [undefined, undefined]
-    return [
-      vesting.withdrawnAmount.add(balance),
-      new Percent(vesting.withdrawnAmount.add(balance).quotient, vesting.totalAmount.quotient),
-    ]
-  }, [balance, vesting])
-
-  const [withdrawnAmount, withdrawnPercentage] = useMemo(() => {
-    if (!vesting || !balance) return [undefined, undefined]
-    return [
-      vesting.totalAmount.subtract(balance),
-      new Percent(vesting.totalAmount.subtract(balance).quotient, vesting.totalAmount.quotient),
-    ]
+  const withdrawnAmount = useMemo(() => {
+    if (!vesting || !balance) return undefined
+    return vesting.totalAmount.subtract(balance)
   }, [balance, vesting])
 
   const remainingAmount = useMemo(() => {

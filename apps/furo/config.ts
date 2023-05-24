@@ -16,4 +16,5 @@ export const SUPPORTED_CHAINS = [
 
 export type SupportedChainIds = typeof SUPPORTED_CHAINS
 export type SupportedChainId = (typeof SUPPORTED_CHAINS)[number]
-export const isSupportedChainId = (chainId: number): chainId is SupportedChainId => chainId in SUPPORTED_CHAINS
+export const isSupportedChainId = (chainId: number): chainId is SupportedChainId =>
+  SUPPORTED_CHAINS.includes(chainId as SupportedChainId)
