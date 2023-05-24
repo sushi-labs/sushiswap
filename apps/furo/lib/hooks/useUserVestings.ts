@@ -1,30 +1,72 @@
 import { useQuery } from '@tanstack/react-query'
-import { isSupportedChainId } from '../../config'
-import { getBuiltGraphSDK } from '../../.graphclient'
+import { SUPPORTED_CHAINS } from '../../config'
+import { getBuiltGraphSDK, Rebase, vestingQuery, userVestingsQuery } from '../../.graphclient'
 import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
-import { ChainId } from '@sushiswap/chain'
+import { FuroVestingChainId } from '@sushiswap/furo/exports/exports'
+import { Token } from '@sushiswap/currency'
+import { toToken } from '../mapper'
+import { queryRebasesDTO } from './useRebasesDTO'
+import { Vesting } from '../Vesting'
 
 const GRAPH_HOST = 'api.thegraph.com'
 
 interface UseUserVestings {
-  chainId: ChainId
   account: string | undefined
 }
 
-export const useUserVestings = ({ chainId, account }: UseUserVestings) => {
+export const useUserVestings = ({ account }: UseUserVestings) => {
   return useQuery({
-    queryKey: ['useUserVestings', { chainId }],
+    queryKey: ['useUserVestings'],
     queryFn: async () => {
-      if (!account || !isSupportedChainId(chainId)) return null
+      if (!account) return null
 
-      const sdk = getBuiltGraphSDK({
-        chainId,
-        host: GRAPH_HOST,
-        name: FURO_SUBGRAPH_NAME[chainId],
+      const sdks = SUPPORTED_CHAINS.map((chainId) =>
+        getBuiltGraphSDK({
+          chainId,
+          host: GRAPH_HOST,
+          name: FURO_SUBGRAPH_NAME[chainId],
+        })
+      )
+
+      const data: { chainId: FuroVestingChainId; data: userVestingsQuery }[] = []
+      const results = await Promise.allSettled(sdks.map((sdk) => sdk.userVestings({ id: account.toLowerCase() })))
+      results.forEach((result, i) => {
+        if (result.status === 'fulfilled') {
+          data.push({
+            chainId: SUPPORTED_CHAINS[i],
+            data: result.value,
+          })
+        }
       })
 
-      const data = await sdk.userVestings({ id: account })
-      return data ?? null
+      const vestings: {
+        vesting: userVestingsQuery['incomingVestings'][0] | userVestingsQuery['outgoingVestings'][0]
+        chainId: FuroVestingChainId
+        vestingId: string
+        token: Token
+      }[] = []
+
+      data.forEach((el) => {
+        ;[...el.data.incomingVestings, ...el.data.outgoingVestings].forEach((vesting) => {
+          const token = toToken(vesting.token, el.chainId)
+          vestings.push({ vesting, chainId: el.chainId, vestingId: vesting.id, token })
+        })
+      })
+
+      const rebases = await queryRebasesDTO({
+        tokens: vestings.map((el) => el.token),
+      })
+
+      return vestings.map((el, i) => {
+        if (rebases[i].data.rebase)
+          return new Vesting({
+            chainId: el.chainId,
+            furo: el.vesting as NonNullable<vestingQuery['vesting']>,
+            rebase: rebases[i].data.rebase as Pick<Rebase, 'id' | 'base' | 'elastic'>,
+          })
+
+        return undefined
+      })
     },
   })
 }

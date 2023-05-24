@@ -1,43 +1,51 @@
 import { useQuery } from '@tanstack/react-query'
-import { isSupportedChainId } from '../../config'
 import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
-import { AddressZero } from '@ethersproject/constants'
-import { Native } from '@sushiswap/currency'
-import { ChainId } from '@sushiswap/chain'
-import { getBuiltGraphSDK } from '../../.graphclient'
+import { Token } from '@sushiswap/currency'
+import { bentoBoxRebaseQuery, getBuiltGraphSDK } from '../../.graphclient'
+import { SUPPORTED_CHAINS } from '../../config'
+import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
 
 const GRAPH_HOST = 'api.thegraph.com'
 
 interface UseRebaseDTO {
-  chainId: ChainId
-  addresses: string[] | undefined
+  tokens: Token[]
   enabled?: boolean
 }
 
-export const queryRebasesDTO = async ({ chainId, addresses }: Omit<UseRebaseDTO, 'enabled'>) => {
-  if (!addresses || !isSupportedChainId(chainId)) return null
+export const queryRebasesDTO = async ({ tokens }: Omit<UseRebaseDTO, 'enabled'>) => {
+  const sdks = tokens.map((token) =>
+    getBuiltGraphSDK({
+      chainId: token.chainId,
+      host: GRAPH_HOST,
+      name: FURO_SUBGRAPH_NAME[token.chainId],
+    })
+  )
 
-  const sdk = getBuiltGraphSDK({
-    chainId,
-    host: GRAPH_HOST,
-    name: FURO_SUBGRAPH_NAME[chainId],
+  const data: { chainId: FuroStreamChainId; data: NonNullable<bentoBoxRebaseQuery> }[] = []
+  await Promise.allSettled(
+    sdks.map((sdk, i) =>
+      sdk.bentoBoxRebase({
+        id: tokens[i].wrapped.address.toLowerCase(),
+      })
+    )
+  ).then((results) => {
+    results.forEach((result, i) => {
+      if (result.status === 'fulfilled') {
+        data.push({
+          chainId: SUPPORTED_CHAINS[i],
+          data: result.value as NonNullable<bentoBoxRebaseQuery>,
+        })
+      }
+    })
   })
 
-  const data = await sdk.bentoBoxRebases({
-    where: {
-      token_in: addresses.map((token) =>
-        token === AddressZero ? Native.onChain(chainId).wrapped.address.toLowerCase() : token
-      ),
-    },
-  })
-
-  return data?.rebases ?? null
+  return data
 }
 
-export const useRebasesDTO = ({ chainId, addresses, enabled = true }: UseRebaseDTO) => {
+export const useRebasesDTO = ({ tokens, enabled = true }: UseRebaseDTO) => {
   return useQuery({
-    queryKey: ['useRebasesDTO', { chainId, addresses }],
-    queryFn: async () => await queryRebasesDTO({ chainId, addresses }),
-    enabled: Boolean(enabled && addresses),
+    queryKey: ['useRebasesDTO', { tokens }],
+    queryFn: async () => await queryRebasesDTO({ tokens }),
+    enabled: Boolean(enabled),
   })
 }

@@ -4,28 +4,24 @@ import { JSBI } from '@sushiswap/math'
 import { useQuery } from '@tanstack/react-query'
 import { readContracts } from '@wagmi/core'
 import { BigNumber } from 'ethers'
-import { ChainId } from '@sushiswap/chain'
-import { isSupportedChainId } from '../../config'
+import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
 
 interface UseStreamBalances {
-  chainId: ChainId
-  streams: { streamId: string; token: Token }[]
+  streams: { chainId: FuroStreamChainId; streamId: string; token: Token }[]
 }
 
-export const useStreamBalances = ({ chainId, streams }: UseStreamBalances) => {
+export const useStreamBalances = ({ streams }: UseStreamBalances) => {
   return useQuery({
-    queryKey: ['useStreamBalances', { chainId, streams }],
+    queryKey: ['useStreamBalances', { streams }],
     queryFn: async () => {
-      if (!isSupportedChainId(chainId)) return null
-
       const [balances, totals] = await Promise.all([
         readContracts({
           contracts: streams.map(
             (stream) =>
               ({
-                ...getFuroStreamContractConfig(chainId),
+                ...getFuroStreamContractConfig(stream.chainId),
                 functionName: 'streamBalanceOf',
-                chainId,
+                chainId: stream.chainId,
                 args: [BigNumber.from(stream.streamId)],
               } as const)
           ),
@@ -34,9 +30,9 @@ export const useStreamBalances = ({ chainId, streams }: UseStreamBalances) => {
           contracts: streams.map(
             (stream) =>
               ({
-                ...getBentoBoxContractConfig(chainId),
+                ...getBentoBoxContractConfig(stream.chainId),
                 functionName: 'totals',
-                chainId,
+                chainId: stream.chainId,
                 args: [stream.token.address as Address],
               } as const)
           ),
@@ -48,10 +44,12 @@ export const useStreamBalances = ({ chainId, streams }: UseStreamBalances) => {
         const elastic = totals[index][0]
         const base = totals[index][1]
 
-        acc[stream.streamId] = Amount.fromShare(stream.token, JSBI.BigInt(balance), {
+        acc[stream.streamId] = Amount.fromShare(stream.token, JSBI.BigInt(balance[1]), {
           base: JSBI.BigInt(base),
           elastic: JSBI.BigInt(elastic),
         })
+
+        console.log(acc)
 
         return acc
       }, {})

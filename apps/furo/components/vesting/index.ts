@@ -1,5 +1,4 @@
 export * from './CreateForm'
 export * from './createScheduleRepresentation'
 export * from './NextPaymentTimer'
-export * from './VestingChart2'
 export * from './WithdrawModal'

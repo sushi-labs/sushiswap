@@ -1,145 +1,121 @@
-import { Tab, Transition, Popover } from '@headlessui/react'
+import { Popover, Tab, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/outline'
-import { Token } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
-import { useRouter } from 'next/router'
-import { FC, Fragment, useEffect, useMemo, useState } from 'react'
-import { toToken, useStreamBalances, useUserStreams, useUserVestings } from '../lib'
-import { FuroTableType, StreamTable } from './Table'
+import React, { FC, Fragment, useState } from 'react'
+import { useUserStreams, useUserVestings } from '../lib'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { DiscordIcon } from '@sushiswap/ui/future/components/icons'
+import { SushiIcon } from '@sushiswap/ui/future/components/icons'
 import Container from '@sushiswap/ui/future/components/Container'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import { Link } from '@sushiswap/ui'
-import { useRebasesDTO } from '../lib/hooks/useRebasesDTO'
-import { useAccount, useNetwork } from 'wagmi'
-import { ChainId } from '@sushiswap/chain'
+import { useAccount } from 'wagmi'
+import { FuroTableType, StreamTable } from './Table'
+import { Address } from '@wagmi/core'
 
-export const Dashboard: FC = () => {
-  const { address } = useAccount()
-  const { chain } = useNetwork()
-  const chainId = (chain?.id || ChainId.ETHEREUM) as ChainId
+export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress }) => {
+  const { address: account } = useAccount()
+  const address = providedAddress ? providedAddress : account
 
-  const router = useRouter()
   const [showActiveIncoming, setShowActiveIncoming] = useState(false)
 
-  const { data: streams, isLoading: isStreamsLoading } = useUserStreams({ chainId, account: address })
-  const { data: vestings, isLoading: isVestingsLoading } = useUserVestings({ chainId, account: address })
+  const { data: streams, isLoading: isStreamsLoading } = useUserStreams({ account: address })
+  const { data: vestings, isLoading: isVestingsLoading } = useUserVestings({ account: address })
 
-  const [tokens, _streams] = useMemo(() => {
-    const _streams: { streamId: string; token: Token }[] = []
-    const tokens: Token[] = []
-
-    const allStreams = [...(streams?.incomingStreams || []), ...(streams?.outgoingStreams || [])]
-    allStreams.forEach((stream) => {
-      const token = toToken(stream.token, chainId)
-      _streams.push({
-        streamId: stream.id,
-        token,
-      })
-      tokens.push(token)
-    })
-
-    vestings?.incomingVestings?.forEach((vesting) => tokens.push(toToken(vesting.token, chainId)))
-    vestings?.outgoingVestings?.forEach((vesting) => tokens.push(toToken(vesting.token, chainId)))
-
-    return [tokens, _streams]
-  }, [chainId, streams, vestings?.incomingVestings, vestings?.outgoingVestings])
-
-  const { data: rebases, isLoading: isRebasesLoading } = useRebasesDTO({
-    chainId,
-    addresses: tokens.map((el) => el.address),
-  })
-
-  const { data: balances, isLoading: isBalancesLoading } = useStreamBalances({ chainId, streams: _streams })
-
-  // Prefetch stream/vesting pages
-  useEffect(() => {
-    void router.prefetch('/stream/[id]')
-    void router.prefetch('/vesting/[id]')
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const isLoading = isStreamsLoading || isVestingsLoading || isRebasesLoading || isBalancesLoading
+  const isLoading = isStreamsLoading || isVestingsLoading
 
   return (
-    <>
-      <Container maxWidth="7xl" className="mx-auto px-4 pt-[80px] lg:pb-[54px]">
-        <section className="flex flex-col gap-12 lg:flex-row justify-between lg:items-start">
+    <div className="flex flex-col gap-10">
+      <Container maxWidth="6xl" className="mx-auto px-4 pt-[80px] lg:pb-[54px]">
+        <section className="flex flex-col gap-12 justify-between">
           <div className="flex flex-col flex-grow gap-6 items-center lg:items-start">
-            <div className="flex flex-col">
-              <span className="text-center lg:text-left font-semibold text-5xl text-gray-800 dark:text-slate-200 leading-[1.2]">
-                Sushi Pay.
-              </span>
-            </div>
-            <div className="group relative z-10">
-              <div className="flex w-full items-center">
-                <Button variant="filled" className="text-blue font-medium text-xl rounded-l-full" size="lg">
-                  Pay Someone
-                </Button>
-                <Popover as={Fragment}>
-                  {({ open }) => (
-                    <>
-                      <Popover.Button
-                        as="button"
-                        className={classNames(
-                          open ? 'bg-blue-600' : '',
-                          'bg-blue hover:bg-blue-600 h-[44px] w-[44px] flex items-center justify-center rounded-r-full text-white'
-                        )}
-                      >
-                        <ChevronDownIcon width={24} height={24} />
-                      </Popover.Button>
-                      <Transition
-                        show={open}
-                        enter="transition duration-300 ease-out"
-                        enterFrom="transform translate-y-[-16px] scale-[0.95] opacity-0"
-                        enterTo="transform translate-y-0 scale-[1] opacity-100"
-                        leave="transition duration-300 ease-out"
-                        leaveFrom="transform translate-y-0 opacity-100 scale-[1]"
-                        leaveTo="transform translate-y-[-16px] opacity-0 scale-[0.95]"
-                      >
-                        <div className={classNames('right-[-140px] absolute pt-3 top-4 w-[320px]')}>
-                          <div className="p-2 flex flex-col w-full right-0 absolute rounded-2xl shadow-md bg-white/50 paper dark:bg-slate-800/50">
-                            <Popover.Panel>
-                              <List.MenuItem
-                                as="a"
-                                href={`/stream/create`}
-                                title="New Stream"
-                                subtitle={'Most efficient way of providing liquidity.'}
-                              />
-                              <List.MenuItem
-                                as="a"
-                                href={`/vesting/create`}
-                                title="New Vesting"
-                                subtitle={'If you prefer creating a classic liquidity position.'}
-                              >
-                                New Vesting
-                              </List.MenuItem>
-                            </Popover.Panel>
-                          </div>
-                        </div>
-                      </Transition>
-                    </>
-                  )}
-                </Popover>
+            <div className="flex gap-12">
+              <div className="flex flex-col gap-5">
+                <h1 className="text-5xl font-semibold leading-[1.1] mt-2">
+                  Want to stream
+                  <br /> to someone?
+                </h1>
+                <span className="text-2xl text-slate-400 leading-[1.5]">
+                  Sushi Pay allows you to stream any ERC20 to any wallet.
+                </span>
+                <div className="group relative z-10 mt-2">
+                  <div className="flex w-full items-center">
+                    <Button variant="filled" className="text-blue font-medium rounded-l-full" size="lg">
+                      Pay Someone
+                    </Button>
+                    <Popover as={Fragment}>
+                      {({ open }) => (
+                        <>
+                          <Popover.Button
+                            as="button"
+                            className={classNames(
+                              open ? 'bg-blue-600' : '',
+                              'bg-blue hover:bg-blue-600 h-[44px] w-[44px] flex items-center justify-center rounded-r-full text-white'
+                            )}
+                          >
+                            <ChevronDownIcon width={24} height={24} />
+                          </Popover.Button>
+                          <Transition
+                            show={open}
+                            enter="transition duration-300 ease-out"
+                            enterFrom="transform translate-y-[-16px] scale-[0.95]"
+                            enterTo="transform translate-y-0 scale-[1]"
+                            leave="transition duration-300 ease-out"
+                            leaveFrom="transform translate-y-0 opacity-100 scale-[1]"
+                            leaveTo="transform translate-y-[-16px] opacity-0 scale-[0.95]"
+                          >
+                            <div className={classNames('right-[-140px] absolute pt-3 top-4 w-[320px]')}>
+                              <div className="p-2 flex flex-col w-full right-0 absolute rounded-2xl shadow-md bg-white/50 paper dark:bg-slate-800/50">
+                                <Popover.Panel>
+                                  <List.MenuItem
+                                    as="a"
+                                    href={`/stream/create`}
+                                    title="New Stream"
+                                    subtitle={'Most efficient way of providing liquidity.'}
+                                  />
+                                  <List.MenuItem
+                                    as="a"
+                                    href={`/vesting/create`}
+                                    title="New Vesting"
+                                    subtitle={'If you prefer creating a classic liquidity position.'}
+                                  >
+                                    New Vesting
+                                  </List.MenuItem>
+                                </Popover.Panel>
+                              </div>
+                            </div>
+                          </Transition>
+                        </>
+                      )}
+                    </Popover>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="flex flex-col gap-4 items-center lg:items-end">
-            <div className="flex flex-col gap-1 items-center lg:items-end">
-              <span className="lg:text-sm font-semibold">Need Help?</span>
-              <Link.External
-                href="https://discord.gg/NVPXN4e"
-                className="font-medium text-blue hover:!text-blue-600 lg:text-sm flex gap-1 items-center"
-              >
-                <DiscordIcon width={16} height={16} /> Join our discord
-              </Link.External>
+              <div className="flex justify-center">
+                <div className="shadow-lg relative w-[460px] h-[290px] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl">
+                  <span className="flex items-center justify-start gap-2">
+                    <div className="flex flex-col">
+                      <span className="font-medium text-white">SUSHI</span>
+                      <span className="text-2xl font-medium text-white">5000</span>
+                    </div>
+                  </span>
+                  <div className="absolute bottom-4 right-4 flex gap-3 items-center justify-center">
+                    <div className="bg-white/10 p-2 rounded-full shadow-md">
+                      <SushiIcon width={22} height={22} />
+                    </div>
+                    <span className="text-2xl font-medium tracking-[-0.025em] text-white">
+                      Sushi <span className="font-bold">Pay</span>
+                    </span>
+                  </div>
+                  <div className="absolute left-5 bottom-4 text-lg font-semibold text-sh tracking-wide mono flex flex-col text-white">
+                    <span className="text-sm font-medium">Recipient</span>
+                    you.eth
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
       </Container>
-      <Container maxWidth="7xl" className="mx-auto px-4">
+      <Container maxWidth="6xl" className="mx-auto px-4 mb-[120px]">
         <Tab.Group>
           <div className="flex items-center gap-2 mb-4">
             <Tab as={Fragment}>
@@ -168,28 +144,20 @@ export const Dashboard: FC = () => {
           <Tab.Panels>
             <Tab.Panel>
               <StreamTable
-                chainId={chainId}
-                balances={balances}
-                globalFilter={showActiveIncoming}
-                setGlobalFilter={setShowActiveIncoming}
+                activeOnly={showActiveIncoming}
                 loading={isLoading}
-                streams={streams?.incomingStreams ?? []}
-                vestings={vestings?.incomingVestings ?? []}
-                rebases={rebases}
+                streams={streams}
+                vestings={vestings}
                 type={FuroTableType.INCOMING}
                 placeholder={<>No incoming streams found</>}
               />
             </Tab.Panel>
             <Tab.Panel>
               <StreamTable
-                chainId={chainId}
-                balances={balances}
-                globalFilter={showActiveIncoming}
-                setGlobalFilter={setShowActiveIncoming}
+                activeOnly={showActiveIncoming}
                 loading={isLoading}
-                streams={streams?.outgoingStreams ?? []}
-                vestings={vestings?.outgoingVestings ?? []}
-                rebases={rebases}
+                streams={streams}
+                vestings={vestings}
                 type={FuroTableType.OUTGOING}
                 placeholder={<>No outgoing streams found</>}
               />
@@ -197,6 +165,6 @@ export const Dashboard: FC = () => {
           </Tab.Panels>
         </Tab.Group>
       </Container>
-    </>
+    </div>
   )
 }

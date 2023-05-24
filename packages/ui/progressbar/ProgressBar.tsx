@@ -8,6 +8,7 @@ export enum ProgressColor {
   BLUE,
   GRADIENT,
   GREEN,
+  GRAY,
 }
 
 interface ProgressBarProps {
@@ -32,6 +33,9 @@ export const ProgressBar: FC<ProgressBarProps> = ({ progress, color, showLabel =
   } else if (color === ProgressColor.GREEN) {
     fromColor = 'from-green'
     toColor = 'to-green'
+  } else if (color === ProgressColor.GRAY) {
+    fromColor = 'from-gray-600 dark:from-slate-400'
+    toColor = 'to-gray-600 dark:to-slate-400'
   }
 
   return (
@@ -39,7 +43,7 @@ export const ProgressBar: FC<ProgressBarProps> = ({ progress, color, showLabel =
       <div className="flex items-center gap-2">
         <div
           className={classNames(
-            'flex flex-grow h-6 rounded-full bg-gradient-to-r overflow-hidden bg-[rgba(255,255,255,0.12)]',
+            'flex flex-grow h-4 rounded-full bg-gradient-to-r overflow-hidden bg-[rgba(255,255,255,0.12)]',
             className
           )}
         >

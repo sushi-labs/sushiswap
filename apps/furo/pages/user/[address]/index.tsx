@@ -1,27 +1,21 @@
-import { ChainId } from '@sushiswap/chain'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-
 import { Layout } from '../../../components'
+import { NextSeo } from 'next-seo'
+import { SplashController } from '@sushiswap/ui/future/components/SplashController'
+import { Address } from '@wagmi/core'
 
 const Dashboard = dynamic(() => import('../../../components/Dashboard').then((mod) => mod.Dashboard), { ssr: false })
 
-import { NextSeo } from 'next-seo'
-
-import { FuroStreamChainId } from '@sushiswap/furo'
-import { SplashController } from '@sushiswap/ui/future/components/SplashController'
-
 const UserDashboard = () => {
   const router = useRouter()
-  const chainId = (router.query.chainId ? Number(router.query.chainId) : ChainId.ETHEREUM) as FuroStreamChainId
-  const address = router.query.address as string
-  const show = router.query.show
+  const address = router.query.address as Address
 
   return (
     <SplashController>
       <NextSeo title="User" />
       <Layout>
-        <Dashboard chainId={chainId} address={address} showOutgoing={show === 'outgoing'} />
+        <Dashboard address={address} />
       </Layout>
     </SplashController>
   )

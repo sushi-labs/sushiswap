@@ -13,7 +13,6 @@ import { WagmiConfig } from '@sushiswap/wagmi'
 
 import { Header } from '../components'
 import SEO from '../next-seo.config.mjs'
-import { PersistQueryClientProvider } from '../components/PersistQueryClientProvider'
 import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
 import { queryClient } from '@sushiswap/react-query'
 import { QueryClientProvider } from '@tanstack/react-query'
@@ -26,6 +25,7 @@ declare global {
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
+
   useEffect(() => {
     const handler = (page: any) => {
       window.dataLayer.push({
@@ -40,6 +40,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       router.events.off('hashChangeComplete', handler)
     }
   }, [router.events])
+
   return (
     <>
       <Head>

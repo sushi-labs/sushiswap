@@ -10,6 +10,18 @@ import { StatusCell } from './StatusCell'
 import { StreamedCell } from './StreamedCell'
 import { FuroTableType } from './StreamTable'
 import { TypeCell } from './TypeCell'
+import { NetworkCell } from './NetworkCell'
+import { EndDateCell } from './EndDateCell'
+
+export const NETWORK_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
+  id: 'network',
+  header: 'Network',
+  cell: (props) => <NetworkCell row={props.row.original} />,
+  size: 40,
+  meta: {
+    skeleton: <Skeleton.Circle radius={24} />,
+  },
+}
 
 export const STREAMED_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   id: 'streamedPercentage',
@@ -45,6 +57,16 @@ export const START_DATE_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   id: 'startDate',
   header: 'Start Date',
   cell: (props) => <StartDateCell row={props.row.original} />,
+  meta: {
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    className: 'justify-end',
+  },
+}
+
+export const END_DATE_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
+  id: 'startDate',
+  header: 'Start Date',
+  cell: (props) => <EndDateCell row={props.row.original} />,
   meta: {
     skeleton: <Skeleton.Text fontSize="text-lg" />,
     className: 'justify-end',

@@ -1,30 +1,72 @@
 import { useQuery } from '@tanstack/react-query'
-import { isSupportedChainId } from '../../config'
-import { getBuiltGraphSDK } from '../../.graphclient'
+import { bentoBoxRebaseQuery, getBuiltGraphSDK, Rebase, streamQuery, userStreamsQuery } from '../../.graphclient'
 import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
-import { ChainId } from '@sushiswap/chain'
+import { SUPPORTED_CHAINS } from '../../config'
+import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
+import { toToken } from '../mapper'
+import { Token } from '@sushiswap/currency'
+import { queryRebasesDTO } from './useRebasesDTO'
+import { Stream } from '../Stream'
 
 const GRAPH_HOST = 'api.thegraph.com'
 
 interface UseUserStreams {
-  chainId: ChainId
   account: string | undefined
 }
 
-export const useUserStreams = ({ chainId, account }: UseUserStreams) => {
+export const useUserStreams = ({ account }: UseUserStreams) => {
   return useQuery({
-    queryKey: ['useUserStreams', { chainId }],
+    queryKey: ['useUserStreams'],
     queryFn: async () => {
-      if (!account || !isSupportedChainId(chainId)) return null
+      if (!account) return null
 
-      const sdk = getBuiltGraphSDK({
-        chainId,
-        host: GRAPH_HOST,
-        name: FURO_SUBGRAPH_NAME[chainId],
+      const sdks = SUPPORTED_CHAINS.map((chainId) =>
+        getBuiltGraphSDK({
+          chainId,
+          host: GRAPH_HOST,
+          name: FURO_SUBGRAPH_NAME[chainId],
+        })
+      )
+
+      const data: { chainId: FuroStreamChainId; data: userStreamsQuery }[] = []
+      const results = await Promise.allSettled(sdks.map((sdk) => sdk.userStreams({ id: account.toLowerCase() })))
+      results.forEach((result, i) => {
+        if (result.status === 'fulfilled') {
+          data.push({
+            chainId: SUPPORTED_CHAINS[i],
+            data: result.value,
+          })
+        }
       })
 
-      const data = await sdk.userStreams({ id: account })
-      return data ?? null
+      const streams: {
+        stream: userStreamsQuery['incomingStreams'][0] | userStreamsQuery['outgoingStreams'][0]
+        chainId: FuroStreamChainId
+        streamId: string
+        token: Token
+      }[] = []
+
+      data.forEach((el) => {
+        ;[...el.data.incomingStreams, ...el.data.outgoingStreams].forEach((stream) => {
+          const token = toToken(stream.token, el.chainId)
+          streams.push({ stream, chainId: el.chainId, streamId: stream.id, token })
+        })
+      })
+
+      const rebases = await queryRebasesDTO({
+        tokens: streams.map((el) => el.token),
+      })
+
+      return streams.map((el, i) => {
+        if (rebases[i].data.rebase)
+          return new Stream({
+            chainId: el.chainId,
+            furo: el.stream as NonNullable<streamQuery['stream']>,
+            rebase: rebases[i].data.rebase as Pick<Rebase, 'id' | 'base' | 'elastic'>,
+          })
+
+        return undefined
+      })
     },
   })
 }
