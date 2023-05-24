@@ -50174,11 +50174,11 @@
         "decimals": 8,
         "symbol": "cUSDC",
         "name": "Compound USD Coin",
-        "id": "1:0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56",
+        "id": "1:0x39AA39c021dfbaE8faC545936693aC917d5E7563",
         "isNative": false,
         "isToken": true,
-        "address": "0xA2B47E3D5c44877cca798226B7B8118F9BFb7A56",
-        "tokenId": "0xA2B47E3D5c44877cca798226B7B8118F9BFb7A56_1"
+        "address": "0x39AA39c021dfbaE8faC545936693aC917d5E7563",
+        "tokenId": "0x39AA39c021dfbaE8faC545936693aC917d5E7563_1"
       }
     },
     {

@@ -97,7 +97,7 @@ const aSUSD = new Token({
 
 const cUSDC = new Token({
   chainId: 1,
-  address: '0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56',
+  address: '0x39AA39c021dfbaE8faC545936693aC917d5E7563',
   decimals: 8,
   symbol: 'cUSDC',
   name: 'Compound USD Coin',
