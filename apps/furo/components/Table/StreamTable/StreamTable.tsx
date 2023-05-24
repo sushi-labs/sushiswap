@@ -5,7 +5,14 @@ import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { FC, ReactNode, useEffect, useMemo, useState } from 'react'
 import { FuroStatus, Stream, Vesting } from '../../../lib'
-import { AMOUNT_COLUMN, END_DATE_COLUMN, NETWORK_COLUMN, STREAMED_COLUMN, TYPE_COLUMN } from '../constants'
+import {
+  AMOUNT_COLUMN,
+  END_DATE_COLUMN,
+  NETWORK_COLUMN,
+  START_DATE_COLUMN,
+  STREAMED_COLUMN,
+  TYPE_COLUMN,
+} from '../constants'
 
 export enum FuroTableType {
   INCOMING,
@@ -29,7 +36,10 @@ export const StreamTable: FC<FuroTableProps> = ({ streams, vestings, placeholder
   const { isMd } = useBreakpoint('md')
   const [columnVisibility, setColumnVisibility] = useState({})
 
-  const COLUMNS = useMemo(() => [NETWORK_COLUMN, AMOUNT_COLUMN, STREAMED_COLUMN, TYPE_COLUMN, END_DATE_COLUMN], [])
+  const COLUMNS = useMemo(
+    () => [NETWORK_COLUMN, AMOUNT_COLUMN, STREAMED_COLUMN, TYPE_COLUMN, START_DATE_COLUMN, END_DATE_COLUMN],
+    []
+  )
 
   const data = useMemo(() => {
     return [
@@ -63,6 +73,7 @@ export const StreamTable: FC<FuroTableProps> = ({ streams, vestings, placeholder
         from: false,
         type: false,
         startDate: false,
+        endDate: false,
       })
     }
   }, [isMd, isSm])

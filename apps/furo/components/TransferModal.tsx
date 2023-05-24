@@ -107,7 +107,7 @@ export const TransferModal: FC<TransferModalProps> = ({
         </Button>
       )}
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-4 !pb-3 !bg-white dark:bg-slate-800">
+        <Dialog.Content className="space-y-4 !pb-3 !bg-white dark:!bg-slate-800">
           <Dialog.Header title="Transfer Stream" onClose={() => setOpen(false)} />
           <div className="text-gray-700 dark:text-slate-400">
             This will transfer a stream consisting of{' '}

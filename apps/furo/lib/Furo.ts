@@ -21,8 +21,8 @@ export abstract class Furo {
   public readonly startTime: Date
   public readonly endTime: Date
   public readonly modifiedAtTimestamp: Date
-  public readonly recipient: UserDTO
-  public readonly createdBy: UserDTO
+  public readonly recipient: (NonNullable<streamQuery['stream']> | NonNullable<vestingQuery['vesting']>)['recipient']
+  public readonly createdBy: (NonNullable<streamQuery['stream']> | NonNullable<vestingQuery['vesting']>)['createdBy']
   public readonly token: Token
   public readonly rebase: Pick<Rebase, 'base' | 'elastic'>
   public readonly txHash: string

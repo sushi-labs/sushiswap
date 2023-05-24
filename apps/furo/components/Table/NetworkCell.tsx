@@ -11,11 +11,11 @@ export const NetworkCell: FC<CellProps> = ({ row }) => {
       position="bottom-right"
       badgeContent={
         <div className="border-2 rounded-full dark:border-slate-900 border-gray-100">
-          <NetworkIcon width={20} height={20} chainId={row.chainId} />
+          <NetworkIcon width={14} height={14} chainId={row.chainId} />
         </div>
       }
     >
-      <Currency.Icon currency={row.token} width={36} height={36} />
+      <Currency.Icon currency={row.token} width={26} height={26} />
       {/*{row.totalAmount?.toSignificant(6)}*/}
     </Badge>
   )

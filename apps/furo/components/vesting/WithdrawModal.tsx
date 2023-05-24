@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
-import { Dialog, Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
 import { useAccount, useFuroVestingContract } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
@@ -11,6 +11,7 @@ import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroVestingChainId } from '@sushiswap/furo'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { ZERO } from '@sushiswap/math'
+import { Dialog } from '@sushiswap/ui/future/components/dialog'
 
 interface WithdrawModalProps {
   vesting?: Vesting
@@ -88,7 +89,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
         </Button>
       )}
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-4 !max-w-xs !pb-4">
+        <Dialog.Content className="space-y-4 !pb-3 !bg-white dark:!bg-slate-800">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <div className="text-gray-700 dark:text-slate-400">
             There are currently{' '}

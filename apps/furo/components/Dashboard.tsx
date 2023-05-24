@@ -27,7 +27,7 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
       <Container maxWidth="6xl" className="mx-auto px-4 pt-[80px] lg:pb-[54px]">
         <section className="flex flex-col gap-12 justify-between">
           <div className="flex flex-col flex-grow gap-6 items-center lg:items-start">
-            <div className="flex gap-12">
+            <div className="flex flex-col lg:flex-row gap-12">
               <div className="flex flex-col gap-5">
                 <h1 className="text-5xl font-semibold leading-[1.1] mt-2">
                   Want to stream
