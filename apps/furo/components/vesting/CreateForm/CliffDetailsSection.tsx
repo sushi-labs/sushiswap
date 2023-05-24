@@ -31,7 +31,7 @@ export const CliffDetailsSection: FC = () => {
 
   return (
     <Form.Section title="Cliff details" description="Optionally provide cliff details for your vesting">
-      <Form.Control label="Enable Cliff">
+      <Form.Control>
         <Controller
           name="cliff.cliffEnabled"
           control={control}
@@ -59,7 +59,7 @@ export const CliffDetailsSection: FC = () => {
         />
       </Form.Control>
       {cliffEnabled ? (
-        <Form.Control label="Cliff End Date">
+        <Form.Control>
           <Controller
             name="cliff.cliffEndDate"
             shouldUnregister={true}
@@ -97,7 +97,7 @@ export const CliffDetailsSection: FC = () => {
         <></>
       )}
       {cliffEnabled ? (
-        <Form.Control label="Cliff Amount">
+        <Form.Control>
           <Controller
             control={control}
             name="cliff.cliffAmount"

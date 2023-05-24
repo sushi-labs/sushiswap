@@ -108,7 +108,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                   <div className="flex flex-col gap-6">
                     <div className="border-b border-slate-200/5" />
                     <Typography weight={500}>Cliff</Typography>
-                    <Form.Control label="Enable Cliff">
+                    <Form.Control>
                       <Controller
                         name={`vestings.${index}.cliff.cliffEnabled`}
                         control={control}
@@ -132,7 +132,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                         }}
                       />
                     </Form.Control>
-                    <Form.Control disabled={!cliff.cliffEnabled} label="Cliff End Date">
+                    <Form.Control disabled={!cliff.cliffEnabled}>
                       <Controller
                         name={`vestings.${index}.cliff.cliffEndDate`}
                         control={control}
@@ -169,7 +169,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                         }}
                       />
                     </Form.Control>
-                    <Form.Control disabled={!cliff.cliffEnabled} label="Cliff Amount">
+                    <Form.Control disabled={!cliff.cliffEnabled}>
                       <Controller
                         control={control}
                         name={`vestings.${index}.cliff.cliffAmount`}
@@ -195,7 +195,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                     </Form.Control>
                     <div className="border-b border-slate-200/5" />
                     <Typography weight={500}>Graded Vesting Details</Typography>
-                    <Form.Control label="Payout per Period*">
+                    <Form.Control>
                       <Controller
                         control={control}
                         name={`vestings.${index}.stepAmount`}
@@ -229,7 +229,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                       />
                     </Form.Control>
                     <div className="flex gap-6">
-                      <Form.Control label="Amount of Periods*">
+                      <Form.Control>
                         <Controller
                           control={control}
                           name={`vestings.${index}.stepPayouts`}
@@ -253,7 +253,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                           }}
                         />
                       </Form.Control>
-                      <Form.Control label="Period Length*">
+                      <Form.Control>
                         <Controller
                           control={control}
                           name={`vestings.${index}.stepConfig`}
@@ -286,7 +286,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                       </Form.Control>
                     </div>
                     <div className="border-b border-slate-200/5" />
-                    <Form.Control label="End Date">
+                    <Form.Control>
                       {endDate instanceof Date && !isNaN(endDate?.getTime()) ? (
                         <Typography variant="sm" className="text-slate-50" weight={500}>
                           {format(endDate, 'dd MMM yyyy hh:mmaaa')}

@@ -3,11 +3,12 @@ import { escapeRegExp, inputRegex } from './utils'
 import { TextInput, Text } from './Text'
 
 interface NumericInput extends Omit<TextInput, 'onChange'> {
+  variant?: 'default' | 'unstyled'
   onUserInput?: (input: string) => void
   maxDecimals?: number
 }
 
-function Component({ onUserInput, ...props }: NumericInput, ref: ForwardedRef<HTMLInputElement>) {
+function Component({ onUserInput, variant = 'default', ...props }: NumericInput, ref: ForwardedRef<HTMLInputElement>) {
   const enforcer = (nextUserInput: string | number | undefined) => {
     if (typeof nextUserInput === 'undefined') return
     const val = `${nextUserInput}`.replace(/,/g, '.')
@@ -24,6 +25,10 @@ function Component({ onUserInput, ...props }: NumericInput, ref: ForwardedRef<HT
         }
       }
     }
+  }
+
+  if (variant === 'unstyled') {
+    return <input {...props} ref={ref} onChange={(e) => enforcer(e.target.value)} />
   }
 
   return <Text {...props} ref={ref} onChange={(val) => enforcer(val)} />

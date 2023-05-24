@@ -165,11 +165,11 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
               <Switch checked={topUp} onChange={() => setTopUp((prevState) => !prevState)} size="sm" />
             </div>
             <div className={classNames(topUp ? '' : 'opacity-40 pointer-events-none', 'flex flex-col gap-2')}>
-              <Input.Text<string>
+              <Input.Text
                 label={`Amount (${stream.token.symbol})`}
                 id={'furo-stream-top-up'}
                 value={amount}
-                onChange={setAmount}
+                onChange={(val) => setAmount(`${val}`)}
               />
             </div>
           </div>

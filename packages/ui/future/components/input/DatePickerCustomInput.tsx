@@ -1,7 +1,7 @@
 import React, { ForwardedRef, forwardRef } from 'react'
 import { Text, TextInput } from './Text'
 
-type DatePickerCustomInput = Omit<TextInput, 'value'>
+type DatePickerCustomInput = Omit<TextInput, 'value' | 'onChange'>
 
 function Component(props: DatePickerCustomInput, ref: ForwardedRef<HTMLInputElement>) {
   return <Text {...props} ref={ref} hideCloseButton />

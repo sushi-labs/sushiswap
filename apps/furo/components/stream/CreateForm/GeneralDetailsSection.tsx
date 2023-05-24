@@ -50,7 +50,6 @@ export const GeneralDetailsSection = () => {
                   onBlur={onBlur}
                   customInput={
                     <Input.DatePickerCustomInput
-                      onChange={onChange}
                       isError={Boolean(error?.message)}
                       caption={error?.message}
                       id="stream-update-end-date"
@@ -88,7 +87,6 @@ export const GeneralDetailsSection = () => {
                   onBlur={onBlur}
                   customInput={
                     <Input.DatePickerCustomInput
-                      onChange={onChange}
                       isError={Boolean(error?.message)}
                       caption={error?.message}
                       id="stream-update-end-date"

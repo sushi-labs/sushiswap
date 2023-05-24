@@ -14,7 +14,6 @@ function Component({ onClick, ...props }: SelectProps, ref: ForwardedRef<HTMLInp
         {...props}
         role="button"
         ref={ref}
-        onChange={() => {}}
         className={classNames(props.className, 'pointer-events-none')}
         hideCloseButton
       />

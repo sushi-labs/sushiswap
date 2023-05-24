@@ -6,7 +6,7 @@ export interface TextInput extends Omit<HTMLProps<HTMLInputElement>, 'label' | '
   isError?: boolean
   label: ReactNode
   value?: string | number
-  onChange(val: string | number | undefined): void
+  onChange?(val: string | number | undefined): void
   id: string
   caption?: string
   className?: string
@@ -29,7 +29,9 @@ function Component(
 ) {
   const _onChange = useCallback(
     (e: string | number | undefined) => {
-      onChange(e)
+      if (onChange) {
+        onChange(e)
+      }
     },
     [onChange]
   )
@@ -65,7 +67,7 @@ function Component(
           <div className="absolute top-0 bottom-0 flex items-center justify-center right-4">
             <button
               type="button"
-              onClick={() => onChange('')}
+              onClick={() => onChange && onChange('')}
               className="bg-black/[0.05] dark:bg-white/[0.08] hover:dark:bg-white/[0.16] hover:bg-gray-300 rounded-full p-0.5"
             >
               <XMarkIcon width={20} height={20} className="text-gray-600 dark:text-slate-400" />
