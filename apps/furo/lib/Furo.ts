@@ -2,12 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 
-import {
-  type Rebase,
-  type Stream as StreamDTO,
-  type User as UserDTO,
-  type Vesting as VestingDTO,
-} from '../.graphclient'
+import { type Rebase, streamQuery, type User as UserDTO, type Vesting as VestingDTO } from '../.graphclient'
 import { FuroStatus, FuroType } from './enums'
 import { toToken } from './mapper'
 
@@ -32,7 +27,15 @@ export abstract class Furo {
   public readonly rebase: Pick<Rebase, 'base' | 'elastic'>
   public readonly txHash: string
 
-  public constructor({ chainId, furo, rebase }: { chainId: ChainId; furo: StreamDTO | VestingDTO; rebase: Rebase }) {
+  public constructor({
+    chainId,
+    furo,
+    rebase,
+  }: {
+    chainId: ChainId
+    furo: NonNullable<streamQuery['stream']> | VestingDTO
+    rebase: Pick<Rebase, 'id' | 'base' | 'elastic'>
+  }) {
     this.rebase = {
       base: JSBI.BigInt(Math.round(Math.floor(rebase.base * 1e5))),
       elastic: JSBI.BigInt(Math.round(Math.floor(rebase.elastic * 1e5))),

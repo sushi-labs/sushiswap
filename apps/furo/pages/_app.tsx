@@ -9,17 +9,14 @@ import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import { FC, useEffect } from 'react'
-import { Provider as ReduxProvider } from 'react-redux'
 import { WagmiConfig } from '@sushiswap/wagmi'
 
 import { Header } from '../components'
-import { SUPPORTED_CHAINS } from '../config'
-import { Updaters as MulticallUpdaters } from '../lib/state/MulticallUpdaters'
-import { Updaters as TokenListUpdaters } from '../lib/state/TokenListsUpdaters'
 import SEO from '../next-seo.config.mjs'
-import store from '../store'
 import { PersistQueryClientProvider } from '../components/PersistQueryClientProvider'
 import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
+import { queryClient } from '@sushiswap/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 
 declare global {
   interface Window {
@@ -69,22 +66,18 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         }}
       />
       <WagmiConfig client={client}>
-        <PersistQueryClientProvider>
-          <ReduxProvider store={store}>
-            <ThemeProvider>
-              <Onramper.Provider>
-                <App.Shell>
-                  <DefaultSeo {...SEO} />
-                  <Header />
-                  <MulticallUpdaters chainIds={SUPPORTED_CHAINS} />
-                  <TokenListUpdaters chainIds={SUPPORTED_CHAINS} />
-                  <Component {...pageProps} />
-                  <App.Footer />
-                </App.Shell>
-              </Onramper.Provider>
-            </ThemeProvider>
-          </ReduxProvider>
-        </PersistQueryClientProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <Onramper.Provider>
+              <App.Shell>
+                <DefaultSeo {...SEO} />
+                <Header />
+                <Component {...pageProps} />
+                <App.Footer />
+              </App.Shell>
+            </Onramper.Provider>
+          </ThemeProvider>
+        </QueryClientProvider>
       </WagmiConfig>
       <Analytics />
     </>

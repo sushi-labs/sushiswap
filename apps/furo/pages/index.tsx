@@ -1,18 +1,12 @@
-import { ChevronDownIcon, XCircleIcon } from '@heroicons/react/outline'
+import { XCircleIcon } from '@heroicons/react/outline'
 import { Dots, Loader, Typography, WalletIcon } from '@sushiswap/ui'
-import { useWalletState } from '@sushiswap/wagmi'
+import { useAccount, useConnect, useNetwork, useWalletState } from '@sushiswap/wagmi'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import { useAccount, useConnect, useNetwork } from '@sushiswap/wagmi'
 
-import { BackgroundVector, Dashboard, Layout } from '../components'
+import { Dashboard, Layout } from '../components'
 import { FuroStreamChainId } from '@sushiswap/furo'
-import Container from '@sushiswap/ui/future/components/Container'
-import { Popover } from '@sushiswap/ui/future/components/Popover'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { Fragment } from 'react'
-import { Transition } from '@headlessui/react'
 
 export default function DashboardPage() {
   const router = useRouter()

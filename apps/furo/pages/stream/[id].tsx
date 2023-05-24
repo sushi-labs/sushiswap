@@ -1,14 +1,10 @@
 import { getFuroStreamContractConfig } from '@sushiswap/wagmi'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { FC, useMemo } from 'react'
-import useSWR, { SWRConfig } from 'swr'
-
-import type { Rebase as RebaseDTO, Stream as StreamDTO, Transaction as TransactionDTO } from '../../.graphclient'
 import { CancelModal, FuroTimer, Layout, TransferModal, UpdateModal } from '../../components'
 import { WithdrawModal } from '../../components/stream'
-import { getRebase, getStream, getStreamTransactions, Stream, Transaction, useStreamBalance } from '../../lib'
+import { useStreamBalance } from '../../lib'
 import { FuroStreamChainId } from '@sushiswap/furo'
 import { SushiIcon } from '@sushiswap/ui/future/components/icons'
 import { formatNumber, shortenAddress } from '@sushiswap/format'
@@ -29,72 +25,31 @@ import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
 import { Blink } from '@sushiswap/ui/future/components/Blink'
 import { Percent } from '@sushiswap/math'
+import { useStream, useStreamTransactions } from '../../lib/queries'
+import { queryParamsSchema } from '../../lib/zod'
 
-interface Props {
-  fallback?: {
-    stream?: StreamDTO
-    transactions?: TransactionDTO[]
-  }
-}
-
-export const getServerSideProps: GetServerSideProps<Props> = async ({ query: { chainId, id } }) => {
-  const stream = (await getStream(chainId as string, id as string)) as StreamDTO
-  const [transactions, rebases] = await Promise.all([
-    getStreamTransactions(chainId as string, id as string),
-    getRebase(chainId as string, stream.token.id),
-  ])
-
-  return {
-    props: {
-      fallback: {
-        [`/furo/api/stream/${chainId}/${id}`]: stream as StreamDTO,
-        [`/furo/api/stream/${chainId}/${id}/transactions`]: transactions as TransactionDTO[],
-        [`/furo/api/rebase/${chainId}/${stream.token.id}`]: rebases as RebaseDTO,
-      },
-    },
-  }
-}
-
-const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+const Streams = () => {
   return (
-    <SWRConfig value={{ fallback }}>
-      <SplashController>
-        <_Streams />
-      </SplashController>
-    </SWRConfig>
+    <SplashController>
+      <_Streams />
+    </SplashController>
   )
 }
 
 const _Streams: FC = () => {
-  const router = useRouter()
-  const chainId = Number(router.query.chainId as string) as FuroStreamChainId
-  const id = Number(router.query.id as string)
+  const { query } = useRouter()
 
-  const { data: transactions, isValidating: isTxLoading } = useSWR<TransactionDTO[]>(
-    `/furo/api/stream/${chainId}/${id}/transactions`,
-    (url) => fetch(url).then((response) => response.json()),
-    { revalidateOnFocus: false }
-  )
+  const {
+    id: [chainId, streamId],
+  } = queryParamsSchema.parse(query)
 
-  const { data: furo, isValidating: isFuroLoading } = useSWR<StreamDTO>(
-    `/furo/api/stream/${chainId}/${id}`,
-    (url) => fetch(url).then((response) => response.json()),
-    { revalidateOnFocus: false }
-  )
-
-  const { data: rebase, isValidating: isRebaseLoading } = useSWR<RebaseDTO>(
-    () => (chainId && furo ? `/furo/api/rebase/${chainId}/${furo.token.id}` : null),
-    (url) => fetch(url).then((response) => response.json()),
-    { revalidateOnFocus: false }
-  )
-
-  const stream = useMemo(
-    () => (chainId && furo && rebase ? new Stream({ chainId, furo, rebase }) : undefined),
-    [chainId, furo, rebase]
-  )
-
-  const isLoading = isTxLoading || isFuroLoading || isRebaseLoading
-  const balance = useStreamBalance(chainId, stream?.id, stream?.token)
+  const { data: transactions, isLoading: isTxLoading } = useStreamTransactions({ chainId, streamId })
+  const { data: stream, isLoading: isStreamLoading } = useStream({ chainId, streamId })
+  const { data: balance, isLoading: isBalanceLoading } = useStreamBalance({
+    chainId,
+    streamId,
+    token: stream?.token,
+  })
 
   const { data: ens } = useEnsName({
     enabled: Boolean(stream),
@@ -102,13 +57,8 @@ const _Streams: FC = () => {
     chainId: ChainId.ETHEREUM,
   })
 
-  const _transactions = useMemo(
-    () => (stream ? transactions?.map((transaction) => new Transaction(transaction, stream.chainId)) : []),
-    [stream, transactions]
-  )
-
   const [streamedAmount, streamedPercentage] = useMemo(() => {
-    if (!stream || !balance) return [undefined, undefined]
+    if (!stream?.withdrawnAmount || !balance) return [undefined, undefined]
     return [
       stream.withdrawnAmount.add(balance),
       new Percent(stream.withdrawnAmount.add(balance).quotient, stream.totalAmount.quotient),
@@ -116,17 +66,19 @@ const _Streams: FC = () => {
   }, [balance, stream])
 
   const [withdrawnAmount, withdrawnPercentage] = useMemo(() => {
-    if (!stream || !balance) return [undefined, undefined]
+    if (!stream?.totalAmount || !balance) return [undefined, undefined]
     return [
       stream.totalAmount.subtract(balance),
       new Percent(stream.totalAmount.subtract(balance).quotient, stream.totalAmount.quotient),
     ]
   }, [balance, stream])
 
+  const isLoading = isTxLoading || isBalanceLoading || isStreamLoading
+
   if (isLoading) {
     return (
       <>
-        <NextSeo title={`Stream #${id}`} />
+        <NextSeo title={`Stream #${streamId}`} />
         <Layout maxWidth="4xl">
           <div className="flex flex-col gap-2">
             <Link
@@ -205,7 +157,7 @@ const _Streams: FC = () => {
   if (stream) {
     return (
       <>
-        <NextSeo title={`Stream #${id}`} />
+        <NextSeo title={`Stream #${streamId}`} />
         <Layout maxWidth="4xl">
           <div className="flex flex-col gap-2">
             <Link
@@ -240,7 +192,7 @@ const _Streams: FC = () => {
                 </Badge>
               </div>
               <div className="flex flex-col flex-grow gap-0.5">
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-slate-50">Stream {id}</h1>
+                <h1 className="text-xl font-semibold text-gray-900 dark:text-slate-50">Stream {streamId}</h1>
                 <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-400">
                   {formatNumber(stream?.totalAmount.toSignificant(6))}
                 </div>
@@ -441,7 +393,7 @@ const _Streams: FC = () => {
                 <List>
                   <List.Label>Withdraw History</List.Label>
                   <List.Control className="max-h-[320px] scroll">
-                    {_transactions?.map((tx, i) => (
+                    {transactions?.map((tx, i) => (
                       <List.KeyValue
                         key={i}
                         flex

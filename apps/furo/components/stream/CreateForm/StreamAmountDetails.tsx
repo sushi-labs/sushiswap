@@ -2,24 +2,20 @@ import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Form, Select } from '@sushiswap/ui'
-import { TokenSelector, _useBalance as useBalance } from '@sushiswap/wagmi'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { _useBalance as useBalance } from '@sushiswap/wagmi'
+import { FC, useCallback, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from '@sushiswap/wagmi'
 
-import { useCustomTokens } from '../../../lib/state/storage'
-import { useTokens } from '../../../lib/state/token-lists'
 import { useFundSourceFromZFundSource, useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { CurrencyInputBase } from '../../CurrencyInput'
 import { FormErrors } from './CreateForm'
 import { FundSourceOption } from './FundSourceOption'
 import { CreateStreamFormSchemaType } from './schema'
+import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
 
 export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const { address } = useAccount()
-  const tokenMap = useTokens(chainId)
-  const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
-  const [dialogOpen, setDialogOpen] = useState(false)
 
   const {
     control,
@@ -39,10 +35,6 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
     chainId,
     loadBentobox: true,
   })
-
-  const onClose = useCallback(() => {
-    setDialogOpen(false)
-  }, [])
 
   const onSelect = useCallback(
     (onChange: (...event: any[]) => void, currency: Type) => {
@@ -68,10 +60,8 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
           isNative,
         })
       }
-
-      onClose()
     },
-    [onClose, setValue]
+    [setValue]
   )
 
   useEffect(() => {
@@ -95,28 +85,24 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
           name="currency"
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <>
-              <Select.Button
-                error={!!error?.message}
-                standalone
-                className="!cursor-pointer ring-offset-slate-900"
-                onClick={() => setDialogOpen(true)}
-              >
-                {value?.symbol || <span className="text-slate-500">Select a currency</span>}
-              </Select.Button>
-              <Form.Error message={error?.message} />
               <TokenSelector
                 id={'create-single-stream'}
-                open={dialogOpen}
-                variant="dialog"
                 chainId={chainId}
-                tokenMap={tokenMap}
-                customTokenMap={customTokenMap}
                 onSelect={(currency) => onSelect(onChange, currency)}
-                currency={_currency}
-                onClose={onClose}
-                onAddToken={addCustomToken}
-                onRemoveToken={removeCustomToken}
-              />
+                selected={_currency}
+              >
+                {({ setOpen }) => (
+                  <Select.Button
+                    error={!!error?.message}
+                    standalone
+                    className="!cursor-pointer ring-offset-slate-900"
+                    onClick={() => setOpen(true)}
+                  >
+                    {value?.symbol || <span className="text-slate-500">Select a currency</span>}
+                  </Select.Button>
+                )}
+              </TokenSelector>
+              <Form.Error message={error?.message} />
             </>
           )}
         />

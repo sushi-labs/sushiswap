@@ -1,14 +1,12 @@
 import { Tab, Transition, Popover } from '@headlessui/react'
-import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/outline'
+import { ChevronDownIcon } from '@heroicons/react/outline'
 import { Token } from '@sushiswap/currency'
 import { FuroStreamChainId } from '@sushiswap/furo'
-import { useIsMounted } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import stringify from 'fast-json-stable-stringify'
 import { useRouter } from 'next/router'
 import { FC, Fragment, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
-import { useAccount } from '@sushiswap/wagmi'
 
 import { Rebase } from '../.graphclient'
 import { toToken, useStreamBalances } from '../lib'
@@ -30,10 +28,7 @@ export const Dashboard: FC<{
   address: string
   showOutgoing: boolean
 }> = ({ chainId, address, showOutgoing }) => {
-  const isMounted = useIsMounted()
   const router = useRouter()
-  const { address: account, isConnected } = useAccount()
-
   const [showActiveIncoming, setShowActiveIncoming] = useState(false)
 
   const { data: streams, isValidating: isValidatingStreams } = useSWR<Streams>(
@@ -44,18 +39,27 @@ export const Dashboard: FC<{
     `/furo/api/user/${chainId}/${address}/vestings`,
     fetcher
   )
-  const [ids, tokens] = useMemo(() => {
+  const [ids, tokens, _streams] = useMemo(() => {
+    const _streams: { streamId: string; token: Token }[] = []
     const ids: [string][] = []
     const tokens: Token[] = []
 
     streams?.incomingStreams?.forEach((stream) => {
-      ids.push([stream.id])
-      tokens.push(toToken(stream.token, chainId))
+      const token = toToken(stream.token, chainId)
+      _streams.push({
+        streamId: stream.id,
+        token,
+      })
+      tokens.push(token)
     })
 
     streams?.outgoingStreams?.forEach((stream) => {
-      ids.push([stream.id])
-      tokens.push(toToken(stream.token, chainId))
+      const token = toToken(stream.token, chainId)
+      _streams.push({
+        streamId: stream.id,
+        token,
+      })
+      tokens.push(token)
     })
 
     vestings?.incomingVestings?.forEach((vesting) => {
@@ -66,14 +70,8 @@ export const Dashboard: FC<{
       tokens.push(toToken(vesting.token, chainId))
     })
 
-    return [ids, tokens]
-  }, [
-    chainId,
-    streams?.incomingStreams,
-    streams?.outgoingStreams,
-    vestings?.incomingVestings,
-    vestings?.outgoingVestings,
-  ])
+    return [ids, tokens, _streams]
+  }, [chainId, streams, vestings?.incomingVestings, vestings?.outgoingVestings])
 
   const { data: rebases, isValidating: isValidatingRebases } = useSWR<Rebase[]>(
     () =>
@@ -86,9 +84,7 @@ export const Dashboard: FC<{
     fetcher
   )
 
-  const { isLoading: balancesLoading, data: balancesData } = useStreamBalances(chainId, ids, tokens, {
-    blocksPerFetch: 3,
-  })
+  const { isLoading: balancesLoading, data: balancesData } = useStreamBalances({ chainId, streams: _streams })
 
   // Prefetch stream/vesting pages
   useEffect(() => {

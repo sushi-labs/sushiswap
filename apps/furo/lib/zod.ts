@@ -3,6 +3,9 @@ import { Native, Token, tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { useMemo } from 'react'
 import { z } from 'zod'
+import { isSupportedChainId } from '../config'
+import isValidNumber from '@visx/xychart/lib/typeguards/isValidNumber'
+import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
 
 export const ZToken = z.object({
   chainId: z.number(),
@@ -113,3 +116,21 @@ export const useAmountsFromZAmounts = (amounts: (z.infer<typeof ZAmount> | undef
     })
   }, [amounts])
 }
+
+export const queryParamsSchema = z.object({
+  id: z
+    .string()
+    .refine((val) => val.includes(':'), {
+      message: 'TokenId not in the right format',
+    })
+    .transform((val) => {
+      const [chainId, poolId] = val.split(':')
+      return [+chainId, poolId] as [FuroStreamChainId, string]
+    })
+    .refine(([chainId]) => isSupportedChainId(chainId), {
+      message: 'ChainId not supported.',
+    })
+    .refine(([, streamId]) => isValidNumber(+streamId), {
+      message: 'StreamId not supported.',
+    }),
+})

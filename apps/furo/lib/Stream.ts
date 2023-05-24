@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI, Percent } from '@sushiswap/math'
 
-import { type Rebase as RebaseDTO, type Stream as StreamDTO } from '../.graphclient'
+import { Rebase, streamQuery } from '../.graphclient'
 import { Furo } from './Furo'
 
 export class Stream extends Furo {
@@ -13,7 +13,15 @@ export class Stream extends Furo {
   public readonly withdrawnShares: Amount<Token>
   public readonly withdrawnAmountAfterExtension: Amount<Token>
 
-  public constructor({ chainId, furo, rebase }: { chainId: ChainId; furo: StreamDTO; rebase: RebaseDTO }) {
+  public constructor({
+    chainId,
+    furo,
+    rebase,
+  }: {
+    chainId: ChainId
+    furo: NonNullable<streamQuery['stream']>
+    rebase: Pick<Rebase, 'id' | 'base' | 'elastic'>
+  }) {
     super({ chainId, furo, rebase })
     this.totalAmount = Amount.fromShare(this.token, JSBI.BigInt(furo.remainingShares), this.rebase).add(
       this.withdrawnAmount
