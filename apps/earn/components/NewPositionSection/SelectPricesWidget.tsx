@@ -295,6 +295,9 @@ export const PriceBlock: FC<PriceBlockProps> = ({
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <Input.Numeric
+            id={`${id}-input`}
+            label="price"
+            variant="unstyled"
             testdata-id={`${id}-input`}
             value={localValue}
             onUserInput={setLocalValue}
