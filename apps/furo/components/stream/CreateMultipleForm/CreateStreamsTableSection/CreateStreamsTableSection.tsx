@@ -123,10 +123,11 @@ export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({ chain
             size="sm"
             startIcon={<PlusIcon width={16} height={16} />}
             onClick={() => append({ ...CREATE_STREAM_DEFAULT_VALUES, id: nanoid() })}
+            testdata-id="furo-create-multiple-streams-add-item-button"
           >
             Add Item
           </Button>
-          <Button onClick={onReview} disabled={!formValid} type="submit" className="!px-10">
+          <Button onClick={onReview} disabled={!formValid} type="submit" className="!px-10" testdata-id='furo-create-multiple-streams-review-button'>
             Review
           </Button>
         </div>

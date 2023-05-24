@@ -59,7 +59,7 @@ export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHE
             )}
           >
             <TokenSelector
-              id={'create-single-stream'}
+              id={`create-single-stream-${index}`}
               chainId={chainId}
               onSelect={(currency) => onSelect(onChange, currency)}
               selected={_currency}
@@ -70,6 +70,7 @@ export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHE
                   className="!px-0 text-left !text-slate-50"
                   type="button"
                   onClick={() => setOpen(true)}
+                  testdata-id={`stream-currency-selector-row-${index}-button`}
                 >
                   <span className="text-sm font-medium truncate">{_currency?.symbol || 'Select'}</span>
                   <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />

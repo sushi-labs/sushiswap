@@ -53,6 +53,7 @@ export const AmountCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHERE
               value={value || ''}
               placeholder="0.00"
               onUserInput={onChange}
+              testdata-id={`create-multiple-streams-amount-input-${index}`}
               className={classNames(
                 error?.message || errors?.['FORM_ERRORS']?.[index]?.['amount']?.message
                   ? '!border-red'
