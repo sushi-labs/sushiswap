@@ -7,7 +7,7 @@ import { getPools, getPoolCount, getPoolCountUrl, getPoolsUrl } from '@sushiswap
 
 import { ChartSection, Layout, PoolsFiltersProvider, TableSection } from '../components'
 import { getBundles, getCharts, getTokenCount, getTokens } from '../lib/api'
-import { defaultPoolsArgs } from 'lib/constants'
+import { defaultPoolsArgs, defaultUnverifiedPoolsArgs } from 'lib/constants'
 
 export const getStaticProps: GetStaticProps = async () => {
   const [pools, tokens, charts, poolCount, tokenCount, bundles] = await Promise.all([
@@ -21,26 +21,6 @@ export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
       fallback: {
-        [unstable_serialize_infinite(() => getPoolsUrl(defaultPoolsArgs))]: pools,
-        [unstable_serialize({
-          url: '/analytics/api/tokens',
-          args: {
-            sorting: [
-              {
-                id: 'liquidityUSD',
-                desc: true,
-              },
-            ],
-            selectedNetworks: SUPPORTED_CHAIN_IDS,
-            pagination: {
-              pageIndex: 0,
-              pageSize: 20,
-            },
-            query: '',
-            extraQuery: '',
-          },
-        })]: tokens,
-
         [unstable_serialize({
           url: '/analytics/api/charts',
           args: {
@@ -48,7 +28,27 @@ export const getStaticProps: GetStaticProps = async () => {
           },
         })]: charts,
         [getPoolCountUrl(defaultPoolsArgs)]: poolCount,
-        [`/analytics/api/tokens/count`]: tokenCount,
+        [unstable_serialize_infinite(() => getPoolsUrl(defaultPoolsArgs))]: pools,
+        [unstable_serialize_infinite(() => getPoolsUrl(defaultUnverifiedPoolsArgs))]: pools,
+        // [unstable_serialize({
+        //   url: '/analytics/api/tokens',
+        //   args: {
+        //     sorting: [
+        //       {
+        //         id: 'liquidityUSD',
+        //         desc: true,
+        //       },
+        //     ],
+        //     selectedNetworks: SUPPORTED_CHAIN_IDS,
+        //     pagination: {
+        //       pageIndex: 0,
+        //       pageSize: 20,
+        //     },
+        //     query: '',
+        //     extraQuery: '',
+        //   },
+        // })]: tokens,
+        // [`/analytics/api/tokens/count`]: tokenCount,
         [`/analytics/api/bundles`]: bundles,
       },
     },

@@ -13,6 +13,8 @@ enum Filters {
 
 export enum SelectedTable {
   Markets = 'Markets',
+  VerifiedPools = 'Verified Pools',
+  UnverifiedPools = 'Unverified Pools',
   Tokens = 'Tokens',
 }
 
