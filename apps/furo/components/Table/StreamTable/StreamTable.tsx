@@ -29,7 +29,7 @@ export const StreamTable: FC<FuroTableProps> = ({ streams, vestings, placeholder
   const { isMd } = useBreakpoint('md')
   const [columnVisibility, setColumnVisibility] = useState({})
 
-  const COLUMNS = useMemo(() => [NETWORK_COLUMN, STREAMED_COLUMN, TYPE_COLUMN, AMOUNT_COLUMN, END_DATE_COLUMN], [])
+  const COLUMNS = useMemo(() => [NETWORK_COLUMN, AMOUNT_COLUMN, STREAMED_COLUMN, TYPE_COLUMN, END_DATE_COLUMN], [])
 
   const data = useMemo(() => {
     return [

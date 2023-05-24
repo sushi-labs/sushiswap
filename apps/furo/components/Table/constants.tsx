@@ -15,7 +15,7 @@ import { EndDateCell } from './EndDateCell'
 
 export const NETWORK_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   id: 'network',
-  header: 'Network',
+  header: 'Token',
   cell: (props) => <NetworkCell row={props.row.original} />,
   size: 40,
   meta: {
@@ -39,7 +39,6 @@ export const AMOUNT_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   cell: (props) => <AmountCell row={props.row.original} />,
   meta: {
     skeleton: <Skeleton.Text fontSize="text-lg" />,
-    className: 'justify-end',
   },
 }
 
