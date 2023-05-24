@@ -33,7 +33,7 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
                   Want to stream
                   <br /> to someone?
                 </h1>
-                <span className="text-2xl text-slate-400 leading-[1.5]">
+                <span className="text-2xl text-gray-600 dark:text-slate-400 leading-[1.5]">
                   Sushi Pay allows you to stream any ERC20 to any wallet.
                 </span>
                 <div className="group relative z-10 mt-2">
