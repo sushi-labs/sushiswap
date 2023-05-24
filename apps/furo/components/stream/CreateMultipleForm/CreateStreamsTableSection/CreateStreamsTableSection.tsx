@@ -1,5 +1,5 @@
 import { MinusIcon, PlusIcon } from '@heroicons/react/solid'
-import { nanoid } from '@reduxjs/toolkit'
+import { nanoid } from 'nanoid'
 import { ChainId } from '@sushiswap/chain'
 import { Button, GenericTable, Typography } from '@sushiswap/ui'
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'

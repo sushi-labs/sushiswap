@@ -4,7 +4,6 @@ import { FundSource } from '@sushiswap/hooks'
 import { useMemo } from 'react'
 import { z } from 'zod'
 import { isSupportedChainId } from '../config'
-import isValidNumber from '@visx/xychart/lib/typeguards/isValidNumber'
 import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
 
 export const ZToken = z.object({
@@ -130,7 +129,7 @@ export const queryParamsSchema = z.object({
     .refine(([chainId]) => isSupportedChainId(chainId), {
       message: 'ChainId not supported.',
     })
-    .refine(([, streamId]) => isValidNumber(+streamId), {
+    .refine(([, streamId]) => typeof +streamId === 'number', {
       message: 'StreamId not supported.',
     }),
 })
