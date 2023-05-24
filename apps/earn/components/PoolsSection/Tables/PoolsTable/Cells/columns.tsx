@@ -57,7 +57,7 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
 }
 
 export const APR_COLUMN: ColumnDef<Pool, unknown> = {
-  id: 'totalApr',
+  id: 'totalApr1d',
   header: () => (
     <div className="flex items-center gap-1">
       APR
