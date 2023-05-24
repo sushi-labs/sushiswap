@@ -1,8 +1,9 @@
 import type { CurvePool, MultiRoute, RouteLeg } from '@sushiswap/tines'
 
 import { HEXer } from '../HEXer'
-import { LiquidityProviders } from '../liquidity-providers'
+import { CURVE_NON_FACTORY_POOLS, CurvePoolType, LiquidityProviders } from '../liquidity-providers'
 import { PoolCode } from './PoolCode'
+import { ChainId } from '@sushiswap/chain'
 
 export class CurvePoolCode extends PoolCode {
   constructor(pool: CurvePool, liquidityProvider: LiquidityProviders, providerName: string) {
@@ -21,12 +22,23 @@ export class CurvePoolCode extends PoolCode {
     return 'CurvePool is not supported by RP2'
   }
 
-  getSwapCodeForRouteProcessor4(leg: RouteLeg, _route: MultiRoute, to: string): string {
+  getSwapCodeForRouteProcessor4(leg: RouteLeg, route: MultiRoute, to: string): string {
     // supports only 2-token pools currently
+
+    let poolType = 0
+    if (leg.tokenFrom.chainId !== undefined) {
+      const index = CURVE_NON_FACTORY_POOLS[leg.tokenFrom.chainId as ChainId].findIndex(
+        ([addr]) => addr == this.pool.address
+      )
+      if (index >= 0 && CURVE_NON_FACTORY_POOLS[leg.tokenFrom.chainId as ChainId][index][1] !== CurvePoolType.Legacy)
+        poolType = 1
+    }
+
     const [fromIndex, toIndex] = leg.tokenFrom.tokenId == this.pool.token0.tokenId ? [0, 1] : [1, 0]
     const code = new HEXer()
       .uint8(5) // Curve pool
       .address(this.pool.address)
+      .uint8(poolType)
       .uint8(fromIndex)
       .uint8(toIndex)
       .address(to)
