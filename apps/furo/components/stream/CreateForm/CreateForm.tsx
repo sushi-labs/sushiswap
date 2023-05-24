@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { nanoid } from '@reduxjs/toolkit'
+import { nanoid } from 'nanoid'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { FundSource } from '@sushiswap/hooks'
 import { Form } from '@sushiswap/ui'

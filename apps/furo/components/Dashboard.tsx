@@ -27,13 +27,13 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
       <Container maxWidth="6xl" className="mx-auto px-4 pt-[80px] lg:pb-[54px]">
         <section className="flex flex-col gap-12 justify-between">
           <div className="flex flex-col flex-grow gap-6 items-center lg:items-start">
-            <div className="flex gap-12">
+            <div className="flex flex-col lg:flex-row gap-12">
               <div className="flex flex-col gap-5">
                 <h1 className="text-5xl font-semibold leading-[1.1] mt-2">
                   Want to stream
                   <br /> to someone?
                 </h1>
-                <span className="text-2xl text-slate-400 leading-[1.5]">
+                <span className="text-2xl text-gray-600 dark:text-slate-400 leading-[1.5]">
                   Sushi Pay allows you to stream any ERC20 to any wallet.
                 </span>
                 <div className="group relative z-10 mt-2">
@@ -67,13 +67,13 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
                                 <Popover.Panel>
                                   <List.MenuItem
                                     as="a"
-                                    href={`/stream/create`}
+                                    href={`/furo/stream/create`}
                                     title="New Stream"
                                     subtitle={'Most efficient way of providing liquidity.'}
                                   />
                                   <List.MenuItem
                                     as="a"
-                                    href={`/vesting/create`}
+                                    href={`/furo/vesting/create`}
                                     title="New Vesting"
                                     subtitle={'If you prefer creating a classic liquidity position.'}
                                   >
@@ -149,7 +149,7 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
                 streams={streams}
                 vestings={vestings}
                 type={FuroTableType.INCOMING}
-                placeholder={<>No incoming streams found</>}
+                placeholder="No incoming streams found"
               />
             </Tab.Panel>
             <Tab.Panel>
@@ -159,7 +159,7 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
                 streams={streams}
                 vestings={vestings}
                 type={FuroTableType.OUTGOING}
-                placeholder={<>No outgoing streams found</>}
+                placeholder="No incoming streams found"
               />
             </Tab.Panel>
           </Tab.Panels>

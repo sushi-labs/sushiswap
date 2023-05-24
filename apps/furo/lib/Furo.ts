@@ -2,8 +2,8 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 
-import { type Rebase, streamQuery, type User as UserDTO, vestingQuery } from '../.graphclient'
-import { FuroStatus, FuroType } from './enums'
+import { type Rebase, streamQuery, vestingQuery } from '../.graphclient'
+import { FuroStatus } from './enums'
 import { toToken } from './mapper'
 
 export abstract class Furo {
@@ -12,7 +12,7 @@ export abstract class Furo {
 
   public readonly id: string
   public readonly chainId: ChainId
-  public readonly type: FuroType
+  public readonly type: (NonNullable<streamQuery['stream']> | NonNullable<vestingQuery['vesting']>)['__typename']
   public readonly status: FuroStatus
   public readonly remainingShares: Amount<Token>
   public readonly _remainingAmount: Amount<Token>
@@ -21,8 +21,8 @@ export abstract class Furo {
   public readonly startTime: Date
   public readonly endTime: Date
   public readonly modifiedAtTimestamp: Date
-  public readonly recipient: UserDTO
-  public readonly createdBy: UserDTO
+  public readonly recipient: (NonNullable<streamQuery['stream']> | NonNullable<vestingQuery['vesting']>)['recipient']
+  public readonly createdBy: (NonNullable<streamQuery['stream']> | NonNullable<vestingQuery['vesting']>)['createdBy']
   public readonly token: Token
   public readonly rebase: Pick<Rebase, 'base' | 'elastic'>
   public readonly txHash: string
@@ -42,7 +42,6 @@ export abstract class Furo {
     }
     this.id = furo.id
     this.chainId = chainId
-    // @ts-ignore
     this.type = furo.__typename
     this.token = toToken(furo.token, chainId)
     this.initialShares = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.initialShares))

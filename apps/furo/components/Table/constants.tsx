@@ -19,7 +19,7 @@ export const NETWORK_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   cell: (props) => <NetworkCell row={props.row.original} />,
   size: 40,
   meta: {
-    skeleton: <Skeleton.Circle radius={24} />,
+    skeleton: <Skeleton.Circle radius={26} />,
   },
 }
 
@@ -63,7 +63,7 @@ export const START_DATE_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
 }
 
 export const END_DATE_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
-  id: 'startDate',
+  id: 'endDate',
   header: 'Start Date',
   cell: (props) => <EndDateCell row={props.row.original} />,
   meta: {
@@ -87,5 +87,6 @@ export const TYPE_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   cell: (props) => <TypeCell row={props.row.original} />,
   meta: {
     skeleton: <Skeleton.Text fontSize="text-lg" />,
+    className: 'justify-end',
   },
 }

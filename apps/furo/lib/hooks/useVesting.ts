@@ -16,7 +16,7 @@ interface UseStream {
 
 export const useVesting = ({ chainId, vestingId, enabled = true }: UseStream) => {
   return useQuery({
-    queryKey: ['useVesting', { vestingId }],
+    queryKey: ['useVesting', { chainId, vestingId }],
     queryFn: async () => {
       if (!isSupportedChainId(chainId)) return null
 

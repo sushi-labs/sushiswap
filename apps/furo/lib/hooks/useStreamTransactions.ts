@@ -14,7 +14,7 @@ interface UseStreamTransactions {
 }
 export const useStreamTransactions = ({ chainId, streamId, enabled = true }: UseStreamTransactions) => {
   return useQuery({
-    queryKey: [],
+    queryKey: ['useStreamTransactions', { chainId, streamId }],
     queryFn: async () => {
       if (!isSupportedChainId(chainId)) return null
 

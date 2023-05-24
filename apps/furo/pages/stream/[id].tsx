@@ -14,10 +14,10 @@ import { format } from 'date-fns'
 import { Button } from '@sushiswap/ui/future/components/button'
 import Link from 'next/link'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
-import { ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, RefreshIcon } from '@heroicons/react/solid'
+import { ArrowLeftIcon, ArrowRightIcon, ArrowDownIcon, ArrowUpIcon, RefreshIcon } from '@heroicons/react/solid'
 import { DownloadIcon, XIcon } from '@heroicons/react/outline'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { NetworkIcon } from '@sushiswap/ui'
+import { classNames, NetworkIcon } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Address } from '@wagmi/core'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
@@ -70,6 +70,11 @@ const _Streams: FC = () => {
       new Percent(stream.totalAmount.subtract(balance).quotient, stream.totalAmount.quotient),
     ]
   }, [balance, stream])
+
+  const remainingAmount = useMemo(() => {
+    if (!stream?.totalAmount || !balance || !withdrawnAmount) return undefined
+    return stream.remainingAmount.subtract(balance)
+  }, [balance, stream?.remainingAmount, stream?.totalAmount, withdrawnAmount])
 
   const isLoading = isTxLoading || isBalanceLoading || isStreamLoading
 
@@ -263,7 +268,7 @@ const _Streams: FC = () => {
             </div>
           </div>
           <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
-          <div className="flex flex-col md:grid md:grid-cols-[460px_372px] justify-center gap-8 md:gap-y-6">
+          <div className="flex flex-col lg:grid lg:grid-cols-[460px_372px] justify-center gap-8 lg:gap-y-6">
             <div className="flex justify-center">
               <div className="shadow-lg relative w-[460px] h-[290px] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl">
                 <span className="flex items-center justify-start gap-2">
@@ -292,14 +297,29 @@ const _Streams: FC = () => {
               <div className="flex flex-col flex-grow justify-center gap-5">
                 <List className="!pt-0">
                   <List.Control>
-                    <List.KeyValue title="Available" subtitle="for withdrawal">
+                    <List.KeyValue title="Unlocked" subtitle="available for withdrawal">
                       <div className="flex flex-col">
                         <Blink dep={balance?.toSignificant()} as="span" timeout={1500}>
                           {(isBlinking) => (
-                            <span className="flex items-center gap-1">
+                            <span className={classNames(isBlinking ? 'text-green' : '', 'flex items-center gap-1')}>
                               {balance?.toSignificant(6)}{' '}
                               {isBlinking && (
                                 <ArrowUpIcon className="rotate-45" strokeWidth={3} width={14} height={14} />
+                              )}
+                            </span>
+                          )}
+                        </Blink>
+                        <span className="text-[10px] font-medium text-slate-500">{balance?.currency.symbol}</span>
+                      </div>
+                    </List.KeyValue>
+                    <List.KeyValue title="Locked" subtitle="funds in stream">
+                      <div className="flex flex-col items-end">
+                        <Blink dep={remainingAmount?.toSignificant()} as="span" timeout={1500}>
+                          {(isBlinking) => (
+                            <span className={classNames(isBlinking ? 'text-red' : '', 'flex items-center gap-1')}>
+                              {remainingAmount?.toSignificant(6)}{' '}
+                              {isBlinking && (
+                                <ArrowDownIcon className="rotate-45" strokeWidth={3} width={14} height={14} />
                               )}
                             </span>
                           )}
@@ -311,7 +331,7 @@ const _Streams: FC = () => {
                       <div className="flex flex-col items-end">
                         <Blink dep={streamedPercentage?.toSignificant(3)} as="span" timeout={1500}>
                           {(isBlinking) => (
-                            <span className="flex items-center gap-1">
+                            <span className={classNames(isBlinking ? 'text-green' : '', 'flex items-center gap-1')}>
                               {streamedPercentage?.toSignificant(3)}%
                               {isBlinking && (
                                 <ArrowUpIcon className="rotate-45" strokeWidth={3} width={14} height={14} />
@@ -328,7 +348,7 @@ const _Streams: FC = () => {
                       <div className="flex flex-col items-end">
                         <Blink dep={withdrawnPercentage?.toSignificant(3)} as="span" timeout={1500}>
                           {(isBlinking) => (
-                            <span className="flex items-center gap-1">
+                            <span className={classNames(isBlinking ? 'text-green' : '', 'flex items-center gap-1')}>
                               {withdrawnPercentage?.toSignificant(3)}%
                               {isBlinking && (
                                 <ArrowUpIcon className="rotate-45" strokeWidth={3} width={14} height={14} />

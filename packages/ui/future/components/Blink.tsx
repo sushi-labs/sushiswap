@@ -18,33 +18,19 @@ export const Blink: BlinkComponent = forwardRef(
     ref?: PolymorphicRef<Tag>
   ) => {
     const Component = as || 'button'
-    const [{ className: _className, isBlinking }, _setClassName] = useState<{ className: string; isBlinking: boolean }>(
-      {
-        className,
-        isBlinking: false,
-      }
-    )
+    const [blinking, setBlinking] = useState(false)
 
     useEffect(() => {
-      _setClassName((prev) => ({
-        className: classNames(prev, 'animate-blink'),
-        isBlinking: true,
-      }))
+      setBlinking(true)
 
       setTimeout(() => {
-        _setClassName((prev) => ({
-          className: prev.className
-            .split(' ')
-            .filter((el) => el !== 'animate-blink')
-            .join(' '),
-          isBlinking: false,
-        }))
+        setBlinking(false)
       }, timeout)
     }, [dep, timeout])
 
     return (
-      <Component {...rest} ref={ref} className={_className}>
-        {typeof children === 'function' ? children(isBlinking) : children}
+      <Component {...rest} ref={ref} className={className}>
+        {typeof children === 'function' ? children(blinking) : children}
       </Component>
     )
   }

@@ -1,4 +1,4 @@
-import { NetworkIcon } from '@sushiswap/ui'
+import { classNames, NetworkIcon } from '@sushiswap/ui'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { FC, useMemo } from 'react'
@@ -7,7 +7,7 @@ import { createScheduleRepresentation, NextPaymentTimer, WithdrawModal } from '.
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
 import Link from 'next/link'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
-import { ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon } from '@heroicons/react/solid'
+import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon } from '@heroicons/react/solid'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
@@ -19,7 +19,6 @@ import { format } from 'date-fns'
 import { useEnsName } from 'wagmi'
 import { Address } from '@wagmi/core'
 import { ChainId } from '@sushiswap/chain'
-import { Percent } from '@sushiswap/math'
 import { getFuroVestingContractConfig } from '@sushiswap/wagmi'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { DownloadIcon, XIcon } from '@heroicons/react/outline'
@@ -67,21 +66,15 @@ const _VestingPage: FC = () => {
     chainId: ChainId.ETHEREUM,
   })
 
-  const [streamedAmount, streamedPercentage] = useMemo(() => {
-    if (!vesting || !balance) return [undefined, undefined]
-    return [
-      vesting.withdrawnAmount.add(balance),
-      new Percent(vesting.withdrawnAmount.add(balance).quotient, vesting.totalAmount.quotient),
-    ]
+  const withdrawnAmount = useMemo(() => {
+    if (!vesting || !balance) return undefined
+    return vesting.totalAmount.subtract(balance)
   }, [balance, vesting])
 
-  const [withdrawnAmount, withdrawnPercentage] = useMemo(() => {
-    if (!vesting || !balance) return [undefined, undefined]
-    return [
-      vesting.totalAmount.subtract(balance),
-      new Percent(vesting.totalAmount.subtract(balance).quotient, vesting.totalAmount.quotient),
-    ]
-  }, [balance, vesting])
+  const remainingAmount = useMemo(() => {
+    if (!vesting?.totalAmount || !balance || !withdrawnAmount) return undefined
+    return vesting.remainingAmount.subtract(balance)
+  }, [balance, vesting?.remainingAmount, vesting?.totalAmount, withdrawnAmount])
 
   const isLoading = isTxLoading || isVestingLoading || isBalanceLoading
 
@@ -259,7 +252,7 @@ const _VestingPage: FC = () => {
             </div>
           </div>
           <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
-          <div className="flex flex-col md:grid md:grid-cols-[460px_372px] justify-center gap-8 md:gap-y-6">
+          <div className="flex flex-col lg:grid lg:grid-cols-[460px_372px] justify-center gap-8 lg:gap-y-6">
             <div className="flex justify-center">
               <div className="shadow-lg relative w-[460px] h-[290px] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl">
                 <span className="flex items-center justify-start gap-2">
@@ -320,11 +313,11 @@ const _VestingPage: FC = () => {
                         </NextPaymentTimer>
                       </div>
                     </List.KeyValue>
-                    <List.KeyValue title="Available" subtitle="for withdrawal">
+                    <List.KeyValue title="Unlocked" subtitle="available for withdrawal">
                       <div className="flex flex-col items-end">
                         <Blink dep={balance?.toSignificant()} as="span" timeout={1500}>
                           {(isBlinking) => (
-                            <span className="flex items-center gap-1">
+                            <span className={classNames(isBlinking ? 'text-green' : '', 'flex items-center gap-1')}>
                               {balance?.toSignificant(6)}{' '}
                               {isBlinking && (
                                 <ArrowUpIcon className="rotate-45" strokeWidth={3} width={14} height={14} />
@@ -335,38 +328,19 @@ const _VestingPage: FC = () => {
                         <span className="text-[10px] font-medium text-slate-500">{balance?.currency.symbol}</span>
                       </div>
                     </List.KeyValue>
-                    <List.KeyValue title="Streamed" subtitle="amount">
+                    <List.KeyValue title="Locked" subtitle="funds in vest">
                       <div className="flex flex-col items-end">
-                        <Blink dep={streamedPercentage?.toSignificant(3)} as="span" timeout={1500}>
+                        <Blink dep={remainingAmount?.toSignificant()} as="span" timeout={1500}>
                           {(isBlinking) => (
-                            <span className="flex items-center gap-1">
-                              {streamedPercentage?.toSignificant(3)}%
+                            <span className={classNames(isBlinking ? 'text-red' : '', 'flex items-center gap-1')}>
+                              {remainingAmount?.toSignificant(6)}{' '}
                               {isBlinking && (
-                                <ArrowUpIcon className="rotate-45" strokeWidth={3} width={14} height={14} />
+                                <ArrowDownIcon className="rotate-45" strokeWidth={3} width={14} height={14} />
                               )}
                             </span>
                           )}
                         </Blink>
-                        <span className="text-[10px] font-medium text-slate-500">
-                          {streamedAmount?.toSignificant(6)} {vesting.streamedAmount?.currency.symbol}
-                        </span>
-                      </div>
-                    </List.KeyValue>
-                    <List.KeyValue title="Withdrawn" subtitle="amount">
-                      <div className="flex flex-col items-end">
-                        <Blink dep={withdrawnPercentage?.toSignificant(3)} as="span" timeout={1500}>
-                          {(isBlinking) => (
-                            <span className="flex items-center gap-1">
-                              {withdrawnPercentage?.toSignificant(3)}%
-                              {isBlinking && (
-                                <ArrowUpIcon className="rotate-45" strokeWidth={3} width={14} height={14} />
-                              )}
-                            </span>
-                          )}
-                        </Blink>
-                        <span className="text-[10px] font-medium text-slate-500">
-                          {withdrawnAmount?.toSignificant(6)} {withdrawnAmount?.currency.symbol}
-                        </span>
+                        <span className="text-[10px] font-medium text-slate-500">{balance?.currency.symbol}</span>
                       </div>
                     </List.KeyValue>
                   </List.Control>
