@@ -3,7 +3,7 @@ import { tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Form, Select } from '@sushiswap/ui'
 import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
-import { FC, useCallback, useEffect } from 'react'
+import React, { FC, useCallback, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { useFundSourceFromZFundSource, useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
@@ -12,6 +12,7 @@ import { FormErrors } from './CreateForm'
 import { FundSourceOption } from './FundSourceOption'
 import { CreateStreamFormSchemaType } from './schema'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
+import { Input } from '@sushiswap/ui/future/components/input'
 
 export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const { address } = useAccount()
@@ -78,7 +79,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
       title="Stream Details"
       description="Furo allows you to create a stream from BentoBox to allow the recipient to gain yield whilst receiving the stream if the token that's being used has a BentoBox strategy set on it."
     >
-      <Form.Control label="Token*">
+      <Form.Control>
         <Controller
           control={control}
           name="currency"
@@ -91,14 +92,14 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
                 selected={_currency}
               >
                 {({ setOpen }) => (
-                  <Select.Button
-                    error={!!error?.message}
-                    standalone
-                    className="!cursor-pointer ring-offset-slate-900"
+                  <Input.Select
+                    label="Token"
+                    value={value?.address}
                     onClick={() => setOpen(true)}
-                  >
-                    {value?.symbol || <span className="text-slate-500">Select a currency</span>}
-                  </Select.Button>
+                    id={'create-single-stream-select'}
+                    caption={error?.message ?? value?.symbol}
+                    isError={Boolean(error?.message)}
+                  />
                 )}
               </TokenSelector>
               <Form.Error message={error?.message} />
@@ -106,7 +107,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
           )}
         />
       </Form.Control>
-      <Form.Control label="Change Funds Source*">
+      <Form.Control>
         <Controller
           control={control}
           name="fundSource"
@@ -114,7 +115,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
             const _value = ZFundSourceToFundSource.parse(value)
             return (
               <div className="flex flex-col">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <FundSourceOption
                     chainId={chainId}
                     label="Wallet"
@@ -140,22 +141,27 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
           }}
         />
       </Form.Control>
-      <Form.Control label="Stream Amount*">
+      <Form.Control>
         <Controller
           control={control}
           name="amount"
           render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
             return (
               <>
-                <CurrencyInputBase
+                <Input.Numeric
+                  onUserInput={onChange}
+                  isError={Boolean(error?.message || errors['FORM_ERROR']?.message)}
+                  caption={error?.message || errors['FORM_ERROR']?.message}
                   onBlur={onBlur}
                   name={name}
-                  className="ring-offset-slate-900"
-                  onChange={onChange}
-                  value={value || ''}
-                  currency={_currency}
+                  value={value}
+                  id="create-stream-input-amount"
+                  label={
+                    <>
+                      Amount<sup>*</sup>
+                    </>
+                  }
                 />
-                <Form.Error message={error?.message || errors['FORM_ERROR']?.message} />
               </>
             )
           }}

@@ -120,7 +120,7 @@ export const TransferModal: FC<TransferModalProps> = ({
               to withdraw from this stream after transferring
             </p>
           </div>
-          <Text<string> label="Address" value={recipient} onChange={setRecipient} id="ens-input" />
+          <Text label="Address" value={recipient} onChange={(val) => setRecipient(`${val}`)} id="ens-input" />
           <Checker.Connect size="xl" fullWidth>
             <Checker.Network size="xl" fullWidth chainId={chainId}>
               <Button

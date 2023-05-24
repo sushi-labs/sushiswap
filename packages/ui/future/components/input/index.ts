@@ -1,13 +1,13 @@
 import classNames from 'classnames'
 
-import { Address } from './Address'
 import { Counter } from './Counter'
 import { DatePickerCustomInput } from './DatePickerCustomInput'
 import { DatetimeLocal } from './DatetimeLocal'
-import { Input as Numeric } from './Numeric'
+import { Numeric } from './Numeric'
 import { Input as Percent } from './Percent'
 import { Text } from './Text'
 import { DatePicker } from './DatePicker'
+import { Select } from './Select'
 
 // Base classes
 export const DEFAULT_INPUT_FONT = 'text-gray-900 dark:text-slate-50 text-left text-base font-medium'
@@ -45,7 +45,6 @@ export const DEFAULT_INPUT_CLASSNAME = classNames(
 )
 
 export const Input = {
-  Address,
   DatetimeLocal,
   DatePicker,
   DatePickerCustomInput,
@@ -53,4 +52,5 @@ export const Input = {
   Numeric,
   Percent,
   Text,
+  Select,
 }

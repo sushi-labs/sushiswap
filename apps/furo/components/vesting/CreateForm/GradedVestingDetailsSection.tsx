@@ -53,7 +53,7 @@ export const GradedVestingDetailsSection = () => {
 
   return (
     <Form.Section title="Graded Vesting Details" description="Optionally provide graded vesting details">
-      <Form.Control label="Payout per Period*">
+      <Form.Control>
         <Controller
           control={control}
           name="stepAmount"
@@ -87,7 +87,7 @@ export const GradedVestingDetailsSection = () => {
         />
       </Form.Control>
       <div className="flex flex-col gap-6 md:flex-row">
-        <Form.Control label="Amount of Periods*">
+        <Form.Control>
           <Controller
             control={control}
             name="stepPayouts"
@@ -111,7 +111,7 @@ export const GradedVestingDetailsSection = () => {
             }}
           />
         </Form.Control>
-        <Form.Control label="Period Length*">
+        <Form.Control>
           <Controller
             control={control}
             name="stepConfig"
@@ -144,7 +144,7 @@ export const GradedVestingDetailsSection = () => {
         </Form.Control>
       </div>
       <div className="flex gap-6">
-        <Form.Control label="Total Amount">
+        <Form.Control>
           <Typography
             variant="sm"
             className={
@@ -160,7 +160,7 @@ export const GradedVestingDetailsSection = () => {
           </Typography>
           <Form.Error message={errors['FORM_ERROR']?.message} />
         </Form.Control>
-        <Form.Control label="End Date">
+        <Form.Control>
           {endDate ? (
             <Typography variant="sm" className="text-slate-50" weight={600}>
               {format(endDate, 'dd MMM yyyy hh:mmaaa')}

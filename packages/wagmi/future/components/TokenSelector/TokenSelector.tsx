@@ -91,7 +91,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
               <TokenSelectorCustomTokensOverlay />
             </div>
             <div className="flex gap-2">
-              <Search id={id} input={Input.Address} value={query} loading={isQueryTokenLoading} onChange={setQuery} />
+              <Search id={id} input={Input.Text} value={query} loading={isQueryTokenLoading} onChange={setQuery} />
             </div>
 
             <div className="flex flex-wrap gap-2">
