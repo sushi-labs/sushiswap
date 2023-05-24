@@ -11,6 +11,7 @@ import {
   STREAMED_COLUMN,
   TYPE_COLUMN,
 } from '../constants'
+import { useAccount } from 'wagmi'
 
 export enum FuroTableType {
   INCOMING,
@@ -27,6 +28,7 @@ interface FuroTableProps {
 }
 
 export const StreamTable: FC<FuroTableProps> = ({ streams, vestings, placeholder, activeOnly, loading, type }) => {
+  const { address } = useAccount()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
   const [columnVisibility, setColumnVisibility] = useState({})
@@ -42,14 +44,26 @@ export const StreamTable: FC<FuroTableProps> = ({ streams, vestings, placeholder
         ? streams
             .filter((el): el is Stream => !!el)
             .filter((el) => (activeOnly ? el.status === FuroStatus.ACTIVE : true))
+            .filter((el) =>
+              type === FuroTableType.INCOMING && address ? el.recipient.id === address.toLowerCase() : true
+            )
+            .filter((el) =>
+              type === FuroTableType.OUTGOING && address ? el.createdBy.id === address.toLowerCase() : true
+            )
         : []),
       ...(vestings
         ? vestings
             .filter((el): el is Vesting => !!el)
             .filter((el) => (activeOnly ? el.status === FuroStatus.ACTIVE : true))
+            .filter((el) =>
+              type === FuroTableType.INCOMING && address ? el.recipient.id === address.toLowerCase() : true
+            )
+            .filter((el) =>
+              type === FuroTableType.OUTGOING && address ? el.createdBy.id === address.toLowerCase() : true
+            )
         : []),
     ]
-  }, [activeOnly, streams, vestings])
+  }, [activeOnly, address, streams, type, vestings])
 
   const table = useReactTable<Stream | Vesting>({
     data: data,
