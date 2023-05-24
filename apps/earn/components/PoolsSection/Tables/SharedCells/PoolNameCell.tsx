@@ -1,5 +1,5 @@
 import { formatNumber } from '@sushiswap/format'
-import { Pool } from '@sushiswap/client'
+import { Pool, Protocol } from '@sushiswap/client'
 import { classNames, NetworkIcon } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { FC } from 'react'
@@ -37,6 +37,12 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
           <div className={classNames('text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1')}></div>
         </span>
         <div className="flex gap-1">
+          {row.protocol === Protocol.BENTOBOX_STABLE && (
+            <div className="bg-green/20 text-green text-[10px] px-2 rounded-full">Trident Stable</div>
+          )}
+          {row.protocol === Protocol.BENTOBOX_CLASSIC && (
+            <div className="bg-green/20 text-green text-[10px] px-2 rounded-full">Trident Classic</div>
+          )}
           {row.protocol === 'SUSHISWAP_V2' && (
             <div className="bg-pink/20 text-pink text-[10px] px-2 rounded-full">
               SushiSwap<sup>v2</sup>
