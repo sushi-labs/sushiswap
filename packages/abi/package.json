@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/abi",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
   "description": "Sushi ABI",
   "keywords": [
     "sushi",
@@ -34,7 +33,7 @@
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "eslint": "8.29.0",
+    "eslint": "8.41.0",
     "typescript": "5.0.4"
   }
 }

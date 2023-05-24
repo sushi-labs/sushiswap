@@ -1,11 +1,11 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
 
-import type { DecimalToString } from '@sushiswap/database'
-import { createClient, Prisma, PoolType, PoolVersion } from '@sushiswap/database'
+import { createClient, Prisma, type DecimalToString } from '@sushiswap/database'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { deepmergeInto } from 'deepmerge-ts'
 import type { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './../schemas/index.js'
+import { getUnindexedPool } from '../getUnindexedPool.js'
 
 function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSchema._output) {
   const where: NonNullable<Prisma.SushiPoolWhereInput> = {}
@@ -27,43 +27,16 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
   }
 
   if ('protocols' in args && args.protocols !== undefined) {
-    const OR: Prisma.SushiPoolWhereInput['OR'] = []
-
-    if (args.protocols.includes('SUSHISWAP_V3')) {
-      OR.push({
-        version: PoolVersion.V3,
-        type: PoolType.CONCENTRATED_LIQUIDITY_POOL,
-      })
-    }
-    if (args.protocols.includes('SUSHISWAP_V2')) {
-      OR.push({
-        version: PoolVersion.LEGACY,
-        type: PoolType.CONSTANT_PRODUCT_POOL,
-      })
-    }
-    if (args.protocols.includes('BENTOBOX_STABLE')) {
-      OR.push({
-        version: PoolVersion.TRIDENT,
-        type: PoolType.STABLE_POOL,
-      })
-    }
-    if (args.protocols.includes('BENTOBOX_CLASSIC')) {
-      OR.push({
-        version: PoolVersion.TRIDENT,
-        type: PoolType.CONSTANT_PRODUCT_POOL,
-      })
-    }
-
-    addFilter({ AND: [{ OR }] })
+    addFilter({ protocol: { in: args.protocols } })
   }
 
-  if ('isIncentivized' in args && args.isIncentivized !== undefined) {
+  if ('isIncentivized' in args && args.isIncentivized !== undefined && args.isIncentivized) {
     addFilter({
       isIncentivized: args.isIncentivized,
     })
   }
 
-  if ('isWhitelisted' in args && args.isWhitelisted !== undefined) {
+  if ('isWhitelisted' in args && args.isWhitelisted !== undefined && args.isWhitelisted) {
     addFilter({
       token0: {
         status: 'APPROVED',
@@ -71,6 +44,38 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
       token1: {
         status: 'APPROVED',
       },
+    })
+  }
+
+  if ('isWhitelisted' in args && args.isWhitelisted !== undefined && !args.isWhitelisted) {
+    addFilter({
+      OR: [
+        {
+          token0: {
+            status: 'UNKNOWN',
+          },
+          token1: {
+            status: 'UNKNOWN',
+          },
+        },
+
+        {
+          token0: {
+            status: 'UNKNOWN',
+          },
+          token1: {
+            status: 'APPROVED',
+          },
+        },
+        {
+          token0: {
+            status: 'APPROVED',
+          },
+          token1: {
+            status: 'UNKNOWN',
+          },
+        },
+      ],
     })
   }
 
@@ -107,13 +112,16 @@ export async function getEarnPool(args: typeof PoolApiSchema._output) {
   const id = `${args.chainId}:${args.address.toLowerCase()}`
 
   // Need to specify take, orderBy and orderDir to make TS happy
-  const [pool] = await getEarnPools({
+  let [pool]: Awaited<ReturnType<typeof getEarnPools>> = await getEarnPools({
     ids: [id],
     take: 1,
     orderBy: 'liquidityUSD',
     orderDir: 'desc',
-    protocols: ['SUSHISWAP_V3', 'SUSHISWAP_V2', 'BENTOBOX_STABLE', 'BENTOBOX_CLASSIC'],
   })
+
+  if (!pool) {
+    pool = (await getUnindexedPool(id)) as any
+  }
 
   if (!pool) throw new Error('Pool not found.')
 
@@ -125,7 +133,7 @@ export async function getEarnPools(args: typeof PoolsApiSchema._output) {
   const orderBy: Prisma.SushiPoolOrderByWithRelationInput = { [args.orderBy]: args.orderDir }
   const where: Prisma.SushiPoolWhereInput = parseWhere(args)
 
-  let skip: number = 0
+  let skip = 0
   let cursor: { cursor: Prisma.SushiPoolWhereUniqueInput } | object = {}
 
   if (args.cursor) {
@@ -145,22 +153,43 @@ export async function getEarnPools(args: typeof PoolsApiSchema._output) {
       address: true,
       name: true,
       chainId: true,
-      version: true,
-      type: true,
+      protocol: true,
       swapFee: true,
       twapEnabled: true,
       totalSupply: true,
       liquidityUSD: true,
       volumeUSD: true,
-      feeApr: true,
+      feeApr1h: true,
+      feeApr1d: true,
+      feeApr1w: true,
+      feeApr1m: true,
+      totalApr1h: true,
+      totalApr1d: true,
+      totalApr1w: true,
+      totalApr1m: true,
       incentiveApr: true,
-      totalApr: true,
       isIncentivized: true,
       wasIncentivized: true,
+      fees1h: true,
       fees1d: true,
       fees1w: true,
+      fees1m: true,
+      feesChange1h: true,
+      feesChange1d: true,
+      feesChange1w: true,
+      feesChange1m: true,
+      volume1h: true,
       volume1d: true,
       volume1w: true,
+      volume1m: true,
+      volumeChange1h: true,
+      volumeChange1d: true,
+      volumeChange1w: true,
+      volumeChange1m: true,
+      liquidityUSDChange1h: true,
+      liquidityUSDChange1d: true,
+      liquidityUSDChange1w: true,
+      liquidityUSDChange1m: true,
       isBlacklisted: true,
       token0: {
         select: {

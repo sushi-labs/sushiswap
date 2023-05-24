@@ -35,6 +35,7 @@ import {
   optimism,
   //  optimismGoerli,
   polygon,
+  polygonZkEvm,
   // polygonMumbai,
   // sepolia,
   //  taraxa,
@@ -509,6 +510,35 @@ export const bttc = {
   },
 } as const
 
+const thundercore = {
+  id: ChainId.THUNDERCORE,
+  name: 'ThunderCore',
+  network: 'thundercore',
+  nativeCurrency: { name: 'Thunder Token', symbol: 'TT', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: [
+        'https://mainnet-rpc.thundercore.io',
+        'https://mainnet-rpc.thundercore.com',
+        'https://mainnet-rpc.thundertoken.net',
+      ],
+    },
+    public: {
+      http: [
+        'https://mainnet-rpc.thundercore.io',
+        'https://mainnet-rpc.thundercore.com',
+        'https://mainnet-rpc.thundertoken.net',
+      ],
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 100671921,
+    },
+  },
+} as const
+
 const alchemyId = process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
 
 export const config: Record<number, PublicClientConfig> = {
@@ -518,7 +548,19 @@ export const config: Record<number, PublicClientConfig> = {
   },
   [ChainId.ARBITRUM]: {
     chain: arbitrum,
-    transport: fallback([http(`${arbitrum.rpcUrls.alchemy.http}/${alchemyId}`), http('https://rpc.ankr.com/arbitrum')]),
+    transport: fallback(
+      [
+        http(`${arbitrum.rpcUrls.alchemy.http}/${alchemyId}`),
+        http('https://rpc.ankr.com/arbitrum'),
+        http('https://arbitrum-one.public.blastapi.io'),
+        http('https://endpoints.omniatech.io/v1/arbitrum/one/public'),
+        http('https://arb1.croswap.com/rpc'),
+        http('https://1rpc.io/arb'),
+        http('https://arbitrum.blockpi.network/v1/rpc/public'),
+        http('https://arb-mainnet-public.unifra.io'),
+      ],
+      { rank: true }
+    ),
   },
   [ChainId.AVALANCHE]: {
     chain: avalanche,
@@ -555,7 +597,20 @@ export const config: Record<number, PublicClientConfig> = {
   },
   [ChainId.ETHEREUM]: {
     chain: mainnet,
-    transport: fallback([http(`${mainnet.rpcUrls.alchemy.http}/${alchemyId}`), http('https://eth.llamarpc.com')]),
+    transport: fallback(
+      [
+        http(`${mainnet.rpcUrls.alchemy.http}/${alchemyId}`),
+        http('https://eth.llamarpc.com'),
+        http('https://eth.rpc.blxrbdn.com'),
+        http('https://virginia.rpc.blxrbdn.com'),
+        http('https://singapore.rpc.blxrbdn.com'),
+        http('https://uk.rpc.blxrbdn.com'),
+        http('https://1rpc.io/eth'),
+        http('https://ethereum.publicnode.com'),
+        http('https://cloudflare-eth.com'),
+      ],
+      { rank: true }
+    ),
   },
   [ChainId.FANTOM]: {
     chain: fantom,
@@ -595,10 +650,59 @@ export const config: Record<number, PublicClientConfig> = {
   },
   [ChainId.OPTIMISM]: {
     chain: optimism,
-    transport: fallback([http(`${optimism.rpcUrls.alchemy.http}/${alchemyId}`), http('https://rpc.ankr.com/optimism')]),
+    transport: fallback(
+      [
+        http(`${optimism.rpcUrls.alchemy.http}/${alchemyId}`),
+        http('https://rpc.ankr.com/optimism'),
+        http('https://optimism-mainnet.public.blastapi.io'),
+        http('https://1rpc.io/op'),
+        http('https://optimism.blockpi.network/v1/rpc/public'),
+        http('https://mainnet.optimism.io'),
+      ],
+      { rank: true }
+    ),
   },
   [ChainId.POLYGON]: {
     chain: polygon,
-    transport: fallback([http(`${polygon.rpcUrls.alchemy.http}/${alchemyId}`), http('https://polygon.llamarpc.com')]),
+    transport: fallback(
+      [
+        http(`${polygon.rpcUrls.alchemy.http}/${alchemyId}`),
+        http('https://polygon.llamarpc.com'),
+        http('https://polygon.rpc.blxrbdn.com'),
+        http('https://polygon-mainnet.public.blastapi.io'),
+        http('https://polygon.blockpi.network/v1/rpc/public'),
+        http('https://polygon-rpc.com'),
+        http('https://rpc.ankr.com/polygon'),
+        http('https://matic-mainnet.chainstacklabs.com'),
+        http('https://polygon-bor.publicnode.com'),
+        http('https://rpc-mainnet.matic.quiknode.pro'),
+        http('https://rpc-mainnet.maticvigil.com'),
+        // ...polygon.rpcUrls.default.http.map((url) => http(url)),
+      ],
+      { rank: true }
+    ),
+    // transport: fallback([http(`${polygon.rpcUrls.alchemy.http}/${alchemyId}`), http('https://polygon.llamarpc.com')]),
+  },
+  [ChainId.POLYGON_ZKEVM]: {
+    chain: polygonZkEvm,
+    transport: fallback(
+      [
+        http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/${alchemyId}`),
+        http('https://zkevm-rpc.com'),
+        http('https://rpc.ankr.com/polygon_zkevm'),
+        http('https://rpc.polygon-zkevm.gateway.fm'),
+      ],
+      { rank: true }
+    ),
+    // transport: fallback([http(`${polygon.rpcUrls.alchemy.http}/${alchemyId}`), http('https://polygon.llamarpc.com')]),
+  },
+  [ChainId.THUNDERCORE]: {
+    chain: thundercore,
+    transport: fallback(
+      thundercore.rpcUrls.default.http.map((url) => http(url)),
+      {
+        rank: true,
+      }
+    ),
   },
 } as const

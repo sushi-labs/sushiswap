@@ -1,4 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
+import { V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 
 export const SWAP_API_ENABLED_NETWORKS = []
 
@@ -57,6 +58,8 @@ export const AMM_ENABLED_NETWORKS = [
   ChainId.HARMONY,
 ] as const
 
-export const SUPPORTED_CHAIN_IDS = Array.from(new Set([...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS]))
+export const SUPPORTED_CHAIN_IDS = Array.from(
+  new Set([...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS, ...V3_SUPPORTED_CHAIN_IDS])
+)
 
 export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]

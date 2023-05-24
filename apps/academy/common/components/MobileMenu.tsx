@@ -1,7 +1,6 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { Bars3Icon } from '@heroicons/react/24/solid'
-import { Link, SushiIcon, Typography } from '@sushiswap/ui'
-import classNames from 'classnames'
+import { classNames, Link, SushiIcon, Typography } from '@sushiswap/ui'
 import { SushiTransparentIcon, TriangleIcon } from 'common/icons'
 import { FC, useCallback, useState } from 'react'
 

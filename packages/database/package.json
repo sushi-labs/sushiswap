@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/database",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
   "description": "Sushi Database",
   "keywords": [
     "sushi",
@@ -48,9 +47,9 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "^29.2.0",
-    "@types/node": "^18.0.0",
+    "@types/node": "18.11.18",
     "dotenv": "16.0.3",
-    "eslint": "8.29.0",
+    "eslint": "8.41.0",
     "jest": "29.3.1",
     "prisma": "4.12.0",
     "tsup": "6.5.0",

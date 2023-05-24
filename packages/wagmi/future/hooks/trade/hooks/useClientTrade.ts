@@ -66,13 +66,14 @@ export const useClientTrade = (variables: UseTradeParams) => {
           overrides: undefined,
         }
 
-      const route = Router.findSushiRoute(
+      const route = Router.findSpecialRoute(
         poolsCodeMap,
         chainId,
         fromToken,
         BigNumber.from(amount.quotient.toString()),
         toToken,
-        feeData.gasPrice.toNumber()
+        feeData.gasPrice.toNumber(),
+        1 // 1% impact before dex aggregation
       )
 
       const logPools = Array.from(poolsCodeMap.values())
