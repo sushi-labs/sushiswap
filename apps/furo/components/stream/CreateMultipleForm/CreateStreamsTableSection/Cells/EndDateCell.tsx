@@ -47,6 +47,7 @@ export const EndDateCell: FC<CellProps> = ({ index }) => {
           dateFormat="MMM d, yyyy HH:mm"
           placeholderText="Select date"
           autoComplete="off"
+          customInput={<input testdata-id={`create-multiple-streams-end-date-${index}`} type="text" />}
         />
       )}
     />

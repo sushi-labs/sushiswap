@@ -28,6 +28,7 @@ export const RecipientCell: FC<CellProps> = ({ index }) => {
             'without-ring h-[37px]'
           )}
           inputClassName={classNames('')}
+          testdata-id={`create-multiple-streams-recipient-input-${index}`}
         />
       )}
     />

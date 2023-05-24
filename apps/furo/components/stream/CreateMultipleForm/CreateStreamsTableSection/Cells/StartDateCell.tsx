@@ -48,6 +48,7 @@ export const StartDateCell: FC<CellProps> = ({ index }) => {
           dateFormat="MMM d, yyyy HH:mm"
           placeholderText="Select date"
           autoComplete="off"
+          customInput={<input testdata-id={`create-multiple-streams-start-date-${index}`} type="text" />}
         />
       )}
     />

@@ -11,8 +11,7 @@
     "generate": "graphclient build",
     "lint": "next lint",
     "start": "next start",
-    "test": "jest --watch --no-cache",
-    "e2e-test": "npx playwright test"
+    "test": " npx playwright test"
   },
   "dependencies": {
     "@ethersproject/address": "5.7.0",
