@@ -67,13 +67,13 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
                                 <Popover.Panel>
                                   <List.MenuItem
                                     as="a"
-                                    href={`/stream/create`}
+                                    href={`/furo/stream/create`}
                                     title="New Stream"
                                     subtitle={'Most efficient way of providing liquidity.'}
                                   />
                                   <List.MenuItem
                                     as="a"
-                                    href={`/vesting/create`}
+                                    href={`/furo/vesting/create`}
                                     title="New Vesting"
                                     subtitle={'If you prefer creating a classic liquidity position.'}
                                   >
