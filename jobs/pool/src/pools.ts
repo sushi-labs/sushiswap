@@ -1,66 +1,114 @@
 import { ChainId } from '@sushiswap/chain'
-import { createClient, PoolType, PoolVersion, Prisma } from '@sushiswap/database'
+import { createClient, Prisma, Protocol } from '@sushiswap/database'
 import {
   SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
   SUSHISWAP_SUBGRAPH_NAME,
   SUSHISWAP_V3_ENABLED_NETWORKS,
   SUSHISWAP_V3_SUBGRAPH_NAME,
+  SWAP_ENABLED_NETWORKS,
   TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
-import { getBuiltGraphSDK, OneDayBlocksQuery, PairsQuery, V3PoolsQuery } from '../.graphclient/index.js'
-import { mergePools } from './etl/pool/index.js'
-import { filterPools } from './etl/pool/index.js'
+import { getBuiltGraphSDK, PairsQuery, V3PoolsQuery } from '../.graphclient/index.js'
+import { upsertPools } from './etl/pool/index.js'
 import { createTokens } from './etl/token/load.js'
 
 interface SubgraphConfig {
   chainId: ChainId
   host: string
   name: string
-  version: PoolVersion
+  protocol: Protocol
+}
+
+interface Blocks {
+  oneHour: number | undefined
+  twoHour: number | undefined
+  oneDay: number | undefined
+  twoDay: number | undefined
+  oneWeek: number | undefined
+  twoWeek: number | undefined
+  oneMonth: number | undefined
+  twoMonth: number | undefined
 }
 
 type V2Data = {
   currentPools: PairsQuery[]
-  poolsOneDayAgo: PairsQuery[]
+  pools1h: PairsQuery[]
+  pools2h: PairsQuery[]
+  pools1d: PairsQuery[]
+  pools2d: PairsQuery[]
+  pools1w: PairsQuery[]
+  pools2w: PairsQuery[]
+  pools1m: PairsQuery[]
+  pools2m: PairsQuery[]
 }
 type V3Data = {
   currentPools: V3PoolsQuery[]
-  poolsOneDayAgo: V3PoolsQuery[]
+  pools1h: V3PoolsQuery[]
+  pools2h: V3PoolsQuery[]
+  pools1d: V3PoolsQuery[]
+  pools2d: V3PoolsQuery[]
+  pools1w: V3PoolsQuery[]
+  pools2w: V3PoolsQuery[]
+  pools1m: V3PoolsQuery[]
+  pools2m: V3PoolsQuery[]
 }
 
-const FIRST_TIME_SEED = process.env.FIRST_TIME_SEED === 'true'
-if (FIRST_TIME_SEED) {
-  console.log('FIRST_TIME_SEED is true')
+interface PercentageChange {
+  oneHour: number
+  oneDay: number
+  oneWeek: number
+  oneMonth: number
 }
 
-export async function execute() {
+interface PoolMetrics {
+  volume: PercentageChange
+  fees: PercentageChange
+  apr: PercentageChange
+}
+
+enum AprTimeRange {
+  ONE_HOUR = 'ONE_HOUR',
+  ONE_DAY = 'ONE_DAY',
+  ONE_WEEK = 'ONE_WEEK',
+  ONE_MONTH = 'ONE_MONTH',
+}
+
+export async function execute(protocol: Protocol) {
   try {
     const startTime = performance.now()
     console.log('Preparing to load pools/tokens')
 
     // EXTRACT
-    const exchanges = await extract()
+    const exchanges = await extract(protocol)
     console.log(`EXTRACT - Pairs extracted from ${exchanges.length} different subgraphs`)
 
     // TRANSFORM
     const { tokens, pools } = transform(exchanges)
 
     // LOAD
-    const batchSize = 500
+    const batchSize = 300
 
     for (let i = 0; i < tokens.length; i += batchSize) {
       const batch = tokens.slice(i, i + batchSize)
       await createTokens(batch)
     }
-
-    for (let i = 0; i < pools.length; i += batchSize) {
-      const batch = pools.slice(i, i + batchSize)
-      const filteredPools = await filterPools(batch)
-      await mergePools(filteredPools, FIRST_TIME_SEED)
+    const concurrentBatches = 10
+    for (let i = 0; i < pools.length; i += batchSize * concurrentBatches) {
+      const batches = []
+      for (let j = i; j < i + concurrentBatches * batchSize; j += batchSize) {
+        if (j > pools.length) {
+          break
+        }
+        batches.push(upsertPools(pools.slice(j, j + batchSize)))
+      }
+      const batchStartTime = performance.now()
+      await Promise.all(batches)
+      const batchEndTime = performance.now()
+      console.log(`Batch completed in ${((batchEndTime - batchStartTime) / 1000).toFixed(1)} seconds. `)
     }
     const endTime = performance.now()
 
@@ -73,69 +121,125 @@ export async function execute() {
   }
 }
 
-async function extract() {
-  const result: { chainId: ChainId; data: V2Data | V3Data }[] = []
-  const subgraphs: SubgraphConfig[] = [
-    TRIDENT_ENABLED_NETWORKS.map((chainId) => {
+function createSubgraphConfig(protocol: Protocol) {
+  if (protocol === Protocol.SUSHISWAP_V2) {
+    return SUSHISWAP_ENABLED_NETWORKS.map((chainId) => {
+      return {
+        chainId,
+        host: SUBGRAPH_HOST[Number(chainId) as keyof typeof SUBGRAPH_HOST],
+        name: SUSHISWAP_SUBGRAPH_NAME[chainId],
+        protocol: Protocol.SUSHISWAP_V2,
+      }
+    })
+  } else if (protocol === Protocol.SUSHISWAP_V3) {
+    return SUSHISWAP_V3_ENABLED_NETWORKS.map((chainId) => ({
+      chainId,
+      host: SUBGRAPH_HOST[Number(chainId) as keyof typeof SUBGRAPH_HOST],
+      name: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
+      protocol: Protocol.SUSHISWAP_V3,
+    }))
+  } else if (protocol === Protocol.BENTOBOX_CLASSIC || protocol === Protocol.BENTOBOX_STABLE) {
+    return TRIDENT_ENABLED_NETWORKS.map((chainId) => {
       const _chainId = chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
       return {
         chainId,
         host: SUBGRAPH_HOST[_chainId],
         name: TRIDENT_SUBGRAPH_NAME[_chainId],
-        version: PoolVersion.TRIDENT,
+        protocol: Protocol.BENTOBOX_CLASSIC,
       }
-    }),
-    SUSHISWAP_ENABLED_NETWORKS.map((chainId) => {
-      return {
-        chainId,
-        host: SUBGRAPH_HOST[Number(chainId) as keyof typeof SUBGRAPH_HOST],
-        name: SUSHISWAP_SUBGRAPH_NAME[chainId],
-        version: PoolVersion.LEGACY,
-      }
-    }),
-    SUSHISWAP_V3_ENABLED_NETWORKS.map((chainId) => ({
-      chainId,
-      host: SUBGRAPH_HOST[Number(chainId) as keyof typeof SUBGRAPH_HOST],
-      name: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
-      version: PoolVersion.V3,
-    })),
-  ]
-    .flat()
+    })
+  }
+
+  throw new Error('Protocol not supported')
+}
+
+async function extract(protocol: Protocol) {
+  const result: { chainId: ChainId; data: V2Data | V3Data }[] = []
+  const subgraphs = createSubgraphConfig(protocol)
 
   const sdk = getBuiltGraphSDK()
-  const oneDayBlocks = await sdk.OneDayBlocks({ chainIds: SUSHISWAP_V3_ENABLED_NETWORKS })
+  const [
+    oneHourBlocks,
+    twoHourBlocks,
+    oneDayBlocks,
+    twoDayBlocks,
+    oneWeekBlocks,
+    twoWeekBlocks,
+    oneMonthBlocks,
+    twoMonthBlocks,
+  ] = await Promise.all([
+    sdk.OneHourBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.TwoHourBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.OneDayBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.TwoDayBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.OneWeekBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.TwoWeekBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.OneMonthBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.TwoMonthBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+  ])
 
   const chains = Array.from(new Set(subgraphs.map((subgraph) => subgraph.chainId.toString())))
   console.log(`EXTRACT - Extracting from ${chains.length} different chains, ${chains.join(', ')}`)
 
   for (const subgraph of subgraphs) {
-    const pairs = await fetchPairs(subgraph, oneDayBlocks)
+    const blocks: Blocks = {
+      oneHour:
+        Number(oneHourBlocks.oneHourBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      twoHour:
+        Number(twoHourBlocks.twoHourBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      oneDay:
+        Number(oneDayBlocks.oneDayBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      twoDay:
+        Number(twoDayBlocks.twoDayBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      oneWeek:
+        Number(oneWeekBlocks.oneWeekBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      twoWeek:
+        Number(twoWeekBlocks.twoWeekBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      oneMonth:
+        Number(oneMonthBlocks.oneMonthBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      twoMonth:
+        Number(twoMonthBlocks.twoMonthBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+    }
+    const pairs = await fetchPairs(subgraph, blocks)
     console.log(`${subgraph.name}, batches: ${pairs.currentPools.length}`)
     result.push({ chainId: subgraph.chainId, data: pairs })
   }
   return result
 }
 
-async function fetchPairs(config: SubgraphConfig, blocks: OneDayBlocksQuery) {
-  if (config.version === PoolVersion.LEGACY || config.version === PoolVersion.TRIDENT) {
-    const currentPools = await fetchLegacyOrTridentPairs(config)
-    return { currentPools, poolsOneDayAgo: [] as PairsQuery[] }
-  } else if (config.version === PoolVersion.V3) {
-    const blockNumber = blocks
-      ? Number(blocks.oneDayBlocks.find((block) => block.chainId === config.chainId)?.number)
-      : undefined
-
-    const [currentPools, poolsOneDayAgo] = await Promise.all([
-      fetchV3Pools(config),
-      blockNumber ? fetchV3Pools(config, blockNumber) : ([] as V3PoolsQuery[]),
+async function fetchPairs(config: SubgraphConfig, blocks: Blocks) {
+  if (config.protocol === Protocol.SUSHISWAP_V2 || config.protocol === Protocol.BENTOBOX_CLASSIC) {
+    const [currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m] = await Promise.all([
+      fetchLegacyOrTridentPairs(config),
+      blocks.oneHour ? fetchLegacyOrTridentPairs(config, blocks.oneHour) : ([] as PairsQuery[]),
+      blocks.twoHour ? fetchLegacyOrTridentPairs(config, blocks.twoHour) : ([] as PairsQuery[]),
+      blocks.oneDay ? fetchLegacyOrTridentPairs(config, blocks.oneDay) : ([] as PairsQuery[]),
+      blocks.twoDay ? fetchLegacyOrTridentPairs(config, blocks.twoDay) : ([] as PairsQuery[]),
+      blocks.oneWeek ? fetchLegacyOrTridentPairs(config, blocks.oneWeek) : ([] as PairsQuery[]),
+      blocks.twoWeek ? fetchLegacyOrTridentPairs(config, blocks.twoWeek) : ([] as PairsQuery[]),
+      blocks.oneMonth ? fetchLegacyOrTridentPairs(config, blocks.oneMonth) : ([] as PairsQuery[]),
+      blocks.twoMonth ? fetchLegacyOrTridentPairs(config, blocks.twoMonth) : ([] as PairsQuery[]),
     ])
-    return { currentPools, poolsOneDayAgo }
+    return { currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m }
+  } else if (config.protocol === Protocol.SUSHISWAP_V3) {
+    const [currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m] = await Promise.all([
+      fetchV3Pools(config),
+      blocks.oneHour ? fetchV3Pools(config, blocks.oneHour) : ([] as V3PoolsQuery[]),
+      blocks.twoHour ? fetchV3Pools(config, blocks.twoHour) : ([] as V3PoolsQuery[]),
+      blocks.oneDay ? fetchV3Pools(config, blocks.oneDay) : ([] as V3PoolsQuery[]),
+      blocks.twoDay ? fetchV3Pools(config, blocks.twoDay) : ([] as V3PoolsQuery[]),
+      blocks.oneWeek ? fetchV3Pools(config, blocks.oneWeek) : ([] as V3PoolsQuery[]),
+      blocks.twoWeek ? fetchV3Pools(config, blocks.twoWeek) : ([] as V3PoolsQuery[]),
+      blocks.oneMonth ? fetchV3Pools(config, blocks.oneMonth) : ([] as V3PoolsQuery[]),
+      blocks.twoMonth ? fetchV3Pools(config, blocks.twoMonth) : ([] as V3PoolsQuery[]),
+    ])
+    return { currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m }
   } else {
     console.warn('fetchPairs: config.version is not LEGACY or TRIDENT or V3, skipping')
   }
 }
 
-async function fetchLegacyOrTridentPairs(config: SubgraphConfig) {
+async function fetchLegacyOrTridentPairs(config: SubgraphConfig, blockNumber?: number) {
   const chainId = config.chainId
   const sdk = getBuiltGraphSDK({ chainId, host: config.host, name: config.name })
   console.log(`Loading data from ${config.host} ${config.name}`)
@@ -144,10 +248,12 @@ async function fetchLegacyOrTridentPairs(config: SubgraphConfig) {
   let count = 0
   do {
     const where = cursor !== '' ? { id_gt: cursor } : {}
+    const block = blockNumber ? { number: blockNumber } : null
     const request = await sdk
       .Pairs({
         first: 1000,
         where,
+        block,
       })
       .catch((e: unknown) => {
         if (e instanceof Error) {
@@ -244,8 +350,103 @@ export const isV3Query = (data: V2Data | V3Data): data is V3Data =>
   data.currentPools.some((d) => d?.pools !== undefined)
 
 function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data }) {
-  const yesterday = new Date(Date.now() - 86400000)
-  const unix24hAgo = Math.floor(yesterday.getTime() / 1000)
+  const oneHourData = new Map(
+    queryResult.data.pools1h
+      .flatMap((page) => page.pairs)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+          liquidityUSD: Number(pool.liquidityUSD),
+        },
+      ])
+  )
+  const twoHourData = new Map(
+    queryResult.data.pools2h
+      .flatMap((page) => page.pairs)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+          liquidityUSD: Number(pool.liquidityUSD),
+        },
+      ])
+  )
+  const oneDayData = new Map(
+    queryResult.data.pools1d
+      .flatMap((page) => page.pairs)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+          liquidityUSD: Number(pool.liquidityUSD),
+        },
+      ])
+  )
+  const twoDayData = new Map(
+    queryResult.data.pools2d
+      .flatMap((page) => page.pairs)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+          liquidityUSD: Number(pool.liquidityUSD),
+        },
+      ])
+  )
+  const oneWeekData = new Map(
+    queryResult.data.pools1w
+      .flatMap((page) => page.pairs)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+          liquidityUSD: Number(pool.liquidityUSD),
+        },
+      ])
+  )
+  const twoWeekData = new Map(
+    queryResult.data.pools2w
+      .flatMap((page) => page.pairs)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+          liquidityUSD: Number(pool.liquidityUSD),
+        },
+      ])
+  )
+  const oneMonthData = new Map(
+    queryResult.data.pools1m
+      .flatMap((page) => page.pairs)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+          liquidityUSD: Number(pool.liquidityUSD),
+        },
+      ])
+  )
+  const twoMonthData = new Map(
+    queryResult.data.pools2m
+      .flatMap((page) => page.pairs)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+          liquidityUSD: Number(pool.liquidityUSD),
+        },
+      ])
+  )
+
   const tokens: Prisma.TokenCreateManyInput[] = []
   const poolsTransformed = queryResult.data.currentPools.flatMap((batch) => {
     if (!batch?.pairs) return []
@@ -270,38 +471,58 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
           decimals: Number(pair.token1.decimals),
         })
       )
-      const isAprValid = Number(pair.aprUpdatedAtTimestamp) > unix24hAgo && !isNaN(Number(pair.apr))
-      const feeApr = isAprValid ? Number(pair.apr) : 0
+
       const regex = /([^\w ]|_|-)/g
       const name = pair.token0.symbol
         .replace(regex, '')
         .slice(0, 15)
         .concat('-')
         .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
-      let version: PoolVersion
-      if (pair.source === PoolVersion.LEGACY) {
-        version = PoolVersion.LEGACY
-      } else if (pair.source === PoolVersion.TRIDENT) {
-        version = PoolVersion.TRIDENT
-      } else {
-        throw new Error('Unknown pool version')
-      }
-      let type: PoolType
-
-      if (pair.type === PoolType.CONSTANT_PRODUCT_POOL) {
-        type = PoolType.CONSTANT_PRODUCT_POOL
-      } else if (pair.type === PoolType.STABLE_POOL) {
-        type = PoolType.STABLE_POOL
+      let protocol: Protocol
+      if (pair.source === 'LEGACY' && pair.type === 'CONSTANT_PRODUCT_POOL') {
+        protocol = Protocol.SUSHISWAP_V2
+      } else if (pair.source === 'TRIDENT' && pair.type === 'CONSTANT_PRODUCT_POOL') {
+        protocol = Protocol.BENTOBOX_CLASSIC
+      } else if (pair.source === 'TRIDENT' && pair.type === 'STABLE_POOL') {
+        protocol = Protocol.BENTOBOX_STABLE
       } else {
         throw new Error('Unknown pool type')
       }
+
+      const feeApr1h = calculateFeeApr(
+        AprTimeRange.ONE_HOUR,
+        oneHourData.get(pair.id)?.feesUSD ?? 0,
+        pair.feesUSD,
+        pair.liquidityUSD
+      )
+      const feeApr1d = calculateFeeApr(
+        AprTimeRange.ONE_DAY,
+        oneDayData.get(pair.id)?.feesUSD ?? 0,
+        pair.feesUSD,
+        pair.liquidityUSD
+      )
+      const feeApr1w = calculateFeeApr(
+        AprTimeRange.ONE_WEEK,
+        oneWeekData.get(pair.id)?.feesUSD ?? 0,
+        pair.feesUSD,
+        pair.liquidityUSD
+      )
+      const feeApr1m = calculateFeeApr(
+        AprTimeRange.ONE_MONTH,
+        oneMonthData.get(pair.id)?.feesUSD ?? 0,
+        pair.feesUSD,
+        pair.liquidityUSD
+      )
+
+      const currentVolumeUSD = Number(pair.volumeUSD)
+      const currentLiquidityUSD = Number(pair.liquidityUSD)
+      const currentFeesUSD = Number(pair.feesUSD)
 
       return {
         id: queryResult.chainId.toString().concat(':').concat(pair.id),
         address: pair.id,
         name: name,
-        version,
-        type,
+        protocol,
         chainId: queryResult.chainId,
         swapFee: Number(pair.swapFee) / 10_000,
         twapEnabled: pair.twapEnabled,
@@ -310,14 +531,81 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
         reserve0: pair.reserve0,
         reserve1: pair.reserve1,
         totalSupply: pair.liquidity,
-        feeApr,
-        liquidityUSD: pair.liquidityUSD,
+        liquidityUSD: currentLiquidityUSD,
         liquidityNative: pair.liquidityNative,
-        volumeUSD: pair.volumeUSD,
+        volumeUSD: currentVolumeUSD,
+        feesUSD: currentFeesUSD,
         volumeNative: pair.volumeNative,
         token0Price: pair.token0Price,
         token1Price: pair.token1Price,
-        totalApr: feeApr,
+        fees1h: oneHourData.has(pair.id) ? currentFeesUSD - oneHourData.get(pair.id).feesUSD : currentFeesUSD,
+        fees1d: oneDayData.has(pair.id) ? currentFeesUSD - oneDayData.get(pair.id).feesUSD : currentFeesUSD,
+        fees1w: oneWeekData.has(pair.id) ? currentFeesUSD - oneWeekData.get(pair.id).feesUSD : currentFeesUSD,
+        fees1m: oneMonthData.has(pair.id) ? currentFeesUSD - oneMonthData.get(pair.id).feesUSD : currentFeesUSD,
+        feesChange1h: calculatePercentageChange(
+          currentFeesUSD,
+          oneHourData.get(pair.id)?.feesUSD ?? 0,
+          twoHourData.get(pair.id)?.feesUSD ?? 0
+        ),
+        feesChange1d: calculatePercentageChange(
+          currentFeesUSD,
+          oneDayData.get(pair.id)?.feesUSD ?? 0,
+          twoDayData.get(pair.id)?.feesUSD ?? 0
+        ),
+        feesChange1w: calculatePercentageChange(
+          currentFeesUSD,
+          oneWeekData.get(pair.id)?.feesUSD ?? 0,
+          twoWeekData.get(pair.id)?.feesUSD ?? 0
+        ),
+        feesChange1m: calculatePercentageChange(
+          currentFeesUSD,
+          oneMonthData.get(pair.id)?.feesUSD ?? 0,
+          twoMonthData.get(pair.id)?.feesUSD ?? 0
+        ),
+        volume1h: oneHourData.has(pair.id) ? currentVolumeUSD - oneHourData.get(pair.id).volumeUSD : currentVolumeUSD,
+        volume1d: oneDayData.has(pair.id) ? currentVolumeUSD - oneDayData.get(pair.id).volumeUSD : currentVolumeUSD,
+        volume1w: oneWeekData.has(pair.id) ? currentVolumeUSD - oneWeekData.get(pair.id).volumeUSD : currentVolumeUSD,
+        volume1m: oneMonthData.has(pair.id) ? currentVolumeUSD - oneMonthData.get(pair.id).volumeUSD : currentVolumeUSD,
+        volumeChange1h: calculatePercentageChange(
+          currentVolumeUSD,
+          oneHourData.get(pair.id)?.volumeUSD ?? 0,
+          twoHourData.get(pair.id)?.volumeUSD ?? 0
+        ),
+        volumeChange1d: calculatePercentageChange(
+          currentVolumeUSD,
+          oneDayData.get(pair.id)?.volumeUSD ?? 0,
+          twoDayData.get(pair.id)?.volumeUSD ?? 0
+        ),
+        volumeChange1w: calculatePercentageChange(
+          currentVolumeUSD,
+          oneWeekData.get(pair.id)?.volumeUSD ?? 0,
+          twoWeekData.get(pair.id)?.volumeUSD ?? 0
+        ),
+        volumeChange1m: calculatePercentageChange(
+          currentVolumeUSD,
+          oneMonthData.get(pair.id)?.volumeUSD ?? 0,
+          twoMonthData.get(pair.id)?.volumeUSD ?? 0
+        ),
+        liquidityUSDChange1h: oneHourData.get(pair.id)?.liquidityUSD
+          ? currentLiquidityUSD / oneHourData.get(pair.id)?.liquidityUSD - 1
+          : 0,
+        liquidityUSDChange1d: oneDayData.get(pair.id)?.liquidityUSD
+          ? currentLiquidityUSD / oneDayData.get(pair.id)?.liquidityUSD - 1
+          : 0,
+        liquidityUSDChange1w: oneWeekData.get(pair.id)?.liquidityUSD
+          ? currentLiquidityUSD / oneWeekData.get(pair.id)?.liquidityUSD - 1
+          : 0,
+        liquidityUSDChange1m: oneMonthData.get(pair.id)?.liquidityUSD
+          ? currentLiquidityUSD / oneMonthData.get(pair.id)?.liquidityUSD - 1
+          : 0,
+        feeApr1h,
+        feeApr1d,
+        feeApr1w,
+        feeApr1m,
+        totalApr1h: feeApr1h,
+        totalApr1d: feeApr1d,
+        totalApr1w: feeApr1w,
+        totalApr1m: feeApr1m,
         createdAtBlockNumber: BigInt(pair.createdAtBlock),
       } satisfies Prisma.SushiPoolCreateManyInput
     })
@@ -327,14 +615,102 @@ function transformLegacyOrTrident(queryResult: { chainId: ChainId; data: V2Data 
 }
 
 function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
-  const aprParams: Map<string, number> = new Map()
-
-  for (const query of queryResult.data.poolsOneDayAgo) {
-    query?.pools.forEach((pair) => {
-      aprParams.set(pair.id, pair.feesUSD)
-    })
-  }
-
+  const oneHourData = new Map(
+    queryResult.data.pools1h
+      .flatMap((page) => page.pools)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+          liquidityUSD: Number(pool.totalValueLockedUSD),
+        },
+      ])
+  )
+  const twoHourData = new Map(
+    queryResult.data.pools2h
+      .flatMap((page) => page.pools)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+          liquidityUSD: Number(pool.totalValueLockedUSD),
+        },
+      ])
+  )
+  const oneDayData = new Map(
+    queryResult.data.pools1d
+      .flatMap((page) => page.pools)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+          liquidityUSD: Number(pool.totalValueLockedUSD),
+        },
+      ])
+  )
+  const twoDayData = new Map(
+    queryResult.data.pools2d
+      .flatMap((page) => page.pools)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+          liquidityUSD: Number(pool.totalValueLockedUSD),
+        },
+      ])
+  )
+  const oneWeekData = new Map(
+    queryResult.data.pools1w
+      .flatMap((page) => page.pools)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+          liquidityUSD: Number(pool.totalValueLockedUSD),
+        },
+      ])
+  )
+  const twoWeekData = new Map(
+    queryResult.data.pools2w
+      .flatMap((page) => page.pools)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+          liquidityUSD: Number(pool.totalValueLockedUSD),
+        },
+      ])
+  )
+  const oneMonthData = new Map(
+    queryResult.data.pools1m
+      .flatMap((page) => page.pools)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+          liquidityUSD: Number(pool.totalValueLockedUSD),
+        },
+      ])
+  )
+  const twoMonthData = new Map(
+    queryResult.data.pools2m
+      .flatMap((page) => page.pools)
+      .map((pool) => [
+        pool.id,
+        {
+          feesUSD: Number(pool.feesUSD),
+          volumeUSD: Number(pool.volumeUSD),
+          liquidityUSD: Number(pool.totalValueLockedUSD),
+        },
+      ])
+  )
   const tokens: Prisma.TokenCreateManyInput[] = []
   const poolsTransformed = queryResult.data.currentPools.flatMap((batch) => {
     if (!batch?.pools) return []
@@ -366,15 +742,40 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
         .concat('-')
         .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
       const swapFee = Number(pair.feeTier) / 1_000_000
-      const feeApr = aprParams.has(pair.id)
-        ? calculateFeeApr(aprParams.get(pair.id), pair.feesUSD, pair.totalValueLockedUSD)
-        : 0
+
+      const feeApr1h = calculateFeeApr(
+        AprTimeRange.ONE_HOUR,
+        oneHourData.get(pair.id)?.feesUSD ?? 0,
+        pair.feesUSD,
+        pair.totalValueLockedUSD
+      )
+      const feeApr1d = calculateFeeApr(
+        AprTimeRange.ONE_DAY,
+        oneDayData.get(pair.id)?.feesUSD ?? 0,
+        pair.feesUSD,
+        pair.totalValueLockedUSD
+      )
+      const feeApr1w = calculateFeeApr(
+        AprTimeRange.ONE_WEEK,
+        oneWeekData.get(pair.id)?.feesUSD ?? 0,
+        pair.feesUSD,
+        pair.totalValueLockedUSD
+      )
+      const feeApr1m = calculateFeeApr(
+        AprTimeRange.ONE_MONTH,
+        oneMonthData.get(pair.id)?.feesUSD ?? 0,
+        pair.feesUSD,
+        pair.totalValueLockedUSD
+      )
+      const currentVolumeUSD = Number(pair.volumeUSD)
+      const currentLiquidityUSD = Number(pair.totalValueLockedUSD)
+      const currentFeesUSD = Number(pair.feesUSD)
+
       return {
         id: queryResult.chainId.toString().concat(':').concat(pair.id),
         address: pair.id,
         name: name,
-        version: PoolVersion.V3,
-        type: PoolType.CONCENTRATED_LIQUIDITY_POOL,
+        protocol: Protocol.SUSHISWAP_V3,
         chainId: queryResult.chainId,
         swapFee,
         twapEnabled: true,
@@ -383,14 +784,81 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
         reserve0: (pair.totalValueLockedToken0 ** pair.token0.decimals).toFixed(0).toString(),
         reserve1: (pair.totalValueLockedToken1 ** pair.token1.decimals).toFixed(0).toString(),
         totalSupply: pair.liquidity,
-        feeApr,
-        liquidityUSD: pair.totalValueLockedUSD,
+        fees1h: oneHourData.has(pair.id) ? currentFeesUSD - oneHourData.get(pair.id).feesUSD : currentFeesUSD,
+        fees1d: oneDayData.has(pair.id) ? currentFeesUSD - oneDayData.get(pair.id).feesUSD : currentFeesUSD,
+        fees1w: oneWeekData.has(pair.id) ? currentFeesUSD - oneWeekData.get(pair.id).feesUSD : currentFeesUSD,
+        fees1m: oneMonthData.has(pair.id) ? currentFeesUSD - oneMonthData.get(pair.id).feesUSD : currentFeesUSD,
+        feesChange1h: calculatePercentageChange(
+          currentFeesUSD,
+          oneHourData.get(pair.id)?.feesUSD ?? 0,
+          twoHourData.get(pair.id)?.feesUSD ?? 0
+        ),
+        feesChange1d: calculatePercentageChange(
+          currentFeesUSD,
+          oneDayData.get(pair.id)?.feesUSD ?? 0,
+          twoDayData.get(pair.id)?.feesUSD ?? 0
+        ),
+        feesChange1w: calculatePercentageChange(
+          currentFeesUSD,
+          oneWeekData.get(pair.id)?.feesUSD ?? 0,
+          twoWeekData.get(pair.id)?.feesUSD ?? 0
+        ),
+        feesChange1m: calculatePercentageChange(
+          currentFeesUSD,
+          oneMonthData.get(pair.id)?.feesUSD ?? 0,
+          twoMonthData.get(pair.id)?.feesUSD ?? 0
+        ),
+        volume1h: oneHourData.has(pair.id) ? currentVolumeUSD - oneHourData.get(pair.id).volumeUSD : currentVolumeUSD,
+        volume1d: oneDayData.has(pair.id) ? currentVolumeUSD - oneDayData.get(pair.id).volumeUSD : currentVolumeUSD,
+        volume1w: oneWeekData.has(pair.id) ? currentVolumeUSD - oneWeekData.get(pair.id).volumeUSD : currentVolumeUSD,
+        volume1m: oneMonthData.has(pair.id) ? currentVolumeUSD - oneMonthData.get(pair.id).volumeUSD : currentVolumeUSD,
+        volumeChange1h: calculatePercentageChange(
+          currentVolumeUSD,
+          oneHourData.get(pair.id)?.volumeUSD ?? 0,
+          twoHourData.get(pair.id)?.volumeUSD ?? 0
+        ),
+        volumeChange1d: calculatePercentageChange(
+          currentVolumeUSD,
+          oneDayData.get(pair.id)?.volumeUSD ?? 0,
+          twoDayData.get(pair.id)?.volumeUSD ?? 0
+        ),
+        volumeChange1w: calculatePercentageChange(
+          currentVolumeUSD,
+          oneWeekData.get(pair.id)?.volumeUSD ?? 0,
+          twoWeekData.get(pair.id)?.volumeUSD ?? 0
+        ),
+        volumeChange1m: calculatePercentageChange(
+          currentVolumeUSD,
+          oneMonthData.get(pair.id)?.volumeUSD ?? 0,
+          twoMonthData.get(pair.id)?.volumeUSD ?? 0
+        ),
+        liquidityUSDChange1h: oneHourData.get(pair.id)?.liquidityUSD
+          ? currentLiquidityUSD / oneHourData.get(pair.id)?.liquidityUSD - 1
+          : 0,
+        liquidityUSDChange1d: oneDayData.get(pair.id)?.liquidityUSD
+          ? currentLiquidityUSD / oneDayData.get(pair.id)?.liquidityUSD - 1
+          : 0,
+        liquidityUSDChange1w: oneWeekData.get(pair.id)?.liquidityUSD
+          ? currentLiquidityUSD / oneWeekData.get(pair.id)?.liquidityUSD - 1
+          : 0,
+        liquidityUSDChange1m: oneMonthData.get(pair.id)?.liquidityUSD
+          ? currentLiquidityUSD / oneMonthData.get(pair.id)?.liquidityUSD - 1
+          : 0,
+        feeApr1h,
+        feeApr1d,
+        feeApr1w,
+        feeApr1m,
+        totalApr1h: feeApr1h,
+        totalApr1d: feeApr1d,
+        totalApr1w: feeApr1w,
+        totalApr1m: feeApr1m,
+        liquidityUSD: currentLiquidityUSD,
         liquidityNative: pair.totalValueLockedETH,
-        volumeUSD: pair.volumeUSD,
+        volumeUSD: currentVolumeUSD,
+        feesUSD: currentFeesUSD,
         volumeNative: 0, // DOES NOT EXIST IN V3 subgraph
         token0Price: pair.token0Price,
         token1Price: pair.token1Price,
-        totalApr: feeApr,
         createdAtBlockNumber: BigInt(pair.createdAtBlockNumber),
       } satisfies Prisma.SushiPoolCreateManyInput
     })
@@ -399,8 +867,30 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
   return { pools: poolsTransformed, tokens }
 }
 
-const calculateFeeApr = (historicalFee: number, currentFee: number, currentLiquidityUSD) => {
+const calculateFeeApr = (
+  timeRange: AprTimeRange,
+  historicalFee: number,
+  currentFee: number,
+  currentLiquidityUSD: number
+) => {
   if (Number(currentLiquidityUSD) === 0) return 0
 
-  return ((currentFee - historicalFee) * 365) / currentLiquidityUSD
+  if (timeRange === AprTimeRange.ONE_HOUR) {
+    return ((currentFee - historicalFee) * 24 * 365) / currentLiquidityUSD
+  } else if (timeRange === AprTimeRange.ONE_DAY) {
+    return ((currentFee - historicalFee) * 365) / currentLiquidityUSD
+  } else if (timeRange === AprTimeRange.ONE_WEEK) {
+    return ((currentFee - historicalFee) * 52) / currentLiquidityUSD
+  } else if (timeRange === AprTimeRange.ONE_MONTH) {
+    return ((currentFee - historicalFee) * 12) / currentLiquidityUSD
+  }
+  return 0
+}
+
+const calculatePercentageChange = (current: number, previous: number, previous2: number) => {
+  if (current === 0) return 0
+  const change1 = previous !== 0 ? current - previous : 0
+  const change2 = previous !== 0 && previous2 !== 0 ? previous - previous2 : 0
+  if (change2 === 0) return 0 // avoid division by 0
+  return previous !== 0 && previous2 !== 0 ? change1 / change2 - 1 : 0
 }

@@ -111,7 +111,8 @@ export default [
     "rpc": [
       "https://goerli.infura.io/v3/${INFURA_API_KEY}",
       "wss://goerli.infura.io/v3/${INFURA_API_KEY}",
-      "https://rpc.goerli.mudit.blog/"
+      "https://rpc.goerli.mudit.blog/",
+      "https://ethereum-goerli.publicnode.com"
     ],
     "faucets": [
       "http://fauceth.komputing.org?chain=5&address=${ADDRESS}",
@@ -321,7 +322,8 @@ export default [
       "https://data-seed-prebsc-1-s2.binance.org:8545",
       "https://data-seed-prebsc-2-s2.binance.org:8545",
       "https://data-seed-prebsc-1-s3.binance.org:8545",
-      "https://data-seed-prebsc-2-s3.binance.org:8545"
+      "https://data-seed-prebsc-2-s3.binance.org:8545",
+      "https://bsc-testnet.publicnode.com"
     ],
     "faucets": [
       "https://testnet.binance.org/faucet-smart"
@@ -380,6 +382,35 @@ export default [
         "name": "blockscout",
         "url": "https://blockscout.com/xdai/mainnet",
         "icon": "blockscout",
+        "standard": "EIP3091"
+      }
+    ]
+  },
+  {
+    "name": "ThunderCore Mainnet",
+    "chain": "TT",
+    "rpc": [
+      "https://mainnet-rpc.thundercore.com",
+      "https://mainnet-rpc.thundertoken.net",
+      "https://mainnet-rpc.thundercore.io"
+    ],
+    "faucets": [
+      "https://faucet.thundercore.com"
+    ],
+    "nativeCurrency": {
+      "name": "ThunderCore Token",
+      "symbol": "TT",
+      "decimals": 18
+    },
+    "infoURL": "https://thundercore.com",
+    "shortName": "TT",
+    "chainId": 108,
+    "networkId": 108,
+    "slip44": 1001,
+    "explorers": [
+      {
+        "name": "thundercore-viewblock",
+        "url": "https://viewblock.io/thundercore",
         "standard": "EIP3091"
       }
     ]
@@ -473,15 +504,15 @@ export default [
       "symbol": "BTT",
       "decimals": 18
     },
-    "infoURL": "https://bittorrentchain.io/",
+    "infoURL": "https:/bt.io",
     "shortName": "BTT",
     "chainId": 199,
     "networkId": 199,
     "explorers": [
       {
-        "name": "bttcscan",
-        "url": "https://scan.bittorrentchain.io",
-        "standard": "none"
+        "name": "BitTorrent Chain Explorer",
+        "url": "https://bttcscan.com",
+        "standard": "EIP3091"
       }
     ]
   },
@@ -724,7 +755,8 @@ export default [
     "name": "Fantom Testnet",
     "chain": "FTM",
     "rpc": [
-      "https://rpc.testnet.fantom.network"
+      "https://rpc.testnet.fantom.network",
+      "https://fantom-testnet.publicnode.com"
     ],
     "faucets": [
       "https://faucet.fantom.network"
@@ -859,7 +891,8 @@ export default [
     "chain": "AVAX",
     "icon": "avax",
     "rpc": [
-      "https://api.avax-test.network/ext/bc/C/rpc"
+      "https://api.avax-test.network/ext/bc/C/rpc",
+      "https://avalanche-fuji-c-chain.publicnode.com"
     ],
     "faucets": [
       "https://faucet.avax-test.network/"
@@ -977,7 +1010,8 @@ export default [
     "rpc": [
       "https://matic-mumbai.chainstacklabs.com",
       "https://rpc-mumbai.maticvigil.com",
-      "https://matic-testnet-archive-rpc.bwarelabs.com"
+      "https://matic-testnet-archive-rpc.bwarelabs.com",
+      "https://polygon-mumbai-bor.publicnode.com"
     ],
     "faucets": [
       "https://faucet.polygon.technology/"

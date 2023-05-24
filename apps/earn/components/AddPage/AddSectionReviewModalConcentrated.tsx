@@ -209,8 +209,8 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                     onClick={onClick}
                     disabled={isWritePending || Boolean(isLoading) || isError}
                     color={isError ? 'red' : 'blue'}
-                    testId='confirm-add-liquidity'
-                    type='button'
+                    testId="confirm-add-liquidity"
+                    type="button"
                   >
                     {isError ? (
                       'Shoot! Something went wrong :('

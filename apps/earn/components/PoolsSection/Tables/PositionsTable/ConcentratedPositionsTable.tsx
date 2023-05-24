@@ -11,19 +11,18 @@ import ConcentratedCurveIcon from '@sushiswap/ui/future/components/icons/Concent
 import { V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { Writeable } from 'zod'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const COLUMNS = [NAME_COLUMN_V3, PRICE_RANGE_COLUMN, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL]
+const COLUMNS = [NAME_COLUMN_V3, PRICE_RANGE_COLUMN, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL] as any
 
 export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; poolId?: string }> = ({
   variant = 'default',
   poolId,
 }) => {
-  const [hide, setHide] = useState(false)
+  const [hide, setHide] = useState(true)
   const { address } = useAccount()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
+  console.log('concentratedTable')
   // const [sorting, setSorting] = useState<SortingState>([{ id: 'value', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
 
@@ -91,7 +90,7 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; p
       <div className={classNames('w-full group')}>
         <h1 className="flex items-center justify-between gap-2 px-4 py-4 text-sm font-semibold text-gray-700 group-hover:text-gray-900 dark:text-slate-200 dark:group-hover:text-slate-50">
           <span className="flex items-center gap-3">
-            <ConcentratedCurveIcon width={20} height={20} className="saturate-200" /> Concentrated Liquidity Positions{' '}
+            <ConcentratedCurveIcon width={20} height={20} className="saturate-200" /> SushiSwap V3 Positions{' '}
             {positions ? `(${positions.length})` : ''}
           </span>
           <div className="flex gap-6">
@@ -107,14 +106,17 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; p
           </div>
         </h1>
       </div>
-      <GenericTable<ConcentratedLiquidityPosition>
-        table={table}
-        loading={Boolean(isLoading && address)}
-        placeholder="No positions found"
-        pageSize={_positions?.length ? _positions.length : 1}
-        linkFormatter={rowLink}
-        loadingOverlay={false}
-      />
+      <div className="mb-4 overflow-hidden border border-gray-200 rounded-2xl dark:border-slate-200/5">
+        <GenericTable<ConcentratedLiquidityPosition>
+          table={table}
+          loading={Boolean(isLoading && address)}
+          placeholder="No positions found"
+          pageSize={_positions?.length ? _positions.length : 1}
+          linkFormatter={rowLink}
+          loadingOverlay={false}
+          testId={'concentrated-positions'}
+        />
+      </div>
     </>
   )
 }

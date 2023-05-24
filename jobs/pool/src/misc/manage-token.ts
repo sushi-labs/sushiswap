@@ -1,7 +1,7 @@
 import '../lib/wagmi.js'
 
 import { isAddress } from '@ethersproject/address'
-import { ChainId, chainIds, chains } from '@sushiswap/chain'
+import { chainIds, chains } from '@sushiswap/chain'
 import { createClient } from '@sushiswap/database'
 import { Address, fetchToken } from '@wagmi/core'
 
@@ -37,7 +37,7 @@ class Token {
 export async function main() {
   const client = await createClient()
   // const token = new Token(56288, '0x4a2c2838c3907D024916c3f4Fe07832745Ae4bec', 'APPROVED')
-  const token = new Token(1, '0x0', 'DISAPPROVED')
+  const token = new Token(1234, '0x', 'DISAPPROVED')
   try {
     const foundToken = await client.token.findFirst({
       where: {

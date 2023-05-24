@@ -123,7 +123,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     enabled:
       Boolean(trade?.writeArgs) &&
       appType === AppType.Swap &&
-      isRouteProcessorChainId(network0) &&
+      (isRouteProcessorChainId(network0) || isRouteProcessor3ChainId(network0)) &&
       approved &&
       trade?.route?.status !== 'NoWay',
     overrides: trade?.overrides,

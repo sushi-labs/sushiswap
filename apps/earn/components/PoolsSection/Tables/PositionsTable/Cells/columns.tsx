@@ -7,7 +7,7 @@ import { PairValueCell } from './PoolValueCell'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { ICON_SIZE } from '../../PoolsTable/Cells/columns'
 import { PoolNameCellV3 } from '../../SharedCells/PoolNameCellV3'
-import { ConcentratedLiquidityPosition } from '@sushiswap/wagmi/future/hooks'
+import { ConcentratedLiquidityPosition, ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
 import { PriceRangeCell } from './PriceRangeCell'
 import { PositionSizeCell } from './PositionSizeCell'
 import { UnclaimedCell } from './UnclaimedCell'
@@ -80,7 +80,7 @@ export const VOLUME_COLUMN: ColumnDef<TData, unknown> = {
   },
 }
 
-export const NAME_COLUMN_V3: ColumnDef<ConcentratedLiquidityPosition, unknown> = {
+export const NAME_COLUMN_V3: ColumnDef<ConcentratedLiquidityPositionWithV3Pool, unknown> = {
   id: 'name',
   header: 'Name',
   cell: (props) => <PoolNameCellV3 row={props.row.original} ctx={props} />,
@@ -100,7 +100,7 @@ export const NAME_COLUMN_V3: ColumnDef<ConcentratedLiquidityPosition, unknown> =
   },
 }
 
-export const PRICE_RANGE_COLUMN: ColumnDef<ConcentratedLiquidityPosition, unknown> = {
+export const PRICE_RANGE_COLUMN: ColumnDef<ConcentratedLiquidityPositionWithV3Pool, unknown> = {
   id: 'priceRange',
   header: 'Price Range',
   cell: (props) => <PriceRangeCell row={props.row.original} ctx={props} />,
@@ -111,7 +111,7 @@ export const PRICE_RANGE_COLUMN: ColumnDef<ConcentratedLiquidityPosition, unknow
   },
 }
 
-export const POSITION_SIZE_CELL: ColumnDef<ConcentratedLiquidityPosition, unknown> = {
+export const POSITION_SIZE_CELL: ColumnDef<ConcentratedLiquidityPositionWithV3Pool, unknown> = {
   id: 'positionSize',
   header: 'Position Size',
   cell: (props) => <PositionSizeCell row={props.row.original} ctx={props} />,
@@ -123,7 +123,7 @@ export const POSITION_SIZE_CELL: ColumnDef<ConcentratedLiquidityPosition, unknow
   },
 }
 
-export const POSITION_UNCLAIMED_CELL: ColumnDef<ConcentratedLiquidityPosition, unknown> = {
+export const POSITION_UNCLAIMED_CELL: ColumnDef<ConcentratedLiquidityPositionWithV3Pool, unknown> = {
   id: 'unclaimed',
   header: 'Unclaimed',
   cell: (props) => <UnclaimedCell row={props.row.original} ctx={props} />,
