@@ -3,6 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { getToken, saveTokens } from '@sushiswap/dexie'
 import { useQuery } from '@tanstack/react-query'
+import { useCallback } from 'react'
 import { fetchToken } from 'wagmi/actions'
 import { Address } from 'wagmi'
 import { useCustomTokens } from '@sushiswap/hooks'
@@ -137,14 +138,16 @@ export const useTokenWithCache = <T extends boolean = false>({
   keepPreviousData = true,
 }: UseTokenParams<T>) => {
   const { data: customTokens, hasToken } = useCustomTokens()
+  const select = useCallback(
+    (data: Data) => getTokenWithQueryCacheHydrate<T>(chainId, data, withStatus),
+    [chainId, withStatus]
+  )
 
   return useQuery({
     queryKey: ['token', { chainId, address }],
-    queryFn: async () => {
-      const data = await getTokenWithCacheQueryFn({ chainId, address, customTokens, hasToken })
-      return getTokenWithQueryCacheHydrate<T>(chainId, data, withStatus)
-    },
+    queryFn: async () => getTokenWithCacheQueryFn({ chainId, address, customTokens, hasToken }),
     enabled: Boolean(enabled && chainId && address && isAddress(address)),
+    select,
     keepPreviousData,
     refetchOnWindowFocus: false,
     retry: false,

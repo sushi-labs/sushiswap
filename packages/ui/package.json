@@ -35,7 +35,6 @@
     "@sushiswap/token-lists": "workspace:*",
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@tailwindcss/forms": "0.5.3",
-    "@tailwindcss/line-clamp": "0.4.4",
     "@tailwindcss/typography": "0.5.9",
     "@tanstack/react-table": "8.5.30",
     "classnames": "2.3.2",
