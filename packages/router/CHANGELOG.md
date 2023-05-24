@@ -1,5 +1,12 @@
 # @sushiswap/router
 
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies [309cd9320]
+  - @sushiswap/viem-config@1.0.0
+
 ## 0.0.2
 
 ### Patch Changes
