@@ -18,11 +18,11 @@ const eslintConfig = {
   ],
   // extends: ["@sushiswap/eslint-config", "turbo", "prettier", "next"],
   // plugins: ["testing-library", "simple-import-sort", "unused-imports"],
-  // settings: {
-  //   next: {
-  //     rootDir: ["apps/*/", "packages/*/"],
-  //   },
-  // },
+  settings: {
+    next: {
+      rootDir: ['apps/*/', 'packages/*/'],
+    },
+  },
   // ignorePatterns: [
   //   "**/dist/**",
   //   "**/.next/**",

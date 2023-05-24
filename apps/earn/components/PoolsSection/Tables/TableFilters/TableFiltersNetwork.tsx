@@ -47,7 +47,7 @@ export const TableFiltersNetwork: FC = () => {
                       <Listbox.Option
                         key={chainId}
                         value={chainId}
-                        className={({ selected }) =>
+                        className={() =>
                           classNames(
                             'w-full group hover:bg-black/[0.04] hover:dark:bg-white/[0.04] px-2.5 flex rounded-lg justify-between gap-2 items-center cursor-pointer transform-all h-[40px]'
                           )

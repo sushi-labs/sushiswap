@@ -1,6 +1,5 @@
-// import type { PoolType, PoolVersion } from '@sushiswap/database'
+import type { Protocol } from '@sushiswap/database' // Unused as a regular import, but type is being used for casting
 import { z } from 'zod'
-import { protocolFilterTypes } from './pools.js'
 
 export const PoolCountApiSchema = z.object({
   chainIds: z
@@ -36,18 +35,8 @@ export const PoolCountApiSchema = z.object({
     .transform((tokenSymbols) => tokenSymbols?.split(','))
     .refine((tokenSymbols) => tokenSymbols.length <= 3, { message: 'Can only use up to 3 tokenSymbols.' })
     .optional(),
-
-  protocols: z
-    .string()
-    .transform((filter) => {
-      if (!filter) return []
-      const filters = filter?.split(',')
-      return filters?.map((f) => {
-        if (!protocolFilterTypes.includes(f)) {
-          throw new Error('Invalid filter')
-        }
-        return f
-      })
-    })
-    .default(''),
+    protocols: z
+      .string()
+      .optional()
+      .transform((protocols) => protocols?.split(',') as Protocol[]),
 })

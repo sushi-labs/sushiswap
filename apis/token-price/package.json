@@ -11,10 +11,10 @@
   "dependencies": {
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/database": "workspace:*",
-    "@vercel/node": "2.9.8",
+    "@vercel/node": "2.14.3",
     "date-fns": "2.29.3",
     "ioredis": "5.3.1",
-    "zod": "3.20.2"
+    "zod": "3.21.4"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
@@ -23,9 +23,9 @@
     "@tsconfig/strictest": "2.0.1",
     "@tsconfig/node18": "2.0.0",
     "@tsconfig/esm": "1.0.3",
-    "@types/node": "^18.0.0",
-    "eslint": "8.29.0",
+    "@types/node": "18.11.18",
+    "eslint": "8.41.0",
     "typescript": "5.0.4",
-    "vercel": "28.16.7"
+    "vercel": "29.4.0"
   }
 }

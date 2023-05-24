@@ -1,10 +1,10 @@
 import React, { FC } from 'react'
+import { WithTestDataId } from './types'
 
-const Body: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement>> = ({
-  children,
-  ...props
-}) => (
-  <tbody {...props} className="">
+const Body: FC<
+  WithTestDataId<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement>>
+> = ({ children, testId, ...props }) => (
+  <tbody {...props} testdata-id={testId} className="">
     {children}
   </tbody>
 )

@@ -1,20 +1,7 @@
 import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
-import {
-  DAI,
-  DAI_ADDRESS,
-  Native,
-  Price,
-  Token,
-  Type,
-  USDC,
-  USDC_ADDRESS,
-  USDT,
-  USDT_ADDRESS,
-  WBTC,
-  WBTC_ADDRESS,
-} from '@sushiswap/currency'
-import { Pool } from '@sushiswap/client'
+import { DAI, Native, Price, Token, Type, USDC, USDT, WBTC } from '@sushiswap/currency'
+import { Pool, Protocol } from '@sushiswap/client'
 import {
   tickToPrice,
   encodeSqrtRatioX96,
@@ -43,6 +30,9 @@ export const isStablePool = (pool: Pair | StablePool | null): pool is StablePool
 export const isLegacyPool = (pool: Pair | ConstantProductPool | StablePool | null): pool is Pair => {
   return pool instanceof Pair
 }
+
+export const isTridentPoolProtocol = (protocol: Protocol) =>
+  ([Protocol.BENTOBOX_CLASSIC, Protocol.BENTOBOX_STABLE] as Protocol[]).includes(protocol)
 
 export const incentiveRewardToToken = (chainId: ChainId, incentive: Pool['incentives'][0]): Token => {
   return new Token({
@@ -131,11 +121,11 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
 
   // if token0 is a dollar-stable asset, set it as the quote token
   const stables = [
-    DAI[chainId as keyof typeof DAI_ADDRESS],
-    USDC[chainId as keyof typeof USDC_ADDRESS],
-    USDT[chainId as keyof typeof USDT_ADDRESS],
+    DAI[chainId as keyof typeof DAI],
+    USDC[chainId as keyof typeof USDC],
+    USDT[chainId as keyof typeof USDT],
   ]
-  if (stables.some((stable) => stable.equals(token0))) {
+  if (stables.some((stable) => stable?.equals(token0))) {
     return {
       priceLower: position.token0PriceUpper.invert(),
       priceUpper: position.token0PriceLower.invert(),
@@ -145,8 +135,8 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
   }
 
   // if token1 is an ETH-/BTC-stable asset, set it as the base token
-  const bases = [Native.onChain(chainId).wrapped, WBTC[chainId as keyof typeof WBTC_ADDRESS]]
-  if (bases.some((base) => base && base.equals(token1))) {
+  const bases = [Native.onChain(chainId).wrapped, WBTC[chainId as keyof typeof WBTC]]
+  if (bases.some((base) => base?.equals(token1))) {
     return {
       priceLower: position.token0PriceUpper.invert(),
       priceUpper: position.token0PriceLower.invert(),

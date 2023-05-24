@@ -3,5 +3,5 @@ export interface ShellProps {
 }
 
 export function Shell({ children }: ShellProps): JSX.Element {
-  return <div>{children}</div>
+  return <div className="min-h-screen">{children}</div>
 }

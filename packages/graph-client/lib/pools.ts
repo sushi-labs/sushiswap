@@ -78,23 +78,22 @@ export interface Pool {
   volumeUSD: string
 }
 
+export const POOL_API =
+  process.env['POOLS_API_V0_BASE_URL'] || process.env['NEXT_PUBLIC_POOLS_API_V0_BASE_URL'] || 'https://pools.sushi.com'
+
 export function parseArgs<T>(args?: Partial<T>) {
   if (!args) return ''
 
   return Object.entries(args).reduce((acc, [key, value]) => {
     if (value === undefined) return acc
 
-    return `${acc}&${key}=` + (Array.isArray(value) ? value.join(',') : value)
+    return `${acc}&${key}=${Array.isArray(value) ? value.join(',') : value}`
   }, '?')
 }
 
 export const getPool = async (poolId: string): Promise<Pool> => {
   return import('node-fetch').then(({ default: fetch }) =>
-    fetch(
-      process.env['POOLS_API_V0_BASE_URL'] ||
-        process.env['NEXT_PUBLIC_POOLS_API_V0_BASE_URL'] ||
-        `https://pools.sushi.com/api/v0?ids=${poolId}`
-    )
+    fetch(`${POOL_API}/api/v0?ids=${poolId}`)
       .then((data: any) => data.json())
       .then((data: any) => data[0])
   )
@@ -102,21 +101,13 @@ export const getPool = async (poolId: string): Promise<Pool> => {
 
 export const getPools = async (args?: GetPoolsArgs): Promise<Pool[]> => {
   return import('node-fetch').then(({ default: fetch }) =>
-    fetch(
-      process.env['POOLS_API_V0_BASE_URL'] ||
-        process.env['NEXT_PUBLIC_POOLS_API_V0_BASE_URL'] ||
-        `https://pools.sushi.com/api/v0${parseArgs(args)}`
-    ).then((data: any) => data.json())
+    fetch(`${POOL_API}/api/v0${parseArgs(args)}`).then((data: any) => data.json())
   )
 }
 
 export const getPoolCount = async (args?: GetPoolsArgs): Promise<number> =>
   import('node-fetch').then(({ default: fetch }) =>
-    fetch(
-      process.env['POOLS_API_V0_BASE_URL'] ||
-        process.env['NEXT_PUBLIC_POOLS_API_V0_BASE_URL'] ||
-        `https://pools.sushi.com/api/v0/count${parseArgs(args)}`
-    )
+    fetch(`${POOL_API}/api/v0/count${parseArgs(args)}`)
       .then((data: any) => data.json())
       .then((data: any) => data.count)
   )

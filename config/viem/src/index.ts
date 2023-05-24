@@ -510,6 +510,35 @@ export const bttc = {
   },
 } as const
 
+const thundercore = {
+  id: ChainId.THUNDERCORE,
+  name: 'ThunderCore',
+  network: 'thundercore',
+  nativeCurrency: { name: 'Thunder Token', symbol: 'TT', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: [
+        'https://mainnet-rpc.thundercore.io',
+        'https://mainnet-rpc.thundercore.com',
+        'https://mainnet-rpc.thundertoken.net',
+      ],
+    },
+    public: {
+      http: [
+        'https://mainnet-rpc.thundercore.io',
+        'https://mainnet-rpc.thundercore.com',
+        'https://mainnet-rpc.thundertoken.net',
+      ],
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 100671921,
+    },
+  },
+} as const
+
 const alchemyId = process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
 
 export const config: Record<number, PublicClientConfig> = {
@@ -666,5 +695,14 @@ export const config: Record<number, PublicClientConfig> = {
       { rank: true }
     ),
     // transport: fallback([http(`${polygon.rpcUrls.alchemy.http}/${alchemyId}`), http('https://polygon.llamarpc.com')]),
+  },
+  [ChainId.THUNDERCORE]: {
+    chain: thundercore,
+    transport: fallback(
+      thundercore.rpcUrls.default.http.map((url) => http(url)),
+      {
+        rank: true,
+      }
+    ),
   },
 } as const

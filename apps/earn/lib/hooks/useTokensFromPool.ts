@@ -41,16 +41,5 @@ export const useTokensFromPool = (pool: Pool) => {
       token1,
       liquidityToken,
     }
-  }, [
-    pool.chainId,
-    pool.id,
-    pool.token0.decimals,
-    pool.token0.address,
-    pool.token0.name,
-    pool.token0.symbol,
-    pool.token1.decimals,
-    pool.token1.address,
-    pool.token1.name,
-    pool.token1.symbol,
-  ])
+  }, [pool])
 }

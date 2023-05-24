@@ -1,5 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
-import { SWRConfig } from 'swr'
+import React, { FC, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeftIcon, ChartBarIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
 import { z } from 'zod'
@@ -31,7 +30,6 @@ import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
 import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { ConcentratedPositionsTable } from './PoolsSection/Tables/PositionsTable/ConcentratedPositionsTable'
 import { createSuccessToast } from '@sushiswap/ui/future/components/toast'
-import { ChainId } from '@sushiswap/chain'
 
 enum Granularity {
   Day,
@@ -114,14 +112,11 @@ const Pool: FC = () => {
     [poolStats?.token0, poolStats?.token1]
   )
 
-  const change1d = 0
-  const change1w = 0
-
   return (
     <Layout>
       <div className="flex flex-col gap-2">
         <Link
-          className="group flex gap-4 items-center mb-2"
+          className="flex items-center gap-4 mb-2 group"
           href={{
             pathname: '/',
             ...(basePath === '/pools' && path?.includes('categories') && { query: path.replace('/?&', '') }),
@@ -145,7 +140,7 @@ const Pool: FC = () => {
           isLoading={isLoading}
           chainId={chainId}
           pool={pool}
-          apy={{ rewards: poolStats?.incentiveApr, fees: poolStats?.feeApr }}
+          apy={{ rewards: poolStats?.incentiveApr, fees: poolStats?.feeApr1d }}
         />
         <RadioGroup value={tab} onChange={setTab} className="flex flex-wrap gap-2 mt-3">
           <RadioGroup.Option
@@ -325,7 +320,7 @@ const Pool: FC = () => {
                     </List.KeyValue>
                   ))
                 ) : (
-                  <div className="p-6 flex font-normal justify-center items-center text-xs text-center text-gray-500 dark:text-slate-500">
+                  <div className="flex items-center justify-center p-6 text-xs font-normal text-center text-gray-500 dark:text-slate-500">
                     This pool only emits fee rewards.
                   </div>
                 )}
@@ -335,7 +330,7 @@ const Pool: FC = () => {
         </div>
       </div>
       <div className={tab === SelectedTab.NewPosition ? 'block' : 'hidden'}>
-        <div className="grid md:grid-cols-2 gap-10">
+        <div className="grid gap-10 md:grid-cols-2">
           <div className="flex">
             <SelectPricesWidget
               chainId={chainId}

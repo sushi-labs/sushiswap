@@ -21,9 +21,9 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@types/node": "^18.0.0",
-    "@types/react": "18.0.26",
-    "@types/react-dom": "18.0.10",
+    "@types/node": "18.11.18",
+    "@types/react": "18.2.6",
+    "@types/react-dom": "18.2.4",
     "eslint": "8.30.0",
     "typescript": "5.0.4"
   }

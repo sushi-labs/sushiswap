@@ -1,10 +1,11 @@
 import { RadioGroup } from '@headlessui/react'
 import { classNames } from '@sushiswap/ui'
-import React, { FC, memo } from 'react'
+import React, { Dispatch, FC, memo, SetStateAction } from 'react'
 
 import { ContentBlock } from '../AddPage/ContentBlock'
 import { FeeAmount } from '@sushiswap/v3-sdk'
 import { useConcentratedLiquidityURLState } from '../ConcentratedLiquidityURLStateProvider'
+import { Type } from '@sushiswap/currency'
 
 export const FEE_OPTIONS = [
   {
@@ -25,9 +26,19 @@ export const FEE_OPTIONS = [
   },
 ]
 
-export const SelectFeeConcentratedWidget: FC = memo(function SelectFeeWidget({}) {
-  const { feeAmount, setFeeAmount, token0, token1 } = useConcentratedLiquidityURLState()
+interface SelectFeeConcentratedWidget {
+  feeAmount: FeeAmount | undefined
+  setFeeAmount: (fee: FeeAmount) => void
+  token0: Type | undefined
+  token1: Type | undefined
+}
 
+export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> = memo(function SelectFeeWidget({
+  feeAmount,
+  setFeeAmount,
+  token0,
+  token1,
+}) {
   return (
     <ContentBlock
       disabled={!token0 || !token1}
@@ -37,7 +48,12 @@ export const SelectFeeConcentratedWidget: FC = memo(function SelectFeeWidget({})
         </>
       }
     >
-      <RadioGroup value={feeAmount} onChange={setFeeAmount} className="grid grid-cols-2 gap-4" disabled={!token0 || !token1}>
+      <RadioGroup
+        value={feeAmount}
+        onChange={setFeeAmount}
+        className="grid grid-cols-2 gap-4"
+        disabled={!token0 || !token1}
+      >
         {FEE_OPTIONS.map((option) => (
           <RadioGroup.Option
             testdata-id={`fee-option-${option.value}`}
