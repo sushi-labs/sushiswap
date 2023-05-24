@@ -1,9 +1,9 @@
+import { ChainId } from '@sushiswap/chain'
 import type { CurvePool, MultiRoute, RouteLeg } from '@sushiswap/tines'
 
 import { HEXer } from '../HEXer'
 import { CURVE_NON_FACTORY_POOLS, CurvePoolType, LiquidityProviders } from '../liquidity-providers'
 import { PoolCode } from './PoolCode'
-import { ChainId } from '@sushiswap/chain'
 
 export class CurvePoolCode extends PoolCode {
   constructor(pool: CurvePool, liquidityProvider: LiquidityProviders, providerName: string) {
