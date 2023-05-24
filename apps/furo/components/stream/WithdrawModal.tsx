@@ -23,7 +23,7 @@ interface WithdrawModalProps {
 
 export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, children }) => {
   const { address } = useAccount()
-  const balance = useStreamBalance({ chainId, streamId: stream.id, token: stream.token })
+  const { data: balance } = useStreamBalance({ chainId, streamId: stream.id, token: stream.token })
   const contract = useFuroStreamContract(chainId)
 
   const [open, setOpen] = useState(false)

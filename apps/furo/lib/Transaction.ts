@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 
-import { type Transaction as TransactionDTO, type User, Maybe, TransactionType } from '../.graphclient'
+import { type User, Maybe, TransactionType, streamTransactionsQuery, vestingTransactionsQuery } from '../.graphclient'
 import { toToken } from './mapper'
 
 export class Transaction {
@@ -15,7 +15,10 @@ export class Transaction {
   public readonly toBentoBox: boolean
   public readonly txHash: string
 
-  public constructor(transaction: TransactionDTO, chainId: ChainId) {
+  public constructor(
+    transaction: streamTransactionsQuery['transactions'][0] | vestingTransactionsQuery['transactions'][0],
+    chainId: ChainId
+  ) {
     this.id = transaction.id
     // this.status = TransactionType[transaction.type]
     this.status = transaction.type

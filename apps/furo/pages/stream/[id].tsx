@@ -4,8 +4,7 @@ import { NextSeo } from 'next-seo'
 import React, { FC, useMemo } from 'react'
 import { CancelModal, FuroTimer, Layout, TransferModal, UpdateModal } from '../../components'
 import { WithdrawModal } from '../../components/stream'
-import { useStreamBalance } from '../../lib'
-import { FuroStreamChainId } from '@sushiswap/furo'
+import { useStream, useStreamBalance, useStreamTransactions } from '../../lib'
 import { SushiIcon } from '@sushiswap/ui/future/components/icons'
 import { formatNumber, shortenAddress } from '@sushiswap/format'
 import { useEnsName } from 'wagmi'
@@ -25,7 +24,6 @@ import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
 import { Blink } from '@sushiswap/ui/future/components/Blink'
 import { Percent } from '@sushiswap/math'
-import { useStream, useStreamTransactions } from '../../lib/queries'
 import { queryParamsSchema } from '../../lib/zod'
 
 const Streams = () => {
@@ -350,24 +348,30 @@ const _Streams: FC = () => {
                   <List.Control>
                     <List.KeyValue title="Remaining">
                       <FuroTimer furo={stream}>
-                        {({ days, seconds, minutes, hours }) => (
+                        {({ days, seconds, minutes, hours, isCompleted }) => (
                           <span className="flex gap-1 items-baseline">
-                            <span>
-                              {days}
-                              <span className="text-gray-400 dark:text-slate-400 text-xs">D</span>
-                            </span>
-                            <span>
-                              {hours}
-                              <span className="text-gray-400 dark:text-slate-400 text-xs">H</span>
-                            </span>
-                            <span>
-                              {minutes}
-                              <span className="text-gray-400 dark:text-slate-400 text-xs">M</span>
-                            </span>
-                            <span>
-                              {seconds}
-                              <span className="text-gray-400 dark:text-slate-400 text-xs">S</span>
-                            </span>
+                            {isCompleted ? (
+                              <span className="text-green">Completed</span>
+                            ) : (
+                              <>
+                                <span>
+                                  {days}
+                                  <span className="text-gray-400 dark:text-slate-400 text-xs">D</span>
+                                </span>
+                                <span>
+                                  {hours}
+                                  <span className="text-gray-400 dark:text-slate-400 text-xs">H</span>
+                                </span>
+                                <span>
+                                  {minutes}
+                                  <span className="text-gray-400 dark:text-slate-400 text-xs">M</span>
+                                </span>
+                                <span>
+                                  {seconds}
+                                  <span className="text-gray-400 dark:text-slate-400 text-xs">S</span>
+                                </span>
+                              </>
+                            )}
                           </span>
                         )}
                       </FuroTimer>

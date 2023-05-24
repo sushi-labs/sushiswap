@@ -32,7 +32,7 @@ export enum FuroTableType {
 
 interface FuroTableProps {
   chainId: number | undefined
-  balances: Record<string, Amount<Token>> | undefined
+  balances: Record<string, Amount<Token>> | undefined | null
   globalFilter: boolean
   setGlobalFilter: Dispatch<SetStateAction<boolean>>
   streams: userStreamsQuery['incomingStreams']

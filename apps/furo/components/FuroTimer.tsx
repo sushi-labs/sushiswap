@@ -12,7 +12,7 @@ interface FuroTimerState {
 
 interface FuroTimerProps {
   furo?: Stream | Vesting
-  children(params: FuroTimerState): ReactElement
+  children(params: FuroTimerState & { isCompleted: boolean | undefined }): ReactElement
 }
 
 export const FuroTimer: FC<FuroTimerProps> = ({ furo, children }) => {
@@ -35,5 +35,12 @@ export const FuroTimer: FC<FuroTimerProps> = ({ furo, children }) => {
     }
   }, 1000)
 
-  return <>{children(remaining)}</>
+  return (
+    <>
+      {children({
+        ...remaining,
+        isCompleted: +remaining.days + +remaining.hours + +remaining.minutes + +remaining.seconds === 0,
+      })}
+    </>
+  )
 }

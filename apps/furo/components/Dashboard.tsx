@@ -1,7 +1,6 @@
 import { Tab, Transition, Popover } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/outline'
 import { Token } from '@sushiswap/currency'
-import { FuroStreamChainId } from '@sushiswap/furo'
 import { classNames } from '@sushiswap/ui'
 import { useRouter } from 'next/router'
 import { FC, Fragment, useEffect, useMemo, useState } from 'react'
@@ -13,12 +12,14 @@ import Container from '@sushiswap/ui/future/components/Container'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Link } from '@sushiswap/ui'
 import { useRebasesDTO } from '../lib/hooks/useRebasesDTO'
+import { useAccount, useNetwork } from 'wagmi'
+import { ChainId } from '@sushiswap/chain'
 
-export const Dashboard: FC<{
-  chainId: FuroStreamChainId
-  address: string
-  showOutgoing: boolean
-}> = ({ chainId, address, showOutgoing }) => {
+export const Dashboard: FC = () => {
+  const { address } = useAccount()
+  const { chain } = useNetwork()
+  const chainId = (chain?.id || ChainId.ETHEREUM) as ChainId
+
   const router = useRouter()
   const [showActiveIncoming, setShowActiveIncoming] = useState(false)
 
@@ -139,7 +140,7 @@ export const Dashboard: FC<{
         </section>
       </Container>
       <Container maxWidth="7xl" className="mx-auto px-4">
-        <Tab.Group defaultIndex={showOutgoing ? 1 : 0}>
+        <Tab.Group>
           <div className="flex items-center gap-2 mb-4">
             <Tab as={Fragment}>
               {({ selected }) => (
@@ -176,11 +177,7 @@ export const Dashboard: FC<{
                 vestings={vestings?.incomingVestings ?? []}
                 rebases={rebases}
                 type={FuroTableType.INCOMING}
-                placeholder={
-                  <>
-                    No <b>incoming</b> streams found
-                  </>
-                }
+                placeholder={<>No incoming streams found</>}
               />
             </Tab.Panel>
             <Tab.Panel>
@@ -194,11 +191,7 @@ export const Dashboard: FC<{
                 vestings={vestings?.outgoingVestings ?? []}
                 rebases={rebases}
                 type={FuroTableType.OUTGOING}
-                placeholder={
-                  <>
-                    No <b>outgoing</b> streams found
-                  </>
-                }
+                placeholder={<>No outgoing streams found</>}
               />
             </Tab.Panel>
           </Tab.Panels>

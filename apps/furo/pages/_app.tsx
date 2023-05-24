@@ -69,12 +69,10 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <QueryClientProvider client={queryClient}>
           <ThemeProvider>
             <Onramper.Provider>
-              <App.Shell>
-                <DefaultSeo {...SEO} />
-                <Header />
-                <Component {...pageProps} />
-                <App.Footer />
-              </App.Shell>
+              <DefaultSeo {...SEO} />
+              <Header />
+              <Component {...pageProps} />
+              <App.Footer />
             </Onramper.Provider>
           </ThemeProvider>
         </QueryClientProvider>

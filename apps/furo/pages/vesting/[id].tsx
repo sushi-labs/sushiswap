@@ -292,24 +292,30 @@ const _VestingPage: FC = () => {
                     <List.KeyValue title="Next unlock">
                       <div className="flex flex-col">
                         <NextPaymentTimer schedule={schedule}>
-                          {({ days, seconds, minutes, hours }) => (
+                          {({ days, seconds, minutes, hours, isCompleted }) => (
                             <span className="flex gap-1 items-baseline">
-                              <span>
-                                {days}
-                                <span className="text-gray-400 dark:text-slate-400 text-xs">D</span>
-                              </span>
-                              <span>
-                                {hours}
-                                <span className="text-gray-400 dark:text-slate-400 text-xs">H</span>
-                              </span>
-                              <span>
-                                {minutes}
-                                <span className="text-gray-400 dark:text-slate-400 text-xs">M</span>
-                              </span>
-                              <span>
-                                {seconds}
-                                <span className="text-gray-400 dark:text-slate-400 text-xs">S</span>
-                              </span>
+                              {isCompleted ? (
+                                <span className="text-green">Completed</span>
+                              ) : (
+                                <>
+                                  <span>
+                                    {days}
+                                    <span className="text-gray-400 dark:text-slate-400 text-xs">D</span>
+                                  </span>
+                                  <span>
+                                    {hours}
+                                    <span className="text-gray-400 dark:text-slate-400 text-xs">H</span>
+                                  </span>
+                                  <span>
+                                    {minutes}
+                                    <span className="text-gray-400 dark:text-slate-400 text-xs">M</span>
+                                  </span>
+                                  <span>
+                                    {seconds}
+                                    <span className="text-gray-400 dark:text-slate-400 text-xs">S</span>
+                                  </span>
+                                </>
+                              )}
                             </span>
                           )}
                         </NextPaymentTimer>
@@ -371,24 +377,30 @@ const _VestingPage: FC = () => {
                   <List.Control>
                     <List.KeyValue title="Remaining">
                       <FuroTimer furo={vesting}>
-                        {({ days, seconds, minutes, hours }) => (
+                        {({ days, seconds, minutes, hours, isCompleted }) => (
                           <span className="flex gap-1 items-baseline">
-                            <span>
-                              {days}
-                              <span className="text-gray-400 dark:text-slate-400 text-xs">D</span>
-                            </span>
-                            <span>
-                              {hours}
-                              <span className="text-gray-400 dark:text-slate-400 text-xs">H</span>
-                            </span>
-                            <span>
-                              {minutes}
-                              <span className="text-gray-400 dark:text-slate-400 text-xs">M</span>
-                            </span>
-                            <span>
-                              {seconds}
-                              <span className="text-gray-400 dark:text-slate-400 text-xs">S</span>
-                            </span>
+                            {isCompleted ? (
+                              <span className="text-green">Completed</span>
+                            ) : (
+                              <>
+                                <span>
+                                  {days}
+                                  <span className="text-gray-400 dark:text-slate-400 text-xs">D</span>
+                                </span>
+                                <span>
+                                  {hours}
+                                  <span className="text-gray-400 dark:text-slate-400 text-xs">H</span>
+                                </span>
+                                <span>
+                                  {minutes}
+                                  <span className="text-gray-400 dark:text-slate-400 text-xs">M</span>
+                                </span>
+                                <span>
+                                  {seconds}
+                                  <span className="text-gray-400 dark:text-slate-400 text-xs">S</span>
+                                </span>
+                              </>
+                            )}
                           </span>
                         )}
                       </FuroTimer>

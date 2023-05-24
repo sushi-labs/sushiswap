@@ -12,7 +12,7 @@ interface NextPaymentTimerState {
 
 interface NextPaymentTimerProps {
   schedule: Schedule | undefined
-  children(state: NextPaymentTimerState): ReactNode
+  children(state: NextPaymentTimerState & { isCompleted: boolean | undefined }): ReactNode
 }
 
 export const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ schedule, children }) => {
@@ -53,5 +53,5 @@ export const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ schedule, children
     })
   }, 1000)
 
-  return <>{children(remaining)}</>
+  return <>{children({ ...remaining, isCompleted: schedule && schedule.length > 0 && !nextPayment })}</>
 }
