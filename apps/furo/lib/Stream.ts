@@ -111,9 +111,4 @@ export class Stream extends Furo {
       return percent.greaterThan(new Percent(100, 100).asFraction) ? new Percent(100, 100) : percent
     }
   }
-
-  public get withdrawnPercentage(): Percent {
-    if (this._withdrawnAmount.toExact() === '0') return new Percent(0, 100)
-    return new Percent(this._withdrawnAmount.quotient, this.totalAmount.quotient)
-  }
 }

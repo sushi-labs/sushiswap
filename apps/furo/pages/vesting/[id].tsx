@@ -1,19 +1,13 @@
 import { NetworkIcon } from '@sushiswap/ui'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { FC, useMemo } from 'react'
-import useSWR, { SWRConfig } from 'swr'
-
-import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '../../.graphclient'
-import { CancelModal, FuroTimer, Layout, TransferModal, UpdateModal } from '../../components'
+import { CancelModal, FuroTimer, Layout, TransferModal } from '../../components'
 import { createScheduleRepresentation, NextPaymentTimer, WithdrawModal } from '../../components/vesting'
-import { getRebase, getVesting, getVestingTransactions, Transaction, useVestingBalance, Vesting } from '../../lib'
-import { FuroVestingChainId } from '@sushiswap/furo'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
 import Link from 'next/link'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
-import { ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, RefreshIcon } from '@heroicons/react/solid'
+import { ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon } from '@heroicons/react/solid'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
@@ -26,70 +20,35 @@ import { useEnsName } from 'wagmi'
 import { Address } from '@wagmi/core'
 import { ChainId } from '@sushiswap/chain'
 import { Percent } from '@sushiswap/math'
-import { getFuroStreamContractConfig, getFuroVestingContractConfig } from '@sushiswap/wagmi'
+import { getFuroVestingContractConfig } from '@sushiswap/wagmi'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { DownloadIcon, XIcon } from '@heroicons/react/outline'
+import { useVesting, useVestingBalance } from '../../lib'
+import { queryParamsSchema } from '../../lib/zod'
+import { useVestingTransactions } from '../../lib'
 
-interface Props {
-  fallback?: {
-    vesting?: VestingDTO
-    transactions?: TransactionDTO[]
-  }
-}
-
-export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
-  if (!query?.chainId) throw new Error('No chainId provided')
-  if (!query?.id) throw new Error('No id provided')
-
-  const chainId = query.chainId as string
-  const id = query.id as string
-
-  const vesting = (await getVesting(chainId, id)) as VestingDTO
-  const [transactions, rebases] = await Promise.all([
-    getVestingTransactions(chainId, id),
-    getRebase(chainId, vesting.token.id),
-  ])
-  return {
-    props: {
-      fallback: {
-        [`/furo/api/vesting/${chainId}/${id}`]: vesting,
-        [`/furo/api/vesting/${chainId}/${id}/transactions`]: transactions as TransactionDTO[],
-        [`/furo/api/rebase/${chainId}/${vesting.token.id}`]: rebases as Rebase,
-      },
-    },
-  }
-}
-
-const VestingPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+const VestingPage = () => {
   return (
-    <SWRConfig value={{ fallback }}>
-      <SplashController>
-        <_VestingPage />
-      </SplashController>
-    </SWRConfig>
+    <SplashController>
+      <_VestingPage />
+    </SplashController>
   )
 }
 
 const _VestingPage: FC = () => {
-  const router = useRouter()
-  const chainId = Number(router.query.chainId as string) as FuroVestingChainId
-  const id = Number(router.query.id as string)
+  const { query } = useRouter()
 
-  const { data: furo, isValidating: isFuroLoading } = useSWR<VestingDTO>(`/furo/api/vesting/${chainId}/${id}`, (url) =>
-    fetch(url).then((response) => response.json())
-  )
-  const { data: transactions, isValidating: isTxLoading } = useSWR<TransactionDTO[]>(
-    `/furo/api/vesting/${chainId}/${id}/transactions`,
-    (url) => fetch(url).then((response) => response.json())
-  )
-  const { data: rebase, isValidating: isRebaseLoading } = useSWR<Rebase>(
-    () => (furo ? `/furo/api/rebase/${chainId}/${furo.token.id}` : null),
-    (url) => fetch(url).then((response) => response.json())
-  )
-  const vesting = useMemo(
-    () => (chainId && furo && rebase ? new Vesting({ chainId, furo, rebase }) : undefined),
-    [chainId, furo, rebase]
-  )
+  const {
+    id: [chainId, vestingId],
+  } = queryParamsSchema.parse(query)
+
+  const { data: transactions, isLoading: isTxLoading } = useVestingTransactions({ chainId, vestingId })
+  const { data: vesting, isLoading: isVestingLoading } = useVesting({ chainId, vestingId })
+  const { data: balance, isLoading: isBalanceLoading } = useVestingBalance({
+    chainId,
+    vestingId,
+    token: vesting?.token,
+  })
 
   const schedule = vesting
     ? createScheduleRepresentation({
@@ -103,19 +62,11 @@ const _VestingPage: FC = () => {
       })
     : undefined
 
-  const _transactions = useMemo(
-    () => (vesting ? transactions?.map((transaction) => new Transaction(transaction, vesting.chainId)) : []),
-    [vesting, transactions]
-  )
-
   const { data: ens } = useEnsName({
     enabled: Boolean(vesting),
     address: vesting?.recipient.id as Address | undefined,
     chainId: ChainId.ETHEREUM,
   })
-
-  // Sync balance to Vesting entity
-  const balance = useVestingBalance(chainId, vesting?.id, vesting?.token)
 
   const [streamedAmount, streamedPercentage] = useMemo(() => {
     if (!vesting || !balance) return [undefined, undefined]
@@ -133,12 +84,12 @@ const _VestingPage: FC = () => {
     ]
   }, [balance, vesting])
 
-  const isLoading = isTxLoading || isFuroLoading || isRebaseLoading
+  const isLoading = isTxLoading || isVestingLoading || isBalanceLoading
 
   if (isLoading) {
     return (
       <>
-        <NextSeo title={`Stream #${id}`} />
+        <NextSeo title={`Stream #${vestingId}`} />
         <Layout maxWidth="4xl">
           <div className="flex flex-col gap-2">
             <Link
@@ -217,7 +168,7 @@ const _VestingPage: FC = () => {
   if (vesting) {
     return (
       <>
-        <NextSeo title={`Stream #${id}`} />
+        <NextSeo title={`Stream #${vestingId}`} />
         <Layout maxWidth="4xl">
           <div className="flex flex-col gap-2">
             <Link
@@ -252,7 +203,7 @@ const _VestingPage: FC = () => {
                 </Badge>
               </div>
               <div className="flex flex-col flex-grow gap-0.5">
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-slate-50">Vesting {id}</h1>
+                <h1 className="text-xl font-semibold text-gray-900 dark:text-slate-50">Vesting {vestingId}</h1>
                 <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-400">
                   {formatNumber(vesting?.totalAmount.toSignificant(6))}
                 </div>
@@ -463,7 +414,7 @@ const _VestingPage: FC = () => {
                 <List>
                   <List.Label>Withdraw History</List.Label>
                   <List.Control className="max-h-[320px] scroll">
-                    {_transactions?.map((tx, i) => (
+                    {transactions?.map((tx, i) => (
                       <List.KeyValue
                         key={i}
                         flex

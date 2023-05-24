@@ -3,25 +3,16 @@ import { ChevronDownIcon } from '@heroicons/react/outline'
 import { Token } from '@sushiswap/currency'
 import { FuroStreamChainId } from '@sushiswap/furo'
 import { classNames } from '@sushiswap/ui'
-import stringify from 'fast-json-stable-stringify'
 import { useRouter } from 'next/router'
 import { FC, Fragment, useEffect, useMemo, useState } from 'react'
-import useSWR from 'swr'
-
-import { Rebase } from '../.graphclient'
-import { toToken, useStreamBalances } from '../lib'
-import { Streams, Vestings } from '../types'
+import { toToken, useStreamBalances, useUserStreams, useUserVestings } from '../lib'
 import { FuroTableType, StreamTable } from './Table'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { DiscordIcon } from '@sushiswap/ui/future/components/icons'
 import Container from '@sushiswap/ui/future/components/Container'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Link } from '@sushiswap/ui'
-
-const fetcher = (url: string) =>
-  fetch(url)
-    .then((res) => res.json())
-    .catch((e) => console.log(stringify(e)))
+import { useRebasesDTO } from '../lib/hooks/useRebasesDTO'
 
 export const Dashboard: FC<{
   chainId: FuroStreamChainId
@@ -31,20 +22,15 @@ export const Dashboard: FC<{
   const router = useRouter()
   const [showActiveIncoming, setShowActiveIncoming] = useState(false)
 
-  const { data: streams, isValidating: isValidatingStreams } = useSWR<Streams>(
-    `/furo/api/user/${chainId}/${address}/streams`,
-    fetcher
-  )
-  const { data: vestings, isValidating: isValidatingVestings } = useSWR<Vestings>(
-    `/furo/api/user/${chainId}/${address}/vestings`,
-    fetcher
-  )
-  const [ids, tokens, _streams] = useMemo(() => {
+  const { data: streams, isLoading: isStreamsLoading } = useUserStreams({ chainId, account: address })
+  const { data: vestings, isLoading: isVestingsLoading } = useUserVestings({ chainId, account: address })
+
+  const [tokens, _streams] = useMemo(() => {
     const _streams: { streamId: string; token: Token }[] = []
-    const ids: [string][] = []
     const tokens: Token[] = []
 
-    streams?.incomingStreams?.forEach((stream) => {
+    const allStreams = [...(streams?.incomingStreams || []), ...(streams?.outgoingStreams || [])]
+    allStreams.forEach((stream) => {
       const token = toToken(stream.token, chainId)
       _streams.push({
         streamId: stream.id,
@@ -53,38 +39,18 @@ export const Dashboard: FC<{
       tokens.push(token)
     })
 
-    streams?.outgoingStreams?.forEach((stream) => {
-      const token = toToken(stream.token, chainId)
-      _streams.push({
-        streamId: stream.id,
-        token,
-      })
-      tokens.push(token)
-    })
+    vestings?.incomingVestings?.forEach((vesting) => tokens.push(toToken(vesting.token, chainId)))
+    vestings?.outgoingVestings?.forEach((vesting) => tokens.push(toToken(vesting.token, chainId)))
 
-    vestings?.incomingVestings?.forEach((vesting) => {
-      tokens.push(toToken(vesting.token, chainId))
-    })
-
-    vestings?.outgoingVestings?.forEach((vesting) => {
-      tokens.push(toToken(vesting.token, chainId))
-    })
-
-    return [ids, tokens, _streams]
+    return [tokens, _streams]
   }, [chainId, streams, vestings?.incomingVestings, vestings?.outgoingVestings])
 
-  const { data: rebases, isValidating: isValidatingRebases } = useSWR<Rebase[]>(
-    () =>
-      streams
-        ? [
-            `/furo/api/rebases/${chainId}/${tokens.map((token) => token.address).join('/')}`,
-            tokens.map((token) => token.address),
-          ]
-        : null,
-    fetcher
-  )
+  const { data: rebases, isLoading: isRebasesLoading } = useRebasesDTO({
+    chainId,
+    addresses: tokens.map((el) => el.address),
+  })
 
-  const { isLoading: balancesLoading, data: balancesData } = useStreamBalances({ chainId, streams: _streams })
+  const { data: balances, isLoading: isBalancesLoading } = useStreamBalances({ chainId, streams: _streams })
 
   // Prefetch stream/vesting pages
   useEffect(() => {
@@ -93,6 +59,8 @@ export const Dashboard: FC<{
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const isLoading = isStreamsLoading || isVestingsLoading || isRebasesLoading || isBalancesLoading
 
   return (
     <>
@@ -200,10 +168,10 @@ export const Dashboard: FC<{
             <Tab.Panel>
               <StreamTable
                 chainId={chainId}
-                balances={balancesData}
+                balances={balances}
                 globalFilter={showActiveIncoming}
                 setGlobalFilter={setShowActiveIncoming}
-                loading={isValidatingVestings || isValidatingStreams || isValidatingRebases || balancesLoading}
+                loading={isLoading}
                 streams={streams?.incomingStreams ?? []}
                 vestings={vestings?.incomingVestings ?? []}
                 rebases={rebases}
@@ -218,10 +186,10 @@ export const Dashboard: FC<{
             <Tab.Panel>
               <StreamTable
                 chainId={chainId}
-                balances={balancesData}
+                balances={balances}
                 globalFilter={showActiveIncoming}
                 setGlobalFilter={setShowActiveIncoming}
-                loading={isValidatingVestings || isValidatingStreams || isValidatingRebases || balancesLoading}
+                loading={isLoading}
                 streams={streams?.outgoingStreams ?? []}
                 vestings={vestings?.outgoingVestings ?? []}
                 rebases={rebases}

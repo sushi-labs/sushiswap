@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 
-import { type Rebase, streamQuery, type User as UserDTO, type Vesting as VestingDTO } from '../.graphclient'
+import { type Rebase, streamQuery, type User as UserDTO, vestingQuery } from '../.graphclient'
 import { FuroStatus, FuroType } from './enums'
 import { toToken } from './mapper'
 
@@ -33,7 +33,7 @@ export abstract class Furo {
     rebase,
   }: {
     chainId: ChainId
-    furo: NonNullable<streamQuery['stream']> | VestingDTO
+    furo: NonNullable<streamQuery['stream']> | NonNullable<vestingQuery['vesting']>
     rebase: Pick<Rebase, 'id' | 'base' | 'elastic'>
   }) {
     this.rebase = {

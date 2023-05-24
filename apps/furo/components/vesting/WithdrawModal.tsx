@@ -22,7 +22,7 @@ interface WithdrawModalProps {
 export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, children }) => {
   const [open, setOpen] = useState(false)
   const { address } = useAccount()
-  const balance = useVestingBalance(chainId, vesting?.id, vesting?.token)
+  const { data: balance } = useVestingBalance({ vestingId: vesting?.id, chainId, token: vesting?.token })
   const contract = useFuroVestingContract(chainId)
 
   const onSettled = useCallback(

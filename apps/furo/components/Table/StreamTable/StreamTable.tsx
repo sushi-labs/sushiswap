@@ -7,7 +7,14 @@ import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { Dispatch, FC, ReactNode, SetStateAction, useEffect, useMemo, useState } from 'react'
 
-import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase as RebaseDTO } from '../../../.graphclient'
+import {
+  Rebase as RebaseDTO,
+  streamQuery,
+  vestingQuery,
+  Rebase,
+  userStreamsQuery,
+  userVestingsQuery,
+} from '../../../.graphclient'
 import { FuroStatus, Stream, Vesting } from '../../../lib'
 import {
   AMOUNT_COLUMN,
@@ -28,9 +35,9 @@ interface FuroTableProps {
   balances: Record<string, Amount<Token>> | undefined
   globalFilter: boolean
   setGlobalFilter: Dispatch<SetStateAction<boolean>>
-  streams: StreamDTO[]
-  vestings: VestingDTO[]
-  rebases: RebaseDTO[] | undefined
+  streams: userStreamsQuery['incomingStreams']
+  vestings: userVestingsQuery['incomingVestings']
+  rebases: Pick<Rebase, 'id' | 'base' | 'elastic'>[] | null | undefined
   type: FuroTableType
   placeholder: ReactNode
   loading: boolean

@@ -3,27 +3,19 @@ import { Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form, Select } from '@sushiswap/ui'
 import { DatePicker } from '@sushiswap/ui/input/DatePicker'
-import { TokenSelector, Web3Input } from '@sushiswap/wagmi'
-import { useTokens } from 'lib/state/token-lists'
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import { Web3Input } from '@sushiswap/wagmi'
+import React, { FC, useCallback, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
-import { useCustomTokens } from '../../../lib/state/storage'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { FundSourceOption } from '../../stream/CreateForm/FundSourceOption'
 import { CreateVestingFormSchemaType } from './schema'
+import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
 
 export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
-  const tokenMap = useTokens(chainId)
-  const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
-  const [dialogOpen, setDialogOpen] = useState(false)
   const { control, watch, setValue, setError, clearErrors } = useFormContext<CreateVestingFormSchemaType>()
   const [currency, startDate] = watch(['currency', 'startDate'])
   const _currency = useTokenFromZToken(currency)
-
-  const onClose = useCallback(() => {
-    setDialogOpen(false)
-  }, [])
 
   const onSelect = useCallback(
     (onChange: (...event: any[]) => void, currency: Type) => {
@@ -49,10 +41,8 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
           isNative,
         })
       }
-
-      onClose()
     },
-    [onClose, setValue]
+    [setValue]
   )
 
   // Temporary solution for when Zod fixes conditional validation
@@ -79,31 +69,24 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
           name="currency"
           render={({ field: { onChange, value, onBlur }, fieldState: { error } }) => (
             <>
-              <Select.Button
-                error={!!error?.message}
-                standalone
-                className="!cursor-pointer ring-offset-slate-900"
-                onClick={() => setDialogOpen(true)}
-              >
-                {value?.symbol || <span className="text-slate-500">Select a currency</span>}
-              </Select.Button>
-              <Form.Error message={error?.message} />
               <TokenSelector
-                id={`create-single-vest`}
-                open={dialogOpen}
-                variant="dialog"
+                id={'create-single-vest'}
                 chainId={chainId}
-                tokenMap={tokenMap}
-                customTokenMap={customTokenMap}
-                onSelect={(currency) => {
-                  onSelect(onChange, currency)
-                  onBlur()
-                }}
-                currency={_currency}
-                onClose={onClose}
-                onAddToken={addCustomToken}
-                onRemoveToken={removeCustomToken}
-              />
+                onSelect={(currency) => onSelect(onChange, currency)}
+                selected={_currency}
+              >
+                {({ setOpen }) => (
+                  <Select.Button
+                    error={!!error?.message}
+                    standalone
+                    className="!cursor-pointer ring-offset-slate-900"
+                    onClick={() => setOpen(true)}
+                  >
+                    {value?.symbol || <span className="text-slate-500">Select a currency</span>}
+                  </Select.Button>
+                )}
+              </TokenSelector>
+              <Form.Error message={error?.message} />
             </>
           )}
         />

@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI, minimum, Percent } from '@sushiswap/math'
 
-import { type Vesting as VestingDTO, Rebase } from '../.graphclient'
+import { Rebase, vestingQuery } from '../.graphclient'
 import { VestingType } from './enums'
 import { Furo } from './Furo'
 
@@ -17,7 +17,15 @@ export class Vesting extends Furo {
   public readonly stepDuration: number
   public readonly vestingType: VestingType
 
-  public constructor({ chainId, furo: vesting, rebase }: { chainId: ChainId; furo: VestingDTO; rebase: Rebase }) {
+  public constructor({
+    chainId,
+    furo: vesting,
+    rebase,
+  }: {
+    chainId: ChainId
+    furo: NonNullable<vestingQuery['vesting']>
+    rebase: Pick<Rebase, 'id' | 'base' | 'elastic'>
+  }) {
     super({ chainId, furo: vesting, rebase })
     this.steps = parseInt(vesting.steps)
     this.cliffShares = Amount.fromRawAmount(this.token, JSBI.BigInt(vesting.cliffShares))
@@ -105,11 +113,6 @@ export class Vesting extends Furo {
     }
 
     return sum
-  }
-
-  public get withdrawnPercentage(): Percent {
-    if (this._withdrawnAmount.toExact() === '0') return new Percent(0, 100)
-    return new Percent(this._withdrawnAmount.quotient, this.totalAmount.quotient)
   }
 
   public get streamedPercentage(): Percent {
