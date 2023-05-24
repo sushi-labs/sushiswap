@@ -13,11 +13,11 @@ export const WidgetTitleV2 = () => {
   const { network0, network1, token1, token0, tokensLoading } = useSwapState()
   const { data: prices0, isLoading: isPrice0Loading } = usePrice({
     chainId: network0,
-    address: token0?.wrapped.address,
+    address: token0?.wrapped?.address,
   })
   const { data: prices1, isLoading: isPrice1Loading } = usePrice({
     chainId: network1,
-    address: token1?.wrapped.address,
+    address: token1?.wrapped?.address,
   })
 
   const [inputUSD, outputUSD, price] = useMemo(() => {

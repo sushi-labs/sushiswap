@@ -65,7 +65,7 @@ export const Component: FC<CurrencyInputProps> = ({
 
   const { data: price, isInitialLoading: isPriceLoading } = usePrice({
     chainId: currency?.chainId,
-    address: currency?.wrapped.address,
+    address: currency?.wrapped?.address,
   })
 
   const _value = useMemo(() => tryParseAmount(value, currency), [value, currency])

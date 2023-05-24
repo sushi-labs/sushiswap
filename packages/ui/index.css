@@ -1,7 +1,7 @@
 @tailwind base;
 
 @import 'react-datepicker/dist/react-datepicker.css';
-@import '@fontsource/inter/variable.css';
+@import '@fontsource-variable/inter';
 
 @tailwind components;
 @tailwind utilities;
@@ -32,6 +32,16 @@ body {
   min-height: 100%;
   margin: 0;
   background-color: transparent !important;
+}
+
+#__next {
+  min-height: 100vh;
+}
+
+
+footer {
+  position: sticky;
+  top: 100%;
 }
 
 html,

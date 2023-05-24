@@ -21,7 +21,7 @@ import {
   PoolPositionStakedProvider,
   PoolRewards,
   PoolStats,
-  UnknownTokenAlert
+  UnknownTokenAlert,
 } from '../../components'
 import { PROTOCOL_MAP } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'

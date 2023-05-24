@@ -3,12 +3,7 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 // @ts-check
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/aspect-ratio'),
-    require('@tailwindcss/line-clamp'),
-    require('@tailwindcss/typography'),
-  ],
+  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/aspect-ratio'), require('@tailwindcss/typography')],
   theme: {
     screens: {
       ...defaultTheme.screens,
@@ -23,6 +18,8 @@ module.exports = {
       }),
       boxShadow: {
         md: 'rgba(0, 0, 0, 0.09) 0px 3px 12px',
+        lg: 'rgba(0, 0, 0, 0.16) 2px 6px 24px',
+        xl: 'rgba(0, 0, 0, 0.24) 2px 6px 24px',
         'depth-1': '0px 3px 6px rgba(15, 15, 15, 0.5)',
         'hover-card': 'rgb(101 119 134 / 20%) 0px 0px 15px, rgb(101 119 134 / 15%) 0px 0px 3px 1px',
       },

@@ -387,6 +387,35 @@ export default [
     ]
   },
   {
+    "name": "ThunderCore Mainnet",
+    "chain": "TT",
+    "rpc": [
+      "https://mainnet-rpc.thundercore.com",
+      "https://mainnet-rpc.thundertoken.net",
+      "https://mainnet-rpc.thundercore.io"
+    ],
+    "faucets": [
+      "https://faucet.thundercore.com"
+    ],
+    "nativeCurrency": {
+      "name": "ThunderCore Token",
+      "symbol": "TT",
+      "decimals": 18
+    },
+    "infoURL": "https://thundercore.com",
+    "shortName": "TT",
+    "chainId": 108,
+    "networkId": 108,
+    "slip44": 1001,
+    "explorers": [
+      {
+        "name": "thundercore-viewblock",
+        "url": "https://viewblock.io/thundercore",
+        "standard": "EIP3091"
+      }
+    ]
+  },
+  {
     "name": "Fuse Mainnet",
     "chain": "FUSE",
     "rpc": [
@@ -475,15 +504,15 @@ export default [
       "symbol": "BTT",
       "decimals": 18
     },
-    "infoURL": "https://bittorrentchain.io/",
+    "infoURL": "https:/bt.io",
     "shortName": "BTT",
     "chainId": 199,
     "networkId": 199,
     "explorers": [
       {
-        "name": "bttcscan",
-        "url": "https://scan.bittorrentchain.io",
-        "standard": "none"
+        "name": "BitTorrent Chain Explorer",
+        "url": "https://bttcscan.com",
+        "standard": "EIP3091"
       }
     ]
   },

@@ -20,8 +20,6 @@ import {
 } from '../Table'
 import { PoolQuickHoverTooltip } from './PoolTableQuickHoverTooltip'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 const COLUMNS = [
   NETWORK_COLUMN,
   NAME_COLUMN,
@@ -31,7 +29,7 @@ const COLUMNS = [
   FEES_1D_COLUMN,
   FEES_7D_COLUMN,
   APR_COLUMN,
-]
+] as any
 
 export const PoolTable: FC = () => {
   const { chainIds, tokenSymbols } = usePoolFilters()

@@ -1,8 +1,9 @@
 import { constantProductPoolAbi, uniswapV2PairAbi, v3baseAbi } from '@sushiswap/abi'
 import { Protocol } from '@sushiswap/database'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
-import { configureChains, createClient, fetchToken, readContracts } from '@wagmi/core'
 import type { Address, FetchTokenResult } from '@wagmi/core'
+import { configureChains, createClient, fetchToken, readContracts } from '@wagmi/core'
+
 import type { getEarnPool } from './api/index.js'
 
 const { provider } = configureChains(allChains, allProviders)
@@ -78,7 +79,6 @@ async function getV3Pool({ chainId, address }: GetPoolArgs): Promise<Pool> {
       { address: address as Address, abi: v3baseAbi, functionName: 'fee', chainId },
     ],
   })
-
   return {
     tokens: [token0, token1],
     totalSupply: liquidity.toString(),
@@ -94,7 +94,6 @@ export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnTy
   const [chainId, address] = [Number(poolId.split(':')[0]), poolId.split(':')[1]]
   if (!chainId || !address) throw new Error('Invalid pool id.')
 
-
   let lpTokenName
   try {
     lpTokenName = (await fetchToken({ address: address as Address, chainId })).name
@@ -102,13 +101,15 @@ export async function getUnindexedPool(poolId: string): Promise<Awaited<ReturnTy
     lpTokenName = 'V3'
   }
 
-  let poolFetcher
+  let poolFetcher: (args: GetPoolArgs) => Promise<Pool>
   switch (lpTokenName) {
     case 'Sushi Stable LP Token':
-      poolFetcher = getTridentPool
+      poolFetcher = async ({ chainId, address }) =>
+        getTridentPool({ chainId, address, protocol: Protocol.BENTOBOX_STABLE })
       break
     case 'Sushi Constant Product LP Token':
-      poolFetcher = getTridentPool
+      poolFetcher = async ({ chainId, address }) =>
+        getTridentPool({ chainId, address, protocol: Protocol.BENTOBOX_CLASSIC })
       break
     case 'SushiSwap LP Token':
       poolFetcher = getV2Pool

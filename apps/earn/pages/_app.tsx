@@ -17,6 +17,7 @@ import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '@sushiswap/react-query'
 import { HistoryProvider } from '../components/HistoryProvider'
+import { Disclaimer } from '../components/Disclaimer'
 
 declare global {
   interface Window {
@@ -59,6 +60,9 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
                   <DefaultSeo {...SEO} />
                   <Header />
                   <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
+                  <App.Footer maxWidth="7xl">
+                    <Disclaimer />
+                  </App.Footer>
                 </App.Shell>
               </HistoryProvider>
             </Onramper.Provider>

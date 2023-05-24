@@ -1,19 +1,6 @@
 import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
-import {
-  DAI,
-  DAI_ADDRESS,
-  Native,
-  Price,
-  Token,
-  Type,
-  USDC,
-  USDC_ADDRESS,
-  USDT,
-  USDT_ADDRESS,
-  WBTC,
-  WBTC_ADDRESS,
-} from '@sushiswap/currency'
+import { DAI, Native, Price, Token, Type, USDC, USDT, WBTC } from '@sushiswap/currency'
 import { Pool, Protocol } from '@sushiswap/client'
 import {
   tickToPrice,

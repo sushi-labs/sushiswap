@@ -1,8 +1,16 @@
-import { useCallback } from 'react'
+'use client'
+
+import { ReactNode, useCallback } from 'react'
 
 import { Container, DiscordIcon, GithubIcon, InstagramIcon, Link, SushiWithTextIcon, TwitterIcon, Typography } from '..'
+import { MaxWidth } from '../future/components/Container'
+import ReactDOM from 'react-dom'
+import dynamic from 'next/dynamic'
 
-export type FooterProps = React.HTMLProps<HTMLDivElement>
+export type FooterProps = React.HTMLProps<HTMLDivElement> & {
+  children?: ReactNode
+  maxWidth?: MaxWidth
+}
 
 const config: Record<
   string,
@@ -103,12 +111,12 @@ const config: Record<
   },
 }
 
-export function Footer(props: FooterProps): JSX.Element {
+const Component = ({ children, maxWidth = '5xl', ...props }: FooterProps) => {
   const leafNode = useCallback(
     (title: string, items: Record<string, { href: string; rel?: string; target?: string }>) => {
       return (
         <div key={title} className="flex flex-col gap-[10px]">
-          <Typography variant="xs" weight={500} className="text-sm sm:text-xs text-slate-100">
+          <Typography variant="xs" weight={500} className="text-sm sm:text-xs text-gray-900 dark:text-slate-100">
             {title}
           </Typography>
           {Object.entries(items).map(([item, { href, rel, target }]) => (
@@ -117,7 +125,7 @@ export function Footer(props: FooterProps): JSX.Element {
               href={href}
               target={target}
               rel={rel}
-              className="text-sm cursor-pointer sm:text-xs text-slate-400 hover:underline"
+              className="text-sm cursor-pointer sm:text-xs text-gray-600 dark:text-slate-400 hover:underline"
             >
               {item}
             </a>
@@ -129,27 +137,40 @@ export function Footer(props: FooterProps): JSX.Element {
   )
 
   return (
-    <footer className="hidden sm:flex flex-col border-t border-slate-400/5 pt-[72px]" {...props}>
-      <Container maxWidth="5xl" className="grid grid-cols-1 md:grid-cols-[176px_auto] mx-auto px-4 gap-4">
+    <footer className="bg-black/[0.02] dark:bg-white/[0.02] hidden sm:flex flex-col pt-[72px]" {...props}>
+      <Container maxWidth={maxWidth} className="grid grid-cols-1 md:grid-cols-[176px_auto] mx-auto px-4 gap-4">
+        <div className="col-span-2">{children && children}</div>
         <div className="flex flex-col gap-5">
           <div className="flex items-center justify-start gap-3 pt-2">
-            <SushiWithTextIcon height={20} className="text-slate-50" />
+            <SushiWithTextIcon height={20} className="text-gray-700 dark:text-slate-50" />
           </div>
-          <div className="text-sm sm:text-[0.625rem] leading-5 sm:leading-4 text-slate-400">
+          <div className="text-sm sm:text-[0.625rem] leading-5 sm:leading-4 text-gray-600 dark:text-slate-400">
             Our community is building a comprehensive decentralized trading platform for the future of finance. Join us!
           </div>
           <div className="flex items-center gap-4">
             <a href="https://github.com/sushiswap" target="_blank" rel="noopener noreferrer">
-              <GithubIcon width={16} className="text-slate-300 hover:text-slate-50" />
+              <GithubIcon
+                width={16}
+                className="text-gray-700 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
+              />
             </a>
             <a href="https://twitter.com/sushiswap" target="_blank" rel="noopener noreferrer">
-              <TwitterIcon width={16} className="text-slate-300 hover:text-slate-50" />
+              <TwitterIcon
+                width={16}
+                className="text-gray-700 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
+              />
             </a>
             <a href="https://instagram.com/instasushiswap" target="_blank" rel="noopener noreferrer">
-              <InstagramIcon width={16} className="text-slate-300 hover:text-slate-50" />
+              <InstagramIcon
+                width={16}
+                className="text-gray-700 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
+              />
             </a>
             <a href="https://discord.gg/NVPXN4e" target="_blank" rel="noopener noreferrer">
-              <DiscordIcon width={16} className="text-slate-300 hover:text-slate-50" />
+              <DiscordIcon
+                width={16}
+                className="text-gray-700 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
+              />
             </a>
           </div>
         </div>
@@ -171,14 +192,14 @@ export function Footer(props: FooterProps): JSX.Element {
           })}
         </div>
       </Container>
-      <Container maxWidth="5xl" className="mx-auto mt-20 mb-5">
-        <div className="flex justify-between py-2 mx-4 border-t border-slate-800">
-          <Typography variant="xs" className="text-slate-400">
+      <Container maxWidth={maxWidth} className="mx-auto mt-20 mb-5">
+        <div className="flex justify-between py-2 mx-4 border-t text-gray-600 border-gray-200 dark:border-slate-800">
+          <Typography variant="xs" className="text-gray-600 dark:text-slate-400">
             Copyright © 2022 Sushi. All rights reserved.
           </Typography>
-          <div className="flex divide-x divide-slate-200/20 gap-">
+          <div className="flex divide-x dark:divide-slate-200/20 gap-">
             <Link.Internal href="https://www.sushi.com/terms-of-use" passHref={true}>
-              <Typography as="a" variant="xs" weight={500} className="px-3 text-slate-300">
+              <Typography as="a" variant="xs" weight={500} className="px-3 text-gray-600 dark:text-slate-300">
                 Terms of Use
               </Typography>
             </Link.Internal>
@@ -194,4 +215,6 @@ export function Footer(props: FooterProps): JSX.Element {
   )
 }
 
-export default Footer
+export const Footer = dynamic(() => Promise.resolve(Component), {
+  ssr: false,
+})
