@@ -7,16 +7,18 @@ import { getPools, getPoolCount, getPoolCountUrl, getPoolsUrl } from '@sushiswap
 
 import { ChartSection, Layout, PoolsFiltersProvider, TableSection } from '../components'
 import { getBundles, getCharts, getTokenCount, getTokens } from '../lib/api'
-import { defaultPoolsArgs, defaultUnverifiedPoolsArgs } from 'lib/constants'
+import { defaultVerifiedPoolsArgs, defaultUnverifiedPoolsArgs } from 'lib/constants'
 
 export const getStaticProps: GetStaticProps = async () => {
-  const [pools, tokens, charts, poolCount, tokenCount, bundles] = await Promise.all([
-    getPools(defaultPoolsArgs),
-    getTokens(),
+  const [verifiedPools, unverifiedPools, verifiedPoolCount, unverifiedPoolCount, charts, bundles] = await Promise.all([
+    getPools(defaultVerifiedPoolsArgs),
+    getPools(defaultUnverifiedPoolsArgs),
+    getPoolCount(defaultVerifiedPoolsArgs),
+    getPoolCount(defaultUnverifiedPoolsArgs),
     getCharts(),
-    getPoolCount(defaultPoolsArgs),
-    getTokenCount(),
     getBundles(),
+    // getTokens(),
+    // getTokenCount(),
   ])
   return {
     props: {
@@ -27,9 +29,11 @@ export const getStaticProps: GetStaticProps = async () => {
             selectedNetworks: SUPPORTED_CHAIN_IDS,
           },
         })]: charts,
-        [getPoolCountUrl(defaultPoolsArgs)]: poolCount,
-        [unstable_serialize_infinite(() => getPoolsUrl(defaultPoolsArgs))]: pools,
-        [unstable_serialize_infinite(() => getPoolsUrl(defaultUnverifiedPoolsArgs))]: pools,
+        [getPoolCountUrl(defaultVerifiedPoolsArgs)]: verifiedPoolCount,
+        [getPoolCountUrl(defaultUnverifiedPoolsArgs)]: unverifiedPoolCount,
+        [unstable_serialize_infinite(() => getPoolsUrl(defaultVerifiedPoolsArgs))]: verifiedPools,
+        [unstable_serialize_infinite(() => getPoolsUrl(defaultUnverifiedPoolsArgs))]: unverifiedPools,
+        ['/analytics/api/bundles']: bundles,
         // [unstable_serialize({
         //   url: '/analytics/api/tokens',
         //   args: {
@@ -49,7 +53,6 @@ export const getStaticProps: GetStaticProps = async () => {
         //   },
         // })]: tokens,
         // [`/analytics/api/tokens/count`]: tokenCount,
-        [`/analytics/api/bundles`]: bundles,
       },
     },
     revalidate: 900,

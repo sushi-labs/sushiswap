@@ -1,7 +1,7 @@
 import { GetPoolsArgs } from '@sushiswap/client'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 
-export const defaultPoolsArgs: GetPoolsArgs = {
+export const defaultVerifiedPoolsArgs: GetPoolsArgs = {
   chainIds: SUPPORTED_CHAIN_IDS,
   orderBy: 'liquidityUSD',
   orderDir: 'desc',
