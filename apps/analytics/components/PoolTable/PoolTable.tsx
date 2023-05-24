@@ -31,7 +31,7 @@ const COLUMNS = [
   APR_COLUMN,
 ] as any
 
-export const PoolTable: FC = () => {
+export const PoolTable: FC<{ isWhitelisted: boolean }> = ({ isWhitelisted }) => {
   const { chainIds, tokenSymbols } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
@@ -50,9 +50,9 @@ export const PoolTable: FC = () => {
       tokenSymbols,
       orderBy: sorting[0]?.id,
       orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
-      isWhitelisted: true,
+      isWhitelisted,
     }),
-    [chainIds, sorting, tokenSymbols]
+    [chainIds, sorting, tokenSymbols, isWhitelisted]
   )
 
   const { data: pools, isValidating, size, setSize } = usePoolsInfinite({ args, swrConfig: useSWRConfig() })
