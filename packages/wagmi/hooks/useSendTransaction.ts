@@ -1,6 +1,7 @@
 import { ErrorCode } from '@ethersproject/logger'
 import { TransactionRequest } from '@ethersproject/providers'
 import { createErrorToast } from '@sushiswap/ui/future/components/toast'
+import { BigNumber } from 'ethers'
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react'
 import { ProviderRpcError, usePrepareSendTransaction, useSendTransaction as useSendTransaction_ } from 'wagmi'
 import { SendTransactionArgs, SendTransactionResult } from 'wagmi/actions'
@@ -15,9 +16,11 @@ export function useSendTransaction({
   onSettled,
   prepare,
   enabled = true,
+  gasMargin = false,
 }: Omit<NonNullable<Args>, 'request' | 'mode'> & {
   prepare: (request: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => void
   enabled?: boolean
+  gasMargin?: boolean
 }) {
   const [request, setRequest] = useState<(TransactionRequest & { to: string }) | undefined>()
   // console.log('useSendTransaction (wrapper) re-runing with', {
@@ -59,7 +62,16 @@ export function useSendTransaction({
   }, [prepare])
 
   return useSendTransaction_({
-    ...config,
+    ...(config.request && {
+      request: {
+        ...config.request,
+        ...(config.request.gasLimit && {
+          gasLimit: BigNumber.from(config.request.gasLimit)
+            .mul(gasMargin ? 120 : 100)
+            .div(100),
+        }),
+      },
+    }),
     chainId,
     onError,
     onMutate,
