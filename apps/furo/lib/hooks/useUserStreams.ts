@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { bentoBoxRebaseQuery, getBuiltGraphSDK, Rebase, streamQuery, userStreamsQuery } from '../../.graphclient'
+import { getBuiltGraphSDK, Rebase, streamQuery, userStreamsQuery } from '../../.graphclient'
 import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { SUPPORTED_CHAINS } from '../../config'
 import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'

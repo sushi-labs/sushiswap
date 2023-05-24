@@ -7,7 +7,7 @@ import { shortenAddress } from '@sushiswap/format'
 import { JSBI, ZERO } from '@sushiswap/math'
 import { classNames, Dots } from '@sushiswap/ui'
 import { _useSendTransaction as useSendTransaction, useAccount, useContract } from '@sushiswap/wagmi'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useRef, useState } from 'react'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { Button } from '@sushiswap/ui/future/components/button/Button'
 import { Stream } from '../lib'
@@ -18,7 +18,6 @@ import { Dialog } from '@sushiswap/ui/future/components/dialog/Dialog'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { Switch } from '@sushiswap/ui/future/components/Switch'
-import { Simulate } from 'react-dom/test-utils'
 
 interface UpdateModalProps {
   stream: Stream
@@ -35,7 +34,6 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
   const [changeEndDate, setChangeEndDate] = useState(false)
   const [amount, setAmount] = useState<string>('')
   const [endDate, setEndDate] = useState<Date | null>(null)
-  const customInputRef = useRef<HTMLInputElement | null>(null)
   const contract = useContract({
     address: contractAddress,
     abi: abi,

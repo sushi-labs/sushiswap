@@ -1,15 +1,10 @@
 import { ArrowCircleLeftIcon } from '@heroicons/react/outline'
-import { DevTool } from '@hookform/devtools'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useIsMounted } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import Link from 'next/link'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-
-export const FORM_ERROR = 'FORM_ERROR' as const
-export type FormErrors = { [FORM_ERROR]?: never }
-
 import { ImportErrorProvider } from '../../vesting/CreateMultipleForm/ImportErrorContext'
 import {
   CreateMultipleStreamFormSchemaType,
@@ -20,6 +15,9 @@ import {
 } from '.'
 import { CreateStreamsTableSection } from './CreateStreamsTableSection'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
+
+export const FORM_ERROR = 'FORM_ERROR' as const
+export type FormErrors = { [FORM_ERROR]?: never }
 
 export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
   const isMounted = useIsMounted()

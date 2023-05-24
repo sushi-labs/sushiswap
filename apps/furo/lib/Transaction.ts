@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 
-import { Maybe, TransactionType, streamTransactionsQuery, vestingTransactionsQuery } from '../.graphclient'
+import { Maybe, streamTransactionsQuery, TransactionType, vestingTransactionsQuery } from '../.graphclient'
 import { toToken } from './mapper'
 
 export class Transaction {

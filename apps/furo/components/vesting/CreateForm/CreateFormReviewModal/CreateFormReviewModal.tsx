@@ -3,11 +3,15 @@ import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames, Dots, Typography } from '@sushiswap/ui'
-import { getFuroVestingRouterContractConfig, useBentoBoxTotal, useFuroVestingRouterContract } from '@sushiswap/wagmi'
+import {
+  getFuroVestingRouterContractConfig,
+  useAccount,
+  useBentoBoxTotal,
+  useFuroVestingRouterContract,
+} from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useAccount } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../../lib'

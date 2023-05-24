@@ -4,11 +4,15 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Dots, Form } from '@sushiswap/ui'
-import { getFuroStreamRouterContractConfig, useBentoBoxTotal, useFuroStreamRouterContract } from '@sushiswap/wagmi'
+import {
+  getFuroStreamRouterContractConfig,
+  useAccount,
+  useBentoBoxTotal,
+  useFuroStreamRouterContract,
+} from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useAccount } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
 

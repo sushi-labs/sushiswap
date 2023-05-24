@@ -1,4 +1,3 @@
-import { DevTool } from '@hookform/devtools'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { nanoid } from '@reduxjs/toolkit'
 import { FuroVestingRouterChainId } from '@sushiswap/furo'

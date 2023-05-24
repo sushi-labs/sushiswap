@@ -1,5 +1,4 @@
 import { ArrowCircleLeftIcon } from '@heroicons/react/outline'
-import { DevTool } from '@hookform/devtools'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { useIsMounted } from '@sushiswap/hooks'

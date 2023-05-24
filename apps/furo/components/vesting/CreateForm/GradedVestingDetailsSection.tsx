@@ -1,16 +1,15 @@
 import { Form, Input, Select, Typography } from '@sushiswap/ui'
-import { _useBalance as useBalance } from '@sushiswap/wagmi'
+import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
 import { format } from 'date-fns'
 import { useEffect, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useAccount } from '@sushiswap/wagmi'
 
 import { useDeepCompareMemoize } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { CurrencyInputBase, HelperTextPanel } from '../../CurrencyInput'
 import { CreateVestingFormSchemaType, FormErrors, StepConfig, stepConfigurations } from '../../vesting'
 import { calculateEndDate, calculateTotalAmount } from '../utils'
-import { Chain, ChainId } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 
 export const GradedVestingDetailsSection = () => {
   const { address } = useAccount()

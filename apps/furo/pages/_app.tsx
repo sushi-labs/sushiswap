@@ -1,7 +1,7 @@
 import '@sushiswap/ui/index.css'
 
 import { App, ThemeProvider } from '@sushiswap/ui'
-import { client } from '@sushiswap/wagmi'
+import { client, WagmiConfig } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
@@ -9,7 +9,6 @@ import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import { FC, useEffect } from 'react'
-import { WagmiConfig } from '@sushiswap/wagmi'
 
 import { Header } from '../components'
 import SEO from '../next-seo.config.mjs'

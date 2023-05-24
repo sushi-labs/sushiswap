@@ -2,7 +2,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token } from '@sushiswap/currency'
 
-import { Token as TokenDTO, userStreamsQuery } from '../.graphclient'
+import { userStreamsQuery } from '../.graphclient'
 
 export function toToken(token: userStreamsQuery['incomingStreams'][0]['token'], chainId: ChainId): Token {
   if (token.id === AddressZero) {

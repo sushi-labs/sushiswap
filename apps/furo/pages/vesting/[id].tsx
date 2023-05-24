@@ -23,9 +23,8 @@ import { Percent } from '@sushiswap/math'
 import { getFuroVestingContractConfig } from '@sushiswap/wagmi'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { DownloadIcon, XIcon } from '@heroicons/react/outline'
-import { useVesting, useVestingBalance } from '../../lib'
+import { useVesting, useVestingBalance, useVestingTransactions } from '../../lib'
 import { queryParamsSchema } from '../../lib/zod'
-import { useVestingTransactions } from '../../lib'
 
 const VestingPage = () => {
   return (

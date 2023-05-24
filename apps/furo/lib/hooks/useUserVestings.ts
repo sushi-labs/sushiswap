@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { SUPPORTED_CHAINS } from '../../config'
-import { getBuiltGraphSDK, Rebase, vestingQuery, userVestingsQuery } from '../../.graphclient'
+import { getBuiltGraphSDK, Rebase, userVestingsQuery, vestingQuery } from '../../.graphclient'
 import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { FuroVestingChainId } from '@sushiswap/furo/exports/exports'
 import { Token } from '@sushiswap/currency'
