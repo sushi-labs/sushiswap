@@ -1,7 +1,6 @@
 import React from 'react'
 
 import { PolymorphicComponentProps } from '../types'
-import { Typography } from '../typography'
 import { FormButtons } from './FormButtons'
 import { FormControl } from './FormControl'
 import { FormError } from './FormError'
@@ -20,12 +19,10 @@ const FormRoot: FormRootComponent = ({ header, children, as, ...rest }) => {
   const Component = as || 'form'
 
   return (
-    <Component className="gap-x-10 divide-y divide-slate-800" {...rest}>
+    <Component className="gap-x-10" {...rest}>
       <>
-        <Typography variant="h3" className="text-slate-50 py-6">
-          {header}
-        </Typography>
-        <div className="divide-y divide-slate-800">{children}</div>
+        <h3 className="text-3xl font-semibold text-gray-900 dark:text-slate-50 py-6">{header}</h3>
+        <div className="space-y-5">{children}</div>
       </>
     </Component>
   )

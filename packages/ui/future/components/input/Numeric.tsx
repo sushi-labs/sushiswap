@@ -1,88 +1,32 @@
-import classNames from 'classnames'
-import React, { forwardRef } from 'react'
-
-import { DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME } from './index'
+import React, { ForwardedRef, forwardRef } from 'react'
 import { escapeRegExp, inputRegex } from './utils'
+import { TextInput, Text } from './Text'
 
-const defaultClassName = 'w-0 p-0 text-2xl bg-transparent'
-
-export type NumericProps = Omit<React.HTMLProps<HTMLInputElement>, 'onChange' | 'as'> & {
-  value: string
+interface NumericInput extends Omit<TextInput, 'onChange'> {
   onUserInput?: (input: string) => void
-  error?: boolean
-  fontSize?: string
-  align?: 'right' | 'left'
-  variant?: 'default' | 'unstyled'
   maxDecimals?: number
 }
 
-export const Input = forwardRef<HTMLInputElement, NumericProps>(
-  (
-    {
-      value,
-      onUserInput,
-      placeholder = '0',
-      className = defaultClassName,
-      title = 'Token Amount',
-      inputMode = 'decimal',
-      type = 'text',
-      pattern = '^[0-9]*[.,]?[0-9]*$',
-      min = 0,
-      minLength = 1,
-      maxLength = 79,
-      variant = 'default',
-      maxDecimals = 18,
-      error,
-      ...rest
-    },
-    ref
-  ) => {
-    const enforcer = (nextUserInput: string) => {
-      if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
-        if (onUserInput) {
-          if (maxDecimals && nextUserInput?.includes('.')) {
-            const [, decimals] = nextUserInput.split('.')
-            if (decimals.length <= maxDecimals) {
-              onUserInput(nextUserInput)
-            }
-          } else {
-            onUserInput(nextUserInput)
+function Component({ onUserInput, ...props }: NumericInput, ref: ForwardedRef<HTMLInputElement>) {
+  const enforcer = (nextUserInput: string | number | undefined) => {
+    if (typeof nextUserInput === 'undefined') return
+    const val = `${nextUserInput}`.replace(/,/g, '.')
+    if (onUserInput && val === '') onUserInput('')
+    if (inputRegex.test(escapeRegExp(val))) {
+      if (onUserInput) {
+        if (props.maxDecimals && val?.includes('.')) {
+          const [, decimals] = val.split('.')
+          if (decimals.length <= props.maxDecimals) {
+            onUserInput(val)
           }
+        } else {
+          onUserInput(val)
         }
       }
     }
-
-    return (
-      <input
-        ref={ref}
-        value={value}
-        onChange={(event) => {
-          // replace commas with periods, because uniswap exclusively uses period as the decimal separator
-          enforcer(event.target.value.replace(/,/g, '.'))
-        }}
-        // universal input options
-        inputMode={inputMode}
-        title={title}
-        autoCorrect="off"
-        autoCapitalize="off"
-        spellCheck="false"
-        autoComplete="new-password"
-        // text-specific options
-        type={type}
-        pattern={pattern}
-        placeholder={placeholder}
-        min={min}
-        minLength={minLength}
-        maxLength={maxLength}
-        className={
-          variant === 'default'
-            ? classNames(DEFAULT_INPUT_CLASSNAME, error ? ERROR_INPUT_CLASSNAME : '', className)
-            : className
-        }
-        {...rest}
-      />
-    )
   }
-)
 
-export default Input
+  return <Text {...props} ref={ref} onChange={(val) => enforcer(val)} />
+}
+
+export const Numeric = forwardRef(Component)

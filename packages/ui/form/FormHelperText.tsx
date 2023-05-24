@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-import { Typography } from '../typography'
+import classNames from 'classnames'
 
 interface FormHelperText {
   message?: string
@@ -11,8 +11,8 @@ export const FormHelperText: FC<FormHelperText> = ({ message, isError = false })
   if (!message) return null
 
   return (
-    <Typography variant="xs" role="alert" className={isError ? 'text-red' : 'text-slate-500'}>
+    <span role="alert" className={classNames(isError ? 'text-red' : 'text-slate-500', 'text-sm px-2')}>
       {message}
-    </Typography>
+    </span>
   )
 }
