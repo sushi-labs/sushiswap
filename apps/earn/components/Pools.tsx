@@ -6,6 +6,8 @@ import { useNetwork } from '@sushiswap/wagmi'
 import { Layout, PoolFilters, PoolsFiltersProvider, PoolsSection } from '../components'
 import { ChainId } from '@sushiswap/chain'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
+import { isUniswapV2FactoryChainId } from '@sushiswap/sushiswap'
+import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
 import { Popover, Transition } from '@headlessui/react'
 import { List } from '@sushiswap/ui/future/components/list/List'
 
@@ -55,8 +57,8 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                             <Transition
                               show={open}
                               enter="transition duration-300 ease-out"
-                              enterFrom="transform translate-y-[-16px] scale-[0.95] opacity-0"
-                              enterTo="transform translate-y-0 scale-[1] opacity-100"
+                              enterFrom="transform translate-y-[-16px] scale-[0.95]"
+                              enterTo="transform translate-y-0 scale-[1]"
                               leave="transition duration-300 ease-out"
                               leaveFrom="transform translate-y-0 opacity-100 scale-[1]"
                               leaveTo="transform translate-y-[-16px] opacity-0 scale-[0.95]"
@@ -86,8 +88,24 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                                     />
                                     <List.MenuItem
                                       as="a"
+                                      disabled={
+                                        !isUniswapV2FactoryChainId(chainId) &&
+                                        !isConstantProductPoolFactoryChainId(chainId) &&
+                                        !isStablePoolFactoryChainId(chainId)
+                                      }
                                       href={`/pools/add/v2/${chainId}`}
-                                      title="V2 Position"
+                                      title={
+                                        <div className="flex gap-2">
+                                          V2 Position{' '}
+                                          {!isUniswapV2FactoryChainId(chainId) &&
+                                          !isConstantProductPoolFactoryChainId(chainId) &&
+                                          !isStablePoolFactoryChainId(chainId) ? (
+                                            <div className="rounded-xl bg-gray-500 dark:bg-slate-600 text-white text-[10px] px-2">
+                                              Unavailable
+                                            </div>
+                                          ) : null}
+                                        </div>
+                                      }
                                       subtitle={'If you prefer creating a classic liquidity position.'}
                                     />
                                   </Popover.Panel>

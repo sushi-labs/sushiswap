@@ -1,5 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
-import { SWRConfig } from 'swr'
+import React, { FC, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeftIcon, ChartBarIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
 import { z } from 'zod'
@@ -20,7 +19,7 @@ import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 import { isAddress } from 'ethers/lib/utils'
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
-import { usePoolGraphData, useTokenAmountDollarValues } from '../lib/hooks'
+import { useTokenAmountDollarValues } from '../lib/hooks'
 import { usePreviousRoute } from './HistoryProvider'
 import { unwrapToken } from '../lib/functions'
 import { Layout } from './Layout'
@@ -31,8 +30,6 @@ import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
 import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { ConcentratedPositionsTable } from './PoolsSection/Tables/PositionsTable/ConcentratedPositionsTable'
 import { createSuccessToast } from '@sushiswap/ui/future/components/toast'
-import { ChainId } from '@sushiswap/chain'
-import { PoolChart } from './PoolSection'
 
 enum Granularity {
   Day,
@@ -94,8 +91,6 @@ const Pool: FC = () => {
 
   const [granularity, setGranularity] = useState<Granularity>(Granularity.Day)
 
-  const { data: graphData, isLoading: isGraphDataLoading } = usePoolGraphData({ poolId, chainId, type: 'V3' })
-
   const { data: poolStats } = useConcentratedLiquidityPoolStats({ chainId, address: poolId })
   const { data: pool, isLoading } = useConcentratedLiquidityPool({
     chainId,
@@ -117,14 +112,11 @@ const Pool: FC = () => {
     [poolStats?.token0, poolStats?.token1]
   )
 
-  const change1d = 0
-  const change1w = 0
-
   return (
     <Layout>
       <div className="flex flex-col gap-2">
         <Link
-          className="group flex gap-4 items-center mb-2"
+          className="flex items-center gap-4 mb-2 group"
           href={{
             pathname: '/',
             ...(basePath === '/pools' && path?.includes('categories') && { query: path.replace('/?&', '') }),
@@ -148,7 +140,7 @@ const Pool: FC = () => {
           isLoading={isLoading}
           chainId={chainId}
           pool={pool}
-          apy={{ rewards: poolStats?.incentiveApr, fees: poolStats?.feeApr }}
+          apy={{ rewards: poolStats?.incentiveApr, fees: poolStats?.feeApr1d }}
         />
         <RadioGroup value={tab} onChange={setTab} className="flex flex-wrap gap-2 mt-3">
           <RadioGroup.Option
@@ -200,8 +192,10 @@ const Pool: FC = () => {
       </div>
       <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
       <div className={tab === SelectedTab.Analytics ? 'block' : 'hidden'}>
-        <div className="grid md:grid-cols-[auto_404px] gap-10">
-          <PoolChart isLoading={isGraphDataLoading} data={graphData} swapFee={pool?.fee} />
+        <div className="grid md:grid-cols-[404px_auto] gap-10">
+          {/*<div className="w-full h-full flex items-center justify-center bg-gray-50 dark:bg-white/[0.02] rounded-xl">*/}
+          {/*  <span className="text-gray-600 dark:text-slate-400">Chart is being worked on 👷🍣</span>*/}
+          {/*</div>*/}
           <div className="flex flex-col gap-6">
             <List className="pt-0 !gap-1">
               <List.Label className="flex justify-end">
@@ -326,7 +320,7 @@ const Pool: FC = () => {
                     </List.KeyValue>
                   ))
                 ) : (
-                  <div className="p-6 flex font-normal justify-center items-center text-xs text-center text-gray-500 dark:text-slate-500">
+                  <div className="flex items-center justify-center p-6 text-xs font-normal text-center text-gray-500 dark:text-slate-500">
                     This pool only emits fee rewards.
                   </div>
                 )}
@@ -336,7 +330,7 @@ const Pool: FC = () => {
         </div>
       </div>
       <div className={tab === SelectedTab.NewPosition ? 'block' : 'hidden'}>
-        <div className="grid md:grid-cols-2 gap-10">
+        <div className="grid gap-10 md:grid-cols-2">
           <div className="flex">
             <SelectPricesWidget
               chainId={chainId}

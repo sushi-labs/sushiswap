@@ -1,7 +1,7 @@
 import { formatPercent } from '@sushiswap/format'
 import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
-import { getPool, usePool, getPools, getPoolUrl, Pool } from '@sushiswap/client'
+import { getPool, usePool, getPools, getPoolUrl, Pool, Protocol } from '@sushiswap/client'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -21,18 +21,17 @@ import {
   PoolPositionStakedProvider,
   PoolRewards,
   PoolStats,
-  UnknownTokenAlert,
+  UnknownTokenAlert
 } from '../../components'
-import { POOL_TYPE_MAP } from '../../lib/constants'
+import { PROTOCOL_MAP } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
 import { NextSeo } from 'next-seo'
 import PoolPageV3 from '../../components/PoolPageV3'
-import { usePoolGraphData } from '../../lib/hooks'
 
 const LINKS = (pool: Pool): BreadcrumbLink[] => [
   {
     href: `/${pool.id}`,
-    label: `${pool.name} - ${POOL_TYPE_MAP[pool.type]} - ${formatPercent(pool.swapFee)}`,
+    label: `${pool.name} - ${PROTOCOL_MAP[pool.protocol]} - ${formatPercent(pool.swapFee)}`,
   },
 ]
 
@@ -56,15 +55,8 @@ const _Pool = () => {
     shouldFetch: Boolean(chainId && address),
   })
 
-  const { data: graphData, isLoading: isGraphDataLoading } = usePoolGraphData({
-    type: pool?.type === 'CONSTANT_PRODUCT_POOL' ? 'V2' : 'V3',
-    poolId: address,
-    chainId,
-    enabled: Boolean(pool),
-  })
-
   if (!pool) return <></>
-  if (pool.type === 'CONCENTRATED_LIQUIDITY_POOL') {
+  if (pool.protocol === Protocol.SUSHISWAP_V3) {
     return <PoolPageV3 />
   }
 
@@ -81,7 +73,7 @@ const _Pool = () => {
                   <div className="flex flex-col order-1 gap-9">
                     <PoolHeader pool={pool} />
                     <hr className="my-3 border-t border-gray-900/5 dark:border-slate-200/5" />
-                    <PoolChart isLoading={isGraphDataLoading} data={graphData} swapFee={pool.swapFee} />
+                    <PoolChart pool={pool} />
                     <PoolStats pool={pool} />
                     <PoolComposition pool={pool} />
                     <PoolRewards pool={pool} />
