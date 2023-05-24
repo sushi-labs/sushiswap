@@ -164,7 +164,8 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                       (position) =>
                         position?.chainId !== ChainId.CELO &&
                         position?.chainId !== ChainId.BOBA_AVAX &&
-                        position?.chainId !== ChainId.BOBA_BNB
+                        position?.chainId !== ChainId.BOBA_BNB &&
+                        position?.chainId !== ChainId.HARMONY
                     )}
                     render={(position) => (isLoading ? <PositionCardSkeleton /> : <PositionCard position={position} />)}
                   />
