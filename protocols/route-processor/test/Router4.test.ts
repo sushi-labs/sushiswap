@@ -766,13 +766,8 @@ describe('End-to-end RouteProcessor4 test', async function () {
       it(`Curve pool ${address} ${type} ${from.symbol}->${to.symbol}`, async function () {
         await env.snapshot.restore()
         const amoutIn = BigInt(1e12)
-        const amountInBN = BigNumber.from(amoutIn.toString())
-
-        if (from instanceof Token) {
-          await setRouterPrimaryBalance(env.user.address, from.address, amoutIn * 2n)
-        }
-
-        intermidiateResult[0] = amountInBN
+        if (from instanceof Token) await setRouterPrimaryBalance(env.user.address, from.address, amoutIn * 2n)
+        intermidiateResult[0] = BigNumber.from(amoutIn.toString())
         intermidiateResult = await updMakeSwap(env, from, to, intermidiateResult, undefined, [
           LiquidityProviders.CurveSwap,
         ])
