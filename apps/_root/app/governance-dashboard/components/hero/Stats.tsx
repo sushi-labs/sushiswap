@@ -12,7 +12,7 @@ export async function Stats() {
   ])
 
   return (
-    <div className="h-fit w-[350px] rounded-lg bg-gradient-to-b from-white/[4%] to-transparent p-px">
+    <div className="hidden h-fit w-[350px] rounded-lg bg-gradient-to-b from-white/[4%] to-transparent p-px md:block">
       <div className="relative overflow-hidden rounded-lg">
         <StatsBackground />
         <div className="relative h-full w-full space-y-10 rounded-lg bg-gradient-to-b from-[#101728]/40 to-transparent p-9">

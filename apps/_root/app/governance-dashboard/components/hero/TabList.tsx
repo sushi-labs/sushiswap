@@ -16,12 +16,12 @@ export function TabList() {
   const pathname = usePathname()
 
   return (
-    <nav className="flex gap-8">
+    <nav className="flex gap-4 md:gap-8">
       {TABS.map((tab) => (
         <Link.Internal key={tab.path} href={tab.path}>
           <button
             className={classNames(
-              '!border-b-2 pb-4',
+              '!border-b-2 pb-2 text-sm md:pb-4 md:text-base',
               pathname === tab.path
                 ? 'border-b-blue font-semibold text-blue'
                 : 'border-b-transparent hover:text-slate-50'
