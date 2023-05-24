@@ -125,7 +125,7 @@ export async function getLatestGovernanceItems(filters?: {
     type: GOV_STATUS.IMPLEMENTATION,
     title: proposal.title,
     isActive: proposal.state === 'open',
-    url: 'https://snapshot.org/#/sushigov.eth/proposal/' + proposal.id,
+    url: `https://snapshot.org/#/sushigov.eth/proposal/${proposal.id}`,
     category: GOV_STATUS.IMPLEMENTATION.title,
   }))
 
@@ -332,13 +332,14 @@ const SUSHI_WALLETS = [
 const SUSHI_NETWORKS = ['ethereum', 'polygon', 'optimism', 'arbitrum', 'fantom']
 
 async function fetchZapper<T>(path: string) {
-  const encodedKey = Buffer.from(process.env.ZAPPER_API_KEY + ':').toString('base64')
+  const encodedKey = Buffer.from(`${process.env.ZAPPER_API_KEY}:`).toString('base64')
 
   const data = await fetchUrl<T>(ZAPPER_BASE_URL + path, {
     method: 'GET',
     headers: {
-      Authorization: 'Basic ' + encodedKey,
+      Authorization: `Basic ${encodedKey}`,
     },
+    cache: 'no-store',
   })
 
   return data
@@ -449,7 +450,7 @@ export async function getTreasurySnapshot() {
       address: info.address,
       name: info.name,
       symbol: info.symbol,
-      chainId: NETWORK_TO_ID[info.network],
+      chainId: NETWORK_TO_ID[info.network as keyof typeof NETWORK_TO_ID],
       decimals: info.decimals,
       isNative: info.address === '0x0000000000000000000000000000000000000000',
     }

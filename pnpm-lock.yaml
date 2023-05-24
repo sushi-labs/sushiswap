@@ -369,7 +369,7 @@ importers:
       '@tanstack/react-query': 4.28.0
       '@tanstack/react-query-devtools': 4.28.0
       '@tanstack/react-query-persist-client': 4.28.0
-      '@tanstack/react-table': 8.5.0
+      '@tanstack/react-table': 8.5.30
       '@tsconfig/next': 1.0.5
       '@types/cors': ^2.8.13
       '@types/node': 18.11.18
@@ -458,7 +458,7 @@ importers:
       '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-devtools': 4.28.0_q4teel2yjbizrm4naiaqcdpjum
       '@tanstack/react-query-persist-client': 4.28.0_qfusmmwykmcbgdy37sd3cqxiry
-      '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-table': 8.5.30_biqbaboplfbrettd7655fr4n2y
       '@uniswap/token-lists': 1.0.0-beta.30
       '@vercel/analytics': 0.1.5_react@18.2.0
       '@wagmi/core': 0.10.10_ishaktedllcvpchijqdxe6xm7a
@@ -9309,7 +9309,7 @@ packages:
       nopt: 5.0.0
       npmlog: 5.0.1
       rimraf: 3.0.2
-      semver: 7.3.8
+      semver: 7.5.1
       tar: 6.1.15
     transitivePeerDependencies:
       - encoding
@@ -11287,18 +11287,6 @@ packages:
       react-dom: 18.2.0_react@18.2.0
       use-sync-external-store: 1.2.0_react@18.2.0
 
-  /@tanstack/react-table/8.5.0_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-WXzNd2HzoyQ3Dv2qiWrKJ0andJrxtghddNV1M85uQGyi2lGMpBnh2OLgafPHiVNHj3EseHFv+CED5unuX2Sv5Q==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      react: '>=16'
-      react-dom: '>=16'
-    dependencies:
-      '@tanstack/table-core': 8.5.0
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-    dev: false
-
   /@tanstack/react-table/8.5.30_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-CyzVzd6T5qO2aznyHsjlKgY5Zy9YYd61EtnJjI8o9ibgiurCAUN6QMGsvKPpdu+MVbqEtzkd3sjbhN2BNbj8Og==}
     engines: {node: '>=12'}
@@ -11309,11 +11297,6 @@ packages:
       '@tanstack/table-core': 8.5.30
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-    dev: false
-
-  /@tanstack/table-core/8.5.0:
-    resolution: {integrity: sha512-YqyY28DyYQy5tmhmR9BYilVvszJn5ivHHxtpFIRrtxyoJIRLFske6jV8+Pz2zV8wkucfTBubqpp/IqhYWoJ4fA==}
-    engines: {node: '>=12'}
     dev: false
 
   /@tanstack/table-core/8.5.30:

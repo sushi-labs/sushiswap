@@ -1,2 +1,2 @@
-export * from './LatestPosts'
-export * from './UpcomingEvents'
+export { LatestPosts } from './LatestPosts'
+export { UpcomingEvents } from './UpcomingEvents'
