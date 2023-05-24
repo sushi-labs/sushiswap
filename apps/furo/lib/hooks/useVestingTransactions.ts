@@ -14,7 +14,7 @@ interface UseVestingTransactions {
 }
 export const useVestingTransactions = ({ chainId, vestingId, enabled = true }: UseVestingTransactions) => {
   return useQuery({
-    queryKey: [],
+    queryKey: ['useVestingTransactions', { chainId, vestingId }],
     queryFn: async () => {
       if (!isSupportedChainId(chainId)) return null
 

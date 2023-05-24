@@ -149,7 +149,7 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
                 streams={streams}
                 vestings={vestings}
                 type={FuroTableType.INCOMING}
-                placeholder={<>No incoming streams found</>}
+                placeholder="No incoming streams found"
               />
             </Tab.Panel>
             <Tab.Panel>
@@ -159,7 +159,7 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
                 streams={streams}
                 vestings={vestings}
                 type={FuroTableType.OUTGOING}
-                placeholder={<>No outgoing streams found</>}
+                placeholder="No incoming streams found"
               />
             </Tab.Panel>
           </Tab.Panels>

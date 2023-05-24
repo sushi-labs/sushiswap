@@ -16,7 +16,7 @@ interface UseUserVestings {
 
 export const useUserVestings = ({ account }: UseUserVestings) => {
   return useQuery({
-    queryKey: ['useUserVestings'],
+    queryKey: ['useUserVestings', { account }],
     queryFn: async () => {
       if (!account) return null
 

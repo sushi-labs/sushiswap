@@ -16,7 +16,7 @@ interface UseUserStreams {
 
 export const useUserStreams = ({ account }: UseUserStreams) => {
   return useQuery({
-    queryKey: ['useUserStreams'],
+    queryKey: ['useUserStreams', { account }],
     queryFn: async () => {
       if (!account) return null
 
