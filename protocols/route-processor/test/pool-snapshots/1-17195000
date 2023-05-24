@@ -50158,20 +50158,6 @@
       "d": {
         "chainId": 1,
         "decimals": 8,
-        "symbol": "cUSDC",
-        "name": "Compound USD Coin",
-        "id": "1:0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56",
-        "isNative": false,
-        "isToken": true,
-        "address": "0xA2B47E3D5c44877cca798226B7B8118F9BFb7A56",
-        "tokenId": "0xA2B47E3D5c44877cca798226B7B8118F9BFb7A56_1"
-      }
-    },
-    {
-      "c": "Object",
-      "d": {
-        "chainId": 1,
-        "decimals": 8,
         "symbol": "cDAI",
         "name": "Compound Dai",
         "id": "1:0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
@@ -50179,6 +50165,20 @@
         "isToken": true,
         "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
         "tokenId": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 8,
+        "symbol": "cUSDC",
+        "name": "Compound USD Coin",
+        "id": "1:0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xA2B47E3D5c44877cca798226B7B8118F9BFb7A56",
+        "tokenId": "0xA2B47E3D5c44877cca798226B7B8118F9BFb7A56_1"
       }
     },
     {
@@ -50347,20 +50347,6 @@
       "d": {
         "chainId": 1,
         "decimals": 8,
-        "symbol": "WBTC",
-        "name": "Wrapped BTC",
-        "id": "1:0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-        "isNative": false,
-        "isToken": true,
-        "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-        "tokenId": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599_1"
-      }
-    },
-    {
-      "c": "Object",
-      "d": {
-        "chainId": 1,
-        "decimals": 8,
         "symbol": "renBTC",
         "name": "renBTC",
         "id": "1:0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D",
@@ -50368,6 +50354,20 @@
         "isToken": true,
         "address": "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D",
         "tokenId": "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 8,
+        "symbol": "WBTC",
+        "name": "Wrapped BTC",
+        "id": "1:0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+        "tokenId": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599_1"
       }
     },
     {
