@@ -42,7 +42,7 @@
     "test-root-app": "dotenv -- turbo run test --filter=root",
     "test-swap-app": "dotenv -- turbo run test --filter=swap",
     "test-earn-app": "dotenv -- turbo run test --filter=earn",
-    "test-furo-app": "dotenv -- turbo run test --filter=furo",
+    "test-furo-app": "dotenv -- turbo run e2e-test --filter=furo",
     "version-config": "dotenv -- turbo run build --filter=./config/* && changeset version",
     "version-packages": "dotenv -- turbo run build --filter=./packages/* && changeset version"
   },
