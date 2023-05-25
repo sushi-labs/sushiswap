@@ -3,8 +3,13 @@ import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { Button, Dots } from '@sushiswap/ui'
-import { Approve, useAccount, useBentoBoxTotals, useFuroStreamRouterContract } from '@sushiswap/wagmi'
+import { Dots } from '@sushiswap/ui'
+import {
+  getFuroStreamRouterContractConfig,
+  useAccount,
+  useBentoBoxTotals,
+  useFuroStreamRouterContract,
+} from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Address } from '@wagmi/core'
 import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
@@ -17,6 +22,10 @@ import { CreateMultipleStreamFormSchemaType } from './schema'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { bentoBoxV1Address } from '@sushiswap/bentobox'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { Button } from '@sushiswap/ui/future/components/button'
+
+const APPROVE_TAG = 'approve-multiple-streams'
 
 export const ExecuteMultipleSection: FC<{
   chainId: FuroStreamRouterChainId
@@ -144,41 +153,39 @@ export const ExecuteMultipleSection: FC<{
     enabled: Boolean(isValid && !isValidating && isReview),
   })
 
+  const approveAmounts = useMemo(
+    () =>
+      Object.values(summedAmounts).map((amount) => ({
+        amount,
+        contract: bentoBoxV1Address[chainId] as Address,
+      })),
+    []
+  )
+
   return (
-    <Approve
-      className="!items-end"
-      components={
-        <Approve.Components>
-          <Approve.Bentobox
-            id="furo-create-multiple-stream-approve-bentobox"
-            enabled={!!contract}
-            address={contract ? (contract.address as Address) : undefined}
-            onSignature={setSignature}
-          />
-          {Object.values(summedAmounts).map((amount, index) => (
-            <Approve.Token
-              id={`furo-create-multiple-stream-approve-token${index}`}
-              enabled={!!amount}
-              key={index}
-              amount={amount}
-              address={bentoBoxV1Address[chainId]}
-            />
-          ))}
-        </Approve.Components>
-      }
-      render={({ approved }) => {
-        return (
-          <Button
-            onClick={() => sendTransaction?.()}
-            type="submit"
-            loading={isWritePending}
-            disabled={!approved || !isValid || isValidating}
-            testdata-id='furo-create-multiple-streams-confirm-button'
-          >
-            {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Streams'}
-          </Button>
-        )
-      }}
-    />
+    <Checker.Connect size="xl" fullWidth>
+      <Checker.Network chainId={chainId} size="xl" fullWidth>
+        <Checker.ApproveBentobox
+          id="furo-create-multiple-stream-approve-bentobox"
+          chainId={chainId}
+          contract={getFuroStreamRouterContractConfig(chainId).address}
+          onSignature={setSignature}
+        >
+          <Checker.ApproveERC20Multiple id={`furo-create-multiple-stream-approve-token`} amounts={approveAmounts}>
+            <Checker.Success tag={APPROVE_TAG}>
+              <Button
+                onClick={() => sendTransaction?.()}
+                type="submit"
+                loading={isWritePending}
+                disabled={!isValid || isValidating}
+                testdata-id="furo-create-multiple-streams-confirm-button"
+              >
+                {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Streams'}
+              </Button>
+            </Checker.Success>
+          </Checker.ApproveERC20Multiple>
+        </Checker.ApproveBentobox>
+      </Checker.Network>
+    </Checker.Connect>
   )
 }

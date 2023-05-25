@@ -9,12 +9,14 @@ import { ApproveBentobox, ApproveBentoboxProps } from './ApproveBentobox'
 import { Success, SuccessProps } from './Success'
 import { CheckerProvider as Root, ProviderProps } from './Provider'
 import { ApproveERC20, ApproveERC20Props } from './ApproveERC20'
+import { ApproveERC20Multiple, ApproveERC20MultipleProps } from './ApproveERC20Multiple'
 
 export type CheckerProps = {
   Amounts: ComponentType<AmountsProps>
   Network: ComponentType<NetworkProps>
   Custom: FC<CustomProps>
   ApproveERC20: ComponentType<ApproveERC20Props>
+  ApproveERC20Multiple: ComponentType<ApproveERC20MultipleProps>
   Connect: ComponentType<ButtonProps<'button'>>
   ApproveBentobox: ComponentType<ApproveBentoboxProps>
   Success: FC<SuccessProps>
@@ -27,6 +29,7 @@ export const Checker: CheckerProps = {
   Network,
   Custom,
   ApproveERC20,
+  ApproveERC20Multiple,
   ApproveBentobox,
   Success,
   Root,
