@@ -41,8 +41,8 @@ export interface Token {
   symbol: string
 }
 
-export async function selectDate(testDataId: string, months: number, page: Page) {
-  await page.locator(`[testdata-id=${testDataId}]`).click()
+export async function selectDate(selector: string, months: number, page: Page) {
+  await page.locator(selector).click()
   for (let i = 0; i < months; i++) {
     await page.locator(`[aria-label="Next Month"]`).click()
   }
