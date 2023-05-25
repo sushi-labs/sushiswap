@@ -17,6 +17,8 @@ export const ActionsCell: FC<CellProps> = ({ row, index }) => {
 
   const onRemove = useCallback(() => {
     if (remove) {
+      console.log(index)
+
       remove(index)
     }
 

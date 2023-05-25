@@ -87,7 +87,7 @@ export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({ chain
               onClick={() => append({ ...CREATE_STREAM_DEFAULT_VALUES, id: nanoid() })}
               testdata-id="furo-create-multiple-streams-add-item-button"
             >
-              Add your first Stream
+              Add Stream
             </Button>
           )}
         </div>
