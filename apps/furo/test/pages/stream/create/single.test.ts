@@ -25,9 +25,9 @@ test.describe('Create single stream', () => {
     await createSingleStream(NATIVE_TOKEN, AMOUNT, RECIPIENT, page)
   })
 
-    test('USDC', async ({ page }) => {
-      await createSingleStream(USDC, '0.0001', RECIPIENT, page)
-    })
+  test('USDC', async ({ page }) => {
+    await createSingleStream(USDC, '0.0001', RECIPIENT, page)
+  })
 
   // TODO: bentobox
 })

@@ -30,6 +30,7 @@ type CurrencyInput = Omit<CurrencyInputBase, 'bottomPanel' | 'error' | 'helperTe
 }
 
 export const CurrencyInput: FC<CurrencyInput> = ({
+  id,
   account,
   fundSource,
   value,
@@ -77,6 +78,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
         value={value}
         onChange={onChange}
         currency={currency}
+        testdata-id={id ?? 'currency-input'}
         bottomPanel={
           bottomPanel ? (
             typeof bottomPanel === 'function' ? (

@@ -226,7 +226,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(({ chai
               <Checker.Amounts type="button" size="xl" chainId={chainId} amounts={[_totalAmount]}>
                 <Checker.ApproveBentobox
                   type="button"
-                  id="furo-create-single-vest-approve-bentobox"
+                  id="create-single-vest-approve-bentobox"
                   size="xl"
                   chainId={chainId as BentoBoxV1ChainId}
                   contract={getFuroVestingRouterContractConfig(chainId).address}
@@ -235,7 +235,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(({ chai
                   <Checker.ApproveERC20
                     type="button"
                     contract={bentoBoxV1Address[chainId]}
-                    id="furo-create-single-vest-approve-token"
+                    id="create-single-vest-approve-token"
                     size="xl"
                     amount={_totalAmount}
                   >
@@ -246,6 +246,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(({ chai
                         size="xl"
                         disabled={isWritePending || !isValid || isValidating}
                         onClick={() => sendTransaction?.()}
+                        testId='create-single-vest-confirmation'
                       >
                         {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vesting'}
                       </Button>
