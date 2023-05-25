@@ -52,13 +52,14 @@ export const Switch: FC<SwitchProps> = ({
         `flex items-center relative inline-flex flex-shrink-0 rounded-full cursor-pointer ease-in-out duration-200 ${id}`
       )}
       style={{ height, width }}
+      testdata-id={id ?? 'switch'}
     >
       <span
         id={id}
         className={classNames(
           checked ? 'translate-x-[32px]' : 'translate-x-[2px]',
           COLOR[color](checked),
-          `transition-colors transition-transform pointer-events-none p-1 rounded-full ease-in-out duration-200 inline-flex items-center justify-center`
+          'transition-colors transition-transform pointer-events-none p-1 rounded-full ease-in-out duration-200 inline-flex items-center justify-center'
         )}
         style={{
           height: height - 6,

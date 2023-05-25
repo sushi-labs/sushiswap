@@ -105,7 +105,7 @@ export const GradedVestingDetailsSection = () => {
                     value={value}
                     error={!!error?.message}
                     className="ring-offset-slate-900"
-                    testdata-id="create-single-vest-graded-payouts-input"
+                    testdata-id="create-single-vest-steps-input"
                   />
                   <Form.Error message={error?.message} />
                 </>

@@ -1,162 +1,258 @@
-// import { AddressZero } from '@ethersproject/constants'
-// import { expect, Page, test } from '@playwright/test'
-// import { Native } from '@sushiswap/currency'
-// import { depositToBento, depositToWrapped, selectDate, selectNetwork, timeout, Token } from 'test/utils'
+import { AddressZero } from '@ethersproject/constants'
+import { expect, Page, test } from '@playwright/test'
+import { Native, Token, Type, USDC_ADDRESS } from '@sushiswap/currency'
+import { selectDate, switchNetwork, timeout } from '../../../utils'
 
-// if (!process.env.CHAIN_ID) {
-//   throw new Error('CHAIN_ID env var not set')
-// }
+if (!process.env.CHAIN_ID) {
+  throw new Error('CHAIN_ID env var not set')
+}
 
-// const CHAIN_ID = parseInt(process.env.CHAIN_ID)
-// const RECIPIENT = '0x23defc2ca207e7fbd84ae43b00048fb5cb4db5b2'
-// const NATIVE_TOKEN: Token = {
-//   address: AddressZero,
-//   symbol: Native.onChain(CHAIN_ID).symbol,
-// }
-// const WNATIVE_TOKEN = {
-//   address: Native.onChain(CHAIN_ID).wrapped.address.toLowerCase(),
-//   symbol: Native.onChain(CHAIN_ID).wrapped.symbol ?? 'WETH',
-// }
-// const AMOUNT = '1'
-// const AMOUNT_OF_PERIODS = '5'
-// const CLIFF_AMOUNT = '10'
+enum GradedVestingFrequency {
+  WEEKLY = 'weekly',
+  BI_WEEKLY = 'bi-weekly',
+  MONTHLY = 'monthly',
+  QUARTERLY = 'quarterly',
+  YEARLY = 'yearly',
+}
 
-// test.describe('Create single vest', () => {
-//   test.beforeEach(async ({ page }) => {
-//     const url = (process.env.PLAYWRIGHT_URL as string).concat('/vesting/create/single')
-//     await page.goto(url)
-//     await selectNetwork(page, CHAIN_ID)
+const CHAIN_ID = parseInt(process.env.CHAIN_ID)
+const RECIPIENT = '0x23defc2ca207e7fbd84ae43b00048fb5cb4db5b2'
+const NATIVE_TOKEN = Native.onChain(CHAIN_ID)
+const USDC = new Token({
+  chainId: CHAIN_ID,
+  address: USDC_ADDRESS[CHAIN_ID as keyof typeof USDC_ADDRESS],
+  decimals: 18,
+  symbol: 'USDC',
+  name: 'USDC Stablecoin',
+})
 
-//     // Date
-//     await selectDate('vesting-start-date', 1, page)
+interface VestingArgs {
+  token: Type
+  amount: string
+  startInMonths: number
+  recipient: string
+  graded?: {
+    stepAmount: string
+    steps: number
+    frequency: GradedVestingFrequency
+  }
+  cliff?: {
+    amount: string
+    cliffEndsInMonths: number
+  }
+}
 
-//     // Recipient
-//     await page.locator(`[testdata-id=create-vest-recipient-input]`).fill(RECIPIENT)
+test.describe('Create single vest', () => {
+  test.beforeEach(async ({ page }) => {
+    const url = (process.env.PLAYWRIGHT_URL as string).concat('/vesting/create/single')
+    await page.goto(url)
+    page.setViewportSize({ width: 1920, height: 1080 });
+    await switchNetwork(page, CHAIN_ID)
+  })
 
-//     // Fund source
-//     await page.locator(`[testdata-id=fund-source-wallet-button]`).click()
+  test('Graded native', async ({ page }) => {
+    const args: VestingArgs = {
+      token: NATIVE_TOKEN,
+      amount: '10',
+      startInMonths: 1,
+      recipient: RECIPIENT,
+      graded: {
+        stepAmount: '1',
+        steps: 12,
+        frequency: GradedVestingFrequency.MONTHLY,
+      },
+    }
+    await handleGeneralDetails(page, args)
+    await handleGradeDetails(page, args)
+    await reviewAndConfirm(page, args)
+  })
 
-//     // Amount
-//     await page.locator('[testdata-id=create-vest-graded-step-amount-input]').fill(AMOUNT)
+  test('Cliff native', async ({ page }) => {
+    const args: VestingArgs = {
+      token: NATIVE_TOKEN,
+      amount: '10',
+      startInMonths: 1,
+      recipient: RECIPIENT,
+      graded: {
+        stepAmount: '1',
+        steps: 12,
+        frequency: GradedVestingFrequency.MONTHLY,
+      },
+      cliff: {
+        amount: '10',
+        cliffEndsInMonths: 3,
+      },
+    }
 
-//     // Amount of periods
-//     await page.locator('[testdata-id=furo-graded-vesting-step-amount-input]').fill(AMOUNT_OF_PERIODS)
-//     await page.locator('[testdata-id=furo-graded-vesting-step-amount-add-button]').click()
-//     await page.locator('[testdata-id=furo-graded-vesting-step-amount-minus-button]').click()
+    await handleGeneralDetails(page, args)
+    await handleGradeDetails(page, args)
+    await handleCliffDetails(page, args)
+    await reviewAndConfirm(page, args)
+  })
 
-//     // Edit period length
-//     await page.locator('[testdata-id=furo-select-period-length-button]').click()
-//     await page.locator('text=Bi-weekly').click()
-//   })
 
-//   test('Graded', async ({ page }) => {
-//     const totalAmount = (Number(AMOUNT) * Number(AMOUNT_OF_PERIODS)).toString()
+  test('Graded USDC', async ({ page }) => {
+    const args: VestingArgs = {
+      token: USDC,
+      amount: '0.00001',
+      startInMonths: 1,
+      recipient: RECIPIENT,
+      graded: {
+        stepAmount: '0.0001',
+        steps: 10,
+        frequency: GradedVestingFrequency.BI_WEEKLY,
+      },
+    }
+    await handleGeneralDetails(page, args)
+    await handleGradeDetails(page, args)
+    await reviewAndConfirm(page, args)
+  })
 
-//     await selectToken(page)
+  test('Cliff USDC', async ({ page }) => {
+    const args: VestingArgs = {
+      token: USDC,
+      amount: '0.00001',
+      startInMonths: 1,
+      recipient: RECIPIENT,
+      graded: {
+        stepAmount: '0.0001',
+        steps: 10,
+        frequency: GradedVestingFrequency.BI_WEEKLY,
+      },
+      cliff: {
+        amount: '0.00001',
+        cliffEndsInMonths: 3,
+      },
+    }
 
-//     await reviewAndConfirm(page, totalAmount)
-//   })
+    await handleGeneralDetails(page, args)
+    await handleGradeDetails(page, args)
+    await handleCliffDetails(page, args)
+    await reviewAndConfirm(page, args)
+  })
 
-//   test('Cliff', async ({ page }) => {
-//     const totalAmount = (Number(AMOUNT) * Number(AMOUNT_OF_PERIODS) + Number(CLIFF_AMOUNT)).toString()
 
-//     await selectToken(page)
+})
 
-//     // Add cliff
-//     await page.locator('[testdata-id=furo-enable-cliff-button-switch]').click()
-//     await selectDate('vesting-cliff-start-date', 1, page)
-//     await page.locator('[testdata-id=create-single-vest-input]').fill(CLIFF_AMOUNT)
+async function handleGeneralDetails(page: Page, args: VestingArgs) {
+  await selectToken(page, args.token)
+  await selectDate('[testdata-id=create-single-vest-start-date]', args.startInMonths, page)
+  await page.locator('[testdata-id=create-single-vest-recipient-input]').fill(args.recipient)
+}
 
-//     await reviewAndConfirm(page, totalAmount, false, true, true)
-//   })
+async function handleCliffDetails(page: Page, args: VestingArgs) {
+    
+  if (!args.cliff) {
+    throw new Error('Graded vesting args not provided')
+  }
+  const cliffSwitchSelector = page.locator('[testdata-id=cliff-toggle-switch]')
+  await expect(cliffSwitchSelector).toBeVisible()
+  await expect(cliffSwitchSelector).toBeEnabled()
+  await cliffSwitchSelector.click()
 
-//   test('Graded from bentobox', async ({ page }) => {
-//     const totalAmount = (Number(AMOUNT) * Number(AMOUNT_OF_PERIODS)).toString()
-//     depositToBento(totalAmount, CHAIN_ID)
+  const cliffAmountSelector = page.locator('[testdata-id=create-single-vest-cliff-amount-input]')
+  await expect(cliffAmountSelector).toBeVisible()
+  await expect(cliffAmountSelector).toBeEnabled()
+  await cliffAmountSelector.fill(args.amount)
 
-//     await selectToken(page, false)
+  await selectDate('[testdata-id=create-single-vest-cliff-date]', args.cliff.cliffEndsInMonths, page)
+}
 
-//     // Update funding for bentobox
-//     await page.locator(`[testdata-id=fund-source-bentobox-button]`).click()
+async function handleGradeDetails(page: Page, args: VestingArgs) {
+  if (!args.graded) {
+    throw new Error('Graded vesting args not provided')
+  }
+  const stepAmountSelector = page.locator('[testdata-id=create-single-vest-graded-amount-input]')
+  await expect(stepAmountSelector).toBeVisible()
+  await expect(stepAmountSelector).toBeEnabled()
+  await stepAmountSelector.fill(args.graded.stepAmount)
 
-//     await reviewAndConfirm(page, totalAmount, true, false, false)
-//   })
+  const stepSelector = page.locator('[testdata-id=create-single-vest-steps-input]')
+  await expect(stepSelector).toBeVisible()
+  await expect(stepSelector).toBeEnabled()
+  await stepSelector.fill(args.graded.steps.toString())
 
-//   test('Graded wrapped native', async ({ page }) => {
-//     const totalAmount = (Number(AMOUNT) * Number(AMOUNT_OF_PERIODS)).toString()
-//     depositToWrapped(totalAmount, CHAIN_ID)
+  const selectFrequencySelector = page.locator('[testdata-id=create-single-vest-graded-unit-type-button]')
+  await expect(selectFrequencySelector).toBeVisible()
+  await expect(selectFrequencySelector).toBeEnabled()
+  await selectFrequencySelector.click()
 
-//     await selectToken(page, false)
+  const desiredFrequencyoptionSelector = page.locator(
+    `[testdata-id=create-single-vest-graded-type-${args.graded.frequency.toLowerCase()}]`
+  )
+  await expect(desiredFrequencyoptionSelector).toBeVisible()
+  await expect(desiredFrequencyoptionSelector).toBeEnabled()
+  await desiredFrequencyoptionSelector.click()
+}
 
-//     // Update funding for bentobox
-//     await page.locator(`[testdata-id=fund-source-wallet-button]`).click()
+async function selectToken(page: Page, currency: Type) {
+  const tokenSelector = page.locator('[testdata-id=create-single-vest-select]')
+  await expect(tokenSelector).toBeVisible()
+  await expect(tokenSelector).toBeEnabled()
+  await tokenSelector.click({ force: true }) // it's missing the click area?! force required.
+  await page.fill('[testdata-id=create-single-vest-address-input]', currency.symbol as string)
+  const tokenRowSelector = page.locator(
+    `[testdata-id=create-single-vest-row-${currency.isNative ? AddressZero : currency.address.toLowerCase()}]`
+  )
+  await expect(tokenRowSelector).toBeVisible()
+  await expect(tokenRowSelector).toBeEnabled()
+  await tokenRowSelector.click()
+}
 
-//     await reviewAndConfirm(page, totalAmount, false, false, false)
-//   })
-// })
+async function reviewAndConfirm(page: Page, args: VestingArgs) {
+  // Review
+  await page.locator('[testdata-id=create-single-vesting-review-button]').click()
 
-// async function selectToken(page: Page, isNative = true) {
-//   // Token selector
-//   await page.locator(`[testdata-id=token-selector-button]`).click()
-//   await page.fill(
-//     `[testdata-id=create-single-vest-token-selector-dialog-address-input]`,
-//     isNative ? NATIVE_TOKEN.symbol : WNATIVE_TOKEN.symbol
-//   )
-//   await timeout(1000) // wait for the list to load instead of using timeout
-//   await page
-//     .locator(
-//       `[testdata-id=create-single-vest-token-selector-dialog-row-${
-//         isNative ? NATIVE_TOKEN.address : WNATIVE_TOKEN.address
-//       }]`
-//     )
-//     .click()
-// }
+//   //   // Check review
+//   //   await expect(page.locator('[testdata-id=furo-review-modal-funds-source]')).toContainText(
+//   //     fromBento ? 'bentobox' : 'wallet'
+//   //   )
 
-// async function reviewAndConfirm(page: Page, totalAmount: string, fromBento = false, isNative = true, isCliff = false) {
-//   // Review
-//   await page.locator('[testdata-id=furo-review-vesting-button]').click()
-
-//   // Check review
-//   await expect(page.locator('[testdata-id=furo-review-modal-funds-source]')).toContainText(
-//     fromBento ? 'bentobox' : 'wallet'
-//   )
 //   await expect(page.locator('[testdata-id=furo-review-modal-payment-per-period]')).toContainText(
-//     `${AMOUNT} ${isNative ? NATIVE_TOKEN.symbol : WNATIVE_TOKEN.symbol}`
+//     `${args.amount} ${args.token.symbol as string}`
 //   )
+//   const totalAmount = args.graded
+//     ? Number(args.amount) + (Number(args.graded.stepAmount) * Number(args.graded.steps)).toString()
+//     : args.amount
 //   await expect(page.locator('[testdata-id=furo-review-modal-total-amount]')).toContainText(totalAmount)
-//   await expect(page.locator('[testdata-id=furo-review-modal-period-length]')).toContainText('Bi-weekly')
-//   await expect(page.locator('[testdata-id=furo-review-modal-amount-of-periods]')).toContainText(AMOUNT_OF_PERIODS)
-//   // Check cliff amount if Cliff
-//   if (isCliff) {
-//     await expect(page.locator('[testdata-id=furo-review-modal-cliff-amount]')).toContainText(CLIFF_AMOUNT)
+//   if (args.graded) {
+//     await expect(page.locator('[testdata-id=furo-review-modal-period-length]')).toContainText(args.graded.frequency)
+//     await expect(page.locator('[testdata-id=furo-review-modal-amount-of-periods]')).toContainText(
+//       args.graded.steps.toString()
+//     )
 //   }
 
-//   // Approve BentoBox
-//   await page
-//     .locator('[testdata-id=furo-create-single-vest-approve-bentobox-button]')
-//     .click({ timeout: 1500 })
-//     .then(async () => {
-//       console.log(`BentoBox Approved`)
-//     })
-//     .catch(() => console.log('BentoBox already approved or not needed'))
-
-//   if (!isNative) {
-//     // Approve Token
-//     await page
-//       .locator('[testdata-id=furo-create-single-stream-approve-token-button]')
-//       .click({ timeout: 1500 })
-//       .then(async () => {
-//         console.log(`${WNATIVE_TOKEN.symbol} Approved`)
-//       })
-//       .catch(() => console.log(`${WNATIVE_TOKEN.symbol} already approved or not needed`))
+//   if (args.cliff) {
+//     await expect(page.locator('[testdata-id=furo-review-modal-cliff-amount]')).toContainText(args.cliff.amount)
 //   }
 
-//   // Confirm creation
-//   await timeout(1000) //confirm button can take some time to appear
-//   const confirmCreateVestingButton = page.locator('[testdata-id=furo-create-single-vest-confirm-button]')
-//   expect(confirmCreateVestingButton).toBeEnabled()
-//   await confirmCreateVestingButton.click()
+  // Approve BentoBox
+  await page
+    .locator('[testdata-id=create-single-vest-approve-bentobox]')
+    .click({ timeout: 1500 })
+    .then(async () => {
+      console.log('BentoBox Approved')
+    })
+    .catch(() => console.log('BentoBox already approved or not needed'))
 
-//   const expectedText = new RegExp(`Created .* ${isNative ? NATIVE_TOKEN.symbol : WNATIVE_TOKEN.symbol} vesting`)
-//   await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
-// }
+  if (!args.token.isNative) {
+    // Approve Token
+    await page
+      .locator('[testdata-id=create-single-vest-approve-token]')
+      .click({ timeout: 1500 })
+      .then(async () => {
+        console.log(`${args.token.symbol} Approved`)
+      })
+      .catch(() => console.log(`${args.token.symbol} already approved or not needed`))
+  }
+
+  // Confirm creation
+  await timeout(1_500) // FIXME: should be removed, but something isn't updated yet
+  const confirmCreateVestingButton = page.locator('[testdata-id=create-single-vest-confirmation-button]')
+  await expect(confirmCreateVestingButton).toBeVisible()
+  await expect(confirmCreateVestingButton).toBeEnabled()
+  await confirmCreateVestingButton.click()
+
+  const expectedText = new RegExp(`Created .* ${args.token.symbol} vesting`)
+  await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
+}
