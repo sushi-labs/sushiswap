@@ -15,9 +15,11 @@ interface UseBalanceParams {
 }
 
 export const queryFnUseBalances = async ({ chainId, currencies, account }: Omit<UseBalanceParams, 'enabled'>) => {
+  console.log({ account })
   if (!account) return null
-
+  console.log('before fetchBalance')
   const native = await fetchBalance({ address: account, chainId, formatUnits: 'wei' })
+  console.log('after fetchBalance', native)
   const [validatedTokens, validatedTokenAddresses] = currencies.reduce<[Token[], Address[]]>(
     (acc, currencies) => {
       if (chainId && currencies && isAddress(currencies.wrapped.address)) {
