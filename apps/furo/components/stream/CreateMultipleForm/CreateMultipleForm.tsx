@@ -1,8 +1,5 @@
-import { ArrowCircleLeftIcon } from '@heroicons/react/outline'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useIsMounted } from '@sushiswap/hooks'
-import { classNames, Form } from '@sushiswap/ui'
-import Link from 'next/link'
+import { Form } from '@sushiswap/ui'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ImportErrorProvider } from '../../vesting/CreateMultipleForm/ImportErrorContext'
@@ -17,13 +14,12 @@ import { CreateStreamsTableSection } from './CreateStreamsTableSection'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
 
 export const FORM_ERROR = 'FORM_ERROR' as const
-export type FormErrors = { [FORM_ERROR]?: never }
 
 export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
   const [review, setReview] = useState(false)
   const methods = useForm<CreateMultipleStreamFormSchemaType>({
     resolver: zodResolver(CreateMultipleStreamModelSchema),
-    mode: 'onBlur',
+    mode: 'onSubmit',
     defaultValues: {
       streams: [],
     },
@@ -52,7 +48,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
   return (
     <>
       <FormProvider {...methods}>
-        <Form header="Create Streams">
+        <Form header="Create Streams" onSubmit={methods.handleSubmit(onReview)}>
           <div className="flex flex-col gap-14">
             <ImportErrorProvider<CreateMultipleStreamFormSchemaType>>
               <ImportZoneSection chainId={chainId} />

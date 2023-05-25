@@ -75,7 +75,6 @@ export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHE
               />
             )}
           </TokenSelector>
-          <Form.Error message={error?.message} />
         </>
       )}
     />
