@@ -16,7 +16,13 @@ export const CreateStreamBaseSchema = z.object({
   fundSource: z.string(),
 })
 
-export const CreateStreamBaseSchemaPartial = CreateStreamBaseSchema.partial()
+export const CreateStreamBaseSchemaPartial = CreateStreamBaseSchema.partial({
+  dates: true,
+  recipient: true,
+  currency: true,
+  amount: true,
+  fundSource: true,
+})
 
 export const CreateStreamFormSchema = CreateStreamBaseSchemaPartial
 export const CreateStreamModelSchema = CreateStreamBaseSchema

@@ -5,6 +5,10 @@ import { useNetwork } from '@sushiswap/wagmi'
 
 import { Layout } from '../../../components'
 import { CreateForm } from '../../../components/stream'
+import Link from 'next/link'
+import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { ArrowLeftIcon } from '@heroicons/react/solid'
+import React from 'react'
 
 const SingleStream = () => {
   const { chain } = useNetwork()
@@ -14,9 +18,24 @@ const SingleStream = () => {
     <>
       <NextSeo title="New Stream" />
       <Layout>
-        <div className="mt-6">
-          <CreateForm chainId={chainId} />
-        </div>
+        <Link
+          className="group flex gap-4 items-center mb-2"
+          href={{
+            pathname: '/stream/create',
+          }}
+          shallow={true}
+        >
+          <IconButton
+            icon={ArrowLeftIcon}
+            iconProps={{
+              width: 24,
+              height: 24,
+              transparent: true,
+            }}
+          />
+          <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">Go back</span>
+        </Link>
+        <CreateForm chainId={chainId} />
       </Layout>
     </>
   )

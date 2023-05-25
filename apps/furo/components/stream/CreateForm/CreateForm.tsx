@@ -29,7 +29,7 @@ export const CreateForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }
     defaultValues: CREATE_STREAM_DEFAULT_VALUES,
   })
 
-  const { control, reset } = methods
+  const { reset } = methods
 
   useEffect(() => {
     reset()

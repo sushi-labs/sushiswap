@@ -45,6 +45,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = withChec
     'recipient',
     'dates',
   ])
+
   const _amount = useMemo(
     () => (currency ? tryParseAmount(amount, ZTokenToToken.parse(currency)) : undefined),
     [amount, currency]
@@ -182,7 +183,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = withChec
                     loading={isWritePending}
                     disabled={!formValid}
                     onClick={() => sendTransaction?.()}
-                    testId='create-single-stream-confirmation'
+                    testId="create-single-stream-confirmation"
                   >
                     {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Stream'}
                   </Button>

@@ -1,7 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { classNames, Input } from '@sushiswap/ui'
 import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
 import React, { FC, useEffect, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -9,6 +8,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../../../lib/zod'
 import { CreateMultipleStreamBaseSchemaFormErrorsType, CreateMultipleStreamFormSchemaType } from '../../schema'
 import { CellProps } from './types'
+import { Input } from '@sushiswap/ui/future/components/input'
 
 export const AmountCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHEREUM }) => {
   const { address } = useAccount()
@@ -44,25 +44,24 @@ export const AmountCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHERE
     <Controller
       control={control as never}
       name={`streams.${index}.amount`}
-      render={({ field: { onChange, value, onBlur }, fieldState: { error } }) => {
+      render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
         return (
-          <div className="py-2">
+          <>
             <Input.Numeric
-              variant="unstyled"
-              onBlur={onBlur}
-              value={value || ''}
-              placeholder="0.00"
               onUserInput={onChange}
-              testdata-id={`create-multiple-streams-amount-input-${index}`}
-              className={classNames(
-                error?.message || errors?.['FORM_ERRORS']?.[index]?.['amount']?.message
-                  ? '!border-red'
-                  : 'border-transparent border-none',
-                'border-0 !border-b-[1px] py-2 flex items-center',
-                'without-ring bg-transparent text-sm font-semibold text-slate-50 !px-0 flex items-center'
-              )}
+              isError={Boolean(error?.message || errors?.['FORM_ERRORS']?.[index]?.['amount']?.message)}
+              caption={error?.message || errors?.['FORM_ERRORS']?.[index]?.['amount']?.message}
+              onBlur={onBlur}
+              name={name}
+              value={value}
+              id="create-stream-amount-input"
+              label={
+                <>
+                  Amount<sup>*</sup>
+                </>
+              }
             />
-          </div>
+          </>
         )
       }}
     />

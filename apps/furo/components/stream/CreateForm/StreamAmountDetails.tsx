@@ -1,13 +1,12 @@
 import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { Form, Select } from '@sushiswap/ui'
+import { Form } from '@sushiswap/ui'
 import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
 import React, { FC, useCallback, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { useFundSourceFromZFundSource, useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
-import { CurrencyInputBase } from '../../CurrencyInput'
 import { FormErrors } from './CreateForm'
 import { FundSourceOption } from './FundSourceOption'
 import { CreateStreamFormSchemaType } from './schema'
@@ -83,7 +82,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
         <Controller
           control={control}
           name="currency"
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
+          render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
             <>
               <TokenSelector
                 id={'create-single-stream'}
@@ -93,7 +92,12 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
               >
                 {({ setOpen }) => (
                   <Input.Select
-                    label="Token"
+                    onBlur={onBlur}
+                    label={
+                      <>
+                        Token<sup>*</sup>
+                      </>
+                    }
                     value={value?.address}
                     onClick={() => setOpen(true)}
                     id={'create-single-stream-select'}
