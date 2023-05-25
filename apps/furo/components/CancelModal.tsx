@@ -110,7 +110,12 @@ export const CancelModal: FC<CancelModalProps> = ({
               {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
             </span>{' '}
             to{' '}
-            <a className="text-blue font-semibold" href={Chain.from(stream.chainId).getAccountUrl(stream.createdBy.id)}>
+            <a
+              target="_blank"
+              className="text-blue font-semibold"
+              href={Chain.from(stream.chainId).getAccountUrl(stream.createdBy.id)}
+              rel="noreferrer"
+            >
               {shortenAddress(stream?.createdBy.id)}
             </a>
             .

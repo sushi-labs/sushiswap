@@ -127,6 +127,7 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId, onBack }) => {
                       <Table.td>
                         {el.recipient && isAddress(el.recipient) && (
                           <Link.External
+                            target="_blank"
                             className="flex items-center gap-1 text-blue hover:underline-none hover:text-blue-400"
                             href={Chain.from(chainId)?.getAccountUrl(el.recipient)}
                           >

@@ -1,4 +1,4 @@
-import { classNames, NetworkIcon } from '@sushiswap/ui'
+import { classNames, NetworkIcon, ProgressColor, Typography } from '@sushiswap/ui'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { FC, useMemo } from 'react'
@@ -7,7 +7,7 @@ import { createScheduleRepresentation, NextPaymentTimer, WithdrawModal } from '.
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
 import Link from 'next/link'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
-import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon } from '@heroicons/react/solid'
+import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, CheckCircleIcon } from '@heroicons/react/solid'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
@@ -22,8 +22,14 @@ import { ChainId } from '@sushiswap/chain'
 import { getFuroVestingContractConfig } from '@sushiswap/wagmi'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { DownloadIcon, XIcon } from '@heroicons/react/outline'
-import { useVesting, useVestingBalance, useVestingTransactions } from '../../lib'
+import { FuroStatus, useVesting, useVestingBalance, useVestingTransactions } from '../../lib'
 import { queryParamsSchema } from '../../lib/zod'
+import { Carousel } from '@sushiswap/ui/future/components/Carousel'
+import ProgressBar from '@sushiswap/ui/progressbar/ProgressBar'
+import { Timer } from '../../components/Timer'
+import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
+import { CheckMarkIcon } from '@sushiswap/ui/future/components/icons/CheckmarkIcon'
+import Container from '@sushiswap/ui/future/components/Container'
 
 const VestingPage = () => {
   return (
@@ -77,6 +83,14 @@ const _VestingPage: FC = () => {
   }, [balance, vesting?.remainingAmount, vesting?.totalAmount, withdrawnAmount])
 
   const isLoading = isTxLoading || isVestingLoading || isBalanceLoading
+
+  const defaultSlide: number = useMemo(() => {
+    if (!schedule) return 0
+
+    const now = Date.now()
+    const filtered = schedule.findIndex((el) => el.date.getTime() > now)
+    return Math.max(filtered, 0)
+  }, [schedule])
 
   if (isLoading) {
     return (
@@ -161,7 +175,7 @@ const _VestingPage: FC = () => {
     return (
       <>
         <NextSeo title={`Stream #${vestingId}`} />
-        <Layout maxWidth="4xl">
+        <Container maxWidth="4xl" className="mt-10 xl:mt-20 lg:mx-auto px-4 h-full">
           <div className="flex flex-col gap-2">
             <Link
               className="group flex gap-4 items-center mb-2"
@@ -252,6 +266,83 @@ const _VestingPage: FC = () => {
             </div>
           </div>
           <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
+        </Container>
+        <div className="pl-4 xl:pl-0">
+          <Carousel
+            defaultSlide={defaultSlide}
+            containerWidth={880}
+            slides={schedule ?? []}
+            render={(slide, i) => {
+              const now = vesting.status === FuroStatus.CANCELLED ? vesting.modifiedAtTimestamp.getTime() : Date.now()
+              const unlocked = slide.date.getTime() < now
+              const end = slide.date.getTime()
+              const length = slide.date.getTime() - (schedule?.[i - 1]?.date.getTime() || 0)
+              const start = end - length
+              const progress = Math.min(Math.max(now - start, 0) / (end - start), 1)
+
+              return (
+                <div>
+                  <div className="relative bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-all rounded-2xl p-7 overflow-hidden w-[320px]">
+                    <span className="uppercase text-xs font-semibold dark:text-slate-400 text-gray-600">
+                      {slide.id}
+                    </span>
+                    <h1 className="text-2xl font-semibold dark:text-white text-gray-900 truncate">
+                      {slide.amount?.toSignificant(6)}
+                      <span className="text-sm text-gray-600 dark:text-slate-400">{slide.amount.currency.symbol}</span>
+                    </h1>
+                    <div className="flex flex-col gap-2 items-center py-7">
+                      <div className="flex min-w-[44px]">
+                        <Currency.Icon currency={slide.amount.currency} width={56} height={56} />
+                      </div>
+                    </div>
+                    <div className="flex justify-center gap-1 mb-4">
+                      <Timer
+                        date={
+                          vesting.status === FuroStatus.CANCELLED
+                            ? vesting.modifiedAtTimestamp
+                            : new Date(slide.date.getTime())
+                        }
+                      >
+                        {({ hours, days, minutes, seconds }) => (
+                          <div className="flex justify-center gap-4 text-slate-200">
+                            <div className="flex flex-col text-center">
+                              <span className="font-medium text-gray-900 dark:text-slate-200">{days}</span>
+                              <span className="text-xs text-gray-500 dark:text-slate-400">days</span>
+                            </div>
+                            <div className="flex flex-col text-center">
+                              <span className="font-medium text-gray-900 dark:text-slate-200">{hours}</span>
+                              <span className="text-xs text-gray-500 dark:text-slate-400">hours</span>
+                            </div>
+                            <div className="flex flex-col text-center">
+                              <span className="font-medium text-gray-900 dark:text-slate-200">{minutes}</span>
+                              <span className="text-xs text-gray-500 dark:text-slate-400">min</span>
+                            </div>
+                            <div className="flex flex-col text-center">
+                              <span className="font-medium text-gray-900 dark:text-slate-200">{seconds}</span>
+                              <span className="text-xs text-gray-500 dark:text-slate-400">sec</span>
+                            </div>
+                          </div>
+                        )}
+                      </Timer>
+                    </div>
+                    {unlocked && (
+                      <div className="flex gap-1 absolute top-3 right-3">
+                        <CheckCircleIcon className="text-green" width={24} height={24} />
+                      </div>
+                    )}
+                    <ProgressBar
+                      className="h-6"
+                      progress={progress}
+                      color={progress === 1 ? ProgressColor.GREEN : ProgressColor.BLUE}
+                    />
+                  </div>
+                </div>
+              )
+            }}
+          />
+        </div>
+
+        <Container maxWidth="4xl" className="mt-4 lg:mx-auto px-4 h-full pb-4 mb-4 lg:mb-40">
           <div className="flex flex-col lg:grid lg:grid-cols-[460px_372px] justify-center gap-8 lg:gap-y-6">
             <div className="flex justify-center">
               <div className="shadow-lg relative w-[460px] h-[290px] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl">
@@ -417,7 +508,7 @@ const _VestingPage: FC = () => {
               </div>
             </div>
           </div>
-        </Layout>
+        </Container>
       </>
     )
   }

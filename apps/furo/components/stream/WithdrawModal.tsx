@@ -115,7 +115,12 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
             </span>{' '}
             available for withdrawal. <br />
             Any withdrawn amount will be sent to{' '}
-            <a className="text-blue font-semibold" href={Chain.from(stream.chainId).getAccountUrl(stream.recipient.id)}>
+            <a
+              target="_blank"
+              className="text-blue font-semibold"
+              href={Chain.from(stream.chainId).getAccountUrl(stream.recipient.id)}
+              rel="noreferrer"
+            >
               {shortenAddress(stream.recipient.id)}
             </a>
           </div>

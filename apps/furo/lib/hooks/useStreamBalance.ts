@@ -39,7 +39,7 @@ export function useStreamBalance({ chainId, streamId, token, enabled = true }: U
         base: JSBI.BigInt(rebase[1]),
       })
     },
-    refetchInterval: 2000,
+    refetchInterval: 10000,
     enabled: Boolean(enabled && streamId && token),
   })
 }

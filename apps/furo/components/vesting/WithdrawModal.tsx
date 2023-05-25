@@ -78,7 +78,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
       ) : (
         <Button
           fullWidth
-          size="md"
+          size="xl"
           variant="filled"
           disabled={!address || !vesting?.canWithdraw(address) || !balance || !balance?.greaterThan(0)}
           onClick={() => {
@@ -109,7 +109,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
                 }
               >
                 <Button
-                  size="md"
+                  size="xl"
                   variant="filled"
                   fullWidth
                   disabled={isWritePending}

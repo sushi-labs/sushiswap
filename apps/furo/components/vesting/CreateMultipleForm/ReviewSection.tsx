@@ -188,6 +188,7 @@ const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
       <Table.td>
         {recipient && (
           <UILink.External
+            target="_blank"
             className="flex items-center gap-1 text-blue hover:underline-none hover:text-blue-400"
             href={Chain.from(chainId)?.getAccountUrl(recipient) ?? ''}
           >
