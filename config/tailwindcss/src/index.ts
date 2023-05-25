@@ -1,12 +1,7 @@
 import defaultTheme from 'tailwindcss/defaultTheme'
 
 const config = {
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/aspect-ratio'),
-    require('@tailwindcss/line-clamp'),
-    require('@tailwindcss/typography'),
-  ],
+  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/aspect-ratio'), require('@tailwindcss/typography')],
   theme: {
     screens: {
       ...defaultTheme.screens,

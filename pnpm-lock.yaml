@@ -1286,7 +1286,6 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@tailwindcss/aspect-ratio': ^0.4.0
       '@tailwindcss/forms': ^0.5.1
-      '@tailwindcss/line-clamp': ^0.4.0
       '@tailwindcss/typography': ^0.5.2
       tailwindcss: 3.3.2
       tsup: 6.5.0
@@ -1294,7 +1293,6 @@ importers:
     dependencies:
       '@tailwindcss/aspect-ratio': 0.4.2_tailwindcss@3.3.2
       '@tailwindcss/forms': 0.5.3_tailwindcss@3.3.2
-      '@tailwindcss/line-clamp': 0.4.4_tailwindcss@3.3.2
       '@tailwindcss/typography': 0.5.9_tailwindcss@3.3.2
       tailwindcss: 3.3.2
     devDependencies:
@@ -2564,7 +2562,6 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@tailwindcss/aspect-ratio': 0.4.2
       '@tailwindcss/forms': 0.5.3
-      '@tailwindcss/line-clamp': 0.4.4
       '@tailwindcss/typography': 0.5.9
       '@tanstack/react-table': 8.5.30
       '@types/react': 18.2.6
@@ -2609,7 +2606,6 @@ importers:
       '@sushiswap/token-lists': link:../token-lists
       '@tailwindcss/aspect-ratio': 0.4.2_tailwindcss@3.3.2
       '@tailwindcss/forms': 0.5.3_tailwindcss@3.3.2
-      '@tailwindcss/line-clamp': 0.4.4_tailwindcss@3.3.2
       '@tailwindcss/typography': 0.5.9_tailwindcss@3.3.2
       '@tanstack/react-table': 8.5.30_biqbaboplfbrettd7655fr4n2y
       classnames: 2.3.2
@@ -11139,14 +11135,6 @@ packages:
       tailwindcss: '>=3.0.0 || >= 3.0.0-alpha.1'
     dependencies:
       mini-svg-data-uri: 1.4.4
-      tailwindcss: 3.3.2
-    dev: false
-
-  /@tailwindcss/line-clamp/0.4.4_tailwindcss@3.3.2:
-    resolution: {integrity: sha512-5U6SY5z8N42VtrCrKlsTAA35gy2VSyYtHWCsg1H87NU1SXnEfekTVlrga9fzUDrrHcGi2Lb5KenUWb4lRQT5/g==}
-    peerDependencies:
-      tailwindcss: '>=2.0.0 || >=3.0.0 || >=3.0.0-alpha.1'
-    dependencies:
       tailwindcss: 3.3.2
     dev: false
 
