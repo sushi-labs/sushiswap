@@ -520,7 +520,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
-      '@tailwindcss/typography': ^0.5.2
+      '@tailwindcss/typography': 0.5.9
       '@types/node': 18.11.18
       '@types/qs': ^6.9.7
       '@types/react': 18.2.6
@@ -690,7 +690,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
-      '@tailwindcss/typography': ^0.5.2
+      '@tailwindcss/typography': 0.5.9
       '@types/node': 18.11.18
       '@types/qs': ^6.9.7
       '@types/react': 18.2.6
@@ -1284,9 +1284,9 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
-      '@tailwindcss/aspect-ratio': ^0.4.0
-      '@tailwindcss/forms': ^0.5.1
-      '@tailwindcss/typography': ^0.5.2
+      '@tailwindcss/aspect-ratio': 0.4.2
+      '@tailwindcss/forms': 0.5.3
+      '@tailwindcss/typography': 0.5.9
       tailwindcss: 3.3.2
       tsup: 6.5.0
       typescript: 5.0.4

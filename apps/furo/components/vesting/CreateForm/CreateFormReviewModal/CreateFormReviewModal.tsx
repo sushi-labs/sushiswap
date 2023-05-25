@@ -2,10 +2,9 @@ import { isAddress } from '@ethersproject/address'
 import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
 import { FundSource } from '@sushiswap/hooks'
-import { Button, classNames, Dots, Typography } from '@sushiswap/ui'
-import { Approve, useBentoBoxTotal, useFuroVestingRouterContract } from '@sushiswap/wagmi'
+import { classNames, Dots, Typography } from '@sushiswap/ui'
+import { getFuroVestingRouterContractConfig, useBentoBoxTotal, useFuroVestingRouterContract } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { Address } from '@wagmi/core'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useAccount } from '@sushiswap/wagmi'
@@ -18,7 +17,12 @@ import { CreateVestingFormSchemaType } from '../schema'
 import CreateFormReviewModalBase from './CreateFormReviewModalBase'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroVestingRouterChainId } from '@sushiswap/furo'
-import { bentoBoxV1Address } from '@sushiswap/bentobox'
+import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+
+const APPROVE_TAG = 'createVestingSingle'
 
 interface Item {
   title: string
@@ -59,7 +63,7 @@ interface CreateFormReviewModal {
   children({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }): ReactNode
 }
 
-const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children }) => {
+const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(({ chainId, children }) => {
   const { address } = useAccount()
   const contract = useFuroVestingRouterContract(chainId)
   const {
@@ -67,6 +71,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
     formState: { isValid, isValidating },
   } = useFormContext<CreateVestingFormSchemaType>()
 
+  const { approved } = useApproved(APPROVE_TAG)
   const [open, setOpen] = useState(false)
   const [signature, setSignature] = useState<Signature>()
 
@@ -202,7 +207,8 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
         _stepPercentage &&
         _totalAmount &&
         stepPayouts &&
-        rebase
+        rebase &&
+        approved
     ),
   })
 
@@ -211,45 +217,45 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
       <>
         {children({ setOpen, isWritePending })}
         <CreateFormReviewModalBase chainId={chainId} open={open} setOpen={setOpen}>
-          <Approve
-            components={
-              <Approve.Components>
-                <Approve.Bentobox
+          <Checker.Connect type="button" size="xl">
+            <Checker.Network type="button" size="xl" chainId={chainId}>
+              <Checker.Amounts type="button" size="xl" chainId={chainId} amounts={[_totalAmount]}>
+                <Checker.ApproveBentobox
+                  type="button"
                   id="furo-create-single-vest-approve-bentobox"
-                  fullWidth
-                  enabled={isValid && !isValidating}
-                  address={contract ? (contract.address as Address) : undefined}
+                  size="xl"
+                  chainId={chainId as BentoBoxV1ChainId}
+                  contract={getFuroVestingRouterContractConfig(chainId).address}
                   onSignature={setSignature}
-                />
-                <Approve.Token
-                  id="furo-create-single-vest-approve-token"
-                  fullWidth
-                  enabled={isValid && !isValidating && !!_totalAmount}
-                  amount={_totalAmount}
-                  address={bentoBoxV1Address[chainId]}
-                />
-              </Approve.Components>
-            }
-            render={({ approved }) => {
-              return (
-                <Button
-                  fullWidth
-                  size="md"
-                  variant="filled"
-                  color="blue"
-                  disabled={isWritePending || !approved || !isValid || isValidating}
-                  onClick={() => sendTransaction?.()}
                 >
-                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vesting'}
-                </Button>
-              )
-            }}
-          />
+                  <Checker.ApproveERC20
+                    type="button"
+                    contract={bentoBoxV1Address[chainId]}
+                    id="furo-create-single-vest-approve-token"
+                    size="xl"
+                    amount={_totalAmount}
+                  >
+                    <Checker.Success tag={APPROVE_TAG}>
+                      <Button
+                        type="button"
+                        fullWidth
+                        size="xl"
+                        disabled={isWritePending || !isValid || isValidating}
+                        onClick={() => sendTransaction?.()}
+                      >
+                        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vesting'}
+                      </Button>
+                    </Checker.Success>
+                  </Checker.ApproveERC20>
+                </Checker.ApproveBentobox>
+              </Checker.Amounts>
+            </Checker.Network>
+          </Checker.Connect>
         </CreateFormReviewModalBase>
       </>
     ),
-    [_totalAmount, chainId, children, contract, isValid, isValidating, isWritePending, open, sendTransaction]
+    [_totalAmount, chainId, children, isValid, isValidating, isWritePending, open, sendTransaction]
   )
-}
+})
 
 export default CreateFormReviewModal

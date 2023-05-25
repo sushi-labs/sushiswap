@@ -52,7 +52,7 @@ export const useTokenApproval = ({
   const { config } = usePrepareContractWrite({
     chainId: amount?.currency.chainId,
     abi: erc20ABI,
-    address: amount?.currency?.wrapped.address as Address,
+    address: amount?.currency?.wrapped?.address as Address,
     functionName: 'approve',
     args: [
       spender as Address,

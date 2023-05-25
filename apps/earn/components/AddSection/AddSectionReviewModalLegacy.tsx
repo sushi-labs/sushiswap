@@ -126,15 +126,11 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
             BigNumber.from(deadline.toHexString()),
           ] as const
 
-          const gasLimit = await contract.estimateGas.addLiquidityETH(...args, {
-            value,
-          })
           setRequest({
             from: address,
             to: contract.address,
             data: contract.interface.encodeFunctionData('addLiquidityETH', args),
             value,
-            gasLimit: calculateGasMargin(gasLimit),
           })
         } else {
           const args = [
@@ -147,17 +143,14 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
             address,
             BigNumber.from(deadline.toHexString()),
           ] as const
-
-          const gasLimit = await contract.estimateGas.addLiquidity(...args, {})
           setRequest({
             from: address,
             to: contract.address,
             data: contract.interface.encodeFunctionData('addLiquidity', args),
-            gasLimit: calculateGasMargin(gasLimit),
           })
         }
       } catch (e: unknown) {
-        //
+        console.error(e)
       }
     },
     [token0, token1, chain?.id, contract, input0, input1, address, minAmount0, minAmount1, deadline]
@@ -169,8 +162,8 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     onSettled,
     onSuccess: close,
     enabled: approved,
+    gasMargin: true,
   })
-
   return (
     <AddSectionReviewModal
       chainId={chainId as BentoBoxV1ChainId}
@@ -179,7 +172,14 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
       open={open}
       close={close}
     >
-      <Button size="xl" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
+      <Button
+        size="xl"
+        disabled={isWritePending}
+        loading={Boolean(!sendTransaction)}
+        fullWidth
+        onClick={() => sendTransaction?.()}
+        testId="confirm-add-v2-liquidity"
+      >
         {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
       </Button>
     </AddSectionReviewModal>
