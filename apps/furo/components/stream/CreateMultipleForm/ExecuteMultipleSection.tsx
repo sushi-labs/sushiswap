@@ -171,7 +171,8 @@ export const ExecuteMultipleSection: FC<{
           <Button
             onClick={() => sendTransaction?.()}
             type="submit"
-            disabled={isWritePending || !approved || !isValid || isValidating}
+            loading={isWritePending}
+            disabled={!approved || !isValid || isValidating}
             testdata-id='furo-create-multiple-streams-confirm-button'
           >
             {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Streams'}

@@ -155,7 +155,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
                   onBlur={onBlur}
                   name={name}
                   value={value}
-                  id="create-stream-input-amount"
+                  id="create-stream-amount-input"
                   label={
                     <>
                       Amount<sup>*</sup>
