@@ -70,6 +70,7 @@ export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHE
                   variant="empty"
                   className={classNames('!px-0 text-left !text-slate-50')}
                   type="button"
+                  testdata-id={`vesting-currency-selector-row-${index}-button`}
                 >
                   <span className="text-sm font-medium truncate">{_currency?.symbol || 'Select'}</span>
                   <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />

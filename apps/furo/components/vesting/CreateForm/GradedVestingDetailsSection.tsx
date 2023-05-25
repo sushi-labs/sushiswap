@@ -121,7 +121,7 @@ export const GradedVestingDetailsSection = () => {
               <>
                 <Select
                   button={
-                    <Select.Button error={!!error?.message} className="ring-offset-slate-900" testdata-id='create-single-vest-graded-unit-type-button'>
+                    <Select.Button error={!!error?.message} className="ring-offset-slate-900" testdata-id='create-single-vest-graded-frequency-selection-button'>
                       {value.label}
                     </Select.Button>
                   }
@@ -133,7 +133,7 @@ export const GradedVestingDetailsSection = () => {
                 >
                   <Select.Options>
                     {Object.values(stepConfigurations).map((stepConfig) => (
-                      <Select.Option key={stepConfig.label} value={stepConfig}  testdata-id={`create-single-vest-graded-type-${stepConfig.label.toLowerCase()}`}>
+                      <Select.Option key={stepConfig.label} value={stepConfig} testdata-id={`create-single-vest-graded-type-${stepConfig.label.toLowerCase()}`}>
                         {stepConfig.label}
                       </Select.Option>
                     ))}

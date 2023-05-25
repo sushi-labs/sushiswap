@@ -171,14 +171,14 @@ export const ExecuteMultipleSection: FC<{
       components={
         <Approve.Components>
           <Approve.Bentobox
-            id="furo-create-multiple-vest-approve-bentobox"
+            id="multiple-vest-approve-bentobox"
             enabled={!!contract}
             address={contract ? (contract.address as Address) : undefined}
             onSignature={setSignature}
           />
           {Object.values(summedAmounts).map((amount, index) => (
             <Approve.Token
-              id={`furo-create-multiple-vest-approve-token${index}`}
+              id={`multiple-vest-approve-token${index}`}
               enabled={!!amount}
               key={index}
               amount={amount}
@@ -193,6 +193,7 @@ export const ExecuteMultipleSection: FC<{
             type="submit"
             onClick={() => sendTransaction?.()}
             disabled={isWritePending || !approved || !isValid || isValidating}
+            testdata-id='multiple-vest-confirm-button'
           >
             {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vests'}
           </Button>

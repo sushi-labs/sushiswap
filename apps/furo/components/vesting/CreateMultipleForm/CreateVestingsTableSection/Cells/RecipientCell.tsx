@@ -28,6 +28,7 @@ export const RecipientCell: FC<CellProps> = ({ index }) => {
             'border-0 !border-b-[1px] h-[37px]'
           )}
           inputClassName={classNames('')}
+          testdata-id={`vesting-recipient-input-${index}`}
         />
       )}
     />
