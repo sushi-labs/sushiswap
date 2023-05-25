@@ -1,6 +1,3 @@
-import '../variables.css'
-import '../styles/index.css'
-
 import { Stats } from '../components/Stats/Stats'
 import React from 'react'
 
