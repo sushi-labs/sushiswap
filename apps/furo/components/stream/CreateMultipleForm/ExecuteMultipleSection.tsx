@@ -166,14 +166,23 @@ export const ExecuteMultipleSection: FC<{
     <Checker.Connect size="xl" fullWidth>
       <Checker.Network chainId={chainId} size="xl" fullWidth>
         <Checker.ApproveBentobox
+          size="xl"
+          fullWidth
           id="furo-create-multiple-stream-approve-bentobox"
           chainId={chainId}
           contract={getFuroStreamRouterContractConfig(chainId).address}
           onSignature={setSignature}
         >
-          <Checker.ApproveERC20Multiple id={`furo-create-multiple-stream-approve-token`} amounts={approveAmounts}>
+          <Checker.ApproveERC20Multiple
+            size="xl"
+            fullWidth
+            id={`furo-create-multiple-stream-approve-token`}
+            amounts={approveAmounts}
+          >
             <Checker.Success tag={APPROVE_TAG}>
               <Button
+                size="xl"
+                fullWidth
                 onClick={() => sendTransaction?.()}
                 type="submit"
                 loading={isWritePending}
