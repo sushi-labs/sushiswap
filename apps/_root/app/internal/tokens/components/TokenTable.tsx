@@ -41,7 +41,7 @@ function useColumns() {
       // cell: (info) => info.getValue(),
       cell: (info) => {
         const name = info.getValue()
-        return <div className="flex justify-start w-full max-w-[150px]">{name}</div>
+        return <div className="flex w-full max-w-[150px] justify-start">{name}</div>
       },
       enableHiding: true,
     }),
@@ -58,7 +58,7 @@ function useColumns() {
     columnHelper.accessor('listEntry', {
       header: 'Default List',
       cell: (info) => (
-        <div className="flex justify-center max-w-[50px]">
+        <div className="flex max-w-[50px] justify-center">
           {info.getValue() ? (
             <CheckIcon width={24} height={24} className="text-green" />
           ) : (
@@ -73,7 +73,7 @@ function useColumns() {
       header: 'Adder',
       cell: ({ row }) => (
         <div
-          className="flex justify-center max-w-[50px]"
+          className="flex max-w-[50px] justify-center"
           onClick={(e) => {
             e.preventDefault()
           }}
