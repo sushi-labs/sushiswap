@@ -37,7 +37,7 @@ function Component(
   )
 
   return (
-    <div className="space-y-1 w-full">
+    <div className={classNames(caption ? 'mb-7' : '', 'w-full')}>
       <div className="relative w-full">
         <input
           {...props}
@@ -59,7 +59,7 @@ function Component(
         />
         <label
           htmlFor={id}
-          className="font-medium peer-focus:font-normal absolute text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-[15px] scale-75 top-4 z-10 origin-[0] left-4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-[15px]"
+          className="pointer-events-none font-medium peer-focus:font-normal absolute text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-[15px] scale-75 top-4 z-10 origin-[0] left-4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-[15px]"
         >
           {label}
         </label>
@@ -74,12 +74,14 @@ function Component(
             </button>
           </div>
         )}
+        {caption && (
+          <span
+            className={classNames(isError ? 'text-red' : '', 'mt-1.5 absolute inline-block px-4 text-xs text-gray-500')}
+          >
+            {caption}
+          </span>
+        )}
       </div>
-      {caption && (
-        <span className={classNames(isError ? 'text-red' : '', 'inline-block px-4 text-xs text-gray-500')}>
-          {caption}
-        </span>
-      )}
     </div>
   )
 }

@@ -20,8 +20,8 @@ export const Dropzone: FC<Dropzone> = ({ label = 'Select a CSV file to upload', 
                 ? 'bg-red-500 bg-opacity-[0.15] border-red'
                 : isDragActive
                 ? 'bg-blue-500 bg-opacity-[0.15] border-blue'
-                : 'bg-slate-800 border-slate-200/5',
-              'border-dashed  border-2 rounded-xl py-6 flex justify-center'
+                : 'dark:bg-white/[0.04] bg-black/[0.04] border-gray-300 dark:border-slate-700',
+              'border-dashed border-2 rounded-2xl py-6 flex justify-center'
             )}
           >
             <div className="space-y-3 text-center flex flex-col items-center justify-center">
@@ -61,15 +61,14 @@ export const Dropzone: FC<Dropzone> = ({ label = 'Select a CSV file to upload', 
                 />
               </svg>
 
-              <div className="flex text-sm text-slate-400">
-                <Typography
-                  variant="sm"
+              <div className="flex text-sm text-gray-600 dark:text-slate-400">
+                <span
                   className={classNames(
                     isDragReject
                       ? 'text-red hover:text-red-400'
                       : isDragActive
                       ? 'text-blue hover:text-blue-400'
-                      : 'text-slate-200',
+                      : 'text-gray-900 dark:text-slate-200',
                     'flex flex-col gap-1 outline-none relative cursor-pointer rounded-md font-medium hover:purple focus-within:outline-none'
                   )}
                 >
@@ -78,7 +77,11 @@ export const Dropzone: FC<Dropzone> = ({ label = 'Select a CSV file to upload', 
                   </label>
                   <p
                     className={classNames(
-                      isDragReject ? 'text-red-200' : isDragActive ? 'text-blue-200' : 'text-slate-500',
+                      isDragReject
+                        ? 'text-red-200'
+                        : isDragActive
+                        ? 'text-blue-200'
+                        : 'text-gray-500 dark:text-slate-500',
                       'text-xs'
                     )}
                   >
@@ -91,7 +94,7 @@ export const Dropzone: FC<Dropzone> = ({ label = 'Select a CSV file to upload', 
                     className="sr-only outline-none"
                     {...getInputProps()}
                   />
-                </Typography>
+                </span>
               </div>
             </div>
           </div>

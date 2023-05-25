@@ -1,5 +1,4 @@
-import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form } from '@sushiswap/ui'
-import { DatePicker } from '@sushiswap/ui/input/DatePicker'
+import { Form } from '@sushiswap/ui'
 import React, { useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
@@ -52,7 +51,7 @@ export const GeneralDetailsSection = () => {
                     <Input.DatePickerCustomInput
                       isError={Boolean(error?.message)}
                       caption={error?.message}
-                      testdata-id={"stream-start-date"} 
+                      testdata-id={'stream-start-date'}
                       id="stream-start-date"
                       label={
                         <>
@@ -71,8 +70,8 @@ export const GeneralDetailsSection = () => {
                   minDate={new Date(Date.now() + 5 * 60 * 1000)}
                   dateFormat="MMM d, yyyy HH:mm"
                   placeholderText="Select date"
-                  autoComplete="off" 
-                  testdata-id={"TEST"}
+                  autoComplete="off"
+                  testdata-id={'TEST'}
                 />
               )
             }}

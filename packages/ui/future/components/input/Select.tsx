@@ -9,13 +9,13 @@ interface SelectProps extends Omit<TextInput, 'onChange'> {
 
 function Component({ onClick, ...props }: SelectProps, ref: ForwardedRef<HTMLInputElement>) {
   return (
-    <div role="button" onClick={onClick} className="relative">
+    <div role="button" onClick={onClick} className={classNames(props.caption ? 'mb-7' : '', 'relative h-[54px]')}>
       <Text
         {...props}
         role="button"
         ref={ref}
-        className={classNames(props.className, 'pointer-events-none')}
         hideCloseButton
+        className={classNames(props.className, 'pointer-events-none')}
       />
       <div className="absolute top-0 bottom-0 flex items-center justify-center right-4">
         <div
