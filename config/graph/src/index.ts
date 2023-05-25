@@ -100,6 +100,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.BOBA_AVAX]: 'Boba Avax',
   [ChainId.BOBA_BNB]: 'Boba BNB',
   [ChainId.BTTC]: 'BitTorrent',
+  [ChainId.THUNDERCORE]: 'ThunderCore',
 } as const
 
 export const SUBGRAPH_HOST = {

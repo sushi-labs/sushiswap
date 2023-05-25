@@ -9,8 +9,20 @@ export async function approve(page: Page, locator: string) {
     .toBeEnabled({ timeout: 1500 })
     .then(async () => {
       await pageLocator.click({ timeout: 2500 })
+      const expectedText = '(Successfully approved .*)'
+      const regex = new RegExp(expectedText)
+      await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
     })
     .catch(() => console.log('already approved or not needed'))
+}
+
+interface TridentPoolArgs {
+  token0: Type
+  token1: Type
+  amount0: string
+  amount1: string
+  fee: string
+  type: 'CREATE' | 'ADD'
 }
 
 interface V2PoolArgs {
@@ -18,7 +30,6 @@ interface V2PoolArgs {
   token1: Type
   amount0: string
   amount1: string
-  fee: string
   type: 'CREATE' | 'ADD'
 }
 
@@ -126,7 +137,7 @@ test.describe('Trident', () => {
 
   test('Create pool', async ({ page }) => {
     test.slow()
-    await createOrAddV2Pool(page, {
+    await createOrAddTridentPool(page, {
       // 0.01% fee is not created at block 42259027
       token0: NATIVE_TOKEN,
       token1: USDC,
@@ -139,7 +150,7 @@ test.describe('Trident', () => {
 
   test('Add, stake, unstake and remove', async ({ page }) => {
     test.slow()
-    await createOrAddV2Pool(page, {
+    await createOrAddTridentPool(page, {
       token0: NATIVE_TOKEN,
       token1: USDC,
       amount0: '0.0001',
@@ -158,6 +169,26 @@ test.describe('Trident', () => {
     await page.reload({ timeout: 25_000 })
     await removeLiquidityV2(page)
   })
+})
+
+test.describe('V2', () => {
+  test.beforeEach(async ({ page }) => {
+    const url = BASE_URL.concat(`/add/v2/${CHAIN_ID}`)
+    await page.goto(url)
+    await switchNetwork(page, CHAIN_ID)
+  })
+
+  test('Add liquidity', async ({ page }) => {
+    test.slow()
+    await createOrAddV2Pool(page, {
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      amount0: '0.0001',
+      amount1: '0.0001',
+      type: 'ADD',
+    })
+  })
+
 })
 
 async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
@@ -194,7 +225,7 @@ async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
 
-async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
+async function createOrAddTridentPool(page: Page, args: TridentPoolArgs) {
   await handleToken(page, args.token0, 'FIRST')
   await handleToken(page, args.token1, 'SECOND')
 
@@ -230,6 +261,39 @@ async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
   await expect(confirmButton).toBeVisible()
   await expect(confirmButton).toBeEnabled()
   await timeout(2_500) // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
+  await confirmButton.click()
+
+  const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`
+  const regex = new RegExp(expectedText)
+  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+}
+
+
+
+async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
+  await handleToken(page, args.token0, 'FIRST')
+  await handleToken(page, args.token1, 'SECOND')
+  if  (args.type === 'CREATE') { 
+    // NOT Sure about this logic as we need a token and currency combination that isn't created to test this. 
+    await page.locator('[testdata-id=add-liquidity-token0-input]').fill(args.amount0)
+    await page.locator('[testdata-id=add-liquidity-token1-input]').fill(args.amount1)
+  } else {
+    // Only fill in the token that is not native if we are adding liquidity to an existing pool.
+    await page.locator(`[testdata-id=add-liquidity-token${args.token0.isNative ? 1 : 0}-input]`).fill(args.token0.isNative ? args.amount1 : args.amount0)
+  }
+
+  await approve(page, `approve-token-${args.token0.isNative ? 1 : 0}`)
+
+  const reviewSelector =
+    args.type === 'CREATE' ? '[testdata-id=create-pool-button]' : '[testdata-id=add-liquidity-button]'
+  const reviewButton = page.locator(reviewSelector)
+  await expect(reviewButton).toBeVisible()
+  await expect(reviewButton).toBeEnabled()
+  await reviewButton.click({ timeout: 2_000 })
+
+  const confirmButton = page.locator('[testdata-id=confirm-add-v2-liquidity-button]')
+  await expect(confirmButton).toBeVisible()
+  await expect(confirmButton).toBeEnabled()
   await confirmButton.click()
 
   const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`

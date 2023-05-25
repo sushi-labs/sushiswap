@@ -51,3 +51,56 @@ query PoolsByTokenPair($tokenId0: String!, $tokenId1: String!) {
     liquidityProviderCount
   }
 }
+
+query V3Transactions(  
+  $first: Int = 10,
+  $skip: Int = 0, 
+  $orderBy: Transaction_orderBy = timestamp, 
+  $orderDir: OrderDirection = desc, 
+  $where: Transaction_filter
+) {
+  transactions(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
+    id
+    timestamp
+    blockNumber
+    mints {
+      id
+      owner
+      sender
+      origin
+      amount
+      amount0
+      amount1
+      amountUSD
+      logIndex
+    }
+    burns {
+      id
+      owner
+      origin
+      amount
+      amount0
+      amount1
+      amountUSD
+      logIndex
+    }
+    swaps {
+      id
+      sender
+      recipient
+      origin
+      amount0
+      amount1
+      amountUSD
+      logIndex
+    }
+    collects {
+      id
+      owner
+      amount0
+      amount1
+      amountUSD
+      logIndex
+    }
+  }
+}

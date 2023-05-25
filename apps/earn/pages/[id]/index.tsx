@@ -56,6 +56,7 @@ const _Pool = () => {
   })
 
   if (!pool) return <></>
+
   if (pool.protocol === Protocol.SUSHISWAP_V3) {
     return <PoolPageV3 />
   }
