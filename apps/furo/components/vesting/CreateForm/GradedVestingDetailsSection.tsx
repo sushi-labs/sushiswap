@@ -59,6 +59,7 @@ export const GradedVestingDetailsSection = () => {
           name="stepAmount"
           render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
             <CurrencyInputBase
+              id="create-single-vest-graded-amount-input"
               className="ring-offset-slate-900"
               onChange={onChange}
               value={value || ''}
@@ -104,6 +105,7 @@ export const GradedVestingDetailsSection = () => {
                     value={value}
                     error={!!error?.message}
                     className="ring-offset-slate-900"
+                    testdata-id="create-single-vest-graded-payouts-input"
                   />
                   <Form.Error message={error?.message} />
                 </>
@@ -119,7 +121,7 @@ export const GradedVestingDetailsSection = () => {
               <>
                 <Select
                   button={
-                    <Select.Button error={!!error?.message} className="ring-offset-slate-900">
+                    <Select.Button error={!!error?.message} className="ring-offset-slate-900" testdata-id='create-single-vest-graded-unit-type-button'>
                       {value.label}
                     </Select.Button>
                   }
@@ -131,7 +133,7 @@ export const GradedVestingDetailsSection = () => {
                 >
                   <Select.Options>
                     {Object.values(stepConfigurations).map((stepConfig) => (
-                      <Select.Option key={stepConfig.label} value={stepConfig}>
+                      <Select.Option key={stepConfig.label} value={stepConfig}  testdata-id={`create-single-vest-graded-type-${stepConfig.label.toLowerCase()}`}>
                         {stepConfig.label}
                       </Select.Option>
                     ))}

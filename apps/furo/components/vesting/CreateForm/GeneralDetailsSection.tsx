@@ -49,12 +49,12 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
   // https://github.com/colinhacks/zod/issues/1394
   useEffect(() => {
     if (startDate && startDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()) {
-      setError(`startDate`, {
+      setError('startDate', {
         type: 'custom',
         message: 'Must be at least 5 minutes from now',
       })
     } else {
-      clearErrors(`startDate`)
+      clearErrors('startDate')
     }
   }, [clearErrors, setError, startDate])
 
@@ -81,6 +81,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
                     standalone
                     className="!cursor-pointer ring-offset-slate-900"
                     onClick={() => setOpen(true)}
+                    testdata-id={'create-single-vest-select'}
                   >
                     {value?.symbol || <span className="text-slate-500">Select a currency</span>}
                   </Select.Button>
@@ -117,6 +118,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
                   dateFormat="MMM d, yyyy HH:mm"
                   placeholderText="Select date"
                   autoComplete="off"
+                  customInput={<input testdata-id='create-single-vest-start-date' type="text"/>}
                 />
                 <Form.Error message={error?.message} />
               </>
@@ -138,6 +140,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
                 onChange={onChange}
                 error={!!error?.message}
                 placeholder="Address or ENS Name"
+                testdata-id='create-single-vest-recipient-input'
                 className={classNames(
                   DEFAULT_INPUT_CLASSNAME,
                   error ? ERROR_INPUT_CLASSNAME : '',

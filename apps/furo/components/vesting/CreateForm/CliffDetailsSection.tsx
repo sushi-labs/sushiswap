@@ -54,6 +54,7 @@ export const CliffDetailsSection: FC = () => {
               size="sm"
               uncheckedIcon={<XIcon />}
               checkedIcon={<CheckIcon />}
+              id="cliff-toggle-switch"
             />
           )}
         />
@@ -87,6 +88,7 @@ export const CliffDetailsSection: FC = () => {
                   dateFormat="MMM d, yyyy HH:mm"
                   placeholderText="Select date"
                   autoComplete="off"
+                  customInput={<input testdata-id='create-single-vest-cliff-date' type="text"/>}
                 />
                 <Form.Error message={error?.message} />
               </>
@@ -104,7 +106,7 @@ export const CliffDetailsSection: FC = () => {
             shouldUnregister={true}
             render={({ field: { onChange, value, onBlur, name }, fieldState: { error: validationError } }) => (
               <CurrencyInput
-                id="create-single-vest"
+                id="create-single-vest-cliff-amount-input"
                 name={name}
                 onBlur={onBlur}
                 className="ring-offset-slate-900"

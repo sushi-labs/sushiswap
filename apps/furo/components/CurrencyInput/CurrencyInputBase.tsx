@@ -24,6 +24,7 @@ export type CurrencyInputBase = Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 
 export const CurrencyInputBase: FC<CurrencyInputBase> = forwardRef<HTMLInputElement, CurrencyInputBase>(
   (
     {
+      id,
       value,
       onChange,
       currency,
@@ -56,13 +57,14 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = forwardRef<HTMLInputElem
             placeholder="0.00"
             className={classNames(inputClassName, DEFAULT_INPUT_UNSTYLED, 'h-full', hideSymbol ? '' : '!pr-[60px]')}
             onUserInput={(val) => onChange(val)}
+            testdata-id={id ?? 'base-currency-input'}
             {...rest}
           />
           {!hideSymbol && (
             <Typography
               variant="sm"
               weight={500}
-              className="absolute right-4 top-3 bottom-0 text-slate-300 max-w-10 truncate"
+              className="absolute bottom-0 truncate right-4 top-3 text-slate-300 max-w-10"
             >
               {currency?.symbol}
             </Typography>
