@@ -15,13 +15,15 @@ export interface ApproveERC20MultipleProps extends ButtonProps<'button'> {
 /*
  * Recursive component for multiple ApproveERC20s
  */
-export const Component: FC<ApproveERC20MultipleProps> = ({ index, id, amounts, ...props }) => {
+export const Component: FC<ApproveERC20MultipleProps> = ({ index, id, amounts, children, ...props }) => {
   const _index = index ? index : amounts.length - 1
-  if (_index === 0) return <>{props.children}</>
+  if (_index === 0) return <>{children}</>
 
   return (
     <ApproveERC20 {...props} id={`${id}-${index}`} amount={amounts[_index].amount} contract={amounts[_index].contract}>
-      <Component {...props} index={_index - 1} id={id} amounts={amounts} />
+      <Component {...props} index={_index - 1} id={id} amounts={amounts}>
+        {children}
+      </Component>
     </ApproveERC20>
   )
 }
