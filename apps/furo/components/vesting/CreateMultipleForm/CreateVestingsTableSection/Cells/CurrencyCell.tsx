@@ -59,7 +59,7 @@ export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHE
             )}
           >
             <TokenSelector
-              id={'create-single-stream'}
+              id={`vesting-token-selector-${index}`}
               chainId={chainId}
               onSelect={(currency) => onSelect(onChange, currency)}
               selected={_currency}

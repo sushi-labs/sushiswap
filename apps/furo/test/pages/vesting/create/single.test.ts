@@ -1,19 +1,12 @@
 // import { AddressZero } from '@ethersproject/constants'
 // import { expect, Page, test } from '@playwright/test'
 // import { Native, Token, Type, USDC_ADDRESS } from '@sushiswap/currency'
-// import { selectDate, switchNetwork, timeout } from '../../../utils'
+// import { GradedVestingFrequency, selectDate, switchNetwork, timeout, VestingArgs } from '../../../utils'
 
 // if (!process.env.CHAIN_ID) {
 //   throw new Error('CHAIN_ID env var not set')
 // }
 
-// enum GradedVestingFrequency {
-//   WEEKLY = 'weekly',
-//   BI_WEEKLY = 'bi-weekly',
-//   MONTHLY = 'monthly',
-//   QUARTERLY = 'quarterly',
-//   YEARLY = 'yearly',
-// }
 
 // const CHAIN_ID = parseInt(process.env.CHAIN_ID)
 // const RECIPIENT = '0x23defc2ca207e7fbd84ae43b00048fb5cb4db5b2'
@@ -26,20 +19,6 @@
 //   name: 'USDC Stablecoin',
 // })
 
-// interface VestingArgs {
-//   token: Type
-//   startInMonths: number
-//   recipient: string
-//   graded?: {
-//     stepAmount: string
-//     steps: number
-//     frequency: GradedVestingFrequency
-//   }
-//   cliff?: {
-//     amount: string
-//     cliffEndsInMonths: number
-//   }
-// }
 
 // test.describe('Create single vest', () => {
 //   test.beforeEach(async ({ page }) => {
@@ -150,9 +129,6 @@
 // }
 
 // async function handleGradeDetails(page: Page, args: VestingArgs) {
-//   if (!args.graded) {
-//     throw new Error('Graded vesting args not provided')
-//   }
 //   const stepAmountSelector = page.locator('[testdata-id=create-single-vest-graded-amount-input]')
 //   await expect(stepAmountSelector).toBeVisible()
 //   await expect(stepAmountSelector).toBeEnabled()
