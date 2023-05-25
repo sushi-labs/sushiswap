@@ -49,7 +49,7 @@ export const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }
   })
 
   return (
-    <div className="w-full">
+    <div className="w-full pt-3">
       <GenericTable<Transaction>
         table={table}
         loading={isLoading}
