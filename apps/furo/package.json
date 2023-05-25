@@ -69,7 +69,7 @@
     "ethers": "5.7.2",
     "graphql": "16.6.0",
     "lodash.clonedeep": "^4.5.0",
-    "next": "13.3.4",
+    "next": "13.4.3",
     "next-seo": "5.15.0",
     "next-sitemap": "3.1.43",
     "react": "18.2.0",
