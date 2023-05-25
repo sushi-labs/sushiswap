@@ -16,6 +16,7 @@ import { PositionCard, PositionCardSkeleton } from './MigratePage/PositionCard'
 import { Carousel } from '@sushiswap/ui/future/components/Carousel'
 import { DiscordIcon, OnsenIcon } from '@sushiswap/ui/future/components/icons'
 import { useAccount } from 'wagmi'
+import { TRIDENT_ENABLED_NETWORKS } from 'config'
 
 export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
   const { address } = useAccount()
@@ -100,7 +101,8 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                                   subtitle={'If you prefer creating a v2 liquidity position.'}
                                 />
                               ) : null}
-                              {isConstantProductPoolFactoryChainId(chainId) || isStablePoolFactoryChainId(chainId) ? (
+                              {/*  isConstantProductPoolFactoryChainId(chainId) || isStablePoolFactoryChainId(chainId) */}
+                              {TRIDENT_ENABLED_NETWORKS.includes(chainId as ChainId) ? (
                                 <List.MenuItem
                                   as="a"
                                   href={`/pools/add/trident/${chainId}`}
