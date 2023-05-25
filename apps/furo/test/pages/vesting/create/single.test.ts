@@ -28,7 +28,6 @@ const USDC = new Token({
 
 interface VestingArgs {
   token: Type
-  amount: string
   startInMonths: number
   recipient: string
   graded?: {
@@ -46,14 +45,13 @@ test.describe('Create single vest', () => {
   test.beforeEach(async ({ page }) => {
     const url = (process.env.PLAYWRIGHT_URL as string).concat('/vesting/create/single')
     await page.goto(url)
-    page.setViewportSize({ width: 1920, height: 1080 });
+    page.setViewportSize({ width: 1920, height: 1080 })
     await switchNetwork(page, CHAIN_ID)
   })
 
   test('Graded native', async ({ page }) => {
     const args: VestingArgs = {
       token: NATIVE_TOKEN,
-      amount: '10',
       startInMonths: 1,
       recipient: RECIPIENT,
       graded: {
@@ -70,7 +68,6 @@ test.describe('Create single vest', () => {
   test('Cliff native', async ({ page }) => {
     const args: VestingArgs = {
       token: NATIVE_TOKEN,
-      amount: '10',
       startInMonths: 1,
       recipient: RECIPIENT,
       graded: {
@@ -90,11 +87,9 @@ test.describe('Create single vest', () => {
     await reviewAndConfirm(page, args)
   })
 
-
   test('Graded USDC', async ({ page }) => {
     const args: VestingArgs = {
       token: USDC,
-      amount: '0.00001',
       startInMonths: 1,
       recipient: RECIPIENT,
       graded: {
@@ -111,7 +106,6 @@ test.describe('Create single vest', () => {
   test('Cliff USDC', async ({ page }) => {
     const args: VestingArgs = {
       token: USDC,
-      amount: '0.00001',
       startInMonths: 1,
       recipient: RECIPIENT,
       graded: {
@@ -130,8 +124,6 @@ test.describe('Create single vest', () => {
     await handleCliffDetails(page, args)
     await reviewAndConfirm(page, args)
   })
-
-
 })
 
 async function handleGeneralDetails(page: Page, args: VestingArgs) {
@@ -141,7 +133,6 @@ async function handleGeneralDetails(page: Page, args: VestingArgs) {
 }
 
 async function handleCliffDetails(page: Page, args: VestingArgs) {
-    
   if (!args.cliff) {
     throw new Error('Graded vesting args not provided')
   }
@@ -153,7 +144,7 @@ async function handleCliffDetails(page: Page, args: VestingArgs) {
   const cliffAmountSelector = page.locator('[testdata-id=create-single-vest-cliff-amount-input]')
   await expect(cliffAmountSelector).toBeVisible()
   await expect(cliffAmountSelector).toBeEnabled()
-  await cliffAmountSelector.fill(args.amount)
+  await cliffAmountSelector.fill(args.cliff.amount)
 
   await selectDate('[testdata-id=create-single-vest-cliff-date]', args.cliff.cliffEndsInMonths, page)
 }
@@ -200,31 +191,37 @@ async function selectToken(page: Page, currency: Type) {
 }
 
 async function reviewAndConfirm(page: Page, args: VestingArgs) {
-  // Review
-  await page.locator('[testdata-id=create-single-vesting-review-button]').click()
+  const reviewButtonLocator = page.locator('[testdata-id=create-single-vesting-review-button]')
+  await expect(reviewButtonLocator).toBeVisible()
+  await expect(reviewButtonLocator).toBeEnabled()
+  await reviewButtonLocator.click()
 
-//   //   // Check review
-//   //   await expect(page.locator('[testdata-id=furo-review-modal-funds-source]')).toContainText(
-//   //     fromBento ? 'bentobox' : 'wallet'
-//   //   )
+  await expect(page.locator('[testdata-id=vesting-review-funds-source]')).toContainText('wallet')
+  let totalAmount: string
+  if (args.graded && args.cliff) {
+    totalAmount = (Number(args.cliff.amount) + Number(args.graded.stepAmount) * Number(args.graded.steps)).toString()
+  } else if (!args.graded && args.cliff) {
+    totalAmount = args.cliff.amount
+  } else if (args.graded && !args.cliff) {
+    totalAmount = (Number(args.graded.stepAmount) * Number(args.graded.steps)).toString()
+  } else {
+    throw new Error('Invalid combination')
+  }
+  await expect(page.locator('[testdata-id=vesting-review-total-amount]')).toContainText(
+    `${totalAmount} ${args.token.symbol as string}`
+  )
 
-//   await expect(page.locator('[testdata-id=furo-review-modal-payment-per-period]')).toContainText(
-//     `${args.amount} ${args.token.symbol as string}`
-//   )
-//   const totalAmount = args.graded
-//     ? Number(args.amount) + (Number(args.graded.stepAmount) * Number(args.graded.steps)).toString()
-//     : args.amount
-//   await expect(page.locator('[testdata-id=furo-review-modal-total-amount]')).toContainText(totalAmount)
-//   if (args.graded) {
-//     await expect(page.locator('[testdata-id=furo-review-modal-period-length]')).toContainText(args.graded.frequency)
-//     await expect(page.locator('[testdata-id=furo-review-modal-amount-of-periods]')).toContainText(
-//       args.graded.steps.toString()
-//     )
-//   }
+  if (args.graded) {
+    await expect(page.locator('[testdata-id=vesting-review-payment-per-period]')).toContainText(args.graded.stepAmount)
+    await expect(page.locator('[testdata-id=vesting-review-period-length]')).toContainText(args.graded.frequency, {
+      ignoreCase: true,
+    })
+    await expect(page.locator('[testdata-id=vesting-review-amount-of-periods]')).toContainText(args.graded.steps.toString())
+  }
 
-//   if (args.cliff) {
-//     await expect(page.locator('[testdata-id=furo-review-modal-cliff-amount]')).toContainText(args.cliff.amount)
-//   }
+  if (args.cliff) {
+    await expect(page.locator('[testdata-id=vesting-review-cliff-amount]')).toContainText(args.cliff.amount)
+  }
 
   // Approve BentoBox
   await page

@@ -27,7 +27,7 @@ const Item: FC<Item> = ({ title, value, className }) => {
       <Typography variant="sm" className="whitespace-nowrap text-slate-300">
         {title}
       </Typography>
-      <Typography variant="sm" weight={500} className={classNames(className, 'whitespace-nowrap text-slate-50')}>
+      <Typography variant="sm" weight={500} className={classNames(className, 'whitespace-nowrap text-slate-50')} testdata-id={`vesting-review-${title.replaceAll(' ', '-').toLowerCase()}`}>
         {value}
       </Typography>
     </div>
