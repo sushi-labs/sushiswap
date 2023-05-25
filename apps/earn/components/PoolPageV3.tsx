@@ -105,6 +105,8 @@ const Pool: FC = () => {
   const incentiveAmounts = useMemo(() => poolStats?.incentives.map((el) => el.reward), [poolStats?.incentives])
   const fiatValuesIncentives = useTokenAmountDollarValues({ chainId, amounts: incentiveAmounts })
 
+  // console.log({ fiatValuesIncentives })
+
   const [_token0, _token1] = useMemo(
     () => [
       poolStats?.token0 ? unwrapToken(poolStats.token0) : undefined,
@@ -226,40 +228,33 @@ const Pool: FC = () => {
                 </List.Label>
                 <List.Control>
                   {poolStats ? (
-                    <List.KeyValue flex title="Fees">
+                    <List.KeyValue flex title="Volume">
                       <span className="flex items-center gap-2">
-                        {formatUSD(granularity === Granularity.Day ? poolStats.fees1d : poolStats.fees1w)}
-                        {/* <span
-                        className={
-                          change1d === 0
-                            ? 'text-gray-600 dark:text-slate-400'
-                            : change1d > 0
-                            ? 'text-green'
-                            : 'text-red'
-                        }
-                      >
-                        (0.00%)
-                      </span> */}
+                        {formatUSD(granularity === Granularity.Week ? poolStats.volume1w : poolStats.volume1d)}
+                        <span
+                          className={
+                            poolStats[granularity === Granularity.Week ? 'volumeChange1w' : 'volumeChange1d'].toFixed(
+                              2
+                            ) === '0.00'
+                              ? 'text-gray-600 dark:text-slate-400'
+                              : poolStats[granularity === Granularity.Week ? 'volumeChange1w' : 'volumeChange1d'] > 0
+                              ? 'text-green'
+                              : 'text-red'
+                          }
+                        >
+                          (
+                          {poolStats[granularity === Granularity.Week ? 'volumeChange1w' : 'volumeChange1d'].toFixed(2)}
+                          %)
+                        </span>
                       </span>
                     </List.KeyValue>
                   ) : (
                     <List.KeyValue skeleton />
                   )}
                   {poolStats ? (
-                    <List.KeyValue flex title="Volume">
+                    <List.KeyValue flex title="Fees">
                       <span className="flex items-center gap-2">
-                        {formatUSD(granularity === Granularity.Week ? poolStats.volume1w : poolStats.volume1d)}
-                        {/* <span
-                        className={
-                          change1w === 0
-                            ? 'text-gray-600 dark:text-slate-400'
-                            : change1d > 0
-                            ? 'text-green'
-                            : 'text-red'
-                        }
-                      >
-                        (0.00%)
-                      </span> */}
+                        {formatUSD(granularity === Granularity.Day ? poolStats.fees1d : poolStats.fees1w)}
                       </span>
                     </List.KeyValue>
                   ) : (
@@ -331,6 +326,7 @@ const Pool: FC = () => {
             </div>
           </div>
         </div>
+        <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
         <PoolTransactionsV3 pool={pool} poolId={poolId} />
       </div>
       <div className={tab === SelectedTab.NewPosition ? 'block' : 'hidden'}>
