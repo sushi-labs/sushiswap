@@ -31,7 +31,7 @@ export const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }
   const opt = useMemo(
     () => ({
       refetchInterval: 60_000,
-      first: 10, //PAGE_SIZE * (pageIndex + 1),
+      first: 10,
       skip: PAGE_SIZE * pageIndex,
     }),
     [pageIndex]
@@ -39,14 +39,8 @@ export const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }
 
   const { data, isLoading } = useTransactionsV3(pool, poolId, opt)
 
-  // const dataPaged = useMemo(
-  //   () => data?.slice(pageIndex * PAGE_SIZE, (pageIndex + 1) * PAGE_SIZE) || [],
-  //   [data, pageIndex]
-  // )
-
   const table = useReactTable<Transaction>({
-    // @ts-ignore
-    data,
+    data: data as Transaction[],
     columns: COLUMNS,
     pageCount: pageIndex + 1,
     getCoreRowModel: getCoreRowModel(),

@@ -25,7 +25,7 @@ function useTransactionsV3(pool: Pool | undefined | null, poolId: string, opts: 
     queryFn: async () => {
       const chainId = pool?.chainId as ChainId
 
-      if (!pool || !isV3ChainId(chainId)) return null
+      if (!pool || !isV3ChainId(chainId)) return []
 
       const sdk = getBuiltGraphSDK({
         subgraphHost: SUBGRAPH_HOST[chainId],
@@ -60,6 +60,8 @@ function useTransactionsV3(pool: Pool | undefined | null, poolId: string, opts: 
           ],
         },
       })
+
+      if (!transactions.length) return []
 
       return transactions.flatMap((transaction) => {
         const mints = (transaction.mints as NonNullable<(typeof transaction.mints)[0]>[]).map((mint) => ({
