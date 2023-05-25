@@ -179,8 +179,10 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = withChec
                     name="execute"
                     type="button"
                     variant="filled"
-                    disabled={isWritePending || !formValid}
+                    loading={isWritePending}
+                    disabled={!formValid}
                     onClick={() => sendTransaction?.()}
+                    testId='create-single-stream-confirmation'
                   >
                     {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Stream'}
                   </Button>

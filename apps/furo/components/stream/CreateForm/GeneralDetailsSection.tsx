@@ -13,23 +13,23 @@ export const GeneralDetailsSection = () => {
 
   useEffect(() => {
     if (startDate && startDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()) {
-      setError(`dates.startDate`, {
+      setError('dates.startDate', {
         type: 'custom',
         message: 'Must be at least 5 minutes from now',
       })
     } else {
-      clearErrors(`dates.startDate`)
+      clearErrors('dates.startDate')
     }
   }, [clearErrors, setError, startDate])
 
   useEffect(() => {
     if (startDate && endDate && endDate < startDate) {
-      setError(`dates.endDate`, {
+      setError('dates.endDate', {
         type: 'custom',
         message: 'Must be later than start date',
       })
     } else {
-      clearErrors(`dates.endDate`)
+      clearErrors('dates.endDate')
     }
   }, [clearErrors, endDate, setError, startDate])
 
@@ -52,7 +52,8 @@ export const GeneralDetailsSection = () => {
                     <Input.DatePickerCustomInput
                       isError={Boolean(error?.message)}
                       caption={error?.message}
-                      id="stream-update-end-date"
+                      testdata-id={"stream-start-date"} 
+                      id="stream-start-date"
                       label={
                         <>
                           Start date<sup>*</sup>
@@ -70,7 +71,8 @@ export const GeneralDetailsSection = () => {
                   minDate={new Date(Date.now() + 5 * 60 * 1000)}
                   dateFormat="MMM d, yyyy HH:mm"
                   placeholderText="Select date"
-                  autoComplete="off"
+                  autoComplete="off" 
+                  testdata-id={"TEST"}
                 />
               )
             }}
@@ -89,7 +91,8 @@ export const GeneralDetailsSection = () => {
                     <Input.DatePickerCustomInput
                       isError={Boolean(error?.message)}
                       caption={error?.message}
-                      id="stream-update-end-date"
+                      testdata-id="stream-end-date"
+                      id="stream-end-date"
                       label={
                         <>
                           End date<sup>*</sup>
@@ -132,7 +135,7 @@ export const GeneralDetailsSection = () => {
                 }
                 name={name}
                 onBlur={onBlur}
-                id="recipient"
+                id="create-stream-recipient-input"
                 value={value}
                 onChange={onChange}
               />
