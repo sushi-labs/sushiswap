@@ -11,7 +11,10 @@ interface PoolStats {
 }
 
 export const PoolStats: FC<PoolStats> = ({ pool }) => {
-  const { data, isLoading } = usePoolGraphData({ poolId: pool.address, chainId: pool.chainId as ChainId, type: 'V2' })
+  const { data, isLoading } = usePoolGraphData({
+    poolAddress: pool.address,
+    chainId: pool.chainId as ChainId,
+  })
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">

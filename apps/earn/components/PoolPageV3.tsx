@@ -77,7 +77,7 @@ const Pool: FC = () => {
   const { path, basePath } = usePreviousRoute()
 
   const {
-    id: [chainId, poolId],
+    id: [chainId, poolAddress],
     activeTab,
   } = queryParamsSchema.parse(query)
 
@@ -91,9 +91,9 @@ const Pool: FC = () => {
 
   const [granularity, setGranularity] = useState<Granularity>(Granularity.Day)
 
-  const { data: graphData, isLoading: isGraphDataLoading } = usePoolGraphData({ poolId, chainId, type: 'V3' })
+  const { data: graphData, isLoading: isGraphDataLoading } = usePoolGraphData({ poolAddress, chainId })
 
-  const { data: poolStats } = useConcentratedLiquidityPoolStats({ chainId, address: poolId })
+  const { data: poolStats } = useConcentratedLiquidityPoolStats({ chainId, address: poolAddress })
   const { data: pool, isLoading } = useConcentratedLiquidityPool({
     chainId,
     token0: poolStats?.token0,
@@ -367,7 +367,7 @@ const Pool: FC = () => {
           </div>
         </div>
         <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
-        <PoolTransactionsV3 pool={pool} poolId={poolId} />
+        <PoolTransactionsV3 pool={pool} poolId={poolAddress} />
       </div>
       <div className={tab === SelectedTab.NewPosition ? 'block' : 'hidden'}>
         <div className="grid gap-10 md:grid-cols-2">
@@ -397,7 +397,7 @@ const Pool: FC = () => {
                 tokensLoading={false}
                 existingPosition={undefined}
                 tokenId={undefined}
-                successLink={`/pools/${chainId}:${poolId}?activeTab=myPositions`}
+                successLink={`/pools/${chainId}:${poolAddress}?activeTab=myPositions`}
               />
             </ContentBlock>
           </div>
@@ -405,7 +405,7 @@ const Pool: FC = () => {
       </div>
       <div className={classNames('', tab === SelectedTab.ManagePosition ? 'block' : 'hidden')}>
         <PoolsFiltersProvider>
-          <ConcentratedPositionsTable variant="minimal" poolId={poolId} />
+          <ConcentratedPositionsTable variant="minimal" poolId={poolAddress} />
         </PoolsFiltersProvider>
       </div>
     </Layout>
