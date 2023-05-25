@@ -57,10 +57,10 @@ const _Pool = () => {
   })
 
   const { data: graphData, isLoading: isGraphDataLoading } = usePoolGraphData({
-    type: pool?.type === 'CONSTANT_PRODUCT_POOL' ? 'V2' : 'V3',
+    type: pool?.protocol === Protocol.SUSHISWAP_V3 ? 'V3' : 'V2',
     poolId: address,
     chainId,
-    enabled: Boolean(pool),
+    enabled: Boolean(pool) && pool?.protocol !== Protocol.SUSHISWAP_V3,
   })
 
   if (!pool) return <></>
