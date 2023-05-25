@@ -213,8 +213,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
       switchTokens,
     }
   }, [
-    chainIdFromUrl,
-    chainId,
+    _chainId,
     fromCurrency,
     tokenFrom,
     isTokenFromLoading,

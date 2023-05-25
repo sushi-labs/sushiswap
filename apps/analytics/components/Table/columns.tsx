@@ -112,8 +112,8 @@ export const FEES_7D_COLUMN: ColumnDef<Pool, unknown> = {
 
 export const APR_COLUMN: ColumnDef<Pool, unknown> = {
   header: 'APR',
-  id: 'totalApr',
-  accessorFn: (row) => row.totalApr,
+  id: 'totalApr1d',
+  accessorFn: (row) => row.totalApr1d,
   cell: (props) => <PoolAPRCell row={props.row.original} />,
   size: 100,
   meta: {

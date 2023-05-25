@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "dotenv -- turbo run build --filter=!bridge --filter=!academy --filter=!blog",
+    "build": "dotenv -- turbo run build",
     "build-config": "dotenv -- turbo run build --filter={./config/*}",
     "build-config-head": "dotenv -- turbo run build --filter={./config/*}[HEAD^1]...",
     "build-packages": "dotenv -- turbo run build --filter={./packages/*}...",
@@ -53,11 +53,11 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "29.2.5",
-    "@types/node": "^18.0.0",
+    "@types/node": "18.11.18",
     "@typescript-eslint/eslint-plugin": "5.48.1",
     "@typescript-eslint/parser": "5.48.1",
     "dotenv-cli": "6.0.0",
-    "eslint": "8.29.0",
+    "eslint": "8.41.0",
     "eslint-config-next": "13.1.2",
     "eslint-config-prettier": "8.6.0",
     "eslint-config-turbo": "0.0.7",
@@ -74,13 +74,13 @@
     "sort-package-json": "2.1.0",
     "ts-jest": "29.0.3",
     "ts-node": "10.9.1",
-    "turbo": "1.9.6",
+    "turbo": "1.9.7",
     "rome": "12.0.0"
   },
   "packageManager": "pnpm@8.5.1",
   "engines": {
     "node": ">=18.x",
-    "pnpm": ">=8.x"
+    "pnpm": "7.9.5"
   },
   "nextBundleAnalysis": {
     "budget": null,
@@ -91,7 +91,9 @@
     "overrides": {
       "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
       "graphql": "16.6.0",
-      "typescript": "5.0.4"
+      "typescript": "5.0.4",
+      "@types/react": "18.2.6",
+      "@types/react-dom": "18.2.4"
     }
   }
 }

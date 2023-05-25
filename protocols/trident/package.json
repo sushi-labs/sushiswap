@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/trident",
-  "version": "1.0.0-canary.54",
-  "private": true,
+  "version": "1.0.1",
   "description": "Trident is a experimental framework for building AMM's.",
   "keywords": [
     "trident",
@@ -45,11 +44,11 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/currency": "workspace:*",
-    "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/bentobox": "1.0.1",
     "@sushiswap/types": "workspace:*",
     "@tenderly/hardhat-tenderly": "^1.0.13",
-    "@types/node": "^18.0.0",
-    "eslint": "8.29.0",
+    "@types/node": "18.11.18",
+    "eslint": "8.41.0",
     "ethers": "5.7.2",
     "hardhat": "2.12.4",
     "hardhat-deploy": "0.11.22",

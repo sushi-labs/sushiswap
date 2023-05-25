@@ -13,7 +13,7 @@ export const TableSection: FC = () => {
   const onChange = useCallback(
     (val: number) => {
       setFilters({
-        selectedTable: val === 0 ? SelectedTable.Markets : SelectedTable.Tokens,
+        selectedTable: val === 0 ? SelectedTable.VerifiedPools : SelectedTable.UnverifiedPools,
       })
     },
     [setFilters]
@@ -26,11 +26,17 @@ export const TableSection: FC = () => {
           <Tab as={Fragment}>
             {({ selected }) => (
               <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
-                Pools
+                Verified Pools
               </Button>
             )}
           </Tab>
-
+          <Tab as={Fragment}>
+            {({ selected }) => (
+              <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
+                Unverified Pools
+              </Button>
+            )}
+          </Tab>
           {/* <Tab as={Fragment}>
             {({ selected }) => (
               <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
@@ -42,7 +48,10 @@ export const TableSection: FC = () => {
         <TableFilters />
         <Tab.Panels>
           <Tab.Panel unmount={false}>
-            <PoolTable />
+            <PoolTable isWhitelisted={true} />
+          </Tab.Panel>
+          <Tab.Panel unmount={false}>
+            <PoolTable isWhitelisted={false} />
           </Tab.Panel>
           {/* <Tab.Panel unmount={false}>
             <TokenTable />

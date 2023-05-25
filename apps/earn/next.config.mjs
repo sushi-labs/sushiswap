@@ -11,6 +11,7 @@ const nextConfig = {
   // By default, Next.js only runs ESLint on the 'pages' and 'utils' directories
   // so we have to add additional directories to the dirs.
   eslint: {
+    // ignoreDuringBuilds: true,
     dirs: ['app', 'components', 'lib', 'pages', 'types', 'ui'],
   },
   transpilePackages: ['@sushiswap/ui', '@sushiswap/wagmi'],

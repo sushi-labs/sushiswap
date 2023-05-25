@@ -26,6 +26,7 @@ import { PalmNaked } from './PalmNaked'
 import { PolygonNaked } from './PolygonNaked'
 import { TelosNaked } from './TelosNaked'
 import { PolygonZKNaked } from './PolygonZKNaked'
+import { ThunderCoreNaked } from './ThunderCoreNaked'
 
 export * from './ArbitrumNaked'
 export * from './ArbitrumNovaNaked'
@@ -79,4 +80,5 @@ export const NETWORK_NAKED_ICON: Record<number, (props: React.ComponentProps<'sv
   [ChainId.BOBA_BNB]: BobaBNBNaked,
   [ChainId.BTTC]: BttcNaked,
   [ChainId.POLYGON_ZKEVM]: PolygonZKNaked,
+  [ChainId.ETHEREUM]: ThunderCoreNaked,
 }

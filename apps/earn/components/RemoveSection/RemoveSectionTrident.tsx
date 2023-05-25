@@ -2,7 +2,7 @@ import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount, Native } from '@sushiswap/currency'
-import { Pool } from '@sushiswap/client'
+import { Pool, Protocol } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
 import { Dots } from '@sushiswap/ui'
@@ -86,11 +86,11 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
   )
 
   const [poolState, pool] = useMemo(() => {
-    if (_pool.type === 'STABLE_POOL') return [stablePoolState, stablePool]
-    if (_pool.type === 'CONSTANT_PRODUCT_POOL') return [constantProductPoolState, constantProductPool]
+    if (_pool.protocol === Protocol.BENTOBOX_STABLE) return [stablePoolState, stablePool]
+    if (_pool.protocol === Protocol.BENTOBOX_CLASSIC) return [constantProductPoolState, constantProductPool]
 
     return [undefined, undefined]
-  }, [_pool.type, constantProductPool, constantProductPoolState, stablePool, stablePoolState])
+  }, [_pool.protocol, constantProductPool, constantProductPoolState, stablePool, stablePoolState])
 
   const totalSupply = useTotalSupply(liquidityToken)
 
@@ -158,6 +158,23 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
   const prepare = useCallback(
     async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       try {
+        console.log('prepare trident')
+        const isInvalid =
+          !chain?.id ||
+          !pool ||
+          !token0 ||
+          !token1 ||
+          !_pool.chainId ||
+          !contract ||
+          !minAmount0 ||
+          !minAmount1 ||
+          !address ||
+          !minAmount0 ||
+          !minAmount1 ||
+          !rebases?.[token0.wrapped.address] ||
+          !rebases?.[token1.wrapped.address] ||
+          !slpAmountToRemove
+        console.log({ isInvalid })
         if (
           !chain?.id ||
           !pool ||
@@ -305,7 +322,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
                   <Checker.ApproveERC20
                     fullWidth
                     size="xl"
-                    id="remove-liquidity-trident-approve-token"
+                    id="approve-remove-liquidity-slp"
                     amount={slpAmountToRemove}
                     contract={getTridentRouterContractConfig(_pool.chainId).address}
                   >
@@ -316,7 +333,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
                         size="xl"
                         variant="filled"
                         disabled={!approved || isWritePending}
-                        testId="remove-liquidity-trident"
+                        testId="remove-liquidity"
                       >
                         {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
                       </Button>

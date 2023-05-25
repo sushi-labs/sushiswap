@@ -19,8 +19,11 @@ export const HeaderNetworkSelector: FC<{
   const { chain } = useNetwork()
   const { isSm } = useBreakpoint('sm')
 
+  console.debug('HeaderNetworkSelector', { networks, selectedNetwork, chain })
+
   const onSwitchNetwork = useCallback<NetworkSelectorOnSelectCallback>(
     async (el, close) => {
+      console.debug('onSwitchNetwork', el)
       try {
         if (switchNetworkAsync && chain?.id !== el) {
           await switchNetworkAsync(el)
@@ -53,9 +56,7 @@ export const HeaderNetworkSelector: FC<{
       {({ open }) => (
         <Popover.Button as={Button} variant="outlined" color="default" size="md" className="!font-medium">
           <NetworkIcon chainId={selected} width={20} height={20} />
-          <div className="hidden xl:block">
-            {chainName?.[selected]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
-          </div>
+          <div className="hidden xl:block">{chainName[selected]}</div>
           <ChevronDownIcon
             width={24}
             height={24}

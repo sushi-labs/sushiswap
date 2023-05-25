@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/react-query",
   "version": "0.0.0",
-  "private": true,
   "description": "Sushi React Query",
   "keywords": [
     "sushi",
@@ -47,24 +46,20 @@
     "@ethersproject/address": "5.7.0",
     "@ethersproject/bignumber": "5.7.0",
     "@ethersproject/units": "^5.7.0",
-    "@sushiswap/abi": "workspace:*",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/currency": "workspace:*",
-    "@sushiswap/database": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/types": "workspace:*",
-    "@sushiswap/ui": "workspace:*",
-    "@sushiswap/route-processor": "workspace:*",
     "@tanstack/react-query": "4.28.0",
     "@tanstack/react-query-devtools": "4.28.0",
     "@tanstack/react-query-persist-client": "4.28.0",
     "ethers": "5.7.2",
     "idb-keyval": "6.2.0",
     "nanoid": "4.0.0",
-    "zod": "3.20.2"
+    "zod": "3.21.4"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
@@ -72,16 +67,16 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/react-query-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
-    "eslint": "8.29.0",
+    "@types/react": "18.2.6",
+    "@types/react-dom": "18.2.4",
+    "eslint": "8.41.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tsup": "6.5.0",
     "typescript": "5.0.4"
   },
   "peerDependencies": {
-    "next": "13.3.1",
+    "next": "13.3.4",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   }

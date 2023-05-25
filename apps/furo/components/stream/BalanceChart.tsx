@@ -145,7 +145,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
           <text
             textAnchor="middle"
             fill="currentColor"
-            fontFamily="InterVariable"
+            fontFamily="Inter Variable"
             fontSize={12}
             x={width / 2}
             y={width / 2}
@@ -159,7 +159,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
             textAnchor="middle"
             fill="currentColor"
             fontWeight={500}
-            fontFamily="InterVariable"
+            fontFamily="Inter Variable"
             fontSize={40}
             x={width / 2}
             y={width / 2}
@@ -201,7 +201,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
           <text
             textAnchor="middle"
             fill="currentColor"
-            fontFamily="InterVariable"
+            fontFamily="Inter Variable"
             fontSize={12}
             x={width / 2}
             y={width / 2}
@@ -215,7 +215,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
             textAnchor="middle"
             fill="currentColor"
             fontWeight={500}
-            fontFamily="InterVariable"
+            fontFamily="Inter Variable"
             fontSize={40}
             x={width / 2}
             y={width / 2}

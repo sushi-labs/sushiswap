@@ -19,8 +19,6 @@ import {
   START_DATE_COLUMN,
 } from './Cells/columns'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 const COLUMNS = [
   CURRENCY_COLUMN,
   RECIPIENT_COLUMN,
@@ -28,7 +26,7 @@ const COLUMNS = [
   START_DATE_COLUMN,
   SCHEDULE_COLUMN,
   ACTIONS_COLUMN,
-]
+] as any
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {

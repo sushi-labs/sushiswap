@@ -9,16 +9,23 @@ import { default as thr, HeadRowProps } from './HeadRow'
 import { Paginator, PaginatorProps } from './Paginator'
 import { default as table } from './Root'
 import { default as tr } from './Row'
+import { WithTestDataId } from './types'
 
 export type TableProps = {
-  container: FC<TableContainerProps>
-  thead: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement>>
-  table: FC<React.DetailedHTMLProps<React.TableHTMLAttributes<HTMLTableElement>, HTMLTableElement>>
+  container: FC<WithTestDataId<TableContainerProps>>
+  thead: FC<
+    WithTestDataId<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement>>
+  >
+  table: FC<WithTestDataId<React.DetailedHTMLProps<React.TableHTMLAttributes<HTMLTableElement>, HTMLTableElement>>>
   tr: typeof tr
-  thr: FC<HeadRowProps>
-  th: FC<HeadCellProps>
-  td: FC<React.DetailedHTMLProps<React.TdHTMLAttributes<HTMLTableDataCellElement>, HTMLTableDataCellElement>>
-  tbody: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement>>
+  thr: FC<WithTestDataId<HeadRowProps>>
+  th: FC<WithTestDataId<HeadCellProps>>
+  td: FC<
+    WithTestDataId<React.DetailedHTMLProps<React.TdHTMLAttributes<HTMLTableDataCellElement>, HTMLTableDataCellElement>>
+  >
+  tbody: FC<
+    WithTestDataId<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement>>
+  >
   Paginator: FC<PaginatorProps>
 }
 

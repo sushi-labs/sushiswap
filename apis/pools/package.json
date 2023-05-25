@@ -28,10 +28,10 @@
     "@sushiswap/validate": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
     "@sushiswap/types": "workspace:*",
-    "@vercel/node": "2.9.8",
-    "@wagmi/core": "0.10.11",
+    "@vercel/node": "2.14.3",
+    "@wagmi/core": "0.10.10",
     "deepmerge-ts": "^4.3.0",
-    "zod": "3.20.2"
+    "zod": "3.21.4"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
@@ -40,10 +40,10 @@
     "@tsconfig/strictest": "2.0.1",
     "@tsconfig/node18": "2.0.0",
     "@tsconfig/esm": "1.0.3",
-    "@types/node": "^18.0.0",
+    "@types/node": "18.11.18",
     "dotenv": "16.0.3",
-    "eslint": "8.29.0",
+    "eslint": "8.41.0",
     "typescript": "5.0.4",
-    "vercel": "28.16.7"
+    "vercel": "29.4.0"
   }
 }
