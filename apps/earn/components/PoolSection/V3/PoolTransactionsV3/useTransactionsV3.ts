@@ -14,6 +14,7 @@ export enum TransactionType {
 interface UseTransactionsV3Opts {
   refetchInterval?: number
   first: number
+  skip?: number
 }
 
 // Will only support the last 1k txs
@@ -33,7 +34,7 @@ function useTransactionsV3(pool: Pool | undefined | null, poolId: string, opts: 
 
       const { transactions } = await sdk.V3Transactions({
         first: opts.first,
-        skip: 0,
+        skip: opts.skip,
         where: {
           or: [
             {

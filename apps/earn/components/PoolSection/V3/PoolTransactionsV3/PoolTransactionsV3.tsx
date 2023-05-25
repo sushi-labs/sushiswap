@@ -18,7 +18,7 @@ interface PoolTransactionsV3Props {
   poolId: string
 }
 
-const COLUMNS = [TYPE_COLUMN, SENDER_COLUMN, AMOUNT_COLUMN, AMOUNT_USD_COLUMN, TIME_COLUMN] as any
+const COLUMNS = [TYPE_COLUMN, SENDER_COLUMN, AMOUNT_COLUMN, AMOUNT_USD_COLUMN, TIME_COLUMN]
 
 const PAGE_SIZE = 10
 
@@ -28,18 +28,25 @@ const PAGE_COUNT = 200 / PAGE_SIZE
 export const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }) => {
   const [pageIndex, setPageIndex] = useState<number>(0)
 
-  const { data, isLoading } = useTransactionsV3(pool, poolId, {
-    refetchInterval: 60_000,
-    first: 200, //PAGE_SIZE * (pageIndex + 1),
-  })
-
-  const dataPaged = useMemo(
-    () => data?.slice(pageIndex * PAGE_SIZE, (pageIndex + 1) * PAGE_SIZE) || [],
-    [data, pageIndex]
+  const opt = useMemo(
+    () => ({
+      refetchInterval: 60_000,
+      first: 10, //PAGE_SIZE * (pageIndex + 1),
+      skip: PAGE_SIZE * pageIndex,
+    }),
+    [pageIndex]
   )
 
+  const { data, isLoading } = useTransactionsV3(pool, poolId, opt)
+
+  // const dataPaged = useMemo(
+  //   () => data?.slice(pageIndex * PAGE_SIZE, (pageIndex + 1) * PAGE_SIZE) || [],
+  //   [data, pageIndex]
+  // )
+
   const table = useReactTable<Transaction>({
-    data: dataPaged,
+    // @ts-ignore
+    data,
     columns: COLUMNS,
     pageCount: pageIndex + 1,
     getCoreRowModel: getCoreRowModel(),

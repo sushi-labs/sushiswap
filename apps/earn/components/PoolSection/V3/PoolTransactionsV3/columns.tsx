@@ -88,7 +88,7 @@ export const AMOUNT_COLUMN: ColumnDef<Transaction, unknown> = {
     }, [])
   },
   meta: {
-    className: 'justify-end',
+    className: 'justify-center',
     skeleton: (
       <div className="flex justify-end">
         <Skeleton.Box className="w-[113px] h-[40px]" />
