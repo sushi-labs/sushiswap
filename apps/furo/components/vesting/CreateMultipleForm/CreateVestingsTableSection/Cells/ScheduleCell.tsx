@@ -75,14 +75,15 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
       {({ setOpen }) => {
         return (
           <>
-            <Drawer.Button>
+            <Drawer.Button
+            >
               <div
                 className={classNames(
                   errors?.vestings?.[index]?.cliff ? 'border-red' : 'border-transparent',
                   'border-0 !border-b-[1px] h-[37px] flex items-center'
                 )}
               >
-                <IconButton as="div" className={classNames('py-0.5 px-1 flex items-center gap-2')}>
+                <IconButton as="div" className={classNames('py-0.5 px-1 flex items-center gap-2')} testdata-id={`vesting-schedule-${index}-button`}>
                   <span className="text-sm font-medium">
                     {row.cliff.cliffEnabled
                       ? `Cliff, ${row.stepConfig?.label}`
@@ -115,6 +116,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                         render={({ field: { onChange, value } }) => {
                           return (
                             <Switch
+                              id={`vesting-schedule-${index}-cliff-toggle-switch`}
                               checked={value}
                               onChange={(val) => {
                                 onChange(val)
@@ -162,6 +164,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                                 dateFormat="MMM d, yyyy HH:mm"
                                 placeholderText="Select date"
                                 autoComplete="off"
+                                customInput={<input testdata-id={`vesting-schedule-cliff-${index}-date`} type="text" />}
                               />
                               <Form.Error message={error?.message} />
                             </>
@@ -178,7 +181,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                           fieldState: { error: validationError },
                         }) => (
                           <CurrencyInput
-                            id="create-multiple-vest"
+                            id={`vesting-schedule-cliff-${index}-amount-input`}
                             name={name}
                             onBlur={onBlur}
                             className="ring-offset-slate-900"
@@ -201,6 +204,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                         name={`vestings.${index}.stepAmount`}
                         render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
                           <CurrencyInputBase
+                            id={`vesting-schedule-graded-${index}-amount-input`}
                             className="ring-offset-slate-900"
                             onChange={onChange}
                             value={value || ''}
@@ -246,6 +250,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                                   value={value}
                                   error={!!error?.message}
                                   className="ring-offset-slate-900"
+                                  testdata-id={`vesting-schedule-graded-${index}-payouts-input`}
                                 />
                                 <Form.Error message={error?.message} />
                               </>
@@ -261,7 +266,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                             <>
                               <Select
                                 button={
-                                  <Select.Button error={!!error?.message} className="ring-offset-slate-900">
+                                  <Select.Button error={!!error?.message} className="ring-offset-slate-900" testdata-id={`vesting-schedule-graded-${index}-frequency-selection-button`}>
                                     {value.label}
                                   </Select.Button>
                                 }
@@ -273,7 +278,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                               >
                                 <Select.Options>
                                   {Object.values(stepConfigurations).map((stepConfig) => (
-                                    <Select.Option key={stepConfig.label} value={stepConfig}>
+                                    <Select.Option key={stepConfig.label} value={stepConfig} testdata-id={`vesting-schedule-graded-${index}-${stepConfig.label.toLowerCase()}`}>
                                       {stepConfig.label}
                                     </Select.Option>
                                   ))}
