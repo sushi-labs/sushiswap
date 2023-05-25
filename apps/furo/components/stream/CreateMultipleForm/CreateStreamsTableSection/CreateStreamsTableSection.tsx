@@ -20,8 +20,6 @@ import {
   START_DATE_COLUMN,
 } from './Cells/columns'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 const COLUMNS = [
   CURRENCY_COLUMN,
   AMOUNT_COLUMN,
@@ -30,7 +28,7 @@ const COLUMNS = [
   START_DATE_COLUMN,
   END_DATE_COLUMN,
   ACTIONS_COLUMN,
-]
+] as any
 
 interface CreateStreamsTableSection {
   chainId: ChainId

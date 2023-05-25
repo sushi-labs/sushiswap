@@ -8,6 +8,8 @@ import { PoolTVLCell } from './PoolTVLCell'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { Explainer } from '@sushiswap/ui/future/components/Explainer'
 import { ChainId } from '@sushiswap/chain'
+import { PoolVolume1hCell } from '../../SharedCells/PoolVolume1hCell'
+import { PoolVolume1wCell } from '../../SharedCells/PoolVolume1wCell'
 
 export const ICON_SIZE = 26
 export const PAGE_SIZE = 20
@@ -55,7 +57,7 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
 }
 
 export const APR_COLUMN: ColumnDef<Pool, unknown> = {
-  id: 'totalApr',
+  id: 'totalApr1d',
   header: () => (
     <div className="flex items-center gap-1">
       APR
@@ -64,7 +66,7 @@ export const APR_COLUMN: ColumnDef<Pool, unknown> = {
       </Explainer>
     </div>
   ),
-  accessorFn: (row) => row.totalApr,
+  accessorFn: (row) => row.totalApr1d,
   cell: (props) => <PoolAPRCell row={props.row.original} />,
   size: 100,
   meta: {
@@ -73,11 +75,35 @@ export const APR_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const VOLUME_COLUMN: ColumnDef<Pool, unknown> = {
+export const VOLUME_1H_COLUMN: ColumnDef<Pool, unknown> = {
+  id: 'volume1h',
+  header: 'Volume (1h)',
+  accessorFn: (row) => row.volume1h,
+  cell: (props) => <PoolVolume1hCell row={props.row.original} />,
+  size: 100,
+  meta: {
+    className: 'justify-end',
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
+  },
+}
+
+export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'volume1d',
-  header: 'Volume (24h)',
+  header: 'Volume (1d)',
   accessorFn: (row) => row.volume1d,
   cell: (props) => <PoolVolume1dCell row={props.row.original} />,
+  size: 100,
+  meta: {
+    className: 'justify-end',
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
+  },
+}
+
+export const VOLUME_7D_COLUMN: ColumnDef<Pool, unknown> = {
+  id: 'volume1w',
+  header: 'Volume (1w)',
+  accessorFn: (row) => row.volume1w,
+  cell: (props) => <PoolVolume1wCell row={props.row.original} />,
   size: 100,
   meta: {
     className: 'justify-end',

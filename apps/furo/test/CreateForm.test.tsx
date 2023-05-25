@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 
 import { CreateForm } from '../components/stream'
+import React from 'react'
 
 const setup = () => render(<CreateForm chainId={1} />)
 

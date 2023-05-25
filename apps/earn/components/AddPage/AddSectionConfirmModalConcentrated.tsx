@@ -16,6 +16,7 @@ import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
+import { useNetwork } from 'wagmi'
 
 interface AddSectionConfirmModalConcentratedProps
   extends Pick<ReturnType<typeof useConcentratedDerivedMintInfo>, 'noLiquidity' | 'position'> {
@@ -51,6 +52,7 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
   existingPosition,
   successLink,
 }) => {
+  const { chain } = useNetwork()
   const [dialogState, setDialogState] = useState<ConfirmationDialogState>(ConfirmationDialogState.Undefined)
   const [open, setOpen] = useState(false)
   const { address } = useAccount()
@@ -141,6 +143,7 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
     chainId,
     prepare,
     onSettled,
+    enabled: chainId === chain?.id,
     onSuccess: (data) => {
       closeReview()
 

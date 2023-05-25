@@ -621,6 +621,34 @@ export const otherChains: Chain[] = [
       },
     },
   },
+  {
+    id: ChainId.THUNDERCORE,
+    name: 'ThunderCore',
+    network: 'thundercore',
+    nativeCurrency: { name: 'Thunder Token', symbol: 'TT', decimals: 18 },
+    rpcUrls: {
+      default: {
+        http: [
+          'https://mainnet-rpc.thundercore.io',
+          'https://mainnet-rpc.thundercore.com',
+          'https://mainnet-rpc.thundertoken.net',
+        ],
+      },
+      public: {
+        http: [
+          'https://mainnet-rpc.thundercore.io',
+          'https://mainnet-rpc.thundercore.com',
+          'https://mainnet-rpc.thundertoken.net',
+        ],
+      },
+    },
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 100671921,
+      },
+    },
+  },
 ]
 
 export const allChains = [...defaultChains, ...otherChains]

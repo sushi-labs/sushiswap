@@ -107,6 +107,8 @@ export const ChainId = {
   // SCROLL_ALPHA_TESTNET: 534353,
   // BASE_TESTNET: 84531,
   POLYGON_ZKEVM: 1101,
+  THUNDERCORE: 108,
+  // FILECOIN: 314,
 } as const
 export type ChainId = (typeof ChainId)[keyof typeof ChainId]
 
@@ -155,57 +157,11 @@ export const ChainKey = {
   // [ChainId.SCROLL_ALPHA_TESTNET]: 'scroll-alpha-testnet',
   // [ChainId.BASE_TESTNET]:'base-testnet',
   [ChainId.POLYGON_ZKEVM]: 'polygon-zkevm',
+  [ChainId.THUNDERCORE]: 'thundercore',
+  // [ChainId.FILECOIN]: 'filecoin',
   // [ChainId.SEPOLIA]: 'sepolia',
 } as const
 export type ChainKey = (typeof ChainKey)[keyof typeof ChainKey]
-
-// const CHAINS = [
-//   ...raw,
-//   {
-//     name: 'Boba Avax',
-//     chain: 'Boba Avax',
-//     rpc: ['https://avax.boba.network', 'wss://wss.avax.boba.network', 'https://replica.avax.boba.network'],
-//     faucets: [],
-//     nativeCurrency: {
-//       name: 'Boba Token',
-//       symbol: 'BOBA',
-//       decimals: 18,
-//     },
-//     infoURL: 'https://boba.network',
-//     shortName: 'bobaavax',
-//     chainId: 43288,
-//     networkId: 43288,
-//     explorers: [
-//       {
-//         name: 'Boba Avax Explorer',
-//         url: 'https://blockexplorer.avax.boba.network',
-//         standard: Standard.None,
-//       },
-//     ],
-//   },
-//   {
-//     name: 'Boba BNB',
-//     chain: 'Boba BNB',
-//     rpc: ['https://bnb.boba.network', 'wss://wss.bnb.boba.network', 'https://replica.bnb.boba.network'],
-//     faucets: [],
-//     nativeCurrency: {
-//       name: 'Boba Token',
-//       symbol: 'BOBA',
-//       decimals: 18,
-//     },
-//     infoURL: 'https://boba.network',
-//     shortName: 'bobabnb',
-//     chainId: 56288,
-//     networkId: 56288,
-//     explorers: [
-//       {
-//         name: 'Boba BNB Explorer',
-//         url: 'https://blockexplorer.bnb.boba.network',
-//         standard: Standard.None,
-//       },
-//     ],
-//   },
-// ] as const
 
 const additional = [
   // {
@@ -272,6 +228,32 @@ const additional = [
   //       name: 'Base Goreli Explorer',
   //       url: 'https://goerli.basescan.org',
   //       standard: Standard.Eip3091,
+  //     },
+  //   ],
+  // },
+  // {
+  //   name: 'ThunderCore',
+  //   chain: 'ThunderCore',
+  //   rpc: [
+  //     'https://mainnet-rpc.thundercore.io',
+  //     'https://mainnet-rpc.thundercore.com',
+  //     'https://mainnet-rpc.thundertoken.net',
+  //   ],
+  //   faucets: [],
+  //   nativeCurrency: {
+  //     name: 'Thunder Token',
+  //     symbol: 'TT',
+  //     decimals: 18,
+  //   },
+  //   infoURL: 'https://docs.developers.thundercore.com',
+  //   shortName: 'thundercore',
+  //   chainId: 108,
+  //   networkId: 108,
+  //   explorers: [
+  //     {
+  //       name: 'ThunderCore Explorer',
+  //       url: 'https://viewblock.io/thundercore',
+  //       standard: Standard.None,
   //     },
   //   ],
   // },

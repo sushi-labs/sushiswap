@@ -204,7 +204,7 @@ export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoad
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col justify-between items-center gap-5 md:flex-row">
+      <div className="flex flex-col items-center justify-between gap-5 md:flex-row">
         <div className="flex items-center gap-1">
           <Button
             size="xs"
@@ -292,14 +292,14 @@ export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoad
         </div>
       </div>
       <div className="flex flex-col">
-        <Typography variant="xl" weight={500} className="dark:text-slate-50 text-gray-900">
+        <Typography variant="xl" weight={500} className="text-gray-900 dark:text-slate-50">
           <span className="hoveredItemValue">
             {chartType === PoolChartType.APR
               ? formatPercent(yData[yData.length - 1])
               : formatUSD(yData[yData.length - 1])}
           </span>{' '}
           {chartType === PoolChartType.Volume && (
-            <span className="text-sm font-medium  text-gray-600 dark:text-slate-300">
+            <span className="text-sm font-medium text-gray-600 dark:text-slate-300">
               <span className="text-xs top-[-2px] relative">•</span>{' '}
               <span className="hoveredItemValue">{formatUSD(Number(yData[yData.length - 1]) * Number(swapFee))}</span>{' '}
               earned
@@ -307,7 +307,7 @@ export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoad
           )}
         </Typography>
         {xData.length && (
-          <Typography variant="sm" className="dark:text-slate-500 text-gray-500 hoveredItemName">
+          <Typography variant="sm" className="text-gray-500 dark:text-slate-500 hoveredItemName">
             <AppearOnMount>{format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}</AppearOnMount>
           </Typography>
         )}

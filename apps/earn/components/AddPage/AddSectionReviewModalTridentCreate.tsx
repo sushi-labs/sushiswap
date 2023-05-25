@@ -34,7 +34,6 @@ import {
 import { AddSectionReviewModal } from '../AddSection'
 import { PoolType } from '@sushiswap/wagmi/future/hooks'
 import { createToast } from '@sushiswap/ui/future/components/toast'
-import { ChainId } from '@sushiswap/chain'
 
 interface CreateSectionReviewModalTridentProps {
   chainId: BentoBoxV1ChainId

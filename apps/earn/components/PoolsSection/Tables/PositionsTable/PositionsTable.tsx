@@ -12,9 +12,7 @@ import { ClassicPoolIcon } from '@sushiswap/ui/future/components/icons'
 import { classNames } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from '../../../../config'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const COLUMNS = [NAME_COLUMN, VALUE_COLUMN, APR_COLUMN]
+const COLUMNS = [NAME_COLUMN, VALUE_COLUMN, APR_COLUMN] as any
 
 export const PositionsTable: FC = () => {
   const { address } = useAccount()
@@ -25,7 +23,10 @@ export const PositionsTable: FC = () => {
   const [columnVisibility, setColumnVisibility] = useState({})
 
   const { data: userPositions, isValidating } = useUserPositions({ id: address, chainIds: SUPPORTED_CHAIN_IDS })
+
   const _positions = useMemo(() => userPositions || [], [userPositions])
+
+  console.log('RENDER POSITIONS TABLE')
 
   const table = useReactTable<PositionWithPool>({
     data: _positions,
@@ -60,21 +61,23 @@ export const PositionsTable: FC = () => {
   return (
     <>
       <div className={classNames('w-full group')}>
-        <h1 className="flex gap-2 items-center justify-between font-semibold text-sm text-gray-700 group-hover:text-gray-900 dark:text-slate-200 dark:group-hover:text-slate-50 group-hover:dark:text-slate-50 py-4 px-4">
+        <h1 className="flex items-center justify-between gap-2 px-4 py-4 text-sm font-semibold text-gray-700 group-hover:text-gray-900 dark:text-slate-200 dark:group-hover:text-slate-50 group-hover:dark:text-slate-50">
           <span className="flex items-center gap-3">
-            <ClassicPoolIcon width={20} height={20} className="saturate-200" /> Legacy Positions{' '}
+            <ClassicPoolIcon width={20} height={20} className="saturate-200" /> V2/Trident Positions{' '}
             {userPositions ? `(${userPositions.length})` : ''}
           </span>
         </h1>
       </div>
-      <GenericTable<PositionWithPool>
-        table={table}
-        HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
-        loading={isValidating}
-        placeholder="No positions found"
-        pageSize={Math.max(userPositions?.length || 0, 5)}
-        linkFormatter={rowLink}
-      />
+      <div className="mb-10 overflow-hidden border border-gray-200 rounded-2xl dark:border-slate-200/5">
+        <GenericTable<PositionWithPool>
+          table={table}
+          HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
+          loading={isValidating}
+          placeholder="No positions found"
+          pageSize={Math.max(userPositions?.length || 0, 5)}
+          linkFormatter={rowLink}
+        />
+      </div>
     </>
   )
 }

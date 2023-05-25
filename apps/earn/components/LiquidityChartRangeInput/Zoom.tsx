@@ -1,4 +1,4 @@
-import { RefreshIcon, ZoomInIcon, ZoomOutIcon } from '@heroicons/react/solid'
+import { ZoomInIcon, ZoomOutIcon } from '@heroicons/react/solid'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { ScaleLinear, select, zoom, ZoomBehavior, zoomIdentity, ZoomTransform } from 'd3'
 import React, { FC, useEffect, useMemo, useRef } from 'react'

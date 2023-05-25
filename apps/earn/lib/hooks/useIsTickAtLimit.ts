@@ -10,11 +10,11 @@ export default function useIsTickAtLimit(
   return useMemo(
     () => ({
       [Bound.LOWER]:
-        feeAmount && tickLower
+        feeAmount && typeof tickLower === 'number'
           ? tickLower === nearestUsableTick(TickMath.MIN_TICK, TICK_SPACINGS[feeAmount as FeeAmount])
           : undefined,
       [Bound.UPPER]:
-        feeAmount && tickUpper
+        feeAmount && typeof tickUpper === 'number'
           ? tickUpper === nearestUsableTick(TickMath.MAX_TICK, TICK_SPACINGS[feeAmount as FeeAmount])
           : undefined,
     }),

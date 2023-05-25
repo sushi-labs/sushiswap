@@ -1,4 +1,4 @@
-import { CONCENTRATED_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
+import { SUBGRAPH_HOST, SUSHISWAP_V3_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 
 import { Query, QueryResolvers } from '../../.graphclient/index.js'
 
@@ -32,7 +32,7 @@ export const poolsByTokenPair: QueryResolvers['poolsByTokenPair'] = async (
       context: {
         ...context,
         chainId: Number(chainId),
-        subgraphName: CONCENTRATED_SUBGRAPH_NAME[chainId],
+        subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
         subgraphHost: SUBGRAPH_HOST[chainId],
       },
       info,

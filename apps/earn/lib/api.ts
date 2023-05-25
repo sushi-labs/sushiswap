@@ -83,7 +83,7 @@ export const getAllV3Ticks = async (id: string) => {
   return ticks
 }
 
-export const getCollectsByTokenPair = async (tokenId0: string, tokenId1: string) => {
+export const getPoolsByTokenPair = async (tokenId0: string, tokenId1: string) => {
   const [chainId0, tokenAddress0] = tokenId0.split(':')
   if (!chainId0 || !tokenAddress0) throw Error('Invalid token0 id')
 

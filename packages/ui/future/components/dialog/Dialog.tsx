@@ -6,7 +6,7 @@ import DialogActions, { DialogActionProps } from './DialogActions'
 import DialogContent, { DialogContentProps } from './DialogContent'
 import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
 import DialogHeader, { DialogHeaderProps } from './DialogHeader'
-import { syncScrollLockSafeArea } from '../../lib/syncScrollLockSafeArea'
+import { syncScrollLockSafeArea } from '../../lib'
 import { ExtractProps } from '../../../types'
 
 export type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
@@ -114,6 +114,9 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
   )
 }
 
+/**
+ * @deprecated use @sushiswap/ui/future/components/modal/Modal
+ */
 export const Dialog: FunctionComponent<DialogRootProps> & {
   Description: FunctionComponent<DialogDescriptionProps>
   Header: FunctionComponent<DialogHeaderProps>

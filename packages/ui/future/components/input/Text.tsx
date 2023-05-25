@@ -9,9 +9,18 @@ interface TextInput<T> {
   id: string
   caption?: string
   className?: string
+  hideCloseButton?: boolean
 }
 
-export function Text<T extends string | number>({ label, value, onChange, id, caption, className = '' }: TextInput<T>) {
+export function Text<T extends string | number>({
+  label,
+  value,
+  onChange,
+  id,
+  caption,
+  hideCloseButton = false,
+  className = '',
+}: TextInput<T>) {
   const _onChange = useCallback(
     (e: T) => {
       onChange(e)
@@ -20,8 +29,8 @@ export function Text<T extends string | number>({ label, value, onChange, id, ca
   )
 
   return (
-    <div className="space-y-1">
-      <div className="relative">
+    <div className="space-y-1 w-full">
+      <div className="relative w-full">
         <input
           type="text"
           id={id}
@@ -44,7 +53,7 @@ export function Text<T extends string | number>({ label, value, onChange, id, ca
         >
           {label}
         </label>
-        {value !== '' && (
+        {value !== '' && !hideCloseButton && (
           <div className="absolute top-0 bottom-0 flex items-center justify-center right-4">
             <button
               onClick={() => onChange('' as T)}

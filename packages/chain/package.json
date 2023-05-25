@@ -27,7 +27,7 @@
     "dev": "tsc -w",
     "generate": "ls ./src/generated.ts || ts-node ./scripts/generate.ts",
     "preinstall": "pnpm run generate",
-    "lint": "TIMING=1 eslint ./index.ts --fix",
+    "lint": "TIMING=1 eslint src --fix",
     "test": "jest --passWithNoTests"
   },
   "jest": {
@@ -41,7 +41,7 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "^29.2.0",
     "@types/node-fetch": "^2.6.2",
-    "eslint": "8.29.0",
+    "eslint": "8.41.0",
     "jest": "29.3.1",
     "node-fetch": "^2.6.2",
     "typescript": "5.0.4"

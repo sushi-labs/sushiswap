@@ -73,6 +73,16 @@ additionalTypeDefs: |
       orderDirection: OrderDirection
       chainIds: [Int!]!
     ): [Block!]!
+    oneHourBlocks(
+      skip: Int = 0
+      first: Int = 100
+      chainIds: [Int!]!
+    ): [Block!]!
+    twoHourBlocks(
+      skip: Int = 0
+      first: Int = 100
+      chainIds: [Int!]!
+    ): [Block!]!
     oneDayBlocks(
       skip: Int = 0
       first: Int = 100
@@ -84,6 +94,21 @@ additionalTypeDefs: |
       chainIds: [Int!]!
     ): [Block!]!
     oneWeekBlocks(
+      skip: Int = 0
+      first: Int = 100
+      chainIds: [Int!]!
+    ): [Block!]!
+    twoWeekBlocks(
+      skip: Int = 0
+      first: Int = 100
+      chainIds: [Int!]!
+    ): [Block!]!
+    oneMonthBlocks(
+      skip: Int = 0
+      first: Int = 100
+      chainIds: [Int!]!
+    ): [Block!]!
+    twoMonthBlocks(
       skip: Int = 0
       first: Int = 100
       chainIds: [Int!]!

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import { Layout } from '../../../components'
 import Link from 'next/link'
 import { ArrowLeftIcon, MinusIcon, PlusIcon } from '@heroicons/react/solid'
@@ -15,8 +15,8 @@ import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { classNames } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import { Amount, tryParseAmount } from '@sushiswap/currency'
-import { usePriceInverter, useTokenAmountDollarValues } from '../../../lib/hooks'
+import { Amount } from '@sushiswap/currency'
+import { usePriceInverter } from '../../../lib/hooks'
 import { formatTickPrice, getPriceOrderingFromPositionForUI, unwrapToken } from '../../../lib/functions'
 import { ConcentratedLiquidityWidget } from '../../../components/ConcentratedLiquidityWidget'
 import { useAccount } from '@sushiswap/wagmi'
@@ -36,6 +36,11 @@ import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { PoolHeader } from '../../../components/future/PoolHeader'
 import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 import useIsTickAtLimit from '../../../lib/hooks/useIsTickAtLimit'
+import { useAngleRewards } from '@sushiswap/react-query'
+import { ConcentratedLiquidityHarvestButton } from '../../../components/ConcentratedLiquidityHarvestButton'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { ChainId } from '@sushiswap/chain'
+import { Explainer } from '@sushiswap/ui/future/components/Explainer'
 
 const PositionPage = () => {
   return (
@@ -143,6 +148,12 @@ const Position: FC = () => {
   const inRange = typeof below === 'boolean' && typeof above === 'boolean' ? !below && !above : false
   const fullRange = Boolean(tickAtLimit[Bound.LOWER] && tickAtLimit[Bound.UPPER])
 
+  const { data: rewardsData, isLoading: rewardsLoading } = useAngleRewards({
+    chainId,
+    account: address,
+    poolAddress: positionDetails?.address,
+  })
+
   return (
     <Layout>
       <div className="flex flex-col gap-2">
@@ -166,7 +177,7 @@ const Position: FC = () => {
           isLoading={isLoading}
           chainId={chainId}
           pool={pool}
-          apy={{ rewards: poolStats?.incentiveApr, fees: poolStats?.feeApr }}
+          apy={{ rewards: poolStats?.incentiveApr, fees: poolStats?.feeApr1d }}
           {...(priceLower && {
             priceRange: fullRange
               ? 'Full range (0 ⇔ ∞)'
@@ -249,9 +260,105 @@ const Position: FC = () => {
               )}
             </List.Control>
           </List>
+          {chainId === ChainId.POLYGON && (
+            <List className="!gap-1">
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col">
+                  <List.Label className="flex gap-1">
+                    Unclaimed rewards{' '}
+                    <Explainer hover iconSize={16} placement="bottom" width={320}>
+                      <List className="!pt-0 ">
+                        <List.Label>Accumulated rewards since inception</List.Label>
+                        <List.Control>
+                          {rewardsLoading ? (
+                            <List.KeyValue skeleton />
+                          ) : rewardsData &&
+                            positionDetails &&
+                            rewardsData.pools[positionDetails.address]?.rewardsPerToken ? (
+                            Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el, i) => (
+                              <List.KeyValue key={i} flex title={`${el.accumulatedSinceInception.currency.symbol}`}>
+                                <div className="flex flex-col gap-2">
+                                  <div className="flex items-center gap-2">
+                                    <Currency.Icon currency={el.unclaimed.currency} width={18} height={18} />
+                                    {el.accumulatedSinceInception.toSignificant(4)} {el.unclaimed.currency.symbol}
+                                  </div>
+                                </div>
+                              </List.KeyValue>
+                            ))
+                          ) : (
+                            <List.KeyValue
+                              flex
+                              title={
+                                <span className="text-xs italic font-normal text-center text-gray-500 dark:text-slate-400">
+                                  No rewards found
+                                </span>
+                              }
+                            >
+                              {' '}
+                            </List.KeyValue>
+                          )}
+                        </List.Control>
+                      </List>
+                    </Explainer>
+                  </List.Label>
+                </div>
+                <ConcentratedLiquidityHarvestButton
+                  account={address}
+                  chainId={chainId}
+                  poolAddress={positionDetails?.address}
+                >
+                  {({ write, isLoading }) => (
+                    <Checker.Connect size="xs" variant="empty" className="!h-[24px] font-bold">
+                      <Checker.Network size="xs" variant="empty" className="!h-[24px] font-bold" chainId={chainId}>
+                        <Button
+                          disabled={isLoading}
+                          onClick={() => write?.()}
+                          size="xs"
+                          variant="empty"
+                          className="!h-[24px] font-bold"
+                        >
+                          Harvest
+                        </Button>
+                      </Checker.Network>
+                    </Checker.Connect>
+                  )}
+                </ConcentratedLiquidityHarvestButton>
+              </div>
+              <List.Control>
+                {rewardsLoading ? (
+                  <List.KeyValue skeleton />
+                ) : rewardsData && positionDetails && rewardsData.pools[positionDetails.address]?.rewardsPerToken ? (
+                  Object.values(rewardsData.pools[positionDetails.address].rewardsPerToken).map((el, i) => (
+                    <List.KeyValue key={i} flex title={`${el.unclaimed.currency.symbol}`}>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <Currency.Icon currency={el.unclaimed.currency} width={18} height={18} />
+                          {el.unclaimed.toSignificant(4)} {el.unclaimed.currency.symbol}
+                        </div>
+                      </div>
+                    </List.KeyValue>
+                  ))
+                ) : (
+                  <List.KeyValue
+                    flex
+                    title={
+                      <span className="text-xs italic font-normal text-center text-gray-500 dark:text-slate-400">
+                        No rewards found
+                      </span>
+                    }
+                  >
+                    {' '}
+                  </List.KeyValue>
+                )}
+              </List.Control>
+              <List.Label className="pt-1.5 font-normal text-gray-500 dark:text-slate-400">
+                Harvest all available pool rewards on the current network.
+              </List.Label>
+            </List>
+          )}
           <List className="!gap-1">
             <div className="flex items-center justify-between">
-              <List.Label>Unclaimed fees</List.Label>
+              <List.Label className="whitespace-nowrap">Unclaimed fees</List.Label>
               <ConcentratedLiquidityCollectButton
                 position={position ?? undefined}
                 positionDetails={positionDetails}
@@ -261,15 +368,19 @@ const Position: FC = () => {
                 chainId={chainId}
               >
                 {({ sendTransaction, isLoading }) => (
-                  <Button
-                    disabled={isLoading}
-                    onClick={() => sendTransaction?.()}
-                    size="xs"
-                    variant="empty"
-                    className="!h-[24px] font-bold"
-                  >
-                    Collect
-                  </Button>
+                  <Checker.Connect size="xs" variant="empty" className="!h-[24px] font-bold">
+                    <Checker.Network size="xs" variant="empty" className="!h-[24px] font-bold" chainId={chainId}>
+                      <Button
+                        disabled={isLoading}
+                        onClick={() => sendTransaction?.()}
+                        size="xs"
+                        variant="empty"
+                        className="!h-[24px] font-bold"
+                      >
+                        Collect
+                      </Button>
+                    </Checker.Network>
+                  </Checker.Connect>
                 )}
               </ConcentratedLiquidityCollectButton>
             </div>
