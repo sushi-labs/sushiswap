@@ -80,7 +80,7 @@
   "packageManager": "pnpm@8.5.1",
   "engines": {
     "node": ">=18.x",
-    "pnpm": "7.9.5"
+    "pnpm": ">=7.x"
   },
   "nextBundleAnalysis": {
     "budget": null,
