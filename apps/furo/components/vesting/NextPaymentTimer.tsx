@@ -47,9 +47,9 @@ export const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ schedule, children
 
     setRemaining({
       days: String(Math.max(days, 0)).padStart(1, '0'),
-      hours: String(Math.max(hours, 0)).padStart(2, '0'),
-      minutes: String(Math.max(minutes, 0)).padStart(2, '0'),
-      seconds: String(Math.max(seconds, 0)).padStart(2, '0'),
+      hours: String(Math.max(hours, 0)).padStart(1, '0'),
+      minutes: String(Math.max(minutes, 0)).padStart(1, '0'),
+      seconds: String(Math.max(seconds, 0)).padStart(1, '0'),
     })
   }, 1000)
 
