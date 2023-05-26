@@ -51,6 +51,8 @@ async function createSingleStream(token: Type, amount: string, recipient: string
 
   await approve(page, token)
 
+  await timeout(1_500) // FIXME: this should be removed and the button should be disabled, something isn't prepared yet and but missing validation
+
   const confirmCreateStreamButton = page.locator('[testdata-id=create-single-stream-confirmation-button]')
 
   await expect(confirmCreateStreamButton).toBeVisible()
