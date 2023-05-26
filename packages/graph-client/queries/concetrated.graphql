@@ -52,13 +52,7 @@ query PoolsByTokenPair($tokenId0: String!, $tokenId1: String!) {
   }
 }
 
-query V3Transactions(  
-  $first: Int = 10,
-  $skip: Int = 0, 
-  $orderBy: Transaction_orderBy = timestamp, 
-  $orderDir: OrderDirection = desc, 
-  $where: Transaction_filter
-) {
+query V3Transactions($first: Int = 100, $skip: Int = 0, $orderBy: Transaction_orderBy = timestamp, $orderDir: OrderDirection = desc, $where: Transaction_filter) {
   transactions(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
     id
     timestamp

@@ -20,27 +20,32 @@ interface PoolTransactionsV3Props {
 
 const COLUMNS = [TYPE_COLUMN, SENDER_COLUMN, AMOUNT_COLUMN, AMOUNT_USD_COLUMN, TIME_COLUMN]
 
-const PAGE_SIZE = 10
+const TOTAL_ROWS = 200
 
-// Query currently hardcoded to 200 transactions, not sure why it's not listening to my args
-const PAGE_COUNT = 200 / PAGE_SIZE
+const PAGE_SIZE = 10
+const PAGE_COUNT = TOTAL_ROWS / PAGE_SIZE
 
 export const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }) => {
   const [pageIndex, setPageIndex] = useState<number>(0)
 
-  const opt = useMemo(
+  const opts = useMemo(
     () => ({
       refetchInterval: 60_000,
-      first: 10,
-      skip: PAGE_SIZE * pageIndex,
+      // Fetch first 10 on initial load, then TOTAL_ROWS after
+      first: pageIndex === 0 ? PAGE_SIZE : TOTAL_ROWS,
     }),
     [pageIndex]
   )
 
-  const { data, isLoading } = useTransactionsV3(pool, poolId, opt)
+  const { data, isLoading } = useTransactionsV3(pool, poolId, opts)
+
+  const dataPaginated = useMemo(
+    () => (data ? data.slice(pageIndex * PAGE_SIZE, (pageIndex + 1) * PAGE_SIZE) : []),
+    [data, pageIndex]
+  )
 
   const table = useReactTable<Transaction>({
-    data: data as Transaction[],
+    data: dataPaginated as Transaction[],
     columns: COLUMNS,
     pageCount: pageIndex + 1,
     getCoreRowModel: getCoreRowModel(),

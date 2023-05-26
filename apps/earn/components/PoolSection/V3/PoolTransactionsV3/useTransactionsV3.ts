@@ -34,7 +34,7 @@ function useTransactionsV3(pool: Pool | undefined | null, poolId: string, opts: 
 
       const { transactions } = await sdk.V3Transactions({
         first: opts.first,
-        skip: opts.skip,
+        skip: opts?.skip ?? 0,
         where: {
           or: [
             {
