@@ -372,7 +372,7 @@ const _VestingPage: FC = () => {
               <div className="flex flex-col flex-grow justify-center gap-5">
                 <List className="!pt-0">
                   <List.Control>
-                    <List.KeyValue title="Next unlock">
+                    <List.KeyValue flex title="Next unlock">
                       <div className="flex flex-col">
                         <NextPaymentTimer schedule={schedule}>
                           {({ days, seconds, minutes, hours, isCompleted }) => (
