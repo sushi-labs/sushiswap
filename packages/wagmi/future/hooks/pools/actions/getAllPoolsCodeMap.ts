@@ -30,7 +30,10 @@ export const getAllPoolsCodeMap = async ({ currencyA, currencyB, chainId }: Omit
     liquidityProviders.push(LiquidityProviders.SushiSwapV3)
   }
   dataFetcher.startDataFetching(liquidityProviders)
-  await dataFetcher.fetchPoolsForToken(currencyA, currencyB)
+  if (currencyA.chainId === currencyB.chainId) {
+    await dataFetcher.fetchPoolsForToken(currencyA, currencyB)
+  }
+
   dataFetcher.stopDataFetching()
   return dataFetcher.getCurrentPoolCodeMap(currencyA, currencyB)
 }

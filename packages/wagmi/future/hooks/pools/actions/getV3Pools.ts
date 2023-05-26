@@ -23,6 +23,11 @@ interface PoolData {
   activeTick: number
 }
 
+/*
+ * Add simple cache that gets wiped on refresh to avoid unnecessary calls
+ */
+const NonExstingPools: Record<string, boolean> = {}
+
 /**
  * The default factory tick spacings by fee amount.
  */
@@ -87,26 +92,34 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
     return []
   }, [])
 
-  const filtered: [Token, Token, FeeAmount][] = []
+  const filtered: [Token, Token, FeeAmount, Address][] = []
   allCurrencyCombinationsWithAllFees.forEach(([currencyA, currencyB, feeAmount]) => {
     if (currencyA && currencyB && feeAmount) {
       const tokenA = currencyA.wrapped
       const tokenB = currencyB.wrapped
       if (tokenA.equals(tokenB)) return
-      filtered.push(tokenA.sortsBefore(tokenB) ? [tokenA, tokenB, feeAmount] : [tokenB, tokenA, feeAmount])
+
+      const address = computePoolAddress({
+        factoryAddress: V3_FACTORY_ADDRESS[chainId as V3ChainId],
+        tokenA: currencyA.wrapped,
+        tokenB: currencyB.wrapped,
+        fee: feeAmount,
+      }) as Address
+
+      // Filter previously fetched pools that turned out to be non-existing
+      if (NonExstingPools[`${chainId}:${address}`]) return
+
+      filtered.push(
+        tokenA.sortsBefore(tokenB) ? [tokenA, tokenB, feeAmount, address] : [tokenB, tokenA, feeAmount, address]
+      )
     }
   })
 
   const slot0Contracts = filtered.map(
-    ([currencyA, currencyB, fee]) =>
+    ([, , , address]) =>
       ({
         chainId,
-        address: computePoolAddress({
-          factoryAddress: V3_FACTORY_ADDRESS[chainId as V3ChainId],
-          tokenA: currencyA.wrapped,
-          tokenB: currencyB.wrapped,
-          fee,
-        }) as Address,
+        address,
         abi: uniswapV3PoolAbi,
         functionName: 'slot0',
       } as const)
@@ -118,11 +131,15 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
 
   if (slot0Contracts.length === 0) return [[V3PoolState.INVALID, null]]
   if (!slot0) return slot0Contracts.map(() => [V3PoolState.LOADING, null])
-
   const existingPools: [V3PoolState, PoolData][] = []
 
   filtered.forEach(([token0, token1, fee], i) => {
-    if (!slot0[i]) return
+    if (!slot0[i]) {
+      // Pool does not exist, set in cache as non-existing to avoid call next iteration
+      NonExstingPools[`${slot0Contracts[i].chainId}:${slot0Contracts[i].address}`] = true
+      return
+    }
+
     const [sqrtPriceX96, tick] = slot0[i]
     if (!sqrtPriceX96 || sqrtPriceX96.eq(0)) return
     // const [tokenA, tokenB, fee] = tokens[index]

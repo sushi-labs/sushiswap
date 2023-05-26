@@ -11,6 +11,11 @@ export enum PairState {
   INVALID,
 }
 
+/*
+ * Add simple cache that gets wiped on refresh to avoid unnecessary calls
+ */
+const NonExistingPairs: Record<string, boolean> = {}
+
 export const getPairs = async (
   chainId: UniswapV2Router02ChainId | undefined,
   currencies: [Currency | undefined, Currency | undefined][]
@@ -26,23 +31,29 @@ export const getPairs = async (
     )
   })
 
-  const [tokensA, tokensB] = filtered.reduce<[Token[], Token[]]>(
+  const [tokensA, tokensB, addresses] = filtered.reduce<[Token[], Token[], Address[]]>(
     (acc, [currencyA, currencyB]) => {
+      const address = computePairAddress({
+        factoryAddress: uniswapV2FactoryAddress[currencyA.chainId as UniswapV2FactoryChainId],
+        tokenA: currencyA.wrapped,
+        tokenB: currencyB.wrapped,
+      }) as Address
+
+      // Filter previously fetched pools that turned out to be non-existing
+      if (NonExistingPairs[`${currencyA.chainId}:${address}`]) return acc
+
       acc[0].push(currencyA.wrapped)
       acc[1].push(currencyB.wrapped)
+      acc[2].push(address)
 
       return acc
     },
-    [[], []]
+    [[], [], []]
   )
 
-  const contracts = filtered.map(([currencyA, currencyB]) => ({
+  const contracts = addresses.map((address) => ({
     chainId,
-    address: computePairAddress({
-      factoryAddress: uniswapV2FactoryAddress[currencyA.chainId as UniswapV2FactoryChainId],
-      tokenA: currencyA.wrapped,
-      tokenB: currencyB.wrapped,
-    }) as Address,
+    address: address,
     abi: uniswapV2PairAbi,
     functionName: 'getReserves' as const,
   }))
@@ -58,7 +69,12 @@ export const getPairs = async (
     const tokenA = tokensA[i]
     const tokenB = tokensB[i]
     if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [PairState.INVALID, null]
-    if (!result) return [PairState.NOT_EXISTS, null]
+    if (!result) {
+      // Pool does not exist, set in cache as non-existing to avoid call next iteration
+      NonExistingPairs[`${contracts[i].chainId}:${contracts[i].address}`] = true
+      return [PairState.NOT_EXISTS, null]
+    }
+
     const [reserve0, reserve1] = result
     const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
     return [
