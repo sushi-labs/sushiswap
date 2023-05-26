@@ -326,8 +326,8 @@ const Pool: FC = () => {
             </div>
           </div>
         </div>
-        <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
-        <PoolTransactionsV3 pool={pool} poolId={poolId} />
+        {/* <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
+        <PoolTransactionsV3 pool={pool} poolId={poolId} /> */}
       </div>
       <div className={tab === SelectedTab.NewPosition ? 'block' : 'hidden'}>
         <div className="grid gap-10 md:grid-cols-2">
