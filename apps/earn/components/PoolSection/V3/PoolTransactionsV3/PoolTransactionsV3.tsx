@@ -95,7 +95,7 @@ export const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }
           >
             Mints
           </div>
-          <div
+          {/* <div
             onClick={() => setType(TransactionType.Collect)}
             className={classNames(
               'cursor-pointer text-gray-400',
@@ -103,7 +103,7 @@ export const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }
             )}
           >
             Collects
-          </div>
+          </div> */}
         </div>
       </div>
 
