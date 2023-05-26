@@ -366,7 +366,7 @@ const _Streams: FC = () => {
                 <List>
                   <List.Label>Details</List.Label>
                   <List.Control>
-                    <List.KeyValue title="Remaining">
+                    <List.KeyValue flex title={stream.startTime.getTime() > Date.now() ? 'Starting in' : 'Remaining'}>
                       <FuroTimer furo={stream}>
                         {({ days, seconds, minutes, hours, isCompleted }) => (
                           <span className="flex gap-1 items-baseline">
@@ -375,20 +375,16 @@ const _Streams: FC = () => {
                             ) : (
                               <>
                                 <span>
-                                  {days}
-                                  <span className="text-gray-400 dark:text-slate-400 text-xs">D</span>
+                                  {days} <span className="text-gray-400 dark:text-slate-400 text-xs">day</span>
                                 </span>
                                 <span>
-                                  {hours}
-                                  <span className="text-gray-400 dark:text-slate-400 text-xs">H</span>
+                                  {hours} <span className="text-gray-400 dark:text-slate-400 text-xs">hours</span>
                                 </span>
                                 <span>
-                                  {minutes}
-                                  <span className="text-gray-400 dark:text-slate-400 text-xs">M</span>
+                                  {minutes} <span className="text-gray-400 dark:text-slate-400 text-xs">mins</span>
                                 </span>
                                 <span>
-                                  {seconds}
-                                  <span className="text-gray-400 dark:text-slate-400 text-xs">S</span>
+                                  {seconds} <span className="text-gray-400 dark:text-slate-400 text-xs">secs</span>
                                 </span>
                               </>
                             )}
@@ -396,14 +392,16 @@ const _Streams: FC = () => {
                         )}
                       </FuroTimer>
                     </List.KeyValue>
-                    <List.KeyValue title="Started on">
-                      <div className="flex flex-col">
-                        {format(new Date(stream.startTime), 'dd MMM yyyy')}
-                        <span className="text-[10px] font-medium text-slate-500">
-                          {format(new Date(stream.startTime), 'hh:mmaaa')}
-                        </span>
-                      </div>
-                    </List.KeyValue>
+                    {stream.startTime.getTime() < Date.now() && (
+                      <List.KeyValue title="Started on">
+                        <div className="flex flex-col">
+                          {format(new Date(stream.startTime), 'dd MMM yyyy')}
+                          <span className="text-[10px] font-medium text-slate-500">
+                            {format(new Date(stream.startTime), 'hh:mmaaa')}
+                          </span>
+                        </div>
+                      </List.KeyValue>
+                    )}
                     <List.KeyValue title="Ending on">
                       <div className="flex flex-col">
                         {format(new Date(stream.endTime), 'dd MMM yyyy')}

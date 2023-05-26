@@ -382,20 +382,16 @@ const _VestingPage: FC = () => {
                               ) : (
                                 <>
                                   <span>
-                                    {days}
-                                    <span className="text-gray-400 dark:text-slate-400 text-xs">D</span>
+                                    {days} <span className="text-gray-400 dark:text-slate-400 text-xs">day</span>
                                   </span>
                                   <span>
-                                    {hours}
-                                    <span className="text-gray-400 dark:text-slate-400 text-xs">H</span>
+                                    {hours} <span className="text-gray-400 dark:text-slate-400 text-xs">hours</span>
                                   </span>
                                   <span>
-                                    {minutes}
-                                    <span className="text-gray-400 dark:text-slate-400 text-xs">M</span>
+                                    {minutes} <span className="text-gray-400 dark:text-slate-400 text-xs">mins</span>
                                   </span>
                                   <span>
-                                    {seconds}
-                                    <span className="text-gray-400 dark:text-slate-400 text-xs">S</span>
+                                    {seconds} <span className="text-gray-400 dark:text-slate-400 text-xs">secs</span>
                                   </span>
                                 </>
                               )}
@@ -469,14 +465,16 @@ const _VestingPage: FC = () => {
                         )}
                       </FuroTimer>
                     </List.KeyValue>
-                    <List.KeyValue title="Started on">
-                      <div className="flex flex-col">
-                        {format(new Date(vesting.startTime), 'dd MMM yyyy')}
-                        <span className="text-[10px] font-medium text-slate-500">
-                          {format(new Date(vesting.startTime), 'hh:mmaaa')}
-                        </span>
-                      </div>
-                    </List.KeyValue>
+                    {vesting.startTime.getTime() < Date.now() && (
+                      <List.KeyValue title="Started on">
+                        <div className="flex flex-col">
+                          {format(new Date(vesting.startTime), 'dd MMM yyyy')}
+                          <span className="text-[10px] font-medium text-slate-500">
+                            {format(new Date(vesting.startTime), 'hh:mmaaa')}
+                          </span>
+                        </div>
+                      </List.KeyValue>
+                    )}
                     <List.KeyValue title="Ending on">
                       <div className="flex flex-col">
                         {format(new Date(vesting.endTime), 'dd MMM yyyy')}

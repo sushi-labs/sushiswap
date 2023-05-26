@@ -64,7 +64,7 @@ export const START_DATE_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
 
 export const END_DATE_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   id: 'endDate',
-  header: 'Start Date',
+  header: 'End Date',
   cell: (props) => <EndDateCell row={props.row.original} />,
   meta: {
     skeleton: <Skeleton.Text fontSize="text-lg" />,
