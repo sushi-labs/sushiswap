@@ -36,8 +36,7 @@ export const poolFiltersSchema = z.object({
   protocols: z
     .string()
     .optional()
-    .default(Object.values(Protocol).join(','))
-    .transform((protocols) => protocols.split(',') as Protocol[]),
+    .transform((protocols) => protocols?.split(',') as Protocol[]),
   farmsOnly: z
     .string()
     .optional()
@@ -52,7 +51,7 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => 
     const parsed = poolFiltersSchema.parse(query)
     return {
       ...parsed,
-      protocols: parsed.protocols.filter((el) => (el as string) !== ''),
+      protocols: parsed?.protocols?.filter((el) => (el as string) !== ''),
     }
   }, [query])
 
