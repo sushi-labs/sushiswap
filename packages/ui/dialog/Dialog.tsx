@@ -75,6 +75,9 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
   )
 }
 
+/**
+ * @deprecated
+ */
 export const Dialog: FunctionComponent<DialogRootProps> & {
   Description: FunctionComponent<DialogDescriptionProps>
   Header: FunctionComponent<DialogHeaderProps>

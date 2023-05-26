@@ -2,7 +2,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Transaction, TransactionType } from './useTransactionsV3'
 import { formatUSD } from '@sushiswap/format'
 import formatDistance from 'date-fns/formatDistance/index.js'
-import { Skeleton } from '@sushiswap/ui'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { useMemo } from 'react'
 import { ChevronRightIcon } from '@heroicons/react/solid'
 

@@ -22,7 +22,7 @@ export interface TextProps extends Omit<HTMLProps<HTMLDivElement>, 'size'> {
 const STYLES = {
   'text-xs': 'h-[18px]',
   'text-sm': 'h-5',
-  'text-base': 'h-[22px]',
+  'text-base': 'h-[24px]',
   'text-lg': 'h-[28px]',
   'text-xl': 'h-[28px]',
   'text-2xl': 'h-[44px]',
@@ -60,7 +60,12 @@ const ALIGN = {
 export const Text: FC<TextProps> = ({ align = 'left', className, fontSize = 'text-base', ...props }) => {
   return (
     <div {...props} className={classNames(ALIGN[align], STYLES[fontSize], PADDING[fontSize], 'flex w-full')}>
-      <div className={classNames(className, 'flex w-full h-full rounded-md overflow-hidden shimmer')} />
+      <div
+        className={classNames(
+          className,
+          'flex w-full h-full rounded-md overflow-hidden animate-pulse bg-black/[0.10] dark:bg-white/[0.10]'
+        )}
+      />
     </div>
   )
 }

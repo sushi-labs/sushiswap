@@ -10,6 +10,9 @@ interface AppearOnMount {
   className?: string
 }
 
+/**
+ * @deprecated
+ */
 export const AppearOnMount: FC<AppearOnMount> = ({ as = 'div', show, children, enabled = true, className }) => {
   const isMounted = useIsMounted()
 

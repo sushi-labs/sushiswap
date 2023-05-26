@@ -16,6 +16,9 @@ export type AppProps = {
   NavItemList: NavItemListProps
 }
 
+/**
+ * @deprecated
+ */
 export const App = {
   Header,
   Shell,

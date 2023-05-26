@@ -13,6 +13,9 @@ export type IconButtonComponent = <C extends React.ElementType = 'button'>(
   props: IconButtonProps<C>
 ) => React.ReactElement | null
 
+/**
+ * @deprecated
+ */
 export const IconButton: IconButtonComponent = React.forwardRef(
   <Tag extends React.ElementType = 'button'>(
     { as, children, className, description, ...rest }: IconButtonProps<Tag>,

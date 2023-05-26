@@ -44,6 +44,9 @@ const MenuRoot: FC<MenuProps> = ({ className, button, appearOnMount = false, chi
   )
 }
 
+/**
+ * @deprecated
+ */
 export const Menu: FunctionComponent<MenuProps> & {
   Item: FC<MenuItem>
   Items: FC<MenuItems>

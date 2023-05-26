@@ -8,6 +8,9 @@ interface ExtendTooltipProps extends Omit<TooltipProps, 'overlay' | 'arrowConten
   naked?: boolean
 }
 
+/**
+ * @deprecated
+ */
 export const Tooltip: FC<ExtendTooltipProps> = ({
   button,
   panel,

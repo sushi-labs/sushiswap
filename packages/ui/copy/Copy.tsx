@@ -10,6 +10,9 @@ export interface CopyHelperProps {
   hideIcon?: boolean
 }
 
+/**
+ * @deprecated
+ */
 export const CopyHelper: FC<CopyHelperProps> = ({ className, toCopy, hideIcon = false, children }) => {
   const [isCopied, setCopied] = useCopyClipboard()
 
