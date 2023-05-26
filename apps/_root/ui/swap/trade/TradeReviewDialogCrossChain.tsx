@@ -149,12 +149,9 @@ export const TradeReviewDialogCrossChain: FC = () => {
                     `Swap ${token0?.symbol} for ${token1?.symbol}`
                   )}
                 </Button>
-                <Collapsible open={!!error}>
-                  <div className="scroll bg-red/20 text-red-700 dark:bg-black/20 p-2 px-3 rounded-lg border border-slate-200/10 text-[10px] break-all max-h-[80px] overflow-y-auto">
-                    {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-                    {/* @ts-ignore */}
+                <Collapsible open={Boolean(error)}>
+                  <div className="scroll bg-red/10 text-red-700 p-2 px-3 rounded-lg break-all">
                     {swapErrorToUserReadableMessage(error)}
-                    {/* <code>{error ? ('data' in error ? error?.data?.message : error.message) : ''}</code> */}
                   </div>
                 </Collapsible>
               </div>

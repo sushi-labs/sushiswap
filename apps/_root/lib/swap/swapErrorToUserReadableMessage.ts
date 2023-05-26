@@ -37,6 +37,7 @@ export function didUserReject(error: any): boolean {
  * @param error - An error from the ethers provider
  */
 export function swapErrorToUserReadableMessage(error: any): string {
+  if (!error) return ''
   if (didUserReject(error)) {
     return 'Transaction rejected'
   }

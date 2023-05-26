@@ -8,14 +8,25 @@ import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
 import DialogHeader, { DialogHeaderProps } from './DialogHeader'
 import { syncScrollLockSafeArea } from '../../lib'
 import { ExtractProps } from '../../../types'
+import { MaxWidth, MaxWidthMapper } from '../Container'
+import classNames from 'classnames'
 
 export type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
   afterLeave?(): void
   children?: React.ReactNode
   variant?: 'transparent' | 'opaque'
+  maxWidth?: MaxWidth
 }
 
-const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, variant = 'transparent', ...rest }) => {
+const DialogRoot: FC<DialogRootProps> = ({
+  open,
+  onClose,
+  children,
+  afterLeave,
+  maxWidth = 'md',
+  variant = 'transparent',
+  ...rest
+}) => {
   const { unmount } = rest
   const { isMd } = useBreakpoint('md')
 
@@ -72,7 +83,9 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
                   leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                   unmount={unmount}
                 >
-                  <HeadlessDialog.Panel className="w-full h-full max-w-md px-1">{children}</HeadlessDialog.Panel>
+                  <HeadlessDialog.Panel className={classNames(MaxWidthMapper[maxWidth], 'w-full h-full px-1')}>
+                    {children}
+                  </HeadlessDialog.Panel>
                 </Transition.Child>
               </div>
             </div>

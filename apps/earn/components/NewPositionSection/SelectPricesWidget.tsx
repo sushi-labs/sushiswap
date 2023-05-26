@@ -100,7 +100,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         {isMounted && showStartPrice && (
           <div className="flex flex-col gap-3">
             {noLiquidity && (
-              <div className="relative flex gap-3 w-full items-center pb-2">
+              <div className="relative flex items-center w-full gap-3 pb-2">
                 <Input.Text
                   hideCloseButton={true}
                   className="!bg-gray-100 dark:!bg-slate-800 !w-full pr-[120px]"
@@ -110,8 +110,8 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                   id="start-price-input"
                   caption="Your pool needs a starting price somewhere between the min. and max. price"
                 />
-                <div className="absolute right-4 top-0 bottom-7 flex items-center">
-                  <div className="text-xs font-medium whitespace-nowrap text-gray-500 dark:text-slate-400">
+                <div className="absolute top-0 flex items-center right-4 bottom-7">
+                  <div className="text-xs font-medium text-gray-500 whitespace-nowrap dark:text-slate-400">
                     {token1?.symbol} per {token0?.symbol}
                   </div>
                 </div>
@@ -136,7 +136,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             )}
           </div>
         )}
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-2">
             <div className="flex justify-end lg:hidden">
               {isLoading || !pool || !token0 || !token1 ? (
@@ -291,7 +291,7 @@ export const PriceBlock: FC<PriceBlockProps> = ({
         'flex flex-col gap-2 w-full bg-gray-100 dark:bg-white/[0.04] rounded-lg p-3'
       )}
     >
-      <p className="text-sm font-medium text-gray-600 dark:text-slate-400 text-slate-600">{label}</p>
+      <p className="text-sm font-medium text-gray-600 dark:text-slate-400">{label}</p>
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <Input.Numeric

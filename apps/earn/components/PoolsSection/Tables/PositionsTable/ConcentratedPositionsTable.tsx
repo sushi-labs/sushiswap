@@ -22,7 +22,6 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; p
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
-  console.log('concentratedTable')
   // const [sorting, setSorting] = useState<SortingState>([{ id: 'value', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
 

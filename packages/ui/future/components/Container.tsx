@@ -4,7 +4,7 @@ import { PolymorphicComponentPropsWithRef, PolymorphicRef } from '../../types'
 
 export type MaxWidth = 'full' | '7xl' | '6xl' | '5xl' | '4xl' | '3xl' | '2xl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs'
 
-const TailwindMapper: Record<MaxWidth, string> = {
+export const MaxWidthMapper: Record<MaxWidth, string> = {
   full: 'max-w-full',
   '7xl': 'max-w-7xl',
   '6xl': 'max-w-6xl',
@@ -38,7 +38,7 @@ export const Container: ContainerComponent = forwardRef(
     return (
       <Component
         ref={ref}
-        className={classNames(className, typeof maxWidth === 'number' ? '' : TailwindMapper[maxWidth], 'w-full')}
+        className={classNames(className, typeof maxWidth === 'number' ? '' : MaxWidthMapper[maxWidth], 'w-full')}
         id={id}
         {...((typeof maxWidth === 'number' || rest.style) && {
           style: { ...rest.style, maxWidth },
