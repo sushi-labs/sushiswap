@@ -1,231 +1,231 @@
-// import { AddressZero } from '@ethersproject/constants'
-// import { expect, Page, test } from '@playwright/test'
-// import { Native, Token, Type, USDC_ADDRESS } from '@sushiswap/currency'
-// import { GradedVestingFrequency, selectDate, switchNetwork, timeout, VestingArgs } from '../../../utils'
+import { AddressZero } from '@ethersproject/constants'
+import { expect, Page, test } from '@playwright/test'
+import { Native, Token, Type, USDC_ADDRESS } from '@sushiswap/currency'
+import { GradedVestingFrequency, selectDate, switchNetwork, timeout, VestingArgs } from '../../../utils'
 
-// if (!process.env.CHAIN_ID) {
-//   throw new Error('CHAIN_ID env var not set')
-// }
-
-
-// const CHAIN_ID = parseInt(process.env.CHAIN_ID)
-// const RECIPIENT = '0x23defc2ca207e7fbd84ae43b00048fb5cb4db5b2'
-// const NATIVE_TOKEN = Native.onChain(CHAIN_ID)
-// const USDC = new Token({
-//   chainId: CHAIN_ID,
-//   address: USDC_ADDRESS[CHAIN_ID as keyof typeof USDC_ADDRESS],
-//   decimals: 18,
-//   symbol: 'USDC',
-//   name: 'USDC Stablecoin',
-// })
+if (!process.env.CHAIN_ID) {
+  throw new Error('CHAIN_ID env var not set')
+}
 
 
-// test.describe('Create single vest', () => {
-//   test.beforeEach(async ({ page }) => {
-//     const url = (process.env.PLAYWRIGHT_URL as string).concat('/vesting/create/single')
-//     await page.goto(url)
-//     page.setViewportSize({ width: 1920, height: 1080 })
-//     await switchNetwork(page, CHAIN_ID)
-//   })
+const CHAIN_ID = parseInt(process.env.CHAIN_ID)
+const RECIPIENT = '0x23defc2ca207e7fbd84ae43b00048fb5cb4db5b2'
+const NATIVE_TOKEN = Native.onChain(CHAIN_ID)
+const USDC = new Token({
+  chainId: CHAIN_ID,
+  address: USDC_ADDRESS[CHAIN_ID as keyof typeof USDC_ADDRESS],
+  decimals: 18,
+  symbol: 'USDC',
+  name: 'USDC Stablecoin',
+})
 
-//   test('Graded native', async ({ page }) => {
-//     const args: VestingArgs = {
-//       token: NATIVE_TOKEN,
-//       startInMonths: 1,
-//       recipient: RECIPIENT,
-//       graded: {
-//         stepAmount: '1',
-//         steps: 12,
-//         frequency: GradedVestingFrequency.MONTHLY,
-//       },
-//     }
-//     await handleGeneralDetails(page, args)
-//     await handleGradeDetails(page, args)
-//     await reviewAndConfirm(page, args)
-//   })
 
-//   test('Cliff native', async ({ page }) => {
-//     const args: VestingArgs = {
-//       token: NATIVE_TOKEN,
-//       startInMonths: 1,
-//       recipient: RECIPIENT,
-//       graded: {
-//         stepAmount: '1',
-//         steps: 12,
-//         frequency: GradedVestingFrequency.MONTHLY,
-//       },
-//       cliff: {
-//         amount: '10',
-//         cliffEndsInMonths: 3,
-//       },
-//     }
+test.describe('Create single vest', () => {
+  test.beforeEach(async ({ page }) => {
+    const url = (process.env.PLAYWRIGHT_URL as string).concat('/vesting/create/single')
+    await page.goto(url)
+    page.setViewportSize({ width: 1920, height: 1080 })
+    await switchNetwork(page, CHAIN_ID)
+  })
 
-//     await handleGeneralDetails(page, args)
-//     await handleGradeDetails(page, args)
-//     await handleCliffDetails(page, args)
-//     await reviewAndConfirm(page, args)
-//   })
+  test('Graded native', async ({ page }) => {
+    const args: VestingArgs = {
+      token: NATIVE_TOKEN,
+      startInMonths: 1,
+      recipient: RECIPIENT,
+      graded: {
+        stepAmount: '1',
+        steps: 12,
+        frequency: GradedVestingFrequency.MONTHLY,
+      },
+    }
+    await handleGeneralDetails(page, args)
+    await handleGradeDetails(page, args)
+    await reviewAndConfirm(page, args)
+  })
 
-//   test('Graded USDC', async ({ page }) => {
-//     const args: VestingArgs = {
-//       token: USDC,
-//       startInMonths: 1,
-//       recipient: RECIPIENT,
-//       graded: {
-//         stepAmount: '0.0001',
-//         steps: 10,
-//         frequency: GradedVestingFrequency.BI_WEEKLY,
-//       },
-//     }
-//     await handleGeneralDetails(page, args)
-//     await handleGradeDetails(page, args)
-//     await reviewAndConfirm(page, args)
-//   })
+  test('Cliff native', async ({ page }) => {
+    const args: VestingArgs = {
+      token: NATIVE_TOKEN,
+      startInMonths: 1,
+      recipient: RECIPIENT,
+      graded: {
+        stepAmount: '1',
+        steps: 12,
+        frequency: GradedVestingFrequency.MONTHLY,
+      },
+      cliff: {
+        amount: '10',
+        cliffEndsInMonths: 3,
+      },
+    }
 
-//   test('Cliff USDC', async ({ page }) => {
-//     const args: VestingArgs = {
-//       token: USDC,
-//       startInMonths: 1,
-//       recipient: RECIPIENT,
-//       graded: {
-//         stepAmount: '0.0001',
-//         steps: 10,
-//         frequency: GradedVestingFrequency.BI_WEEKLY,
-//       },
-//       cliff: {
-//         amount: '0.00001',
-//         cliffEndsInMonths: 3,
-//       },
-//     }
+    await handleGeneralDetails(page, args)
+    await handleGradeDetails(page, args)
+    await handleCliffDetails(page, args)
+    await reviewAndConfirm(page, args)
+  })
 
-//     await handleGeneralDetails(page, args)
-//     await handleGradeDetails(page, args)
-//     await handleCliffDetails(page, args)
-//     await reviewAndConfirm(page, args)
-//   })
-// })
+  test('Graded USDC', async ({ page }) => {
+    const args: VestingArgs = {
+      token: USDC,
+      startInMonths: 1,
+      recipient: RECIPIENT,
+      graded: {
+        stepAmount: '0.0001',
+        steps: 10,
+        frequency: GradedVestingFrequency.BI_WEEKLY,
+      },
+    }
+    await handleGeneralDetails(page, args)
+    await handleGradeDetails(page, args)
+    await reviewAndConfirm(page, args)
+  })
 
-// async function handleGeneralDetails(page: Page, args: VestingArgs) {
-//   await selectToken(page, args.token)
-//   await selectDate('[testdata-id=create-single-vest-start-date]', args.startInMonths, page)
-//   await page.locator('[testdata-id=create-single-vest-recipient-input]').fill(args.recipient)
-// }
+  test('Cliff USDC', async ({ page }) => {
+    const args: VestingArgs = {
+      token: USDC,
+      startInMonths: 1,
+      recipient: RECIPIENT,
+      graded: {
+        stepAmount: '0.0001',
+        steps: 10,
+        frequency: GradedVestingFrequency.BI_WEEKLY,
+      },
+      cliff: {
+        amount: '0.00001',
+        cliffEndsInMonths: 3,
+      },
+    }
 
-// async function handleCliffDetails(page: Page, args: VestingArgs) {
-//   if (!args.cliff) {
-//     throw new Error('Graded vesting args not provided')
-//   }
-//   const cliffSwitchSelector = page.locator('[testdata-id=cliff-toggle-switch]')
-//   await expect(cliffSwitchSelector).toBeVisible()
-//   await expect(cliffSwitchSelector).toBeEnabled()
-//   await cliffSwitchSelector.click()
+    await handleGeneralDetails(page, args)
+    await handleGradeDetails(page, args)
+    await handleCliffDetails(page, args)
+    await reviewAndConfirm(page, args)
+  })
+})
 
-//   const cliffAmountSelector = page.locator('[testdata-id=create-single-vest-cliff-amount-input]')
-//   await expect(cliffAmountSelector).toBeVisible()
-//   await expect(cliffAmountSelector).toBeEnabled()
-//   await cliffAmountSelector.fill(args.cliff.amount)
+async function handleGeneralDetails(page: Page, args: VestingArgs) {
+  await selectToken(page, args.token)
+  await selectDate('[testdata-id=create-single-vest-start-date]', args.startInMonths, page)
+  await page.locator('[testdata-id=create-single-vest-recipient-input]').fill(args.recipient)
+}
 
-//   await selectDate('[testdata-id=create-single-vest-cliff-date]', args.cliff.cliffEndsInMonths, page)
-// }
+async function handleCliffDetails(page: Page, args: VestingArgs) {
+  if (!args.cliff) {
+    throw new Error('Graded vesting args not provided')
+  }
+  const cliffSwitchSelector = page.locator('[testdata-id=cliff-toggle-switch]')
+  await expect(cliffSwitchSelector).toBeVisible()
+  await expect(cliffSwitchSelector).toBeEnabled()
+  await cliffSwitchSelector.click()
 
-// async function handleGradeDetails(page: Page, args: VestingArgs) {
-//   const stepAmountSelector = page.locator('[testdata-id=create-single-vest-graded-amount-input]')
-//   await expect(stepAmountSelector).toBeVisible()
-//   await expect(stepAmountSelector).toBeEnabled()
-//   await stepAmountSelector.fill(args.graded.stepAmount)
+  const cliffAmountSelector = page.locator('[testdata-id=create-single-vest-cliff-amount-input]')
+  await expect(cliffAmountSelector).toBeVisible()
+  await expect(cliffAmountSelector).toBeEnabled()
+  await cliffAmountSelector.fill(args.cliff.amount)
 
-//   const stepSelector = page.locator('[testdata-id=create-single-vest-steps-input]')
-//   await expect(stepSelector).toBeVisible()
-//   await expect(stepSelector).toBeEnabled()
-//   await stepSelector.fill(args.graded.steps.toString())
+  await selectDate('[testdata-id=create-single-vest-cliff-date]', args.cliff.cliffEndsInMonths, page)
+}
 
-//   const selectFrequencySelector = page.locator('[testdata-id=create-single-vest-graded-frequency-selection-button]')
-//   await expect(selectFrequencySelector).toBeVisible()
-//   await expect(selectFrequencySelector).toBeEnabled()
-//   await selectFrequencySelector.click()
+async function handleGradeDetails(page: Page, args: VestingArgs) {
+  const stepAmountSelector = page.locator('[testdata-id=create-single-vest-graded-amount-input]')
+  await expect(stepAmountSelector).toBeVisible()
+  await expect(stepAmountSelector).toBeEnabled()
+  await stepAmountSelector.fill(args.graded.stepAmount)
 
-//   const desiredFrequencyoptionSelector = page.locator(
-//     `[testdata-id=create-single-vest-graded-type-${args.graded.frequency.toLowerCase()}]`
-//   )
-//   await expect(desiredFrequencyoptionSelector).toBeVisible()
-//   await expect(desiredFrequencyoptionSelector).toBeEnabled()
-//   await desiredFrequencyoptionSelector.click()
-// }
+  const stepSelector = page.locator('[testdata-id=create-single-vest-steps-input]')
+  await expect(stepSelector).toBeVisible()
+  await expect(stepSelector).toBeEnabled()
+  await stepSelector.fill(args.graded.steps.toString())
 
-// async function selectToken(page: Page, currency: Type) {
-//   const tokenSelector = page.locator('[testdata-id=create-single-vest-select]')
-//   await expect(tokenSelector).toBeVisible()
-//   await expect(tokenSelector).toBeEnabled()
-//   await tokenSelector.click({ force: true }) // it's missing the click area?! force required.
-//   await page.fill('[testdata-id=create-single-vest-address-input]', currency.symbol as string)
-//   const tokenRowSelector = page.locator(
-//     `[testdata-id=create-single-vest-row-${currency.isNative ? AddressZero : currency.address.toLowerCase()}]`
-//   )
-//   await expect(tokenRowSelector).toBeVisible()
-//   await expect(tokenRowSelector).toBeEnabled()
-//   await tokenRowSelector.click()
-// }
+  const selectFrequencySelector = page.locator('[testdata-id=create-single-vest-graded-frequency-selection-button]')
+  await expect(selectFrequencySelector).toBeVisible()
+  await expect(selectFrequencySelector).toBeEnabled()
+  await selectFrequencySelector.click()
 
-// async function reviewAndConfirm(page: Page, args: VestingArgs) {
-//   const reviewButtonLocator = page.locator('[testdata-id=create-single-vesting-review-button]')
-//   await expect(reviewButtonLocator).toBeVisible()
-//   await expect(reviewButtonLocator).toBeEnabled()
-//   await reviewButtonLocator.click()
+  const desiredFrequencyoptionSelector = page.locator(
+    `[testdata-id=create-single-vest-graded-type-${args.graded.frequency.toLowerCase()}]`
+  )
+  await expect(desiredFrequencyoptionSelector).toBeVisible()
+  await expect(desiredFrequencyoptionSelector).toBeEnabled()
+  await desiredFrequencyoptionSelector.click()
+}
 
-//   await expect(page.locator('[testdata-id=vesting-review-funds-source]')).toContainText('wallet')
-//   let totalAmount: string
-//   if (args.graded && args.cliff) {
-//     totalAmount = (Number(args.cliff.amount) + Number(args.graded.stepAmount) * Number(args.graded.steps)).toString()
-//   } else if (!args.graded && args.cliff) {
-//     totalAmount = args.cliff.amount
-//   } else if (args.graded && !args.cliff) {
-//     totalAmount = (Number(args.graded.stepAmount) * Number(args.graded.steps)).toString()
-//   } else {
-//     throw new Error('Invalid combination')
-//   }
-//   await expect(page.locator('[testdata-id=vesting-review-total-amount]')).toContainText(
-//     `${totalAmount} ${args.token.symbol as string}`
-//   )
+async function selectToken(page: Page, currency: Type) {
+  const tokenSelector = page.locator('[testdata-id=create-single-vest-select]')
+  await expect(tokenSelector).toBeVisible()
+  await expect(tokenSelector).toBeEnabled()
+  await tokenSelector.click({ force: true }) // it's missing the click area?! force required.
+  await page.fill('[testdata-id=create-single-vest-address-input]', currency.symbol as string)
+  const tokenRowSelector = page.locator(
+    `[testdata-id=create-single-vest-row-${currency.isNative ? AddressZero : currency.address.toLowerCase()}]`
+  )
+  await expect(tokenRowSelector).toBeVisible()
+  await expect(tokenRowSelector).toBeEnabled()
+  await tokenRowSelector.click()
+}
 
-//   if (args.graded) {
-//     await expect(page.locator('[testdata-id=vesting-review-payment-per-period]')).toContainText(args.graded.stepAmount)
-//     await expect(page.locator('[testdata-id=vesting-review-period-length]')).toContainText(args.graded.frequency, {
-//       ignoreCase: true,
-//     })
-//     await expect(page.locator('[testdata-id=vesting-review-amount-of-periods]')).toContainText(args.graded.steps.toString())
-//   }
+async function reviewAndConfirm(page: Page, args: VestingArgs) {
+  const reviewButtonLocator = page.locator('[testdata-id=create-single-vesting-review-button]')
+  await expect(reviewButtonLocator).toBeVisible()
+  await expect(reviewButtonLocator).toBeEnabled()
+  await reviewButtonLocator.click()
 
-//   if (args.cliff) {
-//     await expect(page.locator('[testdata-id=vesting-review-cliff-amount]')).toContainText(args.cliff.amount)
-//   }
+  await expect(page.locator('[testdata-id=vesting-review-funds-source]')).toContainText('wallet')
+  let totalAmount: string
+  if (args.graded && args.cliff) {
+    totalAmount = (Number(args.cliff.amount) + Number(args.graded.stepAmount) * Number(args.graded.steps)).toString()
+  } else if (!args.graded && args.cliff) {
+    totalAmount = args.cliff.amount
+  } else if (args.graded && !args.cliff) {
+    totalAmount = (Number(args.graded.stepAmount) * Number(args.graded.steps)).toString()
+  } else {
+    throw new Error('Invalid combination')
+  }
+  await expect(page.locator('[testdata-id=vesting-review-total-amount]')).toContainText(
+    `${totalAmount} ${args.token.symbol as string}`
+  )
 
-//   // Approve BentoBox
-//   await page
-//     .locator('[testdata-id=create-single-vest-approve-bentobox]')
-//     .click({ timeout: 1500 })
-//     .then(async () => {
-//       console.log('BentoBox Approved')
-//     })
-//     .catch(() => console.log('BentoBox already approved or not needed'))
+  if (args.graded) {
+    await expect(page.locator('[testdata-id=vesting-review-payment-per-period]')).toContainText(args.graded.stepAmount)
+    await expect(page.locator('[testdata-id=vesting-review-period-length]')).toContainText(args.graded.frequency, {
+      ignoreCase: true,
+    })
+    await expect(page.locator('[testdata-id=vesting-review-amount-of-periods]')).toContainText(args.graded.steps.toString())
+  }
 
-//   if (!args.token.isNative) {
-//     // Approve Token
-//     await page
-//       .locator('[testdata-id=create-single-vest-approve-token]')
-//       .click({ timeout: 1500 })
-//       .then(async () => {
-//         console.log(`${args.token.symbol} Approved`)
-//       })
-//       .catch(() => console.log(`${args.token.symbol} already approved or not needed`))
-//   }
+  if (args.cliff) {
+    await expect(page.locator('[testdata-id=vesting-review-cliff-amount]')).toContainText(args.cliff.amount)
+  }
 
-//   // Confirm creation
-//   await timeout(1_500) // FIXME: should be removed, but something isn't updated yet
-//   const confirmCreateVestingButton = page.locator('[testdata-id=create-single-vest-confirmation-button]')
-//   await expect(confirmCreateVestingButton).toBeVisible()
-//   await expect(confirmCreateVestingButton).toBeEnabled()
-//   await confirmCreateVestingButton.click()
+  // Approve BentoBox
+  await page
+    .locator('[testdata-id=create-single-vest-approve-bentobox]')
+    .click({ timeout: 1500 })
+    .then(async () => {
+      console.log('BentoBox Approved')
+    })
+    .catch(() => console.log('BentoBox already approved or not needed'))
 
-//   const expectedText = new RegExp(`Created .* ${args.token.symbol} vesting`)
-//   await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
-// }
+  if (!args.token.isNative) {
+    // Approve Token
+    await page
+      .locator('[testdata-id=create-single-vest-approve-token]')
+      .click({ timeout: 1500 })
+      .then(async () => {
+        console.log(`${args.token.symbol} Approved`)
+      })
+      .catch(() => console.log(`${args.token.symbol} already approved or not needed`))
+  }
+
+  // Confirm creation
+  await timeout(1_500) // FIXME: should be removed, but something isn't updated yet
+  const confirmCreateVestingButton = page.locator('[testdata-id=create-single-vest-confirmation-button]')
+  await expect(confirmCreateVestingButton).toBeVisible()
+  await expect(confirmCreateVestingButton).toBeEnabled()
+  await confirmCreateVestingButton.click()
+
+  const expectedText = new RegExp(`Created .* ${args.token.symbol} vesting`)
+  await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
+}
