@@ -13,7 +13,8 @@ export const Explainer: FC<{
   placement: Placement
   className?: string
   hover?: boolean
-}> = ({ children, iconSize, placement, className, hover = false }) => {
+  width?: number
+}> = ({ children, iconSize, placement, className, hover = false, width = 240 }) => {
   const [open, setOpen] = useState(false)
   const isMounted = useIsMounted()
   const [referenceElement, setReferenceElement] = useState<HTMLLabelElement | null>(null)
@@ -44,13 +45,11 @@ export const Explainer: FC<{
           ReactDOM.createPortal(
             <div
               ref={setPopperElement}
-              style={styles.popper}
+              style={{ ...styles.popper, width }}
               {...attributes.popper}
-              className="z-[2000] w-[240px] bg-white dark:bg-slate-900 rounded-xl shadow-hover-card shadow-black/10 text-xs mt-0.5"
+              className="z-[2000] bg-white/50 paper dark:bg-slate-800/50 rounded-xl overflow-hidden shadow-lg text-xs mt-0.5"
             >
-              <div className="flex flex-col gap-3 rounded-md px-4 py-3 bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-400">
-                {children}
-              </div>
+              <div className="flex flex-col gap-3 rounded-md px-4 py-3 dark:text-slate-400">{children}</div>
             </div>,
             document.body
           )}
@@ -69,9 +68,9 @@ export const Explainer: FC<{
       {ReactDOM.createPortal(
         <Menu.Items
           ref={setPopperElement}
-          style={styles.popper}
+          style={{ ...styles.popper, width }}
           {...attributes.popper}
-          className="z-[2000] w-[240px] rounded-xl shadow-md shadow-black/20 text-xs mt-0.5"
+          className="z-[2000] rounded-xl overflow-hidden shadow-lg shadow-black/20 text-xs mt-0.5"
         >
           <div className="flex flex-col gap-3 rounded-md px-4 py-3 bg-white/50 paper dark:bg-slate-800/50">
             {children}

@@ -48,7 +48,7 @@ export const ListKeyValue: FC<ListKeyValueProps> = ({
         {subtitle && <span className="text-xs text-gray-500 dark:text-slate-500">{subtitle}</span>}
       </div>
       <div className="flex justify-end">
-        <span className="w-full text-right flex justify-end text-sm font-medium text-gray-900 dark:text-slate-50">
+        <span className="w-full text-right flex justify-end text-sm font-medium text-gray-900 dark:text-slate-50 truncate">
           {children}
         </span>
       </div>

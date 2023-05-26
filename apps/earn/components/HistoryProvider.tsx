@@ -1,4 +1,3 @@
-import { useAccount } from '@sushiswap/wagmi'
 import { createContext, FC, ReactNode, useContext, useEffect, useRef } from 'react'
 
 import { useRouter } from 'next/router'
@@ -19,7 +18,7 @@ export const HistoryProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     ref.current = asPath
     basePathRef.current = basePath
-  }, [asPath])
+  }, [asPath, basePath])
 
   return <Context.Provider value={{ path: ref.current, basePath: basePathRef.current }}>{children}</Context.Provider>
 }

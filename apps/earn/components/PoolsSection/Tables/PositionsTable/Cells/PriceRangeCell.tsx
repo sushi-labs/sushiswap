@@ -1,11 +1,7 @@
 import { classNames } from '@sushiswap/ui'
 import { FC, useMemo, useState } from 'react'
 
-import {
-  ConcentratedLiquidityPosition,
-  useConcentratedLiquidityPool,
-  useTokenWithCache,
-} from '@sushiswap/wagmi/future/hooks'
+import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
 import { Row } from '../../SharedCells/types'
 import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/react/solid'
 import { Position } from '@sushiswap/v3-sdk'
@@ -15,21 +11,12 @@ import { Bound } from '../../../../../lib/constants'
 import { usePriceInverter } from '../../../../../lib/hooks'
 import useIsTickAtLimit from '../../../../../lib/hooks/useIsTickAtLimit'
 
-export const PriceRangeCell: FC<Row<ConcentratedLiquidityPosition>> = ({ row, ctx }) => {
+export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> = ({ row }) => {
   const [manuallyInverted, setManuallyInverted] = useState(false)
-  const { data: token0, isLoading: isToken0Loading } = useTokenWithCache({ chainId: row.chainId, address: row.token0 })
-  const { data: token1, isLoading: isToken1Loading } = useTokenWithCache({ chainId: row.chainId, address: row.token1 })
-  const { data: pool, isLoading: isPoolLoading } = useConcentratedLiquidityPool({
-    chainId: row.chainId,
-    token0,
-    token1,
-    feeAmount: row.fee,
-  })
-
   const position = useMemo(() => {
-    if (pool && row.liquidity) {
+    if (row.liquidity) {
       return new Position({
-        pool,
+        pool: row.pool,
         liquidity: JSBI.BigInt(row.liquidity),
         tickLower: row.tickLower,
         tickUpper: row.tickUpper,
@@ -37,7 +24,7 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPosition>> = ({ row, ct
     }
 
     return undefined
-  }, [pool, row.liquidity, row.tickLower, row.tickUpper])
+  }, [row.liquidity, row.pool, row.tickLower, row.tickUpper])
 
   const closed = row.liquidity?.eq('0')
   const pricesFromPosition = getPriceOrderingFromPositionForUI(position)
@@ -50,21 +37,18 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPosition>> = ({ row, ct
     invert: manuallyInverted,
   })
 
-  const inverted = token1 ? base?.equals(token1) : undefined
-  const currencyQuote = inverted ? token0 : token1
-  const currencyBase = inverted ? token1 : token0
+  const inverted = row.pool.token1 ? base?.equals(row.pool.token1) : undefined
+  const currencyQuote = inverted ? row.pool.token0 : row.pool.token1
+  const currencyBase = inverted ? row.pool.token1 : row.pool.token0
 
   const invalidRange = Boolean(row.tickLower >= row.tickUpper)
 
   const tickAtLimit = useIsTickAtLimit(row.fee, row.tickLower, row.tickUpper)
   const fullRange = Boolean(tickAtLimit[Bound.LOWER] && tickAtLimit[Bound.UPPER])
 
-  const below = pool && true ? pool.tickCurrent < row.tickLower : undefined
-  const above = pool && true ? pool.tickCurrent >= row.tickUpper : undefined
+  const below = row.pool && true ? row.pool.tickCurrent < row.tickLower : undefined
+  const above = row.pool && true ? row.pool.tickCurrent >= row.tickUpper : undefined
   const inRange = typeof below === 'boolean' && typeof above === 'boolean' ? !below && !above : false
-  const isLoading = isToken0Loading || isToken1Loading || isPoolLoading
-
-  if (isLoading && ctx) return <>{ctx.column.columnDef.meta?.skeleton}</>
 
   return (
     <div
@@ -94,8 +78,8 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPosition>> = ({ row, ct
         </span>
       </div>
       <span className="text-xs flex items-center gap-1 text-gray-900 dark:text-slate-500">
-        Current: {(inverted ? pool?.token1Price : pool?.token0Price)?.toSignificant(6)} {currencyQuote?.symbol} per{' '}
-        {currencyBase?.symbol}{' '}
+        Current: {(inverted ? row.pool?.token1Price : row.pool?.token0Price)?.toSignificant(6)} {currencyQuote?.symbol}{' '}
+        per {currencyBase?.symbol}{' '}
       </span>
     </div>
   )

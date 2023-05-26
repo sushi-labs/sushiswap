@@ -224,7 +224,13 @@ export const COMMON_BASES = {
     USDC[ChainId.BOBA_BNB],
     USDT[ChainId.BOBA_BNB],
   ],
-  [ChainId.BTTC]: [Native.onChain(ChainId.BTTC), WNATIVE[ChainId.BTTC], USDC[ChainId.BTTC], USDT[ChainId.BTTC]],
+  [ChainId.BTTC]: [
+    Native.onChain(ChainId.BTTC),
+    WNATIVE[ChainId.BTTC],
+    WETH9[ChainId.BTTC],
+    USDC[ChainId.BTTC],
+    USDT[ChainId.BTTC],
+  ],
   // [ChainId.CONSENSUS_ZKEVM_TESTNET]: [
   //   Native.onChain(ChainId.CONSENSUS_ZKEVM_TESTNET),
   //   WNATIVE[ChainId.CONSENSUS_ZKEVM_TESTNET],
@@ -239,6 +245,14 @@ export const COMMON_BASES = {
     USDT[ChainId.POLYGON_ZKEVM],
     DAI[ChainId.POLYGON_ZKEVM],
     WBTC[ChainId.POLYGON_ZKEVM],
+  ],
+  [ChainId.THUNDERCORE]: [
+    Native.onChain(ChainId.THUNDERCORE),
+    WNATIVE[ChainId.THUNDERCORE],
+    WETH9[ChainId.THUNDERCORE],
+    USDC[ChainId.THUNDERCORE],
+    USDT[ChainId.THUNDERCORE],
+    WBTC[ChainId.THUNDERCORE],
   ],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const

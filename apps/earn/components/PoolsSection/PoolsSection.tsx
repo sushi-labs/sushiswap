@@ -20,15 +20,14 @@ export const PoolsSection: FC = () => {
           <Tab as={Fragment}>
             {({ selected }) => (
               <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
-                Pools
+                All
               </Button>
             )}
           </Tab>
-
           {address && isMounted && (
             <Tab as={Fragment}>
               {({ selected }) => (
-                <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default" testId='my-positions'>
+                <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default" testId="my-positions">
                   My Positions
                 </Button>
               )}
@@ -38,13 +37,11 @@ export const PoolsSection: FC = () => {
         <Tab.Panels>
           <Tab.Panel unmount={false}>
             <TableFilters showAllFilters={tab === 0} />
-            <div className="border-t border-gray-900/5 dark:border-slate-200/5" />
             <PoolsTable />
           </Tab.Panel>
           <Tab.Panel unmount={false}>
-            <div className="border-t border-gray-900/5 dark:border-slate-200/5">
+            <div className="mt-4">
               <ConcentratedPositionsTable />
-              <div className="w-full h-px bg-gray-900/5 dark:bg-slate-200/5" />
               <PositionsTable />
             </div>
           </Tab.Panel>

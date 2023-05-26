@@ -5,10 +5,24 @@ import { USDC_ADDRESS, Native, Token, Type } from '@sushiswap/currency'
 export async function approve(page: Page, locator: string) {
   await timeout(500) // give the approve button time to load contracts, unrealistically fast when running test
   const pageLocator = page.locator(`[testdata-id=${locator}]`)
-  await expect(pageLocator).toBeEnabled({ timeout: 1500 }).then(async () => {
-    await pageLocator.click({ timeout: 2500 })
-  })
-  .catch(() => console.log('already approved or not needed'))
+  await expect(pageLocator)
+    .toBeEnabled({ timeout: 1500 })
+    .then(async () => {
+      await pageLocator.click({ timeout: 2500 })
+      const expectedText = '(Successfully approved .*)'
+      const regex = new RegExp(expectedText)
+      await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+    })
+    .catch(() => console.log('already approved or not needed'))
+}
+
+interface TridentPoolArgs {
+  token0: Type
+  token1: Type
+  amount0: string
+  amount1: string
+  fee: string
+  type: 'CREATE' | 'ADD'
 }
 
 interface V2PoolArgs {
@@ -16,7 +30,6 @@ interface V2PoolArgs {
   token1: Type
   amount0: string
   amount1: string
-  fee: string
   type: 'CREATE' | 'ADD'
 }
 
@@ -45,10 +58,12 @@ const USDC = new Token({
   name: 'USDC Stablecoin',
 })
 
-// Tests will only work for polygon atm
+const BASE_URL = process.env.PLAYWRIGHT_URL || 'http://localhost:3000/pools'
+
+// // Tests will only work for polygon atm
 test.describe('V3', () => {
   test.beforeEach(async ({ page }) => {
-    const url = (process.env.PLAYWRIGHT_URL as string).concat('/add').concat(`?chainId=${CHAIN_ID}`)
+    const url = BASE_URL.concat('/add').concat(`?chainId=${CHAIN_ID}`)
     await page.goto(url)
     await switchNetwork(page, CHAIN_ID)
   })
@@ -113,17 +128,16 @@ test.describe('V3', () => {
   })
 })
 
-// Tests will only work for polygon atm
-test.describe('V2', () => {
+test.describe('Trident', () => {
   test.beforeEach(async ({ page }) => {
-    const url = (process.env.PLAYWRIGHT_URL as string).concat(`/add/v2/${CHAIN_ID}`)
+    const url = BASE_URL.concat(`/add/trident/${CHAIN_ID}`)
     await page.goto(url)
     await switchNetwork(page, CHAIN_ID)
   })
 
   test('Create pool', async ({ page }) => {
     test.slow()
-    await createOrAddV2Pool(page, {
+    await createOrAddTridentPool(page, {
       // 0.01% fee is not created at block 42259027
       token0: NATIVE_TOKEN,
       token1: USDC,
@@ -136,7 +150,7 @@ test.describe('V2', () => {
 
   test('Add, stake, unstake and remove', async ({ page }) => {
     test.slow()
-    await createOrAddV2Pool(page, {
+    await createOrAddTridentPool(page, {
       token0: NATIVE_TOKEN,
       token1: USDC,
       amount0: '0.0001',
@@ -145,20 +159,36 @@ test.describe('V2', () => {
       type: 'ADD',
     })
 
-    const addLiquidityUrl = (process.env.PLAYWRIGHT_URL as string).concat(
-      '/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/add'
-    )
+    const addLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/add')
     await page.goto(addLiquidityUrl, { timeout: 25_000 })
-    await manageLiquidity(page, 'STAKE')
+    await manageStaking(page, 'STAKE')
 
-    const removeLiquidityUrl = (process.env.PLAYWRIGHT_URL as string).concat(
-      '/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/remove'
-    )
+    const removeLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/remove')
     await page.goto(removeLiquidityUrl, { timeout: 25_000 })
-    await manageLiquidity(page, 'UNSTAKE')
+    await manageStaking(page, 'UNSTAKE')
     await page.reload({ timeout: 25_000 })
     await removeLiquidityV2(page)
   })
+})
+
+test.describe('V2', () => {
+  test.beforeEach(async ({ page }) => {
+    const url = BASE_URL.concat(`/add/v2/${CHAIN_ID}`)
+    await page.goto(url)
+    await switchNetwork(page, CHAIN_ID)
+  })
+
+  test('Add liquidity', async ({ page }) => {
+    test.slow()
+    await createOrAddV2Pool(page, {
+      token0: NATIVE_TOKEN,
+      token1: USDC,
+      amount0: '0.0001',
+      amount1: '0.0001',
+      type: 'ADD',
+    })
+  })
+
 })
 
 async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
@@ -195,7 +225,7 @@ async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
 
-async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
+async function createOrAddTridentPool(page: Page, args: TridentPoolArgs) {
   await handleToken(page, args.token0, 'FIRST')
   await handleToken(page, args.token1, 'SECOND')
 
@@ -238,12 +268,48 @@ async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
 
+
+
+async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
+  await handleToken(page, args.token0, 'FIRST')
+  await handleToken(page, args.token1, 'SECOND')
+  if  (args.type === 'CREATE') { 
+    // NOT Sure about this logic as we need a token and currency combination that isn't created to test this. 
+    await page.locator('[testdata-id=add-liquidity-token0-input]').fill(args.amount0)
+    await page.locator('[testdata-id=add-liquidity-token1-input]').fill(args.amount1)
+  } else {
+    // Only fill in the token that is not native if we are adding liquidity to an existing pool.
+    await page.locator(`[testdata-id=add-liquidity-token${args.token0.isNative ? 1 : 0}-input]`).fill(args.token0.isNative ? args.amount1 : args.amount0)
+  }
+
+  await approve(page, `approve-token-${args.token0.isNative ? 1 : 0}`)
+
+  const reviewSelector =
+    args.type === 'CREATE' ? '[testdata-id=create-pool-button]' : '[testdata-id=add-liquidity-button]'
+  const reviewButton = page.locator(reviewSelector)
+  await expect(reviewButton).toBeVisible()
+  await expect(reviewButton).toBeEnabled()
+  await reviewButton.click({ timeout: 2_000 })
+
+  const confirmButton = page.locator('[testdata-id=confirm-add-v2-liquidity-button]')
+  await expect(confirmButton).toBeVisible()
+  await expect(confirmButton).toBeEnabled()
+  await confirmButton.click()
+
+  const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`
+  const regex = new RegExp(expectedText)
+  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+}
+
 async function removeLiquidityV3(page: Page) {
   const url = process.env.PLAYWRIGHT_URL as string
   await page.goto(url)
   await page.locator('[testdata-id=my-positions-button]').click()
 
-  const firstPositionSelector = page.locator('div:nth-child(2) > div > table > tbody > tr > td > a').first()
+  // const concentratedPositionTableSelector = page.locator('[testdata-id=concentrated-positions]')
+  // await expect(concentratedPositionTableSelector).toBeVisible()
+
+  const firstPositionSelector = page.locator('[testdata-id=concentrated-positions-0-0-td]')
   await expect(firstPositionSelector).toBeVisible({ timeout: 7_000 })
   await timeout(5_000) // wait for the animation to finish, otherwise the click will not work. TODO: figure out a better way to do this
   await firstPositionSelector.click()
@@ -265,16 +331,24 @@ async function removeLiquidityV3(page: Page) {
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
 
-async function manageLiquidity(page: Page, type: 'STAKE' | 'UNSTAKE') {
+async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   await switchNetwork(page, CHAIN_ID)
   // check if the max button is visible, otherwise expand the section. For some reason the default state seem to be inconsistent, closed/open.
+  // TODO: fix this in the UI, the default state should be consistent
   const maxButtonSelector = page.locator(`[testdata-id=${type.toLowerCase()}-max-button]`)
   if (!(await maxButtonSelector.isVisible())) {
+    await expect(maxButtonSelector).toBeEnabled()
     await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-header]`).click()
   }
+  await expect(maxButtonSelector).toBeVisible()
+  await expect(maxButtonSelector).toBeEnabled()
   await maxButtonSelector.click()
-  await approve(page, 'approve-token0')
-  await page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`).click({ timeout: 2_000 })
+  await approve(page, `${type.toLowerCase()}-approve-slp`)
+
+  const actionSelector = page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`)
+  await expect(actionSelector).toBeVisible()
+  await expect(actionSelector).toBeEnabled()
+  await actionSelector.click({ timeout: 2_000 })
 
   const regex = new RegExp(`(Successfully ${type.toLowerCase()}d .* SLP tokens)`)
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
@@ -283,13 +357,13 @@ async function manageLiquidity(page: Page, type: 'STAKE' | 'UNSTAKE') {
 async function removeLiquidityV2(page: Page) {
   await switchNetwork(page, CHAIN_ID)
   await page.locator('[testdata-id=remove-liquidity-max-button]').click()
+  await approve(page, 'approve-remove-liquidity-slp')
 
-  await approve(page, 'remove-liquidity-trident-approve-token')
-  
-  const removeLiquidityLocator = page.locator('[testdata-id=remove-liquidity-trident-button]')
+  const removeLiquidityLocator = page.locator('[testdata-id=remove-liquidity-button]')
 
   await expect(removeLiquidityLocator).toBeVisible()
   await expect(removeLiquidityLocator).toBeEnabled()
+  await timeout(5_000)
   await removeLiquidityLocator.click()
 
   const regex = new RegExp('(Successfully removed liquidity from the .* pair)')

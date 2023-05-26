@@ -1,5 +1,5 @@
 import { FC, useCallback } from 'react'
-import { Dialog } from '@sushiswap/ui'
+import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { useAccount } from 'wagmi'
 import { useOnramperContext } from './OnramperProvider'
 
@@ -14,8 +14,9 @@ export const OnramperPanel: FC = () => {
   }
 
   return (
-    <Dialog open={open} unmount={true} onClose={onClose}>
-      <div className="flex items-center justify-center w-full h-[75vh] sm:w-[482px] sm:h-[560px] rounded-t-2xl sm:rounded-2xl overflow-hidden">
+    <Dialog open={open} unmount={true} onClose={() => {}} maxWidth="lg">
+      <Dialog.Header title="" onClose={onClose} className="mr-1" />
+      <div className="flex items-center justify-center w-full h-[75vh] sm:h-[620px] rounded-t-2xl sm:rounded-2xl overflow-hidden mt-3">
         <iframe
           src={src}
           height="100%"

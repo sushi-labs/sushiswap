@@ -62,7 +62,7 @@ export const Search: FC = () => {
 
   const { data: tokenList } = useQuery<TokenList>(
     ['https://token-list.sushi.com'],
-    () => fetch(`https://token-list.sushi.com`).then((response) => response.json()),
+    () => fetch('https://token-list.sushi.com').then((response) => response.json()),
     {
       enabled: debouncedQuery.length > 2 && !isAddress(debouncedQuery),
     }
@@ -241,13 +241,15 @@ const Row: FC<{ currency: Type; onClick?(): void; isNetwork?: boolean }> = ({
   )
 
   if (onClick) {
-    return <button onClick={onClick}>{content}</button>
+    return (
+      <button type="button" onClick={onClick}>
+        {content}
+      </button>
+    )
   }
 
   return (
-    <a
-      href={`https://www.sushi.com/swap?token1=${currency.wrapped.address}&token0=0x0000000000000000000000000000000000000000&chainId=${currency.chainId}`}
-    >
+    <a href={`https://www.sushi.com/swap?token0=NATIVE&token1=${currency.wrapped.address}&chainId=${currency.chainId}`}>
       {content}
     </a>
   )

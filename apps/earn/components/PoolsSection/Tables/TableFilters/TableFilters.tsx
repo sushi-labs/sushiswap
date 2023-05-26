@@ -1,33 +1,38 @@
 import { classNames } from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
 
-import { FilterTag, usePoolFilters } from '../../../PoolsFiltersProvider'
+import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { TableFiltersSearchToken } from './TableFiltersSearchToken'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { TableFiltersNetwork } from './TableFiltersNetwork'
+import { Protocol } from '@sushiswap/client'
 
 export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters = false }) => {
-  const { categories, setFilters } = usePoolFilters()
+  const { protocols, farmsOnly, setFilters } = usePoolFilters()
 
-  const handler = useCallback(
-    (item: FilterTag) => {
+  const protocolHandler = useCallback(
+    (item: Protocol) => {
       setFilters({
-        categories: categories.includes(item) ? categories.filter((el) => el !== item) : [...categories, item],
+        protocols: protocols.includes(item) ? protocols.filter((el) => el !== item) : [...protocols, item],
       })
     },
-    [categories, setFilters]
+    [protocols, setFilters]
   )
 
-  const isAll = categories[0] !== FilterTag.DEFAULT && categories.length === 1
+  const farmsHandler = useCallback(() => {
+    setFilters({
+      farmsOnly: !farmsOnly,
+    })
+  }, [farmsOnly, setFilters])
 
   return (
     <div className="flex flex-col gap-4 mb-4">
-      <div className="w-full h-px bg-gray-200 dark:bg-slate-200/5" />
+      {/*<div className="w-full h-px bg-gray-200 dark:bg-slate-200/5" />*/}
       <div className="flex gap-4">
         <TableFiltersSearchToken />
         <TableFiltersNetwork />
       </div>
-      <div className="w-full h-px bg-gray-200 dark:bg-slate-200/5" />
+      {/*<div className="w-full h-px bg-gray-200 dark:bg-slate-200/5" />*/}
       <div className="flex flex-wrap items-center gap-3">
         <div
           className={classNames(
@@ -37,10 +42,10 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
         >
           <Button
             className="items-center gap-2.5"
-            onClick={() => handler(FilterTag.SUSHISWAP_V3)}
+            onClick={() => protocolHandler(Protocol.SUSHISWAP_V3)}
             size="sm"
-            variant={categories.includes(FilterTag.SUSHISWAP_V3) && !isAll ? 'outlined' : 'empty'}
-            color={categories.includes(FilterTag.SUSHISWAP_V3) && !isAll ? 'blue' : 'default'}
+            variant={protocols.includes(Protocol.SUSHISWAP_V3) ? 'outlined' : 'empty'}
+            color={protocols.includes(Protocol.SUSHISWAP_V3) ? 'blue' : 'default'}
           >
             <span>🍣</span>{' '}
             <span>
@@ -49,10 +54,10 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
           </Button>
           <Button
             className="gap-2.5"
-            onClick={() => handler(FilterTag.SUSHISWAP_V2)}
+            onClick={() => protocolHandler(Protocol.SUSHISWAP_V2)}
             size="sm"
-            variant={categories.includes(FilterTag.SUSHISWAP_V2) && !isAll ? 'outlined' : 'empty'}
-            color={categories.includes(FilterTag.SUSHISWAP_V2) && !isAll ? 'blue' : 'default'}
+            variant={protocols.includes(Protocol.SUSHISWAP_V2) ? 'outlined' : 'empty'}
+            color={protocols.includes(Protocol.SUSHISWAP_V2) ? 'blue' : 'default'}
           >
             <span>🍣</span>{' '}
             <span>
@@ -62,29 +67,29 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
 
           <Button
             className="flex items-center gap-2.5"
-            onClick={() => handler(FilterTag.BENTOBOX_STABLE)}
+            onClick={() => protocolHandler(Protocol.BENTOBOX_STABLE)}
             size="sm"
-            variant={categories.includes(FilterTag.BENTOBOX_STABLE) && !isAll ? 'outlined' : 'empty'}
-            color={categories.includes(FilterTag.BENTOBOX_STABLE) && !isAll ? 'blue' : 'default'}
+            variant={protocols.includes(Protocol.BENTOBOX_STABLE) ? 'outlined' : 'empty'}
+            color={protocols.includes(Protocol.BENTOBOX_STABLE) ? 'blue' : 'default'}
           >
             <span className="mt-1">🍱</span>
             <span>Stable</span>
           </Button>
           <Button
             className="flex items-center gap-2.5"
-            onClick={() => handler(FilterTag.BENTOBOX_CLASSIC)}
+            onClick={() => protocolHandler(Protocol.BENTOBOX_CLASSIC)}
             size="sm"
-            variant={categories.includes(FilterTag.BENTOBOX_CLASSIC) && !isAll ? 'outlined' : 'empty'}
-            color={categories.includes(FilterTag.BENTOBOX_CLASSIC) && !isAll ? 'blue' : 'default'}
+            variant={protocols.includes(Protocol.BENTOBOX_CLASSIC) ? 'outlined' : 'empty'}
+            color={protocols.includes(Protocol.BENTOBOX_CLASSIC) ? 'blue' : 'default'}
           >
             <span className="mt-1">🍱</span>
             <span>Classic</span>
           </Button>
           <Button
-            onClick={() => handler(FilterTag.FARMS_ONLY)}
+            onClick={() => farmsHandler()}
             size="sm"
-            variant={categories.includes(FilterTag.FARMS_ONLY) && !isAll ? 'outlined' : 'empty'}
-            color={categories.includes(FilterTag.FARMS_ONLY) && !isAll ? 'blue' : 'default'}
+            variant={farmsOnly ? 'outlined' : 'empty'}
+            color={farmsOnly ? 'blue' : 'default'}
             className="flex gap-2.5"
           >
             <span>🧑‍🌾</span> <span>Farms</span>

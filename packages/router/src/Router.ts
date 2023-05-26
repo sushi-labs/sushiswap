@@ -52,7 +52,7 @@ export class Router {
   ) {
     return Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice, [
       LiquidityProviders.NativeWrap,
-      LiquidityProviders.SushiSwap,
+      LiquidityProviders.SushiSwapV2,
       LiquidityProviders.SushiSwapV3,
       LiquidityProviders.Trident,
     ])
@@ -70,7 +70,7 @@ export class Router {
     // Find preferrable route
     const preferrableRoute = Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice, [
       LiquidityProviders.NativeWrap,
-      LiquidityProviders.SushiSwap,
+      LiquidityProviders.SushiSwapV2,
       LiquidityProviders.SushiSwapV3,
       LiquidityProviders.Trident,
     ])

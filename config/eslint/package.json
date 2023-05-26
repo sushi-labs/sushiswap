@@ -18,33 +18,24 @@
     "react/index.js"
   ],
   "dependencies": {
-    "eslint-config-next": "13.1.2",
-    "eslint-config-prettier": "8.5.0",
-    "eslint-config-turbo": "0.0.7",
+    "eslint-config-next": "13.4.3",
+    "eslint-config-prettier": "8.8.0",
+    "eslint-config-turbo": "1.9.9",
     "eslint-plugin-prettier": "4.2.1",
-    "eslint-plugin-simple-import-sort": "8.0.0",
-    "eslint-plugin-testing-library": "5.9.1",
+    "eslint-plugin-simple-import-sort": "10.0.0",
+    "eslint-plugin-testing-library": "5.11.0",
     "eslint-plugin-unused-imports": "2.0.0"
   },
   "devDependencies": {
-    "@types/eslint": "8.4.10",
-    "@types/node": "^18.0.0",
-    "eslint-config-next": "13.1.2",
-    "eslint-config-prettier": "8.5.0",
-    "eslint-config-turbo": "0.0.7",
-    "eslint-plugin-prettier": "4.2.1",
-    "eslint-plugin-simple-import-sort": "8.0.0",
-    "eslint-plugin-testing-library": "5.9.1",
-    "eslint-plugin-unused-imports": "2.0.0"
+    "@types/eslint": "8.40.0",
+    "@types/node": "18.11.18"
   },
   "peerDependencies": {
-    "eslint": "*",
-    "eslint-config-next": "*",
-    "eslint-config-prettier": "*",
-    "eslint-config-turbo": "*",
-    "eslint-plugin-prettier": "*",
-    "eslint-plugin-simple-import-sort": "*",
-    "eslint-plugin-testing-library": "*",
-    "eslint-plugin-unused-imports": "*"
+    "eslint": "8.41.0"
+  },
+  "peerDependenciesMeta": {
+    "eslint": {
+      "optional": false
+    }
   }
 }

@@ -137,6 +137,21 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
   const prepare = useCallback(
     async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       try {
+        console.log('prepare legacy')
+        const isInvalid = 
+        !token0 ||
+        !token1 ||
+        !chain?.id ||
+        !contract ||
+        !underlying0 ||
+        !underlying1 ||
+        !address ||
+        !pool ||
+        !balance?.[FundSource.WALLET] ||
+        !minAmount0 ||
+        !minAmount1 ||
+        !deadline
+        console.log({ isInvalid })
         if (
           !token0 ||
           !token1 ||
@@ -160,6 +175,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
 
         let methodNames
         let args: any
+        console.log({withNative})
 
         if (withNative) {
           const token1IsNative = Native.onChain(_pool.chainId).wrapped.address === pool.token1.wrapped.address
@@ -210,6 +226,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
         }
       } catch (e: unknown) {
         //
+        console.log({e})
       }
     },
     [
@@ -270,7 +287,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
                 <Checker.ApproveERC20
                   fullWidth
                   size="xl"
-                  id="approve-token0"
+                  id="approve-remove-liquidity-slp"
                   amount={amountToRemove}
                   contract={
                     getSushiSwapRouterContractConfig(_pool.chainId as UniswapV2Router02ChainId).address as Address
@@ -283,6 +300,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
                       size="xl"
                       variant="filled"
                       disabled={!approved || isWritePending}
+                      testId="remove-liquidity"
                     >
                       {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
                     </Button>
