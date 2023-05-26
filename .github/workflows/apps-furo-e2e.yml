@@ -33,7 +33,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 jobs:
-  e2e:
+  furo-e2e:
       name: Continuous integration
       timeout-minutes: 30
       runs-on: ubuntu-latest
