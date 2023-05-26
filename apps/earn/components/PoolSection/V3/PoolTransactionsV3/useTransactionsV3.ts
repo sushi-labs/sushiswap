@@ -1,8 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { SUBGRAPH_HOST, SUSHISWAP_V3_SUBGRAPH_NAME } from '@sushiswap/graph-config'
-import { Pool, isV3ChainId } from '@sushiswap/v3-sdk'
-import { Query, UseQueryResult, useQuery } from '@tanstack/react-query'
+import { Pool, V3ChainId, isV3ChainId } from '@sushiswap/v3-sdk'
+import { useQuery } from '@tanstack/react-query'
 
 export enum TransactionType {
   Mint = 'Mint',
@@ -12,9 +12,132 @@ export enum TransactionType {
 }
 
 interface UseTransactionsV3Opts {
+  type?: TransactionType | 'All'
   refetchInterval?: number
   first: number
   skip?: number
+}
+
+const fetchAll = async (poolId: string, chainId: V3ChainId, opts: UseTransactionsV3Opts) => {
+  const sdk = getBuiltGraphSDK({
+    subgraphHost: SUBGRAPH_HOST[chainId],
+    subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
+  })
+
+  const { transactions } = await sdk.V3Transactions({
+    first: opts.first,
+    skip: opts?.skip ?? 0,
+    where: {
+      or: [
+        {
+          mints_: {
+            pool: poolId.toLowerCase(),
+          },
+        },
+        {
+          burns_: {
+            pool: poolId.toLowerCase(),
+          },
+        },
+        {
+          swaps_: {
+            pool: poolId.toLowerCase(),
+          },
+        },
+        {
+          collects_: {
+            pool: poolId.toLowerCase(),
+          },
+        },
+      ],
+    },
+  })
+
+  return transactions
+}
+
+const fetchMints = async (poolId: string, chainId: V3ChainId, opts: UseTransactionsV3Opts) => {
+  const sdk = getBuiltGraphSDK({
+    subgraphHost: SUBGRAPH_HOST[chainId],
+    subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
+  })
+
+  const { mints } = await sdk.V3Mints({
+    first: opts.first,
+    skip: opts?.skip ?? 0,
+    where: { pool: poolId.toLowerCase() },
+  })
+
+  return mints.map((mint) => ({
+    ...mint.transaction,
+    mints: [mint],
+    burns: [],
+    swaps: [],
+    collects: [],
+  }))
+}
+
+const fetchBurns = async (poolId: string, chainId: V3ChainId, opts: UseTransactionsV3Opts) => {
+  const sdk = getBuiltGraphSDK({
+    subgraphHost: SUBGRAPH_HOST[chainId],
+    subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
+  })
+
+  const { burns } = await sdk.V3Burns({
+    first: opts.first,
+    skip: opts?.skip ?? 0,
+    where: { pool: poolId.toLowerCase() },
+  })
+
+  return burns.map((burn) => ({
+    ...burn.transaction,
+    mints: [],
+    burns: [burn],
+    swaps: [],
+    collects: [],
+  }))
+}
+
+const fetchSwaps = async (poolId: string, chainId: V3ChainId, opts: UseTransactionsV3Opts) => {
+  const sdk = getBuiltGraphSDK({
+    subgraphHost: SUBGRAPH_HOST[chainId],
+    subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
+  })
+
+  const { swaps } = await sdk.V3Swaps({
+    first: opts.first,
+    skip: opts?.skip ?? 0,
+    where: { pool: poolId.toLowerCase() },
+  })
+
+  return swaps.map((swap) => ({
+    ...swap.transaction,
+    mints: [],
+    burns: [],
+    swaps: [swap],
+    collects: [],
+  }))
+}
+
+const fetchCollects = async (poolId: string, chainId: V3ChainId, opts: UseTransactionsV3Opts) => {
+  const sdk = getBuiltGraphSDK({
+    subgraphHost: SUBGRAPH_HOST[chainId],
+    subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
+  })
+
+  const { collects } = await sdk.V3Collects({
+    first: opts.first,
+    skip: opts?.skip ?? 0,
+    where: { pool: poolId.toLowerCase() },
+  })
+
+  return collects.map((collect) => ({
+    ...collect.transaction,
+    mints: [],
+    burns: [],
+    swaps: [],
+    collects: [collect],
+  }))
 }
 
 // Will only support the last 1k txs
@@ -27,39 +150,27 @@ function useTransactionsV3(pool: Pool | undefined | null, poolId: string, opts: 
 
       if (!pool || !isV3ChainId(chainId)) return []
 
-      const sdk = getBuiltGraphSDK({
-        subgraphHost: SUBGRAPH_HOST[chainId],
-        subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
-      })
+      let transactions: Awaited<ReturnType<typeof fetchAll>> = []
 
-      const { transactions } = await sdk.V3Transactions({
-        first: opts.first,
-        skip: opts?.skip ?? 0,
-        where: {
-          or: [
-            {
-              mints_: {
-                pool: poolId.toLowerCase(),
-              },
-            },
-            {
-              burns_: {
-                pool: poolId.toLowerCase(),
-              },
-            },
-            {
-              swaps_: {
-                pool: poolId.toLowerCase(),
-              },
-            },
-            {
-              collects_: {
-                pool: poolId.toLowerCase(),
-              },
-            },
-          ],
-        },
-      })
+      switch (opts.type) {
+        case 'All':
+          transactions = await fetchAll(poolId, chainId, opts)
+          break
+        case TransactionType.Mint:
+          transactions = await fetchMints(poolId, chainId, opts)
+          break
+        case TransactionType.Burn:
+          transactions = await fetchBurns(poolId, chainId, opts)
+          break
+        case TransactionType.Swap:
+          transactions = await fetchSwaps(poolId, chainId, opts)
+          break
+        case TransactionType.Collect:
+          transactions = await fetchCollects(poolId, chainId, opts)
+          break
+        default:
+          transactions = await fetchAll(poolId, chainId, opts)
+      }
 
       if (!transactions.length) return []
 
