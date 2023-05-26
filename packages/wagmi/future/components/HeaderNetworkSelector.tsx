@@ -19,8 +19,6 @@ export const HeaderNetworkSelector: FC<{
   const { chain } = useNetwork()
   const { isSm } = useBreakpoint('sm')
 
-  console.debug('HeaderNetworkSelector', { networks, selectedNetwork, chain })
-
   const onSwitchNetwork = useCallback<NetworkSelectorOnSelectCallback>(
     async (el, close) => {
       console.debug('onSwitchNetwork', el)
