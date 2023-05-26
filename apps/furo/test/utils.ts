@@ -3,7 +3,7 @@ import { parseUnits } from '@ethersproject/units'
 import { expect, Page } from '@playwright/test'
 // import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { ChainId, chainName } from '@sushiswap/chain'
-import { WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { Type, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { Contract, Wallet } from 'ethers'
 
 
@@ -39,6 +39,31 @@ export function timeout(ms: number) {
 export interface Token {
   address: string
   symbol: string
+}
+
+
+
+export enum GradedVestingFrequency {
+  WEEKLY = 'weekly',
+  BI_WEEKLY = 'bi-weekly',
+  MONTHLY = 'monthly',
+  QUARTERLY = 'quarterly',
+  YEARLY = 'yearly',
+}
+
+export interface VestingArgs {
+  token: Type
+  startInMonths: number
+  recipient: string
+  graded: {
+    stepAmount: string
+    steps: number
+    frequency: GradedVestingFrequency
+  }
+  cliff?: {
+    amount: string
+    cliffEndsInMonths: number
+  }
 }
 
 export async function selectDate(selector: string, months: number, page: Page) {

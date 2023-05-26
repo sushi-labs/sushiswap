@@ -100,7 +100,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                 <Typography variant="lg" weight={500}>
                   Vesting Details
                 </Typography>
-                <IconButton onClick={() => setOpen(false)}>
+                <IconButton onClick={() => setOpen(false)} testdata-id={`vesting-schedule-${index}-close-drawer-button`}>
                   <XIcon width={24} height={24} className="text-slate-200" />
                 </IconButton>
               </div>
@@ -116,7 +116,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                         render={({ field: { onChange, value } }) => {
                           return (
                             <Switch
-                              id={`vesting-schedule-${index}-cliff-toggle-switch`}
+                              id={`vesting-schedule-cliff-${index}-toggle-switch`}
                               checked={value}
                               onChange={(val) => {
                                 onChange(val)
