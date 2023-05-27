@@ -41,6 +41,15 @@ library InputStream {
     }
   }
 
+  function readUint24(uint256 stream) internal pure returns (uint24 res) {
+    assembly {
+      let pos := mload(stream)
+      pos := add(pos, 3)
+      res := mload(pos)
+      mstore(stream, pos)
+    }
+  }
+
   function readUint32(uint256 stream) internal pure returns (uint32 res) {
     assembly {
       let pos := mload(stream)

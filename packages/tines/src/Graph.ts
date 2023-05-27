@@ -4,6 +4,8 @@ import { ConstantProductRPool, RPool, RToken, setTokenId } from './PrimaryPools'
 import { StableSwapRPool } from './StableSwapPool'
 import { ASSERT, closeValues, DEBUG, getBigNumber } from './Utils'
 
+const ROUTER_DISTRIBUTION_PORTION = 65535
+
 // Routing info about each one swap
 export interface RouteLeg {
   poolType: 'Stable' | 'Classic' | 'Unknown'
@@ -1158,7 +1160,8 @@ export class Graph {
 
       const inputTotal = amounts.get(l.tokenFrom.tokenId as string)
       console.assert(inputTotal !== undefined, 'Internal Error 564')
-      const input = (inputTotal as number) * l.swapPortion
+      const routerPortion = Math.round(l.swapPortion * ROUTER_DISTRIBUTION_PORTION) / ROUTER_DISTRIBUTION_PORTION
+      const input = Math.floor((inputTotal as number) * routerPortion)
       amounts.set(l.tokenFrom.tokenId as string, (inputTotal as number) - input)
       const output = pool.calcOutByInReal(input, direction)
 
