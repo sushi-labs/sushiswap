@@ -38,7 +38,6 @@ export async function HolderSnapshot() {
         </div>
       ),
       value: tokenHolders.tokenConcentration.toLocaleString('EN', { style: 'percent', maximumFractionDigits: 2 }),
-      // additional: <dd className="text-xs text-slate-500">Percentage of $SUSHI held by top 10 addresses</dd>,
       additional: (
         <dd className={`text-sm ${tokenConcentrationDiff < 0 ? 'text-red-400' : 'text-green-400'}`}>
           {tokenConcentrationDiff.toLocaleString('EN', { style: 'percent', maximumFractionDigits: 2 })} from last
@@ -60,10 +59,7 @@ export async function HolderSnapshot() {
   return (
     <section className="space-y-8">
       <h2 className="text-2xl font-bold text-slate-200">Holder Snapshot</h2>
-      <div className="grid grid-cols-3 gap-4">
-        {/** TODO: mobile */}
-        {holderSnapshot.map(KpiCard)}
-      </div>
+      <div className="grid gap-4 md:grid-cols-3">{holderSnapshot.map(KpiCard)}</div>
     </section>
   )
 }

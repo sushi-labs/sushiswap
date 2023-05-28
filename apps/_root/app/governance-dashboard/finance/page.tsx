@@ -12,7 +12,7 @@ export default async function Finance() {
   const [treasurySnapshot, budgetData] = await Promise.all([getTreasurySnapshot(), getNotionBudget()])
 
   return (
-    <div className="space-y-20">
+    <div className="space-y-12 md:space-y-20">
       <section className="space-y-14">
         <div className="space-y-8">
           <h2 className="ml-1 text-2xl font-bold text-slate-200">Treasury Overview</h2>

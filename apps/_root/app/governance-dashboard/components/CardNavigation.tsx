@@ -4,8 +4,8 @@ import 'swiper/swiper.css'
 import 'swiper/css/navigation'
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
-
 import { classNames } from '@sushiswap/ui'
+import { useBreakpoint } from '@sushiswap/ui/future/lib'
 import React, { ReactNode, useReducer } from 'react'
 import { Swiper, SwiperSlide, useSwiper } from 'swiper/react'
 
@@ -71,6 +71,7 @@ export function CardNavigation({
   itemCount,
 }: CardNavigationProps) {
   const [buttonState, setButtonState] = useReducer(reducer, INITIAL_BUTTON_STATE)
+  const { isMd } = useBreakpoint('md')
 
   return (
     <div className={classNames('relative flex overflow-hidden', containerStyle)}>
@@ -85,8 +86,13 @@ export function CardNavigation({
         {itemCount - slidesPerView >= 0 && <SlideButtons show={buttonState} />}
         {children}
         {/** empty slot */}
-        <SwiperSlide />
-        <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-1/2 bg-gradient-to-r from-transparent to-[#101728]" />
+        {isMd ? <SwiperSlide /> : null}
+        <div
+          className={classNames(
+            'pointer-events-none absolute right-0 top-0 z-10 h-full w-1/2 bg-gradient-to-r from-transparent to-[#101728]',
+            !buttonState.right && 'hidden'
+          )}
+        />
       </Swiper>
     </div>
   )
