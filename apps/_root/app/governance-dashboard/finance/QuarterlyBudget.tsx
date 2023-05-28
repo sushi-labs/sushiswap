@@ -63,8 +63,8 @@ export function QuarterlyBudget({ budgetData }: { budgetData: SushiBudget[] }) {
   )
 
   return (
-    <section className="mt-[120px] space-y-8">
-      <header className="flex items-center justify-between">
+    <section className="mt-[120px] space-y-4 md:space-y-8">
+      <header className="flex flex-col items-center justify-between gap-3 md:flex-row">
         <h2 className="ml-1 text-2xl font-bold text-slate-200">Quarterly Budget vs. Actuals</h2>
         <div className="flex h-[42px] items-center gap-2 rounded-lg bg-slate-700 px-2">
           <button
@@ -84,11 +84,11 @@ export function QuarterlyBudget({ budgetData }: { budgetData: SushiBudget[] }) {
           </button>
         </div>
       </header>
-      <div className="grid grid-cols-[3fr,7fr] gap-4">
+      <div className="grid gap-4 md:grid-cols-[3fr,7fr]">
         <div className="grid gap-4">{quarterlyKpis.map(KpiCard)}</div>
         <div className="h-full w-full rounded-lg bg-[#1A2031] p-5">
           <h3 className="text-xl font-semibold">Actuals Breakdown</h3>
-          <div className="mt-10 flex w-full justify-between pr-16">
+          <div className="mt-10 flex w-full flex-col justify-center gap-4 md:flex-row md:justify-between md:pr-16">
             <div className="flex items-center justify-center">
               <PieChart width={240} height={240} className="z-10">
                 <Pie
@@ -130,7 +130,7 @@ export function QuarterlyBudget({ budgetData }: { budgetData: SushiBudget[] }) {
 
             <div className="h-full space-y-5 text-sm">
               {selectedQuarter.expensesBreakdown.map(({ teamName, expense }) => (
-                <dl key={teamName} className="flex items-center justify-between gap-[110px]">
+                <dl key={teamName} className="flex items-center justify-between md:gap-[110px]">
                   <dt className="flex items-center gap-2">
                     <div
                       className={classNames(

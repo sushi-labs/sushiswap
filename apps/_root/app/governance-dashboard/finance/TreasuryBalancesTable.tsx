@@ -14,13 +14,13 @@ const columns = [
   columnHelper.accessor('token', {
     header: 'Token',
     enableSorting: false,
-    meta: { className: 'pl-1' },
+    minSize: 100,
     cell: (info) => {
       const token = info.getValue()
       const currency = token.isNative ? Native.onChain(token.chainId) : new Token(token)
 
       return (
-        <div className="flex items-center gap-2 pl-0.5 font-medium">
+        <div className="flex items-center gap-2 font-medium">
           <Currency.Icon currency={currency} width={24} height={24} />
           {currency.symbol}
         </div>
@@ -29,23 +29,26 @@ const columns = [
   }),
   columnHelper.accessor('portfolioShare', {
     header: 'Portfolio Share',
-
-    cell: (info) => <ProgressBar progress={info.getValue()} color={ProgressColor.BLUE} className="w-[100px]" />,
+    minSize: 150,
+    cell: (info) => <ProgressBar progress={info.getValue()} color={ProgressColor.BLUE} className="w-20 md:w-[100px]" />,
   }),
   columnHelper.accessor('balanceUSD', {
     header: () => <div className="w-full text-right">Value</div>,
     enableSorting: false,
+    minSize: 80,
     cell: (info) => <div className="w-full text-right">${formatNumber(info.getValue())}</div>,
   }),
   columnHelper.accessor('balance', {
     header: () => <div className="w-full text-right">Amount</div>,
     enableSorting: false,
+    minSize: 80,
     cell: (info) => <div className="w-full text-right">{formatNumber(info.getValue())}</div>,
   }),
   columnHelper.accessor('price', {
     header: () => <div className="w-full text-right">Price</div>,
     enableSorting: false,
     meta: { className: 'pr-3' },
+    minSize: 80,
     cell: (info) => (
       <div className="w-full pr-3 text-right">
         {(+info.getValue()).toLocaleString('EN', {
@@ -71,7 +74,7 @@ export function TreasuryBalancesTable({ balances }: { balances: TreasuryBalance[
 
   return (
     <div className="rounded-lg bg-[#1A2031]">
-      <div className="h-full w-full border-b border-slate-800 px-5 pt-5 pb-7">
+      <div className="h-full w-full border-b border-slate-800 px-5 pb-7 pt-5">
         <h3 className="mt-3 text-xl font-semibold">Treasury Snapshot</h3>
         {/* <ExternalLink
           href={`https://etherscan.io/address/${TREASURY_ADDRESS}`}
