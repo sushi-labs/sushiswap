@@ -12,7 +12,7 @@ export function GovernanceDateFilters() {
   const { replace } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const params = new URLSearchParams(searchParams)
+  const params = new URLSearchParams(searchParams ?? '')
 
   const selectedDateFilter =
     DATE_FILTERS.options.find((o) => o.key === params.get(DATE_FILTERS.key)) ?? DATE_FILTERS.options[3]

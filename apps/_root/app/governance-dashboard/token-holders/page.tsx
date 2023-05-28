@@ -1,10 +1,10 @@
 import React from 'react'
 
 import { HolderSnapshot } from '../components/HolderSnapshot'
-import { getSushiPriceUSD, getTokenHolders } from '../lib'
+import { getSushiPriceUSD, getTokenHolders, TokenHoldersFilters } from '../lib'
 import { TokenHoldersTable } from './TokenHoldersTable'
 
-export default async function TokenHolders({ searchParams }) {
+export default async function TokenHolders({ searchParams }: { searchParams: TokenHoldersFilters }) {
   const [tokenHolders, sushiPrice] = await Promise.all([getTokenHolders(searchParams), getSushiPriceUSD()])
 
   const totalSupply = Math.trunc(+tokenHolders.totalSupply ?? 0) / 1e18

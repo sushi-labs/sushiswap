@@ -5,6 +5,10 @@ import React, { useState } from 'react'
 import { GOV_STATUS, GovernanceItem, GovernanceStatus } from '../lib'
 import { GovernanceItemCard, GovernanceTypeFilter } from '../components'
 
+function isValidGovernanceType(govType: string): govType is GovernanceStatus {
+  return govType in GOV_STATUS
+}
+
 export function GovernanceBoard({
   governanceItemsMapping,
 }: {
@@ -18,8 +22,8 @@ export function GovernanceBoard({
         {Object.entries(governanceItemsMapping).map(([key, items]) => (
           <div key={key} className="space-y-5">
             <div className="flex items-center gap-2 pl-2.5">
-              <div className={`h-3 w-3 rounded-sm ${GOV_STATUS[key].color}`} />
-              <h3 className="font-medium">{GOV_STATUS[key].title}</h3>
+              <div className={`h-3 w-3 rounded-sm ${isValidGovernanceType(key) ? GOV_STATUS[key].color : ''}`} />
+              <h3 className="font-medium">{isValidGovernanceType(key) ? GOV_STATUS[key].title : ''}</h3>
             </div>
 
             <div className="grid gap-2">

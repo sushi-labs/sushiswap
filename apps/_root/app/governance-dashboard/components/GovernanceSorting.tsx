@@ -19,7 +19,7 @@ export function GovernanceSorting() {
   const { replace } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const params = new URLSearchParams(searchParams)
+  const params = new URLSearchParams(searchParams ?? '')
 
   const selectedSortOption =
     SORT_OPTIONS.options.find((o) => o.key === params.get(SORT_OPTIONS.key)) ?? SORT_OPTIONS.options[0]

@@ -18,7 +18,7 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
   const { replace } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const params = new URLSearchParams(searchParams)
+  const params = new URLSearchParams(searchParams ?? '')
   const { isMd } = useBreakpoint('md')
 
   function filterDate(filterKey: string) {
@@ -73,7 +73,7 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
                   <span className="font-medium">{status.title}</span>
                 </div>
                 <div className="flex h-6 w-10 items-center justify-center rounded-lg bg-slate-500/60 text-xs font-semibold text-white">
-                  {posts[key].length}
+                  {posts[key as GovernanceStatus].length}
                 </div>
               </div>
             </div>

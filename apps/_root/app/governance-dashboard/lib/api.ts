@@ -42,7 +42,7 @@ async function getBlockNumberFromTimestamp(timestamp: number) {
 /* ===== Discourse (forum) & Snapshot ===== */
 export interface GovernanceItem {
   type: {
-    id: string
+    id: 'IMPLEMENTATION' | 'PROPOSAL' | 'DISCUSSION'
     title: string
     color: string
   }
@@ -68,10 +68,12 @@ async function fetchDiscourse<T>(path: string) {
   return data
 }
 
-export async function getLatestGovernanceItems(filters?: {
+export interface GovernanceItemsFilters {
   dateFilter: 'month' | 'quarter' | 'year' | 'all'
   sortForumPosts?: 'created' | 'activity' | 'default'
-}) {
+}
+
+export async function getLatestGovernanceItems(filters?: GovernanceItemsFilters) {
   const filterSeconds = filters
     ? DATE_FILTERS.options.find((option) => option.key === filters.dateFilter)?.seconds
     : null
@@ -156,7 +158,7 @@ export async function getLatestGovernanceItems(filters?: {
       }) ?? []
 
   const res = [...snapshotProposals, ...forumTopics].reduce(
-    (acc: Record<GovernanceStatus, GovernanceItem[]>, curr) => {
+    (acc: Record<GovernanceStatus, GovernanceItem[]>, curr: GovernanceItem) => {
       acc[curr.type.id].push(curr)
       return acc
     },
@@ -199,9 +201,9 @@ const GRAPH_URL = 'https://api.thegraph.com/subgraphs/name/hhk-eth/sushi-ethereu
 function getTokenConcentration(topTenUsers: { balance: string }[], totalSupply: string) {
   const topTenBalances: bigint = topTenUsers.reduce(
     (acc: bigint, curr: { balance: string }) => acc + BigInt(curr.balance),
-    0n
+    BigInt(0)
   )
-  const tokenConcentration = Number((topTenBalances * 100n) / BigInt(totalSupply)) / 100
+  const tokenConcentration = Number((topTenBalances * BigInt(100)) / BigInt(totalSupply)) / 100
 
   return tokenConcentration
 }
@@ -256,7 +258,12 @@ interface TokenHoldersGraph {
   previousQuarterSushiStats: SushiStatsGraph
 }
 
-export async function getTokenHolders(filters?: { balanceFilter: number; orderDirection: 'asc' | 'desc' }) {
+export interface TokenHoldersFilters {
+  balanceFilter: number
+  orderDirection: 'asc' | 'desc'
+}
+
+export async function getTokenHolders(filters?: TokenHoldersFilters) {
   const previousQuarterTimestamp = Math.floor(endOfPreviousQuarter(Date.now()) / 1000)
   const previousQuarterBlockNumber = await getBlockNumberFromTimestamp(previousQuarterTimestamp)
 
@@ -305,7 +312,7 @@ export async function getTreasuryHistoricalTvl() {
 
   if (!allBalances) return []
 
-  const combinedData = {}
+  const combinedData: Record<number, number> = {}
 
   for (const group in allBalances.chainTvls) {
     // defillama: skip sum of keys like ethereum-staking, arbitrum-vesting

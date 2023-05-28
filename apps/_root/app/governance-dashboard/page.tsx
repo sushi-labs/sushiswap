@@ -1,9 +1,9 @@
 import React from 'react'
 
 import { HolderSnapshot, LatestPosts, UpcomingEvents } from './components'
-import { getNotionEvents, getLatestGovernanceItems } from './lib'
+import { getLatestGovernanceItems, getNotionEvents, GovernanceItemsFilters } from './lib'
 
-export default async function Overview({ searchParams }) {
+export default async function Overview({ searchParams }: { searchParams: GovernanceItemsFilters }) {
   const [latestPosts, events] = await Promise.all([getLatestGovernanceItems(searchParams), getNotionEvents()])
 
   return (

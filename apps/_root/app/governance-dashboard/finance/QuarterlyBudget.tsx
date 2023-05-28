@@ -17,6 +17,10 @@ const CHART_COLORS = {
   'Available Budget': 'transparent',
 }
 
+function isValidTeamName(teamName: string): teamName is keyof typeof CHART_COLORS {
+  return teamName in CHART_COLORS
+}
+
 export function QuarterlyBudget({ budgetData }: { budgetData: SushiBudget[] }) {
   const [selectedQuarterIndex, setSelectedQuarterIndex] = useState(budgetData.length - 1)
   const selectedQuarter = budgetData[selectedQuarterIndex]
@@ -100,7 +104,10 @@ export function QuarterlyBudget({ budgetData }: { budgetData: SushiBudget[] }) {
                   dataKey="expense"
                 >
                   {selectedQuarter.expensesBreakdown.map(({ teamName }) => (
-                    <Cell key={`cell-${teamName}`} fill={CHART_COLORS[teamName] ?? '#5689E6'} />
+                    <Cell
+                      key={`cell-${teamName}`}
+                      fill={isValidTeamName(teamName) ? CHART_COLORS[teamName] : '#5689E6'}
+                    />
                   ))}
                 </Pie>
                 <Tooltip
@@ -137,7 +144,7 @@ export function QuarterlyBudget({ budgetData }: { budgetData: SushiBudget[] }) {
                         'h-[14px] w-[14px] rounded-sm',
                         teamName === 'Available Budget' && 'border border-slate-400'
                       )}
-                      style={{ backgroundColor: CHART_COLORS[teamName] ?? '#5689E6' }}
+                      style={{ backgroundColor: isValidTeamName(teamName) ? CHART_COLORS[teamName] : '#5689E6' }}
                     />
                     {teamName}
                   </dt>

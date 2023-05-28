@@ -38,12 +38,16 @@ const BALANCE_FILTER = {
 }
 const ORDER_DIRECTION_KEY = 'orderDirection'
 
+function isCustomName(address: string): address is keyof typeof tokenHolderNames {
+  return address in tokenHolderNames
+}
+
 export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
   const { replace } = useRouter()
   const pathname = usePathname()
   const [isPending, startTransition] = useTransition()
   const searchParams = useSearchParams()
-  const params = new URLSearchParams(searchParams)
+  const params = new URLSearchParams(searchParams ?? '')
   const { isMd } = useBreakpoint('md')
 
   function sortColumn(direction: false | SortDirection) {
@@ -80,7 +84,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
             endIcon={<ArrowTopRightOnSquareIcon className="mb-0.5 h-4 w-4" strokeWidth={2.5} />}
             className="gap-2 font-bold"
           >
-            {tokenHolderNames[address] ?? shortenAddress(address)}
+            {isCustomName(address) ? tokenHolderNames[address] : shortenAddress(address)}
           </ExternalLink>
         )
       },

@@ -14,7 +14,7 @@ export const GOV_STATUS = {
     title: 'Discussions',
     color: 'bg-blue',
   },
-}
+} as const
 
 export const DATE_FILTERS = {
   key: 'dateFilter',

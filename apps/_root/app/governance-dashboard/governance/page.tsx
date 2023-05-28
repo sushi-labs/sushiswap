@@ -1,10 +1,10 @@
 import React from 'react'
 
 import { GovernanceDateFilters, GovernanceSorting } from '../components'
-import { getLatestGovernanceItems } from '../lib'
+import { getLatestGovernanceItems, GovernanceItemsFilters } from '../lib'
 import { GovernanceBoard } from './GovernanceBoard'
 
-export default async function Governance({ searchParams }) {
+export default async function Governance({ searchParams }: { searchParams: GovernanceItemsFilters }) {
   const governanceItemsMapping = (await getLatestGovernanceItems(searchParams)) ?? []
 
   return (
