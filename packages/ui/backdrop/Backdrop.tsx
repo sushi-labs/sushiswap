@@ -5,6 +5,9 @@ type Props = {
   backdrop?: React.ReactNode
 }
 
+/**
+ * @deprecated
+ */
 export function Backdrop({ children, backdrop }: Props): JSX.Element {
   return (
     <>
