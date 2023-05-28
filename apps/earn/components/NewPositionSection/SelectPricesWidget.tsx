@@ -136,7 +136,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             )}
           </div>
         )}
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-2">
             <div className="flex justify-end lg:hidden">
               {isLoading || !pool || !token0 || !token1 ? (
@@ -291,10 +291,11 @@ export const PriceBlock: FC<PriceBlockProps> = ({
         'flex flex-col gap-2 w-full bg-gray-100 dark:bg-white/[0.04] rounded-lg p-3'
       )}
     >
-      <p className="text-sm font-medium text-gray-600 dark:text-slate-400 text-slate-600">{label}</p>
+      <p className="text-sm font-medium text-gray-600 dark:text-slate-400">{label}</p>
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <Input.Numeric
+            variant="unstyled"
             testdata-id={`${id}-input`}
             value={localValue}
             onUserInput={setLocalValue}

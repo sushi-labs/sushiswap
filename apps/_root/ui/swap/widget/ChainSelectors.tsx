@@ -7,7 +7,6 @@ import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { ArrowRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { STARGATE_SUPPORTED_CHAIN_IDS } from '@sushiswap/stargate'
 import { classNames } from '@sushiswap/ui'
-import { SwapChainId } from '../../../types'
 
 export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
   const { network0, network1 } = useSwapState()

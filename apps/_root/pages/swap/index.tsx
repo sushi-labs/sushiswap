@@ -11,28 +11,31 @@ import { SplashController } from '../../ui/swap/SplashController'
 import { TokenProvider } from '../../ui/swap/TokenProvider'
 import { Header } from '../../ui/swap/Header'
 import { Onramper } from '@sushiswap/wagmi/future/components'
+import { ThemeProvider } from '@sushiswap/ui'
 
 export const Page: FC = () => {
   return (
     <TokenProvider>
       <SplashController>
         <SwapProvider>
-          <Onramper.Provider>
-            <Header />
-            <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
-              <Drawer.Root>
-                <Checker.Root>
-                  <Widget />
-                  <TradeStats />
-                  <TradeReviewDialog />
-                  <TokenNotFoundDialog />
-                </Checker.Root>
-              </Drawer.Root>
+          <ThemeProvider>
+            <Onramper.Provider>
+              <Header />
+              <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
+                <Drawer.Root>
+                  <Checker.Root>
+                    <Widget />
+                    <TradeStats />
+                    <TradeReviewDialog />
+                    <TokenNotFoundDialog />
+                  </Checker.Root>
+                </Drawer.Root>
 
-              {/*spacer for fixed positioned swap button */}
-              <div className="h-[68px] w-full" />
-            </Container>
-          </Onramper.Provider>
+                {/*spacer for fixed positioned swap button */}
+                <div className="h-[68px] w-full" />
+              </Container>
+            </Onramper.Provider>
+          </ThemeProvider>
         </SwapProvider>
       </SplashController>
     </TokenProvider>

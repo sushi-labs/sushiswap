@@ -13,14 +13,14 @@ import { Partners } from '../components/Partners/Partners'
 import { Story } from '../components/Story/Story'
 import { Header } from '../components'
 import { MotionConfig } from 'framer-motion'
-import { App } from '@sushiswap/ui'
+import { App, ThemeProvider } from '@sushiswap/ui'
 import { useIsSmScreen } from '@sushiswap/hooks'
 
 const Index = () => {
   const isSmallScreen = useIsSmScreen()
 
   return (
-    <>
+    <ThemeProvider forcedTheme="dark">
       <Header />
       <MotionConfig reducedMotion={isSmallScreen ? 'always' : 'user'}>
         <article className="my-20 w-full">
@@ -40,7 +40,7 @@ const Index = () => {
         </article>
       </MotionConfig>
       <App.Footer />
-    </>
+    </ThemeProvider>
   )
 }
 
