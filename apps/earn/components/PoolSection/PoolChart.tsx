@@ -14,12 +14,6 @@ import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 
 const tailwind = resolveConfig(tailwindConfig)
 
-interface PoolChartProps {
-  data: ReturnType<typeof usePoolGraphData>['data']
-  isLoading: boolean
-  swapFee: number | undefined
-}
-
 enum PoolChartType {
   Volume,
   TVL,
@@ -35,6 +29,32 @@ enum PoolChartPeriod {
   All,
 }
 
+const chartList = [
+  {
+    name: 'Volume',
+    chartType: PoolChartType.Volume,
+  },
+  {
+    name: 'TVL',
+    chartType: PoolChartType.TVL,
+  },
+  {
+    name: 'Fees',
+    chartType: PoolChartType.Fees,
+  },
+  {
+    name: 'APR',
+    chartType: PoolChartType.APR,
+  },
+] as const
+
+interface PoolChartProps {
+  data: ReturnType<typeof usePoolGraphData>['data']
+  isLoading: boolean
+  swapFee: number | undefined
+  charts?: (typeof chartList)[number]['name'][]
+}
+
 const chartTimespans: Record<PoolChartPeriod, number> = {
   [PoolChartPeriod.Day]: 86400 * 1000,
   [PoolChartPeriod.Week]: 604800 * 1000,
@@ -43,7 +63,7 @@ const chartTimespans: Record<PoolChartPeriod, number> = {
   [PoolChartPeriod.All]: Infinity,
 }
 
-export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoading }) => {
+export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoading, charts }) => {
   const isDark = useMediaQuery({ query: '(prefers-color-scheme: dark)' })
   const [chartType, setChartType] = useState<PoolChartType>(PoolChartType.Volume)
   const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Month)
@@ -202,46 +222,30 @@ export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoad
     [isDark, xData, chartType, yData, onMouseOver, chartPeriod]
   )
 
+  const chartsToRender = useMemo(() => {
+    return charts
+      ? charts
+          .map((chartName) => chartList.find((chart) => chart.name === chartName))
+          .filter((chart): chart is (typeof chartList)[number] => !!chart)
+      : chartList
+  }, [charts])
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col items-center justify-between gap-5 md:flex-row">
         <div className="flex items-center gap-1">
-          <Button
-            size="xs"
-            variant={chartType === PoolChartType.Volume ? 'outlined' : 'empty'}
-            color={chartType === PoolChartType.Volume ? 'blue' : 'default'}
-            onClick={() => setChartType(PoolChartType.Volume)}
-            className="!h-[24px] font-bold"
-          >
-            Volume
-          </Button>
-          <Button
-            size="xs"
-            variant={chartType === PoolChartType.TVL ? 'outlined' : 'empty'}
-            color={chartType === PoolChartType.TVL ? 'blue' : 'default'}
-            onClick={() => setChartType(PoolChartType.TVL)}
-            className="!h-[24px] font-bold"
-          >
-            TVL
-          </Button>
-          <Button
-            size="xs"
-            variant={chartType === PoolChartType.Fees ? 'outlined' : 'empty'}
-            color={chartType === PoolChartType.Fees ? 'blue' : 'default'}
-            onClick={() => setChartType(PoolChartType.Fees)}
-            className="!h-[24px] font-bold"
-          >
-            Fees
-          </Button>
-          <Button
-            size="xs"
-            variant={chartType === PoolChartType.APR ? 'outlined' : 'empty'}
-            color={chartType === PoolChartType.APR ? 'blue' : 'default'}
-            onClick={() => setChartType(PoolChartType.APR)}
-            className="!h-[24px] font-bold"
-          >
-            APR
-          </Button>
+          {chartsToRender.map((chart) => (
+            <Button
+              size="xs"
+              variant={chartType === chart.chartType ? 'outlined' : 'empty'}
+              color={chartType === chart.chartType ? 'blue' : 'default'}
+              onClick={() => setChartType(chart.chartType)}
+              className="!h-[24px] font-bold"
+              key={chart.name}
+            >
+              {chart.name}
+            </Button>
+          ))}
         </div>
         <div className="flex gap-1">
           <Button

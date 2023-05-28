@@ -198,7 +198,12 @@ const Pool: FC = () => {
       <div className={tab === SelectedTab.Analytics ? 'block' : 'hidden'}>
         <div>
           <div className="grid md:grid-cols-[404px_auto] gap-10">
-            <PoolChart isLoading={isGraphDataLoading} data={graphData} swapFee={pool?.fee} />
+            <PoolChart
+              isLoading={isGraphDataLoading}
+              data={graphData}
+              swapFee={pool?.fee}
+              charts={['Volume', 'TVL', 'Fees']}
+            />
             <div className="flex flex-col gap-6">
               <List className="pt-0 !gap-1">
                 <List.Label className="flex justify-end">
