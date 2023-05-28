@@ -27,7 +27,7 @@ function SlideButtons({ show }: { show: { left: boolean; right: boolean } }) {
 
   return (
     <>
-      <div className="absolute inset-y-0 left-1 z-20 flex h-full items-center">
+      <div className="absolute inset-y-0 left-1 z-20 hidden h-full items-center md:flex">
         <button onClick={() => swiper.slidePrev()} className={classNames(BASE, ACTIVE, !show.left && 'invisible')}>
           <ChevronLeftIcon className="h-6 w-6" />
         </button>
@@ -86,7 +86,7 @@ export function CardNavigation({
         {children}
         {/** empty slot */}
         <SwiperSlide />
-        <div className="pointer-events-none absolute top-0 right-0 z-10 h-full w-1/2 bg-gradient-to-r from-transparent to-[#101728]" />
+        <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-1/2 bg-gradient-to-r from-transparent to-[#101728]" />
       </Swiper>
     </div>
   )

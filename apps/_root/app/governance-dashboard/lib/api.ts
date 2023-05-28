@@ -60,7 +60,7 @@ const SNAPSHOT_URL = 'https://hub.snapshot.org/graphql'
 async function fetchDiscourse<T>(path: string) {
   const data = await fetchUrl<T>(DISCOURSE_BASE_URL + path, {
     headers: {
-      'Api-Key': process.env.DISCOURSE_API_KEY,
+      'Api-Key': process.env.DISCOURSE_API_KEY ?? '',
       'Api-Username': 'sushi',
     },
   })
@@ -206,44 +206,60 @@ function getTokenConcentration(topTenUsers: { balance: string }[], totalSupply: 
   return tokenConcentration
 }
 
-export async function getTokenHolders(filters?: { balanceFilter: number; orderDirection: 'asc' | 'desc' }) {
-  const query = gql`
-    query TokenHolders(
-      $usersFilter: User_filter
-      $usersOrderDirection: OrderDirection
-      $previousQuarterBlockNumber: Int
-    ) {
-      sushi(id: "Sushi") {
-        holderCount
-        totalSupply
-      }
-      users(first: 10, orderBy: balance, where: $usersFilter, orderDirection: $usersOrderDirection) {
-        balance
-        id
-      }
-      topTenUsers: users(first: 10, orderBy: balance, orderDirection: desc) {
-        balance
-      }
-      previousQuarterTopTenUsers: users(
-        first: 10
-        orderBy: balance
-        orderDirection: desc
-        block: { number: $previousQuarterBlockNumber }
-      ) {
-        balance
-      }
-      previousQuarterSushiStats: sushi(id: "Sushi", block: { number: $previousQuarterBlockNumber }) {
-        holderCount
-        totalSupply
-      }
+const tokenHoldersQuery = gql`
+  query TokenHolders(
+    $usersFilter: User_filter
+    $usersOrderDirection: OrderDirection
+    $previousQuarterBlockNumber: Int
+  ) {
+    sushi(id: "Sushi") {
+      holderCount
+      totalSupply
     }
-  `
+    users(first: 10, orderBy: balance, where: $usersFilter, orderDirection: $usersOrderDirection) {
+      balance
+      id
+    }
+    topTenUsers: users(first: 10, orderBy: balance, orderDirection: desc) {
+      balance
+    }
+    previousQuarterTopTenUsers: users(
+      first: 10
+      orderBy: balance
+      orderDirection: desc
+      block: { number: $previousQuarterBlockNumber }
+    ) {
+      balance
+    }
+    previousQuarterSushiStats: sushi(id: "Sushi", block: { number: $previousQuarterBlockNumber }) {
+      holderCount
+      totalSupply
+    }
+  }
+`
 
+interface SushiStatsGraph {
+  holderCount: number
+  totalSupply: string
+}
+
+interface SushiUsersGraph {
+  balance: string
+}
+
+interface TokenHoldersGraph {
+  sushi: SushiStatsGraph
+  users: SushiUsersGraph[]
+  topTenUsers: SushiUsersGraph[]
+  previousQuarterTopTenUsers: SushiUsersGraph[]
+  previousQuarterSushiStats: SushiStatsGraph
+}
+
+export async function getTokenHolders(filters?: { balanceFilter: number; orderDirection: 'asc' | 'desc' }) {
   const previousQuarterTimestamp = Math.floor(endOfPreviousQuarter(Date.now()) / 1000)
   const previousQuarterBlockNumber = await getBlockNumberFromTimestamp(previousQuarterTimestamp)
 
-  // TODO: type
-  const tokenHoldersRes = await request(GRAPH_URL, query, {
+  const tokenHoldersRes = await request<TokenHoldersGraph>(GRAPH_URL, tokenHoldersQuery, {
     usersOrderDirection: filters?.orderDirection ?? 'desc',
     usersFilter: {
       balance_gt: filters?.balanceFilter ? (BigInt(1e18) * BigInt(+filters.balanceFilter)).toString() : 0,
