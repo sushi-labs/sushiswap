@@ -1,35 +1,22 @@
 import React from 'react'
 
-import { GovernanceItemCard } from '../components'
+import { GovernanceDateFilters, GovernanceSorting } from '../components'
 import { getLatestGovernanceItems } from '../lib'
-import { GOV_STATUS } from '../lib/constants'
-import { GovernanceFilters } from './GovernanceFilters'
+import { GovernanceBoard } from './GovernanceBoard'
 
 export default async function Governance({ searchParams }) {
   const governanceItemsMapping = (await getLatestGovernanceItems(searchParams)) ?? []
 
   return (
-    <section className="space-y-10">
-      <header className="flex items-center justify-between">
+    <section className="space-y-2 md:space-y-10">
+      <header className="relative z-20 flex flex-col justify-between gap-3 md:flex-row md:items-center">
         <h2 className="ml-1 text-2xl font-bold text-slate-200">Governance Board</h2>
-        <GovernanceFilters />
+        <div className="flex gap-2">
+          <GovernanceSorting />
+          <GovernanceDateFilters />
+        </div>
       </header>
-      <div className="grid grid-cols-3 gap-12">
-        {Object.entries(governanceItemsMapping).map(([key, items]) => (
-          <div key={key} className="space-y-5">
-            <div className="flex items-center gap-2 pl-2.5">
-              <div className={`h-3 w-3 rounded-sm ${GOV_STATUS[key].color}`} />
-              <h3 className="font-medium">{GOV_STATUS[key].title}</h3>
-            </div>
-
-            <div className="grid gap-2">
-              {items.map((item, index) => (
-                <GovernanceItemCard key={index} {...item} />
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+      <GovernanceBoard governanceItemsMapping={governanceItemsMapping} />
     </section>
   )
 }

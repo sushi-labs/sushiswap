@@ -13,7 +13,7 @@ export function GovernanceItemCard(props: GovernanceItem) {
           <div className={classNames('h-2 w-2 rounded-sm', type.color)} />
           <span className="text-xs text-slate-400">{type.title}</span>
         </div>
-        <h3 className="mt-2 h-12 line-clamp-2">{title}</h3>
+        <h3 className="mt-2 line-clamp-2 h-12">{title}</h3>
 
         <div className="mt-4 flex gap-2">
           {isActive ? (
