@@ -201,7 +201,7 @@ const Pool: FC = () => {
             <PoolChart
               isLoading={isGraphDataLoading}
               data={graphData}
-              swapFee={pool?.fee}
+              swapFee={pool?.fee ? pool.fee / 1000000 : pool?.fee}
               charts={['Volume', 'TVL', 'Fees']}
             />
             <div className="flex flex-col gap-6">

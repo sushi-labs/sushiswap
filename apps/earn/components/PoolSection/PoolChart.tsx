@@ -80,7 +80,7 @@ export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoad
         if (cur.date * 1000 >= currentDate - chartTimespans[chartPeriod]) {
           acc[0].push(cur.date)
           if (chartType === PoolChartType.Fees) {
-            acc[1].push(Number(cur.volumeUSD * (Number(swapFee) * 100)))
+            acc[1].push(Number(cur.volumeUSD * Number(swapFee)))
           } else if (chartType === PoolChartType.Volume) {
             acc[1].push(Number(cur.volumeUSD))
           } else if (chartType === PoolChartType.TVL) {
@@ -229,6 +229,8 @@ export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoad
           .filter((chart): chart is (typeof chartList)[number] => !!chart)
       : chartList
   }, [charts])
+
+  console.log(graphPair)
 
   return (
     <div className="flex flex-col gap-6">
