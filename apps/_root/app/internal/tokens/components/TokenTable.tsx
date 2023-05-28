@@ -97,6 +97,7 @@ export const TokenTable: FC<TokenTable> = ({ tokens }) => {
   return (
     <GenericTable<Token>
       table={table}
+      // @ts-ignore
       columns={columns}
       pageSize={20}
       placeholder={<Loader />}
