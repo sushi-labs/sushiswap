@@ -5,6 +5,7 @@ import { shortenAddress } from '@sushiswap/format'
 import { ExternalLink } from '@sushiswap/ui/future/components/ExternalLink'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
+import { useBreakpoint } from '@sushiswap/ui/future/lib'
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -43,6 +44,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
   const [isPending, startTransition] = useTransition()
   const searchParams = useSearchParams()
   const params = new URLSearchParams(searchParams)
+  const { isMd } = useBreakpoint('md')
 
   function sortColumn(direction: false | SortDirection) {
     params.set(ORDER_DIRECTION_KEY, direction === 'desc' ? 'asc' : 'desc')
@@ -64,7 +66,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
     columnHelper.accessor('rank', {
       header: 'Rank',
       cell: (info) => <span className="text-slate-300">{info.getValue()}</span>,
-      size: 50,
+      size: 40,
       enableSorting: false,
       meta: { skeleton: <Skeleton.Text /> },
     }),
@@ -96,6 +98,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
         </span>
       ),
       meta: { skeleton: <Skeleton.Text /> },
+      minSize: 100,
     }),
     columnHelper.accessor('ownership', {
       header: (h) => <div onClick={() => sortColumn(h.column.getIsSorted())}>Ownership</div>,
@@ -108,6 +111,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
         </span>
       ),
       meta: { skeleton: <Skeleton.Text /> },
+      minSize: 60,
     }),
     columnHelper.accessor('value', {
       header: (h) => <div onClick={() => sortColumn(h.column.getIsSorted())}>Value</div>,
@@ -118,6 +122,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
           currency: 'USD',
         }),
       meta: { skeleton: <Skeleton.Text /> },
+      minSize: 110,
     }),
   ])
 
@@ -148,7 +153,9 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
               onClick={() => filterBalance(filter)}
               isActive={Number(params.get(BALANCE_FILTER.key)) === filter}
               key={filter}
-            >{`>=${formatNumber(filter)} $SUSHI`}</FilterButton>
+            >
+              {`>=${formatNumber(filter)}`} {isMd && '$SUSHI'}
+            </FilterButton>
           ))}
         </div>
         <div className="rounded-lg bg-[#1A2031]">

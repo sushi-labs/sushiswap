@@ -244,6 +244,7 @@ interface SushiStatsGraph {
 }
 
 interface SushiUsersGraph {
+  id: string
   balance: string
 }
 
