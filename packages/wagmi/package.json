@@ -36,7 +36,7 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/format": "workspace:*",
-    "@sushiswap/furo": "1.0.1",
+    "@sushiswap/furo": "1.0.2",
     "@sushiswap/gas": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/math": "workspace:*",
