@@ -1,26 +1,32 @@
-import { erc20Abi } from '@sushiswap/abi'
+import { erc20Abi, tickLensAbi } from '@sushiswap/abi'
 import { Token } from '@sushiswap/currency'
-import { PoolCode } from '@sushiswap/routers'
-import { CLTick } from '@sushiswap/tines'
+import { LiquidityProviders, NUMBER_OF_SURROUNDING_TICKS, PoolCode, UniV3PoolCode } from '@sushiswap/router'
+import { CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
 import { FeeAmount, TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { Abi, Address, parseAbiItem } from 'abitype'
+import { BigNumber } from 'ethers'
 import { Log } from 'viem'
 
 import { EventManager } from './EventManager'
 import { MultiCallAggregator } from './MulticallAggregator'
 
-interface UniV3PooSelfState {
+// if positiveFirst == true returns 0, 1, -1, 2, -2, 3, -3, ...
+// if positiveFirst == false returns 0, -1, 1, -2, 2, -3, 3, ...
+function getJump(index: number, positiveFirst: boolean): number {
+  let res
+  if (index % 2 == 0) res = -index / 2
+  else res = (index + 1) / 2
+  return positiveFirst ? res : -res
+}
+
+interface UniV3PoolSelfState {
+  blockNumber: number
   reserve0: bigint
   reserve1: bigint
   tick: number
   liquidity: bigint
   sqrtPriceX96: bigint
 }
-
-// interface Word {
-//   index: number
-//   ticks: CLTick[]
-// }
 
 const slot0Abi: Abi = [
   {
@@ -56,27 +62,32 @@ const mintEventAbi = parseAbiItem(
 
 export class UniV3PoolWatcher {
   address: Address
+  tickHelperContract: Address
   token0: Token
   token1: Token
   fee: FeeAmount
   spacing: number
 
+  providerName: string
   client: MultiCallAggregator
   eventManager: EventManager
-  watchWordList: Set<number> = new Set()
 
-  state?: UniV3PooSelfState
-  ticks: CLTick[]
+  state?: UniV3PoolSelfState
+  wordList: Map<number, [number, CLTick[]]> = new Map()
 
   constructor(
+    providerName: string,
     address: Address,
+    tickHelperContract: Address,
     token0: Token,
     token1: Token,
     fee: FeeAmount,
     client: MultiCallAggregator,
     eventManager: EventManager
   ) {
+    this.providerName = providerName
     this.address = address
+    this.tickHelperContract = tickHelperContract
     this.token0 = token0
     this.token1 = token1
     this.fee = fee
@@ -87,16 +98,19 @@ export class UniV3PoolWatcher {
   }
 
   async startWatching() {
-    // TODO: make it for one block and return it?
-    const [slot0, liquidity, balance0, balance1] = await Promise.all([
-      this.client.call(this.address, slot0Abi, 'slot0'),
-      this.client.call(this.address, liquidityAbi, 'liquidity'),
-      this.client.call(this.token0.address as Address, erc20Abi, 'balanceOf', [this.address]),
-      this.client.call(this.token1.address as Address, erc20Abi, 'balanceOf', [this.address]),
+    const {
+      blockNumber,
+      returnValues: [slot0, liquidity, balance0, balance1],
+    } = await this.client.callSameBlock([
+      { address: this.address, abi: slot0Abi, functionName: 'slot0' },
+      { address: this.address, abi: liquidityAbi, functionName: 'liquidity' },
+      { address: this.token0.address as Address, abi: erc20Abi, functionName: 'balanceOf', args: [this.address] },
+      { address: this.token1.address as Address, abi: erc20Abi, functionName: 'balanceOf', args: [this.address] },
     ])
 
     const [sqrtPriceX96, tick] = slot0 as [bigint, number]
     this.state = {
+      blockNumber,
       reserve0: balance0 as bigint,
       reserve1: balance1 as bigint,
       tick: Math.floor(tick / this.spacing) * this.spacing,
@@ -105,18 +119,100 @@ export class UniV3PoolWatcher {
     }
 
     this.eventManager.startEventListening(this.address, mintEventAbi, (l: Log) => {
-      // TODO
+      if (!this.state) return
+      // address sender,
+      // address indexed owner,
+      // int24 indexed tickLower,
+      // int24 indexed tickUpper,
+      // uint128 amount,
+      // uint256 amount0,
+      // uint256 amount1
+      const tickLower = parseLogData(l, 0)
+      const tickUpper = parseLogData(l, 1)
+      const amount = parseLogData(l, 2)
+      const amount0 = parseLogData(l, 3)
+      const amount1 = parseLogData(l, 4)
+      this.addTick(tickLower, amount)
+      this.addTick(tickUpper, -amount)
+
+      const tick = this.state.tick
+      // TODO: tick < tickUpper - is it correct ?
+      if (tickLower <= tick && tick < tickUpper) this.state.liquidity += amount
+
+      this.state.reserve0 += amount0
+      this.state.reserve1 += amount1
     })
     // TODO: other listeners
 
-    //TODO: start ticks download and watching
+    const currentTickIndex = Math.floor(tick / this.spacing / 256)
+    const minTick = Math.floor(tick - NUMBER_OF_SURROUNDING_TICKS / this.spacing / 256)
+    const maxTick = Math.floor(tick + NUMBER_OF_SURROUNDING_TICKS / this.spacing / 256)
+    const direction = currentTickIndex - minTick <= maxTick - currentTickIndex
+    const wordNumber = maxTick - minTick
+    for (let i = 0; i < wordNumber; ++i) {
+      const wordIndex = currentTickIndex + getJump(i, direction)
+      await this.startWatchWord(wordIndex)
+    }
+  }
+
+  async startWatchWord(wordIndex: number) {
+    const { blockNumber, returnValue: ticks } = await this.client.call<{ tick: bigint; liquidityNet: bigint }[]>(
+      this.tickHelperContract,
+      tickLensAbi,
+      'getPopulatedTicksInWord',
+      [this.address, wordIndex]
+    )
+    this.wordList.set(wordIndex, [
+      blockNumber,
+      ticks.map(({ tick, liquidityNet }) => ({
+        index: Number(tick),
+        DLiquidity: BigNumber.from(liquidityNet),
+      })),
+    ])
   }
 
   async stopWatching() {
     // TODO
   }
 
-  getPoolCode(): PoolCode {
-    // TODO
+  getPoolCode(): PoolCode | undefined {
+    if (this.state === undefined) return
+    const currentTickIndex = Math.floor(this.state.tick / 256)
+    if (!this.wordList.has(currentTickIndex)) return
+    let minIndex, maxIndex
+    for (minIndex = currentTickIndex; this.wordList.has(minIndex); --minIndex);
+    for (maxIndex = currentTickIndex + 1; this.wordList.has(maxIndex); ++maxIndex);
+    if (maxIndex - minIndex <= 1) return
+    let ticks: CLTick[] = []
+    for (let i = minIndex + 1; i < maxIndex; ++i) ticks = ticks.concat((this.wordList.get(i) as [number, CLTick[]])[1])
+
+    const lowerUnknownTick = minIndex * this.spacing * 256 - this.spacing
+    console.assert(ticks.length == 0 || lowerUnknownTick < ticks[0].index, 'Error 165: unexpected min tick index')
+    ticks.unshift({
+      index: lowerUnknownTick,
+      DLiquidity: BigNumber.from(0),
+    })
+    const upperUnknownTick = (maxIndex + 1) * this.spacing * 256
+    console.assert(ticks[ticks.length - 1].index < upperUnknownTick, 'Error 169: unexpected max tick index')
+    ticks.push({
+      index: upperUnknownTick,
+      DLiquidity: BigNumber.from(0),
+    })
+
+    const v3Pool = new UniV3Pool(
+      this.address,
+      this.token0 as RToken,
+      this.token1 as RToken,
+      this.fee / 1_000_000,
+      BigNumber.from(this.state.reserve0),
+      BigNumber.from(this.state.reserve1),
+      this.state.tick,
+      BigNumber.from(this.state.liquidity),
+      BigNumber.from(this.state.sqrtPriceX96),
+      ticks
+    )
+
+    const pc = new UniV3PoolCode(v3Pool, LiquidityProviders.UniswapV3, this.providerName)
+    return pc
   }
 }
