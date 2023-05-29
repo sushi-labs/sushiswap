@@ -42,6 +42,15 @@ export class HEXer {
     return this
   }
 
+  uint24(data: number): HEXer {
+    if (data >= 256 * 256 * 256 || data < 0 || data !== Math.round(data)) {
+      throw new Error('Wrong uint24: ' + data)
+    }
+    this.hex += data.toString(16).padStart(6, '0')
+
+    return this
+  }
+
   share16(share: number): HEXer {
     return this.uint16(Math.round(share * 65535))
   }

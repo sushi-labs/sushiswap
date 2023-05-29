@@ -80,5 +80,5 @@ export const NETWORK_NAKED_ICON: Record<number, (props: React.ComponentProps<'sv
   [ChainId.BOBA_BNB]: BobaBNBNaked,
   [ChainId.BTTC]: BttcNaked,
   [ChainId.POLYGON_ZKEVM]: PolygonZKNaked,
-  [ChainId.ETHEREUM]: ThunderCoreNaked,
+  [ChainId.THUNDERCORE]: ThunderCoreNaked,
 }

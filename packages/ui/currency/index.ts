@@ -10,6 +10,9 @@ type Currency = {
   IconList: FC<IconListProps>
 }
 
+/**
+ * @deprecated
+ */
 export const Currency: Currency = {
   List,
   Icon,

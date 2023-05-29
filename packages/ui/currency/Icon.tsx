@@ -9,55 +9,26 @@ import { cloudinaryImageLoader } from '../cloudinary'
 import { GradientCircleIcon } from '../icons'
 import { Link } from '../link'
 
-const BLOCKCHAIN: Record<number, string> = {
-  [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova',
-  [ChainId.ARBITRUM]: 'arbitrum',
-  [ChainId.AVALANCHE]: 'avalanche',
-  [ChainId.BOBA_AVAX]: 'boba-avax',
-  [ChainId.BOBA_BNB]: 'boba-bnb',
-  [ChainId.BOBA]: 'boba',
-  [ChainId.BSC]: 'bsc',
-  [ChainId.CELO]: 'celo',
-  [ChainId.ETHEREUM]: 'ethereum',
-  [ChainId.FANTOM]: 'fantom',
-  [ChainId.AVALANCHE_TESTNET]: 'fuji',
-  [ChainId.FUSE]: 'fuse',
-  [ChainId.GNOSIS]: 'gnosis',
-  [ChainId.HARMONY]: 'harmony',
-  [ChainId.HECO]: 'heco',
-  [ChainId.KAVA]: 'kava',
-  [ChainId.METIS]: 'metis',
-  [ChainId.MOONBEAM]: 'moonbeam',
-  [ChainId.MOONRIVER]: 'moonriver',
-  [ChainId.OKEX]: 'okex',
-  [ChainId.OPTIMISM]: 'optimism',
-  [ChainId.PALM]: 'palm',
-  [ChainId.POLYGON]: 'polygon',
-  [ChainId.TELOS]: 'telos',
-  [ChainId.BTTC]: 'bttc',
-}
-
-const AvaxLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/avax.svg'
-const BnbLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/bnb.svg'
-const EthereumLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/ethereum.svg'
-const FtmLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/ftm.svg'
-const OneLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/one.svg'
-const HtLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/ht.svg'
-const MaticLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/matic.svg'
-const GlmrLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/glmr.svg'
-const OktLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/okt.svg'
-const xDaiLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/xdai.svg'
-const CeloLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/celo.svg'
-const PalmLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/plam.svg'
-const MovrLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/movr.svg'
-const FuseLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/fuse.svg'
-const TelosLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/telos.svg'
-const KavaLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/kava.svg'
-const MetisLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/metis.svg'
-const BobaLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/boba.svg'
-const BttcLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/bttc.svg'
-const ThundercoreLogo =
-  'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/thundercore.svg'
+const AvaxLogo = 'avax.svg'
+const BnbLogo = 'bnb.svg'
+const EthereumLogo = 'ethereum.svg'
+const FtmLogo = 'ftm.svg'
+const OneLogo = 'one.svg'
+const HtLogo = 'ht.svg'
+const MaticLogo = 'matic.svg'
+const GlmrLogo = 'glmr.svg'
+const OktLogo = 'okt.svg'
+const xDaiLogo = 'xdai.svg'
+const CeloLogo = 'celo.svg'
+const PalmLogo = 'plam.svg'
+const MovrLogo = 'movr.svg'
+const FuseLogo = 'fuse.svg'
+const TelosLogo = 'telos.svg'
+const KavaLogo = 'kava.svg'
+const MetisLogo = 'metis.svg'
+const BobaLogo = 'boba.svg'
+const BttcLogo = 'bttc.svg'
+const ThundercoreLogo = 'thundercore.svg'
 
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
@@ -96,7 +67,8 @@ const LOGO: Record<number, string> = {
   [ChainId.BOBA_AVAX]: BobaLogo,
   [ChainId.BOBA_BNB]: BobaLogo,
   [ChainId.BTTC]: BttcLogo,
-  [ChainId.BTTC]: ThundercoreLogo,
+  [ChainId.POLYGON_ZKEVM]: EthereumLogo,
+  [ChainId.THUNDERCORE]: ThundercoreLogo,
 }
 
 export interface IconProps extends Omit<ImageProps, 'src'> {
@@ -110,6 +82,7 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
 
   const src = useMemo(() => {
     if (!currency) return null
+    if (currency.isNative) return `native-currency/${LOGO[currency.chainId]}`
     return `tokens/${currency.chainId}/${currency.wrapped.address}.jpg`
   }, [currency])
 

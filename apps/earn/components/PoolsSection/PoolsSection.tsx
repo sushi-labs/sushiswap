@@ -13,7 +13,6 @@ export const PoolsSection: FC = () => {
   const [tab, setTab] = useState<number>(0)
   const isMounted = useIsMounted()
 
-  console.log('hi')
   return (
     <section className="flex flex-col">
       <Tab.Group selectedIndex={tab} onChange={setTab}>

@@ -6,7 +6,6 @@ import { Address } from 'wagmi'
 import { BigNumber } from '@ethersproject/bignumber'
 
 interface ConcentratedLiquidityHarvestButton {
-  poolAddress: string | undefined
   account: Address | undefined
   enabled?: boolean
   chainId: ChainId
@@ -15,7 +14,6 @@ interface ConcentratedLiquidityHarvestButton {
 
 export const ConcentratedLiquidityHarvestButton: FC<ConcentratedLiquidityHarvestButton> = ({
   account,
-  poolAddress,
   chainId,
   enabled,
   children,
@@ -23,7 +21,6 @@ export const ConcentratedLiquidityHarvestButton: FC<ConcentratedLiquidityHarvest
   const { data: rewards } = useAngleRewards({
     chainId,
     account,
-    poolAddress,
   })
 
   const args = useMemo(() => {

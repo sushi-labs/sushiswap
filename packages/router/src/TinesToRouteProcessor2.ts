@@ -5,7 +5,8 @@ import { BigNumber } from 'ethers'
 import { HEXer } from './HEXer'
 import { PoolCode } from './pools/PoolCode'
 
-enum TokenType {
+export enum TokenType {
+  NATIVE = 'NATIVE',
   ERC20 = 'ERC20',
   'BENTO' = 'BENTO',
 }
@@ -18,11 +19,12 @@ export interface PermitData {
   s: string
 }
 
-function getTokenType(token: RToken): TokenType {
+export function getTokenType(token: RToken): TokenType {
+  if (token.address == '') return TokenType.NATIVE
   return typeof token.chainId == 'string' && token.chainId.startsWith('Bento') ? TokenType.BENTO : TokenType.ERC20
 }
 
-class TinesToRouteProcessor2 {
+export class TinesToRouteProcessor2 {
   routeProcessorAddress: string
   chainId: ChainId
   pools: Map<string, PoolCode>
@@ -95,14 +97,14 @@ class TinesToRouteProcessor2 {
     return hex.toString()
   }
 
-  processERC20Code(fromMy: boolean, token: RToken, route: MultiRoute, toAddress: string): string {
+  processERC20Code(fromMe: boolean, token: RToken, route: MultiRoute, toAddress: string): string {
     const outputLegs = this.tokenOutputLegs.get(token.tokenId as string)
     if (!outputLegs || outputLegs.length == 0) {
       throw new Error('No output legs for token ' + token.symbol)
     }
 
     const hex = new HEXer()
-      .uint8(fromMy ? 1 : 2) // processMyERC20 : processUserERC20 commandCode
+      .uint8(fromMe ? 1 : 2) // processMyERC20 : processUserERC20 commandCode
       .address(token.address)
       .uint8(outputLegs.length)
 

@@ -20,7 +20,7 @@ export function getCurrencyCombinations(chainId: ChainId, currencyA: Type, curre
     return []
   }
 
-  return [
+  const combinations0: [Token, Token][] = [
     // the direct pair
     [tokenA, tokenB],
     // token A against all bases
@@ -46,6 +46,14 @@ export function getCurrencyCombinations(chainId: ChainId, currencyA: Type, curre
 
       return true
     })
+
+  const combinationUniqueAndSorted: Map<string, [Token, Token]> = new Map()
+  combinations0.forEach(([t0, t1]) => {
+    const [s0, s1] = t0.sortsBefore(t1) ? [t0, t1] : [t1, t0]
+    const id = s0.address + s1.address
+    combinationUniqueAndSorted.set(id, [s0, s1])
+  })
+  return Array.from(combinationUniqueAndSorted.values())
 }
 
 export function getV3CurrencyCombinations(chainId: ChainId, currencyA: Type, currencyB: Type) {

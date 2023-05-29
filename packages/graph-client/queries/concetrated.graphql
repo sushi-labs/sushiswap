@@ -51,3 +51,121 @@ query PoolsByTokenPair($tokenId0: String!, $tokenId1: String!) {
     liquidityProviderCount
   }
 }
+
+query V3Transactions($first: Int = 100, $skip: Int = 0, $orderBy: Transaction_orderBy = timestamp, $orderDir: OrderDirection = desc, $where: Transaction_filter) {
+  transactions(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
+    id
+    timestamp
+    blockNumber
+    mints {
+      id
+      owner
+      sender
+      origin
+      amount
+      amount0
+      amount1
+      amountUSD
+      logIndex
+    }
+    burns {
+      id
+      owner
+      origin
+      amount
+      amount0
+      amount1
+      amountUSD
+      logIndex
+    }
+    swaps {
+      id
+      sender
+      recipient
+      origin
+      amount0
+      amount1
+      amountUSD
+      logIndex
+    }
+    collects {
+      id
+      owner
+      amount0
+      amount1
+      amountUSD
+      logIndex
+    }
+  }
+}
+
+query V3Burns($first: Int = 100, $skip: Int = 0, $orderBy: Burn_orderBy = timestamp, $orderDir: OrderDirection = desc, $where: Burn_filter) {
+  burns(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
+    id
+    owner
+    origin
+    amount
+    amount0
+    amount1
+    amountUSD
+    logIndex
+    transaction {
+      id
+      timestamp
+      blockNumber
+    }
+  }
+}
+
+query V3Mints($first: Int = 100, $skip: Int = 0, $orderBy: Mint_orderBy = timestamp, $orderDir: OrderDirection = desc, $where: Mint_filter) {
+  mints(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
+    id
+    owner
+    sender
+    origin
+    amount
+    amount0
+    amount1
+    amountUSD
+    logIndex
+    transaction {
+      id
+      timestamp
+      blockNumber
+    }
+  }
+}
+
+query V3Swaps($first: Int = 100, $skip: Int = 0, $orderBy: Swap_orderBy = timestamp, $orderDir: OrderDirection = desc, $where: Swap_filter) {
+  swaps(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
+    id
+    sender
+    recipient
+    origin
+    amount0
+    amount1
+    amountUSD
+    logIndex
+    transaction {
+      id
+      timestamp
+      blockNumber
+    }
+  }
+}
+
+query V3Collects($first: Int = 100, $skip: Int = 0, $orderBy: Collect_orderBy = timestamp, $orderDir: OrderDirection = desc, $where: Collect_filter) {
+  collects(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
+    id
+    owner
+    amount0
+    amount1
+    amountUSD
+    logIndex
+    transaction {
+      id
+      timestamp
+      blockNumber
+    }
+  }
+}

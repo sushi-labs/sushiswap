@@ -26,7 +26,8 @@ import {
 import { PROTOCOL_MAP } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
 import { NextSeo } from 'next-seo'
-import PoolPageV3 from '../../components/PoolPageV3'
+import { PoolPageV3 } from '../../components/PoolPageV3'
+import { usePoolGraphData } from '../../lib/hooks'
 
 const LINKS = (pool: Pool): BreadcrumbLink[] => [
   {
@@ -55,7 +56,14 @@ const _Pool = () => {
     shouldFetch: Boolean(chainId && address),
   })
 
+  const { data: graphData, isLoading: isGraphDataLoading } = usePoolGraphData({
+    poolAddress: address,
+    chainId,
+    enabled: Boolean(pool) && pool?.protocol !== Protocol.SUSHISWAP_V3,
+  })
+
   if (!pool) return <></>
+
   if (pool.protocol === Protocol.SUSHISWAP_V3) {
     return <PoolPageV3 />
   }
@@ -73,7 +81,7 @@ const _Pool = () => {
                   <div className="flex flex-col order-1 gap-9">
                     <PoolHeader pool={pool} />
                     <hr className="my-3 border-t border-gray-900/5 dark:border-slate-200/5" />
-                    <PoolChart pool={pool} />
+                    <PoolChart isLoading={isGraphDataLoading} data={graphData} swapFee={pool.swapFee} />
                     <PoolStats pool={pool} />
                     <PoolComposition pool={pool} />
                     <PoolRewards pool={pool} />

@@ -19,7 +19,7 @@ import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 import { isAddress } from 'ethers/lib/utils'
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
-import { useTokenAmountDollarValues } from '../lib/hooks'
+import { usePoolGraphData, useTokenAmountDollarValues } from '../lib/hooks'
 import { usePreviousRoute } from './HistoryProvider'
 import { unwrapToken } from '../lib/functions'
 import { Layout } from './Layout'
@@ -29,14 +29,14 @@ import { ContentBlock } from './AddPage/ContentBlock'
 import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
 import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { ConcentratedPositionsTable } from './PoolsSection/Tables/PositionsTable/ConcentratedPositionsTable'
-import { createSuccessToast } from '@sushiswap/ui/future/components/toast'
+import { PoolTransactionsV3, PoolChart } from './PoolSection'
 
 enum Granularity {
   Day,
   Week,
 }
 
-const PoolPage = () => {
+const PoolPageV3 = () => {
   return (
     <SplashController>
       <ConcentratedLiquidityProvider>
@@ -77,7 +77,7 @@ const Pool: FC = () => {
   const { path, basePath } = usePreviousRoute()
 
   const {
-    id: [chainId, poolId],
+    id: [chainId, poolAddress],
     activeTab,
   } = queryParamsSchema.parse(query)
 
@@ -91,7 +91,9 @@ const Pool: FC = () => {
 
   const [granularity, setGranularity] = useState<Granularity>(Granularity.Day)
 
-  const { data: poolStats } = useConcentratedLiquidityPoolStats({ chainId, address: poolId })
+  const { data: graphData, isLoading: isGraphDataLoading } = usePoolGraphData({ poolAddress, chainId })
+
+  const { data: poolStats } = useConcentratedLiquidityPoolStats({ chainId, address: poolAddress })
   const { data: pool, isLoading } = useConcentratedLiquidityPool({
     chainId,
     token0: poolStats?.token0,
@@ -103,6 +105,8 @@ const Pool: FC = () => {
   const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
   const incentiveAmounts = useMemo(() => poolStats?.incentives.map((el) => el.reward), [poolStats?.incentives])
   const fiatValuesIncentives = useTokenAmountDollarValues({ chainId, amounts: incentiveAmounts })
+
+  // console.log({ fiatValuesIncentives })
 
   const [_token0, _token1] = useMemo(
     () => [
@@ -192,42 +196,80 @@ const Pool: FC = () => {
       </div>
       <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
       <div className={tab === SelectedTab.Analytics ? 'block' : 'hidden'}>
-        <div className="grid md:grid-cols-[404px_auto] gap-10">
-          {/*<div className="w-full h-full flex items-center justify-center bg-gray-50 dark:bg-white/[0.02] rounded-xl">*/}
-          {/*  <span className="text-gray-600 dark:text-slate-400">Chart is being worked on 👷🍣</span>*/}
-          {/*</div>*/}
-          <div className="flex flex-col gap-6">
-            <List className="pt-0 !gap-1">
-              <List.Label className="flex justify-end">
-                <RadioGroup value={granularity} onChange={setGranularity} className="flex">
-                  <RadioGroup.Option
-                    value={Granularity.Day}
-                    as={Button}
-                    size="xs"
-                    color={granularity === Granularity.Day ? 'blue' : 'default'}
-                    variant="empty"
-                    className="!h-[24px] font-bold"
-                  >
-                    1D
-                  </RadioGroup.Option>
-                  <RadioGroup.Option
-                    value={Granularity.Week}
-                    as={Button}
-                    color={granularity === Granularity.Week ? 'blue' : 'default'}
-                    size="xs"
-                    variant="empty"
-                    className="!h-[24px] font-bold"
-                  >
-                    1W
-                  </RadioGroup.Option>
-                </RadioGroup>
-              </List.Label>
-              <List.Control>
-                {poolStats ? (
+        <div>
+          <div className="grid md:grid-cols-[404px_auto] gap-10">
+            <PoolChart
+              isLoading={isGraphDataLoading}
+              data={graphData}
+              swapFee={pool?.fee ? pool.fee / 1000000 : pool?.fee}
+              charts={['Volume', 'TVL', 'Fees']}
+            />
+            <div className="flex flex-col gap-6">
+              <List className="pt-0 !gap-1">
+                <List.Label className="flex justify-end">
+                  <RadioGroup value={granularity} onChange={setGranularity} className="flex">
+                    <RadioGroup.Option
+                      value={Granularity.Day}
+                      as={Button}
+                      size="xs"
+                      color={granularity === Granularity.Day ? 'blue' : 'default'}
+                      variant="empty"
+                      className="!h-[24px] font-bold"
+                    >
+                      1D
+                    </RadioGroup.Option>
+                    <RadioGroup.Option
+                      value={Granularity.Week}
+                      as={Button}
+                      color={granularity === Granularity.Week ? 'blue' : 'default'}
+                      size="xs"
+                      variant="empty"
+                      className="!h-[24px] font-bold"
+                    >
+                      1W
+                    </RadioGroup.Option>
+                  </RadioGroup>
+                </List.Label>
+                <List.Control>
+                  {poolStats ? (
+                    <List.KeyValue flex title="Volume">
+                      <span className="flex items-center gap-2">
+                        {formatUSD(granularity === Granularity.Week ? poolStats.volume1w : poolStats.volume1d)}
+                        <span
+                          className={
+                            poolStats[granularity === Granularity.Week ? 'volumeChange1w' : 'volumeChange1d'].toFixed(
+                              2
+                            ) === '0.00'
+                              ? 'text-gray-600 dark:text-slate-400'
+                              : poolStats[granularity === Granularity.Week ? 'volumeChange1w' : 'volumeChange1d'] > 0
+                              ? 'text-green'
+                              : 'text-red'
+                          }
+                        >
+                          (
+                          {poolStats[granularity === Granularity.Week ? 'volumeChange1w' : 'volumeChange1d'].toFixed(2)}
+                          %)
+                        </span>
+                      </span>
+                    </List.KeyValue>
+                  ) : (
+                    <List.KeyValue skeleton />
+                  )}
+                  {poolStats ? (
+                    <List.KeyValue flex title="Fees">
+                      <span className="flex items-center gap-2">
+                        {formatUSD(granularity === Granularity.Day ? poolStats.fees1d : poolStats.fees1w)}
+                      </span>
+                    </List.KeyValue>
+                  ) : (
+                    <List.KeyValue skeleton />
+                  )}
+
+                  {/* {poolStats ? (
                   <List.KeyValue flex title="Fees">
                     <span className="flex items-center gap-2">
                       {formatUSD(granularity === Granularity.Day ? poolStats.fees1d : poolStats.fees1w)}
-                      {/* <span
+                      <span
                         className={
                           change1d === 0
                             ? 'text-gray-600 dark:text-slate-400'
@@ -237,7 +279,7 @@ const Pool: FC = () => {
                         }
                       >
                         (0.00%)
-                      </span> */}
+                      </span>
                     </span>
                   </List.KeyValue>
                 ) : (
@@ -247,7 +289,7 @@ const Pool: FC = () => {
                   <List.KeyValue flex title="Volume">
                     <span className="flex items-center gap-2">
                       {formatUSD(granularity === Granularity.Week ? poolStats.volume1w : poolStats.volume1d)}
-                      {/* <span
+                      <span
                         className={
                           change1w === 0
                             ? 'text-gray-600 dark:text-slate-400'
@@ -257,77 +299,80 @@ const Pool: FC = () => {
                         }
                       >
                         (0.00%)
-                      </span> */}
+                      </span>
                     </span>
                   </List.KeyValue>
                 ) : (
                   <List.KeyValue skeleton />
-                )}
-              </List.Control>
-            </List>
-            <List>
-              <div className="flex items-center justify-between">
-                <List.Label>Pool Liquidity</List.Label>
-                <List.Label>{formatUSD(fiatValues[0] + fiatValues[1])}</List.Label>
-              </div>
-              <List.Control>
-                {!isReservesLoading && reserves ? (
-                  <List.KeyValue flex title={`${reserves[0].currency.symbol}`}>
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-2">
-                        <Currency.Icon currency={reserves[0].currency} width={18} height={18} />
-                        {reserves[0].toSignificant(4)} {reserves[0].currency.symbol}{' '}
-                        <span className="text-gray-600 dark:text-slate-400">({formatUSD(fiatValues[0])})</span>
-                      </div>
-                    </div>
-                  </List.KeyValue>
-                ) : (
-                  <List.KeyValue skeleton />
-                )}
-                {!isReservesLoading && reserves ? (
-                  <List.KeyValue flex title={`${reserves[1].currency.symbol}`}>
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-2">
-                        <Currency.Icon currency={reserves[1].currency} width={18} height={18} />
-                        {reserves[1].toSignificant(4)} {reserves[1].currency.symbol}{' '}
-                        <span className="text-gray-600 dark:text-slate-400">({formatUSD(fiatValues[1])})</span>
-                      </div>
-                    </div>
-                  </List.KeyValue>
-                ) : (
-                  <List.KeyValue skeleton />
-                )}
-              </List.Control>
-            </List>
-            <List>
-              <div className="flex items-center justify-between">
-                <List.Label>Rewards</List.Label>
-                <List.Label>per day</List.Label>
-              </div>
-              <List.Control>
-                {poolStats && poolStats.incentives.length > 0 ? (
-                  poolStats.incentives.map((el, i) => (
-                    <List.KeyValue key={i} flex title={`${el.reward.currency.symbol}`}>
+                )} */}
+                </List.Control>
+              </List>
+              <List>
+                <div className="flex items-center justify-between">
+                  <List.Label>Pool Liquidity</List.Label>
+                  <List.Label>{formatUSD(fiatValues[0] + fiatValues[1])}</List.Label>
+                </div>
+                <List.Control>
+                  {!isReservesLoading && reserves ? (
+                    <List.KeyValue flex title={`${reserves[0].currency.symbol}`}>
                       <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-2">
-                          <Currency.Icon currency={el.reward.currency} width={18} height={18} />
-                          {el.reward.toSignificant(4)} {el.reward.currency.symbol}{' '}
-                          <span className="text-gray-600 dark:text-slate-400">
-                            ({formatUSD(fiatValuesIncentives[1])})
-                          </span>
+                          <Currency.Icon currency={reserves[0].currency} width={18} height={18} />
+                          {reserves[0].toSignificant(4)} {reserves[0].currency.symbol}{' '}
+                          <span className="text-gray-600 dark:text-slate-400">({formatUSD(fiatValues[0])})</span>
                         </div>
                       </div>
                     </List.KeyValue>
-                  ))
-                ) : (
-                  <div className="flex items-center justify-center p-6 text-xs font-normal text-center text-gray-500 dark:text-slate-500">
-                    This pool only emits fee rewards.
-                  </div>
-                )}
-              </List.Control>
-            </List>
+                  ) : (
+                    <List.KeyValue skeleton />
+                  )}
+                  {!isReservesLoading && reserves ? (
+                    <List.KeyValue flex title={`${reserves[1].currency.symbol}`}>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <Currency.Icon currency={reserves[1].currency} width={18} height={18} />
+                          {reserves[1].toSignificant(4)} {reserves[1].currency.symbol}{' '}
+                          <span className="text-gray-600 dark:text-slate-400">({formatUSD(fiatValues[1])})</span>
+                        </div>
+                      </div>
+                    </List.KeyValue>
+                  ) : (
+                    <List.KeyValue skeleton />
+                  )}
+                </List.Control>
+              </List>
+              <List>
+                <div className="flex items-center justify-between">
+                  <List.Label>Rewards</List.Label>
+                  <List.Label>per day</List.Label>
+                </div>
+                <List.Control>
+                  {poolStats && poolStats.incentives.length > 0 ? (
+                    poolStats.incentives.map((el, i) => (
+                      <List.KeyValue key={i} flex title={`${el.reward.currency.symbol}`}>
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center gap-2">
+                            <Currency.Icon currency={el.reward.currency} width={18} height={18} />
+                            {el.reward.toSignificant(4)} {el.reward.currency.symbol}{' '}
+                            <span className="text-gray-600 dark:text-slate-400">
+                              ({formatUSD(fiatValuesIncentives[1])})
+                            </span>
+                          </div>
+                        </div>
+                      </List.KeyValue>
+                    ))
+                  ) : (
+                    <div className="flex items-center justify-center p-6 text-xs font-normal text-center text-gray-500 dark:text-slate-500">
+                      This pool only emits fee rewards.
+                    </div>
+                  )}
+                </List.Control>
+              </List>
+            </div>
           </div>
         </div>
+        <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
+        <PoolTransactionsV3 pool={pool} poolId={poolAddress} />
       </div>
       <div className={tab === SelectedTab.NewPosition ? 'block' : 'hidden'}>
         <div className="grid gap-10 md:grid-cols-2">
@@ -357,7 +402,7 @@ const Pool: FC = () => {
                 tokensLoading={false}
                 existingPosition={undefined}
                 tokenId={undefined}
-                successLink={`/pools/${chainId}:${poolId}?activeTab=myPositions`}
+                successLink={`/pools/${chainId}:${poolAddress}?activeTab=myPositions`}
               />
             </ContentBlock>
           </div>
@@ -365,11 +410,11 @@ const Pool: FC = () => {
       </div>
       <div className={classNames('', tab === SelectedTab.ManagePosition ? 'block' : 'hidden')}>
         <PoolsFiltersProvider>
-          <ConcentratedPositionsTable variant="minimal" poolId={poolId} />
+          <ConcentratedPositionsTable variant="minimal" poolId={poolAddress} />
         </PoolsFiltersProvider>
       </div>
     </Layout>
   )
 }
 
-export default PoolPage
+export { PoolPageV3 }

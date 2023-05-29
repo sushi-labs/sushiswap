@@ -7,6 +7,9 @@ interface DotsProps {
   className?: string
 }
 
+/**
+ * @deprecated
+ */
 export const Dots: FC<DotsProps> = ({ children = <span />, className }) => {
   return (
     <span
