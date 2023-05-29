@@ -3,6 +3,7 @@ import { getUnixTime, startOfHour, startOfMinute, subYears } from 'date-fns'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 import { GetUserArgs } from './hooks'
+import { chainShortName } from '@sushiswap/chain'
 
 const sdk = getBuiltGraphSDK()
 
@@ -18,6 +19,16 @@ export const getBundles = async () => {
   } catch (error: any) {
     throw new Error(error)
   }
+}
+
+export const getGraphPool = async (id: string) => {
+  if (!id.includes(':')) throw Error('Invalid pair id')
+  // Migrating to new format, graph-client uses the deprecated one
+  const split = id.split(':')
+  const { pair } = await sdk.PairById({
+    id: `${chainShortName[split[0]]}:${split[1]}`,
+  })
+  return pair
 }
 
 export const getGraphPools = async (ids: string[]) => {
