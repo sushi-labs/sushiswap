@@ -85,7 +85,7 @@ const _Streams: FC = () => {
         <Layout maxWidth="4xl">
           <div className="flex flex-col gap-2">
             <Link
-              className="group flex gap-4 items-center mb-2"
+              className="flex items-center gap-4 mb-2 group"
               href={{
                 pathname: '/',
               }}
@@ -125,7 +125,7 @@ const _Streams: FC = () => {
               <Skeleton.Box className="w-[460px] h-[290px]" />
             </div>
             <div className="min-w-fit">
-              <div className="flex flex-col flex-grow justify-center gap-5">
+              <div className="flex flex-col justify-center flex-grow gap-5">
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue skeleton />
@@ -164,7 +164,7 @@ const _Streams: FC = () => {
         <Layout maxWidth="4xl">
           <div className="flex flex-col gap-2">
             <Link
-              className="group flex gap-4 items-center mb-2"
+              className="flex items-center gap-4 mb-2 group"
               href={{
                 pathname: '/',
               }}
@@ -208,6 +208,7 @@ const _Streams: FC = () => {
                     disabled={disabled}
                     onClick={() => setOpen(true)}
                     startIcon={<DownloadIcon width={18} height={18} />}
+                    testId='stream-withdraw'
                     variant="outlined"
                   >
                     Withdraw
@@ -279,22 +280,22 @@ const _Streams: FC = () => {
                     </span>
                   </div>
                 </span>
-                <div className="absolute bottom-4 right-4 flex gap-3 items-center justify-center">
-                  <div className="bg-white/10 p-2 rounded-full shadow-md">
+                <div className="absolute flex items-center justify-center gap-3 bottom-4 right-4">
+                  <div className="p-2 rounded-full shadow-md bg-white/10">
                     <SushiIcon width={22} height={22} />
                   </div>
                   <span className="text-2xl font-medium tracking-[-0.025em] text-white">
                     Sushi <span className="font-bold">Pay</span>
                   </span>
                 </div>
-                <div className="absolute left-5 bottom-4 text-lg font-semibold text-sh tracking-wide mono flex flex-col text-white">
+                <div className="absolute flex flex-col text-lg font-semibold tracking-wide text-white left-5 bottom-4 text-sh mono">
                   <span className="text-sm font-medium">Recipient</span>
                   {ens ? ens : shortenAddress(stream?.recipient.id)}
                 </div>
               </div>
             </div>
             <div className="min-w-fit">
-              <div className="flex flex-col flex-grow justify-center gap-5">
+              <div className="flex flex-col justify-center flex-grow gap-5">
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue title="Unlocked" subtitle="available for withdrawal">
@@ -369,26 +370,26 @@ const _Streams: FC = () => {
                     <List.KeyValue title="Remaining">
                       <FuroTimer furo={stream}>
                         {({ days, seconds, minutes, hours, isCompleted }) => (
-                          <span className="flex gap-1 items-baseline">
+                          <span className="flex items-baseline gap-1">
                             {isCompleted ? (
                               <span className="text-green">Completed</span>
                             ) : (
                               <>
                                 <span>
                                   {days}
-                                  <span className="text-gray-400 dark:text-slate-400 text-xs">D</span>
+                                  <span className="text-xs text-gray-400 dark:text-slate-400">D</span>
                                 </span>
                                 <span>
                                   {hours}
-                                  <span className="text-gray-400 dark:text-slate-400 text-xs">H</span>
+                                  <span className="text-xs text-gray-400 dark:text-slate-400">H</span>
                                 </span>
                                 <span>
                                   {minutes}
-                                  <span className="text-gray-400 dark:text-slate-400 text-xs">M</span>
+                                  <span className="text-xs text-gray-400 dark:text-slate-400">M</span>
                                 </span>
                                 <span>
                                   {seconds}
-                                  <span className="text-gray-400 dark:text-slate-400 text-xs">S</span>
+                                  <span className="text-xs text-gray-400 dark:text-slate-400">S</span>
                                 </span>
                               </>
                             )}

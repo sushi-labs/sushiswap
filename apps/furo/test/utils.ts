@@ -3,6 +3,7 @@ import { parseUnits } from '@ethersproject/units'
 import { expect, Page } from '@playwright/test'
 // import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { ChainId, chainName } from '@sushiswap/chain'
+import { AddressZero } from '@ethersproject/constants'
 import { Type, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { Contract, Wallet } from 'ethers'
 
@@ -82,37 +83,71 @@ export async function selectDate(selector: string, months: number, page: Page) {
   await page.locator('li.react-datepicker__time-list-item').first().click()
 }
 
-// export async function depositToBento(amount: string, chainId: ChainId) {
-//   const amountToSend = parseUnits(amount, 'ether').add(parseUnits('100.0', 'gwei')) //add 100 gwei so we actually get the amount asked as bentobox round down
-//   const provider = new JsonRpcProvider('http://127.0.0.1:8545', chainId)
-//   const signer = new Wallet(accounts[0].privateKey, provider)
-//   const bentoContract = new Contract(BENTOBOX_ADDRESS[chainId] as string, BENTOBOX_DEPOSIT_ABI, signer)
-//   await bentoContract.deposit(
-//     '0x0000000000000000000000000000000000000000',
-//     signer.address,
-//     signer.address,
-//     amountToSend,
-//     0,
-//     { value: amountToSend }
-//   )
-// }
+export async function createSingleStream(chainId: number, token: Type, amount: string, recipient: string, page: Page) {
+  const url = (process.env.PLAYWRIGHT_URL as string).concat('/stream/create/single')
+  await page.goto(url)
+  await switchNetwork(page, chainId)
+  // Date
+  await selectDate('input[name="dates\\.startDate"]', 1, page)
+  await selectDate('input[name="dates\\.endDate"]', 2, page)
 
-// const WRAPPED_DEPOSIT_ABI = [
-//   {
-//     constant: false,
-//     inputs: [],
-//     name: 'deposit',
-//     outputs: [],
-//     payable: true,
-//     stateMutability: 'payable',
-//     type: 'function',
-//   },
-// ]
+  // Recipient
+  await page.locator('[testdata-id=create-stream-recipient-input]').fill(recipient)
 
-// export async function depositToWrapped(amount: string, chainId: ChainId) {
-//   const amountToWrap = parseUnits(amount, 'ether')
-//   const provider = new JsonRpcProvider('http://127.0.0.1:8545', chainId)
-//   const signer = new Wallet(accounts[0].privateKey, provider)
-//   const wrappedContract = new Contract(WNATIVE_ADDRESS[chainId], WRAPPED_DEPOSIT_ABI, signer)
-//   await wrappedContract.deposit({ value: amountToWrap })
-// }
+  // Token
+  await selectToken(page, token)
+
+  // Amount
+  await page.locator('[testdata-id=create-stream-amount-input]').fill(amount)
+
+  await approve(page, token)
+
+  await timeout(1_500) // FIXME: this should be removed and the button should be disabled, something isn't prepared yet and but missing validation
+
+  const confirmCreateStreamButton = page.locator('[testdata-id=create-single-stream-confirmation-button]')
+
+  await expect(confirmCreateStreamButton).toBeVisible()
+  await expect(confirmCreateStreamButton).toBeEnabled()
+  await confirmCreateStreamButton.click()
+
+  const expectedText = new RegExp(`Created .* ${token.symbol} stream`)
+  await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
+
+  async function approve(page: Page, currency: Type) {
+    // Approve BentoBox
+    await page
+      .locator('[testdata-id=furo-create-single-stream-approve-bentobox]')
+      .click({ timeout: 1500 })
+      .then(async () => {
+        console.log('BentoBox Approved')
+      })
+      .catch(() => console.log('BentoBox already approved or not needed'))
+  
+    if (!currency.isNative) {
+      // Approve Token
+      await page
+        .locator('[testdata-id=furo-create-single-stream-approve-token]')
+        .click({ timeout: 1500 })
+        .then(async () => {
+          console.log(`${currency.symbol} Approved`)
+        })
+        .catch(() => console.log(`${currency.symbol} already approved or not needed`))
+    }
+  }
+
+  async function selectToken(page: Page, currency: Type) {
+    // Token selector
+    const tokenSelector = page.locator('[testdata-id=create-single-stream-select]')
+    await expect(tokenSelector).toBeVisible()
+    await expect(tokenSelector).toBeEnabled()
+    await tokenSelector.click({ force: true }) // it's missing the click area?! force required.
+    await page.fill('[testdata-id=create-single-stream-address-input]', currency.symbol as string)
+    const tokenRowSelector = page.locator(
+      `[testdata-id=create-single-stream-row-${currency.isNative ? AddressZero : currency.address.toLowerCase()}]`
+    )
+    await expect(tokenRowSelector).toBeVisible()
+    await expect(tokenRowSelector).toBeEnabled()
+    await tokenRowSelector.click()
+  }
+  
+}
