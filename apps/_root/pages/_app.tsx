@@ -1,5 +1,5 @@
 import '@sushiswap/ui/index.css'
-import '../varaibles.css'
+import '../variables.css'
 import { App } from '@sushiswap/ui'
 import { Analytics } from '@vercel/analytics/react'
 import type { AppProps } from 'next/app'
