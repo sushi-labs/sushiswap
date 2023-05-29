@@ -151,7 +151,6 @@ const Position: FC = () => {
   const { data: rewardsData, isLoading: rewardsLoading } = useAngleRewards({
     chainId,
     account: address,
-    poolAddress: positionDetails?.address,
   })
 
   return (
@@ -302,11 +301,7 @@ const Position: FC = () => {
                     </Explainer>
                   </List.Label>
                 </div>
-                <ConcentratedLiquidityHarvestButton
-                  account={address}
-                  chainId={chainId}
-                  poolAddress={positionDetails?.address}
-                >
+                <ConcentratedLiquidityHarvestButton account={address} chainId={chainId}>
                   {({ write, isLoading }) => (
                     <Checker.Connect size="xs" variant="empty" className="!h-[24px] font-bold">
                       <Checker.Network size="xs" variant="empty" className="!h-[24px] font-bold" chainId={chainId}>

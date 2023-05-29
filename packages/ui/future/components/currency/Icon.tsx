@@ -131,12 +131,6 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
     setError(false)
   }, [src])
 
-  const placeholder = useMemo(() => {
-    if (!rest.width || !rest.height) return 'empty'
-    if ((rest.width as number) < 40 || (rest.height as number) < 40) return 'empty'
-    return 'blur'
-  }, [rest?.width, rest?.height])
-
   if (error) {
     if (disableLink) {
       return (
@@ -148,7 +142,7 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
             background: hashStringToColor(`${currency.symbol} ${currency.name}` ?? '??'),
           }}
         >
-          {currency.symbol?.substring(0, 2) ?? '??'}
+          {+(rest.width || 0) < 20 ? currency.symbol?.substring(0, 1) : currency.symbol?.substring(0, 2) ?? '??'}
         </div>
       )
     }

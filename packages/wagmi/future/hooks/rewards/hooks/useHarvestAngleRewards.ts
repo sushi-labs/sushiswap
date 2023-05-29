@@ -1,11 +1,4 @@
-import {
-  Address,
-  useAccount,
-  useContractWrite,
-  useNetwork,
-  usePrepareContractWrite,
-  UserRejectedRequestError,
-} from 'wagmi'
+import { Address, useContractWrite, useNetwork, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
 import { useCallback } from 'react'
 import { SendTransactionResult } from 'wagmi/actions'
 import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'

@@ -7,6 +7,8 @@ import { TableFilters } from './Tables/TableFilters'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { ConcentratedPositionsTable } from './Tables/PositionsTable/ConcentratedPositionsTable'
 import { useIsMounted } from '@sushiswap/hooks'
+import { RewardsSection } from '../RewardsSection'
+import Container from '@sushiswap/ui/future/components/Container'
 
 export const PoolsSection: FC = () => {
   const { address } = useAccount()
@@ -15,34 +17,54 @@ export const PoolsSection: FC = () => {
 
   return (
     <section className="flex flex-col">
-      <Tab.Group selectedIndex={tab} onChange={setTab}>
-        <div className="flex items-center gap-2 mb-4">
-          <Tab as={Fragment}>
-            {({ selected }) => (
-              <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
-                All
-              </Button>
-            )}
-          </Tab>
-          {address && isMounted && (
+      <Tab.Group defaultIndex={0} selectedIndex={tab} onChange={setTab}>
+        <Container maxWidth="7xl" className="px-4 mx-auto">
+          <div className="flex items-center gap-2 mb-4">
             <Tab as={Fragment}>
               {({ selected }) => (
-                <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default" testId="my-positions">
-                  My Positions
+                <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
+                  All
                 </Button>
               )}
             </Tab>
-          )}
-        </div>
+            {address && isMounted && (
+              <>
+                <Tab as={Fragment}>
+                  {({ selected }) => (
+                    <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default" testId="my-positions">
+                      My Positions
+                    </Button>
+                  )}
+                </Tab>
+                <Tab as={Fragment}>
+                  {({ selected }) => (
+                    <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
+                      My Rewards
+                    </Button>
+                  )}
+                </Tab>
+              </>
+            )}
+          </div>
+        </Container>
         <Tab.Panels>
           <Tab.Panel unmount={false}>
-            <TableFilters showAllFilters={tab === 0} />
-            <PoolsTable />
+            <Container maxWidth="7xl" className="px-4 mx-auto">
+              <TableFilters showAllFilters={tab === 0} />
+              <PoolsTable />
+            </Container>
           </Tab.Panel>
           <Tab.Panel unmount={false}>
-            <div className="mt-4">
-              <ConcentratedPositionsTable />
-              <PositionsTable />
+            <Container maxWidth="7xl" className="px-4 mx-auto">
+              <div className="mt-4">
+                <ConcentratedPositionsTable />
+                <PositionsTable />
+              </div>
+            </Container>
+          </Tab.Panel>
+          <Tab.Panel unmount={false}>
+            <div className="mt-4 mb-20">
+              <RewardsSection />
             </div>
           </Tab.Panel>
         </Tab.Panels>

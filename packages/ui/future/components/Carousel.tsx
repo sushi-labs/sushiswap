@@ -66,7 +66,7 @@ export const Carousel = <T extends object>({
             {slides.map((el, i) => (
               <div key={i} className="inline-block snap-start">
                 <div
-                  className={classNames(i === 0 ? 'ml-0' : i === slides.length - 1 ? 'pr-4' : '', 'flex mr-5')}
+                  className={classNames(i === 0 ? 'ml-0' : i === slides.length - 1 ? 'pr-4' : '', 'flex mr-5 h-full')}
                   style={{ transform: `translateX(calc(max(${containerWidth}px, 100vw)/2 - ${containerWidth / 2}px))` }}
                 >
                   {render(el)}

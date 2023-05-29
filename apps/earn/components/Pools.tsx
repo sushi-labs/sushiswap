@@ -179,11 +179,9 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
           }
         </PositionCardList>
       )}
-      <Container maxWidth="7xl" className="px-4 mx-auto">
-        <PoolsFiltersProvider passedFilters={filters}>
-          <PoolsSection />
-        </PoolsFiltersProvider>
-      </Container>
+      <PoolsFiltersProvider passedFilters={filters}>
+        <PoolsSection />
+      </PoolsFiltersProvider>
     </>
   )
 }
