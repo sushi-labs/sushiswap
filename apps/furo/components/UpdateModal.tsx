@@ -66,8 +66,8 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
         groupTimestamp: ts,
         promise: data.wait(),
         summary: {
-          pending: `Updating stream`,
-          completed: `Successfully updated stream`,
+          pending: 'Updating stream',
+          completed: 'Successfully updated stream',
           failed: 'Something went wrong updating the stream',
         },
       })
@@ -75,16 +75,21 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
     [amount, chainId, address]
   )
 
+  const isTopUpValid = useMemo(() => {
+    return !topUp || Boolean(topUp && amountAsEntity)
+  }, [topUp, amountAsEntity])
+  const isChangeEndDateValid = useMemo(() => {
+    return !changeEndDate || Boolean(changeEndDate && endDate)
+  }, [changeEndDate, endDate])
+
   const prepare = useCallback(
     (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       if (!stream?.canUpdate(address) || !stream || !chainId || !contractAddress) return
       if (topUp && !amount) return
       if (changeEndDate && !endDate) return
-
       const difference =
         changeEndDate && endDate ? Math.floor((endDate?.getTime() - stream?.endTime.getTime()) / 1000) : 0
       const topUpAmount = amountAsEntity?.greaterThan(0) ? amountAsEntity.quotient.toString() : '0'
-
       setRequest({
         from: address,
         to: contractAddress,
@@ -123,12 +128,14 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
         !contractAddress ||
         !stream ||
         !chainId ||
-        (topUp && !amount) ||
-        (changeEndDate && !endDate)
+        !isTopUpValid ||
+        !isChangeEndDateValid
       )
     ),
   })
 
+  // console.log('isTopUpValid', isTopUpValid)
+  // console.log('isChangeEndDateValid', isChangeEndDateValid)
   // if (!stream || !address || !stream?.canUpdate(address)) return <></>
 
   return (
@@ -162,7 +169,12 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
           <div className="flex flex-col">
             <div className="flex items-center justify-between gap-3 pb-2">
               <List.Label className="text-gray-500 dark:text-slate-50">Top up amount</List.Label>
-              <Switch checked={topUp} onChange={() => setTopUp((prevState) => !prevState)} size="sm" />
+              <Switch
+                id="update-amount-switch"
+                checked={topUp}
+                onChange={() => setTopUp((prevState) => !prevState)}
+                size="sm"
+              />
             </div>
             <div className={classNames(topUp ? '' : 'opacity-40 pointer-events-none', 'flex flex-col gap-2')}>
               <Input.Text
@@ -176,7 +188,12 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
           <div className="flex flex-col">
             <div className="flex items-center justify-between gap-3 py-2">
               <List.Label className="text-gray-500 dark:text-slate-50">Change end date</List.Label>
-              <Switch checked={changeEndDate} onChange={() => setChangeEndDate((prevState) => !prevState)} size="sm" />
+              <Switch
+                id="update-end-date-switch"
+                checked={changeEndDate}
+                onChange={() => setChangeEndDate((prevState) => !prevState)}
+                size="sm"
+              />
             </div>
             <div className={classNames(changeEndDate ? '' : 'opacity-40 pointer-events-none', 'flex flex-col gap-2')}>
               <Input.DatePicker
@@ -229,6 +246,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
                         fullWidth
                         disabled={isWritePending || (!topUp && !changeEndDate)}
                         onClick={() => sendTransaction?.()}
+                        testId="stream-update-confirmation"
                       >
                         {isWritePending ? <Dots>Confirm Update</Dots> : 'Update'}
                       </Button>

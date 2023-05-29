@@ -14,7 +14,7 @@ import {
   subWeeks,
 } from 'date-fns'
 import { ethers } from 'ethers'
-import { createSingleStream, switchNetwork } from '../../utils'
+import { createSingleStream, switchNetwork, timeout } from '../../utils'
 
 if (!process.env.CHAIN_ID) {
   throw new Error('CHAIN_ID env var not set')
@@ -31,37 +31,81 @@ const USDC = new Token({
   name: 'USDC Stablecoin',
 })
 
-test('Withdraw', async ({ page }) => {
-  await createSingleStream(CHAIN_ID, USDC, '0.0001', RECIPIENT, page) // TODO: create fixture for this
-  const withdrawAmount = '0.000002'
+
+test.describe('Stream', () => {
+
   const STREAM_ID = '1082'
+  test('Create', async ({ page }) => {
+    await createSingleStream(CHAIN_ID, USDC, '0.0001', RECIPIENT, page)
+  });
 
-  const url = (process.env.PLAYWRIGHT_URL as string).concat(`/stream/${CHAIN_ID}:${STREAM_ID}`)
-  const twoWeeks = 60 * 60 * 24 * 14
-  const middleOfStream = getStartOfMonthUnix(2) + twoWeeks * 1_000
-  await increaseEvmTime(middleOfStream)
-  await mockSubgraph(page)
 
-  await page.goto(url)
-  await switchNetwork(page, CHAIN_ID)
+  test('Withdraw', async ({ page }) => {
+    const withdrawAmount = '0.000002'
+  
+    const twoWeeks = 60 * 60 * 24 * 14
+    const middleOfStream = getStartOfMonthUnix(2) + twoWeeks * 1_000
+    await increaseEvmTime(middleOfStream)
+    await mockSubgraph(page)
+  
+    const url = (process.env.PLAYWRIGHT_URL as string).concat(`/stream/${CHAIN_ID}:${STREAM_ID}`)
+    await page.goto(url)
+    await switchNetwork(page, CHAIN_ID)
+  
+    const openWithdrawLocator = page.locator('[testdata-id=stream-withdraw-button]')
+    await expect(openWithdrawLocator).toBeVisible()
+    await expect(openWithdrawLocator).toBeEnabled()
+    await openWithdrawLocator.click()
+  
 
-  const openWithdrawLocator = page.locator('[testdata-id=stream-withdraw-button]')
-  await expect(openWithdrawLocator).toBeVisible()
-  await expect(openWithdrawLocator).toBeEnabled()
-  await openWithdrawLocator.click()
+    await page.locator('[testdata-id=withdraw-modal-input]').fill(withdrawAmount)
 
-  await page.locator('[testdata-id=withdraw-modal-input]').fill(withdrawAmount)
+    const confirmWithdrawalLocator = page.locator('[testdata-id=withdraw-modal-confirmation-button]')
+    await expect(confirmWithdrawalLocator).toBeVisible()
+    await expect(confirmWithdrawalLocator).toBeEnabled()
+    await confirmWithdrawalLocator.click()
 
-  const confirmWithdrawalLocator = page.locator('[testdata-id=withdraw-modal-confirmation-button]')
+  
+    const expectedText = `(Successfully withdrawn ${withdrawAmount} ${USDC.symbol})`
+    const regex = new RegExp(expectedText)
+    await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  })
 
-  await expect(confirmWithdrawalLocator).toBeVisible()
-  await expect(confirmWithdrawalLocator).toBeEnabled()
-  await confirmWithdrawalLocator.click()
+  test('Update', async ({ page }) => {  
+    const url = (process.env.PLAYWRIGHT_URL as string).concat(`/stream/${CHAIN_ID}:${STREAM_ID}`)
+    await mockSubgraph(page)
+    await page.goto(url)
+    await switchNetwork(page, CHAIN_ID)
+    const openUpdateLocator = page.locator('[testdata-id=stream-update-button]')
+    await expect(openUpdateLocator).toBeVisible()
+    await expect(openUpdateLocator).toBeEnabled()
+    await openUpdateLocator.click()
+    
+    const amountSwitchLocator = page.locator('[testdata-id=update-amount-switch]')
+    await expect(amountSwitchLocator).toBeVisible()
+    await expect(amountSwitchLocator).toBeEnabled()
+    await amountSwitchLocator.click()
+  
+    await page.locator('[testdata-id=furo-stream-top-up]').fill('0.0001')
+  
+    const confirmWithdrawalLocator = page.locator('[testdata-id=stream-update-confirmation-button]')
 
-  const expectedText = `(Successfully withdrawn ${withdrawAmount} ${USDC.symbol})`
-  const regex = new RegExp(expectedText)
-  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
-})
+    // approve
+    const approveLocator = page.locator('[testdata-id=approve-erc20-update-stream]')
+    await expect(approveLocator).toBeVisible()
+    await expect(amountSwitchLocator).toBeEnabled()
+    await approveLocator.click()
+  
+    await expect(confirmWithdrawalLocator).toBeVisible()
+    await expect(confirmWithdrawalLocator).toBeEnabled()
+    await confirmWithdrawalLocator.click()
+  
+    const expectedText = '(Successfully updated stream)'
+    const regex = new RegExp(expectedText)
+    await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+  });
+  
+});
 
 async function mockSubgraph(page: Page) {
   await page.route('https://api.thegraph.com/subgraphs/name/sushi-subgraphs/furo-polygon', async (route, request) => {

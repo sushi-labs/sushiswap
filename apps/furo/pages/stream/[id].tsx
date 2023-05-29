@@ -48,7 +48,6 @@ const _Streams: FC = () => {
     streamId,
     token: stream?.token,
   })
-  console.log({balance})
 
   const { data: ens } = useEnsName({
     enabled: Boolean(stream),
