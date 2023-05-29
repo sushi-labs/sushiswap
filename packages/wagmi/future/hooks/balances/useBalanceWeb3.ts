@@ -17,9 +17,7 @@ export const useBalanceWeb3 = ({ chainId, currency, account, enabled = true }: U
     queryKey: ['useBalance', { chainId, currency, account }],
     queryFn: async () => {
       if (!currency) return null
-      console.log('before queryFnUseBalances')
       const data = await queryFnUseBalances({ chainId, currencies: [currency], account })
-      console.log('after queryFnUseBalances', data)
       return data?.[currency.isNative ? AddressZero : currency.wrapped.address]
     },
     refetchInterval: 10000,

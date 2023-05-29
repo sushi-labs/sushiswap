@@ -2,8 +2,7 @@ import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { useQuery } from '@tanstack/react-query'
 import { ChainId } from '@sushiswap/chain'
-import { Address, erc20ABI, readContracts } from 'wagmi'
-import { fetchBalance } from '@wagmi/core'
+import { fetchBalance, Address, erc20ABI, readContracts } from '../../..'
 import { isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 
@@ -15,11 +14,8 @@ interface UseBalanceParams {
 }
 
 export const queryFnUseBalances = async ({ chainId, currencies, account }: Omit<UseBalanceParams, 'enabled'>) => {
-  console.log({ account })
   if (!account) return null
-  console.log('before fetchBalance')
   const native = await fetchBalance({ address: account, chainId, formatUnits: 'wei' })
-  console.log('after fetchBalance', native)
   const [validatedTokens, validatedTokenAddresses] = currencies.reduce<[Token[], Address[]]>(
     (acc, currencies) => {
       if (chainId && currencies && isAddress(currencies.wrapped.address)) {
