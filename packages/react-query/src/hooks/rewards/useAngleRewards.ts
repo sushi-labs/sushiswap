@@ -22,7 +22,6 @@ type TransformedPools = Record<string, TransformedPoolItem>
 interface UseAngleRewardsParams {
     chainId: ChainId
     account: string | undefined
-    poolAddress: string | undefined
 }
 
 export const useAngleRewards = ({ chainId, account }: UseAngleRewardsParams) => {

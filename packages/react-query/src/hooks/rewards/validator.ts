@@ -1,7 +1,7 @@
 import z from 'zod'
 
 export const angleRewardsPoolsValidator = z.object({
-    aprs: z.record(z.string(), z.number()),
+    aprs: z.record(z.string(), z.number().nullable()),
     decimalToken0: z.number(),
     decimalToken1: z.number(),
     distributionData: z.array(
@@ -22,7 +22,7 @@ export const angleRewardsPoolsValidator = z.object({
         })
     ),
     liquidity: z.number(),
-    meanAPR: z.number(),
+    meanAPR: z.number().nullable(),
     pool: z.string(),
     poolFee: z.number(),
     rewardsPerToken: z.record(z.string(), z.object({
