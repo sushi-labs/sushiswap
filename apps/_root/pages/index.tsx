@@ -17,27 +17,52 @@ const Index = () => {
   const isSmallScreen = useIsSmScreen()
 
   return (
-    <ThemeProvider forcedTheme="dark">
-      <Header />
-      <MotionConfig reducedMotion={isSmallScreen ? 'always' : 'user'}>
-        <article className="my-20 w-full">
-          <Hero />
-          <Stats />
+    <>
+      <ThemeProvider forcedTheme="dark">
+        <Header />
+        <MotionConfig reducedMotion={isSmallScreen ? 'always' : 'user'}>
+          <article className="my-20 w-full">
+            <Hero />
+            <Stats />
 
-          <div className="bg-black overflow-x-hidden">
-            <Partners />
-            <Story />
-            <div className="flex flex-col gap-2 border-t border-neutral-200/10">
-              <BuildWealth />
-              <Ecosystem />
-              <BuildFuture />
-              <NeedHelp />
+            <div className="bg-black overflow-x-hidden">
+              <Partners />
+              <Story />
+              <div className="flex flex-col gap-2 border-t border-neutral-200/10">
+                <BuildWealth />
+                <Ecosystem />
+                <BuildFuture />
+                <NeedHelp />
+              </div>
             </div>
-          </div>
-        </article>
-      </MotionConfig>
-      <App.Footer />
-    </ThemeProvider>
+          </article>
+        </MotionConfig>
+        <App.Footer />
+      </ThemeProvider>
+      <style global jsx>{`
+        html {
+          background-color: black !important;
+          /* color: white; */
+        }
+
+        button:focus {
+          outline: none !important;
+        }
+
+        input:focus {
+          box-shadow: none !important;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+
+        .no-scrollbar {
+          -ms-overflow-style: none; /* IE and Edge */
+          scrollbar-width: none; /* Firefox */
+        }
+      `}</style>
+    </>
   )
 }
 
