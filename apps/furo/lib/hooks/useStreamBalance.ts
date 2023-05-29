@@ -33,6 +33,7 @@ export function useStreamBalance({ chainId, streamId, token, enabled = true }: U
           args: [token.address as Address],
         }),
       ])
+      console.log('hook', balance.senderBalance.toString(), balance.recipientBalance.toString(), rebase[0].toString(), rebase[1].toString())
 
       return Amount.fromShare(token, JSBI.BigInt(balance[1]), {
         elastic: JSBI.BigInt(rebase[0]),

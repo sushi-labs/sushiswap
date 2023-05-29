@@ -1,48 +1,15 @@
-import { JsonRpcProvider } from '@ethersproject/providers'
-import { parseUnits } from '@ethersproject/units'
-import { expect, Page } from '@playwright/test'
-// import { BENTOBOX_ADDRESS } from '@sushiswap/address'
-import { ChainId, chainName } from '@sushiswap/chain'
 import { AddressZero } from '@ethersproject/constants'
-import { Type, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { Contract, Wallet } from 'ethers'
-
-
-
-// export const BENTOBOX_DEPOSIT_ABI = [
-//   {
-//     inputs: [
-//       { internalType: 'contract IERC20', name: 'token_', type: 'address' },
-//       { internalType: 'address', name: 'from', type: 'address' },
-//       { internalType: 'address', name: 'to', type: 'address' },
-//       { internalType: 'uint256', name: 'amount', type: 'uint256' },
-//       { internalType: 'uint256', name: 'share', type: 'uint256' },
-//     ],
-//     name: 'deposit',
-//     outputs: [
-//       { internalType: 'uint256', name: 'amountOut', type: 'uint256' },
-//       { internalType: 'uint256', name: 'shareOut', type: 'uint256' },
-//     ],
-//     stateMutability: 'payable',
-//     type: 'function',
-//   },
-// ]
+import { Page, expect } from '@playwright/test'
+import { Type } from '@sushiswap/currency'
 
 export async function switchNetwork(page: Page, chainId: number) {
-    await page.getByRole('button', { name: 'Ethereum' }).click()
-    await page.locator(`[testdata-id=network-selector-${chainId}]`).click()
-  }
-  
-export function timeout(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms))
-  }
-  
-export interface Token {
-  address: string
-  symbol: string
+  await page.getByRole('button', { name: 'Ethereum' }).click()
+  await page.locator(`[testdata-id=network-selector-${chainId}]`).click()
 }
 
-
+export function timeout(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
 
 export enum GradedVestingFrequency {
   WEEKLY = 'weekly',
@@ -122,7 +89,7 @@ export async function createSingleStream(chainId: number, token: Type, amount: s
         console.log('BentoBox Approved')
       })
       .catch(() => console.log('BentoBox already approved or not needed'))
-  
+
     if (!currency.isNative) {
       // Approve Token
       await page
@@ -149,5 +116,4 @@ export async function createSingleStream(chainId: number, token: Type, amount: s
     await expect(tokenRowSelector).toBeEnabled()
     await tokenRowSelector.click()
   }
-  
 }

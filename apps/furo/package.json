@@ -55,6 +55,7 @@
   },
   "devDependencies": {
     "@playwright/test": "1.32.1",
+    "@whatwg-node/fetch": "0.8.4",
     "@graphprotocol/client-add-source-name": "1.0.18",
     "@graphprotocol/client-auto-pagination": "1.1.16",
     "@graphprotocol/client-cli": "2.2.19",

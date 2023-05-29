@@ -48,6 +48,7 @@ const _Streams: FC = () => {
     streamId,
     token: stream?.token,
   })
+  console.log({balance})
 
   const { data: ens } = useEnsName({
     enabled: Boolean(stream),
@@ -225,6 +226,7 @@ const _Streams: FC = () => {
                   <Button
                     onClick={() => setOpen(true)}
                     startIcon={<ArrowRightIcon width={18} height={18} />}
+                    testId='stream-transfer'
                     variant="outlined"
                   >
                     Transfer
@@ -241,6 +243,7 @@ const _Streams: FC = () => {
                   <Button
                     onClick={() => setOpen(true)}
                     startIcon={<RefreshIcon width={18} height={18} />}
+                    testId='stream-update'
                     variant="outlined"
                   >
                     Update
@@ -260,6 +263,7 @@ const _Streams: FC = () => {
                     color="red"
                     onClick={() => setOpen(true)}
                     startIcon={<XIcon width={18} height={18} />}
+                    testId='stream-cancel'
                     variant="outlined"
                   >
                     Cancel

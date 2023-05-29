@@ -117,7 +117,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
             Any withdrawn amount will be sent to{' '}
             <a
               target="_blank"
-              className="text-blue font-semibold"
+              className="font-semibold text-blue"
               href={Chain.from(stream.chainId).getAccountUrl(stream.recipient.id)}
               rel="noreferrer"
             >
@@ -149,6 +149,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
                       fullWidth
                       disabled={isWritePending || !stream.balance}
                       onClick={() => sendTransaction?.()}
+                      testId='withdraw-modal-confirmation'
                     >
                       {!stream.token ? (
                         'Invalid stream token'
