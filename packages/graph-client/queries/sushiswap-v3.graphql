@@ -126,3 +126,16 @@ query SushiSwapV3Pool(
     }
   }
 }
+
+query SushiSwapV3DayDatas($first: Int = 1000, $skip: Int, $orderBy: UniswapDayData_orderBy, $orderDirection: OrderDirection, $where: UniswapDayData_filter) {
+  uniswapDayDatas(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
+    id
+    date
+    volumeETH
+    volumeUSD
+    volumeUSDUntracked
+    feesUSD
+    txCount
+    tvlUSD
+  }
+}
