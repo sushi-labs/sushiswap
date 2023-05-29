@@ -51,6 +51,9 @@ const SelectRoot: FC<SelectProps> = ({
   )
 }
 
+/**
+ * @deprecated
+ */
 export const Select: FC<SelectProps> & {
   Button: FC<SelectButtonProps>
   Label: FC<SelectLabelProps>

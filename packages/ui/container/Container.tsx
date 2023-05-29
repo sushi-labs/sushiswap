@@ -30,6 +30,9 @@ interface Props {
 type ContainerProps<C extends React.ElementType> = PolymorphicComponentPropsWithRef<C, Props>
 type ContainerComponent = <C extends React.ElementType = 'div'>(props: ContainerProps<C>) => React.ReactElement | null
 
+/**
+ * @deprecated
+ */
 export const Container: ContainerComponent = forwardRef(
   <Tag extends React.ElementType = 'div'>(
     { as, children, maxWidth = '2xl', className = '', id, ...rest }: ContainerProps<Tag>,

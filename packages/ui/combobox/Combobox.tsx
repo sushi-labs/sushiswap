@@ -38,6 +38,9 @@ const ComboboxRoot: FC<ComboboxProps> = ({ className, value, onChange, disabled,
   )
 }
 
+/**
+ * @deprecated
+ */
 export const Combobox: FunctionComponent<ComboboxProps> & {
   Input: FC<ComboboxInputProps>
   Label: FC<ComboboxLabelProps>
