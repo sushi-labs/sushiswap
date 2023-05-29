@@ -7,7 +7,9 @@
     ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    ".mesh",
+    "node_modules",
+    "test"
   ],
   "compilerOptions": {
     "baseUrl": ".",

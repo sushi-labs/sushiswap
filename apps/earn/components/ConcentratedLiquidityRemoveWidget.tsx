@@ -14,7 +14,7 @@ import { Amount, Type } from '@sushiswap/currency'
 import { _useSendTransaction as useSendTransaction } from '@sushiswap/wagmi'
 import { unwrapToken } from '../lib/functions'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
-import { useNetwork } from 'wagmi'
+import { useNetwork } from '@sushiswap/wagmi'
 
 interface ConcentratedLiquidityRemoveWidget {
   token0: Type | undefined

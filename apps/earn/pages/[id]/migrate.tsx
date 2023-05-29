@@ -3,7 +3,7 @@ import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap
 import { useRouter } from 'next/router'
 import { usePool } from '@sushiswap/client'
 import { useSWRConfig } from 'swr'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
 import React, { useMemo } from 'react'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
