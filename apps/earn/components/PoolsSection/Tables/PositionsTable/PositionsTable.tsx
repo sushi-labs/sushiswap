@@ -63,12 +63,12 @@ export const PositionsTable: FC = () => {
       <div className={classNames('w-full group')}>
         <h1 className="flex items-center justify-between gap-2 px-4 py-4 text-sm font-semibold text-gray-700 group-hover:text-gray-900 dark:text-slate-200 dark:group-hover:text-slate-50 group-hover:dark:text-slate-50">
           <span className="flex items-center gap-3">
-            <ClassicPoolIcon width={20} height={20} className="saturate-200" /> V2/Trident Positions{' '}
-            {userPositions ? `(${userPositions.length})` : ''}
+            <ClassicPoolIcon width={20} height={20} className="saturate-200" />{' '}
+            <div className="flex gap-1">Your Positions {userPositions ? `(${userPositions.length})` : ''}</div>
           </span>
         </h1>
       </div>
-      <div className="mb-10 overflow-hidden border border-gray-200 rounded-2xl dark:border-slate-200/5">
+      <div className="mb-[120px]">
         <GenericTable<PositionWithPool>
           table={table}
           HoverElement={isMd ? PositionQuickHoverTooltip : undefined}

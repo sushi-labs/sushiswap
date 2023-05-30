@@ -159,7 +159,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                     Migrate <span className="text-gray-500 dark:text-slate-500">for increased efficiency.</span>
                   </h1>
                 </Container>
-                <div className="pl-4 xl:pl-0">
+                <div className="pl-4 xl:pl-2">
                   <Carousel
                     slideWidth={320}
                     slides={positions.filter(

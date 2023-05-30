@@ -87,9 +87,9 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; p
   return (
     <>
       <div className={classNames('w-full group')}>
-        <h1 className="flex items-center justify-between gap-2 px-4 py-4 text-sm font-semibold text-gray-700 group-hover:text-gray-900 dark:text-slate-200 dark:group-hover:text-slate-50">
+        <h1 className="flex items-center justify-between gap-2 px-4 py-4 text-sm font-semibold text-gray-700 group-hover:text-gray-900 dark:text-slate-200 dark:group-hover:text-slate-50 group-hover:dark:text-slate-50">
           <span className="flex items-center gap-3">
-            <ConcentratedCurveIcon id="ctable" width={20} height={20} className="saturate-200" /> SushiSwap V3 Positions{' '}
+            <ConcentratedCurveIcon id="ctable" width={20} height={20} className="saturate-200" /> Your Positions{' '}
             {positions ? `(${positions.length})` : ''}
           </span>
           <div className="flex gap-6">
@@ -105,7 +105,7 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; p
           </div>
         </h1>
       </div>
-      <div className="mb-4 overflow-hidden border border-gray-200 rounded-2xl dark:border-slate-200/5">
+      <div className="mb-[120px]">
         <GenericTable<ConcentratedLiquidityPosition>
           table={table}
           loading={Boolean(isLoading && address)}

@@ -12,6 +12,7 @@ import { format } from 'date-fns'
 import { Token, tryParseAmount } from '@sushiswap/currency'
 import { useBreakpoint } from '@sushiswap/ui/future'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
+import { List } from '@sushiswap/ui/future/components/list/List'
 
 interface RewardsSectionItem {
   chainId: ChainId
@@ -34,7 +35,7 @@ const rewardPerDay = ({
   token: Token
 }) => {
   const days = (end - start) / 3600 / 24
-  return tryParseAmount(((amount / days) * (userTVL / tvl)).toString(), token)
+  return tryParseAmount(((amount / days) * (userTVL / tvl)).toFixed(8), token)
 }
 
 export const RewardsSectionItem: FC<RewardsSectionItem> = ({ chainId, data }) => {
@@ -45,7 +46,7 @@ export const RewardsSectionItem: FC<RewardsSectionItem> = ({ chainId, data }) =>
   const [open, setOpen] = useState(false)
 
   return (
-    <div className="p-4 flex flex-col gap-1 border border-gray-200 rounded-2xl">
+    <div className="p-4 flex flex-col gap-1 border-t border-gray-200 dark:border-slate-200/20">
       <div
         role="button"
         className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-center"
@@ -118,7 +119,7 @@ export const RewardsSectionItem: FC<RewardsSectionItem> = ({ chainId, data }) =>
                         tvl: data.tvl ?? 0,
                         userTVL: data.userTVL ?? 0,
                         token,
-                      })?.toSignificant(6)}{' '}
+                      })?.toSignificant(8)}{' '}
                       {token.symbol}{' '}
                     </span>
                     <span className="text-xs text-gray-500 dark:text-slate-500">per day</span>
@@ -137,7 +138,77 @@ export const RewardsSectionItem: FC<RewardsSectionItem> = ({ chainId, data }) =>
         </Collapsible>
       ) : (
         <Dialog open={open} onClose={() => setOpen(false)}>
-          <Dialog.Content>Test</Dialog.Content>
+          <Dialog.Content>
+            <div className="flex items-center gap-4">
+              <div className="min-w-[52px]">
+                <Badge
+                  className="border-2 border-gray-100 dark:border-slate-900 rounded-full z-[11] !bottom-0 right-[-15%]"
+                  position="bottom-right"
+                  badgeContent={<NetworkIcon chainId={chainId} width={20} height={20} />}
+                >
+                  <Currency.IconList iconWidth={40} iconHeight={40}>
+                    <Currency.Icon currency={data.token0} />
+                    <Currency.Icon currency={data.token1} />
+                  </Currency.IconList>
+                </Badge>
+              </div>
+              <div className="flex flex-col items-baseline gap-[1px]">
+                <span className="text-sm font-medium flex items-baseline gap-1 text-gray-900 dark:text-slate-50">
+                  {unwrapToken(data.token0).symbol}{' '}
+                  <span className="font-normal text-gray-900 dark:text-slate-500">/</span>{' '}
+                  {unwrapToken(data.token1).symbol}
+                  <span className="text-xs text-gray-500 dark:text-slate-500">{data.poolFee}%</span>
+                </span>
+                <div className="rounded-full px-2 py-0.5 text-xs bg-black/[0.06] dark:bg-white/[0.06]">
+                  {data.distributionData.length} Ongoing Farms
+                </div>
+              </div>
+            </div>
+            <List className="mt-4">
+              <List.Label>Position details</List.Label>
+              <List.Control>
+                <List.KeyValue title="Position Size">${formatNumber(data.userTVL)}</List.KeyValue>
+                <List.KeyValue title="Average APR">{formatNumber(data.meanAPR)}%</List.KeyValue>
+                <List.KeyValue flex title="Claimable">
+                  ${dollarValues.reduce((acc, cur) => acc + +formatNumber(cur), 0)}
+                </List.KeyValue>
+              </List.Control>
+            </List>
+            <List className="mt-4">
+              <List.Label className="text-blue font-medium">Farms ({data.distributionData.length})</List.Label>
+              <List.Control>
+                {data.distributionData.map(({ start, end, amount, token }, i) => (
+                  <>
+                    <List.Label className="!text-[10px] !px-4 pt-4 uppercase font-semibold !text-gray-400 !dark:text-slate-500">
+                      Farm {i + 1}
+                    </List.Label>
+                    <List.KeyValue flex title="Reward" subtitle="per day">
+                      <div className="flex items-center gap-2">
+                        <Currency.Icon currency={token} width={18} height={18} />
+                        {rewardPerDay({
+                          start,
+                          end,
+                          amount,
+                          tvl: data.tvl ?? 0,
+                          userTVL: data.userTVL ?? 0,
+                          token,
+                        })?.toSignificant(6)}{' '}
+                        {unwrapToken(token).symbol}
+                      </div>
+                    </List.KeyValue>
+                    <List.KeyValue flex title="Duration">
+                      <div className="flex flex-col">
+                        <span className="font-mediumt">{Math.floor((end - start) / 3600 / 24)} days left</span>
+                        <span className="text-xs text-gray-500 dark:text-slate-500">
+                          Ends at: {format(end * 1000, 'dd MMM yyyy hh:mm')}
+                        </span>
+                      </div>
+                    </List.KeyValue>
+                  </>
+                ))}
+              </List.Control>
+            </List>
+          </Dialog.Content>
         </Dialog>
       )}
     </div>
