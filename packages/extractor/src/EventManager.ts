@@ -14,7 +14,7 @@ export class EventManager {
     client.watchBlockNumber({ onBlockNumber: (blockNumber) => console.log(blockNumber) })
   }
 
-  async startEventListening(address: Address, event: AbiEvent, callback: LogCallBack): Promise<number> {
+  async startEventListening(callback: LogCallBack, address: Address, event?: AbiEvent): Promise<number> {
     const filter = await this.client.createEventFilter({ address, event })
     this.filterMap.set(this.filterCounter, [filter, callback] as [Filter, LogCallBack])
 

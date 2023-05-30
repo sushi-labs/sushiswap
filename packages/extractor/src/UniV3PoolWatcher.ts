@@ -5,7 +5,7 @@ import { CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
 import { FeeAmount, TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { Abi, Address, parseAbiItem } from 'abitype'
 import { BigNumber } from 'ethers'
-import { Log } from 'viem'
+import { decodeEventLog, Log } from 'viem'
 
 import { EventManager } from './EventManager'
 import { MultiCallAggregator } from './MulticallAggregator'
@@ -26,6 +26,11 @@ interface UniV3PoolSelfState {
   tick: number
   liquidity: bigint
   sqrtPriceX96: bigint
+}
+
+interface WordState {
+  blockNumber: number
+  ticks: CLTick[]
 }
 
 const slot0Abi: Abi = [
@@ -56,10 +61,14 @@ const liquidityAbi: Abi = [
   },
 ]
 
-const mintEventAbi = parseAbiItem(
-  'event Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)'
-)
+const eventsAbi = [
+  parseAbiItem(
+    'event Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)'
+  ),
+]
 
+// TODO: add ticks if price chages
+// TODO: more ticks and priority depending on resources
 export class UniV3PoolWatcher {
   address: Address
   tickHelperContract: Address
@@ -72,8 +81,11 @@ export class UniV3PoolWatcher {
   client: MultiCallAggregator
   eventManager: EventManager
 
+  updateIndex = 0
+  eventFilter?: number
+
   state?: UniV3PoolSelfState
-  wordList: Map<number, [number, CLTick[]]> = new Map()
+  wordList: Map<number, WordState> = new Map()
 
   constructor(
     providerName: string,
@@ -97,7 +109,25 @@ export class UniV3PoolWatcher {
     this.eventManager = eventManager
   }
 
-  async startWatching() {
+  async stopWatching(restart = false) {
+    if (restart && this.eventFilter) {
+      await this.eventManager.stopEventListening(this.eventFilter)
+      this.eventFilter = undefined
+    }
+    this.updateIndex++ // this should stop all currently awaited updates
+  }
+
+  async startWatching(stopPreviousEventFiltering = false) {
+    await this.stopWatching(stopPreviousEventFiltering)
+
+    const updateIndex = this.updateIndex
+    if (this.eventFilter === undefined) {
+      // TODO: still valnurable to several calls. Make it address only? With no index
+      const eventFilter = await this.eventManager.startEventListening(this.processLog.bind(this), this.address)
+      if (updateIndex !== this.updateIndex) return // After await check: Stop updating!
+      this.eventFilter = eventFilter
+    }
+
     const {
       blockNumber,
       returnValues: [slot0, liquidity, balance0, balance1],
@@ -107,6 +137,7 @@ export class UniV3PoolWatcher {
       { address: this.token0.address as Address, abi: erc20Abi, functionName: 'balanceOf', args: [this.address] },
       { address: this.token1.address as Address, abi: erc20Abi, functionName: 'balanceOf', args: [this.address] },
     ])
+    if (updateIndex !== this.updateIndex) return // After await check: Stop updating!
 
     const [sqrtPriceX96, tick] = slot0 as [bigint, number]
     this.state = {
@@ -118,32 +149,6 @@ export class UniV3PoolWatcher {
       sqrtPriceX96: sqrtPriceX96 as bigint,
     }
 
-    this.eventManager.startEventListening(this.address, mintEventAbi, (l: Log) => {
-      if (!this.state) return
-      // address sender,
-      // address indexed owner,
-      // int24 indexed tickLower,
-      // int24 indexed tickUpper,
-      // uint128 amount,
-      // uint256 amount0,
-      // uint256 amount1
-      const tickLower = parseLogData(l, 0)
-      const tickUpper = parseLogData(l, 1)
-      const amount = parseLogData(l, 2)
-      const amount0 = parseLogData(l, 3)
-      const amount1 = parseLogData(l, 4)
-      this.addTick(tickLower, amount)
-      this.addTick(tickUpper, -amount)
-
-      const tick = this.state.tick
-      // TODO: tick < tickUpper - is it correct ?
-      if (tickLower <= tick && tick < tickUpper) this.state.liquidity += amount
-
-      this.state.reserve0 += amount0
-      this.state.reserve1 += amount1
-    })
-    // TODO: other listeners
-
     const currentTickIndex = Math.floor(tick / this.spacing / 256)
     const minTick = Math.floor(tick - NUMBER_OF_SURROUNDING_TICKS / this.spacing / 256)
     const maxTick = Math.floor(tick + NUMBER_OF_SURROUNDING_TICKS / this.spacing / 256)
@@ -152,27 +157,60 @@ export class UniV3PoolWatcher {
     for (let i = 0; i < wordNumber; ++i) {
       const wordIndex = currentTickIndex + getJump(i, direction)
       await this.startWatchWord(wordIndex)
+      if (updateIndex !== this.updateIndex) return // After await check: Stop updating!
     }
   }
 
   async startWatchWord(wordIndex: number) {
+    const updateIndex = this.updateIndex
     const { blockNumber, returnValue: ticks } = await this.client.call<{ tick: bigint; liquidityNet: bigint }[]>(
       this.tickHelperContract,
       tickLensAbi,
       'getPopulatedTicksInWord',
       [this.address, wordIndex]
     )
-    this.wordList.set(wordIndex, [
+    if (updateIndex !== this.updateIndex) return // After await check: Stop updating!
+    this.wordList.set(wordIndex, {
       blockNumber,
-      ticks.map(({ tick, liquidityNet }) => ({
+      ticks: ticks.map(({ tick, liquidityNet }) => ({
         index: Number(tick),
         DLiquidity: BigNumber.from(liquidityNet),
       })),
-    ])
+    })
   }
 
-  async stopWatching() {
-    // TODO
+  updatePoolState() {
+    this.startWatching()
+  }
+
+  processLog(l: Log) {
+    if (l.removed) {
+      this.updatePoolState()
+      return
+    }
+    if (l.blockNumber == null) return
+    const data = decodeEventLog({ abi: eventsAbi, data: l.data, topics: l.topics })
+    switch (data.eventName) {
+      case 'Mint': {
+        const { tickLower, tickUpper, amount, amount0, amount1 } = data.args
+        if (this.state !== undefined && l.blockNumber > this.state.blockNumber) {
+          // TODO: tick < tickUpper - is it correct ?
+          if (tickLower !== undefined && tickUpper !== undefined && amount) {
+            const tick = this.state.tick
+            if (tickLower <= tick && tick < tickUpper) this.state.liquidity += amount
+          }
+          if (amount1 !== undefined && amount0 !== undefined) {
+            this.state.reserve0 += amount0
+            this.state.reserve1 += amount1
+          }
+        }
+        if (tickLower !== undefined && tickUpper !== undefined && amount) {
+          this.addTick(data.args.tickLower, amount)
+          this.addTick(data.args.tickUpper, -amount)
+        }
+      }
+      // TODO: other listeners
+    }
   }
 
   getPoolCode(): PoolCode | undefined {
@@ -184,7 +222,7 @@ export class UniV3PoolWatcher {
     for (maxIndex = currentTickIndex + 1; this.wordList.has(maxIndex); ++maxIndex);
     if (maxIndex - minIndex <= 1) return
     let ticks: CLTick[] = []
-    for (let i = minIndex + 1; i < maxIndex; ++i) ticks = ticks.concat((this.wordList.get(i) as [number, CLTick[]])[1])
+    for (let i = minIndex + 1; i < maxIndex; ++i) ticks = ticks.concat((this.wordList.get(i) as WordState).ticks)
 
     const lowerUnknownTick = minIndex * this.spacing * 256 - this.spacing
     console.assert(ticks.length == 0 || lowerUnknownTick < ticks[0].index, 'Error 165: unexpected min tick index')
