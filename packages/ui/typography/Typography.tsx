@@ -43,6 +43,9 @@ type Props = {
 type TypographyProps<C extends React.ElementType> = PolymorphicComponentPropsWithRef<C, Props>
 type TypographyComponent = <C extends React.ElementType = 'div'>(props: TypographyProps<C>) => React.ReactElement | null
 
+/**
+ * @deprecated
+ */
 export const Typography: TypographyComponent = forwardRef(
   <Tag extends React.ElementType = 'div'>(
     { as, variant = 'base', weight = 400, className, children, onClick, select, ...rest }: TypographyProps<Tag>,

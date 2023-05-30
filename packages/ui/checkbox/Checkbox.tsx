@@ -4,6 +4,9 @@ export interface CheckboxProps {
   set?: (value: boolean) => void
 }
 
+/**
+ * @deprecated
+ */
 export function Checkbox({
   set,
   className = '',

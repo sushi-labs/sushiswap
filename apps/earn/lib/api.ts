@@ -1,9 +1,9 @@
-import { chainShortName } from '@sushiswap/chain'
 import { Bundle, getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { getUnixTime, startOfHour, startOfMinute, subYears } from 'date-fns'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
-import { GetUserArgs } from './hooks/api/useUserPositions'
+import { GetUserArgs } from './hooks'
+import { chainShortName } from '@sushiswap/chain'
 
 const sdk = getBuiltGraphSDK()
 

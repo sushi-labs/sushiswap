@@ -56,14 +56,19 @@ export const tokenComparator = (
   pricesMap: Record<string, Fraction> | undefined
 ) => {
   return (tokenA: Token, tokenB: Token): number => {
-    const balanceA = pricesMap?.[tokenA.address]
+    const priceA = pricesMap?.[tokenA.address]
       ? balancesMap?.[tokenA.address]?.multiply(pricesMap[tokenA.address])
       : undefined
-    const balanceB = pricesMap?.[tokenB.address]
+    const priceB = pricesMap?.[tokenB.address]
       ? balancesMap?.[tokenB.address]?.multiply(pricesMap[tokenB.address])
       : undefined
 
-    const balanceComp = balanceComparator(balanceA, balanceB)
+    const priceComp = balanceComparator(priceA, priceB)
+    if (priceComp !== 0) {
+      return priceComp
+    }
+
+    const balanceComp = balanceComparator(balancesMap?.[tokenA.address], balancesMap?.[tokenB.address])
     if (balanceComp !== 0) {
       return balanceComp
     }

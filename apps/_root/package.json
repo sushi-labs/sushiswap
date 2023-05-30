@@ -58,7 +58,7 @@
     "@tanstack/react-query-persist-client": "4.28.0",
     "@tanstack/react-table": "8.5.30",
     "@vercel/analytics": "0.1.5",
-    "@wagmi/core": "0.10.10",
+    "@wagmi/core": "0.10.11",
     "cors": "2.8.5",
     "date-fns": "2.29.3",
     "ethers": "5.7.2",
@@ -67,7 +67,7 @@
     "graphql": "16.6.0",
     "graphql-request": "^5.0.0",
     "nanoid": "4.0.0",
-    "next": "13.3.4",
+    "next": "13.4.3",
     "next-axiom": "0.17.0",
     "next-seo": "5.15.0",
     "next-sitemap": "3.1.43",
@@ -77,7 +77,7 @@
     "react-dom": "18.2.0",
     "react-dropzone": "14.2.3",
     "react-hook-form": "7.41.2",
-    "react-image-file-resizer": "^0.4.8",
+    "react-image-file-resizer": "0.4.8",
     "react-redux": "8.0.5",
     "react-slider": "^2.0.4",
     "recharts": "^2.6.0",
@@ -97,7 +97,7 @@
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/next": "1.0.5",
-    "@types/cors": "^2.8.13",
+    "@types/cors": "2.8.13",
     "@types/node": "18.11.18",
     "@types/numeral": "2.0.2",
     "@types/react": "18.2.6",
@@ -108,6 +108,6 @@
     "postcss": "8.4.23",
     "tailwindcss": "3.3.2",
     "typescript": "5.0.4",
-    "unimported": "^1.23.0"
+    "unimported": "1.28.0"
   }
 }

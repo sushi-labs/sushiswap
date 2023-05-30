@@ -1,4 +1,4 @@
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 import { useUserPositions } from '../../lib/hooks'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import React, { useEffect, useMemo, useState } from 'react'

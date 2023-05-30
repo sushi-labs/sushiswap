@@ -1,6 +1,6 @@
 import '@sushiswap/ui/index.css'
-
-import { App, ThemeProvider } from '@sushiswap/ui'
+import '../variables.css'
+import { App } from '@sushiswap/ui'
 import { Analytics } from '@vercel/analytics/react'
 import { DefaultSeo } from 'next-seo'
 import Head from 'next/head'

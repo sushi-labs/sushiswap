@@ -42,6 +42,9 @@ export interface ChipProps {
   id?: string
 }
 
+/**
+ * @deprecated
+ */
 export const Chip: FC<ChipProps> = ({
   label,
   color = 'default',

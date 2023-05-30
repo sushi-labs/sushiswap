@@ -8,4 +8,7 @@ export type LinkProps = {
   Internal: FC<InternalLinkProps>
 }
 
+/**
+ * @deprecated
+ */
 export const Link: LinkProps = { External, Internal }

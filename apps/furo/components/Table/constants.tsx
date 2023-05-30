@@ -1,4 +1,4 @@
-import { Skeleton } from '@sushiswap/ui'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 

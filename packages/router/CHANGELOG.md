@@ -1,5 +1,18 @@
 # @sushiswap/router
 
+## 0.0.4
+
+### Patch Changes
+
+- 813200e55: update dependencies
+- Updated dependencies [813200e55]
+  - @sushiswap/currency@0.0.4
+  - @sushiswap/router-config@1.0.0
+  - @sushiswap/amm@0.1.4
+  - @sushiswap/tines@1.0.4
+  - @sushiswap/v3-sdk@1.0.1
+  - @sushiswap/sushiswap@0.1.1
+
 ## 0.0.3
 
 ### Patch Changes
