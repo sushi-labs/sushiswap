@@ -857,7 +857,7 @@ const calculateHistoricalBlock = (chainId: ChainId, currentBlock: number, second
   if (seconds <= 0) return undefined
   const secondsBetweenBlocks = SECONDS_BETWEEN_BLOCKS[chainId]
   if (!secondsBetweenBlocks) {
-    console.debug(`No average block per second for chain ${chainId}`)
+    console.debug(`No secondsBetweenBlocks for chain ${chainId}`)
     return undefined
   }
   return currentBlock - Math.floor(seconds / secondsBetweenBlocks)
