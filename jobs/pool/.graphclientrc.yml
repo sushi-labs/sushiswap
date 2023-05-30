@@ -59,9 +59,6 @@ transforms:
   - autoTypeMerging: true
   - addSourceName: true
 
-additionalResolvers:
-  - ./resolvers/index.ts
-
 documents:
   - ./query.graphql
 
