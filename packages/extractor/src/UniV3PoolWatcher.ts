@@ -194,9 +194,9 @@ export class UniV3PoolWatcher {
       case 'Mint': {
         const { tickLower, tickUpper, amount, amount0, amount1 } = data.args
         if (this.state !== undefined && l.blockNumber > this.state.blockNumber) {
-          // TODO: tick < tickUpper - is it correct ?
           if (tickLower !== undefined && tickUpper !== undefined && amount) {
             const tick = this.state.tick
+            // TODO: tick < tickUpper - is it correct ?
             if (tickLower <= tick && tick < tickUpper) this.state.liquidity += amount
           }
           if (amount1 !== undefined && amount0 !== undefined) {
@@ -205,11 +205,37 @@ export class UniV3PoolWatcher {
           }
         }
         if (tickLower !== undefined && tickUpper !== undefined && amount) {
-          this.addTick(data.args.tickLower, amount)
-          this.addTick(data.args.tickUpper, -amount)
+          this.addTick(l.blockNumber, tickLower, amount)
+          this.addTick(l.blockNumber, tickUpper, -amount)
         }
       }
       // TODO: other listeners
+    }
+  }
+
+  addTick(eventBlockNumber: bigint, tick: number, amount: bigint) {
+    const tickWord = Math.floor(tick / this.spacing / 256)
+    const state = this.wordList.get(tickWord)
+    if (state !== undefined) {
+      const { blockNumber, ticks } = state
+      if (eventBlockNumber <= blockNumber) return
+      if (ticks.length == 0 || tick < ticks[0].index) {
+        ticks.unshift({ index: tick, DLiquidity: BigNumber.from(amount) })
+        return
+      }
+      let start = 0,
+        end = ticks.length
+      while (end - start <= 1) {
+        const middle = (start + end) / 2
+        const index = ticks[middle].index
+        if (index < tick) start = middle
+        else if (index > tick) end = index
+        else {
+          ticks[middle].DLiquidity = ticks[middle].DLiquidity.add(amount)
+          return
+        }
+      }
+      ticks.splice(start + 1, 0, { index: tick, DLiquidity: BigNumber.from(amount) })
     }
   }
 
