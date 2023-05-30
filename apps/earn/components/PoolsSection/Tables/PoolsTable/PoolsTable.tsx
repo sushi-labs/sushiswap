@@ -23,7 +23,7 @@ import { Loader } from '@sushiswap/ui/future/components/Loader'
 const COLUMNS = [
   NAME_COLUMN,
   TVL_COLUMN,
-  VOLUME_1H_COLUMN,
+  // VOLUME_1H_COLUMN,
   VOLUME_1D_COLUMN,
   VOLUME_7D_COLUMN,
   FEES_COLUMN,
