@@ -1,18 +1,18 @@
 import { ChainId } from '@sushiswap/chain'
-import { createClient, Prisma, Protocol } from '@sushiswap/database'
+import { createClient,Prisma, Protocol } from '@sushiswap/database'
 import {
+  SECONDS_BETWEEN_BLOCKS,
   SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
   SUSHISWAP_SUBGRAPH_NAME,
   SUSHISWAP_V3_ENABLED_NETWORKS,
   SUSHISWAP_V3_SUBGRAPH_NAME,
-  SWAP_ENABLED_NETWORKS,
   TRIDENT_ENABLED_NETWORKS,
-  TRIDENT_SUBGRAPH_NAME,
+  TRIDENT_SUBGRAPH_NAME
 } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
-import { getBuiltGraphSDK, PairsQuery, V3PoolsQuery } from '../.graphclient/index.js'
+import { getBuiltGraphSDK,PairsQuery, Sdk, V3PoolsQuery } from '../.graphclient/index.js'
 import { upsertPools } from './etl/pool/index.js'
 import { createTokens } from './etl/token/load.js'
 
@@ -55,19 +55,6 @@ type V3Data = {
   pools2w: V3PoolsQuery[]
   pools1m: V3PoolsQuery[]
   pools2m: V3PoolsQuery[]
-}
-
-interface PercentageChange {
-  oneHour: number
-  oneDay: number
-  oneWeek: number
-  oneMonth: number
-}
-
-interface PoolMetrics {
-  volume: PercentageChange
-  fees: PercentageChange
-  apr: PercentageChange
 }
 
 enum AprTimeRange {
@@ -156,82 +143,57 @@ function createSubgraphConfig(protocol: Protocol) {
 async function extract(protocol: Protocol) {
   const result: { chainId: ChainId; data: V2Data | V3Data }[] = []
   const subgraphs = createSubgraphConfig(protocol)
-
-  const sdk = getBuiltGraphSDK()
-  const [
-    oneHourBlocks,
-    twoHourBlocks,
-    oneDayBlocks,
-    twoDayBlocks,
-    oneWeekBlocks,
-    twoWeekBlocks,
-    oneMonthBlocks,
-    twoMonthBlocks,
-  ] = await Promise.all([
-    sdk.OneHourBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
-    sdk.TwoHourBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
-    sdk.OneDayBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
-    sdk.TwoDayBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
-    sdk.OneWeekBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
-    sdk.TwoWeekBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
-    sdk.OneMonthBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
-    sdk.TwoMonthBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
-  ])
-
   const chains = Array.from(new Set(subgraphs.map((subgraph) => subgraph.chainId.toString())))
   console.log(`EXTRACT - Extracting from ${chains.length} different chains, ${chains.join(', ')}`)
 
   for (const subgraph of subgraphs) {
+    
+    const sdk = getBuiltGraphSDK({ chainId: subgraph.chainId, host: subgraph.host, name: subgraph.name })
+    const currentBlock = (await sdk.CurrentBlock())._meta.block.number
+
     const blocks: Blocks = {
-      oneHour:
-        Number(oneHourBlocks.oneHourBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
-      twoHour:
-        Number(twoHourBlocks.twoHourBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
-      oneDay:
-        Number(oneDayBlocks.oneDayBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
-      twoDay:
-        Number(twoDayBlocks.twoDayBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
-      oneWeek:
-        Number(oneWeekBlocks.oneWeekBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
-      twoWeek:
-        Number(twoWeekBlocks.twoWeekBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
-      oneMonth:
-        Number(oneMonthBlocks.oneMonthBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
-      twoMonth:
-        Number(twoMonthBlocks.twoMonthBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      oneHour: calculateHistoricalBlock(subgraph.chainId, currentBlock, 3600),
+      twoHour: calculateHistoricalBlock(subgraph.chainId, currentBlock, 7200),
+      oneDay: calculateHistoricalBlock(subgraph.chainId, currentBlock, 86400),
+      twoDay: calculateHistoricalBlock(subgraph.chainId, currentBlock, 172800),
+      oneWeek: calculateHistoricalBlock(subgraph.chainId, currentBlock, 604800),
+      twoWeek: calculateHistoricalBlock(subgraph.chainId, currentBlock, 1209600),
+      oneMonth: calculateHistoricalBlock(subgraph.chainId, currentBlock, 2628000),
+      twoMonth: calculateHistoricalBlock(subgraph.chainId, currentBlock, 5256000),
     }
-    const pairs = await fetchPairs(subgraph, blocks)
+
+    const pairs = await fetchPairs(sdk, subgraph, blocks)
     console.log(`${subgraph.name}, batches: ${pairs.currentPools.length}`)
     result.push({ chainId: subgraph.chainId, data: pairs })
   }
   return result
 }
 
-async function fetchPairs(config: SubgraphConfig, blocks: Blocks) {
+async function fetchPairs(sdk: Sdk, config: SubgraphConfig, blocks: Blocks) {
   if (config.protocol === Protocol.SUSHISWAP_V2 || config.protocol === Protocol.BENTOBOX_CLASSIC) {
     const [currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m] = await Promise.all([
-      fetchLegacyOrTridentPairs(config),
-      blocks.oneHour ? fetchLegacyOrTridentPairs(config, blocks.oneHour) : ([] as PairsQuery[]),
-      blocks.twoHour ? fetchLegacyOrTridentPairs(config, blocks.twoHour) : ([] as PairsQuery[]),
-      blocks.oneDay ? fetchLegacyOrTridentPairs(config, blocks.oneDay) : ([] as PairsQuery[]),
-      blocks.twoDay ? fetchLegacyOrTridentPairs(config, blocks.twoDay) : ([] as PairsQuery[]),
-      blocks.oneWeek ? fetchLegacyOrTridentPairs(config, blocks.oneWeek) : ([] as PairsQuery[]),
-      blocks.twoWeek ? fetchLegacyOrTridentPairs(config, blocks.twoWeek) : ([] as PairsQuery[]),
-      blocks.oneMonth ? fetchLegacyOrTridentPairs(config, blocks.oneMonth) : ([] as PairsQuery[]),
-      blocks.twoMonth ? fetchLegacyOrTridentPairs(config, blocks.twoMonth) : ([] as PairsQuery[]),
+      fetchLegacyOrTridentPairs(sdk, config),
+      blocks.oneHour ? fetchLegacyOrTridentPairs(sdk, config, blocks.oneHour) : ([] as PairsQuery[]),
+      blocks.twoHour ? fetchLegacyOrTridentPairs(sdk, config, blocks.twoHour) : ([] as PairsQuery[]),
+      blocks.oneDay ? fetchLegacyOrTridentPairs(sdk, config, blocks.oneDay) : ([] as PairsQuery[]),
+      blocks.twoDay ? fetchLegacyOrTridentPairs(sdk, config, blocks.twoDay) : ([] as PairsQuery[]),
+      blocks.oneWeek ? fetchLegacyOrTridentPairs(sdk, config, blocks.oneWeek) : ([] as PairsQuery[]),
+      blocks.twoWeek ? fetchLegacyOrTridentPairs(sdk, config, blocks.twoWeek) : ([] as PairsQuery[]),
+      blocks.oneMonth ? fetchLegacyOrTridentPairs(sdk, config, blocks.oneMonth) : ([] as PairsQuery[]),
+      blocks.twoMonth ? fetchLegacyOrTridentPairs(sdk, config, blocks.twoMonth) : ([] as PairsQuery[]),
     ])
     return { currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m }
   } else if (config.protocol === Protocol.SUSHISWAP_V3) {
     const [currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m] = await Promise.all([
-      fetchV3Pools(config),
-      blocks.oneHour ? fetchV3Pools(config, blocks.oneHour) : ([] as V3PoolsQuery[]),
-      blocks.twoHour ? fetchV3Pools(config, blocks.twoHour) : ([] as V3PoolsQuery[]),
-      blocks.oneDay ? fetchV3Pools(config, blocks.oneDay) : ([] as V3PoolsQuery[]),
-      blocks.twoDay ? fetchV3Pools(config, blocks.twoDay) : ([] as V3PoolsQuery[]),
-      blocks.oneWeek ? fetchV3Pools(config, blocks.oneWeek) : ([] as V3PoolsQuery[]),
-      blocks.twoWeek ? fetchV3Pools(config, blocks.twoWeek) : ([] as V3PoolsQuery[]),
-      blocks.oneMonth ? fetchV3Pools(config, blocks.oneMonth) : ([] as V3PoolsQuery[]),
-      blocks.twoMonth ? fetchV3Pools(config, blocks.twoMonth) : ([] as V3PoolsQuery[]),
+      fetchV3Pools(sdk, config),
+      blocks.oneHour ? fetchV3Pools(sdk, config, blocks.oneHour) : ([] as V3PoolsQuery[]),
+      blocks.twoHour ? fetchV3Pools(sdk, config, blocks.twoHour) : ([] as V3PoolsQuery[]),
+      blocks.oneDay ? fetchV3Pools(sdk, config, blocks.oneDay) : ([] as V3PoolsQuery[]),
+      blocks.twoDay ? fetchV3Pools(sdk, config, blocks.twoDay) : ([] as V3PoolsQuery[]),
+      blocks.oneWeek ? fetchV3Pools(sdk, config, blocks.oneWeek) : ([] as V3PoolsQuery[]),
+      blocks.twoWeek ? fetchV3Pools(sdk, config, blocks.twoWeek) : ([] as V3PoolsQuery[]),
+      blocks.oneMonth ? fetchV3Pools(sdk, config, blocks.oneMonth) : ([] as V3PoolsQuery[]),
+      blocks.twoMonth ? fetchV3Pools(sdk, config, blocks.twoMonth) : ([] as V3PoolsQuery[]),
     ])
     return { currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m }
   } else {
@@ -239,9 +201,9 @@ async function fetchPairs(config: SubgraphConfig, blocks: Blocks) {
   }
 }
 
-async function fetchLegacyOrTridentPairs(config: SubgraphConfig, blockNumber?: number) {
-  const chainId = config.chainId
-  const sdk = getBuiltGraphSDK({ chainId, host: config.host, name: config.name })
+async function fetchLegacyOrTridentPairs(sdk: Sdk, config: SubgraphConfig, blockNumber?: number) {
+  // const chainId = config.chainId
+  // const sdk = getBuiltGraphSDK({ chainId, host: config.host, name: config.name })
   console.log(`Loading data from ${config.host} ${config.name}`)
   let cursor = ''
   const data: PairsQuery[] = []
@@ -272,9 +234,9 @@ async function fetchLegacyOrTridentPairs(config: SubgraphConfig, blockNumber?: n
   return data
 }
 
-async function fetchV3Pools(config: SubgraphConfig, blockNumber?: number) {
-  const chainId = config.chainId
-  const sdk = getBuiltGraphSDK({ chainId, host: config.host, name: config.name })
+async function fetchV3Pools(sdk: Sdk, config: SubgraphConfig, blockNumber?: number) {
+  // const chainId = config.chainId
+  // const sdk = getBuiltGraphSDK({ chainId, host: config.host, name: config.name })
   console.log(`Loading data from ${config.host} ${config.name}`)
   let cursor = ''
   const data: V3PoolsQuery[] = []
@@ -893,4 +855,16 @@ const calculatePercentageChange = (current: number, previous: number, previous2:
   const change2 = previous !== 0 && previous2 !== 0 ? previous - previous2 : 0
   if (change2 === 0) return 0 // avoid division by 0
   return previous !== 0 && previous2 !== 0 ? change1 / change2 - 1 : 0
+}
+
+
+const calculateHistoricalBlock = (chainId: ChainId, currentBlock: number, seconds:number): number | undefined => {
+  if (currentBlock === 0) return undefined
+  if (seconds <= 0) return undefined
+    const blockPerSecond = SECONDS_BETWEEN_BLOCKS[chainId]
+    if (!blockPerSecond) {
+      console.debug(`No average block per second for chain ${chainId}`)
+      return undefined
+    }
+    return currentBlock - Math.floor(seconds / blockPerSecond)
 }
