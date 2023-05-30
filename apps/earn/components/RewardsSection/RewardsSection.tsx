@@ -16,7 +16,7 @@ export const RewardsSection: FC = () => {
 
   return (
     <>
-      <div className="pl-4 xl:pl-2 py-2">
+      <div className="pl-4 xl:pl-2">
         <Carousel
           containerWidth={1280}
           slides={data ?? []}

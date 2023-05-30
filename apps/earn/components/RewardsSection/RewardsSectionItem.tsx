@@ -46,7 +46,7 @@ export const RewardsSectionItem: FC<RewardsSectionItem> = ({ chainId, data }) =>
   const [open, setOpen] = useState(false)
 
   return (
-    <div className="p-4 flex flex-col gap-1 border-t border-gray-200 dark:border-slate-200/20">
+    <div className="py-4 flex flex-col gap-1">
       <div
         role="button"
         className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-center"
