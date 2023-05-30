@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { createClient,Prisma, Protocol } from '@sushiswap/database'
+import { createClient, Prisma, Protocol } from '@sushiswap/database'
 import {
   SECONDS_BETWEEN_BLOCKS,
   SUBGRAPH_HOST,
@@ -8,11 +8,11 @@ import {
   SUSHISWAP_V3_ENABLED_NETWORKS,
   SUSHISWAP_V3_SUBGRAPH_NAME,
   TRIDENT_ENABLED_NETWORKS,
-  TRIDENT_SUBGRAPH_NAME
+  TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
-import { getBuiltGraphSDK,PairsQuery, Sdk, V3PoolsQuery } from '../.graphclient/index.js'
+import { getBuiltGraphSDK, PairsQuery, Sdk, V3PoolsQuery } from '../.graphclient/index.js'
 import { upsertPools } from './etl/pool/index.js'
 import { createTokens } from './etl/token/load.js'
 
@@ -147,7 +147,6 @@ async function extract(protocol: Protocol) {
   console.log(`EXTRACT - Extracting from ${chains.length} different chains, ${chains.join(', ')}`)
 
   for (const subgraph of subgraphs) {
-    
     const sdk = getBuiltGraphSDK({ chainId: subgraph.chainId, host: subgraph.host, name: subgraph.name })
     const currentBlock = (await sdk.CurrentBlock())._meta.block.number
 
@@ -202,8 +201,6 @@ async function fetchPairs(sdk: Sdk, config: SubgraphConfig, blocks: Blocks) {
 }
 
 async function fetchLegacyOrTridentPairs(sdk: Sdk, config: SubgraphConfig, blockNumber?: number) {
-  // const chainId = config.chainId
-  // const sdk = getBuiltGraphSDK({ chainId, host: config.host, name: config.name })
   console.log(`Loading data from ${config.host} ${config.name}`)
   let cursor = ''
   const data: PairsQuery[] = []
@@ -235,8 +232,6 @@ async function fetchLegacyOrTridentPairs(sdk: Sdk, config: SubgraphConfig, block
 }
 
 async function fetchV3Pools(sdk: Sdk, config: SubgraphConfig, blockNumber?: number) {
-  // const chainId = config.chainId
-  // const sdk = getBuiltGraphSDK({ chainId, host: config.host, name: config.name })
   console.log(`Loading data from ${config.host} ${config.name}`)
   let cursor = ''
   const data: V3PoolsQuery[] = []
@@ -857,14 +852,13 @@ const calculatePercentageChange = (current: number, previous: number, previous2:
   return previous !== 0 && previous2 !== 0 ? change1 / change2 - 1 : 0
 }
 
-
-const calculateHistoricalBlock = (chainId: ChainId, currentBlock: number, seconds:number): number | undefined => {
+const calculateHistoricalBlock = (chainId: ChainId, currentBlock: number, seconds: number): number | undefined => {
   if (currentBlock === 0) return undefined
   if (seconds <= 0) return undefined
-    const blockPerSecond = SECONDS_BETWEEN_BLOCKS[chainId]
-    if (!blockPerSecond) {
-      console.debug(`No average block per second for chain ${chainId}`)
-      return undefined
-    }
-    return currentBlock - Math.floor(seconds / blockPerSecond)
+  const secondsBetweenBlocks = SECONDS_BETWEEN_BLOCKS[chainId]
+  if (!secondsBetweenBlocks) {
+    console.debug(`No average block per second for chain ${chainId}`)
+    return undefined
+  }
+  return currentBlock - Math.floor(seconds / secondsBetweenBlocks)
 }
