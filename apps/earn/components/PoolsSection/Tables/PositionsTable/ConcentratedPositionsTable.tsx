@@ -10,6 +10,7 @@ import { classNames } from '@sushiswap/ui'
 import ConcentratedCurveIcon from '@sushiswap/ui/future/components/icons/ConcentratedCurveIcon'
 import { V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { Writeable } from 'zod'
+import { usePoolFilters } from '../../../PoolsFiltersProvider'
 
 const COLUMNS = [NAME_COLUMN_V3, PRICE_RANGE_COLUMN, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL] as any
 
@@ -21,8 +22,7 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; p
   const { address } = useAccount()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
-
-  // const [sorting, setSorting] = useState<SortingState>([{ id: 'value', desc: true }])
+  const { chainIds, tokenSymbols } = usePoolFilters()
   const [columnVisibility, setColumnVisibility] = useState({})
 
   const {
@@ -35,12 +35,19 @@ export const ConcentratedPositionsTable: FC<{ variant?: 'default' | 'minimal'; p
   })
 
   const _positions = useMemo(() => {
-    return (positions || [])?.filter((el) => {
-      return (
-        (hide ? !el.liquidity?.eq('0') : true) && (poolId ? el.address.toLowerCase() === poolId.toLowerCase() : true)
+    const _tokenSymbols = tokenSymbols?.filter((el) => el !== '') || []
+
+    return (positions || [])
+      ?.filter((el) => chainIds.includes(el.chainId))
+      .filter((el) =>
+        _tokenSymbols.length > 0 ? _tokenSymbols.some((symbol) => [el.token0, el.token1].includes(symbol)) : true
       )
-    })
-  }, [hide, poolId, positions])
+      .filter((el) => {
+        return (
+          (hide ? !el.liquidity?.eq('0') : true) && (poolId ? el.address.toLowerCase() === poolId.toLowerCase() : true)
+        )
+      })
+  }, [hide, poolId, positions, chainIds, tokenSymbols])
 
   const table = useReactTable<ConcentratedLiquidityPosition>({
     data: _positions,

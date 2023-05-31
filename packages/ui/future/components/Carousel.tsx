@@ -7,6 +7,7 @@ interface Carousel<T> {
   slides: T[]
   render(slide: T): ReactNode
   containerWidth?: number
+  className?: string
 }
 
 export const Carousel = <T extends object>({
@@ -14,6 +15,7 @@ export const Carousel = <T extends object>({
   slideWidth = 400,
   slides,
   render,
+  className,
 }: Carousel<T>) => {
   const [buttons, setButtons] = useState({
     hasNext: true,
@@ -62,7 +64,7 @@ export const Carousel = <T extends object>({
           ref={ref}
           className="overflow-x-scroll overflow-x-contain whitespace-nowrap snap-x relative hide-scrollbar scroll-smooth"
         >
-          <div className="w-full align-top inline-flex pt-2.5 pb-10">
+          <div className={classNames(className, 'w-full align-top inline-flex pt-2.5 pb-10')}>
             {slides.map((el, i) => (
               <div key={i} className="inline-block snap-start">
                 <div

@@ -46,7 +46,6 @@ export const RewardsSectionItem: FC<RewardsSectionItem> = ({ chainId, data }) =>
   const dollarValues = useTokenAmountDollarValues({ chainId, amounts: unclaimed })
   const [open, setOpen] = useState(false)
 
-  console.log(data)
   return (
     <div className="py-4 flex flex-col gap-1">
       <div
