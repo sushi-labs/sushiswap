@@ -493,7 +493,7 @@ export const STARGATE_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
   ChainId.POLYGON,
-  ChainId.FANTOM,
+  // ChainId.FANTOM,
   ChainId.BSC,
   ChainId.OPTIMISM,
 ] as const
