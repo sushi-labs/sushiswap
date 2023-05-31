@@ -7,6 +7,9 @@ interface Badge {
   className?: string
 }
 
+/**
+ * @deprecated
+ */
 export const Badge: FC<Badge> = ({ badgeContent, children, className }) => {
   return (
     <div className="relative">

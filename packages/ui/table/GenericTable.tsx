@@ -23,6 +23,9 @@ declare module '@tanstack/react-table' {
   }
 }
 
+/**
+ * @deprecated
+ */
 export const GenericTable = <T extends { id: string }>({
   table,
   HoverElement,

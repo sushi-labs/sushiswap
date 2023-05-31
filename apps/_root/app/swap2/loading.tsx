@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Transition } from '@headlessui/react'
-import { PepeIcon } from '@sushiswap/ui/icons/PepeIcon'
+import { SushiIcon } from '@sushiswap/ui'
 
 export default function Loading() {
   return (
@@ -19,7 +19,7 @@ export default function Loading() {
         leaveFrom="scale-[0.75]"
         leaveTo="scale-1"
       >
-        <PepeIcon width={256} height={256} className="sm:mr-2" />
+        <SushiIcon width={256} height={256} className="sm:mr-2" />
       </Transition>
     </div>
   )

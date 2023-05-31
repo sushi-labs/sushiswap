@@ -179,6 +179,35 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.THUNDERCORE]: 'sushiswap/blocks-thundercore',
 } as const
 
+
+export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
+  [ChainId.ETHEREUM]: 12,
+  [ChainId.GNOSIS]: 5,
+  [ChainId.POLYGON]: 2,
+  [ChainId.POLYGON_ZKEVM]: 5,
+  [ChainId.FANTOM]: 2,
+  [ChainId.BSC]: 3,
+  [ChainId.HARMONY]: 2,
+  [ChainId.AVALANCHE]: 2,
+  [ChainId.CELO]: 5,
+  [ChainId.ARBITRUM]: 0.25,
+  [ChainId.OKEX]: 3.8,
+  [ChainId.HECO]: 3,
+  [ChainId.MOONRIVER]: 12.2,
+  [ChainId.FUSE]: 5,
+  [ChainId.KOVAN]: 4,
+  [ChainId.MOONBEAM]: 12.2,
+  [ChainId.OPTIMISM]: 2,
+  [ChainId.KAVA]: 6.3,
+  [ChainId.METIS]: 4.5,
+  [ChainId.ARBITRUM_NOVA]: 1,
+  [ChainId.BOBA]: 1,
+  [ChainId.BOBA_AVAX]: 612,
+  [ChainId.BOBA_BNB]: 0.5,
+  [ChainId.BTTC]: 2,
+  [ChainId.THUNDERCORE]: 1,
+} as const
+
 export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.AVALANCHE]: 'sushiswap/exchange-avalanche',
   [ChainId.ARBITRUM]: 'sushiswap/exchange-arbitrum-backup',

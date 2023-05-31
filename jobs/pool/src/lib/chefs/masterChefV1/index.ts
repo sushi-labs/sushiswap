@@ -1,10 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI } from '@sushiswap/currency'
+import { SECONDS_BETWEEN_BLOCKS } from '@sushiswap/graph-config'
 import type { Address } from '@wagmi/core'
 import { daysInYear, secondsInDay } from 'date-fns'
 
 import { MASTERCHEF_ADDRESS } from '../../../config.js'
-import { getAverageBlockTime, getPairs, getTokenBalancesOf, getTokens } from '../../common/index.js'
+import { getPairs, getTokenBalancesOf, getTokens } from '../../common/index.js'
 import type { ChefReturn, Farm } from '../../types.js'
 import { getPoolInfos, getPoolLength, getTotalAllocPoint } from './fetchers.js'
 
@@ -16,7 +17,7 @@ export async function getMasterChefV1(): Promise<ChefReturn> {
     getPoolLength(),
     getTotalAllocPoint(),
     getTokens([SUSHI[ChainId.ETHEREUM].address], ChainId.ETHEREUM),
-    getAverageBlockTime(ChainId.ETHEREUM),
+    SECONDS_BETWEEN_BLOCKS[ChainId.ETHEREUM],
   ])
 
   const blocksPerDay = averageBlockTime ? secondsInDay / averageBlockTime : 0

@@ -45,6 +45,9 @@ export const DEFAULT_INPUT_CLASSNAME = classNames(
   DEFAULT_INPUT_PADDING
 )
 
+/**
+ * @deprecated
+ */
 export const Input = {
   Address,
   DatetimeLocal,

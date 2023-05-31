@@ -13,6 +13,9 @@ interface Breadcrumb {
   links: BreadcrumbLink[]
 }
 
+/**
+ * @deprecated
+ */
 export const Breadcrumb: FC<Breadcrumb> = ({ links, home }) => {
   return (
     <div className="flex items-center gap-2 mt-4">

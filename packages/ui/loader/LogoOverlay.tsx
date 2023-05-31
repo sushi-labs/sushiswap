@@ -3,6 +3,9 @@ import React, { FC, Fragment } from 'react'
 
 import { LogoLoader } from './LogoLoader'
 
+/**
+ * @deprecated
+ */
 export const LoadingOverlay: FC<{ show?: boolean }> = ({ show }) => {
   return (
     <Transition

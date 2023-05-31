@@ -1,5 +1,14 @@
 # @sushiswap/furo
 
+## 1.0.2
+
+### Patch Changes
+
+- Updated dependencies [813200e55]
+  - @sushiswap/currency@0.0.4
+  - @sushiswap/stargate@0.1.0
+  - @sushiswap/sushiswap@0.1.1
+
 ## 1.0.1
 
 ### Patch Changes

@@ -3,8 +3,7 @@ import { FC } from 'react'
 import { LoaderProps } from './types'
 
 /**
- * Takes in custom size and stroke for circle color, default to primary color as fill,
- * need ...rest for layered styles on top
+ * @deprecated
  */
 export const Loader: FC<LoaderProps> = ({ size = 16 }) => {
   return (

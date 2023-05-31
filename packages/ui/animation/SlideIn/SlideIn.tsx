@@ -31,6 +31,9 @@ export const useSlideInContext = () => {
   return useContext(SlideInContext)
 }
 
+/**
+ * @deprecated
+ */
 export const SlideIn: FC<RootProps> & {
   FromLeft: FC<FromLeft>
   FromRight: FC<FromRight>

@@ -28,4 +28,8 @@ export abstract class PoolCode {
   getSwapCodeForRouteProcessor2(_leg: RouteLeg, _route: MultiRoute, _to: string): string {
     return 'unimplemented'
   }
+
+  getSwapCodeForRouteProcessor4(leg: RouteLeg, route: MultiRoute, to: string): string {
+    return this.getSwapCodeForRouteProcessor2(leg, route, to)
+  }
 }

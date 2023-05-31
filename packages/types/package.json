@@ -46,7 +46,7 @@
     "typescript": "5.0.4"
   },
   "peerDependencies": {
-    "@wagmi/core": "0.10.10"
+    "@wagmi/core": "0.10.11"
   },
   "publishConfig": {
     "access": "public",
