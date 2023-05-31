@@ -13,7 +13,7 @@ export const PositionsTab = () => {
   return (
     <Container maxWidth="7xl" className="px-4 mx-auto">
       <Tab.Group defaultIndex={0} selectedIndex={tabPositions} onChange={setTabPositions}>
-        <div className="flex justify-between items-center">
+        <div className="flex flex-wrap justify-between items-center">
           <div className="flex items-center gap-3 mb-4">
             <Tab as={Fragment}>
               {({ selected }) => (
