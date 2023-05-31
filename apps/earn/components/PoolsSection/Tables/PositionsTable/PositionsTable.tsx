@@ -11,6 +11,7 @@ import { PositionQuickHoverTooltip } from './PositionQuickHoverTooltip'
 import { ClassicPoolIcon } from '@sushiswap/ui/future/components/icons'
 import { classNames } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from '../../../../config'
+import { usePoolFilters } from '../../../PoolsFiltersProvider'
 
 const COLUMNS = [NAME_COLUMN, VALUE_COLUMN, APR_COLUMN] as any
 
@@ -18,15 +19,24 @@ export const PositionsTable: FC = () => {
   const { address } = useAccount()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
-
+  const { chainIds, tokenSymbols } = usePoolFilters()
   const [sorting, setSorting] = useState<SortingState>([{ id: 'value', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
 
-  const { data: userPositions, isValidating } = useUserPositions({ id: address, chainIds: SUPPORTED_CHAIN_IDS })
+  const { data: positions, isValidating } = useUserPositions({ id: address, chainIds: SUPPORTED_CHAIN_IDS })
 
-  const _positions = useMemo(() => userPositions || [], [userPositions])
-
-  console.log('RENDER POSITIONS TABLE')
+  const _positions = useMemo(() => {
+    const _tokenSymbols = tokenSymbols?.filter((el) => el !== '') || []
+    return (positions || [])
+      ?.filter((el) => chainIds.includes(el.chainId))
+      .filter((el) =>
+        _tokenSymbols.length > 0
+          ? _tokenSymbols.some((symbol) => {
+              return [el.pool?.token0.symbol, el.pool?.token1.symbol].includes(symbol.toUpperCase())
+            })
+          : true
+      )
+  }, [chainIds, tokenSymbols, positions])
 
   const table = useReactTable<PositionWithPool>({
     data: _positions,
@@ -59,25 +69,15 @@ export const PositionsTable: FC = () => {
   }, [])
 
   return (
-    <>
-      <div className={classNames('w-full group')}>
-        <h1 className="flex items-center justify-between gap-2 px-4 py-4 text-sm font-semibold text-gray-700 group-hover:text-gray-900 dark:text-slate-200 dark:group-hover:text-slate-50 group-hover:dark:text-slate-50">
-          <span className="flex items-center gap-3">
-            <ClassicPoolIcon width={20} height={20} className="saturate-200" />{' '}
-            <div className="flex gap-1">Your Positions {userPositions ? `(${userPositions.length})` : ''}</div>
-          </span>
-        </h1>
-      </div>
-      <div className="mb-[120px]">
-        <GenericTable<PositionWithPool>
-          table={table}
-          HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
-          loading={isValidating}
-          placeholder="No positions found"
-          pageSize={Math.max(userPositions?.length || 0, 5)}
-          linkFormatter={rowLink}
-        />
-      </div>
-    </>
+    <div className="mb-[120px]">
+      <GenericTable<PositionWithPool>
+        table={table}
+        HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
+        loading={isValidating}
+        placeholder="No positions found"
+        pageSize={_positions?.length ? _positions.length : 1}
+        linkFormatter={rowLink}
+      />
+    </div>
   )
 }

@@ -65,9 +65,11 @@ export const PoolsSection: FC = () => {
           </div>
         </Container>
         <Tab.Panels className="bg-gray-50 dark:bg-white/[0.02] pt-4">
+          <Container maxWidth="7xl" className="px-4 mx-auto">
+            <TableFilters showCategories={tab === 0} />
+          </Container>
           <Tab.Panel unmount={false}>
             <Container maxWidth="7xl" className="px-4 mx-auto">
-              <TableFilters showAllFilters={tab === 0} />
               <PoolsTable />
             </Container>
           </Tab.Panel>

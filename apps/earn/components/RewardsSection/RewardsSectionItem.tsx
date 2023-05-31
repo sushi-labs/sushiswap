@@ -5,7 +5,6 @@ import { unwrapToken } from '../../lib/functions'
 import { formatNumber } from '@sushiswap/format'
 import React, { FC, useMemo, useState } from 'react'
 import { AngleRewardsPool } from '@sushiswap/react-query'
-import { ChainId } from '@sushiswap/chain'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 import { Collapsible } from '@sushiswap/ui/future/components/animation/Collapsible'
 import { format } from 'date-fns'
@@ -16,7 +15,6 @@ import { List } from '@sushiswap/ui/future/components/list/List'
 import { Explainer } from '@sushiswap/ui/future/components/Explainer'
 
 interface RewardsSectionItem {
-  chainId: ChainId
   data: AngleRewardsPool
 }
 
@@ -39,11 +37,11 @@ const rewardPerDay = ({
   return tryParseAmount(((amount / days) * (userTVL / tvl)).toFixed(8), token)
 }
 
-export const RewardsSectionItem: FC<RewardsSectionItem> = ({ chainId, data }) => {
+export const RewardsSectionItem: FC<RewardsSectionItem> = ({ data }) => {
   const { isMd } = useBreakpoint('md')
 
   const unclaimed = useMemo(() => Object.values(data.rewardsPerToken).map((el) => el.unclaimed), [data])
-  const dollarValues = useTokenAmountDollarValues({ chainId, amounts: unclaimed })
+  const dollarValues = useTokenAmountDollarValues({ chainId: data.chainId, amounts: unclaimed })
   const [open, setOpen] = useState(false)
 
   return (
@@ -58,7 +56,7 @@ export const RewardsSectionItem: FC<RewardsSectionItem> = ({ chainId, data }) =>
             <Badge
               className="border-2 border-gray-100 dark:border-slate-900 rounded-full z-[11] !bottom-0 right-[-15%]"
               position="bottom-right"
-              badgeContent={<NetworkIcon chainId={chainId} width={20} height={20} />}
+              badgeContent={<NetworkIcon chainId={data.chainId} width={20} height={20} />}
             >
               <Currency.IconList iconWidth={40} iconHeight={40}>
                 <Currency.Icon currency={data.token0} />
@@ -158,7 +156,7 @@ export const RewardsSectionItem: FC<RewardsSectionItem> = ({ chainId, data }) =>
                 <Badge
                   className="border-2 border-gray-100 dark:border-slate-900 rounded-full z-[11] !bottom-0 right-[-15%]"
                   position="bottom-right"
-                  badgeContent={<NetworkIcon chainId={chainId} width={20} height={20} />}
+                  badgeContent={<NetworkIcon chainId={data.chainId} width={20} height={20} />}
                 >
                   <Currency.IconList iconWidth={40} iconHeight={40}>
                     <Currency.Icon currency={data.token0} />

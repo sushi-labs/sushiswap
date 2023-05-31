@@ -1,5 +1,4 @@
-import { classNames } from '@sushiswap/ui'
-import React, { FC, useCallback, useMemo } from 'react'
+import React, { FC, useCallback } from 'react'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { TableFiltersSearchToken } from './TableFiltersSearchToken'
@@ -7,10 +6,7 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { TableFiltersNetwork } from './TableFiltersNetwork'
 import { Protocol } from '@sushiswap/client'
 
-export const TableFilters: FC<{ showAllFilters?: boolean; showCategories?: boolean }> = ({
-  showAllFilters = false,
-  showCategories = true,
-}) => {
+export const TableFilters: FC<{ showCategories?: boolean }> = ({ showCategories = true }) => {
   const { protocols, farmsOnly, setFilters } = usePoolFilters()
 
   const protocolHandler = useCallback(
@@ -40,17 +36,12 @@ export const TableFilters: FC<{ showAllFilters?: boolean; showCategories?: boole
       </div>
       {showCategories && (
         <div className="flex flex-wrap items-center gap-3">
-          <div
-            className={classNames(
-              showAllFilters ? 'opacity-100' : 'opacity-40 pointer-events-none',
-              'transition-opacity ease-in duration-150 flex gap-3 flex-wrap items-center'
-            )}
-          >
+          <div className="flex gap-3 flex-wrap items-center">
             <Button
               className="items-center gap-2.5"
               onClick={() => protocolHandler(Protocol.SUSHISWAP_V3)}
               size="sm"
-              variant={protocols?.includes(Protocol.SUSHISWAP_V3) ? 'outlined' : 'empty'}
+              variant="outlined"
               color={protocols?.includes(Protocol.SUSHISWAP_V3) ? 'blue' : 'default'}
             >
               <span>🍣</span>{' '}
@@ -62,7 +53,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean; showCategories?: boole
               className="gap-2.5"
               onClick={() => protocolHandler(Protocol.SUSHISWAP_V2)}
               size="sm"
-              variant={protocols?.includes(Protocol.SUSHISWAP_V2) ? 'outlined' : 'empty'}
+              variant="outlined"
               color={protocols?.includes(Protocol.SUSHISWAP_V2) ? 'blue' : 'default'}
             >
               <span>🍣</span>{' '}
@@ -75,7 +66,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean; showCategories?: boole
               className="flex items-center gap-2.5"
               onClick={() => protocolHandler(Protocol.BENTOBOX_STABLE)}
               size="sm"
-              variant={protocols?.includes(Protocol.BENTOBOX_STABLE) ? 'outlined' : 'empty'}
+              variant="outlined"
               color={protocols?.includes(Protocol.BENTOBOX_STABLE) ? 'blue' : 'default'}
             >
               <span className="mt-1">🍱</span>
@@ -85,7 +76,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean; showCategories?: boole
               className="flex items-center gap-2.5"
               onClick={() => protocolHandler(Protocol.BENTOBOX_CLASSIC)}
               size="sm"
-              variant={protocols?.includes(Protocol.BENTOBOX_CLASSIC) ? 'outlined' : 'empty'}
+              variant="outlined"
               color={protocols?.includes(Protocol.BENTOBOX_CLASSIC) ? 'blue' : 'default'}
             >
               <span className="mt-1">🍱</span>
@@ -94,7 +85,7 @@ export const TableFilters: FC<{ showAllFilters?: boolean; showCategories?: boole
             <Button
               onClick={() => farmsHandler()}
               size="sm"
-              variant={farmsOnly ? 'outlined' : 'empty'}
+              variant="outlined"
               color={farmsOnly ? 'blue' : 'default'}
               className="flex gap-2.5"
             >

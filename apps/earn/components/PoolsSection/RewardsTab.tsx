@@ -3,7 +3,6 @@ import React, { Fragment, useState } from 'react'
 import { Tab } from '@headlessui/react'
 import { Button } from '@sushiswap/ui/future/components/button'
 import Container from '@sushiswap/ui/future/components/Container'
-import { TableFilters } from './Tables/TableFilters'
 
 export const RewardsTab = () => {
   const [tabPositions, setTabPositions] = useState<number>(0)
@@ -11,7 +10,6 @@ export const RewardsTab = () => {
   return (
     <Tab.Group defaultIndex={0} selectedIndex={tabPositions} onChange={setTabPositions}>
       <Container maxWidth="7xl" className="px-4 mx-auto">
-        <TableFilters showCategories={false} />
         <div className="flex items-center gap-2 mb-4">
           <Tab as={Fragment}>
             {({ selected }) => (

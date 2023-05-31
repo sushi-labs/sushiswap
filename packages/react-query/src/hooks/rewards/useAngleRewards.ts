@@ -14,6 +14,7 @@ type TransformedRewardsPerToken = Record<string, {
 }>
 
 export type AngleRewardsPool = Omit<z.infer<typeof angleRewardsPoolsValidator>, 'rewardsPerToken' | 'token0' | 'token1' | 'distributionData'> & {
+    chainId: ChainId
     distributionData: Array<Omit<z.infer<typeof angleRewardsPoolsValidator>['distributionData'][0], 'token'> & { token: Token}>
     rewardsPerToken: TransformedRewardsPerToken
     token0: Token
@@ -44,6 +45,7 @@ export const angleRewardsSelect = (chainId: ChainId, data: Awaited<ReturnType<ty
         pools: Object.entries(data.pools).reduce<TransformedPools>((acc, [a, b]) => {
             acc[a] = {
                 ...b,
+                chainId,
                 distributionData: b.distributionData.reduce<Array<Omit<z.infer<typeof angleRewardsPoolsValidator>['distributionData'][0], 'token'> & { token: Token}>>((acc, el) => {
                     if (el.tokenSymbol !== 'aglaMerkl') {
                         acc.push({
