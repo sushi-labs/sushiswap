@@ -65,9 +65,23 @@ const eventsAbi = [
   parseAbiItem(
     'event Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)'
   ),
+  parseAbiItem(
+    'event Collect(address indexed owner, address recipient, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount0, uint128 amount1)'
+  ),
+  parseAbiItem(
+    'event Burn(address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)'
+  ),
+  parseAbiItem(
+    'event Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)'
+  ),
+  parseAbiItem(
+    'event Flash(address indexed sender, address indexed recipient, uint256 amount0, uint256 amount1, uint256 paid0, uint256 paid1)'
+  ),
+  parseAbiItem(
+    'event CollectProtocol(address indexed sender, address indexed recipient, uint128 amount0, uint128 amount1)'
+  ),
 ]
 
-// TODO: add ticks if price chages
 // TODO: more ticks and priority depending on resources
 export class UniV3PoolWatcher {
   address: Address
@@ -180,6 +194,7 @@ export class UniV3PoolWatcher {
   }
 
   updatePoolState() {
+    // TODO: some words could appear to be not updated. Remove them?
     this.startWatching()
   }
 
@@ -191,12 +206,18 @@ export class UniV3PoolWatcher {
     if (l.blockNumber == null) return
     const data = decodeEventLog({ abi: eventsAbi, data: l.data, topics: l.topics })
     switch (data.eventName) {
-      case 'Mint': {
-        const { tickLower, tickUpper, amount, amount0, amount1 } = data.args
+      case 'Mint':
+      case 'Burn': {
+        let { amount, amount0, amount1 } = data.args
+        if (data.eventName == 'Burn') {
+          amount = amount === undefined ? undefined : -amount
+          amount0 = amount0 === undefined ? undefined : -amount0
+          amount1 = amount1 === undefined ? undefined : -amount1
+        }
+        const { tickLower, tickUpper } = data.args
         if (this.state !== undefined && l.blockNumber > this.state.blockNumber) {
           if (tickLower !== undefined && tickUpper !== undefined && amount) {
             const tick = this.state.tick
-            // TODO: tick < tickUpper - is it correct ?
             if (tickLower <= tick && tick < tickUpper) this.state.liquidity += amount
           }
           if (amount1 !== undefined && amount0 !== undefined) {
@@ -208,8 +229,44 @@ export class UniV3PoolWatcher {
           this.addTick(l.blockNumber, tickLower, amount)
           this.addTick(l.blockNumber, tickUpper, -amount)
         }
+        break
       }
-      // TODO: other listeners
+      case 'Collect':
+      case 'CollectProtocol': {
+        if (this.state !== undefined && l.blockNumber > this.state.blockNumber) {
+          const { amount0, amount1 } = data.args
+          if (amount0 !== undefined && amount1 !== undefined) {
+            this.state.reserve0 -= amount0
+            this.state.reserve1 -= amount1
+          }
+        }
+        break
+      }
+      case 'Flash': {
+        if (this.state !== undefined && l.blockNumber > this.state.blockNumber) {
+          const { paid0, paid1 } = data.args
+          if (paid0 !== undefined && paid1 !== undefined) {
+            this.state.reserve0 += paid0
+            this.state.reserve1 += paid1
+          }
+        }
+        break
+      }
+      case 'Swap': {
+        if (this.state !== undefined && l.blockNumber > this.state.blockNumber) {
+          const { amount0, amount1, sqrtPriceX96, liquidity, tick } = data.args
+          if (amount0 !== undefined && amount1 !== undefined) {
+            this.state.reserve0 -= amount0
+            this.state.reserve1 -= amount1
+          }
+          if (sqrtPriceX96 !== undefined) this.state.sqrtPriceX96 = sqrtPriceX96
+          if (liquidity !== undefined) this.state.liquidity = liquidity
+          if (tick !== undefined) this.state.tick = Math.floor(tick / this.spacing) * this.spacing
+          // TODO: new words watching
+        }
+        break
+      }
+      default:
     }
   }
 
@@ -232,6 +289,7 @@ export class UniV3PoolWatcher {
         else if (index > tick) end = index
         else {
           ticks[middle].DLiquidity = ticks[middle].DLiquidity.add(amount)
+          if (ticks[middle].DLiquidity.isZero()) ticks.splice(middle, 1)
           return
         }
       }

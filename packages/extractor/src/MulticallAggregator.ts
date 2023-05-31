@@ -51,7 +51,6 @@ export class MultiCallAggregator {
   ): Promise<{ blockNumber: number; returnValues: unknown[] }> {
     if (functions.length == 0) return { blockNumber: -1, returnValues: [] }
     this.sheduleMulticall()
-    // TODO: make it really unseparated !!!!!
     const res = await Promise.all(functions.map(([name, args]) => this.call(address, abi, name, args)))
     return { blockNumber: res[0].blockNumber, returnValues: res.map(({ returnValue }) => returnValue) }
   }
@@ -61,7 +60,6 @@ export class MultiCallAggregator {
   ): Promise<{ blockNumber: number; returnValues: unknown[] }> {
     if (calls.length == 0) return { blockNumber: -1, returnValues: [] }
     this.sheduleMulticall()
-    // TODO: make it really unseparated !!!!!
     const res = await Promise.all(
       calls.map(({ address, abi, functionName, args }) => this.call(address, abi, functionName, args as unknown[]))
     )

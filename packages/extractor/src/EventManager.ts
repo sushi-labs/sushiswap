@@ -4,6 +4,7 @@ import { Filter } from 'viem/dist/types/types/filter'
 
 type LogCallBack = (Log) => void
 
+// TODO: last 100 block events cache + all events after block
 export class EventManager {
   client: PublicClient
   filterMap: Map<number, [Filter, LogCallBack]> = new Map()
