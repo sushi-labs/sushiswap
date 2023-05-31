@@ -8,6 +8,7 @@ import { Typography } from '../../../typography'
 import classNames from 'classnames'
 import { Popover } from '../Popover'
 import { useIsMounted } from '@sushiswap/hooks'
+import Row from './Row'
 
 interface GenericTableProps<C> {
   table: ReactTableType<C>
@@ -20,6 +21,7 @@ interface GenericTableProps<C> {
   headRowHeight?: number
   rowHeight?: number
   testId?: string
+  onClick?(row: C): void
 }
 
 declare module '@tanstack/react-table' {
@@ -40,17 +42,24 @@ export const GenericTable = <T extends { id: string }>({
   headRowHeight = 48,
   rowHeight = 78,
   testId,
+  onClick: _onClick,
 }: GenericTableProps<T>) => {
   const isMounted = useIsMounted()
   const [showOverlay, setShowOverlay] = useState(false)
   const [, setPopupInvisible] = useState(false)
 
-  const onClick = useCallback((e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
-    if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
-      setPopupInvisible(true)
-      setTimeout(() => setShowOverlay(true), 250)
-    }
-  }, [])
+  const onClick = useCallback(
+    (e: React.MouseEvent<HTMLTableRowElement, MouseEvent>, row: T) => {
+      if (_onClick) {
+        _onClick(row)
+      } else if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
+        setPopupInvisible(true)
+        setTimeout(() => setShowOverlay(true), 250)
+      }
+    },
+    [_onClick]
+  )
+
   return (
     <>
       {loadingOverlay && <LoadingOverlay show={showOverlay} />}
@@ -124,8 +133,8 @@ export const GenericTable = <T extends { id: string }>({
                       <Popover.Button>
                         <Table.tr
                           testId={`${testId}-${r}-tr`}
-                          onClick={onClick}
-                          className="cursor-pointer"
+                          onClick={(e) => onClick(e, row.original)}
+                          className={linkFormatter || _onClick ? 'cursor-pointer' : ''}
                           rowHeight={rowHeight}
                         >
                           {row.getVisibleCells().map((cell, i) => {
@@ -181,9 +190,9 @@ export const GenericTable = <T extends { id: string }>({
                   return (
                     <Table.tr
                       testId={`${testId}-${r}-tr`}
-                      onClick={onClick}
+                      onClick={(e) => onClick(e, row.original)}
                       key={row.id}
-                      className="cursor-pointer"
+                      className={linkFormatter || _onClick ? 'cursor-pointer' : ''}
                       rowHeight={rowHeight}
                     >
                       {row.getVisibleCells().map((cell, i) => {

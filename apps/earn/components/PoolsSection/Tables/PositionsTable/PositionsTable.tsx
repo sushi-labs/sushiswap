@@ -8,8 +8,6 @@ import { PositionWithPool } from '../../../../types'
 
 import { APR_COLUMN, NAME_COLUMN, VALUE_COLUMN } from './Cells/columns'
 import { PositionQuickHoverTooltip } from './PositionQuickHoverTooltip'
-import { ClassicPoolIcon } from '@sushiswap/ui/future/components/icons'
-import { classNames } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from '../../../../config'
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 

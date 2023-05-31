@@ -15,17 +15,14 @@ export const useAngleRewardsMultipleChains = ({ chainIds, account }: UseAngleRew
         queryFn: async () => {
             if (account) {
                 const res = await Promise.all(chainIds.map(chainId => angleRewardsQueryFn({chainId, account})))
-                return angleRewardsMultipleValidator.parse(res)
+                const parsed = angleRewardsMultipleValidator.parse(res)
+                return parsed.map((el, i) => ({
+                    chainId: chainIds[i],
+                    ...angleRewardsSelect(chainIds[i], el),
+                }))
             }
 
             return null
-        },
-        select: (data) => {
-            if (!data) return undefined
-            return data.map((el, i) => ({
-                chainId: chainIds[i],
-                ...angleRewardsSelect(chainIds[i], el),
-            }))
         },
         staleTime: 15000, // 15 seconds
         cacheTime: 60000 // 1min

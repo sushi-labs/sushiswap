@@ -1,20 +1,53 @@
-import React, { FC, useMemo } from 'react'
-import { useAngleRewardsMultipleChains } from '@sushiswap/react-query'
-import { ChainId } from '@sushiswap/chain'
+import React, { FC, useEffect, useMemo, useState } from 'react'
+import { AngleRewardsPool, useAngleRewardsMultipleChains } from '@sushiswap/react-query'
 import { Carousel } from '@sushiswap/ui/future/components/Carousel'
 import { RewardSlide } from './RewardSlide'
 import { useAccount } from 'wagmi'
-import { RewardsSectionItem } from './RewardsSectionItem'
 import Container from '@sushiswap/ui/future/components/Container'
 import { usePoolFilters } from '../PoolsFiltersProvider'
+import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
+import { useBreakpoint, useEffectDebugger } from '@sushiswap/hooks'
+import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
+import {
+  REWARDS_V3_APR_COLUMN,
+  REWARDS_V3_CLAIMABLE_COLUMN,
+  REWARDS_V3_NAME_COLUMN,
+  REWARDS_V3_POSITION_SIZE_COLUMN,
+} from './Tables/RewardsTableV3'
+import { ANGLE_ENABLED_NETWORKS } from '../../config'
+import { Dialog } from '@sushiswap/ui/future/components/dialog'
+import { Badge } from '@sushiswap/ui/future/components/Badge'
+import { NetworkIcon } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui/future/components/currency'
+import { unwrapToken } from '../../lib/functions'
+import { List } from '@sushiswap/ui/future/components/list/List'
+import { formatNumber } from '@sushiswap/format'
+import { format } from 'date-fns'
+import { Explainer } from '@sushiswap/ui/future/components/Explainer'
+import { RewardsTableV3RowPopover } from './Tables/RewardsTableV3/RewardsTableV3RowPopover'
+
+const COLUMNS = [
+  REWARDS_V3_NAME_COLUMN,
+  REWARDS_V3_POSITION_SIZE_COLUMN,
+  REWARDS_V3_APR_COLUMN,
+  REWARDS_V3_CLAIMABLE_COLUMN,
+] as any
 
 export const RewardsSection: FC = () => {
+  const [clickedRow, setClickedRow] = useState<AngleRewardsPool>()
   const { address } = useAccount()
+  const { isSm } = useBreakpoint('sm')
+  const { isMd } = useBreakpoint('md')
   const { chainIds, tokenSymbols } = usePoolFilters()
-  const { data } = useAngleRewardsMultipleChains({
-    chainIds: [ChainId.POLYGON],
+  const { data, isInitialLoading } = useAngleRewardsMultipleChains({
+    chainIds: ANGLE_ENABLED_NETWORKS,
     account: address,
   })
+
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'positionSize', desc: true }])
+  const [columnVisibility, setColumnVisibility] = useState({})
+
+  useEffectDebugger(() => {}, [chainIds, tokenSymbols, data])
 
   const positions = useMemo(() => {
     const _tokenSymbols = tokenSymbols?.filter((el) => el !== '') || []
@@ -34,6 +67,32 @@ export const RewardsSection: FC = () => {
       .flat()
   }, [chainIds, tokenSymbols, data])
 
+  const table = useReactTable<AngleRewardsPool>({
+    data: positions,
+    state: {
+      sorting,
+      columnVisibility,
+    },
+    columns: COLUMNS,
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    debugAll: true,
+  })
+
+  useEffect(() => {
+    if (isSm && !isMd) {
+      setColumnVisibility({ claimable: false })
+    } else if (isSm) {
+      setColumnVisibility({})
+    } else {
+      setColumnVisibility({
+        claimable: false,
+        apr: false,
+      })
+    }
+  }, [isMd, isSm])
+
   return (
     <>
       <div className="pl-4 xl:pl-2">
@@ -50,14 +109,22 @@ export const RewardsSection: FC = () => {
         />
       </div>
       <Container maxWidth="7xl" className="px-4 mx-auto mb-[120px]">
-        <h1 className="font-medium text-sm my-2 text-gray-700 dark:text-slate-200">
-          Positions that are receiving rewards ({positions.length})
-        </h1>
-        <div className="flex flex-col gap-4">
-          {positions.map((item, i) => {
-            return <RewardsSectionItem data={item} key={i} />
-          })}
-        </div>
+        <GenericTable<AngleRewardsPool>
+          loadingOverlay={false}
+          table={table}
+          loading={isInitialLoading}
+          placeholder="No positions found"
+          pageSize={positions?.length ? positions.length : 1}
+          HoverElement={isMd ? RewardsTableV3RowPopover : undefined}
+          onClick={!isMd ? setClickedRow : undefined}
+        />
+        {clickedRow && !isMd && (
+          <Dialog appear open={true} onClose={() => setClickedRow(undefined)}>
+            <Dialog.Content>
+              <RewardsTableV3RowPopover row={clickedRow} />
+            </Dialog.Content>
+          </Dialog>
+        )}
       </Container>
     </>
   )

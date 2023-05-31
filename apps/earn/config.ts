@@ -37,3 +37,5 @@ export const AMM_ENABLED_NETWORKS: ChainId[] = [
 export const SUPPORTED_CHAIN_IDS: ChainId[] = Array.from(
   new Set([...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS, ...V3_SUPPORTED_CHAIN_IDS])
 )
+
+export const ANGLE_ENABLED_NETWORKS = [ChainId.POLYGON]
