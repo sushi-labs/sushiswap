@@ -482,8 +482,6 @@ export const STARGATE_TOKEN = new Token({
   name: 'StargateToken',
 })
 
-export type StargateChainId = keyof typeof STARGATE_CHAIN_ID
-
 export type StargateBridgeTokens = (typeof STARGATE_BRIDGE_TOKENS)[StargateChainId]
 
 export type StargateBridgeToken = StargateBridgeTokens[number]
@@ -497,3 +495,5 @@ export const STARGATE_SUPPORTED_CHAIN_IDS = [
   ChainId.BSC,
   ChainId.OPTIMISM,
 ] as const
+
+export type StargateChainId = (typeof STARGATE_SUPPORTED_CHAIN_IDS)[number]
