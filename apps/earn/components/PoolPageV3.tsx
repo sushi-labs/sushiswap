@@ -197,7 +197,7 @@ const Pool: FC = () => {
       <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
       <div className={tab === SelectedTab.Analytics ? 'block' : 'hidden'}>
         <div>
-          <div className="grid md:grid-cols-[404px_auto] gap-10">
+          <div className="grid md:grid-cols-[auto_404px] gap-10">
             <PoolChart
               isLoading={isGraphDataLoading}
               data={graphData}
@@ -205,7 +205,7 @@ const Pool: FC = () => {
               charts={['Volume', 'TVL', 'Fees']}
             />
             <div className="flex flex-col gap-6">
-              <List className="pt-0 !gap-1">
+              <List className="!pt-0 !gap-1">
                 <List.Label className="flex justify-end">
                   <RadioGroup value={granularity} onChange={setGranularity} className="flex">
                     <RadioGroup.Option
