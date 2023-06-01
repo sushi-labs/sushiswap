@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { AngleRewardsPool, useAngleRewardsMultipleChains } from '@sushiswap/react-query'
 import { Carousel } from '@sushiswap/ui/future/components/Carousel'
 import { RewardSlide } from './RewardSlide'
@@ -17,6 +17,7 @@ import {
 import { ANGLE_ENABLED_NETWORKS } from '../../config'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { RewardsTableV3RowPopover } from './Tables/RewardsTableV3/RewardsTableV3RowPopover'
+import { Pool } from '@sushiswap/client'
 
 const COLUMNS = [
   REWARDS_V3_NAME_COLUMN,
@@ -85,6 +86,10 @@ export const RewardsSection: FC = () => {
     }
   }, [isMd, isSm])
 
+  const rowLink = useCallback((row: AngleRewardsPool) => {
+    return `/${row.id}`
+  }, [])
+
   return (
     <>
       <div className="pl-4 xl:pl-2">
@@ -102,13 +107,13 @@ export const RewardsSection: FC = () => {
       </div>
       <Container maxWidth="7xl" className="px-4 mx-auto mb-[120px]">
         <GenericTable<AngleRewardsPool>
-          loadingOverlay={false}
           table={table}
           loading={isInitialLoading}
           placeholder="No positions found"
           pageSize={positions?.length ? positions.length : 1}
           HoverElement={isMd ? RewardsTableV3RowPopover : undefined}
           onClick={!isMd ? setClickedRow : undefined}
+          linkFormatter={rowLink}
         />
         {clickedRow && !isMd && (
           <Dialog appear open={true} onClose={() => setClickedRow(undefined)}>
