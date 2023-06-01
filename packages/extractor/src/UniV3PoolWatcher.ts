@@ -81,6 +81,7 @@ export class UniV3PoolWatcher {
   client: MultiCallAggregator
   wordLoadManager: WordLoadManager
   state?: UniV3PoolSelfState
+  updatePoolStateGuard = false
 
   constructor(
     providerName: string,
@@ -104,32 +105,35 @@ export class UniV3PoolWatcher {
   }
 
   async updatePoolState() {
-    const {
-      blockNumber,
-      returnValues: [slot0, liquidity, balance0, balance1],
-    } = await this.client.callSameBlock([
-      { address: this.address, abi: slot0Abi, functionName: 'slot0' },
-      { address: this.address, abi: liquidityAbi, functionName: 'liquidity' },
-      { address: this.token0.address as Address, abi: erc20Abi, functionName: 'balanceOf', args: [this.address] },
-      { address: this.token1.address as Address, abi: erc20Abi, functionName: 'balanceOf', args: [this.address] },
-    ])
+    if (!this.updatePoolStateGuard) {
+      this.updatePoolStateGuard = true
+      const {
+        blockNumber,
+        returnValues: [slot0, liquidity, balance0, balance1],
+      } = await this.client.callSameBlock([
+        { address: this.address, abi: slot0Abi, functionName: 'slot0' },
+        { address: this.address, abi: liquidityAbi, functionName: 'liquidity' },
+        { address: this.token0.address as Address, abi: erc20Abi, functionName: 'balanceOf', args: [this.address] },
+        { address: this.token1.address as Address, abi: erc20Abi, functionName: 'balanceOf', args: [this.address] },
+      ])
 
-    const [sqrtPriceX96, tick] = slot0 as [bigint, number]
-    this.state = {
-      blockNumber,
-      reserve0: balance0 as bigint,
-      reserve1: balance1 as bigint,
-      tick: Math.floor(tick / this.spacing) * this.spacing,
-      liquidity: liquidity as bigint,
-      sqrtPriceX96: sqrtPriceX96 as bigint,
+      const [sqrtPriceX96, tick] = slot0 as [bigint, number]
+      this.state = {
+        blockNumber,
+        reserve0: balance0 as bigint,
+        reserve1: balance1 as bigint,
+        tick: Math.floor(tick / this.spacing) * this.spacing,
+        liquidity: liquidity as bigint,
+        sqrtPriceX96: sqrtPriceX96 as bigint,
+      }
+
+      this.wordLoadManager.onPoolTickChange(this.state.tick, true)
+      this.updatePoolStateGuard = false
     }
-
-    this.wordLoadManager.onPoolTickChange(this.state.tick, true)
   }
 
   processLog(l: Log) {
     if (l.removed) {
-      // TODO: multiple call protection
       this.updatePoolState()
       return
     }
