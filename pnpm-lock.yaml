@@ -828,6 +828,7 @@ importers:
       next: 13.4.3
       next-seo: 5.15.0
       next-sitemap: 3.1.43
+      next-themes: 0.2.1
       numeral: 2.0.6
       postcss: 8.4.23
       react: 18.2.0
@@ -894,6 +895,7 @@ importers:
       next: 13.4.3_biqbaboplfbrettd7655fr4n2y
       next-seo: 5.15.0_o6dt4yn4syzkhlixdxt4y57rzi
       next-sitemap: 3.1.43_next@13.4.3
+      next-themes: 0.2.1_o6dt4yn4syzkhlixdxt4y57rzi
       numeral: 2.0.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -11646,7 +11648,7 @@ packages:
   /@types/concat-stream/1.6.1:
     resolution: {integrity: sha512-eHE4cQPoj6ngxBZMvVf6Hw7Mh4jMW4U9lpGmS5GBPB9RYxlFg+CHaVN7ErNY4W9XfLIEn20b4VDYaIrbq0q4uA==}
     dependencies:
-      '@types/node': 18.11.18
+      '@types/node': 20.2.3
     dev: true
 
   /@types/connect-timeout/0.0.36:
@@ -11928,7 +11930,7 @@ packages:
   /@types/form-data/0.0.33:
     resolution: {integrity: sha512-8BSvG1kGm83cyJITQMZSulnl6QV8jqAGreJsc5tPu1Jq0vTSOiY/k24Wx82JRpWwZSqrala6sd5rWi6aNXvqcw==}
     dependencies:
-      '@types/node': 18.11.18
+      '@types/node': 20.2.3
     dev: true
 
   /@types/geojson/7946.0.10:
@@ -12025,7 +12027,7 @@ packages:
   /@types/keyv/3.1.4:
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
     dependencies:
-      '@types/node': 18.11.18
+      '@types/node': 20.2.3
 
   /@types/linkify-it/3.0.2:
     resolution: {integrity: sha512-HZQYqbiFVWufzCwexrvh694SOim8z2d+xJl5UNamcvQFejLY/2YUtzXHYi3cHdI7PMlS8ejH2slRAOJQ32aNbA==}
@@ -14194,7 +14196,7 @@ packages:
       '@walletconnect/types': 2.7.2
       '@walletconnect/universal-provider': 2.7.2
       '@walletconnect/utils': 2.7.2
-      '@web3modal/standalone': 2.4.1
+      '@web3modal/standalone': 2.4.1_react@18.2.0
       events: 3.3.0
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
@@ -15481,7 +15483,7 @@ packages:
   /axios/0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
-      follow-redirects: 1.15.2
+      follow-redirects: 1.15.2_debug@4.3.4
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
@@ -30497,7 +30499,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.2
+      follow-redirects: 1.15.2_debug@4.3.4
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
