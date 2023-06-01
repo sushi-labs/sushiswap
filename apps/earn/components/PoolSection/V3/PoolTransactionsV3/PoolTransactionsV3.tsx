@@ -2,7 +2,7 @@ import { Pool } from '@sushiswap/v3-sdk'
 import React, { FC, useMemo, useState } from 'react'
 import { Transaction, TransactionType, useTransactionsV3 } from './useTransactionsV3'
 import { getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
-import { AMOUNT_IN_COLUMN, AMOUNT_OUT_COLUMN, AMOUNT_USD_COLUMN, TIME_COLUMN, TYPE_COLUMN } from './columns'
+import { AMOUNT_IN_COLUMN, AMOUNT_OUT_COLUMN, AMOUNT_USD_COLUMN, SENDER_COLUMN, TIME_COLUMN } from './columns'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { Chain } from '@sushiswap/chain'
 import { Paginator } from '@sushiswap/ui/table/Paginator'
@@ -23,7 +23,7 @@ export const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }
   const [pageIndex, setPageIndex] = useState<number>(0)
 
   const COLUMNS = useMemo(() => {
-    return [TYPE_COLUMN, AMOUNT_IN_COLUMN(type), AMOUNT_OUT_COLUMN(type), AMOUNT_USD_COLUMN, TIME_COLUMN]
+    return [SENDER_COLUMN, AMOUNT_IN_COLUMN(type), AMOUNT_OUT_COLUMN(type), AMOUNT_USD_COLUMN, TIME_COLUMN]
   }, [type])
 
   const opts = useMemo(
