@@ -45,7 +45,19 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
                 <List.Label className="!text-[10px] !px-4 pt-4 uppercase font-semibold !text-gray-400 !dark:text-slate-500">
                   Farm {i + 1}
                 </List.Label>
-                <List.KeyValue flex title="Reward" subtitle="per day">
+                <List.KeyValue
+                  flex
+                  title={
+                    <div className="flex gap-1 items-center">
+                      Reward
+                      <Explainer hover iconSize={16} placement="bottom">
+                        Your share calculated as your LP divided by the total LP in the pool multiplied by the rewards
+                        set per day.
+                      </Explainer>
+                    </div>
+                  }
+                  subtitle="per day"
+                >
                   <div className="flex items-center gap-2">
                     <Currency.Icon currency={token} width={18} height={18} />
                     {rewardPerDay({
@@ -72,7 +84,7 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
                   title={
                     <div className="flex gap-1 items-center">
                       Details
-                      <Explainer iconSize={16} placement="bottom">
+                      <Explainer hover iconSize={16} placement="bottom">
                         Weight that fees earned by positions represent in their rewards score. A higher % means that
                         more rewards will be attributed to positions that earn more fees during the distribution.
                       </Explainer>
