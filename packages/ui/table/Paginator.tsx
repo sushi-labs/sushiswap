@@ -1,9 +1,8 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { FC } from 'react'
 
-import { IconButton } from '../iconbutton'
 import { classNames } from '../index'
-import { Typography } from '../typography'
+import { IconButton } from '../future/components/IconButton'
 
 export interface PaginatorProps {
   hasPrev: boolean
@@ -29,8 +28,8 @@ export const Paginator: FC<PaginatorProps> = ({
   pageSize,
 }) => {
   return (
-    <div className="flex justify-between items-center px-2 h-14">
-      <Typography variant="sm">
+    <div className="flex justify-between items-center px-4 h-14 border-t border-gray-200 dark:!border-slate-200/5">
+      <span className="text-sm text-gray-600 dark:text-slate-400">
         Showing <b>{page * pageSize + 1}</b> to <b>{(page + 1) * pageSize}</b>{' '}
         {pages ? (
           <>
@@ -39,27 +38,30 @@ export const Paginator: FC<PaginatorProps> = ({
         ) : (
           ''
         )}
-      </Typography>
+      </span>
       <div className="flex items-center gap-3">
         <div className="flex items-center">
-          <IconButton className={classNames(hasPrev ? '' : 'pointer-events-none opacity-40', 'p-1')} onClick={onPrev}>
-            <ChevronLeftIcon className="text-slate-200" width={20} height={20} />
-          </IconButton>
+          <IconButton
+            icon={ChevronLeftIcon}
+            iconProps={{ width: 20, height: 20 }}
+            className={classNames(hasPrev ? '' : 'pointer-events-none opacity-40', 'p-1')}
+            onClick={onPrev}
+          />
         </div>
         {pages ? (
-          <div className="text-base text-slate-200">
+          <span className="text-sm text-gray-600 dark:text-slate-400">
             <b>{page + 1}</b> of <b>{pages}</b>
-          </div>
+          </span>
         ) : (
           ''
         )}
         <div className="flex items-center">
           <IconButton
+            icon={ChevronRightIcon}
+            iconProps={{ width: 20, height: 20 }}
             className={classNames(!hasNext || (!pages && nextDisabled) ? 'pointer-events-none opacity-40' : '', 'p-1')}
             onClick={onNext}
-          >
-            <ChevronRightIcon className="text-slate-200" width={20} height={20} />
-          </IconButton>
+          />
         </div>
       </div>
     </div>
