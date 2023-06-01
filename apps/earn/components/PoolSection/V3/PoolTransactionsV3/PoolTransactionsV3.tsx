@@ -68,18 +68,6 @@ export const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }
             </Button>
           )}
         </RadioGroup.Option>
-        <RadioGroup.Option value={TransactionType.Burn}>
-          {({ checked }) => (
-            <Button
-              size="xs"
-              variant={checked ? 'outlined' : 'empty'}
-              color={checked ? 'blue' : 'default'}
-              className="!h-[24px] font-bold"
-            >
-              Remove liquidity
-            </Button>
-          )}
-        </RadioGroup.Option>
         <RadioGroup.Option value={TransactionType.Mint}>
           {({ checked }) => (
             <Button
@@ -89,6 +77,18 @@ export const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }
               className="!h-[24px] font-bold"
             >
               Add liquidity
+            </Button>
+          )}
+        </RadioGroup.Option>
+        <RadioGroup.Option value={TransactionType.Burn}>
+          {({ checked }) => (
+            <Button
+              size="xs"
+              variant={checked ? 'outlined' : 'empty'}
+              color={checked ? 'blue' : 'default'}
+              className="!h-[24px] font-bold"
+            >
+              Remove liquidity
             </Button>
           )}
         </RadioGroup.Option>
