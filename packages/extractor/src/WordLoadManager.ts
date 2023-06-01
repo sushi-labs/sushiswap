@@ -29,6 +29,7 @@ export class WordLoadManager {
   words: Map<number, WordState> = new Map()
   downloadQueue: number[] = []
   downloadCycleIsStared = false
+  latestEventBlockNumber = 0
 
   constructor(poolAddress: Address, poolSpacing: number, tickHelperContract: Address, client: MultiCallAggregator) {
     this.poolAddress = poolAddress
@@ -62,7 +63,7 @@ export class WordLoadManager {
               DLiquidity: BigNumber.from(liquidityNet),
             })),
           })
-          this.downloadQueue.pop()
+          if (blockNumber >= this.latestEventBlockNumber) this.downloadQueue.pop()
         }
       }
       this.downloadCycleIsStared = false
@@ -125,6 +126,8 @@ export class WordLoadManager {
   }
 
   addTick(eventBlockNumber: bigint, tick: number, amount: bigint) {
+    this.latestEventBlockNumber = Math.max(this.latestEventBlockNumber, Number(eventBlockNumber))
+
     const tickWord = this.wordIndex(tick)
     const state = this.words.get(tickWord)
     if (state !== undefined) {
