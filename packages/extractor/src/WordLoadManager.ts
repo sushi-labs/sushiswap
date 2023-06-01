@@ -28,7 +28,7 @@ export class WordLoadManager {
 
   words: Map<number, WordState> = new Map()
   downloadQueue: number[] = []
-  downloadingNow = false
+  downloadCycleIsStared = false
 
   constructor(poolAddress: Address, poolSpacing: number, tickHelperContract: Address, client: MultiCallAggregator) {
     this.poolAddress = poolAddress
@@ -41,9 +41,9 @@ export class WordLoadManager {
     return Math.floor(tick / this.poolSpacing / 256)
   }
 
-  async downloadNext() {
-    if (!this.downloadingNow) {
-      this.downloadingNow = true
+  async startDownloadCycle() {
+    if (!this.downloadCycleIsStared) {
+      this.downloadCycleIsStared = true
       while (this.downloadQueue.length > 0) {
         const wordIndex = this.downloadQueue[this.downloadQueue.length - 1]
         const { blockNumber, returnValue: ticks } = await this.client.call<{ tick: bigint; liquidityNet: bigint }[]>(
@@ -65,7 +65,7 @@ export class WordLoadManager {
           this.downloadQueue.pop()
         }
       }
-      this.downloadingNow = false
+      this.downloadCycleIsStared = false
     }
   }
 
@@ -94,7 +94,7 @@ export class WordLoadManager {
     if (pendingWord !== undefined) queue.push(pendingWord)
     this.downloadQueue = queue
 
-    this.downloadNext()
+    this.startDownloadCycle()
   }
 
   getMaxTickDiapason(tick: number): CLTick[] {
