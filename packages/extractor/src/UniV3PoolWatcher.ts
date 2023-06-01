@@ -47,7 +47,7 @@ const liquidityAbi: Abi = [
   },
 ]
 
-const eventsAbi = [
+export const UniV3EventsAbi = [
   parseAbiItem(
     'event Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)'
   ),
@@ -146,7 +146,7 @@ export class UniV3PoolWatcher {
     }
 
     if (l.blockNumber == null) return
-    const data = decodeEventLog({ abi: eventsAbi, data: l.data, topics: l.topics })
+    const data = decodeEventLog({ abi: UniV3EventsAbi, data: l.data, topics: l.topics })
     switch (data.eventName) {
       case 'Mint':
       case 'Burn': {

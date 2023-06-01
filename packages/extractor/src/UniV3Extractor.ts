@@ -1,9 +1,12 @@
-import { Address, PublicClient } from 'viem'
-import { MultiCallAggregator } from './MulticallAggregator'
-import { UniV3PoolWatcher } from './UniV3PoolWatcher'
 import { Token } from '@sushiswap/currency'
-import { FeeAmount } from '@sushiswap/v3-sdk'
 import { PoolCode } from '@sushiswap/router'
+import { FeeAmount } from '@sushiswap/v3-sdk'
+import { AbiEvent } from 'abitype'
+import { Address, PublicClient } from 'viem'
+import { Filter } from 'viem/dist/types/types/filter'
+
+import { MultiCallAggregator } from './MulticallAggregator'
+import { UniV3EventsAbi, UniV3PoolWatcher } from './UniV3PoolWatcher'
 
 interface PoolInfo {
   address: Address
@@ -18,7 +21,9 @@ export class UniV3Extractor {
   tickHelperContract: Address
   client: PublicClient
   multiCallAggregator: MultiCallAggregator
-  pools: UniV3PoolWatcher[] = []
+  poolMap: Map<Address, UniV3PoolWatcher> = new Map()
+  eventFilters: Filter[] = []
+  logProcessGuard = false
 
   constructor(client: PublicClient, providerName: string, tickHelperContract: Address) {
     this.providerName = providerName
@@ -29,8 +34,33 @@ export class UniV3Extractor {
 
   // TODO: stop ?
   // TODO: protection from restarting
-  start(pools: PoolInfo[]) {
-    this.pools = pools.map((p) => {
+  async start(pools: PoolInfo[]) {
+    // Subscribe to each UniV3 event we are interested
+    for (let i = 0; i < UniV3EventsAbi.length; ++i) {
+      const filter = (await this.client.createEventFilter({ event: UniV3EventsAbi[i] as AbiEvent })) as Filter
+      this.eventFilters.push(filter)
+    }
+
+    this.client.watchBlockNumber({
+      onBlockNumber: async (blockNumber) => {
+        if (!this.logProcessGuard) {
+          this.logProcessGuard = true
+          const promises = this.eventFilters.map((f) => this.client.getFilterChanges({ filter: f }))
+          const logss = await Promise.all(promises)
+          logss.forEach((logs) => {
+            logs.forEach((l) => {
+              const pool = this.poolMap.get(l.address)
+              if (pool) pool.processLog(l)
+            })
+          })
+          this.logProcessGuard = false
+        } else {
+          console.warn(`Log Filtering was skipped for block ${blockNumber}`)
+        }
+      },
+    })
+
+    pools.forEach((p) => {
       const watcher = new UniV3PoolWatcher(
         this.providerName,
         p.address,
@@ -41,11 +71,13 @@ export class UniV3Extractor {
         this.multiCallAggregator
       )
       watcher.updatePoolState()
-      return watcher
+      this.poolMap.set(p.address, watcher)
     })
   }
 
   getPoolCodes(): PoolCode[] {
-    return this.pools.map((p) => p.getPoolCode()).filter((pc) => pc !== undefined) as PoolCode[]
+    return Array.from(this.poolMap.values())
+      .map((p) => p.getPoolCode())
+      .filter((pc) => pc !== undefined) as PoolCode[]
   }
 }
