@@ -6,7 +6,6 @@ import { PoolsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { useIsMounted } from '@sushiswap/hooks'
-import { RewardsSection } from '../RewardsSection'
 import Container from '@sushiswap/ui/future/components/Container'
 import { PositionsTab } from './PositionsTab'
 import { RewardsTab } from './RewardsTab'
@@ -55,6 +54,7 @@ export const PoolsSection: FC = () => {
                       variant={selected ? 'outlined' : 'empty'}
                       color="default"
                       className="!rounded-full !h-[36px]"
+                      testId="my-rewards"
                     >
                       My Rewards
                     </Button>
