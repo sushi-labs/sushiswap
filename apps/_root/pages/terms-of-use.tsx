@@ -1,3 +1,5 @@
+import '../variables.css'
+
 import { Typography } from '@sushiswap/ui'
 import React from 'react'
 
