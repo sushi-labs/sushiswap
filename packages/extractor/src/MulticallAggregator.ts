@@ -96,8 +96,8 @@ export class MultiCallAggregator {
         } else {
           const blockNumber = res[0].result as number
           for (let i = 1; i < res.length; ++i) {
-            if (res[i].status == 'success') pendingResolves[i]({ blockNumber, resultValue: res[i].result })
-            else pendingRejects[i](res[i].error)
+            if (res[i].status == 'success') pendingResolves[i - 1]({ blockNumber, returnValue: res[i].result })
+            else pendingRejects[i - 1](res[i].error)
           }
         }
       }, 0)

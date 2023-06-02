@@ -83,10 +83,10 @@ export class WordLoadManager {
     }
 
     const direction = currentTickWord - minWord <= maxWord - currentTickWord
-    const wordNumber = minWord - minWord
+    const wordNumber = maxWord - minWord
     const pendingWord: number | undefined = this.downloadQueue[this.downloadQueue.length - 1]
     const queue: number[] = []
-    for (let i = wordNumber - 1; i >= 0; --i) {
+    for (let i = wordNumber; i >= 0; --i) {
       const wordIndex = currentTickWord + getJump(i, direction)
       if (wordIndex === pendingWord) continue // will be set at the end
       const wordState = this.words.get(wordIndex)
