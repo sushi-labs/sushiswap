@@ -1,14 +1,12 @@
-import { CheckIcon, XIcon } from '@heroicons/react/outline'
-import { FundSource } from '@sushiswap/hooks'
-import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form, Switch } from '@sushiswap/ui'
-import { DatePicker } from '@sushiswap/ui/input/DatePicker'
+import { Form } from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from '@sushiswap/wagmi'
 
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
-import { CurrencyInput } from '../../CurrencyInput'
 import { CreateVestingFormSchemaType } from './schema'
+import { Switch } from '@sushiswap/ui/future/components/Switch'
+import { Input } from '@sushiswap/ui/future/components/input'
 
 export const CliffDetailsSection: FC = () => {
   const { address } = useAccount()
@@ -52,8 +50,6 @@ export const CliffDetailsSection: FC = () => {
                 }
               }}
               size="sm"
-              uncheckedIcon={<XIcon />}
-              checkedIcon={<CheckIcon />}
               id="cliff-toggle-switch"
             />
           )}
@@ -65,16 +61,23 @@ export const CliffDetailsSection: FC = () => {
             name="cliff.cliffEndDate"
             shouldUnregister={true}
             control={control}
-            render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
-              <>
-                <DatePicker
+            render={({ field: { name, onChange, value, onBlur }, fieldState: { error } }) => {
+              return (
+                <Input.DatePicker
                   name={name}
                   onBlur={onBlur}
-                  className={classNames(
-                    DEFAULT_INPUT_CLASSNAME,
-                    error ? ERROR_INPUT_CLASSNAME : '',
-                    '!ring-offset-slate-900'
-                  )}
+                  customInput={
+                    <Input.DatePickerCustomInput
+                      isError={Boolean(error?.message)}
+                      caption={error?.message ? error?.message : 'The end date of the cliff.'}
+                      id="create-single-vest-cliff-date"
+                      label={
+                        <>
+                          End date<sup>*</sup>
+                        </>
+                      }
+                    />
+                  }
                   onChange={onChange}
                   selected={value}
                   portalId="root-portal"
@@ -82,17 +85,13 @@ export const CliffDetailsSection: FC = () => {
                   timeFormat="HH:mm"
                   timeIntervals={15}
                   timeCaption="time"
-                  minDate={
-                    startDate ? new Date(startDate.getTime() + 5 * 60 * 1000) : new Date(Date.now() + 10 * 60 * 1000)
-                  }
+                  minDate={new Date(Date.now() + 5 * 60 * 1000)}
                   dateFormat="MMM d, yyyy HH:mm"
                   placeholderText="Select date"
                   autoComplete="off"
-                  customInput={<input testdata-id='create-single-vest-cliff-date' type="text"/>}
                 />
-                <Form.Error message={error?.message} />
-              </>
-            )}
+              )
+            }}
           />
         </Form.Control>
       ) : (
@@ -104,21 +103,28 @@ export const CliffDetailsSection: FC = () => {
             control={control}
             name="cliff.cliffAmount"
             shouldUnregister={true}
-            render={({ field: { onChange, value, onBlur, name }, fieldState: { error: validationError } }) => (
-              <CurrencyInput
-                id="create-single-vest-cliff-amount-input"
-                name={name}
-                onBlur={onBlur}
-                className="ring-offset-slate-900"
-                fundSource={_fundSource || FundSource.WALLET}
-                account={address}
-                onError={onCurrencyInputError}
-                errorMessage={validationError?.message}
-                value={value || ''}
-                onChange={onChange}
-                currency={_currency}
-              />
-            )}
+            render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
+              return (
+                <>
+                  <Input.Numeric
+                    onUserInput={onChange}
+                    isError={Boolean(error?.message)}
+                    caption={
+                      error?.message ? error?.message : 'The amount that gets unlocked after the cliff end date.'
+                    }
+                    onBlur={onBlur}
+                    name={name}
+                    value={value}
+                    id="create-single-vest-cliff-amount-input"
+                    label={
+                      <>
+                        Amount<sup>*</sup>
+                      </>
+                    }
+                  />
+                </>
+              )
+            }}
           />
         </Form.Control>
       ) : (

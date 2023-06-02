@@ -1,15 +1,16 @@
-import { Form, Input, Select, Typography } from '@sushiswap/ui'
+import { classNames, Form, Typography } from '@sushiswap/ui'
 import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
 import { format } from 'date-fns'
-import { useEffect, useMemo } from 'react'
+import React, { Fragment, useEffect, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { useDeepCompareMemoize } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
-import { CurrencyInputBase, HelperTextPanel } from '../../CurrencyInput'
 import { CreateVestingFormSchemaType, FormErrors, StepConfig, stepConfigurations } from '../../vesting'
 import { calculateEndDate, calculateTotalAmount } from '../utils'
 import { ChainId } from '@sushiswap/chain'
+import { Input } from '@sushiswap/ui/future/components/input'
+import { Listbox, Transition } from '@headlessui/react'
 
 export const GradedVestingDetailsSection = () => {
   const { address } = useAccount()
@@ -57,98 +58,119 @@ export const GradedVestingDetailsSection = () => {
         <Controller
           control={control}
           name="stepAmount"
-          render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
-            <CurrencyInputBase
-              id="create-single-vest-graded-amount-input"
-              className="ring-offset-slate-900"
-              onChange={onChange}
-              value={value || ''}
-              currency={_currency}
-              error={!!error?.message}
-              name={name}
-              onBlur={onBlur}
-              helperTextPanel={
-                <HelperTextPanel
-                  text={
-                    error?.message ? (
-                      error.message
-                    ) : (
-                      <>
-                        The amount the recipient receives after every period. For a value of {value} and a{' '}
-                        {stepConfig?.label.toLowerCase()} period length, the user will receive {value}{' '}
-                        {currency?.symbol} {stepConfig?.label.toLowerCase()}.
-                      </>
-                    )
+          render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
+            return (
+              <>
+                <Input.Numeric
+                  onUserInput={onChange}
+                  isError={Boolean(error?.message)}
+                  caption={error?.message ? error.message : `The amount the recipient receives for every unlock.`}
+                  onBlur={onBlur}
+                  name={name}
+                  value={value}
+                  id="create-single-vest-cliff-amount-input"
+                  label={
+                    <>
+                      Payout per unlock<sup>*</sup>
+                    </>
                   }
-                  isError={!!error?.message}
                 />
-              }
-            />
+              </>
+            )
+          }}
+        />
+      </Form.Control>
+      <Form.Control>
+        <Controller
+          control={control}
+          name="stepPayouts"
+          render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
+            return (
+              <>
+                <Input.Numeric
+                  onUserInput={onChange}
+                  isError={Boolean(error?.message)}
+                  caption={
+                    error?.message
+                      ? error?.message
+                      : 'Defines the number of unlocks, a value of 10 would mean there will be a total of 10 unlocks during the duration of this vest.'
+                  }
+                  onBlur={onBlur}
+                  name={name}
+                  value={value}
+                  id="create-single-vest-cliff-amount-input"
+                  label={
+                    <>
+                      Number of unlocks<sup>*</sup>
+                    </>
+                  }
+                />
+              </>
+            )
+          }}
+        />
+      </Form.Control>
+      <Form.Control>
+        <Controller
+          control={control}
+          name="stepConfig"
+          render={({ field: { onChange, value, onBlur }, fieldState: { error } }) => (
+            <>
+              <Listbox
+                value={value}
+                onChange={(val: StepConfig) => {
+                  onChange(val)
+                  onBlur()
+                }}
+              >
+                <Listbox.Button as={Fragment}>
+                  <Input.Select
+                    id={'create-single-vest-select'}
+                    onBlur={onBlur}
+                    label={
+                      <>
+                        Unlock frequency<sup>*</sup>
+                      </>
+                    }
+                    value={value?.label}
+                    caption={error?.message}
+                    isError={Boolean(error?.message)}
+                  />
+                </Listbox.Button>
+                <Transition
+                  as={Fragment}
+                  enter="transition duration-300 ease-out"
+                  enterFrom="transform translate-y-[-16px] scale-[0.95] opacity-0"
+                  enterTo="transform translate-y-0 scale-[1] opacity-100"
+                  leave="transition duration-300 ease-out"
+                  leaveFrom="transform translate-y-0 opacity-100 scale-[1]"
+                  leaveTo="transform translate-y-[-16px] opacity-0 scale-[0.95]"
+                >
+                  <div className="absolute pt-3 w-full flex flex-col h-fit">
+                    <Listbox.Options as="div">
+                      {Object.values(stepConfigurations).map((stepConfig) => (
+                        <Listbox.Option
+                          as="div"
+                          className="absolute"
+                          key={stepConfig.label}
+                          value={stepConfig}
+                          testdata-id={`create-single-vest-graded-type-${stepConfig.label.toLowerCase()}`}
+                        >
+                          {stepConfig.label}
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </div>
+                </Transition>
+              </Listbox>
+              <Form.Error message={error?.message} />
+            </>
           )}
         />
       </Form.Control>
-      <div className="flex flex-col gap-6 md:flex-row">
-        <Form.Control>
-          <Controller
-            control={control}
-            name="stepPayouts"
-            render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => {
-              return (
-                <>
-                  <Input.Counter
-                    name={name}
-                    onBlur={onBlur}
-                    step={1}
-                    min={0}
-                    max={100}
-                    onChange={(val) => onChange(Number(val) > 0 ? Number(val) : 1)}
-                    value={value}
-                    error={!!error?.message}
-                    className="ring-offset-slate-900"
-                    testdata-id="create-single-vest-steps-input"
-                  />
-                  <Form.Error message={error?.message} />
-                </>
-              )
-            }}
-          />
-        </Form.Control>
-        <Form.Control>
-          <Controller
-            control={control}
-            name="stepConfig"
-            render={({ field: { onChange, value, onBlur }, fieldState: { error } }) => (
-              <>
-                <Select
-                  button={
-                    <Select.Button error={!!error?.message} className="ring-offset-slate-900" testdata-id='create-single-vest-graded-frequency-selection-button'>
-                      {value.label}
-                    </Select.Button>
-                  }
-                  value={value}
-                  onChange={(val: StepConfig) => {
-                    onChange(val)
-                    onBlur()
-                  }}
-                >
-                  <Select.Options>
-                    {Object.values(stepConfigurations).map((stepConfig) => (
-                      <Select.Option key={stepConfig.label} value={stepConfig} testdata-id={`create-single-vest-graded-type-${stepConfig.label.toLowerCase()}`}>
-                        {stepConfig.label}
-                      </Select.Option>
-                    ))}
-                  </Select.Options>
-                </Select>
-                <Form.Error message={error?.message} />
-              </>
-            )}
-          />
-        </Form.Control>
-      </div>
       <div className="flex gap-6">
         <Form.Control>
-          <Typography
-            variant="sm"
+          <span
             className={
               _fundSource && balance?.[_fundSource] && totalAmount?.greaterThan(balance[_fundSource])
                 ? 'text-red'
@@ -156,21 +178,16 @@ export const GradedVestingDetailsSection = () => {
                 ? 'text-slate-50'
                 : 'text-slate-500'
             }
-            weight={600}
           >
             {totalAmount ? totalAmount?.toSignificant(6) : '0.000000'} {totalAmount?.currency.symbol}
-          </Typography>
+          </span>
           <Form.Error message={errors['FORM_ERROR']?.message} />
         </Form.Control>
         <Form.Control>
           {endDate ? (
-            <Typography variant="sm" className="text-slate-50" weight={600}>
-              {format(endDate, 'dd MMM yyyy hh:mmaaa')}
-            </Typography>
+            <span className="text-slate-50">{format(endDate, 'dd MMM yyyy hh:mmaaa')}</span>
           ) : (
-            <Typography variant="sm" className="italic text-slate-500">
-              Not available
-            </Typography>
+            <span className="italic text-slate-500">Not available</span>
           )}
         </Form.Control>
       </div>

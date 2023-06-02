@@ -1,9 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form, Select } from '@sushiswap/ui'
-import { DatePicker } from '@sushiswap/ui/input/DatePicker'
-import { Web3Input } from '@sushiswap/wagmi'
+import { Form } from '@sushiswap/ui'
 import React, { FC, useCallback, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
@@ -11,6 +9,8 @@ import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { FundSourceOption } from '../../stream/CreateForm/FundSourceOption'
 import { CreateVestingFormSchemaType } from './schema'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
+import { Input } from '@sushiswap/ui/future/components/input'
+import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 
 export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const { control, watch, setValue, setError, clearErrors } = useFormContext<CreateVestingFormSchemaType>()
@@ -67,7 +67,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
         <Controller
           control={control}
           name="currency"
-          render={({ field: { onChange, value, onBlur }, fieldState: { error } }) => (
+          render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
             <>
               <TokenSelector
                 id={'create-single-vest'}
@@ -76,15 +76,19 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
                 selected={_currency}
               >
                 {({ setOpen }) => (
-                  <Select.Button
-                    error={!!error?.message}
-                    standalone
-                    className="!cursor-pointer ring-offset-slate-900"
+                  <Input.Select
+                    id={'create-single-vest-select'}
+                    onBlur={onBlur}
+                    label={
+                      <>
+                        Token<sup>*</sup>
+                      </>
+                    }
+                    value={value?.address}
                     onClick={() => setOpen(true)}
-                    testdata-id={'create-single-vest-select'}
-                  >
-                    {value?.symbol || <span className="text-slate-500">Select a currency</span>}
-                  </Select.Button>
+                    caption={error?.message ?? value?.symbol}
+                    isError={Boolean(error?.message)}
+                  />
                 )}
               </TokenSelector>
               <Form.Error message={error?.message} />
@@ -96,32 +100,35 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
         <Controller
           control={control}
           name="startDate"
-          render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
+          render={({ field: { name, onChange, value, onBlur }, fieldState: { error } }) => {
             return (
-              <>
-                <DatePicker
-                  name={name}
-                  onBlur={onBlur}
-                  className={classNames(
-                    DEFAULT_INPUT_CLASSNAME,
-                    error ? ERROR_INPUT_CLASSNAME : '',
-                    '!ring-offset-slate-900'
-                  )}
-                  onChange={onChange}
-                  selected={value}
-                  portalId="root-portal"
-                  showTimeSelect
-                  timeFormat="HH:mm"
-                  timeIntervals={15}
-                  timeCaption="time"
-                  minDate={new Date(Date.now() + 5 * 60 * 1000)}
-                  dateFormat="MMM d, yyyy HH:mm"
-                  placeholderText="Select date"
-                  autoComplete="off"
-                  customInput={<input testdata-id='create-single-vest-start-date' type="text"/>}
-                />
-                <Form.Error message={error?.message} />
-              </>
+              <Input.DatePicker
+                name={name}
+                onBlur={onBlur}
+                customInput={
+                  <Input.DatePickerCustomInput
+                    isError={Boolean(error?.message)}
+                    caption={error?.message}
+                    id="create-single-vest-start-date"
+                    label={
+                      <>
+                        Start date<sup>*</sup>
+                      </>
+                    }
+                  />
+                }
+                onChange={onChange}
+                selected={value}
+                portalId="root-portal"
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                timeCaption="time"
+                minDate={new Date(Date.now() + 5 * 60 * 1000)}
+                dateFormat="MMM d, yyyy HH:mm"
+                placeholderText="Select date"
+                autoComplete="off"
+              />
             )
           }}
         />
@@ -130,26 +137,24 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
         <Controller
           control={control}
           name="recipient"
-          render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
-            <>
+          render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
+            return (
               <Web3Input.Ens
+                isError={Boolean(error?.message)}
+                caption={error?.message}
+                label={
+                  <>
+                    Address or ENS<sup>*</sup>
+                  </>
+                }
                 name={name}
                 onBlur={onBlur}
-                id="ensInput"
+                id="create-single-vest-recipient-input"
                 value={value}
                 onChange={onChange}
-                error={!!error?.message}
-                placeholder="Address or ENS Name"
-                testdata-id='create-single-vest-recipient-input'
-                className={classNames(
-                  DEFAULT_INPUT_CLASSNAME,
-                  error ? ERROR_INPUT_CLASSNAME : '',
-                  'ring-offset-slate-900'
-                )}
               />
-              <Form.Error message={error?.message} />
-            </>
-          )}
+            )
+          }}
         />
       </Form.Control>
       <Form.Control>

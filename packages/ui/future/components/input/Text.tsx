@@ -1,5 +1,5 @@
 import XMarkIcon from '@heroicons/react/20/solid/XMarkIcon'
-import React, { ForwardedRef, forwardRef, HTMLProps, ReactNode, useCallback } from 'react'
+import React, { ForwardedRef, forwardRef, HTMLProps, ReactNode, useCallback, useRef } from 'react'
 import classNames from 'classnames'
 
 export interface TextInput extends Omit<HTMLProps<HTMLInputElement>, 'label' | 'onChange'> {
@@ -10,21 +10,11 @@ export interface TextInput extends Omit<HTMLProps<HTMLInputElement>, 'label' | '
   id: string
   caption?: string
   className?: string
-  hideCloseButton?: boolean
+  customButton?: ReactNode
 }
 
 function Component(
-  {
-    label,
-    value,
-    onChange,
-    id,
-    caption,
-    hideCloseButton = false,
-    className = '',
-    isError = false,
-    ...props
-  }: TextInput,
+  { label, value, onChange, id, caption, customButton, className = '', isError = false, ...props }: TextInput,
   ref: ForwardedRef<HTMLInputElement>
 ) {
   const _onChange = useCallback(
@@ -37,7 +27,7 @@ function Component(
   )
 
   return (
-    <div className={classNames(caption ? 'mb-7' : '', 'w-full')}>
+    <div className="w-full">
       <div className="relative w-full">
         <input
           {...props}
@@ -63,25 +53,27 @@ function Component(
         >
           {label}
         </label>
-        {value !== '' && !hideCloseButton && (
+        {value !== '' && (
           <div className="absolute top-0 bottom-0 flex items-center justify-center right-4">
-            <button
-              type="button"
-              onClick={() => onChange && onChange('')}
-              className="bg-black/[0.05] dark:bg-white/[0.08] hover:dark:bg-white/[0.16] hover:bg-gray-300 rounded-full p-0.5"
-            >
-              <XMarkIcon width={20} height={20} className="text-gray-600 dark:text-slate-400" />
-            </button>
+            {customButton ? (
+              customButton
+            ) : (
+              <div
+                role="button"
+                onClick={() => onChange && onChange('')}
+                className="bg-black/[0.05] dark:bg-white/[0.08] hover:dark:bg-white/[0.16] hover:bg-gray-300 rounded-full p-0.5"
+              >
+                <XMarkIcon width={20} height={20} className="text-gray-600 dark:text-slate-400" />
+              </div>
+            )}
           </div>
         )}
-        {caption && (
-          <span
-            className={classNames(isError ? 'text-red' : '', 'mt-1.5 absolute inline-block px-4 text-xs text-gray-500')}
-          >
-            {caption}
-          </span>
-        )}
       </div>
+      {caption && (
+        <span className={classNames(isError ? 'text-red' : '', 'mt-1.5 inline-block px-4 text-xs text-gray-500')}>
+          {caption}
+        </span>
+      )}
     </div>
   )
 }
