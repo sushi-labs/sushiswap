@@ -27,10 +27,7 @@ export const CreateVestingBaseSchema = z.object({
   stepAmount: z.string().refine((val) => (val !== '' ? Number(val) > 0 : true), 'Must be at least 0'),
   stepPayouts: z.number().min(1).int(),
   fundSource: ZFundSource,
-  stepConfig: z.object({
-    label: z.string(),
-    time: z.number(),
-  }),
+  stepConfig: z.string(),
   cliff: CliffFields,
 })
 
@@ -39,6 +36,7 @@ export const CreateVestingBaseSchemaPartial = CreateVestingBaseSchema.partial({
   startDate: true,
   recipient: true,
   stepAmount: true,
+  stepConfig: true,
 })
 
 export const CreateVestingFormSchema = CreateVestingBaseSchemaPartial

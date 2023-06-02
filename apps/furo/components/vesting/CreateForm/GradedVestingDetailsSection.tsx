@@ -11,6 +11,16 @@ import { calculateEndDate, calculateTotalAmount } from '../utils'
 import { ChainId } from '@sushiswap/chain'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { Listbox, Transition } from '@headlessui/react'
+import {
+  Select,
+  SelectCaption,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@sushiswap/ui/components/ui/select'
 
 export const GradedVestingDetailsSection = () => {
   const { address } = useAccount()
@@ -114,56 +124,33 @@ export const GradedVestingDetailsSection = () => {
         <Controller
           control={control}
           name="stepConfig"
-          render={({ field: { onChange, value, onBlur }, fieldState: { error } }) => (
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
             <>
-              <Listbox
-                value={value}
-                onChange={(val: StepConfig) => {
-                  onChange(val)
-                  onBlur()
-                }}
-              >
-                <Listbox.Button as={Fragment}>
-                  <Input.Select
-                    id={'create-single-vest-select'}
-                    onBlur={onBlur}
-                    label={
-                      <>
-                        Unlock frequency<sup>*</sup>
-                      </>
-                    }
-                    value={value?.label}
-                    caption={error?.message}
-                    isError={Boolean(error?.message)}
+              <Select onValueChange={onChange} defaultValue={value}>
+                <SelectGroup>
+                  <SelectTrigger>
+                    <SelectLabel aria-label={value}>
+                      Unlock frequency<sup>*</sup>
+                    </SelectLabel>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectCaption
+                    caption={error?.message ? error?.message : 'The period of time between each unlock'}
+                    isError={Boolean(error)}
                   />
-                </Listbox.Button>
-                <Transition
-                  as={Fragment}
-                  enter="transition duration-300 ease-out"
-                  enterFrom="transform translate-y-[-16px] scale-[0.95] opacity-0"
-                  enterTo="transform translate-y-0 scale-[1] opacity-100"
-                  leave="transition duration-300 ease-out"
-                  leaveFrom="transform translate-y-0 opacity-100 scale-[1]"
-                  leaveTo="transform translate-y-[-16px] opacity-0 scale-[0.95]"
-                >
-                  <div className="absolute pt-3 w-full flex flex-col h-fit">
-                    <Listbox.Options as="div">
-                      {Object.values(stepConfigurations).map((stepConfig) => (
-                        <Listbox.Option
-                          as="div"
-                          className="absolute"
-                          key={stepConfig.label}
-                          value={stepConfig}
-                          testdata-id={`create-single-vest-graded-type-${stepConfig.label.toLowerCase()}`}
-                        >
-                          {stepConfig.label}
-                        </Listbox.Option>
-                      ))}
-                    </Listbox.Options>
-                  </div>
-                </Transition>
-              </Listbox>
-              <Form.Error message={error?.message} />
+                  <SelectContent>
+                    {Object.values(stepConfigurations).map((stepConfig) => (
+                      <SelectItem
+                        key={stepConfig.label}
+                        value={stepConfig.label}
+                        testdata-id={`create-single-vest-graded-type-${stepConfig.label.toLowerCase()}`}
+                      >
+                        {stepConfig.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </SelectGroup>
+              </Select>
             </>
           )}
         />

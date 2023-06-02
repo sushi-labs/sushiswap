@@ -1,5 +1,5 @@
 {
   "extends": "@sushiswap/typescript-config/react-library.json",
   "include": ["."],
-  "exclude": [".turbo", "node_modules"]
+  "exclude": [".turbo", "node_modules"],
 }

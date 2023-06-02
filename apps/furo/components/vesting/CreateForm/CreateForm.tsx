@@ -1,8 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { nanoid } from 'nanoid'
 import { FuroVestingRouterChainId } from '@sushiswap/furo'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Button, Form } from '@sushiswap/ui'
+import { FundSource } from '@sushiswap/hooks'
+import { Form } from '@sushiswap/ui'
 import { FC, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
@@ -10,7 +10,8 @@ import { CliffDetailsSection } from './CliffDetailsSection'
 import CreateFormReviewModal from './CreateFormReviewModal/CreateFormReviewModal'
 import { GeneralDetailsSection } from './GeneralDetailsSection'
 import { GradedVestingDetailsSection } from './GradedVestingDetailsSection'
-import { CreateVestingFormSchemaType, CreateVestingModelSchema, stepConfigurations } from './schema'
+import { CreateVestingFormSchemaType, CreateVestingModelSchema } from './schema'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 export const FORM_ERROR = 'FORM_ERROR' as const
 export type FormErrors = { [FORM_ERROR]?: never }
@@ -21,7 +22,7 @@ export const CREATE_VEST_DEFAULT_VALUES: CreateVestingFormSchemaType = {
   recipient: undefined,
   startDate: undefined,
   fundSource: FundSource.WALLET,
-  stepConfig: stepConfigurations[0],
+  stepConfig: undefined,
   stepPayouts: 1,
   stepAmount: undefined,
   cliff: {
@@ -30,7 +31,6 @@ export const CREATE_VEST_DEFAULT_VALUES: CreateVestingFormSchemaType = {
 }
 
 export const CreateForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId }) => {
-  const isMounted = useIsMounted()
   const methods = useForm<CreateVestingFormSchemaType & FormErrors>({
     resolver: zodResolver(CreateVestingModelSchema),
     defaultValues: CREATE_VEST_DEFAULT_VALUES,
@@ -43,7 +43,6 @@ export const CreateForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId 
     clearErrors,
     reset,
     formState: { isValid, isValidating, errors },
-    control,
   } = methods
 
   const [startDate, cliffEnabled, cliffEndDate] = watch(['startDate', 'cliff.cliffEnabled', 'cliff.cliffEndDate'])
