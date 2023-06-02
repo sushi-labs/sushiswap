@@ -45,6 +45,7 @@
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/extractor": "workspace:*",
     "@sushiswap/hardhat-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
@@ -81,6 +82,7 @@
     "ts-node": "10.9.1",
     "tsup": "6.5.0",
     "typechain": "8.1.1",
-    "typescript": "5.0.4"
+    "typescript": "5.0.4",    
+    "viem": "0.3.29"
   }
 }

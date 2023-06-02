@@ -3335,6 +3335,7 @@ importers:
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/extractor': workspace:*
       '@sushiswap/hardhat-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -3372,6 +3373,7 @@ importers:
       tsup: 6.5.0
       typechain: 8.1.1
       typescript: 5.0.4
+      viem: 0.3.29
     devDependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/bytes': 5.7.0
@@ -3386,6 +3388,7 @@ importers:
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/extractor': link:../../packages/extractor
       '@sushiswap/hardhat-config': link:../../config/hardhat
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/prettier-config': link:../../config/prettier
@@ -3423,6 +3426,7 @@ importers:
       tsup: 6.5.0_pyqfhkbboucpxgvrs7ocxwodkm
       typechain: 8.1.1_typescript@5.0.4
       typescript: 5.0.4
+      viem: 0.3.29_typescript@5.0.4
 
   protocols/trident:
     specifiers:
