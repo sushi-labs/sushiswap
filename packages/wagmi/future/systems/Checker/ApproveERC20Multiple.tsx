@@ -17,7 +17,7 @@ export interface ApproveERC20MultipleProps extends ButtonProps<'button'> {
  */
 export const Component: FC<ApproveERC20MultipleProps> = ({ index, id, amounts, children, ...props }) => {
   const _index = index ? index : amounts.length - 1
-  if (_index === 0) return <>{children}</>
+  if (!(_index > 0)) return <>{children}</>
 
   return (
     <ApproveERC20 {...props} id={`${id}-${index}`} amount={amounts[_index].amount} contract={amounts[_index].contract}>

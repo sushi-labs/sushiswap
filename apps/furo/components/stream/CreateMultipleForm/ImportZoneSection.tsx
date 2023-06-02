@@ -15,12 +15,13 @@ import { CreateStreamFormSchemaType } from '../CreateForm'
 import { CreateMultipleStreamFormSchemaType } from './schema'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Form } from '@sushiswap/ui'
+import dynamic from 'next/dynamic'
 
 interface ImportZoneSection {
   chainId: ChainId
 }
 
-export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
+const Component: FC<ImportZoneSection> = ({ chainId }) => {
   const { errors, setErrors } = useImportErrorContext<CreateMultipleStreamFormSchemaType>()
   const { control, trigger, watch } = useFormContext<CreateMultipleStreamFormSchemaType>()
   const { append } = useFieldArray({
@@ -223,3 +224,5 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
     </Form.Section>
   )
 }
+
+export const ImportZoneSection = dynamic(() => Promise.resolve(Component), { ssr: false })

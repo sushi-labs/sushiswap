@@ -24,13 +24,14 @@ import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { bentoBoxV1Address } from '@sushiswap/bentobox'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
 const APPROVE_TAG = 'approve-multiple-streams'
 
 export const ExecuteMultipleSection: FC<{
   chainId: FuroStreamRouterChainId
   isReview: boolean
-}> = ({ chainId, isReview }) => {
+}> = withCheckerRoot(({ chainId, isReview }) => {
   const { address } = useAccount()
   const contract = useFuroStreamRouterContract(chainId)
   const [signature, setSignature] = useState<Signature>()
@@ -159,7 +160,7 @@ export const ExecuteMultipleSection: FC<{
         amount,
         contract: bentoBoxV1Address[chainId] as Address,
       })),
-    []
+    [chainId, summedAmounts]
   )
 
   return (
@@ -197,4 +198,4 @@ export const ExecuteMultipleSection: FC<{
       </Checker.Network>
     </Checker.Connect>
   )
-}
+})
