@@ -16,8 +16,8 @@ const getBlockNumberAbi: Abi = [
 export class MultiCallAggregator {
   client: PublicClient
   pendingCalls: MulticallContracts<Contract[]> = []
-  pendingResolves: ((any) => void)[]
-  pendingRejects: ((any) => void)[]
+  pendingResolves: ((arg: any) => void)[] = []
+  pendingRejects: ((arg: unknown) => void)[] = []
   timer?: NodeJS.Timeout
 
   constructor(client: PublicClient) {
