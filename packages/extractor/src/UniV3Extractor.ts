@@ -8,7 +8,7 @@ import { Filter } from 'viem/dist/types/types/filter'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { UniV3EventsAbi, UniV3PoolWatcher } from './UniV3PoolWatcher'
 
-interface PoolInfo {
+export interface PoolInfo {
   address: Address
   token0: Token
   token1: Token
