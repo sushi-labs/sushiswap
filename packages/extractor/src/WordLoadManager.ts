@@ -58,10 +58,12 @@ export class WordLoadManager {
           // Queue still has the same index at the end
           this.words.set(wordIndex, {
             blockNumber,
-            ticks: ticks.map(({ tick, liquidityNet }) => ({
-              index: Number(tick),
-              DLiquidity: BigNumber.from(liquidityNet),
-            })),
+            ticks: ticks
+              .map(({ tick, liquidityNet }) => ({
+                index: Number(tick),
+                DLiquidity: BigNumber.from(liquidityNet),
+              }))
+              .sort((a: CLTick, b: CLTick) => a.index - b.index),
           })
           if (blockNumber >= this.latestEventBlockNumber) this.downloadQueue.pop()
         }
@@ -109,13 +111,13 @@ export class WordLoadManager {
     let ticks: CLTick[] = []
     for (let i = minIndex + 1; i < maxIndex; ++i) ticks = ticks.concat((this.words.get(i) as WordState).ticks)
 
-    const lowerUnknownTick = minIndex * this.poolSpacing * 256 - this.poolSpacing
+    const lowerUnknownTick = (minIndex + 1) * this.poolSpacing * 256 - this.poolSpacing
     console.assert(ticks.length == 0 || lowerUnknownTick < ticks[0].index, 'Error 85: unexpected min tick index')
     ticks.unshift({
       index: lowerUnknownTick,
       DLiquidity: BigNumber.from(0),
     })
-    const upperUnknownTick = (maxIndex + 1) * this.poolSpacing * 256
+    const upperUnknownTick = maxIndex * this.poolSpacing * 256
     console.assert(ticks[ticks.length - 1].index < upperUnknownTick, 'Error 91: unexpected max tick index')
     ticks.push({
       index: upperUnknownTick,
