@@ -68,3 +68,74 @@ query SushiSwapV3PoolHourData(
     close
   }
 }
+
+query SushiSwapV3Pool(
+    $id: ID!
+    $block: CONCENTRATED_Block_height,
+    $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  pool: CONCENTRATED_pool(
+    id: $id,
+    block: $block, 
+    subgraphError: $subgraphError
+  ) {
+    id
+    token0 {
+      id
+      symbol
+      name
+      decimals
+    }
+    token1 {
+      id
+      symbol
+      name
+      decimals
+    }
+    feeTier
+    liquidity
+    volumeToken0
+    volumeToken1
+    volumeUSD
+    feesUSD
+    txCount
+    totalValueLockedToken0
+    totalValueLockedToken1
+    totalValueLockedETH
+    totalValueLockedUSD
+
+    createdAtTimestamp
+    createdAtBlockNumber
+
+    poolHourData(first: 168, orderBy: periodStartUnix, orderDirection: desc) {
+      id
+      periodStartUnix
+      tvlUSD
+      volumeUSD
+      feesUSD
+      txCount
+    }
+
+    poolDayData(first: 730, orderBy: date, orderDirection: desc) {
+      id
+      date
+      tvlUSD
+      volumeUSD
+      feesUSD
+      txCount
+    }
+  }
+}
+
+query SushiSwapV3DayDatas($first: Int = 1000, $skip: Int, $orderBy: UniswapDayData_orderBy, $orderDirection: OrderDirection, $where: UniswapDayData_filter) {
+  uniswapDayDatas(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
+    id
+    date
+    volumeETH
+    volumeUSD
+    volumeUSDUntracked
+    feesUSD
+    txCount
+    tvlUSD
+  }
+}

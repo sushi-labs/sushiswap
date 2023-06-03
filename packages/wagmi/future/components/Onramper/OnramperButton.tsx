@@ -1,3 +1,5 @@
+'use client'
+
 import React, { FC, ReactNode, useCallback } from 'react'
 
 import { useOnramperContext } from './OnramperProvider'

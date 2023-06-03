@@ -26,6 +26,7 @@ export const AMM_ENABLED_NETWORKS = [
   ChainId.BOBA,
   ChainId.BOBA_AVAX,
   ChainId.BOBA_BNB,
+  ChainId.THUNDERCORE
 ]
 
 export const SUPPORTED_CHAIN_IDS = Array.from(new Set([...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS]))

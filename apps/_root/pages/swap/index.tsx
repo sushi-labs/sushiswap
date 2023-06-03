@@ -15,10 +15,10 @@ import { ThemeProvider } from '@sushiswap/ui'
 
 export const Page: FC = () => {
   return (
-    <TokenProvider>
-      <SplashController>
-        <SwapProvider>
-          <ThemeProvider>
+    <ThemeProvider>
+      <TokenProvider>
+        <SplashController>
+          <SwapProvider>
             <Onramper.Provider>
               <Header />
               <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
@@ -35,10 +35,10 @@ export const Page: FC = () => {
                 <div className="h-[68px] w-full" />
               </Container>
             </Onramper.Provider>
-          </ThemeProvider>
-        </SwapProvider>
-      </SplashController>
-    </TokenProvider>
+          </SwapProvider>
+        </SplashController>
+      </TokenProvider>
+    </ThemeProvider>
   )
 }
 

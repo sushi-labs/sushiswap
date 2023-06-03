@@ -8,6 +8,9 @@ type Network = {
   SelectorMenu: FC<SelectorMenuProps>
 }
 
+/**
+ * @deprecated
+ */
 export const Network: Network = {
   Selector,
   SelectorMenu,

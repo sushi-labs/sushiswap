@@ -60,6 +60,35 @@ export const AMM_ENABLED_NETWORKS = [
 
 export const SUPPORTED_CHAIN_IDS = Array.from(
   new Set([...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS, ...V3_SUPPORTED_CHAIN_IDS])
-)
+).sort((a: number, b: number) => {
+  // Sort Thundercore
+  if (
+    (
+      [
+        ChainId.ETHEREUM,
+        ChainId.ARBITRUM,
+        ChainId.POLYGON,
+        ChainId.OPTIMISM,
+        ChainId.AVALANCHE,
+        ChainId.FANTOM,
+        ChainId.BSC,
+        ChainId.GNOSIS,
+      ] as number[]
+    ).includes(b) &&
+    a === ChainId.THUNDERCORE
+  )
+    return 1
+  if (a === ChainId.THUNDERCORE) return -1
+
+  // Sort optimism
+  if (
+    ([ChainId.ETHEREUM, ChainId.ARBITRUM, ChainId.POLYGON, ChainId.OPTIMISM] as number[]).includes(b) &&
+    a === ChainId.OPTIMISM
+  )
+    return 1
+  if (a === ChainId.OPTIMISM) return -1
+
+  return 1
+})
 
 export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]

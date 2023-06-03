@@ -9,6 +9,7 @@ import { foundry } from 'viem/chains'
 
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { BiswapProvider } from './liquidity-providers/Biswap'
+import { CurveProvider } from './liquidity-providers/CurveProvider'
 import { DfynProvider } from './liquidity-providers/Dfyn'
 import { ElkProvider } from './liquidity-providers/Elk'
 import { HoneySwapProvider } from './liquidity-providers/HoneySwap'
@@ -247,6 +248,15 @@ export class DataFetcher {
     if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
       try {
         const provider = new UniswapV2Provider(this.chainId, this.web3Client, this.databaseClient)
+        this.providers.push(provider)
+      } catch (e: unknown) {
+        // console.warn(e.message)
+      }
+    }
+
+    if (this._providerIsIncluded(LiquidityProviders.CurveSwap, providers)) {
+      try {
+        const provider = new CurveProvider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
         // console.warn(e.message)

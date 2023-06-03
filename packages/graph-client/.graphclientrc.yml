@@ -161,8 +161,8 @@ sources:
 
 # Had to disable global transforms since we have a jsonSchema handler in here now...
 transforms:
-  - autoPagination:
-      validateSchema: false
+  # - autoPagination:
+  #     validateSchema: false
   - autoTypeMerging: true
   - addSourceName: true
 
