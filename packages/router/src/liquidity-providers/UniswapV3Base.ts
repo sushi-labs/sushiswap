@@ -37,6 +37,8 @@ const bitmapIndex = (tick: number, tickSpacing: number) => {
   return Math.floor(tick / tickSpacing / 256)
 }
 
+type PoolFilter = { has: (arg: string) => boolean }
+
 export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   poolsByTrade: Map<string, string[]> = new Map()
   pools: Map<string, PoolCode> = new Map()
@@ -68,7 +70,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     this.databaseClient = databaseClient
   }
 
-  async fetchPoolsForToken(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void> {
+  async fetchPoolsForToken(t0: Token, t1: Token, excludePools?: Set<string> | PoolFilter): Promise<void> {
     let staticPools = this.getStaticPools(t0, t1)
     if (excludePools) staticPools = staticPools.filter((p) => !excludePools.has(p.address))
     const slot0 = await this.client

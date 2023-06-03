@@ -100,7 +100,7 @@ export class WordLoadManager {
 
   getMaxTickDiapason(tick: number): CLTick[] {
     const currentTickIndex = this.wordIndex(tick)
-    if (this.words.has(currentTickIndex)) return []
+    if (!this.words.has(currentTickIndex)) return []
     let minIndex, maxIndex
     for (minIndex = currentTickIndex; this.words.has(minIndex); --minIndex);
     for (maxIndex = currentTickIndex + 1; this.words.has(maxIndex); ++maxIndex);
