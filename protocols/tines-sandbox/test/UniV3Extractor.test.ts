@@ -1,7 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
-import { DAI, USDC, WNATIVE } from '@sushiswap/currency'
+import { DAI, USDC, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
 import { PoolInfo, UniV3Extractor } from '@sushiswap/extractor'
 import { UniswapV3Provider } from '@sushiswap/router'
+import { expect } from 'chai'
 import { network } from 'hardhat'
 import { createPublicClient, custom } from 'viem'
 import { hardhat } from 'viem/chains'
@@ -11,19 +12,27 @@ import { comparePoolCodes } from '../src/ComparePoolCodes'
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 const pools: PoolInfo[] = [
-  // {
-  //   address: '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640',
-  //   token0: USDC[ChainId.ETHEREUM],
-  //   token1: WNATIVE[ChainId.ETHEREUM],
-  //   fee: 500,
-  // },
   {
     address: '0x5777d92f208679DB4b9778590Fa3CAB3aC9e2168',
     token0: DAI[ChainId.ETHEREUM],
     token1: USDC[ChainId.ETHEREUM],
     fee: 100,
   },
+  {
+    address: '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640',
+    token0: USDC[ChainId.ETHEREUM],
+    token1: WNATIVE[ChainId.ETHEREUM],
+    fee: 500,
+  },
+  {
+    address: '0xCBCdF9626bC03E24f779434178A73a0B4bad62eD',
+    token0: WBTC[ChainId.ETHEREUM],
+    token1: WETH9[ChainId.ETHEREUM],
+    fee: 3000,
+  },
 ]
+
+const poolSet = new Set(pools.map((p) => p.address.toLowerCase()))
 
 it('1 pool', async () => {
   // const transport = http(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`)
@@ -48,15 +57,20 @@ it('1 pool', async () => {
   extractor.start(pools)
 
   const uniProvider = new UniswapV3Provider(ChainId.ETHEREUM, client)
-  await uniProvider.fetchPoolsForToken(pools[0].token0, pools[0].token1, {
-    has: (poolAddress: string) => poolAddress.toLowerCase() !== pools[0].address.toLowerCase(),
+  await uniProvider.fetchPoolsForToken(USDC[ChainId.ETHEREUM], WETH9[ChainId.ETHEREUM], {
+    has: (poolAddress: string) => !poolSet.has(poolAddress.toLowerCase()),
   })
   const providerPools = uniProvider.getCurrentPoolList()
 
   for (;;) {
-    if (extractor.getStablePoolCodes().length == 1) break
+    if (extractor.getStablePoolCodes().length == pools.length) break
     await delay(500)
   }
+  const extractorPools = extractor.getStablePoolCodes()
 
-  comparePoolCodes(providerPools[0], extractor.getStablePoolCodes()[0])
+  providerPools.forEach((pp) => {
+    const ep = extractorPools.find((p) => p.pool.address == pp.pool.address)
+    expect(ep).not.undefined
+    if (ep) comparePoolCodes(pp, ep)
+  })
 })
