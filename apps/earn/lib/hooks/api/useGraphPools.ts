@@ -3,7 +3,6 @@ import { useMemo } from 'react'
 import useSWR from 'swr'
 import { getGraphPools } from '../../api'
 import { Protocol } from '@sushiswap/client'
-import { useEffectDebugger } from '@sushiswap/hooks'
 
 function transformGraphPool(graphPool: Awaited<ReturnType<typeof getGraphPools>>[0]): Pool {
   let protocol: Protocol = Protocol.SUSHISWAP_V2
@@ -87,8 +86,6 @@ export const useGraphPools = (poolIds: string[]): Pools => {
   )
 
   const { data: pools, isLoading: isPoolsLoading } = usePools({ args: { ids: poolIds } })
-
-  useEffectDebugger(() => {}, [graphPools, isGraphPoolsLoading, isPoolsLoading, poolIds, pools])
 
   return useMemo(() => {
     if (isGraphPoolsLoading || isPoolsLoading) {

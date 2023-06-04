@@ -68,3 +68,5 @@ export const angleRewardsBaseValidator = z.object({
         z.object({ minimumAmountPerEpoch: z.number(), token: z.string() })
     )
 })
+
+export const angleRewardsMultipleValidator = z.array(angleRewardsBaseValidator)

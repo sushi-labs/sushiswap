@@ -15,7 +15,5 @@ export const TableFiltersSearchToken: FC = () => {
     }
   }, [_query, debouncedQuery, setFilters, tokenSymbols])
 
-  return (
-    <Search id="search" value={_query} loading={false} onChange={setQuery} className="max-w-[500px]" delimiter=" " />
-  )
+  return <Search id="search" value={_query} loading={false} onChange={setQuery} className="max-w-full" delimiter=" " />
 }

@@ -35,7 +35,7 @@ const TRANSLATE_CLASS = {
   },
   unchecked: {
     xs: '',
-    sm: 'translate-x-[4px]',
+    sm: 'translate-x-[2px]',
     md: 'translate-x-[2px]',
   },
 }

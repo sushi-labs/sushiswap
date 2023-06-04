@@ -8,9 +8,9 @@ import resolveConfig from 'tailwindcss/resolveConfig'
 
 import tailwindConfig from '../../tailwind.config.js'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { useMediaQuery } from '@sushiswap/hooks'
 import { usePoolGraphData } from '../../lib/hooks'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { useTheme } from 'next-themes'
 
 const tailwind = resolveConfig(tailwindConfig)
 
@@ -64,7 +64,7 @@ const chartTimespans: Record<PoolChartPeriod, number> = {
 }
 
 export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoading, charts }) => {
-  const isDark = useMediaQuery({ query: '(prefers-color-scheme: dark)' })
+  const { resolvedTheme } = useTheme()
   const [chartType, setChartType] = useState<PoolChartType>(PoolChartType.Volume)
   const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Month)
 
@@ -131,13 +131,11 @@ export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoad
     () => ({
       tooltip: {
         trigger: 'axis',
-        extraCssText: 'z-index: 1000',
+        extraCssText: 'z-index: 1000; padding: 0 !important; box-shadow: none !important',
         responsive: true,
         // @ts-ignore
-        backgroundColor: !isDark ? tailwind.theme.colors.white : tailwind.theme.colors.slate['700'],
+        backgroundColor: 'transparent',
         textStyle: {
-          // @ts-ignore
-          color: tailwind.theme.colors.slate['50'],
           fontSize: 12,
           fontWeight: 600,
         },
@@ -145,11 +143,11 @@ export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoad
           onMouseOver({ name: params[0].name, value: params[0].value })
 
           const date = new Date(Number(params[0].name * 1000))
-          return `<div class="flex flex-col gap-0.5">
-            <span class="text-sm dark:text-slate-50 text-gray-900 font-semibold">${
+          return `<div class="flex flex-col gap-0.5 paper bg-white/50 dark:bg-slate-800/50 px-3 py-2 rounded-xl overflow-hidden shadow-lg">
+            <span class="text-sm dark:text-slate-50 text-gray-900 font-medium">${
               chartType === PoolChartType.APR ? formatPercent(params[0].value) : formatUSD(params[0].value)
             }</span>
-            <span class="text-xs text-gray-500 dark:text-slate-400 text-slate-600 font-medium">${
+            <span class="text-xs text-gray-500 dark:text-slate-400 font-medium">${
               date instanceof Date && !isNaN(date?.getTime())
                 ? format(
                     date,
@@ -219,7 +217,7 @@ export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoad
         },
       ],
     }),
-    [isDark, xData, chartType, yData, onMouseOver, chartPeriod]
+    [resolvedTheme, xData, chartType, yData, onMouseOver, chartPeriod]
   )
 
   const chartsToRender = useMemo(() => {
@@ -229,8 +227,6 @@ export const PoolChart: FC<PoolChartProps> = ({ swapFee, data: graphPair, isLoad
           .filter((chart): chart is (typeof chartList)[number] => !!chart)
       : chartList
   }, [charts])
-
-  console.log(graphPair)
 
   return (
     <div className="flex flex-col gap-6">
