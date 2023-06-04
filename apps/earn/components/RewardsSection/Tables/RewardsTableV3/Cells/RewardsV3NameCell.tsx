@@ -7,6 +7,7 @@ import { Currency } from '@sushiswap/ui/future/components/currency'
 import { unwrapToken } from '../../../../../lib/functions'
 
 export const RewardsV3NameCell: FC<RewardTableV3CellProps> = ({ row }) => {
+  const ongoingFarms = row.distributionData.filter((el) => el.end * 1000 >= Date.now())
   return (
     <div className="flex items-center gap-4">
       <div className="min-w-[52px]">
@@ -28,7 +29,7 @@ export const RewardsV3NameCell: FC<RewardTableV3CellProps> = ({ row }) => {
           <span className="text-xs text-gray-500 dark:text-slate-500">{row.poolFee}%</span>
         </span>
         <div className="rounded-full px-2 py-0.5 text-xs bg-black/[0.06] dark:bg-white/[0.06]">
-          {row.distributionData.length} Ongoing Farms
+          {ongoingFarms.length} Ongoing Farms
         </div>
       </div>
     </div>

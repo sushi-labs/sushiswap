@@ -10,6 +10,7 @@ import { Explainer } from '@sushiswap/ui/future/components/Explainer'
 import { rewardPerDay } from './utils'
 
 export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) => {
+  const ongoingFarms = row.distributionData.filter((el) => el.end * 1000 >= Date.now())
   return (
     <div className="p-2">
       <div className="flex items-center gap-4">
@@ -32,77 +33,75 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
             <span className="text-xs text-gray-500 dark:text-slate-500">{row.poolFee}%</span>
           </span>
           <div className="rounded-full px-2 py-0.5 text-xs bg-black/[0.06] dark:bg-white/[0.06]">
-            {row.distributionData.length} Ongoing Farms
+            {ongoingFarms.length} Ongoing Farms
           </div>
         </div>
       </div>
       <List className="mt-4">
         <List.Control className="max-h-[300px] overflow-y-scroll scroll">
-          {row.distributionData
-            .filter((el) => el.end * 1000 >= Date.now())
-            .map(({ start, end, amount, token, propFees, propToken0, propToken1 }, i) => (
-              <>
-                <List.Label className="!text-[10px] !px-4 pt-4 uppercase font-semibold !text-gray-400 !dark:text-slate-500">
-                  Farm {i + 1}
-                </List.Label>
-                <List.KeyValue
-                  flex
-                  title={
-                    <div className="flex gap-1 items-center">
-                      Reward
-                      <Explainer hover iconSize={16} placement="bottom">
-                        Your share calculated as your LP divided by the total LP in the pool multiplied by the rewards
-                        set per day.
-                      </Explainer>
-                    </div>
-                  }
-                  subtitle="per day"
-                >
-                  <div className="flex items-center gap-2">
-                    <Currency.Icon currency={token} width={18} height={18} />
-                    {rewardPerDay({
-                      start,
-                      end,
-                      amount,
-                      tvl: row.tvl ?? 0,
-                      userTVL: row.userTVL ?? 0,
-                      token,
-                    })?.toSignificant(6)}{' '}
-                    {unwrapToken(token).symbol}
+          {ongoingFarms.map(({ start, end, amount, token, propFees, propToken0, propToken1 }, i) => (
+            <>
+              <List.Label className="!text-[10px] !px-4 pt-4 uppercase font-semibold !text-gray-400 !dark:text-slate-500">
+                Farm {i + 1}
+              </List.Label>
+              <List.KeyValue
+                flex
+                title={
+                  <div className="flex gap-1 items-center">
+                    Reward
+                    <Explainer hover iconSize={16} placement="bottom">
+                      Your share calculated as your LP divided by the total LP in the pool multiplied by the rewards set
+                      per day.
+                    </Explainer>
                   </div>
-                </List.KeyValue>
-                <List.KeyValue flex title="Duration">
-                  <div className="flex flex-col">
-                    <span className="font-mediumt">{Math.floor((end - Date.now() / 1000) / 3600 / 24)} days left</span>
-                    <span className="text-xs text-gray-500 dark:text-slate-500">
-                      Ends at: {format(end * 1000, 'dd MMM yyyy hh:mm')}
-                    </span>
+                }
+                subtitle="per day"
+              >
+                <div className="flex items-center gap-2">
+                  <Currency.Icon currency={token} width={18} height={18} />
+                  {rewardPerDay({
+                    start,
+                    end,
+                    amount,
+                    tvl: row.tvl ?? 0,
+                    userTVL: row.userTVL ?? 0,
+                    token,
+                  })?.toSignificant(6)}{' '}
+                  {unwrapToken(token).symbol}
+                </div>
+              </List.KeyValue>
+              <List.KeyValue flex title="Duration">
+                <div className="flex flex-col">
+                  <span className="font-mediumt">{Math.floor((end - Date.now() / 1000) / 3600 / 24)} days left</span>
+                  <span className="text-xs text-gray-500 dark:text-slate-500">
+                    Ends at: {format(end * 1000, 'dd MMM yyyy hh:mm')}
+                  </span>
+                </div>
+              </List.KeyValue>
+              <List.KeyValue
+                flex
+                title={
+                  <div className="flex gap-1 items-center">
+                    Details
+                    <Explainer hover iconSize={16} placement="bottom">
+                      Weight that fees earned by positions represent in their rewards score. A higher % means that more
+                      rewards will be attributed to positions that earn more fees during the distribution.
+                    </Explainer>
                   </div>
-                </List.KeyValue>
-                <List.KeyValue
-                  flex
-                  title={
-                    <div className="flex gap-1 items-center">
-                      Details
-                      <Explainer hover iconSize={16} placement="bottom">
-                        Weight that fees earned by positions represent in their rewards score. A higher % means that
-                        more rewards will be attributed to positions that earn more fees during the distribution.
-                      </Explainer>
-                    </div>
-                  }
-                  subtitle="Reward weights (%)"
-                >
-                  <div className="flex flex-col">
-                    <span className="font-medium">
-                      {propFees}% / {propToken0}% / {propToken1}%
-                    </span>
-                    <span className="flex gap-1 items-center text-xs text-gray-500 dark:text-slate-500">
-                      Fees / {row.token0.symbol} / {row.token1.symbol}
-                    </span>
-                  </div>
-                </List.KeyValue>
-              </>
-            ))}
+                }
+                subtitle="Reward weights (%)"
+              >
+                <div className="flex flex-col">
+                  <span className="font-medium">
+                    {propFees}% / {propToken0}% / {propToken1}%
+                  </span>
+                  <span className="flex gap-1 items-center text-xs text-gray-500 dark:text-slate-500">
+                    Fees / {row.token0.symbol} / {row.token1.symbol}
+                  </span>
+                </div>
+              </List.KeyValue>
+            </>
+          ))}
         </List.Control>
       </List>
     </div>
