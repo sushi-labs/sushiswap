@@ -80,4 +80,11 @@ export class UniV3Extractor {
       .map((p) => p.getPoolCode())
       .filter((pc) => pc !== undefined) as PoolCode[]
   }
+
+  // only for testing
+  getStablePoolCodes(): PoolCode[] {
+    return Array.from(this.poolMap.values())
+      .map((p) => (p.isStable() ? p.getPoolCode() : undefined))
+      .filter((pc) => pc !== undefined) as PoolCode[]
+  }
 }

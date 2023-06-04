@@ -234,4 +234,8 @@ export class UniV3PoolWatcher {
     const pc = new UniV3PoolCode(v3Pool, LiquidityProviders.UniswapV3, this.providerName)
     return pc
   }
+
+  isStable(): boolean {
+    return !this.wordLoadManager.downloadCycleIsStared
+  }
 }

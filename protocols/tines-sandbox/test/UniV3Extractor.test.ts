@@ -11,18 +11,18 @@ import { comparePoolCodes } from '../src/ComparePoolCodes'
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 const pools: PoolInfo[] = [
-  {
-    address: '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640',
-    token0: USDC[ChainId.ETHEREUM],
-    token1: WNATIVE[ChainId.ETHEREUM],
-    fee: 500,
-  },
   // {
-  //   address: '0x5777d92f208679DB4b9778590Fa3CAB3aC9e2168',
-  //   token0: DAI[ChainId.ETHEREUM],
-  //   token1: USDC[ChainId.ETHEREUM],
-  //   fee: 100,
+  //   address: '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640',
+  //   token0: USDC[ChainId.ETHEREUM],
+  //   token1: WNATIVE[ChainId.ETHEREUM],
+  //   fee: 500,
   // },
+  {
+    address: '0x5777d92f208679DB4b9778590Fa3CAB3aC9e2168',
+    token0: DAI[ChainId.ETHEREUM],
+    token1: USDC[ChainId.ETHEREUM],
+    fee: 100,
+  },
 ]
 
 it('1 pool', async () => {
@@ -54,9 +54,9 @@ it('1 pool', async () => {
   const providerPools = uniProvider.getCurrentPoolList()
 
   for (;;) {
-    if (extractor.getPoolCodes().length == 1) break
+    if (extractor.getStablePoolCodes().length == 1) break
     await delay(500)
   }
 
-  comparePoolCodes(providerPools[0], extractor.getPoolCodes()[0])
+  comparePoolCodes(providerPools[0], extractor.getStablePoolCodes()[0])
 })

@@ -18,13 +18,13 @@ export function comparePoolCodes(pc1: PoolCode, pc2: PoolCode): boolean {
     const pp2 = p2 as UniV3Pool
     expect(p1.liquidity.toString()).equal(pp2.liquidity.toString())
     expect(p1.sqrtPriceX96.toString()).equal(pp2.sqrtPriceX96.toString())
-    expect(p1.nearestTick).equal(pp2.nearestTick)
     expect(p1.ticks.length).equal(pp2.ticks.length)
     p1.ticks.forEach((t1, i) => {
       const t2 = pp2.ticks[i]
       expect(t1.index).equal(t2.index, `tick ${i}/${p1.ticks.length}`)
       expect(t1.DLiquidity.toString()).equal(t2.DLiquidity.toString(), `tick ${i}/${p1.ticks.length}`)
     })
+    expect(p1.nearestTick).equal(pp2.nearestTick)
   }
   return true
 }
