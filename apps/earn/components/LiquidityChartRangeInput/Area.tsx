@@ -10,13 +10,14 @@ interface AreaProps {
   xValue: (d: ChartEntry) => number
   yValue: (d: ChartEntry) => number
   fill?: string | undefined
+  opacity?: number | undefined
 }
 
-export const Area: FC<AreaProps> = ({ series, xScale, yScale, xValue, yValue, fill }) =>
+export const Area: FC<AreaProps> = ({ series, xScale, yScale, xValue, yValue, fill, opacity }) =>
   useMemo(
     () => (
       <path
-        opacity={0.5}
+        opacity={opacity ?? 0.5}
         stroke={fill}
         fill={fill}
         d={

@@ -174,17 +174,19 @@ export default function LiquidityChartRangeInput({
               area: {
                 selection: colors.blue['500'],
               },
-              brush: {
+            }}
+            interactive={interactive}
+            brush={{
+              brushDomain,
+              brushLabels: brushLabelValue,
+              onBrushDomainChange: onBrushDomainChangeEnded,
+              style: {
                 handle: {
                   west: colors.blue['600'],
                   east: colors.blue['600'],
                 },
               },
             }}
-            interactive={interactive}
-            brushLabels={brushLabelValue}
-            brushDomain={brushDomain}
-            onBrushDomainChange={onBrushDomainChangeEnded}
             zoomLevels={ZOOM_LEVELS[feeAmount ?? FeeAmount.MEDIUM]}
             ticksAtLimit={ticksAtLimit}
           />

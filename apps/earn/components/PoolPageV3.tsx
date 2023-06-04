@@ -30,6 +30,7 @@ import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
 import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { ConcentratedPositionsTable } from './PoolsSection/Tables/PositionsTable/ConcentratedPositionsTable'
 import { PoolTransactionsV3, PoolChart } from './PoolSection'
+import { PoolDepthWidget } from './PoolSection/V3/PoolDepthWidget'
 
 enum Granularity {
   Day,
@@ -204,6 +205,15 @@ const Pool: FC = () => {
               swapFee={pool?.fee ? pool.fee / 1000000 : pool?.fee}
               charts={['Volume', 'TVL', 'Fees']}
             />
+            {/* {pool && (
+              <PoolDepthWidget
+                chainId={pool.chainId as any}
+                feeAmount={pool.fee}
+                token0={_token0}
+                token1={_token1}
+                key={'key'}
+              />
+            )} */}
             <div className="flex flex-col gap-6">
               <List className="!pt-0 !gap-1">
                 <List.Label className="flex justify-end">
