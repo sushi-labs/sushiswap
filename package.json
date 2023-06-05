@@ -46,7 +46,7 @@
     "version-packages": "dotenv -- turbo run build --filter=./packages/* && changeset version"
   },
   "devDependencies": {
-    "@changesets/cli": "2.26.0",
+    "@changesets/cli": "2.26.1",
     "@graphql-eslint/eslint-plugin": "3.14.3",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
