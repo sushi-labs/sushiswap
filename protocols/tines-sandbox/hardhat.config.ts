@@ -45,10 +45,13 @@ const config: HardhatUserConfig = {
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
         blockNumber: 17390000,
       },
-      accounts: {
-        accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
-      },
-      chainId: 1,
+      accounts: [
+        {
+          privateKey: '0x0102030405060708091011121314151601020304050607080910111213141516',
+          balance: '10000000000000000000000000', //(10_000_000 ETH).
+        },
+      ],
+      chainId: 31337,
     },
   },
   solidity: {
