@@ -35,7 +35,7 @@ import {
   optimism,
   //  optimismGoerli,
   polygon,
-  polygonZkEvm,
+  polygonZkEvm as _polygonZkEvm,
   // polygonMumbai,
   // sepolia,
   //  taraxa,
@@ -85,6 +85,16 @@ export {
   // taraxaTestnet,
   //  zkSync,
   // zkSyncTestnet,
+}
+
+export const polygonZkEvm = {
+  ..._polygonZkEvm,
+  contracts: {
+    multicall3: {
+      address: '0xca11bde05977b3631167028862be2a173976ca11' as Address,
+      blockCreated: 57746,
+    },
+  },
 }
 
 export const gnosis = {
