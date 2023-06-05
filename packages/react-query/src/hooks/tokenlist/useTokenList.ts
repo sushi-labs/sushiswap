@@ -2,22 +2,31 @@ import { getAddress } from '@ethersproject/address'
 import {Token} from "@sushiswap/currency";
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
+import { useLocalStorage } from '@sushiswap/hooks'
 
-import { UseTokenListQuerySelect } from './types'
+import { TokenListType, UseTokenListQuerySelect } from './types'
 import { tokenListValidator } from './validator'
 
-export const useTokenListQuery = (select: UseTokenListQuerySelect) =>
-  useQuery({
-    queryKey: ['https://tokens.sushi.com/v0'],
+export const useTokenListQuery = (select: UseTokenListQuerySelect) => {
+  const [tokenApi] = useLocalStorage('tokenApi', true)
+
+  return useQuery({
+    queryKey: ['https://tokens.sushi.com/v0', tokenApi],
     queryFn: async () => {
-      const res = await (await fetch(`https://tokens.sushi.com/v0`)).json()
-      return tokenListValidator.parse(res)
+      const resp = tokenApi && await fetch('https://tokens.sushi.com/v0')
+
+      if (resp && resp.status === 200) {
+        return tokenListValidator.parse(await resp.json())
+      } else {
+        return (await import("@sushiswap/default-token-list").then(list => list.tokens)) as Omit<TokenListType, "id">
+      }
     },
     select,
     keepPreviousData: true,
     staleTime: 900000, // 15 mins
     cacheTime: 86400000 // 24hs
   })
+}
 
 export const useTokenList = (filter?: 'showNone' | string[]) => {
   const select: UseTokenListQuerySelect = useCallback(

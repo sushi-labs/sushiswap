@@ -2228,8 +2228,10 @@ importers:
       '@sushiswap/chain': workspace:*
       '@sushiswap/client': workspace:*
       '@sushiswap/currency': workspace:*
+      '@sushiswap/default-token-list': ^41.5.0
       '@sushiswap/dexie': workspace:*
       '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -2258,7 +2260,9 @@ importers:
       '@sushiswap/chain': link:../chain
       '@sushiswap/client': link:../client
       '@sushiswap/currency': link:../currency
+      '@sushiswap/default-token-list': 41.5.0
       '@sushiswap/dexie': link:../dexie
+      '@sushiswap/hooks': link:../hooks
       '@sushiswap/math': link:../math
       '@sushiswap/types': link:../types
       '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y

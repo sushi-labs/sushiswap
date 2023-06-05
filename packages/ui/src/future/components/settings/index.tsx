@@ -7,6 +7,7 @@ import { SlippageTolerance } from './SlippageTolerance'
 import { RoutingApi } from './RoutingApi'
 import { Dialog } from '../dialog'
 import { List } from '../list/List'
+import { TokenApi } from './TokenApi'
 
 export enum SettingsModule {
   CarbonOffset = 'CarbonOffset',
@@ -14,6 +15,7 @@ export enum SettingsModule {
   SlippageTolerance = 'SlippageTolerance',
   ExpertMode = 'ExpertMode',
   RoutingApi = 'RoutingApi',
+  TokenApi = 'TokenApi',
 }
 
 interface SettingsOverlayProps {
@@ -65,6 +67,13 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules, children, o
             <List className="!pt-0">
               <List.Control>
                 <RoutingApi />
+              </List.Control>
+            </List>
+          )}
+          {modules.includes(SettingsModule.TokenApi) && (
+            <List className="!pt-0">
+              <List.Control>
+                <TokenApi />
               </List.Control>
             </List>
           )}

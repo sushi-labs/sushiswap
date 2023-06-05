@@ -4,7 +4,7 @@ import { Pool, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { Address } from 'wagmi'
 import { getConcentratedLiquidityPool } from '../../pools'
 import { getTokenWithCacheQueryFn, getTokenWithQueryCacheHydrate } from '../../tokens'
-import { useCustomTokens } from '@sushiswap/hooks'
+import { useCustomTokens, useLocalStorage } from '@sushiswap/hooks'
 import { useAllPrices } from '@sushiswap/react-query'
 import { JSBI, ZERO } from '@sushiswap/math'
 import { Amount, Token } from '@sushiswap/currency'
@@ -20,11 +20,12 @@ export const useConcentratedLiquidityPositions = ({
   chainIds,
   enabled = true,
 }: UseConcentratedLiquidityPositionsParams) => {
+  const [tokenApi] = useLocalStorage('tokenApi', true)
   const { data: customTokens, hasToken } = useCustomTokens()
   const { data: prices } = useAllPrices()
 
   return useQuery({
-    queryKey: ['useConcentratedLiquidityPositions', { chainIds, account, prices }],
+    queryKey: ['useConcentratedLiquidityPositions', { chainIds, account, prices }, tokenApi],
     queryFn: async () => {
       const data = await getConcentratedLiquidityPositions({
         account: account,
@@ -35,8 +36,8 @@ export const useConcentratedLiquidityPositions = ({
         const pools = await Promise.all(
           data.map(async (el) => {
             const [token0Data, token1Data] = await Promise.all([
-              getTokenWithCacheQueryFn({ chainId: el.chainId, hasToken, customTokens, address: el.token0 }),
-              getTokenWithCacheQueryFn({ chainId: el.chainId, hasToken, customTokens, address: el.token1 }),
+              getTokenWithCacheQueryFn({ chainId: el.chainId, hasToken, customTokens, address: el.token0, tokenApi }),
+              getTokenWithCacheQueryFn({ chainId: el.chainId, hasToken, customTokens, address: el.token1, tokenApi }),
             ])
 
             const token0 = getTokenWithQueryCacheHydrate(el.chainId, token0Data, false)

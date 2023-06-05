@@ -28,6 +28,7 @@ export const Widget: FC = () => {
           modules={[
             SettingsModule.SlippageTolerance,
             SettingsModule.CarbonOffset,
+            SettingsModule.TokenApi,
             // SettingsModule.RoutingApi
           ]}
         />
