@@ -1,32 +1,25 @@
-import { MinusIcon, PlusIcon } from '@heroicons/react/solid'
+import { PlusIcon } from '@heroicons/react/solid'
 import { nanoid } from 'nanoid'
 import { ChainId } from '@sushiswap/chain'
-import { Button, GenericTable, Typography } from '@sushiswap/ui'
-import { getCoreRowModel, RowData, useReactTable } from '@tanstack/react-table'
-import React, { FC } from 'react'
-import { FieldError, FieldErrors, useFieldArray, UseFieldArrayRemove, useFormContext } from 'react-hook-form'
+import { RowData } from '@tanstack/react-table'
+import React, { FC, useMemo } from 'react'
+import { FieldErrors, useFieldArray, UseFieldArrayRemove, useFormContext } from 'react-hook-form'
 
 import { useDeepCompareMemoize } from '../../../../lib'
-import { CREATE_VEST_DEFAULT_VALUES, CreateVestingFormSchemaType } from '../../CreateForm'
+import { CREATE_VEST_DEFAULT_VALUES } from '../../CreateForm'
 import { useImportErrorContext } from '../ImportErrorContext'
 import { CreateMultipleVestingFormSchemaType } from '../schema'
-import {
-  ACTIONS_COLUMN,
-  CURRENCY_COLUMN,
-  FUND_SOURCE_COLUMN,
-  RECIPIENT_COLUMN,
-  SCHEDULE_COLUMN,
-  START_DATE_COLUMN,
-} from './Cells/columns'
 
-const COLUMNS = [
-  CURRENCY_COLUMN,
-  RECIPIENT_COLUMN,
-  FUND_SOURCE_COLUMN,
-  START_DATE_COLUMN,
-  SCHEDULE_COLUMN,
-  ACTIONS_COLUMN,
-] as any
+import {
+  CreateMultipleStreamBaseSchemaFormErrorsType,
+  CreateMultipleStreamFormSchemaType,
+} from '../../../stream/CreateMultipleForm'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { CurrencyCell } from './Cells/CurrencyCell'
+import { RecipientCell } from './Cells/RecipientCell'
+import { StartDateCell } from './Cells/StartDateCell'
+import { ScheduleCell } from './Cells/ScheduleCell'
+import { ActionsCell } from './Cells/ActionsCell'
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {
@@ -41,121 +34,102 @@ interface CreateVestingsTableSection {
 }
 
 export const CreateVestingsTableSection: FC<CreateVestingsTableSection> = ({ chainId, onReview }) => {
-  const { errors, setErrors } = useImportErrorContext<CreateMultipleVestingFormSchemaType>()
+  const { errors } = useImportErrorContext<CreateMultipleVestingFormSchemaType>()
   const {
     control,
     watch,
     formState: { isValid, isValidating, errors: formErrors },
-  } = useFormContext<CreateMultipleVestingFormSchemaType>()
-  const { append, remove } = useFieldArray({
+  } = useFormContext<CreateMultipleVestingFormSchemaType & CreateMultipleStreamBaseSchemaFormErrorsType>()
+  const { append } = useFieldArray({
     control,
     name: 'vestings',
     shouldUnregister: true,
   })
 
-  const fields = watch('vestings')
-  const _fields = useDeepCompareMemoize(fields)
+  const fields = watch('vestings') ?? []
+  const _memoizedErrors = useDeepCompareMemoize(formErrors)
+  const _formErrors = useMemo(() => {
+    const length = fields?.length || 0
+    const data: FieldErrors<CreateMultipleStreamFormSchemaType> = {
+      streams: [],
+    }
+    for (let i = 0; i < length; i++) {
+      if (data.streams && _memoizedErrors.vestings?.[i]) {
+        data.streams[i] = _memoizedErrors.vestings[i]
+      }
 
-  const table = useReactTable<CreateVestingFormSchemaType>({
-    data: _fields || [],
-    getRowId: (row) => `${row.id}`,
-    columns: COLUMNS,
-    getCoreRowModel: getCoreRowModel(),
-    meta: {
-      chainId,
-      remove,
-    },
-  })
+      if (data.streams && _memoizedErrors.FORM_ERRORS?.[i]) {
+        data.streams[i] = {
+          ...data.streams[i],
+          ..._memoizedErrors.FORM_ERRORS[i],
+        }
+      }
+    }
+
+    return data
+  }, [fields?.length, _memoizedErrors.FORM_ERRORS, _memoizedErrors.vestings])
+
+  const _errors =
+    (Array.isArray(errors?.vestings) && errors.vestings.length > 0) ||
+    (Array.isArray(_formErrors?.streams) && _formErrors.streams.length > 0)
+  const formValid = isValid && !isValidating && !_errors
 
   return (
     <div className="flex flex-col col-span-2 gap-4">
-      <Typography weight={500}>Vestings</Typography>
+      <p className="text-lg text-gray-900 font-medium dark:text-slate-200">Vests</p>
       <div className="flex flex-col gap-4">
-        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-        {/*@ts-ignore*/}
-        <GenericTable table={table} loading={false} placeholder="No positions found" pageSize={fields?.length || 0} />
-        {Array.isArray(errors?.vestings) && errors.vestings.length > 0 && (
-          <div className="flex flex-col gap-3 px-5 py-3 text-sm border border-slate-200/5 rounded-xl">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200/5">
-              <Typography variant="sm" weight={600}>
-                Import Errors
-              </Typography>
-              <Button onClick={() => setErrors({})} type="button" variant="empty" size="sm" className="!p-0 !h-[unset]">
-                Dismiss
+        <div className="flex flex-col gap-2">
+          {fields.length > 0 ? (
+            fields.map((row, i) => (
+              <div className="flex gap-2" key={i}>
+                <CurrencyCell row={row} index={i} />
+                <RecipientCell row={row} index={i} chainId={chainId} />
+                <StartDateCell row={row} index={i} chainId={chainId} />
+                <ScheduleCell row={row} index={i} chainId={chainId} />
+                <ActionsCell row={row} index={i} chainId={chainId} />
+              </div>
+            ))
+          ) : (
+            <Button
+              size="xl"
+              variant="outlined"
+              type="button"
+              startIcon={<PlusIcon width={16} height={16} />}
+              onClick={() => append({ ...CREATE_VEST_DEFAULT_VALUES, id: nanoid() })}
+              testdata-id="furo-create-multiple-streams-add-item-button"
+            >
+              Add Vest
+            </Button>
+          )}
+        </div>
+        <div className="flex gap-3">
+          {fields.length > 0 && (
+            <>
+              <Button
+                size="lg"
+                variant="outlined"
+                type="button"
+                startIcon={<PlusIcon width={16} height={16} />}
+                onClick={() => append({ ...CREATE_VEST_DEFAULT_VALUES, id: nanoid() })}
+                testdata-id="furo-create-multiple-streams-add-item-button"
+              >
+                Add Vest
               </Button>
-            </div>
-            <FieldErrorRenderer errors={errors} />
-          </div>
-        )}
-        {Array.isArray(formErrors?.vestings) && formErrors.vestings.length > 0 && (
-          <div className="flex flex-col gap-3 px-5 py-3 text-sm border border-slate-200/5 rounded-xl">
-            <Typography variant="sm" weight={600} className="pb-3 border-b border-slate-200/5">
-              Form Errors
-            </Typography>
-            <FieldErrorRenderer errors={formErrors} />
-          </div>
-        )}
-        <div className="flex justify-between">
-          <Button
-            type="button"
-            variant="empty"
-            size="sm"
-            startIcon={<PlusIcon width={16} height={16} />}
-            onClick={() => append({ ...CREATE_VEST_DEFAULT_VALUES, id: nanoid() })}
-            testdata-id="vesting-add-item-button"
-          >
-            Add Item
-          </Button>
-          <Button onClick={onReview} disabled={!isValid || isValidating} type="submit" className="!px-10" testdata-id='vesting-review-button'>
-            Review
-          </Button>
+              <Button
+                size="lg"
+                variant="filled"
+                onClick={onReview}
+                disabled={!formValid}
+                type="submit"
+                className="!px-10"
+                testdata-id="furo-create-multiple-streams-review-button"
+              >
+                Review
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </div>
-  )
-}
-
-const Error: FC<{ k: string; v: FieldError }> = ({ k, v }) => {
-  return (
-    <li className="list-item">
-      <div className="inline-flex items-center gap-1 text-sm font-medium text-slate-200">
-        <div className="uppercase text-[10px] font-semibold text-slate-400">{k.toLowerCase()}</div>
-        <div className="w-3 h-3">
-          <MinusIcon width={12} height={12} className="text-slate-500" />
-        </div>
-        {v.message}
-      </div>
-    </li>
-  )
-}
-
-const FieldErrorRenderer: FC<{
-  errors: FieldErrors<CreateMultipleVestingFormSchemaType>
-}> = ({ errors }) => {
-  return (
-    <>
-      {Array.isArray(errors?.vestings) &&
-        errors.vestings.length > 0 &&
-        errors.vestings.map((el, idx) => {
-          if (!el) return
-          return (
-            <div key={idx}>
-              <Typography variant="xs" weight={400} className="mb-1 text-slate-300">
-                Vesting {idx + 1}
-              </Typography>
-              <ul className="!list-disc !list-inside">
-                {Object.entries(el).map(([k, v]: [k: string, v: any]) => {
-                  if (k === 'dates') {
-                    return Object.entries(v).map(([i, j]: [i: string, j: any]) => {
-                      return <Error key={`${idx}-${i}-${j}`} k={i} v={j} />
-                    })
-                  }
-                  return <Error key={`${idx}-${k}`} k={k} v={v} />
-                })}
-              </ul>
-            </div>
-          )
-        })}
-    </>
   )
 }

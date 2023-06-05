@@ -4,23 +4,22 @@ import { DownloadIcon } from '@heroicons/react/outline'
 import { nanoid } from 'nanoid'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Button, Dropzone, NetworkIcon, Typography } from '@sushiswap/ui'
-import { Address, fetchToken, FetchTokenResult, useAccount, Wallet } from '@sushiswap/wagmi'
+import { FundSource } from '@sushiswap/hooks'
+import { Dropzone, Form, NetworkIcon } from '@sushiswap/ui'
+import { Address, fetchToken, FetchTokenResult } from '@sushiswap/wagmi'
 import { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 
-import { CreateVestingFormSchemaType, stepConfigurations } from '../CreateForm'
+import { CreateVestingFormSchemaType } from '../CreateForm'
 import { useImportErrorContext } from './ImportErrorContext'
 import { CreateMultipleVestingFormSchemaType } from './schema'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 interface ImportZoneSection {
   chainId: ChainId
 }
 
 export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
-  const isMounted = useIsMounted()
-  const { address } = useAccount()
   const { errors, setErrors } = useImportErrorContext<CreateMultipleVestingFormSchemaType>()
   const { control, trigger, watch } = useFormContext<CreateMultipleVestingFormSchemaType>()
 
@@ -180,7 +179,7 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
                         },
                   stepPayouts: Number(stepPayouts),
                   stepAmount,
-                  stepConfig: stepConfigurations[Number(stepConfig)],
+                  stepConfig,
                 })
               }
             }, [])
@@ -209,32 +208,28 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
   }, [])
 
   return (
-    <div className="flex flex-col md:grid md:grid-cols-[296px_auto] gap-y-10 lg:gap-20">
-      <div className="flex flex-col gap-3">
-        <Typography weight={500}>Quick Import</Typography>
-        <Typography variant="sm" weight={400} className="text-slate-400">
-          Autofill your list by uploading a .csv file to save time and effort! Please use the demo file to check if your
-          data is formatted correctly.
-        </Typography>
-        <div>
-          <Button
-            type="button"
-            onClick={downloadExample}
-            className="px-6 mt-4"
-            startIcon={<DownloadIcon width={20} height={20} />}
-          >
-            Example
-          </Button>
-        </div>
-      </div>
-      <div className="relative grid">
-        {isMounted && !address && (
-          <div className="absolute inset-0 z-10 backdrop-blur-[2px] flex justify-center items-center">
-            <Wallet.Button size="sm" className="shadow-md shadow-black/40">
-              Connect Wallet
-            </Wallet.Button>
+    <Form.Section
+      title="Quick Import"
+      description={
+        <div className="flex flex-col gap-6">
+          <span>
+            Autofill your list by uploading a .csv file to save time and effort! Please use the demo file to check if
+            your data is formatted correctly.
+          </span>
+          <div>
+            <Button
+              size="lg"
+              type="button"
+              onClick={downloadExample}
+              startIcon={<DownloadIcon width={20} height={20} />}
+            >
+              Example
+            </Button>
           </div>
-        )}
+        </div>
+      }
+    >
+      <div className="relative grid">
         <div className="absolute -mt-2 -ml-2">
           <NetworkIcon chainId={chainId} className="w-6 h-6" />
         </div>
@@ -245,6 +240,6 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
           onDrop={onDrop}
         />
       </div>
-    </div>
+    </Form.Section>
   )
 }

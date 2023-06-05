@@ -1,59 +1,37 @@
-import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
-import { FundSource } from '@sushiswap/hooks'
-import {
-  Button,
-  classNames,
-  DEFAULT_INPUT_CLASSNAME,
-  Drawer,
-  ERROR_INPUT_CLASSNAME,
-  Form,
-  IconButton,
-  Input,
-  Select,
-  Switch,
-  Typography,
-} from '@sushiswap/ui'
-import { DatePicker } from '@sushiswap/ui/input/DatePicker'
-import { format } from 'date-fns'
-import React, { FC, useCallback, useEffect } from 'react'
+import { PencilIcon } from '@heroicons/react/outline'
+import { classNames, Form } from '@sushiswap/ui'
+import React, { FC, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useAccount } from '@sushiswap/wagmi'
-
-import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../../../lib/zod'
-import { CurrencyInput, CurrencyInputBase, HelperTextPanel } from '../../../../CurrencyInput'
-import { stepConfigurations } from '../../../CreateForm'
-import { calculateEndDate } from '../../../utils'
 import { CreateMultipleVestingFormSchemaType } from '../../schema'
 import { CellProps } from './types'
+import { STEP_CONFIGURATIONS } from '../../../CreateForm'
+import {
+  Select,
+  SelectCaption,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@sushiswap/ui/components/ui/select'
+import { Input } from '@sushiswap/ui/future/components/input'
+import { Drawer } from '@sushiswap/ui/future/components/drawer/Drawer'
+import { Switch } from '@sushiswap/ui/future/components/switch'
+import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 
 export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
-  const { address } = useAccount()
   const {
     watch,
     control,
-    resetField,
     setError,
     clearErrors,
+    resetField,
     formState: { errors },
   } = useFormContext<CreateMultipleVestingFormSchemaType>()
   const formData = watch(`vestings.${index}`)
-  const { currency, fundSource, stepConfig, startDate, cliff } = formData
-  const _fundSource = ZFundSourceToFundSource.parse(fundSource) as FundSource
-  const _currency = useTokenFromZToken(currency)
-  const endDate = calculateEndDate(formData)
+  const { startDate, cliff } = formData
   const cliffEndDate = cliff.cliffEnabled ? cliff.cliffEndDate : undefined
-
-  const onCurrencyInputError = useCallback(
-    (message?: string) => {
-      message
-        ? setError(`vestings.${index}.cliff.cliffAmount`, {
-            type: 'custom',
-            message,
-          })
-        : clearErrors(`vestings.${index}.cliff.cliffAmount`)
-    },
-    [clearErrors, index, setError]
-  )
 
   // Temporary solution for when Zod fixes conditional validation
   // https://github.com/colinhacks/zod/issues/1394
@@ -72,246 +50,206 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
 
   return (
     <Drawer.Root>
-      {({ setOpen }) => {
-        return (
-          <>
-            <Drawer.Button
-            >
-              <div
-                className={classNames(
-                  errors?.vestings?.[index]?.cliff ? 'border-red' : 'border-transparent',
-                  'border-0 !border-b-[1px] h-[37px] flex items-center'
-                )}
-              >
-                <IconButton as="div" className={classNames('py-0.5 px-1 flex items-center gap-2')} testdata-id={`vesting-schedule-${index}-button`}>
-                  <span className="text-sm font-medium">
-                    {row.cliff.cliffEnabled
-                      ? `Cliff, ${row.stepConfig?.label}`
-                      : row.stepConfig?.label
-                      ? row.stepConfig?.label
-                      : 'Edit'}
-                  </span>
-                  <PencilIcon width={16} height={16} />
-                </IconButton>
-              </div>
-            </Drawer.Button>
-            <Drawer.Panel>
-              <div className="flex items-center justify-between py-4">
-                <Typography variant="lg" weight={500}>
-                  Vesting Details
-                </Typography>
-                <IconButton onClick={() => setOpen(false)} testdata-id={`vesting-schedule-${index}-close-drawer-button`}>
-                  <XIcon width={24} height={24} className="text-slate-200" />
-                </IconButton>
-              </div>
-              <div className="">
-                <div className="flex flex-col py-4">
-                  <div className="flex flex-col gap-6">
-                    <div className="border-b border-slate-200/5" />
-                    <Typography weight={500}>Cliff</Typography>
-                    <Form.Control>
-                      <Controller
-                        name={`vestings.${index}.cliff.cliffEnabled`}
-                        control={control}
-                        render={({ field: { onChange, value } }) => {
-                          return (
-                            <Switch
-                              id={`vesting-schedule-cliff-${index}-toggle-switch`}
-                              checked={value}
-                              onChange={(val) => {
-                                onChange(val)
+      <Drawer.Button>
+        <div
+          className={classNames(
+            errors?.vestings?.[index]?.cliff ? 'border-red' : 'border-transparent',
+            'border-0 !border-b-[1px] h-[37px] flex items-center'
+          )}
+        >
+          <IconButton
+            icon={PencilIcon}
+            iconProps={{ width: 16, height: 16 }}
+            as="div"
+            className={classNames('py-0.5 px-1 flex items-center gap-2')}
+            testdata-id={`vesting-schedule-${index}-button`}
+          >
+            <span className="text-sm font-medium">
+              {row.cliff.cliffEnabled ? `Cliff, ${row.stepConfig}` : row.stepConfig ? row.stepConfig : 'Edit'}
+            </span>
+            <PencilIcon width={16} height={16} />
+          </IconButton>
+        </div>
+      </Drawer.Button>
+      <Drawer.Panel>
+        <Form.Control>
+          <Controller
+            name={`vestings.${index}.cliff.cliffEnabled`}
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <Switch
+                checked={value}
+                onChange={(val) => {
+                  onChange(val)
 
-                                if (!val) {
-                                  resetField(`vestings.${index}.cliff.cliffEndDate`)
-                                  resetField(`vestings.${index}.cliff.cliffAmount`)
-                                }
-                              }}
-                              size="sm"
-                              uncheckedIcon={<XIcon />}
-                              checkedIcon={<CheckIcon />}
-                            />
-                          )
-                        }}
-                      />
-                    </Form.Control>
-                    <Form.Control disabled={!cliff.cliffEnabled}>
-                      <Controller
-                        name={`vestings.${index}.cliff.cliffEndDate`}
-                        control={control}
-                        render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => {
-                          return (
-                            <>
-                              <DatePicker
-                                name={name}
-                                onBlur={onBlur}
-                                className={classNames(
-                                  DEFAULT_INPUT_CLASSNAME,
-                                  error ? ERROR_INPUT_CLASSNAME : '',
-                                  '!ring-offset-slate-900'
-                                )}
-                                onChange={onChange}
-                                selected={value}
-                                portalId="root-portal"
-                                showTimeSelect
-                                timeFormat="HH:mm"
-                                timeIntervals={15}
-                                timeCaption="time"
-                                minDate={
-                                  startDate
-                                    ? new Date(startDate.getTime() + 5 * 60 * 1000)
-                                    : new Date(Date.now() + 10 * 60 * 1000)
-                                }
-                                dateFormat="MMM d, yyyy HH:mm"
-                                placeholderText="Select date"
-                                autoComplete="off"
-                                customInput={<input testdata-id={`vesting-schedule-cliff-${index}-date`} type="text" />}
-                              />
-                              <Form.Error message={error?.message} />
-                            </>
-                          )
-                        }}
-                      />
-                    </Form.Control>
-                    <Form.Control disabled={!cliff.cliffEnabled}>
-                      <Controller
-                        control={control}
-                        name={`vestings.${index}.cliff.cliffAmount`}
-                        render={({
-                          field: { onChange, value, onBlur, name },
-                          fieldState: { error: validationError },
-                        }) => (
-                          <CurrencyInput
-                            id={`vesting-schedule-cliff-${index}-amount-input`}
-                            name={name}
-                            onBlur={onBlur}
-                            className="ring-offset-slate-900"
-                            fundSource={_fundSource}
-                            account={address}
-                            onError={onCurrencyInputError}
-                            errorMessage={validationError?.message}
-                            value={value || ''}
-                            onChange={onChange}
-                            currency={_currency}
-                          />
-                        )}
-                      />
-                    </Form.Control>
-                    <div className="border-b border-slate-200/5" />
-                    <Typography weight={500}>Graded Vesting Details</Typography>
-                    <Form.Control>
-                      <Controller
-                        control={control}
-                        name={`vestings.${index}.stepAmount`}
-                        render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
-                          <CurrencyInputBase
-                            id={`vesting-schedule-graded-${index}-amount-input`}
-                            className="ring-offset-slate-900"
-                            onChange={onChange}
-                            value={value || ''}
-                            currency={_currency}
-                            error={!!error?.message}
-                            name={name}
-                            onBlur={onBlur}
-                            helperTextPanel={
-                              <HelperTextPanel
-                                text={
-                                  error?.message ? (
-                                    error.message
-                                  ) : (
-                                    <>
-                                      The amount the recipient receives after every period. For a value of {value} and a{' '}
-                                      {stepConfig?.label.toLowerCase()} period length, the user will receive {value}{' '}
-                                      {currency?.symbol} {stepConfig?.label.toLowerCase()}.
-                                    </>
-                                  )
-                                }
-                                isError={!!error?.message}
-                              />
-                            }
-                          />
-                        )}
-                      />
-                    </Form.Control>
-                    <div className="flex gap-6">
-                      <Form.Control>
-                        <Controller
-                          control={control}
-                          name={`vestings.${index}.stepPayouts`}
-                          render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => {
-                            return (
-                              <>
-                                <Input.Counter
-                                  name={name}
-                                  onBlur={onBlur}
-                                  step={1}
-                                  min={0}
-                                  max={100}
-                                  onChange={(val) => onChange(Number(val) > 0 ? Number(val) : 1)}
-                                  value={value}
-                                  error={!!error?.message}
-                                  className="ring-offset-slate-900"
-                                  testdata-id={`vesting-schedule-graded-${index}-payouts-input`}
-                                />
-                                <Form.Error message={error?.message} />
-                              </>
-                            )
-                          }}
-                        />
-                      </Form.Control>
-                      <Form.Control>
-                        <Controller
-                          control={control}
-                          name={`vestings.${index}.stepConfig`}
-                          render={({ field: { onChange, value, onBlur }, fieldState: { error } }) => (
-                            <>
-                              <Select
-                                button={
-                                  <Select.Button error={!!error?.message} className="ring-offset-slate-900" testdata-id={`vesting-schedule-graded-${index}-frequency-selection-button`}>
-                                    {value.label}
-                                  </Select.Button>
-                                }
-                                value={value}
-                                onChange={(val: any) => {
-                                  onChange(val)
-                                  onBlur()
-                                }}
-                              >
-                                <Select.Options>
-                                  {Object.values(stepConfigurations).map((stepConfig) => (
-                                    <Select.Option key={stepConfig.label} value={stepConfig} testdata-id={`vesting-schedule-graded-${index}-${stepConfig.label.toLowerCase()}`}>
-                                      {stepConfig.label}
-                                    </Select.Option>
-                                  ))}
-                                </Select.Options>
-                              </Select>
-                              <Form.Error message={error?.message} />
-                            </>
-                          )}
-                        />
-                      </Form.Control>
-                    </div>
-                    <div className="border-b border-slate-200/5" />
-                    <Form.Control>
-                      {endDate instanceof Date && !isNaN(endDate?.getTime()) ? (
-                        <Typography variant="sm" className="text-slate-50" weight={500}>
-                          {format(endDate, 'dd MMM yyyy hh:mmaaa')}
-                        </Typography>
-                      ) : (
-                        <Typography variant="sm" className="italic text-slate-500">
-                          Not available
-                        </Typography>
-                      )}
-                    </Form.Control>
-                    <Button type="button" onClick={() => setOpen(false)} size="md" className="block px-6 sm:hidden">
-                      Close
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </Drawer.Panel>
-          </>
-        )
-      }}
+                  if (!val) {
+                    resetField(`vestings.${index}.cliff.cliffEndDate`)
+                    resetField(`vestings.${index}.cliff.cliffAmount`)
+                  }
+                }}
+                size="sm"
+                id="cliff-toggle-switch"
+              />
+            )}
+          />
+        </Form.Control>
+        <Form.Control disabled={!cliff.cliffEnabled}>
+          <Controller
+            name={`vestings.${index}.cliff.cliffEndDate`}
+            control={control}
+            render={({ field: { name, onChange, value, onBlur }, fieldState: { error } }) => {
+              return (
+                <Input.DatePicker
+                  name={name}
+                  onBlur={onBlur}
+                  customInput={
+                    <Input.DatePickerCustomInput
+                      isError={Boolean(error?.message)}
+                      caption={error?.message ? error?.message : 'The end date of the cliff.'}
+                      id="create-single-vest-cliff-date"
+                      label={
+                        <>
+                          End date<sup>*</sup>
+                        </>
+                      }
+                    />
+                  }
+                  onChange={onChange}
+                  selected={value}
+                  portalId="root-portal"
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
+                  timeCaption="time"
+                  minDate={new Date(Date.now() + 5 * 60 * 1000)}
+                  dateFormat="MMM d, yyyy HH:mm"
+                  placeholderText="Select date"
+                  autoComplete="off"
+                />
+              )
+            }}
+          />
+        </Form.Control>
+        <Form.Control disabled={!cliff.cliffEnabled}>
+          <Controller
+            control={control}
+            name={`vestings.${index}.cliff.cliffAmount`}
+            render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
+              return (
+                <>
+                  <Input.Numeric
+                    onUserInput={onChange}
+                    isError={Boolean(error?.message)}
+                    caption={
+                      error?.message ? error?.message : 'The amount that gets unlocked after the cliff end date.'
+                    }
+                    onBlur={onBlur}
+                    name={name}
+                    value={value}
+                    id="create-single-vest-cliff-amount-input"
+                    label={
+                      <>
+                        Amount<sup>*</sup>
+                      </>
+                    }
+                  />
+                </>
+              )
+            }}
+          />
+        </Form.Control>
+        <Form.Control>
+          <Controller
+            control={control}
+            name={`vestings.${index}.stepAmount`}
+            render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
+              return (
+                <>
+                  <Input.Numeric
+                    onUserInput={onChange}
+                    isError={Boolean(error?.message)}
+                    caption={error?.message ? error.message : `The amount the recipient receives for every unlock.`}
+                    onBlur={onBlur}
+                    name={name}
+                    value={value}
+                    id="create-single-vest-cliff-amount-input"
+                    label={
+                      <>
+                        Payout per unlock<sup>*</sup>
+                      </>
+                    }
+                  />
+                </>
+              )
+            }}
+          />
+        </Form.Control>
+        <Form.Control>
+          <Controller
+            control={control}
+            name={`vestings.${index}.stepPayouts`}
+            render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
+              return (
+                <>
+                  <Input.Numeric
+                    onUserInput={(val) => onChange(+val)}
+                    isError={Boolean(error?.message)}
+                    caption={
+                      error?.message
+                        ? error?.message
+                        : 'Defines the number of unlocks, a value of 10 would mean there will be a total of 10 unlocks during the duration of this vest.'
+                    }
+                    onBlur={onBlur}
+                    name={name}
+                    value={value}
+                    id="create-single-vest-cliff-amount-input"
+                    label={
+                      <>
+                        Number of unlocks<sup>*</sup>
+                      </>
+                    }
+                  />
+                </>
+              )
+            }}
+          />
+        </Form.Control>
+        <Form.Control>
+          <Controller
+            control={control}
+            name={`vestings.${index}.stepConfig`}
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+              <>
+                <Select onValueChange={onChange} defaultValue={value}>
+                  <SelectGroup>
+                    <SelectTrigger>
+                      <SelectLabel aria-label={value}>
+                        Unlock frequency<sup>*</sup>
+                      </SelectLabel>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectCaption
+                      caption={error?.message ? error?.message : 'The period of time between each unlock'}
+                      isError={Boolean(error)}
+                    />
+                    <SelectContent>
+                      {Object.keys(STEP_CONFIGURATIONS).map((stepConfig) => (
+                        <SelectItem
+                          key={stepConfig}
+                          value={stepConfig}
+                          testdata-id={`create-single-vest-graded-type-${stepConfig.toLowerCase()}`}
+                        >
+                          {stepConfig}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </SelectGroup>
+                </Select>
+              </>
+            )}
+          />
+        </Form.Control>
+      </Drawer.Panel>
     </Drawer.Root>
   )
 }

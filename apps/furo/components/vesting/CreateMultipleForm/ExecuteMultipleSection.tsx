@@ -18,6 +18,7 @@ import { CreateMultipleVestingFormSchemaType } from './schema'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { bentoBoxV1Address } from '@sushiswap/bentobox'
+import { STEP_CONFIGURATIONS } from '../CreateForm'
 
 export const ExecuteMultipleSection: FC<{
   chainId: FuroVestingRouterChainId
@@ -117,6 +118,7 @@ export const ExecuteMultipleSection: FC<{
               recipient &&
               startDate &&
               stepPayouts &&
+              stepConfig &&
               stepPercentage &&
               totalAmount &&
               cliffDuration &&
@@ -130,7 +132,7 @@ export const ExecuteMultipleSection: FC<{
                   currency: _currency,
                   startDate,
                   cliffDuration: cliffDuration.toString(),
-                  stepDuration: stepConfig.time.toString(),
+                  stepDuration: STEP_CONFIGURATIONS[stepConfig].toString(),
                   steps: stepPayouts.toString(),
                   stepPercentage: stepPercentage.toString(),
                   amount: totalAmount.quotient.toString(),
@@ -193,7 +195,7 @@ export const ExecuteMultipleSection: FC<{
             type="submit"
             onClick={() => sendTransaction?.()}
             disabled={isWritePending || !approved || !isValid || isValidating}
-            testdata-id='multiple-vest-confirm-button'
+            testdata-id="multiple-vest-confirm-button"
           >
             {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vests'}
           </Button>

@@ -1,11 +1,11 @@
 import { DuplicateIcon, TrashIcon } from '@heroicons/react/solid'
-import { IconButton } from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 
 import { useImportErrorContext } from '../../ImportErrorContext'
-import { CreateMultipleVestingFormSchemaType } from '../../schema'
 import { CellProps } from './types'
+import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { CreateMultipleVestingFormSchemaType } from '../../schema'
 
 export const ActionsCell: FC<CellProps> = ({ row, index }) => {
   const { errors, setErrors } = useImportErrorContext<CreateMultipleVestingFormSchemaType>()
@@ -17,6 +17,8 @@ export const ActionsCell: FC<CellProps> = ({ row, index }) => {
 
   const onRemove = useCallback(() => {
     if (remove) {
+      console.log(index)
+
       remove(index)
     }
 
@@ -28,16 +30,12 @@ export const ActionsCell: FC<CellProps> = ({ row, index }) => {
   }, [errors, index, remove, setErrors])
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-5 pl-3 h-[54px]">
       <div className="flex items-center">
-        <IconButton onClick={onRemove}>
-          <TrashIcon width={20} height={20} className="text-slate-300" />
-        </IconButton>
+        <IconButton icon={TrashIcon} iconProps={{ width: 20, height: 20 }} onClick={onRemove} />
       </div>
       <div className="flex items-center">
-        <IconButton onClick={() => append(row)}>
-          <DuplicateIcon width={20} height={20} className="text-slate-300" />
-        </IconButton>
+        <IconButton icon={DuplicateIcon} iconProps={{ width: 20, height: 20 }} onClick={() => append(row)} />
       </div>
     </div>
   )

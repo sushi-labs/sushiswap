@@ -1,8 +1,6 @@
-import { ChevronDownIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { classNames, Form } from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
@@ -10,7 +8,6 @@ import { useTokenFromZToken } from '../../../../../lib/zod'
 import { CreateMultipleStreamFormSchemaType } from '../../schema'
 import { CellProps } from './types'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
-import { Button } from '@sushiswap/ui/future/components/button'
 import { Input } from '@sushiswap/ui/future/components/input'
 
 export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHEREUM }) => {

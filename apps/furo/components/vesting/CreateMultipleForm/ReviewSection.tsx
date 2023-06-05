@@ -12,7 +12,7 @@ import { useFormContext } from 'react-hook-form'
 
 import { useDeepCompareMemoize } from '../../../lib'
 import { useTokenFromZToken } from '../../../lib/zod'
-import { CreateVestingFormSchemaType, ScheduleReview } from '../CreateForm'
+import { CreateVestingFormSchemaType, STEP_CONFIGURATIONS } from '../CreateForm'
 import { createScheduleRepresentation } from '../createScheduleRepresentation'
 import { calculateEndDate, calculateTotalAmount } from '../utils'
 import { CreateMultipleVestingModelSchemaType } from './schema'
@@ -212,36 +212,7 @@ const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
         )}
       </Table.td>
       <Table.td className="flex items-center gap-2">
-        {cliff.cliffEnabled ? `Cliff, ${stepConfig?.label}` : stepConfig.label}
-        <Tooltip
-          button={
-            <IconButton as="div">
-              <TableIcon width={16} height={16} />
-            </IconButton>
-          }
-          panel={
-            currency && stepPayouts ? (
-              <div className="p-1 bg-slate-800">
-                {_stepAmount && _currency && stepConfig && startDate && stepPayouts && (
-                  <ScheduleReview
-                    currency={_currency}
-                    schedule={createScheduleRepresentation({
-                      currency: _currency,
-                      cliffAmount: _cliffAmount,
-                      stepAmount: _stepAmount,
-                      stepDuration: stepConfig.time * 1000,
-                      startDate,
-                      cliffEndDate: cliff.cliffEnabled ? cliff?.cliffEndDate : null,
-                      stepPayouts,
-                    })}
-                  />
-                )}
-              </div>
-            ) : (
-              <div />
-            )
-          }
-        />
+        {cliff.cliffEnabled ? `Cliff, ${stepConfig}` : stepConfig}
       </Table.td>
     </Table.tr>
   )

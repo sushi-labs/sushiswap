@@ -1,15 +1,14 @@
-import { classNames } from '@sushiswap/ui'
-import { DatePicker } from '@sushiswap/ui/input/DatePicker'
 import React, { FC, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
-import { CreateMultipleVestingFormSchemaType } from '../../schema'
 import { CellProps } from './types'
+import { Input } from '@sushiswap/ui/future/components/input'
+import { CreateMultipleVestingFormSchemaType } from '../../schema'
 
 export const StartDateCell: FC<CellProps> = ({ index }) => {
   const { control, watch, setError, clearErrors } = useFormContext<CreateMultipleVestingFormSchemaType>()
 
-  const startDate = watch(`vestings.${index}.startDate`)
+  const [startDate] = watch([`vestings.${index}.startDate`])
 
   // Temporary solution for when Zod fixes conditional validation
   // https://github.com/colinhacks/zod/issues/1394
@@ -28,16 +27,24 @@ export const StartDateCell: FC<CellProps> = ({ index }) => {
     <Controller
       control={control}
       name={`vestings.${index}.startDate`}
-      render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
+      render={({ field: { name, onChange, value, onBlur }, fieldState: { error } }) => {
         return (
-          <DatePicker
+          <Input.DatePicker
             name={name}
             onBlur={onBlur}
-            className={classNames(
-              error?.message ? ' !border-red' : 'border-transparent border-none',
-              'border-0 !border-b-[1px]',
-              'py-2 without-ring !bg-transparent !px-0 truncate text-sm border-0 font-medium'
-            )}
+            customInput={
+              <Input.DatePickerCustomInput
+                isError={Boolean(error?.message)}
+                caption={error?.message}
+                testdata-id={'stream-start-date'}
+                id="stream-start-date"
+                label={
+                  <>
+                    Start date<sup>*</sup>
+                  </>
+                }
+              />
+            }
             onChange={onChange}
             selected={value}
             portalId="root-portal"
@@ -49,7 +56,7 @@ export const StartDateCell: FC<CellProps> = ({ index }) => {
             dateFormat="MMM d, yyyy HH:mm"
             placeholderText="Select date"
             autoComplete="off"
-            customInput={<input testdata-id={`vesting-start-date-${index}`} type="text" />}
+            testdata-id={'TEST'}
           />
         )
       }}
