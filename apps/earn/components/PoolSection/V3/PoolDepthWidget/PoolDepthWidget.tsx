@@ -9,6 +9,7 @@ import { FeeAmount, V3ChainId } from '@sushiswap/v3-sdk'
 import { Chart } from 'components/LiquidityChartRangeInput/Chart'
 import { useDensityChartData } from 'components/LiquidityChartRangeInput/hooks'
 import { ZoomLevels } from 'components/LiquidityChartRangeInput/types'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 
 interface PoolDepthWidget {
   id?: string
@@ -22,26 +23,26 @@ interface PoolDepthWidget {
 
 const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
   [FeeAmount.LOWEST]: {
-    initialMin: 0.95,
-    initialMax: 1.05,
+    initialMin: 0.9,
+    initialMax: 1.1,
     min: 0.00001,
     max: 1.5,
   },
   [FeeAmount.LOW]: {
-    initialMin: 0.75,
-    initialMax: 1.25,
+    initialMin: 0.7,
+    initialMax: 1.3,
     min: 0.00001,
     max: 1.5,
   },
   [FeeAmount.MEDIUM]: {
-    initialMin: 0.25,
-    initialMax: 4,
+    initialMin: 0.125,
+    initialMax: 8,
     min: 0.00001,
     max: 20,
   },
   [FeeAmount.HIGH]: {
-    initialMin: 0.25,
-    initialMax: 4,
+    initialMin: 0.125,
+    initialMax: 8,
     min: 0.00001,
     max: 20,
   },
@@ -78,6 +79,8 @@ export const PoolDepthWidget: FC<PoolDepthWidget> = ({
   return (
     <>
       {children && children}
+      {isLoading && <Skeleton.Box className="w-full h-[456px]" />}
+
       <div className="flex flex-col gap-4 p-4 rounded-xl">
         {isMounted && !noLiquidity && !isLoading && formattedData && price && (
           <Chart
@@ -86,7 +89,7 @@ export const PoolDepthWidget: FC<PoolDepthWidget> = ({
               series: formattedData,
               current: parseFloat((invertPrice ? price.invert() : price).toSignificant(8)),
             }}
-            dimensions={{ width: 400, height: 200 }}
+            dimensions={{ width: 900, height: 400 }}
             margins={{ top: 10, right: 2, bottom: 20, left: 0 }}
             styles={{
               area: {

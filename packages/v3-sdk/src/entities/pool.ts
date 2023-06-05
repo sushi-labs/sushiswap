@@ -3,7 +3,7 @@ import { JSBI } from '@sushiswap/math'
 import { BigintIsh } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
-import { FeeAmount, TICK_SPACINGS, V3_FACTORY_ADDRESS } from '../constants'
+import { FeeAmount, TICK_SPACINGS, V3ChainId, V3_FACTORY_ADDRESS } from '../constants'
 import { NEGATIVE_ONE, ONE, Q192, ZERO } from '../internalConstants'
 import { computePoolAddress } from '../utils/computePoolAddress'
 import { LiquidityMath } from '../utils/liquidityMath'
@@ -148,8 +148,8 @@ export class Pool {
   /**
    * Returns the chain ID of the tokens in the pool.
    */
-  public get chainId(): number {
-    return this.token0.chainId
+  public get chainId(): V3ChainId {
+    return this.token0.chainId as V3ChainId
   }
 
   /**
