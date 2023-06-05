@@ -7,11 +7,10 @@ import { FC, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { CliffDetailsSection } from './CliffDetailsSection'
-import CreateFormReviewModal from './CreateFormReviewModal/CreateFormReviewModal'
 import { GeneralDetailsSection } from './GeneralDetailsSection'
 import { GradedVestingDetailsSection } from './GradedVestingDetailsSection'
 import { CreateVestingFormSchemaType, CreateVestingModelSchema } from './schema'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { CreateFormReviewModal } from './CreateFormReviewModal'
 
 export const FORM_ERROR = 'FORM_ERROR' as const
 export type FormErrors = { [FORM_ERROR]?: never }
@@ -37,14 +36,7 @@ export const CreateForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId 
     mode: 'onBlur',
   })
 
-  const {
-    watch,
-    setError,
-    clearErrors,
-    reset,
-    formState: { isValid, isValidating, errors },
-  } = methods
-
+  const { watch, setError, clearErrors, reset } = methods
   const [startDate, cliffEnabled, cliffEndDate] = watch(['startDate', 'cliff.cliffEnabled', 'cliff.cliffEndDate'])
 
   // Temporary solution for when Zod fixes conditional validation
@@ -81,22 +73,7 @@ export const CreateForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId 
         <GeneralDetailsSection chainId={chainId} />
         <CliffDetailsSection />
         <GradedVestingDetailsSection />
-        <CreateFormReviewModal chainId={chainId}>
-          {({ isWritePending, setOpen }) => {
-            return (
-              <div className="flex justify-end pt-4">
-                <Button
-                  type="button"
-                  disabled={isWritePending || !isValid || isValidating || Boolean(errors?.[FORM_ERROR])}
-                  onClick={() => setOpen(true)}
-                  testdata-id="create-single-vesting-review-button"
-                >
-                  Review Vesting
-                </Button>
-              </div>
-            )
-          }}
-        </CreateFormReviewModal>
+        <CreateFormReviewModal chainId={chainId} />
       </Form>
       {/* {process.env.NODE_ENV === 'development' && isMounted && <DevTool control={control} />} */}
     </FormProvider>

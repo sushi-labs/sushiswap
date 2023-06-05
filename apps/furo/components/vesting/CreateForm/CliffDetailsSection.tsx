@@ -1,31 +1,13 @@
 import { Form } from '@sushiswap/ui'
-import React, { FC, useCallback } from 'react'
+import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useAccount } from '@sushiswap/wagmi'
-
-import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { CreateVestingFormSchemaType } from './schema'
 import { Switch } from '@sushiswap/ui/future/components/Switch'
 import { Input } from '@sushiswap/ui/future/components/input'
 
 export const CliffDetailsSection: FC = () => {
-  const { address } = useAccount()
-  const { control, watch, setError, clearErrors, setValue } = useFormContext<CreateVestingFormSchemaType>()
-  const [startDate, currency, cliffEnabled, fundSource] = watch([
-    'startDate',
-    'currency',
-    'cliff.cliffEnabled',
-    'fundSource',
-  ])
-  const _fundSource = ZFundSourceToFundSource.parse(fundSource)
-  const _currency = useTokenFromZToken(currency)
-
-  const onCurrencyInputError = useCallback(
-    (message?: string) => {
-      message ? setError('cliff.cliffAmount', { type: 'custom', message }) : clearErrors('cliff.cliffAmount')
-    },
-    [clearErrors, setError]
-  )
+  const { control, watch, setValue } = useFormContext<CreateVestingFormSchemaType>()
+  const [cliffEnabled] = watch(['cliff.cliffEnabled'])
 
   return (
     <Form.Section title="Cliff details" description="Optionally provide cliff details for your vesting">

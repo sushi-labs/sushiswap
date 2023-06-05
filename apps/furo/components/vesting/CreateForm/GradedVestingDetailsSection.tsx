@@ -1,16 +1,14 @@
-import { classNames, Form, Typography } from '@sushiswap/ui'
+import { Form } from '@sushiswap/ui'
 import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
-import { format } from 'date-fns'
-import React, { Fragment, useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { useDeepCompareMemoize } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
-import { CreateVestingFormSchemaType, FormErrors, StepConfig, stepConfigurations } from '../../vesting'
-import { calculateEndDate, calculateTotalAmount } from '../utils'
+import { CreateVestingFormSchemaType, FormErrors, STEP_CONFIGURATIONS } from '../../vesting'
+import { calculateTotalAmount } from '../utils'
 import { ChainId } from '@sushiswap/chain'
 import { Input } from '@sushiswap/ui/future/components/input'
-import { Listbox, Transition } from '@headlessui/react'
 import {
   Select,
   SelectCaption,
@@ -24,25 +22,17 @@ import {
 
 export const GradedVestingDetailsSection = () => {
   const { address } = useAccount()
-  const {
-    control,
-    watch,
-    setError,
-    clearErrors,
-    formState: { errors },
-  } = useFormContext<CreateVestingFormSchemaType & FormErrors>()
+  const { control, watch, setError, clearErrors } = useFormContext<CreateVestingFormSchemaType & FormErrors>()
   const formData = watch()
   const _formData = useDeepCompareMemoize(formData)
-
-  const { currency, stepConfig, fundSource, cliff, stepAmount, stepPayouts } = _formData
-
+  const { currency, fundSource, cliff, stepAmount, stepPayouts } = _formData
   const _fundSource = ZFundSourceToFundSource.parse(fundSource)
   const _currency = useTokenFromZToken(currency)
-  const endDate = calculateEndDate(formData)
   const totalAmount = useMemo(
     () => calculateTotalAmount({ currency, cliff, stepAmount, stepPayouts }),
     [cliff, currency, stepAmount, stepPayouts]
   )
+
   const { data: balance } = useBalance({
     account: address,
     chainId: currency?.chainId as ChainId | undefined,
@@ -98,7 +88,7 @@ export const GradedVestingDetailsSection = () => {
             return (
               <>
                 <Input.Numeric
-                  onUserInput={onChange}
+                  onUserInput={(val) => onChange(+val)}
                   isError={Boolean(error?.message)}
                   caption={
                     error?.message
@@ -139,13 +129,13 @@ export const GradedVestingDetailsSection = () => {
                     isError={Boolean(error)}
                   />
                   <SelectContent>
-                    {Object.values(stepConfigurations).map((stepConfig) => (
+                    {Object.keys(STEP_CONFIGURATIONS).map((stepConfig) => (
                       <SelectItem
-                        key={stepConfig.label}
-                        value={stepConfig.label}
-                        testdata-id={`create-single-vest-graded-type-${stepConfig.label.toLowerCase()}`}
+                        key={stepConfig}
+                        value={stepConfig}
+                        testdata-id={`create-single-vest-graded-type-${stepConfig.toLowerCase()}`}
                       >
-                        {stepConfig.label}
+                        {stepConfig}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -155,29 +145,6 @@ export const GradedVestingDetailsSection = () => {
           )}
         />
       </Form.Control>
-      <div className="flex gap-6">
-        <Form.Control>
-          <span
-            className={
-              _fundSource && balance?.[_fundSource] && totalAmount?.greaterThan(balance[_fundSource])
-                ? 'text-red'
-                : totalAmount
-                ? 'text-slate-50'
-                : 'text-slate-500'
-            }
-          >
-            {totalAmount ? totalAmount?.toSignificant(6) : '0.000000'} {totalAmount?.currency.symbol}
-          </span>
-          <Form.Error message={errors['FORM_ERROR']?.message} />
-        </Form.Control>
-        <Form.Control>
-          {endDate ? (
-            <span className="text-slate-50">{format(endDate, 'dd MMM yyyy hh:mmaaa')}</span>
-          ) : (
-            <span className="italic text-slate-500">Not available</span>
-          )}
-        </Form.Control>
-      </div>
     </Form.Section>
   )
 }

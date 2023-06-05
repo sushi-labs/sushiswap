@@ -1,15 +1,14 @@
 import { z } from 'zod'
 
 import { ZAddress, ZFundSource, ZToken } from '../../../lib/zod'
-import { StepConfig } from '../types'
 
-export const stepConfigurations: StepConfig[] = [
-  { label: 'Weekly', time: 604800 },
-  { label: 'Bi-weekly', time: 2 * 604800 },
-  { label: 'Monthly', time: 2620800 },
-  { label: 'Quarterly', time: 3 * 2620800 },
-  { label: 'Yearly', time: 31449600 },
-]
+export const STEP_CONFIGURATIONS: Record<string, number> = {
+  Weekly: 604800,
+  'Bi-weekly': 2 * 604800,
+  Monthly: 2620800,
+  Quarterly: 3 * 2620800,
+  Yearly: 31449600,
+}
 
 const CliffFieldsEnabled = z.object({
   cliffEnabled: z.literal(true),
