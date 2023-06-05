@@ -326,7 +326,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
       <Modal.Confirm tag={MODAL_ID} variant="transparent">
         {({ close }) => (
           <TxStatusModalContent
-            testId="migrate-confirmation-modal"
+            testId="vest-confirmation-modal"
             tag={MODAL_ID}
             chainId={chainId}
             hash={data?.hash}

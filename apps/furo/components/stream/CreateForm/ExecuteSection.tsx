@@ -11,7 +11,7 @@ import {
   useFuroStreamRouterContract,
 } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
@@ -24,8 +24,17 @@ import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
+import { ArrowLeftIcon } from '@heroicons/react/solid'
+import { Currency } from '@sushiswap/ui/future/components/currency'
+import { List } from '@sushiswap/ui/future/components/list/List'
+import { Chain } from '@sushiswap/chain'
+import { format } from 'date-fns'
+import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
+import { shortenAddress } from '@sushiswap/format'
 
 const APPROVE_TAG = 'createStreamSingle'
+const MODAL_ID = 'createStreamSingle'
 
 export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = withCheckerRoot(({ chainId }) => {
   const { address } = useAccount()
@@ -97,16 +106,6 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = withChec
         actions.push(approveBentoBoxAction({ contract, user: address, signature }))
       }
 
-      console.log([
-        recipient,
-        _amount.currency,
-        new Date(dates.startDate),
-        new Date(dates.endDate),
-        _amount.quotient.toString(),
-        _fundSource === FundSource.BENTOBOX,
-        _amount.toShare(rebase).quotient.toString(),
-      ])
-
       actions.push(
         streamCreationAction({
           contract,
@@ -130,7 +129,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = withChec
     [_amount, _fundSource, address, chainId, contract, dates?.endDate, dates?.startDate, rebase, recipient, signature]
   )
 
-  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+  const { sendTransactionAsync, isLoading, data, isError } = useSendTransaction({
     chainId,
     prepare,
     onSettled,
@@ -155,44 +154,138 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = withChec
   const formValid = isValid && !isValidating && Object.keys(errors).length === 0
 
   return (
-    <Form.Buttons className="flex flex-col items-end gap-3">
-      <Checker.Connect type="button" size="xl">
-        <Checker.Network type="button" size="xl" chainId={chainId}>
-          <Checker.Amounts type="button" size="xl" chainId={chainId} amounts={[_amount]}>
-            <Checker.ApproveBentobox
+    <>
+      <Form.Buttons className="grid grid-cols-3 gap-x-10">
+        <div />
+        <Checker.Connect fullWidth type="button" size="xl" className="col-span-3 md:col-span-2">
+          <Checker.Network fullWidth type="button" size="xl" chainId={chainId} className="col-span-3 md:col-span-2">
+            <Checker.Amounts
+              fullWidth
               type="button"
-              id="furo-create-single-stream-approve-bentobox"
               size="xl"
-              chainId={chainId as BentoBoxV1ChainId}
-              contract={getFuroStreamRouterContractConfig(chainId).address}
-              onSignature={setSignature}
+              chainId={chainId}
+              amounts={[_amount]}
+              className="col-span-3 md:col-span-2"
             >
-              <Checker.ApproveERC20
+              <Checker.ApproveBentobox
                 type="button"
-                contract={bentoBoxV1Address[chainId]}
-                id="furo-create-single-stream-approve-token"
+                fullWidth
+                id="furo-create-single-stream-approve-bentobox"
                 size="xl"
-                amount={_amount}
+                chainId={chainId as BentoBoxV1ChainId}
+                contract={getFuroStreamRouterContractConfig(chainId).address}
+                onSignature={setSignature}
+                className="col-span-3 md:col-span-2"
               >
-                <Checker.Success tag={APPROVE_TAG}>
-                  <Button
-                    size="xl"
-                    name="execute"
-                    type="button"
-                    variant="filled"
-                    loading={isWritePending}
-                    disabled={!formValid}
-                    onClick={() => sendTransaction?.()}
-                    testId="create-single-stream-confirmation"
-                  >
-                    {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Stream'}
-                  </Button>
-                </Checker.Success>
-              </Checker.ApproveERC20>
-            </Checker.ApproveBentobox>
-          </Checker.Amounts>
-        </Checker.Network>
-      </Checker.Connect>
-    </Form.Buttons>
+                <Checker.ApproveERC20
+                  fullWidth
+                  type="button"
+                  contract={bentoBoxV1Address[chainId]}
+                  id="furo-create-single-stream-approve-token"
+                  size="xl"
+                  amount={_amount}
+                  className="col-span-3 md:col-span-2"
+                >
+                  <Checker.Success tag={APPROVE_TAG}>
+                    <Modal.Trigger tag={MODAL_ID}>
+                      {({ open }) => (
+                        <Button
+                          type="button"
+                          fullWidth
+                          disabled={!formValid}
+                          size="xl"
+                          onClick={open}
+                          testId="create-single-stream-confirmation"
+                          className="col-span-3 md:col-span-2"
+                        >
+                          {isLoading ? <Dots>Confirm transaction</Dots> : 'Review stream'}
+                        </Button>
+                      )}
+                    </Modal.Trigger>
+                  </Checker.Success>
+                </Checker.ApproveERC20>
+              </Checker.ApproveBentobox>
+            </Checker.Amounts>
+          </Checker.Network>
+        </Checker.Connect>
+      </Form.Buttons>
+      <Modal.Review tag={MODAL_ID} variant="opaque">
+        {({ close, confirm }) => (
+          <div className="max-w-[504px] mx-auto">
+            <button onClick={close} className="p-3 pl-0">
+              <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
+            </button>
+            <div className="flex items-start justify-between gap-4 py-2">
+              <div className="flex flex-col flex-grow gap-1">
+                <h1 className="text-3xl font-semibold text-gray-900 dark:text-slate-50">Create Stream</h1>
+                <h1 className="text-lg font-medium text-gray-600 dark:text-slate-300">{currency?.symbol}</h1>
+              </div>
+              <div>{_amount && <Currency.Icon currency={_amount.currency} width={56} height={56} />}</div>
+            </div>
+            <div className="flex flex-col gap-3">
+              <List>
+                <List.Control>
+                  <List.KeyValue flex title="Network">
+                    {Chain.from(chainId).name}
+                  </List.KeyValue>
+                  {recipient && isAddress(recipient) && (
+                    <List.KeyValue flex title="Recipient">
+                      <a target="_blank" href={Chain.from(chainId).getAccountUrl(recipient)} rel="noreferrer">
+                        {shortenAddress(recipient)}
+                      </a>
+                    </List.KeyValue>
+                  )}
+                  {_amount && (
+                    <List.KeyValue flex title="Total amount">
+                      <div className="flex items-center gap-2">
+                        <Currency.Icon currency={_amount.currency} width={18} height={18} />
+                        {_amount?.toSignificant(6)} {_amount.currency.symbol}
+                      </div>
+                    </List.KeyValue>
+                  )}
+                  {dates?.startDate && (
+                    <List.KeyValue flex title="End date">
+                      {format(dates.startDate, 'dd MMM yyyy hh:mm')}
+                    </List.KeyValue>
+                  )}
+                  {dates?.endDate && (
+                    <List.KeyValue flex title="End date">
+                      {format(dates.endDate, 'dd MMM yyyy hh:mm')}
+                    </List.KeyValue>
+                  )}
+                </List.Control>
+              </List>
+            </div>
+            <div className="pt-4">
+              <div className="space-y-4">
+                <Button
+                  fullWidth
+                  size="xl"
+                  loading={isLoading && !isError}
+                  onClick={() => sendTransactionAsync?.().then(() => confirm())}
+                  disabled={isError}
+                  color={isError ? 'red' : 'blue'}
+                  testId="confirm-swap"
+                >
+                  {isError ? 'Shoot! Something went wrong :(' : isLoading ? <Dots>Create</Dots> : `Create`}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal.Review>
+      <Modal.Confirm tag={MODAL_ID} variant="transparent">
+        {({ close }) => (
+          <TxStatusModalContent
+            testId="stream-confirmation-modal"
+            tag={MODAL_ID}
+            chainId={chainId}
+            hash={data?.hash}
+            successMessage={`Successfully created stream`}
+            onClose={close}
+          />
+        )}
+      </Modal.Confirm>
+    </>
   )
 })
