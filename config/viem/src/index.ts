@@ -697,7 +697,7 @@ export const config: Record<number, PublicClientConfig> = {
     chain: polygonZkEvm,
     transport: fallback(
       [
-        http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/${alchemyId}`),
+        // http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/${alchemyId}`),
         http('https://zkevm-rpc.com'),
         http('https://rpc.ankr.com/polygon_zkevm'),
         http('https://rpc.polygon-zkevm.gateway.fm'),
