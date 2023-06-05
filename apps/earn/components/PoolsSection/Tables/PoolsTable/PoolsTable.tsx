@@ -76,23 +76,25 @@ export const PoolsTable: FC = () => {
     sortDescFirst: true,
   })
 
-  useEffect(() => {
-    if (isSm && !isMd) {
-      setColumnVisibility({
-        volume1d: false,
-        rewards: false,
-        fees1d: false,
-      })
-    } else if (isSm) {
-      setColumnVisibility({})
-    } else {
-      setColumnVisibility({
-        rewards: false,
-        liquidityUSD: false,
-        fees1d: false,
-      })
-    }
-  }, [isMd, isSm])
+  // useEffect(() => {
+  //   if (isSm && !isMd) {
+  //     setColumnVisibility({
+  //       volume1d: false,
+  //       rewards: false,
+  //       fees1d: false,
+  //     })
+  //   } else if (isSm) {
+  //     setColumnVisibility({})
+  //   } else {
+  //     setColumnVisibility({
+  //       rewards: false,
+  //       liquidityUSD: false,
+  //       fees1d: false,
+  //       volume1w: false,
+  //       totalApr1d: false,
+  //     })
+  //   }
+  // }, [isMd, isSm])
 
   const rowLink = useCallback((row: Pool) => {
     return `/${row.id}`
