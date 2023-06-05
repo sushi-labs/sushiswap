@@ -8,7 +8,6 @@ import { Typography } from '../../../typography'
 import classNames from 'classnames'
 import { Popover } from '../Popover'
 import { useIsMounted } from '@sushiswap/hooks'
-import Row from './Row'
 
 interface GenericTableProps<C> {
   table: ReactTableType<C>
@@ -75,14 +74,10 @@ export const GenericTable = <T extends { id: string }>({
                     key={header.id}
                     colSpan={header.colSpan}
                     style={{
-                      ...(header.column.columnDef.maxSize && {
-                        maxWidth: header.column.columnDef.maxSize,
-                      }),
                       ...(header.column.columnDef.size && {
+                        minWidth: header.column.columnDef.size,
                         width: header.column.columnDef.size,
-                      }),
-                      ...(header.column.columnDef.minSize && {
-                        minWidth: header.column.columnDef.minSize,
+                        maxWidth: header.column.columnDef.size,
                       }),
                     }}
                   >
@@ -143,14 +138,10 @@ export const GenericTable = <T extends { id: string }>({
                                 testId={`${testId}-${r}-${i}-td`}
                                 className="!px-0 relative"
                                 style={{
-                                  ...(cell.column.columnDef.maxSize && {
-                                    maxWidth: cell.column.columnDef.maxSize,
-                                  }),
                                   ...(cell.column.columnDef.size && {
+                                    minWidth: cell.column.columnDef.size,
                                     width: cell.column.columnDef.size,
-                                  }),
-                                  ...(cell.column.columnDef.minSize && {
-                                    minWidth: cell.column.columnDef.minSize,
+                                    maxWidth: cell.column.columnDef.size,
                                   }),
                                 }}
                                 key={cell.id}
@@ -201,14 +192,10 @@ export const GenericTable = <T extends { id: string }>({
                             testId={`${testId}-${r}-${i}-td`}
                             className="!px-0 relative"
                             style={{
-                              ...(cell.column.columnDef.maxSize && {
-                                maxWidth: cell.column.columnDef.maxSize,
-                              }),
                               ...(cell.column.columnDef.size && {
+                                minWidth: cell.column.columnDef.size,
                                 width: cell.column.columnDef.size,
-                              }),
-                              ...(cell.column.columnDef.minSize && {
-                                minWidth: cell.column.columnDef.minSize,
+                                maxWidth: cell.column.columnDef.size,
                               }),
                             }}
                             key={cell.id}
@@ -250,14 +237,10 @@ export const GenericTable = <T extends { id: string }>({
                       testId={`${testId}-filler-${index}`}
                       key={column.id}
                       style={{
-                        ...(column.columnDef.maxSize && {
-                          maxWidth: column.columnDef.maxSize,
-                        }),
                         ...(column.columnDef.size && {
+                          minWidth: column.columnDef.size,
+                          width: column.columnDef.size,
                           maxWidth: column.columnDef.size,
-                        }),
-                        ...(column.columnDef.minSize && {
-                          maxWidth: column.columnDef.minSize,
                         }),
                       }}
                     />
