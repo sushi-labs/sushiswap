@@ -2,7 +2,7 @@ import { getFuroStreamContractConfig } from '@sushiswap/wagmi'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { FC, useMemo } from 'react'
-import { CancelModal, FuroTimer, Layout, TransferModal, UpdateModal } from '../../components'
+import { BalancePredictor, CancelModal, FuroTimer, Layout, TransferModal, UpdateModal } from '../../components'
 import { WithdrawModal } from '../../components/stream'
 import { useStream, useStreamBalance, useStreamTransactions } from '../../lib'
 import { SushiIcon } from '@sushiswap/ui/future/components/icons'
@@ -208,7 +208,7 @@ const _Streams: FC = () => {
                     disabled={disabled}
                     onClick={() => setOpen(true)}
                     startIcon={<DownloadIcon width={18} height={18} />}
-                    testId='stream-withdraw'
+                    testId="stream-withdraw"
                     variant="outlined"
                   >
                     Withdraw
@@ -225,7 +225,7 @@ const _Streams: FC = () => {
                   <Button
                     onClick={() => setOpen(true)}
                     startIcon={<ArrowRightIcon width={18} height={18} />}
-                    testId='stream-transfer'
+                    testId="stream-transfer"
                     variant="outlined"
                   >
                     Transfer
@@ -242,7 +242,7 @@ const _Streams: FC = () => {
                   <Button
                     onClick={() => setOpen(true)}
                     startIcon={<RefreshIcon width={18} height={18} />}
-                    testId='stream-update'
+                    testId="stream-update"
                     variant="outlined"
                   >
                     Update
@@ -262,7 +262,7 @@ const _Streams: FC = () => {
                     color="red"
                     onClick={() => setOpen(true)}
                     startIcon={<XIcon width={18} height={18} />}
-                    testId='stream-cancel'
+                    testId="stream-cancel"
                     variant="outlined"
                   >
                     Cancel
@@ -276,13 +276,34 @@ const _Streams: FC = () => {
             <div className="flex justify-center">
               <div className="shadow-lg relative w-[460px] h-[290px] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl">
                 <span className="flex items-center justify-start gap-2">
-                  <div className="flex flex-col">
-                    <span className="font-medium text-white">{stream?.totalAmount.currency.symbol}</span>
-                    <span className="text-2xl font-medium text-white">
-                      {formatNumber(stream?.totalAmount.toSignificant(6))}
-                    </span>
-                  </div>
+                  <span className="flex items-center gap-2 text-lg font-semibold text-white">
+                    <div className="rounded-full shadow-md shadow-black/30 -mt-0.5">
+                      <Currency.Icon currency={stream?.totalAmount.currency} width={20} height={20} />
+                    </div>
+                    {formatNumber(stream?.totalAmount.toSignificant(6))}
+                  </span>
                 </span>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <h1 className="text-4xl font-bold text-white">
+                    <BalancePredictor
+                      startTime={stream.startTime}
+                      endTime={stream.endTime}
+                      balance={balance}
+                      totalAmount={stream.totalAmount}
+                    >
+                      {(val) => {
+                        const [first, latter] = (+(val?.toSignificant(7) || 0))
+                          .toLocaleString('en-US', { minimumFractionDigits: 2 })
+                          .split('.')
+                        return (
+                          <>
+                            <span>{first}</span>.<span className="text-2xl">{latter}</span>
+                          </>
+                        )
+                      }}
+                    </BalancePredictor>
+                  </h1>
+                </div>
                 <div className="absolute flex items-center justify-center gap-3 bottom-4 right-4">
                   <div className="p-2 rounded-full shadow-md bg-white/10">
                     <SushiIcon width={22} height={22} />
@@ -303,16 +324,14 @@ const _Streams: FC = () => {
                   <List.Control>
                     <List.KeyValue title="Unlocked" subtitle="available for withdrawal">
                       <div className="flex flex-col">
-                        <Blink dep={balance?.toSignificant()} as="span" timeout={1500}>
-                          {(isBlinking) => (
-                            <span className={classNames(isBlinking ? 'text-green' : '', 'flex items-center gap-1')}>
-                              {balance?.toSignificant(6)}{' '}
-                              {isBlinking && (
-                                <ArrowUpIcon className="rotate-45" strokeWidth={3} width={14} height={14} />
-                              )}
-                            </span>
-                          )}
-                        </Blink>
+                        <BalancePredictor
+                          balance={balance}
+                          startTime={stream.startTime}
+                          endTime={stream.endTime}
+                          totalAmount={stream.totalAmount}
+                        >
+                          {(val) => +(val?.toSignificant(7) || 0).toLocaleString('en-US')}
+                        </BalancePredictor>
                         <span className="text-[10px] font-medium text-slate-500">{balance?.currency.symbol}</span>
                       </div>
                     </List.KeyValue>
@@ -417,13 +436,23 @@ const _Streams: FC = () => {
                   </List.Control>
                 </List>
                 <List>
-                  <List.Label>Withdraw History</List.Label>
+                  <List.Label>History</List.Label>
                   <List.Control className="max-h-[320px] scroll">
                     {transactions?.map((tx, i) => (
                       <List.KeyValue
                         key={i}
                         flex
-                        title={`${format(new Date(tx.timestamp), 'dd MMM yyyy')}`}
+                        className="!items-end"
+                        title={
+                          <div className="flex flex-col gap-0.5">
+                            <div className="text-xs text-gray-500 dark:text-slate-400 capitalize">
+                              {tx.status?.toLowerCase()}
+                            </div>
+                            <span className="text-sm font-medium text-gray-600 dark:text-slate-400">
+                              {format(new Date(tx.timestamp), 'dd MMM yyyy')}
+                            </span>
+                          </div>
+                        }
                         subtitle={`${format(new Date(tx.timestamp), 'hh:mmaaa')}`}
                       >
                         <div className="flex flex-col">

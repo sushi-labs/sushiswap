@@ -1,4 +1,4 @@
-import { classNames, NetworkIcon, ProgressColor, Typography } from '@sushiswap/ui'
+import { classNames, NetworkIcon, ProgressColor } from '@sushiswap/ui'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { FC, useMemo } from 'react'
@@ -27,8 +27,6 @@ import { queryParamsSchema } from '../../lib/zod'
 import { Carousel } from '@sushiswap/ui/future/components/Carousel'
 import ProgressBar from '@sushiswap/ui/progressbar/ProgressBar'
 import { Timer } from '../../components/Timer'
-import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
-import { CheckMarkIcon } from '@sushiswap/ui/future/components/icons/CheckmarkIcon'
 import Container from '@sushiswap/ui/future/components/Container'
 
 const VestingPage = () => {
