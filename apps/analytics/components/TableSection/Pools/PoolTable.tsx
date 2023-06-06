@@ -36,7 +36,7 @@ const COLUMNS = [
 ] as any
 
 export const PoolTable: FC = () => {
-  const { chainIds, search: tokenSymbols } = useFilters()
+  const { chainIds, search: tokenSymbols, isWhitelisted } = useFilters()
 
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
@@ -55,9 +55,9 @@ export const PoolTable: FC = () => {
       tokenSymbols,
       orderBy: sorting[0]?.id,
       orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
-      isWhitelisted: true,
+      isWhitelisted,
     }),
-    [chainIds, sorting, tokenSymbols]
+    [chainIds, sorting, tokenSymbols, isWhitelisted]
   )
 
   const { data: pools, isValidating, setSize } = usePoolsInfinite({ args, swrConfig: useSWRConfig() })
