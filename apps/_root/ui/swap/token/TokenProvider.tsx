@@ -1,12 +1,14 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { currencyFromShortCurrencyName, isShortCurrencyName, Native, Token, Type } from '@sushiswap/currency'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { isAddress } from 'ethers/lib/utils'
-import { queryParamsSchema } from '../../lib/swap/queryParamsSchema'
+import { queryParamsSchema } from '../../../lib/swap/queryParamsSchema'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { useNetwork } from '@sushiswap/wagmi'
-import { SwapChainId } from '../../types'
+import { SwapChainId } from '../../../types'
 import { isUniswapV2FactoryChainId } from '@sushiswap/sushiswap'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
 import { isV3ChainId } from '@sushiswap/v3-sdk'
@@ -62,26 +64,46 @@ const getChainIdFromUrl = (urlChainId: ChainId | undefined, connectedChainId: Ch
 }
 
 export const TokenProvider: FC<TokenProvider> = ({ children }) => {
-  const { query } = useRouter()
-  const { fromChainId: _fromChainId, fromCurrency, toChainId: _toChainId, toCurrency } = queryParamsSchema.parse(query)
+  // const { query } = useRouter()
+
+  const searchParams = useSearchParams()
+
+  const fromChainId = searchParams?.get('fromChainId')
+  const fromCurrency = searchParams?.get('fromCurrency')
+  const toChainId = searchParams?.get('toChainId')
+  const toCurrency = searchParams?.get('toCurrency')
+  const amount = searchParams?.get('amount')
+
+  const {
+    fromChainId: _fromChainId,
+    fromCurrency: _fromCurrency,
+    toChainId: _toChainId,
+    toCurrency: _toCurrency,
+  } = queryParamsSchema.parse({
+    fromChainId,
+    fromCurrency,
+    toChainId,
+    toCurrency,
+    amount,
+  })
   const { chain } = useNetwork()
   const [chainId] = useState(chain?.id)
 
   const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useTokenWithCache({
     chainId: _fromChainId,
-    address: fromCurrency,
+    address: _fromCurrency,
   })
 
   const { data: tokenTo, isInitialLoading: isTokenToLoading } = useTokenWithCache({
     chainId: _toChainId,
-    address: toCurrency,
+    address: _toCurrency,
   })
 
   const state = useMemo(() => {
     const fromChainId = getChainIdFromUrl(_fromChainId, chainId as ChainId)
     const toChainId = getChainIdFromUrl(_toChainId, chainId as ChainId)
-    const token0 = getTokenFromUrl(fromChainId, fromCurrency, tokenFrom, isTokenFromLoading)
-    const token1 = getTokenFromUrl(toChainId, toCurrency, tokenTo, isTokenToLoading)
+    const token0 = getTokenFromUrl(fromChainId, _fromCurrency, tokenFrom, isTokenFromLoading)
+    const token1 = getTokenFromUrl(toChainId, _toCurrency, tokenTo, isTokenToLoading)
 
     return {
       token0,
@@ -94,10 +116,10 @@ export const TokenProvider: FC<TokenProvider> = ({ children }) => {
     _fromChainId,
     _toChainId,
     chainId,
-    fromCurrency,
+    _fromCurrency,
     isTokenFromLoading,
     isTokenToLoading,
-    toCurrency,
+    _toCurrency,
     tokenFrom,
     tokenTo,
   ])

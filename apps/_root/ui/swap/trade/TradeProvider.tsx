@@ -1,14 +1,16 @@
+'use client'
+
 import { ChainId } from '@sushiswap/chain'
 import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
-import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
+import React, { createContext, FC, ReactNode, useCallback, useContext, useMemo, useReducer } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
-import { useRouter } from 'next/router'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Signature } from '@ethersproject/bytes'
 import { nanoid } from 'nanoid'
 import { SwapChainId } from 'types'
 import { queryParamsSchema } from '../../../lib/swap/queryParamsSchema'
-import { useTokenState } from '../TokenProvider'
+import { useTokenState } from '../token/TokenProvider'
 
 interface InternalSwapState {
   isFallback: boolean
@@ -89,8 +91,27 @@ interface SwapProviderProps {
 
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { address } = useAccount()
-  const { query, push, pathname } = useRouter()
-  const { fromCurrency, toCurrency, amount, recipient, review } = queryParamsSchema.parse(query)
+  // const { query, push, pathname } = useRouter()
+
+  const searchParams = useSearchParams()!
+  const pathname = usePathname()
+  const { push } = useRouter()
+
+  const _fromChainId = searchParams?.get('fromChainId')
+  const _fromCurrency = searchParams?.get('fromCurrency')
+  const _toChainId = searchParams?.get('toChainId')
+  const _toCurrency = searchParams?.get('toCurrency')
+  const _amount = searchParams?.get('amount')
+  const _recipient = searchParams?.get('recipient')
+  const _review = searchParams?.get('review')
+
+  const { fromCurrency, toCurrency, amount, recipient, review } = queryParamsSchema.parse({
+    fromCurrency: _fromCurrency,
+    toCurrency: _toCurrency,
+    amount: _amount,
+    recipient: _recipient,
+    review: _review,
+  })
   const { token0, token1, fromChainId, toChainId } = useTokenState()
 
   const [internalState, dispatch] = useReducer(reducer, {
@@ -125,39 +146,22 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
             ? 'NATIVE'
             : state.token1.wrapped.address
           : defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].address
-
-      void push(
-        {
-          pathname,
-          query: {
-            ...query,
-            fromChainId: chainId,
-            fromCurrency: token0.isNative ? 'NATIVE' : token0.wrapped.address,
-            toChainId: chainId,
-            toCurrency: token1,
-            amount: '',
-          },
-        },
-        undefined
-      )
+      const _searchParams = new URLSearchParams(searchParams)
+      _searchParams.set('fromChainId', chainId.toString())
+      _searchParams.set('fromCurrency', token0.isNative ? 'NATIVE' : token0.wrapped.address)
+      _searchParams.set('toChainId', chainId.toString())
+      _searchParams.set('toCurrency', token1)
+      _searchParams.set('amount', '')
+      void push(`${pathname}?${_searchParams.toString()}`)
     }
 
     const setNetwork0 = (chainId: SwapChainId) => {
       const fromCurrency =
         state.token0?.chainId === chainId ? (state.token0.isNative ? 'NATIVE' : state.token0.wrapped.address) : 'NATIVE'
-
-      void push(
-        {
-          pathname,
-          query: {
-            ...query,
-            fromChainId: chainId,
-            fromCurrency,
-          },
-        },
-        undefined,
-        { shallow: true }
-      )
+      const _searchParams = new URLSearchParams(searchParams)
+      _searchParams.set('fromChainId', chainId.toString())
+      _searchParams.set('fromCurrency', fromCurrency)
+      void push(`${pathname}?${_searchParams.toString()}`)
     }
     const setNetwork1 = (chainId: SwapChainId) => {
       const toCurrency =
@@ -166,86 +170,57 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
             ? 'NATIVE'
             : state.token1.wrapped.address
           : defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].address
-
-      void push(
-        {
-          pathname,
-          query: {
-            ...query,
-            toChainId: chainId,
-            toCurrency,
-          },
-        },
-        undefined,
-        { shallow: true }
-      )
+      const _searchParams = new URLSearchParams(searchParams)
+      _searchParams.set('toChainId', chainId.toString())
+      _searchParams.set('toCurrency', toCurrency)
+      void push(`${pathname}?${_searchParams.toString()}`)
     }
     const setTokens = (currency0: Type, currency1: Type) => {
-      void push(
-        {
-          pathname,
-          query: {
-            ...query,
-            fromChainId: currency0.chainId,
-            fromCurrency: currency0.isNative ? 'NATIVE' : currency0.wrapped.address,
-            toChainId: currency1.chainId,
-            toCurrency: currency1.isNative ? 'NATIVE' : currency1.wrapped.address,
-          },
-        },
-        undefined,
-        { shallow: true }
-      )
+      const _searchParams = new URLSearchParams(searchParams)
+      _searchParams.set('fromChainId', currency0.chainId.toString())
+      _searchParams.set('fromCurrency', currency0.isNative ? 'NATIVE' : currency0.wrapped.address)
+      _searchParams.set('toChainId', currency1.chainId.toString())
+      _searchParams.set('toCurrency', currency1.isNative ? 'NATIVE' : currency1.wrapped.address)
+      void push(`${pathname}?${_searchParams.toString()}`)
     }
     const setToken0 = (currency: Type) => {
       const _fromCurrency = currency.isNative ? 'NATIVE' : currency.wrapped.address
-      void push(
-        {
-          pathname,
-          query: {
-            ...query,
-            fromChainId: currency.chainId,
-            fromCurrency: _fromCurrency,
-            toChainId: toCurrency === _fromCurrency && toChainId === fromChainId ? fromChainId : toChainId,
-            toCurrency: toCurrency === _fromCurrency && toChainId === fromChainId ? fromCurrency : toCurrency,
-          },
-        },
-        undefined,
-        { shallow: true }
+      const _searchParams = new URLSearchParams(searchParams)
+      _searchParams.set('fromChainId', currency.chainId.toString())
+      _searchParams.set('fromCurrency', _fromCurrency)
+      _searchParams.set(
+        'toChainId',
+        toCurrency === _fromCurrency && toChainId === fromChainId ? fromChainId.toString() : toChainId.toString()
       )
+      _searchParams.set(
+        'toCurrency',
+        toCurrency === _fromCurrency && toChainId === fromChainId ? fromCurrency : toCurrency
+      )
+      void push(`${pathname}?${_searchParams.toString()}`)
     }
     const setToken1 = (currency: Type) => {
       const _toCurrency = currency.isNative ? 'NATIVE' : currency.wrapped.address
-
-      void push(
-        {
-          pathname,
-          query: {
-            ...query,
-            fromChainId: fromCurrency === _toCurrency && toChainId === fromChainId ? toChainId : fromChainId,
-            fromCurrency: fromCurrency === _toCurrency && toChainId === fromChainId ? toCurrency : fromCurrency,
-            toChainId: currency.chainId,
-            toCurrency: _toCurrency,
-          },
-        },
-        undefined,
-        { shallow: true }
+      const _searchParams = new URLSearchParams(searchParams)
+      _searchParams.set(
+        'fromChainId',
+        fromCurrency === _toCurrency && toChainId === fromChainId ? toChainId.toString() : fromChainId.toString()
       )
+      _searchParams.set(
+        'fromCurrency',
+        fromCurrency === _toCurrency && toChainId === fromChainId ? toCurrency : fromCurrency
+      )
+      _searchParams.set('toChainId', currency.chainId.toString())
+      _searchParams.set('toCurrency', _toCurrency)
+      void push(`${pathname}?${_searchParams.toString()}`)
     }
-    const switchTokens = () =>
-      void push(
-        {
-          pathname,
-          query: {
-            ...query,
-            fromChainId: toChainId,
-            fromCurrency: toCurrency,
-            toChainId: fromChainId,
-            toCurrency: fromCurrency,
-          },
-        },
-        undefined,
-        { shallow: true }
-      )
+    const switchTokens = () => {
+      const _searchParams = new URLSearchParams(searchParams)
+      _searchParams.set('fromChainId', toChainId.toString())
+      _searchParams.set('fromCurrency', toCurrency)
+      _searchParams.set('toChainId', fromChainId.toString())
+      _searchParams.set('toCurrency', fromCurrency)
+      void push(`${pathname}?${_searchParams.toString()}`)
+    }
     const setAppType = (appType: AppType) => {
       const network1 =
         appType === AppType.Swap
@@ -255,7 +230,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
             ? ChainId.ETHEREUM
             : ChainId.ARBITRUM
           : state.network1
-
       const token1 =
         state.token1?.chainId === network1
           ? state.token1.isNative
@@ -264,70 +238,33 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           : state.token0?.symbol === defaultQuoteCurrency[network1 as keyof typeof defaultQuoteCurrency].symbol
           ? 'NATIVE'
           : defaultQuoteCurrency[network1 as keyof typeof defaultQuoteCurrency].address
-
-      void push(
-        {
-          pathname,
-          query: {
-            ...query,
-            toChainId: network1,
-            toCurrency: token1,
-          },
-        },
-        undefined,
-        { shallow: true }
-      )
+      const _searchParams = new URLSearchParams(searchParams)
+      _searchParams.set('toChainId', network1.toString())
+      _searchParams.set('toCurrency', token1)
+      void push(`${pathname}?${_searchParams.toString()}`)
     }
     const setSearch = (currency: Type) => {
-      void push(
-        {
-          pathname,
-          query: {
-            ...query,
-            fromChainId: currency.chainId,
-            fromCurrency: 'NATIVE',
-            toChainId: currency.chainId,
-            toCurrency: currency.isNative ? 'NATIVE' : currency.wrapped.address,
-          },
-        },
-        undefined,
-        { shallow: true }
-      )
+      const _searchParams = new URLSearchParams(searchParams)
+      _searchParams.set('fromChainId', currency.chainId.toString())
+      _searchParams.set('fromCurrency', 'NATIVE')
+      _searchParams.set('toChainId', currency.chainId.toString())
+      _searchParams.set('toCurrency', currency.isNative ? 'NATIVE' : currency.wrapped.address)
+      void push(`${pathname}?${_searchParams.toString()}`)
     }
 
     const setValue = (value: string) => {
-      if (value !== query.amount) {
-        void push(
-          {
-            pathname,
-            query: {
-              ...query,
-              fromChainId,
-              fromCurrency,
-              toChainId,
-              toCurrency,
-              amount: value,
-            },
-          },
-          undefined,
-          { shallow: true }
-        )
+      if (value !== _amount) {
+        const _searchParams = new URLSearchParams(searchParams)
+        _searchParams.set('amount', value)
+        void push(`${pathname}?${_searchParams.toString()}`)
       }
       dispatch({ type: 'setValue', value })
     }
     const setRecipient = (recipient: string) => {
-      if (recipient !== query.recipient) {
-        void push(
-          {
-            pathname,
-            query: {
-              ...query,
-              recipient,
-            },
-          },
-          undefined,
-          { shallow: true }
-        )
+      if (recipient !== _recipient) {
+        const _searchParams = new URLSearchParams(searchParams)
+        _searchParams.set('recipient', recipient)
+        void push(`${pathname}?${_searchParams.toString()}`)
       }
     }
     const setReview = (value: boolean) => dispatch({ type: 'setReview', value })
@@ -353,11 +290,13 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setFallback,
     }
   }, [
+    _recipient,
+    _amount,
     fromChainId,
     fromCurrency,
     pathname,
     push,
-    query,
+    searchParams,
     state.network0,
     state.network1,
     state.token0,

@@ -21,7 +21,11 @@ export const queryParamsSchema = z.object({
   //     message: 'ChainId not supported.',
   //   }
   // ),
-  fromCurrency: z.string().default('NATIVE'),
+  // fromCurrency: z
+  //   .string()
+  //   .nullable()
+  //   .transform((arg) => (arg ? arg : 'NATIVE')),
+  fromCurrency: z.optional(z.nullable(z.string())).transform((val) => val ?? 'NATIVE'),
   toChainId: z.coerce
     .number()
     .int()
@@ -29,8 +33,12 @@ export const queryParamsSchema = z.object({
     .lte(2 ** 256)
     .optional()
     .transform((chainId) => chainId as SwapChainId | undefined),
-  toCurrency: z.string().default('SUSHI'),
-  amount: z.string().default(''),
-  recipient: z.optional(z.coerce.string()),
-  review: z.optional(z.coerce.boolean()),
+  toCurrency: z.optional(z.nullable(z.string())).transform((val) => val ?? 'SUSHI'),
+  // toCurrency: z
+  //   .string()
+  //   .nullable()
+  //   .transform((arg) => (arg ? arg : 'SUSHI')),
+  amount: z.optional(z.nullable(z.string())).transform((val) => val ?? ''),
+  recipient: z.optional(z.nullable(z.string())).transform((val) => val ?? ''),
+  review: z.optional(z.nullable(z.boolean())),
 })

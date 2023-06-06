@@ -1,5 +1,5 @@
 import { FC, ReactNode } from 'react'
-import { useTokenState } from './TokenProvider'
+import { useTokenState } from './token/TokenProvider'
 import { SplashController as UISplashController } from '@sushiswap/ui/future/components/SplashController'
 
 export const SplashController: FC<{ children: ReactNode }> = ({ children }) => {
