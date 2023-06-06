@@ -201,7 +201,7 @@ export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
   [ChainId.KAVA]: 6.3,
   [ChainId.METIS]: 4.5,
   [ChainId.ARBITRUM_NOVA]: 1,
-  [ChainId.BOBA]: 1,
+  [ChainId.BOBA]: 250,
   [ChainId.BOBA_AVAX]: 612,
   [ChainId.BOBA_BNB]: 0.5,
   [ChainId.BTTC]: 2,
