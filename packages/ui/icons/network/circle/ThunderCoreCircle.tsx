@@ -10,8 +10,8 @@ export const ThunderCoreCircle = (props: React.ComponentProps<'svg'>) => {
       />
       <defs>
         <linearGradient id="paint0_linear_1413_10030" x1="24" y1="14" x2="106" y2="114" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#00FFD5" />
-          <stop offset="1" stop-color="#035CD2" />
+          <stop stopColor="#00FFD5" />
+          <stop offset="1" stopColor="#035CD2" />
         </linearGradient>
       </defs>
     </svg>
