@@ -145,7 +145,7 @@ export class WordLoadManager {
         const middle = Math.floor((start + end) / 2)
         const index = ticks[middle].index
         if (index < tick) start = middle
-        else if (index > tick) end = index
+        else if (index > tick) end = middle
         else {
           ticks[middle].DLiquidity = ticks[middle].DLiquidity.add(amount)
           if (ticks[middle].DLiquidity.isZero()) ticks.splice(middle, 1)
