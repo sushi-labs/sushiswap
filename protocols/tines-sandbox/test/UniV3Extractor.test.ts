@@ -209,10 +209,18 @@ describe('UniV3Extractor', () => {
     })
   })
 
-  it(.only'mint after event', async () => {
+  it('mint after event', async () => {
     await makeTest(env, (env, pool) => {
       const currentTick = pool.ticks[pool.nearestTick].index
       return Mint(env, pool, currentTick + 120, currentTick + 6000, BigInt(1e10))
+    })
+  })
+
+  it('mint x2 event', async () => {
+    await makeTest(env, (env, pool) => {
+      const currentTick = pool.ticks[pool.nearestTick].index
+      Mint(env, pool, currentTick - 300, currentTick, BigInt(1e8))
+      return Mint(env, pool, currentTick, currentTick + 300, BigInt(1e10))
     })
   })
 })
