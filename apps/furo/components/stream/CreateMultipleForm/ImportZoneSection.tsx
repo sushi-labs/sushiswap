@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { Dropzone, NetworkIcon } from '@sushiswap/ui'
+import { Dropzone, Form, NetworkIcon } from '@sushiswap/ui'
 import { Address, fetchToken, FetchTokenResult } from '@sushiswap/wagmi'
 import { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
@@ -14,7 +14,6 @@ import { useImportErrorContext } from '../../vesting/CreateMultipleForm/ImportEr
 import { CreateStreamFormSchemaType } from '../CreateForm'
 import { CreateMultipleStreamFormSchemaType } from './schema'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { Form } from '@sushiswap/ui'
 import dynamic from 'next/dynamic'
 
 interface ImportZoneSection {

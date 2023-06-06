@@ -20,8 +20,8 @@ import {
   SelectValue,
 } from '@sushiswap/ui/components/ui/select'
 import {
-  CreateMultipleVestingFormSchemaType,
   CreateMultipleVestingBaseSchemaFormErrorsType,
+  CreateMultipleVestingFormSchemaType,
 } from '../CreateMultipleForm/schema'
 
 export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) => {
