@@ -68,7 +68,7 @@ export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHE
                 id={'create-single-stream-select'}
                 caption={error?.message ?? value?.symbol}
                 isError={Boolean(error?.message)}
-                className="min-w-[200px]"
+                className="min-w-[200px] w-full"
               />
             )}
           </TokenSelector>

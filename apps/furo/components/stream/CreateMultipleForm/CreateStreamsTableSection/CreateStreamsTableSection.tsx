@@ -15,6 +15,7 @@ import { RecipientCell } from './Cells/RecipientCell'
 import { StartDateCell } from './Cells/StartDateCell'
 import { EndDateCell } from './Cells/EndDateCell'
 import { ActionsCell } from './Cells/ActionsCell'
+import { classNames } from '@sushiswap/ui'
 
 interface CreateStreamsTableSection {
   chainId: ChainId
@@ -66,10 +67,10 @@ export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({ chain
     <div className="flex flex-col col-span-2 gap-4">
       <p className="text-lg text-gray-900 font-medium dark:text-slate-200">Streams</p>
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 divide-y lg:divide-none dark:divide-slate-200/5 divide-gray-900/5">
           {fields.length > 0 ? (
             fields.map((row, i) => (
-              <div className="flex gap-2" key={i}>
+              <div className={classNames('flex flex-wrap lg:flex-nowrap gap-2', i > 0 ? 'pt-4 lg:pt-0' : '')} key={i}>
                 <CurrencyCell row={row} index={i} />
                 <AmountCell row={row} index={i} chainId={chainId} />
                 <RecipientCell row={row} index={i} chainId={chainId} />

@@ -56,8 +56,8 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
                 <CreateStreamsTableSection chainId={chainId} onReview={onReview} />
               </div>
               <div className={review ? '' : 'hidden'}>
-                <ReviewSection chainId={chainId} onBack={onBack} />
-                <ExecuteMultipleSection chainId={chainId} isReview={review} />
+                <ReviewSection chainId={chainId} />
+                <ExecuteMultipleSection chainId={chainId} isReview={review} onBack={onBack} />
               </div>
             </ImportErrorProvider>
           </div>

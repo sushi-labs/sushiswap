@@ -25,13 +25,15 @@ import { bentoBoxV1Address } from '@sushiswap/bentobox'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { ArrowLeftIcon } from '@heroicons/react/outline'
 
 const APPROVE_TAG = 'approve-multiple-streams'
 
 export const ExecuteMultipleSection: FC<{
   chainId: FuroStreamRouterChainId
   isReview: boolean
-}> = withCheckerRoot(({ chainId, isReview }) => {
+  onBack(): void
+}> = withCheckerRoot(({ chainId, isReview, onBack }) => {
   const { address } = useAccount()
   const contract = useFuroStreamRouterContract(chainId)
   const [signature, setSignature] = useState<Signature>()
@@ -164,38 +166,40 @@ export const ExecuteMultipleSection: FC<{
   )
 
   return (
-    <Checker.Connect size="xl" fullWidth>
-      <Checker.Network chainId={chainId} size="xl" fullWidth>
-        <Checker.ApproveBentobox
-          size="xl"
-          fullWidth
-          id="furo-create-multiple-stream-approve-bentobox"
-          chainId={chainId}
-          contract={getFuroStreamRouterContractConfig(chainId).address}
-          onSignature={setSignature}
-        >
-          <Checker.ApproveERC20Multiple
+    <div className="flex justify-end gap-4 mt-6">
+      <Button size="xl" type="button" variant="empty" onClick={onBack}>
+        Cancel
+      </Button>
+      <Checker.Connect size="xl">
+        <Checker.Network chainId={chainId} size="xl">
+          <Checker.ApproveBentobox
             size="xl"
-            fullWidth
-            id={`furo-create-multiple-stream-approve-token`}
-            amounts={approveAmounts}
+            id="furo-create-multiple-stream-approve-bentobox"
+            chainId={chainId}
+            contract={getFuroStreamRouterContractConfig(chainId).address}
+            onSignature={setSignature}
           >
-            <Checker.Success tag={APPROVE_TAG}>
-              <Button
-                size="xl"
-                fullWidth
-                onClick={() => sendTransaction?.()}
-                type="submit"
-                loading={isWritePending}
-                disabled={!isValid || isValidating}
-                testdata-id="furo-create-multiple-streams-confirm-button"
-              >
-                {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Streams'}
-              </Button>
-            </Checker.Success>
-          </Checker.ApproveERC20Multiple>
-        </Checker.ApproveBentobox>
-      </Checker.Network>
-    </Checker.Connect>
+            <Checker.ApproveERC20Multiple
+              size="xl"
+              id={`furo-create-multiple-stream-approve-token`}
+              amounts={approveAmounts}
+            >
+              <Checker.Success tag={APPROVE_TAG}>
+                <Button
+                  size="xl"
+                  onClick={() => sendTransaction?.()}
+                  type="submit"
+                  loading={isWritePending}
+                  disabled={!isValid || isValidating}
+                  testdata-id="furo-create-multiple-streams-confirm-button"
+                >
+                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Streams'}
+                </Button>
+              </Checker.Success>
+            </Checker.ApproveERC20Multiple>
+          </Checker.ApproveBentobox>
+        </Checker.Network>
+      </Checker.Connect>
+    </div>
   )
 })
