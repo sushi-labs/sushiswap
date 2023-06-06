@@ -101,15 +101,15 @@ async function prepareEnvironment(): Promise<TestEnvironment> {
 
 async function Mint(
   env: TestEnvironment,
-  pc: PoolCode,
+  pool: UniV3Pool,
   tickLower: number,
   tickUpper: number,
   liquidity: bigint
 ): Promise<Transaction> {
   const MintParams = {
-    token0: pc.pool.token0.address,
-    token1: pc.pool.token1.address,
-    fee: pc.pool.fee * 1e6,
+    token0: pool.token0.address,
+    token1: pool.token1.address,
+    fee: pool.fee * 1e6,
     tickLower,
     tickUpper,
     amount0Desired: liquidity,
@@ -136,6 +136,54 @@ async function Mint(
   })
 }
 
+async function makeTest(
+  env: TestEnvironment,
+  sendEvents: (env: TestEnvironment, pc: UniV3Pool) => Promise<Transaction> | undefined
+) {
+  const client = createPublicClient({
+    chain: env.chain,
+    transport: env.transport,
+  })
+
+  const extractor = new UniV3Extractor(client, 'UniswapV3', '0xbfd8137f7d1516d3ea5ca83523914859ec47f573')
+  extractor.start(pools)
+  for (;;) {
+    if (extractor.getStablePoolCodes().length == pools.length) break
+    await delay(500)
+  }
+
+  let extractorPools = extractor.getStablePoolCodes()
+  const transactions = (
+    await Promise.all(
+      extractor.getStablePoolCodes().map(async (pc) => {
+        const tinesPool = pc.pool as UniV3Pool
+        return sendEvents(env, tinesPool)
+      })
+    )
+  ).filter((tr) => tr !== undefined) as Transaction[]
+
+  if (transactions.length > 0) {
+    const blockNumber = Math.max(...transactions.map((tr) => Number(tr.blockNumber || 0)))
+    for (;;) {
+      if (Number(extractor.lastProcessdBlock) == blockNumber) break
+      await delay(500)
+    }
+  }
+
+  const uniProvider = new UniswapV3Provider(ChainId.ETHEREUM, client)
+  await uniProvider.fetchPoolsForToken(USDC[ChainId.ETHEREUM], WETH9[ChainId.ETHEREUM], {
+    has: (poolAddress: string) => !poolSet.has(poolAddress.toLowerCase()),
+  })
+  const providerPools = uniProvider.getCurrentPoolList()
+
+  extractorPools = extractor.getStablePoolCodes()
+  providerPools.forEach((pp) => {
+    const ep = extractorPools.find((p) => p.pool.address == pp.pool.address)
+    expect(ep).not.undefined
+    if (ep) comparePoolCodes(pp, ep)
+  })
+}
+
 describe('UniV3Extractor', () => {
   let env: TestEnvironment
 
@@ -144,71 +192,20 @@ describe('UniV3Extractor', () => {
   })
 
   it('pools downloading', async () => {
-    const client = createPublicClient({
-      chain: env.chain,
-      transport: env.transport,
-    })
-
-    const extractor = new UniV3Extractor(client, 'UniswapV3', '0xbfd8137f7d1516d3ea5ca83523914859ec47f573')
-    extractor.start(pools)
-
-    const uniProvider = new UniswapV3Provider(ChainId.ETHEREUM, client)
-    await uniProvider.fetchPoolsForToken(USDC[ChainId.ETHEREUM], WETH9[ChainId.ETHEREUM], {
-      has: (poolAddress: string) => !poolSet.has(poolAddress.toLowerCase()),
-    })
-    const providerPools = uniProvider.getCurrentPoolList()
-
-    for (;;) {
-      if (extractor.getStablePoolCodes().length == pools.length) break
-      await delay(500)
-    }
-    const extractorPools = extractor.getStablePoolCodes()
-
-    providerPools.forEach((pp) => {
-      const ep = extractorPools.find((p) => p.pool.address == pp.pool.address)
-      expect(ep).not.undefined
-      if (ep) comparePoolCodes(pp, ep)
-    })
+    await makeTest(env, () => undefined)
   })
 
   it('mint around event', async () => {
-    const client = createPublicClient({
-      chain: env.chain,
-      transport: env.transport,
-    })
-
-    const extractor = new UniV3Extractor(client, 'UniswapV3', '0xbfd8137f7d1516d3ea5ca83523914859ec47f573')
-    extractor.start(pools)
-    for (;;) {
-      if (extractor.getStablePoolCodes().length == pools.length) break
-      await delay(500)
-    }
-    let extractorPools = extractor.getStablePoolCodes()
-    const transactions = await Promise.all(
-      extractor.getStablePoolCodes().map(async (pc) => {
-        const tinesPool = pc.pool as UniV3Pool
-        const currentTick = tinesPool.ticks[tinesPool.nearestTick].index
-        return Mint(env, pc, currentTick - 600, currentTick + 600, BigInt(1e8))
-      })
-    )
-
-    const blockNumber = Math.max(...transactions.map((tr) => Number(tr.blockNumber || 0)))
-    for (;;) {
-      if (Number(extractor.lastProcessdBlock) == blockNumber) break
-      await delay(500)
-    }
-
-    const uniProvider = new UniswapV3Provider(ChainId.ETHEREUM, client)
-    await uniProvider.fetchPoolsForToken(USDC[ChainId.ETHEREUM], WETH9[ChainId.ETHEREUM], {
-      has: (poolAddress: string) => !poolSet.has(poolAddress.toLowerCase()),
-    })
-    const providerPools = uniProvider.getCurrentPoolList()
-
-    extractorPools = extractor.getStablePoolCodes()
-    providerPools.forEach((pp) => {
-      const ep = extractorPools.find((p) => p.pool.address == pp.pool.address)
-      expect(ep).not.undefined
-      if (ep) comparePoolCodes(pp, ep)
+    await makeTest(env, (env, pool) => {
+      const currentTick = pool.ticks[pool.nearestTick].index
+      return Mint(env, pool, currentTick - 600, currentTick + 600, BigInt(1e8))
     })
   })
+
+  // it.only('mint before event', async () => {
+  //   await makeTest(env, (env, pool) => {
+  //     const currentTick = pool.ticks[pool.nearestTick].index
+  //     return Mint(env, pool, currentTick - 900, currentTick - 60, BigInt(1e9))
+  //   })
+  // })
 })
