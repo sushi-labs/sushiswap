@@ -103,7 +103,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                                 />
                               ) : null}
                               {/*  isConstantProductPoolFactoryChainId(chainId) || isStablePoolFactoryChainId(chainId) */}
-                              {TRIDENT_ENABLED_NETWORKS.includes(chainId as ChainId) ? (
+                              {TRIDENT_ENABLED_NETWORKS.includes(chainId as typeof TRIDENT_ENABLED_NETWORKS[number]) ? (
                                 <List.MenuItem
                                   as="a"
                                   href={`/pools/add/trident/${chainId}`}

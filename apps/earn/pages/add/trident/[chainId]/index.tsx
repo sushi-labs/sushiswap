@@ -116,7 +116,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
                   enabled={
                     isConstantProductPoolFactoryChainId(chainId) &&
                     poolType === PoolFinderType.Classic &&
-                    TRIDENT_ENABLED_NETWORKS.includes(chainId)
+                    TRIDENT_ENABLED_NETWORKS.includes(chainId as typeof TRIDENT_ENABLED_NETWORKS[number])
                   }
                   fee={fee}
                   twap={false}
@@ -128,7 +128,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
                   enabled={
                     isStablePoolFactoryChainId(chainId) &&
                     poolType === PoolFinderType.Stable &&
-                    TRIDENT_ENABLED_NETWORKS.includes(chainId)
+                    TRIDENT_ENABLED_NETWORKS.includes(chainId as typeof TRIDENT_ENABLED_NETWORKS[number])
                   }
                   fee={fee}
                   twap={false}

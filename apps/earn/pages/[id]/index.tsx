@@ -22,6 +22,7 @@ import {
   PoolRewards,
   PoolStats,
   UnknownTokenAlert,
+  PoolTransactionsV2
 } from '../../components'
 import { PROTOCOL_MAP } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
@@ -99,6 +100,8 @@ const _Pool = () => {
                     </div>
                   </div>
                 </div>
+                <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
+                <PoolTransactionsV2 pool={pool} poolId={address} />
               </div>
             </Layout>
             <PoolActionBar pool={pool} />
