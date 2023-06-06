@@ -1,5 +1,12 @@
 import { ChainId } from '@sushiswap/chain'
-import { currencyFromShortCurrencyName, isShortCurrencyName, Native, Token, Type } from '@sushiswap/currency'
+import {
+  currencyFromShortCurrencyName,
+  defaultQuoteCurrency,
+  isShortCurrencyName,
+  Native,
+  Token,
+  Type,
+} from '@sushiswap/currency'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import { isAddress } from 'ethers/lib/utils'
@@ -25,9 +32,16 @@ interface TokenProvider {
   children: ReactNode
 }
 
-const getTokenFromUrl = (chainId: ChainId, currencyId: string, token: Token | undefined, isLoading: boolean) => {
+const getTokenFromUrl = (
+  chainId: ChainId,
+  currencyId: string | undefined,
+  token: Token | undefined,
+  isLoading: boolean
+) => {
   if (isLoading) {
     return undefined
+  } else if (!currencyId) {
+    return defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency]
   } else if (isShortCurrencyName(chainId, currencyId)) {
     return currencyFromShortCurrencyName(chainId, currencyId)
   } else if (isAddress(currencyId) && token) {
