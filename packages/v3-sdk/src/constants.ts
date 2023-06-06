@@ -112,5 +112,5 @@ export const V3_SUPPORTED_CHAIN_IDS = [
 
 export type V3ChainId = (typeof V3_SUPPORTED_CHAIN_IDS)[number]
 
-export const isV3ChainId = (chainId: ChainId): chainId is V3ChainId =>
+export const isV3ChainId = (chainId: number): chainId is V3ChainId =>
   V3_SUPPORTED_CHAIN_IDS.includes(chainId as V3ChainId)

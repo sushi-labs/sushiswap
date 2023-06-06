@@ -1,17 +1,14 @@
 import { ChainId } from '@sushiswap/chain'
 import { currencyFromShortCurrencyName, isShortCurrencyName, Native, Token, Type } from '@sushiswap/currency'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
-import { useRouter } from 'next/router'
 import { isAddress } from 'ethers/lib/utils'
-import { queryParamsSchema } from '../../lib/swap/queryParamsSchema'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
-import { useNetwork } from '@sushiswap/wagmi'
 import { SwapChainId } from '../../types'
-import { isUniswapV2FactoryChainId } from '@sushiswap/sushiswap'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
-import { isV3ChainId } from '@sushiswap/v3-sdk'
-
-type State = {
+import { useRouter } from 'next/router'
+import { useNetwork } from '@sushiswap/wagmi'
+import { queryParamsSchema } from '../../lib/swap/queryParamsSchema'
+import z from 'zod'
+interface State extends Pick<z.TypeOf<typeof queryParamsSchema>, 'amount' | 'review' | 'recipient'> {
   token0: Type | undefined
   token1: Type | undefined
   tokensLoading: boolean
@@ -37,49 +34,34 @@ const getTokenFromUrl = (chainId: ChainId, currencyId: string, token: Token | un
   }
 }
 
-const getChainIdFromUrl = (urlChainId: ChainId | undefined, connectedChainId: ChainId | undefined): SwapChainId => {
-  let chainId: SwapChainId = ChainId.ETHEREUM
-  if (urlChainId) {
-    if (
-      isV3ChainId(urlChainId) ||
-      isUniswapV2FactoryChainId(urlChainId) ||
-      isConstantProductPoolFactoryChainId(urlChainId) ||
-      isStablePoolFactoryChainId(urlChainId)
-    ) {
-      chainId = urlChainId
-    }
-  } else if (connectedChainId) {
-    if (
-      isV3ChainId(connectedChainId) ||
-      isUniswapV2FactoryChainId(connectedChainId) ||
-      isConstantProductPoolFactoryChainId(connectedChainId) ||
-      isStablePoolFactoryChainId(connectedChainId)
-    ) {
-      chainId = connectedChainId
-    }
-  }
-  return chainId
+export const useTokenQueryParams = () => {
+  const { query } = useRouter()
+  const { chain } = useNetwork()
+  const [chainId] = useState(chain?.id)
+  return useMemo(
+    () =>
+      queryParamsSchema.parse({
+        ...query,
+        fromChainId: query?.fromChainId ?? chainId,
+        toChainId: query?.toChainId ?? chainId,
+      }),
+    [chainId, query]
+  )
 }
 
 export const TokenProvider: FC<TokenProvider> = ({ children }) => {
-  const { query } = useRouter()
-  const { fromChainId: _fromChainId, fromCurrency, toChainId: _toChainId, toCurrency } = queryParamsSchema.parse(query)
-  const { chain } = useNetwork()
-  const [chainId] = useState(chain?.id)
-
+  const { fromChainId, fromCurrency, toChainId, toCurrency, amount, recipient, review } = useTokenQueryParams()
   const { data: tokenFrom, isInitialLoading: isTokenFromLoading } = useTokenWithCache({
-    chainId: _fromChainId,
+    chainId: fromChainId,
     address: fromCurrency,
   })
 
   const { data: tokenTo, isInitialLoading: isTokenToLoading } = useTokenWithCache({
-    chainId: _toChainId,
+    chainId: toChainId,
     address: toCurrency,
   })
 
   const state = useMemo(() => {
-    const fromChainId = getChainIdFromUrl(_fromChainId, chainId as ChainId)
-    const toChainId = getChainIdFromUrl(_toChainId, chainId as ChainId)
     const token0 = getTokenFromUrl(fromChainId, fromCurrency, tokenFrom, isTokenFromLoading)
     const token1 = getTokenFromUrl(toChainId, toCurrency, tokenTo, isTokenToLoading)
 
@@ -89,14 +71,19 @@ export const TokenProvider: FC<TokenProvider> = ({ children }) => {
       tokensLoading: isTokenFromLoading || isTokenToLoading,
       fromChainId,
       toChainId,
+      amount,
+      recipient,
+      review,
     }
   }, [
-    _fromChainId,
-    _toChainId,
-    chainId,
+    amount,
+    fromChainId,
     fromCurrency,
     isTokenFromLoading,
     isTokenToLoading,
+    recipient,
+    review,
+    toChainId,
     toCurrency,
     tokenFrom,
     tokenTo,
