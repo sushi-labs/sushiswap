@@ -6,7 +6,7 @@ import { useAccount } from '@sushiswap/wagmi'
 import Container from '@sushiswap/ui/future/components/Container'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
-import { useBreakpoint, useEffectDebugger } from '@sushiswap/hooks'
+import { useBreakpoint } from '@sushiswap/hooks'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import {
   REWARDS_V3_APR_COLUMN,
@@ -17,7 +17,6 @@ import {
 import { ANGLE_ENABLED_NETWORKS } from '../../config'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { RewardsTableV3RowPopover } from './Tables/RewardsTableV3/RewardsTableV3RowPopover'
-import { Pool } from '@sushiswap/client'
 
 const COLUMNS = [
   REWARDS_V3_NAME_COLUMN,
@@ -40,14 +39,13 @@ export const RewardsSection: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'positionSize', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
 
-  useEffectDebugger(() => {}, [chainIds, tokenSymbols, data])
-
   const positions = useMemo(() => {
     const _tokenSymbols = tokenSymbols?.filter((el) => el !== '') || []
     return (data ?? [])
       .filter((el) => chainIds.includes(el.chainId))
       .map((el) => {
         return Object.values(el.pools ?? {})
+          .filter((el) => Object.keys(el.rewardsPerToken).length > 0)
           .filter((el) =>
             _tokenSymbols.length > 0
               ? _tokenSymbols.some((symbol) => {
@@ -55,7 +53,6 @@ export const RewardsSection: FC = () => {
                 })
               : true
           )
-          .filter((el) => +(el.userTVL ?? 0) > 0)
       })
       .flat()
   }, [chainIds, tokenSymbols, data])
@@ -70,7 +67,6 @@ export const RewardsSection: FC = () => {
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    debugAll: true,
   })
 
   useEffect(() => {

@@ -17,8 +17,8 @@ export const RewardsV3NameCell: FC<RewardTableV3CellProps> = ({ row }) => {
           badgeContent={<NetworkIcon chainId={row.chainId} width={20} height={20} />}
         >
           <Currency.IconList iconWidth={40} iconHeight={40}>
-            <Currency.Icon currency={row.token0} />
-            <Currency.Icon currency={row.token1} />
+            <Currency.Icon disableLink currency={row.token0} />
+            <Currency.Icon disableLink currency={row.token1} />
           </Currency.IconList>
         </Badge>
       </div>
