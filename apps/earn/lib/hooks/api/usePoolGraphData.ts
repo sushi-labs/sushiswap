@@ -39,6 +39,7 @@ export const usePoolGraphData = ({ poolAddress, chainId, enabled = true }: UsePo
         return {
           token0,
           token1,
+          swapFee: Number(pair.swapFee),
           reserve0: Amount.fromRawAmount(token0, pair.reserve0),
           reserve1: Amount.fromRawAmount(token1, pair.reserve1),
           liquidityNative: Number(pair.liquidityNative),

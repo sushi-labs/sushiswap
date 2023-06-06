@@ -29,8 +29,9 @@ import { ContentBlock } from './AddPage/ContentBlock'
 import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
 import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { ConcentratedPositionsTable } from './PoolsSection/Tables/PositionsTable/ConcentratedPositionsTable'
-import { PoolTransactionsV3, PoolChart } from './PoolSection'
+import { PoolTransactionsV3 } from './PoolSection'
 import { PoolDepthWidget } from './PoolSection/V3/PoolDepthWidget'
+import { PoolChartV3 } from './PoolSection/PoolChart/PoolChartV3'
 
 enum Granularity {
   Day,
@@ -68,7 +69,6 @@ const queryParamsSchema = z.object({
 
 enum SelectedTab {
   Analytics,
-  Liquidity,
   NewPosition,
   ManagePosition,
 }
@@ -92,8 +92,6 @@ const Pool: FC = () => {
   )
 
   const [granularity, setGranularity] = useState<Granularity>(Granularity.Day)
-
-  const { data: graphData, isLoading: isGraphDataLoading } = usePoolGraphData({ poolAddress, chainId })
 
   const { data: poolStats } = useConcentratedLiquidityPoolStats({ chainId, address: poolAddress })
   const { data: pool, isLoading } = useConcentratedLiquidityPool({
@@ -159,15 +157,6 @@ const Pool: FC = () => {
             Statistics
           </RadioGroup.Option>
           <RadioGroup.Option
-            value={SelectedTab.Liquidity}
-            as={Button}
-            startIcon={<ChartPieIcon width={18} height={18} />}
-            variant="outlined"
-            color={tab === SelectedTab.Liquidity ? 'blue' : 'default'}
-          >
-            Liquidity
-          </RadioGroup.Option>
-          <RadioGroup.Option
             value={SelectedTab.NewPosition}
             as={Button}
             startIcon={<PlusIcon width={18} height={18} />}
@@ -209,12 +198,7 @@ const Pool: FC = () => {
       <div className={tab === SelectedTab.Analytics ? 'block' : 'hidden'}>
         <div>
           <div className="grid md:grid-cols-[auto_404px] gap-10">
-            <PoolChart
-              isLoading={isGraphDataLoading}
-              data={graphData}
-              swapFee={pool?.fee ? pool.fee / 1000000 : pool?.fee}
-              charts={['Volume', 'TVL', 'Fees']}
-            />
+            <PoolChartV3 address={poolAddress} chainId={chainId} />
             <div className="flex flex-col gap-6">
               <List className="!pt-0 !gap-1">
                 <List.Label className="flex justify-end">
@@ -384,17 +368,6 @@ const Pool: FC = () => {
         </div>
         <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
         <PoolTransactionsV3 pool={pool} poolId={poolAddress} />
-      </div>
-      <div className={tab === SelectedTab.Liquidity ? 'block' : 'hidden'}>
-        <ContentBlock
-          title={
-            <>
-              <span className="text-gray-900 dark:text-white">Liquidity Depth</span>
-            </>
-          }
-        >
-          <PoolDepthWidget chainId={chainId} feeAmount={pool?.fee} token0={_token0} token1={_token1} />
-        </ContentBlock>
       </div>
       <div className={tab === SelectedTab.NewPosition ? 'block' : 'hidden'}>
         <div className="grid gap-10 md:grid-cols-2">

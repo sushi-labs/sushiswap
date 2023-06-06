@@ -1,24 +1,20 @@
-import { Type } from '@sushiswap/currency'
 import React, { FC, ReactNode } from 'react'
 import colors from 'tailwindcss/colors'
 
 import { useConcentratedDerivedMintInfo } from '../../../ConcentratedLiquidityProvider'
-import { useAccount } from '@sushiswap/wagmi'
 import { useIsMounted } from '@sushiswap/hooks'
 import { FeeAmount, V3ChainId } from '@sushiswap/v3-sdk'
 import { Chart } from 'components/LiquidityChartRangeInput/Chart'
 import { useDensityChartData } from 'components/LiquidityChartRangeInput/hooks'
 import { ZoomLevels } from 'components/LiquidityChartRangeInput/types'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
+import AutoSizer from 'react-virtualized-auto-sizer'
 
 interface PoolDepthWidget {
   id?: string
+  address: string
   chainId: V3ChainId
-  token0: Type | undefined
-  token1: Type | undefined
-  feeAmount: FeeAmount | undefined
-  children?: ReactNode
-  showStartPrice?: boolean
 }
 
 const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
@@ -49,60 +45,56 @@ const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
 }
 
 // ID has to be set (and unique) if there are multiple charts on the same page
-export const PoolDepthWidget: FC<PoolDepthWidget> = ({
-  id = 'PoolDepthWidget',
-  chainId,
-  token0,
-  token1,
-  feeAmount,
-  children,
-}) => {
+export const PoolDepthWidget: FC<PoolDepthWidget> = ({ id = 'PoolDepthWidget', address, chainId }) => {
   const isMounted = useIsMounted()
-  const { address } = useAccount()
+
+  const { data: poolStats } = useConcentratedLiquidityPoolStats({ chainId, address })
+
   const { price, invertPrice, ticksAtLimit, noLiquidity } = useConcentratedDerivedMintInfo({
+    account: undefined,
     chainId,
-    account: address,
-    token0,
-    token1,
-    baseToken: token0,
-    feeAmount,
+    token0: poolStats?.token0,
+    token1: poolStats?.token1,
+    baseToken: poolStats?.token0,
+    feeAmount: poolStats?.feeAmount,
     existingPosition: undefined,
   })
 
   const { isLoading, formattedData } = useDensityChartData({
     chainId,
-    token0,
-    token1,
-    feeAmount,
+    token0: poolStats?.token0,
+    token1: poolStats?.token1,
+    feeAmount: poolStats?.feeAmount,
   })
 
   return (
-    <>
-      {children && children}
-      {isLoading && <Skeleton.Box className="w-full h-[456px]" />}
+    <AutoSizer>
+      {({ height, width }) => (
+        <div style={{ width, height }}>
+          {isLoading && <Skeleton.Box className="w-full h-full" />}
 
-      <div className="flex flex-col gap-4 p-4 rounded-xl">
-        {isMounted && !noLiquidity && !isLoading && formattedData && price && (
-          <Chart
-            id={id}
-            data={{
-              series: formattedData,
-              current: parseFloat((invertPrice ? price.invert() : price).toSignificant(8)),
-            }}
-            dimensions={{ width: 900, height: 400 }}
-            margins={{ top: 10, right: 2, bottom: 20, left: 0 }}
-            styles={{
-              area: {
-                selection: colors.blue['500'],
-                opacity: 1,
-              },
-            }}
-            interactive={true}
-            zoomLevels={ZOOM_LEVELS[feeAmount ?? FeeAmount.MEDIUM]}
-            ticksAtLimit={ticksAtLimit}
-          />
-        )}
-      </div>
-    </>
+          {isMounted && !noLiquidity && !isLoading && formattedData && price && (
+            <Chart
+              id={id}
+              data={{
+                series: formattedData,
+                current: parseFloat((invertPrice ? price.invert() : price).toSignificant(8)),
+              }}
+              dimensions={{ width, height }}
+              margins={{ top: 10, right: 2, bottom: 80, left: 0 }}
+              styles={{
+                area: {
+                  selection: colors.blue['500'],
+                  opacity: 1,
+                },
+              }}
+              interactive={true}
+              zoomLevels={ZOOM_LEVELS[(poolStats?.feeAmount as FeeAmount) ?? FeeAmount.MEDIUM]}
+              ticksAtLimit={ticksAtLimit}
+            />
+          )}
+        </div>
+      )}
+    </AutoSizer>
   )
 }

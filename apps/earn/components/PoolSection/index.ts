@@ -1,6 +1,6 @@
 export * from './PoolActionBar'
 export * from './PoolButtons'
-export * from './PoolChart'
+export * from './PoolChart/index'
 export * from './PoolComposition'
 export * from './PoolHeader'
 export * from './PoolMyRewards'
