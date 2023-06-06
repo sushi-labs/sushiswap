@@ -141,8 +141,8 @@ export class WordLoadManager {
       }
       let start = 0,
         end = ticks.length
-      while (end - start <= 1) {
-        const middle = (start + end) / 2
+      while (end - start > 1) {
+        const middle = Math.floor((start + end) / 2)
         const index = ticks[middle].index
         if (index < tick) start = middle
         else if (index > tick) end = index

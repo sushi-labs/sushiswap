@@ -24,6 +24,7 @@ export class UniV3Extractor {
   poolMap: Map<Address, UniV3PoolWatcher> = new Map()
   eventFilters: Filter[] = []
   logProcessGuard = false
+  lastProcessdBlock = -1n
 
   constructor(client: PublicClient, providerName: string, tickHelperContract: Address) {
     this.providerName = providerName
@@ -49,10 +50,11 @@ export class UniV3Extractor {
           const logss = await Promise.all(promises)
           logss.forEach((logs) => {
             logs.forEach((l) => {
-              const pool = this.poolMap.get(l.address)
+              const pool = this.poolMap.get(l.address.toLowerCase() as Address)
               if (pool) pool.processLog(l)
             })
           })
+          this.lastProcessdBlock = blockNumber
           this.logProcessGuard = false
         } else {
           console.warn(`Log Filtering was skipped for block ${blockNumber}`)
@@ -71,7 +73,7 @@ export class UniV3Extractor {
         this.multiCallAggregator
       )
       watcher.updatePoolState()
-      this.poolMap.set(p.address, watcher)
+      this.poolMap.set(p.address.toLowerCase() as Address, watcher) // lowercase because incoming events have lowcase addresses ((
     })
   }
 

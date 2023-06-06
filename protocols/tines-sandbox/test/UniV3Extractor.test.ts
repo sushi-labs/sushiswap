@@ -3,6 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { DAI, USDC, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
 import { PoolInfo, UniV3Extractor } from '@sushiswap/extractor'
 import { PoolCode, UniswapV3Provider } from '@sushiswap/router'
+import { UniV3Pool } from '@sushiswap/tines'
 import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import { expect } from 'chai'
 import { network } from 'hardhat'
@@ -143,6 +144,45 @@ describe('UniV3Extractor', () => {
     const extractorPools = extractor.getStablePoolCodes()
 
     providerPools.forEach((pp) => {
+      const ep = extractorPools.find((p) => p.pool.address == pp.pool.address)
+      expect(ep).not.undefined
+      if (ep) comparePoolCodes(pp, ep)
+    })
+  })
+
+  it('mint event', async () => {
+    const testPools = pools.slice(0, 1)
+    const client = createPublicClient({
+      chain: env.chain,
+      transport: env.transport,
+    })
+
+    const extractor = new UniV3Extractor(client, 'UniswapV3', '0xbfd8137f7d1516d3ea5ca83523914859ec47f573')
+    extractor.start(testPools)
+    for (;;) {
+      if (extractor.getStablePoolCodes().length == testPools.length) break
+      await delay(500)
+    }
+
+    let extractorPools = extractor.getStablePoolCodes()
+    const tinesPool = extractorPools[0].pool as UniV3Pool
+    const currentTick = tinesPool.ticks[tinesPool.nearestTick].index
+    await Mint(env, extractor.getStablePoolCodes()[0], currentTick - 600, currentTick + 600, BigInt(1e8))
+    const blockNumber = await client.getBlockNumber()
+    for (;;) {
+      if (extractor.lastProcessdBlock == blockNumber) break
+      await delay(500)
+    }
+
+    const uniProvider = new UniswapV3Provider(ChainId.ETHEREUM, client)
+    await uniProvider.fetchPoolsForToken(USDC[ChainId.ETHEREUM], WETH9[ChainId.ETHEREUM], {
+      has: (poolAddress: string) => !poolSet.has(poolAddress.toLowerCase()),
+    })
+    const providerPools = uniProvider.getCurrentPoolList()
+
+    extractorPools = extractor.getStablePoolCodes()
+    providerPools.forEach((pp) => {
+      if (pp.pool.address !== tinesPool.address) return
       const ep = extractorPools.find((p) => p.pool.address == pp.pool.address)
       expect(ep).not.undefined
       if (ep) comparePoolCodes(pp, ep)
