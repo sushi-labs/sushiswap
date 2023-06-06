@@ -165,7 +165,6 @@ const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
     ]
   }, [cliff.cliffEnabled, _currency, stepAmount])
 
-  console.log(cliff, startDate, stepPayouts, stepConfig)
   return (
     <Table.tr>
       <Table.td>

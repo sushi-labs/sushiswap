@@ -28,10 +28,11 @@ import { Chain } from '@sushiswap/chain'
 import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
 import { format } from 'date-fns'
 import { tryParseAmount } from '@sushiswap/currency'
-import { CreateVestingFormSchemaType, STEP_CONFIGURATIONS } from './schema'
+import { STEP_CONFIGURATIONS } from './schema'
 import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { calculateCliffDuration, calculateEndDate, calculateStepPercentage, calculateTotalAmount } from '../utils'
+import { CreateMultipleVestingFormSchemaType } from '../CreateMultipleForm/schema'
 
 const MODAL_ID = 'createVestingSingle'
 const APPROVE_TAG = 'createVestingSingle'
@@ -46,12 +47,12 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
   const {
     watch,
     formState: { isValid, isValidating },
-  } = useFormContext<CreateVestingFormSchemaType>()
+  } = useFormContext<CreateMultipleVestingFormSchemaType>()
 
   const { approved } = useApproved(APPROVE_TAG)
   const [signature, setSignature] = useState<Signature>()
 
-  const formData = watch()
+  const formData = watch(`vestings.0`)
   const _formData = useDeepCompareMemoize(formData)
 
   const { recipient, startDate, stepConfig, stepPayouts, fundSource, currency, cliff, stepAmount } = _formData

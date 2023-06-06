@@ -24,7 +24,7 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
     } else {
       clearErrors(`streams.${index}.dates.startDate`)
     }
-  }, [clearErrors, setError, startDate])
+  }, [clearErrors, index, setError, startDate])
 
   useEffect(() => {
     if (startDate && endDate && endDate < startDate) {
@@ -35,7 +35,7 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
     } else {
       clearErrors(`streams.${index}.dates.endDate`)
     }
-  }, [clearErrors, endDate, setError, startDate])
+  }, [clearErrors, endDate, index, setError, startDate])
 
   return (
     <Form.Section

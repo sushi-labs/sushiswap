@@ -1,32 +1,32 @@
 import { Form } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { CreateVestingFormSchemaType } from './schema'
 import { Switch } from '@sushiswap/ui/future/components/Switch'
 import { Input } from '@sushiswap/ui/future/components/input'
+import { CreateMultipleVestingFormSchemaType } from '../CreateMultipleForm/schema'
 
-export const CliffDetailsSection: FC = () => {
-  const { control, watch, setValue } = useFormContext<CreateVestingFormSchemaType>()
-  const [cliffEnabled] = watch(['cliff.cliffEnabled'])
+export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
+  const { control, watch, setValue } = useFormContext<CreateMultipleVestingFormSchemaType>()
+  const [cliffEnabled] = watch([`vestings.${index}.cliff.cliffEnabled`])
 
   return (
     <Form.Section title="Cliff details" description="Optionally provide cliff details for your vesting">
       <Form.Control>
         <Controller
-          name="cliff.cliffEnabled"
+          name={`vestings.${index}.cliff.cliffEnabled`}
           control={control}
           render={({ field: { value } }) => (
             <Switch
               checked={value}
               onChange={(val) => {
                 if (val) {
-                  setValue('cliff', {
+                  setValue(`vestings.${index}.cliff`, {
                     cliffEnabled: true,
                     cliffAmount: '',
                     cliffEndDate: null,
                   })
                 } else {
-                  setValue('cliff', {
+                  setValue(`vestings.${index}.cliff`, {
                     cliffEnabled: false,
                   })
                 }
@@ -40,7 +40,7 @@ export const CliffDetailsSection: FC = () => {
       {cliffEnabled ? (
         <Form.Control>
           <Controller
-            name="cliff.cliffEndDate"
+            name={`vestings.${index}.cliff.cliffEndDate`}
             shouldUnregister={true}
             control={control}
             render={({ field: { name, onChange, value, onBlur }, fieldState: { error } }) => {
@@ -83,7 +83,7 @@ export const CliffDetailsSection: FC = () => {
         <Form.Control>
           <Controller
             control={control}
-            name="cliff.cliffAmount"
+            name={`vestings.${index}.cliff.cliffAmount`}
             shouldUnregister={true}
             render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
               return (

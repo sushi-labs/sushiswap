@@ -30,15 +30,12 @@ export const CreateVestingBaseSchema = z.object({
   cliff: CliffFields,
 })
 
-export const CreateVestingBaseSchemaPartial = CreateVestingBaseSchema.partial({
+export const CreateVestingFormSchema = CreateVestingBaseSchema.partial({
   currency: true,
   startDate: true,
   recipient: true,
   stepAmount: true,
   stepConfig: true,
 })
-
-export const CreateVestingFormSchema = CreateVestingBaseSchemaPartial
-export const CreateVestingModelSchema = CreateVestingBaseSchema
 
 export type CreateVestingFormSchemaType = z.infer<typeof CreateVestingFormSchema>

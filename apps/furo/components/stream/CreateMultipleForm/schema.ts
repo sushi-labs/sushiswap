@@ -1,13 +1,13 @@
 import { z } from 'zod'
 
-import { CreateStreamBaseSchema, CreateStreamBaseSchemaPartial } from '../CreateForm'
+import { CreateStreamBaseSchema, CreateStreamFormSchema } from '../CreateForm'
 
 export const CreateMultipleStreamBaseSchema = z.object({
   streams: z.array(CreateStreamBaseSchema),
 })
 
 export const CreateMultipleStreamPartialBaseSchema = z.object({
-  streams: z.array(CreateStreamBaseSchemaPartial),
+  streams: z.array(CreateStreamFormSchema),
 })
 
 export const CreateMultipleStreamFormSchema = CreateMultipleStreamPartialBaseSchema.partial()
@@ -23,4 +23,5 @@ const _CreateMultipleStreamBaseSchemaFormErrors = z.object({
     })
   ),
 })
+
 export type CreateMultipleStreamBaseSchemaFormErrorsType = z.infer<typeof _CreateMultipleStreamBaseSchemaFormErrors>

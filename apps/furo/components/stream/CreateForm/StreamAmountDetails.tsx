@@ -7,9 +7,7 @@ import React, { FC, useCallback, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { useFundSourceFromZFundSource, useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
-import { FormErrors } from './CreateForm'
 import { FundSourceOption } from './FundSourceOption'
-import { CreateStreamFormSchemaType } from './schema'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { CreateMultipleStreamBaseSchemaFormErrorsType, CreateMultipleStreamFormSchemaType } from '../CreateMultipleForm'
@@ -31,6 +29,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
     `streams.${index}.currency`,
     `streams.${index}.fundSource`,
   ])
+
   const _currency = useTokenFromZToken(currency)
   const _fundSource = useFundSourceFromZFundSource(fundSource)
   const { data: balance } = useBalance({
@@ -65,7 +64,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
         })
       }
     },
-    [setValue]
+    [index, setValue]
   )
 
   useEffect(() => {
@@ -76,7 +75,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
     } else {
       clearErrors(`FORM_ERRORS.${index}.amount`)
     }
-  }, [_currency, _fundSource, amount, balance, clearErrors, setError])
+  }, [_currency, _fundSource, amount, balance, clearErrors, index, setError])
 
   return (
     <Form.Section

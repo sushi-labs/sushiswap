@@ -19,8 +19,6 @@ import { nanoid } from 'nanoid'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { useDeepCompareMemoize } from '../../../lib'
 
-export const FORM_ERROR = 'FORM_ERROR' as const
-
 export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
   const [review, setReview] = useState(false)
   const methods = useForm<CreateMultipleStreamFormSchemaType & CreateMultipleStreamBaseSchemaFormErrorsType>({

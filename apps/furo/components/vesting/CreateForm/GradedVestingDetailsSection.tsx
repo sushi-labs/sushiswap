@@ -1,11 +1,11 @@
 import { Form } from '@sushiswap/ui'
 import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
-import React, { useEffect, useMemo } from 'react'
+import React, { FC, useEffect, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { useDeepCompareMemoize } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
-import { CreateVestingFormSchemaType, FormErrors, STEP_CONFIGURATIONS } from '../../vesting'
+import { STEP_CONFIGURATIONS } from './schema'
 import { calculateTotalAmount } from '../utils'
 import { ChainId } from '@sushiswap/chain'
 import { Input } from '@sushiswap/ui/future/components/input'
@@ -19,11 +19,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@sushiswap/ui/components/ui/select'
+import {
+  CreateMultipleVestingFormSchemaType,
+  CreateMultipleVestingBaseSchemaFormErrorsType,
+} from '../CreateMultipleForm/schema'
 
-export const GradedVestingDetailsSection = () => {
+export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) => {
   const { address } = useAccount()
-  const { control, watch, setError, clearErrors } = useFormContext<CreateVestingFormSchemaType & FormErrors>()
-  const formData = watch()
+  const {
+    control,
+    watch,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = useFormContext<CreateMultipleVestingFormSchemaType & CreateMultipleVestingBaseSchemaFormErrorsType>()
+
+  const formData = watch(`vestings.${index}`)
   const _formData = useDeepCompareMemoize(formData)
   const { currency, fundSource, cliff, stepAmount, stepPayouts } = _formData
   const _fundSource = ZFundSourceToFundSource.parse(fundSource)
@@ -43,28 +54,31 @@ export const GradedVestingDetailsSection = () => {
   useEffect(() => {
     if (!_fundSource || !totalAmount || !balance || !balance[_fundSource]) return
     if (totalAmount.greaterThan(balance[_fundSource])) {
-      setError('FORM_ERROR', {
+      setError(`FORM_ERRORS.${index}.stepAmount`, {
         type: 'custom',
         message: 'Insufficient Balance',
       })
     } else {
-      clearErrors('FORM_ERROR')
+      clearErrors(`FORM_ERRORS.${index}.stepAmount`)
     }
-  }, [balance, clearErrors, _fundSource, setError, totalAmount])
+  }, [balance, clearErrors, _fundSource, setError, totalAmount, index])
 
   return (
     <Form.Section title="Graded Vesting Details" description="Optionally provide graded vesting details">
       <Form.Control>
         <Controller
           control={control}
-          name="stepAmount"
+          name={`vestings.${index}.stepAmount`}
           render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
             return (
               <>
                 <Input.Numeric
                   onUserInput={onChange}
-                  isError={Boolean(error?.message)}
-                  caption={error?.message ? error.message : `The amount the recipient receives for every unlock.`}
+                  isError={Boolean(error?.message || errors?.['FORM_ERRORS']?.[index]?.['stepAmount']?.message)}
+                  caption={
+                    (error?.message || errors?.['FORM_ERRORS']?.[index]?.['stepAmount']?.message) ??
+                    'The amount the recipient receives for every unlock.'
+                  }
                   onBlur={onBlur}
                   name={name}
                   value={value}
@@ -83,7 +97,7 @@ export const GradedVestingDetailsSection = () => {
       <Form.Control>
         <Controller
           control={control}
-          name="stepPayouts"
+          name={`vestings.${index}.stepPayouts`}
           render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
             return (
               <>
@@ -113,7 +127,7 @@ export const GradedVestingDetailsSection = () => {
       <Form.Control>
         <Controller
           control={control}
-          name="stepConfig"
+          name={`vestings.${index}.stepConfig`}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <>
               <Select onValueChange={onChange} defaultValue={value}>

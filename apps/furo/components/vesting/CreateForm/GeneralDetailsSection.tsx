@@ -7,14 +7,14 @@ import { Controller, useFormContext } from 'react-hook-form'
 
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { FundSourceOption } from '../../stream/CreateForm/FundSourceOption'
-import { CreateVestingFormSchemaType } from './schema'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
+import { CreateMultipleVestingFormSchemaType } from '../CreateMultipleForm/schema'
 
-export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
-  const { control, watch, setValue, setError, clearErrors } = useFormContext<CreateVestingFormSchemaType>()
-  const [currency, startDate] = watch(['currency', 'startDate'])
+export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({ chainId, index }) => {
+  const { control, watch, setValue, setError, clearErrors } = useFormContext<CreateMultipleVestingFormSchemaType>()
+  const [currency, startDate] = watch([`vestings.${index}.currency`, `vestings.${index}.startDate`])
   const _currency = useTokenFromZToken(currency)
 
   const onSelect = useCallback(
@@ -29,7 +29,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
           name,
           isNative,
         })
-        setValue('fundSource', FundSource.WALLET)
+        setValue(`vestings.${index}.fundSource`, FundSource.WALLET)
       } else {
         const { chainId, decimals, symbol, name, isNative, wrapped } = currency
         onChange({
@@ -49,14 +49,14 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
   // https://github.com/colinhacks/zod/issues/1394
   useEffect(() => {
     if (startDate && startDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()) {
-      setError('startDate', {
+      setError(`vestings.${index}.startDate`, {
         type: 'custom',
         message: 'Must be at least 5 minutes from now',
       })
     } else {
-      clearErrors('startDate')
+      clearErrors(`vestings.${index}.startDate`)
     }
-  }, [clearErrors, setError, startDate])
+  }, [clearErrors, index, setError, startDate])
 
   return (
     <Form.Section
@@ -66,7 +66,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
       <Form.Control>
         <Controller
           control={control}
-          name="currency"
+          name={`vestings.${index}.currency`}
           render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
             <>
               <TokenSelector
@@ -99,7 +99,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
       <Form.Control>
         <Controller
           control={control}
-          name="startDate"
+          name={`vestings.${index}.startDate`}
           render={({ field: { name, onChange, value, onBlur }, fieldState: { error } }) => {
             return (
               <Input.DatePicker
@@ -136,7 +136,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
       <Form.Control>
         <Controller
           control={control}
-          name="recipient"
+          name={`vestings.${index}.recipient`}
           render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
             return (
               <Web3Input.Ens
@@ -160,7 +160,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
       <Form.Control>
         <Controller
           control={control}
-          name="fundSource"
+          name={`vestings.${index}.fundSource`}
           render={({ field: { onChange, value }, fieldState: { error } }) => {
             const _value = ZFundSourceToFundSource.parse(value)
             return (
