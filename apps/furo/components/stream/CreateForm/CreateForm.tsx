@@ -5,14 +5,15 @@ import { FundSource } from '@sushiswap/hooks'
 import { Form } from '@sushiswap/ui'
 import { FC, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { CreateStreamFormSchemaType } from './schema'
 import { StreamForm } from './StreamForm'
+import {} from '../CreateMultipleForm'
+import { ExecuteSection } from './ExecuteSection'
 import {
   CreateMultipleStreamBaseSchemaFormErrorsType,
   CreateMultipleStreamFormSchemaType,
   CreateMultipleStreamModelSchema,
-} from '../CreateMultipleForm'
-import { ExecuteSection } from './ExecuteSection'
+  CreateStreamFormSchemaType,
+} from '../schema'
 
 export const CREATE_STREAM_DEFAULT_VALUES: CreateStreamFormSchemaType = {
   id: nanoid(),
@@ -25,13 +26,19 @@ export const CREATE_STREAM_DEFAULT_VALUES: CreateStreamFormSchemaType = {
 export const CreateForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
   const methods = useForm<CreateMultipleStreamFormSchemaType & CreateMultipleStreamBaseSchemaFormErrorsType>({
     resolver: zodResolver(CreateMultipleStreamModelSchema),
-    mode: 'onSubmit',
+    mode: 'onBlur',
     defaultValues: {
       streams: [{ ...CREATE_STREAM_DEFAULT_VALUES, id: nanoid() }],
     },
   })
 
   const { reset } = methods
+
+  // try {
+  //   CreateMultipleStreamModelSchema.parse(formData)
+  // } catch (e) {
+  //   console.log(e)
+  // }
 
   useEffect(() => {
     reset()

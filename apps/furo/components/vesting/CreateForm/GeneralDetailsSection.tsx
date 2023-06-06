@@ -10,7 +10,7 @@ import { FundSourceOption } from '../../stream/CreateForm/FundSourceOption'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
-import { CreateMultipleVestingFormSchemaType } from '../CreateMultipleForm/schema'
+import { CreateMultipleVestingFormSchemaType } from '../schema'
 
 export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({ chainId, index }) => {
   const { control, watch, setValue, setError, clearErrors } = useFormContext<CreateMultipleVestingFormSchemaType>()

@@ -11,10 +11,9 @@ import { useFormContext } from 'react-hook-form'
 
 import { useDeepCompareMemoize } from '../../../lib'
 import { useTokenFromZToken } from '../../../lib/zod'
-import { CreateVestingFormSchemaType } from '../CreateForm'
 import { calculateEndDate, calculateTotalAmount } from '../utils'
-import { CreateMultipleVestingModelSchemaType } from './schema'
 import { List } from '@sushiswap/ui/future/components/list/List'
+import { CreateMultipleVestingFormSchemaType, CreateVestingFormSchemaType } from '../schema'
 
 interface ReviewSection {
   chainId: ChainId
@@ -25,7 +24,7 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId }) => {
   const {
     watch,
     formState: { isValid },
-  } = useFormContext<CreateMultipleVestingModelSchemaType>()
+  } = useFormContext<CreateMultipleVestingFormSchemaType>()
 
   // Watch mutates the same object which means effects do not trigger when you're watching an array
   const vestings = watch('vestings')

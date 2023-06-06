@@ -29,63 +29,24 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
           <div className="flex flex-col flex-grow gap-6 items-center lg:items-start">
             <div className="flex flex-col lg:flex-row gap-12">
               <div className="flex flex-col gap-5">
-                <h1 className="text-5xl font-semibold leading-[1.1] mt-2">
+                <h1 className="text-5xl font-semibold  mt-2">
                   Want to stream
                   <br /> to someone?
                 </h1>
-                <span className="text-2xl text-gray-600 dark:text-slate-400 leading-[1.5]">
+                <span className="text-2xl font-medium text-gray-600 dark:text-slate-400 leading-[1.5]">
                   Sushi Pay allows you to stream any ERC20 to any wallet.
                 </span>
                 <div className="group relative z-10 mt-2">
                   <div className="flex w-full items-center">
-                    <Button variant="filled" className="text-blue font-medium rounded-l-full" size="lg">
+                    <Button
+                      as="a"
+                      href="/furo/create"
+                      variant="filled"
+                      className="text-blue font-medium !rounded-full"
+                      size="lg"
+                    >
                       Pay Someone
                     </Button>
-                    <Popover as={Fragment}>
-                      {({ open }) => (
-                        <>
-                          <Popover.Button
-                            as="button"
-                            className={classNames(
-                              open ? 'bg-blue-600' : '',
-                              'bg-blue hover:bg-blue-600 h-[44px] w-[44px] flex items-center justify-center rounded-r-full text-white'
-                            )}
-                          >
-                            <ChevronDownIcon width={24} height={24} />
-                          </Popover.Button>
-                          <Transition
-                            show={open}
-                            enter="transition duration-300 ease-out"
-                            enterFrom="transform translate-y-[-16px] scale-[0.95]"
-                            enterTo="transform translate-y-0 scale-[1]"
-                            leave="transition duration-300 ease-out"
-                            leaveFrom="transform translate-y-0 opacity-100 scale-[1]"
-                            leaveTo="transform translate-y-[-16px] opacity-0 scale-[0.95]"
-                          >
-                            <div className={classNames('right-[-140px] absolute pt-3 top-4 w-[320px]')}>
-                              <div className="p-2 flex flex-col w-full right-0 absolute rounded-2xl shadow-md bg-white/50 paper dark:bg-slate-800/50">
-                                <Popover.Panel>
-                                  <List.MenuItem
-                                    as="a"
-                                    href={`/furo/stream/create`}
-                                    title="New Stream"
-                                    subtitle={'Most efficient way of providing liquidity.'}
-                                  />
-                                  <List.MenuItem
-                                    as="a"
-                                    href={`/furo/vesting/create`}
-                                    title="New Vesting"
-                                    subtitle={'If you prefer creating a classic liquidity position.'}
-                                  >
-                                    New Vesting
-                                  </List.MenuItem>
-                                </Popover.Panel>
-                              </div>
-                            </div>
-                          </Transition>
-                        </>
-                      )}
-                    </Popover>
                   </div>
                 </div>
               </div>

@@ -343,7 +343,7 @@ const _VestingPage: FC = () => {
         <Container maxWidth="4xl" className="lg:mt-4 lg:mx-auto px-4 h-full pb-4 mb-4 lg:mb-40">
           <div className="flex flex-col lg:grid lg:grid-cols-[460px_372px] justify-center gap-8 lg:gap-y-6">
             <div className="flex justify-center">
-              <div className="shadow-lg relative w-[460px] h-[290px] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl">
+              <div className="shadow-lg relative w-[460px] h-[290px] bg-gradient-to-tr from-green to-blue flex flex-col bg-slate-800 p-4 rounded-2xl">
                 <span className="flex items-center justify-start gap-2">
                   <div className="flex flex-col">
                     <span className="font-medium text-white">{vesting?.totalAmount.currency.symbol}</span>

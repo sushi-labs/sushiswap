@@ -5,7 +5,6 @@ import { Controller, useFormContext } from 'react-hook-form'
 
 import { useDeepCompareMemoize } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
-import { STEP_CONFIGURATIONS } from './schema'
 import { calculateTotalAmount } from '../utils'
 import { ChainId } from '@sushiswap/chain'
 import { Input } from '@sushiswap/ui/future/components/input'
@@ -22,7 +21,8 @@ import {
 import {
   CreateMultipleVestingBaseSchemaFormErrorsType,
   CreateMultipleVestingFormSchemaType,
-} from '../CreateMultipleForm/schema'
+  STEP_CONFIGURATIONS,
+} from '../schema'
 
 export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) => {
   const { address } = useAccount()

@@ -3,14 +3,7 @@ import { Form } from '@sushiswap/ui'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { FieldErrors, FormProvider, useFieldArray, useForm } from 'react-hook-form'
 import { ImportErrorProvider } from '../../vesting/CreateMultipleForm/ImportErrorContext'
-import {
-  CreateMultipleStreamBaseSchemaFormErrorsType,
-  CreateMultipleStreamFormSchemaType,
-  CreateMultipleStreamModelSchema,
-  ExecuteMultipleSection,
-  ImportZoneSection,
-  ReviewSection,
-} from '.'
+import { ExecuteMultipleSection, ImportZoneSection, ReviewSection } from '.'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { CREATE_STREAM_DEFAULT_VALUES, StreamForm } from '../CreateForm'
 import Button from '@sushiswap/ui/future/components/button/Button'
@@ -18,6 +11,11 @@ import { DuplicateIcon, PlusIcon, TrashIcon } from '@heroicons/react/solid'
 import { nanoid } from 'nanoid'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { useDeepCompareMemoize } from '../../../lib'
+import {
+  CreateMultipleStreamBaseSchemaFormErrorsType,
+  CreateMultipleStreamFormSchemaType,
+  CreateMultipleStreamModelSchema,
+} from '../schema'
 
 export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
   const [review, setReview] = useState(false)

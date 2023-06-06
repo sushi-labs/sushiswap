@@ -5,10 +5,13 @@ import { FundSource } from '@sushiswap/hooks'
 import { Form } from '@sushiswap/ui'
 import { FC, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { CreateVestingFormSchemaType } from './schema'
 import { CreateFormReviewModal } from './CreateFormReviewModal'
 import { VestingForm } from './VestingForm'
-import { CreateMultipleVestingFormSchemaType, CreateMultipleVestingModelSchema } from '../CreateMultipleForm/schema'
+import {
+  CreateMultipleVestingFormSchemaType,
+  CreateMultipleVestingModelSchema,
+  CreateVestingFormSchemaType,
+} from '../schema'
 
 export const CREATE_VEST_DEFAULT_VALUES: CreateVestingFormSchemaType = {
   id: nanoid(),

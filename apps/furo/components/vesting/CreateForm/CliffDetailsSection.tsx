@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Switch } from '@sushiswap/ui/future/components/Switch'
 import { Input } from '@sushiswap/ui/future/components/input'
-import { CreateMultipleVestingFormSchemaType } from '../CreateMultipleForm/schema'
+import { CreateMultipleVestingFormSchemaType } from '../schema'
 
 export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
   const { control, watch, setValue } = useFormContext<CreateMultipleVestingFormSchemaType>()

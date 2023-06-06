@@ -10,10 +10,9 @@ import { Address, fetchToken, FetchTokenResult } from '@sushiswap/wagmi'
 import { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 
-import { CreateVestingFormSchemaType } from '../CreateForm'
 import { useImportErrorContext } from './ImportErrorContext'
-import { CreateMultipleVestingFormSchemaType } from './schema'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { CreateMultipleVestingFormSchemaType, CreateVestingFormSchemaType } from '../schema'
 
 interface ImportZoneSection {
   chainId: ChainId

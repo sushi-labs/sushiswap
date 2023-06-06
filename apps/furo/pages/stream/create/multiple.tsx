@@ -21,7 +21,7 @@ const MultipleStream = () => {
         <Link
           className="group flex gap-4 items-center mb-2"
           href={{
-            pathname: '/stream/create',
+            pathname: '/create',
           }}
           shallow={true}
         >

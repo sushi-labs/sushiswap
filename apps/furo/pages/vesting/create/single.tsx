@@ -21,7 +21,7 @@ const SingleVesting = () => {
         <Link
           className="group flex gap-4 items-center mb-2"
           href={{
-            pathname: '/vesting/create',
+            pathname: '/create',
           }}
           shallow={true}
         >

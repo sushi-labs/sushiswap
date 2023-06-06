@@ -1,8 +1,7 @@
 import { FuroVestingRouterChainId } from '@sushiswap/furo/exports/exports'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { FieldErrors, FormProvider, useFieldArray, useForm } from 'react-hook-form'
-import { CreateMultipleVestingFormSchemaType, CreateMultipleVestingModelSchema } from './schema'
-import { CREATE_VEST_DEFAULT_VALUES, CreateMultipleVestingBaseSchemaFormErrorsType } from '../CreateForm'
+import { CREATE_VEST_DEFAULT_VALUES } from '../CreateForm'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { nanoid } from 'nanoid'
 import { useDeepCompareMemoize } from '../../../lib'
@@ -15,6 +14,11 @@ import { VestingForm } from '../CreateForm/VestingForm'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { ReviewSection } from './ReviewSection'
 import { ExecuteMultipleSection } from './ExecuteMultipleSection'
+import {
+  CreateMultipleVestingBaseSchemaFormErrorsType,
+  CreateMultipleVestingFormSchemaType,
+  CreateMultipleVestingModelSchema,
+} from '../schema'
 
 export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId }) => {
   const [review, setReview] = useState(false)

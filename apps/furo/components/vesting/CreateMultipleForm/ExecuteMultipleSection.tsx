@@ -14,11 +14,10 @@ import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../lib'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
 import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount } from '../utils'
-import { CreateMultipleVestingFormSchemaType } from './schema'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { bentoBoxV1Address } from '@sushiswap/bentobox'
-import { STEP_CONFIGURATIONS } from '../CreateForm'
+import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS } from '../schema'
 
 export const ExecuteMultipleSection: FC<{
   chainId: FuroVestingRouterChainId
