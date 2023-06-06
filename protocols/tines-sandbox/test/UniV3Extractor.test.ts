@@ -8,7 +8,15 @@ import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contrac
 import { expect } from 'chai'
 import { network } from 'hardhat'
 import { HardhatNetworkAccountUserConfig } from 'hardhat/types'
-import { Address, createPublicClient, createWalletClient, custom, CustomTransport, WalletClient } from 'viem'
+import {
+  Address,
+  createPublicClient,
+  createWalletClient,
+  custom,
+  CustomTransport,
+  Transaction,
+  WalletClient,
+} from 'viem'
 import { Account, privateKeyToAccount } from 'viem/accounts'
 import { Chain, hardhat } from 'viem/chains'
 
@@ -91,7 +99,13 @@ async function prepareEnvironment(): Promise<TestEnvironment> {
   }
 }
 
-async function Mint(env: TestEnvironment, pc: PoolCode, tickLower: number, tickUpper: number, liquidity: bigint) {
+async function Mint(
+  env: TestEnvironment,
+  pc: PoolCode,
+  tickLower: number,
+  tickUpper: number,
+  liquidity: bigint
+): Promise<Transaction> {
   const MintParams = {
     token0: pc.pool.token0.address,
     token1: pc.pool.token1.address,
@@ -105,13 +119,20 @@ async function Mint(env: TestEnvironment, pc: PoolCode, tickLower: number, tickU
     recipient: env.user,
     deadline: 1e12,
   }
-  await env.client.writeContract({
+  const hash = await env.client.writeContract({
     account: env.user,
     chain: env.chain,
     address: NonfungiblePositionManagerAddress as Address,
     abi: INonfungiblePositionManager.abi,
     functionName: 'mint',
     args: [MintParams],
+  })
+  const client = createPublicClient({
+    chain: env.chain,
+    transport: env.transport,
+  })
+  return client.getTransaction({
+    hash,
   })
 }
 
@@ -150,27 +171,30 @@ describe('UniV3Extractor', () => {
     })
   })
 
-  it('mint event', async () => {
-    const testPools = pools.slice(0, 1)
+  it('mint around event', async () => {
     const client = createPublicClient({
       chain: env.chain,
       transport: env.transport,
     })
 
     const extractor = new UniV3Extractor(client, 'UniswapV3', '0xbfd8137f7d1516d3ea5ca83523914859ec47f573')
-    extractor.start(testPools)
+    extractor.start(pools)
     for (;;) {
-      if (extractor.getStablePoolCodes().length == testPools.length) break
+      if (extractor.getStablePoolCodes().length == pools.length) break
       await delay(500)
     }
-
     let extractorPools = extractor.getStablePoolCodes()
-    const tinesPool = extractorPools[0].pool as UniV3Pool
-    const currentTick = tinesPool.ticks[tinesPool.nearestTick].index
-    await Mint(env, extractor.getStablePoolCodes()[0], currentTick - 600, currentTick + 600, BigInt(1e8))
-    const blockNumber = await client.getBlockNumber()
+    const transactions = await Promise.all(
+      extractor.getStablePoolCodes().map(async (pc) => {
+        const tinesPool = pc.pool as UniV3Pool
+        const currentTick = tinesPool.ticks[tinesPool.nearestTick].index
+        return Mint(env, pc, currentTick - 600, currentTick + 600, BigInt(1e8))
+      })
+    )
+
+    const blockNumber = Math.max(...transactions.map((tr) => Number(tr.blockNumber || 0)))
     for (;;) {
-      if (extractor.lastProcessdBlock == blockNumber) break
+      if (Number(extractor.lastProcessdBlock) == blockNumber) break
       await delay(500)
     }
 
@@ -182,7 +206,6 @@ describe('UniV3Extractor', () => {
 
     extractorPools = extractor.getStablePoolCodes()
     providerPools.forEach((pp) => {
-      if (pp.pool.address !== tinesPool.address) return
       const ep = extractorPools.find((p) => p.pool.address == pp.pool.address)
       expect(ep).not.undefined
       if (ep) comparePoolCodes(pp, ep)
