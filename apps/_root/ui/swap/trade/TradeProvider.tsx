@@ -7,8 +7,7 @@ import { useRouter } from 'next/router'
 import { Signature } from '@ethersproject/bytes'
 import { nanoid } from 'nanoid'
 import { SwapChainId } from 'types'
-import { queryParamsSchema } from '../../../lib/swap/queryParamsSchema'
-import { useTokenState } from '../TokenProvider'
+import { useTokenQueryParams, useTokenState } from '../TokenProvider'
 
 interface InternalSwapState {
   isFallback: boolean
@@ -90,8 +89,8 @@ interface SwapProviderProps {
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { address } = useAccount()
   const { query, push, pathname } = useRouter()
-  const { fromCurrency, toCurrency, amount, recipient, review } = queryParamsSchema.parse(query)
-  const { token0, token1, fromChainId, toChainId } = useTokenState()
+  const { fromCurrency, toCurrency } = useTokenQueryParams()
+  const { token0, token1, fromChainId, toChainId, recipient, review, amount } = useTokenState()
 
   const [internalState, dispatch] = useReducer(reducer, {
     isFallback: true,
