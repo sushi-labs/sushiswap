@@ -5,11 +5,10 @@ import { FundSource } from '@sushiswap/hooks'
 import { Form } from '@sushiswap/ui'
 import { FC, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-
-import { ExecuteSection } from './ExecuteSection'
-import { GeneralDetailsSection } from './GeneralDetailsSection'
 import { CreateStreamFormSchemaType, CreateStreamModelSchema } from './schema'
-import { StreamAmountDetails } from './StreamAmountDetails'
+import { StreamForm } from './StreamForm'
+import { CreateMultipleStreamFormSchemaType } from '../CreateMultipleForm'
+import { ExecuteSection } from './ExecuteSection'
 
 export const FORM_ERROR = 'FORM_ERROR' as const
 export type FormErrors = { [FORM_ERROR]?: never }
@@ -23,10 +22,12 @@ export const CREATE_STREAM_DEFAULT_VALUES: CreateStreamFormSchemaType = {
 }
 
 export const CreateForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
-  const methods = useForm<CreateStreamFormSchemaType>({
+  const methods = useForm<CreateMultipleStreamFormSchemaType>({
     resolver: zodResolver(CreateStreamModelSchema),
     mode: 'onBlur',
-    defaultValues: CREATE_STREAM_DEFAULT_VALUES,
+    defaultValues: {
+      streams: [],
+    },
   })
 
   const { reset } = methods
@@ -39,9 +40,8 @@ export const CreateForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }
     <>
       <FormProvider {...methods}>
         <Form header="Create Stream">
-          <GeneralDetailsSection />
-          <StreamAmountDetails chainId={chainId} />
-          <ExecuteSection chainId={chainId} />
+          <StreamForm chainId={chainId} index={0} />
+          <ExecuteSection chainId={chainId} index={0} />
         </Form>
         {/* {process.env.NODE_ENV === 'development' && isMounted && <DevTool control={control} />} */}
       </FormProvider>

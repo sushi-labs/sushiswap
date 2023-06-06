@@ -12,8 +12,9 @@ import { FundSourceOption } from './FundSourceOption'
 import { CreateStreamFormSchemaType } from './schema'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
 import { Input } from '@sushiswap/ui/future/components/input'
+import { CreateMultipleStreamBaseSchemaFormErrorsType, CreateMultipleStreamFormSchemaType } from '../CreateMultipleForm'
 
-export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
+export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ chainId, index }) => {
   const { address } = useAccount()
 
   const {
@@ -23,9 +24,13 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
     setError,
     clearErrors,
     formState: { errors },
-  } = useFormContext<CreateStreamFormSchemaType & FormErrors>()
+  } = useFormContext<CreateMultipleStreamFormSchemaType & CreateMultipleStreamBaseSchemaFormErrorsType>()
 
-  const [amount, currency, fundSource] = watch(['amount', 'currency', 'fundSource'])
+  const [amount, currency, fundSource] = watch([
+    `streams.${index}.amount`,
+    `streams.${index}.currency`,
+    `streams.${index}.fundSource`,
+  ])
   const _currency = useTokenFromZToken(currency)
   const _fundSource = useFundSourceFromZFundSource(fundSource)
   const { data: balance } = useBalance({
@@ -47,7 +52,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
           name,
           isNative,
         })
-        setValue('fundSource', FundSource.WALLET)
+        setValue(`streams.${index}.fundSource`, FundSource.WALLET)
       } else {
         const { chainId, decimals, symbol, name, isNative, wrapped } = currency
         onChange({
@@ -67,9 +72,9 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
     const cAmount = tryParseAmount(amount, _currency)
     if (!_fundSource || !balance?.[_fundSource] || !cAmount) return
     if (balance[_fundSource].lessThan(cAmount)) {
-      setError('FORM_ERROR', { type: 'min', message: 'Insufficient Balance' })
+      setError(`FORM_ERRORS.${index}.amount`, { type: 'min', message: 'Insufficient Balance' })
     } else {
-      clearErrors('FORM_ERROR')
+      clearErrors(`FORM_ERRORS.${index}.amount`)
     }
   }, [_currency, _fundSource, amount, balance, clearErrors, setError])
 
@@ -81,7 +86,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
       <Form.Control>
         <Controller
           control={control}
-          name="currency"
+          name={`streams.${index}.currency`}
           render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
             <>
               <TokenSelector
@@ -114,7 +119,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
       <Form.Control>
         <Controller
           control={control}
-          name="fundSource"
+          name={`streams.${index}.fundSource`}
           render={({ field: { onChange, value }, fieldState: { error } }) => {
             const _value = ZFundSourceToFundSource.parse(value)
             return (
@@ -148,14 +153,14 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
       <Form.Control>
         <Controller
           control={control}
-          name="amount"
+          name={`streams.${index}.amount`}
           render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
             return (
               <>
                 <Input.Numeric
                   onUserInput={onChange}
-                  isError={Boolean(error?.message || errors['FORM_ERROR']?.message)}
-                  caption={error?.message || errors['FORM_ERROR']?.message}
+                  isError={Boolean(error?.message || errors?.['FORM_ERRORS']?.[index]?.['amount']?.message)}
+                  caption={error?.message || errors?.['FORM_ERRORS']?.[index]?.['amount']?.message}
                   onBlur={onBlur}
                   name={name}
                   value={value}

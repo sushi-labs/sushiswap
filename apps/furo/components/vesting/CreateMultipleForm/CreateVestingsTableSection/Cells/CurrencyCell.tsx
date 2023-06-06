@@ -9,8 +9,9 @@ import { CreateMultipleVestingFormSchemaType } from '../../schema'
 import { CellProps } from './types'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
 import { Input } from '@sushiswap/ui/future/components/input'
+import { classNames } from '@sushiswap/ui'
 
-export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHEREUM }) => {
+export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHEREUM, className }) => {
   const { control, setValue } = useFormContext<CreateMultipleVestingFormSchemaType>()
 
   const onSelect = useCallback(
@@ -48,7 +49,7 @@ export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHE
       control={control}
       name={`vestings.${index}.currency`}
       render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-        <>
+        <div className={className}>
           <TokenSelector
             id={'create-single-stream'}
             chainId={chainId}
@@ -72,7 +73,7 @@ export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHE
               />
             )}
           </TokenSelector>
-        </>
+        </div>
       )}
     />
   )

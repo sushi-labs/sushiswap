@@ -24,8 +24,7 @@ import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { bentoBoxV1Address } from '@sushiswap/bentobox'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { ArrowLeftIcon } from '@heroicons/react/outline'
+import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
 const APPROVE_TAG = 'approve-multiple-streams'
 
@@ -37,6 +36,7 @@ export const ExecuteMultipleSection: FC<{
   const { address } = useAccount()
   const contract = useFuroStreamRouterContract(chainId)
   const [signature, setSignature] = useState<Signature>()
+  const { approved } = useApproved(APPROVE_TAG)
 
   const {
     watch,
@@ -153,7 +153,7 @@ export const ExecuteMultipleSection: FC<{
     prepare,
     onSettled,
     onSuccess: () => setSignature(undefined),
-    enabled: Boolean(isValid && !isValidating && isReview),
+    enabled: Boolean(isValid && !isValidating && isReview && approved),
   })
 
   const approveAmounts = useMemo(
@@ -166,7 +166,7 @@ export const ExecuteMultipleSection: FC<{
   )
 
   return (
-    <div className="flex justify-end gap-4 mt-6">
+    <div className="flex justify-end gap-4">
       <Button size="xl" type="button" variant="empty" onClick={onBack}>
         Cancel
       </Button>

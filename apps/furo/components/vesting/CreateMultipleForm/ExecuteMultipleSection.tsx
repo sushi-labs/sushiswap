@@ -23,6 +23,7 @@ import { STEP_CONFIGURATIONS } from '../CreateForm'
 export const ExecuteMultipleSection: FC<{
   chainId: FuroVestingRouterChainId
   isReview: boolean
+  onBack(): void
 }> = ({ chainId, isReview }) => {
   const { address } = useAccount()
   const contract = useFuroVestingRouterContract(chainId)

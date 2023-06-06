@@ -6,4 +6,5 @@ export interface CellProps {
   row: CreateVestingFormSchemaType
   index: number
   chainId?: ChainId
+  className?: string
 }

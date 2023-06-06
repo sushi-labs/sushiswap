@@ -81,7 +81,7 @@ export const CreateVestingsTableSection: FC<CreateVestingsTableSection> = ({ cha
         <div className="flex flex-col gap-2">
           {fields.length > 0 ? (
             fields.map((row, i) => (
-              <div className="flex gap-2" key={i}>
+              <div className="grid grid-cols-3 gap-2" key={i}>
                 <CurrencyCell row={row} index={i} />
                 <RecipientCell row={row} index={i} chainId={chainId} />
                 <StartDateCell row={row} index={i} chainId={chainId} />

@@ -1,34 +1,39 @@
 import { Form } from '@sushiswap/ui'
-import React, { useEffect } from 'react'
+import React, { FC, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { CreateStreamFormSchemaType } from './schema'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
+import { CreateMultipleStreamFormSchemaType } from '../CreateMultipleForm'
 
-export const GeneralDetailsSection = () => {
-  const { control, watch, setError, clearErrors } = useFormContext<CreateStreamFormSchemaType>()
-  const [startDate, endDate] = watch(['dates.startDate', 'dates.endDate'])
+interface GeneralDetailsSection {
+  index: number
+}
+
+export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
+  const { control, watch, setError, clearErrors } = useFormContext<CreateMultipleStreamFormSchemaType>()
+  const [startDate, endDate] = watch([`streams.${index}.dates.startDate`, `streams.${index}.dates.endDate`])
 
   useEffect(() => {
     if (startDate && startDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()) {
-      setError('dates.startDate', {
+      setError(`streams.${index}.dates.startDate`, {
         type: 'custom',
         message: 'Must be at least 5 minutes from now',
       })
     } else {
-      clearErrors('dates.startDate')
+      clearErrors(`streams.${index}.dates.startDate`)
     }
   }, [clearErrors, setError, startDate])
 
   useEffect(() => {
     if (startDate && endDate && endDate < startDate) {
-      setError('dates.endDate', {
+      setError(`streams.${index}.dates.endDate`, {
         type: 'custom',
         message: 'Must be later than start date',
       })
     } else {
-      clearErrors('dates.endDate')
+      clearErrors(`streams.${index}.dates.endDate`)
     }
   }, [clearErrors, endDate, setError, startDate])
 
@@ -41,7 +46,7 @@ export const GeneralDetailsSection = () => {
         <Form.Control>
           <Controller
             control={control}
-            name="dates.startDate"
+            name={`streams.${index}.dates.startDate`}
             render={({ field: { name, onChange, value, onBlur }, fieldState: { error } }) => {
               return (
                 <Input.DatePicker
@@ -80,7 +85,7 @@ export const GeneralDetailsSection = () => {
         <Form.Control>
           <Controller
             control={control}
-            name="dates.endDate"
+            name={`streams.${index}.dates.endDate`}
             render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
               return (
                 <Input.DatePicker
@@ -121,7 +126,7 @@ export const GeneralDetailsSection = () => {
       <Form.Control>
         <Controller
           control={control}
-          name="recipient"
+          name={`streams.${index}.recipient`}
           render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
             return (
               <Web3Input.Ens
