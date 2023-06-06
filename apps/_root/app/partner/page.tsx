@@ -168,14 +168,14 @@ export default function Partner() {
               >
                 Default List
               </Button>
-              <Button
+              {/* <Button
                 fullWidth
                 color="gray"
                 className={classNames('rounded-l-none', listType !== 'community-token-list' && 'opacity-40')}
                 onClick={() => methods.setValue('listType', 'community-token-list')}
               >
                 Community List
-              </Button>
+              </Button> */}
             </div>
             <div className="flex justify-end col-span-6">
               <Button
