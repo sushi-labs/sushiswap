@@ -1,11 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
-import { usePoolFilters } from 'components/PoolsFiltersProvider'
 import stringify from 'fast-json-stable-stringify'
 import { FC, useMemo } from 'react'
 import useSWR from 'swr'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { TVLChart } from './TVLChart2'
 import { VolumeChart } from './VolumeChart2'
+import { useFilters } from 'components/Filters'
 
 const fetcher = ({
   url,
@@ -26,7 +26,8 @@ const fetcher = ({
 }
 
 export const ChartSection: FC = () => {
-  const { chainIds } = usePoolFilters()
+  const { chainIds } = useFilters()
+
   const args = useMemo(() => ({ chainIds }), [chainIds])
   const { data, isValidating, isLoading } = useSWR({ url: '/analytics/api/charts', args }, fetcher)
 
@@ -34,7 +35,7 @@ export const ChartSection: FC = () => {
     <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       <div className="p-6 bg-slate-800/20 rounded-xl">
         {isLoading ? (
-          <div className="flex flex-col gap-3 h-full">
+          <div className="flex flex-col h-full gap-3">
             <div className="flex justify-between flex-grow w-full">
               <Skeleton.Text fontSize="text-sm" className="w-10" />
               <Skeleton.Text fontSize="text-sm" className="w-[130px]" align="right" />
@@ -51,7 +52,7 @@ export const ChartSection: FC = () => {
       </div>
       <div className="p-6 bg-slate-800/20 rounded-xl">
         {isLoading ? (
-          <div className="flex flex-col gap-3 h-full">
+          <div className="flex flex-col h-full gap-3">
             <div className="flex justify-between flex-grow w-full">
               <Skeleton.Text fontSize="text-sm" className="w-10" />
               <Skeleton.Text fontSize="text-sm" className="w-[130px]" align="right" />

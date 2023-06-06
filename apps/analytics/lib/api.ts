@@ -2,6 +2,7 @@ import { chainShortNameToChainId } from '@sushiswap/chain'
 import { Bundle, getBuiltGraphSDK, Pagination, QuerytokensByChainIdsArgs } from '@sushiswap/graph-client'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
+import { FuroTokensSchema } from 'pages/api/furoTokens'
 
 const sdk = getBuiltGraphSDK()
 
@@ -49,6 +50,23 @@ export const getTokens = async (query?: GetTokensQuery) => {
   } catch (error: any) {
     console.log(error)
     throw new Error(error)
+  }
+}
+
+export const getFuroTokens = async (query: (typeof FuroTokensSchema)['_output']) => {
+  try {
+    const { tokens } = await sdk.furoTokensByChainIds({
+      where: {
+        or: query.tokenSymbols?.map((symbol) => ({ symbol_contains_nocase: symbol })),
+      },
+      // orderBy,
+      // orderDirection,
+      chainIds: query.chainIds,
+    })
+
+    return tokens
+  } catch (error) {
+    throw new Error(error as string)
   }
 }
 

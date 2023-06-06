@@ -5,35 +5,36 @@ import { SWRConfig, unstable_serialize } from 'swr'
 import { unstable_serialize as unstable_serialize_infinite } from 'swr/infinite'
 import { getPools, getPoolCount, getPoolCountUrl, getPoolsUrl } from '@sushiswap/client'
 
-import { ChartSection, Layout, PoolsFiltersProvider, TableSection } from '../components'
-import { getBundles, getCharts, getTokenCount, getTokens } from '../lib/api'
-import { defaultVerifiedPoolsArgs, defaultUnverifiedPoolsArgs } from 'lib/constants'
+import { ChartSection, Layout, TableSection } from '../components'
+import { getBundles, getCharts, getFuroTokens, getTokenCount, getTokens } from '../lib/api'
+import { defaultPoolsArgs } from 'lib/constants'
+import { FilterProvider } from 'components/Filters'
+import { getFuroTokensUrl } from 'components/TableSection/FuroTokens/useFuroTokens'
 
 export const getStaticProps: GetStaticProps = async () => {
-  const [verifiedPools, unverifiedPools, verifiedPoolCount, unverifiedPoolCount, charts, bundles] = await Promise.all([
-    getPools(defaultVerifiedPoolsArgs),
-    getPools(defaultUnverifiedPoolsArgs),
-    getPoolCount(defaultVerifiedPoolsArgs),
-    getPoolCount(defaultUnverifiedPoolsArgs),
+  const [pools, charts, poolCount, bundles, furoTokens /*tokens, tokenCount*/] = await Promise.all([
+    getPools(defaultPoolsArgs),
     getCharts(),
+    getPoolCount(defaultPoolsArgs),
     getBundles(),
+    getFuroTokens({ chainIds: SUPPORTED_CHAIN_IDS }),
     // getTokens(),
     // getTokenCount(),
   ])
+
   return {
     props: {
       fallback: {
+        [unstable_serialize_infinite(() => getPoolsUrl(defaultPoolsArgs))]: pools,
         [unstable_serialize({
           url: '/analytics/api/charts',
           args: {
             selectedNetworks: SUPPORTED_CHAIN_IDS,
           },
         })]: charts,
-        [getPoolCountUrl(defaultVerifiedPoolsArgs)]: verifiedPoolCount,
-        [getPoolCountUrl(defaultUnverifiedPoolsArgs)]: unverifiedPoolCount,
-        [unstable_serialize_infinite(() => getPoolsUrl(defaultVerifiedPoolsArgs))]: verifiedPools,
-        [unstable_serialize_infinite(() => getPoolsUrl(defaultUnverifiedPoolsArgs))]: unverifiedPools,
-        ['/analytics/api/bundles']: bundles,
+        [getPoolCountUrl(defaultPoolsArgs)]: poolCount,
+        [`/analytics/api/bundles`]: bundles,
+        [getFuroTokensUrl({ chainIds: SUPPORTED_CHAIN_IDS })]: furoTokens,
         // [unstable_serialize({
         //   url: '/analytics/api/tokens',
         //   args: {
@@ -79,10 +80,10 @@ const _Index: FC = () => {
             </p>
           </div>
         </section>
-        <PoolsFiltersProvider>
+        <FilterProvider>
           <ChartSection />
           <TableSection />
-        </PoolsFiltersProvider>
+        </FilterProvider>
       </div>
     </Layout>
   )
