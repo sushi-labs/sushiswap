@@ -3,7 +3,6 @@
 import * as React from 'react'
 import * as SelectPrimitive from '@radix-ui/react-select'
 
-import { cn } from '../../lib/utils'
 import { ChevronUpDownIcon } from '@heroicons/react/24/outline'
 import { CheckIcon } from '@heroicons/react/20/solid'
 import classNames from 'classnames'
@@ -19,7 +18,7 @@ const SelectValue = React.forwardRef<
 >(({ className, ...props }, ref) => {
   return (
     <div className="pb-2 pt-[22px] font-medium">
-      <SelectPrimitive.Value ref={ref} className={cn(className)} {...props}></SelectPrimitive.Value>
+      <SelectPrimitive.Value ref={ref} className={classNames(className)} {...props}></SelectPrimitive.Value>
     </div>
   )
 })
@@ -32,7 +31,7 @@ const SelectTrigger = React.forwardRef<
   <>
     <SelectPrimitive.Trigger
       ref={ref}
-      className={cn(
+      className={classNames(
         'h-[54px] group relative rounded-xl flex items-center justify-between gap-1 w-full text-gray-900 dark:text-slate-50 bg-gray-200 dark:bg-slate-200/[0.04] px-4',
         className
       )}
@@ -56,7 +55,7 @@ const SelectContent = React.forwardRef<
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       ref={ref}
-      className={cn(
+      className={classNames(
         'relative z-[1081] min-w-[8rem] rounded-xl overflow-hidden bg-white/50 paper dark:bg-slate-800/50 shadow-md animate-in fade-in-80',
         position === 'popper' && 'translate-y-1',
         className
@@ -65,7 +64,7 @@ const SelectContent = React.forwardRef<
       {...props}
     >
       <SelectPrimitive.Viewport
-        className={cn(
+        className={classNames(
           'p-1',
           position === 'popper' && 'h-[var(--radix-select-trigger-height)]  min-w-[var(--radix-select-trigger-width)]'
         )}
@@ -85,7 +84,7 @@ const SelectLabel = React.forwardRef<
     <input value={props['aria-label']} placeholder="hidden placeholder" className="peer hidden" />
     <SelectPrimitive.Label
       ref={ref}
-      className={cn(
+      className={classNames(
         'pointer-events-none font-medium peer-focus:font-normal absolute text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-[15px] scale-75 top-4 z-10 origin-[0] left-4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-[15px]',
         className
       )}
@@ -101,7 +100,7 @@ const SelectItem = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Item
     ref={ref}
-    className={cn(
+    className={classNames(
       'text-gray-700 dark:text-slate-300 relative flex w-full cursor-default select-none items-center rounded-md py-2 pl-8 pr-2 text-sm outline-none hover:bg-black/[0.03] hover:dark:bg-white/[0.03] data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className
     )}
@@ -122,7 +121,7 @@ const SelectSeparator = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Separator>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
 >(({ className, ...props }, ref) => (
-  <SelectPrimitive.Separator ref={ref} className={cn('-mx-1 my-1 h-px bg-muted', className)} {...props} />
+  <SelectPrimitive.Separator ref={ref} className={classNames('-mx-1 my-1 h-px bg-muted', className)} {...props} />
 ))
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName
 
