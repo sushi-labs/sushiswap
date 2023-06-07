@@ -150,7 +150,10 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
                       <div className="flex flex-col items-center justify-center gap-1">
                         <span className="flex items-center text-xs text-gray-500 dark:text-slate-500">
                           No tokens found on <NetworkIcon type="naked" width={20} height={20} chainId={chainId} />{' '}
-                          <span className="font-medium">{chainName[chainId]}</span>
+                          <span className="font-medium">{chainName[chainId]}</span>.
+                        </span>
+                        <span className="text-xs text-gray-500 dark:text-slate-500">
+                          Did you try searching with the token address?
                         </span>
                       </div>
                     </div>
