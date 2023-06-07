@@ -45,7 +45,7 @@ export const RewardsSection: FC = () => {
       .filter((el) => chainIds.includes(el.chainId))
       .map((el) => {
         return Object.values(el.pools ?? {})
-          .filter((el) => +(el.userTVL ?? 0) > 0)
+          .filter((el) => el.userTotalBalance0 + el.userTotalBalance1 > 0)
           .filter((el) =>
             _tokenSymbols.length > 0
               ? _tokenSymbols.some((symbol) => {
