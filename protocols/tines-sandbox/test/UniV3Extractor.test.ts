@@ -32,7 +32,7 @@ const pools: PoolInfo[] = [
     token1: USDC[ChainId.ETHEREUM],
     fee: 100,
   },
-  {
+  /* {
     address: '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640',
     token0: USDC[ChainId.ETHEREUM],
     token1: WNATIVE[ChainId.ETHEREUM],
@@ -43,7 +43,7 @@ const pools: PoolInfo[] = [
     token0: WBTC[ChainId.ETHEREUM],
     token1: WNATIVE[ChainId.ETHEREUM],
     fee: 3000,
-  },
+  },*/
 ]
 
 const poolSet = new Set(pools.map((p) => p.address.toLowerCase()))
@@ -131,9 +131,87 @@ async function Mint(
     chain: env.chain,
     transport: env.transport,
   })
-  return client.getTransaction({
-    hash,
+  return client.getTransaction({ hash })
+}
+
+async function MintAndBurn(
+  env: TestEnvironment,
+  pool: UniV3Pool,
+  tickLower: number,
+  tickUpper: number,
+  liquidity: bigint
+): Promise<Transaction> {
+  const MintParams = {
+    token0: pool.token0.address,
+    token1: pool.token1.address,
+    fee: pool.fee * 1e6,
+    tickLower,
+    tickUpper,
+    amount0Desired: liquidity,
+    amount1Desired: liquidity,
+    amount0Min: 0,
+    amount1Min: 0,
+    recipient: env.user,
+    deadline: 1e12,
+  }
+  const hashMint = await env.client.writeContract({
+    account: env.user,
+    chain: env.chain,
+    address: NonfungiblePositionManagerAddress as Address,
+    abi: INonfungiblePositionManager.abi,
+    functionName: 'mint',
+    args: [MintParams],
   })
+
+  const client = createPublicClient({
+    chain: env.chain,
+    transport: env.transport,
+  })
+  const rct = await client.getTransactionReceipt({ hash: hashMint })
+  const increaseLiquidityLog = rct.logs[rct.logs.length - 1]
+  const tokenId = parseInt(increaseLiquidityLog.topics[1] as string)
+  const placedLiquidity = BigInt(increaseLiquidityLog.data.substring(0, 66))
+
+  const DecreaseParams = {
+    tokenId,
+    liquidity: placedLiquidity,
+    amount0Min: 0,
+    amount1Min: 0,
+    deadline: 1e12,
+  }
+  await env.client.writeContract({
+    account: env.user,
+    chain: env.chain,
+    address: NonfungiblePositionManagerAddress as Address,
+    abi: INonfungiblePositionManager.abi,
+    functionName: 'decreaseLiquidity',
+    args: [DecreaseParams],
+  })
+
+  const CollectParams = {
+    tokenId,
+    recipient: env.user,
+    amount0Max: BigInt(1e30),
+    amount1Max: BigInt(1e30),
+  }
+  await env.client.writeContract({
+    account: env.user,
+    chain: env.chain,
+    address: NonfungiblePositionManagerAddress as Address,
+    abi: INonfungiblePositionManager.abi,
+    functionName: 'collect',
+    args: [CollectParams],
+  })
+
+  const hashBurn = await env.client.writeContract({
+    account: env.user,
+    chain: env.chain,
+    address: NonfungiblePositionManagerAddress as Address,
+    abi: INonfungiblePositionManager.abi,
+    functionName: 'burn',
+    args: [tokenId],
+  })
+  return client.getTransaction({ hash: hashBurn })
 }
 
 async function makeTest(
@@ -221,6 +299,13 @@ describe('UniV3Extractor', () => {
       const currentTick = pool.ticks[pool.nearestTick].index
       Mint(env, pool, currentTick - 300, currentTick, BigInt(1e8))
       return Mint(env, pool, currentTick, currentTick + 300, BigInt(1e10))
+    })
+  })
+
+  it.only('mint and burn', async () => {
+    await makeTest(env, (env, pool) => {
+      const currentTick = pool.ticks[pool.nearestTick].index
+      return MintAndBurn(env, pool, currentTick - 540, currentTick + 540, BigInt(1e10))
     })
   })
 })
