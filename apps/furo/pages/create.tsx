@@ -9,6 +9,9 @@ import { ChainId } from '@sushiswap/chain'
 import { useAccount, useEnsName } from '@sushiswap/wagmi'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
+import Link from 'next/link'
+import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { ArrowLeftIcon } from '@heroicons/react/solid'
 
 enum Type {
   stream,
@@ -28,7 +31,24 @@ export default function CreatePage() {
     <SplashController>
       <NextSeo title="Create" />
       <Layout maxWidth="4xl">
-        <h1 className="text-3xl lg:text-5xl font-semibold text-center max-w-[600px] mx-auto">
+        <Link
+          className="group flex gap-4 items-center mb-2"
+          href={{
+            pathname: '/',
+          }}
+          shallow={true}
+        >
+          <IconButton
+            icon={ArrowLeftIcon}
+            iconProps={{
+              width: 24,
+              height: 24,
+              transparent: true,
+            }}
+          />
+          <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">Go back</span>
+        </Link>
+        <h1 className="text-3xl lg:text-5xl font-semibold max-w-[600px] mt-6">
           Would you like to create a stream or a vest?
         </h1>
         <RadioGroup
