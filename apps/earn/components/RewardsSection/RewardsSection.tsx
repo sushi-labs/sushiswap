@@ -45,7 +45,7 @@ export const RewardsSection: FC = () => {
       .filter((el) => chainIds.includes(el.chainId))
       .map((el) => {
         return Object.values(el.pools ?? {})
-          .filter((el) => Object.keys(el.rewardsPerToken).length > 0)
+          .filter((el) => Object.keys(el.rewardsPerToken).length + Object.keys(el.distributionData).length > 0)
           .filter((el) =>
             _tokenSymbols.length > 0
               ? _tokenSymbols.some((symbol) => {
