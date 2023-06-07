@@ -10,7 +10,7 @@ import { useFundSourceFromZFundSource, useTokenFromZToken, ZFundSourceToFundSour
 import { FundSourceOption } from './FundSourceOption'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
 import { Input } from '@sushiswap/ui/future/components/input'
-import { CreateMultipleStreamBaseSchemaFormErrorsType, CreateMultipleStreamFormSchemaType } from '../CreateMultipleForm'
+import { CreateMultipleStreamBaseSchemaFormErrorsType, CreateMultipleStreamFormSchemaType } from '../schema'
 
 export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ chainId, index }) => {
   const { address } = useAccount()
@@ -102,7 +102,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
                         Token<sup>*</sup>
                       </>
                     }
-                    value={value?.address}
+                    value={value?.isNative ? value?.symbol : value?.address}
                     onClick={() => setOpen(true)}
                     id={'create-single-stream-select'}
                     caption={error?.message ?? value?.symbol}
@@ -166,7 +166,8 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
                   id="create-stream-amount-input"
                   label={
                     <>
-                      Amount<sup>*</sup>
+                      Amount{currency ? ` (${currency.symbol})` : ''}
+                      <sup>*</sup>
                     </>
                   }
                 />

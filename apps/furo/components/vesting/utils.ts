@@ -2,7 +2,7 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { Fraction, JSBI, ZERO } from '@sushiswap/math'
 
 import { ZTokenToToken } from '../../lib/zod'
-import { CreateVestingFormSchemaType, STEP_CONFIGURATIONS } from './CreateForm'
+import { CreateVestingFormSchemaType, STEP_CONFIGURATIONS } from './schema'
 
 export const calculateEndDate = ({
   cliff,

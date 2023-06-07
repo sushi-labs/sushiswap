@@ -12,8 +12,8 @@ import { useFormContext } from 'react-hook-form'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { useDeepCompareMemoize } from '../../../lib'
 import { useTokensFromZTokens } from '../../../lib/zod'
-import { CreateMultipleStreamFormSchemaType } from './schema'
 import { Table } from '@sushiswap/ui/future/components/table'
+import { CreateMultipleStreamFormSchemaType } from '../schema'
 
 interface ReviewSection {
   chainId: ChainId

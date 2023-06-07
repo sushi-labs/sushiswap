@@ -3,8 +3,13 @@ import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Native, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { Button, Dots } from '@sushiswap/ui'
-import { Approve, useAccount, useBentoBoxTotals, useFuroVestingRouterContract } from '@sushiswap/wagmi'
+import { Dots } from '@sushiswap/ui'
+import {
+  getFuroVestingRouterContractConfig,
+  useAccount,
+  useBentoBoxTotals,
+  useFuroVestingRouterContract,
+} from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Address } from '@wagmi/core'
 import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
@@ -18,15 +23,21 @@ import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { bentoBoxV1Address } from '@sushiswap/bentobox'
 import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS } from '../schema'
+import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { Button } from '@sushiswap/ui/future/components/button'
+
+const APPROVE_TAG = 'approve-multiple-vestgs'
 
 export const ExecuteMultipleSection: FC<{
   chainId: FuroVestingRouterChainId
   isReview: boolean
   onBack(): void
-}> = ({ chainId, isReview }) => {
+}> = withCheckerRoot(({ chainId, isReview, onBack }) => {
   const { address } = useAccount()
   const contract = useFuroVestingRouterContract(chainId)
   const [signature, setSignature] = useState<Signature>()
+  const { approved } = useApproved(APPROVE_TAG)
 
   const {
     watch,
@@ -164,43 +175,55 @@ export const ExecuteMultipleSection: FC<{
     prepare,
     onSettled,
     onSuccess: () => setSignature(undefined),
-    enabled: Boolean(isReview && isValid && !isValidating && contract && address && chainId && vestings && rebases),
+    enabled: Boolean(
+      isReview && isValid && !isValidating && contract && address && chainId && vestings && rebases && approved
+    ),
   })
 
-  return (
-    <Approve
-      className="!items-end"
-      components={
-        <Approve.Components>
-          <Approve.Bentobox
-            id="multiple-vest-approve-bentobox"
-            enabled={!!contract}
-            address={contract ? (contract.address as Address) : undefined}
-            onSignature={setSignature}
-          />
-          {Object.values(summedAmounts).map((amount, index) => (
-            <Approve.Token
-              id={`multiple-vest-approve-token${index}`}
-              enabled={!!amount}
-              key={index}
-              amount={amount}
-              address={bentoBoxV1Address[chainId]}
-            />
-          ))}
-        </Approve.Components>
-      }
-      render={({ approved }) => {
-        return (
-          <Button
-            type="submit"
-            onClick={() => sendTransaction?.()}
-            disabled={isWritePending || !approved || !isValid || isValidating}
-            testdata-id="multiple-vest-confirm-button"
-          >
-            {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vests'}
-          </Button>
-        )
-      }}
-    />
+  const approveAmounts = useMemo(
+    () =>
+      Object.values(summedAmounts).map((amount) => ({
+        amount,
+        contract: bentoBoxV1Address[chainId] as Address,
+      })),
+    [chainId, summedAmounts]
   )
-}
+
+  return (
+    <div className="flex justify-end gap-4">
+      <Button size="xl" type="button" variant="empty" onClick={onBack}>
+        Cancel
+      </Button>
+      <Checker.Connect size="xl">
+        <Checker.Network chainId={chainId} size="xl">
+          <Checker.ApproveBentobox
+            size="xl"
+            id="furo-create-multiple-stream-approve-bentobox"
+            chainId={chainId}
+            contract={getFuroVestingRouterContractConfig(chainId).address}
+            onSignature={setSignature}
+          >
+            <Checker.ApproveERC20Multiple
+              size="xl"
+              id={`furo-create-multiple-stream-approve-token`}
+              amounts={approveAmounts}
+            >
+              <Checker.Success tag={APPROVE_TAG}>
+                <Button
+                  size="xl"
+                  onClick={() => sendTransaction?.()}
+                  type="submit"
+                  loading={isWritePending}
+                  disabled={!isValid || isValidating}
+                  testdata-id="furo-create-multiple-streams-confirm-button"
+                >
+                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vests'}
+                </Button>
+              </Checker.Success>
+            </Checker.ApproveERC20Multiple>
+          </Checker.ApproveBentobox>
+        </Checker.Network>
+      </Checker.Connect>
+    </div>
+  )
+})

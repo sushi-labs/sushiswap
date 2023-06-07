@@ -84,7 +84,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
                         Token<sup>*</sup>
                       </>
                     }
-                    value={value?.address}
+                    value={value?.isNative ? value?.symbol : value?.address}
                     onClick={() => setOpen(true)}
                     caption={error?.message ?? value?.symbol}
                     isError={Boolean(error?.message)}

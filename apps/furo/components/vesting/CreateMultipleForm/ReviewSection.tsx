@@ -52,6 +52,7 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId }) => {
     [amounts]
   )
 
+  console.log(isValid)
   if (!isValid) return <></>
 
   return (
@@ -168,13 +169,14 @@ const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
     <Table.tr>
       <Table.td>
         {recipient && (
-          <UILink.External
+          <a
+            rel="noreferrer"
             target="_blank"
-            className="flex items-center gap-1 text-blue hover:underline-none hover:text-blue-400"
+            className="flex items-center gap-1 text-blue hover:underline-none hover:text-blue-700"
             href={Chain.from(chainId)?.getAccountUrl(recipient) ?? ''}
           >
             {shortenAddress(recipient)} <ExternalLinkIcon width={16} height={16} />
-          </UILink.External>
+          </a>
         )}
       </Table.td>
       <Table.td>{currency?.symbol}</Table.td>

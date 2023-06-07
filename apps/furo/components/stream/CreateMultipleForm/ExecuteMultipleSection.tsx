@@ -18,13 +18,13 @@ import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction, useDeepCompareMemoize } from '../../../lib'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
-import { CreateMultipleStreamFormSchemaType } from './schema'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { bentoBoxV1Address } from '@sushiswap/bentobox'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { CreateMultipleStreamFormSchemaType } from '../schema'
 
 const APPROVE_TAG = 'approve-multiple-streams'
 

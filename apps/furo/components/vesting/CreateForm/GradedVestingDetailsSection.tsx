@@ -85,7 +85,8 @@ export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) =>
                   id="create-single-vest-cliff-amount-input"
                   label={
                     <>
-                      Payout per unlock<sup>*</sup>
+                      Payout per unlock{currency ? ` (${currency.symbol})` : ''}
+                      <sup>*</sup>
                     </>
                   }
                 />

@@ -13,12 +13,13 @@ import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useImportErrorContext } from './ImportErrorContext'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { CreateMultipleVestingFormSchemaType, CreateVestingFormSchemaType } from '../schema'
+import dynamic from 'next/dynamic'
 
 interface ImportZoneSection {
   chainId: ChainId
 }
 
-export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
+export const Component: FC<ImportZoneSection> = ({ chainId }) => {
   const { errors, setErrors } = useImportErrorContext<CreateMultipleVestingFormSchemaType>()
   const { control, trigger, watch } = useFormContext<CreateMultipleVestingFormSchemaType>()
 
@@ -242,3 +243,5 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
     </Form.Section>
   )
 }
+
+export const ImportZoneSection = dynamic(() => Promise.resolve(Component), { ssr: false })

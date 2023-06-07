@@ -11,10 +11,22 @@ export interface TextInput extends Omit<HTMLProps<HTMLInputElement>, 'label' | '
   caption?: string
   className?: string
   customButton?: ReactNode
+  hideCloseButton?: boolean
 }
 
 function Component(
-  { label, value, onChange, id, caption, customButton, className = '', isError = false, ...props }: TextInput,
+  {
+    label,
+    value,
+    onChange,
+    id,
+    caption,
+    customButton,
+    className = '',
+    isError = false,
+    hideCloseButton,
+    ...props
+  }: TextInput,
   ref: ForwardedRef<HTMLInputElement>
 ) {
   const _onChange = useCallback(
@@ -53,7 +65,7 @@ function Component(
         >
           {label}
         </label>
-        {value !== '' && (
+        {value !== '' && !hideCloseButton && (
           <div className="absolute top-0 bottom-0 flex items-center justify-center right-4">
             {customButton ? (
               customButton

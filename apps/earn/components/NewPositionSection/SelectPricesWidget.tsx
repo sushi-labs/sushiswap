@@ -12,7 +12,7 @@ import {
   useConcentratedMintState,
   useRangeHopCallbacks,
 } from '../ConcentratedLiquidityProvider'
-import { DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui/future/components/input'
+import { Input } from '@sushiswap/ui/future/components/input'
 import { useAccount } from '@sushiswap/wagmi'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 import { Button } from '@sushiswap/ui/future/components/button'
@@ -302,7 +302,9 @@ export const PriceBlock: FC<PriceBlockProps> = ({
             value={localValue}
             onUserInput={setLocalValue}
             disabled={locked}
-            className={classNames(DEFAULT_INPUT_UNSTYLED, 'without-ring !text-3xl !px-0 !pt-1 !pb-2 shadow-none')}
+            className={classNames(
+              'font-medium text-base without-ring !text-3xl !px-0 !pt-1 !pb-2 shadow-none bg-transparent w-full'
+            )}
             tabIndex={0}
           />
           {isMounted && (

@@ -31,7 +31,7 @@ import { Chain } from '@sushiswap/chain'
 import { format } from 'date-fns'
 import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
 import { shortenAddress } from '@sushiswap/format'
-import { CreateMultipleStreamFormSchemaType } from '../CreateMultipleForm'
+import { CreateMultipleStreamFormSchemaType } from '../schema'
 
 const APPROVE_TAG = 'createStreamSingle'
 const MODAL_ID = 'createStreamSingle'

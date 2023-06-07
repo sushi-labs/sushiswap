@@ -7,7 +7,7 @@ import { CreateMultipleVestingFormSchemaType } from '../schema'
 
 export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
   const { control, watch, setValue } = useFormContext<CreateMultipleVestingFormSchemaType>()
-  const [cliffEnabled] = watch([`vestings.${index}.cliff.cliffEnabled`])
+  const [currency, cliffEnabled] = watch([`vestings.${index}.currency`, `vestings.${index}.cliff.cliffEnabled`])
 
   return (
     <Form.Section title="Cliff details" description="Optionally provide cliff details for your vesting">
@@ -100,7 +100,8 @@ export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
                     id="create-single-vest-cliff-amount-input"
                     label={
                       <>
-                        Amount<sup>*</sup>
+                        Amount{currency ? ` (${currency.symbol})` : ''}
+                        <sup>*</sup>
                       </>
                     }
                   />

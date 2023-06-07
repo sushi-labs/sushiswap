@@ -11,10 +11,9 @@ import { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 
 import { useImportErrorContext } from '../../vesting/CreateMultipleForm/ImportErrorContext'
-import { CreateStreamFormSchemaType } from '../CreateForm'
-import { CreateMultipleStreamFormSchemaType } from './schema'
 import { Button } from '@sushiswap/ui/future/components/button'
 import dynamic from 'next/dynamic'
+import { CreateMultipleStreamFormSchemaType, CreateStreamFormSchemaType } from '../schema'
 
 interface ImportZoneSection {
   chainId: ChainId

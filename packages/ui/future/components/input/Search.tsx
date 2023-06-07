@@ -202,7 +202,11 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function 
             </div>
           ) : value ? (
             <div onClick={() => onChange('')}>
-              <XMarkIcon width={24} height={24} className="cursor-pointer text-slate-500 hover:text-slate-300" />
+              <XMarkIcon
+                width={24}
+                height={24}
+                className="cursor-pointer text-gray-600 hover:text-gray-900 dark:text-slate-500 dark:hover:text-slate-300"
+              />
             </div>
           ) : (
             <></>

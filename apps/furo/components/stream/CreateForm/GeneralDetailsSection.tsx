@@ -3,7 +3,7 @@ import React, { FC, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
-import { CreateMultipleStreamFormSchemaType } from '../CreateMultipleForm'
+import { CreateMultipleStreamFormSchemaType } from '../schema'
 
 interface GeneralDetailsSection {
   index: number

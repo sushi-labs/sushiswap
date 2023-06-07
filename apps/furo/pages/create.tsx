@@ -79,7 +79,7 @@ export default function CreatePage() {
                         <Button as="a" href="/furo/stream/create/single" size="lg" className="!rounded-full">
                           Single stream
                         </Button>
-                        <Button as="a" href="/furo/stream/create/single" size="lg" className="!rounded-full">
+                        <Button as="a" href="/furo/stream/create/multiple" size="lg" className="!rounded-full">
                           Multiple streams
                         </Button>
                       </div>
@@ -134,7 +134,7 @@ export default function CreatePage() {
                         <Button as="a" href="/furo/vesting/create/single" size="lg" className="!rounded-full">
                           Single vest
                         </Button>
-                        <Button as="a" href="/furo/vesting/create/single" size="lg" className="!rounded-full">
+                        <Button as="a" href="/furo/vesting/create/multiple" size="lg" className="!rounded-full">
                           Multiple vests
                         </Button>
                       </div>
