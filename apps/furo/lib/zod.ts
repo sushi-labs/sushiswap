@@ -1,5 +1,5 @@
 import { isAddress } from '@ethersproject/address'
-import { Native, Token, tryParseAmount } from '@sushiswap/currency'
+import { Native, Token } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { useMemo } from 'react'
 import { z } from 'zod'
@@ -16,19 +16,7 @@ export const ZToken = z.object({
 })
 
 export const ZAddress = z.string().refine((val) => (val ? isAddress(val) : false), 'Invalid address')
-
-export const ZAmount = z
-  .object({
-    token: ZToken,
-    amount: z.string(),
-  })
-  .partial()
-
 export const ZFundSource = z.string()
-
-export const ZAmountToAmount = ZAmount.optional().transform((input) => {
-  return tryParseAmount(input?.amount, ZTokenToToken.parse(input?.token))
-})
 
 export const ZTokenToToken = ZToken.transform(({ address, decimals, chainId, symbol, name, isNative }) => {
   if (isNative && address === undefined) {
