@@ -24,7 +24,7 @@ export const Header: FC = () => {
             <HeaderNetworkSelector networks={SUPPORTED_CHAINS} />
             <UserProfile networks={SUPPORTED_CHAINS} />
             <Button
-              className="!h-[38px]"
+              className="!h-[38px] !rounded-xl"
               color="blue"
               fullWidth
               startIcon={<PaperAirplaneIcon width={18} className="transform rotate-45 -mt-0.5 -mr-0.5" />}
