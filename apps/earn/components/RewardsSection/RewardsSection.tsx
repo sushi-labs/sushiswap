@@ -108,6 +108,7 @@ export const RewardsSection: FC = () => {
           placeholder="No positions found"
           pageSize={positions?.length ? positions.length : 1}
           HoverElement={isMd ? RewardsTableV3RowPopover : undefined}
+          HoverElementWidth={420}
           onClick={!isMd ? setClickedRow : undefined}
           linkFormatter={rowLink}
         />

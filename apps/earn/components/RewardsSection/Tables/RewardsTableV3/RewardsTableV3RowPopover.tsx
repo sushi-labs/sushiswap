@@ -46,6 +46,7 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
               </List.Label>
               <List.KeyValue
                 flex
+                className="!items-start"
                 title={
                   <div className="flex gap-1 items-center">
                     Reward
@@ -70,7 +71,7 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
                   {unwrapToken(token).symbol}
                 </div>
               </List.KeyValue>
-              <List.KeyValue flex title="Duration">
+              <List.KeyValue className="!items-start" flex title="Duration">
                 <div className="flex flex-col">
                   <span className="font-mediumt">{Math.floor((end - Date.now() / 1000) / 3600 / 24)} days left</span>
                   <span className="text-xs text-gray-500 dark:text-slate-500">
@@ -80,6 +81,7 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
               </List.KeyValue>
               <List.KeyValue
                 flex
+                className="!items-start"
                 title={
                   <div className="flex gap-1 items-center">
                     Details
