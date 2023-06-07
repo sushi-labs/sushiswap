@@ -179,7 +179,7 @@ async function MintAndBurn(
     amount1Min: 0,
     deadline: 1e12,
   }
-  const hashBurn = await env.client.writeContract({
+  await env.client.writeContract({
     account: env.user,
     chain: env.chain,
     address: NonfungiblePositionManagerAddress as Address,
@@ -194,23 +194,23 @@ async function MintAndBurn(
     amount0Max: BigInt(1e30),
     amount1Max: BigInt(1e30),
   }
-  // const hashBurn = await env.client.writeContract({
-  //   account: env.user,
-  //   chain: env.chain,
-  //   address: NonfungiblePositionManagerAddress as Address,
-  //   abi: INonfungiblePositionManager.abi,
-  //   functionName: 'collect',
-  //   args: [CollectParams],
-  // })
+  await env.client.writeContract({
+    account: env.user,
+    chain: env.chain,
+    address: NonfungiblePositionManagerAddress as Address,
+    abi: INonfungiblePositionManager.abi,
+    functionName: 'collect',
+    args: [CollectParams],
+  })
 
-  // const hashBurn = await env.client.writeContract({
-  //   account: env.user,
-  //   chain: env.chain,
-  //   address: NonfungiblePositionManagerAddress as Address,
-  //   abi: INonfungiblePositionManager.abi,
-  //   functionName: 'burn',
-  //   args: [tokenId],
-  // })
+  const hashBurn = await env.client.writeContract({
+    account: env.user,
+    chain: env.chain,
+    address: NonfungiblePositionManagerAddress as Address,
+    abi: INonfungiblePositionManager.abi,
+    functionName: 'burn',
+    args: [tokenId],
+  })
   return client.getTransaction({ hash: hashBurn })
 }
 
@@ -302,7 +302,7 @@ describe('UniV3Extractor', () => {
     })
   })
 
-  it.skip('mint and burn', async () => {
+  it('mint and burn', async () => {
     await makeTest(env, (env, pool) => {
       const currentTick = pool.ticks[pool.nearestTick].index
       return MintAndBurn(env, pool, currentTick - 540, currentTick + 540, BigInt(1e10))
