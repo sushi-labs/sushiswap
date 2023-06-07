@@ -16,7 +16,7 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
 
   return (
     <div className="flex items-center gap-5">
-      <div className="hidden sm:flex">
+      <div className="flex min-w-[54px]">
         {token0 && token1 && (
           <Badge
             className="border-2 border-slate-900 rounded-full z-[11]"
@@ -30,7 +30,6 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
           </Badge>
         )}
       </div>
-      <div className="flex sm:hidden"></div>
       <div className="flex flex-col gap-0.5">
         <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
           {token0?.symbol} <span className="font-normal text-gray-900 dark:text-slate-500">/</span> {token1?.symbol}{' '}

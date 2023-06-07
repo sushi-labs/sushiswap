@@ -137,7 +137,7 @@ const Component = ({ children, maxWidth = '5xl', ...props }: FooterProps) => {
   )
 
   return (
-    <footer className="bg-black/[0.02] dark:bg-white/[0.02] hidden sm:flex flex-col pt-[72px]" {...props}>
+    <footer className="bg-gray-100 dark:bg-slate-900 hidden sm:flex flex-col pt-[72px]" {...props}>
       <Container maxWidth={maxWidth} className="grid grid-cols-1 md:grid-cols-[176px_auto] mx-auto px-4 gap-4">
         <div className="col-span-2">{children && children}</div>
         <div className="flex flex-col gap-5">

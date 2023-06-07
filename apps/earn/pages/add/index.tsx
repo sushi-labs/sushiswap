@@ -117,7 +117,7 @@ const _Add: FC = () => {
           <div className="col-span-2 flex gap-7">
             <div className="flex min-w-[44px] mb-4">
               <Badge
-                className="border-2 border-slate-900 rounded-full z-[11] !bottom-0 right-[-15%]"
+                className="border-2 border-gray-100 dark:border-slate-900 rounded-full z-[11] !bottom-0 right-[-15%]"
                 position="bottom-right"
                 badgeContent={
                   chainId ? (

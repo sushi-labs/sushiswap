@@ -159,7 +159,7 @@ export default function Partner() {
               <Typography weight={600}>Preview</Typography>
               <ImageCanvas size={128} canvasRef={canvasRef} className="rounded-xl" />
             </div>
-            <div className="flex col-span-6">
+            {/* <div className="flex col-span-6">
               <Button
                 fullWidth
                 color="gray"
@@ -176,7 +176,7 @@ export default function Partner() {
               >
                 Community List
               </Button>
-            </div>
+            </div> */}
             <div className="flex justify-end col-span-6">
               <Button
                 disabled={(tokenAddress && !tokenData?.symbol) || !logoUri || !background}

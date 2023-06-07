@@ -22,6 +22,7 @@ export const SUPPORTED_CHAINS = [
   ChainId.BOBA_AVAX,
   ChainId.ARBITRUM_NOVA,
   ChainId.THUNDERCORE,
+  ChainId.OPTIMISM,
 ] as const
 
 export type SupportedChainIds = typeof SUPPORTED_CHAINS

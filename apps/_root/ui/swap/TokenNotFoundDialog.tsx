@@ -78,7 +78,7 @@ export const TokenNotFoundDialog = () => {
               Anyone can create a token, including creating fake versions of existing tokens that claim to represent
               projects. If you purchase this token, you may not be able to sell it back.
             </p>
-            {token0NotInList && !tokenFrom?.token && (
+            {fromCurrency && token0NotInList && !tokenFrom?.token && (
               <List>
                 <List.Label>Token {tokenFrom?.token && tokenTo?.token ? '1' : ''}</List.Label>
                 <List.Control>
@@ -97,7 +97,7 @@ export const TokenNotFoundDialog = () => {
                 </List.Control>
               </List>
             )}
-            {token1NotInList && !tokenTo?.token && (
+            {toCurrency && token1NotInList && !tokenTo?.token && (
               <List>
                 <List.Label>Token {tokenFrom?.token && tokenTo?.token ? '2' : ''}</List.Label>
                 <List.Control>

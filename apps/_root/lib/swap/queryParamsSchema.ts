@@ -29,7 +29,7 @@ export const queryParamsSchema = z.object({
     .lte(2 ** 256)
     .optional()
     .transform((chainId) => chainId as SwapChainId | undefined),
-  toCurrency: z.string().default('SUSHI'),
+  toCurrency: z.string().optional(),
   amount: z.string().default(''),
   recipient: z.optional(z.coerce.string()),
   review: z.optional(z.coerce.boolean()),

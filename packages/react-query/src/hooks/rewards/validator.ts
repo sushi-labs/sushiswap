@@ -11,6 +11,7 @@ export const angleRewardsPoolsValidator = z.object({
             breakdown: z.record(z.string(), z.number()),
             end: z.number(),
             isOutOfRangeIncentivized: z.boolean(),
+            isLive: z.boolean(),
             propFees: z.number(),
             propToken0: z.number(),
             propToken1: z.number(),
@@ -68,3 +69,5 @@ export const angleRewardsBaseValidator = z.object({
         z.object({ minimumAmountPerEpoch: z.number(), token: z.string() })
     )
 })
+
+export const angleRewardsMultipleValidator = z.array(angleRewardsBaseValidator)

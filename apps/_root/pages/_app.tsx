@@ -1,5 +1,5 @@
 import '@sushiswap/ui/index.css'
-import '../variables.css'
+
 import { App } from '@sushiswap/ui'
 import { Analytics } from '@vercel/analytics/react'
 import { DefaultSeo } from 'next-seo'
