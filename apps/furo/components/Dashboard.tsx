@@ -4,7 +4,7 @@ import { useUserStreams, useUserVestings } from '../lib'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { SushiIcon } from '@sushiswap/ui/future/components/icons'
 import Container from '@sushiswap/ui/future/components/Container'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 import { FuroTableType, StreamTable } from './Table'
 import { Address } from '@wagmi/core'
 

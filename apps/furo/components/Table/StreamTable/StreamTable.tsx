@@ -11,7 +11,7 @@ import {
   STREAMED_COLUMN,
   TYPE_COLUMN,
 } from '../constants'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 
 export enum FuroTableType {
   INCOMING,
