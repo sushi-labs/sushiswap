@@ -194,7 +194,7 @@ async function MintAndBurn(
     amount0Max: BigInt(1e30),
     amount1Max: BigInt(1e30),
   }
-  await env.client.writeContract({
+  const hashBurn = await env.client.writeContract({
     account: env.user,
     chain: env.chain,
     address: NonfungiblePositionManagerAddress as Address,
@@ -203,14 +203,14 @@ async function MintAndBurn(
     args: [CollectParams],
   })
 
-  const hashBurn = await env.client.writeContract({
-    account: env.user,
-    chain: env.chain,
-    address: NonfungiblePositionManagerAddress as Address,
-    abi: INonfungiblePositionManager.abi,
-    functionName: 'burn',
-    args: [tokenId],
-  })
+  // const hashBurn = await env.client.writeContract({
+  //   account: env.user,
+  //   chain: env.chain,
+  //   address: NonfungiblePositionManagerAddress as Address,
+  //   abi: INonfungiblePositionManager.abi,
+  //   functionName: 'burn',
+  //   args: [tokenId],
+  // })
   return client.getTransaction({ hash: hashBurn })
 }
 
