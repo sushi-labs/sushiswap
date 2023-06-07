@@ -10,7 +10,7 @@ import { Explainer } from '@sushiswap/ui/future/components/Explainer'
 import { rewardPerDay } from './utils'
 
 export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) => {
-  const ongoingFarms = row.distributionData.filter((el) => el.end * 1000 >= Date.now())
+  const ongoingFarms = row.distributionData.filter((el) => el.isLive)
   return (
     <div className="p-2">
       <div className="flex items-center gap-4">
