@@ -1,4 +1,3 @@
-import { Typography } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
 import { CellProps } from './types'

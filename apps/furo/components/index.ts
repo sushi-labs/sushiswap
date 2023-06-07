@@ -1,5 +1,4 @@
 export * from './CancelModal'
-export * from './CurrencyInput'
 export * from './Dashboard'
 export * from './FuroTimer'
 export * from './Header'

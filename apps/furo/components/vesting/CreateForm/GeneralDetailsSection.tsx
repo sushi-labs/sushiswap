@@ -3,7 +3,7 @@ import { Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Form } from '@sushiswap/ui'
 import React, { FC, useCallback, useEffect } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { Controller, ControllerRenderProps, useFormContext } from 'react-hook-form'
 
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { FundSourceOption } from '../../stream/CreateForm/FundSourceOption'
@@ -18,7 +18,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
   const _currency = useTokenFromZToken(currency)
 
   const onSelect = useCallback(
-    (onChange: (...event: any[]) => void, currency: Type) => {
+    (onChange: ControllerRenderProps['onChange'], currency: Type) => {
       if (currency.isNative) {
         const { chainId, decimals, symbol, name, isNative } = currency
         onChange({
@@ -42,7 +42,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
         })
       }
     },
-    [setValue]
+    [index, setValue]
   )
 
   // Temporary solution for when Zod fixes conditional validation

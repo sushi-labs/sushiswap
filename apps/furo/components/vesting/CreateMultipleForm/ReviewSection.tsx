@@ -1,9 +1,9 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
-import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
+import { Amount, Type } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
-import { Currency, Link as UILink, Table } from '@sushiswap/ui'
+import { Currency, Table } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/react-query'
 import { format } from 'date-fns'
 import React, { FC, useMemo } from 'react'
@@ -52,7 +52,6 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId }) => {
     [amounts]
   )
 
-  console.log(isValid)
   if (!isValid) return <></>
 
   return (
@@ -158,12 +157,12 @@ const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
     stepPayouts,
     stepConfig,
   })
-  const [_cliffAmount, _stepAmount] = useMemo(() => {
-    return [
-      cliff.cliffEnabled ? tryParseAmount(cliff.cliffAmount?.toString(), _currency) : undefined,
-      tryParseAmount(stepAmount?.toString(), _currency),
-    ]
-  }, [cliff.cliffEnabled, _currency, stepAmount])
+  // const [_cliffAmount, _stepAmount] = useMemo(() => {
+  //   return [
+  //     cliff.cliffEnabled ? tryParseAmount(cliff.cliffAmount?.toString(), _currency) : undefined,
+  //     tryParseAmount(stepAmount?.toString(), _currency),
+  //   ]
+  // }, [cliff.cliffEnabled, _currency, stepAmount])
 
   return (
     <Table.tr>
