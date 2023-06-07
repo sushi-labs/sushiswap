@@ -58,40 +58,12 @@ export const useFundSourceFromZFundSource = (fundSource?: z.infer<typeof ZFundSo
   }, [fundSource])
 }
 
-export const useAmountFromZAmount = (amount?: z.infer<typeof ZAmount>) => {
-  return useMemo(() => {
-    if (amount?.token && amount?.amount) {
-      return ZAmountToAmount.parse(amount)
-    }
-
-    return undefined
-  }, [amount])
-}
-
-export const useTokenFromZAmount = (amount?: z.infer<typeof ZAmount>) => {
-  return useMemo(() => {
-    if (amount?.token) return ZTokenToToken.parse(amount.token)
-
-    return undefined
-  }, [amount?.token])
-}
-
 export const useTokenFromZToken = (token?: z.infer<typeof ZToken>) => {
   return useMemo(() => {
     if (token) return ZTokenToToken.parse(token)
 
     return undefined
   }, [token])
-}
-
-export const useTokensFromZAmounts = (amounts: (z.infer<typeof ZAmount> | undefined)[]) => {
-  return useMemo(() => {
-    return amounts.map((amount) => {
-      if (amount?.token) return ZTokenToToken.parse(amount.token)
-
-      return undefined
-    })
-  }, [amounts])
 }
 
 export const useTokensFromZTokens = (tokens: (z.infer<typeof ZToken> | undefined)[]) => {
@@ -104,16 +76,6 @@ export const useTokensFromZTokens = (tokens: (z.infer<typeof ZToken> | undefined
       return undefined
     })
   }, [tokens])
-}
-
-export const useAmountsFromZAmounts = (amounts: (z.infer<typeof ZAmount> | undefined)[]) => {
-  return useMemo(() => {
-    return amounts.map((amount) => {
-      if (amount?.token) return ZAmountToAmount.parse(amount)
-
-      return undefined
-    })
-  }, [amounts])
 }
 
 export const queryParamsSchema = z.object({
