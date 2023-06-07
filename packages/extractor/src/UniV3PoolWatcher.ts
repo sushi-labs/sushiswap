@@ -207,8 +207,8 @@ export class UniV3PoolWatcher {
         if (this.state !== undefined && l.blockNumber > this.state.blockNumber) {
           const { amount0, amount1, sqrtPriceX96, liquidity, tick } = data.args
           if (amount0 !== undefined && amount1 !== undefined) {
-            this.state.reserve0 -= amount0
-            this.state.reserve1 -= amount1
+            this.state.reserve0 += amount0
+            this.state.reserve1 += amount1
           }
           if (sqrtPriceX96 !== undefined) this.state.sqrtPriceX96 = sqrtPriceX96
           if (liquidity !== undefined) this.state.liquidity = liquidity

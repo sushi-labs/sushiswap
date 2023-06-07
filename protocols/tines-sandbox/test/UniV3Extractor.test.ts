@@ -2,9 +2,10 @@ import { erc20Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { DAI, USDC, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
 import { PoolInfo, UniV3Extractor } from '@sushiswap/extractor'
-import { PoolCode, UniswapV3Provider } from '@sushiswap/router'
+import { UniswapV3Provider } from '@sushiswap/router'
 import { UniV3Pool } from '@sushiswap/tines'
 import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
+import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
 import { expect } from 'chai'
 import { network } from 'hardhat'
 import { HardhatNetworkAccountUserConfig } from 'hardhat/types'
@@ -47,7 +48,8 @@ const pools: PoolInfo[] = [
 ]
 
 const poolSet = new Set(pools.map((p) => p.address.toLowerCase()))
-const NonfungiblePositionManagerAddress = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88' as '0x${string}'
+const NonfungiblePositionManagerAddress: Address = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88'
+const SwapRouterAddress: Address = '0xE592427A0AEce92De3Edee1F18E0157C05861564'
 
 interface TestEnvironment {
   account: Account
@@ -85,7 +87,13 @@ async function prepareEnvironment(): Promise<TestEnvironment> {
         address: t.address as Address,
         abi: erc20Abi,
         functionName: 'approve',
-        args: [NonfungiblePositionManagerAddress as Address, BigInt(1e24)],
+        args: [NonfungiblePositionManagerAddress, BigInt(1e24)],
+      })
+      await client.writeContract({
+        address: t.address as Address,
+        abi: erc20Abi,
+        functionName: 'approve',
+        args: [SwapRouterAddress, BigInt(1e24)],
       })
     })
   )
@@ -122,7 +130,7 @@ async function Mint(
   const hash = await env.client.writeContract({
     account: env.user,
     chain: env.chain,
-    address: NonfungiblePositionManagerAddress as Address,
+    address: NonfungiblePositionManagerAddress,
     abi: INonfungiblePositionManager.abi,
     functionName: 'mint',
     args: [MintParams],
@@ -157,7 +165,7 @@ async function MintAndBurn(
   const hashMint = await env.client.writeContract({
     account: env.user,
     chain: env.chain,
-    address: NonfungiblePositionManagerAddress as Address,
+    address: NonfungiblePositionManagerAddress,
     abi: INonfungiblePositionManager.abi,
     functionName: 'mint',
     args: [MintParams],
@@ -182,7 +190,7 @@ async function MintAndBurn(
   await env.client.writeContract({
     account: env.user,
     chain: env.chain,
-    address: NonfungiblePositionManagerAddress as Address,
+    address: NonfungiblePositionManagerAddress,
     abi: INonfungiblePositionManager.abi,
     functionName: 'decreaseLiquidity',
     args: [DecreaseParams],
@@ -197,7 +205,7 @@ async function MintAndBurn(
   await env.client.writeContract({
     account: env.user,
     chain: env.chain,
-    address: NonfungiblePositionManagerAddress as Address,
+    address: NonfungiblePositionManagerAddress,
     abi: INonfungiblePositionManager.abi,
     functionName: 'collect',
     args: [CollectParams],
@@ -206,12 +214,38 @@ async function MintAndBurn(
   const hashBurn = await env.client.writeContract({
     account: env.user,
     chain: env.chain,
-    address: NonfungiblePositionManagerAddress as Address,
+    address: NonfungiblePositionManagerAddress,
     abi: INonfungiblePositionManager.abi,
     functionName: 'burn',
     args: [tokenId],
   })
   return client.getTransaction({ hash: hashBurn })
+}
+
+async function Swap(env: TestEnvironment, pool: UniV3Pool, direction: boolean, amountIn: bigint): Promise<Transaction> {
+  const ExactInputSingleParams = {
+    tokenIn: direction ? pool.token0.address : pool.token1.address,
+    tokenOut: direction ? pool.token1.address : pool.token0.address,
+    fee: pool.fee * 1e6,
+    recipient: env.user,
+    deadline: 1e12,
+    amountIn,
+    amountOutMinimum: 0,
+    sqrtPriceLimitX96: 0,
+  }
+  const hash = await env.client.writeContract({
+    account: env.user,
+    chain: env.chain,
+    address: SwapRouterAddress,
+    abi: ISwapRouter.abi,
+    functionName: 'exactInputSingle',
+    args: [ExactInputSingleParams],
+  })
+  const client = createPublicClient({
+    chain: env.chain,
+    transport: env.transport,
+  })
+  return client.getTransaction({ hash })
 }
 
 async function makeTest(
@@ -306,6 +340,12 @@ describe('UniV3Extractor', () => {
     await makeTest(env, (env, pool) => {
       const currentTick = pool.ticks[pool.nearestTick].index
       return MintAndBurn(env, pool, currentTick - 540, currentTick + 540, BigInt(1e10))
+    })
+  })
+
+  it('swap', async () => {
+    await makeTest(env, (env, pool) => {
+      return Swap(env, pool, true, BigInt(1e10))
     })
   })
 })
