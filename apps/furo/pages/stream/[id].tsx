@@ -63,12 +63,9 @@ const _Streams: FC = () => {
     ]
   }, [balance, stream])
 
-  const [withdrawnAmount, withdrawnPercentage] = useMemo(() => {
-    if (!stream?.totalAmount || !balance) return [undefined, undefined]
-    return [
-      stream.totalAmount.subtract(balance),
-      new Percent(stream.totalAmount.subtract(balance).quotient, stream.totalAmount.quotient),
-    ]
+  const [withdrawnAmount] = useMemo(() => {
+    if (!stream?.totalAmount || !balance) return [undefined]
+    return [stream.totalAmount.subtract(balance)]
   }, [balance, stream])
 
   const remainingAmount = useMemo(() => {
@@ -364,23 +361,6 @@ const _Streams: FC = () => {
                         </Blink>
                         <span className="text-[10px] font-medium text-slate-500">
                           {streamedAmount?.toSignificant(6)} {stream.streamedAmount?.currency.symbol}
-                        </span>
-                      </div>
-                    </List.KeyValue>
-                    <List.KeyValue title="Withdrawn" subtitle="amount">
-                      <div className="flex flex-col items-end">
-                        <Blink dep={withdrawnPercentage?.toSignificant(3)} as="span" timeout={1500}>
-                          {(isBlinking) => (
-                            <span className={classNames(isBlinking ? 'text-green' : '', 'flex items-center gap-1')}>
-                              {withdrawnPercentage?.toSignificant(3)}%
-                              {isBlinking && (
-                                <ArrowUpIcon className="rotate-45" strokeWidth={3} width={14} height={14} />
-                              )}
-                            </span>
-                          )}
-                        </Blink>
-                        <span className="text-[10px] font-medium text-slate-500">
-                          {withdrawnAmount?.toSignificant(6)} {withdrawnAmount?.currency.symbol}
                         </span>
                       </div>
                     </List.KeyValue>
