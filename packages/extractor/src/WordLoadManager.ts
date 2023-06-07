@@ -139,6 +139,12 @@ export class WordLoadManager {
         ticks.unshift({ index: tick, DLiquidity: BigNumber.from(amount) })
         return
       }
+      if (tick == ticks[0].index) {
+        ticks[0].DLiquidity = ticks[0].DLiquidity.add(amount)
+        if (ticks[0].DLiquidity.isZero()) ticks.splice(0, 1)
+        return
+      }
+
       let start = 0,
         end = ticks.length
       while (end - start > 1) {
