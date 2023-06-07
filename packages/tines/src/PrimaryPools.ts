@@ -16,7 +16,7 @@ export interface RToken {
 
 export function setTokenId(...tokens: RToken[]) {
   tokens.forEach((t) => {
-    if (!t.tokenId) t.tokenId = `${t.address}_${t.chainId}`
+    if (!t.tokenId) t.tokenId = `${t.address || ''}_${t.chainId}`
   })
 }
 
@@ -40,11 +40,11 @@ export abstract class RPool {
     minLiquidity = TYPICAL_MINIMAL_LIQUIDITY,
     swapGasCost = TYPICAL_SWAP_GAS_COST
   ) {
-    this.address = address
+    this.address = address || ''
     this.token0 = token0
     this.token1 = token1
     if (token0 && token1) {
-      // exception just for serialization - tokenId should be set after
+      // exception just for deserialization - tokenId should be set after
       setTokenId(this.token0, this.token1)
     }
     this.fee = fee

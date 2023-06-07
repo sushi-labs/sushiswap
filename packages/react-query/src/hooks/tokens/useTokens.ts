@@ -26,33 +26,30 @@ export const fetchTokensQueryFn = async () => {
             })
         })
 
-        return data
-    }
+        return data.reduce<Record<number, Record<string, Token>>>((acc, {id, name, symbol, decimals}) => {
+            const [chainId, address] = id.split(':')
 
-    throw new Error('Could not fetch tokens')
-}
-
-export const hydrateFetchTokensQueryFn = (data: Array<Data>, _chainId: number) => {
-    return data.reduce<Record<string, Token>>((acc, {id, name, symbol, decimals}) => {
-        const [chainId, address] = id.split(':')
-        if (_chainId === +chainId) {
-            acc[getAddress(address)] = new Token({
+            acc[+chainId] = acc[+chainId] ?? {}
+            acc[+chainId][getAddress(address)] = new Token({
                 chainId,
                 name,
                 decimals,
                 symbol,
                 address,
             })
-        }
-        return acc
-    }, {})
+
+            return acc
+        }, {})
+    }
+
+    throw new Error('Could not fetch tokens')
 }
 
 export const useTokens = ({chainId}: UseTokensParams) => {
     return useQuery({
-        queryKey: ['https://tokens.sushi.com/v0'],
+        queryKey: ['tokens'],
         queryFn: fetchTokensQueryFn,
-        select: (data) => hydrateFetchTokensQueryFn(data, chainId),
+        select: (data) => data[chainId],
         keepPreviousData: true,
         staleTime: 900000, // 15 mins
         cacheTime: 86400000 // 24hs

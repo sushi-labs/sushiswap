@@ -16,8 +16,7 @@ import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
-import { useNetwork } from 'wagmi'
-
+import { useNetwork } from '@sushiswap/wagmi'
 interface AddSectionConfirmModalConcentratedProps
   extends Pick<ReturnType<typeof useConcentratedDerivedMintInfo>, 'noLiquidity' | 'position'> {
   closeReview(): void

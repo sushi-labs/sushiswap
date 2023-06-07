@@ -31,6 +31,9 @@ interface ProviderProps {
   children: (({ open, setOpen }: { open: boolean; setOpen(open: boolean): void }) => ReactNode) | ReactNode
 }
 
+/**
+ * @deprecated
+ */
 export const DrawerRoot: FC<ProviderProps> = ({ children }) => {
   const ref = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState(false)

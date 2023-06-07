@@ -2,11 +2,13 @@ import { Tab } from '@headlessui/react'
 import React, { FC, Fragment, useState } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
 
-import { PoolsTable, PositionsTable } from './Tables'
+import { PoolsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { ConcentratedPositionsTable } from './Tables/PositionsTable/ConcentratedPositionsTable'
 import { useIsMounted } from '@sushiswap/hooks'
+import Container from '@sushiswap/ui/future/components/Container'
+import { PositionsTab } from './PositionsTab'
+import { RewardsTab } from './RewardsTab'
 
 export const PoolsSection: FC = () => {
   const { address } = useAccount()
@@ -15,35 +17,67 @@ export const PoolsSection: FC = () => {
 
   return (
     <section className="flex flex-col">
-      <Tab.Group selectedIndex={tab} onChange={setTab}>
-        <div className="flex items-center gap-2 mb-4">
-          <Tab as={Fragment}>
-            {({ selected }) => (
-              <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
-                All
-              </Button>
-            )}
-          </Tab>
-          {address && isMounted && (
+      <Tab.Group defaultIndex={0} selectedIndex={tab} onChange={setTab}>
+        <Container maxWidth="7xl" className="px-4 mx-auto">
+          <div className="flex items-center gap-2 mb-4">
             <Tab as={Fragment}>
               {({ selected }) => (
-                <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default" testId="my-positions">
-                  My Positions
+                <Button
+                  size="sm"
+                  variant={selected ? 'outlined' : 'empty'}
+                  color="default"
+                  className="!rounded-full !h-[36px]"
+                >
+                  All
                 </Button>
               )}
             </Tab>
-          )}
-        </div>
-        <Tab.Panels>
+            {address && isMounted && (
+              <>
+                <Tab as={Fragment}>
+                  {({ selected }) => (
+                    <Button
+                      size="sm"
+                      variant={selected ? 'outlined' : 'empty'}
+                      color="default"
+                      testId="my-positions"
+                      className="!rounded-full !h-[36px]"
+                    >
+                      My Positions
+                    </Button>
+                  )}
+                </Tab>
+                <Tab as={Fragment}>
+                  {({ selected }) => (
+                    <Button
+                      size="sm"
+                      variant={selected ? 'outlined' : 'empty'}
+                      color="default"
+                      className="!rounded-full !h-[36px]"
+                      testId="my-rewards"
+                    >
+                      My Rewards
+                    </Button>
+                  )}
+                </Tab>
+              </>
+            )}
+          </div>
+        </Container>
+        <Tab.Panels className="bg-gray-50 dark:bg-white/[0.02] pt-4">
+          <Container maxWidth="7xl" className="px-4 mx-auto">
+            <TableFilters showCategories={tab === 0} />
+          </Container>
           <Tab.Panel unmount={false}>
-            <TableFilters showAllFilters={tab === 0} />
-            <PoolsTable />
+            <Container maxWidth="7xl" className="px-4 mx-auto">
+              <PoolsTable />
+            </Container>
           </Tab.Panel>
           <Tab.Panel unmount={false}>
-            <div className="mt-4">
-              <ConcentratedPositionsTable />
-              <PositionsTable />
-            </div>
+            <PositionsTab />
+          </Tab.Panel>
+          <Tab.Panel unmount={false}>
+            <RewardsTab />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>

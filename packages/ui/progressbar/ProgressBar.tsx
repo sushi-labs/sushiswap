@@ -17,6 +17,9 @@ interface ProgressBarProps {
   showLabel?: boolean
 }
 
+/**
+ * @deprecated
+ */
 export const ProgressBar: FC<ProgressBarProps> = ({ progress, color, showLabel = true, className }) => {
   let fromColor
   let toColor

@@ -28,7 +28,7 @@ export const NAME_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'name',
   header: 'Name',
   cell: (props) => <PoolNameCell row={props.row.original} />,
-  size: 200,
+  size: 280,
   meta: {
     skeleton: (
       <div className="flex items-center w-full gap-2">

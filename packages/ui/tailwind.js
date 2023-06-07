@@ -45,8 +45,6 @@ module.exports = {
         'spin-slow': 'spin 2s linear infinite',
         heartbeat: 'heartbeat 1s ease 0.2s infinite normal forwards',
         rotate: 'rotate360 1s cubic-bezier(0.83, 0, 0.17, 1) infinite',
-        wave: 'shimmer 1.25s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'wave-fast': 'shimmer 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         dash: 'dash 1.5s 2s ease-out infinite',
         'dash-check': 'dash-check 1.5s 2s ease-out infinite',
         skeleton: 'skeleton 8s ease-in-out infinite',
@@ -107,14 +105,6 @@ module.exports = {
           },
           '100%': {
             strokeDashoffset: 900,
-          },
-        },
-        skeleton: {
-          '0%': {
-            backgroundPosition: '200% 0',
-          },
-          '100%': {
-            backgroundPosition: '-200% 0',
           },
         },
       },

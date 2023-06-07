@@ -28,6 +28,9 @@ const FormRoot: FormRootComponent = ({ header, children, as, ...rest }) => {
   )
 }
 
+/**
+ * @deprecated
+ */
 export const Form: typeof FormRoot & {
   Buttons: typeof FormButtons
   Control: typeof FormControl

@@ -12,6 +12,7 @@ import { useIsMounted } from '@sushiswap/hooks'
 interface GenericTableProps<C> {
   table: ReactTableType<C>
   HoverElement?: React.FunctionComponent<{ row: C }>
+  HoverElementWidth?: number
   loading?: boolean
   placeholder: ReactNode
   pageSize: number
@@ -20,6 +21,7 @@ interface GenericTableProps<C> {
   headRowHeight?: number
   rowHeight?: number
   testId?: string
+  onClick?(row: C): void
 }
 
 declare module '@tanstack/react-table' {
@@ -32,6 +34,7 @@ declare module '@tanstack/react-table' {
 export const GenericTable = <T extends { id: string }>({
   table,
   HoverElement,
+  HoverElementWidth,
   loading,
   placeholder,
   pageSize,
@@ -40,17 +43,24 @@ export const GenericTable = <T extends { id: string }>({
   headRowHeight = 48,
   rowHeight = 78,
   testId,
+  onClick: _onClick,
 }: GenericTableProps<T>) => {
   const isMounted = useIsMounted()
   const [showOverlay, setShowOverlay] = useState(false)
   const [, setPopupInvisible] = useState(false)
 
-  const onClick = useCallback((e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
-    if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
-      setPopupInvisible(true)
-      setTimeout(() => setShowOverlay(true), 250)
-    }
-  }, [])
+  const onClick = useCallback(
+    (e: React.MouseEvent<HTMLTableRowElement, MouseEvent>, row: T) => {
+      if (_onClick) {
+        _onClick(row)
+      } else if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
+        setPopupInvisible(true)
+        setTimeout(() => setShowOverlay(true), 250)
+      }
+    },
+    [_onClick]
+  )
+
   return (
     <>
       {loadingOverlay && <LoadingOverlay show={showOverlay} />}
@@ -66,14 +76,10 @@ export const GenericTable = <T extends { id: string }>({
                     key={header.id}
                     colSpan={header.colSpan}
                     style={{
-                      ...(header.column.columnDef.maxSize && {
-                        maxWidth: header.column.columnDef.maxSize,
-                      }),
                       ...(header.column.columnDef.size && {
+                        minWidth: header.column.columnDef.size,
                         width: header.column.columnDef.size,
-                      }),
-                      ...(header.column.columnDef.minSize && {
-                        minWidth: header.column.columnDef.minSize,
+                        maxWidth: header.column.columnDef.size,
                       }),
                     }}
                   >
@@ -113,7 +119,7 @@ export const GenericTable = <T extends { id: string }>({
                             name: 'sameWidth',
                             enabled: true,
                             fn: ({ state }) => {
-                              state.styles.popper.width = '320px'
+                              state.styles.popper.width = HoverElementWidth ? `${HoverElementWidth}px` : '320px'
                             },
                             phase: 'beforeWrite',
                             requires: ['computeStyles'],
@@ -124,8 +130,8 @@ export const GenericTable = <T extends { id: string }>({
                       <Popover.Button>
                         <Table.tr
                           testId={`${testId}-${r}-tr`}
-                          onClick={onClick}
-                          className="cursor-pointer"
+                          onClick={(e) => onClick(e, row.original)}
+                          className={linkFormatter || _onClick ? 'cursor-pointer' : ''}
                           rowHeight={rowHeight}
                         >
                           {row.getVisibleCells().map((cell, i) => {
@@ -134,14 +140,10 @@ export const GenericTable = <T extends { id: string }>({
                                 testId={`${testId}-${r}-${i}-td`}
                                 className="!px-0 relative"
                                 style={{
-                                  ...(cell.column.columnDef.maxSize && {
-                                    maxWidth: cell.column.columnDef.maxSize,
-                                  }),
                                   ...(cell.column.columnDef.size && {
+                                    minWidth: cell.column.columnDef.size,
                                     width: cell.column.columnDef.size,
-                                  }),
-                                  ...(cell.column.columnDef.minSize && {
-                                    minWidth: cell.column.columnDef.minSize,
+                                    maxWidth: cell.column.columnDef.size,
                                   }),
                                 }}
                                 key={cell.id}
@@ -181,9 +183,9 @@ export const GenericTable = <T extends { id: string }>({
                   return (
                     <Table.tr
                       testId={`${testId}-${r}-tr`}
-                      onClick={onClick}
+                      onClick={(e) => onClick(e, row.original)}
                       key={row.id}
-                      className="cursor-pointer"
+                      className={linkFormatter || _onClick ? 'cursor-pointer' : ''}
                       rowHeight={rowHeight}
                     >
                       {row.getVisibleCells().map((cell, i) => {
@@ -192,14 +194,10 @@ export const GenericTable = <T extends { id: string }>({
                             testId={`${testId}-${r}-${i}-td`}
                             className="!px-0 relative"
                             style={{
-                              ...(cell.column.columnDef.maxSize && {
-                                maxWidth: cell.column.columnDef.maxSize,
-                              }),
                               ...(cell.column.columnDef.size && {
+                                minWidth: cell.column.columnDef.size,
                                 width: cell.column.columnDef.size,
-                              }),
-                              ...(cell.column.columnDef.minSize && {
-                                minWidth: cell.column.columnDef.minSize,
+                                maxWidth: cell.column.columnDef.size,
                               }),
                             }}
                             key={cell.id}
@@ -241,14 +239,10 @@ export const GenericTable = <T extends { id: string }>({
                       testId={`${testId}-filler-${index}`}
                       key={column.id}
                       style={{
-                        ...(column.columnDef.maxSize && {
-                          maxWidth: column.columnDef.maxSize,
-                        }),
                         ...(column.columnDef.size && {
+                          minWidth: column.columnDef.size,
+                          width: column.columnDef.size,
                           maxWidth: column.columnDef.size,
-                        }),
-                        ...(column.columnDef.minSize && {
-                          maxWidth: column.columnDef.minSize,
                         }),
                       }}
                     />

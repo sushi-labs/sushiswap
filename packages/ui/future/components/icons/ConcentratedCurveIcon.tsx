@@ -7,7 +7,7 @@ export const ConcentratedCurveIcon = (props: React.ComponentProps<'svg'>) => {
         cx="5.911"
         cy="5.911"
         r="5.161"
-        stroke="url(#paint0_linear_3982_23283)"
+        stroke={`url(#paint0_linear_3982_23283_${props.id})`}
         strokeWidth="1.5"
         transform="matrix(-1 0 0 1 19.252 15.727)"
       ></circle>
@@ -15,19 +15,19 @@ export const ConcentratedCurveIcon = (props: React.ComponentProps<'svg'>) => {
         cx="5.911"
         cy="5.911"
         r="5.161"
-        stroke="url(#paint1_linear_3982_23283)"
+        stroke={`url(#paint1_linear_3982_23283_${props.id})`}
         strokeWidth="1.5"
         transform="matrix(-1 0 0 1 14.274 10.748)"
       ></circle>
       <path
-        stroke="url(#paint2_linear_3982_23283)"
+        stroke={`url(#paint2_linear_3982_23283_${props.id})`}
         strokeLinecap="round"
         strokeWidth="1.5"
         d="M1 1c1.106 7.57 8.255 23.769 28 28"
       ></path>
       <defs>
         <linearGradient
-          id="paint0_linear_3982_23283"
+          id={`paint0_linear_3982_23283_${props.id}`}
           x1="-0.909"
           x2="13.83"
           y1="0"
@@ -38,7 +38,7 @@ export const ConcentratedCurveIcon = (props: React.ComponentProps<'svg'>) => {
           <stop offset="1" stopColor="#F338C3"></stop>
         </linearGradient>
         <linearGradient
-          id="paint1_linear_3982_23283"
+          id={`paint1_linear_3982_23283_${props.id}`}
           x1="-0.909"
           x2="13.83"
           y1="0"
@@ -49,7 +49,7 @@ export const ConcentratedCurveIcon = (props: React.ComponentProps<'svg'>) => {
           <stop offset="1" stopColor="#F338C3"></stop>
         </linearGradient>
         <linearGradient
-          id="paint2_linear_3982_23283"
+          id={`paint2_linear_3982_23283_${props.id}`}
           x1="-1.154"
           x2="33.756"
           y1="1"

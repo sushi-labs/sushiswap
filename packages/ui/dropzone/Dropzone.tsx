@@ -8,6 +8,9 @@ interface Dropzone extends DropzoneProps {
   label?: string
 }
 
+/**
+ * @deprecated
+ */
 export const Dropzone: FC<Dropzone> = ({ label = 'Select a CSV file to upload', onDrop, ...rest }) => {
   return (
     <ReactDropzone onDrop={onDrop} {...rest}>

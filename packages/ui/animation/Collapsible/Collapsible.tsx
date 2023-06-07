@@ -8,6 +8,9 @@ interface Collapsible {
   className?: string
 }
 
+/**
+ * @deprecated
+ */
 export const Collapsible: FC<Collapsible> = ({ className, open, children }) => {
   const { ref, height } = useResizeObserver()
 

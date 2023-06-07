@@ -46,7 +46,7 @@ const config: HardhatUserConfig = {
     //   forking: {
     //     enabled: true,
     //     url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
-    //     blockNumber: 16240100,
+    //     blockNumber: 17195000,
     //   },
     //   accounts: {
     //     accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
@@ -54,11 +54,6 @@ const config: HardhatUserConfig = {
     //   chainId: 1,
     // },
     hardhat: {
-      // polygon
-      // mining: {
-      //   auto: false,
-      //   interval: 0
-      // },
       forking: {
         enabled: process.env.FORKING === 'true',
         url: process.env.ALCHEMY_ID
@@ -69,6 +64,23 @@ const config: HardhatUserConfig = {
       accounts: {
         accountsBalance: '10000000000000000000000000', //(10_000_000 MATIC).
       },
+      chainId: 137,
+    },
+    // hardhat: {
+    //   forking: {
+    //     enabled: process.env.FORKING === 'true',
+    //     url: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
+    //     blockNumber: 89111000,
+    //   },
+    //   accounts: {
+    //     accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
+    //   },
+    //   chainId: 42161,
+    // },
+    anvil_fork: {
+      // install: https://github.com/foundry-rs/foundry/tree/master/anvil
+      // start: anvil --fork-url https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID} --fork-block-number 42053000 --timeout 1000000000
+      url: 'http://127.0.0.1:8545',
       chainId: 137,
     },
     // ethereum: {

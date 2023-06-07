@@ -1,8 +1,10 @@
+'use client'
+
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/solid'
 import { classNames, Link } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
 import React, { FC, Fragment } from 'react'
-import { useNetwork } from '@sushiswap/wagmi'
+import { useAccount, useNetwork } from '@sushiswap/wagmi'
 import { PoolFilters, PoolsFiltersProvider, PoolsSection } from '../components'
 import { ChainId } from '@sushiswap/chain'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
@@ -15,7 +17,6 @@ import Container from '@sushiswap/ui/future/components/Container'
 import { PositionCard, PositionCardSkeleton } from './MigratePage/PositionCard'
 import { Carousel } from '@sushiswap/ui/future/components/Carousel'
 import { DiscordIcon, OnsenIcon } from '@sushiswap/ui/future/components/icons'
-import { useAccount } from 'wagmi'
 import { TRIDENT_ENABLED_NETWORKS } from 'config'
 
 export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
@@ -159,7 +160,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                     Migrate <span className="text-gray-500 dark:text-slate-500">for increased efficiency.</span>
                   </h1>
                 </Container>
-                <div className="pl-4 xl:pl-0">
+                <div className="pl-4 xl:pl-2">
                   <Carousel
                     slideWidth={320}
                     slides={positions.filter(
@@ -179,11 +180,9 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
           }
         </PositionCardList>
       )}
-      <Container maxWidth="7xl" className="px-4 mx-auto">
-        <PoolsFiltersProvider passedFilters={filters}>
-          <PoolsSection />
-        </PoolsFiltersProvider>
-      </Container>
+      <PoolsFiltersProvider passedFilters={filters}>
+        <PoolsSection />
+      </PoolsFiltersProvider>
     </>
   )
 }

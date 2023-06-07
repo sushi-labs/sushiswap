@@ -31,6 +31,9 @@ const WIDTH = {
   md: 65,
 }
 
+/**
+ * @deprecated
+ */
 export const Switch: FC<SwitchProps> = ({
   size = 'md',
   checked,

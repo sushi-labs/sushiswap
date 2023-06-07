@@ -47,7 +47,7 @@ export const Explainer: FC<{
               ref={setPopperElement}
               style={{ ...styles.popper, width }}
               {...attributes.popper}
-              className="z-[2000] bg-white/50 paper dark:bg-slate-800/50 rounded-xl overflow-hidden shadow-lg text-xs mt-0.5"
+              className="z-[2000] bg-gray-100 paper dark:bg-slate-800/50 rounded-xl overflow-hidden shadow-xl shadow-black/30 text-xs mt-0.5"
             >
               <div className="flex flex-col gap-3 rounded-md px-4 py-3 dark:text-slate-400">{children}</div>
             </div>,
