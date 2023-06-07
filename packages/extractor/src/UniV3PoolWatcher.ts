@@ -148,14 +148,8 @@ export class UniV3PoolWatcher {
     if (l.blockNumber == null) return
     const data = decodeEventLog({ abi: UniV3EventsAbi, data: l.data, topics: l.topics })
     switch (data.eventName) {
-      case 'Mint':
-      case 'Burn': {
-        let { amount, amount0, amount1 } = data.args
-        if (data.eventName == 'Burn') {
-          amount = amount === undefined ? undefined : -amount
-          amount0 = amount0 === undefined ? undefined : -amount0
-          amount1 = amount1 === undefined ? undefined : -amount1
-        }
+      case 'Mint': {
+        const { amount, amount0, amount1 } = data.args
         const { tickLower, tickUpper } = data.args
         if (this.state !== undefined && l.blockNumber > this.state.blockNumber) {
           if (tickLower !== undefined && tickUpper !== undefined && amount) {
@@ -170,6 +164,21 @@ export class UniV3PoolWatcher {
         if (tickLower !== undefined && tickUpper !== undefined && amount) {
           this.wordLoadManager.addTick(l.blockNumber, tickLower, amount)
           this.wordLoadManager.addTick(l.blockNumber, tickUpper, -amount)
+        }
+        break
+      }
+      case 'Burn': {
+        const { amount } = data.args
+        const { tickLower, tickUpper } = data.args
+        if (this.state !== undefined && l.blockNumber > this.state.blockNumber) {
+          if (tickLower !== undefined && tickUpper !== undefined && amount) {
+            const tick = this.state.tick
+            if (tickLower <= tick && tick < tickUpper) this.state.liquidity -= amount
+          }
+        }
+        if (tickLower !== undefined && tickUpper !== undefined && amount) {
+          this.wordLoadManager.addTick(l.blockNumber, tickLower, -amount)
+          this.wordLoadManager.addTick(l.blockNumber, tickUpper, amount)
         }
         break
       }

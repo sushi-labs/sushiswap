@@ -32,7 +32,7 @@ const pools: PoolInfo[] = [
     token1: USDC[ChainId.ETHEREUM],
     fee: 100,
   },
-  /* {
+  {
     address: '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640',
     token0: USDC[ChainId.ETHEREUM],
     token1: WNATIVE[ChainId.ETHEREUM],
@@ -43,7 +43,7 @@ const pools: PoolInfo[] = [
     token0: WBTC[ChainId.ETHEREUM],
     token1: WNATIVE[ChainId.ETHEREUM],
     fee: 3000,
-  },*/
+  },
 ]
 
 const poolSet = new Set(pools.map((p) => p.address.toLowerCase()))
@@ -179,7 +179,7 @@ async function MintAndBurn(
     amount1Min: 0,
     deadline: 1e12,
   }
-  await env.client.writeContract({
+  const hashBurn = await env.client.writeContract({
     account: env.user,
     chain: env.chain,
     address: NonfungiblePositionManagerAddress as Address,
@@ -194,14 +194,14 @@ async function MintAndBurn(
     amount0Max: BigInt(1e30),
     amount1Max: BigInt(1e30),
   }
-  const hashBurn = await env.client.writeContract({
-    account: env.user,
-    chain: env.chain,
-    address: NonfungiblePositionManagerAddress as Address,
-    abi: INonfungiblePositionManager.abi,
-    functionName: 'collect',
-    args: [CollectParams],
-  })
+  // const hashBurn = await env.client.writeContract({
+  //   account: env.user,
+  //   chain: env.chain,
+  //   address: NonfungiblePositionManagerAddress as Address,
+  //   abi: INonfungiblePositionManager.abi,
+  //   functionName: 'collect',
+  //   args: [CollectParams],
+  // })
 
   // const hashBurn = await env.client.writeContract({
   //   account: env.user,
@@ -302,7 +302,7 @@ describe('UniV3Extractor', () => {
     })
   })
 
-  it.only('mint and burn', async () => {
+  it.skip('mint and burn', async () => {
     await makeTest(env, (env, pool) => {
       const currentTick = pool.ticks[pool.nearestTick].index
       return MintAndBurn(env, pool, currentTick - 540, currentTick + 540, BigInt(1e10))
