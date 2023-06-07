@@ -45,7 +45,7 @@ export const RewardsSection: FC = () => {
       .filter((el) => chainIds.includes(el.chainId))
       .map((el) => {
         return Object.values(el.pools ?? {})
-          .filter((el) => Object.keys(el.rewardsPerToken).length > 0)
+          .filter((el) => el.userTotalBalance0 + el.userTotalBalance1 > 0 || Object.keys(el.rewardsPerToken).length > 0)
           .filter((el) =>
             _tokenSymbols.length > 0
               ? _tokenSymbols.some((symbol) => {
@@ -108,6 +108,7 @@ export const RewardsSection: FC = () => {
           placeholder="No positions found"
           pageSize={positions?.length ? positions.length : 1}
           HoverElement={isMd ? RewardsTableV3RowPopover : undefined}
+          HoverElementWidth={420}
           onClick={!isMd ? setClickedRow : undefined}
           linkFormatter={rowLink}
         />
