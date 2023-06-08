@@ -1,6 +1,6 @@
 import React, { FC, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeftIcon, ChartBarIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
+import { ArrowLeftIcon, ChartBarIcon, ChartPieIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
@@ -29,7 +29,9 @@ import { ContentBlock } from './AddPage/ContentBlock'
 import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
 import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { ConcentratedPositionsTable } from './PoolsSection/Tables/PositionsTable/ConcentratedPositionsTable'
-import { PoolTransactionsV3, PoolChart } from './PoolSection'
+import { PoolTransactionsV3 } from './PoolSection'
+import { PoolDepthWidget } from './PoolSection/V3/PoolDepthWidget'
+import { PoolChartV3 } from './PoolSection/PoolChart/PoolChartV3'
 
 enum Granularity {
   Day,
@@ -90,8 +92,6 @@ const Pool: FC = () => {
   )
 
   const [granularity, setGranularity] = useState<Granularity>(Granularity.Day)
-
-  const { data: graphData, isLoading: isGraphDataLoading } = usePoolGraphData({ poolAddress, chainId })
 
   const { data: poolStats } = useConcentratedLiquidityPoolStats({ chainId, address: poolAddress })
   const { data: pool, isLoading } = useConcentratedLiquidityPool({
@@ -198,12 +198,7 @@ const Pool: FC = () => {
       <div className={tab === SelectedTab.Analytics ? 'block' : 'hidden'}>
         <div>
           <div className="grid md:grid-cols-[auto_404px] gap-10">
-            <PoolChart
-              isLoading={isGraphDataLoading}
-              data={graphData}
-              swapFee={pool?.fee ? pool.fee / 1000000 : pool?.fee}
-              charts={['Volume', 'TVL', 'Fees']}
-            />
+            <PoolChartV3 address={poolAddress} chainId={chainId} />
             <div className="flex flex-col gap-6">
               <List className="!pt-0 !gap-1">
                 <List.Label className="flex justify-end">
