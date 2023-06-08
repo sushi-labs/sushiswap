@@ -61,7 +61,7 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
   const hasExistingPosition = !!existingPosition
 
   const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
+    return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
   }, [slippageTolerance])
 
   const onSettled = useCallback(

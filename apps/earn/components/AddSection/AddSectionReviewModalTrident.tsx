@@ -79,7 +79,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   const contract = useTridentRouterContract(chainId)
   const [slippageTolerance] = useSlippageTolerance('addLiquidity')
   const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
+    return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
   }, [slippageTolerance])
 
   const [minAmount0, minAmount1] = useMemo(() => {
@@ -258,7 +258,13 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
 
   return (
     <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} close={close}>
-      <Button size="xl" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()} testdata-id="confirm-add-liquidity-button">
+      <Button
+        size="xl"
+        disabled={isWritePending}
+        fullWidth
+        onClick={() => sendTransaction?.()}
+        testdata-id="confirm-add-liquidity-button"
+      >
         {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
       </Button>
     </AddSectionReviewModal>
