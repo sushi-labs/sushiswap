@@ -106,8 +106,6 @@ const Pool: FC = () => {
   const incentiveAmounts = useMemo(() => poolStats?.incentives.map((el) => el.reward), [poolStats?.incentives])
   const fiatValuesIncentives = useTokenAmountDollarValues({ chainId, amounts: incentiveAmounts })
 
-  // console.log({ fiatValuesIncentives })
-
   const [_token0, _token1] = useMemo(
     () => [
       poolStats?.token0 ? unwrapToken(poolStats.token0) : undefined,
@@ -344,13 +342,13 @@ const Pool: FC = () => {
                 <List.Control>
                   {poolStats && poolStats.incentives.length > 0 ? (
                     poolStats.incentives.map((el, i) => (
-                      <List.KeyValue key={i} flex title={`${el.reward.currency.symbol}`}>
+                      <List.KeyValue key={el.id} flex title={`${el.reward.currency.symbol}`}>
                         <div className="flex flex-col gap-2">
                           <div className="flex items-center gap-2">
                             <Currency.Icon currency={el.reward.currency} width={18} height={18} />
                             {el.reward.toSignificant(4)} {el.reward.currency.symbol}{' '}
                             <span className="text-gray-600 dark:text-slate-400">
-                              ({formatUSD(fiatValuesIncentives[1])})
+                              ({formatUSD(fiatValuesIncentives.reduce((a, b) => a + b, 0))})
                             </span>
                           </div>
                         </div>
