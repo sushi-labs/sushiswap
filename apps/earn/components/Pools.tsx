@@ -18,6 +18,7 @@ import { PositionCard, PositionCardSkeleton } from './MigratePage/PositionCard'
 import { Carousel } from '@sushiswap/ui/future/components/Carousel'
 import { DiscordIcon, OnsenIcon } from '@sushiswap/ui/future/components/icons'
 import { TRIDENT_ENABLED_NETWORKS } from 'config'
+import { isV3ChainId } from '@sushiswap/v3-sdk'
 
 export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
   const { address } = useAccount()
@@ -103,7 +104,9 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                                 />
                               ) : null}
                               {/*  isConstantProductPoolFactoryChainId(chainId) || isStablePoolFactoryChainId(chainId) */}
-                              {TRIDENT_ENABLED_NETWORKS.includes(chainId as typeof TRIDENT_ENABLED_NETWORKS[number]) ? (
+                              {TRIDENT_ENABLED_NETWORKS.includes(
+                                chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]
+                              ) ? (
                                 <List.MenuItem
                                   as="a"
                                   href={`/pools/add/trident/${chainId}`}
@@ -163,13 +166,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                 <div className="pl-4 xl:pl-2">
                   <Carousel
                     slideWidth={320}
-                    slides={positions.filter(
-                      (position) =>
-                        position?.chainId !== ChainId.CELO &&
-                        position?.chainId !== ChainId.BOBA_AVAX &&
-                        position?.chainId !== ChainId.BOBA_BNB &&
-                        position?.chainId !== ChainId.HARMONY
-                    )}
+                    slides={positions.filter((position) => isV3ChainId(position.chainId as ChainId))}
                     render={(position) => (isLoading ? <PositionCardSkeleton /> : <PositionCard position={position} />)}
                   />
                 </div>
