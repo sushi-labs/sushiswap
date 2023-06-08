@@ -1,6 +1,6 @@
 {
-  "name": "@sushiswap/sushiswap",
-  "version": "0.1.1",
+  "name": "@sushiswap/v2-core",
+  "version": "0.0.0",
   "description": "SushiSwap",
   "keywords": [
     "sushi",

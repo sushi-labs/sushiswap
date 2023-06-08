@@ -1,6 +1,6 @@
 {
-  "name": "@sushiswap/trident",
-  "version": "1.0.1",
+  "name": "@sushiswap/trident-core",
+  "version": "0.0.0",
   "description": "Trident is a experimental framework for building AMM's.",
   "keywords": [
     "trident",
