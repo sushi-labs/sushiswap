@@ -25,6 +25,7 @@ export const getAllPoolsCodeMap = async ({ currencyA, currencyB, chainId }: Omit
     LiquidityProviders.UbeSwap,
     LiquidityProviders.Biswap,
     LiquidityProviders.DovishV3, // polygon zkevm
+    LiquidityProviders.LaserSwap, // thundercore
   ]
   if (isRouteProcessor3ChainId(chainId)) {
     liquidityProviders.push(LiquidityProviders.SushiSwapV3)
