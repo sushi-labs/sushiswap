@@ -1,5 +1,17 @@
 # @sushiswap/router
 
+## 0.0.8
+
+### Patch Changes
+
+- 75972206f: hardhat config embed export type helper
+- Updated dependencies
+  - @sushiswap/v2-core@1.0.4
+  - @sushiswap/trident-core@1.0.4
+  - @sushiswap/bentobox@1.0.1
+  - @sushiswap/amm@0.1.8
+  - @sushiswap/v3-sdk@1.0.5
+
 ## 0.0.7
 
 ### Patch Changes

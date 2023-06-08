@@ -441,7 +441,7 @@ importers:
       '@sushiswap/router': link:../../packages/router
       '@sushiswap/router-config': link:../../config/router
       '@sushiswap/stargate': link:../../packages/stargate
-      '@sushiswap/sushixswap': link:../../protocols/sushixswap
+      '@sushiswap/sushixswap': 1.0.3_j2qn747ruc3r5bt2ewtzgtsasu
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/trident-core': link:../../protocols/trident
       '@sushiswap/types': link:../../packages/types
@@ -1703,10 +1703,10 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/tines': workspace:*
-      '@sushiswap/trident-core': 1.0.2
-      '@sushiswap/types': 0.0.1
+      '@sushiswap/trident-core': workspace:*
+      '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/v2-core': 1.0.2
+      '@sushiswap/v2-core': workspace:*
       '@types/node': 18.11.18
       eslint: 8.41.0
       tiny-invariant: 1.3.1
@@ -2369,7 +2369,7 @@ importers:
       '@ethersproject/solidity': 5.7.0
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
-      '@sushiswap/bentobox': 1.0.1
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
@@ -2859,7 +2859,7 @@ importers:
       '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/router': link:../router
       '@sushiswap/router-config': link:../../config/router
-      '@sushiswap/sushixswap': link:../../protocols/sushixswap
+      '@sushiswap/sushixswap': 1.0.3_es3gkzhr5ujwscph5xq4emoneq
       '@sushiswap/tines': link:../tines
       '@sushiswap/trident-core': link:../../protocols/trident
       '@sushiswap/types': link:../types
@@ -3168,16 +3168,17 @@ importers:
       hardhat-deploy: 0.11.22
       ts-node: 10.9.1
       typescript: 5.0.4
-    devDependencies:
-      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_hardhat@2.12.4
+    dependencies:
       '@openzeppelin/contracts': 3.1.0
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/hardhat-config': link:../../config/hardhat
+      '@sushiswap/types': link:../../packages/types
+    devDependencies:
+      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_hardhat@2.12.4
+      '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/types': link:../../packages/types
       '@sushiswap/typescript-config': link:../../config/typescript
       '@tenderly/hardhat-tenderly': 1.7.4_2lseqtovkpll54q66bropeckji
       '@types/node': 18.11.18
@@ -3202,11 +3203,8 @@ importers:
       '@sushiswap/hardhat-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/stargate': workspace:*
-      '@sushiswap/tines': workspace:*
       '@sushiswap/types': 0.0.1
       '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/v2-core': workspace:*
       '@tenderly/hardhat-tenderly': ^1.0.13
       '@types/chai': ^4.3.3
       '@types/node': 18.11.18
@@ -3219,25 +3217,23 @@ importers:
       seedrandom: ^3.0.5
       ts-node: 10.9.1
       typescript: 5.0.4
-    devDependencies:
+    dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2
-      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_yab2ug5tvye2kp6e24l5x3z7uy
       '@openzeppelin/contracts': 4.9.0
       '@sushiswap/amm': link:../../packages/amm
       '@sushiswap/bentobox': link:../bentobox
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/core': 1.4.2
       '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/hardhat-config': link:../../config/hardhat
+      '@sushiswap/types': link:../../packages/types
+    devDependencies:
+      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_yab2ug5tvye2kp6e24l5x3z7uy
+      '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/stargate': link:../../packages/stargate
-      '@sushiswap/tines': link:../../packages/tines
-      '@sushiswap/types': link:../../packages/types
       '@sushiswap/typescript-config': link:../../config/typescript
-      '@sushiswap/v2-core': link:../sushiswap
       '@tenderly/hardhat-tenderly': 1.7.4_2lseqtovkpll54q66bropeckji
       '@types/chai': 4.3.5
       '@types/node': 18.11.18
@@ -10259,7 +10255,6 @@ packages:
 
   /@openzeppelin/contracts/3.1.0:
     resolution: {integrity: sha512-dVXDnUKxrAKLzPdCRkz+N8qsVkK1XxJ6kk3zuI6zaQmcKxN7CkizoDP7lXxcs/Mi2I0mxceTRjJBqlzFffLJrQ==}
-    dev: true
 
   /@openzeppelin/contracts/3.4.1-solc-0.7-2:
     resolution: {integrity: sha512-tAG9LWg8+M2CMu7hIsqHPaTyG4uDzjr6mhvH96LvOpLZZj6tgzTluBt+LsCf1/QaYrlis6pITvpIaIhE+iZB+Q==}
@@ -10278,6 +10273,7 @@ packages:
 
   /@openzeppelin/contracts/4.9.0:
     resolution: {integrity: sha512-DUP74AFGKlic2sQb/CmgrN2aUPMFGxRrmCTUxLHsiU2RzwWqVuMPZBxiAyvlff6Pea77uylAX6B5x9W6evEbhA==}
+    dev: false
 
   /@peculiar/asn1-schema/2.3.6:
     resolution: {integrity: sha512-izNRxPoaeJeg/AyH8hER6s+H7p4itk+03QCa4sbxI3lNdseQYCuxzgsuNK8bTXChtLTjpJz6NmXKA73qLa3rCA==}
@@ -11032,6 +11028,7 @@ packages:
 
   /@sushiswap/core/1.4.2:
     resolution: {integrity: sha512-Khd2i6Bob9uk7dCgVkhUioEoxRP28m6aj25MegAHvnJyxZPVzZDhxSkeL6wdv5MeAp2DwHkYqUq03KDfVTTP4Q==}
+    dev: false
 
   /@sushiswap/default-token-list/41.4.0:
     resolution: {integrity: sha512-2mN2QxAeRWywsWrh598DKqKjOiHlsdi0OXlmcBIlHJY9DYbMz8lZFl9v/2sL3Xj8c1WQ0i9xyktfObv3hhn6KQ==}
@@ -11039,6 +11036,29 @@ packages:
 
   /@sushiswap/default-token-list/41.5.0:
     resolution: {integrity: sha512-SMDWC6WyoH4BoCH5oHDAo3mub3WB6qXK5uEUm/7zvHCY4ckMwJ77n/Q/hYJt1gjMotkOZ9oOVOaWh8qMBJou+A==}
+    dev: false
+
+  /@sushiswap/sushixswap/1.0.3_es3gkzhr5ujwscph5xq4emoneq:
+    resolution: {integrity: sha512-f0QaP5sGto/rA/o+ywsT/AuJQSkYAUt/dhJOwSMEwjsht3qAHsaOMzJ9yZbXaP1JW+OC0cxtaZSHM1kIRWfXEQ==}
+    peerDependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      ethers: 5.7.2
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      ethers: 5.7.2
+    dev: false
+
+  /@sushiswap/sushixswap/1.0.3_j2qn747ruc3r5bt2ewtzgtsasu:
+    resolution: {integrity: sha512-f0QaP5sGto/rA/o+ywsT/AuJQSkYAUt/dhJOwSMEwjsht3qAHsaOMzJ9yZbXaP1JW+OC0cxtaZSHM1kIRWfXEQ==}
+    peerDependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      ethers: 5.7.2
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      ethers: 5.7.2
     dev: false
 
   /@swc/core-darwin-arm64/1.3.26:

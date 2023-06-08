@@ -1,5 +1,14 @@
 # @sushiswap/trident
 
+## 1.0.4
+
+### Patch Changes
+
+- deps
+- Updated dependencies [75972206f]
+  - @sushiswap/hardhat-config@0.1.2
+  - @sushiswap/types@0.0.2
+
 ## 1.0.2
 
 ### Patch Changes

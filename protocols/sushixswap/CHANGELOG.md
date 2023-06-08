@@ -1,5 +1,15 @@
 # @sushiswap/sushixswap
 
+## 1.0.5
+
+### Patch Changes
+
+- deps
+- Updated dependencies [75972206f]
+  - @sushiswap/hardhat-config@0.1.2
+  - @sushiswap/types@0.0.2
+  - @sushiswap/amm@0.1.8
+
 ## 1.0.3
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/router",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Sushi Router",
   "keywords": [
     "sushi",
@@ -42,7 +42,7 @@
     "@ethersproject/solidity": "5.7.0",
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/amm": "workspace:*",
-    "@sushiswap/bentobox": "1.0.1",
+    "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/math": "workspace:*",

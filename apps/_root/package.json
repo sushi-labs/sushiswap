@@ -43,7 +43,7 @@
     "@sushiswap/router-config": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
     "@sushiswap/v2-core": "workspace:*",
-    "@sushiswap/sushixswap": "1.0.3",
+    "@sushiswap/sushixswap": "1.0.5",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident-core": "workspace:*",
     "@sushiswap/types": "workspace:*",
