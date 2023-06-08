@@ -49,7 +49,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
   try {
     CreateMultipleStreamModelSchema.parse(formData)
   } catch (e) {
-    console.log(e)
+    console.error(e)
   }
 
   return (

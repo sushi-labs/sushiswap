@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const pools = await getPools(req.query)
     res.status(200).json(pools)
   } catch (error) {
-    console.log({ error })
+    console.error(error)
     res.status(500).send('')
   }
 }
