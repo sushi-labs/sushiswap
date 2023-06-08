@@ -45,7 +45,7 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/bentobox": "1.0.1",
-    "@sushiswap/types": "workspace:*",
+    "@sushiswap/types": "0.0.1",
     "@tenderly/hardhat-tenderly": "^1.0.13",
     "@types/node": "18.11.18",
     "eslint": "8.41.0",

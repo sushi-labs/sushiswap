@@ -3002,7 +3002,7 @@ importers:
       '@sushiswap/hardhat-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/types': workspace:*
+      '@sushiswap/types': 0.0.1
       '@sushiswap/typescript-config': workspace:*
       '@tenderly/hardhat-tenderly': ^1.0.13
       '@types/node': 18.11.18
@@ -3153,7 +3153,7 @@ importers:
       '@sushiswap/hardhat-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/types': workspace:*
+      '@sushiswap/types': 0.0.1
       '@sushiswap/typescript-config': workspace:*
       '@tenderly/hardhat-tenderly': ^1.0.13
       '@types/node': 18.11.18
@@ -3198,7 +3198,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/stargate': workspace:*
       '@sushiswap/tines': workspace:*
-      '@sushiswap/types': workspace:*
+      '@sushiswap/types': 0.0.1
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/v2-core': workspace:*
       '@tenderly/hardhat-tenderly': ^1.0.13
@@ -3360,7 +3360,7 @@ importers:
       '@sushiswap/hardhat-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/types': workspace:*
+      '@sushiswap/types': 0.0.1
       '@sushiswap/typescript-config': workspace:*
       '@tenderly/hardhat-tenderly': ^1.0.13
       '@types/node': 18.11.18
