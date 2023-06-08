@@ -45,7 +45,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
   const contract = useSushiSwapRouterContract(_pool.chainId as UniswapV2Router02ChainId)
   const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
   const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
+    return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
   }, [slippageTolerance])
 
   const [percentage, setPercentage] = useState<string>('')
