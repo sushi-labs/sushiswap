@@ -353,7 +353,7 @@ importers:
       '@sushiswap/router': workspace:*
       '@sushiswap/router-config': workspace:*
       '@sushiswap/stargate': workspace:*
-      '@sushiswap/sushixswap': 1.0.1
+      '@sushiswap/sushixswap': 1.0.3
       '@sushiswap/tailwindcss-config': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/trident-core': 1.0.2
@@ -441,7 +441,7 @@ importers:
       '@sushiswap/router': link:../../packages/router
       '@sushiswap/router-config': link:../../config/router
       '@sushiswap/stargate': link:../../packages/stargate
-      '@sushiswap/sushixswap': 1.0.1_j2qn747ruc3r5bt2ewtzgtsasu
+      '@sushiswap/sushixswap': 1.0.3_j2qn747ruc3r5bt2ewtzgtsasu
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/trident-core': 1.0.2
       '@sushiswap/types': link:../../packages/types
@@ -959,7 +959,7 @@ importers:
       '@sushiswap/dexie': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
-      '@sushiswap/furo': 1.0.3
+      '@sushiswap/furo': 1.0.5
       '@sushiswap/graph-client': workspace:*
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/hooks': workspace:*
@@ -1720,7 +1720,7 @@ importers:
       '@sushiswap/math': link:../math
       '@sushiswap/tines': link:../tines
       '@sushiswap/trident-core': 1.0.2
-      '@sushiswap/types': 0.0.1
+      '@sushiswap/types': link:../types
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
       zod: 3.21.4
@@ -2550,7 +2550,6 @@ importers:
       jest: 29.3.1
       tsup: 6.5.0_typescript@5.0.4
       typescript: 5.0.4
-    publishDirectory: dist
 
   packages/ui:
     specifiers:
@@ -2787,7 +2786,7 @@ importers:
       '@sushiswap/dexie': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
-      '@sushiswap/furo': 1.0.3
+      '@sushiswap/furo': 1.0.5
       '@sushiswap/gas': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -2797,7 +2796,7 @@ importers:
       '@sushiswap/route-processor': workspace:*
       '@sushiswap/router': workspace:*
       '@sushiswap/router-config': workspace:*
-      '@sushiswap/sushixswap': 1.0.1
+      '@sushiswap/sushixswap': 1.0.3
       '@sushiswap/tines': workspace:*
       '@sushiswap/trident-core': 1.0.2
       '@sushiswap/types': workspace:*
@@ -2856,7 +2855,7 @@ importers:
       '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/router': link:../router
       '@sushiswap/router-config': link:../../config/router
-      '@sushiswap/sushixswap': 1.0.1_es3gkzhr5ujwscph5xq4emoneq
+      '@sushiswap/sushixswap': 1.0.3_es3gkzhr5ujwscph5xq4emoneq
       '@sushiswap/tines': link:../tines
       '@sushiswap/trident-core': 1.0.2
       '@sushiswap/types': link:../types
@@ -10851,8 +10850,8 @@ packages:
     resolution: {integrity: sha512-SMDWC6WyoH4BoCH5oHDAo3mub3WB6qXK5uEUm/7zvHCY4ckMwJ77n/Q/hYJt1gjMotkOZ9oOVOaWh8qMBJou+A==}
     dev: false
 
-  /@sushiswap/sushixswap/1.0.1_es3gkzhr5ujwscph5xq4emoneq:
-    resolution: {integrity: sha512-DTv7IyY6rSdIiNrkN3VMRcgvyDibNI40WXEL77tvcLOCCvtNHiR408Q0klz4tXz0P9Vo1HTA3bzcn8micoY4PQ==}
+  /@sushiswap/sushixswap/1.0.3_es3gkzhr5ujwscph5xq4emoneq:
+    resolution: {integrity: sha512-f0QaP5sGto/rA/o+ywsT/AuJQSkYAUt/dhJOwSMEwjsht3qAHsaOMzJ9yZbXaP1JW+OC0cxtaZSHM1kIRWfXEQ==}
     peerDependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2
@@ -10863,8 +10862,8 @@ packages:
       ethers: 5.7.2
     dev: false
 
-  /@sushiswap/sushixswap/1.0.1_j2qn747ruc3r5bt2ewtzgtsasu:
-    resolution: {integrity: sha512-DTv7IyY6rSdIiNrkN3VMRcgvyDibNI40WXEL77tvcLOCCvtNHiR408Q0klz4tXz0P9Vo1HTA3bzcn8micoY4PQ==}
+  /@sushiswap/sushixswap/1.0.3_j2qn747ruc3r5bt2ewtzgtsasu:
+    resolution: {integrity: sha512-f0QaP5sGto/rA/o+ywsT/AuJQSkYAUt/dhJOwSMEwjsht3qAHsaOMzJ9yZbXaP1JW+OC0cxtaZSHM1kIRWfXEQ==}
     peerDependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2
@@ -10876,12 +10875,6 @@ packages:
 
   /@sushiswap/trident-core/1.0.2:
     resolution: {integrity: sha512-Vbsj1xrd0EsTBSEnwf3dBvpOorElw8/xBBzUrIsv5W4gOusZAcwHWXvo8KR214/dRRvSVbwNBUEp4F/VWQ6C0g==}
-    dev: false
-
-  /@sushiswap/types/0.0.1:
-    resolution: {integrity: sha512-Pz0KzKePZHAoH87AYpBVPrARI6zPsSq/AMWfhzSGhBlomz+tAPwX/NOCNRnShx30VIK/UHThQFcnyCtCXC979Q==}
-    peerDependencies:
-      '@wagmi/core': 0.10.11
     dev: false
 
   /@sushiswap/v2-core/1.0.2:

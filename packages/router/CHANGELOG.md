@@ -1,5 +1,25 @@
 # @sushiswap/router
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [765e430ec]
+  - @sushiswap/v2-core@1.0.2
+  - @sushiswap/trident-core@1.0.2
+  - @sushiswap/amm@0.1.7
+  - @sushiswap/v3-sdk@1.0.4
+
+## 0.0.6
+
+### Patch Changes
+
+- Updated dependencies [5a77f202a]
+  - @sushiswap/v2-core@1.0.0
+  - @sushiswap/trident-core@1.0.0
+  - @sushiswap/amm@0.1.6
+  - @sushiswap/v3-sdk@1.0.3
+
 ## 0.0.5
 
 ### Patch Changes

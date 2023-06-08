@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/types",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
   "description": "Sushi Types",
   "keywords": [
     "sushi",
@@ -30,7 +29,6 @@
   "typings": "./index.d.ts",
   "scripts": {
     "lint": "TIMING=1 eslint . --fix",
-    "prepublishOnly": "pnpm build",
     "test": "jest --passWithNoTests"
   },
   "devDependencies": {
@@ -47,10 +45,6 @@
   },
   "peerDependencies": {
     "@wagmi/core": "0.10.11"
-  },
-  "publishConfig": {
-    "access": "public",
-    "directory": "dist"
   },
   "typescript": {
     "definition": "./index.d.ts"
