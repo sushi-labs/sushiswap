@@ -15,7 +15,15 @@ export interface PoolInfo {
   fee: FeeAmount
 }
 
-// TODO: PoolCode update cache wuth timer
+enum LogsProcessing {
+  NotStarted,
+  Starting,
+  Started,
+}
+
+// TODO: PoolCode update cache with timer
+// TODO: Known pools permanent cache
+// TODO: factory list ?
 export class UniV3Extractor {
   providerName: string
   tickHelperContract: Address
@@ -25,6 +33,7 @@ export class UniV3Extractor {
   eventFilters: Filter[] = []
   logProcessGuard = false
   lastProcessdBlock = -1n
+  logProcessingStatus = LogsProcessing.NotStarted
 
   constructor(client: PublicClient, providerName: string, tickHelperContract: Address) {
     this.providerName = providerName
@@ -34,35 +43,59 @@ export class UniV3Extractor {
   }
 
   // TODO: stop ?
-  // TODO: protection from restarting
-  async start(pools: PoolInfo[]) {
-    // Subscribe to each UniV3 event we are interested
-    for (let i = 0; i < UniV3EventsAbi.length; ++i) {
-      const filter = (await this.client.createEventFilter({ event: UniV3EventsAbi[i] as AbiEvent })) as Filter
-      this.eventFilters.push(filter)
-    }
+  async start() {
+    if (this.logProcessingStatus == LogsProcessing.NotStarted) {
+      this.logProcessingStatus = LogsProcessing.Starting
+      // Subscribe to each UniV3 event we are interested
+      for (let i = 0; i < UniV3EventsAbi.length; ++i) {
+        const filter = (await this.client.createEventFilter({ event: UniV3EventsAbi[i] as AbiEvent })) as Filter
+        this.eventFilters.push(filter)
+      }
 
-    this.client.watchBlockNumber({
-      onBlockNumber: async (blockNumber) => {
-        if (!this.logProcessGuard) {
-          this.logProcessGuard = true
-          const promises = this.eventFilters.map((f) => this.client.getFilterChanges({ filter: f }))
-          const logss = await Promise.all(promises)
-          logss.forEach((logs) => {
-            logs.forEach((l) => {
-              const pool = this.poolMap.get(l.address.toLowerCase() as Address)
-              if (pool) pool.processLog(l)
+      this.client.watchBlockNumber({
+        onBlockNumber: async (blockNumber) => {
+          if (!this.logProcessGuard) {
+            this.logProcessGuard = true
+            const promises = this.eventFilters.map((f) => this.client.getFilterChanges({ filter: f }))
+            const logss = await Promise.all(promises)
+            logss.forEach((logs) => {
+              logs.forEach((l) => {
+                const pool = this.poolMap.get(l.address.toLowerCase() as Address)
+                if (pool) pool.processLog(l)
+                // else this.addPoolByAddress(l.address)
+              })
             })
-          })
-          this.lastProcessdBlock = blockNumber
-          this.logProcessGuard = false
-        } else {
-          console.warn(`Log Filtering was skipped for block ${blockNumber}`)
-        }
-      },
-    })
+            this.lastProcessdBlock = blockNumber
+            this.logProcessGuard = false
+          } else {
+            console.warn(`Log Filtering was skipped for block ${blockNumber}`)
+          }
+        },
+      })
+      this.logProcessingStatus = LogsProcessing.Started
+    }
+  }
 
-    pools.forEach((p) => {
+  // async addPoolsForTokens(tokens: Token[], factory: Address) {
+  //   let pools: PoolInfo[] = []
+  //   for (let i = 0; i < tokens.length; ++i) {
+  //     for (let j = i + 1; j < tokens.length; ++j) {
+  //       const tokenPools: PoolInfo[] = await this.client.readContract({
+  //         address: factory,
+  //         // tokens order !!!
+  //       })
+  //       pools = pools.concat(tokenPools)
+  //     }
+  //   }
+
+  //   pools.forEach((p) => this.addPoolWatching(p))
+  // }
+
+  addPoolWatching(p: PoolInfo) {
+    if (this.logProcessingStatus !== LogsProcessing.Started) {
+      throw new Error('Pools can be added after Log processing have been started')
+    }
+    if (!this.poolMap.has(p.address.toLowerCase() as Address)) {
       const watcher = new UniV3PoolWatcher(
         this.providerName,
         p.address,
@@ -74,8 +107,10 @@ export class UniV3Extractor {
       )
       watcher.updatePoolState()
       this.poolMap.set(p.address.toLowerCase() as Address, watcher) // lowercase because incoming events have lowcase addresses ((
-    })
+    }
   }
+
+  // async addPoolByAddress(addr: Address) {}
 
   getPoolCodes(): PoolCode[] {
     return Array.from(this.poolMap.values())

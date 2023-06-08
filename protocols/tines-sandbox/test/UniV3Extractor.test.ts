@@ -79,21 +79,22 @@ async function prepareEnvironment(): Promise<TestEnvironment> {
   })
   const [user] = await client.getAddresses()
 
+  const amount = BigInt(1e28)
   const tokens = [DAI[ChainId.ETHEREUM], USDC[ChainId.ETHEREUM], WNATIVE[ChainId.ETHEREUM], WBTC[ChainId.ETHEREUM]]
   await Promise.all(
     tokens.map(async (t) => {
-      await setTokenBalance(t.address, user, BigInt(1e24))
+      await setTokenBalance(t.address, user, amount)
       await client.writeContract({
         address: t.address as Address,
         abi: erc20Abi,
         functionName: 'approve',
-        args: [NonfungiblePositionManagerAddress, BigInt(1e24)],
+        args: [NonfungiblePositionManagerAddress, amount],
       })
       await client.writeContract({
         address: t.address as Address,
         abi: erc20Abi,
         functionName: 'approve',
-        args: [SwapRouterAddress, BigInt(1e24)],
+        args: [SwapRouterAddress, amount],
       })
     })
   )
@@ -258,7 +259,8 @@ async function makeTest(
   })
 
   const extractor = new UniV3Extractor(client, 'UniswapV3', '0xbfd8137f7d1516d3ea5ca83523914859ec47f573')
-  extractor.start(pools)
+  await extractor.start()
+  pools.forEach((p) => extractor.addPoolWatching(p))
   for (;;) {
     if (extractor.getStablePoolCodes().length == pools.length) break
     await delay(500)
@@ -277,7 +279,8 @@ async function makeTest(
   if (transactions.length > 0) {
     const blockNumber = Math.max(...transactions.map((tr) => Number(tr.blockNumber || 0)))
     for (;;) {
-      if (Number(extractor.lastProcessdBlock) == blockNumber) break
+      if (Number(extractor.lastProcessdBlock) == blockNumber && extractor.getStablePoolCodes().length == pools.length)
+        break
       await delay(500)
     }
   }
@@ -343,9 +346,37 @@ describe('UniV3Extractor', () => {
     })
   })
 
-  it('swap', async () => {
+  it('swap small direction=true', async () => {
     await makeTest(env, (env, pool) => {
       return Swap(env, pool, true, BigInt(1e10))
+    })
+  })
+
+  it('swap small direction=false', async () => {
+    await makeTest(env, (env, pool) => {
+      return Swap(env, pool, false, BigInt(1e10))
+    })
+  })
+
+  it('swap middle (overlapped word diapason)', async () => {
+    await makeTest(env, (env, pool) => {
+      switch (pool.address) {
+        case '0x5777d92f208679DB4b9778590Fa3CAB3aC9e2168':
+          return Swap(env, pool, true, BigInt(5e25))
+        default:
+        //expect(true).equal(false, `unexpected pool ${pool.address}`)
+      }
+    })
+  })
+
+  it('swap huge (new words diapason)', async () => {
+    await makeTest(env, (env, pool) => {
+      switch (pool.address) {
+        case '0x5777d92f208679DB4b9778590Fa3CAB3aC9e2168':
+          return Swap(env, pool, true, BigInt(1e26))
+        default:
+        //expect(true).equal(false, `unexpected pool ${pool.address}`)
+      }
     })
   })
 })
