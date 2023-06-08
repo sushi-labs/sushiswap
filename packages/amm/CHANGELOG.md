@@ -1,5 +1,14 @@
 # @sushiswap/amm
 
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies [d6b7f8443]
+  - @sushiswap/chain@0.1.1
+  - @sushiswap/currency@0.0.5
+  - @sushiswap/tines@1.0.5
+
 ## 0.1.4
 
 ### Patch Changes

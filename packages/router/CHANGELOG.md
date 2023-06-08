@@ -1,5 +1,19 @@
 # @sushiswap/router
 
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies [d6b7f8443]
+  - @sushiswap/chain@0.1.1
+  - @sushiswap/router-config@1.0.0
+  - @sushiswap/viem-config@1.0.1
+  - @sushiswap/amm@0.1.5
+  - @sushiswap/currency@0.0.5
+  - @sushiswap/v3-sdk@1.0.2
+  - @sushiswap/sushiswap@0.1.1
+  - @sushiswap/tines@1.0.5
+
 ## 0.0.4
 
 ### Patch Changes
