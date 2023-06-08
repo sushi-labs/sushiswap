@@ -1,0 +1,5 @@
+---
+'@sushiswap/types': patch
+---
+
+init
