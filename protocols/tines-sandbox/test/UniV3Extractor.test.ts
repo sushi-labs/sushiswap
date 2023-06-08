@@ -374,6 +374,10 @@ describe('UniV3Extractor', () => {
       switch (pool.address) {
         case '0x5777d92f208679DB4b9778590Fa3CAB3aC9e2168':
           return Swap(env, pool, true, BigInt(1e26))
+        case '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640':
+          return Swap(env, pool, true, BigInt(3e13))
+        case '0xCBCdF9626bC03E24f779434178A73a0B4bad62eD':
+          return Swap(env, pool, true, BigInt(1e18))
         default:
         //expect(true).equal(false, `unexpected pool ${pool.address}`)
       }
