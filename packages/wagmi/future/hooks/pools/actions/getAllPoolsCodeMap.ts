@@ -11,6 +11,7 @@ export const getAllPoolsCodeMap = async ({ currencyA, currencyB, chainId }: Omit
     LiquidityProviders.SushiSwapV2,
     LiquidityProviders.Trident,
     LiquidityProviders.UniswapV2,
+    LiquidityProviders.UniswapV3,
     LiquidityProviders.QuickSwap,
     LiquidityProviders.ApeSwap,
     LiquidityProviders.PancakeSwap,
