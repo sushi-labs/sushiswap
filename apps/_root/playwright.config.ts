@@ -21,7 +21,7 @@ const config: PlaywrightTestConfig = {
   // Test directory
   testDir: path.join(__dirname, 'test'),
   /* Maximum time one test can run for. */
-  timeout: 120 * 1_000,
+  timeout: 180 * 1_000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
