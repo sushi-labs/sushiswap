@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/masterchef",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
   "description": "MasterChef contracts",
   "keywords": [
     "sushiswap",

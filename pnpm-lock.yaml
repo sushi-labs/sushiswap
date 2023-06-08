@@ -441,7 +441,7 @@ importers:
       '@sushiswap/router': link:../../packages/router
       '@sushiswap/router-config': link:../../config/router
       '@sushiswap/stargate': link:../../packages/stargate
-      '@sushiswap/sushixswap': link:../../protocols/sushixswap
+      '@sushiswap/sushixswap': 1.0.1_j2qn747ruc3r5bt2ewtzgtsasu
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/trident-core': link:../../protocols/trident
       '@sushiswap/types': link:../../packages/types
@@ -2853,7 +2853,7 @@ importers:
       '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/router': link:../router
       '@sushiswap/router-config': link:../../config/router
-      '@sushiswap/sushixswap': link:../../protocols/sushixswap
+      '@sushiswap/sushixswap': 1.0.1_es3gkzhr5ujwscph5xq4emoneq
       '@sushiswap/tines': link:../tines
       '@sushiswap/trident-core': link:../../protocols/trident
       '@sushiswap/types': link:../types
@@ -11031,6 +11031,29 @@ packages:
 
   /@sushiswap/default-token-list/41.5.0:
     resolution: {integrity: sha512-SMDWC6WyoH4BoCH5oHDAo3mub3WB6qXK5uEUm/7zvHCY4ckMwJ77n/Q/hYJt1gjMotkOZ9oOVOaWh8qMBJou+A==}
+    dev: false
+
+  /@sushiswap/sushixswap/1.0.1_es3gkzhr5ujwscph5xq4emoneq:
+    resolution: {integrity: sha512-DTv7IyY6rSdIiNrkN3VMRcgvyDibNI40WXEL77tvcLOCCvtNHiR408Q0klz4tXz0P9Vo1HTA3bzcn8micoY4PQ==}
+    peerDependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      ethers: 5.7.2
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      ethers: 5.7.2
+    dev: false
+
+  /@sushiswap/sushixswap/1.0.1_j2qn747ruc3r5bt2ewtzgtsasu:
+    resolution: {integrity: sha512-DTv7IyY6rSdIiNrkN3VMRcgvyDibNI40WXEL77tvcLOCCvtNHiR408Q0klz4tXz0P9Vo1HTA3bzcn8micoY4PQ==}
+    peerDependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      ethers: 5.7.2
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      ethers: 5.7.2
     dev: false
 
   /@swc/core-darwin-arm64/1.3.26:
