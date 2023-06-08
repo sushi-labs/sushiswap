@@ -20,7 +20,7 @@ import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { useTransactionDeadline } from '../../lib/hooks'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
-import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
+import { UniswapV2Router02ChainId } from '@sushiswap/v2-core'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'

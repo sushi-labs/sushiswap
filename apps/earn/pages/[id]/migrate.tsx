@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap/sushiswap/exports/exports'
+import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap/v2-core/exports/exports'
 import { useRouter } from 'next/router'
 import { usePool } from '@sushiswap/client'
 import { useSWRConfig } from 'swr'

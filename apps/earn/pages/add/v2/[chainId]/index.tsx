@@ -7,7 +7,7 @@ import { Address, getSushiSwapRouterContractConfig, PairState, PoolFinder } from
 import { AddSectionReviewModalLegacy, Layout, SelectNetworkWidget, SelectTokensWidget } from '../../../../components'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
-import { isUniswapV2Router02ChainId } from '@sushiswap/sushiswap'
+import { isUniswapV2Router02ChainId } from '@sushiswap/v2-core'
 
 import { AMM_ENABLED_NETWORKS } from '../../../../config'
 import { isLegacyPool } from '../../../../lib/functions'
@@ -20,7 +20,7 @@ import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { APPROVE_TAG_ADD_LEGACY } from '../../../../lib/constants'
-import { uniswapV2FactoryChainIds } from '@sushiswap/sushiswap'
+import { uniswapV2FactoryChainIds } from '@sushiswap/v2-core'
 
 // This function gets called at build time on server-side.
 // It may be called again, on a serverless function, if

@@ -1,7 +1,7 @@
 import { constantProductPoolAbi, constantProductPoolFactoryAbi } from '@sushiswap/abi'
 import { ConstantProductPool } from '@sushiswap/amm'
 import { Amount, Currency, Token } from '@sushiswap/currency'
-import { isConstantProductPoolFactoryChainId } from '@sushiswap/trident'
+import { isConstantProductPoolFactoryChainId } from '@sushiswap/trident-core'
 import { BigNumber } from 'ethers'
 import { Address, readContracts } from 'wagmi'
 

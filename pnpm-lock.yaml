@@ -353,11 +353,11 @@ importers:
       '@sushiswap/router': workspace:*
       '@sushiswap/router-config': workspace:*
       '@sushiswap/stargate': workspace:*
-      '@sushiswap/sushiswap': workspace:*
+      '@sushiswap/v2-core': workspace:*
       '@sushiswap/sushixswap': 1.0.1
       '@sushiswap/tailwindcss-config': workspace:*
       '@sushiswap/tines': workspace:*
-      '@sushiswap/trident': 1.0.1
+      '@sushiswap/trident-core': 1.0.1
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -441,10 +441,10 @@ importers:
       '@sushiswap/router': link:../../packages/router
       '@sushiswap/router-config': link:../../config/router
       '@sushiswap/stargate': link:../../packages/stargate
-      '@sushiswap/sushiswap': link:../../protocols/sushiswap
+      '@sushiswap/v2-core': link:../../protocols/sushiswap
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
       '@sushiswap/tines': link:../../packages/tines
-      '@sushiswap/trident': link:../../protocols/trident
+      '@sushiswap/trident-core': link:../../protocols/trident
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/v3-sdk': link:../../packages/v3-sdk
@@ -788,10 +788,10 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query': workspace:*
       '@sushiswap/route-processor': workspace:*
-      '@sushiswap/sushiswap': workspace:*
+      '@sushiswap/v2-core': workspace:*
       '@sushiswap/tailwindcss-config': workspace:*
       '@sushiswap/token-lists': workspace:*
-      '@sushiswap/trident': 1.0.1
+      '@sushiswap/trident-core': 1.0.1
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -870,9 +870,9 @@ importers:
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/react-query': link:../../packages/react-query
       '@sushiswap/route-processor': link:../../protocols/route-processor
-      '@sushiswap/sushiswap': link:../../protocols/sushiswap
+      '@sushiswap/v2-core': link:../../protocols/sushiswap
       '@sushiswap/token-lists': link:../../packages/token-lists
-      '@sushiswap/trident': link:../../protocols/trident
+      '@sushiswap/trident-core': link:../../protocols/trident
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/v3-sdk': link:../../packages/v3-sdk
@@ -1701,7 +1701,7 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/tines': workspace:*
-      '@sushiswap/trident': 1.0.1
+      '@sushiswap/trident-core': 1.0.1
       '@sushiswap/typescript-config': workspace:*
       '@types/node': 18.11.18
       eslint: 8.41.0
@@ -1718,7 +1718,7 @@ importers:
       '@sushiswap/currency': link:../currency
       '@sushiswap/math': link:../math
       '@sushiswap/tines': link:../tines
-      '@sushiswap/trident': link:../../protocols/trident
+      '@sushiswap/trident-core': link:../../protocols/trident
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
       zod: 3.21.4
@@ -2372,9 +2372,9 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/router-config': workspace:*
-      '@sushiswap/sushiswap': workspace:*
+      '@sushiswap/v2-core': workspace:*
       '@sushiswap/tines': workspace:*
-      '@sushiswap/trident': 1.0.1
+      '@sushiswap/trident-core': 1.0.1
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/v3-sdk': workspace:*
       '@sushiswap/viem-config': workspace:*
@@ -2403,9 +2403,9 @@ importers:
       '@sushiswap/currency': link:../currency
       '@sushiswap/math': link:../math
       '@sushiswap/router-config': link:../../config/router
-      '@sushiswap/sushiswap': link:../../protocols/sushiswap
+      '@sushiswap/v2-core': link:../../protocols/sushiswap
       '@sushiswap/tines': link:../tines
-      '@sushiswap/trident': link:../../protocols/trident
+      '@sushiswap/trident-core': link:../../protocols/trident
       '@sushiswap/v3-sdk': link:../v3-sdk
       '@sushiswap/viem-config': link:../../config/viem
       date-fns: 2.29.3
@@ -2795,10 +2795,10 @@ importers:
       '@sushiswap/route-processor': workspace:*
       '@sushiswap/router': workspace:*
       '@sushiswap/router-config': workspace:*
-      '@sushiswap/sushiswap': workspace:*
+      '@sushiswap/v2-core': workspace:*
       '@sushiswap/sushixswap': 1.0.1
       '@sushiswap/tines': workspace:*
-      '@sushiswap/trident': 1.0.1
+      '@sushiswap/trident-core': 1.0.1
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -2854,10 +2854,10 @@ importers:
       '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/router': link:../router
       '@sushiswap/router-config': link:../../config/router
-      '@sushiswap/sushiswap': link:../../protocols/sushiswap
+      '@sushiswap/v2-core': link:../../protocols/sushiswap
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
       '@sushiswap/tines': link:../tines
-      '@sushiswap/trident': link:../../protocols/trident
+      '@sushiswap/trident-core': link:../../protocols/trident
       '@sushiswap/types': link:../types
       '@sushiswap/ui': link:../ui
       '@sushiswap/v3-sdk': link:../v3-sdk
@@ -2956,7 +2956,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/stargate': workspace:*
-      '@sushiswap/sushiswap': workspace:*
+      '@sushiswap/v2-core': workspace:*
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/node': 18.11.18
@@ -2974,7 +2974,7 @@ importers:
       '@sushiswap/core': 1.4.2
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/stargate': link:../../packages/stargate
-      '@sushiswap/sushiswap': link:../sushiswap
+      '@sushiswap/v2-core': link:../sushiswap
     devDependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2
@@ -3198,7 +3198,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/stargate': workspace:*
-      '@sushiswap/sushiswap': workspace:*
+      '@sushiswap/v2-core': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
@@ -3229,7 +3229,7 @@ importers:
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/stargate': link:../../packages/stargate
-      '@sushiswap/sushiswap': link:../sushiswap
+      '@sushiswap/v2-core': link:../sushiswap
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/typescript-config': link:../../config/typescript
