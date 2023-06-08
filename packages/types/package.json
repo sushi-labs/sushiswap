@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/types",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Sushi Types",
   "keywords": [
     "sushi",
@@ -46,10 +46,6 @@
   },
   "peerDependencies": {
     "@wagmi/core": "0.10.11"
-  },
-  "publishConfig": {
-    "access": "public",
-    "directory": "dist"
   },
   "typescript": {
     "definition": "./index.d.ts"
