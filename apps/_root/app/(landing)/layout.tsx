@@ -12,7 +12,6 @@ import React, { FC } from 'react'
 
 import SEO from '../../next-seo.config.mjs'
 import { QueryClientProvider, WagmiConfig } from '../../providers'
-import { LayoutProps } from '.next/types/app/(landing)/layout.js'
 
 declare global {
   interface Window {
@@ -20,7 +19,7 @@ declare global {
   }
 }
 
-const Layout: FC<LayoutProps> = ({ children }) => {
+const Layout: FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <>
       <Head>
