@@ -1,5 +1,12 @@
 # @sushiswap/amm
 
+## 0.1.6
+
+### Patch Changes
+
+- Updated dependencies [5a77f202a]
+  - @sushiswap/trident-core@1.0.0
+
 ## 0.1.5
 
 ### Patch Changes

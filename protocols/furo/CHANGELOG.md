@@ -1,5 +1,12 @@
 # @sushiswap/furo
 
+## 1.0.4
+
+### Patch Changes
+
+- Updated dependencies [5a77f202a]
+  - @sushiswap/v2-core@1.0.0
+
 ## 1.0.3
 
 ### Patch Changes

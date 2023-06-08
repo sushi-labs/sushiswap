@@ -1,5 +1,11 @@
 # @sushiswap/sushiswap
 
+## 1.0.0
+
+### Major Changes
+
+- 5a77f202a: 1.0.0
+
 ## 0.1.1
 
 ### Patch Changes
