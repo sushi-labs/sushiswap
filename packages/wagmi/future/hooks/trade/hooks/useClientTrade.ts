@@ -77,9 +77,12 @@ export const useClientTrade = (variables: UseTradeParams) => {
       )
 
       const logPools = Array.from(poolsCodeMap.values())
-        .map((pc) => `${pc.liquidityProvider}/${pc.pool.token0.symbol}/${pc.pool.token1.symbol}-${pc.pool.fee}\n`)
-        .join('* ')
-      console.debug(`Pools found ${poolsCodeMap.size}: ${logPools}`)
+        .map((pc) => `* ${pc.liquidityProvider}/${pc.pool.token0.symbol}/${pc.pool.token1.symbol}-${pc.pool.fee}\n`)
+        .join('')
+      console.debug(`
+Pools found ${poolsCodeMap.size}: 
+${logPools}
+`)
 
       // const route = Router.findSushiRoute(
       //   poolsCodeMap,

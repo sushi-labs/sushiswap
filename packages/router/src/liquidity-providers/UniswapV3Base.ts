@@ -124,7 +124,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       })
     })
 
-    if (existingPools.length == 0) return
+    if (existingPools.length === 0) return
 
     const liquidityContracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
@@ -236,7 +236,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
 
       const lowerUnknownTick = minIndexes[i] * TICK_SPACINGS[pool.fee] * 256 - TICK_SPACINGS[pool.fee]
       console.assert(
-        poolTicks.length == 0 || lowerUnknownTick < poolTicks[0].index,
+        poolTicks.length === 0 || lowerUnknownTick < poolTicks[0].index,
         'Error 236: unexpected min tick index'
       )
       poolTicks.unshift({
@@ -307,6 +307,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
         tokenA: currencyA.wrapped,
         tokenB: currencyB.wrapped,
         fee,
+        initCodeHashManualOverride: this.initCodeHash[this.chainId as keyof typeof this.initCodeHash],
       }) as Address,
       token0: currencyA,
       token1: currencyB,

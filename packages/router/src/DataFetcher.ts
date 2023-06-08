@@ -27,6 +27,7 @@ import { TridentProvider } from './liquidity-providers/Trident'
 import { UbeSwapProvider } from './liquidity-providers/UbeSwap'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import { UniswapV3Provider } from './liquidity-providers/UniswapV3'
+import { DovishV3Provider } from './liquidity-providers/DovishV3'
 import type { PoolCode } from './pools/PoolCode'
 
 // import { create } from 'viem'
@@ -257,6 +258,15 @@ export class DataFetcher {
     if (this._providerIsIncluded(LiquidityProviders.CurveSwap, providers)) {
       try {
         const provider = new CurveProvider(this.chainId, this.web3Client)
+        this.providers.push(provider)
+      } catch (e: unknown) {
+        // console.warn(e.message)
+      }
+    }
+
+    if (this._providerIsIncluded(LiquidityProviders.DovishV3, providers)) {
+      try {
+        const provider = new DovishV3Provider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
         // console.warn(e.message)
