@@ -1,6 +1,6 @@
 import { Amount, Price, Share, Token } from '@sushiswap/currency'
 import { JSBI, ONE, sqrt, ZERO } from '@sushiswap/math'
-import { constantProductPoolFactoryAddress, ConstantProductPoolFactoryChainId } from '@sushiswap/trident'
+import { constantProductPoolFactoryAddress, ConstantProductPoolFactoryChainId } from '@sushiswap/trident-core'
 import invariant from 'tiny-invariant'
 
 import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'

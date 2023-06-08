@@ -12,13 +12,13 @@ import {
 } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { isUniswapV2FactoryChainId, uniswapV2FactoryAddress } from '@sushiswap/sushiswap'
+import { isUniswapV2FactoryChainId, uniswapV2FactoryAddress } from '@sushiswap/v2-core'
 import {
   constantProductPoolFactoryAddress,
   isConstantProductPoolFactoryChainId,
   isStablePoolFactoryChainId,
   stablePoolFactoryAddress,
-} from '@sushiswap/trident'
+} from '@sushiswap/trident-core'
 
 const getPoolAddress = ({
   chainId,

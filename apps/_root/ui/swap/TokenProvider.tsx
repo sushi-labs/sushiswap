@@ -14,8 +14,8 @@ import { queryParamsSchema } from '../../lib/swap/queryParamsSchema'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { useNetwork } from '@sushiswap/wagmi'
 import { SwapChainId } from '../../types'
-import { isUniswapV2FactoryChainId } from '@sushiswap/sushiswap'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
+import { isUniswapV2FactoryChainId } from '@sushiswap/v2-core'
+import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
 import { isV3ChainId } from '@sushiswap/v3-sdk'
 
 type State = {

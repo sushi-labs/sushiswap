@@ -50,7 +50,7 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
-    "@sushiswap/sushiswap": "workspace:*",
+    "@sushiswap/v2-core": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/types": "workspace:*",
