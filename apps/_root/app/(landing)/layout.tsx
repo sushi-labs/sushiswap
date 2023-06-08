@@ -1,16 +1,18 @@
+'use client'
+
 import '@sushiswap/ui/index.css'
 
 import { App } from '@sushiswap/ui'
 import { Analytics } from '@vercel/analytics/react'
-import type { AppProps } from 'next/app'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
-import React, { FC, useEffect } from 'react'
 
-import SEO from '../next-seo.config.mjs'
-import { QueryClientProvider, WagmiConfig } from '../providers'
+import React, { FC } from 'react'
+
+import SEO from '../../next-seo.config.mjs'
+import { QueryClientProvider, WagmiConfig } from '../../providers'
+import { LayoutProps } from '.next/types/app/(landing)/layout.js'
 
 declare global {
   interface Window {
@@ -18,26 +20,7 @@ declare global {
   }
 }
 
-export { reportWebVitals } from 'next-axiom'
-
-const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
-  const router = useRouter()
-
-  useEffect(() => {
-    const handler = (page: any) => {
-      window.dataLayer.push({
-        event: 'pageview',
-        page,
-      })
-    }
-    router.events.on('routeChangeComplete', handler)
-    router.events.on('hashChangeComplete', handler)
-    return () => {
-      router.events.off('routeChangeComplete', handler)
-      router.events.off('hashChangeComplete', handler)
-    }
-  }, [router.events])
-
+const Layout: FC<LayoutProps> = ({ children }) => {
   return (
     <>
       <Head>
@@ -67,7 +50,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <QueryClientProvider>
           <App.Shell>
             <DefaultSeo {...SEO} />
-            <Component {...pageProps} />
+            {children}
           </App.Shell>
         </QueryClientProvider>
       </WagmiConfig>
@@ -76,4 +59,4 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   )
 }
 
-export default MyApp
+export default Layout
