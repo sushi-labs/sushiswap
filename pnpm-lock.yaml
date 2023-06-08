@@ -2548,7 +2548,6 @@ importers:
       jest: 29.3.1
       tsup: 6.5.0_typescript@5.0.4
       typescript: 5.0.4
-    publishDirectory: dist
 
   packages/ui:
     specifiers:
