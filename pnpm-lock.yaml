@@ -2739,7 +2739,7 @@ importers:
 
   packages/validate:
     specifiers:
-      '@sushiswap/chain': workspace*
+      '@sushiswap/chain': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/jest-config': workspace:*
