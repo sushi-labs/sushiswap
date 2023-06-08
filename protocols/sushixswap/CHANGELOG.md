@@ -1,14 +1,21 @@
 # @sushiswap/sushixswap
 
-<<<<<<< HEAD
-=======
+## 1.0.3
+
+### Patch Changes
+
+- 765e430ec: include published type package
+
+# <<<<<<< HEAD
+
 ## 1.0.1
 
 ### Patch Changes
 
 - 074ec9ebc: initial publish chunk
 
->>>>>>> origin/master
+> > > > > > > origin/master
+
 ## 1.0.0
 
 ### Major Changes

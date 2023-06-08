@@ -36,7 +36,7 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/format": "workspace:*",
-    "@sushiswap/furo": "1.0.4",
+    "@sushiswap/furo": "1.0.5",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/log": "workspace:*",
