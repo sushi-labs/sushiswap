@@ -25,6 +25,6 @@
     "@types/react": "18.2.6",
     "@types/react-dom": "18.2.4",
     "eslint": "8.30.0",
-    "typescript": "5.0.4"
+    "typescript": "5.1.3"
   }
 }

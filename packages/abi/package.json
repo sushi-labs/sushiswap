@@ -34,6 +34,6 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "eslint": "8.41.0",
-    "typescript": "5.0.4"
+    "typescript": "5.1.3"
   }
 }

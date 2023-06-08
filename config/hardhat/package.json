@@ -55,7 +55,7 @@
     "ethers": "5.7.2",
     "hardhat": "2.12.7",
     "tsup": "6.5.0",
-    "typescript": "5.0.4"
+    "typescript": "5.1.3"
   },
   "peerDependencies": {
     "ethers": "5.7.2",
