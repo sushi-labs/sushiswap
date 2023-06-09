@@ -101,6 +101,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.BOBA_BNB]: 'Boba BNB',
   [ChainId.BTTC]: 'BitTorrent',
   [ChainId.THUNDERCORE]: 'ThunderCore',
+  [ChainId.POLYGON_ZKEVM]: 'Polygon zkEVM',
 } as const
 
 export const SUBGRAPH_HOST = {
@@ -178,7 +179,6 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.BTTC]: 'sushiswap/blocks-bttc',
   [ChainId.THUNDERCORE]: 'sushiswap/blocks-thundercore',
 } as const
-
 
 export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
   [ChainId.ETHEREUM]: 12,
