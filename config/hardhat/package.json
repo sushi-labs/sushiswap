@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/hardhat-config",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Sushi Hardhat Config",
   "keywords": [
     "sushi",
@@ -31,6 +31,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
+    "@sushiswap/types": "workspace:*",
     "@matterlabs/hardhat-zksync-deploy": "0.6.2",
     "@matterlabs/hardhat-zksync-solc": "0.3.14",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",

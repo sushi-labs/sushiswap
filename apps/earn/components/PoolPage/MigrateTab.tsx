@@ -30,7 +30,7 @@ import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
-import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap/exports/exports'
+import { UniswapV2Router02ChainId } from '@sushiswap/v2-core/exports/exports'
 import { useRouter } from 'next/router'
 
 export const MODAL_MIGRATE_ID = 'migrate-modal'
@@ -49,7 +49,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   const [invertPrice, setInvertPrice] = useState(false)
   const [slippageTolerance] = useSlippageTolerance('addLiquidity')
   const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
+    return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
   }, [slippageTolerance])
 
   const {

@@ -70,9 +70,9 @@ export const TableFilters: FC<{ showCategories?: boolean }> = ({ showCategories 
               color={protocols?.includes(Protocol.BENTOBOX_STABLE) ? 'blue' : 'default'}
             >
               <span className="mt-1">🍱</span>
-              <span>Stable</span>
+              <span>Trident Stable</span>
             </Button>
-            {/* <Button
+            <Button
               className="flex items-center gap-2.5"
               onClick={() => protocolHandler(Protocol.BENTOBOX_CLASSIC)}
               size="sm"
@@ -80,8 +80,8 @@ export const TableFilters: FC<{ showCategories?: boolean }> = ({ showCategories 
               color={protocols?.includes(Protocol.BENTOBOX_CLASSIC) ? 'blue' : 'default'}
             >
               <span className="mt-1">🍱</span>
-              <span>Classic</span>
-            </Button> */}
+              <span>Trident Classic</span>
+            </Button>
             <Button
               onClick={() => farmsHandler()}
               size="sm"

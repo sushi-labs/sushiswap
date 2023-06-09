@@ -1,7 +1,7 @@
 import { tryParseAmount } from '@sushiswap/currency'
 import { Pool } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
-import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
+import { UniswapV2Router02ChainId } from '@sushiswap/v2-core'
 import { Address, getSushiSwapRouterContractConfig, PairState, usePair } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
 

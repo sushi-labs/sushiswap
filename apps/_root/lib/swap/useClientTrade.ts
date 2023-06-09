@@ -22,16 +22,16 @@ import {
   PairState,
 } from '@sushiswap/wagmi'
 import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from '../../config'
-import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
+import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap/v2-core'
 
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { useFeeData } from '@sushiswap/wagmi'
 import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
-import { StablePoolFactoryChainId, TridentRouterChainId } from '@sushiswap/trident'
+import { StablePoolFactoryChainId, TridentRouterChainId } from '@sushiswap/trident-core'
 import { RouteProcessor3ChainId } from '@sushiswap/route-processor'
-import { ConstantProductPoolFactoryChainId } from '@sushiswap/trident'
+import { ConstantProductPoolFactoryChainId } from '@sushiswap/trident-core'
 
 export type UseTradeOutput =
   | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>

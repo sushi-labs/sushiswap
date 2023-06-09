@@ -1,7 +1,14 @@
 'use client'
 
 import { ChainId } from '@sushiswap/chain'
-import { currencyFromShortCurrencyName, isShortCurrencyName, Native, Token, Type } from '@sushiswap/currency'
+import {
+  currencyFromShortCurrencyName,
+  defaultQuoteCurrency,
+  isShortCurrencyName,
+  Native,
+  Token,
+  Type,
+} from '@sushiswap/currency'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { isAddress } from 'ethers/lib/utils'
@@ -9,8 +16,8 @@ import { queryParamsSchema } from '../../../lib/swap/queryParamsSchema'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { useNetwork } from '@sushiswap/wagmi'
 import { SwapChainId } from '../../../types'
-import { isUniswapV2FactoryChainId } from '@sushiswap/sushiswap'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
+import { isUniswapV2FactoryChainId } from '@sushiswap/v2-core'
+import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
 import { isV3ChainId } from '@sushiswap/v3-sdk'
 
 type State = {
@@ -27,15 +34,37 @@ interface TokenProvider {
   children: ReactNode
 }
 
-const getTokenFromUrl = (chainId: ChainId, currencyId: string, token: Token | undefined, isLoading: boolean) => {
-  if (isLoading) {
-    return undefined
+const getBaseTokenFromUrl = (
+  chainId: ChainId,
+  currencyId: string | undefined,
+  token: Token | undefined,
+  isLoading: boolean
+) => {
+  if (!currencyId) {
+    return Native.onChain(chainId)
   } else if (isShortCurrencyName(chainId, currencyId)) {
     return currencyFromShortCurrencyName(chainId, currencyId)
+  } else if (isLoading) {
+    return undefined
   } else if (isAddress(currencyId) && token) {
     return token
-  } else {
-    return Native.onChain(chainId ? chainId : ChainId.ETHEREUM)
+  }
+}
+
+const getQuoteTokenFromUrl = (
+  chainId: ChainId,
+  currencyId: string | undefined,
+  token: Token | undefined,
+  isLoading: boolean
+) => {
+  if (!currencyId) {
+    return defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency]
+  } else if (isShortCurrencyName(chainId, currencyId)) {
+    return currencyFromShortCurrencyName(chainId, currencyId)
+  } else if (isLoading) {
+    return undefined
+  } else if (isAddress(currencyId) && token) {
+    return token
   }
 }
 
@@ -102,8 +131,8 @@ export const TokenProvider: FC<TokenProvider> = ({ children }) => {
   const state = useMemo(() => {
     const fromChainId = getChainIdFromUrl(_fromChainId, chainId as ChainId)
     const toChainId = getChainIdFromUrl(_toChainId, chainId as ChainId)
-    const token0 = getTokenFromUrl(fromChainId, _fromCurrency, tokenFrom, isTokenFromLoading)
-    const token1 = getTokenFromUrl(toChainId, _toCurrency, tokenTo, isTokenToLoading)
+    const token0 = getBaseTokenFromUrl(fromChainId, _fromCurrency, tokenFrom, isTokenFromLoading)
+    const token1 = getQuoteTokenFromUrl(toChainId, _toCurrency, tokenTo, isTokenToLoading)
 
     return {
       token0,

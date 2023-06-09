@@ -105,8 +105,7 @@ export const EXPORT_TASK = () => {
 
     writeFileSync(
       './exports/exports.ts',
-      `
-import type { NumberStringToNumber } from "@sushiswap/types"` +
+      'export type NumberStringToNumber<T extends string> = T extends `${infer Result extends number}` ? Result : never' +
         contractNames
           .map((contractName) => {
             const lowerCaseName = contractName.charAt(0).toLowerCase() + contractName.slice(1)
@@ -259,14 +258,14 @@ export const defaultConfig: HardhatUserConfig = {
       zksync: true,
     },
     'scroll-alpha-testnet': {
-      url: `https://alpha-rpc.scroll.io/l2`,
+      url: 'https://alpha-rpc.scroll.io/l2',
       accounts,
       chainId: 534353,
       live: true,
       saveDeployments: true,
     },
     consensyszkevmgoerli: {
-      url: `https://consensys-zkevm-goerli-prealpha.infura.io/v3/53fca4c2b95a43cca82a11e8b573256b`,
+      url: 'https://consensys-zkevm-goerli-prealpha.infura.io/v3/53fca4c2b95a43cca82a11e8b573256b',
       accounts,
       chainId: 59140,
       live: true,

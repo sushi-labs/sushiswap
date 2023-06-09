@@ -1,4 +1,4 @@
-import { TridentRouterChainId, tridentRouterExports } from '@sushiswap/trident'
+import { TridentRouterChainId, tridentRouterExports } from '@sushiswap/trident-core'
 import { Address, useContract, useSigner } from 'wagmi'
 
 // TODO: exports should be in protocol folder

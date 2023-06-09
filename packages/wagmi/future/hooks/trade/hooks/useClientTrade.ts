@@ -43,6 +43,8 @@ export const useClientTrade = (variables: UseTradeParams) => {
       },
     ],
     queryFn: async () => {
+      console.log('useClientTrade')
+
       if (
         !poolsCodeMap ||
         (!isRouteProcessorChainId(chainId) && !isRouteProcessor3ChainId(chainId)) ||
@@ -66,6 +68,8 @@ export const useClientTrade = (variables: UseTradeParams) => {
           overrides: undefined,
         }
 
+      console.log('useClientTrade 2')
+
       const route = Router.findSpecialRoute(
         poolsCodeMap,
         chainId,
@@ -77,9 +81,12 @@ export const useClientTrade = (variables: UseTradeParams) => {
       )
 
       const logPools = Array.from(poolsCodeMap.values())
-        .map((pc) => `${pc.liquidityProvider}/${pc.pool.token0.symbol}/${pc.pool.token1.symbol}-${pc.pool.fee}\n`)
-        .join('* ')
-      console.debug(`Pools found ${poolsCodeMap.size}: ${logPools}`)
+        .map((pc) => `* ${pc.liquidityProvider}/${pc.pool.token0.symbol}/${pc.pool.token1.symbol}-${pc.pool.fee}\n`)
+        .join('')
+      console.debug(`
+Pools found ${poolsCodeMap.size}: 
+${logPools}
+`)
 
       // const route = Router.findSushiRoute(
       //   poolsCodeMap,
@@ -91,6 +98,9 @@ export const useClientTrade = (variables: UseTradeParams) => {
       // )
 
       let args = undefined
+
+      console.log({ recipient })
+
       if (recipient) {
         if (isRouteProcessor3ChainId(chainId)) {
           args = Router.routeProcessor2Params(

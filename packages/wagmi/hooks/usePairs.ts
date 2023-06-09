@@ -1,6 +1,6 @@
 import { computePairAddress, FACTORY_ADDRESS, Pair } from '@sushiswap/amm'
 import { Amount, Token, Type as Currency, Type } from '@sushiswap/currency'
-import { uniswapV2FactoryAddress, UniswapV2Router02ChainId, UniswapV2FactoryChainId } from '@sushiswap/sushiswap'
+import { uniswapV2FactoryAddress, UniswapV2Router02ChainId, UniswapV2FactoryChainId } from '@sushiswap/v2-core'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
 

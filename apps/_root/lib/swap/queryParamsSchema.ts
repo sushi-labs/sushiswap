@@ -1,8 +1,8 @@
 import { z } from 'zod'
-import { ChainId } from '@sushiswap/chain'
+// import { ChainId } from '@sushiswap/chain'
 import { SwapChainId } from '../../types'
-import { isUniswapV2FactoryChainId } from '@sushiswap/sushiswap'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
+// import { isUniswapV2FactoryChainId } from '@sushiswap/v2-core'
+// import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
 
 export const queryParamsSchema = z.object({
   fromChainId: z.coerce
@@ -39,6 +39,6 @@ export const queryParamsSchema = z.object({
   //   .nullable()
   //   .transform((arg) => (arg ? arg : 'SUSHI')),
   amount: z.optional(z.nullable(z.string())).transform((val) => val ?? ''),
-  recipient: z.optional(z.nullable(z.string())).transform((val) => val ?? ''),
+  recipient: z.optional(z.nullable(z.string())),
   review: z.optional(z.nullable(z.boolean())),
 })

@@ -38,11 +38,13 @@ export const TradeReviewDialogSameChain: FC = () => {
     appType === AppType.Swap && token1?.isNative && token0?.wrapped.address === Native.onChain(network0).wrapped.address
   const isSwap = !isWrap && !isUnwrap
 
+  console.log('TradeReviewDialogSameChain')
+
   // Don't unmount this dialog since that will slow down the opening callback
   return (
     <Dialog open={review} unmount={false} onClose={onClose} variant="opaque">
       <div className="max-w-[504px] mx-auto">
-        <button onClick={onClose} className="p-3 pl-0">
+        <button type="button" onClick={onClose} className="p-3 pl-0">
           <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
         </button>
         <div className="flex items-start justify-between gap-4 py-2">
@@ -138,7 +140,7 @@ export const TradeReviewDialogSameChain: FC = () => {
                   {isFetching ? (
                     <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" />
                   ) : (
-                    <button onClick={() => setOpen(true)} className="text-sm font-semibold text-blue">
+                    <button type="button" onClick={() => setOpen(true)} className="text-sm font-semibold text-blue">
                       View
                     </button>
                   )}

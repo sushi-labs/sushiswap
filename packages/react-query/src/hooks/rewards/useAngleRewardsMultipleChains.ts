@@ -16,6 +16,7 @@ export const useAngleRewardsMultipleChains = ({ chainIds, account }: UseAngleRew
             if (account) {
                 const res = await Promise.all(chainIds.map(chainId => angleRewardsQueryFn({chainId, account})))
                 const parsed = angleRewardsMultipleValidator.parse(res)
+
                 return parsed.map((el, i) => ({
                     chainId: chainIds[i],
                     ...angleRewardsSelect(chainIds[i], el),

@@ -2,7 +2,7 @@ import {
   constantProductPoolFactoryAddress,
   constantProductPoolFactoryAbi,
   ConstantProductPoolFactoryChainId,
-} from '@sushiswap/trident'
+} from '@sushiswap/trident-core'
 import { Address, useContract, useProvider } from 'wagmi'
 
 export const getConstantProductPoolFactoryContract = (chainId: number | undefined) => ({

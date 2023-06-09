@@ -12,6 +12,7 @@ import { useIsMounted } from '@sushiswap/hooks'
 interface GenericTableProps<C> {
   table: ReactTableType<C>
   HoverElement?: React.FunctionComponent<{ row: C }>
+  HoverElementWidth?: number
   loading?: boolean
   placeholder: ReactNode
   pageSize: number
@@ -33,6 +34,7 @@ declare module '@tanstack/react-table' {
 export const GenericTable = <T extends { id: string }>({
   table,
   HoverElement,
+  HoverElementWidth,
   loading,
   placeholder,
   pageSize,
@@ -117,7 +119,7 @@ export const GenericTable = <T extends { id: string }>({
                             name: 'sameWidth',
                             enabled: true,
                             fn: ({ state }) => {
-                              state.styles.popper.width = '320px'
+                              state.styles.popper.width = HoverElementWidth ? `${HoverElementWidth}px` : '320px'
                             },
                             phase: 'beforeWrite',
                             requires: ['computeStyles'],

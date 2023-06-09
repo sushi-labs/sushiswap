@@ -65,9 +65,9 @@ export const angleRewardsSelect = (chainId: ChainId, data: Awaited<ReturnType<ty
 
                     if (token0.symbol !== 'aglaMerkl') {
                         acc[k] = {
-                            accumulatedSinceInception: Amount.fromRawAmount(token0, parseUnits(v.accumulatedSinceInception.toString(), v.decimals).toString()),
+                            accumulatedSinceInception: Amount.fromRawAmount(token0, parseUnits(v.accumulatedSinceInception.toFixed(18), v.decimals).toString()),
                             breakdown: Object.entries(v.breakdown).reduce<Record<string, Amount<Token>>>((acc, [i, j]) => {
-                                acc[i] = Amount.fromRawAmount(token0, parseUnits(j.toString(), v.decimals).toString())
+                                acc[i] = Amount.fromRawAmount(token0, parseUnits(j.toFixed(18), v.decimals).toString())
                                 return acc
                             }, {}),
                             symbol: v.symbol,

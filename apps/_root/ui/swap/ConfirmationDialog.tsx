@@ -110,6 +110,22 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const [open, setOpen] = useState(false)
   const [dialogState, setDialogState] = useState<ConfirmationDialogState>(ConfirmationDialogState.Undefined)
 
+  console.log(
+    Boolean(trade?.writeArgs) &&
+      appType === AppType.Swap &&
+      (isRouteProcessorChainId(network0) || isRouteProcessor3ChainId(network0)) &&
+      approved &&
+      trade?.route?.status !== 'NoWay',
+    [
+      trade,
+      Boolean(trade?.writeArgs),
+      appType === AppType.Swap,
+      isRouteProcessorChainId(network0) || isRouteProcessor3ChainId(network0),
+      approved,
+      trade?.route?.status !== 'NoWay',
+    ]
+  )
+
   const { config, isError, error } = usePrepareContractWrite({
     chainId: network0,
     address: isRouteProcessor3ChainId(network0)

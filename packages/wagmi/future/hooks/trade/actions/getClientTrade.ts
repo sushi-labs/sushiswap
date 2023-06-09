@@ -12,7 +12,7 @@ import { BigNumber } from 'ethers'
 import { RouteStatus } from '@sushiswap/tines'
 import { FetchFeeDataResult } from 'wagmi/actions'
 import { JSBI } from '@sushiswap/math'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
+import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
 import { UsePoolsReturn } from '../../pools'
 
 export interface GetTradeParams {

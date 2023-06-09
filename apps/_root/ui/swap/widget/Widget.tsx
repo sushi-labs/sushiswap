@@ -1,5 +1,3 @@
-'use client'
-
 import { Widget as UIWidget } from '@sushiswap/ui/future/components/widget'
 import React, { FC } from 'react'
 import { SwitchAppType } from './SwitchAppType'
@@ -16,7 +14,6 @@ import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components
 
 export const Widget: FC = () => {
   const { appType } = useSwapState()
-
   return (
     <div className="flex flex-col gap-4">
       <WidgetTitleV2 />
