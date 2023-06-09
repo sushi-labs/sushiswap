@@ -1,16 +1,23 @@
 'use client'
 
 import { ChainId } from '@sushiswap/chain'
-import { currencyFromShortCurrencyName, isShortCurrencyName, Native, Token, Type } from '@sushiswap/currency'
+import {
+  currencyFromShortCurrencyName,
+  defaultQuoteCurrency,
+  isShortCurrencyName,
+  Native,
+  Token,
+  Type,
+} from '@sushiswap/currency'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { isAddress } from 'ethers/lib/utils'
 import { queryParamsSchema } from '../../../lib/swap/queryParamsSchema'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { useNetwork } from '@sushiswap/wagmi'
-import { SwapChainId } from '../../../types'
-import { isUniswapV2FactoryChainId } from '@sushiswap/sushiswap'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
+import { SwapChainId } from '../../types'
+import { isUniswapV2FactoryChainId } from '@sushiswap/v2-core'
+import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
 import { isV3ChainId } from '@sushiswap/v3-sdk'
 
 type State = {
@@ -27,9 +34,16 @@ interface TokenProvider {
   children: ReactNode
 }
 
-const getTokenFromUrl = (chainId: ChainId, currencyId: string, token: Token | undefined, isLoading: boolean) => {
+const getTokenFromUrl = (
+  chainId: ChainId,
+  currencyId: string | undefined,
+  token: Token | undefined,
+  isLoading: boolean
+) => {
   if (isLoading) {
     return undefined
+  } else if (!currencyId) {
+    return defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency]
   } else if (isShortCurrencyName(chainId, currencyId)) {
     return currencyFromShortCurrencyName(chainId, currencyId)
   } else if (isAddress(currencyId) && token) {

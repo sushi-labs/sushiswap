@@ -34,8 +34,8 @@ export const RabbyIcon = (props: React.ComponentProps<'svg'>) => {
           y2="21.4799"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#8797FF" />
-          <stop offset="1" stop-color="#AAA8FF" />
+          <stop stopColor="#8797FF" />
+          <stop offset="1" stopColor="#AAA8FF" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_8493_47054"
@@ -45,8 +45,8 @@ export const RabbyIcon = (props: React.ComponentProps<'svg'>) => {
           y2="-0.0381601"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3B22A0" />
-          <stop offset="1" stop-color="#5156D8" stop-opacity="0" />
+          <stop stopColor="#3B22A0" />
+          <stop offset="1" stopColor="#5156D8" stop-opacity="0" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_8493_47054"
@@ -56,8 +56,8 @@ export const RabbyIcon = (props: React.ComponentProps<'svg'>) => {
           y2="15.2457"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3B1E8F" />
-          <stop offset="1" stop-color="#6A6FFB" stop-opacity="0" />
+          <stop stopColor="#3B1E8F" />
+          <stop offset="1" stopColor="#6A6FFB" stop-opacity="0" />
         </linearGradient>
         <linearGradient
           id="paint3_linear_8493_47054"
@@ -67,8 +67,8 @@ export const RabbyIcon = (props: React.ComponentProps<'svg'>) => {
           y2="27.8537"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#8898FF" />
-          <stop offset="0.983895" stop-color="#5F47F1" />
+          <stop stopColor="#8898FF" />
+          <stop offset="0.983895" stopColor="#5F47F1" />
         </linearGradient>
         <clipPath id="clip0_8493_47054">
           <rect width="32" height="32" fill="white" />

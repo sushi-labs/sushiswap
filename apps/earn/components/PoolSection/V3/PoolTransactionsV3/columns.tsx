@@ -46,7 +46,7 @@ export const AMOUNT_IN_COLUMN = (
 
         return (
           <span className="font-normal">
-            <span className="font-semibold">{Math.abs(amounts[0]).toFixed(2)}</span>{' '}
+            <span className="font-semibold">{Math.abs(amounts[0]).toPrecision(6)}</span>{' '}
             <span className="text-gray-600 dark:text-slate-400">{tokens[0].symbol}</span>
           </span>
         )
@@ -56,7 +56,7 @@ export const AMOUNT_IN_COLUMN = (
       case TransactionType.Collect:
         return (
           <span className="font-normal">
-            <span className="font-semibold">{row.amount0.toFixed(2)}</span>{' '}
+            <span className="font-semibold">{row.amount0.toPrecision(6)}</span>{' '}
             <span className="text-gray-600 dark:text-slate-400">{row.pool.token0.symbol}</span>
           </span>
         )

@@ -13,7 +13,7 @@ import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { useTransactionDeadline } from '../../lib/hooks'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
-import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
+import { UniswapV2Router02ChainId } from '@sushiswap/v2-core'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
@@ -46,7 +46,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   const contract = useSushiSwapRouterContract(chainId)
   const [slippageTolerance] = useSlippageTolerance('addLiquidity')
   const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
+    return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
   }, [slippageTolerance])
 
   const onSettled = useCallback(

@@ -1,6 +1,6 @@
 {
-  "name": "@sushiswap/sushiswap",
-  "version": "0.1.1",
+  "name": "@sushiswap/v2-core",
+  "version": "1.0.4",
   "description": "SushiSwap",
   "keywords": [
     "sushi",
@@ -33,17 +33,19 @@
     "export": "hardhat export --export-all exports.json && tsc -p tsconfig.exports.json --declaration",
     "node": "hardhat node"
   },
-  "devDependencies": {
-    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
+  "dependencies": {
     "@openzeppelin/contracts": "3.1.0",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/types": "0.0.2",
+    "@sushiswap/hardhat-config": "workspace:*"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
     "@sushiswap/eslint-config": "workspace:*",
-    "@sushiswap/hardhat-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@sushiswap/types": "workspace:*",
     "@tenderly/hardhat-tenderly": "^1.0.13",
     "@types/node": "18.11.18",
     "eslint": "8.41.0",

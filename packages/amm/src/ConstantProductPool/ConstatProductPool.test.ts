@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Token, USDC_ADDRESS, WETH9, WETH9_ADDRESS } from '@sushiswap/currency'
-import { constantProductPoolFactoryAddress } from '@sushiswap/trident'
+import { constantProductPoolFactoryAddress } from '@sushiswap/trident-core'
 
 import { InsufficientInputAmountError } from '../errors'
 import { computeConstantProductPoolAddress } from './computeConstantProductPoolAddress'
