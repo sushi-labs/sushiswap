@@ -82,7 +82,7 @@ export function getGraphPoolsUrl(poolIds: string[]) {
 export const useGraphPools = (poolIds: string[]): Pools => {
   const { data: graphPools, isLoading: isGraphPoolsLoading } = useSWR<Awaited<ReturnType<typeof getGraphPools>>>(
     poolIds.length > 0 ? getGraphPoolsUrl(poolIds) : null,
-    async (url) => fetch(url).then((data) => data.json())
+    async () => getGraphPools(poolIds)
   )
 
   const { data: pools, isLoading: isPoolsLoading } = usePools({ args: { ids: poolIds } })
