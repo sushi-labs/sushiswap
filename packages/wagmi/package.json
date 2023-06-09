@@ -45,7 +45,7 @@
     "@sushiswap/router": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@sushiswap/v2-core": "workspace:*",
-    "@sushiswap/sushixswap": "1.0.5",
+    "@sushiswap/sushixswap": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident-core": "workspace:*",
     "@sushiswap/types": "workspace:*",
