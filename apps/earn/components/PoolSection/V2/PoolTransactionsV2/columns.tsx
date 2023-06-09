@@ -40,17 +40,13 @@ export const AMOUNT_IN_COLUMN = (
   cell: (props) => {
     const row = props.row.original
     switch (row.type) {
-      case TransactionType.Swap: {
-        const amounts = row.amount0 < 0 ? [row.amount0, row.amount1] : [row.amount1, row.amount0]
-        const tokens = row.amount0 < 0 ? [row.pool.token0, row.pool.token1] : [row.pool.token1, row.pool.token0]
-
+      case TransactionType.Swap:
         return (
           <span className="font-normal">
-            <span className="font-semibold">{Math.abs(amounts[0]).toPrecision(6)}</span>{' '}
-            <span className="text-gray-600 dark:text-slate-400">{tokens[0].symbol}</span>
+            <span className="font-semibold">{(row.amountIn).toPrecision(2)}</span>{' '}
+            <span className="text-gray-600 dark:text-slate-400">{row.tokenIn.symbol}</span>
           </span>
         )
-      }
       case TransactionType.Mint:
       case TransactionType.Burn:
         return (
@@ -74,17 +70,13 @@ export const AMOUNT_OUT_COLUMN = (
   cell: (props) => {
     const row = props.row.original
     switch (row.type) {
-      case TransactionType.Swap: {
-        const amounts = row.amount0 < 0 ? [row.amount0, row.amount1] : [row.amount1, row.amount0]
-        const tokens = row.amount0 < 0 ? [row.pool.token0, row.pool.token1] : [row.pool.token1, row.pool.token0]
-
+      case TransactionType.Swap:
         return (
           <span className="font-normal">
-            <span className="font-semibold">{Math.abs(amounts[1]).toFixed(2)}</span>{' '}
-            <span className="text-gray-600 dark:text-slate-400">{tokens[1].symbol}</span>
+            <span className="font-semibold">{Math.abs(row.amountOut).toFixed(2)}</span>{' '}
+            <span className="text-gray-600 dark:text-slate-400">{row.tokenOut.symbol}</span>
           </span>
         )
-      }
       case TransactionType.Mint:
       case TransactionType.Burn:
         return (
