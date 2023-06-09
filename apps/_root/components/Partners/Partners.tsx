@@ -3,13 +3,13 @@ import { FC } from 'react'
 
 import { ArbitrumSVG } from '../SVG/ArbitrumSVG'
 import { BarnBridgeSVG } from '../SVG/BarnBridgeSVG'
-import { BobaSVG } from '../SVG/BobaSVG'
 import { LayerzeroSVG } from '../SVG/LayerzeroSVG'
 import { MagnaSVG } from '../SVG/MagnaSVG'
 import { MetamaskSVG } from '../SVG/MetamaskSVG'
 import { OptimismSVG } from '../SVG/OptimismSVG'
 import { PolygonSVG } from '../SVG/PolygonSVG'
 import { ZkSyncSVG } from '../SVG/ZkSyncSVG'
+import { ThunderCoreSVG } from 'components/SVG/ThunderCoreSVG'
 
 const INCEPTION_DATE = new Date('08/26/2020')
 
@@ -18,7 +18,7 @@ export const Partners: FC = () => {
 
   return (
     <section className="py-20 sm:py-40 px-4 border-t border-neutral-200/10 bg-gradient-to-b from-white/[0.04] to-black">
-      <Container maxWidth="5xl" className="mx-auto px-4 space-y-20">
+      <Container maxWidth="6xl" className="px-4 mx-auto space-y-20">
         <div className="flex flex-col items-center">
           <Typography variant="h1" weight={600} className="text-center">
             {diff} Days.
@@ -29,18 +29,18 @@ export const Partners: FC = () => {
           </Typography>
         </div>
         <div className="flex flex-col gap-y-10">
-          <div className="flex justify-center items-center flex-wrap gap-10">
+          <div className="flex flex-wrap items-center justify-center gap-10">
             <ArbitrumSVG width={130} />
             <BarnBridgeSVG width={120} />
             <LayerzeroSVG width={120} />
             <MagnaSVG width={120} />
             <MetamaskSVG width={120} />
           </div>
-          <div className="flex justify-center flex-wrap gap-10">
+          <div className="flex flex-wrap justify-center gap-10">
             <OptimismSVG width={120} />
             <PolygonSVG width={120} />
             <ZkSyncSVG width={120} />
-            <BobaSVG height={38} />
+            <ThunderCoreSVG height={35} />
           </div>
         </div>
       </Container>
