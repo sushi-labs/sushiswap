@@ -22,7 +22,7 @@ import {
   PoolRewards,
   PoolStats,
   UnknownTokenAlert,
-  PoolTransactionsV2
+  PoolTransactionsV2,
 } from '../../components'
 import { PROTOCOL_MAP } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
@@ -114,7 +114,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     .sort(({ liquidityUSD: a }, { liquidityUSD: b }) => {
       return Number(b) - Number(a)
     })
-    .slice(0, 250)
+    .slice(0, 50)
     .map((pool) => ({
       params: { id: pool.id },
     }))

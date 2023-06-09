@@ -21,6 +21,7 @@ export const TokenNotFoundDialog = () => {
   const _toChainId = searchParams?.get('toChainId')
   const _toCurrency = searchParams?.get('toCurrency')
 
+  
   const { fromChainId, fromCurrency, toChainId, toCurrency } = queryParamsSchema.parse({
     fromChainId: _fromChainId,
     fromCurrency: _fromCurrency,

@@ -9,6 +9,8 @@ import { Drawer } from '@sushiswap/ui/future/components/drawer'
 import { TokenNotFoundDialog } from '../../ui/swap/TokenNotFoundDialog'
 import { TradeReviewDialog } from '../../ui/swap/trade/TradeReviewDialog'
 
+export const dynamic = 'force-dynamic'
+
 export default async function SwapPage() {
   // simulating to force loading segment...
   // await new Promise((resolve) => setTimeout(resolve, 3000))
