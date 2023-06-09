@@ -98,6 +98,7 @@ export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
                     name={name}
                     value={value}
                     id="create-single-vest-cliff-amount-input"
+                    testdata-id="create-single-vest-cliff-amount-input"
                     label={
                       <>
                         Amount{currency ? ` (${currency.symbol})` : ''}

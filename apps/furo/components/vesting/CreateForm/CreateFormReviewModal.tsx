@@ -51,7 +51,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
   const { approved } = useApproved(APPROVE_TAG)
   const [signature, setSignature] = useState<Signature>()
 
-  const formData = watch(`vestings.0`)
+  const formData = watch('vestings.0')
   const _formData = useDeepCompareMemoize(formData)
 
   const { recipient, startDate, stepConfig, stepPayouts, fundSource, currency, cliff, stepAmount } = _formData

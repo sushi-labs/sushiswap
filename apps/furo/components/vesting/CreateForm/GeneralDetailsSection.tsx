@@ -71,6 +71,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
             <>
               <TokenSelector
                 id={'create-single-vest'}
+                testdata-id={'create-single-vest'}
                 chainId={chainId}
                 onSelect={(currency) => onSelect(onChange, currency)}
                 selected={_currency}
@@ -78,6 +79,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
                 {({ setOpen }) => (
                   <Input.Select
                     id={'create-single-vest-select'}
+                    testdata-id={'create-single-vest-select'}
                     onBlur={onBlur}
                     label={
                       <>
@@ -109,6 +111,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
                   <Input.DatePickerCustomInput
                     isError={Boolean(error?.message)}
                     caption={error?.message}
+                    testdata-id={'create-single-vest-start-date'}
                     id="create-single-vest-start-date"
                     label={
                       <>
@@ -128,6 +131,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
                 dateFormat="MMM d, yyyy HH:mm"
                 placeholderText="Select date"
                 autoComplete="off"
+                testdata-id={'TEST'}
               />
             )
           }}
@@ -150,6 +154,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
                 name={name}
                 onBlur={onBlur}
                 id="create-single-vest-recipient-input"
+                testdata-id="create-single-vest-recipient-input"
                 value={value}
                 onChange={onChange}
               />

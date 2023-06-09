@@ -81,7 +81,7 @@ const SelectLabel = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
 >(({ className, ...props }, ref) => (
   <>
-    <input value={props['aria-label']} placeholder="hidden placeholder" className="peer hidden" />
+    <input value={props['aria-label']} placeholder="hidden placeholder" className="hidden peer" />
     <SelectPrimitive.Label
       ref={ref}
       className={classNames(

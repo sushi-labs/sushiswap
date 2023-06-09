@@ -82,7 +82,8 @@ export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) =>
                   onBlur={onBlur}
                   name={name}
                   value={value}
-                  id="create-single-vest-cliff-amount-input"
+                  id="create-single-vest-graded-amount-input"
+                  testdata-id="create-single-vest-graded-amount-input"
                   label={
                     <>
                       Payout per unlock{currency ? ` (${currency.symbol})` : ''}
@@ -113,7 +114,8 @@ export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) =>
                   onBlur={onBlur}
                   name={name}
                   value={value}
-                  id="create-single-vest-cliff-amount-input"
+                  id="create-single-vest-steps-input"
+                  testdata-id="create-single-vest-steps-input"
                   label={
                     <>
                       Number of unlocks<sup>*</sup>
@@ -133,7 +135,7 @@ export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) =>
             <>
               <Select onValueChange={onChange} defaultValue={value}>
                 <SelectGroup>
-                  <SelectTrigger>
+                  <SelectTrigger testdata-id="create-single-vest-graded-frequency-selection-button">
                     <SelectLabel aria-label={value}>
                       Unlock frequency<sup>*</sup>
                     </SelectLabel>

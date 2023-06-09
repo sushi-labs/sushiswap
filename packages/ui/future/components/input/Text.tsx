@@ -57,7 +57,6 @@ function Component(
           autoCapitalize="off"
           spellCheck="false"
           autoComplete="off"
-          testdata-id={id}
         />
         <label
           htmlFor={id}
