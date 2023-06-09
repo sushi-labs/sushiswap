@@ -2,12 +2,12 @@ import XMarkIcon from '@heroicons/react/20/solid/XMarkIcon'
 import React, { ForwardedRef, forwardRef, HTMLProps, ReactNode, useCallback, useRef } from 'react'
 import classNames from 'classnames'
 
-export interface TextInput extends Omit<HTMLProps<HTMLInputElement>, 'label' | 'onChange'> {
+export interface TextInput extends Omit<HTMLProps<HTMLInputElement>, 'label' | 'onChange' | 'id' | 'testdata-id'> {
   isError?: boolean
   label: ReactNode
+  id: string
   value?: string | number
   onChange?(val: string | number | undefined): void
-  id: string
   caption?: string
   className?: string
   customButton?: ReactNode
@@ -57,7 +57,6 @@ function Component(
           autoCapitalize="off"
           spellCheck="false"
           autoComplete="off"
-          testdata-id={id}
         />
         <label
           htmlFor={id}

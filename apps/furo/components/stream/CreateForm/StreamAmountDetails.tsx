@@ -105,6 +105,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
                     value={value?.isNative ? value?.symbol : value?.address}
                     onClick={() => setOpen(true)}
                     id={'create-single-stream-select'}
+                    testdata-id={'create-single-stream-select'}
                     caption={error?.message ?? value?.symbol}
                     isError={Boolean(error?.message)}
                   />
@@ -164,6 +165,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
                   name={name}
                   value={value}
                   id="create-stream-amount-input"
+                  testdata-id="create-stream-amount-input"
                   label={
                     <>
                       Amount{currency ? ` (${currency.symbol})` : ''}

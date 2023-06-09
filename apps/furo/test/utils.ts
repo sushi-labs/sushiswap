@@ -55,8 +55,8 @@ export async function createSingleStream(chainId: number, token: Type, amount: s
   await page.goto(url)
   await switchNetwork(page, chainId)
   // Date
-  await selectDate('input[name="dates\\.startDate"]', 1, page)
-  await selectDate('input[name="dates\\.endDate"]', 2, page)
+  await selectDate('[testdata-id=stream-start-date]', 1, page)
+  await selectDate('[testdata-id=stream-end-date]', 2, page)
 
   // Recipient
   await page.locator('[testdata-id=create-stream-recipient-input]').fill(recipient)
@@ -71,11 +71,17 @@ export async function createSingleStream(chainId: number, token: Type, amount: s
 
   await timeout(1_500) // FIXME: this should be removed and the button should be disabled, something isn't prepared yet and but missing validation
 
-  const confirmCreateStreamButton = page.locator('[testdata-id=create-single-stream-confirmation-button]')
+  const reviewStreamButton = page.locator('[testdata-id=review-single-stream-button]')
+  await expect(reviewStreamButton).toBeVisible()
+  await expect(reviewStreamButton).toBeEnabled()
+  await reviewStreamButton.click()
 
+  
+  const confirmCreateStreamButton = page.locator('[testdata-id=confirm-stream-creation-button]')
   await expect(confirmCreateStreamButton).toBeVisible()
   await expect(confirmCreateStreamButton).toBeEnabled()
   await confirmCreateStreamButton.click()
+
 
   const expectedText = new RegExp(`Created .* ${token.symbol} stream`)
   await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)

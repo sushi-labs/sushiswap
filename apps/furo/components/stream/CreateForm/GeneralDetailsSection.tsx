@@ -93,7 +93,7 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
                     <Input.DatePickerCustomInput
                       isError={Boolean(error?.message)}
                       caption={error?.message}
-                      testdata-id="stream-end-date"
+                      testdata-id={'stream-end-date'}
                       id="stream-end-date"
                       label={
                         <>
@@ -138,6 +138,7 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
                 name={name}
                 onBlur={onBlur}
                 id="create-stream-recipient-input"
+                testdata-id='create-stream-recipient-input'
                 value={value}
                 onChange={onChange}
               />

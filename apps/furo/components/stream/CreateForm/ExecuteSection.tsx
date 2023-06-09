@@ -196,7 +196,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                             disabled={!formValid}
                             size="xl"
                             onClick={open}
-                            testId="create-single-stream-confirmation"
+                            testId="review-single-stream"
                             className="col-span-3 md:col-span-2"
                           >
                             {isLoading ? <Dots>Confirm transaction</Dots> : 'Review stream'}
@@ -266,7 +266,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                     onClick={() => sendTransactionAsync?.().then(() => confirm())}
                     disabled={isError}
                     color={isError ? 'red' : 'blue'}
-                    testId="confirm-swap"
+                    testId="confirm-stream-creation"
                   >
                     {isError ? 'Shoot! Something went wrong :(' : isLoading ? <Dots>Create</Dots> : `Create`}
                   </Button>

@@ -124,7 +124,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
               {shortenAddress(stream.recipient.id)}
             </a>
           </div>
-          <Text label="Amount" value={input} onChange={(val) => setInput(`${val}`)} id="withdraw-modal-input" />
+          <Text label="Amount" value={input} onChange={(val) => setInput(`${val}`)} id="withdraw-modal-input" testdata-id="withdraw-modal-input" />
           <div className="col-span-2 pt-2">
             <Checker.Connect size="xl" fullWidth>
               <Checker.Network size="xl" fullWidth chainId={chainId}>
