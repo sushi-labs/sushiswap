@@ -12,12 +12,14 @@ import { TokenProvider } from '../../ui/swap/token/TokenProvider'
 import { Header } from '../../ui/swap/Header'
 import { Onramper } from '@sushiswap/wagmi/future/components'
 import { ThemeProvider } from '@sushiswap/ui'
+import { useRouter } from 'next/router'
 
 export const Page: FC = () => {
+  const router = useRouter()
   return (
     <ThemeProvider>
       <TokenProvider>
-        <SplashController>
+        <SplashController show={!router.isReady}>
           <SwapProvider>
             <Onramper.Provider>
               <Header />

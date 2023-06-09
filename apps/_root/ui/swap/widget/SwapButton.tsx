@@ -1,5 +1,3 @@
-'use client'
-
 import { Button } from '@sushiswap/ui/future/components/button'
 import React, { FC, useEffect, useState } from 'react'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
