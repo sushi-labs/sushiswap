@@ -184,7 +184,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
           } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${trade.amountOut?.toSignificant(6)} ${
             trade.amountOut?.currency.symbol
           }`,
-          failed: `Something went wrong when trying to ${isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'}} ${
+          failed: `Something went wrong when trying to ${isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'} ${
             trade.amountIn?.currency.symbol
           } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${trade.amountOut?.currency.symbol}`,
         },

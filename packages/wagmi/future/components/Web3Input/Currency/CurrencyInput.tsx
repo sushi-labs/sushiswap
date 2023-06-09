@@ -124,6 +124,7 @@ export const Component: FC<CurrencyInputProps> = ({
             {({ setOpen }) => (
               <button
                 id={`${id}-button`}
+                type="button"
                 testdata-id={`${id}-button`}
                 onClick={(e) => {
                   setOpen(true)

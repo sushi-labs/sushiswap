@@ -353,7 +353,7 @@ importers:
       '@sushiswap/router': workspace:*
       '@sushiswap/router-config': workspace:*
       '@sushiswap/stargate': workspace:*
-      '@sushiswap/sushixswap': 1.0.5
+      '@sushiswap/sushixswap': workspace:*
       '@sushiswap/tailwindcss-config': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/trident-core': workspace:*
@@ -2800,7 +2800,7 @@ importers:
       '@sushiswap/route-processor': workspace:*
       '@sushiswap/router': workspace:*
       '@sushiswap/router-config': workspace:*
-      '@sushiswap/sushixswap': 1.0.5
+      '@sushiswap/sushixswap': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/trident-core': workspace:*
       '@sushiswap/types': workspace:*

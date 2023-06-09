@@ -1,3 +1,5 @@
+'use client'
+
 import React, { FC } from 'react'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
@@ -11,7 +13,6 @@ export const SwapCurrencyInput: FC = () => {
   return (
     <Web3Input.Currency
       id="swap-from"
-      testdata-id="swap-from"
       type="INPUT"
       className="p-3 bg-white dark:bg-slate-800 rounded-xl"
       chainId={network0}
