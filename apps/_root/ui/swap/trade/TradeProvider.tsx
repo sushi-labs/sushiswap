@@ -1,7 +1,7 @@
 'use client'
 
 import { ChainId } from '@sushiswap/chain'
-import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
+import { Amount, Currency, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
 import React, { createContext, FC, ReactNode, useCallback, useContext, useMemo, useReducer } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
@@ -222,22 +222,29 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       void push(`${pathname}?${_searchParams.toString()}`)
     }
     const setAppType = (appType: AppType) => {
-      const network1 =
-        appType === AppType.Swap
-          ? state.network0
-          : state.network1 === state.network0
-          ? state.network1 === ChainId.ARBITRUM
-            ? ChainId.ETHEREUM
-            : ChainId.ARBITRUM
-          : state.network1
-      const token1 =
-        state.token1?.chainId === network1
-          ? state.token1.isNative
-            ? 'NATIVE'
-            : state.token1.wrapped.address
-          : state.token0?.symbol === defaultQuoteCurrency[network1 as keyof typeof defaultQuoteCurrency].symbol
-          ? 'NATIVE'
-          : defaultQuoteCurrency[network1 as keyof typeof defaultQuoteCurrency].address
+      let network1: ChainId = ChainId.ETHEREUM
+
+      // re-writen so my brain can read it
+
+      // if we are on the swap page, we need to set the network1 to the same as network0
+      if (appType === AppType.Swap) {
+        network1 = state.network0
+      } else if (state.network0 === state.network1) {
+        network1 = state.network0 === ChainId.ETHEREUM ? ChainId.ARBITRUM : ChainId.ETHEREUM
+      } else {
+        network1 = state.network1
+      }
+
+      let token1: string = defaultQuoteCurrency[network1 as keyof typeof defaultQuoteCurrency].address
+
+      if (state?.token1?.chainId === network1) {
+        token1 = state.token1.isNative ? 'NATIVE' : state.token1.wrapped.address
+      } else if (
+        state.token0?.wrapped.address === defaultQuoteCurrency[network1 as keyof typeof defaultQuoteCurrency].address
+      ) {
+        token1 = 'NATIVE'
+      }
+
       const _searchParams = new URLSearchParams(searchParams)
       _searchParams.set('toChainId', network1.toString())
       _searchParams.set('toCurrency', token1)

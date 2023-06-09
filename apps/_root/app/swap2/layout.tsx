@@ -1,4 +1,4 @@
-import { Header } from './Header'
+import { Header } from './header'
 import { Providers } from './providers'
 
 export const metadata = {
