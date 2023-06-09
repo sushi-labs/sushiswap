@@ -27,7 +27,7 @@ import { isConstantProductPool, isStablePool } from '../../../../lib/functions'
 import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
+import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
 import { ContentBlock } from '../../../../components/AddPage/ContentBlock'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import Link from 'next/link'
@@ -116,7 +116,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
                   enabled={
                     isConstantProductPoolFactoryChainId(chainId) &&
                     poolType === PoolFinderType.Classic &&
-                    TRIDENT_ENABLED_NETWORKS.includes(chainId as typeof TRIDENT_ENABLED_NETWORKS[number])
+                    TRIDENT_ENABLED_NETWORKS.includes(chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number])
                   }
                   fee={fee}
                   twap={false}
@@ -128,7 +128,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
                   enabled={
                     isStablePoolFactoryChainId(chainId) &&
                     poolType === PoolFinderType.Stable &&
-                    TRIDENT_ENABLED_NETWORKS.includes(chainId as typeof TRIDENT_ENABLED_NETWORKS[number])
+                    TRIDENT_ENABLED_NETWORKS.includes(chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number])
                   }
                   fee={fee}
                   twap={false}

@@ -1,7 +1,7 @@
 import { Amount, Token, Type, Type as Currency } from '@sushiswap/currency'
 import { Address, readContracts } from 'wagmi'
 import { computePairAddress, FACTORY_ADDRESS, Pair } from '@sushiswap/amm'
-import { uniswapV2FactoryAddress, UniswapV2FactoryChainId, UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
+import { uniswapV2FactoryAddress, UniswapV2FactoryChainId, UniswapV2Router02ChainId } from '@sushiswap/v2-core'
 import { uniswapV2PairAbi } from '@sushiswap/abi'
 
 export enum PairState {

@@ -4,6 +4,7 @@ import { addressMapToTokenMap } from '../addressMapToTokenMap'
 import { Token } from '../Token'
 import {
   AAVE_ADDRESS,
+  AGEUR_ADDRESS,
   ANKR_ADDRESS,
   APE_ADDRESS,
   ARB_ADDRESS,
@@ -294,6 +295,15 @@ export const TUSD = addressMapToTokenMap(
   },
   TUSD_ADDRESS
 ) as Record<keyof typeof TUSD_ADDRESS, Token>
+
+export const AGEUR = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'agEUR',
+    name: 'agEUR',
+  },
+  AGEUR_ADDRESS
+) as Record<keyof typeof AGEUR_ADDRESS, Token>
 
 export const ANKR = addressMapToTokenMap(
   {

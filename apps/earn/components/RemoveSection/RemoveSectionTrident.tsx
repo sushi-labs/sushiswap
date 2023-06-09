@@ -158,7 +158,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
   const prepare = useCallback(
     async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       try {
-        console.log('prepare trident')
+        // console.log('prepare trident')
         const isInvalid =
           !chain?.id ||
           !pool ||
@@ -174,7 +174,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
           !rebases?.[token0.wrapped.address] ||
           !rebases?.[token1.wrapped.address] ||
           !slpAmountToRemove
-        console.log({ isInvalid })
+        // console.log({ isInvalid })
         if (
           !chain?.id ||
           !pool ||

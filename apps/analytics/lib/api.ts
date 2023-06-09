@@ -47,7 +47,7 @@ export const getTokens = async (query?: GetTokensQuery) => {
     })
     return tokens
   } catch (error: any) {
-    console.log(error)
+    console.error(error)
     throw new Error(error)
   }
 }

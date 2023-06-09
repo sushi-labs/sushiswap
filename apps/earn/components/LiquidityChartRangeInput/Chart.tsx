@@ -20,9 +20,7 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
   dimensions: { width, height },
   margins,
   interactive = true,
-  brushDomain,
-  brushLabels,
-  onBrushDomainChange,
+  brush,
   zoomLevels,
 }) => {
   const zoomRef = useRef<SVGRectElement | null>(null)
@@ -58,10 +56,10 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
   }, [zoomLevels])
 
   useEffect(() => {
-    if (!brushDomain) {
-      onBrushDomainChange(xScale.domain() as [number, number], undefined)
+    if (brush && !brush.brushDomain) {
+      brush.onBrushDomainChange(xScale.domain() as [number, number], undefined)
     }
-  }, [brushDomain, onBrushDomainChange, xScale])
+  }, [brush, xScale])
 
   return (
     <div className="relative flex flex-col">
@@ -75,7 +73,9 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
           height
         }
         resetBrush={() => {
-          onBrushDomainChange(
+          if (!brush) return
+
+          brush.onBrushDomainChange(
             [current * zoomLevels.initialMin, current * zoomLevels.initialMax] as [number, number],
             'reset'
           )
@@ -89,14 +89,14 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
             <rect x="0" y="0" width={innerWidth} height={height} />
           </clipPath>
 
-          {brushDomain && (
+          {brush?.brushDomain && (
             // mask to highlight selected area
             <mask id={`${id}-chart-area-mask`}>
               <rect
                 fill="white"
-                x={xScale(brushDomain[0])}
+                x={xScale(brush.brushDomain[0])}
                 y="0"
-                width={xScale(brushDomain[1]) - xScale(brushDomain[0])}
+                width={xScale(brush.brushDomain[1]) - xScale(brush.brushDomain[0])}
                 height={innerHeight}
               />
             </mask>
@@ -112,9 +112,10 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
               xValue={xAccessor}
               yValue={yAccessor}
               fill={styles.area.selection}
+              opacity={styles.area.opacity}
             />
 
-            {brushDomain && (
+            {brush?.brushDomain && (
               // duplicate area chart with mask for selected area
               <g mask={`url(#${id}-chart-area-mask)`}>
                 <Area
@@ -153,18 +154,20 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
             ref={zoomRef}
           />
 
-          <Brush
-            id={id}
-            xScale={xScale}
-            interactive={interactive}
-            brushLabelValue={brushLabels}
-            brushExtent={brushDomain ?? (xScale.domain() as [number, number])}
-            innerWidth={innerWidth}
-            innerHeight={innerHeight}
-            setBrushExtent={onBrushDomainChange}
-            westHandleColor={styles.brush.handle.west}
-            eastHandleColor={styles.brush.handle.east}
-          />
+          {brush && (
+            <Brush
+              id={id}
+              xScale={xScale}
+              interactive={interactive}
+              brushLabelValue={brush.brushLabels}
+              brushExtent={brush.brushDomain ?? (xScale.domain() as [number, number])}
+              innerWidth={innerWidth}
+              innerHeight={innerHeight}
+              setBrushExtent={brush.onBrushDomainChange}
+              westHandleColor={brush.style.handle.west}
+              eastHandleColor={brush.style.handle.east}
+            />
+          )}
         </g>
       </svg>
     </div>

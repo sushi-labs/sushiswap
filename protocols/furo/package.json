@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/furo",
-  "version": "1.0.2",
+  "version": "1.0.6",
   "description": "SushiXSwap",
   "keywords": [
     "sushixswap",
@@ -41,7 +41,7 @@
     "@sushiswap/core": "^1.4.2",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
-    "@sushiswap/sushiswap": "workspace:*"
+    "@sushiswap/v2-core": "workspace:*"
   },
   "devDependencies": {
     "@ethersproject/abi": "5.7.0",

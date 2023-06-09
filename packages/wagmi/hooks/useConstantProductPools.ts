@@ -36,7 +36,7 @@ export function useGetConstantProductPools(
   config: Config = { enabled: true }
 ): UseGetConstantProductPoolsReturn {
   const contract = useConstantProductPoolFactoryContract(chainId)
-  const pairsUnique = useMemo(() => {
+  const pairsUnique = useMemo<[Token, Token][]>(() => {
     const pairsMap = new Map<string, [Token, Token]>()
     currencies.map(([c1, c2]) => {
       if (c1 && c2) {
@@ -51,7 +51,10 @@ export function useGetConstantProductPools(
     return Array.from(pairsMap.values())
   }, [currencies])
 
-  const pairsUniqueAddr = useMemo(() => pairsUnique.map(([t0, t1]) => [t0.address, t1.address]), [pairsUnique])
+  const pairsUniqueAddr = useMemo<[string, string][]>(
+    () => pairsUnique.map(([t0, t1]) => [t0.address, t1.address]),
+    [pairsUnique]
+  )
 
   const {
     data: callStatePoolsCount,

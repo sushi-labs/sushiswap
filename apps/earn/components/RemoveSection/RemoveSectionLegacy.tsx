@@ -6,7 +6,7 @@ import { calculateGasMargin } from '@sushiswap/gas'
 import { Pool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
-import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
+import { UniswapV2Router02ChainId } from '@sushiswap/v2-core'
 import { Dots } from '@sushiswap/ui'
 import {
   getSushiSwapRouterContractConfig,

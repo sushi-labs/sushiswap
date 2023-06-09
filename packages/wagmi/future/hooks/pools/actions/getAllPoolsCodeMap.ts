@@ -2,17 +2,16 @@ import { UsePoolsParams } from '../types'
 import { DataFetcher, LiquidityProviders, PoolCode } from '@sushiswap/router'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
 
-const nullPoolCodeMap = new Map<string, PoolCode>()
-
 export const getAllPoolsCodeMap = async ({ currencyA, currencyB, chainId }: Omit<UsePoolsParams, 'enabled'>) => {
   if (!currencyA || !currencyB || !chainId) {
-    return nullPoolCodeMap
+    return new Map<string, PoolCode>()
   }
   const dataFetcher = DataFetcher.onChain(chainId)
   const liquidityProviders = [
     LiquidityProviders.SushiSwapV2,
     LiquidityProviders.Trident,
     LiquidityProviders.UniswapV2,
+    LiquidityProviders.UniswapV3,
     LiquidityProviders.QuickSwap,
     LiquidityProviders.ApeSwap,
     LiquidityProviders.PancakeSwap,
@@ -25,6 +24,8 @@ export const getAllPoolsCodeMap = async ({ currencyA, currencyB, chainId }: Omit
     LiquidityProviders.HoneySwap,
     LiquidityProviders.UbeSwap,
     LiquidityProviders.Biswap,
+    LiquidityProviders.DovishV3, // polygon zkevm
+    LiquidityProviders.LaserSwap, // thundercore
   ]
   if (isRouteProcessor3ChainId(chainId)) {
     liquidityProviders.push(LiquidityProviders.SushiSwapV3)

@@ -1,5 +1,38 @@
 # @sushiswap/amm
 
+## 0.1.8
+
+### Patch Changes
+
+- Updated dependencies [75972206f]
+- Updated dependencies
+  - @sushiswap/types@0.0.2
+  - @sushiswap/v2-core@1.0.4
+  - @sushiswap/trident-core@1.0.4
+
+## 0.1.7
+
+### Patch Changes
+
+- Updated dependencies [765e430ec]
+  - @sushiswap/trident-core@1.0.2
+
+## 0.1.6
+
+### Patch Changes
+
+- Updated dependencies [5a77f202a]
+  - @sushiswap/trident-core@1.0.0
+
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies [d6b7f8443]
+  - @sushiswap/chain@0.1.1
+  - @sushiswap/currency@0.0.5
+  - @sushiswap/tines@1.0.5
+
 ## 0.1.4
 
 ### Patch Changes

@@ -164,7 +164,13 @@ query V2Transactions($first: Int = 100, $skip: Int = 0, $orderBy: Transaction_or
       sender
       to
       amountIn
+      tokenIn {
+        symbol
+      }
       amountOut
+      tokenOut {
+        symbol
+      }
       amountUSD
       logIndex
     }
@@ -211,7 +217,13 @@ query V2Swaps($first: Int = 100, $skip: Int = 0, $orderBy: Swap_orderBy = timest
     sender
     to
     amountIn
+    tokenIn {
+      symbol
+    }
     amountOut
+    tokenOut {
+      symbol
+    }
     amountUSD
     logIndex
     transaction {
