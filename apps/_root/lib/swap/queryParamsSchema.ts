@@ -39,6 +39,6 @@ export const queryParamsSchema = z.object({
   //   .nullable()
   //   .transform((arg) => (arg ? arg : 'SUSHI')),
   amount: z.optional(z.nullable(z.string())).transform((val) => val ?? ''),
-  recipient: z.optional(z.nullable(z.string())).transform((val) => val ?? ''),
+  recipient: z.optional(z.nullable(z.string())),
   review: z.optional(z.nullable(z.boolean())),
 })

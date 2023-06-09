@@ -15,6 +15,7 @@ import { SwapButtonCrossChain } from './SwapButtonCrossChain'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
 
 export const Widget: FC = () => {
+  console.log('Widget')
   const { appType } = useSwapState()
 
   return (

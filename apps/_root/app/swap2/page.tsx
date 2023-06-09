@@ -12,6 +12,7 @@ import { TradeReviewDialog } from '../../ui/swap/trade/TradeReviewDialog'
 export default async function SwapPage() {
   // simulating to force loading segment...
   // await new Promise((resolve) => setTimeout(resolve, 3000))
+  console.log('Swap page')
   return (
     <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
       <Drawer.Root>
@@ -19,7 +20,7 @@ export default async function SwapPage() {
           <Widget />
           <TradeStats />
           <TradeReviewDialog />
-          {/* <TokenNotFoundDialog /> */}
+          <TokenNotFoundDialog />
         </Checker.Root>
       </Drawer.Root>
       {/*spacer for fixed positioned swap button */}
