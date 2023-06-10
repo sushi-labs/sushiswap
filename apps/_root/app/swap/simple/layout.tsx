@@ -1,17 +1,15 @@
-import React from 'react'
 import { Header } from './header'
 import { Providers } from './providers'
 
 export const metadata = {
-  title: 'Sushi 🍣',
+  title: 'SushiSwap Simple',
 }
 
-export default function LandingLayout({ children }: { children: React.ReactNode }) {
+export default function SwapSimpleLayout({ children }: { children: React.ReactNode }) {
   return (
     <Providers>
       <Header />
       {children}
     </Providers>
-    
   )
 }

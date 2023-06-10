@@ -1,18 +1,23 @@
 import type { Metadata } from 'next'
 
-import '@sushiswap/ui/index.css'
-import '../variables.css'
+import '../styles/globals.css'
+import '../styles/variables.css'
 
 import React from 'react'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
-  title: 'Sushi 🍣',
+  title: {
+    default: 'Sushi 🍣',
+    template: '%s | Sushi 🍣',
+  },
+  description:
+    'A Decentralised Finance (DeFi) app with features such as swap, cross chain swap, streaming, vesting, and permissionless market making for liquidity providers.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html className="dark" lang="en">
+    <html lang="en" className="[color-scheme:dark]">
       <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1" />
       <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=1" />
       <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=1" />

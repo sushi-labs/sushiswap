@@ -3,12 +3,27 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 // @ts-check
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  content: [
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './common/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './ui/**/*.{js,ts,jsx,tsx,mdx}',
+    '../wagmi/!(node_modules)/**/*.{js,ts,jsx,tsx}',
+    './!(node_modules)/**/*.{js,ts,jsx,tsx}',
+  ],
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
   plugins: [require('@tailwindcss/forms'), require('@tailwindcss/aspect-ratio'), require('@tailwindcss/typography')],
   theme: {
     screens: {
       ...defaultTheme.screens,
     },
     extend: {
+      fontFamily: {
+        sans: ['Inter Variable', ...defaultTheme.fontFamily.sans],
+      },
       backgroundImage: () => ({
         'gradient-radial': 'radial-gradient(#13213E, #111829)',
         'shimmer-gradient':
@@ -99,9 +114,6 @@ module.exports = {
           },
         },
       },
-    },
-    fontFamily: {
-      sans: ['Inter Variable', ...defaultTheme.fontFamily.sans],
     },
   },
 }

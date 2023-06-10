@@ -18,6 +18,20 @@
   box-sizing: inherit;
 }
 
+#__next {
+  min-height: 100vh;
+}
+
+html,
+body {
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--color);
+  overscroll-behavior-x: none;
+}
+
 html {
   height: 100%;
   box-sizing: border-box;
@@ -32,24 +46,9 @@ body {
   background-color: transparent !important;
 }
 
-#__next {
-  min-height: 100vh;
-}
-
-
 footer {
   position: sticky;
   top: 100%;
-}
-
-html,
-body {
-  font-family: var(--font-sans);
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: var(--color);
-  overscroll-behavior-x: none;
 }
 
 .hide-scrollbar {

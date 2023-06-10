@@ -1,7 +1,7 @@
 import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { Button, Container, Tab, Typography } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
-import Image from 'next/image'
+import Image from "next/legacy/image";
 import React, { FC, useState } from 'react'
 
 import { ExpandableCard, ExpendableCardData } from './ExpandableCard'
