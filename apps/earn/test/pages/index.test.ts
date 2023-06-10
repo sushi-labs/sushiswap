@@ -305,11 +305,8 @@ async function removeLiquidityV3(page: Page) {
   await page.goto(url)
   await page.locator('[testdata-id=my-positions-button]').click()
 
-  // const concentratedPositionTableSelector = page.locator('[testdata-id=concentrated-positions]')
-  // await expect(concentratedPositionTableSelector).toBeVisible()
-
-  // TODO: Don't do this, wait for the animation to finish so we don't risk this randomly failing....
-  await timeout(10_000) // wait for the animation to finish, otherwise the click will not work.
+  const concentratedPositionTableSelector = page.locator('[testdata-id=concentrated-positions-loading-0]')
+  await expect(concentratedPositionTableSelector).not.toBeVisible()
 
   const firstPositionSelector = page.locator('[testdata-id=concentrated-positions-0-0-td]')
   await expect(firstPositionSelector).toBeVisible()
@@ -388,8 +385,15 @@ async function handleToken(page: Page, currency: Type, order: 'FIRST' | 'SECOND'
 }
 
 async function switchNetwork(page: Page, chainId: number) {
-  await page.getByRole('button', { name: 'Ethereum' }).click()
-  await page.locator(`[testdata-id=network-selector-${chainId}]`).click()
+  const networkSelector = page.getByRole('button', { name: 'Ethereum' })
+  await expect(networkSelector).toBeVisible()
+  await expect(networkSelector).toBeEnabled()
+  await networkSelector.click()
+
+  const networkToSelect = page.locator(`[testdata-id=network-selector-${chainId}]`)
+  await expect(networkToSelect).toBeVisible()
+  await expect(networkToSelect).toBeEnabled()
+  await networkToSelect.click()
 }
 
 function timeout(ms: number) {

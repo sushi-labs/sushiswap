@@ -64,9 +64,9 @@ export const GenericTable = <T extends { id: string }>({
   return (
     <>
       {loadingOverlay && <LoadingOverlay show={showOverlay} />}
-      <Table.container testId={testId}>
-        <Table.table testId={testId} style={{ minHeight: (pageSize + 1) * 52 }}>
-          <Table.thead testId={testId}>
+      <Table.container testId={`${testId}-table-container`}>
+        <Table.table testId={`${testId}-table`} style={{ minHeight: (pageSize + 1) * 52 }}>
+          <Table.thead testId={`${testId}-thead`}>
             {table.getHeaderGroups().map((headerGroup, i) => (
               <Table.thr testId={`${testId}-${i}-thr`} key={headerGroup.id} headRowHeight={headRowHeight}>
                 {headerGroup.headers.map((header, j) => (
