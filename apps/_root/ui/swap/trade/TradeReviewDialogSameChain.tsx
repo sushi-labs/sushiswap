@@ -109,9 +109,9 @@ export const TradeReviewDialogSameChain: FC = () => {
                     {isFetching ? (
                       <Skeleton.Box className="h-4 py-0.5 w-[60px] rounded-md" />
                     ) : (
-                      `${trade?.priceImpact?.lessThan(ZERO) ? '+' : '-'}${Math.abs(
-                        Number(trade?.priceImpact?.toFixed(2))
-                      )}%` ?? '-'
+                      `${
+                        trade?.priceImpact?.lessThan(ZERO) ? '+' : trade?.priceImpact?.greaterThan(ZERO) ? '-' : ''
+                      }${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%` ?? '-'
                     )}
                   </span>
                 </List.KeyValue>
@@ -194,9 +194,7 @@ export const TradeReviewDialogSameChain: FC = () => {
                   )}
                 </Button>
                 <Collapsible open={Boolean(error)}>
-                  <div className="scroll bg-red/10 text-red-700 p-2 px-3 rounded-lg break-all">
-                    {swapErrorToUserReadableMessage(error)}
-                  </div>
+                  <div className="scroll bg-red/10 text-red-700 p-2 px-3 rounded-lg break-all">{error?.message}</div>
                 </Collapsible>
               </div>
             )}

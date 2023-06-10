@@ -364,7 +364,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         trade,
         error,
       })
-      createErrorToast(swapErrorToUserReadableMessage(error), false)
+      createErrorToast(error.message, false)
     },
   })
 

@@ -307,7 +307,11 @@ async function removeLiquidityV3(page: Page) {
 
   // const concentratedPositionTableSelector = page.locator('[testdata-id=concentrated-positions]')
   // await expect(concentratedPositionTableSelector).toBeVisible()
-  await timeout(10_000) // wait for the animation to finish, otherwise the click will not work. TODO: figure out a better way to do this
+
+  const concentratedPositionTableSelector = page.locator('[testdata-id=concentrated-positions-loading-0]')
+  await expect(concentratedPositionTableSelector).toBeVisible()
+  // After loading we expect it to be gone...
+  await expect(page.locator('[testdata-id=concentrated-positions-loading-0]')).not.toBeVisible()
 
   const firstPositionSelector = page.locator('[testdata-id=concentrated-positions-0-0-td]')
   await expect(firstPositionSelector).toBeVisible()

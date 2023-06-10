@@ -187,7 +187,7 @@ importers:
       prettier: 2.8.1
       ts-node: 10.9.1
       typescript: 5.0.4
-      viem: 0.3.29
+      viem: 1.0.2
       zod: 3.21.4
     dependencies:
       '@fastify/cors': 8.2.0
@@ -201,7 +201,7 @@ importers:
       '@whatwg-node/fetch': 0.8.4
       ethers: 5.7.2
       fastify: 4.11.0
-      viem: 0.3.29_z34kx2cq3kivpffalfeqk2ugre
+      viem: 1.0.2_z34kx2cq3kivpffalfeqk2ugre
       zod: 3.21.4
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
@@ -407,7 +407,7 @@ importers:
       tailwindcss: 3.3.2
       typescript: 5.0.4
       unimported: 1.28.0
-      viem: 0.3.29
+      viem: 1.0.2
       wagmi: 0.12.12
       yup: ^0.32.11
       zod: 3.21.4
@@ -480,7 +480,7 @@ importers:
       react-redux: 8.0.5_lhsvdmrfrkqkmxtqosqgyd3k4i
       react-slider: 2.0.4_react@18.2.0
       swr: 1.3.0_react@18.2.0
-      viem: 0.3.29_z34kx2cq3kivpffalfeqk2ugre
+      viem: 1.0.2_z34kx2cq3kivpffalfeqk2ugre
       wagmi: 0.12.12_ylt6pwwz665g7ztw2tsete3ppe
       yup: 0.32.11
       zod: 3.21.4
@@ -1323,7 +1323,7 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       tsup: 6.5.0
       typescript: 5.0.4
-      viem: 0.3.29
+      viem: 1.0.2
     dependencies:
       '@sushiswap/chain': link:../../packages/chain
     devDependencies:
@@ -1333,7 +1333,7 @@ importers:
       '@sushiswap/typescript-config': link:../typescript
       tsup: 6.5.0_typescript@5.0.4
       typescript: 5.0.4
-      viem: 0.3.29_typescript@5.0.4
+      viem: 1.0.2_typescript@5.0.4
 
   config/wagmi:
     specifiers:
@@ -2395,7 +2395,7 @@ importers:
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
       typescript: 5.0.4
-      viem: 0.3.29
+      viem: 1.0.2
       zod: 3.21.4
     dependencies:
       '@ethersproject/abi': 5.7.0
@@ -2420,7 +2420,7 @@ importers:
       node-fetch: 2.6.6
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
-      viem: 0.3.29_z34kx2cq3kivpffalfeqk2ugre
+      viem: 1.0.2_z34kx2cq3kivpffalfeqk2ugre
       zod: 3.21.4
     devDependencies:
       '@sushiswap/database': link:../database
@@ -2829,7 +2829,7 @@ importers:
       tsup: 6.5.0
       typechain: ^8.0.0
       typescript: 5.0.4
-      viem: 0.3.29
+      viem: 1.0.2
       vitest: 0.30.1
       wagmi: 0.12.13
       zod: 3.21.4
@@ -2875,7 +2875,7 @@ importers:
       '@uniswap/v2-core': 1.0.1
       '@uniswap/v3-periphery': 1.4.1
       next-themes: 0.2.1_o6dt4yn4syzkhlixdxt4y57rzi
-      viem: 0.3.29_z34kx2cq3kivpffalfeqk2ugre
+      viem: 1.0.2_z34kx2cq3kivpffalfeqk2ugre
       zod: 3.21.4
     optionalDependencies:
       next: 13.4.3_biqbaboplfbrettd7655fr4n2y
@@ -3055,7 +3055,7 @@ importers:
       ts-node: 10.9.1
       typechain: 8.1.1
       typescript: 5.0.4
-      viem: 0.3.29
+      viem: 1.0.2
     devDependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2
@@ -3111,7 +3111,7 @@ importers:
       ts-node: 10.9.1_fgooozxjrvntjfxsxdw2hhv6my
       typechain: 8.1.1_typescript@5.0.4
       typescript: 5.0.4
-      viem: 0.3.29_typescript@5.0.4
+      viem: 1.0.2_typescript@5.0.4
 
   protocols/sushiswap:
     specifiers:
@@ -13432,16 +13432,6 @@ packages:
       typescript: 5.0.4
     dev: true
 
-  /@wagmi/chains/0.2.16_typescript@5.0.4:
-    resolution: {integrity: sha512-rkWaI2PxCnbD8G07ZZff5QXftnSkYL0h5f4DkHCG3fGYYr/ZDvmCL4bMae7j7A9sAif1csPPBmbCzHp3R5ogCQ==}
-    peerDependencies:
-      typescript: '>=4.9.4'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-    dependencies:
-      typescript: 5.0.4
-
   /@wagmi/chains/0.2.19_typescript@5.0.4:
     resolution: {integrity: sha512-pyqGjOscXH/ZFUJni+VpKmVIENz/vsgq2sgqpNAmLQ6h7/DYrzRvptij+b62K5wONZMr+7X2J5mHM9s4tkEd6A==}
     peerDependencies:
@@ -13457,6 +13447,16 @@ packages:
     resolution: {integrity: sha512-TdiOzJT6TO1JrztRNjTA5Quz+UmQlbvWFG8N41u9tta0boHA1JCAzGGvU6KuIcOmJfRJkKOUIt67wlbopCpVHg==}
     peerDependencies:
       typescript: '>=4.9.4'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      typescript: 5.0.4
+
+  /@wagmi/chains/1.1.0_typescript@5.0.4:
+    resolution: {integrity: sha512-pWZlxBk0Ql8E7DV8DwqlbBpOyUdaG9UDlQPBxJNALuEK1I0tbQ3AVvSDnlsEIt06UPmPo5o27gzs3hwPQ/A+UA==}
+    peerDependencies:
+      typescript: '>=5.0.4'
     peerDependenciesMeta:
       typescript:
         optional: true
@@ -14692,8 +14692,8 @@ packages:
       typescript: 5.0.4
       zod: 3.21.4
 
-  /abitype/0.8.2_typescript@5.0.4:
-    resolution: {integrity: sha512-B1ViNMGpfx/qjVQi0RTc2HEFHuR9uoCoTEkwELT5Y7pBPtBbctYijz9BK6+Kd0hQ3S70FhYTO2dWWk0QNUEXMA==}
+  /abitype/0.8.7_typescript@5.0.4:
+    resolution: {integrity: sha512-wQ7hV8Yg/yKmGyFpqrNZufCxbszDe5es4AZGYPBitocfSqXtjrTG9JMWFcc4N30ukl2ve48aBTwt7NJxVQdU3w==}
     peerDependencies:
       typescript: '>=5.0.4'
       zod: ^3 >=3.19.1
@@ -14704,8 +14704,8 @@ packages:
       typescript: 5.0.4
     dev: true
 
-  /abitype/0.8.2_z34kx2cq3kivpffalfeqk2ugre:
-    resolution: {integrity: sha512-B1ViNMGpfx/qjVQi0RTc2HEFHuR9uoCoTEkwELT5Y7pBPtBbctYijz9BK6+Kd0hQ3S70FhYTO2dWWk0QNUEXMA==}
+  /abitype/0.8.7_z34kx2cq3kivpffalfeqk2ugre:
+    resolution: {integrity: sha512-wQ7hV8Yg/yKmGyFpqrNZufCxbszDe5es4AZGYPBitocfSqXtjrTG9JMWFcc4N30ukl2ve48aBTwt7NJxVQdU3w==}
     peerDependencies:
       typescript: '>=5.0.4'
       zod: ^3 >=3.19.1
@@ -32930,16 +32930,16 @@ packages:
       unist-util-stringify-position: 3.0.3
       vfile-message: 3.1.4
 
-  /viem/0.3.29_typescript@5.0.4:
-    resolution: {integrity: sha512-uFoEnUn4bEKneG2R2Ot2Jgk5LkMScPCanSZp0z5elqK5jFfgBKl7V5bJNL+EaPYKyxSa2A14rSE1IBVQHPYxlw==}
+  /viem/1.0.2_typescript@5.0.4:
+    resolution: {integrity: sha512-3Bn+CuInU8zsdKqqzFDWL018x4B9HDjPIISztReGcBjikY+04tP7CrQQCf1lbinK3wWrEoFU9VDiptCciNjUQA==}
     dependencies:
       '@adraffy/ens-normalize': 1.9.0
       '@noble/curves': 1.0.0
       '@noble/hashes': 1.3.0
       '@scure/bip32': 1.3.0
       '@scure/bip39': 1.2.0
-      '@wagmi/chains': 0.2.16_typescript@5.0.4
-      abitype: 0.8.2_typescript@5.0.4
+      '@wagmi/chains': 1.1.0_typescript@5.0.4
+      abitype: 0.8.7_typescript@5.0.4
       isomorphic-ws: 5.0.0_ws@8.12.0
       ws: 8.12.0
     transitivePeerDependencies:
@@ -32949,16 +32949,16 @@ packages:
       - zod
     dev: true
 
-  /viem/0.3.29_z34kx2cq3kivpffalfeqk2ugre:
-    resolution: {integrity: sha512-uFoEnUn4bEKneG2R2Ot2Jgk5LkMScPCanSZp0z5elqK5jFfgBKl7V5bJNL+EaPYKyxSa2A14rSE1IBVQHPYxlw==}
+  /viem/1.0.2_z34kx2cq3kivpffalfeqk2ugre:
+    resolution: {integrity: sha512-3Bn+CuInU8zsdKqqzFDWL018x4B9HDjPIISztReGcBjikY+04tP7CrQQCf1lbinK3wWrEoFU9VDiptCciNjUQA==}
     dependencies:
       '@adraffy/ens-normalize': 1.9.0
       '@noble/curves': 1.0.0
       '@noble/hashes': 1.3.0
       '@scure/bip32': 1.3.0
       '@scure/bip39': 1.2.0
-      '@wagmi/chains': 0.2.16_typescript@5.0.4
-      abitype: 0.8.2_z34kx2cq3kivpffalfeqk2ugre
+      '@wagmi/chains': 1.1.0_typescript@5.0.4
+      abitype: 0.8.7_z34kx2cq3kivpffalfeqk2ugre
       isomorphic-ws: 5.0.0_ws@8.12.0
       ws: 8.12.0
     transitivePeerDependencies:

@@ -167,7 +167,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
         trade,
         error,
       })
-      createErrorToast(swapErrorToUserReadableMessage(error), false)
+      createErrorToast(error.message, false)
     },
   })
 
