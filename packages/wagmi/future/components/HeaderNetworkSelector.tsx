@@ -52,7 +52,7 @@ export const HeaderNetworkSelector: FC<{
       networks={networks}
     >
       {({ open }) => (
-        <Popover.Button as={Button} variant="outlined" color="default" size="md" className="!font-medium">
+        <Popover.Button as={Button} variant="outlined" color="default" size="md" className="!font-medium" testdata-id="network-selector-button">
           <NetworkIcon chainId={selected} width={20} height={20} />
           <div className="hidden xl:block">{chainName[selected]}</div>
           <ChevronDownIcon

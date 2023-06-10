@@ -388,8 +388,15 @@ async function handleToken(page: Page, currency: Type, order: 'FIRST' | 'SECOND'
 }
 
 async function switchNetwork(page: Page, chainId: number) {
-  await page.getByRole('button', { name: 'Ethereum' }).click()
-  await page.locator(`[testdata-id=network-selector-${chainId}]`).click()
+  const networkSelector = page.locator('[testdata-id=network-selector-button]')
+  await expect(networkSelector).toBeVisible()
+  await expect(networkSelector).toBeEnabled()
+  await networkSelector.click()
+
+  const networkToSelect = page.locator(`[testdata-id=network-selector-${chainId}]`)
+  await expect(networkToSelect).toBeVisible()
+  await expect(networkToSelect).toBeEnabled()
+  await networkToSelect.click()
 }
 
 function timeout(ms: number) {
