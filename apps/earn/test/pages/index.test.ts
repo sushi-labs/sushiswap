@@ -188,7 +188,6 @@ test.describe('V2', () => {
       type: 'ADD',
     })
   })
-
 })
 
 async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
@@ -268,18 +267,18 @@ async function createOrAddTridentPool(page: Page, args: TridentPoolArgs) {
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
 
-
-
 async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
   await handleToken(page, args.token0, 'FIRST')
   await handleToken(page, args.token1, 'SECOND')
-  if  (args.type === 'CREATE') { 
-    // NOT Sure about this logic as we need a token and currency combination that isn't created to test this. 
+  if (args.type === 'CREATE') {
+    // NOT Sure about this logic as we need a token and currency combination that isn't created to test this.
     await page.locator('[testdata-id=add-liquidity-token0-input]').fill(args.amount0)
     await page.locator('[testdata-id=add-liquidity-token1-input]').fill(args.amount1)
   } else {
     // Only fill in the token that is not native if we are adding liquidity to an existing pool.
-    await page.locator(`[testdata-id=add-liquidity-token${args.token0.isNative ? 1 : 0}-input]`).fill(args.token0.isNative ? args.amount1 : args.amount0)
+    await page
+      .locator(`[testdata-id=add-liquidity-token${args.token0.isNative ? 1 : 0}-input]`)
+      .fill(args.token0.isNative ? args.amount1 : args.amount0)
   }
 
   await approve(page, `approve-token-${args.token0.isNative ? 1 : 0}`)
@@ -308,10 +307,10 @@ async function removeLiquidityV3(page: Page) {
 
   // const concentratedPositionTableSelector = page.locator('[testdata-id=concentrated-positions]')
   // await expect(concentratedPositionTableSelector).toBeVisible()
+  await timeout(10_000) // wait for the animation to finish, otherwise the click will not work. TODO: figure out a better way to do this
 
   const firstPositionSelector = page.locator('[testdata-id=concentrated-positions-0-0-td]')
-  await expect(firstPositionSelector).toBeVisible({ timeout: 7_000 })
-  await timeout(5_000) // wait for the animation to finish, otherwise the click will not work. TODO: figure out a better way to do this
+  await expect(firstPositionSelector).toBeVisible()
   await firstPositionSelector.click()
 
   const decreaseLiquiditySelector = page.locator('[testdata-id=decrease-liquidity-button]')
