@@ -2,7 +2,7 @@ import { Token } from '@sushiswap/currency'
 import { PoolCode } from '@sushiswap/router'
 import { FeeAmount } from '@sushiswap/v3-sdk'
 import { AbiEvent } from 'abitype'
-import { Address, PublicClient } from 'viem'
+import { Address, Log, PublicClient } from 'viem'
 import { Filter } from 'viem/dist/types/types/filter'
 
 import { MultiCallAggregator } from './MulticallAggregator'
@@ -59,11 +59,7 @@ export class UniV3Extractor {
             const promises = this.eventFilters.map((f) => this.client.getFilterChanges({ filter: f }))
             const logss = await Promise.all(promises)
             logss.forEach((logs) => {
-              logs.forEach((l) => {
-                const pool = this.poolMap.get(l.address.toLowerCase() as Address)
-                if (pool) pool.processLog(l)
-                // else this.addPoolByAddress(l.address)
-              })
+              logs.forEach((l) => this.processLog(l))
             })
             this.lastProcessdBlock = blockNumber
             this.logProcessGuard = false
@@ -76,6 +72,11 @@ export class UniV3Extractor {
     }
   }
 
+  processLog(l: Log) {
+    const pool = this.poolMap.get(l.address.toLowerCase() as Address)
+    if (pool) pool.processLog(l)
+    // else this.addPoolByAddress(l.address)
+  }
   // async addPoolsForTokens(tokens: Token[], factory: Address) {
   //   let pools: PoolInfo[] = []
   //   for (let i = 0; i < tokens.length; ++i) {

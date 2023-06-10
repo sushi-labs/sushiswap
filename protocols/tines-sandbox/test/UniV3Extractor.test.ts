@@ -1,3 +1,4 @@
+import { reset } from '@nomicfoundation/hardhat-network-helpers'
 import { erc20Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { DAI, USDC, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
@@ -15,14 +16,15 @@ import {
   createWalletClient,
   custom,
   CustomTransport,
+  http,
   Transaction,
   WalletClient,
 } from 'viem'
 import { Account, privateKeyToAccount } from 'viem/accounts'
-import { Chain, hardhat } from 'viem/chains'
+import { Chain, hardhat, mainnet } from 'viem/chains'
 
 import { setTokenBalance } from '../src'
-import { comparePoolCodes } from '../src/ComparePoolCodes'
+import { comparePoolCodes, isSubpool } from '../src/ComparePoolCodes'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -382,5 +384,50 @@ describe('UniV3Extractor', () => {
         //expect(true).equal(false, `unexpected pool ${pool.address}`)
       }
     })
+  })
+
+  it('real logs', async () => {
+    const finalBlock = 17450000n
+    const transport = http(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`)
+    const client = createPublicClient({
+      chain: mainnet,
+      transport,
+    })
+
+    const logs = await client.getLogs({
+      address: pools[0].address,
+      fromBlock: 17390000n,
+      toBlock: finalBlock,
+    })
+    console.log(logs.length)
+
+    const clientPrimary = createPublicClient({
+      chain: env.chain,
+      transport: env.transport,
+    })
+
+    const extractor = new UniV3Extractor(clientPrimary, 'UniswapV3', '0xbfd8137f7d1516d3ea5ca83523914859ec47f573')
+    await extractor.start()
+    extractor.addPoolWatching(pools[0])
+    for (;;) {
+      if (extractor.getStablePoolCodes().length == 1) break
+      await delay(500)
+    }
+
+    logs.forEach((l) => extractor.processLog(l))
+    for (;;) {
+      if (extractor.getStablePoolCodes().length == 1) break
+      await delay(500)
+    }
+
+    await reset(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`, finalBlock)
+
+    const uniProvider = new UniswapV3Provider(ChainId.ETHEREUM, clientPrimary)
+    await uniProvider.fetchPoolsForToken(USDC[ChainId.ETHEREUM], WETH9[ChainId.ETHEREUM], {
+      has: (poolAddress: string) => poolAddress !== pools[0].address, //!poolSet.has(poolAddress.toLowerCase()),
+    })
+    const providerPools = uniProvider.getCurrentPoolList()
+
+    isSubpool(providerPools[0], extractor.getStablePoolCodes()[0])
   })
 })
