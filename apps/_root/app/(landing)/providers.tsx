@@ -1,5 +1,7 @@
 'use client'
 
+import { ThemeProvider } from '@sushiswap/ui'
+
 export function Providers({ children }: { children: React.ReactNode }) {
-  return <>{children}</>
+  return <ThemeProvider forcedTheme="dark">{children}</ThemeProvider>
 }

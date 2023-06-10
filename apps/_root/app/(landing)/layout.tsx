@@ -1,3 +1,5 @@
+import '../../styles/variables.css'
+
 import React from 'react'
 import { Header } from './header'
 import { Providers } from './providers'
@@ -12,6 +14,5 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
       <Header />
       {children}
     </Providers>
-    
   )
 }

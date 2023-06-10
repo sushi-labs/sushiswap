@@ -1,6 +1,3 @@
-// import '../../styles/globals.css'
-// import '@sushiswap/ui/index.css'
-
 import { Header } from './header'
 import { Providers } from './providers'
 

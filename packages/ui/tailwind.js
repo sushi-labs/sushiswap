@@ -9,8 +9,8 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './ui/**/*.{js,ts,jsx,tsx,mdx}',
-    '../wagmi/!(node_modules)/**/*.{js,ts,jsx,tsx}',
-    './!(node_modules)/**/*.{js,ts,jsx,tsx}',
+    '../../packages/wagmi/!(node_modules)/**/*.{js,ts,jsx,tsx,mdx}',
+    '../../packages/ui/!(node_modules)/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   future: {
     hoverOnlyWhenSupported: true,
