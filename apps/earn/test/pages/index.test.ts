@@ -254,12 +254,11 @@ async function createOrAddTridentPool(page: Page, args: TridentPoolArgs) {
   const reviewButton = page.locator(reviewSelector)
   await expect(reviewButton).toBeVisible()
   await expect(reviewButton).toBeEnabled()
-  await reviewButton.click({ timeout: 2_000 })
+  await reviewButton.click()
 
   const confirmButton = page.locator('[testdata-id=confirm-add-liquidity-button]')
   await expect(confirmButton).toBeVisible()
   await expect(confirmButton).toBeEnabled()
-  await timeout(2_500) // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
   await confirmButton.click()
 
   const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`

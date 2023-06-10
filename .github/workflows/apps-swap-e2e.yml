@@ -32,71 +32,70 @@ concurrency:
   cancel-in-progress: true
 jobs:
   e2e:
-      name: Swap E2E Tests
-      timeout-minutes: 30
-      runs-on: ubuntu-latest
-      env:
-        ANVIL_BLOCK_NUMBER: 42259027
-      strategy:
-        matrix:
-          chain-id: [137]
-          node-version: [18]
-          pnpm-version: [7.9.5]
-      steps:
-        - name: Check out
-          uses: actions/checkout@v3
-          with:
-            fetch-depth: 2
-            submodules: true
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    env:
+      ANVIL_BLOCK_NUMBER: 42259027
+    strategy:
+      matrix:
+        chain-id: [137]
+        node-version: [18]
+        pnpm-version: [7.9.5]
+    steps:
+      - name: Check out
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+          submodules: true
 
-        - uses: pnpm/action-setup@v2
-          with:
-            version: ${{ matrix.pnpm-version }}
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ matrix.pnpm-version }}
 
-        - name: Setup Node.js
-          uses: actions/setup-node@v3
-          with:
-            node-version: ${{ matrix.node-version }}
-            cache: 'pnpm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
 
-        - name: Cache pnpm
-          uses: actions/cache@v3
-          with:
-            path: ~/.pnpm-store
-            key: pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-
+      - name: Cache pnpm
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-
 
-        - name: Install dependencies
-          run: pnpm install
-          working-directory: .
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: .
 
-        - name: Install playwright
-          run: pnpm exec playwright install --with-deps chromium
+      - name: Install playwright
+        run: pnpm exec playwright install --with-deps chromium
 
-        - name: Install Foundry
-          uses: foundry-rs/foundry-toolchain@v1
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
 
-        # /home/runner/work/sushiswap/sushiswap
+      # /home/runner/work/sushiswap/sushiswap
 
-        - name: Test swap app
-          run: pnpm test-root-app
-          env:
-            ACADEMY_URL: 'https://academy.sushi.com'
-            ANALYTICS_URL: 'https://analytics.sushi.com'
-            BLOG_URL: 'https://blog.sushi.com'
-            EARN_URL: https://earn.sushi.com'
-            FURO_URL: 'https://furo.sushi.com'
-            ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
-            PLAYWRIGHT_URL: http://localhost:3000/swap
-            CHAIN_ID: ${{ matrix.chain-id }}
-            ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
-            NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
-            NEXT_PUBLIC_TEST: true
-          working-directory: .
+      - name: Test swap app
+        run: pnpm test-root-app
+        env:
+          ACADEMY_URL: 'https://academy.sushi.com'
+          ANALYTICS_URL: 'https://analytics.sushi.com'
+          BLOG_URL: 'https://blog.sushi.com'
+          EARN_URL: https://earn.sushi.com'
+          FURO_URL: 'https://furo.sushi.com'
+          ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+          PLAYWRIGHT_URL: http://localhost:3000/swap
+          CHAIN_ID: ${{ matrix.chain-id }}
+          ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+          NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+          NEXT_PUBLIC_TEST: true
+        working-directory: .
 
-        - name: Upload test results
-          if: always()
-          uses: actions/upload-artifact@v3
-          with:
-            name: playwright-report
-            path: ./apps/_root/test-results/
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-report
+          path: ./apps/_root/test-results/

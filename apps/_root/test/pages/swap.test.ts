@@ -289,7 +289,7 @@ async function inputAmount(page: Page, amount?: string, useMax?: boolean) {
 }
 
 async function switchNetwork(page: Page, chainId: number) {
-  const networkSelector = page.getByRole('button', { name: 'Ethereum' })
+  const networkSelector = page.locator('[testdata-id=network-selector-button]')
   await expect(networkSelector).toBeVisible()
   await expect(networkSelector).toBeEnabled()
   await networkSelector.click()
