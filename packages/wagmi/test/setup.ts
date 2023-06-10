@@ -1,4 +1,4 @@
-import { Chain, CreateClientConfig, configureChains, createClient} from 'wagmi'
+import { Chain, CreateClientConfig, configureChains, createClient } from 'wagmi'
 import { foundry, polygon } from '../chains'
 import { Wallet, providers } from 'ethers'
 import { MockConnector } from '../connectors/mock'
@@ -149,4 +149,3 @@ export const _createTestClient = (config?: CreateClientConfig) =>
     autoConnect: true,
     connectors: [new MockConnector({ options: { signer: getSigners()[0] } })],
   })
-

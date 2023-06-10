@@ -2,6 +2,8 @@ import { AddressZero } from '@ethersproject/constants'
 import { Page, test, expect } from '@playwright/test'
 import { USDC_ADDRESS, Native, Token, Type } from '@sushiswap/currency'
 
+
+
 export async function approve(page: Page, locator: string) {
   await timeout(500) // give the approve button time to load contracts, unrealistically fast when running test
   const pageLocator = page.locator(`[testdata-id=${locator}]`)
@@ -259,6 +261,7 @@ async function createOrAddTridentPool(page: Page, args: TridentPoolArgs) {
   const confirmButton = page.locator('[testdata-id=confirm-add-liquidity-button]')
   await expect(confirmButton).toBeVisible()
   await expect(confirmButton).toBeEnabled()
+  await timeout(5000)
   await confirmButton.click()
 
   const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`

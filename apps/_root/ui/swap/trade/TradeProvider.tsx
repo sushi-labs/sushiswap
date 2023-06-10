@@ -3,7 +3,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui/types'
-import React, { createContext, FC, ReactNode, useCallback, useContext, useMemo, useReducer } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Signature } from '@ethersproject/bytes'
@@ -97,9 +97,9 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const pathname = usePathname()
   const { push } = useRouter()
 
-  const _fromChainId = searchParams?.get('fromChainId')
+  // const _fromChainId = searchParams?.get('fromChainId')
   const _fromCurrency = searchParams?.get('fromCurrency')
-  const _toChainId = searchParams?.get('toChainId')
+  // const _toChainId = searchParams?.get('toChainId')
   const _toCurrency = searchParams?.get('toCurrency')
   const _amount = searchParams?.get('amount')
   const _recipient = searchParams?.get('recipient')

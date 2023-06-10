@@ -102,7 +102,7 @@ export const Component: FC<CurrencyInputProps> = ({
           </div>
         ) : (
           <Input.Numeric
-            testdata-id={`${id}-input`}
+            id={id}
             ref={inputRef}
             variant="unstyled"
             disabled={disabled}

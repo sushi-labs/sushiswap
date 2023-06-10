@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { defaultQuoteCurrency, Native, Token } from '@sushiswap/currency'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Button } from '@sushiswap/ui/future/components/button'
@@ -61,8 +61,7 @@ export const TokenNotFoundDialog = () => {
   )
 
   const reset = useCallback(() => {
-    // @ts-ignore
-    setTokens(Native.onChain(network0), defaultQuoteCurrency[network1])
+    setTokens(Native.onChain(network0), defaultQuoteCurrency[network1 as keyof typeof defaultQuoteCurrency])
   }, [network0, network1, setTokens])
 
   const { data: tokenSecurity } = useTokenSecurity({

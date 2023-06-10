@@ -301,7 +301,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
       <Button
         id="confirm-add-liquidity"
         size="xl"
-        disabled={!approved || !isValid || isWritePending}
+        disabled={!isValid || isWritePending}
         fullWidth
         onClick={() => sendTransaction?.()}
       >

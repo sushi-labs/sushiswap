@@ -9,7 +9,6 @@ import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
-import { swapErrorToUserReadableMessage } from '../../lib/swap/swapErrorToUserReadableMessage'
 import { log } from 'next-axiom'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import {
@@ -25,7 +24,7 @@ import {
 } from '@sushiswap/route-processor'
 import { routeProcessor2Abi } from '@sushiswap/abi'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
-import { Bridge, LiquidityProvider, LiquidityProviders } from '@sushiswap/router'
+import { Bridge, LiquidityProviders } from '@sushiswap/router'
 import { Chain } from '@sushiswap/chain'
 
 interface ConfirmationDialogProps {

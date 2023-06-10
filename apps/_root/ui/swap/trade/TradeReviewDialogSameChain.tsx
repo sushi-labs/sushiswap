@@ -22,7 +22,6 @@ import { warningSeverity, warningSeverityClassName } from '../../../lib/swap/war
 import { TradeRoute } from './TradeRoute'
 import { ZERO } from '@sushiswap/math'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { swapErrorToUserReadableMessage } from '../../../lib/swap/swapErrorToUserReadableMessage'
 
 export const TradeReviewDialogSameChain: FC = () => {
   const [open, setOpen] = useState(false)

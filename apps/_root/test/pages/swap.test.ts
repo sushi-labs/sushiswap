@@ -1,159 +1,76 @@
 import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
-import { chainName } from '@sushiswap/chain'
-import { Native, SUSHI, Type, USDC } from '@sushiswap/currency'
+import { DAI, Native, SUSHI, Type, USDC, USDT, WBTC } from '@sushiswap/currency'
 import { createTestClient, http } from 'viem'
 import { foundry } from 'viem/chains'
-
-// import { z } from 'zod'
-// let envSchema = z.object({
-//   CHAIN_ID: z.string(),
-//   PLAYWRIGHT_URL: z.string(),
-// });
-// const env = envSchema.parse(process.env);
+import { SupportedChainId } from '../../config'
 
 type InputType = 'INPUT' | 'OUTPUT'
 
+// eslint-disable-next-line turbo/no-undeclared-env-vars
 if (!process.env.CHAIN_ID) throw new Error('CHAIN_ID env var not set')
-if (!process.env.PLAYWRIGHT_URL) throw new Error('PLAYWRIGHT_URL env var not set')
-// if (!process.env.ANVIL_FORK_BLOCK) throw new Error('ANVIL_FORK_BLOCK env var not set')
 
-const CHAIN_ID = Number(process.env.CHAIN_ID)
-const PLAYWRIGHT_URL = String(process.env.PLAYWRIGHT_URL)
-// const ANVIL_FORK_BLOCK = Number(process.env.ANVIL_FORK_BLOCK)
+// eslint-disable-next-line turbo/no-undeclared-env-vars
+const chainId = Number(process.env.CHAIN_ID) as SupportedChainId
 
-const native = Native.onChain(CHAIN_ID)
+const url = 'http://localhost:3000/swap'
+
+const native = Native.onChain(chainId)
 const wnative = native.wrapped
 
-const usdc = USDC[CHAIN_ID as keyof typeof USDC]
-const sushi = SUSHI[CHAIN_ID as keyof typeof SUSHI]
+const usdc = USDC[chainId]
+const usdt = USDT[chainId]
+const dai = DAI[chainId]
+const sushi = SUSHI[chainId]
+const wbtc = WBTC[chainId]
 
-// const client = createTestClient({ mode: 'anvil', chain: foundry, transport: http() })
-
-test.beforeAll(async () => {
-  //
-})
+// test.beforeAll(async () => {})
 
 test.beforeEach(async ({ page }) => {
   page.on('pageerror', (error) => {
     console.error(error)
   })
-
-  // @ts-ignore
+  // We cam reset the fork easily
+  // const client = createTestClient({ mode: 'anvil', chain: foundry, transport: http() })
   // await client.reset({ blockNumber: 42259027n })
-
-  await page.goto(PLAYWRIGHT_URL)
-  await switchNetwork(page, CHAIN_ID)
-
-  // const fromBalance = page.getByTestId('swap-from-balance-button')
-  // await expect(fromBalance).toContainText('1000')
-  // const toBalance = page.getByTestId('swap-from-balance-button')
-  // await expect(toBalance).toContainText('0')
+  await page.goto(url)
+  await switchNetwork(page, chainId)
 })
 
-test.afterAll(async () => {
-  //
-})
-
-test.afterEach(async ({ page }) => {
-  //
-})
+// test.afterAll(async () => {})
+// test.afterEach(async ({ page }) => {})
 
 test('Wrap and unwrap', async ({ page }) => {
-  await wrap({
-    page,
-    inputCurrency: native,
-    outputCurrency: wnative,
-    amount: '10',
-  })
-  await wrap({
-    page,
-    inputCurrency: wnative,
-    outputCurrency: native,
-    amount: '10',
-  })
-})
-
-test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
-  const swapFromBalance = page.locator('[testdata-id=swap-from-balance-button]')
-  const swapFromBalanceBefore = await swapFromBalance.textContent()
-
-  const swapToBalance = page.locator('[testdata-id=swap-to-balance-button]')
-  const swapToBalanceBefore = await swapToBalance.textContent()
-
-  await swap({
-    page,
-    inputCurrency: native,
-    outputCurrency: usdc,
-    amount: '100',
-  })
-
-  // Ensure balances at least change...
-  const swapFromBalanceAfterFirst = await swapFromBalance.textContent()
-  expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfterFirst)
-  const swapToBalanceAfterFirst = await swapToBalance.textContent()
-  expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfterFirst)
-
-  await swap({
-    page,
-    inputCurrency: usdc,
-    outputCurrency: native,
-    useBalance: true,
-  })
-
-  // Ensure balances at least change...
-  const swapFromBalanceAfterSecond = await swapFromBalance.textContent()
-  expect(swapFromBalanceAfterFirst).not.toEqual(swapFromBalanceAfterSecond)
-  const swapToBalanceAfterSecond = await swapToBalance.textContent()
-  expect(swapToBalanceAfterFirst).not.toEqual(swapToBalanceAfterSecond)
+  await wrap(page, native, wnative, '10')
+  await wrap(page, wnative, native, '10')
 })
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
-  const swapFromBalance = page.locator('[testdata-id=swap-from-balance-button]')
-  const swapFromBalanceBefore = await swapFromBalance.textContent()
-
-  const swapToBalance = page.locator('[testdata-id=swap-to-balance-button]')
-  const swapToBalanceBefore = await swapToBalance.textContent()
-
-  await swap({
-    page,
-    inputCurrency: native,
-    outputCurrency: sushi,
-    amount: '100',
-  })
-
-  // Ensure balances at least change...
-  const swapFromBalanceAfterFirst = await swapFromBalance.textContent()
-  expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfterFirst)
-  const swapToBalanceAfterFirst = await swapToBalance.textContent()
-  expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfterFirst)
-
-  await swap({
-    page,
-    inputCurrency: sushi,
-    outputCurrency: native,
-    useBalance: true,
-  })
-
-  // Ensure balances at least change...
-  const swapFromBalanceAfterSecond = await swapFromBalance.textContent()
-  expect(swapFromBalanceAfterFirst).not.toEqual(swapFromBalanceAfterSecond)
-  const swapToBalanceAfterSecond = await swapToBalance.textContent()
-  expect(swapToBalanceAfterFirst).not.toEqual(swapToBalanceAfterSecond)
+  await swap(page, native, sushi, '100')
+  await maxSwap(page, sushi, native)
 })
 
-async function wrap({
-  page,
-  inputCurrency,
-  outputCurrency,
-  amount,
-  useBalance,
-}:
-  | { page: Page; inputCurrency: Type; outputCurrency: Type; amount?: never; useBalance: true }
-  | { page: Page; inputCurrency: Type; outputCurrency: Type; amount: string; useBalance?: never }) {
+test('Swap Native to USDC, USDC to USDT then USDT to NATIVE', async ({ page }) => {
+  await swap(page, native, usdc, '100')
+  await maxSwap(page, usdc, usdt)
+  await maxSwap(page, usdt, native)
+})
+
+// test('Swap Native to USDC, USDC to DAI, DAI to USDT then USDT to NATIVE ', async ({ page }) => {
+//   await swap(page, native, usdc, '100')
+//   await maxSwap(page, usdc, dai)
+//   await maxSwap(page, dai, usdt)
+//   await maxSwap(page, usdt, native)
+// })
+
+test('Swap Native to WBTC', async ({ page }) => {
+  await swap(page, native, wbtc, '100')
+})
+
+async function wrap(page: Page, inputCurrency: Type, outputCurrency: Type, amount: string) {
   await handleToken(page, inputCurrency, 'INPUT')
-  await inputAmount(page, amount, useBalance)
   await handleToken(page, outputCurrency, 'OUTPUT')
+  await inputAmount(page, amount)
 
   if (!inputCurrency.isNative) {
     const approveButton = page.locator('[testdata-id=approve-erc20]', { hasText: `Approve ${inputCurrency.symbol}` })
@@ -191,35 +108,22 @@ async function wrap({
   await makeAnotherSwap.click()
 }
 
-async function swap({
-  page,
-  inputCurrency,
-  outputCurrency,
-  amount,
-  useBalance,
-}:
-  | { page: Page; inputCurrency: Type; outputCurrency: Type; amount?: never; useBalance: true }
-  | { page: Page; inputCurrency: Type; outputCurrency: Type; amount: string; useBalance?: false }) {
-  // await expect(page.locator('[id=amount-checker]')).not.toBeEnabled()
-
+async function maxSwap(page: Page, inputCurrency: Type, outputCurrency: Type) {
   await handleToken(page, inputCurrency, 'INPUT')
-  await inputAmount(page, amount, useBalance)
   await handleToken(page, outputCurrency, 'OUTPUT')
 
-  if (!inputCurrency.isNative) {
-    const approveButton = page.locator('[testdata-id=approve-erc20]', { hasText: `Approve ${inputCurrency.symbol}` })
-    await expect(approveButton).toBeVisible()
-    await expect(approveButton).toBeEnabled()
-    await approveButton.click()
-    // .then(() => console.log(`Approved ${inputCurrency.symbol}`))
-    // .catch(() => console.log(`${inputCurrency.symbol} already approved or not needed`))
+  await maxInput(page)
 
-    const expectedApprovingText = `Approving ${inputCurrency.symbol}`
-    await expect(page.getByText(expectedApprovingText)).toContainText(expectedApprovingText)
+  // Cache balances before swap
+  const swapFromBalance = page.locator('[testdata-id=swap-from-balance-button]')
+  await expect(swapFromBalance).toBeVisible()
+  await expect(swapFromBalance).toBeEnabled()
+  const swapFromBalanceBefore = await swapFromBalance.textContent()
+  const swapToBalance = page.locator('[testdata-id=swap-to-balance-button]')
+  await expect(swapToBalance).toBeVisible()
+  const swapToBalanceBefore = await swapToBalance.textContent()
 
-    const expectedApproveText = `Successfully approved ${inputCurrency.symbol}`
-    await expect(page.getByText(expectedApproveText)).toContainText(expectedApproveText)
-  }
+  await approve(page, inputCurrency)
 
   const swapButton = page.locator('[testdata-id=swap-button]')
   await expect(swapButton).toBeVisible()
@@ -238,10 +142,80 @@ async function swap({
   const expectedSwapText = new RegExp(`(Swap .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol}.)`)
   await expect(page.getByText(expectedSwapText)).toContainText(expectedSwapText)
 
+  // Make another swap
   const makeAnotherSwap = page.locator('[testdata-id=make-another-swap-button]')
   await expect(makeAnotherSwap).toBeVisible()
   await expect(makeAnotherSwap).toBeEnabled()
   await makeAnotherSwap.click()
+
+  // Compare against cached balances to ensure there is at least a change...
+  const swapFromBalanceAfter = await swapFromBalance.textContent()
+  expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
+  const swapToBalanceAfter = await swapToBalance.textContent()
+  expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
+}
+
+async function approve(page: Page, currency: Type) {
+  if (!currency.isNative) {
+    const approveButton = page.locator('[testdata-id=approve-erc20]', { hasText: `Approve ${currency.symbol}` })
+    await expect(approveButton).toBeVisible()
+    await expect(approveButton).toBeEnabled()
+    await approveButton.click()
+    // .then(() => console.log(`Approved ${inputCurrency.symbol}`))
+    // .catch(() => console.log(`${inputCurrency.symbol} already approved or not needed`))
+
+    const expectedApprovingText = `Approving ${currency.symbol}`
+    await expect(page.getByText(expectedApprovingText)).toContainText(expectedApprovingText)
+
+    const expectedApproveText = `Successfully approved ${currency.symbol}`
+    await expect(page.getByText(expectedApproveText)).toContainText(expectedApproveText)
+  }
+}
+
+async function swap(page: Page, inputCurrency: Type, outputCurrency: Type, amount: string) {
+  await handleToken(page, inputCurrency, 'INPUT')
+  await handleToken(page, outputCurrency, 'OUTPUT')
+  await inputAmount(page, amount)
+
+  // Cache balances before swap
+  const swapFromBalance = page.locator('[testdata-id=swap-from-balance-button]')
+  await expect(swapFromBalance).toBeVisible()
+  await expect(swapFromBalance).toBeEnabled()
+  const swapFromBalanceBefore = await swapFromBalance.textContent()
+  const swapToBalance = page.locator('[testdata-id=swap-to-balance-button]')
+  await expect(swapToBalance).toBeVisible()
+  const swapToBalanceBefore = await swapToBalance.textContent()
+
+  await approve(page, inputCurrency)
+
+  const swapButton = page.locator('[testdata-id=swap-button]')
+  await expect(swapButton).toBeVisible()
+  await expect(swapButton).toBeEnabled()
+  await swapButton.click()
+
+  const confirmSwap = page.locator('[testdata-id=confirm-swap-button]')
+  // const confirmSwap = page.getByRole('button', { name: `Swap ${inputCurrency.symbol} for ${outputCurrency.symbol}` })
+  await expect(confirmSwap).toBeVisible()
+  await expect(confirmSwap).toBeEnabled()
+  await confirmSwap.click()
+
+  const expectedSwappingText = new RegExp(`(Swapping .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol}.)`)
+  await expect(page.getByText(expectedSwappingText)).toContainText(expectedSwappingText)
+
+  const expectedSwapText = new RegExp(`(Swap .* ${inputCurrency.symbol} for .* ${outputCurrency.symbol}.)`)
+  await expect(page.getByText(expectedSwapText)).toContainText(expectedSwapText)
+
+  // Make another swap
+  const makeAnotherSwap = page.locator('[testdata-id=make-another-swap-button]')
+  await expect(makeAnotherSwap).toBeVisible()
+  await expect(makeAnotherSwap).toBeEnabled()
+  await makeAnotherSwap.click()
+
+  // Compare against cached balances to ensure there is at least a change...
+  const swapFromBalanceAfter = await swapFromBalance.textContent()
+  expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
+  const swapToBalanceAfter = await swapToBalance.textContent()
+  expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
 }
 
 async function handleToken(page: Page, currency: Type, type: InputType) {
@@ -250,12 +224,12 @@ async function handleToken(page: Page, currency: Type, type: InputType) {
   // Open token list
   const tokenSelector = page.locator(`[testdata-id=swap-${selectorInfix}-button]`)
   await expect(tokenSelector).toBeVisible()
-  // await expect(tokenSelector).toBeEnabled()
+  await expect(tokenSelector).toBeEnabled()
   await tokenSelector.click()
 
   const tokenSearch = page.locator(`[testdata-id=swap-${selectorInfix}-token-selector-address-input]`)
   await expect(tokenSearch).toBeVisible()
-  // await expect(tokenSearch).toBeEnabled()
+  await expect(tokenSearch).toBeEnabled()
   await tokenSearch.fill(currency.symbol as string)
 
   const tokenToSelect = page.locator(
@@ -267,25 +241,22 @@ async function handleToken(page: Page, currency: Type, type: InputType) {
   // await expect(tokenSearch).toBeEnabled()
 
   await tokenToSelect.click()
-  await expect(tokenSelector).toHaveText(currency.symbol as string, { timeout: 15_000 })
+  await expect(tokenSelector).toHaveText(currency.symbol as string)
 }
 
 async function maxInput(page: Page) {
-  const maxButton = page.locator('[testdata-id="swap-from-balance-button]')
+  const maxButton = page.locator('[testdata-id=swap-from-balance-button]')
   await expect(maxButton).toBeVisible()
   await expect(maxButton).toBeEnabled()
   await maxButton.click()
 }
 
-async function inputAmount(page: Page, amount?: string, useMax?: boolean) {
-  if (useMax) {
-    await maxInput(page)
-  } else if (amount) {
-    const input0 = page.locator('[testdata-id=swap-from-input]')
-    await expect(input0).toBeVisible()
-    await expect(input0).toBeEnabled()
-    await input0.fill(amount)
-  }
+async function inputAmount(page: Page, amount: string) {
+  const input0 = page.locator('[testdata-id=swap-from-input]')
+  // Inputs are not rendered until the trade is found
+  await expect(input0).toBeVisible()
+  await expect(input0).toBeEnabled()
+  await input0.fill(amount)
 }
 
 async function switchNetwork(page: Page, chainId: number) {
