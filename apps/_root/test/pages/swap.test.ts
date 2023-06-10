@@ -92,7 +92,7 @@ test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
   const swapFromBalanceAfterFirst = await swapFromBalance.textContent()
   expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfterFirst)
   const swapToBalanceAfterFirst = await swapToBalance.textContent()
-  await expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfterFirst)
+  expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfterFirst)
 
   await swap({
     page,
@@ -105,7 +105,7 @@ test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
   const swapFromBalanceAfterSecond = await swapFromBalance.textContent()
   expect(swapFromBalanceAfterFirst).not.toEqual(swapFromBalanceAfterSecond)
   const swapToBalanceAfterSecond = await swapToBalance.textContent()
-  await expect(swapToBalanceAfterFirst).not.toEqual(swapToBalanceAfterSecond)
+  expect(swapToBalanceAfterFirst).not.toEqual(swapToBalanceAfterSecond)
 })
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
@@ -126,7 +126,7 @@ test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   const swapFromBalanceAfterFirst = await swapFromBalance.textContent()
   expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfterFirst)
   const swapToBalanceAfterFirst = await swapToBalance.textContent()
-  await expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfterFirst)
+  expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfterFirst)
 
   await swap({
     page,
@@ -139,7 +139,7 @@ test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   const swapFromBalanceAfterSecond = await swapFromBalance.textContent()
   expect(swapFromBalanceAfterFirst).not.toEqual(swapFromBalanceAfterSecond)
   const swapToBalanceAfterSecond = await swapToBalance.textContent()
-  await expect(swapToBalanceAfterFirst).not.toEqual(swapToBalanceAfterSecond)
+  expect(swapToBalanceAfterFirst).not.toEqual(swapToBalanceAfterSecond)
 })
 
 async function wrap({
