@@ -301,6 +301,53 @@ async function makeTest(
   })
 }
 
+async function checkHistoricalLogs(env: TestEnvironment, pool: PoolInfo, fromBlock: bigint, toBlock: bigint) {
+  const transport = http(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`)
+  const client = createPublicClient({
+    chain: mainnet,
+    transport,
+  })
+
+  const logs = await client.getLogs({
+    address: pool.address,
+    fromBlock,
+    toBlock,
+  })
+  //console.log(logs.length)
+
+  await reset(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`, fromBlock)
+  const clientPrimary = createPublicClient({
+    chain: env.chain,
+    transport: env.transport,
+  })
+
+  const extractor = new UniV3Extractor(clientPrimary, 'UniswapV3', '0xbfd8137f7d1516d3ea5ca83523914859ec47f573')
+  await extractor.start()
+  extractor.addPoolWatching(pool)
+  for (;;) {
+    if (extractor.getStablePoolCodes().length == 1) break
+    await delay(500)
+  }
+
+  logs.forEach((l) => extractor.processLog(l))
+  for (;;) {
+    if (extractor.getStablePoolCodes().length == 1) break
+    await delay(500)
+  }
+
+  await reset(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`, toBlock)
+
+  const uniProvider = new UniswapV3Provider(ChainId.ETHEREUM, clientPrimary)
+  await uniProvider.fetchPoolsForToken(USDC[ChainId.ETHEREUM], WETH9[ChainId.ETHEREUM], {
+    has: (poolAddress: string) => poolAddress !== pool.address,
+  })
+  const providerPools = uniProvider.getCurrentPoolList()
+
+  isSubpool(providerPools[0], extractor.getStablePoolCodes()[0])
+
+  await reset(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`, fromBlock)
+}
+
 describe('UniV3Extractor', () => {
   let env: TestEnvironment
 
@@ -386,48 +433,15 @@ describe('UniV3Extractor', () => {
     })
   })
 
-  it('real logs', async () => {
-    const finalBlock = 17450000n
-    const transport = http(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`)
-    const client = createPublicClient({
-      chain: mainnet,
-      transport,
-    })
+  it('pool #1 historical logs (1582)', async () => {
+    await checkHistoricalLogs(env, pools[0], 17390000n, 17450000n)
+  })
 
-    const logs = await client.getLogs({
-      address: pools[0].address,
-      fromBlock: 17390000n,
-      toBlock: finalBlock,
-    })
-    console.log(logs.length)
+  it('pool #2 historical logs (9525)', async () => {
+    await checkHistoricalLogs(env, pools[1], 17390000n, 17410000n)
+  })
 
-    const clientPrimary = createPublicClient({
-      chain: env.chain,
-      transport: env.transport,
-    })
-
-    const extractor = new UniV3Extractor(clientPrimary, 'UniswapV3', '0xbfd8137f7d1516d3ea5ca83523914859ec47f573')
-    await extractor.start()
-    extractor.addPoolWatching(pools[0])
-    for (;;) {
-      if (extractor.getStablePoolCodes().length == 1) break
-      await delay(500)
-    }
-
-    logs.forEach((l) => extractor.processLog(l))
-    for (;;) {
-      if (extractor.getStablePoolCodes().length == 1) break
-      await delay(500)
-    }
-
-    await reset(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`, finalBlock)
-
-    const uniProvider = new UniswapV3Provider(ChainId.ETHEREUM, clientPrimary)
-    await uniProvider.fetchPoolsForToken(USDC[ChainId.ETHEREUM], WETH9[ChainId.ETHEREUM], {
-      has: (poolAddress: string) => poolAddress !== pools[0].address, //!poolSet.has(poolAddress.toLowerCase()),
-    })
-    const providerPools = uniProvider.getCurrentPoolList()
-
-    isSubpool(providerPools[0], extractor.getStablePoolCodes()[0])
+  it('pool #3 historical logs (1953)', async () => {
+    await checkHistoricalLogs(env, pools[2], 17390000n, 17450000n)
   })
 })
