@@ -75,10 +75,10 @@ test('Wrap and unwrap', async ({ page }) => {
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
-  const swapFromBalance = page.getByTestId('swap-from-balance-button')
+  const swapFromBalance = page.locator('[testdata-id=swap-from-balance-button]')
   const swapFromBalanceBefore = await swapFromBalance.textContent()
 
-  const swapToBalance = page.getByTestId('swap-to-balance-button')
+  const swapToBalance = page.locator('[testdata-id=swap-to-balance-button]')
   const swapToBalanceBefore = await swapToBalance.textContent()
 
   await swap({
@@ -109,10 +109,10 @@ test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
 })
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
-  const swapFromBalance = page.getByTestId('swap-from-balance-button')
+  const swapFromBalance = page.locator('[testdata-id=swap-from-balance-button]')
   const swapFromBalanceBefore = await swapFromBalance.textContent()
 
-  const swapToBalance = page.getByTestId('swap-to-balance-button')
+  const swapToBalance = page.locator('[testdata-id=swap-to-balance-button]')
   const swapToBalanceBefore = await swapToBalance.textContent()
 
   await swap({
@@ -271,7 +271,7 @@ async function handleToken(page: Page, currency: Type, type: InputType) {
 }
 
 async function maxInput(page: Page) {
-  const maxButton = page.getByTestId('swap-from-balance-button')
+  const maxButton = page.locator('[testdata-id="swap-from-balance-button]')
   await expect(maxButton).toBeVisible()
   await expect(maxButton).toBeEnabled()
   await maxButton.click()
@@ -281,7 +281,7 @@ async function inputAmount(page: Page, amount?: string, useMax?: boolean) {
   if (useMax) {
     await maxInput(page)
   } else if (amount) {
-    const input0 = page.locator('[testdata-id="swap-from-input"]')
+    const input0 = page.locator('[testdata-id=swap-from-input]')
     await expect(input0).toBeVisible()
     await expect(input0).toBeEnabled()
     await input0.fill(amount)
