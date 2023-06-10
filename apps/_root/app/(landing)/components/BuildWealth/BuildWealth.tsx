@@ -2,7 +2,8 @@ import { Container, Typography } from '@sushiswap/ui'
 import Image from 'next/legacy/image'
 import React, { FC } from 'react'
 
-import { AnimatedTitle, ExpandableCard } from '../'
+import { ExpandableCard } from '../ExpandableCard'
+import { AnimatedTitle } from '../AnimatedTitle'
 
 export const BuildWealth: FC = () => {
   return (

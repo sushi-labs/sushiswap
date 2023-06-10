@@ -3,7 +3,8 @@ import { Button, Container, Typography } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
 import React, { FC } from 'react'
 
-import { AnimatedTitle, ExpandableCard } from '../'
+import { ExpandableCard } from '../ExpandableCard'
+import { AnimatedTitle } from '../AnimatedTitle'
 
 import { SwitchSVG, BentoBoxSVG } from '../svgs'
 

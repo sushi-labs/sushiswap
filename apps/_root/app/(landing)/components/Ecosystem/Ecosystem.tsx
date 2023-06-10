@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import Image from 'next/legacy/image'
 import React, { FC, useState } from 'react'
 
-import { ExpandableCard, ExpendableCardData } from '../'
+import { ExpandableCard, ExpendableCardData } from '../ExpandableCard'
 
 interface TabsExpendableCardData extends ExpendableCardData {
   summary: string

@@ -1,41 +1,33 @@
 'use client'
 
-import '../../variables.css'
-
 import { MotionConfig } from 'framer-motion'
 import React from 'react'
 
-import { App, ThemeProvider } from '@sushiswap/ui'
 import { useIsSmScreen } from '@sushiswap/hooks'
 
 import { BuildFuture, BuildWealth, Header, Ecosystem, Hero, NeedHelp, Story, Partners, Stats } from './components'
 
-const Index = () => {
+export default async function LandingPage() {
   const isSmallScreen = useIsSmScreen()
-
   return (
     <>
-      <ThemeProvider forcedTheme="dark">
-        <Header />
-        <MotionConfig reducedMotion={isSmallScreen ? 'always' : 'user'}>
-          <article className="w-full my-20">
-            <Hero />
-            <Stats />
-
-            <div className="overflow-x-hidden bg-black">
-              <Partners />
-              <Story />
-              <div className="flex flex-col gap-2 border-t border-neutral-200/10">
-                <BuildWealth />
-                <Ecosystem />
-                <BuildFuture />
-                <NeedHelp />
-              </div>
+      <Header />
+      <MotionConfig reducedMotion={isSmallScreen ? 'always' : 'user'}>
+        <article className="w-full my-20">
+          <Hero />
+          <Stats />
+          <div className="overflow-x-hidden bg-black">
+            <Partners />
+            <Story />
+            <div className="flex flex-col gap-2 border-t border-neutral-200/10">
+              <BuildWealth />
+              <Ecosystem />
+              <BuildFuture />
+              <NeedHelp />
             </div>
-          </article>
-        </MotionConfig>
-        <App.Footer />
-      </ThemeProvider>
+          </div>
+        </article>
+      </MotionConfig>
       <style global jsx>{`
         html {
           background-color: black !important;
@@ -62,5 +54,3 @@ const Index = () => {
     </>
   )
 }
-
-export default Index
