@@ -34,8 +34,10 @@ export const getAllPoolsCodeMap = async ({ currencyA, currencyB, chainId }: Omit
     LiquidityProviders.LaserSwap, // thundercore
   ]
 
+  const testLiquidityProviders = [...sushiLiquidityProviders]
+
   const dataFetcher = DataFetcher.onChain(chainId)
-  dataFetcher.startDataFetching(isTest ? sushiLiquidityProviders : liquidityProviders)
+  dataFetcher.startDataFetching(isTest ? testLiquidityProviders : liquidityProviders)
   await dataFetcher.fetchPoolsForToken(currencyA, currencyB)
   dataFetcher.stopDataFetching()
   return dataFetcher.getCurrentPoolCodeMap(currencyA, currencyB)
