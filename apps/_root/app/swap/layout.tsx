@@ -1,9 +1,9 @@
-import { Header } from './Header'
+import { Header } from './header'
 import { Providers } from './providers'
 
-// export const metadata = {
-//   title: 'SushiSwap 🍣 | Sushi',
-// }
+export const metadata = {
+  title: 'SushiSwap 🍣 | Sushi',
+}
 
 export default function SwapLayout({ children }: { children: React.ReactNode }) {
   return (

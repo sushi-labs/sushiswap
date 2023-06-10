@@ -2,8 +2,8 @@
 
 import { Onramper } from '@sushiswap/wagmi/future/components'
 import { ThemeProvider } from '@sushiswap/ui'
-import { WagmiConfig } from '../ui/swap/WagmiProvider'
-import { QueryClientProvider } from '../ui/swap/QueryClientProvider'
+import { WagmiConfig } from '../providers/WagmiProvider'
+import { QueryClientProvider } from '../providers/QueryClientProvider'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (

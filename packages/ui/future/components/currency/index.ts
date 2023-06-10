@@ -1,4 +1,4 @@
-import { ImageProps } from 'next/legacy/image'
+import { ImageProps } from 'next/image'
 import { FC } from 'react'
 
 import { Icon, IconProps } from './Icon'

@@ -82,8 +82,8 @@ export const ThunderCoreSVG = (props: React.ComponentProps<'svg'>) => {
           y2="438.572"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#00FFD5" />
-          <stop offset="1" stop-color="#035CD2" />
+          <stop stopColor="#00FFD5" />
+          <stop offset="1" stopColor="#035CD2" />
         </linearGradient>
       </defs>
     </svg>

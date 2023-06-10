@@ -2,13 +2,21 @@
 const defaultNextConfig = {
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
-  swcMinify: false,
+  // swcMinify: false,
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
   experimental: {
     esmExternals: 'loose',
   },
   images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        port: '',
+        pathname: '/sushi-cdn/**',
+      },
+    ],
     loader: 'cloudinary',
     // path: 'https://cdn.sushi.com/image/fetch/',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
