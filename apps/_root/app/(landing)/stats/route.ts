@@ -11,49 +11,51 @@ import { getTridentExchangeData } from 'functions/graph/queries/trident'
 export const fetchCache = 'auto'
 
 export async function GET() {
-  const getSushiPriceUSD = async () => {
-    {
-      const prices = await fetch('https://token-price.sushi.com/v0/1').then((data) => data.json())
-      return prices[SUSHI_ADDRESS[ChainId.ETHEREUM].toLowerCase()]
-    }
-  }
+  return NextResponse.json({})
 
-  const [sushiPrice, bentoTVL, legacyExchangeData, tridentExchangeData] = await Promise.all([
-    getSushiPriceUSD(),
-    getBentoTVL(),
-    getLegacyExchangeData(),
-    getTridentExchangeData(),
-  ])
-  const totalTVL = bentoTVL + legacyExchangeData.tvlUSD
-  const totalVolume = legacyExchangeData.volumeUSD + tridentExchangeData.volumeUSD
-  const totalPoolCount = legacyExchangeData.pairCount + tridentExchangeData.poolCount
+  // const getSushiPriceUSD = async () => {
+  //   {
+  //     const prices = await fetch('https://token-price.sushi.com/v0/1').then((data) => data.json())
+  //     return prices[SUSHI_ADDRESS[ChainId.ETHEREUM].toLowerCase()]
+  //   }
+  // }
 
-  return NextResponse.json({
-    stats: {
-      price: {
-        formatted: formatUSD(sushiPrice),
-        number: Number(sushiPrice),
-        title: '$SUSHI Price',
-        decimalPlaces: 2,
-      },
-      liquidity: {
-        formatted: formatUSD(totalTVL),
-        number: totalTVL,
-        title: 'Total Liquidity',
-        decimalPlaces: 0,
-      },
-      volume: {
-        formatted: formatUSD(totalVolume),
-        number: totalVolume,
-        title: 'Total Volume',
-        decimalPlaces: 0,
-      },
-      pairs: {
-        formatted: formatNumber(totalPoolCount),
-        number: totalPoolCount,
-        title: 'Total Pairs',
-        decimalPlaces: 0,
-      },
-    },
-  })
+  // const [sushiPrice, bentoTVL, legacyExchangeData, tridentExchangeData] = await Promise.all([
+  //   getSushiPriceUSD(),
+  //   getBentoTVL(),
+  //   getLegacyExchangeData(),
+  //   getTridentExchangeData(),
+  // ])
+  // const totalTVL = bentoTVL + legacyExchangeData.tvlUSD
+  // const totalVolume = legacyExchangeData.volumeUSD + tridentExchangeData.volumeUSD
+  // const totalPoolCount = legacyExchangeData.pairCount + tridentExchangeData.poolCount
+
+  // return NextResponse.json({
+  //   stats: {
+  //     price: {
+  //       formatted: formatUSD(sushiPrice),
+  //       number: Number(sushiPrice),
+  //       title: '$SUSHI Price',
+  //       decimalPlaces: 2,
+  //     },
+  //     liquidity: {
+  //       formatted: formatUSD(totalTVL),
+  //       number: totalTVL,
+  //       title: 'Total Liquidity',
+  //       decimalPlaces: 0,
+  //     },
+  //     volume: {
+  //       formatted: formatUSD(totalVolume),
+  //       number: totalVolume,
+  //       title: 'Total Volume',
+  //       decimalPlaces: 0,
+  //     },
+  //     pairs: {
+  //       formatted: formatNumber(totalPoolCount),
+  //       number: totalPoolCount,
+  //       title: 'Total Pairs',
+  //       decimalPlaces: 0,
+  //     },
+  //   },
+  // })
 }
