@@ -9,7 +9,7 @@ type Currency = {
   List: ListComponent
   Icon: FC<IconProps>
   IconList: FC<IconListProps>
-} & Omit<ImageProps, 'src'>
+} & Omit<ImageProps, 'src' | 'alt'>
 
 export const Currency: Currency = {
   List,

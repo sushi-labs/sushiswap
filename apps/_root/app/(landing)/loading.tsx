@@ -6,7 +6,7 @@ import { SushiIcon } from '@sushiswap/ui'
 
 export default function Loading() {
   return (
-    <div className="fixed inset-0 bg-gray-100 dark:bg-slate-900 z-[1080] flex items-center justify-center">
+    <div className="fixed inset-0 z-[1080] bg-black flex items-center justify-center">
       <Transition
         appear
         show={true}

@@ -85,7 +85,7 @@ function hashStringToColor(str: string) {
   return '#' + ('0' + r.toString(16)).substr(-2) + ('0' + g.toString(16)).substr(-2) + ('0' + b.toString(16)).substr(-2)
 }
 
-export interface IconProps extends Omit<ImageProps, 'src'> {
+export interface IconProps extends Omit<ImageProps, 'src' | 'alt'> {
   currency: Currency
   disableLink?: boolean
 }
@@ -120,7 +120,7 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
     }
 
     return (
-      <ExternalLink className="flex" href={chains[currency.chainId].getTokenUrl(currency.wrapped.address)}>
+      <ExternalLink className="flex" href={Chain.tokenUrl(currency.chainId, currency.wrapped.address)}>
         <div
           className="text-xs text-white font-bold rounded-full flex items-center justify-center bg-gradient-to-b from-gray-300 to-gray-200 dark:from-blue-700 dark:to-blue-900"
           style={{
@@ -151,7 +151,7 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
         key={src}
         onError={() => setError(true)}
         src={src}
-        alt={currency.name}
+        alt={currency.name || currency.symbol || currency.wrapped.address}
         className="rounded-full"
         width={rest.width}
         height={rest.height}
@@ -168,7 +168,7 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
         key={src}
         onError={() => setError(true)}
         src={src}
-        alt={currency.name}
+        alt={currency.name || currency.symbol || currency.wrapped.address}
         className="rounded-full"
         width={rest.width}
         height={rest.height}

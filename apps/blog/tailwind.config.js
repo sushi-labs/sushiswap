@@ -9,8 +9,8 @@ const tailwindConfig = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './ui/**/*.{js,ts,jsx,tsx,mdx}',
-    '../../packages/wagmi/!(node_modules)/**/*.{js,ts,jsx,tsx,mdx}',
-    '../../packages/ui/!(node_modules)/**/*.{js,ts,jsx,tsx,mdx}',
+    './node_modules/@sushiswap/wagmi/!(node_modules)/**/*.{ts,tsx,mdx}',
+    './node_modules/@sushiswap/ui/!(node_modules)/**/*.{ts,tsx,mdx}',
   ],
 }
 

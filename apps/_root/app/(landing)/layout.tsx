@@ -1,4 +1,5 @@
-import '../../styles/variables.css'
+import './globals.css'
+import './variables.css'
 
 import React from 'react'
 import { Header } from './header'
