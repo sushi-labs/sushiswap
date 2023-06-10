@@ -54,7 +54,9 @@ module.exports = {
     '@typescript-eslint/ban-ts-comment': 'warn',
     '@typescript-eslint/no-empty-function': 'warn',
     '@typescript-eslint/no-namespace': 'off',
+    '@typescript-eslint/no-floating-promises': 'warn',
   },
+  parserOptions: { project: ['tsconfig.json'] },
   overrides: [
     // Only uses Testing Library lint rules in test files
     // {

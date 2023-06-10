@@ -15,7 +15,7 @@ import {
   Layout,
   PoolPositionProvider,
   PoolPositionStakedProvider,
-  UnknownTokenAlert
+  UnknownTokenAlert,
 } from '../../components'
 import { PROTOCOL_MAP } from '../../lib/constants'
 import { getPool, getPools, getPoolUrl, Pool, usePool } from '@sushiswap/client'
@@ -118,7 +118,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     .sort(({ liquidityUSD: a }, { liquidityUSD: b }) => {
       return Number(b) - Number(a)
     })
-    .slice(0, 250)
+    .slice(0, 100)
     .map((pool) => ({
       params: { id: pool.id },
     }))

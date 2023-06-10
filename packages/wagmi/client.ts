@@ -20,12 +20,12 @@ export const _createClient = (config?: CreateClientConfig) => {
     ? _createTestClient()
     : createClient({
         provider,
-        logger: {
-          warn: process.env.NODE_ENV !== 'production' ? console.warn : null,
-        },
         // logger: {
-        //   warn: null,
+        //   warn: process.env.NODE_ENV !== 'production' ? console.warn : null,
         // },
+        logger: {
+          warn: null,
+        },
         autoConnect: true,
         connectors: [
           new InjectedConnector({

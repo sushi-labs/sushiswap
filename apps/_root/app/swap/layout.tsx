@@ -1,3 +1,4 @@
+import { Header } from './Header'
 import { Providers } from './providers'
 
 export const metadata = {
@@ -5,5 +6,10 @@ export const metadata = {
 }
 
 export default function SwapLayout({ children }: { children: React.ReactNode }) {
-  return <Providers>{children}</Providers>
+  return (
+    <Providers>
+      <Header />
+      {children}
+    </Providers>
+  )
 }

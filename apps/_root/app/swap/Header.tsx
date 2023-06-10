@@ -1,22 +1,23 @@
+'use client'
+
 import { GlobalNav, NavLink } from '@sushiswap/ui/future/components/GlobalNav'
 import { HeaderNetworkSelector } from '@sushiswap/wagmi/future/components/HeaderNetworkSelector'
 import { UserProfile } from '@sushiswap/wagmi/future/components/UserProfile'
 import React, { FC } from 'react'
 
-import { SUPPORTED_CHAIN_IDS } from '../../config'
-import { Search } from './search/SearchProvider'
 import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
-import { useSwapActions } from './trade/TradeProvider'
 import { Onramper } from '@sushiswap/wagmi/future/components'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { useConnect } from '@sushiswap/wagmi'
-import { useTokenState } from './token/TokenProvider'
+import { SUPPORTED_CHAIN_IDS } from 'config'
+import { Search } from 'ui/swap/search/SearchProvider'
+import { useTokenState } from 'ui/swap/token/TokenProvider'
+import { useSwapActions } from 'ui/swap/trade/TradeProvider'
 
 export const Header: FC = () => {
   const { isLoading } = useConnect()
   const { setNetworks } = useSwapActions()
   const { fromChainId } = useTokenState()
-
   return (
     <Search>
       <GlobalNav

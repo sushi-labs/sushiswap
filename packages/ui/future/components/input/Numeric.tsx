@@ -19,6 +19,7 @@ export type NumericProps = Omit<React.HTMLProps<HTMLInputElement>, 'onChange' | 
 export const Input = forwardRef<HTMLInputElement, NumericProps>(
   (
     {
+      id,
       value,
       onUserInput,
       placeholder = '0',
@@ -54,6 +55,7 @@ export const Input = forwardRef<HTMLInputElement, NumericProps>(
 
     return (
       <input
+        testdata-id={`${id}-input`}
         ref={ref}
         value={value}
         onChange={(event) => {
