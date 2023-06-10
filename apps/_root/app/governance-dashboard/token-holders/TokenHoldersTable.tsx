@@ -5,7 +5,6 @@ import { shortenAddress } from '@sushiswap/format'
 import { ExternalLink } from '@sushiswap/ui/future/components/ExternalLink'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
-import { useBreakpoint } from '@sushiswap/ui/future/lib'
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -48,7 +47,6 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
   const [isPending, startTransition] = useTransition()
   const searchParams = useSearchParams()
   const params = new URLSearchParams(searchParams ?? '')
-  const { isMd } = useBreakpoint('md')
 
   function sortColumn(direction: false | SortDirection) {
     params.set(ORDER_DIRECTION_KEY, direction === 'desc' ? 'asc' : 'desc')
@@ -158,7 +156,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
               isActive={Number(params.get(BALANCE_FILTER.key)) === filter}
               key={filter}
             >
-              {`>=${formatNumber(filter)}`} {isMd && '$SUSHI'}
+              {`>=${formatNumber(filter)}`} <span className="hidden md:inline">$SUSHI</span>
             </FilterButton>
           ))}
         </div>

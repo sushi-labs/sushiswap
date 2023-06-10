@@ -27,7 +27,7 @@ export function GovernanceDateFilters() {
       {({ open }) => (
         <div className="relative mt-1 w-full text-sm font-medium text-slate-300">
           <Listbox.Button className="relative flex h-[42px] w-full items-center justify-between gap-2 rounded-lg bg-slate-800 px-3 text-left">
-            <span>Filter By: {selectedDateFilter.title}</span>
+            <span className="min-w-max">Filter By: {selectedDateFilter.title}</span>
             <ChevronDownIcon
               className={classNames('h-5 w-5 text-slate-400 transition-all', open ? 'rotate-180' : 'rotate-0')}
               aria-hidden="true"

@@ -1,7 +1,6 @@
 'use client'
 
 import { GlobeAltIcon } from '@heroicons/react/24/outline'
-import { useBreakpoint } from '@sushiswap/hooks'
 import { DiscordIcon, GithubIcon, TwitterIcon } from '@sushiswap/ui'
 import React from 'react'
 
@@ -11,18 +10,13 @@ const LINKS = [
   { icon: GithubIcon, title: 'Github', link: 'https://github.com/sushiswap' },
   { icon: GlobeAltIcon, title: 'Website', link: 'https://sushi.com' },
 ]
-export function Socials() {
-  const { isMd } = useBreakpoint('md')
 
+export function Socials() {
   return (
     <div className="mt-5 flex gap-4 md:gap-6">
       {LINKS.map(({ icon: Icon, link, title }, index) => (
         <a href={link} className="cursor-pointer" key={index} title={title}>
-          <Icon
-            width={isMd ? 24 : 20}
-            height={isMd ? 24 : 20}
-            className="text-slate-500 transition ease-in-out hover:text-slate-300"
-          />
+          <Icon className="h-5 w-5 text-slate-500 transition ease-in-out hover:text-slate-300 md:h-6 md:w-6" />
         </a>
       ))}
     </div>

@@ -12,6 +12,7 @@ import { FilterButton } from '../FilterButton'
 import { GovernanceDateFilters } from '../GovernanceDateFilters'
 import { GovernanceItemCard } from '../GovernanceItemCard'
 import { GovernanceTypeFilter } from '../GovernanceTypeFilter'
+import { useIsMounted } from '@sushiswap/hooks'
 
 export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, GovernanceItem[]> }) {
   const [selectedGovType, setSelectedGovType] = useState<GovernanceStatus>('IMPLEMENTATION')
@@ -20,6 +21,7 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
   const searchParams = useSearchParams()
   const params = new URLSearchParams(searchParams ?? '')
   const { isMd } = useBreakpoint('md')
+  const isMounted = useIsMounted()
 
   function filterDate(filterKey: string) {
     params.set(DATE_FILTERS.key, filterKey)
@@ -85,7 +87,7 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
             (posts[key].length ? (
               <CardNavigation
                 key={key}
-                slidesPerView={isMd ? 2 : 1}
+                slidesPerView={isMounted && isMd ? 2 : 1}
                 spaceBetween={12}
                 containerStyle="p-1"
                 itemCount={posts[key].length}
