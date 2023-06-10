@@ -2,7 +2,7 @@ import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
+import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
 import { config } from '@sushiswap/viem-config'
 import { createPublicClient, http, PublicClient } from 'viem'
 import { foundry } from 'viem/chains'
@@ -27,7 +27,9 @@ import { TridentProvider } from './liquidity-providers/Trident'
 import { UbeSwapProvider } from './liquidity-providers/UbeSwap'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import { UniswapV3Provider } from './liquidity-providers/UniswapV3'
+import { DovishV3Provider } from './liquidity-providers/DovishV3'
 import type { PoolCode } from './pools/PoolCode'
+import { LaserSwapV2Provider } from './liquidity-providers/LaserSwap'
 
 // import { create } from 'viem'
 const isTest = process.env['NODE_ENV'] === 'test' || process.env['NEXT_PUBLIC_TEST'] === 'true'
@@ -257,6 +259,24 @@ export class DataFetcher {
     if (this._providerIsIncluded(LiquidityProviders.CurveSwap, providers)) {
       try {
         const provider = new CurveProvider(this.chainId, this.web3Client)
+        this.providers.push(provider)
+      } catch (e: unknown) {
+        // console.warn(e.message)
+      }
+    }
+
+    if (this._providerIsIncluded(LiquidityProviders.DovishV3, providers)) {
+      try {
+        const provider = new DovishV3Provider(this.chainId, this.web3Client)
+        this.providers.push(provider)
+      } catch (e: unknown) {
+        // console.warn(e.message)
+      }
+    }
+
+    if (this._providerIsIncluded(LiquidityProviders.LaserSwap, providers)) {
+      try {
+        const provider = new LaserSwapV2Provider(this.chainId, this.web3Client)
         this.providers.push(provider)
       } catch (e: unknown) {
         // console.warn(e.message)

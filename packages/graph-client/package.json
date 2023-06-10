@@ -32,7 +32,7 @@
     "build": "graphclient build --fileType js --throwOnInvalidConfig && rm -f .graphclient/package.json && tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo .graphclient node_modules",
-    "dev": "graphclient serve-dev", 
+    "dev": "graphclient serve-dev",
     "lint": "TIMING=1 eslint **/*.ts --fix",
     "prepublishOnly": "pnpm build",
     "start": "graphclient serve-prod",

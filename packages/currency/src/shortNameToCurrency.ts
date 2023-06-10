@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { DAI, FRAX, LUSD, MAI, MIM, OP, SUSHI, UNI, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants'
+import { AGEUR, DAI, FRAX, LUSD, MAI, MIM, OP, SUSHI, UNI, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants'
 import { Native } from './Native'
 import { Token } from './Token'
 import { Type } from './Type'
@@ -20,6 +20,7 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     SUSHI: SUSHI[ChainId.ARBITRUM],
     MAI: MAI[ChainId.ARBITRUM],
     UNI: UNI[ChainId.ARBITRUM],
+    AGEUR: AGEUR[ChainId.ARBITRUM],
   },
   [ChainId.ARBITRUM_NOVA]: {
     ETH: Native.onChain(ChainId.ARBITRUM_NOVA),
@@ -42,6 +43,7 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     SUSHI: SUSHI[ChainId.AVALANCHE],
     MAI: MAI[ChainId.AVALANCHE],
     UNI: UNI[ChainId.AVALANCHE],
+    AGEUR: AGEUR[ChainId.AVALANCHE],
   },
   [ChainId.BOBA]: {
     ETH: Native.onChain(ChainId.BOBA),
@@ -82,6 +84,7 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     SUSHI: SUSHI[ChainId.BSC],
     MAI: MAI[ChainId.BSC],
     UNI: UNI[ChainId.BSC],
+    AGEUR: AGEUR[ChainId.BSC],
   },
   [ChainId.BTTC]: {
     BTT: Native.onChain(ChainId.BTTC),
@@ -92,6 +95,7 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     CELO: Native.onChain(ChainId.CELO),
     WCELO: WNATIVE[ChainId.CELO],
     SUSHI: SUSHI[ChainId.CELO],
+    AGEUR: AGEUR[ChainId.CELO],
   },
   [ChainId.ETHEREUM]: {
     // NATIVE: Native.onChain(ChainId.ETHEREUM),
@@ -108,6 +112,7 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     MAI: MAI[ChainId.ETHEREUM],
     UNI: UNI[ChainId.ETHEREUM],
     LUSD: LUSD[ChainId.ETHEREUM],
+    AGEUR: AGEUR[ChainId.ETHEREUM],
   },
   [ChainId.FANTOM]: {
     // NATIVE: Native.onChain(ChainId.FANTOM),
@@ -134,6 +139,7 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     XDAI: Native.onChain(ChainId.GNOSIS),
     WXDAI: WNATIVE[ChainId.GNOSIS],
     SUSHI: SUSHI[ChainId.GNOSIS],
+    AGEUR: AGEUR[ChainId.GNOSIS],
   },
   [ChainId.KAVA]: {
     KAVA: Native.onChain(ChainId.KAVA),
@@ -165,6 +171,7 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     USDT: USDT[ChainId.OPTIMISM],
     OP: OP[ChainId.OPTIMISM],
     SUSHI: SUSHI[ChainId.OPTIMISM],
+    AGEUR: AGEUR[ChainId.OPTIMISM],
   },
   [ChainId.POLYGON]: {
     // NATIVE: Native.onChain(ChainId.POLYGON),
@@ -182,6 +189,7 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     SUSHI: SUSHI[ChainId.POLYGON],
     MAI: MAI[ChainId.POLYGON],
     UNI: UNI[ChainId.POLYGON],
+    AGEUR: AGEUR[ChainId.POLYGON],
   },
   [ChainId.HARMONY]: {
     ONE: Native.onChain(ChainId.HARMONY),

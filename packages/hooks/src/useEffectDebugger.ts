@@ -23,7 +23,7 @@ export const useEffectDebugger: UseEffectDebugger = (effectHook, dependencies, d
   }, {})
 
   if (Object.keys(changedDeps).length) {
-    console.log('[use-effect-debugger] ', changedDeps)
+    console.debug('[use-effect-debugger] ', changedDeps)
   }
 
   useEffect(effectHook, dependencies)

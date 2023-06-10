@@ -1,3 +1,5 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 
-export const useSlippageTolerance = (key: string | undefined = 'swapSlippage') => useLocalStorage(key, '0.5')
+export const useSlippageTolerance = (key: string | undefined = 'swapSlippage') => {
+  return useLocalStorage<number | string>(key, 0.5)
+}

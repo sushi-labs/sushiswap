@@ -111,8 +111,8 @@ importers:
         specifier: 2.14.3
         version: 2.14.3
       '@wagmi/core':
-        specifier: 0.10.10
-        version: 0.10.10(ethers@5.7.2)(react@18.2.0)(typescript@5.0.4)(zod@3.21.4)
+        specifier: 0.10.11
+        version: 0.10.11(ethers@5.7.2)(react@18.2.0)(typescript@5.0.4)(zod@3.21.4)
       '@whatwg-node/fetch':
         specifier: 0.8.4
         version: 0.8.4
@@ -173,7 +173,7 @@ importers:
         version: link:../../packages/database
       '@sushiswap/types':
         specifier: workspace:*
-        version: link:../../packages/types/dist
+        version: link:../../packages/types
       '@sushiswap/validate':
         specifier: workspace:*
         version: link:../../packages/validate
@@ -184,8 +184,8 @@ importers:
         specifier: 2.14.3
         version: 2.14.3
       '@wagmi/core':
-        specifier: 0.10.10
-        version: 0.10.10(ethers@5.7.2)(react@18.2.0)(typescript@5.0.4)(zod@3.21.4)
+        specifier: 0.10.11
+        version: 0.10.11(ethers@5.7.2)(react@18.2.0)(typescript@5.0.4)(zod@3.21.4)
       deepmerge-ts:
         specifier: ^4.3.0
         version: 4.3.0
@@ -413,8 +413,8 @@ importers:
         specifier: 2.14.3
         version: 2.14.3
       '@wagmi/core':
-        specifier: 0.10.10
-        version: 0.10.10(ethers@5.7.2)(react@18.2.0)(typescript@5.0.4)(zod@3.21.4)
+        specifier: 0.10.11
+        version: 0.10.11(ethers@5.7.2)(react@18.2.0)(typescript@5.0.4)(zod@3.21.4)
       zod:
         specifier: 3.21.4
         version: 3.21.4
@@ -536,24 +536,24 @@ importers:
       '@sushiswap/stargate':
         specifier: workspace:*
         version: link:../../packages/stargate
-      '@sushiswap/sushiswap':
-        specifier: workspace:*
-        version: link:../../protocols/sushiswap
       '@sushiswap/sushixswap':
-        specifier: 1.0.1
+        specifier: workspace:*
         version: link:../../protocols/sushixswap
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../../packages/tines
-      '@sushiswap/trident':
-        specifier: 1.0.1
+      '@sushiswap/trident-core':
+        specifier: workspace:*
         version: link:../../protocols/trident
       '@sushiswap/types':
         specifier: workspace:*
-        version: link:../../packages/types/dist
+        version: link:../../packages/types
       '@sushiswap/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@sushiswap/v2-core':
+        specifier: workspace:*
+        version: link:../../protocols/sushiswap
       '@sushiswap/v3-sdk':
         specifier: workspace:*
         version: link:../../packages/v3-sdk
@@ -1182,21 +1182,21 @@ importers:
       '@sushiswap/route-processor':
         specifier: workspace:*
         version: link:../../protocols/route-processor
-      '@sushiswap/sushiswap':
-        specifier: workspace:*
-        version: link:../../protocols/sushiswap
       '@sushiswap/token-lists':
         specifier: workspace:*
         version: link:../../packages/token-lists
-      '@sushiswap/trident':
-        specifier: 1.0.1
+      '@sushiswap/trident-core':
+        specifier: workspace:*
         version: link:../../protocols/trident
       '@sushiswap/types':
         specifier: workspace:*
-        version: link:../../packages/types/dist
+        version: link:../../packages/types
       '@sushiswap/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@sushiswap/v2-core':
+        specifier: workspace:*
+        version: link:../../protocols/sushiswap
       '@sushiswap/v3-sdk':
         specifier: workspace:*
         version: link:../../packages/v3-sdk
@@ -1278,6 +1278,9 @@ importers:
       react-infinite-scroll-component:
         specifier: 6.1.0
         version: 6.1.0(react@18.2.0)
+      react-virtualized-auto-sizer:
+        specifier: 1.0.7
+        version: 1.0.7(react-dom@18.2.0)(react@18.2.0)
       swr:
         specifier: 2.1.5
         version: 2.1.5(react@18.2.0)
@@ -1333,6 +1336,9 @@ importers:
       '@types/react-dom':
         specifier: 18.2.4
         version: 18.2.4
+      '@types/react-virtualized-auto-sizer':
+        specifier: 1.0.1
+        version: 1.0.1
       autoprefixer:
         specifier: 10.4.14
         version: 10.4.14(postcss@8.4.23)
@@ -1421,7 +1427,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/format
       '@sushiswap/furo':
-        specifier: 1.0.2
+        specifier: 1.0.6
         version: link:../../protocols/furo
       '@sushiswap/graph-client':
         specifier: workspace:*
@@ -1707,6 +1713,9 @@ importers:
       '@nomiclabs/hardhat-waffle':
         specifier: 2.0.3
         version: 2.0.3(ethereum-waffle@3.4.4)(ethers@5.7.2)(hardhat-deploy-ethers@0.3.0-beta.13)(hardhat@2.12.7)
+      '@sushiswap/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@tenderly/hardhat-tenderly':
         specifier: 1.3.2
         version: 1.3.2(hardhat@2.12.7)(tenderly@0.0.3)
@@ -2452,9 +2461,15 @@ importers:
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../tines
-      '@sushiswap/trident':
-        specifier: 1.0.1
+      '@sushiswap/trident-core':
+        specifier: workspace:*
         version: link:../../protocols/trident
+      '@sushiswap/types':
+        specifier: workspace:*
+        version: link:../types
+      '@sushiswap/v2-core':
+        specifier: workspace:*
+        version: link:../../protocols/sushiswap
       tiny-invariant:
         specifier: 1.3.1
         version: 1.3.1
@@ -3176,7 +3191,7 @@ importers:
         version: link:../math
       '@sushiswap/types':
         specifier: workspace:*
-        version: link:../types/dist
+        version: link:../types
       '@tanstack/react-query':
         specifier: 4.28.0
         version: 4.28.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
@@ -3402,7 +3417,7 @@ importers:
         specifier: workspace:*
         version: link:../amm
       '@sushiswap/bentobox':
-        specifier: 1.0.1
+        specifier: workspace:*
         version: link:../../protocols/bentobox
       '@sushiswap/chain':
         specifier: workspace:*
@@ -3416,15 +3431,15 @@ importers:
       '@sushiswap/router-config':
         specifier: workspace:*
         version: link:../../config/router
-      '@sushiswap/sushiswap':
-        specifier: workspace:*
-        version: link:../../protocols/sushiswap
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../tines
-      '@sushiswap/trident':
-        specifier: 1.0.1
+      '@sushiswap/trident-core':
+        specifier: workspace:*
         version: link:../../protocols/trident
+      '@sushiswap/v2-core':
+        specifier: workspace:*
+        version: link:../../protocols/sushiswap
       '@sushiswap/v3-sdk':
         specifier: workspace:*
         version: link:../v3-sdk
@@ -3640,8 +3655,8 @@ importers:
         specifier: ^29.2.0
         version: 29.5.1
       '@wagmi/core':
-        specifier: 0.10.10
-        version: 0.10.10(ethers@5.7.2)(react@18.2.0)(typescript@5.0.4)(zod@3.21.4)
+        specifier: 0.10.11
+        version: 0.10.11(ethers@5.7.2)(react@18.2.0)(typescript@5.0.4)(zod@3.21.4)
       eslint:
         specifier: 8.41.0
         version: 8.41.0
@@ -3654,7 +3669,6 @@ importers:
       typescript:
         specifier: 5.0.4
         version: 5.0.4
-    publishDirectory: dist
 
   packages/ui:
     dependencies:
@@ -3935,7 +3949,7 @@ importers:
   packages/validate:
     devDependencies:
       '@sushiswap/chain':
-        specifier: workspace*
+        specifier: workspace:*
         version: link:../chain
       '@sushiswap/eslint-config':
         specifier: workspace:*
@@ -4019,7 +4033,7 @@ importers:
         specifier: workspace:*
         version: link:../format
       '@sushiswap/furo':
-        specifier: 1.0.2
+        specifier: 1.0.6
         version: link:../../protocols/furo
       '@sushiswap/gas':
         specifier: workspace:*
@@ -4042,24 +4056,24 @@ importers:
       '@sushiswap/router-config':
         specifier: workspace:*
         version: link:../../config/router
-      '@sushiswap/sushiswap':
-        specifier: workspace:*
-        version: link:../../protocols/sushiswap
       '@sushiswap/sushixswap':
-        specifier: 1.0.1
+        specifier: workspace:*
         version: link:../../protocols/sushixswap
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../tines
-      '@sushiswap/trident':
-        specifier: 1.0.1
+      '@sushiswap/trident-core':
+        specifier: workspace:*
         version: link:../../protocols/trident
       '@sushiswap/types':
         specifier: workspace:*
-        version: link:../types/dist
+        version: link:../types
       '@sushiswap/ui':
         specifier: workspace:*
         version: link:../ui
+      '@sushiswap/v2-core':
+        specifier: workspace:*
+        version: link:../../protocols/sushiswap
       '@sushiswap/v3-sdk':
         specifier: workspace:*
         version: link:../v3-sdk
@@ -4123,8 +4137,8 @@ importers:
         specifier: 18.2.4
         version: 18.2.4
       '@wagmi/core':
-        specifier: 0.10.10
-        version: 0.10.10(ethers@5.7.2)(react@18.2.0)(typescript@5.0.4)(zod@3.21.4)
+        specifier: 0.10.11
+        version: 0.10.11(ethers@5.7.2)(react@18.2.0)(typescript@5.0.4)(zod@3.21.4)
       eslint:
         specifier: 8.41.0
         version: 8.41.0
@@ -4193,7 +4207,7 @@ importers:
         version: link:../../config/prettier
       '@sushiswap/types':
         specifier: workspace:*
-        version: link:../../packages/types/dist
+        version: link:../../packages/types
       '@sushiswap/typescript-config':
         specifier: workspace:*
         version: link:../../config/typescript
@@ -4242,7 +4256,7 @@ importers:
       '@sushiswap/stargate':
         specifier: workspace:*
         version: link:../../packages/stargate
-      '@sushiswap/sushiswap':
+      '@sushiswap/v2-core':
         specifier: workspace:*
         version: link:../sushiswap
     devDependencies:
@@ -4272,7 +4286,7 @@ importers:
         version: link:../../config/prettier
       '@sushiswap/types':
         specifier: workspace:*
-        version: link:../../packages/types/dist
+        version: link:../../packages/types
       '@sushiswap/typescript-config':
         specifier: workspace:*
         version: link:../../config/typescript
@@ -4285,57 +4299,6 @@ importers:
       ethers:
         specifier: 5.7.2
         version: 5.7.2
-      hardhat:
-        specifier: 2.12.4
-        version: 2.12.4(ts-node@10.9.1)(typescript@5.0.4)
-      hardhat-deploy:
-        specifier: 0.11.22
-        version: 0.11.22
-      ts-node:
-        specifier: 10.9.1
-        version: 10.9.1(@swc/core@1.3.26)(@types/node@18.11.18)(typescript@5.0.4)
-      typescript:
-        specifier: 5.0.4
-        version: 5.0.4
-
-  protocols/masterchef:
-    devDependencies:
-      '@boringcrypto/boring-solidity':
-        specifier: boringcrypto/BoringSolidity#e06e943
-        version: github.com/boringcrypto/BoringSolidity/e06e943
-      '@nomiclabs/hardhat-ethers':
-        specifier: npm:hardhat-deploy-ethers@^0.3.0-beta.13
-        version: /hardhat-deploy-ethers@0.3.0-beta.13(ethers@5.7.2)(hardhat@2.12.4)
-      '@openzeppelin/contracts':
-        specifier: 3.1.0
-        version: 3.1.0
-      '@sushiswap/eslint-config':
-        specifier: workspace:*
-        version: link:../../config/eslint
-      '@sushiswap/hardhat-config':
-        specifier: workspace:*
-        version: link:../../config/hardhat
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
-      '@sushiswap/prettier-config':
-        specifier: workspace:*
-        version: link:../../config/prettier
-      '@sushiswap/types':
-        specifier: workspace:*
-        version: link:../../packages/types/dist
-      '@sushiswap/typescript-config':
-        specifier: workspace:*
-        version: link:../../config/typescript
-      '@tenderly/hardhat-tenderly':
-        specifier: ^1.0.13
-        version: 1.7.4(hardhat@2.12.4)(ts-node@10.9.1)(typescript@5.0.4)
-      '@types/node':
-        specifier: 18.11.18
-        version: 18.11.18
-      eslint:
-        specifier: 8.41.0
-        version: 8.41.0
       hardhat:
         specifier: 2.12.4
         version: 2.12.4(ts-node@10.9.1)(typescript@5.0.4)
@@ -4419,7 +4382,7 @@ importers:
         version: link:../tines-sandbox
       '@sushiswap/types':
         specifier: workspace:*
-        version: link:../../packages/types/dist
+        version: link:../../packages/types
       '@sushiswap/typescript-config':
         specifier: workspace:*
         version: link:../../config/typescript
@@ -4518,10 +4481,7 @@ importers:
         version: 0.3.29(typescript@5.0.4)(zod@3.21.4)
 
   protocols/sushiswap:
-    devDependencies:
-      '@nomiclabs/hardhat-ethers':
-        specifier: npm:hardhat-deploy-ethers@^0.3.0-beta.13
-        version: /hardhat-deploy-ethers@0.3.0-beta.13(ethers@5.7.2)(hardhat@2.12.4)
+    dependencies:
       '@openzeppelin/contracts':
         specifier: 3.1.0
         version: 3.1.0
@@ -4531,21 +4491,25 @@ importers:
       '@sushiswap/currency':
         specifier: workspace:*
         version: link:../../packages/currency
-      '@sushiswap/eslint-config':
-        specifier: workspace:*
-        version: link:../../config/eslint
       '@sushiswap/hardhat-config':
         specifier: workspace:*
         version: link:../../config/hardhat
+      '@sushiswap/types':
+        specifier: 0.0.2
+        version: link:../../packages/types
+    devDependencies:
+      '@nomiclabs/hardhat-ethers':
+        specifier: npm:hardhat-deploy-ethers@^0.3.0-beta.13
+        version: /hardhat-deploy-ethers@0.3.0-beta.13(ethers@5.7.2)(hardhat@2.12.4)
+      '@sushiswap/eslint-config':
+        specifier: workspace:*
+        version: link:../../config/eslint
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
       '@sushiswap/prettier-config':
         specifier: workspace:*
         version: link:../../config/prettier
-      '@sushiswap/types':
-        specifier: workspace:*
-        version: link:../../packages/types/dist
       '@sushiswap/typescript-config':
         specifier: workspace:*
         version: link:../../config/typescript
@@ -4572,16 +4536,13 @@ importers:
         version: 5.0.4
 
   protocols/sushixswap:
-    devDependencies:
+    dependencies:
       '@ethersproject/abi':
         specifier: 5.7.0
         version: 5.7.0
       '@ethersproject/providers':
         specifier: 5.7.2
         version: 5.7.2
-      '@nomiclabs/hardhat-ethers':
-        specifier: npm:hardhat-deploy-ethers@^0.3.0-beta.13
-        version: /hardhat-deploy-ethers@0.3.0-beta.13(ethers@5.7.2)(hardhat@2.12.4)
       '@openzeppelin/contracts':
         specifier: ^4.6.0
         version: 4.9.0
@@ -4600,30 +4561,25 @@ importers:
       '@sushiswap/currency':
         specifier: workspace:*
         version: link:../../packages/currency
-      '@sushiswap/eslint-config':
-        specifier: workspace:*
-        version: link:../../config/eslint
       '@sushiswap/hardhat-config':
         specifier: workspace:*
         version: link:../../config/hardhat
+      '@sushiswap/types':
+        specifier: 0.0.2
+        version: link:../../packages/types
+    devDependencies:
+      '@nomiclabs/hardhat-ethers':
+        specifier: npm:hardhat-deploy-ethers@^0.3.0-beta.13
+        version: /hardhat-deploy-ethers@0.3.0-beta.13(ethers@5.7.2)(hardhat@2.12.4)
+      '@sushiswap/eslint-config':
+        specifier: workspace:*
+        version: link:../../config/eslint
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
       '@sushiswap/prettier-config':
         specifier: workspace:*
         version: link:../../config/prettier
-      '@sushiswap/stargate':
-        specifier: workspace:*
-        version: link:../../packages/stargate
-      '@sushiswap/sushiswap':
-        specifier: workspace:*
-        version: link:../sushiswap
-      '@sushiswap/tines':
-        specifier: workspace:*
-        version: link:../../packages/tines
-      '@sushiswap/types':
-        specifier: workspace:*
-        version: link:../../packages/types/dist
       '@sushiswap/typescript-config':
         specifier: workspace:*
         version: link:../../config/typescript
@@ -4719,7 +4675,7 @@ importers:
         version: link:../../packages/tines
       '@sushiswap/types':
         specifier: workspace:*
-        version: link:../../packages/types/dist
+        version: link:../../packages/types
       '@sushiswap/typescript-config':
         specifier: workspace:*
         version: link:../../config/typescript
@@ -4818,10 +4774,7 @@ importers:
         version: 5.0.4
 
   protocols/trident:
-    devDependencies:
-      '@nomiclabs/hardhat-ethers':
-        specifier: npm:hardhat-deploy-ethers@^0.3.0-beta.13
-        version: /hardhat-deploy-ethers@0.3.0-beta.13(ethers@5.7.2)(hardhat@2.12.4)
+    dependencies:
       '@openzeppelin/contracts':
         specifier: 4.7.3
         version: 4.7.3
@@ -4832,23 +4785,27 @@ importers:
         specifier: 1.0.1
         version: link:../bentobox
       '@sushiswap/currency':
-        specifier: workspace:*
+        specifier: 0.0.5
         version: link:../../packages/currency
+      '@sushiswap/hardhat-config':
+        specifier: 0.1.2
+        version: link:../../config/hardhat
+      '@sushiswap/types':
+        specifier: 0.0.2
+        version: link:../../packages/types
+    devDependencies:
+      '@nomiclabs/hardhat-ethers':
+        specifier: npm:hardhat-deploy-ethers@^0.3.0-beta.13
+        version: /hardhat-deploy-ethers@0.3.0-beta.13(ethers@5.7.2)(hardhat@2.12.4)
       '@sushiswap/eslint-config':
         specifier: workspace:*
         version: link:../../config/eslint
-      '@sushiswap/hardhat-config':
-        specifier: workspace:*
-        version: link:../../config/hardhat
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
       '@sushiswap/prettier-config':
         specifier: workspace:*
         version: link:../../config/prettier
-      '@sushiswap/types':
-        specifier: workspace:*
-        version: link:../../packages/types/dist
       '@sushiswap/typescript-config':
         specifier: workspace:*
         version: link:../../config/typescript
@@ -11552,7 +11509,7 @@ packages:
 
   /@openzeppelin/contracts@3.1.0:
     resolution: {integrity: sha512-dVXDnUKxrAKLzPdCRkz+N8qsVkK1XxJ6kk3zuI6zaQmcKxN7CkizoDP7lXxcs/Mi2I0mxceTRjJBqlzFffLJrQ==}
-    dev: true
+    dev: false
 
   /@openzeppelin/contracts@3.4.1-solc-0.7-2:
     resolution: {integrity: sha512-tAG9LWg8+M2CMu7hIsqHPaTyG4uDzjr6mhvH96LvOpLZZj6tgzTluBt+LsCf1/QaYrlis6pITvpIaIhE+iZB+Q==}
@@ -11563,7 +11520,7 @@ packages:
 
   /@openzeppelin/contracts@4.7.3:
     resolution: {integrity: sha512-dGRS0agJzu8ybo44pCIf3xBaPQN/65AIXNgK8+4gzKd5kbvlqyxryUYVLJv7fK98Seyd2hDZzVEHSWAh0Bt1Yw==}
-    dev: true
+    dev: false
 
   /@openzeppelin/contracts@4.8.0:
     resolution: {integrity: sha512-AGuwhRRL+NaKx73WKRNzeCxOCOCxpaqF+kp8TJ89QzAipSwZy/NoflkWaL9bywXFRhIzXt8j38sfF7KBKCPWLw==}
@@ -11571,6 +11528,7 @@ packages:
 
   /@openzeppelin/contracts@4.9.0:
     resolution: {integrity: sha512-DUP74AFGKlic2sQb/CmgrN2aUPMFGxRrmCTUxLHsiU2RzwWqVuMPZBxiAyvlff6Pea77uylAX6B5x9W6evEbhA==}
+    dev: false
 
   /@peculiar/asn1-schema@2.3.6:
     resolution: {integrity: sha512-izNRxPoaeJeg/AyH8hER6s+H7p4itk+03QCa4sbxI3lNdseQYCuxzgsuNK8bTXChtLTjpJz6NmXKA73qLa3rCA==}
@@ -11691,6 +11649,7 @@ packages:
   /@rari-capital/solmate@6.2.0:
     resolution: {integrity: sha512-g94F+Ra9ixyJyNgvnOIufNjUz488uEG0nxIEEtJ7+g+tA1XGUupRB2kB5b+VO7WYO26RNOVD2fW6xE4e14iWpg==}
     deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+    dev: false
 
   /@react-hook/event@1.2.6(react@18.2.0):
     resolution: {integrity: sha512-JUL5IluaOdn5w5Afpe/puPa1rj8X6udMlQ9dt4hvMuKmTrBS1Ya6sb4sVgvfe2eU4yDuOfAhik8xhbcCekbg9Q==}
@@ -12512,6 +12471,7 @@ packages:
 
   /@sushiswap/core@1.4.2:
     resolution: {integrity: sha512-Khd2i6Bob9uk7dCgVkhUioEoxRP28m6aj25MegAHvnJyxZPVzZDhxSkeL6wdv5MeAp2DwHkYqUq03KDfVTTP4Q==}
+    dev: false
 
   /@sushiswap/default-token-list@41.4.0:
     resolution: {integrity: sha512-2mN2QxAeRWywsWrh598DKqKjOiHlsdi0OXlmcBIlHJY9DYbMz8lZFl9v/2sL3Xj8c1WQ0i9xyktfObv3hhn6KQ==}
@@ -14877,6 +14837,7 @@ packages:
         optional: true
     dependencies:
       typescript: 5.0.4
+    dev: false
 
   /@wagmi/chains@0.2.22(typescript@5.0.4):
     resolution: {integrity: sha512-TdiOzJT6TO1JrztRNjTA5Quz+UmQlbvWFG8N41u9tta0boHA1JCAzGGvU6KuIcOmJfRJkKOUIt67wlbopCpVHg==}
@@ -14922,6 +14883,7 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
+    dev: false
 
   /@wagmi/connectors@0.3.19(@wagmi/core@0.10.11)(ethers@5.7.2)(react@18.2.0)(typescript@5.0.4)(zod@3.21.4):
     resolution: {integrity: sha512-1EnVdNjP5dAfWoW8dlUDZS+Lva8MYabWK+vwzSUBeSyJcAslXInoiHLb+cz9p8oAAqXspcPLRX3XPErYav23gA==}
@@ -15050,6 +15012,7 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
+    dev: false
 
   /@wagmi/core@0.10.11(ethers@5.7.2)(react@18.2.0)(typescript@5.0.4)(zod@3.21.4):
     resolution: {integrity: sha512-WOmG2RG65U6i+p09/aFztFSLPCeC+CYnkPh+OXrxQ8Q3m829983sH7xUTRbFAl561lRevUHmB+XS/na+Oj2bYQ==}
@@ -15102,6 +15065,7 @@ packages:
       - bufferutil
       - lokijs
       - utf-8-validate
+    dev: false
 
   /@walletconnect/core@2.7.2:
     resolution: {integrity: sha512-gInSwh3uLpTEkDGArfOFoOVgiXW+zkZJpGqfARVi5fhSxsnL1jYNpqO2k8KAXUPfB4MIzLyaGruiaywncLAczA==}
@@ -15200,6 +15164,7 @@ packages:
       - encoding
       - lokijs
       - utf-8-validate
+    dev: false
 
   /@walletconnect/ethereum-provider@2.7.2(@web3modal/standalone@2.4.1):
     resolution: {integrity: sha512-bvmutLrKKLlQ1WxKCvvX5p5YVox1D1f3Enp6hzAiZf4taN+n/M5rmwfAcLgLhp4cTAUDhl3zgtZErzDyJnvGvQ==}
@@ -15426,6 +15391,7 @@ packages:
       - bufferutil
       - lokijs
       - utf-8-validate
+    dev: false
 
   /@walletconnect/sign-client@2.7.2:
     resolution: {integrity: sha512-JOYPmrgR4YG4M2comNcXaa8cLIws0ZJj/SCpF0XJzRZP2+OXWouK19UaI32ROQrcwNodBNeYFRfT5hSM5xjfKg==}
@@ -15481,6 +15447,7 @@ packages:
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
       - lokijs
+    dev: false
 
   /@walletconnect/types@2.7.2:
     resolution: {integrity: sha512-1O2UefakZpT0ErRfEAXY7Ls3qdUrKDky/DsK088xR6klyfkQOx+aSVH0fJYLhmnqPTuvp3lrqNbsDc0s6/6nvg==}
@@ -15529,6 +15496,7 @@ packages:
       - encoding
       - lokijs
       - utf-8-validate
+    dev: false
 
   /@walletconnect/universal-provider@2.7.2:
     resolution: {integrity: sha512-5glu7vCmq3SFUYgniICf7CUZMwrd6FNS/qnCjrnfgW8T55Opms9YkhRpWTJFHpBdNRWF7n6z/Kss2J8olKTxKw==}
@@ -15594,6 +15562,7 @@ packages:
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
       - lokijs
+    dev: false
 
   /@walletconnect/utils@2.7.2:
     resolution: {integrity: sha512-b2lU/JoWqwCOLMudPSRTt3pliBnv6qQHCBWiMBYi1vL14AW3usO5QmK1wF90AVwpdPJ7wFZ6MgHymeWWfhYnGQ==}
@@ -29363,6 +29332,7 @@ packages:
       filter-obj: 1.1.0
       split-on-first: 1.1.0
       strict-uri-encode: 2.0.0
+    dev: false
 
   /query-string@7.1.3:
     resolution: {integrity: sha512-hh2WYhq4fi8+b+/2Kg9CEge4fDPvHS534aOOvOZeQ3+Vf2mCFsaFBYj0i+iXcAq6I9Vzp5fjMFBlONvayDC1qg==}
@@ -35090,12 +35060,6 @@ packages:
     resolution: {tarball: https://codeload.github.com/boringcrypto/BoringSolidity/tar.gz/8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc}
     name: '@boringcrypto/boring-solidity'
     version: 1.2.0
-    dev: true
-
-  github.com/boringcrypto/BoringSolidity/e06e943:
-    resolution: {tarball: https://codeload.github.com/boringcrypto/BoringSolidity/tar.gz/e06e943}
-    name: '@boringcrypto/boring-solidity'
-    version: 1.0.4
     dev: true
 
   github.com/ethereumjs/ethereumjs-abi/ee3994657fa7a427238e6ba92a84d0b529bbcde0:
