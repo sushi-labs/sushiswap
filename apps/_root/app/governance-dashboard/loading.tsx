@@ -1,25 +1,37 @@
 'use client'
 
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import React from 'react'
-import { Transition } from '@headlessui/react'
-import { SushiIcon } from '@sushiswap/ui'
 
 export default function Loading() {
   return (
-    <div className="flex items-center justify-center">
-      <Transition
-        appear
-        show
-        unmount={false}
-        enter="ease-in-out duration-[1000ms]"
-        enterFrom="scale-1 saturate-0"
-        enterTo="scale-[0.75] saturate-100"
-        leave="ease-in-out duration-[1000ms]"
-        leaveFrom="scale-[0.75]"
-        leaveTo="scale-1"
-      >
-        <SushiIcon width={256} height={256} className="sm:mr-2" />
-      </Transition>
+    <div className="space-y-10">
+      <div className="flex justify-between">
+        <Skeleton.Box className="h-10 w-64 rounded-lg" />
+        <Skeleton.Box className="h-10 w-40 rounded-lg" />
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-3">
+        <div className="space-y-2">
+          <Skeleton.Box className="h-40 w-full rounded-lg" />
+          <Skeleton.Box className="h-8 w-full rounded-lg" />
+        </div>
+        <div className="space-y-2">
+          <Skeleton.Box className="h-40 w-full rounded-lg" />
+          <Skeleton.Box className="h-8 w-full rounded-lg" />
+        </div>
+        <div className="space-y-2">
+          <Skeleton.Box className="h-40 w-full rounded-lg" />
+          <Skeleton.Box className="h-8 w-full rounded-lg" />
+        </div>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-4">
+        <Skeleton.Box className="h-32 w-full rounded-lg" />
+        <Skeleton.Box className="h-32 w-full rounded-lg" />
+        <Skeleton.Box className="h-32 w-full rounded-lg" />
+        <Skeleton.Box className="h-32 w-full rounded-lg" />
+      </div>
     </div>
   )
 }
