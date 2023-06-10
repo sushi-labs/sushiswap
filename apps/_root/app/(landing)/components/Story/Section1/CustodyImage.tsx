@@ -1,10 +1,10 @@
 import { useIsSmScreen } from '@sushiswap/hooks'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import Image from 'next/legacy/image'
+import { motion, useScroll, useTransform, MotionTransform } from 'framer-motion'
+import Image from 'next/image'
 import { useRef } from 'react'
 
-function transformTemplate(transformProps: any) {
-  return `perspective(${transformProps.y.toString()}) rotateX(${transformProps.rotateX.toString()}) scale(${transformProps.scale.toString()})`
+function transformTemplate(transformProps: MotionTransform) {
+  return `perspective(${transformProps?.y?.toString()}) rotateX(${transformProps?.rotateX?.toString()}) scale(${transformProps?.scale?.toString()})`
 }
 
 export const CustodyImage = () => {

@@ -3,7 +3,7 @@ import { Button, Container, Typography } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
 import { FC } from 'react'
 
-import { ExpandableCard, ExpendableCardData } from '../../ExpandableCard/ExpandableCard'
+import { ExpandableCard, ExpendableCardData } from '../../ExpandableCard'
 import { GuardImage } from './GuardImage'
 
 const DATA: ExpendableCardData = {

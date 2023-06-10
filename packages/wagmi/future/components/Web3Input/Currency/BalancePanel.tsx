@@ -6,6 +6,7 @@ import { CurrencyInputProps } from './CurrencyInput'
 import { JSBI } from '@sushiswap/math'
 import { WalletIcon } from '@sushiswap/ui/future/components/icons'
 import { classNames } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 type BalancePanel = Pick<CurrencyInputProps, 'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'loading'> & {
   id?: string
@@ -47,8 +48,10 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
 
   return (
     <button
-      data-testid={`${id}-balance-button`}
+      id={`${id}-balance-button`}
+      testdata-id={`${id}-balance-button`}
       type="button"
+      // variant="empty"
       onClick={onClick}
       className={classNames(
         type === 'INPUT'

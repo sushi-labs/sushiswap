@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/router",
-  "version": "0.0.5",
+  "version": "0.0.8",
   "description": "Sushi Router",
   "keywords": [
     "sushi",
@@ -33,7 +33,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "viem": "0.3.29",
+    "viem": "1.0.2",
     "node-fetch": "2.6.6",
     "date-fns": "2.29.3",
     "@ethersproject/abi": "5.7.0",
@@ -42,14 +42,14 @@
     "@ethersproject/solidity": "5.7.0",
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/amm": "workspace:*",
-    "@sushiswap/bentobox": "1.0.1",
+    "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@sushiswap/tines": "workspace:*",
-    "@sushiswap/sushiswap": "workspace:*",
-    "@sushiswap/trident": "1.0.1",
+    "@sushiswap/v2-core": "workspace:*",
+    "@sushiswap/trident-core": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
     "ethers": "5.7.2",

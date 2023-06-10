@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Token, USDC_ADDRESS, WETH9, WETH9_ADDRESS } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import { stablePoolFactoryAddress } from '@sushiswap/trident'
+import { stablePoolFactoryAddress } from '@sushiswap/trident-core'
 
 import { InsufficientInputAmountError } from '../errors'
 import { computeStablePoolAddress } from './computeStablePoolAddress'

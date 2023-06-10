@@ -20,7 +20,7 @@ const baseURL = `http://localhost:${PORT}`
 const config: PlaywrightTestConfig = {
   testDir: path.join(__dirname, 'test'),
   /* Maximum time one test can run for. */
-  timeout: 120 * 1_000,
+  timeout: 180 * 1_000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
@@ -44,7 +44,7 @@ const config: PlaywrightTestConfig = {
     baseURL,
 
     headless: !process.env.CI ? false : true,
-    viewport: { width: 1280, height: 720 },
+    viewport: { width: 1280, height: 720 }, // most common desktop resolution
     ignoreHTTPSErrors: true,
     // video: 'on',
     colorScheme: 'dark',

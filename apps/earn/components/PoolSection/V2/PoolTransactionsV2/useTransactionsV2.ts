@@ -160,12 +160,16 @@ function useTransactionsV2(pool: Pool | undefined | null, poolId: string, opts: 
         const mints = (transaction.mints as NonNullable<(typeof transaction.mints)[0]>[]).map((mint) => ({
           ...mint,
           sender: String(mint.sender),
+          amount0: Number(mint.amount0),
+          amount1: Number(mint.amount1),
           type: TransactionType.Mint as const,
         }))
 
         const burns = (transaction.burns as NonNullable<(typeof transaction.burns)[0]>[]).map((burn) => ({
           ...burn,
           sender: String(burn.sender),
+          amount0: Number(burn.amount0),
+          amount1: Number(burn.amount1),
           type: TransactionType.Burn as const,
         }))
 
@@ -173,8 +177,8 @@ function useTransactionsV2(pool: Pool | undefined | null, poolId: string, opts: 
           ...swap,
           sender: String(swap.sender),
           to: String(swap.to),
-          amount0: Number(swap.amountIn),
-          amount1: Number(swap.amountOut),
+          amountIn: Number(swap.amountIn),
+          amountOut: Number(swap.amountOut),
           type: TransactionType.Swap as const,
         }))
 
@@ -185,8 +189,6 @@ function useTransactionsV2(pool: Pool | undefined | null, poolId: string, opts: 
             createdAtTimestamp: Number(transaction.createdAtTimestamp),
             createdAtBlock: Number(transaction.createdAtBlock),
             ...subtransaction,
-            amount0: Number(subtransaction.amount0), // Amount.fromRawAmount(pool.token0, subtransaction.amount0),
-            amount1: Number(subtransaction.amount1), // Amount.fromRawAmount(pool.token1, subtransaction.amount1),
             amountUSD: Number(subtransaction.amountUSD),
             logIndex: Number(subtransaction.logIndex),
           }))

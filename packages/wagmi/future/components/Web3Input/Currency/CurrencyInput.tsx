@@ -102,7 +102,7 @@ export const Component: FC<CurrencyInputProps> = ({
           </div>
         ) : (
           <Input.Numeric
-            testdata-id={`${id}-input`}
+            id={id}
             ref={inputRef}
             variant="unstyled"
             disabled={disabled}
@@ -124,6 +124,7 @@ export const Component: FC<CurrencyInputProps> = ({
             {({ setOpen }) => (
               <button
                 id={`${id}-button`}
+                type="button"
                 testdata-id={`${id}-button`}
                 onClick={(e) => {
                   setOpen(true)

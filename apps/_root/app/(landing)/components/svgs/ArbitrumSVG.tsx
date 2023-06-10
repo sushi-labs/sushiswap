@@ -3,6 +3,7 @@ import React from 'react'
 export const ArbitrumSVG = (props: React.ComponentProps<'svg'>) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" {...props} x="0" y="0" viewBox="0 0 952 261.35">
+      <title>Arbitrum</title>
       <g>
         <g>
           <g>

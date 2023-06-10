@@ -11,7 +11,7 @@ import {
 import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
-import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
+import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap/v2-core'
 import { RouteStatus } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'

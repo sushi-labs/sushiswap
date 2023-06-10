@@ -2,7 +2,7 @@
 const defaultNextConfig = {
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
-  // swcMinify: false,
+  swcMinify: false,
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
   experimental: {

@@ -23,6 +23,10 @@ export const SUPPORTED_CHAINS = [
   ChainId.ARBITRUM_NOVA,
   ChainId.THUNDERCORE,
   ChainId.OPTIMISM,
+  ChainId.MOONBEAM,
+  ChainId.BOBA_BNB,
+  ChainId.BTTC,
+  ChainId.POLYGON_ZKEVM,
 ] as const
 
 export type SupportedChainIds = typeof SUPPORTED_CHAINS

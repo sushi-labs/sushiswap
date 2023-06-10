@@ -43,6 +43,8 @@ export const useClientTrade = (variables: UseTradeParams) => {
       },
     ],
     queryFn: async () => {
+      console.log('useClientTrade')
+
       if (
         !poolsCodeMap ||
         (!isRouteProcessorChainId(chainId) && !isRouteProcessor3ChainId(chainId)) ||
@@ -65,6 +67,8 @@ export const useClientTrade = (variables: UseTradeParams) => {
           functionName: 'processRoute',
           overrides: undefined,
         }
+
+      console.log('useClientTrade 2')
 
       const route = Router.findSpecialRoute(
         poolsCodeMap,
@@ -94,6 +98,9 @@ ${logPools}
       // )
 
       let args = undefined
+
+      console.log({ recipient })
+
       if (recipient) {
         if (isRouteProcessor3ChainId(chainId)) {
           args = Router.routeProcessor2Params(

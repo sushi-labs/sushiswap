@@ -80,15 +80,19 @@ export function getGraphPoolsUrl(poolIds: string[]) {
 // Returns the Pools type, to make everyone's life easier
 // Updates possibly stale values with subgraph values
 export const useGraphPools = (poolIds: string[]): Pools => {
-  const { data: graphPools, isLoading: isGraphPoolsLoading } = useSWR<Awaited<ReturnType<typeof getGraphPools>>>(
+  const {
+    data: graphPools,
+    isLoading: isGraphPoolsLoading,
+    error: graphPoolsError,
+  } = useSWR<Awaited<ReturnType<typeof getGraphPools>>>(
     poolIds.length > 0 ? getGraphPoolsUrl(poolIds) : null,
-    async (url) => fetch(url).then((data) => data.json())
+    async () => getGraphPools(poolIds)
   )
 
-  const { data: pools, isLoading: isPoolsLoading } = usePools({ args: { ids: poolIds } })
+  const { data: pools, isLoading: isPoolsLoading, error: poolsError } = usePools({ args: { ids: poolIds } })
 
   return useMemo(() => {
-    if (isGraphPoolsLoading || isPoolsLoading) {
+    if ((isGraphPoolsLoading && !graphPoolsError) || (isPoolsLoading && !poolsError)) {
       return []
     }
 

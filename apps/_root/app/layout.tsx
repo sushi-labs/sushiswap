@@ -5,9 +5,9 @@ import React from 'react'
 import { Providers } from './providers'
 // import { Analytics } from '@vercel/analytics/react'
 
-export const metadata = {
-  title: 'Sushi 🍣',
-}
+// export const metadata = {
+//   title: 'Sushi 🍣',
+// }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

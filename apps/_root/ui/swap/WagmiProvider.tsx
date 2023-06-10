@@ -1,7 +1,7 @@
 import { client } from '@sushiswap/wagmi'
 import { FC, ReactNode } from 'react'
-import { WagmiConfig } from '@sushiswap/wagmi'
+import { WagmiConfig as _WagmiConfig } from '@sushiswap/wagmi'
 
-export const WagmiProvider: FC<{ children: ReactNode }> = ({ children }) => (
-  <WagmiConfig client={client}>{children}</WagmiConfig>
+export const WagmiConfig: FC<{ children: ReactNode }> = ({ children }) => (
+  <_WagmiConfig client={client}>{children}</_WagmiConfig>
 )

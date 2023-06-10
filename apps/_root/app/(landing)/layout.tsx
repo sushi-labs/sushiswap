@@ -1,9 +1,16 @@
 import React from 'react'
+import { Header } from './header'
+import { Providers } from './providers'
 
 export const metadata = {
   title: 'Sushi 🍣',
 }
 
 export default function LandingLayout({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-screen">{children}</div>
+  return (
+    <Providers>
+      <Header />
+      {children}
+    </Providers>
+  )
 }

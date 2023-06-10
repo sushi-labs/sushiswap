@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
-import { useRouter } from 'next/router'
+import { useSearchParams } from 'next/navigation'
 import { defaultQuoteCurrency, Native, Token } from '@sushiswap/currency'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Button } from '@sushiswap/ui/future/components/button'
@@ -15,8 +15,19 @@ import { DangerousIcon, GoPlusLabsIcon } from '@sushiswap/ui/icons'
 import { Link } from '@sushiswap/ui'
 
 export const TokenNotFoundDialog = () => {
-  const { query } = useRouter()
-  const { fromChainId, fromCurrency, toChainId, toCurrency } = queryParamsSchema.parse(query)
+  const searchParams = useSearchParams()
+  const _fromChainId = searchParams?.get('fromChainId')
+  const _fromCurrency = searchParams?.get('fromCurrency')
+  const _toChainId = searchParams?.get('toChainId')
+  const _toCurrency = searchParams?.get('toCurrency')
+
+  const { fromChainId, fromCurrency, toChainId, toCurrency } = queryParamsSchema.parse({
+    fromChainId: _fromChainId,
+    fromCurrency: _fromCurrency,
+    toChainId: _toChainId,
+    toCurrency: _toCurrency,
+  })
+
   const { network0, network1 } = useSwapState()
   const { setToken0, setToken1, setTokens } = useSwapActions()
   const { mutate: customTokensMutate, hasToken } = useCustomTokens()
@@ -50,8 +61,7 @@ export const TokenNotFoundDialog = () => {
   )
 
   const reset = useCallback(() => {
-    // @ts-ignore
-    setTokens(Native.onChain(network0), defaultQuoteCurrency[network1])
+    setTokens(Native.onChain(network0), defaultQuoteCurrency[network1 as keyof typeof defaultQuoteCurrency])
   }, [network0, network1, setTokens])
 
   const { data: tokenSecurity } = useTokenSecurity({

@@ -3,7 +3,6 @@ import React from 'react'
 export const BobaSVG = (props: React.ComponentProps<'svg'>) => {
   return (
     <svg
-      id="Layer_1"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
       x="0px"
@@ -12,6 +11,7 @@ export const BobaSVG = (props: React.ComponentProps<'svg'>) => {
       xmlSpace="preserve"
       {...props}
     >
+      <title>Boba</title>
       <style type="text/css">{'\n\t.st0{fill:#CCFF00;}\n\t.st1{fill:#1CD8D2;}\n'}</style>
       <path
         className="st0"

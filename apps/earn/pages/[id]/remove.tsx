@@ -108,7 +108,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     .sort(({ liquidityUSD: a }, { liquidityUSD: b }) => {
       return Number(b) - Number(a)
     })
-    .slice(0, 250)
+    .slice(0, 50)
     .map((pool) => ({
       params: { id: pool.id },
     }))

@@ -41,9 +41,9 @@
     "@sushiswap/math": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/route-processor": "workspace:*",
-    "@sushiswap/sushiswap": "workspace:*",
+    "@sushiswap/v2-core": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",
-    "@sushiswap/trident": "1.0.1",
+    "@sushiswap/trident-core": "workspace:*",
     "@sushiswap/types": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
@@ -75,7 +75,7 @@
     "react-infinite-scroll-component": "6.1.0",
     "react-virtualized-auto-sizer": "1.0.7",
     "swr": "2.1.5",
-    "wagmi": "0.12.12",
+    "wagmi": "0.12.13",
     "zod": "3.21.4"
   },
   "devDependencies": {

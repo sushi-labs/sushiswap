@@ -20,7 +20,7 @@
   "dependencies": {
     "eslint-config-next": "13.4.4",
     "eslint-config-prettier": "8.8.0",
-    "eslint-config-turbo": "1.9.9",
+    "eslint-config-turbo": "1.10.3",
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-simple-import-sort": "10.0.0",
     "eslint-plugin-testing-library": "5.11.0",
