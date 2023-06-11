@@ -78,8 +78,10 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
     const cAmount = tryParseAmount(amount, _currency)
     if (!_fundSource || !balance?.[_fundSource] || !cAmount) return
     if (balance[_fundSource].lessThan(cAmount)) {
+      // @ts-ignore
       setError('FORM_ERROR', { type: 'min', message: 'Insufficient Balance' })
     } else {
+      // @ts-ignore
       clearErrors('FORM_ERROR')
     }
   }, [_currency, _fundSource, amount, balance, clearErrors, setError])

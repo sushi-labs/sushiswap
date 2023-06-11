@@ -21,7 +21,6 @@ import SEO from '../next-seo.config.mjs'
 import store from '../store'
 import { PersistQueryClientProvider } from '../components/PersistQueryClientProvider'
 import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'
-import { ToastContainer } from '@sushiswap/ui/future/components/toast'
 
 declare global {
   interface Window {
