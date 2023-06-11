@@ -53,6 +53,7 @@ export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
                       isError={Boolean(error?.message)}
                       caption={error?.message ? error?.message : 'The end date of the cliff.'}
                       id="create-single-vest-cliff-date"
+                      testdata-id="create-single-vest-cliff-date"
                       label={
                         <>
                           End date<sup>*</sup>

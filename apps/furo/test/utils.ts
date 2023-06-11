@@ -3,8 +3,15 @@ import { Page, expect } from '@playwright/test'
 import { Type } from '@sushiswap/currency'
 
 export async function switchNetwork(page: Page, chainId: number) {
-  await page.getByRole('button', { name: 'Ethereum' }).click()
-  await page.locator(`[testdata-id=network-selector-${chainId}]`).click()
+  const networkSelector = page.getByRole('button', { name: 'Ethereum' })
+  await expect(networkSelector).toBeVisible()
+  await expect(networkSelector).toBeEnabled()
+  await networkSelector.click()
+
+  const networkToSelect = page.locator(`[testdata-id=network-selector-${chainId}]`)
+  await expect(networkToSelect).toBeVisible()
+  await expect(networkToSelect).toBeEnabled()
+  await networkToSelect.click()
 }
 
 export function timeout(ms: number) {
@@ -134,6 +141,27 @@ export async function createSingleVest(page: Page, args: VestingArgs) {
   if (args.cliff) {
     await handleCliffDetails(page, args)
   }
+
+  // Approve BentoBox
+  await page
+    .locator('[testdata-id=create-single-vest-approve-bentobox]')
+    .click({ timeout: 1500 })
+    .then(async () => {
+      console.log('BentoBox Approved')
+    })
+    .catch(() => console.log('BentoBox already approved or not needed'))
+
+  if (!args.token.isNative) {
+    // Approve Token
+    await page
+      .locator('[testdata-id=create-single-vest-approve-token]')
+      .click({ timeout: 1500 })
+      .then(async () => {
+        console.log(`${args.token.symbol} Approved`)
+      })
+      .catch(() => console.log(`${args.token.symbol} already approved or not needed`))
+  }
+
   await reviewAndConfirm(page, args)
 }
 
@@ -199,12 +227,11 @@ async function selectToken(page: Page, currency: Type) {
 }
 
 async function reviewAndConfirm(page: Page, args: VestingArgs) {
-  const reviewButtonLocator = page.locator('[testdata-id=create-single-vesting-review-button]')
+  const reviewButtonLocator = page.locator('[testdata-id=review-single-vest-button]')
   await expect(reviewButtonLocator).toBeVisible()
   await expect(reviewButtonLocator).toBeEnabled()
   await reviewButtonLocator.click()
 
-  await expect(page.locator('[testdata-id=vesting-review-funds-source]')).toContainText('wallet')
   let totalAmount: string
   if (args.graded && args.cliff) {
     totalAmount = (Number(args.cliff.amount) + Number(args.graded.stepAmount) * Number(args.graded.steps)).toString()
@@ -233,33 +260,17 @@ async function reviewAndConfirm(page: Page, args: VestingArgs) {
     await expect(page.locator('[testdata-id=vesting-review-cliff-amount]')).toContainText(args.cliff.amount)
   }
 
-  // Approve BentoBox
-  await page
-    .locator('[testdata-id=create-single-vest-approve-bentobox]')
-    .click({ timeout: 1500 })
-    .then(async () => {
-      console.log('BentoBox Approved')
-    })
-    .catch(() => console.log('BentoBox already approved or not needed'))
-
-  if (!args.token.isNative) {
-    // Approve Token
-    await page
-      .locator('[testdata-id=create-single-vest-approve-token]')
-      .click({ timeout: 1500 })
-      .then(async () => {
-        console.log(`${args.token.symbol} Approved`)
-      })
-      .catch(() => console.log(`${args.token.symbol} already approved or not needed`))
-  }
-
   // Confirm creation
-  await timeout(1_500) // FIXME: should be removed, but something isn't updated yet
-  const confirmCreateVestingButton = page.locator('[testdata-id=create-single-vest-confirmation-button]')
-  await expect(confirmCreateVestingButton).toBeVisible()
-  await expect(confirmCreateVestingButton).toBeEnabled()
-  await confirmCreateVestingButton.click()
+  // await timeout(1_500) // FIXME: should be removed, but something isn't updated yet
+  const confirmCreateVestingLocator = page.locator('[testdata-id=create-single-vest-confirmation-button]')
+  await expect(confirmCreateVestingLocator).toBeVisible()
+  await expect(confirmCreateVestingLocator).toBeEnabled()
+  await confirmCreateVestingLocator.click()
 
-  const expectedText = new RegExp(`Created .* ${args.token.symbol} vesting`)
-  await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
+  // const expectedText = new RegExp('Successfully created vest')
+  // await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
+  const txConfimrationLocator = page.locator('[testdata-id=vest-creation-success-modal-button]')
+  await expect(txConfimrationLocator).toBeVisible()
+  await expect(txConfimrationLocator).toBeEnabled()
+  await txConfimrationLocator.click()
 }

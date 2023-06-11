@@ -226,7 +226,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                 <Checker.Success tag={APPROVE_TAG}>
                   <Modal.Trigger tag={MODAL_ID}>
                     {({ open }) => (
-                      <Button type="button" fullWidth size="xl" onClick={open} testId="create-single-vest-confirmation">
+                      <Button type="button" fullWidth size="xl" onClick={open} testdata-id="review-single-vest-button">
                         {isLoading ? <Dots>Confirm transaction</Dots> : 'Review Vesting'}
                       </Button>
                     )}
@@ -258,7 +258,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                   </List.KeyValue>
                   {_totalAmount && (
                     <List.KeyValue flex title="Total amount">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2" testdata-id="vesting-review-total-amount">
                         <Currency.Icon currency={_totalAmount.currency} width={18} height={18} />
                         {_totalAmount?.toSignificant(6)} {_totalAmount.currency.symbol}
                       </div>
@@ -278,7 +278,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                       {format(cliff.cliffEndDate, 'dd MMM yyyy')}
                     </List.KeyValue>
                     <List.KeyValue flex title="Cliff amount">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2" testdata-id="vesting-review-cliff-amount">
                         <Currency.Icon currency={_cliffAmount.currency} width={18} height={18} />
                         {_cliffAmount?.toSignificant(6)} {_cliffAmount.currency.symbol}
                       </div>
@@ -290,17 +290,21 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                 <List.Control>
                   {_stepAmount && (
                     <List.KeyValue flex title="Payout per unlock">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2" testdata-id="vesting-review-payment-per-period">
                         <Currency.Icon currency={_stepAmount.currency} width={18} height={18} />
                         {_stepAmount?.toSignificant(6)} {_stepAmount.currency.symbol}
                       </div>
                     </List.KeyValue>
                   )}
-                  <List.KeyValue flex title="Number of unlocks">
-                    {stepPayouts}
+                  <List.KeyValue flex title="Number of unlocks" testdata-id="vesting-review-amount-of-periods">
+                    <div className="flex items-center gap-2" testdata-id="vesting-review-amount-of-periods">
+                      {stepPayouts}
+                    </div>
                   </List.KeyValue>
-                  <List.KeyValue flex title="Unlock frequency">
-                    {stepConfig}
+                  <List.KeyValue flex title="Unlock frequency" testdata-id="vesting-review-period-length">
+                    <div className="flex items-center gap-2" testdata-id="vesting-review-period-length">
+                      {stepConfig}
+                    </div>
                   </List.KeyValue>
                 </List.Control>
               </List>
@@ -314,9 +318,9 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                   onClick={() => sendTransactionAsync?.().then(() => confirm())}
                   disabled={isError}
                   color={isError ? 'red' : 'blue'}
-                  testId="confirm-swap"
+                  testdata-id="create-single-vest-confirmation-button"
                 >
-                  {isError ? 'Shoot! Something went wrong :(' : isLoading ? <Dots>Create</Dots> : `Create`}
+                  {isError ? 'Shoot! Something went wrong :(' : isLoading ? <Dots>Create</Dots> : 'Create'}
                 </Button>
               </div>
             </div>
@@ -326,11 +330,11 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
       <Modal.Confirm tag={MODAL_ID} variant="transparent">
         {({ close }) => (
           <TxStatusModalContent
-            testId="vest-confirmation-modal"
+            testId="vest-creation-success-modal"
             tag={MODAL_ID}
             chainId={chainId}
             hash={data?.hash}
-            successMessage={`Successfully created vest`}
+            successMessage={'Successfully created vest'}
             onClose={close}
           />
         )}

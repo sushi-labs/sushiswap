@@ -63,7 +63,7 @@ export const TxStatusModalContent: FC<TxStatusModalContentProps> = ({
             to be confirmed on the blockchain.
           </h1>
         ) : status === 'success' ? (
-          <h1 className="flex flex-wrap items-center justify-center text-center gap-1 text-lg font-semibold">
+          <h1 className="flex flex-wrap items-center justify-center gap-1 text-lg font-semibold text-center">
             {successMessage}
           </h1>
         ) : (
