@@ -6,11 +6,11 @@ import { Amount, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { JSBI, ZERO } from '@sushiswap/math'
 import { classNames, Dots } from '@sushiswap/ui'
-import { _useSendTransaction as useSendTransaction, useAccount, useContract } from '@sushiswap/wagmi'
+import { _useSendTransaction as useSendTransaction, useAccount, useContract, Address } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { Button } from '@sushiswap/ui/future/components/button/Button'
-import { Stream } from '../lib'
+import { Stream, approveBentoBoxAction, batchAction } from '../lib'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
@@ -18,6 +18,7 @@ import { Dialog } from '@sushiswap/ui/future/components/dialog/Dialog'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { Switch } from '@sushiswap/ui/future/components/Switch'
+import { Signature } from '@ethersproject/bytes'
 
 interface UpdateModalProps {
   stream: Stream
@@ -34,6 +35,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
   const [changeEndDate, setChangeEndDate] = useState(false)
   const [amount, setAmount] = useState<string>('')
   const [endDate, setEndDate] = useState<Date | null>(null)
+  const [signature, setSignature] = useState<Signature>()
   const contract = useContract({
     address: contractAddress,
     abi: abi,
@@ -84,21 +86,30 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
 
   const prepare = useCallback(
     (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!stream?.canUpdate(address) || !stream || !chainId || !contractAddress) return
+      if (!stream?.canUpdate(address) || !stream || !chainId || !contractAddress || !contract) return
       if (topUp && !amount) return
       if (changeEndDate && !endDate) return
+
+      const actions: string[] = []
+      if (signature) {
+        actions.push(approveBentoBoxAction({ contract, user: address as Address, signature }))
+      }
+
       const difference =
         changeEndDate && endDate ? Math.floor((endDate?.getTime() - stream?.endTime.getTime()) / 1000) : 0
       const topUpAmount = amountAsEntity?.greaterThan(0) ? amountAsEntity.quotient.toString() : '0'
+
+      actions.push(contract.interface.encodeFunctionData('updateStream', [
+        BigNumber.from(stream.id),
+        BigNumber.from(topUp ? topUpAmount : '0'),
+        difference,
+        false,
+      ]))
+
       setRequest({
         from: address,
         to: contractAddress,
-        data: contract?.interface.encodeFunctionData('updateStream', [
-          BigNumber.from(stream.id),
-          BigNumber.from(topUp ? topUpAmount : '0'),
-          difference,
-          false,
-        ]),
+        data: batchAction({ contract, actions }),
       })
     },
     [
@@ -112,6 +123,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
       endDate,
       stream,
       topUp,
+      signature
     ]
   )
 
@@ -232,26 +244,37 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
                       </Button>
                     }
                   >
-                    <Checker.ApproveERC20
-                      id="approve-erc20-update-stream"
+                    <Checker.ApproveBentobox
                       type="button"
-                      size="xl"
                       fullWidth
-                      amount={amountAsEntity}
-                      contract={bentoBoxV1Address[chainId]}
-                      enabled={topUp}
+                      id="furo-update-stream-approve-bentobox"
+                      size="xl"
+                      chainId={chainId as BentoBoxV1ChainId}
+                      contract={contractAddress as Address}
+                      onSignature={setSignature}
+                      className="col-span-3 md:col-span-2"
                     >
-                      <Button
+                      <Checker.ApproveERC20
+                        id="approve-erc20-update-stream"
                         type="button"
                         size="xl"
                         fullWidth
-                        disabled={isWritePending || (!topUp && !changeEndDate)}
-                        onClick={() => sendTransaction?.()}
-                        testId="stream-update-confirmation"
+                        amount={amountAsEntity}
+                        contract={bentoBoxV1Address[chainId] as Address}
+                        enabled={topUp}
                       >
-                        {isWritePending ? <Dots>Confirm Update</Dots> : 'Update'}
-                      </Button>
-                    </Checker.ApproveERC20>
+                        <Button
+                          type="button"
+                          size="xl"
+                          fullWidth
+                          disabled={isWritePending || (!topUp && !changeEndDate)}
+                          onClick={() => sendTransaction?.()}
+                          testId="stream-update-confirmation"
+                        >
+                          {isWritePending ? <Dots>Confirm Update</Dots> : 'Update'}
+                        </Button>
+                      </Checker.ApproveERC20>
+                    </Checker.ApproveBentobox>
                   </Checker.Custom>
                 </Checker.Custom>
               </Checker.Network>
