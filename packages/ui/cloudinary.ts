@@ -1,4 +1,4 @@
-import { ImageLoaderProps } from 'next/legacy/image'
+import { ImageLoaderProps } from 'next/image'
 
 const normalizeSrc = (src: string) => (src[0] === '/' ? src.slice(1) : src)
 
@@ -12,7 +12,7 @@ export function cloudinaryImageLoader({ src, width, quality }: ImageLoaderProps)
   return `https://cdn.sushi.com/image/upload/${params.join(',')}/${normalizeSrc(src)}`
 }
 
-// from next/legacy/image
+// from next/image
 // function cloudinaryLoader({
 //   config,
 //   src,

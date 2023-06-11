@@ -1,4 +1,4 @@
-import { ImageProps } from 'next/legacy/image'
+import { ImageProps } from 'next/image'
 import { FC } from 'react'
 
 import { Icon, IconProps } from './Icon'
@@ -9,7 +9,7 @@ type Currency = {
   List: ListComponent
   Icon: FC<IconProps>
   IconList: FC<IconListProps>
-} & Omit<ImageProps, 'src'>
+} & Omit<ImageProps, 'src' | 'alt'>
 
 export const Currency: Currency = {
   List,

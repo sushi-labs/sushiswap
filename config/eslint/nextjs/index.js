@@ -47,9 +47,7 @@ const eslintConfig = {
     'react/display-name': 'warn',
     // 'testing-library/prefer-screen-queries': 'warn',
     'turbo/no-undeclared-env-vars': 'warn',
-    '@typescript-eslint/no-floating-promises': 'warn',
   },
-  parserOptions: { project: ['tsconfig.json'] },
   // overrides: [
   //   // Only uses Testing Library lint rules in test files
   //   {

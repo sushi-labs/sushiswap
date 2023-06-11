@@ -1,4 +1,4 @@
-import NextImage from 'next/legacy/image'
+import NextImage from 'next/image'
 
 import bg from '../assets/bg.png'
 
