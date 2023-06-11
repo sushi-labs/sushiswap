@@ -9,9 +9,7 @@ export const PoolFilters: FC = () => {
         <SearchFilter />
         <ChainFilter availableChainIds={SUPPORTED_CHAIN_IDS} />
       </div>
-      <div>
-        <SettingFilter />
-      </div>
+      <div>{process.env.NODE_ENV === 'development' && <SettingFilter />}</div>
     </div>
   )
 }
