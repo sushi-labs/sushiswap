@@ -1,5 +1,3 @@
-'use client'
-
 import { Button } from '@sushiswap/ui/future/components/button'
 import React, { FC, useEffect, useState } from 'react'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
@@ -17,6 +15,8 @@ import {
 import { ZERO } from '@sushiswap/math'
 
 export const SwapButton: FC = () => {
+  console.log('Swap button')
+
   const { appType, amount, network0, network1, value, token0, token1 } = useSwapState()
   const { isFetching, isLoading, data: trade } = useTrade({ crossChain: network0 !== network1 })
   const { setReview } = useSwapActions()

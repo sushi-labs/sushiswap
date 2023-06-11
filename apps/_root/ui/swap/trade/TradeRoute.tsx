@@ -59,7 +59,7 @@ interface ComplexRoutePathProps {
   title: string
 }
 
-const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolType, poolFee, portion, title }) => {
+const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, portion, title }) => {
   const ref = useRef<HTMLDivElement>(null)
   const [width, setWidth] = useState(0)
 

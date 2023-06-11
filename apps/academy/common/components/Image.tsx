@@ -1,5 +1,5 @@
 import { classNames } from '@sushiswap/ui'
-import NextImage from 'next/legacy/image'
+import NextImage from 'next/image'
 import { FC } from 'react'
 
 import { UploadFileEntity } from '../../.mesh'

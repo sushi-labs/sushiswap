@@ -7,7 +7,7 @@ import { TriangleIcon } from 'common/icons'
 import { roadmapSections } from 'common/roadmap'
 import { format } from 'date-fns'
 import { NextPage } from 'next'
-import Image from 'next/legacy/image'
+import Image from 'next/image'
 
 const About: NextPage = () => {
   return (

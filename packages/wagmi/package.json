@@ -60,7 +60,7 @@
     "@uniswap/v2-core": "1.0.1",
     "@uniswap/v3-periphery": "1.4.1",
     "next-themes": "^0.2.1",
-    "viem": "0.3.29",
+    "viem": "1.0.2",
     "zod": "3.21.4"
   },
   "devDependencies": {
@@ -74,7 +74,7 @@
     "@wagmi/core": "0.10.11",
     "eslint": "8.41.0",
     "ethers": "5.7.2",
-    "next": "13.4.3",
+    "next": "13.4.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tsup": "6.5.0",
@@ -108,6 +108,6 @@
     }
   },
   "optionalDependencies": {
-    "next": "13.4.3"
+    "next": "13.4.4"
   }
 }

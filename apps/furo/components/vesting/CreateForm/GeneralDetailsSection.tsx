@@ -4,7 +4,7 @@ import { FundSource } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form, Select } from '@sushiswap/ui'
 import { DatePicker } from '@sushiswap/ui/input/DatePicker'
 import { TokenSelector, Web3Input } from '@sushiswap/wagmi'
-import { useTokens } from 'lib/state/token-lists'
+import { useTokens } from '../../../lib/state/token-lists'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 

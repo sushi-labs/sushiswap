@@ -22,7 +22,6 @@ import { warningSeverity, warningSeverityClassName } from '../../../lib/swap/war
 import { TradeRoute } from './TradeRoute'
 import { ZERO } from '@sushiswap/math'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { swapErrorToUserReadableMessage } from '../../../lib/swap/swapErrorToUserReadableMessage'
 
 export const TradeReviewDialogSameChain: FC = () => {
   const [open, setOpen] = useState(false)
@@ -38,11 +37,13 @@ export const TradeReviewDialogSameChain: FC = () => {
     appType === AppType.Swap && token1?.isNative && token0?.wrapped.address === Native.onChain(network0).wrapped.address
   const isSwap = !isWrap && !isUnwrap
 
+  console.log('TradeReviewDialogSameChain')
+
   // Don't unmount this dialog since that will slow down the opening callback
   return (
     <Dialog open={review} unmount={false} onClose={onClose} variant="opaque">
       <div className="max-w-[504px] mx-auto">
-        <button onClick={onClose} className="p-3 pl-0">
+        <button type="button" onClick={onClose} className="p-3 pl-0">
           <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
         </button>
         <div className="flex items-start justify-between gap-4 py-2">
@@ -107,9 +108,9 @@ export const TradeReviewDialogSameChain: FC = () => {
                     {isFetching ? (
                       <Skeleton.Box className="h-4 py-0.5 w-[60px] rounded-md" />
                     ) : (
-                      `${trade?.priceImpact?.lessThan(ZERO) ? '+' : '-'}${Math.abs(
-                        Number(trade?.priceImpact?.toFixed(2))
-                      )}%` ?? '-'
+                      `${
+                        trade?.priceImpact?.lessThan(ZERO) ? '+' : trade?.priceImpact?.greaterThan(ZERO) ? '-' : ''
+                      }${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%` ?? '-'
                     )}
                   </span>
                 </List.KeyValue>
@@ -138,7 +139,7 @@ export const TradeReviewDialogSameChain: FC = () => {
                   {isFetching ? (
                     <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" />
                   ) : (
-                    <button onClick={() => setOpen(true)} className="text-sm font-semibold text-blue">
+                    <button type="button" onClick={() => setOpen(true)} className="text-sm font-semibold text-blue">
                       View
                     </button>
                   )}
@@ -192,9 +193,7 @@ export const TradeReviewDialogSameChain: FC = () => {
                   )}
                 </Button>
                 <Collapsible open={Boolean(error)}>
-                  <div className="scroll bg-red/10 text-red-700 p-2 px-3 rounded-lg break-all">
-                    {swapErrorToUserReadableMessage(error)}
-                  </div>
+                  <div className="scroll bg-red/10 text-red-700 p-2 px-3 rounded-lg break-all">{error?.message}</div>
                 </Collapsible>
               </div>
             )}

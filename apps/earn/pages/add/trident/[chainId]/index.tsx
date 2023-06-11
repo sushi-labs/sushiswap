@@ -353,12 +353,7 @@ const _Add: FC<AddProps> = ({
                             enabled={isBentoBoxV1ChainId(chainId)}
                           >
                             <Checker.Success tag={APPROVE_TAG_ADD_TRIDENT}>
-                              <Button
-                                fullWidth
-                                onClick={() => setOpen(true)}
-                                size="xl"
-                                testdata-id="add-liquidity-button"
-                              >
+                              <Button id="add-liquidity" fullWidth onClick={() => setOpen(true)} size="xl">
                                 {title}
                               </Button>
                             </Checker.Success>
@@ -413,12 +408,7 @@ const _Add: FC<AddProps> = ({
                             enabled={isBentoBoxV1ChainId(chainId)}
                           >
                             <Checker.Success tag={APPROVE_TAG_CREATE_TRIDENT}>
-                              <Button
-                                fullWidth
-                                onClick={() => setOpen(true)}
-                                size="md"
-                                testdata-id="create-pool-button"
-                              >
+                              <Button id="create-pool" size="xl" fullWidth onClick={() => setOpen(true)}>
                                 {title}
                               </Button>
                             </Checker.Success>

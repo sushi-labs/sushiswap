@@ -31,6 +31,7 @@ export type ButtonComponent = <C extends React.ElementType = 'button'>(
 export const Button: ButtonComponent = React.forwardRef(
   <Tag extends React.ElementType = 'button'>(
     {
+      id,
       as,
       children,
       className,
@@ -63,7 +64,7 @@ export const Button: ButtonComponent = React.forwardRef(
           className,
           disabled || loading ? BUTTON_CLASSES['btn-disabled'] : ''
         )}
-        testdata-id={`${testId}-button`}
+        testdata-id={`${testId || id}-button`}
         {...rest}
       >
         {loading ? (

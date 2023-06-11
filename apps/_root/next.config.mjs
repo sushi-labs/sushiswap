@@ -15,6 +15,7 @@ const nextConfig = {
       'functions',
       'lib',
       'pages',
+      'providers',
       'types',
       'ui',
     ],

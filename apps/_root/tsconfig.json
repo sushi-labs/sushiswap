@@ -7,7 +7,6 @@
     ".next/types/**/*.ts"
   ],
   "exclude": [
-    ".mesh",
     "node_modules",
     "test"
   ],

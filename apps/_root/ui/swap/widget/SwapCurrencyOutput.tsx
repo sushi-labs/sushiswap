@@ -5,7 +5,7 @@ import React, { FC } from 'react'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { usePctChange } from '../../../lib/swap/usePctChange'
 import { useTrade } from '../../../lib/swap/useTrade'
-import { useTokenState } from '../TokenProvider'
+import { useTokenState } from '../token/TokenProvider'
 
 export const SwapCurrencyOutput: FC = () => {
   const { tokensLoading } = useTokenState()

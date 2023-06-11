@@ -50,10 +50,10 @@
     "zod": "3.21.4"
   },
   "devDependencies": {
-    "@graphprotocol/client-add-source-name": "1.0.18",
-    "@graphprotocol/client-auto-pagination": "1.1.16",
+    "@graphprotocol/client-add-source-name": "2.0.0",
+    "@graphprotocol/client-auto-pagination": "2.0.0",
     "@graphprotocol/client-auto-type-merging": "1.0.23",
-    "@graphprotocol/client-cli": "2.2.19",
+    "@graphprotocol/client-cli": "3.0.0",
     "@graphql-mesh/transform-filter-schema": "0.15.24",
     "@graphql-mesh/transform-prefix": "0.12.22",
     "@graphql-mesh/transform-prune": "0.1.20",
