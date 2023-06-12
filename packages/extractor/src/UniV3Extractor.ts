@@ -24,7 +24,6 @@ enum LogsProcessing {
 
 // TODO: PoolCode update cache with timer
 // TODO: Known pools permanent cache
-// TODO: factory list ?
 // TODO: pools reserves update 1/1000 logs
 export class UniV3Extractor {
   factoryAddress: Address
