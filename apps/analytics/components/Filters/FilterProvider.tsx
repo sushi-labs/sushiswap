@@ -7,6 +7,7 @@ enum Filters {
   search = 'search',
   chainIds = 'chainIds',
   isWhitelisted = 'isWhitelisted',
+  protocol = 'isWhitelisted',
 }
 
 interface FilterContext {

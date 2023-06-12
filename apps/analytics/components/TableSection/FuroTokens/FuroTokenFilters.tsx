@@ -4,8 +4,8 @@ import React, { FC } from 'react'
 
 export const FuroTokenFilters: FC = () => {
   return (
-    <div className="flex justify-between">
-      <div className="flex space-x-4">
+    <div className="flex flex-col gap-4 mb-4">
+      <div className="flex gap-4">
         <SearchFilter />
         <ChainFilter availableChainIds={SUPPORTED_CHAIN_IDS} />
       </div>
