@@ -1,3 +1,6 @@
+import aspectRatio from '@tailwindcss/aspect-ratio'
+import forms from '@tailwindcss/forms'
+import typography from '@tailwindcss/typography'
 import { Config } from 'tailwindcss'
 import defaultTheme from 'tailwindcss/defaultTheme'
 
@@ -17,7 +20,7 @@ const config = {
   //   // include packages if not transpiling
   //   '../../packages/**/*.{js,ts,jsx,tsx}',
   // ],
-  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/aspect-ratio'), require('@tailwindcss/typography')],
+  plugins: [forms, aspectRatio, typography],
   theme: {
     screens: {
       ...defaultTheme.screens,
