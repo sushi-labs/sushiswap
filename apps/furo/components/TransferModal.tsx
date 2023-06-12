@@ -120,7 +120,7 @@ export const TransferModal: FC<TransferModalProps> = ({
               to withdraw from this stream after transferring
             </p>
           </div>
-          <Text label="Address" value={recipient} onChange={(val) => setRecipient(`${val}`)} id="ens-input" />
+          <Text label="Address" value={recipient} onChange={(val) => setRecipient(`${val}`)} id="ens-input" testdata-id="stream-transfer-recipient-input"/>
           <Checker.Connect size="xl" fullWidth>
             <Checker.Network size="xl" fullWidth chainId={chainId}>
               <Button
@@ -132,6 +132,7 @@ export const TransferModal: FC<TransferModalProps> = ({
                   resolvedAddress.toLowerCase() == stream?.recipient.id.toLowerCase()
                 }
                 onClick={() => sendTransaction?.()}
+                testId='stream-transfer-confirmation'
               >
                 {isWritePending ? (
                   <Dots>Confirm Transfer</Dots>

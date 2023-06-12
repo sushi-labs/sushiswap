@@ -112,7 +112,7 @@ export const CancelModal: FC<CancelModalProps> = ({
             to{' '}
             <a
               target="_blank"
-              className="text-blue font-semibold"
+              className="font-semibold text-blue"
               href={Chain.from(stream.chainId).getAccountUrl(stream.createdBy.id)}
               rel="noreferrer"
             >
@@ -127,6 +127,7 @@ export const CancelModal: FC<CancelModalProps> = ({
                 fullWidth
                 disabled={isWritePending || stream?.isEnded}
                 onClick={() => sendTransaction?.()}
+                testId="stream-cancel-confirmation"
               >
                 {isWritePending ? <Dots>Confirm Cancel</Dots> : title}
               </Button>

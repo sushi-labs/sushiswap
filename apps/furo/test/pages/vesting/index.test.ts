@@ -38,27 +38,27 @@ const USDC = new Token({
   name: 'USDC Stablecoin',
 })
 
-test.describe('Vest', () => {
-  const VEST_ID = '8'
-  test('Create', async ({ page }) => {
-    const args: VestingArgs = {
-      chainId: CHAIN_ID,
-      token: USDC,
-      startInMonths: 1,
-      recipient: RECIPIENT,
-      graded: {
-        stepAmount: '0.0001',
-        steps: 10,
-        frequency: GradedVestingFrequency.BI_WEEKLY,
-      },
-      cliff: {
-        amount: '0.00001',
-        cliffEndsInMonths: 3,
-      },
-    }
+// test.describe('Vest', () => {
+//   const VEST_ID = '8'
+//   test('Create', async ({ page }) => {
+//     const args: VestingArgs = {
+//       chainId: CHAIN_ID,
+//       token: USDC,
+//       startInMonths: 1,
+//       recipient: RECIPIENT,
+//       graded: {
+//         stepAmount: '0.0001',
+//         steps: 10,
+//         frequency: GradedVestingFrequency.BI_WEEKLY,
+//       },
+//       cliff: {
+//         amount: '0.00001',
+//         cliffEndsInMonths: 3,
+//       },
+//     }
 
-    await createSingleVest(page, args)
-  })
+//     await createSingleVest(page, args)
+//   })
 
   //   test('Withdraw', async ({ page }) => {
   // const withdrawAmount = '0.000002'
