@@ -2,6 +2,7 @@ import { Token } from '@sushiswap/currency'
 import { PoolCode } from '@sushiswap/router'
 import { FeeAmount } from '@sushiswap/v3-sdk'
 import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json'
+import IUniswapV3Pool from '@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json'
 import { Abi, AbiEvent } from 'abitype'
 import { Address, Log, PublicClient } from 'viem'
 import { Filter } from 'viem/dist/types/types/filter'
@@ -32,6 +33,7 @@ export class UniV3Extractor {
   client: PublicClient
   multiCallAggregator: MultiCallAggregator
   poolMap: Map<Address, UniV3PoolWatcher> = new Map()
+  otherFactoryPoolSet: Set<Address> = new Set()
   eventFilters: Filter[] = []
   logProcessGuard = false
   lastProcessdBlock = -1n
@@ -78,17 +80,17 @@ export class UniV3Extractor {
   processLog(l: Log) {
     const pool = this.poolMap.get(l.address.toLowerCase() as Address)
     if (pool) pool.processLog(l)
-    // else this.addPoolByAddress(l.address)
+    else this.addPoolByAddress(l.address)
   }
 
   async addPoolsForTokens(tokens: Token[]) {
-    const promises: Promise<{blockNumber: number, returnValue: Address}>[] = []
+    const promises: Promise<Address>[] = []
     for (let i = 0, promiseIndex = 0; i < tokens.length; ++i) {
       for (let j = i + 1; j < tokens.length; ++j) {
         const [a0, a1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i].address, tokens[j].address] 
         : [tokens[j].address, tokens[i].address]
         Object.values(FeeAmount).forEach(fee => {
-          promises[promiseIndex++] = this.multiCallAggregator.call(
+          promises[promiseIndex++] = this.multiCallAggregator.callValue(
             this.factoryAddress,
             IUniswapV3Factory.abi as Abi,
             'getPool',
@@ -106,7 +108,7 @@ export class UniV3Extractor {
         const [token0, token1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] 
         : [tokens[j], tokens[i]]
         Object.values(FeeAmount).forEach(fee => {
-          const address = result[promiseIndex++].returnValue
+          const address = result[promiseIndex++]
           if (address) pools.push({
             address,
             token0,
@@ -139,7 +141,53 @@ export class UniV3Extractor {
     }
   }
 
-  // async addPoolByAddress(addr: Address) {}
+  async addPoolByAddress(address: Address) {
+    if (this.otherFactoryPoolSet.has(address)) return
+    if (this.client.chain?.id === undefined) return
+
+    const factory = await this.multiCallAggregator.call(
+      address,
+      IUniswapV3Pool.abi as Abi,
+      'factory'
+    )
+    if ((factory.returnValue as Address).toLowerCase() == this.factoryAddress.toLowerCase()) {
+      const token0Promise = this.multiCallAggregator.callValue(
+        address,
+        IUniswapV3Pool.abi as Abi,
+        'token0'
+      )
+      const token1Promise = this.multiCallAggregator.callValue(
+        address,
+        IUniswapV3Pool.abi as Abi,
+        'token1'
+      )
+      const feePromise = this.multiCallAggregator.callValue(
+        address,
+        IUniswapV3Pool.abi as Abi,
+        'fee'
+      )
+      const [token0Address, token1Address, fee] = await Promise.all([token0Promise, token1Promise, feePromise])
+      const token0 = new Token({
+        address: token0Address as string,
+        chainId: this.client.chain?.id,
+        // fake data - we don't need it for uniswap pools actually
+        symbol: 'Unknown',
+        name: 'Unknown',
+        decimals: 18
+      })
+      const token1 = new Token({
+        address: token1Address as string,
+        chainId: this.client.chain?.id,
+        // fake data - we don't need it for uniswap pools actually
+        symbol: 'Unknown',
+        name: 'Unknown',
+        decimals: 18
+      })
+      this.addPoolWatching({address, token0, token1, fee: fee as FeeAmount})
+    } else {
+      this.otherFactoryPoolSet.add(address)
+    }
+  }
 
   getPoolCodes(): PoolCode[] {
     return Array.from(this.poolMap.values())
