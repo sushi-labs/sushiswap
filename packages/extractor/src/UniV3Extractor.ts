@@ -1,7 +1,8 @@
 import { Token } from '@sushiswap/currency'
 import { PoolCode } from '@sushiswap/router'
 import { FeeAmount } from '@sushiswap/v3-sdk'
-import { AbiEvent } from 'abitype'
+import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json'
+import { Abi, AbiEvent } from 'abitype'
 import { Address, Log, PublicClient } from 'viem'
 import { Filter } from 'viem/dist/types/types/filter'
 
@@ -26,6 +27,7 @@ enum LogsProcessing {
 // TODO: factory list ?
 // TODO: pools reserves update 1/1000 logs
 export class UniV3Extractor {
+  factoryAddress: Address
   providerName: string
   tickHelperContract: Address
   client: PublicClient
@@ -36,7 +38,8 @@ export class UniV3Extractor {
   lastProcessdBlock = -1n
   logProcessingStatus = LogsProcessing.NotStarted
 
-  constructor(client: PublicClient, providerName: string, tickHelperContract: Address) {
+  constructor(client: PublicClient, factoryAddress: Address, providerName: string, tickHelperContract: Address) {
+    this.factoryAddress = factoryAddress
     this.providerName = providerName
     this.client = client
     this.multiCallAggregator = new MultiCallAggregator(client)
@@ -65,7 +68,7 @@ export class UniV3Extractor {
             this.lastProcessdBlock = blockNumber
             this.logProcessGuard = false
           } else {
-            console.warn(`Log Filtering was skipped for block ${blockNumber}`)
+            console.warn(`Extractor: Log Filtering was skipped for block ${blockNumber}`)
           }
         },
       })
@@ -78,20 +81,45 @@ export class UniV3Extractor {
     if (pool) pool.processLog(l)
     // else this.addPoolByAddress(l.address)
   }
-  // async addPoolsForTokens(tokens: Token[], factory: Address) {
-  //   let pools: PoolInfo[] = []
-  //   for (let i = 0; i < tokens.length; ++i) {
-  //     for (let j = i + 1; j < tokens.length; ++j) {
-  //       const tokenPools: PoolInfo[] = await this.client.readContract({
-  //         address: factory,
-  //         // tokens order !!!
-  //       })
-  //       pools = pools.concat(tokenPools)
-  //     }
-  //   }
 
-  //   pools.forEach((p) => this.addPoolWatching(p))
-  // }
+  async addPoolsForTokens(tokens: Token[]) {
+    const promises: Promise<{blockNumber: number, returnValue: Address}>[] = []
+    for (let i = 0, promiseIndex = 0; i < tokens.length; ++i) {
+      for (let j = i + 1; j < tokens.length; ++j) {
+        const [a0, a1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i].address, tokens[j].address] 
+        : [tokens[j].address, tokens[i].address]
+        Object.values(FeeAmount).forEach(fee => {
+          promises[promiseIndex++] = this.multiCallAggregator.call(
+            this.factoryAddress,
+            IUniswapV3Factory.abi as Abi,
+            'getPool',
+            [a0, a1, fee],
+          )
+        })
+      }
+    }
+
+    const result = await Promise.all(promises)
+    
+    const pools: PoolInfo[] = []
+    for (let i = 0, promiseIndex = 0; i < tokens.length; ++i) {
+      for (let j = i + 1; j < tokens.length; ++j) {
+        const [token0, token1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] 
+        : [tokens[j], tokens[i]]
+        Object.values(FeeAmount).forEach(fee => {
+          const address = result[promiseIndex++].returnValue
+          if (address) pools.push({
+            address,
+            token0,
+            token1,
+            fee: fee as FeeAmount
+          })
+        })
+      }
+    }    
+
+    pools.forEach((p) => this.addPoolWatching(p))
+  }
 
   addPoolWatching(p: PoolInfo) {
     if (this.logProcessingStatus !== LogsProcessing.Started) {

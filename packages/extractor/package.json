@@ -35,6 +35,7 @@
     "@types/node": "18.11.18",
     "@typescript-eslint/eslint-plugin": "5.48.1",
     "@typescript-eslint/parser": "5.48.1",
+    "@uniswap/v3-core": "1.0.1",
     "abitype": "0.8.2",
     "dotenv-cli": "6.0.0",
     "eslint": "8.41.0",
