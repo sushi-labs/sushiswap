@@ -778,7 +778,7 @@ export class SushiXSwap {
     dstBridgeToken: Token = STARGATE_BRIDGE_TOKENS[this.dstChainId][0],
     gasSpent = 1000000,
     id: string,
-    amountMin: Amount<Currency> = Amount.fromRawAmount(dstBridgeToken, 0),
+    amountMin: Amount<Currency>,
     dustAmount: Amount<Currency> = Amount.fromRawAmount(Native.onChain(this.dstChainId), 0)
   ): void {
     // uint16 dstChainId; // stargate dst chain id
@@ -792,7 +792,6 @@ export class SushiXSwap {
     // address to; // receiver bridge token incase of transaction reverts on dst chain
     // uint256 gas; // extra gas to be sent for dst chain operations
     // bytes32 srcContext; // random bytes32 as source context
-
     const data = defaultAbiCoder.encode(
       [
         'uint16',
