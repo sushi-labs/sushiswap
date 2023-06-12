@@ -1,19 +1,29 @@
 import { ChainId } from '@sushiswap/chain'
-import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
+import {
+  createContext,
+  FC,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../../config'
+import { Protocol } from '@sushiswap/client'
 
 enum Filters {
   search = 'search',
   chainIds = 'chainIds',
   isWhitelisted = 'isWhitelisted',
-  protocol = 'isWhitelisted',
+  poolProtocols = 'poolProtocols',
 }
 
 interface FilterContext {
   [Filters.search]?: string[]
   [Filters.chainIds]: ChainId[]
   [Filters.isWhitelisted]: boolean
+  [Filters.poolProtocols]?: Protocol[]
   setFilters(filters: Partial<Omit<FilterContext, 'setFilters'>>): void
 }
 
@@ -31,8 +41,14 @@ const defaultFilters: FiltersT = {
   [Filters.isWhitelisted]: true,
 }
 
-export const FilterProvider: FC<FiltersProvider> = ({ children, passedFilters }) => {
-  const [filters, _setFilters] = useState({ ...defaultFilters, ...passedFilters })
+export const FilterProvider: FC<FiltersProvider> = ({
+  children,
+  passedFilters,
+}) => {
+  const [filters, _setFilters] = useState({
+    ...defaultFilters,
+    ...passedFilters,
+  })
 
   const setFilters = useCallback((newFilters: FiltersT) => {
     _setFilters((prevState) => ({
@@ -41,7 +57,10 @@ export const FilterProvider: FC<FiltersProvider> = ({ children, passedFilters })
     }))
   }, [])
 
-  useEffect(() => setFilters({ ...defaultFilters, ...passedFilters }), [passedFilters, setFilters])
+  useEffect(
+    () => setFilters({ ...defaultFilters, ...passedFilters }),
+    [passedFilters, setFilters],
+  )
 
   return (
     <FilterContext.Provider
