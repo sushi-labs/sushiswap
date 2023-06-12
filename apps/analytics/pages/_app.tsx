@@ -69,7 +69,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
 
       <WagmiConfig client={client}>
         <Provider store={store}>
-          <ThemeProvider>
+          <ThemeProvider forcedTheme="dark">
             <App.Shell>
               <DefaultSeo {...SEO} />
               <GlobalNav />
