@@ -3,18 +3,15 @@ import { AppearOnMount, Typography, classNames } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo } from 'react'
-import resolveConfig from 'tailwindcss/resolveConfig'
 import ReactECharts from 'echarts-for-react'
 
-import tailwindConfig from '../../../tailwind.config.js'
+import tailwind from '../../../tailwind.config.js'
 import { usePoolGraphData } from '../../../lib/hooks'
 import { useTheme } from 'next-themes'
 import { PoolChartPeriod, PoolChartType } from './types'
 import { chartPeriods } from './constants'
 import { ChainId } from '@sushiswap/chain'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
-
-const tailwind = resolveConfig(tailwindConfig)
 
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL | PoolChartType.APR

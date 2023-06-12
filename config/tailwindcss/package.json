@@ -16,15 +16,14 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewlilley.com>",
+  "sideEffects": false,
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "source": "src/index.ts",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "/dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "build": "tsup src/index.ts --format cjs --dts --external tailwindcss",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "jest": {
@@ -33,14 +32,17 @@
   "dependencies": {
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@tailwindcss/forms": "0.5.3",
-    "@tailwindcss/typography": "0.5.9",
-    "tailwindcss": "3.3.2"
+    "@tailwindcss/typography": "0.5.9"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
+    "@tailwindcss/aspect-ratio": "0.4.2",
+    "@tailwindcss/forms": "0.5.3",
+    "@tailwindcss/typography": "0.5.9",
+    "tailwindcss": "3.3.2",
     "tsup": "6.5.0",
     "typescript": "5.0.4"
   },

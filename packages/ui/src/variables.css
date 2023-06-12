@@ -8,7 +8,9 @@
   --color: #000;
 }
 
-.dark:root {
+.dark:root,
+.dark::before,
+.dark::after {
   color-scheme: dark;
   --background-color: #0f172a;
   --color: #ffffff;

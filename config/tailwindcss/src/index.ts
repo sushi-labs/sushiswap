@@ -1,12 +1,34 @@
+import aspectRatio from '@tailwindcss/aspect-ratio'
+import forms from '@tailwindcss/forms'
+import typography from '@tailwindcss/typography'
+import { Config } from 'tailwindcss'
 import defaultTheme from 'tailwindcss/defaultTheme'
 
 const config = {
-  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/aspect-ratio'), require('@tailwindcss/typography')],
+  content: [
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './common/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './ui/**/*.{js,ts,jsx,tsx,mdx}',
+    '../../packages/wagmi/src/**/*.{ts,tsx,mdx}',
+    '../../packages/ui/src/**/*.{ts,tsx,mdx}',
+  ],
+  // content: [
+  //   // app content
+  //   `src/**/*.{js,ts,jsx,tsx}`,
+  //   // include packages if not transpiling
+  //   '../../packages/**/*.{js,ts,jsx,tsx}',
+  // ],
+  plugins: [forms, aspectRatio, typography],
   theme: {
     screens: {
       ...defaultTheme.screens,
     },
     extend: {
+      fontFamily: {
+        sans: ['Inter Variable', ...defaultTheme.fontFamily.sans],
+      },
       backgroundImage: () => ({
         'gradient-radial': 'radial-gradient(#13213E, #111829)',
         'shimmer-gradient':
@@ -15,7 +37,11 @@ const config = {
           'linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.03) 30%, rgba(0, 0, 0, 0.06) 50%, rgba(0, 0, 0, 0.03) 70%, rgba(0, 0, 0, 0) 100%)',
       }),
       boxShadow: {
+        md: 'rgba(0, 0, 0, 0.09) 0px 3px 12px',
+        lg: 'rgba(0, 0, 0, 0.16) 2px 6px 24px',
+        xl: 'rgba(0, 0, 0, 0.24) 2px 6px 24px',
         'depth-1': '0px 3px 6px rgba(15, 15, 15, 0.5)',
+        'hover-card': 'rgb(101 119 134 / 20%) 0px 0px 15px, rgb(101 119 134 / 15%) 0px 0px 3px 1px',
       },
       colors: {
         blue: {
@@ -40,6 +66,8 @@ const config = {
         heartbeat: 'heartbeat 1s ease 0.2s infinite normal forwards',
         rotate: 'rotate360 1s cubic-bezier(0.83, 0, 0.17, 1) infinite',
         wave: 'shimmer 1.25s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        dash: 'dash 1.5s 2s ease-out infinite',
+        'dash-check': 'dash-check 1.5s 2s ease-out infinite',
       },
       keyframes: {
         shimmer: {
@@ -78,12 +106,25 @@ const config = {
             transform: 'rotate(360deg)',
           },
         },
+        dash: {
+          '0%': {
+            strokeDashoffset: '1000',
+          },
+          '100%': {
+            strokeDashoffset: '0',
+          },
+        },
+        'dash-check': {
+          '0%': {
+            strokeDashoffset: '-100',
+          },
+          '100%': {
+            strokeDashoffset: '900',
+          },
+        },
       },
     },
-    fontFamily: {
-      sans: ['Inter Variable', ...defaultTheme.fontFamily.sans],
-    },
   },
-}
+} satisfies Config
 
-export default config
+export default config as Config

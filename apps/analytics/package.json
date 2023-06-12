@@ -25,6 +25,7 @@
     "@sushiswap/redux-localstorage": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
+    "@sushiswap/tailwindcss-config": "workspace:*",
     "@tanstack/react-table": "8.5.30",
     "@vercel/analytics": "1.0.1",
     "@vercel/og": "0.0.20",

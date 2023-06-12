@@ -1,7 +1,7 @@
 import { Chain, CreateClientConfig, configureChains, createClient } from 'wagmi'
-import { foundry, polygon } from '../chains'
+import { foundry, polygon } from '../src/chains'
 import { Wallet, providers } from 'ethers'
-import { MockConnector } from '../connectors/mock'
+import { MockConnector } from '../src/connectors/mock'
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 
 const foundryPolygon: Chain = {
