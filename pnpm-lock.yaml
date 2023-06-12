@@ -435,6 +435,7 @@ importers:
       '@sushiswap/graph-config': link:../../config/graph
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/math': link:../../packages/math
+      '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/react-query': link:../../packages/react-query
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/route-processor': link:../../protocols/route-processor
@@ -442,6 +443,7 @@ importers:
       '@sushiswap/router-config': link:../../config/router
       '@sushiswap/stargate': link:../../packages/stargate
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
+      '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/trident-core': link:../../protocols/trident
       '@sushiswap/types': link:../../packages/types
@@ -488,9 +490,7 @@ importers:
       '@playwright/test': 1.32.1
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
       '@sushiswap/typescript-config': link:../../config/typescript
       '@tsconfig/next': 1.0.5
       '@types/cors': 2.8.13
@@ -518,6 +518,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/tailwindcss-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@tailwindcss/typography': 0.5.9
@@ -547,7 +548,10 @@ importers:
     dependencies:
       '@cloudinary/url-gen': 1.10.1
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
+      '@heroicons/react': 2.0.13_react@18.2.0
       '@sushiswap/hooks': link:../../packages/hooks
+      '@sushiswap/nextjs-config': link:../../config/nextjs
+      '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
       '@sushiswap/ui': link:../../packages/ui
       '@tailwindcss/typography': 0.5.9_tailwindcss@3.3.2
       '@vercel/analytics': 1.0.1
@@ -565,10 +569,8 @@ importers:
     devDependencies:
       '@graphql-mesh/cli': 0.82.3_ykzowzmb7rcumunkscnbisnkom
       '@graphql-mesh/graphql': 0.33.3_ykzowzmb7rcumunkscnbisnkom
-      '@heroicons/react': 2.0.13_react@18.2.0
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 18.11.18
@@ -600,6 +602,7 @@ importers:
       '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/redux-localstorage': workspace:*
+      '@sushiswap/tailwindcss-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi': workspace:*
@@ -641,6 +644,7 @@ importers:
       '@sushiswap/graph-client': link:../../packages/graph-client
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
+      '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@tanstack/react-table': 8.5.30_biqbaboplfbrettd7655fr4n2y
@@ -688,6 +692,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/tailwindcss-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@tailwindcss/typography': 0.5.9
@@ -719,6 +724,8 @@ importers:
       '@heroicons/react': 1.0.6_react@18.2.0
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/hooks': link:../../packages/hooks
+      '@sushiswap/nextjs-config': link:../../config/nextjs
+      '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
       '@sushiswap/ui': link:../../packages/ui
       '@tailwindcss/typography': 0.5.9_tailwindcss@3.3.2
       '@vercel/analytics': 1.0.1
@@ -738,7 +745,6 @@ importers:
       '@graphql-mesh/graphql': 0.33.3_ykzowzmb7rcumunkscnbisnkom
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 18.11.18
@@ -1052,6 +1058,7 @@ importers:
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/log': link:../../packages/log
       '@sushiswap/math': link:../../packages/math
+      '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/react-query': link:../../packages/react-query
       '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
@@ -1101,7 +1108,6 @@ importers:
       '@hookform/devtools': 4.3.0_tqcjxml4rosq5qpg5cznikfcd4
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
       '@testing-library/react': 14.0.0_biqbaboplfbrettd7655fr4n2y
@@ -9102,6 +9108,7 @@ packages:
       react: '>= 16'
     dependencies:
       react: 18.2.0
+    dev: false
 
   /@hookform/devtools/4.3.0_tqcjxml4rosq5qpg5cznikfcd4:
     resolution: {integrity: sha512-DTTTYJ9j+L4Nd/qj0k41WNbRF/qNQfZxbHwUupFeQWu6JOJ5Ak5ksxuoCbfSWrsXV5EPSmcfhpsDos0IOlwhsg==}
