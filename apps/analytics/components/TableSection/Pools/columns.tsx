@@ -6,10 +6,12 @@ import {
   PoolAPRCell,
   PoolFees1wCell,
   PoolFees1dCell,
+  PoolFees1mCell,
   PoolNameCell,
   PoolTVLCell,
   PoolVolume1wCell,
   PoolVolume1dCell,
+  PoolVolume1mCell,
 } from './Cells'
 import { Pool } from '@sushiswap/client'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
@@ -29,7 +31,7 @@ export const NAME_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'name',
   header: 'Name',
   cell: (props) => <PoolNameCell row={props.row.original} />,
-  size: 160,
+  size: 280,
   meta: {
     skeleton: (
       <div className="flex items-center w-full gap-2">
@@ -81,6 +83,18 @@ export const VOLUME_7D_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
+export const VOLUME_1M_COLUMN: ColumnDef<Pool, unknown> = {
+  header: 'Volume (1m)',
+  id: 'volume1m',
+  accessorFn: (row) => row.volume1m,
+  cell: (props) => <PoolVolume1mCell row={props.row.original} />,
+  size: 100,
+  meta: {
+    className: 'justify-end',
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
+  },
+}
+
 export const FEES_1D_COLUMN: ColumnDef<Pool, unknown> = {
   header: 'Fees (24h)',
   id: 'fees24h',
@@ -98,6 +112,18 @@ export const FEES_7D_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'fees7d',
   accessorFn: (row) => row.fees1w,
   cell: (props) => <PoolFees1wCell row={props.row.original} />,
+  size: 100,
+  meta: {
+    className: 'justify-end',
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
+  },
+}
+
+export const FEES_1M_COLUMN: ColumnDef<Pool, unknown> = {
+  header: 'Fees (1m)',
+  id: 'fees1d',
+  accessorFn: (row) => row.fees1m,
+  cell: (props) => <PoolFees1mCell row={props.row.original} />,
   size: 100,
   meta: {
     className: 'justify-end',

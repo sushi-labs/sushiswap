@@ -56,7 +56,6 @@ export const FuroTokenTable: FC = () => {
 
   return (
     <div className="space-y-4">
-      <div className="w-full h-px bg-gray-200 dark:bg-slate-200/5"></div>
       <FuroTokenFilters />
       <GenericTable<FuroToken>
         table={table}

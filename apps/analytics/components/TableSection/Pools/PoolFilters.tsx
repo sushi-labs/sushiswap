@@ -4,12 +4,12 @@ import React, { FC } from 'react'
 
 export const PoolFilters: FC = () => {
   return (
-    <div className="flex justify-between">
-      <div className="flex space-x-4">
+    <div className="flex flex-col gap-4 mb-4">
+      <div className="flex gap-4">
         <SearchFilter />
         <ChainFilter availableChainIds={SUPPORTED_CHAIN_IDS} />
       </div>
-      <div>{process.env.NODE_ENV === 'development' && <SettingFilter />}</div>
+      {/* <div>{process.env.NODE_ENV !== 'production' && <SettingFilter />}</div> */}
     </div>
   )
 }

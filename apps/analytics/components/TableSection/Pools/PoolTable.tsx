@@ -11,11 +11,13 @@ import {
   APR_COLUMN,
   FEES_1D_COLUMN,
   FEES_7D_COLUMN,
+  FEES_1M_COLUMN,
   NAME_COLUMN,
-  NETWORK_COLUMN,
+  // NETWORK_COLUMN,
   TVL_COLUMN,
   VOLUME_1D_COLUMN,
   VOLUME_7D_COLUMN,
+  VOLUME_1M_COLUMN,
 } from './columns'
 import { PAGE_SIZE } from './constants'
 import { PoolFilters } from './PoolFilters'
@@ -24,13 +26,14 @@ import { useFilters } from 'components/Filters'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const COLUMNS = [
-  NETWORK_COLUMN,
   NAME_COLUMN,
   TVL_COLUMN,
   VOLUME_1D_COLUMN,
   VOLUME_7D_COLUMN,
+  VOLUME_1M_COLUMN,
   FEES_1D_COLUMN,
   FEES_7D_COLUMN,
+  FEES_1M_COLUMN,
   APR_COLUMN,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ] as any
@@ -112,7 +115,6 @@ export const PoolTable: FC<{ isWhitelisted?: boolean }> = ({ isWhitelisted = tru
 
   return (
     <div className="space-y-4">
-      <div className="w-full h-px bg-gray-200 dark:bg-slate-200/5"></div>
       <PoolFilters />
       <InfiniteScroll
         dataLength={data.length}
