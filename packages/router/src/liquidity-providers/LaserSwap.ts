@@ -1,11 +1,10 @@
-import { FACTORY_ADDRESS, INIT_CODE_HASH } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { PrismaClient } from '@sushiswap/database'
 import { PublicClient } from 'viem'
+import { Address } from 'viem'
 
 import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
-import { Address } from 'viem'
 
 export class LaserSwapV2Provider extends UniswapV2BaseProvider {
   fee = 0.0025
