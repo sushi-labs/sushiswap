@@ -41,7 +41,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
   const { data: deadline } = useTransactionDeadline({ chainId })
 
   const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
+    return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
   }, [slippageTolerance])
 
   const _onChange = useCallback(

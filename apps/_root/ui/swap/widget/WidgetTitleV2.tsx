@@ -1,5 +1,3 @@
-'use client'
-
 import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
 import React, { useMemo, useState } from 'react'
 import { useSwapState } from '../trade/TradeProvider'

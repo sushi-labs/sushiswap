@@ -44,7 +44,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
     <div className={classNames('flex flex-col gap-10')}>
       <Link href="/vesting/create" passHref={true} legacyBehavior>
         <a>
-          <button className="flex gap-3 font-medium group hover:text-white text-slate-200">
+          <button type="button" className="flex gap-3 font-medium group hover:text-white text-slate-200">
             <ArrowCircleLeftIcon width={24} height={24} /> <span>Create Vesting</span>
           </button>
         </a>

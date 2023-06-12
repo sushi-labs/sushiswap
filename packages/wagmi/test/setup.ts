@@ -1,7 +1,7 @@
-import { Chain, CreateClientConfig, configureChains, createClient} from 'wagmi'
-import { foundry, polygon } from '../chains'
+import { Chain, CreateClientConfig, configureChains, createClient } from 'wagmi'
+import { foundry, polygon } from '../src/chains'
 import { Wallet, providers } from 'ethers'
-import { MockConnector } from '../connectors/mock'
+import { MockConnector } from '../src/connectors/mock'
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 
 const foundryPolygon: Chain = {
@@ -149,4 +149,3 @@ export const _createTestClient = (config?: CreateClientConfig) =>
     autoConnect: true,
     connectors: [new MockConnector({ options: { signer: getSigners()[0] } })],
   })
-

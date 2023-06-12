@@ -9,7 +9,6 @@ import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
-import { swapErrorToUserReadableMessage } from '../../lib/swap/swapErrorToUserReadableMessage'
 import { log } from 'next-axiom'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import {
@@ -25,7 +24,7 @@ import {
 } from '@sushiswap/route-processor'
 import { routeProcessor2Abi } from '@sushiswap/abi'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
-import { Bridge, LiquidityProvider, LiquidityProviders } from '@sushiswap/router'
+import { Bridge, LiquidityProviders } from '@sushiswap/router'
 import { Chain } from '@sushiswap/chain'
 
 interface ConfirmationDialogProps {
@@ -110,6 +109,22 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const [open, setOpen] = useState(false)
   const [dialogState, setDialogState] = useState<ConfirmationDialogState>(ConfirmationDialogState.Undefined)
 
+  console.log(
+    Boolean(trade?.writeArgs) &&
+      appType === AppType.Swap &&
+      (isRouteProcessorChainId(network0) || isRouteProcessor3ChainId(network0)) &&
+      approved &&
+      trade?.route?.status !== 'NoWay',
+    [
+      trade,
+      Boolean(trade?.writeArgs),
+      appType === AppType.Swap,
+      isRouteProcessorChainId(network0) || isRouteProcessor3ChainId(network0),
+      approved,
+      trade?.route?.status !== 'NoWay',
+    ]
+  )
+
   const { config, isError, error } = usePrepareContractWrite({
     chainId: network0,
     address: isRouteProcessor3ChainId(network0)
@@ -168,7 +183,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
           } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${trade.amountOut?.toSignificant(6)} ${
             trade.amountOut?.currency.symbol
           }`,
-          failed: `Something went wrong when trying to ${isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'}} ${
+          failed: `Something went wrong when trying to ${isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'} ${
             trade.amountIn?.currency.symbol
           } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${trade.amountOut?.currency.symbol}`,
         },
@@ -348,7 +363,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         trade,
         error,
       })
-      createErrorToast(swapErrorToUserReadableMessage(error), false)
+      createErrorToast(error.message, false)
     },
   })
 

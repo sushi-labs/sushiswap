@@ -4,7 +4,15 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { PAGE_SIZE } from '../contants'
-import { APR_COLUMN, FEES_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_1D_COLUMN, VOLUME_7D_COLUMN } from './Cells/columns'
+import {
+  APR_COLUMN,
+  FEES_COLUMN,
+  NAME_COLUMN,
+  TVL_COLUMN,
+  VOLUME_1D_COLUMN,
+  VOLUME_7D_COLUMN,
+  VOLUME_1M_COLUMN,
+} from './Cells/columns'
 import { PoolQuickHoverTooltip } from './PoolQuickHoverTooltip'
 import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
 import { useSWRConfig } from 'swr'
@@ -12,7 +20,15 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { Loader } from '@sushiswap/ui/future/components/Loader'
 
-const COLUMNS = [NAME_COLUMN, TVL_COLUMN, VOLUME_1D_COLUMN, VOLUME_7D_COLUMN, FEES_COLUMN, APR_COLUMN] as any
+const COLUMNS = [
+  NAME_COLUMN,
+  TVL_COLUMN,
+  VOLUME_1D_COLUMN,
+  VOLUME_7D_COLUMN,
+  VOLUME_1M_COLUMN,
+  FEES_COLUMN,
+  APR_COLUMN,
+] as any
 
 export const PoolsTable: FC = () => {
   const { chainIds, tokenSymbols, protocols, farmsOnly } = usePoolFilters()

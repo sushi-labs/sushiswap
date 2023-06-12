@@ -49,6 +49,48 @@ sources:
         endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:subgraph-qa/sushiswap-ethereum}
         retry: 3
     transforms:
+      - rename:
+          renames:
+            - from:
+                type: Query
+                field: swaps
+              to:
+                type: Query
+                field: v2Swaps
+            - from:
+                type: Swap
+              to:
+                type: V2Swap
+            - from:
+                type: Query
+                field: burns
+              to:
+                type: Query
+                field: v2Burns
+            - from:
+                type: Burn
+              to:
+                type: V2Burn
+            - from:
+                type: Query
+                field: mints
+              to:
+                type: Query
+                field: v2Mints
+            - from:
+                type: Mint
+              to:
+                type: V2Mint
+            - from:
+                type: Query
+                field: transactions
+              to:
+                type: Query
+                field: v2Transactions
+            - from:
+                type: Transaction
+              to:
+                type: V2Transaction
       # - addSourceName: true
       # - autoPagination:
       #     validateSchema: true
@@ -157,7 +199,12 @@ sources:
         endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:uniswap/uniswap-v3}
         retry: 3
     transforms:
-
+      - prefix:
+          value: SUSHISWAP_V3_
+          includeRootOperations: true
+          includeTypes: true
+          ignore:
+            - _SubgraphErrorPolicy_
 
 # Had to disable global transforms since we have a jsonSchema handler in here now...
 transforms:

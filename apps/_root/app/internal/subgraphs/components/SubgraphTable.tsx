@@ -94,7 +94,7 @@ const columns = [
             <div className="text-yellow">
               {status} ({formatNumber(unsyncedBlockCount).replace(/\.(00|0)/, '')})
             </div>
-          )
+          );
         case 'Failed':
           return <div className="text-red">{status}</div>
       }

@@ -27,7 +27,7 @@ import { isConstantProductPool, isStablePool } from '../../../../lib/functions'
 import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
+import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
 import { ContentBlock } from '../../../../components/AddPage/ContentBlock'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import Link from 'next/link'
@@ -116,7 +116,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
                   enabled={
                     isConstantProductPoolFactoryChainId(chainId) &&
                     poolType === PoolFinderType.Classic &&
-                    TRIDENT_ENABLED_NETWORKS.includes(chainId)
+                    TRIDENT_ENABLED_NETWORKS.includes(chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number])
                   }
                   fee={fee}
                   twap={false}
@@ -128,7 +128,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
                   enabled={
                     isStablePoolFactoryChainId(chainId) &&
                     poolType === PoolFinderType.Stable &&
-                    TRIDENT_ENABLED_NETWORKS.includes(chainId)
+                    TRIDENT_ENABLED_NETWORKS.includes(chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number])
                   }
                   fee={fee}
                   twap={false}
@@ -353,12 +353,7 @@ const _Add: FC<AddProps> = ({
                             enabled={isBentoBoxV1ChainId(chainId)}
                           >
                             <Checker.Success tag={APPROVE_TAG_ADD_TRIDENT}>
-                              <Button
-                                fullWidth
-                                onClick={() => setOpen(true)}
-                                size="xl"
-                                testdata-id="add-liquidity-button"
-                              >
+                              <Button id="add-liquidity" fullWidth onClick={() => setOpen(true)} size="xl">
                                 {title}
                               </Button>
                             </Checker.Success>
@@ -413,12 +408,7 @@ const _Add: FC<AddProps> = ({
                             enabled={isBentoBoxV1ChainId(chainId)}
                           >
                             <Checker.Success tag={APPROVE_TAG_CREATE_TRIDENT}>
-                              <Button
-                                fullWidth
-                                onClick={() => setOpen(true)}
-                                size="md"
-                                testdata-id="create-pool-button"
-                              >
+                              <Button id="create-pool" size="xl" fullWidth onClick={() => setOpen(true)}>
                                 {title}
                               </Button>
                             </Checker.Success>

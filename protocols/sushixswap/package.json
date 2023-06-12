@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/sushixswap",
-  "version": "1.0.1",
+  "version": "1.0.5",
   "description": "SushiXSwap",
   "keywords": [
     "sushixswap",
@@ -35,25 +35,24 @@
     "node": "hardhat node",
     "test": "hardhat test"
   },
-  "devDependencies": {
+  "dependencies": {
     "@ethersproject/abi": "5.7.0",
     "@ethersproject/providers": "5.7.2",
-    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
     "@openzeppelin/contracts": "^4.6.0",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/bentobox": "1.0.1",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/core": "^1.4.2",
     "@sushiswap/currency": "workspace:*",
-    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/hardhat-config": "workspace:*",
+    "@sushiswap/types": "0.0.2"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
+    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
-    "@sushiswap/stargate": "workspace:*",
-    "@sushiswap/sushiswap": "workspace:*",
-    "@sushiswap/tines": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@sushiswap/types": "workspace:*",
     "@tenderly/hardhat-tenderly": "^1.0.13",
     "@types/chai": "^4.3.3",
     "@types/node": "18.11.18",

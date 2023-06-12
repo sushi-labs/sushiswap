@@ -20,7 +20,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@reduxjs/toolkit": "1.9.1",
+    "@reduxjs/toolkit": "1.9.5",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
@@ -36,15 +36,15 @@
     "fast-json-stable-stringify": "2.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-redux": "8.0.5",
+    "react-redux": "8.0.7",
     "typescript": "5.0.4"
   },
   "peerDependencies": {
-    "@reduxjs/toolkit": "1.9.1",
+    "@reduxjs/toolkit": "1.9.5",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-redux": "8.0.5"
+    "react-redux": "8.0.7"
   }
 }

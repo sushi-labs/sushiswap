@@ -136,6 +136,104 @@ query PairById($id: ID!) {
   }
 }
 
+query V2Transactions($first: Int = 100, $skip: Int = 0, $orderBy: Transaction_orderBy = timestamp, $orderDir: OrderDirection = desc, $where: Transaction_filter) {
+  transactions: v2Transactions(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
+    id
+    createdAtTimestamp
+    createdAtBlock
+    mints {
+      id
+      sender
+      liquidity
+      amount0
+      amount1
+      amountUSD
+      logIndex
+    }
+    burns {
+      id
+      sender
+      liquidity
+      amount0
+      amount1
+      amountUSD
+      logIndex
+    }
+    swaps {
+      id
+      sender
+      to
+      amountIn
+      tokenIn {
+        symbol
+      }
+      amountOut
+      tokenOut {
+        symbol
+      }
+      amountUSD
+      logIndex
+    }
+  }
+}
+
+query V2Burns($first: Int = 100, $skip: Int = 0, $orderBy: Burn_orderBy = timestamp, $orderDir: OrderDirection = desc, $where: Burn_filter) {
+  burns: v2Burns(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
+    id
+    sender
+    liquidity
+    amount0
+    amount1
+    amountUSD
+    logIndex
+    transaction {
+      id
+      createdAtTimestamp
+      createdAtBlock
+    }
+  }
+}
+
+query V2Mints($first: Int = 100, $skip: Int = 0, $orderBy: Mint_orderBy = timestamp, $orderDir: OrderDirection = desc, $where: Mint_filter) {
+  mints: v2Mints(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
+    id
+    sender
+    liquidity
+    amount0
+    amount1
+    amountUSD
+    logIndex
+    transaction {
+      id
+      createdAtTimestamp
+      createdAtBlock
+    }
+  }
+}
+
+query V2Swaps($first: Int = 100, $skip: Int = 0, $orderBy: Swap_orderBy = timestamp, $orderDir: OrderDirection = desc, $where: Swap_filter) {
+  swaps: v2Swaps(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
+    id
+    sender
+    to
+    amountIn
+    tokenIn {
+      symbol
+    }
+    amountOut
+    tokenOut {
+      symbol
+    }
+    amountUSD
+    logIndex
+    transaction {
+      id
+      createdAtTimestamp
+      createdAtBlock
+    }
+  }
+}
+
 # fragment PairWithIncentivesFields on PairWithIncentives {
 #   ...PairFields
 #   # liquidityPositions {

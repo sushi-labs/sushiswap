@@ -2,18 +2,19 @@ import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { PrismaClient } from '@sushiswap/database'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
+import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
 import { config } from '@sushiswap/viem-config'
 import { createPublicClient, http, PublicClient } from 'viem'
-import { foundry } from 'viem/chains'
 
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { BiswapProvider } from './liquidity-providers/Biswap'
 import { CurveProvider } from './liquidity-providers/CurveProvider'
 import { DfynProvider } from './liquidity-providers/Dfyn'
+import { DovishV3Provider } from './liquidity-providers/DovishV3'
 import { ElkProvider } from './liquidity-providers/Elk'
 import { HoneySwapProvider } from './liquidity-providers/HoneySwap'
 import { JetSwapProvider } from './liquidity-providers/JetSwap'
+import { LaserSwapV2Provider } from './liquidity-providers/LaserSwap'
 import { LiquidityProvider, LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
 import { NetSwapProvider } from './liquidity-providers/NetSwap'
@@ -69,7 +70,7 @@ export class DataFetcher {
     } else {
       this.web3Client = createPublicClient({
         ...config[chainId],
-        transport: isTest ? http(foundry.rpcUrls.default.http[0]) : config[chainId].transport,
+        transport: isTest ? http('http://127.0.0.1:8545') : config[chainId].transport,
         pollingInterval: 8_000,
         batch: {
           multicall: {
@@ -263,6 +264,24 @@ export class DataFetcher {
       }
     }
 
+    if (this._providerIsIncluded(LiquidityProviders.DovishV3, providers)) {
+      try {
+        const provider = new DovishV3Provider(this.chainId, this.web3Client)
+        this.providers.push(provider)
+      } catch (e: unknown) {
+        // console.warn(e.message)
+      }
+    }
+
+    if (this._providerIsIncluded(LiquidityProviders.LaserSwap, providers)) {
+      try {
+        const provider = new LaserSwapV2Provider(this.chainId, this.web3Client)
+        this.providers.push(provider)
+      } catch (e: unknown) {
+        // console.warn(e.message)
+      }
+    }
+
     // console.log(
     //   `${chainShortName[this.chainId]}/${this.chainId} - Included providers: ${this.providers
     //     .map((p) => p.getType())
@@ -277,11 +296,19 @@ export class DataFetcher {
   }
 
   async fetchPoolsForToken(currency0: Type, currency1: Type, excludePools?: Set<string>): Promise<void> {
-    const [token0, token1] =
-      currency0.wrapped.equals(currency1.wrapped) || currency0.wrapped.sortsBefore(currency1.wrapped)
-        ? [currency0.wrapped, currency1.wrapped]
-        : [currency1.wrapped, currency0.wrapped]
-    await Promise.all(this.providers.map((p) => p.fetchPoolsForToken(token0, token1, excludePools)))
+    // ensure that we only fetch the native wrap pools if the token is the native currency and wrapped native currency
+    if (currency0.wrapped.equals(currency1.wrapped)) {
+      const provider = this.providers.find((p) => p.getType() === LiquidityProviders.NativeWrap)
+      if (provider) {
+        await provider.fetchPoolsForToken(currency0.wrapped, currency1.wrapped, excludePools)
+      }
+    } else {
+      const [token0, token1] =
+        currency0.wrapped.equals(currency1.wrapped) || currency0.wrapped.sortsBefore(currency1.wrapped)
+          ? [currency0.wrapped, currency1.wrapped]
+          : [currency1.wrapped, currency0.wrapped]
+      await Promise.all(this.providers.map((p) => p.fetchPoolsForToken(token0, token1, excludePools)))
+    }
   }
 
   getCurrentPoolCodeMap(currency0: Type, currency1: Type): Map<string, PoolCode> {

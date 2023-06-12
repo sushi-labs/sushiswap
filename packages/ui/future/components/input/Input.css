@@ -1,7 +1,0 @@
-.without-ring:focus {
-  @apply focus:ring-0 focus:ring-offset-0 focus-within:outline-none;
-}
-
-[type='checkbox']:focus {
-  @apply focus:ring-0 focus:ring-offset-0 focus-within:outline-none;
-}
