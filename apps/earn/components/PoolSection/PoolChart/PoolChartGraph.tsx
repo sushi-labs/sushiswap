@@ -5,13 +5,14 @@ import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo } from 'react'
 import ReactECharts from 'echarts-for-react'
 
-import tailwind from '../../../tailwind.config.js'
+import tailwindConfig from '../../../tailwind.config.js'
 import { usePoolGraphData } from '../../../lib/hooks'
 import { useTheme } from 'next-themes'
 import { PoolChartPeriod, PoolChartType } from './types'
 import { chartPeriods } from './constants'
 import { ChainId } from '@sushiswap/chain'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import resolveConfig from 'tailwindcss/resolveConfig'
 
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL | PoolChartType.APR
@@ -19,6 +20,8 @@ interface PoolChartProps {
   address: string
   chainId: ChainId
 }
+
+const tailwind = resolveConfig(tailwindConfig)
 
 export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, chainId }) => {
   const { resolvedTheme } = useTheme()
