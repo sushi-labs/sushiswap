@@ -629,15 +629,15 @@ export const otherChains: Chain[] = [
     rpcUrls: {
       default: {
         http: [
-          'https://mainnet-rpc.thundercore.io',
           'https://mainnet-rpc.thundercore.com',
-          'https://mainnet-rpc.thundertoken.net',
+          // 'https://mainnet-rpc.thundercore.io',
+          // 'https://mainnet-rpc.thundertoken.net',
         ],
       },
       public: {
         http: [
-          'https://mainnet-rpc.thundercore.io',
           'https://mainnet-rpc.thundercore.com',
+          'https://mainnet-rpc.thundercore.io',
           'https://mainnet-rpc.thundertoken.net',
         ],
       },
