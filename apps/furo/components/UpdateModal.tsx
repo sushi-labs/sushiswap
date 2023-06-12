@@ -112,19 +112,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
         data: batchAction({ contract, actions }),
       })
     },
-    [
-      address,
-      amount,
-      amountAsEntity,
-      chainId,
-      changeEndDate,
-      contract?.interface,
-      contractAddress,
-      endDate,
-      stream,
-      topUp,
-      signature
-    ]
+    [stream, address, chainId, contractAddress, contract, topUp, amount, changeEndDate, endDate, signature, amountAsEntity]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({

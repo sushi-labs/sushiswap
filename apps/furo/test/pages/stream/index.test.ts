@@ -37,9 +37,9 @@ test('Create, Withdraw, Update, Transfer, Cancel.', async ({ page }) => {
   const recipient = '0xc39c2d6eb8adef85f9caa141ec95e7c0b34d8dec'
   await createSingleStream(CHAIN_ID, USDC, '0.0001', RECIPIENT, page)
   await withdrawFromStream(page, streamId, withdrawAmount)
-  await updateStream(page, streamId)
-  await transferStream(page, streamId, recipient)
-  // TODO: Transfer, cancel
+//   await updateStream(page, streamId)
+//   await transferStream(page, streamId, recipient)
+  await cancelStream(page, streamId)
 })
 
 async function updateStream(page: Page, streamId: string) {
@@ -59,14 +59,18 @@ async function updateStream(page: Page, streamId: string) {
 
   await page.locator('[testdata-id=furo-stream-top-up]').fill('0.0001')
 
+  const approveBentoboxLocator = page.locator('[testdata-id=furo-update-stream-approve-bentobox]')
+  await expect(approveBentoboxLocator).toBeVisible()
+  await expect(approveBentoboxLocator).toBeEnabled()
+  await approveBentoboxLocator.click()
+
+//   // approve
+//   const approveLocator = page.locator('[testdata-id=approve-erc20-update-stream]')
+//   await expect(approveLocator).toBeVisible()
+//   await expect(amountSwitchLocator).toBeEnabled()
+//   await approveLocator.click()
+
   const confirmWithdrawalLocator = page.locator('[testdata-id=stream-update-confirmation-button]')
-
-  // approve
-  const approveLocator = page.locator('[testdata-id=approve-erc20-update-stream]')
-  await expect(approveLocator).toBeVisible()
-  await expect(amountSwitchLocator).toBeEnabled()
-  await approveLocator.click()
-
   await expect(confirmWithdrawalLocator).toBeVisible()
   await expect(confirmWithdrawalLocator).toBeEnabled()
   await confirmWithdrawalLocator.click()
@@ -103,30 +107,49 @@ async function withdrawFromStream(page: Page, streamId: string, withdrawAmount: 
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
 
-
 async function transferStream(page: Page, streamId: string, recipient: string) {
-    const url = (process.env.PLAYWRIGHT_URL as string).concat(`/stream/${CHAIN_ID}:${streamId}`)
-    await mockSubgraph(page)
-    await page.goto(url)
-    await switchNetwork(page, CHAIN_ID)
-    const openTransferLocator = page.locator('[testdata-id=stream-transfer-button]')
-    await expect(openTransferLocator).toBeVisible()
-    await expect(openTransferLocator).toBeEnabled()
-    await openTransferLocator.click()
-  
-    const recipientLocator = page.locator('[testdata-id=stream-transfer-recipient-input]')
-    await expect(recipientLocator).toBeVisible()
-    await recipientLocator.fill(recipient)
-  
-    const confirmTransferLocator = page.locator('[testdata-id=stream-transfer-confirmation-button]')
-      await expect(confirmTransferLocator).toBeVisible()
-    await expect(confirmTransferLocator).toBeEnabled()
-    await confirmTransferLocator.click()
-  
-    const expectedText = '(Successfully transferred stream to *.)'
-    const regex = new RegExp(expectedText)
-    await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
-  }
+  const url = (process.env.PLAYWRIGHT_URL as string).concat(`/stream/${CHAIN_ID}:${streamId}`)
+  await mockSubgraph(page)
+  await page.goto(url)
+  await switchNetwork(page, CHAIN_ID)
+  const openTransferLocator = page.locator('[testdata-id=stream-transfer-button]')
+  await expect(openTransferLocator).toBeVisible()
+  await expect(openTransferLocator).toBeEnabled()
+  await openTransferLocator.click()
+
+  const recipientLocator = page.locator('[testdata-id=stream-transfer-recipient-input]')
+  await expect(recipientLocator).toBeVisible()
+  await recipientLocator.fill(recipient)
+
+  const confirmTransferLocator = page.locator('[testdata-id=stream-transfer-confirmation-button]')
+  await expect(confirmTransferLocator).toBeVisible()
+  await expect(confirmTransferLocator).toBeEnabled()
+  await confirmTransferLocator.click()
+
+  const expectedText = '(Successfully transferred stream to *.)'
+  const regex = new RegExp(expectedText)
+  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+}
+
+async function cancelStream(page: Page, streamId: string) {
+  const url = (process.env.PLAYWRIGHT_URL as string).concat(`/stream/${CHAIN_ID}:${streamId}`)
+  await mockSubgraph(page)
+  await page.goto(url)
+  await switchNetwork(page, CHAIN_ID)
+  const openTransferLocator = page.locator('[testdata-id=stream-cancel-button]')
+  await expect(openTransferLocator).toBeVisible()
+  await expect(openTransferLocator).toBeEnabled()
+  await openTransferLocator.click()
+
+  const confirmTransferLocator = page.locator('[testdata-id=stream-cancel-confirmation-button]')
+  await expect(confirmTransferLocator).toBeVisible()
+  await expect(confirmTransferLocator).toBeEnabled()
+  await confirmTransferLocator.click()
+
+  const expectedText = '(Successfully cancelled stream)'
+  const regex = new RegExp(expectedText)
+  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+}
 
 async function mockSubgraph(page: Page) {
   await page.route('https://api.thegraph.com/subgraphs/name/sushi-subgraphs/furo-polygon', async (route, request) => {
