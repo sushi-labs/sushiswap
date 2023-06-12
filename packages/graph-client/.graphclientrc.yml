@@ -199,7 +199,12 @@ sources:
         endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:uniswap/uniswap-v3}
         retry: 3
     transforms:
-
+      - prefix:
+          value: SUSHISWAP_V3_
+          includeRootOperations: true
+          includeTypes: true
+          ignore:
+            - _SubgraphErrorPolicy_
 
 # Had to disable global transforms since we have a jsonSchema handler in here now...
 transforms:
