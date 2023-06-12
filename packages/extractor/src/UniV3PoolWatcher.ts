@@ -10,6 +10,8 @@ import { decodeEventLog, Log } from 'viem'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { WordLoadManager } from './WordLoadManager'
 
+const RESERVES_UPDATE_INTERVAL = 1000
+
 interface UniV3PoolSelfState {
   blockNumber: number
   reserve0: bigint
@@ -78,6 +80,7 @@ export class UniV3PoolWatcher {
   fee: FeeAmount
   spacing: number
   latestEventBlockNumber = 0
+  eventsAfterLastReservesUpdate = 0
 
   providerName: string
   client: MultiCallAggregator
@@ -120,6 +123,8 @@ export class UniV3PoolWatcher {
           { address: this.token1.address as Address, abi: erc20Abi, functionName: 'balanceOf', args: [this.address] },
         ])
         if (blockNumber < this.latestEventBlockNumber) continue // later events already have came
+
+        this.eventsAfterLastReservesUpdate = 0
 
         const [sqrtPriceX96, tick] = slot0 as [bigint, number]
         this.state = {
@@ -221,6 +226,24 @@ export class UniV3PoolWatcher {
       }
       default:
     }
+
+    // Users can send more liquidity to pool than pool expects, so sometimes real reserves differ from expected
+    // Reserves for uniV3 pools don't participate in swap calculation, so it is not critical
+    // But they participate in pricing calculation
+    // Reserves need to be updated from time to time
+    if (this.eventsAfterLastReservesUpdate++ >= RESERVES_UPDATE_INTERVAL) this.updateReserves()
+  }
+
+  async updateReserves() {
+    this.eventsAfterLastReservesUpdate = 0
+    const [reserve0, reserve1] = await Promise.all([
+      this.client.callValue(this.token0.address as Address, erc20Abi as Abi, 'balanceOf', [this.address] ),
+      this.client.callValue(this.token1.address as Address, erc20Abi as Abi, 'balanceOf', [this.address] )
+    ])
+    if (this.state) {
+      this.state.reserve0 = reserve0 as bigint
+      this.state.reserve1 = reserve1 as bigint
+    }    
   }
 
   getPoolCode(): PoolCode | undefined {
