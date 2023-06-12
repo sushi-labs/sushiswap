@@ -987,6 +987,7 @@ importers:
       '@sushiswap/react-query': workspace:*
       '@sushiswap/redux-localstorage': workspace:*
       '@sushiswap/redux-token-lists': workspace:*
+      '@sushiswap/tailwindcss-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi': workspace:*
@@ -1072,6 +1073,7 @@ importers:
       '@sushiswap/react-query': link:../../packages/react-query
       '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
+      '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@sushiswap/wagmi-config': link:../../config/wagmi

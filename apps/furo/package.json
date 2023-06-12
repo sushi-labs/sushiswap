@@ -49,6 +49,7 @@
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
+    "@sushiswap/tailwindcss-config": "workspace:*",
     "@tanstack/react-query": "4.28.0",
     "@tanstack/react-query-devtools": "4.28.0",
     "@tanstack/react-query-persist-client": "4.28.0",
