@@ -5,7 +5,7 @@ import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { SafeConnector } from 'wagmi/connectors/safe'
-import { _createTestClient } from './test/setup'
+import { _createTestClient } from '../test/setup'
 
 const isTest = process.env['NODE_ENV'] === 'test' || process.env['NEXT_PUBLIC_TEST'] === 'true'
 

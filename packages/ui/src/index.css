@@ -1,15 +1,14 @@
 @tailwind base;
 
-@import 'react-datepicker/dist/react-datepicker.css';
 @import '@fontsource-variable/inter/index.css';
+@import 'react-datepicker/dist/react-datepicker.css';
 
 @tailwind components;
 @tailwind utilities;
 
 @import './variables.css';
-@import './tooltip/Tooltip.css';
-@import './input/Input.css';
-@import './input/DatePicker.css';
+@import './tooltip/styles.css';
+@import './input/styles.css';
 @import "./future/components/networkselector/styles.css";
 
 *,
@@ -32,11 +31,6 @@ body {
   background-color: transparent !important;
 }
 
-#__next {
-  min-height: 100vh;
-}
-
-
 footer {
   position: sticky;
   top: 100%;
@@ -52,9 +46,13 @@ body {
   overscroll-behavior-x: none;
 }
 
+#__next {
+    min-height: 100vh;
+}
+
 .hide-scrollbar {
-  -ms-overflow-style: none; /* for Internet Explorer, Edge */
-  scrollbar-width: none; /* for Firefox */
+  -ms-overflow-style: none; 
+  scrollbar-width: none;
 }
 
 .hide-scrollbar::-webkit-scrollbar {
@@ -139,14 +137,5 @@ body {
 
   input[type=range]::-webkit-slider-thumb {
     @apply appearance-none w-6 h-6 bg-blue rounded-full
-  }
-}
-
-@keyframes snowfall {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    transform: translate3d(0, 110vh, 0);
   }
 }

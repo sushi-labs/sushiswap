@@ -3,13 +3,23 @@
 ::after {
   --font-sans: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
   'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  color-scheme: light;
-  --background-color: #f4f5f6;
-  --color: #000;
+    color-scheme: light;
+    --background-color: #f4f5f6;
+    --color: #000;
 }
 
-.dark:root {
+@media (prefers-color-scheme: dark) {
+  :root,
+  ::before,
+  ::after {
+    color-scheme: dark;
+    --background-color: #0f172a;
+    --color: #ffffff;
+  }
+}
+
+/* .dark:root {
   color-scheme: dark;
   --background-color: #0f172a;
   --color: #ffffff;
-}
+} */

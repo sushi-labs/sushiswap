@@ -1,3 +1,5 @@
+import './globals.css'
+
 export * from './animation'
 export * from './app'
 export * from './backdrop'
