@@ -252,6 +252,7 @@ additionalTypeDefs: |
     name: String!
     decimals: Int!
     chainId: Int!
+    rebase: Rebase!
   }
   type ChefUserPool {
     id: BigInt!

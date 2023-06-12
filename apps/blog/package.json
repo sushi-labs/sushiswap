@@ -22,7 +22,7 @@
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
     "@tailwindcss/typography": "0.5.9",
-    "@vercel/analytics": "1.0.1",
+    "@vercel/analytics": "0.1.5",
     "date-fns": "2.29.3",
     "fast-json-stable-stringify": "2.1.0",
     "graphql": "16.6.0",
