@@ -10,19 +10,25 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
-import { FC, useEffect } from 'react'
+import { FC, ReactNode, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { store } from 'store'
 import { WagmiConfig } from '@sushiswap/wagmi'
 
 import SEO from '../next-seo.config.mjs'
 import { GlobalNav } from '@sushiswap/ui/future/components/GlobalNav'
-import { ToastContainer } from '@sushiswap/ui/future/components/toast'
 
 declare global {
   interface Window {
     dataLayer: Record<string, any>[]
   }
+}
+
+import { queryClient } from '@sushiswap/react-query'
+import { QueryClientProvider as _QueryClientProvider } from '@tanstack/react-query'
+
+export const QueryClientProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  return <_QueryClientProvider client={queryClient}>{children}</_QueryClientProvider>
 }
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
@@ -70,12 +76,14 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       <WagmiConfig client={client}>
         <Provider store={store}>
           <ThemeProvider>
-            <App.Shell>
-              <DefaultSeo {...SEO} />
-              <GlobalNav />
-              <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
-              <App.Footer />
-            </App.Shell>
+            <QueryClientProvider>
+              <App.Shell>
+                <DefaultSeo {...SEO} />
+                <GlobalNav />
+                <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
+                <App.Footer />
+              </App.Shell>
+            </QueryClientProvider>
           </ThemeProvider>
         </Provider>
       </WagmiConfig>

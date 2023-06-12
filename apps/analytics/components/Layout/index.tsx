@@ -8,7 +8,7 @@ type Props = {
   className?: string
 }
 
-export function Layout({ children, maxWidth = '6xl', backdrop, className }: Props) {
+export function Layout({ children, maxWidth = 'full', backdrop, className }: Props) {
   return (
     <Container
       maxWidth={maxWidth}
