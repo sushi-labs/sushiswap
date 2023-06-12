@@ -270,7 +270,7 @@ export const useCrossChainTradeQuery = (
           dstBridgeToken,
           dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined,
           tradeId,
-          dstAmountIn
+          srcAmountOut
         )
       }
 
