@@ -1,10 +1,10 @@
 
 query SushiSwapV3PoolDayData(
     $id: ID!
-    $block: Block_height,
+    $block: SUSHISWAP_V3_Block_height,
     $subgraphError: _SubgraphErrorPolicy_! = deny
 ) {
-  poolDayData(
+  poolDayData: SUSHISWAP_V3_poolDayData(
     id: $id,
     block: $block, 
     subgraphError: $subgraphError
@@ -36,10 +36,10 @@ query SushiSwapV3PoolDayData(
 
 query SushiSwapV3PoolHourData(
     $id: ID!
-    $block: Block_height,
+    $block: SUSHISWAP_V3_Block_height,
     $subgraphError: _SubgraphErrorPolicy_! = deny
 ) {
-  poolHourData(
+  poolHourData: SUSHISWAP_V3_poolHourData(
     id: $id,
     block: $block, 
     subgraphError: $subgraphError
@@ -71,10 +71,10 @@ query SushiSwapV3PoolHourData(
 
 query SushiSwapV3Pool(
     $id: ID!
-    $block: CONCENTRATED_Block_height,
+    $block: SUSHISWAP_V3_Block_height,
     $subgraphError: _SubgraphErrorPolicy_! = deny
 ) {
-  pool: CONCENTRATED_pool(
+  pool: SUSHISWAP_V3_pool(
     id: $id,
     block: $block, 
     subgraphError: $subgraphError
@@ -127,8 +127,8 @@ query SushiSwapV3Pool(
   }
 }
 
-query SushiSwapV3DayDatas($first: Int = 1000, $skip: Int, $orderBy: UniswapDayData_orderBy, $orderDirection: OrderDirection, $where: UniswapDayData_filter) {
-  uniswapDayDatas(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
+query SushiSwapV3DayDatas($first: Int = 1000, $skip: Int, $orderBy: SUSHISWAP_V3_UniswapDayData_orderBy, $orderDirection: SUSHISWAP_V3_OrderDirection, $where: SUSHISWAP_V3_UniswapDayData_filter) {
+  uniswapDayDatas: SUSHISWAP_V3_uniswapDayDatas(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
     id
     date
     volumeETH

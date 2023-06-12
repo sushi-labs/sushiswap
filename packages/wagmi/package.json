@@ -9,13 +9,40 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "source": "./index.ts",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": [
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts",
+      "./src/*/index.tsx"
+    ],
+    "./future/*": [
+      "./src/future/*.ts",
+      "./src/future/*.tsx",
+      "./src/future/*/index.ts",
+      "./src/future/*/index.tsx"
+    ]
+  },
+  "files": [
+    "src"
+  ],
+  "typesVersions": {
+    "*": {
+      "*": [
+        "src/*",
+        "src/*/index",
+        "src/future/*",
+        "src/future/*/index"
+      ]
+    }
+  },
   "scripts": {
     "build": "true",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "generate": "typechain --target ethers-v5 --out-dir typechain './node_modules/@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'",
-    "lint": "TIMING=1 eslint . --fix",
     "test": "vitest"
   },
   "dependencies": {
@@ -60,7 +87,7 @@
     "@uniswap/v2-core": "1.0.1",
     "@uniswap/v3-periphery": "1.4.1",
     "next-themes": "^0.2.1",
-    "viem": "0.3.29",
+    "viem": "1.0.2",
     "zod": "3.21.4"
   },
   "devDependencies": {
@@ -74,7 +101,7 @@
     "@wagmi/core": "0.10.11",
     "eslint": "8.41.0",
     "ethers": "5.7.2",
-    "next": "13.4.3",
+    "next": "13.4.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tsup": "6.5.0",
@@ -108,6 +135,6 @@
     }
   },
   "optionalDependencies": {
-    "next": "13.4.3"
+    "next": "13.4.4"
   }
 }

@@ -8,7 +8,6 @@ import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { ChainSelectors } from './ChainSelectors'
 import { Explainer } from '@sushiswap/ui/future/components/Explainer'
 import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
-import { SushiXSwapChainId } from '@sushiswap/sushixswap'
 
 export const CrossChainBanner: FC = () => {
   const { appType, network0 } = useSwapState()

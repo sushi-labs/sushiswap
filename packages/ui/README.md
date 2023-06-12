@@ -45,3 +45,14 @@ return <>I'm a typed component</>
 ## Resources
 
 https://react-typescript-cheatsheet.netlify.app/docs/advanced/patterns_by_usecase/#props-extracting-prop-types-of-a-component
+
+
+
+"exports": {
+  "./future/components/GlobalNav": "./future/components/GlobalNav/**/*.{ts,tsx}",
+  "./index.css": "./index.css",
+  "./globals.css": "./globals.css",
+  "./variables.css": "./variables.css",
+  "./tailwind.js": "./tailwind.js",
+  "./package.json": "./package.json"
+},

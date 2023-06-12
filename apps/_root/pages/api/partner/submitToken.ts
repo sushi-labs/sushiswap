@@ -87,6 +87,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const branches: string[] = []
 
     for (let i = 1; ; i++) {
+      // @ts-ignore
       const { data }: { data: { name: string }[] } = await octokit.request('GET /repos/{owner}/{repo}/branches', {
         owner,
         repo: 'list',
@@ -127,6 +128,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       ;({
         data: { sha: previousImageFileSha },
+        // @ts-ignore
       } = (await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
         owner,
         repo: 'list',
@@ -158,6 +160,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   let currentListData: { sha: string; content: any } | undefined
 
   try {
+    // @ts-ignore
     ;({ data: currentListData } = (await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
       owner,
       repo: 'list',

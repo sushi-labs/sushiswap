@@ -1,5 +1,3 @@
-'use client'
-
 import React, { FC } from 'react'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'

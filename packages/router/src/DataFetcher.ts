@@ -5,15 +5,16 @@ import { PrismaClient } from '@sushiswap/database'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
 import { config } from '@sushiswap/viem-config'
 import { createPublicClient, http, PublicClient } from 'viem'
-import { foundry } from 'viem/chains'
 
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { BiswapProvider } from './liquidity-providers/Biswap'
 import { CurveProvider } from './liquidity-providers/CurveProvider'
 import { DfynProvider } from './liquidity-providers/Dfyn'
+import { DovishV3Provider } from './liquidity-providers/DovishV3'
 import { ElkProvider } from './liquidity-providers/Elk'
 import { HoneySwapProvider } from './liquidity-providers/HoneySwap'
 import { JetSwapProvider } from './liquidity-providers/JetSwap'
+import { LaserSwapV2Provider } from './liquidity-providers/LaserSwap'
 import { LiquidityProvider, LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
 import { NetSwapProvider } from './liquidity-providers/NetSwap'
@@ -27,9 +28,7 @@ import { TridentProvider } from './liquidity-providers/Trident'
 import { UbeSwapProvider } from './liquidity-providers/UbeSwap'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import { UniswapV3Provider } from './liquidity-providers/UniswapV3'
-import { DovishV3Provider } from './liquidity-providers/DovishV3'
 import type { PoolCode } from './pools/PoolCode'
-import { LaserSwapV2Provider } from './liquidity-providers/LaserSwap'
 
 // import { create } from 'viem'
 const isTest = process.env['NODE_ENV'] === 'test' || process.env['NEXT_PUBLIC_TEST'] === 'true'
@@ -71,7 +70,7 @@ export class DataFetcher {
     } else {
       this.web3Client = createPublicClient({
         ...config[chainId],
-        transport: isTest ? http(foundry.rpcUrls.default.http[0]) : config[chainId].transport,
+        transport: isTest ? http('http://127.0.0.1:8545') : config[chainId].transport,
         pollingInterval: 8_000,
         batch: {
           multicall: {
@@ -297,11 +296,19 @@ export class DataFetcher {
   }
 
   async fetchPoolsForToken(currency0: Type, currency1: Type, excludePools?: Set<string>): Promise<void> {
-    const [token0, token1] =
-      currency0.wrapped.equals(currency1.wrapped) || currency0.wrapped.sortsBefore(currency1.wrapped)
-        ? [currency0.wrapped, currency1.wrapped]
-        : [currency1.wrapped, currency0.wrapped]
-    await Promise.all(this.providers.map((p) => p.fetchPoolsForToken(token0, token1, excludePools)))
+    // ensure that we only fetch the native wrap pools if the token is the native currency and wrapped native currency
+    if (currency0.wrapped.equals(currency1.wrapped)) {
+      const provider = this.providers.find((p) => p.getType() === LiquidityProviders.NativeWrap)
+      if (provider) {
+        await provider.fetchPoolsForToken(currency0.wrapped, currency1.wrapped, excludePools)
+      }
+    } else {
+      const [token0, token1] =
+        currency0.wrapped.equals(currency1.wrapped) || currency0.wrapped.sortsBefore(currency1.wrapped)
+          ? [currency0.wrapped, currency1.wrapped]
+          : [currency1.wrapped, currency0.wrapped]
+      await Promise.all(this.providers.map((p) => p.fetchPoolsForToken(token0, token1, excludePools)))
+    }
   }
 
   getCurrentPoolCodeMap(currency0: Type, currency1: Type): Map<string, PoolCode> {

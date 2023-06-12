@@ -11,12 +11,49 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "sideEffects": false,
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "source": "./src/index.ts",
-  "types": "./dist/index.d.ts",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    "./index.css": "./src/index.css",
+    "./variables.css": "./src/variables.css",
+    "./globals.css": "./src/globals.css",
+    "./tailwind.js": "./tailwind.js",
+    ".": [
+      "./src/index.ts",
+      "./src/index.tsx"
+    ],
+    "./*": [
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts",
+      "./src/*/index.tsx"
+    ],
+    "./future/*": [
+      "./src/future/*.ts",
+      "./src/future/*.tsx",
+      "./src/future/*/index.ts",
+      "./src/future/*/index.tsx"
+    ]
+  },
+  "files": [
+    "src",
+    "tailwind.js"
+  ],
+  "typesVersions": {
+    "*": {
+      "*": [
+        "src/*",
+        "src/*/index",
+        "src/future/*",
+        "src/future/*/index"
+      ]
+    }
+  },
   "scripts": {
+    "build": "true",
+    "build2": "tsup",
+    "dev2": "tsup --watch",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "lint": "TIMING=1 eslint \"./**/*.ts*\"",
@@ -33,10 +70,11 @@
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",
+    "@sushiswap/tailwindcss-config": "workspace:*",
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@tailwindcss/forms": "0.5.3",
     "@tailwindcss/typography": "0.5.9",
-    "@tanstack/react-table": "8.5.30",
+    "@tanstack/react-table": "8.9.1",
     "classnames": "2.3.2",
     "date-fns": "2.29.3",
     "nanoid": "4.0.0",
@@ -64,7 +102,7 @@
     "@types/react-window": "1.8.5",
     "autoprefixer": "10.4.14",
     "eslint": "8.41.0",
-    "next": "13.4.3",
+    "next": "13.4.4",
     "postcss": "8.4.23",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -74,11 +112,11 @@
     "wagmi": "0.12.13"
   },
   "peerDependencies": {
-    "next": "13.4.3",
+    "next": "13.4.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.2",
-    "wagmi": "0.12.12"
+    "wagmi": "0.12.13"
   },
   "peerDependenciesMeta": {
     "next": {

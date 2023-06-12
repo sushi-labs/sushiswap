@@ -47,7 +47,9 @@ export const TradeStats: FC = () => {
             {loading || !trade?.priceImpact ? (
               <Skeleton.Box className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : trade?.priceImpact ? (
-              `${trade?.priceImpact?.lessThan(ZERO) ? '+' : '-'}${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%`
+              `${trade?.priceImpact?.lessThan(ZERO) ? '+' : trade?.priceImpact?.greaterThan(ZERO) ? '-' : ''}${Math.abs(
+                Number(trade?.priceImpact?.toFixed(2))
+              )}%`
             ) : null}
           </span>
         </div>

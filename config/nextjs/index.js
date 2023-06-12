@@ -10,8 +10,21 @@ const defaultNextConfig = {
   },
   images: {
     loader: 'cloudinary',
-    // path: 'https://cdn.sushi.com/image/fetch/',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
+    // path: 'https://cdn.sushi.com/image/fetch/',
+  },
+  eslint: {
+    dirs: [
+      // ...
+      'app',
+      'components',
+      'functions',
+      'lib',
+      'pages',
+      'providers',
+      'types',
+      'ui',
+    ],
   },
   webpack: (config, { isServer }) => {
     // If client-side, don't polyfill `fs`

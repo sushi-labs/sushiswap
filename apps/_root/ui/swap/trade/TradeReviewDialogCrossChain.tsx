@@ -19,7 +19,6 @@ import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain/Co
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import { ZERO } from '@sushiswap/math'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { swapErrorToUserReadableMessage } from '../../../lib/swap/swapErrorToUserReadableMessage'
 
 export const TradeReviewDialogCrossChain: FC = () => {
   const { review, token0, token1, recipient, network0, network1, amount, value } = useSwapState()
@@ -33,7 +32,7 @@ export const TradeReviewDialogCrossChain: FC = () => {
   return (
     <Dialog open={review} unmount={false} onClose={onClose} variant="opaque">
       <div className="max-w-[504px] mx-auto">
-        <button onClick={onClose} className="p-3 pl-0">
+        <button type="button" onClick={onClose} className="p-3 pl-0">
           <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
         </button>
         <div className="flex items-start justify-between gap-4 py-2">
@@ -86,9 +85,9 @@ export const TradeReviewDialogCrossChain: FC = () => {
                 {isFetching ? (
                   <Skeleton.Text align="right" fontSize="text-sm" className="w-1/5" />
                 ) : (
-                  `${trade?.priceImpact?.lessThan(ZERO) ? '+' : '-'}${Math.abs(
-                    Number(trade?.priceImpact?.toFixed(2))
-                  )}%`
+                  `${
+                    trade?.priceImpact?.lessThan(ZERO) ? '+' : trade?.priceImpact?.greaterThan(ZERO) ? '-' : ''
+                  }${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%`
                 )}
               </List.KeyValue>
               <List.KeyValue
@@ -150,9 +149,7 @@ export const TradeReviewDialogCrossChain: FC = () => {
                   )}
                 </Button>
                 <Collapsible open={Boolean(error)}>
-                  <div className="scroll bg-red/10 text-red-700 p-2 px-3 rounded-lg break-all">
-                    {swapErrorToUserReadableMessage(error)}
-                  </div>
+                  <div className="scroll bg-red/10 text-red-700 p-2 px-3 rounded-lg break-all">{error?.message}</div>
                 </Collapsible>
               </div>
             )}

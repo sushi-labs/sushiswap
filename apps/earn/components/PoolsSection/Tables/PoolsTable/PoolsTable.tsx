@@ -10,8 +10,8 @@ import {
   NAME_COLUMN,
   TVL_COLUMN,
   VOLUME_1D_COLUMN,
-  VOLUME_1H_COLUMN,
   VOLUME_7D_COLUMN,
+  VOLUME_1M_COLUMN,
 } from './Cells/columns'
 import { PoolQuickHoverTooltip } from './PoolQuickHoverTooltip'
 import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
@@ -23,9 +23,9 @@ import { Loader } from '@sushiswap/ui/future/components/Loader'
 const COLUMNS = [
   NAME_COLUMN,
   TVL_COLUMN,
-  VOLUME_1H_COLUMN,
   VOLUME_1D_COLUMN,
   VOLUME_7D_COLUMN,
+  VOLUME_1M_COLUMN,
   FEES_COLUMN,
   APR_COLUMN,
 ] as any

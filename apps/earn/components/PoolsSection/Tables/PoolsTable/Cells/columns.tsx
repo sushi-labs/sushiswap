@@ -10,7 +10,7 @@ import { Explainer } from '@sushiswap/ui/future/components/Explainer'
 import { ChainId } from '@sushiswap/chain'
 import { PoolVolume1hCell } from '../../SharedCells/PoolVolume1hCell'
 import { PoolVolume1wCell } from '../../SharedCells/PoolVolume1wCell'
-
+import { PoolVolume1mCell } from '../../SharedCells/PoolVolume1mCell'
 export const ICON_SIZE = 26
 export const PAGE_SIZE = 20
 
@@ -104,6 +104,18 @@ export const VOLUME_7D_COLUMN: ColumnDef<Pool, unknown> = {
   header: 'Volume (1w)',
   accessorFn: (row) => row.volume1w,
   cell: (props) => <PoolVolume1wCell row={props.row.original} />,
+  size: 100,
+  meta: {
+    className: 'justify-end',
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
+  },
+}
+
+export const VOLUME_1M_COLUMN: ColumnDef<Pool, unknown> = {
+  id: 'volume1w',
+  header: 'Volume (1m)',
+  accessorFn: (row) => row.volume1m,
+  cell: (props) => <PoolVolume1mCell row={props.row.original} />,
   size: 100,
   meta: {
     className: 'justify-end',
