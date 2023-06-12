@@ -51,7 +51,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
       </Link>
       <FormProvider {...methods}>
         <div className="flex flex-col gap-14">
-          <ImportErrorProvider<CreateMultipleVestingFormSchemaType>>
+          <ImportErrorProvider>
             <ImportZoneSection chainId={chainId} />
             <div className="w-full border-b border-slate-200/5" />
             <div className={review ? 'hidden' : ''}>

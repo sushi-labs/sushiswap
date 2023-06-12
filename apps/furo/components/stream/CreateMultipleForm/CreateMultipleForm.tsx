@@ -63,7 +63,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
       </Link>
       <FormProvider {...methods}>
         <div className="flex flex-col gap-14">
-          <ImportErrorProvider<CreateMultipleStreamFormSchemaType>>
+          <ImportErrorProvider>
             <ImportZoneSection chainId={chainId} />
             <div className="w-full border-b border-slate-200/5" />
             <div className={review ? 'hidden' : ''}>
