@@ -23,7 +23,7 @@ import {
 import { Account, privateKeyToAccount } from 'viem/accounts'
 import { Chain, hardhat, mainnet } from 'viem/chains'
 
-import { setTokenBalance,UniswapV3FactoryAddress } from '../src'
+import { setTokenBalance, UniswapV3FactoryAddress } from '../src'
 import { comparePoolCodes, isSubpool } from '../src/ComparePoolCodes'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
@@ -261,8 +261,11 @@ async function makeTest(
   })
 
   const extractor = new UniV3Extractor(
-    client, UniswapV3FactoryAddress[ChainId.ETHEREUM] as Address, 
-    'UniswapV3', '0xbfd8137f7d1516d3ea5ca83523914859ec47f573')
+    client,
+    UniswapV3FactoryAddress[ChainId.ETHEREUM] as Address,
+    'UniswapV3',
+    '0xbfd8137f7d1516d3ea5ca83523914859ec47f573'
+  )
   await extractor.start()
   pools.forEach((p) => extractor.addPoolWatching(p))
   for (;;) {
@@ -324,8 +327,11 @@ async function checkHistoricalLogs(env: TestEnvironment, pool: PoolInfo, fromBlo
   })
 
   const extractor = new UniV3Extractor(
-    clientPrimary, UniswapV3FactoryAddress[ChainId.ETHEREUM] as Address, 
-    'UniswapV3', '0xbfd8137f7d1516d3ea5ca83523914859ec47f573')
+    clientPrimary,
+    UniswapV3FactoryAddress[ChainId.ETHEREUM] as Address,
+    'UniswapV3',
+    '0xbfd8137f7d1516d3ea5ca83523914859ec47f573'
+  )
   await extractor.start()
   extractor.addPoolWatching(pool)
   for (;;) {

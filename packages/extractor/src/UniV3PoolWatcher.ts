@@ -237,13 +237,13 @@ export class UniV3PoolWatcher {
   async updateReserves() {
     this.eventsAfterLastReservesUpdate = 0
     const [reserve0, reserve1] = await Promise.all([
-      this.client.callValue(this.token0.address as Address, erc20Abi as Abi, 'balanceOf', [this.address] ),
-      this.client.callValue(this.token1.address as Address, erc20Abi as Abi, 'balanceOf', [this.address] )
+      this.client.callValue(this.token0.address as Address, erc20Abi as Abi, 'balanceOf', [this.address]),
+      this.client.callValue(this.token1.address as Address, erc20Abi as Abi, 'balanceOf', [this.address]),
     ])
     if (this.state) {
       this.state.reserve0 = reserve0 as bigint
       this.state.reserve1 = reserve1 as bigint
-    }    
+    }
   }
 
   getPoolCode(): PoolCode | undefined {

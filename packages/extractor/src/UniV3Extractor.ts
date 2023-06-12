@@ -87,37 +87,38 @@ export class UniV3Extractor {
     const promises: Promise<Address>[] = []
     for (let i = 0, promiseIndex = 0; i < tokens.length; ++i) {
       for (let j = i + 1; j < tokens.length; ++j) {
-        const [a0, a1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i].address, tokens[j].address] 
-        : [tokens[j].address, tokens[i].address]
-        Object.values(FeeAmount).forEach(fee => {
+        const [a0, a1] = tokens[i].sortsBefore(tokens[j])
+          ? [tokens[i].address, tokens[j].address]
+          : [tokens[j].address, tokens[i].address]
+        Object.values(FeeAmount).forEach((fee) => {
           promises[promiseIndex++] = this.multiCallAggregator.callValue(
             this.factoryAddress,
             IUniswapV3Factory.abi as Abi,
             'getPool',
-            [a0, a1, fee],
+            [a0, a1, fee]
           )
         })
       }
     }
 
     const result = await Promise.all(promises)
-    
+
     const pools: PoolInfo[] = []
     for (let i = 0, promiseIndex = 0; i < tokens.length; ++i) {
       for (let j = i + 1; j < tokens.length; ++j) {
-        const [token0, token1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] 
-        : [tokens[j], tokens[i]]
-        Object.values(FeeAmount).forEach(fee => {
+        const [token0, token1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] : [tokens[j], tokens[i]]
+        Object.values(FeeAmount).forEach((fee) => {
           const address = result[promiseIndex++]
-          if (address) pools.push({
-            address,
-            token0,
-            token1,
-            fee: fee as FeeAmount
-          })
+          if (address)
+            pools.push({
+              address,
+              token0,
+              token1,
+              fee: fee as FeeAmount,
+            })
         })
       }
-    }    
+    }
 
     pools.forEach((p) => this.addPoolWatching(p))
   }
@@ -145,27 +146,11 @@ export class UniV3Extractor {
     if (this.otherFactoryPoolSet.has(address)) return
     if (this.client.chain?.id === undefined) return
 
-    const factory = await this.multiCallAggregator.call(
-      address,
-      IUniswapV3Pool.abi as Abi,
-      'factory'
-    )
+    const factory = await this.multiCallAggregator.call(address, IUniswapV3Pool.abi as Abi, 'factory')
     if ((factory.returnValue as Address).toLowerCase() == this.factoryAddress.toLowerCase()) {
-      const token0Promise = this.multiCallAggregator.callValue(
-        address,
-        IUniswapV3Pool.abi as Abi,
-        'token0'
-      )
-      const token1Promise = this.multiCallAggregator.callValue(
-        address,
-        IUniswapV3Pool.abi as Abi,
-        'token1'
-      )
-      const feePromise = this.multiCallAggregator.callValue(
-        address,
-        IUniswapV3Pool.abi as Abi,
-        'fee'
-      )
+      const token0Promise = this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'token0')
+      const token1Promise = this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'token1')
+      const feePromise = this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'fee')
       const [token0Address, token1Address, fee] = await Promise.all([token0Promise, token1Promise, feePromise])
       const token0 = new Token({
         address: token0Address as string,
@@ -173,7 +158,7 @@ export class UniV3Extractor {
         // fake data - we don't need it for uniswap pools actually
         symbol: 'Unknown',
         name: 'Unknown',
-        decimals: 18
+        decimals: 18,
       })
       const token1 = new Token({
         address: token1Address as string,
@@ -181,9 +166,9 @@ export class UniV3Extractor {
         // fake data - we don't need it for uniswap pools actually
         symbol: 'Unknown',
         name: 'Unknown',
-        decimals: 18
+        decimals: 18,
       })
-      this.addPoolWatching({address, token0, token1, fee: fee as FeeAmount})
+      this.addPoolWatching({ address, token0, token1, fee: fee as FeeAmount })
     } else {
       this.otherFactoryPoolSet.add(address)
     }
