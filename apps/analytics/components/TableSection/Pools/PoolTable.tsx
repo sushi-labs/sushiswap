@@ -35,8 +35,8 @@ const COLUMNS = [
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ] as any
 
-export const PoolTable: FC = () => {
-  const { chainIds, search: tokenSymbols, isWhitelisted } = useFilters()
+export const PoolTable: FC<{ isWhitelisted?: boolean }> = ({ isWhitelisted = true }) => {
+  const { chainIds, search: tokenSymbols, isWhitelisted: _isWhitelisted } = useFilters()
 
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
@@ -55,7 +55,7 @@ export const PoolTable: FC = () => {
       tokenSymbols,
       orderBy: sorting[0]?.id,
       orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
-      isWhitelisted,
+      isWhitelisted: isWhitelisted,
     }),
     [chainIds, sorting, tokenSymbols, isWhitelisted]
   )

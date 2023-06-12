@@ -63,7 +63,7 @@ export const FuroTokenTable: FC = () => {
         loading={!furoTokens && isLoading}
         placeholder="No tokens found"
         pageSize={PAGE_SIZE}
-        linkFormatter={(row) => `/analytics/token/${row.id}`}
+        linkFormatter={(row) => `/token/${row.id}`}
       />
       <Table.Paginator
         hasPrev={pagination.pageIndex > 0}

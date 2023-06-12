@@ -48,7 +48,7 @@ function useFuroTokens(args: GetFuroTokenArgs) {
           const liquidity = Number(Amount.fromRawAmount(token, liquidityElastic).toSignificant(4))
 
           return {
-            id: furoToken.id,
+            id: token.id,
             token,
             priceUSD: priceUSD,
             liquidityBase: BigInt(furoToken.liquidityShares),
