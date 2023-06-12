@@ -7,17 +7,16 @@ import { withAxiom } from 'next-axiom'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   ...defaultNextConfig,
-  eslint: {
-    dirs: [
-      // ...
-      'app',
-      'components',
-      'functions',
-      'lib',
-      'pages',
-      'providers',
-      'types',
-      'ui',
+  images: {
+    loader: 'cloudinary',
+    path: 'https://cdn.sushi.com/image/upload/',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        port: '',
+        pathname: '/sushi-cdn/**',
+      },
     ],
   },
   transpilePackages: ['@sushiswap/ui', '@sushiswap/wagmi'],
