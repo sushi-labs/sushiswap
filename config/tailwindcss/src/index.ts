@@ -1,12 +1,22 @@
+import { Config } from 'tailwindcss'
 import defaultTheme from 'tailwindcss/defaultTheme'
 
 const config = {
   content: [
-    // app content
-    // `src/**/*.{js,ts,jsx,tsx}`,
-    // include packages if not transpiling
-    '../../packages/**/*.{js,ts,jsx,tsx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './common/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './ui/**/*.{js,ts,jsx,tsx,mdx}',
+    '../../packages/wagmi/src/**/*.{ts,tsx,mdx}',
+    '../../packages/ui/src/**/*.{ts,tsx,mdx}',
   ],
+  // content: [
+  //   // app content
+  //   `src/**/*.{js,ts,jsx,tsx}`,
+  //   // include packages if not transpiling
+  //   '../../packages/**/*.{js,ts,jsx,tsx}',
+  // ],
   plugins: [require('@tailwindcss/forms'), require('@tailwindcss/aspect-ratio'), require('@tailwindcss/typography')],
   theme: {
     screens: {
@@ -95,23 +105,23 @@ const config = {
         },
         dash: {
           '0%': {
-            strokeDashoffset: 1000,
+            strokeDashoffset: '1000',
           },
           '100%': {
-            strokeDashoffset: 0,
+            strokeDashoffset: '0',
           },
         },
         'dash-check': {
           '0%': {
-            strokeDashoffset: -100,
+            strokeDashoffset: '-100',
           },
           '100%': {
-            strokeDashoffset: 900,
+            strokeDashoffset: '900',
           },
         },
       },
     },
   },
-}
+} satisfies Config
 
-export default config
+export default config as Config

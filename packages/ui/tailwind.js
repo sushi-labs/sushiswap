@@ -9,9 +9,6 @@
 // }
 
 import defaultTheme from 'tailwindcss/defaultTheme'
-import typography from '@tailwindcss/typography'
-import forms from '@tailwindcss/forms'
-import aspectRatio from '@tailwindcss/aspect-ratio'
 
 // @ts-check
 /** @type {import('tailwindcss').Config} */
@@ -30,11 +27,7 @@ export default {
   future: {
     hoverOnlyWhenSupported: true,
   },
-  plugins: [
-    typography,
-    forms,
-    aspectRatio
-  ],
+  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/aspect-ratio'), require('@tailwindcss/typography')],
   theme: {
     screens: {
       ...defaultTheme.screens,
