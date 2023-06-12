@@ -29,11 +29,12 @@ export const Widget: FC = () => {
         />
       </div>
       <UIWidget.Content>
-        <CrossChainBanner />
+        {/* <CrossChainBanner /> */}
         <SwapCurrencyInput />
         <SwitchTokensButton />
         <SwapCurrencyOutput />
-        {appType === AppType.Swap ? <SwapButton /> : <SwapButtonCrossChain />}
+        <SwapButton />
+        {/* {appType === AppType.Swap ? <SwapButton /> : <SwapButtonCrossChain />} */}
         <ThunderCoreBanner />
       </UIWidget.Content>
     </div>
