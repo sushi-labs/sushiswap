@@ -2,7 +2,6 @@
 /** @type {import('tailwindcss').Config} */
 const tailwindConfig = {
   darkMode: 'class',
-  // @ts-ignore
   presets: [require('@sushiswap/ui/tailwind.js')],
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',

@@ -8,11 +8,14 @@
 //   presets: [sharedConfig],
 // }
 
-const defaultTheme = require('tailwindcss/defaultTheme')
+import defaultTheme from 'tailwindcss/defaultTheme'
+import typography from '@tailwindcss/typography'
+import forms from '@tailwindcss/forms'
+import aspectRatio from '@tailwindcss/aspect-ratio'
 
 // @ts-check
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   // content: [
   //   './app/**/*.{js,ts,jsx,tsx,mdx}',
   //   './common/**/*.{js,ts,jsx,tsx,mdx}',
@@ -27,7 +30,11 @@ module.exports = {
   future: {
     hoverOnlyWhenSupported: true,
   },
-  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/aspect-ratio'), require('@tailwindcss/typography')],
+  plugins: [
+    typography,
+    forms,
+    aspectRatio
+  ],
   theme: {
     screens: {
       ...defaultTheme.screens,
