@@ -262,9 +262,7 @@ export const useCrossChainTradeQuery = (
         })
       }
 
-      console.log({ dstAmountIn })
-
-      if (srcAmountOut && srcMinimumAmountOutMinusStargateFee && dstAmountIn) {
+      if (srcAmountOut && dstAmountIn) {
         sushiXSwap.teleport(
           srcBridgeToken,
           dstBridgeToken,
