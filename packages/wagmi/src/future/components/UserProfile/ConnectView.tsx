@@ -10,7 +10,7 @@ import {
 } from '@sushiswap/ui/future/components/icons'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import React, { FC, SVGProps, useCallback, useMemo } from 'react'
-import { useConnect } from 'wagmi'
+import { useConnect } from '../../../hooks'
 
 const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element | null> = {
   Injected: ChevronDoubleDownIcon,
