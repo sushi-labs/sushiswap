@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { balanceOfAbi, getReservesAbi, getStableReservesAbi } from '@sushiswap/abi'
+import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/database'
 import { Address, readContracts } from '@wagmi/core'
 
@@ -9,7 +10,7 @@ export interface PoolWithReserves {
   reserve1: BigNumber
 }
 
-export async function getConstantProductPoolReserves(poolIds: string[]) {
+export async function getConstantProductPoolReserves(poolIds: string[], blockNumber: number) {
   const startTime = performance.now()
   const updatedPools: Map<string, PoolWithReserves> = new Map()
 
@@ -20,6 +21,7 @@ export async function getConstantProductPoolReserves(poolIds: string[]) {
     chainId: Number(id.split(':')[0]),
     abi: getReservesAbi,
     functionName: 'getReserves',
+    blockNumber
   } as const))
 
   let failures = 0
@@ -62,7 +64,7 @@ export async function getConstantProductPoolReserves(poolIds: string[]) {
   return updatedPools
 }
 
-export async function getStablePoolReserves(poolIds: string[]) {
+export async function getStablePoolReserves(poolIds: string[], blockNumber: number) {
   const startTime = performance.now()
   const updatedPools: Map<string, PoolWithReserves> = new Map()
   const reserves = await readContracts({
@@ -72,6 +74,7 @@ export async function getStablePoolReserves(poolIds: string[]) {
       chainId: Number(id.split(':')[0]),
       abi: getStableReservesAbi,
       functionName: 'getReserves',
+      blockNumber
     })),
   })
   let failures = 0
@@ -105,7 +108,8 @@ export async function getConcentratedLiquidityPoolReserves(
     chainId: number
     token0: Token
     token1: Token
-  }[]
+  }[], 
+  blockNumber: number
 ) {
   const startTime = performance.now()
   const updatedPools: Map<string, PoolWithReserves> = new Map()
@@ -118,6 +122,7 @@ export async function getConcentratedLiquidityPoolReserves(
         chainId: p.chainId,
         abi: balanceOfAbi,
         functionName: 'balanceOf',
+        blockNumber
       } as const,
       {
         args: [p.address as Address],
@@ -125,6 +130,7 @@ export async function getConcentratedLiquidityPoolReserves(
         chainId: p.chainId,
         abi: balanceOfAbi,
         functionName: 'balanceOf',
+        blockNumber
       } as const,
     ].flat()
   )

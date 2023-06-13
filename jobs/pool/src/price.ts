@@ -1,7 +1,7 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 // import { isAddress } from '@ethersproject/address'
 // import { BigNumber } from '@ethersproject/bignumber'
-import './lib/wagmi.js'
+// import './lib/wagmi.js'
 
 import { totalsAbi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
@@ -23,6 +23,7 @@ import { Address, readContracts } from '@wagmi/core'
 import { BigNumber } from 'ethers'
 import { isAddress } from 'ethers/lib/utils.js'
 import { performance } from 'perf_hooks'
+import {fetchBlockNumber} from '@wagmi/core'
 
 import {
   getConcentratedLiquidityPoolReserves,
@@ -40,8 +41,7 @@ export async function prices() {
   const client = new PrismaClient()
   try {
     const startTime = performance.now()
-    // for (const chainId of SWAP_ENABLED_NETWORKS) {
-    for (const chainId of [ChainId.ETHEREUM]) {
+    for (const chainId of SWAP_ENABLED_NETWORKS) {
       const price = Price.USD
       const base = USDC_ADDRESS[chainId as keyof typeof USDC_ADDRESS]
       if (!isAddress(base) || !base) {
@@ -58,7 +58,7 @@ export async function prices() {
       const pools = await getPools(client, chainId)
       const { rPools, tokens } = await transform(chainId, pools)
       const tokensToUpdate = calculatePrices(rPools, minimumLiquidity, baseToken, tokens)
-      // await updateTokenPrices(client, price, tokensToUpdate)
+      await updateTokenPrices(client, price, tokensToUpdate)
     }
     const endTime = performance.now()
     console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
@@ -149,17 +149,19 @@ async function getPoolsByPagination(
 async function transform(chainId: ChainId, pools: Pool[]) {
   const tokens: Map<string, Token> = new Map()
   const stablePools = pools.filter((pool) => pool.protocol === Protocol.BENTOBOX_STABLE)
-  const rebases = isBentoBoxV1ChainId(chainId) ? await fetchRebases(stablePools, chainId) : undefined
+  const blockNumber = await fetchBlockNumber({chainId})
+  console.log(`ChainId ${chainId} got block number: ${blockNumber}. `)
+  const rebases = isBentoBoxV1ChainId(chainId) ? await fetchRebases(stablePools, chainId, blockNumber) : undefined
 
   const constantProductPoolIds = pools.filter((p) => p.protocol === Protocol.BENTOBOX_CLASSIC || p.protocol === Protocol.SUSHISWAP_V2).map((p) => p.id)
   const stablePoolIds = stablePools.map((p) => p.id)
   const concentratedLiquidityPools = pools.filter((p) => p.protocol === Protocol.SUSHISWAP_V3)
 
   const [constantProductReserves, stableReserves, concentratedLiquidityReserves, v3Info] = await Promise.all([
-    getConstantProductPoolReserves(constantProductPoolIds),
-    getStablePoolReserves(stablePoolIds),
-    getConcentratedLiquidityPoolReserves(concentratedLiquidityPools),
-    fetchV3Info(concentratedLiquidityPools, chainId),
+    getConstantProductPoolReserves(constantProductPoolIds, blockNumber),
+    getStablePoolReserves(stablePoolIds, blockNumber),
+    getConcentratedLiquidityPoolReserves(concentratedLiquidityPools, blockNumber),
+    fetchV3Info(concentratedLiquidityPools, chainId, blockNumber),
   ])
   const poolsWithReserves = new Map([...constantProductReserves, ...stableReserves, ...concentratedLiquidityReserves])
   let classicCount = 0
@@ -243,7 +245,7 @@ async function transform(chainId: ChainId, pools: Pool[]) {
   return { rPools, tokens }
 }
 
-async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId) {
+async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId, blockNumber: number) {
   const sortedTokens = poolsToUniqueTokens(pools)
 
   const totals = await readContracts({
@@ -256,6 +258,7 @@ async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId) {
           chainId: chainId,
           abi: totalsAbi,
           functionName: 'totals',
+          blockNumber,
         } as const)
     ),
   })
@@ -269,7 +272,7 @@ async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId) {
   return rebases
 }
 
-async function fetchV3Info(pools: Pool[], chainId: ChainId) {
+async function fetchV3Info(pools: Pool[], chainId: ChainId, blockNumber: number) {
   const [slot0, liquidity] = await Promise.all([
     readContracts({
       allowFailure: true,
@@ -296,6 +299,7 @@ async function fetchV3Info(pools: Pool[], chainId: ChainId) {
               },
             ],
             functionName: 'slot0',
+            blockNumber
           } as const)
       ),
     }),
@@ -316,6 +320,7 @@ async function fetchV3Info(pools: Pool[], chainId: ChainId) {
               },
             ],
             functionName: 'liquidity',
+            blockNumber
           } as const)
       ),
     }),
@@ -381,8 +386,7 @@ function calculatePrices(
 
     const price = Number((value / Math.pow(10, baseToken.decimals - token.decimals)).toFixed(12))
     if (price > Number.MAX_SAFE_INTEGER) continue
-    if (token.address.toLowerCase() === '0x69570f3e84f51ea70b7b68055c8d667e77735a25')
-    console.log(`${token.symbol}~${token.address}~${price}`)
+    // console.log(`${token.symbol}~${token.address}~${price}`)
     tokensWithPrices.push({ id: token.id, price })
   }
 
