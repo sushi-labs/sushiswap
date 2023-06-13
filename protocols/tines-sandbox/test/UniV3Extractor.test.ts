@@ -456,7 +456,7 @@ describe('UniV3Extractor', () => {
     await checkHistoricalLogs(env, pools[2], 17390000n, 17450000n)
   })
 
-  it.only('infinit work test', async () => {
+  it.skip('infinit work test', async () => {
     const transport = http(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`)
     const client = createPublicClient({
       chain: env.chain,
