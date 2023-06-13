@@ -3,6 +3,7 @@ import { Bundle, getBuiltGraphSDK, Pagination, QuerytokensByChainIdsArgs } from 
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 import { FuroTokensSchema } from 'pages/api/furoTokens'
+import { bentoBoxTokensSchema } from 'pages/api/bentobox'
 
 const sdk = getBuiltGraphSDK()
 
@@ -50,6 +51,23 @@ export const getTokens = async (query?: GetTokensQuery) => {
   } catch (error: any) {
     console.error(error)
     throw new Error(error)
+  }
+}
+
+export const getBentoBoxTokens = async (query: (typeof bentoBoxTokensSchema)['_output']) => {
+  try {
+    const { rebases } = await sdk.RebasesByChainIds({
+      where: {
+        token_: {
+          or: query.tokenSymbols?.map((symbol) => ({ symbol_contains_nocase: symbol })),
+        },
+      },
+      chainIds: query.chainIds,
+    })
+
+    return rebases
+  } catch (error) {
+    throw new Error(error as string)
   }
 }
 
