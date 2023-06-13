@@ -4,6 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { DAI, USDC, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
 import { PoolInfo, UniV3Extractor } from '@sushiswap/extractor'
 import { UniswapV3Provider } from '@sushiswap/router'
+import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { UniV3Pool } from '@sushiswap/tines'
 import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
@@ -23,7 +24,7 @@ import {
 import { Account, privateKeyToAccount } from 'viem/accounts'
 import { Chain, hardhat, mainnet } from 'viem/chains'
 
-import { setTokenBalance } from '../src'
+import { setTokenBalance, UniswapV3FactoryAddress } from '../src'
 import { comparePoolCodes, isSubpool } from '../src/ComparePoolCodes'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
@@ -260,7 +261,12 @@ async function makeTest(
     transport: env.transport,
   })
 
-  const extractor = new UniV3Extractor(client, 'UniswapV3', '0xbfd8137f7d1516d3ea5ca83523914859ec47f573')
+  const extractor = new UniV3Extractor(
+    client,
+    UniswapV3FactoryAddress[ChainId.ETHEREUM] as Address,
+    'UniswapV3',
+    '0xbfd8137f7d1516d3ea5ca83523914859ec47f573'
+  )
   await extractor.start()
   pools.forEach((p) => extractor.addPoolWatching(p))
   for (;;) {
@@ -321,7 +327,12 @@ async function checkHistoricalLogs(env: TestEnvironment, pool: PoolInfo, fromBlo
     transport: env.transport,
   })
 
-  const extractor = new UniV3Extractor(clientPrimary, 'UniswapV3', '0xbfd8137f7d1516d3ea5ca83523914859ec47f573')
+  const extractor = new UniV3Extractor(
+    clientPrimary,
+    UniswapV3FactoryAddress[ChainId.ETHEREUM] as Address,
+    'UniswapV3',
+    '0xbfd8137f7d1516d3ea5ca83523914859ec47f573'
+  )
   await extractor.start()
   extractor.addPoolWatching(pool)
   for (;;) {
@@ -443,5 +454,22 @@ describe('UniV3Extractor', () => {
 
   it('pool #3 historical logs (1953)', async () => {
     await checkHistoricalLogs(env, pools[2], 17390000n, 17450000n)
+  })
+
+  it.skip('infinit work test', async () => {
+    const transport = http(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`)
+    const client = createPublicClient({
+      chain: env.chain,
+      transport: transport,
+    })
+
+    const extractor = new UniV3Extractor(
+      client,
+      UniswapV3FactoryAddress[ChainId.ETHEREUM] as Address,
+      'UniswapV3',
+      '0xbfd8137f7d1516d3ea5ca83523914859ec47f573'
+    )
+    await extractor.start()
+    extractor.addPoolsForTokens(BASES_TO_CHECK_TRADES_AGAINST[ChainId.ETHEREUM])
   })
 })

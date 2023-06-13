@@ -44,6 +44,27 @@ export class MultiCallAggregator {
     })
   }
 
+  // aggregate several calls in one multicall
+  async callValue<FunctionRetType>(
+    address: Address,
+    abi: Abi,
+    functionName: string,
+    args?: unknown[]
+  ): Promise<FunctionRetType> {
+    this.sheduleMulticall()
+    this.pendingCalls.push({
+      address,
+      abi,
+      functionName,
+      args,
+    })
+    const res = await new Promise<{ blockNumber: number; returnValue: FunctionRetType }>((resolve, reject) => {
+      this.pendingResolves.push(resolve)
+      this.pendingRejects.push(reject)
+    })
+    return res.returnValue
+  }
+
   async callContractSameBlock(
     address: Address,
     abi: Abi,

@@ -87,7 +87,7 @@ const config: HardhatUserConfig = {
     ],
   },
   mocha: {
-    timeout: 3600_000,
+    timeout: 24*3600_000,
   },
 }
 

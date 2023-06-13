@@ -19,5 +19,6 @@
   "[solidity]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "eslint.packageManager": "pnpm"
+  "eslint.packageManager": "pnpm",
+  "prettier.prettierPath": "./node_modules/prettier"
 }
