@@ -1,6 +1,7 @@
+import './lib/wagmi.js'
+
 import { BigNumber } from '@ethersproject/bignumber'
 import { balanceOfAbi, getReservesAbi, getStableReservesAbi } from '@sushiswap/abi'
-import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/database'
 import { Address, readContracts } from '@wagmi/core'
 
