@@ -471,5 +471,6 @@ describe('UniV3Extractor', () => {
     )
     await extractor.start()
     extractor.addPoolsForTokens(BASES_TO_CHECK_TRADES_AGAINST[ChainId.ETHEREUM])
+    await delay(24 * 3600 * 1000) // let's wait and see how it works
   })
 })

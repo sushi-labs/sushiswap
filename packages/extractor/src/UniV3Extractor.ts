@@ -37,13 +37,21 @@ export class UniV3Extractor {
   logProcessGuard = false
   lastProcessdBlock = -1n
   logProcessingStatus = LogsProcessing.NotStarted
+  logging
 
-  constructor(client: PublicClient, factoryAddress: Address, providerName: string, tickHelperContract: Address) {
+  constructor(
+    client: PublicClient,
+    factoryAddress: Address,
+    providerName: string,
+    tickHelperContract: Address,
+    logging = true
+  ) {
     this.factoryAddress = factoryAddress
     this.providerName = providerName
     this.client = client
     this.multiCallAggregator = new MultiCallAggregator(client)
     this.tickHelperContract = tickHelperContract
+    this.logging = logging
   }
 
   // TODO: stop ?
@@ -62,11 +70,14 @@ export class UniV3Extractor {
             this.logProcessGuard = true
             const promises = this.eventFilters.map((f) => this.client.getFilterChanges({ filter: f }))
             const logss = await Promise.all(promises)
+            let logNames: string[] = []
             logss.forEach((logs) => {
-              logs.forEach((l) => this.processLog(l))
+              const ln = logs.map((l) => this.processLog(l))
+              logNames = logNames.concat(ln)
             })
             this.lastProcessdBlock = blockNumber
             this.logProcessGuard = false
+            this.consoleLog(`Block ${blockNumber} ${logNames.length} logs: [${logNames}]`)
           } else {
             console.warn(`Extractor: Log Filtering was skipped for block ${blockNumber}`)
           }
@@ -76,10 +87,19 @@ export class UniV3Extractor {
     }
   }
 
-  processLog(l: Log) {
+  async startForever(tokens: Token[]) {
+    await this.start()
+    await this.addPoolsForTokens(tokens)
+    await new Promise(() => {
+      // waits forever
+    })
+  }
+
+  processLog(l: Log): string {
     const pool = this.poolMap.get(l.address.toLowerCase() as Address)
-    if (pool) pool.processLog(l)
+    if (pool) return pool.processLog(l)
     else this.addPoolByAddress(l.address)
+    return 'UnknPool'
   }
 
   async addPoolsForTokens(tokens: Token[]) {
@@ -139,6 +159,7 @@ export class UniV3Extractor {
       )
       watcher.updatePoolState()
       this.poolMap.set(p.address.toLowerCase() as Address, watcher) // lowercase because incoming events have lowcase addresses ((
+      this.consoleLog(`add pool ${p.address}, watched pools total: ${this.poolMap.size}`)
     }
   }
 
@@ -146,8 +167,8 @@ export class UniV3Extractor {
     if (this.otherFactoryPoolSet.has(address)) return
     if (this.client.chain?.id === undefined) return
 
-    const factory = await this.multiCallAggregator.call(address, IUniswapV3Pool.abi as Abi, 'factory')
-    if ((factory.returnValue as Address).toLowerCase() == this.factoryAddress.toLowerCase()) {
+    const factory = await this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'factory')
+    if ((factory as Address).toLowerCase() == this.factoryAddress.toLowerCase()) {
       const token0Promise = this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'token0')
       const token1Promise = this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'token1')
       const feePromise = this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'fee')
@@ -171,6 +192,7 @@ export class UniV3Extractor {
       this.addPoolWatching({ address, token0, token1, fee: fee as FeeAmount })
     } else {
       this.otherFactoryPoolSet.add(address)
+      this.consoleLog(`other factory pool ${address}, such pools known: ${this.otherFactoryPoolSet.size}`)
     }
   }
 
@@ -185,5 +207,9 @@ export class UniV3Extractor {
     return Array.from(this.poolMap.values())
       .map((p) => (p.isStable() ? p.getPoolCode() : undefined))
       .filter((pc) => pc !== undefined) as PoolCode[]
+  }
+
+  consoleLog(log: string) {
+    if (this.logging) console.log(log)
   }
 }

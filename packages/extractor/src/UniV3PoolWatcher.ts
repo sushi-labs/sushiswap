@@ -143,14 +143,14 @@ export class UniV3PoolWatcher {
     }
   }
 
-  processLog(l: Log) {
+  processLog(l: Log): string {
     this.latestEventBlockNumber = Math.max(this.latestEventBlockNumber, Number(l.blockNumber || 0))
     if (l.removed) {
       this.updatePoolState()
-      return
+      return 'Removed'
     }
 
-    if (l.blockNumber == null) return
+    if (l.blockNumber == null) return 'Error!'
     const data = decodeEventLog({ abi: UniV3EventsAbi, data: l.data, topics: l.topics })
     switch (data.eventName) {
       case 'Mint': {
@@ -232,6 +232,8 @@ export class UniV3PoolWatcher {
     // But they participate in pricing calculation
     // Reserves need to be updated from time to time
     if (this.eventsAfterLastReservesUpdate++ >= RESERVES_UPDATE_INTERVAL) this.updateReserves()
+
+    return data.eventName
   }
 
   async updateReserves() {
