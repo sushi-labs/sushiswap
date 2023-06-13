@@ -1,7 +1,4 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
-// import { isAddress } from '@ethersproject/address'
-// import { BigNumber } from '@ethersproject/bignumber'
-// import './lib/wagmi.js'
 
 import { totalsAbi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
@@ -20,10 +17,10 @@ import {
   toShareBN,
 } from '@sushiswap/tines'
 import { Address, readContracts } from '@wagmi/core'
+import { fetchBlockNumber } from '@wagmi/core'
 import { BigNumber } from 'ethers'
 import { isAddress } from 'ethers/lib/utils.js'
 import { performance } from 'perf_hooks'
-import {fetchBlockNumber} from '@wagmi/core'
 
 import {
   getConcentratedLiquidityPoolReserves,
