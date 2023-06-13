@@ -3,6 +3,8 @@ import { Chain, configureChains, createClient, CreateClientConfig, mainnet } fro
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
+// import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+import { LedgerConnector } from 'wagmi/connectors/ledger'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { SafeConnector } from 'wagmi/connectors/safe'
 import { _createTestClient } from '../test/setup'
@@ -41,6 +43,12 @@ export const _createClient = (config?: CreateClientConfig) => {
               // shimChainChangedDisconnect: false,
             },
           }),
+          new LedgerConnector({
+            chains,
+            options: {
+              enableDebugLogs: process.env.NODE_ENV !== 'production',
+            },
+          }),
           // TODO: Migrate to the WalletConnect v2 Connector before June 28
           // and flesh out wallet connect options.
           new WalletConnectLegacyConnector({
@@ -55,7 +63,7 @@ export const _createClient = (config?: CreateClientConfig) => {
           //     projectId: '187b0394dbf3b20ce7762592560eafd2',
           //     metadata: {
           //       name: 'Sushi',
-          //       description: 'Sushi',
+          //       description: 'Community home of DeFi',
           //       url: 'https://www.sushi.com',
           //       icons: ['https://www.sushi.com/icon.png'],
           //     },
