@@ -12,7 +12,7 @@
     "url": "https://github.com/sushiswap/sushiswap.git",
     "directory": "packages/router"
   },
-  "license": "MIT",
+  "license": "UNLICENSED",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "dist/index.js",
   "source": "src/index.ts",
