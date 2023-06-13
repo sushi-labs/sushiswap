@@ -37,8 +37,8 @@ test('Create, Withdraw, Update, Transfer, Cancel.', async ({ page }) => {
   const recipient = '0xc39c2d6eb8adef85f9caa141ec95e7c0b34d8dec'
   await createSingleStream(CHAIN_ID, USDC, '0.0001', RECIPIENT, page)
   await withdrawFromStream(page, streamId, withdrawAmount)
-//   await updateStream(page, streamId)
-//   await transferStream(page, streamId, recipient)
+  await updateStream(page, streamId)
+  await transferStream(page, streamId, recipient)
   await cancelStream(page, streamId)
 })
 
@@ -64,11 +64,10 @@ async function updateStream(page: Page, streamId: string) {
   await expect(approveBentoboxLocator).toBeEnabled()
   await approveBentoboxLocator.click()
 
-//   // approve
-//   const approveLocator = page.locator('[testdata-id=approve-erc20-update-stream]')
-//   await expect(approveLocator).toBeVisible()
-//   await expect(amountSwitchLocator).toBeEnabled()
-//   await approveLocator.click()
+  const approveLocator = page.locator('[testdata-id=approve-erc20-update-stream]')
+  await expect(approveLocator).toBeVisible()
+  await expect(amountSwitchLocator).toBeEnabled()
+  await approveLocator.click()
 
   const confirmWithdrawalLocator = page.locator('[testdata-id=stream-update-confirmation-button]')
   await expect(confirmWithdrawalLocator).toBeVisible()
