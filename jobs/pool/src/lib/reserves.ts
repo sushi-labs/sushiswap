@@ -1,4 +1,4 @@
-import './lib/wagmi.js'
+import './wagmi.js'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { balanceOfAbi, getReservesAbi, getStableReservesAbi } from '@sushiswap/abi'
