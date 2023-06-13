@@ -31,6 +31,7 @@
     "@sushiswap/wagmi",
     "@sushiswap/aggregator-job",
     "@sushiswap/pool-job",
+    "@sushiswap/price-job",
     "@sushiswap/route-processor"
   ]
 }

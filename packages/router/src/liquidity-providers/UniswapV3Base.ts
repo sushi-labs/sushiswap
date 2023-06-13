@@ -31,7 +31,9 @@ interface V3Pool {
 export const NUMBER_OF_SURROUNDING_TICKS = 1000 // 10% price impact
 
 const getActiveTick = (tickCurrent: number, feeAmount: FeeAmount) =>
-  tickCurrent && feeAmount ? Math.floor(tickCurrent / TICK_SPACINGS[feeAmount]) * TICK_SPACINGS[feeAmount] : undefined
+  typeof tickCurrent === 'number' && feeAmount
+    ? Math.floor(tickCurrent / TICK_SPACINGS[feeAmount]) * TICK_SPACINGS[feeAmount]
+    : undefined
 
 const bitmapIndex = (tick: number, tickSpacing: number) => {
   return Math.floor(tick / tickSpacing / 256)
@@ -114,9 +116,9 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       if (slot0 === undefined || !slot0[i]) return
       const sqrtPriceX96 = slot0[i].result?.[0]
       const tick = slot0[i].result?.[1]
-      if (!sqrtPriceX96 || sqrtPriceX96 === 0n || !tick) return
+      if (!sqrtPriceX96 || sqrtPriceX96 === 0n || typeof tick !== 'number') return
       const activeTick = getActiveTick(tick, pool.fee)
-      if (!activeTick) return
+      if (typeof activeTick !== 'number') return
       existingPools.push({
         ...pool,
         sqrtPriceX96,
@@ -124,7 +126,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       })
     })
 
-    if (existingPools.length == 0) return
+    if (existingPools.length === 0) return
 
     const liquidityContracts = this.client.multicall({
       multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
@@ -236,7 +238,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
 
       const lowerUnknownTick = minIndexes[i] * TICK_SPACINGS[pool.fee] * 256 - TICK_SPACINGS[pool.fee]
       console.assert(
-        poolTicks.length == 0 || lowerUnknownTick < poolTicks[0].index,
+        poolTicks.length === 0 || lowerUnknownTick < poolTicks[0].index,
         'Error 236: unexpected min tick index'
       )
       poolTicks.unshift({
@@ -307,6 +309,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
         tokenA: currencyA.wrapped,
         tokenB: currencyB.wrapped,
         fee,
+        initCodeHashManualOverride: this.initCodeHash[this.chainId as keyof typeof this.initCodeHash],
       }) as Address,
       token0: currencyA,
       token1: currencyB,

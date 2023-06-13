@@ -1,34 +1,30 @@
 import { Pool } from '@sushiswap/v3-sdk'
-import { FC, useMemo, useState } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import { Transaction, TransactionType, useTransactionsV3 } from './useTransactionsV3'
-import {
-  PaginationState,
-  getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
-import { AMOUNT_COLUMN, AMOUNT_USD_COLUMN, SENDER_COLUMN, TIME_COLUMN, TYPE_COLUMN } from './columns'
+import { getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
+import { AMOUNT_IN_COLUMN, AMOUNT_OUT_COLUMN, AMOUNT_USD_COLUMN, SENDER_COLUMN, TIME_COLUMN } from './columns'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { Chain } from '@sushiswap/chain'
 import { Paginator } from '@sushiswap/ui/table/Paginator'
-import { classNames } from '@sushiswap/ui'
+import { RadioGroup } from '@headlessui/react'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 interface PoolTransactionsV3Props {
   pool: Pool | undefined | null
   poolId: string
 }
 
-const COLUMNS = [TYPE_COLUMN, SENDER_COLUMN, AMOUNT_COLUMN, AMOUNT_USD_COLUMN, TIME_COLUMN]
-
 const TOTAL_ROWS = 200
-
 const PAGE_SIZE = 10
 const PAGE_COUNT = TOTAL_ROWS / PAGE_SIZE
 
 export const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }) => {
-  const [type, setType] = useState<Parameters<typeof useTransactionsV3>['2']['type']>('All')
+  const [type, setType] = useState<Parameters<typeof useTransactionsV3>['2']['type']>(TransactionType.Swap)
   const [pageIndex, setPageIndex] = useState<number>(0)
+
+  const COLUMNS = useMemo(() => {
+    return [SENDER_COLUMN, AMOUNT_IN_COLUMN(type), AMOUNT_OUT_COLUMN(type), AMOUNT_USD_COLUMN, TIME_COLUMN]
+  }, [type])
 
   const opts = useMemo(
     () =>
@@ -58,54 +54,45 @@ export const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({ pool, poolId }
   })
 
   return (
-    <div className="w-full pt-3 space-y-2">
-      <div className="flex items-center justify-between text-gray-300">
-        <div>Transactions</div>
-        <div className="flex flex-row space-x-2 text-sm select-none">
-          <div
-            onClick={() => setType('All')}
-            className={classNames('cursor-pointer text-gray-400', type === 'All' && 'text-gray-300 font-bold')}
-          >
-            All
-          </div>
-          <div
-            onClick={() => setType(TransactionType.Swap)}
-            className={classNames(
-              'cursor-pointer text-gray-400',
-              type === TransactionType.Swap && 'text-gray-300 font-bold'
-            )}
-          >
-            Swaps
-          </div>
-          <div
-            onClick={() => setType(TransactionType.Burn)}
-            className={classNames(
-              'cursor-pointer text-gray-400',
-              type === TransactionType.Burn && 'text-gray-300 font-bold'
-            )}
-          >
-            Burns
-          </div>
-          <div
-            onClick={() => setType(TransactionType.Mint)}
-            className={classNames(
-              'cursor-pointer text-gray-400',
-              type === TransactionType.Mint && 'text-gray-300 font-bold'
-            )}
-          >
-            Mints
-          </div>
-          {/* <div
-            onClick={() => setType(TransactionType.Collect)}
-            className={classNames(
-              'cursor-pointer text-gray-400',
-              type === TransactionType.Collect && 'text-gray-300 font-bold'
-            )}
-          >
-            Collects
-          </div> */}
-        </div>
-      </div>
+    <div>
+      <RadioGroup value={type} onChange={setType} className="flex gap-1 mb-6 justify-end px-2">
+        <RadioGroup.Option value={TransactionType.Swap}>
+          {({ checked }) => (
+            <Button
+              size="xs"
+              variant={checked ? 'outlined' : 'empty'}
+              color={checked ? 'blue' : 'default'}
+              className="!h-[24px] font-bold"
+            >
+              Swaps
+            </Button>
+          )}
+        </RadioGroup.Option>
+        <RadioGroup.Option value={TransactionType.Mint}>
+          {({ checked }) => (
+            <Button
+              size="xs"
+              variant={checked ? 'outlined' : 'empty'}
+              color={checked ? 'blue' : 'default'}
+              className="!h-[24px] font-bold"
+            >
+              Add liquidity
+            </Button>
+          )}
+        </RadioGroup.Option>
+        <RadioGroup.Option value={TransactionType.Burn}>
+          {({ checked }) => (
+            <Button
+              size="xs"
+              variant={checked ? 'outlined' : 'empty'}
+              color={checked ? 'blue' : 'default'}
+              className="!h-[24px] font-bold"
+            >
+              Remove liquidity
+            </Button>
+          )}
+        </RadioGroup.Option>
+      </RadioGroup>
 
       <GenericTable<Transaction>
         table={table}

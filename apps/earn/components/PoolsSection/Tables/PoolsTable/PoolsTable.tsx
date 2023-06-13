@@ -1,6 +1,6 @@
 import { useBreakpoint } from '@sushiswap/hooks'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useMemo, useState } from 'react'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { PAGE_SIZE } from '../contants'
@@ -10,8 +10,8 @@ import {
   NAME_COLUMN,
   TVL_COLUMN,
   VOLUME_1D_COLUMN,
-  VOLUME_1H_COLUMN,
   VOLUME_7D_COLUMN,
+  VOLUME_1M_COLUMN,
 } from './Cells/columns'
 import { PoolQuickHoverTooltip } from './PoolQuickHoverTooltip'
 import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
@@ -23,20 +23,18 @@ import { Loader } from '@sushiswap/ui/future/components/Loader'
 const COLUMNS = [
   NAME_COLUMN,
   TVL_COLUMN,
-  // VOLUME_1H_COLUMN,
   VOLUME_1D_COLUMN,
   VOLUME_7D_COLUMN,
+  VOLUME_1M_COLUMN,
   FEES_COLUMN,
   APR_COLUMN,
 ] as any
 
 export const PoolsTable: FC = () => {
   const { chainIds, tokenSymbols, protocols, farmsOnly } = usePoolFilters()
-  const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
   const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
-  const [columnVisibility, setColumnVisibility] = useState({})
   const [, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: PAGE_SIZE })
 
   const args = useMemo<GetPoolsArgs>(() => {
@@ -64,7 +62,6 @@ export const PoolsTable: FC = () => {
     columns: COLUMNS,
     state: {
       sorting,
-      columnVisibility,
     },
     pageCount: Math.ceil((poolCount?.count || 0) / PAGE_SIZE),
     onSortingChange: setSorting,
@@ -75,25 +72,6 @@ export const PoolsTable: FC = () => {
     manualPagination: true,
     sortDescFirst: true,
   })
-
-  useEffect(() => {
-    if (isSm && !isMd) {
-      setColumnVisibility({
-        volume1d: false,
-        rewards: false,
-        fees1d: false,
-      })
-    } else if (isSm) {
-      setColumnVisibility({})
-    } else {
-      setColumnVisibility({
-        rewards: false,
-        liquidityUSD: false,
-        fees1d: false,
-      })
-    }
-  }, [isMd, isSm])
-
   const rowLink = useCallback((row: Pool) => {
     return `/${row.id}`
   }, [])

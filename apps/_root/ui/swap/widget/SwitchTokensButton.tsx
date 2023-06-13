@@ -1,5 +1,3 @@
-'use client'
-
 import { ArrowDownIcon } from '@heroicons/react/24/outline'
 import React, { FC } from 'react'
 

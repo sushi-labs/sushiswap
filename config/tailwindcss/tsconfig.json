@@ -4,6 +4,10 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
     "composite": true
   }
 }

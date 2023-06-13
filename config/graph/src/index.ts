@@ -101,6 +101,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.BOBA_BNB]: 'Boba BNB',
   [ChainId.BTTC]: 'BitTorrent',
   [ChainId.THUNDERCORE]: 'ThunderCore',
+  [ChainId.POLYGON_ZKEVM]: 'Polygon zkEVM',
 } as const
 
 export const SUBGRAPH_HOST = {
@@ -179,7 +180,6 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.THUNDERCORE]: 'sushiswap/blocks-thundercore',
 } as const
 
-
 export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
   [ChainId.ETHEREUM]: 12,
   [ChainId.GNOSIS]: 5,
@@ -201,7 +201,7 @@ export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
   [ChainId.KAVA]: 6.3,
   [ChainId.METIS]: 4.5,
   [ChainId.ARBITRUM_NOVA]: 1,
-  [ChainId.BOBA]: 1,
+  [ChainId.BOBA]: 250,
   [ChainId.BOBA_AVAX]: 612,
   [ChainId.BOBA_BNB]: 0.5,
   [ChainId.BTTC]: 2,
@@ -309,6 +309,21 @@ export const MINICHEF_SUBGRAPH_NAME = {
 export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging' as const
 export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2' as const
 
+export const FURO_ENABLED_NETWORKS = [
+  ChainId.ETHEREUM,
+  ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
+  ChainId.BSC,
+  ChainId.FANTOM,
+  ChainId.GNOSIS,
+  ChainId.HARMONY,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
+  ChainId.OPTIMISM,
+  ChainId.POLYGON,
+] as const
+
+// TODO: Make typesafe
 export const FURO_SUBGRAPH_NAME: Record<string, string> = {
   [ChainId.ETHEREUM]: 'sushi-subgraphs/furo-ethereum',
   [ChainId.GÖRLI]: 'sushi-subgraphs/furo-goerli',

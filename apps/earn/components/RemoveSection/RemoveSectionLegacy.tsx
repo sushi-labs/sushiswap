@@ -6,7 +6,7 @@ import { calculateGasMargin } from '@sushiswap/gas'
 import { Pool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
-import { UniswapV2Router02ChainId } from '@sushiswap/sushiswap'
+import { UniswapV2Router02ChainId } from '@sushiswap/v2-core'
 import { Dots } from '@sushiswap/ui'
 import {
   getSushiSwapRouterContractConfig,
@@ -45,7 +45,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
   const contract = useSushiSwapRouterContract(_pool.chainId as UniswapV2Router02ChainId)
   const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
   const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
+    return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
   }, [slippageTolerance])
 
   const [percentage, setPercentage] = useState<string>('')
@@ -137,21 +137,6 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
   const prepare = useCallback(
     async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       try {
-        console.log('prepare legacy')
-        const isInvalid = 
-        !token0 ||
-        !token1 ||
-        !chain?.id ||
-        !contract ||
-        !underlying0 ||
-        !underlying1 ||
-        !address ||
-        !pool ||
-        !balance?.[FundSource.WALLET] ||
-        !minAmount0 ||
-        !minAmount1 ||
-        !deadline
-        console.log({ isInvalid })
         if (
           !token0 ||
           !token1 ||
@@ -175,7 +160,6 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
 
         let methodNames
         let args: any
-        console.log({withNative})
 
         if (withNative) {
           const token1IsNative = Native.onChain(_pool.chainId).wrapped.address === pool.token1.wrapped.address
@@ -205,7 +189,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
           methodNames.map((methodName) =>
             contract.estimateGas[methodName](...args)
               .then(calculateGasMargin)
-              .catch()
+              .catch(() => undefined)
           )
         )
 
@@ -226,7 +210,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
         }
       } catch (e: unknown) {
         //
-        console.log({e})
+        console.log({ e })
       }
     },
     [

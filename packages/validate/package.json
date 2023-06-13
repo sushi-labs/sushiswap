@@ -33,7 +33,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "devDependencies": {
-    "@sushiswap/chain": "workspace*",
+    "@sushiswap/chain": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",

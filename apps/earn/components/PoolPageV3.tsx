@@ -1,6 +1,6 @@
 import React, { FC, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeftIcon, ChartBarIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
+import { ArrowLeftIcon, ChartBarIcon, ChartPieIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
@@ -29,7 +29,9 @@ import { ContentBlock } from './AddPage/ContentBlock'
 import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
 import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { ConcentratedPositionsTable } from './PoolsSection/Tables/PositionsTable/ConcentratedPositionsTable'
-import { PoolTransactionsV3, PoolChart } from './PoolSection'
+import { PoolTransactionsV3 } from './PoolSection'
+import { PoolDepthWidget } from './PoolSection/V3/PoolDepthWidget'
+import { PoolChartV3 } from './PoolSection/PoolChart/PoolChartV3'
 
 enum Granularity {
   Day,
@@ -91,8 +93,6 @@ const Pool: FC = () => {
 
   const [granularity, setGranularity] = useState<Granularity>(Granularity.Day)
 
-  const { data: graphData, isLoading: isGraphDataLoading } = usePoolGraphData({ poolAddress, chainId })
-
   const { data: poolStats } = useConcentratedLiquidityPoolStats({ chainId, address: poolAddress })
   const { data: pool, isLoading } = useConcentratedLiquidityPool({
     chainId,
@@ -105,8 +105,6 @@ const Pool: FC = () => {
   const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
   const incentiveAmounts = useMemo(() => poolStats?.incentives.map((el) => el.reward), [poolStats?.incentives])
   const fiatValuesIncentives = useTokenAmountDollarValues({ chainId, amounts: incentiveAmounts })
-
-  // console.log({ fiatValuesIncentives })
 
   const [_token0, _token1] = useMemo(
     () => [
@@ -197,15 +195,10 @@ const Pool: FC = () => {
       <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
       <div className={tab === SelectedTab.Analytics ? 'block' : 'hidden'}>
         <div>
-          <div className="grid md:grid-cols-[404px_auto] gap-10">
-            <PoolChart
-              isLoading={isGraphDataLoading}
-              data={graphData}
-              swapFee={pool?.fee ? pool.fee / 1000000 : pool?.fee}
-              charts={['Volume', 'TVL', 'Fees']}
-            />
+          <div className="grid md:grid-cols-[auto_404px] gap-10">
+            <PoolChartV3 address={poolAddress} chainId={chainId} />
             <div className="flex flex-col gap-6">
-              <List className="pt-0 !gap-1">
+              <List className="!pt-0 !gap-1">
                 <List.Label className="flex justify-end">
                   <RadioGroup value={granularity} onChange={setGranularity} className="flex">
                     <RadioGroup.Option
@@ -349,13 +342,13 @@ const Pool: FC = () => {
                 <List.Control>
                   {poolStats && poolStats.incentives.length > 0 ? (
                     poolStats.incentives.map((el, i) => (
-                      <List.KeyValue key={i} flex title={`${el.reward.currency.symbol}`}>
+                      <List.KeyValue key={el.id} flex title={`${el.reward.currency.symbol}`}>
                         <div className="flex flex-col gap-2">
                           <div className="flex items-center gap-2">
                             <Currency.Icon currency={el.reward.currency} width={18} height={18} />
                             {el.reward.toSignificant(4)} {el.reward.currency.symbol}{' '}
                             <span className="text-gray-600 dark:text-slate-400">
-                              ({formatUSD(fiatValuesIncentives[1])})
+                              ({formatUSD(fiatValuesIncentives.reduce((a, b) => a + b, 0))})
                             </span>
                           </div>
                         </div>

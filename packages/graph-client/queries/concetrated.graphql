@@ -52,8 +52,8 @@ query PoolsByTokenPair($tokenId0: String!, $tokenId1: String!) {
   }
 }
 
-query V3Transactions($first: Int = 100, $skip: Int = 0, $orderBy: Transaction_orderBy = timestamp, $orderDir: OrderDirection = desc, $where: Transaction_filter) {
-  transactions(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
+query V3Transactions($first: Int = 100, $skip: Int = 0, $orderBy: CONCENTRATED_Transaction_orderBy = timestamp, $orderDir: CONCENTRATED_OrderDirection = desc, $where: CONCENTRATED_Transaction_filter) {
+  transactions: CONCENTRATED_transactions(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
     id
     timestamp
     blockNumber
@@ -99,8 +99,8 @@ query V3Transactions($first: Int = 100, $skip: Int = 0, $orderBy: Transaction_or
   }
 }
 
-query V3Burns($first: Int = 100, $skip: Int = 0, $orderBy: Burn_orderBy = timestamp, $orderDir: OrderDirection = desc, $where: Burn_filter) {
-  burns(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
+query V3Burns($first: Int = 100, $skip: Int = 0, $orderBy: CONCENTRATED_Burn_orderBy = timestamp, $orderDir: CONCENTRATED_OrderDirection = desc, $where: CONCENTRATED_Burn_filter) {
+  burns: CONCENTRATED_burns(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
     id
     owner
     origin
@@ -117,8 +117,8 @@ query V3Burns($first: Int = 100, $skip: Int = 0, $orderBy: Burn_orderBy = timest
   }
 }
 
-query V3Mints($first: Int = 100, $skip: Int = 0, $orderBy: Mint_orderBy = timestamp, $orderDir: OrderDirection = desc, $where: Mint_filter) {
-  mints(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
+query V3Mints($first: Int = 100, $skip: Int = 0, $orderBy: CONCENTRATED_Mint_orderBy = timestamp, $orderDir: CONCENTRATED_OrderDirection = desc, $where: CONCENTRATED_Mint_filter) {
+  mints: CONCENTRATED_mints(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
     id
     owner
     sender
@@ -136,8 +136,8 @@ query V3Mints($first: Int = 100, $skip: Int = 0, $orderBy: Mint_orderBy = timest
   }
 }
 
-query V3Swaps($first: Int = 100, $skip: Int = 0, $orderBy: Swap_orderBy = timestamp, $orderDir: OrderDirection = desc, $where: Swap_filter) {
-  swaps(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
+query V3Swaps($first: Int = 100, $skip: Int = 0, $orderBy: CONCENTRATED_Swap_orderBy = timestamp, $orderDir: CONCENTRATED_OrderDirection = desc, $where: CONCENTRATED_Swap_filter) {
+  swaps: CONCENTRATED_swaps(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
     id
     sender
     recipient
@@ -154,8 +154,8 @@ query V3Swaps($first: Int = 100, $skip: Int = 0, $orderBy: Swap_orderBy = timest
   }
 }
 
-query V3Collects($first: Int = 100, $skip: Int = 0, $orderBy: Collect_orderBy = timestamp, $orderDir: OrderDirection = desc, $where: Collect_filter) {
-  collects(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
+query V3Collects($first: Int = 100, $skip: Int = 0, $orderBy: CONCENTRATED_Collect_orderBy = timestamp, $orderDir: CONCENTRATED_OrderDirection = desc, $where: CONCENTRATED_Collect_filter) {
+  collects: CONCENTRATED_collects(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
     id
     owner
     amount0

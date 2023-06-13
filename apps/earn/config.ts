@@ -1,7 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 import { V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 
-export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [
+export const ANGLE_ENABLED_NETWORKS = [ChainId.POLYGON, ChainId.ARBITRUM, ChainId.OPTIMISM]
+
+export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.OPTIMISM,
   ChainId.POLYGON,
   ChainId.METIS,
@@ -15,7 +17,7 @@ export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [
   // ChainId.GNOSIS,
 ]
 
-export const AMM_ENABLED_NETWORKS: ChainId[] = [
+export const AMM_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
@@ -34,7 +36,7 @@ export const AMM_ENABLED_NETWORKS: ChainId[] = [
   ChainId.BOBA_BNB,
 ]
 
-export const SUPPORTED_CHAIN_IDS: ChainId[] = Array.from(
+export const SUPPORTED_CHAIN_IDS = Array.from(
   new Set([...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS, ...V3_SUPPORTED_CHAIN_IDS])
 ).sort((a: number, b: number) => {
   // Sort Thundercore
