@@ -3,7 +3,7 @@ import { Chain, configureChains, createClient, CreateClientConfig, mainnet } fro
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
-// import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { LedgerConnector } from 'wagmi/connectors/ledger'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { SafeConnector } from 'wagmi/connectors/safe'
