@@ -5,19 +5,19 @@
   "editor.formatOnPaste": false,
   "editor.formatOnSave": false,
   "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "rome.rome",
     "editor.formatOnSave": true
   },
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "rome.rome",
     "editor.formatOnSave": true
   },
   "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "rome.rome",
     "editor.formatOnSave": true
   },
   "[solidity]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "rome.rome"
   },
   "eslint.packageManager": "pnpm"
 }
