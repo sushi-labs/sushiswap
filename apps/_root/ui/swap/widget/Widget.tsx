@@ -18,7 +18,7 @@ export const Widget: FC = () => {
   return (
     <div className="flex flex-col gap-4">
       <WidgetTitleV2 />
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <SwitchAppType />
         <SettingsOverlay
           modules={[
@@ -29,12 +29,12 @@ export const Widget: FC = () => {
         />
       </div>
       <UIWidget.Content>
-        {/* <CrossChainBanner /> */}
+        <CrossChainBanner />
         <SwapCurrencyInput />
         <SwitchTokensButton />
         <SwapCurrencyOutput />
-        <SwapButton />
-        {/* {appType === AppType.Swap ? <SwapButton /> : <SwapButtonCrossChain />} */}
+        {/* <SwapButton /> */}
+        {appType === AppType.Swap ? <SwapButton /> : <SwapButtonCrossChain />}
         <ThunderCoreBanner />
       </UIWidget.Content>
     </div>

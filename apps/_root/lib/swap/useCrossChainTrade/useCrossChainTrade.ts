@@ -272,7 +272,7 @@ export const useCrossChainTradeQuery = (
         )
       }
 
-      if (sushiXSwap.srcCooker.actions.includes(Action.STARGATE_TELEPORT))
+      if (!sushiXSwap.srcCooker.actions.includes(Action.STARGATE_TELEPORT))
         throw new Error('Stargate teleport action not included')
 
       // need async to get fee for final value... this should be moved to exec?
