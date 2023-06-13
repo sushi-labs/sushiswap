@@ -33,6 +33,7 @@ export const Widget: FC = () => {
         <SwapCurrencyInput />
         <SwitchTokensButton />
         <SwapCurrencyOutput />
+        {/* <SwapButton /> */}
         {appType === AppType.Swap ? <SwapButton /> : <SwapButtonCrossChain />}
         <ThunderCoreBanner />
       </UIWidget.Content>

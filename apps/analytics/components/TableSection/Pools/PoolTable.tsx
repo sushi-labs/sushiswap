@@ -1,7 +1,18 @@
-import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
+import {
+  GetPoolsArgs,
+  Pool,
+  usePoolCount,
+  usePoolsInfinite,
+} from '@sushiswap/client'
 import { useBreakpoint } from '@sushiswap/hooks'
 import { Loader } from '@sushiswap/ui'
-import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
+import {
+  getCoreRowModel,
+  getSortedRowModel,
+  PaginationState,
+  SortingState,
+  useReactTable,
+} from '@tanstack/react-table'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useSWRConfig } from 'swr'
@@ -20,7 +31,6 @@ import {
   VOLUME_1M_COLUMN,
 } from './columns'
 import { PAGE_SIZE } from './constants'
-import { PoolFilters } from './PoolFilters'
 import { useFilters } from 'components/Filters'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -35,17 +45,24 @@ const COLUMNS = [
   FEES_7D_COLUMN,
   FEES_1M_COLUMN,
   APR_COLUMN,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-] as any
+  // rome-ignore lint:
+] as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
-export const PoolTable: FC<{ isWhitelisted?: boolean }> = ({ isWhitelisted = true }) => {
-  const { chainIds, search: tokenSymbols, isWhitelisted: _isWhitelisted } = useFilters()
+export const PoolTable: FC = () => {
+  const {
+    chainIds,
+    search: tokenSymbols,
+    isWhitelisted,
+    poolProtocols: protocols,
+  } = useFilters()
 
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
   const { isLg } = useBreakpoint('lg')
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'liquidityUSD', desc: true },
+  ])
   const [columnVisibility, setColumnVisibility] = useState({})
   const [, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -58,12 +75,17 @@ export const PoolTable: FC<{ isWhitelisted?: boolean }> = ({ isWhitelisted = tru
       tokenSymbols,
       orderBy: sorting[0]?.id,
       orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
+      protocols,
       isWhitelisted: isWhitelisted,
     }),
-    [chainIds, sorting, tokenSymbols, isWhitelisted]
+    [chainIds, tokenSymbols, sorting, protocols, isWhitelisted],
   )
 
-  const { data: pools, isValidating, setSize } = usePoolsInfinite({ args, swrConfig: useSWRConfig() })
+  const {
+    data: pools,
+    isValidating,
+    setSize,
+  } = usePoolsInfinite({ args, swrConfig: useSWRConfig() })
   const { data: poolCount } = usePoolCount({ args, swrConfig: useSWRConfig() })
 
   const data = useMemo(() => pools?.flat() || [], [pools])
@@ -114,27 +136,24 @@ export const PoolTable: FC<{ isWhitelisted?: boolean }> = ({ isWhitelisted = tru
   }, [])
 
   return (
-    <div className="space-y-4">
-      <PoolFilters />
-      <InfiniteScroll
-        dataLength={data.length}
-        next={() => setSize((prev) => prev + 1)}
-        hasMore={data.length < (poolCount?.count || 0)}
-        loader={
-          <div className="flex justify-center w-full py-4">
-            <Loader size={24} />
-          </div>
-        }
-      >
-        <GenericTable<Pool>
-          table={table}
-          loading={!pools && isValidating}
-          HoverElement={isMd ? PoolQuickHoverTooltip : undefined}
-          placeholder="No pools found"
-          pageSize={PAGE_SIZE}
-          linkFormatter={rowLink}
-        />
-      </InfiniteScroll>
-    </div>
+    <InfiniteScroll
+      dataLength={data.length}
+      next={() => setSize((prev) => prev + 1)}
+      hasMore={data.length < (poolCount?.count || 0)}
+      loader={
+        <div className='flex justify-center w-full py-4'>
+          <Loader size={24} />
+        </div>
+      }
+    >
+      <GenericTable<Pool>
+        table={table}
+        loading={!pools && isValidating}
+        HoverElement={isMd ? PoolQuickHoverTooltip : undefined}
+        placeholder='No pools found'
+        pageSize={PAGE_SIZE}
+        linkFormatter={rowLink}
+      />
+    </InfiniteScroll>
   )
 }

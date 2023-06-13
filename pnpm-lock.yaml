@@ -1480,6 +1480,9 @@ importers:
       '@sushiswap/redux-token-lists':
         specifier: workspace:*
         version: link:../../packages/redux/token-lists
+      '@sushiswap/tailwindcss-config':
+        specifier: workspace:*
+        version: link:../../config/tailwindcss
       '@sushiswap/ui':
         specifier: workspace:*
         version: link:../../packages/ui

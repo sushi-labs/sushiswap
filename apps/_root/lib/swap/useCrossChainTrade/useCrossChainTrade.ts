@@ -5,7 +5,7 @@ import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { Amount, Native, Price, Token, tryParseAmount, Type, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { useQuery } from '@tanstack/react-query'
 import { getBridgeFees } from './getBridgeFees'
-import { SushiXSwap } from '../SushiXSwap'
+import { Action, SushiXSwap } from '../SushiXSwap'
 import { useCallback } from 'react'
 import { UseCrossChainSelect, UseCrossChainTradeParams, UseCrossChainTradeQuerySelect } from './types'
 import { useFeeData } from '@sushiswap/wagmi'
@@ -267,9 +267,13 @@ export const useCrossChainTradeQuery = (
           srcBridgeToken,
           dstBridgeToken,
           dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined,
-          tradeId
+          tradeId,
+          srcAmountOut
         )
       }
+
+      if (sushiXSwap.srcCooker.actions.includes(Action.STARGATE_TELEPORT))
+        throw new Error('Stargate teleport action not included')
 
       // need async to get fee for final value... this should be moved to exec?
       const [fee] = await sushiXSwap.getFee(dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined)
