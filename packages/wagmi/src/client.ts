@@ -2,8 +2,8 @@ import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import { Chain, configureChains, createClient, CreateClientConfig, mainnet } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
-import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
-// import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+// import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { LedgerConnector } from 'wagmi/connectors/ledger'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { SafeConnector } from 'wagmi/connectors/safe'
@@ -51,24 +51,24 @@ export const _createClient = (config?: CreateClientConfig) => {
           }),
           // TODO: Migrate to the WalletConnect v2 Connector before June 28
           // and flesh out wallet connect options.
-          new WalletConnectLegacyConnector({
-            chains,
-            options: {
-              qrcode: true,
-            },
-          }),
-          // new WalletConnectConnector({
+          // new WalletConnectLegacyConnector({
           //   chains,
           //   options: {
-          //     projectId: '187b0394dbf3b20ce7762592560eafd2',
-          //     metadata: {
-          //       name: 'Sushi',
-          //       description: 'Community home of DeFi',
-          //       url: 'https://www.sushi.com',
-          //       icons: ['https://www.sushi.com/icon.png'],
-          //     },
+          //     qrcode: true,
           //   },
           // }),
+          new WalletConnectConnector({
+            chains,
+            options: {
+              projectId: '187b0394dbf3b20ce7762592560eafd2',
+              metadata: {
+                name: 'Sushi',
+                description: 'Community home of DeFi',
+                url: 'https://www.sushi.com',
+                icons: ['https://www.sushi.com/icon.png'],
+              },
+            },
+          }),
           new CoinbaseWalletConnector({
             // TODO: Flesh out coinbase wallet connect options?
             chains,
