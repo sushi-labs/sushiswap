@@ -4,6 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { DAI, USDC, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
 import { PoolInfo, UniV3Extractor } from '@sushiswap/extractor'
 import { UniswapV3Provider } from '@sushiswap/router'
+import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { UniV3Pool } from '@sushiswap/tines'
 import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
@@ -453,5 +454,22 @@ describe('UniV3Extractor', () => {
 
   it('pool #3 historical logs (1953)', async () => {
     await checkHistoricalLogs(env, pools[2], 17390000n, 17450000n)
+  })
+
+  it.skip('infinit work test', async () => {
+    const transport = http(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`)
+    const client = createPublicClient({
+      chain: env.chain,
+      transport: transport,
+    })
+
+    const extractor = new UniV3Extractor(
+      client,
+      UniswapV3FactoryAddress[ChainId.ETHEREUM] as Address,
+      'UniswapV3',
+      '0xbfd8137f7d1516d3ea5ca83523914859ec47f573'
+    )
+    await extractor.start()
+    extractor.addPoolsForTokens(BASES_TO_CHECK_TRADES_AGAINST[ChainId.ETHEREUM])
   })
 })

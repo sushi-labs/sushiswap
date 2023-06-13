@@ -3342,6 +3342,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/router': workspace:*
+      '@sushiswap/router-config': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
@@ -3397,6 +3398,7 @@ importers:
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/router': link:../../packages/router
+      '@sushiswap/router-config': link:../../config/router
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/typescript-config': link:../../config/typescript

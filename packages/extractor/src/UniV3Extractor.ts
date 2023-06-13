@@ -25,7 +25,6 @@ enum LogsProcessing {
 
 // TODO: PoolCode update cache with timer
 // TODO: Known pools permanent cache
-// TODO: pools reserves update 1/1000 logs
 export class UniV3Extractor {
   factoryAddress: Address
   providerName: string
@@ -84,13 +83,14 @@ export class UniV3Extractor {
   }
 
   async addPoolsForTokens(tokens: Token[]) {
+    const fees = Object.values(FeeAmount).filter((fee) => typeof fee == 'number')
     const promises: Promise<Address>[] = []
     for (let i = 0, promiseIndex = 0; i < tokens.length; ++i) {
       for (let j = i + 1; j < tokens.length; ++j) {
         const [a0, a1] = tokens[i].sortsBefore(tokens[j])
           ? [tokens[i].address, tokens[j].address]
           : [tokens[j].address, tokens[i].address]
-        Object.values(FeeAmount).forEach((fee) => {
+        fees.forEach((fee) => {
           promises[promiseIndex++] = this.multiCallAggregator.callValue(
             this.factoryAddress,
             IUniswapV3Factory.abi as Abi,
@@ -107,9 +107,9 @@ export class UniV3Extractor {
     for (let i = 0, promiseIndex = 0; i < tokens.length; ++i) {
       for (let j = i + 1; j < tokens.length; ++j) {
         const [token0, token1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] : [tokens[j], tokens[i]]
-        Object.values(FeeAmount).forEach((fee) => {
+        fees.forEach((fee) => {
           const address = result[promiseIndex++]
-          if (address)
+          if (address !== '0x0000000000000000000000000000000000000000')
             pools.push({
               address,
               token0,
