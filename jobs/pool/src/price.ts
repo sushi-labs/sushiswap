@@ -1,6 +1,8 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 // import { isAddress } from '@ethersproject/address'
 // import { BigNumber } from '@ethersproject/bignumber'
+import './lib/wagmi.js'
+
 import { totalsAbi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
@@ -38,7 +40,8 @@ export async function prices() {
   const client = new PrismaClient()
   try {
     const startTime = performance.now()
-    for (const chainId of SWAP_ENABLED_NETWORKS) {
+    // for (const chainId of SWAP_ENABLED_NETWORKS) {
+    for (const chainId of [ChainId.ETHEREUM]) {
       const price = Price.USD
       const base = USDC_ADDRESS[chainId as keyof typeof USDC_ADDRESS]
       if (!isAddress(base) || !base) {
@@ -55,7 +58,7 @@ export async function prices() {
       const pools = await getPools(client, chainId)
       const { rPools, tokens } = await transform(chainId, pools)
       const tokensToUpdate = calculatePrices(rPools, minimumLiquidity, baseToken, tokens)
-      await updateTokenPrices(client, price, tokensToUpdate)
+      // await updateTokenPrices(client, price, tokensToUpdate)
     }
     const endTime = performance.now()
     console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
@@ -378,7 +381,8 @@ function calculatePrices(
 
     const price = Number((value / Math.pow(10, baseToken.decimals - token.decimals)).toFixed(12))
     if (price > Number.MAX_SAFE_INTEGER) continue
-    // console.log(`${token.symbol}~${token.address}~${price}`)
+    if (token.address.toLowerCase() === '0x69570f3e84f51ea70b7b68055c8d667e77735a25')
+    console.log(`${token.symbol}~${token.address}~${price}`)
     tokensWithPrices.push({ id: token.id, price })
   }
 
