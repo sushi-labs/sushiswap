@@ -102,7 +102,7 @@ export const CancelModal: FC<CancelModalProps> = ({
         </Button>
       )}
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-4 !pb-3 !bg-white dark:bg-slate-800">
+        <Dialog.Content className="space-y-4 !pb-3 !bg-white dark:!bg-slate-800">
           <Dialog.Header title={title} onClose={() => setOpen(false)} />
           <Typography variant="sm" weight={400} className="text-gray-700 dark:text-slate-400">
             This will send the remaining amount of{' '}

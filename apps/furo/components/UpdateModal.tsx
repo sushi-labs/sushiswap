@@ -19,6 +19,9 @@ import { List } from '@sushiswap/ui/future/components/list/List'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { Switch } from '@sushiswap/ui/future/components/Switch'
 import { Signature } from '@ethersproject/bytes'
+import { withCheckerRoot, useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+
+const APPROVE_TAG = 'updateStreamSingle'
 
 interface UpdateModalProps {
   stream: Stream
@@ -28,8 +31,9 @@ interface UpdateModalProps {
   children?({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }): ReactNode
 }
 
-export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contractAddress, chainId, children }) => {
+export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(({ stream, abi, address: contractAddress, chainId, children }) => {
   const { address } = useAccount()
+  const { approved } = useApproved(APPROVE_TAG)
   const [open, setOpen] = useState(false)
   const [topUp, setTopUp] = useState(false)
   const [changeEndDate, setChangeEndDate] = useState(false)
@@ -121,6 +125,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
     onSettled,
     onSuccess() {
       setOpen(false)
+      setSignature(undefined)
     },
     enabled: Boolean(
       !(
@@ -129,7 +134,8 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
         !stream ||
         !chainId ||
         !isTopUpValid ||
-        !isChangeEndDateValid
+        !isChangeEndDateValid ||
+        !approved
       )
     ),
   })
@@ -251,16 +257,18 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
                         contract={bentoBoxV1Address[chainId] as Address}
                         enabled={topUp}
                       >
-                        <Button
-                          type="button"
-                          size="xl"
-                          fullWidth
-                          disabled={isWritePending || (!topUp && !changeEndDate)}
-                          onClick={() => sendTransaction?.()}
-                          testId="stream-update-confirmation"
-                        >
-                          {isWritePending ? <Dots>Confirm Update</Dots> : 'Update'}
-                        </Button>
+                        <Checker.Success tag={APPROVE_TAG}>
+                          <Button
+                            type="button"
+                            size="xl"
+                            fullWidth
+                            disabled={isWritePending || (!topUp && !changeEndDate) || !sendTransaction}
+                            onClick={() => sendTransaction?.()}
+                            testId="stream-update-confirmation"
+                          >
+                            {isWritePending ? <Dots>Confirm Update</Dots> : 'Update'}
+                          </Button>
+                        </Checker.Success>
                       </Checker.ApproveERC20>
                     </Checker.ApproveBentobox>
                   </Checker.Custom>
@@ -272,4 +280,4 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
       </Dialog>
     </>
   )
-}
+})
