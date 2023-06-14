@@ -6,7 +6,7 @@ import { Amount, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { JSBI, ZERO } from '@sushiswap/math'
 import { classNames, Dots } from '@sushiswap/ui'
-import { _useSendTransaction as useSendTransaction, useAccount, useContract, Address } from '@sushiswap/wagmi'
+import { _useSendTransaction as useSendTransaction, useAccount, useContract, Address, getBentoBoxContractConfig } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { Button } from '@sushiswap/ui/future/components/button/Button'
@@ -247,6 +247,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(({ stream, abi,
                       contract={contractAddress as Address}
                       onSignature={setSignature}
                       className="col-span-3 md:col-span-2"
+                      enabled={Boolean(getBentoBoxContractConfig(chainId).address)}
                     >
                       <Checker.ApproveERC20
                         id="approve-erc20-update-stream"
