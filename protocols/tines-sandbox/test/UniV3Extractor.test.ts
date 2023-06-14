@@ -1,9 +1,9 @@
 import { reset } from '@nomicfoundation/hardhat-network-helpers'
 import { erc20Abi, routeProcessor2Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
-import { DAI, USDC, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
+import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
 import { PoolInfo, UniV3Extractor } from '@sushiswap/extractor'
-import { PoolCode, Router, UniswapV3Provider } from '@sushiswap/router'
+import { NativeWrapProvider, PoolCode, Router, UniswapV3Provider } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { getBigNumber, RouteStatus, UniV3Pool } from '@sushiswap/tines'
 import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
@@ -459,7 +459,7 @@ describe('UniV3Extractor', () => {
     await checkHistoricalLogs(env, pools[2], 17390000n, 17450000n)
   })
 
-  it.only('infinit work test', async () => {
+  it.skip('infinit work test', async () => {
     const transport = http(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`)
     const client = createPublicClient({
       chain: env.chain,
@@ -475,51 +475,56 @@ describe('UniV3Extractor', () => {
     await extractor.start()
     extractor.addPoolsForTokens(BASES_TO_CHECK_TRADES_AGAINST[ChainId.ETHEREUM])
 
+    const nativeProvider = new NativeWrapProvider(env.client.chain?.id as ChainId, client)
     const tokens = BASES_TO_CHECK_TRADES_AGAINST[ChainId.ETHEREUM]
     for (;;) {
-      for (let i = 0; i < tokens.length; ++i) {
-        for (let j = 0; j < tokens.length; ++j) {
-          if (i == j) continue
-          await delay(1000)
-          const pools = extractor.getPoolCodes()
-          const poolMap = new Map<string, PoolCode>()
-          pools.forEach((p) => poolMap.set(p.pool.address, p))
-          const amountIn = getBigNumber(1e9) //??
-          const route = Router.findBestRoute(
-            poolMap,
-            env.client.chain?.id as ChainId,
-            tokens[i],
-            amountIn,
-            tokens[j],
-            30e9
-          )
-          if (route.status == RouteStatus.NoWay) {
-            console.log(`Routing: ${tokens[i].symbol} => ${tokens[j].symbol} ${route.status}`)
-            continue
-          }
-          const rpParams = Router.routeProcessor2Params(poolMap, route, tokens[i], tokens[j], env.user, RP3Address)
-          if (rpParams === undefined) {
-            console.log(`Routing: ${tokens[i].symbol} => ${tokens[j].symbol} ${route.status} ROUTE CREATION FAILED !!!`)
-            continue
-          }
-          const amountOutReal = await client.readContract({
-            address: RP3Address,
-            abi: routeProcessor2Abi,
-            functionName: 'processRoute',
-            args: [
-              rpParams.tokenIn as Address,
-              BigInt(rpParams.amountIn.toString()),
-              rpParams.tokenOut as Address,
-              0n,
-              rpParams.to as Address,
-              rpParams.routeCode as Address, // !!!!
-            ],
-          })
-          console.log(
-            `Routing: ${tokens[i].symbol} => ${tokens[j].symbol} ${route.status}` +
-              ` expected: ${route.amountOut} simulated: ${amountOutReal}`
-          )
+      for (let i = 1; i < tokens.length; ++i) {
+        await delay(1000)
+        const pools = extractor.getPoolCodes()
+        const poolMap = new Map<string, PoolCode>()
+        pools.forEach((p) => poolMap.set(p.pool.address, p))
+        nativeProvider.getCurrentPoolList().forEach((p) => poolMap.set(p.pool.address, p))
+        const fromToken = Native.onChain(ChainId.ETHEREUM),
+          toToken = tokens[i]
+        const route = Router.findBestRoute(
+          poolMap,
+          env.client.chain?.id as ChainId,
+          fromToken,
+          getBigNumber(1e18),
+          toToken,
+          30e9
+        )
+        if (route.status == RouteStatus.NoWay) {
+          console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status}`)
+          continue
         }
+        const rpParams = Router.routeProcessor2Params(poolMap, route, fromToken, toToken, env.user, RP3Address)
+        if (rpParams === undefined) {
+          console.log(`Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ROUTE CREATION FAILED !!!`)
+          continue
+        }
+        const amountOutReal = await client.readContract({
+          address: RP3Address,
+          abi: routeProcessor2Abi,
+          functionName: 'processRoute',
+          args: [
+            rpParams.tokenIn as Address,
+            BigInt(rpParams.amountIn.toString()),
+            rpParams.tokenOut as Address,
+            0n,
+            rpParams.to as Address,
+            rpParams.routeCode as Address, // !!!!
+          ],
+          value: BigInt(rpParams.value?.toString() as string),
+        })
+        const amountOutExp = BigInt(route.amountOutBN.toString())
+        const diff =
+          amountOutExp == 0n ? amountOutReal - amountOutExp : Number(amountOutReal - amountOutExp) / route.amountOut
+        console.log(
+          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.legs.length - 1} pools` +
+            ` diff = ${diff > 0 ? '+' : ''}${diff}`
+        )
+        if (Math.abs(Number(diff)) > 0.001) console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
       }
     }
   })

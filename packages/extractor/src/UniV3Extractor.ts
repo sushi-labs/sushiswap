@@ -25,6 +25,9 @@ enum LogsProcessing {
 
 // TODO: PoolCode update cache with timer
 // TODO: Known pools permanent cache
+// TODO: Multifactory
+// TODO: TokenManager
+// TODO: quality checker?
 export class UniV3Extractor {
   factoryAddress: Address
   providerName: string
