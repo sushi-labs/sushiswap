@@ -104,7 +104,7 @@ export const GenericTable = <T extends { id: string }>({
               </Table.thr>
             ))}
           </Table.thead>
-          <Table.tbody testId={testId}>
+          <Table.tbody testId={`${testId}-thead`}>
             {!loading &&
               table.getRowModel().rows.map((row, r) => {
                 if (HoverElement && isMounted) {

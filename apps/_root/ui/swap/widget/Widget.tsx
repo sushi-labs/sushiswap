@@ -12,9 +12,13 @@ import { SwapButton } from './SwapButton'
 // import { SwapButtonCrossChain } from './SwapButtonCrossChain'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
 import { ThunderCoreBanner } from './ThunderCoreBanner'
+import { CrossChainBanner } from './CrossChainBanner'
+import { SwapButtonCrossChain } from './SwapButtonCrossChain'
+import { AppType } from '@sushiswap/ui'
+import { useSwapState } from '../trade/TradeProvider'
 
 export const Widget: FC = () => {
-  // const { appType } = useSwapState()
+  const { appType } = useSwapState()
   return (
     <div className="flex flex-col gap-4">
       <WidgetTitleV2 />
