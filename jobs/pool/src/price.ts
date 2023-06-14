@@ -36,7 +36,6 @@ export enum Price {
 }
 
 export async function prices() {
-  const minimumLiquidity = 500000000 // 500 USDC
   const client = new PrismaClient()
   try {
     const startTime = performance.now()
@@ -54,6 +53,7 @@ export async function prices() {
         console.log(`Base token (${base}) does not exist in the database. chainId: ${chainId}. SKIPPING`)
         continue
       }
+      const minimumLiquidity = 500 * Math.pow(10, baseToken.decimals) // 500 USDC
       const pools = await getPools(client, chainId)
       const { rPools, tokens } = await transform(chainId, pools)
       const tokensToUpdate = calculatePrices(rPools, minimumLiquidity, baseToken, tokens)
