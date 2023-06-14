@@ -56,12 +56,14 @@ export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsB
       info,
     })
 
-    return snapshots.map((snapshot) => ({
-      ...snapshot,
-      chainId,
-      chainName: chainName[chainId],
-      chainShortName: chainShortName[chainId],
-    }))
+    return (
+      snapshots?.map((snapshot) => ({
+        ...snapshot,
+        chainId,
+        chainName: chainName[chainId],
+        chainShortName: chainShortName[chainId],
+      })) || []
+    )
   }
 
   const fetchSushiSwapV2Snapshots = async (chainId: number) => {
@@ -79,12 +81,14 @@ export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsB
       info,
     })
 
-    return snapshots.map((snapshot) => ({
-      ...snapshot,
-      chainId,
-      chainName: chainName[chainId],
-      chainShortName: chainShortName[chainId],
-    }))
+    return (
+      snapshots?.map((snapshot) => ({
+        ...snapshot,
+        chainId,
+        chainName: chainName[chainId],
+        chainShortName: chainShortName[chainId],
+      })) || []
+    )
   }
 
   const fetchSushiSwapV3Snapshots = async (chainId: SushiSwapV3ChainId) => {

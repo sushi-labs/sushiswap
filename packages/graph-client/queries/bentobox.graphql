@@ -74,6 +74,11 @@ query RebasesByChainIds($first: Int, $skip: Int, $where: Rebase_filter, $chainId
   rebases: rebasesByChainIds(skip: $skip, first: $first, where: $where, chainIds: $chainIds) {
     id
     chainId
+    token {
+      symbol
+      name
+      decimals
+    }
     base
     elastic
   }

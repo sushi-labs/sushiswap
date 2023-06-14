@@ -150,6 +150,8 @@ export const BENTOBOX_SUBGRAPH_NAME = {
   [ChainId.BTTC]: 'sushiswap/bentobox-bttc',
 } as const
 
+export const BENTOBOX_ENABLED_NETWORKS = Object.keys(BENTOBOX_SUBGRAPH_NAME).map(Number) as BentoBoxChainId[]
+
 export type BentoBoxChainId = keyof typeof BENTOBOX_SUBGRAPH_NAME
 
 export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
