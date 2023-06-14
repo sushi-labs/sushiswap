@@ -44,7 +44,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const feeApr1h = poolsToUpdate
     .filter((p) => p.feeApr1h)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.feeApr1h}`)
-  const feeApr1hQuery = feeApr1h
+  const feeApr1hQuery = feeApr1h.length
     ? `
   feeApr1h = CASE 
               ${Prisma.join(feeApr1h, ' ')}
@@ -55,7 +55,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const feeApr1d = poolsToUpdate
     .filter((p) => p.feeApr1d)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.feeApr1d}`)
-  const feeApr1dQuery = feeApr1d
+  const feeApr1dQuery = feeApr1d.length
     ? `
   feeApr1d = CASE 
               ${Prisma.join(feeApr1d, ' ')}
@@ -66,7 +66,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const feeApr1w = poolsToUpdate
     .filter((p) => p.feeApr1w)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.feeApr1w}`)
-  const feeApr1wQuery = feeApr1w
+  const feeApr1wQuery = feeApr1w.length
     ? `
   feeApr1w = CASE 
               ${Prisma.join(feeApr1w, ' ')}
@@ -77,7 +77,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const feeApr1m = poolsToUpdate
     .filter((p) => p.feeApr1m)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.feeApr1m}`)
-  const feeApr1mQuery = feeApr1m
+  const feeApr1mQuery = feeApr1m.length
     ? `
   feeApr1m = CASE 
               ${Prisma.join(feeApr1m, ' ')}
@@ -88,7 +88,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const totalApr1h = poolsToUpdate
     .filter((p) => p.totalApr1h)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.totalApr1h}`)
-  const totalApr1hQuery = totalApr1h
+  const totalApr1hQuery = totalApr1h.length
     ? `
   totalApr1h = CASE 
               ${Prisma.join(totalApr1h, ' ')}
@@ -99,7 +99,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const totalApr1d = poolsToUpdate
     .filter((p) => p.totalApr1d)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.totalApr1d}`)
-  const totalApr1dQuery = totalApr1d
+  const totalApr1dQuery = totalApr1d.length
     ? `
   totalApr1d = CASE 
               ${Prisma.join(totalApr1d, ' ')}
@@ -110,7 +110,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const totalApr1w = poolsToUpdate
     .filter((p) => p.totalApr1w)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.totalApr1w}`)
-  const totalApr1wQuery = totalApr1w
+  const totalApr1wQuery = totalApr1w.length
     ? `
   totalApr1w = CASE 
               ${Prisma.join(totalApr1w, ' ')}
@@ -121,7 +121,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const totalApr1m = poolsToUpdate
     .filter((p) => p.totalApr1m)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.totalApr1m}`)
-  const totalApr1mQuery = totalApr1m
+  const totalApr1mQuery = totalApr1m.length
     ? `
   totalApr1w = CASE 
               ${Prisma.join(totalApr1m, ' ')}
@@ -132,7 +132,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const fees1h = poolsToUpdate
     .filter((p) => p.fees1h)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.fees1h}`)
-  const fees1hQuery = fees1h
+  const fees1hQuery = fees1h.length
     ? `
   fees1h = CASE 
               ${Prisma.join(fees1h, ' ')}
@@ -143,7 +143,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const fees1d = poolsToUpdate
     .filter((p) => p.fees1d)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.fees1d}`)
-  const fees1dQuery = fees1d
+  const fees1dQuery = fees1d.length
     ? `
   fees1d = CASE 
               ${Prisma.join(fees1d, ' ')}
@@ -154,7 +154,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const fees1w = poolsToUpdate
     .filter((p) => p.fees1w)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.fees1w}`)
-  const fees1wQuery = fees1w
+  const fees1wQuery = fees1w.length
     ? `
   fees1w = CASE 
               ${Prisma.join(fees1w, ' ')}
@@ -165,7 +165,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const fees1m = poolsToUpdate
     .filter((p) => p.fees1m)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.fees1m}`)
-  const fees1mQuery = fees1m
+  const fees1mQuery = fees1m.length
     ? `
   fees1m = CASE 
               ${Prisma.join(fees1m, ' ')}
@@ -176,7 +176,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const volume1h = poolsToUpdate
     .filter((p) => p.volume1h)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.volume1h}`)
-  const volume1hQuery = volume1h
+  const volume1hQuery = volume1h.length
     ? `
   volume1h = CASE 
   ${Prisma.join(volume1h, ' ')}
@@ -187,7 +187,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const volume1d = poolsToUpdate
     .filter((p) => p.volume1d)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.volume1d}`)
-  const volume1dQuery = volume1d
+  const volume1dQuery = volume1d.length
     ? `
   volume1d = CASE 
     ${Prisma.join(volume1d, ' ')}
@@ -198,7 +198,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const volume1w = poolsToUpdate
     .filter((p) => p.volume1w)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.volume1w}`)
-  const volume1wQuery = volume1w
+  const volume1wQuery = volume1w.length
     ? `
   volume1w = CASE 
     ${Prisma.join(volume1w, ' ')}
@@ -209,7 +209,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const volume1m = poolsToUpdate
     .filter((p) => p.volume1m)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.volume1m}`)
-  const volume1mQuery = volume1m
+  const volume1mQuery = volume1m.length
     ? `
   volume1m = CASE 
     ${Prisma.join(volume1m, ' ')}
@@ -220,7 +220,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const liquidityUSDChange1h = poolsToUpdate
     .filter((p) => p.liquidityUSDChange1h)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.liquidityUSDChange1h}`)
-  const liquidityUSDChange1hQuery = liquidityUSDChange1h
+  const liquidityUSDChange1hQuery = liquidityUSDChange1h.length
     ? `
   liquidityUSDChange1h = CASE
     ${Prisma.join(liquidityUSDChange1h, ' ')}
@@ -231,7 +231,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const liquidityUSDChange1d = poolsToUpdate
     .filter((p) => p.liquidityUSDChange1d)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.liquidityUSDChange1d}`)
-  const liquidityUSDChange1dQuery = liquidityUSDChange1d
+  const liquidityUSDChange1dQuery = liquidityUSDChange1d.length
     ? `
   liquidityUSDChange1d = CASE
     ${Prisma.join(liquidityUSDChange1d, ' ')}
@@ -242,7 +242,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const liquidityUSDChange1w = poolsToUpdate
     .filter((p) => p.liquidityUSDChange1w)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.liquidityUSDChange1w}`)
-  const liquidityUSDChange1wQuery = liquidityUSDChange1w
+  const liquidityUSDChange1wQuery = liquidityUSDChange1w.length
     ? `
   liquidityUSDChange1w = CASE
     ${Prisma.join(liquidityUSDChange1w, ' ')}
@@ -253,7 +253,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const liquidityUSDChange1m = poolsToUpdate
     .filter((p) => p.liquidityUSDChange1m)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.liquidityUSDChange1m}`)
-  const liquidityUSDChange1mQuery = liquidityUSDChange1m
+  const liquidityUSDChange1mQuery = liquidityUSDChange1m.length
     ? `
   liquidityUSDChange1m = CASE
     ${Prisma.join(liquidityUSDChange1m, ' ')}
@@ -264,7 +264,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const volumeChange1h = poolsToUpdate
     .filter((p) => p.volumeChange1h)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.volumeChange1h}`)
-  const volumeChange1hQuery = volumeChange1h
+  const volumeChange1hQuery = volumeChange1h.length
     ? `
   volumeChange1h = CASE
     ${Prisma.join(volumeChange1h, ' ')}
@@ -275,7 +275,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const volumeChange1d = poolsToUpdate
     .filter((p) => p.volumeChange1d)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.volumeChange1d}`)
-  const volumeChange1dQuery = volumeChange1d
+  const volumeChange1dQuery = volumeChange1d.length
     ? `
   volumeChange1d = CASE
     ${Prisma.join(volumeChange1d, ' ')}
@@ -286,7 +286,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const volumeChange1w = poolsToUpdate
     .filter((p) => p.volumeChange1w)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.volumeChange1w}`)
-  const volumeChange1wQuery = volumeChange1w
+  const volumeChange1wQuery = volumeChange1w.length
     ? `
   volumeChange1w = CASE
     ${Prisma.join(volumeChange1w, ' ')}
@@ -297,7 +297,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const volumeChange1m = poolsToUpdate
     .filter((p) => p.volumeChange1m)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.volumeChange1m}`)
-  const volumeChange1mQuery = volumeChange1m
+  const volumeChange1mQuery = volumeChange1m.length
     ? `
   volumeChange1m = CASE
     ${Prisma.join(volumeChange1m, ' ')}
@@ -308,7 +308,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const feesChange1h = poolsToUpdate
     .filter((p) => p.feesChange1h)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.feesChange1h}`)
-  const feesChange1hQuery = feesChange1h
+  const feesChange1hQuery = feesChange1h.length
     ? `
   feesChange1h = CASE
     ${Prisma.join(feesChange1h, ' ')}
@@ -319,7 +319,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const feesChange1d = poolsToUpdate
     .filter((p) => p.feesChange1d)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.feesChange1d}`)
-  const feesChange1dQuery = feesChange1d
+  const feesChange1dQuery = feesChange1d.length
     ? `
   feesChange1d = CASE
     ${Prisma.join(feesChange1d, ' ')}
@@ -330,7 +330,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const feesChange1w = poolsToUpdate
     .filter((p) => p.feesChange1w)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.feesChange1w}`)
-  const feesChange1wQuery = feesChange1w
+  const feesChange1wQuery = feesChange1w.length
     ? `
   feesChange1w = CASE
     ${Prisma.join(feesChange1w, ' ')}
@@ -341,7 +341,7 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   const feesChange1m = poolsToUpdate
     .filter((p) => p.feesChange1m)
     .map((update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.feesChange1m}`)
-  const feesChange1mQuery = feesChange1m
+  const feesChange1mQuery = feesChange1m.length
     ? `
   feesChange1m = CASE
     ${Prisma.join(feesChange1m, ' ')}
