@@ -166,6 +166,7 @@ async function extract(protocol: Protocol) {
     sdk.OneMonthBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
     sdk.TwoMonthBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
   ])
+  console.log({oneDayBlocks, twoDayBlocks, oneWeekBlocks, twoWeekBlocks, oneMonthBlocks, twoMonthBlocks})
 
   for (const subgraph of subgraphs) {
 
