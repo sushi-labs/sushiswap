@@ -7,6 +7,7 @@ import {
   SUSHISWAP_SUBGRAPH_NAME,
   SUSHISWAP_V3_ENABLED_NETWORKS,
   SUSHISWAP_V3_SUBGRAPH_NAME,
+  SWAP_ENABLED_NETWORKS,
   TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
@@ -144,21 +145,49 @@ async function extract(protocol: Protocol) {
   const result: { chainId: ChainId; data: V2Data | V3Data }[] = []
   const subgraphs = createSubgraphConfig(protocol)
   const chains = Array.from(new Set(subgraphs.map((subgraph) => subgraph.chainId.toString())))
-  console.log(`EXTRACT - Extracting from ${chains.length} different chains, ${chains.join(', ')}`)
+  console.log(`EXTRACT - Extracting from ${chains.length} different chains, ${chains.join(', ')}`) 
+  const sdk = getBuiltGraphSDK()
+  const [
+    oneHourBlocks,
+    twoHourBlocks,
+    oneDayBlocks,
+    twoDayBlocks,
+    oneWeekBlocks,
+    twoWeekBlocks,
+    oneMonthBlocks,
+    twoMonthBlocks,
+  ] = await Promise.all([
+    sdk.OneHourBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.TwoHourBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.OneDayBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.TwoDayBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.OneWeekBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.TwoWeekBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.OneMonthBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.TwoMonthBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+  ])
 
   for (const subgraph of subgraphs) {
-    const sdk = getBuiltGraphSDK({ chainId: subgraph.chainId, host: subgraph.host, name: subgraph.name })
-    const currentBlock = (await sdk.CurrentBlock())._meta.block.number
 
+    
+    const sdk = getBuiltGraphSDK({ chainId: subgraph.chainId, host: subgraph.host, name: subgraph.name })
     const blocks: Blocks = {
-      oneHour: calculateHistoricalBlock(subgraph.chainId, currentBlock, 3600),
-      twoHour: calculateHistoricalBlock(subgraph.chainId, currentBlock, 7200),
-      oneDay: calculateHistoricalBlock(subgraph.chainId, currentBlock, 86400),
-      twoDay: calculateHistoricalBlock(subgraph.chainId, currentBlock, 172800),
-      oneWeek: calculateHistoricalBlock(subgraph.chainId, currentBlock, 604800),
-      twoWeek: calculateHistoricalBlock(subgraph.chainId, currentBlock, 1209600),
-      oneMonth: calculateHistoricalBlock(subgraph.chainId, currentBlock, 2628000),
-      twoMonth: calculateHistoricalBlock(subgraph.chainId, currentBlock, 5256000),
+      oneHour:
+        Number(oneHourBlocks.oneHourBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      twoHour:
+        Number(twoHourBlocks.twoHourBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      oneDay:
+        Number(oneDayBlocks.oneDayBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      twoDay:
+        Number(twoDayBlocks.twoDayBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      oneWeek:
+        Number(oneWeekBlocks.oneWeekBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      twoWeek:
+        Number(twoWeekBlocks.twoWeekBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      oneMonth:
+        Number(oneMonthBlocks.oneMonthBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
+      twoMonth:
+        Number(twoMonthBlocks.twoMonthBlocks.find((block) => block.chainId === subgraph.chainId)?.number) ?? undefined,
     }
 
     const pairs = await fetchPairs(sdk, subgraph, blocks)
