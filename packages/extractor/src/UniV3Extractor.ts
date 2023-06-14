@@ -210,6 +210,6 @@ export class UniV3Extractor {
   }
 
   consoleLog(log: string) {
-    if (this.logging) console.log(log)
+    if (this.logging) console.log('Extractor: ' + log)
   }
 }

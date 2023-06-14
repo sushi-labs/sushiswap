@@ -21,7 +21,7 @@ const config: HardhatUserConfig = {
           balance: '10000000000000000000000000', //(10_000_000 ETH).
         },
       ],
-      chainId: 31337,
+      chainId: 1,
     },
   },
   solidity: {
