@@ -39,7 +39,7 @@ export const Header: FC = () => {
         <NavLink title="Swap" href="https://www.sushi.com/swap" />
         <NavLink title="Pools" href="https://www.sushi.com/pools" />
         <Onramper.Button>
-          <Button as="span" color="default" variant="empty" size="md">
+          <Button as="span" color="default" variant="empty" size="md" className="whitespace-nowrap">
             Buy Crypto
           </Button>
         </Onramper.Button>
