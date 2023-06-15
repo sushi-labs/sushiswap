@@ -363,6 +363,7 @@ importers:
       '@sushiswap/v2-core': workspace:*
       '@sushiswap/v3-sdk': workspace:*
       '@sushiswap/validate': workspace:*
+      '@sushiswap/viem-config': workspace:*
       '@sushiswap/wagmi': workspace:*
       '@sushiswap/wagmi-config': workspace:*
       '@tanstack/query-sync-storage-persister': 4.27.1
@@ -451,6 +452,7 @@ importers:
       '@sushiswap/v2-core': link:../../protocols/sushiswap
       '@sushiswap/v3-sdk': link:../../packages/v3-sdk
       '@sushiswap/validate': link:../../packages/validate
+      '@sushiswap/viem-config': link:../../config/viem
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@tanstack/query-sync-storage-persister': 4.27.1

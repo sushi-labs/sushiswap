@@ -38,7 +38,7 @@ export default function Partner() {
   const methods = useForm<FormType>({
     resolver: yupResolver(schema),
     defaultValues: {
-      logoSize: 86,
+      logoSize: 128,
       listType: 'default-token-list',
     },
   })
@@ -157,7 +157,7 @@ export default function Partner() {
               )}
             >
               <Typography weight={600}>Preview</Typography>
-              <ImageCanvas size={128} canvasRef={canvasRef} className="rounded-xl" />
+              <ImageCanvas size={128} canvasRef={canvasRef} className="rounded-full" />
             </div>
             {/* <div className="flex col-span-6">
               <Button
