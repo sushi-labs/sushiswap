@@ -268,7 +268,8 @@ async function makeTest(
     client,
     UniswapV3FactoryAddress[ChainId.ETHEREUM] as Address,
     'UniswapV3',
-    '0xbfd8137f7d1516d3ea5ca83523914859ec47f573'
+    '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
+    false
   )
   await extractor.start()
   pools.forEach((p) => extractor.addPoolWatching(p))
@@ -334,7 +335,8 @@ async function checkHistoricalLogs(env: TestEnvironment, pool: PoolInfo, fromBlo
     clientPrimary,
     UniswapV3FactoryAddress[ChainId.ETHEREUM] as Address,
     'UniswapV3',
-    '0xbfd8137f7d1516d3ea5ca83523914859ec47f573'
+    '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
+    false
   )
   await extractor.start()
   extractor.addPoolWatching(pool)

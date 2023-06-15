@@ -8,6 +8,7 @@ import { Address, Log, PublicClient } from 'viem'
 import { Filter } from 'viem/dist/types/types/filter'
 
 import { MultiCallAggregator } from './MulticallAggregator'
+import { TokenManager } from './TokenManager'
 import { UniV3EventsAbi, UniV3PoolWatcher } from './UniV3PoolWatcher'
 
 export interface PoolInfo {
@@ -26,7 +27,8 @@ enum LogsProcessing {
 // TODO: PoolCode update cache with timer
 // TODO: Known pools permanent cache
 // TODO: Multifactory
-// TODO: TokenManager
+// TODO: New Tokens tips? (with statistics)
+// TODO: provider usage statistics (if have enough time to process all logs or no) ?
 // TODO: quality checker?
 export class UniV3Extractor {
   factoryAddress: Address
@@ -34,13 +36,14 @@ export class UniV3Extractor {
   tickHelperContract: Address
   client: PublicClient
   multiCallAggregator: MultiCallAggregator
+  tokenManager: TokenManager
   poolMap: Map<Address, UniV3PoolWatcher> = new Map()
   otherFactoryPoolSet: Set<Address> = new Set()
   eventFilters: Filter[] = []
   logProcessGuard = false
   lastProcessdBlock = -1n
   logProcessingStatus = LogsProcessing.NotStarted
-  logging
+  logging: boolean
 
   constructor(
     client: PublicClient,
@@ -53,6 +56,7 @@ export class UniV3Extractor {
     this.providerName = providerName
     this.client = client
     this.multiCallAggregator = new MultiCallAggregator(client)
+    this.tokenManager = new TokenManager(this.multiCallAggregator)
     this.tickHelperContract = tickHelperContract
     this.logging = logging
   }
@@ -106,6 +110,7 @@ export class UniV3Extractor {
   }
 
   async addPoolsForTokens(tokens: Token[]) {
+    this.tokenManager.addTokens(tokens)
     const fees = Object.values(FeeAmount).filter((fee) => typeof fee == 'number')
     const promises: Promise<Address>[] = []
     for (let i = 0, promiseIndex = 0; i < tokens.length; ++i) {
@@ -172,31 +177,22 @@ export class UniV3Extractor {
 
     const factory = await this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'factory')
     if ((factory as Address).toLowerCase() == this.factoryAddress.toLowerCase()) {
-      const token0Promise = this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'token0')
-      const token1Promise = this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'token1')
-      const feePromise = this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'fee')
-      const [token0Address, token1Address, fee] = await Promise.all([token0Promise, token1Promise, feePromise])
-      const token0 = new Token({
-        address: token0Address as string,
-        chainId: this.client.chain?.id,
-        // fake data - we don't need it for uniswap pools actually
-        symbol: 'Unknown',
-        name: 'Unknown',
-        decimals: 18,
-      })
-      const token1 = new Token({
-        address: token1Address as string,
-        chainId: this.client.chain?.id,
-        // fake data - we don't need it for uniswap pools actually
-        symbol: 'Unknown',
-        name: 'Unknown',
-        decimals: 18,
-      })
-      this.addPoolWatching({ address, token0, token1, fee: fee as FeeAmount })
-    } else {
-      this.otherFactoryPoolSet.add(address)
-      this.consoleLog(`other factory pool ${address}, such pools known: ${this.otherFactoryPoolSet.size}`)
+      const [token0Address, token1Address, fee] = await Promise.all([
+        this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'token0'),
+        this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'token1'),
+        this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'fee'),
+      ])
+      const [token0, token1] = await Promise.all([
+        this.tokenManager.findToken(token0Address as Address),
+        this.tokenManager.findToken(token1Address as Address),
+      ])
+      if (token0 && token1) {
+        this.addPoolWatching({ address, token0, token1, fee: fee as FeeAmount })
+        return
+      }
     }
+    this.otherFactoryPoolSet.add(address)
+    this.consoleLog(`other factory pool ${address}, such pools known: ${this.otherFactoryPoolSet.size}`)
   }
 
   getPoolCodes(): PoolCode[] {
