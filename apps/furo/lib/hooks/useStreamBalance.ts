@@ -4,7 +4,7 @@ import { JSBI } from '@sushiswap/math'
 import { Address, getBentoBoxContractConfig, getFuroStreamContractConfig } from '@sushiswap/wagmi'
 import { BigNumber } from 'ethers'
 import { useQuery } from '@tanstack/react-query'
-import { readContract } from '@wagmi/core'
+import { readContract } from '@sushiswap/wagmi'
 
 interface UseStreamBalance {
   chainId: FuroStreamChainId

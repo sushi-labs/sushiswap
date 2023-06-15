@@ -11,7 +11,7 @@ import {
   useFuroStreamRouterContract,
 } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { Address } from '@wagmi/core'
+import { Address } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'

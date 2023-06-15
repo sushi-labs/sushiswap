@@ -4,9 +4,8 @@ import { useUserStreams, useUserVestings } from '../lib'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { SushiIcon } from '@sushiswap/ui/future/components/icons'
 import Container from '@sushiswap/ui/future/components/Container'
-import { useAccount } from '@sushiswap/wagmi'
+import { useAccount, Address } from '@sushiswap/wagmi'
 import { FuroTableType, StreamTable } from './Table'
-import { Address } from '@wagmi/core'
 
 export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress }) => {
   const { address: account } = useAccount()
@@ -22,19 +21,19 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
   return (
     <div className="flex flex-col gap-10">
       <Container maxWidth="6xl" className="mx-auto px-4 pt-[80px] lg:pb-[54px]">
-        <section className="flex flex-col gap-12 justify-between">
-          <div className="flex flex-col flex-grow gap-6 items-center lg:items-start">
-            <div className="flex flex-col lg:flex-row gap-12">
+        <section className="flex flex-col justify-between gap-12">
+          <div className="flex flex-col items-center flex-grow gap-6 lg:items-start">
+            <div className="flex flex-col gap-12 lg:flex-row">
               <div className="flex flex-col gap-5">
-                <h1 className="text-5xl font-semibold  mt-2">
+                <h1 className="mt-2 text-5xl font-semibold">
                   Want to stream
                   <br /> to someone?
                 </h1>
                 <span className="text-2xl font-medium text-gray-600 dark:text-slate-400 leading-[1.5]">
                   Sushi Pay allows you to stream any ERC20 to any wallet.
                 </span>
-                <div className="group relative z-10 mt-2">
-                  <div className="flex w-full items-center">
+                <div className="relative z-10 mt-2 group">
+                  <div className="flex items-center w-full">
                     <Button
                       as="a"
                       href="/furo/create"
@@ -55,15 +54,15 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
                       <span className="text-2xl font-medium text-white">5000</span>
                     </div>
                   </span>
-                  <div className="absolute bottom-4 right-4 flex gap-3 items-center justify-center">
-                    <div className="bg-white/10 p-2 rounded-full shadow-md">
+                  <div className="absolute flex items-center justify-center gap-3 bottom-4 right-4">
+                    <div className="p-2 rounded-full shadow-md bg-white/10">
                       <SushiIcon width={22} height={22} />
                     </div>
                     <span className="text-2xl font-medium tracking-[-0.025em] text-white">
                       Sushi <span className="font-bold">Pay</span>
                     </span>
                   </div>
-                  <div className="absolute left-5 bottom-4 text-lg font-semibold text-sh tracking-wide mono flex flex-col text-white">
+                  <div className="absolute flex flex-col text-lg font-semibold tracking-wide text-white left-5 bottom-4 text-sh mono">
                     <span className="text-sm font-medium">Recipient</span>
                     you.eth
                   </div>
