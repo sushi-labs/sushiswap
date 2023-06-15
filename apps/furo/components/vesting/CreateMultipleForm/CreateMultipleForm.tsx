@@ -90,7 +90,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
     <FormProvider {...methods}>
       <Form header="Create Vestings" onSubmit={methods.handleSubmit(onReview)}>
         <div className="flex flex-col gap-14">
-          <ImportErrorProvider<CreateMultipleVestingFormSchemaType>>
+          <ImportErrorProvider>
             <ImportZoneSection chainId={chainId} />
             {!review ? (
               <div className="flex flex-col gap-4">

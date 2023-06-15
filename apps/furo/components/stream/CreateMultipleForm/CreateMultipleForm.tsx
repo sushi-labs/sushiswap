@@ -88,7 +88,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
       <FormProvider {...methods}>
         <Form header="Create Streams" onSubmit={methods.handleSubmit(onReview)}>
           <div className="flex flex-col gap-14">
-            <ImportErrorProvider<CreateMultipleStreamFormSchemaType>>
+            <ImportErrorProvider>
               <ImportZoneSection chainId={chainId} />
               {!review ? (
                 <div className="flex flex-col gap-4">
