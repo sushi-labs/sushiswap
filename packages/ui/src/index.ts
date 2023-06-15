@@ -2,7 +2,6 @@ import './globals.css'
 
 export * from './animation'
 export * from './app'
-export * from './backdrop'
 export * from './badge'
 export * from './breadcrumb'
 export * from './button'
