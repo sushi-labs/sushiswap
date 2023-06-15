@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { Layout } from '../../../components'
 import { NextSeo } from 'next-seo'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
-import { Address } from '@wagmi/core'
+import { Address } from '@sushiswap/wagmi'
 
 const Dashboard = dynamic(() => import('../../../components/Dashboard').then((mod) => mod.Dashboard), { ssr: false })
 

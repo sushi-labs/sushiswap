@@ -17,7 +17,7 @@ import { SushiIcon } from '@sushiswap/ui/future/components/icons'
 import { Blink } from '@sushiswap/ui/future/components/Blink'
 import { format } from 'date-fns'
 import { useEnsName } from '@sushiswap/wagmi'
-import { Address } from '@wagmi/core'
+import { Address } from '@sushiswap/wagmi'
 import { ChainId } from '@sushiswap/chain'
 import { getFuroVestingContractConfig } from '@sushiswap/wagmi'
 import { Button } from '@sushiswap/ui/future/components/button'
@@ -30,8 +30,9 @@ import { Timer } from '../../components/Timer'
 import Container from '@sushiswap/ui/future/components/Container'
 
 const VestingPage = () => {
+  const { isReady } = useRouter()
   return (
-    <SplashController>
+    <SplashController show={!isReady}>
       <_VestingPage />
     </SplashController>
   )
@@ -97,7 +98,7 @@ const _VestingPage: FC = () => {
         <Layout maxWidth="4xl">
           <div className="flex flex-col gap-2">
             <Link
-              className="group flex gap-4 items-center mb-2"
+              className="flex items-center gap-4 mb-2 group"
               href={{
                 pathname: '/',
               }}
@@ -137,7 +138,7 @@ const _VestingPage: FC = () => {
               <Skeleton.Box className="w-[460px] h-[290px]" />
             </div>
             <div className="min-w-fit">
-              <div className="flex flex-col flex-grow justify-center gap-5">
+              <div className="flex flex-col justify-center flex-grow gap-5">
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue skeleton />
@@ -173,10 +174,10 @@ const _VestingPage: FC = () => {
     return (
       <>
         <NextSeo title={`Stream #${vestingId}`} />
-        <Container maxWidth="4xl" className="mt-10 xl:mt-20 lg:mx-auto px-4 h-full">
+        <Container maxWidth="4xl" className="h-full px-4 mt-10 xl:mt-20 lg:mx-auto">
           <div className="flex flex-col gap-2">
             <Link
-              className="group flex gap-4 items-center mb-2"
+              className="flex items-center gap-4 mb-2 group"
               href={{
                 pathname: '/',
               }}
@@ -281,14 +282,14 @@ const _VestingPage: FC = () => {
               return (
                 <div>
                   <div className="relative bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-all rounded-2xl p-7 overflow-hidden w-[320px]">
-                    <span className="uppercase text-xs font-semibold dark:text-slate-400 text-gray-600">
+                    <span className="text-xs font-semibold text-gray-600 uppercase dark:text-slate-400">
                       {slide.id}
                     </span>
-                    <h1 className="text-2xl font-semibold dark:text-white text-gray-900 truncate">
+                    <h1 className="text-2xl font-semibold text-gray-900 truncate dark:text-white">
                       {slide.amount?.toSignificant(6)}
                       <span className="text-sm text-gray-600 dark:text-slate-400">{slide.amount.currency.symbol}</span>
                     </h1>
-                    <div className="flex flex-col gap-2 items-center py-7">
+                    <div className="flex flex-col items-center gap-2 py-7">
                       <div className="flex min-w-[44px]">
                         <Currency.Icon currency={slide.amount.currency} width={56} height={56} />
                       </div>
@@ -324,7 +325,7 @@ const _VestingPage: FC = () => {
                       </Timer>
                     </div>
                     {unlocked && (
-                      <div className="flex gap-1 absolute top-3 right-3">
+                      <div className="absolute flex gap-1 top-3 right-3">
                         <CheckCircleIcon className="text-green" width={24} height={24} />
                       </div>
                     )}
@@ -340,7 +341,7 @@ const _VestingPage: FC = () => {
           />
         </div>
 
-        <Container maxWidth="4xl" className="lg:mt-4 lg:mx-auto px-4 h-full pb-4 mb-4 lg:mb-40">
+        <Container maxWidth="4xl" className="h-full px-4 pb-4 mb-4 lg:mt-4 lg:mx-auto lg:mb-40">
           <div className="flex flex-col lg:grid lg:grid-cols-[460px_372px] justify-center gap-8 lg:gap-y-6">
             <div className="flex justify-center">
               <div className="shadow-lg relative w-[460px] h-[290px] bg-gradient-to-tr from-green to-blue flex flex-col bg-slate-800 p-4 rounded-2xl">
@@ -352,44 +353,44 @@ const _VestingPage: FC = () => {
                     </span>
                   </div>
                 </span>
-                <div className="absolute bottom-4 right-4 flex gap-3 items-center justify-center">
-                  <div className="bg-white/10 p-2 rounded-full shadow-md">
+                <div className="absolute flex items-center justify-center gap-3 bottom-4 right-4">
+                  <div className="p-2 rounded-full shadow-md bg-white/10">
                     <SushiIcon width={22} height={22} />
                   </div>
                   <span className="text-2xl font-medium tracking-[-0.025em] text-white">
                     Sushi <span className="font-bold">Pay</span>
                   </span>
                 </div>
-                <div className="absolute left-5 bottom-4 text-lg font-semibold text-sh tracking-wide mono flex flex-col text-white">
+                <div className="absolute flex flex-col text-lg font-semibold tracking-wide text-white left-5 bottom-4 text-sh mono">
                   <span className="text-sm font-medium">Recipient</span>
                   {ens ? ens : shortenAddress(vesting?.recipient.id)}
                 </div>
               </div>
             </div>
             <div className="min-w-fit">
-              <div className="flex flex-col flex-grow justify-center gap-5">
+              <div className="flex flex-col justify-center flex-grow gap-5">
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue flex title="Next unlock">
                       <div className="flex flex-col">
                         <NextPaymentTimer schedule={schedule}>
                           {({ days, seconds, minutes, hours, isCompleted }) => (
-                            <span className="flex gap-1 items-baseline">
+                            <span className="flex items-baseline gap-1">
                               {isCompleted ? (
                                 <span className="text-green">Completed</span>
                               ) : (
                                 <>
                                   <span>
-                                    {days} <span className="text-gray-400 dark:text-slate-400 text-xs">day</span>
+                                    {days} <span className="text-xs text-gray-400 dark:text-slate-400">day</span>
                                   </span>
                                   <span>
-                                    {hours} <span className="text-gray-400 dark:text-slate-400 text-xs">hours</span>
+                                    {hours} <span className="text-xs text-gray-400 dark:text-slate-400">hours</span>
                                   </span>
                                   <span>
-                                    {minutes} <span className="text-gray-400 dark:text-slate-400 text-xs">mins</span>
+                                    {minutes} <span className="text-xs text-gray-400 dark:text-slate-400">mins</span>
                                   </span>
                                   <span>
-                                    {seconds} <span className="text-gray-400 dark:text-slate-400 text-xs">secs</span>
+                                    {seconds} <span className="text-xs text-gray-400 dark:text-slate-400">secs</span>
                                   </span>
                                 </>
                               )}
@@ -436,26 +437,26 @@ const _VestingPage: FC = () => {
                     <List.KeyValue title="Remaining">
                       <FuroTimer furo={vesting}>
                         {({ days, seconds, minutes, hours, isCompleted }) => (
-                          <span className="flex gap-1 items-baseline">
+                          <span className="flex items-baseline gap-1">
                             {isCompleted ? (
                               <span className="text-green">Completed</span>
                             ) : (
                               <>
                                 <span>
                                   {days}
-                                  <span className="text-gray-400 dark:text-slate-400 text-xs">D</span>
+                                  <span className="text-xs text-gray-400 dark:text-slate-400">D</span>
                                 </span>
                                 <span>
                                   {hours}
-                                  <span className="text-gray-400 dark:text-slate-400 text-xs">H</span>
+                                  <span className="text-xs text-gray-400 dark:text-slate-400">H</span>
                                 </span>
                                 <span>
                                   {minutes}
-                                  <span className="text-gray-400 dark:text-slate-400 text-xs">M</span>
+                                  <span className="text-xs text-gray-400 dark:text-slate-400">M</span>
                                 </span>
                                 <span>
                                   {seconds}
-                                  <span className="text-gray-400 dark:text-slate-400 text-xs">S</span>
+                                  <span className="text-xs text-gray-400 dark:text-slate-400">S</span>
                                 </span>
                               </>
                             )}

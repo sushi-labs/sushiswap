@@ -1,5 +1,6 @@
 import { getFuroStreamContractConfig } from '@sushiswap/wagmi'
 import { useRouter } from 'next/router'
+import dynamic from 'next/dynamic'
 import { NextSeo } from 'next-seo'
 import React, { FC, useMemo } from 'react'
 import { BalancePredictor, CancelModal, FuroTimer, Layout, TransferModal, UpdateModal } from '../../components'
@@ -19,16 +20,18 @@ import { DownloadIcon, XIcon } from '@heroicons/react/outline'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { classNames, NetworkIcon } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/future/components/currency'
-import { Address } from '@wagmi/core'
+import { Address } from '@sushiswap/wagmi'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
 import { Blink } from '@sushiswap/ui/future/components/Blink'
 import { Percent } from '@sushiswap/math'
 import { queryParamsSchema } from '../../lib/zod'
 
+
 const Streams = () => {
+  const { isReady } = useRouter()
   return (
-    <SplashController>
+    <SplashController show={!isReady}>
       <_Streams />
     </SplashController>
   )
@@ -36,7 +39,7 @@ const Streams = () => {
 
 const _Streams: FC = () => {
   const { query } = useRouter()
-
+  console.log({query})
   const {
     id: [chainId, streamId],
   } = queryParamsSchema.parse(query)
@@ -425,7 +428,7 @@ const _Streams: FC = () => {
                         className="!items-end"
                         title={
                           <div className="flex flex-col gap-0.5">
-                            <div className="text-xs text-gray-500 dark:text-slate-400 capitalize">
+                            <div className="text-xs text-gray-500 capitalize dark:text-slate-400">
                               {tx.status?.toLowerCase()}
                             </div>
                             <span className="text-sm font-medium text-gray-600 dark:text-slate-400">
