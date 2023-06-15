@@ -208,6 +208,7 @@ async function fetchPairs(sdk: Sdk, config: SubgraphConfig, blocks: Blocks) {
       blocks.oneMonth ? fetchLegacyOrTridentPairs(sdk, config, blocks.oneMonth) : ([] as PairsQuery[]),
       blocks.twoMonth ? fetchLegacyOrTridentPairs(sdk, config, blocks.twoMonth) : ([] as PairsQuery[]),
     ])
+    console.log(`${config.name} results by timeframe\n  * current: ${currentPools.length}\n * 1h: ${pools1h.length}\n * 2h: ${pools2h.length}\n * 1d: ${pools1d.length}\n * 2d: ${pools2d.length}\n * 1w: ${pools1w.length}\n * 2w: ${pools2w.length}\n * 1m: ${pools1m.length}\n * 2m: ${pools2m.length}`)
     return { currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m }
   } else if (config.protocol === Protocol.SUSHISWAP_V3) {
     const [currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m] = await Promise.all([
@@ -221,6 +222,7 @@ async function fetchPairs(sdk: Sdk, config: SubgraphConfig, blocks: Blocks) {
       blocks.oneMonth ? fetchV3Pools(sdk, config, blocks.oneMonth) : ([] as V3PoolsQuery[]),
       blocks.twoMonth ? fetchV3Pools(sdk, config, blocks.twoMonth) : ([] as V3PoolsQuery[]),
     ])
+    console.log(`${config.name} results by timeframe\n * current: ${currentPools.length}\n * 1h: ${pools1h.length}\n * 2h: ${pools2h.length}\n * 1d: ${pools1d.length}\n * 2d: ${pools2d.length}\n * 1w: ${pools1w.length}\n * 2w: ${pools2w.length}\n * 1m: ${pools1m.length}\n * 2m: ${pools2m.length}`)
     return { currentPools, pools1h, pools2h, pools1d, pools2d, pools1w, pools2w, pools1m, pools2m }
   } else {
     console.warn('fetchPairs: config.version is not LEGACY or TRIDENT or V3, skipping')
