@@ -87,76 +87,71 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
   const formValid = isValid && !isValidating && !_errors
 
   return (
-    <>
-      <FormProvider {...methods}>
-        <Form header="Create Vestings" onSubmit={methods.handleSubmit(onReview)}>
-          <div className="flex flex-col gap-14">
-            <ImportErrorProvider<CreateMultipleVestingFormSchemaType>>
-              <ImportZoneSection chainId={chainId} />
-              {!review ? (
-                <div className="flex flex-col gap-4">
-                  {(formData.vestings || []).map((el, i) => (
-                    <div
-                      key={i}
-                      className="flex flex-col gap-1 border-b dark:border-slate-200/5 border-gray-900/5 pb-4"
-                    >
-                      <div className="flex justify-between">
-                        <h1 className="text-xs uppercase font-semibold">Vesting {i + 1}</h1>
-                        <div className="flex items-center gap-5 pr-2">
+    <FormProvider {...methods}>
+      <Form header="Create Vestings" onSubmit={methods.handleSubmit(onReview)}>
+        <div className="flex flex-col gap-14">
+          <ImportErrorProvider<CreateMultipleVestingFormSchemaType>>
+            <ImportZoneSection chainId={chainId} />
+            {!review ? (
+              <div className="flex flex-col gap-4">
+                {(formData.vestings || []).map((el, i) => (
+                  <div key={i} className="flex flex-col gap-1 border-b dark:border-slate-200/5 border-gray-900/5 pb-4">
+                    <div className="flex justify-between">
+                      <h1 className="text-xs uppercase font-semibold">Vesting {i + 1}</h1>
+                      <div className="flex items-center gap-5 pr-2">
+                        <div className="flex items-center">
+                          <IconButton
+                            icon={DuplicateIcon}
+                            iconProps={{ width: 16, height: 16 }}
+                            onClick={() => append(el)}
+                          />
+                        </div>
+                        {(i > 0 || (formData.vestings || []).length > 1) && (
                           <div className="flex items-center">
                             <IconButton
-                              icon={DuplicateIcon}
-                              iconProps={{ width: 16, height: 16 }}
-                              onClick={() => append(el)}
+                              icon={TrashIcon}
+                              iconProps={{ width: 16, height: 16, className: 'text-red' }}
+                              onClick={() => remove(i)}
                             />
                           </div>
-                          {(i > 0 || (formData.vestings || []).length > 1) && (
-                            <div className="flex items-center">
-                              <IconButton
-                                icon={TrashIcon}
-                                iconProps={{ width: 16, height: 16, className: 'text-red' }}
-                                onClick={() => remove(i)}
-                              />
-                            </div>
-                          )}
-                        </div>
+                        )}
                       </div>
-                      <VestingForm chainId={chainId} index={i} />
                     </div>
-                  ))}
-                  <div className="flex justify-end gap-4">
-                    <Button
-                      size="xl"
-                      variant="outlined"
-                      type="button"
-                      startIcon={<PlusIcon width={16} height={16} />}
-                      onClick={() => append({ ...CREATE_VEST_DEFAULT_VALUES, id: nanoid() })}
-                      testdata-id="furo-create-multiple-vestings-add-item-button"
-                    >
-                      Add Vesting
-                    </Button>
-                    <Button
-                      size="xl"
-                      variant="outlined"
-                      type="button"
-                      onClick={() => setReview(true)}
-                      disabled={!formValid}
-                      testdata-id="furo-create-multiple-vestings-add-item-button"
-                    >
-                      Review
-                    </Button>
+                    <VestingForm chainId={chainId} index={i} />
                   </div>
+                ))}
+                <div className="flex justify-end gap-4">
+                  <Button
+                    size="xl"
+                    variant="outlined"
+                    type="button"
+                    startIcon={<PlusIcon width={16} height={16} />}
+                    onClick={() => append({ ...CREATE_VEST_DEFAULT_VALUES, id: nanoid() })}
+                    testdata-id="furo-create-multiple-vestings-add-item-button"
+                  >
+                    Add Vesting
+                  </Button>
+                  <Button
+                    size="xl"
+                    variant="outlined"
+                    type="button"
+                    onClick={() => setReview(true)}
+                    disabled={!formValid}
+                    testdata-id="furo-create-multiple-vestings-add-item-button"
+                  >
+                    Review
+                  </Button>
                 </div>
-              ) : (
-                <div className="flex flex-col gap-4">
-                  <ReviewSection chainId={chainId} />
-                  <ExecuteMultipleSection chainId={chainId} isReview={review} onBack={onBack} />
-                </div>
-              )}
-            </ImportErrorProvider>
-          </div>
-        </Form>
-      </FormProvider>
-    </>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4">
+                <ReviewSection chainId={chainId} />
+                <ExecuteMultipleSection chainId={chainId} isReview={review} onBack={onBack} />
+              </div>
+            )}
+          </ImportErrorProvider>
+        </div>
+      </Form>
+    </FormProvider>
   )
 }
