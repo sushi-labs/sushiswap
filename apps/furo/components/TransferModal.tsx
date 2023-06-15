@@ -71,7 +71,7 @@ export const TransferModal: FC<TransferModalProps> = ({
         groupTimestamp: ts,
         promise: data.wait(),
         summary: {
-          pending: `Transferring stream`,
+          pending: 'Transferring stream',
           completed: `Successfully transferred stream to ${shortenAddress(resolvedAddress)}`,
           failed: 'Something went wrong transferring the stream',
         },
@@ -129,14 +129,14 @@ export const TransferModal: FC<TransferModalProps> = ({
                 disabled={
                   isWritePending ||
                   !resolvedAddress ||
-                  resolvedAddress.toLowerCase() == stream?.recipient.id.toLowerCase()
+                  resolvedAddress.toLowerCase() === stream?.recipient.id.toLowerCase() || !sendTransaction
                 }
                 onClick={() => sendTransaction?.()}
                 testId='stream-transfer-confirmation'
               >
                 {isWritePending ? (
                   <Dots>Confirm Transfer</Dots>
-                ) : resolvedAddress?.toLowerCase() == stream?.recipient.id.toLowerCase() ? (
+                ) : resolvedAddress?.toLowerCase() === stream?.recipient.id.toLowerCase() ? (
                   'Invalid recipient'
                 ) : !resolvedAddress ? (
                   'Enter recipient'

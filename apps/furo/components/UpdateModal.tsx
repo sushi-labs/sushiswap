@@ -6,7 +6,7 @@ import { Amount, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { JSBI, ZERO } from '@sushiswap/math'
 import { classNames, Dots } from '@sushiswap/ui'
-import { _useSendTransaction as useSendTransaction, useAccount, useContract, Address, getBentoBoxContractConfig } from '@sushiswap/wagmi'
+import { _useSendTransaction as useSendTransaction, useAccount, useContract, Address, getBentoBoxContractConfig, getFuroStreamRouterContractConfig } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { Button } from '@sushiswap/ui/future/components/button/Button'
@@ -20,6 +20,7 @@ import { Input } from '@sushiswap/ui/future/components/input'
 import { Switch } from '@sushiswap/ui/future/components/Switch'
 import { Signature } from '@ethersproject/bytes'
 import { withCheckerRoot, useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { FuroStreamChainId } from '@sushiswap/furo'
 
 const APPROVE_TAG = 'updateStreamSingle'
 
@@ -27,7 +28,7 @@ interface UpdateModalProps {
   stream: Stream
   abi: NonNullable<Parameters<typeof useContract>['0']>['abi']
   address: string
-  chainId: BentoBoxV1ChainId
+  chainId: FuroStreamChainId
   children?({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }): ReactNode
 }
 
@@ -143,7 +144,6 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(({ stream, abi,
   // console.log('isTopUpValid', isTopUpValid)
   // console.log('isChangeEndDateValid', isChangeEndDateValid)
   // if (!stream || !address || !stream?.canUpdate(address)) return <></>
-
   return (
     <>
       {typeof children === 'function' ? (
@@ -243,11 +243,10 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(({ stream, abi,
                       fullWidth
                       id="furo-update-stream-approve-bentobox"
                       size="xl"
-                      chainId={chainId as BentoBoxV1ChainId}
+                      chainId={chainId satisfies BentoBoxV1ChainId}
                       contract={contractAddress as Address}
                       onSignature={setSignature}
                       className="col-span-3 md:col-span-2"
-                      enabled={Boolean(getBentoBoxContractConfig(chainId).address)}
                     >
                       <Checker.ApproveERC20
                         id="approve-erc20-update-stream"
