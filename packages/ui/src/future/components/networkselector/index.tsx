@@ -11,8 +11,7 @@ export interface NetworkSelectorProps<T extends number = ChainId> {
   selected: T
   onSelect: NetworkSelectorOnSelectCallback<T>
   variant: 'menu' | 'dialog'
-  align?: 'left' | 'right'
-  children: ((props: { open: boolean; close(): void }) => ReactNode) | ReactNode
+  children: ReactNode
 }
 
 export const NetworkSelector = <T extends number>({
@@ -21,7 +20,6 @@ export const NetworkSelector = <T extends number>({
   selected,
   onSelect,
   children,
-  align,
 }: NetworkSelectorProps<T>) => {
   if (variant === 'dialog') {
     return (
@@ -32,7 +30,7 @@ export const NetworkSelector = <T extends number>({
   }
 
   return (
-    <NetworkSelectorMenu networks={networks} selected={selected} onSelect={onSelect} align={align}>
+    <NetworkSelectorMenu networks={networks} selected={selected} onSelect={onSelect}>
       {children}
     </NetworkSelectorMenu>
   )

@@ -1,14 +1,13 @@
-import { Popover } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
-import { ChainId, chainName } from '@sushiswap/chain'
-import { classNames } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
-import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui/future/components/networkselector'
-import { createErrorToast } from '@sushiswap/ui/future/components/toast'
-import { useBreakpoint } from '@sushiswap/ui/future/lib/useBreakpoint'
-import React, { FC, useCallback } from 'react'
-import { ProviderRpcError, useNetwork, UserRejectedRequestError, useSwitchNetwork } from 'wagmi'
+import {Chain, ChainId} from '@sushiswap/chain'
+import {NetworkIcon} from '@sushiswap/ui/future/components/icons'
+import {NetworkSelector, NetworkSelectorOnSelectCallback} from '@sushiswap/ui/future/components/networkselector'
+import {createErrorToast} from '@sushiswap/ui/future/components/toast'
+import {useBreakpoint} from '@sushiswap/ui/future/lib/useBreakpoint'
+import React, {FC, useCallback} from 'react'
+import {ProviderRpcError, useNetwork, UserRejectedRequestError, useSwitchNetwork} from 'wagmi'
+import {SelectPrimitive} from "@sushiswap/ui/future/components/select";
+import {Button} from "@sushiswap/ui/future/components/button";
+import {ChevronDownIcon} from "@heroicons/react/20/solid";
 
 export const HeaderNetworkSelector: FC<{
   networks: ChainId[]
@@ -51,17 +50,16 @@ export const HeaderNetworkSelector: FC<{
       onSelect={onSwitchNetwork}
       networks={networks}
     >
-      {({ open }) => (
-        <Popover.Button as={Button} variant="outlined" color="default" size="md" className="!font-medium" testdata-id="network-selector-button">
+      <SelectPrimitive.Trigger>
+        <Button variant="outlined" color="default" size="md" className="!font-medium" testdata-id="network-selector-button">
           <NetworkIcon chainId={selected} width={20} height={20} />
-          <div className="hidden xl:block">{chainName[selected]}</div>
+          <div className="hidden xl:block">{Chain.from(selected).name}</div>
           <ChevronDownIcon
-            width={24}
-            height={24}
-            className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
+              width={24}
+              height={24}
           />
-        </Popover.Button>
-      )}
+        </Button>
+      </SelectPrimitive.Trigger>
     </NetworkSelector>
   )
 }

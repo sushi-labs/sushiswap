@@ -4,10 +4,11 @@ import { RefreshIcon } from '@heroicons/react-v1/solid'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { formatNumber, formatPercent } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
-import { CheckIcon, NetworkIcon, Tooltip } from '@sushiswap/ui'
+import { CheckIcon, NetworkIcon } from '@sushiswap/ui'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { GenericTable } from '@sushiswap/ui/table'
 import { Subgraph } from '../lib'
+import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
+import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 
 interface SubgraphTable {
   subgraphs: Subgraph[]
@@ -40,9 +41,13 @@ const columns = [
     cell: (info) => (
       <div className="flex justify-center">
         {info.getValue() === 'Current' ? (
-          <Tooltip panel={<>Synced</>} button={<CheckIcon width={24} height={24} />} />
+          <Tooltip description="Synced">
+            <CheckIcon width={24} height={24} />
+          </Tooltip>
         ) : (
-          <Tooltip panel={<>Syncing</>} button={<RefreshIcon width={24} height={24} />} />
+          <Tooltip description="Syncing">
+            <RefreshIcon width={24} height={24} />
+          </Tooltip>
         )}
       </div>
     ),
@@ -94,7 +99,7 @@ const columns = [
             <div className="text-yellow">
               {status} ({formatNumber(unsyncedBlockCount).replace(/\.(00|0)/, '')})
             </div>
-          );
+          )
         case 'Failed':
           return <div className="text-red">{status}</div>
       }

@@ -6,9 +6,9 @@ import useSWR, { SWRConfig } from 'swr'
 
 import { Layout } from '../../components'
 import { TokenInformation } from '../../components/TokenSection'
-import { TokenHeader } from '../../components/TokenSection/TokenHeader'
+import { TokenHeader } from '../../components/TokenSection'
 import { TokenPairs } from '../../components/TokenSection/TokenPairs'
-import { TokenStats } from '../../components/TokenSection/TokenStats'
+import { TokenStats } from '../../components/TokenSection'
 import { getBundles, getToken } from '../../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {

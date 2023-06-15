@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import * as SelectPrimitive from '@radix-ui/react-select'
-
+export * as SelectPrimitive from '@radix-ui/react-select'
 import { ChevronUpDownIcon } from '@heroicons/react/24/outline'
 import { CheckIcon } from '@heroicons/react/20/solid'
 import classNames from 'classnames'
@@ -24,6 +24,22 @@ const SelectValue = React.forwardRef<
 })
 SelectValue.displayName = SelectPrimitive.Value.displayName
 
+const SelectIcon = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Icon>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Icon>
+>(({ className, ...props }, ref) => (
+  <SelectPrimitive.Icon ref={ref} {...props} asChild>
+    <div
+      className={classNames(
+        'bg-black/[0.05] dark:bg-white/[0.08] hover:dark:bg-white/[0.16] hover:bg-gray-300 rounded-full p-0.5',
+        className
+      )}
+    >
+      <ChevronUpDownIcon width={20} height={20} className="text-gray-600 dark:text-slate-400" />
+    </div>
+  </SelectPrimitive.Icon>
+))
+
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
@@ -38,11 +54,7 @@ const SelectTrigger = React.forwardRef<
       {...props}
     >
       {children}
-      <SelectPrimitive.Icon asChild>
-        <div className="bg-black/[0.05] dark:bg-white/[0.08] hover:dark:bg-white/[0.16] hover:bg-gray-300 rounded-full p-0.5">
-          <ChevronUpDownIcon width={20} height={20} className="text-gray-600 dark:text-slate-400" />
-        </div>
-      </SelectPrimitive.Icon>
+      <SelectIcon />
     </SelectPrimitive.Trigger>
   </>
 ))
@@ -56,7 +68,7 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={classNames(
-        'relative z-[1081] min-w-[8rem] rounded-xl overflow-hidden bg-white/50 paper dark:bg-slate-800/50 shadow-md animate-in fade-in-80',
+        'relative z-[1081] min-w-[8rem] rounded-xl overflow-hidden bg-white/50 paper dark:bg-slate-800/50 border border-gray-900/5 dark:border-slate-200/5 shadow-md animate-in fade-in-80',
         position === 'popper' && 'translate-y-1',
         className
       )}
@@ -65,7 +77,7 @@ const SelectContent = React.forwardRef<
     >
       <SelectPrimitive.Viewport
         className={classNames(
-          'p-1',
+          'p-0.5',
           position === 'popper' && 'h-[var(--radix-select-trigger-height)]  min-w-[var(--radix-select-trigger-width)]'
         )}
       >
@@ -108,7 +120,7 @@ const SelectItem = React.forwardRef<
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <CheckIcon width={16} height={16} />
+        <CheckIcon strokeWidth={3} width={16} height={16} className="text-blue" />
       </SelectPrimitive.ItemIndicator>
     </span>
 
@@ -145,4 +157,5 @@ export {
   SelectItem,
   SelectSeparator,
   SelectCaption,
+  SelectIcon,
 }

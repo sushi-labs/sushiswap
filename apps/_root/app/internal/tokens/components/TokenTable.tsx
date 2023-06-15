@@ -1,6 +1,5 @@
 'use client'
 
-import { GenericTable } from '@sushiswap/ui/table/GenericTable'
 import { Token } from '../lib'
 import { FC } from 'react'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
@@ -10,6 +9,7 @@ import { ChainId, chainName } from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
 import { XIcon } from '@heroicons/react-v1/outline'
 import { TokenAdder } from './TokenAdder'
+import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 
 interface TokenTable {
   tokens: Token[]

@@ -7,7 +7,6 @@
 @tailwind utilities;
 
 @import './variables.css';
-@import './tooltip/styles.css';
 @import './future/components/input/DatePicker.css';
 @import './input/styles.css';
 

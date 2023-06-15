@@ -3,12 +3,13 @@ import { usePools } from '@sushiswap/client'
 import { Native, Token } from '@sushiswap/currency'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'
-import { Currency, Link, Table, Tooltip, Typography } from '@sushiswap/ui'
-import { FC } from 'react'
+import { Currency, Link, Typography } from '@sushiswap/ui'
+import React, { FC } from 'react'
 import { useSWRConfig } from 'swr'
-
+import { Table } from '@sushiswap/ui/future/components/table'
 import { FarmRewardsAvailableTooltip } from '../FarmRewardsAvailableTooltip'
 import { PoolQuickHoverTooltip } from '../PoolQuickHoverTooltip'
+import { Popover } from '@sushiswap/ui/future/components/Popover'
 
 interface TokenPairs {
   token: GraphToken
@@ -68,60 +69,74 @@ export const TokenPairs: FC<TokenPairs> = ({ token }) => {
                 const volume1w = formatUSD(pair.volume1w)
 
                 return (
-                  <Tooltip
-                    destroyTooltipOnHide={true}
-                    key={pair.id}
-                    trigger="hover"
-                    mouseEnterDelay={0.5}
-                    placement="top"
-                    button={
-                      <Table.tr>
-                        <Table.td>
-                          <Link.External href={`/earn/${pair.id}`} className="!no-underline">
-                            <div className="flex items-center">
-                              <Currency.IconList iconWidth={24} iconHeight={24}>
-                                <Currency.Icon currency={token0} />
-                                <Currency.Icon currency={token1} />
-                              </Currency.IconList>
-                              <Link.External
-                                className="flex flex-col !no-underline group"
-                                href={chains[token.chainId].getTokenUrl(pair.id.split(':')[1])}
-                              >
-                                <Typography variant="sm" weight={600}>
-                                  {token0.symbol} <span className="text-slate-400">/</span> {token1.symbol}
-                                </Typography>
-                              </Link.External>
-                            </div>
-                          </Link.External>
-                        </Table.td>
-                        <Table.td>
-                          <Link.External href={`/earn/${pair.id}`} className="!no-underline">
-                            <Typography weight={600} variant="sm" className="text-slate-100">
-                              {liquidityUSD.includes('NaN') ? '$0.00' : liquidityUSD}
-                            </Typography>
-                          </Link.External>
-                        </Table.td>
-                        <Table.td>
-                          <Link.External href={`/earn/${pair.id}`} className="!no-underline">
-                            <Typography weight={600} variant="sm" className="text-slate-100">
-                              {volume1w.includes('NaN') ? '$0.00' : volume1w}
-                            </Typography>
-                          </Link.External>
-                        </Table.td>
-                        <Table.td>
-                          <Link.External href={`/earn/${pair.id}`} className="!no-underline">
-                            <Typography weight={600} variant="sm" className="text-slate-100">
-                              {formatPercent(pair.feeApr)}{' '}
-                              {pool && pool.incentives.length > 0 && pool.incentiveApr > 0 && (
-                                <FarmRewardsAvailableTooltip />
-                              )}
-                            </Typography>
-                          </Link.External>
-                        </Table.td>
-                      </Table.tr>
-                    }
-                    panel={pool ? <PoolQuickHoverTooltip row={pool} /> : <></>}
-                  />
+                  <>
+                    <Popover
+                      key={pair.id}
+                      options={{
+                        placement: 'top',
+                        modifiers: [
+                          { name: 'offset', options: { offset: [0, 0] } },
+                          {
+                            name: 'sameWidth',
+                            enabled: true,
+                            fn: ({ state }) => {
+                              state.styles.popper.width = '320px'
+                            },
+                            phase: 'beforeWrite',
+                            requires: ['computeStyles'],
+                          },
+                        ],
+                      }}
+                    >
+                      <Popover.Button>
+                        <Table.tr>
+                          <Table.td>
+                            <Link.External href={`/earn/${pair.id}`} className="!no-underline">
+                              <div className="flex items-center">
+                                <Currency.IconList iconWidth={24} iconHeight={24}>
+                                  <Currency.Icon currency={token0} />
+                                  <Currency.Icon currency={token1} />
+                                </Currency.IconList>
+                                <Link.External
+                                  className="flex flex-col !no-underline group"
+                                  href={chains[token.chainId].getTokenUrl(pair.id.split(':')[1])}
+                                >
+                                  <Typography variant="sm" weight={600}>
+                                    {token0.symbol} <span className="text-slate-400">/</span> {token1.symbol}
+                                  </Typography>
+                                </Link.External>
+                              </div>
+                            </Link.External>
+                          </Table.td>
+                          <Table.td>
+                            <Link.External href={`/earn/${pair.id}`} className="!no-underline">
+                              <Typography weight={600} variant="sm" className="text-slate-100">
+                                {liquidityUSD.includes('NaN') ? '$0.00' : liquidityUSD}
+                              </Typography>
+                            </Link.External>
+                          </Table.td>
+                          <Table.td>
+                            <Link.External href={`/earn/${pair.id}`} className="!no-underline">
+                              <Typography weight={600} variant="sm" className="text-slate-100">
+                                {volume1w.includes('NaN') ? '$0.00' : volume1w}
+                              </Typography>
+                            </Link.External>
+                          </Table.td>
+                          <Table.td>
+                            <Link.External href={`/earn/${pair.id}`} className="!no-underline">
+                              <Typography weight={600} variant="sm" className="text-slate-100">
+                                {formatPercent(pair.feeApr)}{' '}
+                                {pool && pool.incentives.length > 0 && pool.incentiveApr > 0 && (
+                                  <FarmRewardsAvailableTooltip />
+                                )}
+                              </Typography>
+                            </Link.External>
+                          </Table.td>
+                        </Table.tr>
+                      </Popover.Button>
+                      <Popover.Panel>{pool ? <PoolQuickHoverTooltip row={pool} /> : <></>}</Popover.Panel>
+                    </Popover>
+                  </>
                 )
               })}
           </Table.tbody>

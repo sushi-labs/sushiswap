@@ -1,23 +1,28 @@
 'use client'
 
 import { SearchIcon } from '@heroicons/react-v1/solid'
-import { ChainId } from '@sushiswap/chain'
+import { Chain, ChainId } from '@sushiswap/chain'
 import { useDebounce } from '@sushiswap/hooks'
-import { classNames, DEFAULT_INPUT_UNSTYLED, Network } from '@sushiswap/ui'
+import { classNames, DEFAULT_INPUT_UNSTYLED } from '@sushiswap/ui'
 import { TokenTable } from './components/TokenTable'
 import { TOKENS_SUPPORTED_CHAIN_IDS } from './config'
 import stringify from 'fast-json-stable-stringify'
 import { getTokens, Token } from './lib'
-import { FC, useState } from 'react'
+import React, { FC, useState } from 'react'
 import useSWR from 'swr'
+import { NetworkSelector } from '@sushiswap/ui/future/components/networkselector'
+import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
+import { Button } from '@sushiswap/ui/future/components/button/Button'
+import { SelectPrimitive } from '@sushiswap/ui/future/components/select'
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
 
 const TokensPage: FC = () => {
   const [filter, setFilter] = useState<string>('')
-  const [chainIds, setChainIds] = useState<ChainId[]>([ChainId.ETHEREUM])
+  const [chainId, setChainId] = useState<ChainId>(ChainId.ETHEREUM)
   const debouncedFilter = useDebounce(filter, 400)
 
-  const { data: tokens } = useSWR<Token[]>(stringify(['tokens', debouncedFilter, chainIds]), () =>
-    getTokens({ chainIds, filter: debouncedFilter })
+  const { data: tokens } = useSWR<Token[]>(stringify(['tokens', debouncedFilter, chainId]), () =>
+    getTokens({ chainIds: [chainId], filter: debouncedFilter })
   )
 
   // console.log(tokens)
@@ -47,11 +52,15 @@ const TokensPage: FC = () => {
             </div>
           </div>
         </div>
-        <Network.Selector
-          networks={TOKENS_SUPPORTED_CHAIN_IDS}
-          selectedNetworks={chainIds}
-          onChange={(selectedNetworks) => setChainIds(selectedNetworks)}
-        />
+        <NetworkSelector networks={TOKENS_SUPPORTED_CHAIN_IDS} selected={chainId} onSelect={setChainId} variant="menu">
+          <SelectPrimitive.Trigger>
+            <Button variant="outlined" color="default" size="xl" className="!font-medium">
+              <NetworkIcon chainId={chainId} width={20} height={20} />
+              <div>{Chain.from(chainId).name}</div>
+              <ChevronDownIcon width={24} height={24} />
+            </Button>
+          </SelectPrimitive.Trigger>
+        </NetworkSelector>
 
         <TokenTable tokens={tokens || []} />
       </section>

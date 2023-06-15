@@ -3,7 +3,7 @@ import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
-import { Currency, Table } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/react-query'
 import { format } from 'date-fns'
 import React, { FC, useMemo } from 'react'
@@ -14,6 +14,7 @@ import { useTokenFromZToken } from '../../../lib/zod'
 import { calculateEndDate, calculateTotalAmount } from '../utils'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { CreateMultipleVestingFormSchemaType, CreateVestingFormSchemaType } from '../schema'
+import { Table } from '@sushiswap/ui/future/components/table'
 
 interface ReviewSection {
   chainId: ChainId

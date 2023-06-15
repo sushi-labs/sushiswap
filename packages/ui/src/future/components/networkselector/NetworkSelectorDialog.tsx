@@ -20,7 +20,7 @@ export const NetworkSelectorDialog = <T extends number>({
     <Popover>
       {({ open, close }) => (
         <>
-          {typeof children === 'function' ? children({ open, close }) : children}
+          {children}
           <Dialog open={open} onClose={() => close()}>
             <Dialog.Content className="flex flex-col gap-2 scroll sm:overflow-hidden !pb-0 !h-[75vh] sm:!h-[640px]">
               <Popover.Panel className="overflow-hidden">
