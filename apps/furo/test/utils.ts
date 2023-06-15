@@ -3,13 +3,14 @@ import { Page, expect } from '@playwright/test'
 import { Type } from '@sushiswap/currency'
 
 export async function switchNetwork(page: Page, chainId: number) {
-  const networkSelector = page.getByRole('button', { name: 'Ethereum' })
+  const networkSelector = page.locator('[testdata-id=network-selector-button]')
   await expect(networkSelector).toBeVisible()
   await expect(networkSelector).toBeEnabled()
   await networkSelector.click()
 
   const networkToSelect = page.locator(`[testdata-id=network-selector-${chainId}]`)
-  await expect(networkToSelect).toBeVisible()
+  networkToSelect.scrollIntoViewIfNeeded()
+  await expect(networkToSelect).toBeInViewport({ratio: 1})
   await expect(networkToSelect).toBeEnabled()
   await networkToSelect.click()
 }
