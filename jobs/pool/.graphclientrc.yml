@@ -10,8 +10,8 @@ sources:
     handler:
       graphql:
         endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:sushi-v2/sushiswap-ethereum}
-        retry: 5
-        timeout: 5000 # 5 seconds
+        retry: 3
+        timeout: 10000 # 10 seconds
     transforms:
       - autoPagination:
           validateSchema: true
