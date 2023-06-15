@@ -111,7 +111,7 @@ export const getConcentratedLiquidityPositions = async ({
   const positions = await getConcentratedLiquidityPositionsFromTokenIds({ tokenIds })
   const fees = await getConcentratedLiquidityPositionFees({ tokenIds })
 
-  return positions.map((el, i) => ({
+  return positions.filter(Boolean).map((el, i) => ({
     ...el,
     address: computePoolAddress({
       factoryAddress: getV3FactoryContractConfig(el.chainId).address,
