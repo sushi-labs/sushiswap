@@ -17,7 +17,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@sushiswap/ui/components/ui/select'
+} from '@sushiswap/ui/future/components/select'
 import {
   CreateMultipleVestingBaseSchemaFormErrorsType,
   CreateMultipleVestingFormSchemaType,

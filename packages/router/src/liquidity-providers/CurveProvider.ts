@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { Token, Type, USDT } from '@sushiswap/currency'
+import { Token, Type } from '@sushiswap/currency'
 import { FRAX } from '@sushiswap/currency'
 import { USDC } from '@sushiswap/currency'
 import { WBTC } from '@sushiswap/currency'
@@ -277,10 +277,6 @@ async function getCurvePoolCode(publicClient: PublicClient, poolAddress: string,
 export class CurveProvider extends LiquidityProvider {
   foundPools: PoolCode[] = []
 
-  constructor(chainId: ChainId, web3Client: PublicClient) {
-    super(chainId, web3Client)
-  }
-
   override getType(): LiquidityProviders {
     return LiquidityProviders.CurveSwap
   }
@@ -325,11 +321,11 @@ export class CurveProvider extends LiquidityProvider {
         contracts: calls,
       })
       newFoundPools.forEach((pool, i) => {
-        if (pool.status == 'success' && excludePools?.has(pool.result as string) !== true)
+        if (pool.status === 'success' && excludePools?.has(pool.result as string) !== true)
           pools.set(pool.result as string, [CurvePoolType.Factory, ...currencyCombinations[i]])
       })
       currencyCombinations = newFoundPools
-        .map((pool, i) => (pool.status == 'success' ? currencyCombinations[i] : undefined))
+        .map((pool, i) => (pool.status === 'success' ? currencyCombinations[i] : undefined))
         .filter((c) => c !== undefined) as [Token, Token][]
     }
 
@@ -341,7 +337,7 @@ export class CurveProvider extends LiquidityProvider {
   }
 
   async getPoolRatio(pools: [string, [CurvePoolType, Type, Type]][]): Promise<(number | undefined)[]> {
-    if (this.chainId == ChainId.ETHEREUM) {
+    if (this.chainId === ChainId.ETHEREUM) {
       const ratios = await this.client.multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3?.address as '0x${string}',
         allowFailure: true,
@@ -438,7 +434,7 @@ export class CurveProvider extends LiquidityProvider {
         _A === undefined ||
         _balance0 === undefined ||
         _balance1 === undefined ||
-        _ratio == undefined
+        _ratio === undefined
       )
         return
       const poolTines = new CurvePool(

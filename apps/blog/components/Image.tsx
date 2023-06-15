@@ -54,8 +54,8 @@ export const Image: FC<ImageProps> = ({
       quality={quality}
       className={className}
       layout={layout}
-      width={width || _width || 640}
-      height={height || _height || 400}
+      width={layout !== 'fill' ? width || _width || 640 : undefined}
+      height={layout !== 'fill' ? height || _height || 400 : undefined}
       objectFit={objectFit}
       src={getOptimizedMedia({
         metadata: image.attributes.provider_metadata,

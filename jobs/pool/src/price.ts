@@ -1,6 +1,6 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
-// import { isAddress } from '@ethersproject/address'
-// import { BigNumber } from '@ethersproject/bignumber'
+import './lib/wagmi.js'
+
 import { totalsAbi } from '@sushiswap/abi'
 import { bentoBoxV1Address, BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId } from '@sushiswap/chain'
@@ -17,7 +17,9 @@ import {
   StableSwapRPool,
   toShareBN,
 } from '@sushiswap/tines'
+import { TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { Address, readContracts } from '@wagmi/core'
+import { fetchBlockNumber } from '@wagmi/core'
 import { BigNumber } from 'ethers'
 import { isAddress } from 'ethers/lib/utils.js'
 import { performance } from 'perf_hooks'
@@ -34,7 +36,6 @@ export enum Price {
 }
 
 export async function prices() {
-  const minimumLiquidity = 500000000 // 500 USDC
   const client = new PrismaClient()
   try {
     const startTime = performance.now()
@@ -52,6 +53,7 @@ export async function prices() {
         console.log(`Base token (${base}) does not exist in the database. chainId: ${chainId}. SKIPPING`)
         continue
       }
+      const minimumLiquidity = 500 * Math.pow(10, baseToken.decimals) // 500 USDC
       const pools = await getPools(client, chainId)
       const { rPools, tokens } = await transform(chainId, pools)
       const tokensToUpdate = calculatePrices(rPools, minimumLiquidity, baseToken, tokens)
@@ -113,7 +115,7 @@ async function getPools(client: PrismaClient, chainId: ChainId) {
   const endTime = performance.now()
 
   console.log(`Fetched ${results.length} pools (${((endTime - startTime) / 1000).toFixed(1)}s). `)
-  return results.filter(pool => pool.token1.isCommon || pool.token0.isCommon)
+  return results
 }
 
 async function getPoolsByPagination(
@@ -138,7 +140,15 @@ async function getPoolsByPagination(
     },
     where: {
       chainId,
-      protocol: { in: [Protocol.SUSHISWAP_V2, Protocol.SUSHISWAP_V3, Protocol.BENTOBOX_CLASSIC, Protocol.BENTOBOX_STABLE] },
+      protocol: {
+        in: [Protocol.SUSHISWAP_V2, Protocol.SUSHISWAP_V3, Protocol.BENTOBOX_CLASSIC, Protocol.BENTOBOX_STABLE],
+      },
+      token0: {
+        status: 'APPROVED',
+      },
+      token1: {
+        status: 'APPROVED',
+      },
     },
   })
 }
@@ -146,17 +156,19 @@ async function getPoolsByPagination(
 async function transform(chainId: ChainId, pools: Pool[]) {
   const tokens: Map<string, Token> = new Map()
   const stablePools = pools.filter((pool) => pool.protocol === Protocol.BENTOBOX_STABLE)
-  const rebases = isBentoBoxV1ChainId(chainId) ? await fetchRebases(stablePools, chainId) : undefined
+  const blockNumber = await fetchBlockNumber({ chainId })
+  console.log(`ChainId ${chainId} got block number: ${blockNumber}. `)
+  const rebases = isBentoBoxV1ChainId(chainId) ? await fetchRebases(stablePools, chainId, blockNumber) : undefined
 
   const constantProductPoolIds = pools.filter((p) => p.protocol === Protocol.BENTOBOX_CLASSIC || p.protocol === Protocol.SUSHISWAP_V2).map((p) => p.id)
   const stablePoolIds = stablePools.map((p) => p.id)
   const concentratedLiquidityPools = pools.filter((p) => p.protocol === Protocol.SUSHISWAP_V3)
 
   const [constantProductReserves, stableReserves, concentratedLiquidityReserves, v3Info] = await Promise.all([
-    getConstantProductPoolReserves(constantProductPoolIds),
-    getStablePoolReserves(stablePoolIds),
-    getConcentratedLiquidityPoolReserves(concentratedLiquidityPools),
-    fetchV3Info(concentratedLiquidityPools, chainId),
+    getConstantProductPoolReserves(constantProductPoolIds, blockNumber),
+    getStablePoolReserves(stablePoolIds, blockNumber),
+    getConcentratedLiquidityPoolReserves(concentratedLiquidityPools, blockNumber),
+    fetchV3Info(concentratedLiquidityPools, chainId, blockNumber),
   ])
   const poolsWithReserves = new Map([...constantProductReserves, ...stableReserves, ...concentratedLiquidityReserves])
   let classicCount = 0
@@ -214,14 +226,15 @@ async function transform(chainId: ChainId, pools: Pool[]) {
       }
     } else if (pool.protocol === Protocol.SUSHISWAP_V3) {
       const v3 = v3Info.get(pool.address)
-      if (v3) {
+      const tickSpacing = TICK_SPACINGS[pool.swapFee * 1_000_000]
+      if (v3 && tickSpacing) {
         rPools.push(
           new CLRPool(
             pool.address,
             token0 as RToken,
             token1 as RToken,
             pool.swapFee,
-            12,
+            tickSpacing,
             reserves.reserve0,
             reserves.reserve1,
             v3.liquidity,
@@ -240,7 +253,7 @@ async function transform(chainId: ChainId, pools: Pool[]) {
   return { rPools, tokens }
 }
 
-async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId) {
+async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId, blockNumber: number) {
   const sortedTokens = poolsToUniqueTokens(pools)
 
   const totals = await readContracts({
@@ -253,6 +266,7 @@ async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId) {
           chainId: chainId,
           abi: totalsAbi,
           functionName: 'totals',
+          blockNumber,
         } as const)
     ),
   })
@@ -266,7 +280,7 @@ async function fetchRebases(pools: Pool[], chainId: BentoBoxV1ChainId) {
   return rebases
 }
 
-async function fetchV3Info(pools: Pool[], chainId: ChainId) {
+async function fetchV3Info(pools: Pool[], chainId: ChainId, blockNumber: number) {
   const [slot0, liquidity] = await Promise.all([
     readContracts({
       allowFailure: true,
@@ -293,6 +307,7 @@ async function fetchV3Info(pools: Pool[], chainId: ChainId) {
               },
             ],
             functionName: 'slot0',
+            blockNumber,
           } as const)
       ),
     }),
@@ -313,6 +328,7 @@ async function fetchV3Info(pools: Pool[], chainId: ChainId) {
               },
             ],
             functionName: 'liquidity',
+            blockNumber,
           } as const)
       ),
     }),

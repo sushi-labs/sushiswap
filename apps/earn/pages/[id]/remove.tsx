@@ -54,7 +54,7 @@ const _Remove = () => {
   })
 
   if (!pool) return <></>
-  console.log(pool.protocol)
+  // console.log(pool.protocol)
 
   return (
     <>
@@ -108,7 +108,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     .sort(({ liquidityUSD: a }, { liquidityUSD: b }) => {
       return Number(b) - Number(a)
     })
-    .slice(0, 250)
+    .slice(0, 50)
     .map((pool) => ({
       params: { id: pool.id },
     }))

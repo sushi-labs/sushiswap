@@ -20,7 +20,6 @@ import { useTrade } from '../../../lib/swap/useTrade'
 import { nanoid } from 'nanoid'
 import { useLayerZeroScanLink } from '../../../lib/swap/useLayerZeroScanLink'
 import { SushiXSwapChainId } from '@sushiswap/sushixswap'
-import { swapErrorToUserReadableMessage } from '../../../lib/swap/swapErrorToUserReadableMessage'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { Chain } from '@sushiswap/chain'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
@@ -167,7 +166,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
         trade,
         error,
       })
-      createErrorToast(swapErrorToUserReadableMessage(error), false)
+      createErrorToast(error.message, false)
     },
   })
 

@@ -1,14 +1,10 @@
+import sharedConfig from '@sushiswap/tailwindcss-config'
+
 // @ts-check
 /** @type {import('tailwindcss').Config} */
 const tailwindConfig = {
   darkMode: 'class',
-  presets: [require('@sushiswap/ui/tailwind')],
-  content: [
-    './pages/**/*.{js,ts,jsx,tsx}',
-    './components/**/*.{js,ts,jsx,tsx}',
-    '../../packages/wagmi/{components,systems,future}/**/*.{js,ts,jsx,tsx}',
-    '../../packages/ui/{,!(node_modules)/**/}*.{js,ts,jsx,tsx}',
-  ],
+  presets: [sharedConfig],
   theme: {
     extend: {
       display: ['group-hover'],
@@ -24,4 +20,4 @@ const tailwindConfig = {
   },
 }
 
-module.exports = tailwindConfig
+export default tailwindConfig

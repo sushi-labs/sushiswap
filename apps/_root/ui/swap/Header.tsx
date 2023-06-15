@@ -10,7 +10,7 @@ import { useSwapActions } from './trade/TradeProvider'
 import { Onramper } from '@sushiswap/wagmi/future/components'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { useConnect } from '@sushiswap/wagmi'
-import { useTokenState } from './TokenProvider'
+import { useTokenState } from './token/TokenProvider'
 
 export const Header: FC = () => {
   const { isLoading } = useConnect()
@@ -39,7 +39,7 @@ export const Header: FC = () => {
         <NavLink title="Swap" href="https://www.sushi.com/swap" />
         <NavLink title="Pools" href="https://www.sushi.com/pools" />
         <Onramper.Button>
-          <Button as="span" color="default" variant="empty" size="md">
+          <Button as="span" color="default" variant="empty" size="md" className="whitespace-nowrap">
             Buy Crypto
           </Button>
         </Onramper.Button>

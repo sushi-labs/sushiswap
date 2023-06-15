@@ -25,7 +25,7 @@
   "dependencies": {
     "@sushiswap/chain": "workspace:*",
     "@vercel/node": "2.14.3",
-    "@wagmi/core": "0.10.10",
+    "@wagmi/core": "0.10.13",
     "lodash.zip": "4.2.0",
     "@whatwg-node/fetch": "0.8.4",
     "zod": "3.21.4"

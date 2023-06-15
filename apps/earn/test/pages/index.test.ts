@@ -2,6 +2,8 @@ import { AddressZero } from '@ethersproject/constants'
 import { Page, test, expect } from '@playwright/test'
 import { USDC_ADDRESS, Native, Token, Type } from '@sushiswap/currency'
 
+
+
 export async function approve(page: Page, locator: string) {
   await timeout(500) // give the approve button time to load contracts, unrealistically fast when running test
   const pageLocator = page.locator(`[testdata-id=${locator}]`)
@@ -188,7 +190,6 @@ test.describe('V2', () => {
       type: 'ADD',
     })
   })
-
 })
 
 async function createOrAddLiquidityV3(page: Page, args: V3PoolArgs) {
@@ -255,12 +256,12 @@ async function createOrAddTridentPool(page: Page, args: TridentPoolArgs) {
   const reviewButton = page.locator(reviewSelector)
   await expect(reviewButton).toBeVisible()
   await expect(reviewButton).toBeEnabled()
-  await reviewButton.click({ timeout: 2_000 })
+  await reviewButton.click()
 
   const confirmButton = page.locator('[testdata-id=confirm-add-liquidity-button]')
   await expect(confirmButton).toBeVisible()
   await expect(confirmButton).toBeEnabled()
-  await timeout(2_500) // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
+  await timeout(5000)
   await confirmButton.click()
 
   const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`
@@ -268,18 +269,18 @@ async function createOrAddTridentPool(page: Page, args: TridentPoolArgs) {
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
 
-
-
 async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
   await handleToken(page, args.token0, 'FIRST')
   await handleToken(page, args.token1, 'SECOND')
-  if  (args.type === 'CREATE') { 
-    // NOT Sure about this logic as we need a token and currency combination that isn't created to test this. 
+  if (args.type === 'CREATE') {
+    // NOT Sure about this logic as we need a token and currency combination that isn't created to test this.
     await page.locator('[testdata-id=add-liquidity-token0-input]').fill(args.amount0)
     await page.locator('[testdata-id=add-liquidity-token1-input]').fill(args.amount1)
   } else {
     // Only fill in the token that is not native if we are adding liquidity to an existing pool.
-    await page.locator(`[testdata-id=add-liquidity-token${args.token0.isNative ? 1 : 0}-input]`).fill(args.token0.isNative ? args.amount1 : args.amount0)
+    await page
+      .locator(`[testdata-id=add-liquidity-token${args.token0.isNative ? 1 : 0}-input]`)
+      .fill(args.token0.isNative ? args.amount1 : args.amount0)
   }
 
   await approve(page, `approve-token-${args.token0.isNative ? 1 : 0}`)
@@ -306,12 +307,11 @@ async function removeLiquidityV3(page: Page) {
   await page.goto(url)
   await page.locator('[testdata-id=my-positions-button]').click()
 
-  // const concentratedPositionTableSelector = page.locator('[testdata-id=concentrated-positions]')
-  // await expect(concentratedPositionTableSelector).toBeVisible()
+  const concentratedPositionTableSelector = page.locator('[testdata-id=concentrated-positions-loading-0]')
+  await expect(concentratedPositionTableSelector).not.toBeVisible()
 
   const firstPositionSelector = page.locator('[testdata-id=concentrated-positions-0-0-td]')
-  await expect(firstPositionSelector).toBeVisible({ timeout: 7_000 })
-  await timeout(5_000) // wait for the animation to finish, otherwise the click will not work. TODO: figure out a better way to do this
+  await expect(firstPositionSelector).toBeVisible()
   await firstPositionSelector.click()
 
   const decreaseLiquiditySelector = page.locator('[testdata-id=decrease-liquidity-button]')
@@ -387,8 +387,15 @@ async function handleToken(page: Page, currency: Type, order: 'FIRST' | 'SECOND'
 }
 
 async function switchNetwork(page: Page, chainId: number) {
-  await page.getByRole('button', { name: 'Ethereum' }).click()
-  await page.locator(`[testdata-id=network-selector-${chainId}]`).click()
+  const networkSelector = page.locator('[testdata-id=network-selector-button]')
+  await expect(networkSelector).toBeVisible()
+  await expect(networkSelector).toBeEnabled()
+  await networkSelector.click()
+
+  const networkToSelect = page.locator(`[testdata-id=network-selector-${chainId}]`)
+  await expect(networkToSelect).toBeVisible()
+  await expect(networkToSelect).toBeEnabled()
+  await networkToSelect.click()
 }
 
 function timeout(ms: number) {

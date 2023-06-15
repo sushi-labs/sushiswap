@@ -5,7 +5,7 @@ import React, { FC } from 'react'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { usePctChange } from '../../../lib/swap/usePctChange'
 import { useTrade } from '../../../lib/swap/useTrade'
-import { useTokenState } from '../TokenProvider'
+import { useTokenState } from '../token/TokenProvider'
 
 export const SwapCurrencyOutput: FC = () => {
   const { tokensLoading } = useTokenState()
@@ -24,7 +24,8 @@ export const SwapCurrencyOutput: FC = () => {
       onSelect={setToken1}
       value={trade?.amountOut?.toSignificant() ?? ''}
       currency={token1}
-      usdPctChange={trade?.route?.status === 'NoWay' ? undefined : usdPctChange}
+      usdPctChange={undefined}
+      // usdPctChange={trade?.route?.status === 'NoWay' ? undefined : usdPctChange}
       loading={Boolean(isLoading && +value > 0) || isFetching || tokensLoading}
       disableMaxButton
       currencyLoading={tokensLoading}

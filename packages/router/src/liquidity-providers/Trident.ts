@@ -9,7 +9,7 @@ import {
   ConstantProductPoolFactoryChainId,
   stablePoolFactoryAddress,
   StablePoolFactoryChainId,
-} from '@sushiswap/trident'
+} from '@sushiswap/trident-core'
 import { add, getUnixTime } from 'date-fns'
 import { BigNumber } from 'ethers'
 import { Address, PublicClient } from 'viem'
