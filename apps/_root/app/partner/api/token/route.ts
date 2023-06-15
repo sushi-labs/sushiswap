@@ -49,7 +49,7 @@ const erc20ABI = [
   },
 ] as const
 
-export const getToken = async (id: string, chainId: ChainId): Promise<Token> => {
+const getToken = async (id: string, chainId: ChainId): Promise<Token> => {
   const publicClient = createPublicClient(config[chainId])
 
   const token = getContract({ address: id as Address, abi: erc20ABI, publicClient })
