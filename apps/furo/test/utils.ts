@@ -10,7 +10,7 @@ export async function switchNetwork(page: Page, chainId: number) {
 
   const networkToSelect = page.locator(`[testdata-id=network-selector-${chainId}]`)
   await networkToSelect.scrollIntoViewIfNeeded()
-  await expect(networkToSelect).toBeInViewport({ratio: 1})
+  await expect(networkToSelect).toBeInViewport({ ratio: 1 })
   await expect(networkToSelect).toBeEnabled()
   await networkToSelect.click()
 
@@ -87,12 +87,10 @@ export async function createSingleStream(chainId: number, token: Type, amount: s
   await expect(reviewStreamButton).toBeEnabled()
   await reviewStreamButton.click()
 
-  
   const confirmCreateStreamButton = page.locator('[testdata-id=confirm-stream-creation-button]')
   await expect(confirmCreateStreamButton).toBeVisible()
   await expect(confirmCreateStreamButton).toBeEnabled()
   await confirmCreateStreamButton.click()
-
 
   const expectedText = new RegExp(`Created .* ${token.symbol} stream`)
   await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
@@ -146,23 +144,17 @@ export async function createSingleVest(page: Page, args: VestingArgs) {
   }
 
   // Approve BentoBox
-  await page
-    .locator('[testdata-id=create-single-vest-approve-bentobox]')
-    .click({ timeout: 1500 })
-    .then(async () => {
-      console.log('BentoBox Approved')
-    })
-    .catch(() => console.log('BentoBox already approved or not needed'))
-
+  const bentoboxLocator = page.locator('[testdata-id=create-single-vest-approve-bentobox]')
+  await expect(bentoboxLocator).toBeVisible()
+  await expect(bentoboxLocator).toBeEnabled()
+  await bentoboxLocator.click({ timeout: 1500 })
+  
+  // Approve Token
   if (!args.token.isNative) {
-    // Approve Token
-    await page
-      .locator('[testdata-id=create-single-vest-approve-token]')
-      .click({ timeout: 1500 })
-      .then(async () => {
-        console.log(`${args.token.symbol} Approved`)
-      })
-      .catch(() => console.log(`${args.token.symbol} already approved or not needed`))
+    const locator = page.locator('[testdata-id=create-single-vest-approve-token]')
+    await expect(locator).toBeVisible()
+    await expect(locator).toBeEnabled()
+    await locator.click({ timeout: 1500 })
   }
 
   await reviewAndConfirm(page, args)

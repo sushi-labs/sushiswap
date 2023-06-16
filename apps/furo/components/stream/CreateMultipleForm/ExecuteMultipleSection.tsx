@@ -181,7 +181,7 @@ export const ExecuteMultipleSection: FC<{
           >
             <Checker.ApproveERC20Multiple
               size="xl"
-              id={`furo-create-multiple-stream-approve-token`}
+              id={'furo-create-multiple-stream-approve-token'}
               amounts={approveAmounts}
             >
               <Checker.Success tag={APPROVE_TAG}>
