@@ -39,7 +39,7 @@ const USDC = new Token({
 })
 
 test.describe('Vest', () => {
-  const VEST_ID = '8'
+  const VEST_ID = '100'
   test('Create', async ({ page }) => {
     test.slow()
     const args: VestingArgs = {
@@ -136,7 +136,7 @@ async function mockSubgraph(page: Page) {
         const resultData = {
           data: {
             _0_vesting: {
-              id: '8',
+              id: '100',
               __typename: 'Vesting',
               status: 'ACTIVE',
               steps: '10',
