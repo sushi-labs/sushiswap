@@ -40,7 +40,7 @@ const USDC = new Token({
 })
 
 test.describe('Vest', () => {
-  test('Create', async ({ page }) => {
+  test('Create, Withdraw, Transfer, cancel', async ({ page }) => {
     test.slow()
     const args: VestingArgs = {
       chainId: CHAIN_ID,
@@ -65,32 +65,32 @@ test.describe('Vest', () => {
 
     await withdrawVest(page)
     await transferVest(page, '0xc39c2d6eb8adef85f9caa141ec95e7c0b34d8dec')
+    await cancelVest(page)
   })
+})
+async function withdrawVest(page: Page) {
+  await mockSubgraph(page)
 
-  async function withdrawVest(page: Page) {
-    await mockSubgraph(page)
+  const url = (process.env.PLAYWRIGHT_URL as string).concat(`/vesting/${CHAIN_ID}:${VEST_ID}`)
+  await page.goto(url)
+  await switchNetwork(page, CHAIN_ID)
 
-    const url = (process.env.PLAYWRIGHT_URL as string).concat(`/vesting/${CHAIN_ID}:${VEST_ID}`)
-    await page.goto(url)
-    await switchNetwork(page, CHAIN_ID)
+  const openWithdrawLocator = page.locator('[testdata-id=vest-withdraw-button]')
+  await expect(openWithdrawLocator).toBeVisible()
+  await expect(openWithdrawLocator).toBeEnabled()
+  await openWithdrawLocator.click()
 
-    const openWithdrawLocator = page.locator('[testdata-id=vest-withdraw-button]')
-    await expect(openWithdrawLocator).toBeVisible()
-    await expect(openWithdrawLocator).toBeEnabled()
-    await openWithdrawLocator.click()
+  const confirmWithdrawalLocator = page.locator('[testdata-id=withdraw-modal-confirmation-button]')
+  await expect(confirmWithdrawalLocator).toBeVisible()
+  await expect(confirmWithdrawalLocator).toBeEnabled()
+  await confirmWithdrawalLocator.click()
 
-    const confirmWithdrawalLocator = page.locator('[testdata-id=withdraw-modal-confirmation-button]')
-    await expect(confirmWithdrawalLocator).toBeVisible()
-    await expect(confirmWithdrawalLocator).toBeEnabled()
-    await confirmWithdrawalLocator.click()
-
-    const expectedText = `(Successfully withdrawn .* ${USDC.symbol})`
-    const regex = new RegExp(expectedText)
-    await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
-  }
+  const expectedText = `(Successfully withdrawn .* ${USDC.symbol})`
+  const regex = new RegExp(expectedText)
+  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+}
 
 async function transferVest(page: Page, recipient: string) {
-
   const url = (process.env.PLAYWRIGHT_URL as string).concat(`/vesting/${CHAIN_ID}:${VEST_ID}`)
   await mockSubgraph(page)
   await page.goto(url)
@@ -114,27 +114,25 @@ async function transferVest(page: Page, recipient: string) {
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
 
-// async function cancelStream(page: Page, streamId: string) {
-//   const url = (process.env.PLAYWRIGHT_URL as string).concat(`/stream/${CHAIN_ID}:${streamId}`)
-//   await mockSubgraph(page)
-//   await page.goto(url)
-//   await switchNetwork(page, CHAIN_ID)
-//   const openTransferLocator = page.locator('[testdata-id=stream-cancel-button]')
-//   await expect(openTransferLocator).toBeVisible()
-//   await expect(openTransferLocator).toBeEnabled()
-//   await openTransferLocator.click()
+async function cancelVest(page: Page) {
+  const url = (process.env.PLAYWRIGHT_URL as string).concat(`/vesting/${CHAIN_ID}:${VEST_ID}`)
+  await mockSubgraph(page)
+  await page.goto(url)
+  await switchNetwork(page, CHAIN_ID)
+  const openTransferLocator = page.locator('[testdata-id=vest-cancel-button]')
+  await expect(openTransferLocator).toBeVisible()
+  await expect(openTransferLocator).toBeEnabled()
+  await openTransferLocator.click()
 
-//   const confirmTransferLocator = page.locator('[testdata-id=stream-cancel-confirmation-button]')
-//   await expect(confirmTransferLocator).toBeVisible()
-//   await expect(confirmTransferLocator).toBeEnabled()
-//   await confirmTransferLocator.click()
+  const confirmTransferLocator = page.locator('[testdata-id=cancel-confirmation-button]')
+  await expect(confirmTransferLocator).toBeVisible()
+  await expect(confirmTransferLocator).toBeEnabled()
+  await confirmTransferLocator.click()
 
-//   const expectedText = '(Successfully cancelled stream)'
-//   const regex = new RegExp(expectedText)
-//   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
-// }
-})
-
+  const expectedText = '(Successfully cancelled Vest)'
+  const regex = new RegExp(expectedText)
+  await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
+}
 async function mockSubgraph(page: Page) {
   await page.route('https://api.thegraph.com/subgraphs/name/sushi-subgraphs/furo-polygon', async (route, request) => {
     if (request.method() === 'POST') {
