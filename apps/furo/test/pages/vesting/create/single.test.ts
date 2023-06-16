@@ -1,11 +1,12 @@
 // import { test } from '@playwright/test'
 // import { Native, Token, USDC_ADDRESS } from '@sushiswap/currency'
-// import { GradedVestingFrequency, VestingArgs, createSingleVest, switchNetwork } from '../../../utils'
+// import { GradedVestingFrequency, VestingArgs, createSingleVest, createSnapshot, loadSnapshot, switchNetwork } from '../../../utils'
 
 // if (!process.env.CHAIN_ID) {
 //   throw new Error('CHAIN_ID env var not set')
 // }
 
+// let SNAPSHOT_ID = '0x0'
 // const CHAIN_ID = parseInt(process.env.CHAIN_ID)
 // const RECIPIENT = '0x23defc2ca207e7fbd84ae43b00048fb5cb4db5b2'
 // const NATIVE_TOKEN = Native.onChain(CHAIN_ID)
@@ -17,11 +18,19 @@
 //   name: 'USDC Stablecoin',
 // })
 
+
+// test.beforeAll(async () => {
+//   SNAPSHOT_ID = await createSnapshot(CHAIN_ID)
+// })
+
+// test.afterEach(async () => {
+//   await loadSnapshot(CHAIN_ID, SNAPSHOT_ID)
+// })
+
 // test.describe('Create single vest', () => {
 //   test.beforeEach(async ({ page }) => {
 //     const url = (process.env.PLAYWRIGHT_URL as string).concat('/vesting/create/single')
 //     await page.goto(url)
-//     page.setViewportSize({ width: 1920, height: 1080 })
 //     await switchNetwork(page, CHAIN_ID)
 //   })
 

@@ -82,8 +82,8 @@ export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) =>
                   onBlur={onBlur}
                   name={name}
                   value={value}
-                  id="create-single-vest-graded-amount-input"
-                  testdata-id="create-single-vest-graded-amount-input"
+                  id={`create-single-vest-graded-amount-input${index}`}
+                  testdata-id={`create-single-vest-graded-amount-input${index}`}
                   label={
                     <>
                       Payout per unlock{currency ? ` (${currency.symbol})` : ''}
@@ -114,8 +114,8 @@ export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) =>
                   onBlur={onBlur}
                   name={name}
                   value={value}
-                  id="create-single-vest-steps-input"
-                  testdata-id="create-single-vest-steps-input"
+                  id={`create-single-vest-steps-input${index}`}
+                  testdata-id={`create-single-vest-steps-input${index}`}
                   label={
                     <>
                       Number of unlocks<sup>*</sup>
@@ -135,7 +135,7 @@ export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) =>
             <>
               <Select onValueChange={onChange} defaultValue={value}>
                 <SelectGroup>
-                  <SelectTrigger testdata-id="create-single-vest-graded-frequency-selection-button">
+                  <SelectTrigger testdata-id={`create-single-vest-graded-frequency-selection-button${index}`}>
                     <SelectLabel aria-label={value}>
                       Unlock frequency<sup>*</sup>
                     </SelectLabel>
@@ -150,7 +150,7 @@ export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) =>
                       <SelectItem
                         key={stepConfig}
                         value={stepConfig}
-                        testdata-id={`create-single-vest-graded-type-${stepConfig.toLowerCase()}`}
+                        testdata-id={`create-single-vest-graded-type-${stepConfig.toLowerCase()}${index}`}
                       >
                         {stepConfig}
                       </SelectItem>

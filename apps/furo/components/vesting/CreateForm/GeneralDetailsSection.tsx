@@ -70,16 +70,16 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
           render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
             <>
               <TokenSelector
-                id={'create-single-vest'}
-                testdata-id={'create-single-vest'}
+                id={`create-single-vest${index}`}
+                testdata-id={`create-single-vest${index}`}
                 chainId={chainId}
                 onSelect={(currency) => onSelect(onChange, currency)}
                 selected={_currency}
               >
                 {({ setOpen }) => (
                   <Input.Select
-                    id={'create-single-vest-select'}
-                    testdata-id={'create-single-vest-select'}
+                    id={`create-single-vest-select${index}`}
+                    testdata-id={`create-single-vest-select${index}`}
                     onBlur={onBlur}
                     label={
                       <>
@@ -111,8 +111,8 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
                   <Input.DatePickerCustomInput
                     isError={Boolean(error?.message)}
                     caption={error?.message}
-                    testdata-id={'create-single-vest-start-date'}
-                    id="create-single-vest-start-date"
+                    testdata-id={`create-single-vest-start-date${index}`}
+                    id={`create-single-vest-start-date${index}`}
                     label={
                       <>
                         Start date<sup>*</sup>
@@ -153,8 +153,8 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
                 }
                 name={name}
                 onBlur={onBlur}
-                id="create-single-vest-recipient-input"
-                testdata-id="create-single-vest-recipient-input"
+                id={`create-single-vest-recipient-input${index}`}
+                testdata-id={`create-single-vest-recipient-input${index}`}
                 value={value}
                 onChange={onChange}
               />

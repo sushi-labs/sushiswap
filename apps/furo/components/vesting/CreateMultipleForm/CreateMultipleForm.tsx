@@ -95,9 +95,9 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
             {!review ? (
               <div className="flex flex-col gap-4">
                 {(formData.vestings || []).map((el, i) => (
-                  <div key={i} className="flex flex-col gap-1 border-b dark:border-slate-200/5 border-gray-900/5 pb-4">
+                  <div key={i} className="flex flex-col gap-1 pb-4 border-b dark:border-slate-200/5 border-gray-900/5">
                     <div className="flex justify-between">
-                      <h1 className="text-xs uppercase font-semibold">Vesting {i + 1}</h1>
+                      <h1 className="text-xs font-semibold uppercase">Vesting {i + 1}</h1>
                       <div className="flex items-center gap-5 pr-2">
                         <div className="flex items-center">
                           <IconButton
@@ -127,7 +127,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
                     type="button"
                     startIcon={<PlusIcon width={16} height={16} />}
                     onClick={() => append({ ...CREATE_VEST_DEFAULT_VALUES, id: nanoid() })}
-                    testdata-id="furo-create-multiple-vestings-add-item-button"
+                    testdata-id="create-multiple-vest-add-vest-button"
                   >
                     Add Vesting
                   </Button>
@@ -137,7 +137,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
                     type="button"
                     onClick={() => setReview(true)}
                     disabled={!formValid}
-                    testdata-id="furo-create-multiple-vestings-add-item-button"
+                    testdata-id="create-multiple-vest-review-button"
                   >
                     Review
                   </Button>

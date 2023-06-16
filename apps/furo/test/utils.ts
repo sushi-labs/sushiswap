@@ -171,61 +171,111 @@ export async function createSingleVest(page: Page, args: VestingArgs) {
   await reviewAndConfirm(page, args)
 }
 
-async function handleGeneralDetails(page: Page, args: VestingArgs) {
-  await selectToken(page, args.token)
-  await selectDate('[testdata-id=create-single-vest-start-date]', args.startInMonths, page)
-  await page.locator('[testdata-id=create-single-vest-recipient-input]').fill(args.recipient)
+export async function createMultipleVests(page: Page, chainId: number, vestingArgs: VestingArgs[]) {
+  const url = (process.env.PLAYWRIGHT_URL as string).concat('/vesting/create/multiple')
+  await page.goto(url)
+  await switchNetwork(page, chainId)
+  let index = 0
+  for (const args of vestingArgs) {
+    if (index > 0) {
+      const addVestingLocator = page.locator('[testdata-id=create-multiple-vest-add-vest-button]')
+      await expect(addVestingLocator).toBeVisible()
+      await expect(addVestingLocator).toBeEnabled()
+      await addVestingLocator.click()
+    }
+    await handleGeneralDetails(page, args, index)
+    await handleGradeDetails(page, args, index)
+    if (args.cliff) {
+      await handleCliffDetails(page, args, index)
+    }
+    index++
+  }
+  
+  const reviewLocator = page.locator('[testdata-id=create-multiple-vest-review-button]')
+  await expect(reviewLocator).toBeVisible()
+  await expect(reviewLocator).toBeEnabled()
+  await reviewLocator.click()
+
+  // // Approve BentoBox
+  // const bentoboxLocator = page.locator('[testdata-id=create-single-vest-approve-bentobox]')
+  // await expect(bentoboxLocator).toBeVisible()
+  // await expect(bentoboxLocator).toBeEnabled()
+  // await bentoboxLocator.click()
+
+  // // Approve Token
+  // const locator = page.locator('[testdata-id=create-single-vest-approve-token]')
+  // await expect(locator).toBeVisible()
+  // await expect(locator).toBeEnabled()
+  // await locator.click()
+  // const confirmCreateVestingButton = page.locator('[testdata-id=multiple-vest-confirm-button]')
+  // await expect(confirmCreateVestingButton).toBeVisible({ timeout: 10_000 })
+  // await expect(confirmCreateVestingButton).toBeEnabled({ timeout: 10_000 })
+  // await confirmCreateVestingButton.click()
+
+  // await expect(page.locator('div', { hasText: 'Creating 4 vests' }).last()).toContainText('Creating 4 vests')
+  // await expect(page.locator('div', { hasText: 'Transaction Completed' }).last()).toContainText(
+  //   'Transaction Completed'
+  // )
+
 }
 
-async function handleCliffDetails(page: Page, args: VestingArgs) {
+async function handleGeneralDetails(page: Page, args: VestingArgs, index = 0) {
+  await selectToken(page, args.token, index)
+  await selectDate(`[testdata-id=create-single-vest-start-date${index}]`, args.startInMonths, page)
+  await page.locator(`[testdata-id=create-single-vest-recipient-input${index}]`).fill(args.recipient)
+}
+
+async function handleCliffDetails(page: Page, args: VestingArgs, index = 0) {
   if (!args.cliff) {
     throw new Error('Graded vesting args not provided')
   }
-  const cliffSwitchSelector = page.locator('[testdata-id=cliff-toggle-switch]')
+  const cliffSwitchSelector = page.locator(`[testdata-id=cliff-toggle-switch${index}]`)
   await expect(cliffSwitchSelector).toBeVisible()
   await expect(cliffSwitchSelector).toBeEnabled()
   await cliffSwitchSelector.click()
 
-  const cliffAmountSelector = page.locator('[testdata-id=create-single-vest-cliff-amount-input]')
+  const cliffAmountSelector = page.locator(`[testdata-id=create-single-vest-cliff-amount-input${index}]`)
   await expect(cliffAmountSelector).toBeVisible()
   await expect(cliffAmountSelector).toBeEnabled()
   await cliffAmountSelector.fill(args.cliff.amount)
 
-  await selectDate('[testdata-id=create-single-vest-cliff-date]', args.cliff.cliffEndsInMonths, page)
+  await selectDate(`[testdata-id=create-single-vest-cliff-date${index}]`, args.cliff.cliffEndsInMonths, page)
 }
 
-async function handleGradeDetails(page: Page, args: VestingArgs) {
-  const stepAmountSelector = page.locator('[testdata-id=create-single-vest-graded-amount-input]')
+async function handleGradeDetails(page: Page, args: VestingArgs, index = 0) {
+  const stepAmountSelector = page.locator(`[testdata-id=create-single-vest-graded-amount-input${index}]`)
   await expect(stepAmountSelector).toBeVisible()
   await expect(stepAmountSelector).toBeEnabled()
   await stepAmountSelector.fill(args.graded.stepAmount)
 
-  const stepSelector = page.locator('[testdata-id=create-single-vest-steps-input]')
+  const stepSelector = page.locator(`[testdata-id=create-single-vest-steps-input${index}]`)
   await expect(stepSelector).toBeVisible()
   await expect(stepSelector).toBeEnabled()
   await stepSelector.fill(args.graded.steps.toString())
 
-  const selectFrequencySelector = page.locator('[testdata-id=create-single-vest-graded-frequency-selection-button]')
+  const selectFrequencySelector = page.locator(
+    `[testdata-id=create-single-vest-graded-frequency-selection-button${index}]`
+  )
   await expect(selectFrequencySelector).toBeVisible()
   await expect(selectFrequencySelector).toBeEnabled()
   await selectFrequencySelector.click()
 
   const desiredFrequencyoptionSelector = page.locator(
-    `[testdata-id=create-single-vest-graded-type-${args.graded.frequency.toLowerCase()}]`
+    `[testdata-id=create-single-vest-graded-type-${args.graded.frequency.toLowerCase()}${index}]`
   )
   await expect(desiredFrequencyoptionSelector).toBeVisible()
   await expect(desiredFrequencyoptionSelector).toBeEnabled()
   await desiredFrequencyoptionSelector.click()
 }
 
-async function selectToken(page: Page, currency: Type) {
-  const tokenSelector = page.locator('[testdata-id=create-single-vest-select]')
+async function selectToken(page: Page, currency: Type, index = 0) {
+  const tokenSelector = page.locator(`[testdata-id=create-single-vest-select${index}]`)
   await expect(tokenSelector).toBeVisible()
   await expect(tokenSelector).toBeEnabled()
   await tokenSelector.click({ force: true }) // it's missing the click area?! force required.
-  await page.fill('[testdata-id=create-single-vest-address-input]', currency.symbol as string)
+  await page.fill(`[testdata-id=create-single-vest${index}-address-input]`, currency.symbol as string)
   const tokenRowSelector = page.locator(
-    `[testdata-id=create-single-vest-row-${currency.isNative ? AddressZero : currency.address.toLowerCase()}]`
+    `[testdata-id=create-single-vest${index}-row-${currency.isNative ? AddressZero : currency.address.toLowerCase()}]`
   )
   await expect(tokenRowSelector).toBeVisible()
   await expect(tokenRowSelector).toBeEnabled()

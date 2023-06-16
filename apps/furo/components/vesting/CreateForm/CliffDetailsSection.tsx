@@ -32,7 +32,7 @@ export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
                 }
               }}
               size="sm"
-              id="cliff-toggle-switch"
+              id={`cliff-toggle-switch${index}`}
             />
           )}
         />
@@ -52,8 +52,8 @@ export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
                     <Input.DatePickerCustomInput
                       isError={Boolean(error?.message)}
                       caption={error?.message ? error?.message : 'The end date of the cliff.'}
-                      id="create-single-vest-cliff-date"
-                      testdata-id="create-single-vest-cliff-date"
+                      id={`create-single-vest-cliff-date${index}`}
+                      testdata-id={`create-single-vest-cliff-date${index}`}
                       label={
                         <>
                           End date<sup>*</sup>
@@ -99,7 +99,7 @@ export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
                     name={name}
                     value={value}
                     id="create-single-vest-cliff-amount-input"
-                    testdata-id="create-single-vest-cliff-amount-input"
+                    testdata-id={`create-single-vest-cliff-amount-input${index}`}
                     label={
                       <>
                         Amount{currency ? ` (${currency.symbol})` : ''}
