@@ -50,7 +50,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
 
   const prepare = useCallback(
     (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!vesting || !balance || !contract) return
+      if (!vesting || !balance || !contract || !address) return
 
       setRequest({
         from: address,
@@ -69,7 +69,9 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
       setOpen(false)
     },
     enabled: Boolean(vesting && balance && contract),
+    gasMargin: true
   })
+
 
   return (
     <>
@@ -112,11 +114,12 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
                   size="xl"
                   variant="filled"
                   fullWidth
-                  disabled={isWritePending}
+                  disabled={isWritePending || !sendTransaction}
                   onClick={() => sendTransaction?.()}
+                  testId='withdraw-modal-confirmation'
                 >
                   {!vesting?.token ? (
-                    'Invalid stream token'
+                    'Invalid vest token'
                   ) : isWritePending ? (
                     <Dots>Confirm Withdraw</Dots>
                   ) : (
