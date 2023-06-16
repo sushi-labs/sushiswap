@@ -224,7 +224,7 @@ async function mockSubgraph(page: Page) {
 }
 
 async function increaseEvmTime(unix: number) {
-  const provider = new ethers.providers.JsonRpcProvider('http://localhost:8545', CHAIN_ID)
+  const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545', CHAIN_ID)
   // await provider.send('evm_increaseTime', [unix])
   await provider.send('evm_mine', [unix])
 }
