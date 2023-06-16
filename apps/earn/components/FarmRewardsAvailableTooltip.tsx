@@ -1,4 +1,4 @@
-import { Tooltip } from '@sushiswap/ui/future/components/tooltip'
+import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
 import { FC } from 'react'
 
 export const FarmRewardsAvailableTooltip: FC = () => {

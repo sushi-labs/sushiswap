@@ -2,7 +2,7 @@ import { useIsMounted } from '@sushiswap/hooks'
 import React, { FC } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Container } from '@sushiswap/ui/future/components/Container'
 
 export const Stats: FC = () => {
   const isMounted = useIsMounted()

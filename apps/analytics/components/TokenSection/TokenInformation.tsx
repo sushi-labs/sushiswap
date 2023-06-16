@@ -4,7 +4,7 @@ import { shortenAddress } from '@sushiswap/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { Currency, Link, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
-import { Table } from '@sushiswap/ui/future/components/Table'
+import { Table } from '@sushiswap/ui/future/components/table'
 
 import { useTokenFromToken } from '../../lib/hooks'
 import { ClipboardController } from '@sushiswap/ui/future/components/ClipboardController'

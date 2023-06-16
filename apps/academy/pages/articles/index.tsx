@@ -16,7 +16,7 @@ import {
 } from '../../.mesh'
 import { ArticleList, ArticlesPageHeader, Card, Pagination, SearchInput } from '../../common/components'
 import { getArticles, getDifficulties, getProducts, getTopics } from '../../lib/api'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Container } from '@sushiswap/ui/future/components/Container'
 import { classNames } from '@sushiswap/ui'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@sushiswap/ui/future/components/select'
 
