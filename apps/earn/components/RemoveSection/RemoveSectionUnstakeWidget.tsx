@@ -5,7 +5,7 @@ import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
 import { classNames, Currency, DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui'
+import { Widget } from '@sushiswap/ui/future/components/widget'
 import { useTotalSupply } from '@sushiswap/wagmi'
 import { FC, Fragment, ReactNode, useMemo, useState } from 'react'
 

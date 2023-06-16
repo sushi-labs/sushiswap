@@ -1,11 +1,12 @@
 import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { formatPercent } from '@sushiswap/format'
-import { AppearOnMount, BreadcrumbLink, Container, Link, Typography } from '@sushiswap/ui'
+import { AppearOnMount, Link, Typography } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { SWRConfig, useSWRConfig } from 'swr'
+import { Container } from '@sushiswap/ui/future/components/Container'
 
 import {
   AddSectionLegacy,
@@ -15,36 +16,11 @@ import {
   Layout,
   PoolPositionProvider,
   PoolPositionStakedProvider,
-  UnknownTokenAlert,
 } from '../../components'
-import { PROTOCOL_MAP } from '../../lib/constants'
 import { getPool, getPools, getPoolUrl, Pool, usePool } from '@sushiswap/client'
 import { ChainId } from '@sushiswap/chain'
 import { NextSeo } from 'next-seo'
 import { isTridentPoolProtocol } from '../../lib/functions'
-
-const LINKS = (pool: Pool): BreadcrumbLink[] => [
-  {
-    href: `/${pool.id}`,
-    label: `${pool.name} - ${[PROTOCOL_MAP[pool.protocol]]} - ${formatPercent(pool.swapFee)}`,
-  },
-  {
-    href: `/${pool.id}/add`,
-    label: `Add Liquidity`,
-  },
-]
-
-// export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
-//   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-//   const [pair] = await Promise.all([getPool(query.id as string)])
-//   return {
-//     props: {
-//       fallback: {
-//         [`/earn/api/pool/${query.id}`]: { pair },
-//       },
-//     },
-//   }
-// }
 
 const Add: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (
@@ -71,7 +47,7 @@ const _Add = () => {
       <NextSeo title={`Add liquidity ${pool.name} - ${formatPercent(pool.swapFee)}`} />
       <PoolPositionProvider pool={pool}>
         <PoolPositionStakedProvider pool={pool}>
-          <Layout breadcrumbs={LINKS(pool)}>
+          <Layout>
             <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
               <div className="hidden md:block" />
               <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">

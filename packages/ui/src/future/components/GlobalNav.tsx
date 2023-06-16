@@ -7,8 +7,7 @@ import { APP_TYPE_LINKS, HEADER_HEIGHT } from '../../constants'
 import { AppType } from '../../types'
 import { Button } from './button'
 import { SushiIcon } from './icons'
-import { MaxWidth } from '../../container'
-import Container from './Container'
+import Container, { MaxWidth } from './Container'
 import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
 
 const ITEMS = [

@@ -1,5 +1,5 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
-import { classNames, Container } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import {
   ProductArticles,
   ProductBackground,
@@ -14,6 +14,7 @@ import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { FC } from 'react'
 import useSWR from 'swr'
+import { Container } from '@sushiswap/ui/future/components/Container'
 
 import { ArticleEntity, GetLatestAndRelevantArticlesQuery } from '.mesh'
 

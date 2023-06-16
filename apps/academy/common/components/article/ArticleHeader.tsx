@@ -1,10 +1,11 @@
-import { classNames, Container } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import { format } from 'date-fns'
 import { FC } from 'react'
 
 import { ArticleEntity } from '../../../.mesh'
 import { DifficultyLabel, Image } from '../'
+import { Container } from '@sushiswap/ui/future/components/Container'
 
 interface ArticleHeader {
   article?: ArticleEntity

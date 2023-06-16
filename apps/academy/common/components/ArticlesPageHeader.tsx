@@ -1,11 +1,12 @@
 import { useBreakpoint } from '@sushiswap/hooks'
-import { classNames, Container } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { LooperBg } from 'common/assets/LooperBg'
 import { FC, useLayoutEffect, useState } from 'react'
 
 import { DEFAULT_SIDE_PADDING } from '../helpers'
 import { DifficultyEntity, Maybe } from '.mesh'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@sushiswap/ui/future/components/select'
+import { Container } from '@sushiswap/ui/future/components/Container'
 
 interface ArticlesPagesHeader {
   title: Maybe<string> | undefined

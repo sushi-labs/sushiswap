@@ -1,7 +1,7 @@
 import { formatPercent } from '@sushiswap/format'
-import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
+import { AppearOnMount } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
-import { getPool, usePool, getPools, getPoolUrl, Pool, Protocol } from '@sushiswap/client'
+import { getPool, usePool, getPools, getPoolUrl, Protocol } from '@sushiswap/client'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -24,17 +24,9 @@ import {
   UnknownTokenAlert,
   PoolTransactionsV2,
 } from '../../components'
-import { PROTOCOL_MAP } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
 import { NextSeo } from 'next-seo'
 import { PoolPageV3 } from '../../components/PoolPageV3'
-
-const LINKS = (pool: Pool): BreadcrumbLink[] => [
-  {
-    href: `/${pool.id}`,
-    label: `${pool.name} - ${PROTOCOL_MAP[pool.protocol]} - ${formatPercent(pool.swapFee)}`,
-  },
-]
 
 const Pool: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (
@@ -69,7 +61,7 @@ const _Pool = () => {
       <PoolPositionProvider pool={pool}>
         <PoolPositionStakedProvider pool={pool}>
           <PoolPositionRewardsProvider pool={pool}>
-            <Layout breadcrumbs={LINKS(pool)}>
+            <Layout>
               <div className="flex flex-col gap-9">
                 <UnknownTokenAlert pool={pool} />
                 <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">

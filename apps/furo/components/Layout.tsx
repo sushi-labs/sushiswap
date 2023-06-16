@@ -1,5 +1,6 @@
-import { classNames, Container, MaxWidth } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import React from 'react'
+import { Container, MaxWidth } from '@sushiswap/ui/future/components/Container'
 
 type Props = {
   children?: React.ReactNode

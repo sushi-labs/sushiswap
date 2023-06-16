@@ -4,11 +4,12 @@ import { PlusIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
-import { classNames, Widget } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import React, { FC, ReactNode } from 'react'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { Widget } from '@sushiswap/ui/future/components/widget'
 
 interface AddSectionWidgetProps {
   isFarm: boolean

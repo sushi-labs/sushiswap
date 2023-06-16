@@ -2,11 +2,12 @@ import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'
-import { CopyHelper, Currency, Link, Typography } from '@sushiswap/ui'
+import { Currency, Link, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 import { Table } from '@sushiswap/ui/future/components/Table'
 
 import { useTokenFromToken } from '../../lib/hooks'
+import { ClipboardController } from '@sushiswap/ui/future/components/ClipboardController'
 
 interface TokenInformation {
   token: GraphToken
@@ -55,11 +56,13 @@ export const TokenInformation: FC<TokenInformation> = ({ token }) => {
                 </div>
               </Table.td>
               <Table.td>
-                <CopyHelper toCopy={shortenAddress(_token.wrapped.address)}>
-                  <Typography weight={500} variant="sm" className="text-slate-100">
-                    {shortenAddress(_token.wrapped.address)}
-                  </Typography>
-                </CopyHelper>
+                <ClipboardController>
+                  {({ setCopied }) => (
+                    <span onClick={() => setCopied(_token.wrapped.address)} className="text-sm font-medium">
+                      {shortenAddress(_token.wrapped.address)}
+                    </span>
+                  )}
+                </ClipboardController>
               </Table.td>
               <Table.td>
                 <Link.External

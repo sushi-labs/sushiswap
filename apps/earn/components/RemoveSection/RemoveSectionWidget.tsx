@@ -13,7 +13,7 @@ import {
   Input,
   Typography,
 } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui'
+import { Widget } from '@sushiswap/ui/future/components/widget'
 import React, { FC, Fragment, ReactNode, useState } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
 
@@ -154,16 +154,32 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                           />
                         </div>
                         <div className="flex gap-2">
-                          <Button size="xs" onClick={() => setPercentage('25')} testdata-id='remove-liquidity-25-button'>
+                          <Button
+                            size="xs"
+                            onClick={() => setPercentage('25')}
+                            testdata-id="remove-liquidity-25-button"
+                          >
                             25%
                           </Button>
-                          <Button size="xs" onClick={() => setPercentage('50')} testdata-id='remove-liquidity-50-button'>
+                          <Button
+                            size="xs"
+                            onClick={() => setPercentage('50')}
+                            testdata-id="remove-liquidity-50-button"
+                          >
                             50%
                           </Button>
-                          <Button size="xs" onClick={() => setPercentage('75')} testdata-id='remove-liquidity-75-button'>
+                          <Button
+                            size="xs"
+                            onClick={() => setPercentage('75')}
+                            testdata-id="remove-liquidity-75-button"
+                          >
                             75%
                           </Button>
-                          <Button size="xs" onClick={() => setPercentage('100')} testdata-id='remove-liquidity-max-button'>
+                          <Button
+                            size="xs"
+                            onClick={() => setPercentage('100')}
+                            testdata-id="remove-liquidity-max-button"
+                          >
                             MAX
                           </Button>
                         </div>

@@ -1,4 +1,4 @@
-import { Container, Typography } from '@sushiswap/ui'
+import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import {
@@ -13,6 +13,7 @@ import {
   ZkSyncSVG,
   ThunderCoreSVG,
 } from './svgs'
+import { Container } from '@sushiswap/ui/future/components/Container'
 
 const INCEPTION_DATE = new Date('08/26/2020')
 

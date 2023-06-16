@@ -1,5 +1,5 @@
 import { ArrowRightCircleIcon } from '@heroicons/react/24/solid'
-import { classNames, Container, Typography } from '@sushiswap/ui'
+import { classNames, Typography } from '@sushiswap/ui'
 import onsenImg from 'common/assets/onsen-img.png'
 import {
   ProductArticles,
@@ -17,6 +17,7 @@ import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import Image from 'next/image'
 import { FC } from 'react'
 import useSWR from 'swr'
+import { Container } from '@sushiswap/ui/future/components/Container'
 
 import { ArticleEntity } from '.mesh'
 

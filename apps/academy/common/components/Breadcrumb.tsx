@@ -1,8 +1,9 @@
 import { ArrowLeftIcon, ShareIcon } from '@heroicons/react/24/solid'
-import { Container, IconButton, Typography } from '@sushiswap/ui'
+import { IconButton, Typography } from '@sushiswap/ui'
 import { getShareText } from 'common/helpers'
 import Link from 'next/link'
 import { FC } from 'react'
+import { Container } from '@sushiswap/ui/future/components/Container'
 
 import { ArticleEntity } from '.mesh'
 
