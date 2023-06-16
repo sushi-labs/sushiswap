@@ -32,7 +32,6 @@ enum LogsProcessing {
 
 // TODO: PoolCode update cache with timer
 // TODO: Known pools permanent cache
-// TODO: Multifactory
 // TODO: New Tokens tips? (with statistics)
 // TODO: provider usage statistics (if have enough time to process all logs or no) ?
 // TODO: quality checker?
