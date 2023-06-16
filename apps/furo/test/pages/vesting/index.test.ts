@@ -41,7 +41,6 @@ const USDC = new Token({
 
 test.describe('Vest', () => {
   test('Create, Withdraw, Transfer, cancel', async ({ page }) => {
-    test.slow()
     const args: VestingArgs = {
       chainId: CHAIN_ID,
       token: USDC,

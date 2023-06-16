@@ -222,6 +222,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                 id="create-single-vest-approve-token"
                 size="xl"
                 amount={_totalAmount}
+                enabled={Boolean(_totalAmount)}
               >
                 <Checker.Success tag={APPROVE_TAG}>
                   <Modal.Trigger tag={MODAL_ID}>

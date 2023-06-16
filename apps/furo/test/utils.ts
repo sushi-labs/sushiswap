@@ -147,14 +147,14 @@ export async function createSingleVest(page: Page, args: VestingArgs) {
   const bentoboxLocator = page.locator('[testdata-id=create-single-vest-approve-bentobox]')
   await expect(bentoboxLocator).toBeVisible()
   await expect(bentoboxLocator).toBeEnabled()
-  await bentoboxLocator.click({ timeout: 1500 })
-  
+  await bentoboxLocator.click()
+
   // Approve Token
   if (!args.token.isNative) {
     const locator = page.locator('[testdata-id=create-single-vest-approve-token]')
     await expect(locator).toBeVisible()
     await expect(locator).toBeEnabled()
-    await locator.click({ timeout: 1500 })
+    await locator.click()
   }
 
   await reviewAndConfirm(page, args)
