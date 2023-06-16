@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Article } from 'types'
 import { Container } from '@sushiswap/ui/future/components/Container'
-import { Button } from '@sushiswap/ui/future/components/Button'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 import { ArticleAuthors, ArticleHeader } from './article'
 
