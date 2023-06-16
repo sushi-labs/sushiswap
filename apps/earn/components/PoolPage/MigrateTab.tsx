@@ -544,7 +544,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
             chainId={pool.chainId as V3ChainId}
             token0={token0}
             token1={token1}
-            feeAmount={FeeAmount.HIGH}
+            feeAmount={feeAmount}
             tokenId={undefined}
             showStartPrice={false}
           >
