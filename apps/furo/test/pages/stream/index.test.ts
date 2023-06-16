@@ -116,11 +116,11 @@
 //   await expect(openTransferLocator).toBeEnabled()
 //   await openTransferLocator.click()
 
-//   const recipientLocator = page.locator('[testdata-id=stream-transfer-recipient-input]')
+//   const recipientLocator = page.locator('[testdata-id=transfer-recipient-input]')
 //   await expect(recipientLocator).toBeVisible()
 //   await recipientLocator.fill(recipient)
 
-//   const confirmTransferLocator = page.locator('[testdata-id=stream-transfer-confirmation-button]')
+//   const confirmTransferLocator = page.locator('[testdata-id=transfer-confirmation-button]')
 //   await expect(confirmTransferLocator).toBeVisible()
 //   await expect(confirmTransferLocator).toBeEnabled()
 //   await confirmTransferLocator.click()
@@ -140,7 +140,7 @@
 //   await expect(openTransferLocator).toBeEnabled()
 //   await openTransferLocator.click()
 
-//   const confirmTransferLocator = page.locator('[testdata-id=stream-cancel-confirmation-button]')
+//   const confirmTransferLocator = page.locator('[testdata-id=cancel-confirmation-button]')
 //   await expect(confirmTransferLocator).toBeVisible()
 //   await expect(confirmTransferLocator).toBeEnabled()
 //   await confirmTransferLocator.click()
