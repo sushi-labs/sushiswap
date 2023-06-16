@@ -1,26 +1,18 @@
 import { Page, expect, test } from '@playwright/test'
 import { Token, USDC_ADDRESS } from '@sushiswap/currency'
 import {
-  addMonths,
   addWeeks,
-  getDate,
   getUnixTime,
-  setHours,
-  setMilliseconds,
-  setMinutes,
-  setSeconds,
-  startOfDay,
-  startOfMonth,
-  subWeeks,
+  subWeeks
 } from 'date-fns'
-import { ethers } from 'ethers'
 import {
   GradedVestingFrequency,
   VestingArgs,
-  createSingleStream,
   createSingleVest,
+  getStartOfMonthUnix,
+  increaseEvmTime,
+  resetFork,
   switchNetwork,
-  timeout,
 } from '../../utils'
 
 if (!process.env.CHAIN_ID) {
@@ -37,6 +29,11 @@ const USDC = new Token({
   decimals: 18,
   symbol: 'USDC',
   name: 'USDC Stablecoin',
+})
+
+
+test.beforeAll(async ({ page }) => {
+  await resetFork(CHAIN_ID)
 })
 
 test.describe('Vest', () => {
@@ -60,7 +57,7 @@ test.describe('Vest', () => {
 
     const twoWeeks = 60 * 60 * 24 * 14
     const middleOfVest = getStartOfMonthUnix(4) + twoWeeks * 50 * 1000 // FIXME: Might want to change this, the x50 multiplier is just to make sure the vest has ended..
-    await increaseEvmTime(middleOfVest)
+    await increaseEvmTime(middleOfVest, CHAIN_ID)
 
     await withdrawVest(page)
     await transferVest(page, '0xc39c2d6eb8adef85f9caa141ec95e7c0b34d8dec')
@@ -221,17 +218,4 @@ async function mockSubgraph(page: Page) {
       return await route.continue()
     }
   })
-}
-
-async function increaseEvmTime(unix: number) {
-  const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545', CHAIN_ID)
-  await provider.send('evm_mine', [unix])
-}
-
-function getStartOfMonthUnix(months: number) {
-  const currentDate = new Date()
-  const nextMonth = addMonths(currentDate, months)
-  const firstDayOfMonth = startOfMonth(nextMonth)
-  const startOfNextMonth = setMilliseconds(setSeconds(setMinutes(setHours(startOfDay(firstDayOfMonth), 0), 0), 0), 0)
-  return getUnixTime(startOfNextMonth)
 }

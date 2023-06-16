@@ -1,20 +1,7 @@
 import { Page, expect, test } from '@playwright/test'
 import { Token, USDC_ADDRESS } from '@sushiswap/currency'
-import {
-  addMonths,
-  addWeeks,
-  getDate,
-  getUnixTime,
-  setHours,
-  setMilliseconds,
-  setMinutes,
-  setSeconds,
-  startOfDay,
-  startOfMonth,
-  subWeeks,
-} from 'date-fns'
-import { ethers } from 'ethers'
-import { createSingleStream, switchNetwork, timeout } from '../../utils'
+import { addWeeks, getUnixTime, subWeeks } from 'date-fns'
+import { createSingleStream, getStartOfMonthUnix, increaseEvmTime, resetFork, switchNetwork } from '../../utils'
 
 if (!process.env.CHAIN_ID) {
   throw new Error('CHAIN_ID env var not set')
@@ -29,6 +16,10 @@ const USDC = new Token({
   decimals: 18,
   symbol: 'USDC',
   name: 'USDC Stablecoin',
+})
+
+test.beforeAll(async ({ page }) => {
+  await resetFork(CHAIN_ID)
 })
 
 test('Create, Withdraw, Update, Transfer, Cancel.', async ({ page }) => {
@@ -82,7 +73,7 @@ async function updateStream(page: Page, streamId: string) {
 async function withdrawFromStream(page: Page, streamId: string, withdrawAmount: number) {
   const twoWeeks = 60 * 60 * 24 * 14
   const middleOfStream = getStartOfMonthUnix(2) + twoWeeks * 1000
-  await increaseEvmTime(middleOfStream)
+  await increaseEvmTime(middleOfStream, CHAIN_ID)
   await mockSubgraph(page)
 
   const url = (process.env.PLAYWRIGHT_URL as string).concat(`/stream/${CHAIN_ID}:${streamId}`)
@@ -240,17 +231,4 @@ async function mockSubgraph(page: Page) {
       return await route.continue()
     }
   })
-}
-
-async function increaseEvmTime(unix: number) {
-  const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545', CHAIN_ID)
-  await provider.send('evm_mine', [unix])
-}
-
-function getStartOfMonthUnix(months: number) {
-  const currentDate = new Date()
-  const nextMonth = addMonths(currentDate, months)
-  const firstDayOfMonth = startOfMonth(nextMonth)
-  const startOfNextMonth = setMilliseconds(setSeconds(setMinutes(setHours(startOfDay(firstDayOfMonth), 0), 0), 0), 0)
-  return getUnixTime(startOfNextMonth)
 }

@@ -1,6 +1,17 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Page, expect } from '@playwright/test'
 import { Type } from '@sushiswap/currency'
+import {
+  addMonths,
+  getUnixTime,
+  setHours,
+  setMilliseconds,
+  setMinutes,
+  setSeconds,
+  startOfDay,
+  startOfMonth,
+} from 'date-fns'
+import { ethers } from 'ethers'
 
 export async function switchNetwork(page: Page, chainId: number) {
   const networkSelector = page.locator('[testdata-id=network-selector-button]')
@@ -256,7 +267,6 @@ async function reviewAndConfirm(page: Page, args: VestingArgs) {
   }
 
   // Confirm creation
-  // await timeout(1_500) // FIXME: should be removed, but something isn't updated yet
   const confirmCreateVestingLocator = page.locator('[testdata-id=create-single-vest-confirmation-button]')
   await expect(confirmCreateVestingLocator).toBeVisible()
   await expect(confirmCreateVestingLocator).toBeEnabled()
@@ -268,4 +278,22 @@ async function reviewAndConfirm(page: Page, args: VestingArgs) {
   await expect(txConfimrationLocator).toBeVisible()
   await expect(txConfimrationLocator).toBeEnabled()
   await txConfimrationLocator.click()
+}
+
+export async function increaseEvmTime(unix: number, chainId: number) {
+  const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545', chainId)
+  await provider.send('evm_mine', [unix])
+}
+
+export async function resetFork(chainId: number) {
+  const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545', chainId)
+  await provider.send('anvil_reset', [])
+}
+
+export function getStartOfMonthUnix(months: number) {
+  const currentDate = new Date()
+  const nextMonth = addMonths(currentDate, months)
+  const firstDayOfMonth = startOfMonth(nextMonth)
+  const startOfNextMonth = setMilliseconds(setSeconds(setMinutes(setHours(startOfDay(firstDayOfMonth), 0), 0), 0), 0)
+  return getUnixTime(startOfNextMonth)
 }
