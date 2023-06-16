@@ -24,7 +24,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
   const [review, setReview] = useState(false)
   const methods = useForm<CreateMultipleVestingFormSchemaType & CreateMultipleVestingBaseSchemaFormErrorsType>({
     resolver: zodResolver(CreateMultipleVestingModelSchema),
-    mode: 'onSubmit',
+    mode: 'onBlur',
     defaultValues: {
       vestings: [{ ...CREATE_VEST_DEFAULT_VALUES, id: nanoid() }],
     },
@@ -86,6 +86,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
   const _errors = Array.isArray(_formErrors?.vestings) && _formErrors.vestings.length > 0
   const formValid = isValid && !isValidating && !_errors
 
+  console.log(formData)
   return (
     <FormProvider {...methods}>
       <Form header="Create Vestings" onSubmit={methods.handleSubmit(onReview)}>

@@ -24,6 +24,8 @@ export const CREATE_VEST_DEFAULT_VALUES: CreateVestingFormSchemaType = {
   stepAmount: undefined,
   cliff: {
     cliffEnabled: false,
+    cliffAmount: undefined,
+    cliffEndDate: undefined,
   },
 }
 

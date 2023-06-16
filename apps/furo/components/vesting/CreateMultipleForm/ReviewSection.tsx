@@ -52,6 +52,7 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId }) => {
     [amounts]
   )
 
+  console.log(isValid)
   if (!isValid) return <></>
 
   return (

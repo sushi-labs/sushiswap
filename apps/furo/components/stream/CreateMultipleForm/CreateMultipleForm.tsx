@@ -21,7 +21,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
   const [review, setReview] = useState(false)
   const methods = useForm<CreateMultipleStreamFormSchemaType & CreateMultipleStreamBaseSchemaFormErrorsType>({
     resolver: zodResolver(CreateMultipleStreamModelSchema),
-    mode: 'onSubmit',
+    mode: 'onBlur',
     defaultValues: {
       streams: [{ ...CREATE_STREAM_DEFAULT_VALUES, id: nanoid() }],
     },
