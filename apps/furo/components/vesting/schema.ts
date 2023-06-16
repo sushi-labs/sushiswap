@@ -9,14 +9,6 @@ export const STEP_CONFIGURATIONS: Record<string, number> = {
   Yearly: 31449600,
 }
 
-const CliffFieldsEnabled = z.object({
-  cliffEnabled: z.literal(true),
-  cliffEndDate: z.date().nullable(),
-  cliffAmount: z.string().refine((val) => Number(val) > 0, 'Must be at least 0'),
-})
-const CliffFieldsDisabled = z.object({ cliffEnabled: z.literal(false) })
-const CliffFields = CliffFieldsEnabled.or(CliffFieldsDisabled)
-
 export const CreateVestingBaseSchema = z.object({
   id: z.string(),
   currency: ZToken,
@@ -26,7 +18,11 @@ export const CreateVestingBaseSchema = z.object({
   stepPayouts: z.number().min(1).int(),
   fundSource: ZFundSource,
   stepConfig: z.string(),
-  cliff: CliffFields,
+  cliff: z.object({
+    cliffEnabled: z.boolean(),
+    cliffEndDate: z.date().optional(),
+    cliffAmount: z.string().optional(),
+  }),
 })
 
 export const CreateVestingFormSchema = CreateVestingBaseSchema.partial({
