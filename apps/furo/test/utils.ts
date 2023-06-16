@@ -9,10 +9,12 @@ export async function switchNetwork(page: Page, chainId: number) {
   await networkSelector.click()
 
   const networkToSelect = page.locator(`[testdata-id=network-selector-${chainId}]`)
-  networkToSelect.scrollIntoViewIfNeeded()
+  await networkToSelect.scrollIntoViewIfNeeded()
   await expect(networkToSelect).toBeInViewport({ratio: 1})
   await expect(networkToSelect).toBeEnabled()
   await networkToSelect.click()
+
+  await expect(networkToSelect).toBeHidden()
 }
 
 export function timeout(ms: number) {
