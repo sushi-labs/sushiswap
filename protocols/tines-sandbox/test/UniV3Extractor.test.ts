@@ -2,7 +2,7 @@ import { reset } from '@nomicfoundation/hardhat-network-helpers'
 import { erc20Abi, routeProcessor2Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
-import { PoolInfo, UniV3Extractor } from '@sushiswap/extractor'
+import { FactoryInfo, PoolInfo, UniV3Extractor } from '@sushiswap/extractor'
 import { NativeWrapProvider, PoolCode, Router, UniswapV3Provider } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { getBigNumber, RouteStatus, UniV3Pool } from '@sushiswap/tines'
@@ -29,31 +29,40 @@ import { comparePoolCodes, isSubpool } from '../src/ComparePoolCodes'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
+const NonfungiblePositionManagerAddress: Address = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88'
+const SwapRouterAddress: Address = '0xE592427A0AEce92De3Edee1F18E0157C05861564'
+const RP3Address: Address = '0x827179dD56d07A7eeA32e3873493835da2866976'
+
+const uniswapFactory: FactoryInfo = {
+  address: UniswapV3FactoryAddress[ChainId.ETHEREUM] as Address,
+  providerName: 'UniswapV3',
+}
+
 const pools: PoolInfo[] = [
   {
     address: '0x5777d92f208679DB4b9778590Fa3CAB3aC9e2168',
     token0: DAI[ChainId.ETHEREUM],
     token1: USDC[ChainId.ETHEREUM],
     fee: 100,
+    factory: uniswapFactory,
   },
   {
     address: '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640',
     token0: USDC[ChainId.ETHEREUM],
     token1: WNATIVE[ChainId.ETHEREUM],
     fee: 500,
+    factory: uniswapFactory,
   },
   {
     address: '0xCBCdF9626bC03E24f779434178A73a0B4bad62eD',
     token0: WBTC[ChainId.ETHEREUM],
     token1: WNATIVE[ChainId.ETHEREUM],
     fee: 3000,
+    factory: uniswapFactory,
   },
 ]
 
 const poolSet = new Set(pools.map((p) => p.address.toLowerCase()))
-const NonfungiblePositionManagerAddress: Address = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88'
-const SwapRouterAddress: Address = '0xE592427A0AEce92De3Edee1F18E0157C05861564'
-const RP3Address: Address = '0x827179dD56d07A7eeA32e3873493835da2866976'
 
 interface TestEnvironment {
   account: Account
@@ -264,13 +273,7 @@ async function makeTest(
     transport: env.transport,
   })
 
-  const extractor = new UniV3Extractor(
-    client,
-    UniswapV3FactoryAddress[ChainId.ETHEREUM] as Address,
-    'UniswapV3',
-    '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
-    false
-  )
+  const extractor = new UniV3Extractor(client, '0xbfd8137f7d1516d3ea5ca83523914859ec47f573', [uniswapFactory], false)
   await extractor.start()
   pools.forEach((p) => extractor.addPoolWatching(p))
   for (;;) {
@@ -468,12 +471,7 @@ describe('UniV3Extractor', () => {
       transport: transport,
     })
 
-    const extractor = new UniV3Extractor(
-      client,
-      UniswapV3FactoryAddress[ChainId.ETHEREUM] as Address,
-      'UniswapV3',
-      '0xbfd8137f7d1516d3ea5ca83523914859ec47f573'
-    )
+    const extractor = new UniV3Extractor(client, '0xbfd8137f7d1516d3ea5ca83523914859ec47f573', [uniswapFactory])
     await extractor.start()
     extractor.addPoolsForTokens(BASES_TO_CHECK_TRADES_AGAINST[ChainId.ETHEREUM])
 

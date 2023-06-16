@@ -11,11 +11,17 @@ import { MultiCallAggregator } from './MulticallAggregator'
 import { TokenManager } from './TokenManager'
 import { UniV3EventsAbi, UniV3PoolWatcher } from './UniV3PoolWatcher'
 
+export interface FactoryInfo {
+  address: Address
+  providerName: string
+}
+
 export interface PoolInfo {
   address: Address
   token0: Token
   token1: Token
   fee: FeeAmount
+  factory: FactoryInfo
 }
 
 enum LogsProcessing {
@@ -31,8 +37,8 @@ enum LogsProcessing {
 // TODO: provider usage statistics (if have enough time to process all logs or no) ?
 // TODO: quality checker?
 export class UniV3Extractor {
-  factoryAddress: Address
-  providerName: string
+  factories: FactoryInfo[]
+  factoryMap: Map<string, FactoryInfo> = new Map()
   tickHelperContract: Address
   client: PublicClient
   multiCallAggregator: MultiCallAggregator
@@ -45,19 +51,13 @@ export class UniV3Extractor {
   logProcessingStatus = LogsProcessing.NotStarted
   logging: boolean
 
-  constructor(
-    client: PublicClient,
-    factoryAddress: Address,
-    providerName: string,
-    tickHelperContract: Address,
-    logging = true
-  ) {
-    this.factoryAddress = factoryAddress
-    this.providerName = providerName
+  constructor(client: PublicClient, tickHelperContract: Address, factories: FactoryInfo[], logging = true) {
     this.client = client
     this.multiCallAggregator = new MultiCallAggregator(client)
     this.tokenManager = new TokenManager(this.multiCallAggregator)
     this.tickHelperContract = tickHelperContract
+    this.factories = factories
+    factories.forEach((f) => this.factoryMap.set(f.address.toLowerCase(), f))
     this.logging = logging
   }
 
@@ -119,12 +119,14 @@ export class UniV3Extractor {
           ? [tokens[i].address, tokens[j].address]
           : [tokens[j].address, tokens[i].address]
         fees.forEach((fee) => {
-          promises[promiseIndex++] = this.multiCallAggregator.callValue(
-            this.factoryAddress,
-            IUniswapV3Factory.abi as Abi,
-            'getPool',
-            [a0, a1, fee]
-          )
+          this.factories.forEach((factory) => {
+            promises[promiseIndex++] = this.multiCallAggregator.callValue(
+              factory.address,
+              IUniswapV3Factory.abi as Abi,
+              'getPool',
+              [a0, a1, fee]
+            )
+          })
         })
       }
     }
@@ -136,14 +138,17 @@ export class UniV3Extractor {
       for (let j = i + 1; j < tokens.length; ++j) {
         const [token0, token1] = tokens[i].sortsBefore(tokens[j]) ? [tokens[i], tokens[j]] : [tokens[j], tokens[i]]
         fees.forEach((fee) => {
-          const address = result[promiseIndex++]
-          if (address !== '0x0000000000000000000000000000000000000000')
-            pools.push({
-              address,
-              token0,
-              token1,
-              fee: fee as FeeAmount,
-            })
+          this.factories.forEach((factory) => {
+            const address = result[promiseIndex++]
+            if (address !== '0x0000000000000000000000000000000000000000')
+              pools.push({
+                address,
+                token0,
+                token1,
+                fee: fee as FeeAmount,
+                factory,
+              })
+          })
         })
       }
     }
@@ -157,7 +162,7 @@ export class UniV3Extractor {
     }
     if (!this.poolMap.has(p.address.toLowerCase() as Address)) {
       const watcher = new UniV3PoolWatcher(
-        this.providerName,
+        p.factory.providerName,
         p.address,
         this.tickHelperContract,
         p.token0,
@@ -175,8 +180,9 @@ export class UniV3Extractor {
     if (this.otherFactoryPoolSet.has(address)) return
     if (this.client.chain?.id === undefined) return
 
-    const factory = await this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'factory')
-    if ((factory as Address).toLowerCase() == this.factoryAddress.toLowerCase()) {
+    const factoryAddress = await this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'factory')
+    const factory = this.factoryMap.get((factoryAddress as Address).toLowerCase())
+    if (factory !== undefined) {
       const [token0Address, token1Address, fee] = await Promise.all([
         this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'token0'),
         this.multiCallAggregator.callValue(address, IUniswapV3Pool.abi as Abi, 'token1'),
@@ -187,7 +193,7 @@ export class UniV3Extractor {
         this.tokenManager.findToken(token1Address as Address),
       ])
       if (token0 && token1) {
-        this.addPoolWatching({ address, token0, token1, fee: fee as FeeAmount })
+        this.addPoolWatching({ address, token0, token1, fee: fee as FeeAmount, factory })
         return
       }
     }
