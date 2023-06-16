@@ -35,6 +35,8 @@ export const TransferModal: FC<TransferModalProps> = ({
   const [open, setOpen] = useState(false)
   const [recipient, setRecipient] = useState<string>('')
 
+  const type = stream instanceof Vesting ? 'Vest' : 'Stream'
+  
   const contract = useContract({
     address: contractAddress,
     abi: abi,
@@ -71,13 +73,13 @@ export const TransferModal: FC<TransferModalProps> = ({
         groupTimestamp: ts,
         promise: data.wait(),
         summary: {
-          pending: 'Transferring stream',
-          completed: `Successfully transferred stream to ${shortenAddress(resolvedAddress)}`,
-          failed: 'Something went wrong transferring the stream',
+          pending: `Transferring ${type}`,
+          completed: `Successfully transferred ${type} to ${shortenAddress(resolvedAddress)}`,
+          failed: `Something went wrong transferring the ${type}`,
         },
       })
     },
-    [address, chainId, resolvedAddress]
+    [address, chainId, resolvedAddress, type]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
@@ -110,17 +112,17 @@ export const TransferModal: FC<TransferModalProps> = ({
         <Dialog.Content className="space-y-4 !pb-3 !bg-white dark:!bg-slate-800">
           <Dialog.Header title="Transfer Stream" onClose={() => setOpen(false)} />
           <div className="text-gray-700 dark:text-slate-400">
-            This will transfer a stream consisting of{' '}
+            This will transfer a {type.toLowerCase()} consisting of{' '}
             <span className="font-medium text-gray-900 dark:text-slate-200">
               {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
             </span>{' '}
             to the entered recipient.
             <p className="mt-2">
-              Please note that this will transfer ownership of the entire stream to the recipient. You will not be able
-              to withdraw from this stream after transferring
+              Please note that this will transfer ownership of the entire {type.toLowerCase()} to the recipient. You will not be able
+              to withdraw from this {type.toLowerCase()} after transferring
             </p>
           </div>
-          <Text label="Address" value={recipient} onChange={(val) => setRecipient(`${val}`)} id="ens-input" testdata-id="stream-transfer-recipient-input"/>
+          <Text label="Address" value={recipient} onChange={(val) => setRecipient(`${val}`)} id="ens-input" testdata-id="transfer-recipient-input"/>
           <Checker.Connect size="xl" fullWidth>
             <Checker.Network size="xl" fullWidth chainId={chainId}>
               <Button
@@ -132,7 +134,7 @@ export const TransferModal: FC<TransferModalProps> = ({
                   resolvedAddress.toLowerCase() === stream?.recipient.id.toLowerCase() || !sendTransaction
                 }
                 onClick={() => sendTransaction?.()}
-                testId='stream-transfer-confirmation'
+                testId='transfer-confirmation'
               >
                 {isWritePending ? (
                   <Dots>Confirm Transfer</Dots>

@@ -10,7 +10,7 @@ import { _useSendTransaction as useSendTransaction, useAccount, useContract, Add
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { Button } from '@sushiswap/ui/future/components/button/Button'
-import { Stream, approveBentoBoxAction, batchAction } from '../lib'
+import { Stream, approveBentoBoxAction, batchAction } from '../../lib'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'

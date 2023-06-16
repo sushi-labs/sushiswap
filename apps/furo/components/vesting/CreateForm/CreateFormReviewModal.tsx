@@ -316,7 +316,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                   size="xl"
                   loading={isLoading && !isError}
                   onClick={() => sendTransactionAsync?.().then(() => confirm())}
-                  disabled={isError}
+                  disabled={isError || !sendTransactionAsync}
                   color={isError ? 'red' : 'blue'}
                   testdata-id="create-single-vest-confirmation-button"
                 >
