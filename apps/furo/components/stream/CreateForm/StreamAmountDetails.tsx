@@ -89,7 +89,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
           render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
             <>
               <TokenSelector
-                id={'create-single-stream'}
+                id={`create-single-stream-token-selector${index}`}
                 chainId={chainId}
                 onSelect={(currency) => onSelect(onChange, currency)}
                 selected={_currency}
@@ -104,8 +104,8 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
                     }
                     value={value?.isNative ? value?.symbol : value?.address}
                     onClick={() => setOpen(true)}
-                    id={'create-single-stream-select'}
-                    testdata-id={'create-single-stream-select'}
+                    id={`create-single-stream-token-select${index}`}
+                    testdata-id={`create-single-stream-token-select${index}`}
                     caption={error?.message ?? value?.symbol}
                     isError={Boolean(error?.message)}
                   />
@@ -164,8 +164,8 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
                   onBlur={onBlur}
                   name={name}
                   value={value}
-                  id="create-stream-amount-input"
-                  testdata-id="create-stream-amount-input"
+                  id={`create-stream-amount-input${index}`}
+                  testdata-id={`create-stream-amount-input${index}`}
                   label={
                     <>
                       Amount{currency ? ` (${currency.symbol})` : ''}

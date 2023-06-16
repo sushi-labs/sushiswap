@@ -56,6 +56,13 @@ export interface VestingArgs {
   }
 }
 
+export interface StreamArgs {
+  chainId: number
+  token: Type
+  amount: string
+  recipient: string
+}
+
 export async function selectDate(selector: string, months: number, page: Page) {
   await page.locator(selector).click()
   for (let i = 0; i < months; i++) {
@@ -72,26 +79,15 @@ export async function selectDate(selector: string, months: number, page: Page) {
   await page.locator('li.react-datepicker__time-list-item').first().click()
 }
 
-export async function createSingleStream(chainId: number, token: Type, amount: string, recipient: string, page: Page) {
+export async function createSingleStream(page: Page, args: StreamArgs) {
+  const { chainId, token } = args
   const url = (process.env.PLAYWRIGHT_URL as string).concat('/stream/create/single')
   await page.goto(url)
   await switchNetwork(page, chainId)
   // Date
-  await selectDate('[testdata-id=stream-start-date]', 1, page)
-  await selectDate('[testdata-id=stream-end-date]', 2, page)
-
-  // Recipient
-  await page.locator('[testdata-id=create-stream-recipient-input]').fill(recipient)
-
-  // Token
-  await selectToken(page, token)
-
-  // Amount
-  await page.locator('[testdata-id=create-stream-amount-input]').fill(amount)
+  await handleStreamInputs(page, args)
 
   await approve(page, token)
-
-  await timeout(1_500) // FIXME: this should be removed and the button should be disabled, something isn't prepared yet and but missing validation
 
   const reviewStreamButton = page.locator('[testdata-id=review-single-stream-button]')
   await expect(reviewStreamButton).toBeVisible()
@@ -127,21 +123,75 @@ export async function createSingleStream(chainId: number, token: Type, amount: s
         .catch(() => console.log(`${currency.symbol} already approved or not needed`))
     }
   }
+}
 
-  async function selectToken(page: Page, currency: Type) {
-    // Token selector
-    const tokenSelector = page.locator('[testdata-id=create-single-stream-select]')
-    await expect(tokenSelector).toBeVisible()
-    await expect(tokenSelector).toBeEnabled()
-    await tokenSelector.click({ force: true }) // it's missing the click area?! force required.
-    await page.fill('[testdata-id=create-single-stream-address-input]', currency.symbol as string)
-    const tokenRowSelector = page.locator(
-      `[testdata-id=create-single-stream-row-${currency.isNative ? AddressZero : currency.address.toLowerCase()}]`
-    )
-    await expect(tokenRowSelector).toBeVisible()
-    await expect(tokenRowSelector).toBeEnabled()
-    await tokenRowSelector.click()
+export async function createMultipleStreams(page: Page, chainId: number, streamArgs: StreamArgs[]) {
+  const url = (process.env.PLAYWRIGHT_URL as string).concat('/stream/create/multiple')
+  await page.goto(url)
+  await switchNetwork(page, chainId)
+  let index = 0
+  for (const args of streamArgs) {
+    if (index > 0) {
+      const addVestingLocator = page.locator('[testdata-id=create-multiple-streams-add-item-button]')
+      await expect(addVestingLocator).toBeVisible()
+      await expect(addVestingLocator).toBeEnabled()
+      await addVestingLocator.click()
+    }
+    await handleStreamInputs(page, args, index)
+    index++
   }
+
+  const reviewLocator = page.locator('[testdata-id=create-multiple-streams-review-button]')
+  await expect(reviewLocator).toBeVisible()
+  await expect(reviewLocator).toBeEnabled()
+  await reviewLocator.click()
+
+  // Approve BentoBox
+  const bentoboxLocator = page.locator('[testdata-id=create-multiple-stream-approve-bentobox]')
+  await expect(bentoboxLocator).toBeVisible()
+  await expect(bentoboxLocator).toBeEnabled()
+  await bentoboxLocator.click()
+
+  // // Approve Token
+  // const locator = page.locator('[testdata-id=create-multiple-stream-approve-token]')
+  // await expect(locator).toBeVisible()
+  // await expect(locator).toBeEnabled()
+  // await locator.click()
+
+  // const confirmCreateVestingButton = page.locator('[testdata-id=create-multiple-streams-confirm-button]')
+  // await expect(confirmCreateVestingButton).toBeVisible()
+  // await expect(confirmCreateVestingButton).toBeEnabled()
+  // await confirmCreateVestingButton.click()
+
+  // const text = `Created ${streamArgs.length} streams`
+  // await expect(page.locator('div', { hasText: text }).last()).toContainText(text)
+}
+
+async function handleStreamInputs(page: Page, args: StreamArgs, index = 0) {
+  const { token, amount, recipient } = args
+  await selectDate(`[testdata-id=stream-start-date${index}]`, 1, page)
+  await selectDate(`[testdata-id=stream-end-date${index}]`, 2, page)
+
+  // Recipient
+  await page.locator(`[testdata-id=create-stream-recipient-input${index}]`).fill(recipient)
+
+  // Token
+  const tokenSelector = page.locator(`[testdata-id=create-single-stream-token-select${index}]`)
+  await expect(tokenSelector).toBeVisible()
+  await expect(tokenSelector).toBeEnabled()
+  await tokenSelector.click({ force: true }) // it's missing the click area?! force required.
+  await page.fill(`[testdata-id=create-single-stream-token-selector${index}-address-input]`, token.symbol as string)
+  const tokenRowSelector = page.locator(
+    `[testdata-id=create-single-stream-token-selector${index}-row-${
+      token.isNative ? AddressZero : token.address.toLowerCase()
+    }]`
+  )
+  await expect(tokenRowSelector).toBeVisible()
+  await expect(tokenRowSelector).toBeEnabled()
+  await tokenRowSelector.click()
+
+  // Amount
+  await page.locator(`[testdata-id=create-stream-amount-input${index}]`).fill(amount)
 }
 
 export async function createSingleVest(page: Page, args: VestingArgs) {
@@ -168,7 +218,7 @@ export async function createSingleVest(page: Page, args: VestingArgs) {
     await locator.click()
   }
 
-  await reviewAndConfirm(page, args)
+  await reviewAndConfirmSingleVest(page, args)
 }
 
 export async function createMultipleVests(page: Page, chainId: number, vestingArgs: VestingArgs[]) {
@@ -190,7 +240,7 @@ export async function createMultipleVests(page: Page, chainId: number, vestingAr
     }
     index++
   }
-  
+
   const reviewLocator = page.locator('[testdata-id=create-multiple-vest-review-button]')
   await expect(reviewLocator).toBeVisible()
   await expect(reviewLocator).toBeEnabled()
@@ -216,11 +266,23 @@ export async function createMultipleVests(page: Page, chainId: number, vestingAr
   // await expect(page.locator('div', { hasText: 'Transaction Completed' }).last()).toContainText(
   //   'Transaction Completed'
   // )
-
 }
 
 async function handleGeneralDetails(page: Page, args: VestingArgs, index = 0) {
-  await selectToken(page, args.token, index)
+  const tokenSelector = page.locator(`[testdata-id=create-single-vest-select${index}]`)
+  await expect(tokenSelector).toBeVisible()
+  await expect(tokenSelector).toBeEnabled()
+  await tokenSelector.click({ force: true }) // it's missing the click area?! force required.
+  await page.fill(`[testdata-id=create-single-vest${index}-address-input]`, args.token.symbol as string)
+  const tokenRowSelector = page.locator(
+    `[testdata-id=create-single-vest${index}-row-${
+      args.token.isNative ? AddressZero : args.token.address.toLowerCase()
+    }]`
+  )
+  await expect(tokenRowSelector).toBeVisible()
+  await expect(tokenRowSelector).toBeEnabled()
+  await tokenRowSelector.click()
+
   await selectDate(`[testdata-id=create-single-vest-start-date${index}]`, args.startInMonths, page)
   await page.locator(`[testdata-id=create-single-vest-recipient-input${index}]`).fill(args.recipient)
 }
@@ -268,21 +330,7 @@ async function handleGradeDetails(page: Page, args: VestingArgs, index = 0) {
   await desiredFrequencyoptionSelector.click()
 }
 
-async function selectToken(page: Page, currency: Type, index = 0) {
-  const tokenSelector = page.locator(`[testdata-id=create-single-vest-select${index}]`)
-  await expect(tokenSelector).toBeVisible()
-  await expect(tokenSelector).toBeEnabled()
-  await tokenSelector.click({ force: true }) // it's missing the click area?! force required.
-  await page.fill(`[testdata-id=create-single-vest${index}-address-input]`, currency.symbol as string)
-  const tokenRowSelector = page.locator(
-    `[testdata-id=create-single-vest${index}-row-${currency.isNative ? AddressZero : currency.address.toLowerCase()}]`
-  )
-  await expect(tokenRowSelector).toBeVisible()
-  await expect(tokenRowSelector).toBeEnabled()
-  await tokenRowSelector.click()
-}
-
-async function reviewAndConfirm(page: Page, args: VestingArgs) {
+async function reviewAndConfirmSingleVest(page: Page, args: VestingArgs) {
   const reviewButtonLocator = page.locator('[testdata-id=review-single-vest-button]')
   await expect(reviewButtonLocator).toBeVisible()
   await expect(reviewButtonLocator).toBeEnabled()
