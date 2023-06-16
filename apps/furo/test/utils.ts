@@ -285,9 +285,14 @@ export async function increaseEvmTime(unix: number, chainId: number) {
   await provider.send('evm_mine', [unix])
 }
 
-export async function resetFork(chainId: number) {
+export async function createSnapshot(chainId: number): Promise<string> {
   const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545', chainId)
-  await provider.send('anvil_reset', [])
+  return await provider.send('evm_snapshot', [])
+}
+
+export async function loadSnapshot(chainId: number, snapshot: string) {
+  const provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545', chainId)
+  await provider.send('evm_revert', [snapshot])
 }
 
 export function getStartOfMonthUnix(months: number) {

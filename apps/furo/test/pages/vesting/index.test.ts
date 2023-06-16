@@ -1,17 +1,14 @@
 import { Page, expect, test } from '@playwright/test'
 import { Token, USDC_ADDRESS } from '@sushiswap/currency'
-import {
-  addWeeks,
-  getUnixTime,
-  subWeeks
-} from 'date-fns'
+import { addWeeks, getUnixTime, subWeeks } from 'date-fns'
 import {
   GradedVestingFrequency,
   VestingArgs,
   createSingleVest,
+  createSnapshot,
   getStartOfMonthUnix,
   increaseEvmTime,
-  resetFork,
+  loadSnapshot,
   switchNetwork,
 } from '../../utils'
 
@@ -19,6 +16,7 @@ if (!process.env.CHAIN_ID) {
   throw new Error('CHAIN_ID env var not set')
 }
 
+let SNAPSHOT_ID = '0x0'
 const CHAIN_ID = parseInt(process.env.CHAIN_ID)
 const VEST_ID = '100'
 const RECIPIENT = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
@@ -31,11 +29,13 @@ const USDC = new Token({
   name: 'USDC Stablecoin',
 })
 
-
-test.beforeAll(async ({ page }) => {
-  await resetFork(CHAIN_ID)
+test.beforeAll(async () => {
+  SNAPSHOT_ID = await createSnapshot(CHAIN_ID)
 })
 
+test.afterAll(async () => {
+  await loadSnapshot(CHAIN_ID, SNAPSHOT_ID)
+})
 test.describe('Vest', () => {
   test('Create, Withdraw, Transfer, cancel', async ({ page }) => {
     const args: VestingArgs = {

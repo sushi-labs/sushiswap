@@ -264,11 +264,11 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                     size="xl"
                     loading={isLoading && !isError}
                     onClick={() => sendTransactionAsync?.().then(() => confirm())}
-                    disabled={isError}
+                    disabled={isError || !sendTransactionAsync}
                     color={isError ? 'red' : 'blue'}
                     testId="confirm-stream-creation"
                   >
-                    {isError ? 'Shoot! Something went wrong :(' : isLoading ? <Dots>Create</Dots> : `Create`}
+                    {isError ? 'Shoot! Something went wrong :(' : isLoading ? <Dots>Create</Dots> : 'Create'}
                   </Button>
                 </div>
               </div>
@@ -282,7 +282,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
               tag={MODAL_ID}
               chainId={chainId}
               hash={data?.hash}
-              successMessage={`Successfully created stream`}
+              successMessage={'Successfully created stream'}
               onClose={close}
             />
           )}
