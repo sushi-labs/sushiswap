@@ -10,12 +10,7 @@ import { Currency } from './enums.js'
  * @param currency
  * @returns
  */
-export async function getPrice(
-  chainId: number,
-  address: string,
-  date: Date,
-  currency: Currency = Currency.USD,
-) {
+export async function getPrice(chainId: number, address: string, date: Date, currency: Currency = Currency.USD) {
   const client = await createClient()
   const price = await client.token.findFirst({
     select: { address: true, derivedUSD: true, derivedNative: true },
@@ -48,9 +43,7 @@ export async function getPrice(
     return undefined
   }
 
-  return currency === Currency.USD
-    ? Number(price.derivedUSD)
-    : Number(price.derivedNative)
+  return currency === Currency.USD ? Number(price.derivedUSD) : Number(price.derivedNative)
 }
 
 /**
@@ -71,8 +64,8 @@ export async function getPrices(date: Date, currency: Currency = Currency.USD) {
     },
     where:
       currency === Currency.USD
-        ? { AND: { derivedUSD: { gt: 0 }, updatedAt: { gt: date } } }
-        : { AND: { derivedNative: { gt: 0 }, updatedAt: { gt: date } } },
+        ? { AND: { derivedUSD: { gt: 0 }, status: 'APPROVED', updatedAt: { gt: date } } }
+        : { AND: { derivedNative: { gt: 0 }, status: 'APPROVED', updatedAt: { gt: date } } },
   })
   await client.$disconnect()
   if (!prices.length) {
@@ -82,9 +75,7 @@ export async function getPrices(date: Date, currency: Currency = Currency.USD) {
   return prices.reduce((acc, token) => {
     acc[token.chainId] = acc[token.chainId] || {}
     ;(acc[token.chainId] || {})[token.address] =
-      currency === Currency.USD
-        ? Number(token.derivedUSD)
-        : Number(token.derivedNative)
+      currency === Currency.USD ? Number(token.derivedUSD) : Number(token.derivedNative)
 
     return acc
   }, {} as Record<number, Record<string, number>>)
@@ -97,19 +88,15 @@ export async function getPrices(date: Date, currency: Currency = Currency.USD) {
  * @param currency
  * @returns
  */
-export async function getPricesByChainId(
-  chainId: number,
-  date: Date,
-  currency: Currency = Currency.USD,
-) {
+export async function getPricesByChainId(chainId: number, date: Date, currency: Currency = Currency.USD) {
   const client = await createClient()
   const prices = await client.token.findMany({
     select: { address: true, derivedUSD: true, derivedNative: true },
     where:
       currency === Currency.USD
-        ? { AND: { chainId, derivedUSD: { gt: 0 }, updatedAt: { gt: date } } }
+        ? { AND: { chainId, status: 'APPROVED', derivedUSD: { gt: 0 }, updatedAt: { gt: date } } }
         : {
-            AND: { chainId, derivedNative: { gt: 0 }, updatedAt: { gt: date } },
+            AND: { chainId, status: 'APPROVED', derivedNative: { gt: 0 }, updatedAt: { gt: date } },
           },
   })
   await client.$disconnect()
@@ -118,10 +105,7 @@ export async function getPricesByChainId(
   }
 
   return prices.reduce((acc, token) => {
-    acc[token.address] =
-      currency === Currency.USD
-        ? Number(token.derivedUSD)
-        : Number(token.derivedNative)
+    acc[token.address] = currency === Currency.USD ? Number(token.derivedUSD) : Number(token.derivedNative)
     return acc
   }, {} as Record<string, number>)
 }

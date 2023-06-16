@@ -9,7 +9,6 @@
 @import './variables.css';
 @import './tooltip/styles.css';
 @import './input/styles.css';
-@import "./future/components/networkselector/styles.css";
 
 *,
 *:before,
@@ -49,6 +48,15 @@ body {
 #__next {
     min-height: 100vh;
 }
+
+.paper {
+  backdrop-filter: blur(12px) saturate(190%) contrast(50%) brightness(130%);
+}
+
+html[class='[color-scheme:dark]'] .paper {
+  backdrop-filter: blur(10px) saturate(190%) contrast(70%) brightness(80%);
+}
+
 
 .hide-scrollbar {
   -ms-overflow-style: none; 

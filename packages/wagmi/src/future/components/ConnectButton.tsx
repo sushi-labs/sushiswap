@@ -10,6 +10,7 @@ import {
   RabbyIcon,
   TrustWalletIcon,
   WalletConnectIcon,
+  LedgerIcon,
 } from '@sushiswap/ui/future/components/icons'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Loader } from '@sushiswap/ui/future/components/Loader'
@@ -27,6 +28,7 @@ const Icons: Record<string, React.ElementType> = {
   Safe: GnosisSafeIcon,
   Rabby: RabbyIcon,
   Frame: FrameIcon,
+  Ledger: LedgerIcon,
 }
 
 interface Props extends ExtractProps<ButtonComponent> {

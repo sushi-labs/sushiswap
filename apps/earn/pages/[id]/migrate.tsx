@@ -40,8 +40,9 @@ const queryParamsSchema = z.object({
 })
 
 const MigratePositionPage = () => {
+  const router = useRouter()
   return (
-    <SplashController>
+    <SplashController show={!router.isReady}>
       <Migrate />
     </SplashController>
   )

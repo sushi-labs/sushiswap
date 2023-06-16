@@ -1,18 +1,7 @@
-import {
-  GetPoolsArgs,
-  Pool,
-  usePoolCount,
-  usePoolsInfinite,
-} from '@sushiswap/client'
+import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
 import { useBreakpoint } from '@sushiswap/hooks'
 import { Loader } from '@sushiswap/ui'
-import {
-  getCoreRowModel,
-  getSortedRowModel,
-  PaginationState,
-  SortingState,
-  useReactTable,
-} from '@tanstack/react-table'
+import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useSWRConfig } from 'swr'
@@ -49,20 +38,13 @@ const COLUMNS = [
 ] as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
 export const PoolTable: FC = () => {
-  const {
-    chainIds,
-    search: tokenSymbols,
-    isWhitelisted,
-    poolProtocols: protocols,
-  } = useFilters()
+  const { chainIds, search: tokenSymbols, isWhitelisted, poolProtocols: protocols } = useFilters()
 
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
   const { isLg } = useBreakpoint('lg')
 
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: 'liquidityUSD', desc: true },
-  ])
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
   const [, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -78,14 +60,10 @@ export const PoolTable: FC = () => {
       protocols,
       isWhitelisted: isWhitelisted,
     }),
-    [chainIds, tokenSymbols, sorting, protocols, isWhitelisted],
+    [chainIds, tokenSymbols, sorting, protocols, isWhitelisted]
   )
 
-  const {
-    data: pools,
-    isValidating,
-    setSize,
-  } = usePoolsInfinite({ args, swrConfig: useSWRConfig() })
+  const { data: pools, isValidating, setSize } = usePoolsInfinite({ args, swrConfig: useSWRConfig() })
   const { data: poolCount } = usePoolCount({ args, swrConfig: useSWRConfig() })
 
   const data = useMemo(() => pools?.flat() || [], [pools])
@@ -141,7 +119,7 @@ export const PoolTable: FC = () => {
       next={() => setSize((prev) => prev + 1)}
       hasMore={data.length < (poolCount?.count || 0)}
       loader={
-        <div className='flex justify-center w-full py-4'>
+        <div className="flex justify-center w-full py-4">
           <Loader size={24} />
         </div>
       }
@@ -149,8 +127,7 @@ export const PoolTable: FC = () => {
       <GenericTable<Pool>
         table={table}
         loading={!pools && isValidating}
-        HoverElement={isMd ? PoolQuickHoverTooltip : undefined}
-        placeholder='No pools found'
+        placeholder="No pools found"
         pageSize={PAGE_SIZE}
         linkFormatter={rowLink}
       />

@@ -3,6 +3,7 @@ import {
   CoinbaseWalletIcon,
   FrameIcon,
   GnosisSafeIcon,
+  LedgerIcon,
   MetamaskIcon,
   RabbyIcon,
   TrustWalletIcon,
@@ -22,6 +23,7 @@ const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element | nu
   Safe: GnosisSafeIcon,
   Rabby: RabbyIcon,
   Frame: FrameIcon,
+  Ledger: LedgerIcon,
 }
 
 export const ConnectView: FC<{ onSelect(): void }> = ({ onSelect }) => {
