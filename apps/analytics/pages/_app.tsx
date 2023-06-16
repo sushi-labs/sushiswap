@@ -1,7 +1,7 @@
 import '@sushiswap/ui/index.css'
 import '../variables.css'
 
-import { App, ThemeProvider } from '@sushiswap/ui'
+import { ThemeProvider } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
 import { SUPPORTED_CHAIN_IDS } from 'config'
@@ -17,6 +17,7 @@ import { WagmiConfig } from '@sushiswap/wagmi'
 
 import SEO from '../next-seo.config.mjs'
 import { GlobalNav } from '@sushiswap/ui/future/components/GlobalNav'
+import { GlobalFooter } from '@sushiswap/ui/future/components/GlobalFooter'
 
 declare global {
   interface Window {
@@ -77,12 +78,10 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <Provider store={store}>
           <ThemeProvider forcedTheme="dark">
             <QueryClientProvider>
-              <App.Shell>
-                <DefaultSeo {...SEO} />
-                <GlobalNav />
-                <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
-                <App.Footer />
-              </App.Shell>
+              <DefaultSeo {...SEO} />
+              <GlobalNav />
+              <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
+              <GlobalFooter />
             </QueryClientProvider>
           </ThemeProvider>
         </Provider>

@@ -2,12 +2,12 @@ import { ChevronDownIcon, SearchIcon, StarIcon } from '@heroicons/react-v1/solid
 import chains, { ChainId, chainShortName } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { useDebounce, useOnClickOutside } from '@sushiswap/hooks'
-import { classNames, Currency, DEFAULT_INPUT_UNSTYLED, NetworkIcon, Skeleton, Typography } from '@sushiswap/ui'
+import { classNames, Currency, DEFAULT_INPUT_UNSTYLED, NetworkIcon, Typography } from '@sushiswap/ui'
 import type { TokenList } from '@uniswap/token-lists'
 import { isAddress } from 'ethers/lib/utils'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery, useToken } from '@sushiswap/wagmi'
-
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { SUPPORTED_CHAIN_IDS } from '../../../config'
 
 const EXAMPLE_CURRENCIES = [
@@ -79,11 +79,11 @@ export const Search: FC = () => {
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700">
           <div className="w-[36px] h-[36px]">
-            <Skeleton.Circle radius={36} className="bg-neutral-600" />
+            <Skeleton.Circle radius={36} />
           </div>
-          <div className="flex flex-col space-y-1">
-            <Skeleton.Box className="h-4 w-[120px] my-0.5 bg-neutral-600" />
-            <Skeleton.Box className="h-4 w-[60px] my-0.5 bg-neutral-700" />
+          <div className="flex flex-col gap-1 w-full">
+            <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
+            <Skeleton.Text fontSize="text-xs" className="w-[60px]" />
           </div>
         </div>
       </div>

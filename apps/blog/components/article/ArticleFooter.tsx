@@ -1,5 +1,5 @@
 import { ChevronRightIcon } from '@heroicons/react/solid'
-import { Button } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { format } from 'date-fns'
 import { FC } from 'react'
 import { Article } from 'types'
@@ -24,7 +24,7 @@ export const ArticleFooter: FC<ArticleFooter> = ({ articles }) => {
             <Button
               as="a"
               size="sm"
-              color="gray"
+              color="default"
               endIcon={<ChevronRightIcon width={16} height={16} />}
               href={`/blog/${article?.attributes?.slug}`}
               className="order-1 mt-6 text-sm"

@@ -1,10 +1,11 @@
-import { Button, Link } from '@sushiswap/ui'
+import { Link } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { ArticleList } from '../ArticleList'
 import { Card } from '../Card'
 import { ProductSectionTitle } from './ProductSectionTitle'
 import { ArticleEntity } from '.mesh'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 interface ProductArticles {
   title: string
@@ -21,9 +22,7 @@ export const ProductArticles: FC<ProductArticles> = ({ title, productName, artic
         <ProductSectionTitle title={title} subtitle={subtitle} />
 
         <Link.Internal href={`/articles?product=${productName}`}>
-          <Button variant="outlined" className="min-w-max h-[38px] px-5 !font-medium">
-            View All
-          </Button>
+          <Button variant="outlined">View All</Button>
         </Link.Internal>
       </div>
       <div className="mt-8 sm:mt-20">

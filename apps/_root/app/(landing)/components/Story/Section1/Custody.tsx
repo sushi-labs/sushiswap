@@ -1,5 +1,6 @@
 import { ChevronRightIcon } from '@heroicons/react-v1/solid'
-import { Button, Container, Typography } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { Container } from '@sushiswap/ui/future/components/Container'
 import { motion } from 'framer-motion'
 import { FC } from 'react'
 
@@ -47,19 +48,16 @@ export const Custody: FC = () => {
             >
               {({ setOpen, containerId, titleId }) => (
                 <motion.div layoutId={containerId} className="flex flex-col items-center lg:items-start">
-                  <Typography
-                    as={motion.h1}
+                  <motion.h1
                     layoutId={titleId}
-                    variant="h1"
-                    weight={600}
-                    className="flex flex-col items-center lg:items-start text-center lg:text-left"
+                    className="text-4xl font-semibold flex flex-col items-center lg:items-start text-center lg:text-left"
                   >
                     {DATA.title}
-                  </Typography>
-                  <Typography variant="lg" weight={400} className="text-center lg:text-left mt-2">
+                  </motion.h1>
+                  <span className="text-lg text-center lg:text-left mt-2">
                     Own your own crypto, just like cash in your wallet. Fully decentralized & self custody of your funds
                     means your money in your wallet, as it should be.
-                  </Typography>
+                  </span>
                   <Button
                     onClick={() => setOpen(true)}
                     className="!p-0 mt-3"

@@ -1,6 +1,7 @@
-import { Button, Container, Typography } from '@sushiswap/ui'
 import Link from 'next/link'
 import { FC } from 'react'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { Container } from '@sushiswap/ui/future/components/Container'
 
 interface PreviewBanner {
   show: boolean
@@ -13,15 +14,11 @@ export const PreviewBanner: FC<PreviewBanner> = ({ show }) => {
     <div className="bg-slate-700 py-3 flex items-center border-t border-slate-600 border-b">
       <Container maxWidth="2xl" className="mx-auto px-4 flex items-center justify-between">
         <div className="flex flex-col gap-1">
-          <Typography variant="base" weight={500} className="text-white">
-            Preview Mode
-          </Typography>
-          <Typography variant="xs" className="text-slate-300">
-            You are viewing an unpublished article
-          </Typography>
+          <span className="font-medium text-white">Preview Mode</span>
+          <span className="text-xs text-slate-300">You are viewing an unpublished article</span>
         </div>
         <Link passHref={true} href="/api/exit-preview" legacyBehavior>
-          <Button as="a" color="blue" size="sm" className="px-6">
+          <Button as="a" color="blue" size="sm">
             Exit Preview Mode
           </Button>
         </Link>

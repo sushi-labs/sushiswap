@@ -1,7 +1,8 @@
 import { useIsMounted } from '@sushiswap/hooks'
-import { Container, Skeleton, Typography } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { Container } from '@sushiswap/ui/future/components/container'
 
 export const Stats: FC = () => {
   const isMounted = useIsMounted()
@@ -13,57 +14,41 @@ export const Stats: FC = () => {
           <div className="flex items-center gap-3 px-6 lg:px-0">
             <div className="flex flex-col justify-center gap-1">
               {data?.stats?.price && isMounted ? (
-                <Typography variant="h2" weight={600}>
-                  {data?.stats?.price.formatted}
-                </Typography>
+                <span className="text-3xl font-semibold">{data?.stats?.price.formatted}</span>
               ) : (
-                <Skeleton.Box className="bg-neutral-800 w-[120px] h-[28px] my-1" />
+                <Skeleton.Text fontSize="text-3xl" className="w-[120px]" />
               )}
-              <Typography variant="xs" weight={600} className="uppercase text-neutral-400 -mt-0.5">
-                Price
-              </Typography>
+              <span className="text-xs font-medium uppercase text-neutral-400 -mt-0.5">Price</span>
             </div>
           </div>
           <div className="flex items-center justify-end gap-3 px-6 lg:justify-center lg:px-0">
             <div className="flex flex-col justify-center gap-1">
               {data?.stats?.liquidity && isMounted ? (
-                <Typography variant="h2" weight={600}>
-                  {data?.stats?.liquidity.formatted}
-                </Typography>
+                <span className="text-3xl font-semibold">{data?.stats?.liquidity.formatted}</span>
               ) : (
-                <Skeleton.Box className="bg-neutral-800 w-[120px] h-[28px] my-1" />
+                <Skeleton.Text fontSize="text-3xl" className="w-[120px]" />
               )}
-              <Typography variant="xs" weight={600} className="uppercase text-neutral-400 -mt-0.5">
-                Total Liquidity
-              </Typography>
+              <span className="text-xs font-medium uppercase text-neutral-400 -mt-0.5">Total Liquidity</span>
             </div>
           </div>
           <div className="flex items-center gap-3 px-6 lg:justify-center lg:px-0">
             <div className="flex flex-col justify-center gap-1">
               {data?.stats?.volume && isMounted ? (
-                <Typography variant="h2" weight={600}>
-                  {data?.stats?.volume.formatted}
-                </Typography>
+                <span className="text-3xl font-semibold">{data?.stats?.volume.formatted}</span>
               ) : (
-                <Skeleton.Box className="bg-neutral-800 w-[120px] h-[28px] my-1" />
+                <Skeleton.Text fontSize="text-3xl" className="w-[120px]" />
               )}
-              <Typography variant="xs" weight={600} className="uppercase text-neutral-400 -mt-0.5">
-                Total Volume
-              </Typography>
+              <span className="text-xs font-medium uppercase text-neutral-400 -mt-0.5">Total Volume</span>
             </div>
           </div>
           <div className="flex items-center justify-end gap-3 px-6 lg:px-0">
             <div className="flex flex-col justify-center gap-1">
               {data?.stats?.pairs && isMounted ? (
-                <Typography variant="h2" weight={600}>
-                  {data?.stats?.pairs.formatted}
-                </Typography>
+                <span className="text-3xl font-semibold">{data?.stats?.pairs.formatted}</span>
               ) : (
-                <Skeleton.Box className="bg-neutral-800 w-[120px] h-[28px] my-1" />
+                <Skeleton.Text fontSize="text-3xl" className="w-[120px]" />
               )}
-              <Typography variant="xs" weight={600} className="uppercase text-neutral-400 -mt-0.5">
-                Total Pairs
-              </Typography>
+              <span className="text-xs font-medium uppercase text-neutral-400 -mt-0.5">Total Pairs</span>
             </div>
           </div>
         </div>

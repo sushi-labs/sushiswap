@@ -3,13 +3,14 @@ import { ChevronDownIcon } from '@heroicons/react/outline'
 import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
-import { Button, classNames, Currency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
+import { classNames, Currency, DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui'
 import { useTotalSupply } from '@sushiswap/wagmi'
 import { FC, Fragment, ReactNode, useMemo } from 'react'
 
 import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
 import { usePoolPosition } from '../PoolPositionProvider'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 interface AddSectionStakeWidgetProps {
   title?: string
@@ -58,7 +59,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
           <Disclosure>
             {({ open }) => (
               <>
-                <Disclosure.Button className="w-full pr-4" testdata-id='stake-liquidity-header'>
+                <Disclosure.Button className="w-full pr-4" testdata-id="stake-liquidity-header">
                   <div className="flex items-center justify-between">
                     <Widget.Header title={title || '2. Stake Liquidity'} className="!pb-3 " />
                     <div
@@ -86,9 +87,9 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                   leaveTo="transform max-h-0"
                 >
                   <Disclosure.Panel unmount={false}>
-                    <Typography variant="sm" className="px-3 pb-5 text-gray-600 dark:text-slate-400">
+                    <div className="text-sm px-3 pb-5 text-gray-600 dark:text-slate-400">
                       Stake your liquidity tokens to receive incentive rewards on top of your pool fee rewards
-                    </Typography>
+                    </div>
                     <div className="flex flex-col gap-3 p-3">
                       <div className="flex items-center gap-2">
                         <div className="flex items-center justify-between flex-grow">
@@ -104,18 +105,22 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                           <Button
                             size="xs"
                             onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(4)?.toExact() || '')}
-                            testdata-id='stake-25-button'
+                            testdata-id="stake-25-button"
                           >
                             25%
                           </Button>
                           <Button
                             size="xs"
                             onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(2)?.toExact() || '')}
-                            testdata-id='stake-50-button'
+                            testdata-id="stake-50-button"
                           >
                             50%
                           </Button>
-                          <Button size="xs" onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')} testdata-id='stake-max-button'>
+                          <Button
+                            size="xs"
+                            onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}
+                            testdata-id="stake-max-button"
+                          >
                             MAX
                           </Button>
                         </div>
@@ -126,47 +131,18 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                           </Currency.IconList>
                         </div>
                       </div>
-                      <div className="grid items-center justify-between grid-cols-3 pb-2">
-                        <Transition
-                          appear
-                          as={Fragment}
-                          show={Boolean(balance?.[FundSource.WALLET])}
-                          enter="transition duration-300 origin-center ease-out"
-                          enterFrom="transform scale-90 opacity-0"
-                          enterTo="transform scale-100 opacity-100"
-                          leave="transition duration-75 ease-out"
-                          leaveFrom="transform opacity-100"
-                          leaveTo="transform opacity-0"
+                      <div className="grid items-center justify-between grid-cols-2 pb-2">
+                        <span className="text-sm font-medium text-gray-700 dark:text-slate-300 hover:text-slate-20">
+                          {formatUSD(value0 + value1)}
+                        </span>
+                        <Button
+                          size="xs"
+                          variant="empty"
+                          onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}
+                          className="!px-0"
                         >
-                          <Typography
-                            variant="sm"
-                            weight={500}
-                            className="text-gray-700 dark:text-slate-300 hover:text-slate-20"
-                          >
-                            {formatUSD(value0 + value1)}
-                          </Typography>
-                        </Transition>
-                        <Transition
-                          appear
-                          show={Boolean(balance?.[FundSource.WALLET])}
-                          as={Fragment}
-                          enter="transition duration-300 origin-center ease-out"
-                          enterFrom="transform scale-90 opacity-0"
-                          enterTo="transform scale-100 opacity-100"
-                          leave="transition duration-75 ease-out"
-                          leaveFrom="transform opacity-100"
-                          leaveTo="transform opacity-0"
-                        >
-                          <Typography
-                            onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}
-                            as="button"
-                            variant="sm"
-                            weight={500}
-                            className="flex justify-end col-span-2 text-gray-700 text-gray-800 truncate dark:text-slate-300 hover:dark:text-slate-200"
-                          >
-                            Balance: {balance?.[FundSource.WALLET].toSignificant(6)}
-                          </Typography>
-                        </Transition>
+                          Balance: {balance?.[FundSource.WALLET].toSignificant(6)}
+                        </Button>
                       </div>
                       {children}
                     </div>

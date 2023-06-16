@@ -1,12 +1,13 @@
 import { Pool } from '@sushiswap/client'
 import { formatNumber, formatPercent } from '@sushiswap/format'
-import { Button, Chip, Currency, Typography } from '@sushiswap/ui'
+import { Chip, Currency } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { incentiveRewardToToken } from '../lib/functions'
 import { useTokensFromPool } from '../lib/hooks'
 import { ICON_SIZE } from './TableSection/Pools/constants'
 import { ChainId } from '@sushiswap/chain'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 interface PoolQuickHoverTooltipProps {
   row: Pool
@@ -25,37 +26,35 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
               <Currency.Icon currency={token1} />
             </Currency.IconList>
             <div className="flex flex-col">
-              <Typography variant="sm" weight={500} className="flex gap-1 text-slate-50">
+              <span className="text-sm font-medium flex gap-1 text-slate-50">
                 {token0.symbol} <span className="text-slate-500">/</span> {token1.symbol}
-              </Typography>
+              </span>
               {/* <Typography variant="xxs" className="text-slate-400">
                 SushiSwap Farm
               </Typography> */}
             </div>
           </div>
-          <Typography variant="xs" weight={600} className="flex gap-1.5 mt-1 items-center text-slate-400">
+          <span className="text-xs font-semibold flex gap-1.5 mt-1 items-center text-slate-400">
             <Chip color="gray" label={`Fee ${formatPercent(row.swapFee)}`} />
-          </Typography>
+          </span>
         </div>
         <div className="flex flex-col gap-1">
-          <Typography variant="sm" weight={600} className="flex gap-3 text-slate-50">
+          <span className="text-sm font-semibold flex gap-3 text-slate-50">
             <span className="text-slate-400">APR:</span> {formatPercent(row.totalApr1d)}
-          </Typography>
-          <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-slate-50">
+          </span>
+          <span className="text-[10px] font-semibod flex justify-end gap-1 text-slate-50">
             <span className="text-slate-400">Rewards:</span> {formatPercent(row.incentiveApr)}
-          </Typography>
-          <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-slate-50">
+          </span>
+          <span className="text-[10px] font-semibold flex justify-end gap-1 text-slate-50">
             <span className="text-slate-400">Fees:</span> {formatPercent(row.feeApr1d)}
-          </Typography>
+          </span>
         </div>
       </div>
       {!!row?.incentives?.length && row.incentives.length > 0 && (
         <>
           <hr className="my-3 border-t border-slate-200/10" />
           <div className="flex flex-col gap-1.5">
-            <Typography variant="xs" className="mb-1 text-slate-500">
-              Reward Emission
-            </Typography>
+            <span className="text-xs mb-1 text-slate-500">Reward Emission</span>
             {row.incentives.map((incentive) => (
               <div key={incentive.id} className="flex items-center gap-2">
                 <Currency.Icon
@@ -63,12 +62,12 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
                   width={18}
                   height={18}
                 />
-                <Typography variant="sm" weight={600} className="text-slate-50">
+                <span className="text-sm font-semibold text-slate-50">
                   <span>
                     {formatNumber(incentive.rewardPerDay)} {incentive.rewardToken.symbol}
                   </span>{' '}
                   <span className="font-normal text-slate-300">per day</span>
-                </Typography>
+                </span>
               </div>
             ))}
           </div>

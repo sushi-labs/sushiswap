@@ -1,8 +1,9 @@
 import { useBreakpoint } from '@sushiswap/hooks'
-import { Button, classNames, Link, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { FC, ReactNode, useLayoutEffect, useState } from 'react'
 
 import { ProductStat, ProductStats } from './'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 interface ProductHero {
   productName: ReactNode
@@ -55,11 +56,16 @@ export const ProductHero: FC<ProductHero> = ({
             {productDescription}
           </h3>
 
-          <Link.External href={productUrl}>
-            <Button size="lg" className="mt-16 rounded-lg" startIcon={buttonIcon}>
-              <Typography weight={500}>{buttonText}</Typography>
-            </Button>
-          </Link.External>
+          <Button
+            as="a"
+            href={productUrl}
+            target="_blank"
+            size="lg"
+            className="mt-16 rounded-lg"
+            startIcon={buttonIcon}
+          >
+            {buttonText}
+          </Button>
         </div>
         {image && <div className="hidden md:block">{image}</div>}
       </div>

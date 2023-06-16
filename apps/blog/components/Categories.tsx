@@ -1,4 +1,4 @@
-import { Button } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { Dispatch, FC, SetStateAction, useCallback } from 'react'
 import { Category } from 'types'
 
@@ -27,7 +27,7 @@ export const Categories: FC<Categories> = ({ categories, selected, onSelect }) =
         return (
           <Button
             size="sm"
-            color={selected.includes(category.id) ? 'blue' : 'gray'}
+            color={selected.includes(category.id) ? 'blue' : 'default'}
             onClick={() => handleSelect(category.id as string)}
             variant="outlined"
             key={category.id}

@@ -1,12 +1,12 @@
 import { SearchIcon } from '@heroicons/react/outline'
 import { useDebounce } from '@sushiswap/hooks'
-import { Button, Container } from '@sushiswap/ui'
 import BlogSeo from 'components/Seo/BlogSeo'
 import { InferGetServerSidePropsType } from 'next'
 import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { Article, Category, Collection } from 'types'
-
+import { Button } from '@sushiswap/ui/future/components/button'
+import { Container } from '@sushiswap/ui/future/components/Container'
 import { ArticleList, Card, Categories, Hero } from '../components'
 import { getArticles, getCategories } from '../lib/api'
 
@@ -103,7 +103,7 @@ const _Home: FC = () => {
               </div>
             )}
             <div className="flex justify-center">
-              <Button as="a" href="/blog/archive" color="gray" variant="outlined" className="px-6">
+              <Button as="a" href="/blog/archive" color="default" variant="outlined">
                 View Archive
               </Button>
             </div>

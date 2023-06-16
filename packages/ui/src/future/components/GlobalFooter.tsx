@@ -2,10 +2,9 @@
 
 import { ReactNode, useCallback } from 'react'
 
-import { Container, DiscordIcon, GithubIcon, InstagramIcon, Link, SushiWithTextIcon, TwitterIcon, Typography } from '..'
-import { MaxWidth } from '../future/components/Container'
-import ReactDOM from 'react-dom'
 import dynamic from 'next/dynamic'
+import { Container, MaxWidth } from './Container'
+import { DiscordIcon, GithubIcon, InstagramIcon, SushiWithTextIcon, TwitterIcon } from './icons'
 
 export type FooterProps = React.HTMLProps<HTMLDivElement> & {
   children?: ReactNode
@@ -116,9 +115,7 @@ const Component = ({ children, maxWidth = '5xl', ...props }: FooterProps) => {
     (title: string, items: Record<string, { href: string; rel?: string; target?: string }>) => {
       return (
         <div key={title} className="flex flex-col gap-[10px]">
-          <Typography variant="xs" weight={500} className="text-sm sm:text-xs text-gray-900 dark:text-slate-100">
-            {title}
-          </Typography>
+          <span className="text-sm sm:text-xs text-gray-900 dark:text-slate-100">{title}</span>
           {Object.entries(items).map(([item, { href, rel, target }]) => (
             <a
               key={item}
@@ -194,20 +191,16 @@ const Component = ({ children, maxWidth = '5xl', ...props }: FooterProps) => {
       </Container>
       <Container maxWidth={maxWidth} className="mx-auto mt-20 mb-5">
         <div className="flex justify-between py-2 mx-4 border-t text-gray-600 border-gray-200 dark:border-slate-800">
-          <Typography variant="xs" className="text-gray-600 dark:text-slate-400">
+          <span className="text-xs text-gray-600 dark:text-slate-400">
             Copyright © 2022 Sushi. All rights reserved.
-          </Typography>
+          </span>
           <div className="flex divide-x dark:divide-slate-200/20 gap-">
-            <Link.Internal href="https://www.sushi.com/terms-of-use" passHref={true}>
-              <Typography as="a" variant="xs" weight={500} className="px-3 text-gray-600 dark:text-slate-300">
-                Terms of Use
-              </Typography>
-            </Link.Internal>
-            {/*<Link.Internal href="/privacy-policy" passHref={true}>*/}
-            {/*  <Typography as="a" variant="xs" weight={500} className="pl-3 text-slate-300">*/}
-            {/*    Privacy Policy*/}
-            {/*  </Typography>*/}
-            {/*</Link.Internal>*/}
+            <a
+              href="https://www.sushi.com/terms-of-use"
+              className="text-xs font-medium px-3 text-gray-600 dark:text-slate-300"
+            >
+              Terms of Use
+            </a>
           </div>
         </div>
       </Container>
@@ -215,6 +208,6 @@ const Component = ({ children, maxWidth = '5xl', ...props }: FooterProps) => {
   )
 }
 
-export const Footer = dynamic(() => Promise.resolve(Component), {
+export const GlobalFooter = dynamic(() => Promise.resolve(Component), {
   ssr: false,
 })

@@ -1,8 +1,8 @@
 import { ChevronRightIcon, ExternalLinkIcon } from '@heroicons/react-v1/solid'
-import { Button, Link, Typography } from '@sushiswap/ui'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
 import { nanoid } from 'nanoid'
 import React, { FC, ReactNode, useCallback, useState } from 'react'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 interface ExpandableCardRenderProps {
   open: boolean
@@ -43,7 +43,6 @@ export const ExpandableCard: FC<ExpandableCardProps> = ({ children, title, capti
             <Button
               onClick={() => setOpen(true)}
               className="!p-0 mt-3 whitespace-nowrap"
-              size="md"
               variant="empty"
               endIcon={<ChevronRightIcon width={16} height={16} />}
             >
@@ -73,25 +72,17 @@ export const ExpandableCard: FC<ExpandableCardProps> = ({ children, title, capti
                 layoutId={`container-${id}`}
                 className="bg-neutral-800 p-4 md:p-[36px] max-h-[80vh] overflow-y-scroll scroll overflow-x-hidden rounded-xl flex flex-col gap-2 items-start"
               >
-                <Typography variant="xs" weight={600} className="mb-1 uppercase text-neutral-400">
-                  {caption}
-                </Typography>
-                <Typography
-                  as={motion.h1}
-                  layoutId={`container-title-${id}`}
-                  variant="h1"
-                  weight={600}
-                  className="text-left"
-                >
+                <span className="text-xs font-medium mb-1 uppercase text-neutral-400">{caption}</span>
+                <motion.h1 layoutId={`container-title-${id}`} className="text-4xl font-semibold text-left">
                   {title}
-                </Typography>
+                </motion.h1>
                 <motion.div className="max-w-[700px] prose !prose-invert prose-neutral mt-5 pt-5 border-t border-neutral-200/5">
                   {content}
                 </motion.div>
                 <motion.div>
                   <Button
                     target="_blank"
-                    as={Link.External}
+                    as="a"
                     href={link}
                     className="!p-0 mt-3 !no-underline"
                     variant="empty"

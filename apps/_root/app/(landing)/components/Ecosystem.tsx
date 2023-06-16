@@ -1,8 +1,9 @@
 import { ChevronRightIcon } from '@heroicons/react-v1/solid'
-import { Button, Container, Tab, Typography } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { Container } from '@sushiswap/ui/future/components/Container'
 import { motion } from 'framer-motion'
-import Image from "next/legacy/image";
-import React, { FC, useState } from 'react'
+import Image from 'next/legacy/image'
+import React, { FC } from 'react'
 
 import { ExpandableCard, ExpendableCardData } from './ExpandableCard'
 
@@ -111,8 +112,6 @@ const TABS: TabsExpendableCardData[] = [
 // }
 
 export const Ecosystem: FC = () => {
-  const [_index, setIndex] = useState(0)
-
   return (
     <section className="px-1 py-20 overflow-x-hidden sm:py-40">
       <Container maxWidth="5xl" className="mx-auto">
@@ -123,52 +122,41 @@ export const Ecosystem: FC = () => {
             <div className="rounded-full w-[10px] h-[10px] bg-green" />
           </div>
           <div className="flex flex-col gap-3 pt-10">
-            <Typography weight={400} className="text-center text-slate-400">
-              Ecosystem
-            </Typography>
-            <Typography variant="hero" weight={600} className="!text-4xl !md:text-5xl px-4 text-center">
+            <span className="text-center text-slate-400">Ecosystem</span>
+            <span className="font-semibold !text-4xl !md:text-5xl px-4 text-center">
               Explore our <span className="text-blue">DeFi</span> Payment Solution
-            </Typography>
-            <Tab.Group selectedIndex={_index} onChange={setIndex}>
-              <Tab.Panels>
-                <div className="flex items-center p-10 min-h-[420px]">
-                  {TABS.map(({ title, content, image, summary, link, linkText, caption }) => (
-                    <Tab.Panel key={title} className="grid items-center grid-cols-1 gap-20 md:grid-cols-2">
-                      <div className="relative h-[420px] md:max-w-[420px] md:max-h-[420px] w-full h-full flex items-center justify-center">
-                        <div className="absolute w-[210px] h-[210px] bg-pink rounded-full blur-[200px]" />
-                        <Image alt="stellar" objectFit="contain" src={image} width={420} height={420} />
-                      </div>
-                      <ExpandableCard title={title} caption={caption} content={content} link={link} linkText={linkText}>
-                        {({ setOpen, containerId, titleId }) => (
-                          <motion.div layoutId={containerId} className="flex flex-col items-center lg:items-start">
-                            <Typography
-                              as={motion.h1}
-                              layoutId={titleId}
-                              variant="h1"
-                              weight={600}
-                              className="flex flex-col items-center text-center lg:items-start lg:text-left"
-                            >
-                              {title}
-                            </Typography>
-                            <Typography variant="lg" weight={400} className="mt-2 text-center lg:text-left">
-                              {summary}
-                            </Typography>
-                            <Button
-                              onClick={() => setOpen(true)}
-                              className="!p-0 mt-3"
-                              variant="empty"
-                              endIcon={<ChevronRightIcon width={16} height={16} />}
-                            >
-                              Learn More
-                            </Button>
-                          </motion.div>
-                        )}
-                      </ExpandableCard>
-                    </Tab.Panel>
-                  ))}
+            </span>
+            <div className="flex items-center p-10 min-h-[420px]">
+              {TABS.map(({ title, content, image, summary, link, linkText, caption }) => (
+                <div key={title} className="grid items-center grid-cols-1 gap-20 md:grid-cols-2">
+                  <div className="relative h-[420px] md:max-w-[420px] md:max-h-[420px] w-full h-full flex items-center justify-center">
+                    <div className="absolute w-[210px] h-[210px] bg-pink rounded-full blur-[200px]" />
+                    <Image alt="stellar" objectFit="contain" src={image} width={420} height={420} />
+                  </div>
+                  <ExpandableCard title={title} caption={caption} content={content} link={link} linkText={linkText}>
+                    {({ setOpen, containerId, titleId }) => (
+                      <motion.div layoutId={containerId} className="flex flex-col items-center lg:items-start">
+                        <motion.h1
+                          layoutId={titleId}
+                          className="text-4xl font-semibold flex flex-col items-center text-center lg:items-start lg:text-left"
+                        >
+                          {title}
+                        </motion.h1>
+                        <span className="text-lg mt-2 text-center lg:text-left">{summary}</span>
+                        <Button
+                          onClick={() => setOpen(true)}
+                          className="!p-0 mt-3"
+                          variant="empty"
+                          endIcon={<ChevronRightIcon width={16} height={16} />}
+                        >
+                          Learn More
+                        </Button>
+                      </motion.div>
+                    )}
+                  </ExpandableCard>
                 </div>
-              </Tab.Panels>
-            </Tab.Group>
+              ))}
+            </div>
           </div>
         </div>
       </Container>

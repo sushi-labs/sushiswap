@@ -1,13 +1,14 @@
 import { ChevronRightIcon } from '@heroicons/react-v1/solid'
-import { Button, Container, Typography } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
 import React, { FC } from 'react'
 
 import { ExpandableCard } from './ExpandableCard'
 import { AnimatedTitle } from './AnimatedTitle'
 
-import { BentoBoxSVG } from './svgs/BentoBoxSVG'
-import { SwitchSVG } from './svgs/SwitchSVG'
+import { BentoBoxSVG } from './svgs'
+import { SwitchSVG } from './svgs'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { Container } from '@sushiswap/ui/future/components/Container'
 
 const DATA = [
   {
@@ -98,19 +99,11 @@ export const BuildFuture: FC = () => {
                         >
                           <div className="flex items-center gap-3">
                             <Icon width={40} height={40} className="text-neutral-50 opacity-1" />
-                            <Typography weight={500} className="text-neutral-400">
-                              {category}
-                            </Typography>
+                            <span className="font-medium text-neutral-400">{category}</span>
                           </div>
-                          <Typography
-                            as={motion.h1}
-                            layoutId={titleId}
-                            weight={600}
-                            variant="h3"
-                            className="text-left text-neutral-50"
-                          >
+                          <motion.h1 layoutId={titleId} className="text-4xl font-semibold text-left text-neutral-50">
                             {title}
-                          </Typography>
+                          </motion.h1>
                           <div>
                             <Button
                               className="!p-0"
