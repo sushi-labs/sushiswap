@@ -38,6 +38,11 @@ const uniswapFactory: FactoryInfo = {
   providerName: 'UniswapV3',
 }
 
+const kyberswapFactory: FactoryInfo = {
+  address: '0xC7a590291e07B9fe9E64b86c58fD8fC764308C4A' as Address,
+  providerName: 'KyberSwapV3',
+}
+
 const pools: PoolInfo[] = [
   {
     address: '0x5777d92f208679DB4b9778590Fa3CAB3aC9e2168',
@@ -480,7 +485,7 @@ describe('UniV3Extractor', () => {
     const extractor = new UniV3Extractor(
       client,
       '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
-      [uniswapFactory],
+      [uniswapFactory, kyberswapFactory],
       './cache'
     )
     await extractor.start()
