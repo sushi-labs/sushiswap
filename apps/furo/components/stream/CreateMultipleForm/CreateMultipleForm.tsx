@@ -95,10 +95,10 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
                   {(formData.streams || []).map((el, i) => (
                     <div
                       key={i}
-                      className="flex flex-col gap-1 border-b dark:border-slate-200/5 border-gray-900/5 pb-4"
+                      className="flex flex-col gap-1 pb-4 border-b dark:border-slate-200/5 border-gray-900/5"
                     >
                       <div className="flex justify-between">
-                        <h1 className="text-xs uppercase font-semibold">Stream {i + 1}</h1>
+                        <h1 className="text-xs font-semibold uppercase">Stream {i + 1}</h1>
                         <div className="flex items-center gap-5 pr-2">
                           <div className="flex items-center">
                             <IconButton
@@ -128,7 +128,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
                       type="button"
                       startIcon={<PlusIcon width={16} height={16} />}
                       onClick={() => append({ ...CREATE_STREAM_DEFAULT_VALUES, id: nanoid() })}
-                      testdata-id="furo-create-multiple-streams-add-item-button"
+                      testdata-id="create-multiple-streams-add-item-button"
                     >
                       Add Stream
                     </Button>
@@ -138,7 +138,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
                       type="button"
                       onClick={() => setReview(true)}
                       disabled={!formValid}
-                      testdata-id="furo-create-multiple-streams-add-item-button"
+                      testdata-id="create-multiple-streams-review-button"
                     >
                       Review
                     </Button>

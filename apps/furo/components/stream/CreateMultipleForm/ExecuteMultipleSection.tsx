@@ -84,7 +84,7 @@ export const ExecuteMultipleSection: FC<{
         promise: data.wait(),
         summary: {
           pending: `Creating ${streams.length} streams`,
-          completed: `Creating ${streams.length} streams`,
+          completed: `Created ${streams.length} streams`,
           failed: `Something went wrong trying to create ${streams.length} streams`,
         },
         timestamp: ts,
@@ -174,14 +174,14 @@ export const ExecuteMultipleSection: FC<{
         <Checker.Network chainId={chainId} size="xl">
           <Checker.ApproveBentobox
             size="xl"
-            id="furo-create-multiple-stream-approve-bentobox"
+            id="create-multiple-stream-approve-bentobox"
             chainId={chainId}
             contract={getFuroStreamRouterContractConfig(chainId).address}
             onSignature={setSignature}
           >
             <Checker.ApproveERC20Multiple
               size="xl"
-              id={'furo-create-multiple-stream-approve-token'}
+              id={'create-multiple-stream-approve-token'}
               amounts={approveAmounts}
             >
               <Checker.Success tag={APPROVE_TAG}>
@@ -191,7 +191,7 @@ export const ExecuteMultipleSection: FC<{
                   type="submit"
                   loading={isWritePending}
                   disabled={!isValid || isValidating}
-                  testdata-id="furo-create-multiple-streams-confirm-button"
+                  testdata-id="create-multiple-streams-confirm-button"
                 >
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Streams'}
                 </Button>

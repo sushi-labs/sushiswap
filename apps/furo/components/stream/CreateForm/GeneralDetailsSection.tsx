@@ -54,8 +54,8 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
                     <Input.DatePickerCustomInput
                       isError={Boolean(error?.message)}
                       caption={error?.message}
-                      testdata-id={'stream-start-date'}
-                      id="stream-start-date"
+                      testdata-id={`stream-start-date${index}`}
+                      id={`stream-start-date${index}`}
                       label={
                         <>
                           Start date<sup>*</sup>
@@ -93,8 +93,8 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
                     <Input.DatePickerCustomInput
                       isError={Boolean(error?.message)}
                       caption={error?.message}
-                      testdata-id={'stream-end-date'}
-                      id="stream-end-date"
+                      testdata-id={`stream-end-date${index}`}
+                      id={`stream-end-date${index}`}
                       label={
                         <>
                           End date<sup>*</sup>
@@ -137,8 +137,8 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
                 }
                 name={name}
                 onBlur={onBlur}
-                id="create-stream-recipient-input"
-                testdata-id='create-stream-recipient-input'
+                id={`create-stream-recipient-input${index}`}
+                testdata-id={`create-stream-recipient-input${index}`}
                 value={value}
                 onChange={onChange}
               />
