@@ -14,11 +14,10 @@ const USDC = new Token({
   name: 'USDC Stablecoin',
 })
 
-test.beforeAll(async () => {
+test.beforeEach(async () => {
   SNAPSHOT_ID = await createSnapshot(CHAIN_ID)
 })
-
-test.afterAll(async () => {
+test.afterEach(async () => {
   await loadSnapshot(CHAIN_ID, SNAPSHOT_ID)
 })
 

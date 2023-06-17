@@ -15,8 +15,8 @@ export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
   ])
 
   useEffect(() => {
-    if (cliffEnabled) {
-      if (!isNaN(cliffAmount) && +cliffAmount <= 0)
+    if (cliffEnabled && cliffAmount) {
+      if (!isNaN(+cliffAmount) && +cliffAmount <= 0)
         setError(`vestings.${index}.cliff.cliffAmount`, {
           type: 'custom',
           message: 'Must be at least 0',
@@ -40,7 +40,7 @@ export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
                   setValue(`vestings.${index}.cliff`, {
                     cliffEnabled: true,
                     cliffAmount: '',
-                    cliffEndDate: null,
+                    cliffEndDate: undefined,
                   })
                 } else {
                   setValue(`vestings.${index}.cliff`, {

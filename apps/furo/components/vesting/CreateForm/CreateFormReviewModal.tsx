@@ -122,7 +122,8 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
         !_stepPercentage ||
         !_totalAmount ||
         !stepPayouts ||
-        !rebase
+        !rebase || 
+        approved
       ) {
         return
       }
@@ -172,6 +173,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
       rebase,
       signature,
       _fundSource,
+      approved
     ]
   )
 
@@ -202,6 +204,9 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
         approved
     ),
   })
+
+
+  console.log({sendTransactionAsync, approved})
 
   return (
     <>

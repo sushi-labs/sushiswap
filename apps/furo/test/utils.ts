@@ -246,8 +246,8 @@ export async function createMultipleVests(page: Page, chainId: number, vestingAr
   await expect(reviewLocator).toBeEnabled()
   await reviewLocator.click()
 
-  // // Approve BentoBox
-  // const bentoboxLocator = page.locator('[testdata-id=create-single-vest-approve-bentobox]')
+  // // // Approve BentoBox
+  // const bentoboxLocator = page.locator('[testdata-id=create-multiple-vest-approve-bentobox]')
   // await expect(bentoboxLocator).toBeVisible()
   // await expect(bentoboxLocator).toBeEnabled()
   // await bentoboxLocator.click()
@@ -258,10 +258,12 @@ export async function createMultipleVests(page: Page, chainId: number, vestingAr
   // await expect(locator).toBeEnabled()
   // await locator.click()
   // const confirmCreateVestingButton = page.locator('[testdata-id=multiple-vest-confirm-button]')
-  // await expect(confirmCreateVestingButton).toBeVisible({ timeout: 10_000 })
-  // await expect(confirmCreateVestingButton).toBeEnabled({ timeout: 10_000 })
+  // await expect(confirmCreateVestingButton).toBeVisible()
+  // await expect(confirmCreateVestingButton).toBeEnabled()
   // await confirmCreateVestingButton.click()
 
+
+  // create-multiple-vest-approve-token-undefined
   // await expect(page.locator('div', { hasText: 'Creating 4 vests' }).last()).toContainText('Creating 4 vests')
   // await expect(page.locator('div', { hasText: 'Transaction Completed' }).last()).toContainText(
   //   'Transaction Completed'

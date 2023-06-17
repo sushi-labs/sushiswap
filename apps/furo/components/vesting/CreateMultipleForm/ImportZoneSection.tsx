@@ -172,7 +172,7 @@ export const Component: FC<ImportZoneSection> = ({ chainId }) => {
                       ? {
                           cliffEnabled: true,
                           cliffAmount: cliffAmount,
-                          cliffEndDate: _cliffEndDate,
+                          cliffEndDate: _cliffEndDate ? _cliffEndDate : undefined,
                         }
                       : {
                           cliffEnabled: false,
