@@ -152,19 +152,19 @@ export async function createMultipleStreams(page: Page, chainId: number, streamA
   await expect(bentoboxLocator).toBeEnabled()
   await bentoboxLocator.click()
 
-  // // Approve Token
-  // const locator = page.locator('[testdata-id=create-multiple-stream-approve-token]')
-  // await expect(locator).toBeVisible()
-  // await expect(locator).toBeEnabled()
-  // await locator.click()
+  // Approve Token
+  const locator = page.locator('[testdata-id=create-multiple-stream-approve-token-1]') // TODO: refactor, index is hardcoded because we pass in the erc20 after native.
+  await expect(locator).toBeVisible()
+  await expect(locator).toBeEnabled()
+  await locator.click()
 
-  // const confirmCreateVestingButton = page.locator('[testdata-id=create-multiple-streams-confirm-button]')
-  // await expect(confirmCreateVestingButton).toBeVisible()
-  // await expect(confirmCreateVestingButton).toBeEnabled()
-  // await confirmCreateVestingButton.click()
+  const confirmCreateVestingButton = page.locator('[testdata-id=create-multiple-streams-confirm-button]')
+  await expect(confirmCreateVestingButton).toBeVisible()
+  await expect(confirmCreateVestingButton).toBeEnabled()
+  await confirmCreateVestingButton.click()
 
-  // const text = `Created ${streamArgs.length} streams`
-  // await expect(page.locator('div', { hasText: text }).last()).toContainText(text)
+  const text = `Created ${streamArgs.length} streams`
+  await expect(page.locator('div', { hasText: text }).last()).toContainText(text)
 }
 
 async function handleStreamInputs(page: Page, args: StreamArgs, index = 0) {
@@ -246,28 +246,23 @@ export async function createMultipleVests(page: Page, chainId: number, vestingAr
   await expect(reviewLocator).toBeEnabled()
   await reviewLocator.click()
 
-  // // // Approve BentoBox
-  // const bentoboxLocator = page.locator('[testdata-id=create-multiple-vest-approve-bentobox]')
-  // await expect(bentoboxLocator).toBeVisible()
-  // await expect(bentoboxLocator).toBeEnabled()
-  // await bentoboxLocator.click()
+  // // Approve BentoBox
+  const bentoboxLocator = page.locator('[testdata-id=create-multiple-vest-approve-bentobox]')
+  await expect(bentoboxLocator).toBeVisible()
+  await expect(bentoboxLocator).toBeEnabled()
+  await bentoboxLocator.click()
 
-  // // Approve Token
-  // const locator = page.locator('[testdata-id=create-single-vest-approve-token]')
-  // await expect(locator).toBeVisible()
-  // await expect(locator).toBeEnabled()
-  // await locator.click()
-  // const confirmCreateVestingButton = page.locator('[testdata-id=multiple-vest-confirm-button]')
-  // await expect(confirmCreateVestingButton).toBeVisible()
-  // await expect(confirmCreateVestingButton).toBeEnabled()
-  // await confirmCreateVestingButton.click()
+  // Approve Token
+  const locator = page.locator('[testdata-id=create-multiple-vest-approve-token-1]')
+  await expect(locator).toBeVisible()
+  await expect(locator).toBeEnabled()
+  await locator.click()
+  const confirmCreateVestingButton = page.locator('[testdata-id=create-multiple-vest-confirm-button]')
+  await expect(confirmCreateVestingButton).toBeVisible()
+  await expect(confirmCreateVestingButton).toBeEnabled()
+  await confirmCreateVestingButton.click()
 
-
-  // create-multiple-vest-approve-token-undefined
-  // await expect(page.locator('div', { hasText: 'Creating 4 vests' }).last()).toContainText('Creating 4 vests')
-  // await expect(page.locator('div', { hasText: 'Transaction Completed' }).last()).toContainText(
-  //   'Transaction Completed'
-  // )
+  await expect(page.locator('div', { hasText: `Creating ${vestingArgs.length} vests` }).last()).toContainText(`Creating ${vestingArgs.length} vests`)
 }
 
 async function handleGeneralDetails(page: Page, args: VestingArgs, index = 0) {

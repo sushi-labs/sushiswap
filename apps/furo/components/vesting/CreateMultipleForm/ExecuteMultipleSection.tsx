@@ -85,7 +85,7 @@ export const ExecuteMultipleSection: FC<{
         promise: data.wait(),
         summary: {
           pending: `Creating ${vestings.length} vests`,
-          completed: `Creating ${vestings.length} vests`,
+          completed: `Created ${vestings.length} vests`,
           failed: `Something went wrong trying to create ${vestings.length} vests`,
         },
         timestamp: ts,
@@ -214,7 +214,7 @@ export const ExecuteMultipleSection: FC<{
                   onClick={() => sendTransaction?.()}
                   type="submit"
                   loading={isWritePending}
-                  disabled={!isValid || isValidating}
+                  disabled={!isValid || isValidating || !sendTransaction}
                   testdata-id="create-multiple-vest-confirm-button"
                 >
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vests'}
