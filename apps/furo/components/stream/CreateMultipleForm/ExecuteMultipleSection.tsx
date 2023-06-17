@@ -164,6 +164,7 @@ export const ExecuteMultipleSection: FC<{
       })),
     [chainId, summedAmounts]
   )
+  console.log({approveAmounts})
 
   return (
     <div className="flex justify-end gap-4">
@@ -190,7 +191,7 @@ export const ExecuteMultipleSection: FC<{
                   onClick={() => sendTransaction?.()}
                   type="submit"
                   loading={isWritePending}
-                  disabled={!isValid || isValidating}
+                  disabled={!isValid || isValidating || !sendTransaction}
                   testdata-id="create-multiple-streams-confirm-button"
                 >
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Streams'}
