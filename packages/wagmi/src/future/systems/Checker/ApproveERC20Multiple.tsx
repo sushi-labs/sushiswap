@@ -16,7 +16,7 @@ export interface ApproveERC20MultipleProps extends ButtonProps<'button'> {
  * Recursive component for multiple ApproveERC20s
  */
 export const Component: FC<ApproveERC20MultipleProps> = ({ index, id, amounts, children, ...props }) => {
-  const _index = index ? index : amounts.length - 1
+  const _index = index ? index : amounts.length
   if (!(_index > 0)) return <>{children}</>
 
   return (
