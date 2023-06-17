@@ -31,7 +31,7 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { calculateCliffDuration, calculateEndDate, calculateStepPercentage, calculateTotalAmount } from '../utils'
-import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS } from '../schema'
+import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS_MAP } from '../schema'
 
 const MODAL_ID = 'createVestingSingle'
 const APPROVE_TAG = 'createVestingSingle'
@@ -131,7 +131,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
         !startDate ||
         !_cliffDuration ||
         !stepConfig ||
-        !STEP_CONFIGURATIONS[stepConfig] ||
+        !STEP_CONFIGURATIONS_MAP[stepConfig] ||
         !_stepPercentage ||
         !_totalAmount ||
         !stepPayouts ||
@@ -153,7 +153,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
           currency: _currency,
           startDate,
           cliffDuration: _cliffDuration.toString(),
-          stepDuration: STEP_CONFIGURATIONS[stepConfig].toString(),
+          stepDuration: STEP_CONFIGURATIONS_MAP[stepConfig].toString(),
           steps: stepPayouts.toString(),
           stepPercentage: _stepPercentage.toString(),
           amount: _totalAmount.quotient.toString(),
@@ -209,7 +209,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
         startDate &&
         _cliffDuration &&
         stepConfig &&
-        STEP_CONFIGURATIONS[stepConfig] &&
+        STEP_CONFIGURATIONS_MAP[stepConfig] &&
         _stepPercentage &&
         _totalAmount &&
         stepPayouts &&

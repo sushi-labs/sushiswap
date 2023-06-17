@@ -2,7 +2,7 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { Fraction, JSBI, ZERO } from '@sushiswap/math'
 
 import { ZTokenToToken } from '../../lib/zod'
-import { CreateVestingFormSchemaType, STEP_CONFIGURATIONS } from './schema'
+import { CreateVestingFormSchemaType, STEP_CONFIGURATIONS_MAP } from './schema'
 
 export const calculateEndDate = ({
   cliffEnabled,
@@ -13,9 +13,9 @@ export const calculateEndDate = ({
 }: Pick<CreateVestingFormSchemaType, 'cliffEnabled' | 'cliffEndDate' | 'startDate' | 'stepPayouts' | 'stepConfig'>) => {
   if (!stepPayouts || !stepConfig) return undefined
   if (startDate && !cliffEnabled)
-    return new Date(startDate.getTime() + STEP_CONFIGURATIONS[stepConfig] * stepPayouts * 1000)
+    return new Date(startDate.getTime() + STEP_CONFIGURATIONS_MAP[stepConfig] * stepPayouts * 1000)
   if (cliffEnabled && cliffEndDate)
-    return new Date(cliffEndDate.getTime() + STEP_CONFIGURATIONS[stepConfig] * stepPayouts * 1000)
+    return new Date(cliffEndDate.getTime() + STEP_CONFIGURATIONS_MAP[stepConfig] * stepPayouts * 1000)
   return undefined
 }
 
