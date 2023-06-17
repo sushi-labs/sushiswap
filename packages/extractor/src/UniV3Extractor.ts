@@ -8,6 +8,7 @@ import { Address, Log, PublicClient } from 'viem'
 import { Filter } from 'viem/dist/types/types/filter'
 
 import { MultiCallAggregator } from './MulticallAggregator'
+import { PermanentCache } from './PermanentCache'
 import { TokenManager } from './TokenManager'
 import { UniV3EventsAbi, UniV3PoolWatcher } from './UniV3PoolWatcher'
 
@@ -30,8 +31,15 @@ enum LogsProcessing {
   Started,
 }
 
+interface PoolCacheRecord {
+  address: Address
+  token0: Address
+  token1: Address
+  fee: number
+  factory: Address
+}
+
 // TODO: PoolCode update cache with timer
-// TODO: Known pools permanent cache
 // TODO: New Tokens tips? (with statistics)
 // TODO: provider usage statistics (if have enough time to process all logs or no) ?
 // TODO: quality checker?
@@ -43,6 +51,7 @@ export class UniV3Extractor {
   multiCallAggregator: MultiCallAggregator
   tokenManager: TokenManager
   poolMap: Map<Address, UniV3PoolWatcher> = new Map()
+  poolPermanentCache: PermanentCache<PoolCacheRecord>
   otherFactoryPoolSet: Set<Address> = new Set()
   eventFilters: Filter[] = []
   logProcessGuard = false
@@ -50,13 +59,20 @@ export class UniV3Extractor {
   logProcessingStatus = LogsProcessing.NotStarted
   logging: boolean
 
-  constructor(client: PublicClient, tickHelperContract: Address, factories: FactoryInfo[], logging = true) {
+  constructor(
+    client: PublicClient,
+    tickHelperContract: Address,
+    factories: FactoryInfo[],
+    cacheDir: string,
+    logging = true
+  ) {
     this.client = client
     this.multiCallAggregator = new MultiCallAggregator(client)
-    this.tokenManager = new TokenManager(this.multiCallAggregator)
+    this.tokenManager = new TokenManager(this.multiCallAggregator, cacheDir)
     this.tickHelperContract = tickHelperContract
     this.factories = factories
     factories.forEach((f) => this.factoryMap.set(f.address.toLowerCase(), f))
+    this.poolPermanentCache = new PermanentCache(cacheDir, `uniV3Pools-${this.client.chain?.id}`)
     this.logging = logging
   }
 
@@ -70,6 +86,7 @@ export class UniV3Extractor {
         this.eventFilters.push(filter)
       }
 
+      // Start log watching
       this.client.watchBlockNumber({
         onBlockNumber: async (blockNumber) => {
           if (!this.logProcessGuard) {
@@ -90,6 +107,26 @@ export class UniV3Extractor {
         },
       })
       this.logProcessingStatus = LogsProcessing.Started
+
+      // Add cached pools to watching
+      const cachedPools: Map<string, PoolInfo> = new Map() // map instead of array to avoid duplicates
+      await this.tokenManager.addCachedTokens()
+      const cachedRecords = await this.poolPermanentCache.getAllRecords()
+      cachedRecords.forEach((r) => {
+        const token0 = this.tokenManager.getKnownToken(r.token0)
+        const token1 = this.tokenManager.getKnownToken(r.token1)
+        const factory = this.factoryMap.get(r.factory.toLowerCase())
+        if (token0 && token1 && factory && r.address && r.fee)
+          cachedPools.set(r.address.toLowerCase(), {
+            address: r.address,
+            token0,
+            token1,
+            fee: r.fee,
+            factory,
+          })
+      })
+      cachedPools.forEach((p) => this.addPoolWatching(p, false))
+      this.consoleLog(`${cachedPools.size} pools were taken from cache`)
     }
   }
 
@@ -155,7 +192,7 @@ export class UniV3Extractor {
     pools.forEach((p) => this.addPoolWatching(p))
   }
 
-  addPoolWatching(p: PoolInfo) {
+  addPoolWatching(p: PoolInfo, addToCache = true) {
     if (this.logProcessingStatus !== LogsProcessing.Started) {
       throw new Error('Pools can be added after Log processing have been started')
     }
@@ -171,6 +208,14 @@ export class UniV3Extractor {
       )
       watcher.updatePoolState()
       this.poolMap.set(p.address.toLowerCase() as Address, watcher) // lowercase because incoming events have lowcase addresses ((
+      if (addToCache)
+        this.poolPermanentCache.add({
+          address: p.address,
+          token0: p.token0.address as Address,
+          token1: p.token1.address as Address,
+          fee: p.fee,
+          factory: p.factory.address,
+        })
       this.consoleLog(`add pool ${p.address}, watched pools total: ${this.poolMap.size}`)
     }
   }

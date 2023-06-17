@@ -273,7 +273,13 @@ async function makeTest(
     transport: env.transport,
   })
 
-  const extractor = new UniV3Extractor(client, '0xbfd8137f7d1516d3ea5ca83523914859ec47f573', [uniswapFactory], false)
+  const extractor = new UniV3Extractor(
+    client,
+    '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
+    [uniswapFactory],
+    '',
+    false
+  )
   await extractor.start()
   pools.forEach((p) => extractor.addPoolWatching(p))
   for (;;) {
@@ -336,9 +342,9 @@ async function checkHistoricalLogs(env: TestEnvironment, pool: PoolInfo, fromBlo
 
   const extractor = new UniV3Extractor(
     clientPrimary,
-    UniswapV3FactoryAddress[ChainId.ETHEREUM] as Address,
-    'UniswapV3',
     '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
+    [uniswapFactory],
+    '',
     false
   )
   await extractor.start()
@@ -471,7 +477,12 @@ describe('UniV3Extractor', () => {
       transport: transport,
     })
 
-    const extractor = new UniV3Extractor(client, '0xbfd8137f7d1516d3ea5ca83523914859ec47f573', [uniswapFactory])
+    const extractor = new UniV3Extractor(
+      client,
+      '0xbfd8137f7d1516d3ea5ca83523914859ec47f573',
+      [uniswapFactory],
+      './cache'
+    )
     await extractor.start()
     extractor.addPoolsForTokens(BASES_TO_CHECK_TRADES_AGAINST[ChainId.ETHEREUM])
 
