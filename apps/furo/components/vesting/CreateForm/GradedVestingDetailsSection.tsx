@@ -36,12 +36,12 @@ export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) =>
 
   const formData = watch(`vestings.${index}`)
   const _formData = useDeepCompareMemoize(formData)
-  const { currency, fundSource, cliff, stepAmount, stepPayouts } = _formData
+  const { currency, fundSource, cliffEnabled, cliffAmount, stepAmount, stepPayouts } = _formData
   const _fundSource = ZFundSourceToFundSource.parse(fundSource)
   const _currency = useTokenFromZToken(currency)
   const totalAmount = useMemo(
-    () => calculateTotalAmount({ currency, cliff, stepAmount, stepPayouts }),
-    [cliff, currency, stepAmount, stepPayouts]
+    () => calculateTotalAmount({ currency, cliffEnabled, cliffAmount, stepAmount, stepPayouts }),
+    [cliffAmount, cliffEnabled, currency, stepAmount, stepPayouts]
   )
 
   const { data: balance } = useBalance({
@@ -133,7 +133,7 @@ export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) =>
           name={`vestings.${index}.stepConfig`}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <>
-              <Select onValueChange={onChange} defaultValue={value}>
+              <Select value={value} onValueChange={onChange} defaultValue={value}>
                 <SelectGroup>
                   <SelectTrigger testdata-id={`create-single-vest-graded-frequency-selection-button${index}`}>
                     <SelectLabel aria-label={value}>
@@ -146,10 +146,10 @@ export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) =>
                     isError={Boolean(error)}
                   />
                   <SelectContent>
-                    {Object.keys(STEP_CONFIGURATIONS).map((stepConfig) => (
+                    {Object.keys(STEP_CONFIGURATIONS).map((stepConfig, i) => (
                       <SelectItem
                         key={stepConfig}
-                        value={stepConfig}
+                        value={`${i}`}
                         testdata-id={`create-single-vest-graded-type-${stepConfig.toLowerCase()}${index}`}
                       >
                         {stepConfig}

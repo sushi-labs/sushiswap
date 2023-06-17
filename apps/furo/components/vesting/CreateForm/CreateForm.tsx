@@ -19,14 +19,12 @@ export const CREATE_VEST_DEFAULT_VALUES: CreateVestingFormSchemaType = {
   recipient: undefined,
   startDate: undefined,
   fundSource: FundSource.WALLET,
-  stepConfig: undefined,
+  stepConfig: '2',
   stepPayouts: 1,
   stepAmount: undefined,
-  cliff: {
-    cliffEnabled: false,
-    cliffAmount: undefined,
-    cliffEndDate: undefined,
-  },
+  cliffEnabled: false,
+  cliffAmount: undefined,
+  cliffEndDate: undefined,
 }
 
 export const CreateForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId }) => {
@@ -38,36 +36,7 @@ export const CreateForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId 
     },
   })
 
-  const { watch, setError, clearErrors, reset } = methods
-  const [startDate, cliffEnabled, cliffEndDate] = watch([
-    `vestings.0.startDate`,
-    'vestings.0.cliff.cliffEnabled',
-    'vestings.0.cliff.cliffEndDate',
-  ])
-
-  // Temporary solution for when Zod fixes conditional validation
-  // https://github.com/colinhacks/zod/issues/1394
-  useEffect(() => {
-    if (startDate && cliffEnabled && cliffEndDate) {
-      if (cliffEndDate < startDate) {
-        setError('vestings.0.cliff.cliffEndDate', {
-          type: 'custom',
-          message: 'Must be later than start date',
-        })
-      } else {
-        clearErrors('vestings.0.cliff.cliffEndDate')
-      }
-    }
-  }, [clearErrors, cliffEnabled, cliffEndDate, setError, startDate])
-
-  // useEffect(() => {
-  //   try {
-  //     CreateVestingModelSchema.parse(formData)
-  //   } catch (e) {
-  //     console.log(formData)
-  //     console.log(e)
-  //   }
-  // }, [formData])
+  const { reset } = methods
 
   useEffect(() => {
     reset()

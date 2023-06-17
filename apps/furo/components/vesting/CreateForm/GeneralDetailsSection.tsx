@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Form } from '@sushiswap/ui'
-import React, { FC, useCallback, useEffect } from 'react'
+import React, { FC, useCallback } from 'react'
 import { Controller, ControllerRenderProps, useFormContext } from 'react-hook-form'
 
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
@@ -13,8 +13,8 @@ import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { CreateMultipleVestingFormSchemaType } from '../schema'
 
 export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({ chainId, index }) => {
-  const { control, watch, setValue, setError, clearErrors } = useFormContext<CreateMultipleVestingFormSchemaType>()
-  const [currency, startDate] = watch([`vestings.${index}.currency`, `vestings.${index}.startDate`])
+  const { control, watch, setValue } = useFormContext<CreateMultipleVestingFormSchemaType>()
+  const [currency] = watch([`vestings.${index}.currency`])
   const _currency = useTokenFromZToken(currency)
 
   const onSelect = useCallback(
@@ -44,19 +44,6 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
     },
     [index, setValue]
   )
-
-  // Temporary solution for when Zod fixes conditional validation
-  // https://github.com/colinhacks/zod/issues/1394
-  useEffect(() => {
-    if (startDate && startDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()) {
-      setError(`vestings.${index}.startDate`, {
-        type: 'custom',
-        message: 'Must be at least 5 minutes from now',
-      })
-    } else {
-      clearErrors(`vestings.${index}.startDate`)
-    }
-  }, [clearErrors, index, setError, startDate])
 
   return (
     <Form.Section
@@ -93,7 +80,6 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
                   />
                 )}
               </TokenSelector>
-              <Form.Error message={error?.message} />
             </>
           )}
         />
@@ -102,6 +88,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
         <Controller
           control={control}
           name={`vestings.${index}.startDate`}
+          rules={{ deps: [`vestings.${index}.cliffEndDate`] }}
           render={({ field: { name, onChange, value, onBlur }, fieldState: { error } }) => {
             return (
               <Input.DatePicker

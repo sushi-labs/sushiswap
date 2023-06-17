@@ -111,7 +111,6 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
                   />
                 )}
               </TokenSelector>
-              <Form.Error message={error?.message} />
             </>
           )}
         />
@@ -120,7 +119,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
         <Controller
           control={control}
           name={`streams.${index}.fundSource`}
-          render={({ field: { onChange, value }, fieldState: { error } }) => {
+          render={({ field: { onChange, value } }) => {
             const _value = ZFundSourceToFundSource.parse(value)
             return (
               <div className="flex flex-col">
@@ -144,7 +143,6 @@ export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ c
                     />
                   )}
                 </div>
-                <Form.Error message={error?.message} />
               </div>
             )
           }}

@@ -1,5 +1,5 @@
 import { Form } from '@sushiswap/ui'
-import React, { FC, useEffect } from 'react'
+import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Switch } from '@sushiswap/ui/future/components/Switch'
 import { Input } from '@sushiswap/ui/future/components/input'
@@ -7,56 +7,29 @@ import { CreateMultipleVestingFormSchemaType } from '../schema'
 import { classNames } from '@sushiswap/ui'
 
 export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
-  const { control, watch, setValue, clearErrors, setError } = useFormContext<CreateMultipleVestingFormSchemaType>()
-  const [currency, cliffEnabled, cliffAmount] = watch([
+  const { control, watch } = useFormContext<CreateMultipleVestingFormSchemaType>()
+  const [startDate, currency, cliffEnabled] = watch([
+    `vestings.${index}.startDate`,
     `vestings.${index}.currency`,
-    `vestings.${index}.cliff.cliffEnabled`,
-    `vestings.${index}.cliff.cliffAmount`,
+    `vestings.${index}.cliffEnabled`,
   ])
-
-  useEffect(() => {
-    if (cliffEnabled && cliffAmount) {
-      if (!isNaN(+cliffAmount) && +cliffAmount <= 0)
-        setError(`vestings.${index}.cliff.cliffAmount`, {
-          type: 'custom',
-          message: 'Must be at least 0',
-        })
-    } else {
-      clearErrors(`vestings.${index}.cliff.cliffAmount`)
-    }
-  }, [clearErrors, cliffAmount, cliffEnabled, index, setError])
 
   return (
     <Form.Section title="Cliff details" description="Optionally provide cliff details for your vesting">
       <Form.Control>
         <Controller
-          name={`vestings.${index}.cliff.cliffEnabled`}
+          name={`vestings.${index}.cliffEnabled`}
+          rules={{ deps: [`vestings.${index}.cliffEndDate`, `vestings.${index}.cliffAmount`] }}
           control={control}
-          render={({ field: { value } }) => (
-            <Switch
-              checked={value}
-              onChange={(val) => {
-                if (val) {
-                  setValue(`vestings.${index}.cliff`, {
-                    cliffEnabled: true,
-                    cliffAmount: '',
-                    cliffEndDate: undefined,
-                  })
-                } else {
-                  setValue(`vestings.${index}.cliff`, {
-                    cliffEnabled: false,
-                  })
-                }
-              }}
-              size="sm"
-              id={`cliff-toggle-switch${index}`}
-            />
+          render={({ field: { value, onChange } }) => (
+            <Switch checked={value} onChange={onChange} size="sm" id={`cliff-toggle-switch${index}`} />
           )}
         />
       </Form.Control>
       <Form.Control className={classNames(cliffEnabled ? 'block' : 'hidden')}>
         <Controller
-          name={`vestings.${index}.cliff.cliffEndDate`}
+          name={`vestings.${index}.cliffEndDate`}
+          rules={{ deps: [`vestings.${index}.startDate`] }}
           control={control}
           render={({ field: { name, onChange, value, onBlur }, fieldState: { error } }) => {
             return (
@@ -65,6 +38,7 @@ export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
                 onBlur={onBlur}
                 customInput={
                   <Input.DatePickerCustomInput
+                    name={name}
                     isError={Boolean(error?.message)}
                     caption={error?.message ? error?.message : 'The end date of the cliff.'}
                     id={`create-single-vest-cliff-date${index}`}
@@ -83,7 +57,9 @@ export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
                 timeFormat="HH:mm"
                 timeIntervals={15}
                 timeCaption="time"
-                minDate={new Date(Date.now() + 5 * 60 * 1000)}
+                minDate={
+                  startDate ? new Date(startDate.getTime() + 5 * 60 * 1000) : new Date(Date.now() + 10 * 60 * 1000)
+                }
                 dateFormat="MMM d, yyyy HH:mm"
                 placeholderText="Select date"
                 autoComplete="off"
@@ -95,7 +71,7 @@ export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
       <Form.Control className={classNames(cliffEnabled ? 'block' : 'hidden')}>
         <Controller
           control={control}
-          name={`vestings.${index}.cliff.cliffAmount`}
+          name={`vestings.${index}.cliffAmount`}
           render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
             return (
               <>

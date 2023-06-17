@@ -54,32 +54,45 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
   const formData = watch('vestings.0')
   const _formData = useDeepCompareMemoize(formData)
 
-  const { recipient, startDate, stepConfig, stepPayouts, fundSource, currency, cliff, stepAmount } = _formData
+  const {
+    recipient,
+    startDate,
+    stepConfig,
+    stepPayouts,
+    fundSource,
+    currency,
+    cliffEnabled,
+    cliffAmount,
+    cliffEndDate,
+    stepAmount,
+  } = _formData
   const _fundSource = ZFundSourceToFundSource.parse(fundSource)
   const _currency = useTokenFromZToken(formData.currency)
   const _totalAmount = useMemo(
-    () => calculateTotalAmount({ currency, cliff, stepAmount, stepPayouts }),
-    [cliff, currency, stepAmount, stepPayouts]
+    () => calculateTotalAmount({ currency, cliffEnabled, cliffAmount, stepAmount, stepPayouts }),
+    [cliffAmount, cliffEnabled, currency, stepAmount, stepPayouts]
   )
-  const _cliffDuration = useMemo(() => calculateCliffDuration({ cliff, startDate }), [cliff, startDate])
+  const _cliffDuration = useMemo(
+    () => calculateCliffDuration({ cliffEnabled, cliffEndDate, startDate }),
+    [cliffEnabled, cliffEndDate, startDate]
+  )
   const _stepPercentage = useMemo(
-    () => calculateStepPercentage({ currency, cliff, stepAmount, stepPayouts }),
-    [cliff, currency, stepAmount, stepPayouts]
+    () => calculateStepPercentage({ currency, cliffEnabled, cliffAmount, stepAmount, stepPayouts }),
+    [cliffAmount, cliffEnabled, currency, stepAmount, stepPayouts]
   )
   const rebase = useBentoBoxTotal(chainId, _currency)
   const endDate = useMemo(
-    () => calculateEndDate({ cliff, startDate, stepPayouts, stepConfig }),
-    [cliff, startDate, stepConfig, stepPayouts]
+    () => calculateEndDate({ cliffEndDate, cliffEnabled, startDate, stepPayouts, stepConfig }),
+    [cliffEnabled, cliffEndDate, startDate, stepConfig, stepPayouts]
   )
 
   const [_cliffAmount, _stepAmount] = useMemo(() => {
-    if (cliff.cliffEnabled) {
-      const { cliffAmount } = cliff
+    if (cliffEnabled) {
       return [tryParseAmount(cliffAmount?.toString(), _currency), tryParseAmount(stepAmount?.toString(), _currency)]
     } else {
       return [undefined, tryParseAmount(stepAmount?.toString(), _currency)]
     }
-  }, [_currency, cliff, stepAmount])
+  }, [_currency, cliffAmount, cliffEnabled, stepAmount])
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
@@ -122,7 +135,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
         !_stepPercentage ||
         !_totalAmount ||
         !stepPayouts ||
-        !rebase || 
+        !rebase ||
         approved
       ) {
         return
@@ -173,7 +186,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
       rebase,
       signature,
       _fundSource,
-      approved
+      approved,
     ]
   )
 
@@ -204,9 +217,6 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
         approved
     ),
   })
-
-
-  console.log({sendTransactionAsync, approved})
 
   return (
     <>
@@ -276,11 +286,11 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                   )}
                 </List.Control>
               </List>
-              {cliff.cliffEnabled && cliff.cliffEndDate && _cliffAmount && (
+              {cliffEnabled && cliffEndDate && _cliffAmount && (
                 <List>
                   <List.Control>
                     <List.KeyValue flex title="Cliff end date">
-                      {format(cliff.cliffEndDate, 'dd MMM yyyy')}
+                      {format(cliffEndDate, 'dd MMM yyyy')}
                     </List.KeyValue>
                     <List.KeyValue flex title="Cliff amount">
                       <div className="flex items-center gap-2" testdata-id="vesting-review-cliff-amount">

@@ -1,5 +1,5 @@
 import { Form } from '@sushiswap/ui'
-import React, { FC, useEffect } from 'react'
+import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
@@ -10,30 +10,8 @@ interface GeneralDetailsSection {
 }
 
 export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
-  const { control, watch, setError, clearErrors } = useFormContext<CreateMultipleStreamFormSchemaType>()
-  const [startDate, endDate] = watch([`streams.${index}.dates.startDate`, `streams.${index}.dates.endDate`])
-
-  useEffect(() => {
-    if (startDate && startDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()) {
-      setError(`streams.${index}.dates.startDate`, {
-        type: 'custom',
-        message: 'Must be at least 5 minutes from now',
-      })
-    } else {
-      clearErrors(`streams.${index}.dates.startDate`)
-    }
-  }, [clearErrors, index, setError, startDate])
-
-  useEffect(() => {
-    if (startDate && endDate && endDate < startDate) {
-      setError(`streams.${index}.dates.endDate`, {
-        type: 'custom',
-        message: 'Must be later than start date',
-      })
-    } else {
-      clearErrors(`streams.${index}.dates.endDate`)
-    }
-  }, [clearErrors, endDate, index, setError, startDate])
+  const { control, watch } = useFormContext<CreateMultipleStreamFormSchemaType>()
+  const [startDate] = watch([`streams.${index}.dates.startDate`])
 
   return (
     <Form.Section
@@ -44,6 +22,7 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
         <Form.Control>
           <Controller
             control={control}
+            rules={{ deps: [`streams.${index}.dates.endDate`] }}
             name={`streams.${index}.dates.startDate`}
             render={({ field: { name, onChange, value, onBlur }, fieldState: { error } }) => {
               return (
@@ -83,8 +62,13 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
         <Form.Control>
           <Controller
             control={control}
+            rules={{ deps: [`streams.${index}.dates.endDate`] }}
             name={`streams.${index}.dates.endDate`}
             render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
+              const minDate = startDate
+                ? new Date(startDate.getTime() + 5 * 60 * 1000)
+                : new Date(Date.now() + 10 * 60 * 1000)
+
               return (
                 <Input.DatePicker
                   name={name}
@@ -109,9 +93,7 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
                   timeFormat="HH:mm"
                   timeIntervals={15}
                   timeCaption="time"
-                  minDate={
-                    startDate ? new Date(startDate.getTime() + 5 * 60 * 1000) : new Date(Date.now() + 10 * 60 * 1000)
-                  }
+                  minDate={new Date(Date.now()) > minDate ? new Date(Date.now() + 10 * 60 * 1000) : minDate}
                   dateFormat="MMM d, yyyy HH:mm"
                   placeholderText="Select date"
                   autoComplete="off"

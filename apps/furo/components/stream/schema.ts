@@ -1,5 +1,49 @@
 import { z } from 'zod'
 import { ZAddress, ZToken } from '../../lib/zod'
+import { RefinementCtx } from 'zod/lib/types'
+
+const dateRangeValidator = (val: { startDate?: Date; endDate?: Date }, ctx: RefinementCtx) => {
+  if (!val.startDate) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Required',
+      path: ['startDate'],
+    })
+  }
+  if (!val.endDate) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Required',
+      path: ['endDate'],
+    })
+  }
+
+  if (val.startDate && val.startDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Must be at least 5 minutes from now',
+      path: ['startDate'],
+    })
+  }
+
+  if (val.endDate && val.endDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Must be at least 5 minutes from now',
+      path: ['endDate'],
+    })
+  }
+
+  if (val.startDate && val.endDate && val.endDate.getTime() < val.startDate.getTime()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Must be later than start date',
+      path: ['endDate'],
+    })
+  }
+
+  return z.NEVER
+}
 
 export const CreateStreamBaseSchema = z.object({
   id: z.string(),
@@ -8,10 +52,10 @@ export const CreateStreamBaseSchema = z.object({
       startDate: z.date(),
       endDate: z.date(),
     })
-    .required(),
+    .superRefine(dateRangeValidator),
   recipient: ZAddress,
   currency: ZToken,
-  amount: z.string().refine((val) => Number(val) > 0, 'Must be at least 0'),
+  amount: z.string().refine((val) => Number(val) > 0, 'Must be greater than 0'),
   fundSource: z.string(),
 })
 
