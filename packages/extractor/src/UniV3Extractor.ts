@@ -39,10 +39,6 @@ interface PoolCacheRecord {
   factory: Address
 }
 
-// TODO: PoolCode update cache with timer
-// TODO: New Tokens tips? (with statistics)
-// TODO: provider usage statistics (if have enough time to process all logs or no) ?
-// TODO: quality checker?
 export class UniV3Extractor {
   factories: FactoryInfo[]
   factoryMap: Map<string, FactoryInfo> = new Map()
