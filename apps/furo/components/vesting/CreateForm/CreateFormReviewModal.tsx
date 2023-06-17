@@ -339,7 +339,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                   </List.KeyValue>
                   <List.KeyValue flex title="Unlock frequency" testdata-id="vesting-review-period-length">
                     <div className="flex items-center gap-2" testdata-id="vesting-review-period-length">
-                      {stepConfig}
+                      {stepConfig ? STEP_CONFIGURATIONS_MAP[stepConfig] : ''}
                     </div>
                   </List.KeyValue>
                 </List.Control>
