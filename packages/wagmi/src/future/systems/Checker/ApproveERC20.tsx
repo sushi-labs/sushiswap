@@ -140,7 +140,7 @@ export const Component: FC<ApproveERC20Props> = ({
                       className="fixed inset-0 bg-black/50 backdrop-blur transform-gpu"
                     />
                   </Transition.Child>
-                  <div className={classNames('right-0 absolute pt-3 -top-[-1] sm:w-[320px]')}>
+                  <div className={classNames('right-0 absolute pt-3 -top-[-1] sm:w-[500px]')}>
                     <div className="p-2 flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white/50 paper dark:bg-slate-800/50">
                       <Popover.Panel>
                         <List.MenuItem
