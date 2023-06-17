@@ -2,7 +2,7 @@ import { isAddress } from '@ethersproject/address'
 import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
 import { FundSource } from '@sushiswap/hooks'
-import { Dots } from '@sushiswap/ui'
+import { Dots, Form } from '@sushiswap/ui'
 import {
   getFuroVestingRouterContractConfig,
   useAccount,
@@ -220,38 +220,59 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
 
   return (
     <>
-      <Checker.Connect type="button" size="xl">
-        <Checker.Network type="button" size="xl" chainId={chainId}>
-          <Checker.Amounts type="button" size="xl" chainId={chainId} amounts={[_totalAmount]}>
-            <Checker.ApproveBentobox
+      <Form.Buttons className="grid grid-cols-3 gap-x-10">
+        <div />
+        <Checker.Connect fullWidth type="button" size="xl" className="col-span-3 md:col-span-2">
+          <Checker.Network fullWidth type="button" size="xl" chainId={chainId} className="col-span-3 md:col-span-2">
+            <Checker.Amounts
+              fullWidth
               type="button"
-              id="create-single-vest-approve-bentobox"
               size="xl"
-              chainId={chainId as BentoBoxV1ChainId}
-              contract={getFuroVestingRouterContractConfig(chainId).address}
-              onSignature={setSignature}
+              chainId={chainId}
+              amounts={[_totalAmount]}
+              className="col-span-3 md:col-span-2"
             >
-              <Checker.ApproveERC20
+              <Checker.ApproveBentobox
                 type="button"
-                contract={bentoBoxV1Address[chainId]}
-                id="create-single-vest-approve-token"
+                fullWidth
+                id="create-single-vest-approve-bentobox"
                 size="xl"
-                amount={_totalAmount}
+                chainId={chainId as BentoBoxV1ChainId}
+                contract={getFuroVestingRouterContractConfig(chainId).address}
+                onSignature={setSignature}
+                className="col-span-3 md:col-span-2"
               >
-                <Checker.Success tag={APPROVE_TAG}>
-                  <Modal.Trigger tag={MODAL_ID}>
-                    {({ open }) => (
-                      <Button type="button" fullWidth size="xl" onClick={open} testdata-id="review-single-vest-button">
-                        {isLoading ? <Dots>Confirm transaction</Dots> : 'Review Vesting'}
-                      </Button>
-                    )}
-                  </Modal.Trigger>
-                </Checker.Success>
-              </Checker.ApproveERC20>
-            </Checker.ApproveBentobox>
-          </Checker.Amounts>
-        </Checker.Network>
-      </Checker.Connect>
+                <Checker.ApproveERC20
+                  type="button"
+                  fullWidth
+                  contract={bentoBoxV1Address[chainId]}
+                  id="create-single-vest-approve-token"
+                  size="xl"
+                  amount={_totalAmount}
+                  className="col-span-3 md:col-span-2"
+                >
+                  <Checker.Success tag={APPROVE_TAG}>
+                    <Modal.Trigger tag={MODAL_ID}>
+                      {({ open }) => (
+                        <Button
+                          type="button"
+                          fullWidth
+                          size="xl"
+                          onClick={open}
+                          testdata-id="review-single-vest-button"
+                          className="col-span-3 md:col-span-2"
+                        >
+                          {isLoading ? <Dots>Confirm transaction</Dots> : 'Review Vesting'}
+                        </Button>
+                      )}
+                    </Modal.Trigger>
+                  </Checker.Success>
+                </Checker.ApproveERC20>
+              </Checker.ApproveBentobox>
+            </Checker.Amounts>
+          </Checker.Network>
+        </Checker.Connect>
+      </Form.Buttons>
       <Modal.Review tag={MODAL_ID} variant="opaque">
         {({ close, confirm }) => (
           <div className="max-w-[504px] mx-auto">
