@@ -2,7 +2,7 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
 import { AppearOnMount, Dots } from '@sushiswap/ui'
-import { getMasterChefContractConfig, useMasterChefWithdraw } from '@sushiswap/wagmi'
+import { useMasterChefWithdraw } from '@sushiswap/wagmi'
 import { FC, useMemo, useState } from 'react'
 
 import { useGraphPool } from '../../lib/hooks'
@@ -78,27 +78,16 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot((
               </Button>
             }
           >
-            <Checker.ApproveERC20
-              size="xl"
+            <Button
+              onClick={() => sendTransaction?.()}
               fullWidth
-              id="unstake-approve-slp"
-              amount={amount}
-              contract={getMasterChefContractConfig(pool.chainId, chefType)?.address}
-              enabled={Boolean(getMasterChefContractConfig(pool.chainId, chefType)?.address)}
+              size="xl"
+              variant="filled"
+              disabled={!approved || isWritePending}
+              testId="unstake-liquidity"
             >
-              <Checker.Success tag={APPROVE_TAG_UNSTAKE}>
-                <Button
-                  onClick={() => sendTransaction?.()}
-                  fullWidth
-                  size="xl"
-                  variant="filled"
-                  disabled={!approved || isWritePending}
-                  testId="unstake-liquidity"
-                >
-                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Unstake Liquidity'}
-                </Button>
-              </Checker.Success>
-            </Checker.ApproveERC20>
+              {isWritePending ? <Dots>Confirm transaction</Dots> : 'Unstake Liquidity'}
+            </Button>
           </Checker.Custom>
         </Checker.Network>
       </Checker.Connect>
