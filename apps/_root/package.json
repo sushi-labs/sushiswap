@@ -52,6 +52,7 @@
     "@sushiswap/wagmi-config": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
+    "@sushiswap/viem-config": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@uniswap/token-lists": "1.0.0-beta.30",
