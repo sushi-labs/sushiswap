@@ -4,7 +4,7 @@ import { gql, request } from 'graphql-request'
 import { z } from 'zod'
 
 import { DATE_FILTERS, GOV_STATUS } from './constants'
-import { endOfPreviousQuarter } from './helpers'
+import { endOfPreviousQuarter, getPercentageDiff } from './helpers'
 
 import type { Address } from 'wagmi'
 async function fetchUrl<T>(urlPath: string, options?: RequestInit) {
@@ -212,6 +212,7 @@ const tokenHoldersQuery = gql`
   query TokenHolders(
     $usersFilter: User_filter
     $usersOrderDirection: OrderDirection
+    $previousMonthBlockNumber: Int
     $previousQuarterBlockNumber: Int
   ) {
     sushi(id: "Sushi") {
@@ -219,6 +220,12 @@ const tokenHoldersQuery = gql`
       totalSupply
     }
     users(first: 10, orderBy: balance, where: $usersFilter, orderDirection: $usersOrderDirection) {
+      balance
+      id
+    }
+    previousMonthUsers: users(first: 10, orderBy: balance, where: $usersFilter, orderDirection: $usersOrderDirection,
+      block: { number: $previousMonthBlockNumber }
+    ) {
       balance
       id
     }
@@ -253,6 +260,7 @@ interface SushiUsersGraph {
 interface TokenHoldersGraph {
   sushi: SushiStatsGraph
   users: SushiUsersGraph[]
+  previousMonthUsers: SushiUsersGraph[]
   topTenUsers: SushiUsersGraph[]
   previousQuarterTopTenUsers: SushiUsersGraph[]
   previousQuarterSushiStats: SushiStatsGraph
@@ -264,14 +272,19 @@ export interface TokenHoldersFilters {
 }
 
 export async function getTokenHolders(filters?: TokenHoldersFilters) {
+  const previousMonthTimestamp = Math.floor((Date.now() - 30 * 86400 * 1000)/1000)
   const previousQuarterTimestamp = Math.floor(endOfPreviousQuarter(Date.now()) / 1000)
-  const previousQuarterBlockNumber = await getBlockNumberFromTimestamp(previousQuarterTimestamp)
+  const [previousMonthBlockNumber,previousQuarterBlockNumber] = await Promise.all([
+    getBlockNumberFromTimestamp(previousMonthTimestamp),
+    getBlockNumberFromTimestamp(previousQuarterTimestamp)
+  ])
 
   const tokenHoldersRes = await request<TokenHoldersGraph>(GRAPH_URL, tokenHoldersQuery, {
     usersOrderDirection: filters?.orderDirection ?? 'desc',
     usersFilter: {
       balance_gt: filters?.balanceFilter ? (BigInt(1e18) * BigInt(+filters.balanceFilter)).toString() : 0,
     },
+    previousMonthBlockNumber,
     previousQuarterBlockNumber,
   })
 
@@ -281,10 +294,23 @@ export async function getTokenHolders(filters?: TokenHoldersFilters) {
     tokenHoldersRes.previousQuarterSushiStats.totalSupply
   )
 
+  const users = tokenHoldersRes.users.map((user) => {
+    const balance = Math.trunc(+user.balance) / 1e18
+    const previousMonthData = tokenHoldersRes.previousMonthUsers.find((u) => u.id === user.id)
+    const previousMonthBalance = previousMonthData ? Math.trunc(+previousMonthData.balance) / 1e18 : 0
+    const balanceChange30days = getPercentageDiff(balance, previousMonthBalance)
+    
+    return {
+      ...user,
+      balance,
+      balanceChange30days
+    }
+  })
+
   const res = {
     userCount: tokenHoldersRes.sushi.holderCount,
     totalSupply: tokenHoldersRes.sushi.totalSupply,
-    users: tokenHoldersRes.users,
+    users,
     tokenConcentration,
     previousQuarter: {
       userCount: tokenHoldersRes.previousQuarterSushiStats.holderCount,

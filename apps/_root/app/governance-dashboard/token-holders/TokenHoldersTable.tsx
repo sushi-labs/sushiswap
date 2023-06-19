@@ -27,6 +27,7 @@ type TokenHolder = {
   quantity: number
   ownership: number
   value: number
+  change30d: number
 }
 
 const columnHelper = createColumnHelper<TokenHolder>()
@@ -100,7 +101,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
         </span>
       ),
       meta: { skeleton: <Skeleton.Text /> },
-      minSize: 100,
+      size: 100,
     }),
     columnHelper.accessor('ownership', {
       header: (h) => <div onClick={() => sortColumn(h.column.getIsSorted())}>Ownership</div>,
@@ -113,7 +114,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
         </span>
       ),
       meta: { skeleton: <Skeleton.Text /> },
-      minSize: 60,
+      size: 60,
     }),
     columnHelper.accessor('value', {
       header: (h) => <div onClick={() => sortColumn(h.column.getIsSorted())}>Value</div>,
@@ -124,7 +125,25 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
           currency: 'USD',
         }),
       meta: { skeleton: <Skeleton.Text /> },
-      minSize: 110,
+      size: 110,
+    }),
+    columnHelper.accessor('change30d', {
+      header: 'Change (30d)',
+      cell: (info) => {
+        const change = info.getValue()
+        const color = change > 0 ? 'text-green-400' : change < 0 ? 'text-red-400' : 'text-gray-50'
+        return (
+          <span className={color}>
+            {change.toLocaleString('EN', {
+              maximumFractionDigits: 2,
+              style: 'percent',
+            })}
+          </span>
+          )
+      },
+      meta: { skeleton: <Skeleton.Text /> },
+      enableSorting: false,
+      size: 60,
     }),
   ])
 
