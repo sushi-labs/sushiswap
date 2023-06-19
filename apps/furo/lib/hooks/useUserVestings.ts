@@ -47,10 +47,12 @@ export const useUserVestings = ({ account }: UseUserVestings) => {
       }[] = []
 
       data.forEach((el) => {
-        ;[...el.data.incomingVestings, ...el.data.outgoingVestings].forEach((vesting) => {
-          const token = toToken(vesting.token, el.chainId)
-          vestings.push({ vesting, chainId: el.chainId, vestingId: vesting.id, token })
-        })
+        ;[...el.data.incomingVestings, ...el.data.outgoingVestings]
+          .filter((el, i, vestings) => i === vestings.findIndex((vesting) => vesting.id === el.id))
+          .forEach((vesting) => {
+            const token = toToken(vesting.token, el.chainId)
+            vestings.push({ vesting, chainId: el.chainId, vestingId: vesting.id, token })
+          })
       })
 
       const rebases = await queryRebasesDTO({
