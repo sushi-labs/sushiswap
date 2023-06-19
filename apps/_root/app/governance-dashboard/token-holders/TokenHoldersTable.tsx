@@ -68,7 +68,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
   const [columns] = useState([
     columnHelper.accessor('rank', {
       header: 'Rank',
-      cell: (info) => <span className="text-slate-300">{info.getValue()}</span>,
+      cell: (info) => <span className="text-slate-600 dark:text-slate-300">{info.getValue()}</span>,
       size: 40,
       enableSorting: false,
       meta: { skeleton: <Skeleton.Text /> },
@@ -94,7 +94,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
     columnHelper.accessor('quantity', {
       header: (h) => <div onClick={() => sortColumn(h.column.getIsSorted())}>Quantity</div>,
       cell: (info) => (
-        <span className="text-slate-300">
+        <span className="text-slate-600 dark:text-slate-300">
           {info.getValue().toLocaleString('EN', {
             maximumFractionDigits: 0,
           })}
@@ -106,7 +106,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
     columnHelper.accessor('ownership', {
       header: (h) => <div onClick={() => sortColumn(h.column.getIsSorted())}>Ownership</div>,
       cell: (info) => (
-        <span className="text-slate-300">
+        <span className="text-slate-600 dark:text-slate-300">
           {info.getValue().toLocaleString('EN', {
             maximumFractionDigits: 2,
             style: 'percent',
@@ -166,7 +166,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
 
   return (
     <div className="space-y-8">
-      <h2 className="pl-1 text-2xl font-bold text-slate-200">All Holders</h2>
+      <h2 className="pl-1 text-2xl font-bold text-slate-900 dark:text-slate-200">All Holders</h2>
       <div className="space-y-6">
         <div className="flex gap-2">
           {BALANCE_FILTER.options.map((filter) => (
@@ -179,7 +179,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
             </FilterButton>
           ))}
         </div>
-        <div className="rounded-lg bg-[#1A2031]">
+        <div className="rounded-lg bg-white dark:bg-[#1A2031]">
           <GenericTable<TokenHolder>
             loading={isPending}
             table={table}
