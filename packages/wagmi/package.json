@@ -71,7 +71,7 @@
     "@sushiswap/route-processor": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
-    "@sushiswap/v2-core": "workspace:*",
+    "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/sushixswap": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident-core": "workspace:*",

@@ -4,7 +4,7 @@ import { getConcentratedLiquidityPositionsFromTokenIds } from './getConcentrated
 import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
 import { ConcentratedLiquidityPosition } from '../types'
 import { BigNumber } from 'ethers'
-import { computePoolAddress, V3ChainId } from '@sushiswap/v3-sdk'
+import { computePoolAddress, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
 
@@ -13,7 +13,7 @@ export const getConcentratedLiquidityPositions = async ({
   chainIds,
 }: {
   account: `0x${string}` | undefined
-  chainIds: V3ChainId[]
+  chainIds: SushiSwapV3ChainId[]
 }) => {
   if (!account) return undefined
 
@@ -58,10 +58,10 @@ export const getConcentratedLiquidityPositions = async ({
     return acc
   }, {} as Record<ChainId, number>)
 
-  const tokenIdsArgs: [V3ChainId, `0x${string}`, number][] = []
+  const tokenIdsArgs: [SushiSwapV3ChainId, `0x${string}`, number][] = []
   Object.entries(accountBalances).forEach(([k, v]) => {
     for (let i = 0; i < v; i++) {
-      tokenIdsArgs.push([+k as V3ChainId, account, i])
+      tokenIdsArgs.push([+k as SushiSwapV3ChainId, account, i])
     }
   })
 

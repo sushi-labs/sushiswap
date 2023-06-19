@@ -16,9 +16,9 @@ import { queryParamsSchema } from '../../../lib/swap/queryParamsSchema'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { useNetwork } from '@sushiswap/wagmi'
 import { SwapChainId } from '../../../types'
-import { isUniswapV2FactoryChainId } from '@sushiswap/v2-core'
+import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
-import { isV3ChainId } from '@sushiswap/v3-sdk'
+import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 
 type State = {
   token0: Type | undefined
@@ -57,8 +57,8 @@ const getChainIdFromUrl = (urlChainId: ChainId | undefined, connectedChainId: Ch
   let chainId: SwapChainId = ChainId.ETHEREUM
   if (urlChainId) {
     if (
-      isV3ChainId(urlChainId) ||
-      isUniswapV2FactoryChainId(urlChainId) ||
+      isSushiSwapV3ChainId(urlChainId) ||
+      isSushiSwapV2ChainId(urlChainId) ||
       isConstantProductPoolFactoryChainId(urlChainId) ||
       isStablePoolFactoryChainId(urlChainId)
     ) {
@@ -66,8 +66,8 @@ const getChainIdFromUrl = (urlChainId: ChainId | undefined, connectedChainId: Ch
     }
   } else if (connectedChainId) {
     if (
-      isV3ChainId(connectedChainId) ||
-      isUniswapV2FactoryChainId(connectedChainId) ||
+      isSushiSwapV3ChainId(connectedChainId) ||
+      isSushiSwapV2ChainId(connectedChainId) ||
       isConstantProductPoolFactoryChainId(connectedChainId) ||
       isStablePoolFactoryChainId(connectedChainId)
     ) {

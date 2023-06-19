@@ -1,9 +1,9 @@
-import { UniswapV2FactoryChainId } from '@sushiswap/v2-core'
+import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { ConstantProductPoolFactoryChainId, StablePoolFactoryChainId } from '@sushiswap/trident-core'
-import { V3ChainId } from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 
 export type SwapChainId =
   | StablePoolFactoryChainId
   | ConstantProductPoolFactoryChainId
-  | UniswapV2FactoryChainId
-  | V3ChainId
+  | SushiSwapV2ChainId
+  | SushiSwapV3ChainId

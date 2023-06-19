@@ -1,10 +1,10 @@
 import { BigNumber } from 'ethers'
-import { Pool, V3ChainId } from '@sushiswap/v3-sdk'
+import { Pool, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 
 export interface ConcentratedLiquidityPosition {
   id: string
   address: string
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
   nonce: BigNumber
   tokenId: BigNumber
   operator: string
@@ -24,7 +24,7 @@ export interface ConcentratedLiquidityPosition {
 export interface ConcentratedLiquidityPositionWithV3Pool {
   id: string
   address: string
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
   nonce: BigNumber
   tokenId: BigNumber
   operator: string

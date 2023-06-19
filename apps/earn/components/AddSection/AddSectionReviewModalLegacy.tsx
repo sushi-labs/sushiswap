@@ -20,7 +20,7 @@ import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { useTransactionDeadline } from '../../lib/hooks'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
-import { UniswapV2Router02ChainId } from '@sushiswap/v2-core'
+import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
@@ -30,7 +30,7 @@ import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 interface AddSectionReviewModalLegacyProps {
   poolState: PairState
-  chainId: UniswapV2Router02ChainId
+  chainId: SushiSwapV2ChainId
   token0: Type | undefined
   token1: Type | undefined
   input0: Amount<Type> | undefined

@@ -5,7 +5,7 @@ import { erc20Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { uniswapV3PoolAbi } from '../../../../abis/uniswapV3PoolAbi'
 import { RToken, UniV3Pool } from '@sushiswap/tines'
-import { V3ChainId, V3_FACTORY_ADDRESS, computePoolAddress, FeeAmount, V3_TICK_LENS } from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId, V3_FACTORY_ADDRESS, computePoolAddress, FeeAmount, V3_TICK_LENS } from '@sushiswap/v3-sdk'
 
 export enum V3PoolState {
   LOADING,
@@ -102,7 +102,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
       ({
         chainId,
         address: computePoolAddress({
-          factoryAddress: V3_FACTORY_ADDRESS[chainId as V3ChainId],
+          factoryAddress: V3_FACTORY_ADDRESS[chainId as SushiSwapV3ChainId],
           tokenA: currencyA.wrapped,
           tokenB: currencyB.wrapped,
           fee,
@@ -188,7 +188,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
     ([, poolData], i) =>
       ({
         chainId,
-        address: V3_TICK_LENS[chainId as V3ChainId] as Address,
+        address: V3_TICK_LENS[chainId as SushiSwapV3ChainId] as Address,
         args: [poolData.address as Address, minIndexes[i]],
         abi: tickLensAbi,
         functionName: 'getPopulatedTicksInWord',
@@ -199,7 +199,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
     ([, poolData], i) =>
       ({
         chainId,
-        address: V3_TICK_LENS[chainId as V3ChainId] as Address,
+        address: V3_TICK_LENS[chainId as SushiSwapV3ChainId] as Address,
         args: [poolData.address as Address, maxIndexes[i]],
         abi: tickLensAbi,
         functionName: 'getPopulatedTicksInWord',

@@ -12,7 +12,7 @@ import {
 } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { isUniswapV2FactoryChainId, uniswapV2FactoryAddress } from '@sushiswap/v2-core'
+import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS } from '@sushiswap/v2-sdk'
 import {
   constantProductPoolFactoryAddress,
   isConstantProductPoolFactoryChainId,
@@ -53,9 +53,9 @@ const getPoolAddress = ({
       twap: false,
     })
 
-  if (poolType === PoolType.V2 && isUniswapV2FactoryChainId(chainId)) {
+  if (poolType === PoolType.V2 && isSushiSwapV2ChainId(chainId)) {
     return computePairAddress({
-      factoryAddress: uniswapV2FactoryAddress[chainId],
+      factoryAddress: SUSHISWAP_V2_FACTORY_ADDRESS[chainId],
       tokenA,
       tokenB,
     })

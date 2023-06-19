@@ -1,5 +1,5 @@
 import { Type } from '@sushiswap/currency'
-import { FeeAmount, TICK_SPACINGS, computePoolAddress, nearestUsableTick, V3ChainId } from '@sushiswap/v3-sdk'
+import { FeeAmount, TICK_SPACINGS, computePoolAddress, nearestUsableTick, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { useMemo } from 'react'
 import { Address, useContractReads } from '@sushiswap/wagmi'
@@ -10,7 +10,7 @@ import { getV3TickLensContractConfig } from '@sushiswap/wagmi/future/hooks/contr
 interface useTicks {
   token0: Type | undefined
   token1: Type | undefined
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
   feeAmount: FeeAmount | undefined
   numSurroundingTicks?: number | undefined
   enabled?: boolean | undefined

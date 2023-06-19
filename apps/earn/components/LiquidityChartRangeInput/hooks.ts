@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react'
 
 import { ChartEntry } from './types'
 import { Type } from '@sushiswap/currency'
-import { FeeAmount, V3ChainId } from '@sushiswap/v3-sdk'
+import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { TickProcessed, useConcentratedActiveLiquidity } from '../../lib/hooks/useConcentratedActiveLiquidity'
 
 export function useDensityChartData({
@@ -11,7 +11,7 @@ export function useDensityChartData({
   token1,
   feeAmount,
 }: {
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
   token0: Type | undefined
   token1: Type | undefined
   feeAmount: FeeAmount | undefined
