@@ -7,6 +7,7 @@ import { Abi, AbiEvent } from 'abitype'
 import { Address, Log, PublicClient } from 'viem'
 import { Filter } from 'viem/dist/types/types/filter'
 
+import { Counter } from './Counter'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { PermanentCache } from './PermanentCache'
 import { TokenManager } from './TokenManager'
@@ -54,7 +55,13 @@ export class UniV3Extractor {
   lastProcessdBlock = -1n
   logProcessingStatus = LogsProcessing.NotStarted
   logging: boolean
+  busyCounter: Counter
 
+  /// @param client
+  /// @param tickHelperContract address of helper contract for pool's ticks download
+  /// @param factories list of supported factories
+  /// @param cacheDir directory for cache. Extremely recomended
+  /// @param logging to write logs in console or not
   constructor(
     client: PublicClient,
     tickHelperContract: Address,
@@ -70,6 +77,9 @@ export class UniV3Extractor {
     factories.forEach((f) => this.factoryMap.set(f.address.toLowerCase(), f))
     this.poolPermanentCache = new PermanentCache(cacheDir, `uniV3Pools-${this.client.chain?.id}`)
     this.logging = logging
+    this.busyCounter = new Counter((count) => {
+      if (count == 0) this.consoleLog(`All pools were updated`)
+    })
   }
 
   // TODO: stop ?
@@ -87,14 +97,21 @@ export class UniV3Extractor {
         onBlockNumber: async (blockNumber) => {
           if (!this.logProcessGuard) {
             this.logProcessGuard = true
-            const promises = this.eventFilters.map((f) => this.client.getFilterChanges({ filter: f }))
-            const logss = await Promise.all(promises)
             let logNames: string[] = []
-            logss.forEach((logs) => {
-              const ln = logs.map((l) => this.processLog(l))
-              logNames = logNames.concat(ln)
-            })
-            this.lastProcessdBlock = blockNumber
+            try {
+              const promises = this.eventFilters.map((f) => this.client.getFilterChanges({ filter: f }))
+              const logss = await Promise.allSettled(promises)
+              logss.forEach((logs) => {
+                if (logs.status == 'fulfilled') {
+                  const ln = logs.value.map((l) => this.processLog(l))
+                  logNames = logNames.concat(ln)
+                }
+              })
+              this.lastProcessdBlock = blockNumber
+            } catch (e) {
+              console.warn(`Block ${blockNumber} log process error: ${e}`)
+            }
+
             this.logProcessGuard = false
             this.consoleLog(`Block ${blockNumber} ${logNames.length} logs: [${logNames}]`)
           } else {
@@ -135,10 +152,15 @@ export class UniV3Extractor {
   }
 
   processLog(l: Log): string {
-    const pool = this.poolMap.get(l.address.toLowerCase() as Address)
-    if (pool) return pool.processLog(l)
-    else this.addPoolByAddress(l.address)
-    return 'UnknPool'
+    try {
+      const pool = this.poolMap.get(l.address.toLowerCase() as Address)
+      if (pool) return pool.processLog(l)
+      else this.addPoolByAddress(l.address)
+      return 'UnknPool'
+    } catch (e) {
+      console.warn(`Log processing for pool ${l.address} throwed an exception ${e}`)
+      return 'Exception!!!'
+    }
   }
 
   async addPoolsForTokens(tokens: Token[]) {
@@ -200,7 +222,8 @@ export class UniV3Extractor {
         p.token0,
         p.token1,
         p.fee,
-        this.multiCallAggregator
+        this.multiCallAggregator,
+        this.busyCounter
       )
       watcher.updatePoolState()
       this.poolMap.set(p.address.toLowerCase() as Address, watcher) // lowercase because incoming events have lowcase addresses ((

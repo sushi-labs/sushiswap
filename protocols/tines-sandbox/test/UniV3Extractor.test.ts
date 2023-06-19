@@ -38,6 +38,11 @@ const uniswapFactory: FactoryInfo = {
   providerName: 'UniswapV3',
 }
 
+export const pancakeswapFactory: FactoryInfo = {
+  address: '0x6e229c972d9f69c15bdc7b07f385d2025225e72b' as Address,
+  providerName: 'PancakeswapV3',
+}
+
 const kyberswapFactory: FactoryInfo = {
   address: '0xC7a590291e07B9fe9E64b86c58fD8fC764308C4A' as Address,
   providerName: 'KyberSwapV3',
