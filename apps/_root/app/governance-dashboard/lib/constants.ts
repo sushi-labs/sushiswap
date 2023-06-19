@@ -2,7 +2,7 @@ export const GOV_STATUS = {
   IMPLEMENTATION: {
     id: 'IMPLEMENTATION',
     title: 'Implementation Vote',
-    color: 'bg-red',
+    color: 'bg-[#CF95FF]',
   },
   PROPOSAL: {
     id: 'PROPOSAL',
