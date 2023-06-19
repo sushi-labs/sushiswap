@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Form } from '@sushiswap/ui'
 import React, { FC, useCallback, useEffect, useState } from 'react'
-import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { ExecuteMultipleSection, ImportZoneSection, ReviewSection } from '.'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { CREATE_STREAM_DEFAULT_VALUES, StreamForm } from '../CreateForm'
@@ -14,6 +13,7 @@ import {
   CreateMultipleStreamFormSchemaType,
   CreateMultipleStreamModelSchema,
 } from '../schema'
+import { Form } from '@sushiswap/ui/future/components/form'
 
 export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
   const [review, setReview] = useState(false)
@@ -49,12 +49,11 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
     }
   }, [formData])
 
-  console.log(CreateMultipleStreamModelSchema.safeParse(formData))
-
   return (
     <>
-      <FormProvider {...methods}>
-        <Form header="Create Streams" onSubmit={methods.handleSubmit(onReview)}>
+      <h3 className="text-3xl font-semibold text-gray-900 dark:text-slate-50 py-6">Create Streams</h3>
+      <Form {...methods}>
+        <form onSubmit={methods.handleSubmit(onReview)}>
           <div className="flex flex-col gap-14">
             <ImportZoneSection chainId={chainId} />
             {!review ? (
@@ -118,8 +117,8 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
               </div>
             )}
           </div>
-        </Form>
-      </FormProvider>
+        </form>
+      </Form>
     </>
   )
 }

@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { Dropzone, Form, NetworkIcon } from '@sushiswap/ui'
+import { Dropzone, NetworkIcon } from '@sushiswap/ui'
 import { Address, fetchToken, FetchTokenResult } from '@sushiswap/wagmi'
 import { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
@@ -13,6 +13,7 @@ import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Button } from '@sushiswap/ui/future/components/button'
 import dynamic from 'next/dynamic'
 import { CreateMultipleStreamFormSchemaType, CreateStreamFormSchemaType } from '../schema'
+import { FormSection } from '@sushiswap/ui/future/components/form'
 
 interface ImportZoneSection {
   chainId: ChainId
@@ -133,7 +134,7 @@ const Component: FC<ImportZoneSection> = ({ chainId }) => {
   }, [])
 
   return (
-    <Form.Section
+    <FormSection
       title="Quick Import"
       description={
         <div className="flex flex-col gap-6">
@@ -165,7 +166,7 @@ const Component: FC<ImportZoneSection> = ({ chainId }) => {
           onDrop={onDrop}
         />
       </div>
-    </Form.Section>
+    </FormSection>
   )
 }
 

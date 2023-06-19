@@ -2523,6 +2523,7 @@ importers:
       '@headlessui/react': 1.7.7
       '@heroicons/react': 2.0.13
       '@popperjs/core': 2.11.7
+      '@radix-ui/react-label': ^2.0.2
       '@radix-ui/react-popover': ^1.0.6
       '@radix-ui/react-select': ^1.2.2
       '@radix-ui/react-slot': ^1.0.2
@@ -2563,6 +2564,7 @@ importers:
       react-day-picker: ^8.7.1
       react-dom: 18.2.0
       react-dropzone: 14.2.2
+      react-hook-form: 7.41.2
       react-jazzicon: 1.0.4
       react-popper: 2.3.0
       react-spring: 9.6.1
@@ -2581,6 +2583,7 @@ importers:
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 2.0.13_react@18.2.0
       '@popperjs/core': 2.11.7
+      '@radix-ui/react-label': 2.0.2_lhsvdmrfrkqkmxtqosqgyd3k4i
       '@radix-ui/react-popover': 1.0.6_lhsvdmrfrkqkmxtqosqgyd3k4i
       '@radix-ui/react-select': 1.2.2_lhsvdmrfrkqkmxtqosqgyd3k4i
       '@radix-ui/react-slot': 1.0.2_s3k22s5ab4eu26xuel7hiaraxy
@@ -2606,6 +2609,7 @@ importers:
       react-datepicker: 4.8.0_biqbaboplfbrettd7655fr4n2y
       react-day-picker: 8.7.1_r6j3756ioqf5pjc2u22wj25rla
       react-dropzone: 14.2.2_react@18.2.0
+      react-hook-form: 7.41.2_react@18.2.0
       react-jazzicon: 1.0.4_biqbaboplfbrettd7655fr4n2y
       react-popper: 2.3.0_d52dtujcogewjimhlbpfze4rs4
       react-spring: 9.6.1_biqbaboplfbrettd7655fr4n2y
@@ -10729,6 +10733,27 @@ packages:
       '@radix-ui/react-use-layout-effect': 1.0.1_s3k22s5ab4eu26xuel7hiaraxy
       '@types/react': 18.2.6
       react: 18.2.0
+    dev: false
+
+  /@radix-ui/react-label/2.0.2_lhsvdmrfrkqkmxtqosqgyd3k4i:
+    resolution: {integrity: sha512-N5ehvlM7qoTLx7nWPodsPYPgMzA5WM8zZChQg8nyFJKnDO5WHdba1vv5/H6IO5LtJMfD2Q3wh1qHFGNtK0w3bQ==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.21.5
+      '@radix-ui/react-primitive': 1.0.3_lhsvdmrfrkqkmxtqosqgyd3k4i
+      '@types/react': 18.2.6
+      '@types/react-dom': 18.2.4
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /@radix-ui/react-popover/1.0.6_lhsvdmrfrkqkmxtqosqgyd3k4i:

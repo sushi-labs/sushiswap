@@ -2,9 +2,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { nanoid } from 'nanoid'
 import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { FundSource } from '@sushiswap/hooks'
-import { Form } from '@sushiswap/ui'
 import { FC, useEffect } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { CreateFormReviewModal } from './CreateFormReviewModal'
 import { VestingForm } from './VestingForm'
 import {
@@ -12,6 +11,7 @@ import {
   CreateMultipleVestingModelSchema,
   CreateVestingFormSchemaType,
 } from '../schema'
+import { Form } from '@sushiswap/ui/future/components/form'
 
 export const CREATE_VEST_DEFAULT_VALUES: CreateVestingFormSchemaType = {
   id: nanoid(),
@@ -43,12 +43,12 @@ export const CreateForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId 
   }, [chainId, reset])
 
   return (
-    <FormProvider {...methods}>
-      <Form header="Create vesting">
+    <>
+      <h3 className="text-3xl font-semibold text-gray-900 dark:text-slate-50 py-6">Create Vest</h3>
+      <Form {...methods}>
         <VestingForm chainId={chainId} index={0} />
         <CreateFormReviewModal chainId={chainId} />
       </Form>
-      {/* {process.env.NODE_ENV === 'development' && isMounted && <DevTool control={control} />} */}
-    </FormProvider>
+    </>
   )
 }
