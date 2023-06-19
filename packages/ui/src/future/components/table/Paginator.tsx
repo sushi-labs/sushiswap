@@ -1,8 +1,8 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { FC } from 'react'
 import { Typography } from '../../../typography'
-import { IconButton } from '../IconButton'
 import classNames from 'classnames'
+import { IconButton } from '../iconbutton'
 
 export interface PaginatorProps {
   hasPrev: boolean
@@ -43,9 +43,10 @@ export const Paginator: FC<PaginatorProps> = ({
         <div className="flex items-center">
           <IconButton
             icon={ChevronLeftIcon}
-            iconProps={{ className: 'text-slate-200', width: 20, height: 20 }}
+            iconProps={{ width: 20, height: 20 }}
             className={classNames(hasPrev ? '' : 'pointer-events-none opacity-40', 'p-1')}
             onClick={onPrev}
+            name="Previous"
           />
         </div>
         {pages ? (
@@ -57,10 +58,11 @@ export const Paginator: FC<PaginatorProps> = ({
         )}
         <div className="flex items-center">
           <IconButton
-            iconProps={{ className: 'text-slate-200', width: 20, height: 20 }}
+            iconProps={{ width: 20, height: 20 }}
             icon={ChevronRightIcon}
             className={classNames(!hasNext || (!pages && nextDisabled) ? 'pointer-events-none opacity-40' : '', 'p-1')}
             onClick={onNext}
+            name="Next"
           />
         </div>
       </div>

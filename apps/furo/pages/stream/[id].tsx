@@ -1,6 +1,5 @@
 import { getFuroStreamContractConfig } from '@sushiswap/wagmi'
 import { useRouter } from 'next/router'
-import dynamic from 'next/dynamic'
 import { NextSeo } from 'next-seo'
 import React, { FC, useMemo } from 'react'
 import { BalancePredictor, CancelModal, FuroTimer, Layout, TransferModal, UpdateModal } from '../../components'
@@ -14,20 +13,19 @@ import { List } from '@sushiswap/ui/future/components/list/List'
 import { format } from 'date-fns'
 import { Button } from '@sushiswap/ui/future/components/button'
 import Link from 'next/link'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
 import { ArrowLeftIcon, ArrowRightIcon, ArrowDownIcon, ArrowUpIcon, RefreshIcon } from '@heroicons/react/solid'
 import { DownloadIcon, XIcon } from '@heroicons/react/outline'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { classNames, NetworkIcon } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Address } from '@sushiswap/wagmi'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText, SkeletonBox, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
+
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
 import { Blink } from '@sushiswap/ui/future/components/Blink'
 import { Percent } from '@sushiswap/math'
 import { queryParamsSchema } from '../../lib/zod'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
-
 
 const Streams = () => {
   const { isReady } = useRouter()
@@ -98,6 +96,7 @@ const _Streams: FC = () => {
                   height: 24,
                   transparent: true,
                 }}
+                name="Back"
               />
               <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
                 Go back to dashboard
@@ -105,24 +104,24 @@ const _Streams: FC = () => {
             </Link>
             <div className="flex gap-6 h-[52px]">
               <div className="inline-flex">
-                <Skeleton.Circle radius={48} />
+                <SkeletonCircle radius={48} />
               </div>
               <div className="flex flex-col flex-grow">
-                <Skeleton.Text fontSize="text-xl" className="w-[120px]" />
-                <Skeleton.Text fontSize="text-base" className="w-[240px]" />
+                <SkeletonText fontSize="xl" className="w-[120px]" />
+                <SkeletonText className="w-[240px]" />
               </div>
             </div>
             <div>
               <div className="flex gap-2 mt-3">
-                <Skeleton.Box className="w-[132px] h-[38px]" />
-                <Skeleton.Box className="w-[122px] h-[38px]" />
+                <SkeletonBox className="w-[132px] h-[38px]" />
+                <SkeletonBox className="w-[122px] h-[38px]" />
               </div>
             </div>
           </div>
           <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
           <div className="flex flex-col md:grid md:grid-cols-[460px_372px] justify-center gap-8 md:gap-y-6">
             <div className="flex justify-center">
-              <Skeleton.Box className="w-[460px] h-[290px]" />
+              <SkeletonBox className="w-[460px] h-[290px]" />
             </div>
             <div className="min-w-fit">
               <div className="flex flex-col justify-center flex-grow gap-5">
@@ -177,6 +176,7 @@ const _Streams: FC = () => {
                   height: 24,
                   transparent: true,
                 }}
+                name="Back"
               />
               <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
                 Go back to dashboard

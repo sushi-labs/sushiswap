@@ -31,7 +31,7 @@ import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from 
 import { ContentBlock } from '../../../../components/AddPage/ContentBlock'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import Link from 'next/link'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Signature } from '@ethersproject/bytes'
@@ -94,6 +94,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
                 height: 24,
                 transparent: true,
               }}
+              name="Back"
             />
             <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
               Go back to pools list

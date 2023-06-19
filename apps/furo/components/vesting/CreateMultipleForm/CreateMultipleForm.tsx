@@ -5,7 +5,7 @@ import { CREATE_VEST_DEFAULT_VALUES } from '../CreateForm'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { nanoid } from 'nanoid'
 import { ImportZoneSection } from './ImportZoneSection'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
 import { DuplicateIcon, PlusIcon, TrashIcon } from '@heroicons/react/solid'
 import { VestingForm } from '../CreateForm/VestingForm'
 import { Button } from '@sushiswap/ui/future/components/button'
@@ -85,6 +85,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
                             icon={DuplicateIcon}
                             iconProps={{ width: 16, height: 16 }}
                             onClick={() => append(el)}
+                            name="Duplicate"
                           />
                         </div>
                         {(i > 0 || (formData.vestings || []).length > 1) && (
@@ -93,6 +94,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
                               icon={TrashIcon}
                               iconProps={{ width: 16, height: 16, className: 'text-red' }}
                               onClick={() => remove(i)}
+                              name="Remove"
                             />
                           </div>
                         )}

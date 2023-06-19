@@ -11,7 +11,8 @@ import {
   useTokenRevokeApproval,
   useTokenWithCache,
 } from '@sushiswap/wagmi/future/hooks'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
+
 import { Amount } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { Button } from '@sushiswap/ui/future/components/button'
@@ -59,8 +60,8 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
         <span className="text-sm font-medium text-gray-600 dark:text-white">
           {isLoading ? (
             <div className="flex gap-3 items-center">
-              <Skeleton.Circle radius={24} />
-              <Skeleton.Text fontSize="text-sm" className="max-w-[100px]" />
+              <SkeletonCircle radius={24} />
+              <SkeletonText fontSize="sm" className="max-w-[100px]" />
             </div>
           ) : token ? (
             <div className="flex gap-3 items-center">
@@ -80,7 +81,7 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
       <div className="flex justify-end">
         <span className="w-full text-right flex justify-end text-sm font-semibold text-gray-900 dark:text-white">
           {isLoading ? (
-            <Skeleton.Text className="max-w-[75px]" align="right" />
+            <SkeletonText className="max-w-[75px]" align="right" />
           ) : token ? (
             <>
               {amount?.toSignificant(6)} {token.symbol}
@@ -91,7 +92,7 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
         </span>
       </div>
       {!allowance || isLoading ? (
-        <Skeleton.Text className="max-w-[100px]" align="right" />
+        <SkeletonText className="max-w-[100px]" align="right" />
       ) : (
         <div className="flex justify-end">
           {!isClaimed ? (

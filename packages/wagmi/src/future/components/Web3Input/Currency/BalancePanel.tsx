@@ -1,12 +1,12 @@
 import { Amount, Native, Type } from '@sushiswap/currency'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+
 import { FC, memo, useCallback } from 'react'
 
 import { CurrencyInputProps } from './CurrencyInput'
 import { JSBI } from '@sushiswap/math'
 import { WalletIcon } from '@sushiswap/ui/future/components/icons'
 import { classNames } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/future/components/button'
 
 type BalancePanel = Pick<CurrencyInputProps, 'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'loading'> & {
   id?: string
@@ -41,7 +41,7 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
   if (loading) {
     return (
       <div className="w-[60px] flex items-center">
-        <Skeleton.Text fontSize="text-lg" className="w-full" />
+        <SkeletonText fontSize="lg" className="w-full" />
       </div>
     )
   }

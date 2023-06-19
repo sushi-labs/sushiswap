@@ -3,7 +3,8 @@ import React, { useMemo, useState } from 'react'
 import { useSwapState } from '../trade/TradeProvider'
 import { usePrice } from '@sushiswap/react-query'
 import { Amount, Price, Token, tryParseAmount } from '@sushiswap/currency'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+
 import { ZERO } from '@sushiswap/math'
 
 export const WidgetTitleV2 = () => {
@@ -49,7 +50,7 @@ export const WidgetTitleV2 = () => {
         Trade
       </h1>
       {tokensLoading || isPrice0Loading || isPrice1Loading || !token0 || !token1 ? (
-        <Skeleton.Text fontSize="text-sm" className="w-2/4" />
+        <SkeletonText fontSize="sm" className="w-2/4" />
       ) : (
         <button
           onClick={() => setInvert((invert) => !invert)}

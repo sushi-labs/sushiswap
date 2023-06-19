@@ -4,7 +4,8 @@ import { Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Input } from '@sushiswap/ui/future/components/input'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonBox } from '@sushiswap/ui/future/components/skeleton'
+
 import { FC, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -98,7 +99,7 @@ export const Component: FC<CurrencyInputProps> = ({
       <div className="relative flex items-center gap-4">
         {isLoading ? (
           <div className="flex gap-1 items-center justify-between flex-grow h-[44px]">
-            <Skeleton.Box className="w-1/2 h-[32px] rounded-lg" />
+            <SkeletonBox className="w-1/2 h-[32px] rounded-lg" />
           </div>
         ) : (
           <Input.Numeric

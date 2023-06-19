@@ -7,7 +7,7 @@ import { CREATE_STREAM_DEFAULT_VALUES, StreamForm } from '../CreateForm'
 import Button from '@sushiswap/ui/future/components/button/Button'
 import { DuplicateIcon, PlusIcon, TrashIcon } from '@heroicons/react/solid'
 import { nanoid } from 'nanoid'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
 import {
   CreateMultipleStreamBaseSchemaFormErrorsType,
   CreateMultipleStreamFormSchemaType,
@@ -71,6 +71,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
                             icon={DuplicateIcon}
                             iconProps={{ width: 16, height: 16 }}
                             onClick={() => append(el)}
+                            name="Duplicate"
                           />
                         </div>
                         {(i > 0 || (formData.streams || []).length > 1) && (
@@ -79,6 +80,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
                               icon={TrashIcon}
                               iconProps={{ width: 16, height: 16, className: 'text-red' }}
                               onClick={() => remove(i)}
+                              name="Delete"
                             />
                           </div>
                         )}

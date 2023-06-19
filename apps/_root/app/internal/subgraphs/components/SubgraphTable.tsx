@@ -7,8 +7,8 @@ import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { CheckIcon, NetworkIcon } from '@sushiswap/ui'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { Subgraph } from '../lib'
-import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
+import { TooltipContent, TooltipProvider, TooltipTrigger, Tooltip } from '@sushiswap/ui/future/components/tooltip'
 
 interface SubgraphTable {
   subgraphs: Subgraph[]
@@ -41,13 +41,27 @@ const columns = [
     cell: (info) => (
       <div className="flex justify-center">
         {info.getValue() === 'Current' ? (
-          <Tooltip description="Synced">
-            <CheckIcon width={24} height={24} />
-          </Tooltip>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <CheckIcon width={24} height={24} />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Synced</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         ) : (
-          <Tooltip description="Syncing">
-            <RefreshIcon width={24} height={24} />
-          </Tooltip>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <RefreshIcon width={24} height={24} />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Syncing</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         )}
       </div>
     ),

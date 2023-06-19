@@ -19,7 +19,7 @@ import ReactDOM from 'react-dom'
 
 import { ButtonComponent } from '../button'
 import { XMarkIcon } from '@heroicons/react/20/solid'
-import { IconButton } from '../IconButton'
+import { IconButton } from '../iconbutton'
 
 interface DrawerContext {
   open: boolean
@@ -107,7 +107,12 @@ export const Panel: FC<PanelProps> = ({ children, className }) => {
         >
           <div className="relative">
             <div className="absolute right-2 top-2">
-              <IconButton icon={XMarkIcon} iconProps={{ width: 26, height: 26 }} onClick={() => setOpen(false)} />
+              <IconButton
+                name="Close"
+                icon={XMarkIcon}
+                iconProps={{ width: 26, height: 26 }}
+                onClick={() => setOpen(false)}
+              />
             </div>
             {children}
           </div>

@@ -2,7 +2,8 @@ import { ChainId } from '@sushiswap/chain'
 import stringify from 'fast-json-stable-stringify'
 import { FC, useMemo } from 'react'
 import useSWR from 'swr'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText, SkeletonBox } from '@sushiswap/ui/future/components/skeleton'
+
 import { TVLChart } from './TVLChart2'
 import { VolumeChart } from './VolumeChart2'
 import { useFilters } from 'components/Filters'
@@ -39,14 +40,14 @@ export const ChartSection: FC = () => {
           {isLoading ? (
             <div className="flex flex-col h-full gap-3">
               <div className="flex justify-between flex-grow w-full">
-                <Skeleton.Text fontSize="text-sm" className="w-10" />
-                <Skeleton.Text fontSize="text-sm" className="w-[130px]" align="right" />
+                <SkeletonText fontSize="sm" className="w-10" />
+                <SkeletonText fontSize="sm" className="w-[130px]" align="right" />
               </div>
               <div className="flex flex-col">
-                <Skeleton.Text fontSize="text-xl" className="w-[120px]" />
-                <Skeleton.Text fontSize="text-sm" className="w-[160px]" />
+                <SkeletonText fontSize="xl" className="w-[120px]" />
+                <SkeletonText fontSize="sm" className="w-[160px]" />
               </div>
-              <Skeleton.Box className="w-full h-[328px]" />
+              <SkeletonBox className="w-full h-[328px]" />
             </div>
           ) : (
             <TVLChart x={data?.[0]?.[0]} y={data?.[0]?.[1]} />
@@ -56,14 +57,14 @@ export const ChartSection: FC = () => {
           {isLoading ? (
             <div className="flex flex-col h-full gap-3">
               <div className="flex justify-between flex-grow w-full">
-                <Skeleton.Text fontSize="text-sm" className="w-10" />
-                <Skeleton.Text fontSize="text-sm" className="w-[130px]" align="right" />
+                <SkeletonText fontSize="sm" className="w-10" />
+                <SkeletonText fontSize="sm" className="w-[130px]" align="right" />
               </div>
               <div className="flex flex-col">
-                <Skeleton.Text fontSize="text-xl" className="w-[120px]" />
-                <Skeleton.Text fontSize="text-sm" className="w-[160px]" />
+                <SkeletonText fontSize="xl" className="w-[120px]" />
+                <SkeletonText fontSize="sm" className="w-[160px]" />
               </div>
-              <Skeleton.Box className="w-full h-[328px]" />
+              <SkeletonBox className="w-full h-[328px]" />
             </div>
           ) : (
             <VolumeChart x={data?.[1]?.[0]} y={data?.[1]?.[1]} />

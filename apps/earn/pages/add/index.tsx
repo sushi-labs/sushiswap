@@ -18,10 +18,10 @@ import { useConcentratedLiquidityPool, useConcentratedPositionInfo } from '@sush
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 import { tryParseAmount } from '@sushiswap/currency'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
 import { computePoolAddress } from '@sushiswap/v3-sdk'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3FactoryContract'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
@@ -42,6 +42,7 @@ export function AddPage() {
                       height: 24,
                       transparent: true,
                     }}
+                    name="Back"
                   />
                   <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
                     Go back to pools list
@@ -153,8 +154,8 @@ const _Add: FC = () => {
                 </>
               ) : tokensLoading ? (
                 <>
-                  <Skeleton.Text fontSize="text-xl" className="w-full" />
-                  <Skeleton.Text fontSize="text-base" className="w-full" />
+                  <SkeletonText fontSize="xl" className="w-full" />
+                  <SkeletonText className="w-full" />
                 </>
               ) : (
                 <></>
@@ -180,7 +181,7 @@ const _Add: FC = () => {
             {!isInitialLoading && !pool ? (
               <span className="">N/A</span>
             ) : isInitialLoading ? (
-              <Skeleton.Text className="w-[120px]" />
+              <SkeletonText className="w-[120px]" />
             ) : token0 && token1 && pool ? (
               <div
                 onClick={() => setInvert((prev) => !prev)}

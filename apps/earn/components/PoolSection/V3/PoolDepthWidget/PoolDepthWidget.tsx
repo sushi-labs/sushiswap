@@ -7,7 +7,8 @@ import { FeeAmount, V3ChainId } from '@sushiswap/v3-sdk'
 import { Chart } from 'components/LiquidityChartRangeInput/Chart'
 import { useDensityChartData } from 'components/LiquidityChartRangeInput/hooks'
 import { ZoomLevels } from 'components/LiquidityChartRangeInput/types'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonBox } from '@sushiswap/ui/future/components/skeleton'
+
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
@@ -71,7 +72,7 @@ export const PoolDepthWidget: FC<PoolDepthWidget> = ({ id = 'PoolDepthWidget', a
     <AutoSizer>
       {({ height, width }) => (
         <div style={{ width, height }}>
-          {isLoading && <Skeleton.Box className="w-full h-full" />}
+          {isLoading && <SkeletonBox className="w-full h-full" />}
 
           {isMounted && !noLiquidity && !isLoading && formattedData && price && (
             <Chart

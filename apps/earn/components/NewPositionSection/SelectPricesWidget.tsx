@@ -17,7 +17,8 @@ import { useAccount } from '@sushiswap/wagmi'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { useIsMounted } from '@sushiswap/hooks'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+
 import { useConcentratedLiquidityPositionsFromTokenId } from '@sushiswap/wagmi/future/hooks'
 import { FeeAmount, V3ChainId } from '@sushiswap/v3-sdk'
 
@@ -145,7 +146,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
           <div className="flex items-center justify-between gap-2">
             <div className="flex justify-end lg:hidden">
               {isLoading || !pool || !token0 || !token1 ? (
-                <Skeleton.Text fontSize="text-xs" />
+                <SkeletonText fontSize="xs" />
               ) : (
                 <div
                   onClick={() => setInvert((prev) => !prev)}

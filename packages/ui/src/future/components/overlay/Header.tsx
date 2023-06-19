@@ -1,10 +1,9 @@
-import { ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/react/24/solid'
+import { XMarkIcon } from '@heroicons/react/24/solid'
 import classNames from 'classnames'
 import React, { FC } from 'react'
 
-import { Button } from '../button'
-import { IconButton } from '../IconButton'
 import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon } from '@heroicons/react/20/solid'
+import { IconButton } from '../iconbutton'
 
 export interface Header {
   title: string
@@ -31,10 +30,10 @@ export const Header: FC<Header> = ({ className, title, onBack, onClose, arrowDir
           iconProps={{
             width: 24,
             height: 24,
-            className: 'hover:text-slate-50 dark:text-slate-100 text-gray-400 hover:text-gray-900',
           }}
           className="flex items-center justify-center w-6 h-6 gap-2 cursor-pointer"
           onClick={onBack}
+          name="Back"
         />
       )}
       <h3
@@ -50,10 +49,10 @@ export const Header: FC<Header> = ({ className, title, onBack, onClose, arrowDir
           iconProps={{
             width: 24,
             height: 24,
-            className: 'hover:text-slate-50 dark:text-slate-100 text-gray-400 hover:text-gray-900',
           }}
           className="cursor-pointer"
           onClick={onClose}
+          name="close"
         />
       )}
     </div>

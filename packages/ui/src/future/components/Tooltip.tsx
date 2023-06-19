@@ -1,59 +1,31 @@
-import classNames from 'classnames'
-import React, { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
-import ReactDOM from 'react-dom'
-import { usePopper } from 'react-popper'
+'use client'
 
-interface TooltipProps {
-  children: ReactNode
-  description: string
-  transitionDelay?: number
-  className?: string
-}
+import * as React from 'react'
+import * as TooltipPrimitive from '@radix-ui/react-tooltip'
+import { classNames } from '../../index'
 
-export const Tooltip: FC<TooltipProps> = ({ children, description, transitionDelay = 0, className }) => {
-  const [open, setOpen] = useState(false)
-  const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null)
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null)
-  const timeout = useRef<ReturnType<typeof setTimeout>>()
+const TooltipProvider = TooltipPrimitive.Provider
 
-  const { styles, attributes, update } = usePopper(referenceElement, popperElement, {
-    placement: 'bottom',
-    modifiers: [{ name: 'offset', options: { offset: [0, 8] } }],
-  })
+const Tooltip = TooltipPrimitive.Root
 
-  useEffect(() => {
-    if (open && update) {
-      void update()
-    }
-  }, [open, update])
+const TooltipTrigger = TooltipPrimitive.Trigger
 
-  const onMouseEnter = useCallback(() => {
-    timeout.current = setTimeout(() => setOpen(true), transitionDelay)
-  }, [transitionDelay])
-
-  const onMouseLeave = useCallback(() => {
-    clearTimeout(timeout.current)
-    setOpen(false)
-  }, [])
-
-  return (
-    <>
-      <div ref={setReferenceElement} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} className="relative z-10">
-        {children}
-      </div>
-      {ReactDOM.createPortal(
-        <div
-          ref={setPopperElement}
-          style={styles.popper}
-          {...attributes.popper}
-          className={classNames('', open ? '' : 'hidden', className)}
-        >
-          <span className="bg-gray-600 font-medium text-white px-2 py-1 rounded-xl whitespace-nowrap text-xs leading-normal">
-            {description}
-          </span>
-        </div>,
-        document.body
+const TooltipContent = React.forwardRef<
+  React.ElementRef<typeof TooltipPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
+>(({ className, sideOffset = 4, ...props }, ref) => (
+  <TooltipPrimitive.Portal>
+    <TooltipPrimitive.Content
+      ref={ref}
+      sideOffset={sideOffset}
+      className={classNames(
+        'text-gray-900 font-medium dark:text-slate-400 z-[1080] overflow-hidden rounded-xl paper bg-white/50 dark:bg-slate-950 px-3 py-1.5 text-xs shadow-md animate-in fade-in-50 data-[side=bottom]:slide-in-from-top-1 data-[side=left]:slide-in-from-right-1 data-[side=right]:slide-in-from-left-1 data-[side=top]:slide-in-from-bottom-1',
+        className
       )}
-    </>
-  )
-}
+      {...props}
+    />
+  </TooltipPrimitive.Portal>
+))
+TooltipContent.displayName = TooltipPrimitive.Content.displayName
+
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }

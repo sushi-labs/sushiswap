@@ -10,7 +10,7 @@ import chains, { ChainId } from '@sushiswap/chain'
 import { Amount, Native } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { ClipboardController } from '@sushiswap/ui/future/components/ClipboardController'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
 import { JazzIcon } from '@sushiswap/ui/future/components/icons/JazzIcon'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
@@ -50,29 +50,14 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
   return (
     <>
       <div className="flex flex-col gap-8 p-4">
-        <div className="flex justify-between gap-3">
-          <div className="text-sm font-semibold flex items-center gap-1.5 text-gray-700 dark:text-slate-200">
-            {avatar ? (
-              <div className="w-4 h-4">
-                <img alt="ens-avatar" src={avatar} width={16} height={16} className="rounded-full" />
-              </div>
-            ) : (
-              <JazzIcon diameter={16} address={address} />
-            )}
-            <ClipboardController>
-              {({ setCopied }) => (
-                <span className="cursor-pointer" onClick={() => setCopied(address)}>
-                  {shortenAddress(address)}
-                </span>
-              )}
-            </ClipboardController>
-          </div>
-          <div className="flex gap-5">
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-3">
             <IconButton
               icon={Cog6ToothIcon}
               iconProps={{ width: 18, height: 18 }}
               onClick={() => setView(ProfileView.Settings)}
               description="Settings"
+              name="Settings"
             />
             <ClipboardController hideTooltip>
               {({ setCopied, isCopied }) => (
@@ -81,22 +66,25 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
                   iconProps={{ width: 18, height: 18 }}
                   onClick={() => setCopied(address)}
                   description={isCopied ? 'Copied!' : 'Copy Address'}
+                  name="Copy"
                 />
               )}
             </ClipboardController>
-            <IconButton
-              icon={LinkIcon}
-              iconProps={{ width: 18, height: 18 }}
-              as="a"
-              target="_blank"
-              href={chains[chainId].getAccountUrl(address)}
-              description="View on Explorer"
-            />
+            <a target="_blank" href={chains[chainId].getAccountUrl(address)}>
+              <IconButton
+                  icon={LinkIcon}
+                  iconProps={{ width: 18, height: 18 }}
+                  description="View on Explorer"
+                  name="View on Explorer"
+              />
+            </a>
+
             <IconButton
               icon={ArrowLeftOnRectangleIcon}
               iconProps={{ width: 18, height: 18 }}
               onClick={() => disconnect()}
               description="Disconnect"
+              name="Disconnect"
             />
           </div>
         </div>

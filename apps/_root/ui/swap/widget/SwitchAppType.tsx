@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
-import NonSSRWrapper from '../NonSSRWrapper'
+import { TooltipContent, TooltipProvider, TooltipTrigger, Tooltip } from '@sushiswap/ui/future/components/tooltip'
 
 export const SwitchAppType: FC = () => {
   return (
@@ -9,13 +8,18 @@ export const SwitchAppType: FC = () => {
       <Button size="sm" variant="outlined" color="default">
         Swap
       </Button>
-      <NonSSRWrapper>
-        <Tooltip description="Coming soon!">
-          <Button className="pointer-events-none opacity-40" size="sm" variant="empty" color="default">
-            Limit
-          </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger className="cursor-default">
+            <Button className="pointer-events-none opacity-40" size="sm" variant="empty" color="default">
+              Limit
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Coming soon!</p>
+          </TooltipContent>
         </Tooltip>
-      </NonSSRWrapper>
+      </TooltipProvider>
     </div>
   )
 }

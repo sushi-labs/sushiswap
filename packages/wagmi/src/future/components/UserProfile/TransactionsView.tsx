@@ -6,7 +6,7 @@ import React, { Dispatch, FC, SetStateAction } from 'react'
 import { ProfileView } from './index'
 import { NotificationGroup } from './NotificationGroup'
 import { useClearNotifications, useNotifications } from '@sushiswap/dexie'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
 
 interface TransactionsProps {
   address: `0x${string}`
@@ -29,6 +29,7 @@ export const TransactionsView: FC<TransactionsProps> = ({ setView, address }) =>
             height: 20,
             transparent: true,
           }}
+          name="Back"
         />
         <Button onClick={() => clearNotifications()} variant="empty" size="sm" className="!px-2">
           Clear all

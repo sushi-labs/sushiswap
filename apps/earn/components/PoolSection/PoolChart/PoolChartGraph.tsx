@@ -11,7 +11,8 @@ import { useTheme } from 'next-themes'
 import { PoolChartPeriod, PoolChartType } from './types'
 import { chartPeriods } from './constants'
 import { ChainId } from '@sushiswap/chain'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonBox } from '@sushiswap/ui/future/components/skeleton'
+
 import resolveConfig from 'tailwindcss/resolveConfig'
 
 interface PoolChartProps {
@@ -201,7 +202,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
         )}
       </div>
       {isLoading ? (
-        <Skeleton.Box className={classNames('h-[400px] w-full dark:via-slate-800 dark:to-slate-900')} />
+        <SkeletonBox className={classNames('h-[400px] w-full dark:via-slate-800 dark:to-slate-900')} />
       ) : (
         <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} />
       )}

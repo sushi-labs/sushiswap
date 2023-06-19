@@ -1,6 +1,15 @@
 import { FC } from 'react'
-import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
+import { TooltipContent, TooltipProvider, TooltipTrigger, Tooltip } from '@sushiswap/ui/future/components/tooltip'
 
 export const FarmRewardsAvailableTooltip: FC = () => {
-  return <Tooltip description="Farm rewards available">✨</Tooltip>
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>✨</TooltipTrigger>
+        <TooltipContent>
+          <p>Farm rewards available</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  )
 }

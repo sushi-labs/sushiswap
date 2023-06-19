@@ -3,7 +3,7 @@ import { List } from '@sushiswap/ui/future/components/list/List'
 import React, { Dispatch, FC, Fragment, SetStateAction } from 'react'
 
 import { ProfileView } from './index'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
 import { RadioGroup } from '@headlessui/react'
 import { classNames } from '@sushiswap/ui'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
@@ -36,8 +36,8 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
               strokeWidth: 4,
               width: 20,
               height: 20,
-              transparent: true,
             }}
+            name="Back"
           />
         </div>
         <span className="font-medium text-center">Settings</span>

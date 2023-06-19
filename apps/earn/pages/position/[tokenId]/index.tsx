@@ -13,7 +13,7 @@ import {
 } from '@sushiswap/wagmi/future/hooks'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { Currency } from '@sushiswap/ui/future/components/currency'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 import { classNames } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Amount } from '@sushiswap/currency'
@@ -33,7 +33,7 @@ import { ConcentratedLiquidityCollectButton } from '../../../components/Concentr
 import { Bound } from '../../../lib/constants'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
 import { CogIcon } from '@heroicons/react/outline'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
 import { PoolHeader } from '../../../components/future/PoolHeader'
 import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 import useIsTickAtLimit from '../../../lib/hooks/useIsTickAtLimit'
@@ -170,6 +170,7 @@ const Position: FC = () => {
               height: 24,
               transparent: true,
             }}
+            name="Back"
           />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">Go back to pool</span>
         </Link>
@@ -463,7 +464,7 @@ const Position: FC = () => {
                     </b>
                   </span>
                 ) : (
-                  <Skeleton.Text fontSize="text-sm" />
+                  <SkeletonText fontSize="sm" />
                 )}
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -482,7 +483,7 @@ const Position: FC = () => {
                         {unwrapToken(currencyQuote)?.symbol}
                       </span>
                     ) : (
-                      <Skeleton.Text />
+                      <SkeletonText />
                     )}
                   </div>
                   {currencyBase && (
@@ -506,7 +507,7 @@ const Position: FC = () => {
                         {unwrapToken(currencyQuote).symbol}
                       </span>
                     ) : (
-                      <Skeleton.Text />
+                      <SkeletonText />
                     )}
                   </div>
                   {currencyQuote && (

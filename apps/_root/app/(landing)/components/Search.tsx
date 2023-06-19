@@ -7,7 +7,8 @@ import type { TokenList } from '@uniswap/token-lists'
 import { isAddress } from 'ethers/lib/utils'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery, useToken } from '@sushiswap/wagmi'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
+
 import { SUPPORTED_CHAIN_IDS } from '../../../config'
 
 const EXAMPLE_CURRENCIES = [
@@ -79,11 +80,11 @@ export const Search: FC = () => {
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700">
           <div className="w-[36px] h-[36px]">
-            <Skeleton.Circle radius={36} />
+            <SkeletonCircle radius={36} />
           </div>
           <div className="flex flex-col gap-1 w-full">
-            <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
-            <Skeleton.Text fontSize="text-xs" className="w-[60px]" />
+            <SkeletonText fontSize="sm" className="w-[120px]" />
+            <SkeletonText fontSize="xs" className="w-[60px]" />
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React, { ReactNode } from 'react'
 import { PolymorphicComponentProps } from '../../../types'
-import { Skeleton } from '../skeleton'
+import { SkeletonText, SkeletonCircle } from '../skeleton'
 
 interface Props {
   title: ReactNode
@@ -47,10 +47,10 @@ export const ListItem: ListItemComponent = ({
     >
       {loading ? (
         <>
-          {Icon && <Skeleton.Circle radius={iconProps?.width ?? 18} />}
+          {Icon && <SkeletonCircle radius={iconProps?.width ?? 18} />}
           <div className="flex flex-col gap-0.5 items-start w-full">
-            <Skeleton.Text fontSize="text-sm" />
-            {subtitle && <Skeleton.Text fontSize="text-xs" />}
+            <SkeletonText fontSize="sm" />
+            {subtitle && <SkeletonText fontSize="xs" />}
           </div>
         </>
       ) : (

@@ -13,7 +13,8 @@ import { useTrade } from '../../../lib/swap/useTrade'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import { Dots } from '@sushiswap/ui/future/components/Dots'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText, SkeletonCircle, SkeletonBox } from '@sushiswap/ui/future/components/skeleton'
+
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
@@ -49,7 +50,7 @@ export const TradeReviewDialogSameChain: FC = () => {
         <div className="flex items-start justify-between gap-4 py-2">
           <div className="flex flex-col flex-grow gap-1">
             {isFetching ? (
-              <Skeleton.Text fontSize="text-3xl" className="w-2/3" />
+              <SkeletonText fontSize="3xl" className="w-2/3" />
             ) : (
               <h1 className="text-3xl font-semibold dark:text-slate-50">
                 Buy {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
@@ -77,7 +78,7 @@ export const TradeReviewDialogSameChain: FC = () => {
                 {token1 ? (
                   <Currency.Icon currency={token1} width={56} height={56} />
                 ) : (
-                  <Skeleton.Circle radius={56} className="bg-gray-100 dark:bg-slate-800" />
+                  <SkeletonCircle radius={56} className="bg-gray-100 dark:bg-slate-800" />
                 )}
               </Badge>
             </div>
@@ -106,7 +107,7 @@ export const TradeReviewDialogSameChain: FC = () => {
                     )}
                   >
                     {isFetching ? (
-                      <Skeleton.Box className="h-4 py-0.5 w-[60px] rounded-md" />
+                      <SkeletonBox className="h-4 py-0.5 w-[60px] rounded-md" />
                     ) : (
                       `${
                         trade?.priceImpact?.lessThan(ZERO) ? '+' : trade?.priceImpact?.greaterThan(ZERO) ? '-' : ''
@@ -121,7 +122,7 @@ export const TradeReviewDialogSameChain: FC = () => {
                   subtitle="The minimum amount you are guaranteed to receive."
                 >
                   {isFetching ? (
-                    <Skeleton.Text align="right" fontSize="text-sm" className="w-1/2" />
+                    <SkeletonText align="right" fontSize="sm" className="w-1/2" />
                   ) : (
                     `${trade?.minAmountOut?.toSignificant(6)} ${token1?.symbol}`
                   )}
@@ -129,7 +130,7 @@ export const TradeReviewDialogSameChain: FC = () => {
               )}
               <List.KeyValue title="Network fee">
                 {isFetching ? (
-                  <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" />
+                  <SkeletonText align="right" fontSize="sm" className="w-1/3" />
                 ) : (
                   `~$${trade?.gasSpent ?? '0.00'}`
                 )}
@@ -137,7 +138,7 @@ export const TradeReviewDialogSameChain: FC = () => {
               {isSwap && (
                 <List.KeyValue title="Route">
                   {isFetching ? (
-                    <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" />
+                    <SkeletonText align="right" fontSize="sm" className="w-1/3" />
                   ) : (
                     <button type="button" onClick={() => setOpen(true)} className="text-sm font-semibold text-blue">
                       View

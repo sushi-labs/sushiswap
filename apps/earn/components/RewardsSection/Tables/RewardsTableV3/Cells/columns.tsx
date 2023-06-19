@@ -1,5 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
+
 import React from 'react'
 import { RewardsV3NameCell } from './RewardsV3NameCell'
 import { AngleRewardsPool } from '@sushiswap/react-query'
@@ -17,11 +18,11 @@ export const REWARDS_V3_NAME_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
     skeleton: (
       <div className="flex items-center w-full gap-2">
         <div className="flex items-center">
-          <Skeleton.Circle radius={40} />
-          <Skeleton.Circle radius={40} className="-ml-[12px]" />
+          <SkeletonCircle radius={40} />
+          <SkeletonCircle radius={40} className="-ml-[12px]" />
         </div>
         <div className="flex flex-col w-full">
-          <Skeleton.Text fontSize="text-lg" />
+          <SkeletonText fontSize="lg" />
         </div>
       </div>
     ),
@@ -39,7 +40,7 @@ export const REWARDS_V3_POSITION_SIZE_COLUMN: ColumnDef<AngleRewardsPool, unknow
   ),
   size: 100,
   meta: {
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -61,7 +62,7 @@ export const REWARDS_V3_APR_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
   ),
   size: 100,
   meta: {
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -72,6 +73,6 @@ export const REWARDS_V3_CLAIMABLE_COLUMN: ColumnDef<AngleRewardsPool, unknown> =
   cell: (props) => <RewardsV3ClaimableCell row={props.row.original} />,
   size: 100,
   meta: {
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }

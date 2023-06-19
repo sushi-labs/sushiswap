@@ -8,8 +8,8 @@ import { useTokensFromPool } from '../../../../lib/hooks'
 import { ICON_SIZE } from '../constants'
 import { Row } from './types'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
 import { ChainId } from '@sushiswap/chain'
+import { TooltipContent, TooltipProvider, TooltipTrigger, Tooltip } from '@sushiswap/ui/future/components/tooltip'
 
 export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
   const { token0, token1 } = useTokensFromPool(row)
@@ -55,12 +55,20 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
           <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
             {formatNumber(row.swapFee * 100)}%
           </div>
+
           {row.incentives && row.incentives.length > 0 && (
-            <Tooltip description="Farm rewards available">
-              <div className="bg-green/20 text-green text-[10px] px-2 rounded-full">
-                🧑‍🌾 {row.incentives.length > 1 ? `x ${row.incentives.length}` : ''}{' '}
-              </div>
-            </Tooltip>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="bg-green/20 text-green text-[10px] px-2 rounded-full">
+                    🧑‍🌾 {row.incentives.length > 1 ? `x ${row.incentives.length}` : ''}{' '}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Farm rewards available</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </div>
       </div>

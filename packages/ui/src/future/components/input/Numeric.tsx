@@ -8,16 +8,19 @@ interface NumericInput extends Omit<TextInput, 'onChange'> {
   maxDecimals?: number
 }
 
-function Component({ onUserInput, variant = 'default', ...props }: NumericInput, ref: ForwardedRef<HTMLInputElement>) {
+function Component(
+  { onUserInput, variant = 'default', maxDecimals, ...props }: NumericInput,
+  ref: ForwardedRef<HTMLInputElement>
+) {
   const enforcer = (nextUserInput: string | number | undefined) => {
     if (typeof nextUserInput === 'undefined') return
     const val = `${nextUserInput}`.replace(/,/g, '.')
     if (onUserInput && val === '') onUserInput('')
     if (inputRegex.test(escapeRegExp(val))) {
       if (onUserInput) {
-        if (props.maxDecimals && val?.includes('.')) {
+        if (maxDecimals && val?.includes('.')) {
           const [, decimals] = val.split('.')
-          if (decimals.length <= props.maxDecimals) {
+          if (decimals.length <= maxDecimals) {
             onUserInput(val)
           }
         } else {
@@ -28,10 +31,21 @@ function Component({ onUserInput, variant = 'default', ...props }: NumericInput,
   }
 
   if (variant === 'unstyled') {
-    return <input {...props} ref={ref} onChange={(e) => enforcer(e.target.value)} />
+    return (
+      <input
+        {...props}
+        placeholder="0.0"
+        ref={ref}
+        onChange={(e) => enforcer(e.target.value)}
+        autoCorrect="off"
+        autoCapitalize="off"
+        spellCheck="false"
+        autoComplete="off"
+      />
+    )
   }
 
-  return <Text {...props} ref={ref} onChange={(val) => enforcer(val)} />
+  return <Text {...props} placeholder="0.0" ref={ref} onChange={(val) => enforcer(val)} />
 }
 
 export const Numeric = forwardRef(Component)

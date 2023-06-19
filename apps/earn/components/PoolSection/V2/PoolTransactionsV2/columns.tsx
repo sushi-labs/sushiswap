@@ -2,7 +2,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Transaction, TransactionType, useTransactionsV2 } from './useTransactionsV2'
 import { formatUSD } from '@sushiswap/format'
 import formatDistance from 'date-fns/formatDistance/index.js'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 import React from 'react'
 
 export const TYPE_COLUMN: ColumnDef<Transaction, unknown> = {
@@ -14,7 +14,7 @@ export const TYPE_COLUMN: ColumnDef<Transaction, unknown> = {
     </span>
   ),
   meta: {
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -28,7 +28,7 @@ export const SENDER_COLUMN: ColumnDef<Transaction, unknown> = {
     )}..${props.row.original.sender.slice(-4)}`}</span>
   ),
   meta: {
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -43,7 +43,7 @@ export const AMOUNT_IN_COLUMN = (
       case TransactionType.Swap:
         return (
           <span className="font-normal">
-            <span className="font-semibold">{(row.amountIn).toPrecision(2)}</span>{' '}
+            <span className="font-semibold">{row.amountIn.toPrecision(2)}</span>{' '}
             <span className="text-gray-600 dark:text-slate-400">{row.tokenIn.symbol}</span>
           </span>
         )
@@ -58,7 +58,7 @@ export const AMOUNT_IN_COLUMN = (
     }
   },
   meta: {
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 })
 
@@ -88,7 +88,7 @@ export const AMOUNT_OUT_COLUMN = (
     }
   },
   meta: {
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 })
 
@@ -102,7 +102,7 @@ export const AMOUNT_USD_COLUMN: ColumnDef<Transaction, unknown> = {
   ),
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -116,6 +116,6 @@ export const TIME_COLUMN: ColumnDef<Transaction, unknown> = {
   ),
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }

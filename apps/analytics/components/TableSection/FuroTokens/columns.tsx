@@ -1,9 +1,10 @@
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
-import { ChainCell, StringCell } from '../Common/Cells'
-import { TokenNameCell, TokenPriceCell } from './Cells'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { ChainCell, StringCell } from '../Common'
+import { TokenNameCell } from './Cells'
+import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
+
 import { FuroToken } from './useFuroTokens'
 import { formatNumber, formatUSD } from '@sushiswap/format'
 import { ICON_SIZE } from './constants'
@@ -14,7 +15,7 @@ export const NETWORK_COLUMN: ColumnDef<FuroToken, unknown> = {
   cell: (props) => <ChainCell row={props.row.original.token} ICON_SIZE={ICON_SIZE} />,
   size: 30,
   meta: {
-    skeleton: <Skeleton.Circle radius={26} />,
+    skeleton: <SkeletonCircle radius={26} />,
   },
 }
 
@@ -24,7 +25,7 @@ export const NAME_COLUMN: ColumnDef<FuroToken, unknown> = {
   cell: (props) => <TokenNameCell token={props.row.original.token} />,
   size: 160,
   meta: {
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -38,7 +39,7 @@ export const LIQUIDITY_COLUMN: ColumnDef<FuroToken, unknown> = {
   size: 160,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -53,7 +54,7 @@ export const LIQUIDITY_USD_COLUMN: ColumnDef<FuroToken, unknown> = {
   size: 160,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -64,6 +65,6 @@ export const LIQUIDITY_USD_COLUMN: ColumnDef<FuroToken, unknown> = {
 //   size: 160,
 //   meta: {
 //     className: 'justify-end',
-//     skeleton: <Skeleton.Text fontSize="text-lg" />,
+//     skeleton: <SkeletonText fontSize="lg" />,
 //   },
 // }

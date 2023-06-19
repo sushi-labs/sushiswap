@@ -5,7 +5,8 @@ import React from 'react'
 import { PoolFees1dCell } from './PoolFees1dCell'
 import { PoolNameCell, PoolChainCell, PoolAPRCell, PoolVolume1dCell } from '../../SharedCells'
 import { PoolTVLCell } from './PoolTVLCell'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
+
 import { Explainer } from '@sushiswap/ui/future/components/Explainer'
 import { ChainId } from '@sushiswap/chain'
 import { PoolVolume1hCell } from '../../SharedCells/PoolVolume1hCell'
@@ -20,7 +21,7 @@ export const NETWORK_COLUMN: ColumnDef<Pool, unknown> = {
   cell: (props) => <PoolChainCell row={props.row.original as typeof props.row.original & { chainId: ChainId }} />,
   size: 50,
   meta: {
-    skeleton: <Skeleton.Circle radius={ICON_SIZE} />,
+    skeleton: <SkeletonCircle radius={ICON_SIZE} />,
   },
 }
 
@@ -33,11 +34,11 @@ export const NAME_COLUMN: ColumnDef<Pool, unknown> = {
     skeleton: (
       <div className="flex items-center w-full gap-2">
         <div className="flex items-center">
-          <Skeleton.Circle radius={ICON_SIZE} />
-          <Skeleton.Circle radius={ICON_SIZE} className="-ml-[12px]" />
+          <SkeletonCircle radius={ICON_SIZE} />
+          <SkeletonCircle radius={ICON_SIZE} className="-ml-[12px]" />
         </div>
         <div className="flex flex-col w-full">
-          <Skeleton.Text fontSize="text-lg" />
+          <SkeletonText fontSize="lg" />
         </div>
       </div>
     ),
@@ -52,7 +53,7 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -71,7 +72,7 @@ export const APR_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -83,7 +84,7 @@ export const VOLUME_1H_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -95,7 +96,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -107,7 +108,7 @@ export const VOLUME_7D_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -119,7 +120,7 @@ export const VOLUME_1M_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
@@ -131,6 +132,6 @@ export const FEES_COLUMN: ColumnDef<Pool, unknown> = {
   size: 100,
   meta: {
     className: 'justify-end',
-    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    skeleton: <SkeletonText fontSize="lg" />,
   },
 }

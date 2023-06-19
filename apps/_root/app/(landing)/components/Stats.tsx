@@ -1,7 +1,8 @@
 import { useIsMounted } from '@sushiswap/hooks'
 import React, { FC } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+
 import { Container } from '@sushiswap/ui/future/components/Container'
 
 export const Stats: FC = () => {
@@ -16,7 +17,7 @@ export const Stats: FC = () => {
               {data?.stats?.price && isMounted ? (
                 <span className="text-3xl font-semibold">{data?.stats?.price.formatted}</span>
               ) : (
-                <Skeleton.Text fontSize="text-3xl" className="w-[120px]" />
+                <SkeletonText fontSize="3xl" className="w-[120px]" />
               )}
               <span className="text-xs font-medium uppercase text-neutral-400 -mt-0.5">Price</span>
             </div>
@@ -26,7 +27,7 @@ export const Stats: FC = () => {
               {data?.stats?.liquidity && isMounted ? (
                 <span className="text-3xl font-semibold">{data?.stats?.liquidity.formatted}</span>
               ) : (
-                <Skeleton.Text fontSize="text-3xl" className="w-[120px]" />
+                <SkeletonText fontSize="3xl" className="w-[120px]" />
               )}
               <span className="text-xs font-medium uppercase text-neutral-400 -mt-0.5">Total Liquidity</span>
             </div>
@@ -36,7 +37,7 @@ export const Stats: FC = () => {
               {data?.stats?.volume && isMounted ? (
                 <span className="text-3xl font-semibold">{data?.stats?.volume.formatted}</span>
               ) : (
-                <Skeleton.Text fontSize="text-3xl" className="w-[120px]" />
+                <SkeletonText fontSize="3xl" className="w-[120px]" />
               )}
               <span className="text-xs font-medium uppercase text-neutral-400 -mt-0.5">Total Volume</span>
             </div>
@@ -46,7 +47,7 @@ export const Stats: FC = () => {
               {data?.stats?.pairs && isMounted ? (
                 <span className="text-3xl font-semibold">{data?.stats?.pairs.formatted}</span>
               ) : (
-                <Skeleton.Text fontSize="text-3xl" className="w-[120px]" />
+                <SkeletonText fontSize="3xl" className="w-[120px]" />
               )}
               <span className="text-xs font-medium uppercase text-neutral-400 -mt-0.5">Total Pairs</span>
             </div>

@@ -10,7 +10,7 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { RadioGroup } from '@headlessui/react'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
 import { CogIcon } from '@heroicons/react/outline'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
 import { useAccount } from '@sushiswap/wagmi'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { List } from '@sushiswap/ui/future/components/list/List'
@@ -132,6 +132,7 @@ const Pool: FC = () => {
               height: 24,
               transparent: true,
             }}
+            name="Back"
           />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
             Go back to pools list

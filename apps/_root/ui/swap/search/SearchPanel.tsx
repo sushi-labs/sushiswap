@@ -8,7 +8,8 @@ import { usePrice, useTokenList, useTokenSearch } from '@sushiswap/react-query'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { classNames } from '@sushiswap/ui'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
+
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { Token } from '@sushiswap/currency'
@@ -16,8 +17,8 @@ import { Chain } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { COMMON_BASES } from '@sushiswap/router-config'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { TooltipContent, TooltipProvider, TooltipTrigger, Tooltip } from '@sushiswap/ui/future/components/tooltip'
 
 export const SearchPanel: FC = () => {
   const { network1 } = useSwapState()
@@ -162,9 +163,16 @@ const Row: FC<{ currency: Token; supported?: boolean }> = ({ currency, supported
             <span className="font-medium text-gray-900 dark:text-slate-100">{currency.name}</span>
 
             {!supported && (
-              <Tooltip description="Not in official tokenlist" className="z-[2000]">
-                <ExclamationTriangleIcon width={18} height={18} />
-              </Tooltip>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <ExclamationTriangleIcon width={18} height={18} />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Not in official tokenlist</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             )}
           </div>
           <div className="flex gap-1 items-center">
@@ -194,18 +202,18 @@ const RowSkeleton = () => {
     <div className="flex justify-between px-3 py-2 rounded-lg">
       <div className="flex w-2/4 items-center gap-5">
         <div className="w-9 h-9">
-          <Badge position="bottom-right" badgeContent={<Skeleton.Circle radius={20} />}>
-            <Skeleton.Circle radius={36} />
+          <Badge position="bottom-right" badgeContent={<SkeletonCircle radius={20} />}>
+            <SkeletonCircle radius={36} />
           </Badge>
         </div>
         <div className="flex flex-col gap-0.5 flex-grow">
-          <Skeleton.Text />
-          <Skeleton.Text fontSize="text-sm" className="w-1/2" />
+          <SkeletonText />
+          <SkeletonText fontSize="sm" className="w-1/2" />
         </div>
       </div>
       <div className="flex flex-col w-1/4 items-center">
-        <Skeleton.Text className="w-1/2" align="right" />
-        <Skeleton.Text fontSize="text-sm" className="w-1/3" align="right" />
+        <SkeletonText className="w-1/2" align="right" />
+        <SkeletonText fontSize="sm" className="w-1/3" align="right" />
       </div>
     </div>
   )

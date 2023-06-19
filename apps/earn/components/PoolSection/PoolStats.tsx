@@ -3,7 +3,7 @@ import { Pool } from '@sushiswap/client'
 import { FC } from 'react'
 import { usePoolGraphData } from '../../lib/hooks'
 import { ChainId } from '@sushiswap/chain'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 import { classNames } from '@sushiswap/ui'
 
 interface PoolStats {
@@ -21,7 +21,7 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
       <div className="flex flex-col gap-1 p-3 rounded-md bg-white dark:bg-slate-200 dark:bg-opacity-[0.04]">
         <span className="text-xs text-gray-500 dark:text-slate-400">Liquidity</span>
         {isLoading ? (
-          <Skeleton.Text fontSize="text-base" />
+          <SkeletonText />
         ) : data ? (
           <span className="font-medium text-gray-900 dark:text-slate-50">{formatUSD(data.liquidityUSD ?? 0)}</span>
         ) : (
@@ -33,7 +33,7 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             {formatPercent(Math.abs(data.liquidity1dChange))}
           </span>
         ) : isLoading ? (
-          <Skeleton.Text fontSize="text-xs" />
+          <SkeletonText fontSize="xs" />
         ) : (
           <></>
         )}
@@ -43,7 +43,7 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
         {data ? (
           <span className="font-medium text-gray-900 dark:text-slate-50">{formatUSD(data.volume1d ?? 0)}</span>
         ) : isLoading ? (
-          <Skeleton.Text fontSize="text-base" />
+          <SkeletonText />
         ) : (
           <></>
         )}
@@ -53,7 +53,7 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             {formatPercent(Math.abs(data.volume1dChange))}
           </span>
         ) : isLoading ? (
-          <Skeleton.Text fontSize="text-xs" />
+          <SkeletonText fontSize="xs" />
         ) : (
           <></>
         )}
@@ -64,7 +64,7 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
         {data ? (
           <span className="font-medium text-gray-900 dark:text-slate-50">{formatUSD(data.fees1d ?? 0)}</span>
         ) : isLoading ? (
-          <Skeleton.Text fontSize="text-base" />
+          <SkeletonText />
         ) : (
           <></>
         )}
@@ -74,7 +74,7 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             {formatPercent(Math.abs(data.fees1dChange))}
           </span>
         ) : isLoading ? (
-          <Skeleton.Text fontSize="text-xs" />
+          <SkeletonText fontSize="xs" />
         ) : (
           <></>
         )}
@@ -87,7 +87,7 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             {formatNumber(data.txCount1d).replace('.00', '')}
           </span>
         ) : isLoading ? (
-          <Skeleton.Text fontSize="text-base" />
+          <SkeletonText />
         ) : (
           <></>
         )}
@@ -97,7 +97,7 @@ export const PoolStats: FC<PoolStats> = ({ pool }) => {
             {formatPercent(Math.abs(data.txCount1dChange))}
           </span>
         ) : isLoading ? (
-          <Skeleton.Text fontSize="text-xs" />
+          <SkeletonText fontSize="xs" />
         ) : (
           <></>
         )}
