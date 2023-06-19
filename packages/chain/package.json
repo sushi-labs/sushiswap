@@ -14,8 +14,7 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "files": [
-    "dist",
-    "scripts"
+    "dist"
   ],
   "main": "dist/index.js",
   "source": "src/index.ts",
