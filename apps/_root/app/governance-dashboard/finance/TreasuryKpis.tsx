@@ -45,7 +45,7 @@ export function TreasuryKpis({
       title: 'Treasury Balance',
       value: '$' + formatNumber(treasurySnapshot.totalValueUsd),
       additional: (
-        <div className="flex items-center gap-[14px] text-sm">
+        <div className="flex items-center gap-[14px] text-sm mt-1">
           <div className="flex items-baseline gap-3">
             <label className="text-slate-400">Liquid</label>
             <span className="font-bold">${formatNumber(treasurySnapshot.balancesValueUsd)}</span>

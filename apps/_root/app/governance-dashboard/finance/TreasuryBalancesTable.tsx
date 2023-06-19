@@ -73,8 +73,8 @@ export function TreasuryBalancesTable({ balances }: { balances: TreasuryBalance[
   })
 
   return (
-    <div className="rounded-lg bg-[#1A2031]">
-      <div className="h-full w-full border-b border-slate-800 px-5 pb-7 pt-5">
+    <div className="rounded-lg bg-white dark:bg-[#1A2031]">
+      <div className="h-full w-full border-b border-slate-200 dark:border-slate-800 px-5 pb-7 pt-5">
         <h3 className="mt-3 text-xl font-semibold">Treasury Snapshot</h3>
         {/* <ExternalLink
           href={`https://etherscan.io/address/${TREASURY_ADDRESS}`}

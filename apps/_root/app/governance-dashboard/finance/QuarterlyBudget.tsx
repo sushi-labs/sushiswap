@@ -69,8 +69,8 @@ export function QuarterlyBudget({ budgetData }: { budgetData: SushiBudget[] }) {
   return (
     <section className="mt-[120px] space-y-4 md:space-y-8">
       <header className="flex flex-col items-center justify-between gap-3 md:flex-row">
-        <h2 className="ml-1 text-2xl font-bold text-slate-200">Quarterly Budget vs. Actuals</h2>
-        <div className="flex h-[42px] items-center gap-2 rounded-lg bg-slate-700 px-2">
+        <h2 className="ml-1 text-2xl font-bold text-slate-900 dark:text-slate-200">Quarterly Budget vs. Actuals</h2>
+        <div className="flex h-[42px] items-center gap-2 rounded-lg bg-slate-200 dark:bg-slate-700 px-2 font-medium text-sm">
           <button
             className="rounded p-1 transition-colors ease-in-out enabled:hover:bg-black/[0.12] disabled:text-slate-500 enabled:hover:dark:bg-white/[0.12]"
             onClick={() => setSelectedQuarterIndex(selectedQuarterIndex - 1)}
@@ -90,7 +90,7 @@ export function QuarterlyBudget({ budgetData }: { budgetData: SushiBudget[] }) {
       </header>
       <div className="grid gap-4 md:grid-cols-[3fr,7fr]">
         <div className="grid gap-4">{quarterlyKpis.map(KpiCard)}</div>
-        <div className="h-full w-full rounded-lg bg-[#1A2031] p-5">
+        <div className="h-full w-full rounded-lg bg-white dark:bg-[#1A2031] p-5">
           <h3 className="text-xl font-semibold">Actuals Breakdown</h3>
           <div className="mt-10 flex w-full flex-col justify-center gap-4 md:flex-row md:justify-between md:pr-16">
             <div className="flex items-center justify-center">
