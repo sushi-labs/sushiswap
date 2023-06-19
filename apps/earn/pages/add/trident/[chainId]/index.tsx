@@ -325,13 +325,13 @@ const _Add: FC<AddProps> = ({
                   {pool && (isConstantProductPool(pool) || isStablePool(pool)) && isBentoBoxV1ChainId(chainId) && (
                     <>
                       <Checker.ApproveBentobox
+                        tag={APPROVE_TAG_ADD_TRIDENT}
                         chainId={chainId}
                         id="add-liquidity-trident-approve-bentobox"
                         size="xl"
                         className="whitespace-nowrap"
                         fullWidth
-                        contract={getTridentRouterContractConfig(chainId).address}
-                        onSignature={setPermit}
+                        masterContract={getTridentRouterContractConfig(chainId).address}
                         enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
                       >
                         <Checker.ApproveERC20
@@ -372,21 +372,19 @@ const _Add: FC<AddProps> = ({
                         input1={parsedInput1}
                         open={open}
                         close={close}
-                        permit={permit}
-                        setPermit={setPermit}
                       />
                     </>
                   )}
                   {!pool && isBentoBoxV1ChainId(chainId) && (
                     <>
                       <Checker.ApproveBentobox
+                        tag={APPROVE_TAG_CREATE_TRIDENT}
                         chainId={chainId}
                         id="create-trident-approve-bentobox"
                         size="xl"
                         className="whitespace-nowrap"
                         fullWidth
-                        contract={getTridentRouterContractConfig(chainId).address}
-                        onSignature={setPermit}
+                        masterContract={getTridentRouterContractConfig(chainId).address}
                         enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
                       >
                         <Checker.ApproveERC20
@@ -425,8 +423,6 @@ const _Add: FC<AddProps> = ({
                         poolType={poolType}
                         open={open}
                         close={close}
-                        permit={permit}
-                        setPermit={setPermit}
                       />
                     </>
                   )}

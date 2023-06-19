@@ -1,5 +1,4 @@
 import { isAddress } from '@ethersproject/address'
-import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames, Dots, Typography } from '@sushiswap/ui'
@@ -20,7 +19,7 @@ import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useApproved, useSignature, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
 const APPROVE_TAG = 'createVestingSingle'
 
@@ -71,9 +70,9 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(({ chai
     formState: { isValid, isValidating },
   } = useFormContext<CreateVestingFormSchemaType>()
 
+  const { signature, setSignature } = useSignature(APPROVE_TAG)
   const { approved } = useApproved(APPROVE_TAG)
   const [open, setOpen] = useState(false)
-  const [signature, setSignature] = useState<Signature>()
 
   const formData = watch()
   const _formData = useDeepCompareMemoize(formData)
@@ -221,12 +220,12 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(({ chai
             <Checker.Network type="button" size="xl" chainId={chainId}>
               <Checker.Amounts type="button" size="xl" chainId={chainId} amounts={[_totalAmount]}>
                 <Checker.ApproveBentobox
+                  tag={APPROVE_TAG}
                   type="button"
                   id="furo-create-single-vest-approve-bentobox"
                   size="xl"
                   chainId={chainId as BentoBoxV1ChainId}
-                  contract={getFuroVestingRouterContractConfig(chainId).address}
-                  onSignature={setSignature}
+                  masterContract={getFuroVestingRouterContractConfig(chainId).address}
                 >
                   <Checker.ApproveERC20
                     type="button"

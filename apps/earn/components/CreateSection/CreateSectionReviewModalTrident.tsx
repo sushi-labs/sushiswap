@@ -1,5 +1,4 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
-import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import {
@@ -35,7 +34,7 @@ import {
 import { AddSectionReviewModal } from '../AddSection'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import Button from '@sushiswap/ui/future/components/button/Button'
-import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_CREATE_TRIDENT } from '../../lib/constants'
 
 interface CreateSectionReviewModalTridentProps {
@@ -48,8 +47,6 @@ interface CreateSectionReviewModalTridentProps {
   poolType: PoolFinderType
   open: boolean
   close(): void
-  permit: Signature | undefined
-  setPermit: Dispatch<SetStateAction<Signature | undefined>>
 }
 
 export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTridentProps> = ({
@@ -62,11 +59,10 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   chainId,
   open,
   close,
-  permit,
-  setPermit,
 }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
+  const { signature, setSignature } = useSignature(APPROVE_TAG_CREATE_TRIDENT)
   const { approved } = useApproved(APPROVE_TAG_CREATE_TRIDENT)
   const contract = useTridentRouterContract(chainId)
   const constantProductPoolFactory = useConstantProductPoolFactoryContract(chainId)
@@ -228,7 +224,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
             actions: [
               approveMasterContractAction({
                 router: contract,
-                signature: permit,
+                signature: signature,
               }),
               deployNewPoolAction({
                 assets: [input0.currency, input1.currency],
@@ -269,9 +265,9 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
       fee,
       input0,
       input1,
-      permit,
       pool,
       poolAddress,
+      signature,
       token0,
       token1,
       totalSupply,
@@ -284,7 +280,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     prepare,
     onSettled,
     onSuccess: () => {
-      setPermit(undefined)
+      setSignature(undefined)
       close()
     },
     enabled: approved,
