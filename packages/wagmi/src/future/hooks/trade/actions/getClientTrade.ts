@@ -1,13 +1,13 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type as Currency, Type, WNATIVE } from '@sushiswap/currency'
 import {
-  FACTORY_ADDRESS,
   findMultiRouteExactIn,
   findSingleRouteExactIn,
   Trade,
   TradeType,
   Version as TradeVersion,
 } from '@sushiswap/amm'
+import {   SUSHISWAP_V2_FACTORY_ADDRESS} from '@sushiswap/v2-sdk'
 import { BigNumber } from 'ethers'
 import { RouteStatus } from '@sushiswap/tines'
 import { FetchFeeDataResult } from 'wagmi/actions'
@@ -56,7 +56,7 @@ export const getClientTrade = async ({
   ) {
     if (tradeType === TradeType.EXACT_INPUT) {
       if (
-        chainId in FACTORY_ADDRESS &&
+        chainId in SUSHISWAP_V2_FACTORY_ADDRESS &&
         (isConstantProductPoolFactoryChainId(chainId) || isStablePoolFactoryChainId(chainId))
       ) {
         const legacyRoute = findSingleRouteExactIn(

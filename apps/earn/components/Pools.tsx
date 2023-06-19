@@ -8,7 +8,7 @@ import { useAccount, useNetwork } from '@sushiswap/wagmi'
 import { PoolFilters, PoolsFiltersProvider, PoolsSection } from '../components'
 import { ChainId } from '@sushiswap/chain'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
-import { isUniswapV2FactoryChainId } from '@sushiswap/v2-core'
+import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
 import { Popover, Transition } from '@headlessui/react'
 import { List } from '@sushiswap/ui/future/components/list/List'
@@ -18,7 +18,7 @@ import { PositionCard, PositionCardSkeleton } from './MigratePage/PositionCard'
 import { Carousel } from '@sushiswap/ui/future/components/Carousel'
 import { DiscordIcon, OnsenIcon } from '@sushiswap/ui/future/components/icons'
 import { TRIDENT_ENABLED_NETWORKS } from 'config'
-import { isV3ChainId } from '@sushiswap/v3-sdk'
+import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 
 export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
   const { address } = useAccount()
@@ -95,7 +95,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                                 }
                                 subtitle={'Most efficient way of providing liquidity.'}
                               />
-                              {isUniswapV2FactoryChainId(chainId) ? (
+                              {isSushiSwapV2ChainId(chainId as ChainId) ? (
                                 <List.MenuItem
                                   as="a"
                                   href={`/pools/add/v2/${chainId}`}
@@ -166,7 +166,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                 <div className="pl-4 xl:pl-2">
                   <Carousel
                     slideWidth={320}
-                    slides={positions.filter((position) => isV3ChainId(position.chainId as ChainId))}
+                    slides={positions.filter((position) => isSushiSwapV3ChainId(position.chainId as ChainId))}
                     render={(position) => (isLoading ? <PositionCardSkeleton /> : <PositionCard position={position} />)}
                   />
                 </div>

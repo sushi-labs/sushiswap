@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { Pool, V3ChainId } from '@sushiswap/v3-sdk'
+import { Pool, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { getConcentratedLiquidityPoolReserves } from '../actions/getConcentratedLiquidityPoolReserves'
 
 interface UseConcentratedLiquidityPoolReserves {
   pool: Pool | null | undefined
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
   enabled?: boolean
 }
 

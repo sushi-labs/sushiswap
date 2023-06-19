@@ -1,9 +1,9 @@
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
 import { Address, useProvider } from 'wagmi'
-import { V3_TICK_LENS, V3ChainId } from '@sushiswap/v3-sdk'
+import { V3_TICK_LENS, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 
-export const getV3TickLensContractConfig = (chainId: V3ChainId) => ({
+export const getV3TickLensContractConfig = (chainId: SushiSwapV3ChainId) => ({
   address: V3_TICK_LENS[chainId] as Address,
   abi: [
     {
@@ -30,7 +30,7 @@ export const getV3TickLensContractConfig = (chainId: V3ChainId) => ({
   ] as const,
 })
 
-export function useTickLensContract(chainId: V3ChainId | undefined) {
+export function useTickLensContract(chainId: SushiSwapV3ChainId | undefined) {
   const signerOrProvider = useProvider({ chainId })
 
   return useMemo(() => {

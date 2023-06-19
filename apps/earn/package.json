@@ -41,7 +41,7 @@
     "@sushiswap/math": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/route-processor": "workspace:*",
-    "@sushiswap/v2-core": "workspace:*",
+    "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",
     "@sushiswap/trident-core": "workspace:*",
     "@sushiswap/types": "workspace:*",

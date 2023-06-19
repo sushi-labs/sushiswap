@@ -1,9 +1,9 @@
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
 import { Address, useProvider } from 'wagmi'
-import { V3_FACTORY_ADDRESS, V3ChainId } from '@sushiswap/v3-sdk'
+import { V3_FACTORY_ADDRESS, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 
-export const getV3FactoryContractConfig = (chainId: V3ChainId) => ({
+export const getV3FactoryContractConfig = (chainId: SushiSwapV3ChainId) => ({
   address: V3_FACTORY_ADDRESS[chainId] as Address,
   abi: [
     { inputs: [], stateMutability: 'nonpayable', type: 'constructor' },
@@ -106,7 +106,7 @@ export const getV3FactoryContractConfig = (chainId: V3ChainId) => ({
   ] as const,
 })
 
-export function useV3FactoryContract(chainId: V3ChainId | undefined) {
+export function useV3FactoryContract(chainId: SushiSwapV3ChainId | undefined) {
   const signerOrProvider = useProvider({ chainId })
 
   return useMemo(() => {
