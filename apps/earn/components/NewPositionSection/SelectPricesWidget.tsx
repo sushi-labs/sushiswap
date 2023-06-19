@@ -117,7 +117,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                 </div>
               </div>
             )}
-            {!noLiquidity && !isLoading && (
+            {!noLiquidity && (
               <>
                 <LiquidityChartRangeInput
                   chainId={chainId}
