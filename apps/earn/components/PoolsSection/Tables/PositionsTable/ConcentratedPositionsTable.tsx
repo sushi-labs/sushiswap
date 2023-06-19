@@ -6,7 +6,7 @@ import { useAccount } from '@sushiswap/wagmi'
 
 import { NAME_COLUMN_V3, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL, PRICE_RANGE_COLUMN } from './Cells/columns'
 import { ConcentratedLiquidityPosition, useConcentratedLiquidityPositions } from '@sushiswap/wagmi/future/hooks'
-import { V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
+import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { Writeable } from 'zod'
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 
@@ -29,7 +29,7 @@ export const ConcentratedPositionsTable: FC<{
     isInitialLoading,
   } = useConcentratedLiquidityPositions({
     account: address,
-    chainIds: V3_SUPPORTED_CHAIN_IDS as Writeable<typeof V3_SUPPORTED_CHAIN_IDS>,
+    chainIds: SUSHISWAP_V3_SUPPORTED_CHAIN_IDS as Writeable<typeof SUSHISWAP_V3_SUPPORTED_CHAIN_IDS>,
   })
 
   const _positions = useMemo(() => {

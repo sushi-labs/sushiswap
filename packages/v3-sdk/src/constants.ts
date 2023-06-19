@@ -93,7 +93,7 @@ export const V3_TICK_LENS = {
   [ChainId.THUNDERCORE]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904',
 } as const
 
-export const V3_SUPPORTED_CHAIN_IDS = [
+export const SUSHISWAP_V3_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM_NOVA,
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
@@ -110,7 +110,7 @@ export const V3_SUPPORTED_CHAIN_IDS = [
   ChainId.THUNDERCORE,
 ] as const
 
-export type V3ChainId = (typeof V3_SUPPORTED_CHAIN_IDS)[number]
+export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_SUPPORTED_CHAIN_IDS)[number]
 
-export const isV3ChainId = (chainId: ChainId): chainId is V3ChainId =>
-  V3_SUPPORTED_CHAIN_IDS.includes(chainId as V3ChainId)
+export const isV3ChainId = (chainId: ChainId): chainId is SushiSwapV3ChainId =>
+  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS.includes(chainId as SushiSwapV3ChainId)

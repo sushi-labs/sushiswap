@@ -1,5 +1,28 @@
 import { ChainId } from '@sushiswap/chain'
 
+export const SUSHISWAP_V2_SUPPORTED_CHAIN_IDS = [
+  ChainId.ARBITRUM,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.AVALANCHE,
+  ChainId.BOBA,
+  ChainId.BOBA_AVAX,
+  ChainId.BOBA_BNB,
+  ChainId.BSC,
+  ChainId.CELO,
+  ChainId.ETHEREUM,
+  ChainId.FANTOM,
+  ChainId.FUSE,
+  ChainId.GNOSIS,
+  ChainId.HARMONY,
+  ChainId.HECO,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
+  ChainId.OKEX,
+  ChainId.PALM,
+  ChainId.POLYGON,
+  ChainId.TELOS
+]
+
 export const INIT_CODE_HASH: Record<string | number, string> = {
   [ChainId.ETHEREUM]: '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303',
   [ChainId.ROPSTEN]: '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303',
@@ -67,3 +90,8 @@ export const FACTORY_ADDRESS: Record<string | number, string> = {
   [ChainId.BOBA_AVAX]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
   [ChainId.BOBA_BNB]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
 }
+
+export type SushiSwapV2ChainId = typeof SUSHISWAP_V2_SUPPORTED_CHAIN_IDS[number]
+
+export const isSushiSwapV2ChainId = (chainId: ChainId): chainId is SushiSwapV2ChainId =>
+SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.includes(chainId as SushiSwapV2ChainId)
