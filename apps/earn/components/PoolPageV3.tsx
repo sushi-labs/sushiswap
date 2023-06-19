@@ -83,6 +83,7 @@ const Pool: FC = () => {
     activeTab,
   } = queryParamsSchema.parse(query)
 
+  const [invertTokens, setInvertTokens] = useState(false)
   const [tab, setTab] = useState<SelectedTab>(
     activeTab === 'new'
       ? SelectedTab.NewPosition
@@ -107,11 +108,15 @@ const Pool: FC = () => {
   const fiatValuesIncentives = useTokenAmountDollarValues({ chainId, amounts: incentiveAmounts })
 
   const [_token0, _token1] = useMemo(
-    () => [
-      poolStats?.token0 ? unwrapToken(poolStats.token0) : undefined,
-      poolStats?.token1 ? unwrapToken(poolStats.token1) : undefined,
-    ],
-    [poolStats?.token0, poolStats?.token1]
+    () => {
+      const tokens = [
+        poolStats?.token0 ? unwrapToken(poolStats.token0) : undefined,
+        poolStats?.token1 ? unwrapToken(poolStats.token1) : undefined,
+      ]
+
+      return invertTokens ? tokens.reverse() : tokens
+    },
+    [invertTokens, poolStats?.token0, poolStats?.token1]
   )
 
   return (
@@ -376,6 +381,7 @@ const Pool: FC = () => {
               token1={_token1}
               feeAmount={poolStats?.feeAmount}
               tokenId={undefined}
+              switchTokens={() => setInvertTokens((prev) => !prev)}
             />
           </div>
           <div className="flex flex-col gap-3">
