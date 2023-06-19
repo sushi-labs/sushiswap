@@ -23,7 +23,7 @@ export function TabList() {
             className={classNames(
               '!border-b-2 pb-2 text-sm md:pb-4 md:text-base',
               pathname === tab.path
-                ? 'border-b-blue font-semibold dark:text-blue text-gray-50'
+                ? 'dark:border-b-blue font-semibold dark:text-blue text-gray-50'
                 : 'border-b-transparent hover:text-slate-50 text-gray-50'
             )}
           >
