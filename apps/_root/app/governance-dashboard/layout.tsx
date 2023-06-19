@@ -10,9 +10,9 @@ export default function GovernanceDashboardLayout({
   return (
     <>
       <Header />
-      <main className="text-gray-50">
+      <main className="dark:text-gray-50 text-[#101728]">
         <Hero />
-        <Container maxWidth="6xl" className="dark mx-auto px-4 py-8 md:py-14">
+        <Container maxWidth="6xl" className="mx-auto px-4 py-8 md:py-14">
           {children}
         </Container>
       </main>

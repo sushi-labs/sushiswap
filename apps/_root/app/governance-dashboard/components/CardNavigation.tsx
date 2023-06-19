@@ -20,9 +20,9 @@ function SlideButtons({ show }: { show: { left: boolean; right: boolean } }) {
   const swiper = useSwiper()
 
   const BASE =
-    'rounded-full h-10 w-10 flex items-center justify-center border border-slate-600 transition-colors ease-in'
-  const ACTIVE = 'bg-gray-50 text-slate-800 hover:bg-slate-200'
-  const STALE = 'bg-slate-700 text-slate-400 hover:bg-slate-800'
+  'rounded-full h-10 w-10 flex items-center justify-center border border-blue/40 dark:border-slate-600 transition-colors ease-in'
+  const ACTIVE = 'bg-blue-100 dark:bg-gray-50 text-blue dark:text-slate-800 hover:bg-blue-300 dark:hover:bg-slate-200'
+  const STALE = 'bg-blue/80 dark:bg-slate-700 text-gray-50 dark:text-slate-400 hover:bg-blue-300 dark:hover:bg-slate-800'
 
   return (
     <>
@@ -89,7 +89,7 @@ export function CardNavigation({
         </div>
         <div
           className={classNames(
-            'pointer-events-none absolute right-0 top-0 z-10 h-full w-1/2 bg-gradient-to-r from-transparent to-[#101728]',
+            'pointer-events-none absolute right-0 top-0 z-10 h-full w-1/2 bg-gradient-to-r from-transparent to-[#F5F5F5] dark:to-[#101728]',
             !buttonState.right && 'hidden'
           )}
         />

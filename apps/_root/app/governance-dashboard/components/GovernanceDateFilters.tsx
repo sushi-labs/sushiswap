@@ -25,20 +25,20 @@ export function GovernanceDateFilters() {
   return (
     <Listbox value={selectedDateFilter} onChange={(dateFilter) => filterDate(dateFilter.key)}>
       {({ open }) => (
-        <div className="relative mt-1 w-full text-sm font-medium text-slate-300">
-          <Listbox.Button className="relative flex h-[42px] w-full items-center justify-between gap-2 rounded-lg bg-slate-800 px-3 text-left">
+        <div className="relative mt-1 w-full text-sm font-medium dark:text-slate-300">
+          <Listbox.Button className="relative flex h-[42px] w-full items-center justify-between gap-2 rounded-lg bg-slate-200 dark:bg-slate-800 px-3 text-left">
             <span className="min-w-max">Filter By: {selectedDateFilter.title}</span>
             <ChevronDownIcon
-              className={classNames('h-5 w-5 text-slate-400 transition-all', open ? 'rotate-180' : 'rotate-0')}
+              className={classNames('h-5 w-5 dark:text-slate-400 transition-all', open ? 'rotate-180' : 'rotate-0')}
               aria-hidden="true"
             />
           </Listbox.Button>
-          <Listbox.Options className="absolute mt-2 w-full rounded-lg bg-slate-800 py-1">
+          <Listbox.Options className="absolute mt-2 w-full rounded-lg bg-slate-200 dark:bg-slate-800 py-1">
             {DATE_FILTERS.options.map((option) => (
               <Listbox.Option
                 key={option.title}
                 value={option}
-                className="flex h-9 items-center rounded-lg px-3 hover:cursor-default hover:bg-slate-700"
+                className="flex h-9 items-center rounded-lg px-3 hover:cursor-default hover:bg-slate-300 dark:hover:bg-slate-700"
               >
                 {option.title}
               </Listbox.Option>

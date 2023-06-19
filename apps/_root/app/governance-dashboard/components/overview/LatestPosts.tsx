@@ -32,7 +32,7 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
     <section className="space-y-8">
       <div className="space-y-3">
         <div className="relative z-10 flex items-center justify-between">
-          <h2 className="pl-1 text-2xl font-bold text-slate-200">Latest @ Sushi</h2>
+          <h2 className="pl-1 text-2xl font-bold dark:text-slate-200">Latest @ Sushi</h2>
           <div className="md:hidden">
             <GovernanceDateFilters />
           </div>
@@ -69,12 +69,12 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
               onClick={() => setSelectedGovType(key as GovernanceStatus)}
               style={{ zIndex: i + 1 }}
             >
-              <div className="flex items-center justify-between gap-10 rounded-t-2xl bg-gradient-to-b from-[#212939] to-[#101728] px-5 py-5 pb-10">
+              <div className="flex items-center justify-between gap-10 rounded-t-2xl bg-gradient-to-b from-white to-[#F4F5F6] dark:from-[#212939] dark:to-[#101728] px-5 py-5 pb-10">
                 <div className="flex items-center gap-2">
                   <div className={classNames('h-3 w-3 rounded-sm', status.color)} />
                   <span className="font-medium">{status.title}</span>
                 </div>
-                <div className="flex h-6 w-10 items-center justify-center rounded-lg bg-slate-500/60 text-xs font-semibold text-white">
+                <div className="flex h-6 w-10 items-center justify-center rounded-lg bg-slate-200 dark:bg-slate-500/60 text-xs font-semibold text-slate-600 dark:text-white">
                   {posts[key as GovernanceStatus].length}
                 </div>
               </div>

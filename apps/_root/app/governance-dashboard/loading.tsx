@@ -6,7 +6,7 @@ import React from 'react'
 export default function Loading() {
   return (
     <div className="space-y-10">
-      <div className="flex justify-between">
+      <div className="flex justify-between gap-24">
         <Skeleton.Box className="h-10 w-64 rounded-lg" />
         <Skeleton.Box className="h-10 w-40 rounded-lg" />
       </div>

@@ -23,8 +23,8 @@ export async function HolderSnapshot() {
         </div>
       ),
       additional: (
-        <div className="grid grid-cols-3 text-sm text-slate-500">
-          <span>Total</span>
+        <div className="grid grid-cols-3 text-sm text-slate-400 dark:text-slate-500">
+        <span>Total</span>
           <span>Last 7 days</span>
           <span>Last 30 days</span>
         </div>
@@ -58,7 +58,7 @@ export async function HolderSnapshot() {
 
   return (
     <section className="space-y-8">
-      <h2 className="text-2xl font-bold text-slate-200">Holder Snapshot</h2>
+      <h2 className="text-2xl font-bold dark:text-slate-200">Holder Snapshot</h2>
       <div className="grid gap-4 md:grid-cols-3">{holderSnapshot.map(KpiCard)}</div>
     </section>
   )
