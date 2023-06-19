@@ -223,7 +223,11 @@ const tokenHoldersQuery = gql`
       balance
       id
     }
-    previousMonthUsers: users(first: 10, orderBy: balance, where: $usersFilter, orderDirection: $usersOrderDirection,
+    previousMonthUsers: users(
+      first: 10
+      orderBy: balance
+      where: $usersFilter
+      orderDirection: $usersOrderDirection
       block: { number: $previousMonthBlockNumber }
     ) {
       balance
@@ -272,11 +276,11 @@ export interface TokenHoldersFilters {
 }
 
 export async function getTokenHolders(filters?: TokenHoldersFilters) {
-  const previousMonthTimestamp = Math.floor((Date.now() - 30 * 86400 * 1000)/1000)
+  const previousMonthTimestamp = Math.floor((Date.now() - 30 * 86400 * 1000) / 1000)
   const previousQuarterTimestamp = Math.floor(endOfPreviousQuarter(Date.now()) / 1000)
-  const [previousMonthBlockNumber,previousQuarterBlockNumber] = await Promise.all([
+  const [previousMonthBlockNumber, previousQuarterBlockNumber] = await Promise.all([
     getBlockNumberFromTimestamp(previousMonthTimestamp),
-    getBlockNumberFromTimestamp(previousQuarterTimestamp)
+    getBlockNumberFromTimestamp(previousQuarterTimestamp),
   ])
 
   const tokenHoldersRes = await request<TokenHoldersGraph>(GRAPH_URL, tokenHoldersQuery, {
@@ -299,11 +303,11 @@ export async function getTokenHolders(filters?: TokenHoldersFilters) {
     const previousMonthData = tokenHoldersRes.previousMonthUsers.find((u) => u.id === user.id)
     const previousMonthBalance = previousMonthData ? Math.trunc(+previousMonthData.balance) / 1e18 : 0
     const balanceChange30days = getPercentageDiff(balance, previousMonthBalance)
-    
+
     return {
       ...user,
       balance,
-      balanceChange30days
+      balanceChange30days,
     }
   })
 

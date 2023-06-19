@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
+import { ArrowTopRightOnSquareIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { shortenAddress } from '@sushiswap/format'
 import { ExternalLink } from '@sushiswap/ui/future/components/ExternalLink'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
@@ -139,7 +139,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
               style: 'percent',
             })}
           </span>
-          )
+        )
       },
       meta: { skeleton: <Skeleton.Text /> },
       enableSorting: false,
@@ -186,6 +186,26 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
             placeholder=""
             pageSize={Math.max(users.length, 5)}
           />
+        </div>
+        <div className="flex justify-between items-center">
+          <div className="flex h-[42px] items-center gap-2 rounded-lg bg-slate-200 dark:bg-slate-700 px-2 font-medium text-sm">
+            <button
+              className="rounded p-1 transition-colors ease-in-out enabled:hover:bg-black/[0.12] disabled:text-slate-500 enabled:hover:dark:bg-white/[0.12]"
+              // onClick={() => setSelectedQuarterIndex(selectedQuarterIndex - 1)}
+              // disabled={selectedQuarterIndex === 0}
+            >
+              <ChevronLeftIcon className="h-3 w-3" strokeWidth={3} />
+            </button>
+            {/* {selectedQuarter.quarter} */}
+            <button
+              className="rounded p-1 transition-colors ease-in-out enabled:hover:bg-black/[0.12] disabled:text-slate-500 enabled:hover:dark:bg-white/[0.12]"
+              // onClick={() => setSelectedQuarterIndex(selectedQuarterIndex + 1)}
+              // disabled={selectedQuarterIndex === budgetData.length - 1}
+            >
+              <ChevronRightIcon className="h-3 w-3" strokeWidth={3} />
+            </button>
+          </div>
+          <div></div>
         </div>
       </div>
     </div>

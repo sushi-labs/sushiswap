@@ -16,10 +16,10 @@ export function TokenNetflowChart(props: { tokenNetflowData: SushiTokenNetflow[]
         <defs>
           <linearGradient id="inflow" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#568AE8" />
-            <stop offset="100.2%" stopColor={isDarkMode ? "#1A2031" : "white"} />
+            <stop offset="100.2%" stopColor={isDarkMode ? '#1A2031' : 'white'} />
           </linearGradient>
           <linearGradient id="outflow" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor={isDarkMode ? "#1A2031" : "white"} stopOpacity={0.85} />
+            <stop offset="0%" stopColor={isDarkMode ? '#1A2031' : 'white'} stopOpacity={0.85} />
             <stop offset="100.2%" stopColor="#C662F5" />
           </linearGradient>
         </defs>
@@ -38,15 +38,11 @@ export function TokenNetflowChart(props: { tokenNetflowData: SushiTokenNetflow[]
               <ChartTooltip>
                 <dl className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-sm bg-blue" />
-                  <dd className="text-base font-semibold">
-                    ${formatNumber(Math.abs(payload[0].payload.outflow), 0)}
-                  </dd>
+                  <dd className="text-base font-semibold">${formatNumber(Math.abs(payload[0].payload.outflow), 0)}</dd>
                 </dl>
                 <dl className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-sm bg-[#BF60EE]" />
-                  <dd className="text-base font-semibold">
-                    ${formatNumber(payload[0].payload.inflow, 0)}
-                  </dd>
+                  <dd className="text-base font-semibold">${formatNumber(payload[0].payload.inflow, 0)}</dd>
                 </dl>
                 <p className="mt-1">{label}</p>
               </ChartTooltip>
@@ -55,7 +51,13 @@ export function TokenNetflowChart(props: { tokenNetflowData: SushiTokenNetflow[]
         />
         <Bar barSize={24} dataKey="inflow" fill="url(#inflow)" stackId="stack" />
         <Bar barSize={24} dataKey="outflow" fill="url(#outflow)" stackId="stack" />
-        <ReferenceLine isFront y={0} stroke={isDarkMode ? "#97A3B7" : "#677488"} strokeDasharray="5 5" opacity={isDarkMode ? 0.1 : 1} />
+        <ReferenceLine
+          isFront
+          y={0}
+          stroke={isDarkMode ? '#97A3B7' : '#677488'}
+          strokeDasharray="5 5"
+          opacity={isDarkMode ? 0.1 : 1}
+        />
       </BarChart>
     </ResponsiveContainer>
   )

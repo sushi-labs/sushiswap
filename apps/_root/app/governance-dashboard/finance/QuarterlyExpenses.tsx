@@ -7,7 +7,7 @@ import { ChartTooltip } from '../components'
 
 export function QuarterlyExpenses({ budgetData }: { budgetData: SushiBudget[] }) {
   const isDarkMode = useIsDarkMode()
-  
+
   return (
     <div className="h-full w-full rounded-lg bg-white dark:bg-[#1A2031] p-5">
       <div className="flex items-center gap-[14px]">
@@ -28,11 +28,11 @@ export function QuarterlyExpenses({ budgetData }: { budgetData: SushiBudget[] })
             <defs>
               <linearGradient id="expenses" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#C662F5" />
-                <stop offset="100.2%" stopColor={isDarkMode ? "#1A2031" : "white"} />
+                <stop offset="100.2%" stopColor={isDarkMode ? '#1A2031' : 'white'} />
               </linearGradient>
               <linearGradient id="revenue" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#568AE8" />
-                <stop offset="100.2%" stopColor={isDarkMode ? "#1A2031" : "white"} />
+                <stop offset="100.2%" stopColor={isDarkMode ? '#1A2031' : 'white'} />
               </linearGradient>
             </defs>
             <Tooltip
@@ -42,22 +42,23 @@ export function QuarterlyExpenses({ budgetData }: { budgetData: SushiBudget[] })
                   <ChartTooltip>
                     <dl className="flex items-center gap-2">
                       <div className="h-3 w-3 rounded-sm bg-[#BF60EE]" />
-                      <dd className="text-base font-semibold">
-                        ${formatNumber(payload[0].payload.expenses, 0)}
-                      </dd>
+                      <dd className="text-base font-semibold">${formatNumber(payload[0].payload.expenses, 0)}</dd>
                     </dl>
                     <dl className="flex items-center gap-2">
                       <div className="h-3 w-3 rounded-sm bg-blue" />
-                      <dd className="text-base font-semibold">
-                        ${formatNumber(payload[0].payload.revenue, 0)}
-                      </dd>
+                      <dd className="text-base font-semibold">${formatNumber(payload[0].payload.revenue, 0)}</dd>
                     </dl>
                     <p className="mt-1">{label}</p>
                   </ChartTooltip>
                 ) : null
               }
             />
-            <XAxis dataKey="quarter" axisLine={false} tickLine={false} tick={{ fill: isDarkMode ? '#97A3B7' : '#677488' }} />
+            <XAxis
+              dataKey="quarter"
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: isDarkMode ? '#97A3B7' : '#677488' }}
+            />
             <YAxis
               axisLine={false}
               tickLine={false}

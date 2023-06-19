@@ -24,7 +24,7 @@ export async function HolderSnapshot() {
       ),
       additional: (
         <div className="grid grid-cols-3 text-sm text-slate-400 dark:text-slate-500">
-        <span>Total</span>
+          <span>Total</span>
           <span>Last 7 days</span>
           <span>Last 30 days</span>
         </div>

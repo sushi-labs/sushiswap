@@ -36,7 +36,7 @@ export function QuarterlyBudget({ budgetData }: { budgetData: SushiBudget[] }) {
         value: <span className="text-green-400">{formatNumber(selectedQuarter.left)}</span>,
         additional: (
           <dd className="text-sm text-slate-400">
-            {(1 - (selectedQuarter.left / selectedQuarter.budget)).toLocaleString('EN', {
+            {(1 - selectedQuarter.left / selectedQuarter.budget).toLocaleString('EN', {
               style: 'percent',
               maximumFractionDigits: 2,
             })}{' '}

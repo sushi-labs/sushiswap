@@ -20,9 +20,10 @@ function SlideButtons({ show }: { show: { left: boolean; right: boolean } }) {
   const swiper = useSwiper()
 
   const BASE =
-  'rounded-full h-10 w-10 flex items-center justify-center border border-blue/40 dark:border-slate-600 transition-colors ease-in'
+    'rounded-full h-10 w-10 flex items-center justify-center border border-blue/40 dark:border-slate-600 transition-colors ease-in'
   const ACTIVE = 'bg-blue-100 dark:bg-gray-50 text-blue dark:text-slate-800 hover:bg-blue-300 dark:hover:bg-slate-200'
-  const STALE = 'bg-blue/80 dark:bg-slate-700 text-gray-50 dark:text-slate-400 hover:bg-blue-300 dark:hover:bg-slate-800'
+  const STALE =
+    'bg-blue/80 dark:bg-slate-700 text-gray-50 dark:text-slate-400 hover:bg-blue-300 dark:hover:bg-slate-800'
 
   return (
     <>

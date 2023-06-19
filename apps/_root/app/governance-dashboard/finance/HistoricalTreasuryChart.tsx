@@ -12,7 +12,7 @@ export function HistoricalTreasuryChart({
   treasuryHistoricalTvl: { date: string; value: number }[]
 }) {
   const isDarkMode = useIsDarkMode()
-  
+
   return (
     <div className="w-full text-xs">
       <ResponsiveContainer minWidth="100%" minHeight={240}>
@@ -25,7 +25,7 @@ export function HistoricalTreasuryChart({
           <defs>
             <linearGradient id="area-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="13.14%" stopColor="#2C6DE2" />
-              <stop offset="100.2%" stopColor={isDarkMode ? "#101728" : "white"} />
+              <stop offset="100.2%" stopColor={isDarkMode ? '#101728' : 'white'} />
             </linearGradient>
           </defs>
           <XAxis

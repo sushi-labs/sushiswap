@@ -21,7 +21,9 @@ export function GovernanceItemCard(props: GovernanceItem) {
               Active
             </div>
           ) : (
-            <div className="flex h-6 w-fit items-center rounded-full bg-[#2371FF1A] dark:bg-[#26304B] px-2 text-xs text-blue">Closed</div>
+            <div className="flex h-6 w-fit items-center rounded-full bg-[#2371FF1A] dark:bg-[#26304B] px-2 text-xs text-blue">
+              Closed
+            </div>
           )}
           <div className="flex h-6 w-fit items-center rounded-full bg-slate-400 dark:bg-slate-700 px-2 text-xs text-gray-50 dark:text-slate-300">
             {category}

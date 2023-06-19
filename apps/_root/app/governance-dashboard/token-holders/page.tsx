@@ -10,15 +10,14 @@ export default async function TokenHolders({ searchParams }: { searchParams: Tok
   const totalSupply = Math.trunc(+tokenHolders.totalSupply ?? 0) / 1e18
 
   const users = tokenHolders.users.map(({ id, balance, balanceChange30days }, i: number) => ({
-      id,
-      rank: i + 1,
-      address: id,
-      quantity: balance,
-      ownership: balance / totalSupply,
-      value: balance * sushiPrice,
-      change30d: balanceChange30days
-    })
-  )
+    id,
+    rank: i + 1,
+    address: id,
+    quantity: balance,
+    ownership: balance / totalSupply,
+    value: balance * sushiPrice,
+    change30d: balanceChange30days,
+  }))
 
   return (
     <section className="space-y-14">
