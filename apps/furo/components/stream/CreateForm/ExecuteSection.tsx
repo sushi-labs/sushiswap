@@ -92,15 +92,15 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId }> = withChec
         actions.push(approveBentoBoxAction({ contract, user: address, signature }))
       }
 
-      console.log([
-        recipient,
-        _amount.currency,
-        new Date(dates.startDate),
-        new Date(dates.endDate),
-        _amount.quotient.toString(),
-        _fundSource === FundSource.BENTOBOX,
-        _amount.toShare(rebase).quotient.toString(),
-      ])
+      // console.log([
+      //   recipient,
+      //   _amount.currency,
+      //   new Date(dates.startDate),
+      //   new Date(dates.endDate),
+      //   _amount.quotient.toString(),
+      //   _fundSource === FundSource.BENTOBOX,
+      //   _amount.toShare(rebase).quotient.toString(),
+      // ])
 
       actions.push(
         streamCreationAction({

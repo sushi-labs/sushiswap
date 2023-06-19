@@ -7,7 +7,7 @@ import { Address, getSushiSwapRouterContractConfig, PairState, PoolFinder } from
 import { AddSectionReviewModalLegacy, Layout, SelectNetworkWidget, SelectTokensWidget } from '../../../../components'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
-import { isUniswapV2Router02ChainId } from '@sushiswap/sushiswap'
+import { isUniswapV2Router02ChainId } from '@sushiswap/v2-core'
 
 import { AMM_ENABLED_NETWORKS } from '../../../../config'
 import { isLegacyPool } from '../../../../lib/functions'
@@ -20,7 +20,7 @@ import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { APPROVE_TAG_ADD_LEGACY } from '../../../../lib/constants'
-import { uniswapV2FactoryChainIds } from '@sushiswap/sushiswap'
+import { uniswapV2FactoryChainIds } from '@sushiswap/v2-core'
 
 // This function gets called at build time on server-side.
 // It may be called again, on a serverless function, if
@@ -66,7 +66,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
 
   return (
     <SWRConfig>
-      <Layout>
+      <Layout className='flex justify-center'>
         <div className="flex flex-col gap-2">
           <Link className="flex items-center gap-4 mb-2 group" href="/" shallow={true}>
             <IconButton
@@ -207,6 +207,8 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onChangeToken0TypedAmount])
 
+  console.log(pool)
+
   return (
     <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">
       <SelectNetworkWidget networks={AMM_ENABLED_NETWORKS} selectedNetwork={chainId} onSelect={setChainId} />
@@ -251,7 +253,7 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
             <Checker.Connect fullWidth size="xl">
               <Checker.Network fullWidth size="xl" chainId={chainId}>
                 <Checker.Amounts fullWidth size="xl" chainId={chainId} amounts={[parsedInput0, parsedInput1]}>
-                  {pool && isLegacyPool(pool) && isUniswapV2Router02ChainId(chainId) && (
+                  {(!pool || isLegacyPool(pool)) && isUniswapV2Router02ChainId(chainId) && (
                     <>
                       <Checker.ApproveERC20
                         id="approve-token-0"

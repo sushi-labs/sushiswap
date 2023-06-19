@@ -32,4 +32,15 @@ export class ConstantProductPoolCode extends PoolCode {
       .toString()
     return code
   }
+
+  getSwapCodeForRouteProcessor4(leg: RouteLeg, _route: MultiRoute, to: string): string {
+    const code = new HEXer()
+      .uint8(0) // uniV2 pool
+      .address(this.pool.address)
+      .bool(leg.tokenFrom.address == this.pool.token0.address)
+      .address(to)
+      .uint24(Math.round(leg.poolFee * 1_000_000)) // new part - before fee was always 0.3%
+      .toString()
+    return code
+  }
 }

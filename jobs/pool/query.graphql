@@ -288,3 +288,11 @@ query CustomBlocks($timestamp: Int!, $chainIds: [Int!]!) {
     timestamp
   }
 }
+
+query CurrentBlock($first: Int = 1000 $skip: Int = 0) {
+  _meta {
+    block {
+      number
+    }
+  }
+}

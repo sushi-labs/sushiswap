@@ -7,8 +7,7 @@ import { ShuffleIcon } from '@sushiswap/ui/future/components/icons'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { ChainSelectors } from './ChainSelectors'
 import { Explainer } from '@sushiswap/ui/future/components/Explainer'
-import { STARGATE_SUPPORTED_CHAIN_IDS } from '@sushiswap/stargate'
-import { SushiXSwapChainId } from '@sushiswap/sushixswap'
+import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
 
 export const CrossChainBanner: FC = () => {
   const { appType, network0 } = useSwapState()
@@ -25,7 +24,7 @@ export const CrossChainBanner: FC = () => {
   return (
     <div
       className={classNames(
-        !STARGATE_SUPPORTED_CHAIN_IDS.includes(network0 as SushiXSwapChainId) ? 'opacity-40 pointer-events-none' : '',
+        !STARGATE_SUPPORTED_CHAIN_IDS.includes(network0 as StargateChainId) ? 'opacity-40 pointer-events-none' : '',
         'bg-white dark:bg-slate-900 rounded-xl mb-4'
       )}
     >

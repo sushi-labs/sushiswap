@@ -13,7 +13,6 @@ import { Type } from '@sushiswap/currency'
 
 export const PoolNameCellV3: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> = ({ row }) => {
   const [_token0, _token1]: Type[] = useMemo(() => [unwrapToken(row.pool.token0), unwrapToken(row.pool.token1)], [row])
-
   return (
     <div className="flex items-center gap-5">
       <div className="hidden sm:flex">

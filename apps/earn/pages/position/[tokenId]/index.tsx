@@ -8,6 +8,7 @@ import { SplashController } from '@sushiswap/ui/future/components/SplashControll
 import {
   useConcentratedLiquidityPositionsFromTokenId,
   useConcentratedPositionInfo,
+  useConcentratedPositionOwner,
   useTokenWithCache,
 } from '@sushiswap/wagmi/future/hooks'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
@@ -148,10 +149,10 @@ const Position: FC = () => {
   const inRange = typeof below === 'boolean' && typeof above === 'boolean' ? !below && !above : false
   const fullRange = Boolean(tickAtLimit[Bound.LOWER] && tickAtLimit[Bound.UPPER])
 
+  const { data: owner } = useConcentratedPositionOwner({ chainId, tokenId })
   const { data: rewardsData, isLoading: rewardsLoading } = useAngleRewards({
     chainId,
-    account: address,
-    poolAddress: positionDetails?.address,
+    account: owner,
   })
 
   return (
@@ -302,11 +303,7 @@ const Position: FC = () => {
                     </Explainer>
                   </List.Label>
                 </div>
-                <ConcentratedLiquidityHarvestButton
-                  account={address}
-                  chainId={chainId}
-                  poolAddress={positionDetails?.address}
-                >
+                <ConcentratedLiquidityHarvestButton account={address} chainId={chainId}>
                   {({ write, isLoading }) => (
                     <Checker.Connect size="xs" variant="empty" className="!h-[24px] font-bold">
                       <Checker.Network size="xs" variant="empty" className="!h-[24px] font-bold" chainId={chainId}>

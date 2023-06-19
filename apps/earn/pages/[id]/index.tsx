@@ -11,7 +11,7 @@ import {
   Layout,
   PoolActionBar,
   PoolButtons,
-  PoolChart,
+  PoolChartV2,
   PoolComposition,
   PoolHeader,
   PoolMyRewards,
@@ -22,11 +22,12 @@ import {
   PoolRewards,
   PoolStats,
   UnknownTokenAlert,
+  PoolTransactionsV2,
 } from '../../components'
 import { PROTOCOL_MAP } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
 import { NextSeo } from 'next-seo'
-import PoolPageV3 from '../../components/PoolPageV3'
+import { PoolPageV3 } from '../../components/PoolPageV3'
 
 const LINKS = (pool: Pool): BreadcrumbLink[] => [
   {
@@ -49,6 +50,7 @@ const _Pool = () => {
   const router = useRouter()
 
   const [chainId, address] = (router.query.id as string).split(':') as [ChainId, string]
+
   const { data: pool } = usePool({
     args: { chainId, address },
     swrConfig: useSWRConfig(),
@@ -74,7 +76,7 @@ const _Pool = () => {
                   <div className="flex flex-col order-1 gap-9">
                     <PoolHeader pool={pool} />
                     <hr className="my-3 border-t border-gray-900/5 dark:border-slate-200/5" />
-                    <PoolChart pool={pool} />
+                    <PoolChartV2 address={address} chainId={chainId} />
                     <PoolStats pool={pool} />
                     <PoolComposition pool={pool} />
                     <PoolRewards pool={pool} />
@@ -92,6 +94,8 @@ const _Pool = () => {
                     </div>
                   </div>
                 </div>
+                <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
+                <PoolTransactionsV2 pool={pool} poolId={address} />
               </div>
             </Layout>
             <PoolActionBar pool={pool} />
@@ -110,7 +114,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     .sort(({ liquidityUSD: a }, { liquidityUSD: b }) => {
       return Number(b) - Number(a)
     })
-    .slice(0, 250)
+    .slice(0, 50)
     .map((pool) => ({
       params: { id: pool.id },
     }))

@@ -41,7 +41,7 @@ export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): 
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     gasPrice: feeData?.gasPrice?.toNumber(),
     recipient,
-    enabled: isFallback,
+    enabled: !crossChain && network0 === network1 && isFallback,
     carbonOffset,
   })
 

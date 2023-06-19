@@ -25,12 +25,14 @@ import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { computePoolAddress } from '@sushiswap/v3-sdk'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3FactoryContract'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
+import { useRouter } from 'next/router'
 
 export function AddPage() {
+  const router = useRouter()
   return (
     <ConcentratedLiquidityURLStateProvider>
       {({ token0, chainId }) => (
-        <SplashController show={Boolean(!token0 || !chainId)}>
+        <SplashController show={Boolean(!token0 || !chainId || !router.isReady)}>
           <SWRConfig>
             <Layout>
               <div className="flex flex-col gap-2">
@@ -117,7 +119,7 @@ const _Add: FC = () => {
           <div className="col-span-2 flex gap-7">
             <div className="flex min-w-[44px] mb-4">
               <Badge
-                className="border-2 border-slate-900 rounded-full z-[11] !bottom-0 right-[-15%]"
+                className="border-2 border-gray-100 dark:border-slate-900 rounded-full z-[11] !bottom-0 right-[-15%]"
                 position="bottom-right"
                 badgeContent={
                   chainId ? (

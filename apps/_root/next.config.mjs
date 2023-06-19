@@ -7,21 +7,6 @@ import { withAxiom } from 'next-axiom'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   ...defaultNextConfig,
-  eslint: {
-    dirs: [
-      // ...
-      'app',
-      'components',
-      'functions',
-      'lib',
-      'pages',
-      'types',
-      'ui',
-    ],
-  },
-  experimental: {
-    appDir: true,
-  },
   transpilePackages: ['@sushiswap/ui', '@sushiswap/wagmi'],
   async redirects() {
     return [

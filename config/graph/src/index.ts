@@ -101,6 +101,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.BOBA_BNB]: 'Boba BNB',
   [ChainId.BTTC]: 'BitTorrent',
   [ChainId.THUNDERCORE]: 'ThunderCore',
+  [ChainId.POLYGON_ZKEVM]: 'Polygon zkEVM',
 } as const
 
 export const SUBGRAPH_HOST = {
@@ -149,6 +150,8 @@ export const BENTOBOX_SUBGRAPH_NAME = {
   [ChainId.BTTC]: 'sushiswap/bentobox-bttc',
 } as const
 
+export const BENTOBOX_ENABLED_NETWORKS = Object.keys(BENTOBOX_SUBGRAPH_NAME).map(Number) as BentoBoxChainId[]
+
 export type BentoBoxChainId = keyof typeof BENTOBOX_SUBGRAPH_NAME
 
 export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
@@ -177,6 +180,34 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.BOBA_BNB]: 'sushiswap/blocks-boba-bnb',
   [ChainId.BTTC]: 'sushiswap/blocks-bttc',
   [ChainId.THUNDERCORE]: 'sushiswap/blocks-thundercore',
+} as const
+
+export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
+  [ChainId.ETHEREUM]: 12,
+  [ChainId.GNOSIS]: 5,
+  [ChainId.POLYGON]: 2,
+  [ChainId.POLYGON_ZKEVM]: 5,
+  [ChainId.FANTOM]: 2,
+  [ChainId.BSC]: 3,
+  [ChainId.HARMONY]: 2,
+  [ChainId.AVALANCHE]: 2,
+  [ChainId.CELO]: 5,
+  [ChainId.ARBITRUM]: 0.25,
+  [ChainId.OKEX]: 3.8,
+  [ChainId.HECO]: 3,
+  [ChainId.MOONRIVER]: 12.2,
+  [ChainId.FUSE]: 5,
+  [ChainId.KOVAN]: 4,
+  [ChainId.MOONBEAM]: 12.2,
+  [ChainId.OPTIMISM]: 2,
+  [ChainId.KAVA]: 6.3,
+  [ChainId.METIS]: 4.5,
+  [ChainId.ARBITRUM_NOVA]: 1,
+  [ChainId.BOBA]: 250,
+  [ChainId.BOBA_AVAX]: 612,
+  [ChainId.BOBA_BNB]: 0.5,
+  [ChainId.BTTC]: 2,
+  [ChainId.THUNDERCORE]: 1,
 } as const
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
@@ -280,6 +311,21 @@ export const MINICHEF_SUBGRAPH_NAME = {
 export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging' as const
 export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2' as const
 
+export const FURO_ENABLED_NETWORKS = [
+  ChainId.ETHEREUM,
+  ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
+  ChainId.BSC,
+  ChainId.FANTOM,
+  ChainId.GNOSIS,
+  ChainId.HARMONY,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
+  ChainId.OPTIMISM,
+  ChainId.POLYGON,
+] as const
+
+// TODO: Make typesafe
 export const FURO_SUBGRAPH_NAME: Record<string, string> = {
   [ChainId.ETHEREUM]: 'sushi-subgraphs/furo-ethereum',
   [ChainId.GÖRLI]: 'sushi-subgraphs/furo-goerli',

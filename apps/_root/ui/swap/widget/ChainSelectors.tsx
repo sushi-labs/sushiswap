@@ -5,7 +5,7 @@ import { Popover } from '@headlessui/react'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { ArrowRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
-import { STARGATE_SUPPORTED_CHAIN_IDS } from '@sushiswap/stargate'
+import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
 import { classNames } from '@sushiswap/ui'
 
 export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
@@ -13,7 +13,7 @@ export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
 
   const { setNetwork0, setNetwork1, switchTokens } = useSwapActions()
 
-  const handleSelect0 = useCallback<NetworkSelectorOnSelectCallback<(typeof STARGATE_SUPPORTED_CHAIN_IDS)[number]>>(
+  const handleSelect0 = useCallback<NetworkSelectorOnSelectCallback<StargateChainId>>(
     (el, close) => {
       setNetwork0(el)
       close()
@@ -21,7 +21,7 @@ export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
     [setNetwork0]
   )
 
-  const handleSelect1 = useCallback<NetworkSelectorOnSelectCallback<(typeof STARGATE_SUPPORTED_CHAIN_IDS)[number]>>(
+  const handleSelect1 = useCallback<NetworkSelectorOnSelectCallback<StargateChainId>>(
     (el, close) => {
       setNetwork1(el)
       close()
@@ -46,10 +46,10 @@ export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
 
         <div className="grid grid-cols-2 gap-[60px] border-gray-200 dark:border-slate-800">
           <div className="z-10">
-            <NetworkSelector<(typeof STARGATE_SUPPORTED_CHAIN_IDS)[number]>
+            <NetworkSelector<StargateChainId>
               networks={STARGATE_SUPPORTED_CHAIN_IDS}
               variant="dialog"
-              selected={network0 as (typeof STARGATE_SUPPORTED_CHAIN_IDS)[number]}
+              selected={network0 as StargateChainId}
               onSelect={handleSelect0}
             >
               <Popover.Button
@@ -75,7 +75,7 @@ export const ChainSelectors: FC<{ open: boolean }> = ({ open }) => {
             <NetworkSelector
               networks={STARGATE_SUPPORTED_CHAIN_IDS}
               variant="dialog"
-              selected={network1 as (typeof STARGATE_SUPPORTED_CHAIN_IDS)[number]}
+              selected={network1 as StargateChainId}
               onSelect={handleSelect1}
             >
               <Popover.Button

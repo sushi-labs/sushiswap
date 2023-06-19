@@ -8,7 +8,7 @@ import { FC } from 'react'
 import { useSWRConfig } from 'swr'
 
 import { FarmRewardsAvailableTooltip } from '../FarmRewardsAvailableTooltip'
-import { PoolQuickHoverTooltip } from '../PoolTable'
+import { PoolQuickHoverTooltip } from '../PoolQuickHoverTooltip'
 
 interface TokenPairs {
   token: GraphToken

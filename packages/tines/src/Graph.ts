@@ -4,6 +4,8 @@ import { ConstantProductRPool, RPool, RToken, setTokenId } from './PrimaryPools'
 import { StableSwapRPool } from './StableSwapPool'
 import { ASSERT, closeValues, DEBUG, getBigNumber } from './Utils'
 
+const ROUTER_DISTRIBUTION_PORTION = 65535
+
 // Routing info about each one swap
 export interface RouteLeg {
   poolType: 'Stable' | 'Classic' | 'Unknown'
@@ -352,7 +354,8 @@ export class Graph {
     start: RToken,
     baseTokenOrNetworks: RToken | NetworkInfo[],
     gasPriceSingleNetwork?: number,
-    minPriceLiquidity = 0
+    minPriceLiquidity = 0,
+    priceLogging = false
   ) {
     const networks: NetworkInfo[] =
       baseTokenOrNetworks instanceof Array
@@ -385,7 +388,7 @@ export class Graph {
     //   }
     // })
     const startV = this.getVert(start)
-    if (startV !== undefined) this.setPricesStable(startV, 1, networks, minPriceLiquidity)
+    if (startV !== undefined) this.setPricesStable(startV, 1, networks, minPriceLiquidity, priceLogging)
   }
 
   getVert(t: RToken): Vertice | undefined {
@@ -398,7 +401,7 @@ export class Graph {
   }
 
   // Set prices using greedy algorithm
-  setPricesStable(from: Vertice, price: number, networks: NetworkInfo[], minLiquidity = 0) {
+  setPricesStable(from: Vertice, price: number, networks: NetworkInfo[], minLiquidity = 0, logging = false) {
     const processedVert = new Set<Vertice>()
     let nextEdges: Edge[] = []
     const edgeValues = new Map<Edge, number>()
@@ -424,6 +427,7 @@ export class Graph {
       processedVert.add(v)
     }
 
+    if (logging) console.log(`Pricing: Initial token ${from.token.symbol} price=${price}` )
     addVertice(from, price)
     while (nextEdges.length > 0) {
       const bestEdge = nextEdges.pop() as Edge
@@ -432,7 +436,11 @@ export class Graph {
         : [bestEdge.vert0, bestEdge.vert1]
       if (processedVert.has(vTo)) continue
       const p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
-      addVertice(vTo, vFrom.price * p) //, vFrom.gasPrice / p)
+      if (logging) 
+        console.log(
+          `Pricing: + Token ${vTo.token.symbol} price=${vFrom.price * p}`
+          + ` from ${vFrom.token.symbol} pool=${bestEdge.pool.address} liquidity=${edgeValues.get(bestEdge)}` )
+      addVertice(vTo, vFrom.price * p)
     }
 
     const gasPrice = new Map<number | string | undefined, number>()
@@ -1158,7 +1166,8 @@ export class Graph {
 
       const inputTotal = amounts.get(l.tokenFrom.tokenId as string)
       console.assert(inputTotal !== undefined, 'Internal Error 564')
-      const input = (inputTotal as number) * l.swapPortion
+      const routerPortion = Math.round(l.swapPortion * ROUTER_DISTRIBUTION_PORTION) / ROUTER_DISTRIBUTION_PORTION
+      const input = Math.floor((inputTotal as number) * routerPortion)
       amounts.set(l.tokenFrom.tokenId as string, (inputTotal as number) - input)
       const output = pool.calcOutByInReal(input, direction)
 

@@ -49,21 +49,21 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
   try {
     CreateMultipleStreamModelSchema.parse(formData)
   } catch (e) {
-    console.log(e)
+    console.error(e)
   }
 
   return (
     <div className={classNames('flex flex-col gap-20')}>
       <Link href="/stream/create" passHref={true} legacyBehavior>
         <a>
-          <button className="flex gap-3 font-medium group hover:text-white text-slate-200">
+          <button type="button" className="flex gap-3 font-medium group hover:text-white text-slate-200">
             <ArrowCircleLeftIcon width={24} height={24} /> <span>Create Stream</span>
           </button>
         </a>
       </Link>
       <FormProvider {...methods}>
         <div className="flex flex-col gap-14">
-          <ImportErrorProvider<CreateMultipleStreamFormSchemaType>>
+          <ImportErrorProvider>
             <ImportZoneSection chainId={chainId} />
             <div className="w-full border-b border-slate-200/5" />
             <div className={review ? 'hidden' : ''}>

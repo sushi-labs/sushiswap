@@ -54,7 +54,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
   const contract = useTridentRouterContract(_pool.chainId)
   const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
   const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
+    return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
   }, [slippageTolerance])
 
   const [percentage, setPercentage] = useState<string>('')
@@ -157,7 +157,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
   const prepare = useCallback(
     async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       try {
-        console.log('prepare trident')
+        // console.log('prepare trident')
         const isInvalid =
           !chain?.id ||
           !pool ||
@@ -173,7 +173,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
           !rebases?.[token0.wrapped.address] ||
           !rebases?.[token1.wrapped.address] ||
           !slpAmountToRemove
-        console.log({ isInvalid })
+        // console.log({ isInvalid })
         if (
           !chain?.id ||
           !pool ||

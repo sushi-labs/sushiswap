@@ -4,7 +4,7 @@ import { CHAIN_NAME, SushiSwapChainId, TridentChainId } from '@sushiswap/graph-c
 import Cors from 'cors'
 import { ethers } from 'ethers'
 import stringify from 'fast-json-stable-stringify'
-import { getOctokit, getTokenKPI, Token } from 'app/partner/lib'
+import { getOctokit, Token } from 'app/partner/lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 interface Body {
@@ -87,6 +87,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const branches: string[] = []
 
     for (let i = 1; ; i++) {
+      // @ts-ignore
       const { data }: { data: { name: string }[] } = await octokit.request('GET /repos/{owner}/{repo}/branches', {
         owner,
         repo: 'list',
@@ -127,6 +128,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       ;({
         data: { sha: previousImageFileSha },
+        // @ts-ignore
       } = (await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
         owner,
         repo: 'list',
@@ -158,6 +160,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   let currentListData: { sha: string; content: any } | undefined
 
   try {
+    // @ts-ignore
     ;({ data: currentListData } = (await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
       owner,
       repo: 'list',
@@ -199,7 +202,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     sha: currentListData?.sha,
   })
 
-  const exchangeData = await getTokenKPI(tokenAddress, chainId as Extract<ChainId, SushiSwapChainId & TridentChainId>)
+  // const exchangeData = await getTokenKPI(tokenAddress, chainId as Extract<ChainId, SushiSwapChainId & TridentChainId>)
+  // Volume: ${formatUSD(exchangeData?.volumeUSD ?? 0)}
+  // Liquidity: ${formatUSD(exchangeData?.liquidityUSD ?? 0)}
 
   // Open List PR
   const {
@@ -215,8 +220,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       Symbol: ${tokenData.symbol}
       Decimals: ${tokenData.decimals}
       List: ${listType}
-      Volume: ${formatUSD(exchangeData?.volumeUSD ?? 0)}
-      Liquidity: ${formatUSD(exchangeData?.liquidityUSD ?? 0)}
+      Volume: ${formatUSD(0)}
+      Liquidity: ${formatUSD(0)}
       CoinGecko: ${await getCoinGecko(chainId, checksummedAddress)}
       Image: https://github.com/${owner}/list/tree/${branch}/${imagePath}
       ![${displayName}](https://raw.githubusercontent.com/${owner}/list/${branch}/${imagePath})

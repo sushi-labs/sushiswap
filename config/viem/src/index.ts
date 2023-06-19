@@ -35,7 +35,7 @@ import {
   optimism,
   //  optimismGoerli,
   polygon,
-  polygonZkEvm,
+  polygonZkEvm as _polygonZkEvm,
   // polygonMumbai,
   // sepolia,
   //  taraxa,
@@ -85,6 +85,16 @@ export {
   // taraxaTestnet,
   //  zkSync,
   // zkSyncTestnet,
+}
+
+export const polygonZkEvm = {
+  ..._polygonZkEvm,
+  contracts: {
+    multicall3: {
+      address: '0xca11bde05977b3631167028862be2a173976ca11' as Address,
+      blockCreated: 57746,
+    },
+  },
 }
 
 export const gnosis = {
@@ -518,15 +528,15 @@ const thundercore = {
   rpcUrls: {
     default: {
       http: [
-        'https://mainnet-rpc.thundercore.io',
         'https://mainnet-rpc.thundercore.com',
-        'https://mainnet-rpc.thundertoken.net',
+        // 'https://mainnet-rpc.thundercore.io',
+        // 'https://mainnet-rpc.thundertoken.net',
       ],
     },
     public: {
       http: [
-        'https://mainnet-rpc.thundercore.io',
         'https://mainnet-rpc.thundercore.com',
+        'https://mainnet-rpc.thundercore.io',
         'https://mainnet-rpc.thundertoken.net',
       ],
     },
@@ -551,6 +561,7 @@ export const config: Record<number, PublicClientConfig> = {
     transport: fallback(
       [
         http(`${arbitrum.rpcUrls.alchemy.http}/${alchemyId}`),
+        http('https://lb.drpc.org/ogrpc?network=arbitrum&dkey=Ak765fp4zUm6uVwKu4annC8M80dnCZkR7pAEsm6XXi_w'),
         http('https://rpc.ankr.com/arbitrum'),
         http('https://arbitrum-one.public.blastapi.io'),
         http('https://endpoints.omniatech.io/v1/arbitrum/one/public'),
@@ -582,6 +593,7 @@ export const config: Record<number, PublicClientConfig> = {
     chain: bsc,
     transport: fallback([
       http(bsc.rpcUrls.default.http[0]),
+      http('https://lb.drpc.org/ogrpc?network=bsc&dkey=Ak765fp4zUm6uVwKu4annC8M80dnCZkR7pAEsm6XXi_w'),
       http('https://bsc-dataseed.binance.org'),
       http('https://bsc-dataseed1.binance.org'),
       http('https://bsc-dataseed2.binance.org'),
@@ -600,6 +612,7 @@ export const config: Record<number, PublicClientConfig> = {
     transport: fallback(
       [
         http(`${mainnet.rpcUrls.alchemy.http}/${alchemyId}`),
+        http('https://lb.drpc.org/ogrpc?network=ethereum&dkey=Ak765fp4zUm6uVwKu4annC8M80dnCZkR7pAEsm6XXi_w'),
         http('https://eth.llamarpc.com'),
         http('https://eth.rpc.blxrbdn.com'),
         http('https://virginia.rpc.blxrbdn.com'),
@@ -653,6 +666,7 @@ export const config: Record<number, PublicClientConfig> = {
     transport: fallback(
       [
         http(`${optimism.rpcUrls.alchemy.http}/${alchemyId}`),
+        http('https://lb.drpc.org/ogrpc?network=optimism&dkey=Ak765fp4zUm6uVwKu4annC8M80dnCZkR7pAEsm6XXi_w'),
         http('https://rpc.ankr.com/optimism'),
         http('https://optimism-mainnet.public.blastapi.io'),
         http('https://1rpc.io/op'),
@@ -687,7 +701,7 @@ export const config: Record<number, PublicClientConfig> = {
     chain: polygonZkEvm,
     transport: fallback(
       [
-        http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/${alchemyId}`),
+        // http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/${alchemyId}`),
         http('https://zkevm-rpc.com'),
         http('https://rpc.ankr.com/polygon_zkevm'),
         http('https://rpc.polygon-zkevm.gateway.fm'),

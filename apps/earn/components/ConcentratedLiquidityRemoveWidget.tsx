@@ -14,7 +14,7 @@ import { Amount, Type } from '@sushiswap/currency'
 import { _useSendTransaction as useSendTransaction } from '@sushiswap/wagmi'
 import { unwrapToken } from '../lib/functions'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
-import { useNetwork } from 'wagmi'
+import { useNetwork } from '@sushiswap/wagmi'
 
 interface ConcentratedLiquidityRemoveWidget {
   token0: Type | undefined
@@ -41,7 +41,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
   const { data: deadline } = useTransactionDeadline({ chainId })
 
   const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(+slippageTolerance * 100), 10_000)
+    return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
   }, [slippageTolerance])
 
   const _onChange = useCallback(

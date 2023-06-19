@@ -1,7 +1,7 @@
 import React, { FC, ReactNode } from 'react'
 import { useUserPositions } from '../../lib/hooks'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 import { PositionWithPool } from '../../types'
 import { Protocol } from '@sushiswap/client'
 

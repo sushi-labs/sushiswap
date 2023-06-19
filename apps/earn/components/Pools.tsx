@@ -1,13 +1,15 @@
+'use client'
+
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/solid'
 import { classNames, Link } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
 import React, { FC, Fragment } from 'react'
-import { useNetwork } from '@sushiswap/wagmi'
+import { useAccount, useNetwork } from '@sushiswap/wagmi'
 import { PoolFilters, PoolsFiltersProvider, PoolsSection } from '../components'
 import { ChainId } from '@sushiswap/chain'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
-import { isUniswapV2FactoryChainId } from '@sushiswap/sushiswap'
-import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident'
+import { isUniswapV2FactoryChainId } from '@sushiswap/v2-core'
+import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
 import { Popover, Transition } from '@headlessui/react'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { PositionCardList } from './MigratePage/PositionCardList'
@@ -15,8 +17,8 @@ import Container from '@sushiswap/ui/future/components/Container'
 import { PositionCard, PositionCardSkeleton } from './MigratePage/PositionCard'
 import { Carousel } from '@sushiswap/ui/future/components/Carousel'
 import { DiscordIcon, OnsenIcon } from '@sushiswap/ui/future/components/icons'
-import { useAccount } from 'wagmi'
 import { TRIDENT_ENABLED_NETWORKS } from 'config'
+import { isV3ChainId } from '@sushiswap/v3-sdk'
 
 export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
   const { address } = useAccount()
@@ -102,7 +104,9 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                                 />
                               ) : null}
                               {/*  isConstantProductPoolFactoryChainId(chainId) || isStablePoolFactoryChainId(chainId) */}
-                              {TRIDENT_ENABLED_NETWORKS.includes(chainId as ChainId) ? (
+                              {TRIDENT_ENABLED_NETWORKS.includes(
+                                chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]
+                              ) ? (
                                 <List.MenuItem
                                   as="a"
                                   href={`/pools/add/trident/${chainId}`}
@@ -159,16 +163,10 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                     Migrate <span className="text-gray-500 dark:text-slate-500">for increased efficiency.</span>
                   </h1>
                 </Container>
-                <div className="pl-4 xl:pl-0">
+                <div className="pl-4 xl:pl-2">
                   <Carousel
                     slideWidth={320}
-                    slides={positions.filter(
-                      (position) =>
-                        position?.chainId !== ChainId.CELO &&
-                        position?.chainId !== ChainId.BOBA_AVAX &&
-                        position?.chainId !== ChainId.BOBA_BNB &&
-                        position?.chainId !== ChainId.HARMONY
-                    )}
+                    slides={positions.filter((position) => isV3ChainId(position.chainId as ChainId))}
                     render={(position) => (isLoading ? <PositionCardSkeleton /> : <PositionCard position={position} />)}
                   />
                 </div>
@@ -179,11 +177,9 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
           }
         </PositionCardList>
       )}
-      <Container maxWidth="7xl" className="px-4 mx-auto">
-        <PoolsFiltersProvider passedFilters={filters}>
-          <PoolsSection />
-        </PoolsFiltersProvider>
-      </Container>
+      <PoolsFiltersProvider passedFilters={filters}>
+        <PoolsSection />
+      </PoolsFiltersProvider>
     </>
   )
 }

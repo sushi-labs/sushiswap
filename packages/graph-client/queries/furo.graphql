@@ -20,5 +20,9 @@ query furoTokensByChainIds(
     name
     decimals
     chainId
+    rebase {
+      base
+      elastic
+    }
   }
 }

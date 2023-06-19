@@ -1,9 +1,9 @@
 import { z } from 'zod'
-import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap/sushiswap/exports/exports'
+import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap/v2-core/exports/exports'
 import { useRouter } from 'next/router'
 import { usePool } from '@sushiswap/client'
 import { useSWRConfig } from 'swr'
-import { useAccount } from 'wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
 import React, { useMemo } from 'react'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
@@ -40,8 +40,9 @@ const queryParamsSchema = z.object({
 })
 
 const MigratePositionPage = () => {
+  const router = useRouter()
   return (
-    <SplashController>
+    <SplashController show={!router.isReady}>
       <Migrate />
     </SplashController>
   )

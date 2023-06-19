@@ -1,5 +1,64 @@
 # @sushiswap/router
 
+## 0.0.8
+
+### Patch Changes
+
+- 75972206f: hardhat config embed export type helper
+- Updated dependencies
+  - @sushiswap/v2-core@1.0.4
+  - @sushiswap/trident-core@1.0.4
+  - @sushiswap/bentobox@1.0.1
+  - @sushiswap/amm@0.1.8
+  - @sushiswap/v3-sdk@1.0.5
+
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [765e430ec]
+  - @sushiswap/v2-core@1.0.2
+  - @sushiswap/trident-core@1.0.2
+  - @sushiswap/amm@0.1.7
+  - @sushiswap/v3-sdk@1.0.4
+
+## 0.0.6
+
+### Patch Changes
+
+- Updated dependencies [5a77f202a]
+  - @sushiswap/v2-core@1.0.0
+  - @sushiswap/trident-core@1.0.0
+  - @sushiswap/amm@0.1.6
+  - @sushiswap/v3-sdk@1.0.3
+
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies [d6b7f8443]
+  - @sushiswap/chain@0.1.1
+  - @sushiswap/router-config@1.0.0
+  - @sushiswap/viem-config@1.0.1
+  - @sushiswap/amm@0.1.5
+  - @sushiswap/currency@0.0.5
+  - @sushiswap/v3-sdk@1.0.2
+  - @sushiswap/sushiswap@0.1.1
+  - @sushiswap/tines@1.0.5
+
+## 0.0.4
+
+### Patch Changes
+
+- 813200e55: update dependencies
+- Updated dependencies [813200e55]
+  - @sushiswap/currency@0.0.4
+  - @sushiswap/router-config@1.0.0
+  - @sushiswap/amm@0.1.4
+  - @sushiswap/tines@1.0.4
+  - @sushiswap/v3-sdk@1.0.1
+  - @sushiswap/sushiswap@0.1.1
+
 ## 0.0.3
 
 ### Patch Changes
