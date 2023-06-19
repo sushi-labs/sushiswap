@@ -1,5 +1,12 @@
 # @sushiswap/wagmi-config
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [233a64e6b]
+  - @sushiswap/chain@0.1.2
+
 ## 0.1.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @sushiswap/hardhat-config
 
+## 0.1.3
+
+### Patch Changes
+
+- 233a64e6b: update scripts
+
 ## 0.1.2
 
 ### Patch Changes

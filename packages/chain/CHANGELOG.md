@@ -1,5 +1,11 @@
 # @sushiswap/chain
 
+## 0.1.2
+
+### Patch Changes
+
+- 233a64e6b: update files
+
 ## 0.1.1
 
 ### Patch Changes

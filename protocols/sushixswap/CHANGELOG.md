@@ -1,5 +1,16 @@
 # @sushiswap/sushixswap
 
+## 1.0.6
+
+### Patch Changes
+
+- Updated dependencies [233a64e6b]
+- Updated dependencies [233a64e6b]
+  - @sushiswap/chain@0.1.2
+  - @sushiswap/hardhat-config@0.1.3
+  - @sushiswap/amm@0.1.9
+  - @sushiswap/currency@0.0.6
+
 ## 1.0.5
 
 ### Patch Changes

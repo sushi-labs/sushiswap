@@ -1,5 +1,13 @@
 # @sushiswap/trident
 
+## 1.0.5
+
+### Patch Changes
+
+- Updated dependencies [233a64e6b]
+  - @sushiswap/hardhat-config@0.1.3
+  - @sushiswap/currency@0.0.6
+
 ## 1.0.4
 
 ### Patch Changes
