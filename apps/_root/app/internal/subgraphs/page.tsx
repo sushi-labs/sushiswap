@@ -2,12 +2,13 @@
 
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { useDebounce } from '@sushiswap/hooks'
-import { Checkbox, Loader } from '@sushiswap/ui'
+import { Loader } from '@sushiswap/ui'
 import { SubgraphTable } from './components/SubgraphTable'
 import { getSubgraphs, Subgraph } from './lib'
 import { useMemo, useState } from 'react'
 import useSWR from 'swr'
 import stringify from 'fast-json-stable-stringify'
+import { Checkbox } from '@sushiswap/ui/future/components/checkbox'
 
 const SubgraphsPage = () => {
   const [filterBy, setFilter] = useState<string>('')
@@ -50,7 +51,7 @@ const SubgraphsPage = () => {
                   {(['chainId', 'category', 'type', 'status'] as const).map((group) => (
                     <>
                       <div>{group}</div>
-                      <Checkbox set={() => setGroupBy(group)} checked={groupBy === group} />
+                      <Checkbox onCheckedChange={() => setGroupBy(group)} checked={groupBy === group} />
                     </>
                   ))}
                 </div>

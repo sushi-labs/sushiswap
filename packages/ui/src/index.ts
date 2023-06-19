@@ -1,7 +1,6 @@
 import './globals.css'
 
 export * from './animation'
-export * from './checkbox'
 export * from './chip'
 export * from './currency'
 export * from './dialog'
