@@ -789,7 +789,7 @@ importers:
       '@reduxjs/toolkit': 1.9.5
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
-      '@sushiswap/bentobox': 1.0.1
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/client': workspace:*
       '@sushiswap/currency': workspace:*
