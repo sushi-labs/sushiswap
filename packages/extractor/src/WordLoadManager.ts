@@ -4,6 +4,7 @@ import { CLTick } from '@sushiswap/tines'
 import { Address } from 'abitype'
 import { BigNumber } from 'ethers'
 
+import { Counter } from './Counter'
 import { MultiCallAggregator } from './MulticallAggregator'
 
 interface WordState {
@@ -25,17 +26,25 @@ export class WordLoadManager {
   poolSpacing: number
   tickHelperContract: Address
   client: MultiCallAggregator
+  busyCounter?: Counter
 
   words: Map<number, WordState> = new Map()
   downloadQueue: number[] = []
   downloadCycleIsStared = false
   latestEventBlockNumber = 0
 
-  constructor(poolAddress: Address, poolSpacing: number, tickHelperContract: Address, client: MultiCallAggregator) {
+  constructor(
+    poolAddress: Address,
+    poolSpacing: number,
+    tickHelperContract: Address,
+    client: MultiCallAggregator,
+    counter?: Counter
+  ) {
     this.poolAddress = poolAddress
     this.poolSpacing = poolSpacing
     this.tickHelperContract = tickHelperContract
     this.client = client
+    this.busyCounter = counter
   }
 
   wordIndex(tick: number) {
@@ -45,29 +54,36 @@ export class WordLoadManager {
   async startDownloadCycle() {
     if (!this.downloadCycleIsStared) {
       this.downloadCycleIsStared = true
-      while (this.downloadQueue.length > 0) {
-        const wordIndex = this.downloadQueue[this.downloadQueue.length - 1]
-        const { blockNumber, returnValue: ticks } = await this.client.call<{ tick: bigint; liquidityNet: bigint }[]>(
-          this.tickHelperContract,
-          tickLensAbi,
-          'getPopulatedTicksInWord',
-          [this.poolAddress, wordIndex]
-        )
-        const wordIndexNew = this.downloadQueue[this.downloadQueue.length - 1]
-        if (wordIndexNew === wordIndex) {
-          // Queue still has the same index at the end
-          this.words.set(wordIndex, {
-            blockNumber,
-            ticks: ticks
-              .map(({ tick, liquidityNet }) => ({
-                index: Number(tick),
-                DLiquidity: BigNumber.from(liquidityNet),
-              }))
-              .sort((a: CLTick, b: CLTick) => a.index - b.index),
-          })
-          if (blockNumber >= this.latestEventBlockNumber) this.downloadQueue.pop()
+      const initialQueueLength = this.downloadQueue.length
+      if (initialQueueLength > 0 && this.busyCounter) this.busyCounter.inc()
+      try {
+        while (this.downloadQueue.length > 0) {
+          const wordIndex = this.downloadQueue[this.downloadQueue.length - 1]
+          const { blockNumber, returnValue: ticks } = await this.client.call<{ tick: bigint; liquidityNet: bigint }[]>(
+            this.tickHelperContract,
+            tickLensAbi,
+            'getPopulatedTicksInWord',
+            [this.poolAddress, wordIndex]
+          )
+          const wordIndexNew = this.downloadQueue[this.downloadQueue.length - 1]
+          if (wordIndexNew === wordIndex) {
+            // Queue still has the same index at the end
+            this.words.set(wordIndex, {
+              blockNumber,
+              ticks: ticks
+                .map(({ tick, liquidityNet }) => ({
+                  index: Number(tick),
+                  DLiquidity: BigNumber.from(liquidityNet),
+                }))
+                .sort((a: CLTick, b: CLTick) => a.index - b.index),
+            })
+            if (blockNumber >= this.latestEventBlockNumber) this.downloadQueue.pop()
+          }
         }
+      } catch (e) {
+        // do nothing
       }
+      if (initialQueueLength > 0 && this.busyCounter) this.busyCounter.dec()
       this.downloadCycleIsStared = false
     }
   }

@@ -7,6 +7,7 @@ import { Abi, Address, parseAbiItem } from 'abitype'
 import { BigNumber } from 'ethers'
 import { decodeEventLog, Log } from 'viem'
 
+import { Counter } from './Counter'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { WordLoadManager } from './WordLoadManager'
 
@@ -87,6 +88,7 @@ export class UniV3PoolWatcher {
   wordLoadManager: WordLoadManager
   state?: UniV3PoolSelfState
   updatePoolStateGuard = false
+  busyCounter?: Counter
 
   constructor(
     providerName: string,
@@ -95,7 +97,8 @@ export class UniV3PoolWatcher {
     token0: Token,
     token1: Token,
     fee: FeeAmount,
-    client: MultiCallAggregator
+    client: MultiCallAggregator,
+    busyCounter?: Counter
   ) {
     this.providerName = providerName
     this.address = address
@@ -106,39 +109,46 @@ export class UniV3PoolWatcher {
     this.spacing = TICK_SPACINGS[fee]
 
     this.client = client
-    this.wordLoadManager = new WordLoadManager(address, this.spacing, tickHelperContract, client)
+    this.wordLoadManager = new WordLoadManager(address, this.spacing, tickHelperContract, client, busyCounter)
+    this.busyCounter = busyCounter
   }
 
   async updatePoolState() {
     if (!this.updatePoolStateGuard) {
       this.updatePoolStateGuard = true
-      for (;;) {
-        const {
-          blockNumber,
-          returnValues: [slot0, liquidity, balance0, balance1],
-        } = await this.client.callSameBlock([
-          { address: this.address, abi: slot0Abi, functionName: 'slot0' },
-          { address: this.address, abi: liquidityAbi, functionName: 'liquidity' },
-          { address: this.token0.address as Address, abi: erc20Abi, functionName: 'balanceOf', args: [this.address] },
-          { address: this.token1.address as Address, abi: erc20Abi, functionName: 'balanceOf', args: [this.address] },
-        ])
-        if (blockNumber < this.latestEventBlockNumber) continue // later events already have came
+      if (this.busyCounter) this.busyCounter.inc()
+      try {
+        for (;;) {
+          const {
+            blockNumber,
+            returnValues: [slot0, liquidity, balance0, balance1],
+          } = await this.client.callSameBlock([
+            { address: this.address, abi: slot0Abi, functionName: 'slot0' },
+            { address: this.address, abi: liquidityAbi, functionName: 'liquidity' },
+            { address: this.token0.address as Address, abi: erc20Abi, functionName: 'balanceOf', args: [this.address] },
+            { address: this.token1.address as Address, abi: erc20Abi, functionName: 'balanceOf', args: [this.address] },
+          ])
+          if (blockNumber < this.latestEventBlockNumber) continue // later events already have came
 
-        this.eventsAfterLastReservesUpdate = 0
+          this.eventsAfterLastReservesUpdate = 0
 
-        const [sqrtPriceX96, tick] = slot0 as [bigint, number]
-        this.state = {
-          blockNumber,
-          reserve0: balance0 as bigint,
-          reserve1: balance1 as bigint,
-          tick: Math.floor(tick / this.spacing) * this.spacing,
-          liquidity: liquidity as bigint,
-          sqrtPriceX96: sqrtPriceX96 as bigint,
+          const [sqrtPriceX96, tick] = slot0 as [bigint, number]
+          this.state = {
+            blockNumber,
+            reserve0: balance0 as bigint,
+            reserve1: balance1 as bigint,
+            tick: Math.floor(tick / this.spacing) * this.spacing,
+            liquidity: liquidity as bigint,
+            sqrtPriceX96: sqrtPriceX96 as bigint,
+          }
+
+          this.wordLoadManager.onPoolTickChange(this.state.tick, true)
+          break
         }
-
-        this.wordLoadManager.onPoolTickChange(this.state.tick, true)
-        break
+      } catch (e) {
+        // do nothing
       }
+      if (this.busyCounter) this.busyCounter.dec()
       this.updatePoolStateGuard = false
     }
   }
@@ -237,15 +247,21 @@ export class UniV3PoolWatcher {
   }
 
   async updateReserves() {
-    this.eventsAfterLastReservesUpdate = 0
-    const [reserve0, reserve1] = await Promise.all([
-      this.client.callValue(this.token0.address as Address, erc20Abi as Abi, 'balanceOf', [this.address]),
-      this.client.callValue(this.token1.address as Address, erc20Abi as Abi, 'balanceOf', [this.address]),
-    ])
-    if (this.state) {
-      this.state.reserve0 = reserve0 as bigint
-      this.state.reserve1 = reserve1 as bigint
+    if (this.busyCounter) this.busyCounter.inc()
+    try {
+      this.eventsAfterLastReservesUpdate = 0
+      const [reserve0, reserve1] = await Promise.all([
+        this.client.callValue(this.token0.address as Address, erc20Abi as Abi, 'balanceOf', [this.address]),
+        this.client.callValue(this.token1.address as Address, erc20Abi as Abi, 'balanceOf', [this.address]),
+      ])
+      if (this.state) {
+        this.state.reserve0 = reserve0 as bigint
+        this.state.reserve1 = reserve1 as bigint
+      }
+    } catch (e) {
+      // do nothing
     }
+    if (this.busyCounter) this.busyCounter.dec()
   }
 
   getPoolCode(): PoolCode | undefined {
