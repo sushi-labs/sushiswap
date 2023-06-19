@@ -46,7 +46,7 @@ const columns = [
     cell: (info) => <div className="w-full text-right">${formatNumber(info.getValue())}</div>,
   }),
   columnHelper.accessor('balance', {
-    header: () => <div className="w-full text-right">Amount</div>,
+    header: () => <div className="w-full text-right">Tokens</div>,
     enableSorting: false,
     minSize: 80,
     cell: (info) => <div className="w-full text-right">{formatNumber(info.getValue())}</div>,
