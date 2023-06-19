@@ -37,17 +37,20 @@ const BALANCE_FILTER = {
   options: [1, 1_000, 10_000, 100_000],
 }
 const ORDER_DIRECTION_KEY = 'orderDirection'
+const PAGE_KEY = 'page'
 
 function isCustomName(address: string): address is keyof typeof tokenHolderNames {
   return address in tokenHolderNames
 }
 
-export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
+export function TokenHoldersTable({ users, userCount }: { users: TokenHolder[]; userCount: number }) {
   const { replace } = useRouter()
   const pathname = usePathname()
   const [isPending, startTransition] = useTransition()
   const searchParams = useSearchParams()
   const params = new URLSearchParams(searchParams ?? '')
+  const page = params.get(PAGE_KEY) ? Number(params.get(PAGE_KEY)) : 1
+  const maxUserCountReached = userCount === 1000
 
   function sortColumn(direction: false | SortDirection) {
     params.set(ORDER_DIRECTION_KEY, direction === 'desc' ? 'asc' : 'desc')
@@ -58,7 +61,19 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
   }
 
   function filterBalance(balance: number) {
-    params.set(BALANCE_FILTER.key, balance.toString())
+    if (balance === Number(params.get(BALANCE_FILTER.key))) {
+      params.delete(BALANCE_FILTER.key)
+    } else {
+      params.set(BALANCE_FILTER.key, balance.toString())
+    }
+
+    startTransition(() => {
+      replace(`${pathname}?${params.toString()}`)
+    })
+  }
+
+  function setPage(page: number) {
+    params.set(PAGE_KEY, page.toString())
 
     startTransition(() => {
       replace(`${pathname}?${params.toString()}`)
@@ -131,7 +146,7 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
       header: 'Change (30d)',
       cell: (info) => {
         const change = info.getValue()
-        const color = change > 0 ? 'text-green-400' : change < 0 ? 'text-red-400' : 'text-gray-50'
+        const color = change > 0 ? 'text-green-400' : change < 0 ? 'text-red-400' : 'text-slate-700 dark:text-gray-50'
         return (
           <span className={color}>
             {change.toLocaleString('EN', {
@@ -187,25 +202,36 @@ export function TokenHoldersTable({ users }: { users: TokenHolder[] }) {
             pageSize={Math.max(users.length, 5)}
           />
         </div>
-        <div className="flex justify-between items-center">
-          <div className="flex h-[42px] items-center gap-2 rounded-lg bg-slate-200 dark:bg-slate-700 px-2 font-medium text-sm">
+        <div className="flex justify-between items-center text-sm pr-1">
+          <div className="grid grid-cols-[repeat(5,minmax(24px,min-content))] items-center place-items-center">
             <button
               className="rounded p-1 transition-colors ease-in-out enabled:hover:bg-black/[0.12] disabled:text-slate-500 enabled:hover:dark:bg-white/[0.12]"
-              // onClick={() => setSelectedQuarterIndex(selectedQuarterIndex - 1)}
-              // disabled={selectedQuarterIndex === 0}
+              onClick={() => setPage(page - 1)}
+              disabled={page === 1}
             >
               <ChevronLeftIcon className="h-3 w-3" strokeWidth={3} />
             </button>
-            {/* {selectedQuarter.quarter} */}
+            <span>{page}</span>
+            <span>/</span>
+            <span>
+              {Math.ceil(userCount / 10)}
+              {maxUserCountReached && '+'}
+            </span>
             <button
               className="rounded p-1 transition-colors ease-in-out enabled:hover:bg-black/[0.12] disabled:text-slate-500 enabled:hover:dark:bg-white/[0.12]"
-              // onClick={() => setSelectedQuarterIndex(selectedQuarterIndex + 1)}
-              // disabled={selectedQuarterIndex === budgetData.length - 1}
+              onClick={() => setPage(page + 1)}
+              disabled={page === Math.ceil(userCount / 10)}
             >
               <ChevronRightIcon className="h-3 w-3" strokeWidth={3} />
             </button>
           </div>
-          <div></div>
+          <div>
+            <span>{(page - 1) * 10 + 1}</span> - <span>{page * 10}</span> of{' '}
+            <span>
+              {userCount}
+              {maxUserCountReached && '+'}
+            </span>
+          </div>
         </div>
       </div>
     </div>

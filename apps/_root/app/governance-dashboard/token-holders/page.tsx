@@ -9,9 +9,9 @@ export default async function TokenHolders({ searchParams }: { searchParams: Tok
 
   const totalSupply = Math.trunc(+tokenHolders.totalSupply ?? 0) / 1e18
 
-  const users = tokenHolders.users.map(({ id, balance, balanceChange30days }, i: number) => ({
+  const users = tokenHolders.users.map(({ id, balance, balanceChange30days, rank }) => ({
     id,
-    rank: i + 1,
+    rank,
     address: id,
     quantity: balance,
     ownership: balance / totalSupply,
@@ -23,7 +23,7 @@ export default async function TokenHolders({ searchParams }: { searchParams: Tok
     <section className="space-y-14">
       {/* @ts-expect-error Async Server Component */}
       <HolderSnapshot />
-      <TokenHoldersTable users={users} />
+      <TokenHoldersTable users={users} userCount={tokenHolders.userCount} />
     </section>
   )
 }

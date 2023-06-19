@@ -74,7 +74,7 @@ export function QuarterlyBudget({ budgetData }: { budgetData: SushiBudget[] }) {
           <button
             className="rounded p-1 transition-colors ease-in-out enabled:hover:bg-black/[0.12] disabled:text-slate-500 enabled:hover:dark:bg-white/[0.12]"
             onClick={() => setSelectedQuarterIndex(selectedQuarterIndex - 1)}
-            disabled={selectedQuarterIndex === 0}
+            disabled={!selectedQuarterIndex}
           >
             <ChevronLeftIcon className="h-3 w-3" strokeWidth={3} />
           </button>

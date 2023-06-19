@@ -1,11 +1,11 @@
 import React from 'react'
 
-import { formatNumber, getForumStats, getNotionEvents, getTokenHolders, getTreasurySnapshot } from '../../lib'
+import { formatNumber, getForumStats, getNotionEvents, getSushiUserCount, getTreasurySnapshot } from '../../lib'
 import { StatsBackground } from './StatsBackground'
 
 export async function Stats() {
-  const [tokenHolders, forumStats, treasurySnapshot, events] = await Promise.all([
-    getTokenHolders(),
+  const [userCount, forumStats, treasurySnapshot, events] = await Promise.all([
+    getSushiUserCount(),
     getForumStats(),
     getTreasurySnapshot(),
     getNotionEvents(),
@@ -37,7 +37,7 @@ export async function Stats() {
             <div className="flex justify-between">
               <div className="flex flex-col gap-1">
                 <label className="text-sm text-slate-400">Token Holders</label>
-                <span className="text-gray-50 text-2xl font-bold">{formatNumber(+tokenHolders.userCount)}</span>
+                <span className="text-gray-50 text-2xl font-bold">{formatNumber(+userCount)}</span>
               </div>
               <div className="flex flex-col gap-1 text-right">
                 <label className="text-sm text-slate-400">Total Proposals</label>

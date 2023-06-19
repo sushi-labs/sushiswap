@@ -1,32 +1,32 @@
 import React from 'react'
 
-import { formatNumber, getForumStats, getPercentageDiff, getTokenHolders } from '../lib'
-import { KpiCard } from './KpiCard'
+import { formatNumber, getForumStats, getPercentageDiff, getHolderSnapshot } from '../lib'
 import { InfoIconTooltip } from './InfoIconTooltip'
+import { KpiCard } from './KpiCard'
 
 export async function HolderSnapshot() {
-  const [tokenHolders, forumStats] = await Promise.all([getTokenHolders(), getForumStats()])
+  const [holderSnapshot, forumStats] = await Promise.all([getHolderSnapshot(), getForumStats()])
   const tokenConcentrationDiff = getPercentageDiff(
-    tokenHolders.tokenConcentration,
-    tokenHolders.previousQuarter.tokenConcentration
+    holderSnapshot.tokenConcentration,
+    holderSnapshot.previousQuarterTokenConcentration
   )
-  const userCountDiff = getPercentageDiff(tokenHolders.userCount, tokenHolders.previousQuarter.userCount)
+  const userCountDiff = getPercentageDiff(holderSnapshot.userCount, holderSnapshot.previousQuarterUserCount)
 
-  const holderSnapshot = [
+  const holderSnapshotInfo = [
     {
       title: 'Community Participants',
       value: (
         <div className="grid grid-cols-3">
           <span>{formatNumber(forumStats?.user_count)}</span>
-          <span>{formatNumber(forumStats?.active_users_7_days)}</span>
           <span>{formatNumber(forumStats?.active_users_30_days)}</span>
+          <span>{formatNumber(forumStats?.active_users_7_days)}</span>
         </div>
       ),
       additional: (
         <div className="grid grid-cols-3 text-sm text-slate-400 dark:text-slate-500">
           <span>Total</span>
-          <span>Last 7 days</span>
           <span>Last 30 days</span>
+          <span>Last 7 days</span>
         </div>
       ),
     },
@@ -37,7 +37,7 @@ export async function HolderSnapshot() {
           <InfoIconTooltip description="Percentage of $SUSHI held by top 10 addresses" />
         </div>
       ),
-      value: tokenHolders.tokenConcentration.toLocaleString('EN', { style: 'percent', maximumFractionDigits: 2 }),
+      value: holderSnapshot.tokenConcentration.toLocaleString('EN', { style: 'percent', maximumFractionDigits: 2 }),
       additional: (
         <dd className={`text-sm ${tokenConcentrationDiff < 0 ? 'text-red-400' : 'text-green-400'}`}>
           {tokenConcentrationDiff.toLocaleString('EN', { style: 'percent', maximumFractionDigits: 2 })} from last
@@ -47,7 +47,7 @@ export async function HolderSnapshot() {
     },
     {
       title: 'Token Holders',
-      value: formatNumber(+tokenHolders.userCount),
+      value: formatNumber(+holderSnapshot.userCount),
       additional: (
         <dd className={`text-sm ${userCountDiff < 0 ? 'text-red-400' : 'text-green-400'}`}>
           {userCountDiff.toLocaleString('EN', { style: 'percent', maximumFractionDigits: 2 })} from last quarter
@@ -59,7 +59,7 @@ export async function HolderSnapshot() {
   return (
     <section className="space-y-8">
       <h2 className="text-2xl font-bold dark:text-slate-200">Holder Snapshot</h2>
-      <div className="grid gap-4 md:grid-cols-3">{holderSnapshot.map(KpiCard)}</div>
+      <div className="grid gap-4 md:grid-cols-3">{holderSnapshotInfo.map(KpiCard)}</div>
     </section>
   )
 }

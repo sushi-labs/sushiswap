@@ -208,30 +208,23 @@ function getTokenConcentration(topTenUsers: { balance: string }[], totalSupply: 
   return tokenConcentration
 }
 
-const tokenHoldersQuery = gql`
-  query TokenHolders(
-    $usersFilter: User_filter
-    $usersOrderDirection: OrderDirection
-    $previousMonthBlockNumber: Int
-    $previousQuarterBlockNumber: Int
-  ) {
+const userCountQuery = gql`
+  query UserCount {
+    sushi(id: "Sushi") {
+      holderCount
+    }
+  }
+`
+
+const holderSnapshotQuery = gql`
+  query HolderSnapshot($previousQuarterBlockNumber: Int) {
     sushi(id: "Sushi") {
       holderCount
       totalSupply
     }
-    users(first: 10, orderBy: balance, where: $usersFilter, orderDirection: $usersOrderDirection) {
-      balance
-      id
-    }
-    previousMonthUsers: users(
-      first: 10
-      orderBy: balance
-      where: $usersFilter
-      orderDirection: $usersOrderDirection
-      block: { number: $previousMonthBlockNumber }
-    ) {
-      balance
-      id
+    previousQuarterSushiStats: sushi(id: "Sushi", block: { number: $previousQuarterBlockNumber }) {
+      holderCount
+      totalSupply
     }
     topTenUsers: users(first: 10, orderBy: balance, orderDirection: desc) {
       balance
@@ -244,9 +237,38 @@ const tokenHoldersQuery = gql`
     ) {
       balance
     }
-    previousQuarterSushiStats: sushi(id: "Sushi", block: { number: $previousQuarterBlockNumber }) {
+  }
+`
+
+const tokenHoldersQuery = gql`
+  query TokenHolders(
+    $usersFilter: User_filter
+    $orderDirection: OrderDirection
+    $first: Int
+    $skip: Int
+    $previousMonthBlockNumber: Int
+  ) {
+    sushi(id: "Sushi") {
       holderCount
       totalSupply
+    }
+    users(first: $first, skip: $skip, orderBy: balance, where: $usersFilter, orderDirection: $orderDirection) {
+      balance
+      id
+    }
+    previousMonthUsers: users(
+      first: $first
+      skip: $skip
+      orderBy: balance
+      where: $usersFilter
+      orderDirection: $orderDirection
+      block: { number: $previousMonthBlockNumber }
+    ) {
+      balance
+      id
+    }
+    topTenUsers: users(first: 10, orderBy: balance, orderDirection: desc) {
+      balance
     }
   }
 `
@@ -254,6 +276,13 @@ const tokenHoldersQuery = gql`
 interface SushiStatsGraph {
   holderCount: number
   totalSupply: string
+}
+
+interface HoldersSnapshotGraph {
+  sushi: SushiStatsGraph
+  previousQuarterSushiStats: SushiStatsGraph
+  topTenUsers: SushiUsersGraph[]
+  previousQuarterTopTenUsers: SushiUsersGraph[]
 }
 
 interface SushiUsersGraph {
@@ -265,62 +294,84 @@ interface TokenHoldersGraph {
   sushi: SushiStatsGraph
   users: SushiUsersGraph[]
   previousMonthUsers: SushiUsersGraph[]
-  topTenUsers: SushiUsersGraph[]
-  previousQuarterTopTenUsers: SushiUsersGraph[]
-  previousQuarterSushiStats: SushiStatsGraph
 }
 
 export interface TokenHoldersFilters {
   balanceFilter: number
   orderDirection: 'asc' | 'desc'
+  page: number
+}
+
+export async function getHolderSnapshot() {
+  const previousQuarterTimestamp = Math.floor(endOfPreviousQuarter(Date.now()) / 1000)
+  const previousQuarterBlockNumber = await getBlockNumberFromTimestamp(previousQuarterTimestamp)
+
+  const tokenHoldersComparisonRes = await request<HoldersSnapshotGraph>(GRAPH_URL, holderSnapshotQuery, {
+    previousQuarterBlockNumber,
+  })
+
+  const tokenConcentration = getTokenConcentration(
+    tokenHoldersComparisonRes.topTenUsers,
+    tokenHoldersComparisonRes.sushi.totalSupply
+  )
+  const previousQuarterTokenConcentration = getTokenConcentration(
+    tokenHoldersComparisonRes.previousQuarterTopTenUsers,
+    tokenHoldersComparisonRes.previousQuarterSushiStats.totalSupply
+  )
+
+  return {
+    tokenConcentration,
+    previousQuarterTokenConcentration,
+    userCount: tokenHoldersComparisonRes.sushi.holderCount,
+    previousQuarterUserCount: tokenHoldersComparisonRes.previousQuarterSushiStats.holderCount,
+  }
+}
+
+export async function getSushiUserCount() {
+  const userCountRes = await request<{ sushi: { holderCount: number; totalSupply: number } }>(GRAPH_URL, userCountQuery)
+
+  return userCountRes.sushi.holderCount
 }
 
 export async function getTokenHolders(filters?: TokenHoldersFilters) {
   const previousMonthTimestamp = Math.floor((Date.now() - 30 * 86400 * 1000) / 1000)
-  const previousQuarterTimestamp = Math.floor(endOfPreviousQuarter(Date.now()) / 1000)
-  const [previousMonthBlockNumber, previousQuarterBlockNumber] = await Promise.all([
-    getBlockNumberFromTimestamp(previousMonthTimestamp),
-    getBlockNumberFromTimestamp(previousQuarterTimestamp),
-  ])
+  const previousMonthBlockNumber = await getBlockNumberFromTimestamp(previousMonthTimestamp)
+
+  const skip = filters?.page ? (filters.page - 1) * 10 : 0
+  const orderDirection = filters?.orderDirection ?? 'desc'
+  const balanceFilter = filters?.balanceFilter ?? 0
 
   const tokenHoldersRes = await request<TokenHoldersGraph>(GRAPH_URL, tokenHoldersQuery, {
-    usersOrderDirection: filters?.orderDirection ?? 'desc',
+    orderDirection,
     usersFilter: {
-      balance_gt: filters?.balanceFilter ? (BigInt(1e18) * BigInt(+filters.balanceFilter)).toString() : 0,
+      balance_gt: (BigInt(1e18) * BigInt(balanceFilter)).toString(),
     },
+    skip,
+    first: balanceFilter ? 1000 : 10,
     previousMonthBlockNumber,
-    previousQuarterBlockNumber,
   })
 
-  const tokenConcentration = getTokenConcentration(tokenHoldersRes.topTenUsers, tokenHoldersRes.sushi.totalSupply)
-  const previousQuarterTokenConcentration = getTokenConcentration(
-    tokenHoldersRes.previousQuarterTopTenUsers,
-    tokenHoldersRes.previousQuarterSushiStats.totalSupply
-  )
+  const userCount = balanceFilter ? tokenHoldersRes.users.length : tokenHoldersRes.sushi.holderCount
+  const rank = orderDirection === 'desc' ? skip + 1 : userCount - skip
 
-  const users = tokenHoldersRes.users.map((user) => {
+  const users = tokenHoldersRes.users.slice(0, 10).map((user, i) => {
     const balance = Math.trunc(+user.balance) / 1e18
     const previousMonthData = tokenHoldersRes.previousMonthUsers.find((u) => u.id === user.id)
     const previousMonthBalance = previousMonthData ? Math.trunc(+previousMonthData.balance) / 1e18 : 0
-    const balanceChange30days = getPercentageDiff(balance, previousMonthBalance)
+    const balanceChange30days = previousMonthBalance ? getPercentageDiff(balance, previousMonthBalance) : 1
 
     return {
       ...user,
+      rank: rank + i,
       balance,
       balanceChange30days,
     }
   })
 
   const res = {
-    userCount: tokenHoldersRes.sushi.holderCount,
-    totalSupply: tokenHoldersRes.sushi.totalSupply,
     users,
-    tokenConcentration,
-    previousQuarter: {
-      userCount: tokenHoldersRes.previousQuarterSushiStats.holderCount,
-      totalSupply: tokenHoldersRes.previousQuarterSushiStats.totalSupply,
-      tokenConcentration: previousQuarterTokenConcentration,
-    },
+    userCount,
+    totalSupply: tokenHoldersRes.sushi.totalSupply,
   }
 
   return res

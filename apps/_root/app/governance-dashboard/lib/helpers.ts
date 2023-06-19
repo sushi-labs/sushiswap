@@ -18,7 +18,7 @@ export function endOfPreviousQuarter(timestamp: number) {
   let quarter = Math.floor((date.getMonth() + 3) / 3) - 1
   let year = date.getFullYear()
 
-  if (quarter === 0) {
+  if (!quarter) {
     quarter = 4
     year -= 1 // Previous year
   }

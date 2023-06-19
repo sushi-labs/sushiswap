@@ -1,7 +1,8 @@
 'use client'
 
 import { Native, Token } from '@sushiswap/currency'
-import { Currency, ProgressBar, ProgressColor } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui/future/components/currency'
+import { ProgressBar, ProgressColor } from '@sushiswap/ui'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
 import { createColumnHelper, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 import React from 'react'
@@ -30,7 +31,13 @@ const columns = [
   columnHelper.accessor('portfolioShare', {
     header: 'Portfolio Share',
     minSize: 150,
-    cell: (info) => <ProgressBar progress={info.getValue()} color={ProgressColor.BLUE} className="w-20 md:w-[100px]" />,
+    cell: (info) => (
+      <ProgressBar
+        progress={info.getValue()}
+        color={ProgressColor.BLUE}
+        className="w-20 md:w-[100px] bg-slate-900/20 dark:bg-slate-50/20"
+      />
+    ),
   }),
   columnHelper.accessor('balanceUSD', {
     header: () => <div className="w-full text-right">Value</div>,
