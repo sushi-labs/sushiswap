@@ -47,10 +47,12 @@ export const useUserStreams = ({ account }: UseUserStreams) => {
       }[] = []
 
       data.forEach((el) => {
-        ;[...el.data.incomingStreams, ...el.data.outgoingStreams].forEach((stream) => {
-          const token = toToken(stream.token, el.chainId)
-          streams.push({ stream, chainId: el.chainId, streamId: stream.id, token })
-        })
+        ;[...el.data.incomingStreams, ...el.data.outgoingStreams]
+          .filter((el, i, streams) => i === streams.findIndex((stream) => stream.id === el.id))
+          .forEach((stream) => {
+            const token = toToken(stream.token, el.chainId)
+            streams.push({ stream, chainId: el.chainId, streamId: stream.id, token })
+          })
       })
 
       const rebases = await queryRebasesDTO({

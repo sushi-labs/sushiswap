@@ -1,12 +1,9 @@
 import { FuroVestingRouterChainId } from '@sushiswap/furo/exports/exports'
-import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { FieldErrors, FormProvider, useFieldArray, useForm } from 'react-hook-form'
+import { FC, useCallback, useEffect, useState } from 'react'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { CREATE_VEST_DEFAULT_VALUES } from '../CreateForm'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { nanoid } from 'nanoid'
-import { useDeepCompareMemoize } from '../../../lib'
-import { Form } from '@sushiswap/ui'
-import { ImportErrorProvider } from './ImportErrorContext'
 import { ImportZoneSection } from './ImportZoneSection'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { DuplicateIcon, PlusIcon, TrashIcon } from '@heroicons/react/solid'
@@ -19,23 +16,20 @@ import {
   CreateMultipleVestingFormSchemaType,
   CreateMultipleVestingModelSchema,
 } from '../schema'
+import { Form } from '@sushiswap/ui/future/components/form'
 
 export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId }) => {
   const [review, setReview] = useState(false)
   const methods = useForm<CreateMultipleVestingFormSchemaType & CreateMultipleVestingBaseSchemaFormErrorsType>({
     resolver: zodResolver(CreateMultipleVestingModelSchema),
-    mode: 'onSubmit',
+    mode: 'onChange',
+    reValidateMode: 'onChange',
     defaultValues: {
       vestings: [{ ...CREATE_VEST_DEFAULT_VALUES, id: nanoid() }],
     },
   })
 
-  const {
-    reset,
-    watch,
-    control,
-    formState: { isValid, isValidating, errors: formErrors },
-  } = methods
+  const { reset, watch, control, formState } = methods
   const { append, remove } = useFieldArray({
     control,
     name: 'vestings',
@@ -58,46 +52,33 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
   try {
     CreateMultipleVestingModelSchema.parse(formData)
   } catch (e) {
-    console.log(e)
+    console.log(formState.errors, e)
   }
-
-  const _memoizedErrors = useDeepCompareMemoize(formErrors)
-  const _formErrors = useMemo(() => {
-    const length = formData.vestings?.length || 0
-    const data: FieldErrors<CreateMultipleVestingFormSchemaType> = {
-      vestings: [],
-    }
-    for (let i = 0; i < length; i++) {
-      if (data.vestings && _memoizedErrors.vestings?.[i]) {
-        data.vestings[i] = _memoizedErrors.vestings[i]
-      }
-
-      if (data.vestings && _memoizedErrors.FORM_ERRORS?.[i]) {
-        data.vestings[i] = {
-          ...data.vestings[i],
-          ..._memoizedErrors.FORM_ERRORS[i],
-        }
-      }
-    }
-
-    return data
-  }, [formData.vestings?.length, _memoizedErrors.FORM_ERRORS, _memoizedErrors.vestings])
-
-  const _errors = Array.isArray(_formErrors?.vestings) && _formErrors.vestings.length > 0
-  const formValid = isValid && !isValidating && !_errors
+  //
+  // useEffect(() => {
+  //   try {
+  //     CreateMultipleVestingModelSchema.parse(formData)
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
+  // }, [formData])
 
   return (
-    <FormProvider {...methods}>
-      <Form header="Create Vestings" onSubmit={methods.handleSubmit(onReview)}>
-        <div className="flex flex-col gap-14">
-          <ImportErrorProvider>
+    <>
+      <h3 className="text-3xl font-semibold text-gray-900 dark:text-slate-50 py-6">Create Vests</h3>
+      <Form {...methods}>
+        <form onSubmit={methods.handleSubmit(onReview)}>
+          <div className="flex flex-col gap-14">
             <ImportZoneSection chainId={chainId} />
             {!review ? (
               <div className="flex flex-col gap-4">
                 {(formData.vestings || []).map((el, i) => (
-                  <div key={i} className="flex flex-col gap-1 border-b dark:border-slate-200/5 border-gray-900/5 pb-4">
+                  <div
+                    key={el.id}
+                    className="flex flex-col gap-1 pb-4 border-b dark:border-slate-200/5 border-gray-900/5"
+                  >
                     <div className="flex justify-between">
-                      <h1 className="text-xs uppercase font-semibold">Vesting {i + 1}</h1>
+                      <h1 className="text-xs font-semibold uppercase">Vesting {i + 1}</h1>
                       <div className="flex items-center gap-5 pr-2">
                         <div className="flex items-center">
                           <IconButton
@@ -127,7 +108,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
                     type="button"
                     startIcon={<PlusIcon width={16} height={16} />}
                     onClick={() => append({ ...CREATE_VEST_DEFAULT_VALUES, id: nanoid() })}
-                    testdata-id="furo-create-multiple-vestings-add-item-button"
+                    testdata-id="create-multiple-vest-add-vest-button"
                   >
                     Add Vesting
                   </Button>
@@ -136,8 +117,8 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
                     variant="outlined"
                     type="button"
                     onClick={() => setReview(true)}
-                    disabled={!formValid}
-                    testdata-id="furo-create-multiple-vestings-add-item-button"
+                    disabled={!formState.isValid}
+                    testdata-id="create-multiple-vest-review-button"
                   >
                     Review
                   </Button>
@@ -149,9 +130,9 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
                 <ExecuteMultipleSection chainId={chainId} isReview={review} onBack={onBack} />
               </div>
             )}
-          </ImportErrorProvider>
-        </div>
+          </div>
+        </form>
       </Form>
-    </FormProvider>
+    </>
   )
 }

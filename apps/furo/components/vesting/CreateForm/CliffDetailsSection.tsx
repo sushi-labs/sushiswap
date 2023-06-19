@@ -1,105 +1,102 @@
-import { Form } from '@sushiswap/ui'
 import React, { FC } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import { Switch } from '@sushiswap/ui/future/components/Switch'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { CreateMultipleVestingFormSchemaType } from '../schema'
+import { classNames } from '@sushiswap/ui'
+import {
+  FormSection,
+  FormField,
+  FormItem,
+  FormControl,
+  FormMessage,
+  FormDescription,
+} from '@sushiswap/ui/future/components/form'
 
 export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
-  const { control, watch, setValue } = useFormContext<CreateMultipleVestingFormSchemaType>()
-  const [currency, cliffEnabled] = watch([`vestings.${index}.currency`, `vestings.${index}.cliff.cliffEnabled`])
+  const { control, watch } = useFormContext<CreateMultipleVestingFormSchemaType>()
+  const [startDate, currency, cliffEnabled] = watch([
+    `vestings.${index}.startDate`,
+    `vestings.${index}.currency`,
+    `vestings.${index}.cliffEnabled`,
+  ])
 
   return (
-    <Form.Section title="Cliff details" description="Optionally provide cliff details for your vesting">
-      <Form.Control>
-        <Controller
-          name={`vestings.${index}.cliff.cliffEnabled`}
+    <FormSection title="Cliff details" description="Optionally provide cliff details for your vesting">
+      <FormField
+        name={`vestings.${index}.cliffEnabled`}
+        rules={{ deps: [`vestings.${index}.cliffEndDate`, `vestings.${index}.cliffAmount`] }}
+        control={control}
+        render={({ field: { value, onChange } }) => (
+          <FormItem>
+            <FormControl>
+              <Switch checked={value} onChange={onChange} size="sm" id={`cliff-toggle-switch${index}`} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <div className={classNames(cliffEnabled ? 'block' : 'hidden')}>
+        <FormField
+          name={`vestings.${index}.cliffEndDate`}
+          rules={{ deps: [`vestings.${index}.startDate`] }}
           control={control}
-          render={({ field: { value } }) => (
-            <Switch
-              checked={value}
-              onChange={(val) => {
-                if (val) {
-                  setValue(`vestings.${index}.cliff`, {
-                    cliffEnabled: true,
-                    cliffAmount: '',
-                    cliffEndDate: null,
-                  })
-                } else {
-                  setValue(`vestings.${index}.cliff`, {
-                    cliffEnabled: false,
-                  })
-                }
-              }}
-              size="sm"
-              id="cliff-toggle-switch"
-            />
-          )}
+          render={({ field: { name, onChange, value, onBlur } }) => {
+            return (
+              <FormItem>
+                <FormControl>
+                  <Input.DatePicker
+                    name={name}
+                    onBlur={onBlur}
+                    customInput={
+                      <Input.DatePickerCustomInput
+                        name={name}
+                        id={`create-single-vest-cliff-date${index}`}
+                        testdata-id={`create-single-vest-cliff-date${index}`}
+                        label={
+                          <>
+                            End date<sup>*</sup>
+                          </>
+                        }
+                      />
+                    }
+                    onChange={onChange}
+                    selected={value}
+                    portalId="root-portal"
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={15}
+                    timeCaption="time"
+                    minDate={
+                      startDate ? new Date(startDate.getTime() + 5 * 60 * 1000) : new Date(Date.now() + 10 * 60 * 1000)
+                    }
+                    dateFormat="MMM d, yyyy HH:mm"
+                    placeholderText="Select date"
+                    autoComplete="off"
+                  />
+                </FormControl>
+                <FormDescription>The end date of the cliff.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )
+          }}
         />
-      </Form.Control>
-      {cliffEnabled ? (
-        <Form.Control>
-          <Controller
-            name={`vestings.${index}.cliff.cliffEndDate`}
-            shouldUnregister={true}
-            control={control}
-            render={({ field: { name, onChange, value, onBlur }, fieldState: { error } }) => {
-              return (
-                <Input.DatePicker
-                  name={name}
-                  onBlur={onBlur}
-                  customInput={
-                    <Input.DatePickerCustomInput
-                      isError={Boolean(error?.message)}
-                      caption={error?.message ? error?.message : 'The end date of the cliff.'}
-                      id="create-single-vest-cliff-date"
-                      testdata-id="create-single-vest-cliff-date"
-                      label={
-                        <>
-                          End date<sup>*</sup>
-                        </>
-                      }
-                    />
-                  }
-                  onChange={onChange}
-                  selected={value}
-                  portalId="root-portal"
-                  showTimeSelect
-                  timeFormat="HH:mm"
-                  timeIntervals={15}
-                  timeCaption="time"
-                  minDate={new Date(Date.now() + 5 * 60 * 1000)}
-                  dateFormat="MMM d, yyyy HH:mm"
-                  placeholderText="Select date"
-                  autoComplete="off"
-                />
-              )
-            }}
-          />
-        </Form.Control>
-      ) : (
-        <></>
-      )}
-      {cliffEnabled ? (
-        <Form.Control>
-          <Controller
-            control={control}
-            name={`vestings.${index}.cliff.cliffAmount`}
-            shouldUnregister={true}
-            render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
-              return (
-                <>
+      </div>
+      <div className={classNames(cliffEnabled ? 'block' : 'hidden')}>
+        <FormField
+          control={control}
+          name={`vestings.${index}.cliffAmount`}
+          render={({ field: { onChange, value, onBlur, name } }) => {
+            return (
+              <FormItem>
+                <FormControl>
                   <Input.Numeric
                     onUserInput={onChange}
-                    isError={Boolean(error?.message)}
-                    caption={
-                      error?.message ? error?.message : 'The amount that gets unlocked after the cliff end date.'
-                    }
                     onBlur={onBlur}
                     name={name}
                     value={value}
                     id="create-single-vest-cliff-amount-input"
-                    testdata-id="create-single-vest-cliff-amount-input"
+                    testdata-id={`create-single-vest-cliff-amount-input${index}`}
                     label={
                       <>
                         Amount{currency ? ` (${currency.symbol})` : ''}
@@ -107,14 +104,14 @@ export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
                       </>
                     }
                   />
-                </>
-              )
-            }}
-          />
-        </Form.Control>
-      ) : (
-        <></>
-      )}
-    </Form.Section>
+                </FormControl>
+                <FormDescription>The amount that gets unlocked after the cliff end date.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )
+          }}
+        />
+      </div>
+    </FormSection>
   )
 }

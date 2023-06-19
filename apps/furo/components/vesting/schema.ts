@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { ZAddress, ZFundSource, ZToken } from '../../lib/zod'
+import { RefinementCtx } from 'zod/lib/types'
 
 export const STEP_CONFIGURATIONS: Record<string, number> = {
   Weekly: 604800,
@@ -9,24 +10,78 @@ export const STEP_CONFIGURATIONS: Record<string, number> = {
   Yearly: 31449600,
 }
 
-const CliffFieldsEnabled = z.object({
-  cliffEnabled: z.literal(true),
-  cliffEndDate: z.date().nullable(),
-  cliffAmount: z.string().refine((val) => Number(val) > 0, 'Must be at least 0'),
-})
-const CliffFieldsDisabled = z.object({ cliffEnabled: z.literal(false) })
-const CliffFields = CliffFieldsEnabled.or(CliffFieldsDisabled)
+export const STEP_CONFIGURATIONS_MAP: Record<string, number> = {
+  '0': STEP_CONFIGURATIONS['Weekly'],
+  '1': STEP_CONFIGURATIONS['Bi-weekly'],
+  '2': STEP_CONFIGURATIONS['Monthly'],
+  '3': STEP_CONFIGURATIONS['Quarterly'],
+  '4': STEP_CONFIGURATIONS['Yearly'],
+}
+
+const cliffValidator = (
+  val: { startDate?: Date; cliffEnabled?: boolean; cliffEndDate?: Date; cliffAmount?: string },
+  ctx: RefinementCtx
+) => {
+  if (val.startDate && val.startDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Must be at least 5 minutes from now',
+      path: ['startDate'],
+    })
+  }
+
+  if (!val.cliffEnabled) {
+    return z.NEVER
+  }
+
+  if (!val.cliffEndDate) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Required',
+      path: ['cliffEndDate'],
+    })
+  }
+
+  if (val.startDate && val.cliffEnabled && val.cliffEndDate && val.cliffEndDate < val.startDate) {
+    console.log('here')
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Must be later than start date',
+      path: ['cliffEndDate'],
+    })
+  }
+
+  if (!val.cliffAmount) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Required',
+      path: ['cliffAmount'],
+    })
+  }
+
+  if (val.cliffAmount && !isNaN(+val.cliffAmount) && +val.cliffAmount <= 0) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Must be greater than 0',
+      path: ['cliffAmount'],
+    })
+  }
+
+  return z.NEVER
+}
 
 export const CreateVestingBaseSchema = z.object({
   id: z.string(),
   currency: ZToken,
   startDate: z.date(),
   recipient: ZAddress,
-  stepAmount: z.string().refine((val) => (val !== '' ? Number(val) > 0 : true), 'Must be at least 0'),
+  stepAmount: z.string().refine((val) => (val !== '' ? Number(val) > 0 : true), 'Must be greater than 0'),
   stepPayouts: z.number().min(1).int(),
   fundSource: ZFundSource,
   stepConfig: z.string(),
-  cliff: CliffFields,
+  cliffEnabled: z.boolean(),
+  cliffEndDate: z.date(),
+  cliffAmount: z.string(),
 })
 
 export const CreateVestingFormSchema = CreateVestingBaseSchema.partial({
@@ -35,12 +90,14 @@ export const CreateVestingFormSchema = CreateVestingBaseSchema.partial({
   recipient: true,
   stepAmount: true,
   stepConfig: true,
-})
+  cliffAmount: true,
+  cliffEndDate: true,
+}).superRefine(cliffValidator)
 
 export type CreateVestingFormSchemaType = z.infer<typeof CreateVestingFormSchema>
 
 export const CreateMultipleVestingBaseSchema = z.object({
-  vestings: z.array(CreateVestingBaseSchema),
+  vestings: z.array(CreateVestingBaseSchema.superRefine(cliffValidator)),
 })
 
 export const CreateMultipleVestingPartialBaseSchema = z.object({

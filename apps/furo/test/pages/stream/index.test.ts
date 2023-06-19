@@ -1,28 +1,22 @@
 import { Page, expect, test } from '@playwright/test'
 import { Token, USDC_ADDRESS } from '@sushiswap/currency'
+import { addWeeks, getUnixTime, subWeeks } from 'date-fns'
 import {
-  addMonths,
-  addWeeks,
-  getDate,
-  getUnixTime,
-  setHours,
-  setMilliseconds,
-  setMinutes,
-  setSeconds,
-  startOfDay,
-  startOfMonth,
-  subWeeks,
-} from 'date-fns'
-import { ethers } from 'ethers'
-import { createSingleStream, switchNetwork, timeout } from '../../utils'
+  createSingleStream,
+  createSnapshot,
+  getStartOfMonthUnix,
+  increaseEvmTime,
+  loadSnapshot,
+  switchNetwork,
+} from '../../utils'
 
 if (!process.env.CHAIN_ID) {
   throw new Error('CHAIN_ID env var not set')
 }
 
+let SNAPSHOT_ID = '0x0'
 const CHAIN_ID = parseInt(process.env.CHAIN_ID)
 const RECIPIENT = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
-
 const USDC = new Token({
   chainId: CHAIN_ID,
   address: USDC_ADDRESS[CHAIN_ID as keyof typeof USDC_ADDRESS],
@@ -31,14 +25,22 @@ const USDC = new Token({
   name: 'USDC Stablecoin',
 })
 
+test.beforeEach(async () => {
+  SNAPSHOT_ID = await createSnapshot(CHAIN_ID)
+})
+test.afterEach(async () => {
+  await loadSnapshot(CHAIN_ID, SNAPSHOT_ID)
+})
+
 test('Create, Withdraw, Update, Transfer, Cancel.', async ({ page }) => {
   const streamId = '1082'
   const withdrawAmount = 0.000002
-  const recipient = '0xc39c2d6eb8adef85f9caa141ec95e7c0b34d8dec'
-  await createSingleStream(CHAIN_ID, USDC, '0.0001', RECIPIENT, page)
+  const transferToRecipient = '0xc39c2d6eb8adef85f9caa141ec95e7c0b34d8dec'
+
+  await createSingleStream(page, { chainId: CHAIN_ID, token: USDC, amount: '0.00001', recipient: RECIPIENT })
   await withdrawFromStream(page, streamId, withdrawAmount)
   await updateStream(page, streamId)
-  await transferStream(page, streamId, recipient)
+  await transferStream(page, streamId, transferToRecipient)
   await cancelStream(page, streamId)
 })
 
@@ -82,7 +84,7 @@ async function updateStream(page: Page, streamId: string) {
 async function withdrawFromStream(page: Page, streamId: string, withdrawAmount: number) {
   const twoWeeks = 60 * 60 * 24 * 14
   const middleOfStream = getStartOfMonthUnix(2) + twoWeeks * 1000
-  await increaseEvmTime(middleOfStream)
+  await increaseEvmTime(middleOfStream, CHAIN_ID)
   await mockSubgraph(page)
 
   const url = (process.env.PLAYWRIGHT_URL as string).concat(`/stream/${CHAIN_ID}:${streamId}`)
@@ -116,16 +118,16 @@ async function transferStream(page: Page, streamId: string, recipient: string) {
   await expect(openTransferLocator).toBeEnabled()
   await openTransferLocator.click()
 
-  const recipientLocator = page.locator('[testdata-id=stream-transfer-recipient-input]')
+  const recipientLocator = page.locator('[testdata-id=transfer-recipient-input]')
   await expect(recipientLocator).toBeVisible()
   await recipientLocator.fill(recipient)
 
-  const confirmTransferLocator = page.locator('[testdata-id=stream-transfer-confirmation-button]')
+  const confirmTransferLocator = page.locator('[testdata-id=transfer-confirmation-button]')
   await expect(confirmTransferLocator).toBeVisible()
   await expect(confirmTransferLocator).toBeEnabled()
   await confirmTransferLocator.click()
 
-  const expectedText = '(Successfully transferred stream to *.)'
+  const expectedText = '(Successfully transferred Stream to *.)'
   const regex = new RegExp(expectedText)
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
@@ -140,12 +142,12 @@ async function cancelStream(page: Page, streamId: string) {
   await expect(openTransferLocator).toBeEnabled()
   await openTransferLocator.click()
 
-  const confirmTransferLocator = page.locator('[testdata-id=stream-cancel-confirmation-button]')
+  const confirmTransferLocator = page.locator('[testdata-id=cancel-confirmation-button]')
   await expect(confirmTransferLocator).toBeVisible()
   await expect(confirmTransferLocator).toBeEnabled()
   await confirmTransferLocator.click()
 
-  const expectedText = '(Successfully cancelled stream)'
+  const expectedText = '(Successfully cancelled Stream)'
   const regex = new RegExp(expectedText)
   await expect(page.locator('span', { hasText: regex }).last()).toContainText(regex)
 }
@@ -240,18 +242,4 @@ async function mockSubgraph(page: Page) {
       return await route.continue()
     }
   })
-}
-
-async function increaseEvmTime(unix: number) {
-  const provider = new ethers.providers.JsonRpcProvider('http://localhost:8545', CHAIN_ID)
-  // await provider.send('evm_increaseTime', [unix])
-  await provider.send('evm_mine', [unix])
-}
-
-function getStartOfMonthUnix(months: number) {
-  const currentDate = new Date()
-  const nextMonth = addMonths(currentDate, months)
-  const firstDayOfMonth = startOfMonth(nextMonth)
-  const startOfNextMonth = setMilliseconds(setSeconds(setMinutes(setHours(startOfDay(firstDayOfMonth), 0), 0), 0), 0)
-  return getUnixTime(startOfNextMonth)
 }

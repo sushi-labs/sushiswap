@@ -10,7 +10,6 @@ import React, { FC, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { useDeepCompareMemoize } from '../../../lib'
-import { useTokenFromZToken } from '../../../lib/zod'
 import { calculateEndDate, calculateTotalAmount } from '../utils'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { CreateMultipleVestingFormSchemaType, CreateVestingFormSchemaType } from '../schema'
@@ -108,7 +107,19 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId }) => {
               <Table.tbody>
                 {vestings?.map(
                   (
-                    { id, cliff, currency, recipient, startDate, stepPayouts, stepConfig, stepAmount, fundSource },
+                    {
+                      id,
+                      cliffEndDate,
+                      cliffAmount,
+                      cliffEnabled,
+                      currency,
+                      recipient,
+                      startDate,
+                      stepPayouts,
+                      stepConfig,
+                      stepAmount,
+                      fundSource,
+                    },
                     idx
                   ) => (
                     <TableRow
@@ -116,7 +127,9 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId }) => {
                       key={idx}
                       currency={currency}
                       chainId={chainId}
-                      cliff={cliff}
+                      cliffEnabled={cliffEnabled}
+                      cliffAmount={cliffAmount}
+                      cliffEndDate={cliffEndDate}
                       recipient={recipient}
                       stepPayouts={stepPayouts}
                       stepConfig={stepConfig}
@@ -139,31 +152,28 @@ const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
   currency,
   chainId,
   recipient,
-  cliff,
+  cliffEnabled,
+  cliffAmount,
+  cliffEndDate,
   stepAmount,
   stepPayouts,
   stepConfig,
   startDate,
 }) => {
-  const _currency = useTokenFromZToken(currency)
   const totalAmount = calculateTotalAmount({
     currency,
-    cliff,
+    cliffEnabled,
+    cliffAmount,
     stepAmount,
     stepPayouts,
   })
   const endDate = calculateEndDate({
-    cliff,
+    cliffEnabled,
+    cliffEndDate,
     startDate,
     stepPayouts,
     stepConfig,
   })
-  // const [_cliffAmount, _stepAmount] = useMemo(() => {
-  //   return [
-  //     cliff.cliffEnabled ? tryParseAmount(cliff.cliffAmount?.toString(), _currency) : undefined,
-  //     tryParseAmount(stepAmount?.toString(), _currency),
-  //   ]
-  // }, [cliff.cliffEnabled, _currency, stepAmount])
 
   return (
     <Table.tr>
@@ -184,9 +194,7 @@ const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
         {totalAmount?.toSignificant(6)} {totalAmount?.currency.symbol}
       </Table.td>
       <Table.td>{endDate && !isNaN(+endDate) ? format(endDate, 'dd MMM yyyy hh:mmaaa') : 'Not available'}</Table.td>
-      <Table.td className="flex items-center gap-2">
-        {cliff.cliffEnabled ? `Cliff, ${stepConfig}` : stepConfig}
-      </Table.td>
+      <Table.td className="flex items-center gap-2">{cliffEnabled ? `Cliff, ${stepConfig}` : stepConfig}</Table.td>
     </Table.tr>
   )
 }

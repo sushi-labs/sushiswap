@@ -22,7 +22,7 @@ import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount }
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { bentoBoxV1Address } from '@sushiswap/bentobox'
-import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS } from '../schema'
+import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS, STEP_CONFIGURATIONS_MAP } from '../schema'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
@@ -85,7 +85,7 @@ export const ExecuteMultipleSection: FC<{
         promise: data.wait(),
         summary: {
           pending: `Creating ${vestings.length} vests`,
-          completed: `Creating ${vestings.length} vests`,
+          completed: `Created ${vestings.length} vests`,
           failed: `Something went wrong trying to create ${vestings.length} vests`,
         },
         timestamp: ts,
@@ -108,22 +108,39 @@ export const ExecuteMultipleSection: FC<{
 
       vestings
         .reduce<string[]>(
-          (acc, { fundSource, recipient, currency, startDate, cliff, stepConfig, stepPayouts, stepAmount }, idx) => {
+          (
+            acc,
+            {
+              fundSource,
+              recipient,
+              currency,
+              startDate,
+              cliffEnabled,
+              cliffEndDate,
+              cliffAmount,
+              stepConfig,
+              stepPayouts,
+              stepAmount,
+            },
+            idx
+          ) => {
             const _currency = _tokens[idx]
             const _fundSource = ZFundSourceToFundSource.parse(fundSource)
             const stepPercentage = calculateStepPercentage({
               currency,
-              cliff,
+              cliffEnabled,
+              cliffAmount,
               stepAmount,
               stepPayouts,
             })
             const totalAmount = calculateTotalAmount({
               currency,
-              cliff,
+              cliffEnabled,
+              cliffAmount,
               stepAmount,
               stepPayouts,
             })
-            const cliffDuration = calculateCliffDuration({ cliff, startDate })
+            const cliffDuration = calculateCliffDuration({ cliffEnabled, cliffEndDate, startDate })
 
             if (
               recipient &&
@@ -143,7 +160,7 @@ export const ExecuteMultipleSection: FC<{
                   currency: _currency,
                   startDate,
                   cliffDuration: cliffDuration.toString(),
-                  stepDuration: STEP_CONFIGURATIONS[stepConfig].toString(),
+                  stepDuration: STEP_CONFIGURATIONS_MAP[stepConfig].toString(),
                   steps: stepPayouts.toString(),
                   stepPercentage: stepPercentage.toString(),
                   amount: totalAmount.quotient.toString(),
@@ -198,24 +215,20 @@ export const ExecuteMultipleSection: FC<{
         <Checker.Network chainId={chainId} size="xl">
           <Checker.ApproveBentobox
             size="xl"
-            id="furo-create-multiple-stream-approve-bentobox"
+            id="create-multiple-vest-approve-bentobox"
             chainId={chainId}
             contract={getFuroVestingRouterContractConfig(chainId).address}
             onSignature={setSignature}
           >
-            <Checker.ApproveERC20Multiple
-              size="xl"
-              id={`furo-create-multiple-stream-approve-token`}
-              amounts={approveAmounts}
-            >
+            <Checker.ApproveERC20Multiple size="xl" id={'create-multiple-vest-approve-token'} amounts={approveAmounts}>
               <Checker.Success tag={APPROVE_TAG}>
                 <Button
                   size="xl"
                   onClick={() => sendTransaction?.()}
                   type="submit"
                   loading={isWritePending}
-                  disabled={!isValid || isValidating}
-                  testdata-id="furo-create-multiple-streams-confirm-button"
+                  disabled={!isValid || isValidating || !sendTransaction}
+                  testdata-id="create-multiple-vest-confirm-button"
                 >
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vests'}
                 </Button>

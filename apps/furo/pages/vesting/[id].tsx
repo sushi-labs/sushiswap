@@ -221,6 +221,7 @@ const _VestingPage: FC = () => {
                     disabled={disabled}
                     onClick={() => setOpen(true)}
                     startIcon={<DownloadIcon width={18} height={18} />}
+                    testId="vest-withdraw"
                     variant="outlined"
                   >
                     Withdraw
@@ -238,6 +239,7 @@ const _VestingPage: FC = () => {
                     onClick={() => setOpen(true)}
                     startIcon={<ArrowRightIcon width={18} height={18} />}
                     variant="outlined"
+                    testId="vest-transfer"
                   >
                     Transfer
                   </Button>
@@ -257,6 +259,7 @@ const _VestingPage: FC = () => {
                     onClick={() => setOpen(true)}
                     startIcon={<XIcon width={18} height={18} />}
                     variant="outlined"
+                    testId="vest-cancel"
                   >
                     Cancel
                   </Button>

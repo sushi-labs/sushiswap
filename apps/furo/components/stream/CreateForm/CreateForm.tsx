@@ -2,12 +2,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { nanoid } from 'nanoid'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { FundSource } from '@sushiswap/hooks'
-import { Form } from '@sushiswap/ui'
+import { Form } from '@sushiswap/ui/future/components/form'
 import { FC, useEffect } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
 import { StreamForm } from './StreamForm'
-import {} from '../CreateMultipleForm'
 import { ExecuteSection } from './ExecuteSection'
+import { useForm } from 'react-hook-form'
 import {
   CreateMultipleStreamBaseSchemaFormErrorsType,
   CreateMultipleStreamFormSchemaType,
@@ -46,13 +45,11 @@ export const CreateForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }
 
   return (
     <>
-      <FormProvider {...methods}>
-        <Form header="Create Stream">
-          <StreamForm chainId={chainId} index={0} />
-          <ExecuteSection chainId={chainId} index={0} />
-        </Form>
-        {/* {process.env.NODE_ENV === 'development' && isMounted && <DevTool control={control} />} */}
-      </FormProvider>
+      <h3 className="text-3xl font-semibold text-gray-900 dark:text-slate-50 py-6">Create Stream</h3>
+      <Form {...methods}>
+        <StreamForm chainId={chainId} index={0} />
+        <ExecuteSection chainId={chainId} index={0} />
+      </Form>
     </>
   )
 }

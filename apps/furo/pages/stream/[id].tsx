@@ -26,6 +26,7 @@ import { SplashController } from '@sushiswap/ui/future/components/SplashControll
 import { Blink } from '@sushiswap/ui/future/components/Blink'
 import { Percent } from '@sushiswap/math'
 import { queryParamsSchema } from '../../lib/zod'
+import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 
 
 const Streams = () => {
@@ -39,7 +40,6 @@ const Streams = () => {
 
 const _Streams: FC = () => {
   const { query } = useRouter()
-  console.log({query})
   const {
     id: [chainId, streamId],
   } = queryParamsSchema.parse(query)

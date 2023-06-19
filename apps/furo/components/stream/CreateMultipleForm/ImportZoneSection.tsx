@@ -5,31 +5,27 @@ import { nanoid } from 'nanoid'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { Dropzone, Form, NetworkIcon } from '@sushiswap/ui'
+import { Dropzone, NetworkIcon } from '@sushiswap/ui'
 import { Address, fetchToken, FetchTokenResult } from '@sushiswap/wagmi'
 import { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 
-import { useImportErrorContext } from '../../vesting/CreateMultipleForm/ImportErrorContext'
 import { Button } from '@sushiswap/ui/future/components/button'
 import dynamic from 'next/dynamic'
 import { CreateMultipleStreamFormSchemaType, CreateStreamFormSchemaType } from '../schema'
+import { FormSection } from '@sushiswap/ui/future/components/form'
 
 interface ImportZoneSection {
   chainId: ChainId
 }
 
 const Component: FC<ImportZoneSection> = ({ chainId }) => {
-  const { errors, setErrors } = useImportErrorContext<CreateMultipleStreamFormSchemaType>()
-  const { control, trigger, watch } = useFormContext<CreateMultipleStreamFormSchemaType>()
-  const { append } = useFieldArray({
+  const { control, trigger } = useFormContext<CreateMultipleStreamFormSchemaType>()
+  const { replace } = useFieldArray({
     control,
     name: 'streams',
     shouldUnregister: true,
   })
-
-  const streams = watch('streams')
-  const nrOfStreams = streams?.length || 0
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -57,20 +53,7 @@ const Component: FC<ImportZoneSection> = ({ chainId }) => {
                 if (cur !== '') {
                   const [tokenAddress] = cur.split(',') as [Address]
                   if (tokenAddress !== AddressZero) {
-                    acc.push(
-                      fetchToken({ address: tokenAddress, chainId }).catch(() => {
-                        if (!errors.streams?.[index]) {
-                          errors.streams = []
-                        }
-
-                        errors.streams[index + nrOfStreams] = {
-                          amount: {
-                            type: 'custom',
-                            message: `${tokenAddress} was not found`,
-                          },
-                        }
-                      })
-                    )
+                    acc.push(fetchToken({ address: tokenAddress, chainId }).catch())
                   }
                 }
 
@@ -91,62 +74,27 @@ const Component: FC<ImportZoneSection> = ({ chainId }) => {
               return acc
             }, {})
 
-            arr?.forEach((cur, index) => {
+            arr?.forEach((cur) => {
               if (cur !== '') {
                 const [tokenAddress, fundSource, amount, recipient, startDate, endDate] = cur.split(',')
-
-                if (!errors.streams?.[index]) {
-                  errors.streams = []
-                }
-
                 let _startDate: Date | null = new Date(Number(startDate) * 1000)
                 let _endDate: Date | null = new Date(Number(endDate) * 1000)
                 let _recipient: string | undefined = recipient
-                let _currency: Type | undefined =
+                const _currency: Type | undefined =
                   tokenAddress.toLowerCase() === AddressZero.toLowerCase()
                     ? Native.onChain(chainId)
                     : tokenMap?.[tokenAddress.toLowerCase()]
 
-                if (errors.streams[index + nrOfStreams]?.amount) {
-                  _currency = undefined
-                }
-
                 if (!isAddress(recipient)) {
                   _recipient = undefined
-                  errors.streams[index + nrOfStreams] = {
-                    ...errors.streams[index + nrOfStreams],
-                    recipient: {
-                      type: 'custom',
-                      message: `${recipient} is not a valid address`,
-                    },
-                  }
                 }
 
                 if (isNaN(_startDate.getTime())) {
                   _startDate = null
-                  errors.streams[index + nrOfStreams] = {
-                    ...errors.streams[index + nrOfStreams],
-                    dates: {
-                      startDate: {
-                        type: 'custom',
-                        message: `${startDate} is not a valid unix timestamp`,
-                      },
-                    },
-                  }
                 }
 
                 if (isNaN(_endDate.getTime())) {
                   _endDate = null
-                  errors.streams[index + nrOfStreams] = {
-                    ...errors.streams[index + nrOfStreams],
-                    dates: {
-                      ...errors.streams[index + nrOfStreams]?.dates,
-                      endDate: {
-                        type: 'custom',
-                        message: `${endDate} is not a valid unix timestamp`,
-                      },
-                    },
-                  }
                 }
 
                 rows.push({
@@ -163,16 +111,15 @@ const Component: FC<ImportZoneSection> = ({ chainId }) => {
               }
             }, [])
 
-            append(rows)
+            replace(rows)
             await trigger()
-            setErrors(errors)
           }
         }
 
         reader.readAsText(file)
       })
     },
-    [append, chainId, errors, nrOfStreams, setErrors, trigger]
+    [replace, chainId, trigger]
   )
 
   const downloadExample = useCallback(() => {
@@ -187,7 +134,7 @@ const Component: FC<ImportZoneSection> = ({ chainId }) => {
   }, [])
 
   return (
-    <Form.Section
+    <FormSection
       title="Quick Import"
       description={
         <div className="flex flex-col gap-6">
@@ -219,7 +166,7 @@ const Component: FC<ImportZoneSection> = ({ chainId }) => {
           onDrop={onDrop}
         />
       </div>
-    </Form.Section>
+    </FormSection>
   )
 }
 

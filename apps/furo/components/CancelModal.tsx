@@ -40,6 +40,8 @@ export const CancelModal: FC<CancelModalProps> = ({
     abi: abi,
   })
 
+  const type = stream instanceof Vesting ? 'Vest' : 'Stream'
+
   const prepare = useCallback(
     (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       if (!stream || !address) return
@@ -67,9 +69,9 @@ export const CancelModal: FC<CancelModalProps> = ({
         groupTimestamp: ts,
         promise: data.wait(),
         summary: {
-          pending: `Cancelling stream`,
-          completed: `Successfully cancelled stream`,
-          failed: 'Something went wrong cancelling the stream',
+          pending: `Cancelling ${type}`,
+          completed: `Successfully cancelled ${type}`,
+          failed: `Something went wrong cancelling the ${type}`,
         },
       })
     },
@@ -127,7 +129,7 @@ export const CancelModal: FC<CancelModalProps> = ({
                 fullWidth
                 disabled={isWritePending || stream?.isEnded}
                 onClick={() => sendTransaction?.()}
-                testId="stream-cancel-confirmation"
+                testId="cancel-confirmation"
               >
                 {isWritePending ? <Dots>Confirm Cancel</Dots> : title}
               </Button>

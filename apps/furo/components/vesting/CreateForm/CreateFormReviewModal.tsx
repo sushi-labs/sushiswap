@@ -31,7 +31,7 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { calculateCliffDuration, calculateEndDate, calculateStepPercentage, calculateTotalAmount } from '../utils'
-import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS } from '../schema'
+import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS_MAP } from '../schema'
 
 const MODAL_ID = 'createVestingSingle'
 const APPROVE_TAG = 'createVestingSingle'
@@ -54,32 +54,45 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
   const formData = watch('vestings.0')
   const _formData = useDeepCompareMemoize(formData)
 
-  const { recipient, startDate, stepConfig, stepPayouts, fundSource, currency, cliff, stepAmount } = _formData
+  const {
+    recipient,
+    startDate,
+    stepConfig,
+    stepPayouts,
+    fundSource,
+    currency,
+    cliffEnabled,
+    cliffAmount,
+    cliffEndDate,
+    stepAmount,
+  } = _formData
   const _fundSource = ZFundSourceToFundSource.parse(fundSource)
   const _currency = useTokenFromZToken(formData.currency)
   const _totalAmount = useMemo(
-    () => calculateTotalAmount({ currency, cliff, stepAmount, stepPayouts }),
-    [cliff, currency, stepAmount, stepPayouts]
+    () => calculateTotalAmount({ currency, cliffEnabled, cliffAmount, stepAmount, stepPayouts }),
+    [cliffAmount, cliffEnabled, currency, stepAmount, stepPayouts]
   )
-  const _cliffDuration = useMemo(() => calculateCliffDuration({ cliff, startDate }), [cliff, startDate])
+  const _cliffDuration = useMemo(
+    () => calculateCliffDuration({ cliffEnabled, cliffEndDate, startDate }),
+    [cliffEnabled, cliffEndDate, startDate]
+  )
   const _stepPercentage = useMemo(
-    () => calculateStepPercentage({ currency, cliff, stepAmount, stepPayouts }),
-    [cliff, currency, stepAmount, stepPayouts]
+    () => calculateStepPercentage({ currency, cliffEnabled, cliffAmount, stepAmount, stepPayouts }),
+    [cliffAmount, cliffEnabled, currency, stepAmount, stepPayouts]
   )
   const rebase = useBentoBoxTotal(chainId, _currency)
   const endDate = useMemo(
-    () => calculateEndDate({ cliff, startDate, stepPayouts, stepConfig }),
-    [cliff, startDate, stepConfig, stepPayouts]
+    () => calculateEndDate({ cliffEndDate, cliffEnabled, startDate, stepPayouts, stepConfig }),
+    [cliffEnabled, cliffEndDate, startDate, stepConfig, stepPayouts]
   )
 
   const [_cliffAmount, _stepAmount] = useMemo(() => {
-    if (cliff.cliffEnabled) {
-      const { cliffAmount } = cliff
+    if (cliffEnabled) {
       return [tryParseAmount(cliffAmount?.toString(), _currency), tryParseAmount(stepAmount?.toString(), _currency)]
     } else {
       return [undefined, tryParseAmount(stepAmount?.toString(), _currency)]
     }
-  }, [_currency, cliff, stepAmount])
+  }, [_currency, cliffAmount, cliffEnabled, stepAmount])
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
@@ -118,11 +131,12 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
         !startDate ||
         !_cliffDuration ||
         !stepConfig ||
-        !STEP_CONFIGURATIONS[stepConfig] ||
+        !STEP_CONFIGURATIONS_MAP[stepConfig] ||
         !_stepPercentage ||
         !_totalAmount ||
         !stepPayouts ||
-        !rebase
+        !rebase ||
+        approved
       ) {
         return
       }
@@ -139,7 +153,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
           currency: _currency,
           startDate,
           cliffDuration: _cliffDuration.toString(),
-          stepDuration: STEP_CONFIGURATIONS[stepConfig].toString(),
+          stepDuration: STEP_CONFIGURATIONS_MAP[stepConfig].toString(),
           steps: stepPayouts.toString(),
           stepPercentage: _stepPercentage.toString(),
           amount: _totalAmount.quotient.toString(),
@@ -172,6 +186,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
       rebase,
       signature,
       _fundSource,
+      approved,
     ]
   )
 
@@ -194,7 +209,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
         startDate &&
         _cliffDuration &&
         stepConfig &&
-        STEP_CONFIGURATIONS[stepConfig] &&
+        STEP_CONFIGURATIONS_MAP[stepConfig] &&
         _stepPercentage &&
         _totalAmount &&
         stepPayouts &&
@@ -205,38 +220,59 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
 
   return (
     <>
-      <Checker.Connect type="button" size="xl">
-        <Checker.Network type="button" size="xl" chainId={chainId}>
-          <Checker.Amounts type="button" size="xl" chainId={chainId} amounts={[_totalAmount]}>
-            <Checker.ApproveBentobox
+      <div className="grid grid-cols-3 gap-x-10">
+        <div />
+        <Checker.Connect fullWidth type="button" size="xl" className="col-span-3 md:col-span-2">
+          <Checker.Network fullWidth type="button" size="xl" chainId={chainId} className="col-span-3 md:col-span-2">
+            <Checker.Amounts
+              fullWidth
               type="button"
-              id="create-single-vest-approve-bentobox"
               size="xl"
-              chainId={chainId as BentoBoxV1ChainId}
-              contract={getFuroVestingRouterContractConfig(chainId).address}
-              onSignature={setSignature}
+              chainId={chainId}
+              amounts={[_totalAmount]}
+              className="col-span-3 md:col-span-2"
             >
-              <Checker.ApproveERC20
+              <Checker.ApproveBentobox
                 type="button"
-                contract={bentoBoxV1Address[chainId]}
-                id="create-single-vest-approve-token"
+                fullWidth
+                id="create-single-vest-approve-bentobox"
                 size="xl"
-                amount={_totalAmount}
+                chainId={chainId as BentoBoxV1ChainId}
+                contract={getFuroVestingRouterContractConfig(chainId).address}
+                onSignature={setSignature}
+                className="col-span-3 md:col-span-2"
               >
-                <Checker.Success tag={APPROVE_TAG}>
-                  <Modal.Trigger tag={MODAL_ID}>
-                    {({ open }) => (
-                      <Button type="button" fullWidth size="xl" onClick={open} testdata-id="review-single-vest-button">
-                        {isLoading ? <Dots>Confirm transaction</Dots> : 'Review Vesting'}
-                      </Button>
-                    )}
-                  </Modal.Trigger>
-                </Checker.Success>
-              </Checker.ApproveERC20>
-            </Checker.ApproveBentobox>
-          </Checker.Amounts>
-        </Checker.Network>
-      </Checker.Connect>
+                <Checker.ApproveERC20
+                  type="button"
+                  fullWidth
+                  contract={bentoBoxV1Address[chainId]}
+                  id="create-single-vest-approve-token"
+                  size="xl"
+                  amount={_totalAmount}
+                  className="col-span-3 md:col-span-2"
+                >
+                  <Checker.Success tag={APPROVE_TAG}>
+                    <Modal.Trigger tag={MODAL_ID}>
+                      {({ open }) => (
+                        <Button
+                          type="button"
+                          fullWidth
+                          size="xl"
+                          onClick={open}
+                          testdata-id="review-single-vest-button"
+                          className="col-span-3 md:col-span-2"
+                        >
+                          {isLoading ? <Dots>Confirm transaction</Dots> : 'Review Vesting'}
+                        </Button>
+                      )}
+                    </Modal.Trigger>
+                  </Checker.Success>
+                </Checker.ApproveERC20>
+              </Checker.ApproveBentobox>
+            </Checker.Amounts>
+          </Checker.Network>
+        </Checker.Connect>
+      </div>
       <Modal.Review tag={MODAL_ID} variant="opaque">
         {({ close, confirm }) => (
           <div className="max-w-[504px] mx-auto">
@@ -271,11 +307,11 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                   )}
                 </List.Control>
               </List>
-              {cliff.cliffEnabled && cliff.cliffEndDate && _cliffAmount && (
+              {cliffEnabled && cliffEndDate && _cliffAmount && (
                 <List>
                   <List.Control>
                     <List.KeyValue flex title="Cliff end date">
-                      {format(cliff.cliffEndDate, 'dd MMM yyyy')}
+                      {format(cliffEndDate, 'dd MMM yyyy')}
                     </List.KeyValue>
                     <List.KeyValue flex title="Cliff amount">
                       <div className="flex items-center gap-2" testdata-id="vesting-review-cliff-amount">
@@ -303,7 +339,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                   </List.KeyValue>
                   <List.KeyValue flex title="Unlock frequency" testdata-id="vesting-review-period-length">
                     <div className="flex items-center gap-2" testdata-id="vesting-review-period-length">
-                      {stepConfig}
+                      {stepConfig ? STEP_CONFIGURATIONS_MAP[stepConfig] : ''}
                     </div>
                   </List.KeyValue>
                 </List.Control>
@@ -316,7 +352,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                   size="xl"
                   loading={isLoading && !isError}
                   onClick={() => sendTransactionAsync?.().then(() => confirm())}
-                  disabled={isError}
+                  disabled={isError || !sendTransactionAsync}
                   color={isError ? 'red' : 'blue'}
                   testdata-id="create-single-vest-confirmation-button"
                 >

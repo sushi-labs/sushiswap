@@ -30,7 +30,7 @@ function Component(props: EnsInputProps, ref: ForwardedRef<HTMLInputElement>) {
     }
   }, [props.value])
 
-  return <Input.Text {...props} ref={ref} caption={state.name ? state.name : props.caption} />
+  return <Input.Text {...props} ref={ref} />
 }
 
 export const EnsInput = forwardRef(Component)

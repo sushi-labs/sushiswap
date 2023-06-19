@@ -7,6 +7,26 @@ import { Label } from './label'
 
 const Form = FormProvider
 
+const FormSection = ({
+  title,
+  description,
+  children,
+}: {
+  title: string
+  description: React.ReactNode
+  children: React.ReactNode
+}) => {
+  return (
+    <div className="grid grid-cols-3 gap-x-10 py-2">
+      <div className="col-span-3 md:col-span-1 space-y-3 py-4">
+        <div className="text-lg text-gray-900 font-medium dark:text-slate-200">{title}</div>
+        <div className="text-gray-600 dark:text-slate-400">{description}</div>
+      </div>
+      <div className="col-span-3 md:col-span-2 space-y-6 py-4">{children}</div>
+    </div>
+  )
+}
+
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
@@ -126,12 +146,7 @@ const FormMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<
     }
 
     return (
-      <p
-        ref={ref}
-        id={formMessageId}
-        className={classNames('text-sm font-medium text-destructive', className)}
-        {...props}
-      >
+      <p ref={ref} id={formMessageId} className={classNames('px-4 text-sm font-medium text-red', className)} {...props}>
         {body}
       </p>
     )
@@ -139,4 +154,4 @@ const FormMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<
 )
 FormMessage.displayName = 'FormMessage'
 
-export { useFormField, Form, FormItem, FormLabel, FormControl, FormDescription, FormMessage, FormField }
+export { useFormField, Form, FormItem, FormLabel, FormControl, FormDescription, FormMessage, FormField, FormSection }

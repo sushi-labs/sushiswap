@@ -1,32 +1,19 @@
 import XMarkIcon from '@heroicons/react/20/solid/XMarkIcon'
-import React, { ForwardedRef, forwardRef, HTMLProps, ReactNode, useCallback, useRef } from 'react'
+import React, { ForwardedRef, forwardRef, HTMLProps, ReactNode, useCallback } from 'react'
 import classNames from 'classnames'
 
 export interface TextInput extends Omit<HTMLProps<HTMLInputElement>, 'label' | 'onChange' | 'id' | 'testdata-id'> {
-  isError?: boolean
   label: ReactNode
   id: string
   value?: string | number
   onChange?(val: string | number | undefined): void
-  caption?: string
   className?: string
   customButton?: ReactNode
   hideCloseButton?: boolean
 }
 
 function Component(
-  {
-    label,
-    value,
-    onChange,
-    id,
-    caption,
-    customButton,
-    className = '',
-    isError = false,
-    hideCloseButton,
-    ...props
-  }: TextInput,
+  { label, value, onChange, id, customButton, className = '', hideCloseButton, ...props }: TextInput,
   ref: ForwardedRef<HTMLInputElement>
 ) {
   const _onChange = useCallback(
@@ -80,11 +67,6 @@ function Component(
           </div>
         )}
       </div>
-      {caption && (
-        <span className={classNames(isError ? 'text-red' : '', 'mt-1.5 inline-block px-4 text-xs text-gray-500')}>
-          {caption}
-        </span>
-      )}
     </div>
   )
 }

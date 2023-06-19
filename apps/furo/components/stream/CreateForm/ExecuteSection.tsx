@@ -3,7 +3,7 @@ import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { Dots, Form } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
 import {
   getFuroStreamRouterContractConfig,
   useAccount,
@@ -156,7 +156,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
 
     return (
       <>
-        <Form.Buttons className="grid grid-cols-3 gap-x-10">
+        <div className="grid grid-cols-3 gap-x-10">
           <div />
           <Checker.Connect fullWidth type="button" size="xl" className="col-span-3 md:col-span-2">
             <Checker.Network fullWidth type="button" size="xl" chainId={chainId} className="col-span-3 md:col-span-2">
@@ -209,7 +209,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
               </Checker.Amounts>
             </Checker.Network>
           </Checker.Connect>
-        </Form.Buttons>
+        </div>
         <Modal.Review tag={MODAL_ID} variant="opaque">
           {({ close, confirm }) => (
             <div className="max-w-[504px] mx-auto">
@@ -264,11 +264,11 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                     size="xl"
                     loading={isLoading && !isError}
                     onClick={() => sendTransactionAsync?.().then(() => confirm())}
-                    disabled={isError}
+                    disabled={isError || !sendTransactionAsync}
                     color={isError ? 'red' : 'blue'}
                     testId="confirm-stream-creation"
                   >
-                    {isError ? 'Shoot! Something went wrong :(' : isLoading ? <Dots>Create</Dots> : `Create`}
+                    {isError ? 'Shoot! Something went wrong :(' : isLoading ? <Dots>Create</Dots> : 'Create'}
                   </Button>
                 </div>
               </div>
@@ -282,7 +282,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
               tag={MODAL_ID}
               chainId={chainId}
               hash={data?.hash}
-              successMessage={`Successfully created stream`}
+              successMessage={'Successfully created stream'}
               onClose={close}
             />
           )}

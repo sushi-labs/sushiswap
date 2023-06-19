@@ -33,6 +33,7 @@ export function useSendTransaction({
     chainId,
     enabled,
   })
+
   // console.log('usePrepareSendTransaction returned config', { config })
 
   const _onSettled = useCallback(
