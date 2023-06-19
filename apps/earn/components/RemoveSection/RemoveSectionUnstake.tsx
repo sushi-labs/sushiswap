@@ -46,7 +46,6 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot((
     data: { reserve0, reserve1, liquidityToken },
   } = useGraphPool(pool)
   const { balance } = usePoolPositionStaked()
-  const { approved } = useApproved(APPROVE_TAG_UNSTAKE)
   const amount = useMemo(() => {
     return tryParseAmount(value, liquidityToken)
   }, [liquidityToken, value])
@@ -56,7 +55,6 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot((
     amount,
     pid: farmId,
     chef: chefType,
-    enabled: approved,
   })
 
   return (
@@ -83,7 +81,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot((
               fullWidth
               size="xl"
               variant="filled"
-              disabled={!approved || isWritePending}
+              disabled={isWritePending}
               testId="unstake-liquidity"
             >
               {isWritePending ? <Dots>Confirm transaction</Dots> : 'Unstake Liquidity'}
