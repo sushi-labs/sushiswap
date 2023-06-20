@@ -1,0 +1,49 @@
+{
+  "name": "@sushiswap/address-mapper",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Sushi Address Mapper",
+  "keywords": [
+    "sushi",
+    "address-mapper"
+  ],
+  "license": "MIT",
+  "author": "Ola Stenberg <hello@olastenberg.com>",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": [
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts",
+      "./src/*/index.tsx"
+    ]
+  },
+  "files": [
+    "src"
+  ],
+  "typesVersions": {
+    "*": {
+      "*": [
+        "src/*",
+        "src/*/index"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "true",
+    "check": "tsc --pretty --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/chain": "workspace:*",
+    "@sushiswap/currency": "workspace:*"
+  },
+  "devDependencies": {
+    "@sushiswap/typescript-config": "workspace:*",
+    "vitest": "0.30.1"
+  }
+}

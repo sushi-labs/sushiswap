@@ -1710,6 +1710,21 @@ importers:
       eslint: 8.41.0
       typescript: 5.0.4
 
+  packages/address-mapper:
+    specifiers:
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      vitest: 0.30.1
+    dependencies:
+      '@sushiswap/chain': link:../chain
+      '@sushiswap/currency': link:../currency
+      '@sushiswap/prettier-config': link:../../config/prettier
+    devDependencies:
+      '@sushiswap/typescript-config': link:../../config/typescript
+      vitest: 0.30.1
+
   packages/amm:
     specifiers:
       '@ethersproject/abi': 5.7.0
