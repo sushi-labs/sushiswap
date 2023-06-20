@@ -2,7 +2,7 @@ import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/solid'
 import { ConstantProductPool, Fee, StablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
-import { Loader } from '@sushiswap/ui'
+import { Loader } from '@sushiswap/ui/future/components/loader'
 import {
   ConstantProductPoolState,
   getTridentRouterContractConfig,

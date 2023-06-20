@@ -1,12 +1,12 @@
 import { Transition } from '@headlessui/react'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
-import { CircleIcon } from '@sushiswap/ui'
 import { DIFFICULTY_ELEMENTS, DOCS_URL } from 'common/helpers'
 import { AcademyIcon } from 'common/icons'
 import { FC, Fragment, useState } from 'react'
 
 import { DifficultyEntity } from '.mesh'
 import { Chip } from '@sushiswap/ui/future/components/chip'
+import { CircleIcon } from '@sushiswap/ui/future/components/icons'
 
 interface DifficultyCard {
   difficulty: DifficultyEntity

@@ -1,5 +1,5 @@
 import { useBreakpoint } from '@sushiswap/hooks'
-import { classNames, LoadingOverlay } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { APP_HEADER_HEIGHT, DEFAULT_SIDE_PADDING } from 'common/helpers'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
@@ -26,6 +26,7 @@ import {
 } from '../../common/components'
 import { Image } from '../../common/components'
 import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../../lib/api'
+import { LoadingOverlay } from '@sushiswap/ui/future/components/Loader'
 
 export async function getStaticPaths() {
   const allArticles = await getAllArticlesBySlug()

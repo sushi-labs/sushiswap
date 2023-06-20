@@ -3,13 +3,14 @@
 import { Token } from '../lib'
 import { FC } from 'react'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { CheckIcon, Loader, NetworkIcon } from '@sushiswap/ui'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
 import { XIcon } from '@heroicons/react-v1/outline'
 import { TokenAdder } from './TokenAdder'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
+import { NetworkIcon, CheckIcon } from '@sushiswap/ui/future/components/icons'
+import { Loader } from '@sushiswap/ui/future/components/loader'
 
 interface TokenTable {
   tokens: Token[]

@@ -3,7 +3,6 @@ import { Token } from '@sushiswap/currency'
 import { useTokenAllowance, useTokenRevokeApproval } from '@sushiswap/wagmi/future/hooks'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { NetworkIcon } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import Button from '@sushiswap/ui/future/components/button/Button'
@@ -11,6 +10,7 @@ import { ZERO } from '@sushiswap/math'
 import { routeProcessor2Address, RouteProcessor2ChainId } from '@sushiswap/route-processor/exports/exports'
 import { CheckIcon } from '@heroicons/react-v1/solid'
 import { Address } from 'wagmi'
+import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 
 export const RevokeItem: FC<{ token: Token; account: Address }> = ({ account, token }) => {
   const { data: allowance, isLoading } = useTokenAllowance({

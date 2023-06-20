@@ -1,7 +1,8 @@
 import { formatNumber } from '@sushiswap/format'
-import { classNames, NetworkIcon } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { FC, useMemo } from 'react'
+import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 
 import { ICON_SIZE } from '../contants'
 import { Row } from './types'

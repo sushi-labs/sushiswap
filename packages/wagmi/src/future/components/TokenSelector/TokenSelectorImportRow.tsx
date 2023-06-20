@@ -9,7 +9,7 @@ import { Overlay } from '@sushiswap/ui/future/components/overlay'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { shortenAddress } from '@sushiswap/format'
 import { useTokenSecurity } from '@sushiswap/react-query'
-import { DangerousIcon, GoPlusLabsIcon } from '@sushiswap/ui/icons'
+import { DangerousIcon, GoPlusLabsIcon } from '@sushiswap/ui/future/components/icons'
 import { Link } from '@sushiswap/ui'
 
 interface TokenSelectorImportRow {

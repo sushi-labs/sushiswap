@@ -1,8 +1,9 @@
-import { CircleIcon, classNames } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { DIFFICULTY_ELEMENTS } from 'common/helpers'
 import { FC } from 'react'
 
 import { ArticleEntity } from '.mesh'
+import { CircleIcon } from '@sushiswap/ui/future/components/icons'
 
 interface DifficultyLabel {
   article: ArticleEntity

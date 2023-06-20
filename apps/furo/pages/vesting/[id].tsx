@@ -1,4 +1,4 @@
-import { classNames, NetworkIcon, ProgressColor } from '@sushiswap/ui'
+import { classNames, ProgressColor } from '@sushiswap/ui'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { FC, useMemo } from 'react'
@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
 import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, CheckCircleIcon } from '@heroicons/react/solid'
 import { SkeletonText, SkeletonBox, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
+import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Badge } from '@sushiswap/ui/future/components/Badge'

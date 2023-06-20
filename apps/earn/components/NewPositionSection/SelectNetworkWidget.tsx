@@ -1,5 +1,5 @@
 import { ChainId, chainName } from '@sushiswap/chain'
-import { NetworkIcon } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import React, { FC, memo } from 'react'
 
 import { V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'

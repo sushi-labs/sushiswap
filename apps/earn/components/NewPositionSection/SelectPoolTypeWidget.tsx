@@ -1,9 +1,10 @@
 import { RadioGroup } from '@headlessui/react'
 import { StarIcon } from '@heroicons/react/solid'
-import { CheckIcon, classNames } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { PoolFinderType } from '@sushiswap/wagmi'
 import React, { FC, memo } from 'react'
 import { ContentBlock } from '../AddPage/ContentBlock'
+import { CheckIcon } from '@sushiswap/ui/future/components/icons'
 
 const POOL_OPTIONS = [
   {

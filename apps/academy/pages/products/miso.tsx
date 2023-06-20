@@ -1,5 +1,5 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
-import { CheckIcon, classNames } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import {
   ProductArticles,
   ProductBackground,
@@ -17,6 +17,7 @@ import useSWR from 'swr'
 import { Container } from '@sushiswap/ui/future/components/Container'
 
 import { ArticleEntity } from '.mesh'
+import { CheckIcon } from '@sushiswap/ui/future/components/icons'
 
 const PRODUCT_SLUG = 'miso'
 const { color, usps, productStats, buttonText, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG]

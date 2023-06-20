@@ -1,8 +1,9 @@
 import { formatNumber } from '@sushiswap/format'
 import { Pool, Protocol } from '@sushiswap/client'
-import { classNames, NetworkIcon } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { FC } from 'react'
+import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 
 import { useTokensFromPool } from '../../../../lib/hooks'
 import { ICON_SIZE } from '../contants'

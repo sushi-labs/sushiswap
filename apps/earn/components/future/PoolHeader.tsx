@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from 'react'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { NetworkIcon } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
 import { ChainId } from '@sushiswap/chain'

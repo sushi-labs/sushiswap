@@ -15,7 +15,7 @@ import { Dots } from '@sushiswap/ui/future/components/Dots'
 import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
 
 import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { NetworkIcon } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain/ConfirmationDialogCrossChain'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import { ZERO } from '@sushiswap/math'

@@ -11,7 +11,7 @@ import { useCustomTokens } from '@sushiswap/hooks'
 import { queryParamsSchema } from '../../lib/swap/queryParamsSchema'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { useTokenSecurity } from '@sushiswap/react-query'
-import { DangerousIcon, GoPlusLabsIcon } from '@sushiswap/ui/icons'
+import { DangerousIcon, GoPlusLabsIcon } from '@sushiswap/ui/future/components/icons'
 import { Link } from '@sushiswap/ui'
 
 export const TokenNotFoundDialog = () => {

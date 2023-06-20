@@ -1,10 +1,10 @@
 import { EnvelopeIcon, LinkIcon } from '@heroicons/react/24/outline'
-import { TwitterIcon } from '@sushiswap/ui'
 import { getShareText } from 'common/helpers'
 import { FC } from 'react'
 
 import { ArticleEntity } from '../../../.mesh'
 import { ClipboardController } from '@sushiswap/ui/future/components/ClipboardController'
+import { TwitterIcon } from '@sushiswap/ui/future/components/icons'
 
 interface ArticleLinks {
   article?: ArticleEntity

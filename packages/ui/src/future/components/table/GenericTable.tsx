@@ -3,11 +3,11 @@ import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-ta
 import React, { ReactNode, useCallback, useState } from 'react'
 import { Table } from '.'
 import { Link } from '../../../link'
-import { LoadingOverlay } from '../../../loader'
 import { Typography } from '../../../typography'
 import classNames from 'classnames'
 import { Popover } from '../Popover'
 import { useIsMounted } from '@sushiswap/hooks'
+import { LoadingOverlay } from '../Loader'
 
 interface GenericTableProps<C> {
   table: ReactTableType<C>

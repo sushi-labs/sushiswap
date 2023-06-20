@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { RewardTableV3CellProps } from './Cells'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { NetworkIcon } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { unwrapToken } from '../../../../lib/functions'
 import { List } from '@sushiswap/ui/future/components/list/List'

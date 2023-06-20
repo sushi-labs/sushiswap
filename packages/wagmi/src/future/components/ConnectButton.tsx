@@ -4,13 +4,13 @@ import { ChevronDoubleDownIcon } from '@heroicons/react/24/outline'
 import { Button, ButtonComponent } from '@sushiswap/ui/future/components/button'
 import {
   CoinbaseWalletIcon,
-  FrameIcon,
   GnosisSafeIcon,
   MetamaskIcon,
-  RabbyIcon,
   TrustWalletIcon,
   WalletConnectIcon,
-  LedgerIcon,
+    RabbyIcon,
+    FrameIcon,
+    LedgerIcon
 } from '@sushiswap/ui/future/components/icons'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Loader } from '@sushiswap/ui/future/components/Loader'

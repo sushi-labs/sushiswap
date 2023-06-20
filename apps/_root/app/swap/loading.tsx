@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Transition } from '@headlessui/react'
-import { SushiIcon } from '@sushiswap/ui'
+import { SushiIcon } from '@sushiswap/ui/future/components/icons'
 
 export default function Loading() {
   return (

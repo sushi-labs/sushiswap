@@ -1,6 +1,6 @@
 import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { Loader } from '@sushiswap/ui'
+import { Loader } from '@sushiswap/ui/future/components/loader'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'

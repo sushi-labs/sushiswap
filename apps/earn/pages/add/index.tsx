@@ -1,6 +1,6 @@
 import { ArrowLeftIcon, SwitchHorizontalIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
-import { NetworkIcon } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { Layout, SelectNetworkWidget, SelectPricesWidget, SelectTokensWidget } from '../../components'
 import React, { FC, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
