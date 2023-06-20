@@ -11,8 +11,7 @@ import { useAccount } from 'wagmi'
 import { TokenSelector } from '../../TokenSelector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
-import { usePrice } from '@sushiswap/react-query'
-import { useBalanceWeb3 } from '../../../hooks'
+import { useBalanceWeb3, useUSDCPrice } from '../../../hooks'
 import dynamic from 'next/dynamic'
 
 export interface CurrencyInputProps {
@@ -63,9 +62,9 @@ export const Component: FC<CurrencyInputProps> = ({
     currency,
   })
 
-  const { data: price, isInitialLoading: isPriceLoading } = usePrice({
+  const { data: price, isInitialLoading: isPriceLoading } = useUSDCPrice({
     chainId: currency?.chainId,
-    address: currency?.wrapped?.address,
+    currency
   })
 
   const _value = useMemo(() => tryParseAmount(value, currency), [value, currency])
