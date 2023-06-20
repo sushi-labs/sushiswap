@@ -1,6 +1,6 @@
 import { useBreakpoint } from '@sushiswap/hooks'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
-import { getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
+import { SortingState, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
 
@@ -10,6 +10,7 @@ import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { Writeable } from 'zod'
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 
+// rome-ignore lint: reasons
 const COLUMNS = [NAME_COLUMN_V3, PRICE_RANGE_COLUMN, POSITION_SIZE_CELL, POSITION_UNCLAIMED_CELL] as any
 
 export const ConcentratedPositionsTable: FC<{
@@ -22,6 +23,7 @@ export const ConcentratedPositionsTable: FC<{
   const { isMd } = useBreakpoint('md')
   const { chainIds, tokenSymbols } = usePoolFilters()
   const [columnVisibility, setColumnVisibility] = useState({})
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'positionSize', desc: true }])
 
   const {
     data: positions,
@@ -54,11 +56,11 @@ export const ConcentratedPositionsTable: FC<{
   const table = useReactTable<ConcentratedLiquidityPosition>({
     data: _positions,
     state: {
-      // sorting,
+      sorting,
       columnVisibility,
     },
     columns: COLUMNS,
-    // onSortingChange: setSorting,
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   })
