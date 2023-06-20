@@ -5,7 +5,6 @@ import { nanoid } from 'nanoid'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { Dropzone } from '@sushiswap/ui'
 import { Address, fetchToken, FetchTokenResult } from '@sushiswap/wagmi'
 import { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
@@ -15,6 +14,7 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import dynamic from 'next/dynamic'
 import { CreateMultipleStreamFormSchemaType, CreateStreamFormSchemaType } from '../schema'
 import { FormSection } from '@sushiswap/ui/future/components/form'
+import { Dropzone } from '@sushiswap/ui/future/components/dropzone'
 
 interface ImportZoneSection {
   chainId: ChainId

@@ -1,7 +1,7 @@
 import '@sushiswap/ui/index.css'
 import '../variables.css'
 
-import { ThemeProvider } from '@sushiswap/ui'
+import { ThemeProvider } from '@sushiswap/ui/future/ThemeProvider'
 import { client } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
 import { SUPPORTED_CHAIN_IDS } from 'config'

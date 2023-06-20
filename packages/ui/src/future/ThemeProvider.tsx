@@ -1,9 +1,9 @@
 'use client'
 
 import { FC, ReactNode } from 'react'
-import { ToastContainer } from '../future/components/toast'
+import { ToastContainer } from './components/toast'
 import { ThemeProvider as NextThemeProvider } from 'next-themes'
-import { Modal } from '../future/components/modal/Modal'
+import { Modal } from './components/modal/Modal'
 
 interface ThemeProvider {
   children: ReactNode | Array<ReactNode>

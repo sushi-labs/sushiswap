@@ -1,4 +1,4 @@
-import { classNames, ProgressColor } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { FC, useMemo } from 'react'
@@ -27,9 +27,9 @@ import { DownloadIcon, XIcon } from '@heroicons/react/outline'
 import { FuroStatus, useVesting, useVestingBalance, useVestingTransactions } from '../../lib'
 import { queryParamsSchema } from '../../lib/zod'
 import { Carousel } from '@sushiswap/ui/future/components/Carousel'
-import ProgressBar from '@sushiswap/ui/progressbar/ProgressBar'
 import { Timer } from '../../components/Timer'
 import Container from '@sushiswap/ui/future/components/Container'
+import { Progress } from '@sushiswap/ui/future/components/progress'
 
 const VestingPage = () => {
   const { isReady } = useRouter()
@@ -336,11 +336,7 @@ const _VestingPage: FC = () => {
                         <CheckCircleIcon className="text-green" width={24} height={24} />
                       </div>
                     )}
-                    <ProgressBar
-                      className="h-6"
-                      progress={progress}
-                      color={progress === 1 ? ProgressColor.GREEN : ProgressColor.BLUE}
-                    />
+                    <Progress value={progress * 100} />
                   </div>
                 </div>
               )

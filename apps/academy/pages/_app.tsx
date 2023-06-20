@@ -3,7 +3,7 @@ import '../index.css'
 import '../variables.css'
 
 import { Cloudinary } from '@cloudinary/url-gen'
-import { ThemeProvider } from '@sushiswap/ui'
+import { ThemeProvider } from '@sushiswap/ui/future/ThemeProvider'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
 import { useRouter } from 'next/router'

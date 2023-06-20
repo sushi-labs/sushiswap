@@ -2,8 +2,6 @@ import classNames from 'classnames'
 import { FC } from 'react'
 import ReactDropzone, { DropzoneProps } from 'react-dropzone'
 
-import { Typography } from '../typography'
-
 interface Dropzone extends DropzoneProps {
   label?: string
 }
