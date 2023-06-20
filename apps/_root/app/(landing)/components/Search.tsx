@@ -2,12 +2,13 @@ import { ChevronDownIcon, SearchIcon, StarIcon } from '@heroicons/react-v1/solid
 import chains, { ChainId, chainShortName } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { useDebounce, useOnClickOutside } from '@sushiswap/hooks'
-import { classNames, Currency, DEFAULT_INPUT_UNSTYLED, NetworkIcon, Typography } from '@sushiswap/ui'
+import { classNames, DEFAULT_INPUT_UNSTYLED, NetworkIcon, Typography } from '@sushiswap/ui'
 import type { TokenList } from '@uniswap/token-lists'
 import { isAddress } from 'ethers/lib/utils'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery, useToken } from '@sushiswap/wagmi'
 import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
+import { Currency } from '@sushiswap/ui/future/components/currency'
 
 import { SUPPORTED_CHAIN_IDS } from '../../../config'
 

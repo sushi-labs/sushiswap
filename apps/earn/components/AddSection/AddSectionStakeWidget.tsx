@@ -3,10 +3,11 @@ import { ChevronDownIcon } from '@heroicons/react/outline'
 import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
-import { classNames, Currency, DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui'
+import { classNames, DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/future/components/widget'
 import { useTotalSupply } from '@sushiswap/wagmi'
-import { FC, Fragment, ReactNode, useMemo } from 'react'
+import { FC, ReactNode, useMemo } from 'react'
+import { Currency } from '@sushiswap/ui/future/components/currency'
 
 import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
 import { usePoolPosition } from '../PoolPositionProvider'
@@ -125,10 +126,12 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                           </Button>
                         </div>
                         <div className="min-w-[56px] -mr-[10px]">
-                          <Currency.IconList iconHeight={28} iconWidth={28}>
-                            <Currency.Icon currency={reserve0?.currency} />
-                            <Currency.Icon currency={reserve1?.currency} />
-                          </Currency.IconList>
+                          {reserve0 && reserve1 && (
+                            <Currency.IconList iconHeight={28} iconWidth={28}>
+                              <Currency.Icon currency={reserve0?.currency} />
+                              <Currency.Icon currency={reserve1?.currency} />
+                            </Currency.IconList>
+                          )}
                         </div>
                       </div>
                       <div className="grid items-center justify-between grid-cols-2 pb-2">

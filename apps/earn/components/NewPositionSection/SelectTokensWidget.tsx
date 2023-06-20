@@ -1,11 +1,12 @@
 import { ChevronDownIcon } from '@heroicons/react/solid'
-import { classNames, Currency } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { ContentBlock } from '../AddPage/ContentBlock'
+import { Currency } from '@sushiswap/ui/future/components/currency'
 
 interface SelectTokensWidget {
   chainId: ChainId

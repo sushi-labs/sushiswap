@@ -1,5 +1,5 @@
 import { formatPercent, formatUSD } from '@sushiswap/format'
-import { Currency, Link } from '@sushiswap/ui'
+import { Link } from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
 import { PositionWithPool } from '../../../../types'
 import { PoolPositionProvider, usePoolPosition } from '../../../PoolPositionProvider'
@@ -10,6 +10,7 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { ArrowDownIcon, MinusIcon, PlusIcon } from '@heroicons/react/solid'
 import { useNetwork, useSwitchNetwork } from '@sushiswap/wagmi'
 import { ZERO } from '@sushiswap/math'
+import { Currency } from '@sushiswap/ui/future/components/currency'
 
 interface PositionQuickHoverTooltipProps {
   row: PositionWithPool
@@ -83,26 +84,30 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
             <List className="!pt-5">
               <List.Label>Pending rewards</List.Label>
               <List.Control className="bg-gray-100 dark:bg-slate-700">
-                {pendingRewards.map((reward, index) => (
-                  <List.Item
-                    key={index}
-                    icon={Currency.Icon}
-                    iconProps={{
-                      currency: reward?.currency,
-                      width: 24,
-                      height: 24,
-                    }}
-                    title={
-                      <div className="flex items-baseline gap-2">
-                        {reward?.toSignificant(6) || '0.00'} {rewardTokens[index]?.symbol}
-                        <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
-                          {' '}
-                          {formatUSD(values[index])}
-                        </span>
-                      </div>
-                    }
-                  />
-                ))}
+                {pendingRewards.map((reward, index) =>
+                  reward?.currency ? (
+                    <List.Item
+                      key={index}
+                      icon={Currency.Icon}
+                      iconProps={{
+                        currency: reward.currency,
+                        width: 24,
+                        height: 24,
+                      }}
+                      title={
+                        <div className="flex items-baseline gap-2">
+                          {reward?.toSignificant(6) || '0.00'} {rewardTokens[index]?.symbol}
+                          <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
+                            {' '}
+                            {formatUSD(values[index])}
+                          </span>
+                        </div>
+                      }
+                    />
+                  ) : (
+                    <></>
+                  )
+                )}
               </List.Control>
             </List>
           </>
@@ -114,40 +119,44 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
             <List.Label>{formatUSD(value0 + value1)}</List.Label>
           </div>
           <List.Control className="bg-gray-100 dark:bg-slate-700">
-            <List.Item
-              loading={!underlying0}
-              icon={Currency.Icon}
-              iconProps={{
-                currency: underlying0?.currency,
-                width: 24,
-                height: 24,
-              }}
-              title={
-                <div className="flex items-baseline gap-2">
-                  {underlying0?.toSignificant(6)} {underlying0?.currency.symbol}
-                  <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
-                    {formatUSD(value0)}
-                  </span>
-                </div>
-              }
-            />
-            <List.Item
-              loading={!underlying1}
-              icon={Currency.Icon}
-              iconProps={{
-                currency: underlying1?.currency,
-                width: 24,
-                height: 24,
-              }}
-              title={
-                <div className="flex items-baseline gap-2">
-                  {underlying1?.toSignificant(6)} {underlying1?.currency.symbol}
-                  <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
-                    {formatUSD(value1)}
-                  </span>
-                </div>
-              }
-            />
+            {underlying0 && (
+              <List.Item
+                loading={!underlying0}
+                icon={Currency.Icon}
+                iconProps={{
+                  currency: underlying0?.currency,
+                  width: 24,
+                  height: 24,
+                }}
+                title={
+                  <div className="flex items-baseline gap-2">
+                    {underlying0?.toSignificant(6)} {underlying0?.currency.symbol}
+                    <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
+                      {formatUSD(value0)}
+                    </span>
+                  </div>
+                }
+              />
+            )}
+            {underlying1 && (
+              <List.Item
+                loading={!underlying1}
+                icon={Currency.Icon}
+                iconProps={{
+                  currency: underlying1?.currency,
+                  width: 24,
+                  height: 24,
+                }}
+                title={
+                  <div className="flex items-baseline gap-2">
+                    {underlying1?.toSignificant(6)} {underlying1?.currency.symbol}
+                    <span className="text-[10px] text-gray-600 dark:text-slate-400 text-slate-600">
+                      {formatUSD(value1)}
+                    </span>
+                  </div>
+                }
+              />
+            )}
           </List.Control>
         </List>
 

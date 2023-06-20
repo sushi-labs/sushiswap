@@ -1,6 +1,5 @@
 import './globals.css'
 
-export * from './currency'
 export * from './dropzone'
 export * from './icons'
 export * from './input'

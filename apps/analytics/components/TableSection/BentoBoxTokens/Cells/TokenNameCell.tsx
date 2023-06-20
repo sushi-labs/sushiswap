@@ -1,5 +1,6 @@
-import { Currency, Typography } from '@sushiswap/ui'
+import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
+import { Currency } from '@sushiswap/ui/future/components/currency'
 
 import { ICON_SIZE } from '../constants'
 import { Token } from '@sushiswap/currency'

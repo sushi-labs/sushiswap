@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 import { CellProps } from './types'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { Currency } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui/future/components/currency'
 
 export const NetworkCell: FC<CellProps> = ({ row }) => {
   return (

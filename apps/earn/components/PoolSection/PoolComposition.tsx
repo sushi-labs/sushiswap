@@ -1,6 +1,6 @@
 import { formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
-import { Currency } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui/future/components/currency'
 import React, { FC } from 'react'
 import { List } from '@sushiswap/ui/future/components/list/List'
 

@@ -1,11 +1,12 @@
 import { formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { Currency, Typography } from '@sushiswap/ui'
+import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { usePoolPositionRewards } from '../PoolPositionRewardsProvider'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { Currency } from '@sushiswap/ui/future/components/currency'
 
 interface PoolMyRewardsProps {
   pool: Pool

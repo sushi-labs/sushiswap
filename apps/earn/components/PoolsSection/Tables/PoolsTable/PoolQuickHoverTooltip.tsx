@@ -1,7 +1,8 @@
 import { formatNumber, formatPercent } from '@sushiswap/format'
 import { Pool, Protocol } from '@sushiswap/client'
-import { Currency, Link } from '@sushiswap/ui'
+import { Link } from '@sushiswap/ui'
 import React, { FC } from 'react'
+import { Currency } from '@sushiswap/ui/future/components/currency'
 
 import { incentiveRewardToToken } from '../../../../lib/functions'
 import { List } from '@sushiswap/ui/future/components/list/List'

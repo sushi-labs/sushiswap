@@ -1,8 +1,9 @@
-import { Currency, Typography } from '@sushiswap/ui'
+import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { ICON_SIZE } from '../constants'
 import { Token } from '@sushiswap/currency'
+import { Currency } from '@sushiswap/ui/future/components/currency'
 
 export const TokenNameCell: FC<{ token: Token }> = ({ token }) => {
   return (

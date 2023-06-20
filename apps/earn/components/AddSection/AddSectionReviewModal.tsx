@@ -1,8 +1,9 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { Amount, Price, Type } from '@sushiswap/currency'
-import { Currency, Typography } from '@sushiswap/ui'
+import { Typography } from '@sushiswap/ui'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { FC, ReactNode, useMemo } from 'react'
+import { Currency } from '@sushiswap/ui/future/components/currency'
 
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 import { Rate } from '../Rate'

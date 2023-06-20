@@ -3,13 +3,14 @@ import { usePools } from '@sushiswap/client'
 import { Native, Token } from '@sushiswap/currency'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'
-import { Currency, Link, Typography } from '@sushiswap/ui'
+import { Link, Typography } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { useSWRConfig } from 'swr'
 import { Table } from '@sushiswap/ui/future/components/table'
 import { FarmRewardsAvailableTooltip } from '../FarmRewardsAvailableTooltip'
 import { PoolQuickHoverTooltip } from '../PoolQuickHoverTooltip'
 import { Popover } from '@sushiswap/ui/future/components/Popover'
+import { Currency } from '@sushiswap/ui/future/components/currency'
 
 interface TokenPairs {
   token: GraphToken

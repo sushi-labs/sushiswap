@@ -1,6 +1,6 @@
 'use client'
 
-import { classNames, Currency, NetworkIcon } from '@sushiswap/ui'
+import { classNames, NetworkIcon } from '@sushiswap/ui'
 import React, { FC, useMemo } from 'react'
 import { RP2MerkleTreeClaimSchema } from '@sushiswap/wagmi/future/hooks/exploits/constants'
 import { z } from 'zod'
@@ -23,6 +23,7 @@ import { Address } from 'wagmi'
 import { routeProcessor2Address } from '@sushiswap/route-processor/exports/exports'
 import { ZERO } from '@sushiswap/math'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
+import { Currency } from '@sushiswap/ui/future/components/currency'
 
 interface ClaimItem {
   account: Address

@@ -1,7 +1,7 @@
 import { getAddress } from '@ethersproject/address'
 import { formatUSD } from '@sushiswap/format'
 import { Bundle, Token as GraphToken } from '@sushiswap/graph-client'
-import { Currency } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui/future/components/currency'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import useSWR from 'swr'
