@@ -1441,7 +1441,7 @@ importers:
       '@graphql-mesh/transform-type-merging': 0.5.20
       '@graphql-tools/merge': 8.4.0
       '@sushiswap/abi': workspace:*
-      '@sushiswap/bentobox': 1.0.1
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
@@ -1534,7 +1534,7 @@ importers:
       '@graphql-mesh/utils': 0.43.21
       '@graphql-tools/merge': 8.4.0
       '@sushiswap/abi': workspace:*
-      '@sushiswap/bentobox': 1.0.1
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
