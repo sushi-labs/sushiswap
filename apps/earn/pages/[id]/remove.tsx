@@ -1,6 +1,6 @@
 import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { formatPercent } from '@sushiswap/format'
-import { AppearOnMount, Link, Typography } from '@sushiswap/ui'
+import { Link, Typography } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
@@ -22,6 +22,7 @@ import { ChainId } from '@sushiswap/chain'
 import { useSWRConfig } from 'swr/_internal'
 import { NextSeo } from 'next-seo'
 import { isTridentPoolProtocol } from '../../lib/functions'
+import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
 
 const Remove: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (

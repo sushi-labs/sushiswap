@@ -1,5 +1,4 @@
 import { formatPercent } from '@sushiswap/format'
-import { AppearOnMount } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { getPool, usePool, getPools, getPoolUrl, Protocol } from '@sushiswap/client'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
@@ -27,6 +26,7 @@ import {
 import { ChainId } from '@sushiswap/chain'
 import { NextSeo } from 'next-seo'
 import { PoolPageV3 } from '../../components/PoolPageV3'
+import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
 
 const Pool: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (

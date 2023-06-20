@@ -15,11 +15,12 @@ import { Dots } from '@sushiswap/ui/future/components/Dots'
 import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
 
 import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { Collapsible, NetworkIcon } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui'
 import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain/ConfirmationDialogCrossChain'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import { ZERO } from '@sushiswap/math'
 import { useSlippageTolerance } from '@sushiswap/hooks'
+import { Collapsible } from '@sushiswap/ui/future/components/animation/Collapsible'
 
 export const TradeReviewDialogCrossChain: FC = () => {
   const { review, token0, token1, recipient, network0, network1, amount, value } = useSwapState()

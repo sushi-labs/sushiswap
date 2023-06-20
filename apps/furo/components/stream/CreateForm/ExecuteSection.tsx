@@ -3,7 +3,7 @@ import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui/future/components/Dots'
 import {
   getFuroStreamRouterContractConfig,
   useAccount,

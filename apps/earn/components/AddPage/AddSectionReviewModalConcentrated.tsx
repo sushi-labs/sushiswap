@@ -1,5 +1,4 @@
 import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
-import { Collapsible } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/future/components/button'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
@@ -13,6 +12,7 @@ import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider
 import { FeeAmount, Position } from '@sushiswap/v3-sdk'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 import { Dots } from '@sushiswap/ui/future/components/Dots'
+import { Collapsible } from '@sushiswap/ui/future/components/animation/Collapsible'
 
 interface AddSectionReviewModalConcentratedProps
   extends Pick<

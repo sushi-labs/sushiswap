@@ -1,5 +1,5 @@
 import { formatPercent, formatUSD } from '@sushiswap/format'
-import { AppearOnMount, Typography, classNames } from '@sushiswap/ui'
+import { Typography, classNames } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo } from 'react'
@@ -14,6 +14,7 @@ import { ChainId } from '@sushiswap/chain'
 import { SkeletonBox } from '@sushiswap/ui/future/components/skeleton'
 
 import resolveConfig from 'tailwindcss/resolveConfig'
+import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
 
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL | PoolChartType.APR

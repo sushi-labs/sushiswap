@@ -1,7 +1,7 @@
 import { TransactionRequest } from '@ethersproject/providers'
 import { TrashIcon } from '@heroicons/react/outline'
 import { Chain, ChainId } from '@sushiswap/chain'
-import { Dots, Typography } from '@sushiswap/ui'
+import { Typography } from '@sushiswap/ui'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
 import { useAccount, useContract } from '@sushiswap/wagmi'
@@ -12,6 +12,7 @@ import { createToast } from '@sushiswap/ui/future/components/toast'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { Dialog } from '@sushiswap/ui/future/components/dialog/Dialog'
 import { shortenAddress } from '@sushiswap/format'
+import { Dots } from '@sushiswap/ui/future/components/Dots'
 
 interface CancelModalProps {
   title: string

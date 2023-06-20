@@ -1,11 +1,12 @@
 import { formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
-import { Currency, Dialog, Typography } from '@sushiswap/ui'
+import { Currency, Typography } from '@sushiswap/ui'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { FC, useCallback } from 'react'
 
 import { usePoolPositionRewards } from '../../PoolPositionRewardsProvider'
 import Button from '@sushiswap/ui/future/components/button/Button'
+import { Dialog } from '@sushiswap/ui/future/components/dialog'
 
 interface PoolActionBarPositionRewardsProps {
   pool: Pool

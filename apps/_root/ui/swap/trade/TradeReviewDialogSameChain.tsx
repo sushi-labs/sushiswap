@@ -18,11 +18,12 @@ import { SkeletonText, SkeletonCircle, SkeletonBox } from '@sushiswap/ui/future/
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
-import { classNames, Collapsible } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { warningSeverity, warningSeverityClassName } from '../../../lib/swap/warningSeverity'
 import { TradeRoute } from './TradeRoute'
 import { ZERO } from '@sushiswap/math'
 import { useSlippageTolerance } from '@sushiswap/hooks'
+import { Collapsible } from '@sushiswap/ui/future/components/animation/Collapsible'
 
 export const TradeReviewDialogSameChain: FC = () => {
   const [open, setOpen] = useState(false)

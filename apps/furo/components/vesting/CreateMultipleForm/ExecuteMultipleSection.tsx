@@ -3,7 +3,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Native, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui/future/components/Dots'
 import {
   getFuroVestingRouterContractConfig,
   useAccount,
@@ -22,7 +22,7 @@ import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount }
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { bentoBoxV1Address } from '@sushiswap/bentobox'
-import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS, STEP_CONFIGURATIONS_MAP } from '../schema'
+import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS_MAP } from '../schema'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'

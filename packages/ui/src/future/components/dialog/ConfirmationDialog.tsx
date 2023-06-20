@@ -1,13 +1,13 @@
-import { Dispatch, FC, ReactNode, SetStateAction } from 'react'
-import { Dialog } from '../future/components/dialog'
-import { BarLoader } from '../future/components/BarLoader'
-import { Loader } from '../future/components/Loader'
-import { CheckMarkIcon } from '../future/components/icons/CheckmarkIcon'
-import { FailedMarkIcon } from '../future/components/icons/FailedMarkIcon'
 import { Chain, ChainId } from '@sushiswap/chain'
-import { Dots } from '../future/components/Dots'
-import { Button } from '../future/components/button'
-import Link from 'next/link'
+import { Dialog } from './Dialog'
+import { BarLoader } from '../BarLoader'
+import * as React from 'react'
+import { Loader } from '../Loader'
+import { Dots } from '../Dots'
+import { Button } from '../button'
+import { CheckMarkIcon } from '../icons/CheckmarkIcon'
+import { FailedMarkIcon } from '../icons/FailedMarkIcon'
+import { FC } from 'react'
 
 export enum ConfirmationDialogState {
   Undefined,
@@ -25,7 +25,7 @@ interface ConfirmationDialog {
   setOpen(open: boolean): void
   onComplete(): void
   isWritePending: boolean
-  successMessage: ReactNode
+  successMessage: React.ReactNode
   buttonSuccessMessage: string
   buttonSuccessLink?: string
   testId?: string
@@ -42,7 +42,7 @@ export const ConfirmationDialog: FC<ConfirmationDialog> = ({
   successMessage,
   buttonSuccessMessage,
   buttonSuccessLink,
-  testId
+  testId,
 }) => {
   return (
     <Dialog open={open} unmount={false} onClose={() => setOpen(false)}>

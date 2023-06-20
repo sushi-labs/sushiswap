@@ -2,12 +2,13 @@ import { ExternalLinkIcon } from '@heroicons/react/solid'
 import chains, { ChainId } from '@sushiswap/chain'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
-import { AppearOnMount, Currency, Link, NetworkIcon, Typography } from '@sushiswap/ui'
+import { Currency, Link, NetworkIcon, Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/react-query'
 import { FC } from 'react'
 
 import { useGraphPool } from '../../lib/hooks'
 import { FarmRewardsAvailableTooltip } from '../FarmRewardsAvailableTooltip'
+import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
 
 interface PoolHeader {
   pool: Pool

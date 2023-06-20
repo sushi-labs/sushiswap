@@ -1,6 +1,6 @@
 import { MinusIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/react/solid'
 import { tryParseAmount, Type } from '@sushiswap/currency'
-import { classNames, Collapsible } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Bound } from '../../lib/constants'
@@ -21,6 +21,7 @@ import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 
 import { useConcentratedLiquidityPositionsFromTokenId } from '@sushiswap/wagmi/future/hooks'
 import { FeeAmount, V3ChainId } from '@sushiswap/v3-sdk'
+import { Collapsible } from '@sushiswap/ui/future/components/animation/Collapsible'
 
 interface SelectPricesWidget {
   chainId: V3ChainId

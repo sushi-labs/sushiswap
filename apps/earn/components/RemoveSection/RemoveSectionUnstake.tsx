@@ -1,7 +1,7 @@
 import { tryParseAmount } from '@sushiswap/currency'
 import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
-import { AppearOnMount } from '@sushiswap/ui'
+import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
 import { getMasterChefContractConfig, useMasterChefWithdraw } from '@sushiswap/wagmi'
 import { FC, useMemo, useState } from 'react'
 import { Dots } from '@sushiswap/ui/future/components/Dots'

@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
 import { tryParseAmount } from '@sushiswap/currency'
-import { Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui/future/components/Dots'
 import { _useSendTransaction as useSendTransaction, useAccount, useFuroStreamContract } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
@@ -124,7 +124,13 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
               {shortenAddress(stream.recipient.id)}
             </a>
           </div>
-          <Text label="Amount" value={input} onChange={(val) => setInput(`${val}`)} id="withdraw-modal-input" testdata-id="withdraw-modal-input" />
+          <Text
+            label="Amount"
+            value={input}
+            onChange={(val) => setInput(`${val}`)}
+            id="withdraw-modal-input"
+            testdata-id="withdraw-modal-input"
+          />
           <div className="col-span-2 pt-2">
             <Checker.Connect size="xl" fullWidth>
               <Checker.Network size="xl" fullWidth chainId={chainId}>
@@ -149,7 +155,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
                       fullWidth
                       disabled={isWritePending || !stream.balance}
                       onClick={() => sendTransaction?.()}
-                      testId='withdraw-modal-confirmation'
+                      testId="withdraw-modal-confirmation"
                     >
                       {!stream.token ? (
                         'Invalid stream token'

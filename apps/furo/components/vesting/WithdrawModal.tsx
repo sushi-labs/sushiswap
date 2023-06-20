@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
-import { Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui/future/components/Dots'
 import { useAccount, useFuroVestingContract } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
@@ -69,9 +69,8 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
       setOpen(false)
     },
     enabled: Boolean(vesting && balance && contract),
-    gasMargin: true
+    gasMargin: true,
   })
-
 
   return (
     <>
@@ -116,15 +115,9 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
                   fullWidth
                   disabled={isWritePending || !sendTransaction}
                   onClick={() => sendTransaction?.()}
-                  testId='withdraw-modal-confirmation'
+                  testId="withdraw-modal-confirmation"
                 >
-                  {!vesting?.token ? (
-                    'Invalid vest token'
-                  ) : isWritePending ? (
-                    <Dots>Confirm Withdraw</Dots>
-                  ) : (
-                    'Withdraw'
-                  )}
+                  {!vesting?.token ? 'Invalid vest token' : isWritePending ? <Dots>Confirm Withdraw</Dots> : 'Withdraw'}
                 </Button>
               </Checker.Custom>
             </Checker.Network>

@@ -3,7 +3,7 @@ import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
-import { Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui/future/components/Dots'
 import { _useSendTransaction as useSendTransaction, useAccount, useContract, useEnsAddress } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
@@ -36,7 +36,7 @@ export const TransferModal: FC<TransferModalProps> = ({
   const [recipient, setRecipient] = useState<string>('')
 
   const type = stream instanceof Vesting ? 'Vest' : 'Stream'
-  
+
   const contract = useContract({
     address: contractAddress,
     abi: abi,
@@ -118,11 +118,17 @@ export const TransferModal: FC<TransferModalProps> = ({
             </span>{' '}
             to the entered recipient.
             <p className="mt-2">
-              Please note that this will transfer ownership of the entire {type.toLowerCase()} to the recipient. You will not be able
-              to withdraw from this {type.toLowerCase()} after transferring
+              Please note that this will transfer ownership of the entire {type.toLowerCase()} to the recipient. You
+              will not be able to withdraw from this {type.toLowerCase()} after transferring
             </p>
           </div>
-          <Text label="Address" value={recipient} onChange={(val) => setRecipient(`${val}`)} id="ens-input" testdata-id="transfer-recipient-input"/>
+          <Text
+            label="Address"
+            value={recipient}
+            onChange={(val) => setRecipient(`${val}`)}
+            id="ens-input"
+            testdata-id="transfer-recipient-input"
+          />
           <Checker.Connect size="xl" fullWidth>
             <Checker.Network size="xl" fullWidth chainId={chainId}>
               <Button
@@ -131,10 +137,11 @@ export const TransferModal: FC<TransferModalProps> = ({
                 disabled={
                   isWritePending ||
                   !resolvedAddress ||
-                  resolvedAddress.toLowerCase() === stream?.recipient.id.toLowerCase() || !sendTransaction
+                  resolvedAddress.toLowerCase() === stream?.recipient.id.toLowerCase() ||
+                  !sendTransaction
                 }
                 onClick={() => sendTransaction?.()}
-                testId='transfer-confirmation'
+                testId="transfer-confirmation"
               >
                 {isWritePending ? (
                   <Dots>Confirm Transfer</Dots>

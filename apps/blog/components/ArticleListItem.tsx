@@ -1,9 +1,10 @@
-import { Chip, Typography } from '@sushiswap/ui'
+import { Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC } from 'react'
 import { Article } from 'types'
 
 import { Image } from './Image'
+import { Chip } from '@sushiswap/ui/future/components/chip'
 
 interface ArticleListItem {
   article: Article
@@ -28,7 +29,9 @@ export const ArticleListItem: FC<ArticleListItem> = ({ article }) => {
         {(article?.attributes?.categories?.data || []).length > 0 && (
           <div className="flex gap-1 md:pt-3">
             {article?.attributes?.categories?.data.map((category) => (
-              <Chip key={category.id} label={category?.attributes?.name} className="capitalize" />
+              <Chip variant="ghost" key={category.id}>
+                {category?.attributes?.name}
+              </Chip>
             ))}
           </div>
         )}

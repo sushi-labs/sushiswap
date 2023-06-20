@@ -3,7 +3,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui/future/components/Dots'
 import {
   getFuroStreamRouterContractConfig,
   useAccount,
@@ -164,7 +164,7 @@ export const ExecuteMultipleSection: FC<{
       })),
     [chainId, summedAmounts]
   )
-  console.log({approveAmounts})
+  console.log({ approveAmounts })
 
   return (
     <div className="flex justify-end gap-4">

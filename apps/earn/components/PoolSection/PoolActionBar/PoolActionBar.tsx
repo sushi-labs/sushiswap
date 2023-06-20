@@ -1,10 +1,11 @@
 import { Pool } from '@sushiswap/client'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { AppearOnMount, Typography } from '@sushiswap/ui'
+import { Typography } from '@sushiswap/ui'
 import { FC, Fragment, useState } from 'react'
 
 import { PoolActionBarPositionDialog } from './PoolActionBarPositionDialog'
 import { PoolActionBarPositionRewards } from './PoolActionBarPositionRewards'
+import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
 
 interface PoolActionBarProps {
   pool: Pool

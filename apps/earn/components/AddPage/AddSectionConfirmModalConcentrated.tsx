@@ -11,7 +11,7 @@ import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import {
   ConfirmationDialog as UIConfirmationDialog,
   ConfirmationDialogState,
-} from '@sushiswap/ui/dialog/ConfirmationDialog'
+} from '@sushiswap/ui/future/components/dialog/ConfirmationDialog'
 import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'

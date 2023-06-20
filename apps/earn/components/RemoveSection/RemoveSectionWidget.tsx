@@ -5,14 +5,7 @@ import { Amount, Native, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import {
-  AppearOnMount,
-  classNames,
-  Currency as UICurrency,
-  DEFAULT_INPUT_UNSTYLED,
-  Input,
-  Typography,
-} from '@sushiswap/ui'
+import { classNames, Currency as UICurrency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/future/components/widget'
 import React, { FC, Fragment, ReactNode, useState } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
@@ -20,6 +13,7 @@ import { useAccount } from '@sushiswap/wagmi'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
 
 interface RemoveSectionWidgetProps {
   isFarm: boolean

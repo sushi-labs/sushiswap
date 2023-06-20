@@ -14,7 +14,7 @@ import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import {
   ConfirmationDialog as UIConfirmationDialog,
   ConfirmationDialogState,
-} from '@sushiswap/ui/dialog/ConfirmationDialog'
+} from '@sushiswap/ui/future/components/dialog/ConfirmationDialog'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
   isRouteProcessor3ChainId,

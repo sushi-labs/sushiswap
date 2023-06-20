@@ -1,11 +1,12 @@
 import { ArrowLeftIcon, ShareIcon } from '@heroicons/react/24/solid'
-import { IconButton, Typography } from '@sushiswap/ui'
+import { Typography } from '@sushiswap/ui'
 import { getShareText } from 'common/helpers'
 import Link from 'next/link'
 import { FC } from 'react'
 import { Container } from '@sushiswap/ui/future/components/Container'
 
 import { ArticleEntity } from '.mesh'
+import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
 
 interface Breadcrumb {
   article?: ArticleEntity
@@ -36,9 +37,7 @@ export const Breadcrumb: FC<Breadcrumb> = ({ article }) => {
           </Typography>
         </a>
       </Link>
-      <IconButton className="w-5 h-5 sm:hidden" onClick={onShare}>
-        <ShareIcon className="text-slate-50" />
-      </IconButton>
+      <IconButton icon={ShareIcon} iconProps={{ width: 20, height: 20 }} name="Share" onClick={onShare} />
     </Container>
   )
 }

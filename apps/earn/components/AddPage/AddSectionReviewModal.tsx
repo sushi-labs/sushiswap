@@ -1,11 +1,12 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Type } from '@sushiswap/currency'
-import { Currency, Dialog, Typography } from '@sushiswap/ui'
+import { Currency, Typography } from '@sushiswap/ui'
 import { FC, ReactNode, useMemo } from 'react'
 
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 import { Rate } from '../Rate'
+import { Dialog } from '@sushiswap/ui/future/components/dialog'
 
 interface AddSectionReviewModal {
   chainId: ChainId
@@ -37,7 +38,7 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
   return (
     <Dialog open={open} onClose={close}>
       <Dialog.Content className="max-w-sm !pb-4">
-        <Dialog.Header border={false} title="Add Liquidity" onClose={close} />
+        <Dialog.Header title="Add Liquidity" onClose={close} />
         <div className="!my-0 grid grid-cols-12 items-center">
           <div className="relative flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
             <div className="flex items-center gap-2">
