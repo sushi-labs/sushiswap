@@ -16,7 +16,6 @@ import { Chain, ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
 import { Currency as UICurrency } from '@sushiswap/ui/future/components/currency'
-import { ExternalLink } from '@sushiswap/ui/future/components/ExternalLink'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { Loader } from '@sushiswap/ui/future/components/Loader'
 import { TimeAgo } from '@sushiswap/ui/future/components/time-ago'
@@ -73,7 +72,7 @@ export const Notification: FC<{
           )}
         </Disclosure.Button>
       )}
-      <ExternalLink
+      <a target="_blank" rel="noopener noreferrer"
         href={
           notification.href
             ? notification.href
@@ -81,7 +80,6 @@ export const Notification: FC<{
             ? Chain.from(notification.chainId).getTxUrl(notification.txHash)
             : ''
         }
-        className="!no-underline"
       >
         <div
           className={classNames(
@@ -146,7 +144,7 @@ export const Notification: FC<{
             </span>
           </div>
         </div>
-      </ExternalLink>
+      </a>
     </div>
   )
 }
