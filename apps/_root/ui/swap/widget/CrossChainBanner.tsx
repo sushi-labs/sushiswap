@@ -1,5 +1,5 @@
 import React, { FC, useCallback } from 'react'
-import Switch from '@sushiswap/ui/future/components/Switch'
+import { Switch } from '@sushiswap/ui/future/components/Switch'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { AppType } from '@sushiswap/ui/types'
 import { classNames } from '@sushiswap/ui'
@@ -60,7 +60,7 @@ export const CrossChainBanner: FC = () => {
             </span>
           </div>
           <div className="flex justify-end flex-grow">
-            <Switch checked={appType === AppType.xSwap} onChange={handleChange} />
+            <Switch checked={appType === AppType.xSwap} onCheckedChange={handleChange} />
           </div>
         </div>
         <ChainSelectors open={appType === AppType.xSwap} />

@@ -4,7 +4,7 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { ConcentratedPositionsTable } from './Tables/PositionsTable/ConcentratedPositionsTable'
 import { PositionsTable } from './Tables'
 import Container from '@sushiswap/ui/future/components/Container'
-import Switch from '@sushiswap/ui/future/components/Switch'
+import { Switch } from '@sushiswap/ui/future/components/switch'
 
 export const PositionsTab = () => {
   const [hide, setHide] = useState(true)
@@ -46,9 +46,9 @@ export const PositionsTab = () => {
               )}
             </Tab>
           </div>
-          <div className="flex gap-1 items-center px-2.5">
+          <div className="flex gap-3 items-center px-2.5">
             <span className="font-medium text-sm text-gray-600 dark:text-slate-400">Include closed</span>
-            <Switch size="sm" checked={hide} onChange={() => setHide((prev) => !prev)} className="scale-75" />
+            <Switch checked={hide} onCheckedChange={() => setHide((prev) => !prev)} />
           </div>
         </div>
         <Tab.Panels>

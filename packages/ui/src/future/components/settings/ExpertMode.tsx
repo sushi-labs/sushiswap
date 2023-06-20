@@ -3,8 +3,8 @@
 import { LightBulbIcon } from '@heroicons/react/24/outline'
 import React, { FC } from 'react'
 import { useLocalStorage } from '@sushiswap/hooks'
-import Switch from '../Switch'
 import { List } from '../list/List'
+import { Switch } from '../switch'
 
 export const ExpertMode: FC = () => {
   const [expertMode, setExpertMode] = useLocalStorage('expertMode', false)
@@ -19,7 +19,7 @@ export const ExpertMode: FC = () => {
       subtitle="Enabling Expert Mode will allow for high slippage trades. Only use if you are an advanced user and know what you are doing. Use at your own risk."
       value={
         <div className="flex items-center flex-col">
-          <Switch className={(checked) => (checked ? 'bg-red' : '')} checked={expertMode} onChange={setExpertMode} />
+          <Switch checked={expertMode} onCheckedChange={setExpertMode} />
         </div>
       }
     />

@@ -2533,6 +2533,7 @@ importers:
       '@radix-ui/react-select': ^1.2.2
       '@radix-ui/react-separator': ^1.0.3
       '@radix-ui/react-slot': ^1.0.2
+      '@radix-ui/react-switch': ^1.0.3
       '@radix-ui/react-tooltip': ^1.0.6
       '@react-hook/window-scroll': 1.3.0
       '@sushiswap/chain': workspace:*
@@ -2598,6 +2599,7 @@ importers:
       '@radix-ui/react-select': 1.2.2_lhsvdmrfrkqkmxtqosqgyd3k4i
       '@radix-ui/react-separator': 1.0.3_lhsvdmrfrkqkmxtqosqgyd3k4i
       '@radix-ui/react-slot': 1.0.2_s3k22s5ab4eu26xuel7hiaraxy
+      '@radix-ui/react-switch': 1.0.3_lhsvdmrfrkqkmxtqosqgyd3k4i
       '@radix-ui/react-tooltip': 1.0.6_lhsvdmrfrkqkmxtqosqgyd3k4i
       '@react-hook/window-scroll': 1.3.0_react@18.2.0
       '@sushiswap/chain': link:../chain
@@ -11051,6 +11053,33 @@ packages:
       '@radix-ui/react-compose-refs': 1.0.1_s3k22s5ab4eu26xuel7hiaraxy
       '@types/react': 18.2.6
       react: 18.2.0
+    dev: false
+
+  /@radix-ui/react-switch/1.0.3_lhsvdmrfrkqkmxtqosqgyd3k4i:
+    resolution: {integrity: sha512-mxm87F88HyHztsI7N+ZUmEoARGkC22YVW5CaC+Byc+HRpuvCrOBPTAnXgf+tZ/7i0Sg/eOePGdMhUKhPaQEqow==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.21.5
+      '@radix-ui/primitive': 1.0.1
+      '@radix-ui/react-compose-refs': 1.0.1_s3k22s5ab4eu26xuel7hiaraxy
+      '@radix-ui/react-context': 1.0.1_s3k22s5ab4eu26xuel7hiaraxy
+      '@radix-ui/react-primitive': 1.0.3_lhsvdmrfrkqkmxtqosqgyd3k4i
+      '@radix-ui/react-use-controllable-state': 1.0.1_s3k22s5ab4eu26xuel7hiaraxy
+      '@radix-ui/react-use-previous': 1.0.1_s3k22s5ab4eu26xuel7hiaraxy
+      '@radix-ui/react-use-size': 1.0.1_s3k22s5ab4eu26xuel7hiaraxy
+      '@types/react': 18.2.6
+      '@types/react-dom': 18.2.4
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /@radix-ui/react-tooltip/1.0.6_lhsvdmrfrkqkmxtqosqgyd3k4i:

@@ -194,8 +194,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                 <Switch
                   id="update-amount-switch"
                   checked={topUp}
-                  onChange={() => setTopUp((prevState) => !prevState)}
-                  size="sm"
+                  onCheckedChange={() => setTopUp((prevState) => !prevState)}
                 />
               </div>
               <div className={classNames(topUp ? '' : 'opacity-40 pointer-events-none', 'flex flex-col gap-2')}>
@@ -214,8 +213,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                 <Switch
                   id="update-end-date-switch"
                   checked={changeEndDate}
-                  onChange={() => setChangeEndDate((prevState) => !prevState)}
-                  size="sm"
+                  onCheckedChange={() => setChangeEndDate((prevState) => !prevState)}
                 />
               </div>
               <div className={classNames(changeEndDate ? '' : 'opacity-40 pointer-events-none', 'flex flex-col gap-2')}>

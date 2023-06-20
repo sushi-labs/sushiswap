@@ -1,6 +1,5 @@
 import React, { ElementType, forwardRef, ReactElement, ReactNode, useEffect, useState } from 'react'
 import { PolymorphicComponentPropsWithRef, PolymorphicRef } from '../../types'
-import classNames from 'classnames'
 
 interface Props {
   dep: string | undefined

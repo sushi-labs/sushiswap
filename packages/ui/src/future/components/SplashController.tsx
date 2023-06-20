@@ -1,5 +1,4 @@
 import React, { FC, ReactNode } from 'react'
-// import { useRouter } from 'next/navigation'
 import { Transition } from '@headlessui/react'
 import dynamic from 'next/dynamic'
 import { SushiIcon } from './icons'

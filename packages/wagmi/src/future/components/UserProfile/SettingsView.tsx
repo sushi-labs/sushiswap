@@ -8,7 +8,7 @@ import { RadioGroup } from '@headlessui/react'
 import { classNames } from '@sushiswap/ui'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
 import { useLocalStorage } from '@sushiswap/hooks'
-import Switch from '@sushiswap/ui/future/components/Switch'
+import { Switch } from '@sushiswap/ui/future/components/Switch'
 import { useTheme } from 'next-themes'
 
 interface SettingsViewProps {
@@ -69,7 +69,7 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
             </RadioGroup>
           </List.KeyValue>
           <List.KeyValue flex title="Show testnets">
-            <Switch checked={showTestnets} onChange={setShowTestnets} />
+            <Switch checked={showTestnets} onCheckedChange={setShowTestnets} />
           </List.KeyValue>
         </List.Control>
       </List>

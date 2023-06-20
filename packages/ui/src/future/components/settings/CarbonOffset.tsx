@@ -3,8 +3,8 @@
 import React, { FC } from 'react'
 import { ChainId } from '@sushiswap/chain'
 import { useLocalStorage } from '@sushiswap/hooks'
-import Switch from '../Switch'
 import { NetworkIcon } from '../icons'
+import { Switch } from '../switch'
 
 export const CarbonOffset: FC = () => {
   const [carbonOffset, setCarbonOffset] = useLocalStorage('carbonOffset', false)
@@ -19,7 +19,7 @@ export const CarbonOffset: FC = () => {
             transaction on Polygon is less than $0.01.
           </span>
         </div>
-        <Switch checked={carbonOffset} onChange={(checked) => setCarbonOffset(checked)} />
+        <Switch checked={carbonOffset} onCheckedChange={(checked) => setCarbonOffset(checked)} />
       </div>
       <span className="mt-3 text-xs text-gray-500 dark:text-slate-400 items-center flex font-medium gap-0.5">
         Only available on <NetworkIcon type="naked" chainId={ChainId.POLYGON} width={16} height={16} /> Polygon
