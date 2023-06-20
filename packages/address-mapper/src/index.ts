@@ -8,8 +8,6 @@ export class AddressMapper {
     }
 
     private initialize(addressLists: Record<number, string>[]) {
-
-        this.addresses = new Map()
         for (const addressList of addressLists) {
             Object.entries(addressList).forEach(([chainId, address]) => {
                 const id = `${chainId}:${address.toLowerCase()}`
