@@ -6,7 +6,7 @@ import { FC, useLayoutEffect, useState } from 'react'
 import { DEFAULT_SIDE_PADDING } from '../helpers'
 import { DifficultyEntity, Maybe } from '.mesh'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@sushiswap/ui/future/components/select'
-import { Container } from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 
 interface ArticlesPagesHeader {
   title: Maybe<string> | undefined

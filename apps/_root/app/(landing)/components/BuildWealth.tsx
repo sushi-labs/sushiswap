@@ -4,7 +4,7 @@ import React, { FC } from 'react'
 
 import { ExpandableCard } from './ExpandableCard'
 import { AnimatedTitle } from './AnimatedTitle'
-import { Container } from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 
 export const BuildWealth: FC = () => {
   return (

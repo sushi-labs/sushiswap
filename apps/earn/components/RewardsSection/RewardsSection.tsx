@@ -3,7 +3,7 @@ import { AngleRewardsPool, useAngleRewardsMultipleChains } from '@sushiswap/reac
 import { Carousel } from '@sushiswap/ui/future/components/Carousel'
 import { RewardSlide } from './RewardSlide'
 import { useAccount } from '@sushiswap/wagmi'
-import Container from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
 import { useBreakpoint } from '@sushiswap/hooks'

@@ -2,7 +2,7 @@ import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { Article, MediaBlock as MediaBlockType, RichTextBlock as RichTextBlockType } from 'types'
-import { Container } from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 
 import {
   ArticleAuthors,

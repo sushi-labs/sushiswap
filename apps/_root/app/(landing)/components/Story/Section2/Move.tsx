@@ -1,6 +1,6 @@
 import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { Container } from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 import { FC } from 'react'
 
 import { MoveImage } from './MoveImage'

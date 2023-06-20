@@ -9,7 +9,7 @@ import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/20/soli
 import { classNames } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import dynamic from 'next/dynamic'
-import {Explainer} from "@sushiswap/ui/future/components/Explainer";
+import {Explainer} from "@sushiswap/ui/future/components/explainer";
 
 export interface ApproveERC20Props extends ButtonProps<'button'> {
   id: string

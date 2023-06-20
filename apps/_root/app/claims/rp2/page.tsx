@@ -10,7 +10,7 @@ import { ConnectButton } from '@sushiswap/wagmi/future/components'
 import { RevokeItem } from '../components/RevokeItem'
 import { Disclosure } from '@headlessui/react'
 import { ChevronRightIcon } from '@heroicons/react-v1/solid'
-import { Container } from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 
 const RP2ClaimPage = () => {
   const { address } = useAccount()

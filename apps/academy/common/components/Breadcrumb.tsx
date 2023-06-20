@@ -3,7 +3,7 @@ import { Typography } from '@sushiswap/ui'
 import { getShareText } from 'common/helpers'
 import Link from 'next/link'
 import { FC } from 'react'
-import { Container } from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 
 import { ArticleEntity } from '.mesh'
 import { IconButton } from '@sushiswap/ui/future/components/iconbutton'

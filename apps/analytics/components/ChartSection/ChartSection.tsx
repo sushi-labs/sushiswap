@@ -7,7 +7,7 @@ import { SkeletonText, SkeletonBox } from '@sushiswap/ui/future/components/skele
 import { TVLChart } from './TVLChart2'
 import { VolumeChart } from './VolumeChart2'
 import { useFilters } from 'components/Filters'
-import Container from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 
 const fetcher = ({
   url,

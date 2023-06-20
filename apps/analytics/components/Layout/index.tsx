@@ -1,13 +1,14 @@
 import { classNames } from '@sushiswap/ui'
 import React from 'react'
 
-type Props = {
+interface Props extends Pick<ExtractProps<ContainerProps>, 'maxWidth'> {
   children?: React.ReactNode
-  maxWidth?: MaxWidth
   backdrop?: React.ReactNode
   className?: string
 }
-import { Container, MaxWidth } from '@sushiswap/ui/future/components/Container'
+
+import { Container, ContainerProps } from '@sushiswap/ui/future/components/container'
+import { ExtractProps } from '@sushiswap/ui'
 
 export function Layout({ children, maxWidth = 'full', className }: Props) {
   return (

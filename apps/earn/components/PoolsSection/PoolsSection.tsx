@@ -6,7 +6,7 @@ import { PoolsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { useIsMounted } from '@sushiswap/hooks'
-import Container from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 import { PositionsTab } from './PositionsTab'
 import { RewardsTab } from './RewardsTab'
 

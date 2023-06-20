@@ -28,7 +28,7 @@ import { FuroStatus, useVesting, useVestingBalance, useVestingTransactions } fro
 import { queryParamsSchema } from '../../lib/zod'
 import { Carousel } from '@sushiswap/ui/future/components/Carousel'
 import { Timer } from '../../components/Timer'
-import Container from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 import { Progress } from '@sushiswap/ui/future/components/progress'
 
 const VestingPage = () => {

@@ -15,7 +15,7 @@ import { useFilters } from 'components/Filters'
 import { LIQUIDITY_COLUMN, LIQUIDITY_USD_COLUMN, NAME_COLUMN, NETWORK_COLUMN } from './columns'
 import { FuroTokenFilters } from './FuroTokenFilters'
 import { FuroToken, GetFuroTokenArgs, useFuroTokens } from './useFuroTokens'
-import Container from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, LIQUIDITY_USD_COLUMN, LIQUIDITY_COLUMN] as any
 

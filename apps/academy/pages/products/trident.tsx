@@ -15,7 +15,7 @@ import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import React, { FC } from 'react'
 import useSWR from 'swr'
-import { Container } from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 
 import { ArticleEntity } from '.mesh'
 

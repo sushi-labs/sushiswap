@@ -3,7 +3,7 @@ import React, { Fragment, useState } from 'react'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { ConcentratedPositionsTable } from './Tables/PositionsTable/ConcentratedPositionsTable'
 import { PositionsTable } from './Tables'
-import Container from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 import { Switch } from '@sushiswap/ui/future/components/switch'
 
 export const PositionsTab = () => {

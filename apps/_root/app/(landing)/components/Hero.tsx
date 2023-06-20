@@ -8,7 +8,7 @@ import { Button } from '@sushiswap/ui/future/components/button/Button'
 import { Search } from './Search'
 import { CurrencyInput } from '@sushiswap/wagmi/future/components/Web3Input/Currency'
 import { ArrowDownIcon } from '@heroicons/react/24/outline'
-import { Container } from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 
 const TITLES = ['Whenever', 'Wherever', 'Whoever']
 const VALUES = [

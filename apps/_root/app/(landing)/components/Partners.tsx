@@ -13,7 +13,7 @@ import {
   ZkSyncSVG,
   ThunderCoreSVG,
 } from './svgs'
-import { Container } from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 
 const INCEPTION_DATE = new Date('08/26/2020')
 

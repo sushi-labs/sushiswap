@@ -8,7 +8,7 @@ import { AnimatedTitle } from './AnimatedTitle'
 import { BentoBoxSVG } from './svgs'
 import { SwitchSVG } from './svgs'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { Container } from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 
 const DATA = [
   {

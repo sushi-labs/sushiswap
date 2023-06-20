@@ -4,7 +4,7 @@ import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui/future/components/widget'
+import { Widget, WidgetHeader, WidgetContent } from '@sushiswap/ui/future/components/widget'
 import { useTotalSupply } from '@sushiswap/wagmi'
 import { FC, ReactNode, useMemo } from 'react'
 import { Currency } from '@sushiswap/ui/future/components/currency'
@@ -55,14 +55,14 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
 
   return useMemo(
     () => (
-      <Widget id="stakeLiquidity" maxWidth={400} className="bg-white dark:bg-slate-800">
-        <Widget.Content>
+      <Widget id="stakeLiquidity" maxWidth="sm" className="bg-white dark:bg-slate-800">
+        <WidgetContent>
           <Disclosure>
             {({ open }) => (
               <>
                 <Disclosure.Button className="w-full pr-4" testdata-id="stake-liquidity-header">
                   <div className="flex items-center justify-between">
-                    <Widget.Header title={title || '2. Stake Liquidity'} className="!pb-3 " />
+                    <WidgetHeader title={title || '2. Stake Liquidity'} className="!pb-3 " />
                     <div
                       className={classNames(
                         open ? 'rotate-180' : 'rotate-0',
@@ -154,7 +154,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
               </>
             )}
           </Disclosure>
-        </Widget.Content>
+        </WidgetContent>
       </Widget>
     ),
     [balance, children, reserve0?.currency, reserve1?.currency, setValue, title, value, value0, value1]

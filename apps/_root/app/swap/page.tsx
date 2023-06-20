@@ -1,6 +1,6 @@
 'use client'
 
-import Container from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 import React from 'react'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { TradeStats } from '../../ui/swap/trade/TradeStats'
@@ -16,7 +16,7 @@ export default async function SwapPage() {
   // await new Promise((resolve) => setTimeout(resolve, 3000))
   // console.log('Swap page')
   return (
-    <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
+    <Container maxWidth="lg" className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
       <Drawer.Root>
         <Checker.Root>
           <Widget />

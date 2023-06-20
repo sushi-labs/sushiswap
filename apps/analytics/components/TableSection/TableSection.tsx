@@ -4,7 +4,7 @@ import React, { FC, Fragment } from 'react'
 import { Pools } from './Pools'
 import { Button } from '@sushiswap/ui/future/components/button'
 // import { TokenTable } from './Tokens'
-import Container from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 import { FuroTokenTable } from './FuroTokens'
 import { BentoBoxTokenTable } from './BentoBoxTokens'
 

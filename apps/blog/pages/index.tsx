@@ -6,7 +6,7 @@ import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { Article, Category, Collection } from 'types'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { Container } from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 import { ArticleList, Card, Categories, Hero } from '../components'
 import { getArticles, getCategories } from '../lib/api'
 

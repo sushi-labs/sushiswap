@@ -4,11 +4,11 @@ import classNames from 'classnames'
 import React, { FC, Fragment, ReactElement, ReactNode, useState } from 'react'
 
 import { APP_TYPE_LINKS, HEADER_HEIGHT } from '../../constants'
-import { AppType } from '../../types'
+import { AppType, ExtractProps } from '../../types'
 import { Button } from './button'
 import { SushiIcon } from './icons'
-import Container, { MaxWidth } from './Container'
 import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
+import { Container, ContainerProps } from './container'
 
 const ITEMS = [
   {
@@ -38,11 +38,10 @@ const ITEMS = [
   },
 ]
 
-export interface HeaderProps extends React.HTMLProps<HTMLElement> {
+export interface HeaderProps extends React.HTMLProps<HTMLElement>, Pick<ExtractProps<ContainerProps>, 'maxWidth'> {
   children?: ReactElement<NavLinkProps> | Array<ReactElement<NavLinkProps>>
   rightElement?: ReactNode
   transparent?: boolean
-  maxWidth?: MaxWidth
 }
 
 export const GlobalNav: FC<HeaderProps> = ({

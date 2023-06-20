@@ -6,7 +6,7 @@ import { formatUSD } from '@sushiswap/format'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { classNames, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui/future/components/widget'
+import { Widget, WidgetHeader, WidgetContent } from '@sushiswap/ui/future/components/widget'
 import React, { FC, Fragment, ReactNode, useState } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
 import { Currency as UICurrency } from '@sushiswap/ui/future/components/currency'
@@ -62,13 +62,13 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
           </Typography>
         </div>
       </Transition>
-      <Widget id="removeLiquidity" maxWidth={400} className="bg-white dark:bg-slate-800">
-        <Widget.Content>
+      <Widget id="removeLiquidity" maxWidth="sm" className="bg-white dark:bg-slate-800">
+        <WidgetContent>
           <Disclosure defaultOpen={true}>
             {({ open }) => (
               <>
                 {isFarm && isMounted ? (
-                  <Widget.Header title="Remove Liquidity" className="!pb-3 ">
+                  <WidgetHeader title="Remove Liquidity" className="!pb-3 ">
                     <div className="flex gap-3">
                       <SettingsOverlay
                         options={{
@@ -103,9 +103,9 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                         </div>
                       </Disclosure.Button>
                     </div>
-                  </Widget.Header>
+                  </WidgetHeader>
                 ) : (
-                  <Widget.Header title="Remove Liquidity" className="!pb-3 ">
+                  <WidgetHeader title="Remove Liquidity" className="!pb-3 ">
                     <div className="flex gap-3">
                       <SettingsOverlay
                         options={{
@@ -124,7 +124,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                         )}
                       </SettingsOverlay>{' '}
                     </div>
-                  </Widget.Header>
+                  </WidgetHeader>
                 )}
                 <Transition
                   unmount={false}
@@ -265,7 +265,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
               </>
             )}
           </Disclosure>
-        </Widget.Content>
+        </WidgetContent>
       </Widget>
     </div>
   )

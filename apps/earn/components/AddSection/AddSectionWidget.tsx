@@ -9,7 +9,7 @@ import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import React, { FC, ReactNode } from 'react'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { Widget } from '@sushiswap/ui/future/components/widget'
+import { Widget, WidgetHeader, WidgetContent } from '@sushiswap/ui/future/components/widget'
 
 interface AddSectionWidgetProps {
   isFarm: boolean
@@ -41,13 +41,13 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
   const isMounted = useIsMounted()
 
   return (
-    <Widget id="addLiquidity" maxWidth={400}>
-      <Widget.Content>
+    <Widget id="addLiquidity" maxWidth="sm">
+      <WidgetContent>
         <Disclosure defaultOpen={true}>
           {({ open }) => (
             <>
               {isFarm && isMounted ? (
-                <Widget.Header title="1. Add Liquidity" className="!pb-3 ">
+                <WidgetHeader title="1. Add Liquidity" className="!pb-3 ">
                   <div className="flex gap-3">
                     <SettingsOverlay
                       options={{
@@ -82,9 +82,9 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                       </div>
                     </Disclosure.Button>
                   </div>
-                </Widget.Header>
+                </WidgetHeader>
               ) : (
-                <Widget.Header title="Add Liquidity" className="!pb-3">
+                <WidgetHeader title="Add Liquidity" className="!pb-3">
                   <div className="flex gap-3">
                     <SettingsOverlay
                       options={{
@@ -103,7 +103,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                       )}
                     </SettingsOverlay>
                   </div>
-                </Widget.Header>
+                </WidgetHeader>
               )}
               <Transition
                 unmount={false}
@@ -148,7 +148,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
             </>
           )}
         </Disclosure>
-      </Widget.Content>
+      </WidgetContent>
     </Widget>
   )
 }

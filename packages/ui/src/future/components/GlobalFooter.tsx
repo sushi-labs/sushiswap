@@ -3,12 +3,12 @@
 import { ReactNode, useCallback } from 'react'
 
 import dynamic from 'next/dynamic'
-import { Container, MaxWidth } from './Container'
 import { DiscordIcon, GithubIcon, InstagramIcon, SushiWithTextIcon, TwitterIcon } from './icons'
+import { Container, ContainerProps } from './container'
+import { ExtractProps } from '../../types'
 
-export type FooterProps = React.HTMLProps<HTMLDivElement> & {
+export interface FooterProps extends React.HTMLProps<HTMLDivElement>, Pick<ExtractProps<ContainerProps>, 'maxWidth'> {
   children?: ReactNode
-  maxWidth?: MaxWidth
 }
 
 const config: Record<

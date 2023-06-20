@@ -32,7 +32,7 @@ import {
   ViewAllButton,
 } from '../common/components'
 import { getArticles, getDifficulties, getProducts, getTopics } from '../lib/api'
-import { Container } from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 
 export async function getStaticProps() {
   const [articles, difficulties, topics, products] = await Promise.all([

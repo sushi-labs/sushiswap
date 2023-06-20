@@ -1,6 +1,6 @@
 import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { Container } from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 import { motion } from 'framer-motion'
 import Image from 'next/legacy/image'
 import React, { FC } from 'react'

@@ -3,7 +3,7 @@ import React, { FC, Fragment, useState } from 'react'
 import { useUserStreams, useUserVestings } from '../lib'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { SushiIcon } from '@sushiswap/ui/future/components/icons'
-import Container from '@sushiswap/ui/future/components/Container'
+import { Container } from '@sushiswap/ui/future/components/container'
 import { useAccount, Address } from '@sushiswap/wagmi'
 import { FuroTableType, StreamTable } from './Table'
 
