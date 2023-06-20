@@ -1,10 +1,8 @@
 import './globals.css'
 
 export * from './animation'
-export * from './chip'
 export * from './currency'
 export * from './dialog'
-export * from './dots'
 export * from './dropzone'
 export * from './iconbutton'
 export * from './icons'

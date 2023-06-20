@@ -1,7 +1,7 @@
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Fraction, JSBI, Percent, ZERO } from '@sushiswap/math'
 import { RadioGroup } from '@headlessui/react'
-import { classNames, Dots } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { formatUSD } from '@sushiswap/format'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { unwrapToken } from '../../lib/functions'
@@ -32,6 +32,7 @@ import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
 import { UniswapV2Router02ChainId } from '@sushiswap/v2-core/exports/exports'
 import { useRouter } from 'next/router'
+import { Dots } from '@sushiswap/ui/future/components/Dots'
 
 export const MODAL_MIGRATE_ID = 'migrate-modal'
 

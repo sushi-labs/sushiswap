@@ -1,13 +1,14 @@
 import { getAddress } from '@ethersproject/address'
 import { formatUSD } from '@sushiswap/format'
 import { Bundle, Token as GraphToken } from '@sushiswap/graph-client'
-import { Chip, Currency } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import useSWR from 'swr'
 
 import { useTokenFromToken } from '../../lib/hooks'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { Chip } from '@sushiswap/ui/future/components/chip'
 
 interface TokenHeader {
   token: GraphToken
@@ -29,7 +30,7 @@ export const TokenHeader: FC<TokenHeader> = ({ token }) => {
             <Currency.Icon currency={_token} width={24} height={24} />
           </div>
           <span className="text-lg font-medium text-slate-200">{_token.name}</span>
-          <Chip label={_token.symbol} />
+          <Chip variant="ghost">{_token.symbol}</Chip>
         </div>
         <span className="text-2xl font-semibold text-slate-200">{price.includes('NaN') ? '$0.00' : price}</span>
       </div>

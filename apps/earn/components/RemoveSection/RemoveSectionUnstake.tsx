@@ -1,9 +1,10 @@
 import { tryParseAmount } from '@sushiswap/currency'
 import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
-import { AppearOnMount, Dots } from '@sushiswap/ui'
+import { AppearOnMount } from '@sushiswap/ui'
 import { getMasterChefContractConfig, useMasterChefWithdraw } from '@sushiswap/wagmi'
 import { FC, useMemo, useState } from 'react'
+import { Dots } from '@sushiswap/ui/future/components/Dots'
 
 import { useGraphPool } from '../../lib/hooks'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'

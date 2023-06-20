@@ -6,7 +6,7 @@ import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushi
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
-import { Dots } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui/future/components/Dots'
 import {
   _useSendTransaction as useSendTransaction,
   ConstantProductPoolState,

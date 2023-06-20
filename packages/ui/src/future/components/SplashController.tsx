@@ -14,10 +14,10 @@ const Component: FC<{ children: ReactNode; show?: boolean }> = ({ children, show
             show={true}
             unmount={false}
             static
-            enter="ease-in-out duration-[1000ms]"
+            enter="ease-in-out duration-1000"
             enterFrom="scale-1 saturate-0"
             enterTo="scale-[0.75] saturate-100"
-            leave="ease-in-out duration-[1000ms]"
+            leave="ease-in-out duration-1000"
             leaveFrom="scale-[0.75]"
             leaveTo="scale-1"
           >

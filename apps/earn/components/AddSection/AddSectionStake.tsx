@@ -3,10 +3,11 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { ChefType, Pool, usePool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { Dots, Typography } from '@sushiswap/ui'
+import { Typography } from '@sushiswap/ui'
 import { getMasterChefContractConfig, useMasterChefDeposit } from '@sushiswap/wagmi'
 import { FC, Fragment, useMemo, useState } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
+import { Dots } from '@sushiswap/ui/future/components/Dots'
 
 import { useGraphPool } from '../../lib/hooks'
 import { usePoolPosition } from '../PoolPositionProvider'
@@ -121,7 +122,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(({ pool, chef
                       size="xl"
                       variant="filled"
                       disabled={!approved || isWritePending}
-                      testId='stake-liquidity'
+                      testId="stake-liquidity"
                     >
                       {isWritePending ? <Dots>Confirm transaction</Dots> : 'Stake Liquidity'}
                     </Button>

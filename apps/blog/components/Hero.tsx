@@ -16,9 +16,11 @@ export const Hero: FC<Hero> = ({ article }) => {
         <div className="relative pt-10">
           <ArticleHeader article={article} />
           <ArticleAuthors article={article} />
-          <Button as="a" href={`/blog/${article?.attributes?.slug}`} color="blue">
-            Read Article
-          </Button>
+          <div className="mt-8">
+            <Button as="a" href={`/blog/${article?.attributes?.slug}`} color="blue">
+              Read Article
+            </Button>
+          </div>
         </div>
       </Container>
     </section>

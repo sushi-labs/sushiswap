@@ -1,6 +1,6 @@
 import { Pool } from '@sushiswap/client'
 import { formatNumber, formatPercent } from '@sushiswap/format'
-import { Chip, Currency } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { incentiveRewardToToken } from '../lib/functions'
@@ -8,6 +8,7 @@ import { useTokensFromPool } from '../lib/hooks'
 import { ICON_SIZE } from './TableSection/Pools/constants'
 import { ChainId } from '@sushiswap/chain'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { Chip } from '@sushiswap/ui/future/components/chip'
 
 interface PoolQuickHoverTooltipProps {
   row: Pool
@@ -35,7 +36,7 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
             </div>
           </div>
           <span className="text-xs font-semibold flex gap-1.5 mt-1 items-center text-slate-400">
-            <Chip color="gray" label={`Fee ${formatPercent(row.swapFee)}`} />
+            <Chip variant="ghost">Fee ${formatPercent(row.swapFee)}</Chip>
           </span>
         </div>
         <div className="flex flex-col gap-1">
