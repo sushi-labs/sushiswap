@@ -41,7 +41,7 @@
     "@sushiswap/core": "^1.4.2",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
-    "@sushiswap/v2-core": "workspace:*",
+    "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/types": "workspace:*"
   },
   "devDependencies": {

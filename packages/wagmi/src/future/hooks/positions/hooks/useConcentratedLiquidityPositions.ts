@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { getConcentratedLiquidityPositions } from '../actions'
-import { Pool, Position, V3ChainId } from '@sushiswap/v3-sdk'
+import { Pool, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { Address } from 'wagmi'
 import { getConcentratedLiquidityPool } from '../../pools'
 import { getTokenWithCacheQueryFn, getTokenWithQueryCacheHydrate } from '../../tokens'
@@ -11,7 +11,7 @@ import { Amount, Token } from '@sushiswap/currency'
 
 interface UseConcentratedLiquidityPositionsParams {
   account: Address | undefined
-  chainIds: V3ChainId[]
+  chainIds: SushiSwapV3ChainId[]
   enabled?: boolean
 }
 

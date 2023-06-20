@@ -5,7 +5,7 @@ import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState
 import { useAccount, UserRejectedRequestError } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { createToast } from '@sushiswap/ui/future/components/toast'
-import { isV3ChainId, NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
+import { isSushiSwapV3ChainId, NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import {
@@ -95,7 +95,7 @@ export const AddSectionConfirmModalConcentrated: FC<AddSectionConfirmModalConcen
 
   const prepare = useCallback(
     async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!chainId || !address || !token0 || !token1 || !isV3ChainId(chainId)) return
+      if (!chainId || !address || !token0 || !token1 || !isSushiSwapV3ChainId(chainId)) return
 
       if (position && deadline) {
         const useNative = token0.isNative ? token0 : token1.isNative ? token1 : undefined

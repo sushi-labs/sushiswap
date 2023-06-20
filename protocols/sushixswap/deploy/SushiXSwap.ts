@@ -1,4 +1,3 @@
-import { INIT_CODE_HASH } from '@sushiswap/amm'
 import bentoBoxExports from '@sushiswap/bentobox/exports'
 import {
   STARGATE_BRIDGE_TOKENS,
@@ -6,7 +5,7 @@ import {
   STARGATE_USDC_ADDRESS,
   STARGATE_WIDGET_ADDRESS,
 } from '@sushiswap/stargate'
-import sushiSwapExports from '@sushiswap/v2-core'
+import { SUSHISWAP_V2_FACTORY_ADDRESS, SUSHISWAP_V2_INIT_CODE_HASH } from '@sushiswap/v2-sdk'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/types'
 
@@ -42,22 +41,21 @@ const func: DeployFunction = async function ({
     throw Error(`No STARGATE_WIDGET_ADDRESS for chain #${chainId}!`)
   }
 
-  if (!factory && !(chainId in sushiSwapExports)) {
-    // throw Error(`No FACTORY_ADDRESS for chain #${chainId}!`)
-    console.warn(`No FACTORY_ADDRESS for chain #${chainId}!`)
+  if (!factory && !(chainId in SUSHISWAP_V2_FACTORY_ADDRESS)) {
+    // throw Error(`No SUSHISWAP_V2_FACTORY_ADDRESS for chain #${chainId}!`)
+    console.warn(`No SUSHISWAP_V2_FACTORY_ADDRESS for chain #${chainId}!`)
   }
 
-  if ((factory || chainId in sushiSwapExports) && !(chainId in INIT_CODE_HASH)) {
-    throw Error(`No INIT_CODE_HASH for chain #${chainId}!`)
+  if ((factory || chainId in SUSHISWAP_V2_FACTORY_ADDRESS) && !(chainId in SUSHISWAP_V2_INIT_CODE_HASH)) {
+    throw Error(`No SUSHISWAP_V2_INIT_CODE_HASH for chain #${chainId}!`)
   }
 
   const args = [
     bentoBoxExports?.[chainId.toString() as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
       ?.address,
     STARGATE_ROUTER_ADDRESS[chainId],
-    sushiSwapExports?.[chainId.toString() as keyof Omit<typeof sushiSwapExports, '31337'>]?.[0]?.contracts
-      ?.UniswapV2Factory.address ?? ethers.constants.AddressZero,
-    INIT_CODE_HASH?.[chainId] ?? ethers.constants.HashZero,
+    SUSHISWAP_V2_FACTORY_ADDRESS?.[chainId] ?? ethers.constants.AddressZero,
+    SUSHISWAP_V2_INIT_CODE_HASH?.[chainId] ?? ethers.constants.HashZero,
     STARGATE_WIDGET_ADDRESS[chainId as keyof typeof STARGATE_WIDGET_ADDRESS],
   ]
 

@@ -16,7 +16,7 @@ import { Currency } from '@sushiswap/ui/future/components/currency'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { formatUSD } from '@sushiswap/format'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
-import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
+import { isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { isAddress } from 'ethers/lib/utils'
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
 import { usePoolGraphData, useTokenAmountDollarValues } from '../lib/hooks'
@@ -56,9 +56,9 @@ const queryParamsSchema = z.object({
     })
     .transform((val) => {
       const [chainId, poolId] = val.split(':')
-      return [+chainId, poolId] as [V3ChainId, string]
+      return [+chainId, poolId] as [SushiSwapV3ChainId, string]
     })
-    .refine(([chainId]) => isV3ChainId(chainId), {
+    .refine(([chainId]) => isSushiSwapV3ChainId(chainId), {
       message: 'ChainId not supported.',
     })
     .refine(([, poolId]) => isAddress(poolId), {

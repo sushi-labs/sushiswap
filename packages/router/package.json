@@ -48,7 +48,7 @@
     "@sushiswap/math": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@sushiswap/tines": "workspace:*",
-    "@sushiswap/v2-core": "workspace:*",
+    "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/trident-core": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
