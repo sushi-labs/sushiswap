@@ -19,7 +19,7 @@ import { Currency as UICurrency } from '@sushiswap/ui/future/components/currency
 import { ExternalLink } from '@sushiswap/ui/future/components/ExternalLink'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { Loader } from '@sushiswap/ui/future/components/Loader'
-import { TimeAgo } from '@sushiswap/ui/future/components/TimeAgo'
+import { TimeAgo } from '@sushiswap/ui/future/components/time-ago'
 import React, { FC } from 'react'
 import { useWaitForTransaction } from 'wagmi'
 import { ResolvedNotification } from '@sushiswap/dexie'
@@ -142,7 +142,7 @@ export const Notification: FC<{
             </div>
             <span className="flex gap-1 items-center text-xs text-gray-600 dark:text-slate-500">
               <NetworkIcon type="naked" chainId={notification.chainId} width={14} height={14} />•{' '}
-              <TimeAgo date={new Date(notification.timestamp)} />
+              <TimeAgo value={new Date(notification.timestamp)} />
             </span>
           </div>
         </div>

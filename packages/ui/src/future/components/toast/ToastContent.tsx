@@ -1,5 +1,5 @@
 import React, { FC, ReactNode, useState } from 'react'
-import { TimeAgo } from '../TimeAgo'
+import { TimeAgo } from '../time-ago'
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 
 interface ToastContent {
@@ -30,7 +30,7 @@ export const ToastContent: FC<ToastContent> = ({ icon, href, summary, code = fal
               </a>
             )}
             <span className="text-[10px] font-medium text-gray-600 dark:text-slate-400">
-              <TimeAgo date={date} />
+              <TimeAgo value={date} />
             </span>
           </>
         ) : (
