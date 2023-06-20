@@ -6,7 +6,7 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@sushiswap/ui/future/components/select'
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Loader } from '@sushiswap/ui/future/components/Loader'
+import { Loader } from '@sushiswap/ui/future/components/loader'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 
 interface TokenAdder {

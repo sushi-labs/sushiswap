@@ -26,7 +26,7 @@ import {
 } from '../../common/components'
 import { Image } from '../../common/components'
 import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../../lib/api'
-import { LoadingOverlay } from '@sushiswap/ui/future/components/Loader'
+import { LoadingOverlay } from '@sushiswap/ui/future/components/loader'
 
 export async function getStaticPaths() {
   const allArticles = await getAllArticlesBySlug()

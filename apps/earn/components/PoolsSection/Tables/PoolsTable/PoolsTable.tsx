@@ -18,7 +18,7 @@ import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/c
 import { useSWRConfig } from 'swr'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
-import { Loader } from '@sushiswap/ui/future/components/Loader'
+import { Loader } from '@sushiswap/ui/future/components/loader'
 
 const COLUMNS = [
   NAME_COLUMN,

@@ -2,7 +2,7 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import classNames from 'classnames'
 import React, { FC, forwardRef, KeyboardEvent, ReactElement, useCallback, useEffect, useState } from 'react'
 
-import { Loader } from '../Loader'
+import { Loader } from '../loader'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
 interface Search {

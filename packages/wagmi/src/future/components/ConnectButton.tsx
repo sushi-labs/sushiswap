@@ -13,7 +13,7 @@ import {
     LedgerIcon
 } from '@sushiswap/ui/future/components/icons'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import { Loader } from '@sushiswap/ui/future/components/Loader'
+import { Loader } from '@sushiswap/ui/future/components/loader'
 import React, { FC, Fragment, useCallback, useMemo } from 'react'
 import { useConnect } from 'wagmi'
 import { classNames, ExtractProps } from '@sushiswap/ui'

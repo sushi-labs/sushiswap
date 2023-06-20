@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React, { ReactNode } from 'react'
 
-import { Loader } from '../Loader'
+import { Loader } from '../loader'
 import { BUTTON_CLASSES, BUTTON_SIZES, BUTTON_STYLES, BUTTON_STYLES_VARIANT } from './styles'
 import { PolymorphicComponentPropsWithRef, PolymorphicRef } from '../../../types'
 

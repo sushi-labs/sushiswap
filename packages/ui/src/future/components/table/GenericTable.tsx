@@ -7,7 +7,7 @@ import { Typography } from '../../../typography'
 import classNames from 'classnames'
 import { Popover } from '../Popover'
 import { useIsMounted } from '@sushiswap/hooks'
-import { LoadingOverlay } from '../Loader'
+import { LoadingOverlay } from '../loader'
 
 interface GenericTableProps<C> {
   table: ReactTableType<C>
