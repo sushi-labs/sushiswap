@@ -7,7 +7,7 @@ export class AddressMapper {
         this.initialize(addressLists)
     }
 
-    initialize(addressLists: Record<number, string>[]) {
+    private initialize(addressLists: Record<number, string>[]) {
 
         this.addresses = new Map()
         for (const addressList of addressLists) {
@@ -24,10 +24,6 @@ export class AddressMapper {
                 }
             })
         }
-    }
-
-    allAddresses() {
-        return this.addresses;
     }
 
     getAddresses(chainId: number, address: string, filterChainIds?: number[]) {

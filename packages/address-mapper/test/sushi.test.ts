@@ -53,7 +53,6 @@ import {
     LINK_ADDRESS,
     AGEUR_ADDRESS} from "@sushiswap/currency";
 
-
 describe("Sushi addresses", () => {
     const addressLists = [
         MANA_ADDRESS,
@@ -113,12 +112,10 @@ describe("Sushi addresses", () => {
         const expected = Object.keys(WNATIVE_ADDRESS).length - 1 // minus one, exclude itself 
         expect(MAPPER.getAddresses(ChainId.ETHEREUM, "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2")?.size).toEqual(expected);
     });
-
     
     test("Get all sushi addresses for the top networks given thundercores sushi address", async () => {
         const topNetworks = [ChainId.ETHEREUM, ChainId.ARBITRUM, ChainId.POLYGON, ChainId.OPTIMISM]
         const expected = 4
         expect(MAPPER.getAddresses(ChainId.THUNDERCORE, SUSHI_ADDRESS[ChainId.THUNDERCORE], topNetworks)?.size).toEqual(expected);
     });
-
 });
