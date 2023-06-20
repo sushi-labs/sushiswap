@@ -692,6 +692,53 @@ importers:
       tailwindcss: 3.3.2
       typescript: 5.0.4
 
+  apps/aptos:
+    specifiers:
+      '@headlessui/react': 1.7.7
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/tailwindcss-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/ui': workspace:*
+      '@types/node': 18.11.18
+      '@types/react': 18.2.6
+      '@types/react-dom': 18.2.4
+      '@vercel/analytics': 0.1.5
+      autoprefixer: 10.4.14
+      eslint: 8.41.0
+      next: 13.4.4
+      next-axiom: 0.17.0
+      postcss: 8.4.23
+      react: 18.2.0
+      react-dom: 18.2.0
+      tailwindcss: 3.3.2
+      typescript: 5.0.4
+    dependencies:
+      '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
+      '@sushiswap/nextjs-config': link:../../config/nextjs
+      '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
+      '@sushiswap/ui': link:../../packages/ui
+      '@vercel/analytics': 0.1.5_react@18.2.0
+      next: 13.4.4_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.17.0_next@13.4.4
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/typescript-config': link:../../config/typescript
+      '@types/node': 18.11.18
+      '@types/react': 18.2.6
+      '@types/react-dom': 18.2.4
+      autoprefixer: 10.4.14_postcss@8.4.23
+      eslint: 8.41.0
+      postcss: 8.4.23
+      tailwindcss: 3.3.2
+      typescript: 5.0.4
+
   apps/blog:
     specifiers:
       '@cloudinary/url-gen': ^1.8.0
