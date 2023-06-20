@@ -1,12 +1,13 @@
 import { RadioGroup } from '@headlessui/react'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import React, { FC, Fragment, useCallback, useEffect, useState } from 'react'
-import { Explainer } from '../Explainer'
+import { Explainer } from '../explainer'
 import classNames from 'classnames'
 import { Collapsible } from '../animation/Collapsible'
 import { Input } from '../input'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { Switch } from '../switch'
+import { InformationCircleIcon } from '@heroicons/react/20/solid'
 
 const TABS = ['0.1', '0.5', '1.0']
 
@@ -55,7 +56,7 @@ export const SlippageTolerance: FC<{
         <div className="flex flex-col gap-2">
           <h1 className="text-sm font-semibold text-gray-900 dark:text-slate-50 flex gap-1">
             {options?.title || 'Slippage'}{' '}
-            <Explainer iconSize={16} placement="right">
+            <Explainer icon={<InformationCircleIcon width={16} height={16} />}>
               <span className="text-gray-900 dark:text-slate-50 font-semibold">Slippage</span>
               <span className="text-gray-500 dark:text-slate-400 font-medium">
                 {' '}

@@ -6,8 +6,9 @@ import { Currency } from '@sushiswap/ui/future/components/currency'
 import { unwrapToken } from '../../../../lib/functions'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { format } from 'date-fns'
-import { Explainer } from '@sushiswap/ui/future/components/Explainer'
+import { Explainer } from '@sushiswap/ui/future/components/explainer'
 import { rewardPerDay } from './utils'
+import { InformationCircleIcon } from '@heroicons/react/solid'
 
 export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) => {
   const ongoingFarms = row.distributionData.filter((el) => el.isLive)
@@ -50,7 +51,7 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
                 title={
                   <div className="flex gap-1 items-center">
                     Reward
-                    <Explainer hover iconSize={16} placement="bottom">
+                    <Explainer icon={<InformationCircleIcon width={18} height={18} />}>
                       Your share calculated as your LP divided by the total LP in the pool multiplied by the rewards set
                       per day.
                     </Explainer>
@@ -85,7 +86,7 @@ export const RewardsTableV3RowPopover: FC<RewardTableV3CellProps> = ({ row }) =>
                 title={
                   <div className="flex gap-1 items-center">
                     Details
-                    <Explainer hover iconSize={16} placement="bottom">
+                    <Explainer icon={<InformationCircleIcon width={16} height={16} />}>
                       Weight that fees earned by positions represent in their rewards score. A higher % means that more
                       rewards will be attributed to positions that earn more fees during the distribution.
                     </Explainer>

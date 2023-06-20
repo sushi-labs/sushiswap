@@ -1,12 +1,13 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
+import { InformationCircleIcon } from '@heroicons/react/solid'
 
 import React from 'react'
 import { RewardsV3NameCell } from './RewardsV3NameCell'
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import { Pool } from '@sushiswap/client'
 import { formatNumber } from '@sushiswap/format'
-import { Explainer } from '@sushiswap/ui/future/components/Explainer'
+import { Explainer } from '@sushiswap/ui/future/components/explainer'
 import { RewardsV3ClaimableCell } from './RewardsV3ClaimableCell'
 
 export const REWARDS_V3_NAME_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
@@ -49,7 +50,7 @@ export const REWARDS_V3_APR_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
   header: () => (
     <div className="flex items-center gap-1">
       APR
-      <Explainer hover iconSize={16} placement="bottom">
+      <Explainer icon={<InformationCircleIcon width={16} height={16} />}>
         The APRs displayed for the liquidity pools are algorithmic and subject to change.
       </Explainer>
     </div>

@@ -20,6 +20,7 @@ import { Amount } from '@sushiswap/currency'
 import { usePriceInverter } from '../../../lib/hooks'
 import { formatTickPrice, getPriceOrderingFromPositionForUI, unwrapToken } from '../../../lib/functions'
 import { ConcentratedLiquidityWidget } from '../../../components/ConcentratedLiquidityWidget'
+import { InformationCircleIcon } from '@heroicons/react/solid'
 import { useAccount } from '@sushiswap/wagmi'
 import {
   ConcentratedLiquidityProvider,
@@ -41,7 +42,7 @@ import { useAngleRewards } from '@sushiswap/react-query'
 import { ConcentratedLiquidityHarvestButton } from '../../../components/ConcentratedLiquidityHarvestButton'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { ChainId } from '@sushiswap/chain'
-import { Explainer } from '@sushiswap/ui/future/components/Explainer'
+import { Explainer } from '@sushiswap/ui/future/components/explainer'
 
 const PositionPage = () => {
   return (
@@ -268,7 +269,7 @@ const Position: FC = () => {
                 <div className="flex flex-col">
                   <List.Label className="flex gap-1">
                     Unclaimed rewards{' '}
-                    <Explainer hover iconSize={16} placement="bottom" width={320}>
+                    <Explainer icon={<InformationCircleIcon width={16} height={16} />}>
                       <List className="!pt-0 ">
                         <List.Label>Accumulated rewards since inception</List.Label>
                         <List.Control>

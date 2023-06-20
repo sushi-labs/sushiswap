@@ -8,7 +8,7 @@ import { RadioGroup } from '@headlessui/react'
 import { classNames } from '@sushiswap/ui'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
 import { useLocalStorage } from '@sushiswap/hooks'
-import { Switch } from '@sushiswap/ui/future/components/Switch'
+import { Switch } from '@sushiswap/ui/future/components/switch'
 import { useTheme } from 'next-themes'
 
 interface SettingsViewProps {

@@ -1,13 +1,14 @@
 import React, { FC, useCallback } from 'react'
-import { Switch } from '@sushiswap/ui/future/components/Switch'
+import { Switch } from '@sushiswap/ui/future/components/switch'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { AppType } from '@sushiswap/ui/types'
 import { classNames } from '@sushiswap/ui'
 import { ShuffleIcon } from '@sushiswap/ui/future/components/icons'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { ChainSelectors } from './ChainSelectors'
-import { Explainer } from '@sushiswap/ui/future/components/Explainer'
+import { Explainer } from '@sushiswap/ui/future/components/explainer'
 import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
+import { InformationCircleIcon } from '@heroicons/react/20/solid'
 
 export const CrossChainBanner: FC = () => {
   const { appType, network0 } = useSwapState()
@@ -40,19 +41,21 @@ export const CrossChainBanner: FC = () => {
               <span className="flex gap-1.5 items-center bg-gradient-to-r from-blue to-pink text-transparent bg-clip-text">
                 Cross Chain
               </span>
-              <Explainer iconSize={16} placement="bottom">
-                <span className="text-gray-900 dark:text-slate-50 font-semibold">Cross-chain Swap</span>
-                <span className="text-gray-500 dark:text-slate-400 font-medium">
-                  Swap your funds on one network and swap them into a token on a different network
-                </span>
-                <a
-                  target="_blank"
-                  className="text-blue dark:text-blue dark:font-semibold flex gap-1 items-center font-medium"
-                  href="https://www.sushi.com/academy/articles/sushi-xswap-a-crosschain-dex"
-                  rel="noreferrer"
-                >
-                  Learn more <ChevronRightIcon width={12} height={12} />
-                </a>
+              <Explainer icon={<InformationCircleIcon width={16} height={16} />}>
+                <div className="flex flex-col gap-3">
+                  <span className="text-gray-900 dark:text-slate-50 font-semibold">Cross-chain Swap</span>
+                  <span className="text-gray-500 dark:text-slate-400 font-medium">
+                    Swap your funds on one network and swap them into a token on a different network
+                  </span>
+                  <a
+                    target="_blank"
+                    className="text-blue dark:text-blue dark:font-semibold flex gap-1 items-center font-medium"
+                    href="https://www.sushi.com/academy/articles/sushi-xswap-a-crosschain-dex"
+                    rel="noreferrer"
+                  >
+                    Learn more <ChevronRightIcon width={12} height={12} />
+                  </a>
+                </div>
               </Explainer>
             </h1>
             <span className="font-medium text-sm text-gray-700 dark:text-slate-400">

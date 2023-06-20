@@ -1,14 +1,15 @@
 import React, { FC, Fragment, useCallback, useState, MouseEvent } from 'react'
 import { Button, ButtonProps } from '@sushiswap/ui/future/components/button'
 import { Amount, Type } from '@sushiswap/currency'
-import { Menu, Popover, Transition } from '@headlessui/react'
-import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/24/solid'
+import { Popover, Transition } from '@headlessui/react'
+import { ChevronRightIcon } from '@heroicons/react/24/solid'
 import { ApprovalState, useTokenApproval } from '../../hooks'
 import { Address } from 'wagmi'
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/20/solid'
 import { classNames } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import dynamic from 'next/dynamic'
+import {Explainer} from "@sushiswap/ui/future/components/Explainer";
 
 export interface ApproveERC20Props extends ButtonProps<'button'> {
   id: string
@@ -31,7 +32,6 @@ export const Component: FC<ApproveERC20Props> = ({
   type,
 }) => {
   const [max, setMax] = useState(false)
-  const [showTooltip, setShowTooltip] = useState(false)
   const [state, { write }] = useTokenApproval({
     amount,
     spender: contract,
@@ -68,40 +68,19 @@ export const Component: FC<ApproveERC20Props> = ({
       type={type}
     >
       Approve {amount?.currency.symbol} {max ? 'Permanently' : ''}
-      <Menu
-        as="div"
-        className="relative flex justify-center"
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
-      >
-        <Menu.Button as="div" role="button" className="text-xs text-center cursor-pointer text-blue">
-          <InformationCircleIcon width={18} height={18} className="text-white" />
-        </Menu.Button>
-        <Transition
-          as={Fragment}
-          show={showTooltip}
-          enter="transition ease-out duration-200"
-          enterFrom="translate-y-1 scale-[0.95]"
-          enterTo="translate-y-0 scale-[1]"
-          leave="transition ease-in duration-150"
-          leaveFrom="opacity-100 translate-y-0 scale-[0.95]"
-          leaveTo="opacity-0 translate-y-1 scale-[1]"
-        >
-          <div className="z-10 absolute pb-2 w-[max-content] bottom-4">
-            <Menu.Items className="text-left w-[240px] text-gray-700 dark:text-slate-400 flex flex-col gap-3 paper bg-white/50 dark:bg-slate-800/50 rounded-lg shadow-md shadow-black/20 px-4 py-3 text-xs mt-0.5">
-              We need your approval to execute this transaction on your behalf.
-              <a
-                target="_blank"
-                className="flex items-center gap-1 text-blue dark:text-blue dark:font-semibold hover:text-blue-700"
-                href="https://www.sushi.com/academy/articles/what-is-token-approval"
-                rel="noreferrer"
-              >
-                Learn more <ChevronRightIcon width={12} height={12} />
-              </a>
-            </Menu.Items>
-          </div>
-        </Transition>
-      </Menu>
+      <Explainer icon={<InformationCircleIcon width={18} height={18} />}>
+        <div className="flex flex-col gap-3">
+          We need your approval to execute this transaction on your behalf.
+          <a
+              target="_blank"
+              className="flex items-center gap-1 text-blue dark:text-blue dark:font-semibold hover:text-blue-700"
+              href="https://www.sushi.com/academy/articles/what-is-token-approval"
+              rel="noreferrer"
+          >
+            Learn more <ChevronRightIcon width={12} height={12} />
+          </a>
+        </div>
+      </Explainer>
       <div className="absolute right-1 top-1 bottom-1 w-[52px]">
         <div className="relative z-[100] w-full h-full">
           <Popover as={Fragment}>

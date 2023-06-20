@@ -6,11 +6,12 @@ import { useTokenAmountDollarValues } from '../../lib/hooks'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { formatNumber } from '@sushiswap/format'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import { Explainer } from '@sushiswap/ui/future/components/Explainer'
+import { Explainer } from '@sushiswap/ui/future/components/explainer'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import Button from '@sushiswap/ui/future/components/button/Button'
 import { ConcentratedLiquidityHarvestButton } from '../ConcentratedLiquidityHarvestButton'
 import { Address } from 'wagmi'
+import { InformationCircleIcon } from '@heroicons/react/solid'
 
 export const RewardSlide: FC<{
   address: Address | undefined
@@ -48,7 +49,7 @@ export const RewardSlide: FC<{
         <span className="font-medium flex items-center gap-1 text-sm text-gray-500 dark:text-slate-400">
           Claimable{' '}
           {unclaimed.length > 0 && (
-            <Explainer hover iconSize={16} placement="bottom" width={320}>
+            <Explainer icon={<InformationCircleIcon width={16} height={16} />}>
               <List className="!pt-0 ">
                 <List.Label>Claimable on {Chain.from(data.chainId).name}</List.Label>
                 <List.Control>

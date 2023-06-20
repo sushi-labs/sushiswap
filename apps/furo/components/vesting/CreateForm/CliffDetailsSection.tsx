@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { Switch } from '@sushiswap/ui/future/components/Switch'
+import { Switch } from '@sushiswap/ui/future/components/switch'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { CreateMultipleVestingFormSchemaType } from '../schema'
 import { classNames } from '@sushiswap/ui'

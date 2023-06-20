@@ -16,8 +16,9 @@ import { UseTradeReturn } from '@sushiswap/react-query'
 import { shortenAddress } from '@sushiswap/format'
 import { isAddress } from 'ethers/lib/utils'
 import { useAccount } from '@sushiswap/wagmi'
-import { Explainer } from '@sushiswap/ui/future/components/Explainer'
+import { Explainer } from '@sushiswap/ui/future/components/explainer'
 import { AddressToEnsResolver } from '@sushiswap/wagmi/future/components/Account/AddressToEnsResolver'
+import { InformationCircleIcon } from '@heroicons/react/20/solid'
 
 export const TradeStats: FC = () => {
   const { address } = useAccount()
@@ -124,11 +125,8 @@ export const TradeStats: FC = () => {
                   }}
                 </AddressToEnsResolver>
                 {address !== recipient && (
-                  <Explainer iconSize={18} placement="bottom" className="!text-yellow">
-                    <span className="text-gray-500 dark:text-slate-400 font-medium">
-                      Recipient is different from the connected wallet address. If this is expected, ignore this
-                      warning.
-                    </span>
+                  <Explainer icon={<InformationCircleIcon width={18} height={18} />}>
+                    Recipient is different from the connected wallet address. If this is expected, ignore this warning.
                   </Explainer>
                 )}
               </a>
