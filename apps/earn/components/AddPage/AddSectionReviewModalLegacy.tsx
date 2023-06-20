@@ -8,7 +8,7 @@ import { BigNumber } from 'ethers'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 import { Address, useAccount, useNetwork } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
+import { Dots } from '@sushiswap/ui/future/components/dots'
 
 import { useTransactionDeadline } from '../../lib/hooks'
 import { AddSectionReviewModal } from './AddSectionReviewModal'

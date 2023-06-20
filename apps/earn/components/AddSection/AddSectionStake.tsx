@@ -7,7 +7,7 @@ import { Typography } from '@sushiswap/ui'
 import { getMasterChefContractConfig, useMasterChefDeposit } from '@sushiswap/wagmi'
 import { FC, Fragment, useMemo, useState } from 'react'
 import { useAccount } from '@sushiswap/wagmi'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
+import { Dots } from '@sushiswap/ui/future/components/dots'
 
 import { useGraphPool } from '../../lib/hooks'
 import { usePoolPosition } from '../PoolPositionProvider'

@@ -6,7 +6,7 @@ import { ContentBlock } from '../AddPage/ContentBlock'
 import { FeeAmount } from '@sushiswap/v3-sdk'
 import { Type } from '@sushiswap/currency'
 import { usePoolsByTokenPair } from 'lib/hooks/usePoolsByTokenPair'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
+import { Dots } from '@sushiswap/ui/future/components/dots'
 
 export const FEE_OPTIONS = [
   {

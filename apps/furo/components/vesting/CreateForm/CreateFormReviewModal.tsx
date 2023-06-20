@@ -2,7 +2,7 @@ import { isAddress } from '@ethersproject/address'
 import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
 import { FundSource } from '@sushiswap/hooks'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
+import { Dots } from '@sushiswap/ui/future/components/dots'
 import {
   getFuroVestingRouterContractConfig,
   useAccount,

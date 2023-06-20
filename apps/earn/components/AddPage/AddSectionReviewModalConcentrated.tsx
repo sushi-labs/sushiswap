@@ -11,7 +11,7 @@ import { Bound } from '../../lib/constants'
 import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
 import { FeeAmount, Position } from '@sushiswap/v3-sdk'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
+import { Dots } from '@sushiswap/ui/future/components/dots'
 import { Collapsible } from '@sushiswap/ui/future/components/animation/Collapsible'
 
 interface AddSectionReviewModalConcentratedProps

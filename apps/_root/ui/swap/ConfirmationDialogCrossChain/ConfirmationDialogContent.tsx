@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { Chain } from '@sushiswap/chain'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
+import { Dots } from '@sushiswap/ui/future/components/dots'
 import { classNames } from '@sushiswap/ui'
 import { useSwapState } from '../trade/TradeProvider'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_TOKEN } from '@sushiswap/stargate'

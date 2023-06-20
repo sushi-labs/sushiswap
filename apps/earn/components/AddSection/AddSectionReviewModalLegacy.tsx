@@ -2,7 +2,7 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount, Type } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
+import { Dots } from '@sushiswap/ui/future/components/dots'
 import {
   _useSendTransaction as useSendTransaction,
   Address,

@@ -5,7 +5,7 @@ import { BarLoader } from '@sushiswap/ui/future/components/BarLoader'
 import { Loader } from '@sushiswap/ui/future/components/Loader'
 import { CheckMarkIcon } from '@sushiswap/ui/future/components/icons/CheckmarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/future/components/icons/FailedMarkIcon'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
+import { Dots } from '@sushiswap/ui/future/components/dots'
 import { Button } from '@sushiswap/ui/future/components/button'
 
 interface TxStatusModalContentProps {

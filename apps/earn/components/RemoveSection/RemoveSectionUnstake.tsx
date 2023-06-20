@@ -4,7 +4,7 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
 import { getMasterChefContractConfig, useMasterChefWithdraw } from '@sushiswap/wagmi'
 import { FC, useMemo, useState } from 'react'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
+import { Dots } from '@sushiswap/ui/future/components/dots'
 
 import { useGraphPool } from '../../lib/hooks'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'

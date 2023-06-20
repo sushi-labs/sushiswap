@@ -2,7 +2,7 @@ import { Chain } from '@sushiswap/chain'
 import { FC } from 'react'
 
 import { ToastContent } from './ToastContent'
-import { Dots } from '../Dots'
+import { Dots } from '../dots'
 import { ResolvedNotification } from '@sushiswap/dexie'
 
 interface ToastPending extends ResolvedNotification {

@@ -21,7 +21,7 @@ import { Switch } from '@sushiswap/ui/future/components/switch'
 import { Signature } from '@ethersproject/bytes'
 import { withCheckerRoot, useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { FuroStreamChainId } from '@sushiswap/furo'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
+import { Dots } from '@sushiswap/ui/future/components/dots'
 
 const APPROVE_TAG = 'updateStreamSingle'
 

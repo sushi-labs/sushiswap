@@ -5,7 +5,7 @@ import { Amount, Native } from '@sushiswap/currency'
 import { Pool, Protocol } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
+import { Dots } from '@sushiswap/ui/future/components/dots'
 import {
   ConstantProductPoolState,
   getTridentRouterContractConfig,
