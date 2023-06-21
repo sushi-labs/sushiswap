@@ -222,6 +222,7 @@ export const ExecuteMultipleSection: FC<{
             <Checker.ApproveERC20Multiple id={'create-multiple-vest-approve-token'} amounts={approveAmounts}>
               <Checker.Success tag={APPROVE_TAG}>
                 <Button
+                  size="xl"
                   onClick={() => sendTransaction?.()}
                   type="submit"
                   loading={isWritePending}

@@ -116,6 +116,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(({ pool, chef
                 >
                   <Checker.Success tag={APPROVE_TAG_STAKE}>
                     <Button
+                      size="xl"
                       onClick={() => sendTransaction?.()}
                       fullWidth
                       disabled={!approved || isWritePending}

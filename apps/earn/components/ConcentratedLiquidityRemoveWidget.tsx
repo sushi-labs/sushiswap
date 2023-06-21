@@ -269,6 +269,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
       <Checker.Connect fullWidth>
         <Checker.Network fullWidth chainId={chainId}>
           <Button
+            size="xl"
             loading={isWritePending}
             disabled={+value === 0}
             fullWidth

@@ -106,7 +106,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                     contract={getSushiSwapRouterContractConfig(chainId).address as Address}
                   >
                     <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
-                      <Button fullWidth onClick={() => setOpen(true)}>
+                      <Button size="xl" fullWidth onClick={() => setOpen(true)}>
                         Add Liquidity
                       </Button>
                     </Checker.Success>

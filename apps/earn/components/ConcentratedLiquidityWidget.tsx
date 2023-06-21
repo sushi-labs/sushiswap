@@ -263,7 +263,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                     successLink={successLink}
                   >
                     {({ setOpen }) => (
-                      <Button fullWidth onClick={() => setOpen(true)} testId="add-liquidity-preview">
+                      <Button size="xl" fullWidth onClick={() => setOpen(true)} testId="add-liquidity-preview">
                         Preview
                       </Button>
                     )}

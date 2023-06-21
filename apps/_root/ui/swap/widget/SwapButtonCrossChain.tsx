@@ -53,6 +53,7 @@ export const SwapButtonCrossChain: FC = () => {
                       color={warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
                       fullWidth
                       onClick={() => setReview(true)}
+                      size="xl"
                     >
                       {!checked && warningSeverity(trade?.priceImpact) >= 3
                         ? 'Price impact too high'

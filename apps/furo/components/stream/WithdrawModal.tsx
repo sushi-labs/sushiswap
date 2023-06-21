@@ -141,6 +141,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
                     guard={<Button fullWidth>Not enough available</Button>}
                   >
                     <Button
+                      size="xl"
                       fullWidth
                       disabled={isWritePending || !stream.balance}
                       onClick={() => sendTransaction?.()}

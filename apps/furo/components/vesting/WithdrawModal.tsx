@@ -104,6 +104,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
                 guard={<Button fullWidth>Not enough available</Button>}
               >
                 <Button
+                  size="xl"
                   fullWidth
                   disabled={isWritePending || !sendTransaction}
                   onClick={() => sendTransaction?.()}

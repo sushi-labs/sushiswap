@@ -438,6 +438,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                 >
                   <Checker.Success tag={APPROVE_TAG_UNSTAKE}>
                     <Button
+                      size="xl"
                       onClick={() => sendTransaction?.()}
                       fullWidth
                       disabled={!approved || isWritePending}
@@ -586,7 +587,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                     <Checker.Success tag={APPROVE_TAG_MIGRATE}>
                       <Modal.Trigger tag={MODAL_MIGRATE_ID}>
                         {({ open }) => (
-                          <Button onClick={open} fullWidth testId="unstake-liquidity">
+                          <Button size="xl" onClick={open} fullWidth testId="unstake-liquidity">
                             Migrate
                           </Button>
                         )}

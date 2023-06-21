@@ -326,6 +326,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
                   >
                     <Checker.Success tag={APPROVE_TAG_REMOVE_TRIDENT}>
                       <Button
+                        size="xl"
                         onClick={() => sendTransaction?.()}
                         fullWidth
                         disabled={!approved || isWritePending}

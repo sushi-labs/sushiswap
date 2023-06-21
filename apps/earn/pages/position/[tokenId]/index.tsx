@@ -299,15 +299,9 @@ const Position: FC = () => {
                 </div>
                 <ConcentratedLiquidityHarvestButton account={address} chainId={chainId}>
                   {({ write, isLoading }) => (
-                    <Checker.Connect size="sm" variant="ghost" className="!h-[24px] font-bold">
-                      <Checker.Network size="sm" variant="ghost" className="!h-[24px] font-bold" chainId={chainId}>
-                        <Button
-                          disabled={isLoading}
-                          onClick={() => write?.()}
-                          size="sm"
-                          variant="ghost"
-                          className="!h-[24px] font-bold"
-                        >
+                    <Checker.Connect size="sm" variant="ghost">
+                      <Checker.Network size="sm" variant="ghost" chainId={chainId}>
+                        <Button disabled={isLoading} onClick={() => write?.()} size="sm" variant="ghost">
                           Harvest
                         </Button>
                       </Checker.Network>
@@ -359,15 +353,9 @@ const Position: FC = () => {
                 chainId={chainId}
               >
                 {({ sendTransaction, isLoading }) => (
-                  <Checker.Connect size="sm" variant="ghost" className="!h-[24px] font-bold">
-                    <Checker.Network size="sm" variant="ghost" className="!h-[24px] font-bold" chainId={chainId}>
-                      <Button
-                        disabled={isLoading}
-                        onClick={() => sendTransaction?.()}
-                        size="sm"
-                        variant="ghost"
-                        className="!h-[24px] font-bold"
-                      >
+                  <Checker.Connect size="sm" variant="ghost">
+                    <Checker.Network size="sm" variant="ghost" chainId={chainId}>
+                      <Button disabled={isLoading} onClick={() => sendTransaction?.()} size="sm" variant="ghost">
                         Collect
                       </Button>
                     </Checker.Network>

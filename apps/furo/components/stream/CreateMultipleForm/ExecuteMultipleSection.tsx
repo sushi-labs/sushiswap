@@ -182,6 +182,7 @@ export const ExecuteMultipleSection: FC<{
             <Checker.ApproveERC20Multiple id={'create-multiple-stream-approve-token'} amounts={approveAmounts}>
               <Checker.Success tag={APPROVE_TAG}>
                 <Button
+                  size="xl"
                   onClick={() => sendTransaction?.()}
                   type="submit"
                   loading={isWritePending}

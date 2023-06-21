@@ -84,6 +84,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot((
             >
               <Checker.Success tag={APPROVE_TAG_UNSTAKE}>
                 <Button
+                  size="xl"
                   onClick={() => sendTransaction?.()}
                   fullWidth
                   disabled={!approved || isWritePending}

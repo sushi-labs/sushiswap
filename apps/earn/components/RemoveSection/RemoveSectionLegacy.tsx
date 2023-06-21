@@ -278,6 +278,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
                 >
                   <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
                     <Button
+                      size="xl"
                       onClick={() => sendTransaction?.()}
                       fullWidth
                       disabled={!approved || isWritePending}

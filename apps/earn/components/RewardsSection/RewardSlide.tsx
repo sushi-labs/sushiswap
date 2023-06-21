@@ -98,7 +98,7 @@ export const RewardSlide: FC<{
             {({ write, isLoading }) => (
               <Checker.Connect fullWidth variant="secondary">
                 <Checker.Network fullWidth variant="secondary" chainId={data.chainId}>
-                  <Button fullWidth disabled={isLoading} onClick={() => write?.()} variant="secondary">
+                  <Button size="xl" fullWidth disabled={isLoading} onClick={() => write?.()} variant="secondary">
                     Claim
                   </Button>
                 </Checker.Network>

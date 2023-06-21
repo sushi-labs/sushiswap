@@ -162,7 +162,7 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                       enabled={isBentoBoxV1ChainId(chainId)}
                     >
                       <Checker.Success tag={APPROVE_TAG_ADD_TRIDENT}>
-                        <Button fullWidth onClick={() => setOpen(true)}>
+                        <Button size="xl" fullWidth onClick={() => setOpen(true)}>
                           Add Liquidity
                         </Button>
                       </Checker.Success>

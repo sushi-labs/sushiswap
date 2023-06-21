@@ -133,6 +133,7 @@ export const TransferModal: FC<TransferModalProps> = ({
           <Checker.Connect fullWidth>
             <Checker.Network fullWidth chainId={chainId}>
               <Button
+                size="xl"
                 fullWidth
                 disabled={
                   isWritePending ||

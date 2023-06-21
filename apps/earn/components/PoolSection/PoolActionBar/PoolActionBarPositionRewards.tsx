@@ -63,7 +63,7 @@ export const PoolActionBarPositionRewards: FC<PoolActionBarPositionRewardsProps>
         <div className="px-2 mt-3">
           <Checker.Connect fullWidth>
             <Checker.Network fullWidth chainId={pool.chainId}>
-              <Button fullWidth onClick={harvest}>
+              <Button size="xl" fullWidth onClick={harvest}>
                 Claim
               </Button>
             </Checker.Network>

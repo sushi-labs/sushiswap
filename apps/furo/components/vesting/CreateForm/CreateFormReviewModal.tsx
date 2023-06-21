@@ -252,6 +252,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                     <Modal.Trigger tag={MODAL_ID}>
                       {({ open }) => (
                         <Button
+                          size="xl"
                           type="button"
                           fullWidth
                           onClick={open}

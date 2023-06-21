@@ -188,6 +188,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                       <Modal.Trigger tag={MODAL_ID}>
                         {({ open }) => (
                           <Button
+                            size="xl"
                             type="button"
                             fullWidth
                             disabled={!formValid}
