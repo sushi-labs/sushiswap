@@ -133,7 +133,12 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
             }
           >
             <Checker.Network fullWidth size="xl" chainId={_pool.chainId}>
-              <Checker.Amounts fullWidth size="xl" chainId={_pool.chainId} amounts={[parsedInput0, parsedInput1]}>
+              <Checker.Amounts
+                fullWidth
+                size="xl"
+                chainId={_pool.chainId as ChainId}
+                amounts={[parsedInput0, parsedInput1]}
+              >
                 <Checker.ApproveBentobox
                   tag={APPROVE_TAG_ADD_TRIDENT}
                   chainId={chainId}
