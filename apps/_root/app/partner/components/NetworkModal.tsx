@@ -16,7 +16,7 @@ export const NetworkModal: FC<NetworkModal> = ({ chainId, setChainId }) => {
 
   return (
     <>
-      <Button key={chainId} color="default" onClick={() => setOpen(true)} className="flex !justify-start">
+      <Button key={chainId} variant="secondary" onClick={() => setOpen(true)} className="flex !justify-start">
         <NetworkIcon type="circle" chainId={chainId} width={28} height={28} />
         <span>{CHAIN_NAME[chainId]}</span>
       </Button>
@@ -27,7 +27,7 @@ export const NetworkModal: FC<NetworkModal> = ({ chainId, setChainId }) => {
             {SUPPORTED_CHAINS.map((key) => (
               <Button
                 key={key}
-                color="default"
+                variant="secondary"
                 onClick={() => {
                   setChainId(key)
                   setOpen(false)

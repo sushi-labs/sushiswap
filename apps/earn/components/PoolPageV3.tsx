@@ -1,6 +1,6 @@
 import React, { FC, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeftIcon, ChartBarIcon, ChartPieIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
+import { ArrowLeftIcon, ChartBarIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
@@ -19,7 +19,7 @@ import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 import { isAddress } from 'ethers/lib/utils'
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
-import { usePoolGraphData, useTokenAmountDollarValues } from '../lib/hooks'
+import { useTokenAmountDollarValues } from '../lib/hooks'
 import { usePreviousRoute } from './HistoryProvider'
 import { unwrapToken } from '../lib/functions'
 import { Layout } from './Layout'
@@ -30,8 +30,8 @@ import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
 import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { ConcentratedPositionsTable } from './PoolsSection/Tables/PositionsTable/ConcentratedPositionsTable'
 import { PoolTransactionsV3 } from './PoolSection'
-import { PoolDepthWidget } from './PoolSection/V3/PoolDepthWidget'
 import { PoolChartV3 } from './PoolSection/PoolChart/PoolChartV3'
+import { Toggle } from '@sushiswap/ui/future/components/toggle'
 
 enum Granularity {
   Day,
@@ -125,15 +125,7 @@ const Pool: FC = () => {
           }}
           shallow={true}
         >
-          <IconButton
-            icon={ArrowLeftIcon}
-            iconProps={{
-              width: 24,
-              height: 24,
-              transparent: true,
-            }}
-            name="Back"
-          />
+          <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
             Go back to pools list
           </span>
@@ -149,8 +141,8 @@ const Pool: FC = () => {
           <RadioGroup.Option
             value={SelectedTab.Analytics}
             as={Button}
-            startIcon={<ChartBarIcon width={18} height={18} />}
-            variant="outlined"
+            icon={ChartBarIcon}
+            variant="secondary"
             color={tab === SelectedTab.Analytics ? 'blue' : 'default'}
           >
             Statistics
@@ -158,8 +150,8 @@ const Pool: FC = () => {
           <RadioGroup.Option
             value={SelectedTab.NewPosition}
             as={Button}
-            startIcon={<PlusIcon width={18} height={18} />}
-            variant="outlined"
+            icon={PlusIcon}
+            variant="secondary"
             color={tab === SelectedTab.NewPosition ? 'blue' : 'default'}
           >
             New position
@@ -167,8 +159,8 @@ const Pool: FC = () => {
           <RadioGroup.Option
             value={SelectedTab.ManagePosition}
             as={Button}
-            startIcon={<UserCircleIcon width={18} height={18} />}
-            variant="outlined"
+            icon={UserCircleIcon}
+            variant="secondary"
             color={tab === SelectedTab.ManagePosition ? 'blue' : 'default'}
           >
             My Positions
@@ -185,7 +177,7 @@ const Pool: FC = () => {
               modules={[SettingsModule.SlippageTolerance]}
             >
               {({ setOpen }) => (
-                <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
+                <Button variant="secondary" onClick={() => setOpen(true)}>
                   <CogIcon width={24} height={24} />
                 </Button>
               )}
@@ -199,31 +191,27 @@ const Pool: FC = () => {
           <div className="grid md:grid-cols-[auto_404px] gap-10">
             <PoolChartV3 address={poolAddress} chainId={chainId} />
             <div className="flex flex-col gap-6">
-              <List className="!pt-0 !gap-1">
-                <List.Label className="flex justify-end">
-                  <RadioGroup value={granularity} onChange={setGranularity} className="flex">
+              <List className="!pt-0 !gap-2">
+                <div className="flex justify-end">
+                  <RadioGroup value={granularity} onChange={setGranularity} className="flex gap-2">
                     <RadioGroup.Option
                       value={Granularity.Day}
-                      as={Button}
-                      size="xs"
-                      color={granularity === Granularity.Day ? 'blue' : 'default'}
-                      variant="empty"
-                      className="!h-[24px] font-bold"
+                      as={Toggle}
+                      size="sm"
+                      pressed={granularity === Granularity.Day}
                     >
                       1D
                     </RadioGroup.Option>
                     <RadioGroup.Option
                       value={Granularity.Week}
-                      as={Button}
-                      color={granularity === Granularity.Week ? 'blue' : 'default'}
-                      size="xs"
-                      variant="empty"
-                      className="!h-[24px] font-bold"
+                      as={Toggle}
+                      pressed={granularity === Granularity.Week}
+                      size="sm"
                     >
                       1W
                     </RadioGroup.Option>
                   </RadioGroup>
-                </List.Label>
+                </div>
                 <List.Control>
                   {poolStats ? (
                     <List.KeyValue flex title="Volume">

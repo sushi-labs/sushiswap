@@ -1,4 +1,3 @@
-import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import React, { FC } from 'react'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Container } from '@sushiswap/ui/future/components/container'
@@ -61,14 +60,8 @@ export const NeedHelp: FC = () => {
                   </span>
                 </div>
                 <div className="flex justify-start mt-4">
-                  <Button
-                    as="a"
-                    href="https://www.sushi.com/academy"
-                    className="!p-0 mt-3"
-                    variant="empty"
-                    endIcon={<ExternalLinkIcon width={16} height={16} />}
-                  >
-                    Visit Academy
+                  <Button asChild variant="secondary">
+                    <a href="https://www.sushi.com/academy">Visit Academy</a>
                   </Button>
                 </div>
               </div>

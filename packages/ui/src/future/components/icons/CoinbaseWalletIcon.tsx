@@ -1,6 +1,7 @@
 import React from 'react'
+import { IconComponent } from '../../types'
 
-export const CoinbaseWalletIcon = (props: React.ComponentProps<'svg'>) => {
+export const CoinbaseWalletIcon: IconComponent = (props) => {
   return (
     <svg
       {...props}

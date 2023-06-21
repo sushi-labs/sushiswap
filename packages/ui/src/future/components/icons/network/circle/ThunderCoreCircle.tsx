@@ -1,6 +1,7 @@
 import React from 'react'
+import { IconComponent } from '../../../../types'
 
-export const ThunderCoreCircle = (props: React.ComponentProps<'svg'>) => {
+export const ThunderCoreCircle: IconComponent = (props) => {
   return (
     <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <circle cx="64" cy="64" r="64" fill="url(#paint0_linear_1413_10030)" />

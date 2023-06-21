@@ -6,7 +6,7 @@ import { Currency } from '@sushiswap/ui/future/components/currency'
 
 import { incentiveRewardToToken } from '../../../../lib/functions'
 import { List } from '@sushiswap/ui/future/components/list/List'
-import Button from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 
@@ -29,20 +29,13 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
         </span>
       </div>
       <div className="flex gap-2">
-        <Link.Internal
-          href={row.protocol === Protocol.SUSHISWAP_V3 ? `/${row.id}?activeTab=new` : `/${row.id}/add`}
-          passHref={true}
-        >
-          <Button as="a" size="xs" variant="outlined">
-            <PlusIcon width={16} height={16} /> Deposit
-          </Button>
-        </Link.Internal>
+        <Button icon={PlusIcon} asChild size="sm" variant="secondary">
+          <a href={row.protocol === Protocol.SUSHISWAP_V3 ? `/${row.id}?activeTab=new` : `/${row.id}/add`}>Deposit</a>
+        </Button>
         {row.protocol === Protocol.SUSHISWAP_V3 && (
-          <Link.Internal href={`/${row.id}?activeTab=myPositions`} passHref={true}>
-            <Button as="a" size="xs" variant="outlined">
-              <UserCircleIcon width={16} height={16} /> My Positions
-            </Button>
-          </Link.Internal>
+          <Button icon={UserCircleIcon} asChild size="sm" variant="secondary">
+            <a href={`/${row.id}?activeTab=myPositions`}>My Positions</a>
+          </Button>
         )}
       </div>
 
@@ -60,8 +53,6 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
                   icon={Currency.Icon}
                   iconProps={{
                     currency: incentiveRewardToToken(row.chainId as ChainId, incentive),
-                    width: 18,
-                    height: 18,
                   }}
                   title={`${formatNumber(incentive.rewardPerDay)} ${incentive.rewardToken.symbol}`}
                 />

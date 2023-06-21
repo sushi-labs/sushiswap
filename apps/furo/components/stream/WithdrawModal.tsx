@@ -8,7 +8,7 @@ import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { Stream, useStreamBalance } from '../../lib'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroStreamChainId } from '@sushiswap/furo'
-import { Button } from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { Dialog } from '@sushiswap/ui/future/components/dialog/Dialog'
 import { Text } from '@sushiswap/ui/future/components/input/Text'
@@ -95,8 +95,6 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
       ) : (
         <Button
           fullWidth
-          size="md"
-          variant="filled"
           disabled={!stream.canWithdraw(address)}
           onClick={() => {
             setOpen(true)
@@ -132,26 +130,17 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
             testdata-id="withdraw-modal-input"
           />
           <div className="col-span-2 pt-2">
-            <Checker.Connect size="xl" fullWidth>
-              <Checker.Network size="xl" fullWidth chainId={chainId}>
+            <Checker.Connect fullWidth>
+              <Checker.Network fullWidth chainId={chainId}>
                 <Checker.Custom
                   showGuardIfTrue={!amount?.greaterThan(0)}
-                  guard={
-                    <Button size="xl" fullWidth>
-                      Enter amount
-                    </Button>
-                  }
+                  guard={<Button fullWidth>Enter amount</Button>}
                 >
                   <Checker.Custom
                     showGuardIfTrue={Boolean(stream.balance && amount?.greaterThan(stream.balance))}
-                    guard={
-                      <Button size="xl" fullWidth>
-                        Not enough available
-                      </Button>
-                    }
+                    guard={<Button fullWidth>Not enough available</Button>}
                   >
                     <Button
-                      size="xl"
                       fullWidth
                       disabled={isWritePending || !stream.balance}
                       onClick={() => sendTransaction?.()}

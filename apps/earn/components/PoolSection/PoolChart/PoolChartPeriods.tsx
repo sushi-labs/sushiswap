@@ -1,6 +1,6 @@
-import { Button } from '@sushiswap/ui/future/components/button'
 import React, { FC } from 'react'
 import { PoolChartPeriod } from './types'
+import { Toggle } from '@sushiswap/ui/future/components/toggle'
 
 interface PoolChartPeriodsProps {
   periods: PoolChartPeriod[]
@@ -12,16 +12,9 @@ const PoolChartPeriods: FC<PoolChartPeriodsProps> = ({ periods, selectedPeriod, 
   return (
     <div className="flex items-center gap-1">
       {periods.map((period) => (
-        <Button
-          size="xs"
-          variant={period === selectedPeriod ? 'outlined' : 'empty'}
-          color={period === selectedPeriod ? 'blue' : 'default'}
-          onClick={() => setPeriod(period)}
-          className="!h-[24px] font-bold"
-          key={period}
-        >
+        <Toggle size="sm" pressed={period === selectedPeriod} onClick={() => setPeriod(period)} key={period}>
           {period}
-        </Button>
+        </Toggle>
       ))}
     </div>
   )

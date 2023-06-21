@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { FC } from 'react'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Container } from '@sushiswap/ui/future/components/container'
@@ -17,11 +16,9 @@ export const PreviewBanner: FC<PreviewBanner> = ({ show }) => {
           <span className="font-medium text-white">Preview Mode</span>
           <span className="text-xs text-slate-300">You are viewing an unpublished article</span>
         </div>
-        <Link passHref={true} href="/api/exit-preview" legacyBehavior>
-          <Button as="a" color="blue" size="sm">
-            Exit Preview Mode
-          </Button>
-        </Link>
+        <Button asChild>
+          <a href="/api/exit-preview">Exit Preview Mode</a>
+        </Button>
       </Container>
     </div>
   )

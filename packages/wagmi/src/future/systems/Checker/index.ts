@@ -17,7 +17,7 @@ export type CheckerProps = {
   Custom: FC<CustomProps>
   ApproveERC20: ComponentType<ApproveERC20Props>
   ApproveERC20Multiple: ComponentType<ApproveERC20MultipleProps>
-  Connect: ComponentType<ButtonProps<'button'>>
+  Connect: ComponentType<ButtonProps>
   ApproveBentobox: ComponentType<ApproveBentoboxProps>
   Success: FC<SuccessProps>
   Root: FC<ProviderProps>

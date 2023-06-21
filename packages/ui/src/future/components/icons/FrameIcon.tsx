@@ -1,6 +1,7 @@
 import React from 'react'
+import { IconComponent } from '../../types'
 
-export const FrameIcon = (props: React.ComponentProps<'svg'>) => {
+export const FrameIcon: IconComponent = (props) => {
   return (
     <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="155.675 61.509 131.262 131.262">
       <g transform="matrix(1, 0, 0, 1, 155.675343, 61.509203)">

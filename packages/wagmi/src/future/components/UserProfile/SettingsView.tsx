@@ -30,13 +30,9 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
       <div className="grid grid-cols-3 mb-3">
         <div className="flex justify-start">
           <IconButton
+              size="sm"
             onClick={() => setView(ProfileView.Default)}
             icon={ArrowLeftIcon}
-            iconProps={{
-              strokeWidth: 4,
-              width: 20,
-              height: 20,
-            }}
             name="Back"
           />
         </div>

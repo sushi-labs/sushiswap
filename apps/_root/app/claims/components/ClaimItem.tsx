@@ -98,38 +98,22 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
       ) : (
         <div className="flex justify-end">
           {!isClaimed ? (
-            <Checker.Connect size="xs">
-              <Checker.Network size="xs" chainId={chainId}>
+            <Checker.Connect size="sm">
+              <Checker.Network size="sm" chainId={chainId}>
                 {allowance.greaterThan(ZERO) ? (
-                  <Button
-                    size="xs"
-                    color="blue"
-                    loading={isRevokePending}
-                    disabled={isRevokePending}
-                    onClick={() => revoke?.()}
-                  >
+                  <Button size="sm" loading={isRevokePending} disabled={isRevokePending} onClick={() => revoke?.()}>
                     Revoke Approval
                   </Button>
                 ) : (
-                  <Button
-                    onClick={() => write?.()}
-                    size="xs"
-                    disabled={isClaimPending}
-                    loading={isClaimPending}
-                    variant="filled"
-                    color="blue"
-                  >
+                  <Button onClick={() => write?.()} size="sm" disabled={isClaimPending} loading={isClaimPending}>
                     <div className="flex gap-1 items-center">Claim</div>
                   </Button>
                 )}
               </Checker.Network>
             </Checker.Connect>
           ) : (
-            <Button size="xs" variant="outlined" color="green" className="pointer-events-none">
-              <div className="flex gap-1 items-center">
-                <CheckIcon strokeWidth={2} width={16} height={16} className="text-green" />
-                Claimed
-              </div>
+            <Button icon={CheckIcon} size="sm" variant="secondary" className="pointer-events-none">
+              Claimed
             </Button>
           )}
         </div>

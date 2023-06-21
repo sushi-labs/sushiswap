@@ -36,7 +36,7 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function S
           variant="menu"
         >
           <SelectPrimitive.Trigger>
-            <Button variant="outlined" color="default" size="xl" className="!font-medium">
+            <Button variant="secondary" className="!font-medium">
               <NetworkIcon chainId={selectedNetwork} width={20} height={20} />
               <div>{chainName?.[selectedNetwork]}</div>
               <ChevronDownIcon width={24} height={24} />

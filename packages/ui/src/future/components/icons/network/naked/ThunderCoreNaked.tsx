@@ -1,6 +1,7 @@
 import React from 'react'
+import { IconComponent } from '../../../../types'
 
-export const ThunderCoreNaked = (props: React.ComponentProps<'svg'>) => {
+export const ThunderCoreNaked: IconComponent = (props) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" fill="none" viewBox="0 0 128 128" {...props}>
       <path

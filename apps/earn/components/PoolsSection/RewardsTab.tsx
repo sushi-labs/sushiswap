@@ -1,8 +1,8 @@
 import { RewardsSection } from '../RewardsSection'
 import React, { Fragment, useState } from 'react'
 import { Tab } from '@headlessui/react'
-import { Button } from '@sushiswap/ui/future/components/button'
 import { Container } from '@sushiswap/ui/future/components/container'
+import { Toggle } from '@sushiswap/ui/future/components/toggle'
 
 export const RewardsTab = () => {
   const [tabPositions, setTabPositions] = useState<number>(0)
@@ -13,17 +13,12 @@ export const RewardsTab = () => {
         <div className="flex items-center gap-2 mb-4">
           <Tab as={Fragment}>
             {({ selected }) => (
-              <Button
-                size="sm"
-                variant="outlined"
-                color={selected ? 'blue' : 'default'}
-                className="items-center !gap-2.5"
-              >
+              <Toggle size="sm" pressed={selected}>
                 <span>🍣</span>{' '}
                 <span>
                   SushiSwap <sup>v3</sup>
                 </span>
-              </Button>
+              </Toggle>
             )}
           </Tab>
         </div>

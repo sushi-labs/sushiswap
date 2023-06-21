@@ -22,7 +22,7 @@ export const ProductArticles: FC<ProductArticles> = ({ title, productName, artic
         <ProductSectionTitle title={title} subtitle={subtitle} />
 
         <Link.Internal href={`/articles?product=${productName}`}>
-          <Button variant="outlined">View All</Button>
+          <Button variant="secondary">View All</Button>
         </Link.Internal>
       </div>
       <div className="mt-8 sm:mt-20">

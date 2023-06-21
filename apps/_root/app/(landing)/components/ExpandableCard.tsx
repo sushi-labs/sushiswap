@@ -1,4 +1,3 @@
-import { ChevronRightIcon, ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
 import { nanoid } from 'nanoid'
 import React, { FC, ReactNode, useCallback, useState } from 'react'
@@ -40,12 +39,7 @@ export const ExpandableCard: FC<ExpandableCardProps> = ({ children, title, capti
       ) : (
         <motion.div layoutId={`container-${id}`}>
           <motion.div layoutId={`container-title-${id}`}>
-            <Button
-              onClick={() => setOpen(true)}
-              className="!p-0 mt-3 whitespace-nowrap"
-              variant="empty"
-              endIcon={<ChevronRightIcon width={16} height={16} />}
-            >
+            <Button onClick={() => setOpen(true)} className="mt-3 whitespace-nowrap" variant="secondary">
               {title}
             </Button>
           </motion.div>
@@ -79,16 +73,11 @@ export const ExpandableCard: FC<ExpandableCardProps> = ({ children, title, capti
                 <motion.div className="max-w-[700px] prose !prose-invert prose-neutral mt-5 pt-5 border-t border-neutral-200/5">
                   {content}
                 </motion.div>
-                <motion.div>
-                  <Button
-                    target="_blank"
-                    as="a"
-                    href={link}
-                    className="!p-0 mt-3 !no-underline"
-                    variant="empty"
-                    endIcon={<ExternalLinkIcon width={16} height={16} />}
-                  >
-                    {linkText}
+                <motion.div className="mt-3">
+                  <Button variant="secondary">
+                    <a target="_blank" href={link} rel="noopener noreferrer">
+                      {linkText}
+                    </a>
                   </Button>
                 </motion.div>
               </motion.div>

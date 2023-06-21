@@ -5,13 +5,13 @@ import { TooltipContent, TooltipProvider, TooltipTrigger, Tooltip } from '@sushi
 export const SwitchAppType: FC = () => {
   return (
     <div className="flex gap-2">
-      <Button size="sm" variant="outlined" color="default">
+      <Button size="sm" variant="secondary">
         Swap
       </Button>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger className="cursor-default">
-            <Button className="pointer-events-none opacity-40" size="sm" variant="empty" color="default">
+            <Button className="pointer-events-none opacity-40" size="sm" variant="ghost">
               Limit
             </Button>
           </TooltipTrigger>

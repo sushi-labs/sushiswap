@@ -59,6 +59,10 @@ const config = {
         yellow: {
           DEFAULT: '#eab308',
         },
+        muted: 'var(--muted)',
+        'muted-foreground': 'var(--muted-foreground)',
+        accent: 'var(--accent)',
+        'accent-foreground': 'var(--accent-foreground)',
       },
       animation: {
         ellipsis: 'ellipsis 1.25s infinite',

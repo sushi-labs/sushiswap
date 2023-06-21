@@ -2,11 +2,10 @@ import { Tab } from '@headlessui/react'
 import React, { FC, Fragment } from 'react'
 
 import { Pools } from './Pools'
-import { Button } from '@sushiswap/ui/future/components/button'
-// import { TokenTable } from './Tokens'
 import { Container } from '@sushiswap/ui/future/components/container'
 import { FuroTokenTable } from './FuroTokens'
 import { BentoBoxTokenTable } from './BentoBoxTokens'
+import { Toggle } from '@sushiswap/ui/future/components/toggle'
 
 export const TableSection: FC = () => {
   return (
@@ -16,48 +15,25 @@ export const TableSection: FC = () => {
           <div className="flex items-center gap-2 mb-4">
             <Tab as={Fragment}>
               {({ selected }) => (
-                <Button
-                  size="sm"
-                  variant={selected ? 'outlined' : 'empty'}
-                  color="default"
-                  className="!rounded-full !h-[36px]"
-                >
+                <Toggle size="sm" pressed={selected}>
                   SushiSwap 🍣
-                </Button>
+                </Toggle>
               )}
             </Tab>
             <Tab as={Fragment}>
               {({ selected }) => (
-                <Button
-                  size="sm"
-                  variant={selected ? 'outlined' : 'empty'}
-                  color="default"
-                  className="!rounded-full !h-[36px]"
-                >
+                <Toggle size="sm" pressed={selected}>
                   SushiPay 💸
-                </Button>
+                </Toggle>
               )}
             </Tab>
             <Tab as={Fragment}>
               {({ selected }) => (
-                <Button
-                  size="sm"
-                  variant={selected ? 'outlined' : 'empty'}
-                  color="default"
-                  className="!rounded-full !h-[36px]"
-                >
+                <Toggle size="sm" pressed={selected}>
                   Sushi Vault 🏦
-                </Button>
+                </Toggle>
               )}
             </Tab>
-
-            {/* <Tab as={Fragment}>
-            {({ selected }) => (
-              <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default" >
-                Tokens
-              </Button>
-            )}
-          </Tab> */}
           </div>
         </Container>
         <Tab.Panels className="bg-gray-50 dark:bg-white/[0.02] pt-4">

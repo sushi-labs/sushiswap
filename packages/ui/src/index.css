@@ -147,3 +147,20 @@ html[class='[color-scheme:dark]'] .paper {
     @apply appearance-none w-6 h-6 bg-blue rounded-full
   }
 }
+
+
+@layer base {
+  :root {
+    --muted: rgba(0, 0, 0, 0.04);
+    --muted-foreground: #6b7280;
+    --accent: rgba(0, 0, 0, 0.04);
+    --accent-foreground: #111827;
+  }
+
+  .dark {
+    --muted: 223 47% 11%;
+    --muted-foreground: 215.4 16.3% 56.9%;
+    --accent: 216 34% 17%;
+    --accent-foreground: 210 40% 98%;
+  }
+}

@@ -1,6 +1,7 @@
 import * as React from 'react'
+import { IconComponent } from '../../../../types'
 
-export const PalmNaked = (props: React.ComponentProps<'svg'>) => (
+export const PalmNaked: IconComponent = (props) => (
   <svg viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <path
       fillRule="evenodd"

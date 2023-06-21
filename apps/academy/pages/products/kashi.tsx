@@ -58,7 +58,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         productName={longName}
         productDescription={description}
         productUrl={url}
-        buttonIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
+        buttonIcon={LinkIcon}
         image={<Image src={kashiImg} unoptimized alt="kashi-img" />}
       />
       <ProductCards

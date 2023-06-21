@@ -79,8 +79,6 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
       ) : (
         <Button
           fullWidth
-          size="xl"
-          variant="filled"
           disabled={!address || !vesting?.canWithdraw(address) || !balance || !balance?.greaterThan(0)}
           onClick={() => {
             setOpen(true)
@@ -99,19 +97,13 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
             </span>{' '}
             unlocked tokens available for withdrawal.
           </div>
-          <Checker.Connect size="xl" fullWidth>
-            <Checker.Network size="xl" fullWidth chainId={chainId}>
+          <Checker.Connect fullWidth>
+            <Checker.Network fullWidth chainId={chainId}>
               <Checker.Custom
                 showGuardIfTrue={Boolean(!balance?.greaterThan(ZERO))}
-                guard={
-                  <Button size="xl" fullWidth>
-                    Not enough available
-                  </Button>
-                }
+                guard={<Button fullWidth>Not enough available</Button>}
               >
                 <Button
-                  size="xl"
-                  variant="filled"
                   fullWidth
                   disabled={isWritePending || !sendTransaction}
                   onClick={() => sendTransaction?.()}

@@ -222,12 +222,11 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
     <>
       <div className="grid grid-cols-3 gap-x-10">
         <div />
-        <Checker.Connect fullWidth type="button" size="xl" className="col-span-3 md:col-span-2">
-          <Checker.Network fullWidth type="button" size="xl" chainId={chainId} className="col-span-3 md:col-span-2">
+        <Checker.Connect fullWidth type="button" className="col-span-3 md:col-span-2">
+          <Checker.Network fullWidth type="button" chainId={chainId} className="col-span-3 md:col-span-2">
             <Checker.Amounts
               fullWidth
               type="button"
-              size="xl"
               chainId={chainId}
               amounts={[_totalAmount]}
               className="col-span-3 md:col-span-2"
@@ -236,7 +235,6 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                 type="button"
                 fullWidth
                 id="create-single-vest-approve-bentobox"
-                size="xl"
                 chainId={chainId as BentoBoxV1ChainId}
                 contract={getFuroVestingRouterContractConfig(chainId).address}
                 onSignature={setSignature}
@@ -247,7 +245,6 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                   fullWidth
                   contract={bentoBoxV1Address[chainId]}
                   id="create-single-vest-approve-token"
-                  size="xl"
                   amount={_totalAmount}
                   className="col-span-3 md:col-span-2"
                 >
@@ -257,7 +254,6 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                         <Button
                           type="button"
                           fullWidth
-                          size="xl"
                           onClick={open}
                           testdata-id="review-single-vest-button"
                           className="col-span-3 md:col-span-2"
@@ -349,7 +345,6 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
               <div className="space-y-4">
                 <Button
                   fullWidth
-                  size="xl"
                   loading={isLoading && !isError}
                   onClick={() => sendTransactionAsync?.().then(() => confirm())}
                   disabled={isError || !sendTransactionAsync}

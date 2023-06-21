@@ -11,7 +11,7 @@ import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
 import { useSWRConfig } from 'swr'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import Button from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_UNSTAKE } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
@@ -69,18 +69,13 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot((
       reserve1={reserve1}
       liquidityToken={liquidityToken}
     >
-      <Checker.Connect size="xl" fullWidth>
-        <Checker.Network size="xl" fullWidth chainId={pool.chainId}>
+      <Checker.Connect fullWidth>
+        <Checker.Network fullWidth chainId={pool.chainId}>
           <Checker.Custom
             showGuardIfTrue={Boolean(amount && balance && amount.greaterThan(balance))}
-            guard={
-              <Button size="xl" fullWidth>
-                Insufficient Balance
-              </Button>
-            }
+            guard={<Button fullWidth>Insufficient Balance</Button>}
           >
             <Checker.ApproveERC20
-              size="xl"
               fullWidth
               id="unstake-approve-slp"
               amount={amount}
@@ -91,8 +86,6 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot((
                 <Button
                   onClick={() => sendTransaction?.()}
                   fullWidth
-                  size="xl"
-                  variant="filled"
                   disabled={!approved || isWritePending}
                   testId="unstake-liquidity"
                 >

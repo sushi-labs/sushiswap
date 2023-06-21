@@ -8,7 +8,7 @@ import { formatNumber } from '@sushiswap/format'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Explainer } from '@sushiswap/ui/future/components/explainer'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import Button from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { ConcentratedLiquidityHarvestButton } from '../ConcentratedLiquidityHarvestButton'
 import { Address } from 'wagmi'
 import { InformationCircleIcon } from '@heroicons/react/solid'
@@ -96,9 +96,9 @@ export const RewardSlide: FC<{
         <div className="mt-4">
           <ConcentratedLiquidityHarvestButton account={address} chainId={data.chainId}>
             {({ write, isLoading }) => (
-              <Checker.Connect fullWidth variant="outlined">
-                <Checker.Network fullWidth variant="outlined" chainId={data.chainId}>
-                  <Button fullWidth disabled={isLoading} onClick={() => write?.()} variant="outlined">
+              <Checker.Connect fullWidth variant="secondary">
+                <Checker.Network fullWidth variant="secondary" chainId={data.chainId}>
+                  <Button fullWidth disabled={isLoading} onClick={() => write?.()} variant="secondary">
                     Claim
                   </Button>
                 </Checker.Network>

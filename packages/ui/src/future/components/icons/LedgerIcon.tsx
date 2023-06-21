@@ -1,4 +1,6 @@
-export const LedgerIcon = (props: React.ComponentProps<'svg'>) => {
+import { IconComponent } from '../../types'
+
+export const LedgerIcon: IconComponent = (props) => {
   return (
     <svg {...props} viewBox="0 0 147 128" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path

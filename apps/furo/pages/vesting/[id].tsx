@@ -23,7 +23,7 @@ import { Address } from '@sushiswap/wagmi'
 import { ChainId } from '@sushiswap/chain'
 import { getFuroVestingContractConfig } from '@sushiswap/wagmi'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { DownloadIcon, XIcon } from '@heroicons/react/outline'
+import { DownloadIcon, TrashIcon } from '@heroicons/react/outline'
 import { FuroStatus, useVesting, useVestingBalance, useVestingTransactions } from '../../lib'
 import { queryParamsSchema } from '../../lib/zod'
 import { Carousel } from '@sushiswap/ui/future/components/Carousel'
@@ -106,15 +106,7 @@ const _VestingPage: FC = () => {
               }}
               shallow={true}
             >
-              <IconButton
-                icon={ArrowLeftIcon}
-                iconProps={{
-                  width: 24,
-                  height: 24,
-                  transparent: true,
-                }}
-                name="Back"
-              />
+              <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
               <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
                 Go back to dashboard
               </span>
@@ -186,15 +178,7 @@ const _VestingPage: FC = () => {
               }}
               shallow={true}
             >
-              <IconButton
-                icon={ArrowLeftIcon}
-                iconProps={{
-                  width: 24,
-                  height: 24,
-                  transparent: true,
-                }}
-                name="Back"
-              />
+              <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
               <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
                 Go back to dashboard
               </span>
@@ -224,9 +208,9 @@ const _VestingPage: FC = () => {
                   <Button
                     disabled={disabled}
                     onClick={() => setOpen(true)}
-                    startIcon={<DownloadIcon width={18} height={18} />}
+                    icon={DownloadIcon}
                     testId="vest-withdraw"
-                    variant="outlined"
+                    variant="secondary"
                   >
                     Withdraw
                   </Button>
@@ -241,8 +225,8 @@ const _VestingPage: FC = () => {
                 {({ setOpen }) => (
                   <Button
                     onClick={() => setOpen(true)}
-                    startIcon={<ArrowRightIcon width={18} height={18} />}
-                    variant="outlined"
+                    icon={ArrowRightIcon}
+                    variant="secondary"
                     testId="vest-transfer"
                   >
                     Transfer
@@ -258,13 +242,7 @@ const _VestingPage: FC = () => {
                 chainId={chainId}
               >
                 {({ setOpen }) => (
-                  <Button
-                    color="red"
-                    onClick={() => setOpen(true)}
-                    startIcon={<XIcon width={18} height={18} />}
-                    variant="outlined"
-                    testId="vest-cancel"
-                  >
+                  <Button variant="destructive" onClick={() => setOpen(true)} icon={TrashIcon} testId="vest-cancel">
                     Cancel
                   </Button>
                 )}

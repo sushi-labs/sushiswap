@@ -1,5 +1,5 @@
-import { Button } from '@sushiswap/ui/future/components/button'
 import React, { FC } from 'react'
+import { Toggle } from '@sushiswap/ui/future/components/toggle'
 
 interface PoolChartTypesProps<C> {
   charts: Readonly<C[]>
@@ -11,16 +11,9 @@ function PoolChartTypes<C extends string>({ charts, selectedChart, setChart }: P
   return (
     <div className="flex items-center gap-1">
       {charts.map((chart) => (
-        <Button
-          size="xs"
-          variant={chart === selectedChart ? 'outlined' : 'empty'}
-          color={chart === selectedChart ? 'blue' : 'default'}
-          onClick={() => setChart(chart)}
-          className="!h-[24px] font-bold"
-          key={chart}
-        >
+        <Toggle size="sm" pressed={chart === selectedChart} onClick={() => setChart(chart)} key={chart}>
           {chart}
-        </Button>
+        </Toggle>
       ))}
     </div>
   )

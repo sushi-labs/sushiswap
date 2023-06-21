@@ -17,11 +17,9 @@ export const PreviewBanner: FC<PreviewBanner> = ({ show }) => {
           <span className="font-medium text-white">Preview Mode</span>
           <span className="text-xs text-slate-300">You are viewing an unpublished article</span>
         </div>
-        <Link passHref={true} href="/api/exit-preview" legacyBehavior>
-          <Button as="a" color="blue" size="sm">
-            Exit Preview Mode
-          </Button>
-        </Link>
+        <Button>
+          <a href="/api/exit-preview">Exit Preview Mode</a>
+        </Button>
       </Container>
     </div>
   )

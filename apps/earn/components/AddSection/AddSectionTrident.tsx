@@ -116,7 +116,7 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
         onInput0={onChangeToken0TypedAmount}
         onInput1={onChangeToken1TypedAmount}
       >
-        <Checker.Connect fullWidth size="xl">
+        <Checker.Connect fullWidth>
           <Checker.Custom
             showGuardIfTrue={
               isMounted &&
@@ -129,17 +129,16 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
               ].includes(poolState)
             }
             guard={
-              <Button size="xl" fullWidth disabled={true}>
+              <Button fullWidth disabled={true}>
                 Pool Not Found
               </Button>
             }
           >
-            <Checker.Network fullWidth size="xl" chainId={_pool.chainId}>
-              <Checker.Amounts fullWidth size="xl" chainId={_pool.chainId} amounts={[parsedInput0, parsedInput1]}>
+            <Checker.Network fullWidth chainId={_pool.chainId}>
+              <Checker.Amounts fullWidth chainId={_pool.chainId} amounts={[parsedInput0, parsedInput1]}>
                 <Checker.ApproveBentobox
                   chainId={chainId}
                   id="add-liquidity-trident-approve-bentobox"
-                  size="xl"
                   className="whitespace-nowrap"
                   fullWidth
                   contract={getTridentRouterContractConfig(chainId).address}
@@ -148,7 +147,6 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                 >
                   <Checker.ApproveERC20
                     id="add-liquidity-trident-approve-token0"
-                    size="xl"
                     className="whitespace-nowrap"
                     fullWidth
                     amount={parsedInput0}
@@ -157,7 +155,6 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                   >
                     <Checker.ApproveERC20
                       id="add-liquidity-trident-approve-token1"
-                      size="xl"
                       className="whitespace-nowrap"
                       fullWidth
                       amount={parsedInput1}
@@ -165,7 +162,7 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                       enabled={isBentoBoxV1ChainId(chainId)}
                     >
                       <Checker.Success tag={APPROVE_TAG_ADD_TRIDENT}>
-                        <Button fullWidth onClick={() => setOpen(true)} size="xl">
+                        <Button fullWidth onClick={() => setOpen(true)}>
                           Add Liquidity
                         </Button>
                       </Checker.Success>

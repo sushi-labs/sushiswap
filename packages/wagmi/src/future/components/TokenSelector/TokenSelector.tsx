@@ -13,14 +13,14 @@ import { TokenSelectorImportRow } from './TokenSelectorImportRow'
 import { useAccount } from 'wagmi'
 import { TokenSelectorCustomTokensOverlay } from './TokenSelectorCustomTokensOverlay'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { Currency } from '@sushiswap/ui/future/components/currency'
 import { COMMON_BASES } from '@sushiswap/router-config'
 import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
-
+import { Currency } from "@sushiswap/ui/future/components/currency";
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useSortedTokenList } from './hooks/useSortedTokenList'
 import { useTokenWithCache } from '../../hooks'
 import { isAddress } from '@ethersproject/address'
+import {buttonIconVariants} from "@sushiswap/ui/future/components/button";
 
 interface TokenSelectorProps {
   id: string
@@ -97,12 +97,11 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
             <div className="flex flex-wrap gap-2">
               {COMMON_BASES[chainId].map((base) => (
                 <Button
-                  startIcon={<Currency.Icon currency={base} width={16} height={16} disableLink={true} />}
-                  color="default"
-                  variant="outlined"
+                  variant="secondary"
                   key={base.id}
                   onClick={() => _onSelect(base)}
                 >
+                  <Currency.Icon width={20} height={20} className={buttonIconVariants({ size: 'default'})} currency={base} disableLink/>
                   {base.symbol}
                 </Button>
               ))}

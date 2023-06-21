@@ -57,9 +57,9 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pool }) => {
           })}
         </div>
       </div>
-      <Checker.Connect fullWidth size="xl">
-        <Checker.Network fullWidth size="xl" chainId={pool.chainId}>
-          <Button size="xl" fullWidth onClick={harvest}>
+      <Checker.Connect fullWidth>
+        <Checker.Network fullWidth chainId={pool.chainId}>
+          <Button fullWidth onClick={harvest} size="lg">
             Claim
           </Button>
         </Checker.Network>

@@ -60,7 +60,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                       modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
                     >
                       {({ setOpen }) => (
-                        <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
+                        <Button variant="secondary" onClick={() => setOpen(true)}>
                           <CogIcon width={24} height={24} />
                         </Button>
                       )}
@@ -97,7 +97,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                       modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
                     >
                       {({ setOpen }) => (
-                        <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
+                        <Button variant="secondary" onClick={() => setOpen(true)}>
                           <CogIcon width={24} height={24} />
                         </Button>
                       )}

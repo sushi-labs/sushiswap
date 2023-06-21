@@ -17,9 +17,9 @@ import React, {
 } from 'react'
 import ReactDOM from 'react-dom'
 
-import { ButtonComponent } from '../button'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { IconButton } from '../iconbutton'
+import { Button, ButtonProps } from '../button'
 
 interface DrawerContext {
   open: boolean
@@ -72,10 +72,10 @@ interface PanelProps {
   className?: string
 }
 
-export const DrawerButton: ButtonComponent = (props) => {
+export const DrawerButton = (props: ButtonProps) => {
   const { setOpen } = useDrawer()
 
-  const onClick = useCallback<MouseEventHandler<HTMLDivElement>>(
+  const onClick = useCallback<MouseEventHandler<HTMLButtonElement>>(
     (e) => {
       setOpen((prev) => !prev)
       props.onClick && props.onClick(e)
@@ -83,7 +83,7 @@ export const DrawerButton: ButtonComponent = (props) => {
     [props, setOpen]
   )
 
-  return <div className="flex items-center" onClick={onClick} {...props} />
+  return <Button onClick={onClick} {...props} />
 }
 
 export const Panel: FC<PanelProps> = ({ children, className }) => {
@@ -107,12 +107,7 @@ export const Panel: FC<PanelProps> = ({ children, className }) => {
         >
           <div className="relative">
             <div className="absolute right-2 top-2">
-              <IconButton
-                name="Close"
-                icon={XMarkIcon}
-                iconProps={{ width: 26, height: 26 }}
-                onClick={() => setOpen(false)}
-              />
+              <IconButton name="Close" icon={XMarkIcon} onClick={() => setOpen(false)} />
             </div>
             {children}
           </div>

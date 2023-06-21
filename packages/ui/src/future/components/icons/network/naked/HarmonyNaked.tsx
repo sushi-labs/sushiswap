@@ -1,6 +1,7 @@
 import * as React from 'react'
+import { IconComponent } from '../../../../types'
 
-export const HarmonyNaked = (props: React.ComponentProps<'svg'>) => (
+export const HarmonyNaked: IconComponent = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 128 128" {...props}>
     <path
       fill="#fff"

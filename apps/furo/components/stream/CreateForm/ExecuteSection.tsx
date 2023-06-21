@@ -158,12 +158,11 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
       <>
         <div className="grid grid-cols-3 gap-x-10">
           <div />
-          <Checker.Connect fullWidth type="button" size="xl" className="col-span-3 md:col-span-2">
-            <Checker.Network fullWidth type="button" size="xl" chainId={chainId} className="col-span-3 md:col-span-2">
+          <Checker.Connect fullWidth type="button" className="col-span-3 md:col-span-2">
+            <Checker.Network fullWidth type="button" chainId={chainId} className="col-span-3 md:col-span-2">
               <Checker.Amounts
                 fullWidth
                 type="button"
-                size="xl"
                 chainId={chainId}
                 amounts={[_amount]}
                 className="col-span-3 md:col-span-2"
@@ -172,7 +171,6 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                   type="button"
                   fullWidth
                   id="furo-create-single-stream-approve-bentobox"
-                  size="xl"
                   chainId={chainId as BentoBoxV1ChainId}
                   contract={getFuroStreamRouterContractConfig(chainId).address}
                   onSignature={setSignature}
@@ -183,7 +181,6 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                     type="button"
                     contract={bentoBoxV1Address[chainId]}
                     id="furo-create-single-stream-approve-token"
-                    size="xl"
                     amount={_amount}
                     className="col-span-3 md:col-span-2"
                   >
@@ -194,7 +191,6 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                             type="button"
                             fullWidth
                             disabled={!formValid}
-                            size="xl"
                             onClick={open}
                             testId="review-single-stream"
                             className="col-span-3 md:col-span-2"
@@ -261,7 +257,6 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                 <div className="space-y-4">
                   <Button
                     fullWidth
-                    size="xl"
                     loading={isLoading && !isError}
                     onClick={() => sendTransactionAsync?.().then(() => confirm())}
                     disabled={isError || !sendTransactionAsync}

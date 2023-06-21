@@ -4,7 +4,7 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { ExecuteMultipleSection, ImportZoneSection, ReviewSection } from '.'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { CREATE_STREAM_DEFAULT_VALUES, StreamForm } from '../CreateForm'
-import Button from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { DuplicateIcon, PlusIcon, TrashIcon } from '@heroicons/react/solid'
 import { nanoid } from 'nanoid'
 import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
@@ -67,18 +67,13 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
                       <h1 className="text-xs font-semibold uppercase">Stream {i + 1}</h1>
                       <div className="flex items-center gap-5 pr-2">
                         <div className="flex items-center">
-                          <IconButton
-                            icon={DuplicateIcon}
-                            iconProps={{ width: 16, height: 16 }}
-                            onClick={() => append(el)}
-                            name="Duplicate"
-                          />
+                          <IconButton icon={DuplicateIcon} onClick={() => append(el)} name="Duplicate" />
                         </div>
                         {(i > 0 || (formData.streams || []).length > 1) && (
                           <div className="flex items-center">
                             <IconButton
                               icon={TrashIcon}
-                              iconProps={{ width: 16, height: 16, className: 'text-red' }}
+                              iconProps={{ className: 'text-red' }}
                               onClick={() => remove(i)}
                               name="Delete"
                             />
@@ -91,18 +86,15 @@ export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ c
                 ))}
                 <div className="flex justify-end gap-4">
                   <Button
-                    size="xl"
-                    variant="outlined"
+                    variant="secondary"
                     type="button"
-                    startIcon={<PlusIcon width={16} height={16} />}
+                    icon={PlusIcon}
                     onClick={() => append({ ...CREATE_STREAM_DEFAULT_VALUES, id: nanoid() })}
                     testdata-id="create-multiple-streams-add-item-button"
                   >
                     Add Stream
                   </Button>
                   <Button
-                    size="xl"
-                    variant="outlined"
                     type="button"
                     onClick={() => setReview(true)}
                     disabled={!formState.isValid}

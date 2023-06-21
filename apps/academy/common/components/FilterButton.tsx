@@ -11,7 +11,7 @@ interface FilterButton {
 
 export const FilterButton: FC<FilterButton> = ({ title, isSelected, onClick }) => {
   return (
-    <Button size="md" onClick={onClick} color={isSelected ? 'blue' : 'default'}>
+    <Button onClick={onClick} color={isSelected ? 'blue' : 'default'}>
       {title}
     </Button>
   )

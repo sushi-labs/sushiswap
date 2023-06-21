@@ -12,7 +12,7 @@ import React, { FC, useState } from 'react'
 import useSWR from 'swr'
 import { NetworkSelector } from '@sushiswap/ui/future/components/networkselector'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
-import { Button } from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { SelectPrimitive } from '@sushiswap/ui/future/components/select'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 
@@ -54,7 +54,7 @@ const TokensPage: FC = () => {
         </div>
         <NetworkSelector networks={TOKENS_SUPPORTED_CHAIN_IDS} selected={chainId} onSelect={setChainId} variant="menu">
           <SelectPrimitive.Trigger>
-            <Button variant="outlined" color="default" size="xl" className="!font-medium">
+            <Button variant="secondary" className="!font-medium">
               <NetworkIcon chainId={chainId} width={20} height={20} />
               <div>{Chain.from(chainId).name}</div>
               <ChevronDownIcon width={24} height={24} />

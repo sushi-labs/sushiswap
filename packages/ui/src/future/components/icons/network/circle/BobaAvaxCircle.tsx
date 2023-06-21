@@ -1,6 +1,7 @@
 import * as React from 'react'
+import { IconComponent } from '../../../../types'
 
-export const BobaAvaxCircle = (props: React.ComponentProps<'svg'>) => (
+export const BobaAvaxCircle: IconComponent = (props) => (
   <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <rect width="128" height="128" rx="64" fill="url(#paint0_linear_706_814)" />
     <g clipPath="url(#clip0_706_814)">

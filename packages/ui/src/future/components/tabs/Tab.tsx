@@ -5,6 +5,7 @@ import React, { FC, forwardRef, Fragment, FunctionComponent, ReactNode } from 'r
 import { TabGroup, TabGroupProps } from './TabGroup'
 import { TabList, TabListProps } from './TabList'
 import { ExtractProps } from '../../../types'
+import { Button } from '../button'
 
 export type TabButton = Omit<ExtractProps<typeof HeadlessTab>, 'children'> & { children: ReactNode }
 
@@ -15,9 +16,9 @@ const _Tab: FC<TabButton> = forwardRef<HTMLButtonElement, TabButton>(function _T
   return (
     <HeadlessTab as={Fragment}>
       {({ selected }) => (
-        <button
+        <Button
           ref={ref}
-          color="default"
+          variant="secondary"
           className={classNames(
             selected
               ? 'text-gray-900 dark:text-slate-50 bg-white dark:bg-slate-700'
@@ -28,7 +29,7 @@ const _Tab: FC<TabButton> = forwardRef<HTMLButtonElement, TabButton>(function _T
           {...props}
         >
           {children}
-        </button>
+        </Button>
       )}
     </HeadlessTab>
   )

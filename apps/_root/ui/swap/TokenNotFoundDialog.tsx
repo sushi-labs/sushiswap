@@ -164,7 +164,7 @@ export const TokenNotFoundDialog = () => {
                 </List.Control>
               </List>
             )}
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-3 mt-4">
               {tokenSecurity?.isSupported && (
                 <div className="flex items-center gap-0.5 justify-center">
                   <span className="text-xs text-gray-700 dark:text-slate-400">
@@ -178,7 +178,7 @@ export const TokenNotFoundDialog = () => {
                   I understand
                 </Button>
               ) : (
-                <Button size="xl" variant="outlined" onClick={reset}>
+                <Button size="xl" onClick={reset}>
                   Close
                 </Button>
               )}
@@ -252,7 +252,7 @@ export const TokenNotFoundDialog = () => {
                 </List.Control>
               </List>
             )}
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-3 mt-4">
               {tokenSecurity.isSupported && (
                 <div className="flex items-center gap-0.5 justify-center">
                   <span className="text-xs text-gray-700 dark:text-slate-400">

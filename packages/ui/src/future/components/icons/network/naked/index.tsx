@@ -1,4 +1,4 @@
-import { Chain, ChainId } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import React from 'react'
 
 import { ArbitrumNaked } from './ArbitrumNaked'
@@ -27,6 +27,7 @@ import { PolygonNaked } from './PolygonNaked'
 import { TelosNaked } from './TelosNaked'
 import { PolygonZKNaked } from './PolygonZKNaked'
 import { ThunderCoreNaked } from './ThunderCoreNaked'
+import { IconComponent } from '../../../../types'
 
 export * from './ArbitrumNaked'
 export * from './ArbitrumNovaNaked'
@@ -54,7 +55,7 @@ export * from './PolygonNaked'
 export * from './TelosNaked'
 export * from './PolygonZKNaked'
 
-export const NETWORK_NAKED_ICON: Record<number, (props: React.ComponentProps<'svg'>) => JSX.Element> = {
+export const NETWORK_NAKED_ICON: Record<number, IconComponent> = {
   [ChainId.ETHEREUM]: EthereumNaked,
   [ChainId.FANTOM]: FantomNaked,
   [ChainId.POLYGON]: PolygonNaked,

@@ -1,6 +1,7 @@
 import React from 'react'
+import { IconComponent } from '../../types'
 
-export const SushiWithTextIcon = (props: React.ComponentProps<'svg'>) => {
+export const SushiWithTextIcon: IconComponent = (props) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 116 28">
       <path

@@ -39,8 +39,8 @@ export const NetworkCheck: FC<{ chainId: ChainId }> = ({ chainId }) => {
         <Button
           fullWidth
           onClick={() => switchNetwork?.(chainId)}
-          variant="filled"
-          color="blue"
+          
+          
           size="sm"
           className="whitespace-nowrap"
         >

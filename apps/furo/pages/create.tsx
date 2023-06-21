@@ -38,15 +38,7 @@ export default function CreatePage() {
           }}
           shallow={true}
         >
-          <IconButton
-            icon={ArrowLeftIcon}
-            iconProps={{
-              width: 24,
-              height: 24,
-              transparent: true,
-            }}
-            name="Back"
-          />
+          <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">Go back</span>
         </Link>
         <h1 className="text-3xl lg:text-5xl font-semibold max-w-[600px] mt-6">
@@ -97,11 +89,11 @@ export default function CreatePage() {
                       leaveTo="transform translate-y-[32px] opacity-0"
                     >
                       <div className="flex justify-center gap-2">
-                        <Button as="a" href="/furo/stream/create/single" size="lg" className="!rounded-full">
-                          Single stream
+                        <Button asChild size="lg">
+                          <a href="/furo/stream/create/single">Single stream</a>
                         </Button>
-                        <Button as="a" href="/furo/stream/create/multiple" size="lg" className="!rounded-full">
-                          Multiple streams
+                        <Button asChild size="lg">
+                          <a href="/furo/stream/create/multiple">Multiple streams</a>
                         </Button>
                       </div>
                     </Transition>
@@ -152,11 +144,11 @@ export default function CreatePage() {
                       leaveTo="transform translate-y-[32px] opacity-0"
                     >
                       <div className="flex justify-center gap-2">
-                        <Button as="a" href="/furo/vesting/create/single" size="lg" className="!rounded-full">
-                          Single vest
+                        <Button asChild size="lg">
+                          <a href="/furo/vesting/create/single">Single vest</a>
                         </Button>
-                        <Button as="a" href="/furo/vesting/create/multiple" size="lg" className="!rounded-full">
-                          Multiple vests
+                        <Button asChild size="lg">
+                          <a href="/furo/vesting/create/multiple">Multiple vests</a>
                         </Button>
                       </div>
                     </Transition>

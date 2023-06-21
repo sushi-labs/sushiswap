@@ -1,6 +1,7 @@
 import * as React from 'react'
+import { IconComponent } from '../../../../types'
 
-export const GnosisCircle = (props: React.ComponentProps<'svg'>) => (
+export const GnosisCircle: IconComponent = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 128 128" {...props}>
     <rect width="128" height="128" fill="url(#paint0_radial_101_1995)" rx="64"></rect>
     <g fill="#00193C" clipPath="url(#clip0_101_1995)">

@@ -205,7 +205,6 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                 <div className="space-y-4">
                   <Button
                     fullWidth
-                    size="xl"
                     loading={isLoading && !isError}
                     onClick={onClick}
                     disabled={isWritePending || Boolean(isLoading) || isError}

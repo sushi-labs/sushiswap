@@ -1,6 +1,7 @@
 import * as React from 'react'
+import { IconComponent } from '../../../../types'
 
-export const KavaNaked = (props: React.ComponentProps<'svg'>) => (
+export const KavaNaked: IconComponent = (props) => (
   <svg {...props} viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clipPath="url(#clip0_101_1759)">
       <path d="M43.0347 24H29.0693V104H43.0347V24Z" fill="#FF433E" />

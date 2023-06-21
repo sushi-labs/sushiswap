@@ -5,7 +5,7 @@ import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { FC, useCallback } from 'react'
 
 import { usePoolPositionRewards } from '../../PoolPositionRewardsProvider'
-import Button from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 
@@ -61,9 +61,9 @@ export const PoolActionBarPositionRewards: FC<PoolActionBarPositionRewardsProps>
           })}
         </div>
         <div className="px-2 mt-3">
-          <Checker.Connect fullWidth size="xl">
-            <Checker.Network fullWidth size="xl" chainId={pool.chainId}>
-              <Button size="xl" fullWidth onClick={harvest}>
+          <Checker.Connect fullWidth>
+            <Checker.Network fullWidth chainId={pool.chainId}>
+              <Button fullWidth onClick={harvest}>
                 Claim
               </Button>
             </Checker.Network>

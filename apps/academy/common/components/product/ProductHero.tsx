@@ -4,12 +4,13 @@ import { FC, ReactNode, useLayoutEffect, useState } from 'react'
 
 import { ProductStat, ProductStats } from './'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { IconComponent } from '@sushiswap/ui/future/types'
 
 interface ProductHero {
   productName: ReactNode
   productDescription: string
   productUrl: string
-  buttonIcon: JSX.Element
+  buttonIcon: IconComponent
   buttonText?: string
   image?: JSX.Element
   productStats?: ProductStat[]
@@ -56,15 +57,8 @@ export const ProductHero: FC<ProductHero> = ({
             {productDescription}
           </h3>
 
-          <Button
-            as="a"
-            href={productUrl}
-            target="_blank"
-            size="lg"
-            className="mt-16 rounded-lg"
-            startIcon={buttonIcon}
-          >
-            {buttonText}
+          <Button asChild className="mt-16" icon={buttonIcon}>
+            <a href={productUrl}>{buttonText}</a>
           </Button>
         </div>
         {image && <div className="hidden md:block">{image}</div>}

@@ -120,21 +120,21 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                         </div>
                         <div className="flex gap-2">
                           <Button
-                            size="xs"
+                            size="sm"
                             onClick={() => setValue(balance?.divide(4)?.toExact() || '')}
                             testdata-id="unstake-25-button"
                           >
                             25%
                           </Button>
                           <Button
-                            size="xs"
+                            size="sm"
                             onClick={() => setValue(balance?.divide(2)?.toExact() || '')}
                             testdata-id="unstake-50-button"
                           >
                             50%
                           </Button>
                           <Button
-                            size="xs"
+                            size="sm"
                             onClick={() => setValue(balance?.toExact() || '')}
                             testdata-id="unstake-max-button"
                           >
@@ -155,8 +155,8 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                           {formatUSD(value0 + value1)}
                         </span>
                         <Button
-                          variant="empty"
-                          size="xs"
+                          variant="ghost"
+                          size="sm"
                           onClick={() => setValue(balance?.toExact() || '')}
                           className="!px-0"
                         >

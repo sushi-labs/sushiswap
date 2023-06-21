@@ -1,4 +1,6 @@
-export const GithubIcon = (props: React.ComponentProps<'svg'>) => {
+import { IconComponent } from '../../types'
+
+export const GithubIcon: IconComponent = (props) => {
   return (
     <svg
       viewBox="0 0 256 250"

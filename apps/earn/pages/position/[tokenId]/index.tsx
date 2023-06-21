@@ -164,15 +164,7 @@ const Position: FC = () => {
           href={`/${chainId}:${positionDetails?.address}`}
           shallow={true}
         >
-          <IconButton
-            icon={ArrowLeftIcon}
-            iconProps={{
-              width: 24,
-              height: 24,
-              transparent: true,
-            }}
-            name="Back"
-          />
+          <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">Go back to pool</span>
         </Link>
         <PoolHeader
@@ -195,8 +187,8 @@ const Position: FC = () => {
           <RadioGroup.Option
             value={SelectedTab.IncreaseLiq}
             as={Button}
-            startIcon={<PlusIcon width={18} height={18} />}
-            variant="outlined"
+            icon={PlusIcon}
+            variant="secondary"
             color={tab === SelectedTab.IncreaseLiq ? 'blue' : 'default'}
           >
             Increase Liquidity
@@ -204,8 +196,8 @@ const Position: FC = () => {
           <RadioGroup.Option
             value={SelectedTab.DecreaseLiq}
             as={Button}
-            startIcon={<MinusIcon width={18} height={18} />}
-            variant="outlined"
+            icon={MinusIcon}
+            variant="secondary"
             color={tab === SelectedTab.DecreaseLiq ? 'blue' : 'default'}
             testdata-id="decrease-liquidity-button"
           >
@@ -223,7 +215,7 @@ const Position: FC = () => {
               modules={[SettingsModule.SlippageTolerance]}
             >
               {({ setOpen }) => (
-                <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
+                <Button variant="secondary" onClick={() => setOpen(true)}>
                   <CogIcon width={24} height={24} />
                 </Button>
               )}
@@ -307,13 +299,13 @@ const Position: FC = () => {
                 </div>
                 <ConcentratedLiquidityHarvestButton account={address} chainId={chainId}>
                   {({ write, isLoading }) => (
-                    <Checker.Connect size="xs" variant="empty" className="!h-[24px] font-bold">
-                      <Checker.Network size="xs" variant="empty" className="!h-[24px] font-bold" chainId={chainId}>
+                    <Checker.Connect size="sm" variant="ghost" className="!h-[24px] font-bold">
+                      <Checker.Network size="sm" variant="ghost" className="!h-[24px] font-bold" chainId={chainId}>
                         <Button
                           disabled={isLoading}
                           onClick={() => write?.()}
-                          size="xs"
-                          variant="empty"
+                          size="sm"
+                          variant="ghost"
                           className="!h-[24px] font-bold"
                         >
                           Harvest
@@ -367,13 +359,13 @@ const Position: FC = () => {
                 chainId={chainId}
               >
                 {({ sendTransaction, isLoading }) => (
-                  <Checker.Connect size="xs" variant="empty" className="!h-[24px] font-bold">
-                    <Checker.Network size="xs" variant="empty" className="!h-[24px] font-bold" chainId={chainId}>
+                  <Checker.Connect size="sm" variant="ghost" className="!h-[24px] font-bold">
+                    <Checker.Network size="sm" variant="ghost" className="!h-[24px] font-bold" chainId={chainId}>
                       <Button
                         disabled={isLoading}
                         onClick={() => sendTransaction?.()}
-                        size="xs"
-                        variant="empty"
+                        size="sm"
+                        variant="ghost"
                         className="!h-[24px] font-bold"
                       >
                         Collect
@@ -418,9 +410,9 @@ const Position: FC = () => {
                   <RadioGroup.Option
                     value={false}
                     as={Button}
-                    size="xs"
+                    size="sm"
                     color={invert ? 'default' : 'blue'}
-                    variant="empty"
+                    variant="ghost"
                     className="!h-[24px] font-bold"
                   >
                     {_token0.symbol}
@@ -429,8 +421,8 @@ const Position: FC = () => {
                     value={true}
                     as={Button}
                     color={invert ? 'blue' : 'default'}
-                    size="xs"
-                    variant="empty"
+                    size="sm"
+                    variant="ghost"
                     className="!h-[24px] font-bold"
                   >
                     {_token1.symbol}

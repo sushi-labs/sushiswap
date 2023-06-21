@@ -103,8 +103,8 @@ const _Home: FC = () => {
               </div>
             )}
             <div className="flex justify-center">
-              <Button as="a" href="/blog/archive" color="default" variant="outlined">
-                View Archive
+              <Button asChild variant="secondary">
+                <a href="/blog/archive">View Archive</a>
               </Button>
             </div>
           </Container>

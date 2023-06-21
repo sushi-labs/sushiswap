@@ -23,11 +23,11 @@ export const TableFiltersNetwork: FC = () => {
     >
       {({ open }) => (
         <div className="relative z-[100]">
-          <Listbox.Button as={Button} variant="outlined" size="lg" color="default">
+          <Listbox.Button as={Button} variant="secondary">
             Networks{' '}
             <ChevronDownIcon
-              width={24}
-              height={24}
+              width={20}
+              height={20}
               className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
             />
           </Listbox.Button>

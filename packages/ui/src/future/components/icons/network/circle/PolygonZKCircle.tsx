@@ -1,6 +1,7 @@
 import * as React from 'react'
+import { IconComponent } from '../../../../types'
 
-export const PolygonZKCircle = (props: React.ComponentProps<'svg'>) => (
+export const PolygonZKCircle: IconComponent = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 129 128" {...props}>
     <rect width="128" height="128" x="0.265" fill="#8247E5" rx="64"></rect>
     <g fill="#fff" clipPath="url(#clip0_833_64)">

@@ -96,8 +96,6 @@ export const SearchInput: FC<SearchInput> = ({ ref, handleSearch, isTopOfPage, s
             )}
             icon={MagnifyingGlassIcon}
             iconProps={{
-              width: 20,
-              height: 20,
               className: isMobileAndSticky ? 'fill-slate-500' : 'fill-[#3B7EF6] sm:fill-white',
             }}
             name="Search"

@@ -6,6 +6,7 @@ import { SushiIcon } from '@sushiswap/ui/future/components/icons'
 import { Container } from '@sushiswap/ui/future/components/container'
 import { useAccount, Address } from '@sushiswap/wagmi'
 import { FuroTableType, StreamTable } from './Table'
+import { Toggle } from '@sushiswap/ui/future/components/toggle'
 
 export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress }) => {
   const { address: account } = useAccount()
@@ -34,14 +35,8 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
                 </span>
                 <div className="relative z-10 mt-2 group">
                   <div className="flex items-center w-full">
-                    <Button
-                      as="a"
-                      href="/furo/create"
-                      variant="filled"
-                      className="text-blue font-medium !rounded-full"
-                      size="lg"
-                    >
-                      Pay Someone
+                    <Button asChild size="xl">
+                      <a href="/furo/create">Pay Someone</a>
                     </Button>
                   </div>
                 </div>
@@ -77,26 +72,25 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
           <div className="flex items-center gap-2 mb-4">
             <Tab as={Fragment}>
               {({ selected }) => (
-                <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
+                <Toggle size="sm" pressed={selected}>
                   Incoming
-                </Button>
+                </Toggle>
               )}
             </Tab>
             <Tab as={Fragment}>
               {({ selected }) => (
-                <Button size="sm" variant={selected ? 'outlined' : 'empty'} color="default">
+                <Toggle size="sm" pressed={selected}>
                   Outgoing
-                </Button>
+                </Toggle>
               )}
             </Tab>
-            <Button
-              variant={showActiveIncoming ? 'outlined' : 'empty'}
-              color={showActiveIncoming ? 'blue' : 'default'}
-              onClick={() => setShowActiveIncoming((prevState) => !prevState)}
+            <Toggle
+              pressed={showActiveIncoming}
+              onPressedChange={() => setShowActiveIncoming((prevState) => !prevState)}
               size="sm"
             >
               Active
-            </Button>
+            </Toggle>
           </div>
           <Tab.Panels>
             <Tab.Panel>

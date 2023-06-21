@@ -14,7 +14,7 @@ export const ExpertMode: FC = () => {
       className="!bg-transparent cursor-default"
       as="div"
       icon={LightBulbIcon}
-      iconProps={{ width: 20, height: 20, className: '!text-red' }}
+      iconProps={{ className: '!text-red' }}
       title="Expert mode"
       subtitle="Enabling Expert Mode will allow for high slippage trades. Only use if you are an advanced user and know what you are doing. Use at your own risk."
       value={

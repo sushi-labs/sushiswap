@@ -1,6 +1,7 @@
 import React from 'react'
+import { IconComponent } from '../../types'
 
-export const CalendarIcon = (props: React.ComponentProps<'svg'>) => {
+export const CalendarIcon: IconComponent = (props) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 24 24">
       <path

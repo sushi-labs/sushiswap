@@ -1,6 +1,7 @@
 import * as React from 'react'
+import { IconComponent } from '../../../../types'
 
-export const MoonbeamCircle = (props: React.ComponentProps<'svg'>) => (
+export const MoonbeamCircle: IconComponent = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 128 128" {...props}>
     <rect width="128" height="128" fill="url(#paint0_radial_303_506)" rx="64"></rect>
     <path

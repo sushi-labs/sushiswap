@@ -1,6 +1,7 @@
 import React from 'react'
+import { IconComponent } from '../../types'
 
-export const DangerousIcon = (props: React.ComponentProps<'svg'>) => {
+export const DangerousIcon: IconComponent = (props) => {
   return (
     <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path

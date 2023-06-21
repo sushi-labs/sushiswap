@@ -92,8 +92,7 @@ export const ConfirmationDialog: FC<ConfirmationDialog> = ({
           <Button
             {...(buttonSuccessLink ? { as: 'a', href: buttonSuccessLink } : { onClick: () => setOpen(false) })}
             fullWidth
-            color="blue"
-            variant="outlined"
+            variant="secondary"
             size="xl"
             testId={testId}
           >

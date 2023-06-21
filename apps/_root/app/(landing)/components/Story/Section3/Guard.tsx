@@ -1,4 +1,3 @@
-import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Container } from '@sushiswap/ui/future/components/container'
 import { motion } from 'framer-motion'
@@ -53,15 +52,10 @@ export const Guard: FC = () => {
                   >
                     {DATA.title}
                   </motion.h1>
-                  <span className="text-lg text-center lg:text-left mt-2">
+                  <span className="text-lg text-center lg:text-left mt-2 mb-3">
                     Enable SushiGuard and earn gas refunds on all of your transactions.
                   </span>
-                  <Button
-                    onClick={() => setOpen(true)}
-                    className="!p-0 mt-3"
-                    variant="empty"
-                    endIcon={<ChevronRightIcon width={16} height={16} />}
-                  >
+                  <Button onClick={() => setOpen(true)} variant="secondary">
                     Learn More
                   </Button>
                 </motion.div>

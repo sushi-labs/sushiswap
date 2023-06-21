@@ -50,13 +50,7 @@ export const Drawer: FC<Drawer> = ({ children, isOpen, onClose, className, heade
           <div className={classNames('relative overflow-y-auto', className)}>
             <div className="z-[1] py-[34px] sticky top-0 bg-slate-900">{header}</div>
             <div className="z-[1] fixed right-6 top-[38px]" onClick={onClose}>
-              <IconButton
-                icon={XMarkIcon}
-                iconProps={{ width: 20, height: 20 }}
-                className="w-6 h-6 text-slate-50/50"
-                onClick={onClose}
-                name="Close"
-              />
+              <IconButton icon={XMarkIcon} onClick={onClose} name="Close" />
             </div>
             <div className="px-[30px]">{children}</div>
           </div>

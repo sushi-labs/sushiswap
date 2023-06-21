@@ -1,6 +1,7 @@
 import * as React from 'react'
+import { IconComponent } from '../../types'
 
-export const EtherscanIcon = (props: React.ComponentProps<'svg'>) => (
+export const EtherscanIcon: IconComponent = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 293.775 293.671" {...props}>
     <path
       data-name="Path 1"

@@ -27,6 +27,7 @@ import { PolygonCircle } from './PolygonCircle'
 import { TelosCircle } from './TelosCircle'
 import { PolygonZKCircle } from './PolygonZKCircle'
 import { ThunderCoreCircle } from './ThunderCoreCircle'
+import { IconComponent } from '../../../../types'
 
 export * from './ArbitrumCircle'
 export * from './ArbitrumNovaCircle'
@@ -55,7 +56,7 @@ export * from './TelosCircle'
 export * from './PolygonZKCircle'
 export * from './ThunderCoreCircle'
 
-export const NETWORK_CIRCLE_ICON: Record<number, (props: React.ComponentProps<'svg'>) => JSX.Element> = {
+export const NETWORK_CIRCLE_ICON: Record<number, IconComponent> = {
   [ChainId.ETHEREUM]: EthereumCircle,
   [ChainId.FANTOM]: FantomCircle,
   [ChainId.POLYGON]: PolygonCircle,

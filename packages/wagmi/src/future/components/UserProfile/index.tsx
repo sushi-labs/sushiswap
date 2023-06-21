@@ -14,6 +14,8 @@ import { ConnectView } from './ConnectView'
 import { DefaultView } from './DefaultView'
 import { TransactionsView } from './TransactionsView'
 import { SettingsView } from './SettingsView'
+import {PopoverNew, PopoverTrigger, PopoverContent} from "@sushiswap/ui/future/components/popovernew";
+import {ConnectButton} from "../ConnectButton";
 
 export enum ProfileView {
   Disconnected,
@@ -38,12 +40,37 @@ export const UserProfile: FC<ProfileProps> = () => {
 
   const chainId = (chain?.id as ChainId) || ChainId.ETHEREUM
 
+  if (!address) return <ConnectButton variant="secondary" />
+
+  return (
+    <PopoverNew>
+      <PopoverTrigger asChild>
+        <Button variant="secondary">
+          {avatar ? (
+              <img alt="ens-avatar" src={avatar} width={20} height={20} className="rounded-full" />
+          ) : <JazzIcon diameter={20} address={address} />}
+          {shortenAddress(address, isSm ? 3 : 2)}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-80" onOpenAutoFocus={e => e.preventDefault()}>
+        {!address && <ConnectView onSelect={close} />}
+        {view === ProfileView.Default && address && (
+            <DefaultView chainId={chainId} address={address} setView={setView} />
+        )}
+        {view === ProfileView.Settings && <SettingsView setView={setView} />}
+        {view === ProfileView.Transactions && address && (
+            <TransactionsView setView={setView} address={address} />
+        )}
+      </PopoverContent>
+    </PopoverNew>
+  )
+
   if (isSm)
     return (
       <Popover>
         {({ open, close }) => (
           <>
-            <Popover.Button as={Button} variant="outlined" color="default" size="md" className="!font-medium">
+            <Popover.Button as={Button} variant="secondary"  className="!font-medium">
               {address ? (
                 <>
                   <div className="hidden md:flex">
@@ -103,7 +130,7 @@ export const UserProfile: FC<ProfileProps> = () => {
     <Popover>
       {({ open, close }) => (
         <>
-          <Popover.Button as={Button} variant="outlined" color="default" size="md" className="!font-medium">
+          <Popover.Button as={Button} variant="secondary"  className="!font-medium">
             {address ? (
               <>
                 <div className="hidden md:flex">

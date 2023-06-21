@@ -37,7 +37,7 @@ export const Breadcrumb: FC<Breadcrumb> = ({ article }) => {
           </Typography>
         </a>
       </Link>
-      <IconButton icon={ShareIcon} iconProps={{ width: 20, height: 20 }} name="Share" onClick={onShare} />
+      <IconButton icon={ShareIcon} name="Share" onClick={onShare} />
     </Container>
   )
 }

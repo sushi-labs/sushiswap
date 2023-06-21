@@ -1,4 +1,6 @@
-export const DiscordIcon = (props: React.ComponentProps<'svg'>) => {
+import { IconComponent } from '../../types'
+
+export const DiscordIcon: IconComponent = (props) => {
   return (
     <svg
       viewBox="0 0 256 199"

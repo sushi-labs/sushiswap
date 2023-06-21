@@ -4,6 +4,7 @@ import { Currency } from '@sushiswap/currency'
 import Image, { ImageProps } from 'next/image'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { cloudinaryImageLoader } from '../../../cloudinary'
+import { classNames } from '../../../index'
 
 const AvaxLogo = 'avax.svg'
 const BnbLogo = 'bnb.svg'
@@ -88,7 +89,7 @@ export interface IconProps extends Omit<ImageProps, 'src' | 'alt'> {
   disableLink?: boolean
 }
 
-export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
+export const Icon: FC<IconProps> = ({ currency, disableLink, className, ...rest }) => {
   const [error, setError] = useState(false)
 
   const src = useMemo(() => {
@@ -150,7 +151,7 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
         onError={() => setError(true)}
         src={src}
         alt={currency.name || currency.symbol || currency.wrapped.address}
-        className="rounded-full"
+        className={classNames(className, 'rounded-full overflow-hidden')}
         width={rest.width}
         height={rest.height}
         loader={cloudinaryImageLoader}
@@ -166,8 +167,8 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
         key={src}
         onError={() => setError(true)}
         src={src}
+        className={classNames(className, 'rounded-full overflow-hidden')}
         alt={currency.name || currency.symbol || currency.wrapped.address}
-        className="rounded-full"
         width={rest.width}
         height={rest.height}
         loader={cloudinaryImageLoader}

@@ -69,15 +69,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
       <Layout>
         <div className="flex flex-col gap-2">
           <Link className="flex items-center gap-4 mb-2 group" href="/" shallow={true}>
-            <IconButton
-              icon={ArrowLeftIcon}
-              iconProps={{
-                width: 24,
-                height: 24,
-                transparent: true,
-              }}
-              name="Back"
-            />
+            <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
             <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
               Go back to pools list
             </span>
@@ -249,14 +241,13 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
             loading={poolState === PairState.LOADING}
           />
           <Checker.Root>
-            <Checker.Connect fullWidth size="xl">
-              <Checker.Network fullWidth size="xl" chainId={chainId}>
-                <Checker.Amounts fullWidth size="xl" chainId={chainId} amounts={[parsedInput0, parsedInput1]}>
+            <Checker.Connect fullWidth>
+              <Checker.Network fullWidth chainId={chainId}>
+                <Checker.Amounts fullWidth chainId={chainId} amounts={[parsedInput0, parsedInput1]}>
                   {pool && isLegacyPool(pool) && isUniswapV2Router02ChainId(chainId) && (
                     <>
                       <Checker.ApproveERC20
                         id="approve-token-0"
-                        size="xl"
                         className="whitespace-nowrap"
                         fullWidth
                         amount={parsedInput0}
@@ -264,19 +255,13 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
                       >
                         <Checker.ApproveERC20
                           id="approve-token-1"
-                          size="xl"
                           className="whitespace-nowrap"
                           fullWidth
                           amount={parsedInput1}
                           contract={getSushiSwapRouterContractConfig(chainId).address as Address}
                         >
                           <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
-                            <Button
-                              fullWidth
-                              onClick={() => setOpen(true)}
-                              size="xl"
-                              testdata-id="add-liquidity-button"
-                            >
+                            <Button fullWidth onClick={() => setOpen(true)} testdata-id="add-liquidity-button">
                               {title}
                             </Button>
                           </Checker.Success>

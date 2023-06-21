@@ -75,8 +75,8 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
         </>
       )}
       <div className="flex justify-end gap-2 mt-4 mb-2">
-        <Button as="a" size="sm" fullWidth href={`/pools/${row.id}/add`}>
-          Earn
+        <Button asChild fullWidth>
+          <a href={`/pools/${row.id}/add`}>Earn</a>
         </Button>
       </div>
     </div>

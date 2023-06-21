@@ -15,7 +15,7 @@ import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 import { useSWRConfig } from 'swr'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import Button from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { APPROVE_TAG_STAKE } from '../../lib/constants'
 
 interface AddSectionStakeProps {
@@ -104,11 +104,10 @@ const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(({ pool, chef
           reserve1={reserve1}
           liquidityToken={liquidityToken}
         >
-          <Checker.Connect size="xl" fullWidth>
-            <Checker.Network size="xl" fullWidth chainId={pool.chainId}>
-              <Checker.Amounts size="xl" fullWidth chainId={pool.chainId} amounts={[amount]}>
+          <Checker.Connect fullWidth>
+            <Checker.Network fullWidth chainId={pool.chainId}>
+              <Checker.Amounts fullWidth chainId={pool.chainId} amounts={[amount]}>
                 <Checker.ApproveERC20
-                  size="xl"
                   fullWidth
                   id="stake-approve-slp"
                   amount={amount}
@@ -119,8 +118,6 @@ const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(({ pool, chef
                     <Button
                       onClick={() => sendTransaction?.()}
                       fullWidth
-                      size="xl"
-                      variant="filled"
                       disabled={!approved || isWritePending}
                       testId="stake-liquidity"
                     >

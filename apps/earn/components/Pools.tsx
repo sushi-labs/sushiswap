@@ -30,7 +30,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
         <section className="flex flex-col justify-between gap-12 lg:flex-row lg:items-center">
           <div className="flex flex-col items-center flex-grow gap-6 lg:items-start">
             <div className="flex flex-col gap-2">
-              <span className="text-center lg:text-left font-semibold text-5xl text-gray-800 dark:text-slate-200 leading-[1.2]">
+              <span className="tracking-tight text-center lg:text-left font-semibold text-5xl text-gray-800 dark:text-slate-200">
                 Provide Liquidity
                 <span className="font-medium text-gray-500 dark:text-slate-500">
                   <br /> and receive fees & rewards<sup className="text-sm top-[-24px]">1</sup>
@@ -39,17 +39,15 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
             </div>
             <div className="relative z-10 group">
               <div className="flex items-center w-full">
-                <Button
-                  as="a"
-                  variant="filled"
+                <a
                   href={
                     isRouteProcessor3ChainId(chainId) ? `/pools/add?chainId=${chainId}` : `/pools/add/v2/${chainId}`
                   }
-                  className="text-xl font-medium rounded-l-full text-blue"
-                  size="lg"
                 >
-                  Create Position
-                </Button>
+                  <Button asChild size="lg" className="rounded-r-none">
+                    Create Position
+                  </Button>
+                </a>
                 <Popover as={Fragment}>
                   {({ open }) => (
                     <>
@@ -57,7 +55,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                         as="button"
                         className={classNames(
                           open ? 'bg-blue-600' : '',
-                          'bg-blue hover:bg-blue-600 h-[44px] w-[44px] flex items-center justify-center rounded-r-full text-white'
+                          'bg-blue hover:bg-blue-600 h-[44px] w-[44px] flex items-center justify-center rounded-r-xl text-white'
                         )}
                       >
                         <ChevronDownIcon width={24} height={24} />

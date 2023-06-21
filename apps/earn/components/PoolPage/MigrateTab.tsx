@@ -427,10 +427,9 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
             <div className="p-6 font-medium bg-blue/10 text-blue rounded-xl">
               You have staked liquidity balance. Please unstake and claim your rewards before migrating.
             </div>
-            <Checker.Connect size="xl" fullWidth>
-              <Checker.Network size="xl" fullWidth chainId={pool.chainId}>
+            <Checker.Connect fullWidth>
+              <Checker.Network fullWidth chainId={pool.chainId}>
                 <Checker.ApproveERC20
-                  size="xl"
                   fullWidth
                   id="approve-token0"
                   amount={stakedBalance}
@@ -441,8 +440,6 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                     <Button
                       onClick={() => sendTransaction?.()}
                       fullWidth
-                      size="xl"
-                      variant="filled"
                       disabled={!approved || isWritePending}
                       testId="unstake-liquidity"
                     >
@@ -567,28 +564,19 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
               </div>
             )}
           </SelectPricesWidget>
-          <Checker.Connect size="xl" fullWidth>
-            <Checker.Network size="xl" fullWidth chainId={pool.chainId}>
+          <Checker.Connect fullWidth>
+            <Checker.Network fullWidth chainId={pool.chainId}>
               <Checker.Custom
                 showGuardIfTrue={!balance?.[FundSource.WALLET].greaterThan(ZERO)}
-                guard={
-                  <Button size="xl" fullWidth>
-                    Not enough balance
-                  </Button>
-                }
+                guard={<Button fullWidth>Not enough balance</Button>}
               >
                 <Checker.Custom
                   showGuardIfTrue={Boolean(
                     !position || position.amount0.equalTo(ZERO) || position.amount1.equalTo(ZERO)
                   )}
-                  guard={
-                    <Button size="xl" fullWidth>
-                      Enter valid range
-                    </Button>
-                  }
+                  guard={<Button fullWidth>Enter valid range</Button>}
                 >
                   <Checker.ApproveERC20
-                    size="xl"
                     fullWidth
                     id="approve-token0"
                     amount={balance?.[FundSource.WALLET] ?? undefined}
@@ -598,7 +586,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                     <Checker.Success tag={APPROVE_TAG_MIGRATE}>
                       <Modal.Trigger tag={MODAL_MIGRATE_ID}>
                         {({ open }) => (
-                          <Button onClick={open} fullWidth size="xl" variant="filled" testId="unstake-liquidity">
+                          <Button onClick={open} fullWidth testId="unstake-liquidity">
                             Migrate
                           </Button>
                         )}
@@ -754,7 +742,6 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
               <div className="space-y-4">
                 <Button
                   fullWidth
-                  size="xl"
                   loading={isLoading && !isError}
                   onClick={() => writeAsync?.().then(() => confirm())}
                   disabled={isMigrateLoading || isError}

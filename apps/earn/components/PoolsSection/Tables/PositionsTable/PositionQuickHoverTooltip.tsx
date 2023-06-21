@@ -63,18 +63,14 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
         </span>
       </div>
       <div className="flex gap-2">
-        <Link.Internal href={`/${row.pool.id}/add`} passHref={true}>
-          <Button as="a" size="xs" variant="outlined">
-            <PlusIcon width={16} height={16} /> Deposit
-          </Button>
-        </Link.Internal>
-        <Link.Internal href={`/${row.pool.id}/remove`} passHref={true}>
-          <Button as="a" size="xs" variant="outlined">
-            <MinusIcon width={16} height={16} /> Withdraw
-          </Button>
-        </Link.Internal>
-        <Button as="a" size="xs" variant="outlined" onClick={_harvest}>
-          <ArrowDownIcon width={16} height={16} /> Claim
+        <Button icon={PlusIcon} asChild size="sm" variant="secondary">
+          <a href={`/${row.pool.id}/add`}>Deposit</a>
+        </Button>
+        <Button icon={MinusIcon} asChild size="sm" variant="secondary">
+          <a href={`/${row.pool.id}/remove`}>Withdraw</a>
+        </Button>
+        <Button icon={ArrowDownIcon} size="sm" variant="secondary" onClick={_harvest}>
+          Claim
         </Button>
       </div>
 
@@ -91,8 +87,6 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
                       icon={Currency.Icon}
                       iconProps={{
                         currency: reward.currency,
-                        width: 24,
-                        height: 24,
                       }}
                       title={
                         <div className="flex items-baseline gap-2">
@@ -125,8 +119,6 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
                 icon={Currency.Icon}
                 iconProps={{
                   currency: underlying0?.currency,
-                  width: 24,
-                  height: 24,
                 }}
                 title={
                   <div className="flex items-baseline gap-2">
@@ -144,8 +136,6 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
                 icon={Currency.Icon}
                 iconProps={{
                   currency: underlying1?.currency,
-                  width: 24,
-                  height: 24,
                 }}
                 title={
                   <div className="flex items-baseline gap-2">
@@ -171,8 +161,6 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
                 icon={Currency.Icon}
                 iconProps={{
                   currency: stakedUnderlying0?.currency,
-                  width: 24,
-                  height: 24,
                 }}
                 title={
                   <div className="flex items-baseline gap-2">
@@ -187,8 +175,6 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
                 icon={Currency.Icon}
                 iconProps={{
                   currency: stakedUnderlying1?.currency,
-                  width: 24,
-                  height: 24,
                 }}
                 title={
                   <div className="flex items-baseline gap-2">

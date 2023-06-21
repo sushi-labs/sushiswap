@@ -320,7 +320,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
                 dstTxHash={lzData?.dstTxHash}
               />
             </div>
-            <Button fullWidth color="blue" variant="outlined" size="xl" onClick={() => setOpen(false)}>
+            <Button size="xl" fullWidth onClick={() => setOpen(false)}>
               {failedState(stepStates) ? 'Try again' : finishedState(stepStates) ? 'Make another swap' : 'Close'}
             </Button>
           </div>

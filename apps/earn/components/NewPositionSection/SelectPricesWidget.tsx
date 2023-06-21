@@ -22,6 +22,7 @@ import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 import { useConcentratedLiquidityPositionsFromTokenId } from '@sushiswap/wagmi/future/hooks'
 import { FeeAmount, V3ChainId } from '@sushiswap/v3-sdk'
 import { Collapsible } from '@sushiswap/ui/future/components/animation/Collapsible'
+import { Toggle } from '@sushiswap/ui/future/components/toggle'
 
 interface SelectPricesWidget {
   chainId: V3ChainId
@@ -166,28 +167,18 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             </div>
             {switchTokens ? (
               <div className="flex gap-2 rounded-xl bg-gray-100 dark:bg-white/[0.02] p-1">
-                <Button
-                  onClick={switchTokens}
-                  variant={isSorted ? 'outlined' : 'empty'}
-                  color={isSorted ? 'blue' : 'default'}
-                  size="xs"
-                >
+                <Toggle onPressedChange={switchTokens} pressed={isSorted} size="sm">
                   {isSorted ? token0?.symbol : token1?.symbol}
-                </Button>
-                <Button
-                  onClick={switchTokens}
-                  variant={isSorted ? 'empty' : 'outlined'}
-                  color={isSorted ? 'default' : 'blue'}
-                  size="xs"
-                >
+                </Toggle>
+                <Toggle onPressedChange={switchTokens} pressed={!isSorted} size="sm">
                   {isSorted ? token1?.symbol : token0?.symbol}
-                </Button>
+                </Toggle>
               </div>
             ) : (
               <div />
             )}
             {!noLiquidity && (
-              <Button size="xs" variant="empty" color="blue" onClick={getSetFullRange}>
+              <Button size="sm" variant="ghost" onClick={getSetFullRange}>
                 Full Range
               </Button>
             )}

@@ -1,6 +1,7 @@
 import * as React from 'react'
+import { IconComponent } from '../../../../types'
 
-export const OkexNaked = (props: React.ComponentProps<'svg'>) => (
+export const OkexNaked: IconComponent = (props) => (
   <svg
     viewBox="0 0 128 128"
     fill="none"

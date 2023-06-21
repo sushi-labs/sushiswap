@@ -51,7 +51,7 @@ const RP2ClaimPage = () => {
             <List.Control>
               {!address ? (
                 <List.KeyValue flex title="No user connected">
-                  <ConnectButton size="xs" color="blue" hideChevron />
+                  <ConnectButton size="sm" />
                 </List.KeyValue>
               ) : isLoading ? (
                 <List.KeyValue skeleton />
@@ -74,7 +74,7 @@ const RP2ClaimPage = () => {
             <List.Control>
               {!address ? (
                 <List.KeyValue flex title="No user connected">
-                  <ConnectButton size="xs" color="blue" hideChevron />
+                  <ConnectButton size="sm" />
                 </List.KeyValue>
               ) : claims.length > 0 ? (
                 claims.map(([chainId, claim]) => (

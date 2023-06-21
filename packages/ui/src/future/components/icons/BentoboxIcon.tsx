@@ -1,6 +1,7 @@
 import React from 'react'
+import { IconComponent } from '../../types'
 
-export const BentoboxIcon = (props: React.ComponentProps<'svg'>) => {
+export const BentoboxIcon: IconComponent = (props) => {
   return (
     <svg {...props} viewBox="0 0 42 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
       <path

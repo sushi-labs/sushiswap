@@ -27,7 +27,7 @@ export const ChainFilter: FC<ChainFilterProps> = ({ availableChainIds }) => {
     >
       {({ open }) => (
         <div className="relative z-[100]">
-          <Listbox.Button as={Button} variant="outlined" size="lg" color="default">
+          <Listbox.Button as={Button} variant="secondary">
             Networks{' '}
             <ChevronDownIcon
               width={24}

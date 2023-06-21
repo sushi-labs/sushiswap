@@ -7,6 +7,7 @@ import { SlippageTolerance } from './SlippageTolerance'
 import { RoutingApi } from './RoutingApi'
 import { Dialog } from '../dialog'
 import { List } from '../list/List'
+import { IconButton } from '../iconbutton'
 
 export enum SettingsModule {
   CarbonOffset = 'CarbonOffset',
@@ -36,12 +37,7 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules, children, o
       {children ? (
         children({ setOpen })
       ) : (
-        <Cog6ToothIcon
-          onClick={() => setOpen(true)}
-          width={26}
-          height={26}
-          className="cursor-pointer hover:animate-spin-slow hover:dark:text-slate-50 dark:text-slate-200 text-gray-700 hover:text-gray-900 mr-3"
-        />
+        <IconButton size="sm" name="Settings" icon={Cog6ToothIcon} onClick={() => setOpen(true)} />
       )}
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="flex flex-col gap-3">

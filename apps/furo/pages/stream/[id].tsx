@@ -90,15 +90,7 @@ const _Streams: FC = () => {
               }}
               shallow={true}
             >
-              <IconButton
-                icon={ArrowLeftIcon}
-                iconProps={{
-                  width: 24,
-                  height: 24,
-                  transparent: true,
-                }}
-                name="Back"
-              />
+              <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
               <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
                 Go back to dashboard
               </span>
@@ -170,15 +162,7 @@ const _Streams: FC = () => {
               }}
               shallow={true}
             >
-              <IconButton
-                icon={ArrowLeftIcon}
-                iconProps={{
-                  width: 24,
-                  height: 24,
-                  transparent: true,
-                }}
-                name="Back"
-              />
+              <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
               <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
                 Go back to dashboard
               </span>
@@ -208,9 +192,9 @@ const _Streams: FC = () => {
                   <Button
                     disabled={disabled}
                     onClick={() => setOpen(true)}
-                    startIcon={<DownloadIcon width={18} height={18} />}
+                    icon={DownloadIcon}
                     testId="stream-withdraw"
-                    variant="outlined"
+                    variant="secondary"
                   >
                     Withdraw
                   </Button>
@@ -225,9 +209,9 @@ const _Streams: FC = () => {
                 {({ setOpen }) => (
                   <Button
                     onClick={() => setOpen(true)}
-                    startIcon={<ArrowRightIcon width={18} height={18} />}
+                    icon={ArrowRightIcon}
                     testId="stream-transfer"
-                    variant="outlined"
+                    variant="secondary"
                   >
                     Transfer
                   </Button>
@@ -240,12 +224,7 @@ const _Streams: FC = () => {
                 chainId={chainId}
               >
                 {({ setOpen }) => (
-                  <Button
-                    onClick={() => setOpen(true)}
-                    startIcon={<RefreshIcon width={18} height={18} />}
-                    testId="stream-update"
-                    variant="outlined"
-                  >
+                  <Button onClick={() => setOpen(true)} icon={RefreshIcon} testId="stream-update" variant="secondary">
                     Update
                   </Button>
                 )}
@@ -262,9 +241,9 @@ const _Streams: FC = () => {
                   <Button
                     color="red"
                     onClick={() => setOpen(true)}
-                    startIcon={<XIcon width={18} height={18} />}
+                    icon={XIcon}
                     testId="stream-cancel"
-                    variant="outlined"
+                    variant="secondary"
                   >
                     Cancel
                   </Button>

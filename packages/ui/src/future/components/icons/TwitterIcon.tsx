@@ -1,4 +1,6 @@
-export const TwitterIcon = (props: React.ComponentProps<'svg'>) => {
+import { IconComponent } from '../../types'
+
+export const TwitterIcon: IconComponent = (props) => {
   return (
     <svg {...props} viewBox="0 0 19 14" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path

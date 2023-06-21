@@ -80,20 +80,19 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
         onInput0={onChangeToken0TypedAmount}
         onInput1={onChangeToken1TypedAmount}
       >
-        <Checker.Connect fullWidth size="xl">
+        <Checker.Connect fullWidth>
           <Checker.Custom
             showGuardIfTrue={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
             guard={
-              <Button size="xl" fullWidth disabled={true}>
+              <Button fullWidth disabled={true}>
                 Pool Not Found
               </Button>
             }
           >
-            <Checker.Network fullWidth size="xl" chainId={_pool.chainId}>
-              <Checker.Amounts fullWidth size="xl" chainId={_pool.chainId} amounts={[parsedInput0, parsedInput1]}>
+            <Checker.Network fullWidth chainId={_pool.chainId}>
+              <Checker.Amounts fullWidth chainId={_pool.chainId} amounts={[parsedInput0, parsedInput1]}>
                 <Checker.ApproveERC20
                   id="approve-token-0"
-                  size="xl"
                   className="whitespace-nowrap"
                   fullWidth
                   amount={parsedInput0}
@@ -101,14 +100,13 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                 >
                   <Checker.ApproveERC20
                     id="approve-token-1"
-                    size="xl"
                     className="whitespace-nowrap"
                     fullWidth
                     amount={parsedInput1}
                     contract={getSushiSwapRouterContractConfig(chainId).address as Address}
                   >
                     <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
-                      <Button fullWidth onClick={() => setOpen(true)} size="xl">
+                      <Button fullWidth onClick={() => setOpen(true)}>
                         Add Liquidity
                       </Button>
                     </Checker.Success>

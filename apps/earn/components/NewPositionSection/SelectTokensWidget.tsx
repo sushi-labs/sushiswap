@@ -29,8 +29,7 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({ chainId, token0, to
         <TokenSelector id={'token0-token-selector'} selected={token0} chainId={chainId} onSelect={setToken0}>
           {({ open, setOpen }) => (
             <Button
-              size="xl"
-              variant="outlined"
+              variant="secondary"
               color={!token0 ? 'blue' : 'default'}
               id={'token0-select-button'}
               testId={'token0-select'}
@@ -57,8 +56,7 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({ chainId, token0, to
         <TokenSelector id={'token1-token-selector'} selected={token1} chainId={chainId} onSelect={setToken1}>
           {({ open, setOpen }) => (
             <Button
-              size="xl"
-              variant="outlined"
+              variant="secondary"
               color={!token1 ? 'blue' : 'default'}
               id={'token1-select-button'}
               testId={'token1-select'}

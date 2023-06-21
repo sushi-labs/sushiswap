@@ -12,7 +12,7 @@ interface ProductTechnicalDoc {
 
 const DocsButton: FC<{ className: string; url: string }> = ({ className, url }) => (
   <Link.External href={url}>
-    <Button className={classNames(className)} variant="outlined">
+    <Button className={classNames(className)} variant="secondary">
       <ArrowRightIcon width={20} height={20} />
     </Button>
   </Link.External>

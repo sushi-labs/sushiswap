@@ -1,7 +1,8 @@
 import classNames from 'classnames'
 import React, { FC } from 'react'
+import { IconProps } from '../../types'
 
-interface CircleWithText extends React.ComponentProps<'svg'> {
+interface CircleWithText extends IconProps {
   text?: string | number
 }
 

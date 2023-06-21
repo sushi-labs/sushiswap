@@ -72,7 +72,7 @@ export const SearchPanel: FC = () => {
       <div>
         <div className="flex items-center gap-4">
           <Search id="search-input" loading={isLoading} onChange={setQuery} value={query ?? ''} />
-          <Button variant="empty" onClick={onClose} size="md" className="px-0">
+          <Button variant="ghost" onClick={onClose} className="text-blue">
             Cancel
           </Button>
         </div>

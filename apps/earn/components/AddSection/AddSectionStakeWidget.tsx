@@ -104,21 +104,21 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                         </div>
                         <div className="flex gap-2">
                           <Button
-                            size="xs"
+                            size="sm"
                             onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(4)?.toExact() || '')}
                             testdata-id="stake-25-button"
                           >
                             25%
                           </Button>
                           <Button
-                            size="xs"
+                            size="sm"
                             onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(2)?.toExact() || '')}
                             testdata-id="stake-50-button"
                           >
                             50%
                           </Button>
                           <Button
-                            size="xs"
+                            size="sm"
                             onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}
                             testdata-id="stake-max-button"
                           >
@@ -139,8 +139,8 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                           {formatUSD(value0 + value1)}
                         </span>
                         <Button
-                          size="xs"
-                          variant="empty"
+                          size="sm"
+                          variant="ghost"
                           onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}
                           className="!px-0"
                         >

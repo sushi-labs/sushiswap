@@ -8,10 +8,8 @@ import {
 } from '@heroicons/react/24/outline'
 import chains, { ChainId } from '@sushiswap/chain'
 import { Amount, Native } from '@sushiswap/currency'
-import { shortenAddress } from '@sushiswap/format'
 import { ClipboardController } from '@sushiswap/ui/future/components/ClipboardController'
 import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
-import { JazzIcon } from '@sushiswap/ui/future/components/icons/JazzIcon'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import { useBalance, useDisconnect, useEnsAvatar } from 'wagmi'
@@ -49,12 +47,12 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
 
   return (
     <>
-      <div className="flex flex-col gap-8 p-4">
+      <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-2">
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             <IconButton
+                size="sm"
               icon={Cog6ToothIcon}
-              iconProps={{ width: 18, height: 18 }}
               onClick={() => setView(ProfileView.Settings)}
               description="Settings"
               name="Settings"
@@ -62,8 +60,8 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
             <ClipboardController hideTooltip>
               {({ setCopied, isCopied }) => (
                 <IconButton
+                    size="sm"
                   icon={DocumentDuplicateIcon}
-                  iconProps={{ width: 18, height: 18 }}
                   onClick={() => setCopied(address)}
                   description={isCopied ? 'Copied!' : 'Copy Address'}
                   name="Copy"
@@ -72,16 +70,16 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
             </ClipboardController>
             <a target="_blank" href={chains[chainId].getAccountUrl(address)}>
               <IconButton
+                  size="sm"
                   icon={LinkIcon}
-                  iconProps={{ width: 18, height: 18 }}
                   description="View on Explorer"
                   name="View on Explorer"
               />
             </a>
 
             <IconButton
+                size="sm"
               icon={ArrowLeftOnRectangleIcon}
-              iconProps={{ width: 18, height: 18 }}
               onClick={() => disconnect()}
               description="Disconnect"
               name="Disconnect"

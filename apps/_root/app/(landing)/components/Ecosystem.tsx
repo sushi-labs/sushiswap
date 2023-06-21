@@ -1,4 +1,3 @@
-import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Container } from '@sushiswap/ui/future/components/container'
 import { motion } from 'framer-motion'
@@ -142,13 +141,8 @@ export const Ecosystem: FC = () => {
                         >
                           {title}
                         </motion.h1>
-                        <span className="text-lg mt-2 text-center lg:text-left">{summary}</span>
-                        <Button
-                          onClick={() => setOpen(true)}
-                          className="!p-0 mt-3"
-                          variant="empty"
-                          endIcon={<ChevronRightIcon width={16} height={16} />}
-                        >
+                        <span className="text-lg mt-2 text-center lg:text-left mb-3">{summary}</span>
+                        <Button onClick={() => setOpen(true)} variant="secondary">
                           Learn More
                         </Button>
                       </motion.div>

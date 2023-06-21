@@ -7,7 +7,7 @@ import { Dots } from '@sushiswap/ui/future/components/dots'
 import { _useSendTransaction as useSendTransaction, useAccount, useContract, useEnsAddress } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { Button } from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { Stream, Vesting } from '../lib'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
@@ -102,7 +102,8 @@ export const TransferModal: FC<TransferModalProps> = ({
       ) : (
         <Button
           fullWidth
-          startIcon={<PaperAirplaneIcon width={18} height={18} className="transform rotate-45 mt-[-4px] ml-0.5" />}
+          icon={PaperAirplaneIcon}
+          iconProps={{ className: 'transform rotate-45 mt-[-4px] ml-0.5' }}
           onClick={() => setOpen(true)}
         >
           Transfer
@@ -129,10 +130,9 @@ export const TransferModal: FC<TransferModalProps> = ({
             id="ens-input"
             testdata-id="transfer-recipient-input"
           />
-          <Checker.Connect size="xl" fullWidth>
-            <Checker.Network size="xl" fullWidth chainId={chainId}>
+          <Checker.Connect fullWidth>
+            <Checker.Network fullWidth chainId={chainId}>
               <Button
-                size="xl"
                 fullWidth
                 disabled={
                   isWritePending ||

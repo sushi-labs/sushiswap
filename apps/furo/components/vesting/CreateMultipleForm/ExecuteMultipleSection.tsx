@@ -208,22 +208,20 @@ export const ExecuteMultipleSection: FC<{
 
   return (
     <div className="flex justify-end gap-4">
-      <Button size="xl" type="button" variant="empty" onClick={onBack}>
+      <Button type="button" variant="ghost" onClick={onBack}>
         Cancel
       </Button>
-      <Checker.Connect size="xl">
-        <Checker.Network chainId={chainId} size="xl">
+      <Checker.Connect>
+        <Checker.Network chainId={chainId}>
           <Checker.ApproveBentobox
-            size="xl"
             id="create-multiple-vest-approve-bentobox"
             chainId={chainId}
             contract={getFuroVestingRouterContractConfig(chainId).address}
             onSignature={setSignature}
           >
-            <Checker.ApproveERC20Multiple size="xl" id={'create-multiple-vest-approve-token'} amounts={approveAmounts}>
+            <Checker.ApproveERC20Multiple id={'create-multiple-vest-approve-token'} amounts={approveAmounts}>
               <Checker.Success tag={APPROVE_TAG}>
                 <Button
-                  size="xl"
                   onClick={() => sendTransaction?.()}
                   type="submit"
                   loading={isWritePending}

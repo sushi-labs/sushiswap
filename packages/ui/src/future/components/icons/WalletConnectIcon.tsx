@@ -1,6 +1,7 @@
 import React from 'react'
+import { IconComponent } from '../../types'
 
-export const WalletConnectIcon = (props: React.ComponentProps<'svg'>) => {
+export const WalletConnectIcon: IconComponent = (props) => {
   return (
     <svg {...props} viewBox="0 0 300 185" version="1.1" xmlns="http://www.w3.org/2000/svg">
       <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">

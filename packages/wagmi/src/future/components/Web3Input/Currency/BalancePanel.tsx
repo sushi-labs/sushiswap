@@ -51,7 +51,7 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
       id={`${id}-balance-button`}
       testdata-id={`${id}-balance-button`}
       type="button"
-      // variant="empty"
+      // variant="ghost"
       onClick={onClick}
       className={classNames(
         type === 'INPUT'

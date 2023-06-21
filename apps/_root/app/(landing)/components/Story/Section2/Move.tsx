@@ -1,4 +1,3 @@
-import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Container } from '@sushiswap/ui/future/components/container'
 import { FC } from 'react'
@@ -18,16 +17,11 @@ export const Move: FC = () => {
               <span className="text-lg text-center lg:text-left mt-2">
                 We will always find you the best rate, no matter what network you’re on, with no extra fees.
               </span>
-              <div className="flex gap-6">
-                <Button
-                  as="a"
-                  target="_blank"
-                  href="https://www.sushi.com/xswap"
-                  className="!p-0 mt-3"
-                  variant="empty"
-                  endIcon={<ExternalLinkIcon width={16} height={16} />}
-                >
-                  Visit xSwap
+              <div className="flex gap-6 mt-3">
+                <Button asChild variant="secondary">
+                  <a target="_blank" href="https://www.sushi.com/xswap" rel="noreferrer">
+                    Visit xSwap
+                  </a>
                 </Button>
               </div>
             </div>

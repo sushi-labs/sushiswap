@@ -34,7 +34,7 @@ import {
 } from '../../lib/actions'
 import { AddSectionReviewModal } from '../AddSection'
 import { createToast } from '@sushiswap/ui/future/components/toast'
-import Button from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_CREATE_TRIDENT } from '../../lib/constants'
 
@@ -300,7 +300,6 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     >
       <Button
         id="confirm-add-liquidity"
-        size="xl"
         disabled={!isValid || isWritePending}
         fullWidth
         onClick={() => sendTransaction?.()}

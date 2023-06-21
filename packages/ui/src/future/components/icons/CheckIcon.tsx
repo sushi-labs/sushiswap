@@ -1,6 +1,7 @@
 import React from 'react'
+import { IconComponent } from '../../types'
 
-export const CheckIcon = (props: React.ComponentProps<'svg'>) => {
+export const CheckIcon: IconComponent = (props) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

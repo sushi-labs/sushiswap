@@ -17,8 +17,8 @@ export const Hero: FC<Hero> = ({ article }) => {
           <ArticleHeader article={article} />
           <ArticleAuthors article={article} />
           <div className="mt-8">
-            <Button as="a" href={`/blog/${article?.attributes?.slug}`} color="blue">
-              Read Article
+            <Button asChild>
+              <a href={`/blog/${article?.attributes?.slug}`}>Read Article</a>
             </Button>
           </div>
         </div>

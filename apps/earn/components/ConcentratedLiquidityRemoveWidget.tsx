@@ -178,16 +178,16 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
               <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">{value}%</h1>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outlined" color="blue" size="sm" onClick={() => _onChange('25')} testId="liquidity-25">
+              <Button variant="secondary" size="sm" onClick={() => _onChange('25')} testId="liquidity-25">
                 25%
               </Button>
-              <Button variant="outlined" size="sm" onClick={() => _onChange('50')} testId="liquidity-50">
+              <Button variant="secondary" size="sm" onClick={() => _onChange('50')} testId="liquidity-50">
                 50%
               </Button>
-              <Button variant="outlined" size="sm" onClick={() => _onChange('75')} testId="liquidity-75">
+              <Button variant="secondary" size="sm" onClick={() => _onChange('75')} testId="liquidity-75">
                 75%
               </Button>
-              <Button variant="outlined" size="sm" onClick={() => _onChange('100')} testId="liquidity-max">
+              <Button variant="secondary" size="sm" onClick={() => _onChange('100')} testId="liquidity-max">
                 Max
               </Button>
             </div>
@@ -266,14 +266,13 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
         </List>
       )}
 
-      <Checker.Connect fullWidth size="xl">
-        <Checker.Network fullWidth size="xl" chainId={chainId}>
+      <Checker.Connect fullWidth>
+        <Checker.Network fullWidth chainId={chainId}>
           <Button
             loading={isWritePending}
             disabled={+value === 0}
             fullWidth
             onClick={() => sendTransaction?.()}
-            size="xl"
             testId="remove-or-add-liquidity"
           >
             {+value === 0 ? 'Enter Amount' : 'Remove'}

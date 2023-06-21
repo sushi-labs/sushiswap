@@ -21,17 +21,12 @@ export const TransactionsView: FC<TransactionsProps> = ({ setView, address }) =>
     <div className="p-2">
       <div className="flex justify-between items-center mb-3">
         <IconButton
+            size="sm"
           onClick={() => setView(ProfileView.Default)}
           icon={ArrowLeftIcon}
-          iconProps={{
-            strokeWidth: 4,
-            width: 20,
-            height: 20,
-            transparent: true,
-          }}
           name="Back"
         />
-        <Button onClick={() => clearNotifications()} variant="empty" size="sm" className="!px-2">
+        <Button onClick={() => clearNotifications()} variant="ghost" size="sm" className="!px-2">
           Clear all
         </Button>
       </div>

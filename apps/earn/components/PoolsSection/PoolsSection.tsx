@@ -22,12 +22,7 @@ export const PoolsSection: FC = () => {
           <div className="flex items-center gap-2 mb-4">
             <Tab as={Fragment}>
               {({ selected }) => (
-                <Button
-                  size="sm"
-                  variant={selected ? 'outlined' : 'empty'}
-                  color="default"
-                  className="!rounded-full !h-[36px]"
-                >
+                <Button size="sm" variant={selected ? 'secondary' : 'ghost'}>
                   All
                 </Button>
               )}
@@ -36,26 +31,14 @@ export const PoolsSection: FC = () => {
               <>
                 <Tab as={Fragment}>
                   {({ selected }) => (
-                    <Button
-                      size="sm"
-                      variant={selected ? 'outlined' : 'empty'}
-                      color="default"
-                      testId="my-positions"
-                      className="!rounded-full !h-[36px]"
-                    >
+                    <Button size="sm" variant={selected ? 'secondary' : 'ghost'} testId="my-positions">
                       My Positions
                     </Button>
                   )}
                 </Tab>
                 <Tab as={Fragment}>
                   {({ selected }) => (
-                    <Button
-                      size="sm"
-                      variant={selected ? 'outlined' : 'empty'}
-                      color="default"
-                      className="!rounded-full !h-[36px]"
-                      testId="my-rewards"
-                    >
+                    <Button size="sm" variant={selected ? 'secondary' : 'ghost'} testId="my-rewards">
                       My Rewards
                     </Button>
                   )}

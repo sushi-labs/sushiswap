@@ -1,6 +1,7 @@
 import React from 'react'
+import { IconComponent } from '../../types'
 
-export const TrustWalletIcon = (props: React.ComponentProps<'svg'>) => {
+export const TrustWalletIcon: IconComponent = (props) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" {...props} viewBox="0 0 1024 1024" fill="none">
       <path

@@ -81,7 +81,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                         modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
                       >
                         {({ setOpen }) => (
-                          <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
+                          <Button variant="secondary" onClick={() => setOpen(true)}>
                             <CogIcon width={24} height={24} />
                           </Button>
                         )}
@@ -118,7 +118,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                         modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
                       >
                         {({ setOpen }) => (
-                          <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
+                          <Button variant="secondary" onClick={() => setOpen(true)}>
                             <CogIcon width={24} height={24} />
                           </Button>
                         )}
@@ -150,28 +150,28 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                         </div>
                         <div className="flex gap-2">
                           <Button
-                            size="xs"
+                            size="sm"
                             onClick={() => setPercentage('25')}
                             testdata-id="remove-liquidity-25-button"
                           >
                             25%
                           </Button>
                           <Button
-                            size="xs"
+                            size="sm"
                             onClick={() => setPercentage('50')}
                             testdata-id="remove-liquidity-50-button"
                           >
                             50%
                           </Button>
                           <Button
-                            size="xs"
+                            size="sm"
                             onClick={() => setPercentage('75')}
                             testdata-id="remove-liquidity-75-button"
                           >
                             75%
                           </Button>
                           <Button
-                            size="xs"
+                            size="sm"
                             onClick={() => setPercentage('100')}
                             testdata-id="remove-liquidity-max-button"
                           >

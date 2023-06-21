@@ -1,4 +1,6 @@
-export const InstagramIcon = (props: React.ComponentProps<'svg'>) => {
+import { IconComponent } from '../../types'
+
+export const InstagramIcon: IconComponent = (props) => {
   return (
     <svg {...props} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path

@@ -62,7 +62,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         productDescription={description}
         productUrl={url}
         buttonText={buttonText}
-        buttonIcon={<ArrowRightCircleIcon width={20} height={20} />}
+        buttonIcon={ArrowRightCircleIcon}
         image={<Image src={onsenImg} unoptimized alt="onsen-img" />}
         productStats={productStats}
       />

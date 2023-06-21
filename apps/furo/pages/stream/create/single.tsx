@@ -25,15 +25,7 @@ const SingleStream = () => {
           }}
           shallow={true}
         >
-          <IconButton
-            icon={ArrowLeftIcon}
-            iconProps={{
-              width: 24,
-              height: 24,
-              transparent: true,
-            }}
-            name="Back"
-          />
+          <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">Go back</span>
         </Link>
         <CreateForm chainId={chainId} />

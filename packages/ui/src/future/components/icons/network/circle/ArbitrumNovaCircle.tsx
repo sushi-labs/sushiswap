@@ -1,6 +1,7 @@
 import * as React from 'react'
+import { IconComponent } from '../../../../types'
 
-export const ArbitrumNovaCircle = (props: React.ComponentProps<'svg'>) => (
+export const ArbitrumNovaCircle: IconComponent = (props) => (
   <svg {...props} viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect width="128" height="128" rx="64" fill="#2D374B" />
     <path

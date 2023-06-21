@@ -6,7 +6,7 @@ import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
 import { useAccount, useContract } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { Button } from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { Stream, Vesting } from '../lib'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
@@ -96,11 +96,7 @@ export const CancelModal: FC<CancelModalProps> = ({
       {typeof children === 'function' ? (
         children({ setOpen })
       ) : (
-        <Button
-          fullWidth
-          startIcon={<TrashIcon className="text-red-400" width={18} height={18} />}
-          onClick={() => setOpen(true)}
-        >
+        <Button fullWidth variant="destructive" icon={TrashIcon} onClick={() => setOpen(true)}>
           Cancel
         </Button>
       )}
@@ -123,10 +119,9 @@ export const CancelModal: FC<CancelModalProps> = ({
             </a>
             .
           </Typography>
-          <Checker.Connect size="xl" fullWidth>
-            <Checker.Network size="xl" fullWidth chainId={chainId}>
+          <Checker.Connect fullWidth>
+            <Checker.Network fullWidth chainId={chainId}>
               <Button
-                size="xl"
                 fullWidth
                 disabled={isWritePending || stream?.isEnded}
                 onClick={() => sendTransaction?.()}

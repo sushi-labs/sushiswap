@@ -43,7 +43,6 @@ export const Paginator: FC<PaginatorProps> = ({
         <div className="flex items-center">
           <IconButton
             icon={ChevronLeftIcon}
-            iconProps={{ width: 20, height: 20 }}
             className={classNames(hasPrev ? '' : 'pointer-events-none opacity-40', 'p-1')}
             onClick={onPrev}
             name="Previous"
@@ -58,7 +57,6 @@ export const Paginator: FC<PaginatorProps> = ({
         )}
         <div className="flex items-center">
           <IconButton
-            iconProps={{ width: 20, height: 20 }}
             icon={ChevronRightIcon}
             className={classNames(!hasNext || (!pages && nextDisabled) ? 'pointer-events-none opacity-40' : '', 'p-1')}
             onClick={onNext}

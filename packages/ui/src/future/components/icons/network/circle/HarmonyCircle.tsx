@@ -1,6 +1,7 @@
 import * as React from 'react'
+import { IconComponent } from '../../../../types'
 
-export const HarmonyCircle = (props: React.ComponentProps<'svg'>) => (
+export const HarmonyCircle: IconComponent = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 128 128" {...props}>
     <rect width="128" height="128" fill="#fff" rx="64" />
     <rect width="128" height="128" fill="url(#paint0_linear_301_2)" rx="64" />

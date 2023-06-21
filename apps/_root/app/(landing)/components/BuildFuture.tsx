@@ -1,4 +1,3 @@
-import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { motion } from 'framer-motion'
 import React, { FC } from 'react'
 
@@ -68,7 +67,7 @@ export const BuildFuture: FC = () => {
     <section className="px-4 py-20 sm:py-40">
       <Container maxWidth="5xl" className="mx-auto">
         <div className="flex flex-col gap-20">
-          <AnimatedTitle className="text-center md:text-left !max-w-full">
+          <AnimatedTitle className="text-center md:text-left !max-w-full tracking-tight">
             Help build <span className="text-pink">the future</span> with Sushi.{' '}
             <span className="text-neutral-400">{`We invite all developers to explore Sushi's frameworks.`}</span>
           </AnimatedTitle>
@@ -105,13 +104,7 @@ export const BuildFuture: FC = () => {
                             {title}
                           </motion.h1>
                           <div>
-                            <Button
-                              className="!p-0"
-                              variant="empty"
-                              endIcon={<ChevronRightIcon width={16} height={16} />}
-                            >
-                              View More
-                            </Button>
+                            <Button variant="ghost">View More</Button>
                           </div>
                         </motion.div>
                       </motion.div>

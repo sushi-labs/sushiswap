@@ -73,8 +73,8 @@ export const PositionCard: FC<PositionCard> = ({ position }) => {
         )}
       </div>
       <div className="absolute bottom-7 right-7">
-        <Button size="sm" as="a" href={`/pools/${position.pool.id}/migrate`} className="!rounded-full">
-          Migrate
+        <Button size="sm" asChild>
+          <a href={`/pools/${position.pool.id}/migrate`}>Migrate</a>
         </Button>
       </div>
     </div>

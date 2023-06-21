@@ -87,15 +87,7 @@ export const Migrate = () => {
     <Layout>
       <div className="flex flex-col gap-2">
         <Link className="flex items-center gap-4 mb-2 group" href={'/'} shallow={true}>
-          <IconButton
-            icon={ArrowLeftIcon}
-            iconProps={{
-              width: 24,
-              height: 24,
-              transparent: true,
-            }}
-            name="Back"
-          />
+          <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
           <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
             Go back to pool list
           </span>
@@ -151,7 +143,7 @@ export const Migrate = () => {
             modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
           >
             {({ setOpen }) => (
-              <Button variant="outlined" color="default" onClick={() => setOpen(true)}>
+              <Button variant="secondary" onClick={() => setOpen(true)}>
                 <CogIcon width={24} height={24} />
               </Button>
             )}

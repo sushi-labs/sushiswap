@@ -5,7 +5,7 @@ import { List } from '@sushiswap/ui/future/components/list/List'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import Button from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { ZERO } from '@sushiswap/math'
 import { routeProcessor2Address, RouteProcessor2ChainId } from '@sushiswap/route-processor/exports/exports'
 import { CheckIcon } from '@heroicons/react-v1/solid'
@@ -44,9 +44,9 @@ export const RevokeItem: FC<{ token: Token; account: Address }> = ({ account, to
           </div>
         }
       >
-        <Checker.Connect size="xs" color="blue">
-          <Checker.Network size="xs" color="blue" chainId={token.chainId}>
-            <Button size="xs" color="blue" disabled={isPending} loading={isPending} onClick={() => write?.()}>
+        <Checker.Connect size="sm">
+          <Checker.Network size="sm" chainId={token.chainId}>
+            <Button size="sm" disabled={isPending} loading={isPending} onClick={() => write?.()}>
               Revoke
             </Button>
           </Checker.Network>
@@ -67,7 +67,7 @@ export const RevokeItem: FC<{ token: Token; account: Address }> = ({ account, to
         </div>
       }
     >
-      <Button size="xs" variant="outlined" color="green" className="pointer-events-none">
+      <Button size="sm" variant="secondary" className="pointer-events-none">
         <div className="flex gap-1 items-center">
           <CheckIcon strokeWidth={2} width={16} height={16} className="text-green" />
           Already Revoked

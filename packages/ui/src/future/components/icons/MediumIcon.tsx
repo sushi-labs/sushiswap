@@ -1,4 +1,6 @@
-export const MediumIcon = (props: React.ComponentProps<'svg'>) => {
+import { IconComponent } from '../../types'
+
+export const MediumIcon: IconComponent = (props) => {
   return (
     <svg {...props} viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path

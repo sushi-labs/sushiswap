@@ -35,7 +35,7 @@ import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
-import Button from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_REMOVE_TRIDENT } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
@@ -284,7 +284,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
         token1Minimum={minAmount1}
         setPercentage={setPercentage}
       >
-        <Checker.Connect fullWidth size="xl">
+        <Checker.Connect fullWidth>
           <Checker.Custom
             showGuardIfTrue={
               isMounted &&
@@ -297,23 +297,22 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
               ].includes(poolState)
             }
             guard={
-              <Button size="xl" fullWidth disabled={true}>
+              <Button fullWidth disabled={true}>
                 Pool Not Found
               </Button>
             }
           >
-            <Checker.Network fullWidth size="xl" chainId={_pool.chainId}>
+            <Checker.Network fullWidth chainId={_pool.chainId}>
               <Checker.Custom
                 showGuardIfTrue={+percentage <= 0}
                 guard={
-                  <Button size="xl" fullWidth disabled={true}>
+                  <Button fullWidth disabled={true}>
                     Enter Amount
                   </Button>
                 }
               >
                 <Checker.ApproveBentobox
                   fullWidth
-                  size="xl"
                   chainId={chainId}
                   id="remove-liquidity-trident-approve-bentobox"
                   onSignature={setPermit}
@@ -321,7 +320,6 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
                 >
                   <Checker.ApproveERC20
                     fullWidth
-                    size="xl"
                     id="approve-remove-liquidity-slp"
                     amount={slpAmountToRemove}
                     contract={getTridentRouterContractConfig(_pool.chainId).address}
@@ -330,8 +328,6 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
                       <Button
                         onClick={() => sendTransaction?.()}
                         fullWidth
-                        size="xl"
-                        variant="filled"
                         disabled={!approved || isWritePending}
                         testId="remove-liquidity"
                       >

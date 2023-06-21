@@ -33,7 +33,7 @@ export const BuildWealth: FC = () => {
                 With multiple ways to passively earn yield on your coins, you can choose your own yield stack and make
                 your money work for you, all in the background, 24/7.
               </Typography>
-              <div className="flex flex-wrap justify-center md:justify-start gap-x-6">
+              <div className="flex flex-wrap justify-center md:justify-start gap-x-3">
                 <ExpandableCard
                   caption="For Retail Users"
                   title="Provide Liquidity"

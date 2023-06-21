@@ -1,6 +1,7 @@
 import React from 'react'
+import { IconComponent } from '../../types'
 
-export const MetamaskIcon = (props: React.ComponentProps<'svg'>) => {
+export const MetamaskIcon: IconComponent = (props) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" {...props} viewBox="0 0 212 189">
       <g fill="none" fillRule="evenodd">

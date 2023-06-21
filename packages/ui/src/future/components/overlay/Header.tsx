@@ -2,7 +2,7 @@ import { XMarkIcon } from '@heroicons/react/24/solid'
 import classNames from 'classnames'
 import React, { FC } from 'react'
 
-import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon } from '@heroicons/react/20/solid'
+import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon } from '@heroicons/react/24/solid'
 import { IconButton } from '../iconbutton'
 
 export interface Header {
@@ -18,6 +18,7 @@ export const Header: FC<Header> = ({ className, title, onBack, onClose, arrowDir
     <div className={classNames(className, 'grid grid-cols-[40px_auto_40px] pb-2')}>
       {onBack && (
         <IconButton
+          size="sm"
           icon={
             arrowDirection === 'left'
               ? ArrowLeftIcon
@@ -27,11 +28,6 @@ export const Header: FC<Header> = ({ className, title, onBack, onClose, arrowDir
               ? ArrowUpIcon
               : ArrowDownIcon
           }
-          iconProps={{
-            width: 24,
-            height: 24,
-          }}
-          className="flex items-center justify-center w-6 h-6 gap-2 cursor-pointer"
           onClick={onBack}
           name="Back"
         />
@@ -43,18 +39,7 @@ export const Header: FC<Header> = ({ className, title, onBack, onClose, arrowDir
       >
         {title}
       </h3>
-      {onClose && (
-        <IconButton
-          icon={XMarkIcon}
-          iconProps={{
-            width: 24,
-            height: 24,
-          }}
-          className="cursor-pointer"
-          onClick={onClose}
-          name="close"
-        />
-      )}
+      {onClose && <IconButton size="sm" icon={XMarkIcon} onClick={onClose} name="close" />}
     </div>
   )
 }

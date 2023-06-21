@@ -21,15 +21,8 @@ export const ArticleFooter: FC<ArticleFooter> = ({ articles }) => {
                 {format(new Date(article.attributes.publishedAt), 'dd MMM yyyy')}
               </time>
             )}
-            <Button
-              as="a"
-              size="sm"
-              color="default"
-              endIcon={<ChevronRightIcon width={16} height={16} />}
-              href={`/blog/${article?.attributes?.slug}`}
-              className="order-1 mt-6 text-sm"
-            >
-              Read more
+            <Button asChild size="sm" variant="secondary" className="order-1 mt-6">
+              <a href={`/blog/${article?.attributes?.slug}`}>Read more</a>
             </Button>
           </article>
         ))}

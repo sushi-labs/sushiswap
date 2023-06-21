@@ -87,14 +87,14 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
               }, [])}
             </List.Control>
           </List>
-          <div className="absolute bottom-3 left-3 right-3 flex flex-col gap-1">
+          <div className="absolute bottom-3 left-3 right-3 flex flex-col gap-3">
             {tokenSecurity?.isSupported && (
               <div className="flex items-center gap-0.5 justify-center">
                 <span className="text-xs text-gray-700 dark:text-slate-400">Honeypot detection powered by GoPlus</span>
                 <GoPlusLabsIcon width={22} height={20} />
               </div>
             )}
-            <Button fullWidth size="xl" variant="outlined" color="blue" onClick={onClick}>
+            <Button fullWidth size="xl" onClick={onClick}>
               Import
             </Button>
           </div>
@@ -168,7 +168,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
                 <GoPlusLabsIcon width={22} height={20} />
               </div>
             )}
-            <Button fullWidth size="xl" variant="outlined" color="blue" disabled>
+            <Button fullWidth disabled>
               Honeypot Token Not Supported
             </Button>
           </div>
@@ -197,7 +197,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
                 </div>
 
                 <div className="flex flex-col">
-                  <Button className="rounded-full" color="blue" size="xs" onClick={() => setOpen(true)}>
+                  <Button size="sm" onClick={() => setOpen(true)}>
                     Import
                   </Button>
                 </div>

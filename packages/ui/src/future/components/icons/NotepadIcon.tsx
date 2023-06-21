@@ -1,6 +1,7 @@
 import React from 'react'
+import { IconComponent } from '../../types'
 
-export const NotepadIcon = (props: React.ComponentProps<'svg'>) => {
+export const NotepadIcon: IconComponent = (props) => {
   return (
     <svg {...props} viewBox="0 0 17 20" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M5.32001 10.36H11.08" stroke="#E3E3E3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

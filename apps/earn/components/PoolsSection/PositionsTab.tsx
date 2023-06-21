@@ -1,10 +1,10 @@
 import { Tab } from '@headlessui/react'
 import React, { Fragment, useState } from 'react'
-import { Button } from '@sushiswap/ui/future/components/button'
 import { ConcentratedPositionsTable } from './Tables/PositionsTable/ConcentratedPositionsTable'
 import { PositionsTable } from './Tables'
 import { Container } from '@sushiswap/ui/future/components/container'
 import { Switch } from '@sushiswap/ui/future/components/switch'
+import { Toggle } from '@sushiswap/ui/future/components/toggle'
 
 export const PositionsTab = () => {
   const [hide, setHide] = useState(true)
@@ -17,32 +17,22 @@ export const PositionsTab = () => {
           <div className="flex items-center gap-3 mb-4">
             <Tab as={Fragment}>
               {({ selected }) => (
-                <Button
-                  size="sm"
-                  variant="outlined"
-                  color={selected ? 'blue' : 'default'}
-                  className="items-center !gap-2.5"
-                >
+                <Toggle size="sm" pressed={selected}>
                   <span>🍣</span>{' '}
                   <span>
                     SushiSwap <sup>v3</sup>
                   </span>
-                </Button>
+                </Toggle>
               )}
             </Tab>
             <Tab as={Fragment}>
               {({ selected }) => (
-                <Button
-                  size="sm"
-                  variant="outlined"
-                  color={selected ? 'blue' : 'default'}
-                  className="items-center !gap-2.5"
-                >
+                <Toggle size="sm" pressed={selected}>
                   <span>🍣</span>{' '}
                   <span>
                     SushiSwap <sup>v2</sup>
                   </span>
-                </Button>
+                </Toggle>
               )}
             </Tab>
           </div>

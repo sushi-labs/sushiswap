@@ -58,7 +58,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         productDescription={description}
         productUrl={url}
         buttonText={buttonText}
-        buttonIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
+        buttonIcon={LinkIcon}
         productStats={productStats}
       />
 

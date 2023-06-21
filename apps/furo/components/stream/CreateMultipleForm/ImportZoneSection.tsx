@@ -144,12 +144,7 @@ const Component: FC<ImportZoneSection> = ({ chainId }) => {
             your data is formatted correctly.
           </span>
           <div>
-            <Button
-              size="lg"
-              type="button"
-              onClick={downloadExample}
-              startIcon={<DownloadIcon width={20} height={20} />}
-            >
+            <Button size="lg" type="button" onClick={downloadExample} icon={DownloadIcon}>
               Example
             </Button>
           </div>

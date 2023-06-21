@@ -2,7 +2,8 @@ import { classNames } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
 
 import { DEFAULT_SIDE_PADDING } from '../helpers'
-import { ViewAllButton } from './ViewAllButton'
+import { Button } from '@sushiswap/ui/future/components/button'
+import { PlusCircleIcon } from '@heroicons/react/24/solid'
 
 interface AdditionalArticles {
   title: string
@@ -15,7 +16,9 @@ export const AdditionalArticles: FC<AdditionalArticles> = ({ title, children, cl
     <div className={classNames('max-w-6xl mx-auto', className)}>
       <div className={classNames('flex justify-between', DEFAULT_SIDE_PADDING)}>
         <span className="text-xl font-bold sm:text-2xl">{title}</span>
-        <ViewAllButton as="a" href="/academy/articles" isSmall />
+        <Button icon={PlusCircleIcon} iconProps={{ fill: '#3B7EF6' }} variant="secondary" className="sm:hidden">
+          <a href="/academy/articles">View All</a>
+        </Button>
       </div>
 
       <div
@@ -27,7 +30,9 @@ export const AdditionalArticles: FC<AdditionalArticles> = ({ title, children, cl
         {children}
       </div>
       <div className={classNames('hidden sm:flex justify-center', DEFAULT_SIDE_PADDING)}>
-        <ViewAllButton as="a" href="/academy/articles" />
+        <Button icon={PlusCircleIcon} iconProps={{ fill: '#3B7EF6' }} variant="secondary" className="hidden sm:flex">
+          <a href="/academy/articles">View All</a>
+        </Button>
       </div>
     </div>
   )

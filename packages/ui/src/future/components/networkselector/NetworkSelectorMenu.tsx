@@ -33,8 +33,8 @@ export const NetworkSelectorMenu = <T extends number>({
             .filter((el) => (query ? chains[el].name.toLowerCase().includes(query.toLowerCase()) : Boolean))
             .map((el) => (
               <SelectItem value={`${el}`} key={el}>
-                <div className="flex items-center gap-2.5">
-                  <NetworkIcon chainId={el} width={20} height={20} />
+                <div className="flex items-center gap-2">
+                  <NetworkIcon chainId={el} width={16} height={16} />
                   {Chain.from(el).name}
                 </div>
               </SelectItem>

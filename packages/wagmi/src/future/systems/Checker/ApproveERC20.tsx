@@ -1,17 +1,17 @@
-import React, { FC, Fragment, useCallback, useState, MouseEvent } from 'react'
-import { Button, ButtonProps } from '@sushiswap/ui/future/components/button'
-import { Amount, Type } from '@sushiswap/currency'
-import { Popover, Transition } from '@headlessui/react'
-import { ChevronRightIcon } from '@heroicons/react/24/solid'
-import { ApprovalState, useTokenApproval } from '../../hooks'
-import { Address } from 'wagmi'
-import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/20/solid'
-import { classNames } from '@sushiswap/ui'
-import { List } from '@sushiswap/ui/future/components/list/List'
+import React, {FC, useState} from 'react'
+import {Button, ButtonProps} from '@sushiswap/ui/future/components/button'
+import {Amount, Type} from '@sushiswap/currency'
+import {ChevronRightIcon} from '@heroicons/react/24/solid'
+import {ApprovalState, useTokenApproval} from '../../hooks'
+import {Address} from 'wagmi'
+import {ChevronDownIcon, InformationCircleIcon} from '@heroicons/react/20/solid'
+import {classNames} from '@sushiswap/ui'
 import dynamic from 'next/dynamic'
 import {Explainer} from "@sushiswap/ui/future/components/explainer";
+import {Select, SelectContent, SelectItem, SelectPrimitive} from "@sushiswap/ui/future/components/select";
+import {IconButton} from "@sushiswap/ui/future/components/iconbutton";
 
-export interface ApproveERC20Props extends ButtonProps<'button'> {
+export interface ApproveERC20Props extends ButtonProps {
   id: string
   amount: Amount<Type> | undefined
   contract: Address | undefined
@@ -23,13 +23,11 @@ export const Component: FC<ApproveERC20Props> = ({
   amount,
   contract,
   children,
-  className,
-  variant,
-  fullWidth,
-  as,
-  size,
+    className,
+                                                   fullWidth = true,
+                                                   size = 'xl',
   enabled = true,
-  type,
+    ...props
 }) => {
   const [max, setMax] = useState(false)
   const [state, { write }] = useTokenApproval({
@@ -39,33 +37,19 @@ export const Component: FC<ApproveERC20Props> = ({
     approveMax: max,
   })
 
-  const onMenuItemClick = useCallback((e: MouseEvent<HTMLDivElement>, isMax: boolean, cb: () => void) => {
-    e.stopPropagation()
-
-    if (isMax) {
-      setMax(true)
-    } else {
-      setMax(false)
-    }
-
-    cb()
-  }, [])
-
   if (state === ApprovalState.APPROVED || !enabled) {
     return <>{children}</>
   }
+
   return (
     <Button
-      as={as}
       disabled={state !== ApprovalState.NOT_APPROVED || !write }
       loading={[ApprovalState.UNKNOWN, ApprovalState.LOADING, ApprovalState.PENDING].includes(state)}
-      testdata-id={id}
-      variant={variant}
-      size={size}
       className={classNames(className, 'group relative pr-16')}
-      fullWidth={fullWidth}
       onClick={() => write?.()}
-      type={type}
+      fullWidth={fullWidth}
+      size={size}
+      {...props}
     >
       Approve {amount?.currency.symbol} {max ? 'Permanently' : ''}
       <Explainer icon={<InformationCircleIcon width={18} height={18} />}>
@@ -81,70 +65,28 @@ export const Component: FC<ApproveERC20Props> = ({
           </a>
         </div>
       </Explainer>
-      <div className="absolute right-1 top-1 bottom-1 w-[52px]">
-        <div className="relative z-[100] w-full h-full">
-          <Popover as={Fragment}>
-            {({ open, close }) => (
-              <>
-                <Popover.Button
-                  as="button"
-                  className={classNames(
-                    open ? 'bg-black/[0.12]' : '',
-                    'hover:bg-black/[0.12] h-full w-full flex items-center justify-center rounded-lg'
-                  )}
-                >
-                  <ChevronDownIcon width={24} height={24} />
-                </Popover.Button>
-                <Transition
-                  show={open}
-                  enter="transition duration-200 ease-out"
-                  enterFrom="transform scale-[0.95]"
-                  enterTo="transform scale-[1]"
-                  leave="transition duration-200 ease-out"
-                  leaveFrom="transform scale-[1] opacity-1"
-                  leaveTo="transform scale-[0.95] opacity-0"
-                >
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <div
-                      onClick={(e) => e.stopPropagation()}
-                      className="fixed inset-0 bg-black/50 backdrop-blur transform-gpu"
-                    />
-                  </Transition.Child>
-                  <div className={classNames('right-0 absolute pt-3 -top-[-1] sm:w-[320px]')}>
-                    <div className="p-2 flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white/50 paper dark:bg-slate-800/50">
-                      <Popover.Panel>
-                        <List.MenuItem
-                          as="div"
-                          role="button"
-                          onClick={(e: MouseEvent<HTMLDivElement>) => onMenuItemClick(e, false, close)}
-                          title="Approve one-time only"
-                          subtitle={`You'll give your approval to spend ${amount?.toSignificant(6)} ${
-                            amount?.currency?.symbol
-                          } on your behalf`}
-                        />
-                        <List.MenuItem
-                          as="div"
-                          role="button"
-                          onClick={(e: MouseEvent<HTMLDivElement>) => onMenuItemClick(e, true, close)}
-                          title="Approve unlimited amount"
-                          subtitle={`You won't need to approve again next time you want to spend ${amount?.currency?.symbol}.`}
-                        />
-                      </Popover.Panel>
-                    </div>
-                  </div>
-                </Transition>
-              </>
-            )}
-          </Popover>
-        </div>
+      <div className="absolute right-1 top-1 bottom-1">
+      <Select value={`${max}`} onValueChange={(val) => setMax(val === 'true')}>
+        <SelectPrimitive.Trigger>
+          <IconButton size="lg" icon={ChevronDownIcon} name="Select" />
+        </SelectPrimitive.Trigger>
+        <SelectContent className="w-80">
+          <SelectItem value="false">
+            <div className="flex flex-col">
+              <span className="font-semibold">Approve one-time only</span>
+              <span className="text-sm">You'll give your approval to spend {amount?.toSignificant(6)} {
+                amount?.currency?.symbol
+              } on your behalf</span>
+            </div>
+          </SelectItem>
+          <SelectItem value="true">
+            <div className="flex flex-col">
+              <span className="font-semibold">Approve unlimited amount</span>
+              <span className='text-sm'>You won't need to approve again next time you want to spend {amount?.currency?.symbol}.</span>
+            </div>
+          </SelectItem>
+        </SelectContent>
+      </Select>
       </div>
     </Button>
   )

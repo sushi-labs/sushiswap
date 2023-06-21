@@ -76,7 +76,7 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function 
       <div
         className={classNames(
           className,
-          size === 'sm' ? 'h-[38px] text-sm px-[8px]' : '',
+          size === 'sm' ? '!h-[40px] text-sm px-[8px]' : '',
           '!focus-within:bg-gray-200 relative pr-10 rounded-xl flex gap-2.5 flex-grow items-center bg-black/[0.04] dark:bg-white/[0.04] px-3 py-2.5 h-[44px]'
         )}
       >

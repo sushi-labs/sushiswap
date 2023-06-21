@@ -77,7 +77,7 @@ export const GlobalNav: FC<HeaderProps> = ({
               </div>
             </a>
             <Menu as="div" className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-              <Menu.Button color="default" as={Button} variant="empty" size="md">
+              <Menu.Button as={Button} variant="ghost">
                 Explore
               </Menu.Button>
               <Transition
@@ -162,9 +162,11 @@ type NavLinkProps = { title: string; href: string }
 
 export const NavLink: FC<NavLinkProps> = ({ title, href }) => {
   return (
-    <Button as="a" color="default" href={href} variant="empty" size="md">
-      {title}
-    </Button>
+    <a href={href}>
+      <Button asChild variant="ghost">
+        {title}
+      </Button>
+    </a>
   )
 }
 
@@ -173,7 +175,7 @@ export const SubNav: FC<{ title: string; children: ReactNode }> = ({ title, chil
 
   return (
     <Menu as="div" className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-      <Menu.Button color="default" as={Button} variant="empty" size="md">
+      <Menu.Button as={Button} variant="ghost">
         {title}
       </Menu.Button>
       <Transition

@@ -181,8 +181,7 @@ export default function Partner() {
               <Button
                 disabled={(tokenAddress && !tokenData?.symbol) || !logoUri || !background}
                 loading={submitState.state === SubmitState.Loading}
-                variant="filled"
-                color="default"
+                variant="secondary"
                 onClick={onSubmit}
                 type="button"
                 fullWidth

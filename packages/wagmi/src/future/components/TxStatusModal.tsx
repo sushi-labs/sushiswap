@@ -76,8 +76,8 @@ export const TxStatusModalContent: FC<TxStatusModalContentProps> = ({
       <Button
         {...(buttonSuccessLink ? { as: 'a', href: buttonSuccessLink } : { onClick: onClose })}
         fullWidth
-        color="blue"
-        variant="outlined"
+        
+        variant="secondary"
         size="xl"
         testId={testId}
       >

@@ -3,7 +3,7 @@ import { ButtonProps } from '@sushiswap/ui/future/components/button'
 
 export interface CustomProps {
   showGuardIfTrue: boolean
-  guard: ReactElement<ButtonProps<'button'>>
+  guard: ReactElement<ButtonProps>
   children: ReactNode
 }
 

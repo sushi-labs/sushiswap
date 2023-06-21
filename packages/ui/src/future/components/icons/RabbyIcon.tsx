@@ -1,6 +1,7 @@
 import React from 'react'
+import { IconComponent } from '../../types'
 
-export const RabbyIcon = (props: React.ComponentProps<'svg'>) => {
+export const RabbyIcon: IconComponent = (props) => {
   return (
     <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32">
       <g clip-path="url(#clip0_8493_47054)">

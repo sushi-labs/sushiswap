@@ -1,6 +1,7 @@
 import React from 'react'
+import { IconComponent } from '../../types'
 
-export const ArrowFlatLinesUp = (props: React.ComponentProps<'svg'>) => {
+export const ArrowFlatLinesUp: IconComponent = (props) => {
   return (
     <svg {...props} viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path

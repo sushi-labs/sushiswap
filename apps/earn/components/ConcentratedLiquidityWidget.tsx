@@ -169,7 +169,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             </div>
           </Transition>
           <Web3Input.Currency
-            id='add-liquidity-token0'
+            id="add-liquidity-token0"
             type="INPUT"
             className="p-3 bg-white dark:bg-slate-800 rounded-xl"
             chainId={chainId}
@@ -216,7 +216,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             </div>
           </Transition>
           <Web3Input.Currency
-            id='add-liquidity-token1'
+            id="add-liquidity-token1"
             type="INPUT"
             className="p-3 bg-white dark:bg-slate-800 rounded-xl"
             chainId={chainId}
@@ -229,11 +229,10 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
           />
         </div>
 
-        <Checker.Connect fullWidth size="xl">
-          <Checker.Network fullWidth size="xl" chainId={chainId}>
-            <Checker.Amounts fullWidth size="xl" chainId={chainId} amounts={amounts}>
+        <Checker.Connect fullWidth>
+          <Checker.Network fullWidth chainId={chainId}>
+            <Checker.Amounts fullWidth chainId={chainId} amounts={amounts}>
               <Checker.ApproveERC20
-                size="xl"
                 fullWidth
                 id="approve-erc20-0"
                 amount={parsedAmounts[Field.CURRENCY_A]}
@@ -241,7 +240,6 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                 enabled={!depositADisabled}
               >
                 <Checker.ApproveERC20
-                  size="xl"
                   fullWidth
                   id="approve-erc20-1"
                   amount={parsedAmounts[Field.CURRENCY_B]}
@@ -265,7 +263,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                     successLink={successLink}
                   >
                     {({ setOpen }) => (
-                      <Button fullWidth onClick={() => setOpen(true)} size="xl" testId='add-liquidity-preview'>
+                      <Button fullWidth onClick={() => setOpen(true)} testId="add-liquidity-preview">
                         Preview
                       </Button>
                     )}

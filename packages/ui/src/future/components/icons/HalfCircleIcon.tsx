@@ -1,4 +1,6 @@
-export const HalfCircleIcon = (props: React.ComponentProps<'svg'>) => {
+import { IconComponent } from '../../types'
+
+export const HalfCircleIcon: IconComponent = (props) => {
   return (
     <svg viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path

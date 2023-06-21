@@ -1,7 +1,8 @@
 import classNames from 'classnames'
 import React from 'react'
+import { IconComponent } from '../../types'
 
-export const WaterIcon = (props: React.ComponentProps<'svg'>) => {
+export const WaterIcon: IconComponent = (props) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

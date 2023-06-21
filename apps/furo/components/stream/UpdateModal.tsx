@@ -9,7 +9,7 @@ import { classNames } from '@sushiswap/ui'
 import { _useSendTransaction as useSendTransaction, useAccount, useContract, Address } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { Button } from '@sushiswap/ui/future/components/button/Button'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { Stream, approveBentoBoxAction, batchAction } from '../../lib'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
@@ -165,12 +165,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
         {typeof children === 'function' ? (
           children({ setOpen })
         ) : (
-          <Button
-            fullWidth
-            startIcon={<PencilIcon width={18} height={18} />}
-            onClick={() => setOpen(true)}
-            disabled={!stream?.canUpdate(address)}
-          >
+          <Button fullWidth icon={PencilIcon} onClick={() => setOpen(true)} disabled={!stream?.canUpdate(address)}>
             Update
           </Button>
         )}
@@ -234,12 +229,12 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
               </div>
             </div>
             <div>
-              <Checker.Connect type="button" size="xl" fullWidth>
-                <Checker.Network type="button" size="xl" fullWidth chainId={chainId}>
+              <Checker.Connect type="button">
+                <Checker.Network type="button" chainId={chainId}>
                   <Checker.Custom
                     showGuardIfTrue={topUp && !amountAsEntity?.greaterThan(ZERO)}
                     guard={
-                      <Button type="button" size="xl" fullWidth>
+                      <Button type="button" fullWidth>
                         Enter amount
                       </Button>
                     }
@@ -247,16 +242,14 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                     <Checker.Custom
                       showGuardIfTrue={changeEndDate && !endDate}
                       guard={
-                        <Button type="button" size="xl" fullWidth>
+                        <Button type="button" fullWidth>
                           Enter date
                         </Button>
                       }
                     >
                       <Checker.ApproveBentobox
                         type="button"
-                        fullWidth
                         id="furo-update-stream-approve-bentobox"
-                        size="xl"
                         chainId={chainId satisfies BentoBoxV1ChainId}
                         contract={contractAddress as Address}
                         onSignature={setSignature}
@@ -265,8 +258,6 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                         <Checker.ApproveERC20
                           id="approve-erc20-update-stream"
                           type="button"
-                          size="xl"
-                          fullWidth
                           amount={amountAsEntity}
                           contract={bentoBoxV1Address[chainId] as Address}
                           enabled={topUp}
@@ -274,8 +265,8 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                           <Checker.Success tag={APPROVE_TAG}>
                             <Button
                               type="button"
-                              size="xl"
                               fullWidth
+                              size="xl"
                               disabled={isWritePending || (!topUp && !changeEndDate) || !sendTransaction}
                               onClick={() => sendTransaction?.()}
                               testId="stream-update-confirmation"
