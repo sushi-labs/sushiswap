@@ -1,8 +1,8 @@
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import classNames from 'classnames'
 import React, { forwardRef, KeyboardEvent, useCallback, useEffect, useState } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { Loader2 } from 'lucide-react'
+import { Search as SearchIcon } from 'lucide-react'
 
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Chip } from '../chip'
@@ -96,7 +96,7 @@ const Search = forwardRef<HTMLInputElement, SearchProps>(
     if (delimiter) {
       return (
         <div ref={ref} className={classNames(containerVariants({ size }))}>
-          <MagnifyingGlassIcon className={classNames(containerIconVariants({ size }))} />
+          <SearchIcon className={classNames(containerIconVariants({ size }))} />
           <div className="flex gap-1">
             {values.all
               .filter((el) => el !== ' ' && el !== '')
@@ -152,7 +152,7 @@ const Search = forwardRef<HTMLInputElement, SearchProps>(
 
     return (
       <div ref={ref} className={classNames(containerVariants({ size }))}>
-        <MagnifyingGlassIcon className={classNames(containerIconVariants({ size }))} />
+        <SearchIcon className={classNames(containerIconVariants({ size }))} />
         <input
           id={`${id}-address-input`}
           testdata-id={`${id}-address-input`}

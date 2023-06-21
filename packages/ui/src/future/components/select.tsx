@@ -28,7 +28,7 @@ const SelectIcon = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Icon>
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Icon ref={ref} {...props} asChild>
-    <ChevronDownIcon strokeWidth={3} width={16} height={16} className={className} />
+    <ChevronDownIcon strokeWidth={2} width={16} height={16} className={classNames(className, 'w-4 h-4')} />
   </SelectPrimitive.Icon>
 ))
 

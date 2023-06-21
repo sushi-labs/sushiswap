@@ -1,13 +1,14 @@
 import * as React from 'react'
 import { IconComponent } from '../../../../types'
+import { classNames } from '../../../../../index'
 
 export const BttcCircle: IconComponent = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 128 128"
+    className={classNames(props.className, 'dark:text-white text-gray-700')}
     {...props}
-    className="dark:text-white text-gray-700"
   >
     <path
       fill="currentColor"

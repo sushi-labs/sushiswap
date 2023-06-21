@@ -5,7 +5,7 @@ import {createErrorToast} from '@sushiswap/ui/future/components/toast'
 import {useBreakpoint} from '@sushiswap/ui/future/lib/useBreakpoint'
 import React, {FC, useCallback} from 'react'
 import {ProviderRpcError, useNetwork, UserRejectedRequestError, useSwitchNetwork} from 'wagmi'
-import {SelectPrimitive} from "@sushiswap/ui/future/components/select";
+import {PopoverPrimitive } from "@sushiswap/ui/future/components/popovernew";
 import {Button} from "@sushiswap/ui/future/components/button";
 
 export const HeaderNetworkSelector: FC<{
@@ -49,12 +49,12 @@ export const HeaderNetworkSelector: FC<{
       onSelect={onSwitchNetwork}
       networks={networks}
     >
-      <SelectPrimitive.Trigger asChild>
+      <PopoverPrimitive.Trigger asChild>
         <Button variant="secondary" testdata-id="network-selector-button">
           <NetworkIcon chainId={selected} width={16} height={16} />
           <div className="hidden xl:block">{Chain.from(selected).name}</div>
         </Button>
-      </SelectPrimitive.Trigger>
+      </PopoverPrimitive.Trigger>
     </NetworkSelector>
   )
 }

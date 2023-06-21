@@ -22,7 +22,7 @@ const chipVariants = cva(
 )
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof chipVariants> {
-  icon: IconComponent
+  icon?: IconComponent
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
 }
 

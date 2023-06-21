@@ -6,7 +6,7 @@ import { Loader2 } from 'lucide-react'
 import { IconComponent } from '../types'
 
 const buttonVariants = cva(
-  'cursor-pointer whitespace-nowrap truncate inline-flex gap-2 items-center justify-center rounded-xl font-medium transition-colors !ring-0 disabled:opacity-50 disabled:pointer-events-none ring-offset-background',
+  'cursor-pointer whitespace-nowrap inline-flex gap-2 items-center justify-center rounded-xl font-medium transition-colors !ring-0 disabled:opacity-50 disabled:pointer-events-none ring-offset-background',
   {
     variants: {
       variant: {
