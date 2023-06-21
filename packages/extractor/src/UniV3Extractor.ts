@@ -12,6 +12,7 @@ import { MultiCallAggregator } from './MulticallAggregator'
 import { PermanentCache } from './PermanentCache'
 import { TokenManager } from './TokenManager'
 import { UniV3EventsAbi, UniV3PoolWatcher } from './UniV3PoolWatcher'
+import { warnLog } from './WarnLog'
 
 export interface FactoryInfo {
   address: Address
@@ -109,13 +110,13 @@ export class UniV3Extractor {
               })
               this.lastProcessdBlock = blockNumber
             } catch (e) {
-              console.warn(`Block ${blockNumber} log process error: ${e}`)
+              warnLog(`Block ${blockNumber} log process error: ${e}`)
             }
 
             this.logProcessGuard = false
             this.consoleLog(`Block ${blockNumber} ${logNames.length} logs: [${logNames}]`)
           } else {
-            console.warn(`Extractor: Log Filtering was skipped for block ${blockNumber}`)
+            warnLog(`Extractor: Log Filtering was skipped for block ${blockNumber}`)
           }
         },
       })
@@ -158,7 +159,7 @@ export class UniV3Extractor {
       else this.addPoolByAddress(l.address)
       return 'UnknPool'
     } catch (e) {
-      console.warn(`Log processing for pool ${l.address} throwed an exception ${e}`)
+      warnLog(`Log processing for pool ${l.address} throwed an exception ${e}`)
       return 'Exception!!!'
     }
   }
