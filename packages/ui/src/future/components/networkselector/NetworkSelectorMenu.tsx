@@ -20,13 +20,7 @@ export const NetworkSelectorMenu = <T extends number>({
     <Select value={`${selected}`} onValueChange={(val) => onSelect(+val as T, () => {})}>
       {children}
       <SelectContent>
-        <Search
-          className="!bg-black/[0.03] dark:!bg-white/[0.04]"
-          id=""
-          value={query}
-          loading={false}
-          onChange={setQuery}
-        />
+        <Search id="" value={query} loading={false} onValueChange={setQuery} />
         <Separator className="my-1" />
         <ScrollArea className="h-72" type="auto">
           {networks

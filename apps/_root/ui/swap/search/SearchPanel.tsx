@@ -71,7 +71,7 @@ export const SearchPanel: FC = () => {
     <Dialog variant="opaque" open={open} onClose={onClose} className="fixed inset-0 z-[1080]">
       <div>
         <div className="flex items-center gap-4">
-          <Search id="search-input" loading={isLoading} onChange={setQuery} value={query ?? ''} />
+          <Search id="search-input" loading={isLoading} onValueChange={setQuery} value={query ?? ''} />
           <Button variant="ghost" onClick={onClose} className="text-blue">
             Cancel
           </Button>

@@ -30,5 +30,5 @@ export const SearchFilter: FC = () => {
     }
   }, [extra, setFilters])
 
-  return <Search id="search" value={_query} loading={false} onChange={setQuery} className="max-w-full" />
+  return <Search id="search" value={_query} loading={false} onValueChange={setQuery} className="max-w-full" />
 }
