@@ -17,8 +17,6 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@sushiswap/ui/future/components/dropdown-menu";
 

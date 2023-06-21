@@ -4,12 +4,12 @@ import { PlusIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
-import { classNames } from '@sushiswap/ui'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
-import React, { FC, ReactNode } from 'react'
+import React, { FC, ReactNode, Fragment } from 'react'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
-import { Button } from '@sushiswap/ui/future/components/button'
 import { Widget, WidgetHeader, WidgetContent } from '@sushiswap/ui/future/components/widget'
+import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
+import { SelectIcon } from '@sushiswap/ui/future/components/select'
 
 interface AddSectionWidgetProps {
   isFarm: boolean
@@ -60,26 +60,19 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                       modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
                     >
                       {({ setOpen }) => (
-                        <Button variant="secondary" onClick={() => setOpen(true)}>
-                          <CogIcon width={24} height={24} />
-                        </Button>
+                        <IconButton
+                          size="sm"
+                          name="Settings"
+                          icon={CogIcon}
+                          variant="secondary"
+                          onClick={() => setOpen(true)}
+                        />
                       )}
                     </SettingsOverlay>
-                    <Disclosure.Button className="w-full pr-0.5">
-                      <div className="flex items-center justify-between">
-                        <div
-                          className={classNames(
-                            open ? 'rotate-180' : 'rotate-0',
-                            'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
-                          )}
-                        >
-                          <ChevronDownIcon
-                            width={24}
-                            height={24}
-                            className="text-gray-700 hover:text-gray-800 dark:group-hover:text-slate-200 dark:text-slate-300"
-                          />
-                        </div>
-                      </div>
+                    <Disclosure.Button as={Fragment}>
+                      <IconButton size="sm" icon={ChevronDownIcon} name="Select">
+                        <SelectIcon />
+                      </IconButton>
                     </Disclosure.Button>
                   </div>
                 </WidgetHeader>
@@ -97,9 +90,13 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                       modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
                     >
                       {({ setOpen }) => (
-                        <Button variant="secondary" onClick={() => setOpen(true)}>
-                          <CogIcon width={24} height={24} />
-                        </Button>
+                        <IconButton
+                          size="sm"
+                          name="Settings"
+                          icon={CogIcon}
+                          variant="secondary"
+                          onClick={() => setOpen(true)}
+                        />
                       )}
                     </SettingsOverlay>
                   </div>

@@ -4,9 +4,11 @@ import * as React from 'react'
 import * as TogglePrimitive from '@radix-ui/react-toggle'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { classNames } from '../../index'
+import { IconComponent } from '../types'
+import { buttonVariants } from './button'
 
 const toggleVariants = cva(
-  'inline-flex gap-2 items-center justify-center rounded-lg text-sm font-medium transition-colors data-[state=on]:bg-accent data-[state=on]:text-accent-foreground !ring-0 disabled:pointer-events-none disabled:opacity-50 hover:bg-muted hover:text-muted-foreground',
+  'inline-flex gap-2 items-center justify-center rounded-xl text-sm font-medium transition-colors data-[state=on]:bg-accent data-[state=on]:text-accent-foreground !ring-0 disabled:pointer-events-none disabled:opacity-50 hover:bg-muted hover:text-muted-foreground',
   {
     variants: {
       variant: {
@@ -14,6 +16,7 @@ const toggleVariants = cva(
         outline: 'bg-transparent border border-input hover:bg-accent hover:text-accent-foreground',
       },
       size: {
+        xs: 'h-[26px] px-2 text-xs',
         default: 'h-10 px-3',
         sm: 'h-9 px-2.5',
         lg: 'h-11 px-5',
@@ -26,12 +29,22 @@ const toggleVariants = cva(
   }
 )
 
-const Toggle = React.forwardRef<
-  React.ElementRef<typeof TogglePrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root> & VariantProps<typeof toggleVariants>
->(({ className, variant, size, ...props }, ref) => (
-  <TogglePrimitive.Root ref={ref} className={classNames(toggleVariants({ variant, size, className }))} {...props} />
-))
+export interface ToggleProps
+  extends React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root>,
+    VariantProps<typeof toggleVariants> {
+  testId?: string
+}
+
+const Toggle = React.forwardRef<React.ElementRef<typeof TogglePrimitive.Root>, ToggleProps>(
+  ({ testId, id, className, variant, size, ...props }, ref) => (
+    <TogglePrimitive.Root
+      testdata-id={`${testId || id}-button`}
+      ref={ref}
+      className={classNames(toggleVariants({ variant, size, className }))}
+      {...props}
+    />
+  )
+)
 
 Toggle.displayName = TogglePrimitive.Root.displayName
 

@@ -25,6 +25,7 @@ import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
 import { computePoolAddress } from '@sushiswap/v3-sdk'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3FactoryContract'
 import { SplashController } from '@sushiswap/ui/future/components/SplashController'
+import { Button } from '@sushiswap/ui/future/components/button'
 
 export function AddPage() {
   return (
@@ -175,22 +176,17 @@ const _Add: FC = () => {
             ) : isInitialLoading ? (
               <SkeletonText className="w-[120px]" />
             ) : token0 && token1 && pool ? (
-              <div
-                onClick={() => setInvert((prev) => !prev)}
-                role="button"
-                className="flex items-center font-semibold gap-1.5 rounded-xl text-blue hover:text-blue-600"
-              >
-                <SwitchHorizontalIcon width={16} height={16} />
-                <div className="flex items-baseline gap-1.5">
-                  {invert ? token1.symbol : token0.symbol} ={' '}
-                  {pool.priceOf(invert ? token1.wrapped : token0.wrapped)?.toSignificant(4)}{' '}
-                  {invert ? token0.symbol : token1.symbol}
-                  <span className="text-sm font-normal">${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)}</span>
-                </div>
+              <div>
+                <Button icon={SwitchHorizontalIcon} variant="link" onClick={() => setInvert((prev) => !prev)}>
+                  <div className="flex items-baseline gap-1.5">
+                    {invert ? token1.symbol : token0.symbol} ={' '}
+                    {pool.priceOf(invert ? token1.wrapped : token0.wrapped)?.toSignificant(4)}{' '}
+                    {invert ? token0.symbol : token1.symbol}
+                    <span className="text-sm font-normal">${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)}</span>
+                  </div>
+                </Button>
               </div>
-            ) : (
-              <></>
-            )}
+            ) : null}
           </div>
         </div>
       </div>

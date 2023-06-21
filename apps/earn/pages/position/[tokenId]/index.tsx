@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useMemo, useState, Fragment } from 'react'
 import { Layout } from '../../../components'
 import Link from 'next/link'
 import { ArrowLeftIcon, MinusIcon, PlusIcon } from '@heroicons/react/solid'
@@ -43,6 +43,7 @@ import { ConcentratedLiquidityHarvestButton } from '../../../components/Concentr
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { ChainId } from '@sushiswap/chain'
 import { Explainer } from '@sushiswap/ui/future/components/explainer'
+import { Toggle } from '@sushiswap/ui/future/components/toggle'
 
 const PositionPage = () => {
   return (
@@ -161,7 +162,7 @@ const Position: FC = () => {
       <div className="flex flex-col gap-2">
         <Link
           className="flex items-center gap-4 mb-2 group"
-          href={`/${chainId}:${positionDetails?.address}`}
+          href={`/pools/${chainId}:${positionDetails?.address}`}
           shallow={true}
         >
           <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
@@ -299,9 +300,9 @@ const Position: FC = () => {
                 </div>
                 <ConcentratedLiquidityHarvestButton account={address} chainId={chainId}>
                   {({ write, isLoading }) => (
-                    <Checker.Connect size="sm" variant="ghost">
-                      <Checker.Network size="sm" variant="ghost" chainId={chainId}>
-                        <Button disabled={isLoading} onClick={() => write?.()} size="sm" variant="ghost">
+                    <Checker.Connect size="xs" variant="link">
+                      <Checker.Network size="xs" variant="link" chainId={chainId}>
+                        <Button disabled={isLoading} onClick={() => write?.()} size="xs" variant="link">
                           Harvest
                         </Button>
                       </Checker.Network>
@@ -353,9 +354,9 @@ const Position: FC = () => {
                 chainId={chainId}
               >
                 {({ sendTransaction, isLoading }) => (
-                  <Checker.Connect size="sm" variant="ghost">
-                    <Checker.Network size="sm" variant="ghost" chainId={chainId}>
-                      <Button disabled={isLoading} onClick={() => sendTransaction?.()} size="sm" variant="ghost">
+                  <Checker.Connect fullWidth={false} size="xs" variant="link">
+                    <Checker.Network fullWidth={false} size="xs" variant="link" chainId={chainId}>
+                      <Button disabled={isLoading} onClick={() => sendTransaction?.()} size="xs" variant="link">
                         Collect
                       </Button>
                     </Checker.Network>
@@ -394,26 +395,20 @@ const Position: FC = () => {
             <div className="flex items-center justify-between">
               <List.Label>Price Range</List.Label>
               {_token0 && _token1 && (
-                <RadioGroup value={invert} onChange={setInvert} className="flex">
-                  <RadioGroup.Option
-                    value={false}
-                    as={Button}
-                    size="sm"
-                    color={invert ? 'default' : 'blue'}
-                    variant="ghost"
-                    className="!h-[24px] font-bold"
-                  >
-                    {_token0.symbol}
+                <RadioGroup value={invert} onChange={setInvert} className="flex gap-1">
+                  <RadioGroup.Option as={Fragment} value={true}>
+                    {({ checked }) => (
+                      <Toggle size="xs" pressed={checked}>
+                        {_token0.symbol}
+                      </Toggle>
+                    )}
                   </RadioGroup.Option>
-                  <RadioGroup.Option
-                    value={true}
-                    as={Button}
-                    color={invert ? 'blue' : 'default'}
-                    size="sm"
-                    variant="ghost"
-                    className="!h-[24px] font-bold"
-                  >
-                    {_token1.symbol}
+                  <RadioGroup.Option as={Fragment} value={false}>
+                    {({ checked }) => (
+                      <Toggle size="xs" pressed={checked}>
+                        {_token1.symbol}
+                      </Toggle>
+                    )}
                   </RadioGroup.Option>
                 </RadioGroup>
               )}

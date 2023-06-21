@@ -3,7 +3,7 @@
 import * as React from 'react'
 import * as SelectPrimitive from '@radix-ui/react-select'
 export * as SelectPrimitive from '@radix-ui/react-select'
-import { ChevronDownIcon, CheckIcon } from '@heroicons/react/24/solid'
+import { ChevronDownIcon, CheckIcon } from '@heroicons/react/24/outline'
 import classNames from 'classnames'
 import { FC } from 'react'
 
@@ -28,7 +28,7 @@ const SelectIcon = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Icon>
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Icon ref={ref} {...props} asChild>
-    <ChevronDownIcon width={20} height={20} className={className} />
+    <ChevronDownIcon strokeWidth={3} width={16} height={16} className={className} />
   </SelectPrimitive.Icon>
 ))
 
@@ -40,7 +40,7 @@ const SelectTrigger = React.forwardRef<
     <SelectPrimitive.Trigger
       ref={ref}
       className={classNames(
-        'h-[54px] group relative rounded-xl flex items-center justify-between gap-1 w-full text-gray-900 dark:text-slate-50 bg-gray-200 dark:bg-slate-200/[0.04] px-4',
+        'h-[54px] data-[state=open]:bg-accent group relative rounded-xl flex items-center justify-between gap-1 w-full text-gray-900 dark:text-slate-50 bg-secondary px-4',
         className
       )}
       {...props}
@@ -107,7 +107,7 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={classNames(
-      'text-gray-700 dark:text-slate-300 relative flex w-full cursor-default select-none items-center rounded-md py-2 pl-8 pr-2 text-sm outline-none hover:bg-black/[0.03] hover:dark:bg-white/[0.03] data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'text-gray-700 dark:text-slate-300 relative flex w-full cursor-default select-none items-center rounded-md py-2 pl-8 pr-2 text-sm outline-none hover:bg-muted focus:bg-accent data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className
     )}
     {...props}

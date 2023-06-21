@@ -52,7 +52,9 @@ const WidgetHeader = React.forwardRef<HTMLDivElement, WidgetHeaderProps>(
         className={classNames(className, 'p-3 mx-0.5 grid grid-cols-2 items-center pb-4 font-medium')}
         {...props}
       >
-        <p className="font-medium flex items-center gap-2 text-slate-100 hover:text-slate-200">{title}</p>
+        <p className="font-medium flex items-center gap-2 text-gray-700 hover:text-gray-900 dark:text-slate-100 dark:hover:text-slate-200">
+          {title}
+        </p>
         <div className="flex justify-end">{children}</div>
       </Comp>
     )

@@ -4,16 +4,18 @@
 
 @layer base {
     :root {
-        --muted: #0000000a;
+        --secondary: #0000000a;
+        --muted: #0000000f;
         --muted-foreground: #6b7280;
-        --accent: #0000000a;
+        --accent: #00000014;
         --accent-foreground: #111827;
     }
 
     .dark {
-        --muted: 223 47% 11%;
+        --secondary: #ffffff0a;
+        --muted: #ffffff0f;
         --muted-foreground: 215.4 16.3% 56.9%;
-        --accent: 216 34% 17%;
+        --accent: #ffffff14;
         --accent-foreground: 210 40% 98%;
     }
 }

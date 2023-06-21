@@ -5,9 +5,9 @@ import React, { FC, memo } from 'react'
 import { V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { NetworkSelector } from '@sushiswap/ui/future/components/networkselector'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { ChevronDownIcon } from '@heroicons/react/solid'
 import { ContentBlock } from '../AddPage/ContentBlock'
 import { SelectPrimitive } from '@sushiswap/ui/future/components/select'
+import { SelectIcon } from '@sushiswap/ui/future/components/select'
 
 interface SelectNetworkWidgetProps {
   networks?: ChainId[]
@@ -37,9 +37,9 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function S
         >
           <SelectPrimitive.Trigger>
             <Button variant="secondary" className="!font-medium">
-              <NetworkIcon chainId={selectedNetwork} width={20} height={20} />
-              <div>{chainName?.[selectedNetwork]}</div>
-              <ChevronDownIcon width={24} height={24} />
+              <NetworkIcon chainId={selectedNetwork} width={16} height={16} />
+              {chainName?.[selectedNetwork]}
+              <SelectIcon />
             </Button>
           </SelectPrimitive.Trigger>
         </NetworkSelector>

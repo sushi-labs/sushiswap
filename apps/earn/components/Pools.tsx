@@ -1,16 +1,13 @@
 'use client'
 
-import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/solid'
-import { classNames, Link } from '@sushiswap/ui'
+import { ChevronRightIcon } from '@heroicons/react/solid'
 import { Button } from '@sushiswap/ui/future/components/button'
-import React, { FC, Fragment } from 'react'
+import React, { FC } from 'react'
 import { useAccount, useNetwork } from '@sushiswap/wagmi'
 import { PoolFilters, PoolsFiltersProvider, PoolsSection } from '../components'
 import { ChainId } from '@sushiswap/chain'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
 import { isUniswapV2FactoryChainId } from '@sushiswap/v2-core'
-import { Popover, Transition } from '@headlessui/react'
-import { List } from '@sushiswap/ui/future/components/list/List'
 import { PositionCardList } from './MigratePage/PositionCardList'
 import { Container } from '@sushiswap/ui/future/components/container'
 import { PositionCard, PositionCardSkeleton } from './MigratePage/PositionCard'
@@ -18,6 +15,16 @@ import { Carousel } from '@sushiswap/ui/future/components/Carousel'
 import { DiscordIcon } from '@sushiswap/ui/future/components/icons'
 import { TRIDENT_ENABLED_NETWORKS } from 'config'
 import { isV3ChainId } from '@sushiswap/v3-sdk'
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@sushiswap/ui/future/components/dropdown-menu'
+import { Chip } from '@sushiswap/ui/future/components/chip'
+import { SelectIcon } from '@sushiswap/ui/future/components/select'
 
 export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
   const { address } = useAccount()
@@ -39,113 +46,90 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
             </div>
             <div className="relative z-10 group">
               <div className="flex items-center w-full">
-                <a
-                  href={
-                    isRouteProcessor3ChainId(chainId) ? `/pools/add?chainId=${chainId}` : `/pools/add/v2/${chainId}`
-                  }
-                >
-                  <Button asChild size="lg" className="rounded-r-none">
+                <Button asChild size="lg" className="rounded-r-none">
+                  <a
+                    href={
+                      isRouteProcessor3ChainId(chainId) ? `/pools/add?chainId=${chainId}` : `/pools/add/v2/${chainId}`
+                    }
+                  >
                     Create Position
-                  </Button>
-                </a>
-                <Popover as={Fragment}>
-                  {({ open }) => (
-                    <>
-                      <Popover.Button
-                        as="button"
-                        className={classNames(
-                          open ? 'bg-blue-600' : '',
-                          'bg-blue hover:bg-blue-600 h-[44px] w-[44px] flex items-center justify-center rounded-r-xl text-white'
-                        )}
-                      >
-                        <ChevronDownIcon width={24} height={24} />
-                      </Popover.Button>
-                      <Transition
-                        show={open}
-                        enter="transition duration-300 ease-out"
-                        enterFrom="transform translate-y-[-16px] scale-[0.95] opacity-0"
-                        enterTo="transform translate-y-0 scale-[1] opacity-100"
-                        leave="transition duration-300 ease-out"
-                        leaveFrom="transform translate-y-0 opacity-100 scale-[1]"
-                        leaveTo="transform translate-y-[-16px] opacity-0 scale-[0.95]"
-                      >
-                        <div className={classNames('right-[-140px] absolute pt-3 top-4 w-[320px]')}>
-                          <div className="absolute right-0 flex flex-col w-full p-2 shadow-md rounded-2xl bg-white/50 paper dark:bg-slate-800/50">
-                            <Popover.Panel>
-                              <List.MenuItem
-                                disabled={!isRouteProcessor3ChainId(chainId)}
-                                as="a"
-                                href={`/pools/add?chainId=${chainId}`}
-                                title={
-                                  <div className="flex gap-2">
-                                    V3 Position{' '}
-                                    {isRouteProcessor3ChainId(chainId) ? (
-                                      <div className="rounded-xl bg-gradient-to-r from-pink to-blue text-white text-[10px] px-2">
-                                        New 🔥
-                                      </div>
-                                    ) : (
-                                      <div className="rounded-xl bg-gray-500 dark:bg-slate-600 text-white text-[10px] px-2">
-                                        Unavailable
-                                      </div>
-                                    )}
-                                  </div>
-                                }
-                                subtitle={'Most efficient way of providing liquidity.'}
-                              />
-                              {isUniswapV2FactoryChainId(chainId) ? (
-                                <List.MenuItem
-                                  as="a"
-                                  href={`/pools/add/v2/${chainId}`}
-                                  title="V2 Position"
-                                  subtitle={'If you prefer creating a v2 liquidity position.'}
-                                />
-                              ) : null}
-                              {/*  isConstantProductPoolFactoryChainId(chainId) || isStablePoolFactoryChainId(chainId) */}
-                              {TRIDENT_ENABLED_NETWORKS.includes(
-                                chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]
-                              ) ? (
-                                <List.MenuItem
-                                  as="a"
-                                  href={`/pools/add/trident/${chainId}`}
-                                  title={
-                                    <div className="flex gap-2">
-                                      Trident Position{' '}
-                                      <div className="rounded-xl bg-slate-900 text-white text-[10px] px-2">
-                                        Deprecating 💀
-                                      </div>
-                                    </div>
-                                  }
-                                  subtitle={'If you prefer creating a trident liquidity position.'}
-                                />
-                              ) : null}
-                            </Popover.Panel>
+                  </a>
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button asChild size="lg" className="rounded-l-none">
+                      <SelectIcon />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-80">
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem asChild>
+                        <a
+                          href={`/pools/add?chainId=${chainId}`}
+                          className="flex flex-col !items-start gap-1 cursor-pointer"
+                        >
+                          <div className="flex items-center gap-1 font-medium leading-none">
+                            V3 Position
+                            <Chip variant="secondary">
+                              {isRouteProcessor3ChainId(chainId) ? 'New 🔥' : 'Unavailable'}
+                            </Chip>
                           </div>
-                        </div>
-                      </Transition>
-                    </>
-                  )}
-                </Popover>
+                          <p className="text-sm leading-snug text-muted-foreground">
+                            Provide highly-efficient concentrated liquidity.
+                          </p>
+                        </a>
+                      </DropdownMenuItem>
+
+                      {isUniswapV2FactoryChainId(chainId) ? (
+                        <DropdownMenuItem asChild>
+                          <a
+                            href={`/pools/add/v2/${chainId}`}
+                            className="flex flex-col !items-start gap-1 cursor-pointer"
+                          >
+                            <div className="flex items-center gap-1 font-medium leading-none">V2 Position</div>
+                            <p className="text-sm leading-snug text-muted-foreground">
+                              Create a legacy V2 liquidity position.
+                            </p>
+                          </a>
+                        </DropdownMenuItem>
+                      ) : null}
+                      {TRIDENT_ENABLED_NETWORKS.includes(chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]) ? (
+                        <DropdownMenuItem asChild>
+                          <a
+                            href={`/pools/add/trident/${chainId}`}
+                            className="flex flex-col !items-start gap-1 cursor-pointer"
+                          >
+                            <div className="flex items-center gap-1 font-medium leading-none">
+                              Trident Position <Chip>Deprecated 💀</Chip>
+                            </div>
+                            <p className="text-sm leading-snug text-muted-foreground">
+                              If you prefer creating a trident liquidity position.
+                            </p>
+                          </a>
+                        </DropdownMenuItem>
+                      ) : null}
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           </div>
           <div className="flex flex-col items-center gap-4 lg:items-end">
             <div className="flex flex-col items-center gap-1 lg:items-end">
               <span className="font-semibold lg:text-sm">Looking for a partnership with Sushi?</span>
-              <Link.External
-                href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe"
-                className="font-medium text-blue hover:!text-blue-600 lg:text-sm flex gap-1 items-center"
-              >
-                Join Onsen <ChevronRightIcon width={16} height={16} />
-              </Link.External>
+              <Button icon={ChevronRightIcon} variant="link" size="sm" asChild>
+                <a href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe" rel="noreferrer noopener" target="_blank">
+                  Join Onsen
+                </a>
+              </Button>
             </div>
             <div className="flex flex-col items-center gap-1 lg:items-end">
               <span className="font-semibold lg:text-sm">Need Help?</span>
-              <Link.External
-                href="https://discord.gg/NVPXN4e"
-                className="font-medium text-blue hover:!text-blue-600 lg:text-sm flex gap-1 items-center"
-              >
-                <DiscordIcon width={16} height={16} /> Join our discord
-              </Link.External>
+              <Button icon={DiscordIcon} variant="link" size="sm" asChild>
+                <a href="https://discord.gg/NVPXN4e" rel="noreferrer noopener" target="_blank">
+                  Join our discord
+                </a>
+              </Button>
             </div>
           </div>
         </section>

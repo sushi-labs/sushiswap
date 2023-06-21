@@ -167,10 +167,10 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             </div>
             {switchTokens ? (
               <div className="flex gap-2 rounded-xl bg-gray-100 dark:bg-white/[0.02] p-1">
-                <Toggle onPressedChange={switchTokens} pressed={isSorted} size="sm">
+                <Toggle onPressedChange={switchTokens} pressed={isSorted} size="xs">
                   {isSorted ? token0?.symbol : token1?.symbol}
                 </Toggle>
-                <Toggle onPressedChange={switchTokens} pressed={!isSorted} size="sm">
+                <Toggle onPressedChange={switchTokens} pressed={!isSorted} size="xs">
                   {isSorted ? token1?.symbol : token0?.symbol}
                 </Toggle>
               </div>

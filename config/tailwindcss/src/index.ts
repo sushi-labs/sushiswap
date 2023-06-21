@@ -59,6 +59,7 @@ const config = {
         yellow: {
           DEFAULT: '#eab308',
         },
+        secondary: 'var(--secondary)',
         muted: 'var(--muted)',
         'muted-foreground': 'var(--muted-foreground)',
         accent: 'var(--accent)',

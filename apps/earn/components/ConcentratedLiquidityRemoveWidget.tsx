@@ -178,16 +178,36 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
               <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">{value}%</h1>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="secondary" size="sm" onClick={() => _onChange('25')} testId="liquidity-25">
+              <Button
+                variant={value === '25' ? 'default' : 'secondary'}
+                size="sm"
+                onClick={() => _onChange('25')}
+                testId="liquidity-25"
+              >
                 25%
               </Button>
-              <Button variant="secondary" size="sm" onClick={() => _onChange('50')} testId="liquidity-50">
+              <Button
+                variant={value === '50' ? 'default' : 'secondary'}
+                size="sm"
+                onClick={() => _onChange('50')}
+                testId="liquidity-50"
+              >
                 50%
               </Button>
-              <Button variant="secondary" size="sm" onClick={() => _onChange('75')} testId="liquidity-75">
+              <Button
+                variant={value === '75' ? 'default' : 'secondary'}
+                size="sm"
+                onClick={() => _onChange('75')}
+                testId="liquidity-75"
+              >
                 75%
               </Button>
-              <Button variant="secondary" size="sm" onClick={() => _onChange('100')} testId="liquidity-max">
+              <Button
+                variant={value === '100' ? 'default' : 'secondary'}
+                size="sm"
+                onClick={() => _onChange('100')}
+                testId="liquidity-max"
+              >
                 Max
               </Button>
             </div>

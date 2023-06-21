@@ -34,7 +34,7 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
         </Button>
         {row.protocol === Protocol.SUSHISWAP_V3 && (
           <Button icon={UserCircleIcon} asChild size="sm" variant="secondary">
-            <a href={`/${row.id}?activeTab=myPositions`}>My Positions</a>
+            <a href={`/pools/${row.id}?activeTab=myPositions`}>My Positions</a>
           </Button>
         )}
       </div>

@@ -197,7 +197,7 @@ const Pool: FC = () => {
                     <RadioGroup.Option
                       value={Granularity.Day}
                       as={Toggle}
-                      size="sm"
+                      size="xs"
                       pressed={granularity === Granularity.Day}
                     >
                       1D
@@ -206,7 +206,7 @@ const Pool: FC = () => {
                       value={Granularity.Week}
                       as={Toggle}
                       pressed={granularity === Granularity.Week}
-                      size="sm"
+                      size="xs"
                     >
                       1W
                     </RadioGroup.Option>

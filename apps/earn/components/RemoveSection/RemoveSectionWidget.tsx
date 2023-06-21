@@ -15,6 +15,8 @@ import { usePoolPosition } from '../PoolPositionProvider'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
+import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
+import { SelectIcon } from '@sushiswap/ui/future/components/select'
 
 interface RemoveSectionWidgetProps {
   isFarm: boolean
@@ -68,8 +70,8 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
             {({ open }) => (
               <>
                 {isFarm && isMounted ? (
-                  <WidgetHeader title="Remove Liquidity" className="!pb-3 ">
-                    <div className="flex gap-3">
+                  <WidgetHeader title="Remove Liquidity" className="!pb-3">
+                    <div className="flex gap-2">
                       <SettingsOverlay
                         options={{
                           slippageTolerance: {
@@ -81,26 +83,19 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                         modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
                       >
                         {({ setOpen }) => (
-                          <Button variant="secondary" onClick={() => setOpen(true)}>
-                            <CogIcon width={24} height={24} />
-                          </Button>
+                          <IconButton
+                            size="sm"
+                            name="Settings"
+                            icon={CogIcon}
+                            variant="secondary"
+                            onClick={() => setOpen(true)}
+                          />
                         )}
                       </SettingsOverlay>
-                      <Disclosure.Button className="w-full pr-0.5">
-                        <div className="flex items-center justify-between">
-                          <div
-                            className={classNames(
-                              open ? 'rotate-180' : 'rotate-0',
-                              'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
-                            )}
-                          >
-                            <ChevronDownIcon
-                              width={24}
-                              height={24}
-                              className="text-gray-700 hover:text-gray-800 dark:group-hover:text-slate-200 dark:text-slate-300"
-                            />
-                          </div>
-                        </div>
+                      <Disclosure.Button as={Fragment}>
+                        <IconButton size="sm" icon={ChevronDownIcon} name="Select">
+                          <SelectIcon />
+                        </IconButton>
                       </Disclosure.Button>
                     </div>
                   </WidgetHeader>
@@ -118,9 +113,13 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                         modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}
                       >
                         {({ setOpen }) => (
-                          <Button variant="secondary" onClick={() => setOpen(true)}>
-                            <CogIcon width={24} height={24} />
-                          </Button>
+                          <IconButton
+                            size="sm"
+                            name="Settings"
+                            icon={CogIcon}
+                            variant="secondary"
+                            onClick={() => setOpen(true)}
+                          />
                         )}
                       </SettingsOverlay>{' '}
                     </div>
@@ -150,7 +149,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                         </div>
                         <div className="flex gap-2">
                           <Button
-                            size="sm"
+                            variant={percentage === '25' ? 'default' : 'secondary'}
                             onClick={() => setPercentage('25')}
                             testdata-id="remove-liquidity-25-button"
                           >
@@ -158,6 +157,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                           </Button>
                           <Button
                             size="sm"
+                            variant={percentage === '50' ? 'default' : 'secondary'}
                             onClick={() => setPercentage('50')}
                             testdata-id="remove-liquidity-50-button"
                           >
@@ -165,6 +165,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                           </Button>
                           <Button
                             size="sm"
+                            variant={percentage === '75' ? 'default' : 'secondary'}
                             onClick={() => setPercentage('75')}
                             testdata-id="remove-liquidity-75-button"
                           >
@@ -172,6 +173,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                           </Button>
                           <Button
                             size="sm"
+                            variant={percentage === '100' ? 'default' : 'secondary'}
                             onClick={() => setPercentage('100')}
                             testdata-id="remove-liquidity-max-button"
                           >

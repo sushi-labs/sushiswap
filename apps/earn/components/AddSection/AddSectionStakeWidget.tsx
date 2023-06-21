@@ -6,12 +6,14 @@ import { FundSource } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui'
 import { Widget, WidgetHeader, WidgetContent } from '@sushiswap/ui/future/components/widget'
 import { useTotalSupply } from '@sushiswap/wagmi'
-import { FC, ReactNode, useMemo } from 'react'
+import { FC, ReactNode, useMemo, Fragment } from 'react'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 
 import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
+import { SelectIcon } from '@sushiswap/ui/future/components/select'
 
 interface AddSectionStakeWidgetProps {
   title?: string
@@ -63,18 +65,9 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                 <Disclosure.Button className="w-full pr-4" testdata-id="stake-liquidity-header">
                   <div className="flex items-center justify-between">
                     <WidgetHeader title={title || '2. Stake Liquidity'} className="!pb-3 " />
-                    <div
-                      className={classNames(
-                        open ? 'rotate-180' : 'rotate-0',
-                        'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
-                      )}
-                    >
-                      <ChevronDownIcon
-                        width={24}
-                        height={24}
-                        className="text-gray-700 hover:text-gray-800 dark:group-hover:text-slate-200 dark:text-slate-300"
-                      />
-                    </div>
+                    <IconButton size="sm" icon={ChevronDownIcon} name="Select">
+                      <SelectIcon />
+                    </IconButton>
                   </div>
                 </Disclosure.Button>
                 <Transition
@@ -105,6 +98,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                         <div className="flex gap-2">
                           <Button
                             size="sm"
+                            variant={value === '25' ? 'default' : 'secondary'}
                             onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(4)?.toExact() || '')}
                             testdata-id="stake-25-button"
                           >
@@ -112,6 +106,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                           </Button>
                           <Button
                             size="sm"
+                            variant={value === '50' ? 'default' : 'secondary'}
                             onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(2)?.toExact() || '')}
                             testdata-id="stake-50-button"
                           >
@@ -119,6 +114,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                           </Button>
                           <Button
                             size="sm"
+                            variant={value === '100' ? 'default' : 'secondary'}
                             onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}
                             testdata-id="stake-max-button"
                           >
@@ -140,9 +136,8 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                         </span>
                         <Button
                           size="sm"
-                          variant="ghost"
+                          variant="link"
                           onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}
-                          className="!px-0"
                         >
                           Balance: {balance?.[FundSource.WALLET].toSignificant(6)}
                         </Button>

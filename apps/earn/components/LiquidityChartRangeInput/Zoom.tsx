@@ -83,7 +83,7 @@ export const Zoom: FC<ZoomProps> = ({
       {showResetButton ? (
         <Button
           size="sm"
-          variant="ghost"
+          variant="link"
           disabled={!showResetButton}
           onClick={() => {
             resetBrush()

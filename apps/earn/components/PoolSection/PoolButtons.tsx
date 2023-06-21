@@ -26,10 +26,10 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pool }) => {
           variant="secondary"
           fullWidth
         >
-          <a href={`/${pool.id}/remove`}>Withdraw</a>
+          <a href={`/pools/${pool.id}/remove`}>Withdraw</a>
         </Button>
         <Button asChild size="lg" fullWidth>
-          <a href={`/${pool.id}/add`}>Deposit</a>
+          <a href={`/pools/${pool.id}/add`}>Deposit</a>
         </Button>
       </div>
       <Button asChild className="col-span-2" size="lg" variant="secondary">

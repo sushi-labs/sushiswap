@@ -13,6 +13,8 @@ import { Currency } from '@sushiswap/ui/future/components/currency'
 import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
+import { SelectIcon } from '@sushiswap/ui/future/components/select'
 
 interface RemoveSectionUnstakeWidget {
   chainId: ChainId
@@ -79,18 +81,9 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                 <Disclosure.Button className="w-full pr-4" testdata-id="unstake-liquidity-header">
                   <div className="flex items-center justify-between">
                     <WidgetHeader title="Unstake Liquidity" className="!pb-3" />
-                    <div
-                      className={classNames(
-                        open ? 'rotate-180' : 'rotate-0',
-                        'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
-                      )}
-                    >
-                      <ChevronDownIcon
-                        width={24}
-                        height={24}
-                        className="text-gray-700 hover:text-gray-800 dark:group-hover:text-slate-200 dark:text-slate-300"
-                      />
-                    </div>
+                    <IconButton size="sm" icon={ChevronDownIcon} name="Select">
+                      <SelectIcon />
+                    </IconButton>
                   </div>
                 </Disclosure.Button>
                 <Transition
@@ -121,6 +114,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                         <div className="flex gap-2">
                           <Button
                             size="sm"
+                            variant={value === '50' ? 'default' : 'secondary'}
                             onClick={() => setValue(balance?.divide(4)?.toExact() || '')}
                             testdata-id="unstake-25-button"
                           >
@@ -128,6 +122,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                           </Button>
                           <Button
                             size="sm"
+                            variant={value === '50' ? 'default' : 'secondary'}
                             onClick={() => setValue(balance?.divide(2)?.toExact() || '')}
                             testdata-id="unstake-50-button"
                           >
@@ -135,6 +130,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                           </Button>
                           <Button
                             size="sm"
+                            variant={value === '50' ? 'default' : 'secondary'}
                             onClick={() => setValue(balance?.toExact() || '')}
                             testdata-id="unstake-max-button"
                           >
@@ -154,12 +150,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                         <span className="text-sm font-medium text-slate-300 hover:text-slate-20">
                           {formatUSD(value0 + value1)}
                         </span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setValue(balance?.toExact() || '')}
-                          className="!px-0"
-                        >
+                        <Button variant="link" size="sm" onClick={() => setValue(balance?.toExact() || '')}>
                           Balance: {balance?.toSignificant(6)}
                         </Button>
                       </div>

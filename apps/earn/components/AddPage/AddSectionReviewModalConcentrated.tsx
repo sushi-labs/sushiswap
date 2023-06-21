@@ -208,7 +208,6 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
                     loading={isLoading && !isError}
                     onClick={onClick}
                     disabled={isWritePending || Boolean(isLoading) || isError}
-                    color={isError ? 'red' : 'blue'}
                     testId="confirm-add-liquidity"
                     type="button"
                   >

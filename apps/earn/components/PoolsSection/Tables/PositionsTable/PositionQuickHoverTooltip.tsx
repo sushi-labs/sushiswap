@@ -64,10 +64,10 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
       </div>
       <div className="flex gap-2">
         <Button icon={PlusIcon} asChild size="sm" variant="secondary">
-          <a href={`/${row.pool.id}/add`}>Deposit</a>
+          <a href={`/pools/${row.pool.id}/add`}>Deposit</a>
         </Button>
         <Button icon={MinusIcon} asChild size="sm" variant="secondary">
-          <a href={`/${row.pool.id}/remove`}>Withdraw</a>
+          <a href={`/pools/${row.pool.id}/remove`}>Withdraw</a>
         </Button>
         <Button icon={ArrowDownIcon} size="sm" variant="secondary" onClick={_harvest}>
           Claim
