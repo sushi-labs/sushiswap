@@ -11,6 +11,7 @@ importers:
 
   .:
     specifiers:
+      '@changesets/changelog-github': 0.4.8
       '@changesets/cli': 2.26.1
       '@graphql-eslint/eslint-plugin': 3.14.3
       '@sushiswap/eslint-config': workspace:*
@@ -42,6 +43,7 @@ importers:
       ts-node: 10.9.1
       turbo: 1.10.3
     devDependencies:
+      '@changesets/changelog-github': 0.4.8
       '@changesets/cli': 2.26.1
       '@graphql-eslint/eslint-plugin': 3.14.3_@types+node@18.11.18
       '@sushiswap/eslint-config': link:config/eslint
@@ -3365,7 +3367,7 @@ packages:
     dependencies:
       '@fastify/deepmerge': 1.3.0
       ajv: 8.12.0
-      ajv-formats: 2.1.1_ajv@8.12.0
+      ajv-formats: 2.1.1
       fast-deep-equal: 3.1.3
       rfdc: 1.3.0
 
@@ -4662,6 +4664,16 @@ packages:
       '@changesets/types': 5.2.1
     dev: true
 
+  /@changesets/changelog-github/0.4.8:
+    resolution: {integrity: sha512-jR1DHibkMAb5v/8ym77E4AMNWZKB5NPzw5a5Wtqm1JepAuIF+hrKp2u04NKM14oBZhHglkCfrla9uq8ORnK/dw==}
+    dependencies:
+      '@changesets/get-github-info': 0.5.2
+      '@changesets/types': 5.2.1
+      dotenv: 8.6.0
+    transitivePeerDependencies:
+      - encoding
+    dev: true
+
   /@changesets/cli/2.26.1:
     resolution: {integrity: sha512-XnTa+b51vt057fyAudvDKGB0Sh72xutQZNAdXkCqPBKO2zvs2yYZx5hFZj1u9cbtpwM6Sxtcr02/FQJfZOzemQ==}
     hasBin: true
@@ -4727,6 +4739,15 @@ packages:
       chalk: 2.4.2
       fs-extra: 7.0.1
       semver: 5.7.1
+    dev: true
+
+  /@changesets/get-github-info/0.5.2:
+    resolution: {integrity: sha512-JppheLu7S114aEs157fOZDjFqUDpm7eHdq5E8SSR0gUBTEK0cNSHsrSR5a66xs0z3RWuo46QvA3vawp8BxDHvg==}
+    dependencies:
+      dataloader: 1.4.0
+      node-fetch: 2.6.11
+    transitivePeerDependencies:
+      - encoding
     dev: true
 
   /@changesets/get-release-plan/3.0.16:
@@ -14913,17 +14934,6 @@ packages:
         optional: true
     dependencies:
       ajv: 8.12.0
-    dev: false
-
-  /ajv-formats/2.1.1_ajv@8.12.0:
-    resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
-    peerDependencies:
-      ajv: ^8.0.0
-    peerDependenciesMeta:
-      ajv:
-        optional: true
-    dependencies:
-      ajv: 8.12.0
 
   /ajv/6.12.3:
     resolution: {integrity: sha512-4K0cK3L1hsqk9xIb2z9vs/XU+PGJZ9PNpJRDS9YLzmNdX6jmVPfamLvTJr0aDAusnHyCHO6MjzlkAsgtqp9teA==}
@@ -17956,6 +17966,10 @@ packages:
       whatwg-url: 11.0.0
     dev: false
 
+  /dataloader/1.4.0:
+    resolution: {integrity: sha512-68s5jYdlvasItOJnCuI2Q9s4q98g0pCyL3HrcKJu8KNugUl8ahgmZYg38ysLTgQjjXX3H8CJLkAvWrclWfcalw==}
+    dev: true
+
   /dataloader/2.1.0:
     resolution: {integrity: sha512-qTcEYLen3r7ojZNgVUaRggOI+KM7jrKxXeSHhogh/TWxYMeONEMqY+hmkobiYQozsGIyg9OYVzO4ZIfoB4I0pQ==}
     dev: true
@@ -18556,6 +18570,11 @@ packages:
   /dotenv/16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
     engines: {node: '>=12'}
+
+  /dotenv/8.6.0:
+    resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
+    engines: {node: '>=10'}
+    dev: true
 
   /dotignore/0.1.2:
     resolution: {integrity: sha512-UGGGWfSauusaVJC+8fgV+NVvBXkCTmVv7sk6nojDZZvuOUNGUy0Zk4UpHQD6EDjS0jpBwcACvH4eofvyzBcRDw==}
@@ -21106,7 +21125,7 @@ packages:
       '@whatwg-node/fetch': 0.8.8
       '@whatwg-node/server': 0.7.7
       ajv: 8.12.0
-      ajv-formats: 2.1.1_ajv@8.12.0
+      ajv-formats: 2.1.1
       hotscript: 1.0.12
       json-schema-to-ts: 2.9.1
       openapi-types: 12.1.3
