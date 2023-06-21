@@ -2,6 +2,7 @@ import React, { FC, ReactNode } from 'react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip'
 import { IconComponent, IconProps } from '../types'
 import { InformationCircleIcon } from '@heroicons/react/20/solid'
+import { classNames } from '../../index'
 
 export const Explainer: FC<{
   children: ReactNode
@@ -13,9 +14,9 @@ export const Explainer: FC<{
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
           {Icon ? (
-            <Icon {...iconProps} />
+            <Icon className={classNames(iconProps?.className, 'self-center')} {...iconProps} />
           ) : (
-            <InformationCircleIcon width={16} height={16} className={iconProps?.className} />
+            <InformationCircleIcon width={16} height={16} className={classNames(iconProps?.className, 'self-center')} />
           )}
         </TooltipTrigger>
         <TooltipContent className="paper !bg-white/50 dark:!bg-slate-800/50 dark:!text-slate-200 !text-gray-700 !p-4 shadow-xl w-80">
