@@ -26,7 +26,6 @@
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "postinstall": "pnpm build",
     "lint": "TIMING=1 eslint ./**/*.ts* --fix",
     "test": "jest --passWithNoTests"
   },
