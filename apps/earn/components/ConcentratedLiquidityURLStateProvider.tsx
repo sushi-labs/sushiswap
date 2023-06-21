@@ -6,7 +6,7 @@ import React, { createContext, FC, ReactNode, useContext, useMemo, useState } fr
 import { useRouter } from 'next/router'
 import { isAddress } from 'ethers/lib/utils'
 import { z } from 'zod'
-import { FeeAmount, isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
+import { FeeAmount, isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
 import { useNetwork } from '@sushiswap/wagmi'
 
@@ -17,7 +17,7 @@ export const queryParamsSchema = z.object({
     .gte(0)
     .lte(2 ** 256)
     .optional()
-    .transform((chainId) => chainId as V3ChainId | undefined),
+    .transform((chainId) => chainId as SushiSwapV3ChainId | undefined),
   fromCurrency: z.string().default('NATIVE'),
   toCurrency: z.string().optional(),
   feeAmount: z.coerce
@@ -34,12 +34,12 @@ export const queryParamsSchema = z.object({
 
 type State = {
   tokenId: string | undefined
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
   token0: Type | undefined
   token1: Type | undefined
   tokensLoading: boolean
   feeAmount: FeeAmount
-  setNetwork(chainId: V3ChainId): void
+  setNetwork(chainId: SushiSwapV3ChainId): void
   setToken0(currency: Type): void
   setToken1(currency: Type): void
   setFeeAmount(feeAmount: FeeAmount): void
@@ -71,11 +71,11 @@ const getTokenFromUrl = (
   }
 }
 
-const getChainIdFromUrl = (urlChainId: ChainId | undefined, connectedChainId: ChainId | undefined): V3ChainId => {
-  let chainId: V3ChainId = ChainId.ETHEREUM
-  if (urlChainId && isV3ChainId(urlChainId)) {
+const getChainIdFromUrl = (urlChainId: ChainId | undefined, connectedChainId: ChainId | undefined): SushiSwapV3ChainId => {
+  let chainId: SushiSwapV3ChainId = ChainId.ETHEREUM
+  if (urlChainId && isSushiSwapV3ChainId(urlChainId)) {
     chainId = urlChainId
-  } else if (connectedChainId && isV3ChainId(connectedChainId)) {
+  } else if (connectedChainId && isSushiSwapV3ChainId(connectedChainId)) {
     chainId = connectedChainId
   }
   return chainId
@@ -111,7 +111,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<ConcentratedLiquidityURLS
       token1 = undefined
     }
 
-    const setNetwork = (chainId: V3ChainId) => {
+    const setNetwork = (chainId: SushiSwapV3ChainId) => {
       const fromCurrency =
         state.token0?.chainId === chainId ? (state.token0.isNative ? 'NATIVE' : state.token0.wrapped.address) : 'NATIVE'
       const toCurrency =

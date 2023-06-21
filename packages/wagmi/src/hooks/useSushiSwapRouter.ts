@@ -1,20 +1,21 @@
 import { ChainId } from '@sushiswap/chain'
-import { uniswapV2Router02Abi, uniswapV2Router02Address, UniswapV2Router02ChainId } from '@sushiswap/v2-core'
+import { SUSHISWAP_V2_ROUTER_ADDRESS, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
+import { uniswapV2RouterAbi } from "@sushiswap/abi"
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
 import { useProvider, useSigner } from 'wagmi'
 
 export const getSushiSwapKlimaRouterContractConfig = (chainId: typeof ChainId.POLYGON) => ({
   address: '0x85B5cc3ec95AE5D0b02E7c17e53F97C4B02a78e4',
-  abi: uniswapV2Router02Abi[chainId],
+  abi: uniswapV2RouterAbi,
 })
 
-export const getSushiSwapRouterContractConfig = (chainId: UniswapV2Router02ChainId) => ({
-  address: uniswapV2Router02Address[chainId],
-  abi: uniswapV2Router02Abi[chainId],
+export const getSushiSwapRouterContractConfig = (chainId: SushiSwapV2ChainId) => ({
+  address: SUSHISWAP_V2_ROUTER_ADDRESS[chainId],
+  abi: uniswapV2RouterAbi,
 })
 
-export function useSushiSwapRouterContract(chainId: UniswapV2Router02ChainId | undefined) {
+export function useSushiSwapRouterContract(chainId: SushiSwapV2ChainId | undefined) {
   const provider = useProvider({ chainId })
   const { data: signer } = useSigner({ chainId })
 

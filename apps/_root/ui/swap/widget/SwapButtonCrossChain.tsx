@@ -8,9 +8,10 @@ import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { sushiXSwapAddress, SushiXSwapChainId } from '@sushiswap/sushixswap'
 import { ZERO } from '@sushiswap/math'
 
+export const APPROVE_XSWAP_TAG = 'APPROVE_XSWAP_TAG'
+
 export const SwapButtonCrossChain: FC = () => {
   const { amount, network0, network1, value } = useSwapState()
-  const { setBentoboxSignature } = useSwapActions()
   const { isFetching, isLoading, data: trade } = useTrade({ crossChain: network0 !== network1 })
   const { setReview } = useSwapActions()
   const [checked, setChecked] = useState(false)
@@ -29,12 +30,12 @@ export const SwapButtonCrossChain: FC = () => {
           <Checker.Network fullWidth size="xl" chainId={network0}>
             <Checker.Amounts fullWidth size="xl" chainId={network0} amounts={[amount]}>
               <Checker.ApproveBentobox
+                tag={APPROVE_XSWAP_TAG}
                 fullWidth
                 size="xl"
                 chainId={network0 as BentoBoxV1ChainId}
                 id="approve-bentobox"
-                contract={sushiXSwapAddress[network0 as SushiXSwapChainId]}
-                onSignature={setBentoboxSignature}
+                masterContract={sushiXSwapAddress[network0 as SushiXSwapChainId]}
               >
                 <Checker.ApproveERC20
                   id="approve-erc20"
@@ -43,7 +44,7 @@ export const SwapButtonCrossChain: FC = () => {
                   amount={amount}
                   contract={bentoBoxV1Address[network0 as BentoBoxV1ChainId]}
                 >
-                  <Checker.Success tag="xswap">
+                  <Checker.Success tag={APPROVE_XSWAP_TAG}>
                     <Button
                       disabled={
                         !trade?.amountOut?.greaterThan(ZERO) ||

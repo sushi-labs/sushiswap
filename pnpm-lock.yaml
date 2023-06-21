@@ -11,6 +11,9 @@ importers:
 
   .:
     devDependencies:
+      '@changesets/changelog-github':
+        specifier: 0.4.8
+        version: 0.4.8
       '@changesets/cli':
         specifier: 2.26.1
         version: 2.26.1
@@ -489,7 +492,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/amm
       '@sushiswap/bentobox':
-        specifier: 1.0.1
+        specifier: workspace:*
         version: link:../../protocols/bentobox
       '@sushiswap/chain':
         specifier: workspace:*
@@ -557,9 +560,9 @@ importers:
       '@sushiswap/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@sushiswap/v2-core':
+      '@sushiswap/v2-sdk':
         specifier: workspace:*
-        version: link:../../protocols/sushiswap
+        version: link:../../packages/v2-sdk
       '@sushiswap/v3-sdk':
         specifier: workspace:*
         version: link:../../packages/v3-sdk
@@ -1171,7 +1174,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/amm
       '@sushiswap/bentobox':
-        specifier: 1.0.1
+        specifier: workspace:*
         version: link:../../protocols/bentobox
       '@sushiswap/chain':
         specifier: workspace:*
@@ -1227,9 +1230,9 @@ importers:
       '@sushiswap/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@sushiswap/v2-core':
+      '@sushiswap/v2-sdk':
         specifier: workspace:*
-        version: link:../../protocols/sushiswap
+        version: link:../../packages/v2-sdk
       '@sushiswap/v3-sdk':
         specifier: workspace:*
         version: link:../../packages/v3-sdk
@@ -2071,7 +2074,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/abi
       '@sushiswap/bentobox':
-        specifier: 1.0.1
+        specifier: workspace:*
         version: link:../../protocols/bentobox
       '@sushiswap/chain':
         specifier: workspace:*
@@ -2243,7 +2246,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/abi
       '@sushiswap/bentobox':
-        specifier: 1.0.1
+        specifier: workspace:*
         version: link:../../protocols/bentobox
       '@sushiswap/chain':
         specifier: workspace:*
@@ -2497,9 +2500,9 @@ importers:
       '@sushiswap/types':
         specifier: workspace:*
         version: link:../types
-      '@sushiswap/v2-core':
+      '@sushiswap/v2-sdk':
         specifier: workspace:*
-        version: link:../../protocols/sushiswap
+        version: link:../v2-sdk
       tiny-invariant:
         specifier: 1.3.1
         version: 1.3.1
@@ -3467,9 +3470,9 @@ importers:
       '@sushiswap/trident-core':
         specifier: workspace:*
         version: link:../../protocols/trident
-      '@sushiswap/v2-core':
+      '@sushiswap/v2-sdk':
         specifier: workspace:*
-        version: link:../../protocols/sushiswap
+        version: link:../v2-sdk
       '@sushiswap/v3-sdk':
         specifier: workspace:*
         version: link:../v3-sdk
@@ -4048,7 +4051,7 @@ importers:
         specifier: workspace:*
         version: link:../amm
       '@sushiswap/bentobox':
-        specifier: 1.0.1
+        specifier: workspace:*
         version: link:../../protocols/bentobox
       '@sushiswap/chain':
         specifier: workspace:*
@@ -4066,7 +4069,7 @@ importers:
         specifier: workspace:*
         version: link:../format
       '@sushiswap/furo':
-        specifier: 1.0.6
+        specifier: workspace:*
         version: link:../../protocols/furo
       '@sushiswap/gas':
         specifier: workspace:*
@@ -4104,9 +4107,9 @@ importers:
       '@sushiswap/ui':
         specifier: workspace:*
         version: link:../ui
-      '@sushiswap/v2-core':
+      '@sushiswap/v2-sdk':
         specifier: workspace:*
-        version: link:../../protocols/sushiswap
+        version: link:../v2-sdk
       '@sushiswap/v3-sdk':
         specifier: workspace:*
         version: link:../v3-sdk
@@ -4275,7 +4278,7 @@ importers:
         specifier: 6.2.0
         version: 6.2.0
       '@sushiswap/bentobox':
-        specifier: 1.0.1
+        specifier: workspace:*
         version: link:../bentobox
       '@sushiswap/chain':
         specifier: workspace:*
@@ -4289,9 +4292,12 @@ importers:
       '@sushiswap/stargate':
         specifier: workspace:*
         version: link:../../packages/stargate
-      '@sushiswap/v2-core':
+      '@sushiswap/types':
         specifier: workspace:*
-        version: link:../sushiswap
+        version: link:../../packages/types
+      '@sushiswap/v2-sdk':
+        specifier: workspace:*
+        version: link:../../packages/v2-sdk
     devDependencies:
       '@ethersproject/abi':
         specifier: 5.7.0
@@ -4317,9 +4323,6 @@ importers:
       '@sushiswap/prettier-config':
         specifier: workspace:*
         version: link:../../config/prettier
-      '@sushiswap/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@sushiswap/typescript-config':
         specifier: workspace:*
         version: link:../../config/typescript
@@ -4381,7 +4384,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/amm
       '@sushiswap/bentobox':
-        specifier: 1.0.1
+        specifier: workspace:*
         version: link:../bentobox
       '@sushiswap/chain':
         specifier: workspace:*
@@ -4513,61 +4516,6 @@ importers:
         specifier: 1.0.2
         version: 1.0.2(typescript@5.0.4)(zod@3.21.4)
 
-  protocols/sushiswap:
-    dependencies:
-      '@openzeppelin/contracts':
-        specifier: 3.1.0
-        version: 3.1.0
-      '@sushiswap/chain':
-        specifier: workspace:*
-        version: link:../../packages/chain
-      '@sushiswap/currency':
-        specifier: workspace:*
-        version: link:../../packages/currency
-      '@sushiswap/hardhat-config':
-        specifier: workspace:*
-        version: link:../../config/hardhat
-      '@sushiswap/types':
-        specifier: 0.0.2
-        version: link:../../packages/types
-    devDependencies:
-      '@nomiclabs/hardhat-ethers':
-        specifier: npm:hardhat-deploy-ethers@^0.3.0-beta.13
-        version: /hardhat-deploy-ethers@0.3.0-beta.13(ethers@5.7.2)(hardhat@2.12.4)
-      '@sushiswap/eslint-config':
-        specifier: workspace:*
-        version: link:../../config/eslint
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
-      '@sushiswap/prettier-config':
-        specifier: workspace:*
-        version: link:../../config/prettier
-      '@sushiswap/typescript-config':
-        specifier: workspace:*
-        version: link:../../config/typescript
-      '@tenderly/hardhat-tenderly':
-        specifier: ^1.0.13
-        version: 1.7.4(hardhat@2.12.4)(ts-node@10.9.1)(typescript@5.0.4)
-      '@types/node':
-        specifier: 18.11.18
-        version: 18.11.18
-      eslint:
-        specifier: 8.41.0
-        version: 8.41.0
-      hardhat:
-        specifier: 2.12.4
-        version: 2.12.4(ts-node@10.9.1)(typescript@5.0.4)
-      hardhat-deploy:
-        specifier: 0.11.22
-        version: 0.11.22
-      ts-node:
-        specifier: 10.9.1
-        version: 10.9.1(@swc/core@1.3.26)(@types/node@18.11.18)(typescript@5.0.4)
-      typescript:
-        specifier: 5.0.4
-        version: 5.0.4
-
   protocols/sushixswap:
     dependencies:
       '@ethersproject/abi':
@@ -4583,7 +4531,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/amm
       '@sushiswap/bentobox':
-        specifier: 1.0.1
+        specifier: workspace:*
         version: link:../bentobox
       '@sushiswap/chain':
         specifier: workspace:*
@@ -4598,7 +4546,7 @@ importers:
         specifier: workspace:*
         version: link:../../config/hardhat
       '@sushiswap/types':
-        specifier: 0.0.2
+        specifier: workspace:*
         version: link:../../packages/types
     devDependencies:
       '@nomiclabs/hardhat-ethers':
@@ -4815,16 +4763,16 @@ importers:
         specifier: 6.2.0
         version: 6.2.0
       '@sushiswap/bentobox':
-        specifier: 1.0.1
+        specifier: workspace:*
         version: link:../bentobox
       '@sushiswap/currency':
-        specifier: 0.0.5
+        specifier: workspace:*
         version: link:../../packages/currency
       '@sushiswap/hardhat-config':
-        specifier: 0.1.2
+        specifier: workspace:*
         version: link:../../config/hardhat
       '@sushiswap/types':
-        specifier: 0.0.2
+        specifier: workspace:*
         version: link:../../packages/types
     devDependencies:
       '@nomiclabs/hardhat-ethers':
@@ -6213,6 +6161,14 @@ packages:
       '@changesets/types': 5.2.1
     dev: true
 
+  /@changesets/changelog-github@0.4.8:
+    resolution: {integrity: sha512-jR1DHibkMAb5v/8ym77E4AMNWZKB5NPzw5a5Wtqm1JepAuIF+hrKp2u04NKM14oBZhHglkCfrla9uq8ORnK/dw==}
+    dependencies:
+      '@changesets/get-github-info': 0.5.2
+      '@changesets/types': 5.2.1
+      dotenv: 8.6.0
+    dev: true
+
   /@changesets/cli@2.26.1:
     resolution: {integrity: sha512-XnTa+b51vt057fyAudvDKGB0Sh72xutQZNAdXkCqPBKO2zvs2yYZx5hFZj1u9cbtpwM6Sxtcr02/FQJfZOzemQ==}
     hasBin: true
@@ -6278,6 +6234,13 @@ packages:
       chalk: 2.4.2
       fs-extra: 7.0.1
       semver: 5.7.1
+    dev: true
+
+  /@changesets/get-github-info@0.5.2:
+    resolution: {integrity: sha512-JppheLu7S114aEs157fOZDjFqUDpm7eHdq5E8SSR0gUBTEK0cNSHsrSR5a66xs0z3RWuo46QvA3vawp8BxDHvg==}
+    dependencies:
+      dataloader: 1.4.0
+      node-fetch: 2.6.6
     dev: true
 
   /@changesets/get-release-plan@3.0.16:
@@ -11580,10 +11543,6 @@ packages:
       '@octokit/webhooks-methods': 3.0.2
       '@octokit/webhooks-types': 6.11.0
       aggregate-error: 3.1.0
-    dev: false
-
-  /@openzeppelin/contracts@3.1.0:
-    resolution: {integrity: sha512-dVXDnUKxrAKLzPdCRkz+N8qsVkK1XxJ6kk3zuI6zaQmcKxN7CkizoDP7lXxcs/Mi2I0mxceTRjJBqlzFffLJrQ==}
     dev: false
 
   /@openzeppelin/contracts@3.4.1-solc-0.7-2:
@@ -18807,6 +18766,10 @@ packages:
       whatwg-url: 11.0.0
     dev: false
 
+  /dataloader@1.4.0:
+    resolution: {integrity: sha512-68s5jYdlvasItOJnCuI2Q9s4q98g0pCyL3HrcKJu8KNugUl8ahgmZYg38ysLTgQjjXX3H8CJLkAvWrclWfcalw==}
+    dev: true
+
   /dataloader@2.1.0:
     resolution: {integrity: sha512-qTcEYLen3r7ojZNgVUaRggOI+KM7jrKxXeSHhogh/TWxYMeONEMqY+hmkobiYQozsGIyg9OYVzO4ZIfoB4I0pQ==}
     dev: true
@@ -19386,6 +19349,11 @@ packages:
   /dotenv@16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
     engines: {node: '>=12'}
+
+  /dotenv@8.6.0:
+    resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
+    engines: {node: '>=10'}
+    dev: true
 
   /dotignore@0.1.2:
     resolution: {integrity: sha512-UGGGWfSauusaVJC+8fgV+NVvBXkCTmVv7sk6nojDZZvuOUNGUy0Zk4UpHQD6EDjS0jpBwcACvH4eofvyzBcRDw==}

@@ -1,6 +1,5 @@
 import {
   ConstantProductPool,
-  FACTORY_ADDRESS,
   findMultiRouteExactIn,
   findSingleRouteExactIn,
   Pair,
@@ -11,7 +10,7 @@ import {
 import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
-import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap/v2-core'
+import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { RouteStatus } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
@@ -64,8 +63,8 @@ export const useTrade: UseTrade = ({
   tridentEnabled = true,
   ammEnabled = true,
 }) => {
-  if (ammEnabled && !isUniswapV2Router02ChainId(chainId))
-    throw new Error(`ChainId Error: Legacy is not available on ${chainName[chainId]} and ammEnabled is enabled.`)
+  if (ammEnabled && !isSushiSwapV2ChainId(chainId))
+    throw new Error(`ChainId Error: SushiSwapV2 is not available on ${chainName[chainId]} and ammEnabled is enabled.`)
 
   // TODO: Use trident chainId instead of Bento
   if (tridentEnabled && !isBentoBoxV1ChainId(chainId))
@@ -90,7 +89,7 @@ export const useTrade: UseTrade = ({
     data: pairs,
     isLoading: isPairsLoading,
     isError: isPairsError,
-  } = usePairs(chainId as UniswapV2Router02ChainId, currencyCombinations, { enabled: ammEnabled })
+  } = usePairs(chainId as SushiSwapV2ChainId, currencyCombinations, { enabled: ammEnabled })
 
   // Trident constant product pools
   const {
@@ -139,7 +138,7 @@ export const useTrade: UseTrade = ({
       filteredPools.length > 0
     ) {
       if (tradeType === TradeType.EXACT_INPUT) {
-        if (chainId in FACTORY_ADDRESS && getConstantProductPoolFactoryContract(chainId).address) {
+        if (chainId in SUSHISWAP_V2_FACTORY_ADDRESS && getConstantProductPoolFactoryContract(chainId).address) {
           const legacyRoute = findSingleRouteExactIn(
             currencyIn.wrapped,
             currencyOut.wrapped,

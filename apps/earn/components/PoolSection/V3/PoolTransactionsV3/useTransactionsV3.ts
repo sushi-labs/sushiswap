@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { SUBGRAPH_HOST, SUSHISWAP_V3_SUBGRAPH_NAME } from '@sushiswap/graph-config'
-import { Pool, V3ChainId, isV3ChainId } from '@sushiswap/v3-sdk'
+import { Pool, SushiSwapV3ChainId, isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useQuery } from '@tanstack/react-query'
 
 export enum TransactionType {
@@ -18,7 +18,7 @@ interface UseTransactionsV3Opts {
   skip?: number
 }
 
-const fetchAll = async (poolId: string, chainId: V3ChainId, opts: UseTransactionsV3Opts) => {
+const fetchAll = async (poolId: string, chainId: SushiSwapV3ChainId, opts: UseTransactionsV3Opts) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
@@ -56,7 +56,7 @@ const fetchAll = async (poolId: string, chainId: V3ChainId, opts: UseTransaction
   return transactions
 }
 
-const fetchMints = async (poolId: string, chainId: V3ChainId, opts: UseTransactionsV3Opts) => {
+const fetchMints = async (poolId: string, chainId: SushiSwapV3ChainId, opts: UseTransactionsV3Opts) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
@@ -77,7 +77,7 @@ const fetchMints = async (poolId: string, chainId: V3ChainId, opts: UseTransacti
   }))
 }
 
-const fetchBurns = async (poolId: string, chainId: V3ChainId, opts: UseTransactionsV3Opts) => {
+const fetchBurns = async (poolId: string, chainId: SushiSwapV3ChainId, opts: UseTransactionsV3Opts) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
@@ -98,7 +98,7 @@ const fetchBurns = async (poolId: string, chainId: V3ChainId, opts: UseTransacti
   }))
 }
 
-const fetchSwaps = async (poolId: string, chainId: V3ChainId, opts: UseTransactionsV3Opts) => {
+const fetchSwaps = async (poolId: string, chainId: SushiSwapV3ChainId, opts: UseTransactionsV3Opts) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
@@ -119,7 +119,7 @@ const fetchSwaps = async (poolId: string, chainId: V3ChainId, opts: UseTransacti
   }))
 }
 
-const fetchCollects = async (poolId: string, chainId: V3ChainId, opts: UseTransactionsV3Opts) => {
+const fetchCollects = async (poolId: string, chainId: SushiSwapV3ChainId, opts: UseTransactionsV3Opts) => {
   const sdk = getBuiltGraphSDK({
     subgraphHost: SUBGRAPH_HOST[chainId],
     subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
@@ -148,7 +148,7 @@ function useTransactionsV3(pool: Pool | undefined | null, poolId: string, opts: 
     queryFn: async () => {
       const chainId = pool?.chainId as ChainId
 
-      if (!pool || !isV3ChainId(chainId)) return []
+      if (!pool || !isSushiSwapV3ChainId(chainId)) return []
 
       let transactions: Awaited<ReturnType<typeof fetchAll>> = []
 
@@ -218,7 +218,7 @@ function useTransactionsV3(pool: Pool | undefined | null, poolId: string, opts: 
           .sort((a, b) => b.logIndex - a.logIndex)
       })
     },
-    enabled: !!pool && isV3ChainId(pool?.chainId as ChainId),
+    enabled: !!pool && isSushiSwapV3ChainId(pool?.chainId as ChainId),
     refetchInterval: opts?.refetchInterval,
   })
 }

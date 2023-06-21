@@ -6,7 +6,7 @@ import { calculateGasMargin } from '@sushiswap/gas'
 import { Pool } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
-import { UniswapV2Router02ChainId } from '@sushiswap/v2-core'
+import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { Dots } from '@sushiswap/ui'
 import {
   getSushiSwapRouterContractConfig,
@@ -42,7 +42,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
   const isMounted = useIsMounted()
   const { address } = useAccount()
   const deadline = useTransactionDeadline(_pool.chainId)
-  const contract = useSushiSwapRouterContract(_pool.chainId as UniswapV2Router02ChainId)
+  const contract = useSushiSwapRouterContract(_pool.chainId as SushiSwapV2ChainId)
   const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
   const slippagePercent = useMemo(() => {
     return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
@@ -53,7 +53,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
 
   const {
     data: [poolState, pool],
-  } = usePair(_pool.chainId as UniswapV2Router02ChainId, token0, token1)
+  } = usePair(_pool.chainId as SushiSwapV2ChainId, token0, token1)
   const { balance } = usePoolPosition()
   const totalSupply = useTotalSupply(liquidityToken)
 
@@ -273,9 +273,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
                   size="xl"
                   id="approve-remove-liquidity-slp"
                   amount={amountToRemove}
-                  contract={
-                    getSushiSwapRouterContractConfig(_pool.chainId as UniswapV2Router02ChainId).address as Address
-                  }
+                  contract={getSushiSwapRouterContractConfig(_pool.chainId as SushiSwapV2ChainId).address as Address}
                 >
                   <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
                     <Button

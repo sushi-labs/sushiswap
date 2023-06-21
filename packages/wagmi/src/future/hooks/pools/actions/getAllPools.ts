@@ -1,6 +1,6 @@
-import { ConstantProductPool, Pair, StablePool, TradeType } from '@sushiswap/amm'
+import { ConstantProductPool, StablePool, TradeType, Pair } from '@sushiswap/amm'
 import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { isUniswapV2Router02ChainId } from '@sushiswap/v2-core'
+import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { getCurrencyCombinations } from '@sushiswap/router'
 import { ConstantProductPoolState, getConstantProductPools } from './getConstantProductPools'
 import { getStablePools, StablePoolState } from './getStablePools'
@@ -13,8 +13,7 @@ import { BridgeBento, UniV3Pool } from '@sushiswap/tines'
 import { BridgeBentoState, getBridgeBentoPools } from './getBridgeBentoPools'
 import { Type } from '@sushiswap/currency'
 import { getV3Pools, V3PoolState } from './getV3Pools'
-import { isSushiSwapV3Chain } from '@sushiswap/validate'
-import { isV3ChainId } from '@sushiswap/v3-sdk'
+import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 
 const queryFn = async ({
   chainId,
@@ -41,7 +40,7 @@ const queryFn = async ({
   const totalsMap = isBentoBoxV1ChainId(chainId) ? await getBentoboxTotalsMap(chainId, _tokensUnique) : null
 
   const [pairs, constantProductPools, stablePools, bridgeBentoPools, v3Pools] = await Promise.all([
-    isUniswapV2Router02ChainId(chainId) ? getPairs(chainId, currencyCombinations) : Promise.resolve([]),
+    isSushiSwapV2ChainId(chainId) ? getPairs(chainId, currencyCombinations) : Promise.resolve([]),
     isConstantProductPoolFactoryChainId(chainId) && isBentoBoxV1ChainId(chainId)
       ? getConstantProductPools(chainId, currencyCombinations)
       : Promise.resolve([]),
@@ -51,7 +50,7 @@ const queryFn = async ({
     isBentoBoxV1ChainId(chainId) && withBentoPools && totalsMap
       ? getBridgeBentoPools(chainId, _tokensUnique, totalsMap)
       : Promise.resolve([]),
-    isV3ChainId(chainId) ? getV3Pools(chainId, currencyCombinations) : Promise.resolve([]),
+    isSushiSwapV3ChainId(chainId) ? getV3Pools(chainId, currencyCombinations) : Promise.resolve([]),
   ])
   // const filteredCurrencyCombinations = currencyCombinations.filter(([a, b]) =>  a === currencyA || b === currencyA || a === currencyB || b === currencyB)
   // const v3Pools = await getV3Pools(chainId, v3CurrencyCombinations)

@@ -3,7 +3,7 @@ import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useR
 import React, { FC, useCallback, useMemo, useState } from 'react'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
-import { PAGE_SIZE } from '../contants'
+import { PAGE_SIZE } from '../constants'
 import {
   APR_COLUMN,
   FEES_COLUMN,

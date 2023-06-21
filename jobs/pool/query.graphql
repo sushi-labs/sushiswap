@@ -155,6 +155,140 @@ query MiniChefRewarders(
   }
 }
 
+query LatestBlock {
+  blocks(first: 1, orderBy: number, orderDirection: desc) {
+    id
+    number
+    timestamp
+  }
+}
+
+query Block($id: ID!) {
+  block(id: $id) {
+    id
+    number
+    timestamp
+  }
+}
+
+query Blocks(
+  $first: Int = 1
+  $skip: Int = 0
+  $where: Block_filter
+  $orderBy: Block_orderBy = timestamp
+  $orderDirection: OrderDirection = desc
+) {
+  blocks(first: $first, skip: $skip, where: $where, orderBy: $orderBy, orderDirection: $orderDirection) {
+    id
+    number
+    timestamp
+  }
+}
+
+query BlocksByChainIds(
+  $first: Int
+  $skip: Int
+  $where: Block_filter
+  $orderBy: Block_orderBy = timestamp
+  $orderDirection: OrderDirection = desc
+  $chainIds: [Int!]!
+) {
+  blocks: blocksByChainIds(
+    first: $first
+    skip: $skip
+    where: $where
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    chainIds: $chainIds
+  ) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query OneHourBlocks($chainIds: [Int!]!) {
+  oneHourBlocks(chainIds: $chainIds) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query TwoHourBlocks($chainIds: [Int!]!) {
+  twoHourBlocks(chainIds: $chainIds) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query OneDayBlocks($chainIds: [Int!]!) {
+  oneDayBlocks(chainIds: $chainIds) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query TwoDayBlocks($chainIds: [Int!]!) {
+  twoDayBlocks(chainIds: $chainIds) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query OneWeekBlocks($chainIds: [Int!]!) {
+  oneWeekBlocks(chainIds: $chainIds) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query TwoWeekBlocks($chainIds: [Int!]!) {
+  twoWeekBlocks(chainIds: $chainIds) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query OneMonthBlocks($chainIds: [Int!]!) {
+  oneMonthBlocks(chainIds: $chainIds) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query TwoMonthBlocks($chainIds: [Int!]!) {
+  twoMonthBlocks(chainIds: $chainIds) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query CustomBlocks($timestamp: Int!, $chainIds: [Int!]!) {
+  customBlocks(timestamp: $timestamp, chainIds: $chainIds) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
 query CurrentBlock($first: Int = 1000 $skip: Int = 0) {
   _meta {
     block {

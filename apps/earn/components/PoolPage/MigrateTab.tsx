@@ -11,7 +11,14 @@ import { APPROVE_TAG_MIGRATE, APPROVE_TAG_UNSTAKE, Bound, Field } from '../../li
 import { Button } from '@sushiswap/ui/future/components/button'
 import { SelectFeeConcentratedWidget } from '../NewPositionSection/SelectFeeConcentratedWidget'
 import { SelectPricesWidget } from '../NewPositionSection'
-import { FeeAmount, Pool as V3Pool, Position, priceToClosestTick, TickMath, V3ChainId } from '@sushiswap/v3-sdk'
+import {
+  FeeAmount,
+  Pool as V3Pool,
+  Position,
+  priceToClosestTick,
+  TickMath,
+  SushiSwapV3ChainId,
+} from '@sushiswap/v3-sdk'
 import React, { FC, useMemo, useState } from 'react'
 import { useGraphPool, useTokenAmountDollarValues } from '../../lib/hooks'
 import { Pool } from '@sushiswap/client'
@@ -30,7 +37,7 @@ import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
-import { UniswapV2Router02ChainId } from '@sushiswap/v2-core/exports/exports'
+import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { useRouter } from 'next/router'
 
 export const MODAL_MIGRATE_ID = 'migrate-modal'
@@ -47,18 +54,35 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   const [feeAmount, setFeeAmount] = useState<FeeAmount>(FeeAmount.LOWEST)
   const { approved } = useApproved(APPROVE_TAG_UNSTAKE)
   const [invertPrice, setInvertPrice] = useState(false)
+  const [invertTokens, setInvertTokens] = useState(false)
   const [slippageTolerance] = useSlippageTolerance('addLiquidity')
   const slippagePercent = useMemo(() => {
     return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
   }, [slippageTolerance])
 
   const {
-    data: { token0, token1, liquidityToken },
+    data: { token0: _token0, token1: _token1, liquidityToken },
   } = useGraphPool(pool)
 
-  const { data: pair } = usePair(pool.chainId as UniswapV2Router02ChainId, token0, token1)
+  const {
+    value0: _value0,
+    value1: _value1,
+    underlying0: _underlying0,
+    underlying1: _underlying1,
+    isLoading,
+    balance,
+  } = usePoolPosition()
+
+  const [token0, token1, value0, value1, underlying0, underlying1] = useMemo(
+    () =>
+      invertTokens
+        ? [_token1, _token0, _value1, _value0, _underlying1, _underlying0]
+        : [_token0, _token1, _value0, _value1, _underlying0, _underlying1],
+    [invertTokens, _token0, _token1, _value0, _value1, _underlying0, _underlying1]
+  )
+
+  const { data: pair } = usePair(pool.chainId as SushiSwapV2ChainId, token0, token1)
   const totalSupply = useTotalSupply(liquidityToken)
-  const { value0, value1, underlying0, underlying1, isLoading, balance } = usePoolPosition()
 
   // Harvest & Withdraw
   const {
@@ -83,11 +107,14 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   // this is just getLiquidityValue with the fee off, but for the passed pair
   const token0Value = useMemo(
     () =>
-      token0 && pair?.[1]?.reserve0 && totalSupply && balance
+      token0 && pair?.[1] && totalSupply && balance
         ? Amount.fromRawAmount(
             token0?.wrapped,
             JSBI.divide(
-              JSBI.multiply(balance[FundSource.WALLET].quotient, pair[1].reserve0.quotient),
+              JSBI.multiply(
+                balance[FundSource.WALLET].quotient,
+                token0.wrapped.equals(pair[1].token0) ? pair[1].reserve0.quotient : pair[1].reserve1.quotient
+              ),
               totalSupply.quotient
             )
           )
@@ -101,7 +128,10 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
         ? Amount.fromRawAmount(
             token1?.wrapped,
             JSBI.divide(
-              JSBI.multiply(balance[FundSource.WALLET].quotient, pair[1].reserve1.quotient),
+              JSBI.multiply(
+                balance[FundSource.WALLET].quotient,
+                token1.wrapped.equals(pair[1].token1) ? pair[1].reserve1.quotient : pair[1].reserve0.quotient
+              ),
               totalSupply.quotient
             )
           )
@@ -120,7 +150,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
     noLiquidity,
     outOfRange,
   } = useConcentratedDerivedMintInfo({
-    chainId: pool.chainId as V3ChainId,
+    chainId: pool.chainId as SushiSwapV3ChainId,
     account: address,
     token0,
     token1,
@@ -134,10 +164,10 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   const v3SpotPrice = useMemo(() => (v3Pool ? v3Pool?.token0Price : undefined), [v3Pool])
   const v2SpotPrice = useMemo(
     () =>
-      token0 && token1 && pair?.[1]?.reserve0 && pair?.[1]?.reserve1
-        ? new Price(token0.wrapped, token1.wrapped, pair[1].reserve0.quotient, pair[1].reserve1.quotient)
+      _token0 && _token1 && pair?.[1]?.reserve0 && pair?.[1]?.reserve1
+        ? new Price(_token0.wrapped, _token1.wrapped, pair[1].reserve0.quotient, pair[1].reserve1.quotient)
         : undefined,
-    [token0, token1, pair]
+    [_token0, _token1, pair]
   )
 
   let priceDifferenceFraction: Fraction | undefined =
@@ -170,40 +200,48 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
             pool: v3Pool ?? new V3Pool(token0.wrapped, token1.wrapped, feeAmount, sqrtPrice, 0, tick, []),
             tickLower,
             tickUpper,
-            amount0: token0Value.quotient,
-            amount1: token1Value.quotient,
+            amount0: token0.wrapped.sortsBefore(token1.wrapped) ? token0Value.quotient : token1Value.quotient,
+            amount1: token0.wrapped.sortsBefore(token1.wrapped) ? token1Value.quotient : token0Value.quotient,
             useFullPrecision: true, // we want full precision for the theoretical position
           })
         : undefined,
     [feeAmount, invalidRange, sqrtPrice, tick, tickLower, tickUpper, token0, token0Value, token1, token1Value, v3Pool]
   )
 
-  const { amount0: v3Amount0Min, amount1: v3Amount1Min } = useMemo(
+  const { amount0, amount1 } = useMemo(
     () => (position ? position.mintAmountsWithSlippage(slippagePercent) : { amount0: undefined, amount1: undefined }),
     [position, slippagePercent]
   )
 
+  const [positionAmount0, positionAmount1, v3Amount0Min, v3Amount1Min] = useMemo(
+    () =>
+      invertTokens
+        ? [position?.amount1, position?.amount0, amount1, amount0]
+        : [position?.amount0, position?.amount1, amount0, amount1],
+    [invertTokens, position?.amount0, position?.amount1, amount0, amount1]
+  )
+
   const refund0 = useMemo(
     () =>
-      position &&
+      positionAmount0 &&
       token0 &&
       token0Value &&
-      Amount.fromRawAmount(token0, JSBI.subtract(token0Value.quotient, position.amount0.quotient)),
+      Amount.fromRawAmount(token0, JSBI.subtract(token0Value.quotient, positionAmount0.quotient)),
     [token0Value, position, token0]
   )
 
   const refund1 = useMemo(
     () =>
-      position &&
+      positionAmount1 &&
       token1 &&
       token1Value &&
-      Amount.fromRawAmount(token1, JSBI.subtract(token1Value.quotient, position.amount1.quotient)),
+      Amount.fromRawAmount(token1, JSBI.subtract(token1Value.quotient, positionAmount1.quotient)),
     [token1Value, position, token1]
   )
 
   const [v3FiatValue0, v3FiatValue1, refund0FiatValue, refund1FiatValue] = useTokenAmountDollarValues({
-    chainId: pool.chainId as V3ChainId,
-    amounts: [position?.amount0, position?.amount1, refund0, refund1],
+    chainId: pool.chainId as SushiSwapV3ChainId,
+    amounts: [positionAmount0, positionAmount1, refund0, refund1],
   })
 
   const { [Field.CURRENCY_A]: input0, [Field.CURRENCY_B]: input1 } = parsedAmounts
@@ -254,7 +292,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       sqrtPrice,
       noLiquidity,
     },
-    chainId: pool.chainId as V3ChainId,
+    chainId: pool.chainId as SushiSwapV3ChainId,
     enabled: approvedMigrate,
   })
 
@@ -464,12 +502,12 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                 <List.KeyValue flex title={<span className="font-semibold text-base">Migration</span>}>
                   <span className="font-semibold text-base">{formatUSD(v3FiatValue0 + v3FiatValue1)}</span>
                 </List.KeyValue>
-                {position?.amount0 && (
-                  <List.KeyValue flex title={`${position.amount0.currency.symbol}`} className="!items-start">
+                {positionAmount0 && (
+                  <List.KeyValue flex title={`${positionAmount0.currency.symbol}`} className="!items-start">
                     <div className="flex flex-col gap-0.5">
                       <div className="flex items-center gap-2">
-                        <Currency.Icon currency={unwrapToken(position.amount0.currency)} width={18} height={18} />
-                        {position.amount0?.toSignificant(6)} {unwrapToken(position.amount0.currency).symbol}
+                        <Currency.Icon currency={unwrapToken(positionAmount0.currency)} width={18} height={18} />
+                        {positionAmount0.toSignificant(6)} {unwrapToken(positionAmount0.currency).symbol}
                       </div>
                       <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
                         {formatUSD(v3FiatValue0)}
@@ -477,12 +515,12 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                     </div>
                   </List.KeyValue>
                 )}
-                {position?.amount1 && (
-                  <List.KeyValue flex title={`${position.amount1.currency.symbol}`} className="!items-start">
+                {positionAmount1 && (
+                  <List.KeyValue flex title={`${positionAmount1.currency.symbol}`} className="!items-start">
                     <div className="flex flex-col gap-0.5">
                       <div className="flex items-center gap-2">
-                        <Currency.Icon currency={unwrapToken(position.amount1.currency)} width={18} height={18} />
-                        {position.amount1?.toSignificant(6)} {unwrapToken(position.amount1.currency).symbol}
+                        <Currency.Icon currency={unwrapToken(positionAmount1.currency)} width={18} height={18} />
+                        {positionAmount1.toSignificant(6)} {unwrapToken(positionAmount1.currency).symbol}
                       </div>
                       <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
                         {formatUSD(v3FiatValue1)}
@@ -541,12 +579,13 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
         />
         <div className="flex flex-col gap-6">
           <SelectPricesWidget
-            chainId={pool.chainId as V3ChainId}
+            chainId={pool.chainId as SushiSwapV3ChainId}
             token0={token0}
             token1={token1}
             feeAmount={feeAmount}
             tokenId={undefined}
             showStartPrice={false}
+            switchTokens={() => setInvertTokens((prev) => !prev)}
           >
             {outOfRange && (
               <div className="p-6 font-medium bg-yellow/10 text-yellow rounded-xl">
@@ -578,7 +617,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
               >
                 <Checker.Custom
                   showGuardIfTrue={Boolean(
-                    !position || position.amount0.equalTo(ZERO) || position.amount1.equalTo(ZERO)
+                    !position || positionAmount0?.equalTo(ZERO) || positionAmount1?.equalTo(ZERO)
                   )}
                   guard={
                     <Button size="xl" fullWidth>
@@ -591,8 +630,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                     fullWidth
                     id="approve-token0"
                     amount={balance?.[FundSource.WALLET] ?? undefined}
-                    contract={V3MigrateContractConfig(pool.chainId as V3ChainId).address}
-                    enabled={Boolean(V3MigrateContractConfig(pool.chainId as V3ChainId).address)}
+                    contract={V3MigrateContractConfig(pool.chainId as SushiSwapV3ChainId).address}
+                    enabled={Boolean(V3MigrateContractConfig(pool.chainId as SushiSwapV3ChainId).address)}
                   >
                     <Checker.Success tag={APPROVE_TAG_MIGRATE}>
                       <Modal.Trigger tag={MODAL_MIGRATE_ID}>
@@ -681,7 +720,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
               </List>
               <List>
                 <List.Control>
-                  {position?.amount0 && (
+                  {positionAmount0 && (
                     <List.KeyValue
                       flex
                       title={`Migration`}
@@ -690,8 +729,8 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                     >
                       <div className="flex flex-col gap-0.5">
                         <div className="flex items-center gap-2">
-                          <Currency.Icon currency={unwrapToken(position.amount0.currency)} width={18} height={18} />
-                          {position.amount0?.toSignificant(6)} {unwrapToken(position.amount0.currency).symbol}
+                          <Currency.Icon currency={unwrapToken(positionAmount0.currency)} width={18} height={18} />
+                          {positionAmount0.toSignificant(6)} {unwrapToken(positionAmount0.currency).symbol}
                         </div>
                         <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
                           {formatUSD(v3FiatValue0)}
@@ -699,12 +738,12 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                       </div>
                     </List.KeyValue>
                   )}
-                  {position?.amount1 && (
+                  {positionAmount1 && (
                     <List.KeyValue flex title={``} className="!items-start">
                       <div className="flex flex-col gap-0.5">
                         <div className="flex items-center gap-2">
-                          <Currency.Icon currency={unwrapToken(position.amount1.currency)} width={18} height={18} />
-                          {position.amount1?.toSignificant(6)} {unwrapToken(position.amount1.currency).symbol}
+                          <Currency.Icon currency={unwrapToken(positionAmount1.currency)} width={18} height={18} />
+                          {positionAmount1.toSignificant(6)} {unwrapToken(positionAmount1.currency).symbol}
                         </div>
                         <span className="text-gray-600 dark:text-slate-400 text-xs font-normal">
                           {formatUSD(v3FiatValue1)}

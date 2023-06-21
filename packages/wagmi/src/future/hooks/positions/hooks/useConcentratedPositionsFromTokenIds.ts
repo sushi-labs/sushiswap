@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { getConcentratedLiquidityPositionsFromTokenIds } from '../actions'
 import { BigNumber } from 'ethers'
-import { V3ChainId } from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 
 interface UseConcentratedLiquidityPositionsFromTokenIdsParams {
-  keys: { tokenId: BigNumber; chainId: V3ChainId }[] | undefined
+  keys: { tokenId: BigNumber; chainId: SushiSwapV3ChainId }[] | undefined
   enabled?: boolean
 }
 

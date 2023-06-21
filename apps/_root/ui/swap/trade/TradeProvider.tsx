@@ -17,7 +17,6 @@ interface InternalSwapState {
   tradeId: string
   review: boolean
   value: string
-  bentoboxSignature: Signature | undefined
 }
 
 interface SwapState {
@@ -46,7 +45,6 @@ type SwapApi = {
   setTokens(currency0: Type, currency1: Type): void
   setAppType(appType: AppType): void
   setSearch(currency: Type): void
-  setBentoboxSignature(signature: Signature | undefined): void
   setTradeId(id: string): void
   setFallback(val: boolean): void
 }
@@ -58,7 +56,6 @@ type Actions =
   | { type: 'setTradeId'; value: string }
   | { type: 'setValue'; value: string }
   | { type: 'setReview'; value: boolean }
-  | { type: 'setBentoboxSignature'; value: Signature }
   | { type: 'setFallback'; value: boolean }
 
 const reducer = (state: InternalSwapState, action: Actions): InternalSwapState => {
@@ -71,11 +68,6 @@ const reducer = (state: InternalSwapState, action: Actions): InternalSwapState =
       return {
         ...state,
         value: action.value,
-      }
-    case 'setBentoboxSignature':
-      return {
-        ...state,
-        bentoboxSignature: action.value,
       }
     case 'setFallback':
       return {
@@ -119,7 +111,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     tradeId: nanoid(),
     review: review ? review : false,
     value: !amount || amount === '0' ? '' : amount,
-    bentoboxSignature: undefined,
   })
 
   // console.log({ token0, token1 })
@@ -268,7 +259,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       }
     }
     const setReview = (value: boolean) => dispatch({ type: 'setReview', value })
-    const setBentoboxSignature = (value: Signature) => dispatch({ type: 'setBentoboxSignature', value })
     const setTradeId = (value: string) => dispatch({ type: 'setTradeId', value })
     const setFallback = (value: boolean) => dispatch({ type: 'setFallback', value })
 
@@ -286,7 +276,6 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setTokens,
       setAppType,
       setSearch,
-      setBentoboxSignature,
       setFallback,
     }
   }, [

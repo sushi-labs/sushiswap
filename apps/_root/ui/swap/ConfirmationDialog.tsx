@@ -26,6 +26,7 @@ import { routeProcessor2Abi } from '@sushiswap/abi'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import { Bridge, LiquidityProviders } from '@sushiswap/router'
 import { Chain } from '@sushiswap/chain'
+import { useNetwork } from 'wagmi'
 
 interface ConfirmationDialogProps {
   children({
@@ -43,6 +44,7 @@ interface ConfirmationDialogProps {
 
 export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) => {
   const { address } = useAccount()
+  const { chain } = useNetwork()
   const { setReview } = useSwapActions()
   const { appType, network0, token0, token1, review } = useSwapState()
   const { approved } = useApproved('swap')
@@ -136,11 +138,11 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     functionName: trade?.functionName,
     args: trade?.writeArgs,
     enabled:
-      Boolean(trade?.writeArgs) &&
+      Boolean(trade?.writeArgs &&
       appType === AppType.Swap &&
       (isRouteProcessorChainId(network0) || isRouteProcessor3ChainId(network0)) &&
       approved &&
-      trade?.route?.status !== 'NoWay',
+      trade?.route?.status !== 'NoWay' && chain?.id === network0),
     overrides: trade?.overrides,
     onError: (error) => {
       const message = error.message.toLowerCase()

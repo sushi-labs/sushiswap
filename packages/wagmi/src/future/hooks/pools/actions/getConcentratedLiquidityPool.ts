@@ -1,5 +1,5 @@
 import { Token, Type } from '@sushiswap/currency'
-import { computePoolAddress, FeeAmount, Pool, V3ChainId } from '@sushiswap/v3-sdk'
+import { computePoolAddress, FeeAmount, Pool, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { JSBI } from '@sushiswap/math'
 import { Address, readContracts } from 'wagmi'
 import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
@@ -8,7 +8,7 @@ export const getConcentratedLiquidityPools = async ({
   chainId,
   poolKeys,
 }: {
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
   poolKeys: [Type | undefined, Type | undefined, FeeAmount | undefined][]
 }): Promise<(Pool | null)[]> => {
   let poolTokens: ([Token, Token, FeeAmount] | undefined)[]
@@ -111,7 +111,7 @@ export const getConcentratedLiquidityPool = async ({
   token1,
   feeAmount,
 }: {
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
   token0: Type | undefined
   token1: Type | undefined
   feeAmount: FeeAmount | undefined

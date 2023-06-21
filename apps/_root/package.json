@@ -26,7 +26,7 @@
 
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/amm": "workspace:*",
-    "@sushiswap/bentobox": "1.0.1",
+    "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/database": "workspace:*",
@@ -42,7 +42,7 @@
     "@sushiswap/router": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
-    "@sushiswap/v2-core": "workspace:*",
+    "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/sushixswap": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident-core": "workspace:*",

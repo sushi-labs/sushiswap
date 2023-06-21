@@ -35,7 +35,7 @@ import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components
 import { CogIcon } from '@heroicons/react/outline'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { PoolHeader } from '../../../components/future/PoolHeader'
-import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
+import { isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import useIsTickAtLimit from '../../../lib/hooks/useIsTickAtLimit'
 import { useAngleRewards } from '@sushiswap/react-query'
 import { ConcentratedLiquidityHarvestButton } from '../../../components/ConcentratedLiquidityHarvestButton'
@@ -61,9 +61,9 @@ const queryParamsSchema = z.object({
     })
     .transform((val) => {
       const [chainId, tokenId] = val.split(':')
-      return [+chainId, +tokenId] as [V3ChainId, number]
+      return [+chainId, +tokenId] as [SushiSwapV3ChainId, number]
     })
-    .refine(([chainId]) => isV3ChainId(chainId), {
+    .refine(([chainId]) => isSushiSwapV3ChainId(chainId), {
       message: 'ChainId not supported.',
     }),
 })
