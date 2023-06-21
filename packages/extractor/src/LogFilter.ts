@@ -48,7 +48,9 @@ class BlockFrame {
   }
 }
 
-// Timestamp to each warning
+// - network fail/absence protection
+// - restores missed blocks
+// - correctly processes removed logs (like undos)
 export class LogFilter {
   readonly client: PublicClient
   readonly depth: number
@@ -63,7 +65,6 @@ export class LogFilter {
 
   blockHashMap: Map<string, Block> = new Map()
   logHashMap: Map<string, Log[]> = new Map()
-  //blockParentHashMap: Map<string, Block[]> = new Map()
   blockFrame: BlockFrame = new BlockFrame()
 
   constructor(client: PublicClient, depth: number, events: AbiEvent[], onNewLogs: (arg?: Log[]) => void) {
@@ -92,16 +93,18 @@ export class LogFilter {
     this.blockHashMap = new Map()
     this.logHashMap = new Map()
     this.blockFrame.deleteFrame()
+    this.onNewLogs() // Signal about stopping
   }
 
   setNewGoal(blockNumber: number, block: Block): boolean {
     const deletedHashes = this.blockFrame.setFrame(blockNumber - this.depth, blockNumber + this.depth)
+    const initProcessedBlocksNumber = this.processedBlockHash.size
     deletedHashes.forEach((hash) => {
       this.blockHashMap.delete(hash)
       this.logHashMap.delete(hash)
       this.processedBlockHash.delete(hash)
     })
-    if (this.processedBlockHash.size == 0) {
+    if (initProcessedBlocksNumber > 0 && this.processedBlockHash.size == 0) {
       this.stop()
       return false
     }
@@ -130,36 +133,36 @@ export class LogFilter {
     ).then((logss) => {
       const logs = logss
         .reduce((a, b) => a.concat(b), [])
-        .sort((a, b) => (b.transactionIndex || 0) - (a.transactionIndex || 0))
+        .sort((a, b) => Number(a.logIndex || 0) - Number(b.logIndex || 0))
       this.logHashMap.set(block.hash || '', logs)
       this.processNewLogs()
     })
-    if (!this.blockHashMap.has(block.parentHash))
+    if (this.lastProcessedBlock && !this.blockHashMap.has(block.parentHash))
       this.client.getBlock({ blockHash: block.parentHash }).then((b) => this.addBlock(b, false))
   }
 
   processNewLogs() {
-    if (!this.unWatchBlocks) {
-      // LogFilter is stopped
-      this.onNewLogs()
-      return
-    }
+    if (!this.unWatchBlocks) return
     const upLine: Block[] = []
     let cornerBlock: Block | undefined = this.nextGoalBlock
     for (;;) {
-      if (cornerBlock == undefined) return
+      if (cornerBlock == undefined)
+        if (this.lastProcessedBlock) return
+        else break
       if (this.processedBlockHash.has(cornerBlock.hash || '')) break
       upLine.push(cornerBlock)
       cornerBlock = this.blockHashMap.get(cornerBlock.parentHash)
     }
 
     const downLine: Block[] = []
-    let b: Block | undefined = this.lastProcessedBlock
-    for (;;) {
-      if (b == undefined) return
-      if (b.hash == cornerBlock.hash) break
-      downLine.push(b)
-      b = this.blockHashMap.get(b.parentHash)
+    if (cornerBlock) {
+      let b: Block | undefined = this.lastProcessedBlock
+      for (;;) {
+        if (b == undefined) return
+        if (b.hash == cornerBlock.hash) break
+        downLine.push(b)
+        b = this.blockHashMap.get(b.parentHash)
+      }
     }
 
     let logs: Log[] = []
@@ -170,14 +173,24 @@ export class LogFilter {
         this.stop()
         return
       }
-      logs = logs.concat(l.reverse())
+      logs = logs.concat(
+        l.reverse().map((l) => {
+          l.removed = true
+          return l
+        })
+      )
       this.processedBlockHash.delete(downLine[i].hash || '')
     }
     this.lastProcessedBlock = cornerBlock
-    for (let i = 0; i < upLine.length; ++i) {
+    for (let i = upLine.length - 1; i >= 0; --i) {
       const l = this.logHashMap.get(upLine[i].hash || '')
       if (l == undefined) break
-      logs = logs.concat(l)
+      logs = logs.concat(
+        l.map((l) => {
+          l.removed = false
+          return l
+        })
+      )
       this.processedBlockHash.add(upLine[i].hash || '')
       this.lastProcessedBlock = upLine[i]
     }
