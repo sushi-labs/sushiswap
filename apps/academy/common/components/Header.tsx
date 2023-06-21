@@ -65,15 +65,15 @@ export const Header: FC = () => {
   return (
     <GlobalNav maxWidth="6xl">
       <>
-        {navData.map(({ title, href, links, isExternal }, i, a) => {
+        {navData.map(({ title, href, links, isExternal }) => {
           if (href && !links) {
-            return <NavLink title={title} href={href} key={i} />
+            return <NavLink title={title} href={href} key={title} />
           }
 
           return (
-            <SubNav title={title} key={i}>
-              {links?.map(({ name, href }, j) => (
-                <SubNavLink href={href} title={name} key={`${i}-${j}`} />
+            <SubNav title={title} key={title}>
+              {links?.map(({ name, href }) => (
+                <SubNavLink href={href} title={name} key={`${title}-${name}`} />
               ))}
             </SubNav>
           )
