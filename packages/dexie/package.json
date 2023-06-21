@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/dexie",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "Sushi Dexie",
   "keywords": [

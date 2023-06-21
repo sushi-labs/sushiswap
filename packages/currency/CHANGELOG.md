@@ -1,5 +1,12 @@
 # @sushiswap/currency
 
+## 0.0.6
+
+### Patch Changes
+
+- Updated dependencies [[`c6d6cc5db`](https://github.com/sushiswap/sushiswap/commit/c6d6cc5db4cc614f3931ee3a325547967c86c51a)]:
+  - @sushiswap/chain@0.1.2
+
 ## 0.0.5
 
 ### Patch Changes
