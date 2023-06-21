@@ -17,7 +17,7 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { COMMON_BASES } from '@sushiswap/router-config'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
-import { useCustomTokens } from '@sushiswap/hooks'
+import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
 import { useSortedTokenList } from './hooks/useSortedTokenList'
 import { useTokenWithCache } from '../../hooks'
 import { isAddress } from '@ethersproject/address'
@@ -39,6 +39,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
   const handleClose = useCallback(() => setOpen(false), [])
 
   const { data: customTokenMap, mutate: customTokenMutate } = useCustomTokens()
+  const { data: pinnedTokenSet, mutate: pinnedTokenMutate, hasToken: isTokenPinned } = usePinnedTokens()
   const { data: tokenMap } = useTokens({ chainId })
   const { data: pricesMap } = usePrices({ chainId })
   const { data: balancesMap } = useBalances({ chainId, account: address })
@@ -55,6 +56,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
     query,
     customTokenMap: currencies ? {} : customTokenMap,
     tokenMap: currencies ? currencies : tokenMap,
+    pin: { isPinned: isTokenPinned, pinnedSet: pinnedTokenSet },
     pricesMap,
     balancesMap,
     chainId,
@@ -71,6 +73,14 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
     },
     [onSelect]
   )
+
+  const _onPin = useCallback((currencyId: string) => {
+    if (isTokenPinned(currencyId)) {
+      pinnedTokenMutate('remove', currencyId)
+    } else {
+      pinnedTokenMutate('add', currencyId)
+    }
+  }, [])
 
   const handleImport = useCallback(
     (currency: Token) => {
@@ -142,6 +152,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
                     selected={selected}
                     onSelect={_onSelect}
                     id={id}
+                    pin={{ onPin: _onPin, pinnedSet: pinnedTokenSet }}
                     currencies={sortedTokenList}
                     chainId={chainId}
                   />
