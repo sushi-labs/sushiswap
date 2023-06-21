@@ -406,7 +406,7 @@ importers:
       react-image-file-resizer: 0.4.8
       react-redux: 8.0.7
       react-slider: 2.0.4
-      swr: ^1.3.0
+      swr: 2.1.5
       tailwindcss: 3.3.2
       typescript: 5.0.4
       unimported: 1.28.0
@@ -485,7 +485,7 @@ importers:
       react-image-file-resizer: 0.4.8
       react-redux: 8.0.7_lhsvdmrfrkqkmxtqosqgyd3k4i
       react-slider: 2.0.4_react@18.2.0
-      swr: 1.3.0_react@18.2.0
+      swr: 2.1.5_react@18.2.0
       viem: 1.0.2_z34kx2cq3kivpffalfeqk2ugre
       wagmi: 0.12.15_ylt6pwwz665g7ztw2tsete3ppe
       yup: 0.32.11
@@ -546,7 +546,7 @@ importers:
       react-dom: 18.2.0
       react-markdown: ^8.0.3
       sharp: 0.31.3
-      swr: ^1.3.0
+      swr: 2.1.5
       tailwindcss: 3.3.2
       typescript: 5.0.4
     dependencies:
@@ -569,7 +569,7 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-markdown: 8.0.7_s3k22s5ab4eu26xuel7hiaraxy
-      swr: 1.3.0_react@18.2.0
+      swr: 2.1.5_react@18.2.0
     devDependencies:
       '@graphql-mesh/cli': 0.82.3_ykzowzmb7rcumunkscnbisnkom
       '@graphql-mesh/graphql': 0.33.3_ykzowzmb7rcumunkscnbisnkom
@@ -730,7 +730,7 @@ importers:
       react-dom: 18.2.0
       react-markdown: ^8.0.3
       sharp: 0.31.3
-      swr: ^1.3.0
+      swr: 2.1.5
       tailwindcss: 3.3.2
       typescript: 5.0.4
     dependencies:
@@ -753,7 +753,7 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-markdown: 8.0.7_s3k22s5ab4eu26xuel7hiaraxy
-      swr: 1.3.0_react@18.2.0
+      swr: 2.1.5_react@18.2.0
     devDependencies:
       '@graphql-mesh/cli': 0.82.3_ykzowzmb7rcumunkscnbisnkom
       '@graphql-mesh/graphql': 0.33.3_ykzowzmb7rcumunkscnbisnkom
@@ -1038,7 +1038,7 @@ importers:
       react-spring: 9.6.1
       redux-devtools-extension: 2.13.9
       redux-persist: 6.0.0
-      swr: ^1.3.0
+      swr: 2.1.5
       tailwindcss: 3.3.2
       ts-jest: ^29.0.0
       typescript: 5.0.4
@@ -1114,7 +1114,7 @@ importers:
       react-spring: 9.6.1_biqbaboplfbrettd7655fr4n2y
       redux-devtools-extension: 2.13.9
       redux-persist: 6.0.0_react@18.2.0
-      swr: 1.3.0_react@18.2.0
+      swr: 2.1.5_react@18.2.0
       wagmi: 0.12.15_ylt6pwwz665g7ztw2tsete3ppe
       zod: 3.21.4
     devDependencies:
@@ -3367,7 +3367,7 @@ packages:
     dependencies:
       '@fastify/deepmerge': 1.3.0
       ajv: 8.12.0
-      ajv-formats: 2.1.1
+      ajv-formats: 2.1.1_ajv@8.12.0
       fast-deep-equal: 3.1.3
       rfdc: 1.3.0
 
@@ -14934,6 +14934,17 @@ packages:
         optional: true
     dependencies:
       ajv: 8.12.0
+    dev: false
+
+  /ajv-formats/2.1.1_ajv@8.12.0:
+    resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependencies:
+      ajv: ^8.0.0
+    peerDependenciesMeta:
+      ajv:
+        optional: true
+    dependencies:
+      ajv: 8.12.0
 
   /ajv/6.12.3:
     resolution: {integrity: sha512-4K0cK3L1hsqk9xIb2z9vs/XU+PGJZ9PNpJRDS9YLzmNdX6jmVPfamLvTJr0aDAusnHyCHO6MjzlkAsgtqp9teA==}
@@ -21125,7 +21136,7 @@ packages:
       '@whatwg-node/fetch': 0.8.8
       '@whatwg-node/server': 0.7.7
       ajv: 8.12.0
-      ajv-formats: 2.1.1
+      ajv-formats: 2.1.1_ajv@8.12.0
       hotscript: 1.0.12
       json-schema-to-ts: 2.9.1
       openapi-types: 12.1.3
@@ -31254,14 +31265,6 @@ packages:
       - utf-8-validate
     dev: false
     optional: true
-
-  /swr/1.3.0_react@18.2.0:
-    resolution: {integrity: sha512-dkghQrOl2ORX9HYrMDtPa7LTVHJjCTeZoB1dqTbnnEDlSvN8JEKpYIYurDfvbQFUUS8Cg8PceFVZNkW0KNNYPw==}
-    peerDependencies:
-      react: ^16.11.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: 18.2.0
-    dev: false
 
   /swr/2.1.5:
     resolution: {integrity: sha512-/OhfZMcEpuz77KavXST5q6XE9nrOBOVcBLWjMT+oAE/kQHyE3PASrevXCtQDZ8aamntOfFkbVJp7Il9tNBQWrw==}
