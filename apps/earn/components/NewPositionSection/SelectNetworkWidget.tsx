@@ -6,7 +6,6 @@ import { V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
 import { NetworkSelector } from '@sushiswap/ui/future/components/networkselector'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { ContentBlock } from '../AddPage/ContentBlock'
-import { SelectPrimitive } from '@sushiswap/ui/future/components/select'
 import { SelectIcon } from '@sushiswap/ui/future/components/select'
 
 interface SelectNetworkWidgetProps {
@@ -35,13 +34,11 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function S
           onSelect={onSelect}
           variant="menu"
         >
-          <SelectPrimitive.Trigger>
-            <Button variant="secondary" className="!font-medium">
-              <NetworkIcon chainId={selectedNetwork} width={16} height={16} />
-              {chainName?.[selectedNetwork]}
-              <SelectIcon />
-            </Button>
-          </SelectPrimitive.Trigger>
+          <Button variant="secondary" className="!font-medium">
+            <NetworkIcon chainId={selectedNetwork} width={16} height={16} />
+            {chainName?.[selectedNetwork]}
+            <SelectIcon />
+          </Button>
         </NetworkSelector>
       </div>
     </ContentBlock>

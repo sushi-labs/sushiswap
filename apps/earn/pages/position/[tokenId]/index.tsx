@@ -262,7 +262,7 @@ const Position: FC = () => {
                 <div className="flex flex-col">
                   <List.Label className="flex gap-1">
                     Unclaimed rewards{' '}
-                    <Explainer icon={<InformationCircleIcon width={16} height={16} />}>
+                    <Explainer>
                       <List className="!pt-0 ">
                         <List.Label>Accumulated rewards since inception</List.Label>
                         <List.Control>

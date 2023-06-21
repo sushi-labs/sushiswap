@@ -49,12 +49,10 @@ export const HeaderNetworkSelector: FC<{
       onSelect={onSwitchNetwork}
       networks={networks}
     >
-      <PopoverPrimitive.Trigger asChild>
         <Button variant="secondary" testdata-id="network-selector-button">
           <NetworkIcon chainId={selected} width={16} height={16} />
           <div className="hidden xl:block">{Chain.from(selected).name}</div>
         </Button>
-      </PopoverPrimitive.Trigger>
     </NetworkSelector>
   )
 }

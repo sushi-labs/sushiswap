@@ -18,7 +18,6 @@ import { isAddress } from 'ethers/lib/utils'
 import { useAccount } from '@sushiswap/wagmi'
 import { Explainer } from '@sushiswap/ui/future/components/explainer'
 import { AddressToEnsResolver } from '@sushiswap/wagmi/future/components/Account/AddressToEnsResolver'
-import { InformationCircleIcon } from '@heroicons/react/20/solid'
 
 export const TradeStats: FC = () => {
   const { address } = useAccount()
@@ -125,7 +124,7 @@ export const TradeStats: FC = () => {
                   }}
                 </AddressToEnsResolver>
                 {address !== recipient && (
-                  <Explainer icon={<InformationCircleIcon width={18} height={18} />}>
+                  <Explainer>
                     Recipient is different from the connected wallet address. If this is expected, ignore this warning.
                   </Explainer>
                 )}

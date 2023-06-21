@@ -52,7 +52,7 @@ export const Component: FC<ApproveERC20Props> = ({
       {...props}
     >
       Approve {amount?.currency.symbol} {max ? 'Permanently' : ''}
-      <Explainer icon={<InformationCircleIcon width={18} height={18} />}>
+      <Explainer>
         <div className="flex flex-col gap-3">
           We need your approval to execute this transaction on your behalf.
           <a

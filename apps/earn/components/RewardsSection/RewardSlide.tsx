@@ -49,7 +49,7 @@ export const RewardSlide: FC<{
         <span className="font-medium flex items-center gap-1 text-sm text-gray-500 dark:text-slate-400">
           Claimable{' '}
           {unclaimed.length > 0 && (
-            <Explainer icon={<InformationCircleIcon width={16} height={16} />}>
+            <Explainer>
               <List className="!pt-0 ">
                 <List.Label>Claimable on {Chain.from(data.chainId).name}</List.Label>
                 <List.Control>

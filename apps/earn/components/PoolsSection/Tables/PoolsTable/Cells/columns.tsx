@@ -6,7 +6,6 @@ import { PoolFees1dCell } from './PoolFees1dCell'
 import { PoolNameCell, PoolChainCell, PoolAPRCell, PoolVolume1dCell } from '../../SharedCells'
 import { PoolTVLCell } from './PoolTVLCell'
 import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
-import { InformationCircleIcon } from '@heroicons/react/solid'
 
 import { Explainer } from '@sushiswap/ui/future/components/explainer'
 import { ChainId } from '@sushiswap/chain'
@@ -63,9 +62,7 @@ export const APR_COLUMN: ColumnDef<Pool, unknown> = {
   header: () => (
     <div className="flex items-center gap-1">
       APR
-      <Explainer icon={<InformationCircleIcon width={16} height={16} />}>
-        The APRs displayed for the liquidity pools are algorithmic and subject to change.
-      </Explainer>
+      <Explainer>The APRs displayed for the liquidity pools are algorithmic and subject to change.</Explainer>
     </div>
   ),
   accessorFn: (row) => row.totalApr1d,

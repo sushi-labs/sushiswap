@@ -42,7 +42,7 @@ export const Component: FC<ApproveBentoboxProps> = ({
             {...props}
           >
             Approve Bentobox
-            <Explainer icon={<InformationCircleIcon width={18} height={18} />}>
+            <Explainer>
               <div className="flex flex-col gap-3">
                 <span className="text-gray-500 dark:text-slate-400">BentoBox Approval</span>
                 We need your approval first to access your wallet using BentoBox; you will only have to approve this

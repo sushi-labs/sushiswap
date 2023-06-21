@@ -3,12 +3,10 @@ import { Switch } from '@sushiswap/ui/future/components/switch'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { AppType } from '@sushiswap/ui/types'
 import { classNames } from '@sushiswap/ui'
-import { ShuffleIcon } from '@sushiswap/ui/future/components/icons'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { ChainSelectors } from './ChainSelectors'
 import { Explainer } from '@sushiswap/ui/future/components/explainer'
 import { STARGATE_SUPPORTED_CHAIN_IDS, StargateChainId } from '@sushiswap/stargate'
-import { InformationCircleIcon } from '@heroicons/react/20/solid'
 
 export const CrossChainBanner: FC = () => {
   const { appType, network0 } = useSwapState()
@@ -31,20 +29,19 @@ export const CrossChainBanner: FC = () => {
     >
       <div
         className={classNames(
-          'flex flex-col bg-gradient-to-r from-blue/[0.15] to-pink/[0.15] hover:from-blue/20 hover:to-pink/20 saturate-[2] dark:saturate-[1] px-4 py-3 rounded-xl'
+          'flex flex-col bg-gradient-to-r from-blue/[0.15] to-pink/[0.15] hover:from-blue/20 hover:to-pink/20 saturate-[2] dark:saturate-[1] p-6 rounded-xl'
         )}
       >
         <div className="flex gap-3 items-center">
-          <ShuffleIcon strokeWidth={1} width={24} height={24} className="text-blue" />
           <div className="flex flex-col">
             <h1 className="flex gap-1.5 items-center font-semibold text-gray-900 dark:text-slate-50">
-              <span className="flex gap-1.5 items-center bg-gradient-to-r from-blue to-pink text-transparent bg-clip-text">
+              <span className="flex gap-1.5 items-center bg-gradient-to-r from-blue to-pink text-transparent bg-clip-text tracking-tighter">
                 Cross Chain
               </span>
-              <Explainer icon={<InformationCircleIcon width={16} height={16} />}>
+              <Explainer iconProps={{ className: 'text-gray-400' }}>
                 <div className="flex flex-col gap-3">
                   <span className="text-gray-900 dark:text-slate-50 font-semibold">Cross-chain Swap</span>
-                  <span className="text-gray-500 dark:text-slate-400 font-medium">
+                  <span className="text-gray-500 dark:text-slate-400">
                     Swap your funds on one network and swap them into a token on a different network
                   </span>
                   <a
@@ -58,9 +55,7 @@ export const CrossChainBanner: FC = () => {
                 </div>
               </Explainer>
             </h1>
-            <span className="font-medium text-sm text-gray-700 dark:text-slate-400">
-              Swap tokens from one network to another.
-            </span>
+            <span className="text-sm text-muted-foreground">Swap tokens from one network to another.</span>
           </div>
           <div className="flex justify-end flex-grow">
             <Switch checked={appType === AppType.xSwap} onCheckedChange={handleChange} />

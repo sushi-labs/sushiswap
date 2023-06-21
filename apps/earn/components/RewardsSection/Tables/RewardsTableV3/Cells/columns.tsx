@@ -50,9 +50,7 @@ export const REWARDS_V3_APR_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
   header: () => (
     <div className="flex items-center gap-1">
       APR
-      <Explainer icon={<InformationCircleIcon width={16} height={16} />}>
-        The APRs displayed for the liquidity pools are algorithmic and subject to change.
-      </Explainer>
+      <Explainer>The APRs displayed for the liquidity pools are algorithmic and subject to change.</Explainer>
     </div>
   ),
   accessorFn: (row) => row.meanAPR ?? 0,

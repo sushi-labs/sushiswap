@@ -56,7 +56,7 @@ export const SlippageTolerance: FC<{
         <div className="flex flex-col gap-2">
           <h1 className="text-sm font-semibold text-gray-900 dark:text-slate-50 flex gap-1">
             {options?.title || 'Slippage'}{' '}
-            <Explainer icon={<InformationCircleIcon width={16} height={16} />}>
+            <Explainer>
               <span className="text-gray-900 dark:text-slate-50 font-semibold">Slippage</span>
               <span className="text-gray-500 dark:text-slate-400 font-medium">
                 {' '}

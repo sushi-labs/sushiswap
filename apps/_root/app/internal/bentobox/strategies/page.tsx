@@ -9,7 +9,6 @@ import useSWR from 'swr'
 import { NetworkSelector } from '@sushiswap/ui/future/components/networkselector'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { SelectPrimitive } from '@sushiswap/ui/future/components/select'
 
 export default function BentoBoxStrategiesPage() {
   const { data } = useSWR('bentobox-strategies', () => getStrategies())
@@ -40,13 +39,11 @@ export default function BentoBoxStrategiesPage() {
           onSelect={setSelectedChainId}
           variant="menu"
         >
-          <SelectPrimitive.Trigger>
-            <Button variant="secondary" className="!font-medium">
-              <NetworkIcon chainId={selectedChainId} width={20} height={20} />
-              <div>{Chain.from(selectedChainId).name}</div>
-              <ChevronDownIcon width={24} height={24} />
-            </Button>
-          </SelectPrimitive.Trigger>
+          <Button variant="secondary" className="!font-medium">
+            <NetworkIcon chainId={selectedChainId} width={20} height={20} />
+            <div>{Chain.from(selectedChainId).name}</div>
+            <ChevronDownIcon width={24} height={24} />
+          </Button>
         </NetworkSelector>
       )}
       <div className="grid grid-cols-1 gap-5">
