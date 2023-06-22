@@ -227,6 +227,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                   timeFormat="HH:mm"
                   timeIntervals={15}
                   timeCaption="time"
+                  startDate={stream.endTime}
                   minDate={stream.endTime}
                   dateFormat="MMM d, yyyy HH:mm"
                   autoComplete="off"

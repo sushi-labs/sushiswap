@@ -112,6 +112,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({
                   timeFormat="HH:mm"
                   timeIntervals={15}
                   timeCaption="time"
+                  startDate={new Date(Date.now() + 5 * 60 * 1000)}
                   minDate={new Date(Date.now() + 5 * 60 * 1000)}
                   dateFormat="MMM d, yyyy HH:mm"
                   placeholderText="Select date"

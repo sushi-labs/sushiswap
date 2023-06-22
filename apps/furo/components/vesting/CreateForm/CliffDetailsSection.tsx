@@ -67,6 +67,9 @@ export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
                     timeFormat="HH:mm"
                     timeIntervals={15}
                     timeCaption="time"
+                    startDate={
+                      startDate ? new Date(startDate.getTime() + 5 * 60 * 1000) : new Date(Date.now() + 10 * 60 * 1000)
+                    }
                     minDate={
                       startDate ? new Date(startDate.getTime() + 5 * 60 * 1000) : new Date(Date.now() + 10 * 60 * 1000)
                     }
