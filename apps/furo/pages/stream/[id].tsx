@@ -1,6 +1,5 @@
 import { getFuroStreamContractConfig } from '@sushiswap/wagmi'
 import { useRouter } from 'next/router'
-import dynamic from 'next/dynamic'
 import { NextSeo } from 'next-seo'
 import React, { FC, useMemo } from 'react'
 import { BalancePredictor, CancelModal, FuroTimer, Layout, TransferModal, UpdateModal } from '../../components'
@@ -26,8 +25,6 @@ import { SplashController } from '@sushiswap/ui/future/components/SplashControll
 import { Blink } from '@sushiswap/ui/future/components/Blink'
 import { Percent } from '@sushiswap/math'
 import { queryParamsSchema } from '../../lib/zod'
-import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
-
 
 const Streams = () => {
   const { isReady } = useRouter()
