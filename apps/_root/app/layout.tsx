@@ -4,7 +4,7 @@ import '@sushiswap/ui/index.css'
 
 import React from 'react'
 import { Providers } from './providers'
-import { SanctionedAddressDialog } from '@sushiswap/wagmi/components/SanctionedAddressDialog'
+import { SanctionedAddressDialog } from '@sushiswap/wagmi/future/components/SanctionedAddressDialog'
 
 import { Inter, Roboto_Mono } from 'next/font/google'
 
