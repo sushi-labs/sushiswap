@@ -16,7 +16,11 @@ export const Explainer: FC<{
           {Icon ? (
             <Icon className={classNames(iconProps?.className, 'self-center')} {...iconProps} />
           ) : (
-            <InformationCircleIcon width={16} height={16} className={classNames(iconProps?.className, 'self-center')} />
+            <InformationCircleIcon
+              width={16}
+              height={16}
+              className={classNames(iconProps?.className, 'self-center text-muted-foreground')}
+            />
           )}
         </TooltipTrigger>
         <TooltipContent className="paper !bg-white/50 dark:!bg-slate-800/50 dark:!text-slate-200 !text-gray-700 !p-4 shadow-xl w-80">
