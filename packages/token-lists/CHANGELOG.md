@@ -1,5 +1,12 @@
 # @sushiswap/token-lists
 
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies [[`dc91c7513`](https://github.com/sushiswap/sushiswap/commit/dc91c7513bee9ca2c505ff4b804e337c98309bb3)]:
+  - @sushiswap/currency@0.1.1
+
 ## 0.0.4
 
 ### Patch Changes

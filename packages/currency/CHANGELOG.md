@@ -1,5 +1,11 @@
 # @sushiswap/currency
 
+## 0.1.1
+
+### Patch Changes
+
+- [#962](https://github.com/sushiswap/sushiswap/pull/962) [`dc91c7513`](https://github.com/sushiswap/sushiswap/commit/dc91c7513bee9ca2c505ff4b804e337c98309bb3) Thanks [@OlaStenberg](https://github.com/OlaStenberg)! - fix exports
+
 ## 0.1.0
 
 ### Minor Changes
