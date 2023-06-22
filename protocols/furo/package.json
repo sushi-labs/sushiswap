@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/furo",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "SushiXSwap",
   "keywords": [
     "sushixswap",
@@ -36,12 +36,13 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.6.0",
     "@rari-capital/solmate": "6.2.0",
-    "@sushiswap/bentobox": "1.0.1",
+    "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/core": "^1.4.2",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
-    "@sushiswap/v2-core": "workspace:*"
+    "@sushiswap/v2-sdk": "workspace:*",
+    "@sushiswap/types": "workspace:*"
   },
   "devDependencies": {
     "@ethersproject/abi": "5.7.0",
@@ -53,7 +54,6 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@sushiswap/types": "workspace:*",
     "@types/node": "18.11.18",
     "eslint": "8.41.0",
     "ethers": "5.7.2",

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap/v2-core/exports/exports'
+import { isSushiSwapV2ChainId, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { useRouter } from 'next/router'
 import { usePool } from '@sushiswap/client'
 import { useSWRConfig } from 'swr'
@@ -32,16 +32,17 @@ const queryParamsSchema = z.object({
     })
     .transform((val) => {
       const [chainId, poolId] = val.split(':')
-      return [+chainId, poolId] as [UniswapV2Router02ChainId, string]
+      return [+chainId, poolId] as [SushiSwapV2ChainId, string]
     })
-    .refine(([chainId]) => isUniswapV2Router02ChainId(chainId), {
+    .refine(([chainId]) => isSushiSwapV2ChainId(chainId), {
       message: 'ChainId not supported.',
     }),
 })
 
 const MigratePositionPage = () => {
+  const router = useRouter()
   return (
-    <SplashController>
+    <SplashController show={!router.isReady}>
       <Migrate />
     </SplashController>
   )

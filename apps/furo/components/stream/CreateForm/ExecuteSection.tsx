@@ -22,7 +22,7 @@ import { createToast } from '@sushiswap/ui/future/components/toast'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useApproved, useSignature, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import { ArrowLeftIcon } from '@heroicons/react/solid'
 import { Currency } from '@sushiswap/ui/future/components/currency'
@@ -40,8 +40,9 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
   ({ chainId, index }) => {
     const { address } = useAccount()
     const { approved } = useApproved(APPROVE_TAG)
-    const contract = useFuroStreamRouterContract(chainId)
-    const [signature, setSignature] = useState<Signature>()
+    const { signature, setSignature } = useSignature(APPROVE_TAG)
+  const contract = useFuroStreamRouterContract(chainId)
+
 
     const {
       watch,
@@ -169,13 +170,13 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                 className="col-span-3 md:col-span-2"
               >
                 <Checker.ApproveBentobox
-                  type="button"
+                  tag={APPROVE_TAG}type="button"
                   fullWidth
                   id="furo-create-single-stream-approve-bentobox"
                   size="xl"
                   chainId={chainId as BentoBoxV1ChainId}
-                  contract={getFuroStreamRouterContractConfig(chainId).address}
-                  onSignature={setSignature}
+                  masterContract={getFuroStreamRouterContractConfig(chainId).address}
+
                   className="col-span-3 md:col-span-2"
                 >
                   <Checker.ApproveERC20

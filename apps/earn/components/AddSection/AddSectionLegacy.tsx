@@ -1,7 +1,7 @@
 import { tryParseAmount } from '@sushiswap/currency'
 import { Pool } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
-import { UniswapV2Router02ChainId } from '@sushiswap/v2-core'
+import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { Address, getSushiSwapRouterContractConfig, PairState, usePair } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
 
@@ -14,7 +14,7 @@ import { APPROVE_TAG_ADD_LEGACY } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
 
 export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
-  const chainId = _pool.chainId as UniswapV2Router02ChainId
+  const chainId = _pool.chainId as SushiSwapV2ChainId
   const [open, setOpen] = useState(false)
   const isMounted = useIsMounted()
   const { token0, token1 } = useTokensFromPool(_pool)
@@ -24,7 +24,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   }>({ input0: '', input1: '' })
   const {
     data: [poolState, pool],
-  } = usePair(_pool.chainId as UniswapV2Router02ChainId, token0, token1)
+  } = usePair(_pool.chainId as SushiSwapV2ChainId, token0, token1)
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
@@ -121,7 +121,7 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
       </AddSectionWidget>
       <AddSectionReviewModalLegacy
         poolState={poolState}
-        chainId={_pool.chainId as UniswapV2Router02ChainId}
+        chainId={_pool.chainId as SushiSwapV2ChainId}
         token0={token0}
         token1={token1}
         input0={parsedInput0}

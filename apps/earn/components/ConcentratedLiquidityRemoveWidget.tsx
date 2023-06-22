@@ -4,7 +4,7 @@ import { ConcentratedLiquidityPosition, useTransactionDeadline } from '@sushiswa
 import { Button } from '@sushiswap/ui/future/components/button'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Currency } from '@sushiswap/ui/future/components/currency'
-import { isV3ChainId, NonfungiblePositionManager, Position, V3ChainId } from '@sushiswap/v3-sdk'
+import { isSushiSwapV3ChainId, NonfungiblePositionManager, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { TransactionRequest } from '@ethersproject/providers'
@@ -20,7 +20,7 @@ interface ConcentratedLiquidityRemoveWidget {
   token0: Type | undefined
   token1: Type | undefined
   account: string | undefined
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
   positionDetails: ConcentratedLiquidityPosition | undefined
   position: Position | undefined
   onChange?(val: string): void
@@ -113,7 +113,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<ConcentratedLiquidityRemoveWi
         liquidityValue0 &&
         liquidityValue1 &&
         liquidityPercentage.greaterThan(ZERO) &&
-        isV3ChainId(chainId)
+        isSushiSwapV3ChainId(chainId)
       ) {
         const { calldata, value: _value } = NonfungiblePositionManager.removeCallParameters(position, {
           tokenId: positionDetails.tokenId.toString(),

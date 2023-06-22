@@ -4,7 +4,7 @@ import { PoolChartTypes } from './PoolChartTypes'
 import { PoolChartPeriods } from './PoolChartPeriods'
 import { PoolChartGraph } from './PoolChartGraph'
 import { PoolDepthWidget } from '../V3/PoolDepthWidget'
-import { V3ChainId } from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 
 const charts = [PoolChartType.Volume, PoolChartType.TVL, PoolChartType.Fees, PoolChartType.Depth]
 const periods = [
@@ -17,7 +17,7 @@ const periods = [
 
 interface PoolChartV3Props {
   address: string
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
 }
 
 const PoolChartV3: FC<PoolChartV3Props> = ({ address, chainId }) => {

@@ -2,14 +2,14 @@ import { BigNumber } from 'ethers'
 import { Address, readContracts } from 'wagmi'
 import { ConcentratedLiquidityPosition } from '../types'
 import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
-import { computePoolAddress, V3ChainId } from '@sushiswap/v3-sdk'
+import { computePoolAddress, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
 
 export const getConcentratedLiquidityPositionsFromTokenIds = async ({
   tokenIds,
 }: {
-  tokenIds: { chainId: V3ChainId; tokenId: BigNumber }[]
+  tokenIds: { chainId: SushiSwapV3ChainId; tokenId: BigNumber }[]
 }): Promise<ConcentratedLiquidityPosition[]> => {
   const results = await readContracts({
     contracts: tokenIds.map(

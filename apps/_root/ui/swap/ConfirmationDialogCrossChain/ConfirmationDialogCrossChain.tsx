@@ -20,11 +20,12 @@ import { useTrade } from '../../../lib/swap/useTrade'
 import { nanoid } from 'nanoid'
 import { useLayerZeroScanLink } from '../../../lib/swap/useLayerZeroScanLink'
 import { SushiXSwapChainId } from '@sushiswap/sushixswap'
-import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { Chain } from '@sushiswap/chain'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
 import { log } from 'next-axiom'
 import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
+import { APPROVE_XSWAP_TAG } from '../widget/SwapButtonCrossChain'
 
 interface ConfirmationDialogCrossChainProps {
   children({
@@ -44,10 +45,11 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
   const { address } = useAccount()
   const { chain } = useNetwork()
   const { appType, review, network0, token0, token1, network1, tradeId } = useSwapState()
-  const { setReview, setBentoboxSignature, setTradeId } = useSwapActions()
+  const { setReview, setTradeId } = useSwapActions()
   const [open, setOpen] = useState(false)
   const { data: trade } = useTrade({ crossChain: true })
-  const { approved } = useApproved('xswap')
+  const { setSignature } = useSignature(APPROVE_XSWAP_TAG)
+  const { approved } = useApproved(APPROVE_XSWAP_TAG)
   const groupTs = useRef<number>()
   const refetchBalances = useBalanceWeb3Refetch()
 
@@ -155,7 +157,7 @@ export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps>
         })
         .finally(async () => {
           await refetchBalances()
-          setBentoboxSignature(undefined)
+          setSignature(undefined)
           setTradeId(nanoid())
         })
     },

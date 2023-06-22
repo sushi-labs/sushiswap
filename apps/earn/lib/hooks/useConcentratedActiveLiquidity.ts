@@ -1,5 +1,5 @@
 import { Type } from '@sushiswap/currency'
-import { FeeAmount, TICK_SPACINGS, tickToPrice, V3ChainId } from '@sushiswap/v3-sdk'
+import { FeeAmount, TICK_SPACINGS, tickToPrice, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useMemo } from 'react'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { JSBI } from '@sushiswap/math'
@@ -24,7 +24,7 @@ const useAllV3Ticks = ({
   feeAmount,
   chainId,
 }: {
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
   token0: Type | undefined
   token1: Type | undefined
   feeAmount: FeeAmount | undefined
@@ -40,7 +40,7 @@ export const useConcentratedActiveLiquidity = ({
   chainId,
   enabled = true,
 }: {
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
   token0: Type | undefined
   token1: Type | undefined
   feeAmount: FeeAmount | undefined

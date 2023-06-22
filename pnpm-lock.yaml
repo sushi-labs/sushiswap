@@ -11,6 +11,7 @@ importers:
 
   .:
     specifiers:
+      '@changesets/changelog-github': 0.4.8
       '@changesets/cli': 2.26.1
       '@graphql-eslint/eslint-plugin': 3.14.3
       '@sushiswap/eslint-config': workspace:*
@@ -42,6 +43,7 @@ importers:
       ts-node: 10.9.1
       turbo: 1.10.3
     devDependencies:
+      '@changesets/changelog-github': 0.4.8
       '@changesets/cli': 2.26.1
       '@graphql-eslint/eslint-plugin': 3.14.3_@types+node@18.11.18
       '@sushiswap/eslint-config': link:config/eslint
@@ -333,7 +335,7 @@ importers:
       '@playwright/test': 1.32.1
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
-      '@sushiswap/bentobox': 1.0.1
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
@@ -360,9 +362,10 @@ importers:
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
-      '@sushiswap/v2-core': workspace:*
+      '@sushiswap/v2-sdk': workspace:*
       '@sushiswap/v3-sdk': workspace:*
       '@sushiswap/validate': workspace:*
+      '@sushiswap/viem-config': workspace:*
       '@sushiswap/wagmi': workspace:*
       '@sushiswap/wagmi-config': workspace:*
       '@tanstack/query-sync-storage-persister': 4.27.1
@@ -448,9 +451,10 @@ importers:
       '@sushiswap/trident-core': link:../../protocols/trident
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/ui': link:../../packages/ui
-      '@sushiswap/v2-core': link:../../protocols/sushiswap
+      '@sushiswap/v2-sdk': link:../../packages/v2-sdk
       '@sushiswap/v3-sdk': link:../../packages/v3-sdk
       '@sushiswap/validate': link:../../packages/validate
+      '@sushiswap/viem-config': link:../../config/viem
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@tanstack/query-sync-storage-persister': 4.27.1
@@ -787,7 +791,7 @@ importers:
       '@reduxjs/toolkit': 1.9.5
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
-      '@sushiswap/bentobox': 1.0.1
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/client': workspace:*
       '@sushiswap/currency': workspace:*
@@ -810,7 +814,7 @@ importers:
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
-      '@sushiswap/v2-core': workspace:*
+      '@sushiswap/v2-sdk': workspace:*
       '@sushiswap/v3-sdk': workspace:*
       '@sushiswap/wagmi': workspace:*
       '@sushiswap/wagmi-config': workspace:*
@@ -892,7 +896,7 @@ importers:
       '@sushiswap/trident-core': link:../../protocols/trident
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/ui': link:../../packages/ui
-      '@sushiswap/v2-core': link:../../protocols/sushiswap
+      '@sushiswap/v2-sdk': link:../../packages/v2-sdk
       '@sushiswap/v3-sdk': link:../../packages/v3-sdk
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@sushiswap/wagmi-config': link:../../config/wagmi
@@ -1383,7 +1387,7 @@ importers:
       '@graphql-mesh/transform-type-merging': 0.5.20
       '@graphql-tools/merge': 8.4.0
       '@sushiswap/abi': workspace:*
-      '@sushiswap/bentobox': 1.0.1
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
@@ -1476,7 +1480,7 @@ importers:
       '@graphql-mesh/utils': 0.43.21
       '@graphql-tools/merge': 8.4.0
       '@sushiswap/abi': workspace:*
-      '@sushiswap/bentobox': 1.0.1
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/database': workspace:*
@@ -1668,7 +1672,7 @@ importers:
       '@sushiswap/trident-core': workspace:*
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/v2-core': workspace:*
+      '@sushiswap/v2-sdk': workspace:*
       '@types/node': 18.11.18
       eslint: 8.41.0
       tiny-invariant: 1.3.1
@@ -1686,7 +1690,7 @@ importers:
       '@sushiswap/tines': link:../tines
       '@sushiswap/trident-core': link:../../protocols/trident
       '@sushiswap/types': link:../types
-      '@sushiswap/v2-core': link:../../protocols/sushiswap
+      '@sushiswap/v2-sdk': link:../v2-sdk
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
       zod: 3.21.4
@@ -2343,7 +2347,7 @@ importers:
       '@sushiswap/tines': workspace:*
       '@sushiswap/trident-core': workspace:*
       '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/v2-core': workspace:*
+      '@sushiswap/v2-sdk': workspace:*
       '@sushiswap/v3-sdk': workspace:*
       '@sushiswap/viem-config': workspace:*
       '@types/lodash.flatmap': ^4.5.7
@@ -2373,7 +2377,7 @@ importers:
       '@sushiswap/router-config': link:../../config/router
       '@sushiswap/tines': link:../tines
       '@sushiswap/trident-core': link:../../protocols/trident
-      '@sushiswap/v2-core': link:../../protocols/sushiswap
+      '@sushiswap/v2-sdk': link:../v2-sdk
       '@sushiswap/v3-sdk': link:../v3-sdk
       '@sushiswap/viem-config': link:../../config/viem
       date-fns: 2.29.3
@@ -2769,14 +2773,14 @@ importers:
       '@heroicons/react': 2.0.13
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
-      '@sushiswap/bentobox': 1.0.1
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/client': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/dexie': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
-      '@sushiswap/furo': 1.0.6
+      '@sushiswap/furo': workspace:*
       '@sushiswap/gas': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -2792,7 +2796,7 @@ importers:
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
-      '@sushiswap/v2-core': workspace:*
+      '@sushiswap/v2-sdk': workspace:*
       '@sushiswap/v3-sdk': workspace:*
       '@sushiswap/validate': workspace:*
       '@sushiswap/viem-config': workspace:*
@@ -2850,7 +2854,7 @@ importers:
       '@sushiswap/trident-core': link:../../protocols/trident
       '@sushiswap/types': link:../types
       '@sushiswap/ui': link:../ui
-      '@sushiswap/v2-core': link:../../protocols/sushiswap
+      '@sushiswap/v2-sdk': link:../v2-sdk
       '@sushiswap/v3-sdk': link:../v3-sdk
       '@sushiswap/validate': link:../validate
       '@sushiswap/viem-config': link:../../config/viem
@@ -2938,7 +2942,7 @@ importers:
       '@nomiclabs/hardhat-etherscan': ^3.1.0
       '@openzeppelin/contracts': ^4.6.0
       '@rari-capital/solmate': 6.2.0
-      '@sushiswap/bentobox': 1.0.1
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/core': ^1.4.2
       '@sushiswap/currency': workspace:*
@@ -2949,7 +2953,7 @@ importers:
       '@sushiswap/stargate': workspace:*
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/v2-core': workspace:*
+      '@sushiswap/v2-sdk': workspace:*
       '@types/node': 18.11.18
       eslint: 8.41.0
       ethers: 5.7.2
@@ -2965,7 +2969,8 @@ importers:
       '@sushiswap/core': 1.4.2
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/stargate': link:../../packages/stargate
-      '@sushiswap/v2-core': link:../sushiswap
+      '@sushiswap/types': link:../../packages/types
+      '@sushiswap/v2-sdk': link:../../packages/v2-sdk
     devDependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/providers': 5.7.2
@@ -2975,7 +2980,6 @@ importers:
       '@sushiswap/hardhat-config': link:../../config/hardhat
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/types': link:../../packages/types
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 18.11.18
       eslint: 8.41.0
@@ -2998,7 +3002,7 @@ importers:
       '@openzeppelin/contracts': 4.8.0
       '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
-      '@sushiswap/bentobox': 1.0.1
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -3099,45 +3103,6 @@ importers:
       typescript: 5.0.4
       viem: 1.0.2_typescript@5.0.4
 
-  protocols/sushiswap:
-    specifiers:
-      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
-      '@openzeppelin/contracts': 3.1.0
-      '@sushiswap/chain': workspace:*
-      '@sushiswap/currency': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/hardhat-config': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/types': 0.0.2
-      '@sushiswap/typescript-config': workspace:*
-      '@tenderly/hardhat-tenderly': ^1.0.13
-      '@types/node': 18.11.18
-      eslint: 8.41.0
-      hardhat: 2.12.4
-      hardhat-deploy: 0.11.22
-      ts-node: 10.9.1
-      typescript: 5.0.4
-    dependencies:
-      '@openzeppelin/contracts': 3.1.0
-      '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/hardhat-config': link:../../config/hardhat
-      '@sushiswap/types': link:../../packages/types
-    devDependencies:
-      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_hardhat@2.12.4
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/typescript-config': link:../../config/typescript
-      '@tenderly/hardhat-tenderly': 1.7.4_2lseqtovkpll54q66bropeckji
-      '@types/node': 18.11.18
-      eslint: 8.41.0
-      hardhat: 2.12.4_pyqfhkbboucpxgvrs7ocxwodkm
-      hardhat-deploy: 0.11.22
-      ts-node: 10.9.1_fgooozxjrvntjfxsxdw2hhv6my
-      typescript: 5.0.4
-
   protocols/sushixswap:
     specifiers:
       '@ethersproject/abi': 5.7.0
@@ -3145,7 +3110,7 @@ importers:
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@openzeppelin/contracts': ^4.6.0
       '@sushiswap/amm': workspace:*
-      '@sushiswap/bentobox': 1.0.1
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/core': ^1.4.2
       '@sushiswap/currency': workspace:*
@@ -3153,7 +3118,7 @@ importers:
       '@sushiswap/hardhat-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/types': 0.0.2
+      '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@tenderly/hardhat-tenderly': ^1.0.13
       '@types/chai': ^4.3.3
@@ -3306,13 +3271,13 @@ importers:
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@openzeppelin/contracts': 4.7.3
       '@rari-capital/solmate': 6.2.0
-      '@sushiswap/bentobox': 1.0.1
-      '@sushiswap/currency': 0.0.5
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/hardhat-config': 0.1.2
+      '@sushiswap/hardhat-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/types': 0.0.2
+      '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@tenderly/hardhat-tenderly': ^1.0.13
       '@types/node': 18.11.18
@@ -3368,7 +3333,7 @@ packages:
     dependencies:
       '@fastify/deepmerge': 1.3.0
       ajv: 8.12.0
-      ajv-formats: 2.1.1_ajv@8.12.0
+      ajv-formats: 2.1.1
       fast-deep-equal: 3.1.3
       rfdc: 1.3.0
 
@@ -4665,6 +4630,16 @@ packages:
       '@changesets/types': 5.2.1
     dev: true
 
+  /@changesets/changelog-github/0.4.8:
+    resolution: {integrity: sha512-jR1DHibkMAb5v/8ym77E4AMNWZKB5NPzw5a5Wtqm1JepAuIF+hrKp2u04NKM14oBZhHglkCfrla9uq8ORnK/dw==}
+    dependencies:
+      '@changesets/get-github-info': 0.5.2
+      '@changesets/types': 5.2.1
+      dotenv: 8.6.0
+    transitivePeerDependencies:
+      - encoding
+    dev: true
+
   /@changesets/cli/2.26.1:
     resolution: {integrity: sha512-XnTa+b51vt057fyAudvDKGB0Sh72xutQZNAdXkCqPBKO2zvs2yYZx5hFZj1u9cbtpwM6Sxtcr02/FQJfZOzemQ==}
     hasBin: true
@@ -4730,6 +4705,15 @@ packages:
       chalk: 2.4.2
       fs-extra: 7.0.1
       semver: 5.7.1
+    dev: true
+
+  /@changesets/get-github-info/0.5.2:
+    resolution: {integrity: sha512-JppheLu7S114aEs157fOZDjFqUDpm7eHdq5E8SSR0gUBTEK0cNSHsrSR5a66xs0z3RWuo46QvA3vawp8BxDHvg==}
+    dependencies:
+      dataloader: 1.4.0
+      node-fetch: 2.6.11
+    transitivePeerDependencies:
+      - encoding
     dev: true
 
   /@changesets/get-release-plan/3.0.16:
@@ -10414,10 +10398,6 @@ packages:
       aggregate-error: 3.1.0
     dev: false
 
-  /@openzeppelin/contracts/3.1.0:
-    resolution: {integrity: sha512-dVXDnUKxrAKLzPdCRkz+N8qsVkK1XxJ6kk3zuI6zaQmcKxN7CkizoDP7lXxcs/Mi2I0mxceTRjJBqlzFffLJrQ==}
-    dev: false
-
   /@openzeppelin/contracts/3.4.1-solc-0.7-2:
     resolution: {integrity: sha512-tAG9LWg8+M2CMu7hIsqHPaTyG4uDzjr6mhvH96LvOpLZZj6tgzTluBt+LsCf1/QaYrlis6pITvpIaIhE+iZB+Q==}
     dev: false
@@ -12594,7 +12574,7 @@ packages:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 18.11.18
+      '@types/node': 20.2.3
     dev: true
 
   /@types/glob/8.1.0:
@@ -14649,7 +14629,7 @@ packages:
       '@walletconnect/jsonrpc-provider': 1.0.13
       '@walletconnect/jsonrpc-types': 1.0.3
       '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/modal': 2.4.5_react@18.2.0
+      '@walletconnect/modal': 2.4.5
       '@walletconnect/sign-client': 2.8.0
       '@walletconnect/types': 2.8.0
       '@walletconnect/universal-provider': 2.8.0
@@ -15544,17 +15524,6 @@ packages:
         optional: true
     dependencies:
       ajv: 8.12.0
-    dev: false
-
-  /ajv-formats/2.1.1_ajv@8.12.0:
-    resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
-    peerDependencies:
-      ajv: ^8.0.0
-    peerDependenciesMeta:
-      ajv:
-        optional: true
-    dependencies:
-      ajv: 8.12.0
 
   /ajv/6.12.3:
     resolution: {integrity: sha512-4K0cK3L1hsqk9xIb2z9vs/XU+PGJZ9PNpJRDS9YLzmNdX6jmVPfamLvTJr0aDAusnHyCHO6MjzlkAsgtqp9teA==}
@@ -16059,7 +16028,7 @@ packages:
   /axios/0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
-      follow-redirects: 1.15.2
+      follow-redirects: 1.15.2_debug@4.3.4
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
@@ -18532,6 +18501,10 @@ packages:
       whatwg-url: 11.0.0
     dev: false
 
+  /dataloader/1.4.0:
+    resolution: {integrity: sha512-68s5jYdlvasItOJnCuI2Q9s4q98g0pCyL3HrcKJu8KNugUl8ahgmZYg38ysLTgQjjXX3H8CJLkAvWrclWfcalw==}
+    dev: true
+
   /dataloader/2.1.0:
     resolution: {integrity: sha512-qTcEYLen3r7ojZNgVUaRggOI+KM7jrKxXeSHhogh/TWxYMeONEMqY+hmkobiYQozsGIyg9OYVzO4ZIfoB4I0pQ==}
     dev: true
@@ -19132,6 +19105,11 @@ packages:
   /dotenv/16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
     engines: {node: '>=12'}
+
+  /dotenv/8.6.0:
+    resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
+    engines: {node: '>=10'}
+    dev: true
 
   /dotignore/0.1.2:
     resolution: {integrity: sha512-UGGGWfSauusaVJC+8fgV+NVvBXkCTmVv7sk6nojDZZvuOUNGUy0Zk4UpHQD6EDjS0jpBwcACvH4eofvyzBcRDw==}
@@ -21682,7 +21660,7 @@ packages:
       '@whatwg-node/fetch': 0.8.8
       '@whatwg-node/server': 0.7.7
       ajv: 8.12.0
-      ajv-formats: 2.1.1_ajv@8.12.0
+      ajv-formats: 2.1.1
       hotscript: 1.0.12
       json-schema-to-ts: 2.9.1
       openapi-types: 12.1.3
@@ -22943,15 +22921,6 @@ packages:
     dependencies:
       ethers: 5.7.2
       hardhat: 2.12.7_typescript@5.0.4
-
-  /hardhat-deploy-ethers/0.3.0-beta.13_hardhat@2.12.4:
-    resolution: {integrity: sha512-PdWVcKB9coqWV1L7JTpfXRCI91Cgwsm7KLmBcwZ8f0COSm1xtABHZTyz3fvF6p42cTnz1VM0QnfDvMFlIRkSNw==}
-    peerDependencies:
-      ethers: ^5.0.0
-      hardhat: ^2.0.0
-    dependencies:
-      hardhat: 2.12.4_pyqfhkbboucpxgvrs7ocxwodkm
-    dev: true
 
   /hardhat-deploy-ethers/0.3.0-beta.13_yab2ug5tvye2kp6e24l5x3z7uy:
     resolution: {integrity: sha512-PdWVcKB9coqWV1L7JTpfXRCI91Cgwsm7KLmBcwZ8f0COSm1xtABHZTyz3fvF6p42cTnz1VM0QnfDvMFlIRkSNw==}
@@ -31149,7 +31118,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.2
+      follow-redirects: 1.15.2_debug@4.3.4
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1

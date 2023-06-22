@@ -16,7 +16,6 @@ import { AddSectionReviewModalTrident } from './AddSectionReviewModalTrident'
 import { AddSectionWidget } from './AddSectionWidget'
 import { ZERO } from '@sushiswap/math'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { Signature } from '@ethersproject/bytes'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { APPROVE_TAG_ADD_TRIDENT } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
@@ -25,7 +24,6 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
   const [open, setOpen] = useState(false)
   const chainId = _pool.chainId as BentoBoxV1ChainId
   const isMounted = useIsMounted()
-  const [permit, setPermit] = useState<Signature>()
   const { token0, token1 } = useTokensFromPool(_pool)
   const [{ input0, input1 }, setTypedAmounts] = useState<{
     input0: string
@@ -137,13 +135,13 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
             <Checker.Network fullWidth size="xl" chainId={_pool.chainId}>
               <Checker.Amounts fullWidth size="xl" chainId={_pool.chainId} amounts={[parsedInput0, parsedInput1]}>
                 <Checker.ApproveBentobox
+                  tag={APPROVE_TAG_ADD_TRIDENT}
                   chainId={chainId}
                   id="add-liquidity-trident-approve-bentobox"
                   size="xl"
                   className="whitespace-nowrap"
                   fullWidth
-                  contract={getTridentRouterContractConfig(chainId).address}
-                  onSignature={setPermit}
+                  masterContract={getTridentRouterContractConfig(chainId).address}
                   enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
                 >
                   <Checker.ApproveERC20
@@ -186,10 +184,8 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
         token1={token1}
         input0={parsedInput0}
         input1={parsedInput1}
-        permit={permit}
         open={open}
         close={close}
-        setPermit={setPermit}
       />
     </Checker.Root>
   )
