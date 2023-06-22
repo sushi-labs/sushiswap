@@ -16,6 +16,7 @@ import {
 
 export const CREATE_STREAM_DEFAULT_VALUES: CreateStreamFormSchemaType = {
   id: nanoid(),
+  dates: undefined,
   currency: undefined,
   amount: '',
   recipient: '',
@@ -25,19 +26,13 @@ export const CREATE_STREAM_DEFAULT_VALUES: CreateStreamFormSchemaType = {
 export const CreateForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
   const methods = useForm<CreateMultipleStreamFormSchemaType & CreateMultipleStreamBaseSchemaFormErrorsType>({
     resolver: zodResolver(CreateMultipleStreamModelSchema),
-    mode: 'onBlur',
+    mode: 'all',
     defaultValues: {
       streams: [{ ...CREATE_STREAM_DEFAULT_VALUES, id: nanoid() }],
     },
   })
 
   const { reset } = methods
-
-  // try {
-  //   CreateMultipleStreamModelSchema.parse(formData)
-  // } catch (e) {
-  //   console.log(e)
-  // }
 
   useEffect(() => {
     reset()

@@ -52,7 +52,6 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
                     dateFormat="MMM d, yyyy HH:mm"
                     placeholderText="Select date"
                     autoComplete="off"
-                    testdata-id={'TEST'}
                   />
                 </FormControl>
                 <FormMessage />

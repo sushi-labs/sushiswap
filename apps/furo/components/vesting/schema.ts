@@ -43,7 +43,6 @@ const cliffValidator = (
   }
 
   if (val.startDate && val.cliffEnabled && val.cliffEndDate && val.cliffEndDate < val.startDate) {
-    console.log('here')
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Must be later than start date',
@@ -73,15 +72,21 @@ const cliffValidator = (
 export const CreateVestingBaseSchema = z.object({
   id: z.string(),
   currency: ZToken,
-  startDate: z.date(),
+  startDate: z.coerce
+    .date()
+    .refine(
+      (val) => val && val.getTime() >= new Date(Date.now() + 5 * 60 * 1000).getTime(),
+      'Must be at least 5 minutes from now'
+    ),
+  // startDate: z.date().superRefine(startDateValidator),
   recipient: ZAddress,
   stepAmount: z.string().refine((val) => (val !== '' ? Number(val) > 0 : true), 'Must be greater than 0'),
   stepPayouts: z.number().min(1).int(),
   fundSource: ZFundSource,
   stepConfig: z.string(),
   cliffEnabled: z.boolean(),
-  cliffEndDate: z.date(),
-  cliffAmount: z.string(),
+  cliffEndDate: z.date().optional(),
+  cliffAmount: z.string().optional(),
 })
 
 export const CreateVestingFormSchema = CreateVestingBaseSchema.partial({
