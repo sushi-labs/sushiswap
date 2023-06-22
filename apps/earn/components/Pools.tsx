@@ -100,7 +100,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                             className="flex flex-col !items-start gap-1 cursor-pointer"
                           >
                             <div className="flex items-center gap-1 font-medium leading-none">
-                              Trident Position <Chip>Deprecated 💀</Chip>
+                              Trident Position <Chip variant="secondary">Deprecated 💀</Chip>
                             </div>
                             <p className="text-sm leading-snug text-muted-foreground">
                               If you prefer creating a trident liquidity position.
