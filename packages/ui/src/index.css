@@ -160,8 +160,8 @@ html[class='dark'] .paper {
   .dark {
     --secondary: #ffffff0a;
     --muted: #ffffff0f;
-    --muted-foreground: 215.4 16.3% 56.9%;
+    --muted-foreground: #94a3b8;
     --accent: #ffffff14;
-    --accent-foreground: 210 40% 98%;
+    --accent-foreground: #e2e8f0;
   }
 }
