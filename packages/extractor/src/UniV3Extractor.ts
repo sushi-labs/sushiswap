@@ -41,6 +41,13 @@ interface PoolCacheRecord {
   factory: Address
 }
 
+// Usage recomendation:
+//   - launch in a separate thread or process, maybe with higher priority. Don't launch anything network or processor
+//     consuming in the same thread
+//   - provide good blockchain provider account (Alchemy/Infura/...)
+//   - don't call getPoolCodes() too often. It consumes much. Good practice is no do it once per second or so
+//   - direct logs (std output) to console
+//   - direct warnings (std error) to a file
 export class UniV3Extractor {
   factories: FactoryInfo[]
   factoryMap: Map<string, FactoryInfo> = new Map()
