@@ -20,7 +20,6 @@ import { Amount } from '@sushiswap/currency'
 import { usePriceInverter } from '../../../lib/hooks'
 import { formatTickPrice, getPriceOrderingFromPositionForUI, unwrapToken } from '../../../lib/functions'
 import { ConcentratedLiquidityWidget } from '../../../components/ConcentratedLiquidityWidget'
-import { InformationCircleIcon } from '@heroicons/react/solid'
 import { useAccount } from '@sushiswap/wagmi'
 import {
   ConcentratedLiquidityProvider,
@@ -162,7 +161,7 @@ const Position: FC = () => {
       <div className="flex flex-col gap-2">
         <Link
           className="flex items-center gap-4 mb-2 group"
-          href={`/pools/${chainId}:${positionDetails?.address}`}
+          href={`/${chainId}:${positionDetails?.address}`}
           shallow={true}
         >
           <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
