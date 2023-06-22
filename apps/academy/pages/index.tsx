@@ -78,8 +78,8 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const { data: productsData } = useSWR<ProductEntityResponseCollection>('/products')
   const { data: topicsData } = useSWR<TopicEntityResponseCollection>('/topics')
   const { data: filterData, isValidating } = useSWR(
-    [`/articles`, selectedTopic, selectedDifficulty, selectedProduct],
-    async (_url, searchTopic, searchDifficulty, searchProduct) => {
+    ['/articles', selectedTopic, selectedDifficulty, selectedProduct],
+    async ([_url, searchTopic, searchDifficulty, searchProduct]) => {
       const filters = {
         ...(searchDifficulty?.id && {
           difficulty: { id: { eq: searchDifficulty?.id } },
@@ -155,8 +155,8 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             DEFAULT_SIDE_PADDING
           )}
         >
-          {difficulties.map((difficulty, i) => (
-            <DifficultyCard key={i} difficulty={difficulty} />
+          {difficulties.map((difficulty) => (
+            <DifficultyCard key={difficulty.id} difficulty={difficulty} />
           ))}
         </div>
 

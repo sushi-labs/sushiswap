@@ -43,8 +43,8 @@ const _Archive: FC = () => {
   const { data: articlesData } = useSWR<Collection<Article>>('/articles')
   const { data: categoriesData } = useSWR<Collection<Category>>('/categories')
   const { data: filterData, isValidating } = useSWR(
-    [`/articles`, selected, debouncedQuery, page],
-    async (url, selected, debouncedQuery, page) => {
+    ['/articles', selected, debouncedQuery, page],
+    async ([_url, selected, debouncedQuery, page]) => {
       return (
         await getArticles({
           filters: {

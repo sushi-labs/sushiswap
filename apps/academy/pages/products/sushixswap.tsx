@@ -26,7 +26,7 @@ const { color, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
 export const getStaticProps: GetStaticProps = async () => {
   const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } })
   const product = data?.products?.data?.[0].attributes
-  if (!product) throw new Error(`Product not found`)
+  if (!product) throw new Error('Product not found')
   return { props: product, revalidate: 60 }
 }
 
@@ -38,7 +38,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   relevantArticleIds,
 }) => {
   const { data, isValidating } = useSWR(
-    [`/bentobox-articles`],
+    ['/bentobox-articles'],
     async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
     {
       revalidateOnFocus: false,
