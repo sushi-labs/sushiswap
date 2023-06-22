@@ -1,5 +1,11 @@
 # @sushiswap/v2-sdk
 
+## 0.0.7
+
+### Patch Changes
+
+- [#957](https://github.com/sushiswap/sushiswap/pull/957) [`a726740ef`](https://github.com/sushiswap/sushiswap/commit/a726740ef94784753fcc431186bcefc2ecb5aec5) Thanks [@0xMasayoshi](https://github.com/0xMasayoshi)! - initial release
+
 ## 0.0.6
 
 ### Patch Changes
