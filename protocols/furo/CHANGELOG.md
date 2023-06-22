@@ -1,5 +1,12 @@
 # @sushiswap/furo
 
+## 1.0.9
+
+### Patch Changes
+
+- Updated dependencies [[`a726740ef`](https://github.com/sushiswap/sushiswap/commit/a726740ef94784753fcc431186bcefc2ecb5aec5)]:
+  - @sushiswap/v2-sdk@0.0.7
+
 ## 1.0.8
 
 ### Patch Changes

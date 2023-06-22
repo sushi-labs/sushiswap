@@ -1,5 +1,12 @@
 # @sushiswap/v3-sdk
 
+## 1.0.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @sushiswap/amm@0.1.11
+
 ## 1.0.7
 
 ### Patch Changes
