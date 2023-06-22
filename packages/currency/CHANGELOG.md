@@ -1,5 +1,11 @@
 # @sushiswap/currency
 
+## 0.1.0
+
+### Minor Changes
+
+- [#958](https://github.com/sushiswap/sushiswap/pull/958) [`90784ce08`](https://github.com/sushiswap/sushiswap/commit/90784ce0876741b8f7f41552e181677d0746884b) Thanks [@OlaStenberg](https://github.com/OlaStenberg)! - Add AddressMapper
+
 ## 0.0.6
 
 ### Patch Changes
