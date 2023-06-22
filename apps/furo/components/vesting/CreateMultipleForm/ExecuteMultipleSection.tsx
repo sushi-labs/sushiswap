@@ -27,7 +27,7 @@ import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
-const APPROVE_TAG = 'approve-multiple-vestgs'
+const APPROVE_TAG = 'approve-multiple-vestings'
 
 export const ExecuteMultipleSection: FC<{
   chainId: FuroVestingRouterChainId
