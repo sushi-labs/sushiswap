@@ -45,7 +45,7 @@ export const Component: FC<ApproveERC20Props> = ({
     <Button
       disabled={state !== ApprovalState.NOT_APPROVED || !write }
       loading={[ApprovalState.UNKNOWN, ApprovalState.LOADING, ApprovalState.PENDING].includes(state)}
-      className={classNames(className, 'group relative pr-16')}
+      className={classNames(className, 'group relative')}
       onClick={() => write?.()}
       fullWidth={fullWidth}
       size={size}
