@@ -53,7 +53,7 @@ body {
   backdrop-filter: blur(12px) saturate(190%) contrast(50%) brightness(130%);
 }
 
-html[class='[color-scheme:dark]'] .paper {
+html[class='dark'] .paper {
   backdrop-filter: blur(10px) saturate(190%) contrast(70%) brightness(80%);
 }
 
