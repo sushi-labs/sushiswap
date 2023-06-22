@@ -1,7 +1,8 @@
 
 import { AddressMapper } from "../AddressMapper";
 import { ChainId } from "@sushiswap/chain";
-import { SUSHI_ADDRESS, WNATIVE_ADDRESS } from "../constants";
+import { SUSHI_ADDRESS, USDC_ADDRESS, WNATIVE_ADDRESS } from "../constants";
+import { TOKEN_MAP } from "../constants/token-map";
 
 const USDC_ETHEREUM_BRIDGE_LIST = {
     1: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
@@ -124,5 +125,45 @@ describe("AddressMapper", () => {
             expect(actual[ChainId.OPTIMISM][0]).toEqual(SUSHI_ADDRESS[ChainId.OPTIMISM].toLowerCase());
         });
     });
+
+
+    describe("Sushi addresses", () => {
+        const addressLists = [
+            WNATIVE_ADDRESS,
+            SUSHI_ADDRESS,
+        ]
+        const MAPPING = AddressMapper.generate([...addressLists]);
+
+        test("Get all weth addresses", async () => {
+            const expected = Object.keys(WNATIVE_ADDRESS).length - 1 // minus one, exclude itself 
+            const actual = Object.values(MAPPING[`${ChainId.ETHEREUM}:${WNATIVE_ADDRESS[ChainId.ETHEREUM].toLowerCase()}`]).length
+            expect(actual).toEqual(expected);
+        });
+        
+        test("Get all sushi addresses for the top networks given thundercores sushi address", async () => {
+
+            const actual = MAPPING[`${ChainId.THUNDERCORE}:${SUSHI_ADDRESS[ChainId.THUNDERCORE].toLowerCase()}`]
+
+            expect(actual[ChainId.ETHEREUM]).toHaveLength(1);
+            expect(actual[ChainId.ETHEREUM][0]).toEqual(SUSHI_ADDRESS[ChainId.ETHEREUM].toLowerCase());
+            
+            expect(actual[ChainId.ARBITRUM]).toHaveLength(1);
+            expect(actual[ChainId.ARBITRUM][0]).toEqual(SUSHI_ADDRESS[ChainId.ARBITRUM].toLowerCase());
+            
+            expect(actual[ChainId.POLYGON]).toHaveLength(1);
+            expect(actual[ChainId.POLYGON][0]).toEqual(SUSHI_ADDRESS[ChainId.POLYGON].toLowerCase());
+            
+            expect(actual[ChainId.OPTIMISM]).toHaveLength(1);
+            expect(actual[ChainId.OPTIMISM][0]).toEqual(SUSHI_ADDRESS[ChainId.OPTIMISM].toLowerCase());
+        });
+    });
+
+
+        test("BTTC has 3 usdc addresses", async () => {
+            const actual = Object.values(TOKEN_MAP[`${ChainId.BTTC}:${USDC_ADDRESS[ChainId.BTTC].toLowerCase()}`][ChainId.BTTC]).length
+            const expected = 2 // 3 in total, including itself
+            expect(actual).toEqual(expected);
+        });
+        
 });
 
