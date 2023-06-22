@@ -31,6 +31,18 @@ const containerIconVariants = cva('', {
   },
 })
 
+const inputVariants = cva('truncate bg-transparent w-full', {
+  variants: {
+    size: {
+      sm: 'min-h-9 h-9',
+      default: 'min-h-10 h-10',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+})
+
 export interface SearchProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof containerVariants> {
   className?: string
   id: string
@@ -120,7 +132,7 @@ const Search = forwardRef<HTMLInputElement, SearchProps>(
             value={values.typed}
             onChange={(e) => _onChange(e.target.value)}
             onKeyDown={handleKeyDown}
-            className={classNames('bg-transparent')}
+            className={inputVariants({ size, className: 'pr-6' })}
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck="false"
@@ -141,7 +153,7 @@ const Search = forwardRef<HTMLInputElement, SearchProps>(
                     })
                   }
                 >
-                  <XMarkIcon className={containerIconVariants({ size })} />
+                  <XMarkIcon className={containerIconVariants({ size, className: 'cursor-pointer' })} />
                 </div>
               ) : null}
             </div>
@@ -159,9 +171,7 @@ const Search = forwardRef<HTMLInputElement, SearchProps>(
           placeholder="Search"
           value={value}
           onChange={(e) => onValueChange(e.target.value)}
-          className={classNames(
-            'truncate font-semibold w-full bg-transparent !p-0 placeholder:font-medium placeholder:text-gray-400 placeholder:dark:text-slate-500 text-gray-900 dark:text-slate-200'
-          )}
+          className={inputVariants({ size, className: 'pr-6' })}
           autoCorrect="off"
           autoCapitalize="off"
           spellCheck="false"
@@ -175,7 +185,7 @@ const Search = forwardRef<HTMLInputElement, SearchProps>(
               </div>
             ) : value ? (
               <div onClick={() => onValueChange('')}>
-                <XMarkIcon className={containerIconVariants({ size })} />
+                <XMarkIcon className={containerIconVariants({ size, className: 'cursor-pointer' })} />
               </div>
             ) : null}
           </div>
