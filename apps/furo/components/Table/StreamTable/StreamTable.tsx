@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { AddressZero } from '@ethersproject/constants'
 import { Amount, Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { useBreakpoint } from '@sushiswap/hooks'
@@ -17,14 +15,15 @@ import {
   STREAMED_COLUMN,
   TYPE_COLUMN,
 } from '../constants'
+import { ChainId } from '@sushiswap/chain'
 
 export enum FuroTableType {
-  INCOMING,
-  OUTGOING,
+  INCOMING = 'INCOMING',
+  OUTGOING = 'OUTGOING',
 }
 
 interface FuroTableProps {
-  chainId: number | undefined
+  chainId: ChainId | undefined
   balances: Record<string, Amount<Token>> | undefined
   globalFilter: boolean
   setGlobalFilter: Dispatch<SetStateAction<boolean>>
@@ -62,34 +61,43 @@ export const StreamTable: FC<FuroTableProps> = ({
 
   const data: Array<Stream | Vesting> = useMemo(() => {
     if (!chainId || !streams || !vestings || !rebases) return []
+
     return [
       ...streams
-        .map(
-          (stream) =>
-            new Stream({
-              chainId,
-              furo: stream,
-              rebase: rebases.find((rebase) =>
-                stream.token.id === AddressZero
-                  ? WNATIVE_ADDRESS[Number(chainId) as keyof typeof WNATIVE_ADDRESS].toLowerCase() === rebase.id
-                  : rebase.id === stream.token.id
-              ) as RebaseDTO,
-            })
-        )
+        .map((stream) => {
+          const rebase = rebases?.find((rebase) =>
+            stream.token.id === AddressZero
+              ? WNATIVE_ADDRESS[Number(chainId) as keyof typeof WNATIVE_ADDRESS].toLowerCase() === rebase.id
+              : rebase.id === stream.token.id
+          ) as RebaseDTO | undefined
+
+          if (!rebase) return
+
+          return new Stream({
+            chainId,
+            furo: stream,
+            rebase,
+          })
+        })
+        .filter((stream): stream is Stream => !!stream)
         .filter((el) => (globalFilter ? el.status === FuroStatus.ACTIVE : true)),
       ...vestings
-        .map(
-          (vesting) =>
-            new Vesting({
-              chainId,
-              furo: vesting,
-              rebase: rebases.find((rebase) =>
-                vesting.token.id === AddressZero
-                  ? WNATIVE_ADDRESS[Number(chainId) as keyof typeof WNATIVE_ADDRESS].toLowerCase() === rebase.id
-                  : rebase.id === vesting.token.id
-              ) as RebaseDTO,
-            })
-        )
+        .map((vesting) => {
+          const rebase = rebases?.find((rebase) =>
+            vesting.token.id === AddressZero
+              ? WNATIVE_ADDRESS[Number(chainId) as keyof typeof WNATIVE_ADDRESS].toLowerCase() === rebase.id
+              : rebase.id === vesting.token.id
+          ) as RebaseDTO | undefined
+
+          if (!rebase) return
+
+          return new Vesting({
+            chainId,
+            furo: vesting,
+            rebase: rebase,
+          })
+        })
+        .filter((vesting): vesting is Vesting => !!vesting)
         .filter((el) => (globalFilter ? el.status === FuroStatus.ACTIVE : true)),
     ]
   }, [chainId, streams, vestings, rebases, globalFilter])

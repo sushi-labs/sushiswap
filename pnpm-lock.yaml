@@ -672,8 +672,8 @@ importers:
         specifier: ^9.2.0
         version: 9.3.2
       swr:
-        specifier: ^1.3.0
-        version: 1.3.0(react@18.2.0)
+        specifier: 2.1.5
+        version: 2.1.5(react@18.2.0)
       viem:
         specifier: 1.0.2
         version: 1.0.2(typescript@5.0.4)(zod@3.21.4)
@@ -802,8 +802,8 @@ importers:
         specifier: ^8.0.3
         version: 8.0.7(@types/react@18.2.6)(react@18.2.0)
       swr:
-        specifier: ^1.3.0
-        version: 1.3.0(react@18.2.0)
+        specifier: 2.1.5
+        version: 2.1.5(react@18.2.0)
     devDependencies:
       '@graphql-mesh/cli':
         specifier: 0.82.3
@@ -1071,8 +1071,8 @@ importers:
         specifier: ^8.0.3
         version: 8.0.7(@types/react@18.2.6)(react@18.2.0)
       swr:
-        specifier: ^1.3.0
-        version: 1.3.0(react@18.2.0)
+        specifier: 2.1.5
+        version: 2.1.5(react@18.2.0)
     devDependencies:
       '@graphql-mesh/cli':
         specifier: 0.82.3
@@ -1598,8 +1598,8 @@ importers:
         specifier: 6.0.0
         version: 6.0.0(react@18.2.0)(redux@4.2.1)
       swr:
-        specifier: ^1.3.0
-        version: 1.3.0(react@18.2.0)
+        specifier: 2.1.5
+        version: 2.1.5(react@18.2.0)
       wagmi:
         specifier: 0.12.15
         version: 0.12.15(ethers@5.7.2)(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)(typescript@5.0.4)(zod@3.21.4)
@@ -31828,14 +31828,6 @@ packages:
     engines: {node: '>= 4.7.0'}
     dependencies:
       ssr-window: 4.0.2
-    dev: false
-
-  /swr@1.3.0(react@18.2.0):
-    resolution: {integrity: sha512-dkghQrOl2ORX9HYrMDtPa7LTVHJjCTeZoB1dqTbnnEDlSvN8JEKpYIYurDfvbQFUUS8Cg8PceFVZNkW0KNNYPw==}
-    peerDependencies:
-      react: ^16.11.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: 18.2.0
     dev: false
 
   /swr@2.1.5(react@18.2.0):

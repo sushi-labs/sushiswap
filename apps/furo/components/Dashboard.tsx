@@ -79,7 +79,7 @@ export const Dashboard: FC<{
             tokens.map((token) => token.address),
           ]
         : null,
-    fetcher
+    ([url]: [string]) => fetcher(url)
   )
 
   const { isLoading: balancesLoading, data: balancesData } = useStreamBalances(chainId, ids, tokens, {

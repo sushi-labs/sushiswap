@@ -1,5 +1,15 @@
 # @sushiswap/v3-sdk
 
+## 1.0.6
+
+### Patch Changes
+
+- Updated dependencies [[`c6d6cc5db`](https://github.com/sushiswap/sushiswap/commit/c6d6cc5db4cc614f3931ee3a325547967c86c51a)]:
+  - @sushiswap/chain@0.1.2
+  - @sushiswap/amm@0.1.9
+  - @sushiswap/currency@0.0.6
+  - @sushiswap/tines@1.0.6
+
 ## 1.0.5
 
 ### Patch Changes

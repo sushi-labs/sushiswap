@@ -13,7 +13,7 @@
     "build-scripts": "dotenv -- turbo run build --filter={./scripts/*}[HEAD^1]...",
     "build-earn-app": "dotenv -- turbo run build --filter=earn...[HEAD^1]",
     "changeset": "changeset",
-    "changeset:release": "pnpm build && changeset publish",
+    "changeset:release": "changeset publish",
     "changeset:version": "changeset version && pnpm install --lockfile-only",
     "check": "turbo run check --no-cache",
     "clean": "turbo run clean && rm -rf node_modules",
