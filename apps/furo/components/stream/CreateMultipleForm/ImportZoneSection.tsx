@@ -8,13 +8,13 @@ import { FundSource } from '@sushiswap/hooks'
 import { Address, fetchToken, FetchTokenResult } from '@sushiswap/wagmi'
 import { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import dynamic from 'next/dynamic'
 import { CreateMultipleStreamFormSchemaType, CreateStreamFormSchemaType } from '../schema'
-import { FormSection } from '@sushiswap/ui/future/components/form'
-import { Dropzone } from '@sushiswap/ui/future/components/dropzone'
+import { FormSection } from '@sushiswap/ui/components/form'
+import { Dropzone } from '@sushiswap/ui/components/dropzone'
 
 interface ImportZoneSection {
   chainId: ChainId

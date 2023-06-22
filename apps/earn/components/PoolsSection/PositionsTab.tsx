@@ -2,9 +2,9 @@ import { Tab } from '@headlessui/react'
 import React, { Fragment, useState } from 'react'
 import { ConcentratedPositionsTable } from './Tables/PositionsTable/ConcentratedPositionsTable'
 import { PositionsTable } from './Tables'
-import { Container } from '@sushiswap/ui/future/components/container'
-import { Switch } from '@sushiswap/ui/future/components/switch'
-import { Toggle } from '@sushiswap/ui/future/components/toggle'
+import { Container } from '@sushiswap/ui/components/container'
+import { Switch } from '@sushiswap/ui/components/switch'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 export const PositionsTab = () => {
   const [hide, setHide] = useState(true)

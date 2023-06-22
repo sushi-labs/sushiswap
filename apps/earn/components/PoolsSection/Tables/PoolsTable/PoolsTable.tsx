@@ -17,8 +17,8 @@ import { PoolQuickHoverTooltip } from './PoolQuickHoverTooltip'
 import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'
 import { useSWRConfig } from 'swr'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
-import { Loader } from '@sushiswap/ui/future/components/loader'
+import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
+import { Loader } from '@sushiswap/ui/components/loader'
 
 const COLUMNS = [
   NAME_COLUMN,

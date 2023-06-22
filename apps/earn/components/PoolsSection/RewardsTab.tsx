@@ -1,8 +1,8 @@
 import { RewardsSection } from '../RewardsSection'
 import React, { Fragment, useState } from 'react'
 import { Tab } from '@headlessui/react'
-import { Container } from '@sushiswap/ui/future/components/container'
-import { Toggle } from '@sushiswap/ui/future/components/toggle'
+import { Container } from '@sushiswap/ui/components/container'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 export const RewardsTab = () => {
   const [tabPositions, setTabPositions] = useState<number>(0)

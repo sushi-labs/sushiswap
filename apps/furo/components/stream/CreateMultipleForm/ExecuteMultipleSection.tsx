@@ -3,7 +3,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { Dots } from '@sushiswap/ui/future/components/dots'
+import { Dots } from '@sushiswap/ui/components/dots'
 import {
   Address,
   getFuroStreamRouterContractConfig,
@@ -18,11 +18,11 @@ import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction, useDeepCompareMemoize } from '../../../lib'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
-import { createToast } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { bentoBoxV1Address } from '@sushiswap/bentobox'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { CreateMultipleStreamFormSchemaType } from '../schema'
 

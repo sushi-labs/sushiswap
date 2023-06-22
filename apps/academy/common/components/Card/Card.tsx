@@ -4,7 +4,7 @@ import { FC } from 'react'
 
 import { ArticleEntity } from '../../../.mesh'
 import { DifficultyLabel, Image } from '../'
-import { Chip } from '@sushiswap/ui/future/components/chip'
+import { Chip } from '@sushiswap/ui/components/chip'
 
 interface Card {
   article: ArticleEntity

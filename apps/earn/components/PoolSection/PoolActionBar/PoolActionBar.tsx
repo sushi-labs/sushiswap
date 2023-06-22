@@ -4,7 +4,7 @@ import { FC, Fragment, useState } from 'react'
 
 import { PoolActionBarPositionDialog } from './PoolActionBarPositionDialog'
 import { PoolActionBarPositionRewards } from './PoolActionBarPositionRewards'
-import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
+import { AppearOnMount } from '@sushiswap/ui/components/animation'
 
 interface PoolActionBarProps {
   pool: Pool

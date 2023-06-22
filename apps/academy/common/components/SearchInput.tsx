@@ -6,7 +6,7 @@ import { ChangeEvent, FC, FormEvent, RefObject, useLayoutEffect, useState } from
 import useSWR from 'swr'
 
 import { APP_HEADER_HEIGHT } from '../helpers'
-import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 
 interface SearchInput {
   handleSearch: (value: string) => void

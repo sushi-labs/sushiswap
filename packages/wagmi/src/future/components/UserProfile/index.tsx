@@ -3,10 +3,10 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { classNames } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { JazzIcon } from '@sushiswap/ui/future/components/icons/JazzIcon'
-import { useBreakpoint } from '@sushiswap/ui/future/lib/useBreakpoint'
+import { Button } from '@sushiswap/ui/components/button'
+import { Dialog } from '@sushiswap/ui/components/dialog'
+import { JazzIcon } from '@sushiswap/ui/components/icons/JazzIcon'
+import { useBreakpoint } from '@sushiswap/ui/lib/useBreakpoint'
 import React, { FC, useState } from 'react'
 import { useAccount, useEnsAvatar, useNetwork } from 'wagmi'
 
@@ -14,7 +14,7 @@ import { ConnectView } from './ConnectView'
 import { DefaultView } from './DefaultView'
 import { TransactionsView } from './TransactionsView'
 import { SettingsView } from './SettingsView'
-import {PopoverNew, PopoverTrigger, PopoverContent} from "@sushiswap/ui/future/components/popovernew";
+import {PopoverNew, PopoverTrigger, PopoverContent} from "@sushiswap/ui/components/popovernew";
 import {ConnectButton} from "../ConnectButton";
 
 export enum ProfileView {

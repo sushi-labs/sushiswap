@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { Switch } from '@sushiswap/ui/future/components/switch'
-import { Input } from '@sushiswap/ui/future/components/input'
+import { Switch } from '@sushiswap/ui/components/switch'
+import { Input } from '@sushiswap/ui/components/input'
 import { CreateMultipleVestingFormSchemaType } from '../schema'
 import { classNames } from '@sushiswap/ui'
 import {
@@ -11,7 +11,7 @@ import {
   FormItem,
   FormMessage,
   FormSection,
-} from '@sushiswap/ui/future/components/form'
+} from '@sushiswap/ui/components/form'
 
 export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {
   const { control, watch } = useFormContext<CreateMultipleVestingFormSchemaType>()

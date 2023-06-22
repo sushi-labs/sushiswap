@@ -1,9 +1,9 @@
 import { LinkIcon, XCircleIcon } from '@heroicons/react/24/outline'
 import chain from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
-import { Icon } from '@sushiswap/ui/future/components/currency/Icon'
-import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
+import { Icon } from '@sushiswap/ui/components/currency/Icon'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import React, { CSSProperties, FC } from 'react'
 
 export const TokenSelectorCustomTokenRow: FC<{

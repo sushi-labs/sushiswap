@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import { useIsMounted } from '@sushiswap/hooks'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { Chain, ChainId, chainName } from '@sushiswap/chain'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 import ReactDOM from 'react-dom'

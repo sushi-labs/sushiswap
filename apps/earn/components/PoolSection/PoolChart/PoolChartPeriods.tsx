@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { PoolChartPeriod } from './types'
-import { Toggle } from '@sushiswap/ui/future/components/toggle'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 interface PoolChartPeriodsProps {
   periods: PoolChartPeriod[]

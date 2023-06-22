@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { Container } from '@sushiswap/ui/future/components/container'
-import { DiscordIcon, GithubIcon, TwitterIcon, YoutubeIcon } from '@sushiswap/ui/future/components/icons'
+import { Button } from '@sushiswap/ui/components/button'
+import { Container } from '@sushiswap/ui/components/container'
+import { DiscordIcon, GithubIcon, TwitterIcon, YoutubeIcon } from '@sushiswap/ui/components/icons'
 
 const SUPPORT_CHANNELS = [
   {

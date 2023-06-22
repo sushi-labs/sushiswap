@@ -11,20 +11,20 @@ import {
   useTokenRevokeApproval,
   useTokenWithCache,
 } from '@sushiswap/wagmi/future/hooks'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 
 import { Amount } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { RP2ClaimChainId } from '@sushiswap/wagmi/future/hooks/exploits/types'
 import { CheckIcon } from '@heroicons/react-v1/solid'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { Address } from 'wagmi'
 import { routeProcessor2Address } from '@sushiswap/route-processor/exports/exports'
 import { ZERO } from '@sushiswap/math'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { Currency } from '@sushiswap/ui/future/components/currency'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
+import { Badge } from '@sushiswap/ui/components/Badge'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 
 interface ClaimItem {
   account: Address

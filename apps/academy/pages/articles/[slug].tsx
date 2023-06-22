@@ -4,7 +4,7 @@ import { APP_HEADER_HEIGHT, DEFAULT_SIDE_PADDING } from 'common/helpers'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import { FC, useCallback, useState } from 'react'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Container } from '@sushiswap/ui/components/container'
 
 import {
   ArticleBlocksDynamicZone,
@@ -26,7 +26,7 @@ import {
   RichTextBlock,
 } from '../../common/components'
 import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../../lib/api'
-import { LoadingOverlay } from '@sushiswap/ui/future/components/loader'
+import { LoadingOverlay } from '@sushiswap/ui/components/loader'
 
 export async function getStaticPaths() {
   const allArticles = await getAllArticlesBySlug()

@@ -2,7 +2,7 @@ import { classNames } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
 
 import { DEFAULT_SIDE_PADDING } from '../helpers'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { PlusCircleIcon } from '@heroicons/react/24/solid'
 
 interface AdditionalArticles {

@@ -2,7 +2,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Transaction, TransactionType, useTransactionsV3 } from './useTransactionsV3'
 import { formatUSD } from '@sushiswap/format'
 import formatDistance from 'date-fns/formatDistance/index.js'
-import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 
 import React from 'react'
 

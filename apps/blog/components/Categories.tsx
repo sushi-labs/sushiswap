@@ -1,6 +1,6 @@
 import { Dispatch, FC, SetStateAction, useCallback } from 'react'
 import { Category } from 'types'
-import { Toggle } from '@sushiswap/ui/future/components/toggle'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 interface Categories {
   selected: string[]

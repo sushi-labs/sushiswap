@@ -2,13 +2,13 @@ import { AddressZero } from '@ethersproject/constants'
 import { Amount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import React, { FC, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useBalances } from '../../../hooks'
 import dynamic from 'next/dynamic'
-import {ButtonProps} from "@sushiswap/ui/future/components/button";
+import {ButtonProps} from "@sushiswap/ui/components/button";
 
 export interface AmountsProps extends ButtonProps {
   chainId: number | undefined

@@ -5,9 +5,9 @@ import React, { useMemo, useState } from 'react'
 import { getStrategies } from './lib'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import useSWR from 'swr'
-import { NetworkSelector } from '@sushiswap/ui/future/components/networkselector'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { NetworkSelector } from '@sushiswap/ui/components/networkselector'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Button } from '@sushiswap/ui/components/button'
 
 export default function BentoBoxStrategiesPage() {
   const { data } = useSWR('bentobox-strategies', () => getStrategies())

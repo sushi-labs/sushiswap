@@ -1,9 +1,9 @@
 import React, { FC } from 'react'
 
 import { CellProps } from './types'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Badge } from '@sushiswap/ui/components/Badge'
+import { Currency } from '@sushiswap/ui/components/currency'
 
 export const NetworkCell: FC<CellProps> = ({ row }) => {
   return (

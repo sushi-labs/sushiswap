@@ -5,10 +5,10 @@ import { useAccount } from '@sushiswap/wagmi'
 import { PoolsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'
 import { useIsMounted } from '@sushiswap/hooks'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Container } from '@sushiswap/ui/components/container'
 import { PositionsTab } from './PositionsTab'
 import { RewardsTab } from './RewardsTab'
-import { Toggle } from '@sushiswap/ui/future/components/toggle'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 export const PoolsSection: FC = () => {
   const { address } = useAccount()

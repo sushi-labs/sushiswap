@@ -4,7 +4,7 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import React, { FC, Fragment, ReactNode } from 'react'
 import ReactDOM from 'react-dom'
-import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 
 interface Drawer {
   isOpen: boolean

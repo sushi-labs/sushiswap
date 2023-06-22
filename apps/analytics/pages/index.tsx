@@ -10,7 +10,7 @@ import { getBundles, getCharts, getFuroTokens } from '../lib/api'
 import { defaultPoolsArgs } from 'lib/constants'
 import { FilterProvider } from 'components/Filters'
 import { getFuroTokensUrl } from 'components/TableSection/FuroTokens/useFuroTokens'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Container } from '@sushiswap/ui/components/container'
 
 export const getStaticProps: GetStaticProps = async () => {
   const [pools, charts, poolCount, bundles, furoTokens /*tokens, tokenCount*/] = await Promise.all([

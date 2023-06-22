@@ -6,9 +6,9 @@ import { formatNumber, formatPercent } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { Subgraph } from '../lib'
-import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/future/components/tooltip'
-import { CheckIcon, NetworkIcon } from '@sushiswap/ui/future/components/icons'
+import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
+import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
 
 interface SubgraphTable {
   subgraphs: Subgraph[]

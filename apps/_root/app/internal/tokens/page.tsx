@@ -10,9 +10,9 @@ import stringify from 'fast-json-stable-stringify'
 import { getTokens, Token } from './lib'
 import React, { FC, useState } from 'react'
 import useSWR from 'swr'
-import { NetworkSelector } from '@sushiswap/ui/future/components/networkselector'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { NetworkSelector } from '@sushiswap/ui/components/networkselector'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Button } from '@sushiswap/ui/components/button'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 
 const TokensPage: FC = () => {

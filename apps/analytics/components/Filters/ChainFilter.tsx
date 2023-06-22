@@ -1,10 +1,10 @@
 import React, { FC, Fragment } from 'react'
 
 import { Listbox, Transition } from '@headlessui/react'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { ChevronDownIcon } from '@heroicons/react/outline'
 import { classNames } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { CheckIcon } from '@heroicons/react/solid'
 import { useFilters } from './FilterProvider'

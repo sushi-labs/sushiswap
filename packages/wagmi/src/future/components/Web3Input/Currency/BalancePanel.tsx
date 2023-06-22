@@ -1,11 +1,11 @@
 import { Amount, Native, Type } from '@sushiswap/currency'
-import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 
 import { FC, memo, useCallback } from 'react'
 
 import { CurrencyInputProps } from './CurrencyInput'
 import { JSBI } from '@sushiswap/math'
-import { WalletIcon } from '@sushiswap/ui/future/components/icons'
+import { WalletIcon } from '@sushiswap/ui/components/icons'
 import { classNames } from '@sushiswap/ui'
 
 type BalancePanel = Pick<CurrencyInputProps, 'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'loading'> & {

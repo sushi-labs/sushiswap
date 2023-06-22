@@ -1,16 +1,16 @@
 import { formatNumber } from '@sushiswap/format'
 import { Pool, Protocol } from '@sushiswap/client'
 import { classNames } from '@sushiswap/ui'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { FC } from 'react'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 
 import { useTokensFromPool } from '../../../../lib/hooks'
 import { ICON_SIZE } from '../contants'
 import { Row } from './types'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
+import { Badge } from '@sushiswap/ui/components/Badge'
 import { ChainId } from '@sushiswap/chain'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/future/components/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 
 export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
   const { token0, token1 } = useTokensFromPool(row)

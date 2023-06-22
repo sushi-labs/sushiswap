@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Button, ButtonProps } from '@sushiswap/ui/future/components/button'
+import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import { ApprovalState } from '../../../hooks'
 import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/24/solid'
 import { ApproveBentoboxController } from '../../components'
@@ -7,7 +7,7 @@ import { Address } from 'wagmi'
 import { Signature } from '@ethersproject/bytes'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import dynamic from 'next/dynamic'
-import {Explainer} from "@sushiswap/ui/future/components/explainer";
+import {Explainer} from "@sushiswap/ui/components/explainer";
 
 export interface ApproveBentoboxProps extends ButtonProps {
   chainId: BentoBoxV1ChainId

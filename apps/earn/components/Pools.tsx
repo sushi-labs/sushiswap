@@ -1,7 +1,7 @@
 'use client'
 
 import { ChevronRightIcon } from '@heroicons/react/solid'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import React, { FC } from 'react'
 import { useAccount, useNetwork } from '@sushiswap/wagmi'
 import { PoolFilters, PoolsFiltersProvider, PoolsSection } from '../components'
@@ -9,10 +9,10 @@ import { ChainId } from '@sushiswap/chain'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
 import { isUniswapV2FactoryChainId } from '@sushiswap/v2-core'
 import { PositionCardList } from './MigratePage/PositionCardList'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Container } from '@sushiswap/ui/components/container'
 import { PositionCard, PositionCardSkeleton } from './MigratePage/PositionCard'
-import { Carousel } from '@sushiswap/ui/future/components/Carousel'
-import { DiscordIcon } from '@sushiswap/ui/future/components/icons'
+import { Carousel } from '@sushiswap/ui/components/Carousel'
+import { DiscordIcon } from '@sushiswap/ui/components/icons'
 import { TRIDENT_ENABLED_NETWORKS } from 'config'
 import { isV3ChainId } from '@sushiswap/v3-sdk'
 
@@ -22,9 +22,9 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@sushiswap/ui/future/components/dropdown-menu'
-import { Chip } from '@sushiswap/ui/future/components/chip'
-import { SelectIcon } from '@sushiswap/ui/future/components/select'
+} from '@sushiswap/ui/components/dropdown-menu'
+import { Chip } from '@sushiswap/ui/components/chip'
+import { SelectIcon } from '@sushiswap/ui/components/select'
 
 export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
   const { address } = useAccount()

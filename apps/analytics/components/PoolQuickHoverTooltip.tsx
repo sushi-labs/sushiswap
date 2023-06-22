@@ -1,14 +1,14 @@
 import { Pool } from '@sushiswap/client'
 import { formatNumber, formatPercent } from '@sushiswap/format'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { FC } from 'react'
 
 import { incentiveRewardToToken } from '../lib/functions'
 import { useTokensFromPool } from '../lib/hooks'
 import { ICON_SIZE } from './TableSection/Pools/constants'
 import { ChainId } from '@sushiswap/chain'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { Chip } from '@sushiswap/ui/future/components/chip'
+import { Button } from '@sushiswap/ui/components/button'
+import { Chip } from '@sushiswap/ui/components/chip'
 
 interface PoolQuickHoverTooltipProps {
   row: Pool

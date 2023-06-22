@@ -2,7 +2,7 @@ import { formatPercent } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
 import { classNames } from '@sushiswap/ui'
 import React, { FC } from 'react'
-import { Currency as UICurrency } from '@sushiswap/ui/future/components/currency'
+import { Currency as UICurrency } from '@sushiswap/ui/components/currency'
 
 import { incentiveRewardToToken } from '../../../lib/functions'
 import { AddSectionMyPositionStaked } from './AddSectionMyPositionStaked'

@@ -14,14 +14,14 @@ import {
 import { BigNumber } from 'ethers'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { Dots } from '@sushiswap/ui/future/components/dots'
+import { Dots } from '@sushiswap/ui/components/dots'
 
 import { useTransactionDeadline } from '../../lib/hooks'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 import { UniswapV2Router02ChainId } from '@sushiswap/v2-core'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { createToast } from '@sushiswap/ui/future/components/toast'
+import { Button } from '@sushiswap/ui/components/button'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 
 interface AddSectionReviewModalLegacyProps {

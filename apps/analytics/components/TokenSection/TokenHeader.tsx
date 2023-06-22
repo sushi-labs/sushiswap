@@ -1,14 +1,14 @@
 import { getAddress } from '@ethersproject/address'
 import { formatUSD } from '@sushiswap/format'
 import { Bundle, Token as GraphToken } from '@sushiswap/graph-client'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import useSWR from 'swr'
 
 import { useTokenFromToken } from '../../lib/hooks'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { Chip } from '@sushiswap/ui/future/components/chip'
+import { Button } from '@sushiswap/ui/components/button'
+import { Chip } from '@sushiswap/ui/components/chip'
 
 interface TokenHeader {
   token: GraphToken

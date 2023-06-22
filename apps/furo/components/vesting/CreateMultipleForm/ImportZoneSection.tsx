@@ -5,16 +5,16 @@ import { nanoid } from 'nanoid'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { Dropzone } from '@sushiswap/ui/future/components/dropzone'
+import { Dropzone } from '@sushiswap/ui/components/dropzone'
 import { Address, fetchToken, FetchTokenResult } from '@sushiswap/wagmi'
 import { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { CreateMultipleVestingFormSchemaType, CreateVestingFormSchemaType } from '../schema'
 import dynamic from 'next/dynamic'
-import { FormSection } from '@sushiswap/ui/future/components/form'
+import { FormSection } from '@sushiswap/ui/components/form'
 
 interface ImportZoneSection {
   chainId: ChainId

@@ -1,7 +1,7 @@
 'use client'
 
 import { DefaultSeo, DefaultSeoProps } from 'next-seo'
-import { GlobalNav } from '@sushiswap/ui/future/components/GlobalNav'
+import { GlobalNav } from '@sushiswap/ui/components/GlobalNav'
 
 const SEO: DefaultSeoProps = {
   titleTemplate: '%s | Partner',

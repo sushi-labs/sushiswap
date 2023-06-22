@@ -5,13 +5,13 @@ import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
 import { useAccount, useContract } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { Stream, Vesting } from '../lib'
-import { createToast } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
-import { Dialog } from '@sushiswap/ui/future/components/dialog/Dialog'
+import { Dialog } from '@sushiswap/ui/components/dialog/Dialog'
 import { shortenAddress } from '@sushiswap/format'
-import { Dots } from '@sushiswap/ui/future/components/dots'
+import { Dots } from '@sushiswap/ui/components/dots'
 
 interface CancelModalProps {
   title: string

@@ -6,7 +6,7 @@ import { useNetwork } from '@sushiswap/wagmi'
 import { Layout } from '../../../components'
 import { CreateMultipleForm } from '../../../components/stream/CreateMultipleForm'
 import Link from 'next/link'
-import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { ArrowLeftIcon } from '@heroicons/react/solid'
 import React from 'react'
 

@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react'
 import { useSwapState } from '../trade/TradeProvider'
 import { usePrice } from '@sushiswap/react-query'
 import { Amount, Price, Token, tryParseAmount } from '@sushiswap/currency'
-import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 
 import { ZERO } from '@sushiswap/math'
 

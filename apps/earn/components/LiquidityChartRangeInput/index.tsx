@@ -9,7 +9,7 @@ import { Chart } from './Chart'
 import { useDensityChartData } from './hooks'
 import { ZoomLevels } from './types'
 import { FeeAmount, V3ChainId } from '@sushiswap/v3-sdk'
-import { SkeletonBox } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 
 const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
   [FeeAmount.LOWEST]: {

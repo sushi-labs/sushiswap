@@ -2,12 +2,12 @@ import { ChainId } from '@sushiswap/chain'
 import stringify from 'fast-json-stable-stringify'
 import { FC, useMemo } from 'react'
 import useSWR from 'swr'
-import { SkeletonBox, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonBox, SkeletonText } from '@sushiswap/ui/components/skeleton'
 
 import { TVLChart } from './TVLChart2'
 import { VolumeChart } from './VolumeChart2'
 import { useFilters } from 'components/Filters'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Container } from '@sushiswap/ui/components/container'
 
 const fetcher = ({
   url,

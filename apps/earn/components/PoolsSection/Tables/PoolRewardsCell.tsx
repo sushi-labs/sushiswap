@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI } from '@sushiswap/currency'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { FC } from 'react'
 
 import { ICON_SIZE } from './contants'

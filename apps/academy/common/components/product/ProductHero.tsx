@@ -3,8 +3,8 @@ import { classNames } from '@sushiswap/ui'
 import { FC, ReactNode, useLayoutEffect, useState } from 'react'
 
 import { ProductStat, ProductStats } from './'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { IconComponent } from '@sushiswap/ui/future/types'
+import { Button } from '@sushiswap/ui/components/button'
+import { IconComponent } from '@sushiswap/ui/types'
 
 interface ProductHero {
   productName: ReactNode

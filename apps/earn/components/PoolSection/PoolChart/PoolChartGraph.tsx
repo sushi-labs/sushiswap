@@ -11,10 +11,10 @@ import { useTheme } from 'next-themes'
 import { PoolChartPeriod, PoolChartType } from './types'
 import { chartPeriods } from './constants'
 import { ChainId } from '@sushiswap/chain'
-import { SkeletonBox } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 
 import resolveConfig from 'tailwindcss/resolveConfig'
-import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
+import { AppearOnMount } from '@sushiswap/ui/components/animation'
 
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL | PoolChartType.APR

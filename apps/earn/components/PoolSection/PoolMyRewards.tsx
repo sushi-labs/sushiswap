@@ -4,8 +4,8 @@ import { useBreakpoint } from '@sushiswap/hooks'
 import { FC } from 'react'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { usePoolPositionRewards } from '../PoolPositionRewardsProvider'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Button } from '@sushiswap/ui/components/button'
+import { Currency } from '@sushiswap/ui/components/currency'
 
 interface PoolMyRewardsProps {
   pool: Pool

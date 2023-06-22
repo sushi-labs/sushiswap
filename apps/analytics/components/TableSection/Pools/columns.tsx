@@ -14,7 +14,7 @@ import {
   PoolVolume1wCell,
 } from './Cells'
 import { Pool } from '@sushiswap/client'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 
 import { ICON_SIZE } from './constants'
 

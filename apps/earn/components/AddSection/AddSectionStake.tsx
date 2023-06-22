@@ -5,7 +5,7 @@ import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { getMasterChefContractConfig, useAccount, useMasterChefDeposit } from '@sushiswap/wagmi'
 import { FC, Fragment, useMemo, useState } from 'react'
-import { Dots } from '@sushiswap/ui/future/components/dots'
+import { Dots } from '@sushiswap/ui/components/dots'
 
 import { useGraphPool } from '../../lib/hooks'
 import { usePoolPosition } from '../PoolPositionProvider'
@@ -13,7 +13,7 @@ import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 import { useSWRConfig } from 'swr'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { APPROVE_TAG_STAKE } from '../../lib/constants'
 
 interface AddSectionStakeProps {

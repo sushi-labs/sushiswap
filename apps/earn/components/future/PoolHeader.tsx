@@ -1,13 +1,13 @@
 import React, { FC, useMemo } from 'react'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
-import { Currency } from '@sushiswap/ui/future/components/currency'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+import { Badge } from '@sushiswap/ui/components/Badge'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ChainId } from '@sushiswap/chain'
 import { Pool } from '@sushiswap/v3-sdk'
 import { unwrapToken } from '../../lib/functions'
 import { formatPercent } from '@sushiswap/format'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/future/components/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 
 type PoolHeader = {
   title?: string

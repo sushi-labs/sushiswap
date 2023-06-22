@@ -1,14 +1,14 @@
 import { ArrowLeftIcon } from '@heroicons/react/20/solid'
-import { List } from '@sushiswap/ui/future/components/list/List'
+import { List } from '@sushiswap/ui/components/list/List'
 import React, { Dispatch, FC, Fragment, SetStateAction } from 'react'
 
 import { ProfileView } from './index'
-import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { RadioGroup } from '@headlessui/react'
 import { classNames } from '@sushiswap/ui'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
 import { useLocalStorage } from '@sushiswap/hooks'
-import { Switch } from '@sushiswap/ui/future/components/switch'
+import { Switch } from '@sushiswap/ui/components/switch'
 import { useTheme } from 'next-themes'
 
 interface SettingsViewProps {

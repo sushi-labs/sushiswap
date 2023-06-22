@@ -1,6 +1,6 @@
 import '@sushiswap/ui/index.css'
 
-import { ThemeProvider } from '@sushiswap/ui/future/ThemeProvider'
+import { ThemeProvider } from '@sushiswap/ui/ThemeProvider'
 import { Analytics } from '@vercel/analytics/react'
 import { Header } from '../components'
 import { SUPPORTED_CHAIN_IDS } from '../config'
@@ -11,7 +11,7 @@ import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import { FC, useEffect } from 'react'
 import { client, WagmiConfig } from '@sushiswap/wagmi'
-import { GlobalFooter } from '@sushiswap/ui/future/components/GlobalFooter'
+import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
 
 import SEO from '../next-seo.config.mjs'
 import { Onramper } from '@sushiswap/wagmi/future/components/Onramper'

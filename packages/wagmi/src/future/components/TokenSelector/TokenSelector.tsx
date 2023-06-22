@@ -1,26 +1,26 @@
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { useBalances, usePrices, useTokens } from '@sushiswap/react-query'
-import { SlideIn } from '@sushiswap/ui/future/components/animation'
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
-import { Search } from '@sushiswap/ui/future/components/input/Search'
-import { List } from '@sushiswap/ui/future/components/list/List'
+import { SlideIn } from '@sushiswap/ui/components/animation'
+import { Dialog } from '@sushiswap/ui/components/dialog'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Search } from '@sushiswap/ui/components/input/Search'
+import { List } from '@sushiswap/ui/components/list/List'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
 
 import { TokenSelectorCurrencyList } from './TokenSelectorCurrencyList'
 import { TokenSelectorImportRow } from './TokenSelectorImportRow'
 import { useAccount } from 'wagmi'
 import { TokenSelectorCustomTokensOverlay } from './TokenSelectorCustomTokensOverlay'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { COMMON_BASES } from '@sushiswap/router-config'
-import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
-import { Currency } from "@sushiswap/ui/future/components/currency";
+import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/components/skeleton'
+import { Currency } from "@sushiswap/ui/components/currency";
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useSortedTokenList } from './hooks/useSortedTokenList'
 import { useTokenWithCache } from '../../hooks'
 import { isAddress } from '@ethersproject/address'
-import {buttonIconVariants} from "@sushiswap/ui/future/components/button";
+import {buttonIconVariants} from "@sushiswap/ui/components/button";
 
 interface TokenSelectorProps {
   id: string

@@ -1,7 +1,7 @@
 import { formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
 import { FC } from 'react'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Currency } from '@sushiswap/ui/components/currency'
 
 import { useTokensFromPool } from '../../../lib/hooks'
 import { usePoolPosition } from '../../PoolPositionProvider'

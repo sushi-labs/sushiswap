@@ -6,11 +6,11 @@ import { Token as GraphToken } from '@sushiswap/graph-client'
 import { Link } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { useSWRConfig } from 'swr'
-import { Table } from '@sushiswap/ui/future/components/table'
+import { Table } from '@sushiswap/ui/components/table'
 import { FarmRewardsAvailableTooltip } from '../FarmRewardsAvailableTooltip'
 import { PoolQuickHoverTooltip } from '../PoolQuickHoverTooltip'
-import { Popover } from '@sushiswap/ui/future/components/Popover'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Popover } from '@sushiswap/ui/components/Popover'
+import { Currency } from '@sushiswap/ui/components/currency'
 
 interface TokenPairs {
   token: GraphToken

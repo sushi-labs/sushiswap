@@ -5,7 +5,7 @@ import { ArticleList } from '../ArticleList'
 import { Card } from '../Card'
 import { ProductSectionTitle } from './ProductSectionTitle'
 import { ArticleEntity } from '.mesh'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 
 interface ProductArticles {
   title: string

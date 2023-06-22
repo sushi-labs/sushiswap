@@ -1,6 +1,6 @@
 import { classNames } from '@sushiswap/ui'
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Loader } from '@sushiswap/ui/future/components/loader'
+import { Loader } from '@sushiswap/ui/components/loader'
 import { FC, ReactNode } from 'react'
 
 export enum StepState {

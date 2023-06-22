@@ -1,5 +1,5 @@
 import React, { FC} from 'react'
-import { Button, ButtonProps } from '@sushiswap/ui/future/components/button'
+import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 
 export interface CustomProps extends ButtonProps {
   guardWhen: boolean

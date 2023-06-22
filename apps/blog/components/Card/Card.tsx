@@ -6,7 +6,7 @@ import { Article } from 'types'
 
 import { isMediaVideo } from '../../lib/media'
 import { Image } from '../Image'
-import { Chip } from '@sushiswap/ui/future/components/chip'
+import { Chip } from '@sushiswap/ui/components/chip'
 
 interface Card {
   article: Article

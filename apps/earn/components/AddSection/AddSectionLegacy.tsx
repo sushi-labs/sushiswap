@@ -9,7 +9,7 @@ import { useTokensFromPool } from '../../lib/hooks'
 import { AddSectionReviewModalLegacy } from './AddSectionReviewModalLegacy'
 import { AddSectionWidget } from './AddSectionWidget'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { APPROVE_TAG_ADD_LEGACY } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
 

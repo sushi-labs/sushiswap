@@ -4,9 +4,9 @@ import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { FC, useCallback } from 'react'
 
 import { usePoolPositionRewards } from '../../PoolPositionRewardsProvider'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Button } from '@sushiswap/ui/components/button'
+import { Dialog } from '@sushiswap/ui/components/dialog'
+import { Currency } from '@sushiswap/ui/components/currency'
 
 interface PoolActionBarPositionRewardsProps {
   pool: Pool

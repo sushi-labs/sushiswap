@@ -2,7 +2,7 @@ import { useDebounce } from '@sushiswap/hooks'
 import React, { FC, useEffect, useState } from 'react'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
-import { Search } from '@sushiswap/ui/future/components/input/Search'
+import { Search } from '@sushiswap/ui/components/input/Search'
 
 export const TableFiltersSearchToken: FC = () => {
   const { tokenSymbols, setFilters } = usePoolFilters()

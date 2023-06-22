@@ -5,17 +5,17 @@ import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
 import { classNames } from '@sushiswap/ui'
-import { Widget, WidgetContent, WidgetHeader } from '@sushiswap/ui/future/components/widget'
+import { Widget, WidgetContent, WidgetHeader } from '@sushiswap/ui/components/widget'
 import { useTotalSupply } from '@sushiswap/wagmi'
 import { FC, Fragment, ReactNode, useMemo, useState } from 'react'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Currency } from '@sushiswap/ui/components/currency'
 
 import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
-import { SelectIcon } from '@sushiswap/ui/future/components/select'
-import { Input } from '@sushiswap/ui/future/components/input'
+import { Button } from '@sushiswap/ui/components/button'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
+import { SelectIcon } from '@sushiswap/ui/components/select'
+import { Input } from '@sushiswap/ui/components/input'
 
 interface RemoveSectionUnstakeWidget {
   chainId: ChainId

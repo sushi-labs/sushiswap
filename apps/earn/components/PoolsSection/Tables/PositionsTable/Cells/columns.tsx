@@ -4,7 +4,7 @@ import { PositionWithPool } from '../../../../../types'
 
 import { PoolAPRCell, PoolChainCell, PoolNameCell, PoolVolume1dCell } from '../../SharedCells'
 import { PairValueCell } from './PoolValueCell'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 
 import { ICON_SIZE } from '../../PoolsTable/Cells/columns'
 import { PoolNameCellV3 } from '../../SharedCells/PoolNameCellV3'

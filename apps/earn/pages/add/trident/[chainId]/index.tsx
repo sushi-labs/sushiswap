@@ -1,8 +1,8 @@
-import {ArrowLeftIcon, PlusIcon} from '@heroicons/react/solid'
-import {ConstantProductPool, Fee, StablePool} from '@sushiswap/amm'
-import {ChainId} from '@sushiswap/chain'
-import {defaultQuoteCurrency, Native, tryParseAmount, Type} from '@sushiswap/currency'
-import {Loader} from '@sushiswap/ui/future/components/loader'
+import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/solid'
+import { ConstantProductPool, Fee, StablePool } from '@sushiswap/amm'
+import { ChainId } from '@sushiswap/chain'
+import { defaultQuoteCurrency, Native, tryParseAmount, Type } from '@sushiswap/currency'
+import { Loader } from '@sushiswap/ui/components/loader'
 import {
   ConstantProductPoolState,
   getTridentRouterContractConfig,
@@ -19,23 +19,23 @@ import {
   SelectPoolTypeWidget,
   SelectTokensWidget,
 } from '../../../../components'
-import React, {Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useState} from 'react'
-import {SWRConfig} from 'swr'
-import {CreateSectionReviewModalTrident} from '../../../../components/CreateSection'
-import {TRIDENT_ENABLED_NETWORKS} from '../../../../config'
-import {isConstantProductPool, isStablePool} from '../../../../lib/functions'
-import {bentoBoxV1Address, isBentoBoxV1ChainId} from '@sushiswap/bentobox'
-import {GetStaticPaths, GetStaticProps, InferGetStaticPropsType} from 'next'
-import {useRouter} from 'next/router'
-import {isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId} from '@sushiswap/trident-core'
-import {ContentBlock} from '../../../../components/AddPage/ContentBlock'
-import {Web3Input} from '@sushiswap/wagmi/future/components/Web3Input'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
+import { SWRConfig } from 'swr'
+import { CreateSectionReviewModalTrident } from '../../../../components/CreateSection'
+import { TRIDENT_ENABLED_NETWORKS } from '../../../../config'
+import { isConstantProductPool, isStablePool } from '../../../../lib/functions'
+import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
+import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
+import { useRouter } from 'next/router'
+import { isConstantProductPoolFactoryChainId, isStablePoolFactoryChainId } from '@sushiswap/trident-core'
+import { ContentBlock } from '../../../../components/AddPage/ContentBlock'
+import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import Link from 'next/link'
-import {IconButton} from '@sushiswap/ui/future/components/iconbutton'
-import {Checker} from '@sushiswap/wagmi/future/systems'
-import {Button} from '@sushiswap/ui/future/components/button'
-import {Signature} from '@ethersproject/bytes'
-import {APPROVE_TAG_ADD_TRIDENT, APPROVE_TAG_CREATE_TRIDENT} from '../../../../lib/constants'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
+import { Checker } from '@sushiswap/wagmi/future/systems'
+import { Button } from '@sushiswap/ui/components/button'
+import { Signature } from '@ethersproject/bytes'
+import { APPROVE_TAG_ADD_TRIDENT, APPROVE_TAG_CREATE_TRIDENT } from '../../../../lib/constants'
 
 // This function gets called at build time on server-side.
 // It may be called again, on a serverless function, if

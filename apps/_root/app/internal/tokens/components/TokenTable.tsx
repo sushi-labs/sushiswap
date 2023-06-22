@@ -8,9 +8,9 @@ import { ChainId, chainName } from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
 import { XIcon } from '@heroicons/react-v1/outline'
 import { TokenAdder } from './TokenAdder'
-import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
-import { CheckIcon, NetworkIcon } from '@sushiswap/ui/future/components/icons'
-import { Loader } from '@sushiswap/ui/future/components/loader'
+import { GenericTable } from '@sushiswap/ui/components/table/GenericTable'
+import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Loader } from '@sushiswap/ui/components/loader'
 
 interface TokenTable {
   tokens: Token[]

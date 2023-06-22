@@ -6,10 +6,10 @@ import { Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import React, { FC, Fragment, ReactNode } from 'react'
-import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
-import { Widget, WidgetContent, WidgetHeader } from '@sushiswap/ui/future/components/widget'
-import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
-import { SelectIcon } from '@sushiswap/ui/future/components/select'
+import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/components/settings'
+import { Widget, WidgetContent, WidgetHeader } from '@sushiswap/ui/components/widget'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
+import { SelectIcon } from '@sushiswap/ui/components/select'
 
 interface AddSectionWidgetProps {
   isFarm: boolean

@@ -7,7 +7,7 @@ import { FeeAmount, V3ChainId } from '@sushiswap/v3-sdk'
 import { Chart } from 'components/LiquidityChartRangeInput/Chart'
 import { useDensityChartData } from 'components/LiquidityChartRangeInput/hooks'
 import { ZoomLevels } from 'components/LiquidityChartRangeInput/types'
-import { SkeletonBox } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import AutoSizer from 'react-virtualized-auto-sizer'

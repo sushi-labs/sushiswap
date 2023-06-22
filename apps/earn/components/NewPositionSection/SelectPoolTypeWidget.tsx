@@ -4,7 +4,7 @@ import { classNames } from '@sushiswap/ui'
 import { PoolFinderType } from '@sushiswap/wagmi'
 import React, { FC, memo } from 'react'
 import { ContentBlock } from '../AddPage/ContentBlock'
-import { CheckIcon } from '@sushiswap/ui/future/components/icons'
+import { CheckIcon } from '@sushiswap/ui/components/icons'
 
 const POOL_OPTIONS = [
   {

@@ -5,8 +5,8 @@ import { ExpandableCard } from './ExpandableCard'
 import { AnimatedTitle } from './AnimatedTitle'
 
 import { BentoBoxSVG, SwitchSVG } from './svgs'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Button } from '@sushiswap/ui/components/button'
+import { Container } from '@sushiswap/ui/components/container'
 
 const DATA = [
   {

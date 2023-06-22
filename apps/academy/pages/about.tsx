@@ -8,7 +8,7 @@ import { roadmapSections } from 'common/roadmap'
 import { format } from 'date-fns'
 import { NextPage } from 'next'
 import Image from 'next/image'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Container } from '@sushiswap/ui/components/container'
 
 const About: NextPage = () => {
   return (

@@ -2,10 +2,10 @@ import { ArrowLeftIcon, ShareIcon } from '@heroicons/react/24/solid'
 import { getShareText } from 'common/helpers'
 import Link from 'next/link'
 import { FC } from 'react'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Container } from '@sushiswap/ui/components/container'
 
 import { ArticleEntity } from '.mesh'
-import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 
 interface Breadcrumb {
   article?: ArticleEntity

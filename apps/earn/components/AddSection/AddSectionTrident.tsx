@@ -17,7 +17,7 @@ import { AddSectionWidget } from './AddSectionWidget'
 import { ZERO } from '@sushiswap/math'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Signature } from '@ethersproject/bytes'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { APPROVE_TAG_ADD_TRIDENT } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
 

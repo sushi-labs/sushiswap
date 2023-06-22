@@ -1,6 +1,6 @@
 import { tryParseAmount } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
-import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 
 import { FC, useMemo } from 'react'
 

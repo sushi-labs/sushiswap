@@ -1,10 +1,10 @@
 import { chainName } from '@sushiswap/chain'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import React, { FC, ReactElement } from 'react'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 import dynamic from 'next/dynamic'
-import {ButtonProps} from "@sushiswap/ui/future/components/button";
+import {ButtonProps} from "@sushiswap/ui/components/button";
 
 export interface NetworkProps extends ButtonProps {
   chainId: number | undefined

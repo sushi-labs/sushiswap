@@ -2,7 +2,7 @@ import { Protocol } from '@sushiswap/client'
 import { ChainFilter, SearchFilter, useFilters } from 'components/Filters'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import React, { FC, useCallback } from 'react'
-import { Toggle } from '@sushiswap/ui/future/components/toggle'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 export const PoolFilters: FC = () => {
   const { poolProtocols: protocols, isWhitelisted, setFilters } = useFilters()

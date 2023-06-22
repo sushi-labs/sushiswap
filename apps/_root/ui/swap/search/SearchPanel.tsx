@@ -1,24 +1,24 @@
 import { useDebounce } from '@sushiswap/hooks'
-import { Search } from '@sushiswap/ui/future/components/input/Search'
+import { Search } from '@sushiswap/ui/components/input/Search'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 
 import { useSearchContext } from './SearchProvider'
-import { List } from '@sushiswap/ui/future/components/list/List'
+import { List } from '@sushiswap/ui/components/list/List'
 import { usePrice, useTokenList, useTokenSearch } from '@sushiswap/react-query'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
+import { Badge } from '@sushiswap/ui/components/Badge'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { classNames } from '@sushiswap/ui'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
+import { Dialog } from '@sushiswap/ui/components/dialog'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { Token } from '@sushiswap/currency'
 import { Chain } from '@sushiswap/chain'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { COMMON_BASES } from '@sushiswap/router-config'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/future/components/tooltip'
+import { Button } from '@sushiswap/ui/components/button'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/components/tooltip'
 
 export const SearchPanel: FC = () => {
   const { network1 } = useSwapState()

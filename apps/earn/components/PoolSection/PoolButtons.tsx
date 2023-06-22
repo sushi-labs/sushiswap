@@ -2,7 +2,7 @@ import { getAddress } from '@ethersproject/address'
 import { Pool } from '@sushiswap/client'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { FC } from 'react'
 
 import { usePoolPosition } from '../PoolPositionProvider'

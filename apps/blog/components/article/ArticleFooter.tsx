@@ -1,4 +1,4 @@
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { format } from 'date-fns'
 import { FC } from 'react'
 import { Article } from 'types'

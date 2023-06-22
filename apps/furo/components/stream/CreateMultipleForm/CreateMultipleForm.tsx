@@ -4,16 +4,16 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { ExecuteMultipleSection, ImportZoneSection, ReviewSection } from '.'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
 import { CREATE_STREAM_DEFAULT_VALUES, StreamForm } from '../CreateForm'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { DuplicateIcon, PlusIcon, TrashIcon } from '@heroicons/react/solid'
 import { nanoid } from 'nanoid'
-import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import {
   CreateMultipleStreamBaseSchemaFormErrorsType,
   CreateMultipleStreamFormSchemaType,
   CreateMultipleStreamModelSchema,
 } from '../schema'
-import { Form } from '@sushiswap/ui/future/components/form'
+import { Form } from '@sushiswap/ui/components/form'
 
 export const CreateMultipleForm: FC<{ chainId: FuroStreamRouterChainId }> = ({ chainId }) => {
   const [review, setReview] = useState(false)

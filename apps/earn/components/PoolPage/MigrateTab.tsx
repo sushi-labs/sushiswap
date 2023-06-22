@@ -1,9 +1,9 @@
-import { List } from '@sushiswap/ui/future/components/list/List'
+import { List } from '@sushiswap/ui/components/list/List'
 import { Fraction, JSBI, Percent, ZERO } from '@sushiswap/math'
 import { RadioGroup } from '@headlessui/react'
 import { classNames } from '@sushiswap/ui'
 import { formatUSD } from '@sushiswap/format'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { unwrapToken } from '../../lib/functions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import {
@@ -15,7 +15,7 @@ import {
   useTotalSupply,
 } from '@sushiswap/wagmi'
 import { APPROVE_TAG_MIGRATE, APPROVE_TAG_UNSTAKE, Bound, Field } from '../../lib/constants'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { SelectFeeConcentratedWidget } from '../NewPositionSection/SelectFeeConcentratedWidget'
 import { SelectPricesWidget } from '../NewPositionSection'
 import { FeeAmount, Pool as V3Pool, Position, priceToClosestTick, TickMath, V3ChainId } from '@sushiswap/v3-sdk'
@@ -32,13 +32,13 @@ import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 import { ArrowDownIcon, ArrowLeftIcon, SwitchHorizontalIcon } from '@heroicons/react/solid'
 import { FundSource } from '@sushiswap/hooks'
-import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
+import { Modal } from '@sushiswap/ui/components/modal/Modal'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
 import { TxStatusModalContent } from '@sushiswap/wagmi/future/components/TxStatusModal'
 import { UniswapV2Router02ChainId } from '@sushiswap/v2-core/exports/exports'
 import { useRouter } from 'next/router'
-import { Dots } from '@sushiswap/ui/future/components/dots'
+import { Dots } from '@sushiswap/ui/components/dots'
 
 export const MODAL_MIGRATE_ID = 'migrate-modal'
 

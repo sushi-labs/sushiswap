@@ -3,7 +3,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Native, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { Dots } from '@sushiswap/ui/future/components/dots'
+import { Dots } from '@sushiswap/ui/components/dots'
 import {
   Address,
   getFuroVestingRouterContractConfig,
@@ -19,13 +19,13 @@ import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../lib'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
 import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount } from '../utils'
-import { createToast } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { bentoBoxV1Address } from '@sushiswap/bentobox'
 import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS_MAP } from '../schema'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 
 const APPROVE_TAG = 'approve-multiple-vestgs'
 

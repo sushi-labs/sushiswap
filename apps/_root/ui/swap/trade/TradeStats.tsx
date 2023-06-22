@@ -5,7 +5,7 @@ import React, { FC, useState } from 'react'
 
 import { useSwapState } from './TradeProvider'
 import { useTrade } from '../../../lib/swap/useTrade'
-import { SkeletonBox, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonBox, SkeletonText } from '@sushiswap/ui/components/skeleton'
 
 import { AppType, classNames } from '@sushiswap/ui'
 import { warningSeverity, warningSeverityClassName } from '../../../lib/swap/warningSeverity'
@@ -16,7 +16,7 @@ import { UseTradeReturn } from '@sushiswap/react-query'
 import { shortenAddress } from '@sushiswap/format'
 import { isAddress } from 'ethers/lib/utils'
 import { useAccount } from '@sushiswap/wagmi'
-import { Explainer } from '@sushiswap/ui/future/components/explainer'
+import { Explainer } from '@sushiswap/ui/components/explainer'
 import { AddressToEnsResolver } from '@sushiswap/wagmi/future/components/Account/AddressToEnsResolver'
 
 export const TradeStats: FC = () => {

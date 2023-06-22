@@ -5,7 +5,7 @@ import { FC } from 'react'
 
 import { ArticleEntity } from '../../../.mesh'
 import { DifficultyLabel, Image } from '../'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Container } from '@sushiswap/ui/components/container'
 
 interface ArticleHeader {
   article?: ArticleEntity

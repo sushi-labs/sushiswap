@@ -2,13 +2,13 @@
 
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { useDebounce } from '@sushiswap/hooks'
-import { Loader } from '@sushiswap/ui/future/components/loader'
+import { Loader } from '@sushiswap/ui/components/loader'
 import { SubgraphTable } from './components/SubgraphTable'
 import { getSubgraphs, Subgraph } from './lib'
 import { useMemo, useState } from 'react'
 import useSWR from 'swr'
 import stringify from 'fast-json-stable-stringify'
-import { Checkbox } from '@sushiswap/ui/future/components/checkbox'
+import { Checkbox } from '@sushiswap/ui/components/checkbox'
 
 const SubgraphsPage = () => {
   const [filterBy, setFilter] = useState<string>('')

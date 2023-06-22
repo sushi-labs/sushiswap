@@ -5,8 +5,8 @@ import { AcademyIcon } from 'common/icons'
 import { FC, Fragment, useState } from 'react'
 
 import { DifficultyEntity } from '.mesh'
-import { Chip } from '@sushiswap/ui/future/components/chip'
-import { CircleIcon } from '@sushiswap/ui/future/components/icons'
+import { Chip } from '@sushiswap/ui/components/chip'
+import { CircleIcon } from '@sushiswap/ui/components/icons'
 
 interface DifficultyCard {
   difficulty: DifficultyEntity

@@ -1,11 +1,11 @@
 import { formatNumber, formatPercent } from '@sushiswap/format'
 import { Pool, Protocol } from '@sushiswap/client'
 import React, { FC } from 'react'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Currency } from '@sushiswap/ui/components/currency'
 
 import { incentiveRewardToToken } from '../../../../lib/functions'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { List } from '@sushiswap/ui/components/list/List'
+import { Button } from '@sushiswap/ui/components/button'
 import { PlusIcon, UserCircleIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 

@@ -7,8 +7,8 @@ import { useTokensFromPool } from '../../../lib/hooks'
 import { usePoolPosition } from '../../PoolPositionProvider'
 import { usePoolPositionStaked } from '../../PoolPositionStakedProvider'
 import { PoolButtons } from '../PoolButtons'
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Dialog } from '@sushiswap/ui/components/dialog'
+import { Currency } from '@sushiswap/ui/components/currency'
 
 interface PoolActionBarPositionDialogProps {
   pool: Pool

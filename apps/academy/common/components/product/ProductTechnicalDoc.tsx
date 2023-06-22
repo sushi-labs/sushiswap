@@ -2,7 +2,7 @@ import { ArrowRightIcon } from '@heroicons/react/24/solid'
 import { classNames, Link } from '@sushiswap/ui'
 import { DocsIcon } from 'common/icons'
 import { FC } from 'react'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 
 interface ProductTechnicalDoc {
   color: string

@@ -5,12 +5,12 @@ import { Pool } from '@sushiswap/client'
 import { Link } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/react-query'
 import { FC } from 'react'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 
 import { useGraphPool } from '../../lib/hooks'
 import { FarmRewardsAvailableTooltip } from '../FarmRewardsAvailableTooltip'
-import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { AppearOnMount } from '@sushiswap/ui/components/animation'
+import { Currency } from '@sushiswap/ui/components/currency'
 
 interface PoolHeader {
   pool: Pool

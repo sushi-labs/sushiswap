@@ -5,7 +5,7 @@ import { Amount, Native } from '@sushiswap/currency'
 import { Pool, Protocol } from '@sushiswap/client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
-import { Dots } from '@sushiswap/ui/future/components/dots'
+import { Dots } from '@sushiswap/ui/components/dots'
 import {
   _useSendTransaction as useSendTransaction,
   ConstantProductPoolState,
@@ -34,9 +34,9 @@ import {
 import { useTokensFromPool, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
-import { createToast } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_REMOVE_TRIDENT } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'

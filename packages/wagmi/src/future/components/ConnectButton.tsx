@@ -1,5 +1,5 @@
 import {ChevronDoubleDownIcon} from '@heroicons/react/24/outline'
-import {Button, ButtonProps} from '@sushiswap/ui/future/components/button'
+import {Button, ButtonProps} from '@sushiswap/ui/components/button'
 import {
   CoinbaseWalletIcon,
   FrameIcon,
@@ -9,7 +9,7 @@ import {
   RabbyIcon,
   TrustWalletIcon,
   WalletConnectIcon
-} from '@sushiswap/ui/future/components/icons'
+} from '@sushiswap/ui/components/icons'
 import React, {FC, useCallback, useMemo} from 'react'
 import {useConnect} from 'wagmi'
 import {
@@ -18,7 +18,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from "@sushiswap/ui/future/components/dropdown-menu";
+} from "@sushiswap/ui/components/dropdown-menu";
 
 const Icons: Record<string, React.ElementType> = {
   Injected: ChevronDoubleDownIcon,

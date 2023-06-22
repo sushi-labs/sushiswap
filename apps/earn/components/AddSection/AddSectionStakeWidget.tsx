@@ -4,17 +4,17 @@ import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
-import { Widget, WidgetContent, WidgetHeader } from '@sushiswap/ui/future/components/widget'
+import { Widget, WidgetContent, WidgetHeader } from '@sushiswap/ui/components/widget'
 import { useTotalSupply } from '@sushiswap/wagmi'
 import { FC, ReactNode, useMemo } from 'react'
-import { Currency } from '@sushiswap/ui/future/components/currency'
-import { Input } from '@sushiswap/ui/future/components/input'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { Input } from '@sushiswap/ui/components/input'
 
 import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
 import { usePoolPosition } from '../PoolPositionProvider'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
-import { SelectIcon } from '@sushiswap/ui/future/components/select'
+import { Button } from '@sushiswap/ui/components/button'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
+import { SelectIcon } from '@sushiswap/ui/components/select'
 
 interface AddSectionStakeWidgetProps {
   title?: string

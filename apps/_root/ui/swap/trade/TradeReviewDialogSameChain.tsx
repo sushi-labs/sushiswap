@@ -3,19 +3,19 @@
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
-import { Currency } from '@sushiswap/ui/future/components/currency'
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { List } from '@sushiswap/ui/future/components/list/List'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { Dialog } from '@sushiswap/ui/components/dialog'
+import { List } from '@sushiswap/ui/components/list/List'
 import React, { FC, useCallback, useState } from 'react'
 
 import { useSwapActions, useSwapState } from './TradeProvider'
 import { useTrade } from '../../../lib/swap/useTrade'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { ConfirmationDialog } from '../ConfirmationDialog'
-import { Dots } from '@sushiswap/ui/future/components/dots'
-import { SkeletonBox, SkeletonCircle, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+import { Dots } from '@sushiswap/ui/components/dots'
+import { SkeletonBox, SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 
-import { Badge } from '@sushiswap/ui/future/components/Badge'
+import { Badge } from '@sushiswap/ui/components/Badge'
 import { AppType } from '@sushiswap/ui/types'
 import { Native } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
@@ -23,7 +23,7 @@ import { warningSeverity, warningSeverityClassName } from '../../../lib/swap/war
 import { TradeRoute } from './TradeRoute'
 import { ZERO } from '@sushiswap/math'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { Collapsible } from '@sushiswap/ui/future/components/animation/Collapsible'
+import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 
 export const TradeReviewDialogSameChain: FC = () => {
   const [open, setOpen] = useState(false)

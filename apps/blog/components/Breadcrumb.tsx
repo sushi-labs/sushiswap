@@ -1,7 +1,7 @@
 import { ChevronLeftIcon } from '@heroicons/react/solid'
 import Link from 'next/link'
 import { FC } from 'react'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Container } from '@sushiswap/ui/components/container'
 
 export const Breadcrumb: FC = () => {
   return (

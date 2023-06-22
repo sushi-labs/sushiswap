@@ -1,7 +1,7 @@
 import { FC } from 'react'
 
 import { Maybe } from '../../.mesh'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 
 interface FilterButton {
   isSelected: boolean

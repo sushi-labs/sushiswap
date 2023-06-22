@@ -1,9 +1,9 @@
 import React, { FC } from 'react'
 
 import { RewardTableV3CellProps } from './types'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Badge } from '@sushiswap/ui/components/Badge'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Currency } from '@sushiswap/ui/components/currency'
 import { unwrapToken } from '../../../../../lib/functions'
 
 export const RewardsV3NameCell: FC<RewardTableV3CellProps> = ({ row }) => {

@@ -3,7 +3,7 @@ import { ErrorCode } from '@ethersproject/logger'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Currency } from '@sushiswap/currency'
 import { calculateGasMargin } from '@sushiswap/gas'
-import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { BigNumber } from 'ethers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {

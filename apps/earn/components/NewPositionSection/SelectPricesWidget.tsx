@@ -12,17 +12,17 @@ import {
   useConcentratedMintState,
   useRangeHopCallbacks,
 } from '../ConcentratedLiquidityProvider'
-import { Input } from '@sushiswap/ui/future/components/input'
+import { Input } from '@sushiswap/ui/components/input'
 import { useAccount } from '@sushiswap/wagmi'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { useIsMounted } from '@sushiswap/hooks'
-import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 
 import { useConcentratedLiquidityPositionsFromTokenId } from '@sushiswap/wagmi/future/hooks'
 import { FeeAmount, V3ChainId } from '@sushiswap/v3-sdk'
-import { Collapsible } from '@sushiswap/ui/future/components/animation/Collapsible'
-import { Toggle } from '@sushiswap/ui/future/components/toggle'
+import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 interface SelectPricesWidget {
   chainId: V3ChainId

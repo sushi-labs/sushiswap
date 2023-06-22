@@ -5,10 +5,10 @@ import { CREATE_VEST_DEFAULT_VALUES } from '../CreateForm'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { nanoid } from 'nanoid'
 import { ImportZoneSection } from './ImportZoneSection'
-import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { DuplicateIcon, PlusIcon, TrashIcon } from '@heroicons/react/solid'
 import { VestingForm } from '../CreateForm/VestingForm'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { ReviewSection } from './ReviewSection'
 import { ExecuteMultipleSection } from './ExecuteMultipleSection'
 import {
@@ -16,7 +16,7 @@ import {
   CreateMultipleVestingFormSchemaType,
   CreateMultipleVestingModelSchema,
 } from '../schema'
-import { Form } from '@sushiswap/ui/future/components/form'
+import { Form } from '@sushiswap/ui/components/form'
 
 export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId }) => {
   const [review, setReview] = useState(false)

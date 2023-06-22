@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { FC } from 'react'
 
 import { ICON_SIZE } from '../contants'

@@ -1,7 +1,7 @@
 import '@sushiswap/ui/index.css'
 import '../variables.css'
 
-import { ThemeProvider } from '@sushiswap/ui/future/ThemeProvider'
+import { ThemeProvider } from '@sushiswap/ui/ThemeProvider'
 import { client, WagmiConfig } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
 import { SUPPORTED_CHAIN_IDS } from 'config'
@@ -15,8 +15,8 @@ import { Provider } from 'react-redux'
 import { store } from 'store'
 
 import SEO from '../next-seo.config.mjs'
-import { GlobalNav } from '@sushiswap/ui/future/components/GlobalNav'
-import { GlobalFooter } from '@sushiswap/ui/future/components/GlobalFooter'
+import { GlobalNav } from '@sushiswap/ui/components/GlobalNav'
+import { GlobalFooter } from '@sushiswap/ui/components/GlobalFooter'
 import { queryClient } from '@sushiswap/react-query'
 import { QueryClientProvider as _QueryClientProvider } from '@tanstack/react-query'
 

@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { Chain } from '@sushiswap/chain'
-import { Dots } from '@sushiswap/ui/future/components/dots'
+import { Dots } from '@sushiswap/ui/components/dots'
 import { classNames } from '@sushiswap/ui'
 import { useSwapState } from '../trade/TradeProvider'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_TOKEN } from '@sushiswap/stargate'
@@ -8,8 +8,8 @@ import { useTrade } from '../../../lib/swap/useTrade'
 import { StepState } from './StepStates'
 import { shortenAddress } from '@sushiswap/format'
 import { ArrowLongRightIcon } from '@heroicons/react/20/solid'
-import { Currency } from '@sushiswap/ui/future/components/currency'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 
 interface ConfirmationDialogContent {
   txHash?: string

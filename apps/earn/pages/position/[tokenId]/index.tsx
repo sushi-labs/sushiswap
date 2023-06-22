@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { ArrowLeftIcon, MinusIcon, PlusIcon } from '@heroicons/react/solid'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
-import { SplashController } from '@sushiswap/ui/future/components/SplashController'
+import { SplashController } from '@sushiswap/ui/components/SplashController'
 import {
   useConcentratedLiquidityPositionsFromTokenId,
   useConcentratedPositionInfo,
@@ -12,10 +12,10 @@ import {
   useTokenWithCache,
 } from '@sushiswap/wagmi/future/hooks'
 import { useAngleRewards, useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
-import { Currency } from '@sushiswap/ui/future/components/currency'
-import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { classNames } from '@sushiswap/ui'
-import { List } from '@sushiswap/ui/future/components/list/List'
+import { List } from '@sushiswap/ui/components/list/List'
 import { Amount } from '@sushiswap/currency'
 import { usePriceInverter } from '../../../lib/hooks'
 import { formatTickPrice, getPriceOrderingFromPositionForUI, unwrapToken } from '../../../lib/functions'
@@ -25,23 +25,23 @@ import {
   ConcentratedLiquidityProvider,
   useConcentratedDerivedMintInfo,
 } from '../../../components/ConcentratedLiquidityProvider'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 import { RadioGroup } from '@headlessui/react'
 import { ConcentratedLiquidityRemoveWidget } from '../../../components/ConcentratedLiquidityRemoveWidget'
 import { JSBI } from '@sushiswap/math'
 import { ConcentratedLiquidityCollectButton } from '../../../components/ConcentratedLiquidityCollectButton'
 import { Bound } from '../../../lib/constants'
-import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
+import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/components/settings'
 import { CogIcon } from '@heroicons/react/outline'
-import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { PoolHeader } from '../../../components/future/PoolHeader'
 import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 import useIsTickAtLimit from '../../../lib/hooks/useIsTickAtLimit'
 import { ConcentratedLiquidityHarvestButton } from '../../../components/ConcentratedLiquidityHarvestButton'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { ChainId } from '@sushiswap/chain'
-import { Explainer } from '@sushiswap/ui/future/components/explainer'
-import { Toggle } from '@sushiswap/ui/future/components/toggle'
+import { Explainer } from '@sushiswap/ui/components/explainer'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 const PositionPage = () => {
   return (

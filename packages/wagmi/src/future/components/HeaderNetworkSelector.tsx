@@ -1,12 +1,12 @@
 import {Chain, ChainId} from '@sushiswap/chain'
-import {NetworkIcon} from '@sushiswap/ui/future/components/icons'
-import {NetworkSelector, NetworkSelectorOnSelectCallback} from '@sushiswap/ui/future/components/networkselector'
-import {createErrorToast} from '@sushiswap/ui/future/components/toast'
-import {useBreakpoint} from '@sushiswap/ui/future/lib/useBreakpoint'
+import {NetworkIcon} from '@sushiswap/ui/components/icons'
+import {NetworkSelector, NetworkSelectorOnSelectCallback} from '@sushiswap/ui/components/networkselector'
+import {createErrorToast} from '@sushiswap/ui/components/toast'
+import {useBreakpoint} from '@sushiswap/ui/lib/useBreakpoint'
 import React, {FC, useCallback} from 'react'
 import {ProviderRpcError, useNetwork, UserRejectedRequestError, useSwitchNetwork} from 'wagmi'
-import {PopoverPrimitive } from "@sushiswap/ui/future/components/popovernew";
-import {Button} from "@sushiswap/ui/future/components/button";
+import {PopoverPrimitive } from "@sushiswap/ui/components/popovernew";
+import {Button} from "@sushiswap/ui/components/button";
 
 export const HeaderNetworkSelector: FC<{
   networks: ChainId[]

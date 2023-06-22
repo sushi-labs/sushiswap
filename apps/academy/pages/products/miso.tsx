@@ -14,10 +14,10 @@ import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { FC } from 'react'
 import useSWR from 'swr'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Container } from '@sushiswap/ui/components/container'
 
 import { ArticleEntity } from '.mesh'
-import { CheckIcon } from '@sushiswap/ui/future/components/icons'
+import { CheckIcon } from '@sushiswap/ui/components/icons'
 
 const PRODUCT_SLUG = 'miso'
 const { color, usps, productStats, buttonText, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG]

@@ -11,7 +11,7 @@ import {
 } from '@sushiswap/amm'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Amount, Type } from '@sushiswap/currency'
-import { Dots } from '@sushiswap/ui/future/components/dots'
+import { Dots } from '@sushiswap/ui/components/dots'
 import {
   _useSendTransaction as useSendTransaction,
   PoolFinderType,
@@ -33,8 +33,8 @@ import {
   LiquidityInput,
 } from '../../lib/actions'
 import { AddSectionReviewModal } from '../AddSection'
-import { createToast } from '@sushiswap/ui/future/components/toast'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { createToast } from '@sushiswap/ui/components/toast'
+import { Button } from '@sushiswap/ui/components/button'
 import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_CREATE_TRIDENT } from '../../lib/constants'
 

@@ -2,7 +2,7 @@
 
 import { useRP2ExploitCheck, useRP2ExploitClaimFinder } from '@sushiswap/wagmi/future/hooks'
 import { useAccount } from '@sushiswap/wagmi'
-import { List } from '@sushiswap/ui/future/components/list/List'
+import { List } from '@sushiswap/ui/components/list/List'
 import React, { Fragment } from 'react'
 import { ClaimItem } from '../components/ClaimItem'
 import { Header } from '../components/Header'
@@ -10,7 +10,7 @@ import { ConnectButton } from '@sushiswap/wagmi/future/components'
 import { RevokeItem } from '../components/RevokeItem'
 import { Disclosure } from '@headlessui/react'
 import { ChevronRightIcon } from '@heroicons/react-v1/solid'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Container } from '@sushiswap/ui/components/container'
 
 const RP2ClaimPage = () => {
   const { address } = useAccount()

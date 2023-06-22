@@ -4,11 +4,11 @@ import { shortenAddress } from '@sushiswap/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { Link } from '@sushiswap/ui'
 import { FC } from 'react'
-import { Table } from '@sushiswap/ui/future/components/table'
-import { Currency } from '@sushiswap/ui/future/components/currency'
+import { Table } from '@sushiswap/ui/components/table'
+import { Currency } from '@sushiswap/ui/components/currency'
 
 import { useTokenFromToken } from '../../lib/hooks'
-import { ClipboardController } from '@sushiswap/ui/future/components/ClipboardController'
+import { ClipboardController } from '@sushiswap/ui/components/ClipboardController'
 
 interface TokenInformation {
   token: GraphToken

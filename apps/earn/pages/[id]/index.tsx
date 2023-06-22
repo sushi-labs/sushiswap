@@ -26,7 +26,7 @@ import {
 import { ChainId } from '@sushiswap/chain'
 import { NextSeo } from 'next-seo'
 import { PoolPageV3 } from '../../components/PoolPageV3'
-import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
+import { AppearOnMount } from '@sushiswap/ui/components/animation'
 
 const Pool: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (

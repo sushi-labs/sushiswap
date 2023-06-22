@@ -1,4 +1,5 @@
 import React, { ComponentType } from 'react'
+import { FC } from 'react'
 
 export enum AppType {
   Root = 'Explore Apps',
@@ -75,3 +76,6 @@ export type PolymorphicComponentPropsWithRef<
   C extends React.ElementType,
   Props = Record<string, never>
 > = PolymorphicComponentProps<C, Props> & { ref?: PolymorphicRef<C> }
+
+export type IconProps = React.ComponentProps<'svg'>
+export type IconComponent = FC<IconProps>

@@ -6,7 +6,7 @@ import { useDeepCompareMemoize } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { calculateTotalAmount } from '../utils'
 import { ChainId } from '@sushiswap/chain'
-import { Input } from '@sushiswap/ui/future/components/input'
+import { Input } from '@sushiswap/ui/components/input'
 import {
   Select,
   SelectContent,
@@ -15,7 +15,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@sushiswap/ui/future/components/select'
+} from '@sushiswap/ui/components/select'
 import {
   CreateMultipleVestingBaseSchemaFormErrorsType,
   CreateMultipleVestingFormSchemaType,
@@ -28,7 +28,7 @@ import {
   FormItem,
   FormMessage,
   FormSection,
-} from '@sushiswap/ui/future/components/form'
+} from '@sushiswap/ui/components/form'
 
 export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) => {
   const { address } = useAccount()

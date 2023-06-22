@@ -1,4 +1,4 @@
-import { GlobalNav, NavLink, SubNav, SubNavLink } from '@sushiswap/ui/future/components/GlobalNav'
+import { GlobalNav, NavLink, SubNav, SubNavLink } from '@sushiswap/ui/components/GlobalNav'
 import { DOCS_URL } from 'common/helpers'
 import { getDifficulties, getProducts } from 'lib/api'
 import React, { FC, useMemo } from 'react'

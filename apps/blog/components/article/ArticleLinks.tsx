@@ -1,7 +1,7 @@
 import { LinkIcon, MailIcon } from '@heroicons/react/outline'
 import { FC } from 'react'
 import { Article } from 'types'
-import { TwitterIcon } from '@sushiswap/ui/future/components/icons'
+import { TwitterIcon } from '@sushiswap/ui/components/icons'
 
 interface ArticleLinks {
   article?: Article

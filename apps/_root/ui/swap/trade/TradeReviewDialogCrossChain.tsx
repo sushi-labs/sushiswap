@@ -3,24 +3,24 @@
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { Chain, chainName } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
-import { Currency } from '@sushiswap/ui/future/components/currency'
-import { Dialog } from '@sushiswap/ui/future/components/dialog'
-import { List } from '@sushiswap/ui/future/components/list/List'
+import { Currency } from '@sushiswap/ui/components/currency'
+import { Dialog } from '@sushiswap/ui/components/dialog'
+import { List } from '@sushiswap/ui/components/list/List'
 import React, { FC, useCallback } from 'react'
 
 import { useSwapActions, useSwapState } from './TradeProvider'
 import { useTrade } from '../../../lib/swap/useTrade'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { Dots } from '@sushiswap/ui/future/components/dots'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+import { Button } from '@sushiswap/ui/components/button'
+import { Dots } from '@sushiswap/ui/components/dots'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
+import { Badge } from '@sushiswap/ui/components/Badge'
+import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain/ConfirmationDialogCrossChain'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import { ZERO } from '@sushiswap/math'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { Collapsible } from '@sushiswap/ui/future/components/animation/Collapsible'
+import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 
 export const TradeReviewDialogCrossChain: FC = () => {
   const { review, token0, token1, recipient, network0, network1, amount, value } = useSwapState()

@@ -1,12 +1,12 @@
 import { Tab } from '@headlessui/react'
 import React, { FC, Fragment, useState } from 'react'
 import { useUserStreams, useUserVestings } from '../lib'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { SushiIcon } from '@sushiswap/ui/future/components/icons'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Button } from '@sushiswap/ui/components/button'
+import { SushiIcon } from '@sushiswap/ui/components/icons'
+import { Container } from '@sushiswap/ui/components/container'
 import { Address, useAccount } from '@sushiswap/wagmi'
 import { FuroTableType, StreamTable } from './Table'
-import { Toggle } from '@sushiswap/ui/future/components/toggle'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress }) => {
   const { address: account } = useAccount()

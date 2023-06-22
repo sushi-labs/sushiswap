@@ -2,11 +2,11 @@ import { TrashIcon } from '@heroicons/react/24/outline'
 import chains from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { useCustomTokens, useIsMounted } from '@sushiswap/hooks'
-import { SlideIn } from '@sushiswap/ui/future/components/animation'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import { Overlay } from '@sushiswap/ui/future/components/overlay'
+import { SlideIn } from '@sushiswap/ui/components/animation'
+import { List } from '@sushiswap/ui/components/list/List'
+import { Overlay } from '@sushiswap/ui/components/overlay'
 import React, { FC, useMemo, useState } from 'react'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 
 export const TokenSelectorCustomTokensOverlay: FC = () => {
   const isMounted = useIsMounted()

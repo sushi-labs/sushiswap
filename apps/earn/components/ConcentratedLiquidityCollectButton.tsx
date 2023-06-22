@@ -1,6 +1,6 @@
 import { Dispatch, FC, ReactElement, SetStateAction, useCallback } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-import { createToast } from '@sushiswap/ui/future/components/toast'
+import { createToast } from '@sushiswap/ui/components/toast'
 import { TransactionRequest } from '@ethersproject/providers'
 import { JSBI } from '@sushiswap/math'
 import { Amount, Type } from '@sushiswap/currency'

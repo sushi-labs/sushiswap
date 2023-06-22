@@ -2,10 +2,10 @@ import { Tab } from '@headlessui/react'
 import React, { FC, Fragment } from 'react'
 
 import { Pools } from './Pools'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Container } from '@sushiswap/ui/components/container'
 import { FuroTokenTable } from './FuroTokens'
 import { BentoBoxTokenTable } from './BentoBoxTokens'
-import { Toggle } from '@sushiswap/ui/future/components/toggle'
+import { Toggle } from '@sushiswap/ui/components/toggle'
 
 export const TableSection: FC = () => {
   return (

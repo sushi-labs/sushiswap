@@ -2,7 +2,7 @@ import { classNames } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { DEFAULT_SIDE_PADDING } from '../helpers'
-import { DiscordIcon, GithubIcon, TwitterIcon, YoutubeIcon } from '@sushiswap/ui/future/components/icons'
+import { DiscordIcon, GithubIcon, TwitterIcon, YoutubeIcon } from '@sushiswap/ui/components/icons'
 
 const heroIconProps = {
   width: 24,

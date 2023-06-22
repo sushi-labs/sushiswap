@@ -3,7 +3,7 @@ import { Pool } from '@sushiswap/client'
 import { FC } from 'react'
 import { usePoolGraphData } from '../../lib/hooks'
 import { ChainId } from '@sushiswap/chain'
-import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { classNames } from '@sushiswap/ui'
 
 interface PoolStats {

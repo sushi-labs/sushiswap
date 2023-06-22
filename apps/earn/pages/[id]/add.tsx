@@ -6,7 +6,7 @@ import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { SWRConfig, useSWRConfig } from 'swr'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Container } from '@sushiswap/ui/components/container'
 
 import {
   AddSectionLegacy,
@@ -21,7 +21,7 @@ import { getPool, getPools, getPoolUrl, usePool } from '@sushiswap/client'
 import { ChainId } from '@sushiswap/chain'
 import { NextSeo } from 'next-seo'
 import { isTridentPoolProtocol } from '../../lib/functions'
-import { AppearOnMount } from '@sushiswap/ui/future/components/animation'
+import { AppearOnMount } from '@sushiswap/ui/components/animation'
 
 const Add: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (

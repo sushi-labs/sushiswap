@@ -3,7 +3,7 @@ import { DIFFICULTY_ELEMENTS } from 'common/helpers'
 import { FC } from 'react'
 
 import { ArticleEntity } from '.mesh'
-import { CircleIcon } from '@sushiswap/ui/future/components/icons'
+import { CircleIcon } from '@sushiswap/ui/components/icons'
 
 interface DifficultyLabel {
   article: ArticleEntity

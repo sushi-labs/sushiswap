@@ -16,7 +16,7 @@ import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import Image from 'next/image'
 import { FC } from 'react'
 import useSWR from 'swr'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Container } from '@sushiswap/ui/components/container'
 
 import { ArticleEntity } from '.mesh'
 

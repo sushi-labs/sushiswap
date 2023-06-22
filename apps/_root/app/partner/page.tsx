@@ -8,9 +8,9 @@ import { addressValidator, useTokenData } from './lib'
 import React, { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
-import { Loader } from '@sushiswap/ui/future/components/loader'
+import { Loader } from '@sushiswap/ui/components/loader'
 import { classNames } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button } from '@sushiswap/ui/components/button'
 
 enum SubmitState {
   Nothing = 'nothing',

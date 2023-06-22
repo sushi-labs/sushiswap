@@ -8,9 +8,9 @@ import { ControllerRenderProps, useFormContext } from 'react-hook-form'
 import { useFundSourceFromZFundSource, useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { FundSourceOption } from './FundSourceOption'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
-import { Input } from '@sushiswap/ui/future/components/input'
+import { Input } from '@sushiswap/ui/components/input'
 import { CreateMultipleStreamBaseSchemaFormErrorsType, CreateMultipleStreamFormSchemaType } from '../schema'
-import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/future/components/form'
+import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/components/form'
 
 export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ chainId, index }) => {
   const { address } = useAccount()

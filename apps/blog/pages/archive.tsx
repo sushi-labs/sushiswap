@@ -8,7 +8,7 @@ import { Article, Category, Collection } from 'types'
 
 import { ArticleList, ArticleListItem, Categories, Pagination } from '../components'
 import { getArticles, getCategories } from '../lib/api'
-import { Container } from '@sushiswap/ui/future/components/container'
+import { Container } from '@sushiswap/ui/components/container'
 
 export async function getStaticProps() {
   const articles = await getArticles()

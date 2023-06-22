@@ -1,12 +1,12 @@
 import { ArrowLeftIcon } from '@heroicons/react/20/solid'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { List } from '@sushiswap/ui/future/components/list/List'
+import { Button } from '@sushiswap/ui/components/button'
+import { List } from '@sushiswap/ui/components/list/List'
 import React, { Dispatch, FC, SetStateAction } from 'react'
 
 import { ProfileView } from './index'
 import { NotificationGroup } from './NotificationGroup'
 import { useClearNotifications, useNotifications } from '@sushiswap/dexie'
-import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 
 interface TransactionsProps {
   address: `0x${string}`

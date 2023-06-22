@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { ButtonProps } from '@sushiswap/ui/future/components/button'
+import { ButtonProps } from '@sushiswap/ui/components/button'
 import { Amount, Type } from '@sushiswap/currency'
 import { Address } from 'wagmi'
 import dynamic from 'next/dynamic'
