@@ -1,5 +1,3 @@
-
-
 export class AddressMapper {
 
      static generate(addressLists: (Record<number, string[]> | Record<number, string>)[]) {
@@ -37,15 +35,13 @@ export class AddressMapper {
         const merged: Record<number, string[]> = {}
         for (const addressList of addressLists) {   
             Object.entries(addressList).forEach(([chainId, address]) => {
-                if (!merged[chainId]) {
-                    merged[chainId] = [address.toLowerCase()]
+                if (!merged[Number(chainId)]) {
+                    merged[Number(chainId)] = [address.toLowerCase()]
                 } else {
-                    merged[chainId].push(address.toLowerCase())
+                    merged[Number(chainId)].push(address.toLowerCase())
                 }
             })
         }
         return merged
-    
     }
-
 }
