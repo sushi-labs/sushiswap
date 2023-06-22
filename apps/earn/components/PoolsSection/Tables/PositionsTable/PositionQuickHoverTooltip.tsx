@@ -1,5 +1,4 @@
 import { formatPercent, formatUSD } from '@sushiswap/format'
-import { Link } from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
 import { PositionWithPool } from '../../../../types'
 import { PoolPositionProvider, usePoolPosition } from '../../../PoolPositionProvider'
@@ -62,7 +61,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
           </span>
         </span>
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <Button icon={PlusIcon} asChild size="sm" variant="secondary">
           <a href={`/pools/${row.pool.id}/add`}>Deposit</a>
         </Button>

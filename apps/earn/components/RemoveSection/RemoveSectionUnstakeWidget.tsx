@@ -4,8 +4,8 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
-import { classNames, DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui'
-import { Widget, WidgetHeader, WidgetContent } from '@sushiswap/ui/future/components/widget'
+import { classNames } from '@sushiswap/ui'
+import { Widget, WidgetContent, WidgetHeader } from '@sushiswap/ui/future/components/widget'
 import { useTotalSupply } from '@sushiswap/wagmi'
 import { FC, Fragment, ReactNode, useMemo, useState } from 'react'
 import { Currency } from '@sushiswap/ui/future/components/currency'
@@ -15,6 +15,7 @@ import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
 import { SelectIcon } from '@sushiswap/ui/future/components/select'
+import { Input } from '@sushiswap/ui/future/components/input'
 
 interface RemoveSectionUnstakeWidget {
   chainId: ChainId
@@ -104,16 +105,21 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                       <div className="flex items-center gap-2">
                         <div className="flex items-center justify-between flex-grow">
                           <Input.Percent
+                            id="remove-amount"
+                            label="Amount"
                             onUserInput={setValue}
                             value={value}
                             placeholder="0"
                             variant="unstyled"
-                            className={classNames(DEFAULT_INPUT_UNSTYLED, '!text-2xl')}
+                            className={classNames(
+                              'p-0 bg-transparent border-none focus:outline-none focus:ring-0 w-full truncate font-medium text-left text-base md:text-sm placeholder:font-normal font-medium',
+                              '!text-2xl'
+                            )}
                           />
                         </div>
                         <div className="flex gap-2">
                           <Button
-                            size="sm"
+                            size="xs"
                             variant={value === '50' ? 'default' : 'secondary'}
                             onClick={() => setValue(balance?.divide(4)?.toExact() || '')}
                             testdata-id="unstake-25-button"
@@ -121,7 +127,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                             25%
                           </Button>
                           <Button
-                            size="sm"
+                            size="xs"
                             variant={value === '50' ? 'default' : 'secondary'}
                             onClick={() => setValue(balance?.divide(2)?.toExact() || '')}
                             testdata-id="unstake-50-button"
@@ -129,8 +135,16 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                             50%
                           </Button>
                           <Button
-                            size="sm"
-                            variant={value === '50' ? 'default' : 'secondary'}
+                            size="xs"
+                            variant={value === '75' ? 'default' : 'secondary'}
+                            onClick={() => setValue(balance?.divide(4).multiply(3)?.toExact() || '')}
+                            testdata-id="unstake-50-button"
+                          >
+                            75%
+                          </Button>
+                          <Button
+                            size="xs"
+                            variant={value === '100' ? 'default' : 'secondary'}
                             onClick={() => setValue(balance?.toExact() || '')}
                             testdata-id="unstake-max-button"
                           >

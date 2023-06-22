@@ -3,7 +3,7 @@ import { usePools } from '@sushiswap/client'
 import { Native, Token } from '@sushiswap/currency'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Token as GraphToken } from '@sushiswap/graph-client'
-import { Link, Typography } from '@sushiswap/ui'
+import { Link } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { useSWRConfig } from 'swr'
 import { Table } from '@sushiswap/ui/future/components/table'
@@ -21,9 +21,7 @@ export const TokenPairs: FC<TokenPairs> = ({ token }) => {
 
   return (
     <div className="flex flex-col w-full gap-4">
-      <Typography weight={600} className="text-slate-50">
-        Trending Pairs
-      </Typography>
+      <p className="font-semibold  text-slate-50">Trending Pairs</p>
       <Table.container className="w-full">
         <Table.table>
           <Table.thead>
@@ -102,35 +100,35 @@ export const TokenPairs: FC<TokenPairs> = ({ token }) => {
                                   className="flex flex-col !no-underline group"
                                   href={chains[token.chainId].getTokenUrl(pair.id.split(':')[1])}
                                 >
-                                  <Typography variant="sm" weight={600}>
+                                  <p className="text-sm font-semibold">
                                     {token0.symbol} <span className="text-slate-400">/</span> {token1.symbol}
-                                  </Typography>
+                                  </p>
                                 </Link.External>
                               </div>
                             </Link.External>
                           </Table.td>
                           <Table.td>
                             <Link.External href={`/earn/${pair.id}`} className="!no-underline">
-                              <Typography weight={600} variant="sm" className="text-slate-100">
+                              <p className="font-semibold text-sm text-slate-100">
                                 {liquidityUSD.includes('NaN') ? '$0.00' : liquidityUSD}
-                              </Typography>
+                              </p>
                             </Link.External>
                           </Table.td>
                           <Table.td>
                             <Link.External href={`/earn/${pair.id}`} className="!no-underline">
-                              <Typography weight={600} variant="sm" className="text-slate-100">
+                              <p className="font-semibold text-sm text-slate-100">
                                 {volume1w.includes('NaN') ? '$0.00' : volume1w}
-                              </Typography>
+                              </p>
                             </Link.External>
                           </Table.td>
                           <Table.td>
                             <Link.External href={`/earn/${pair.id}`} className="!no-underline">
-                              <Typography weight={600} variant="sm" className="text-slate-100">
+                              <p className="font-semibold text-sm text-slate-100">
                                 {formatPercent(pair.feeApr)}{' '}
                                 {pool && pool.incentives.length > 0 && pool.incentiveApr > 0 && (
                                   <FarmRewardsAvailableTooltip />
                                 )}
-                              </Typography>
+                              </p>
                             </Link.External>
                           </Table.td>
                         </Table.tr>

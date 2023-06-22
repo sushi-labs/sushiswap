@@ -5,8 +5,8 @@ import { PositionWithPool } from '../../types'
 import { useTokensFromPool } from '../../lib/hooks'
 import { formatNumber, formatUSD } from '@sushiswap/format'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
-import { TooltipContent, TooltipProvider, TooltipTrigger, Tooltip } from '@sushiswap/ui/future/components/tooltip'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/future/components/tooltip'
 
 interface PositionCard {
   position: PositionWithPool

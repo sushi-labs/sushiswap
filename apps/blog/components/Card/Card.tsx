@@ -1,5 +1,5 @@
 import { ChevronRightIcon } from '@heroicons/react/solid'
-import { classNames, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC } from 'react'
 import { Article } from 'types'
@@ -41,18 +41,14 @@ export const Card: FC<Card> = ({ article }) => {
             </div>
           )}
           <div className="flex flex-col gap-1">
-            <Typography variant="sm" weight={500} className="text-slate-200 line-clamp-1">
-              {article?.attributes?.title}
-            </Typography>
-            <Typography variant="sm" className="text-slate-400 line-clamp-2">
-              {article?.attributes?.description}
-            </Typography>
+            <p className="text-sm font-medium text-slate-200 line-clamp-1">{article?.attributes?.title}</p>
+            <p className="text-sm text-slate-400 line-clamp-2">{article?.attributes?.description}</p>
             <div className="absolute bottom-3 left-4 right-4">
               <div className="flex items-center justify-between">
-                <Typography variant="xs" weight={500} className="text-slate-400 line-clamp-2">
+                <p className="text-xs font-medium text-slate-400 line-clamp-2">
                   {article?.attributes?.publishedAt &&
                     format(new Date(article?.attributes.publishedAt), 'dd MMM, yyyy')}
-                </Typography>
+                </p>
                 <div className="flex items-center text-sm font-medium text-blue">
                   Read more <ChevronRightIcon width={16} height={16} />
                 </div>

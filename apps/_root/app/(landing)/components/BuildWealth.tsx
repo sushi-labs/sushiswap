@@ -1,4 +1,3 @@
-import { Typography } from '@sushiswap/ui'
 import Image from 'next/legacy/image'
 import React, { FC } from 'react'
 
@@ -26,13 +25,13 @@ export const BuildWealth: FC = () => {
               />
             </div>
             <div className="flex flex-col items-center md:items-start">
-              <Typography variant="h1" weight={600} className="text-center md:text-left">
+              <p className="text-4xl font-semibold  text-center md:text-left">
                 Earn passive income with <br /> your coins.
-              </Typography>
-              <Typography variant="lg" weight={400} className="mt-2 text-center md:text-left">
+              </p>
+              <p className="text-lg mt-2 text-center md:text-left">
                 With multiple ways to passively earn yield on your coins, you can choose your own yield stack and make
                 your money work for you, all in the background, 24/7.
-              </Typography>
+              </p>
               <div className="flex flex-wrap justify-center md:justify-start gap-x-3">
                 <ExpandableCard
                   caption="For Retail Users"

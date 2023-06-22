@@ -30,9 +30,9 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({ row }) =
               <span className="text-sm font-medium flex gap-1 text-slate-50">
                 {token0.symbol} <span className="text-slate-500">/</span> {token1.symbol}
               </span>
-              {/* <Typography variant="xxs" className="text-slate-400">
+              {/* <p className="text-[10px] text-slate-400">
                 SushiSwap Farm
-              </Typography> */}
+              </p> */}
             </div>
           </div>
           <span className="text-xs font-semibold flex gap-1.5 mt-1 items-center text-slate-400">

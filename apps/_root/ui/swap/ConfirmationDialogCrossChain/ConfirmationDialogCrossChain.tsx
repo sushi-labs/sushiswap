@@ -1,6 +1,7 @@
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { AppType } from '@sushiswap/ui/types'
 import {
+  getSushiXSwapContractConfig,
   useAccount,
   useContractWrite,
   useNetwork,
@@ -8,7 +9,6 @@ import {
   UserRejectedRequestError,
   useTransaction,
 } from '@sushiswap/wagmi'
-import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { createErrorToast, createInfoToast, createToast } from '@sushiswap/ui/future/components/toast'
 import { Dialog } from '@sushiswap/ui/future/components/dialog'

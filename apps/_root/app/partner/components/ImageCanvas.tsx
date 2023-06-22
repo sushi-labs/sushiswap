@@ -1,16 +1,17 @@
 import { FormType } from '../page'
-import { HTMLAttributes, RefObject } from 'react'
-import { FC, useEffect } from 'react'
+import { FC, HTMLAttributes, RefObject, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import Resizer from 'react-image-file-resizer'
 
 function adjust(color: string, amount: number) {
-  return '#' +
-  color
-    .replace(/^#/, '')
-    .replace(/../g, (color) =>
-      ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2)
-    );
+  return (
+    '#' +
+    color
+      .replace(/^#/, '')
+      .replace(/../g, (color) =>
+        ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2)
+      )
+  )
 }
 
 interface ImageCanvas extends HTMLAttributes<HTMLCanvasElement> {

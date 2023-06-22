@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState, Fragment } from 'react'
+import React, { FC, Fragment, useMemo, useState } from 'react'
 import { Layout } from '../../../components'
 import Link from 'next/link'
 import { ArrowLeftIcon, MinusIcon, PlusIcon } from '@heroicons/react/solid'
@@ -11,7 +11,7 @@ import {
   useConcentratedPositionOwner,
   useTokenWithCache,
 } from '@sushiswap/wagmi/future/hooks'
-import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
+import { useAngleRewards, useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 import { classNames } from '@sushiswap/ui'
@@ -37,7 +37,6 @@ import { IconButton } from '@sushiswap/ui/future/components/iconbutton'
 import { PoolHeader } from '../../../components/future/PoolHeader'
 import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
 import useIsTickAtLimit from '../../../lib/hooks/useIsTickAtLimit'
-import { useAngleRewards } from '@sushiswap/react-query'
 import { ConcentratedLiquidityHarvestButton } from '../../../components/ConcentratedLiquidityHarvestButton'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { ChainId } from '@sushiswap/chain'

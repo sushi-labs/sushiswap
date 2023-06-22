@@ -1,5 +1,5 @@
 import { AddressZero } from '@ethersproject/constants'
-import { Page, expect } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 import { Type } from '@sushiswap/currency'
 import {
   addMonths,

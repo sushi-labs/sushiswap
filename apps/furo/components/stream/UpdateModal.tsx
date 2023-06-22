@@ -6,11 +6,11 @@ import { Amount, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { JSBI, ZERO } from '@sushiswap/math'
 import { classNames } from '@sushiswap/ui'
-import { _useSendTransaction as useSendTransaction, useAccount, useContract, Address } from '@sushiswap/wagmi'
+import { _useSendTransaction as useSendTransaction, Address, useAccount, useContract } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { Stream, approveBentoBoxAction, batchAction } from '../../lib'
+import { approveBentoBoxAction, batchAction, Stream } from '../../lib'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
@@ -19,7 +19,7 @@ import { List } from '@sushiswap/ui/future/components/list/List'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { Switch } from '@sushiswap/ui/future/components/switch'
 import { Signature } from '@ethersproject/bytes'
-import { withCheckerRoot, useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { FuroStreamChainId } from '@sushiswap/furo'
 import { Dots } from '@sushiswap/ui/future/components/dots'
 
@@ -231,22 +231,8 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
             <div>
               <Checker.Connect type="button">
                 <Checker.Network type="button" chainId={chainId}>
-                  <Checker.Custom
-                    showGuardIfTrue={topUp && !amountAsEntity?.greaterThan(ZERO)}
-                    guard={
-                      <Button type="button" fullWidth>
-                        Enter amount
-                      </Button>
-                    }
-                  >
-                    <Checker.Custom
-                      showGuardIfTrue={changeEndDate && !endDate}
-                      guard={
-                        <Button type="button" fullWidth>
-                          Enter date
-                        </Button>
-                      }
-                    >
+                  <Checker.Custom guardWhen={topUp && !amountAsEntity?.greaterThan(ZERO)} guardText="Enter amount">
+                    <Checker.Custom guardWhen={changeEndDate && !endDate} guardText="Enter date">
                       <Checker.ApproveBentobox
                         type="button"
                         id="furo-update-stream-approve-bentobox"

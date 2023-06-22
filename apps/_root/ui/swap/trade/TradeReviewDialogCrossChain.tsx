@@ -12,7 +12,7 @@ import { useSwapActions, useSwapState } from './TradeProvider'
 import { useTrade } from '../../../lib/swap/useTrade'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Dots } from '@sushiswap/ui/future/components/dots'
-import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'

@@ -5,12 +5,11 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { JSBI } from '@sushiswap/math'
 import { Amount, Type } from '@sushiswap/currency'
 import { isV3ChainId, NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
-import { _useSendTransaction as useSendTransaction } from '@sushiswap/wagmi'
+import { _useSendTransaction as useSendTransaction, useNetwork } from '@sushiswap/wagmi'
 import { ChainId } from '@sushiswap/chain'
 import { ConcentratedLiquidityPosition } from '@sushiswap/wagmi/future/hooks'
 import { unwrapToken } from '../lib/functions'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
-import { useNetwork } from '@sushiswap/wagmi'
 
 interface ConcentratedLiquidityCollectButton {
   positionDetails: ConcentratedLiquidityPosition | undefined

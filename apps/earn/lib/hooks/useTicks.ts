@@ -1,5 +1,5 @@
 import { Type } from '@sushiswap/currency'
-import { FeeAmount, TICK_SPACINGS, computePoolAddress, nearestUsableTick, V3ChainId } from '@sushiswap/v3-sdk'
+import { computePoolAddress, FeeAmount, nearestUsableTick, TICK_SPACINGS, V3ChainId } from '@sushiswap/v3-sdk'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
 import { useMemo } from 'react'
 import { Address, useContractReads } from '@sushiswap/wagmi'

@@ -9,15 +9,17 @@ import { Percent } from '@sushiswap/math'
 import { UniswapV2Router02ChainId } from '@sushiswap/v2-core'
 import { Dots } from '@sushiswap/ui/future/components/dots'
 import {
+  _useSendTransaction as useSendTransaction,
+  Address,
   getSushiSwapRouterContractConfig,
   PairState,
+  useAccount,
+  useNetwork,
   usePair,
-  _useSendTransaction as useSendTransaction,
   useSushiSwapRouterContract,
   useTotalSupply,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { Address, useAccount, useNetwork } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
 import { useTokensFromPool, useTransactionDeadline, useUnderlyingTokenBalanceFromPool } from '../../lib/hooks'
@@ -252,22 +254,11 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = withCheckerRoot
       >
         <Checker.Connect fullWidth>
           <Checker.Custom
-            showGuardIfTrue={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
-            guard={
-              <Button fullWidth disabled={true}>
-                Pool Not Found
-              </Button>
-            }
+            guardWhen={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
+            guardText="Pool not found"
           >
             <Checker.Network fullWidth chainId={_pool.chainId}>
-              <Checker.Custom
-                showGuardIfTrue={+percentage <= 0}
-                guard={
-                  <Button fullWidth disabled={true}>
-                    Enter Amount
-                  </Button>
-                }
-              >
+              <Checker.Custom guardWhen={+percentage <= 0} guardText="Enter amount">
                 <Checker.ApproveERC20
                   fullWidth
                   id="approve-remove-liquidity-slp"

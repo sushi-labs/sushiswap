@@ -10,7 +10,7 @@ import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/
 import { Input } from '@sushiswap/ui/future/components/input'
 import { Web3Input } from '@sushiswap/wagmi/future/components/Web3Input'
 import { CreateMultipleVestingFormSchemaType } from '../schema'
-import { FormSection, FormField, FormItem, FormControl, FormMessage } from '@sushiswap/ui/future/components/form'
+import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/future/components/form'
 
 export const GeneralDetailsSection: FC<{ chainId: ChainId; index: number }> = ({ chainId, index }) => {
   const { control, watch, setValue } = useFormContext<CreateMultipleVestingFormSchemaType>()

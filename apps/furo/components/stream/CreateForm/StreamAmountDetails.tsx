@@ -10,7 +10,7 @@ import { FundSourceOption } from './FundSourceOption'
 import { TokenSelector } from '@sushiswap/wagmi/future/components/TokenSelector/TokenSelector'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { CreateMultipleStreamBaseSchemaFormErrorsType, CreateMultipleStreamFormSchemaType } from '../schema'
-import { FormSection, FormField, FormItem, FormControl, FormMessage } from '@sushiswap/ui/future/components/form'
+import { FormControl, FormField, FormItem, FormMessage, FormSection } from '@sushiswap/ui/future/components/form'
 
 export const StreamAmountDetails: FC<{ chainId: ChainId; index: number }> = ({ chainId, index }) => {
   const { address } = useAccount()

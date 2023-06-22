@@ -11,7 +11,7 @@ import {
   useTokenRevokeApproval,
   useTokenWithCache,
 } from '@sushiswap/wagmi/future/hooks'
-import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 
 import { Amount } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'

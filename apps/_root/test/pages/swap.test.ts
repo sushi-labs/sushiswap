@@ -1,8 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
 import { DAI, Native, SUSHI, Type, USDC, USDT, WBTC } from '@sushiswap/currency'
-import { createTestClient, http } from 'viem'
-import { foundry } from 'viem/chains'
 import { SupportedChainId } from '../../config'
 
 type InputType = 'INPUT' | 'OUTPUT'

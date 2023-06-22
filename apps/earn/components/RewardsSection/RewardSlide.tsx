@@ -11,7 +11,6 @@ import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { ConcentratedLiquidityHarvestButton } from '../ConcentratedLiquidityHarvestButton'
 import { Address } from 'wagmi'
-import { InformationCircleIcon } from '@heroicons/react/solid'
 
 export const RewardSlide: FC<{
   address: Address | undefined

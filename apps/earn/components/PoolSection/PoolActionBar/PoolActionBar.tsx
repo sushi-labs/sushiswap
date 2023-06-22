@@ -1,6 +1,5 @@
 import { Pool } from '@sushiswap/client'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { Typography } from '@sushiswap/ui'
 import { FC, Fragment, useState } from 'react'
 
 import { PoolActionBarPositionDialog } from './PoolActionBarPositionDialog'
@@ -24,15 +23,11 @@ export const PoolActionBar: FC<PoolActionBarProps> = ({ pool }) => {
         <div>
           <div className="divide-x rounded-full shadow-md shadow-black/50 bg-blue divide-slate-800">
             <button onClick={() => setOpenPosition(true)} className="inline-flex px-4 py-3 cursor-pointer">
-              <Typography variant="sm" weight={600} className="text-slate-50">
-                My Position
-              </Typography>
+              <p className="text-sm font-semibold  text-slate-50">My Position</p>
             </button>
             {pool.incentives && (
               <button onClick={() => setOpenRewards(true)} className="inline-flex px-4 py-3 cursor-pointer">
-                <Typography variant="sm" weight={600} className="text-slate-50">
-                  My Rewards
-                </Typography>
+                <p className="text-sm font-semibold  text-slate-50">My Rewards</p>
               </button>
             )}
           </div>

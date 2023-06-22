@@ -8,7 +8,7 @@ import { usePrice, useTokenList, useTokenSearch } from '@sushiswap/react-query'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 import { classNames } from '@sushiswap/ui'
-import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 
 import { Dialog } from '@sushiswap/ui/future/components/dialog'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
@@ -18,7 +18,7 @@ import { Currency } from '@sushiswap/ui/future/components/currency'
 import { COMMON_BASES } from '@sushiswap/router-config'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { TooltipContent, TooltipProvider, TooltipTrigger, Tooltip } from '@sushiswap/ui/future/components/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/future/components/tooltip'
 
 export const SearchPanel: FC = () => {
   const { network1 } = useSwapState()

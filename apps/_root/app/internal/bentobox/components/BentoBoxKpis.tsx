@@ -1,8 +1,8 @@
 'use client'
 
-import { formatNumber } from '@sushiswap/format'
+import {formatNumber} from '@sushiswap/format'
 import useSWR from 'swr'
-import { getBentoBoxKpis } from '../lib'
+import {getBentoBoxKpis} from '../lib'
 
 // const stats = [
 //   { name: 'Total Subscribers', value: '71,897' },

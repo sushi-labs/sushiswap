@@ -2,7 +2,7 @@ import '@sushiswap/ui/index.css'
 import '../variables.css'
 
 import { ThemeProvider } from '@sushiswap/ui/future/ThemeProvider'
-import { client } from '@sushiswap/wagmi'
+import { client, WagmiConfig } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import type { AppProps } from 'next/app'
@@ -13,20 +13,18 @@ import { DefaultSeo } from 'next-seo'
 import { FC, ReactNode, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { store } from 'store'
-import { WagmiConfig } from '@sushiswap/wagmi'
 
 import SEO from '../next-seo.config.mjs'
 import { GlobalNav } from '@sushiswap/ui/future/components/GlobalNav'
 import { GlobalFooter } from '@sushiswap/ui/future/components/GlobalFooter'
+import { queryClient } from '@sushiswap/react-query'
+import { QueryClientProvider as _QueryClientProvider } from '@tanstack/react-query'
 
 declare global {
   interface Window {
     dataLayer: Record<string, any>[]
   }
 }
-
-import { queryClient } from '@sushiswap/react-query'
-import { QueryClientProvider as _QueryClientProvider } from '@tanstack/react-query'
 
 export const QueryClientProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return <_QueryClientProvider client={queryClient}>{children}</_QueryClientProvider>

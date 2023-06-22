@@ -12,11 +12,9 @@ import {
   StargateChainId,
 } from '@sushiswap/stargate'
 import { getBigNumber } from '@sushiswap/tines'
-import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
+import { Address, getSushiXSwapContractConfig, SushiXSwap as SushiXSwapContract } from '@sushiswap/wagmi'
 import { ContractTransaction } from 'ethers'
 import { formatBytes32String } from 'ethers/lib/utils'
-import { SushiXSwap as SushiXSwapContract } from '@sushiswap/wagmi'
-import { Address } from '@sushiswap/wagmi'
 import { HexString } from '@sushiswap/types'
 import { readContract } from '@sushiswap/wagmi/actions'
 import { SushiXSwapChainId } from '@sushiswap/sushixswap'

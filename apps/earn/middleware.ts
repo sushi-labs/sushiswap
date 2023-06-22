@@ -1,5 +1,5 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
-import { NextResponse, type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 const shortNameIdRegexp = new RegExp(/(\w+):0x.*?(?=(?:\/|$))/)
 

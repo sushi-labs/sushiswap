@@ -10,8 +10,8 @@ import {
   NAME_COLUMN,
   TVL_COLUMN,
   VOLUME_1D_COLUMN,
-  VOLUME_7D_COLUMN,
   VOLUME_1M_COLUMN,
+  VOLUME_7D_COLUMN,
 } from './Cells/columns'
 import { PoolQuickHoverTooltip } from './PoolQuickHoverTooltip'
 import { GetPoolsArgs, Pool, usePoolCount, usePoolsInfinite } from '@sushiswap/client'

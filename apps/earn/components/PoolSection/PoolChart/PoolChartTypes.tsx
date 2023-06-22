@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { Toggle } from '@sushiswap/ui/future/components/toggle'
 
 interface PoolChartTypesProps<C> {

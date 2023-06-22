@@ -1,6 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table'
-import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
-import { InformationCircleIcon } from '@heroicons/react/solid'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 
 import React from 'react'
 import { RewardsV3NameCell } from './RewardsV3NameCell'

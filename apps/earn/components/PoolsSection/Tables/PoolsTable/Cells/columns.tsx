@@ -3,15 +3,16 @@ import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
 import { PoolFees1dCell } from './PoolFees1dCell'
-import { PoolNameCell, PoolChainCell, PoolAPRCell, PoolVolume1dCell } from '../../SharedCells'
+import { PoolAPRCell, PoolChainCell, PoolNameCell, PoolVolume1dCell } from '../../SharedCells'
 import { PoolTVLCell } from './PoolTVLCell'
-import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 
 import { Explainer } from '@sushiswap/ui/future/components/explainer'
 import { ChainId } from '@sushiswap/chain'
 import { PoolVolume1hCell } from '../../SharedCells/PoolVolume1hCell'
 import { PoolVolume1wCell } from '../../SharedCells/PoolVolume1wCell'
 import { PoolVolume1mCell } from '../../SharedCells/PoolVolume1mCell'
+
 export const ICON_SIZE = 26
 export const PAGE_SIZE = 20
 

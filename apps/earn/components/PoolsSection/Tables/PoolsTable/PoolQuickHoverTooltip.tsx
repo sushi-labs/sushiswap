@@ -1,6 +1,5 @@
 import { formatNumber, formatPercent } from '@sushiswap/format'
 import { Pool, Protocol } from '@sushiswap/client'
-import { Link } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 

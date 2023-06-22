@@ -132,13 +132,10 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, childre
           <div className="col-span-2 pt-2">
             <Checker.Connect fullWidth>
               <Checker.Network fullWidth chainId={chainId}>
-                <Checker.Custom
-                  showGuardIfTrue={!amount?.greaterThan(0)}
-                  guard={<Button fullWidth>Enter amount</Button>}
-                >
+                <Checker.Custom guardWhen={!amount?.greaterThan(0)} guardText="Enter amount">
                   <Checker.Custom
-                    showGuardIfTrue={Boolean(stream.balance && amount?.greaterThan(stream.balance))}
-                    guard={<Button fullWidth>Not enough available</Button>}
+                    guardWhen={Boolean(stream.balance && amount?.greaterThan(stream.balance))}
+                    guardText="Not enough available"
                   >
                     <Button
                       size="xl"

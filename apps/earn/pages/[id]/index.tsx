@@ -1,6 +1,6 @@
 import { formatPercent } from '@sushiswap/format'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
-import { getPool, usePool, getPools, getPoolUrl, Protocol } from '@sushiswap/client'
+import { getPool, getPools, getPoolUrl, Protocol, usePool } from '@sushiswap/client'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -20,8 +20,8 @@ import {
   PoolPositionStakedProvider,
   PoolRewards,
   PoolStats,
-  UnknownTokenAlert,
   PoolTransactionsV2,
+  UnknownTokenAlert,
 } from '../../components'
 import { ChainId } from '@sushiswap/chain'
 import { NextSeo } from 'next-seo'

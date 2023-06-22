@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { TooltipContent, TooltipProvider, TooltipTrigger, Tooltip } from '@sushiswap/ui/future/components/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/future/components/tooltip'
 
 export const SwitchAppType: FC = () => {
   return (

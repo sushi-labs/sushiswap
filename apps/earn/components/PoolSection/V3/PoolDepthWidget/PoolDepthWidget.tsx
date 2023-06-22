@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react'
+import React, { FC } from 'react'
 import colors from 'tailwindcss/colors'
 
 import { useConcentratedDerivedMintInfo } from '../../../ConcentratedLiquidityProvider'

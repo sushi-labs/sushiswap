@@ -1,7 +1,6 @@
 import { TransactionRequest } from '@ethersproject/providers'
 import { TrashIcon } from '@heroicons/react/outline'
 import { Chain, ChainId } from '@sushiswap/chain'
-import { Typography } from '@sushiswap/ui'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
 import { useAccount, useContract } from '@sushiswap/wagmi'
@@ -103,7 +102,7 @@ export const CancelModal: FC<CancelModalProps> = ({
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-4 !pb-3 !bg-white dark:!bg-slate-800">
           <Dialog.Header title={title} onClose={() => setOpen(false)} />
-          <Typography variant="sm" weight={400} className="text-gray-700 dark:text-slate-400">
+          <p className="text-sm text-gray-700 dark:text-slate-400">
             This will send the remaining amount of{' '}
             <span className="font-medium text-gray-900 dark:text-slate-200">
               {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
@@ -118,7 +117,7 @@ export const CancelModal: FC<CancelModalProps> = ({
               {shortenAddress(stream?.createdBy.id)}
             </a>
             .
-          </Typography>
+          </p>
           <Checker.Connect fullWidth>
             <Checker.Network fullWidth chainId={chainId}>
               <Button

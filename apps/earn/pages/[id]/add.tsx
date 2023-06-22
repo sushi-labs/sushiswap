@@ -1,6 +1,6 @@
 import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { formatPercent } from '@sushiswap/format'
-import { Link, Typography } from '@sushiswap/ui'
+import { Link } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
@@ -17,7 +17,7 @@ import {
   PoolPositionProvider,
   PoolPositionStakedProvider,
 } from '../../components'
-import { getPool, getPools, getPoolUrl, Pool, usePool } from '@sushiswap/client'
+import { getPool, getPools, getPoolUrl, usePool } from '@sushiswap/client'
 import { ChainId } from '@sushiswap/chain'
 import { NextSeo } from 'next-seo'
 import { isTridentPoolProtocol } from '../../lib/functions'
@@ -63,14 +63,10 @@ const _Add = () => {
                     href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"
                     className="flex justify-center px-6 py-4 dark:decoration-slate-500 decoration-gray-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
                   >
-                    <Typography
-                      variant="xs"
-                      weight={500}
-                      className="flex items-center gap-1 text-gray-600 dark:text-slate-500"
-                    >
+                    <p className="text-xs font-medium flex items-center gap-1 text-gray-600 dark:text-slate-500">
                       Learn more about liquidity and yield farming
                       <ExternalLinkIcon width={16} height={16} className="text-gray-600 dark:text-slate-500" />
-                    </Typography>
+                    </p>
                   </Link.External>
                 </Container>
               </div>

@@ -7,18 +7,19 @@ import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
 import { Dots } from '@sushiswap/ui/future/components/dots'
 import {
+  _useSendTransaction as useSendTransaction,
   ConstantProductPoolState,
   getTridentRouterContractConfig,
   StablePoolState,
+  useAccount,
   useBentoBoxTotals,
   useConstantProductPool,
-  _useSendTransaction as useSendTransaction,
+  useNetwork,
   useStablePool,
   useTotalSupply,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount, useNetwork } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Checker } from '@sushiswap/wagmi/future/systems'
@@ -286,7 +287,8 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
       >
         <Checker.Connect fullWidth>
           <Checker.Custom
-            showGuardIfTrue={
+            guardText="Pool not found"
+            guardWhen={
               isMounted &&
               !!poolState &&
               [
@@ -296,21 +298,9 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
                 StablePoolState.INVALID,
               ].includes(poolState)
             }
-            guard={
-              <Button fullWidth disabled={true}>
-                Pool Not Found
-              </Button>
-            }
           >
             <Checker.Network fullWidth chainId={_pool.chainId}>
-              <Checker.Custom
-                showGuardIfTrue={+percentage <= 0}
-                guard={
-                  <Button fullWidth disabled={true}>
-                    Enter Amount
-                  </Button>
-                }
-              >
+              <Checker.Custom guardWhen={+percentage <= 0} guardText="Enter amount">
                 <Checker.ApproveBentobox
                   fullWidth
                   chainId={chainId}

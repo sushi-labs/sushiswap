@@ -13,7 +13,7 @@ import { useTrade } from '../../../lib/swap/useTrade'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import { Dots } from '@sushiswap/ui/future/components/dots'
-import { SkeletonText, SkeletonCircle, SkeletonBox } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonBox, SkeletonCircle, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { AppType } from '@sushiswap/ui/types'

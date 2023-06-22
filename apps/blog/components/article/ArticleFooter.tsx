@@ -1,4 +1,3 @@
-import { ChevronRightIcon } from '@heroicons/react/solid'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { format } from 'date-fns'
 import { FC } from 'react'

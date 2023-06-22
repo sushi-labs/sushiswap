@@ -1,4 +1,4 @@
-import { classNames, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { FormType } from '../../../page'
 import React, { FC, ReactElement, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -24,13 +24,14 @@ const FormSelectField: FC<FormSelectFieldProps> = ({ name, label, children, help
   // Unregister on unmount
   useEffect(() => {
     return () => {
+      // @ts-ignore
       unregister(name)
     }
   }, [name, unregister])
 
   return (
     <>
-      <Typography weight={600}>{label}</Typography>
+      <p className="font-semibold">{label}</p>
       <div className="flex mt-2 rounded-md shadow-sm">
         <select
           {...register(name)}

@@ -1,5 +1,4 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
-import { Typography } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
 
 import { ArticleEntity, Maybe } from '../../.mesh'
@@ -25,9 +24,7 @@ export const ArticleList: FC<ArticleList> = ({ articles, loading, render, skelet
     return (
       <div className="flex items-center gap-2">
         <MagnifyingGlassIcon width={20} height={20} />
-        <Typography variant="xl" weight={700}>
-          No results
-        </Typography>
+        <p className="text-xl font-semibold">No results</p>
       </div>
     )
   return <>{articles.map((article, i) => render(article, i))}</>

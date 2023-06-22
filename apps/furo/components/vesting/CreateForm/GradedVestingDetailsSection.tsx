@@ -10,6 +10,7 @@ import { Input } from '@sushiswap/ui/future/components/input'
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectLabel,
   SelectTrigger,
@@ -21,14 +22,13 @@ import {
   STEP_CONFIGURATIONS,
 } from '../schema'
 import {
-  FormSection,
+  FormControl,
+  FormDescription,
   FormField,
   FormItem,
-  FormControl,
   FormMessage,
-  FormDescription,
+  FormSection,
 } from '@sushiswap/ui/future/components/form'
-import { SelectGroup } from '@sushiswap/ui/future/components/select'
 
 export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) => {
   const { address } = useAccount()

@@ -6,7 +6,14 @@ import { formatUSD } from '@sushiswap/format'
 import { Currency } from '@sushiswap/ui/future/components/currency'
 import { unwrapToken } from '../../lib/functions'
 import { Checker } from '@sushiswap/wagmi/future/systems'
-import { getMasterChefContractConfig, useMasterChefWithdraw, usePair, useTotalSupply } from '@sushiswap/wagmi'
+import {
+  Address,
+  getMasterChefContractConfig,
+  useAccount,
+  useMasterChefWithdraw,
+  usePair,
+  useTotalSupply,
+} from '@sushiswap/wagmi'
 import { APPROVE_TAG_MIGRATE, APPROVE_TAG_UNSTAKE, Bound, Field } from '../../lib/constants'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { SelectFeeConcentratedWidget } from '../NewPositionSection/SelectFeeConcentratedWidget'
@@ -20,7 +27,6 @@ import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { usePoolPositionRewards } from '../PoolPositionRewardsProvider'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { useV3Migrate, V3MigrateContractConfig } from '@sushiswap/wagmi/future/hooks/migrate/hooks/useV3Migrate'
-import { Address, useAccount } from '@sushiswap/wagmi'
 import { Amount, Price, tryParseAmount } from '@sushiswap/currency'
 import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
@@ -568,14 +574,12 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
           <Checker.Connect fullWidth>
             <Checker.Network fullWidth chainId={pool.chainId}>
               <Checker.Custom
-                showGuardIfTrue={!balance?.[FundSource.WALLET].greaterThan(ZERO)}
-                guard={<Button fullWidth>Not enough balance</Button>}
+                guardWhen={!balance?.[FundSource.WALLET].greaterThan(ZERO)}
+                guardText="Not enough balance"
               >
                 <Checker.Custom
-                  showGuardIfTrue={Boolean(
-                    !position || position.amount0.equalTo(ZERO) || position.amount1.equalTo(ZERO)
-                  )}
-                  guard={<Button fullWidth>Enter valid range</Button>}
+                  guardWhen={Boolean(!position || position.amount0.equalTo(ZERO) || position.amount1.equalTo(ZERO))}
+                  guardText="Enter valid range"
                 >
                   <Checker.ApproveERC20
                     fullWidth

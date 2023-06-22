@@ -4,7 +4,7 @@ import React from 'react'
 
 import { ChainCell } from '../Common'
 import { TokenLiquidityCell, TokenNameCell, TokenPriceCell, TokenVolumeCell } from './Cells'
-import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 
 import { ICON_SIZE } from './constants'
 

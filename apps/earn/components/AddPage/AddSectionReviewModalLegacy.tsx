@@ -3,10 +3,16 @@ import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount, Type } from '@sushiswap/currency'
 import { calculateGasMargin } from '@sushiswap/gas'
 import { Percent } from '@sushiswap/math'
-import { PairState, _useSendTransaction as useSendTransaction, useSushiSwapRouterContract } from '@sushiswap/wagmi'
+import {
+  _useSendTransaction as useSendTransaction,
+  Address,
+  PairState,
+  useAccount,
+  useNetwork,
+  useSushiSwapRouterContract,
+} from '@sushiswap/wagmi'
 import { BigNumber } from 'ethers'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
-import { Address, useAccount, useNetwork } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { Dots } from '@sushiswap/ui/future/components/dots'
 

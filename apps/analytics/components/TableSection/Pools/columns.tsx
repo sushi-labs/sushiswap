@@ -4,17 +4,17 @@ import React from 'react'
 import { ChainCell } from '../Common'
 import {
   PoolAPRCell,
-  PoolFees1wCell,
   PoolFees1dCell,
   PoolFees1mCell,
+  PoolFees1wCell,
   PoolNameCell,
   PoolTVLCell,
-  PoolVolume1wCell,
   PoolVolume1dCell,
   PoolVolume1mCell,
+  PoolVolume1wCell,
 } from './Cells'
 import { Pool } from '@sushiswap/client'
-import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 
 import { ICON_SIZE } from './constants'
 

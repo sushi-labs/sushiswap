@@ -1,8 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
-import { Page, test, expect } from '@playwright/test'
-import { USDC_ADDRESS, Native, Token, Type } from '@sushiswap/currency'
-
-
+import { expect, Page, test } from '@playwright/test'
+import { Native, Token, Type, USDC_ADDRESS } from '@sushiswap/currency'
 
 export async function approve(page: Page, locator: string) {
   await timeout(500) // give the approve button time to load contracts, unrealistically fast when running test

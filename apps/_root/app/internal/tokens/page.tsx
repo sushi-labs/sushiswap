@@ -3,7 +3,7 @@
 import { SearchIcon } from '@heroicons/react-v1/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { useDebounce } from '@sushiswap/hooks'
-import { classNames, DEFAULT_INPUT_UNSTYLED } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { TokenTable } from './components/TokenTable'
 import { TOKENS_SUPPORTED_CHAIN_IDS } from './config'
 import stringify from 'fast-json-stable-stringify'
@@ -45,7 +45,10 @@ const TokensPage: FC = () => {
               </div>
               <input
                 placeholder="Search a token"
-                className={classNames(DEFAULT_INPUT_UNSTYLED, 'flex flex-grow !text-base placeholder:text-sm')}
+                className={classNames(
+                  'p-0 bg-transparent border-none focus:outline-none focus:ring-0 w-full truncate font-medium text-left text-base md:text-sm placeholder:font-normal font-medium',
+                  'flex flex-grow !text-base placeholder:text-sm'
+                )}
                 onChange={(e) => setFilter(e.target.value)}
               />
             </div>

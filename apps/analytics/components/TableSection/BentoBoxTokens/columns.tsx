@@ -3,7 +3,7 @@ import React from 'react'
 
 import { ChainCell, StringCell } from '../Common'
 import { TokenNameCell } from './Cells'
-import { SkeletonText, SkeletonCircle } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 
 import { BentoBoxToken } from './useBentoBoxTokens'
 import { formatNumber, formatUSD } from '@sushiswap/format'

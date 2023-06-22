@@ -1,5 +1,5 @@
 import { formatPercent, formatUSD } from '@sushiswap/format'
-import { Typography, classNames } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo } from 'react'
@@ -184,7 +184,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
   return (
     <>
       <div className="flex flex-col">
-        <Typography variant="xl" weight={500} className="text-gray-900 dark:text-slate-50">
+        <p className="text-xl font-medium text-gray-900 dark:text-slate-50">
           <span className="hoveredItemValue">
             {chart === PoolChartType.APR ? formatPercent(yData[yData.length - 1]) : formatUSD(yData[yData.length - 1])}
           </span>{' '}
@@ -195,11 +195,11 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, address, cha
               earned
             </span>
           )}
-        </Typography>
+        </p>
         {xData.length && (
-          <Typography variant="sm" className="text-gray-500 dark:text-slate-500 hoveredItemName">
+          <p className="text-sm text-gray-500 dark:text-slate-500 hoveredItemName">
             <AppearOnMount>{format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}</AppearOnMount>
-          </Typography>
+          </p>
         )}
       </div>
       {isLoading ? (

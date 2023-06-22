@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import stringify from 'fast-json-stable-stringify'
 import { FC, useMemo } from 'react'
 import useSWR from 'swr'
-import { SkeletonText, SkeletonBox } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonBox, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 
 import { TVLChart } from './TVLChart2'
 import { VolumeChart } from './VolumeChart2'

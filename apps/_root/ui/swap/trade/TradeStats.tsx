@@ -5,7 +5,7 @@ import React, { FC, useState } from 'react'
 
 import { useSwapState } from './TradeProvider'
 import { useTrade } from '../../../lib/swap/useTrade'
-import { SkeletonText, SkeletonBox } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonBox, SkeletonText } from '@sushiswap/ui/future/components/skeleton'
 
 import { AppType, classNames } from '@sushiswap/ui'
 import { warningSeverity, warningSeverityClassName } from '../../../lib/swap/warningSeverity'

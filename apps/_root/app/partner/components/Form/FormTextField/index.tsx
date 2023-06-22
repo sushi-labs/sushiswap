@@ -1,4 +1,4 @@
-import { classNames, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { FormType } from '../../../page'
 import React, { FC, ReactElement, ReactNode, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -34,13 +34,14 @@ const FormTextField: FC<FormTextFieldProps> = ({
   // Unregister on unmount
   useEffect(() => {
     return () => {
+      // @ts-ignore
       unregister(name)
     }
   }, [name, unregister])
 
   return (
     <>
-      {label && <Typography weight={600}>{label}</Typography>}
+      {label && <p className="font-semibold">{label}</p>}
       <div
         className={classNames(
           'mt-2 flex rounded-xl shadow-xl border',

@@ -82,12 +82,8 @@ export const AddSectionLegacy: FC<{ pool: Pool }> = ({ pool: _pool }) => {
       >
         <Checker.Connect fullWidth>
           <Checker.Custom
-            showGuardIfTrue={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
-            guard={
-              <Button fullWidth disabled={true}>
-                Pool Not Found
-              </Button>
-            }
+            guardWhen={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
+            guardText="Pool not found"
           >
             <Checker.Network fullWidth chainId={_pool.chainId}>
               <Checker.Amounts fullWidth chainId={_pool.chainId} amounts={[parsedInput0, parsedInput1]}>

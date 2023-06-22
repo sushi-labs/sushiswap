@@ -1,7 +1,6 @@
 'use client'
 
 import { Chain, ChainId } from '@sushiswap/chain'
-import { Typography } from '@sushiswap/ui/typography'
 import React, { useMemo, useState } from 'react'
 import { getStrategies } from './lib'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
@@ -29,9 +28,7 @@ export default function BentoBoxStrategiesPage() {
 
   return (
     <div className="max-w-full px-4 py-12 mx-auto space-y-4 sm:px-6 lg:px-8">
-      <Typography variant="hero" weight={600} className="text-slate-50">
-        BentoBox Strategies
-      </Typography>
+      <p className="text-5xl font-semibold  text-slate-50">BentoBox Strategies</p>
       {strategyChainIds && (
         <NetworkSelector
           networks={strategyChainIds}

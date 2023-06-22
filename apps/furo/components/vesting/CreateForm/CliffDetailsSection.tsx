@@ -5,12 +5,12 @@ import { Input } from '@sushiswap/ui/future/components/input'
 import { CreateMultipleVestingFormSchemaType } from '../schema'
 import { classNames } from '@sushiswap/ui'
 import {
-  FormSection,
+  FormControl,
+  FormDescription,
   FormField,
   FormItem,
-  FormControl,
   FormMessage,
-  FormDescription,
+  FormSection,
 } from '@sushiswap/ui/future/components/form'
 
 export const CliffDetailsSection: FC<{ index: number }> = ({ index }) => {

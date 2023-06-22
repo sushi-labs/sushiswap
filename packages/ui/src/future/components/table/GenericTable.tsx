@@ -3,7 +3,6 @@ import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-ta
 import React, { ReactNode, useCallback, useState } from 'react'
 import { Table } from '.'
 import { Link } from '../../../link'
-import { Typography } from '../../../typography'
 import classNames from 'classnames'
 import { Popover } from '../Popover'
 import { useIsMounted } from '@sushiswap/hooks'
@@ -274,9 +273,7 @@ export const GenericTable = <T extends { id: string }>({
                   colSpan={table.getAllColumns().length}
                   className="!h-[260px] pointer-events-none"
                 >
-                  <Typography variant="xs" className="w-full text-center text-slate-400">
-                    {placeholder}
-                  </Typography>
+                  <p className="text-xs w-full text-center text-slate-400">{placeholder}</p>
                 </Table.td>
               </Table.tr>
             )}

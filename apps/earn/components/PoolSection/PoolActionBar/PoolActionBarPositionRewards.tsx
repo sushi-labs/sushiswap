@@ -1,6 +1,5 @@
 import { formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
-import { Typography } from '@sushiswap/ui'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { FC, useCallback } from 'react'
 
@@ -26,13 +25,11 @@ export const PoolActionBarPositionRewards: FC<PoolActionBarPositionRewardsProps>
       <Dialog.Content className="!pb-6">
         <Dialog.Header title="My Rewards" onClose={handleClose} />
         <div className="flex items-center justify-between p-2 pt-4 pb-3">
-          <Typography weight={600} className="text-slate-50">
-            My Rewards
-          </Typography>
+          <p className="font-semibold  text-slate-50">My Rewards</p>
           <div className="flex flex-col">
-            <Typography variant="sm" weight={600} className="text-right text-slate-50">
+            <p className="text-sm font-semibold  text-right text-slate-50">
               {formatUSD(values.reduce((sum, value) => sum + value, 0))}
-            </Typography>
+            </p>
           </div>
         </div>
         <div className="flex flex-col gap-3 px-2 py-4">
@@ -49,13 +46,11 @@ export const PoolActionBarPositionRewards: FC<PoolActionBarPositionRewardsProps>
               <div className="flex items-center justify-between" key={index}>
                 <div className="flex items-center gap-2">
                   <Currency.Icon currency={rewardTokens[index]} width={20} height={20} />
-                  <Typography variant="sm" weight={600} className="text-slate-300">
+                  <p className="text-sm font-semibold  text-slate-300">
                     {reward?.toSignificant(6)} {rewardTokens[index].symbol}
-                  </Typography>
+                  </p>
                 </div>
-                <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
-                  {formatUSD(values[index])}
-                </Typography>
+                <p className="text-xs font-medium dark:text-slate-400 text-slate-600">{formatUSD(values[index])}</p>
               </div>
             )
           })}

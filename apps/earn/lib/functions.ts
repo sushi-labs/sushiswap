@@ -3,14 +3,14 @@ import { ChainId } from '@sushiswap/chain'
 import { DAI, Native, Price, Token, Type, USDC, USDT, WBTC } from '@sushiswap/currency'
 import { Pool, Protocol } from '@sushiswap/client'
 import {
-  tickToPrice,
   encodeSqrtRatioX96,
   FeeAmount,
   nearestUsableTick,
+  Position,
   priceToClosestTick,
   TICK_SPACINGS,
   TickMath,
-  Position,
+  tickToPrice,
 } from '@sushiswap/v3-sdk'
 import { JSBI } from '@sushiswap/math'
 import { TickProcessed } from './hooks/useConcentratedActiveLiquidity'

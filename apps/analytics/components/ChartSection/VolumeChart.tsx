@@ -1,6 +1,6 @@
 import { formatUSD } from '@sushiswap/format'
 import { Pair } from '@sushiswap/graph-client'
-import { classNames, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
@@ -212,12 +212,12 @@ export const VolumeChart: FC<{ stats?: Pair[] }> = ({ stats }) => {
         </div>
       </div>
       <div className="flex flex-col">
-        <Typography variant="xl" weight={500} className="text-slate-50">
+        <p className="text-xl font-medium text-slate-50">
           <span className="hoveredItemValueVolume">{formatUSD(yData[yData.length - 1])}</span>{' '}
-        </Typography>
-        <Typography variant="sm" className="text-slate-500 hoveredItemNameVolume">
+        </p>
+        <p className="text-sm text-slate-500 hoveredItemNameVolume">
           {format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}
-        </Typography>
+        </p>
       </div>
       <ReactECharts option={DEFAULT_OPTION} style={{ height: 320 }} />
     </div>

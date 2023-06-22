@@ -118,7 +118,7 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
       >
         <Checker.Connect fullWidth>
           <Checker.Custom
-            showGuardIfTrue={
+            guardWhen={
               isMounted &&
               !!poolState &&
               [
@@ -128,11 +128,7 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                 StablePoolState.INVALID,
               ].includes(poolState)
             }
-            guard={
-              <Button fullWidth disabled={true}>
-                Pool Not Found
-              </Button>
-            }
+            guardText="Pool not found"
           >
             <Checker.Network fullWidth chainId={_pool.chainId}>
               <Checker.Amounts fullWidth chainId={_pool.chainId} amounts={[parsedInput0, parsedInput1]}>

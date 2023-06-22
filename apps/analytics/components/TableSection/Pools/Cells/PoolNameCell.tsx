@@ -9,7 +9,7 @@ import { ICON_SIZE } from '../constants'
 import { Row } from './types'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { ChainId } from '@sushiswap/chain'
-import { TooltipContent, TooltipProvider, TooltipTrigger, Tooltip } from '@sushiswap/ui/future/components/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/future/components/tooltip'
 import { NetworkIcon } from '@sushiswap/ui/future/components/icons'
 
 export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {

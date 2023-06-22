@@ -20,11 +20,11 @@ import {
   ArticleLinks,
   ArticleSeo,
   Breadcrumb,
+  Image,
   MediaBlock,
   PreviewBanner,
   RichTextBlock,
 } from '../../common/components'
-import { Image } from '../../common/components'
 import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../../lib/api'
 import { LoadingOverlay } from '@sushiswap/ui/future/components/loader'
 

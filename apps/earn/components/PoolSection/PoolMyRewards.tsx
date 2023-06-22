@@ -1,7 +1,6 @@
 import { formatUSD } from '@sushiswap/format'
 import { Pool } from '@sushiswap/client'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { usePoolPositionRewards } from '../PoolPositionRewardsProvider'
@@ -22,13 +21,11 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pool }) => {
     <div className="flex flex-col gap-3">
       <div className="flex flex-col bg-white dark:bg-slate-800 rounded-2xl">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-900/5 dark:border-slate-200/5">
-          <Typography weight={600} className="dark:text-slate-50 text-gray-900">
-            My Rewards
-          </Typography>
+          <p className="font-semibold  dark:text-slate-50 text-gray-900">My Rewards</p>
           <div className="flex flex-col">
-            <Typography variant="sm" weight={600} className="text-right dark:text-slate-50 text-gray-900">
+            <p className="text-sm font-semibold  text-right dark:text-slate-50 text-gray-900">
               {formatUSD(values.reduce((sum, value) => sum + value, 0))}
-            </Typography>
+            </p>
           </div>
         </div>
         <div className="flex flex-col gap-3 px-5 py-4">
@@ -45,13 +42,13 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pool }) => {
               <div className="flex items-center justify-between" key={index}>
                 <div className="flex items-center gap-2">
                   <Currency.Icon currency={rewardTokens[index]} width={20} height={20} />
-                  <Typography variant="sm" weight={600} className="dark:text-slate-300 text-gray-700">
+                  <p className="text-sm font-semibold  dark:text-slate-300 text-gray-700">
                     {reward?.toSignificant(6)} {rewardTokens[index].symbol}
-                  </Typography>
+                  </p>
                 </div>
-                <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600 text-gray-600">
+                <p className="text-xs font-medium dark:text-slate-400 text-slate-600 text-gray-600">
                   {formatUSD(values[index])}
-                </Typography>
+                </p>
               </div>
             )
           })}
@@ -59,7 +56,7 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pool }) => {
       </div>
       <Checker.Connect fullWidth>
         <Checker.Network fullWidth chainId={pool.chainId}>
-          <Button fullWidth onClick={harvest} size="xl">
+          <Button fullWidth onClick={harvest} size="lg">
             Claim
           </Button>
         </Checker.Network>

@@ -1,5 +1,5 @@
 import { ArrowRightCircleIcon } from '@heroicons/react/24/solid'
-import { classNames, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import onsenImg from 'common/assets/onsen-img.png'
 import {
   ProductArticles,
@@ -112,14 +112,10 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
               <div key={i} className="p-12 h-full bg-[#212939] rounded-3xl">
                 <card.Icon />
                 <div className="mt-11">
-                  <Typography weight={700} variant="h3">
-                    {card.title}
-                  </Typography>
+                  <p className="text-2xl font-semibold">{card.title}</p>
                 </div>
                 <div className="mt-5">
-                  <Typography variant="sm" className="text-slate-400">
-                    {card.subtitle}
-                  </Typography>
+                  <p className="text-sm text-slate-400">{card.subtitle}</p>
                 </div>
               </div>
             ))}

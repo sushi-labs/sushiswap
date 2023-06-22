@@ -72,8 +72,8 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot((
       <Checker.Connect fullWidth>
         <Checker.Network fullWidth chainId={pool.chainId}>
           <Checker.Custom
-            showGuardIfTrue={Boolean(amount && balance && amount.greaterThan(balance))}
-            guard={<Button fullWidth>Insufficient Balance</Button>}
+            guardWhen={Boolean(amount && balance && amount.greaterThan(balance))}
+            guardText="Insufficient balance"
           >
             <Checker.ApproveERC20
               fullWidth

@@ -1,7 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI } from '@sushiswap/currency'
 import { useInterval } from '@sushiswap/hooks'
-import { Typography } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
 import React, { FC, useEffect, useState } from 'react'
 import { Button } from '@sushiswap/ui/future/components/button'
@@ -41,12 +40,12 @@ export const Hero: FC = () => {
       <Container maxWidth="5xl" className="px-4 mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[auto_400px] flex justify-between gap-[100px]">
           <div className="flex flex-col">
-            <Typography variant="hero" weight={700} className="text-neutral-50 leading-[3.5rem] tracking-tight">
+            <p className="text-5xl font-semibold text-neutral-50 leading-[3.5rem] tracking-tight">
               Buy and Sell Instantly on Sushi. <span className="text-blue"> {TITLES[index]}.</span>
-            </Typography>
-            <Typography variant="lg" className="mt-3 text-neutral-400">
+            </p>
+            <p className="text-lg mt-3 text-neutral-400">
               No registration needed. Over 400 tokens to trade at your fingertips.
-            </Typography>
+            </p>
             <div className="mt-10">
               <Search />
             </div>

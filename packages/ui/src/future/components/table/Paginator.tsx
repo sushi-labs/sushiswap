@@ -1,6 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { FC } from 'react'
-import { Typography } from '../../../typography'
 import classNames from 'classnames'
 import { IconButton } from '../iconbutton'
 
@@ -29,7 +28,7 @@ export const Paginator: FC<PaginatorProps> = ({
 }) => {
   return (
     <div className="flex justify-between items-center px-2 h-14">
-      <Typography variant="sm">
+      <p className="text-sm">
         Showing <b>{page * pageSize + 1}</b> to <b>{(page + 1) * pageSize}</b>{' '}
         {pages ? (
           <>
@@ -38,7 +37,7 @@ export const Paginator: FC<PaginatorProps> = ({
         ) : (
           ''
         )}
-      </Typography>
+      </p>
       <div className="flex items-center gap-3">
         <div className="flex items-center">
           <IconButton

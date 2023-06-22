@@ -1,8 +1,12 @@
 import { TransactionRequest } from '@ethersproject/providers'
 import { Percent } from '@sushiswap/math'
-import { _useSendTransaction as useSendTransaction } from '@sushiswap/wagmi'
+import {
+  _useSendTransaction as useSendTransaction,
+  useAccount,
+  useNetwork,
+  UserRejectedRequestError,
+} from '@sushiswap/wagmi'
 import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount, UserRejectedRequestError } from '@sushiswap/wagmi'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { isV3ChainId, NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
@@ -16,7 +20,7 @@ import { useConcentratedDerivedMintInfo } from '../ConcentratedLiquidityProvider
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
-import { useNetwork } from '@sushiswap/wagmi'
+
 interface AddSectionConfirmModalConcentratedProps
   extends Pick<ReturnType<typeof useConcentratedDerivedMintInfo>, 'noLiquidity' | 'position'> {
   closeReview(): void

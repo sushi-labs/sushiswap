@@ -6,18 +6,16 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useSWRConfig } from 'swr'
 import { GenericTable } from '@sushiswap/ui/future/components/table/GenericTable'
-import { PoolQuickHoverTooltip } from '../../PoolQuickHoverTooltip'
 import {
   APR_COLUMN,
   FEES_1D_COLUMN,
-  FEES_7D_COLUMN,
   FEES_1M_COLUMN,
+  FEES_7D_COLUMN,
   NAME_COLUMN,
-  // NETWORK_COLUMN,
   TVL_COLUMN,
   VOLUME_1D_COLUMN,
-  VOLUME_7D_COLUMN,
   VOLUME_1M_COLUMN,
+  VOLUME_7D_COLUMN,
 } from './columns'
 import { PAGE_SIZE } from './constants'
 import { useFilters } from 'components/Filters'

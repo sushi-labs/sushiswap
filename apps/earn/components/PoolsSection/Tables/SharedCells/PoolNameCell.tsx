@@ -10,7 +10,7 @@ import { ICON_SIZE } from '../contants'
 import { Row } from './types'
 import { Badge } from '@sushiswap/ui/future/components/Badge'
 import { ChainId } from '@sushiswap/chain'
-import { TooltipContent, TooltipProvider, TooltipTrigger, Tooltip } from '@sushiswap/ui/future/components/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@sushiswap/ui/future/components/tooltip'
 
 export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
   const { token0, token1 } = useTokensFromPool(row)

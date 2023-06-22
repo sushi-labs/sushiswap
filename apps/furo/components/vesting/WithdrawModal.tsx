@@ -99,10 +99,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId, childr
           </div>
           <Checker.Connect fullWidth>
             <Checker.Network fullWidth chainId={chainId}>
-              <Checker.Custom
-                showGuardIfTrue={Boolean(!balance?.greaterThan(ZERO))}
-                guard={<Button fullWidth>Not enough available</Button>}
-              >
+              <Checker.Custom guardWhen={Boolean(!balance?.greaterThan(ZERO))} guardText="Not enough available">
                 <Button
                   size="xl"
                   fullWidth
