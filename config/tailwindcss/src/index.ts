@@ -27,7 +27,8 @@ const config = {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter Variable', ...defaultTheme.fontFamily.sans],
+        sans: ['var(--font-inter)'],
+        mono: ['var(--font-roboto-mono)'],
       },
       backgroundImage: () => ({
         'gradient-radial': 'radial-gradient(#13213E, #111829)',
