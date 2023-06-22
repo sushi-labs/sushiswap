@@ -1,4 +1,3 @@
-import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Native, Type } from '@sushiswap/currency'
@@ -12,7 +11,7 @@ import {
 } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Address } from '@sushiswap/wagmi'
-import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
@@ -22,10 +21,11 @@ import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount }
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroVestingRouterChainId } from '@sushiswap/furo'
 import { bentoBoxV1Address } from '@sushiswap/bentobox'
-import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS, STEP_CONFIGURATIONS_MAP } from '../schema'
+import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS_MAP } from '../schema'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/future/components/button'
+import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
 const APPROVE_TAG = 'approve-multiple-vestgs'
 
@@ -36,7 +36,7 @@ export const ExecuteMultipleSection: FC<{
 }> = withCheckerRoot(({ chainId, isReview, onBack }) => {
   const { address } = useAccount()
   const contract = useFuroVestingRouterContract(chainId)
-  const [signature, setSignature] = useState<Signature>()
+  const { signature, setSignature } = useSignature(APPROVE_TAG)
   const { approved } = useApproved(APPROVE_TAG)
 
   const {
@@ -214,11 +214,11 @@ export const ExecuteMultipleSection: FC<{
       <Checker.Connect size="xl">
         <Checker.Network chainId={chainId} size="xl">
           <Checker.ApproveBentobox
+            tag={APPROVE_TAG}
             size="xl"
             id="create-multiple-vest-approve-bentobox"
             chainId={chainId}
-            contract={getFuroVestingRouterContractConfig(chainId).address}
-            onSignature={setSignature}
+            masterContract={getFuroVestingRouterContractConfig(chainId).address}
           >
             <Checker.ApproveERC20Multiple size="xl" id={'create-multiple-vest-approve-token'} amounts={approveAmounts}>
               <Checker.Success tag={APPROVE_TAG}>

@@ -10,7 +10,7 @@ import {
   useFuroVestingRouterContract,
 } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
@@ -32,6 +32,7 @@ import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreat
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { calculateCliffDuration, calculateEndDate, calculateStepPercentage, calculateTotalAmount } from '../utils'
 import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS_MAP } from '../schema'
+import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
 const MODAL_ID = 'createVestingSingle'
 const APPROVE_TAG = 'createVestingSingle'
@@ -49,7 +50,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
   } = useFormContext<CreateMultipleVestingFormSchemaType>()
 
   const { approved } = useApproved(APPROVE_TAG)
-  const [signature, setSignature] = useState<Signature>()
+  const { signature, setSignature } = useSignature(APPROVE_TAG)
 
   const formData = watch('vestings.0')
   const _formData = useDeepCompareMemoize(formData)
@@ -233,13 +234,13 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
               className="col-span-3 md:col-span-2"
             >
               <Checker.ApproveBentobox
+                tag={APPROVE_TAG}
                 type="button"
                 fullWidth
                 id="create-single-vest-approve-bentobox"
                 size="xl"
                 chainId={chainId as BentoBoxV1ChainId}
-                contract={getFuroVestingRouterContractConfig(chainId).address}
-                onSignature={setSignature}
+                masterContract={getFuroVestingRouterContractConfig(chainId).address}
                 className="col-span-3 md:col-span-2"
               >
                 <Checker.ApproveERC20

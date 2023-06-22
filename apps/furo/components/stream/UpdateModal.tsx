@@ -18,9 +18,9 @@ import { Dialog } from '@sushiswap/ui/future/components/dialog/Dialog'
 import { List } from '@sushiswap/ui/future/components/list/List'
 import { Input } from '@sushiswap/ui/future/components/input'
 import { Switch } from '@sushiswap/ui/future/components/Switch'
-import { Signature } from '@ethersproject/bytes'
 import { withCheckerRoot, useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { FuroStreamChainId } from '@sushiswap/furo'
+import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
 const APPROVE_TAG = 'updateStreamSingle'
 
@@ -41,7 +41,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
     const [changeEndDate, setChangeEndDate] = useState(false)
     const [amount, setAmount] = useState<string>('')
     const [endDate, setEndDate] = useState<Date | null>(null)
-    const [signature, setSignature] = useState<Signature>()
+    const { signature, setSignature } = useSignature(APPROVE_TAG)
     const contract = useContract({
       address: contractAddress,
       abi: abi,
@@ -254,13 +254,13 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                       }
                     >
                       <Checker.ApproveBentobox
+                        tag={APPROVE_TAG}
                         type="button"
                         fullWidth
                         id="furo-update-stream-approve-bentobox"
                         size="xl"
                         chainId={chainId satisfies BentoBoxV1ChainId}
-                        contract={contractAddress as Address}
-                        onSignature={setSignature}
+                        masterContract={contractAddress as Address}
                         className="col-span-3 md:col-span-2"
                       >
                         <Checker.ApproveERC20
