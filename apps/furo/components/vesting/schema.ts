@@ -78,7 +78,6 @@ export const CreateVestingBaseSchema = z.object({
       (val) => val && val.getTime() >= new Date(Date.now() + 5 * 60 * 1000).getTime(),
       'Must be at least 5 minutes from now'
     ),
-  // startDate: z.date().superRefine(startDateValidator),
   recipient: ZAddress,
   stepAmount: z.string().refine((val) => (val !== '' ? Number(val) > 0 : true), 'Must be greater than 0'),
   stepPayouts: z.number().min(1).int(),

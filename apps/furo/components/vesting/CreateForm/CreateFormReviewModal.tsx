@@ -46,7 +46,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
   const contract = useFuroVestingRouterContract(chainId)
   const {
     watch,
-    formState: { isValid, isValidating },
+    formState: { isValid, isValidating, errors },
   } = useFormContext<CreateMultipleVestingFormSchemaType>()
 
   const { approved } = useApproved(APPROVE_TAG)
@@ -219,6 +219,8 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
     ),
   })
 
+  const formValid = isValid && !isValidating && Object.keys(errors).length === 0
+
   return (
     <>
       <div className="grid grid-cols-3 gap-x-10">
@@ -258,6 +260,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                         <Button
                           type="button"
                           fullWidth
+                          disabled={!formValid}
                           size="xl"
                           onClick={open}
                           testdata-id="review-single-vest-button"
