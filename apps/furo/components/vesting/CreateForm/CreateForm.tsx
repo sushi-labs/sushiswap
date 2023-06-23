@@ -30,7 +30,7 @@ export const CREATE_VEST_DEFAULT_VALUES: CreateVestingFormSchemaType = {
 export const CreateForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId }) => {
   const methods = useForm<CreateMultipleVestingFormSchemaType>({
     resolver: zodResolver(CreateMultipleVestingModelSchema),
-    mode: 'onBlur',
+    mode: 'all',
     defaultValues: {
       vestings: [{ ...CREATE_VEST_DEFAULT_VALUES, id: nanoid() }],
     },

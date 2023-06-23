@@ -56,11 +56,11 @@ export const Component: FC<ApproveERC20Props> = ({
   }
 
   const loading = [ApprovalState.UNKNOWN, ApprovalState.LOADING, ApprovalState.PENDING].includes(state)
-
+  console.log({loading, state})
   return (
     <Button
       as={as}
-      disabled={state !== ApprovalState.NOT_APPROVED}
+      disabled={state !== ApprovalState.NOT_APPROVED || !write}
       loading={loading}
       testdata-id={id}
       variant={variant}

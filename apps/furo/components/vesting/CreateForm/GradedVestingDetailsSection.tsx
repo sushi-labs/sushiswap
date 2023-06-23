@@ -18,7 +18,7 @@ import {
 import {
   CreateMultipleVestingBaseSchemaFormErrorsType,
   CreateMultipleVestingFormSchemaType,
-  STEP_CONFIGURATIONS,
+  STEP_CONFIGURATIONS_SECONDS,
 } from '../schema'
 import {
   FormSection,
@@ -143,7 +143,7 @@ export const GradedVestingDetailsSection: FC<{ index: number }> = ({ index }) =>
               </FormControl>
 
               <SelectContent>
-                {Object.keys(STEP_CONFIGURATIONS).map((stepConfig, i) => (
+                {Object.keys(STEP_CONFIGURATIONS_SECONDS).map((stepConfig, i) => (
                   <SelectItem
                     key={stepConfig}
                     value={`${i}`}

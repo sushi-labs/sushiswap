@@ -31,7 +31,7 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { calculateCliffDuration, calculateEndDate, calculateStepPercentage, calculateTotalAmount } from '../utils'
-import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS_MAP } from '../schema'
+import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS_SECONDS, STEP_CONFIGURATIONS_MAP, STEP_CONFIGURATIONS_LABEL } from '../schema'
 import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
 const MODAL_ID = 'createVestingSingle'
@@ -46,7 +46,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
   const contract = useFuroVestingRouterContract(chainId)
   const {
     watch,
-    formState: { isValid, isValidating },
+    formState: { isValid, isValidating, errors },
   } = useFormContext<CreateMultipleVestingFormSchemaType>()
 
   const { approved } = useApproved(APPROVE_TAG)
@@ -219,6 +219,9 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
     ),
   })
 
+  const formValid = isValid && !isValidating && Object.keys(errors).length === 0
+  console.log({stepConfig})
+  if (stepConfig) console.log(STEP_CONFIGURATIONS_MAP[stepConfig])
   return (
     <>
       <div className="grid grid-cols-3 gap-x-10">
@@ -258,6 +261,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                         <Button
                           type="button"
                           fullWidth
+                          disabled={!formValid || !sendTransactionAsync}
                           size="xl"
                           onClick={open}
                           testdata-id="review-single-vest-button"
@@ -340,7 +344,7 @@ export const CreateFormReviewModal: FC<CreateFormReviewModal> = withCheckerRoot(
                   </List.KeyValue>
                   <List.KeyValue flex title="Unlock frequency" testdata-id="vesting-review-period-length">
                     <div className="flex items-center gap-2" testdata-id="vesting-review-period-length">
-                      {stepConfig ? STEP_CONFIGURATIONS_MAP[stepConfig] : ''}
+                      {stepConfig ? STEP_CONFIGURATIONS_LABEL[stepConfig] : ''}
                     </div>
                   </List.KeyValue>
                 </List.Control>

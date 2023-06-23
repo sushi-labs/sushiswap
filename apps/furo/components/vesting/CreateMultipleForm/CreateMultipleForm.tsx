@@ -22,8 +22,7 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
   const [review, setReview] = useState(false)
   const methods = useForm<CreateMultipleVestingFormSchemaType & CreateMultipleVestingBaseSchemaFormErrorsType>({
     resolver: zodResolver(CreateMultipleVestingModelSchema),
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    mode: 'all',
     defaultValues: {
       vestings: [{ ...CREATE_VEST_DEFAULT_VALUES, id: nanoid() }],
     },
