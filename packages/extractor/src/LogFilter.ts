@@ -169,7 +169,7 @@ export class LogFilter {
     for (let i = 0; i < downLine.length; ++i) {
       const l = this.logHashMap.get(downLine[i].hash || '')
       if (l == undefined) {
-        warnLog('Unexpected Error in LogFilter. LogFilter will be restarted')
+        warnLog('Unexpected Error in LogFilter')
         this.stop()
         return
       }

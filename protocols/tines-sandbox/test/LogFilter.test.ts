@@ -65,3 +65,78 @@ it.skip('LogFilter correctness test', async () => {
 
   await delay(1000 * 3600 * 24 * 7)
 })
+
+it.skip('LogFilter completeness test', async () => {
+  const transport = http(`https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`)
+  const client = createPublicClient({
+    chain: mainnet,
+    transport: transport,
+  })
+
+  const logHash = (l: Log) => `${l.blockHash}_${l.logIndex}`
+  const logsMy: Set<string> = new Set()
+  const logsEthalon: Set<string> = new Set()
+
+  let myRemoved = 0
+  const filterMy = new LogFilter(
+    client,
+    10,
+    [parseAbiItem('event Transfer(address from, address to, uint256 value)')],
+    (logs?: Log[]) => {
+      // console.log(
+      //   logs?.map((l) => [l.blockNumber, l.logIndex, l.removed]),
+      //   'blocks in memory:',
+      //   filterMy.blockHashMap.size
+      // )
+      if (logs === undefined) filterMy.start()
+      else
+        logs.forEach((l) => {
+          if (l.removed) {
+            logsMy.delete(logHash(l))
+            ++myRemoved
+          } else logsMy.add(logHash(l))
+        })
+    }
+  )
+
+  let ethalonRemoved = 0
+  const filterEthalon = await client.createEventFilter({
+    event: parseAbiItem('event Transfer(address from, address to, uint256 value)'),
+  })
+  for (let i = 0; ; ++i) {
+    await delay(1000 * 10)
+    const logs = await client.getFilterChanges({ filter: filterEthalon })
+    logs.forEach((l) => {
+      if (l.removed) {
+        logsEthalon.delete(logHash(l))
+        ++ethalonRemoved
+      } else logsEthalon.add(logHash(l))
+    })
+    if (i == 0) {
+      // remove initial difference
+      const logs0: string[] = []
+      logsMy.forEach((l) => {
+        if (!logsEthalon.has(l)) logs0.push(l)
+      })
+      logs0.forEach((l) => logsMy.delete(l))
+
+      const logs1: string[] = []
+      logsEthalon.forEach((l) => {
+        if (!logsMy.has(l)) logs1.push(l)
+      })
+      logs1.forEach((l) => logsEthalon.delete(l))
+    }
+    let uniqueMy = 0,
+      uniqueEthalon = 0
+    logsMy.forEach((l) => {
+      if (!logsEthalon.has(l)) uniqueMy++
+    })
+    logsEthalon.forEach((l) => {
+      if (!logsMy.has(l)) uniqueEthalon++
+    })
+    console.log(
+      `My logs: ${logsMy.size}, eth logs: ${logsEthalon.size}, only my: ${uniqueMy}, only eth: ${uniqueEthalon}` +
+        ` my removed: ${myRemoved} eth removed: ${ethalonRemoved}`
+    )
+  }
+})
