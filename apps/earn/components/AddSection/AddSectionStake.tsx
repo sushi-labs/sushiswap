@@ -106,7 +106,12 @@ const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(({ pool, chef
         >
           <Checker.Connect size="xl" fullWidth>
             <Checker.Network size="xl" fullWidth chainId={pool.chainId}>
-              <Checker.Amounts size="xl" fullWidth chainId={pool.chainId as ChainId} amounts={[amount]}>
+              <Checker.Amounts
+                size="xl"
+                fullWidth
+                chainId={pool.chainId as ChainId}
+                amounts={useMemo(() => [amount], [amount])}
+              >
                 <Checker.ApproveERC20
                   size="xl"
                   fullWidth

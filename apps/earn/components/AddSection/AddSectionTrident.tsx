@@ -137,7 +137,7 @@ export const AddSectionTrident: FC<{ pool: Pool }> = ({ pool: _pool }) => {
                 fullWidth
                 size="xl"
                 chainId={_pool.chainId as ChainId}
-                amounts={[parsedInput0, parsedInput1]}
+                amounts={useMemo(() => [parsedInput0, parsedInput1], [parsedInput0, parsedInput1])}
               >
                 <Checker.ApproveBentobox
                   tag={APPROVE_TAG_ADD_TRIDENT}
