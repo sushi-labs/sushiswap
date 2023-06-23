@@ -260,12 +260,7 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
                           contract={getSushiSwapRouterContractConfig(chainId).address as Address}
                         >
                           <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
-                            <Button
-                              size="xl"
-                              fullWidth
-                              onClick={() => setOpen(true)}
-                              testdata-id="add-liquidity-button"
-                            >
+                            <Button size="xl" fullWidth onClick={() => setOpen(true)} testId="add-liquidity">
                               {title}
                             </Button>
                           </Checker.Success>

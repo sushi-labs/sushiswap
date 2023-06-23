@@ -26,7 +26,7 @@ export const NetworkSelectorMenu = <T extends number>({
                 testdata-id={`network-selector-${el}`}
                 value={`${Chain.from(el).name}__${el}`}
                 key={el}
-                onSelect={(value) => onSelect(+value.split('__')[1] as T, () => {})}
+                onSelect={(value) => onSelect(+value.split('__')[1] as T, () => setOpen(false))}
               >
                 <div className="flex items-center gap-2">
                   <NetworkIcon chainId={el} width={16} height={16} />

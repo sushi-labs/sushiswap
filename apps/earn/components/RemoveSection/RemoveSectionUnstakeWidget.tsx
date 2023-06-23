@@ -79,9 +79,9 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
           <Disclosure defaultOpen={balance?.greaterThan(ZERO)}>
             {({ open }) => (
               <>
-                <Disclosure.Button className="w-full pr-4" testdata-id="unstake-liquidity-header">
+                <Disclosure.Button className="w-full" testdata-id="unstake-liquidity-header">
                   <div className="flex items-center justify-between">
-                    <WidgetHeader title="Unstake Liquidity" className="!pb-3" />
+                    <WidgetHeader title="Unstake Liquidity" />
                     <IconButton size="sm" icon={ChevronDownIcon} name="Select">
                       <SelectIcon />
                     </IconButton>

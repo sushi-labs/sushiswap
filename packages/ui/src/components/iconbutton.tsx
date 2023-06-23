@@ -11,6 +11,7 @@ export interface IconButtonProps
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
   name: string
   description?: string
+  testId?: string
 }
 
 const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(

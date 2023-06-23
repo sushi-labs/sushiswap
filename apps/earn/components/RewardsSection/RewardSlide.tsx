@@ -95,9 +95,15 @@ export const RewardSlide: FC<{
         <div className="mt-4">
           <ConcentratedLiquidityHarvestButton account={address} chainId={data.chainId}>
             {({ write, isLoading }) => (
-              <Checker.Connect fullWidth variant="secondary">
-                <Checker.Network fullWidth variant="secondary" chainId={data.chainId}>
-                  <Button size="xl" fullWidth disabled={isLoading} onClick={() => write?.()} variant="secondary">
+              <Checker.Connect fullWidth={false} size="sm" variant="secondary">
+                <Checker.Network fullWidth={false} size="sm" variant="secondary" chainId={data.chainId}>
+                  <Button
+                    fullWidth={false}
+                    size="sm"
+                    disabled={isLoading}
+                    onClick={() => write?.()}
+                    variant="secondary"
+                  >
                     Claim
                   </Button>
                 </Checker.Network>

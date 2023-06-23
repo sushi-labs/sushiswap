@@ -169,7 +169,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   return (
     <>
       <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} close={close}>
-        <Button disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
+        <Button size="xl" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
           {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
         </Button>
       </AddSectionReviewModal>

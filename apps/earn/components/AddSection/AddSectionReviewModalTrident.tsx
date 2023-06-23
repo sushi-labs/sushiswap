@@ -254,7 +254,13 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
 
   return (
     <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} close={close}>
-      <Button id="confirm-add-liquidity" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
+      <Button
+        size="xl"
+        id="confirm-add-liquidity"
+        disabled={isWritePending}
+        fullWidth
+        onClick={() => sendTransaction?.()}
+      >
         {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
       </Button>
     </AddSectionReviewModal>

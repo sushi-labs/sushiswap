@@ -10,7 +10,7 @@ const Widget = React.forwardRef<HTMLDivElement, ContainerProps>(({ id, className
       ref={ref}
       className={classNames(
         className,
-        'flex flex-col mx-auto rounded-2xl relative overflow-hidden dark:shadow dark:shadow-slate-900 bg-white dark:bg-slate-800'
+        'p-4 flex flex-col mx-auto rounded-2xl relative overflow-hidden dark:shadow dark:shadow-slate-900 bg-white dark:bg-slate-800'
       )}
       {...props}
     />
@@ -27,7 +27,7 @@ interface WidgetContentProps {
 const WidgetContent = React.forwardRef<HTMLDivElement, WidgetContentProps>(({ asChild, children, ...props }, ref) => {
   const Comp = asChild ? Slot : 'div'
   return (
-    <Comp ref={ref} {...props}>
+    <Comp ref={ref} {...props} className="flex flex-col gap-4">
       {children}
     </Comp>
   )
@@ -47,11 +47,7 @@ const WidgetHeader = React.forwardRef<HTMLDivElement, WidgetHeaderProps>(
     const Comp = asChild ? Slot : 'div'
 
     return (
-      <Comp
-        ref={ref}
-        className={classNames(className, 'p-3 mx-0.5 grid grid-cols-2 items-center pb-4 font-medium')}
-        {...props}
-      >
+      <Comp ref={ref} className={classNames(className, 'grid grid-cols-2 items-center font-medium')} {...props}>
         <p className="font-medium flex items-center gap-2 text-gray-700 hover:text-gray-900 dark:text-slate-100 dark:hover:text-slate-200">
           {title}
         </p>

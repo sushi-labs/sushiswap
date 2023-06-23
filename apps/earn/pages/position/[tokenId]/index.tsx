@@ -189,6 +189,7 @@ const Position: FC = () => {
             icon={PlusIcon}
             variant="secondary"
             color={tab === SelectedTab.IncreaseLiq ? 'blue' : 'default'}
+            testId="increase-liquidity"
           >
             Increase Liquidity
           </RadioGroup.Option>{' '}
@@ -198,7 +199,7 @@ const Position: FC = () => {
             icon={MinusIcon}
             variant="secondary"
             color={tab === SelectedTab.DecreaseLiq ? 'blue' : 'default'}
-            testdata-id="decrease-liquidity-button"
+            testId="decrease-liquidity"
           >
             Decrease Liquidity
           </RadioGroup.Option>

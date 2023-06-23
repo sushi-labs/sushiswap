@@ -47,7 +47,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
           {({ open }) => (
             <>
               {isFarm && isMounted ? (
-                <WidgetHeader title="1. Add Liquidity" className="!pb-3 ">
+                <WidgetHeader title="1. Add Liquidity">
                   <div className="flex gap-3">
                     <SettingsOverlay
                       options={{
@@ -77,7 +77,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                   </div>
                 </WidgetHeader>
               ) : (
-                <WidgetHeader title="Add Liquidity" className="!pb-3">
+                <WidgetHeader title="Add Liquidity">
                   <div className="flex gap-3">
                     <SettingsOverlay
                       options={{
@@ -115,7 +115,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                 <Disclosure.Panel unmount={false}>
                   <Web3Input.Currency
                     type="INPUT"
-                    className="p-3"
+                    className="bg-muted p-3 !rounded-xl"
                     loading={false}
                     value={input0}
                     onChange={onInput0}
@@ -123,23 +123,21 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                     currency={token0}
                     chainId={chainId}
                   />
-                  <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
-                    <div className="group dark:bg-slate-700 p-0.5 dark:border-2 dark:border-slate-800 transition-all rounded-full">
+                  <div className="flex items-center justify-center -mt-[8px] -mb-[8px] z-10">
+                    <div className="group p-0.5 bg-accent rounded-full">
                       <PlusIcon width={16} height={16} />
                     </div>
                   </div>
-                  <div className="dark:bg-slate-800 bg-white">
-                    <Web3Input.Currency
-                      type="INPUT"
-                      className="p-3 !pb-1"
-                      value={input1}
-                      onChange={onInput1}
-                      currency={token1}
-                      onSelect={onSelectToken1}
-                      chainId={chainId}
-                    />
-                    <div className="p-3">{children}</div>
-                  </div>
+                  <Web3Input.Currency
+                    type="INPUT"
+                    className="bg-muted p-3 !rounded-xl"
+                    value={input1}
+                    onChange={onInput1}
+                    currency={token1}
+                    onSelect={onSelectToken1}
+                    chainId={chainId}
+                  />
+                  <div className="pt-4">{children}</div>
                 </Disclosure.Panel>
               </Transition>
             </>

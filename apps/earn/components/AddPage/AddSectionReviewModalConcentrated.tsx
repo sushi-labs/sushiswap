@@ -204,6 +204,7 @@ export const AddSectionReviewModalConcentrated: FC<AddSectionReviewModalConcentr
               {({ onClick, isWritePending, isLoading, isError, error, isConfirming }) => (
                 <div className="space-y-4">
                   <Button
+                    size="xl"
                     fullWidth
                     loading={isLoading && !isError}
                     onClick={onClick}

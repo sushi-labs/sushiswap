@@ -71,7 +71,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
             {({ open }) => (
               <>
                 {isFarm && isMounted ? (
-                  <WidgetHeader title="Remove Liquidity" className="!pb-3">
+                  <WidgetHeader title="Remove Liquidity">
                     <div className="flex gap-2">
                       <SettingsOverlay
                         options={{
@@ -101,7 +101,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                     </div>
                   </WidgetHeader>
                 ) : (
-                  <WidgetHeader title="Remove Liquidity" className="!pb-3 ">
+                  <WidgetHeader title="Remove Liquidity">
                     <div className="flex gap-3">
                       <SettingsOverlay
                         options={{
@@ -137,7 +137,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                   leaveTo="transform max-h-0"
                 >
                   <Disclosure.Panel unmount={false}>
-                    <div className="flex flex-col gap-3 p-3">
+                    <div className="flex flex-col gap-3">
                       <div className="flex items-center gap-4">
                         <div className="flex items-center justify-between flex-grow">
                           <Input.Percent
@@ -188,24 +188,15 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                           </Button>
                         </div>
                       </div>
-                      <div className="grid items-center justify-between grid-cols-3 pb-2">
-                        <AppearOnMount show={Boolean(balance?.[FundSource.WALLET])}>
-                          <p className="text-sm font-medium text-gray-900 dark:text-slate-300">
-                            {formatUSD((value0 + value1) * (+percentage / 100))}
-                          </p>
-                        </AppearOnMount>
-                        <AppearOnMount
-                          className="flex justify-end col-span-2"
-                          show={Boolean(balance?.[FundSource.WALLET])}
-                        >
-                          <p
-                            onClick={() => setPercentage('100')}
-                            role="button"
-                            className="text-sm font-medium text-gray-700 truncate hover:text-gray-800 dark:text-slate-300 dark:hover:text-slate-200"
-                          >
+                      <div className="grid items-center justify-between grid-cols-2 pb-2">
+                        <span className="text-sm font-medium text-gray-900 dark:text-slate-300">
+                          {formatUSD((value0 + value1) * (+percentage / 100))}
+                        </span>
+                        <div className="flex justify-end">
+                          <Button size="sm" variant="link" testId="stake-balance" onClick={() => setPercentage('100')}>
                             Balance: {balance?.[FundSource.WALLET].toSignificant(6)}
-                          </p>
-                        </AppearOnMount>
+                          </Button>
+                        </div>
                       </div>
                       <Transition
                         show={Boolean(+percentage > 0 && token0Minimum && token1Minimum)}
