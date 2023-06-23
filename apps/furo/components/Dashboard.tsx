@@ -42,7 +42,7 @@ export const Dashboard: FC<{ address?: Address }> = ({ address: providedAddress 
                 </div>
               </div>
               <div className="flex justify-center">
-                <div className="shadow-lg relative w-[460px] h-[290px] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl">
+                <div className="shadow-lg relative w-full lg:w-[460px] aspect-[460/290] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl">
                   <span className="flex items-center justify-start gap-2">
                     <div className="flex flex-col">
                       <span className="font-medium text-white">SUSHI</span>

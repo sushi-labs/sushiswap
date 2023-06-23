@@ -379,7 +379,7 @@ async function handleToken(page: Page, currency: Type, order: 'FIRST' | 'SECOND'
   await page.fill(`[testdata-id=${selectorInfix}-token-selector-address-input]`, currency.symbol as string)
   const rowSelector = page.locator(
     `[testdata-id=${selectorInfix}-token-selector-row-${
-      currency.isNative ? AddressZero : currency.address.toLowerCase()
+      currency.isNative ? AddressZero : currency.wrapped.address.toLowerCase()
     }]`
   )
   await expect(rowSelector).toBeVisible()

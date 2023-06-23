@@ -55,7 +55,7 @@ export default function CreatePage() {
                 <div
                   className={classNames(
                     checked ? 'z-10 lg:scale-110 shadow-2xl' : 'lg:scale-100 shadow-md',
-                    'relative transform-all duration-200 w-full lg:w-[460px] h-fit lg:h-[290px] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl'
+                    'relative transform-all duration-200 w-full lg:w-[460px] aspect-[460/290] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl'
                   )}
                 >
                   <div className="relative lg:absolute lg:top-4 lg:left-5 flex flex-col justify-center">
@@ -108,7 +108,7 @@ export default function CreatePage() {
                 <div
                   className={classNames(
                     checked ? 'z-10 lg:scale-110 shadow-2xl' : 'lg:scale-100 shadow-md lg:mt-0 mt-20',
-                    'relative transform-all duration-200 w-full lg:w-[460px] h-fit lg:h-[290px] bg-gradient-to-tr from-green to-blue flex flex-col bg-slate-800 p-4 rounded-2xl'
+                    'relative transform-all duration-200 w-full lg:w-[460px] aspect-[460/290] bg-gradient-to-tr from-green to-blue flex flex-col bg-slate-800 p-4 rounded-2xl'
                   )}
                 >
                   <div className="relative lg:absolute lg:top-4 lg:left-5 flex flex-col justify-center">
