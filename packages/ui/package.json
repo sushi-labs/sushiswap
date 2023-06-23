@@ -17,7 +17,6 @@
   "exports": {
     "./index.css": "./src/index.css",
     "./variables.css": "./src/variables.css",
-    "./globals.css": "./src/globals.css",
     "./tailwind.js": "./tailwind.js",
     ".": [
       "./src/index.ts",

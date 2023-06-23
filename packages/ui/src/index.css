@@ -6,7 +6,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import './variables.css';
 @import './components/input/DatePicker.css';
 
 *,
@@ -48,15 +47,6 @@ body {
     min-height: 100vh;
 }
 
-.paper {
-  backdrop-filter: blur(12px) saturate(190%) contrast(50%) brightness(130%);
-}
-
-html[class='dark'] .paper {
-  backdrop-filter: blur(10px) saturate(190%) contrast(70%) brightness(80%);
-}
-
-
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -85,15 +75,13 @@ html[class='dark'] .paper {
   -webkit-box-shadow: inset -1px -1px 0px rgba(255, 255, 255, 0.05), inset 1px 1px 0px rgba(255, 255, 255, 0.05);
 }
 
-@media (prefers-color-scheme: dark) {
-  *.scroll::-webkit-scrollbar-thumb {
+html[class='dark'] *.scroll::-webkit-scrollbar-thumb {
     height: 30px;
     border: 4px solid rgba(255, 255, 255, 0);
     background-clip: padding-box;
     background-color: rgba(255, 255, 255, 0.2);
     -webkit-border-radius: 7px;
     -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
-  }
 }
 
 *.scroll::-webkit-scrollbar-button {
@@ -121,27 +109,6 @@ html[class='dark'] .paper {
     -webkit-appearance: none;
   }
 
-  button:focus,
-  input:focus,
-  a:focus,
-  img:focus {
-    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0;
-  }
-
-  button:focus-within,
-  input:focus-within,
-  a:focus-within,
-  img:focus-within {
-    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0;
-  }
-
-  button:focus-visible,
-  input:focus-visible,
-  a:focus-visible,
-  img:focus-visible {
-    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0;
-  }
-
   input[type=range]::-webkit-slider-thumb {
     @apply appearance-none w-6 h-6 bg-blue rounded-full
   }
@@ -149,11 +116,20 @@ html[class='dark'] .paper {
 
 @layer base {
   :root {
+    --font-sans: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+
+    --background-color: #f4f5f6;
+    --color: #000;
     --secondary: #0000000a;
     --muted: #0000000f;
     --muted-foreground: #6b7280;
     --accent: #00000014;
     --accent-foreground: #111827;
+  }
+
+  .paper {
+    backdrop-filter: blur(12px) saturate(190%) contrast(50%) brightness(130%);
   }
 
   .dark {
@@ -162,5 +138,11 @@ html[class='dark'] .paper {
     --muted-foreground: #94a3b8;
     --accent: #ffffff14;
     --accent-foreground: #e2e8f0;
+    --background-color: #0f172a;
+    --color: #ffffff;
+  }
+
+  .dark .paper {
+    backdrop-filter: blur(10px) saturate(190%) contrast(70%) brightness(80%);
   }
 }
