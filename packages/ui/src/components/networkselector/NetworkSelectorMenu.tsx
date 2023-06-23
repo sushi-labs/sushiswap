@@ -23,6 +23,7 @@ export const NetworkSelectorMenu = <T extends number>({
           <CommandGroup>
             {networks.map((el) => (
               <CommandItem
+                testdata-id={`network-selector-${el}`}
                 value={`${Chain.from(el).name}__${el}`}
                 key={el}
                 onSelect={(value) => onSelect(+value.split('__')[1] as T, () => {})}

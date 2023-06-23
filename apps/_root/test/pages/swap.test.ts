@@ -71,11 +71,13 @@ async function wrap(page: Page, inputCurrency: Type, outputCurrency: Type, amoun
   await inputAmount(page, amount)
 
   if (!inputCurrency.isNative) {
-    const approveButton = page.locator('[testdata-id=approve-erc20]', { hasText: `Approve ${inputCurrency.symbol}` })
+    const approveButton = page.locator('[testdata-id=approve-erc20-button]', {
+      hasText: `Approve ${inputCurrency.symbol}`,
+    })
     await expect(approveButton).toBeVisible()
     await expect(approveButton).toBeEnabled()
 
-    await page.locator('[testdata-id=approve-erc20]', { hasText: `Approve ${inputCurrency.symbol}` }).click()
+    await page.locator('[testdata-id=approve-erc20-button]', { hasText: `Approve ${inputCurrency.symbol}` }).click()
     // .then(() => console.log(`Approved ${inputCurrency.symbol}`))
     // .catch(() => console.log(`${inputCurrency.symbol} already approved or not needed`))
 
@@ -155,7 +157,7 @@ async function maxSwap(page: Page, inputCurrency: Type, outputCurrency: Type) {
 
 async function approve(page: Page, currency: Type) {
   if (!currency.isNative) {
-    const approveButton = page.locator('[testdata-id=approve-erc20]', { hasText: `Approve ${currency.symbol}` })
+    const approveButton = page.locator('[testdata-id=approve-erc20-button]', { hasText: `Approve ${currency.symbol}` })
     await expect(approveButton).toBeVisible()
     await expect(approveButton).toBeEnabled()
     await approveButton.click()
