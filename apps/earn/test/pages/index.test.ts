@@ -301,8 +301,7 @@ async function createOrAddV2Pool(page: Page, args: V2PoolArgs) {
 }
 
 async function removeLiquidityV3(page: Page) {
-  const url = process.env.PLAYWRIGHT_URL as string
-  await page.goto(url)
+  await page.goto(BASE_URL)
   await page.locator('[testdata-id=my-positions-button]').click()
 
   const concentratedPositionTableSelector = page.locator('[testdata-id=concentrated-positions-loading-0]')
