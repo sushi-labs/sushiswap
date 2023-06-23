@@ -7,7 +7,6 @@ import { SwapCurrencyOutput } from './SwapCurrencyOutput'
 import { WidgetTitleV2 } from './WidgetTitleV2'
 import { SwapButton } from './SwapButton'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/components/settings'
-import { ThunderCoreBanner } from './ThunderCoreBanner'
 import { CrossChainBanner } from './CrossChainBanner'
 import { SwapButtonCrossChain } from './SwapButtonCrossChain'
 import { AppType } from '@sushiswap/ui'
@@ -28,7 +27,6 @@ export const Widget: FC = () => {
         <SwitchTokensButton />
         <SwapCurrencyOutput />
         {appType === AppType.Swap ? <SwapButton /> : <SwapButtonCrossChain />}
-        <ThunderCoreBanner />
       </WidgetContent>
     </div>
   )
