@@ -3,7 +3,6 @@ import classNames from 'classnames'
 import React, { FC, forwardRef, KeyboardEvent, ReactElement, useCallback, useEffect, useState } from 'react'
 
 import { Loader } from '../Loader'
-import { DEFAULT_INPUT_NO_RINGS } from './index'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
 interface Search {
@@ -115,8 +114,7 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function 
           onChange={(e) => _onChange(e.target.value)}
           onKeyDown={handleKeyDown}
           className={classNames(
-            'truncate font-semibold w-full bg-transparent !p-0 placeholder:font-medium placeholder:text-gray-400 placeholder:dark:text-slate-500 text-gray-900 dark:text-slate-200',
-            DEFAULT_INPUT_NO_RINGS
+            'truncate font-semibold w-full bg-transparent !p-0 placeholder:font-medium placeholder:text-gray-400 placeholder:dark:text-slate-500 text-gray-900 dark:text-slate-200'
           )}
           autoCorrect="off"
           autoCapitalize="off"
@@ -173,8 +171,7 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function 
           value={value}
           onChange={onChange}
           className={classNames(
-            'font-medium w-full bg-transparent !p-0 placeholder:font-medium placeholder:text-gray-400 placeholder:dark:text-slate-500 text-gray-900 dark:text-slate-200',
-            DEFAULT_INPUT_NO_RINGS
+            'font-medium w-full bg-transparent !p-0 placeholder:font-medium placeholder:text-gray-400 placeholder:dark:text-slate-500 text-gray-900 dark:text-slate-200'
           )}
           autoCorrect="off"
           autoCapitalize="off"
@@ -189,8 +186,7 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function 
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className={classNames(
-            'truncate font-semibold w-full bg-transparent !p-0 placeholder:font-medium placeholder:text-gray-400 placeholder:dark:text-slate-500 text-gray-900 dark:text-slate-200',
-            DEFAULT_INPUT_NO_RINGS
+            'truncate font-semibold w-full bg-transparent !p-0 placeholder:font-medium placeholder:text-gray-400 placeholder:dark:text-slate-500 text-gray-900 dark:text-slate-200'
           )}
           autoCorrect="off"
           autoCapitalize="off"
@@ -206,7 +202,11 @@ export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function 
             </div>
           ) : value ? (
             <div onClick={() => onChange('')}>
-              <XMarkIcon width={24} height={24} className="cursor-pointer text-slate-500 hover:text-slate-300" />
+              <XMarkIcon
+                width={24}
+                height={24}
+                className="cursor-pointer text-gray-600 hover:text-gray-900 dark:text-slate-500 dark:hover:text-slate-300"
+              />
             </div>
           ) : (
             <></>

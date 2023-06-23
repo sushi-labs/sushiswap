@@ -10,6 +10,18 @@ import { StatusCell } from './StatusCell'
 import { StreamedCell } from './StreamedCell'
 import { FuroTableType } from './StreamTable'
 import { TypeCell } from './TypeCell'
+import { NetworkCell } from './NetworkCell'
+import { EndDateCell } from './EndDateCell'
+
+export const NETWORK_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
+  id: 'network',
+  header: 'Token',
+  cell: (props) => <NetworkCell row={props.row.original} />,
+  size: 40,
+  meta: {
+    skeleton: <Skeleton.Circle radius={26} />,
+  },
+}
 
 export const STREAMED_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   id: 'streamedPercentage',
@@ -17,7 +29,7 @@ export const STREAMED_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   cell: (props) => <StreamedCell row={props.row.original} />,
   size: 170,
   meta: {
-    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }
 
@@ -26,8 +38,7 @@ export const AMOUNT_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   header: 'Amount',
   cell: (props) => <AmountCell row={props.row.original} />,
   meta: {
-    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
-    className: 'justify-end',
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }
 
@@ -36,7 +47,7 @@ export const FROM_COLUMN = (tableType: FuroTableType): ColumnDef<Stream | Vestin
   header: 'From',
   cell: (props) => <FromCell row={props.row.original} tableType={tableType} />,
   meta: {
-    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
     className: 'justify-end',
   },
 })
@@ -46,7 +57,17 @@ export const START_DATE_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   header: 'Start Date',
   cell: (props) => <StartDateCell row={props.row.original} />,
   meta: {
-    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    className: 'justify-end',
+  },
+}
+
+export const END_DATE_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
+  id: 'endDate',
+  header: 'End Date',
+  cell: (props) => <EndDateCell row={props.row.original} />,
+  meta: {
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
     className: 'justify-end',
   },
 }
@@ -56,7 +77,7 @@ export const STATUS_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   header: 'Status',
   cell: (props) => <StatusCell row={props.row.original} />,
   meta: {
-    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
   },
 }
 
@@ -65,6 +86,7 @@ export const TYPE_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   header: 'Type',
   cell: (props) => <TypeCell row={props.row.original} />,
   meta: {
-    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
+    skeleton: <Skeleton.Text fontSize="text-lg" />,
+    className: 'justify-end',
   },
 }

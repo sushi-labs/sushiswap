@@ -114,6 +114,8 @@ export const SlippageTolerance: FC<{
 
                 <div className="h-[28px] w-0.5 bg-gray-900/5 dark:bg-slate-200/5" />
                 <Input.Numeric
+                  id="slippage-tolerance"
+                  label="Slippage tolerance"
                   maxDecimals={1}
                   variant="unstyled"
                   value={customVal}

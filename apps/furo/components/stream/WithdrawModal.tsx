@@ -1,39 +1,38 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
-import { CheckCircleIcon } from '@heroicons/react/solid'
 import { tryParseAmount } from '@sushiswap/currency'
-import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
-import { Button, classNames, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
-import { Checker, useFuroStreamContract, _useSendTransaction as useSendTransaction, Web3Input } from '@sushiswap/wagmi'
-import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount } from '@sushiswap/wagmi'
+import { Dots } from '@sushiswap/ui'
+import { _useSendTransaction as useSendTransaction, useAccount, useFuroStreamContract } from '@sushiswap/wagmi'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
-
-import { BottomPanel, CurrencyInputBase } from '../../components'
-import { Stream } from '../../lib'
-import { useStreamBalance } from '../../lib'
+import { Stream, useStreamBalance } from '../../lib'
 import { createToast } from '@sushiswap/ui/future/components/toast'
 import { FuroStreamChainId } from '@sushiswap/furo'
+import { Button } from '@sushiswap/ui/future/components/button/Button'
+import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
+import { Dialog } from '@sushiswap/ui/future/components/dialog/Dialog'
+import { Text } from '@sushiswap/ui/future/components/input/Text'
+import { shortenAddress } from '@sushiswap/format'
+import { Chain } from '@sushiswap/chain'
 
 interface WithdrawModalProps {
-  stream?: Stream
+  stream: Stream
   chainId: FuroStreamChainId
+  children?({ disabled, setOpen }: { disabled: boolean; setOpen: Dispatch<SetStateAction<boolean>> }): ReactNode
 }
 
-export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
+export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId, children }) => {
   const { address } = useAccount()
-  const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
-  const balance = useStreamBalance(chainId, stream?.id, stream?.token)
+  const { data: balance } = useStreamBalance({ chainId, streamId: stream.id, token: stream.token })
   const contract = useFuroStreamContract(chainId)
 
   const [open, setOpen] = useState(false)
   const [input, setInput] = useState<string>('')
-  const [withdrawTo, setWithdrawTo] = useState<string>()
 
   const amount = useMemo(() => {
-    if (!stream?.token) return undefined
+    if (!stream.token) return undefined
     return tryParseAmount(input, stream.token)
-  }, [input, stream?.token])
+  }, [input, stream.token])
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
@@ -68,13 +67,13 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
         data: contract.interface.encodeFunctionData('withdrawFromStream', [
           BigNumber.from(stream.id),
           BigNumber.from(amount.toShare(stream.rebase).quotient.toString()),
-          withdrawTo ?? stream.recipient.id,
-          fundSource === FundSource.BENTOBOX,
+          stream.recipient.id,
+          false,
           '0x',
         ]),
       })
     },
-    [stream, amount, chainId, contract, address, withdrawTo, fundSource]
+    [stream, amount, chainId, contract, address]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
@@ -87,122 +86,83 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
     enabled: Boolean(!!stream && !!amount && !!chainId && !!contract),
   })
 
+  if (!address || !stream.canWithdraw(address)) return <></>
+
   return (
     <>
-      <Checker.Connected size="md">
-        <Checker.Network size="md" chainId={chainId}>
-          <Button
-            fullWidth
-            size="md"
-            variant="filled"
-            disabled={!stream?.canWithdraw(address)}
-            onClick={() => {
-              setOpen(true)
-            }}
-          >
-            Withdraw
-          </Button>
-        </Checker.Network>
-      </Checker.Connected>
+      {typeof children === 'function' ? (
+        children({ disabled: !stream.canWithdraw(address), setOpen })
+      ) : (
+        <Button
+          fullWidth
+          size="md"
+          variant="filled"
+          disabled={!stream.canWithdraw(address)}
+          onClick={() => {
+            setOpen(true)
+          }}
+        >
+          Withdraw
+        </Button>
+      )}
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-4 !max-w-xs !pb-3">
+        <Dialog.Content className="space-y-4 !pb-3 !bg-white dark:!bg-slate-800">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
-          <div className="flex flex-col gap-2">
-            <CurrencyInputBase
-              inputClassName="pb-2"
-              className="ring-offset-slate-800"
-              currency={stream?.token}
-              onChange={setInput}
-              value={input}
-              error={amount && stream?.balance && amount.greaterThan(stream.balance)}
-              bottomPanel={<BottomPanel loading={false} label="Available" amount={balance} />}
-            />
-          </div>
-          <div className="flex flex-col">
-            <Web3Input.Ens
-              id="withdraw-stream-recipient"
-              value={withdrawTo}
-              onChange={setWithdrawTo}
-              className="ring-offset-slate-800"
-              placeholder="Recipient (optional)"
-            />
-          </div>
-          <div className="grid items-center grid-cols-2 gap-3">
-            <div
-              onClick={() => setFundSource(FundSource.WALLET)}
-              className={classNames(
-                fundSource === FundSource.WALLET ? 'ring-green/70' : 'ring-transparent',
-                DEFAULT_INPUT_BG,
-                'ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
-              )}
+          <div className="text-gray-700 dark:text-slate-400">
+            You have{' '}
+            <span onClick={() => setInput(balance?.toExact() ?? '')} role="button" className="font-semibold text-blue">
+              {balance?.toSignificant(6)} {balance?.currency.symbol}
+            </span>{' '}
+            available for withdrawal. <br />
+            Any withdrawn amount will be sent to{' '}
+            <a
+              target="_blank"
+              className="font-semibold text-blue"
+              href={Chain.from(stream.chainId).getAccountUrl(stream.recipient.id)}
+              rel="noreferrer"
             >
-              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
-                Wallet
-              </Typography>
-              <Typography variant="xs" className="text-slate-400">
-                Receive funds in your Wallet
-              </Typography>
-              {fundSource === FundSource.WALLET && (
-                <div className="absolute w-5 h-5 top-3 right-3">
-                  <CheckCircleIcon className="text-green/70" />
-                </div>
-              )}
-            </div>
-            <div
-              onClick={() => setFundSource(FundSource.BENTOBOX)}
-              className={classNames(
-                fundSource === FundSource.BENTOBOX ? 'ring-green/70' : 'ring-transparent',
-                DEFAULT_INPUT_BG,
-                'ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
-              )}
-            >
-              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
-                BentoBox
-              </Typography>
-              <Typography variant="xs" className="text-slate-400">
-                Receive funds in your BentoBox
-              </Typography>
-              {fundSource === FundSource.BENTOBOX && (
-                <div className="absolute w-5 h-5 top-3 right-3">
-                  <CheckCircleIcon className="text-green/70" />
-                </div>
-              )}
-            </div>
-            <div className="col-span-2 pt-2">
-              <Checker.Custom
-                showGuardIfTrue={!amount?.greaterThan(0)}
-                guard={
-                  <Button size="md" fullWidth>
-                    Enter amount
-                  </Button>
-                }
-              >
+              {shortenAddress(stream.recipient.id)}
+            </a>
+          </div>
+          <Text label="Amount" value={input} onChange={(val) => setInput(`${val}`)} id="withdraw-modal-input" testdata-id="withdraw-modal-input" />
+          <div className="col-span-2 pt-2">
+            <Checker.Connect size="xl" fullWidth>
+              <Checker.Network size="xl" fullWidth chainId={chainId}>
                 <Checker.Custom
-                  showGuardIfTrue={Boolean(stream?.balance && amount?.greaterThan(stream.balance))}
+                  showGuardIfTrue={!amount?.greaterThan(0)}
                   guard={
-                    <Button size="md" fullWidth>
-                      Not enough available
+                    <Button size="xl" fullWidth>
+                      Enter amount
                     </Button>
                   }
                 >
-                  <Button
-                    size="md"
-                    variant="filled"
-                    fullWidth
-                    disabled={isWritePending || !stream?.balance}
-                    onClick={() => sendTransaction?.()}
+                  <Checker.Custom
+                    showGuardIfTrue={Boolean(stream.balance && amount?.greaterThan(stream.balance))}
+                    guard={
+                      <Button size="xl" fullWidth>
+                        Not enough available
+                      </Button>
+                    }
                   >
-                    {!stream?.token ? (
-                      'Invalid stream token'
-                    ) : isWritePending ? (
-                      <Dots>Confirm Withdraw</Dots>
-                    ) : (
-                      'Withdraw'
-                    )}
-                  </Button>
+                    <Button
+                      size="xl"
+                      fullWidth
+                      disabled={isWritePending || !stream.balance}
+                      onClick={() => sendTransaction?.()}
+                      testId='withdraw-modal-confirmation'
+                    >
+                      {!stream.token ? (
+                        'Invalid stream token'
+                      ) : isWritePending ? (
+                        <Dots>Confirm Withdraw</Dots>
+                      ) : (
+                        'Withdraw'
+                      )}
+                    </Button>
+                  </Checker.Custom>
                 </Checker.Custom>
-              </Checker.Custom>
-            </div>
+              </Checker.Network>
+            </Checker.Connect>
           </div>
         </Dialog.Content>
       </Dialog>

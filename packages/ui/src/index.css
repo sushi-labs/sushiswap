@@ -8,6 +8,7 @@
 
 @import './variables.css';
 @import './tooltip/styles.css';
+@import './future/components/input/DatePicker.css';
 @import './input/styles.css';
 
 *,
@@ -59,7 +60,7 @@ html[class='[color-scheme:dark]'] .paper {
 
 
 .hide-scrollbar {
-  -ms-overflow-style: none; 
+  -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
