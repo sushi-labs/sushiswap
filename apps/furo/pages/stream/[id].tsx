@@ -111,7 +111,7 @@ const _Streams: FC = () => {
           <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
           <div className="flex flex-col md:grid md:grid-cols-[460px_372px] justify-center gap-8 md:gap-y-6">
             <div className="flex justify-center">
-              <SkeletonBox className="w-full lg:w-[460px] aspect-[460/290]" />
+              <SkeletonBox className="w-full lg:w-[460px] h-fit aspect-[460/290]" />
             </div>
             <div className="min-w-fit">
               <div className="flex flex-col justify-center flex-grow gap-5">
@@ -251,7 +251,7 @@ const _Streams: FC = () => {
           <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
           <div className="flex flex-col lg:grid lg:grid-cols-[460px_372px] justify-center gap-8 lg:gap-y-6">
             <div className="flex justify-center">
-              <div className="shadow-lg relative w-full lg:w-[460px] aspect-[460/290] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl">
+              <div className="shadow-lg relative w-full lg:w-[460px] h-fit aspect-[460/290] bg-gradient-to-tr from-blue to-pink flex flex-col bg-slate-800 p-4 rounded-2xl">
                 <span className="flex items-center justify-start gap-2">
                   <span className="flex items-center gap-2 text-lg font-semibold text-white">
                     <div className="rounded-full shadow-md shadow-black/30 -mt-0.5">

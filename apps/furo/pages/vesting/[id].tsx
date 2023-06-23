@@ -127,7 +127,7 @@ const _VestingPage: FC = () => {
           <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
           <div className="flex flex-col md:grid md:grid-cols-[460px_372px] justify-center gap-8 md:gap-y-6">
             <div className="flex justify-center">
-              <SkeletonBox className="w-full lg:w-[460px] aspect-[460/290]" />
+              <SkeletonBox className="w-full lg:w-[460px] h-fit aspect-[460/290]" />
             </div>
             <div className="min-w-fit">
               <div className="flex flex-col justify-center flex-grow gap-5">
@@ -322,7 +322,7 @@ const _VestingPage: FC = () => {
         <Container maxWidth="4xl" className="h-full px-4 pb-4 mb-4 lg:mt-4 lg:mx-auto lg:mb-40">
           <div className="flex flex-col lg:grid lg:grid-cols-[460px_372px] justify-center gap-8 lg:gap-y-6">
             <div className="flex justify-center">
-              <div className="shadow-lg relative w-full lg:w-[460px] aspect-[460/290] bg-gradient-to-tr from-green to-blue flex flex-col bg-slate-800 p-4 rounded-2xl">
+              <div className="shadow-lg relative w-full lg:w-[460px] h-fit aspect-[460/290] bg-gradient-to-tr from-green to-blue flex flex-col bg-slate-800 p-4 rounded-2xl">
                 <span className="flex items-center justify-start gap-2">
                   <div className="flex flex-col">
                     <span className="font-medium text-white">{vesting?.totalAmount.currency.symbol}</span>
