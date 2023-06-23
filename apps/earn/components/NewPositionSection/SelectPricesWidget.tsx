@@ -109,6 +109,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                     value={startPriceTypedValue}
                     onChange={onStartPriceInput}
                     id="start-price-input"
+                    testdata-id="start-price-input"
                   />
                   <span className="mt-1.5 inline-block px-4 text-xs text-gray-500 dark:text-slate-400">
                     Your pool needs a starting price somewhere between the min. and max. price
