@@ -113,7 +113,7 @@ export const GlobalNav: FC<HeaderProps> = ({
                 </div>
               </Transition>
             </Menu>
-            <div className="hidden md:flex justify-center gap-2 relative h-[38px]">{children}</div>
+            <div className="hidden lg:flex justify-center gap-2 relative h-[38px]">{children}</div>
           </div>
           <div className="flex items-center justify-end gap-2">{rightElement}</div>
         </div>
@@ -133,7 +133,7 @@ export const MenuItem: FC<{ subtitle: string; type: AppType }> = ({ subtitle, ty
       onMouseLeave={() => setHover(false)}
       className="font-medium transition-all relative text-gray-500 dark:text-slate-200 hover:bg-gray-100 hover:dark:bg-slate-600/40 hover:dark:text-blue hover:text-blue transition-all rounded-lg py-2 text-sm !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
     >
-      <span className="pr-10">
+      <span className="flex flex-col gap-1 pr-10 font-medium">
         {type}
         <p className="max-w-[200px] font-normal text-xs text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-400 group-hover:text-blue">
           {subtitle}

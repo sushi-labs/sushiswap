@@ -107,7 +107,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           {loading ? (
             <Loader2 className={buttonLoaderVariants({ size })} />
           ) : Icon ? (
-            <Icon {...iconProps} className={buttonIconVariants({ size })} />
+            <Icon {...iconProps} className={buttonIconVariants({ size, className: iconProps?.className })} />
           ) : null}
           {children}
         </ButtonContent>

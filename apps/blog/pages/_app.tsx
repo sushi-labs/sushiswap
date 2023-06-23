@@ -3,7 +3,7 @@ import '../index.css'
 import '../variables.css'
 
 import { Cloudinary } from '@cloudinary/url-gen'
-import { ThemeProvider } from '@sushiswap/ui/ThemeProvider'
+import { ThemeProvider } from '@sushiswap/ui'
 import { Analytics } from '@vercel/analytics/react'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'

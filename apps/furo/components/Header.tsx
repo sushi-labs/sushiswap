@@ -10,6 +10,7 @@ import { AppearOnMount } from '@sushiswap/ui/components/animation'
 import { useConnect } from '@sushiswap/wagmi'
 import { Onramper } from '@sushiswap/wagmi/future/components'
 import { Button } from '@sushiswap/ui/components/button'
+import { PaperAirplaneIcon } from '@heroicons/react/outline'
 
 export const Header: FC = () => {
   const { isLoading } = useConnect()
@@ -23,7 +24,12 @@ export const Header: FC = () => {
             <HeaderNetworkSelector networks={SUPPORTED_CHAINS} />
             <UserProfile networks={SUPPORTED_CHAINS} />
             <a href="/furo/create">
-              <Button asChild fullWidth>
+              <Button
+                icon={PaperAirplaneIcon}
+                iconProps={{ className: 'transform rotate-45 mt-[-4px] ml-0.5' }}
+                asChild
+                fullWidth
+              >
                 <span className="hidden md:block">Pay Someone</span>
               </Button>
             </a>

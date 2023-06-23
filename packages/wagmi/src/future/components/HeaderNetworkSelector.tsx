@@ -49,7 +49,7 @@ export const HeaderNetworkSelector: FC<{
       networks={networks}
     >
       <Button variant="secondary" testId="network-selector">
-        <NetworkIcon chainId={selected} width={16} height={16} />
+        <NetworkIcon chainId={selected} width={20} height={20} />
         <div className="hidden xl:block">{Chain.from(selected)?.name}</div>
       </Button>
     </NetworkSelector>

@@ -1,6 +1,6 @@
 import '@sushiswap/ui/index.css'
 
-import { ThemeProvider } from '@sushiswap/ui/ThemeProvider'
+import { ThemeProvider } from '@sushiswap/ui'
 import { client, WagmiConfig } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
 import type { AppProps } from 'next/app'
