@@ -95,7 +95,7 @@ export const Panel: FC<PanelProps> = ({ children, className }) => {
 
   return ReactDOM.createPortal(
     <Transition.Root appear show={open} unmount={false} as={Fragment}>
-      <div className={classNames(className, 'fixed right-0 top-0 bottom-0 w-full translate-x-[100%] z-[1080] ')}>
+      <div className={classNames(className, 'fixed right-0 top-0 bottom-0 w-full translate-x-[100%] z-[1080]')}>
         <Transition.Child
           as={Fragment}
           enter="ease-in-out duration-500"
@@ -109,11 +109,11 @@ export const Panel: FC<PanelProps> = ({ children, className }) => {
           <div
             aria-hidden="true"
             onClick={() => setOpen(false)}
-            className="translate-x-[-100%] absolute inset-0 bg-black/40 transition-opacity"
+            className="translate-x-[-100%] absolute inset-0 transition-opacity"
           />
         </Transition.Child>
         <Transition.Child
-          className="overflow-y-auto scroll w-full sm:w-[380px] bg-slate-800 top-0 bottom-0 absolute px-5 shadow-xl shadow-black/30 border-l border-slate-200/10"
+          className="overflow-y-auto scroll w-full sm:w-[380px] paper dark:bg-slate-900/50 bg-gray-100/50 top-4 bottom-4 -left-4 rounded-2xl absolute px-5 shadow-lg shadow-black/30 border-l border-slate-200/10"
           enter="transform transition ease-in-out duration-300"
           enterFrom="translate-x-0"
           enterTo="translate-x-[-100%]"

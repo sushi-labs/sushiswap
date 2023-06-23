@@ -1,8 +1,10 @@
 import { isAddress } from '@ethersproject/address'
-import { Native, Token, tryParseAmount } from '@sushiswap/currency'
+import { Native, Token } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { useMemo } from 'react'
 import { z } from 'zod'
+import { isSupportedChainId } from '../config'
+import { FuroStreamChainId } from '@sushiswap/furo/exports/exports'
 
 export const ZToken = z.object({
   chainId: z.number(),
@@ -14,19 +16,7 @@ export const ZToken = z.object({
 })
 
 export const ZAddress = z.string().refine((val) => (val ? isAddress(val) : false), 'Invalid address')
-
-export const ZAmount = z
-  .object({
-    token: ZToken,
-    amount: z.string(),
-  })
-  .partial()
-
 export const ZFundSource = z.string()
-
-export const ZAmountToAmount = ZAmount.optional().transform((input) => {
-  return tryParseAmount(input?.amount, ZTokenToToken.parse(input?.token))
-})
 
 export const ZTokenToToken = ZToken.transform(({ address, decimals, chainId, symbol, name, isNative }) => {
   if (isNative && address === undefined) {
@@ -56,40 +46,12 @@ export const useFundSourceFromZFundSource = (fundSource?: z.infer<typeof ZFundSo
   }, [fundSource])
 }
 
-export const useAmountFromZAmount = (amount?: z.infer<typeof ZAmount>) => {
-  return useMemo(() => {
-    if (amount?.token && amount?.amount) {
-      return ZAmountToAmount.parse(amount)
-    }
-
-    return undefined
-  }, [amount])
-}
-
-export const useTokenFromZAmount = (amount?: z.infer<typeof ZAmount>) => {
-  return useMemo(() => {
-    if (amount?.token) return ZTokenToToken.parse(amount.token)
-
-    return undefined
-  }, [amount?.token])
-}
-
 export const useTokenFromZToken = (token?: z.infer<typeof ZToken>) => {
   return useMemo(() => {
     if (token) return ZTokenToToken.parse(token)
 
     return undefined
   }, [token])
-}
-
-export const useTokensFromZAmounts = (amounts: (z.infer<typeof ZAmount> | undefined)[]) => {
-  return useMemo(() => {
-    return amounts.map((amount) => {
-      if (amount?.token) return ZTokenToToken.parse(amount.token)
-
-      return undefined
-    })
-  }, [amounts])
 }
 
 export const useTokensFromZTokens = (tokens: (z.infer<typeof ZToken> | undefined)[]) => {
@@ -104,12 +66,20 @@ export const useTokensFromZTokens = (tokens: (z.infer<typeof ZToken> | undefined
   }, [tokens])
 }
 
-export const useAmountsFromZAmounts = (amounts: (z.infer<typeof ZAmount> | undefined)[]) => {
-  return useMemo(() => {
-    return amounts.map((amount) => {
-      if (amount?.token) return ZAmountToAmount.parse(amount)
-
-      return undefined
+export const queryParamsSchema = z.object({
+  id: z
+    .string()
+    .refine((val) => val.includes(':'), {
+      message: 'TokenId not in the right format',
     })
-  }, [amounts])
-}
+    .transform((val) => {
+      const [chainId, poolId] = val.split(':')
+      return [+chainId, poolId] as [FuroStreamChainId, string]
+    })
+    .refine(([chainId]) => isSupportedChainId(chainId), {
+      message: 'ChainId not supported.',
+    })
+    .refine(([, streamId]) => typeof +streamId === 'number', {
+      message: 'StreamId not supported.',
+    }),
+})

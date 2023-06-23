@@ -1,13 +1,13 @@
 import classNames from 'classnames'
 import { FC } from 'react'
 
-import { AppearOnMount } from '../animation'
-
 export enum ProgressColor {
   PINK,
   BLUE,
   GRADIENT,
   GREEN,
+  GRAY,
+  WHITE,
 }
 
 interface ProgressBarProps {
@@ -24,36 +24,44 @@ export const ProgressBar: FC<ProgressBarProps> = ({ progress, color, showLabel =
   let fromColor
   let toColor
   if (color === ProgressColor.BLUE) {
-    fromColor = 'from-blue-200'
+    fromColor = 'from-blue'
     toColor = 'to-blue'
   } else if (color === ProgressColor.PINK) {
-    fromColor = 'from-pink-200'
+    fromColor = 'from-pink'
     toColor = 'to-pink'
   } else if (color === ProgressColor.GRADIENT) {
     fromColor = 'from-blue'
     toColor = 'to-pink'
   } else if (color === ProgressColor.GREEN) {
-    fromColor = 'from-green-200'
+    fromColor = 'from-green'
     toColor = 'to-green'
+  } else if (color === ProgressColor.GRAY) {
+    fromColor = 'from-gray-600 dark:from-slate-400'
+    toColor = 'to-gray-600 dark:to-slate-400'
+  } else if (color === ProgressColor.WHITE) {
+    fromColor = 'from-white dark:from-white'
+    toColor = 'to-white dark:to-white'
   }
 
   return (
-    <AppearOnMount>
-      <div className="flex items-center gap-2">
+    <div className="flex w-full items-center gap-2">
+      <div
+        className={classNames(
+          'relative flex flex-grow h-4 rounded-full bg-gradient-to-r overflow-hidden bg-[rgba(0,0,0,0.24)] dark:bg-[rgba(255,255,255,0.12)]',
+          className
+        )}
+      >
         <div
-          className={classNames(
-            'flex flex-grow h-[10px] rounded-full bg-gradient-to-r overflow-hidden bg-[rgba(255,255,255,0.12)]',
-            className
-          )}
-        >
-          <div
-            className={`flex justify-end h-full rounded-r-full bg-gradient-to-r ${fromColor} ${toColor}`}
-            style={{ width: `${Number(progress) * 100}%` }}
-          />
+          className={`flex justify-end h-full rounded-r-full bg-gradient-to-r ${fromColor} ${toColor}`}
+          style={{ width: `${Number(progress) * 100}%` }}
+        />
+        <div className="absolute inset-0 flex justify-center items-center">
+          <span className="text-xs font-semibold text-white">
+            {showLabel ? `${(Number(progress) * 100).toFixed(1)}%` : ''}
+          </span>
         </div>
-        {showLabel ? `${(Number(progress) * 100).toFixed(1)}%` : ''}
       </div>
-    </AppearOnMount>
+    </div>
   )
 }
 

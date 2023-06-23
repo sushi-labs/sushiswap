@@ -62,6 +62,7 @@ export const Switch: FC<SwitchProps> = ({
         `flex items-center relative inline-flex flex-shrink-0 rounded-full cursor-pointer ease-in-out duration-200 ${id}`
       )}
       style={{ height, width }}
+      testdata-id={id}
     >
       <span
         id={id}

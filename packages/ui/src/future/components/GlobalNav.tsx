@@ -65,7 +65,7 @@ export const GlobalNav: FC<HeaderProps> = ({
         showBackground
           ? 'bg-gray-100 dark:bg-slate-900 lg:dark:border-slate-200/5 lg:border-gray-300/70 lg:border-b'
           : 'lg:border-transparent',
-        transparent ? '' : 'bg-gray-100 dark:bg-slate-900 border-gray-300/70 dark:border-slate-200/5 border-b',
+        transparent ? '' : 'bg-gray-100 dark:bg-slate-900 border-gray-300/70 dark:border-slate-200/5',
         'sticky flex items-center top-0 z-[1070] transition-all',
         className
       )}

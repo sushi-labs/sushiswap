@@ -16,7 +16,7 @@ import { shortenAddress } from '@sushiswap/format'
 import { isAddress } from 'ethers/lib/utils'
 import { useAccount } from '@sushiswap/wagmi'
 import { Explainer } from '@sushiswap/ui/future/components/Explainer'
-import { AddressToEnsResolver } from '@sushiswap/wagmi/components/Account/AddressToEnsResolver'
+import { AddressToEnsResolver } from '@sushiswap/wagmi/future/components/Account/AddressToEnsResolver'
 
 export const TradeStats: FC = () => {
   const { address } = useAccount()

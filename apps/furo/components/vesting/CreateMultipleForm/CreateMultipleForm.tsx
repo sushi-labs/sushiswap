@@ -1,33 +1,41 @@
-import { ArrowCircleLeftIcon } from '@heroicons/react/outline'
-import { DevTool } from '@hookform/devtools'
+import { FuroVestingRouterChainId } from '@sushiswap/furo/exports/exports'
+import { FC, useCallback, useEffect, useState } from 'react'
+import { useFieldArray, useForm } from 'react-hook-form'
+import { CREATE_VEST_DEFAULT_VALUES } from '../CreateForm'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FuroVestingRouterChainId } from '@sushiswap/furo'
-import { useIsMounted } from '@sushiswap/hooks'
-import { classNames } from '@sushiswap/ui'
-import Link from 'next/link'
-import React, { FC, useCallback, useEffect, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
-
-import { CreateVestingsTableSection } from './CreateVestingsTableSection'
-import { ExecuteMultipleSection } from './ExecuteMultipleSection'
-import { ImportErrorProvider } from './ImportErrorContext'
+import { nanoid } from 'nanoid'
 import { ImportZoneSection } from './ImportZoneSection'
+import { IconButton } from '@sushiswap/ui/future/components/IconButton'
+import { DuplicateIcon, PlusIcon, TrashIcon } from '@heroicons/react/solid'
+import { VestingForm } from '../CreateForm/VestingForm'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { ReviewSection } from './ReviewSection'
-import { CreateMultipleVestingFormSchemaType, CreateMultipleVestingModelSchema } from './schema'
+import { ExecuteMultipleSection } from './ExecuteMultipleSection'
+import {
+  CreateMultipleVestingBaseSchemaFormErrorsType,
+  CreateMultipleVestingFormSchemaType,
+  CreateMultipleVestingModelSchema,
+} from '../schema'
+import { Form } from '@sushiswap/ui/future/components/form'
 
 export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ chainId }) => {
-  const isMounted = useIsMounted()
   const [review, setReview] = useState(false)
-  const methods = useForm<CreateMultipleVestingFormSchemaType>({
+  const methods = useForm<CreateMultipleVestingFormSchemaType & CreateMultipleVestingBaseSchemaFormErrorsType>({
     resolver: zodResolver(CreateMultipleVestingModelSchema),
-    mode: 'onBlur',
+    mode: 'all',
     defaultValues: {
-      vestings: [],
+      vestings: [{ ...CREATE_VEST_DEFAULT_VALUES, id: nanoid() }],
     },
   })
 
-  const { control, reset } = methods
+  const { reset, watch, control, formState } = methods
+  const { append, remove } = useFieldArray({
+    control,
+    name: 'vestings',
+    shouldUnregister: true,
+  })
 
+  const formData = watch()
   const onReview = useCallback(() => {
     setReview(true)
   }, [])
@@ -40,31 +48,90 @@ export const CreateMultipleForm: FC<{ chainId: FuroVestingRouterChainId }> = ({ 
     reset()
   }, [chainId, reset])
 
+  try {
+    CreateMultipleVestingModelSchema.parse(formData)
+  } catch (e) {
+    console.log(formState.errors, e)
+  }
+  //
+  // useEffect(() => {
+  //   try {
+  //     CreateMultipleVestingModelSchema.parse(formData)
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
+  // }, [formData])
+
   return (
-    <div className={classNames('flex flex-col gap-10')}>
-      <Link href="/vesting/create" passHref={true} legacyBehavior>
-        <a>
-          <button type="button" className="flex gap-3 font-medium group hover:text-white text-slate-200">
-            <ArrowCircleLeftIcon width={24} height={24} /> <span>Create Vesting</span>
-          </button>
-        </a>
-      </Link>
-      <FormProvider {...methods}>
-        <div className="flex flex-col gap-14">
-          <ImportErrorProvider>
+    <>
+      <h3 className="text-3xl font-semibold text-gray-900 dark:text-slate-50 py-6">Create Vests</h3>
+      <Form {...methods}>
+        <form onSubmit={methods.handleSubmit(onReview)}>
+          <div className="flex flex-col gap-14">
             <ImportZoneSection chainId={chainId} />
-            <div className="w-full border-b border-slate-200/5" />
-            <div className={review ? 'hidden' : ''}>
-              <CreateVestingsTableSection chainId={chainId} onReview={onReview} />
-            </div>
-            <div className={review ? '' : 'hidden'}>
-              <ReviewSection chainId={chainId} onBack={onBack} />
-              <ExecuteMultipleSection chainId={chainId} isReview={review} />
-            </div>
-          </ImportErrorProvider>
-        </div>
-        {/* {process.env.NODE_ENV === 'development' && isMounted && <DevTool control={control} />} */}
-      </FormProvider>
-    </div>
+            {!review ? (
+              <div className="flex flex-col gap-4">
+                {(formData.vestings || []).map((el, i) => (
+                  <div
+                    key={el.id}
+                    className="flex flex-col gap-1 pb-4 border-b dark:border-slate-200/5 border-gray-900/5"
+                  >
+                    <div className="flex justify-between">
+                      <h1 className="text-xs font-semibold uppercase">Vesting {i + 1}</h1>
+                      <div className="flex items-center gap-5 pr-2">
+                        <div className="flex items-center">
+                          <IconButton
+                            icon={DuplicateIcon}
+                            iconProps={{ width: 16, height: 16 }}
+                            onClick={() => append(el)}
+                          />
+                        </div>
+                        {(i > 0 || (formData.vestings || []).length > 1) && (
+                          <div className="flex items-center">
+                            <IconButton
+                              icon={TrashIcon}
+                              iconProps={{ width: 16, height: 16, className: 'text-red' }}
+                              onClick={() => remove(i)}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <VestingForm chainId={chainId} index={i} />
+                  </div>
+                ))}
+                <div className="flex justify-end gap-4">
+                  <Button
+                    size="xl"
+                    variant="outlined"
+                    type="button"
+                    startIcon={<PlusIcon width={16} height={16} />}
+                    onClick={() => append({ ...CREATE_VEST_DEFAULT_VALUES, id: nanoid() })}
+                    testdata-id="create-multiple-vest-add-vest-button"
+                  >
+                    Add Vesting
+                  </Button>
+                  <Button
+                    size="xl"
+                    variant="outlined"
+                    type="button"
+                    onClick={() => setReview(true)}
+                    disabled={!formState.isValid}
+                    testdata-id="create-multiple-vest-review-button"
+                  >
+                    Review
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4">
+                <ReviewSection chainId={chainId} />
+                <ExecuteMultipleSection chainId={chainId} isReview={review} onBack={onBack} />
+              </div>
+            )}
+          </div>
+        </form>
+      </Form>
+    </>
   )
 }

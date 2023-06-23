@@ -1,14 +1,13 @@
-import { ChevronDownIcon } from '@heroicons/react-v1/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI } from '@sushiswap/currency'
 import { useInterval } from '@sushiswap/hooks'
-import { Button, classNames, Container, Typography } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui'
-import { CurrencyInput } from '@sushiswap/wagmi/components/Web3Input/Currency'
+import { classNames, Container, Typography } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
 import React, { FC, useEffect, useState } from 'react'
-
+import { Button } from '@sushiswap/ui/future/components/button/Button'
 import { Search } from './Search'
+import { CurrencyInput } from '@sushiswap/wagmi/future/components/Web3Input/Currency'
+import { ArrowDownIcon } from '@heroicons/react/24/outline'
 
 const TITLES = ['Whenever', 'Wherever', 'Whoever']
 const VALUES = [
@@ -60,80 +59,66 @@ export const Hero: FC = () => {
                 delay: 0.7,
               }}
             >
-              <Widget id="test" maxWidth={400} className="relative">
-                <motion.div
-                  initial={{ opacity: 0.08 }}
-                  animate={{ opacity: 0 }}
-                  transition={{
-                    duration: 0.8,
-                    delay: 0.7,
-                  }}
-                  className="bg-white absolute inset-0 z-[10]"
-                />
-                <Widget.Content>
-                  <motion.div
-                    initial={{ opacity: 0, scale: 1.05 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{
-                      duration: 0.5,
-                      delay: 1.6,
-                    }}
-                  >
-                    <div className={classNames('p-3 mx-0.5 grid grid-cols-2 items-center pb-4 font-medium')}>
-                      <div className="flex items-center gap-4 text-sm font-semibold text-slate-200">
-                        <div>Swap</div>
-                        <div>xSwap</div>
-                      </div>
-                    </div>
-                  </motion.div>
-                  <CurrencyInput
-                    className="p-3"
-                    value={valueIndex >= 0 ? VALUES[valueIndex].value0 : ''}
-                    onChange={() => {}}
-                    onSelect={() => {}}
-                    currency={Native.onChain(ChainId.ETHEREUM)}
-                    chainId={ChainId.ETHEREUM}
-                    tokenMap={{}}
-                    disabled={true}
-                  />
-                  <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
-                    <button
-                      type="button"
-                      className=" group bg-slate-700 p-0.5 border-2 border-slate-800 transition-all rounded-full hover:ring-2 hover:ring-slate-500 cursor-pointer"
-                    >
-                      <div className="transition-all rotate-0 group-hover:rotate-180 group-hover:delay-200">
-                        <ChevronDownIcon width={16} height={16} />
-                      </div>
-                    </button>
+              <motion.div
+                initial={{ opacity: 0, scale: 1.05 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  duration: 0.5,
+                  delay: 1.6,
+                }}
+              >
+                <div className="flex gap-2 mb-4">
+                  <Button size="sm" variant="outlined" color="default">
+                    Swap
+                  </Button>
+                  <Button className="pointer-events-none opacity-40" size="sm" variant="empty" color="default">
+                    Limit
+                  </Button>
+                </div>
+              </motion.div>
+              <CurrencyInput
+                type="INPUT"
+                className="p-3 bg-white dark:bg-slate-800 rounded-xl"
+                value={valueIndex >= 0 ? VALUES[valueIndex].value0 : ''}
+                onChange={() => {}}
+                onSelect={() => {}}
+                currency={Native.onChain(ChainId.ETHEREUM)}
+                chainId={ChainId.ETHEREUM}
+                disabled={true}
+              />
+              <div className="left-0 right-0 mt-[-9px] mb-[-9px] flex items-center justify-center">
+                <button
+                  type="button"
+                  className="z-10 group bg-gray-100 hover:bg-gray-200 hover:dark:bg-slate-700 dark:bg-slate-900 p-2 border-white transition-all rounded-full cursor-pointer"
+                >
+                  <div className="transition-transform rotate-0 group-hover:rotate-180">
+                    <ArrowDownIcon strokeWidth={3} className="w-4 h-4 text-blue" />
                   </div>
-                  <div className="bg-slate-800">
-                    <CurrencyInput
-                      className="p-3 "
-                      value={valueIndex >= 0 ? VALUES[valueIndex].value1 : ''}
-                      onChange={() => {}}
-                      onSelect={() => {}}
-                      currency={SUSHI[ChainId.ETHEREUM]}
-                      chainId={ChainId.ETHEREUM}
-                      tokenMap={{}}
-                      disabled={true}
-                    />
-                    <div className="p-3 pt-0">
-                      <motion.div
-                        initial={{ opacity: 0, scale: 1.05 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{
-                          duration: 0.8,
-                          delay: 3,
-                        }}
-                      >
-                        <Button as="a" href="https://www.sushi.com/swap" size="md" fullWidth className="relative z-10">
-                          Trade Now
-                        </Button>
-                      </motion.div>
-                    </div>
-                  </div>
-                </Widget.Content>
-              </Widget>
+                </button>
+              </div>
+              <CurrencyInput
+                type="OUTPUT"
+                className="p-3 bg-white dark:bg-slate-800 rounded-xl"
+                value={valueIndex >= 0 ? VALUES[valueIndex].value1 : ''}
+                onChange={() => {}}
+                onSelect={() => {}}
+                currency={SUSHI[ChainId.ETHEREUM]}
+                chainId={ChainId.ETHEREUM}
+                disabled={true}
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 1.05 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  duration: 0.8,
+                  delay: 3,
+                }}
+                className="mt-4"
+              >
+                <Button as="a" href="https://www.sushi.com/swap" size="xl" fullWidth>
+                  Trade Now
+                </Button>
+              </motion.div>
             </motion.div>
           </div>
         </div>

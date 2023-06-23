@@ -96,8 +96,8 @@ export function useBentoBoxApproveCallback({
       txHash: data.hash,
       promise: data.wait(),
       summary: {
-        pending: `Approving BentoBox Master Contract`,
-        completed: `Successfully approved the master contract`,
+        pending: 'Approving BentoBox Master Contract',
+        completed: 'Successfully approved the master contract',
         failed: 'Something went wrong approving the master contract',
       },
       groupTimestamp: ts,

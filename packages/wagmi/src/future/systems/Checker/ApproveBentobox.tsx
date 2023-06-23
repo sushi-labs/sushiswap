@@ -35,11 +35,11 @@ export const Component: FC<ApproveBentoboxProps> = ({
   if (state === ApprovalState.APPROVED || !enabled) {
     return <>{children}</>
   }
-
+  console.log({state})
   return (
     <Button
       as={as}
-      loading={state === ApprovalState.LOADING || state === ApprovalState.PENDING}
+      loading={state === ApprovalState.LOADING || state === ApprovalState.PENDING || !execute}
       testdata-id={id}
       variant={variant}
       size={size}
