@@ -4,7 +4,7 @@ import { createToast } from '@sushiswap/ui/components/toast'
 import { TransactionRequest } from '@ethersproject/providers'
 import { JSBI } from '@sushiswap/math'
 import { Amount, Type } from '@sushiswap/currency'
-import { isV3ChainId, NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
+import { isSushiSwapV3ChainId, NonfungiblePositionManager, Position } from '@sushiswap/v3-sdk'
 import { _useSendTransaction as useSendTransaction, useNetwork } from '@sushiswap/wagmi'
 import { ChainId } from '@sushiswap/chain'
 import { ConcentratedLiquidityPosition } from '@sushiswap/wagmi/future/hooks'
@@ -56,7 +56,7 @@ export const ConcentratedLiquidityCollectButton: FC<ConcentratedLiquidityCollect
 
   const prepare = useCallback(
     async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (token0 && token1 && position && account && positionDetails && isV3ChainId(chainId)) {
+      if (token0 && token1 && position && account && positionDetails && isSushiSwapV3ChainId(chainId)) {
         const feeValue0 = positionDetails.fees
           ? Amount.fromRawAmount(token0, JSBI.BigInt(positionDetails.fees[0]))
           : undefined

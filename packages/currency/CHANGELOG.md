@@ -1,5 +1,24 @@
 # @sushiswap/currency
 
+## 0.1.1
+
+### Patch Changes
+
+- [#962](https://github.com/sushiswap/sushiswap/pull/962) [`dc91c7513`](https://github.com/sushiswap/sushiswap/commit/dc91c7513bee9ca2c505ff4b804e337c98309bb3) Thanks [@OlaStenberg](https://github.com/OlaStenberg)! - fix exports
+
+## 0.1.0
+
+### Minor Changes
+
+- [#958](https://github.com/sushiswap/sushiswap/pull/958) [`90784ce08`](https://github.com/sushiswap/sushiswap/commit/90784ce0876741b8f7f41552e181677d0746884b) Thanks [@OlaStenberg](https://github.com/OlaStenberg)! - Add AddressMapper
+
+## 0.0.6
+
+### Patch Changes
+
+- Updated dependencies [[`c6d6cc5db`](https://github.com/sushiswap/sushiswap/commit/c6d6cc5db4cc614f3931ee3a325547967c86c51a)]:
+  - @sushiswap/chain@0.1.2
+
 ## 0.0.5
 
 ### Patch Changes

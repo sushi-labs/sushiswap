@@ -112,7 +112,7 @@ export const VOLUME_7D_COLUMN: ColumnDef<Pool, unknown> = {
 }
 
 export const VOLUME_1M_COLUMN: ColumnDef<Pool, unknown> = {
-  id: 'volume1w',
+  id: 'volume1m',
   header: 'Volume (1m)',
   accessorFn: (row) => row.volume1m,
   cell: (props) => <PoolVolume1mCell row={props.row.original} />,

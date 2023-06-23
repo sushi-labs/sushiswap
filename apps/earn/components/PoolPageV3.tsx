@@ -16,7 +16,7 @@ import { Currency } from '@sushiswap/ui/components/currency'
 import { List } from '@sushiswap/ui/components/list/List'
 import { formatUSD } from '@sushiswap/format'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
-import { isV3ChainId, V3ChainId } from '@sushiswap/v3-sdk'
+import { isSushiSwapV3ChainId, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { isAddress } from 'ethers/lib/utils'
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
 import { useTokenAmountDollarValues } from '../lib/hooks'
@@ -56,9 +56,9 @@ const queryParamsSchema = z.object({
     })
     .transform((val) => {
       const [chainId, poolId] = val.split(':')
-      return [+chainId, poolId] as [V3ChainId, string]
+      return [+chainId, poolId] as [SushiSwapV3ChainId, string]
     })
-    .refine(([chainId]) => isV3ChainId(chainId), {
+    .refine(([chainId]) => isSushiSwapV3ChainId(chainId), {
       message: 'ChainId not supported.',
     })
     .refine(([, poolId]) => isAddress(poolId), {
@@ -83,6 +83,7 @@ const Pool: FC = () => {
     activeTab,
   } = queryParamsSchema.parse(query)
 
+  const [invertTokens, setInvertTokens] = useState(false)
   const [tab, setTab] = useState<SelectedTab>(
     activeTab === 'new'
       ? SelectedTab.NewPosition
@@ -107,11 +108,15 @@ const Pool: FC = () => {
   const fiatValuesIncentives = useTokenAmountDollarValues({ chainId, amounts: incentiveAmounts })
 
   const [_token0, _token1] = useMemo(
-    () => [
-      poolStats?.token0 ? unwrapToken(poolStats.token0) : undefined,
-      poolStats?.token1 ? unwrapToken(poolStats.token1) : undefined,
-    ],
-    [poolStats?.token0, poolStats?.token1]
+    () => {
+      const tokens = [
+        poolStats?.token0 ? unwrapToken(poolStats.token0) : undefined,
+        poolStats?.token1 ? unwrapToken(poolStats.token1) : undefined,
+      ]
+
+      return invertTokens ? tokens.reverse() : tokens
+    },
+    [invertTokens, poolStats?.token0, poolStats?.token1]
   )
 
   return (
@@ -365,6 +370,7 @@ const Pool: FC = () => {
               token1={_token1}
               feeAmount={poolStats?.feeAmount}
               tokenId={undefined}
+              switchTokens={() => setInvertTokens((prev) => !prev)}
             />
           </div>
           <div className="flex flex-col gap-3">

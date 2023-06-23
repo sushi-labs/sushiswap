@@ -11,14 +11,14 @@ import {
   useConcentratedMintActionHandlers,
   useConcentratedMintState,
 } from './ConcentratedLiquidityProvider'
-import { FeeAmount, Position, V3ChainId } from '@sushiswap/v3-sdk'
+import { FeeAmount, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { Type } from '@sushiswap/currency'
 import { useConcentratedPositionOwner } from '@sushiswap/wagmi/future/hooks/positions/hooks/useConcentratedPositionOwner'
 import { Button } from '@sushiswap/ui/components/button'
 import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
 
 interface ConcentratedLiquidityWidget {
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
   account: string | undefined
   token0: Type | undefined
   token1: Type | undefined
@@ -263,7 +263,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                     successLink={successLink}
                   >
                     {({ setOpen }) => (
-                      <Button size="xl" fullWidth onClick={() => setOpen(true)} testId="add-liquidity-preview">
+                      <Button fullWidth onClick={() => setOpen(true)} size="xl" testId="add-liquidity-preview">
                         Preview
                       </Button>
                     )}

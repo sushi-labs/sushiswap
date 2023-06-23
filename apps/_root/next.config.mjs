@@ -6,18 +6,6 @@ const { ANALYTICS_URL, BLOG_URL, EARN_URL, FURO_URL, SWAP_URL, ACADEMY_URL } = p
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   ...defaultNextConfig,
-  images: {
-    loader: 'cloudinary',
-    path: 'https://cdn.sushi.com/image/upload/',
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-        port: '',
-        pathname: '/sushi-cdn/**',
-      },
-    ],
-  },
   transpilePackages: ['@sushiswap/ui', '@sushiswap/wagmi'],
   async redirects() {
     return [

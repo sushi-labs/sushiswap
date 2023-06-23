@@ -4,7 +4,7 @@ import { Currency } from '@sushiswap/ui/components/currency'
 import { FC, useMemo } from 'react'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 
-import { ICON_SIZE } from '../contants'
+import { ICON_SIZE } from '../constants'
 import { Row } from './types'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future/hooks'
 import { Badge } from '@sushiswap/ui/components/Badge'
@@ -13,7 +13,6 @@ import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 
 export const PoolNameCellV3: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> = ({ row }) => {
-  console.log('PoolNameCellV3', row)
   const [_token0, _token1]: Type[] = useMemo(() => [unwrapToken(row.pool.token0), unwrapToken(row.pool.token1)], [row])
   return (
     <div className="flex items-center gap-5">

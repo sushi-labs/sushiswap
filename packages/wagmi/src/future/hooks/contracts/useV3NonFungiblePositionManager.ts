@@ -1,9 +1,9 @@
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
 import { Address, useProvider } from 'wagmi'
-import { V3_POSTIION_MANAGER, V3ChainId } from '@sushiswap/v3-sdk'
+import { V3_POSTIION_MANAGER, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 
-export const getV3NonFungiblePositionManagerConractConfig = (chainId: V3ChainId) => ({
+export const getV3NonFungiblePositionManagerConractConfig = (chainId: SushiSwapV3ChainId) => ({
   address: V3_POSTIION_MANAGER[chainId] as Address,
   abi: [
     {
@@ -504,7 +504,7 @@ export const getV3NonFungiblePositionManagerConractConfig = (chainId: V3ChainId)
   ] as const,
 })
 
-export function useV3NonFungiblePositionManager(chainId: V3ChainId | undefined) {
+export function useV3NonFungiblePositionManager(chainId: SushiSwapV3ChainId | undefined) {
   const signerOrProvider = useProvider({ chainId })
 
   return useMemo(() => {

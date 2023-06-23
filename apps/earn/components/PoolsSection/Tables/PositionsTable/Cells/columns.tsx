@@ -114,6 +114,7 @@ export const PRICE_RANGE_COLUMN: ColumnDef<ConcentratedLiquidityPositionWithV3Po
 
 export const POSITION_SIZE_CELL: ColumnDef<ConcentratedLiquidityPositionWithV3Pool, unknown> = {
   id: 'positionSize',
+  accessorFn: (row) => row.position.positionUSD,
   header: 'Position Size',
   cell: (props) => <PositionSizeCell row={props.row.original} ctx={props} />,
   size: 60,
@@ -126,6 +127,7 @@ export const POSITION_SIZE_CELL: ColumnDef<ConcentratedLiquidityPositionWithV3Po
 
 export const POSITION_UNCLAIMED_CELL: ColumnDef<ConcentratedLiquidityPositionWithV3Pool, unknown> = {
   id: 'unclaimed',
+  accessorFn: (row) => row.position.unclaimedUSD,
   header: 'Unclaimed',
   cell: (props) => <UnclaimedCell row={props.row.original} ctx={props} />,
   size: 60,

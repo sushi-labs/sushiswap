@@ -1,4 +1,3 @@
-import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Native, Type } from '@sushiswap/currency'
@@ -12,7 +11,7 @@ import {
   useFuroVestingRouterContract,
 } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
@@ -26,8 +25,9 @@ import { CreateMultipleVestingFormSchemaType, STEP_CONFIGURATIONS_MAP } from '..
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/components/button'
+import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
-const APPROVE_TAG = 'approve-multiple-vestgs'
+const APPROVE_TAG = 'approve-multiple-vestings'
 
 export const ExecuteMultipleSection: FC<{
   chainId: FuroVestingRouterChainId
@@ -36,7 +36,7 @@ export const ExecuteMultipleSection: FC<{
 }> = withCheckerRoot(({ chainId, isReview, onBack }) => {
   const { address } = useAccount()
   const contract = useFuroVestingRouterContract(chainId)
-  const [signature, setSignature] = useState<Signature>()
+  const { signature, setSignature } = useSignature(APPROVE_TAG)
   const { approved } = useApproved(APPROVE_TAG)
 
   const {
@@ -214,10 +214,10 @@ export const ExecuteMultipleSection: FC<{
       <Checker.Connect>
         <Checker.Network chainId={chainId}>
           <Checker.ApproveBentobox
+            tag={APPROVE_TAG}
             id="create-multiple-vest-approve-bentobox"
             chainId={chainId}
-            contract={getFuroVestingRouterContractConfig(chainId).address}
-            onSignature={setSignature}
+            masterContract={getFuroVestingRouterContractConfig(chainId).address}
           >
             <Checker.ApproveERC20Multiple id={'create-multiple-vest-approve-token'} amounts={approveAmounts}>
               <Checker.Success tag={APPROVE_TAG}>

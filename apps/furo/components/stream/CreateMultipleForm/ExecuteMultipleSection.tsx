@@ -1,4 +1,3 @@
-import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Native, tryParseAmount, Type } from '@sushiswap/currency'
@@ -12,7 +11,7 @@ import {
   useFuroStreamRouterContract,
 } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 
@@ -25,6 +24,7 @@ import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/components/button'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { CreateMultipleStreamFormSchemaType } from '../schema'
+import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
 const APPROVE_TAG = 'approve-multiple-streams'
 
@@ -35,7 +35,7 @@ export const ExecuteMultipleSection: FC<{
 }> = withCheckerRoot(({ chainId, isReview, onBack }) => {
   const { address } = useAccount()
   const contract = useFuroStreamRouterContract(chainId)
-  const [signature, setSignature] = useState<Signature>()
+  const { signature, setSignature } = useSignature(APPROVE_TAG)
   const { approved } = useApproved(APPROVE_TAG)
 
   const {
@@ -164,7 +164,6 @@ export const ExecuteMultipleSection: FC<{
       })),
     [chainId, summedAmounts]
   )
-  console.log({ approveAmounts })
 
   return (
     <div className="flex justify-end gap-4">
@@ -174,10 +173,11 @@ export const ExecuteMultipleSection: FC<{
       <Checker.Connect>
         <Checker.Network chainId={chainId}>
           <Checker.ApproveBentobox
+            tag={APPROVE_TAG}
+            size="xl"
             id="create-multiple-stream-approve-bentobox"
             chainId={chainId}
-            contract={getFuroStreamRouterContractConfig(chainId).address}
-            onSignature={setSignature}
+            masterContract={getFuroStreamRouterContractConfig(chainId).address}
           >
             <Checker.ApproveERC20Multiple id={'create-multiple-stream-approve-token'} amounts={approveAmounts}>
               <Checker.Success tag={APPROVE_TAG}>

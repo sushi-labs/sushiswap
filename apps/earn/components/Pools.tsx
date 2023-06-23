@@ -4,17 +4,17 @@ import { ChevronRightIcon } from '@heroicons/react/solid'
 import { Button } from '@sushiswap/ui/components/button'
 import React, { FC } from 'react'
 import { useAccount, useNetwork } from '@sushiswap/wagmi'
+import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { PoolFilters, PoolsFiltersProvider, PoolsSection } from '../components'
 import { ChainId } from '@sushiswap/chain'
 import { isRouteProcessor3ChainId } from '@sushiswap/route-processor'
-import { isUniswapV2FactoryChainId } from '@sushiswap/v2-core'
 import { PositionCardList } from './MigratePage/PositionCardList'
 import { Container } from '@sushiswap/ui/components/container'
 import { PositionCard, PositionCardSkeleton } from './MigratePage/PositionCard'
 import { Carousel } from '@sushiswap/ui/components/Carousel'
 import { DiscordIcon } from '@sushiswap/ui/components/icons'
 import { TRIDENT_ENABLED_NETWORKS } from 'config'
-import { isV3ChainId } from '@sushiswap/v3-sdk'
+import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 
 import {
   DropdownMenu,
@@ -63,7 +63,9 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-80">
                     <DropdownMenuGroup>
-                      <DropdownMenuItem asChild>
+                      <DropdownMenuItem
+                          disabled={!isRouteProcessor3ChainId(chainId)}
+                          asChild>
                         <a
                           href={`/pools/add?chainId=${chainId}`}
                           className="flex flex-col !items-start gap-1 cursor-pointer"
@@ -80,7 +82,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                         </a>
                       </DropdownMenuItem>
 
-                      {isUniswapV2FactoryChainId(chainId) ? (
+                      {isSushiSwapV2ChainId(chainId as ChainId) ? (
                         <DropdownMenuItem asChild>
                           <a
                             href={`/pools/add/v2/${chainId}`}
@@ -147,7 +149,7 @@ export const Pools: FC<{ filters?: Partial<PoolFilters> }> = ({ filters }) => {
                 <div className="pl-4 xl:pl-2">
                   <Carousel
                     slideWidth={320}
-                    slides={positions.filter((position) => isV3ChainId(position.chainId as ChainId))}
+                    slides={positions.filter((position) => isSushiSwapV3ChainId(position.chainId as ChainId))}
                     render={(position) => (isLoading ? <PositionCardSkeleton /> : <PositionCard position={position} />)}
                   />
                 </div>

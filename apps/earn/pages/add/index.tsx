@@ -26,12 +26,14 @@ import { computePoolAddress } from '@sushiswap/v3-sdk'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3FactoryContract'
 import { SplashController } from '@sushiswap/ui/components/SplashController'
 import { Button } from '@sushiswap/ui/components/button'
+import { useRouter } from 'next/router'
 
 export function AddPage() {
+  const router = useRouter()
   return (
     <ConcentratedLiquidityURLStateProvider>
       {({ token0, chainId }) => (
-        <SplashController show={Boolean(!token0 || !chainId)}>
+        <SplashController show={Boolean(!token0 || !chainId || !router.isReady)}>
           <SWRConfig>
             <Layout>
               <div className="flex flex-col gap-2">

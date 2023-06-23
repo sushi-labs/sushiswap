@@ -106,9 +106,9 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                       <SettingsOverlay
                         options={{
                           slippageTolerance: {
-                            storageKey: 'addLiquidity',
+                            storageKey: 'removeLiquidity',
                             defaultValue: '0.5',
-                            title: 'Add Liquidity Slippage',
+                            title: 'Remove Liquidity Slippage',
                           },
                         }}
                         modules={[SettingsModule.CustomTokens, SettingsModule.SlippageTolerance]}

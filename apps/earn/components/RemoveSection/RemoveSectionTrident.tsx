@@ -1,4 +1,3 @@
-import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount, Native } from '@sushiswap/currency'
@@ -37,7 +36,7 @@ import { RemoveSectionWidget } from './RemoveSectionWidget'
 import { createToast } from '@sushiswap/ui/components/toast'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
 import { Button } from '@sushiswap/ui/components/button'
-import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useApproved, withCheckerRoot, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_REMOVE_TRIDENT } from '../../lib/constants'
 import { ChainId } from '@sushiswap/chain'
 
@@ -52,8 +51,8 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
   const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
   const isMounted = useIsMounted()
   const { approved } = useApproved(APPROVE_TAG_REMOVE_TRIDENT)
+  const { signature, setSignature } = useSignature(APPROVE_TAG_REMOVE_TRIDENT)
   const contract = useTridentRouterContract(_pool.chainId)
-  const [permit, setPermit] = useState<Signature>()
   const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
   const slippagePercent = useMemo(() => {
     return new Percent(Math.floor(+(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100), 10_000)
@@ -212,7 +211,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
           minAmount1.wrapped.currency.address === Native.onChain(_pool.chainId).wrapped.address ? 1 : indexOfWETH
 
         const actions = [
-          approveMasterContractAction({ router: contract, signature: permit }),
+          approveMasterContractAction({ router: contract, signature }),
           burnLiquidityAction({
             router: contract,
             address: pool.liquidityToken.address,
@@ -262,7 +261,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
       address,
       rebases,
       slpAmountToRemove,
-      permit,
+      signature,
     ]
   )
 
@@ -271,6 +270,9 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
     prepare,
     onSettled,
     enabled: approved,
+    onSuccess: () => {
+      setSignature(undefined)
+    },
   })
 
   return (
@@ -302,11 +304,11 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = withCheckerRo
             <Checker.Network fullWidth chainId={_pool.chainId}>
               <Checker.Custom guardWhen={+percentage <= 0} guardText="Enter amount">
                 <Checker.ApproveBentobox
+                  tag={APPROVE_TAG_REMOVE_TRIDENT}
                   fullWidth
                   chainId={chainId}
                   id="remove-liquidity-trident-approve-bentobox"
-                  onSignature={setPermit}
-                  contract={getTridentRouterContractConfig(_pool.chainId).address}
+                  masterContract={getTridentRouterContractConfig(_pool.chainId).address}
                 >
                   <Checker.ApproveERC20
                     fullWidth

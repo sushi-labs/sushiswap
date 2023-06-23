@@ -22,6 +22,7 @@ import { Signature } from '@ethersproject/bytes'
 import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { FuroStreamChainId } from '@sushiswap/furo'
 import { Dots } from '@sushiswap/ui/components/dots'
+import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 
 const APPROVE_TAG = 'updateStreamSingle'
 
@@ -42,7 +43,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
     const [changeEndDate, setChangeEndDate] = useState(false)
     const [amount, setAmount] = useState<string>('')
     const [endDate, setEndDate] = useState<Date | null>(null)
-    const [signature, setSignature] = useState<Signature>()
+    const { signature, setSignature } = useSignature(APPROVE_TAG)
     const contract = useContract({
       address: contractAddress,
       abi: abi,
@@ -221,6 +222,7 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                   timeFormat="HH:mm"
                   timeIntervals={15}
                   timeCaption="time"
+                  startDate={stream.endTime}
                   minDate={stream.endTime}
                   dateFormat="MMM d, yyyy HH:mm"
                   autoComplete="off"
@@ -234,11 +236,11 @@ export const UpdateModal: FC<UpdateModalProps> = withCheckerRoot(
                   <Checker.Custom guardWhen={topUp && !amountAsEntity?.greaterThan(ZERO)} guardText="Enter amount">
                     <Checker.Custom guardWhen={changeEndDate && !endDate} guardText="Enter date">
                       <Checker.ApproveBentobox
+                        tag={APPROVE_TAG}
                         type="button"
                         id="furo-update-stream-approve-bentobox"
                         chainId={chainId satisfies BentoBoxV1ChainId}
-                        contract={contractAddress as Address}
-                        onSignature={setSignature}
+                        masterContract={contractAddress as Address}
                         className="col-span-3 md:col-span-2"
                       >
                         <Checker.ApproveERC20

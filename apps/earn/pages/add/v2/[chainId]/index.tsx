@@ -7,7 +7,6 @@ import { Address, getSushiSwapRouterContractConfig, PairState, PoolFinder } from
 import { AddSectionReviewModalLegacy, Layout, SelectNetworkWidget, SelectTokensWidget } from '../../../../components'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { SWRConfig } from 'swr'
-import { isUniswapV2Router02ChainId, uniswapV2FactoryChainIds } from '@sushiswap/v2-core'
 
 import { AMM_ENABLED_NETWORKS } from '../../../../config'
 import { isLegacyPool } from '../../../../lib/functions'
@@ -20,6 +19,7 @@ import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { Checker } from '@sushiswap/wagmi/future/systems'
 import { Button } from '@sushiswap/ui/components/button'
 import { APPROVE_TAG_ADD_LEGACY } from '../../../../lib/constants'
+import { SUSHISWAP_V2_SUPPORTED_CHAIN_IDS, isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 
 // This function gets called at build time on server-side.
 // It may be called again, on a serverless function, if
@@ -38,7 +38,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 // the path has not been generated.
 export const getStaticPaths: GetStaticPaths = async () => {
   // Get the paths we want to pre-render based on supported chain ids
-  const paths = uniswapV2FactoryChainIds.map((chainId) => ({
+  const paths = SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.map((chainId) => ({
     params: {
       chainId: chainId.toString(),
     },
@@ -65,7 +65,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
 
   return (
     <SWRConfig>
-      <Layout>
+      <Layout className="flex justify-center">
         <div className="flex flex-col gap-2">
           <Link className="flex items-center gap-4 mb-2 group" href="/" shallow={true}>
             <IconButton size="sm" icon={ArrowLeftIcon} name="Back" />
@@ -87,7 +87,7 @@ export function Add(props: InferGetStaticPropsType<typeof getStaticProps>) {
                   chainId={chainId}
                   token0={token0}
                   token1={token1}
-                  enabled={isUniswapV2Router02ChainId(chainId)}
+                  enabled={isSushiSwapV2ChainId(chainId)}
                 />
               </PoolFinder.Components>
             }
@@ -243,7 +243,7 @@ const _Add: FC<AddProps> = ({ chainId, setChainId, pool, poolState, title, token
             <Checker.Connect fullWidth>
               <Checker.Network fullWidth chainId={chainId}>
                 <Checker.Amounts fullWidth chainId={chainId} amounts={[parsedInput0, parsedInput1]}>
-                  {pool && isLegacyPool(pool) && isUniswapV2Router02ChainId(chainId) && (
+                  {(!pool || isLegacyPool(pool)) && isSushiSwapV2ChainId(chainId) && (
                     <>
                       <Checker.ApproveERC20
                         id="approve-token-0"

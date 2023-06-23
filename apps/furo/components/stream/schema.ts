@@ -3,6 +3,8 @@ import { ZAddress, ZToken } from '../../lib/zod'
 import { RefinementCtx } from 'zod/lib/types'
 
 const dateRangeValidator = (val: { startDate?: Date; endDate?: Date }, ctx: RefinementCtx) => {
+  console.log('dateRangeValidator', val)
+
   if (!val.startDate) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
@@ -49,8 +51,8 @@ export const CreateStreamBaseSchema = z.object({
   id: z.string(),
   dates: z
     .object({
-      startDate: z.date(),
-      endDate: z.date(),
+      startDate: z.date().optional(),
+      endDate: z.date().optional(),
     })
     .superRefine(dateRangeValidator),
   recipient: ZAddress,

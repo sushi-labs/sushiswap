@@ -1,5 +1,4 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
-import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushiswap/amm'
@@ -26,7 +25,7 @@ import { AddSectionReviewModal } from './AddSectionReviewModal'
 import { createToast } from '@sushiswap/ui/components/toast'
 import { Button } from '@sushiswap/ui/components/button'
 import { useSlippageTolerance } from '../../lib/hooks/useSlippageTolerance'
-import { useApproved } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useApproved, useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { APPROVE_TAG_ADD_TRIDENT } from '../../lib/constants'
 
 interface AddSectionReviewModalTridentProps {
@@ -40,8 +39,6 @@ interface AddSectionReviewModalTridentProps {
   input1: Amount<Type> | undefined
   open: boolean
   close(): void
-  permit: Signature | undefined
-  setPermit: Dispatch<SetStateAction<Signature | undefined>>
 }
 
 const ZERO_PERCENT = new Percent('0')
@@ -56,12 +53,11 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   input0,
   input1,
   open,
-  permit,
-  setPermit,
   close,
 }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
+  const { signature, setSignature } = useSignature(APPROVE_TAG_ADD_TRIDENT)
   const { approved } = useApproved(APPROVE_TAG_ADD_TRIDENT)
   const liquidityToken = useMemo(() => {
     return new Token({
@@ -213,7 +209,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
             actions: [
               approveMasterContractAction({
                 router: contract,
-                signature: permit,
+                signature: signature,
               }),
               getAsEncodedAction({
                 contract,
@@ -241,7 +237,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
       minAmount0,
       minAmount1,
       liquidityMinted,
-      permit,
+      signature,
     ]
   )
 
@@ -250,7 +246,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     prepare,
     onSettled,
     onSuccess: () => {
-      setPermit(undefined)
+      setSignature(undefined)
       close()
     },
     enabled: approved,

@@ -1,6 +1,5 @@
 import {
   ConstantProductPool,
-  FACTORY_ADDRESS,
   findMultiRouteExactIn,
   findSingleRouteExactIn,
   Pair,
@@ -23,8 +22,7 @@ import {
   usePairs,
 } from '@sushiswap/wagmi'
 import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from '../../config'
-import { isUniswapV2Router02ChainId, UniswapV2Router02ChainId } from '@sushiswap/v2-core'
-
+import { isSushiSwapV2ChainId, SUSHISWAP_V2_FACTORY_ADDRESS, SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { BentoBoxV1ChainId, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
@@ -45,7 +43,7 @@ export type UseTradeOutput =
  */
 export function useTrade(
   chainId:
-    | UniswapV2Router02ChainId
+    | SushiSwapV2ChainId
     | StablePoolFactoryChainId
     | ConstantProductPoolFactoryChainId
     | RouteProcessor3ChainId,
@@ -67,8 +65,8 @@ export function useTrade(
   const currencyCombinations = useCurrencyCombinations(chainId, currencyIn, currencyOut)
 
   // Legacy SushiSwap pairs
-  const { data: pairs } = usePairs(chainId as UniswapV2Router02ChainId, currencyCombinations, {
-    enabled: isUniswapV2Router02ChainId(chainId),
+  const { data: pairs } = usePairs(chainId as SushiSwapV2ChainId, currencyCombinations, {
+    enabled: isSushiSwapV2ChainId(chainId),
   })
 
   // Trident constant product pools
@@ -134,7 +132,7 @@ export function useTrade(
     ) {
       if (tradeType === TradeType.EXACT_INPUT) {
         if (
-          chainId in FACTORY_ADDRESS &&
+          chainId in SUSHISWAP_V2_FACTORY_ADDRESS &&
           (chainId in CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS || chainId in STABLE_POOL_FACTORY_ADDRESS)
         ) {
           const legacyRoute = findSingleRouteExactIn(

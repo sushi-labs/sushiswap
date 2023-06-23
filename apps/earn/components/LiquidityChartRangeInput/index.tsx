@@ -8,7 +8,7 @@ import { Bound } from '../../lib/constants'
 import { Chart } from './Chart'
 import { useDensityChartData } from './hooks'
 import { ZoomLevels } from './types'
-import { FeeAmount, V3ChainId } from '@sushiswap/v3-sdk'
+import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 
 const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
@@ -69,7 +69,7 @@ export default function LiquidityChartRangeInput({
   onRightRangeInput,
   interactive,
 }: {
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
   currencyA: Type | undefined
   currencyB: Type | undefined
   feeAmount?: FeeAmount

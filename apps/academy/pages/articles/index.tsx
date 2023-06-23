@@ -104,8 +104,8 @@ const _Articles: FC = () => {
   }, [router.isReady, searchQuery])
 
   const { data: articlesData, isValidating } = useSWR(
-    [`/articles`, selectedDifficulty, selectedProduct, selectedTopic, debouncedQuery, page, sortBy.key],
-    async (_url, searchDifficulty, searchProduct, searchTopic, searchInput, searchPage, sortKey) => {
+    ['/articles', selectedDifficulty, selectedProduct, selectedTopic, debouncedQuery, page, sortBy.key],
+    async ([_url, searchDifficulty, searchProduct, searchTopic, searchInput, searchPage, sortKey]) => {
       const difficultySlug = searchDifficulty?.attributes?.slug
       const productSlug = searchProduct?.attributes?.slug
       const topicSlug = searchTopic?.attributes?.slug
@@ -177,7 +177,7 @@ const _Articles: FC = () => {
             <SelectTrigger placeholder="Select Difficulty">{selectedDifficulty?.attributes?.name}</SelectTrigger>
             <SelectContent>
               {difficulties.map((difficulty, i) => (
-                <SelectItem key={i} value={`${i}`}>
+                <SelectItem key={difficulty.id} value={`${i}`}>
                   {difficulty.attributes?.name}
                 </SelectItem>
               ))}
@@ -212,7 +212,7 @@ const _Articles: FC = () => {
             <div className="flex flex-col gap-2 mt-12">
               {products.map((product, i) => (
                 <span
-                  key={i}
+                  key={product.id}
                   className={classNames(
                     'py-2 px-5 rounded-lg hover:bg-blue-500 text-slate-300',
                     selectedProduct?.id === product.id && 'bg-blue-500'
@@ -224,7 +224,7 @@ const _Articles: FC = () => {
               ))}
               {topics.map((topic, i) => (
                 <span
-                  key={i}
+                  key={topic.id}
                   className={classNames(
                     'py-2 px-5 rounded-lg hover:bg-blue-500 text-slate-300',
                     selectedTopic?.id === topic.id && 'bg-blue-500'

@@ -120,6 +120,7 @@ export const SearchInput: FC<SearchInput> = ({ ref, handleSearch, isTopOfPage, s
                 <button
                   className="ml-2 text-xs font-medium sm:text-sm hover:underline"
                   key={topic}
+                  type="button"
                   onClick={() => onTopicClick(topic)}
                 >
                   {topic}

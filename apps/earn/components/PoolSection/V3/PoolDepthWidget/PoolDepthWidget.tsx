@@ -3,7 +3,7 @@ import colors from 'tailwindcss/colors'
 
 import { useConcentratedDerivedMintInfo } from '../../../ConcentratedLiquidityProvider'
 import { useIsMounted } from '@sushiswap/hooks'
-import { FeeAmount, V3ChainId } from '@sushiswap/v3-sdk'
+import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { Chart } from 'components/LiquidityChartRangeInput/Chart'
 import { useDensityChartData } from 'components/LiquidityChartRangeInput/hooks'
 import { ZoomLevels } from 'components/LiquidityChartRangeInput/types'
@@ -15,7 +15,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 interface PoolDepthWidget {
   id?: string
   address: string
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
 }
 
 const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {

@@ -6,7 +6,7 @@ import { FC } from 'react'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 
 import { useTokensFromPool } from '../../../../lib/hooks'
-import { ICON_SIZE } from '../contants'
+import { ICON_SIZE } from '../constants'
 import { Row } from './types'
 import { Badge } from '@sushiswap/ui/components/Badge'
 import { ChainId } from '@sushiswap/chain'

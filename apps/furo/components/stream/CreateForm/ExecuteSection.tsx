@@ -1,5 +1,4 @@
 import { isAddress } from '@ethersproject/address'
-import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
@@ -11,7 +10,7 @@ import {
   useFuroStreamRouterContract,
 } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { SendTransactionResult } from '@sushiswap/wagmi/actions'
 import { FuroStreamRouterChainId } from '@sushiswap/furo'
@@ -22,7 +21,7 @@ import { createToast } from '@sushiswap/ui/components/toast'
 import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
 import { Checker } from '@sushiswap/wagmi/future/systems/Checker'
 import { Button } from '@sushiswap/ui/components/button'
-import { useApproved, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { useApproved, useSignature, withCheckerRoot } from '@sushiswap/wagmi/future/systems/Checker/Provider'
 import { Modal } from '@sushiswap/ui/components/modal/Modal'
 import { ArrowLeftIcon } from '@heroicons/react/solid'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -40,8 +39,8 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
   ({ chainId, index }) => {
     const { address } = useAccount()
     const { approved } = useApproved(APPROVE_TAG)
+    const { signature, setSignature } = useSignature(APPROVE_TAG)
     const contract = useFuroStreamRouterContract(chainId)
-    const [signature, setSignature] = useState<Signature>()
 
     const {
       watch,
@@ -168,12 +167,12 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                 className="col-span-3 md:col-span-2"
               >
                 <Checker.ApproveBentobox
+                  tag={APPROVE_TAG}
                   type="button"
                   fullWidth
                   id="furo-create-single-stream-approve-bentobox"
                   chainId={chainId as BentoBoxV1ChainId}
-                  contract={getFuroStreamRouterContractConfig(chainId).address}
-                  onSignature={setSignature}
+                  masterContract={getFuroStreamRouterContractConfig(chainId).address}
                   className="col-span-3 md:col-span-2"
                 >
                   <Checker.ApproveERC20
@@ -258,6 +257,7 @@ export const ExecuteSection: FC<{ chainId: FuroStreamRouterChainId; index: numbe
                 <div className="space-y-4">
                   <Button
                     fullWidth
+                    size="xl"
                     loading={isLoading && !isError}
                     onClick={() => sendTransactionAsync?.().then(() => confirm())}
                     disabled={isError || !sendTransactionAsync}

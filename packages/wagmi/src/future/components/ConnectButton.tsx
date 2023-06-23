@@ -11,7 +11,7 @@ import {
   WalletConnectIcon
 } from '@sushiswap/ui/components/icons'
 import React, {FC, useCallback, useMemo} from 'react'
-import {useConnect} from 'wagmi'
+import {useConnect} from '../../hooks'
 import {
   DropdownMenu,
   DropdownMenuContent,

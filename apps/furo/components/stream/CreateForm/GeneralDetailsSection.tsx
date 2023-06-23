@@ -48,11 +48,11 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
                     timeFormat="HH:mm"
                     timeIntervals={15}
                     timeCaption="time"
+                    startDate={new Date(Date.now() + 5 * 60 * 1000)}
                     minDate={new Date(Date.now() + 5 * 60 * 1000)}
                     dateFormat="MMM d, yyyy HH:mm"
                     placeholderText="Select date"
                     autoComplete="off"
-                    testdata-id={'TEST'}
                   />
                 </FormControl>
                 <FormMessage />
@@ -93,6 +93,7 @@ export const GeneralDetailsSection: FC<GeneralDetailsSection> = ({ index }) => {
                     timeFormat="HH:mm"
                     timeIntervals={15}
                     timeCaption="time"
+                    startDate={new Date(Date.now()) > minDate ? new Date(Date.now() + 10 * 60 * 1000) : minDate}
                     minDate={new Date(Date.now()) > minDate ? new Date(Date.now() + 10 * 60 * 1000) : minDate}
                     dateFormat="MMM d, yyyy HH:mm"
                     placeholderText="Select date"

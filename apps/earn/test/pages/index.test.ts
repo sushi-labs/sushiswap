@@ -341,7 +341,9 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
   await expect(maxButtonSelector).toBeVisible()
   await expect(maxButtonSelector).toBeEnabled()
   await maxButtonSelector.click()
-  await approve(page, `${type.toLowerCase()}-approve-slp`)
+  if(type === 'STAKE') { 
+    await approve(page, `${type.toLowerCase()}-approve-slp`)
+  }
 
   const actionSelector = page.locator(`[testdata-id=${type.toLowerCase()}-liquidity-button]`)
   await expect(actionSelector).toBeVisible()

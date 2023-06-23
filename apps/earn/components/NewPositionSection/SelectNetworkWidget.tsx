@@ -1,10 +1,9 @@
 import { ChainId, chainName } from '@sushiswap/chain'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import React, { FC, memo } from 'react'
-
-import { V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
-import { NetworkSelector } from '@sushiswap/ui/components/networkselector'
-import { Button } from '@sushiswap/ui/components/button'
+import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
+import { NetworkSelector } from '@sushiswap/ui/future/components/networkselector'
+import { Button } from '@sushiswap/ui/future/components/button'
 import { ContentBlock } from '../AddPage/ContentBlock'
 import { SelectIcon } from '@sushiswap/ui/components/select'
 
@@ -29,7 +28,7 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(function S
     >
       <div className="flex relative z-[100]">
         <NetworkSelector
-          networks={networks ?? V3_SUPPORTED_CHAIN_IDS}
+          networks={networks ?? SUSHISWAP_V3_SUPPORTED_CHAIN_IDS}
           selected={selectedNetwork}
           onSelect={onSelect}
           variant="menu"

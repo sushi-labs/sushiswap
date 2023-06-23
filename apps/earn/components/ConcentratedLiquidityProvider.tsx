@@ -11,7 +11,7 @@ import {
   TICK_SPACINGS,
   TickMath,
   tickToPrice,
-  V3ChainId,
+  SushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 
 import { JSBI, Rounding } from '@sushiswap/math'
@@ -167,7 +167,7 @@ export function useConcentratedDerivedMintInfo({
   token0: Type | undefined
   token1: Type | undefined
   baseToken: Type | undefined
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
   feeAmount: FeeAmount | undefined
   existingPosition?: Position
 }): {

@@ -262,7 +262,9 @@ export async function createMultipleVests(page: Page, chainId: number, vestingAr
   await expect(confirmCreateVestingButton).toBeEnabled()
   await confirmCreateVestingButton.click()
 
-  await expect(page.locator('div', { hasText: `Creating ${vestingArgs.length} vests` }).last()).toContainText(`Creating ${vestingArgs.length} vests`)
+  await expect(page.locator('div', { hasText: `Creating ${vestingArgs.length} vests` }).last()).toContainText(
+    `Creating ${vestingArgs.length} vests`
+  )
 }
 
 async function handleGeneralDetails(page: Page, args: VestingArgs, index = 0) {

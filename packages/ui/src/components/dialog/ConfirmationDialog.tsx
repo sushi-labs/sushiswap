@@ -1,8 +1,10 @@
+'use client'
+
 import { Chain, ChainId } from '@sushiswap/chain'
+import { FC, ReactNode } from 'react'
 import { Dialog } from './Dialog'
 import { BarLoader } from '../BarLoader'
 import * as React from 'react'
-import { FC } from 'react'
 import { Loader } from '../loader'
 import { Dots } from '../dots'
 import { Button } from '../button'

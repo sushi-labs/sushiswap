@@ -20,12 +20,12 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 
 import { useConcentratedLiquidityPositionsFromTokenId } from '@sushiswap/wagmi/future/hooks'
-import { FeeAmount, V3ChainId } from '@sushiswap/v3-sdk'
+import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
 import { Toggle } from '@sushiswap/ui/components/toggle'
 
 interface SelectPricesWidget {
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
   token0: Type | undefined
   token1: Type | undefined
   feeAmount: FeeAmount | undefined
@@ -125,7 +125,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                 </div>
               </div>
             )}
-            {!noLiquidity && !isLoading && (
+            {!noLiquidity && (
               <>
                 <LiquidityChartRangeInput
                   chainId={chainId}

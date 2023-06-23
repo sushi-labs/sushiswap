@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { ZAddress, ZFundSource, ZToken } from '../../lib/zod'
 import { RefinementCtx } from 'zod/lib/types'
 
-export const STEP_CONFIGURATIONS: Record<string, number> = {
+export const STEP_CONFIGURATIONS_SECONDS: Record<string, number> = {
   Weekly: 604800,
   'Bi-weekly': 2 * 604800,
   Monthly: 2620800,
@@ -11,11 +11,19 @@ export const STEP_CONFIGURATIONS: Record<string, number> = {
 }
 
 export const STEP_CONFIGURATIONS_MAP: Record<string, number> = {
-  '0': STEP_CONFIGURATIONS['Weekly'],
-  '1': STEP_CONFIGURATIONS['Bi-weekly'],
-  '2': STEP_CONFIGURATIONS['Monthly'],
-  '3': STEP_CONFIGURATIONS['Quarterly'],
-  '4': STEP_CONFIGURATIONS['Yearly'],
+  '0': STEP_CONFIGURATIONS_SECONDS['Weekly'],
+  '1': STEP_CONFIGURATIONS_SECONDS['Bi-weekly'],
+  '2': STEP_CONFIGURATIONS_SECONDS['Monthly'],
+  '3': STEP_CONFIGURATIONS_SECONDS['Quarterly'],
+  '4': STEP_CONFIGURATIONS_SECONDS['Yearly'],
+}
+
+export const STEP_CONFIGURATIONS_LABEL: Record<string, string> = {
+  '0': 'Weekly',
+  '1': 'Bi-weekly',
+  '2': 'Monthly',
+  '3': 'Quarterly',
+  '4': 'Yearly',
 }
 
 const cliffValidator = (
@@ -43,7 +51,6 @@ const cliffValidator = (
   }
 
   if (val.startDate && val.cliffEnabled && val.cliffEndDate && val.cliffEndDate < val.startDate) {
-    console.log('here')
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Must be later than start date',
@@ -73,15 +80,20 @@ const cliffValidator = (
 export const CreateVestingBaseSchema = z.object({
   id: z.string(),
   currency: ZToken,
-  startDate: z.date(),
+  startDate: z.coerce
+    .date()
+    .refine(
+      (val) => val && val.getTime() >= new Date(Date.now() + 5 * 60 * 1000).getTime(),
+      'Must be at least 5 minutes from now'
+    ),
   recipient: ZAddress,
   stepAmount: z.string().refine((val) => (val !== '' ? Number(val) > 0 : true), 'Must be greater than 0'),
   stepPayouts: z.number().min(1).int(),
   fundSource: ZFundSource,
   stepConfig: z.string(),
   cliffEnabled: z.boolean(),
-  cliffEndDate: z.date(),
-  cliffAmount: z.string(),
+  cliffEndDate: z.date().optional(),
+  cliffAmount: z.string().optional(),
 })
 
 export const CreateVestingFormSchema = CreateVestingBaseSchema.partial({

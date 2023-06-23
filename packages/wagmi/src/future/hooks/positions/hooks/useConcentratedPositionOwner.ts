@@ -1,13 +1,13 @@
 import { useContractRead } from 'wagmi'
 import { BigNumber } from 'ethers'
-import { V3ChainId } from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 
 export const useConcentratedPositionOwner = ({
   chainId,
   tokenId,
 }: {
-  chainId: V3ChainId
+  chainId: SushiSwapV3ChainId
   tokenId: number | string | undefined
 }) => {
   return useContractRead({
@@ -37,5 +37,5 @@ export const useConcentratedPositionOwner = ({
     functionName: 'ownerOf',
     args: [BigNumber.from(tokenId ? tokenId : 0)],
     enabled: Boolean(chainId) && Boolean(tokenId),
-  })
+  } as const)
 }

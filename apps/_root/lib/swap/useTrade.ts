@@ -7,15 +7,17 @@ import { useMemo } from 'react'
 import { isSushiXSwapChainId, SushiXSwapChainId } from '@sushiswap/sushixswap'
 import { useClientTrade } from '@sushiswap/wagmi/future/hooks'
 import { useSlippageTolerance } from '@sushiswap/hooks'
+import { useSignature } from '@sushiswap/wagmi/future/systems/Checker/Provider'
+import { APPROVE_XSWAP_TAG } from '../../ui/swap/widget/SwapButtonCrossChain'
 
 type ObjectType<T> = T extends true ? ReturnType<typeof useCrossChainTrade> : ReturnType<typeof _useTrade>
 
 export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): ObjectType<T> {
-  const { token0, token1, network0, network1, amount, recipient, bentoboxSignature, tradeId, isFallback } =
-    useSwapState()
+  const { token0, token1, network0, network1, amount, recipient, tradeId, isFallback } = useSwapState()
   const { setFallback } = useSwapActions()
   const [slippageTolerance] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
+  const { signature } = useSignature(APPROVE_XSWAP_TAG)
 
   const { data: feeData } = useFeeData({ chainId: network0 })
   const sameChainTrade = _useTrade({
@@ -53,7 +55,7 @@ export function useTrade<T extends boolean>({ crossChain }: { crossChain: T }): 
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     recipient,
     enabled: crossChain && network0 !== network1 && isSushiXSwapChainId(network0) && isSushiXSwapChainId(network1),
-    bentoboxSignature,
+    bentoboxSignature: signature,
   })
 
   return useMemo(() => {
