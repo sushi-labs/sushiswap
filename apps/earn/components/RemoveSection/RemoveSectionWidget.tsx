@@ -158,7 +158,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                             size="xs"
                             variant={percentage === '25' ? 'default' : 'secondary'}
                             onClick={() => setPercentage('25')}
-                            testdata-id="remove-liquidity-25-button"
+                            testId="remove-liquidity-25"
                           >
                             25%
                           </Button>
@@ -166,7 +166,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                             size="xs"
                             variant={percentage === '50' ? 'default' : 'secondary'}
                             onClick={() => setPercentage('50')}
-                            testdata-id="remove-liquidity-50-button"
+                            testId="remove-liquidity-50"
                           >
                             50%
                           </Button>
@@ -174,7 +174,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                             size="xs"
                             variant={percentage === '75' ? 'default' : 'secondary'}
                             onClick={() => setPercentage('75')}
-                            testdata-id="remove-liquidity-75-button"
+                            testId="remove-liquidity-75"
                           >
                             75%
                           </Button>
@@ -182,7 +182,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                             size="xs"
                             variant={percentage === '100' ? 'default' : 'secondary'}
                             onClick={() => setPercentage('100')}
-                            testdata-id="remove-liquidity-max-button"
+                            testId="remove-liquidity-max"
                           >
                             MAX
                           </Button>
