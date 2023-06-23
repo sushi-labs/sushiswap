@@ -6,7 +6,7 @@ import { Loader2, Search as SearchIcon } from 'lucide-react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Chip } from '../chip'
 
-const containerVariants = cva('font-medium relative w-full flex items-center gap-1.5 rounded-xl bg-secondary', {
+const containerVariants = cva('font-medium relative w-full flex items-center gap-3 rounded-xl bg-secondary', {
   variants: {
     size: {
       sm: 'min-h-9 h-9 px-3 text-sm',
